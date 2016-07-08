@@ -77,6 +77,27 @@ Weitere Details ueber die Installation und Einrichtung von iTALC in Ihrem
 Netzwerk finden Sie in /usr/share/italc/doc/INSTALL.
 
 
+%package master
+Summary:	iTALC master software
+Summary(de):	iTALC-Master-Software
+Group:		Applications/Networking
+Requires:	italc = %{version}
+Requires:	italc-client = %{version}
+
+%description master
+This package contains the actual master-software for accessing clients.
+
+See /usr/share/italc/doc/INSTALL for details on how to install and setup iTALC
+in your network.
+
+%description master -l de
+Dieses Paket beinhaltet die eigentliche Master-Software, um auf Clients
+zuzugreifen.
+
+Weitere Details ueber die Installation und Einrichtung von iTALC in Ihrem
+Netzwerk finden Sie in /usr/share/italc/doc/INSTALL.
+
+
 
 %prep
 %setup -q
@@ -104,6 +125,16 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %{_bindir}/ica
 %{_libdir}/italc/libitalc_core.so
 %doc %{_mandir}/man1/ica.1.gz
+
+
+%files master
+%defattr(-,root,root)
+%{_bindir}/italc
+%doc %{_mandir}/man1/italc.1.gz
+%{_datadir}/applications/italc.desktop
+%{_datadir}/menu/italc
+%{_datadir}/pixmaps/italc.xpm
+%{_datadir}/icons/italc.png
 
 
 %changelog

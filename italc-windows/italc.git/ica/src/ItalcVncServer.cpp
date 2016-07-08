@@ -248,10 +248,10 @@ static void runX11vnc( QStringList cmdline, int port, bool plainVnc )
 		}
 	}
 
-	// workaround for x11vnc when running in an NX session
+	// workaround for x11vnc when running in an NX session or a Thin client LTSP session
 	foreach( const QString &s, QProcess::systemEnvironment() )
 	{
-		if( s.startsWith( "NXSESSIONID=" ) || s.startsWith( "X2GO_SESSION=" ) )
+		if( s.startsWith( "NXSESSIONID=" ) || s.startsWith( "X2GO_SESSION=" ) || s.startsWith( "LTSP_CLIENT_MAC=" ) )
 		{
 			cmdline << "-noxdamage";
 		}
@@ -315,10 +315,6 @@ void ItalcVncServer::runVncReflector( int srcPort, int dstPort )
 	args << "-viewonly"
 		<< "-reflect"
 		<< QString( "localhost:%1" ).arg( srcPort );
-	if( ItalcCore::config->isDemoServerMultithreaded() )
-	{
-		args << "-threads";
-	}
 
 	while( 1 )
 	{

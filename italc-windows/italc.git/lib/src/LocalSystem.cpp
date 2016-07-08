@@ -2,7 +2,7 @@
  * LocalSystem.cpp - namespace LocalSystem, providing an interface for
  *				   transparent usage of operating-system-specific functions
  *
- * Copyright (c) 2006-2012 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2006-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -27,13 +27,15 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QProcess>
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtNetwork/QHostInfo>
 
 
 #ifdef ITALC_BUILD_WIN32
 
 #include <QtCore/QLibrary>
+#include <QtGui/QGuiApplication>
+#include <qpa/qplatformnativeinterface.h>
 
 #include <windows.h>
 #include <shlobj.h>
@@ -171,7 +173,7 @@ User::User( const QString &name, const QString &dom, const QString &fullname ) :
 	m_userToken = sid;
 
 	if( !LookupAccountName( NULL,		// system name
-							m_name.toAscii().constData(),
+							m_name.toLatin1().constData(),
 							m_userToken,		// SID
 							&sidLen,
 							domainName,
@@ -455,8 +457,8 @@ void User::lookupFullName()
 	lookupNameAndDomain();
 
 #ifdef ITALC_BUILD_WIN32
-	char * accName = qstrdup( m_name.toAscii().constData() );
-	char * domainName = qstrdup( m_domain.toAscii().constData() );
+	char * accName = qstrdup( m_name.toLatin1().constData() );
+	char * domainName = qstrdup( m_domain.toLatin1().constData() );
 
 	// try to retrieve user's full name from domain
 	WCHAR wszDomain[256];
@@ -762,7 +764,7 @@ Process::Handle Process::runAsUser( const QString &proc,
 	si.cb = sizeof( STARTUPINFO );
 	if( !desktop.isEmpty() )
 	{
-		si.lpDesktop = (CHAR *) qstrdup( desktop.toAscii().constData() );
+		si.lpDesktop = (CHAR *) qstrdup( desktop.toLatin1().constData() );
 	}
 	HANDLE hNewToken = NULL;
 
@@ -886,7 +888,7 @@ void broadcastWOLPacket( const QString & _mac )
 	unsigned char mac[MAC_SIZE];
 	char out_buf[OUTBUF_SIZE];
 
-	if( sscanf( _mac.toAscii().constData(),
+	if( sscanf( _mac.toLatin1().constData(),
 				"%2x:%2x:%2x:%2x:%2x:%2x",
 				(unsigned int *) &mac[0],
 				(unsigned int *) &mac[1],
@@ -1165,15 +1167,46 @@ BOOL enablePrivilege( LPCTSTR lpszPrivilegeName, BOOL bEnable )
 #endif
 
 
-
-void activateWindow( QWidget * _w )
-{
-	_w->activateWindow();
-	_w->raise();
 #ifdef ITALC_BUILD_WIN32
-	SetWindowPos( _w->winId(), HWND_TOPMOST, 0, 0, 0, 0,
+static QWindow* windowForWidget( const QWidget* widget )
+{
+	QWindow* window = widget->windowHandle();
+	if( window )
+	{
+		return window;
+	}
+
+	const QWidget* nativeParent = widget->nativeParentWidget();
+	if( nativeParent )
+	{
+		return nativeParent->windowHandle();
+	}
+
+	return 0;
+}
+
+
+HWND getHWNDForWidget(const QWidget* widget )
+{
+	QWindow* window = windowForWidget( widget );
+	if( window )
+	{
+		QPlatformNativeInterface* interfacep = QGuiApplication::platformNativeInterface();
+		return static_cast<HWND>( interfacep->nativeResourceForWindow( QByteArrayLiteral( "handle" ), window ) );
+	}
+	return 0;
+}
+#endif
+
+
+void activateWindow( QWidget* w )
+{
+	w->activateWindow();
+	w->raise();
+#ifdef ITALC_BUILD_WIN32
+	SetWindowPos( getHWNDForWidget(w), HWND_TOPMOST, 0, 0, 0, 0,
 						SWP_NOMOVE | SWP_NOSIZE );
-	SetWindowPos( _w->winId(), HWND_NOTOPMOST, 0, 0, 0, 0,
+	SetWindowPos( getHWNDForWidget(w), HWND_NOTOPMOST, 0, 0, 0, 0,
 						SWP_NOMOVE | SWP_NOSIZE );
 #endif
 }

@@ -15,17 +15,16 @@ INCLUDE(CheckCSourceCompiles)
 INCLUDE(CheckIncludeFiles)
 INCLUDE(CheckFunctionExists)
 INCLUDE(FindPkgConfig)
-INCLUDE(Qt4Hacks)
 
 SET(VERSION_MAJOR "2")
-SET(VERSION_MINOR "0")
-SET(VERSION_PATCH "2")
+SET(VERSION_MINOR "1")
+SET(VERSION_PATCH "0")
 SET(VERSION_SUFFIX "")
 SET(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 IF(VERSION_SUFFIX)
 	SET (VERSION "${VERSION}-${VERSION_SUFFIX}")
 ENDIF(VERSION_SUFFIX)
-ADD_DEFINITIONS(-D'ITALC_VERSION="${VERSION}"')
+ADD_DEFINITIONS(-DITALC_VERSION="${VERSION}")
 
 
 INCLUDE(DetectMachine)
@@ -82,6 +81,7 @@ CHECK_INCLUDE_FILES(linux/input.h ITALC_HAVE_LINUX_INPUT_H)
 CHECK_INCLUDE_FILES(linux/uinput.h ITALC_HAVE_LINUX_UINPUT_H)
 CHECK_INCLUDE_FILES(linux/videodev.h ITALC_HAVE_LINUX_VIDEODEV_H)
 CHECK_INCLUDE_FILES(linux/videodev2.h ITALC_HAVE_LINUX_VIDEODEV2_H)
+CHECK_INCLUDE_FILES(ws2tcpip.h ITALC_HAVE_WS2TCPIP_H)
 
 IF(NOT ITALC_BUILD_WIN32)
 	FIND_PACKAGE(PAM REQUIRED)
@@ -97,36 +97,14 @@ ENDFOREACH(_func ${FUNCS})
 
 # TODO: ITALC_WORDS_BIGENDIAN
 
-# check for Qt4
+# check for required Qt5 modules
 
-SET(QT_MIN_VERSION "4.6.0")
-FIND_PACKAGE(Qt4 REQUIRED)
-SET(QT_USE_QTXML 1)
-SET(QT_USE_QTNETWORK 1)
-IF(WIN32)
-	SET(QT_QM_RCC "<!DOCTYPE RCC><RCC version=\"1.0\"><qresource>")
-	FILE(GLOB QT_QM ${MINGW_PREFIX}/share/qt4/translations/qt_*.qm)
-	FOREACH(f ${QT_QM})
-		STRING(REGEX MATCH ".*qt_help.*" TMP "${f}")
-		IF(NOT TMP)
-			STRING(REPLACE "${MINGW_PREFIX}/share/qt4/translations/" "" fa "${f}")
-			SET(QT_QM_RCC "${QT_QM_RCC}<file alias=\"${fa}\">${f}</file>")
-		ENDIF()
-	ENDFOREACH()
-	SET(QT_QM_RCC "${QT_QM_RCC}</qresource></RCC>")
-	FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/lib/qt_qm.qrc "${QT_QM_RCC}")
-ELSE()
-	EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_TRANSLATIONS" OUTPUT_VARIABLE QT_TRANSLATIONS_DIR)
-	IF(EXISTS "${QT_TRANSLATIONS_DIR}")
-		MESSAGE("-- Found Qt translations in ${QT_TRANSLATIONS_DIR}")
-		ADD_DEFINITIONS(-D'QT_TRANSLATIONS_DIR="${QT_TRANSLATIONS_DIR}"')
-	ENDIF(EXISTS "${QT_TRANSLATIONS_DIR}")
-ENDIF()
-
-IF(NOT WIN32)
-	STRING(REPLACE "-DQT_DLL" "" QT_DEFINITIONS "${QT_DEFINITIONS}")
-ENDIF(NOT WIN32)
-INCLUDE(${QT_USE_FILE})
+FIND_PACKAGE(Qt5Core REQUIRED)
+FIND_PACKAGE(Qt5Gui REQUIRED)
+FIND_PACKAGE(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Qt5Xml REQUIRED)
+FIND_PACKAGE(Qt5Network REQUIRED)
+FIND_PACKAGE(Qt5LinguistTools)
 
 
 # find libraries
@@ -203,7 +181,7 @@ IF(${ITALCCONFIG} IS_NEWER_THAN ${RFBCONFIG})
 	EXECUTE_PROCESS(COMMAND sed -e "s/ITALC_/LIBVNCSERVER_/g" INPUT_FILE ${ITALCCONFIG} OUTPUT_FILE ${RFBCONFIG})
 ENDIF(${ITALCCONFIG} IS_NEWER_THAN ${RFBCONFIG})
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-exceptions ${CXXFLAGS}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-exceptions -std=c++11 ${CXXFLAGS}")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall ${CFLAGS}")
 IF(ITALC_BUILD_WIN32)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-pragmas")
@@ -211,7 +189,7 @@ ELSE()
 	SET(OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES} -lcrypto)
 ENDIF(ITALC_BUILD_WIN32)
 
-ADD_DEFINITIONS(-D'LIB_DIR="${CMAKE_INSTALL_PREFIX}/${LIB_DIR}/"' -D'PLUGIN_DIR="${CMAKE_INSTALL_PREFIX}/${LIB_DIR}/italc/"')
+ADD_DEFINITIONS(-DLIB_DIR="${CMAKE_INSTALL_PREFIX}/${LIB_DIR}/" -DPLUGIN_DIR="${CMAKE_INSTALL_PREFIX}/${LIB_DIR}/italc/")
 ADD_DEFINITIONS(-DLIBVNCSERVER_HAVE_LIBZ)
 ADD_DEFINITIONS(-DLIBVNCSERVER_HAVE_LIBJPEG)
 IF(PNG_FOUND)
@@ -241,8 +219,8 @@ FOREACH(_ts_file ${italc_LOCALES})
 	STRING(REPLACE "${CMAKE_SOURCE_DIR}/lib/resources/" "" _ts_target "${_ts_file}")
 	STRING(REPLACE ".ts" ".qm" _qm_file "${_ts_file}")
 	STRING(REPLACE ".ts" ".qm" _qm_target "${_ts_target}")
-	ADD_CUSTOM_TARGET(${_ts_target} COMMAND ${QT_LUPDATE_EXECUTABLE} -I${CMAKE_SOURCE_DIR}/lib/include -locations none -no-obsolete ${italc_SOURCES} -ts ${_ts_file})
-	ADD_CUSTOM_TARGET(${_qm_target} COMMAND ${QT_LRELEASE_EXECUTABLE} ${_ts_file} -qm ${_qm_file})
+	ADD_CUSTOM_TARGET(${_ts_target} COMMAND ${Qt5_LUPDATE_EXECUTABLE} -I${CMAKE_SOURCE_DIR}/lib/include -locations none -no-obsolete ${italc_SOURCES} -ts ${_ts_file})
+	ADD_CUSTOM_TARGET(${_qm_target} COMMAND ${Qt5_LRELEASE_EXECUTABLE} ${_ts_file} -qm ${_qm_file})
 	LIST(APPEND ts_targets "${_ts_target}")
 	LIST(APPEND qm_targets "${_qm_target}")
 ENDFOREACH(_ts_file ${italc_LOCALES})
@@ -268,7 +246,7 @@ ADD_CUSTOM_TARGET(dist
 			COMMAND mkdir -p ${TMP}
 			COMMAND cp AUTHORS build_mingw* ChangeLog CMakeLists.txt COPYING INSTALL italcconfig.h.in italc.spec.in iTALC.nsi.in README* TODO ${TMP}
 			COMMAND cp -r cmake contrib doc lib ica ima imc nsis ${TMP}
-			COMMAND rm -rf `find ${TMP} -type d -name ".svn"`  `find ${TMP} -name cmake_install.cmake` `find ${TMP} -name Makefile` `find ${TMP} -type d -name CMakeFiles` ${TMP}/CMakeCache.txt `find ${TMP} -name "*.depends"` ${TMP}/ima/data/italc ${TMP}/ima/data/italc.desktop
+			COMMAND rm -rf `find ${TMP} -type d -name ".git"` `find ${TMP} -name cmake_install.cmake` `find ${TMP} -name Makefile` `find ${TMP} -type d -name CMakeFiles` ${TMP}/CMakeCache.txt `find ${TMP} -name "*.depends"` ${TMP}/ima/data/italc ${TMP}/ima/data/italc.desktop
 			COMMAND tar cjf italc-${VERSION}.tar.bz2 ${TMP}
 			COMMAND rm -rf ${TMP})
 

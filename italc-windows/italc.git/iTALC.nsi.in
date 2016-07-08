@@ -1,5 +1,12 @@
 !define DLLDIR "@MINGW_PREFIX@/bin"
-!define SYSTEM_DLLDIR "@MINGW_PREFIX@/@CMAKE_SYSTEM_PROCESSOR@-w64-mingw32/bin"
+!define DLLDIR_LIB "@MINGW_PREFIX@/lib"
+!define DLLDIR_GCC "/usr/lib/gcc/@CMAKE_SYSTEM_PROCESSOR@-w64-mingw32/5.3-win32"
+!if "@CMAKE_SYSTEM_PROCESSOR@" == "x86_64"
+   !define DLL_GCC "libgcc_s_seh-1.dll"
+!else
+   !define DLL_GCC "libgcc_s_sjlj-1.dll"
+!endif
+!define QT5_PLUGINS_PLATFORMS "/usr/@CMAKE_SYSTEM_PROCESSOR@-w64-mingw32/lib/qt5/plugins/platforms"
 !define APP_NAME "iTALC"
 !define COMP_NAME "iTALC Solutions Inc."
 !define WEB_SITE "http://italc.sf.net"
@@ -56,6 +63,8 @@ ShowInstDetails show
 !insertmacro MUI_PAGE_LICENSE "${LICENSE_TXT}"
 
 !insertmacro MUI_PAGE_DIRECTORY
+
+!insertmacro MUI_PAGE_COMPONENTS
 
 !ifdef REG_START_MENU
 !define MUI_STARTMENUPAGE_NODISABLE
@@ -140,23 +149,26 @@ FunctionEnd
 
 ######################################################################
 
-Section -"iTALC Service"
+Section "iTALC Service"
 SectionIn RO
 ${INSTALL_TYPE}
 ExecWait '"$INSTDIR\ica.exe" -quiet -unregisterservice'
 SetOverwrite on
 SetOutPath "$INSTDIR"
 # DLLs
-File "${DLLDIR}\QtCore4.dll"
-File "${DLLDIR}\QtGui4.dll"
-File "${DLLDIR}\QtXml4.dll"
-File "${DLLDIR}\QtNetwork4.dll"
-File "${DLLDIR}\zlib1.dll"
+File "${DLLDIR}\Qt5Core.dll"
+File "${DLLDIR}\Qt5Gui.dll"
+File "${DLLDIR}\Qt5Widgets.dll"
+File "${DLLDIR}\Qt5Xml.dll"
+File "${DLLDIR}\Qt5Network.dll"
 File "${DLLDIR}\libjpeg-9.dll"
 File "${DLLDIR}\libeay32.dll"
 File "${DLLDIR}\libssl32.dll"
 File "${DLLDIR}\libpng16-16.dll"
-File "${SYSTEM_DLLDIR}\libwinpthread-1.dll"
+File "${DLLDIR_LIB}\zlib1.dll"
+File "${DLLDIR_LIB}\libwinpthread-1.dll"
+File "${DLLDIR_GCC}\libstdc++-6.dll"
+File "${DLLDIR_GCC}\${DLL_GCC}"
 # core components
 File "italc-${VERSION}\ica.exe"
 File "italc-${VERSION}\vnchooks.dll"
@@ -165,6 +177,9 @@ File "italc-${VERSION}\ItalcCore.dll"
 File "italc-${VERSION}\imc.exe"
 File "italc-${VERSION}\LICENSE.TXT"
 File "italc-${VERSION}\README.TXT"
+SetOutPath "$INSTDIR\platforms"
+File "${QT5_PLUGINS_PLATFORMS}/qwindows.dll"
+File "${QT5_PLUGINS_PLATFORMS}/qminimal.dll"
 SetOutPath "$INSTDIR\doc"
 File "italc-${VERSION}\doc\*txt"
 SetOutPath "$INSTDIR\contrib"
@@ -176,6 +191,26 @@ ExecWait '"$INSTDIR\imc.exe" -s Network/FirewallExceptionEnabled=1'
 ExecWait '"$INSTDIR\ica.exe" -quiet -startservice'
 # disable forced guest logon as otherwise logon authentication fails
 WriteRegDWORD ${REG_ROOT} "SYSTEM\CurrentControlSet\Control\Lsa"  "ForceGuest" "0"
+SectionEnd
+
+Section "iTALC Master"
+${INSTALL_TYPE}
+SetOutPath "$INSTDIR"
+File "italc-${VERSION}\italc.exe"
+
+!ifdef REG_START_MENU
+!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+CreateDirectory "$SMPROGRAMS\$SM_Folder"
+CreateShortCut "$SMPROGRAMS\$SM_Folder\${APP_NAME}.lnk" "$INSTDIR\${MAIN_APP_EXE}"
+CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\${MAIN_APP_EXE}"
+!insertmacro MUI_STARTMENU_WRITE_END
+!endif
+
+!ifndef REG_START_MENU
+CreateDirectory "$SMPROGRAMS\iTALC"
+CreateShortCut "$SMPROGRAMS\iTALC\${APP_NAME}.lnk" "$INSTDIR\${MAIN_APP_EXE}"
+CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\${MAIN_APP_EXE}"
+!endif
 SectionEnd
 
 Function RunIMC
@@ -225,13 +260,16 @@ ExecWait '"$INSTDIR\ica.exe" -quiet -unregisterservice'
 Sleep 2000
 Delete "$INSTDIR\ica.exe"
 Delete "$INSTDIR\libwinpthread-1.dll"
+Delete "$INSTDIR\libgcc_s_sjlj-1.dll"
+Delete "$INSTDIR\libgcc_s_seh-1.dll"
+Delete "$INSTDIR\libstdc++-6.dll"
 Delete "$INSTDIR\zlib1.dll"
 Delete "$INSTDIR\libjpeg-9.dll"
-Delete "$INSTDIR\QtXml4.dll"
+Delete "$INSTDIR\Qt5Xml.dll"
 Delete "$INSTDIR\libeay32.dll"
 Delete "$INSTDIR\libpng16-16.dll"
-Delete "$INSTDIR\QtNetwork4.dll"
-Delete "$INSTDIR\QtCore4.dll"
+Delete "$INSTDIR\Qt5Network.dll"
+Delete "$INSTDIR\Qt5Core.dll"
 Delete "$INSTDIR\libssl32.dll"
 Delete "$INSTDIR\LICENSE.TXT"
 Delete "$INSTDIR\authSSP.dll"
@@ -240,9 +278,11 @@ Delete "$INSTDIR\imc.exe"
 Delete "$INSTDIR\italc.exe"
 Delete "$INSTDIR\README.TXT"
 Delete "$INSTDIR\ItalcCore.dll"
-Delete "$INSTDIR\QtGui4.dll"
+Delete "$INSTDIR\Qt5Gui.dll"
+Delete "$INSTDIR\Qt5Widgets.dll"
 Delete "$INSTDIR\uninstall.exe"
 Delete "$INSTDIR\iTALC website.url"
+RmDir /r "$INSTDIR\platforms"
 RmDir /r "$INSTDIR\doc"
 RmDir /r "$INSTDIR\contrib"
 

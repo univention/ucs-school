@@ -4,8 +4,9 @@
  * This code should be independent of any changes in the RFB protocol.  It just
  * deals with the X server scheduling stuff, calling rfbNewClientConnection and
  * rfbProcessClientMessage to actually deal with the protocol.  If a socket
- * needs to be closed for any reason then rfbCloseClient should be called, and
- * this in turn will call rfbClientConnectionGone.  To make an active
+ * needs to be closed for any reason then rfbCloseClient should be called. In turn,
+ * rfbClientConnectionGone will be called by rfbProcessEvents (non-threaded case)
+ * or clientInput (threaded case) in main.c.  To make an active
  * connection out, call rfbConnect - note that this does _not_ call
  * rfbNewClientConnection.
  *
@@ -98,19 +99,30 @@ int deny_severity=LOG_WARNING;
 #endif
 
 #if defined(WIN32)
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #ifndef __MINGW32__
 #pragma warning (disable: 4018 4761)
 #endif
 #define read(sock,buf,len) recv(sock,buf,len,0)
-#ifndef EWOULDBLOCK
+#ifdef EWOULDBLOCK
+#undef EWOULDBLOCK
+#endif
 #define EWOULDBLOCK WSAEWOULDBLOCK
+#ifdef ETIMEDOUT
+#undef ETIMEDOUT
 #endif
-#ifndef ETIMEDOUT
 #define ETIMEDOUT WSAETIMEDOUT
-#endif
 #define write(sock,buf,len) send(sock,buf,len,0)
 #else
 #define closesocket close
+#endif
+
+#ifdef _MSC_VER
+#define SHUT_RD   0x00
+#define SHUT_WR   0x01
+#define SHUT_RDWR 0x02
+#define snprintf _snprintf /* Missing in MSVC */
 #endif
 
 int rfbMaxClientWait = 20000;   /* time (ms) after which we decide client has
@@ -140,8 +152,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
 
 	if (setsockopt(rfbScreen->inetdSock, IPPROTO_TCP, TCP_NODELAY,
 		       (char *)&one, sizeof(one)) < 0) {
-	    rfbLogPerror("setsockopt");
-	    return;
+	    rfbLogPerror("setsockopt failed: can't set TCP_NODELAY flag, non TCP socket?");
 	}
 
     	FD_ZERO(&(rfbScreen->allFds));
@@ -156,7 +167,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
 
         rfbLog("Autoprobing TCP port \n");
         for (i = 5900; i < 6000; i++) {
-            if ((rfbScreen->listenSock = rfbListenOnTCPPort(i, iface)) >= 0) {
+            if ((rfbScreen->listenSock = rfbListenOnTCPPort(i, iface)) != -1) {
 		rfbScreen->port = i;
 		break;
 	    }
@@ -174,7 +185,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
 #ifdef LIBVNCSERVER_IPv6
         rfbLog("Autoprobing TCP6 port \n");
 	for (i = 5900; i < 6000; i++) {
-            if ((rfbScreen->listen6Sock = rfbListenOnTCP6Port(i, rfbScreen->listen6Interface)) >= 0) {
+            if ((rfbScreen->listen6Sock = rfbListenOnTCP6Port(i, rfbScreen->listen6Interface)) != -1) {
 		rfbScreen->ipv6port = i;
 		break;
 	    }
@@ -187,7 +198,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
 
         rfbLog("Autoprobing selected TCP6 port %d\n", rfbScreen->ipv6port);
 	FD_SET(rfbScreen->listen6Sock, &(rfbScreen->allFds));
-	rfbScreen->maxFd = max((int)rfbScreen->listen6Sock,rfbScreen->maxFd);
+	rfbScreen->maxFd = rfbMax((int)rfbScreen->listen6Sock,rfbScreen->maxFd);
 #endif
     }
     else
@@ -214,7 +225,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
       rfbLog("Listening for VNC connections on TCP6 port %d\n", rfbScreen->ipv6port);  
 	
       FD_SET(rfbScreen->listen6Sock, &(rfbScreen->allFds));
-      rfbScreen->maxFd = max((int)rfbScreen->listen6Sock,rfbScreen->maxFd);
+      rfbScreen->maxFd = rfbMax((int)rfbScreen->listen6Sock,rfbScreen->maxFd);
 	    }
 #endif
 
@@ -230,7 +241,7 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
 	rfbLog("Listening for VNC connections on TCP port %d\n", rfbScreen->port);  
 
 	FD_SET(rfbScreen->udpSock, &(rfbScreen->allFds));
-	rfbScreen->maxFd = max((int)rfbScreen->udpSock,rfbScreen->maxFd);
+	rfbScreen->maxFd = rfbMax((int)rfbScreen->udpSock,rfbScreen->maxFd);
     }
 }
 
@@ -241,25 +252,25 @@ void rfbShutdownSockets(rfbScreenInfoPtr rfbScreen)
 
     rfbScreen->socketState = RFB_SOCKET_SHUTDOWN;
 
-    if(rfbScreen->inetdSock>-1) {
+    if(rfbScreen->inetdSock!=-1) {
 	closesocket(rfbScreen->inetdSock);
 	FD_CLR(rfbScreen->inetdSock,&rfbScreen->allFds);
 	rfbScreen->inetdSock=-1;
     }
 
-    if(rfbScreen->listenSock>-1) {
+    if(rfbScreen->listenSock!=-1) {
 	closesocket(rfbScreen->listenSock);
 	FD_CLR(rfbScreen->listenSock,&rfbScreen->allFds);
 	rfbScreen->listenSock=-1;
     }
 
-    if(rfbScreen->listen6Sock>-1) {
+    if(rfbScreen->listen6Sock!=-1) {
 	closesocket(rfbScreen->listen6Sock);
 	FD_CLR(rfbScreen->listen6Sock,&rfbScreen->allFds);
 	rfbScreen->listen6Sock=-1;
     }
 
-    if(rfbScreen->udpSock>-1) {
+    if(rfbScreen->udpSock!=-1) {
 	closesocket(rfbScreen->udpSock);
 	FD_CLR(rfbScreen->udpSock,&rfbScreen->allFds);
 	rfbScreen->udpSock=-1;
@@ -385,7 +396,15 @@ rfbCheckFds(rfbScreenInfoPtr rfbScreen,long usec)
             if (FD_ISSET(cl->sock, &(rfbScreen->allFds)))
             {
                 if (FD_ISSET(cl->sock, &fds))
+                {
+#ifdef LIBVNCSERVER_WITH_WEBSOCKETS
+                    do {
+                        rfbProcessClientMessage(cl);
+                    } while (cl->sock > 0 && webSocketsHasDataInBuffer(cl));
+#else
                     rfbProcessClientMessage(cl);
+#endif
+                }
                 else
                     rfbSendFileTransferChunk(cl);
             }
@@ -413,17 +432,17 @@ rfbProcessNewConnection(rfbScreenInfoPtr rfbScreen)
        has an incoming connection pending. We know that at least 
        one of them has, so this should not block for too long! */
     FD_ZERO(&listen_fds);  
-    if(rfbScreen->listenSock >= 0) 
+    if(rfbScreen->listenSock != -1) 
       FD_SET(rfbScreen->listenSock, &listen_fds);
-    if(rfbScreen->listen6Sock >= 0) 
+    if(rfbScreen->listen6Sock != -1) 
       FD_SET(rfbScreen->listen6Sock, &listen_fds);
     if (select(rfbScreen->maxFd+1, &listen_fds, NULL, NULL, NULL) == -1) {
       rfbLogPerror("rfbProcessNewConnection: error in select");
       return FALSE;
     }
-    if (rfbScreen->listenSock >= 0 && FD_ISSET(rfbScreen->listenSock, &listen_fds))
+    if (rfbScreen->listenSock != -1 && FD_ISSET(rfbScreen->listenSock, &listen_fds))
       chosen_listen_sock = rfbScreen->listenSock;
-    if (rfbScreen->listen6Sock >= 0 && FD_ISSET(rfbScreen->listen6Sock, &listen_fds))
+    if (rfbScreen->listen6Sock != -1 && FD_ISSET(rfbScreen->listen6Sock, &listen_fds))
       chosen_listen_sock = rfbScreen->listen6Sock;
 
     if ((sock = accept(chosen_listen_sock,
@@ -439,9 +458,7 @@ rfbProcessNewConnection(rfbScreenInfoPtr rfbScreen)
 
     if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
 		   (char *)&one, sizeof(one)) < 0) {
-      rfbLogPerror("rfbCheckFds: setsockopt");
-      closesocket(sock);
-      return FALSE;
+      rfbLogPerror("rfbCheckFds: setsockopt failed: can't set TCP_NODELAY flag, non TCP socket?");
     }
 
 #ifdef USE_LIBWRAP
@@ -455,11 +472,13 @@ rfbProcessNewConnection(rfbScreenInfoPtr rfbScreen)
 #endif
 
 #ifdef LIBVNCSERVER_IPv6
-    char host[1024];
-    if(getnameinfo((struct sockaddr*)&addr, addrlen, host, sizeof(host), NULL, 0, NI_NUMERICHOST) != 0) {
-      rfbLogPerror("rfbProcessNewConnection: error in getnameinfo");
+    {
+        char host[1024];
+        if(getnameinfo((struct sockaddr*)&addr, addrlen, host, sizeof(host), NULL, 0, NI_NUMERICHOST) != 0) {
+            rfbLogPerror("rfbProcessNewConnection: error in getnameinfo");
+        }
+        rfbLog("Got connection from client %s\n", host);
     }
-    rfbLog("Got connection from client %s\n", host);
 #else
     rfbLog("Got connection from client %s\n", inet_ntoa(addr.sin_addr));
 #endif
@@ -540,14 +559,12 @@ rfbConnect(rfbScreenInfoPtr rfbScreen,
 
     if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
 		   (char *)&one, sizeof(one)) < 0) {
-	rfbLogPerror("setsockopt failed");
-	closesocket(sock);
-	return -1;
+	rfbLogPerror("setsockopt failed: can't set TCP_NODELAY flag, non TCP socket?");
     }
 
     /* AddEnabledDevice(sock); */
     FD_SET(sock, &rfbScreen->allFds);
-    rfbScreen->maxFd = max(sock,rfbScreen->maxFd);
+    rfbScreen->maxFd = rfbMax(sock,rfbScreen->maxFd);
 
     return sock;
 }
@@ -909,7 +926,7 @@ rfbListenOnTCP6Port(int port,
         }
 
 #ifdef IPV6_V6ONLY
-	/* we have seperate IPv4 and IPv6 sockets since some OS's do not support dual binding */
+	/* we have separate IPv4 and IPv6 sockets since some OS's do not support dual binding */
 	if (setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&one, sizeof(one)) < 0) {
 	  rfbLogPerror("rfbListenOnTCP6Port error in setsockopt IPV6_V6ONLY");
 	  closesocket(sock);

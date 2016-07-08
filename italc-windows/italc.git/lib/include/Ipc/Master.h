@@ -1,7 +1,7 @@
 /*
  * IpcMaster.h - class Ipc::Master which manages Ipc::Slaves
  *
- * Copyright (c) 2010-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2010-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
@@ -27,8 +27,10 @@
 #define IPC_MASTER_H
 
 #include "Ipc/Core.h"
+#include "Ipc/SlaveLauncher.h"
 
 #include <QtCore/QMutex>
+#include <QtCore/QPointer>
 #include <QtCore/QProcess>
 #include <QtCore/QSignalMapper>
 #include <QtNetwork/QTcpServer>
@@ -36,8 +38,6 @@
 
 namespace Ipc
 {
-
-class SlaveLauncher;
 
 class Master : public QTcpServer
 {
@@ -51,12 +51,11 @@ public:
 		return m_applicationFilePath;
 	}
 
-	virtual void createSlave( const Ipc::Id &id, SlaveLauncher *slaveLauncher = NULL );
-	void stopSlave( const Ipc::Id &id );
-	bool isSlaveRunning( const Ipc::Id &id );
+	Q_INVOKABLE virtual void createSlave( const Ipc::Id &id, Ipc::SlaveLauncher *slaveLauncher = NULL );
+	Q_INVOKABLE void stopSlave( const Ipc::Id& id );
+	bool isSlaveRunning( const Id& id );
 
-	void sendMessage( const Ipc::Id &id, const Ipc::Msg &msg );
-	Ipc::Msg receiveMessage( const Ipc::Id &id );
+	Q_INVOKABLE void sendMessage( const Ipc::Id& id, const Ipc::Msg& msg );
 
 	virtual bool handleMessage( const Ipc::Id &id, const Ipc::Msg &msg ) = 0;
 
@@ -74,7 +73,7 @@ private:
 	struct ProcessInformation
 	{
 		QTcpSocket *sock;
-		SlaveLauncher *slaveLauncher;
+		QPointer<SlaveLauncher> slaveLauncher;
 		QVector<Ipc::Msg> pendingMessages;
 
 		ProcessInformation() :
@@ -96,10 +95,6 @@ private:
 	ProcessMap m_processes;
 
 	QMutex m_processMapMutex;
-
-
-signals:
-	void messagesPending();
 
 };
 

@@ -2,7 +2,8 @@
  * IpcSlaveLauncher.cpp - class Ipc::SlaveLauncher providing mechanisms for
  *                        launching a slave application
  *
- * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2010-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+
  * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
@@ -38,6 +39,12 @@ SlaveLauncher::SlaveLauncher( const QString &applicationFilePath ) :
 	{
 		m_applicationFilePath = QCoreApplication::applicationFilePath();
 	}
+
+#if QT_VERSION >= 0x050000
+	connect( this, &SlaveLauncher::finished, this, &SlaveLauncher::deleteLater );
+#else
+	connect( this, SIGNAL(finished()), this, SLOT(deleteLater()) );
+#endif
 }
 
 

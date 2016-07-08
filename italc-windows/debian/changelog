@@ -1,3 +1,9 @@
+italc-windows (3.0.2-1) unstable; urgency=low
+
+  * Bug #38415: update to iTALC 2.1.0
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 08 Jul 2016 17:14:00 +0200
+
 italc-windows (3.0.1-1) unstable; urgency=medium
 
   * Bug #38415: update iTALC to 2.0.2

@@ -2,7 +2,7 @@
  * QtSlaveLauncher.cpp - class Ipc::QtSlaveLauncher providing mechanisms for
  *                       launching a slave application via QProcess
  *
- * Copyright (c) 2010-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2010-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
@@ -26,7 +26,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
-#include <QtCore/QTime>
+#include <QtCore/QTimer>
 
 #include "Ipc/QtSlaveLauncher.h"
 
@@ -46,7 +46,7 @@ namespace Ipc
 
 QtSlaveLauncher::QtSlaveLauncher( const QString &applicationFilePath ) :
 	SlaveLauncher( applicationFilePath ),
-	m_processMutex(),
+	m_processMutex( QMutex::Recursive ),
 	m_process( NULL )
 {
 }
@@ -64,62 +64,45 @@ void QtSlaveLauncher::start( const QStringList &arguments )
 {
 	stop();
 
-	m_processMutex.lock();
+	QMutexLocker l( &m_processMutex );
+
 	m_process = new QProcess;
 
-	if( ItalcCore::config->logLevel() >= Logger::LogLevelDebug )
-	{
-		// forward stdout from slave to master when in debug mode
-		m_process->setProcessChannelMode( QProcess::ForwardedChannels );
-	}
-	else
-	{
-		// discard output when not in debug mode
-		m_process->setStandardOutputFile( DEV_NULL );
-		m_process->setStandardErrorFile( DEV_NULL );
-	}
+	// forward stdout/stderr from slave to master
+	m_process->setProcessChannelMode( QProcess::ForwardedChannels );
+
+#if QT_VERSION >= 0x050000
+	QObject::connect( m_process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+					  m_process, &QProcess::deleteLater );
+	QObject::connect( m_process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+					  this, &QtSlaveLauncher::finished );
+#else
+	connect( m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()) );
+	connect( m_process, SIGNAL(finished(int)), this, SIGNAL(finished()) );
+#endif
 
 #ifndef DEBUG
 	m_process->start( applicationFilePath(), arguments );
 #else
 	qWarning() << applicationFilePath() << arguments;
 #endif
-	m_processMutex.unlock();
 }
 
 
 
 void QtSlaveLauncher::stop()
 {
-	m_processMutex.lock();
-	if( m_process )
+	QMutexLocker l( &m_processMutex );
+
+	// process still running?
+	if( isRunning() )
 	{
-		QTime t;
-		t.start();
-
-		while( t.elapsed() < 5000 && m_process->state() != QProcess::NotRunning )
-		{
-			QCoreApplication::processEvents();
-#ifdef ITALC_BUILD_WIN32
-			// Silvio 2012-01-07: I don't know why this works and why this "Sleep" helps
-			// but after adding these two lines taskbar returns and screen unlocks almost
-			// instantly (before it took few seconds). Same is true for demo mode.
-			Sleep( 500 );
-			QCoreApplication::processEvents();
-#endif
-		}
-
-		if( m_process->state() != QProcess::NotRunning )
-		{
-			qWarning( "Slave still running, terminating it now." );
-			m_process->terminate();
-			m_process->kill();
-		}
-
-		delete m_process;
-		m_process = NULL;
+		// then register some logic for asynchronously stopping process after timeout
+		QTimer* killTimer = new QTimer( m_process );
+		connect( killTimer, SIGNAL(timeout()), m_process, SLOT(terminate()) );
+		connect( killTimer, SIGNAL(timeout()), m_process, SLOT(kill()) );
+		killTimer->start( 5000 );
 	}
-	m_processMutex.unlock();
 }
 
 
@@ -127,15 +110,13 @@ void QtSlaveLauncher::stop()
 bool QtSlaveLauncher::isRunning()
 {
 	QMutexLocker l( &m_processMutex );
+
+	// guarded pointer still valid?
 	if( m_process )
 	{
-		// we have to call this in order to update the state if the
-		// process has finished already
-		m_process->waitForFinished( 0 );
-
-		return m_process->state() != QProcess::NotRunning;
+		// then process is running
+		return true;
 	}
-
 	return false;
 }
 
