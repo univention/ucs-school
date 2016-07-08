@@ -452,8 +452,12 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 	# iTalc: screenshots
 	@property
 	def screenshot(self):
+		if not self.connected:
+			MODULE.warn('%s: not connected - skipping screenshot' % (self.ipAddress,))
+			return None
 		image = self._vnc.image()
 		if not image.byteCount():
+			MODULE.info('%s: no screenshot available yet' % (self.ipAddress,))
 			return None
 		tmpfile = tempfile.NamedTemporaryFile(delete=False)
 		tmpfile.close()
