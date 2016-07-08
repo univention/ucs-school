@@ -1,5 +1,11 @@
 ucs-school-ldap-acls-master (14.0.1-8) unstable; urgency=medium
 
+  * Bug #41720: simplify filter
+
+ -- Florian Best <best@univention.de>  Fri, 08 Jul 2016 15:43:08 +0200
+
+ucs-school-ldap-acls-master (14.0.1-8) unstable; urgency=medium
+
   * Bug #41725: restrict access to cn=WMIPolicy,cn=system,
   	cn=policies,cn=system, sambaDomain objects and cn=idmap,cn=univention
 

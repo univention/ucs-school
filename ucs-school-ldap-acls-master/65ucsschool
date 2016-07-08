@@ -122,13 +122,13 @@ access to dn.regex="^cn=([^,]+),(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,
 # Lehrer, Mitarbeiter und OU-Admins duerfen Shares anlegen, Klassenshares aber nicht aendern
 access to dn.regex="^cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"  attrs=children,entry
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$1,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by set.expand="[$1] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28%26%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolStaff%29%29%29])/ucsschoolSchool" write
+	by set.expand="[$1] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%29])/ucsschoolSchool" write
 @$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$1,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * +0 break
 
 access to dn.regex="^cn=([^,]+),cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionShare))"
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by set.expand="[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28%26%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolStaff%29%29%29])/ucsschoolSchool" write
+	by set.expand="[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%29])/ucsschoolSchool" write
 @$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * +0 break
 
