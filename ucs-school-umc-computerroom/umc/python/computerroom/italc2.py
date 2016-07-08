@@ -130,7 +130,7 @@ _usermap = UserMap()
 class LockableAttribute( object ):
 	def __init__( self, initial_value = None, locking = True ):
 		self._lock = locking and threading.Lock() or None
-		MODULE.info( 'Locking object: %s' % self._lock )
+		# MODULE.info('Locking object: %s' % self._lock)
 		self._old = initial_value
 		self._current = copy.deepcopy(initial_value)
 
@@ -276,18 +276,19 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._state.set( ITALC_Computer.CONNECTION_STATES[ state ] )
 
 		if not self._core and self._state.current == 'connected' and self._state.old != 'connected':
-			MODULE.info('%s: VNC connection established' % (self.ipAddress,))
+			MODULE.process('%s: VNC connection established' % (self.ipAddress,))
 			self._core = italc.ItalcCoreConnection(self._vnc)
 			self._core.receivedUserInfo.connect(self._userInfo)
 			self._core.receivedSlaveStateFlags.connect(self._slaveStateFlags)
 			self._core_ready = False
 			self.start()
 		elif self._core and self._state.current == 'connected' and self._state.old != 'connected':
-			MODULE.info('%s: iTALC connection on top of VNC connection established' % (self.ipAddress,))
+			MODULE.process('%s: iTALC connection on top of VNC connection established' % (self.ipAddress,))
 			self._core_ready = True
 			self.signal_emit('connected', self)
 		# lost connection ...
 		elif self._state.current != 'connected' and self._state.old == 'connected':
+			MODULE.process('%s: lost connection: new state=%r' % (self.ipAddress, self._state.current))
 			self._core_ready = False
 			self._username.reset()
 			self._homedir.reset()
@@ -328,12 +329,12 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._emit_flag(diff, italc.ItalcCore.SystemTrayIconRunning, 'system-tray-icon')
 
 	def update(self):
-		if self._state.current != 'connected':
-			MODULE.info( '%s is currently not connected' % self.ipAddress )
+		if not self.connected:
+			MODULE.warn('%s: not connected - skipping update' % (self.ipAddress,))
 			return True
 
 		if self._usernameLastUpdate + ITALC_CORE_TIMEOUT < time.time():
-			MODULE.process('connection to %s is dead for %.2fs - reconnecting' % (self.ipAddress, (time.time()-self._usernameLastUpdate)))
+			MODULE.process('connection to %s is dead for %.2fs - reconnecting (timeout=%d)' % (self.ipAddress, (time.time() - self._usernameLastUpdate), ITALC_CORE_TIMEOUT))
 			self.close()
 			self._username.reset()
 			self._homedir.reset()
