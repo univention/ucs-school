@@ -178,9 +178,9 @@ class LockableAttribute( object ):
 		self._current = copy.deepcopy(inital_value)
 		self.unlock()
 
-	def set( self, value ):
+	def set(self, value, force=False):
 		self.lock()
-		if value != self._current:
+		if value != self._current or force:
 			self._old = copy.deepcopy(self._current)
 			self._current = copy.deepcopy(value)
 		self.unlock()
@@ -309,15 +309,16 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		else:
 			# which flags have changed: old xor current
 			diff = self._flags.old ^ self._flags.current
-		self._emit_flag( diff, italc.ItalcCore.ScreenLockRunning, 'screen-lock' )
-		self._emit_flag( diff, italc.ItalcCore.InputLockRunning, 'input-lock' )
-		self._emit_flag( diff, italc.ItalcCore.AccessDialogRunning, 'access-dialog' )
-		self._emit_flag( diff, italc.ItalcCore.DemoClientRunning, 'demo-client' )
-		self._emit_flag( diff, italc.ItalcCore.DemoServerRunning, 'demo-server' )
-		self._emit_flag( diff, italc.ItalcCore.MessageBoxRunning, 'message-box' )
-		self._emit_flag( diff, italc.ItalcCore.SystemTrayIconRunning, 'system-tray-icon' )
+		self._flags.set(flags, force=True)
+		self._emit_flag(diff, italc.ItalcCore.ScreenLockRunning, 'screen-lock')
+		self._emit_flag(diff, italc.ItalcCore.InputLockRunning, 'input-lock')
+		self._emit_flag(diff, italc.ItalcCore.AccessDialogRunning, 'access-dialog')
+		self._emit_flag(diff, italc.ItalcCore.DemoClientRunning, 'demo-client')
+		self._emit_flag(diff, italc.ItalcCore.DemoServerRunning, 'demo-server')
+		self._emit_flag(diff, italc.ItalcCore.MessageBoxRunning, 'message-box')
+		self._emit_flag(diff, italc.ItalcCore.SystemTrayIconRunning, 'system-tray-icon')
 
-	def update( self ):
+	def update(self):
 		if self._state.current != 'connected':
 			MODULE.info( '%s is currently not connected' % self.ipAddress )
 			return True
