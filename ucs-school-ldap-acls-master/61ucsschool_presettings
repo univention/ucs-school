@@ -11,6 +11,13 @@ access to attrs=entry,objectClass,uniqueMember,ou,uid,loginShell,homeDirectory,u
 	by * +0 break
 
 # Slave-Controller und Member-Server duerfen Samba-Domaenenobjekt(e) modifizieren
+access to dn.base="cn=samba,@%@ldap/base@%@" attrs=children
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
 access to dn.children="@%@ldap/base@%@" filter="(objectClass=sambaDomain)" attrs=@sambaDomain
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write

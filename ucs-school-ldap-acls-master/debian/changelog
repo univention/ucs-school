@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (14.0.1-9) unstable; urgency=medium
+
+  * Bug #41725: allow write access to cn=samba children
+
+ -- Florian Best <best@univention.de>  Mon, 11 Jul 2016 17:15:14 +0200
+
 ucs-school-ldap-acls-master (14.0.1-8) unstable; urgency=medium
 
   * Bug #41720: simplify filter
