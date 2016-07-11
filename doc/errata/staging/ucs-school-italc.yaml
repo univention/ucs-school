@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-italc
+fix: 
+desc: |
+ This update addresses the following issue(s):
+ * Upgrade to iTALC 2.0-2.
+bug: [38213]
