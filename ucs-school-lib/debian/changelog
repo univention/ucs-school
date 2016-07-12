@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-8) unstable; urgency=medium
+
+  * Bug #41747: Fix detection of schools on DC Backup
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jul 2016 15:29:02 +0200
+
 ucs-school-lib (9.0.20-7) unstable; urgency=low
 
   * Bug #40705: Add shell function to get the OUs a server is responsible for

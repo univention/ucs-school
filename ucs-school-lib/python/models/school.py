@@ -442,7 +442,7 @@ class School(UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def _filter_local_schools(cls, schools, lo):
-		if ucr.get('server/role') == 'domaincontroller_master':
+		if ucr.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
 			return schools
 		return [school for school in schools if any(ucr.get('ldap/hostdn', '').lower() == x.lower() for x in school.get_administrative_server_names(lo) + school.get_educational_server_names(lo))]
 
