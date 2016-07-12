@@ -14,4 +14,5 @@ desc: |
  * New passwords are now guaranteed to be created from different character
    classes (Bug #40711).
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
-bug: [41609, 41620, 41601, 40711, 40705]
+ * All schools are available on a DC Backup again (Bug #41747).
+bug: [41609, 41620, 41601, 40711, 40705, 41747]
