@@ -64,8 +64,9 @@ class ParseUserImportCmdline(object):
 			help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values "
 			"(e.g. 'scheme:email=...').")
 		self.parser.add_argument("-m", "--no-delete", dest="no_delete", action="store_true",
-			help="Only add/modify given user objects. User objects not mentioned within input files are not "
-				"deleted/deactived (shortcut for --set no_delete=...) [default: %(default)s].")
+			help="Only add/modify user objects in input data. User objects not mentioned within input files are not "
+				"automatically deleted/deactived, except if explicitely marked (shortcut for --set no_delete=...) "
+				"[default: %(default)s].")
 		self.parser.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
 			help="Dry run - don't actually commit changes to LDAP (shortcut for --set dry_run=...) "
 				"[default: %(default)s].")

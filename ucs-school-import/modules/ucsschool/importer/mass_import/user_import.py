@@ -245,15 +245,7 @@ class UserImport(object):
 		:param users: list: ImportUsers with record_uid and source_uid set.
 		:return: tuple: (self.errors, self.deleted_users)
 		"""
-		self.logger.info("------ Deleting users... ------")
-
-		if self.config["no_delete"]:
-			# Only create/modify users from input, do not remove users
-			# that exist in UCS but not in input.
-			self.logger.info("Option 'no_delete' ist set, not deleting users missing in input.")
-			return
-
-		self.logger.info("Deleting %d users...", len(users))
+		self.logger.info("------ Deleting %d users... ------", len(users))
 		for user in users:
 			try:
 				success = self.do_delete(user)

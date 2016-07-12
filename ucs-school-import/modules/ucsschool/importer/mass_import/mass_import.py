@@ -95,10 +95,11 @@ class MassImport(object):
 		imported_users = user_import.read_input()
 		user_import.create_and_modify_users(imported_users)
 		if self.config["no_delete"]:
-			self.logger.info("------ Skipping user deletion (no_delete=%r) ------", self.config["no_delete"])
+			self.logger.info("------ Skipping user delete detection (no_delete=%r) ------", self.config["no_delete"])
+			users_to_delete = list()
 		else:
 			users_to_delete = user_import.detect_users_to_delete()
-			user_import.delete_users(users_to_delete)
+		user_import.delete_users(users_to_delete)
 		self.errors.extend(user_import.errors)
 		user_import.log_stats()
 		if self.config["output"]["new_user_passwords"]:

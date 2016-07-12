@@ -1,3 +1,10 @@
+ucs-school-import (14.0.15-6) unstable; urgency=low
+
+  * Bug #41775: Allow user deletion if --no-delete option is set, if action=D
+    is explicitly set in the input data.
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 12 Jul 2016 10:57:34 +0200
+
 ucs-school-import (14.0.15-5) unstable; urgency=low
 
   * Bug #41572: forgotten import

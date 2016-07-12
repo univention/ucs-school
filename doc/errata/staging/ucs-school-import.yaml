@@ -3,7 +3,7 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-import
-fix: 14.0.15-5.282.201607061757
+fix:
 desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
@@ -12,4 +12,6 @@ desc: |
    exported CSV file (Bug #31187).
  * Python based hooks are now also run, when creating, modifying, moving or
    deleting a user outside an import job (Bug #41572).
-bug: [40711,31187,41572]
+ * Users can now be deleted even when the --no-delete option is set, if
+   action=D is explicitly set in the input data (Bug #41775).
+bug: [40711,31187,41572,41775]
