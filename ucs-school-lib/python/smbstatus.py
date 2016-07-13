@@ -37,7 +37,7 @@ import subprocess
 import univention.debug as ud
 
 REGEX_LOCKED_FILES = re.compile( r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$' )
-REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)$' )
+REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s+$' )
 REGEX_SERVICES = re.compile( r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$' )
 
 class SMB_LockedFile( dict ):
@@ -151,23 +151,42 @@ if __name__ == '__main__':
 	ud.init( '/var/log/univention/smbstatus.log', 0 , 0 )
 	ud.set_level( ud.PARSER, 4 )
 	TESTDATA = '''
-Samba version 4.0.0alpha18-UNKNOWN
-PID     Username      Group         Machine                        
--------------------------------------------------------------------
-23740     anton5        Domain Users schule  10.200.28.25 (10.200.28.25:57430)
-23741     anton6        Domain Users schule  10.200.28.26 (ipv4:10.200.28.26:57431)
-23558     lehrer1       Domain Users schule  client22     (ipv6:2001:4dd0:ff00:8c42:ff08:0ac8::221)
+Samba version 4.2.0rc2-Debian
+PID     Username      Group         Machine            Protocol Version       
+------------------------------------------------------------------------------
+26731     silke5        Domain Users test  10.200.27.155 (ipv4:10.200.27.155:51426) SMB2_10     
+25470     d.krause1     Domain Users test  10.200.27.16 (ipv4:10.200.27.16:59306) NT1         
+23740     anton5        Domain Users schule  10.200.28.25 (10.200.28.25:57430) NT1         
+23741     anton6        Domain Users schule  10.200.28.26 (ipv4:10.200.28.26:57431) SMB2_10     
+23558     lehrer1       Domain Users schule  client22     (ipv6:2001:4dd0:ff00:8c42:ff08:0ac8::221) SMB2_10     
 
 Service      pid     machine       Connected at
 -------------------------------------------------------
-Marktplatz   23558   client22      Wed May 23 10:48:10 2012
-sysvol       23558   client22      Wed May 23 10:48:19 2012
-Marktplatz   23741   10.200.28.26  Wed May 23 10:48:35 2012
+Marktplatz   26731   client22      Tue Nov 18 12:25:44 2014
+d.krause1    25470   10.200.27.16  Tue Nov 18 11:49:08 2014
+IPC$         25470   10.200.27.16  Tue Nov 18 11:49:08 2014
 
 Locked files:
 Pid          Uid        DenyMode   Access      R/W        Oplock           SharePath   Name   Time
 --------------------------------------------------------------------------------------------------
 23741        2016       DENY_NONE  0x100081    RDONLY     NONE             /home/groups/Marktplatz   .   Wed May 23 10:48:35 2012
+25470        7520       DENY_NONE  0x19b       RDWR       EXCLUSIVE        /home/test/lehrer/d.krause1   .kde/share/apps/ktp/cache.db   Tue Nov 18 11:49:24 2014
+25470        7520       DENY_NONE  0x89        RDONLY     EXCLUSIVE        /home/test/lehrer/d.krause1   .local/share/baloo/file/record.DB   Tue Nov 18 11:53:34 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .local/share/baloo/file/postlist.DB   Tue Nov 18 11:49:23 2014
+25470        7520       DENY_NONE  0x19b       RDWR       EXCLUSIVE        /home/test/lehrer/d.krause1   .local/share/baloo/file/fileMap.sqlite3-wal   Tue Nov 18 11:49:23 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .config/dconf/user   Tue Nov 18 11:49:09 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .local/share/baloo/file/position.DB   Tue Nov 18 11:49:23 2014
+25470        7520       DENY_NONE  0x19b       RDWR       EXCLUSIVE        /home/test/lehrer/d.krause1   .local/share/baloo/file/fileMap.sqlite3   Tue Nov 18 11:49:23 2014
+25470        7520       DENY_NONE  0x19b       RDWR       EXCLUSIVE        /home/test/lehrer/d.krause1   .kde/share/apps/activitymanager/activityranking/database   Tue Nov 18 11:49:18 2014
+26731        7464       DENY_NONE  0x100081    RDONLY     NONE             /home/school6/groups/Marktplatz   .   Tue Nov 18 12:25:44 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .local/share/baloo/file/termlist.DB   Tue Nov 18 11:49:23 2014
+25470        7520       DENY_NONE  0x19b       RDWR       EXCLUSIVE        /home/test/lehrer/d.krause1   .kde/share/apps/activitymanager/resources/database   Tue Nov 18 11:49:18 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .config/dconf/user   Tue Nov 18 11:49:09 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .config/dconf/user   Tue Nov 18 11:49:23 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .config/dconf/user   Tue Nov 18 11:49:33 2014
+25470        7520       DENY_NONE  0x89        RDONLY     NONE             /home/test/lehrer/d.krause1   .config/dconf/user   Tue Nov 18 11:49:33 2014
+25470        7520       DENY_NONE  0x19b       RDWR       EXCLUSIVE        /home/test/lehrer/d.krause1   .local/share/baloo/file/fileMap.sqlite3-shm   Tue Nov 18 11:49:23 2014
+25470        7520       DENY_NONE  0x192       WRONLY     EXCLUSIVE        /home/test/lehrer/d.krause1   .xsession-errors   Tue Nov 18 11:49:08 2014
 '''
 	status = SMB_Status()
 	# status = SMB_Status( testdata = TESTDATA.split( '\n' ) )
