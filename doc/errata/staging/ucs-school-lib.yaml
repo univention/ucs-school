@@ -1,0 +1,11 @@
+product: ucsschool
+release: "3.2"
+version: [r2]
+scope: ucs_3.2-0-ucs-school-3.2r2
+src: ucs-school-lib
+fix: 5.0.49-9.232.201607131540
+desc: |
+ This update addresses the following issue:
+ * The smbstatus parsing library is now compatible with both Samba 4.0 and
+   Samba 4.2 (Bug #41697).
+bug: [41697]
