@@ -32,12 +32,9 @@
 # <http://www.gnu.org/licenses/>.
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_CommandError
-from univention.management.console.modules.sanitizers import StringSanitizer
+from univention.management.console.modules.sanitizers import StringSanitizer, StringSanitizer as DNSanitizer, DictSanitizer, ListSanitizer
 from univention.management.console.modules.decorators import sanitize
-from univention.management.console.log import MODULE
 
-import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE
@@ -55,7 +52,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def computers(self, request, ldap_user_read=None, ldap_position=None):
+	def computers(self, request, ldap_user_read=None):
 		pattern = LDAP_Filter.forComputers(request.options.get('pattern', ''))
 
 		result = [{
@@ -68,7 +65,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def query(self, request, ldap_user_read=None, ldap_position=None):
+	def query(self, request, ldap_user_read=None):
 		school = request.options['school']
 		pattern = LDAP_Filter.forGroups(request.options.get('pattern', ''), school)
 
@@ -81,27 +78,19 @@ class Instance(SchoolBaseModule):
 
 		self.finished(request.id, result)
 
+	@sanitize(DNSanitizer(required=True))
 	@LDAP_Connection()
-	def get(self, request, ldap_user_read=None, ldap_position=None):
-		MODULE.info('schoolrooms.get: options: %s' % str(request.options))
-
+	def get(self, request, ldap_user_read=None):
 		# open the specified room
 		room = ComputerRoom.from_dn(request.options[0], None, ldap_user_read)
 		result = room.to_dict()
 		result['computers'] = result.get('hosts')
 		self.finished(request.id, [result])
 
+	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def add(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
-		"""Adds a new room
-
-		requests.options = [ { $dn$ : ..., }, ... ]
-
-		return: True|<error message>
-		"""
-		if not request.options:
-			raise UMC_CommandError('Invalid arguments')
-
+	def add(self, request, ldap_user_write=None, ldap_user_read=None):
+		"""Adds a new room"""
 		group_props = request.options[0].get('object', {})
 		group_props['hosts'] = group_props.get('computers')
 		room = ComputerRoom(**group_props)
@@ -111,17 +100,10 @@ class Instance(SchoolBaseModule):
 		success = room.create(ldap_user_write)
 		self.finished(request.id, [success])
 
+	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def put(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
-		"""Modify an existing room
-
-		requests.options = [ { object : ..., options : ... }, ... ]
-
-		return: True|<error message>
-		"""
-		if not request.options:
-			raise UMC_CommandError('Invalid arguments')
-
+	def put(self, request, ldap_user_write=None, ldap_user_read=None):
+		"""Modify an existing room"""
 		group_props = request.options[0].get('object', {})
 		group_props['hosts'] = group_props.get('computers')
 
@@ -133,24 +115,17 @@ class Instance(SchoolBaseModule):
 
 		self.finished(request.id, [True])
 
+	@sanitize(DictSanitizer(dict(object=ListSanitizer(DNSanitizer(required=True), min_elements=1))))
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def remove(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
-		"""Deletes a room
-
-		requests.options = [ <LDAP DN>, ... ]
-
-		return: True|<error message>
-		"""
-		MODULE.info('schoolrooms.remove: object: %s' % str(request.options))
-		if not request.options:
-			raise UMC_CommandError('Invalid arguments')
-
-		room_dn = request.options[0].get('object', {})
-		room_obj = udm_modules.get('groups/group').object(None, ldap_user_write, ldap_position, room_dn[0])
+	def remove(self, request, ldap_user_write=None, ldap_user_read=None):
+		"""Deletes a room"""
 
 		try:
-			room_obj.remove()
+			room_dn = request.options[0]['object'][0]
+			room = ComputerRoom.from_dn(room_dn, None, ldap_user_write)
+			room.remove(ldap_user_write)
 		except udm_exceptions.base as e:
 			self.finished(request.id, [{'success': False, 'message': str(e)}])
+			return
 
 		self.finished(request.id, [{'success': True}])
