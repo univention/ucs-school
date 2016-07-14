@@ -340,6 +340,7 @@ cat my_config.json | json_xs
 					</simpara>
 				</caution>
 				<table id="table:global_configuration">
+					<title>Globale Konfigurationsoptionen</title>
 					<tgroup cols="2">
 						<colspec colnum="1" colname="key" colwidth="1*"/>
 						<colspec colnum="2" colname="description" colwidth="4*"/>
@@ -388,6 +389,7 @@ cat my_config.json | json_xs
 			<section id="configuration:json_format:userimport">
 				<title>Benutzerimport  Konfiguration</title>
 				<table id="table:userimport_configuration">
+					<title>Benutzerimport Konfigurationsoptionen</title>
 					<tgroup cols="2">
 						<colspec colnum="1" colname="key" colwidth="1*"/>
 						<colspec colnum="2" colname="description" colwidth="4*"/>
@@ -979,6 +981,7 @@ udm users/user
 			<para>
 				Die Klasse <classname>ImportUser</classname> wird verwendet um Daten von eingelesenen oder zu ändernden Benutzern zu speichern. An Objekten der <classname>ImportUser</classname> Klasse können folgende Attribute gesetzt werden:
 				<table id="table:import_user">
+					<title>Attribute der ImportUser Klasse</title>
 					<tgroup cols="3">
 						<colspec colnum="1" colname="key" colwidth="2*"/>
 						<colspec colnum="2" colname="type" colwidth="1*"/>
@@ -1063,6 +1066,7 @@ udm users/user
 			<para>
 				Weitere interessante Attribute, die jedoch nur gelesen und nicht modifiziert werden sollten, sind:
 				<table>
+					<title>Attribute der ImportUser Klasse (nur lesen)</title>
 					<tgroup cols="3">
 						<colspec colnum="1" colname="key" colwidth="2*"/>
 						<colspec colnum="2" colname="type" colwidth="1*"/>
@@ -1193,8 +1197,10 @@ class MyHook(UserPyHook):
 					</listitem>
 				</itemizedlist>
 			</para>
+			<para>
 				In <methodname>pre_create()</methodname> wird in <varname>udm_properties</varname> an den Schlüssel description der Wert <literal>Herzlichen Glückwunsch</literal> geschrieben.
 			Das expliziete Abspeichern des <literal>user</literal> Objektes ist in dieser Funktion nicht nötig, da dies ja beim auf den Hook folgenden <methodname>create</methodname> geschieht.
+			</para>
 			<para>
 				In der Funktion wird außerdem mit <methodname>self.logger.info()</methodname> ein Text zu Protokoll gegeben.
 				Es handelt sich bei <property>self.logger</property> um eine Instanz eines Python <classname>logging</classname> Objekts<footnote><para>Python Dokumentation: <ulink url="https://docs.python.org/2/library/logging.html"/></para></footnote>.
@@ -1368,7 +1374,7 @@ class MyUserImportFactory(DefaultUserImportFactory):
 					</simpara>
 				</listitem>
 				<listitem>
-					<simpara>
+					<para>
 						Schule A und Schule B werden vom gleichen Quellverzeichnis abgedeckt, die beiden Schulverwaltungen pflegen die Daten ihrer Schüler oder Lehrer jedoch unabhängig voneinander.
 						Der Schulwechsel findet also in zwei Schritten statt.
 						Es können zwei Szenarien auftreten:
@@ -1386,7 +1392,7 @@ class MyUserImportFactory(DefaultUserImportFactory):
 								</simpara>
 							</listitem>
 						</itemizedlist>
-					</simpara>
+					</para>
 				</listitem>
 				<listitem>
 					<simpara>
@@ -1428,7 +1434,7 @@ class MyUserImportFactory(DefaultUserImportFactory):
 	<chapter id="ou_spanning_account">
 	<title>Schulübergreifende Benutzerkonten</title>
 		<para>
-			Seit &ucsUAS; 4.1 R2 werden schulübergreifenden Benutzerkonten unterstützt.
+			Seit &ucsUAS; 4.1 R2 werden schulübergreifende Benutzerkonten unterstützt.
 			Ein Benutzerobjekt existiert im LDAP-Verzeichnis nur einmal: an seiner primären Schule (Attribut <property>school</property>).
 			An weitere, festgelegte Schulen (Attribut <property>schools</property>) wird nur ein Ausschnitt des LDAP-Verzeichnisses seiner primären Schule repliziert: sein Benutzerobjekt und die Standardgruppen.
 			Verlässt der Benutzer die Schule (durch Entfernen aus dem Attribut <property>schools</property>), so wird sein Benutzerobjekt dort gelöscht und nicht mehr dorthin repliziert.
