@@ -32,9 +32,9 @@
 
 from random import choice, shuffle
 import string
+import sys
 import logging
-from logging import StreamHandler, Logger, Formatter
-from logging.handlers import MemoryHandler
+from logging.handlers import MemoryHandler, TimedRotatingFileHandler
 from contextlib import contextmanager
 import subprocess
 
@@ -49,14 +49,44 @@ import univention.debug as ud
 # "global" translation for ucsschool.lib.models
 _ = Translation('python-ucs-school').translate
 
+FILE_LOG_FORMATS = dict(
+	DEBUG="%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s",
+	INFO="%(asctime)s %(levelname)-5s %(message)s"
+)
+for lvl in ["CRITICAL", "ERROR", "WARN", "WARNING"]:
+	FILE_LOG_FORMATS[lvl] = FILE_LOG_FORMATS["INFO"]
+FILE_LOG_FORMATS["NOTSET"] = FILE_LOG_FORMATS["DEBUG"]
+CMDLINE_LOG_FORMATS = dict(
+	DEBUG="%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s",
+	INFO="%(message)s",
+	WARN="%(levelname)-5s  %(message)s"
+)
+for lvl in ["CRITICAL", "ERROR", "WARNING"]:
+	CMDLINE_LOG_FORMATS[lvl] = CMDLINE_LOG_FORMATS["WARN"]
+CMDLINE_LOG_FORMATS["NOTSET"] = CMDLINE_LOG_FORMATS["DEBUG"]
+LOG_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+_handler_cache = dict()
+_module_handler = None
+_pw_length_cache = dict()
+
+
 # "global" ucr for ucsschool.lib.models
 ucr = ConfigRegistry()
 ucr.load()
 
 logger = logging.getLogger("ucsschool")
+# Must set this higher than NOTSET or the root loggers level (WARN)
+# will be used.
 logger.setLevel(logging.DEBUG)
 
-_module_handler = None
+
+class UniFileHandler(TimedRotatingFileHandler):
+	pass
+
+
+class UniStreamHandler(logging.StreamHandler):
+	pass
 
 
 class ModuleHandler(logging.Handler):
@@ -82,20 +112,15 @@ class ModuleHandler(logging.Handler):
 		ud.debug(self._udebug_facility, udebug_level, msg)
 
 
-def add_stream_logger_to_schoollib(level=logging.DEBUG, stream=None, log_format=None):
-	'''Outputs all log messages of the models code to a stream (default: sys.stderr)
+def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=None, name=None):
+	"""Outputs all log messages of the models code to a stream (default: "stderr")
 	>>> from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 	>>> add_module_logger_to_schoollib()
 	>>> # or:
-	>>> add_module_logger_to_schoollib(level=logging.ERROR, stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
-	'''
-	stream_handler = StreamHandler(stream)
-	stream_handler.setLevel(level)
-	if log_format:
-		formatter = Formatter(log_format)
-		stream_handler.setFormatter(formatter)
-	logger.addHandler(stream_handler)
-	return stream_handler
+	>>> add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
+	"""
+	return get_logger(name, level, stream, formatter_kwargs={"fmt": log_format, "datefmt": None})
+
 
 def add_module_logger_to_schoollib():
 	global _module_handler
@@ -109,7 +134,6 @@ def add_module_logger_to_schoollib():
 	return _module_handler
 
 
-_pw_length_cache = {}
 def create_passwd(length=8, dn=None, specials='@#$%&*-_+=\:,.;?/()'):
 	if dn:
 		# get dn pw policy
@@ -145,6 +169,7 @@ def create_passwd(length=8, dn=None, specials='@#$%&*-_+=\:,.;?/()'):
 	shuffle(pw)
 	return ''.join(pw)
 
+
 def flatten(list_of_lists):
 	# return [item for sublist in list_of_lists for item in sublist]
 	# => does not work well for strings in list
@@ -155,6 +180,96 @@ def flatten(list_of_lists):
 		else:
 			ret.append(sublist)
 	return ret
+
+
+def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, formatter_kwargs=None):
+	"""
+	Get a logger object below the ucsschool root logger.
+
+	* The logger will use UniStreamHandler(StreamHandler) for streams
+	(sys.stdout etc) and UniFileHandler(TimedRotatingFileHandler) for files if
+	not configured differently through handler_kwargs[cls].
+	* A call with the same name will return the same logging object.
+	* There is only one handler per name-target combination.
+	* If name and target are the same, and only the log level changes, it will
+	return the logging object with the same handlers and change both the log
+	level of the respective handler and of the logger object to be the lowest
+	of the previous and the new level.
+	* Complete output customization is possible, setting kwargs for the
+	constructors of the handler and formatter.
+	* Using custom handler and formatter classes is possible by configuring
+	the 'cls' key of handler_kwargs and formatter_kwargs.
+	* The logging level can be configured through ucsschool/logging/level/<name>.
+
+	:param name: str: will be appended to "ucsschool." as name of the logger
+	:param level: str: loglevel (DEBUG, INFO etc), the UCRV
+	ucsschool/logging/level/<name> overwrites this setting!
+	:param target: stream (open file) or a str (file path)
+	:param handler_kwargs: dict: will be passed to the handlers constructor.
+	It cannot be used to modify a handler, as it is only used at creation time.
+	If it has a key 'cls' it will be used as handler instead of UniFileHandler
+	or UniStreamHandler. It should be a subclass of one of those!
+	:param formatter_kwargs: dict: will be passed to the formatters constructor,
+	if it has a key 'cls' it will be used to create a formatter instead of
+	logging.Formatter.
+	:return: a python logging object
+	"""
+	if not name:
+		name = "noname"
+	level = ucr.get("ucsschool/logging/level/{}".format(name), level)
+	if isinstance(target, file):
+		filename = target.name
+	else:
+		filename = target
+	cache_key = "{}-{}".format(name, filename)
+	_logger = logging.getLogger("ucsschool.{}".format(name))
+
+	if cache_key in _handler_cache and getattr(logging, level) >= _handler_cache[cache_key].level:
+		return _logger
+
+	# The logger objects level must be the lowest of all handlers, or handlers
+	# with a higher level will not be able to log anything.
+	if getattr(logging, level) < _logger.level:
+		_logger.setLevel(level)
+
+	if not isinstance(handler_kwargs, dict):
+		handler_kwargs = dict()
+	if not isinstance(formatter_kwargs, dict):
+		formatter_kwargs = dict()
+
+	if isinstance(target, file):
+		handler_defaults = dict(cls=UniStreamHandler, stream=target)
+		fmt = CMDLINE_LOG_FORMATS[level]
+	else:
+		handler_defaults = dict(cls=UniFileHandler, filename=target, when="D", backupCount=10000000)
+		fmt = FILE_LOG_FORMATS[level]
+	handler_defaults.update(handler_kwargs)
+	fmt_kwargs = dict(cls=logging.Formatter, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
+	fmt_kwargs.update(formatter_kwargs)
+
+	if _logger.level == logging.NOTSET:
+		# fresh logger
+		_logger.setLevel(level)
+
+	if cache_key in _handler_cache:
+		# Check if loglevel from this request is lower than the one used in
+		# the cached loggers handler. We do only lower level, never raise it.
+		if getattr(logging, level) < _handler_cache[cache_key].level:
+			handler = _handler_cache[cache_key]
+			handler.setLevel(level)
+			formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
+			handler.setFormatter(formatter)
+	else:
+		# Create handler and formatter from scratch.
+		handler = handler_defaults.pop("cls")(**handler_defaults)
+		handler.set_name("ucsschool.{}".format(name))
+		handler.setLevel(level)
+		formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
+		handler.setFormatter(formatter)
+		_logger.addHandler(handler)
+		_handler_cache[cache_key] = handler
+	return _logger
+
 
 @contextmanager
 def stopped_notifier(strict=True):
@@ -209,4 +324,3 @@ def stopped_notifier(strict=True):
 				logger.info('%s started', service_name)
 			else:
 				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command)) # correct: shlex... unnecessary
-

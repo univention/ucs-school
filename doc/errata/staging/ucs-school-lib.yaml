@@ -3,7 +3,7 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-lib
-fix: 9.0.20-6.229.201607051230
+fix:
 desc: |
  This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one
@@ -15,4 +15,5 @@ desc: |
    classes (Bug #40711).
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
  * All schools are available on a DC Backup again (Bug #41747).
-bug: [41609, 41620, 41601, 40711, 40705, 41747]
+ * A logging function was added (Bug #41595).
+bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595]

@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-9) unstable; urgency=low
+
+  * Bug #41595: add python only logging function
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 14 Jul 2016 14:44:30 +0200
+
 ucs-school-lib (9.0.20-8) unstable; urgency=medium
 
   * Bug #41747: Fix detection of schools on DC Backup
