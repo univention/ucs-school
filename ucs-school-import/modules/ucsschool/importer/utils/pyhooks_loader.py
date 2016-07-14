@@ -36,7 +36,7 @@ import inspect
 from os import listdir
 import os.path
 
-from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.logging import get_logger
 
 
 class PyHooksLoader(object):

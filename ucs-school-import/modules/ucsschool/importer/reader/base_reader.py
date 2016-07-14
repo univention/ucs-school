@@ -33,7 +33,7 @@ Base class of all input readers.
 
 
 from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.factory import Factory
 
 

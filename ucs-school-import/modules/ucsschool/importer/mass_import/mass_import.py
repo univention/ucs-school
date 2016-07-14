@@ -35,7 +35,7 @@ import datetime
 
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.models.utils import stopped_notifier
 
 

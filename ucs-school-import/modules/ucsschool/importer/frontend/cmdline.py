@@ -37,7 +37,7 @@ import pprint
 from logging import StreamHandler
 import traceback
 
-from ucsschool.importer.utils.logging2udebug import get_logger, add_stdout_handler, add_file_handler
+from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose, add_file_handler
 from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
@@ -59,9 +59,9 @@ class CommandLine(object):
 
 	def setup_logging(self, stdout=False, files=None):
 		if stdout:
-			add_stdout_handler(self.logger)
+			make_stdout_verbose()
 		if files:
-			add_file_handler(self.logger, files)
+			add_file_handler(files)
 
 	def setup_config(self):
 		configs = self.configuration_files

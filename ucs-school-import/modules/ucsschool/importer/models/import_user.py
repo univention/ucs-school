@@ -45,7 +45,7 @@ from ucsschool.lib.models.utils import create_passwd
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
-from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.pyhooks_loader import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 

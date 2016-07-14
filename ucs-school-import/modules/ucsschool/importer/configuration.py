@@ -35,7 +35,7 @@ Configuration classes.
 import json
 
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
-from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.logging import get_logger
 
 logger = get_logger()
 

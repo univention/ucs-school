@@ -4,7 +4,7 @@ from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.importer.exceptions import FormatError
-from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.logging import get_logger
 
 
 class UsernameHandler(object):

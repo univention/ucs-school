@@ -44,7 +44,7 @@ from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.utils.username_handler import UsernameHandler
-from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.factory import load_class
 from ucsschool.importer.exceptions import InitialisationError
 

@@ -55,7 +55,6 @@ import copy
 import ipaddr
 import optparse
 import os
-import random
 import re
 import string
 import subprocess
@@ -87,7 +86,7 @@ ldap_errors = (ldap.LDAPError, univention.admin.uexceptions.base,)
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
-add_stream_logger_to_schoollib(stream=sys.stdout)
+add_stream_logger_to_schoollib(stream=sys.stdout, name="legacy-import")
 
 baseDN=configRegistry['ldap/base']
 domainname=configRegistry['domainname']
