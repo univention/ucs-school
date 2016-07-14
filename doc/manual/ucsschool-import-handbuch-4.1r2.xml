@@ -280,7 +280,7 @@ optional arguments:
             Enable debugging output on the console [default: False].
 			</programlisting>
 			<para>
-				Nahe zu alle Kommandozeilenparameter können auch in den Konfigurationsdateien angegeben werden. Um Variablen aus Konfigurationsdateien an der Kommandozeile zu setzen, kann '--set' verwendet werden. Geschachtelte Konfigurationsvariablen können mit dem Doppelpunkt angegeben werden.
+				Nahe zu alle Kommandozeilenparameter können auch in den Konfigurationsdateien angegeben werden. Um Variablen aus Konfigurationsdateien an der Kommandozeile zu setzen, kann <option>--set</option> verwendet werden. Geschachtelte Konfigurationsvariablen können mit dem Doppelpunkt angegeben werden.
 			</para>
 			<para>
 				Um z.B. "zwei" als die Anzahl der Kopfzeilen in einer CSV-Datei anzugeben, kann entweder in einer  Konfigurationsdatei stehen:
@@ -315,7 +315,7 @@ optional arguments:
 			</note>
 			<para>
 				Das JSON-Format erlaubt Daten in verschachtelten Strukturen zu speichern, und ist sowohl von Computer als auch Menschen zuverlässig zu lesen und zu schreiben.
-				Nach dem editieren einer JSON-Datei kann ihre syntaktische Korrektheit mit Hilfe einer Webseite zur JSON Validierung (z.B. <uri>http://zaach.github.com/jsonlint/</uri>) oder eines Kommandozeilenprogrammes überprüft werden:
+				Nach dem Editieren einer JSON-Datei kann ihre syntaktische Korrektheit mit Hilfe einer Webseite zur JSON Validierung (z.B. <uri>http://zaach.github.com/jsonlint/</uri>) oder eines Kommandozeilenprogrammes überprüft werden:
 				<programlisting>
 univention-install libjson-xs-perl
 
@@ -327,7 +327,7 @@ cat my_config.json | json_xs
 			</para>
 			<para>
 				Schlüssel sind immer Texte (<classname>string</classname>) und müssen in doppelten Anführungszeichen stehen.
-				Als Datentypen werden folgende Typen verwendet: Wahrheitswerte (<classname>boolean</classname>: <literal>true</literal> / <literal>false</literal>), Ganzzahlen (<classname>int</classname>), Gleitkommazahlen (<classname>float</classname>), Listen (<classname>list</classname>: Werte die in <literal>[</literal> und <literal>]</literal> eingeschlossen sind) und Objekte (<classname>object</classname>: neue Verschachtelungsebene die in <literal>{</literal> und <literal>}</literal> eingeschlossen wird).
+				Als Datentypen werden folgende Typen verwendet: Wahrheitswerte (<classname>boolean</classname>: <literal>true</literal> / <literal>false</literal>), Ganzzahlen (<classname>int</classname>), Gleitkommazahlen (<classname>float</classname>), Listen (<classname>list</classname>: Werte die in <literal>[</literal> und <literal>]</literal> eingeschlossen sind) und Objekte (in Python "<wordasword>dictionary</wordasword>") (<classname>object</classname>: neue Verschachtelungsebene die in <literal>{</literal> und <literal>}</literal> eingeschlossen wird).
 				Die Verschachtelungstiefe wird in den Schlüsseln wie oben beschrieben mit Doppelpunkten angezeigt.
 			</para>
 			<section id="configuration:json_format:global">
@@ -453,7 +453,7 @@ cat my_config.json | json_xs
 <!-- activate_new_users:default -->
 							<row>
 								<entry morerows="1"><varname>activate_new \ _users: \ default</varname></entry>
-								<entry>Definiert, ob ein neuer Benutzer aktiviert werden soll. Ist false eingestellt, wird das Benutzerkonto beim Anlegen automatisch deaktiviert.</entry>
+								<entry>Definiert, ob ein neuer Benutzer aktiviert werden soll. Ist <literal>false</literal> eingestellt, wird das Benutzerkonto beim Anlegen automatisch deaktiviert.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>boolean</classname>): <literal>true</literal></entry>
@@ -477,7 +477,7 @@ cat my_config.json | json_xs
 <!-- csv:header_lines -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:csv:header_lines"><varname>csv:header_ \ lines</varname></entry>
-								<entry>Wie viele Zeilen der Eingabedaten übersprungen werden sollen, bevor die Benutzerdaten anfangen. Wenn der Wert 1 ist (Kopfdatensatz), wird der Inhalt als Name der Spalten interpretiert und kann in csv:mapping als Schlüssel verwendet werden.</entry>
+								<entry>Wie viele Zeilen der Eingabedaten übersprungen werden sollen, bevor die Benutzerdaten anfangen. Wenn der Wert 1 ist (Kopfdatensatz), wird der Inhalt als Name der Spalten interpretiert und kann in <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link> als Schlüssel verwendet werden.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>1</literal></entry>
@@ -566,7 +566,7 @@ Zu den oben beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[
 <!-- maildomain -->
 							<row>
 								<entry morerows="1"><varname>maildomain</varname></entry>
-								<entry>Der Wert dieser Variablen wird beim Formatieren mit einem Schema in die Variable &lt;maildomain&gt; eingesetzt. Wenn nicht gesetzt, wird versucht &lt;maildomain&gt; durch Daten aus dem System zu füllen.</entry>
+								<entry>Der Wert dieser Variablen wird beim Formatieren mit einem Schema in die Variable <varname>&lt;maildomain&gt;</varname> eingesetzt. Wenn nicht gesetzt, wird versucht <varname>&lt;maildomain&gt;</varname> durch Daten aus dem System zu füllen.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
@@ -600,7 +600,7 @@ Zu den oben beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[
 <!-- output:new_user_passwords -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:output:new_user_passwords"><varname>output:new_ \ user_passwords</varname></entry>
-								<entry>CSV-Datei in die die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein Python-Format-String<footnote><para>Python Format-String Dokumentation: <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"/></para></footnote> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
+								<entry>CSV-Datei in die die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <foreignphrase>Python-Format-String</foreignphrase><footnote><para><foreignphrase>Python Format-String</foreignphrase> Dokumentation: <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"/></para></footnote> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
@@ -733,7 +733,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 				Als erstes fällt auf, dass ein Schüler an zwei Schulen gleichzeitig eingeschrieben ist.
 				Schulübergreifende Benutzerkonten wurden mit &ucsUAS; 4.1R2 eingeführt<footnote><para>UCS@school 4.1 R2 v1 Release Notes: <ulink url="https://docs.software-univention.de/release-notes-ucsschool-4.1R2v1-de.html"/></para></footnote> und werden von der Importsoftware unterstützt.
 				Entsprechend sind die Namen der Klassen so kodiert, dass sie eindeutig einer Schule zugeordnet werden können.
-				Anton geht also in die Klasse "1A" der "Schule1" und in die "2B" der "Schule2".
+				Anton geht also in die Klasse <literal>1A</literal> der Schule <literal>Schule1</literal> und in die Klasse <literal>2B</literal> der Schule <literal>Schule2</literal>.
 			</para>
 			<para>
 				Die Namen der Schulen bzw. Klassen sind ohne Freizeichen und durch Komma getrennt, aufgelistet.
@@ -804,7 +804,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 					</listitem>
 					<listitem>
 						<simpara>
-							<property>name</property> und <property>record_uid</property> sind aus den konfigurierten Schemata scheme:username und scheme:<property>recordUID</property> erzeugt worden.
+							<property>name</property> und <property>record_uid</property> sind aus den konfigurierten Schemata <varname>scheme:username</varname> und <varname>scheme:recordUID</varname> erzeugt worden.
 						</simpara>
 					</listitem>
 					<listitem>
@@ -891,13 +891,13 @@ udm users/user
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							[ALWAYSCOUNTER] ist ein Zähler der bei seiner ersten Verwendung eine 1 einsetzt.
+							<literal>[ALWAYSCOUNTER]</literal> ist ein Zähler der bei seiner ersten Verwendung eine 1 einsetzt.
 							Benutzernamen für <systemitem class="username">anton</systemitem> wären: <systemitem class="username">anton1</systemitem>, <systemitem class="username">anton2</systemitem>, <systemitem class="username">anton3</systemitem>...
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							[COUNTER2] ist ein Zähler der bei seiner ersten Verwendung keine Zahl einsetzt, erst bei seiner zweiten.
+							<literal>[COUNTER2]</literal> ist ein Zähler der bei seiner ersten Verwendung keine Zahl einsetzt, erst bei seiner zweiten.
 							Benutzernamen für <systemitem class="username">anton</systemitem> wären: <systemitem class="username">anton</systemitem>, <systemitem class="username">anton2</systemitem>, <systemitem class="username">anton3</systemitem>...
 						</simpara>
 					</listitem>
@@ -977,7 +977,7 @@ udm users/user
 		</para>
 
 		<section id="extending:import_user_class">
-			<title>Die ImportUser Klasse</title>
+			<title>Die <classname>ImportUser</classname> Klasse</title>
 			<para>
 				Die Klasse <classname>ImportUser</classname> wird verwendet um Daten von eingelesenen oder zu ändernden Benutzern zu speichern. An Objekten der <classname>ImportUser</classname> Klasse können folgende Attribute gesetzt werden:
 				<table id="table:import_user">
@@ -1007,7 +1007,7 @@ udm users/user
 							<row>
 								<entry id="extending:import_user_class:importuser:schools"><varname>schools</varname></entry>
 								<entry>string / liste</entry>
-								<entry>Alle Schulen des Benutzers inkl. der primären Schule, ein komma-separierter String oder als Liste von Strings.</entry>
+								<entry>Alle Schulen des Benutzers inkl. der primären Schule, ein kommaseparierter String oder als Liste von Strings.</entry>
 							</row>
 							<row>
 								<entry><varname>firstname</varname></entry>
@@ -1042,7 +1042,7 @@ udm users/user
 							<row>
 								<entry><varname>school_classes</varname></entry>
 								<entry>string / object</entry>
-								<entry><simpara>Klassen in denen der Benutzer ist.</simpara><simpara>Als String im Format <literal>schule1-1A,schule1-2B,schule2-1A</literal> oder als Python <classname>dictionary</classname>: <literal>{"schule1": ["1A", "2B"], "schule2": ["1A"]}</literal>.</simpara><simpara>Es können Klassen aus mehreren Schulen aufgelistet werden; diese Schulen müssen alle in <link linkend="extending:import_user_class:importuser:schools"><varname>schools</varname></link> auftauchen.</simpara></entry>
+								<entry><simpara>Klassen in denen der Benutzer ist.</simpara><simpara>Als String im Format <literal>schule1-1A,schule1-2B,schule2-1A</literal> oder als Python <wordasword>dictionary</wordasword>: <literal>{"schule1": ["1A", "2B"], "schule2": ["1A"]}</literal>.</simpara><simpara>Es können Klassen aus mehreren Schulen aufgelistet werden; diese Schulen müssen alle in <link linkend="extending:import_user_class:importuser:schools"><varname>schools</varname></link> auftauchen.</simpara></entry>
 							</row>
 							<row>
 								<entry><varname>source_uid</varname></entry>
@@ -1057,7 +1057,7 @@ udm users/user
 							<row>
 								<entry><varname>udm_properties</varname></entry>
 								<entry>object</entry>
-								<entry>Alle anderen UDM Attribute die in den Eingabedaten enthalten waren werden in dieses Python <classname>dictionary</classname> gespeichert.</entry>
+								<entry>Alle anderen UDM Attribute die in den Eingabedaten enthalten waren werden in dieses Python <wordasword>dictionary</wordasword> gespeichert.</entry>
 							</row>
 						</tbody>
 					</tgroup>
@@ -1066,7 +1066,7 @@ udm users/user
 			<para>
 				Weitere interessante Attribute, die jedoch nur gelesen und nicht modifiziert werden sollten, sind:
 				<table>
-					<title>Attribute der ImportUser Klasse (nur lesen)</title>
+					<title>Attribute der <classname>ImportUser</classname> Klasse (nur lesen)</title>
 					<tgroup cols="3">
 						<colspec colnum="1" colname="key" colwidth="2*"/>
 						<colspec colnum="2" colname="type" colwidth="1*"/>
@@ -1097,7 +1097,7 @@ udm users/user
 							<row>
 								<entry><varname>ucr</varname></entry>
 								<entry>object</entry>
-								<entry>Eine UCR-Instanz zum Auslesen von UCR-Einstellungen.</entry>
+								<entry>Eine &ucsUCR;-Instanz zum Auslesen von &ucsUCR;-Einstellungen.</entry>
 							</row>
 						</tbody>
 					</tgroup>
@@ -1136,7 +1136,7 @@ udm users/user
 				Veränderungen an diesem Objekt werden bei dessen Abspeicherung direkt ins LDAP übernommen.
 			</para>
 			<para>
-				Die Klasse definiert ein <classname>dictionary</classname> <literal>priority</literal> mit dessen Hilfe eine Reihenfolge definiert werden kann, sollten mehrere Hook-Klassen mit zum Einsatz kommen, die die gleichen Methoden definieren.
+				Die Klasse definiert ein <wordasword>dictionary</wordasword> <literal>priority</literal> mit dessen Hilfe eine Reihenfolge definiert werden kann, sollten mehrere Hook-Klassen mit zum Einsatz kommen, die die gleichen Methoden definieren.
 				Die Namen der Methoden die ausgeführt werden sollen sind die Schlüssel, Methoden mit höheren Zahlen werden zu erst ausgeführt.
 				Ist der Wert <literal>None</literal>, wird die Methode deaktiviert.
 			</para>
@@ -1455,12 +1455,12 @@ class MyUserImportFactory(DefaultUserImportFactory):
 1. sambahome wird regulär durch das Import-Skript gesetzt und nicht manuell verändert. sambahome ist dann immer ein Verzeichnis auf dem Schulserver der primären Schule des jeweiligen Benutzers.
 pro: Es existiert genau ein Heimatverzeichnis auf einem Server für alle Clients der Domäne (egal an welcher Schule).
 contra: Klassenarbeitsmodus und Materialverteilung funktionieren nicht an anderen Schulen als der primären. Beim regulären Arbeiten gibt es ein hohes Datenaufkommen zwischen den Schulen.
-2. sambahome wird durch das Import-Skript für alle auf einen (per UCR) festgesetzten, zentralen, Server gesetzt.
+2. sambahome wird durch das Import-Skript für alle auf einen (per &ucsUCR;) festgesetzten, zentralen, Server gesetzt.
 pro: wie bei 1.
 contra: wie bei 1.
 3. sambahome wird durch das Import-Skript auf einen Server mit einem Alias-Namen gesetzt. Je nach dem an welcher Schule sich der Benutzer befindet, bekommt er vom DNS-Server eine andere IP-Adresse für den gleichen Servernamen geliefert.
 pro: Klassenarbeitsmodus und Materialverteilung funktionieren, an der jeweiligen Schule an der sie stattfinden, für alle Benutzer - egal ob es ihre primäre Schule ist oder nicht. Kein Datenverkehr zwischen Schulen.
-contra: Es wird an jeder Schule eines Benutzers ein eigenes Heimatverzeichnis für ihn angelegt. Einmailger Installationsaufwand: An jeder Schule müssen ein paar UCR-Variablen eingestellt werden.
+contra: Es wird an jeder Schule eines Benutzers ein eigenes Heimatverzeichnis für ihn angelegt. Einmailger Installationsaufwand: An jeder Schule müssen ein paar &ucsUCR;-Variablen eingestellt werden.
 		</para>
 		<para>
 			Es folgt eine Anleitung zur Einrichtung der dritten Variante.
