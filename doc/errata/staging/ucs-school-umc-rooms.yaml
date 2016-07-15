@@ -3,7 +3,7 @@ release: "4.1"
 version: [2]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-rooms
-fix: 
+fix: 13.0.0-2.54.201607131458
 desc: |
  This update addresses the following issue(s):
  * The ucsschool python library now handles all operations in the module
