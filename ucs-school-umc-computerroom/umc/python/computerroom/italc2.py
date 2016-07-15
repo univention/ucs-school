@@ -58,6 +58,7 @@ import italc
 import ldap
 import sip
 from ldap.filter import filter_format
+from ldap.dn import explode_dn
 
 _ = Translation('ucs-school-umc-computerroom').translate
 
@@ -85,10 +86,11 @@ class ITALC_Error(Exception):
 
 class UserInfo(object):
 
-	def __init__(self, ldap_dn, username, isTeacher=False):
+	def __init__(self, ldap_dn, username, isTeacher=False, hide_screenshot=False):
 		self.dn = ldap_dn
 		self.isTeacher = isTeacher
 		self.username = username
+		self.hide_screenshot = hide_screenshot
 
 
 class UserMap(dict):
@@ -111,16 +113,28 @@ class UserMap(dict):
 
 		lo = ldap_user_read
 		try:
-			user = User.get_only_udm_obj(lo, filter_format('uid=%s', (username,)))
-			if user is None:
+			userobj = User.get_only_udm_obj(lo, filter_format('uid=%s', (username,)))
+			if userobj is None:
 				raise noObject(username)
-			user = User.from_udm_obj(user, None, lo)
+			user = User.from_udm_obj(userobj, None, lo)
 		except (noObject, MultipleObjectsError):
 			MODULE.info('Unknown user "%s"' % username)
 			dict.__setitem__(self, userstr, UserInfo('', ''))
 			return
 
-		dict.__setitem__(self, userstr, UserInfo(user.dn, username, isTeacher=user.is_teacher(lo)))
+		blacklisted_groups = set([x.strip().lower() for x in ucr.get('ucsschool/umc/computerroom/hide_screenshots/groups', 'Domain Admins').split(',')])
+		users_groupmemberships = set([explode_dn(x, True)[0].lower() for x in userobj['groups']])
+		MODULE.info('UserMap: %s: hide screenshots for following groups: %s' % (username, blacklisted_groups,))
+		MODULE.info('UserMap: %s: user is member of following groups: %s' % (username, users_groupmemberships,))
+		hide_screenshot = bool(blacklisted_groups & users_groupmemberships)
+
+		if ucr.is_true('ucsschool/umc/computerroom/hide_screenshots/teachers', False) and user.is_teacher(lo):
+			MODULE.info('UserMap: %s: is teacher hiding screenshot' % (username,))
+			hide_screenshot = True
+
+		MODULE.info('UserMap: %s: hide_screenshot=%r' % (username, hide_screenshot))
+
+		dict.__setitem__(self, userstr, UserInfo(user.dn, username, isTeacher=user.is_teacher(lo), hide_screenshot=hide_screenshot))
 _usermap = UserMap()
 
 
@@ -378,6 +392,13 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 	def isTeacher(self):
 		try:
 			return _usermap[str(self._username.current)].isTeacher
+		except AttributeError:
+			return False
+
+	@property
+	def hide_screenshot(self):
+		try:
+			return _usermap[str(self._username.current)].hide_screenshot
 		except AttributeError:
 			return False
 

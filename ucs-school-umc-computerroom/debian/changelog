@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (8.0.3-2) unstable; urgency=medium
+
+  * Bug #40210: prevent to create screenshots of certain users
+
+ -- Florian Best <best@univention.de>  Wed, 13 Jul 2016 16:12:58 +0200
+
 ucs-school-umc-computerroom (8.0.3-1) unstable; urgency=low
 
   * Bug #41752:

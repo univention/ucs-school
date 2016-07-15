@@ -9,3 +9,15 @@ Description[de]=UMC-Computerraum-Administration: auf "yes" setzen, um UltraVNC-S
 Description[en]=UMC-Computerroom-Administration: set "yes" to activate UltraVNC shortcut (Default: false)
 Type=str
 Categories=management-umc
+
+[ucsschool/umc/computerroom/hide_screenshots/groups]
+Description[de]=Kommaseparierte Liste mit Gruppennamen, für deren Mitglieder keine Screenshots im Computerraum-Modul angezeigt werden sollen (Standard: Domain Admins)
+Description[en]=Comma separated list of group names, for whose group members no screenshots are shown in computer room module (Default: Domain Admins)
+Type=str
+Categories=management-umc
+
+[ucsschool/umc/computerroom/hide_screenshots/teachers]
+Description[de]=Der Wert "true" verhindert die Anzeige von Screenshots von Lehrer-Rechnern im Computerraum-Modul (Standard: false)
+Description[en]=By setting this variable to "true", screenshots of teacher's computers are not shown in computer room module (Default: false)
+Type=bool
+Categories=management-umc
