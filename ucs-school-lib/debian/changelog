@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-10) unstable; urgency=low
+
+  * Bug #41595: fix stream detection for ipython notebook
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 15 Jul 2016 09:46:46 +0200
+
 ucs-school-lib (9.0.20-9) unstable; urgency=low
 
   * Bug #41595: add python only logging function

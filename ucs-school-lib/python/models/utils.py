@@ -217,7 +217,8 @@ def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, forma
 	if not name:
 		name = "noname"
 	level = ucr.get("ucsschool/logging/level/{}".format(name), level)
-	if isinstance(target, file):
+	if isinstance(target, file) or hasattr(target, "write"):
+		# file like object
 		filename = target.name
 	else:
 		filename = target
@@ -237,7 +238,7 @@ def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, forma
 	if not isinstance(formatter_kwargs, dict):
 		formatter_kwargs = dict()
 
-	if isinstance(target, file):
+	if isinstance(target, file) or hasattr(target, "write"):
 		handler_defaults = dict(cls=UniStreamHandler, stream=target)
 		fmt = CMDLINE_LOG_FORMATS[level]
 	else:
