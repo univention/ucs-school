@@ -468,7 +468,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 	@property
 	def connected(self):
-		return self._core and self._vnc.isConnected() and self._state.current == 'connected' and self._core_ready
+		return self._core and self._core_ready and self._vnc.isConnected() and self._state.current == 'connected'
 
 	# iTalc: screenshots
 	@property
