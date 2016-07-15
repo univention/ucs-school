@@ -52,7 +52,6 @@ class CsvReader(BaseReader):
 
 	def __init__(self, filename, header_lines=0, **kwargs):
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
-		self.config = Configuration()
 		self.fieldnames = None
 		usersmod = univention.admin.modules.get("users/user")
 		lo, position = get_admin_connection()

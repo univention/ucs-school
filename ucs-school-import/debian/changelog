@@ -1,3 +1,9 @@
+ucs-school-import (14.0.15-8) unstable; urgency=low
+
+  * Bug #41595: initialize later
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 15 Jul 2016 09:49:49 +0200
+
 ucs-school-import (14.0.15-7) unstable; urgency=low
 
   * Bug #41595: move logging code to ucsschool.lib

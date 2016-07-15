@@ -43,8 +43,8 @@ class BaseReader(object):
 
 	Subclasses must override get_roles(), map() and read().
 	"""
-	config = Configuration()
-	logger = get_logger()
+	config = None
+	logger = None
 
 	def __init__(self, filename, header_lines=0, **kwargs):
 		"""
@@ -52,6 +52,8 @@ class BaseReader(object):
 		:param header_lines: int: Number of lines before the actual data starts.
 		:param kwargs: dict: optional parameters for use in derived classes
 		"""
+		self.config = Configuration()
+		self.logger = get_logger()
 		self.filename = filename
 		self.header_lines = header_lines
 		self.import_users = self.read()

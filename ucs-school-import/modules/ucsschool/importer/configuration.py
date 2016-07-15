@@ -37,8 +37,6 @@ import json
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
 
-logger = get_logger()
-
 
 def setup_configuration(conffiles, **kwargs):
 	config = Configuration(conffiles)
@@ -54,19 +52,20 @@ def setup_configuration(conffiles, **kwargs):
 class ConfigurationFile(object):
 	def __init__(self, filename):
 		self.filename = filename
+		self.logger = get_logger()
 
 	def read(self):
-		logger.info("Reading configuration from %r...", self.filename)
+		self.logger.info("Reading configuration from %r...", self.filename)
 		with open(self.filename, "rb") as fp:
 			return json.load(fp)
 
 	def write(self, conf):
-		logger.info("Writing configuration to %r...", self.filename)
+		self.logger.info("Writing configuration to %r...", self.filename)
 		with open(self.filename, "wb") as fp:
 			return json.dump(conf, fp)
 
 	def update(self, conf):
-		logger.info("Updating configuration in %r...", self.filename)
+		self.logger.info("Updating configuration in %r...", self.filename)
 		cur = self.read()
 		cur.update(conf)
 		with open(self.filename, "wb") as fp:
