@@ -35,21 +35,20 @@ define([
 	"dojo/aspect",
 	"dojo/dom",
 	"dojo/dom-geometry",
+	"dojox/html/entities",
 	"dijit/layout/ContentPane",
 	"dijit/_Contained",
 	"dijit/Tooltip",
-//	"dijit/TitlePane",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Button",
 	"umc/widgets/Page",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, geometry, ContentPane, _Contained, Tooltip,
-            /*TitlePane,*/ ComboBox, ContainerWidget, Button, Page, StandbyMixin, _) {
+], function(declare, lang, array, aspect, dom, geometry, entities, ContentPane, _Contained, Tooltip, ComboBox, ContainerWidget, Button, Page, StandbyMixin, _) {
 
 	// README: This is an alternative view
-	// var Item = declare( "umc.modules.computerroom.Item", [ TitlePane, _Contained ], {
+	// var Item = declare( "umc.modules.computerroom.Item", [ dijit.TitlePane, _Contained ], {
 
 	// 	// the computer to show
 	// 	computer: '',
@@ -190,17 +189,21 @@ define([
 			this.inherited( arguments );
 
 			lang.mixin( this, {
-				content: lang.replace( '<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 100%;" id="img-{computer}"></img>', {
-					computer: this.computer,
-					width: this.defaultSize
-				} )
+				content: lang.replace('<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 100%;" id="img-{computer}" alt="{alternative}"></img>', {
+					computer: entities.encode(this.computer),
+					width: this.defaultSize,
+					alternative: entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
+				})
 			} );
 			this.startup();
 
 			// use dijit.Tooltip here to not hide screenshot tooltips if set up in user preferences
 			var tooltip = new Tooltip({
 				'class': 'umcTooltip',
-				label: lang.replace( '<div style="display: table-cell; vertical-align: middle; width: 440px;height: 400px;"><img id="screenshotTooltip-{0}" src="" style="width: 430px; display: block; margin-left: auto; margin-right: auto;"/></div>', [ this.computer ] ),
+				label: lang.replace('<div style="display: table-cell; vertical-align: middle; width: 440px;height: 400px;"><img alt="{1}" id="screenshotTooltip-{0}" src="" style="width: 430px; display: block; margin-left: auto; margin-right: auto;"/></div>', [
+					entities.encode(this.computer),
+					entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
+				]),
 				connectId: [ this.domNode ],
 				onShow: lang.hitch( this, function() {
 					var image = dom.byId( 'screenshotTooltip-' + this.computer );
