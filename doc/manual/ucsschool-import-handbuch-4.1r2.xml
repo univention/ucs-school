@@ -50,6 +50,12 @@
 		<para>
 			Im Folgenden wird dargestellt, wie der automatische, nicht-interaktive Import abläuft, welche Konfigurationsmöglichkeiten es gibt und wie die Software um neue Funktionalität erweitert werden kann.
 		</para>
+		<caution>
+			<simpara>
+				Dies ist eine <emphasis>Vorveröffentlichung</emphasis>.
+				Das Dokument hat noch nicht Univentions Qualitätskontrolle passiert.
+			</simpara>
+		</caution>
 	</chapter>
 
 	<chapter id="procedure">
