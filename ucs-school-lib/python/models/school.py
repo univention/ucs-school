@@ -407,7 +407,7 @@ class School(UCSSchoolHelperAbstractClass):
 					schools.append(cls.from_dn(cls(name=ou).dn, lo))
 				except noObject:
 					pass
-			return cls._filter_local_schools(schools)
+			return cls._filter_local_schools(schools, lo)
 
 		if 'ou=' in lo.binddn:
 			# user has no ucsschoolSchool attribute (not migrated yet)
@@ -418,7 +418,7 @@ class School(UCSSchoolHelperAbstractClass):
 			logger.debug('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s', school_dn)
 			school = cls.from_dn(school_dn, None, lo)
 			logger.debug('Schools from binddn: Found school: %r', school)
-			return cls._filter_local_schools([school])
+			return cls._filter_local_schools([school], lo)
 
 		logger.warning('Schools from binddn: Unable to identify OU of this account - showing all local OUs!')
 		return School.get_all(lo)

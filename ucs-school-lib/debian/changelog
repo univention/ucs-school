@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-12) unstable; urgency=medium
+
+  * Bug #41811: fix missing argument in School.from_binddn()
+
+ -- Florian Best <best@univention.de>  Mon, 18 Jul 2016 14:22:57 +0200
+
 ucs-school-lib (9.0.20-11) unstable; urgency=medium
 
   * Bug #40870: fix groups of user when moving user
