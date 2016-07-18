@@ -7,13 +7,13 @@ fix: 9.0.20-9.233.201607141710
 desc: |
  This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one
-   school to another (Bug #41609)
- * When moving a user from a school the the user is not put into the school
-   classes of the old school (Bug #41620).
+   school to another (Bug #41609).
+ * When moving a user from a school the user is put into the school
+   related groups of this school (Bug #41620) (Bug #40870).
  * Users are now added to groups of all schools they belong to (Bug #41601).
  * New passwords are now guaranteed to be created from different character
    classes (Bug #40711).
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
  * All schools are available on a DC Backup again (Bug #41747).
  * A logging function was added (Bug #41595).
-bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595]
+bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870]
