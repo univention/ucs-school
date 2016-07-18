@@ -1,0 +1,158 @@
+#!/usr/share/ucs-test/runner python2.7
+## desc: Test hijacking uidNumber=0
+## tags: [apptest, ucsschool]
+## roles-not:
+##  - basesystem
+## packages:
+##  - python-univention-lib
+##  - python-ldap
+##  - python-univention-directory-manager
+##  - ucs-test-ldap
+## exposure: dangerous
+
+import ldap.filter
+import imp
+ucshacklib = imp.load_source('ucshacklib', '/usr/share/ucs-test/10_ldap/90_acl_access_to_uidNumber0')
+
+import univention.admin.uldap
+from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.udm import UCSTestUDM
+from univention.testing.ucr import UCSTestConfigRegistry
+from univention.testing.utils import get_ldap_connection
+
+PASSWORD = 'univention'
+
+
+def create_environment(self, udm, ucr):
+	class Environment(object):
+		pass
+	lo = get_ldap_connection()
+	env = Environment()
+	env.master_dn = lo.searchDn(filter='univentionObjectType=computers/domaincontroller_master')[0]
+	env.backup_dn = udm.create_object(
+		"computers/domaincontroller_backup",
+		name = 'schoolTestBackup',
+		password=PASSWORD,
+		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
+		domain = ucr.get('domainname'),
+		)
+	env.slave_dn = udm.create_object(
+		"computers/domaincontroller_slave",
+		name = 'schoolTestSlave',
+		password=PASSWORD,
+		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
+		domain = ucr.get('domainname'),
+		)
+	env.slave_dn2 = udm.create_object(
+		"computers/domaincontroller_slave",
+		name = 'schoolTestSlave2',
+		password=PASSWORD,
+		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
+		domain = ucr.get('domainname'),
+		)
+	env.member_dn = udm.create_object(
+		"computers/memberserver",
+		name = 'schoolTestMember',
+		password=PASSWORD,
+		position = "cn=computers,%(ldap/base)s" % ucr,
+		domain = ucr.get('domainname'),
+		)
+	env.winclient_dn = udm.create_object(
+		"computers/windows",
+		name = 'schoolTestWinDom',
+		password=PASSWORD,
+		position = "cn=computers,%(ldap/base)s" % ucr,
+		)
+	env.domain_user_dn = udm.create_user(username='domainUser')[0]
+	env.schoolA = Environment()
+	env.schoolB = Environment()
+	for suffix, school in (('A', env.schoolA), ('B', env.schoolB),):
+		hostname = ucr.get('hostname') if suffix == 'A' else 'schoolTestSlave2'
+		admin_hostname = 'adminslave%s' % (suffix,)
+		school.name, school.dn = self.create_ou(ou_name='school%s' % (suffix,), name_edudc=hostname, name_admindc=admin_hostname)
+
+		schools = [env.schoolA.name] if suffix == 'A' else [env.schoolA.name, env.schoolB.name]
+		school.teacher_name, school.teacher_dn = self.create_user(school.name, username='teacher%s' % (suffix,), schools=schools, is_teacher=True, password=PASSWORD)
+		school.teacher_staff_name, school.teacher_staff_dn = self.create_user(school.name, username='teachstaff%s' % (suffix,), schools=schools, is_teacher=True, is_staff=True, password=PASSWORD)
+		school.staff_name, school.staff_dn = self.create_user(school.name, username='staff%s' % (suffix,), schools=schools, is_staff=True, password=PASSWORD)
+		school.student_name, school.student_dn = self.create_user(school.name, username='student%s' % (suffix,), schools=schools, password=PASSWORD)
+		school.admin_name, school.admin_dn = self.create_school_admin(school.name, username='schooladmin%s' % (suffix,), schools=schools, password=PASSWORD)
+
+		try:
+			school.schoolserver_dn = lo.searchDn(base=school.dn, filter=ldap.filter.filter_format('(&(univentionObjectType=computers/domaincontroller_slave)(cn=%s))', [hostname]))[0]
+			udm.modify_object("computers/domaincontroller_slave", dn=school.schoolserver_dn, password=PASSWORD)
+		except IndexError:
+			school.schoolserver_dn = ''
+		try:
+			school.schooladminserver_dn = lo.searchDn(base=school.dn, filter=ldap.filter.filter_format('(&(univentionObjectType=computers/domaincontroller_slave)(cn=%s))', [admin_hostname]))[0]
+			udm.modify_object("computers/domaincontroller_slave", dn=school.schooladminserver_dn, password=PASSWORD)
+		except IndexError:
+			school.schooladminserver_dn = ''
+
+		school.winclient_dn = udm.create_object(
+			"computers/windows",
+			name = 'schoolwin%s' % (suffix,),
+			password=PASSWORD,
+			position = "cn=computers,%s" % (school.dn,),
+		)
+
+	return env
+
+
+def main():
+	with UCSTestSchool() as schoolenv, UCSTestUDM() as udm, UCSTestConfigRegistry() as ucr:
+		env = create_environment(schoolenv, udm, ucr)
+
+		def get_connections():
+			yield univention.uldap.getMachineConnection(ldap_master=True)
+			for dn in (
+				env.master_dn,
+				env.backup_dn,
+				env.slave_dn,
+				env.member_dn,
+				env.winclient_dn,
+				env.domain_user_dn,
+				env.schoolA.schoolserver_dn,
+				env.schoolB.schoolserver_dn,
+				env.schoolA.schooladminserver_dn,
+				env.schoolB.schooladminserver_dn,
+				env.schoolA.winclient_dn,
+				env.schoolB.winclient_dn,
+				env.schoolA.teacher_dn,
+				env.schoolB.teacher_dn,
+				env.schoolA.student_dn,
+				env.schoolB.student_dn,
+				env.schoolA.teacher_staff_dn,
+				env.schoolB.teacher_staff_dn,
+				env.schoolA.staff_dn,
+				env.schoolB.staff_dn,
+				env.schoolA.admin_dn,
+				env.schoolB.admin_dn,
+			):
+				try:
+					yield univention.uldap.access(
+						host=ucr['ldap/master'],
+						port=int(ucr.get('ldap/master/port', '7389')),
+						base=ucr['ldap/base'],
+						binddn=dn,
+						bindpw=PASSWORD,
+					)
+				except (univention.admin.uexceptions.base, ldap.LDAPError) as exc:
+					print >> sys.stderr, 'Authentication as %r failed: %s' % (dn, exc)
+
+		def do_hacks(connections):
+			hacks = []
+			hacking = ucshacklib.Hacking()
+			for lo in connections:
+				try:
+					hacking(lo)
+				except ucshacklib.Hacked as exc:
+					hacks.append(exc)
+			if hacks:
+				raise ucshacklib.Hacked('\n\n\n'.join(map(str, hacks)))
+
+		do_hacks(get_connections())
+
+
+if __name__ == "__main__":
+	main()
