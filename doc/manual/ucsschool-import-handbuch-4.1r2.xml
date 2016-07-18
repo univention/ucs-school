@@ -1456,17 +1456,64 @@ class MyUserImportFactory(DefaultUserImportFactory):
 			Wenn die primäre Schule eines Benutzers eine andere ist, als die, an der er gerade eine Klassenarbeit schreiben soll, so existiert sein Heimatverzeichnis dort unter Umständen nicht.
 		</para>
 		<para>
-			Es existieren drei Varianten des Umgangs mit der UDM-Eigenschaft  sambahome, mit folgenden Vor- und Nachteilen:
-
-1. sambahome wird regulär durch das Import-Skript gesetzt und nicht manuell verändert. sambahome ist dann immer ein Verzeichnis auf dem Schulserver der primären Schule des jeweiligen Benutzers.
-pro: Es existiert genau ein Heimatverzeichnis auf einem Server für alle Clients der Domäne (egal an welcher Schule).
-contra: Klassenarbeitsmodus und Materialverteilung funktionieren nicht an anderen Schulen als der primären. Beim regulären Arbeiten gibt es ein hohes Datenaufkommen zwischen den Schulen.
-2. sambahome wird durch das Import-Skript für alle auf einen (per &ucsUCR;) festgesetzten, zentralen, Server gesetzt.
-pro: wie bei 1.
-contra: wie bei 1.
-3. sambahome wird durch das Import-Skript auf einen Server mit einem Alias-Namen gesetzt. Je nach dem an welcher Schule sich der Benutzer befindet, bekommt er vom DNS-Server eine andere IP-Adresse für den gleichen Servernamen geliefert.
-pro: Klassenarbeitsmodus und Materialverteilung funktionieren, an der jeweiligen Schule an der sie stattfinden, für alle Benutzer - egal ob es ihre primäre Schule ist oder nicht. Kein Datenverkehr zwischen Schulen.
-contra: Es wird an jeder Schule eines Benutzers ein eigenes Heimatverzeichnis für ihn angelegt. Einmailger Installationsaufwand: An jeder Schule müssen ein paar &ucsUCR;-Variablen eingestellt werden.
+			Es existieren drei Varianten des Umgangs mit der &ucsUDM;-Eigenschaft <property>sambahome</property>, mit folgenden Vor- und Nachteilen:
+			<orderedlist>
+				<listitem>
+					<para>
+                        <property>sambahome</property> wird regulär durch das Import-Skript gesetzt und nicht manuell verändert.
+						<property>sambahome</property> ist dann immer ein Verzeichnis auf dem Schulserver der primären Schule des jeweiligen Benutzers.
+						<itemizedlist>
+							<listitem>
+								<simpara>
+									pro: Es existiert genau ein Heimatverzeichnis auf einem Server für alle Clients der Domäne (egal an welcher Schule).
+								</simpara>
+							</listitem>
+							<listitem>
+								<simpara>
+									contra: Klassenarbeitsmodus und Materialverteilung funktionieren nicht an anderen Schulen als der primären. Beim regulären Arbeiten gibt es ein hohes Datenaufkommen zwischen den Schulen.
+								</simpara>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<property>sambahome</property> wird durch das Import-Skript für alle auf einen (per &ucsUCR;) festgesetzten, zentralen, Server gesetzt.
+						<itemizedlist>
+							<listitem>
+								<simpara>
+									pro: wie bei 1.
+								</simpara>
+							</listitem>
+							<listitem>
+								<simpara>
+									contra: wie bei 1.
+								</simpara>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<property>sambahome</property> wird durch das Import-Skript auf einen Server mit einem Alias-Namen gesetzt.
+						Je nach dem an welcher Schule sich der Benutzer befindet, bekommt er vom DNS-Server eine andere IP-Adresse für den gleichen Servernamen geliefert.
+						<itemizedlist>
+							<listitem>
+								<simpara>
+									pro: Klassenarbeitsmodus und Materialverteilung funktionieren, an der jeweiligen Schule an der sie stattfinden, für alle Benutzer - egal ob es ihre primäre Schule ist oder nicht.
+									Kein Datenverkehr zwischen Schulen.
+								</simpara>
+							</listitem>
+							<listitem>
+								<simpara>
+									contra: Es wird an jeder Schule eines Benutzers ein eigenes Heimatverzeichnis für ihn angelegt.
+									Einmailger Installationsaufwand: An jeder Schule müssen ein paar &ucsUCR;-Variablen eingestellt werden.
+								</simpara>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+			</orderedlist>
 		</para>
 		<para>
 			Es folgt eine Anleitung zur Einrichtung der dritten Variante.
