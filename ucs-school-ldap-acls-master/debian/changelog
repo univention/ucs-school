@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (14.0.1-10) unstable; urgency=medium
+
+  * Bug #41818: DC Verwaltungsserver can read teacher+staff users again
+
+ -- Florian Best <best@univention.de>  Mon, 18 Jul 2016 15:58:22 +0200
+
 ucs-school-ldap-acls-master (14.0.1-9) unstable; urgency=medium
 
   * Bug #41725: allow write access to cn=samba children
