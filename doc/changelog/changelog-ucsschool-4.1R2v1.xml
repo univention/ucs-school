@@ -184,7 +184,7 @@
 							<itemizedlist>
 								<listitem><simpara><envar>ucsschool/workgroups/autosearch</envar></simpara></listitem>
 								<listitem><simpara><envar>ucsschool/assign-classes/autosearch</envar></simpara></listitem>
-								<listitem><simpara><envar>ucsschool/assign-teacher/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/assign-teachers/autosearch</envar></simpara></listitem>
 								<listitem><simpara><envar>ucsschool/passwordreset/autosearch</envar></simpara></listitem>
 								<listitem><simpara><envar>ucsschool/wizards/schoolwizards/users/autosearch</envar></simpara></listitem>
 								<listitem><simpara><envar>ucsschool/wizards/schoolwizards/classes/autosearch</envar></simpara></listitem>

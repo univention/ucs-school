@@ -171,7 +171,7 @@ scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
     		Dieses Verhalten kann durch setzen der folgenden &ucsUCRV;n für die jeweiligen Module deaktiviert werden.
     		<itemizedlist>
 				<listitem><simpara>Passwörter (Schüler), Passwörter (Lehrer): <envar>ucsschool/passwordreset/autosearch</envar></simpara></listitem>
-				<listitem><simpara>Lehrer zuordnen: <envar>ucsschool/assign-teacher/autosearch</envar></simpara></listitem>
+				<listitem><simpara>Lehrer zuordnen: <envar>ucsschool/assign-teachers/autosearch</envar></simpara></listitem>
 				<listitem><simpara>Klassen zuordnen: <envar>ucsschool/assign-classes/autosearch</envar></simpara></listitem>
 				<listitem><simpara>Arbeitsgruppen verwalten: <envar>ucsschool/workgroups/autosearch</envar></simpara></listitem>
 				<listitem><simpara>Benutzer: <envar>ucsschool/wizards/schoolwizards/users/autosearch</envar></simpara></listitem>
