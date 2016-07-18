@@ -177,6 +177,11 @@ if [ $JS_LAST_EXECUTED_VERSION = 1 ]; then
 	append_ucr_policy_to_base ucsschool/import/roleshare no "$@"
 fi
 
+# in multi-school environments deactivate autosearch in all school related UMC modules
+for UCRVC in assign-classes assign-teachers passwordreset wizards workgroups; do
+	append_ucr_policy_to_base "ucsschool/$UCRVC/autosearch" false "$@"
+done
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 joinscript_save_current_version
