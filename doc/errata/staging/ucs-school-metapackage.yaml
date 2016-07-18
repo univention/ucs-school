@@ -3,8 +3,11 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-metapackage
-fix: 9.0.1-2.174.201607061527
+fix: 9.0.1-3.175.201607181417
 desc: |
  This update addresses the following issue(s):
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
-bug: [40705]
+ * In multi-school environments autosearch is now deactivated by default in
+   all school related UMC modules, using a UCR policy at the LDAP-root. This
+   is done only for new installations. (Bug #41300)
+bug: [40705,41300]
