@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-11) unstable; urgency=medium
+
+  * Bug #40870: fix groups of user when moving user
+
+ -- Florian Best <best@univention.de>  Mon, 18 Jul 2016 12:20:32 +0200
+
 ucs-school-lib (9.0.20-10) unstable; urgency=low
 
   * Bug #41595: fix stream detection for ipython notebook

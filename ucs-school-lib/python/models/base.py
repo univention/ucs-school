@@ -559,6 +559,8 @@ class UCSSchoolHelperAbstractClass(object):
 	def change_school(self, school, lo):
 		if self.school in self.schools:
 			self.schools.remove(self.school)
+		if school not in self.schools:
+			self.schools.append(school)
 		self.school = school
 		self.position = self.get_own_container()
 		return self.move(lo, force=True)
