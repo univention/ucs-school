@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.13-4) unstable; urgency=medium
+
+  * Bug #41725: enhance test
+
+ -- Florian Best <best@univention.de>  Tue, 19 Jul 2016 14:14:35 +0200
+
 ucs-test-ucsschool (3.0.13-3) unstable; urgency=medium
 
   * Bug #41725: add 90_ucsschool/79_ldap_acl_access_to_uidNumber0

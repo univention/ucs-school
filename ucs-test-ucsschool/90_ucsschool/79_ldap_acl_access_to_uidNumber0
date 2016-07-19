@@ -11,6 +11,7 @@
 ## exposure: dangerous
 
 import ldap.filter
+import sys
 import imp
 ucshacklib = imp.load_source('ucshacklib', '/usr/share/ucs-test/10_ldap/90_acl_access_to_uidNumber0')
 
@@ -80,11 +81,13 @@ def create_environment(self, udm, ucr):
 
 		try:
 			school.schoolserver_dn = lo.searchDn(base=school.dn, filter=ldap.filter.filter_format('(&(univentionObjectType=computers/domaincontroller_slave)(cn=%s))', [hostname]))[0]
+			udm._cleanup.setdefault("computers/domaincontroller_slave", []).append(school.schoolserver_dn)
 			udm.modify_object("computers/domaincontroller_slave", dn=school.schoolserver_dn, password=PASSWORD)
 		except IndexError:
 			school.schoolserver_dn = ''
 		try:
 			school.schooladminserver_dn = lo.searchDn(base=school.dn, filter=ldap.filter.filter_format('(&(univentionObjectType=computers/domaincontroller_slave)(cn=%s))', [admin_hostname]))[0]
+			udm._cleanup.setdefault("computers/domaincontroller_slave", []).append(school.schooladminserver_dn)
 			udm.modify_object("computers/domaincontroller_slave", dn=school.schooladminserver_dn, password=PASSWORD)
 		except IndexError:
 			school.schooladminserver_dn = ''
@@ -138,7 +141,7 @@ def main():
 						bindpw=PASSWORD,
 					)
 				except (univention.admin.uexceptions.base, ldap.LDAPError) as exc:
-					print >> sys.stderr, 'Authentication as %r failed: %s' % (dn, exc)
+					print >> sys.stderr, 'SKIP: Authentication as %r failed: %s' % (dn, exc)
 
 		def do_hacks(connections):
 			hacks = []
