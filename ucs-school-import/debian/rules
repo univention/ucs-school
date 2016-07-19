@@ -30,9 +30,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+PO_FILES := $(shell find udm_hook -name '*.po')
+MO_FILES := $(PO_FILES:%.po=%.mo)
+
+%.mo:	%.po
+	msgfmt --check -o $@ $<
+
+override_dh_auto_build: $(MO_FILES)
+	dh_auto_build
+
 override_dh_auto_install:
 	dh_auto_install
 	univention-install-config-registry
+	@for i in $(MO_FILES); do\
+		lang=`basename $$i .mo`;\
+		domain=univention.admin.hooks.d.uscchooloptions;\
+		o=debian/ucs-school-import/usr/share/locale/$$lang/LC_MESSAGES/$$domain.mo;\
+		install -d "`dirname $$o`";\
+		install -m 644 $$i $$o;\
+	done
 
 override_dh_auto_clean:
 	dh_auto_clean

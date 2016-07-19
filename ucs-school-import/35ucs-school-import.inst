@@ -231,6 +231,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set ldapMapping=ucsschoolSchool \
 	--set syntax=ucsschoolSchools \
 	--set mayChange=1 \
+	--set hook=UcsschoolUserOptionsHook \
 	--set multivalue=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
