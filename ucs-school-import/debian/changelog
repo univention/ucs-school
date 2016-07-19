@@ -1,3 +1,9 @@
+ucs-school-import (14.0.15-9) unstable; urgency=low
+
+  * Bug #41609: empty school_class attribute is always dict, not None.
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 19 Jul 2016 10:17:51 +0200
+
 ucs-school-import (14.0.15-8) unstable; urgency=low
 
   * Bug #41595: initialize later

@@ -312,7 +312,7 @@ class ImportUser(User):
 				res[school].append("{}-{}".format(school, cls_name))
 			self.school_classes = dict(res)
 		elif self.school_classes is None:
-			pass
+			self.school_classes = dict()
 		else:
 			raise RuntimeError("Unknown data in attribute 'school_classes': '{}'".format(self.school_classes))
 
