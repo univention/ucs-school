@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (14.0.1-11) unstable; urgency=medium
+
+  * Bug #41818: fix typo in last commit
+
+ -- Florian Best <best@univention.de>  Tue, 19 Jul 2016 14:12:20 +0200
+
 ucs-school-ldap-acls-master (14.0.1-10) unstable; urgency=medium
 
   * Bug #41818: DC Verwaltungsserver can read teacher+staff users again

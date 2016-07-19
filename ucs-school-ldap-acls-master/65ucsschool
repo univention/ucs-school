@@ -186,7 +186,7 @@ access to dn.regex="^.+,cn=(@$@TEACHERS@$@|@$@PUPILS@$@),cn=users,ou=[^,]+,@$@DI
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
 
-access to filter="(|(objectClass=ucsschoolStudent)(&((objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff))))"
+access to filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff)))"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
