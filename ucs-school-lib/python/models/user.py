@@ -70,6 +70,11 @@ class User(UCSSchoolHelperAbstractClass):
 
 	roles = []
 
+	def __init__(self, *args, **kwargs):
+		super(User, self).__init__(*args, **kwargs)
+		if self.school_classes is None:
+			self.school_classes = {}
+
 	@classmethod
 	def shall_create_mail_domain(cls):
 		return ucr.is_true('ucsschool/import/generate/mail/domain')
@@ -207,8 +212,6 @@ class User(UCSSchoolHelperAbstractClass):
 		obj = super(User, cls).from_udm_obj(udm_obj, school, lo)
 		obj.password = None
 		obj.school_classes = cls.get_school_classes(udm_obj, obj)
-		if obj.school_classes is None:
-			del obj.school_classes
 		return obj
 
 	def do_create(self, udm_obj, lo):
@@ -264,7 +267,7 @@ class User(UCSSchoolHelperAbstractClass):
 					logger.debug('No. Leaving it alone...')
 					continue
 				logger.debug('Yes, part of %s!', school_class.school)
-				if school_class.school not in (self.school_classes or {}):
+				if school_class.school not in self.school_classes:
 					continue  # if the key isn't set we don't change anything to the groups. to remove the groups it has to be an empty list
 				classes = self.school_classes[school_class.school]
 				remove = school_class.name not in classes and school_class.get_relative_name() not in classes
@@ -287,8 +290,7 @@ class User(UCSSchoolHelperAbstractClass):
 		logger.info('User is part of the following groups: %r', udm_obj['groups'])
 		self.remove_from_groups_of_school(old_school, lo)
 		self._udm_obj_searched = False
-		if self.school_classes:
-			self.school_classes.pop(old_school, None)
+		self.school_classes.pop(old_school, None)
 		udm_obj = self.get_udm_object(lo)
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
 		groups = set(udm_obj['groups'])
@@ -396,8 +398,7 @@ class User(UCSSchoolHelperAbstractClass):
 				return False
 		else:
 			self.remove_from_groups_of_school(school, lo)
-		if self.school_classes:
-			self.school_classes.pop(school, None)
+		self.school_classes.pop(school, None)
 		return self.modify(lo)
 
 	def remove_from_groups_of_school(self, school, lo):
@@ -471,9 +472,7 @@ class User(UCSSchoolHelperAbstractClass):
 		code = self._map_func_name_to_code(func_name)
 		is_teacher = isinstance(self, Teacher) or isinstance(self, TeachersAndStaff)
 		is_staff = isinstance(self, Staff) or isinstance(self, TeachersAndStaff)
-		school_class = ''
-		if self.school_classes:
-			school_class = ','.join(self.school_classes.get(self.school, []))  # legacy format: only classes of the primary school
+		school_class = ','.join(self.school_classes.get(self.school, []))  # legacy format: only classes of the primary school
 		return self._build_hook_line(
 				code,
 				self.name,
@@ -508,10 +507,9 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def get_school_class_objs(self):
 		ret = []
-		if self.school_classes:
-			for school, classes in self.school_classes.iteritems():
-				for school_class in classes:
-					ret.append(SchoolClass.cache(school_class, school))
+		for school, classes in self.school_classes.iteritems():
+			for school_class in classes:
+				ret.append(SchoolClass.cache(school_class, school))
 		return ret
 
 	@classmethod
@@ -628,7 +626,7 @@ class Staff(User):
 
 	@classmethod
 	def get_school_classes(cls, udm_obj, obj):
-		return None
+		return {}
 
 	def get_specific_groups(self, lo):
 		groups = super(Staff, self).get_specific_groups(lo)
