@@ -25,6 +25,10 @@ access to dn.children="@%@ldap/base@%@" filter="(objectClass=sambaDomain)" attrs
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
+@!@
+import os.path
+if os.path.exists('/var/lib/univention-ldap/local-schema/univention-app.schema'):
+	print '''
 # grant write access to domaincontroller slave/member server for certain univention app center settings
 access to dn.regex="^univentionAppID=([^,]+),cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" filter="(objectClass=univentionApp)" attrs=entry,@univentionApp,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -46,7 +50,13 @@ access to dn="cn=apps,cn=univention,@%@ldap/base@%@" attrs=children
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
+'''.replace('@%@ldap/base@%@$', configRegistry['ldap/base'])
+@!@
 
+@!@
+import os.path
+if os.path.exists('/usr/share/univention-ldap/schema/univention-virtual-machine-manager.schema'):
+	print '''
 # Slave controllers and memberservers require write access to virtual machine manager objects
 access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachine)" attrs=entry,@univentionVirtualMachine,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -70,6 +80,8 @@ access to dn="cn=(Information|CloudConnection),cn=Virtual Machine Manager,@%@lda
 	by dn.regex="^[^,]+,cn=dc,cn=computers,@%@ldap/base@%@$$" write
 	by dn.regex="^[^,]+,cn=memberserver,cn=computers,@%@ldap/base@%@$$" write
 	by * +0 break
+'''.replace('@%@ldap/base@%@$', configRegistry['ldap/base'])
+@!@
 
 # Slave-Controller und Member-Server benoetigen idmap-Container
 access to dn.base="cn=idmap,cn=univention,@%@ldap/base@%@" attrs=children,@organizationalRole,@sambaIdmapEntry,@sambaSidEntry

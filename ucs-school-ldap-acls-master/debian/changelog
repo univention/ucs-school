@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (14.0.1-13) unstable; urgency=medium
+
+  * Bug #41725: check if schema exists before referencing attribute names
+    otherwise joining will completely fail
+
+ -- Florian Best <best@univention.de>  Wed, 20 Jul 2016 17:14:13 +0200
+
 ucs-school-ldap-acls-master (14.0.1-12) unstable; urgency=medium
 
   * Bug #41725: add more restrictions
