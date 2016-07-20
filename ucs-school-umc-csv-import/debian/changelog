@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (3.0.4-2) unstable; urgency=low
+
+  * Bug #41609: adapt to change of User.school_classes in ucsschool.lib.models
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 20 Jul 2016 14:21:09 +0200
+
 ucs-school-umc-csv-import (3.0.4-1) unstable; urgency=medium
 
   * Bug #41588: fix unserializing when modifying class inline

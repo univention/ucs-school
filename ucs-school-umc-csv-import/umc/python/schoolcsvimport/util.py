@@ -123,6 +123,7 @@ class CSVUser(User):
 	@classmethod
 	def from_csv_line(cls, attrs, school, date_format, line_no, lo):
 		attrs = dict((key, value) for key, value in attrs.iteritems() if isinstance(key, basestring))
+		school_classes = attrs.pop('school_classes', None)
 		user = cls(**attrs)
 		user.name = user.guess_username(lo, date_format)
 		user.school = school
@@ -131,12 +132,15 @@ class CSVUser(User):
 				user.birthday = unformat_date(user.birthday, date_format)
 			except (TypeError, ValueError):
 				pass
-		if user.school_classes is not None:
-			user.school_classes = {school: user.school_classes.split(',')}
+		cls.set_school_classes(user, school_classes)
 
 		user.action = 'modify' if user.exists(lo) else 'create'
 		user.line = line_no
 		return user
+
+	@classmethod
+	def set_school_classes(cls, user, school_classes):
+		user.school_classes = {user.school: school_classes.split(',')}
 
 	@classmethod
 	def from_frontend_attrs(cls, attrs, school, date_format):
@@ -288,6 +292,10 @@ class CSVTeacher(CSVUser, Teacher):
 
 class CSVStaff(CSVUser, Staff):
 	birthday = birthday_attr
+
+	@classmethod
+	def set_school_classes(cls, user, school_classes):
+		return
 
 	@classmethod
 	def find_all_fields(cls):
