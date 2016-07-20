@@ -140,7 +140,8 @@ class CSVUser(User):
 
 	@classmethod
 	def set_school_classes(cls, user, school_classes):
-		user.school_classes = {user.school: school_classes.split(',')}
+		if school_classes:
+			user.school_classes = {user.school: school_classes.split(',')}
 
 	@classmethod
 	def from_frontend_attrs(cls, attrs, school, date_format):
