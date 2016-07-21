@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-06-20 12:47+0200\n"
+"POT-Creation-Date: 2016-07-21 18:34+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,15 +12,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/computerroom/__init__.py:327
+#: umc/python/computerroom/__init__.py:82
+msgid "/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg"
+msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_denied_de.jpg"
+
+#: umc/python/computerroom/__init__.py:83
+msgid "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"
+msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_notready_de.jpg"
+
+#: umc/python/computerroom/__init__.py:419
 msgid "A different user is already running a computerroom session."
 msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
 
-#: umc/python/computerroom/__init__.py:180
+#: umc/python/computerroom/__init__.py:218
 msgid "Action unavailable for UCC clients."
 msgstr "Aktion nicht verfügbar für UCC-Klienten."
 
-#: umc/python/computerroom/__init__.py:82
+#: umc/python/computerroom/__init__.py:90
 #, python-format
 msgid "Invalid room DN: %s"
 msgstr "Ungültige Raum-DN: %s"

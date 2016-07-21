@@ -79,8 +79,8 @@ from notifier.nf_qt import _exit
 _ = Translation('ucs-school-umc-computerroom').translate
 
 ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
-FN_SCREENSHOT_DENIED = '/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg'
-FN_SCREENSHOT_NOTREADY = '/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg'
+FN_SCREENSHOT_DENIED = _('/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg')
+FN_SCREENSHOT_NOTREADY = _('/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg')
 
 def _getRoomFile(roomDN):
 	if roomDN.startswith('cn='):

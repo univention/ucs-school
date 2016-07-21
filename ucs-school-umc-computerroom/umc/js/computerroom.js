@@ -44,6 +44,7 @@ define([
 	"dijit/Dialog",
 	"dijit/Tooltip",
 	"dojox/html/styles",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/tools",
 	"umc/app",
@@ -60,7 +61,7 @@ define([
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, domClass, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
-            Dialog, Tooltip, styles, dialog, tools, app, Grid, Button, Module, Page, Form,
+            Dialog, Tooltip, styles, entities, dialog, tools, app, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
@@ -714,7 +715,10 @@ define([
 						return '';
 					}
 					var id = item.id[0];
-					var label = lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', [id]);
+					var label = lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" alt="{1}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', [
+						id,
+						entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
+					]);
 
 					var widget = new Button({
 						label: _('Watch'),
