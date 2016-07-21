@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.13-5) unstable; urgency=low
+
+  * Bug #41282: fix import_via_python_api (workaround for 'schools' attribute
+    not being available after User object instanciation, as it is an extended
+    attribute)
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 21 Jul 2016 19:32:15 +0200
+
 ucs-test-ucsschool (3.0.13-4) unstable; urgency=medium
 
   * Bug #41725: enhance test

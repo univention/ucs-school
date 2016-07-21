@@ -391,6 +391,7 @@ class ImportFile:
 		def _set_kwargs(user):
 			kwargs = {
 				'school': user.school,
+				'schools': [user.school],
 				'name': user.username,
 				'firstname': user.firstname,
 				'lastname': user.lastname,
