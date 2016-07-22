@@ -3,9 +3,9 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-umc-csv-import
-fix: 3.0.4-3.48.201607201513
+fix: 3.0.4-4.49.201607221513
 desc: |
  This update addresses the following issue(s):
  * Adapt to package to changes in the UCS@school programming library
-   (Bug #41609).
-bug: [41609]
+   (Bug #41282, #41609).
+bug: [41282, 41609]
