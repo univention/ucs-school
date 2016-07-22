@@ -1,3 +1,10 @@
+ucs-school-import (14.0.15-13) unstable; urgency=low
+
+  * Bug #41572: fix ImportUser.input_data not being available in
+    ucsschool.lib post-hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 22 Jul 2016 12:53:06 +0200
+
 ucs-school-import (14.0.15-12) unstable; urgency=low
 
   * Bug #41572: prevent searching for pyhooks for each new ImportUser in case

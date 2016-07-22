@@ -122,11 +122,11 @@ class ImportUser(User):
 			# update self from LDAP
 			user = self.get_by_import_id(self._lo, self.source_uid, self.record_uid)
 			user_udm = user.get_udm_object(self._lo)
+			# copy only those UDM properties from LDAP that were originally
+			# set in self.udm_properties
 			for k in self.udm_properties.keys():
 				user.udm_properties[k] = user_udm[k]
-			self.action = user.action
-			self.entry_count = user.entry_count
-			self.input_data = user.input_data
+			self.update(user)
 
 		self.in_hook = True
 		meth_name = "{}_{}".format(hook_time, func_name)
@@ -750,10 +750,11 @@ class ImportUser(User):
 			if k == "name" and v is None:
 				continue
 			setattr(self, k, v)
-		self.action = other.action
-		self.entry_count = other.entry_count
-		self.udm_properties.update(other.udm_properties)
-		self.input_data = other.input_data
+		self.action = other.action or self.action
+		self.entry_count = other.entry_count or self.entry_count
+		if other.udm_properties:
+			self.udm_properties.update(other.udm_properties)
+		self.input_data = other.input_data or self.input_data
 
 
 class ImportStaff(ImportUser, Staff):
