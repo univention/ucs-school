@@ -79,7 +79,7 @@ class ImportUser(User):
 	username_handler = None
 	reader = None
 	logger = None
-	_pyhook_cache = dict()
+	_pyhook_cache = None
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -116,9 +116,8 @@ class ImportUser(User):
 		:param func_name: str: "create", "modify", "move" or "remove"
 		:return: int: return code of lib hooks
 		"""
-		if not self._pyhook_cache:
+		if self._pyhook_cache is None:
 			self.setup_pyhooks(self._lo)
-
 		if hook_time == "post" and self.action in ["A", "M"]:
 			# update self from LDAP
 			user = self.get_by_import_id(self._lo, self.source_uid, self.record_uid)
@@ -712,6 +711,8 @@ class ImportUser(User):
 			for meth_name, prio in pyhook.priority.items():
 				if hasattr(pyhook, meth_name) and isinstance(pyhook.priority.get(meth_name), int):
 					pyhook_cache[meth_name].append((getattr(pyhook, meth_name), pyhook.priority[meth_name]))
+		if self._pyhook_cache is None:
+			self.__class__._pyhook_cache = dict()
 		# sort by priority
 		for meth_name, meth_list in pyhook_cache.items():
 			self._pyhook_cache[meth_name] = [x[0] for x in sorted(meth_list, key=lambda x: x[1], reverse=True)]
