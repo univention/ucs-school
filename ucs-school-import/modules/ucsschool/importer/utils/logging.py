@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.models.utils import get_logger as get_lib_logger
+from ucsschool.lib.models.utils import get_logger as get_lib_logger, logger as lib_logger
 
 
 def get_logger():
@@ -47,3 +47,10 @@ def add_file_handler(filename):
 		info_filename = "{}.info".format(filename)
 	get_lib_logger("import", "DEBUG", filename)
 	return get_lib_logger("import", "INFO", info_filename)
+
+
+def move_our_handlers_to_lib_logger():
+	import_logger = get_logger()
+	for handler in import_logger.handlers:
+		lib_logger.addHandler(handler)
+		import_logger.removeHandler(handler)

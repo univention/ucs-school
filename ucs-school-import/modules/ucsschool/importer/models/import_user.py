@@ -144,6 +144,7 @@ class ImportUser(User):
 		self._lo = lo
 		if self.in_hook:
 			# prevent recursion
+			self.logger.warn("Running create() from within a hook.")
 			return self.create_without_hooks(lo, validate)
 		else:
 			return super(ImportUser, self).create(lo, validate)
@@ -483,6 +484,7 @@ class ImportUser(User):
 		self._lo = lo
 		if self.in_hook:
 			# prevent recursion
+			self.logger.warn("Running modify() from within a hook.")
 			return self.modify_without_hooks(lo, validate, move_if_necessary)
 		else:
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
