@@ -127,6 +127,8 @@ class CSVUser(User):
 		user = cls(**attrs)
 		user.name = user.guess_username(lo, date_format)
 		user.school = school
+		if not user.schools:
+			user.schools = [school]
 		if user.birthday:
 			try:
 				user.birthday = unformat_date(user.birthday, date_format)

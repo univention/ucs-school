@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (3.0.4-4) unstable; urgency=low
+
+  * Bug #41282: adapt to ou-overlapping users
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 22 Jul 2016 13:58:06 +0200
+
 ucs-school-umc-csv-import (3.0.4-3) unstable; urgency=low
 
   * bump
