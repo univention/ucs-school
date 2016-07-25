@@ -1,3 +1,9 @@
+ucs-school-umc-groups (6.0.3-2) unstable; urgency=medium
+
+  * Bug #40539: prevent non-school-users being added to working groups
+
+ -- Florian Best <best@univention.de>  Mon, 25 Jul 2016 13:12:09 +0200
+
 ucs-school-umc-groups (6.0.3-1) unstable; urgency=medium
 
   * Bug #41293: support school_class → school_classes API change

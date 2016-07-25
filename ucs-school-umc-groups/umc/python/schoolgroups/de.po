@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-27 12:28+0200\n"
+"POT-Creation-Date: 2016-07-25 12:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,17 +12,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolgroups/__init__.py:210
+#: umc/python/schoolgroups/__init__.py:242
 #, python-format
 msgid "Failed to create group (%s)."
 msgstr "Die Gruppe konnte nicht erstellt werden (%s)."
 
-#: umc/python/schoolgroups/__init__.py:185
+#: umc/python/schoolgroups/__init__.py:217
 #, python-format
 msgid "Failed to modify group (%s)."
 msgstr "Die Gruppe konnte nicht bearbeitet werden (%s)."
 
-#: umc/python/schoolgroups/__init__.py:207
+#: umc/python/schoolgroups/__init__.py:239
 #, python-format
 msgid "The workgroup %r already exists!"
 msgstr "Die Arbeitsgruppe %r existiert bereits!"
+
+#: umc/python/schoolgroups/__init__.py:202
+#: umc/python/schoolgroups/__init__.py:204
+#, python-format
+msgid "User %s does not belong to school %r."
+msgstr "Benutzer %s gehört nicht zur Schule %r."
+
+#: umc/python/schoolgroups/__init__.py:208
+#, python-format
+msgid "User %s is not a student."
+msgstr "Benutzer %s ist kein Schüler."
+
+#: umc/python/schoolgroups/__init__.py:206
+#, python-format
+msgid "User %s is not a teacher."
+msgstr "Benutzer %s ist kein Lehrer."
