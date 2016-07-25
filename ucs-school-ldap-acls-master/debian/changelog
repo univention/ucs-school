@@ -1,6 +1,7 @@
 ucs-school-ldap-acls-master (14.0.1-14) unstable; urgency=medium
 
-  * Bug #41725: generate ACL's dynamically
+  * Bug #41725: generate ACL's dynamically; add blacklist for certain object
+  	classes
 
  -- Florian Best <best@univention.de>  Fri, 22 Jul 2016 16:39:32 +0200
 

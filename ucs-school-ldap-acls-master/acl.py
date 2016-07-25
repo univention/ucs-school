@@ -32,6 +32,7 @@
 
 import re
 import sys
+import copy
 import ldap
 import ldap.dn
 import ldap.filter
@@ -53,17 +54,22 @@ class Object(object):
 
 class AccessRule(Object):
 
-	def __init__(self, dn=None, dnstyle=None, filter=None, attrs=None, by=None, comment=None):
+	def __init__(self, dn=None, dnstyle=None, filter=None, attrs=None, by=None, comment=None, blacklist=None):
 		self.comment = comment
 		if isinstance(attrs, basestring):
 			attrs = attrs.split(',')
-		self.acl = ACL(What(dn, attrs, filter, dnstyle), Bys(by))
+		self.acls = []
+		for oc in blacklist or []:
+			prevent_attr = Attrs([Attr('objectClass', value=oc)])
+			prevent_bys = [By(x.who, 'none', 'stop') for x in copy.deepcopy(Bys(by)).bys[:-1]] + [By('*', '+0', 'break')]
+			self.acls.append(ACL(What(dn, prevent_attr, filter, dnstyle), prevent_bys))
+		self.acls.append(ACL(What(dn, attrs, filter, dnstyle), Bys(by)))
 
 	def __str__(self):
 		accessrule = ''
 		if self.comment:
 			accessrule += '# %s\n' % (repr(self.comment).strip('"\''),)
-		accessrule += str(self.acl)
+		accessrule += ''.join(map(str, self.acls))
 		return accessrule
 
 
@@ -148,7 +154,7 @@ class Attrs(Object):
 			raise TypeError('attr=%r != <attrlist>[ val[/matchingRule][.<attrstyle>]=<attrval>]' % (self,))
 
 	def __str__(self):
-		return 'attrs="%s"' % (','.join(str(attr) for attr in self.attrs))
+		return 'attrs=%s' % (','.join(str(attr) for attr in self.attrs))
 
 
 class Attr(Object):
