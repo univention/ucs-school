@@ -3,7 +3,7 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-import
-fix: 14.0.15-13.289.201607221302
+fix: 14.0.15-14.290.201607251401
 desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
@@ -22,4 +22,6 @@ desc: |
    school to another (Bug #41609)
  * Changing user options to an invalid combination is now prevented
    (Bug #41351).
-bug: [40711,31187,41572,41775,41595,41609,41351]
+ * A bug was fixed, that didn't allow users to be created without having at
+   least one school class (Bug #41847).
+bug: [40711,31187,41572,41775,41595,41609,41351,41847]
