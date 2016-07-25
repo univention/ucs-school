@@ -298,6 +298,8 @@ class ImportUser(User):
 		elif self.school_classes and isinstance(self.school_classes, basestring):
 			res = defaultdict(list)
 			for a_class in self.school_classes.strip(",").split(","):
+				if not a_class:
+					continue
 				school, sep, cls_name = a_class.partition("-")
 				if sep and not cls_name:
 					raise InvalidClassName("Empty class name.")
