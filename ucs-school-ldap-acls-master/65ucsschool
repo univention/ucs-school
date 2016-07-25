@@ -1,295 +1,317 @@
 @!@
 # -*- coding: utf-8 -*-
-import re
+import sys
+sys.path.append('/usr/share/ucs-school-ldap-acls-master/')
+from acl import AccessRule, By, Who, GroupUniqueMember, Set, Group
 import os.path
+import univention.config_registry
 
-aclset = """
-# Master und Backup-Systeme duerfen die Einträge aller OUs lesen und schreiben
-access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember.expand="cn=DC Backup Hosts,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+configRegistry = univention.config_registry.ConfigRegistry()
+configRegistry.load()
 
-"""
+replacements = {
+	'DISTRICT': 'ou=[^,]+,' if configRegistry.is_true('ucsschool/ldap/district/enable', False) else '',
+	'PUPILS': configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler'),
+	'TEACHERS': configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer'),
+	'STAFF': configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter'),
+	'TEACHERS-STAFF': configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter'),
+	'ADMINS': configRegistry.get('ucsschool/ldap/default/container/admins', 'admins'),
+	'GRPADMINS': configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-'),
+	'EXAM': configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers'),
+	'SCHOOLOUATTRS': '@top,@organizationalUnit,@ucsschoolOrganizationalUnit,@univentionObject,@univentionPolicyReference',  # FIXME: extended attributes which adds object classes doesn't work
+	# FIXME: the following rules aren't enough but we need to support extended attributes/options
+	'CONTAINERATTRS': '!univentionShare,!univentionShareNFS,!univentionShareSamba,!SambaSamAccount',
+	'USERATTRS': '!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixGroup',
+	'GROUPATTRS': 'posixGroup,sambaGroupMapping,univentionGroup,univentionObject,top,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixAccount,!SambaSamAccount',
+	'SHAREATTRS': '!posixGroup,!posixAccount,!SambaSamAccount',
+	'DHCPSERVICEATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+	'DHCPATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+}
 
-def replace_ucr_variables(template):
-	variable_token = re.compile('@[$]@')
-	replacements = {
-		'DISTRICT': 'ou=[^,]+,' if configRegistry.is_true('ucsschool/ldap/district/enable', False) else '',
-		'PUPILS': configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler'),
-		'TEACHERS': configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer'),
-		'STAFF': configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter'),
-		'TEACHERS-STAFF': configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter'),
-		'ADMINS': configRegistry.get('ucsschool/ldap/default/container/admins', 'admins'),
-		'GRPADMINS': configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-'),
-		'EXAM': configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers'),
-		'SCHOOLOUATTRS': '@top,@organizationalUnit,@ucsschoolOrganizationalUnit,@univentionObject,@univentionPolicyReference',  # FIXME: extended attributes which adds object classes doesn't work
-		# FIXME: the following rules aren't enough but we need to support extended attributes/options
-		'CONTAINERATTRS': '!univentionShare,!univentionShareNFS,!univentionShareSamba,!SambaSamAccount',
-		'USERATTRS': '!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixGroup',
-		'GROUPATTRS': '!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixAccount,!SambaSamAccount',
-		'SHAREATTRS': '!posixGroup,!posixAccount,!SambaSamAccount',
-		'DHCPSERVICEATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
-		'DHCPATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
-	}
+else_zero_break = By('*', '+0', 'break')
+self_write = By('self', 'write')
+def group_factory(name):
+	def func(backref=None):
+		if backref is None:
+			return GroupUniqueMember("cn=%s,cn=ucsschool,cn=groups,%%(ldap/base)s" % (name,))
+		return GroupUniqueMember('cn=OU$%d-%s,cn=ucsschool,cn=groups,%%(ldap/base)s' % (backref, name), 'expand')
+	return func
 
-	while True:
-		i = variable_token.finditer(template)
-		try:
-			start = i.next()
-			end = i.next()
-			name = template[start.end():end.start()]
+dc_educational_group = group_factory('DC-Edukativnetz')
+member_educational_group = group_factory('Member-Edukativnetz')
+dc_administrative_group = group_factory('DC-Verwaltungsnetz')
+member_administrative_group = group_factory('Member-Verwaltungsnetz')
 
-			template = template[:start.start()] + replacements.get(name, '') + template[end.end():]
-		except StopIteration:
-			break
+def ou_group_admins(backref):
+	return By(GroupUniqueMember("cn=%(GRPADMINS)s$%%d,cn=ouadmins,cn=groups,%%%%(ldap/base)s" % replacements % (backref,), 'expand'), 'write')
 
-	return template
+dc_educational_group_write = By(dc_educational_group(), 'write', 'stop')
+member_educational_group_write = By(member_educational_group(), 'write', 'stop')
+dc_administrative_group_write = By(dc_administrative_group(), 'write', 'stop')
+member_administrative_group_write = By(member_administrative_group(), 'write', 'stop')
 
+dc_educational_group_none = By(dc_educational_group(), 'none', 'stop')
+member_educational_group_none  = By(member_educational_group(), 'none', 'stop')
+dc_administrative_group_none = By(dc_administrative_group(), 'none', 'stop')
+member_administrative_group_none = By(member_administrative_group(), 'none', 'stop')
 
-aclset += """
-# DC Slaves need write access to the members of the group Domain Computers
-access to dn.exact="cn=Domain Computers,cn=groups,@%@ldap/base@%@" attrs="uniqueMember,memberUid"
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+school_groups_write = [dc_administrative_group_write, member_administrative_group_write, dc_educational_group_write, member_educational_group_write, else_zero_break]
+school_groups_none= [dc_administrative_group_none, member_administrative_group_none, dc_educational_group_none, member_educational_group_none, else_zero_break]
 
-"""
+school_dc_group_write = [dc_administrative_group_write, dc_educational_group_write, else_zero_break]
+school_group_administrative_none = [By(dc_administrative_group(), 'none'), By(member_administrative_group(), 'none'), else_zero_break]
+school_group_educational_none = [By(dc_educational_group(), 'none'), By(member_educational_group(), 'none'), else_zero_break]
+
+print '# start 65ucsschool'
+
+print '# Master und Backup-Systeme duerfen die Einträge aller OUs lesen und schreiben'
+print AccessRule(dn='^(.+,)?ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', by=[
+	By(GroupUniqueMember('cn=DC Backup Hosts,cn=groups,%(ldap/base)s', 'expand'), 'write', 'stop'),
+	else_zero_break,
+])
+
+print '# DC Slaves need write access to the members of the group Domain Computers'
+print AccessRule(dn='cn=Domain Computers,cn=groups,%(ldap/base)s', attrs='uniqueMember,memberUid', by=school_dc_group_write)
 
 if os.path.exists('/var/lib/univention-ldap/local-schema/msprintconnectionpolicy.schema'):
-	aclset += """
-# Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects
-access to dn.base="cn=policies,cn=system,@%@ldap/base@%@" attrs=children
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
-
-access to dn.children="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))" attrs=entry,@univentionObject,@organizationalRole,@msPrintConnectionPolicy,@msGPOContainer
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
-
-"""
+	print '# Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects'
+	print AccessRule(dn='cn=policies,cn=system,%(ldap/base)s', attrs='children', by=school_dc_group_write)
+	print AccessRule(dn='cn=policies,cn=system,%(ldap/base)s', dnstyle='children', filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))",
+		attrs='entry,@univentionObject,@organizationalRole,@msPrintConnectionPolicy,@msGPOContainer',
+		by=school_dc_group_write,
+	)
 
 if os.path.exists('/var/lib/univention-ldap/local-schema/mswmi.schema'):
-	aclset += """
-# Slave DCs can read and write policy containers for MS WMI filter objects
-access to dn.base="cn=WMIPolicy,cn=system,@%@ldap/base@%@" attrs=children
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+	print '# Slave DCs can read and write policy containers for MS WMI filter objects'
+	print AccessRule(dn='cn=WMIPolicy,cn=system,%(ldap/base)s', attrs='children', by=school_dc_group_write)
+	print AccessRule(dn='cn=WMIPolicy,cn=system,%(ldap/base)s', dnstyle='children', filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))", attrs='entry,@univentionObject,@organizationalRole,@msWMISom', by=school_dc_group_write)
 
-access to dn.children="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))" attrs=entry,@univentionObject,@organizationalRole,@msWMISom
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+print '# Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern'
+print AccessRule(
+	filter="objectClass=ucsschoolStudent",
+	attrs='krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount',
+	by=[
+		By(Set('this/ucsschoolSchool & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool'), 'write'),
+		else_zero_break
+	]
+)
 
-"""
+# old rule for unmigrated systems
+print AccessRule(
+	dn='^uid=([^,]+),cn=%(PUPILS)s,cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex',
+	attrs='krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount',
+	by=[
+		By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=$2,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),
+		else_zero_break
+	]
+)
 
-aclset += """
-# Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern
-access to filter="objectClass=ucsschoolStudent" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
-	by set="this/ucsschoolSchool & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-	by * +0 break
+print '# Lehrer, Mitarbeiter und OU-Admins duerfen Raum-Gruppen anlegen und bearbeiten'
+print AccessRule(dn='^cn=raeume,cn=groups,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='children,entry', by=[
+	By(Set('[$1] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool', 'expand'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=$1,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-@$@# old rule for unmigrated systems@$@
-access to dn.regex="^uid=([^,]+),cn=@$@PUPILS@$@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
-	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print AccessRule(dn='^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', filter='(objectClass=univentionGroup)', attrs='entry,%(GROUPATTRS)s' % replacements, by=[
+	By(Set('[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool', 'expand'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=$2,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-# Lehrer, Mitarbeiter und OU-Admins duerfen Raum-Gruppen anlegen und bearbeiten
-access to dn.regex="^cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=children,entry
-	by set.expand="[$1] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$1,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print '# Rechner duerfen ihr Passwort aendern'
+# TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory''
+print AccessRule(dn='cn=.*,cn=server,cn=computers,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange', by=[self_write, else_zero_break,])
 
-access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(objectClass=univentionGroup)" attrs=entry,@$@GROUPATTRS@$@
-	by set.expand="[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print '# OU-Admins duerfen Passwoerter unterhalb von ...,cn=users,ou=... aendern'
+print AccessRule(dn='^uid=(.+),cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount', by=[
+	ou_group_admins(2),
+	else_zero_break,
+])
 
-# Rechner duerfen ihr Passwort aendern
-# TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory'
-access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange
-	by self write
-	by * +0 break
+print '# OU-Admins duerfen Passwoerter von Schülern, Lehrern und Mitarbeitern (mit Position ausserhalb der OU) aendern'
+print AccessRule(filter="(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStudent)(objectClass=ucsschoolStaff))", attrs='krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount', by=[
+	By(Set('this/ucsschoolSchool & ([ldap:///%(ldap/base)s?entryDN?sub?%28%26%28objectClass%3DucsschoolAdministratorGroup%29%28uniqueMember%3D]+user/entryDN+[%29])/ucsschoolSchool'), 'write'),
+	else_zero_break,
+])
 
-# OU-Admins duerfen Passwoerter unterhalb von ...,cn=users,ou=... aendern
-access to dn.regex="^uid=(.+),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+print '# Lehrer, Mitarbeiter und OU-Admins duerfen Arbeitsgruppen anlegen und aendern'
+print AccessRule(dn='^(cn=%(TEACHERS)s,|cn=%(PUPILS)s,|)cn=groups,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='children,entry', by=[
+	ou_group_admins(2),
+	By(Set('[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool', 'expand'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s),cn=users,ou=$2,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-# OU-Admins duerfen Passwoerter von Schülern, Lehrern und Mitarbeitern (mit Position ausserhalb der OU) aendern
-access to filter="(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStudent)(objectClass=ucsschoolStaff))" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
-	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?entryDN?sub?%28%26%28objectClass%3DucsschoolAdministratorGroup%29%28uniqueMember%3D]+user/entryDN+[%29])/ucsschoolSchool" write
-	by * +0 break
+print AccessRule(dn="^cn=([^,]+),(cn=%(TEACHERS)s,|cn=%(PUPILS)s,|)cn=groups,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$", dnstyle='regex', filter="(objectClass=univentionGroup)", attrs='entry,%(GROUPATTRS)s' % replacements, by=[
+	ou_group_admins(3),
+	By(Set('[$3] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool', 'expand'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=$3,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-# Lehrer, Mitarbeiter und OU-Admins duerfen Arbeitsgruppen anlegen und aendern
-access to dn.regex="^(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=children,entry
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by set.expand="[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print '# Lehrer, Mitarbeiter und OU-Admins duerfen Shares anlegen, Klassenshares aber nicht aendern'
+print AccessRule(dn="^cn=shares,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$", dnstyle='regex', attrs='children,entry', by=[
+	ou_group_admins(1),
+	By(Set('[$1] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%29])/ucsschoolSchool', 'expand'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s),cn=users,ou=$1,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-access to dn.regex="^cn=([^,]+),(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(objectClass=univentionGroup)" attrs=entry,@$@GROUPATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$3,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by set.expand="[$3] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$3,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print AccessRule(dn='^cn=([^,]+),cn=shares,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', filter="(objectClass=univentionShare)", attrs='entry,%(SHAREATTRS)s' % replacements, by=[
+	ou_group_admins(2),
+	By(Set('[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%29])/ucsschoolSchool', 'expand'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s),cn=users,ou=$2,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-# Lehrer, Mitarbeiter und OU-Admins duerfen Shares anlegen, Klassenshares aber nicht aendern
-access to dn.regex="^cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"  attrs=children,entry
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$1,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by set.expand="[$1] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$1,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print '# Lehrer, Mitarbeiter und OU-Admins muessen einige temporaere Objekte schreiben duerfen'
+print '# da keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt'
+print AccessRule(dn='^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,%(ldap/base)s$$', dnstyle='regex', filter="objectClass=lock", attrs='entry,@univentionObject,@lock', by=[
+	By(Set('([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-access to dn.regex="^cn=([^,]+),cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(objectClass=univentionShare)" attrs=entry,@$@SHAREATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by set.expand="[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print AccessRule(dn='^cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,%(ldap/base)s$$', dnstyle='regex', attrs='children,entry', by=[
+	By(Set('([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-# Lehrer, Mitarbeiter und OU-Admins muessen einige temporaere Objekte schreiben duerfen
-# da keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt
-access to dn.regex="^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="objectClass=lock" attrs="entry,@univentionObject,@lock"
-	by set="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print AccessRule(dn="cn=gidNumber,cn=temporary,cn=univention,%(ldap/base)s", attrs='univentionLastUsedValue', by=[
+	By(Set('([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-access to dn.regex="^cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=children,entry
-	by set="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print AccessRule(dn="cn=uidNumber,cn=temporary,cn=univention,%(ldap/base)s", attrs='univentionLastUsedValue', by=[
+	By(Set('([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),  # old rule!
+	else_zero_break,
+])
 
-access to dn.base="cn=gidNumber,cn=temporary,cn=univention,@%@ldap/base@%@" attrs=univentionLastUsedValue
-	by set="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print '# OU-Admins duerfen MAC-Adressen im Rechner- und DHCP-Objekt aendern'
+print AccessRule(dn='^cn=([^,]+),cn=computers,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='macAddress', by=[
+	ou_group_admins(2),
+	else_zero_break,
+])
 
-access to dn.base="cn=uidNumber,cn=temporary,cn=univention,@%@ldap/base@%@" attrs=univentionLastUsedValue
-	by set="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-@$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
+print AccessRule(dn='^cn=([^,]+),cn=dhcp,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='entry,children,@univentionObject,@univentionPolicyReference,%(DHCPSERVICEATTRS)s' % replacements, by=[
+	ou_group_admins(2),
+	else_zero_break,
+])
+print AccessRule(dn='^cn=([^,]+),cn=([^,]+),cn=dhcp,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='entry,@univentionObject,@univentionPolicyReference,%(DHCPATTRS)s' % replacements, by=[
+	ou_group_admins(3),
+	else_zero_break,
+])
 
-# OU-Admins duerfen MAC-Adressen im Rechner- und DHCP-Objekt aendern
-access to dn.regex="^cn=([^,]+),cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=macAddress
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+print '# OU-Admins duerfen den DC-Slave und Memberserver joinen (benoetigt Passwortaenderung)'
+print AccessRule(dn='^cn=.*,cn=server,cn=computers,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount', by=[
+	ou_group_admins(1),
+	else_zero_break,
+])
 
-access to dn.regex="^cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,children,@univentionObject,@univentionPolicyReference,@$@DHCPSERVICEATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
-access to dn.regex="^cn=([^,]+),cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@univentionObject,@univentionPolicyReference,@$@DHCPATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$3,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+print AccessRule(dn='^zoneName=[^,]+,cn=dns,%(ldap/base)s$$', dnstyle='regex', attrs='sOARecord', by=[
+	By(Who(dn='^uid=([^,]+),cn=%(ADMINS)s,cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), 'write'),
+	else_zero_break,
+])
 
-# OU-Admins duerfen den DC-Slave und Memberserver joinen (benoetigt Passwortaenderung)
-access to dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
-	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$1,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+print '# domaincontroller slaves and memberservers of management group are not allowed to replicate pupils and teachers'
+print AccessRule(dn='^.+,cn=(%(TEACHERS)s|%(PUPILS)s),cn=users,ou=[^,]+,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', by=school_group_administrative_none)
+print AccessRule(filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff))))", by=school_group_administrative_none)
 
-access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
-	by dn.regex="^uid=([^,]+),cn=@$@ADMINS@$@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * +0 break
 
-# domaincontroller slaves and memberservers of management group are not allowed to replicate pupils and teachers
-access to dn.regex="^.+,cn=(@$@TEACHERS@$@|@$@PUPILS@$@),cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by * +0 break
-
-access to filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff))))"
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by * +0 break
-
-# domaincontroller slaves and memberservers of educational group are not allowed to replicate staff users
-access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by * +0 break
-
-access to filter="(&(objectClass=ucsschoolStaff)(!(objectClass=ucsschoolTeacher))(!(objectClass=ucsschoolAdministrator)))"
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by * +0 break
+print '# domaincontroller slaves and memberservers of educational group are not allowed to replicate staff users'
+print AccessRule(dn='^.+,cn=%(STAFF)s,cn=users,ou=[^,]+,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', by=school_group_educational_none)
+print AccessRule(filter="(&(objectClass=ucsschoolStaff)(!(objectClass=ucsschoolTeacher))(!(objectClass=ucsschoolAdministrator)))", by=school_group_educational_none)
 
 # FIXME: this rule allows to read all passwords underneath of all OU's instead of only the password belonging to the OU; explain why or fix it
 # TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory'
-# Memberserver duerfen Passwoerter aller Objekte unterhalb einer Schule lesen
-access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange
-	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by * +0 break
+print '# Memberserver duerfen Passwoerter aller Objekte unterhalb einer Schule lesen'
+print AccessRule(dn='^(.+,)?ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange', by=[
+	By(member_administrative_group(), '+rscxd'),
+	By(member_educational_group(), '+rscxd'),
+	else_zero_break,
+])
 
-# Alle DC-Slaves muessen alle Benutzercontainer und Gruppen jeder Schule lesen koennen
-access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=ucsschoolOrganizationalUnit" attrs=entry,@$@SCHOOLOUATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
-	by * +0 break
+print '# Alle DC-Slaves muessen alle Benutzercontainer und Gruppen jeder Schule lesen koennen'
+print AccessRule(dn='^ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', filter="objectClass=ucsschoolOrganizationalUnit", attrs='entry,%(SCHOOLOUATTRS)s' % replacements, by=[
+	By(dc_administrative_group(1), 'write'),
+	By(dc_educational_group(1), 'write'),
+	By(Who(dn='^cn=.*,cn=server,cn=computers,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), '+rscxd'),
+	else_zero_break,
+])
 
-access to dn.regex="^cn=(users|groups|@$@EXAM@$@),ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,children,@$@CONTAINERATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
-	by * +0 break
+print AccessRule(dn='^cn=(users|groups|%(EXAM)s),ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='entry,children,%(CONTAINERATTRS)s' % replacements, by=[
+	By(dc_administrative_group(2), 'write'),
+	By(dc_educational_group(2), 'write'),
+	By(Who(dn='^cn=.*,cn=server,cn=computers,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), '+rscxd'),
+	else_zero_break,
+])
 
-access to dn.regex="^([^,]+),cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@GROUPATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
-	by * +0 break
+print AccessRule(dn='^([^,]+),cn=groups,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='entry,%(GROUPATTRS)s' % replacements, by=[
+	By(dc_administrative_group(2), 'write'),
+	By(dc_educational_group(2), 'write'),
+	By(Who(dn='^cn=.*,cn=server,cn=computers,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), '+rscxd'),
+	else_zero_break,
+])
 
-access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,children,@$@CONTAINERATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
-	by * +0 break
+print AccessRule(dn='^cn=(%(PUPILS)s|%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='entry,children,%(CONTAINERATTRS)s' % replacements, by=[
+	By(dc_administrative_group(2), 'write'),
+	By(dc_educational_group(2), 'write'),
+	By(Who(dn='^cn=.*,cn=server,cn=computers,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), '+rscxd'),
+	else_zero_break,
+])
 
-# DC-Slaves muessen die Benutzer ihrer Schule lesen und schreiben duerfen
-access to dn.regex="^uid=([^,]+),cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@USERATTRS@$@
-	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
-	by * +0 break
-access to dn.regex="^uid=([^,]+),cn=@$@EXAM@$@,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@USERATTRS@$@
-	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
-	by * +0 break
+print '# DC-Slaves muessen die Benutzer ihrer Schule lesen und schreiben duerfen'
+print AccessRule(dn='^uid=([^,]+),cn=(%(PUPILS)s|%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='entry,%(USERATTRS)s' % replacements, by=[
+	By(Set('([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s])/uniqueMember & user'), 'write'),
+	else_zero_break,
+])
+print AccessRule(dn='^uid=([^,]+),cn=%(EXAM)s,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='entry,%(USERATTRS)s' % replacements, by=[
+	By(Set('([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s])/uniqueMember & user'), 'write'),
+	else_zero_break,
+])
 
-# Schul-Slave-Server duerfen nur Eintraege ihrer OU lesen und schreiben (Passwortaenderungen etc.)
-# Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
-access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by set.expand="[ldap:///ou=$2,@%@ldap/base@%@?ou?base?%28%21%28objectClass%3DucsschoolOrganizationalUnit%29%29]/ou" +0 break
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionLDAPACL/univentionLDAPAccessWrite.expand="ou=$2,@$@DISTRICT@$@@%@ldap/base@%@" write
-	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd continue
-	by set.expand="[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" +rscxd continue
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +0 stop
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +0 stop
-	by set.expand="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" +0 stop
-	by dn.regex="^.*,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd break
-	by dn.regex="^.*,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +0 stop
-	by * +0 break
+print '# Schul-Slave-Server duerfen nur Eintraege ihrer OU lesen und schreiben (Passwortaenderungen etc.)'
+print '# Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts'
+print AccessRule(dn='^(.+,)?ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', by=[
+	By(Set('[ldap:///ou=$2,%(ldap/base)s?ou?base?%28%21%28objectClass%3DucsschoolOrganizationalUnit%29%29]/ou', 'expand'), '+0', 'break'),
+	By(dc_administrative_group(2), 'write'),
+	By(dc_educational_group(2), 'write'),
+	By(Group('ou=$2,%(DISTRICT)s%%(ldap/base)s' % replacements, groupstyle='expand', objectclass='univentionLDAPACL', attrname='univentionLDAPAccessWrite'), 'write'),
+	By(Who(dn='^uid=([^,]+),cn=(%(TEACHERS)s|%(TEACHERS-STAFF)s|%(STAFF)s|%(ADMINS)s),cn=users,ou=$2,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), '+rscxd', 'continue'),
+	By(Set('[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool', 'expand'), '+rscxd', 'continue'),
+	By(dc_administrative_group(), '+0', 'stop'),
+	By(dc_educational_group(), '+0', 'stop'),
+	By(Set('([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool', 'expand'), '+0', 'stop'),
+	By(Who(dn='^.*,ou=$2,%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), '+rscxd', 'break'),
+	By(Who(dn='^.*,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex'), '+0', 'stop'),
+	else_zero_break,
+])
 
-# Slave-Controller duerfen Klassen-Gruppen bearbeiten (AUSNAHME! Wird fuer Lehrerzuordnung in UMC benoetigt!)
-access to dn.regex="^cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=children,entry
-	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+print '# Slave-Controller duerfen Klassen-Gruppen bearbeiten (AUSNAHME! Wird fuer Lehrerzuordnung in UMC benoetigt!)'
+print AccessRule(dn='^cn=klassen,cn=%(PUPILS)s,cn=groups,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', attrs='children,entry', by=[
+	By(dc_administrative_group(1), 'write'),
+	By(dc_educational_group(1), 'write'),
+	else_zero_break,
+])
 
-access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(objectClass=univentionGroup)" attrs=entry,@$@GROUPATTRS@$@
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
+print AccessRule(dn='^cn=([^,]+),cn=klassen,cn=%(PUPILS)s,cn=groups,ou=([^,]+),%(DISTRICT)s%%(ldap/base)s$$' % replacements, dnstyle='regex', filter="(objectClass=univentionGroup)", attrs='entry,%(GROUPATTRS)s' % replacements, by=[
+	By(dc_administrative_group(2), 'write'),
+	By(dc_educational_group(2), 'write'),
+	else_zero_break,
+])
 
-# Schulserver duerfen die Passwoerter aller globalen Objekte replizieren
-access to dn.regex="^(.+,)?cn=(users|kerberos|computers),@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by * +0 break
-"""
+print '# Schulserver duerfen die Passwoerter aller globalen Objekte replizieren'
+print AccessRule(dn='^(.+,)?cn=(users|kerberos|computers),%(ldap/base)s$$', dnstyle='regex', by=[
+	By(dc_administrative_group(), '+rscxd'),
+	By(member_administrative_group(), '+rscxd'),
+	By(dc_educational_group(), '+rscxd'),
+	By(member_educational_group(), '+rscxd'),
+	else_zero_break,
+])
 
-print replace_ucr_variables(aclset)
+print '# end 65ucsschool'
 @!@

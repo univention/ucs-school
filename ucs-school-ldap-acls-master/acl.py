@@ -75,7 +75,7 @@ class ACL(Object):
 		self.bys = bys and Bys.new(bys)
 
 	def __str__(self):
-		acl = 'access to %s\n' % (self.what,)
+		acl = 'access to%s\n' % (self.what,)
 		if self.bys:
 			acl += '\t%s\n' % (self.bys,)
 		acl += '\n'
@@ -95,7 +95,7 @@ class What(Object):
 	def __str__(self):
 		what = ''
 		if self.dn:
-			what += str(self.dn)
+			what += ' %s' % (self.dn,)
 		if self.filter:
 			what += ' %s' % (self.filter,)
 		if self.attrs:
@@ -112,7 +112,7 @@ class DN(Object):
 	def __init__(self, dn, dnstyle=None):
 		self.dnpattern = dn
 		if '%' in self.dnpattern:
-			self.dnpattern = self.dnpattern % ucr
+			self.dnpattern = self.dnpattern % dict(ucr.items())
 		self.dnstyle = (dnstyle or 'base').lower()
 		if self.dnstyle not in ('exact', 'base', 'baseobject', 'regex', 'one', 'onelevel', 'sub', 'subtree', 'children'):
 			raise TypeError('dnstyle=%r != {{exact|base(object)}|regex|one(level)|sub(tree)|children}' % (self.dnstyle,))
@@ -265,24 +265,30 @@ class Who(Object):
 		<pattern>=<attrname>]
 	"""
 
-	def __init__(self, who=None, dn=None, dnstyle=None, dnattr=None, modifier=None, group=None, objectclass=None, attrname=None, groupstyle=None):
+	def __init__(self, who=None, dn=None, dnstyle=None, dnattr=None, modifier=None, group=None, objectclass=None, attrname=None, groupstyle=None, set=None, setstyle=None):
 		# TODO: more validation + implement the rest
 		self.who = who
 		self.dn = dn
 		if self.dn and '%' in self.dn:
-			self.dn = self.dn % ucr
+			self.dn = self.dn % dict(ucr.items())
 		self.dnstyle = dnstyle
 		self.dnattr = dnattr
 		self.modifier = modifier
 		self.group = group
 		if self.group and '%' in self.group:
-			self.group = self.group % ucr
+			self.group = self.group % dict(ucr.items())
 		self.groupstyle = groupstyle
 		self.objectclass = objectclass
 		self.attrname = attrname
 		self.groupstyle = groupstyle
+		self.set = set
+		#if self.set and '%' in self.set:
+		#	self.set = self.set % dict(ucr.items())
+		self.setstyle = setstyle
 		if self.who and self.who not in ('*', 'anonymous', 'users', 'self', 'realanonymous', 'realusers', 'realself'):
-			raise TypeError()
+			raise TypeError('who=%r != ...' % (self.who,))
+		if self.setstyle and self.setstyle not in ('exact', 'expand'):
+			raise TypeError('setstyle=%r != {exact|expand}' % (self.setstyle,))
 
 	def __str__(self):
 		if self.who:
@@ -305,8 +311,26 @@ class Who(Object):
 				who += '.%s' % (self.groupstyle,)
 			who += '="%s"' % (self.group,)
 			return who
+		if self.set:
+			who = 'set'
+			if self.setstyle:
+				who += '.%s' % (self.setstyle,)
+			who += '="%s"' % (self.set,)
+			return who
 
 		raise RuntimeError(self.__dict__)
+
+
+class Set(Who):
+
+	def __init__(self, set, setstyle=None):
+		super(Set, self).__init__(set=set, setstyle=setstyle)
+
+
+class Group(Who):
+
+	def __init__(self, dn, groupstyle=None, objectclass=None, attrname=None):
+		super(Group, self).__init__(group=dn, objectclass=objectclass, attrname=attrname, groupstyle=groupstyle)
 
 
 class GroupUniqueMember(Who):
