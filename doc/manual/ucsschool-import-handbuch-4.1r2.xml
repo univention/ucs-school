@@ -491,7 +491,7 @@ cat my_config.json | json_xs
 <!-- csv:incell-delimiter -->
 							<row>
 								<entry morerows="1"><varname>csv:incell- \ delimiter</varname></entry>
-								<entry>Enthält Informationen darüber welches Zeichen <emphasis>innerhalb</emphasis> einer Zelle zwei Daten trennt. Z.B. bei der Angabe von mehreren Telefonnummern. Es kann ein Standard definiert werden und eine Konfiguration pro UDM Attribut (mit dem Namen des Schlüssels in <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>).</entry>
+								<entry>Enthält Informationen darüber welches Zeichen <emphasis>innerhalb</emphasis> einer Zelle zwei Daten trennt. Z.B. bei der Angabe von mehreren Telefonnummern. Es kann ein Standard definiert werden und eine Konfiguration pro &ucsUDM; Attribut (mit dem Namen des Schlüssels in <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>).</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>object</classname>): <literal>{"default": ..}</literal></entry>
@@ -515,7 +515,7 @@ cat my_config.json | json_xs
 <!-- scheme -->
 							<row>
 								<entry morerows="1"><varname>scheme</varname></entry>
-								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den UCS Benutzervorlagen (siehe <biblioref linkend="ucs-handbuch"/>) verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>recordUID</property> und <property>username</property> können Konfigurationen für beliebige UDM Attribute hinterlegt werden.</simpara></entry>
+								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den UCS Benutzervorlagen (siehe <biblioref linkend="ucs-handbuch"/>) verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>recordUID</property> und <property>username</property> können Konfigurationen für beliebige &ucsUDM; Attribute hinterlegt werden.</simpara></entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>object</classname>): <literal>{"email": .., "recordUID": .., "username": {..}}</literal></entry>
@@ -564,7 +564,7 @@ Zu den oben beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[
 <!-- scheme:<udm attribute name> -->
 							<row>
 								<entry morerows="1"><varname>scheme:&lt;udm attribute name&gt;</varname></entry>
-								<entry>UDM Attribute, die aus einem Schema erzeugt werden sollen. Der Schlüssel braucht nicht in <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link> vorzukommen.</entry>
+								<entry>&ucsUDM; Attribute, die aus einem Schema erzeugt werden sollen. Der Schlüssel braucht nicht in <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link> vorzukommen.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
@@ -580,7 +580,7 @@ Zu den oben beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[
 <!-- mandatory_attributes -->
 							<row>
 								<entry morerows="1"><varname>mandatory_ \ attributes</varname></entry>
-								<entry>Liste mit UDM Attribut Namen die vom Import gesetzt werden müssen.</entry>
+								<entry>Liste mit &ucsUDM; Attribut Namen die vom Import gesetzt werden müssen.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>list</classname>): <literal>["firstname", "lastname", "name", "school"]</literal></entry>
@@ -868,7 +868,7 @@ udm users/user
 				Aus diesem Grund unterstützt die Importsoftware die Erzeugung von Attributen mit Hilfe von konfigurierbaren Schemata.
 				Das Format ist das gleiche wie das bei den Benutzervorlagen eingesetzte (siehe <biblioref linkend="ucs-handbuch"/>).
 				Es existieren dedizierte Konfigurationsschlüssel für die Attribute <property>email</property>, <property>recordUID</property> und <property>username</property>.
-				Darüber hinaus können Schemata für beliebige UDM Attribute (mit dem Namen des Attributs als Schlüssel) hinterlegt werden.
+				Darüber hinaus können Schemata für beliebige &ucsUDM; Attribute (mit dem Namen des Attributs als Schlüssel) hinterlegt werden.
 			</para>
 			<para>
 				Im folgenden Beispiel würde allen aus den Eingabedaten übernommenen Telefonnummern die Ländervorwahl vorangestellt (und die führende 0 der Städtevorwahl entfernt), sowie die E-Mail-Adresse aus Vor- und Nachname berechnet:
@@ -1013,7 +1013,7 @@ udm users/user
 							<row>
 								<entry id="extending:import_user_class:importuser:schools"><varname>schools</varname></entry>
 								<entry>string / liste</entry>
-								<entry>Alle Schulen des Benutzers inkl. der primären Schule, ein kommaseparierter String oder als Liste von Strings.</entry>
+								<entry>Alle Schulen des Benutzers inkl. der primären Schule, als ein kommaseparierter String oder als Liste von Strings.</entry>
 							</row>
 							<row>
 								<entry><varname>firstname</varname></entry>
@@ -1088,7 +1088,7 @@ udm users/user
 							<row>
 								<entry><varname>dn</varname></entry>
 								<entry>string</entry>
-								<entry>DN den Benutzers im LDAP, wenn er jetzt gespeichert würde.</entry>
+								<entry>DN des Benutzers im LDAP, wenn er jetzt gespeichert würde.</entry>
 							</row>
 							<row>
 								<entry><varname>entry_count</varname></entry>
@@ -1109,14 +1109,6 @@ udm users/user
 					</tgroup>
 				</table>
 			</para>
-			<caution>
-				<para>
-				Falls das Benutzerobjekt in einem <foreignphrase>post-Hook</foreignphrase> geändert werden soll, so ist es möglich <methodname>user.modify_without_hooks()</methodname> auszuführen, aber generell sollte ein erneutes Modifizieren nach dem Speichern vermieden werden.
-				</para>
-				<para>
-				Die Methoden <methodname>create()</methodname>, <methodname>modify()</methodname> und <methodname>delete()</methodname> sollten in Hooks nie ausgeführt werden, da dies zu einer Rekursion führen kann.
-				</para>
-			</caution>
 			<para>
 			</para>
 		  </section>
@@ -1217,6 +1209,14 @@ class MyHook(UserPyHook):
 				Dies tut <methodname>user.get_udm_object()</methodname>, welches als Argument ein LDAP-Verbindungsobjekt erwartet.
 				Dieses ist im Hook-Objekt an <property>self.lo</property> gespeichert.
 			</para>
+			<caution>
+				<para>
+					Falls das Benutzerobjekt in einem <foreignphrase>post-Hook</foreignphrase> geändert werden soll, so ist es möglich <methodname>user.modify_without_hooks()</methodname> auszuführen, aber generell sollte ein erneutes Modifizieren <emphasis>nach</emphasis> dem Speichern vermieden werden.
+				</para>
+				<para>
+					Die Methoden <methodname>create()</methodname>, <methodname>modify()</methodname> und <methodname>delete()</methodname> sollten in Hooks nie ausgeführt werden, da dies zu einer Rekursion führen kann.
+				</para>
+			</caution>
 		  </section>
 
 		<section id="extending:subclassing">
@@ -1452,7 +1452,7 @@ class MyUserImportFactory(DefaultUserImportFactory):
 			Der Klassenarbeitsmodus und die Materialverteilung arbeiten grundsätzlich so, dass sie auf dem Schulserver an dem sie veranlasst wurden, die hochgeladenen Dateien in die Heimatverzeichnisse der betroffenen Benutzer kopieren. Befindet sich ein Heimatverzeichnis nicht auf dem Server, scheitert dies.
 		</para>
 		<para>
-			Windows-Clients verwenden das LDAP-Attribut <property>homeDirectory</property> (LDAP-Attribut <property>sambaHomePath</property> bzw. UDM-Eigenschaft <property>sambahome</property>) um beim Einloggen das Netzwerklaufwerk mit den Dokumenten des Benutzers einzubinden.
+			Windows-Clients verwenden das LDAP-Attribut <property>homeDirectory</property> (LDAP-Attribut <property>sambaHomePath</property> bzw. &ucsUDM;-Eigenschaft <property>sambahome</property>) um beim Einloggen das Netzwerklaufwerk mit den Dokumenten des Benutzers einzubinden.
 			Wenn die primäre Schule eines Benutzers eine andere ist, als die, an der er gerade eine Klassenarbeit schreiben soll, so existiert sein Heimatverzeichnis dort unter Umständen nicht.
 		</para>
 		<para>
