@@ -20,6 +20,7 @@ from univention.testing.ucsschool import UCSTestSchool
 from univention.testing.udm import UCSTestUDM
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.utils import get_ldap_connection
+from univention.testing.strings import random_name
 
 PASSWORD = 'univention'
 
@@ -32,35 +33,36 @@ def create_environment(self, udm, ucr):
 	env.master_dn = lo.searchDn(filter='univentionObjectType=computers/domaincontroller_master')[0]
 	env.backup_dn = udm.create_object(
 		"computers/domaincontroller_backup",
-		name = 'schoolTestBackup',
+		name = random_name(),
 		password=PASSWORD,
 		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
 		domain = ucr.get('domainname'),
 		)
 	env.slave_dn = udm.create_object(
 		"computers/domaincontroller_slave",
-		name = 'schoolTestSlave',
+		name = random_name(),
 		password=PASSWORD,
 		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
 		domain = ucr.get('domainname'),
 		)
+	slave2_name = random_name()
 	env.slave_dn2 = udm.create_object(
 		"computers/domaincontroller_slave",
-		name = 'schoolTestSlave2',
+		name = slave2_name,
 		password=PASSWORD,
 		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
 		domain = ucr.get('domainname'),
 		)
 	env.member_dn = udm.create_object(
 		"computers/memberserver",
-		name = 'schoolTestMember',
+		name = random_name(),
 		password=PASSWORD,
 		position = "cn=computers,%(ldap/base)s" % ucr,
 		domain = ucr.get('domainname'),
 		)
 	env.winclient_dn = udm.create_object(
 		"computers/windows",
-		name = 'schoolTestWinDom',
+		name = random_name(),
 		password=PASSWORD,
 		position = "cn=computers,%(ldap/base)s" % ucr,
 		)
@@ -68,7 +70,7 @@ def create_environment(self, udm, ucr):
 	env.schoolA = Environment()
 	env.schoolB = Environment()
 	for suffix, school in (('A', env.schoolA), ('B', env.schoolB),):
-		hostname = ucr.get('hostname') if suffix == 'A' else 'schoolTestSlave2'
+		hostname = ucr.get('hostname') if suffix == 'A' else slave2_name
 		admin_hostname = 'adminslave%s' % (suffix,)
 		school.name, school.dn = self.create_ou(ou_name='school%s' % (suffix,), name_edudc=hostname, name_admindc=admin_hostname)
 
@@ -108,6 +110,8 @@ def main():
 
 		def get_connections():
 			yield univention.uldap.getMachineConnection(ldap_master=True)
+			if ucr.get('server/role') != 'domaincontroller_master':
+				return
 			for dn in (
 				env.master_dn,
 				env.backup_dn,
