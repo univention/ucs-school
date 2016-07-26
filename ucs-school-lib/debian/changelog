@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.20-14) unstable; urgency=low
+
+  * Bug #40705: add support for ldap server and port arguments to shell
+    function servers_school_ous
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Jul 2016 11:47:08 +0200
+
 ucs-school-lib (9.0.20-13) unstable; urgency=low
 
   * Bug #41609: empty school_class attribute is always dict, not None.

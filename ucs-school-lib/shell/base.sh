@@ -92,7 +92,7 @@ school_dn() {
 }
 
 servers_school_ous() {
-	# syntax: servers_school_ous [hostdn]
+	# syntax: servers_school_ous [-d hostdn] [-h ldap server] [-p ldap port]
 	#
 	# Tries to determine all LDAP DNs of the OUs this host is responsible for.
 	# The OU DN is retrieved from the local LDAP. If no DN has been passed to
@@ -104,23 +104,39 @@ servers_school_ous() {
 	# $ servers_school_ous
 	# ou=bar,dc=example,dc=com
 	#
-	# $ servers_school_ous cn=myslave,cn=dc,cn=server,cn=computers,ou=bar,dc=example,dc=com
+	# $ servers_school_ous -d cn=myslave,cn=dc,cn=server,cn=computers,ou=bar,dc=example,dc=com
 	# ou=bar,dc=example,dc=com
 	# ou=foo,dc=example,dc=com
+	#
+	# $ servers_school_ous -h $(ucr get ldap/master) -p $(ucr get ldap/master/port)
+	# ou=bar,dc=example,dc=com
 
-	local ldap_hostdn ldap_base
+	local ldap_hostdn ldap_base ldap_server ldap_port
 
-	if [ -n "$1" ] ; then
-		ldap_hostdn="$1"
-	else
-		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
-	fi
 	ldap_base="$(/usr/sbin/univention-config-registry get ldap/base)"
+	ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
+	ldap_server=""
+	ldap_port=""
+
+	while (( "$#" )); do
+		if [[ "$1" == "-d" ]]; then
+			ldap_hostdn="$2"
+		elif [ "$1" == "-h" ] ; then
+			ldap_server="-h $2"
+		elif [ "$1" == "-p" ] ; then
+			ldap_port="-p $2"
+		else
+			echo "Unknown argument \"$1\"."
+			echo "Usage: servers_school_ous [-d hostdn] [-h ldap server] [-p ldap port]"
+			return 1
+		fi
+		shift 2
+	done
 
 	res=""
-	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+	for oudn in $(univention-ldapsearch $ldap_server $ldap_port -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
 		ouname="$(school_ou "$oudn")"
-		if univention-ldapsearch -xLLL "(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=${ldap_hostdn}))" dn | grep -q "^dn: "; then
+		if univention-ldapsearch $ldap_server $ldap_port -xLLL "(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=${ldap_hostdn}))" dn | grep -q "^dn: "; then
 			res="$res $oudn"
 		fi
 	done
