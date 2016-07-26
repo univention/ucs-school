@@ -965,6 +965,39 @@ class CLI_Import_v2_Tester(object):
 			person.verify()
 		self.log.info('Test was successful.\n\n\n')
 
+	def test_create_with_empty_class_name(self):
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			import user with role <role> and special username scheme
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r and empty class name.', role)
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('user_role', role)
+
+			person = Person(self.ou_A.name, role)
+			person.update(school_classes={})
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			# check for new users in LDAP
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			if len(new_users) != 1:
+				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				utils.fail('Stopping here')
+			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+			if (role == 'student' and len(removed_users) != 0) or (role != 'student' and len(removed_users) != 1):
+				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				utils.fail('Stopping here')
+
+			self.log.info('Test was successful.\n\n\n')
 
 	def run(self):
 		try:
@@ -987,6 +1020,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_iso_birthday()
 					self.test_lowercase_username_with_counter()
 					self.test_create_modify_with_extended_attribute(udm)
+					self.test_create_with_empty_class_name()
 		finally:
 			self.cleanup()
 

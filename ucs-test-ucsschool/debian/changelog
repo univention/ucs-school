@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.13-6) unstable; urgency=low
+
+  * Bug #41847: add test for importing empty class names
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Jul 2016 10:53:33 +0200
+
 ucs-test-ucsschool (3.0.13-5) unstable; urgency=low
 
   * Bug #41282: fix import_via_python_api (workaround for 'schools' attribute
