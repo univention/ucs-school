@@ -1063,7 +1063,7 @@ udm users/user
 							<row>
 								<entry><varname>udm_properties</varname></entry>
 								<entry>object</entry>
-								<entry>Alle anderen UDM Attribute die in den Eingabedaten enthalten waren werden in dieses Python <wordasword>dictionary</wordasword> gespeichert.</entry>
+								<entry><simpara>Alle anderen &ucsUDM; Attribute die in den Eingabedaten enthalten waren, werden in dieses Python <wordasword>dictionary</wordasword> gespeichert.</simpara><simpara>Oben stehende Attribute und ihre &ucsUDM;-Pendants (<varname>name</varname> &rarr; <varname>username</varname>, <varname>email</varname> &rarr; <varname>mailPrimaryAddress</varname>) sind hier nicht erlaubt.</simpara></entry>
 							</row>
 						</tbody>
 					</tgroup>
