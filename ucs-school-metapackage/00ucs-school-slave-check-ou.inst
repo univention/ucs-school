@@ -45,7 +45,7 @@ if [ -z "$OU" ]; then
 	exit 1
 fi
 
-if [ -z  "$(servers_school_ous)" ]; then
+if [ -z  "$(servers_school_ous -h $(ucr get ldap/master) -p $(ucr get ldap/master/port))" ]; then
 	echo "ERROR: This host has no permission for the OU he is stored in."
 	exit 1
 fi

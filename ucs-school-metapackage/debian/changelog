@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.1-4) unstable; urgency=low
+
+  * Bug #40705: use ldap of dc master in first join script
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Jul 2016 11:50:14 +0200
+
 ucs-school-metapackage (9.0.1-3) unstable; urgency=low
 
   * Bug #41300: deactivate autosearch in school related UMC modules in
