@@ -293,14 +293,13 @@ class ImportUser(User):
 		"""
 		if isinstance(self, Staff):
 			self.school_classes = dict()
-		elif self.school_classes and isinstance(self.school_classes, dict):
+		elif isinstance(self.school_classes, dict):
 			pass
-		elif self.school_classes and isinstance(self.school_classes, basestring):
+		elif isinstance(self.school_classes, basestring):
 			res = defaultdict(list)
-			for a_class in self.school_classes.strip(",").split(","):
-				if not a_class:
-					continue
-				school, sep, cls_name = a_class.partition("-")
+			self.school_classes = self.school_classes.strip(" \n\r\t,")
+			for a_class in [klass.strip() for klass in self.school_classes.split(",") if klass.strip()]:
+				school, sep, cls_name = [x.strip() for x in a_class.partition("-")]
 				if sep and not cls_name:
 					raise InvalidClassName("Empty class name.")
 				if not sep:
@@ -311,7 +310,9 @@ class ImportUser(User):
 					school = self.school
 				cls_name = self.normalize(cls_name)
 				school = self.normalize(school)
-				res[school].append("{}-{}".format(school, cls_name))
+				klass_name = "{}-{}".format(school, cls_name)
+				if klass_name not in res[school]:
+					res[school].append(klass_name)
 			self.school_classes = dict(res)
 		elif self.school_classes is None:
 			self.school_classes = dict()
