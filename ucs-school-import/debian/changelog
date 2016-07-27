@@ -1,3 +1,9 @@
+ucs-school-import (14.0.15-18) unstable; urgency=low
+
+  * Add migration code for existing legacy import users (Bug #41862).
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 27 Jul 2016 12:02:03 +0200
+
 ucs-school-import (14.0.15-17) unstable; urgency=low
 
   * Bug #41861: create module to ease interactive use on import classes
