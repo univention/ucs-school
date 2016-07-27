@@ -1,3 +1,11 @@
+ucs-school-import (14.0.15-17) unstable; urgency=low
+
+  * Bug #41861: create module to ease interactive use on import classes
+    To use, run "from ucsschool.importer.utils.shell import *" from a
+    Python shell. Read comment at top about configuration.
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 27 Jul 2016 11:12:22 +0200
+
 ucs-school-import (14.0.15-16) unstable; urgency=low
 
   * Bug #41857: prevent storing of attributes mapped by ucsschool.lib User
