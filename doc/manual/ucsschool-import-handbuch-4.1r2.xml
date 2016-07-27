@@ -1152,7 +1152,7 @@ class MyHook(UserPyHook):
     priority = {
         "pre_create": 1,
         "post_create": None,
-        "pre_delete": 1
+        "pre_remove": 1
     }
 
     def pre_create(self, user):
@@ -1168,7 +1168,7 @@ class MyHook(UserPyHook):
         # Diese Function ist deaktiviert.
         self.logger.info("Running a post_create hook for %s.", user)
 
-    def pre_delete(self, user):
+    def pre_remove(self, user):
         # backup users home directory
         self.logger.info("Backing up home directory of %s.", user)
         user_udm = user.get_udm_object(self.lo)
@@ -1190,7 +1190,7 @@ class MyHook(UserPyHook):
 					</listitem>
 					<listitem>
 						<simpara>
-							In <methodname>pre_delete()</methodname> wird ein Backup des Heimatverzeichnises des Benutzers gemacht, bevor er gelöscht wird.
+							In <methodname>pre_remove()</methodname> wird ein Backup des Heimatverzeichnises des Benutzers gemacht, bevor er gelöscht wird.
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -1204,7 +1204,7 @@ class MyHook(UserPyHook):
 				Es handelt sich bei <property>self.logger</property> um eine Instanz eines Python <classname>logging</classname> Objekts<footnote><para>Python Dokumentation: <ulink url="https://docs.python.org/2/library/logging.html"/></para></footnote>.
 			</para>
 			<para>
-				In <methodname>pre_delete()</methodname> wird das Heimatverzeichnises des Benutzers benötigt.
+				In <methodname>pre_remove()</methodname> wird das Heimatverzeichnises des Benutzers benötigt.
 				Da dies nicht eines der direkt am Objekt stehenden Daten ist (siehe <xref linkend="extending:import_user_class"/>), muss zuerst das gesamte Benutzerobjekt aus dem LDAP geladen werden.
 				Dies tut <methodname>user.get_udm_object()</methodname>, welches als Argument ein LDAP-Verbindungsobjekt erwartet.
 				Dieses ist im Hook-Objekt an <property>self.lo</property> gespeichert.
@@ -1214,7 +1214,7 @@ class MyHook(UserPyHook):
 					Falls das Benutzerobjekt in einem <foreignphrase>post-Hook</foreignphrase> geändert werden soll, so ist es möglich <methodname>user.modify_without_hooks()</methodname> auszuführen, aber generell sollte ein erneutes Modifizieren <emphasis>nach</emphasis> dem Speichern vermieden werden.
 				</para>
 				<para>
-					Die Methoden <methodname>create()</methodname>, <methodname>modify()</methodname> und <methodname>delete()</methodname> sollten in Hooks nie ausgeführt werden, da dies zu einer Rekursion führen kann.
+					Die Methoden <methodname>create()</methodname>, <methodname>modify()</methodname> und <methodname>remove()</methodname> sollten in Hooks nie ausgeführt werden, da dies zu einer Rekursion führen kann.
 				</para>
 			</caution>
 		  </section>
