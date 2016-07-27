@@ -42,6 +42,7 @@ Module to ease interactive use of import system.
 # Two ways exist to configure the system additionally to the default
 # configuration (same as with the import script):
 # * create (or symlink to) a JSON configuration file: ~/.import_shell_config
+#   (ln -s /var/lib/ucs-school-import/configs/example.json ~/.import_shell_config)
 # * store command line arguments in a JSON file in ~/.import_shell_args
 #
 
@@ -63,10 +64,9 @@ _config_args = {
 	"verbose": True
 }
 try:
-	_user_args = json.load(open(os.path.expanduser("~/.import_shell_args"), "rb"))
-	_config_args.update(_user_args)
+	_config_args.update(json.load(open(os.path.expanduser("~/.import_shell_args"), "rb")))
 except IOError as exc:
-	_user_args = None
+	pass
 
 _ui = _UserImportCommandLine()
 _config_files = _ui.configuration_files
@@ -81,6 +81,5 @@ lo, _po = _get_admin_connection()
 
 logger.info("------ UCS@school import tool configured ------")
 logger.info("Used configuration files: %s.", config.conffiles)
-if _user_args:
-	logger.info("Using command line arguments: %r", _user_args)
+logger.info("Using command line arguments: %r", _config_args)
 logger.info("Configuration is:\n%s", pprint.pformat(config))
