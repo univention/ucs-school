@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 Univention GmbH
+ * Copyright 2012-2015 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -181,7 +181,7 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 				label: _('Internet rule'),
 				staticValues: [{
 					id: '$default$',
-					label: _('-- Default (unrestricted) --')
+					label: _('-- default settings --')
 				}],
 				dynamicValues: function() {
 					// query rules mapped to id-label dicts

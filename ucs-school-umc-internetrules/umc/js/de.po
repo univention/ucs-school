@@ -13,8 +13,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: umc/js/_internetrules/AssignPage.js:186
-msgid "-- Default (unrestricted) --"
-msgstr "-- Voreinstellungen (Unbeschränkt) --"
+msgid "-- default settings --"
+msgstr "-- Voreinstellungen --"
 
 #: umc/js/_internetrules/DetailPage.js:113
 msgid "0 (low)"

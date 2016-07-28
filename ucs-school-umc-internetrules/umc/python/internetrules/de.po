@@ -13,8 +13,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: umc/python/internetrules/__init__.py:367
-msgid "-- Default (unrestricted) --"
-msgstr "-- Voreinstellungen (Unbeschränkt) --"
+msgid "-- default settings --"
+msgstr "-- Voreinstellungen --"
 
 #: umc/python/internetrules/__init__.py:221
 #, python-format
