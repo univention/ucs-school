@@ -968,7 +968,7 @@ class CLI_Import_v2_Tester(object):
 	def test_create_with_empty_class_name(self):
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			import user with role <role> and special username scheme
+			import user with role <role> and empty class name
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r and empty class name.', role)
@@ -999,6 +999,78 @@ class CLI_Import_v2_Tester(object):
 
 			self.log.info('Test was successful.\n\n\n')
 
+	def test_no_delete_option(self):
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			import user with role <role> and [un]set --no-delete option
+		"""
+		first_user = True
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Testing "--no-delete".', role)
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('user_role', role)
+
+			person = Person(self.ou_A.name, role)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.log.info('*** Importing a user, deleting a user.')
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			# check for new users in LDAP
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			if len(new_users) != 1:
+				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				utils.fail('Stopping here')
+			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+			if first_user:
+				num_rem = 0
+				first_user = False
+			else:
+				num_rem = 1
+			if len(removed_users) != num_rem:
+				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				utils.fail('Stopping here')
+
+			self.log.info('*** Importing a user, NOT deleting previous user (running with "--no-delete")')
+			person = Person(self.ou_A.name, role)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+
+			# check for new users in LDAP
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			if len(new_users) != 1:
+				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				utils.fail('Stopping here')
+			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+			if len(removed_users) != 0:
+				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				utils.fail('Stopping here')
+
+			self.log.info('*** Deleting a user, deleting previous users (running without "--no-delete")')
+			person = Person(self.ou_A.name, role)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			# check for new users in LDAP
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			if len(new_users) != 1:
+				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				utils.fail('Stopping here')
+			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+			if len(removed_users) != 2:
+				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				utils.fail('Stopping here')
+
+			self.log.info('Test was successful.\n\n\n')
+
 	def run(self):
 		try:
 			ucr = univention.testing.ucr.UCSTestConfigRegistry()
@@ -1021,6 +1093,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_lowercase_username_with_counter()
 					self.test_create_modify_with_extended_attribute(udm)
 					self.test_create_with_empty_class_name()
+					self.test_no_delete_option()
 		finally:
 			self.cleanup()
 
