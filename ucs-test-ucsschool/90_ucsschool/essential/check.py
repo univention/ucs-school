@@ -59,7 +59,7 @@ class Check(object):
 				'pattern': groupName
 				}
 			if ruleName is None:
-				ruleName = ['-- Default (unrestricted) --' , '-- Voreinstellungen (Unbeschränkt) --']
+				ruleName = ['-- default settings --' , '-- Voreinstellungen --']
 			result = self.umcConnection.request(
 				'internetrules/groups/query',
 				param)[0]['rule']
