@@ -312,7 +312,7 @@ class Project(_Dict):
 		'''Converts the time value of the specified key to string and saves it to
 		the internal dict. Parameter time may an instance of string or datetime.'''
 		_dict = object.__getattribute__(self, '_dict')
-		if time == None:
+		if time is None:
 			# unset value
 			_dict[key] = None
 		elif isinstance(time, basestring):
@@ -397,9 +397,8 @@ class Project(_Dict):
 				pass
 
 			# save the project file
-			fd = open(self.projectfile, 'w')
-			fd.write(jsonEncode(self))
-			fd.close()
+			with open(self.projectfile, 'w') as fd:
+				fd.write(jsonEncode(self))
 
 			# create cache directory
 			self._createCacheDir()
@@ -427,7 +426,10 @@ class Project(_Dict):
 			os.makedirs(self.cachedir, 0o700)
 			os.chown(self.cachedir, 0, 0)
 		except (OSError, IOError) as exc:
-			MODULE.error('Failed to create cachedir: %s' % (exc,))
+			if exc.errno == 17:
+				MODULE.info('cache dir %s exists.' % self.cachedir)
+			else:
+				MODULE.error('Failed to create cachedir: %s' % (exc,))
 
 	def _createProjectDir(self):
 		'''Create project directory in the senders home.'''

@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-umc-distribution
+fix: 
+desc: |
+ This update addresses the following issue(s):
+ * Under some circumstances a file distribution (for an exam) could get
+   stuck. This has been fixed (Bug #41252).
+bug: [41252]
