@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-16) unstable; urgency=low
+
+  * Bug #38641: new shares are not exported to NFS anymore
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 29 Jul 2016 12:53:03 +0200
+
 ucs-school-lib (9.0.20-15) unstable; urgency=low
 
   * Bug #41775: handle not running notifier
