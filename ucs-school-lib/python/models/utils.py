@@ -38,7 +38,7 @@ from logging.handlers import MemoryHandler, TimedRotatingFileHandler
 from contextlib import contextmanager
 import subprocess
 
-from psutil import process_iter
+from psutil import process_iter, NoSuchProcess
 
 from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
@@ -299,7 +299,7 @@ def stopped_notifier(strict=True):
 			if process.name == service_name:
 				notifier_running = True
 				break
-		except IOError:
+		except (IOError, NoSuchProcess):
 			pass
 	if not notifier_running:
 		logger.warning('%s is not running! Skipping', service_name)

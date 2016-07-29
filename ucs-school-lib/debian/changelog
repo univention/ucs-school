@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-15) unstable; urgency=low
+
+  * Bug #41775: handle not running notifier
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 29 Jul 2016 10:24:08 +0200
+
 ucs-school-lib (9.0.20-14) unstable; urgency=low
 
   * Bug #40705: add support for ldap server and port arguments to shell
