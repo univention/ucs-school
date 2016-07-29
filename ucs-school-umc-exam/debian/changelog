@@ -1,3 +1,10 @@
+ucs-school-umc-exam (6.0.7-4) unstable; urgency=low
+
+  * Bug #40213: disable all cleanup actions except for the exam users by
+    default on DC master
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 29 Jul 2016 11:33:22 +0200
+
 ucs-school-umc-exam (6.0.7-3) unstable; urgency=low
 
   * Bug #40213: open UMC connection to localhost, error handling

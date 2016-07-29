@@ -36,7 +36,7 @@ Type=string
 Categories=ucsschool-exam
 
 [ucsschool/exam/cron/cleanup-master/options]
-Description[en]=Specifies additional options for the script exam-and-room-cleanup (no additional options by default)
-Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup (standardmäßig keine zusätzlichen Optionen)
+Description[en]=Specifies additional options for the script exam-and-room-cleanup. By default disables all cleanup actions except for the exam users, as those run on the DC slaves: "--skip-exam-shutdown --skip-ucr-cleanup --skip-exam-cleanup --skip-room-cleanup".
+Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup. Standardmäßig werden alle Aktionen bis auf das Bereinigen der Exam-Benutzer deaktiviert, da diese auf den DC Slaves laufen: "--skip-exam-shutdown --skip-ucr-cleanup --skip-exam-cleanup --skip-room-cleanup".
 Type=string
 Categories=ucsschool-exam

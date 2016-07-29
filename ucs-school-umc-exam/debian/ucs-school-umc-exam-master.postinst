@@ -34,7 +34,9 @@
 
 eval "$(univention-config-registry shell)"
 
-ucr set 'ucsschool/exam/user/ldap/blacklist?mail|mailPrimaryAddress|mailAlternativeAddress'
+ucr set \
+	'ucsschool/exam/user/ldap/blacklist?mail|mailPrimaryAddress|mailAlternativeAddress' \
+	'ucsschool/exam/cron/cleanup-master/options?--skip-exam-shutdown --skip-ucr-cleanup --skip-exam-cleanup --skip-room-cleanup'
 
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
 	/usr/lib/univention-install/35ucs-school-umc-exam-master.inst || true
