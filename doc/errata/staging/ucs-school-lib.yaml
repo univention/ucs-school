@@ -3,7 +3,7 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-lib
-fix: 9.0.20-14.238.201607261154
+fix: 9.0.20-15.239.201607291025
 desc: |
  This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one
@@ -16,6 +16,8 @@ desc: |
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
  * All schools are available on a DC Backup again (Bug #41747).
  * A logging function was added (Bug #41595).
- * A error has been fixed when filtering out possible schools for certain
+ * An error has been fixed when filtering out possible schools for certain
    users (Bug #41811).
-bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811]
+ * Temparary shutdown of the directory notifier is now handled more safely
+   (Bug #41775).
+bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775]
