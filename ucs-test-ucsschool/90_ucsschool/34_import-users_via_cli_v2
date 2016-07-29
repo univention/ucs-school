@@ -970,10 +970,14 @@ class CLI_Import_v2_Tester(object):
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			import user with role <role> and empty class name
 		"""
+		first_user = True
+		config = copy.deepcopy(self.default_config)
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config.update_entry('sourceUID', source_uid)
+
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r and empty class name.', role)
 
-			config = copy.deepcopy(self.default_config)
 			config.update_entry('user_role', role)
 
 			person = Person(self.ou_A.name, role)
@@ -990,11 +994,17 @@ class CLI_Import_v2_Tester(object):
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 			if len(new_users) != 1:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				self.log.error('Invalid number of new users (expected 1)! Found new objects: %r', new_users)
 				utils.fail('Stopping here')
 			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
-			if (role == 'student' and len(removed_users) != 0) or (role != 'student' and len(removed_users) != 1):
-				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+			if first_user:
+				num_rem = 0
+				first_user = False
+			else:
+				num_rem = 1
+			if len(removed_users) != num_rem:
+				self.log.error('Invalid number of removed users (expected %d)! Removed objects: %r',
+					num_rem, removed_users)
 				utils.fail('Stopping here')
 
 			self.log.info('Test was successful.\n\n\n')
@@ -1005,10 +1015,13 @@ class CLI_Import_v2_Tester(object):
 			import user with role <role> and [un]set --no-delete option
 		"""
 		first_user = True
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Testing "--no-delete".', role)
+		config = copy.deepcopy(self.default_config)
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config.update_entry('sourceUID', source_uid)
 
-			config = copy.deepcopy(self.default_config)
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Testing "--no-delete" option for role %r.', role)
+
 			config.update_entry('user_role', role)
 
 			person = Person(self.ou_A.name, role)
@@ -1019,13 +1032,13 @@ class CLI_Import_v2_Tester(object):
 			self.save_ldap_status()
 
 			# start import
-			self.log.info('*** Importing a user, deleting a user.')
+			self.log.info('*** Importing a user, deleting a user (running without "--no-delete").')
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 			if len(new_users) != 1:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				self.log.error('Invalid number of new users (expected 1)! Found new objects: %r', new_users)
 				utils.fail('Stopping here')
 			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
 			if first_user:
@@ -1034,7 +1047,8 @@ class CLI_Import_v2_Tester(object):
 			else:
 				num_rem = 1
 			if len(removed_users) != num_rem:
-				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				self.log.error('Invalid number of removed users (expected %d)! Removed objects: %r',
+					num_rem, removed_users)
 				utils.fail('Stopping here')
 
 			self.log.info('*** Importing a user, NOT deleting previous user (running with "--no-delete")')
@@ -1046,11 +1060,11 @@ class CLI_Import_v2_Tester(object):
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 			if len(new_users) != 1:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				self.log.error('Invalid number of new users (expected 1)! Found new objects: %r', new_users)
 				utils.fail('Stopping here')
 			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
 			if len(removed_users) != 0:
-				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				self.log.error('Invalid number of removed users (expected 0)! Removed objects: %r', removed_users)
 				utils.fail('Stopping here')
 
 			self.log.info('*** Deleting a user, deleting previous users (running without "--no-delete")')
@@ -1062,11 +1076,11 @@ class CLI_Import_v2_Tester(object):
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 			if len(new_users) != 1:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				self.log.error('Invalid number of new users (expected 1)! Found new objects: %r', new_users)
 				utils.fail('Stopping here')
 			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
 			if len(removed_users) != 2:
-				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				self.log.error('Invalid number of removed users (expected 2)! Removed objects: %r', removed_users)
 				utils.fail('Stopping here')
 
 			self.log.info('Test was successful.\n\n\n')
