@@ -3,7 +3,7 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-import
-fix: 14.0.15-18.294.201607271202
+fix: 14.0.15-20.295.201608011228
 desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
