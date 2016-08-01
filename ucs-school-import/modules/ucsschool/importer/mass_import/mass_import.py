@@ -93,9 +93,9 @@ class MassImport(object):
 		self.logger.info("------ Importing users... ------")
 		user_import = self.factory.make_user_importer(self.dry_run)
 		imported_users = user_import.read_input()
-		user_import.create_and_modify_users(imported_users)
 		users_to_delete = user_import.detect_users_to_delete()
 		user_import.delete_users(users_to_delete)
+		user_import.create_and_modify_users(imported_users)
 		self.errors.extend(user_import.errors)
 		user_import.log_stats()
 		if self.config["output"]["new_user_passwords"]:

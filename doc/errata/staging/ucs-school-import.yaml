@@ -28,4 +28,8 @@ desc: |
  * Program code was added to ease future development and support (Bug #41861).
  * The migration script now adds attributes to existing users that are
    required for the import script (Bug #41862).
-bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862]
+ * Deletion of user accounts is now done before creating new accounts or
+   modifying existing ones. This remedies the problem, that new users could
+   not have unique properties (like the primary email address), that
+   accounts scheduled for deletion still had (Bug #41544).
+bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544]
