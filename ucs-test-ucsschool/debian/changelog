@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.13-10) unstable; urgency=low
+
+  * Bug #41775: test forcing action=D in import with --no-delete
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 01 Aug 2016 15:06:55 +0200
+
 ucs-test-ucsschool (3.0.13-9) unstable; urgency=low
 
   * Bug #41775: create fresh sourceUID for each test

@@ -131,6 +131,7 @@ class Person:
 			value_map.get('description', '__EMPTY__'): self.description,
 			value_map.get('school_classes', '__EMPTY__'): ','.join([x for school_, classes in self.school_classes.iteritems() for x in classes]),
 			value_map.get('email', '__EMPTY__'): self.mail,
+			value_map.get('__action', '__EMPTY__'): self.mode,
 		}
 		if '__EMPTY__' in result.keys():
 			del result['__EMPTY__']
