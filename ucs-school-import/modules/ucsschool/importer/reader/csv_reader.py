@@ -190,8 +190,8 @@ class CsvReader(BaseReader):
 					import_user.udm_properties[v] = input_data[k].split(delimiter)
 				else:
 					import_user.udm_properties[v] = input_data[k]
-		self.logger.debug("%s attributes=%r udm_properties=%r", import_user, import_user.to_dict(),
-			import_user.udm_properties)
+		self.logger.debug("%s attributes=%r udm_properties=%r action=%r", import_user, import_user.to_dict(),
+			import_user.udm_properties, import_user.action)
 		return import_user
 
 	def get_data_mapping(self, input_data):

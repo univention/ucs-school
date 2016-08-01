@@ -204,6 +204,24 @@ class UserImport(object):
 		:return list: ImportUsers to delete (objects loaded from LDAP)
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
+		users_to_delete = list()
+		a_user = self.factory.make_import_user([])
+
+		if self.config["no_delete"]:
+			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------",
+				self.config["no_delete"])
+			for user in self.imported_users:
+				if user.action == "D":
+					try:
+						ldap_user = a_user.get_by_import_id(self.connection, user.source_uid, user.record_uid)
+						ldap_user.update(user)  # need user.input_data for hooks
+						users_to_delete.append(ldap_user)
+					except noObject:
+						msg = "User to delete not found in LDAP: {}.".format(user)
+						self.logger.error(msg)
+						self._add_error(DeletionError(msg, entry=user.entry_count, import_user=user))
+			return users_to_delete
+
 		source_uid = self.config["sourceUID"]
 		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
 		filter_s = filter_format("(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))", (source_uid, ))
@@ -217,10 +235,7 @@ class UserImport(object):
 		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
 		ucs_user_ids = set([(lu[1]["ucsschoolSourceUID"][0], lu[1]["ucsschoolRecordUID"][0]) for lu in ucs_ldap_users])
 
-		a_user = self.factory.make_import_user([])
-
 		# collect ucschool objects for those users to delete in imported_users
-		users_to_delete = list()
 		for ucs_id_not_in_import in (ucs_user_ids - imported_user_ids):
 			try:
 				ldap_user = a_user.get_by_import_id(self.connection, ucs_id_not_in_import[0], ucs_id_not_in_import[1])

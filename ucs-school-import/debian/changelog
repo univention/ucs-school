@@ -1,3 +1,9 @@
+ucs-school-import (14.0.15-19) unstable; urgency=low
+
+  * Bug #41775: honor action='D' when using option --no-delete
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 01 Aug 2016 10:47:38 +0200
+
 ucs-school-import (14.0.15-18) unstable; urgency=low
 
   * Add migration code for existing legacy import users (Bug #41862).
