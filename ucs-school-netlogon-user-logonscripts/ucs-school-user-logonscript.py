@@ -51,7 +51,7 @@ filter = '(|(&(objectClass=posixAccount)(objectClass=organizationalPerson)(!(uid
 atributes = []
 
 scriptpath = []
-desktopFolderName = "Eigene Shares"
+desktopFolderName = listener.configRegistry.get('ucsschool/userlogon/shares_foldername', "Eigene Shares")
 desktopFolderNameMacOS = listener.configRegistry.get('ucsschool/userlogon/mac/foldername', desktopFolderName)
 globalLinks = {}
 

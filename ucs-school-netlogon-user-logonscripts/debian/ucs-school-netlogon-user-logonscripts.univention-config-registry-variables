@@ -34,6 +34,18 @@ Description[en]=Path to the personal directory (default: $(ucr get samba/homedir
 Type=str
 Categories=ucsschool-netlogon
 
+[ucsschool/userlogon/shares_foldername]
+Description[de]=Name des Verzeichnisses das Links zu Laufwerken des Benutzers enthält (Standard: "Eigene Shares"). Wenn verändert, müssen alle logon Skripte neu geschrieben werden: "invoke-rc.d univention-directory-listener restart; univention-directory-listener-ctrl resync ucs-school-user-logonscript"
+Description[en]=Name of the directory containing links to the users shares (default: "Eigene Shares"). If changed, all logon scripts must be rewritten: "invoke-rc.d univention-directory-listener restart; univention-directory-listener-ctrl resync ucs-school-user-logonscript"
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/mac/foldername]
+Description[de]=Name des Verzeichnisses das Links zu Laufwerken des Benutzers enthält, für Mac Clients (Standard: "Eigene Shares"). Wenn verändert, müssen alle logon Skripte neu geschrieben werden: "invoke-rc.d univention-directory-listener restart; univention-directory-listener-ctrl resync ucs-school-user-logonscript"
+Description[en]=Name of the directory containing links to the users shares, for Mac clients (default: "Eigene Shares"). If changed, all logon scripts must be rewritten: "invoke-rc.d univention-directory-listener restart; univention-directory-listener-ctrl resync ucs-school-user-logonscript"
+Type=str
+Categories=ucsschool-netlogon
+
 [ucsschool/userlogon/shares/validservers]
 Description[de]=Definiert von welchen Servern Freigaben eingebunden werden (default: leer, möglich: leer [nur Freigaben vom lokalen Rechner], Komma separierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
 Description[en]=Defines the valid servers for network shares (default: empty, possible: empty [only shares from the local host], Comma-separated list of servers [shares from these servers], * [all shares]
