@@ -266,6 +266,9 @@ class User(UCSSchoolHelperAbstractClass):
 				except noObject:
 					logger.debug('No. Leaving it alone...')
 					continue
+				if not school_class.self_is_class():
+					logger.debug('Group is no school class. Leave it untouched.')
+					continue
 				logger.debug('Yes, part of %s!', school_class.school)
 				if school_class.school not in self.school_classes:
 					continue  # if the key isn't set we don't change anything to the groups. to remove the groups it has to be an empty list

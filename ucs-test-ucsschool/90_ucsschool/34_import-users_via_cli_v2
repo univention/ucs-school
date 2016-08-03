@@ -1046,6 +1046,99 @@ class CLI_Import_v2_Tester(object):
 
 			self.log.info('Test was successful.\n\n\n')
 
+	def test_modify_with_workgroups(self, udm):
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			import user with role <role>
+			modify user with role <role> → changing group memberships
+			remove user with role <role>
+		"""
+		workgroup_dn, workgroup_name = udm.create_group(position='cn=schueler,cn=groups,%s' % (self.ou_A.dn,))
+		global_group_dn, global_group_name = udm.create_group()
+		cn_dn = udm.create_object('container/cn', position=self.ou_A.dn, name='kurs-%s' % uts.random_string())
+		extra_group_dn, extra_group_name = udm.create_group(position=cn_dn)
+
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r', role)
+
+			person = Person(self.ou_A.name, role)
+			fn_csv = self.create_csv_file(person_list=[person])
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
+			config = {
+				'sourceUID': source_uid,
+				'input:filename': fn_csv,
+				'user_role': role,
+			}
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_num_users(1, 0)
+
+			# update dn+username of person and verify LDAP attributes
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
+			person.verify()
+
+			self.log.info('*** Adding user with role %r to groups', role)
+
+			udm.modify_object('groups/group', dn=workgroup_dn, append={'users': [new_users[0]]})
+			udm.modify_object('groups/group', dn=global_group_dn, append={'users': [new_users[0]]})
+			udm.modify_object('groups/group', dn=extra_group_dn, append={'users': [new_users[0]]})
+			utils.verify_ldap_object(workgroup_dn, expected_attr={'uniqueMember': [new_users[0]]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(global_group_dn, expected_attr={'uniqueMember': [new_users[0]]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_group_dn, expected_attr={'uniqueMember': [new_users[0]]}, strict=False, should_exist=True)
+
+			self.log.info('*** Modifying a single user with role %r', role)
+
+			if role == 'student':
+				person.school_classes = {}
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				person.append_random_class()
+
+			self.create_csv_file(person_list=[person], fn_csv=fn_csv)
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_num_users(0, 0)
+
+			# verify LDAP attributes
+			person.verify()
+			utils.verify_ldap_object(workgroup_dn, expected_attr={'uniqueMember': [new_users[0]]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(global_group_dn, expected_attr={'uniqueMember': [new_users[0]]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_group_dn, expected_attr={'uniqueMember': [new_users[0]]}, strict=False, should_exist=True)
+
+			self.log.info('*** Remove a single user with role %r', role)
+
+			# mark person as removed
+			person.set_mode_to_delete()
+			self.create_csv_file(person_list=[], fn_csv=fn_csv)
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_num_users(0, 1)
+
+			# verify LDAP attributes
+			person.verify()
+
+		self.log.info('Creating, modifying, removing user with role %r was successful', role)
+		self.log.info('Test was successful.\n\n\n')
+
 	def run(self):
 		try:
 			ucr = univention.testing.ucr.UCSTestConfigRegistry()
@@ -1069,6 +1162,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_create_modify_with_extended_attribute(udm)
 					self.test_create_with_empty_class_name()
 					self.test_no_delete_option()
+					self.test_modify_with_workgroups(udm)
 		finally:
 			self.cleanup()
 

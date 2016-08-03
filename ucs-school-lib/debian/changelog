@@ -1,3 +1,11 @@
+ucs-school-lib (9.0.20-17) unstable; urgency=low
+
+  * Bug #41907: An important bug in user handling has been fixed. If users
+    are modified, all memberships of groups, that are no class groups
+    (e.g. working groups or global groups), were lost during modification.
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 03 Aug 2016 17:06:54 +0200
+
 ucs-school-lib (9.0.20-16) unstable; urgency=low
 
   * Bug #38641: new shares are not exported to NFS anymore

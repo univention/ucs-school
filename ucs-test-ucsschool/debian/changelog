@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.13-11) unstable; urgency=low
+
+  * Bug #41907: test checking group memberships during user modification
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 03 Aug 2016 17:11:08 +0200
+
 ucs-test-ucsschool (3.0.13-10) unstable; urgency=low
 
   * Bug #41775: test forcing action=D in import with --no-delete
