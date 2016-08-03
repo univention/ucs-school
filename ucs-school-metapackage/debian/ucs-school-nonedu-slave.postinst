@@ -54,6 +54,12 @@ if [ "$1" = "configure" ] ; then
 	if [ -z "$2" ] ; then
 		### Defaults for new installations of non-edu Slave PDCs
 		:
+		# prevent sysvol-sync of netlogon scripts
+		if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
+			univention-config-registry set \
+				samba/share/netlogon/path=/var/lib/samba/netlogon \
+				ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
+		fi
 	else
 		### Settings for updates of non-edu Slave PDCs
 		:

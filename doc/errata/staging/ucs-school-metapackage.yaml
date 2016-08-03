@@ -3,11 +3,18 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-metapackage
-fix: 9.0.1-4.176.201607261155
+fix:
 desc: |
  This update addresses the following issue(s):
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
  * In multi-school environments autosearch is now deactivated by default in
    all school related UMC modules, using a UCR policy at the LDAP-root. This
    is done only for new installations. (Bug #41300)
-bug: [40705,41300]
+ * Sysvol-replication of netlogon scripts is now prevented by default on all
+   UCS@school DCs. The netlogon scripts will be stored in
+   /var/lib/samba/netlogon/user. This change will only activate in newly
+   installed UCS@school DCs. To revert to the previous behavior unset UCRVs
+   samba/share/netlogon/path and ucsschool/userlogon/netlogon/path. Further
+   documentation can be found in the chapter "Netlogon-Skripte für
+   Samba4-Umgebung" of the UCS@school manual. (Bug #40347).
+bug: [40705,41300,40347]

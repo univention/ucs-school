@@ -1,3 +1,10 @@
+ucs-school-metapackage (9.0.1-5) unstable; urgency=low
+
+  * Bug #40347: prevent sysvol-sync of netlogon scripts in all UCS@school DCs
+    for fresh installations
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 03 Aug 2016 11:17:33 +0200
+
 ucs-school-metapackage (9.0.1-4) unstable; urgency=low
 
   * Bug #40705: use ldap of dc master in first join script

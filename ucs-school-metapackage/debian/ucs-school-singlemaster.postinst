@@ -116,6 +116,14 @@ if [ "$1" = "configure" -a -n "$2" ]; then
 			fi
 		fi
 	fi
+else
+	# fresh installation
+	# prevent sysvol-sync of netlogon scripts
+	if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
+		univention-config-registry set \
+			samba/share/netlogon/path=/var/lib/samba/netlogon \
+			ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
+	fi
 fi
 
 # Bug 33883: restart S4 connector during *update* if installed to activate connector/s4/mapping/group/syncmode change
