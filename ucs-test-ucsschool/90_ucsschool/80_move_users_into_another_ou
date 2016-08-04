@@ -7,9 +7,10 @@
 
 from univention.testing.ucsschool import UCSTestSchool
 from univention.testing.ucr import UCSTestConfigRegistry
+from univention.testing.udm import UCSTestUDM
 import univention.testing.strings as uts
 from univention.testing import utils
-from ucsschool.lib.models import User, SchoolClass
+from ucsschool.lib.models import User, SchoolClass, WorkGroup
 import univention.config_registry
 
 
@@ -17,14 +18,14 @@ def main():
 	if not hasattr(User, 'change_school'):
 		utils.fail('ERROR: moving users to another school OU is not supported by ucs-school-lib')
 
-	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr:
+	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr, UCSTestUDM() as udm:
 		# make sure that nonedu containers are created
 		univention.config_registry.handler_set(['ucsschool/ldap/noneducational/create/objects=yes'])
 
 		a, a_dn = env.create_ou(name_edudc=ucr.get('hostname'))
 		b, b_dn = env.create_ou(name_edudc=ucr.get('hostname'))
 
-		# TODO: create some workgroups, put into one global group, add exam user
+		# TODO: add exam user
 		# TODO: change school and uid at once!
 		# TODO: user without classes
 
@@ -36,19 +37,32 @@ def main():
 		grp1_name = uts.random_username()
 		grp2_name = uts.random_username()
 		two_klasses = '{0}-{1},{0}-{2}'.format(a, grp1_name, grp2_name)
+		workgroup_dn, workgroup_name = udm.create_group(position='cn=schueler,cn=groups,%s' % (a_dn,))
+		global_group_dn, global_group_name = udm.create_group()
 
 		users = [
-			(env.create_user(a, classes=two_klasses), 'schueler', [students_group, domain_users_school]),
-			(env.create_user(a, is_teacher=True, classes=two_klasses), 'lehrer', [domain_users_school, teacher_group]),
-			(env.create_user(a, is_staff=True), 'mitarbeiter', [domain_users_school, staff_group]),
-			(env.create_user(a, is_teacher=True, is_staff=True, classes=two_klasses), 'lehrer', [domain_users_school, teacher_group, staff_group]),
+			(env.create_user(a, classes=two_klasses), 'schueler',
+				[students_group, domain_users_school, global_group_dn]),
+			(env.create_user(a, is_teacher=True, classes=two_klasses), 'lehrer',
+				[domain_users_school, teacher_group, global_group_dn]),
+			(env.create_user(a, is_staff=True), 'mitarbeiter',
+				[domain_users_school, staff_group, global_group_dn]),
+			(env.create_user(a, is_teacher=True, is_staff=True, classes=two_klasses), 'lehrer',
+				[domain_users_school, teacher_group, staff_group, global_group_dn]),
 		]
 		lo = env.open_ldap_connection()
+		workgroup = WorkGroup.from_dn(workgroup_dn, a, lo)
+		users_dns = [dn for (user, dn,), roleshare_path, groups in users]
+		udm.modify_object('groups/group', dn=global_group_dn, append={'users': users_dns})
+		workgroup.users.extend(users_dns)
+		workgroup.modify(lo)
 
 		for (user, dn,), roleshare_path, groups in users:
+
 			print '################################'
 			print '#### moving user at', dn, 'to', b
 			print '################################'
+
 			user = User.from_dn(dn, a, lo)
 			attrs = {
 				'homeDirectory': ['/home/%s/%s/%s' % (b, roleshare_path, user.name)],
@@ -59,6 +73,7 @@ def main():
 			oldinfo = user.get_udm_object(lo).info
 			if oldinfo.get('departmentNumber') != a:
 				attrs.pop('departmentNumber')
+
 			user.change_school(b, lo)
 			assert user.dn != dn
 			assert b in user.dn
