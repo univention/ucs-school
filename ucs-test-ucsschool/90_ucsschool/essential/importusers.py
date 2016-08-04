@@ -55,6 +55,7 @@ class Person:
 		self.lastname = uts.random_name()
 		self.username = uts.random_name()
 		self.school = school
+		self.schools = [school]
 		self.role = role
 		self.record_uid = None
 		self.source_uid = None
@@ -124,7 +125,7 @@ class Person:
 			value_map.get('firstname', '__EMPTY__'): self.firstname,
 			value_map.get('lastname', '__EMPTY__'): self.lastname,
 			value_map.get('username', '__EMPTY__'): self.username,
-			value_map.get('schools', '__EMPTY__'): self.school,
+			value_map.get('schools', '__EMPTY__'): ','.join(self.schools),
 			value_map.get('role', '__EMPTY__'): self.role,
 			value_map.get('record_uid', '__EMPTY__'): self.record_uid,
 			value_map.get('source_uid', '__EMPTY__'): self.source_uid,
@@ -171,13 +172,17 @@ class Person:
 			line += self.password
 		return line
 
-	def append_random_class(self):
-		self.school_classes.setdefault(self.school, []).append('%s-%s%s' % (self.school, uts.random_int(), uts.random_string(length=1, alpha=True, numeric=False)))
+	def append_random_class(self, schools=None):
+		if schools:
+			for school in schools:
+				self.school_classes.setdefault(school, []).append('%s-%s%s%s' % (school, uts.random_int(), uts.random_int(), uts.random_string(length=2, alpha=True, numeric=False)))
+		else:
+			self.school_classes.setdefault(self.school, []).append('%s-%s%s%s' % (self.school, uts.random_int(), uts.random_int(), uts.random_string(length=2, alpha=True, numeric=False)))
 
 	def append_random_working_group(self):
 		return
 		# working groups cannot be specified, neither in file for CLI nor by API in Python
-		self.school_classes.setdefault(self.school, []).append('%s-%s' % (self.school, uts.random_string(length=9, alpha=True, numeric=False)))
+		# self.school_classes.setdefault(self.school, []).append('%s-%s' % (self.school, uts.random_string(length=9, alpha=True, numeric=False)))
 
 	def is_student(self):
 		return self.role == 'student'

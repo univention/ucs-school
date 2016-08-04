@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.14-1) unstable; urgency=low
+
+  * Bug #41907: test checking group memberships during user modification
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 04 Aug 2016 15:36:46 +0200
+
 ucs-test-ucsschool (3.0.13-12) unstable; urgency=low
 
   * Bug #41907: check group memberships during user ou move
