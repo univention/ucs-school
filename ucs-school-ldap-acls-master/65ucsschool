@@ -48,23 +48,13 @@ access to dn.exact="cn=Domain Computers,cn=groups,@%@ldap/base@%@" attrs="unique
 	by * +0 break
 
 # Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects
-access to dn.base="cn=policies,cn=system,@%@ldap/base@%@" attrs=children
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
-
-access to dn.children="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))" attrs=entry,@univentionObject,@organizationalRole,@msPrintConnectionPolicy,@msGPOContainer
+access to dn.subtree="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
 # Slave DCs can read and write policy containers for MS WMI filter objects
-access to dn.base="cn=WMIPolicy,cn=system,@%@ldap/base@%@" attrs=children
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by * +0 break
-
-access to dn.children="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))" attrs=entry,@univentionObject,@organizationalRole,@msWMISom
+access to dn.subtree="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
