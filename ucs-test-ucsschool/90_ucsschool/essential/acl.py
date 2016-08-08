@@ -34,7 +34,7 @@ def run_commands(cmdlist, argdict):
 		cmd = copy.deepcopy(cmd)
 		for i, val in enumerate(cmd):
 			cmd[i] = val % argdict
-		print '*** %s' % ' '.join(pipes.quote(x) for x in cmd)
+		print '*** %r' % cmd
 		out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 		result_list.append((out, err))
 	return result_list
