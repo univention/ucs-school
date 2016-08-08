@@ -1,4 +1,15 @@
 @!@
+# not required after Bug #41715
+## revert rule from UCS; Bug #41402
+#access to attrs=entry,objectClass,uniqueMember,ou,uid,loginShell,homeDirectory,uidNumber,gidNumber,sn,cn,gecos,description,memberUid
+#	by dn.regex=".*cn=computers,ou=([^,]+),(ou=[^,]+,)?%(ldap/base)s" none break
+#	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(ldap/base)s" none break
+#	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(ldap/base)s" none break
+#	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" none break
+#	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" none break
+#	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolAdministrator])" none break
+#	by * +0 break
+
 import sys
 sys.path.append('/usr/share/ucs-school-ldap-acls-master/')
 import os.path
