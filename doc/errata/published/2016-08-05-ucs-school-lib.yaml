@@ -1,0 +1,12 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-lib
+fix: 9.0.20-1-1.245.201608041732
+desc: |
+ * An important bug in user handling has been fixed. If users are modified, all
+   memberships of groups, that are no class groups (e.g. working groups or
+   global groups), were lost during modification. This regression had been
+   introduced with UCS@school 4.1R2v1 (Bug #41907).
+bug: [41907]

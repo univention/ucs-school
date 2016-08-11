@@ -21,8 +21,4 @@ desc: |
  * Temparary shutdown of the directory notifier is now handled more safely
    (Bug #41775).
  * New class / group shares are not exported to NFS anymore (Bug #38641).
- * An important bug in user handling has been fixed. If users are modified, all
-   memberships of groups, that are no class groups (e.g. working groups or
-   global groups), were lost during modification. This regression had been
-   introduced with UCS@school 4.1R2v1 (Bug #41907).
-bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641, 41907]
+bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641]
