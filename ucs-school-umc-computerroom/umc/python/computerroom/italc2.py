@@ -274,6 +274,20 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	@pyqtSlot( int )
 	def _stateChanged( self, state ):
 		self._state.set( ITALC_Computer.CONNECTION_STATES[ state ] )
+		MODULE.process('%s: state changed: old=%r  new=%r  core=%r' % (self.ipAddress, self._state.old, self._state.current, bool(self._core)))
+
+		# Comments for bug #41752:
+		# The iTALC core connection is used on top of the iTALC VNC connection.
+		# The core connection is set up after the VNC connection emits a state change ??? ==> connected.
+		# Tests have shown that the core connection is not ready/usable right after setup.
+		# That's why _core_ready is set to False.
+		# After the first usage of the core connection, two state changes are triggered:
+		# connected ==> disconnected ==> connected.
+		# Now the core connection is ready for use ==> _core_ready is set to True and the
+		# "connected" signal is emitted.
+		#
+		# self.connected() checks by default if _core_ready==True if not specified by argument to ignore this variable.
+		# (used to send initial sendGetUserInformationRequest() via core connection to trigger connection state change).
 
 		if not self._core and self._state.current == 'connected' and self._state.old != 'connected':
 			MODULE.process('%s: VNC connection established' % (self.ipAddress,))
@@ -329,7 +343,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._emit_flag(diff, italc.ItalcCore.SystemTrayIconRunning, 'system-tray-icon')
 
 	def update(self):
-		if not self.connected:
+		if not self.connected(ignore_core_ready=True):  # have a look at _stateChanged why ignore_core_ready is required
 			MODULE.warn('%s: not connected - skipping update' % (self.ipAddress,))
 			return True
 
@@ -466,9 +480,9 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		error'''
 		return self._state
 
-	@property
-	def connected(self):
-		return self._core and self._vnc.isConnected() and self._state.current == 'connected' and self._core_ready
+	def connected(self, ignore_core_ready=False):
+		# have a look at _stateChanged why ignore_core_ready is required
+		return self._core and self._vnc.isConnected() and self._state.current == 'connected' and (self._core_ready or ignore_core_ready)
 
 	# iTalc: screenshots
 	@property
@@ -492,7 +506,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	# iTalc: screen locking
 	def lockScreen(self, value):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping lockScreen' % (self.ipAddress,))
 			return
 		if value:
@@ -502,7 +516,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	# iTalc: input device locking
 	def lockInput(self, value):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping lockInput' % (self.ipAddress,))
 			return
 		if value:
@@ -512,14 +526,14 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	# iTalc: message box
 	def message(self, text):
-		if not self.connected:
+		if not self.connected():
 			MODULE.warn('%s: not connected - skipping message' % (self.ipAddress,))
 			return
 		self._core.displayTextMessage(text)
 
 	# iTalc: Demo
 	def denyClients(self):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping denyClients' % (self.ipAddress,))
 			return
 		for client in self._allowedClients[:]:
@@ -527,7 +541,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			self._allowedClients.remove(client)
 
 	def allowClients(self, clients):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping allowClients' % (self.ipAddress,))
 			return
 		self.denyClients()
@@ -536,7 +550,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			self._allowedClients.append( client )
 
 	def startDemoServer( self, allowed_clients = [] ):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping startDemoServer' % (self.ipAddress,))
 			return
 		self._core.stopDemoServer()
@@ -544,14 +558,14 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self.allowClients( allowed_clients )
 
 	def stopDemoServer(self):
-		if not self.connected:
+		if not self.connected():
 			MODULE.warn('%s: not connected - skipping stopDemoServer' % (self.ipAddress,))
 			return
 		self.denyClients()
 		self._core.stopDemoServer()
 
 	def startDemoClient(self, server, fullscreen=True):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping startDemoClient' % (self.ipAddress,))
 			return
 		self._core.stopDemo()
@@ -560,14 +574,14 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._core.startDemo( server.ipAddress, ITALC_DEMO_PORT, fullscreen )
 
 	def stopDemoClient(self):
-		if not self.connected:
+		if not self.connected():
 			MODULE.warn('%s: not connected - skipping stopDemoClient' % (self.ipAddress,))
 			return
 		self._core.stopDemo()
 
 	# iTalc: computer control
 	def powerOff(self):
-		if not self.connected:
+		if not self.connected():
 			MODULE.warn('%s: not connected - skipping powerOff' % (self.ipAddress,))
 			return
 		self._core.powerDownComputer()
@@ -582,14 +596,14 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			MODULE.error('%s: no MAC address set - skipping powerOn' % (self.ipAddress,))
 
 	def restart(self):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping restart' % (self.ipAddress,))
 			return
 		self._core.restartComputer()
 
 	# iTalc: user functions
 	def logOut(self):
-		if not self.connected:
+		if not self.connected():
 			MODULE.error('%s: not connected - skipping logOut' % (self.ipAddress,))
 			return
 		self._core.logoutUser()
