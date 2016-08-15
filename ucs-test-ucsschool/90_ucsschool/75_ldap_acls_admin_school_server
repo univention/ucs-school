@@ -1,0 +1,51 @@
+#!/usr/share/ucs-test/runner python
+# coding=utf-8
+## desc: ldap-ACL asserts for administrative DCs
+## roles: [domaincontroller_master]
+## tags: [apptest]
+## exposure: dangerous
+## packages: [ucs-school-ldap-acls-master]
+## bugs: [41818]
+
+from essential.acl import Acl
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.strings as uts
+from ldap.filter import filter_format
+
+class Bunch(object):
+	def __init__(self, **kwds):
+		self.__dict__.update(kwds)
+
+def main():
+	with utu.UCSTestSchool()  as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			admindc = Bunch(name=uts.random_name())
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'), name_admindc=admindc.name)
+			staff, staff_dn = schoolenv.create_user(school, is_staff=True)
+			teastaff, teastaff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
+			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+			stu, stu_dn = schoolenv.create_user(school)
+			lo = schoolenv.open_ldap_connection()
+
+			# get DN of school DC
+			try:
+				admindc.dn = lo.search(filter=filter_format('(&(objectClass=univentionHost)(cn=%s))', (admindc.name,)))[0][0]
+			except IndexError:
+				print '\n\nERROR: Looks like the administrative domaincontroller %r does not exist in LDAP\n\n'
+				raise
+
+			# Bug 41818: administrative school server can only replicate staff users and teacher-staff users
+			acl = Acl(school, admindc.dn, 'ALLOWED')
+			# TODO: following attribute list is incomplete, but gives a rough idea if replication of this user is allowed
+			attr_list = ['uid', 'givenName', 'sn', 'uidNumber', 'userPassword', 'sambaHomePath', 'gidNumber', 'krb5Key', 'sambaSID']
+			for user_dn, allowance in (
+					(staff_dn, 'ALLOWED'),
+					(teastaff_dn, 'ALLOWED'),
+					(tea_dn, 'DENIED'),
+					(stu_dn, 'DENIED')):
+				acl.assert_acl(user_dn, 'read', attr_list, allowance)
+
+
+if __name__ == '__main__':
+	main()

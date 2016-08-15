@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.14-2) unstable; urgency=low
+
+  * Bug #41818: check if administrative school server has read access to
+    staff and teacher+staff but not teachers and students
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 15 Aug 2016 12:26:14 +0200
+
 ucs-test-ucsschool (3.0.14-1) unstable; urgency=low
 
   * Bug #41907: test checking group memberships during user modification
