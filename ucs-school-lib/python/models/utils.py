@@ -134,7 +134,7 @@ def add_module_logger_to_schoollib():
 	return _module_handler
 
 
-def create_passwd(length=8, dn=None, specials='@#$%&*-_+=\:,.;?/()'):
+def create_passwd(length=8, dn=None, specials='@#$%&*-_+=:,.;?/()'):
 	if dn:
 		# get dn pw policy
 		if not _pw_length_cache.get(dn):

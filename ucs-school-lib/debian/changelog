@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.21-2) unstable; urgency=low
+
+  * Bug #40711: removed "\" from list of create_passwd's special characters
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 16 Aug 2016 16:58:22 +0200
+
 ucs-school-lib (9.0.21-1) unstable; urgency=low
 
   * Bug #41907: An important bug in user handling has been fixed. If users
