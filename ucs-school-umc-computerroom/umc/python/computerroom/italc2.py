@@ -480,7 +480,6 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		error'''
 		return self._state
 
-	@property
 	def connected(self, ignore_core_ready=False):
 		# bug 41752: have a look at _stateChanged() why ignore_core_ready is required for self.connected()
 		return self._core and self._vnc.isConnected() and self._state.current == 'connected' and (self._core_ready or ignore_core_ready)
@@ -488,7 +487,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 	# iTalc: screenshots
 	@property
 	def screenshot(self):
-		if not self.connected:
+		if not self.connected():
 			MODULE.warn('%s: not connected - skipping screenshot' % (self.ipAddress,))
 			return None
 		image = self._vnc.image()
@@ -643,7 +642,7 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 
 	@property
 	def users(self):
-		return [_usermap[x.user.current].username for x in self.values() if x.user.current and x.connected]
+		return [_usermap[x.user.current].username for x in self.values() if x.user.current and x.connected()]
 
 	def ipAddresses(self, students_only=True):
 		values = self.values()
@@ -722,7 +721,7 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 			raise AttributeError('unknown system %s' % demo_server)
 
 		# start demo server
-		clients = [comp for comp in self.values() if comp.name != demo_server and comp.connected and comp.objectType != 'computers/ucc']
+		clients = [comp for comp in self.values() if comp.name != demo_server and comp.connected() and comp.objectType != 'computers/ucc']
 		MODULE.info('Demo server is %s' % (demo_server,))
 		MODULE.info('Demo clients: %s' % ', '.join(x.name for x in clients))
 		MODULE.info('Demo client users: %s' % ', '.join(str(x.user.current) for x in clients))
