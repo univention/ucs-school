@@ -734,7 +734,9 @@ define([
 						connectId: [ widget.domNode ],
 						onShow: function(target) {
 							var image = dom.byId('screenshotTooltip-' + id);
-							image.src = '/univention-management-console/command/computerroom/screenshot?computer=' + id + '&random=' + Math.random();
+							if (image) {
+								image.src = '/univention-management-console/command/computerroom/screenshot?computer=' + id + '&random=' + Math.random();
+							}
 						}
 					});
 					widget.own(tooltip);
