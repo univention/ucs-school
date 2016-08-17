@@ -75,13 +75,6 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		fi
 	fi
 
-	# The old samba 4 data must be removed, otherwise the provision will fail
-	#  https://forge.univention.org/bugzilla/show_bug.cgi?id=33398
-	if [ -e /var/lib/samba/private/sam.ldb ]; then
-		mv /var/lib/samba/private/sam.ldb "/var/lib/samba/private/sam.ldb_$(date +%Y%m%d%H%M%S)"
-		mv /var/lib/samba/private/secrets.ldb "/var/lib/samba/private/secrets.ldb_$(date +%Y%m%d%H%M%S)"
-	fi
-
 	# In UCS@school a DC slave should not register himself to the DNS SRV records.
 	univention-config-registry set	dns/register/srv_records/kerberos?false \
 									dns/register/srv_records/ldap?false \

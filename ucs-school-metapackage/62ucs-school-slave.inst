@@ -73,14 +73,6 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 			echo "ERROR: unknown school OU!"
 		fi
 	fi
-
-	# The old samba 4 data must be removed, otherwise the provision will fail
-	#  https://forge.univention.org/bugzilla/show_bug.cgi?id=33398
-	if [ -e /var/lib/samba/private/sam.ldb ]; then
-		mv /var/lib/samba/private/sam.ldb "/var/lib/samba/private/sam.ldb_$(date +%Y%m%d%H%M%S)"
-		mv /var/lib/samba/private/secrets.ldb "/var/lib/samba/private/secrets.ldb_$(date +%Y%m%d%H%M%S)"
-	fi
-	
 fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then

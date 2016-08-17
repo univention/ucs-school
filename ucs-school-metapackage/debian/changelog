@@ -1,3 +1,10 @@
+ucs-school-metapackage (9.0.2-2) unstable; urgency=medium
+
+  * Bug #40424: The sam.ldb and secrets.ldb are not removed any longer
+    while running the ucs-school-slave joinscripts.
+
+ -- Arvid Requate <requate@univention.de>  Wed, 17 Aug 2016 15:40:58 +0200
+
 ucs-school-metapackage (9.0.2-1) unstable; urgency=medium
 
   * The pcpatch user is no longer be ignored by default (Bug #34626)
