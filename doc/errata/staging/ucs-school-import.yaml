@@ -8,8 +8,10 @@ desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
    are less difficult to type (Bug #40711).
- * The activate_group_members script now also writes usernames in the
-   exported CSV file (Bug #31187).
+ * The script "activate_group_members" now also writes the username of each
+   activated group member into the exported CSV file. Please note, that
+   the order of the data fields in the resulting CSV file has changed
+   (Bug #31187).
  * Python based hooks are now also run, when creating, modifying, moving or
    deleting a user outside an import job (Bug #41572).
  * Users can now be deleted even when the --no-delete option is set, if
