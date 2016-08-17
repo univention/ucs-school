@@ -118,12 +118,12 @@ servers_school_ous() {
 	ldap_server=""
 	ldap_port=""
 
-	while (( "$#" )); do
-		if [[ "$1" == "-d" ]]; then
+	while [ "$#" -gt 1 ]; do
+		if [ "$1" = "-d" ]; then
 			ldap_hostdn="$2"
-		elif [ "$1" == "-h" ] ; then
+		elif [ "$1" = "-h" ] ; then
 			ldap_server="-h $2"
-		elif [ "$1" == "-p" ] ; then
+		elif [ "$1" = "-p" ] ; then
 			ldap_port="-p $2"
 		else
 			echo "Unknown argument \"$1\"."
