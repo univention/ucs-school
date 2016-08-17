@@ -3,9 +3,10 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix:
+fix: 9.0.2-1.178.201608171531
 desc: |
  This update addresses the following issue(s):
+ * The pcpatch user is no longer ignored by default by the S4-Connector
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
  * In multi-school environments autosearch is now deactivated by default in
    all school related UMC modules, using a UCR policy at the LDAP-root. This
@@ -17,4 +18,4 @@ desc: |
    samba/share/netlogon/path and ucsschool/userlogon/netlogon/path. Further
    documentation can be found in the chapter "Netlogon-Skripte für
    Samba4-Umgebung" of the UCS@school manual. (Bug #40347).
-bug: [40705,41300,40347]
+bug: [34626,40705,41300,40347]
