@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-1) unstable; urgency=medium
+
+  * The pcpatch user is no longer be ignored by default (Bug #34626)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 17 Aug 2016 15:26:09 +0200
+
 ucs-school-metapackage (9.0.1-5) unstable; urgency=low
 
   * Bug #40347: prevent sysvol-sync of netlogon scripts in all UCS@school DCs
