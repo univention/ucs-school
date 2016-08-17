@@ -21,8 +21,9 @@ desc: |
    users (Bug #41811).
  * Temparary shutdown of the directory notifier is now handled more safely
    (Bug #41775).
- * By default, new class shares or group shares are no longer exported via NFS.
-   The NFS export of those shares can be reactivated manually via the UMC module
-   "Shares" by activating the option "Export for NFS clients (NFSv3 and NFSv4)".
-   This new default value does not affect existing shares objects (Bug #38641).
+ * By default, new class shares or group shares are no longer exported via
+   NFS. The NFS export of those shares can be reactivated manually via the
+   UMC module "Shares" by activating the option "Export for NFS clients
+   (NFSv3 and NFSv4)". This new default value does not affect existing
+   shares objects (Bug #38641).
 bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641]
