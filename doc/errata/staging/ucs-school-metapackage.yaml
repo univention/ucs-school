@@ -19,5 +19,5 @@ desc: |
    documentation can be found in the chapter "Netlogon-Skripte für
    Samba4-Umgebung" of the UCS@school manual. (Bug #40347).
  * The sam.ldb and secrets.ldb are not removed any longer while running
-   the ucs-school-slave joinscripts.
+   the ucs-school-slave joinscripts (Bug #40424).
 bug: [34626,40705,41300,40347,40424]
