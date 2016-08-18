@@ -5,8 +5,8 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
 fix: 9.0.2-2.179.201608171541
 desc: |
- This update addresses the following issue(s):
  * The pcpatch user is no longer ignored by default by the S4-Connector
+   (Bug #34626).
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
  * In multi-school environments autosearch is now deactivated by default in
    all school related UMC modules, using a UCR policy at the LDAP-root. This
