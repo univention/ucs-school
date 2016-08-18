@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python2.7
 ## desc: Test hijacking uidNumber=0
-## tags: [apptest, ucsschool]
+## tags: [apptest, ucsschool, SKIP]
 ## roles-not:
 ##  - basesystem
 ## packages:
