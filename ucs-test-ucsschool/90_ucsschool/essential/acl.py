@@ -288,6 +288,59 @@ class Acl(object):
 		]
 		self.assert_acl(group_dn, access, attrs)
 
+	def assert_share_object_access(self, share_dn, access, access_allowance='ALLOWED'):
+		"""
+		Assert that for the given share object the given <access>, "read" or "write", is (not) given.
+		Please note that the attribute list may not be complete.
+		"""
+		share_attribute_list = [
+			'univentionShareNFSSync',
+			'univentionShareSambaForceDirectoryMode',
+			'cn',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'univentionShareSambaDosFilemode',
+			'univentionShareSambaForceSecurityMode',
+			'univentionShareSambaLocking',
+			'univentionShareSambaForceDirectorySecurityMode',
+			'univentionShareSambaMSDFS',
+			'univentionShareSambaCreateMode',
+			'univentionShareSambaWriteable',
+			'univentionShareSambaInheritPermissions',
+			'univentionShareSambaBrowseable',
+			'univentionShareSambaHideUnreadable',
+			'univentionShareSambaInheritAcls',
+			'univentionShareSambaPublic',
+			'univentionShareSambaSecurityMode',
+			'univentionShareDirectoryMode',
+			'univentionShareSambaBlockingLocks',
+			'univentionSharePath',
+			'univentionShareWriteable',
+			'univentionShareSambaDirectorySecurityMode',
+			'univentionShareSambaLevel2Oplocks',
+			'univentionShareSambaNtAclSupport',
+			'univentionShareSambaCscPolicy',
+			'univentionShareSambaForceCreateMode',
+			'univentionObjectType',
+			'univentionShareSambaOplocks',
+			'univentionShareSambaDirectoryMode',
+			'univentionShareSambaForceGroup',
+			'univentionShareSambaFakeOplocks',
+			'univentionShareGid',
+			'univentionShareNFSRootSquash',
+			'univentionShareUid',
+			'univentionShareSambaStrictLocking',
+			'univentionShareSambaName',
+			'univentionShareNFSSubTree',
+			'univentionShareSambaInheritOwner',
+			'univentionShareHost',
+		]
+		self.assert_acl(share_dn, access, share_attribute_list, access_allowance)
+
+
 	def assert_shares(self, shares_dn, access):
 		"""Lehrer und Mitglieder der lokalen Administratoren duerfen Shares anlegen,
 		Klassenshares aber nicht aendern

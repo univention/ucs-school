@@ -6,6 +6,7 @@
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 
+from ldap.filter import filter_format
 from essential.acl import Acl
 from essential.computerroom import Computers
 from essential.schoolroom import ComputerRoom
@@ -18,9 +19,9 @@ def main():
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			school_admin, school_admin_dn = schoolenv.create_school_admin(school)
-
 			staff, staff_dn  = schoolenv.create_user(school, is_staff=True)
 			stu, stu_dn = schoolenv.create_user(school)
+			class_name, class_dn = schoolenv.create_school_class(school)
 
 			open_ldap_co = schoolenv.open_ldap_connection()
 			# importing 2 random computers
@@ -44,6 +45,14 @@ def main():
 			acl.assert_ou('read')
 
 			acl.assert_global_containers('read')
+
+			# Bug #41720
+			share_dn = open_ldap_co.searchDn(filter=filter_format('(&(objectClass=univentionShare)(cn=%s))', (class_name,)))[0]
+			acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
+			acl.assert_share_object_access(share_dn, 'write', 'DENIED')
+			share_dn = 'cn=Marktplatz,cn=shares,%s' % (oudn,)
+			acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
+			acl.assert_share_object_access(share_dn, 'write', 'DENIED')
 
 if __name__ == '__main__':
 	main()

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.14-5) unstable; urgency=low
+
+  * Bug #41720: check if users are able to read but not able to write
+    shares
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 18 Aug 2016 17:18:04 +0200
+
 ucs-test-ucsschool (3.0.14-4) unstable; urgency=low
 
   * Bug #41725: disabled 90_ucsschool/79_ldap_acl_access_to_uidNumber0
