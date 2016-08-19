@@ -57,7 +57,7 @@ feedback@univention.de
 			</para>
 		</section>
 
-		<section id="changelog:changelogs">
+		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
 			@%@CHANGELOG@%@
 		</section>
