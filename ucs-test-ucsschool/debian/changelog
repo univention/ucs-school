@@ -1,4 +1,4 @@
-ucs-test-ucsschool (3.0.14-5.1) unstable; urgency=medium
+ucs-test-ucsschool (3.0.14-6) unstable; urgency=medium
 
   * 79_ldap_acl_access_to_uidNumber0: use SKIP-UCSSCHOOL tag
     (Bug #41725)
