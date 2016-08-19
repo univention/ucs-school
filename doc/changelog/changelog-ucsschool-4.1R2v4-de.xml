@@ -57,9 +57,9 @@ feedback@univention.de
 			</para>
 		</section>
 
-		<section id="changelog:changelogs">
+		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
-						<section id="changelog:ucsschool:ucs-school-ldap-acls-master">
+						<section id="changelog:ucsschool:ucs-school-ldap-acls-master" lang="en">
 				<title>Source package ucs-school-ldap-acls-master</title>
 				<itemizedlist>
 					<listitem><simpara>A regression that staff only users could modify shares has been fixed (<u:bug>41720</u:bug>).</simpara></listitem>
