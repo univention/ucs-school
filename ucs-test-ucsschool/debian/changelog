@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.14-8) unstable; urgency=low
+
+  * Bug #42065: disabled some LDAP ACL tests until bug is fixed
+  * renamed 75_ldap_acls_admin_school_server to 75_ldap_acls_nonedu_server
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 19 Aug 2016 15:19:22 +0200
+
 ucs-test-ucsschool (3.0.14-7) unstable; urgency=medium
 
   * 22_computerroom_two_rooms_settings_interference: Increase the

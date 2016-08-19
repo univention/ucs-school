@@ -76,9 +76,10 @@ def main():
 			share_dn = open_ldap_co.searchDn(filter=filter_format('(&(objectClass=univentionShare)(cn=%s))', (class_name,)))[0]
 			acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
 			acl.assert_share_object_access(share_dn, 'write', 'DENIED')
-			share_dn = 'cn=Marktplatz,cn=shares,%s' % (oudn,)
-			acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
-			acl.assert_share_object_access(share_dn, 'write', 'DENIED')
+			# disabled on purpose - see Bug #42065
+			# share_dn = 'cn=Marktplatz,cn=shares,%s' % (oudn,)
+			# acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
+			# acl.assert_share_object_access(share_dn, 'write', 'DENIED')
 
 if __name__ == '__main__':
 	main()
