@@ -1,3 +1,12 @@
+ucs-test-ucsschool (3.0.14-7) unstable; urgency=medium
+
+  * 22_computerroom_two_rooms_settings_interference: Increase the
+    timeout to 14400 seconds (Bug #42034)
+  * essential/computerroom.py: Let's try to wait a little bit longer for
+    the CUPS and Samba server (Bug #42034)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 19 Aug 2016 13:39:07 +0200
+
 ucs-test-ucsschool (3.0.14-6) unstable; urgency=medium
 
   * 79_ldap_acl_access_to_uidNumber0: use SKIP-UCSSCHOOL tag

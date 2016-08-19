@@ -571,6 +571,9 @@ class Room(object):
 				utils.wait_for_replication_and_postrun()
 				wait_for_s4connector()
 
+				# give the CUPS and Samba server a little bit more time
+				time.sleep(5)
+
 				# check if displayed values match
 				self.check_room_settings(umc_connection, new_settings)
 				# old_period = old_settings['period']

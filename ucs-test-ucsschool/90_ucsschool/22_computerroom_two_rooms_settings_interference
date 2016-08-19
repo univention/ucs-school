@@ -3,7 +3,7 @@
 ## desc: computerroom two rooms settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool,longrunning]
-## timeout: 9000
+## timeout: 14400
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
