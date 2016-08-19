@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 # coding=utf-8
-## desc: ldap-ACL asserts for administrative DCs
+## desc: ldap-ACL asserts for non-edu DCs
 ## roles: [domaincontroller_master]
 ## tags: [apptest]
 ## exposure: dangerous
@@ -32,7 +32,7 @@ def main():
 			try:
 				admindc.dn = lo.search(filter=filter_format('(&(objectClass=univentionHost)(cn=%s))', (admindc.name,)))[0][0]
 			except IndexError:
-				print '\n\nERROR: Looks like the administrative domaincontroller %r does not exist in LDAP\n\n'
+				print '\n\nERROR: Looks like the non-edu domaincontroller %r does not exist in LDAP\n\n'
 				raise
 
 			# Bug 41818: administrative school server can only replicate staff users and teacher-staff users
