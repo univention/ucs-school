@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
-fix: 9.0.21-3.248.201608171701
+fix: 9.0.21-4.249.201608221440
 desc: |
  This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one
@@ -21,9 +21,9 @@ desc: |
    users (Bug #41811).
  * Temparary shutdown of the directory notifier is now handled more safely
    (Bug #41775).
- * By default, new class shares or group shares are no longer exported via
-   NFS. The NFS export of those shares can be reactivated manually via the
-   UMC module "Shares" by activating the option "Export for NFS clients
-   (NFSv3 and NFSv4)". This new default value does not affect existing
-   shares objects (Bug #38641).
+ * Creation of NFS exports for new shares can now be controlled using the
+   UCR variable ucsschool/default/share/nfs. Its backwards compatible
+   default setting is 'true' (new shares are export via NFS). To manually
+   (de)activate the NFS export of a share, activate the option "Export for
+   NFS clients (NFSv3 and NFSv4)" via the UMC module "Shares" (Bug #38641).
 bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641]
