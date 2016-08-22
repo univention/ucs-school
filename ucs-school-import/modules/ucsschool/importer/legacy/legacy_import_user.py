@@ -31,7 +31,9 @@ ImportUser subclass for import using legacy CSV format.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from ldap.filter import filter_format
 
+from univention.admin.uexceptions import noObject
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher,\
 	ImportTeachersAndStaff, ImportUser
@@ -59,6 +61,32 @@ class LegacyImportUser(ImportUser):
 
 		if self.action and self.action not in ["A", "D", "M"]:
 			raise UnkownAction("Unknown action '{}'.".format(self.action))
+
+	@classmethod
+	def get_by_import_id_or_username(cls, connection, source_uid, record_uid, username, superordinate=None):
+		"""
+		Retrieve a LegacyImportUser.
+		Will find it using either source_uid and record_uid or if unset
+		with the username.
+
+		:param connection: uldap object
+		:param source_uid: str: source DB identifier
+		:param record_uid: str: source record identifier
+		:param username: str: username
+		:param superordinate: str: superordinate
+		:return: object of ImportUser subclass from LDAP or raises noObject
+		"""
+		filter_s = filter_format(
+			"(&(objectClass=ucsschoolType)"
+			"(|"
+			"(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))"
+			"(&(!(ucsschoolSourceUID=*))(!(ucsschoolRecordUID=*))(uid=%s))"
+			"))",
+			(source_uid, record_uid, username))
+		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
+		if not obj:
+			raise noObject("No user with source_uid={0}, record_uid={1} or username={2} found.".format(source_uid, record_uid, username))
+		return cls.from_udm_obj(obj, None, connection)
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):

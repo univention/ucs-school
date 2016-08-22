@@ -48,7 +48,7 @@ class LegacyUserImport(UserImport):
 		for user in self.imported_users:
 			if user.action == "D":
 				try:
-					ldap_user = a_user.get_by_import_id(self.connection, user.source_uid, user.record_uid)
+					ldap_user = a_user.get_by_import_id_or_username(self.connection, user.source_uid, user.record_uid, user.name)
 					ldap_user.update(user)  # need user.input_data for hooks
 					users_to_delete.append(ldap_user)
 				except noObject:
@@ -70,8 +70,8 @@ class LegacyUserImport(UserImport):
 		"""
 		if imported_user.action == "A":
 			try:
-				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
-					imported_user.record_uid)
+				user = imported_user.get_by_import_id_or_username(self.connection, imported_user.source_uid,
+					imported_user.record_uid, imported_user.name)
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
 					imported_user.old_user = user
@@ -95,8 +95,8 @@ class LegacyUserImport(UserImport):
 				user = imported_user
 		elif imported_user.action == "M":
 			try:
-				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
-					imported_user.record_uid)
+				user = imported_user.get_by_import_id_or_username(self.connection, imported_user.source_uid,
+					imported_user.record_uid, imported_user.name)
 				imported_user.old_user = user
 				imported_user.prepare_all(new_user=False)
 				if user.school != imported_user.school:

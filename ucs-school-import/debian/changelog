@@ -1,3 +1,11 @@
+ucs-school-import (14.0.15-22) unstable; urgency=low
+
+  * Bug #41862: find users with and without SourceUID and RecordUID (from
+    legacy imports)
+  * revert r71265 (migration code)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 22 Aug 2016 16:13:08 +0200
+
 ucs-school-import (14.0.15-21) unstable; urgency=low
 
   * Bug #38641: deactivate NFS for new shares if UCRV

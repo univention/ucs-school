@@ -96,29 +96,15 @@ def migrate_users(lo, options):
 				old_object_classes = object_attrs.get('objectClass', [])
 				new_schools = set(old_schools) | set([school])
 				new_object_classes = set(old_object_classes) | set(object_classes)
-				old_source_uid = object_attrs.get('ucsschoolSourceUID', [])
-				if old_source_uid:
-					new_source_uid = old_source_uid
-				else:
-					new_source_uid = ["LegacyDB"]
-				old_record_uid = object_attrs.get('ucsschoolRecordUID', [])
-				if old_record_uid:
-					new_record_uid = old_record_uid
-				else:
-					new_record_uid = object_attrs.get('uid')
 				if (set(old_schools) == set(new_schools) and
-					set(old_object_classes) == set(new_object_classes) and
-					old_source_uid == new_source_uid and
-					old_record_uid == new_record_uid):
+					set(old_object_classes) == set(new_object_classes)):
 					yield '%r has already been converted.' % (object_dn,)
 					continue
 				yield 'Adding %r into school %r' % (object_dn, ', '.join(new_schools))
 				try:
 					modlist = [
 						('ucsschoolSchool', list(old_schools), list(new_schools)),
-						('objectClass', list(old_object_classes), list(new_object_classes)),
-						('ucsschoolSourceUID', old_source_uid, new_source_uid),
-						('ucsschoolRecordUID', old_record_uid, new_record_uid)
+						('objectClass', list(old_object_classes), list(new_object_classes))
 					]
 					if options.dryrun:
 						if options.verbose:
