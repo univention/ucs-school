@@ -1,3 +1,9 @@
+ucs-school-import (14.0.15-23) unstable; urgency=low
+
+  * Bug #41351: install UDM hook domain wide
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 22 Aug 2016 16:47:49 +0200
+
 ucs-school-import (14.0.15-22) unstable; urgency=low
 
   * Bug #41862: find users with and without SourceUID and RecordUID (from
