@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.21-4) unstable; urgency=low
+
+  * Bug #38641: deactivate NFS for new shares only if UCRV
+    ucsschool/default/share/nfs is set to false.
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 22 Aug 2016 14:29:35 +0200
+
 ucs-school-lib (9.0.21-3) unstable; urgency=medium
 
   * shell/base.sh: removed bashism since the lib is used in dash scripts

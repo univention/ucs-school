@@ -1,3 +1,10 @@
+ucs-school-import (14.0.15-21) unstable; urgency=low
+
+  * Bug #38641: deactivate NFS for new shares if UCRV
+    ucsschool/default/share/nfs is set to false.
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 22 Aug 2016 14:36:17 +0200
+
 ucs-school-import (14.0.15-20) unstable; urgency=low
 
   * Bug #41544: move delete phase before add/modify phase, so that new user

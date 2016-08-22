@@ -34,8 +34,8 @@ import os.path
 
 from ucsschool.lib.models.attributes import ShareName, SchoolClassAttribute
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-
 from ucsschool.lib.models.utils import ucr, _, logger
+
 
 class Share(UCSSchoolHelperAbstractClass):
 	name = ShareName(_('Name'))
@@ -63,7 +63,8 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_obj['owner'] = '0'
 		udm_obj['group'] = gid
 		udm_obj['directorymode'] = '0770'
-		udm_obj.options = ['samba']  # deactivate NFS
+		if ucr.is_false('ucsschool/default/share/nfs'):
+			udm_obj.options = ['samba']  # deactivate NFS
 		logger.info('Creating share on "%s"', udm_obj['host'])
 		return super(Share, self).do_create(udm_obj, lo)
 

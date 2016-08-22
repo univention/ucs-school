@@ -1168,7 +1168,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object["owner"]="0"
 		object["group"]=gid
 		object["directorymode"]="0770"
-
+		if configRegistry.is_false('ucsschool/default/share/nfs'):
+			object.options = ['samba']  # deactivate NFS
 		try:
 			create_object(object)
 		except:

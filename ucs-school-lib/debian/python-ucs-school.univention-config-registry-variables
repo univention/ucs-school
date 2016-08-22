@@ -1,0 +1,6 @@
+[ucsschool/default/share/nfs]
+Description[de]=Für neue shares eine NFS Freigabe erstellen. Standard: true.
+Description[en]=Export new shares via NFS. Default: true.
+Type=bool
+Categories=ucsschool-base
+
