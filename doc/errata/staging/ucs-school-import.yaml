@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.15-21.296.201608221441
+fix: 14.0.15-22.298.201608221621
 desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
@@ -28,8 +28,8 @@ desc: |
    least one school class (Bug #41847).
  * Conflicting storage of UDM attributes is now prevented (Bug #41857).
  * Program code was added to ease future development and support (Bug #41861).
- * The migration script now adds attributes to existing users that are
-   required for the import script (Bug #41862).
+ * The legacy import script now finds users in LDAP with and without the new
+   SourceUID and RecordUID attributes (Bug #41862).
  * Deletion of user accounts is now done before creating new accounts or
    modifying existing ones. This remedies the problem, that new users could
    not have unique properties (like the primary email address), that
