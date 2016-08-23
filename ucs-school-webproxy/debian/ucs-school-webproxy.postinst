@@ -45,7 +45,13 @@ case "$1" in
 
 		if dpkg --compare-versions "$2" lt 11.0.6-1
 		then
-			univention-config-registry set 'squid/acl/windowsupdater/allow/dstdomain-i/regex?^(.*\.update\.microsoft|download.windowsupdate)\.com$'
+			univention-config-registry set 'squid/acl/windowsupdater/allow/dstdomain-i/regex?(.*\.update\.microsoft|download.windowsupdate)\.com'
+		else
+			if [ "$(ucr get squid/acl/windowsupdater/allow/dstdomain-i/regex)" = '^(.*\.update\.microsoft|download.windowsupdate)\.com$' ]
+			then
+				# fix old configuration (Bug #40960)
+				univention-config-registry set 'squid/acl/windowsupdater/allow/dstdomain-i/regex=(.*\.update\.microsoft|download.windowsupdate)\.com'
+			fi
 		fi
 
 		# init squidguard db
