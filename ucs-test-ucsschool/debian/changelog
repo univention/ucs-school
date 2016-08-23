@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.14-10) unstable; urgency=medium
+
+  * Bug #41571: New 90_ucsschool/98_samba4_evaluate_windows_gpo:
+    adapted from ucs-test/tests/51_samba4/56evaluate_windows_gpo for
+    UCS@school exam
+
+ -- Arvid Requate <requate@univention.de>  Tue, 23 Aug 2016 20:31:12 +0200
+
 ucs-test-ucsschool (3.0.14-9) unstable; urgency=medium
 
   * Added tag skip_in_multiserver to skip various tests in our
