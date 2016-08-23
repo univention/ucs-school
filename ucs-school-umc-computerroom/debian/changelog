@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (8.0.5-1) unstable; urgency=low
+
+  * Bug #41278: fixed problem with execution time of at jobs and intra-day limit
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 23 Aug 2016 14:35:03 +0200
+
 ucs-school-umc-computerroom (8.0.4-2) unstable; urgency=low
 
   * Bug #41752: fixed "connected" logic

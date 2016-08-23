@@ -832,6 +832,8 @@ class Instance(SchoolBaseModule):
 			MODULE.info('Now: %s' % starttime)
 			MODULE.info('Endtime: %s' % endtime)
 			starttime = starttime.replace(hour=endtime.hour, minute=endtime.minute)
+			while starttime < datetime.datetime.now():  # prevent problems due to intra-day limit
+				starttime += datetime.timedelta(days=1)
 			MODULE.info('Remove settings at %s' % starttime)
 			atjobs.add(cmd, starttime, {Instance.ATJOB_KEY: self._italc.room})
 			self._ruleEndAt = starttime
