@@ -75,11 +75,6 @@
 				</listitem>
 				<listitem>
 					<simpara>
-						Existierende &ucsUAS;-Benutzer werden verändert, fehlende angelegt.
-					</simpara>
-				</listitem>
-				<listitem>
-					<simpara>
 						Je nach Konfiguration werden die Eingabedaten als vollständiger Soll-Zustand interpretiert oder als inkrementelles Update zum Ist-Zustand.
 					</simpara>
 					<itemizedlist>
@@ -95,6 +90,11 @@
 							</simpara>
 						</listitem>
 					</itemizedlist>
+				</listitem>
+				<listitem>
+					<simpara>
+						Existierende &ucsUAS;-Benutzer werden verändert, fehlende angelegt.
+					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
