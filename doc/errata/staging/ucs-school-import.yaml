@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.15-22.299.201608221703
+fix:
 desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
@@ -34,7 +34,8 @@ desc: |
    modifying existing ones. This remedies the problem, that new users could
    not have unique properties (like the primary email address), that
    accounts scheduled for deletion still had (Bug #41544).
- * The export of newly created shares can now be deactivated using the UCR
-   variable ucsschool/default/share/nfs. Its default is 'true': create NFS
-   shares (Bug #38641).
+ * Newly created shares are by default not exported via NFS anymore. To
+   reactivate the previous bahaviour (creation of both Samba/CIFS and NFS
+   shares), set UCR variable ucsschool/default/share/nfs to true. Existing
+   shares are not affected by this change (Bug #38641).
 bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641]

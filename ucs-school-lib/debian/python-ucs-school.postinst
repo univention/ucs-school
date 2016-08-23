@@ -36,6 +36,6 @@ if [ ! -e /var/lib/ucs-school-lib/lessons.ini ]; then
 	cp /usr/share/ucs-school-lib/lessons.ini /var/lib/ucs-school-lib/
 fi
 
-ucr set ucsschool/default/share/nfs?true
+ucr set ucsschool/default/share/nfs?false
 
 exit 0

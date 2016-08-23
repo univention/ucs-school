@@ -64,7 +64,10 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_obj['group'] = gid
 		udm_obj['directorymode'] = '0770'
 		if ucr.is_false('ucsschool/default/share/nfs'):
-			udm_obj.options = ['samba']  # deactivate NFS
+			try:
+				udm_obj.options.remove('nfs')  # deactivate NFS
+			except ValueError:
+				pass
 		logger.info('Creating share on "%s"', udm_obj['host'])
 		return super(Share, self).do_create(udm_obj, lo)
 
