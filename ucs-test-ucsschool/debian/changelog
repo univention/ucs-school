@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.14-9) unstable; urgency=medium
+
+  * Added tag skip_in_multiserver to skip various tests in our
+    multiserver setups (Bug #42094)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 23 Aug 2016 14:03:12 +0200
+
 ucs-test-ucsschool (3.0.14-8) unstable; urgency=low
 
   * Bug #42065: disabled some LDAP ACL tests until bug is fixed

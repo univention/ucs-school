@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Import users via CLI
-## tags: [apptest,ucsschool,longrunning]
+## tags: [apptest,ucsschool,longrunning,skip_in_multiserver]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## timeout: 21600
