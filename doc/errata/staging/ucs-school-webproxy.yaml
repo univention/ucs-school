@@ -1,0 +1,13 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-webproxy
+fix: 12.0.3-2.118.201608231057
+desc: |
+ This update addresses the following issue(s):
+ * The default value of the UCR variabel
+   squid/acl/windowsupdater/allow/dstdomain-i/regex contained an error
+   which, although it didn't lead to a functional problem, was corrected
+   (Bug #40960).
+bug: [40960]
