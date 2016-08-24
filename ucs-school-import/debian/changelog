@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-1) unstable; urgency=low
+
+  * Bug #41775: reworded cmdline description
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 19 Aug 2016 15:29:27 +0200
+
 ucs-school-import (14.0.15-24) unstable; urgency=low
 
   * Bug #38641: only remove NFS option, don't set whole options list
