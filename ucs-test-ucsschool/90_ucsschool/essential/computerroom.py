@@ -706,6 +706,11 @@ def add_printer(name, school, hostname, domainname, ldap_base):
 			'ldap_base': ldap_base,
 		})
 
+	utils.wait_for_replication_and_postrun()
+
+	# give the CUPS and Samba server a little bit more time
+	time.sleep(5)
+
 
 def remove_printer(name, school, ldap_base):
 	cmd_remove_printer = [
