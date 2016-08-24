@@ -284,7 +284,7 @@ class CLI_Import_v2_Tester(object):
 			raise ImportException('Non-zero exit code %r' % (exitcode,))
 		return exitcode
 
-	def check_num_users(self, exp_new, exp_removed):
+	def check_new_and_removed_users(self, exp_new, exp_removed):
 		new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 		if len(new_users) != exp_new:
 			self.log.error('Invalid number of new users (expected %d, found %d)! Found new objects: %r',
@@ -323,7 +323,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
-			self.check_num_users(1, 0)
+			self.check_new_and_removed_users(1, 0)
 
 			# update dn+username of person and verify LDAP attributes
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -347,7 +347,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
-			self.check_num_users(0, 0)
+			self.check_new_and_removed_users(0, 0)
 
 			# verify LDAP attributes
 			person.verify()
@@ -365,7 +365,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
-			self.check_num_users(0, 1)
+			self.check_new_and_removed_users(0, 1)
 
 			# verify LDAP attributes
 			person.verify()
@@ -410,7 +410,7 @@ class CLI_Import_v2_Tester(object):
 				self.run_import(['-c', fn_config, '-i', fn_csv])
 
 				# check for new users in LDAP
-				self.check_num_users(2, 0)
+				self.check_new_and_removed_users(2, 0)
 
 				# update dn+username of person and verify LDAP attributes
 				for person in person_list:
@@ -438,7 +438,7 @@ class CLI_Import_v2_Tester(object):
 				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
 				# check for new users in LDAP
-				self.check_num_users(0, 0)
+				self.check_new_and_removed_users(0, 0)
 
 				# verify LDAP attributes
 				for person in person_list:
@@ -463,7 +463,7 @@ class CLI_Import_v2_Tester(object):
 				self.run_import(['-c', fn_config, '-i', fn_csv])
 
 				# check for new users in LDAP
-				self.check_num_users(0, 1)
+				self.check_new_and_removed_users(0, 1)
 
 				# verify LDAP attributes
 				for person in person_list:
@@ -507,7 +507,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 
 			# check for new users in LDAP
-			self.check_num_users(1, 0)
+			self.check_new_and_removed_users(1, 0)
 
 			# update dn+username of person and verify LDAP attributes
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -960,11 +960,11 @@ class CLI_Import_v2_Tester(object):
 
 			# check for new users in LDAP
 			if first_user:
-				num_rem = 0
+				users_removed = 0
 				first_user = False
 			else:
-				num_rem = 1
-			self.check_num_users(1, num_rem)
+				users_removed = 1
+			self.check_new_and_removed_users(1, users_removed)
 
 			self.log.info('Test was successful.\n\n\n')
 
@@ -994,7 +994,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 
 			# check for new users in LDAP
-			self.check_num_users(1, 0)
+			self.check_new_and_removed_users(1, 0)
 
 			self.log.info('*** Importing a user, NOT deleting previous user (running with "--no-delete")')
 			person = Person(self.ou_A.name, role)
@@ -1003,7 +1003,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
 
 			# check for new users in LDAP
-			self.check_num_users(1, 0)
+			self.check_new_and_removed_users(1, 0)
 
 			self.log.info('*** Importing a user, deleting previous two users (running without "--no-delete")')
 			person = Person(self.ou_A.name, role)
@@ -1012,7 +1012,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 
 			# check for new users in LDAP
-			self.check_num_users(1, 2)
+			self.check_new_and_removed_users(1, 2)
 
 			self.log.info('*** Importing a user, deleting previous user')
 			person = Person(self.ou_A.name, role)
@@ -1021,7 +1021,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 
 			# check for new users in LDAP
-			self.check_num_users(1, 1)
+			self.check_new_and_removed_users(1, 1)
 
 			self.log.info('*** Importing same user and running with "--no-delete"')
 			person.set_mode_to_delete()
@@ -1030,7 +1030,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
 
 			# check for new users in LDAP
-			self.check_num_users(0, 0)
+			self.check_new_and_removed_users(0, 0)
 
 			self.log.info('*** Importing same user with action="D" and running with "--no-delete"')
 			person.set_mode_to_delete()
@@ -1042,7 +1042,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config_d, '-i', fn_csv, '--no-delete'])
 
 			# check for new users in LDAP
-			self.check_num_users(0, 1)
+			self.check_new_and_removed_users(0, 1)
 
 			self.log.info('Test was successful.\n\n\n')
 
@@ -1087,7 +1087,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
-			self.check_num_users(1, 0)
+			self.check_new_and_removed_users(1, 0)
 
 			# update dn+username of person and verify LDAP attributes
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -1124,7 +1124,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
-			self.check_num_users(0, 0)
+			self.check_new_and_removed_users(0, 0)
 
 			# verify LDAP attributes
 			person.verify()
@@ -1147,7 +1147,7 @@ class CLI_Import_v2_Tester(object):
 			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
-			self.check_num_users(0, 1)
+			self.check_new_and_removed_users(0, 1)
 
 			# verify LDAP attributes
 			person.verify()
