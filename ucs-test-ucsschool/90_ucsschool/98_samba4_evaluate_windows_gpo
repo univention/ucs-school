@@ -468,7 +468,7 @@ class GPO_Test(object):
 
 		return self
 
-	def __exit__(self):
+	def __exit__(self, exc_type, exc_value, etraceback):
 		remove_test_gpo(self.test_user_gpo)
 		remove_test_gpo(self.test_machine_gpo)
 
@@ -521,6 +521,8 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		exam.start()
 		try:
 			Win.reboot_remote_win_host()
+			Win.wait_until_client_is_gone(timeout=120)
+			Win.wait_for_client(timeout=120)
 			gpo_test.check()
 		finally:
 			exam.finish()
