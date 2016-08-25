@@ -18,7 +18,7 @@
 		}
 	},
 	"scheme": {
-		"email": "<firstname>[0].<lastname>@<maildomain>",
+		"email": "<firstname>.<lastname>@<maildomain>",
 		"recordUID": "<firstname>.<lastname>"
 	},
 	"sourceUID": "NewDB",
