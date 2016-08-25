@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: computerroom two rooms settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest, ucsschool,longrunning]
+## tags: [apptest, ucsschool,longrunning,SKIP-UCSSCHOOL]
 ## timeout: 14400
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]

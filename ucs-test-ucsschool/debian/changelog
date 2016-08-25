@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.14-13.1) unstable; urgency=medium
+
+  * 22_computerroom_two_rooms_settings_interference: Disable the test
+    case now (Bug #42034)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 25 Aug 2016 05:57:43 +0200
+
 ucs-test-ucsschool (3.0.14-13) unstable; urgency=low
 
   * Bug #41775: renamed 1 function/1 variable for better readability
