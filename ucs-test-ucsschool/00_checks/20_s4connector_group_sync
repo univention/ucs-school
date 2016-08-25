@@ -1,6 +1,9 @@
 #!/usr/share/ucs-test/runner bash 
 ## desc: Check connector/s4/mapping/group/syncmode variable
 ## exposure: safe
+## tags:
+## - apptest
+## - ucsschool
 ## packages:
 ## - univention-s4-connector
 

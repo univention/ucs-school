@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.14-15) unstable; urgency=medium
+
+  * 00_checks/20_s4connector_group_sync: Execute in UCS@school setups
+    (Bug #40473)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 25 Aug 2016 14:34:49 +0200
+
 ucs-test-ucsschool (3.0.14-14) unstable; urgency=medium
 
   * Added test case 20_s4connector_group_sync which checks the UCR
