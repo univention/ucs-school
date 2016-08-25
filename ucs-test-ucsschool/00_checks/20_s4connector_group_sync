@@ -1,0 +1,18 @@
+#!/usr/share/ucs-test/runner bash 
+## desc: Check connector/s4/mapping/group/syncmode variable
+## exposure: safe
+## packages:
+## - univention-s4-connector
+
+RETVAL=0
+
+. "$TESTLIBPATH/base.sh" || exit 137
+
+eval "$(ucr shell)"
+
+if [ "$connector_s4_mapping_group_syncmode" != "write" ]; then
+	fail_test 1 "connector/s4/mapping/group/syncmode is set to $connector_s4_mapping_group_syncmode, expected: write"
+fi
+
+exit $RETVAL
+
