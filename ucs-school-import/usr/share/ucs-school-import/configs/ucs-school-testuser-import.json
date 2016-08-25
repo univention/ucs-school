@@ -1,0 +1,26 @@
+{
+	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
+	"classes": {
+		"reader": "ucsschool.importer.reader.test_csv_reader.TestCsvReader"
+	},
+	"input": {
+		"type": "csv"
+	},
+	"csv": {
+		"mapping": {
+			"Schulen": "schools",
+			"Benutzertyp": "__type",
+			"Vorname": "firstname",
+			"Nachname": "lastname",
+			"Klassen": "school_classes",
+			"Beschreibung": "description",
+			"Telefon": "phone"
+		}
+	},
+	"scheme": {
+		"email": "<firstname>[0].<lastname>@<maildomain>",
+		"recordUID": "<firstname>.<lastname>"
+	},
+	"sourceUID": "NewDB",
+	"verbose": false
+}

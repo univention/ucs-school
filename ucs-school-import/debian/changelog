@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-2) unstable; urgency=low
+
+  * Bug #42105: add script to import test users
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 25 Aug 2016 14:17:06 +0200
+
 ucs-school-import (14.0.16-1) unstable; urgency=low
 
   * Bug #41775: reworded cmdline description

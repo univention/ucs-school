@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.15-24.300.201608231150
+fix:
 desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
@@ -41,4 +41,7 @@ desc: |
    reactivate the previous bahaviour (creation of both Samba/CIFS and NFS
    shares), set UCR variable ucsschool/default/share/nfs to true. Existing
    shares are not affected by this change (Bug #38641).
-bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641]
+ * A script was added to create and import users for testing purposes for the
+   Univention development team. Do not use it on production systems!
+   (Bug #42105)
+bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641,42105]

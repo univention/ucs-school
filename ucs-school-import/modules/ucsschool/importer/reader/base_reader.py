@@ -43,9 +43,6 @@ class BaseReader(object):
 
 	Subclasses must override get_roles(), map() and read().
 	"""
-	config = None
-	logger = None
-
 	def __init__(self, filename, header_lines=0, **kwargs):
 		"""
 		:param filename: str: Path to file with user data.
