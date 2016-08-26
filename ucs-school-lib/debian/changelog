@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.21-6) unstable; urgency=low
+
+  * Bug #38641: fix missing UCR default value
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 26 Aug 2016 10:45:23 +0200
+
 ucs-school-lib (9.0.21-5) unstable; urgency=low
 
   * Bug #38641: deactivate NFS for new shares by default, wording,

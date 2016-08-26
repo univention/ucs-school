@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-4) unstable; urgency=low
+
+  * Bug #38641: fix missing UCR default value
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 26 Aug 2016 10:44:50 +0200
+
 ucs-school-import (14.0.16-3) unstable; urgency=low
 
   * Bug #42105: change email schema for lower chance of collision

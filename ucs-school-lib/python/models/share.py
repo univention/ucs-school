@@ -63,7 +63,7 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_obj['owner'] = '0'
 		udm_obj['group'] = gid
 		udm_obj['directorymode'] = '0770'
-		if ucr.is_false('ucsschool/default/share/nfs'):
+		if ucr.is_false('ucsschool/default/share/nfs', True):
 			try:
 				udm_obj.options.remove('nfs')  # deactivate NFS
 			except ValueError:
