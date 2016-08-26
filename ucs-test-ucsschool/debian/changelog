@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-1) unstable; urgency=low
+
+  * Bug #38641: added check script 130_classshares_check_ucr_for_nfs for
+    NFS UCR option for (class) shares
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 25 Aug 2016 14:38:42 +0200
+
 ucs-test-ucsschool (3.0.14-15) unstable; urgency=medium
 
   * 00_checks/20_s4connector_group_sync: Execute in UCS@school setups
