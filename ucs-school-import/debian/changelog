@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-5) unstable; urgency=low
+
+  * Bug #41595: remove UCRV support for setting the effective log level
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 26 Aug 2016 10:56:33 +0200
+
 ucs-school-import (14.0.16-4) unstable; urgency=low
 
   * Bug #38641: fix missing UCR default value

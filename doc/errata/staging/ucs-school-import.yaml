@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-4.304.201608261048
+fix:
 desc: |
  This update addresses the following issue(s):
  * New passwords for activated group members use special characters that
@@ -19,10 +19,8 @@ desc: |
    if the --no-delete option is set. --no-delete only disables the deletion
    of user objects if the action (add, modify, delete) has been determined
    automatically (Bug #41775).
- * Logging code was moved to the ucs-school-lib package. The UCRV
-   ucsschool/import/debug/werror has been replaced with
-   ucsschool/logging/level/import. If ucsschool/import/debug/werror was set,
-   it is automatically migrated (Bug #41595).
+ * Logging code was moved to the ucs-school-lib package. Support for the
+   UCR variable ucsschool/import/debug/werror has been removed (Bug #41595).
  * A bug was fixed, that prevented staff users from being moved from one
    school to another (Bug #41609)
  * Changing user options to an invalid combination is now prevented

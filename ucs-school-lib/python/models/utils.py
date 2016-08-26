@@ -202,8 +202,7 @@ def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, forma
 	* The logging level can be configured through ucsschool/logging/level/<name>.
 
 	:param name: str: will be appended to "ucsschool." as name of the logger
-	:param level: str: loglevel (DEBUG, INFO etc), the UCRV
-	ucsschool/logging/level/<name> overwrites this setting!
+	:param level: str: loglevel (DEBUG, INFO etc)
 	:param target: stream (open file) or a str (file path)
 	:param handler_kwargs: dict: will be passed to the handlers constructor.
 	It cannot be used to modify a handler, as it is only used at creation time.
@@ -216,7 +215,6 @@ def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, forma
 	"""
 	if not name:
 		name = "noname"
-	level = ucr.get("ucsschool/logging/level/{}".format(name), level)
 	if isinstance(target, file) or hasattr(target, "write"):
 		# file like object
 		filename = target.name

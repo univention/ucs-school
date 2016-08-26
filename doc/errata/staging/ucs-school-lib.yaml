@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
-fix: 9.0.21-6.251.201608261047
+fix:
 desc: |
  This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one

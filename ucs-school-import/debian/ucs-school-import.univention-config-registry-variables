@@ -141,9 +141,3 @@ Description[de]=Falls auf true gesetzt, hängt beim Erstellen einer Schule die U
 Description[en]=If true attaches the default-umc-users UMC policy to the group "Domain Users $ou" when creating a school.
 Type=bool
 Categories=ucsschool-base
-
-[ucsschool/logging/level/importer]
-Description[de]=Die Detailtiefe der auf die Konsole und ins Logfile geschriebenen Information einstellen. Mögliche Werte sind DEBUG, INFO, WARN, ERROR. Standard ist "INFO".
-Description[en]=Set the verbosity of log messages on the terminal and in the logfile. Allowed values are DEBUG, INFO, WARN, ERROR. Default is "INFO".
-Type=str
-Categories=ucsschool-base
