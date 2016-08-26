@@ -36,8 +36,8 @@ desc: |
    not have unique properties (like the primary email address), that
    accounts scheduled for deletion still had (Bug #41544).
  * Newly created shares are by default not exported via NFS anymore. To
-   reactivate the previous bahaviour (creation of both Samba/CIFS and NFS
-   shares), set UCR variable ucsschool/default/share/nfs to true. Existing
+   reactivate the previous behaviour (creation of both Samba/CIFS and NFS
+   shares), set UCR variable ucsschool/default/share/nfs to "true". Existing
    shares are not affected by this change (Bug #38641).
  * A script was added to create and import users for testing purposes for the
    Univention development team. Do not use it on production systems!
