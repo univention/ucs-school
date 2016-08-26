@@ -245,6 +245,18 @@
             Anlegen einer Freigabe statt. Für die OU <wordasword>gym17</wordasword> muss
             beispielsweise der Container <guimenuitem>gym17/shares</guimenuitem> ausgewählt werden.
         </para>
+        <note>
+            <para>
+                Seit &ucsUAS; 4.1R2 werden neue Freigaben (sowohl automatisch, als auch manuell erstellte)
+                standardmäßig nur noch per Samba/CIFS freigegeben. Um neue Freigaben standardmäßig auch per NFS zu exportieren,
+                kann die &ucsUCRV; <envar>ucsschool/default/share/nfs</envar> auf den Wert <literal>yes</literal>
+                gesetzt werden.
+            </para>
+            <para>
+            	Um das Freizugeben per NFS manuell ein- oder auszuschalten, kann im UMC-Modul <guimenu>Freigaben</guimenu> für jede
+            	Freigabe die Option <emphasis>Für NFS-Clients exportieren (NFSv3 und NFSv4)</emphasis> (de)aktiviert werden.
+            </para>
+        </note>
     </section>
 
     <section id="school:setup:generic:roleshares">
