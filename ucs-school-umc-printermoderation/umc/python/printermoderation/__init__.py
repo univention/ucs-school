@@ -39,7 +39,7 @@ import subprocess
 
 from univention.lib.i18n import Translation
 
-from univention.management.console.modules import UMC_OptionTypeError
+from univention.management.console.modules import UMC_OptionTypeError, UMC_Error
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.log import MODULE
@@ -78,6 +78,7 @@ class Instance(SchoolBaseModule):
 				os.makedirs(DISTRIBUTION_DATA_PATH, 0o755)
 		except (OSError, IOError) as exc:
 			MODULE.error('error occured while creating %s: %s' % (CUPSPDF_DIR, exc))
+		self.fqdn = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 
 	def _get_path(self, username, printjob):
 		printjob = printjob.replace('/', '')
@@ -117,6 +118,9 @@ class Instance(SchoolBaseModule):
 				continue
 			name = prt.info['name']
 			spool_host = prt.info['spoolHost'][0]
+			# allways prefer myself
+			if self.fqdn in prt.info['spoolHost']:
+				spool_host = self.fqdn
 			result.append({'id': '%s://%s' % (spool_host, name), 'label': name})
 		self.finished(request.id, result)
 
@@ -215,32 +219,39 @@ class Instance(SchoolBaseModule):
 		except ValueError:
 			raise UMC_OptionTypeError('Invalid printer URI')
 
-		success = False
-		if os.path.exists(path):
-			MODULE.info('Deleting print job %r' % (path,))
-			cmd = [
-				'lpr',
-				# specify printer
-				'-P', printer,
-				# print as alternate user
-				'-U', username,
-				# set job name
-				'-J', Printjob.filename2label(printjob),
-				# delete file after printing
-				'-r',
-				# the file
-				path,
+		if spoolhost == self.fqdn:
+			spoolhost = None
+
+		if not os.path.exists(path):
+		        raise UMC_Error('File %s doesnt exists' % path)
+		
+		MODULE.info('Deleting print job %r' % (path,))
+		cmd = [
+			'lpr',
+			# specify printer
+			'-P', printer,
+			# print as alternate user
+			'-U', self.username,
+			# set job name
+			'-J', Printjob.filename2label(printjob),
+			# delete file after printing
+			'-r',
+			# the file
+			path,
+		]
+		if spoolhost:
+		        cmd.extend([
 				# spool host
 				'-H', spoolhost
-			]
-			MODULE.error('Printing: %r' % '" "'.join(cmd))
-			success = subprocess.call(cmd) == 0
-			if success:
-				MODULE.info('Printing was success')
-			else:
-				MODULE.error('Printing has failed')
+			])
+		MODULE.process('Printing: %r' % '" "'.join(cmd))
 
-		return success
+		lpr = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		(stdout, stderr) = lpr.communicate()
+		if lpr.returncode != 0:
+			raise UMC_Error(_('Failed to print on %s: %s' % (printer, stderr)))
+
+		return True
 
 
 class Printjob(object):
