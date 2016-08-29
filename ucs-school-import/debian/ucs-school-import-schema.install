@@ -1,4 +1,5 @@
 82univention-ucs-school-import-custom-attributes.inst       usr/lib/univention-install/
 schema/ucs-school-import.schema                             usr/share/ucs-school-import/schema
 syntax.ucs-school-import.py                                 usr/share/ucs-school-import/schema
-udm_hook/*                                                  usr/share/ucs-school-import/schema
+udm_hook/*.py                                               usr/share/ucs-school-import/schema
+udm_hook/*.mo                                               usr/share/ucs-school-import/schema

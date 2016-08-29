@@ -37,30 +37,46 @@ from univention.admin.hook import simpleHook
 import univention.admin.uexceptions
 import univention.admin.localization
 
-translation=univention.admin.localization.translation('univention.admin.hooks.d.uscchooloptions')
-_=translation.translate
+translation = univention.admin.localization.translation("univention-admin-hooks-ucsschool_user-options_hook")
+_ = translation.translate
 
 
-blacklisted_option_additions = {
-	"ucsschoolAdministrator": ["ucsschoolExam", "ucsschoolStudent"],
-	"ucsschoolExam": ["ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolStudent", "ucsschoolTeacher"],
-	"ucsschoolStaff": ["ucsschoolExam", "ucsschoolStudent"],
-	"ucsschoolStudent": ["ucsschoolExam", "ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"],
-	"ucsschoolTeacher": ["ucsschoolExam", "ucsschoolStudent"],
+blacklisted_option_combinations = {
+	"ucsschoolAdministrator": {"ucsschoolExam", "ucsschoolStudent"},
+	"ucsschoolExam": {"ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"},
+	"ucsschoolStaff": {"ucsschoolExam", "ucsschoolStudent"},
+	"ucsschoolStudent": {"ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"},
+	"ucsschoolTeacher": {"ucsschoolExam", "ucsschoolStudent"},
 }
-
+option_names = {
+	"ucsschoolAdministrator": _("UCS@school Administrator"),
+	"ucsschoolExam": _("UCS@school Examuser"),
+	"ucsschoolStaff": _("UCS@school staff"),
+	"ucsschoolStudent": _("UCS@school student"),
+	"ucsschoolTeacher": _("UCS@school teacher")
+}
 error_msg = _("Illegal combination of options. %(option)s cannot be activated together with %(illegals)s.")
 
 
 class UcsschoolUserOptionsHook(simpleHook):
 	type = "UcsschoolUserOptionsHook"
 
+	@staticmethod
+	def check_options(module):
+		users_options = set(module.options)
+		ucsschool_options = users_options.intersection(set(blacklisted_option_combinations.keys()))
+		for option in ucsschool_options:
+			illegal_options = blacklisted_option_combinations[option]
+			if illegal_options.intersection(users_options):
+				msg = error_msg % {
+					"option": option_names[option],
+					"illegals": ", ".join([option_names[o] for o in illegal_options])
+				}
+				ud.debug(ud.ADMIN, ud.WARN, msg)
+				raise univention.admin.uexceptions.valueError(msg)
+
+	def hook_ldap_pre_create(self, module):
+		self.check_options(module)
+
 	def hook_ldap_pre_modify(self, module):
-		new_options = set(module.options) - set(module.old_options)
-		new_ucsschool_options = set(blacklisted_option_additions.keys()).intersection(new_options)
-		for option in new_ucsschool_options:
-			illegal_options = blacklisted_option_additions[option]
-			if any([opt in illegal_options for opt in module.options]):
-				ud.debug(ud.ADMIN, ud.WARN, error_msg % {"option": option, "illegals": ", ".join(illegal_options)})
-				raise univention.admin.uexceptions.valueError(error_msg %
-					{"option": option, "illegals": ", ".join(illegal_options)})
+		self.check_options(module)

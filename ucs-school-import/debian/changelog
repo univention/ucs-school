@@ -1,3 +1,12 @@
+ucs-school-import (14.0.16-6) unstable; urgency=low
+
+  * catch invalid option combinations at creation and modify time (Bug #41351)
+  * allow ucsschoolExam and ucsschoolStudent together
+  * check option combinations also, when no ucsschool options were modified
+  * fix i18n
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 Aug 2016 10:12:07 +0200
+
 ucs-school-import (14.0.16-5) unstable; urgency=low
 
   * Bug #41595: remove UCRV support for setting the effective log level
