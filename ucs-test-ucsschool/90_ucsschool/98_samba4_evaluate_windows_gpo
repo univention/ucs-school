@@ -411,7 +411,8 @@ def remove_test_gpo(gpo_name):
 		print ("An Error occured while removing GPO remotely: %r" % exc)
 
 class GPO_Test(object):
-	def __init__(self, student_name, windows_hostname, security_filter_group):
+	def __init__(self, school_dn, student_name, windows_hostname, security_filter_group):
+		self.school_dn = school_dn
 		self.student_name = student_name
 		self.windows_hostname = windows_hostname
 		self.security_filter_group = security_filter_group
@@ -435,7 +436,7 @@ class GPO_Test(object):
 		# considered as only one argument, otherwise it's passed as two args:
 		set_gpo_readonly(self.test_user_gpo,
 			'"Authenticated Users"', 'Group', 'True')
-		link_gpo(self.test_user_gpo, "CN=Users,%s" % ldap_base)
+		link_gpo(self.test_user_gpo, "%s" % self.school_dn)
 
 		check_gpo_application_listed(self.test_user_gpo, self.student_name)
 		check_gpo_registry_value(self.test_user_gpo,
@@ -458,7 +459,7 @@ class GPO_Test(object):
 		# considered as only one argument, otherwise it's passed as two args:
 		set_gpo_readonly(self.test_machine_gpo,
 			'"Authenticated Users"', 'Group', 'True')
-		link_gpo(self.test_machine_gpo, "CN=Computers,%s" % ldap_base)
+		link_gpo(self.test_machine_gpo, "%s" % self.school_dn)
 
 		check_gpo_application_listed(self.test_machine_gpo, self.windows_hostname)
 		check_gpo_registry_value(self.test_machine_gpo,
@@ -484,7 +485,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 
 	school = SchoolSearchBase.getOU(ucr['ldap/hostdn'])
 	school_search_base = School.get_search_base(school)
-	school_dn = school_search_base.dn
+	school_dn = school_search_base.schoolDN
 	exam_group_name = school_search_base.examGroupName
 
 	schoolclassname = '%s-AA1' % school
@@ -516,7 +517,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		recipients=[klasse_dn]
 		)
 
-	with GPO_Test(stu, windows_client['hostname'], exam_group_name) as gpo_test:
+	with GPO_Test(school_dn, stu, windows_client['hostname'], exam_group_name) as gpo_test:
 
 		exam.start()
 		try:
