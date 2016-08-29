@@ -1,3 +1,11 @@
+ucs-school-lib (9.0.21-8) unstable; urgency=low
+
+  * Bug #40705: servers_school_ous now also works on single-server systems
+    and uses a line break as delimiter between OUs (safer with DNs containing
+    white space)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 Aug 2016 13:00:44 +0200
+
 ucs-school-lib (9.0.21-7) unstable; urgency=low
 
   * Bug #41595: remove UCRV support for setting the effective log level

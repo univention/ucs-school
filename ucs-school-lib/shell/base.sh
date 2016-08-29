@@ -110,13 +110,15 @@ servers_school_ous() {
 	#
 	# $ servers_school_ous -h $(ucr get ldap/master) -p $(ucr get ldap/master/port)
 	# ou=bar,dc=example,dc=com
-
-	local ldap_hostdn ldap_base ldap_server ldap_port
+	local ldap_hostdn ldap_base ldap_server ldap_port IFS
+	source /usr/share/univention-lib/ucr.sh
 
 	ldap_base="$(/usr/sbin/univention-config-registry get ldap/base)"
 	ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
 	ldap_server=""
 	ldap_port=""
+	IFS="
+"
 
 	while [ "$#" -gt 1 ]; do
 		if [ "$1" = "-d" ]; then
@@ -136,9 +138,15 @@ servers_school_ous() {
 	res=""
 	for oudn in $(univention-ldapsearch $ldap_server $ldap_port -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
 		ouname="$(school_ou "$oudn")"
-		if univention-ldapsearch $ldap_server $ldap_port -xLLL "(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=${ldap_hostdn}))" dn | grep -q "^dn: "; then
-			res="$res $oudn"
+		if is_ucr_true ucsschool/singlemaster; then
+			search_str="(|(cn=OU${ouname,}-DC-Edukativnetz)(cn=OU${ouname,}-DC-Verwaltungsnetz))"
+		else
+			search_str="(&(|(cn=OU${ouname,}-DC-Edukativnetz)(cn=OU${ouname,}-DC-Verwaltungsnetz))(uniqueMember=${ldap_hostdn}))"
+		fi
+		if univention-ldapsearch $ldap_server $ldap_port -xLLL "$search_str" dn | grep -q "^dn: "; then
+			res="$res
+$oudn"
 		fi
 	done
-	echo -n "${res}" | sed -e 's/^[[:space:]]*//'
+	echo -n "${res}" | egrep -v "^\s*$"
 }
