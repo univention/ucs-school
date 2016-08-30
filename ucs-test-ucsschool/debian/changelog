@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-6) unstable; urgency=low
+
+  * Bug #41282: fix 34_import-users_via_cli_v2 (adapt to ou-overlapping users)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 30 Aug 2016 16:57:39 +0200
+
 ucs-test-ucsschool (3.0.15-5) unstable; urgency=medium
 
   * Bug #41571: Work around Bug #40435

@@ -114,6 +114,12 @@ class Person:
 				self.dn = kwargs[key]
 			elif key == 'school':
 				self.school = kwargs[key]
+				if len(self.schools) == 1:
+					self.schools = [self.school]
+				elif self.school in self.schools:
+					pass
+				else:
+					self.schools.append(self.school)
 				self.school_base = get_school_base(self.school)
 			elif hasattr(self, key):
 				setattr(self, key, kwargs[key])
@@ -235,7 +241,7 @@ class Person:
 			attr['krb5KDCFlags'] = ['254']
 			attr['sambaAcctFlags'] = ['[UD         ]']
 			attr['shadowExpire'] = ['1']
-		attr['departmentNumber'] = [self.school]
+		attr['departmentNumber'] = self.schools
 
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
@@ -309,6 +315,7 @@ class Person:
 
 		role_group_dn = 'cn=%s%s,cn=groups,%s' % (self.grp_prefix, self.school, self.school_base)
 		utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
+		print 'person OK: %s' % self.username
 
 
 class Student(Person):
