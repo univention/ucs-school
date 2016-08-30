@@ -97,8 +97,12 @@ def link_gpo(gpo_name, container):
 			utils.fail("The linking of the GPO on the Windows host "
 				"returned code '%s' when 0 is expected. "
 				"STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr))
-		sleep(60)  # seems like force_drs does not help here
-		print "Forcing GPO update on Windows:"
+	except univention.winexe.WinExeFailed as exc:
+		utils.fail("An Error occured while linking a GPO remotely: %r" % exc)
+
+def force_gpo_update():
+	print "Forcing GPO update on Windows:"
+	try:
 		ret_code, stdout, stderr = Win.force_gpo_update()
 		if stdout:
 			print stdout
@@ -319,6 +323,10 @@ def check_gpo_application_listed(gpo_name, username):
 	"""
 	print "\nChecking that GPO '%s' is applied to %s" % (gpo_name, username)
 	stdout, stderr = run_samba_tool(("samba-tool", "gpo", "list", username))
+	if stdout:
+		print stdout
+	if stderr:
+		print stderr
 
 	if not stdout:
 		utils.fail("The samba-tool did not produce any output when list "
@@ -436,7 +444,7 @@ class GPO_Test(object):
 		# considered as only one argument, otherwise it's passed as two args:
 		set_gpo_readonly(self.test_user_gpo,
 			'"Authenticated Users"', 'Group', 'True')
-		link_gpo(self.test_user_gpo, "%s" % self.school_dn)
+		link_gpo(self.test_user_gpo, self.school_dn)
 
 		check_gpo_application_listed(self.test_user_gpo, self.student_name)
 		check_gpo_registry_value(self.test_user_gpo,
@@ -459,7 +467,8 @@ class GPO_Test(object):
 		# considered as only one argument, otherwise it's passed as two args:
 		set_gpo_readonly(self.test_machine_gpo,
 			'"Authenticated Users"', 'Group', 'True')
-		link_gpo(self.test_machine_gpo, "%s" % self.school_dn)
+		# link_gpo(self.test_machine_gpo, self.school_dn) ## doesn't work: Bug #40435
+		link_gpo(self.test_machine_gpo, ldap_base)
 
 		check_gpo_application_listed(self.test_machine_gpo, self.windows_hostname)
 		check_gpo_registry_value(self.test_machine_gpo,
