@@ -34,6 +34,7 @@ import univention.config_registry
 import univention.uldap
 import univention.admin.config
 import univention.admin.modules
+from univention.admin.uexceptions import noObject
 
 import univention.admin.modules as udm_modules
 from univention.management.console.protocol.message import Message
@@ -436,28 +437,49 @@ class SchoolBaseModule(Base):
 			groupObj = groupModule.object(None, ldap_connection, None, group)
 			groupObj.open()
 
-		users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
-		users = [user.get_udm_object(ldap_connection) for user in users]
-		if groupObj:
-			# filter users to be members of the specified group
-			users = [i for i in users if i.dn in set(groupObj['users'])]
+			# The following code block prevents a massive performance loss if the group
+			# contains far less users than all available users. The else-block opens
+			# all available users ==> high LDAP load! (Bug #42167)
+			users = []
+			for userdn in set(groupObj['users']):
+				try:
+					user = cls.from_dn(userdn, school, ldap_connection)
+				except noObject:
+					continue
+				if school not in user.schools:
+					continue
+				udm_obj = user.get_udm_object(ldap_connection)
+				if pattern:
+					# check if pattern is part of any of user's common properties (case insensitive)
+					if not any([pattern.lower() in udm_obj.info.get(propertyname, '').lower() for propertyname in LDAP_Filter.forUsersSubMatch]):
+						continue
+				users.append(udm_obj)
+		else:
+			# be aware that this search opens all user objects of specified type and may take some time!
+			users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
+			users = [user.get_udm_object(ldap_connection) for user in users]
+
 		return users
 
 
 class LDAP_Filter:
+	forUsersSubMatch = ['lastname', 'username', 'firstname']
+	forGroupsSubMatch = ['name', 'description']
+	forComputersSubMatch = ['name', 'description']
+	forComputersFullMatch = ['mac', 'ip']
 
 	@staticmethod
 	def forUsers( pattern ):
-		return LDAP_Filter.forAll( pattern, ['lastname', 'username', 'firstname'] )
+		return LDAP_Filter.forAll(pattern, LDAP_Filter.forUsersSubMatch)
 
 	@staticmethod
 	def forGroups( pattern, school = None ):
 		# school parameter is deprecated
-		return LDAP_Filter.forAll( pattern, ['name', 'description'] )
+		return LDAP_Filter.forAll(pattern, LDAP_Filter.forGroupsSubMatch)
 
 	@staticmethod
 	def forComputers( pattern ):
-		return LDAP_Filter.forAll( pattern, ['name', 'description'], ['mac', 'ip'] )
+		return LDAP_Filter.forAll(pattern, LDAP_Filter.forComputersSubMatch, LDAP_Filter.forComputersFullMatch)
 
 	regWhiteSpaces = re.compile(r'\s+')
 	@staticmethod

@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.22-1) unstable; urgency=low
+
+  * Bug #42167: improve inefficient code of SchoolBaseModule._users() to
+    speed up user search if a group has been specified
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 30 Aug 2016 11:55:00 +0200
+
 ucs-school-lib (9.0.21-8) unstable; urgency=low
 
   * Bug #40705: servers_school_ous now also works on single-server systems

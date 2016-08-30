@@ -5,7 +5,6 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
 fix:
 desc: |
- This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one
    school to another (Bug #41609).
  * When moving a user from a school the user is put into the school
@@ -30,4 +29,6 @@ desc: |
    The NFS export of shares can be (de)activated manually via the UMC module
    "Shares" by toggling the option "Export for NFS clients (NFSv3 and NFSv4)"
    (Bug #38641).
-bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641]
+ * An inefficient LDAP search has been improved that reduces the search time
+   in some UMC modules, e.g. "Passwords (students)" (Bug #42167).
+bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641, 42167]
