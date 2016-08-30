@@ -214,10 +214,10 @@ def get_gpo_uid_by_name(gpo_name):
 			return '{' + search('{(.+?)}', gpo).group(1) + '}'
 
 
-def check_gpo_report(gpo_name, user_name):
+def check_gpo_report(gpo_name, identity_name):
 	"""
 	Gets the XML GPOreport for the 'gpo_name' from the remote Windows Host
-	via winexe. Checks that 'user_name' has 'gpo_name' applied.
+	via winexe. Checks that 'identity_name' has 'gpo_name' applied.
 	"""
 	print "\nCollecting and checking the GPOreport for %s:" % gpo_name
 	try:
@@ -235,10 +235,8 @@ def check_gpo_report(gpo_name, user_name):
 		utils.fail("An Error occured while collecting GPO report remotely: %r"
 			% exc)
 
-	# workaround to make it parseable by ElementTree:
-	# (TODO: can be done better probably?)
-	stdout = stdout.decode('utf-8', 'replace')
-	stdout = stdout.replace('utf-16', 'utf-8')
+	# Recode to match encoding specified in XML header
+	stdout = stdout.decode('cp850').encode('utf-16')
 
 	gpo_root = ET.fromstring(stdout)
 	gpo_types = "http://www.microsoft.com/GroupPolicy/Types"
@@ -248,18 +246,19 @@ def check_gpo_report(gpo_name, user_name):
 
 		# check name tag of the 'Trustee':
 		for name in trust_perm.iter("{%s}Name" % gpo_types):
-			if user_name in name.text:
-				print "Found GPO test user/computer '%s'." % user_name
+			trustee = name.text.split('\\',1)[-1]  ## cut off netbios domain prefix
+			if identity_name == trustee:
+				print "Found GPO test identity '%s'." % identity_name
 
 				# check GPO is applied to user/computer:
 				for access in trust_perm.iter("{%s/Security}GPOGroupedAccessEnum" % gpo_types):
 					if "Apply Group Policy" in access.text:
 						print("Confirmed '%s' GPO application to '%s'."
-							% (gpo_name, user_name))
+							% (gpo_name, identity_name))
 						return
 
 	utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'"
-			% (gpo_name, user_name))
+			% (gpo_name, identity_name))
 
 
 def check_gpo_registry_value(gpo_name, reg_key, value_name, value):
@@ -484,10 +483,10 @@ class GPO_Test(object):
 
 	def check(self):
 		# case 1: checks with user GPO
-		check_gpo_report(self.test_user_gpo, self.student_name)
+		check_gpo_report(self.test_user_gpo, self.security_filter_group)
 	
 		# case 2: checks with computer GPO
-		check_gpo_report(self.test_machine_gpo, self.windows_hostname)
+		check_gpo_report(self.test_machine_gpo, self.security_filter_group)
 
 
 def test_exam_gpo(ucr, udm, schoolenv, windows_client):
@@ -561,8 +560,8 @@ if __name__ == '__main__':
 
 	domain_admin_dn = ucr.get('tests/domainadmin/account')
 	domain_admin_password = ucr.get('tests/domainadmin/pwd')
-	windows_admin = 'testadmin'
-	windows_admin_password = 'Univention@99'
+	windows_admin = ucr.get('tests/windowsadmin/account', 'testadmin')
+	windows_admin_password =  ucr.get('tests/windowsadmin/pwd', 'Univention@99')
 	domainname = ucr.get('domainname')
 	hostname = ucr.get('hostname')
 	ldap_base = ucr.get('ldap/base')

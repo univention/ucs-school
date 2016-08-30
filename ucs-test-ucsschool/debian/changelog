@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.15-7) unstable; urgency=medium
+
+  * Bug #41571: Fix XML recoding from cp850 to UTF-16
+  * New UCR variables tests/windowsadmin/account and tests/windowsadmin/pwd
+  * Look for security_filter group in gpresult output
+
+ -- Arvid Requate <requate@univention.de>  Tue, 30 Aug 2016 19:33:27 +0200
+
 ucs-test-ucsschool (3.0.15-6) unstable; urgency=low
 
   * Bug #41282: fix 34_import-users_via_cli_v2 (adapt to ou-overlapping users)
