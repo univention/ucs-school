@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (13.0.3-2) unstable; urgency=low
+
+  * Bug #41374: fixed translations
+
+ -- Felix Botner <botner@univention.de>  Tue, 30 Aug 2016 09:49:38 +0200
+
 ucs-school-umc-printermoderation (13.0.3-1) unstable; urgency=low
 
   * Bug #41374: support restricted printers

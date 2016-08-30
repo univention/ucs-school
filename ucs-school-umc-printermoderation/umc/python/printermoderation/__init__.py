@@ -39,7 +39,7 @@ import subprocess
 
 from univention.lib.i18n import Translation
 
-from univention.management.console.modules import UMC_OptionTypeError, UMC_Error
+from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.log import MODULE
@@ -85,7 +85,7 @@ class Instance(SchoolBaseModule):
 		username = username.replace('/', '')
 		path = os.path.join(CUPSPDF_DIR, username, CUPSPDF_USERSUBDIR, printjob)
 		if not os.path.realpath(path).startswith(os.path.realpath(CUPSPDF_DIR)):
-			raise UMC_OptionTypeError('Invalid file')
+			raise UMC_Error(_('Invalid file'))
 		return path
 
 	def _get_all_username_variants(self, username):
@@ -126,7 +126,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(**{
 		'school': StringSanitizer(required=True),
-		'class': StringSanitizer(required=True), # allow_none=True
+		'class': StringSanitizer(required=True),
 		'pattern': StringSanitizer(required=True),
 	})
 	@LDAP_Connection()
@@ -156,15 +156,15 @@ class Instance(SchoolBaseModule):
 		"""Searches for print jobs
 
 		requests.options = {}
-		  'username' -- owner of the print job
-		  'printjob' -- relative filename of the print job
+		'username' -- owner of the print job
+		'printjob' -- relative filename of the print job
 
 		return: <PDF document>
 		"""
 		path = self._get_path(request.options['username'], request.options['printjob'])
 
 		if not os.path.exists(path):
-			raise UMC_OptionTypeError('Invalid file')
+			raise UMC_Error(_('Invalid file'))
 
 		with open(path) as fd:
 			self.finished(request.id, fd.read(), mimetype='application/pdf')
@@ -178,8 +178,8 @@ class Instance(SchoolBaseModule):
 		"""Delete a print job
 
 		requests.options = {}
-		  'username' -- owner of the print job
-		  'printjob' -- relative filename of the print job
+		'username' -- owner of the print job
+		'printjob' -- relative filename of the print job
 
 		return: <PDF document>
 		"""
@@ -205,9 +205,9 @@ class Instance(SchoolBaseModule):
 		"""Print a given document on the given printer
 
 		requests.options = {}
-		  'username' -- owner of the print job
-		  'printjob' -- relative filename of the print job
-		  'printer' -- the printer to use (<hostname>://<printer>)
+		'username' -- owner of the print job
+		'printjob' -- relative filename of the print job
+		'printer' -- the printer to use (<hostname>://<printer>)
 
 		return: <PDF document>
 		"""
@@ -217,14 +217,14 @@ class Instance(SchoolBaseModule):
 		try:
 			spoolhost, printer = printer.split('://', 1)
 		except ValueError:
-			raise UMC_OptionTypeError('Invalid printer URI')
+			raise UMC_Error(_('Invalid printer URI'))
 
 		if spoolhost == self.fqdn:
 			spoolhost = None
 
 		if not os.path.exists(path):
-		        raise UMC_Error('File %s doesnt exists' % path)
-		
+				raise UMC_Error(_('File %r could not be printed as it does not exists (anymore).') % (printjob,))
+
 		MODULE.info('Deleting print job %r' % (path,))
 		cmd = [
 			'lpr',
@@ -240,7 +240,7 @@ class Instance(SchoolBaseModule):
 			path,
 		]
 		if spoolhost:
-		        cmd.extend([
+			cmd.extend([
 				# spool host
 				'-H', spoolhost
 			])
@@ -249,7 +249,7 @@ class Instance(SchoolBaseModule):
 		lpr = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		(stdout, stderr) = lpr.communicate()
 		if lpr.returncode != 0:
-			raise UMC_Error(_('Failed to print on %s: %s' % (printer, stderr)))
+			raise UMC_Error(_('Failed to print on %(printer)s: %(stderr)s') % {'printer': printer, 'stderr': stderr})
 
 		return True
 
