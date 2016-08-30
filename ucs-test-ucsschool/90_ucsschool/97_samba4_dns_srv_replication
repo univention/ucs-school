@@ -5,7 +5,7 @@
 ## - domaincontroller_master
 ## - domaincontroller_slave
 ## packages: [univention-s4-connector, univention-samba4]
-## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## versions:
 ##  3.2-5: skip
@@ -23,7 +23,11 @@ except ImportError:
 
 from essential.test_samba4 import TestSamba4
 import univention.testing.utils as utils
-
+from samba.provision.sambadns import SRVRecord
+from samba.dcerpc import dnsp
+from samba.ndr import ndr_pack, ndr_unpack
+import base64
+import re
 
 class TestS4DNSSRVReplication(TestSamba4):
 
@@ -68,23 +72,29 @@ class TestS4DNSSRVReplication(TestSamba4):
 				"record" % record_name)
 		return sed_stdout.split()
 
-	def decode_samba_dns_record(self, record):
-		"""
-		Decodes the given DNS SRV 'record' using 's4search-decode'.
-		"""
-		stdout, stderr = self.create_and_run_process('s4search-decode', PIPE, record)
-		if stderr:
-			utils.fail("An error occured while performing the "
-				"'s4search-decode' on the given '%s'"
-				"DNS SRV record. STDERR:\n %s" % (record, stderr))
-		return stdout
+	def get_samba4_dns_searchbase_for_record(self, record_name):
+		if self.UCR.get('connector/s4/mapping/dns/position','').lower() == 'legacy':
+			dns_searchbase = "CN=MicrosoftDNS,CN=System,%s" % (self.ldap_base,)
+			zone_name = self.domainname
+		else:
+			if record_name.endswith('._msdcs'):
+				partition = 'ForestDnsZones'
+				record_name = record_name[:-7]
+				zone_name = '_msdcs.%s' % (self.domainname,)
+			else:
+				partition = 'DomainDnsZones'
+				zone_name = self.domainname
+			dns_searchbase = "CN=MicrosoftDNS,DC=%s,%s" % (partition, self.ldap_base,)
+		return (record_name, zone_name, dns_searchbase)
 
-	def get_dns_srv_via_univention_search(self, record_name):
+	def get_dns_srv_via_univention_s4search(self, record_name, dns_searchbase=None):
 		"""
 		Returns the output of a decoded 'univention-s4search' with a query
 		for a given DNS SRV 'record_name'.
 		"""
-		cmd = ('univention-s4search', 'dc=%s' % record_name)
+		cmd = ['univention-s4search', 'DC=%s' % record_name, 'dnsRecord']
+		if dns_searchbase:
+			cmd.extend(['-b', dns_searchbase])
 
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
@@ -95,7 +105,8 @@ class TestS4DNSSRVReplication(TestSamba4):
 			utils.fail("No output from 'univention-s4search', while the '%s' "
 				"SRV record attributes were expected" % record_name)
 
-		return self.decode_samba_dns_record(stdout)
+		stdout, stderr = self.create_and_run_process('ldapsearch-wrapper', PIPE, stdout)
+		return stdout
 
 	def add_remove_srv_record_location_via_ldbmodify(self, record_name, action):
 		"""
@@ -110,13 +121,8 @@ class TestS4DNSSRVReplication(TestSamba4):
 				"'ldbmodify', only 'add' or 'delete' are allowed."
 				% action)
 
-		if self.UCR.get('connector/s4/mapping/dns/position','').lower() == 'legacy':
-			# DNS SRV record DN in a format as stored in Samba4:
-			samba_record_dn = "DC=%s,DC=%s,CN=MicrosoftDNS,CN=System,%s" % (
-				record_name, self.domainname, self.ldap_base)
-		else:
-			# DNS SRV record DN in a format as stored in Samba4:
-			samba_record_dn = "DC=%s,DC=%s,CN=MicrosoftDNS,CN=System,DC=DomainDnsZones,%s" % (record_name, self.domainname, self.ldap_base)
+		record_name, zone_name, dns_searchbase = self.get_samba4_dns_searchbase_for_record(record_name)
+		samba_record_dn = "DC=%s,DC=%s,%s" % (record_name, zone_name, dns_searchbase)
 
 		# prepare an LDIF to add/remove a test value to/from the SRV record:
 		LDIFRecord = StringIO()
@@ -124,11 +130,11 @@ class TestS4DNSSRVReplication(TestSamba4):
 		LDIFRecord.write('changetype: modify\n')
 		LDIFRecord.write(action + ': dnsRecord\n')
 
-		# test 'dnsRecord' written here in decrypted format looks like:
-		# "35", "888", "35512", "ucs_test_2.hostname.local."
-		# (priority, weight, port, hostname)
-		LDIFRecord.write('dnsRecord:: IwAhAAXwAAABAAAAAAADhAAAAAAAAAAAA'
-			'CMDeIq4GwMKdWNzX3Rlc3RfMghob3N0bmFtZQVsb2NhbAA=')
+		# unique test values set that was added to tested records in Samba
+		(priority, weight, port, target) = (35, 888, 35512, "ucs_test_2.hostname.local")
+		s=SRVRecord(target, port, priority, weight)
+		base64.b64encode(ndr_pack(s))
+		LDIFRecord.write('dnsRecord:: %s' % base64.b64encode(ndr_pack(s)))
 
 		cmd = ('ldbmodify',
 			'-H', self.sam_ldb_path,
@@ -155,22 +161,27 @@ class TestS4DNSSRVReplication(TestSamba4):
 		The first element in each list will be corresponding to a first record
 		location values, the second to a second location, etc.
 		"""
-		samba_record = self.get_dns_srv_via_univention_search(record_name)
-		RecordBuffer = StringIO(samba_record)
 
-		# extract the decrypted 'priority' values:
-		priority = self.sed_for_key(RecordBuffer.getvalue(), "^# .* wPriority .* (").replace(")","").split()
+		record_name, zone_name, dns_searchbase = self.get_samba4_dns_searchbase_for_record(record_name)
+		zone_searchbase = "DC=%s,%s" % (zone_name, dns_searchbase)
 
-                # extract the decrypted 'weight' values:
-		weight = self.sed_for_key(RecordBuffer.getvalue(), "^# .* wWeight .* (").replace(")","").split()
+		ldif = self.get_dns_srv_via_univention_s4search(record_name, zone_searchbase)
+		dns_record_re = re.compile("^dnsRecord:: (.*)$", re.M)
+		priority = []
+		weight = []
+		port = []
+		host = []
+		for dns_record_base64 in dns_record_re.findall(ldif):
+			dns_record_ndr = base64.b64decode(dns_record_base64)
+			dns_record = ndr_unpack(dnsp.DnssrvRpcRecord, dns_record_ndr)
 
-                # extract the decrypted 'port' values:
-		port = self.sed_for_key(RecordBuffer.getvalue(), "^# .* wPort .* (").replace(")", "").split()
+			if dns_record.wType != dnsp.DNS_TYPE_SRV:
+				continue
 
-                # extract the decrypted 'hostname' values:
-		host = self.sed_for_key(RecordBuffer.getvalue(), "^# .* nameTarget .* : ").split()
-
-		RecordBuffer.close()
+			priority.append(str(dns_record.data.wPriority))
+			weight.append(str(dns_record.data.wWeight))
+			port.append(str(dns_record.data.wPort))
+			host.append(str(dns_record.data.nameTarget))
 
 		if not all((priority, weight, port, host)):
 			utils.fail("Could not determine at least one of the location "
@@ -254,8 +265,8 @@ class TestS4DNSSRVReplication(TestSamba4):
 				# ignore the 'Does not exist' messages
 				if 'Does not exist' not in stderr:
 					print("An error occured while executing command '%s', "
-					"STDERR: '%s'"
-					% (" ".join(cmd + record_cmd), stderr))
+						"STDERR: '%s'"
+						% (" ".join(cmd + record_cmd), stderr))
 
 	def check_srv_records_equal(self, dns_srv_records):
 		"""
@@ -298,7 +309,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 				"openLDAP to Samba:" % record_name)
 
 			# unique test values set that was added to the records in openLDAP:
-			test_location = ["53", "777", "63256", "ucs_test.hostname.local"]
+			test_location = ("53", "777", "63256", "ucs_test.hostname.local")
 			samba_attrs = self.get_samba_srv_record_location(record_name)
 
 			for counter, samba_attr in enumerate(samba_attrs):
@@ -327,8 +338,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 				"Samba to openLDAP:" % record_name)
 
 			# unique test values set that was added to tested records in Samba
-			test_location = ["35", "888", "35512",
-						"ucs_test_2.hostname.local."]
+			test_location = ("35", "888", "35512", "ucs_test_2.hostname.local.")
 			ldap_attrs = self.get_dns_srv_location_via_udm(record_name)
 
 			for attr_value in test_location:

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-4) unstable; urgency=medium
+
+  * Bug #39964: Fix test case, use samba SRV object
+
+ -- Arvid Requate <requate@univention.de>  Tue, 30 Aug 2016 16:14:16 +0200
+
 ucs-test-ucsschool (3.0.15-3) unstable; urgency=medium
 
   * Bug #39964: Cleanup: Make indentation a little bit less horrible
