@@ -58,7 +58,7 @@ univention-directory-manager container/cn      create "$@" --ignore_exists --set
 ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-school-import.schema || die
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolOU.py || die
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolAdminGroup.py || die
-ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user-options_hook.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
+ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \

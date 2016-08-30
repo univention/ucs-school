@@ -1,3 +1,11 @@
+ucs-school-import (14.0.16-7) unstable; urgency=low
+
+  * raise better fitting exception (Bug #41351)
+  * rename UDM hook
+  * fix translation
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 30 Aug 2016 08:19:28 +0200
+
 ucs-school-import (14.0.16-6) unstable; urgency=low
 
   * catch invalid option combinations at creation and modify time (Bug #41351)

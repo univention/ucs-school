@@ -37,7 +37,7 @@ from univention.admin.hook import simpleHook
 import univention.admin.uexceptions
 import univention.admin.localization
 
-translation = univention.admin.localization.translation("univention-admin-hooks-ucsschool_user-options_hook")
+translation = univention.admin.localization.translation("univention-admin-hooks-ucsschool_user_options")
 _ = translation.translate
 
 
@@ -55,7 +55,7 @@ option_names = {
 	"ucsschoolStudent": _("UCS@school student"),
 	"ucsschoolTeacher": _("UCS@school teacher")
 }
-error_msg = _("Illegal combination of options. %(option)s cannot be activated together with %(illegals)s.")
+error_msg = _("%(option)s cannot be activated together with %(illegals)s.")
 
 
 class UcsschoolUserOptionsHook(simpleHook):
@@ -73,7 +73,7 @@ class UcsschoolUserOptionsHook(simpleHook):
 					"illegals": ", ".join([option_names[o] for o in illegal_options])
 				}
 				ud.debug(ud.ADMIN, ud.WARN, msg)
-				raise univention.admin.uexceptions.valueError(msg)
+				raise univention.admin.uexceptions.invalidOptions(msg)
 
 	def hook_ldap_pre_create(self, module):
 		self.check_options(module)

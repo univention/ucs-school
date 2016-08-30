@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: univention-admin-hooks-ucsschool_user-options_hook\n"
+"Project-Id-Version: univention-admin-hooks-ucsschool_user_options\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2016-08-29 09:43+0200\n"
 "PO-Revision-Date: 2016-08-29 09:24+0200\n"
@@ -15,31 +15,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: udm_hook/ucsschool_user-options_hook.py:58
+#: udm_hook/ucsschool_user_options.py:58
 #, python-format
 msgid ""
-"Illegal combination of options. %(option)s cannot be activated together with "
-"%(illegals)s."
+"%(option)s cannot be activated together with %(illegals)s."
 msgstr ""
-"Unerlaubte Kombination von Optionen. %(option)s kann nicht zusammen mit "
-"%(illegals)s aktiviert werden."
+"%(option)s kann nicht zusammen mit %(illegals)s aktiviert werden."
 
-#: udm_hook/ucsschool_user-options_hook.py:52
+#: udm_hook/ucsschool_user_options.py:52
 msgid "UCS@school Administrator"
 msgstr "UCS@school-Administrator"
 
-#: udm_hook/ucsschool_user-options_hook.py:53
+#: udm_hook/ucsschool_user_options.py:53
 msgid "UCS@school Examuser"
 msgstr "UCS@school-Klassenarbeitsbenutzer"
 
-#: udm_hook/ucsschool_user-options_hook.py:54
+#: udm_hook/ucsschool_user_options.py:54
 msgid "UCS@school staff"
 msgstr "UCS@school-Mitarbeiter"
 
-#: udm_hook/ucsschool_user-options_hook.py:55
+#: udm_hook/ucsschool_user_options.py:55
 msgid "UCS@school student"
 msgstr "UCS@school-Schüler"
 
-#: udm_hook/ucsschool_user-options_hook.py:56
+#: udm_hook/ucsschool_user_options.py:56
 msgid "UCS@school teacher"
-msgstr "school-Lehrer"
+msgstr "UCS@school-Lehrer"
