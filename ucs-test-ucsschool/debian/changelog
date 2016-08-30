@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-3) unstable; urgency=medium
+
+  * Bug #39964: Cleanup: Make indentation a little bit less horrible
+
+ -- Arvid Requate <requate@univention.de>  Tue, 30 Aug 2016 13:40:21 +0200
+
 ucs-test-ucsschool (3.0.15-2) unstable; urgency=medium
 
   * Bug #41571: Fix 90_ucsschool/98_samba4_evaluate_windows_gpo
