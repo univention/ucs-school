@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.23-2) unstable; urgency=low
+
+  * Bug #42167: also catch exceptions thrown due to inconsistencies
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 31 Aug 2016 15:11:00 +0200
+
 ucs-school-lib (9.0.23-1) unstable; urgency=low
 
   * Bug #42167: reverted changes in class LDAP_Filter

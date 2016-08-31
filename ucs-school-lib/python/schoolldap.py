@@ -35,6 +35,7 @@ import univention.uldap
 import univention.admin.config
 import univention.admin.modules
 from univention.admin.filter import conjunction, parse
+from univention.admin.uexceptions import noObject
 
 import univention.admin.modules as udm_modules
 from univention.management.console.protocol.message import Message
@@ -450,7 +451,12 @@ class SchoolBaseModule(Base):
 					search_filter_list.append(LDAP_Filter.forUsers(pattern))
 				# concatenate LDAP filters
 				search_filter = unicode(conjunction('&', [parse(subfilter) for subfilter in search_filter_list]))
-				udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)
+				try:
+					udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)
+				except noObject:
+					MODULE.error('Possible group inconsistency detected: %r contains member %r but member was not found in LDAP' % (group, userdn))
+					udm_obj = None
+
 				if udm_obj is not None:
 					# make sure that the found UDM object is of requested user type
 					try:
@@ -507,6 +513,8 @@ class LDAP_Filter:
 			# append to list of all search expressions
 			expressions.append('(|%s)' % ''.join(subexpr))
 
+		if not expressions:
+			return ''
 		return '(&%s)' % ''.join( expressions )
 
 
