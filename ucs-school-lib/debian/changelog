@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.22-2) unstable; urgency=low
+
+  * Bug #40705: remove bashism
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 31 Aug 2016 08:33:21 +0200
+
 ucs-school-lib (9.0.22-1) unstable; urgency=low
 
   * Bug #42167: improve inefficient code of SchoolBaseModule._users() to
