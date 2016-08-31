@@ -463,23 +463,22 @@ class SchoolBaseModule(Base):
 
 
 class LDAP_Filter:
-	forUsersSubMatch = ['lastname', 'username', 'firstname']
-	forGroupsSubMatch = ['name', 'description']
-	forComputersSubMatch = ['name', 'description']
-	forComputersFullMatch = ['mac', 'ip']
+	@staticmethod
+	def forSchool(school):
+		return filter_format('(ucsschoolSchool=%s)', [school])
 
 	@staticmethod
 	def forUsers( pattern ):
-		return LDAP_Filter.forAll(pattern, LDAP_Filter.forUsersSubMatch)
+		return LDAP_Filter.forAll(pattern, ['lastname', 'username', 'firstname'])
 
 	@staticmethod
 	def forGroups( pattern, school = None ):
 		# school parameter is deprecated
-		return LDAP_Filter.forAll(pattern, LDAP_Filter.forGroupsSubMatch)
+		return LDAP_Filter.forAll(pattern, ['name', 'description'])
 
 	@staticmethod
 	def forComputers( pattern ):
-		return LDAP_Filter.forAll(pattern, LDAP_Filter.forComputersSubMatch, LDAP_Filter.forComputersFullMatch)
+		return LDAP_Filter.forAll(pattern, ['name', 'description'], ['mac', 'ip'])
 
 	regWhiteSpaces = re.compile(r'\s+')
 	@staticmethod
