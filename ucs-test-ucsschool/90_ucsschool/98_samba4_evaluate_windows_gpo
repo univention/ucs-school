@@ -64,7 +64,7 @@ def run_samba_tool(cmd, stdout=PIPE):
 	return stdout, stderr
 
 
-def create_gpo(gpo_name, gpo_comment):
+def windows_create_gpo(gpo_name, gpo_comment):
 	"""
 	Creates a GPO with a given 'gpo_name' and 'gpo_comment' via
 	winexe running the powershell script on the Windows host.
@@ -84,7 +84,7 @@ def create_gpo(gpo_name, gpo_comment):
 		utils.fail("An Error occured while creating GPO remotely: %r" % exc)
 
 
-def link_gpo(gpo_name, container):
+def windows_link_gpo(gpo_name, container):
 	"""
 	Links a given 'gpo_name' to a container using powershell script
 	on Windows Host via winexe.
@@ -100,7 +100,7 @@ def link_gpo(gpo_name, container):
 	except univention.winexe.WinExeFailed as exc:
 		utils.fail("An Error occured while linking a GPO remotely: %r" % exc)
 
-def force_gpo_update():
+def windows_force_gpo_update():
 	print "Forcing GPO update on Windows:"
 	try:
 		ret_code, stdout, stderr = Win.force_gpo_update()
@@ -112,7 +112,7 @@ def force_gpo_update():
 		utils.fail("An Error occured while linking a GPO remotely: %r" % exc)
 
 
-def set_gpo_readonly(gpo_name, target_name, target_type, replace):
+def windows_set_gpo_security_filter_GpoRead(gpo_name, target_name, target_type, replace):
 	"""
 	Adds the 'GpoRead' GpoPermissions to 'gpo_name' for the 'target_name'
 	of the 'target_type'.
@@ -136,7 +136,7 @@ def set_gpo_readonly(gpo_name, target_name, target_type, replace):
 		utils.fail("Exception during Set-GPPermissions: %r" % exc)
 
 
-def apply_gpo(gpo_name, target_name, target_type):
+def windows_set_gpo_security_filter_GpoApply(gpo_name, target_name, target_type):
 	"""
 	Applies the 'gpo_name' GPO to the 'target_name' of the 'target_type'
 	by executing a powershell script on Windows host via winexe.
@@ -159,7 +159,7 @@ def apply_gpo(gpo_name, target_name, target_type):
 		utils.fail("Exception during Set-GPPermissions: %r" % exc)
 
 
-def check_gpo_exists(gpo_name):
+def samba_check_gpo_exists(gpo_name):
 	"""
 	Checks that GPO with 'gpo_name' exists via samba-tool.
 	"""
@@ -175,7 +175,7 @@ def check_gpo_exists(gpo_name):
 			% gpo_name)
 
 
-def set_gpo_registry_value(gpo_name, reg_key, value_name, value, value_type):
+def windows_set_gpo_registry_value(gpo_name, reg_key, value_name, value, value_type):
 	"""
 	Sets the 'value_name', 'value' and 'value_type' for 'gpo_name' Registry Key
 	"""
@@ -197,7 +197,7 @@ def set_gpo_registry_value(gpo_name, reg_key, value_name, value, value_type):
 		utils.fail("An Error occured while modifying GPO remotely: %r" % exc)
 
 
-def get_gpo_uid_by_name(gpo_name):
+def samba_get_gpo_uid_by_name(gpo_name):
 	"""
 	Returns the {GPO UID} for the given gpo_name using samba-tool.
 	"""
@@ -214,7 +214,7 @@ def get_gpo_uid_by_name(gpo_name):
 			return '{' + search('{(.+?)}', gpo).group(1) + '}'
 
 
-def check_gpo_report(gpo_name, identity_name):
+def windows_check_gpo_report(gpo_name, identity_name):
 	"""
 	Gets the XML GPOreport for the 'gpo_name' from the remote Windows Host
 	via winexe. Checks that 'identity_name' has 'gpo_name' applied.
@@ -236,9 +236,10 @@ def check_gpo_report(gpo_name, identity_name):
 			% exc)
 
 	# Recode to match encoding specified in XML header
-	stdout = stdout.decode('cp850').encode('utf-16')
+	gporeport_unicode = stdout.decode('cp850')
+	gporeport_utf16 = gporeport_unicode.encode('utf-16')
 
-	gpo_root = ET.fromstring(stdout)
+	gpo_root = ET.fromstring(gporeport_utf16)
 	gpo_types = "http://www.microsoft.com/GroupPolicy/Types"
 
 	# find the 'TrusteePermissions' tags in xml:
@@ -255,19 +256,20 @@ def check_gpo_report(gpo_name, identity_name):
 					if "Apply Group Policy" in access.text:
 						print("Confirmed '%s' GPO application to '%s'."
 							% (gpo_name, identity_name))
-						return
+						return True
 
-	utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'"
-			% (gpo_name, identity_name))
+	print "\nUnexpected GPOreport:\n"
+	print gporeport_unicode
+	return False
 
 
-def check_gpo_registry_value(gpo_name, reg_key, value_name, value):
+def sysvol_check_gpo_registry_value(gpo_name, reg_key, value_name, value):
 	"""
 	Checks that GPO exists on the filesystem level in sysvol;
 	Checks the Registry.pol contents has test values.
 	"""
 	print "\nChecking '%s' GPO registry key value in Samba" % gpo_name
-	gpo_uid = get_gpo_uid_by_name(gpo_name)  # get GPO UID to determine path
+	gpo_uid = samba_get_gpo_uid_by_name(gpo_name)  # get GPO UID to determine path
 
 	gpo_path = '/var/lib/samba/sysvol/%s/Policies/%s' % (domainname, gpo_uid)
 	if not path.exists(gpo_path):
@@ -315,7 +317,7 @@ def check_gpo_registry_value(gpo_name, reg_key, value_name, value):
 			% (value, gpo_name))
 
 
-def check_gpo_application_listed(gpo_name, username):
+def samba_check_gpo_application_listed(gpo_name, username):
 	"""
 	Checks if the 'gpo_name' GPO is listen in GPOs for
 	'username' via samba-tool.
@@ -335,7 +337,7 @@ def check_gpo_application_listed(gpo_name, username):
 			"all user/computer GPOs." % gpo_name)
 
 
-def get_host_ip(host_name, all=False):
+def dns_get_host_ip(host_name, all=False):
 	"""
 	Lookup host_name;
 	"""
@@ -372,7 +374,7 @@ def get_host_ip(host_name, all=False):
 			return ips[0]
 
 
-def get_windows_computer():
+def udm_get_windows_computer():
 	"""
 	Using UDM looks for 'computers/windows' hostname of the joined
 	Windows Host (Assuming there is only one).
@@ -391,7 +393,7 @@ def get_windows_computer():
 	return {'hostdn': sed_stdout, 'hostname': sed_stdout.split(',')[0][3:]}
 
 
-def check_windows_domain():
+def windows_check_domain():
 	"""
 	Runs powershell script via Winexe to check Windows Host domain is correct.
 	"""
@@ -402,7 +404,7 @@ def check_windows_domain():
 		utils.fail("Failed to check that Windows host domain is correct: %r" % exc)
 
 
-def remove_test_gpo(gpo_name):
+def windows_remove_test_gpo(gpo_name):
 	"""
 	Removes the GPO with a given 'gpo_name' via
 	winexe running the powershell script on the Windows host.
@@ -423,70 +425,112 @@ class GPO_Test(object):
 		self.student_name = student_name
 		self.windows_hostname = windows_hostname
 		self.security_filter_group = security_filter_group
-		self.test_user_gpo = 'test_user_gpo_' + random_username(4)
-		self.test_machine_gpo = 'test_machine_gpo_' + random_username(4)
+		random_gpo_suffix = random_username(4)
+		self.test_user_gpo = 'test_user_gpo_' + random_gpo_suffix
+		self.test_machine_gpo = 'test_machine_gpo_' + random_gpo_suffix
 
 	def __enter__(self):
+		print "\nGPOTest.__enter__"
 		# case 1: checks with user GPO
-		create_gpo(self.test_user_gpo, "GPO for %s Group %s"
+		gpo_name = self.test_user_gpo
+		windows_create_gpo(gpo_name, "GPO for %s Group %s"
 			% (self.student_name, self.security_filter_group))
-		check_gpo_exists(self.test_user_gpo)
-		apply_gpo(self.test_user_gpo, self.security_filter_group, 'Group')
+		samba_check_gpo_exists(gpo_name)
 
-		set_gpo_registry_value(self.test_user_gpo,
+		windows_set_gpo_registry_value(gpo_name,
 			"HKCU\Software\Policies\Microsoft\UCSTestKey",
 			"TestUserValueOne",
 			"Foo",
 			"String")
-
-		# double quotes for '"Authenticated Users"' for it to be
-		# considered as only one argument, otherwise it's passed as two args:
-		set_gpo_readonly(self.test_user_gpo,
-			'"Authenticated Users"', 'Group', 'True')
-		link_gpo(self.test_user_gpo, self.school_dn)
-
-		check_gpo_application_listed(self.test_user_gpo, self.student_name)
-		check_gpo_registry_value(self.test_user_gpo,
+		sysvol_check_gpo_registry_value(gpo_name,
 			"HKCU\Software\Policies\Microsoft\UCSTestKey",
 			"TestUserValueOne",
 			"Foo")
 
-		# case 2: checks with computer GPO
-		create_gpo(self.test_machine_gpo, "GPO for %s Windows host" % self.windows_hostname)
-		check_gpo_exists(self.test_machine_gpo)
-		apply_gpo(self.test_machine_gpo, self.security_filter_group, 'Group')
+		windows_link_gpo(gpo_name, self.school_dn)
+		samba_check_gpo_application_listed(gpo_name, self.student_name)
 
-		set_gpo_registry_value(self.test_machine_gpo,
+		# double quotes for '"Authenticated Users"' for it to be
+		# considered as only one argument, otherwise it's passed as two args:
+		windows_set_gpo_security_filter_GpoRead(gpo_name,
+			'"Authenticated Users"', 'Group', 'True')
+		windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
+		if not windows_check_gpo_report(gpo_name, self.security_filter_group):
+			## Temporary Debug stuff: try once more
+			log_message = "\nCould not confirm that GPO '%s' is applied to '%s'" % (gpo_name, self.security_filter_group)
+			print '### ERROR ###'
+			print '%s\n###      ###' % log_message
+			print("\nTrying again one more time\n")
+			windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
+			if windows_check_gpo_report(gpo_name, self.security_filter_group):
+				## make test fail anyway
+				print("\nOk, second time it worked\n")
+				exit(1)
+			else:
+				# print "\nContinue? \n"
+				# raw_read()
+			
+				utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'"
+					% (gpo_name, self.security_filter_group))
+
+		# case 2: checks with computer GPO
+		gpo_name = self.test_machine_gpo
+		windows_create_gpo(gpo_name, "GPO for %s Windows host" % self.windows_hostname)
+		samba_check_gpo_exists(gpo_name)
+
+		windows_set_gpo_registry_value(gpo_name,
 			"HKLM\Software\Policies\Microsoft\UCSTestKey",
 			"TestComputerValueTwo",
 			"Bar",
 			"String")
-
-		# double quotes for '"Authenticated Users"' for it to be
-		# considered as only one argument, otherwise it's passed as two args:
-		set_gpo_readonly(self.test_machine_gpo,
-			'"Authenticated Users"', 'Group', 'True')
-		# link_gpo(self.test_machine_gpo, self.school_dn) ## doesn't work: Bug #40435
-		link_gpo(self.test_machine_gpo, ldap_base)
-
-		check_gpo_application_listed(self.test_machine_gpo, self.windows_hostname)
-		check_gpo_registry_value(self.test_machine_gpo,
+		sysvol_check_gpo_registry_value(gpo_name,
 			"HKLM\Software\Policies\Microsoft\UCSTestKey",
 			"TestComputerValueTwo",
 			"Bar")
 
+		windows_link_gpo(gpo_name, ldap_base)
+		samba_check_gpo_application_listed(gpo_name, self.windows_hostname)
+
+		# double quotes for '"Authenticated Users"' for it to be
+		# considered as only one argument, otherwise it's passed as two args:
+		windows_set_gpo_security_filter_GpoRead(gpo_name,
+			'"Authenticated Users"', 'Group', 'True')
+		windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
+		# windows_link_gpo(gpo_name, self.school_dn) ## doesn't work: Bug #40435
+		if not windows_check_gpo_report(gpo_name, self.security_filter_group):
+			## Temporary Debug stuff: try once more
+			log_message = "\nCould not confirm that GPO '%s' is applied to '%s'" % (gpo_name, self.security_filter_group)
+			print '### ERROR ###'
+			print '%s\n###      ###' % log_message
+			print("\nTrying again one more time\n")
+			windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
+			if windows_check_gpo_report(gpo_name, self.security_filter_group):
+				## make test fail anyway
+				print("\nOk, second time it worked\n")
+				exit(1)
+			else:
+			
+				# print "\nContinue? \n"
+				# raw_read()
+				utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'"
+					% (gpo_name, self.security_filter_group))
+
+
+		print "\nGPOTest.__enter__ return"
 		return self
 
 	def __exit__(self, exc_type, exc_value, etraceback):
-		remove_test_gpo(self.test_user_gpo)
-		remove_test_gpo(self.test_machine_gpo)
+		print "\nGPOTest.__exit__"
+		windows_remove_test_gpo(self.test_user_gpo)
+		windows_remove_test_gpo(self.test_machine_gpo)
 
 	def check(self):
+		print "\nGPOTest.check"
 		# case 1: checks with user GPO
-		check_gpo_report(self.test_user_gpo, self.security_filter_group)
+		windows_check_gpo_report(self.test_user_gpo, self.security_filter_group)
 	
 		# case 2: checks with computer GPO
-		check_gpo_report(self.test_machine_gpo, self.security_filter_group)
+		windows_check_gpo_report(self.test_machine_gpo, self.security_filter_group)
 
 
 def test_exam_gpo(ucr, udm, schoolenv, windows_client):
@@ -560,8 +604,8 @@ if __name__ == '__main__':
 
 	domain_admin_dn = ucr.get('tests/domainadmin/account')
 	domain_admin_password = ucr.get('tests/domainadmin/pwd')
-	windows_admin = ucr.get('tests/windowsadmin/account', 'testadmin')
-	windows_admin_password =  ucr.get('tests/windowsadmin/pwd', 'Univention@99')
+	windows_admin = ucr.get('tests/windowsadmin/account', 'Administrator')
+	windows_admin_password =  ucr.get('tests/windowsadmin/pwd', 'univention')
 	domainname = ucr.get('domainname')
 	hostname = ucr.get('hostname')
 	ldap_base = ucr.get('ldap/base')
@@ -575,14 +619,14 @@ if __name__ == '__main__':
 	samba_credentials = ("--username=" + domain_admin,
 		"--password=" + domain_admin_password)
 
-	windows_client = get_windows_computer()
+	windows_client = udm_get_windows_computer()
 
 	# setup winexe:
 	Win = univention.winexe.WinExe(domainname,
 		domain_admin, domain_admin_password,
 		windows_admin, windows_admin_password,
-		445, get_host_ip(windows_client['hostname']))
-	check_windows_domain()
+		445, dns_get_host_ip(windows_client['hostname']))
+	windows_check_domain()
 
 	with univention.testing.udm.UCSTestUDM() as udm:
 		with utu.UCSTestSchool() as schoolenv:

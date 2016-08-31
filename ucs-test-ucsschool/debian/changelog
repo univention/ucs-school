@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-8) unstable; urgency=medium
+
+  * Bug #41571: Rename test methods to explain where they are operating
+  * In case Set-GPPermissions didn't work try one more time before failing
+
+ -- Arvid Requate <requate@univention.de>  Wed, 31 Aug 2016 22:13:53 +0200
+
 ucs-test-ucsschool (3.0.15-7) unstable; urgency=medium
 
   * Bug #41571: Fix XML recoding from cp850 to UTF-16
