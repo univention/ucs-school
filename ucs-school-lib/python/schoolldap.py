@@ -34,7 +34,7 @@ import univention.config_registry
 import univention.uldap
 import univention.admin.config
 import univention.admin.modules
-from univention.admin.uexceptions import noObject
+from univention.admin.filter import conjunction, parse
 
 import univention.admin.modules as udm_modules
 from univention.management.console.protocol.message import Message
@@ -44,7 +44,7 @@ from univention.lib.i18n import Translation
 from functools import wraps
 import re
 import inspect
-from ldap.filter import escape_filter_chars
+from ldap.filter import escape_filter_chars, filter_format
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -437,23 +437,28 @@ class SchoolBaseModule(Base):
 			groupObj = groupModule.object(None, ldap_connection, None, group)
 			groupObj.open()
 
+			# lazy loading of exception classes to prevent import loop
+			from ucsschool.lib.models.base import UnknownModel, WrongModel
+
 			# The following code block prevents a massive performance loss if the group
 			# contains far less users than all available users. The else-block opens
 			# all available users ==> high LDAP load! (Bug #42167)
 			users = []
 			for userdn in set(groupObj['users']):
-				try:
-					user = cls.from_dn(userdn, school, ldap_connection)
-				except noObject:
-					continue
-				if school not in user.schools:
-					continue
-				udm_obj = user.get_udm_object(ldap_connection)
+				search_filter_list = [LDAP_Filter.forSchool(school)]
 				if pattern:
-					# check if pattern is part of any of user's common properties (case insensitive)
-					if not any([pattern.lower() in udm_obj.info.get(propertyname, '').lower() for propertyname in LDAP_Filter.forUsersSubMatch]):
+					search_filter_list.append(LDAP_Filter.forUsers(pattern))
+				# concatenate LDAP filters
+				search_filter = unicode(conjunction('&', [parse(subfilter) for subfilter in search_filter_list]))
+				udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)
+				if udm_obj is not None:
+					# make sure that the found UDM object is of requested user type
+					try:
+						user = cls.from_udm_obj(udm_obj, school, ldap_connection)
+					except (UnknownModel, WrongModel):
 						continue
-				users.append(udm_obj)
+
+					users.append(udm_obj)
 		else:
 			# be aware that this search opens all user objects of specified type and may take some time!
 			users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
