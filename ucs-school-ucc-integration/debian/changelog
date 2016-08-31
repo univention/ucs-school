@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (3.0.0-4) unstable; urgency=low
+
+  * Bug #40705: also change UCR policy for timeserver when updating
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 31 Aug 2016 13:02:37 +0200
+
 ucs-school-ucc-integration (3.0.0-3) unstable; urgency=low
 
   * Bug #40705: use lib function to get OUs for server

@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.22-3) unstable; urgency=low
+
+  * Bug #40705: adapt parameter handling to changed IFS
+  * don't lowercase OU name
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 31 Aug 2016 13:03:39 +0200
+
 ucs-school-lib (9.0.22-2) unstable; urgency=low
 
   * Bug #40705: remove bashism

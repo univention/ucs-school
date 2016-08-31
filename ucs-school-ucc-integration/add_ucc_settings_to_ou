@@ -80,7 +80,10 @@ for oudn in $oudnlist ; do
      	--append "registry=ucc/proxy/http http://${hostname}.${domainname}:${squid_httpport}" \
      	--append "registry=ucc/cups/server ${hostname}.${domainname}" \
      	--append "registry=ucc/italc/key/sambasource \\\\${hostname}\\netlogon" \
-     	--append "registry=ucc/italc/key/filename italc-key_${hostname}.pub" \
+     	--append "registry=ucc/italc/key/filename italc-key_${hostname}.pub"
+
+	# Bug #40705 - Set timeserver for UCC clients to school DC slave (in multiserver env)
+    univention-directory-manager policies/registry modify "$@" \
      	--append "registry=ucc/timeserver ${hostname}.${domainname}"
 
     # link to OU

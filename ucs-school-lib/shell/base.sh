@@ -124,9 +124,11 @@ servers_school_ous() {
 		if [ "$1" = "-d" ]; then
 			ldap_hostdn="$2"
 		elif [ "$1" = "-h" ] ; then
-			ldap_server="-h $2"
+			ldap_server="-h
+$2"
 		elif [ "$1" = "-p" ] ; then
-			ldap_port="-p $2"
+			ldap_port="-p
+$2"
 		else
 			echo "Unknown argument \"$1\"."
 			echo "Usage: servers_school_ous [-d hostdn] [-h ldap server] [-p ldap port]"
@@ -137,7 +139,7 @@ servers_school_ous() {
 
 	res=""
 	for oudn in $(univention-ldapsearch $ldap_server $ldap_port -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
-		ouname="$(school_ou "$oudn" | sed 's/.*/\l&/')"
+		ouname="$(school_ou "$oudn")"
 		if is_ucr_true ucsschool/singlemaster; then
 			search_str="(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))"
 		else
