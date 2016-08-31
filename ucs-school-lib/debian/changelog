@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.23-1) unstable; urgency=low
+
+  * Bug #42167: reverted changes in class LDAP_Filter
+  * Bug #42167: another round in improving SchoolBaseModule._users()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 31 Aug 2016 13:39:54 +0200
+
 ucs-school-lib (9.0.22-3) unstable; urgency=low
 
   * Bug #40705: adapt parameter handling to changed IFS
