@@ -847,7 +847,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return cls.from_udm_obj(udm_obj, school, lo)
 
 	@classmethod
-	def get_only_udm_obj(cls, lo, filter_str, superordinate=None):
+	def get_only_udm_obj(cls, lo, filter_str, superordinate=None, base=None):
 		'''Returns the one UDM object of class cls._meta.udm_module that
 		matches a given filter.
 		If more than one is found, a MultipleObjectsError is raised
@@ -857,7 +857,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if cls._meta.udm_filter:
 			filter_str = '(&(%s)(%s))' % (cls._meta.udm_filter, filter_str)
 		logger.debug('Getting %s UDM object by filter: %s', cls.__name__, filter_str)
-		objs = udm_modules.lookup(cls._meta.udm_module, None, lo, scope='sub', base=ucr.get('ldap/base'), filter=str(filter_str), superordinate=superordinate)
+		objs = udm_modules.lookup(cls._meta.udm_module, None, lo, scope='sub', base=base or ucr.get('ldap/base'), filter=str(filter_str), superordinate=superordinate)
 		if len(objs) == 0:
 			return None
 		if len(objs) > 1:
