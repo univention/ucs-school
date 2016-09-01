@@ -636,7 +636,7 @@ class Instance(Base):
 			return
 
 		if serverRole == 'domaincontroller_slave' and not server_type:
-			_error(_('Server type has to be set for domaincontroller slave'))
+			_error(_('Server type has to be set for domain controller slave'))
 			return
 
 		if serverRole == 'domaincontroller_slave' and server_type == 'administrative' and not educational_slave:
@@ -665,7 +665,7 @@ class Instance(Base):
 					return
 			except socket.gaierror as e:
 				MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-				_error(_('Cannot connect to the master domain controller system %s. Please make sure that the system is reachable. If not this could be due to wrong DNS nameserver settings.') % master)
+				_error(_('Cannot connect to the master domain controller system %s. Please make sure that the system is reachable. If not this could be due to wrong DNS name server settings.') % master)
 				return
 			except paramiko.SSHException as e:
 				MODULE.warn('Could not connect to master system %s: %s' % (master, e))

@@ -97,7 +97,7 @@ define([
 					}),
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
-							multiserver: _('<p>In a multi server environment, the master domain controller system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own slave domain controller system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessibly on the slave domain controller. The master domain controller does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
+							multiserver: _('<p>In a multi server environment, the master domain controller system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own slave domain controller system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessible on the slave domain controller. The master domain controller does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
 							singlemaster: _('<p>In a single server environment, the master domain controller system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the master domain controller itself. Teaching related UMC modules are provided directly on the master itself. Note that this setup can lead to performance problems in larger environments.</p>')
 						};
 
@@ -208,23 +208,23 @@ define([
 			}, {
 				name: 'server_type',
 				headerText: _('UCS@school - educational server vs. administrative server'),
-				helpText: _('<p>The UCS@school multi server environment distinguishes between educational servers and administrative servers. The educational servers provide all educational functions of UCS@school. The administrative servers only provide a very limited set of functions, e.g. logon services for staff users.</p><p>Usually the domaincontroller slave is configured as educational server.</p>'),
+				helpText: _('<p>The UCS@school multi server environment distinguishes between educational servers and administrative servers. The educational servers provide all educational functions of UCS@school. The administrative servers only provide a very limited set of functions, e.g. logon services for staff users.</p><p>Usually the domain controller slave is configured as educational server.</p>'),
 				widgets: [{
 					type: ComboBox,
 					name: 'server_type',
-					label: _('Please choose the server type for this domaincontroller slave:'),
+					label: _('Please choose the server type for this domain controller slave:'),
 					staticValues: [ { id: 'educational', label: _('Educational server') },
 									{ id: 'administrative', label: _('Administrative server') }]
 				}]
 			}, {
 				name: 'administrativesetup',
 				headerText: _('UCS@school - extended school OU setup'),
-				helpText: _('During installation this server will be configured as administrative server. To create the specified school, the name of a second/future domaincontroller slave is required, which will be configured as educational server.'),
+				helpText: _('During installation this server will be configured as administrative server. To create the specified school, the name of a second/future domain controller slave is required, which will be configured as educational server.'),
 				widgets: [{
 					type: TextBox,
 					name: 'nameEduServer',
 					label: _("Name of educational school server"),
-					description: _('Name of the educational domaincontroller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The name of the educational server may not be equal to the administrative server!'),
+					description: _('Name of the educational domain controller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The name of the educational server may not be equal to the administrative server!'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$',
 					required: true
 				}]
@@ -326,7 +326,7 @@ define([
 					var widget = this.getWidget('credentials', 'dnsLookupError');
 					var _warningMessage = lang.replace('<b>{0}</b> {1} {2} {3}', [
 						_('Warning:'),
-						_('Could not find the DNS entry for the domaincontroller master.'),
+						_('Could not find the DNS entry for the domain controller master.'),
 						_('Make sure the DNS server is up and running or check the DNS settings.'),
 						networkLink ? _('The DNS settings can be adjusted in the %s.', networkLink) : ''
 					]);
