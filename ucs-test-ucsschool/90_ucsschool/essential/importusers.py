@@ -241,7 +241,7 @@ class Person:
 			attr['krb5KDCFlags'] = ['254']
 			attr['sambaAcctFlags'] = ['[UD         ]']
 			attr['shadowExpire'] = ['1']
-		attr['departmentNumber'] = self.schools
+		attr['departmentNumber'] = [self.school]
 
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
@@ -411,12 +411,13 @@ class ImportFile:
 				'school_classes': user.school_classes,
 				'email': user.mail,
 				'password': user.password,
-				'disabled': 'none' if user.active else 'all',
+				'disabled': 'none' if user.is_active() else 'all',
 			}
 			return kwargs
 
 		for user in self.user_import.students:
 			kwargs = _set_kwargs(user)
+			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				StudentLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -426,6 +427,7 @@ class ImportFile:
 
 		for user in self.user_import.teachers:
 			kwargs = _set_kwargs(user)
+			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				TeacherLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -435,6 +437,7 @@ class ImportFile:
 
 		for user in self.user_import.staff:
 			kwargs = _set_kwargs(user)
+			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				StaffLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -444,6 +447,7 @@ class ImportFile:
 
 		for user in self.user_import.teacher_staff:
 			kwargs = _set_kwargs(user)
+			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				TeachersAndStaffLib(**kwargs).create(lo)
 			elif user.mode == 'M':
