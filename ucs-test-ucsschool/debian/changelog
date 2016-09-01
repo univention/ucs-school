@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-11) unstable; urgency=low
+
+  * Bug #41282: partly fix test_modify_with_several_groups
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 01 Sep 2016 18:08:20 +0200
+
 ucs-test-ucsschool (3.0.15-10) unstable; urgency=low
 
   * Bug #41282: merge User.__init__ and Person.__init__
