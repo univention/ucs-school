@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.15-14) unstable; urgency=medium
+
+  * Bug #41571: Add Workaround for Bug #35336
+  * Verify the actual application of the machine GPO part after reboot
+  * Set random registry values via GPO to avoid artefacts from earlier runs
+
+ -- Arvid Requate <requate@univention.de>  Thu, 01 Sep 2016 22:48:50 +0200
+
 ucs-test-ucsschool (3.0.15-13) unstable; urgency=medium
 
   * 92_samba4_check_denied_user_creation: Re-enable test case

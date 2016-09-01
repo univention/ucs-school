@@ -10,7 +10,7 @@
 
 from os import path
 from sys import exit
-from re import search
+import re
 from time import sleep
 from subprocess import Popen, PIPE
 import xml.etree.ElementTree as ET
@@ -158,6 +158,37 @@ def windows_set_gpo_security_filter_GpoApply(gpo_name, target_name, target_type)
 	except univention.winexe.WinExeFailed as exc:
 		utils.fail("Exception during Set-GPPermissions: %r" % exc)
 
+def windows_check_registry_key(reg_key, subkey, expected_value):
+	print("\nGet-ItemProperty for '%s' check subkey '%s' value '%s'"
+		% (reg_key, subkey, expected_value))
+
+	if reg_key.startswith('HKCU\\'):
+		item = 'HKCU:'+reg_key[4:]
+	elif reg_key.startswith('HKLM\\'):
+		item = 'HKLM:'+reg_key[4:]
+	else:
+		utils.fail("The given registry key '%s' should be either HKCU or HKLM"
+			% reg_key)
+
+	try:
+		ret_code, stdout, stderr = Win.Get_ItemProperty(item)
+		if ret_code != 0:
+			utils.fail("Get-ItemProperty on the Windows host "
+				"returned status '%s' when 0 is expected. "
+				"STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr))
+		print "stdout:", stdout
+	except univention.winexe.WinExeFailed as exc:
+		# print("Exception during Get-ItemProperty: %r\n" % exc)
+		# print("Continue?\n")
+		# raw_input()
+		utils.fail("Exception during Get-ItemProperty: %r" % exc)
+
+	reg_key_pattern = re.compile("^%s +: (.*)$" % subkey, re.M)
+	m = reg_key_pattern.search(stdout)
+	if m and m.group(1).strip() == expected_value:
+		return True
+	utils.fail("Get-ItemProperty for %s did not return expected value (%s) for subkey %s" % (reg_key, expected_value, subkey))
+
 
 def samba_check_gpo_exists(gpo_name):
 	"""
@@ -211,7 +242,7 @@ def samba_get_gpo_uid_by_name(gpo_name):
 	stdout = stdout.split('\n\n')  # separate GPOs
 	for gpo in stdout:
 		if gpo_name in gpo:
-			return '{' + search('{(.+?)}', gpo).group(1) + '}'
+			return '{' + re.search('{(.+?)}', gpo).group(1) + '}'
 
 
 def windows_check_gpo_report(gpo_name, identity_name):
@@ -260,7 +291,8 @@ def windows_check_gpo_report(gpo_name, identity_name):
 
 	print "\nUnexpected GPOreport:\n"
 	print gporeport_unicode
-	return False
+	utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'"
+		% (gpo_name, identity_name))
 
 
 def sysvol_check_gpo_registry_value(gpo_name, reg_key, value_name, value):
@@ -420,14 +452,17 @@ def windows_remove_test_gpo(gpo_name):
 		print ("An Error occured while removing GPO remotely: %r" % exc)
 
 class GPO_Test(object):
-	def __init__(self, school_dn, student_name, windows_hostname, security_filter_group):
+	def __init__(self, school_dn, student_name, student_pwd, windows_hostname, security_filter_group):
 		self.school_dn = school_dn
 		self.student_name = student_name
+		self.student_pwd = student_pwd
 		self.windows_hostname = windows_hostname
 		self.security_filter_group = security_filter_group
 		random_gpo_suffix = random_username(4)
 		self.test_user_gpo = 'test_user_gpo_' + random_gpo_suffix
 		self.test_machine_gpo = 'test_machine_gpo_' + random_gpo_suffix
+		self.test_user_gpo_value = random_username(4)
+		self.test_machine_gpo_value = random_username(4)
 
 	def __enter__(self):
 		print "\nGPOTest.__enter__"
@@ -440,12 +475,12 @@ class GPO_Test(object):
 		windows_set_gpo_registry_value(gpo_name,
 			"HKCU\Software\Policies\Microsoft\UCSTestKey",
 			"TestUserValueOne",
-			"Foo",
+			self.test_user_gpo_value,
 			"String")
 		sysvol_check_gpo_registry_value(gpo_name,
 			"HKCU\Software\Policies\Microsoft\UCSTestKey",
 			"TestUserValueOne",
-			"Foo")
+			self.test_user_gpo_value)
 
 		windows_link_gpo(gpo_name, self.school_dn)
 		samba_check_gpo_application_listed(gpo_name, self.student_name)
@@ -454,24 +489,13 @@ class GPO_Test(object):
 		# considered as only one argument, otherwise it's passed as two args:
 		windows_set_gpo_security_filter_GpoRead(gpo_name,
 			'"Authenticated Users"', 'Group', 'True')
+		if ucr.is_true("connector/s4/mapping/gpo/ntsd", False):
+			## Workaround for Bug #35336
+			utils.wait_for_connector_replication()
+			utils.wait_for_replication()
+			utils.wait_for_connector_replication()
 		windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
-		if not windows_check_gpo_report(gpo_name, self.security_filter_group):
-			## Temporary Debug stuff: try once more
-			log_message = "\nCould not confirm that GPO '%s' is applied to '%s'" % (gpo_name, self.security_filter_group)
-			print '### ERROR ###'
-			print '%s\n###      ###' % log_message
-			print("\nTrying again one more time\n")
-			windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
-			if windows_check_gpo_report(gpo_name, self.security_filter_group):
-				## make test fail anyway
-				print("\nOk, second time it worked\n")
-				exit(1)
-			else:
-				# print "\nContinue? \n"
-				# raw_read()
-			
-				utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'"
-					% (gpo_name, self.security_filter_group))
+		windows_check_gpo_report(gpo_name, self.security_filter_group)
 
 		# case 2: checks with computer GPO
 		gpo_name = self.test_machine_gpo
@@ -481,12 +505,12 @@ class GPO_Test(object):
 		windows_set_gpo_registry_value(gpo_name,
 			"HKLM\Software\Policies\Microsoft\UCSTestKey",
 			"TestComputerValueTwo",
-			"Bar",
+			self.test_machine_gpo_value,
 			"String")
 		sysvol_check_gpo_registry_value(gpo_name,
 			"HKLM\Software\Policies\Microsoft\UCSTestKey",
 			"TestComputerValueTwo",
-			"Bar")
+			self.test_machine_gpo_value)
 
 		windows_link_gpo(gpo_name, ldap_base)
 		samba_check_gpo_application_listed(gpo_name, self.windows_hostname)
@@ -495,26 +519,14 @@ class GPO_Test(object):
 		# considered as only one argument, otherwise it's passed as two args:
 		windows_set_gpo_security_filter_GpoRead(gpo_name,
 			'"Authenticated Users"', 'Group', 'True')
+		if ucr.is_true("connector/s4/mapping/gpo/ntsd", False):
+			## Workaround for Bug #35336
+			utils.wait_for_connector_replication()
+			utils.wait_for_replication()
+			utils.wait_for_connector_replication()
 		windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
 		# windows_link_gpo(gpo_name, self.school_dn) ## doesn't work: Bug #40435
-		if not windows_check_gpo_report(gpo_name, self.security_filter_group):
-			## Temporary Debug stuff: try once more
-			log_message = "\nCould not confirm that GPO '%s' is applied to '%s'" % (gpo_name, self.security_filter_group)
-			print '### ERROR ###'
-			print '%s\n###      ###' % log_message
-			print("\nTrying again one more time\n")
-			windows_set_gpo_security_filter_GpoApply(gpo_name, self.security_filter_group, 'Group')
-			if windows_check_gpo_report(gpo_name, self.security_filter_group):
-				## make test fail anyway
-				print("\nOk, second time it worked\n")
-				exit(1)
-			else:
-			
-				# print "\nContinue? \n"
-				# raw_read()
-				utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'"
-					% (gpo_name, self.security_filter_group))
-
+		windows_check_gpo_report(gpo_name, self.security_filter_group)
 
 		print "\nGPOTest.__enter__ return"
 		return self
@@ -526,11 +538,14 @@ class GPO_Test(object):
 
 	def check(self):
 		print "\nGPOTest.check"
+		windows_force_gpo_update()	## seems to be necessary even for machine GPO after reboot
+
 		# case 1: checks with user GPO
-		windows_check_gpo_report(self.test_user_gpo, self.security_filter_group)
+		## TODO: Doesn't work as Admin, needs to be checked with the student-account!
+		# windows_check_registry_key("HKCU\Software\Policies\Microsoft\UCSTestKey", "TestUserValueOne", self.test_user_gpo_value)
 	
 		# case 2: checks with computer GPO
-		windows_check_gpo_report(self.test_machine_gpo, self.security_filter_group)
+		windows_check_registry_key("HKLM\Software\Policies\Microsoft\UCSTestKey", "TestComputerValueTwo", self.test_machine_gpo_value)
 
 
 def test_exam_gpo(ucr, udm, schoolenv, windows_client):
@@ -547,8 +562,9 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		position="cn=klassen,cn=schueler,cn=groups,%s" % school_dn
 		)
 
-	stu, studn = schoolenv.create_user(school)
-	udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
+	student_pwd = "univention"
+	student_name, student_dn = schoolenv.create_user(school, password=student_pwd)
+	udm.modify_object('groups/group', dn=klasse_dn, append={"users": [student_dn]})
 
 	# set 2 computer rooms to contain the windows client
 	room = Room(school, host_members=windows_client['hostdn'])
@@ -569,7 +585,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		recipients=[klasse_dn]
 		)
 
-	with GPO_Test(school_dn, stu, windows_client['hostname'], exam_group_name) as gpo_test:
+	with GPO_Test(school_dn, student_name, student_pwd, windows_client['hostname'], exam_group_name) as gpo_test:
 
 		exam.start()
 		try:
@@ -625,7 +641,8 @@ if __name__ == '__main__':
 	Win = univention.winexe.WinExe(domainname,
 		domain_admin, domain_admin_password,
 		windows_admin, windows_admin_password,
-		445, dns_get_host_ip(windows_client['hostname']))
+		445, dns_get_host_ip(windows_client['hostname']),
+		debug=False)
 	windows_check_domain()
 
 	with univention.testing.udm.UCSTestUDM() as udm:
