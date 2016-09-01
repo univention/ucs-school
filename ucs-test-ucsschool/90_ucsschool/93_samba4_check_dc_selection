@@ -12,7 +12,7 @@
 ##  4.0-0: skip
 ##  4.0-1: skip
 ##  3.2-5: skip
-# The test should be re-enabled after Bug #37698 is fixed.
+##  4.1-2: fixed
 
 from sys import exit
 from time import sleep

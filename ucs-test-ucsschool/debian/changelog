@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.15-13) unstable; urgency=medium
+
+  * 92_samba4_check_denied_user_creation: Re-enable test case
+    (Bug #37700)
+  * 93_samba4_check_dc_selection: Re-enable test case (Bug #37700)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 01 Sep 2016 20:10:04 +0200
+
 ucs-test-ucsschool (3.0.15-12) unstable; urgency=medium
 
   * 95_samba4_client_join_on_slave: Re-enable test case (Bug #37700)
