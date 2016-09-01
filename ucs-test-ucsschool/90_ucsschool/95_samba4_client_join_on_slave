@@ -8,9 +8,9 @@
 ## exposure: dangerous
 ## versions:
 ##  4.0-0: skip
-##  4.0-1: skip
 ##  3.2-5: skip
-# The test should be re-enabled after the reason for the failure is resolved.
+##  4.0-1: skip
+##  4.1-2: fixed
 
 from os import getenv
 from time import sleep
@@ -98,6 +98,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 			utils.fail("The join password, domain SID and domain name should "
 					   "be returned by the libnet join, however at least "
 					   "one of them is empty")
+		utils.wait_for_replication()
 
 		print "Join Password:", join_password
 		print "Domain SID:", domain_sid
