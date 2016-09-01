@@ -10,7 +10,9 @@ import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.utils as utils
 import univention.testing.udm as udm_test
+from univention.testing.decorators import SetTimeout
 import univention.uldap
+import univention.config_registry
 from ucsschool.lib.models import Student as StudentLib
 from ucsschool.lib.models import Teacher as TeacherLib
 from ucsschool.lib.models import Staff as StaffLib
@@ -20,7 +22,6 @@ import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, create_ou_cli, get_school_base
 
-from univention.testing.decorators import SetTimeout
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object)
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
@@ -33,7 +34,6 @@ class ImportUser(Exception):
 class UserHookResult(Exception):
 	pass
 
-import univention.config_registry
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
@@ -48,7 +48,7 @@ grp_prefix_admins = configRegistry.get('ucsschool/ldap/default/groupprefix/admin
 grp_prefix_staff = configRegistry.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 
 
-class Person:
+class Person(object):
 
 	def __init__(self, school, role):
 		self.firstname = uts.random_name()
@@ -63,22 +63,12 @@ class Person:
 		self.mail = '%s@%s' % (self.username, configRegistry.get('domainname'))
 		self.school_classes = {}
 		if self.is_student():
-			self.append_random_class()
-			self.append_random_working_group()
 			self.cn = cn_pupils
 			self.grp_prefix = grp_prefix_pupils
 		elif self.is_teacher():
-			self.append_random_class()
-			self.append_random_class()
-			self.append_random_class()
-			self.append_random_working_group()
-			self.append_random_working_group()
 			self.cn = cn_teachers
 			self.grp_prefix = grp_prefix_teachers
 		elif self.is_teacher_staff():
-			self.append_random_class()
-			self.append_random_working_group()
-			self.append_random_working_group()
 			self.cn = cn_teachers_staff
 			self.grp_prefix = grp_prefix_teachers
 		elif self.is_staff():
@@ -87,10 +77,29 @@ class Person:
 		self.mode = 'A'
 		self.active = True
 		self.password = None
-
 		self.school_base = get_school_base(self.school)
+		self.dn = self.make_dn()
+		self.append_random_groups()
 
-		self.dn = 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
+	def make_dn(self):
+		return 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
+
+	def append_random_groups(self):
+		if self.is_student():
+			self.append_random_class()
+			self.append_random_working_group()
+		elif self.is_teacher():
+			self.append_random_class()
+			self.append_random_class()
+			self.append_random_class()
+			self.append_random_working_group()
+			self.append_random_working_group()
+		elif self.is_teacher_staff():
+			self.append_random_class()
+			self.append_random_working_group()
+			self.append_random_working_group()
+		elif self.is_staff():
+			pass
 
 	def set_mode_to_modify(self):
 		self.mode = 'M'

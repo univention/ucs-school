@@ -4,11 +4,9 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucsschool import UMCConnection
 import univention.testing.ucr as ucr_test
-from essential.importou import get_school_base
 from essential.importusers import Person
 
 
@@ -37,7 +35,6 @@ class EditFail(Exception):
 
 
 class User(Person):
-
 	"""Contains the needed functuality for users in the UMC module schoolwizards/users.\n
 	:param school: school name of the user
 	:type school: str
@@ -46,7 +43,6 @@ class User(Person):
 	:param school_classes: dictionary of school -> list of names of the class which contain the user
 	:type school_classes: dict
 	"""
-
 	def __init__(
 			self,
 			school,
@@ -58,65 +54,35 @@ class User(Person):
 			lastname=None,
 			password=None,
 			mail=None):
-		# TODO: merge with super.__init__
-		self.ucr = ucr_test.UCSTestConfigRegistry()
-		self.ucr.load()
-		cn_pupils = self.ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
-		cn_teachers = self.ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-		cn_teachers_staff = self.ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-		cn_staff = self.ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+		super(User, self).__init__(school, role)
 
-		grp_prefix_pupils = self.ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
-		grp_prefix_teachers = self.ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
-		grp_prefix_admins = self.ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
-		grp_prefix_staff = self.ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
-
-		self.firstname = uts.random_name()
-		self.lastname = uts.random_name()
-		self.username = uts.random_name()
 		if username:
 			self.username = username
+			self.dn = self.make_dn()
 		if firstname:
 			self.firstname = firstname
 		if lastname:
 			self.lastname = lastname
-		self.school = school
-		self.role = role
-		# self.mail = '%s@%s' % (self.username, self.ucr.get('domainname'))
-		if self.is_student():
-			self.cn = cn_pupils
-			self.grp_prefix = grp_prefix_pupils
-		elif self.is_teacher():
-			self.cn = cn_teachers
-			self.grp_prefix = grp_prefix_teachers
-		elif self.is_teacher_staff():
-			self.cn = cn_teachers_staff
-			self.grp_prefix = grp_prefix_teachers
-		elif self.is_staff():
-			self.cn = cn_staff
-			self.grp_prefix = grp_prefix_staff
-		utils.wait_for_replication()
-		self.mode = mode
-		self.active = True
-
-		self.school_base = get_school_base(self.school)
-
-		self.dn = 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
-		self.mail = mail
-
+		if mail:
+			self.mail = mail
+		if school_classes:
+			self.school_classes = school_classes
 		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
-		self.school_classes = school_classes or {}
+		self.mode = mode
 
+		utils.wait_for_replication()
+		self.ucr = ucr_test.UCSTestConfigRegistry()
+		self.ucr.load()
 		host = self.ucr.get('ldap/master')
 		self.umc_connection = UMCConnection(host)
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
 		self.password = password if password else passwd
-		self.source_uid = None
-		self.record_uid = None
-		self.description = None
 		self.umc_connection.auth(admin, passwd)
+
+	def append_random_groups(self):
+		pass
 
 	def __enter__(self):
 		return self
