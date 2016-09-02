@@ -22,7 +22,7 @@ import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, create_ou_cli, get_school_base
 
-utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object)
+utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object, 5)
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
