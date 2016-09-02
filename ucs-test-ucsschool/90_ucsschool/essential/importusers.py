@@ -125,9 +125,7 @@ class Person(object):
 				self.school = kwargs[key]
 				if len(self.schools) == 1:
 					self.schools = [self.school]
-				elif self.school in self.schools:
-					pass
-				else:
+				elif self.school not in self.schools:
 					self.schools.append(self.school)
 				self.school_base = get_school_base(self.school)
 			elif key == 'schools':
