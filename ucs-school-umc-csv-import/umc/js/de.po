@@ -55,7 +55,7 @@ msgid "Back"
 msgstr "Zurück"
 
 #: umc/js/schoolcsvimport.js:128
-msgid "Birthday"
+msgid "Birthdate"
 msgstr "Geburtstag"
 
 #: umc/js/schoolcsvimport.js:278 umc/js/schoolcsvimport.js:336
@@ -231,8 +231,8 @@ msgstr ""
 
 #: umc/js/schoolcsvimport.js:695
 msgid ""
-"The birthday does not follow the format for dates. Please change the "
-"birthday."
+"The birthdate does not follow the format for dates. Please change the "
+"birthdate."
 msgstr ""
 "Der Geburtstag passt nicht in das Format für ein Datum. Bitte ändern Sie den "
 "Geburtstag."

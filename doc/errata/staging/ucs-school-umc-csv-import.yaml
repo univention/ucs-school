@@ -8,5 +8,6 @@ desc: |
  This update addresses the following issue(s):
  * Adapt to package to changes in the UCS@school programming library
    (Bug #41282, #41609).
- * (Bug #42216)
+ * Some typos in the description text of the UMC module "UCS@school csv-import"
+   have been corrected (Bug #42216).
 bug: [41282, 41609, 42216]

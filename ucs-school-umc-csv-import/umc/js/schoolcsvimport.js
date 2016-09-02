@@ -125,7 +125,7 @@ define([
 								username: _('Username'),
 								firstname: _('First name'),
 								lastname: _('Last name'),
-								birthday: _('Birthday')}) + '\n' +
+								birthday: _('Birthdate')}) + '\n' +
 							_('john.doe,Johnathan James,Doe,03/15/2000') + '\n' +
 							'[...]' +
 						'</pre>'
@@ -692,7 +692,7 @@ define([
 					if (birthday) {
 						var parsedDate = dateLocaleModule.parse(birthday, dateConstraints);
 						if (!parsedDate) {
-							item.setError('birthday', _('The birthday does not follow the format for dates. Please change the birthday.'), grid._grid);
+							item.setError('birthday', _('The birthdate does not follow the format for dates. Please change the birthdate.'), grid._grid);
 						}
 					}
 				}
