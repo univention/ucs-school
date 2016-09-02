@@ -507,8 +507,34 @@ class UCSTestSchool(object):
 
 		return class_name, grp_dn
 
-	def create_workgroup(self, *args, **kwargs):
-		pass
+	def create_workgroup(self, ou_name, workgroup_name=None, description=None, users=None, wait_for_replication=True):
+		"""
+		Creates a new workgroup in specified ou <ou_name>. If no name for the workgroup is specified,
+		a random name is used. <name> has to be of format "<OU>-<WGNAME>" or "<WGNAME>".
+		Group members may also be specified a list of user DNs in <users>.
+		"""
+		if workgroup_name is None:
+			workgroup_name = uts.random_username()
+		if not workgroup_name.startswith('{}-'.format(ou_name)):
+			workgroup_name = '{}-{}'.format(ou_name, workgroup_name)
+		grp_dn = 'cn={},cn=schueler,cn=groups,ou={},{}'.format(workgroup_name, ou_name, self.LDAP_BASE)
+		kwargs = {
+			'school': ou_name,
+			'name': workgroup_name,
+			'description': description,
+			'users': users or [],
+		}
+		print('*** Creating new WorkGroup "{}" with {}...'.format(workgroup_name, kwargs))
+		lo = self.open_ldap_connection()
+		WorkGroup.invalidate_all_caches()
+		WorkGroup.init_udm_module(lo)
+		result = WorkGroup(**kwargs).create(lo)
+		print('*** Result of WorkGroup(...).create(): {}'.format(result))
+
+		if wait_for_replication:
+			utils.wait_for_replication()
+
+		return workgroup_name, grp_dn
 
 	def create_computerroom(self, ou_name, name=None, description=None, host_members=None, wait_for_replication=True):
 		"""
