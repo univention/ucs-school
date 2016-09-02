@@ -1158,12 +1158,10 @@ class CLI_Import_v2_Tester(object):
 			# verify LDAP attributes
 			person.verify()
 			utils.verify_ldap_object(global_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
-			# FIXME
-			# utils.verify_ldap_object(workgroup_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
-			# FIXME
-			# utils.verify_ldap_object(workgroup_B_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(workgroup_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			utils.verify_ldap_object(extra_A_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			utils.verify_ldap_object(extra_A_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(workgroup_B_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			utils.verify_ldap_object(extra_B_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			utils.verify_ldap_object(extra_B_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			if role in ('student', 'teacher', 'teacher_and_staff'):
