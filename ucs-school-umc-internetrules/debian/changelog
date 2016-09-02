@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (12.0.0-2) unstable; urgency=low
+
+  * Bug #42217: Corrected a typo.
+
+ -- Richard Ulmer <ulmer@univention.de>  Fri, 02 Sep 2016 14:39:11 +0200
+
 ucs-school-umc-internetrules (12.0.0-1) unstable; urgency=medium
 
   * Bug #41127: use ucsschool.lib.models instead if deprecated search_base

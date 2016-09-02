@@ -198,8 +198,8 @@ msgstr "Zeichenkette, nach der in den Gruppeneigenschaften gesucht wird"
 
 #: umc/js/_internetrules/AdminPage.js:154
 msgid ""
-"Specifies the substring pattern which is searched for in the rules' name and "
-"its domain list"
+"Specifies the substring pattern which is searched for in the rules' names "
+"and their domain lists"
 msgstr "Zeichenkette, nach der im Regelnamen und der Domänenliste gesucht wird"
 
 #: umc/js/_internetrules/AssignPage.js:171

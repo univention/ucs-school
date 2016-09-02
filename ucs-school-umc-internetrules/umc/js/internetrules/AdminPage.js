@@ -149,7 +149,7 @@ define([
 			var widgets = [{
 				type: TextBox,
 				name: 'pattern',
-				description: _('Specifies the substring pattern which is searched for in the rules\' name and its domain list'),
+				description: _('Specifies the substring pattern which is searched for in the rules\' names and their domain lists'),
 				label: _('Search pattern')
 			}];
 
