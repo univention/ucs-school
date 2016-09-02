@@ -242,7 +242,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 		self.get_ucr_test_credentials()
 
 		private_dir = ''  # temporary Samba private directory
-		computer_name = 'WIN7PRO4_' + random_username(6).upper()
+		computer_name = 'WIN7' + random_username(6).upper()
 		self.domain_name = self.UCR.get('domainname')
 		try:
 			private_dir = self.configure_samba_credentials_lp()
@@ -250,6 +250,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 			if precreate_computer:
 				self.create_computer_via_ldbadd(computer_name)
 				sleep(30)  # wait for replication
+				utils.wait_for_replication()
 
 			machine_password = self.join_a_computer(computer_name)
 			self.check_computer_via_udm(computer_name)

@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.15-14.1) unstable; urgency=medium
+
+  * 95_samba4_client_join_on_slave: The computer name shouldn't be
+    longer than 15 characters https://support.microsoft.com/en-
+    us/kb/909264 (Bug #34219)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 02 Sep 2016 06:34:22 +0200
+
 ucs-test-ucsschool (3.0.15-14) unstable; urgency=medium
 
   * Bug #41571: Add Workaround for Bug #35336
