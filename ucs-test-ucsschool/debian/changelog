@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-12) unstable; urgency=low
+
+  * Bug #42033: fixed order of test case setup and debug output
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 11:27:30 +0200
+
 ucs-test-ucsschool (3.0.15-11) unstable; urgency=low
 
   * Bug #35447, #42033: domain admin is allowed to reset all passwords
