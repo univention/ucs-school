@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-15) unstable; urgency=medium
+
+  * 93_samba4_check_dc_selection: Disable test case again (Bug #34223)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 02 Sep 2016 07:03:00 +0200
+
 ucs-test-ucsschool (3.0.15-14.1) unstable; urgency=medium
 
   * 95_samba4_client_join_on_slave: The computer name shouldn't be

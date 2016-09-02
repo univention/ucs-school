@@ -12,7 +12,8 @@
 ##  4.0-0: skip
 ##  4.0-1: skip
 ##  3.2-5: skip
-##  4.1-2: fixed
+
+# Disabled test case, see Bug #34223
 
 from sys import exit
 from time import sleep
