@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-14) unstable; urgency=low
+
+  * Bug #41282: fixed 34_import-users_via_cli_v2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 16:47:14 +0200
+
 ucs-test-ucsschool (3.0.15-13) unstable; urgency=low
 
   * Bug #42224: fixed a bug in UCS@school test lib when creating a new OU
