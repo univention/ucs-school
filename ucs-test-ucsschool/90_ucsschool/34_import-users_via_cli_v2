@@ -1049,9 +1049,16 @@ class CLI_Import_v2_Tester(object):
 	def test_modify_with_several_groups(self, udm):
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			- create user with 2 schools
-			- add user to several groups: global group; workgroup, class, extra group for each school
+			- create user with 2 schools and 2 classes
+			- add user to several groups for each school:
+			  - global group
+			  - workgroup
+			  - class
+			  - extra group 1 (random name <RANDOM>)
+			  - extra group 2 (same naming schema as workgroup/class <OU>-<NAME>)
 			- modify user with role <role>
+			  - add user to new random class
+			  - remove user from class_B
 			- remove user with role <role>
 		"""
 		self.log.debug('*** Creating groups...')
