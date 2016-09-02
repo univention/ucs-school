@@ -879,7 +879,7 @@ class CLI_Import_v2_Tester(object):
 			'objectClass': 'univentionFreeAttributes',
 			'ldapMapping': 'univentionFreeAttribute15'
 		}
-		extended_attribute = udm.create_object('settings/extended_attribute', **properties)
+		udm.create_object('settings/extended_attribute', **properties)
 
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r with ', role)
