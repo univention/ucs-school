@@ -131,6 +131,7 @@ class Person(object):
 			elif key == 'schools':
 				if not self.school:
 					self.school = sorted(kwargs[key])[0]
+				self.schools = kwargs[key]
 			elif hasattr(self, key):
 				setattr(self, key, kwargs[key])
 			else:
