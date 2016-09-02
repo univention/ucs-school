@@ -416,7 +416,7 @@ class Instance(SchoolBaseModule):
 		# make sure that we run the current room session
 		userDN = _getRoomOwner(self._italc.roomDN)
 		if userDN and userDN != self._user_dn:
-			raise UMC_Error(_('A different user is already running a computerroom session.'))
+			raise UMC_Error(_('A different user is already running a computer room session.'))
 
 	@LDAP_Connection()
 	def query(self, request, ldap_user_read=None):

@@ -459,11 +459,11 @@ msgid "The selected computers are shutting down."
 msgstr "Die ausgewählten Computer fahren herunter."
 
 #: umc/js/computerroom.js:441 umc/js/computerroom.js:462
-msgid "The selected computers get locked."
+msgid "The selected computers are being locked."
 msgstr "Die ausgewählten Computer werden gesperrt."
 
 #: umc/js/computerroom.js:441 umc/js/computerroom.js:462
-msgid "The selected computers get unlocked."
+msgid "The selected computers are being unlocked."
 msgstr "Die ausgewählten Computer werden entsperrt."
 
 #: umc/js/computerroom.js:373

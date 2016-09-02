@@ -438,7 +438,7 @@ define([
 				});
 				this._objStore.put({ id: comp.id[0], InputLock: null });
 			}));
-			this.addNotification(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
+			this.addNotification(lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.'));
 		},
 
 		_lockScreen: function(lock, ids, items) {
@@ -459,7 +459,7 @@ define([
 				});
 				this._objStore.put({ id: comp.id[0], ScreenLock: null });
 			}));
-			this.addNotification(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
+			this.addNotification(lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.'));
 		},
 
 		buildRendering: function() {
