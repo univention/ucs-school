@@ -8,4 +8,5 @@ desc: |
  This update addresses the following issue(s):
  * Adapt to package to changes in the UCS@school programming library
    (Bug #41282, #41609).
-bug: [41282, 41609]
+ * (Bug #42216)
+bug: [41282, 41609, 42216]
