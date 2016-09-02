@@ -89,7 +89,7 @@ define([
 					type: TextBox,
 					required: true,
 					label: _('Exam name'),
-					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".'),
+					description: _('The name of the exam, e.g., "Math exam algebra 02/2013".'),
 					onChange: lang.hitch(this, function() {
 						// update the directory name
 						var name = sanitizeFilename(this.getWidget('general', 'name').get('value'));
@@ -119,7 +119,7 @@ define([
 				}]
 			}, {
 				name: 'advanced',
-				headerText: _('Select room and participients'),
+				headerText: _('Select room and participants'),
 				helpText: _('<p>Please select the room in which the exam is written and select classes or workgroups that shall participate in the exam.</p>'),
 				layout: [
 					'school',
@@ -299,7 +299,7 @@ define([
 				}]
 			}, {
 				name: 'finished',
-				headerText: _('Exam succesfully prepared'),
+				headerText: _('Exam successfully prepared'),
 				headerTextRegion: 'main',
 				helpText: _('<p>The preparation of the exam was successful. A summary of the exam properties is displayed below.<p><p>Press the button "Open computer room" to finish this wizard and open selected computer room directly.</p><p><b>Attention:</b> For the exam, students are required to login with a special user account by adding <i>{prefix}</i> to their common username, e.g., <i>{prefix}joe123</i> instead of <i>joe123</i>.</p>'),
 				helpTextRegion: 'main',

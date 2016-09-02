@@ -180,7 +180,7 @@ msgid "Exam name"
 msgstr "Name der Klassenarbeit"
 
 #: umc/js/schoolexam.js:302
-msgid "Exam succesfully prepared"
+msgid "Exam successfully prepared"
 msgstr "Klassenarbeit erfolgreich angelegt"
 
 #: umc/js/schoolexam.js:226
@@ -348,7 +348,7 @@ msgstr ""
 "Schuladministrators verwendet werden."
 
 #: umc/js/schoolexam.js:122
-msgid "Select room and participients"
+msgid "Select room and participants"
 msgstr "Raum und Teilnehmer auswählen"
 
 #: umc/js/schoolexam.js:114
@@ -372,7 +372,7 @@ msgid "Take over"
 msgstr "Übernehmen"
 
 #: umc/js/schoolexam.js:92
-msgid "The name of the exam, e.g., \"Math exam algrebra 02/2013\"."
+msgid "The name of the exam, e.g., \"Math exam algebra 02/2013\"."
 msgstr "Der Name der Klassenarbeit, bspw. \"Mathematik-Klausur 02-2013\"."
 
 #: umc/js/schoolexam.js:215
