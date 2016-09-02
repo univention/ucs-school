@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-11) unstable; urgency=low
+
+  * Bug #35447, #42033: domain admin is allowed to reset all passwords
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 10:46:33 +0200
+
 ucs-test-ucsschool (3.0.15-15) unstable; urgency=medium
 
   * 93_samba4_check_dc_selection: Disable test case again (Bug #34223)
