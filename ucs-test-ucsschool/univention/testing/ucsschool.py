@@ -220,8 +220,8 @@ class UCSTestSchool(object):
 		class share file server and the home share file server will be set.
 		If use_cli is set to True, the old CLI interface is used. Otherwise the UCS@school python
 		library is used.
-		PLEASE NOTE: if name_edudc is set to the hostname of the master, name_edudc will be unset automatically,
-					 because it's not allowed to specify the hostname of the master in any situation!
+		PLEASE NOTE: if name_edudc is set to the hostname of the master or backup, name_edudc will be unset automatically,
+					 because it's not allowed to specify the hostname of the master or any backup in any situation!
 
 		Return value: (ou_name, ou_dn)
 			ou_name: name of the created OU
@@ -236,6 +236,9 @@ class UCSTestSchool(object):
 		if isinstance(name_edudc, str):
 			if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.', 1)[0].lower():
 				print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc'
+				name_edudc = None
+			elif any([name_edudc.lower() == backup.split('.', 1)[0].lower() for backup in self._ucr.get('ldap/backup', '').split(' ')]):
+				print '*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc'
 				name_edudc = None
 
 		# create random OU name

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-13) unstable; urgency=low
+
+  * Bug #42224: fixed a bug in UCS@school test lib when creating a new OU
+    on a DC backup
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 12:35:41 +0200
+
 ucs-test-ucsschool (3.0.15-12) unstable; urgency=low
 
   * Bug #42033: fixed order of test case setup and debug output
