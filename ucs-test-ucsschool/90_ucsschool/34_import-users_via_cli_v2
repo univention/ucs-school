@@ -1063,7 +1063,11 @@ class CLI_Import_v2_Tester(object):
 			position='cn=klassen,cn=schueler,cn=groups,%s' % (self.ou_A.dn,),
 			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
 		cn_A_dn = udm.create_object('container/cn', position=self.ou_A.dn, name='kurs-%s' % uts.random_string())
-		extra_A_group_dn, extra_A_group_name = udm.create_group(position=cn_A_dn)
+		extra_A_group1_dn, extra_A_group1_name = udm.create_group(position=cn_A_dn)
+		extra_A_group2_dn, extra_A_group2_name = udm.create_group(
+			position=cn_A_dn,
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+
 		workgroup_B_dn, workgroup_B_name = udm.create_group(
 			position='cn=schueler,cn=groups,%s' % (self.ou_B.dn,),
 			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
@@ -1071,7 +1075,10 @@ class CLI_Import_v2_Tester(object):
 			position='cn=klassen,cn=schueler,cn=groups,%s' % (self.ou_B.dn,),
 			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
 		cn_B_dn = udm.create_object('container/cn', position=self.ou_B.dn, name='kurs-%s' % uts.random_string())
-		extra_B_group_dn, extra_B_group_name = udm.create_group(position=cn_B_dn)
+		extra_B_group1_dn, extra_B_group1_name = udm.create_group(position=cn_B_dn)
+		extra_B_group2_dn, extra_B_group2_name = udm.create_group(
+			position=cn_B_dn,
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
 
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r', role)
@@ -1113,13 +1120,17 @@ class CLI_Import_v2_Tester(object):
 			udm.modify_object('groups/group', dn=global_group_dn, append={'users': [user_dn]})
 			udm.modify_object('groups/group', dn=workgroup_A_dn, append={'users': [user_dn]})
 			udm.modify_object('groups/group', dn=workgroup_B_dn, append={'users': [user_dn]})
-			udm.modify_object('groups/group', dn=extra_A_group_dn, append={'users': [user_dn]})
-			udm.modify_object('groups/group', dn=extra_B_group_dn, append={'users': [user_dn]})
+			udm.modify_object('groups/group', dn=extra_A_group1_dn, append={'users': [user_dn]})
+			udm.modify_object('groups/group', dn=extra_A_group2_dn, append={'users': [user_dn]})
+			udm.modify_object('groups/group', dn=extra_B_group1_dn, append={'users': [user_dn]})
+			udm.modify_object('groups/group', dn=extra_B_group2_dn, append={'users': [user_dn]})
 			utils.verify_ldap_object(global_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			utils.verify_ldap_object(workgroup_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
-			utils.verify_ldap_object(extra_A_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			utils.verify_ldap_object(workgroup_B_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
-			utils.verify_ldap_object(extra_B_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 
 			self.log.info('*** Modifying a single user with role %r', role)
 
@@ -1145,10 +1156,12 @@ class CLI_Import_v2_Tester(object):
 			utils.verify_ldap_object(global_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			# FIXME
 			# utils.verify_ldap_object(workgroup_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
-			utils.verify_ldap_object(extra_A_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			# FIXME
 			# utils.verify_ldap_object(workgroup_B_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
-			utils.verify_ldap_object(extra_B_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
 			if role in ('student', 'teacher', 'teacher_and_staff'):
 				utils.verify_ldap_object(class_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False,
 					should_exist=True)
