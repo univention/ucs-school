@@ -5,6 +5,6 @@ scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-umc-installer
 fix: 4.0.0-4.77.201609011637
 desc: |
- This update addresses the following issue(s):
- * Some typos have been corrected.
+ * Some typos in the description text of the UMC module "UCS@school installer"
+   have been corrected (Bug #42213).
 bug: [42213]
