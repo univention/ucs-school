@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-16) unstable; urgency=medium
+
+  * Bug #39964: Add utils.wait_for_replication
+
+ -- Arvid Requate <requate@univention.de>  Mon, 05 Sep 2016 21:13:22 +0200
+
 ucs-test-ucsschool (3.0.15-15) unstable; urgency=low
 
   * Bug #41282: set maildomain when testing email scheme

@@ -450,6 +450,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 			print("\n\nTest case 1: adding new DNS SRV record attribute "
 				"values in openLDAP, checking their values in Samba:")
 			self.add_remove_record_location_via_dns_edit(dns_srv_records, 'add')
+			utils.wait_for_replication()
 			utils.wait_for_connector_replication()
 
 			print("\nChecking if test values of the SRV records "
@@ -459,6 +460,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 
 			# restore to previous state in openLDAP by removing the test record
 			self.add_remove_record_location_via_dns_edit(dns_srv_records, 'remove')
+			utils.wait_for_replication()
 			utils.wait_for_connector_replication()
 
 			# check that SRV record values are the same in openLDAP/Samba
@@ -471,6 +473,8 @@ class TestS4DNSSRVReplication(TestSamba4):
 			for srv_record in dns_srv_records:
 				self.add_remove_srv_record_location_via_ldbmodify(srv_record, 'add')
 			utils.wait_for_connector_replication()
+			utils.wait_for_replication()
+			utils.wait_for_connector_replication()
 
 			print("\nChecking if test values of the SRV records "
 				"were replicated to openLDAP.")
@@ -480,10 +484,13 @@ class TestS4DNSSRVReplication(TestSamba4):
 		finally:
 			print "\nPerforming clean-up after the test:"  # in openldap
 			self.add_remove_record_location_via_dns_edit(dns_srv_records, 'remove')
+			utils.wait_for_replication()
 			utils.wait_for_connector_replication()
 
 			for srv_record in dns_srv_records:	# and in samba
 				self.add_remove_srv_record_location_via_ldbmodify(srv_record, 'delete')
+			utils.wait_for_connector_replication()
+			utils.wait_for_replication()
 			utils.wait_for_connector_replication()
 
 			# check that SRV record values are the same after the clean-up:
