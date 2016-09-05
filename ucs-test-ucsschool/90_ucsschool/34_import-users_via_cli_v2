@@ -151,6 +151,8 @@ class MyHook(UserPyHook):
 
 
 class CLI_Import_v2_Tester(object):
+	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+
 	def __init__(self):
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
 		self.log = logging.getLogger('main')
@@ -160,6 +162,11 @@ class CLI_Import_v2_Tester(object):
 		self.ou_A = Bunch()
 		self.ou_B = Bunch()
 		self.ou_C = Bunch()
+		self.ucr.load()
+		try:
+			maildomain = self.ucr["mail/hosteddomains"].split()[0]
+		except (AttributeError, IndexError):
+			maildomain = self.ucr["domainname"]
 		self.default_config = ConfigDict({
 			"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
 			"classes": {},
@@ -177,6 +184,7 @@ class CLI_Import_v2_Tester(object):
 					"Beschreibung": "description",
 				}
 			},
+			"maildomain": maildomain,
 			"scheme": {
 				"email": "<firstname>[0].<lastname>@<maildomain>",
 				"recordUID": "<firstname>;<lastname>;<email>",
