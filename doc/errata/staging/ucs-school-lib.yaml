@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
-fix: 9.0.23-1.256.201608311408
+fix: 9.0.23-3.258.201609051417
 desc: |
  * A bug was fixed, that prevented staff users from being moved from one
    school to another (Bug #41609).
@@ -31,4 +31,6 @@ desc: |
    (Bug #38641).
  * An inefficient LDAP search has been improved that reduces the search time
    in some UMC modules, e.g. "Passwords (students)" (Bug #42167).
-bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641, 42167]
+ * An error has been fixed when handling users with more that one school and
+   workgroups but no classes (Bug #42251).
+bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641, 42167, 42251]
