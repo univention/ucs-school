@@ -269,11 +269,11 @@ class User(UCSSchoolHelperAbstractClass):
 				except noObject:
 					logger.debug('No. Leaving it alone...')
 					continue
-				# Bug 41908:
+				# Bug 41907:
 				# SchoolClass.from_dn does not throw WrongModel if no class or workgroup.
 				# But self_is_class() and self_is_workgroup() return correct values.
 				if school_group.self_is_class():
-					classes = self.school_classes[school_group.school]
+					classes = self.school_classes.get(school_group.school, [])
 					remove = school_group.name not in classes and school_group.get_relative_name() not in classes
 				elif school_group.self_is_workgroup():
 					remove = school_group.school not in self.schools

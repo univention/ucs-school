@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.23-3) unstable; urgency=low
+
+  * Bug #42251: handle users having working groups but no class groups in a
+    non-primary OU
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 05 Sep 2016 14:10:57 +0200
+
 ucs-school-lib (9.0.23-2) unstable; urgency=low
 
   * Bug #42167: also catch exceptions thrown due to inconsistencies
