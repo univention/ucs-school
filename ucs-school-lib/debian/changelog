@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.23-5) unstable; urgency=medium
+
+  * Bug #42214: Reverted the typo-correction, because it leads to problems.
+
+ -- Richard ulmer <ulmer@univention.de>  Tue, 06 Sep 2016 12:35:41 +0200
+
 ucs-school-lib (9.0.23-4) unstable; urgency=medium
 
   * Bug #42214: Corrected a typo.

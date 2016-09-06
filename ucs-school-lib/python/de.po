@@ -26,7 +26,7 @@ msgid "Administrative servers"
 msgstr "Verwaltungsserver"
 
 #: python/models/user.py:58
-msgid "Birthdate"
+msgid "Birthday"
 msgstr "Geburtstag"
 
 #: python/models/dhcp.py:173 python/models/network.py:45
