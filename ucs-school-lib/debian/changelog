@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.23-4) unstable; urgency=medium
+
+  * Bug #42214: Corrected a typo.
+
+ -- Richard ulmer <ulmer@univention.de>  Tue, 06 Sep 2016 11:59:40 +0200
+
 ucs-school-lib (9.0.23-3) unstable; urgency=low
 
   * Bug #42251: handle users having working groups but no class groups in a

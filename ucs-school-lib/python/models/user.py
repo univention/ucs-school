@@ -55,7 +55,7 @@ class User(UCSSchoolHelperAbstractClass):
 	schools = Schools(_('Schools'))
 	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
 	lastname = Lastname(_('Last name'), aka=['Last name', 'Nachname'], required=True, unlikely_to_change=True)
-	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
+	birthday = Birthday(_('Birthdate'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
 	email = Email(_('Email'), aka=['Email', 'E-Mail'], unlikely_to_change=True)
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
 	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
