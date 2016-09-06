@@ -23,6 +23,7 @@ import ucsschool.lib.models.utils
 from essential.importou import remove_ou, create_ou_cli, get_school_base
 
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object, 5)
+ucsschool.lib.models.utils.logger.handlers = ucsschool.lib.models.utils.get_logger("ucs-test", level="DEBUG").handlers
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -428,7 +429,7 @@ class ImportFile:
 
 		for user in self.user_import.students:
 			kwargs = _set_kwargs(user)
-			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print '* student username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				StudentLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -438,7 +439,7 @@ class ImportFile:
 
 		for user in self.user_import.teachers:
 			kwargs = _set_kwargs(user)
-			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print '* teacher username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				TeacherLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -448,7 +449,7 @@ class ImportFile:
 
 		for user in self.user_import.staff:
 			kwargs = _set_kwargs(user)
-			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print '* staff username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				StaffLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -458,7 +459,7 @@ class ImportFile:
 
 		for user in self.user_import.teacher_staff:
 			kwargs = _set_kwargs(user)
-			print 'username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print '* teacher_staff username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
 			if user.mode == 'A':
 				TeachersAndStaffLib(**kwargs).create(lo)
 			elif user.mode == 'M':
