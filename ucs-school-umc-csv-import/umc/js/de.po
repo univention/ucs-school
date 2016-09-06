@@ -55,7 +55,7 @@ msgid "Back"
 msgstr "Zurück"
 
 #: umc/js/schoolcsvimport.js:128
-msgid "Birthdate"
+msgid "Birthday"
 msgstr "Geburtstag"
 
 #: umc/js/schoolcsvimport.js:278 umc/js/schoolcsvimport.js:336

@@ -125,7 +125,7 @@ define([
 								username: _('Username'),
 								firstname: _('First name'),
 								lastname: _('Last name'),
-								birthday: _('Birthdate')}) + '\n' +
+								birthday: _('Birthday')}) + '\n' +
 							_('john.doe,Johnathan James,Doe,03/15/2000') + '\n' +
 							'[...]' +
 						'</pre>'
