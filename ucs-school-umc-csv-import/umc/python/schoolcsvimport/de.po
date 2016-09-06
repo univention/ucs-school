@@ -37,7 +37,7 @@ msgid "Action"
 msgstr "Aktion"
 
 #: umc/python/schoolcsvimport/util.py:278
-msgid "Birthdate"
+msgid "Birthday"
 msgstr "Geburtstag"
 
 #: umc/python/schoolcsvimport/__init__.py:235

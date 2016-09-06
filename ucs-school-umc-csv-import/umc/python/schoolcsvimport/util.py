@@ -285,7 +285,7 @@ class CSVUser(User):
 # same as normal but without syntax validation (done by our validate function)
 # has to be specified in each class, otherwise the base class Student would overwrite
 # it from base class CSVUser
-birthday_attr = Birthday(_('Birthdate'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
+birthday_attr = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
 
 class CSVStudent(CSVUser, Student):
 	birthday = birthday_attr

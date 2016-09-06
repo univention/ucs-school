@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (3.0.4-6) unstable; urgency=medium
+
+  * Bug #42216: Reverted a typo, because it caused problems.
+
+ -- Richard ulmer <ulmer@univention.de>  Tue, 06 Sep 2016 12:46:07 +0200
+
 ucs-school-umc-csv-import (3.0.4-5) unstable; urgency=low
 
   * Bug #42216: Corrected some typos.
