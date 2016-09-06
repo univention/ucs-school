@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.0-5) unstable; urgency=medium
+
+  * Bug #42215: Corrected a typo.
+
+ -- Richard ulmer <ulmer@univention.de>  Tue, 06 Sep 2016 12:17:23 +0200
+
 ucs-school-umc-installer (4.0.0-4) unstable; urgency=low
 
   * Bug #42213: Corrected some typos.
