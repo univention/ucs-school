@@ -8,7 +8,9 @@ desc: |
  * The iTALC handling has been revised and improved. Several bugs have been
    fixed which makes iTALC connections more reliable (Bug #41752).
  * It is now possible to prevent that screenshots of specific users or groups
-   are shown in the UMC module (Bug #40210).
+   are shown in the UMC module. See UCR variables
+   ucsschool/umc/computerroom/hide_screenshots/teachers and
+   ucsschool/umc/computerroom/hide_screenshots/groups (Bug #40210).
  * Some typos in the description text of the UMC module
    "UCS@school computerroom" have been corrected (Bug #42221).
 bug: [41752, 40210, 42221]
