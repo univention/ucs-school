@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
-fix: 9.0.23-4.259.201609061201
+fix: 9.0.23-5.260.201609061238
 desc: |
  * A bug was fixed, that prevented staff users from being moved from one
    school to another (Bug #41609).
@@ -33,6 +33,4 @@ desc: |
    in some UMC modules, e.g. "Passwords (students)" (Bug #42167).
  * An error has been fixed when handling users with more that one school and
    workgroups but no classes (Bug #42251).
- * A typo in the description text of the UMC module "UCS@school lib" has been
-   corrected (Bug #42214).
-bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641, 42167, 42251, 42214]
+bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641, 42167, 42251]
