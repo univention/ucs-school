@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-17) unstable; urgency=medium
+
+  * 93_samba4_check_dc_selection: enable test again, it might be fixed
+    due to Bug #42305 (Bug #34223)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 07 Sep 2016 15:40:45 +0200
+
 ucs-test-ucsschool (3.0.15-16.1) unstable; urgency=low
 
   * Bug #41282: switch on uscschool-lib logging
