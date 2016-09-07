@@ -42,4 +42,7 @@ desc: |
  * A script was added to create and import users for testing purposes for the
    Univention development team. Do not use it on production systems!
    (Bug #42105)
-bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641,42105]
+ * A regression was fixed, and the previous behavior has been reestablished:
+   If the CSV input for importing a user does not contain any school classes,
+   existing ones will not be modified (Bug #42288).
+bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641,42105,42288]

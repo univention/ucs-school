@@ -495,6 +495,11 @@ class ImportUser(User):
 		# must set udm_properties first, as they contain overridePWHistory and
 		# overridePWLength
 		self.store_udm_properties(lo)
+		if not self.school_classes:
+			# empty classes input means: don't change existing classes (Bug #42288)
+			self.logger.debug("No school_classes are set, not modifying existing ones.")
+			udm_obj = self.get_udm_object(lo)
+			self.school_classes = self.get_school_classes(udm_obj, self)
 		success = super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 		return success
 

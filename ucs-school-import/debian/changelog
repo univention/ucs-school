@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-9) unstable; urgency=low
+
+  * Bug #42288: do not modify school_classes if empty in input
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 07 Sep 2016 14:08:20 +0200
+
 ucs-school-import (14.0.16-8) unstable; urgency=low
 
   * Bug #41857: only emit a warning (no error) for 'email', as it is an actual

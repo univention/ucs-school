@@ -767,7 +767,10 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 				<programlisting>
 2016-06-28 17:47:25 INFO  user_import.read_input:81  ------ Starting to read users from input data... ------
 [..]
-2016-06-28 17:47:25 DEBUG base_reader.next:73  Input 3: ['schule1', 'Bea', 'Schmidt', 'schule1-2B,schule2-1A', 'bea@schule.local', 'Sch\xc3\xbclerin mit Telefon', '0421-1234567890'] -> {u'Schulen': u'schule1', u'Vorname': u'Bea', u'phone': u'0421-1234567890', u'Nachname': u'Schmidt', u'Klassen': u'schule1-2B,schule2-1A', u'Mailadresse': u'bea@schule.local'}
+2016-06-28 17:47:25 DEBUG base_reader.next:73  Input 3: ['schule1', 'Bea', 'Schmidt', 'schule1-2B,schule2-1A',
+'bea@schule.local', 'Sch\xc3\xbclerin mit Telefon', '0421-1234567890'] -> {u'Schulen': u'schule1',
+u'Vorname': u'Bea', u'phone': u'0421-1234567890', u'Nachname': u'Schmidt', u'Klassen': u'schule1-2B,schule2-1A',
+u'Mailadresse': u'bea@schule.local'}
 				</programlisting>
 			</para>
 			<para>
@@ -797,7 +800,15 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 				<programlisting>
 2016-06-28 17:47:25 INFO  user_import.create_and_modify_users:107  ------ Creating / modifying users... ------
 [..]
-2016-06-28 17:47:25 INFO  user_import.create_and_modify_users:128  Adding ImportStudent(name='B.Schmidt', school='schule1', dn='uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dtr', old_dn=None) (source_uid:NewDB record_uid:bea@schule.local) attributes={'$dn$': 'uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dtr', 'display_name': 'Bea Schmidt', <property>'record_uid'</property>: u'bea@schule.local', 'firstname': 'Bea', 'lastname': 'Schmidt', 'type_name': 'Student', 'school': 'schule1', <property>'name'</property>: 'B.Schmidt', 'disabled': 'none', 'email': u'bea@schule.local', 'birthday': None, 'type': 'importStudent', 'schools': ['schule1'], 'password': 'xxxxxxxxxx', 'source_uid': u'NewDB', <property>'school_classes'</property>: {'schule1': ['schule1-2B'], 'schule2': ['schule2-1A']}, 'objectType': 'users/user'} <property>udm_properties</property>={u<property>'phone'</property>: [u'0421-1234567890'], 'overridePWHistory': '1', 'overridePWLength': '1'}...
+2016-06-28 17:47:25 INFO  user_import.create_and_modify_users:128  Adding ImportStudent(name='B.Schmidt',
+school='schule1', dn='uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dtr', old_dn=None) (source_uid:NewDB
+record_uid:bea@schule.local) attributes={'$dn$': 'uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dtr',
+'display_name': 'Bea Schmidt', <property>'record_uid'</property>: u'bea@schule.local', 'firstname': 'Bea',
+'lastname': 'Schmidt', 'type_name': 'Student', 'school': 'schule1', <property>'name'</property>: 'B.Schmidt',
+'disabled': 'none', 'email': u'bea@schule.local', 'birthday': None, 'type': 'importStudent', 'schools': ['schule1'],
+'password': 'xxxxxxxxxx', 'source_uid': u'NewDB', <property>'school_classes'</property>: {'schule1': ['schule1-2B'],
+'schule2': ['schule2-1A']}, 'objectType': 'users/user'} <property>udm_properties</property>={u<property>'phone'</property>: [u'0421-1234567890'],
+'overridePWHistory': '1', 'overridePWLength': '1'}...
 				</programlisting>
 			</para>
 			<para>
@@ -1048,7 +1059,7 @@ udm users/user
 							<row>
 								<entry><varname>school_classes</varname></entry>
 								<entry>string / object</entry>
-								<entry><simpara>Klassen in denen der Benutzer ist.</simpara><simpara>Als String im Format <literal>schule1-1A,schule1-2B,schule2-1A</literal> oder als Python <wordasword>dictionary</wordasword>: <literal>{"schule1": ["1A", "2B"], "schule2": ["1A"]}</literal>.</simpara><simpara>Es können Klassen aus mehreren Schulen aufgelistet werden; diese Schulen müssen alle in <link linkend="extending:import_user_class:importuser:schools"><varname>schools</varname></link> auftauchen.</simpara></entry>
+								<entry><simpara>Klassen in denen der Benutzer ist.</simpara><simpara>Als String im Format <literal>schule1-1A,schule1-2B,schule2-1A</literal> oder als Python <wordasword>dictionary</wordasword>: <literal>{"schule1": ["1A", "2B"], "schule2": ["1A"]}</literal>.</simpara><simpara>Es können Klassen aus mehreren Schulen aufgelistet werden; diese Schulen müssen alle in <link linkend="extending:import_user_class:importuser:schools"><varname>schools</varname></link> auftauchen. Wenn <varname>school_classes</varname> leer ist, werden bestehende Klassen nicht verändert.</simpara></entry>
 							</row>
 							<row>
 								<entry><varname>source_uid</varname></entry>
