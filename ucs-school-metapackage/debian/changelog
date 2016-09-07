@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-3) unstable; urgency=low
+
+  * Bug #40262: print help message if rejoin of school slave fails
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 07 Sep 2016 11:35:28 +0200
+
 ucs-school-metapackage (9.0.2-2) unstable; urgency=medium
 
   * Bug #40424: The sam.ldb and secrets.ldb are not removed any longer

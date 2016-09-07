@@ -40,13 +40,27 @@ eval "$(ucr shell)"
 
 OU="$(school_ou "$ldap_hostdn")"
 
+rejoin_msg() {
+	echo "This problem may be resolved by the following action on the DC master:"
+	echo "1) Remove the slaves computer account: "
+	echo "   # udm computers/domaincontroller_slave remove --dn=$ldap_hostdn"
+	echo "2) Create the slaves computer account with the correct settings:"
+	echo "   # cd /usr/share/ucs-school-import/scripts/"
+	echo "   # ./create_ou <OU (abbreviation of school)> $hostname"
+	echo "Then rejoin the slave, by running this on the DC slave:"
+	echo "   # ucr set nameserver1=<IP of DC master> nameserver2= nameserver3="
+	echo "   # univention-join -dcname <FQDN of DC master>"
+}
+
 if [ -z "$OU" ]; then
 	echo "ERROR: The computer object for this host isn't inside a school OU and therefore at the wrong place."
+	rejoin_msg
 	exit 1
 fi
 
 if [ -z  "$(servers_school_ous -h $(ucr get ldap/master) -p $(ucr get ldap/master/port))" ]; then
 	echo "ERROR: This host has no permission for the OU he is stored in."
+	rejoin_msg
 	exit 1
 fi
 
