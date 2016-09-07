@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix: 9.0.2-2.179.201608171541
+fix: 9.0.2-3.180.201609071136
 desc: |
  * The pcpatch user is no longer ignored by default by the S4-Connector
    (Bug #34626).
@@ -20,4 +20,6 @@ desc: |
    Samba4-Umgebung" of the UCS@school manual. (Bug #40347).
  * The sam.ldb and secrets.ldb are not removed any longer while running
    the ucs-school-slave joinscripts (Bug #40424).
-bug: [34626,40705,41300,40347,40424]
+ * A help message was added to a join script, giving instructions on how to
+   rejoin a previously deleted school slave (Bug #40262).
+bug: [34626,40705,41300,40347,40424,40262]
