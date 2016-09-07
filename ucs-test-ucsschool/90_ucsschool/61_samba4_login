@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-## desc: Create an user and check the samba3 login
+## desc: Create an user and check the samba login
 ## roles:
 ##  - domaincontroller_master
 ##  - domaincontroller_backup
@@ -8,7 +8,6 @@
 ##  - univention-samba4
 ## exposure: dangerous
 ## tags:
-##  - SKIP-UCSSCHOOL
 ##  - ucsschool
 ##  - apptest
 
