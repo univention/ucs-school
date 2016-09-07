@@ -297,6 +297,7 @@ define([
 				widgets: [ {
 					type: Text,
 					name: 'info',
+					// i18n: 0: number of selected users; 1 and 2: "students" / "teachers"
 					content: '<p>' + lang.replace( _( 'Clicking the <i>Reset</i> button will set the password for all {0} selected {1} to the given password. For security reasons the {2} should be forced to change the password on the next login.' ), [ items.length, userType, userType ] ) + '</p>'
 				},{
 					type: CheckBox,
