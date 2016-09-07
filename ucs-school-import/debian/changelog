@@ -1,3 +1,10 @@
+ucs-school-import (14.0.16-8) unstable; urgency=low
+
+  * Bug #41857: only emit a warning (no error) for 'email', as it is an actual
+    LDAP attribute, that cannot be set otherwise
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 07 Sep 2016 08:53:53 +0200
+
 ucs-school-import (14.0.16-7) unstable; urgency=low
 
   * raise better fitting exception (Bug #41351)

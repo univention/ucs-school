@@ -733,12 +733,16 @@ class ImportUser(User):
 		"""
 		if not self.udm_properties:
 			return
-		forbidden_attributes = {"birthday", "disabled", "email", "firstname", "lastname",
+		forbidden_attributes = {"birthday", "disabled", "firstname", "lastname",
 			"mailPrimaryAddress", "name", "password", "school", "schools", "school_classes", "sn", "uid", "username"}
 		bad_props = set(self.udm_properties.keys()).intersection(forbidden_attributes)
 		if bad_props:
 			raise NotSupportedError("UDM properties '{}' must be set as attributes of the {} object (not in "
 				"udm_properties).".format("', '".join(bad_props), self.__class__.__name__))
+		if "email" in self.udm_properties.keys() and not self.email:
+			self.logger.warn("UDM property 'email' is used for storing contact information. The users mailbox "
+			"address is strored in the 'email' attribute of the {} object (not in udm_properties).".format(
+				self.__class__.__name__))
 
 		udm_obj = self.get_udm_object(connection)
 		udm_obj.info.update(self.udm_properties)
