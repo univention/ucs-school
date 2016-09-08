@@ -21,6 +21,7 @@ import os
 import pprint
 import subprocess
 import time
+import string
 from essential.importusers import Person
 import univention.testing.ucr
 import univention.testing.udm
@@ -1258,7 +1259,63 @@ class CLI_Import_v2_Tester(object):
 			utils.verify_ldap_object(cls1_dn, expected_attr={'uniqueMember': [person.dn]}, strict=False, should_exist=True)
 			utils.verify_ldap_object(cls2_dn, expected_attr={'uniqueMember': [person.dn]}, strict=False, should_exist=True)
 
-			self.log.info('Test was successful.\n\n\n')
+		self.log.info('Test was successful.\n\n\n')
+
+	def test_create_with_illegal_chars_in_username(self):
+		"""
+		Bug #42313: remove illegal characters from username
+		* "Username must only contain numbers, letters and dots, and may not be 'admin'!"
+		* but no dot at beginning
+		"""
+		allowed_chars = string.ascii_letters + string.digits + "."
+
+		def remove_bad_chars(name):
+			bad_chars = "".join(sorted(set(name).difference(set(allowed_chars))))
+			name = name.lstrip(".")
+			return name.translate(None, bad_chars)
+
+		punkts = string.punctuation.translate(None, '[]')  # those will create bad counter vars
+
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			lastnames = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in punkts]
+			lastnames.append(".{}".format(uts.random_username()))
+			lastnames.append(".{}.{}".format(uts.random_username(4), uts.random_username(4)))
+			lastnames.append(uts.random_username(40))
+			self.log.info('*** Importing new users with role %r and the following lastnames:\n%r', role, lastnames)
+
+			config = copy.deepcopy(self.default_config)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('user_role', role)
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:username:default', "<lastname>[ALWAYSCOUNTER]")
+
+			persons = list()
+			names = dict()
+			for lastname in lastnames:
+				record_uid = uts.random_name()
+				person = Person(self.ou_A.name, role)
+				person.update(record_uid=record_uid, source_uid=source_uid, lastname=lastname)
+				persons.append(person)
+				names[person] = lastname
+			fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+
+			# save ldap state for later comparison
+			self.save_ldap_status()
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			# check for new users in LDAP
+			self.check_new_and_removed_users(len(persons), 0)
+			# check usernames
+			for person, lastname in names.items():
+				person.update(username=remove_bad_chars("{}1".format(lastname[:12])))
+				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False,
+					should_exist=True)
+
+		self.log.info('Test was successful.\n\n\n')
 
 	def run(self):
 		try:
@@ -1283,6 +1340,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_no_delete_option()
 					self.test_modify_with_several_groups(udm)
 					self.test_create_no_modify_classes_with_empty_class_name(udm)
+					self.test_create_with_illegal_chars_in_username()
 		finally:
 			self.cleanup()
 
