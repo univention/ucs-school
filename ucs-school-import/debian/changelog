@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-11) unstable; urgency=low
+
+  * Bug #42315: remove leftovers of UCRV ucsschool/logging/level/importer
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Sep 2016 13:41:18 +0200
+
 ucs-school-import (14.0.16-10) unstable; urgency=low
 
   * Bug #42313: remove illegal characters from usernames

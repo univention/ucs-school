@@ -64,7 +64,6 @@ class CommandLine(object):
 			add_file_handler(files)
 		# make ucsschool.lib use our logging
 		move_our_handlers_to_lib_logger()
-		self.logger.info("To change the loglevel, set UCRV ucsschool/logging/level/importer.")
 
 	def setup_config(self):
 		configs = self.configuration_files

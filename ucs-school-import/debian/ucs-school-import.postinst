@@ -117,17 +117,4 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 10.0.8 ; then
 	fi
 fi
 
-# rename UCR variable
-if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 14.0.15-7 ; then
-	if is_ucr_true ucsschool/import/debug/werror; then
-		echo "UCRV ucsschool/logging/level/import replaces ucsschool/import/debug/werror."
-		ucr set ucsschool/logging/level/import=DEBUG
-	fi
-	if [ -n "$(ucr get ucsschool/import/debug/werror)" ]; then
-		# remove even if set to no, so user doesn't think it has a meaning
-		echo "Removing UCRV ucsschool/import/debug/werror."
-		ucr unset ucsschool/import/debug/werror
-	fi
-fi
-
 exit 0
