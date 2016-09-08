@@ -122,6 +122,9 @@ class Person(object):
 			if key == 'dn':
 				self.username = ldap.explode_rdn(kwargs[key], notypes=1)[0]
 				self.dn = kwargs[key]
+			if key == 'username':
+				self.username = kwargs[key]
+				self.dn = self.make_dn()
 			elif key == 'school':
 				self.school = kwargs[key]
 				if len(self.schools) == 1:

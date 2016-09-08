@@ -1205,6 +1205,61 @@ class CLI_Import_v2_Tester(object):
 		self.log.info('Creating, modifying, removing user with role %r was successful', role)
 		self.log.info('Test was successful.\n\n\n')
 
+	def test_create_no_modify_classes_with_empty_class_name(self, udm):
+		"""
+		Bug #42288: do not modify group memberships if no group specified
+		"""
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r and two classes.', role)
+			config = copy.deepcopy(self.default_config)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = uts.random_name()
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('user_role', role)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+
+			cls1_dn, cls1_name = udm.create_group(
+				position='cn=klassen,cn=schueler,cn=groups,%s' % (self.ou_A.dn,),
+				name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+			cls2_dn, cls2_name = udm.create_group(
+				position='cn=klassen,cn=schueler,cn=groups,%s' % (self.ou_A.dn,),
+				name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+			person = Person(self.ou_A.name, role)
+			person.update(school_classes={self.ou_A.name: [cls1_name, cls2_name]}, record_uid=record_uid,
+				source_uid=source_uid, username=uts.random_username())
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+
+			# save ldap state for later comparison
+			self.save_ldap_status()
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			# check for new users in LDAP
+			self.check_new_and_removed_users(1, 0)
+			# check school classes
+			utils.verify_ldap_object(cls1_dn, expected_attr={'uniqueMember': [person.dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(cls2_dn, expected_attr={'uniqueMember': [person.dn]}, strict=False, should_exist=True)
+
+			self.log.info('*** Modifying user: setting CSV-input to have no classes.', role)
+			person.update(school_classes={})
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+
+			# save ldap state for later comparison
+			self.save_ldap_status()
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			# check for new users in LDAP
+			self.check_new_and_removed_users(0, 0)
+			# check school classes
+			utils.verify_ldap_object(cls1_dn, expected_attr={'uniqueMember': [person.dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(cls2_dn, expected_attr={'uniqueMember': [person.dn]}, strict=False, should_exist=True)
+
+			self.log.info('Test was successful.\n\n\n')
+
 	def run(self):
 		try:
 			with univention.testing.udm.UCSTestUDM() as udm:
@@ -1227,6 +1282,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_create_with_empty_class_name()
 					self.test_no_delete_option()
 					self.test_modify_with_several_groups(udm)
+					self.test_create_no_modify_classes_with_empty_class_name(udm)
 		finally:
 			self.cleanup()
 

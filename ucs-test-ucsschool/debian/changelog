@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-19) unstable; urgency=low
+
+  * Bug #42288: add test, that classes are not modified, if none are in input
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Sep 2016 17:36:51 +0200
+
 ucs-test-ucsschool (3.0.15-18) unstable; urgency=medium
 
   * 61_samba4_login: re-enable test case (Bug #37978)
