@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-12) unstable; urgency=low
+
+  * Bug #42313: remove dot from beginning of username
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Sep 2016 15:43:23 +0200
+
 ucs-school-import (14.0.16-11) unstable; urgency=low
 
   * Bug #42315: remove leftovers of UCRV ucsschool/logging/level/importer
