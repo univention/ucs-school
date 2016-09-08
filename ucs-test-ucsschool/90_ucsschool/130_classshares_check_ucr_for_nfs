@@ -4,6 +4,7 @@
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-import, ucs-school-singlemaster]
+## bugs: [38641]
 
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu

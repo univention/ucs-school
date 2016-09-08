@@ -7,6 +7,7 @@
 ## timeout: 14400
 ## packages:
 ##   - ucs-school-import
+## bugs: [41243, 41244, 41346, 41350, 41354, 41471, 41472, 41609, 41642, 41645, 41707, 41775, 41847, 41857, 41907]
 
 import tempfile
 import json
@@ -481,14 +482,13 @@ class CLI_Import_v2_Tester(object):
 
 			finally:
 				hooks.cleanup()
-		self.log.info('Creating, modifying, removing user with role %r and username/recordUID was successful', role)
+			self.log.info('Creating, modifying, removing user with role %r and username/recordUID was successful', role)
 		self.log.info('Test was successful.\n\n\n')
 
 
 	def test_create_with_username_scheme(self):
 		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			import user with role <role> and special username scheme
+		Test creation of usernames from a special username scheme (Bug #41243, #41244).
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r and username and recordUID', role)
@@ -542,7 +542,7 @@ class CLI_Import_v2_Tester(object):
 
 	def test_create_modify_only(self):
 		"""
-		check if the --no-delete option works as expected
+		Bug #41775, #41350: check if the --no-delete option works as expected
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Add/modify without delete with role %r', role)
@@ -599,6 +599,7 @@ class CLI_Import_v2_Tester(object):
 
 	def test_create_with_attribute_schemes(self):
 		"""
+		Tests Bug #41472.
 		Create a new user for each role:
 		- use UDM template syntax (http://docs.software-univention.de/handbuch-4.1.html#users:templates)
           to define several custom values
@@ -658,7 +659,7 @@ class CLI_Import_v2_Tester(object):
 
 	def test_multivalue_attributes(self):
 		"""
-		Create/modify a new user for each role:
+		Test creation of multi-value fields (Bug #41471).
         - mailAlternativeAddress is filled with multiple strings
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
@@ -715,8 +716,7 @@ class CLI_Import_v2_Tester(object):
 
 	def test_school_change(self):
 		"""
-		Create/modify a new user for each role:
-        - mailAlternativeAddress is filled with multiple strings
+		Test moving a user from ou_A to ou_B (Bug #41609).
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r and change school afterwards', role)
@@ -942,8 +942,7 @@ class CLI_Import_v2_Tester(object):
 
 	def test_create_with_empty_class_name(self):
 		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			import user with role <role> and empty class name
+		Bug #41847: import users with an empty class name
 		"""
 		first_user = True
 		config = copy.deepcopy(self.default_config)
@@ -978,8 +977,9 @@ class CLI_Import_v2_Tester(object):
 
 	def test_no_delete_option(self):
 		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			import user with role <role> and [un]set --no-delete option
+		Bug #41775, #41350: test --no-delete option:
+		- with[out] --no-delete
+		- with[out] explicit mode=D  -> should delete even when --no-delete is on
 		"""
 		config = copy.deepcopy(self.default_config)
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
@@ -1056,6 +1056,7 @@ class CLI_Import_v2_Tester(object):
 
 	def test_modify_with_several_groups(self, udm):
 		"""
+		Bug #41907:
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			- create user with 2 schools and 2 classes
 			- add user to several groups for each school:
@@ -1206,14 +1207,11 @@ class CLI_Import_v2_Tester(object):
 
 	def run(self):
 		try:
-			ucr = univention.testing.ucr.UCSTestConfigRegistry()
-			ucr.load()
-
 			with univention.testing.udm.UCSTestUDM() as udm:
 				with utu.UCSTestSchool() as schoolenv:
-					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-					self.ou_C.name, self.ou_C.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+					self.ou_C.name, self.ou_C.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
 					self.lo = schoolenv.open_ldap_connection(admin=True)
 
 					self.test_create_modify_delete_user()
