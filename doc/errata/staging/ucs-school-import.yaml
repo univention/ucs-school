@@ -45,4 +45,6 @@ desc: |
  * A regression was fixed, and the previous behavior has been reestablished:
    If the CSV input for importing a user does not contain any school classes,
    existing ones will not be modified (Bug #42288).
-bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641,42105,42288]
+ * When creating or modifying users, illegal characters are now removed from
+   their usernames. Allowed are only numbers, letters and dots (Bug #42313).
+bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641,42105,42288,42313]

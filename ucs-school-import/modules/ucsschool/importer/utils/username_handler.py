@@ -1,4 +1,5 @@
 import re
+import string
 
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject
@@ -64,42 +65,58 @@ class UsernameHandler(object):
 		:return: str: unique username
 		"""
 		assert isinstance(name, basestring)
-		res = name
+		ori_name = name
+		allowed_chars = string.ascii_letters + string.digits + "."
 		cut_pos = self.username_max_length - 3  # numbers >999 are not supported
-		match = self.username_pattern.search(name)
 
-		if match:
-			variable = match.group()
-			start = match.start()
-			end = match.end()
-		else:
+		def remove_bad_chars(name):
+			bad_chars = "".join(sorted(set(name).difference(set(allowed_chars))))
+			if bad_chars:
+				self.logger.warn("Removing disallowed characters %r from username %r.", bad_chars, name)
+			return name.translate(None, bad_chars)
+
+		match = self.username_pattern.search(name)
+		if not match:
+			name = remove_bad_chars(name)
 			if len(name) > cut_pos:
 				res = name[:cut_pos]
 				self.logger.warn("Username %r to long, shortened to %r.", name, res)
+			else:
+				res = name
 			return res
 
 		if len(self.username_pattern.split(name)) > 2:
 			raise FormatError("More than one counter variable found in username scheme '{}'.".format(name), name, name)
 
+		_base_name = "".join(self.username_pattern.split(name))
+		base_name = remove_bad_chars(_base_name)
+		if _base_name != base_name:
+			# recalculate position of pattern
+			name = "{}{}{}".format(base_name[:match.start()], match.group(), base_name[match.end():])
+			match = self.username_pattern.search(name)
+
+		variable = match.group()
+		start = match.start()
+		end = match.end()
+
 		if start == 0 and end == len(name):
-			raise FormatError("No username in '{}'.".format(name), name, name)
+			raise FormatError("No username in '{}'.".format(name), ori_name, ori_name)
 
 		try:
 			func = self.username_patterns[variable.upper()]
 		except KeyError as exc:
-			raise FormatError("Unknown variable name '{}' in username scheme '{}': {}".format(variable, name, exc),
+			raise FormatError("Unknown variable name '{}' in username scheme '{}': {}".format(variable, ori_name, exc),
 				variable, name)
 		except AttributeError as exc:
 			raise FormatError("No method '{}' can be found for variable name '{}' in username scheme '{}': {}".format(
-				self.username_patterns[variable], variable, name, exc), variable, name)
+				self.username_patterns[variable], variable, name, exc), variable, ori_name)
 
-		base_name = "".join(self.username_pattern.split(name))
 		if len(base_name) > cut_pos:
 			# base name without variable to long, we have to shorten it
 			# numbers will only be appended, no inserting possible anymore
 			res = base_name[:cut_pos]
 			insert_position = cut_pos
-			self.logger.warn("Username %r to long, shortened to %r.", name, res)
+			self.logger.warn("Username %r to long, shortened to %r.", base_name, res)
 		else:
 			insert_position = start
 			res = u"{}{}".format(name[:start], name[end:])

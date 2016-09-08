@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-10) unstable; urgency=low
+
+  * Bug #42313: remove illegal characters from usernames
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Sep 2016 11:12:28 +0200
+
 ucs-school-import (14.0.16-9) unstable; urgency=low
 
   * Bug #42288: do not modify school_classes if empty in input
