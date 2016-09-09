@@ -539,12 +539,10 @@ class ImportUser(User):
 		for k, v in self.udm_properties.items():
 			self.udm_properties[k] = normalize_recursive(v)
 
-	def reactivate(self, connection):
+	def reactivate(self):
 		"""
 		Reactivate a deactivated user account and reset the account expiry
 		setting. Run this only on existing users fetched from LDAP.
-
-		:param connection: uldap connection object
 		"""
 		self.expire("")
 		self.disabled = "none"

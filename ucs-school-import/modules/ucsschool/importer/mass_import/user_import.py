@@ -189,7 +189,7 @@ class UserImport(object):
 				if self.dry_run:
 					self.logger.info("Dry run - not reactivating.")
 				else:
-					user.reactivate(self.connection)
+					user.reactivate()
 			user.action = "M"
 		except noObject:
 			imported_user.prepare_all(new_user=True)
@@ -329,10 +329,10 @@ class UserImport(object):
 			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
 			expiry_str = expiry.strftime("%Y-%m-%d")
 			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
+			user.expire(expiry_str)
 			if self.dry_run:
 				self.logger.info("Dry run - not expiring the user.")
 			else:
-				user.expire(expiry_str)
 				user.modify(lo=self.connection)
 			success = True
 		elif not self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
@@ -341,12 +341,11 @@ class UserImport(object):
 			expiry_str = expiry.strftime("%Y-%m-%d")
 			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
 			self.logger.info("Deactivating user %s...", user)
+			user.expire(expiry_str)
+			user.deactivate()
 			if self.dry_run:
-				self.logger.info("Dry run - not expiring the user.")
-				self.logger.info("Dry run - not deactivating the user.")
+				self.logger.info("Dry run - not expiring and not deactivating the user.")
 			else:
-				user.expire(expiry_str)
-				user.deactivate()
 				user.modify(lo=self.connection)
 			success = True
 		else:

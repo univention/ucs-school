@@ -82,7 +82,7 @@ class LegacyUserImport(UserImport):
 					if self.dry_run:
 						self.logger.info("Dry run - not reactivating.")
 					else:
-						user.reactivate(self.connection)
+						user.reactivate()
 					user.update(imported_user)
 					user.action = "M"
 				else:
@@ -106,7 +106,7 @@ class LegacyUserImport(UserImport):
 					if self.dry_run:
 						self.logger.info("Dry run - not reactivating.")
 					else:
-						user.reactivate(self.connection)
+						user.reactivate()
 				user.update(imported_user)
 			except noObject:
 				imported_user.prepare_all(new_user=True)
