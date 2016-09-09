@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-23) unstable; urgency=medium
+
+  * 93_samba4_check_dc_selection: Use samba init script and parse the
+    backup FQDN correctly (Bug #34223)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 09 Sep 2016 14:48:44 +0200
+
 ucs-test-ucsschool (3.0.15-22) unstable; urgency=medium
 
   * Disable 97_samba4_dns_srv_replication again (Bug #39964)

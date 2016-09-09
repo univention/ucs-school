@@ -103,9 +103,10 @@ class TestS4DCLocatorDNS(TestSamba4):
 			central_dcs = self.sed_for_key(self.get_udm_list_dcs(
 													"domaincontroller_master"),
 										   "^  fqdn: ")
+			central_dcs += ' '
 			central_dcs += self.sed_for_key(self.get_udm_list_dcs(
 													"domaincontroller_backup"),
-											"^	fqdn: ")
+										   "^  fqdn: ")
 			self.site_dcs.extend(central_dcs.split())
 			print("\nThe following DCs are located in the current "
 				  "central School department:\n%s" % central_dcs)
@@ -123,19 +124,19 @@ class TestS4DCLocatorDNS(TestSamba4):
 			self.UCR.load()
 			self.populate_list_of_site_dcs()  # get all site DCs with Samba4
 
-			# case 1: samba-ad-dc running and any current site DC can be
+			# case 1: samba running and any current site DC can be
 			# located including the local (current) DC itself
-			print("\nForcing the 'samba-ad-dc' service start to "
+			print("\nForcing the 'samba' service start to "
 															"ensure it runs:")
-			self.start_stop_service('samba-ad-dc', 'start')
-			sleep(30)  # wait to ensure that 'samba-ad-dc' works
+			self.start_stop_service('samba', 'start')
+			sleep(30)  # wait to ensure that 'samba' works
 			self.check_dc_location()
 
-			# case 2: samba-ad-dc stopped and current DC should not be located,
+			# case 2: samba stopped and current DC should not be located,
 			# other DCs in a current site can be located (if there are any)
-			print("\nForcing the 'samba-ad-dc' service stop to "
+			print("\nForcing the 'samba' service stop to "
 													   "ensure it is stopped:")
-			self.start_stop_service('samba-ad-dc', 'stop')
+			self.start_stop_service('samba', 'stop')
 			try:
 				self.site_dcs.remove(self.UCR.get('ldap/server/name'))
 			except ValueError as exc:
@@ -146,9 +147,9 @@ class TestS4DCLocatorDNS(TestSamba4):
 
 			self.check_dc_location()
 		finally:
-			print "\nForcing the 'samba-ad-dc' service (re-)start:"
-			self.start_stop_service('samba-ad-dc', 'restart')
-			sleep(30)  # wait to ensure that 'samba-ad-dc' works
+			print "\nForcing the 'samba' service (re-)start:"
+			self.start_stop_service('samba', 'restart')
+			sleep(30)  # wait to ensure that 'samba' works
 
 
 if __name__ == '__main__':
