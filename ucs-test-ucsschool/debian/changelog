@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-21) unstable; urgency=low
+
+  * Bug #41244: adapt expected username to changes of Bug #42313
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 09 Sep 2016 10:24:36 +0200
+
 ucs-test-ucsschool (3.0.15-20) unstable; urgency=low
 
   * Bug #42313: add test for correcting bad usernames
