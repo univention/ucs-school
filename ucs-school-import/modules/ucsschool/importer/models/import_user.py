@@ -96,6 +96,7 @@ class ImportUser(User):
 			self.logger = get_logger()
 			self.username_max_length = 20 - len(self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
 		self._lo = None
+		self._userexpiry = None
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -177,20 +178,18 @@ class ImportUser(User):
 		"""
 		self.disabled = "all"
 
-	def expire(self, connection, expiry):
+	def expire(self, expiry):
 		"""
-		Set the account expiration date.
+		Set the account expiration date. Caller must run modify().
 
-		:param connection: uldap connection object
 		:param expiry: str: expire date "%Y-%m-%d" or ""
 		"""
-		user_udm = self.get_udm_object(connection)
-		user_udm["userexpiry"] = expiry
-		user_udm.modify()
-		# This operation partly invalidates the cached ucsschool.lib User:
-		# setting the 'disabled' attribute after this would raise an ldapError.
-		# Invalidating cache:
-		self._udm_obj_searched = False
+		self._userexpiry = expiry
+
+	def _alter_udm_obj(self, udm_obj):
+		super(ImportUser, self)._alter_udm_obj(udm_obj)
+		if self._userexpiry is not None:
+			udm_obj["userexpiry"] = self._userexpiry
 
 	def has_expired(self, connection):
 		"""
@@ -547,7 +546,7 @@ class ImportUser(User):
 
 		:param connection: uldap connection object
 		"""
-		self.expire(connection, "")
+		self.expire("")
 		self.disabled = "none"
 
 	def remove(self, lo):

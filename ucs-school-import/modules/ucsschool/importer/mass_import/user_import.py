@@ -331,25 +331,23 @@ class UserImport(object):
 			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
 			if self.dry_run:
 				self.logger.info("Dry run - not expiring the user.")
-				success = True
 			else:
-				user.expire(self.connection, expiry_str)
-				success = True
+				user.expire(expiry_str)
+				user.modify(lo=self.connection)
+			success = True
 		elif not self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
 			# don't delete but deactivate with an expiration data
 			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
 			expiry_str = expiry.strftime("%Y-%m-%d")
 			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-			if self.dry_run:
-				self.logger.info("Dry run - not expiring the user.")
-			else:
-				user.expire(self.connection, expiry_str)
 			self.logger.info("Deactivating user %s...", user)
 			if self.dry_run:
+				self.logger.info("Dry run - not expiring the user.")
 				self.logger.info("Dry run - not deactivating the user.")
 			else:
+				user.expire(expiry_str)
 				user.deactivate()
-				user.modify()
+				user.modify(lo=self.connection)
 			success = True
 		else:
 			raise UnknownDeleteSetting("Don't know what to do with user_deletion=%r and expiration=%r.".format(
