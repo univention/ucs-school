@@ -10,6 +10,7 @@
 ## versions:
 ##  3.2-5: skip
 ##  4.0-1: fixed
+##  4.1-2: skip
 # The test should be re-enabled after the reason for the failure is resolved.
 
 from sys import exit

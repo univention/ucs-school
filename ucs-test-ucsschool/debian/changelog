@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-22) unstable; urgency=medium
+
+  * Disable 97_samba4_dns_srv_replication again (Bug #39964)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 09 Sep 2016 14:21:40 +0200
+
 ucs-test-ucsschool (3.0.15-21) unstable; urgency=low
 
   * Bug #41244: adapt expected username to changes of Bug #42313
