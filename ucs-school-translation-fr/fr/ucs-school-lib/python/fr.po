@@ -1,0 +1,362 @@
+# Nicolas Ternisien <nicolas@bureau-cornavin.com>, 2016.
+# Éric Bischoff <ebischoff@bureau-cornavin.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: ucs-school-lib\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2016-06-07 16:04+0200\n"
+"PO-Revision-Date: 2016-07-06 20:25+0200\n"
+"Last-Translator: Nicolas Ternisien <nicolas@bureau-cornavin.com>\n"
+"Language-Team: French <fr@bureau-cornavin.com>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Lokalize 1.5\n"
+
+#: python/models/attributes.py:88
+#, python-format
+msgid "\"%s\" is required. Please provide this information."
+msgstr "« %s » est requis. Veuillez fournir cette information."
+
+#: python/models/attributes.py:153
+msgid "A valid NetBIOS hostname can not be longer than 12 characters."
+msgstr "Un nom d'hôte NetBIOS valide ne peut pas dépasser 12 caractères."
+
+#: python/models/school.py:57
+msgid "Administrative servers"
+msgstr "Serveurs administratifs"
+
+#: python/models/user.py:58
+msgid "Birthday"
+msgstr "Date de naissance"
+
+#: python/models/dhcp.py:173 python/models/network.py:45
+msgid "Broadcast"
+msgstr "Diffuser"
+
+#: python/models/user.py:62
+msgid "Class"
+msgstr "Classe"
+
+#: python/models/computer.py:158
+msgid "Computer"
+msgstr "Ordinateur"
+
+#: python/models/misc.py:90
+msgid "Computer path"
+msgstr "Emplacement de l'ordinateur"
+
+#: python/models/group.py:157
+msgid "Container"
+msgstr "Conteneur"
+
+#: python/schoolldap.py:364
+msgid ""
+"Could not find any school. You have to create a school before continuing. "
+"Use the 'Add school' UMC module to create one."
+msgstr ""
+"Impossible de trouver une école. Vous devez créer une école avant de "
+"continuer. Utiliser le module UMC « Ajouter une école » pour en créer une."
+
+#: python/models/school.py:50
+msgid "DC Name"
+msgstr "Nom du CD"
+
+#: python/models/school.py:51
+msgid "DC Name administrative server"
+msgstr "Serveur administratif de noms CD"
+
+#: python/models/misc.py:93
+msgid "DHCP path"
+msgstr "Emplacement DHCP"
+
+#: python/models/dhcp.py:143 python/models/dhcp.py:174
+msgid "DHCP service"
+msgstr "Service DHCP"
+
+#: python/models/group.py:75
+msgid "Description"
+msgstr "Description"
+
+#: python/models/computer.py:320
+msgid "Device with IP address"
+msgstr "Périphérique avec adresse IP"
+
+#: python/models/user.py:61
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: python/models/school.py:54
+msgid "Display name"
+msgstr "Nom d'affichage"
+
+#: python/models/dhcp.py:42
+msgid "Domain"
+msgstr "Domaine"
+
+#: python/models/school.py:56
+msgid "Educational servers"
+msgstr "Serveurs éducatifs"
+
+#: python/models/user.py:59
+msgid "Email"
+msgstr "Courriel"
+
+#: python/models/policy.py:69
+msgid "Empty attributes"
+msgstr "Vider les attributs"
+
+#: python/models/user.py:660
+msgid "Exam student"
+msgstr "Examiner l'étudiant"
+
+#: python/models/user.py:56
+msgid "First name"
+msgstr "Prénom"
+
+#: python/models/misc.py:92
+msgid "Group path"
+msgstr "Emplacement du groupe"
+
+#: python/models/computer.py:76
+msgid "Groups"
+msgstr "Groupes"
+
+#: python/models/dhcp.py:41
+msgid "Hostname"
+msgstr "Nom d'hôte"
+
+#: python/models/group.py:262
+msgid "Hosts"
+msgstr "Hôtes"
+
+#: python/models/computer.py:152
+msgid "IP address"
+msgstr "Adresse IP"
+
+#: python/models/attributes.py:150
+msgid "Invalid Domain Controller name"
+msgstr "Nom du contrôleur de domaine invalide"
+
+#: python/models/attributes.py:142
+msgid "Invalid school name"
+msgstr "Nom d'école invalide"
+
+#: python/models/computer.py:155
+msgid "Inventory number"
+msgstr "Numéro d'inventaire"
+
+#: python/models/user.py:400 python/models/user.py:408
+#, python-format
+msgid ""
+"It is not supported to change the role of a user. %(old_role)s %(name)s "
+"cannot become a %(new_role)s."
+msgstr ""
+"Il n'est pas possible de modifier le rôle d'un utilisateur. %(name)s ne peut "
+"passer de %(old_role)s à %(new_role)s."
+
+#: python/models/user.py:57
+msgid "Last name"
+msgstr "Nom"
+
+#: python/models/computer.py:154
+msgid "MAC address"
+msgstr "Adresse MAC"
+
+#: python/models/computer.py:313
+msgid "Mac OS X"
+msgstr "Mac OS X"
+
+#: python/models/attributes.py:101
+msgid "May not contain special characters"
+msgstr "Ne peut pas contenir de caractères spéciaux"
+
+#: python/models/share.py:41 python/models/base.py:192
+#: python/models/group.py:74 python/models/group.py:194
+msgid "Name"
+msgstr "Nom"
+
+#: python/models/attributes.py:81
+msgid "Needs to be a dict!"
+msgstr "Doit être un « dict » !"
+
+#: python/models/attributes.py:77
+msgid "Needs to be a list of values!"
+msgstr "Doit être une liste de valeurs !"
+
+#: python/models/dhcp.py:172 python/models/network.py:43
+msgid "Netmask"
+msgstr "Masque réseau"
+
+#: python/models/network.py:44
+msgid "Network"
+msgstr "Réseau"
+
+#: python/models/misc.py:91
+msgid "Network path"
+msgstr "Emplacement du réseau"
+
+#: python/schoollessons.py:58 python/schoollessons.py:130
+msgid "Overlapping lessons are not allowed"
+msgstr "Les cours superposés ne sont pas autorisés"
+
+#: python/models/user.py:60
+msgid "Password"
+msgstr "Mot de passe"
+
+#: python/models/misc.py:94
+msgid "Policy path"
+msgstr "Emplacement de la stratégie"
+
+#: python/models/misc.py:96
+msgid "Printer path"
+msgstr "Emplacement de l'imprimante"
+
+#: python/models/base.py:193
+msgid "School"
+msgstr "École"
+
+#: python/models/share.py:42
+msgid "School class"
+msgstr "Classe de l'école"
+
+#: python/models/school.py:49
+msgid "School name"
+msgstr "Nom de l'école"
+
+#: python/models/user.py:55
+msgid "Schools"
+msgstr "Écoles"
+
+#: python/models/school.py:53
+msgid "Server for Windows home directories"
+msgstr "Serveur pour les répertoires personnels Windows"
+
+#: python/models/school.py:52
+msgid "Server for class shares"
+msgstr "Serveur pour les partages de la classe"
+
+#: python/models/dhcp.py:142
+msgid "Server name"
+msgstr "Nom du serveur"
+
+#: python/models/dhcp.py:40
+msgid "Service"
+msgstr "Service"
+
+#: python/models/misc.py:95
+msgid "Share path"
+msgstr "Emplacement du partage"
+
+#: python/models/user.py:601
+msgid "Staff"
+msgstr "Personnel"
+
+#: python/models/user.py:549
+msgid "Student"
+msgstr "Étudiant"
+
+#: python/models/network.py:130
+msgid "Subnet"
+msgstr "Sous-réseau"
+
+#: python/models/dhcp.py:171
+msgid "Subnet address"
+msgstr "Adresse de sous-réseau"
+
+#: python/models/computer.py:153
+msgid "Subnet mask"
+msgstr "Masque de sous-réseau"
+
+#: python/models/user.py:582
+msgid "Teacher"
+msgstr "Enseignant"
+
+#: python/models/user.py:642
+msgid "Teacher and Staff"
+msgstr "Enseignant et personnel"
+
+#: python/models/user.py:416
+msgid ""
+"The email address is already taken by another user. Please change the email "
+"address."
+msgstr ""
+"L'adresse électronique est déjà utilisée par un autre utilisateur. Veuillez "
+"modifier l'adresse électronique."
+
+#: python/models/computer.py:245
+msgid ""
+"The ip address is already taken by another computer. Please change the ip "
+"address."
+msgstr ""
+"L'adresse IP est déjà utilisée par un autre ordinateur. Veuillez modifier "
+"l'adresse IP."
+
+#: python/models/attributes.py:155
+msgid ""
+"The length of fully qualified domain name is greater than 63 characters."
+msgstr ""
+"La longueur du nom de domaine intégralement qualifié dépasse les 63 "
+"caractères."
+
+#: python/models/computer.py:249
+msgid ""
+"The mac address is already taken by another computer. Please change the mac "
+"address."
+msgstr ""
+"L'adresse MAC est déjà utilisée par un autre ordinateur. Veuillez modifier "
+"l'adresse MAC."
+
+#: python/models/base.py:294
+msgid ""
+"The name is already used somewhere outside the school. It may not be taken "
+"twice and has to be changed."
+msgstr ""
+"Le nom est déjà employé en dehors de l'école. Il ne peut être utilisé "
+"plusieurs fois et doit être modifié."
+
+#: python/models/base.py:297
+#, python-format
+msgid ""
+"The school \"%s\" does not exist. Please choose an existing one or create it."
+msgstr ""
+"L'école « %s » n'existe pas. Veuillez choisir une existante ou en créer "
+"une."
+
+#: python/models/base.py:312
+#, python-format
+msgid "The value changed from %(old)s. This seems unlikely."
+msgstr ""
+"La valeur, précédemment à %(old)s, a été modifiée. Ceci semble peu probable."
+
+#: python/models/computer.py:191
+msgid "There are no free addresses left in the subnet!"
+msgstr "Il n'existe plus aucune adresse libre dans le sous-réseau !"
+
+#: python/models/computer.py:327
+msgid "Univention Corporate Client"
+msgstr "Univention Corporate Client"
+
+#: python/models/misc.py:89
+msgid "User path"
+msgstr "Emplacement de l'utilisateur"
+
+#: python/models/user.py:54
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: python/models/group.py:76
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: python/models/computer.py:306
+msgid "Windows system"
+msgstr "Système Windows"
+
+#: python/models/computer.py:156
+msgid "Zone"
+msgstr "Zone"
+
+
