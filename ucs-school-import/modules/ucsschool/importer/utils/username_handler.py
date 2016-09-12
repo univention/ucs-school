@@ -73,9 +73,9 @@ class UsernameHandler(object):
 			bad_chars = "".join(sorted(set(name).difference(set(allowed_chars))))
 			if bad_chars:
 				self.logger.warn("Removing disallowed characters %r from username %r.", bad_chars, name)
-			if name.startswith("."):
-				self.logger.warn("Removing disallowed dot from start of username %r.", name)
-				name = name.lstrip(".")
+			if name.startswith(".") or name.endswith("."):
+				self.logger.warn("Removing disallowed dot from start and end of username %r.", name)
+				name = name.strip(".")
 			return name.translate(None, bad_chars)
 
 		match = self.username_pattern.search(name)

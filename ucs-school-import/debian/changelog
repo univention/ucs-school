@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-15) unstable; urgency=low
+
+  * Bug #42313: no dot at start or end of username
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 12 Sep 2016 08:29:42 +0200
+
 ucs-school-import (14.0.16-14) unstable; urgency=low
 
   * Bug #41344: followup after to commit (remove lo dep, only exclude modify()
