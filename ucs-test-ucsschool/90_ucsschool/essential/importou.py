@@ -451,7 +451,7 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 		# in singleserver setup only the first OU sets dhcpd/ldap/base and all following OUs
 		# should leave the UCR variable untouched.
 		dhcpd_ldap_base = ucr.get('dhcpd/ldap/base')
-		if not dhcpd_ldap_base or not 'ou=' in dhcpd_ldap_base:
+		if not dhcpd_ldap_base or 'ou=' not in dhcpd_ldap_base:
 			raise DhcpdLDAPBase('dhcpd/ldap/base=%r contains no "ou="' % (dhcpd_ldap_base,))
 
 		if not old_dhcpd_ldap_base:

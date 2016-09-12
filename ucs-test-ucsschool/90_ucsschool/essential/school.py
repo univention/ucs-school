@@ -148,7 +148,7 @@ class School(object):
 				'schoolwizards/schools/add',
 				param,
 				flavor)
-		if reqResult[0] != True:
+		if reqResult[0] is not True:
 			raise CreateFail('Unable to create school (%r)' % (reqResult,))
 		else:
 			utils.wait_for_replication()
@@ -436,7 +436,7 @@ class School(object):
 			# in singleserver setup only the first OU sets dhcpd/ldap/base and all following OUs
 			# should leave the UCR variable untouched.
 			dhcpd_ldap_base = ucr.get('dhcpd/ldap/base')
-			if not dhcpd_ldap_base or not 'ou=' in dhcpd_ldap_base:
+			if not dhcpd_ldap_base or 'ou=' not in dhcpd_ldap_base:
 				raise DhcpdLDAPBase('dhcpd/ldap/base=%r contains no "ou="' % (dhcpd_ldap_base,))
 
 			if not old_dhcpd_ldap_base:

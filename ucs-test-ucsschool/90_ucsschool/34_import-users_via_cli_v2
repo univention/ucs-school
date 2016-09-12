@@ -7,7 +7,7 @@
 ## timeout: 14400
 ## packages:
 ##   - ucs-school-import
-## bugs: [41243, 41244, 41344, 41346, 41350, 41354, 41471, 41472, 41609, 41642, 41645, 41707, 41775, 41847, 41857, 41907]
+## bugs: [41243, 41244, 41344, 41346, 41350, 41354, 41471, 41472, 41544, 41609, 41642, 41645, 41707, 41775, 41847, 41857, 41907]
 
 import tempfile
 import json
@@ -132,7 +132,7 @@ class MyHook(UserPyHook):
 			user.modify(self.lo)
 		fn_touchfile = os.path.join(%(tmpdir)r, '%%s-%%s' %% (when, action))
 		open(fn_touchfile, 'w').write('EXECUTED\\n')
-''' % { 'tmpdir': self.tmpdir }
+''' % {'tmpdir': self.tmpdir}
 
 		fn = os.path.join(self.hook_basedir, fn)
 		self.cleanup_files.add(fn)
@@ -362,7 +362,6 @@ class CLI_Import_v2_Tester(object):
 			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
 			person.verify()
 
-
 			self.log.info('*** Modifying a single user with role %r', role)
 
 			if role == 'student':
@@ -478,7 +477,6 @@ class CLI_Import_v2_Tester(object):
 					assert_and_print(True, fn)
 				for fn in ('pre-remove', 'post-remove'):
 					assert_and_print(False, fn)
-
 
 				self.log.info('*** Remove a single user with role %r and username and recordUID', role)
 
@@ -643,7 +641,7 @@ class CLI_Import_v2_Tester(object):
 			config.update_entry('no_delete', 'True')
 			fn_csv = self.create_csv_file(person_list=[personA], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(values=config)
-			self.run_import(['-c', fn_config, '-i', fn_csv])  #  '--no-delete'  is not specified on purpose -> using config option "no_delete"
+			self.run_import(['-c', fn_config, '-i', fn_csv])  # '--no-delete'  is not specified on purpose -> using config option "no_delete"
 
 			for username in (personA.username, personB.username):
 				userlist = self.lo.searchDn('uid=%s' % (username,))
@@ -713,7 +711,6 @@ class CLI_Import_v2_Tester(object):
 			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
 		self.log.info('Test was successful.\n\n\n')
 
-
 	def test_multivalue_attributes(self):
 		"""
 		Test creation of multi-value fields (Bug #41471).
@@ -747,7 +744,6 @@ class CLI_Import_v2_Tester(object):
 				def expected_attributes(self):
 					result = Person.expected_attributes(self)
 					result['mailAlternativeAddress'] = self.mailAlternativeAddress.split(',')
-
 
 			# create person with 3 alternative mail addresses
 			person = MultiPerson(self.ou_A.name, role)
@@ -927,7 +923,6 @@ class CLI_Import_v2_Tester(object):
 			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
 			person.verify()
 		self.log.info('Test was successful.\n\n\n')
-
 
 	def test_create_modify_with_extended_attribute(self, udm):
 		"""
@@ -1418,7 +1413,7 @@ class CLI_Import_v2_Tester(object):
 
 		self.log.info('*** 2/3: do not delete, but deactivate with an expiration data ***')
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			exp_days = random.randint(1,20)
+			exp_days = random.randint(1, 20)
 			self.log.info('*** (2/3) Importing a new single user with role %r', role)
 			person = Person(self.ou_A.name, role)
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
@@ -1473,7 +1468,7 @@ class CLI_Import_v2_Tester(object):
 		self.log.info('*** 3/3: store an expiration data for the user ***')
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** (3/3) Importing a new single user with role %r', role)
-			exp_days = random.randint(1,20)
+			exp_days = random.randint(1, 20)
 			person = Person(self.ou_A.name, role)
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 			record_uid = 'recordUID-%s' % (uts.random_string(),)
@@ -1515,6 +1510,10 @@ class CLI_Import_v2_Tester(object):
 		self.log.info('Test was successful.\n\n\n')
 
 	def test_reuse_email_attribute(self):
+		"""
+		Bug #41544: test if it is possible to reuse an email address (-> if
+		users are removed before they are added)
+		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 			email = "{}@{}".format(uts.random_name(), self.ucr.get('domainname'))
@@ -1553,7 +1552,6 @@ class CLI_Import_v2_Tester(object):
 			self.check_new_and_removed_users(1, 1)
 			person.verify()
 		self.log.info('*\n*** Test was successful.\n*')
-
 
 	def run(self):
 		try:

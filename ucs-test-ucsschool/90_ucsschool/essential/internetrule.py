@@ -55,7 +55,7 @@ class InternetRule(object):
 			dom = RandomDomain()
 			domains = dom.getDomainList(random.randint(1, 10))
 			self.domains = sorted(domains)
-		if wlan == True or wlan == False:
+		if isinstance(wlan, bool):
 			self.wlan = wlan
 		else:
 			self.wlan = random.choice([True, False])

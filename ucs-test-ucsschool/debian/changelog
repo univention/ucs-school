@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-31) unstable; urgency=low
+
+  * Bug #41282: add missing import
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 12 Sep 2016 16:35:15 +0200
+
 ucs-test-ucsschool (3.0.15-30) unstable; urgency=low
 
   * Bug #41544: add test, if it is possible to reuse an email address (-> if

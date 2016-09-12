@@ -63,7 +63,7 @@ class Check(object):
 			result = self.umcConnection.request(
 				'internetrules/groups/query',
 				param)[0]['rule']
-			if not result in ruleName:
+			if result not in ruleName:
 				utils.fail(
 					'Assigned rule (%r) to workgroup (%r) doesn\'t match' %
 					(ruleName, groupName))

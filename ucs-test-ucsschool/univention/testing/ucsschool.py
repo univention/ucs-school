@@ -56,7 +56,7 @@ import univention.admin.uldap as udm_uldap
 import univention.admin.uexceptions as udm_errors
 from univention.lib.umc_connection import UMCConnection as _UMCConnection
 
-from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass
+from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.models.group import ComputerRoom
 

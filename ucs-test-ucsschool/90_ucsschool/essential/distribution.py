@@ -609,7 +609,7 @@ html5
 		self.ucr.load()
 		roleshare = self.ucr.get('ucsschool/import/roleshare')
 		if purpose == 'distribute':
-			if roleshare == 'no' or roleshare == False:
+			if roleshare == 'no' or roleshare is False:
 				path = '/home/{0}/Unterrichtsmaterial/{1}/'.format(user, self.name)
 			else:
 				path = '/home/{0}/schueler/{1}/Unterrichtsmaterial/{2}'.format(
@@ -617,7 +617,7 @@ html5
 					user,
 					self.name)
 		elif purpose == 'collect':
-			if roleshare == 'no' or roleshare == False:
+			if roleshare == 'no' or roleshare is False:
 				path = '/home/{0}/Unterrichtsmaterial/{1}/{2}/'.format(
 						self.sender,
 						self.name,
