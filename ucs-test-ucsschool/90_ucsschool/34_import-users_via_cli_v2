@@ -511,54 +511,91 @@ class CLI_Import_v2_Tester(object):
 		Test creation of usernames from a special username scheme (Bug #41243, #41244).
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Importing a new single user with role %r and username and recordUID', role)
+			for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
+				self.log.info('*** Importing a new single user with role %r, username scheme %r and recordUID 1. time', role, scheme)
 
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			record_uid = uts.random_name()
+				source_uid = 'sourceUID-%s' % (uts.random_string(),)
+				record_uid = uts.random_name()
 
-			config = copy.deepcopy(self.default_config)
-			config.update_entry('sourceUID', source_uid)
-			config.update_entry('csv:mapping:DBID', 'record_uid')
-			config.update_entry('scheme:recordUID', '<record_uid>')
-			config.update_entry('user_role', role)
-			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[ALWAYSCOUNTER]")
+				config = copy.deepcopy(self.default_config)
+				config.update_entry('sourceUID', source_uid)
+				config.update_entry('csv:mapping:DBID', 'record_uid')
+				config.update_entry('scheme:recordUID', '<record_uid>')
+				config.update_entry('user_role', role)
+				config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[{}]".format(scheme))
 
-			person = Person(self.ou_A.name, role)
-			person.update(record_uid=record_uid, source_uid=source_uid, username=None)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+				person = Person(self.ou_A.name, role)
+				person.update(record_uid=record_uid, source_uid=source_uid, username=None)
+				fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+				config.update_entry('input:filename', fn_csv)
+				fn_config = self.create_config_json(config=config)
+				# save ldap state for later comparison
+				self.save_ldap_status()
 
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])
+				# start import
+				self.run_import(['-c', fn_config, '-i', fn_csv])
 
-			# check for new users in LDAP
-			self.check_new_and_removed_users(1, 0)
+				# check for new users in LDAP
+				self.check_new_and_removed_users(1, 0)
 
-			# update dn+username of person and verify LDAP attributes
-			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
-			person.verify()
+				# update dn+username of person and verify LDAP attributes
+				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+				person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
+				person.verify()
 
-			username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
-			if person.username.rstrip('0123456789') != username_prefix.rstrip('0123456789'):
-				utils.fail('username %r does not start with expected string %r' % (person.username, username_prefix))
-			self.log.info('Username %r starts as expected with string %r' % (person.username, username_prefix))
+				username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
+				self.log.info("Calculated username_prefix is %r.", username_prefix)
+				if person.username != "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""):
+					utils.fail('username %r is not expected string "%s%s"' % (person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""))
+				self.log.info('Username %r is expected with string "%s%s"', person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")
 
-			# check if username history object exists
-			self.log.info('Checking for unique-usernames object...')
-			dn = 'cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s' % (username_prefix, self.lo.base)
-			attrs = {
-				'objectClass': ['ucsschoolUsername'],
-				'ucsschoolUsernameNextNumber': ['2'],
-				'cn': [username_prefix],
-			}
-			utils.verify_ldap_object(dn, expected_attr=attrs, strict=True, should_exist=True)
-			self.log.debug('User object %r:\n%s', dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(dn)))
-			self.log.info('unique-usernames object has been found.')
-			self.log.info('Test was successful.\n\n\n')
+				# check if username history object exists
+				self.log.info('Checking for unique-usernames object...')
+				dn = 'cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s' % (username_prefix, self.lo.base)
+				attrs = {
+					'objectClass': ['ucsschoolUsername'],
+					'ucsschoolUsernameNextNumber': ['2'],
+					'cn': [username_prefix],
+				}
+				utils.verify_ldap_object(dn, expected_attr=attrs, strict=True, should_exist=True)
+				self.log.debug('unique-usernames object %r:\n%s', dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(dn)))
+				self.log.info('unique-usernames object has been found and is correct.')
+
+				for ext in [2, 3]:
+					self.log.info('*** Deleting user with role %r and username and recordUID %d. time', role, ext - 1)
+					fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
+					config.update_entry('input:filename', fn_csv)
+					fn_config = self.create_config_json(config=config)
+					self.save_ldap_status()
+					self.run_import(['-c', fn_config, '-i', fn_csv])
+					self.check_new_and_removed_users(0, 1)
+
+					self.log.info('*** Importing same user with role %r with same username and recordUID %d. time', role, ext)
+					person.update(record_uid=record_uid, source_uid=source_uid, username=None)
+					fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+					config.update_entry('input:filename', fn_csv)
+					fn_config = self.create_config_json(config=config)
+					self.save_ldap_status()
+					self.run_import(['-c', fn_config, '-i', fn_csv])
+					self.check_new_and_removed_users(1, 0)
+
+					new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+					person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
+					person.verify()
+					if person.username != "{}{}".format(username_prefix, ext):
+						utils.fail('username %r is not expected string "%s%d"' % (person.username, username_prefix, ext))
+					self.log.info('Username %r is expected with string "%s%d', person.username, username_prefix, ext)
+
+					self.log.info('Checking for unique-usernames object...')
+					dn = 'cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s' % (username_prefix, self.lo.base)
+					attrs = {
+						'objectClass': ['ucsschoolUsername'],
+						'ucsschoolUsernameNextNumber': [str(ext + 1)],
+						'cn': [username_prefix],
+					}
+					self.log.info('unique-usernames object is correct.')
+
+				self.log.info('Test was successful.\n\n\n')
 
 	def test_create_modify_only(self):
 		"""

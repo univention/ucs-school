@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-26) unstable; urgency=low
+
+  * Bug #41244: test import with ALWAYSCOUNTER and COUNTER2 username schemes
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 12 Sep 2016 09:38:09 +0200
+
 ucs-test-ucsschool (3.0.15-25) unstable; urgency=low
 
   * Bug #41344: revert accidental deactivation of most tests
