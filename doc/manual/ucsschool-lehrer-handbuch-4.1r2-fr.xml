@@ -1,2148 +1,445 @@
-#
-# Sandrine Burriel <sandrine@bureau-cornavin.com>, 2016.
-msgid ""
-msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: http://bugs.kde.org\n"
-"POT-Creation-Date: 2016-06-15 07:30+0000\n"
-"PO-Revision-Date: 2016-07-11 01:29+0900\n"
-"Last-Translator: Sandrine Burriel <sandrine@bureau-cornavin.com>\n"
-"Language-Team: French <fr@bureau-cornavin.com>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Language: fr_FR\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.5\n"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:13
-#, no-c-format
-msgid "&ucsUAS;"
-msgstr "&ucsUAS;"
-
-#. Tag: subtitle
-#: ucsschool-lehrer-handbuch-4.1.xml:16
-#, no-c-format
-msgid "Handbuch für Lehrkräfte"
-msgstr "Manuel pour les enseignants"
-
-#. Tag: literallayout
-#: ucsschool-lehrer-handbuch-4.1.xml:20
-#, no-c-format
-msgid ""
-"Version 4.1 v1\n"
-"Stand: 17. November 2015"
-msgstr ""
-"Version 4.1 v1\n"
-"En date du : 17 novembre 2015"
-
-#. Tag: literallayout
-#: ucsschool-lehrer-handbuch-4.1.xml:22
-#, no-c-format
-msgid ""
-"Alle Rechte vorbehalten./ All rights reserved.\n"
-"(c) 2002-2015\n"
-"Univention GmbH\n"
-"Mary-Somerville-Straße 1\n"
-"28359 Bremen\n"
-"Deutschland\n"
-"feedback@univention.de"
-msgstr ""
-"All rights reserved./ Tous droits réservés.\n"
-"(c) 2002-2015\n"
-"Univention GmbH\n"
-"Mary-Somerville-Straße 1\n"
-"28359 Bremen\n"
-"Allemagne\n"
-"feedback@univention.de"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:24
-#, no-c-format
-msgid ""
-"Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer "
-"jeweiligen eingetragenen Rechtsinhaber. Linux ist ein eingetragenes "
-"Warenzeichen von Linus Torvalds."
-msgstr ""
-"Toutes les marques déposées citées sont la propriété de leurs détenteurs "
-"enregistrés respectifs. Linux est une marque déposée par Linus Torvalds."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:29
-#, no-c-format
-msgid ""
-"The mentioned brand names and registered trademarks are owned by the "
-"respective legal owners in each case. Linux is a registered trademark of "
-"Linus Torvalds."
-msgstr ""
-"The mentioned brand names and registered trademarks are owned by the "
-"respective legal owners in each case. Linux is a registered trademark of "
-"Linus Torvalds."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:37
-#, no-c-format
-msgid "Einführung"
-msgstr "Introduction"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:42
-#, no-c-format
-msgid ""
-"&ucsUAS; ist eine Komplettlösung für den schulinternen IT-Betrieb und IT-"
-"gestützten Unterricht."
-msgstr ""
-"&ucsUAS; est une solution complète pour la gestion informatique d'une école "
-"et pour l'enseignement assisté par ordinateur."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:45
-#, no-c-format
-msgid ""
-"Neben den administrativen Verwaltungsschnittstellen gibt es eine Reihe von "
-"browserbasierten Oberflächen, mit denen Lehrkräfte den IT-gestützten "
-"Unterricht verwalten können. Sie erlauben beispielsweise Lehrern, die "
-"Passwörter von Schülern neu zu setzen oder den Internetzugang während einer "
-"Schulstunde gezielt zu sperren oder freizugeben."
-msgstr ""
-"Outre les interfaces de gestion administrative, une série d'interfaces Web "
-"permet aux enseignants de gérer leurs cours assistés par ordinateur. "
-"Ces interfaces permettent par exemple aux enseignants de réinitialiser les "
-"mots de passe de leurs élèves ou de bloquer ou autoriser l'accès à "
-"Internet de manière sélective pendant une heure de cours."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:51
-#, no-c-format
-msgid ""
-"Die Benutzung der Oberfläche erfordert keine besonderen IT-Kenntnisse und "
-"wird in diesem Dokument beschrieben. Dabei wird neben einer kurzen "
-"Beschreibung der jeweiligen Funktion auch ein Nutzungsbeispiel aufgezeigt "
-"und in einer Schritt-für-Schritt-Anleitung die Bedienung erläutert."
-msgstr ""
-"L'utilisation de cette interface ne suppose aucune connaisance "
-"informatique particulière et sera décrite dans ce document. Chaque fonctionnalité "
-"sera présentée à travers une brève description ainsi qu'un exemple "
-"d'utilisation et des indications expliquant pas à pas comment l'utiliser."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:56
-#, no-c-format
-msgid ""
-"In &ucsUAS; werden für Lehrkräfte zwei Zugriffsberechtigungen unterschieden:"
-msgstr ""
-"&ucsUAS; présente deux niveaux d'accès différenciés pour les enseignants :"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:61
-#, no-c-format
-msgid ""
-"<emphasis>Schuladministratoren</emphasis> verfügen über volle "
-"Verwaltungsrechte in Bezug auf den IT-gestützten Unterricht."
-msgstr ""
-"Les <emphasis>administrateurs de l'école</emphasis> possèdent des "
-"droits administratifs complets en ce qui concerne l'enseignement assisté "
-"par ordinateur."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:67
-#, no-c-format
-msgid ""
-"<emphasis>Lehrer</emphasis> können nur einen Teil der Verwaltungsfunktionen "
-"nutzen. Sie können zum Beispiel die Passwörter von Schülern neu setzen, "
-"nicht aber die von anderen Lehrern (dies können nur Schuladministratoren). "
-"Ein weiteres Beispiel: Lehrer können einen Internet-Filter aktivieren/"
-"deaktivieren, aber nur Schuladministratoren können die Filterregeln anpassen."
-msgstr ""
-"Les <emphasis>enseignants</emphasis> ne peuvent utiliser qu'une partie "
-"des fonctionnalités d'administration. Ils peuvent par exemple réinitialiser les "
-"mots de passe de leurs élèves, mais pas ceux d'autres enseignants (cela n'est "
-"possible que pour les administrateurs de l'école). Autre exemple : les "
-"enseignants peuvent activer ou désactiver un filtre Internet, mais seuls les "
-"administrateurs de l'école peuvent configurer les règles de filtrage."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:76
-#, no-c-format
-msgid ""
-"In jeder Schule gibt es einen Schulserver. Die Daten der Schüler und Lehrer "
-"werden auf diesem Schulserver gespeichert, so dass, egal auf welchem PC man "
-"sich anmeldet, immer dieselben Daten verfügbar sind. Dieses Verzeichnis wird "
-"als <emphasis>Heimatverzeichnis</emphasis> bezeichnet. Es wird bei der "
-"Anmeldung an einem PC automatisch eingebunden, so dass die eigenen Dateien "
-"nach der Anmeldung auf jedem beliebigen Schulcomputer sofort zur Verfügung "
-"stehen."
-msgstr ""
-"Chaque école héberge son propre serveur. Les données des élèves et des "
-"enseignants sont enregistrées sur ce serveur de sorte que, quel que soit "
-"l'ordinateur avec lequel vous vous connectez, les mêmes données sont toujours "
-"intégralement disponibles. Ce répertoire est appelé <emphasis>répertoire "
-"personnel</emphasis>. Il est automatiquement appelé lors de la connexion "
-"à un ordinateur, de sorte que vos fichiers propres sont immédiatement "
-"disponibles dès que vous ouvrez une session sur un ordinateur de l'école."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:83
-#, no-c-format
-msgid ""
-"Die Heimatverzeichnisse sind benutzerspezifisch. Zusätzlich wird für jede "
-"Klasse und für weitere Benutzergruppen (z.B. eine Informatik-AG) ein eigener "
-"Datenbereich angelegt. Diese Daten werden ähnlich wie das Heimatverzeichnis "
-"bei der Anmeldung an einem Schul-PC eingebunden. Zugriff erhalten nur die "
-"Schüler und Lehrer, die der Klasse oder Arbeitsgruppe (AG) zugeordnet sind."
-msgstr ""
-"Le répertoire personnel est propre à un utilisateur. De plus, un domaine "
-"de données particulier est créé pour chaque classe et pour tout autre groupe "
-"d'utilisateurs (par exemple un groupe de travail informatique). Ces données "
-"seront mises à disposition lors de la connexion à un ordinateur de l'école de "
-"manière analogue au répertoire personnel. L'accès est réservé à l'enseignant "
-"et aux élèves qui sont affectés à cette classe ou à ce groupe de travail."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:89
-#, no-c-format
-msgid ""
-"Dieses Dokument richtet sich an Lehrer und Schuladministratoren. Die "
-"einzelnen Funktionen sind dahingehend unterteilt."
-msgstr ""
-"Ce document est destiné aux enseignants et aux administrateurs de l'école. "
-"Les différentes fonctionnalités sont détaillées dans ce qui suit."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:99
-#, no-c-format
-msgid "&ucsUMC; - Die Verwaltungsoberfläche"
-msgstr "&ucsUMC; - L'interface d'administration"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:101
-#, no-c-format
-msgid "Anmeldung"
-msgstr "Connexion"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:102
-#, no-c-format
-msgid ""
-"Der IT-gestützte Unterricht wird mit einer Oberfläche verwaltet, der "
-"&ucsUMC; (UMC). Diese wird über einen Web-Browser (z.B. Mozilla Firefox) "
-"angezeigt und kann erreicht werden, indem in die Adresszeile des Web-"
-"Browsers eine Adresse in der Form <uri>https://<replaceable>schulserver."
-"schultraeger.de</replaceable>/umc/</uri> eingetragen wird. Die genaue "
-"Adresse wird vom Schul-Administrator bekannt gegeben. Beim ersten Zugriff "
-"muss das Sicherheitszertifikat des Servers bestätigt werden."
-msgstr ""
-"L'enseignement assisté par ordinateur est géré par une interface, la "
-"console &ucsUMC; (UMC). Vous pouvez l'afficher par l'intermédiaire d'un "
-"navigateur Web (par exemple Mozilla Firefox) et y accéder en saisissant "
-"dans la barre d'adresse du navigateur une adresse de la forme "
-"<uri>https://<replaceable>serveurecole.academie.fr</replaceable> "
-"/umc/</uri>. L'adresse exacte vous sera fournie par l'administrateur de "
-"l'école. Lors de votre premier accès au serveur, vous devez accepter le "
-"certificat de sécurité du serveur."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:112
-#, no-c-format
-msgid "Sicherheitszertifikatswarnung in Firefox"
-msgstr "Avertissement relatif au certificat de sécurité, affiché dans Firefox"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:116
-#, no-c-format
-msgid ""
-"Einige ältere Web-Browser werden nicht unterstützt, die Oberfläche benötigt "
-"mindestens die folgenden Versionen:"
-msgstr ""
-"Certains navigateurs anciens ne sont pas pris en charge. L'interface "
-"demande au moins les versions suivantes :"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:121
-#, no-c-format
-msgid "Google Chrome ab Version 14"
-msgstr "Google Chrome version 14 ou plus"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:122
-#, no-c-format
-msgid "Mozilla Firefox ab Version 10"
-msgstr "Mozilla Firefox version 10 ou plus"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:123
-#, no-c-format
-msgid "Microsoft Internet Explorer ab Version 9"
-msgstr "Microsoft Internet Explorer version 9 ou plus"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:124
-#, no-c-format
-msgid "Safari (auf dem iPad 2)"
-msgstr "Safari (sur iPad 2)"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:126
-#, no-c-format
-msgid ""
-"Wird kein unterstützter Browser vorgefunden, wird eine Warnung ausgegeben "
-"und es können Darstellungsprobleme auftreten."
-msgstr ""
-"Si le navigateur trouvé n'est pas compatible, un avertissement est affiché "
-"et des problèmes d'affichage sont susceptibles de se produire."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:132
-#, no-c-format
-msgid "Anmeldung an der &ucsUMC;"
-msgstr "Connexion à la console &ucsUMC;"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:136
-#, no-c-format
-msgid ""
-"Nach Aufruf der URL erscheint die Anmeldemaske, in der "
-"<guimenu>Benutzername</guimenu> und <guimenu>Passwort</guimenu> eingegeben "
-"werden müssen."
-msgstr ""
-"Une fois l'URL ouverte apparaît un formulaire de connexion dans lequel "
-"vous devez indiquer votre <guimenu>Nom d'utilisateur</guimenu> "
-"et votre <guimenu>Mot de passe</guimenu>."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:140
-#, no-c-format
-msgid ""
-"Die genaue Anzahl der angezeigten Funktionen richtet sich nach der Anzahl "
-"der auf dem jeweiligen Schulserver eingerichteten Dienste. Funktionen, die "
-"einem Benutzer aufgrund fehlender Rechte nicht zur Verfügung stehen, werden "
-"dem Benutzer nicht angezeigt. So können die Dialoge der UMC-Module während "
-"der Benutzung von den hier abgebildeten Dialogen abweichen. Die genauen "
-"Unterschiede sind den einzelnen Modulbeschreibungen zu entnehmen. Die "
-"einzelnen Kapitel sind nach den Namen der Menüpunkte benannt."
-msgstr ""
-"Le nombre exact de fonctionnalités affichées dépend du nombre de services installés "
-"sur le serveur de l'école. Les fonctionnalités qui ne sont pas disponibles pour un "
-"utilisateur donné du fait de droits insuffisants sont tout simplement "
-"cachées à l'utilisateur. Ainsi, les boîtes de dialogue des modules UMC rencontrées lors "
-"d'une utilisation réelle peuvent différer des boîtes de dialogue illustrées ici. "
-"Les différences exactes sont expliquées dans les descriptions des différents modules. "
-"Les différents chapitres sont intitulés d'après le nom des "
-"éléments du menu."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:150
-#, no-c-format
-msgid "Übersichtsseite der Funktionen eines Schuladministrators"
-msgstr ""
-"Page de vue d'ensemble des fonctionnalités offertes à l'administrateur "
-"de l'école"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:158
-#, no-c-format
-msgid "Verwaltungsfunktionen für Lehrer"
-msgstr "Fonctionnalités d'administration pour les enseignants"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:160
-#, no-c-format
-msgid "Passwörter (Schüler)"
-msgstr "Mots de passe (élèves)"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:161
-#, no-c-format
-msgid ""
-"Dieses Modul erlaubt Lehrern das Zurücksetzen von Schülerpasswörtern. Die "
-"bestehenden Passwörter können aus Sicherheitsgründen nicht ausgelesen "
-"werden; wenn Schüler ihr Passwort vergessen, muss ein neues Passwort "
-"vergeben werden. Mit den folgenden Schritten kann ein Schülerpasswort neu "
-"gesetzt werden:"
-msgstr ""
-"Ce module permet aux enseignants de réinitialiser les mots de passe des "
-"élèves. Pour des raisons de sécurité, les mots de passe existants ne "
-"peuvent pas être récupérés ; lorsqu'un élève oublie son mot de passe, un "
-"nouveau mot de passe doit être fourni. Les étapes suivantes décrivent "
-"comment réinitialiser le mot de passe d'un élève :"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:169
-#, no-c-format
-msgid ""
-"Die Passwort-Funktion kann über <guimenu>Passwörter (Schüler)</guimenu> "
-"aufgerufen werden."
-msgstr ""
-"La fonctionnalité de réinitialisation des mots de passe est accessible via "
-"<guimenu>Mots de passe (élèves)</guimenu>."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:174
-#, no-c-format
-msgid ""
-"Es erscheint eine Liste aller Schüler der Schule. Die Liste der Schüler kann "
-"eingeschränkt werden, indem über das Auswahlfeld <guimenu>Klasse oder "
-"Arbeitsgruppe</guimenu> eine Klasse oder AG ausgewählt wird. Es werden dann "
-"nur die Schüler dieser Klasse dargestellt."
-msgstr ""
-"Cela ouvre une liste de tous les élèves de l'école. La liste des élèves peut "
-"être affinée en choisissant un élément dans le champ de sélection "
-"<guimenu>Classe ou groupe de travail</guimenu>. Seuls les élèves de "
-"la classe en question sont alors affichés."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:181
-#, no-c-format
-msgid "Zurücksetzen von Schülerpasswörtern"
-msgstr "Réinitialisation du mot de passe d'un élève"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:187
-#, no-c-format
-msgid ""
-"Durch Eingabe von Benutzer-, Vor- und/oder Nachname in das Eingabefeld "
-"<guimenu>Name</guimenu> und anschließendem Klick auf <guimenu>Suchen</"
-"guimenu> kann auch gezielt nach einem Schüler gesucht werden."
-msgstr ""
-"Vous pouvez rechercher un élève en particulier en saisissant son nom "
-"d'utilisateur, son nom de famille et / ou son prénom dans le champ de saisie "
-"<guimenu>Nom</guimenu>, puis en cliquant sur <guimenu>Rechercher</"
-"guimenu>"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:194
-#, no-c-format
-msgid "Suche nach Schülerkonten"
-msgstr "Chercher des comptes d'élèves"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:200
-#, no-c-format
-msgid ""
-"Aus der Liste der angezeigten Schüler sind anschließend ein oder mehrere "
-"Schüler durch das Markieren des grauen Auswahlkastens vor dem Schülernamen "
-"auszuwählen. Anschließend ist die Schaltfläche <guimenu>Passwort "
-"zurücksetzen</guimenu> oberhalb der Schülerliste auszuwählen."
-msgstr ""
-"Vous pouvez alors sélectionner un ou plusieurs élèves dans la liste en "
-"cochant les cases grises correspondantes figurant devant leurs noms. Pour conclure "
-"l'opération, cliquez sur le bouton <guimenu>Réinitialiser le mot de "
-"passe</guimenu> figurant au dessus de la liste."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:207
-#, no-c-format
-msgid "Zurücksetzen eines Schülerpassworts"
-msgstr "Réinitialiser le mot de passe d'un élève"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:213
-#, no-c-format
-msgid ""
-"In das Feld <guimenu>Neues Passwort</guimenu> wird das neue Passwort für den "
-"oder die Schüler eingetragen. Ist der Haken vor dem Feld <guimenu>Benutzer "
-"muss das Passwort bei der nächsten Anmeldung ändern</guimenu> aktiviert, ist "
-"das dabei vergebene Passwort nur temporär gültig; wenn der Schüler sich mit "
-"diesem Zwischenpasswort anmeldet, muss das Passwort direkt geändert werden. "
-"Es wird empfohlen, diese Option aus Sicherheitsgründen aktiviert zu lassen. "
-"Dadurch ist das neue Passwort, welches der Schüler anschließend setzt, nur "
-"ihm bekannt."
-msgstr ""
-"Vous pouvez saisir le nouveau mot de passe destiné aux élèves dans le champ "
-"<guimenu>Nouveau mot de passe</guimenu>. Si la case figurant devant le "
-"champ <guimenu>L'utilisateur doit modifier son mot de passe à sa prochaine "
-"connexion</guimenu> est cochée, le mot de passe ainsi renseigné n'est valable "
-"que de façon temporaire. Lorsque l'élève se connecte avec son mot de passe "
-"temporaire, celui-ci doit être changé immédiatement. Pour des raisons de "
-"sécurité, il est recommandé de laisser cette option activée. Ainsi, le "
-"nouveau mot de passe choisi par l'élève n'est connu que de lui seul."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:223
-#, no-c-format
-msgid ""
-"Für Passwörter können Mindestanforderungen definiert werden, etwa mindestens "
-"acht Zeichen Länge. Wenn das eingegebene Passwort gegen diese Kriterien "
-"verstößt, wird ein Hinweis ausgegeben und es muss ein neues Passwort "
-"eingegeben werden."
-msgstr ""
-"Il est possible de définir des exigences minimales pour les mots de passe, "
-"par exemple une longueur de huit caractères au moins. Lorsque le mot de passe "
-"saisi ne répond pas à ces critères, un avertissement est émis et un nouveau "
-"mot de passe doit être saisi."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:234
-#, no-c-format
-msgid "Computerraum"
-msgstr "Salle informatique"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:235
-#, no-c-format
-msgid ""
-"Diese Funktion erlaubt die Kontrolle der Schüler-PCs und des Internetzugangs "
-"während einer Schulstunde. Der Internetzugang kann gesperrt oder freigegeben "
-"werden und es können gezielt einzelne Internetseiten freigegeben werden."
-msgstr ""
-"Cette fonctionnalité permet de contrôler les ordinateurs des élèves et l'accès à "
-"Internet pendant un cours. L'accès à Internet peut être autorisé ou coupé, "
-"et l'accès à certains sites Web particuliers peut être autorisé."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:240
-#, no-c-format
-msgid ""
-"Wenn eine entsprechende Software (iTALC) auf den Schüler-PCs installiert "
-"ist, besteht auch die Möglichkeit diese PCs zu steuern. So kann "
-"beispielsweise der Bildschirm gesperrt werden, so dass in einer Chemie-"
-"Stunde die ungeteilte Aufmerksamkeit auf ein Experiment gelenkt werden kann."
-msgstr ""
-"Si un logiciel approprié (iTALC) est installé sur les ordinateurs des élèves, "
-"il est également possible de contrôler ces ordinateurs. Cela permet par "
-"exemple de verrouiller l'écran, de sorte que, pendant un cours de chimie, "
-"l'attention des étudiants est entièrement tournée vers une expérience."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:246
-#, no-c-format
-msgid ""
-"Außerdem kann der Bildschiminhalt eines PCs auf andere Systeme übertragen "
-"werden. Dies erlaubt es Lehrern, auch ohne einen Beamer Präsentationen "
-"durchzuführen."
-msgstr ""
-"De plus, il est possible de diffuser sur d'autres systèmes les éléments "
-"affichés sur l'écran d'un ordinateur source. Cela permet aux enseignants de faire des "
-"présentations sans nécessiter de vidéoprojecteur."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:252
-#, no-c-format
-msgid "Auswahl eines Computerraums"
-msgstr "Choix d'une salle informatique"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:256
-#, no-c-format
-msgid ""
-"Nach einem Klick auf <guimenu>Computerraum</guimenu> erscheint eine "
-"Auswahlmaske, in der ein Computerraum ausgewählt werden muss."
-msgstr ""
-"Après avoir cliqué sur <guimenu>Salle informatique</guimenu> apparaît "
-"un formulaire de sélection dans lequel vous pouvez choisir une salle "
-"informatique. "
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:260
-#, no-c-format
-msgid ""
-"Wird ein Computerraum aktuell von einem anderen Lehrer betreut, erscheint "
-"ein Hinweis. Ein Klick auf <guimenu>Übernehmen</guimenu> überträgt den "
-"Rechnerraum dann an den gerade angemeldeten Lehrer, wenn z.B. ein anderer "
-"Lehrer die zweite Hälfte einer Doppelstunde betreut."
-msgstr ""
-"Si une salle informatique est actuellement sous la responsabilité d'un "
-"autre enseignant, un message apparaît. Un clic sur <guimenu>Prendre "
-"la main</guimenu> transfère la responsabilité de la salle à l'enseignant "
-"actuellement connecté, par exemple lorsque celui-ci doit prendre en charge "
-"la seconde moitié d'un cours."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:265
-#, no-c-format
-msgid ""
-"Es wird nun eine Liste aller PCs in diesem Computerraum angezeigt. Unter "
-"<guimenu>Name</guimenu> ist der Name des PCs aufgeführt. Bewegt man die Maus "
-"auf einen PC wird zusätzlich ein Feld angezeigt, das zwei Adressen anzeigt, "
-"mit denen der PC im Schulnetz identifiziert werden kann. Diese Informationen "
-"werden ggf. vom Helpdesk abgefragt, haben aber für die Computerverwaltung "
-"keine weitergehende Bedeutung. Neben jedem PC wird ein Kreis angezeigt. Ist "
-"dieser dunkelgrau, ist auf den PCs die Software iTALC installiert (siehe "
-"<xref linkend=\"lehrerdoku:computerraum\"/>), ist der Kreis hellgrau, fehlt "
-"iTALC oder der Rechner ist abgeschaltet."
-msgstr ""
-"Une liste de tous les ordinateurs de cette salle informatique s'affiche "
-"alors. "
-"La colonne <guimenu>Nom</guimenu> répertorie les noms de tous les "
-"ordinateurs. Si vous survolez de la souris le nom d'un ordinateur, un champ "
-"supplémentaire apparaît et affiche deux adresses identifiant l'ordinateur au "
-"sein du réseau de l'école. Ces informations peuvent être demandées par "
-"le centre d'aide mais n'ont pas d'autre signification pour la gestion de "
-"l'ordinateur. "
-"À côté de chaque PC figure un cercle : si celui-ci est de couleur gris "
-"sombre, "
-"cela signifie que le logiciel iTALC est installé sur cette machine (voir "
-"<xref linkend=\"lehrerdoku:computerraum\"/>) ; s'il est de couleur gris "
-"clair, "
-"iTALC est absent ou l'ordinateur est éteint."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:275
-#, no-c-format
-msgid ""
-"Ist iTALC installiert, wird unter <guimenu>Benutzer</guimenu> der Name des "
-"gerade angemeldeten Schülers/Lehrers angezeigt."
-msgstr ""
-"Si iTALC est installé, la colonne <guimenu>Utilisateur</guimenu> affiche "
-"le nom de l'élève ou de l'enseignant actuellement connecté sur cette machine."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:279
-#, no-c-format
-msgid ""
-"Unter <guimenu>mehr</guimenu> können die Schüler-PCs über die Option "
-"<guimenu>Computer einschalten</guimenu> über das Netzwerk eingeschaltet "
-"werden. Die Computer müssen dafür entsprechend konfiguriert worden sein."
-msgstr ""
-"L'onglet <guimenu>plus</guimenu> permet d'allumer les ordinateurs des "
-"élèves à travers le réseau au moyen de l'option <guimenu>Allumer "
-"l'ordinateur</guimenu>. Les ordinateurs doivent préalablement avoir "
-"été configurés pour cela."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:284
-#, no-c-format
-msgid ""
-"Lehrer können benutzerdefinierte Einstellungen für den Computerraum "
-"vornehmen, die unter <guimenu>ändern</guimenu> angepasst werden können. Hier "
-"lassen sich u.a. Regeln für den Internetzugriff auswählen (siehe <xref "
-"linkend=\"admindoku:internetregeln\"/> oder eine lokale Liste erlaubter "
-"Webseiten definieren. Mit den Optionen <guimenu>Freigabezugriff</guimenu> "
-"und <guimenu>Druckmodus</guimenu> kann der Zugriff auf Freigaben und Drucker "
-"unterbunden bzw. erlaubt werden. Die benutzerdefinierten Einschränkungen "
-"werden über das Feld <guimenu>Gültig bis</guimenu> zeitlich eingeschränkt."
-msgstr ""
-"Les enseignants peuvent créer des réglages personnalisés pour la salle "
-"informatique dans l'onglet <guimenu>modifier</guimenu>. Cet onglet "
-"permet notamment de sélectionner les règles d'accès à Internet (voir <xref "
-"linkend=\"admindoku:internetregeln\"/> ou de définir une liste locale de "
-"sites web autorisés. Les options <guimenu>Accès aux partages</guimenu> "
-"et <guimenu>Mode d'impression</guimenu> permettent d'autoriser ou de "
-"bloquer l'accès aux partages et aux imprimantes. Les restrictions définies "
-"par l'enseignant peuvent être limitées dans le temps grâce au champ "
-"<guimenu>Valide jusqu'au</guimenu>."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:295
-#, no-c-format
-msgid "Kontrolle der Schüler-PCs bei Einsatz von iTALC"
-msgstr "Contrôle des ordinateurs des élèves à l'aide d'iTALC"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:296
-#, no-c-format
-msgid ""
-"Die folgenden Möglichkeiten stehen nur zur Verfügung, wenn auf den Schüler-"
-"PCs die Software iTALC installiert ist. Für die Installation der Software "
-"kann der Helpdesk angesprochen werden (siehe <xref linkend=\"lehrerdoku:"
-"helpdesk\"/>)."
-msgstr ""
-"Les options suivantes ne sont disponibles que lorsque le logiciel iTALC est "
-"installé sur les ordinateurs des élèves. Pour installer ce logiciel, vous "
-"pouvez contacter le centre d'aide (voir <xref linkend=\"lehrerdoku:helpdesk\"/>)."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:303
-#, no-c-format
-msgid "Beaufsichtigung eines Computerraums"
-msgstr "Supervision d'une salle informatique"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:307
-#, no-c-format
-msgid ""
-"In der Übersichtsliste der Schüler-PCs steht eine Reihe von Aktionen zur "
-"Verfügung. Bewegt man die Maus über die Schaltfläche <guimenu>Beobachten</"
-"guimenu> eines Eintrags, erscheint eine verkleinerte Ansicht des aktuellen "
-"Schüler-Desktops. Klickt man auf die Schaltfläche, besteht auch die "
-"Möglichkeit diese Ansicht in größerer Form darzustellen. Die Ansicht des "
-"Schüler-Desktops wird fortlaufend aktualisiert."
-msgstr ""
-"Une série d'actions est disponible dans la vue d'ensemble des ordinateurs "
-"des élèves. Si vous déplacez la souris vers le bouton <guimenu>Surveiller</"
-"guimenu> correspondant à un ordinateur, cela fait apparaître une vue "
-"réduite du bureau de l'élève dans son état courant. Si vous cliquez sur ce "
-"bouton, vous pouvez alors afficher cette vue réduite en plein écran. La vue "
-"du bureau de l'élève est rafraîchie continuellement."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:314
-#, no-c-format
-msgid ""
-"Durch Klick auf <guimenu>Bildschirm sperren</guimenu> kann die "
-"Bildschirmanzeige der zuvor markierten Schüler-PCs deaktiviert werden. Auf "
-"den Schüler-PCs wird dann nur ein grauer Hintergrund mit einem Schloss-"
-"Symbol angezeigt (siehe <xref linkend=\"screenlock\"/>). Ein Klick auf "
-"<guimenu>Bildschirm entsperren</guimenu> gibt die ausgewählten Schüler-PCs "
-"wieder frei."
-msgstr ""
-"Un clic sur <guimenu>Verrouiller l'écran</guimenu> permet de désactiver "
-"l'écran de l'ordinateur précédemment sélectionné. L'ordinateur de l'élève "
-"affiche alors uniquement un cadenas sur fond gris (voir <xref "
-"linkend=\"screenlock\"/>). Un clic sur <guimenu>Déverrouiller "
-"l'écran</guimenu> libère à nouveau l'ordinateur de l'élève."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:322
-#, no-c-format
-msgid "Ein gesperrter Bildschirm"
-msgstr "Un écran verrouillé"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:326
-#, no-c-format
-msgid "Unter <guimenu>mehr</guimenu> stehen weitere Aktionen zur Verfügung:"
-msgstr ""
-"L'onglet <guimenu>plus</guimenu> met à votre disposition d'autres actions :"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:331
-#, no-c-format
-msgid ""
-"<guimenu>Benutzer abmelden</guimenu> meldet einen Schüler vom Windows-"
-"Desktop ab."
-msgstr ""
-"<guimenu>Déconnecter l'utilisateur</guimenu> déconnecte l'élève du bureau "
-"Windows."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:336
-#, no-c-format
-msgid ""
-"<guimenu>Computer herunterfahren</guimenu> und <guimenu>Computer neu "
-"starten</guimenu> erlauben das Abschalten, bzw. den Neustart eines Schüler-"
-"PCs."
-msgstr ""
-"<guimenu>Éteindre l'ordinateur</guimenu> et <guimenu>Redémarrer "
-"l'ordinateur</guimenu> permettent respectivement d'éteindre et de "
-"redémarrer l'ordinateur d'un élève."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:342
-#, no-c-format
-msgid ""
-"<guimenu>Computer einschalten</guimenu> ermöglicht das Einschalten von "
-"Schüler-PCs über die Weboberfläche. Dieser Menüpunkt funktioniert nur, wenn "
-"die Hardware der betreffenden Schüler-PCs dies unterstützt und zuvor vom "
-"Administrator entsprechend eingerichtet wurde."
-msgstr ""
-"<guimenu>Allumer l'ordinateur</guimenu> permet d'allumer les ordinateurs "
-"des élèves à travers l'interface web. Cet élément de menu ne fonctionne que "
-"si le matériel des ordinateurs des élèves le permet et a été préalablement "
-"configuré pour cela par l'administrateur."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:349
-#, no-c-format
-msgid ""
-"<guimenu>Eingabegeräte sperren</guimenu> deaktiviert Maus und Tastatur auf "
-"den Schüler-PCs."
-msgstr ""
-"<guimenu>Verrouiller les périphériques d'entrée</guimenu> désactive la souris "
-"et le clavier sur les ordinateurs des élèves."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:355
-#, no-c-format
-msgid ""
-"Die Option <guimenu>Präsentation starten</guimenu> wird in <xref linkend="
-"\"lehrerdoku:computerraum:presentation\"/> beschrieben."
-msgstr ""
-"L'option <guimenu>Démarrer une présentation</guimenu> est "
-"décrite dans <xref linkend=\"lehrerdoku:computerraum:presentation\"/>."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:364
-#, no-c-format
-msgid "Durchführung von Bildschirmpräsentationen"
-msgstr "Conduire une présentation"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:365
-#, no-c-format
-msgid ""
-"Diese Funktion steht ebenfalls nur zur Verfügung, wenn auf den Schüler-PCs "
-"die Software iTALC installiert ist. Sie erlaubt es, den Bildschirminhalt "
-"eines PCs an alle anderen PCs zu übertragen und dort darzustellen. So können "
-"Schüler und Lehrer Präsentationen ohne die Verwendung eines Beamers "
-"durchzuführen."
-msgstr ""
-"Cette fonctionnalité n'est elle aussi disponible que si le logiciel iTALC est "
-"installé sur les ordinateurs des élèves. Elle permet de transmettre le "
-"contenu de l'écran d'un PC vers les écrans de tous les autres ordinateurs. "
-"Ainsi, les élèves et l'enseignant peuvent conduire des présentations sans "
-"avoir besoin d'un vidéoprojecteur."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:371
-#, no-c-format
-msgid ""
-"Wird eine Präsentation durchgeführt, wird auf den PCs des Computerraums, an "
-"denen Schüler angemeldet sind, die Präsentation in Vollbild dargestellt und "
-"Tastatur- und Mauseingaben blockiert. Auf PCs, an denen Lehrer angemeldet "
-"sind, erfolgt die Präsentation in einem separaten Fenster und alle Eingaben "
-"sind wie gewohnt möglich."
-msgstr ""
-"Lorsqu'une présentation a lieu, tous les ordinateurs de la salle informatique "
-"auxquels un élève est connecté affichent la présentation en plein écran, et "
-"la souris et le clavier sont bloqués. Sur les ordinateurs auxquel "
-"l'enseignant est connecté, la présentation se déroule dans une fenêtre séparée et toutes "
-"les entrées sont disponibles comme à l'accoutumée."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:379
-#, no-c-format
-msgid "Start einer Bildschirmpräsentation"
-msgstr "Démarrer une présentation"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:383
-#, no-c-format
-msgid ""
-"Eine Präsentation wird wie folgt gestartet: Unter <guimenu>mehr</guimenu> "
-"muss in der Liste der Rechner die Option <guimenu>Präsentation starten</"
-"guimenu> ausgewählt werden. Es erscheint ein Hinweis, das die Präsentation "
-"gestartet wird und nach kurzer Zeit wird die Ausgabe auf die übrigen PCs "
-"übertragen. Der Kreis des sendenden Rechners wird in rot und für die "
-"empfangenden Rechner in grün dargestellt. Ein Klick auf die Schaltfläche "
-"<guimenu>Präsentation beenden</guimenu> stoppt die Präsentation."
-msgstr ""
-"Pour démarrer une présentation : "
-"dans <guimenu>plus</guimenu>, choisissez l'option "
-"<guimenu>Démarrer une présentation</guimenu> qui apparaît avec la liste "
-"des ordinateurs. Un message apparaît, indiquant que la présentation va "
-"démarrer et d'ici peu être diffusée sur l'ensemble des autres ordinateurs. "
-"Le cercle correspondant à l'ordinateur émetteur passe en rouge tandis que "
-"les cercles des ordinateurs récepteurs passent en vert. Un clic sur le bouton "
-"<guimenu>Terminer la présentation</guimenu> arrête la présentation."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:395
-#, no-c-format
-msgid "Klassenarbeitsmodus"
-msgstr "Mode examen"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:396
-#, no-c-format
-msgid ""
-"Die Anforderungen, die in einer Klassenarbeitssituation an die IT-"
-"Infrastruktur gestellt werden, sind vielfältig und variieren stark je nach "
-"Schulform, Schulfach und Jahrgang. Um das Herstellen einer "
-"Klassenarbeitssituation in einem Computerraum zu vereinfachen, stellt "
-"&ucsUAS; einen speziellen Klassenarbeitsmodus zur Verfügung."
-msgstr ""
-"Les exigences posées à l'infrastructure informatique dans le contexte "
-"d'un examen sont nombreuses et varient selon l'école, la matière et le "
-"niveau de la classe. Pour simplifier la mise en place d'un examen, &ucsUAS; "
-"met à votre disposition un mode examen spécifique."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:402
-#, no-c-format
-msgid ""
-"Der Klassenarbeitsmodus vereint die aus &ucsUAS; bekannten Funktionen, wie z."
-"B. der Materialverteilung, mit schulspezifischen Einstellungen, die durch "
-"den Schuladministrator definiert werden können. Dabei ist zu beachten, dass "
-"vom Klassenarbeitsmodus nur ein bestimmter Rahmen für eine Klassenarbeit "
-"bereitgestellt wird - für die eigentliche Abnahme einer Klassenarbeit/"
-"Prüfung ist gegebenenfalls weitere Software notwendig."
-msgstr ""
-"Le mode examen combine les fonctionnalités bien connues de &ucsUAS;, par "
-"exemple la distribution de contenus, avec les réglages propres à chaque "
-"école, qui peuvent être définis par l'administrateur de l'école. Il convient "
-"de noter que le mode examen ne peut que fournir un cadre pour l'examen, celui-ci "
-"pouvant par ailleurs nécessiter des logiciels supplémentaires."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:408
-#, no-c-format
-msgid "Der Klassenarbeitsmodus umfasst dabei folgende Eigenschaften:"
-msgstr "Le mode examen présente les caractéristiques suivantes :"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:412
-#, no-c-format
-msgid ""
-"Für den Zeitraum der Klassenarbeit wird pro Schüler ein spezielles "
-"Benutzerkonto angelegt. Nur mit diesem speziellen Benutzerkonto kann ein "
-"Schüler an der Klassenarbeit teilnehmen. Der Loginname für das "
-"Klassenarbeitskonto setzt sich aus einem festgelegten Präfix (in der "
-"Standardeinstellung <literal>exam-</literal>) und dem normalen Benutzernamen "
-"zusammen. Somit meldet sich der Benutzer <systemitem class=\"username"
-"\">anton123</systemitem> für die Klassenarbeit als <systemitem class="
-"\"username\">exam-anton123</systemitem> an."
-msgstr ""
-"Un compte utilisateur spécial est créé pour chaque élève pour la durée de "
-"l'examen. Un élève ne peut participer à l'examen qu'à travers ce compte "
-"spécial. Le nom de connexion pour le compte d'examen est constitué d'un "
-"préfixe prédéfini (par défaut, <literal>exam-</literal>), suivi du nom "
-"d'utilisateur habituel. Ainsi, l'utilisateur <systemitem class=\"username"
-"\">anton123</systemitem> se connectera à l'examen avec l'identifiant "
-"<systemitem class=\"username\">exam-anton123</systemitem>."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:420
-#, no-c-format
-msgid ""
-"Für den Zeitraum der Klassenarbeit wird sichergestellt, dass der Zugriff auf "
-"das ursprüngliche Heimatverzeichnis der Schüler nicht möglich ist."
-msgstr ""
-"Pour la durée de l'examen, le système garantit que l'accès au répertoire "
-"personnel de l'élève n'est pas possible."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:425
-#, no-c-format
-msgid ""
-"Zu Beginn der Klassenarbeit ist es möglich, die für die Klassenarbeit "
-"notwendigen Dateien (Aufgaben, Material, ...) anzugeben und direkt an die "
-"Schüler zu verteilen."
-msgstr ""
-"Au début de l'examen, il est possible de distribuer directement aux élèves "
-"des fichiers nécessaires pour l'examen (exercices, documents, etc.)."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:430
-#, no-c-format
-msgid ""
-"Mit dem Ende der Klassenarbeit werden alle Dateien des Klassenarbeitsordners "
-"wieder eingesammelt und nach Schülern sortiert im Heimatverzeichnis des "
-"Lehrers abgelegt."
-msgstr ""
-"À la fin de l'examen, tous les fichiers du répertoire de l'examen sont "
-"rassemblés, classés par élève et déposés dans le répertoire personnel de l'enseignant."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:435
-#, no-c-format
-msgid ""
-"Des Weiteren kann - wie aus dem UMC-Modul <guimenu>Computerraum</guimenu> "
-"bekannt - der Zugang zum Internet sowie zu Datei- und Druck-Freigaben "
-"eingeschränkt werden."
-msgstr ""
-"De surcroît, comme nous l'avons vu avec le module UMC <guimenu>Salle "
-"informatique</guimenu>, l'accès à Internet ainsi qu'aux dossiers partagés "
-"et aux imprimantes peut être restreint."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:441
-#, no-c-format
-msgid ""
-"Im Folgenden werden die einzelnen Schritte zum Erstellen einer Klassenarbeit "
-"kurz beschrieben."
-msgstr ""
-"Nous décrirons brièvement dans ce qui suit les différentes étapes de création "
-"d'un examen."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:445
-#, no-c-format
-msgid "Einrichten einer Klassenarbeit"
-msgstr "Mise en place d'un examen"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:446
-#, no-c-format
-msgid ""
-"Eine neue Klassenarbeit kann über das &ucsUMC;-Modul <guimenu>Klassenarbeit "
-"starten</guimenu> eingerichtet werden. In mehreren Schritten werden alle "
-"Einstellungen für die Klassenarbeit festgelegt."
-msgstr ""
-"Vous pouvez créer un nouvel examen à travers le module &ucsUMC; "
-"<guimenu>Démarrer un examen</guimenu>. Plusieurs étapes permettent "
-"de définir tous les paramètres de l'examen."
-
-#. Tag: listitem
-#: ucsschool-lehrer-handbuch-4.1.xml:451
-#, no-c-format
-msgid ""
-"<simpara> Alle notwendigen Einstellungen werden in den ersten beiden "
-"Schritten angegeben. Dazu ist es notwendig einen Namen für die Klassenarbeit "
-"zu definieren. </simpara> <simpara> Als Endzeit wird das Ende der laufenden "
-"Schulstunde vorgeschlagen, sie kann jedoch nach Belieben angepasst werden. "
-"Für die Klassenarbeit ist die Endzeit nicht verbindlich, sondern wird "
-"lediglich genutzt, um über die verbleibende Zeit zu informieren. Mit "
-"Erreichen der vorgesehenen Endzeit wird ein Erinnerungsdialog im Modul "
-"<guimenu>Computerraum</guimenu> eingeblendet. Die Klassenarbeit kann ohne "
-"weiteres auch über das vorgesehene Ende hinaus weitergeführt werden. </"
-"simpara> <simpara> Über die auf der Seite enthaltenen Auswahlkästchen kann "
-"eingestellt werden, welche weiteren Einstellungsmöglichkeiten in den "
-"nächsten Schritten des Assistenten abgefragt werden. Dazu gehört das "
-"Verteilen von Unterrichtsmaterialien, das Festlegen von Einschränkungen für "
-"den Zugang zum Internet sowie die Zugriffssteuerung auf Freigaben. </simpara>"
-msgstr ""
-"<simpara> Tous les réglages nécessaires sont précisés au cours des deux "
-"premières étapes. Pour cela, il est nécessaire de définir un nom pour "
-"l'examen."
-"</simpara> <simpara>L'heure de fin proposée est l'heure de fin du cours, mais "
-"cela peut être ajusté à volonté. L'heure de fin n'est pas contraignante, elle "
-"sert uniquement à informer du temps restant. Lorsque l'heure de fin prévue est "
-"atteinte, une fenêtre de rappel est affichée dans le module <guimenu>Salle "
-"informatique</guimenu>. L'examen peut néanmoins se poursuivre au delà du "
-"délai imparti sans autre action nécessaire.</simpara> <simpara>Les cases à cocher "
-"figurant sur le côté de la page permettent de définir les éléments de "
-"configuration à faire apparaître dans les étapes suivantes de l'assistant. Cela comprend par "
-"exemple la distribution de documents liés au cours, la définition de restrictions "
-"d'accès à Internet, ainsi que le contrôle de l'accès aux partages.</simpara>"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:467
-#, no-c-format
-msgid ""
-"Im zweiten Schritt muss der Computerraum in dem die Arbeit geschrieben "
-"werden soll sowie mindestens eine teilnehmende Klasse bzw. Arbeitsgruppe "
-"angegeben werden. Falls weitere Einstellungsmöglichkeiten aktiviert wurden, "
-"werden diese auf den folgenden Seiten des Assistenten angezeigt."
-msgstr ""
-"La deuxième étape sert à indiquer la salle informatique où l'examen doit "
-"se tenir ainsi qu'au moins une classe ou un groupe de travail participant à "
-"l'examen. Si d'autres éléments de configuration ont été activés, ceux-ci sont "
-"affichés dans les pages suivantes de l'assistant."
-
-#. Tag: listitem
-#: ucsschool-lehrer-handbuch-4.1.xml:472
-#, no-c-format
-msgid ""
-"<simpara> Im nächsten optionalen Schritt kann ein passender Verzeichnisname "
-"für die Klassenarbeit ausgewählt und alle benötigten Klassenarbeitsdateien "
-"nacheinander hochgeladen werden. Diese Klassenarbeitsdateien werden an alle "
-"teilnehmenden Schüler ausgeteilt; eine Kopie der Originaldateien wird im "
-"Heimatverzeichnis des Lehrers abgelegt, der die Klassenarbeit erstellt hat. "
-"Die Dateien werden im Heimatverzeichnis der Schüler unterhalb des Ordners "
-"<filename>Klassenarbeiten</filename> und dem angegebenen Verzeichnisnamen "
-"abgelegt. </simpara> <simpara> Zu jedem Zeitpunkt der laufenden "
-"Klassenarbeit können die Dateien aus den Heimatverzeichnissen der Schüler "
-"eingesammelt werden. Dabei werden lediglich die Dateien unterhalb des "
-"Klassenarbeitsordners berücksichtigt. Die eingesammelten Dateien werden im "
-"Klassenarbeitsverzeichnis des Lehrer-Heimatverzeichnisses gespeichert. Durch "
-"mehrfaches Einsammeln kann beispielsweise der Arbeitsfortschritt "
-"festgehalten werden. </simpara>"
-msgstr ""
-"<simpara>La prochaine étape facultative permet de sélectionner un nom de "
-"répertoire pour l'examen et à y transférer séquentiellement tous les fichiers "
-"requis pour l'examen. Ces fichiers seront distribués à tous les élèves participant à "
-"l'examen. "
-"Une copie des fichiers originaux est déposée dans le répertoire personnel de "
-"l'enseignant ayant créé l'examen. Les fichiers sont déposés dans les "
-"répertoires personnels des élèves dans un sous-répertoire du répertoire "
-"<filename>Examens</filename> portant le nom associé à l'examen.</simpara> "
-"<simpara> À tout moment de l'examen, les fichiers peuvent être collectés dans "
-"les répertoires personnels des élèves. Dans ce cas, seuls les fichiers qui se trouvent "
-"dans le sous-répertoire dédié à l'examen sont concernés. Les fichiers collectés "
-"sont enregistrés dans le répertoire dédié à l'examen créé dans le répertoire "
-"personnel de l'enseignant. Des collectes répétées au cours de l'examen permettent par "
-"exemple d'estimer l'avancement du travail. </simpara>"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:486
-#, no-c-format
-msgid ""
-"Zuletzt können optional Einschränkungen für den Zugang zum Internet und den "
-"Zugriff auf Freigaben festgelegt werden. Diese Einstellungen können "
-"jederzeit während einer laufenden Klassenarbeit über die Raumeinstellungen "
-"des Moduls <guimenu>Computerraum</guimenu> angepasst werden. Die einzelnen "
-"Einstellungsmöglichkeiten werden auch unter <xref linkend=\"lehrerdoku:"
-"computerraum\"/> beschrieben."
-msgstr ""
-"Enfin, il est possible de définir des restrictions facultatives sur l'accès à "
-"Internet et aux partages. Ces réglages peuvent être ajustés à tout moment de l'examen "
-"en cours au moyen des paramètres de salle du module <guimenu>Salle "
-"informatique</guimenu>. Les possibilités de réglages sont également décrites "
-"à la section <xref linkend=\"lehrerdoku:computerraum\"/>."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:493
-#, no-c-format
-msgid ""
-"Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu> "
-"werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die "
-"Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt."
-msgstr ""
-"Un clic sur le bouton <guimenu>Démarrer l'examen</guimenu> crée les "
-"comptes utilisateurs requis pour l'examen pour chaque élève, distribue les "
-"fichiers relatifs à l'examen et applique les réglages de la salle "
-"informatique."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:498 ucsschool-lehrer-handbuch-4.1.xml:500
-#, no-c-format
-msgid "Neustart der Schülerrechner"
-msgstr "Redémarrer les ordinateurs des élèves"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:503
-#, no-c-format
-msgid ""
-"Um die Einrichtung der Klassenarbeit abzuschließen, ist es wichtig, dass "
-"alle Schülerrechner des Computerraums neu gestartet werden. Nur durch einen "
-"Neustart der betroffenen Rechner können spezifische Berechtigungen und "
-"Rechnerkonfigurationen, die für den Klassenarbeitsmodus vorgesehen sind, "
-"wirksam werden."
-msgstr ""
-"Pour terminer la configuration de l'examen, il est important de redémarrer "
-"tous les ordinateurs des élèves dans la salle informatique. Ce n'est qu'en "
-"redémarrant les ordinateurs concernés que les configurations et autorisations "
-"spécifiques mis en place pour l'examen prendont effet."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:507
-#, no-c-format
-msgid ""
-"Das Klassenarbeitsmodul bietet eine Hilfsfunktion an, so dass dieser Vorgang "
-"weitgehend automatisiert durchgeführt werden kann. Dabei wird eine "
-"Verbindung zu allen eingeschalteten Rechnern aufgebaut und alle "
-"eingeschaltete Rechner werden aufgelistet, wie in <xref linkend=\"fig:"
-"klassenarbeit:neustart\"/> dargestellt. Die aufgelisteten Rechner können "
-"durch Klick auf die Schaltfläche <guimenu>Schülerrechner neustarten</"
-"guimenu> automatisch neu gestartet werden. Rechner, an denen Lehrer "
-"angemeldet sind, werden bei dieser Aktion automatisch ausgelassen. "
-"Voraussetzung hierfür ist, dass die Lehrerbenutzer korrekt erkannt wurden "
-"(siehe auch Spalte <guimenu>Benutzer</guimenu> in der Tabelle). Zusätzlich "
-"können einzelne Rechner ausgewählt und über die Schaltfläche "
-"<guimenu>Ausgewählte Rechner neustarten</guimenu> neu gestartet werden. "
-"Hierbei werden die Rechner ungeachtet des angemeldeten Benutzers (auch bei "
-"Lehrerbenutzern!) neu gestartet."
-msgstr ""
-"Le module d'examen propose une fonctionnalité auxiliaire permettant en grande "
-"partie d'automatiser ce processus. Une connexion est établie vers tous "
-"les ordinateurs allumés et ceux-ci sont répertoriés comme décrit à la section"
-"<xref linkend=\"fig:klassenarbeit:neustart\"/>. Les ordinateurs apparaissant "
-"dans la liste peuvent être redémarrés automatiquement d'un clic sur le bouton "
-"<guimenu>Redémarrer les ordinateurs des élèves</guimenu>. Les ordinateurs "
-"auxquels l'enseignant est connecté sont automatiquement exclus de cette "
-"action. La seule condition à cela est que l'utilisateur soit correctement "
-"identifié en tant qu'enseignant (voir également la colonne "
-"<guimenu>Utilisateur</guimenu> du tableau). Il est également possible de "
-"sélectionner des ordinateurs individuels et de les redémarrer au moyen du "
-"bouton <guimenu>Redémarrer les ordinateurs sélectionnés</guimenu>. "
-"Dans ce cas, l'ordinateur sera redémarré indépendamment de l'utilisateur "
-"qui y est connecté (y compris l'enseignant !)."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:515
-#, no-c-format
-msgid ""
-"Nach der Bestätigung wird der Neustart der Rechner sofort ausgeführt! Es "
-"erfolgt dabei keine Warnung bei angemeldeten Benutzern. Daher können auf "
-"diesen Rechnern ggf. noch nicht gesicherte Daten verloren gehen."
-msgstr ""
-"Les ordinateurs sont redémarrés immédiatement après confirmation ! "
-"Aucun avertissement n'est envoyé aux utilisateurs connectés. Par conséquent, "
-"sur ces ordinateurs, les données non enregistrées seront perdues."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:522
-#, no-c-format
-msgid ""
-"Bitte stellen Sie zusätzlich sicher, dass eingeschaltete Rechner manuell neu "
-"gestartet werden, sollten dies nicht automatisch durchgeführt worden sein."
-msgstr ""
-"Si un ordinateur ne redémarre pas automatiquement, veuillez vous assurer "
-"qu'il peut être redémarré manuellement."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:528
-#, no-c-format
-msgid "Verwaltung und Abschluss der Klassenarbeit"
-msgstr "Gestion et clôture de l'examen"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:530
-#, no-c-format
-msgid ""
-"Verwaltung der Klassenarbeit über das Computerraum-Modul im "
-"Klassenarbeitsmodus"
-msgstr "Gestion d'un examen dans le module Salle informatique en mode examen"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:533
-#, no-c-format
-msgid ""
-"Die Klassenarbeit wird durchgeführt und verwaltet über das &ucsUMC;-Modul "
-"<guimenu>Computerraum</guimenu> (siehe <xref linkend=\"fig:klassenarbeit:"
-"computerraum\"/>). Während einer Klassenarbeit werden in dem Modul "
-"zusätzlich die verbleibende Zeit der Klassenarbeit sowie für diesen Modus "
-"spezifische Aktionen angezeigt. Zwischenergebnisse der Klassenarbeit können "
-"über die Schaltfläche <guimenu>Ergebnisse einsammeln</guimenu> "
-"zusammengetragen werden. Diese Aktion kann beliebig oft durchgeführt werden. "
-"Zum Beenden der Klassenarbeit muss die Schaltfläche <guimenu>Klassenarbeit "
-"beenden</guimenu> ausgewählt werden."
-msgstr ""
-"L'examen se déroule et est géré par l'intermédiaire du module &ucsUMC; "
-"<guimenu>Salle informatique</guimenu> (voir <xref linkend=\"fig:klassenarbeit:"
-"computerraum\"/>). Pendant l'examen, le module affiche le temps restant pour "
-"l'examen ainsi que des actions spécifiques au mode examen. Vous pouvez "
-"collecter les résultats intermédiaires de la classe au moyen du bouton "
-"<guimenu>Collecter les résultats</guimenu>. Vous pouvez réaliser cette "
-"action aussi souvent que souhaité. Pour clore l'examen, cliquez sur le bouton "
-"<guimenu>Conclure l'examen</guimenu>."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:541
-#, no-c-format
-msgid ""
-"Zum Abschluss der Klassenarbeit müssen alle Rechner entweder ausgeschaltet "
-"oder neu gestartet werden, bevor sie für den regulären Schulbetrieb wieder "
-"verwendet werden können. Ein Neustart/Ausschalten setzt die für die "
-"Klassenarbeit spezifischen Einstellungen an den Rechnern wieder zurück."
-msgstr ""
-"Une fois l'examen terminé, tous les ordinateurs doivent être soit éteints, "
-"soit redémarrés, avant de pouvoir être utilisés pour les activités de classe "
-"habituelles. Le redémarrage ou l'extinction rétablit à leurs valeurs "
-"d'origine tous les paramètres modifiés spécialement pour l'examen."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:550
-#, no-c-format
-msgid "Helpdesk kontaktieren"
-msgstr "Contacter le centre d'aide"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:551
-#, no-c-format
-msgid ""
-"Mit dem Helpdeskformular besteht die Möglichkeit mit dem Schul-Support (z.B. "
-"Lehrkraft mit Administrationsrechten an der jeweiligen Schule) in Kontakt zu "
-"treten. Damit kann beispielsweise die Einrichtung einer neuen Arbeitsgruppe "
-"angefordert werden oder ein Hardwareproblem mit einem Computer gemeldet "
-"werden."
-msgstr ""
-"Le formulaire du centre d'aide permet d'entrer en contact avec l'équipe "
-"d'assistance de l'école (par exemple un enseignant possédant les droits "
-"d'administrateur dans l'école en question). Cela vous permet ainsi de "
-"demander la création d'un nouveau groupe de travail ou de signaler un problème "
-"matériel sur un ordinateur."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:559
-#, no-c-format
-msgid "Anfrage an den Helpdesk"
-msgstr "Demande au centre d'aide"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:563
-#, no-c-format
-msgid ""
-"Über das Auswahlfeld <guimenu>Kategorie</guimenu> kann eine Auswahl "
-"getroffen, um welche Art von Anfrage es sich handelt, beispielsweise um eine "
-"Anfrage zu einem Hardwareproblem."
-msgstr ""
-"La liste déroulante <guimenu>Catégorie</guimenu> permet de définir le type "
-"de demande, par exemple une demande relative à un problème matériel."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:567
-#, no-c-format
-msgid ""
-"Die Nachricht kann als freier Fließtext in das Formular eingegeben werden. "
-"Das Formular wird nach dem Absenden automatisch als E-Mail an den Support "
-"gesendet."
-msgstr ""
-"Le message peut être saisi sous forme de texte simple dans le formulaire. "
-"Après envoi, le formulaire est automatiquement transféré sous forme de "
-"courriel à l'équipe d'assistance."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:575
-#, no-c-format
-msgid "Arbeitsgruppen verwalten"
-msgstr "Gérer les groupes de travail"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:576
-#, no-c-format
-msgid ""
-"Jeder Schüler ist Mitglied seiner Klasse. Darüberhinaus gibt es die "
-"Möglichkeit, Schüler und Lehrer in klassenübergreifende Arbeitsgruppen (AGs) "
-"einzuordnen. Dieses Modul erlaubt es, neue Arbeitsgruppen anzulegen, zu "
-"bearbeiten und zu löschen."
-msgstr ""
-"Chaque élève est membre de sa classe. Par ailleurs, il est possible "
-"d'affecter les élèves et les enseignants à des groupes de travail inter-classes. Ce "
-"module permet de créer de nouveaux groupes de travail, de les modifier et de les "
-"supprimer."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:581
-#, no-c-format
-msgid ""
-"Das Anlegen einer Arbeitsgruppe legt automatisch auch einen Datenbereich auf "
-"dem Schulserver (Dateifreigabe) an, auf den alle Mitglieder der "
-"Arbeitsgruppe Zugriff erhalten. Der Name der Dateifreigabe ist identisch mit "
-"dem gewählten Namen der Arbeitsgruppe."
-msgstr ""
-"La création d'un groupe de travail génère automatiquement sur le serveur de "
-"l'école un partage de données auquel tous les membres du groupe ont accès. "
-"Le nom du partage est identique au nom choisi pour le groupe de travail."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:586
-#, no-c-format
-msgid ""
-"Nach einem Klick auf <guimenu>Arbeitsgruppen verwalten</guimenu> wird eine "
-"Liste aller Arbeitsgruppen angezeigt."
-msgstr ""
-"Un clic sur <guimenu>Gérer les groupes de travail</guimenu> affiche la liste "
-"de tous les groupes de travail."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:590
-#, no-c-format
-msgid ""
-"Über das Eingabefeld <guimenu>Suchmuster</guimenu> können die angezeigten "
-"Arbeitsgruppen eingeschränkt werden. Trägt man hier beispielsweise "
-"<userinput>inf</userinput> ein, werden nur Arbeitsgruppen angezeigt, die die "
-"Zeichenkette <literal>inf</literal> enthalten (z.B. die Informatik-AG)."
-msgstr ""
-"Le champ de saisie <guimenu>Motif à rechercher</guimenu> permet d'affiner "
-"la liste des groupes de travail affichés. Si, par exemple, vous saisissez"
-"<userinput>inf</userinput>, seuls les groupes de travail contenant la "
-"chaîne de caractères <literal>inf</literal> demeurent affichés (par exemple "
-"le groupe de travail informatique)."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:596
-#, no-c-format
-msgid ""
-"Eine neue Arbeitsgruppe kann über die Option <guimenu>Arbeitsgruppe "
-"hinzufügen</guimenu> eingerichtet werden. Es muss mindestens der Name der "
-"<guimenu>Arbeitsgruppe</guimenu> eingegeben werden; optional kann eine "
-"<guimenu>Beschreibung</guimenu> hinterlegt werden."
-msgstr ""
-"Vous pouvez mettre en place un nouveau groupe de travail par le biais de "
-"l'option <guimenu>Ajouter un groupe de travail</guimenu>. Vous devez au moins "
-"fournir un nom pour le <guimenu>Groupe de travail</guimenu> ; la "
-"<guimenu>Description</guimenu> est facultative."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:601
-#, no-c-format
-msgid ""
-"Eine bestehende Arbeitsgruppe kann durch Klick auf das Minus-Symbol gelöscht "
-"werden."
-msgstr ""
-"Pour supprimer un groupe de travail existant, cliquez sur l'icône moins."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:606
-#, no-c-format
-msgid "Auswahl einer Arbeitsgruppe"
-msgstr "Sélection d'un groupe de travail"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:610
-#, no-c-format
-msgid ""
-"Ein Klick auf den Namen der Arbeitsgruppe öffnet ein neues Fenster. Der Name "
-"einer bereits bestehenden <guimenu>Arbeitsgruppe</guimenu> kann nachträglich "
-"nicht geändert werden."
-msgstr ""
-"Un clic sur le nom d'un groupe de travail ouvre une nouvelle fenêtre. Le nom "
-"d'un <guimenu>groupe de travail</guimenu> existant ne peut pas être "
-"modifié ultérieurement."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:614
-#, no-c-format
-msgid ""
-"Im Eingabefeld <guimenu>Mitglieder</guimenu> wird eine Liste der Schüler und "
-"Lehrer angezeigt, die Mitglied der Arbeitsgruppe sind. Ein Klick auf "
-"<guimenu>Hinzufügen</guimenu> öffnet einen neuen Dialog."
-msgstr ""
-"Le champ de saisie <guimenu>Membres</guimenu> affiche une liste "
-"des élèves et enseignants membres de ce groupe de travail. Un clic sur "
-"<guimenu>Ajouter</guimenu> ouvre une nouvelle boîte de dialogue."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:621
-#, no-c-format
-msgid "Zuweisen von Schülern zu einer Arbeitsgruppe"
-msgstr "Affectation d'élèves à un groupe de travail"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:625
-#, no-c-format
-msgid ""
-"Es erscheint eine Liste aller Schüler und Lehrer der Schule. Die Liste der "
-"angezeigten Benutzer kann eingeschränkt werden, indem über den Menüpunkt "
-"<guimenu>Benutzergruppe oder Klasse</guimenu> eine Klasse oder AG ausgewählt "
-"wird. Es werden dann nur die Schüler und Lehrer dieser Klasse dargestellt. "
-"Durch Eingabe von Benutzer-, Vor- und/oder Nachname in das Eingabefeld "
-"<guimenu>Name</guimenu> und anschließendem Klick auf <guimenu>Suchen</"
-"guimenu> kann auch gezielt nach einem Benutzer gesucht werden. Die Benutzer, "
-"die zu der Arbeitsgruppe hinzugefügt werden sollen, können durch Aktivieren "
-"des Auswahlkästchens vor dem Benutzernamen markiert werden. Ein Klick auf "
-"<guimenu>Hinzufügen</guimenu> fügt die Benutzer dann der Arbeitsgruppe hinzu."
-msgstr ""
-"Cela affiche une liste de tous les élèves et enseignants de l'école. La liste "
-"des utilisateurs affichés peut être restreinte à une classe ou un groupe de "
-"travail au moyen de la liste déroulante <guimenu>Groupe d'utilisateurs ou "
-"classe</guimenu> : les seuls utilisateurs affichés sont alors les élèves et "
-"enseignants de la classe demandée. Vous pouvez également "
-"chercher un utilisateur particulier en saisissant un nom d'utilisateur, "
-"un nom de famille et / ou un prénom dans le champ de saisie "
-"<guimenu>Nom</guimenu> puis en cliquant sur "
-"<guimenu>Rechercher</guimenu>. Vous pouvez sélectionner les utilisateurs à "
-"ajouter au groupe de travail en cochant la case correspondante devant le nom "
-"de l'utilisateur. Un clic sur <guimenu>Ajouter</guimenu> met l'utilisateur "
-"dans le groupe de travail."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:635
-#, no-c-format
-msgid ""
-"Benutzer können aus der Arbeitsgruppe entfernt werden, indem das "
-"Auswahlkästchens vor dem zu entfernenden Benutzer aktiviert und und "
-"anschließend auf <guimenu>Entfernen</guimenu> geklickt wird."
-msgstr ""
-"Vous pouvez également retirer un utilisateur d'un groupe de travail en "
-"cochant la case correspondant à l'utilisateur à retirer, puis en cliquant "
-"sur le bouton <guimenu>Supprimer</guimenu>."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:644
-#, no-c-format
-msgid "Drucker moderieren"
-msgstr "Superviser l'imprimante"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:645
-#, no-c-format
-msgid ""
-"Mit dieser Funktion können Ausdrucke der Schüler geprüft werden. Die "
-"anstehenden Druckaufträge können vom Lehrer betrachtet und entweder "
-"verworfen oder an den Drucker weitergereicht werden. Dadurch können unnötige "
-"oder fehlerhafte Ausdrucke vermieden werden."
-msgstr ""
-"Cette fonctionnalité permet de vérifier les impressions des élèves. Les tâches "
-"d'impression en attente peuvent être contrôlées par l'enseignant et être "
-"soit rejetées, soit transmises à l'imprimante. Cela permet d'éviter les "
-"impressions superflues ou erronées."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:652
-#, no-c-format
-msgid "Moderation von Druckaufträgen"
-msgstr "Modération des tâches d'impression"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:659
-#, no-c-format
-msgid ""
-"Die Moderationsfunktion kann über <guimenu>Drucker moderieren</guimenu> "
-"aufgerufen werden."
-msgstr ""
-"Vous pouvez appeler la fonctionnalité de modération par le biais de "
-"<guimenu>Modérer l'imprimante</guimenu> "
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:665
-#, no-c-format
-msgid ""
-"Es erscheint eine Liste mit anstehenden Druckaufträge. Die Liste der Schüler "
-"kann eingeschränkt werden, indem über den Menüpunkt <guimenu>Klasse oder "
-"Arbeitsgruppe</guimenu> eine Klasse oder AG ausgewählt wird. Es werden dann "
-"nur die Schüler dieser Klasse dargestellt."
-msgstr ""
-"Une liste des tâches d'impression en attente apparaît alors. Vous pouvez "
-"restreindre la liste des élèves à une classe ou un groupe de travail donnés "
-"au moyen de la liste déroulante <guimenu>Classe ou groupe de "
-"travail</guimenu>. Seuls les élèves de cette classe sont alors affichés."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:672
-#, no-c-format
-msgid ""
-"Jeder Druckauftrag wird in einer Zeile dargestellt. In der Spalte "
-"<guimenu>Druckauftrag</guimenu> wird der Dateiname der ausgedruckten Datei "
-"angezeigt, außerdem die Seitenanzahl und das Datum des Druckauftrags."
-msgstr ""
-"Chaque tâche d'impression est présentée sur une seule ligne. La colonne <"
-"guimenu>Tâche d'impression</guimenu> contient le nom du fichier à "
-"imprimer, en plus du nombre de pages et de la date de la tâche d'impression."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:678
-#, no-c-format
-msgid "Auswahl des Druckers nach Freigabe des Druckauftrags"
-msgstr "Sélection de l'imprimante après avoir accepté une tâche d'impression"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:684
-#, no-c-format
-msgid ""
-"Mit <guimenu>Betrachten</guimenu> kann der Druckauftrag angezeigt werden. "
-"Wenn alles in Ordnung ist, kann der Ausdruck mit <guimenu>Drucken</guimenu> "
-"an den tatsächlichen Drucker weitergeleitet werden. In dem folgenden Dialog "
-"kann dann ein Drucker ausgewählt werden. Alternativ kann der Druckauftrag "
-"mit <guimenu>Löschen</guimenu> entfernt werden."
-msgstr ""
-"<guimenu>Inspecter</guimenu> permet d'afficher la tâche d'impression. Si tout "
-"est en ordre, la tâche peut être transmise à une imprimante physique au moyen "
-"du bouton <guimenu>Imprimer</guimenu>. La boîte de dialogue suivante permet "
-"de sélectionner l'imprimante. Sinon, vous pouvez supprimer la tâche "
-"d'impression au moyen du bouton <guimenu>Effacer</guimenu>."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:697
-#, no-c-format
-msgid "Materialien verteilen"
-msgstr "Distribuer des documents"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:698
-#, no-c-format
-msgid ""
-"Diese Funktion vereinfacht das Verteilen und Einsammeln von "
-"Unterrichtsmaterial an Klassen oder Arbeitsgruppen. Optional kann eine Frist "
-"festgelegt werden. So ist es möglich, Aufgaben zu verteilen, die bis zum "
-"Ende der Unterrichtsstunde zu bearbeiten sind. Nach Ablauf der Frist werden "
-"die verteilten Materialien dann automatisch wieder eingesammelt und im "
-"Heimatverzeichnis des Lehrers abgelegt."
-msgstr ""
-"Cette fonctionnalité simplifie le partage et la collecte de matériel "
-"pédagogique auprès d'une classe ou d'un groupe de travail. Un délai peut aussi être "
-"défini, le cas échéant. Il est donc possible, par exemple, de partager des exercices à "
-"résoudre avant la fin du cours. À l'expiration du délai imparti, les "
-"documents distribués sont automatiquement collectés et déposés dans le répertoire "
-"personnel de l'enseignant."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:705
-#, no-c-format
-msgid ""
-"Die für eine solche Verteilung notwendigen Informationen werden als "
-"<emphasis>Projekt</emphasis> bezeichnet."
-msgstr ""
-"Les informations requises pour distribuer des documents ainsi "
-"sont désignées par le terme de <emphasis>Projet</emphasis>."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:709
-#, no-c-format
-msgid "Ein mögliches Beispielszenario:"
-msgstr "Un exemple de scénario possible :"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:712
-#, no-c-format
-msgid ""
-"Die Schüler des Mathematikunterrichts sollen bis zur nächste "
-"Unterrichtsstunde (ein paar Tage später) ein Dokument bearbeiten. Dafür "
-"erstellt die Lehrkraft ein neues Projekt und lädt das zu verteilende "
-"Dokument in die Materialverteilung hoch. Als Frist wird der Startzeitpunkt "
-"der nächsten Unterrichtsstunde angegeben. Mit dem Erstellen des Projektes "
-"wird das Dokument automatisch in die Heimatverzeichnisse der Schüler "
-"verteilt. Die Schüler bearbeiten das Dokument bis zur nächsten "
-"Unterrichtsstunde (z.B. im Unterricht oder in Freistunden). Zum festgelegten "
-"Abgabezeitpunkt wird das Dokument automatisiert eingesammelt. Dazu wird das "
-"Dokument aus den Heimatverzeichnissen der Schüler in das Heimatverzeichnis "
-"der Lehrkraft kopiert und steht anschließend der Lehrkraft zur Durchsicht "
-"zur Verfügung."
-msgstr ""
-"Les élèves du cours de mathématiques doivent travailler sur un document "
-"d'ici le prochain cours (quelques jours plus tard). Pour ce faire, "
-"l'enseignant crée un nouveau projet et télécharge le document à partager vers le "
-"système de distribution de documents. La date et l'heure limites sont fixées "
-"au début du cours suivant. Lorsque le projet est effectivement créé, le "
-"document est automatiquement déposé dans le répertoire personnel de chaque élève. "
-"Les élèves travaillent sur le document d'ici le cours suivant (par exemple "
-"pendant le cours ou leur temps libre). À l'heure limite indiquée, le document est "
-"collecté automatiquement : le document est copié du répertoire personnel "
-"de chaque élève vers le répertoire personnel de l'enseignant, où il est à la "
-"disposition de l'enseignant pour correction."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:725
-#, no-c-format
-msgid "Verwaltung von Projekten"
-msgstr "Gestion des projets"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:726
-#, no-c-format
-msgid ""
-"Die Funktion kann über das Modul <guimenu>Materialien verteilen</guimenu> "
-"erreicht werden. Hier findet sich eine Liste aller bestehenden Projekte. Das "
-"Anlegen weiterer Projekte ist in <xref linkend=\"lehrerdoku:material:"
-"addproject\"/> beschrieben."
-msgstr ""
-"Vous pouvez accéder à cette fonctionnalité par le biais du module "
-"<guimenu>Distribuer des documents</guimenu>. Vous y trouverez "
-"une liste de tous les projets existants. La création de nouveaux projets "
-"est décrite à la section <xref linkend=\"lehrerdoku:material:addproject\"/>."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:733
-#, no-c-format
-msgid "Liste von Materialverteilungsprojekten"
-msgstr "Liste des projets de distribution de documents"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:737
-#, no-c-format
-msgid ""
-"Im Hauptmenü ist eine Liste aller Projekte zu sehen. Jedes Projekt ist einem "
-"Lehrer zugeordnet, der unter <guimenu>Eigentümer</guimenu> angezeigt wird. "
-"Über die Option <mousebutton>Übernehmen</mousebutton> kann ein anderer "
-"Lehrer das Projekt übernehmen. Bestehende Projekte können außerdem "
-"bearbeitet oder gelöscht werden."
-msgstr ""
-"Le menu principal comporte la liste de tous les projets visibles. Chaque "
-"projet est associé à un enseignant qui apparaît sous <guimenu>Propriétaire</guimenu> "
-"L'option <mousebutton>Prendre en charge</mousebutton> permet de confier "
-"le projet à un autre enseignant. Les projets existants peuvent également être "
-"modifiés ou supprimés."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:743
-#, no-c-format
-msgid ""
-"Das <mousebutton>Einsammeln</mousebutton> von Dateien ist in <xref linkend="
-"\"lehrerdoku:material:einsammeln\"/> beschrieben."
-msgstr ""
-"La <mousebutton>collecte</mousebutton> des fichiers est décrite dans "
-"<xref linkend=\"lehrerdoku:material:einsammeln\"/>."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:750
-#, no-c-format
-msgid "Neues Projekt erstellen"
-msgstr "Créer un nouveau projet"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:751
-#, no-c-format
-msgid ""
-"In der unteren Bildzeile findet sich die Option <guimenu>Projekt hinzufügen</"
-"guimenu>, mit der ein neues Projekt registriert werden kann."
-msgstr ""
-"Dans la ligne inférieure se trouve l'option <guimenu>Ajouter un projet</"
-"guimenu> permettant d'enregistrer un nouveau projet."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:757
-#, no-c-format
-msgid "Erstellen eines Materialverteilungsprojekts"
-msgstr "Création d'un projet de distribution de documents"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:764
-#, no-c-format
-msgid ""
-"Als <guimenu>Beschreibung</guimenu> muss ein Projektname eingetragen werden, "
-"z.B. <emphasis>Klassenarbeit Mathematik</emphasis>. Der Verzeichnisname legt "
-"fest, wo die Daten abgelegt werden."
-msgstr ""
-"Un nom de projet doit être saisi comme <guimenu>Description</guimenu>, "
-"par exemple <emphasis>Devoir de mathématiques</emphasis>. Le nom du "
-"répertoire détermine où les données seront déposées."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:771
-#, no-c-format
-msgid ""
-"Das Feld <guimenu>Verteilen der Projektdateien</guimenu> erlaubt die "
-"Automatisierung des Verteilens von Projektdaten. In der Grundeinstellung "
-"<guimenu>Manuelles Verteilen</guimenu> wird die Verteilung der "
-"Projektdateien durch den Lehrer manuell ausgelöst. Durch Auswahl von "
-"<guimenu>Automatisches Austeilen</guimenu> kann auch ein fester Zeitpunkt "
-"definiert werden, zu dem die Dateien in die Heimatverzeichnisse der Schüler "
-"kopiert werden. Dieser Zeitpunkt kann über die Auswahlfelder "
-"<guimenu>Verteilungsdatum</guimenu> und <guimenu>Verteilungszeit</guimenu> "
-"vorgegeben werden."
-msgstr ""
-"Le champ <guimenu>Distribuer les fichiers du projet</guimenu> permet "
-"d'automatiser la distribution des données relatives au projet. Dans la "
-"configuration par défaut <guimenu>Distribution manuelle</guimenu>, "
-"la distribution des fichiers du projet est déclenchée manuellement par "
-"l'enseignant. Si vous choisissez l'option <guimenu>Distribution "
-"automatique</guimenu>, vous pouvez aussi définir une date et une heure "
-"auxquelles copier les fichiers dans le répertoire personnel des élèves. Vous "
-"pouvez indiquer ces paramètres dans les champs <guimenu>Date de "
-"distribution</guimenu> et <guimenu>Heure de distribution</guimenu>."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:781
-#, no-c-format
-msgid ""
-"Analog zu der automatischen Verteilung können Projektdateien auch im "
-"Auswahlfeld <guimenu>Einsammeln der Projektdateien</guimenu> manuell oder "
-"automatisch eingesammelt werden."
-msgstr ""
-"De manière analogue à la distribution automatique, les fichiers d'un projet "
-"peuvent aussi être collectés de façon manuelle ou automatique via l'option "
-"<guimenu>Collecte des fichiers du projet</guimenu>."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:787
-#, no-c-format
-msgid ""
-"Unter <guimenu>Mitglieder</guimenu> können mit <guimenu>Hinzufügen</guimenu> "
-"einzelne Klassen oder Arbeitsgemeinschaften zugeordnet werden, bzw. mit "
-"<guimenu>Entfernen</guimenu> wieder entfernt werden."
-msgstr ""
-"La section <guimenu>Membres</guimenu> vous permet "
-"d'<guimenu>Ajouter</guimenu> des classes ou des groupes de travail au "
-"projet, ou bien de les en <guimenu>Supprimer</guimenu>."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:794
-#, no-c-format
-msgid ""
-"Im Untermenü <guimenu>Dateien</guimenu> werden die zu verteilenden Dokumente "
-"ausgewählt. Ein Klick auf <guimenu>Hochladen</guimenu> öffnet ein Fenster, "
-"mit dem eine Datei ausgewählt werden kann. Mit <guimenu>Entfernen</guimenu> "
-"können Dateien wieder abgewählt werden."
-msgstr ""
-"La section <guimenu>Fichiers</guimenu> vous permet de sélectionner les "
-"documents à distribuer. Un clic sur le bouton <guimenu>Transférer</guimenu> "
-"ouvre une nouvelle fenêtre dans laquelle vous pouvez choisir un fichier. Le "
-"bouton <guimenu>Supprimer</guimenu> vous permet de retirer des fichiers."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:801
-#, no-c-format
-msgid ""
-"Ein Klick auf <guimenu>Projekt erstellen</guimenu> schließt das Anlegen "
-"eines Projekts ab."
-msgstr ""
-"Un clic sur <guimenu>Créer le projet</guimenu> confirme la création d'un "
-"projet."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:812
-#, no-c-format
-msgid "Einsammeln der verteilten Dokumente"
-msgstr "Collecte des documents distribués"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:813
-#, no-c-format
-msgid ""
-"Die nachfolgende Beschreibung gibt einen Überblick über das manuelle "
-"Einsammeln der Dokumente eines bestehenden Verteilungsprojekts. Es wird "
-"durch einen Klick auf <guimenu>einsammeln</guimenu> in der Liste der "
-"Materialverteilungsliste gestartet."
-msgstr ""
-"La description qui suit donne un aperçu de la collecte manuelle de documents "
-"associés à un projet de distribution existant. L'opération est déclenchée en "
-"cliquant sur <guimenu>collecter</guimenu> dans la liste des projets de "
-"distribution de documents."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:820
-#, no-c-format
-msgid "Einsammeln eines Materialverteilungsprojekts"
-msgstr "Collecte d'un projet de distribution de documents"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:824
-#, no-c-format
-msgid ""
-"Die eingesammelten Dateien werden im Heimatverzeichnis der Lehrkraft "
-"abgelegt, die das Verteilungsprojekt erstellt hat. Dies erfolgt unabhängig "
-"davon, welche Lehrkraft das Einsammeln der Dateien auslöst! Die Dateien "
-"befinden sich im Verzeichnis <emphasis>Unterrichtsmaterial</emphasis> "
-"unterhalb des persönlichen Heimatverzeichnisses des Lehrkraft. Für jedes "
-"Verteilungsprojekt wird ein eigenes Verzeichnis angelegt, das den Namen des "
-"Verteilungsprojektes trägt. Unterhalb dieses Verzeichnisses wird für jeden "
-"Schüler ein Verzeichnis angelegt, das die eingesammelten Dateien des "
-"Schülers enthält, so dass eine nachträgliche Zuordnung leicht möglich ist."
-msgstr ""
-"Les fichiers collectés sont déposés dans le répertoire personnel de "
-"l'enseignant ayant créé le projet de distribution et ce, quel que soit"
-"l'enseignant qui lance la collecte de fichiers ! Les fichiers sont déposés "
-"dans le répertoire <emphasis>Matériel pédagogique</emphasis> "
-"du répertoire personnel de l'enseignant. Un répertoire individuel portant le "
-"nom du projet est créé pour chaque projet de distribution. Dans ce "
-"répertoire, un répertoire est créé pour chaque élève et contient les fichiers collectés "
-"de l'élève en question, de sorte qu'il toujours facile d'identifier l'élève par "
-"la suite."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:838
-#, no-c-format
-msgid "Verwaltungsfunktionen für Schuladministratoren"
-msgstr "Fonctionnalités de gestion pour les administrateurs de l'école"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:840
-#, no-c-format
-msgid "Passwörter (Lehrer)"
-msgstr "Mots de passe (enseignants)"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:841
-#, no-c-format
-msgid ""
-"Dieses Modul erlaubt Schuladministratoren das Zurücksetzen von Lehrer-"
-"Passwörtern. Die bestehenden Passwörter können aus Sicherheitsgründen nicht "
-"ausgelesen werden; wird ein Passwort vergessen, muss ein neues Passwort "
-"vergeben werden."
-msgstr ""
-"Ce module permet aux administrateurs de l'école de réinitialiser les mots de "
-"passe des enseignants. Pour des raisons de sécurité, les mots de passe "
-"existants ne peuvent pas être récupérés ; lorsqu'un enseignant oublie son "
-"mot de passe, un nouveau mot de passe doit être fourni."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:846
-#, no-c-format
-msgid ""
-"Die Bedienung erfolgt analog zum in <xref linkend=\"lehrerdoku:"
-"schuelerpasswort\"/> beschriebene Zurücksetzen von Passwörtern für Schüler."
-msgstr ""
-"Le fonctionnement est analogue à celui décrit à la section "
-"<xref linkend=\"lehrerdoku:schuelerpasswort\"/> concernant les mots de passe "
-"des élèves."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:853
-#, no-c-format
-msgid "Computerräume verwalten"
-msgstr "Gérer les salles informatiques"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:854
-#, no-c-format
-msgid ""
-"Mit der Funktion <guimenu>Computerräume verwalten</guimenu> werden Computer "
-"einer Schule einem Computerraum zugeordnet. Diese Computerräume können von "
-"den Lehrern dann zentral verwaltet werden, etwa indem der Internetzugang "
-"freigegeben wird."
-msgstr ""
-"La fonctionnalité <guimenu>Gérer les salles informatiques</guimenu> permet "
-"d'affecter les ordinateurs d'une école à une salle informatique. Ces salles "
-"informatiques peuvent alors être gérées de manière centralisée par les "
-"enseignants lorsque l'accès à Internet est activé."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:861
-#, no-c-format
-msgid "Verwaltung von Computerräumen"
-msgstr "Gestion des salles informatiques"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:865
-#, no-c-format
-msgid ""
-"Mit <guimenu>Raum hinzufügen</guimenu> kann ein neuer Computerraum definiert "
-"werden. Neben einem <guimenu>Namen</guimenu> kann auch eine weiterführende "
-"<guimenu>Beschreibung</guimenu> angegeben werden."
-msgstr ""
-"<guimenu>Ajouter une salle</guimenu> permet de définir une nouvelle "
-"salle informatique. Outre un <guimenu>Nom</guimenu>, vous pouvez également "
-"indiquer une <guimenu>Description</guimenu>."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:870
-#, no-c-format
-msgid ""
-"Mit der Option <guimenu>Computer in dem Raum</guimenu> können dem Raum "
-"Computer zugewiesen werden. In der Auswahlliste werden nur Rechner "
-"angezeigt, die von den technischen Betreuern registriert sind. Fehlen in der "
-"Liste Computer, sollte dies an den Helpdesk gemeldet werden."
-msgstr ""
-"L'option <guimenu>Ordinateurs de la salle</guimenu> permet d'affecter des "
-"ordinateurs à la salle. La liste déroulante ne comporte que des ordinateurs "
-"enregistrés par le personnel technique. Si un ordinateur est absent de la "
-"liste, cela doit être signalé au centre d'aide."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:877
-#, no-c-format
-msgid "Zuweisen von Computern zu einem Computerraum"
-msgstr "Affectation d'ordinateurs à une salle informatique"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:881
-#, no-c-format
-msgid ""
-"Bereits angelegte Computerräume können auch nachträglich über das jeweilige "
-"Icon bearbeitet oder gelöscht werden."
-msgstr ""
-"Les salles informatiques existantes peuvent également être modifiées "
-"ou supprimées ultérieurement au moyen des icônes idoines."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:888
-#, no-c-format
-msgid "Unterrichtszeiten"
-msgstr "Horaires de cours"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:889
-#, no-c-format
-msgid ""
-"Die Funktion <guimenu>Unterrichtszeiten</guimenu> erlaubt es, die Zeiträume "
-"der jeweiligen Schulstunden pro Schule zu definieren. So kann beispielsweise "
-"der Internetzugang pro Schulstunde freigegeben werden."
-msgstr ""
-"La fonctionnalité <guimenu>Horaires de cours</guimenu> permet de définir les plages "
-"horaires de chaque cours, pour chaque école. Vous pouvez ainsi autoriser "
-"l'accès à Internet en fonction des cours concernés."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:896
-#, no-c-format
-msgid "Festlegung der Unterrichtszeiten"
-msgstr "Définition des horaires de cours"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:900
-#, no-c-format
-msgid ""
-"Es wird empfohlen das Ende der Schulstunden inkl. der Pausen bis kurz vor "
-"Beginn der nächsten Schulstunde anzugeben, da die Unterrichtszeiten als "
-"Vorgabe für die raumbezogenen Einstellungen verwendet werden und damit z.B. "
-"der Internetzugang nicht direkt mit der Pausenglocke deaktiviert wird."
-msgstr ""
-"Il est recommandé de repousser la fin des heures de cours y compris les pauses "
-"au plus proche du début de l'heure de cours suivante, car les horaires de "
-"cours sont utilisés comme modèle pour les réglages relatifs aux salles. Ainsi, vous "
-"évitez de désactiver l'accès à Internet immédiatement lorsque la cloche de la "
-"pause sonne."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:909
-#, no-c-format
-msgid "Lehrer Klassen zuordnen"
-msgstr "Affecter des enseignants aux classes"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:910
-#, no-c-format
-msgid ""
-"Für jede Klasse gibt es einen gemeinsamen Datenbereich. Damit Lehrer auf "
-"diesen Datenbereich zugreifen können, müssen sie der Klasse zugewiesen "
-"werden und somit Mitglied der Klasse werden."
-msgstr ""
-"Pour chaque classe, il existe un domaine de données commun. Pour que "
-"les enseignants puissent accéder à ce domaine de données, ils doivent "
-"être affectés à une classe et ainsi devenir membres de la classe."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:916
-#, no-c-format
-msgid "Liste der Klassen einer Schule"
-msgstr "Liste des classes d'une école"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:920
-#, no-c-format
-msgid ""
-"Die Zuweisung kann über zwei Module erfolgen: <guimenu>Lehrer zuordnen</"
-"guimenu> und <guimenu>Klassen zuordnen</guimenu>."
-msgstr ""
-"L'affectation peut se faire par le biais de deux modules : <guimenu>Affecter "
-"un enseignant</guimenu> et <guimenu>Affecter une classe</guimenu>."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:923
-#, no-c-format
-msgid ""
-"Das Modul <guimenu>Lehrer zuordnen</guimenu> erlaubt es, einer ausgewählten "
-"Klasse mehrere Lehrer zuzuordnen. Nach dem Öffnen des Moduls wird eine Liste "
-"von Klassen angezeigt. Nach der Auswahl einer Klasse und einem Klick auf "
-"<guimenu>Bearbeiten</guimenu> wird eine Auswahlliste angezeigt, in der "
-"Lehrer hinzugefügt oder entfernt werden können. Dieses Modul wird "
-"üblicherweise nach der Einrichtung neuer Klassen verwendet, um ihnen "
-"erstmals die entsprechenden Lehrer zuzuordnen."
-msgstr ""
-"Le module <guimenu>Affecter un enseignant</guimenu> permet d'affecter "
-"un certain nombre d'enseignants à une classe donnée. Une fois le module "
-"ouvert, vous accédez à une liste des classes. Après avoir choisi une classe "
-"et cliqué sur <guimenu>Modifier</guimenu>, une liste déroulante vous permet "
-"d'ajouter ou de retirer des enseignants. Ce module est habituellement utilisé "
-"après avoir créé de nouvelles classes, pour l'affectation initiale des "
-"enseignants correspondants."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:929
-#, no-c-format
-msgid ""
-"Daneben erlaubt das Modul <guimenu>Klassen zuordnen</guimenu>, einen "
-"bestimmten Lehrer zu mehreren Klassen hinzuzufügen. Nach dem Öffnen des "
-"Moduls wird eine Liste von Lehrern angezeigt. Nach der Auswahl eines Lehrers "
-"und einem Klick auf <guimenu>Bearbeiten</guimenu> wird eine Auswahlliste "
-"angezeigt, in der Klassen hinzugefügt oder entfernt werden können. Dieses "
-"Modul wird üblicherweise nach einem Neuzugang im Kollegium verwendet, um den "
-"neuen Lehrer seinen Klassen zuzuweisen."
-msgstr ""
-"Par ailleurs, le module <guimenu>Affecter une classe</guimenu> permet "
-"d'associer un enseignant donné à plusieurs classes. Une fois le module "
-"ouvert, vous accédez à une liste des enseignants. Après avoir choisi un "
-"enseignant et cliqué sur <guimenu>Modifier</guimenu>, une liste "
-"déroulante vous permet d'ajouter ou de retirer des classes. Ce module "
-"est habituellement utilisé à l'arrivée d'un nouvel enseignant pour "
-"l'affecter à ses classes."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:937
-#, no-c-format
-msgid "Zuweisen von Lehrern zu einer Klasse"
-msgstr "Affectation d'enseignants à une classe"
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:945
-#, no-c-format
-msgid "Internetregeln definieren"
-msgstr "Définir des règles d'accès à Internet"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:946
-#, no-c-format
-msgid ""
-"Für die Filterung des Internetzugriffs wird ein sogenannter Proxy "
-"eingesetzt. Es handelt sich dabei um einen Server, der vor jedem Abruf einer "
-"Internetseite prüft, ob der Zugriff auf diese Seite erlaubt ist. Ist das "
-"nicht der Fall, wird eine Informationsseite angezeigt."
-msgstr ""
-"Pour le filtrage de l'accès à Internet, on utilise un système appelé "
-"serveur mandataire (proxy). Il s'agit d'un serveur qui, à chaque demande "
-"de consultation d'une page web, vérifie si l'accès à cette page est autorisé. "
-"Si ce n'est pas le cas, une page d'information est affichée."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:951
-#, no-c-format
-msgid ""
-"Wenn Schüler beispielsweise in einer Schulstunde in der Wikipedia "
-"recherchieren sollen, kann eine Regelliste definiert werden, die Zugriffe "
-"auf alle anderen Internetseiten unterbindet. Diese Regelliste kann dann vom "
-"Lehrer zugewiesen werden."
-msgstr ""
-"Si les élèves doivent par exemple effectuer des recherches, dans le cadre "
-"d'un cours, sur le site Wikipedia, une liste de règles peut être établie pour "
-"interdire l'accès à tout autre site. Cette liste de règles peut alors être "
-"appliquée par l'enseignant."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:956
-#, no-c-format
-msgid ""
-"Wird die Regel für eine Klasse oder Arbeitsgruppe definiert, betrifft dies "
-"auch die in der Klasse enthaltenen Lehrer. Für Lehrer kann ggf. eine Regel "
-"mit höherer Priorität zugewiesen werden (s.u.)."
-msgstr ""
-"Si la règle est définie pour une classe ou un groupe de travail, elle "
-"s'applique également aux enseignants faisant partie de la classe. Toutefois, "
-"une règle définissant une priorité plus élevée peut être appliquée aux "
-"enseignants (voir ci-dessous)."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:961
-#, no-c-format
-msgid ""
-"Mit der Funktion <guimenu>Internetregeln definieren</guimenu> können die "
-"Regeln verwaltet werden."
-msgstr ""
-"La fonctionnalité <guimenu>Définir des règles d'accès à Internet</guimenu> "
-"permet de gérer les règles de filtrage."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:965
-#, no-c-format
-msgid ""
-"In der Grundeinstellung sind schon zwei Regeln vordefiniert; <emphasis>Kein "
-"Internet</emphasis> deaktiviert den Internetzugang generell und "
-"<emphasis>Unbeschränkt</emphasis> erlaubt vollständigen Zugriff."
-msgstr ""
-"Deux règles sont pré-définies par défaut : <emphasis>Aucun accès à "
-"Internet</emphasis> désactive totalement l'accès à Internet, et "
-"<emphasis>Sans restriction</emphasis> permet un accès total."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:972
-#, no-c-format
-msgid "Verwaltung von Internetregeln"
-msgstr "Gestion des règles d'accès à Internet"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:976
-#, no-c-format
-msgid ""
-"Mit <guimenu>Regel hinzufügen</guimenu> kann eine neue Filterregel definiert "
-"werden. Zuerst ist ein <guimenu>Name</guimenu> einzugeben. Als "
-"<guimenu>Regeltyp</guimenu> werden zwei Arten von Filterregeln unterschieden:"
-msgstr ""
-"<guimenu>Ajouter une règle</guimenu> permet de définir une nouvelle règle "
-"de filtrage. Il faut d'abord d'indiquer un <guimenu>Nom</guimenu>. "
-"Le <guimenu>Type de règle</guimenu> permet de différencier deux types de "
-"règles :"
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:983
-#, no-c-format
-msgid ""
-"Bei einer <emphasis>Freigabeliste</emphasis> sind nur vordefinierte Seiten "
-"aufrufbar und alle anderen Seiten gesperrt."
-msgstr ""
-"Une <emphasis>liste d'autorisations</emphasis> contient une liste prédéfinie "
-"de sites dont la consultation est autorisée. Tout autre site est bloqué."
-
-#. Tag: simpara
-#: ucsschool-lehrer-handbuch-4.1.xml:989
-#, no-c-format
-msgid ""
-"Bei einer <emphasis>Sperrliste</emphasis> sind bis auf die gesperrten Seiten "
-"alle anderen Seiten aufrufbar."
-msgstr ""
-"Avec une <emphasis>liste de blocage</emphasis>, tout site peut être consulté, "
-"à l'exception de ceux qui sont bloqués."
-
-#. Tag: title
-#: ucsschool-lehrer-handbuch-4.1.xml:997
-#, no-c-format
-msgid "Anlegen einer Whitelist für Wikipedia"
-msgstr "Créer une liste blanche pour Wikipedia"
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:1001
-#, no-c-format
-msgid ""
-"Unter <guimenu>Internet-Domänen</guimenu> kann eine Liste von Adressen "
-"angegeben werden, z.B. <uri>wikipedia.org</uri> oder <uri>facebook.com</"
-"uri>. Es wird empfohlen nur den Domänenanteil einer Adresse anzugeben, also "
-"statt <uri>www.wikipedia.org</uri> nur <uri>wikipedia.org</uri>."
-msgstr ""
-"Vous pouvez donner dans <guimenu>Domaines Internet</guimenu> une "
-"liste d'adresses, par exemple <uri>wikipedia.org</uri> ou <uri>facebook.com</"
-"uri>. Il est recommandé de ne fournir que la partie du domaine de l'adresse, "
-"par exemple seulement <uri>wikipedia.org</uri> et non <uri>www.wikipedia.org</uri>"
-"."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:1006
-#, no-c-format
-msgid ""
-"Ist die Option <guimenu>WLAN-Authentifizierung</guimenu> aktiviert, wird der "
-"Klasse oder Arbeitsgruppe, der die die Regel zugewiesen wird, der Zugriff "
-"auf ein ggf. vorhandenes <foreignphrase>Wireless LAN</foreignphrase> "
-"erlaubt, um beispielsweise mobilen Geräten wie Laptops den Zugriff auf das "
-"Internet zu erlauben."
-msgstr ""
-"Si l'option <guimenu>Authentification WLAN</guimenu> est activée, "
-"la classe ou le groupe de travail auxquels s'appliquent cette règle se voient "
-"autoriser l'accès à un éventuel réseau local sans fil (<foreignphrase>Wireless "
-"LAN</foreignphrase>), par exemple pour autoriser l'accès Internet à des "
-"appareils mobiles du type ordinateur portable."
-
-#. Tag: para
-#: ucsschool-lehrer-handbuch-4.1.xml:1012
-#, no-c-format
-msgid ""
-"Regeln können auch mit <guimenu>Prioritäten</guimenu> versehen werden. Eine "
-"Regel mit höherer Priorität überschreibt dann die unterliegenden Regeln. "
-"Dies ist besonders dann zu beachten, wenn Benutzer in mehreren Gruppen "
-"enthalten sind."
-msgstr ""
-"Les règles peuvent également se voir affecter des "
-"<guimenu>Priorités</guimenu>. Une règle de priorité plus élevée prend le pas "
-"sur toutes les règles de priorité inférieure. C'est un point auquel il faut "
-"plus particulièrement veiller lorsqu'un utilisateur fait partie de plusieurs "
-"groupes à la fois."
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-fr.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="fr" id="ucsschool-4.0r2-teacher">
+  <bookinfo>
+    <title>&ucsUAS;</title>
+    <subtitle>Manuel pour les enseignants </subtitle>
+    <legalnotice>
+      <literallayout>Version 4.1 v1
+En date du : 17 novembre 2015
+      </literallayout>
+      <literallayout lang="">All rights reserved./ Tous droits réservés.
+(c) 2002-2015
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Allemagne
+feedback@univention.de
+      </literallayout>
+      <para>Toutes les marques déposées citées sont la propriété de leurs détenteurs enregistrés respectifs. Linux est une marque déposée par Linus Torvalds. </para>
+      <para lang="en">The mentioned brand names and registered trademarks are owned by the respective legal owners in each case. Linux is a registered trademark of Linus Torvalds. </para>
+    </legalnotice>
+  </bookinfo>
+  <chapter id="introduction">
+    <title>Introduction</title>
+    <!--
+	  <section id="introduction:intro">
+		<title
+>Was ist &ucsUAS;</title>
+	-->
+    <para>&ucsUAS; est une solution complète pour la gestion informatique d'une école et pour l'enseignement assisté par ordinateur. </para>
+    <para>Outre les interfaces de gestion administrative, une série d'interfaces Web permet aux enseignants de gérer leurs cours assistés par ordinateur. Ces interfaces permettent par exemple aux enseignants de réinitialiser les mots de passe de leurs élèves ou de bloquer ou autoriser l'accès à Internet de manière sélective pendant une heure de cours. </para>
+    <para>L'utilisation de cette interface ne suppose aucune connaisance informatique particulière et sera décrite dans ce document. Chaque fonctionnalité sera présentée à travers une brève description ainsi qu'un exemple d'utilisation et des indications expliquant pas à pas comment l'utiliser. </para>
+    <para>&ucsUAS; présente deux niveaux d'accès différenciés pour les enseignants : </para>
+    <itemizedlist>
+      <listitem>
+        <simpara>Les <emphasis>administrateurs de l'école</emphasis> possèdent des droits administratifs complets en ce qui concerne l'enseignement assisté par ordinateur. </simpara>
+      </listitem>
+      <listitem>
+        <simpara>Les <emphasis>enseignants</emphasis> ne peuvent utiliser qu'une partie des fonctionnalités d'administration. Ils peuvent par exemple réinitialiser les mots de passe de leurs élèves, mais pas ceux d'autres enseignants (cela n'est possible que pour les administrateurs de l'école). Autre exemple : les enseignants peuvent activer ou désactiver un filtre Internet, mais seuls les administrateurs de l'école peuvent configurer les règles de filtrage. </simpara>
+      </listitem>
+    </itemizedlist>
+    <para>Chaque école héberge son propre serveur. Les données des élèves et des enseignants sont enregistrées sur ce serveur de sorte que, quel que soit l'ordinateur avec lequel vous vous connectez, les mêmes données sont toujours intégralement disponibles. Ce répertoire est appelé <emphasis>répertoire personnel</emphasis>. Il est automatiquement appelé lors de la connexion à un ordinateur, de sorte que vos fichiers propres sont immédiatement disponibles dès que vous ouvrez une session sur un ordinateur de l'école. </para>
+    <para>Le répertoire personnel est propre à un utilisateur. De plus, un domaine de données particulier est créé pour chaque classe et pour tout autre groupe d'utilisateurs (par exemple un groupe de travail informatique). Ces données seront mises à disposition lors de la connexion à un ordinateur de l'école de manière analogue au répertoire personnel. L'accès est réservé à l'enseignant et aux élèves qui sont affectés à cette classe ou à ce groupe de travail. </para>
+    <para>Ce document est destiné aux enseignants et aux administrateurs de l'école. Les différentes fonctionnalités sont détaillées dans ce qui suit. </para>
+    <!--
+	  </section>
+	-->
+  </chapter>
+  <chapter id="umc">
+    <title>&ucsUMC; - L'interface d'administration</title>
+    <section id="umc:login">
+      <title>Connexion</title>
+      <para>L'enseignement assisté par ordinateur est géré par une interface, la console &ucsUMC; (UMC). Vous pouvez l'afficher par l'intermédiaire d'un navigateur Web (par exemple Mozilla Firefox) et y accéder en saisissant dans la barre d'adresse du navigateur une adresse de la forme <uri>https://<replaceable>serveurecole.academie.fr</replaceable> /umc/</uri>. L'adresse exacte vous sera fournie par l'administrateur de l'école. Lors de votre premier accès au serveur, vous devez accepter le certificat de sécurité du serveur. </para>
+      <para>
+        <figure id="ssl-warning">
+          <title>Avertissement relatif au certificat de sécurité, affiché dans Firefox</title>
+          <graphic scalefit="1" width="80%" align="center" fileref="illustrations41/firefox_ssl_certificate.png"/>
+        </figure>
+      </para>
+      <para>Certains navigateurs anciens ne sont pas pris en charge. L'interface demande au moins les versions suivantes : </para>
+      <itemizedlist>
+        <listitem>
+          <simpara>Google Chrome version 14 ou plus</simpara>
+        </listitem>
+        <listitem>
+          <simpara>Mozilla Firefox version 10 ou plus</simpara>
+        </listitem>
+        <listitem>
+          <simpara>Microsoft Internet Explorer version 9 ou plus</simpara>
+        </listitem>
+        <listitem>
+          <simpara>Safari (sur iPad 2)</simpara>
+        </listitem>
+      </itemizedlist>
+      <para>Si le navigateur trouvé n'est pas compatible, un avertissement est affiché et des problèmes d'affichage sont susceptibles de se produire. </para>
+      <para>
+        <figure id="login">
+          <title>Connexion à la console &ucsUMC;</title>
+          <graphic scalefit="1" width="50%" align="center" fileref="illustrations41/login_41.png"/>
+        </figure>
+      </para>
+      <para>Une fois l'URL ouverte apparaît un formulaire de connexion dans lequel vous devez indiquer votre <guimenu>Nom d'utilisateur</guimenu> et votre <guimenu>Mot de passe</guimenu>. </para>
+      <para>Le nombre exact de fonctionnalités affichées dépend du nombre de services installés sur le serveur de l'école. Les fonctionnalités qui ne sont pas disponibles pour un utilisateur donné du fait de droits insuffisants sont tout simplement cachées à l'utilisateur. Ainsi, les boîtes de dialogue des modules UMC rencontrées lors d'une utilisation réelle peuvent différer des boîtes de dialogue illustrées ici. Les différences exactes sont expliquées dans les descriptions des différents modules. Les différents chapitres sont intitulés d'après le nom des éléments du menu. </para>
+      <para>
+        <figure id="moduluebersicht">
+          <title>Page de vue d'ensemble des fonctionnalités offertes à l'administrateur de l'école</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/moduluebersicht_41.png"/>
+        </figure>
+      </para>
+    </section>
+  </chapter>
+  <chapter id="lehrerdoku">
+    <title>Fonctionnalités d'administration pour les enseignants</title>
+    <section id="lehrerdoku:schuelerpasswort">
+      <title>Mots de passe (élèves)</title>
+      <para>Ce module permet aux enseignants de réinitialiser les mots de passe des élèves. Pour des raisons de sécurité, les mots de passe existants ne peuvent pas être récupérés ; lorsqu'un élève oublie son mot de passe, un nouveau mot de passe doit être fourni. Les étapes suivantes décrivent comment réinitialiser le mot de passe d'un élève : <itemizedlist><listitem><simpara>La fonctionnalité de réinitialisation des mots de passe est accessible via <guimenu>Mots de passe (élèves)</guimenu>. </simpara></listitem><listitem><para>Cela ouvre une liste de tous les élèves de l'école. La liste des élèves peut être affinée en choisissant un élément dans le champ de sélection <guimenu>Classe ou groupe de travail</guimenu>. Seuls les élèves de la classe en question sont alors affichés. </para><para><figure id="passwordreset1"><title>Réinitialisation du mot de passe d'un élève</title><graphic scalefit="1" width="95%" align="center" fileref="illustrations41/students_passwords_41.png"/></figure></para></listitem><listitem><para>Vous pouvez rechercher un élève en particulier en saisissant son nom d'utilisateur, son nom de famille et / ou son prénom dans le champ de saisie <guimenu>Nom</guimenu>, puis en cliquant sur <guimenu>Rechercher</guimenu> </para><para><figure id="searchingpupils"><title>Chercher des comptes d'élèves</title><graphic scalefit="1" width="95%" align="center" fileref="illustrations41/students_passwords_selected_41.png"/></figure></para></listitem><listitem><para>Vous pouvez alors sélectionner un ou plusieurs élèves dans la liste en cochant les cases grises correspondantes figurant devant leurs noms. Pour conclure l'opération, cliquez sur le bouton <guimenu>Réinitialiser le mot de passe</guimenu> figurant au dessus de la liste. </para><para><figure id="passwordreset2"><title>Réinitialiser le mot de passe d'un élève</title><graphic scalefit="1" width="60%" align="center" fileref="illustrations41/student_password_reset_41.png"/></figure></para></listitem><listitem><simpara>Vous pouvez saisir le nouveau mot de passe destiné aux élèves dans le champ <guimenu>Nouveau mot de passe</guimenu>. Si la case figurant devant le champ <guimenu>L'utilisateur doit modifier son mot de passe à sa prochaine connexion</guimenu> est cochée, le mot de passe ainsi renseigné n'est valable que de façon temporaire. Lorsque l'élève se connecte avec son mot de passe temporaire, celui-ci doit être changé immédiatement. Pour des raisons de sécurité, il est recommandé de laisser cette option activée. Ainsi, le nouveau mot de passe choisi par l'élève n'est connu que de lui seul. </simpara></listitem><listitem><simpara>Il est possible de définir des exigences minimales pour les mots de passe, par exemple une longueur de huit caractères au moins. Lorsque le mot de passe saisi ne répond pas à ces critères, un avertissement est émis et un nouveau mot de passe doit être saisi. </simpara></listitem></itemizedlist>
+		</para>
+    </section>
+    <section id="lehrerdoku:computerraum">
+      <title>Salle informatique</title>
+      <para>Cette fonctionnalité permet de contrôler les ordinateurs des élèves et l'accès à Internet pendant un cours. L'accès à Internet peut être autorisé ou coupé, et l'accès à certains sites Web particuliers peut être autorisé. </para>
+      <para>Si un logiciel approprié (iTALC) est installé sur les ordinateurs des élèves, il est également possible de contrôler ces ordinateurs. Cela permet par exemple de verrouiller l'écran, de sorte que, pendant un cours de chimie, l'attention des étudiants est entièrement tournée vers une expérience. </para>
+      <para>De plus, il est possible de diffuser sur d'autres systèmes les éléments affichés sur l'écran d'un ordinateur source. Cela permet aux enseignants de faire des présentations sans nécessiter de vidéoprojecteur. </para>
+      <para>
+        <figure id="choose-computerroom">
+          <title>Choix d'une salle informatique</title>
+          <graphic scalefit="1" width="45%" align="center" fileref="illustrations41/choose_computerroom_41.png"/>
+        </figure>
+      </para>
+      <para>Après avoir cliqué sur <guimenu>Salle informatique</guimenu> apparaît un formulaire de sélection dans lequel vous pouvez choisir une salle informatique.  </para>
+      <para>Si une salle informatique est actuellement sous la responsabilité d'un autre enseignant, un message apparaît. Un clic sur <guimenu>Prendre la main</guimenu> transfère la responsabilité de la salle à l'enseignant actuellement connecté, par exemple lorsque celui-ci doit prendre en charge la seconde moitié d'un cours. </para>
+      <para>Une liste de tous les ordinateurs de cette salle informatique s'affiche alors. La colonne <guimenu>Nom</guimenu> répertorie les noms de tous les ordinateurs. Si vous survolez de la souris le nom d'un ordinateur, un champ supplémentaire apparaît et affiche deux adresses identifiant l'ordinateur au sein du réseau de l'école. Ces informations peuvent être demandées par le centre d'aide mais n'ont pas d'autre signification pour la gestion de l'ordinateur. À côté de chaque PC figure un cercle : si celui-ci est de couleur gris sombre, cela signifie que le logiciel iTALC est installé sur cette machine (voir <xref linkend="lehrerdoku:computerraum"/>) ; s'il est de couleur gris clair, iTALC est absent ou l'ordinateur est éteint. </para>
+      <para>Si iTALC est installé, la colonne <guimenu>Utilisateur</guimenu> affiche le nom de l'élève ou de l'enseignant actuellement connecté sur cette machine. </para>
+      <para>L'onglet <guimenu>plus</guimenu> permet d'allumer les ordinateurs des élèves à travers le réseau au moyen de l'option <guimenu>Allumer l'ordinateur</guimenu>. Les ordinateurs doivent préalablement avoir été configurés pour cela. </para>
+      <para>Les enseignants peuvent créer des réglages personnalisés pour la salle informatique dans l'onglet <guimenu>modifier</guimenu>. Cet onglet permet notamment de sélectionner les règles d'accès à Internet (voir <xref linkend="admindoku:internetregeln"/> ou de définir une liste locale de sites web autorisés. Les options <guimenu>Accès aux partages</guimenu> et <guimenu>Mode d'impression</guimenu> permettent d'autoriser ou de bloquer l'accès aux partages et aux imprimantes. Les restrictions définies par l'enseignant peuvent être limitées dans le temps grâce au champ <guimenu>Valide jusqu'au</guimenu>. </para>
+      <section id="lehrerdoku:computerraum:italc">
+        <title>Contrôle des ordinateurs des élèves à l'aide d'iTALC</title>
+        <para>Les options suivantes ne sont disponibles que lorsque le logiciel iTALC est installé sur les ordinateurs des élèves. Pour installer ce logiciel, vous pouvez contacter le centre d'aide (voir <xref linkend="lehrerdoku:helpdesk"/>). </para>
+        <para>
+          <figure id="computerraum">
+            <title>Supervision d'une salle informatique</title>
+            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/italc_computerroom_41.png"/>
+          </figure>
+        </para>
+        <para>Une série d'actions est disponible dans la vue d'ensemble des ordinateurs des élèves. Si vous déplacez la souris vers le bouton <guimenu>Surveiller</guimenu> correspondant à un ordinateur, cela fait apparaître une vue réduite du bureau de l'élève dans son état courant. Si vous cliquez sur ce bouton, vous pouvez alors afficher cette vue réduite en plein écran. La vue du bureau de l'élève est rafraîchie continuellement. </para>
+        <para>Un clic sur <guimenu>Verrouiller l'écran</guimenu> permet de désactiver l'écran de l'ordinateur précédemment sélectionné. L'ordinateur de l'élève affiche alors uniquement un cadenas sur fond gris (voir <xref linkend="screenlock"/>). Un clic sur <guimenu>Déverrouiller l'écran</guimenu> libère à nouveau l'ordinateur de l'élève. </para>
+        <para>
+          <figure id="screenlock">
+            <title>Un écran verrouillé</title>
+            <graphic scalefit="1" width="40%" align="center" fileref="illustrations41/school-italc-lock.png"/>
+          </figure>
+        </para>
+        <para>L'onglet <guimenu>plus</guimenu> met à votre disposition d'autres actions : </para>
+        <itemizedlist>
+          <listitem>
+            <simpara><guimenu>Déconnecter l'utilisateur</guimenu> déconnecte l'élève du bureau Windows. </simpara>
+          </listitem>
+          <listitem>
+            <simpara><guimenu>Éteindre l'ordinateur</guimenu> et <guimenu>Redémarrer l'ordinateur</guimenu> permettent respectivement d'éteindre et de redémarrer l'ordinateur d'un élève. </simpara>
+          </listitem>
+          <listitem>
+            <simpara><guimenu>Allumer l'ordinateur</guimenu> permet d'allumer les ordinateurs des élèves à travers l'interface web. Cet élément de menu ne fonctionne que si le matériel des ordinateurs des élèves le permet et a été préalablement configuré pour cela par l'administrateur. </simpara>
+          </listitem>
+          <listitem>
+            <simpara><guimenu>Verrouiller les périphériques d'entrée</guimenu> désactive la souris et le clavier sur les ordinateurs des élèves. </simpara>
+          </listitem>
+          <listitem>
+            <simpara>L'option <guimenu>Démarrer une présentation</guimenu> est décrite dans <xref linkend="lehrerdoku:computerraum:presentation"/>. </simpara>
+          </listitem>
+        </itemizedlist>
+      </section>
+      <section id="lehrerdoku:computerraum:presentation">
+        <title>Conduire une présentation</title>
+        <para>Cette fonctionnalité n'est elle aussi disponible que si le logiciel iTALC est installé sur les ordinateurs des élèves. Elle permet de transmettre le contenu de l'écran d'un PC vers les écrans de tous les autres ordinateurs. Ainsi, les élèves et l'enseignant peuvent conduire des présentations sans avoir besoin d'un vidéoprojecteur. </para>
+        <para>Lorsqu'une présentation a lieu, tous les ordinateurs de la salle informatique auxquels un élève est connecté affichent la présentation en plein écran, et la souris et le clavier sont bloqués. Sur les ordinateurs auxquel l'enseignant est connecté, la présentation se déroule dans une fenêtre séparée et toutes les entrées sont disponibles comme à l'accoutumée. </para>
+        <para>
+          <figure id="praesentation">
+            <title>Démarrer une présentation</title>
+            <graphic scalefit="1" width="80%" align="center" fileref="illustrations41/starting_presentation_41.png"/>
+          </figure>
+        </para>
+        <para>Pour démarrer une présentation : dans <guimenu>plus</guimenu>, choisissez l'option <guimenu>Démarrer une présentation</guimenu> qui apparaît avec la liste des ordinateurs. Un message apparaît, indiquant que la présentation va démarrer et d'ici peu être diffusée sur l'ensemble des autres ordinateurs. Le cercle correspondant à l'ordinateur émetteur passe en rouge tandis que les cercles des ordinateurs récepteurs passent en vert. Un clic sur le bouton <guimenu>Terminer la présentation</guimenu> arrête la présentation. </para>
+      </section>
+    </section>
+    <section id="lehrerdoku:klassenarbeit">
+      <title>Mode examen</title>
+      <para>Les exigences posées à l'infrastructure informatique dans le contexte d'un examen sont nombreuses et varient selon l'école, la matière et le niveau de la classe. Pour simplifier la mise en place d'un examen, &ucsUAS; met à votre disposition un mode examen spécifique. </para>
+      <para>Le mode examen combine les fonctionnalités bien connues de &ucsUAS;, par exemple la distribution de contenus, avec les réglages propres à chaque école, qui peuvent être définis par l'administrateur de l'école. Il convient de noter que le mode examen ne peut que fournir un cadre pour l'examen, celui-ci pouvant par ailleurs nécessiter des logiciels supplémentaires. </para>
+      <para>Le mode examen présente les caractéristiques suivantes : <itemizedlist><listitem><simpara>Un compte utilisateur spécial est créé pour chaque élève pour la durée de l'examen. Un élève ne peut participer à l'examen qu'à travers ce compte spécial. Le nom de connexion pour le compte d'examen est constitué d'un préfixe prédéfini (par défaut, <literal>exam-</literal>), suivi du nom d'utilisateur habituel. Ainsi, l'utilisateur <systemitem class="username">anton123</systemitem> se connectera à l'examen avec l'identifiant <systemitem class="username">exam-anton123</systemitem>. </simpara></listitem><listitem><simpara>Pour la durée de l'examen, le système garantit que l'accès au répertoire personnel de l'élève n'est pas possible. </simpara></listitem><listitem><simpara>Au début de l'examen, il est possible de distribuer directement aux élèves des fichiers nécessaires pour l'examen (exercices, documents, etc.). </simpara></listitem><listitem><simpara>À la fin de l'examen, tous les fichiers du répertoire de l'examen sont rassemblés, classés par élève et déposés dans le répertoire personnel de l'enseignant. </simpara></listitem><listitem><simpara>De surcroît, comme nous l'avons vu avec le module UMC <guimenu>Salle informatique</guimenu>, l'accès à Internet ainsi qu'aux dossiers partagés et aux imprimantes peut être restreint. </simpara></listitem></itemizedlist>
+		</para>
+      <para>Nous décrirons brièvement dans ce qui suit les différentes étapes de création d'un examen. </para>
+      <section id="lehrerdoku:klassenarbeit:start">
+        <title>Mise en place d'un examen</title>
+        <para>Vous pouvez créer un nouvel examen à travers le module &ucsUMC; <guimenu>Démarrer un examen</guimenu>. Plusieurs étapes permettent de définir tous les paramètres de l'examen. </para>
+        <orderedlist>
+          <listitem>
+            <simpara> Tous les réglages nécessaires sont précisés au cours des deux premières étapes. Pour cela, il est nécessaire de définir un nom pour l'examen.</simpara>
+            <simpara>L'heure de fin proposée est l'heure de fin du cours, mais cela peut être ajusté à volonté. L'heure de fin n'est pas contraignante, elle sert uniquement à informer du temps restant. Lorsque l'heure de fin prévue est atteinte, une fenêtre de rappel est affichée dans le module <guimenu>Salle informatique</guimenu>. L'examen peut néanmoins se poursuivre au delà du délai imparti sans autre action nécessaire.</simpara>
+            <simpara>Les cases à cocher figurant sur le côté de la page permettent de définir les éléments de configuration à faire apparaître dans les étapes suivantes de l'assistant. Cela comprend par exemple la distribution de documents liés au cours, la définition de restrictions d'accès à Internet, ainsi que le contrôle de l'accès aux partages.</simpara>
+          </listitem>
+          <listitem>
+            <simpara>La deuxième étape sert à indiquer la salle informatique où l'examen doit se tenir ainsi qu'au moins une classe ou un groupe de travail participant à l'examen. Si d'autres éléments de configuration ont été activés, ceux-ci sont affichés dans les pages suivantes de l'assistant. </simpara>
+          </listitem>
+          <listitem>
+            <simpara>La prochaine étape facultative permet de sélectionner un nom de répertoire pour l'examen et à y transférer séquentiellement tous les fichiers requis pour l'examen. Ces fichiers seront distribués à tous les élèves participant à l'examen. Une copie des fichiers originaux est déposée dans le répertoire personnel de l'enseignant ayant créé l'examen. Les fichiers sont déposés dans les répertoires personnels des élèves dans un sous-répertoire du répertoire <filename>Examens</filename> portant le nom associé à l'examen.</simpara>
+            <simpara> À tout moment de l'examen, les fichiers peuvent être collectés dans les répertoires personnels des élèves. Dans ce cas, seuls les fichiers qui se trouvent dans le sous-répertoire dédié à l'examen sont concernés. Les fichiers collectés sont enregistrés dans le répertoire dédié à l'examen créé dans le répertoire personnel de l'enseignant. Des collectes répétées au cours de l'examen permettent par exemple d'estimer l'avancement du travail. </simpara>
+          </listitem>
+          <listitem>
+            <simpara>Enfin, il est possible de définir des restrictions facultatives sur l'accès à Internet et aux partages. Ces réglages peuvent être ajustés à tout moment de l'examen en cours au moyen des paramètres de salle du module <guimenu>Salle informatique</guimenu>. Les possibilités de réglages sont également décrites à la section <xref linkend="lehrerdoku:computerraum"/>. </simpara>
+          </listitem>
+        </orderedlist>
+        <para>Un clic sur le bouton <guimenu>Démarrer l'examen</guimenu> crée les comptes utilisateurs requis pour l'examen pour chaque élève, distribue les fichiers relatifs à l'examen et applique les réglages de la salle informatique. </para>
+      </section>
+      <section id="lehrerdoku:klassenarbeit:neustart">
+        <title>Redémarrer les ordinateurs des élèves</title>
+        <figure id="fig:klassenarbeit:neustart">
+          <title>Redémarrer les ordinateurs des élèves</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/exam_reboot_41.png"/>
+        </figure>
+        <para>Pour terminer la configuration de l'examen, il est important de redémarrer tous les ordinateurs des élèves dans la salle informatique. Ce n'est qu'en redémarrant les ordinateurs concernés que les configurations et autorisations spécifiques mis en place pour l'examen prendont effet. </para>
+        <para>Le module d'examen propose une fonctionnalité auxiliaire permettant en grande partie d'automatiser ce processus. Une connexion est établie vers tous les ordinateurs allumés et ceux-ci sont répertoriés comme décrit à la section<xref linkend="fig:klassenarbeit:neustart"/>. Les ordinateurs apparaissant dans la liste peuvent être redémarrés automatiquement d'un clic sur le bouton <guimenu>Redémarrer les ordinateurs des élèves</guimenu>. Les ordinateurs auxquels l'enseignant est connecté sont automatiquement exclus de cette action. La seule condition à cela est que l'utilisateur soit correctement identifié en tant qu'enseignant (voir également la colonne <guimenu>Utilisateur</guimenu> du tableau). Il est également possible de sélectionner des ordinateurs individuels et de les redémarrer au moyen du bouton <guimenu>Redémarrer les ordinateurs sélectionnés</guimenu>. Dans ce cas, l'ordinateur sera redémarré indépendamment de l'utilisateur qui y est connecté (y compris l'enseignant !). </para>
+        <caution>
+          <para>Les ordinateurs sont redémarrés immédiatement après confirmation ! Aucun avertissement n'est envoyé aux utilisateurs connectés. Par conséquent, sur ces ordinateurs, les données non enregistrées seront perdues. </para>
+        </caution>
+        <note>
+          <para>Si un ordinateur ne redémarre pas automatiquement, veuillez vous assurer qu'il peut être redémarré manuellement. </para>
+        </note>
+      </section>
+      <section id="lehrerdoku:klassenarbeit:verwalten">
+        <title>Gestion et clôture de l'examen</title>
+        <figure id="fig:klassenarbeit:computerraum">
+          <title>Gestion d'un examen dans le module Salle informatique en mode examen</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/exam_computerroom_41.png"/>
+        </figure>
+        <para>L'examen se déroule et est géré par l'intermédiaire du module &ucsUMC; <guimenu>Salle informatique</guimenu> (voir <xref linkend="fig:klassenarbeit:computerraum"/>). Pendant l'examen, le module affiche le temps restant pour l'examen ainsi que des actions spécifiques au mode examen. Vous pouvez collecter les résultats intermédiaires de la classe au moyen du bouton <guimenu>Collecter les résultats</guimenu>. Vous pouvez réaliser cette action aussi souvent que souhaité. Pour clore l'examen, cliquez sur le bouton <guimenu>Conclure l'examen</guimenu>. </para>
+        <note>
+          <para>Une fois l'examen terminé, tous les ordinateurs doivent être soit éteints, soit redémarrés, avant de pouvoir être utilisés pour les activités de classe habituelles. Le redémarrage ou l'extinction rétablit à leurs valeurs d'origine tous les paramètres modifiés spécialement pour l'examen. </para>
+        </note>
+      </section>
+    </section>
+    <section id="lehrerdoku:helpdesk">
+      <title>Contacter le centre d'aide</title>
+      <para>Le formulaire du centre d'aide permet d'entrer en contact avec l'équipe d'assistance de l'école (par exemple un enseignant possédant les droits d'administrateur dans l'école en question). Cela vous permet ainsi de demander la création d'un nouveau groupe de travail ou de signaler un problème matériel sur un ordinateur. </para>
+      <para>
+        <figure id="helpdesk">
+          <title>Demande au centre d'aide</title>
+          <graphic scalefit="1" width="40%" align="center" fileref="illustrations41/contact_helpdesk_41.png"/>
+        </figure>
+      </para>
+      <para>La liste déroulante <guimenu>Catégorie</guimenu> permet de définir le type de demande, par exemple une demande relative à un problème matériel. </para>
+      <para>Le message peut être saisi sous forme de texte simple dans le formulaire. Après envoi, le formulaire est automatiquement transféré sous forme de courriel à l'équipe d'assistance. </para>
+    </section>
+    <section id="lehrerdoku:ags">
+      <title>Gérer les groupes de travail</title>
+      <para>Chaque élève est membre de sa classe. Par ailleurs, il est possible d'affecter les élèves et les enseignants à des groupes de travail inter-classes. Ce module permet de créer de nouveaux groupes de travail, de les modifier et de les supprimer. </para>
+      <para>La création d'un groupe de travail génère automatiquement sur le serveur de l'école un partage de données auquel tous les membres du groupe ont accès. Le nom du partage est identique au nom choisi pour le groupe de travail. </para>
+      <para>Un clic sur <guimenu>Gérer les groupes de travail</guimenu> affiche la liste de tous les groupes de travail. </para>
+      <para>Le champ de saisie <guimenu>Motif à rechercher</guimenu> permet d'affiner la liste des groupes de travail affichés. Si, par exemple, vous saisissez<userinput>inf</userinput>, seuls les groupes de travail contenant la chaîne de caractères <literal>inf</literal> demeurent affichés (par exemple le groupe de travail informatique). </para>
+      <para>Vous pouvez mettre en place un nouveau groupe de travail par le biais de l'option <guimenu>Ajouter un groupe de travail</guimenu>. Vous devez au moins fournir un nom pour le <guimenu>Groupe de travail</guimenu> ; la <guimenu>Description</guimenu> est facultative. </para>
+      <para>Pour supprimer un groupe de travail existant, cliquez sur l'icône moins. </para>
+      <para>
+        <figure id="select-workgroup">
+          <title>Sélection d'un groupe de travail</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/workgroup_selected_41.png"/>
+        </figure>
+      </para>
+      <para>Un clic sur le nom d'un groupe de travail ouvre une nouvelle fenêtre. Le nom d'un <guimenu>groupe de travail</guimenu> existant ne peut pas être modifié ultérieurement. </para>
+      <para>Le champ de saisie <guimenu>Membres</guimenu> affiche une liste des élèves et enseignants membres de ce groupe de travail. Un clic sur <guimenu>Ajouter</guimenu> ouvre une nouvelle boîte de dialogue. </para>
+      <para>
+        <figure id="assign-pupils">
+          <title>Affectation d'élèves à un groupe de travail</title>
+          <graphic scalefit="1" width="40%" align="center" fileref="illustrations41/workgroup_add_students_41.png"/>
+        </figure>
+      </para>
+      <para>Cela affiche une liste de tous les élèves et enseignants de l'école. La liste des utilisateurs affichés peut être restreinte à une classe ou un groupe de travail au moyen de la liste déroulante <guimenu>Groupe d'utilisateurs ou classe</guimenu> : les seuls utilisateurs affichés sont alors les élèves et enseignants de la classe demandée. Vous pouvez également chercher un utilisateur particulier en saisissant un nom d'utilisateur, un nom de famille et / ou un prénom dans le champ de saisie <guimenu>Nom</guimenu> puis en cliquant sur <guimenu>Rechercher</guimenu>. Vous pouvez sélectionner les utilisateurs à ajouter au groupe de travail en cochant la case correspondante devant le nom de l'utilisateur. Un clic sur <guimenu>Ajouter</guimenu> met l'utilisateur dans le groupe de travail. </para>
+      <para>Vous pouvez également retirer un utilisateur d'un groupe de travail en cochant la case correspondant à l'utilisateur à retirer, puis en cliquant sur le bouton <guimenu>Supprimer</guimenu>. </para>
+    </section>
+    <section id="lehrerdoku:druckermod">
+      <title>Superviser l'imprimante</title>
+      <para>Cette fonctionnalité permet de vérifier les impressions des élèves. Les tâches d'impression en attente peuvent être contrôlées par l'enseignant et être soit rejetées, soit transmises à l'imprimante. Cela permet d'éviter les impressions superflues ou erronées. </para>
+      <para>
+        <figure id="printer-moderation">
+          <title>Modération des tâches d'impression</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/print_jobs_41.png"/>
+        </figure>
+      </para>
+      <para>
+        <itemizedlist>
+          <listitem>
+            <simpara>Vous pouvez appeler la fonctionnalité de modération par le biais de <guimenu>Modérer l'imprimante</guimenu>  </simpara>
+          </listitem>
+          <listitem>
+            <simpara>Une liste des tâches d'impression en attente apparaît alors. Vous pouvez restreindre la liste des élèves à une classe ou un groupe de travail donnés au moyen de la liste déroulante <guimenu>Classe ou groupe de travail</guimenu>. Seuls les élèves de cette classe sont alors affichés. </simpara>
+          </listitem>
+          <listitem>
+            <para>Chaque tâche d'impression est présentée sur une seule ligne. La colonne <guimenu>Tâche d'impression</guimenu> contient le nom du fichier à imprimer, en plus du nombre de pages et de la date de la tâche d'impression. <figure id="printer-selection"><title>Sélection de l'imprimante après avoir accepté une tâche d'impression</title><graphic scalefit="1" width="60%" align="center" fileref="illustrations41/printer_choice_41.png"/></figure>
+			  </para>
+          </listitem>
+          <listitem>
+            <simpara><guimenu>Inspecter</guimenu> permet d'afficher la tâche d'impression. Si tout est en ordre, la tâche peut être transmise à une imprimante physique au moyen du bouton <guimenu>Imprimer</guimenu>. La boîte de dialogue suivante permet de sélectionner l'imprimante. Sinon, vous pouvez supprimer la tâche d'impression au moyen du bouton <guimenu>Effacer</guimenu>. </simpara>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+    <section id="lehrerdoku:material">
+      <title>Distribuer des documents</title>
+      <para>Cette fonctionnalité simplifie le partage et la collecte de matériel pédagogique auprès d'une classe ou d'un groupe de travail. Un délai peut aussi être défini, le cas échéant. Il est donc possible, par exemple, de partager des exercices à résoudre avant la fin du cours. À l'expiration du délai imparti, les documents distribués sont automatiquement collectés et déposés dans le répertoire personnel de l'enseignant. </para>
+      <para>Les informations requises pour distribuer des documents ainsi sont désignées par le terme de <emphasis>Projet</emphasis>. </para>
+      <para>Un exemple de scénario possible : </para>
+      <para>Les élèves du cours de mathématiques doivent travailler sur un document d'ici le prochain cours (quelques jours plus tard). Pour ce faire, l'enseignant crée un nouveau projet et télécharge le document à partager vers le système de distribution de documents. La date et l'heure limites sont fixées au début du cours suivant. Lorsque le projet est effectivement créé, le document est automatiquement déposé dans le répertoire personnel de chaque élève. Les élèves travaillent sur le document d'ici le cours suivant (par exemple pendant le cours ou leur temps libre). À l'heure limite indiquée, le document est collecté automatiquement : le document est copié du répertoire personnel de chaque élève vers le répertoire personnel de l'enseignant, où il est à la disposition de l'enseignant pour correction. </para>
+      <section id="lehrerdoku:material:project">
+        <title>Gestion des projets</title>
+        <para>Vous pouvez accéder à cette fonctionnalité par le biais du module <guimenu>Distribuer des documents</guimenu>. Vous y trouverez une liste de tous les projets existants. La création de nouveaux projets est décrite à la section <xref linkend="lehrerdoku:material:addproject"/>. </para>
+        <para>
+          <figure id="verteilungsprojekte">
+            <title>Liste des projets de distribution de documents</title>
+            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/distribution_projects_41.png"/>
+          </figure>
+        </para>
+        <para>Le menu principal comporte la liste de tous les projets visibles. Chaque projet est associé à un enseignant qui apparaît sous <guimenu>Propriétaire</guimenu> L'option <mousebutton>Prendre en charge</mousebutton> permet de confier le projet à un autre enseignant. Les projets existants peuvent également être modifiés ou supprimés. </para>
+        <para>La <mousebutton>collecte</mousebutton> des fichiers est décrite dans <xref linkend="lehrerdoku:material:einsammeln"/>. </para>
+      </section>
+      <section id="lehrerdoku:material:addproject">
+        <title>Créer un nouveau projet</title>
+        <para>Dans la ligne inférieure se trouve l'option <guimenu>Ajouter un projet</guimenu> permettant d'enregistrer un nouveau projet. </para>
+        <para>
+          <figure id="verteilungsprojekt">
+            <title>Création d'un projet de distribution de documents</title>
+            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/distribution_project_creation_41.png"/>
+          </figure>
+        </para>
+        <para>
+          <itemizedlist>
+            <listitem>
+              <simpara>Un nom de projet doit être saisi comme <guimenu>Description</guimenu>, par exemple <emphasis>Devoir de mathématiques</emphasis>. Le nom du répertoire détermine où les données seront déposées. </simpara>
+            </listitem>
+            <listitem>
+              <simpara>Le champ <guimenu>Distribuer les fichiers du projet</guimenu> permet d'automatiser la distribution des données relatives au projet. Dans la configuration par défaut <guimenu>Distribution manuelle</guimenu>, la distribution des fichiers du projet est déclenchée manuellement par l'enseignant. Si vous choisissez l'option <guimenu>Distribution automatique</guimenu>, vous pouvez aussi définir une date et une heure auxquelles copier les fichiers dans le répertoire personnel des élèves. Vous pouvez indiquer ces paramètres dans les champs <guimenu>Date de distribution</guimenu> et <guimenu>Heure de distribution</guimenu>. </simpara>
+            </listitem>
+            <listitem>
+              <simpara>De manière analogue à la distribution automatique, les fichiers d'un projet peuvent aussi être collectés de façon manuelle ou automatique via l'option <guimenu>Collecte des fichiers du projet</guimenu>. </simpara>
+            </listitem>
+            <listitem>
+              <simpara>La section <guimenu>Membres</guimenu> vous permet d'<guimenu>Ajouter</guimenu> des classes ou des groupes de travail au projet, ou bien de les en <guimenu>Supprimer</guimenu>. </simpara>
+            </listitem>
+            <listitem>
+              <simpara>La section <guimenu>Fichiers</guimenu> vous permet de sélectionner les documents à distribuer. Un clic sur le bouton <guimenu>Transférer</guimenu> ouvre une nouvelle fenêtre dans laquelle vous pouvez choisir un fichier. Le bouton <guimenu>Supprimer</guimenu> vous permet de retirer des fichiers. </simpara>
+            </listitem>
+            <listitem>
+              <simpara>Un clic sur <guimenu>Créer le projet</guimenu> confirme la création d'un projet. </simpara>
+            </listitem>
+          </itemizedlist>
+        </para>
+      </section>
+      <section id="lehrerdoku:material:einsammeln">
+        <title>Collecte des documents distribués</title>
+        <para>La description qui suit donne un aperçu de la collecte manuelle de documents associés à un projet de distribution existant. L'opération est déclenchée en cliquant sur <guimenu>collecter</guimenu> dans la liste des projets de distribution de documents. </para>
+        <para>
+          <figure id="verteilungsprojekt-einsammeln">
+            <title>Collecte d'un projet de distribution de documents</title>
+            <graphic scalefit="1" width="60%" align="center" fileref="illustrations41/distribution_collect_project_41.png"/>
+          </figure>
+        </para>
+        <para>Les fichiers collectés sont déposés dans le répertoire personnel de l'enseignant ayant créé le projet de distribution et ce, quel que soitl'enseignant qui lance la collecte de fichiers ! Les fichiers sont déposés dans le répertoire <emphasis>Matériel pédagogique</emphasis> du répertoire personnel de l'enseignant. Un répertoire individuel portant le nom du projet est créé pour chaque projet de distribution. Dans ce répertoire, un répertoire est créé pour chaque élève et contient les fichiers collectés de l'élève en question, de sorte qu'il toujours facile d'identifier l'élève par la suite. </para>
+      </section>
+    </section>
+  </chapter>
+  <chapter id="admindoku">
+    <title>Fonctionnalités de gestion pour les administrateurs de l'école</title>
+    <section id="admindoku:pwlehrer">
+      <title>Mots de passe (enseignants)</title>
+      <para>Ce module permet aux administrateurs de l'école de réinitialiser les mots de passe des enseignants. Pour des raisons de sécurité, les mots de passe existants ne peuvent pas être récupérés ; lorsqu'un enseignant oublie son mot de passe, un nouveau mot de passe doit être fourni. </para>
+      <para>Le fonctionnement est analogue à celui décrit à la section <xref linkend="lehrerdoku:schuelerpasswort"/> concernant les mots de passe des élèves. </para>
+    </section>
+    <section id="admindoku:computerraum:anlegen">
+      <title>Gérer les salles informatiques</title>
+      <para>La fonctionnalité <guimenu>Gérer les salles informatiques</guimenu> permet d'affecter les ordinateurs d'une école à une salle informatique. Ces salles informatiques peuvent alors être gérées de manière centralisée par les enseignants lorsque l'accès à Internet est activé. </para>
+      <para>
+        <figure id="computerroom-list">
+          <title>Gestion des salles informatiques</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/computerrooms_41.png"/>
+        </figure>
+      </para>
+      <para><guimenu>Ajouter une salle</guimenu> permet de définir une nouvelle salle informatique. Outre un <guimenu>Nom</guimenu>, vous pouvez également indiquer une <guimenu>Description</guimenu>. </para>
+      <para>L'option <guimenu>Ordinateurs de la salle</guimenu> permet d'affecter des ordinateurs à la salle. La liste déroulante ne comporte que des ordinateurs enregistrés par le personnel technique. Si un ordinateur est absent de la liste, cela doit être signalé au centre d'aide. </para>
+      <para>
+        <figure id="add-to-computerroom">
+          <title>Affectation d'ordinateurs à une salle informatique</title>
+          <graphic scalefit="1" width="35%" align="center" fileref="illustrations41/computerrooms_add_computers_41.png"/>
+        </figure>
+      </para>
+      <para>Les salles informatiques existantes peuvent également être modifiées ou supprimées ultérieurement au moyen des icônes idoines. </para>
+    </section>
+    <section id="admindoku:unterrichtszeiten">
+      <title>Horaires de cours</title>
+      <para>La fonctionnalité <guimenu>Horaires de cours</guimenu> permet de définir les plages horaires de chaque cours, pour chaque école. Vous pouvez ainsi autoriser l'accès à Internet en fonction des cours concernés. </para>
+      <para>
+        <figure id="lesson-times">
+          <title>Définition des horaires de cours</title>
+          <graphic scalefit="1" width="55%" align="center" fileref="illustrations41/lesson_times_41.png"/>
+        </figure>
+      </para>
+      <para>Il est recommandé de repousser la fin des heures de cours y compris les pauses au plus proche du début de l'heure de cours suivante, car les horaires de cours sont utilisés comme modèle pour les réglages relatifs aux salles. Ainsi, vous évitez de désactiver l'accès à Internet immédiatement lorsque la cloche de la pause sonne. </para>
+    </section>
+    <section id="admindoku:assign-teachers-to-pupils">
+      <title>Affecter des enseignants aux classes</title>
+      <para>Pour chaque classe, il existe un domaine de données commun. Pour que les enseignants puissent accéder à ce domaine de données, ils doivent être affectés à une classe et ainsi devenir membres de la classe. </para>
+      <para>
+        <figure id="liste-klassen">
+          <title>Liste des classes d'une école</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/classes_41.png"/>
+        </figure>
+      </para>
+      <para>L'affectation peut se faire par le biais de deux modules : <guimenu>Affecter un enseignant</guimenu> et <guimenu>Affecter une classe</guimenu>. </para>
+      <para>Le module <guimenu>Affecter un enseignant</guimenu> permet d'affecter un certain nombre d'enseignants à une classe donnée. Une fois le module ouvert, vous accédez à une liste des classes. Après avoir choisi une classe et cliqué sur <guimenu>Modifier</guimenu>, une liste déroulante vous permet d'ajouter ou de retirer des enseignants. Ce module est habituellement utilisé après avoir créé de nouvelles classes, pour l'affectation initiale des enseignants correspondants. </para>
+      <para>Par ailleurs, le module <guimenu>Affecter une classe</guimenu> permet d'associer un enseignant donné à plusieurs classes. Une fois le module ouvert, vous accédez à une liste des enseignants. Après avoir choisi un enseignant et cliqué sur <guimenu>Modifier</guimenu>, une liste déroulante vous permet d'ajouter ou de retirer des classes. Ce module est habituellement utilisé à l'arrivée d'un nouvel enseignant pour l'affecter à ses classes. </para>
+      <para>
+        <figure id="assign-teacher">
+          <title>Affectation d'enseignants à une classe</title>
+          <graphic scalefit="1" width="35%" align="center" fileref="illustrations41/assign_teacher_to_class_41.png"/>
+        </figure>
+      </para>
+    </section>
+    <section id="admindoku:internetregeln">
+      <title>Définir des règles d'accès à Internet</title>
+      <para>Pour le filtrage de l'accès à Internet, on utilise un système appelé serveur mandataire (proxy). Il s'agit d'un serveur qui, à chaque demande de consultation d'une page web, vérifie si l'accès à cette page est autorisé. Si ce n'est pas le cas, une page d'information est affichée. </para>
+      <para>Si les élèves doivent par exemple effectuer des recherches, dans le cadre d'un cours, sur le site Wikipedia, une liste de règles peut être établie pour interdire l'accès à tout autre site. Cette liste de règles peut alors être appliquée par l'enseignant. </para>
+      <para>Si la règle est définie pour une classe ou un groupe de travail, elle s'applique également aux enseignants faisant partie de la classe. Toutefois, une règle définissant une priorité plus élevée peut être appliquée aux enseignants (voir ci-dessous). </para>
+      <para>La fonctionnalité <guimenu>Définir des règles d'accès à Internet</guimenu> permet de gérer les règles de filtrage. </para>
+      <para>Deux règles sont pré-définies par défaut : <emphasis>Aucun accès à Internet</emphasis> désactive totalement l'accès à Internet, et <emphasis>Sans restriction</emphasis> permet un accès total. </para>
+      <para>
+        <figure id="internet-rules">
+          <title>Gestion des règles d'accès à Internet</title>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/internet_rules_41.png"/>
+        </figure>
+      </para>
+      <para><guimenu>Ajouter une règle</guimenu> permet de définir une nouvelle règle de filtrage. Il faut d'abord d'indiquer un <guimenu>Nom</guimenu>. Le <guimenu>Type de règle</guimenu> permet de différencier deux types de règles : </para>
+      <itemizedlist>
+        <listitem>
+          <simpara>Une <emphasis>liste d'autorisations</emphasis> contient une liste prédéfinie de sites dont la consultation est autorisée. Tout autre site est bloqué. </simpara>
+        </listitem>
+        <listitem>
+          <simpara>Avec une <emphasis>liste de blocage</emphasis>, tout site peut être consulté, à l'exception de ceux qui sont bloqués. </simpara>
+        </listitem>
+      </itemizedlist>
+      <para>
+        <figure id="wikipedia-whitelist">
+          <title>Créer une liste blanche pour Wikipedia</title>
+          <graphic scalefit="1" width="50%" align="center" fileref="illustrations41/internet_rules_whitelist_41.png"/>
+        </figure>
+      </para>
+      <para>Vous pouvez donner dans <guimenu>Domaines Internet</guimenu> une liste d'adresses, par exemple <uri>wikipedia.org</uri> ou <uri>facebook.com</uri>. Il est recommandé de ne fournir que la partie du domaine de l'adresse, par exemple seulement <uri>wikipedia.org</uri> et non <uri>www.wikipedia.org</uri>. </para>
+      <para>Si l'option <guimenu>Authentification WLAN</guimenu> est activée, la classe ou le groupe de travail auxquels s'appliquent cette règle se voient autoriser l'accès à un éventuel réseau local sans fil (<foreignphrase>Wireless LAN</foreignphrase>), par exemple pour autoriser l'accès Internet à des appareils mobiles du type ordinateur portable. </para>
+      <para>Les règles peuvent également se voir affecter des <guimenu>Priorités</guimenu>. Une règle de priorité plus élevée prend le pas sur toutes les règles de priorité inférieure. C'est un point auquel il faut plus particulièrement veiller lorsqu'un utilisateur fait partie de plusieurs groupes à la fois. </para>
+    </section>
+  </chapter>
+</book>
