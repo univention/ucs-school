@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.15-28) unstable; urgency=low
+
+  * Bug #41861: test setup of ucsschool-import for interactive use
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 12 Sep 2016 10:46:33 +0200
+
 ucs-test-ucsschool (3.0.15-27) unstable; urgency=low
 
   * Bug #41472, #41645: adapt to changes by Bug #42313
