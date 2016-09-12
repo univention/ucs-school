@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-30) unstable; urgency=low
+
+  * Bug #41544: add test, if it is possible to reuse an email address (-> if
+    users are removed before they are added)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 12 Sep 2016 16:07:32 +0200
+
 ucs-test-ucsschool (3.0.15-29) unstable; urgency=low
 
   * Bug #41351: add test for UDM hook preventing illegal option combinations

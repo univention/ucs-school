@@ -1514,6 +1514,47 @@ class CLI_Import_v2_Tester(object):
 
 		self.log.info('Test was successful.\n\n\n')
 
+	def test_reuse_email_attribute(self):
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			email = "{}@{}".format(uts.random_name(), self.ucr.get('domainname'))
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			config.update_entry('scheme:email', '<email>')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry("user_deletion:delete", True)
+			config.update_entry("user_deletion:expiration", 0)
+
+			self.log.info('*** Importing a new single user with role %r and email address %r...', role, email)
+			person = Person(self.ou_A.name, role)
+			record_uid = uts.random_name()
+			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(1, 0)
+			person.verify()
+
+			self.log.info('*** Importing a new single user with role %r and same email address %r...', role, email)
+			person = Person(self.ou_A.name, role)
+			record_uid = uts.random_name()
+			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(1, 1)
+			person.verify()
+		self.log.info('*\n*** Test was successful.\n*')
+
+
 	def run(self):
 		try:
 			with univention.testing.udm.UCSTestUDM() as udm:
@@ -1539,6 +1580,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_create_no_modify_classes_with_empty_class_name(udm)
 					self.test_create_with_illegal_chars_in_username()
 					self.test_delete_variants()
+					self.test_reuse_email_attribute()
 		finally:
 			self.cleanup()
 
