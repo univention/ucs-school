@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-29) unstable; urgency=low
+
+  * Bug #41351: add test for UDM hook preventing illegal option combinations
+  * reactive accidentally deactivated tests
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 12 Sep 2016 11:30:23 +0200
+
 ucs-test-ucsschool (3.0.15-28) unstable; urgency=low
 
   * Bug #41861: test setup of ucsschool-import for interactive use
