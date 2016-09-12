@@ -1290,7 +1290,7 @@ class CLI_Import_v2_Tester(object):
 
 		def remove_bad_chars(name):
 			bad_chars = "".join(sorted(set(name).difference(set(allowed_chars))))
-			name = name.lstrip(".")
+			name = name.strip(".")
 			return name.translate(None, bad_chars)
 
 		punkts = string.punctuation.translate(None, '[]')  # those will create bad counter vars
