@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-33) unstable; urgency=low
+
+  * Bug #42373: added test to check if InitialisationError are written to a
+    logfile
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 13 Sep 2016 13:15:20 +0200
+
 ucs-test-ucsschool (3.0.15-32) unstable; urgency=low
 
   * Bug #41862: add test for migration from old-legacy user-import to
