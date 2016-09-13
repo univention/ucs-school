@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-32) unstable; urgency=low
+
+  * Bug #41862: add test for migration from old-legacy user-import to
+    new-legacy user-import
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 13 Sep 2016 11:56:25 +0200
+
 ucs-test-ucsschool (3.0.15-31) unstable; urgency=low
 
   * Bug #41282: add missing import

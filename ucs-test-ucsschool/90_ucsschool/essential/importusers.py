@@ -365,6 +365,7 @@ class ImportFile:
 		self.import_fd, self.import_file = tempfile.mkstemp()
 		os.close(self.import_fd)
 		self.user_import = None
+		self.cli_path = '/usr/share/ucs-school-import/scripts/import_user'
 
 	def write_import(self):
 		self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
@@ -395,7 +396,7 @@ class ImportFile:
 				print 'WARNING: %s not removed. %s' % (self.import_file, e)
 
 	def _run_import_via_cli(self):
-		cmd_block = ['/usr/share/ucs-school-import/scripts/import_user', self.import_file]
+		cmd_block = [self.cli_path, self.import_file]
 
 		print 'cmd_block: %r' % cmd_block
 		retcode = subprocess.call(cmd_block, shell=False)
