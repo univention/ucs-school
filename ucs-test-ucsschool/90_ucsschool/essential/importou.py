@@ -454,13 +454,6 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 		if not dhcpd_ldap_base or 'ou=' not in dhcpd_ldap_base:
 			raise DhcpdLDAPBase('dhcpd/ldap/base=%r contains no "ou="' % (dhcpd_ldap_base,))
 
-		if not old_dhcpd_ldap_base:
-			# seems to be the first OU, so check the variable settings
-			if ucr.get('dhcpd/ldap/base') != "cn=dhcp,%s" % (ou_base,):
-				print 'ERROR: dhcpd/ldap/base =', ucr.get('dhcpd/ldap/base')
-				print 'ERROR: expected base =', dhcp_dn
-				raise DhcpdLDAPBase()
-
 		# use the UCR value and check if the DHCP service exists
 		dhcp_dn = dhcpd_ldap_base
 
