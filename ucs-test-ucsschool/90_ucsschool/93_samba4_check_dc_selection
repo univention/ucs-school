@@ -137,6 +137,7 @@ class TestS4DCLocatorDNS(TestSamba4):
 			print("\nForcing the 'samba' service stop to "
 													   "ensure it is stopped:")
 			self.start_stop_service('samba', 'stop')
+			sleep(30)  # give the environment some seconds Bug #34223
 			try:
 				self.site_dcs.remove(self.UCR.get('ldap/server/name'))
 			except ValueError as exc:
