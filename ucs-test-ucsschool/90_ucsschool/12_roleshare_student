@@ -158,9 +158,11 @@ def main(ldap_machine_read=None):
 		utils.fail(log_message="ucsschool/import/roleshare has been deactivated, skipping test", returncode=TestCodes.REASON_SKIP)
 
 	all_available_servers = []
-	all_visible_schools = [x.name for x in School.get_all(ldap_machine_read)]
 	with testing_ucsschool.UCSTestSchool() as schoolenv:
-		for school_id in all_visible_schools:
+		ou_A_name, ou_A_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+		ou_B_name, ou_B_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+		ou_C_name, ou_C_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+		for school_id in map(School.get_name_from_dn, [ou_A_dn, ou_B_dn, ou_C_dn]):
 			available_servers = prepare_fileservers(school_id)
 			if available_servers:
 				all_available_servers.extend(available_servers)

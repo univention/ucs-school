@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-34) unstable; urgency=low
+
+  * Bug #41385: don't use OUs created (and partally deleted) by previous
+    ucs-test runs
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 14 Sep 2016 15:06:20 +0200
+
 ucs-test-ucsschool (3.0.15-33) unstable; urgency=low
 
   * Bug #42373: added test to check if InitialisationError are written to a
