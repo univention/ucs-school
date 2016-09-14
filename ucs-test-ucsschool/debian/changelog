@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.15-36) unstable; urgency=medium
+
+  * 94_samba4_check_shares_access: wait for s4 connector (Bug #42392)
+  * 61_samba4_login: wait for s4 connector (Bug #42392)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 14 Sep 2016 16:35:46 +0200
+
 ucs-test-ucsschool (3.0.15-35) unstable; urgency=medium
 
   * 93_samba4_check_dc_selection: Give Samba some secons (Bug #34223)

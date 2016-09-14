@@ -12,7 +12,7 @@ from sys import exit
 from essential.test_samba4 import TestSamba4
 
 import univention.testing.utils as utils
-from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool import UCSTestSchool
 from univention.testing.strings import random_username
 
@@ -81,6 +81,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 
 		wait_for_drs_replication("(sAMAccountName=%s)" % student_name,
 								 attrs="objectSid")
+		wait_for_s4connector()
 		return student_name, student_dn, student_password
 
 	def main(self):
