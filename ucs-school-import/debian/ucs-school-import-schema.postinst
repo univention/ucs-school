@@ -49,7 +49,7 @@ fi
 # run join script
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
         /usr/lib/univention-install/82univention-ucs-school-import-custom-attributes.inst || true
-        /etc/init.d/slapd crestart
+        invoke-rc.d slapd crestart
 fi
 
 exit 0

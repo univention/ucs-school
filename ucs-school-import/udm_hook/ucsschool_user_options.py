@@ -58,8 +58,8 @@ option_names = {
 error_msg = _("%(option)s cannot be activated together with %(illegals)s.")
 
 
-class UcsschoolUserOptionsHook(simpleHook):
-	type = "UcsschoolUserOptionsHook"
+class UcsschoolUserOptions(simpleHook):
+	type = "UcsschoolUserOptions"
 
 	@staticmethod
 	def check_options(module):

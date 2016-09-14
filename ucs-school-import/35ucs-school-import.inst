@@ -232,7 +232,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set ldapMapping=ucsschoolSchool \
 	--set syntax=ucsschoolSchools \
 	--set mayChange=1 \
-	--set hook=UcsschoolUserOptionsHook \
+	--set hook=UcsschoolUserOptions \
 	--set multivalue=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
@@ -353,6 +353,15 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
 		echo "FINISHED: $(date)" | tee -a "$LOGFILE"
 	fi
 fi
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 12 ] ; then
+	# Bug #41351: UDM hook to prevent invalid combinations of UCS@school options
+	univention-directory-manager settings/extended_attribute modify "$@" \
+	--dn="cn=ucsschoolSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set hook=UcsschoolUserOptions || die
+fi
+
+stop_udm_cli_server
 
 joinscript_save_current_version
 
