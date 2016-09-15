@@ -855,7 +855,7 @@ ucs-school-metapackage (4.0.13-1) unstable; urgency=low
 
 ucs-school-metapackage (4.0.12-1) unstable; urgency=low
 
-  * set listener/shares/rename?yes for ucs@school systems (Bug #26531)
+  * set listener/shares/rename?yes for UCS@school systems (Bug #26531)
 
  -- Felix Botner <botner@univention.de>  Wed, 21 Mar 2012 17:01:22 +0100
 

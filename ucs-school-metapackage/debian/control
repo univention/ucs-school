@@ -33,8 +33,8 @@ Recommends:
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
  ucs-school-umc-exam-master,
-Description: UCS@School meta package for UCS DC Master System (multi server environment)
- This meta package installs all required packages for UCS@School on
+Description: UCS@school meta package for UCS DC Master System (multi server environment)
+ This meta package installs all required packages for UCS@school on
  a UCS domaincontroller master. The domaincontroller master will be 
  configured for a multi server environment. The package ucs-school-slave
  has to be installed on all domaincontroller slave systems.
@@ -83,8 +83,8 @@ Recommends:
  ucs-school-umc-users,
  ucs-school-umc-rooms,
  ucs-school-webproxy,
-Description: UCS@School meta package for UCS DC Slave System
- This meta package installs all required packages for UCS@School on
+Description: UCS@school meta package for UCS DC Slave System
+ This meta package installs all required packages for UCS@school on
  a UCS domaincontroller slave. The package ucs-school-master
  has to be installed on domaincontroller master/backup systems.
  .
@@ -136,8 +136,8 @@ Recommends:
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
  ucs-school-webproxy,
-Description: UCS@School meta package for UCS DC Master System (single server environment)
- This meta package installs all required packages for UCS@School on
+Description: UCS@school meta package for UCS DC Master System (single server environment)
+ This meta package installs all required packages for UCS@school on
  a UCS domaincontroller master. The domaincontroller master will be 
  configured for a single server environment. 
  .
