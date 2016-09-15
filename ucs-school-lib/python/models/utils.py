@@ -199,7 +199,6 @@ def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, forma
 	constructors of the handler and formatter.
 	* Using custom handler and formatter classes is possible by configuring
 	the 'cls' key of handler_kwargs and formatter_kwargs.
-	* The logging level can be configured through ucsschool/logging/level/<name>.
 
 	:param name: str: will be appended to "ucsschool." as name of the logger
 	:param level: str: loglevel (DEBUG, INFO etc)

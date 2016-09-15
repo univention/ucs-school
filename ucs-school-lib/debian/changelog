@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.23-6) unstable; urgency=low
+
+  * Bug #42315: Remove leftover mentioning of UCRV
+    ucsschool/logging/level/importer
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 15 Sep 2016 08:26:12 +0200
+
 ucs-school-lib (9.0.23-5) unstable; urgency=medium
 
   * Bug #42214: Reverted the typo-correction, because it leads to problems.
