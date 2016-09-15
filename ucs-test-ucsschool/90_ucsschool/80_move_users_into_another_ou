@@ -2,7 +2,7 @@
 ## desc: move user into another school
 ## roles: [domaincontroller_master]
 ## tags: [apptest, ucsschool]
-## bugs: [40870]
+## bugs: [40870, 41601, 41609, 41620]
 ## exposure: dangerous
 
 from univention.testing.ucsschool import UCSTestSchool
