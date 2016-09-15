@@ -10,8 +10,10 @@ from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.udm import UCSTestUDM
 import univention.testing.strings as uts
 from univention.testing import utils
-from ucsschool.lib.models import User, SchoolClass, WorkGroup
+from ucsschool.lib.models import User, SchoolClass, WorkGroup, utils as lib_utils
 import univention.config_registry
+
+lib_utils.logger.handlers = lib_utils.get_logger("ucs-test", level="DEBUG").handlers
 
 
 def main():
