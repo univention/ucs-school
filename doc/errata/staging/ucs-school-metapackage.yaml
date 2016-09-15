@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix:
+fix: 9.0.2-5.182.201609151034
 desc: |
  * The pcpatch user is no longer ignored by default by the S4-Connector
    (Bug #34626).
