@@ -78,12 +78,15 @@ class Person(object):
 		self.mode = 'A'
 		self.active = True
 		self.password = None
-		self.school_base = get_school_base(self.school)
+		self.school_base = self.make_school_base()
 		self.dn = self.make_dn()
 		self.append_random_groups()
 
 	def make_dn(self):
 		return 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
+
+	def make_school_base(self):
+		return get_school_base(self.school)
 
 	def append_random_groups(self):
 		if self.is_student():
@@ -131,10 +134,11 @@ class Person(object):
 					self.schools = [self.school]
 				elif self.school not in self.schools:
 					self.schools.append(self.school)
-				self.school_base = get_school_base(self.school)
+				self.school_base = self.make_school_base()
 			elif key == 'schools':
 				if not self.school:
 					self.school = sorted(kwargs[key])[0]
+					self.school_base = self.make_school_base()
 				self.schools = kwargs[key]
 			elif hasattr(self, key):
 				setattr(self, key, kwargs[key])
