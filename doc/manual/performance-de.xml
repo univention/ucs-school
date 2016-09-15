@@ -181,6 +181,12 @@ scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
 				<listitem><simpara>Benutzer/Klassen/Rechner/Schulen: <envar>ucsschool/wizards/autosearch</envar></simpara></listitem>
     		</itemizedlist>
     	</para>
+		<note>
+			<para>
+				Wie die automatische Suche auch für andere (nicht schulbezogene) UMC-Module deaktiviert wird, steht im
+				<ulink url="http://docs.software-univention.de/performance-guide-4.1.html#umc:search:auto">UCS performance guide</ulink> (nur in Englisch verfügbar).
+			</para>
+		</note>
     </section>
   </section>
 </chapter>

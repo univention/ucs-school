@@ -3,14 +3,13 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix: 9.0.2-3.180.201609071136
+fix:
 desc: |
  * The pcpatch user is no longer ignored by default by the S4-Connector
    (Bug #34626).
  * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
- * In multi-school environments autosearch is now deactivated by default in
-   all school related UMC modules, using a UCR policy at the LDAP-root. This
-   is done only for new installations. (Bug #41300)
+ * A hint, how to deactivate the autosearch feature of UMC modules, was
+   added to the manual (Bug #41300).
  * Sysvol-replication of netlogon scripts is now prevented by default on all
    UCS@school DCs. The netlogon scripts will be stored in
    /var/lib/samba/netlogon/user. This change will only activate in newly

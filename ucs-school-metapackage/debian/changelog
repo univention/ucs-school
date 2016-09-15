@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-4) unstable; urgency=low
+
+  * Bug #41300: revert automatic deactivation of autosearch
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 15 Sep 2016 10:04:54 +0200
+
 ucs-school-metapackage (9.0.2-3) unstable; urgency=low
 
   * Bug #40262: print help message if rejoin of school slave fails
