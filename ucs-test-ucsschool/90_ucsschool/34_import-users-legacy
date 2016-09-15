@@ -74,9 +74,9 @@ class CLI_Legacy_Import_Tester(object):
 		sys.stdout.flush()
 		sys.stderr.flush()
 		exitcode = subprocess.call(cmd)
-		log.info('Import process exited with exit code %r', exitcode)
+		self.log.info('Import process exited with exit code %r', exitcode)
 		if fail_on_error and exitcode:
-			log.error('Import failed with exit code %r', exitcode)
+			self.log.error('Import failed with exit code %r', exitcode)
 			utils.fail('Import failed with exit code %r' % (exitcode,))
 		return exitcode
 
@@ -84,7 +84,7 @@ class CLI_Legacy_Import_Tester(object):
 		"""
 		Import users with empty class
 		"""
-		log.info('*** Importing users without specified class')
+		self.log.info('*** Importing users without specified class')
 		fn = tempfile.mkstemp(prefix='empty_class.', dir=self.tmpdir)[1]
 		with open(fn, 'w') as fd:
 			write_user_line(fd, self.ou_A.name, False, False)
@@ -92,7 +92,7 @@ class CLI_Legacy_Import_Tester(object):
 			write_user_line(fd, self.ou_A.name, False, True)
 			write_user_line(fd, self.ou_A.name, True, True)
 		self.run_import(fn)
-		log.info('*** TEST WAS SUCCESSFUL')
+		self.log.info('*** TEST WAS SUCCESSFUL')
 
 	def run(self):
 		try:
