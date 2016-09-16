@@ -58,6 +58,12 @@ from ucsschool.importer.utils.ldap_connection import get_admin_connection as _ge
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
 
 
+assert ImportStaff
+assert ImportStudent
+assert ImportTeacher
+assert ImportTeachersAndStaff
+assert ImportUser
+
 _config_args = {
 	"dry_run": False,
 	"sourceUID": "TestDB",

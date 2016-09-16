@@ -1,3 +1,10 @@
+ucs-school-import (14.0.16-18) unstable; urgency=low
+
+  * Bug #42313: add copyright header
+  * Bug #41861: make pyflakes happy
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Sep 2016 15:23:48 +0200
+
 ucs-school-import (14.0.16-17) unstable; urgency=low
 
   * Bug #42315: remove UCRV leftover
