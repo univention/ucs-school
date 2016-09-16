@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-17) unstable; urgency=low
+
+  * Bug #42315: remove UCRV leftover
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Sep 2016 14:12:26 +0200
+
 ucs-school-import (14.0.16-16) unstable; urgency=low
 
   * Bug #41351: add update code for extended attribute to use UDM hook

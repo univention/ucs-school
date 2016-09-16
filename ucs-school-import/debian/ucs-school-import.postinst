@@ -47,8 +47,7 @@ univention-config-registry set \
 	ucsschool/ldap/default/dcs?"edukativ" \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes \
-	ucsschool/import/generate/mail/domain?yes \
-	ucsschool/import/debug/werror?no || die
+	ucsschool/import/generate/mail/domain?yes || die
 
 eval "$(univention-config-registry shell)"
 
