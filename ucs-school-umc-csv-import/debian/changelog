@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (3.0.4-8) unstable; urgency=low
+
+  * Bug #41987: allow import without classes in CSV
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Sep 2016 14:53:44 +0200
+
 ucs-school-umc-csv-import (3.0.4-7) unstable; urgency=medium
 
   * Bug #42216: Reverted a typo, because it caused problems.

@@ -56,7 +56,7 @@ define([
 					obj[k] = this[k];
 					if (k == 'school_classes' && typeof this[k] != 'object') {
 						obj[k] = {}
-						obj[k][this.school] = this[k].split(',');
+						obj[k][this.school] = this[k] ? this[k].split(',') : [];
 					}
 				}
 			}));
