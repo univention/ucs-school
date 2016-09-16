@@ -6,6 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
+## bugs: [42288]
 
 import shutil
 import logging
@@ -17,6 +18,7 @@ import univention.testing.ucr
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.config_registry import handler_set
 
 
 class Bunch(object):
@@ -73,7 +75,10 @@ class CLI_Legacy_Import_Tester(object):
 		cmd = ['/usr/share/ucs-school-import/scripts/import_user', fn]
 		sys.stdout.flush()
 		sys.stderr.flush()
-		exitcode = subprocess.call(cmd)
+		with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+			if not ucr.get('mail/hosteddomains'):
+				handler_set(['mail/hosteddomains={}'.format(ucr['domainname'])])
+			exitcode = subprocess.call(cmd)
 		self.log.info('Import process exited with exit code %r', exitcode)
 		if fail_on_error and exitcode:
 			self.log.error('Import failed with exit code %r', exitcode)
