@@ -17,9 +17,13 @@ from univention.admin.uexceptions import invalidOptions
 from univention.testing.udm import UCSTestUDM_CreateUDMObjectFailed
 from ucsschool.lib.models import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
 
-import sys
-sys.path.append("/usr/share/pyshared/univention/admin/hooks.d")
-from ucsschool_user_options import blacklisted_option_combinations
+blacklisted_option_combinations = {
+	"ucsschoolAdministrator": {"ucsschoolExam", "ucsschoolStudent"},
+	"ucsschoolExam": {"ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"},
+	"ucsschoolStaff": {"ucsschoolExam", "ucsschoolStudent"},
+	"ucsschoolStudent": {"ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"},
+	"ucsschoolTeacher": {"ucsschoolExam", "ucsschoolStudent"},
+}
 
 
 def main():
