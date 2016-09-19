@@ -9,8 +9,8 @@ class MyHook(UserPyHook):
 		"post_modify": 1,
 		"pre_move": 1,
 		"post_move": 1,
-		"pre_delete": 1,
-		"post_delete": 1
+		"pre_remove": 1,
+		"post_remove": 1
 	}
 
 	def pre_create(self, user):
@@ -31,8 +31,8 @@ class MyHook(UserPyHook):
 	def post_move(self, user):
 		self.logger.info("Running a post_move hook for %s.", user)
 
-	def pre_delete(self, user):
-		self.logger.info("Running a pre_delete hook for %s.", user)
+	def pre_remove(self, user):
+		self.logger.info("Running a pre_remove hook for %s.", user)
 
-	def post_delete(self, user):
-		self.logger.info("Running a post_delete hook for %s.", user)
+	def post_remove(self, user):
+		self.logger.info("Running a post_remove hook for %s.", user)

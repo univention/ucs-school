@@ -1,0 +1,92 @@
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+from ucsschool.importer.exceptions import UcsSchoolImportError
+
+BIRTHDAYS = {
+	"pre_create": "1901-02-03",
+	"post_create": "1902-03-04",
+	"pre_modify": "1903-04-05",
+	"post_modify": "1904-05-06",
+	"pre_move": "1905-06-07",
+	"post_move": "1906-07-08",
+	"pre_remove": "1907-08-09",
+	"post_remove": "1908-09-10"
+}
+PRE_ACTION_BIRTHDAYS = {
+	"pre_create": "1966-06-06",
+	"pre_modify": "1977-07-07",
+	"pre_move": "1988-08-08",
+	"pre_remove": "1999-09-09"
+}
+
+
+class BirthdayHook(UserPyHook):
+	priority = {
+		"pre_create": 10,
+		"post_create": 10,
+		"pre_modify": 10,
+		"post_modify": 10,
+		"pre_move": 10,
+		"post_move": 10,
+		"pre_remove": 10,
+		"post_remove": 10
+	}
+
+	def pre_create(self, user):
+		self.logger.info("*** Running a pre_create hook for %s.", user)
+		if user.birthday != PRE_ACTION_BIRTHDAYS["pre_create"]:
+			raise UcsSchoolImportError("Birthday should have been %r.", PRE_ACTION_BIRTHDAYS["pre_create"])
+		self.logger.info("*** Birthday was %r, setting to %r.", user.birthday, BIRTHDAYS["pre_create"])
+		user.birthday = BIRTHDAYS["pre_create"]
+
+	def post_create(self, user):
+		self.logger.info("*** Running a post_create hook for %s.", user)
+		if user.birthday != BIRTHDAYS["pre_create"]:
+			raise UcsSchoolImportError("User %s birthday should have been %r.", user, BIRTHDAYS["pre_create"])
+		self.logger.info("*** Birthday was %r, setting to %r.", user.birthday, BIRTHDAYS["post_create"])
+		user.birthday = BIRTHDAYS["post_create"]
+		user.modify_without_hooks(self.lo)
+
+	def pre_modify(self, user):
+		self.logger.info("*** Running a pre_modify hook for %s.", user)
+		if user.birthday != PRE_ACTION_BIRTHDAYS["pre_modify"]:
+			raise UcsSchoolImportError("Birthday should have been %r.", PRE_ACTION_BIRTHDAYS["pre_modify"])
+		self.logger.info("*** Birthday was %r, setting to %r.", user.birthday, BIRTHDAYS["pre_modify"])
+		user.birthday = BIRTHDAYS["pre_modify"]
+
+	def post_modify(self, user):
+		self.logger.info("*** Running a post_modify hook for %s.", user)
+		if user.birthday != BIRTHDAYS["pre_modify"]:
+			raise UcsSchoolImportError("User %s birthday should have been %r.", user, BIRTHDAYS["pre_modify"])
+		self.logger.info("*** Birthday was %r, setting to %r.", user.birthday, BIRTHDAYS["post_modify"])
+		user.birthday = BIRTHDAYS["post_modify"]
+		user.modify_without_hooks(self.lo)
+
+	def pre_move(self, user):
+		self.logger.info("*** Running a pre_move hook for %s.", user)
+		if user.birthday != PRE_ACTION_BIRTHDAYS["pre_move"]:
+			raise UcsSchoolImportError("Birthday should have been %r.", PRE_ACTION_BIRTHDAYS["pre_move"])
+		self.logger.info("*** Birthday was %r, setting to %r.",
+			user, user.birthday, BIRTHDAYS["pre_move"])
+		user.birthday = BIRTHDAYS["pre_move"]
+
+	def post_move(self, user):
+		self.logger.info("*** Running a post_move hook for %s.", user)
+		if user.birthday != BIRTHDAYS["pre_move"]:
+			raise UcsSchoolImportError("User %s birthday should have been %r.", user, BIRTHDAYS["pre_move"])
+		self.logger.info("*** Birthday was %r, setting to %r.", user.birthday, BIRTHDAYS["post_move"])
+		user.birthday = BIRTHDAYS["post_move"]
+		user.modify_without_hooks(self.lo)
+
+	def pre_remove(self, user):
+		self.logger.info("*** Running a pre_remove hook for %s.", user)
+		if user.birthday != PRE_ACTION_BIRTHDAYS["pre_remove"]:
+			raise UcsSchoolImportError("Birthday should have been %r.", PRE_ACTION_BIRTHDAYS["pre_remove"])
+		self.logger.info("*** Birthday was %r, setting to %r.", user.birthday, BIRTHDAYS["pre_remove"])
+		user.birthday = BIRTHDAYS["pre_remove"]
+
+	def post_remove(self, user):
+		self.logger.info("*** Running a post_remove hook for %s.", user)
+		if user.exists(self.lo):
+			raise UcsSchoolImportError("Deleted user %s still exists.", user)
+		else:
+			self.logger.info("*** OK: user %s was deleted.", user)

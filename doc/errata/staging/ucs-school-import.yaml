@@ -12,8 +12,10 @@ desc: |
    activated group member into the exported CSV file. Please note, that
    the order of the data fields in the resulting CSV file has changed
    (Bug #31187).
- * Python based hooks are now also run, when creating, modifying, moving or
-   deleting a user outside an import job (Bug #41572).
+ * Python based hooks are now always run, when creating, modifying, moving
+   or deleting ImportUser objects. This change is internal. Command line
+   imports behave as before and the UMC-modules are not yet affected
+   (Bug #41572).
  * During import via ucs-school-user-import, users can now be deleted if
    __action=D is explicitly set in the input data. This is performed even
    if the --no-delete option is set. --no-delete only disables the deletion
