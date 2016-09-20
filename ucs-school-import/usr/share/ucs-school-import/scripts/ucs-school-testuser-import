@@ -33,140 +33,13 @@ Tool to create lots of test users.
 # <http://www.gnu.org/licenses/>.
 
 import datetime
-import gzip
-import json
-import random
 import sys
-import string
 from argparse import ArgumentParser, REMAINDER
 import subprocess
 
 from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose
+from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import TestUserCsvExporter
-
-TEST_DATA_FILE = "/usr/share/doc/ucs-school-import/test_data.json.gz"
-logger = get_logger()
-
-
-class TestUserCreator(object):
-	def __init__(self, ous, staff=0, students=0, teachers=0, staffteachers=0, classes=0, inclasses=2, schools=2):
-		self.ous = sorted(ous)
-		self.num_staff = staff
-		self.num_students = students
-		self.num_teachers = teachers
-		self.num_staffteachers = staffteachers
-		self.num_classes = classes
-		self.num_inclasses = inclasses
-		self.num_schools = schools
-		self.staff = list()
-		self.students = list()
-		self.teachers = list()
-		self.staffteachers = list()
-		self.class_names = list()
-		self.class_name_generators = dict()
-		self.test_data = self.get_test_data(TEST_DATA_FILE)
-
-	@staticmethod
-	def get_test_data(filename):
-		with gzip.open(filename, "rb") as fp:
-			return json.load(fp)
-
-	def make_classes(self):
-		grade = 0
-		while len(self.class_names) * len(self.ous) < self.num_classes:
-			grade += 1
-			for letter in string.ascii_lowercase:
-				self.class_names.append("{}{}".format(grade, letter))
-				if len(self.class_names) * len(self.ous) >= self.num_classes:
-					logger.info("Created %d class names for %d schools.", len(self.class_names), len(self.ous))
-					return self.class_names
-
-	def make_users(self):
-		def get_new_given_name():
-			give_modifier = ""
-			given_len = len(self.test_data["given"])
-			given_cursor = random.randint(0, given_len)
-			while True:
-				yield u"{}{}".format(self.test_data["given"][given_cursor], give_modifier)
-				given_cursor += 1
-				if given_cursor == given_len:
-					# used all names, append number
-					try:
-						give_modifier = str(int(give_modifier) + 1)
-					except ValueError:
-						give_modifier = "2"
-				given_cursor %= given_len
-
-		def get_new_family_name():
-			family_modifier = ""
-			family_len = len(self.test_data["family"])
-			family_cursor = random.randint(0, family_len)
-			while True:
-				yield u"{}{}".format(self.test_data["family"][family_cursor], family_modifier)
-				family_cursor += 1
-				if family_cursor == family_len:
-					# used all names, append number
-					try:
-						family_modifier = str(int(family_modifier) + 1)
-					except ValueError:
-						family_modifier = "2"
-				family_cursor %= family_len
-
-		def class_name_gen(school):
-			cursor = 0
-			class_names_len = len(self.class_names)
-			while True:
-				yield self.class_names[cursor % class_names_len]
-				cursor += 1
-
-		def get_class_name(school):
-			try:
-				gen = self.class_name_generators[school]
-			except KeyError:
-				gen = self.class_name_generators[school] = class_name_gen(school)
-			return next(gen)
-
-		given_name = get_new_given_name()
-		family_name = get_new_family_name()
-		jobs = ((self.num_staff, "staff"), (self.num_students, "student"), (self.num_teachers, "teacher"),
-			(self.num_staffteachers, "staffteacher"))
-		total_users_num = sum([job[0] for job in jobs])
-		total_users_count = 0
-
-		for num, kind in jobs:
-			if num == 0:
-				continue
-			for user_num in xrange(num):
-				user = dict(
-					Schulen=None,
-					Benutzertyp=kind,
-					Vorname=next(given_name),
-					Nachname=next(family_name),
-					Klassen=None,
-					Beschreibung="A {}.".format(kind),
-					Telefon="+{:>02}-{:>03}-{}".format(random.randint(1, 99), random.randint(1, 999),
-						random.randint(1000, 999999))
-				)
-				if kind != "student" and random.choice((True, False)):
-					# 50% chance for non-students to be in multiple schools
-					user["Schulen"] = sorted(random.sample(self.ous, self.num_schools))
-				else:
-					user["Schulen"] = [random.choice(self.ous)]
-
-				if kind == "staff":
-					user["Klassen"] = {}
-				elif kind == "student":
-					# students are in 1 class
-					user["Klassen"] = dict([(school, get_class_name(school)) for school in user["Schulen"]])
-				else:
-					# [staff]teachers can be in multiple classes
-					user["Klassen"] = dict([(school, [get_class_name(school) for _x in range(self.num_inclasses)])
-						for school in user["Schulen"]])
-				total_users_count += 1
-				logger.debug("(%d/%d) Created: %r", total_users_count, total_users_num, user)
-				yield user
-			logger.info("Created %d %ss.", num, kind)
-		logger.info("Created a total of %d users.", total_users_count)
 
 
 def parse_cmdline():
@@ -222,6 +95,7 @@ def parse_cmdline():
 
 
 def main():
+	logger = get_logger()
 	args = parse_cmdline()
 	logger.info("------ Creating user information... ------")
 	test_user_creator = TestUserCreator(args.OU, staff=args.staff, students=args.students, teachers=args.teachers,
