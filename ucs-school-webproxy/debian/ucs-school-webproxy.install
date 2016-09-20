@@ -2,3 +2,5 @@ blocked-by-squid.html var/www/
 ucs-school-webproxy etc/logcollector.d/
 pupilgroups.py usr/lib/univention-directory-listener/system/
 share/* usr/share/ucs-school-webproxy
+etc/runit etc
+usr/bin usr

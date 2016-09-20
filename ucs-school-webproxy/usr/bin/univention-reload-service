@@ -1,0 +1,132 @@
+#!/usr/bin/python2.7
+# coding: utf-8
+#
+# Univention Reload Service
+#  restart services centrally for rate limiting
+#
+# Copyright 2016 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+from ctypes import CDLL, POINTER, Structure, byref, c_int, c_long, get_errno
+from errno import ENOENT
+from os import strerror, umask, unlink
+from socket import AF_UNIX, SOCK_DGRAM, socket, timeout
+from subprocess import call
+from sys import stdout
+from time import strftime
+
+RECV_BUFFER_SIZE = 128
+RELOAD_SOCKET_PATH = '/var/run/univention-reload-service.socket'
+
+CLOCK_MONOTONIC = 1 # see <linux/time.h>
+
+class timespec(Structure):
+	_fields_ = [
+		('tv_sec', c_long, ),
+		('tv_nsec', c_long, ),
+	]
+
+librt = CDLL('librt.so.1', use_errno=True)
+clock_gettime = librt.clock_gettime
+clock_gettime.restype = c_int
+clock_gettime.argtypes = [c_int, POINTER(timespec)]
+
+def monotonic_time():
+	t = timespec()
+	if clock_gettime(CLOCK_MONOTONIC , byref(t)):
+		errno_ = get_errno()
+		raise OSError(errno_, strerror(errno_))
+	return t.tv_sec + t.tv_nsec * 1e-9
+
+def timestamp():
+	return strftime('%Y-%m-%d %H:%M:%S%z')
+
+def log(message):
+	stdout.write("%s %s\n" % (timestamp(), message, ))
+	stdout.flush()
+
+def reloadSquid3():
+	log('Reloading %r now' % (reloadSquid3.name, ))
+	call(('/etc/init.d/squid3', 'reload', ))
+reloadSquid3.name = 'squid3'
+reloadSquid3.delay = 15.0
+
+QUEUE = {} # reloader → when-to-reload
+
+def queue(reloader):
+	if reloader not in QUEUE:
+		log('Reloading %r in %f s' % (reloader.name, reloader.delay, ))
+		QUEUE[reloader] = monotonic_time() + reloader.delay
+
+def process_queue():
+	now = monotonic_time()
+	for reloader, when in QUEUE.items():
+		if when <= now:
+			reloader()
+			del QUEUE[reloader]
+
+def handle(message):
+	message = tuple(message.split(' '))
+	if message == ('reload', 'squid3', ):
+		queue(reloadSquid3)
+	else:
+		log("Command not implemented %r!" % (message, ))
+
+def time_to_next():
+	if not QUEUE:
+		return None # no timeout
+	now = monotonic_time()
+	next = min(QUEUE.values())
+	return max(next - now, 0.1) # minimal delay 100 ms to not busy-wait
+
+def create_socket(socket_path):
+	try:
+		unlink(socket_path)
+	except OSError, e:
+		if e.errno != ENOENT:
+			raise
+	s = socket(AF_UNIX, SOCK_DGRAM)
+	oldmask = umask(0o177) # create the socket as srw-------, so that only root can access it
+	s.bind(socket_path)
+	umask(oldmask)
+	return s
+
+def main():
+	log('Starting')
+	s = create_socket(RELOAD_SOCKET_PATH)
+	while True:
+		process_queue()
+		s.settimeout(time_to_next())
+		try:
+			message = s.recv(RECV_BUFFER_SIZE)
+		except timeout:
+			pass
+		else:
+			handle(message)
+
+if __name__ == "__main__":
+	main()

@@ -1,0 +1,12 @@
+#!/bin/sh -e
+#
+# Univention Reload Service
+#  runit script
+#
+# Copyright 2016 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+
+exec /usr/bin/univention-reload-service >> /var/log/univention/reload-service.log 2>&1

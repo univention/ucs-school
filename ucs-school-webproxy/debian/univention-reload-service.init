@@ -1,0 +1,48 @@
+#!/bin/sh -e
+#
+# Univention Reload Service
+#  init script
+#
+# Copyright 2012-2016 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+
+### BEGIN INIT INFO
+# Provides:          univention-reload-service
+# Required-Start:    $local_fs $remote_fs $network $syslog postgresql apache2
+# Required-Stop:     $local_fs $remote_fs $network $syslog postgresql apache2
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Univention Reload Service
+# Description:       Univention Reload Service - rate-limiting service restart
+### END INIT INFO
+
+if [ ! -e /etc/runit/univention/univention-reload-service ]; then
+	exit 0
+fi
+
+. /lib/lsb/init-functions
+
+case "$1" in
+	start)
+		log_action_msg "Starting univention-reload-service"
+		sv up univention-reload-service
+		log_action_end_msg 0
+		;;
+	stop)
+		log_action_msg "Stopping univention-reload-service"
+		sv down univention-reload-service
+		log_action_end_msg 0
+		;;
+	restart|force-reload)
+		log_action_msg "Restarting univention-reload-service"
+		sv restart univention-reload-service
+		log_action_end_msg 0
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart|force-reload}"
+		exit 1
+		;;
+esac

@@ -51,6 +51,7 @@
 
 import os
 import re
+import socket
 import subprocess
 import tempfile
 import time
@@ -63,6 +64,7 @@ DIR_DATA = '/var/lib/ucs-school-webproxy'
 FN_GLOBAL_BLACKLIST_PREFIX = 'global-blacklist'
 TXT_GLOBAL_BLACKLIST_COMMENT = '###GLOBAL-BLACKLIST-COMMENT###'
 UCR_FORCED_GLOBAL_BLACKLIST = 'proxy/filter/global/blacklists/forced'
+RELOAD_SOCKET_PATH = '/var/run/univention-reload-service.socket'
 
 def logerror(msg):
 	logfd = open( PATH_LOG, 'a+')
@@ -112,6 +114,23 @@ def handler(configRegistry, changes):
 	finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA)
 	moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA)
 	removeTempDirectory(DIR_TEMP)
+	reloadSquid()
+
+def reloadSquid():
+	if not signalReloadProcess():
+		reloadSquidDirectly()
+
+def signalReloadProcess():
+	try:
+		s = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+		s.settimeout(0)
+		s.sendto('reload squid3', RELOAD_SOCKET_PATH)
+		print "Delayed reload triggered"
+		return True
+	except socket.error:
+		return False
+
+def reloadSquidDirectly():
 	subprocess.call(('/etc/init.d/squid3', 'reload', ))
 
 def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
