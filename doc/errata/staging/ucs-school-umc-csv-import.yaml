@@ -6,6 +6,6 @@ src: ucs-school-umc-csv-import
 fix: 3.0.4-8.53.201609161456
 desc: |
  This update addresses the following issue(s):
- * Adapt to package to changes in the UCS@school programming library
+ * Adapt package to changes in the UCS@school programming library
    (Bug #41282, #41609 #41987).
 bug: [41282, 41609, 41987]
