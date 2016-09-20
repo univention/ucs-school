@@ -135,10 +135,12 @@ class Person(object):
 				elif self.school not in self.schools:
 					self.schools.append(self.school)
 				self.school_base = self.make_school_base()
+				self.dn = self.make_dn()
 			elif key == 'schools':
 				if not self.school:
 					self.school = sorted(kwargs[key])[0]
 					self.school_base = self.make_school_base()
+					self.dn = self.make_dn()
 				self.schools = kwargs[key]
 			elif hasattr(self, key):
 				setattr(self, key, kwargs[key])

@@ -1286,13 +1286,15 @@ class CLI_Import_v2_Tester(object):
 			if same_ou:
 				dn = self.ou_A.dn
 				name = self.ou_A.name
+				school = self.ou_A.name
 			else:
 				dn = self.ou_B.dn
 				name = self.ou_B.name
+				school = sorted([self.ou_A.name, self.ou_B.name])[0]
 			cls2_dn, cls2_name = udm.create_group(
 				position='cn=klassen,cn=schueler,cn=groups,%s' % (dn,),
 				name="{}-{}".format(name, uts.random_groupname()))
-			person = Person(self.ou_A.name, role)
+			person = Person(school, role)
 			person.update(record_uid=record_uid, source_uid=source_uid, username=uts.random_username())
 			if same_ou:
 				person.update(school_classes={self.ou_A.name: [cls1_name, cls2_name]})

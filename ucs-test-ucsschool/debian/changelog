@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-6) unstable; urgency=low
+
+  * Bug #42288: set primary school for correct groupDN calculation
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 20 Sep 2016 12:46:36 +0200
+
 ucs-test-ucsschool (3.0.16-5) unstable; urgency=low
 
   * Bug #41572: test modifications on user objects by python import hooks
