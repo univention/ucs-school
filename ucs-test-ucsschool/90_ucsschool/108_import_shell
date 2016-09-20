@@ -13,7 +13,7 @@ import univention.testing.ucsschool as utu
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 
-from ucsschool.importer.utils.shell import *
+from ucsschool.importer.utils.shell import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, logger, config
 
 
 def main():
