@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: univention-admin-hooks-ucsschool_user_options\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2016-08-29 09:43+0200\n"
-"PO-Revision-Date: 2016-08-29 09:24+0200\n"
+"PO-Revision-Date: 2016-09-20 09:49+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "Language: de\n"
@@ -21,23 +21,3 @@ msgid ""
 "%(option)s cannot be activated together with %(illegals)s."
 msgstr ""
 "%(option)s kann nicht zusammen mit %(illegals)s aktiviert werden."
-
-#: udm_hook/ucsschool_user_options.py:52
-msgid "UCS@school Administrator"
-msgstr "UCS@school-Administrator"
-
-#: udm_hook/ucsschool_user_options.py:53
-msgid "UCS@school Examuser"
-msgstr "UCS@school-Klassenarbeitsbenutzer"
-
-#: udm_hook/ucsschool_user_options.py:54
-msgid "UCS@school staff"
-msgstr "UCS@school-Mitarbeiter"
-
-#: udm_hook/ucsschool_user_options.py:55
-msgid "UCS@school student"
-msgstr "UCS@school-Schüler"
-
-#: udm_hook/ucsschool_user_options.py:56
-msgid "UCS@school teacher"
-msgstr "UCS@school-Lehrer"

@@ -32,8 +32,8 @@ UCS@school UDM-hook to prevent invalid combinations of user options
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import univention.debug as ud
 from univention.admin.hook import simpleHook
+import univention.admin.modules
 import univention.admin.uexceptions
 import univention.admin.localization
 
@@ -41,21 +41,13 @@ translation = univention.admin.localization.translation("univention-admin-hooks-
 _ = translation.translate
 
 
-blacklisted_option_combinations = {
+option_blacklist = {
 	"ucsschoolAdministrator": {"ucsschoolExam", "ucsschoolStudent"},
 	"ucsschoolExam": {"ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"},
 	"ucsschoolStaff": {"ucsschoolExam", "ucsschoolStudent"},
 	"ucsschoolStudent": {"ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"},
 	"ucsschoolTeacher": {"ucsschoolExam", "ucsschoolStudent"},
 }
-option_names = {
-	"ucsschoolAdministrator": _("UCS@school Administrator"),
-	"ucsschoolExam": _("UCS@school Examuser"),
-	"ucsschoolStaff": _("UCS@school staff"),
-	"ucsschoolStudent": _("UCS@school student"),
-	"ucsschoolTeacher": _("UCS@school teacher")
-}
-error_msg = _("%(option)s cannot be activated together with %(illegals)s.")
 
 
 class UcsschoolUserOptions(simpleHook):
@@ -63,17 +55,16 @@ class UcsschoolUserOptions(simpleHook):
 
 	@staticmethod
 	def check_options(module):
-		users_options = set(module.options)
-		ucsschool_options = users_options.intersection(set(blacklisted_option_combinations.keys()))
-		for option in ucsschool_options:
-			illegal_options = blacklisted_option_combinations[option]
-			if illegal_options.intersection(users_options):
-				msg = error_msg % {
-					"option": option_names[option],
-					"illegals": ", ".join([option_names[o] for o in illegal_options])
-				}
-				ud.debug(ud.ADMIN, ud.WARN, msg)
-				raise univention.admin.uexceptions.invalidOptions(msg)
+		def _option_name(option):
+			return univention.admin.modules.get(module.module).options[option].short_description
+		for option, invalid_options in option_blacklist.items():
+			if option not in module.options:
+				continue
+			if invalid_options & set(module.options):
+				raise univention.admin.uexceptions.invalidOptions(_("%(option)s cannot be activated together with %(illegals)s.") % {
+					"option": _option_name(option),
+					"illegals": ", ".join(map(_option_name, (invalid_options & set(module.options))))
+				})
 
 	def hook_ldap_pre_create(self, module):
 		self.check_options(module)
