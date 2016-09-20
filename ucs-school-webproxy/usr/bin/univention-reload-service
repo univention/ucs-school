@@ -71,16 +71,20 @@ def log(message):
 
 def reloadSquid3():
 	log('Reloading %r now' % (reloadSquid3.name, ))
+	reloadSquid3.last = monotonic_time()
 	call(('/etc/init.d/squid3', 'reload', ))
 reloadSquid3.name = 'squid3'
 reloadSquid3.delay = 15.0
+reloadSquid3.last = float('-inf')
 
 QUEUE = {} # reloader → when-to-reload
 
 def queue(reloader):
+	now = monotonic_time()
 	if reloader not in QUEUE:
-		log('Reloading %r in %f s' % (reloader.name, reloader.delay, ))
-		QUEUE[reloader] = monotonic_time() + reloader.delay
+		when = max(reloader.last + reloader.delay, now)
+		log('Reloading %r in %f s' % (reloader.name, when - now, ))
+		QUEUE[reloader] = when
 
 def process_queue():
 	now = monotonic_time()
