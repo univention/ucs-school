@@ -110,6 +110,8 @@ class Person(object):
 
 	def set_mode_to_delete(self):
 		self.mode = 'D'
+		# wait for S4-create-round-trip before removing
+		utils.wait_for_connector_replication()
 
 	def set_active(self):
 		self.active = True

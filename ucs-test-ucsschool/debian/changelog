@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-7) unstable; urgency=low
+
+  * Bug #41282: wait for S4 connector before removing
+  * query LDAP only once for diff
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 21 Sep 2016 08:58:32 +0200
+
 ucs-test-ucsschool (3.0.16-6) unstable; urgency=low
 
   * Bug #42288: set primary school for correct groupDN calculation

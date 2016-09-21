@@ -317,12 +317,13 @@ class CLI_Import_v2_Tester(object):
 		return exitcode
 
 	def check_new_and_removed_users(self, exp_new, exp_removed):
-		new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+		ldap_diff = self.diff_ldap_status()
+		new_users = [x for x in ldap_diff.new if x.startswith('uid=')]
 		if len(new_users) != exp_new:
 			self.log.error('Invalid number of new users (expected %d, found %d)! Found new objects: %r',
 				exp_new, len(new_users), new_users)
 			utils.fail('Stopping because of invalid number of new users.')
-		removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+		removed_users = [x for x in ldap_diff.removed if x.startswith('uid=')]
 		if len(removed_users) != exp_removed:
 			self.log.error('Invalid number of removed users (expected %d, found %d)! Removed objects: %r',
 				exp_removed, len(removed_users), removed_users)
@@ -1237,7 +1238,6 @@ class CLI_Import_v2_Tester(object):
 				utils.verify_ldap_object(class_B_dn, expected_attr={'uniqueMember': []}, strict=True, should_exist=True)
 
 			self.log.info('*** Remove a single user with role %r', role)
-
 			# mark person as removed
 			person.set_mode_to_delete()
 			self.create_csv_file(person_list=[], fn_csv=fn_csv)
