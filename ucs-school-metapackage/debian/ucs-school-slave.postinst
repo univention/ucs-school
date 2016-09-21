@@ -34,6 +34,14 @@
 if [ "$1" = configure -a -z "$2" ]; then
 	# overwrite the netlogon sync setting during the installation
 	univention-config-registry set samba/netlogon/sync=download
+
+	# fresh installation
+	# prevent sysvol-sync of netlogon scripts
+	if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
+		univention-config-registry set \
+			samba/share/netlogon/path=/var/lib/samba/netlogon \
+			ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
+	fi
 fi
 
 univention-config-registry set \
@@ -139,14 +147,6 @@ if [ "$1" = "configure" ] ; then
 				fi
 			fi
 		fi
-	fi
-else
-	# fresh installation
-	# prevent sysvol-sync of netlogon scripts
-	if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
-		univention-config-registry set \
-			samba/share/netlogon/path=/var/lib/samba/netlogon \
-			ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	fi
 fi
 

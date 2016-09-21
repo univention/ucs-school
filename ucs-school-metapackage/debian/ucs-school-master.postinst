@@ -113,7 +113,9 @@ if [ "$1" = "configure" -a -n "$2" ]; then
 			fi
 		fi
 	fi
-else
+fi
+
+if [ "$1" = configure -a -z "$2" ]; then
 	# fresh installation
 	# prevent sysvol-sync of netlogon scripts
 	if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
