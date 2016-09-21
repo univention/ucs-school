@@ -1,0 +1,27 @@
+{
+	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
+	"classes": {
+		"reader": "univention.testing.ucsschool_import_factory_test_classes.TypeCsvReader"
+	},
+	"input": {
+		"type": "csv"
+	},
+	"csv": {
+		"mapping": {
+			"Schulen": "schools",
+			"Benutzertyp": "__type",
+			"Vorname": "firstname",
+			"Nachname": "lastname",
+			"Klassen": "school_classes",
+			"Beschreibung": "description",
+			"Telefon": "phone"
+		}
+	},
+	"scheme": {
+		"email": "<firstname>.<lastname>@<maildomain>",
+		"recordUID": "<firstname>.<lastname>",
+		"username": {"default": "<:umlauts><firstname>.<lastname><:lower>[COUNTER2]"}
+	},
+	"sourceUID": "TestDB",
+	"verbose": true
+}

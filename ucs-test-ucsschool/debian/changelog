@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-8) unstable; urgency=low
+
+  * Bug #41469: add test for configurability of import factory
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 21 Sep 2016 17:42:59 +0200
+
 ucs-test-ucsschool (3.0.16-7) unstable; urgency=low
 
   * Bug #41282: wait for S4 connector before removing
