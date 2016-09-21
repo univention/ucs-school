@@ -21,6 +21,6 @@
 		"email": "<firstname>.<lastname>@<maildomain>",
 		"recordUID": "<firstname>.<lastname>"
 	},
-	"sourceUID": "NewDB",
+	"sourceUID": "TESTID",
 	"verbose": false
 }
