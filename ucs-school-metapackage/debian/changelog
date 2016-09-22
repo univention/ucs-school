@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-7) unstable; urgency=low
+
+  * Bug #40262: quote DN, tell user to reboot slave
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 22 Sep 2016 09:16:25 +0200
+
 ucs-school-metapackage (9.0.2-6) unstable; urgency=low
 
   * Bug #40347: ensure UCRVs are set on new installations only
