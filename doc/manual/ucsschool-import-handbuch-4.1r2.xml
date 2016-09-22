@@ -933,7 +933,7 @@ udm users/user
 				</programlisting>
 			</para>
 			<para>
-				Um neue Zählervariablen hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.utils.username_handler.UsernameHandler</classname> abgeleitet und die Methode <methodname>username_patterns()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>).
+				Um neue Zählervariablen hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.utils.username_handler.UsernameHandler</classname> abgeleitet und die Methode <methodname>counter_variable_to_function()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>).
 			</para>
 		</section>
 
@@ -1247,10 +1247,10 @@ from ucsschool.importer.utils.username_handler import UsernameHandler
 
 class MyUsernameHandler(UsernameHandler):
     @property
-    def username_patterns(self):
-        patterns = super(MyUsernameHandler, self).username_patterns
-        patterns["[ALWAYSWITHZEROS]"] = self.always_counter_with_zeros
-        return patterns
+    def counter_variable_to_function(self):
+        name_function_mapping = super(MyUsernameHandler, self).counter_variable_to_function
+        name_function_mapping["[ALWAYSWITHZEROS]"] = self.always_counter_with_zeros
+        return name_function_mapping
 
     def always_counter_with_zeros(self, name_base):
         number_str = self.always_counter(name_base)
@@ -1259,7 +1259,7 @@ class MyUsernameHandler(UsernameHandler):
         return new_number_str
 			</programlisting>
 			<para>
-				In <methodname>username_patterns()</methodname> wird den existierenden beiden Variablen eine weitere hinzugefügt, und auf die neue Funktion verwiesen.
+				In <methodname>counter_variable_to_function()</methodname> wird den existierenden beiden Variablen eine weitere hinzugefügt, und auf die neue Funktion verwiesen.
 				<methodname>always_counter_with_zeros()</methodname> verwendet <methodname>always_counter()</methodname> zur Erzeugung der nächsten freien Zahl, schreibt diese aber dann so um, dass sie immer vier Stellen lang ist (vorne wird mit Nullen aufgefüllt).
 			</para>
 			<para>

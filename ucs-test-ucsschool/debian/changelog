@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.16-9) unstable; urgency=low
+
+  * Bug #42313: adapt to renaming of username_patterns to
+    counter_variable_to_function
+  * add unit test for username_handler
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 22 Sep 2016 12:11:00 +0200
+
 ucs-test-ucsschool (3.0.16-8) unstable; urgency=low
 
   * Bug #41469: add test for configurability of import factory

@@ -1,3 +1,10 @@
+ucs-school-import (14.0.16-21) unstable; urgency=low
+
+  * Bug #42313: rename username_patterns to counter_variable_to_function
+  * change dialect object instead of class
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 22 Sep 2016 12:11:57 +0200
+
 ucs-school-import (14.0.16-20) unstable; urgency=low
 
   * Bug #40562: move test user creation code into separate module

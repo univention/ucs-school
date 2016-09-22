@@ -52,7 +52,7 @@ class CsvWriter(BaseWriter):
 		self.dialect = dialect
 
 		if not self.dialect:
-			self.dialect = excel
+			self.dialect = excel()
 			self.dialect.doublequote = True
 			self.dialect.quoting = QUOTE_ALL
 

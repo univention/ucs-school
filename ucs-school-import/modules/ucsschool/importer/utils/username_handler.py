@@ -42,7 +42,8 @@ from ucsschool.importer.utils.logging import get_logger
 
 
 class UsernameHandler(object):
-	username_pattern = re.compile(r"\[.*?\]")
+	replacement_variable_pattern = re.compile(r"\[.*?\]")
+	allowed_chars = string.ascii_letters + string.digits + "."
 
 	def __init__(self, username_max_length):
 		self.username_max_length = username_max_length
@@ -82,6 +83,23 @@ class UsernameHandler(object):
 		)
 		return cur
 
+	def remove_bad_chars(self, name):
+		"""
+		Remove characters disallowed for usernames.
+		* Username must only contain numbers, letters and dots, and may not be 'admin'!
+		* Username must not start or end in a dot.
+
+		:param name: str: username to check
+		:return: str: copy of input, possibly modified
+		"""
+		bad_chars = "".join(sorted(set(name).difference(set(self.allowed_chars))))
+		if bad_chars:
+			self.logger.warn("Removing disallowed characters %r from username %r.", bad_chars, name)
+		if name.startswith(".") or name.endswith("."):
+			self.logger.warn("Removing disallowed dot from start and end of username %r.", name)
+			name = name.strip(".")
+		return name.translate(None, bad_chars)
+
 	def format_username(self, name):
 		"""
 		Create a username from name, possibly replacing a counter variable.
@@ -91,7 +109,7 @@ class UsernameHandler(object):
 		* Only one counter variable is allowed.
 		* Counters should run only to 999. The algorithm will not honor
 		username_max_length for higher numbers!
-		* Subclass->override username_patterns() and the called methods to support
+		* Subclass->override counter_variable_to_function() and the called methods to support
 		other schemes than [ALWAYSCOUNTER] and [COUNTER2] or change their meaning.
 
 		:param name: str: username, possibly a template
@@ -99,37 +117,29 @@ class UsernameHandler(object):
 		"""
 		assert isinstance(name, basestring)
 		ori_name = name
-		allowed_chars = string.ascii_letters + string.digits + "."
 		cut_pos = self.username_max_length - 3  # numbers >999 are not supported
 
-		def remove_bad_chars(name):
-			bad_chars = "".join(sorted(set(name).difference(set(allowed_chars))))
-			if bad_chars:
-				self.logger.warn("Removing disallowed characters %r from username %r.", bad_chars, name)
-			if name.startswith(".") or name.endswith("."):
-				self.logger.warn("Removing disallowed dot from start and end of username %r.", name)
-				name = name.strip(".")
-			return name.translate(None, bad_chars)
-
-		match = self.username_pattern.search(name)
+		match = self.replacement_variable_pattern.search(name)
 		if not match:
-			name = remove_bad_chars(name)
-			if len(name) > cut_pos:
-				res = name[:cut_pos]
-				self.logger.warn("Username %r to long, shortened to %r.", name, res)
+			# no counter variable used, just check characters and length
+			name = self.remove_bad_chars(name)
+			if len(name) > self.username_max_length:
+				res = name[:self.username_max_length]
+				self.logger.warn("Username %r too long, shortened to %r.", name, res)
 			else:
 				res = name
 			return res
 
-		if len(self.username_pattern.split(name)) > 2:
+		if len(self.replacement_variable_pattern.split(name)) > 2:
 			raise FormatError("More than one counter variable found in username scheme '{}'.".format(name), name, name)
 
-		_base_name = "".join(self.username_pattern.split(name))
-		base_name = remove_bad_chars(_base_name)
+		# need username without counter variable to calculate length
+		_base_name = "".join(self.replacement_variable_pattern.split(name))
+		base_name = self.remove_bad_chars(_base_name)
 		if _base_name != base_name:
 			# recalculate position of pattern
 			name = "{}{}{}".format(base_name[:match.start()], match.group(), base_name[match.end():])
-			match = self.username_pattern.search(name)
+			match = self.replacement_variable_pattern.search(name)
 
 		variable = match.group()
 		start = match.start()
@@ -138,31 +148,33 @@ class UsernameHandler(object):
 		if start == 0 and end == len(name):
 			raise FormatError("No username in '{}'.".format(name), ori_name, ori_name)
 
+		# get counter function
 		try:
-			func = self.username_patterns[variable.upper()]
+			func = self.counter_variable_to_function[variable.upper()]
 		except KeyError as exc:
-			raise FormatError("Unknown variable name '{}' in username scheme '{}': {}".format(variable, ori_name, exc),
-				variable, name)
+			raise FormatError("Unknown variable name '{}' in username scheme '{}': '{}' not in known variables: '{}'".format(
+				variable, ori_name, exc, self.counter_variable_to_function.keys()), variable, name)
 		except AttributeError as exc:
 			raise FormatError("No method '{}' can be found for variable name '{}' in username scheme '{}': {}".format(
-				self.username_patterns[variable], variable, name, exc), variable, ori_name)
+				self.counter_variable_to_function[variable], variable, name, exc), variable, ori_name)
 
 		if len(base_name) > cut_pos:
 			# base name without variable to long, we have to shorten it
 			# numbers will only be appended, no inserting possible anymore
 			res = base_name[:cut_pos]
 			insert_position = cut_pos
-			self.logger.warn("Username %r to long, shortened to %r.", base_name, res)
+			self.logger.warn("Username %r too long, shortened to %r.", base_name, res)
+			res = self.remove_bad_chars(res)  # dot from middle might be at end now
 		else:
 			insert_position = start
 			res = u"{}{}".format(name[:start], name[end:])
 
-		counter = func(res)
+		counter = func(res)  # get counter number to insert/append
 		ret = "{}{}{}".format(res[:insert_position], counter, res[insert_position:])
 		return ret
 
 	@property
-	def username_patterns(self):
+	def counter_variable_to_function(self):
 		"""
 		Subclass->override this to support other variables than [ALWAYSCOUNTER]
 		and [COUNTER2] or change their meaning. Add/Modify corresponding

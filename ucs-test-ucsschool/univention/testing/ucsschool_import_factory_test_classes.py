@@ -154,8 +154,8 @@ class FooUsernameHandler(UsernameHandler):
 	Adds [FOO] modifier. Always appends "foo" to a username -> works only once per username!
 	"""
 	@property
-	def username_patterns(self):
-		res = super(FooUsernameHandler, self).username_patterns
+	def counter_variable_to_function(self):
+		res = super(FooUsernameHandler, self).counter_variable_to_function
 		res["[FOO]"] = self.foo_counter
 		return res
 

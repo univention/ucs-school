@@ -30,6 +30,8 @@ import univention.testing.udm
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from ucsschool.importer.utils.username_handler import UsernameHandler
+from ucsschool.importer.exceptions import FormatError
 
 
 class Bunch(object):
@@ -1417,6 +1419,62 @@ class CLI_Import_v2_Tester(object):
 				person.update(username=remove_bad_chars("{}1".format(lastname[:12])))
 				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False,
 					should_exist=True)
+
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (1/5)')
+		unh = UsernameHandler(15)  # 20 - len("exam-")
+		name12 = uts.random_username(12)  # 15 - 3
+		usernames = {
+			".abc.def.": "abc.def",
+			"...abc...def...": "abc...def",
+			"": "",
+			"..[ALWAYSCOUNTER]..": None,
+			"[ALWAYSCOUNTER]": None,
+			"[FOObar]": None,
+			"{}.[COUNTER2]".format(name12): name12,
+			".": ""
+		}
+		for input_name, expected in usernames.items():
+			try:
+				out = unh.format_username(input_name)
+			except FormatError:
+				if expected is None:
+					continue
+			if out != expected:
+				utils.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (2/5)')
+		for i in range(1000):
+			name = uts.random_username(15)
+			out = unh.format_username(name)
+			if out != name:
+				utils.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (3/5)')
+		for i in range(1000):
+			name = uts.random_name(20)
+			out = unh.format_username(name)
+			if out.startswith(".") or out.endswith(".") or len(out) > 15:
+				utils.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (4/5)')
+		for i in range(1000):
+			name = uts.random_name_special_characters(20)
+			name = name.translate(None, "[]")  # those are reserved for counter vars
+			out = unh.format_username(name)
+			if out.startswith(".") or out.endswith(".") or len(out) > 15:
+				utils.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (5/5)')
+		usernames = [
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max1.Mustermann'),
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max2.Mustermann'),
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max3.Mustermann'),
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max4.Mustermann'),
+			('Maria[ALWAYSCOUNTER].Musterfrau', 'Maria1.Musterfrau'),
+			('Moritz[COUNTER2]', 'Moritz'),
+			('Moritz[COUNTER2]', 'Moritz2')
+		]
+		unh = UsernameHandler(20)
+		for input_name, expected in usernames:
+			out = unh.format_username(input_name)
+			if out != expected:
+				utils.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
 
 		self.log.info('Test was successful.\n\n\n')
 
