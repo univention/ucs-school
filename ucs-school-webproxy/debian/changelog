@@ -1,8 +1,8 @@
-ucs-school-webproxy (12.0.3-4) unstable; urgency=medium
+ucs-school-webproxy (12.0.3-5) unstable; urgency=medium
 
   * Bug #41361: add univention-reload-service
 
- -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 23 Sep 2016 13:30:08 +0200
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 23 Sep 2016 13:47:21 +0200
 
 ucs-school-webproxy (12.0.3-2) unstable; urgency=low
 

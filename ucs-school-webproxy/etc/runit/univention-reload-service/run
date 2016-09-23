@@ -9,4 +9,4 @@
 #
 # All rights reserved.
 
-exec /usr/bin/univention-reload-service >> /var/log/univention/reload-service.log 2>&1
+exec /usr/sbin/univention-reload-service >> /var/log/univention/reload-service.log 2>&1
