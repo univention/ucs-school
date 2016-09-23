@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-22) unstable; urgency=low
+
+  * Bug #42105: students usernames are their firstnames
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 23 Sep 2016 14:30:28 +0200
+
 ucs-school-import (14.0.16-21) unstable; urgency=low
 
   * Bug #42313: rename username_patterns to counter_variable_to_function
