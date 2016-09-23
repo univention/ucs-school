@@ -24,6 +24,7 @@ import time
 import string
 import re
 import datetime
+import traceback
 from essential.importusers import Person
 import univention.testing.ucr
 import univention.testing.udm
@@ -324,12 +325,20 @@ class CLI_Import_v2_Tester(object):
 		if len(new_users) != exp_new:
 			self.log.error('Invalid number of new users (expected %d, found %d)! Found new objects: %r',
 				exp_new, len(new_users), new_users)
-			utils.fail('Stopping because of invalid number of new users.')
+			self.fail('Stopping because of invalid number of new users.')
 		removed_users = [x for x in ldap_diff.removed if x.startswith('uid=')]
 		if len(removed_users) != exp_removed:
 			self.log.error('Invalid number of removed users (expected %d, found %d)! Removed objects: %r',
 				exp_removed, len(removed_users), removed_users)
-			utils.fail('Stopping because of invalid number of removed users.')
+			self.fail('Stopping because of invalid number of removed users.')
+
+	def fail(self, msg, returncode=1):
+		"""
+		Print the stack to faster find where the error came from.
+		This ucs-test is so long, reading the logfile is hard and it gets cropped by jenkins.
+		"""
+		self.log.error("".join(traceback.format_stack()))
+		utils.fail(msg, returncode)
 
 	def test_create_modify_delete_user(self):
 		"""
@@ -547,7 +556,7 @@ class CLI_Import_v2_Tester(object):
 				username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
 				self.log.info("Calculated username_prefix is %r.", username_prefix)
 				if person.username != "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""):
-					utils.fail('username %r is not expected string "%s%s"' % (person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""))
+					self.fail('username %r is not expected string "%s%s"' % (person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""))
 				self.log.info('Username %r is expected with string "%s%s"', person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")
 
 				# check if username history object exists
@@ -584,7 +593,7 @@ class CLI_Import_v2_Tester(object):
 					person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
 					person.verify()
 					if person.username != "{}{}".format(username_prefix, ext):
-						utils.fail('username %r is not expected string "%s%d"' % (person.username, username_prefix, ext))
+						self.fail('username %r is not expected string "%s%d"' % (person.username, username_prefix, ext))
 					self.log.info('Username %r is expected with string "%s%d', person.username, username_prefix, ext)
 
 					self.log.info('Checking for unique-usernames object...')
@@ -623,7 +632,7 @@ class CLI_Import_v2_Tester(object):
 			userlist = self.lo.searchDn('uid=%s' % (personA.username,))
 			if len(userlist) != 1:
 				self.log.error('Invalid number of users for personA! Found new objects: %r', userlist)
-				utils.fail('Stopping here')
+				self.fail('Stopping here')
 			personA.verify()
 
 			self.log.info('Adding user B %r with role %r', personB.username, role)
@@ -635,7 +644,7 @@ class CLI_Import_v2_Tester(object):
 				userlist = self.lo.searchDn('uid=%s' % (username,))
 				if len(userlist) != 1:
 					self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
-					utils.fail('Stopping here')
+					self.fail('Stopping here')
 			personA.verify()
 			personB.verify()
 
@@ -650,7 +659,7 @@ class CLI_Import_v2_Tester(object):
 				userlist = self.lo.searchDn('uid=%s' % (username,))
 				if len(userlist) != 1:
 					self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
-					utils.fail('Stopping here')
+					self.fail('Stopping here')
 			personA.verify()
 			personB.verify()
 		self.log.info('Test was successful.\n\n\n')
@@ -694,7 +703,7 @@ class CLI_Import_v2_Tester(object):
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 			if len(new_users) != 1:
 				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
-				utils.fail('Stopping here')
+				self.fail('Stopping here')
 
 			# update dn+username of person and verify LDAP attributes
 			mail = '%s.%s@example.com' % (person.firstname[0:3].lower(), person.lastname[2:5].lower())
@@ -703,7 +712,7 @@ class CLI_Import_v2_Tester(object):
 
 			username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
 			if person.username != "{}1".format(username_prefix):
-				utils.fail('username %r is not expected string %r' % (person.username, "{}1".format(username_prefix)))
+				self.fail('username %r is not expected string %r' % (person.username, "{}1".format(username_prefix)))
 			self.log.info('Username %r is not expected string %r', person.username, "{}1".format(username_prefix))
 
 			self.log.info('Testing mailPrimaryAddress and description...')
@@ -808,7 +817,7 @@ class CLI_Import_v2_Tester(object):
 			userlist = self.lo.searchDn('uid=%s' % (person.username,))
 			if len(userlist) != 1:
 				self.log.error('Invalid number of user objects for user %r! Found new objects: %r', person.username, userlist)
-				utils.fail('Stopping here')
+				self.fail('Stopping here')
 
 			person.update(dn=userlist[0])
 			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
@@ -851,7 +860,7 @@ class CLI_Import_v2_Tester(object):
 				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 				if len(new_users) != 1:
 					self.log.error('Invalid number of new users! Found new objects: %r', new_users)
-					utils.fail('Stopping here')
+					self.fail('Stopping here')
 
 				# update dn+username of person and verify LDAP attributes
 				mail = '%s.%s@example.com' % (person.firstname.lower(), person.lastname.lower())
@@ -860,7 +869,7 @@ class CLI_Import_v2_Tester(object):
 
 				username_prefix = '%s.%sa' % (person.firstname[0:6], person.lastname[0:3])
 				if person.username != "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""):
-					utils.fail('username %r is not expected string %r.' % (person.username, "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")))
+					self.fail('username %r is not expected string %r.' % (person.username, "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")))
 				self.log.info('Username %r is not expected with string %r.', person.username, "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""))
 
 				self.log.info('Testing mailPrimaryAddress and description...')
@@ -1440,26 +1449,26 @@ class CLI_Import_v2_Tester(object):
 				if expected is None:
 					continue
 			if out != expected:
-				utils.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
+				self.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (2/5)')
 		for i in range(1000):
 			name = uts.random_username(15)
 			out = unh.format_username(name)
 			if out != name:
-				utils.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (3/5)')
 		for i in range(1000):
 			name = uts.random_name(20)
 			out = unh.format_username(name)
 			if out.startswith(".") or out.endswith(".") or len(out) > 15:
-				utils.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (4/5)')
 		for i in range(1000):
 			name = uts.random_name_special_characters(20)
 			name = name.translate(None, "[]")  # those are reserved for counter vars
 			out = unh.format_username(name)
 			if out.startswith(".") or out.endswith(".") or len(out) > 15:
-				utils.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (5/5)')
 		usernames = [
 			('Max[ALWAYSCOUNTER].Mustermann', 'Max1.Mustermann'),
@@ -1474,7 +1483,7 @@ class CLI_Import_v2_Tester(object):
 		for input_name, expected in usernames:
 			out = unh.format_username(input_name)
 			if out != expected:
-				utils.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
+				self.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
 
 		self.log.info('Test was successful.\n\n\n')
 
@@ -1680,7 +1689,7 @@ class CLI_Import_v2_Tester(object):
 		self.log.info('*** Running import with broken configuration file...\n*')
 		try:
 			self.run_import(['-c', fn_config])
-			utils.fail("Import ran with broken configuration.")
+			self.fail("Import ran with broken configuration.")
 		except ImportException as exc:
 			self.log.info("*** OK - error was expected: %r", exc)
 		# look for error message in logfile
@@ -1691,7 +1700,7 @@ class CLI_Import_v2_Tester(object):
 				self.log.info("Found in logfile: %r", found[0])
 				break
 		else:
-			utils.fail("Error message not found in logfile.")
+			self.fail("Error message not found in logfile.")
 		self.log.info("Test was successful.\n\n\n")
 
 	def run(self):
@@ -1726,7 +1735,8 @@ class CLI_Import_v2_Tester(object):
 
 
 def main():
-	logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(levelname)s: %(funcName)s:%(lineno)d: %(message)s')
+	logging.basicConfig(stream=sys.stdout, level=logging.DEBUG,
+		format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 	tester = CLI_Import_v2_Tester()
 	tester.run()
 

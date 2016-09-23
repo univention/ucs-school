@@ -8,6 +8,7 @@
 ##   - ucs-school-import
 ## bugs: [41572]
 import os
+import os.path
 import sys
 import shutil
 
@@ -18,7 +19,7 @@ import univention.testing.utils as utils
 
 from ucsschool.importer.utils.shell import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, logger
 
-TESTHOOKSOURCE = "/root/sync/ucs-test-ucsschool/90_ucsschool/testpyhookpy"
+TESTHOOKSOURCE = CONFIG = os.path.join(os.path.dirname(__file__), "testpyhookpy")
 TESTHOOKTARGET = "/usr/share/ucs-school-import/pyhooks/bdaytest.py"
 
 logger.info('*** Copying %r to %r...', TESTHOOKSOURCE, TESTHOOKTARGET)

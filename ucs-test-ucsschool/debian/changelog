@@ -1,3 +1,12 @@
+ucs-test-ucsschool (3.0.16-10) unstable; urgency=low
+
+  * Bug #41469: fix various tests
+  * log traceback on error in 34_import-users_via_cli_v2 because it's so long
+  * log time in 34_import-users_via_cli_v2, because it's missing in jenkins
+    logfile
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 23 Sep 2016 08:51:30 +0200
+
 ucs-test-ucsschool (3.0.16-9) unstable; urgency=low
 
   * Bug #42313: adapt to renaming of username_patterns to
