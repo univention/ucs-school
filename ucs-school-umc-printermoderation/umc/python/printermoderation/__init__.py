@@ -36,12 +36,14 @@ import glob
 import os
 import stat
 import subprocess
+import cups
 
 from univention.lib.i18n import Translation
 
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
+from univention.management.console.modules.decorators import require_password
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
@@ -79,6 +81,7 @@ class Instance(SchoolBaseModule):
 		except (OSError, IOError) as exc:
 			MODULE.error('error occured while creating %s: %s' % (CUPSPDF_DIR, exc))
 		self.fqdn = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
+		self.pw_callback_bad_password = False
 
 	def _get_path(self, username, printjob):
 		printjob = printjob.replace('/', '')
@@ -195,6 +198,14 @@ class Instance(SchoolBaseModule):
 				MODULE.error('Error deleting print job: %s' % (exc,))
 		return success
 
+	def pw_callback(self, prompt):
+		if self.pw_callback_bad_password:
+			return None
+		else:
+			self.pw_callback_bad_password = True
+			return self.password
+
+	@require_password
 	@sanitize(
 		username=StringSanitizer(required=True),
 		printjob=StringSanitizer(required=True),
@@ -219,37 +230,25 @@ class Instance(SchoolBaseModule):
 		except ValueError:
 			raise UMC_Error(_('Invalid printer URI'))
 
-		if spoolhost == self.fqdn:
-			spoolhost = None
-
 		if not os.path.exists(path):
 				raise UMC_Error(_('File %r could not be printed as it does not exists (anymore).') % (printjob,))
 
-		MODULE.info('Deleting print job %r' % (path,))
-		cmd = [
-			'lpr',
-			# specify printer
-			'-P', printer,
-			# print as alternate user
-			'-U', self.username,
-			# set job name
-			'-J', Printjob.filename2label(printjob),
-			# delete file after printing
-			'-r',
-			# the file
-			path,
-		]
-		if spoolhost:
-			cmd.extend([
-				# spool host
-				'-H', spoolhost
-			])
-		MODULE.process('Printing: %r' % '" "'.join(cmd))
+		MODULE.process('Printing: %s' % path)
+		self.pw_callback_bad_password = False
+		try:
+			cups.setUser(self.username)
+			cups.setEncryption(cups.HTTP_ENCRYPT_ALWAYS)
+			cups.setPasswordCB(self.pw_callback)
+			conn = cups.Connection(spoolhost)
+			conn.printFile(printer, path, Printjob.filename2label(printjob), {})
+		except RuntimeError:
+			raise UMC_Error(_('Failed to connect to print server %(printserver)s.') % {'printserver': spoolhost})
+		except cups.IPPError as e:
+			raise UMC_Error(_('Failed to print on %(printer)s: %(stderr)s') % {'printer': printer, 'stderr': e})
 
-		lpr = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		(stdout, stderr) = lpr.communicate()
-		if lpr.returncode != 0:
-			raise UMC_Error(_('Failed to print on %(printer)s: %(stderr)s') % {'printer': printer, 'stderr': stderr})
+		# delete file
+		MODULE.info('Deleting print job %r' % (path,))
+		os.remove(path)
 
 		return True
 

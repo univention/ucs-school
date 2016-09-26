@@ -30,3 +30,8 @@ msgstr "Die Datei %r konnte nicht gedruckt werden da sie nicht (mehr) existiert.
 #, python-format
 msgid "Failed to print on %(printer)s: %(stderr)s"
 msgstr "Auf Drucker %(printer)s konnte nicht gedruckt werden: %(stderr)s"
+
+#: umc/python/printermoderation/__init__.py:252
+#, python-format
+msgid "Failed to connect to print server %(printserver)s."
+msgstr "Die Verbindung zum Druck-Server %(printserver)s konnte nicht hergestellt werden."
