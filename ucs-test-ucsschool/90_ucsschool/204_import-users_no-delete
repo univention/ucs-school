@@ -1,0 +1,90 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Check if the --no-delete option works as expected (Bug #41775, #41350)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [41350, 41775]
+
+import copy
+import univention.testing.strings as uts
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formerly test_create_modify_only()
+		"""
+		Bug #41775, #41350: check if the --no-delete option works as expected
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Add/modify without delete with role %r', role)
+
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('scheme:recordUID', '<username>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			personA = Person(self.ou_A.name, role)
+			personB = Person(self.ou_A.name, role)
+
+			self.log.info('Adding user A %r with role %r', personA.username, role)
+			fn_csv = self.create_csv_file(person_list=[personA], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(values=config)
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+
+			userlist = self.lo.searchDn('uid=%s' % (personA.username,))
+			if len(userlist) != 1:
+				self.log.error('Invalid number of users for personA! Found new objects: %r', userlist)
+				self.fail('Stopping here')
+			personA.verify()
+
+			self.log.info('Adding user B %r with role %r', personB.username, role)
+			fn_csv = self.create_csv_file(person_list=[personB], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(values=config)
+			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+
+			for username in (personA.username, personB.username):
+				userlist = self.lo.searchDn('uid=%s' % (username,))
+				if len(userlist) != 1:
+					self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
+					self.fail('Stopping here')
+			personA.verify()
+			personB.verify()
+
+			self.log.info('Modifying user A %r with role %r', personA.username, role)
+			personA.lastname = uts.random_name()
+			config.update_entry('no_delete', 'True')
+			fn_csv = self.create_csv_file(person_list=[personA], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(values=config)
+			self.run_import(['-c', fn_config, '-i', fn_csv])  # '--no-delete'  is not specified on purpose -> using config option "no_delete"
+
+			for username in (personA.username, personB.username):
+				userlist = self.lo.searchDn('uid=%s' % (username,))
+				if len(userlist) != 1:
+					self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
+					self.fail('Stopping here')
+			personA.verify()
+			personB.verify()
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
+

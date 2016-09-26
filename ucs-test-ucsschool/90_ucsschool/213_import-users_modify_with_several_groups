@@ -1,0 +1,179 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Test group creation (Bug 41907)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [441907]
+
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formally test_modify_with_several_groups()
+		"""
+		Bug #41907:
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			- create user with 2 schools and 2 classes
+			- add user to several groups for each school:
+			  - global group
+			  - workgroup
+			  - class
+			  - extra group 1 (random name <RANDOM>)
+			  - extra group 2 (same naming schema as workgroup/class <OU>-<NAME>)
+			- modify user with role <role>
+			  - add user to new random class
+			  - remove user from class_B
+			- remove user with role <role>
+		"""
+		self.log.debug('*** Creating groups...')
+		global_group_dn, global_group_name = self.udm.create_group()
+		workgroup_A_dn, workgroup_A_name = self.udm.create_group(
+			position='cn=schueler,cn=groups,%s' % (self.ou_A.dn,),
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+		class_A_dn, class_A_name = self.udm.create_group(
+			position='cn=klassen,cn=schueler,cn=groups,%s' % (self.ou_A.dn,),
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+		cn_A_dn = self.udm.create_object('container/cn', position=self.ou_A.dn, name='kurs-%s' % uts.random_string())
+		extra_A_group1_dn, extra_A_group1_name = self.udm.create_group(position=cn_A_dn)
+		extra_A_group2_dn, extra_A_group2_name = self.udm.create_group(
+			position=cn_A_dn,
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+
+		workgroup_B_dn, workgroup_B_name = self.udm.create_group(
+			position='cn=schueler,cn=groups,%s' % (self.ou_B.dn,),
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
+		class_B_dn, class_B_name = self.udm.create_group(
+			position='cn=klassen,cn=schueler,cn=groups,%s' % (self.ou_B.dn,),
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
+		cn_B_dn = self.udm.create_object('container/cn', position=self.ou_B.dn, name='kurs-%s' % uts.random_string())
+		extra_B_group1_dn, extra_B_group1_name = self.udm.create_group(position=cn_B_dn)
+		extra_B_group2_dn, extra_B_group2_name = self.udm.create_group(
+			position=cn_B_dn,
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
+
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r', role)
+
+			# create user that is member in multiple schools
+			# sorted() because csv-mapping has no prim.OU -> import will use first OU, alpha.sorted
+			person = Person(sorted([self.ou_A.name, self.ou_B.name])[0], role)
+			person.update(schools=[self.ou_A.name, self.ou_B.name])
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				person.school_classes.setdefault(self.ou_A.name, []).append(class_A_name)
+				person.school_classes.setdefault(self.ou_B.name, []).append(class_B_name)
+
+			fn_csv = self.create_csv_file(person_list=[person])
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
+			config = {
+				'sourceUID': source_uid,
+				'input:filename': fn_csv,
+				'user_role': role,
+			}
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_new_and_removed_users(1, 0)
+
+			# update dn+username of person and verify LDAP attributes
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			user_dn = new_users[0]
+			person.update(dn=user_dn, record_uid=record_uid, source_uid=source_uid)
+			person.verify()
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				utils.verify_ldap_object(class_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=True, should_exist=True)
+				utils.verify_ldap_object(class_B_dn, expected_attr={'uniqueMember': [user_dn]}, strict=True, should_exist=True)
+
+			self.log.info('*** Adding user with role %r to groups', role)
+
+			# add user to working groups, extra groups in both schools and to global group
+			self.udm.modify_object('groups/group', dn=global_group_dn, append={'users': [user_dn]})
+			self.udm.modify_object('groups/group', dn=workgroup_A_dn, append={'users': [user_dn]})
+			self.udm.modify_object('groups/group', dn=workgroup_B_dn, append={'users': [user_dn]})
+			self.udm.modify_object('groups/group', dn=extra_A_group1_dn, append={'users': [user_dn]})
+			self.udm.modify_object('groups/group', dn=extra_A_group2_dn, append={'users': [user_dn]})
+			self.udm.modify_object('groups/group', dn=extra_B_group1_dn, append={'users': [user_dn]})
+			self.udm.modify_object('groups/group', dn=extra_B_group2_dn, append={'users': [user_dn]})
+			utils.verify_ldap_object(global_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(workgroup_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(workgroup_B_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+
+			self.log.info('*** Modifying a single user with role %r', role)
+
+			person.school_classes = {}
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				person.append_random_class(schools=[person.school])  # TODO FIXME Bug #41914: line should be: person.append_random_class(schools=person.schools)
+				person.school_classes.setdefault(self.ou_A.name, []).append(class_A_name)
+				# user is removed from class_B!
+
+			self.create_csv_file(person_list=[person], fn_csv=fn_csv)
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_new_and_removed_users(0, 0)
+
+			# verify LDAP attributes
+			person.verify()
+			utils.verify_ldap_object(global_group_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(workgroup_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_A_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(workgroup_B_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group1_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(extra_B_group2_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				utils.verify_ldap_object(class_A_dn, expected_attr={'uniqueMember': [user_dn]}, strict=False, should_exist=True)
+				utils.verify_ldap_object(class_B_dn, expected_attr={'uniqueMember': []}, strict=True, should_exist=True)
+
+			self.log.info('*** Remove a single user with role %r', role)
+			# mark person as removed
+			person.set_mode_to_delete()
+			self.create_csv_file(person_list=[], fn_csv=fn_csv)
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_new_and_removed_users(0, 1)
+
+			# verify LDAP attributes
+			person.verify()
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()

@@ -1,0 +1,76 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: test if it is possible to reuse an email address (Bug 41544)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [41544]
+
+import copy
+import univention.testing.strings as uts
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formally test_reuse_email_attribute()
+		"""
+		Bug #41544: test if it is possible to reuse an email address (-> if
+		users are removed before they are added)
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			email = "{}@{}".format(uts.random_name(), self.ucr.get('domainname'))
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			config.update_entry('scheme:email', '<email>')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry("user_deletion:delete", True)
+			config.update_entry("user_deletion:expiration", 0)
+
+			self.log.info('*** Importing a new single user with role %r and email address %r...', role, email)
+			person = Person(self.ou_A.name, role)
+			record_uid = uts.random_name()
+			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(1, 0)
+			person.verify()
+
+			self.log.info('*** Importing a new single user with role %r and same email address %r...', role, email)
+			person = Person(self.ou_A.name, role)
+			record_uid = uts.random_name()
+			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(1, 1)
+			person.verify()
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()

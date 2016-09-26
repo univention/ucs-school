@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-11) unstable; urgency=low
+
+  * Bug #41282: split user import v2 tests into separate files
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Sep 2016 15:50:26 +0200
+
 ucs-test-ucsschool (3.0.16-10) unstable; urgency=low
 
   * Bug #41469: fix various tests

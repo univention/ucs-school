@@ -1,0 +1,151 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: remove illegal characters from username (Bug 42313)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [42313]
+
+import copy
+import random
+import string
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from ucsschool.importer.utils.username_handler import UsernameHandler
+from ucsschool.importer.exceptions import FormatError
+from essential.importusers import Person
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formally test_create_with_illegal_chars_in_username()
+		"""
+		Bug #42313: remove illegal characters from username
+		* "Username must only contain numbers, letters and dots, and may not be 'admin'!"
+		* but no dot at beginning
+		"""
+		allowed_chars = string.ascii_letters + string.digits + "."
+
+		def remove_bad_chars(name):
+			bad_chars = "".join(sorted(set(name).difference(set(allowed_chars))))
+			name = name.strip(".")
+			return name.translate(None, bad_chars)
+
+		punkts = string.punctuation.translate(None, '[]')  # those will create bad counter vars
+
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			lastnames = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in punkts]
+			lastnames.append(".{}".format(uts.random_username()))
+			lastnames.append(".{}.{}".format(uts.random_username(4), uts.random_username(4)))
+			lastnames.append(uts.random_username(40))
+			self.log.info('*** Importing new users with role %r and the following lastnames:\n%r', role, lastnames)
+
+			config = copy.deepcopy(self.default_config)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('user_role', role)
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:username:default', "<lastname>[ALWAYSCOUNTER]")
+
+			persons = list()
+			names = dict()
+			for lastname in lastnames:
+				record_uid = uts.random_name()
+				person = Person(self.ou_A.name, role)
+				person.update(record_uid=record_uid, source_uid=source_uid, lastname=lastname)
+				persons.append(person)
+				names[person] = lastname
+			fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+
+			# save ldap state for later comparison
+			self.save_ldap_status()
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			# check for new users in LDAP
+			self.check_new_and_removed_users(len(persons), 0)
+			# check usernames
+			for person, lastname in names.items():
+				person.update(username=remove_bad_chars("{}1".format(lastname[:12])))
+				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False,
+					should_exist=True)
+
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (1/5)')
+		unh = UsernameHandler(15)  # 20 - len("exam-")
+		name12 = uts.random_username(12)  # 15 - 3
+		usernames = {
+			".abc.def.": "abc.def",
+			"...abc...def...": "abc...def",
+			"": "",
+			"..[ALWAYSCOUNTER]..": None,
+			"[ALWAYSCOUNTER]": None,
+			"[FOObar]": None,
+			"{}.[COUNTER2]".format(name12): name12,
+			".": ""
+		}
+		for input_name, expected in usernames.items():
+			try:
+				out = unh.format_username(input_name)
+				if out != expected:
+					self.fail("UsernameHandler.format_username(%r) returned %r, expected %r." %
+						(input_name, out, expected))
+			except FormatError:
+				if expected is not None:
+					self.fail("UsernameHandler.format_username(%r) raise a FormatError, expected it to return %r." %
+						(input_name, expected))
+				continue
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (2/5)')
+		for i in range(1000):
+			name = uts.random_username(15)
+			out = unh.format_username(name)
+			if out != name:
+				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (3/5)')
+		for i in range(1000):
+			name = uts.random_name(20)
+			out = unh.format_username(name)
+			if out.startswith(".") or out.endswith(".") or len(out) > 15:
+				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (4/5)')
+		for i in range(1000):
+			name = uts.random_name_special_characters(20)
+			name = name.translate(None, "[]")  # those are reserved for counter vars
+			out = unh.format_username(name)
+			if out.startswith(".") or out.endswith(".") or len(out) > 15:
+				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
+		self.log.info('*** Starting unit test for UsernameHandler.format_username() (5/5)')
+		usernames = [
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max1.Mustermann'),
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max2.Mustermann'),
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max3.Mustermann'),
+			('Max[ALWAYSCOUNTER].Mustermann', 'Max4.Mustermann'),
+			('Maria[ALWAYSCOUNTER].Musterfrau', 'Maria1.Musterfrau'),
+			('Moritz[COUNTER2]', 'Moritz'),
+			('Moritz[COUNTER2]', 'Moritz2')
+		]
+		unh = UsernameHandler(20)
+		for input_name, expected in usernames:
+			out = unh.format_username(input_name)
+			if out != expected:
+				self.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()

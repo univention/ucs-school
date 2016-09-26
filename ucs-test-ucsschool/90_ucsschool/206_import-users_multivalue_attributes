@@ -1,0 +1,90 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Test creation of multi-value fields (Bug #41471)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [41471]
+
+import copy
+import pprint
+import univention.testing.strings as uts
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formally test_multivalue_attributes()
+		"""
+		Test creation of multi-value fields (Bug #41471).
+        - mailAlternativeAddress is filled with multiple strings
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r with multivalue attributes', role)
+
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('csv:incell-delimiter:default', ';')
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('csv:mapping:mailAlternativeAddress', 'mailAlternativeAddress')
+			config.update_entry('scheme:recordUID', '<username>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+
+			class MultiPerson(Person):
+				def __init__(self, school, role):
+					Person.__init__(self, school, role)
+					self.mailAlternativeAddress = '%s@example.com;%s@example.com;%s@example.com' % (uts.random_name(), uts.random_name(), uts.random_name())
+
+				def map_to_dict(self, value_map):
+					result = Person.map_to_dict(self, value_map)
+					result[value_map.get('mailAlternativeAddress', '__EMPTY__')] = self.mailAlternativeAddress
+					return result
+
+				def expected_attributes(self):
+					result = Person.expected_attributes(self)
+					result['mailAlternativeAddress'] = self.mailAlternativeAddress.split(',')
+
+			# create person with 3 alternative mail addresses
+			person = MultiPerson(self.ou_A.name, role)
+			person.update(record_uid=person.username, source_uid=source_uid)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			person.verify()
+
+			# modify person and set 1 alternative mail address
+			person.update(mailAlternativeAddress='%s@example.com' % (uts.random_name(),))
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			person.verify()
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
+

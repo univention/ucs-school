@@ -1,0 +1,106 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Import users via CLI v2
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: []
+
+
+import univention.testing.strings as uts
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formerly test_create_modify_delete_user()
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			import user with role <role>
+			modify user with role <role> → changing group memberships
+			remove user with role <role>
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r', role)
+
+			person = Person(self.ou_A.name, role)
+			fn_csv = self.create_csv_file(person_list=[person])
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
+			config = {
+				'sourceUID': source_uid,
+				'input:filename': fn_csv,
+				'user_role': role,
+			}
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_new_and_removed_users(1, 0)
+
+			# update dn+username of person and verify LDAP attributes
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
+			person.verify()
+
+			self.log.info('*** Modifying a single user with role %r', role)
+
+			if role == 'student':
+				person.school_classes = {}
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				person.append_random_class()
+
+			self.create_csv_file(person_list=[person], fn_csv=fn_csv)
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_new_and_removed_users(0, 0)
+
+			# verify LDAP attributes
+			person.verify()
+
+			self.log.info('*** Remove a single user with role %r', role)
+
+			# mark person as removed
+			person.set_mode_to_delete()
+			self.create_csv_file(person_list=[], fn_csv=fn_csv)
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config])
+
+			# check for new users in LDAP
+			self.check_new_and_removed_users(0, 1)
+
+			# verify LDAP attributes
+			person.verify()
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()

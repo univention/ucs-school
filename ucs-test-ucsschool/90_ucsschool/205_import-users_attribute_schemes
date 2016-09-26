@@ -1,0 +1,94 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: create with attribute schemes
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [41472]
+
+import copy
+import pprint
+import univention.testing.utils as utils
+import univention.testing.strings as uts
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formerly test_create_with_attribute_schemes()
+		"""
+		Tests Bug #41472.
+		Create a new user for each role:
+		- use UDM template syntax (http://docs.software-univention.de/handbuch-4.1.html#users:templates)
+          to define several custom values
+        - employeeNumber is filled with a string consisting of first and last name and description
+        - mailPrimaryAddress is also built from those attributes
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r from templates', role)
+
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = uts.random_name()
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('csv:mapping:employeeNumber', 'employeeNumber')
+			config.update_entry('csv:mapping:DBID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('user_role', role)
+			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[ALWAYSCOUNTER]")
+			config.update_entry('scheme:email', "<:umlauts><firstname:lower>[0:3].<lastname:lower>[2:5]@example.com")
+			config.update_entry('scheme:employeeNumber', "The user's name is <firstname:upper> <lastname> <description>")
+
+			person = Person(self.ou_A.name, role)
+			person.update(record_uid=record_uid, source_uid=source_uid, username=None, mail=None, description=uts.random_name())
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			# check for new users in LDAP
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			if len(new_users) != 1:
+				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				self.fail('Stopping here')
+
+			# update dn+username of person and verify LDAP attributes
+			mail = '%s.%s@example.com' % (person.firstname[0:3].lower(), person.lastname[2:5].lower())
+			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid, mail=mail)
+			person.verify()
+
+			username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
+			if person.username != "{}1".format(username_prefix):
+				self.fail('username %r is not expected string %r' % (person.username, "{}1".format(username_prefix)))
+			self.log.info('Username %r is not expected string %r', person.username, "{}1".format(username_prefix))
+
+			self.log.info('Testing mailPrimaryAddress and description...')
+			values = {
+				'employeeNumber': ["The user's name is %s %s %s" % (person.firstname.upper(), person.lastname, person.description)],
+			}
+			utils.verify_ldap_object(person.dn, expected_attr=values, strict=True, should_exist=True)
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
+

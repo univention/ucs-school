@@ -1,0 +1,174 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: support deletion of users in different ways (Bug 41344)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [41344]
+
+import copy
+import random
+import datetime
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formally test_delete_variants()
+		"""
+		Bug #41344: support deletion of users in different ways
+
+		* simply delete: user_deletion": {"delete": True, "expiration": 0}
+		* do not delete, but deactivate with an expiration data: user_deletion": {"delete": False, "expiration": 7}
+		  + creating a user with the deactived users SUID+RUID -> reactive account
+		* store an expiration data (that is in the future) for the user, so it can
+		  access its data for some days, before deletion: user_deletion": {"delete": True, "expiration": 7}
+		"""
+		self.log.info('*** 1/3: simply delete ***')
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** (1/3) Importing a new single user with role %r', role)
+			person = Person(self.ou_A.name, role)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			person.update(record_uid=record_uid, source_uid=source_uid)
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			config.update_entry("user_deletion:delete", True)
+			config.update_entry("user_deletion:expiration", 0)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(values=config)
+
+			self.save_ldap_status()  # save ldap state for later comparison
+			self.run_import(['-c', fn_config])  # start import
+			self.check_new_and_removed_users(1, 0)  # check for new users in LDAP
+			person.verify()  # verify LDAP attributes
+
+			self.log.info('*** (1/3) Removing a single user with role %r', role)
+			person.set_mode_to_delete()  # mark person as removed
+			self.create_csv_file(person_list=[], fn_csv=fn_csv, mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(values=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(0, 1)
+			person.verify()
+
+		self.log.info('*** 2/3: do not delete, but deactivate with an expiration data ***')
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			exp_days = random.randint(1, 20)
+			self.log.info('*** (2/3) Importing a new single user with role %r', role)
+			person = Person(self.ou_A.name, role)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			person.update(record_uid=record_uid, source_uid=source_uid)
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			config.update_entry("user_deletion:delete", False)
+			config.update_entry("user_deletion:expiration", exp_days)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(values=config)
+
+			self.save_ldap_status()  # save ldap state for later comparison
+			self.run_import(['-c', fn_config])  # start import
+			self.check_new_and_removed_users(1, 0)  # check for new users in LDAP
+			person.verify()  # verify LDAP attributes
+
+			self.log.info('*** (2/3) Removing a single user with role %r', role)
+			person.set_inactive()  # mark person as disabled
+			self.create_csv_file(person_list=[], fn_csv=fn_csv, mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(values=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(0, 0)
+			# check exp. date
+			exp_date = (datetime.datetime.now() + datetime.timedelta(days=exp_days)).strftime("%Y-%m-%d")
+			udm_value = self.udm_formula_for_shadowExpire(exp_date)
+			self.log.debug('Account expiration date should be %r -> %r.', exp_date, udm_value)
+			utils.verify_ldap_object(
+				person.dn,
+				expected_attr={
+					'shadowExpire': [udm_value],
+					'krb5KDCFlags': ['254'],
+					'sambaAcctFlags': ['[UD         ]']},
+				strict=False,
+				should_exist=True)
+
+			self.log.info('*** (2/3) Reactivating previously "deleted" user with role %r', role)
+			person.set_active()
+			self.create_csv_file(person_list=[person], fn_csv=fn_csv, mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(values=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(0, 0)
+			person.verify()
+
+		self.log.info('*** 3/3: store an expiration data for the user ***')
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** (3/3) Importing a new single user with role %r', role)
+			exp_days = random.randint(1, 20)
+			person = Person(self.ou_A.name, role)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			person.update(record_uid=record_uid, source_uid=source_uid)
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			config.update_entry("user_deletion:delete", True)
+			config.update_entry("user_deletion:expiration", exp_days)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(values=config)
+
+			self.save_ldap_status()  # save ldap state for later comparison
+			self.run_import(['-c', fn_config])  # start import
+			self.check_new_and_removed_users(1, 0)  # check for new users in LDAP
+			person.verify()  # verify LDAP attributes
+
+			self.log.info('*** (3/3) Removing a single user with role %r', role)
+			self.create_csv_file(person_list=[], fn_csv=fn_csv, mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(values=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			self.check_new_and_removed_users(0, 0)
+			# check exp. date
+			exp_date = (datetime.datetime.now() + datetime.timedelta(days=exp_days)).strftime("%Y-%m-%d")
+			utils.verify_ldap_object(
+				person.dn,
+				expected_attr={
+					'shadowExpire': [self.udm_formula_for_shadowExpire(exp_date)],
+					'krb5KDCFlags': ['126'],
+					'sambaAcctFlags': ['[U          ]']},
+				strict=False,
+				should_exist=True)
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+if __name__ == '__main__':
+	main()

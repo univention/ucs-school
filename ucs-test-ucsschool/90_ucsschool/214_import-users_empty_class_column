@@ -1,0 +1,137 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: do not modify group memberships if no group specified (Bug 42288)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [42288]
+
+import copy
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formally test_no_modify_classes_with_empty_class_column()
+		"""
+		Bug #42288: do not modify group memberships if no group specified
+		Test cases:
+		  1. has 2 classes -> import w/o classes -> has 2 classes
+		  2. has 2 classes -> import w 1 class   -> has 1 class
+		  3. has 0 classes -> import w/o classes -> has 0 classes
+		  4. has 2 classes from 2 OUs -> import w/o classes -> has 2 classes from 2 OUs
+		"""
+		base_config = copy.deepcopy(self.default_config)
+		base_config.update_entry('scheme:recordUID', '<record_uid>')
+		base_config.update_entry('csv:mapping:Benutzername', 'username')
+		base_config.update_entry('csv:mapping:recordUID', 'record_uid')
+
+		def new_config(role):
+			config = copy.deepcopy(base_config)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = uts.random_name()
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			return config, source_uid, record_uid
+
+		def create_user_w_two_classes(record_uid, source_uid, same_ou=True):
+			cls1_dn, cls1_name = self.udm.create_group(
+				position='cn=klassen,cn=schueler,cn=groups,%s' % (self.ou_A.dn,),
+				name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+			if same_ou:
+				dn = self.ou_A.dn
+				name = self.ou_A.name
+				school = self.ou_A.name
+			else:
+				dn = self.ou_B.dn
+				name = self.ou_B.name
+				school = sorted([self.ou_A.name, self.ou_B.name])[0]
+			cls2_dn, cls2_name = self.udm.create_group(
+				position='cn=klassen,cn=schueler,cn=groups,%s' % (dn,),
+				name="{}-{}".format(name, uts.random_groupname()))
+			person = Person(school, role)
+			person.update(record_uid=record_uid, source_uid=source_uid, username=uts.random_username())
+			if same_ou:
+				person.update(school_classes={self.ou_A.name: [cls1_name, cls2_name]})
+			else:
+				person.update(school_classes={self.ou_A.name: [cls1_name], self.ou_B.name: [cls2_name]},
+					schools=[self.ou_A.name, self.ou_B.name])
+			return person, cls1_dn, cls2_dn
+
+		def import_check_changes(config, person, class_check, add_user, rm_user):
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+
+			self.save_ldap_status()  # save ldap state for later comparison
+			self.run_import(['-c', fn_config, '-i', fn_csv])  # start import
+			self.check_new_and_removed_users(add_user, rm_user)  # check for new users in LDAP
+			# check school classes
+			for cls_dn, unique_members in class_check:
+				utils.verify_ldap_object(cls_dn, expected_attr={'uniqueMember': unique_members}, strict=False, should_exist=True)
+
+		self.log.info('*** Test case 1/4: has 2 classes -> import w/o classes -> has 2 classes')
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			self.log.info('*** (1/4) Importing a new single user with role %r and two classes from 1 OU.', role)
+			config, source_uid, record_uid = new_config(role)
+			person, cls1_dn, cls2_dn = create_user_w_two_classes(record_uid, source_uid)
+			import_check_changes(config, person, [(cls1_dn, [person.dn]), (cls2_dn, [person.dn])], 1, 0)
+
+			self.log.info('*** (1/4) Modifying user with role %r: setting CSV-input to have no classes.', role)
+			person.update(school_classes={})
+			import_check_changes(config, person, [(cls1_dn, [person.dn]), (cls2_dn, [person.dn])], 0, 0)
+		self.log.info('Test case 1/4 was successful.\n\nich kannrt\n')
+
+		self.log.info('*** Test case 2/4: has 2 classes -> import w 1 class   -> has 1 class')
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			self.log.info('*** (2/4) Importing a new single user with role %r and two classes from 1 OU.', role)
+			config, source_uid, record_uid = new_config(role)
+			person, cls1_dn, cls2_dn = create_user_w_two_classes(record_uid, source_uid)
+			import_check_changes(config, person, [(cls1_dn, [person.dn]), (cls2_dn, [person.dn])], 1, 0)
+
+			self.log.info('*** (2/4) Modifying user with role %r: setting CSV-input to have 1 class.', role)
+			# remove 2nd class
+			classes = person.school_classes[self.ou_A.name]
+			person.update(school_classes={self.ou_A.name: [classes[0]]})
+			import_check_changes(config, person, [(cls1_dn, [person.dn]), (cls2_dn, [])], 0, 0)
+		self.log.info('Test case 2/4 was successful.\n\n\n')
+
+		self.log.info('*** Test case 3/4: has 0 classes -> import w/o classes -> has 0 classes')
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			self.log.info('*** (2/4) Importing a new single user with role %r and 0 classes.', role)
+			config, source_uid, record_uid = new_config(role)
+			person, cls1_dn, cls2_dn = create_user_w_two_classes(record_uid, source_uid)
+			person.update(school_classes={}, record_uid=record_uid, source_uid=source_uid, username=uts.random_username())
+			import_check_changes(config, person, [(cls1_dn, []), (cls2_dn, [])], 1, 0)
+		self.log.info('Test case 3/4 was successful.\n\n\n')
+
+		self.log.info('*** Test case 4/4: has 2 classes from 2 OUs -> import w/o classes -> has 2 classes from 2 OUs.')
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			self.log.info('*** (4/4) Importing a new single user with role %r and 1 class from each of 2 OUs.', role)
+			config, source_uid, record_uid = new_config(role)
+			person, cls1_dn, cls2_dn = create_user_w_two_classes(record_uid, source_uid, False)
+			import_check_changes(config, person, [(cls1_dn, [person.dn]), (cls2_dn, [person.dn])], 1, 0)
+
+			self.log.info('*** (4/4) Modifying user with role %r: setting CSV-input to have no classes.', role)
+			person.update(school_classes={})
+			import_check_changes(config, person, [(cls1_dn, [person.dn]), (cls2_dn, [person.dn])], 0, 0)
+		self.log.info('Test case 4/4 was successful.\n\n\n')
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+if __name__ == '__main__':
+	main()

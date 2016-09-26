@@ -1,0 +1,66 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: import users with an empty class name (Bug 41847)
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [41847]
+
+import copy
+import univention.testing.strings as uts
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formally test_create_with_empty_class_name()
+		"""
+		Bug #41847: import users with an empty class name
+		"""
+		first_user = True
+		config = copy.deepcopy(self.default_config)
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config.update_entry('sourceUID', source_uid)
+
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r and empty class name.', role)
+
+			config.update_entry('user_role', role)
+
+			person = Person(self.ou_A.name, role)
+			person.update(school_classes={})
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			# check for new users in LDAP
+			if first_user:
+				users_removed = 0
+				first_user = False
+			else:
+				users_removed = 1
+			self.check_new_and_removed_users(1, users_removed)
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()

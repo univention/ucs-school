@@ -1,0 +1,133 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Import users via CLI v2
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: []
+
+import copy
+import os.path
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester, PyHooks
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def test(self):  # formerly test_create_modify_delete_user_with_username_and_recordUID_and_UDM_property()
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			import user with role <role> and given username
+			remove user with role <role> and given username
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			hooks = PyHooks()
+			hooks.create_hooks()
+			try:
+				self.log.info('*** Importing a new single user with role %r and username and recordUID', role)
+
+				source_uid = 'sourceUID-%s' % (uts.random_string(),)
+				record_uid_A = uts.random_name()
+				record_uid_B = uts.random_name()
+
+				config = copy.deepcopy(self.default_config)
+				config.update_entry('sourceUID', source_uid)
+				config.update_entry('csv:mapping:Benutzername', 'username')
+				config.update_entry('csv:mapping:DBID', 'record_uid')
+				config.update_entry('user_role', role)
+
+				person_list = [Person(self.ou_A.name, role), Person(self.ou_A.name, role)]
+				person_list[0].update(record_uid=record_uid_A, source_uid=source_uid, description=uts.random_name())
+				person_list[1].update(record_uid=record_uid_B, source_uid=source_uid, description=uts.random_name())
+				fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+				config.update_entry('input:filename', fn_csv)
+				fn_config = self.create_config_json(config=config)
+				# save ldap state for later comparison
+				self.save_ldap_status()
+
+				# start import
+				self.run_import(['-c', fn_config, '-i', fn_csv])
+
+				# check for new users in LDAP
+				self.check_new_and_removed_users(2, 0)
+
+				# update dn+username of person and verify LDAP attributes
+				for person in person_list:
+					person.verify()
+				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create']}, strict=True, should_exist=True)
+
+				def assert_and_print(exists, fn):
+					status = os.path.exists(os.path.join(hooks.tmpdir, fn))
+					self.log.debug('Hook touch file %r exists = %r' % (fn, status))
+					assert exists == status, 'Unexpected status of hook touch file: exists=%s  expected=%s' % (status, exists)
+
+				for fn in ('pre-create', 'post-create'):
+					assert_and_print(True, fn)
+				for fn in ('pre-modify', 'post-modify', 'pre-remove', 'post-remove'):
+					assert_and_print(False, fn)
+
+				self.log.info('*** Modifying a single user with role %r and username and recordUID', role)
+
+				person_list[0].firstname = uts.random_name()
+				person_list[1].lastname = uts.random_name()
+				self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'], fn_csv=fn_csv)
+				fn_config = self.create_config_json(values=config)
+				# save ldap state for later comparison
+				self.save_ldap_status()
+				# start import
+				self.run_import(['-c', fn_config, '-i', fn_csv])
+				# check for new users in LDAP
+				self.check_new_and_removed_users(0, 0)
+
+				# verify LDAP attributes
+				for person in person_list:
+					person.verify()
+				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create,pre-modify,post-modify']}, strict=True, should_exist=True)
+				for fn in ('pre-create', 'post-create', 'pre-modify', 'post-modify'):
+					assert_and_print(True, fn)
+				for fn in ('pre-remove', 'post-remove'):
+					assert_and_print(False, fn)
+
+				self.log.info('*** Remove a single user with role %r and username and recordUID', role)
+
+				# mark first person as removed
+				person_list[0].set_mode_to_delete()
+				self.create_csv_file(person_list=[person_list[1]], mapping=config['csv']['mapping'], fn_csv=fn_csv)
+				fn_config = self.create_config_json(values=config)
+				# save ldap state for later comparison
+				self.save_ldap_status()
+
+				# start import
+				self.run_import(['-c', fn_config, '-i', fn_csv])
+
+				# check for new users in LDAP
+				self.check_new_and_removed_users(0, 1)
+
+				# verify LDAP attributes
+				for person in person_list:
+					person.verify()
+				for fn in ('pre-create', 'post-create', 'pre-modify', 'post-modify', 'pre-remove', 'post-remove'):
+					assert_and_print(True, fn)
+
+			finally:
+				hooks.cleanup()
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
