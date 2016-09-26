@@ -18,9 +18,9 @@ from essential.importusers import Person
 
 class Test(CLI_Import_v2_Tester):
 	def __init__(self):
+		super(Test, self).__init__()
 		self.ou_B = None
 		self.ou_C = None
-		super(Test, self).__init__()
 
 	def test(self):  # formerly test_create_with_attribute_schemes()
 		"""

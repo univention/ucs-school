@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-12) unstable; urgency=low
+
+  * Bug #41282: create only necessary OUs
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Sep 2016 18:46:46 +0200
+
 ucs-test-ucsschool (3.0.16-11) unstable; urgency=low
 
   * Bug #41282: split user import v2 tests into separate files
