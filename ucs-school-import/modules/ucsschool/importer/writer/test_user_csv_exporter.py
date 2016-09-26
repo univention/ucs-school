@@ -39,6 +39,11 @@ from ucsschool.importer.writer.result_exporter import ResultExporter
 class TestUserCsvExporter(ResultExporter):
 	field_names = ("Schulen", "Benutzertyp", "Vorname", "Nachname", "Klassen", "Beschreibung", "Telefon")
 
+	def __init__(self, email=False, *args, **kwargs):
+		if not email:
+			self.field_names += ("EMail", )
+		super(TestUserCsvExporter, self).__init__(*args, **kwargs)
+
 	def get_iter(self, user_import):
 		# TestUserCreator.make_users() is already a generator
 		return user_import

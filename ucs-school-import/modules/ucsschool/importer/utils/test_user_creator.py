@@ -44,7 +44,7 @@ logger = get_logger()
 
 
 class TestUserCreator(object):
-	def __init__(self, ous, staff=0, students=0, teachers=0, staffteachers=0, classes=0, inclasses=2, schools=2):
+	def __init__(self, ous, staff=0, students=0, teachers=0, staffteachers=0, classes=0, inclasses=2, schools=2, email=False):
 		self.ous = sorted(ous)
 		self.num_staff = staff
 		self.num_students = students
@@ -53,6 +53,7 @@ class TestUserCreator(object):
 		self.num_classes = classes
 		self.num_inclasses = inclasses
 		self.num_schools = schools
+		self.email = email
 		self.staff = list()
 		self.students = list()
 		self.teachers = list()
@@ -142,6 +143,8 @@ class TestUserCreator(object):
 					Telefon="+{:>02}-{:>03}-{}".format(random.randint(1, 99), random.randint(1, 999),
 						random.randint(1000, 999999))
 				)
+				if not self.email:
+					user["EMail"] = ""
 				if kind != "student" and random.choice((True, False)):
 					# 50% chance for non-students to be in multiple schools
 					user["Schulen"] = sorted(random.sample(self.ous, self.num_schools))

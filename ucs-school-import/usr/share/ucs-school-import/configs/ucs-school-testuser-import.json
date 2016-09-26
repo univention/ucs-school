@@ -14,7 +14,8 @@
 			"Nachname": "lastname",
 			"Klassen": "school_classes",
 			"Beschreibung": "description",
-			"Telefon": "phone"
+			"Telefon": "phone",
+			"EMail": "mailPrimaryAddress"
 		}
 	},
 	"scheme": {

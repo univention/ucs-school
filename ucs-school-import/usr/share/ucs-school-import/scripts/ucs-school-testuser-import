@@ -53,9 +53,13 @@ def parse_cmdline():
 		classes=0,
 		inclasses=2,
 		schools=2,
+		email=False,
 		verbose=False
 	)
-	parser = ArgumentParser(description="UCS@school import test users tool")
+	parser = ArgumentParser(
+		description="UCS@school import test users tool",
+		epilog="When using --email either an email domain must be created in the corresponding UMC-module or must be "
+			"configured on the command line with --set maildomain=...")
 	parser.add_argument("-c", "--csvfile", dest="csvfile", help="File to write to [default: %(default)s].")
 	parser.add_argument("-n", "--nostart", action="store_true",
 						help="Disable automatic start of import script [default: %(default)s].")
@@ -72,6 +76,8 @@ def parse_cmdline():
 						help="Number of classes to put users (except students) into per school [default: %(default)s].")
 	parser.add_argument("--schools", dest="schools", type=int,
 						help="Number of schools to put users (except students) into (if #OUs > 1) [default: %(default)s].")
+	parser.add_argument("--email", dest="email", action="store_true",
+						help="Create email addresses for users [default: %(default)s].")
 	parser.add_argument("-v", "--verbose", action="store_true",
 						help="Enable debugging output on the console [default: %(default)s].")
 	parser.add_argument("OU", metavar='OU', nargs='+',
@@ -99,9 +105,10 @@ def main():
 	args = parse_cmdline()
 	logger.info("------ Creating user information... ------")
 	test_user_creator = TestUserCreator(args.OU, staff=args.staff, students=args.students, teachers=args.teachers,
-		staffteachers=args.staffteachers, classes=args.classes, inclasses=args.inclasses, schools=args.schools)
+		staffteachers=args.staffteachers, classes=args.classes, inclasses=args.inclasses, schools=args.schools,
+		email=args.email)
 	test_user_creator.make_classes()
-	test_user_exporter = TestUserCsvExporter()
+	test_user_exporter = TestUserCsvExporter(email=args.email)
 	logger.info("------ Writing user information to CSV file '%s'... ------", args.csvfile)
 	test_user_exporter.dump(test_user_creator.make_users(), args.csvfile)
 	if args.nostart:
