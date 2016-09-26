@@ -9,10 +9,12 @@
 ## bugs: [42313]
 
 import copy
-import random
 import string
+from ldap.dn import escape_dn_chars
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.admin.uldap import getAdminConnection
+from univention.admin.uexceptions import noObject, ldapError
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.importer.exceptions import FormatError
 from essential.importusers import Person
@@ -21,9 +23,26 @@ from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 
 class Test(CLI_Import_v2_Tester):
 	def __init__(self):
+		super(Test, self).__init__()
 		self.ou_B = None
 		self.ou_C = None
-		super(Test, self).__init__()
+		self.unique_basenames_to_remove = list()
+
+	def cleanup(self):
+		lo, po = getAdminConnection()
+		self.log.info("Removing new unique-usernames,cn=ucsschool entries...")
+		for username in self.unique_basenames_to_remove:
+			dn = "cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(escape_dn_chars(username), lo.base)
+			self.log.debug("Removing %r", dn)
+			try:
+				lo.delete(dn)
+			except noObject:
+				pass
+			except ldapError as exc:
+				self.log.error("DN %r -> %s", dn, exc)
+		super(Test, self).cleanup()
+
+
 
 	def test(self):  # formally test_create_with_illegal_chars_in_username()
 		"""
@@ -70,6 +89,7 @@ class Test(CLI_Import_v2_Tester):
 			# save ldap state for later comparison
 			self.save_ldap_status()
 			# start import
+			self.unique_basenames_to_remove.extend(lastnames)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 			# check for new users in LDAP
 			self.check_new_and_removed_users(len(persons), 0)
@@ -95,6 +115,7 @@ class Test(CLI_Import_v2_Tester):
 		for input_name, expected in usernames.items():
 			try:
 				out = unh.format_username(input_name)
+				self.unique_basenames_to_remove.append(expected)
 				if out != expected:
 					self.fail("UsernameHandler.format_username(%r) returned %r, expected %r." %
 						(input_name, out, expected))
@@ -106,12 +127,14 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (2/5)')
 		for i in range(1000):
 			name = uts.random_username(15)
+			self.unique_basenames_to_remove.append(name)
 			out = unh.format_username(name)
 			if out != name:
 				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (3/5)')
 		for i in range(1000):
 			name = uts.random_name(20)
+			self.unique_basenames_to_remove.append(name)
 			out = unh.format_username(name)
 			if out.startswith(".") or out.endswith(".") or len(out) > 15:
 				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
@@ -119,6 +142,7 @@ class Test(CLI_Import_v2_Tester):
 		for i in range(1000):
 			name = uts.random_name_special_characters(20)
 			name = name.translate(None, "[]")  # those are reserved for counter vars
+			self.unique_basenames_to_remove.append(name)
 			out = unh.format_username(name)
 			if out.startswith(".") or out.endswith(".") or len(out) > 15:
 				self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
@@ -132,6 +156,7 @@ class Test(CLI_Import_v2_Tester):
 			('Moritz[COUNTER2]', 'Moritz'),
 			('Moritz[COUNTER2]', 'Moritz2')
 		]
+		self.unique_basenames_to_remove.extend(["Max.Mustermann", "Maria.Musterfrau", "Moritz"])
 		unh = UsernameHandler(20)
 		for input_name, expected in usernames:
 			out = unh.format_username(input_name)
