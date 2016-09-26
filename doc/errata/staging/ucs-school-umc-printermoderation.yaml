@@ -3,10 +3,9 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-printermoderation
-fix: 13.0.3-2.62.201608300952
+fix: 13.0.3-3.63.201609261734
 desc: |
  This update addresses the following issue(s):
- * The use of restricted printers is supported if the printer is provided
-   by the server, on which the printermoderation module is running. 
+ * The use of restricted printers is supported.
    Proper error messages are displayed in case printing fails.
 bug: [41374]
