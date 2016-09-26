@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-13) unstable; urgency=low
+
+  * Bug #42504: Check if there is any share object with enabled NFS option
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Sep 2016 19:24:56 +0200
+
 ucs-test-ucsschool (3.0.16-12) unstable; urgency=low
 
   * Bug #41282: create only necessary OUs
