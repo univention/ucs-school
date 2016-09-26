@@ -332,15 +332,14 @@ class CLI_Import_v2_Tester(object):
 
 	def fail(self, msg, returncode=1):
 		"""
-		Collect errors and tracebacks, don't stop tests.
+		Print package versions, traceback and error message.
 		"""
 		apt_cache = AptCache()
-		res = "\n{}\nInstalled package versions:\n".format("*" * 40)
+		res = "{}\n{}\n{}{}\nInstalled package versions:".format(msg, "-" * 40, "".join(traceback.format_stack()), "-" * 40)
 		for pck in ["ucs-test-ucsschool", "python-ucs-school", "ucs-school-import"]:
-			res += "{:>20}: {}\n".format(pck,
+			res += "\n{:<20} {}".format(pck,
 				apt_cache[pck].installed.version if apt_cache[pck].is_installed else "Not installed")
-		res += "\n{}\n{}".format("-" * 40, "".join(traceback.format_stack()))
-		utils.fail(msg, returncode)
+		utils.fail(res, returncode)
 
 	def run(self):
 		try:
