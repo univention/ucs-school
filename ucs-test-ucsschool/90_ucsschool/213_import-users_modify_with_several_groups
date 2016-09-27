@@ -121,7 +121,7 @@ class Test(CLI_Import_v2_Tester):
 
 			person.school_classes = {}
 			if role in ('student', 'teacher', 'teacher_and_staff'):
-				person.append_random_class(schools=[person.school])  # TODO FIXME Bug #41914: line should be: person.append_random_class(schools=person.schools)
+				person.append_random_class(schools=person.schools)
 				person.school_classes.setdefault(self.ou_A.name, []).append(class_A_name)
 				# user is removed from class_B!
 
