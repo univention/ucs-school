@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-18) unstable; urgency=low
+
+  * Bug #41344: wait some more for s4connector
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 27 Sep 2016 18:17:07 +0200
+
 ucs-test-ucsschool (3.0.16-17) unstable; urgency=low
 
   * Bug #41361: add test to check number of squid reloads

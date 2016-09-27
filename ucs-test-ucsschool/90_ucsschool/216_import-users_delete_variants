@@ -9,6 +9,7 @@
 ## bugs: [41344]
 
 import copy
+import time
 import random
 import datetime
 import univention.testing.strings as uts
@@ -54,6 +55,11 @@ class Test(CLI_Import_v2_Tester):
 
 			self.save_ldap_status()  # save ldap state for later comparison
 			self.run_import(['-c', fn_config])  # start import
+			ldap_diff = self.diff_ldap_status()
+			if len([x for x in ldap_diff.new if x.startswith('uid=')]) > 1:
+				# On single-server s4-all-components previously removed users
+				# get resurrected. Try waiting some more for connector.
+				time.sleep(30)
 			self.check_new_and_removed_users(1, 0)  # check for new users in LDAP
 			person.verify()  # verify LDAP attributes
 
