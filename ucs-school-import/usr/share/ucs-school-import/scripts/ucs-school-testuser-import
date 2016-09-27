@@ -76,7 +76,7 @@ def parse_cmdline():
 						help="Number of classes to put users (except students) into per school [default: %(default)s].")
 	parser.add_argument("--schools", dest="schools", type=int,
 						help="Number of schools to put users (except students) into (if #OUs > 1) [default: %(default)s].")
-	parser.add_argument("--email", dest="email", action="store_true",
+	parser.add_argument("--create-email-addresses", dest="email", action="store_true",
 						help="Create email addresses for users [default: %(default)s].")
 	parser.add_argument("-v", "--verbose", action="store_true",
 						help="Enable debugging output on the console [default: %(default)s].")
