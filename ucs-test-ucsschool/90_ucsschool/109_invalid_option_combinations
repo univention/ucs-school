@@ -60,6 +60,7 @@ def main():
 							utils.fail("Added {} to {}.".format(bad_option, kls.type_name))
 						except invalidOptions as exc:
 							print("OK: caught expected exception: %s" % exc)
+						user.remove(lo)
 
 	print("*\n*** Test was successful.\n*")
 

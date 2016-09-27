@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-15) unstable; urgency=low
+
+  * Bug #41351: remove test-users, or test-ou will not be purged and we'll get
+    an error in 131_check_for_nfs_shares
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 27 Sep 2016 14:57:43 +0200
+
 ucs-test-ucsschool (3.0.16-14) unstable; urgency=low
 
   * Bug #42504: don not always fail
