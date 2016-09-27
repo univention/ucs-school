@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-16) unstable; urgency=medium
+
+  * Bug #41571: Adjust 98_samba4_evaluate_windows_gpo to changes in
+    ucs-windows-tools
+
+ -- Arvid Requate <requate@univention.de>  Tue, 27 Sep 2016 16:40:42 +0200
+
 ucs-test-ucsschool (3.0.16-15) unstable; urgency=low
 
   * Bug #41351: remove test-users, or test-ou will not be purged and we'll get
