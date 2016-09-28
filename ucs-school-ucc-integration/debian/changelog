@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (3.0.0-5) unstable; urgency=low
+
+  * Bug #40705: remove error message if run twice, add missing dn
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 28 Sep 2016 15:23:14 +0200
+
 ucs-school-ucc-integration (3.0.0-4) unstable; urgency=low
 
   * Bug #40705: also change UCR policy for timeserver when updating

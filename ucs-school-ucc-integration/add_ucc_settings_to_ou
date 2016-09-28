@@ -84,7 +84,8 @@ for oudn in $oudnlist ; do
 
 	# Bug #40705 - Set timeserver for UCC clients to school DC slave (in multiserver env)
     univention-directory-manager policies/registry modify "$@" \
-     	--append "registry=ucc/timeserver ${hostname}.${domainname}"
+     	--dn "cn=ou-default-ucr-policy,cn=policies,${oudn}" \
+     	--append "registry=ucc/timeserver ${hostname}.${domainname}" | grep -v "Duplicated variables not allowed"
 
     # link to OU
     univention-directory-manager container/ou modify "$@" \
