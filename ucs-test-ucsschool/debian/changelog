@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-20) unstable; urgency=low
+
+  * Bug #41361: squid reload: wait for triggered reloads of previous
+    ucs-test scripts
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 28 Sep 2016 14:44:07 +0200
+
 ucs-test-ucsschool (3.0.16-19) unstable; urgency=low
 
   * Bug #41361: wait for reload triggered by previous installation/test
