@@ -54,7 +54,7 @@ def write_user_line(fd, ou, is_teacher, is_staff):
 		'teacher': '1' if is_teacher else '0',
 		'staff': '1' if is_staff else '0',
 	}
-	line = 'A	%(username)s	%(lastname)%s	%(firstname)s	%(ou)s				%(teacher)s	1	%(staff)s\n'
+	line = 'A	%(username)s	%(lastname)s	%(firstname)s	%(ou)s				%(teacher)s	1	%(staff)s\n'
 	fd.write(line % data)
 
 
