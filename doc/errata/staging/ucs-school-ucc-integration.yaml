@@ -6,6 +6,8 @@ src: ucs-school-ucc-integration
 fix: 3.0.0-6.18.201609291110
 desc: |
  This update addresses the following issue(s):
- * The UCR variable ucc/timeserver is set to the local school server by appending it to the default UCR policy for each school-OU.
-   If the variable is already configured in that UCR policy, it is not changed (Bug #40705).
+ * The UCR variable ucc/timeserver is set to the local school server by
+   appending it to the default UCR policy for each school-OU. If the
+   variable is already configured in that UCR policy, it is not
+   changed (Bug #40705).
 bug: [40705]
