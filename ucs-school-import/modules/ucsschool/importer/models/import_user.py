@@ -253,12 +253,16 @@ class ImportUser(User):
 		Create self.udm_properties from schemes configured in config["scheme"].
 		Existing entries will be overwritten!
 
-		* Attributes (email, record_uid, [user]name etc.) should not be set
-		through udm_properties, as they are processed separately in make_*.
+		* Attributes (email, record_uid, [user]name etc.) are ignored, as they are
+		processed separately in make_*.
 		* See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz
 		section "scheme" for details on the configuration.
 		"""
+		ignore_keys = self.to_dict().keys()
+		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "username"])  # these are used in make_*
 		for k, v in self.config["scheme"].items():
+			if k in ignore_keys:
+				continue
 			self.udm_properties[k] = self.format_from_scheme(k, v)
 
 	def prepare_uids(self):
@@ -744,13 +748,12 @@ class ImportUser(User):
 				self.__class__.__name__))
 
 		udm_obj = self.get_udm_object(connection)
-		for k, v in self.udm_properties.items():
-			try:
-				udm_obj[k] = v
-			except KeyError as exc:
-				raise UnknownProperty("UDM properties could not be set. Unknown property: '{}'".format(exc),
-					entry=self.entry_count, import_user=self)
-		udm_obj.modify()
+		udm_obj.info.update(self.udm_properties)
+		try:
+			udm_obj.modify()
+		except KeyError as exc:
+			raise UnknownProperty("UDM properties could not be set. Unknown property: '{}'".format(exc),
+				entry=self.entry_count, import_user = self)
 
 	def update(self, other):
 		"""
