@@ -253,16 +253,12 @@ class ImportUser(User):
 		Create self.udm_properties from schemes configured in config["scheme"].
 		Existing entries will be overwritten!
 
-		* Attributes (email, record_uid, [user]name etc.) are ignored, as they are
-		processed separately in make_*.
+		* Attributes (email, record_uid, [user]name etc.) should not be set
+		through udm_properties, as they are processed separately in make_*.
 		* See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz
 		section "scheme" for details on the configuration.
 		"""
-		ignore_keys = self.to_dict().keys()
-		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "username"])
 		for k, v in self.config["scheme"].items():
-			if k in ignore_keys:
-				continue
 			self.udm_properties[k] = self.format_from_scheme(k, v)
 
 	def prepare_uids(self):
@@ -736,24 +732,25 @@ class ImportUser(User):
 		"""
 		if not self.udm_properties:
 			return
-		forbidden_attributes = {"birthday", "disabled", "firstname", "lastname",
-			"mailPrimaryAddress", "name", "password", "school", "schools", "school_classes", "sn", "uid", "username"}
+		forbidden_attributes = set(x.udm_name for x in self._attributes.values() if x.udm_name)
 		bad_props = set(self.udm_properties.keys()).intersection(forbidden_attributes)
 		if bad_props:
 			raise NotSupportedError("UDM properties '{}' must be set as attributes of the {} object (not in "
 				"udm_properties).".format("', '".join(bad_props), self.__class__.__name__))
-		if "email" in self.udm_properties.keys() and not self.email:
-			self.logger.warn("UDM property 'email' is used for storing contact information. The users mailbox "
-			"address is strored in the 'email' attribute of the {} object (not in udm_properties).".format(
+		if "e-mail" in self.udm_properties.keys() and not self.email:
+			# this might be an mistake, so let's warn the user
+			self.logger.warn("UDM property 'e-mail' is used for storing contact information. The users mailbox "
+			"address is stored in the 'email' attribute of the {} object (not in udm_properties).".format(
 				self.__class__.__name__))
 
 		udm_obj = self.get_udm_object(connection)
-		udm_obj.info.update(self.udm_properties)
-		try:
-			udm_obj.modify()
-		except KeyError as exc:
-			raise UnknownProperty("UDM properties could not be set. Unknown property: '{}'".format(exc),
-				entry=self.entry_count, import_user=self)
+		for k, v in self.udm_properties.items():
+			try:
+				udm_obj[k] = v
+			except KeyError as exc:
+				raise UnknownProperty("UDM properties could not be set. Unknown property: '{}'".format(exc),
+					entry=self.entry_count, import_user=self)
+		udm_obj.modify()
 
 	def update(self, other):
 		"""
