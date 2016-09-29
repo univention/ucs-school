@@ -29,7 +29,7 @@ desc: |
    (Bug #41351).
  * A bug was fixed, that didn't allow users to be created without having at
    least one school class (Bug #41847).
- * Conflicting storage of UDM attributes is now prevented (Bug #41857).
+ * Conflicting storage of UDM properties is now prevented (Bug #41857).
  * Program code was added to ease future development and support (Bug #41861).
  * The legacy import script now finds users in LDAP with and without the new
    SourceUID and RecordUID attributes (Bug #41862).
