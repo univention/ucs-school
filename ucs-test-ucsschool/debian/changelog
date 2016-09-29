@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-21) unstable; urgency=medium
+
+  * Bug #41571: Fix 98_samba4_evaluate_windows_gpo parmeter order
+
+ -- Arvid Requate <requate@univention.de>  Thu, 29 Sep 2016 22:35:52 +0200
+
 ucs-test-ucsschool (3.0.16-20) unstable; urgency=low
 
   * Bug #41361: squid reload: wait for triggered reloads of previous

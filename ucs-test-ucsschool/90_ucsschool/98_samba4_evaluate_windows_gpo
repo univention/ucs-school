@@ -128,8 +128,8 @@ def windows_set_gpo_security_filter(gpo_name, permission_level, target_name, tar
 			permission_level,
 			target_name,
 			target_type,
-			server,
-			replace)
+			replace,
+			server)
 		if ret_code != 0:
 			utils.fail("Set-GPPermissions on the Windows host "
 				"returned status '%s' when 0 is expected. "
