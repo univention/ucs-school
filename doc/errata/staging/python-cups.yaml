@@ -6,6 +6,6 @@ src: python-cups
 fix: 1.9.48-1.9.201609261456
 desc: |
  This update addresses the following issue(s):
- * python-cups has been added to the ucs@school software
+ * python-cups has been added to the UCS@school software
    repository.
 bug: [41374]
