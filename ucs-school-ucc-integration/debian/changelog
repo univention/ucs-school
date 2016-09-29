@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (3.0.0-6) unstable; urgency=low
+
+  * Bug #40705: try to set ucc/timeserver also when updating
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 29 Sep 2016 11:05:01 +0200
+
 ucs-school-ucc-integration (3.0.0-5) unstable; urgency=low
 
   * Bug #40705: remove error message if run twice, add missing dn
