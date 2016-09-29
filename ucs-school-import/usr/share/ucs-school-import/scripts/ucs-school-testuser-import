@@ -58,8 +58,8 @@ def parse_cmdline():
 	)
 	parser = ArgumentParser(
 		description="UCS@school import test users tool",
-		epilog="When using --email either an email domain must be created in the corresponding UMC-module or must be "
-			"configured on the command line with --set maildomain=...")
+		epilog="When using --create-email-addresses either an email domain must be created in the corresponding "
+			"UMC-module or must be configured on the command line with --set maildomain=...")
 	parser.add_argument("-c", "--csvfile", dest="csvfile", help="File to write to [default: %(default)s].")
 	parser.add_argument("-n", "--nostart", action="store_true",
 						help="Disable automatic start of import script [default: %(default)s].")
