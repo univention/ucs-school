@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-22) unstable; urgency=medium
+
+  * Bug #41571: Adjust 98_samba4_evaluate_windows_gpo to changes in
+    ucs-windows-tools
+
+ -- Arvid Requate <requate@univention.de>  Fri, 30 Sep 2016 01:41:48 +0200
+
 ucs-test-ucsschool (3.0.16-21) unstable; urgency=medium
 
   * Bug #41571: Fix 98_samba4_evaluate_windows_gpo parmeter order
