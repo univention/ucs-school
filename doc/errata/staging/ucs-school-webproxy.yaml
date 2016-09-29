@@ -5,12 +5,14 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-webproxy
 fix: 12.0.3-6.122.201609231431
 desc: |
- This update addresses the following issue(s):
  * The default value of the UCR variable
-   squid/acl/windowsupdater/allow/dstdomain-i/regex contained an error
-   which, although it didn't lead to a functional problem, was corrected
+   squid/acl/windowsupdater/allow/dstdomain-i/regex has been updated.
+   The old regular expression was bordered needlessly by ^ and $
    (Bug #40960).
- * A service was added to control and regulate squid3 reloads when
-   triggered by UCR updates. Reload frequency is limited to once every
-   15 s (Bug #41361)
+ * If a new user or group import for UCS@school had been performed,
+   the system load on UCS@school slaves got very high due to frequent
+   reloads of the squid3 configuration. Therefore a new service was
+   added to control and regulate squid3 reloads when triggered by
+   UCR updates. The reload frequency is limited to once every
+   15 seconds (Bug #41361).
 bug: [40960, 41361]
