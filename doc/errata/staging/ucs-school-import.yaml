@@ -5,49 +5,51 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
 fix: 14.0.16-27.319.201609291641
 desc: |
- This update addresses the following issue(s):
- * New passwords for activated group members use special characters that
-   are less difficult to type (Bug #40711).
- * The script "activate_group_members" now also writes the username of each
+ * The script "activate_groupmembers" now also writes the username of each
    activated group member into the exported CSV file. Please note, that
    the order of the data fields in the resulting CSV file has changed
    (Bug #31187).
+ * The script "activate_groupmembers" now creates new passwords for each
+   activated group member which contains special characters that are less
+   difficult to type (Bug #40711).
  * Python based hooks are now always run, when creating, modifying, moving
-   or deleting ImportUser objects. This change is internal. Command line
+   or deleting ImportUser objects. This is an internal change. Command line
    imports behave as before and the UMC-modules are not yet affected
    (Bug #41572).
- * During import via ucs-school-user-import, users can now be deleted if
+ * During import via the script "ucs-school-user-import", users can now be
+   deleted if
    __action=D is explicitly set in the input data. This is performed even
    if the --no-delete option is set. --no-delete only disables the deletion
    of user objects if the action (add, modify, delete) has been determined
    automatically (Bug #41775).
- * Logging code was moved to the ucs-school-lib package. Support for the
-   UCR variable ucsschool/import/debug/werror has been removed (Bug #41595).
+ * Logging code was moved to the package "ucs-school-lib". Support for the
+   UCR variable "ucsschool/import/debug/werror" has been removed (Bug #41595).
  * A bug was fixed, that prevented staff users from being moved from one
    school to another (Bug #41609)
- * Changing user options to an invalid combination is now prevented
-   (Bug #41351).
+ * Changing user options to an invalid combination is now prevented in UMC
+   and via UDM (Bug #41351).
  * A bug was fixed, that didn't allow users to be created without having at
    least one school class (Bug #41847).
  * Conflicting storage of UDM properties is now prevented (Bug #41857).
  * Program code was added to ease future development and support (Bug #41861).
- * The legacy import script now finds users in LDAP with and without the new
-   SourceUID and RecordUID attributes (Bug #41862).
+ * The legacy import script ("import_user") now finds users in LDAP with
+   and without the new LDAP attributes "SourceUID" and "RecordUID"
+   (Bug #41862).
  * Deletion of user accounts is now done before creating new accounts or
    modifying existing ones. This remedies the problem, that new users could
    not have unique properties (like the primary email address), that
    accounts scheduled for deletion still had (Bug #41544).
  * Newly created shares are by default not exported via NFS anymore. To
    reactivate the previous behaviour (creation of both Samba/CIFS and NFS
-   shares), set UCR variable ucsschool/default/share/nfs to "true". Existing
-   shares are not affected by this change (Bug #38641).
- * A script was added to create and import users for testing purposes for the
-   Univention development team. Do not use it on production systems!
-   (Bug #42105)
+   shares), set the UCR variable "ucsschool/default/share/nfs" to "true".
+   Existing shares are not affected by this change (Bug #38641).
+ * A script was added to create and import dummy users for testing purposes.
+   Do not use it on production systems! (Bug #42105)
  * A regression was fixed, and the previous behavior has been reestablished:
-   If the CSV input for importing a user does not contain any school classes,
-   existing ones will not be modified (Bug #42288).
+   If the CSV input data for importing/modifying a user does not contain
+   any school class, existing class memberships will not be modified by
+   the legacy import ("import_user") (Bug #42288).
  * When creating or modifying users, illegal characters are now removed from
    their usernames. Allowed are only numbers, letters and dots (Bug #42313).
- * The logging code was cleaned up (Bug #42315).
+ * The internal logging code was cleaned up (Bug #42315).
 bug: [40711,31187,41572,41775,41595,41609,41351,41847,41857,41861,41862,41544,38641,42105,42288,42313,42315]

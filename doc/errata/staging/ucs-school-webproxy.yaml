@@ -6,8 +6,8 @@ src: ucs-school-webproxy
 fix: 12.0.3-6.122.201609231431
 desc: |
  * The default value of the UCR variable
-   squid/acl/windowsupdater/allow/dstdomain-i/regex has been updated.
-   The old regular expression was bordered needlessly by ^ and $
+   "squid/acl/windowsupdater/allow/dstdomain-i/regex" has been updated.
+   The old regular expression was bordered needlessly by "^" and "$"
    (Bug #40960).
  * If a new user or group import for UCS@school had been performed,
    the system load on UCS@school slaves got very high due to frequent

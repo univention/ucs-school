@@ -5,7 +5,7 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-rooms
 fix: 13.0.0-2.54.201607131458
 desc: |
- This update addresses the following issue(s):
- * The ucsschool python library now handles all operations in the module
-   (Bug #41130).
+ * The UMC module had been adjusted to use the new methods and classes of
+   the UCS@school python library that have been introduced/updated in
+   UCS@school 4.1 R2 (Bug #41130).
 bug: [41130]

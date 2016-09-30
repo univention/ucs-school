@@ -5,9 +5,13 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-ucc-integration
 fix: 3.0.0-6.18.201609291110
 desc: |
- This update addresses the following issue(s):
- * The UCR variable ucc/timeserver is set to the local school server by
-   appending it to the default UCR policy for each school-OU. If the
-   variable is already configured in that UCR policy, it is not
-   changed (Bug #40705).
+ * By default, the IP address of the UCS master domaincontroller was assigned
+   to UCC clients as time server. In numerous environments the master
+   domaincontroller is not directly reachable by UCC clients due to firewall
+   restrictions which resulted in incorrect system clocks on the UCC systems.
+   With this update, the default UCR policy of each school OU is automatically
+   updated and the UCR variable "ucc/timeserver" is appended. If the UCR
+   variable is already configured in that UCR policy, the value is not
+   changed. The UCR variable sets the local school server as time server
+   for UCC systems (Bug #40705).
 bug: [40705]

@@ -5,7 +5,12 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-csv-import
 fix: 3.0.4-8.53.201609161456
 desc: |
- This update addresses the following issue(s):
- * Adapt package to changes in the UCS@school programming library
-   (Bug #41282, #41609 #41987).
+ * With UCS@school 4.1R2v3 it was not possible to import users (e.g.
+   teachers) without an assigned class via the UMC CSV import
+   module. The error message "Der Wert darf nur Zahlen, Buchstaben
+   und Punkte enthalten." was shown instead. With this update the
+   faulty logic has been fixed (Bug #41987).
+ * Some small internal changes were done in the UMC module to harmonize
+   the UMC module with changes in the UCS@school python library
+   (Bug #41282, #41609).
 bug: [41282, 41609, 41987]

@@ -7,30 +7,34 @@ fix: 9.0.23-6.261.201609150827
 desc: |
  * A bug was fixed, that prevented staff users from being moved from one
    school to another (Bug #41609).
- * When moving a user from a school the user is put into the school
-   related groups of this school (Bug #41620) (Bug #40870).
+ * When moving a user from a school A to school B, the user is now put into
+   the school related groups of school B (Bug #41620, #40870).
  * Users are now added to groups of all schools they belong to (Bug #41601).
- * Passwords created by the scripts activate_groupmembers and the CLI import
+ * Passwords created by the script "activate_groupmembers" and the CLI import
    scripts now contain at least one character from each character class
    (lowercase, uppercase, digits, special characters) (Bug #40711).
- * Adapted installation procedure to ou-overlapping users changes (Bug #40705)
- * All schools are available on a DC Backup again (Bug #41747).
- * A logging function was added (Bug #41595).
+ * A new shell script function has been added to detect responsible school
+   servers for a specific OU (Bug #40705)
+ * Due to a logic error in UCS@school library, the backup domain controller
+   was not able to detect all school OU in LDAP. This error has been
+   fixed (Bug #41747).
+ * Internal functions for extensive logging have been improved (Bug #41595).
  * An error has been fixed when filtering out possible schools for certain
-   users (Bug #41811).
+   users. This error was detected by Univention development only and could
+   not be seen during production use (Bug #41811).
  * In some situations the temporary shutdown of univention-directory-notifier
    failed with a traceback during user import. The shutdown and therefore
-   also restart of univention-directory-notifier is now handled more safely
+   also the restart of univention-directory-notifier is now handled more safely
    (Bug #41775).
  * From now on UCS@school shares for working groups and classes are only
    exported via CIFS/Samba and no longer via NFS. To reenable the NFS
-   export for new shares, set the UCR variable ucsschool/default/share/nfs
+   export for new shares, set the UCR variable "ucsschool/default/share/nfs"
    to "yes". This new default value does not affect existing shares objects.
    The NFS export of shares can be (de)activated manually via the UMC module
    "Shares" by toggling the option "Export for NFS clients (NFSv3 and NFSv4)"
    (Bug #38641).
- * An inefficient LDAP search has been improved that reduces the search time
-   in some UMC modules, e.g. "Passwords (students)" (Bug #42167).
+ * An inefficient LDAP search has been improved that vastly reduces the
+   search time in some UMC modules, e.g. "Passwords (students)" (Bug #42167).
  * An error has been fixed when handling users with more that one school and
    workgroups but no classes (Bug #42251).
 bug: [41609, 41620, 41601, 40711, 40705, 41747, 41595, 40870, 41811, 41775, 38641, 42167, 42251]
