@@ -87,7 +87,7 @@ feedback@univention.de
 			<section id="changelog:ucsschool:ucs-school-ucc-integration" lang="en">
 				<title>Source package ucs-school-ucc-integration</title>
 				<itemizedlist>
-					<listitem><simpara>By default, the IP address of the UCS master domaincontroller was assigned to UCC clients as time server. In numerous environments the master domaincontroller is not directly reachable by UCC clients due to firewall restrictions which resulted in incorrect system clocks on the UCC systems. With this update, the default UCR policy of each school OU is automatically updated and the UCR variable "ucc/timeserver" is appended. If the UCR variable is already configured in that UCR policy, the value is not changed. The UCR variable sets the local school server as time server for UCC systems (<u:bug>40705</u:bug>).</simpara></listitem>
+					<listitem><simpara>By default, the IP address of the UCS master domain controller was assigned to UCC clients as time server. In numerous environments the master domain controller is not directly reachable by UCC clients due to firewall restrictions which resulted in incorrect system clocks on the UCC systems. With this update, the default UCR policy of each school OU is automatically updated and the UCR variable "ucc/timeserver" is appended. If the UCR variable is already configured in that UCR policy, the value is not changed. The UCR variable sets the local school server as time server for UCC systems (<u:bug>40705</u:bug>).</simpara></listitem>
 
 				</itemizedlist>
 			</section>
