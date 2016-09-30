@@ -316,11 +316,8 @@
                         auf dem &ucsMaster; hinzugefügt werden. Auf dem Reiter
                         <guimenu>Gruppen</guimenu>
                         muss das Benutzerkonto in die Gruppe
-                        <systemitem class="groupname">admins-
-                            <replaceable>OU</replaceable>
-                        </systemitem>
-                        (bei
-                        der OU <wordasword>gym17</wordasword> ist dies die Gruppe
+                        <systemitem class="groupname"><replaceable>admins-OU</replaceable></systemitem>
+                        (bei der OU <wordasword>gym17</wordasword> ist dies die Gruppe
                         <systemitem class="groupname">admins-gym17</systemitem>) aufgenommen werden.
                     </simpara>
                 </listitem>
@@ -338,21 +335,16 @@
         <para>
             Fungiert das Benutzerkonto nicht mehr als Lehrer, sondern nur noch als Schuladministrator, so kann im
             Reiter <guimenu>Optionen</guimenu> die Option <option>UCS@school-Lehrer</option> deaktiviert und dem
-            Benutzer die Gruppe
-            <systemitem class="groupname">lehrer-
-                <replaceable>OU</replaceable>
-            </systemitem>
+            Benutzer die Gruppe <systemitem class="groupname"><replaceable>lehrer-OU</replaceable></systemitem>
             entzogen werden.
         </para>
         <para>
             Soll ein frisch angelegter Schuladministrator auch als Lehrer tätig sein, muss zusätzlich die Gruppe
-            <systemitem class="groupname">lehrer-
-                <replaceable>OU</replaceable>
-            </systemitem>
-            , also z.B. <systemitem class="groupname">lehrer-gym17</systemitem>, hinzugefügt werden.
+            <systemitem class="groupname"><replaceable>lehrer-OU</replaceable></systemitem>,
+            also z.B. <systemitem class="groupname">lehrer-gym17</systemitem>, hinzugefügt werden.
             Abschließend müssen die Angaben für Profilpfad und Heimatverzeichnispfad am Benutzerobjekt
             gesetzt werden, um das gleiche Verhalten wie bei Schüler- und Lehrerkonten zu erhalten (siehe dazu
-            auch<xref linkend="school:setup:generic:windowsattributes"/>).
+            auch <xref linkend="school:setup:generic:windowsattributes"/>).
         </para>
     </section>
 
