@@ -307,9 +307,7 @@
         <title>Anlegen von Benutzerkonten für Schuladministratoren</title>
         <para>
             Benutzerkonten von Lehrern können durch eine zusätzliche Gruppenmitgliedschaft und das Einschalten einer
-            Option zu Schuladministratoren umgewandelt werden. Sie unterliegen dann jedoch der Einschränkung, dass die
-            Benutzerkonten der Lehrer-Schuladministratoren nur auf den edukativen Schulserver und nicht auf den
-            Schulserver des Verwaltungsnetzes repliziert werden.
+            Option zu Schuladministratoren umgewandelt werden.
             <itemizedlist>
                 <listitem>
                     <simpara>
@@ -345,45 +343,13 @@
                 <replaceable>OU</replaceable>
             </systemitem>
             entzogen werden.
-            Damit das Konto nicht mehr in den &ucsUAS; UMC-Modulen aufgelistet wird, muss es noch in einen
-            anderen Container verschoben werden. Dazu wird das Konto im UMC-Modul
-            <guimenu>Benutzer</guimenu>
-            markiert, und mit mit Hilfe des Menüpunktes <guimenu>Verschieben nach...</guimenu> in den Container
-            <uri>cn=admins,cn=users</uri>
-            unterhalb der OU der Schule verschoben.
         </para>
         <para>
-            Soll das Benutzerkonto des Schuladministrators auch auf den Systemen des Verwaltungsnetzes
-            verfügbar sein, so reicht es nicht aus, die Gruppenmitgliedschaft zu ändern. Es muss manuell
-            ein neues Benutzerkonto über das &ucsUMC;-Modul <guimenu>Benutzer</guimenu> auf dem &ucsMaster;
-            angelegt werden.
-        </para>
-        <para>
-            Die Benutzerkonten der Schuladministratoren müssen unterhalb der OU der Schule im Container
-            <uri>cn=admins,cn=users</uri>
-            angelegt werden. Die Auswahl findet mit der Option
-            <guimenu>Container</guimenu>
-            beim Anlegen eines Benutzers statt. Bei einer OU
-            <wordasword>gym17</wordasword>
-            muss beispielsweise der Container
-            <guimenuitem>gym17/users/admins</guimenuitem>
-            ausgewählt werden.
-        </para>
-        <para>
-            Der Benutzer muss außerdem im Reiter <guimenu>Gruppen</guimenu> in die Gruppe
-            <systemitem class="groupname">admins-
-                <replaceable>OU</replaceable>
-            </systemitem>
-            , also z.B. <systemitem class="groupname">admins-gym17</systemitem> aufgenommen werden.
-        </para>
-        <para>
-            Sollte der Schuladministrator auch als Lehrer tätig sein, muss zusätzlich die Gruppe
+            Soll ein frisch angelegter Schuladministrator auch als Lehrer tätig sein, muss zusätzlich die Gruppe
             <systemitem class="groupname">lehrer-
                 <replaceable>OU</replaceable>
             </systemitem>
             , also z.B. <systemitem class="groupname">lehrer-gym17</systemitem>, hinzugefügt werden.
-        </para>
-        <para>
             Abschließend müssen die Angaben für Profilpfad und Heimatverzeichnispfad am Benutzerobjekt
             gesetzt werden, um das gleiche Verhalten wie bei Schüler- und Lehrerkonten zu erhalten (siehe dazu
             auch<xref linkend="school:setup:generic:windowsattributes"/>).
