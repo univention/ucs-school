@@ -5,9 +5,9 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-ucc-integration
 fix: 3.0.0-6.18.201609291110
 desc: |
- * By default, the IP address of the UCS master domaincontroller was assigned
+ * By default, the IP address of the UCS master domain controller was assigned
    to UCC clients as time server. In numerous environments the master
-   domaincontroller is not directly reachable by UCC clients due to firewall
+   domain controller is not directly reachable by UCC clients due to firewall
    restrictions which resulted in incorrect system clocks on the UCC systems.
    With this update, the default UCR policy of each school OU is automatically
    updated and the UCR variable "ucc/timeserver" is appended. If the UCR
