@@ -231,7 +231,7 @@ class Instance(SchoolBaseModule):
 			raise UMC_Error(_('Invalid printer URI'))
 
 		if not os.path.exists(path):
-				raise UMC_Error(_('File %r could not be printed as it does not exists (anymore).') % (printjob,))
+			raise UMC_Error(_('File %r could not be printed as it does not exists (anymore).') % (printjob,))
 
 		MODULE.process('Printing: %s' % path)
 		self.pw_callback_bad_password = False
