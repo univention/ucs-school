@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 R2 v5 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.1 R2 v4 nach 4.1 R2 v5</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.1 R2 v5
+Stand: 30. September 2016
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2016
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 R2 v4 nach 4.1 R2 v5.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-umc-rooms" lang="en">
+				<title>Source package ucs-school-umc-rooms</title>
+				<itemizedlist>
+					<listitem><simpara>The UMC module had been adjusted to use the new methods and classes of the UCS@school python library that have been introduced/updated in UCS@school 4.1 R2 (<u:bug>41130</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-csv-import" lang="en">
+				<title>Source package ucs-school-umc-csv-import</title>
+				<itemizedlist>
+					<listitem><simpara>With UCS@school 4.1R2v3 it was not possible to import users (e.g. teachers) without an assigned class via the UMC CSV import module. The error message "Der Wert darf nur Zahlen, Buchstaben und Punkte enthalten." was shown instead. With this update the faulty logic has been fixed (<u:bug>41987</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Some small internal changes were done in the UMC module to harmonize the UMC module with changes in the UCS@school python library (<u:bug>41282</u:bug>, <u:bug>41609</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-webproxy" lang="en">
+				<title>Source package ucs-school-webproxy</title>
+				<itemizedlist>
+					<listitem><simpara>The default value of the UCR variable "squid/acl/windowsupdater/allow/dstdomain-i/regex" has been updated. The old regular expression was bordered needlessly by "^" and "$" (<u:bug>40960</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>If a new user or group import for UCS@school had been performed, the system load on UCS@school slaves got very high due to frequent reloads of the squid3 configuration. Therefore a new service was added to control and regulate squid3 reloads when triggered by UCR updates. The reload frequency is limited to once every 15 seconds (<u:bug>41361</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-ucc-integration" lang="en">
+				<title>Source package ucs-school-ucc-integration</title>
+				<itemizedlist>
+					<listitem><simpara>By default, the IP address of the UCS master domaincontroller was assigned to UCC clients as time server. In numerous environments the master domaincontroller is not directly reachable by UCC clients due to firewall restrictions which resulted in incorrect system clocks on the UCC systems. With this update, the default UCR policy of each school OU is automatically updated and the UCR variable "ucc/timeserver" is appended. If the UCR variable is already configured in that UCR policy, the value is not changed. The UCR variable sets the local school server as time server for UCC systems (<u:bug>40705</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-metapackage" lang="en">
+				<title>Source package ucs-school-metapackage</title>
+				<itemizedlist>
+					<listitem><simpara>By default the user "pcpatch" is no longer ignored by the Univention S4 Connector (<u:bug>34626</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The join scripts 00ucs-school-slave-check-ou and 62-ucs-school-slave have been improved. This change was neccessary due to allowing ou-overlapping users and related changes in LDAP ACLs (<u:bug>40705</u:bug>)</simpara></listitem>
+
+					<listitem><simpara>The new default path for UCS@school NETLOGON scripts for Windows systems is "/var/lib/samba/netlogon/user". This change will become active on newly installed UCS@school systems only. The configuration of existing UCS@school systems is not altered. To revert to the previous behavior, unset the UCR variables "samba/share/netlogon/path" and "ucsschool/userlogon/netlogon/path". This change has introduced to prevent the replication of the NETLOGON scripts via the SYSVOL replication mechanism which caused higher load in larger environments. Further documentation can be found in the chapter "Netlogon-Skripte für Samba4-Umgebung" of the UCS@school administrator manual (<u:bug>40347</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The samba internal databases "sam.ldb" and "secrets.ldb" are not removed any longer while running the ucs-school-slave joinscripts (<u:bug>40424</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A help message was added to a join script, giving instructions on how to rejoin school slave whose LDAP object has been previously deleted (<u:bug>40262</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><simpara>The script "activate_groupmembers" now also writes the username of each activated group member into the exported CSV file. Please note, that the order of the data fields in the resulting CSV file has changed (<u:bug>31187</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The script "activate_groupmembers" now creates new passwords for each activated group member which contains special characters that are less difficult to type (<u:bug>40711</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Python based hooks are now always run, when creating, modifying, moving or deleting ImportUser objects. This is an internal change. Command line imports behave as before and the UMC-modules are not yet affected (<u:bug>41572</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>During import via the script "ucs-school-user-import", users can now be deleted if __action=D is explicitly set in the input data. This is performed even if the --no-delete option is set. --no-delete only disables the deletion of user objects if the action (add, modify, delete) has been determined automatically (<u:bug>41775</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Logging code was moved to the package "ucs-school-lib". Support for the UCR variable "ucsschool/import/debug/werror" has been removed (<u:bug>41595</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A bug was fixed, that prevented staff users from being moved from one school to another (<u:bug>41609</u:bug>)</simpara></listitem>
+
+					<listitem><simpara>Changing user options to an invalid combination is now prevented in UMC and via UDM (<u:bug>41351</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A bug was fixed, that didn't allow users to be created without having at least one school class (<u:bug>41847</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Conflicting storage of UDM properties is now prevented (<u:bug>41857</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Program code was added to ease future development and support (<u:bug>41861</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The legacy import script ("import_user") now finds users in LDAP with and without the new LDAP attributes "SourceUID" and "RecordUID" (<u:bug>41862</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Deletion of user accounts is now done before creating new accounts or modifying existing ones. This remedies the problem, that new users could not have unique properties (like the primary email address), that accounts scheduled for deletion still had (<u:bug>41544</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Newly created shares are by default not exported via NFS anymore. To reactivate the previous behaviour (creation of both Samba/CIFS and NFS shares), set the UCR variable "ucsschool/default/share/nfs" to "true". Existing shares are not affected by this change (<u:bug>38641</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A script was added to create and import dummy users for testing purposes. Do not use it on production systems! (<u:bug>42105</u:bug>)</simpara></listitem>
+
+					<listitem><simpara>A regression was fixed, and the previous behavior has been reestablished: If the CSV input data for importing/modifying a user does not contain any school class, existing class memberships will not be modified by the legacy import ("import_user") (<u:bug>42288</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>When creating or modifying users, illegal characters are now removed from their usernames. Allowed are only numbers, letters and dots (<u:bug>42313</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The internal logging code was cleaned up (<u:bug>42315</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><simpara>A bug was fixed, that prevented staff users from being moved from one school to another (<u:bug>41609</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>When moving a user from a school A to school B, the user is now put into the school related groups of school B (<u:bug>41620</u:bug>, <u:bug>40870</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Users are now added to groups of all schools they belong to (<u:bug>41601</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Passwords created by the script "activate_groupmembers" and the CLI import scripts now contain at least one character from each character class (lowercase, uppercase, digits, special characters) (<u:bug>40711</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A new shell script function has been added to detect responsible school servers for a specific OU (<u:bug>40705</u:bug>)</simpara></listitem>
+
+					<listitem><simpara>Due to a logic error in UCS@school library, the backup domain controller was not able to detect all school OU in LDAP. This error has been fixed (<u:bug>41747</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Internal functions for extensive logging have been improved (<u:bug>41595</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>An error has been fixed when filtering out possible schools for certain users. This error was detected by Univention development only and could not be seen during production use (<u:bug>41811</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>In some situations the temporary shutdown of univention-directory-notifier failed with a traceback during user import. The shutdown and therefore also the restart of univention-directory-notifier is now handled more safely (<u:bug>41775</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>From now on UCS@school shares for working groups and classes are only exported via CIFS/Samba and no longer via NFS. To reenable the NFS export for new shares, set the UCR variable "ucsschool/default/share/nfs" to "yes". This new default value does not affect existing shares objects. The NFS export of shares can be (de)activated manually via the UMC module "Shares" by toggling the option "Export for NFS clients (NFSv3 and NFSv4)" (<u:bug>38641</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>An inefficient LDAP search has been improved that vastly reduces the search time in some UMC modules, e.g. "Passwords (students)" (<u:bug>42167</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>An error has been fixed when handling users with more that one school and workgroups but no classes (<u:bug>42251</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
