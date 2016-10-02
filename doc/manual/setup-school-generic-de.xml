@@ -97,7 +97,7 @@
                         <simpara>
                             Auf dem Schulserver kann über das UMC-Modul <emphasis>Domänenbeitritt</emphasis> das
                             Joinskript
-                            <emphasis>80ucs-school-umc-printermoderation</emphasis>
+                            <emphasis>99ucs-school-umc-printermoderation</emphasis>
                             (erneut) ausgeführt werden.
                         </simpara>
                     </listitem>
