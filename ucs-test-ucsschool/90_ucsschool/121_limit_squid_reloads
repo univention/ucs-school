@@ -4,7 +4,7 @@
 ## tags: [apptest,ucsschool]
 ## roles: [domaincontroller_master,domaincontroller_slave]
 ## bugs: [41361]
-## exposure: safe
+## exposure: dangerous
 ## packages:
 ##   - ucs-school-webproxy
 
@@ -23,12 +23,11 @@ TEST_UCR = ("proxy/filter/domain/whitelisted/2000", "www.univention.com")
 
 def main():
 	# wait for reload triggered by previous installation/test
-	time.sleep(15)
+	time.sleep(20)
 	# find end of logfile
 	with open(LOGFILE, "rb") as log:
 		log.seek(0, os.SEEK_END)
 		logfile_pos = log.tell()
-	time.sleep(20)  # wait for a squid reload of previous UCR variable changes of other scripts
 	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
 		# every handler_set and handler_unset of proxy/filter/.*
 		# (ucs-school-webproxy/debian/ucs-school-webproxy.univention-config-registry)
