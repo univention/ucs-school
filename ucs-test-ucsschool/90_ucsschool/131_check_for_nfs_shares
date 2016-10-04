@@ -4,7 +4,7 @@
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-import]
-## bugs: [38641, 42504]
+## bugs: [38641, 42504, 42514]
 
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
@@ -19,7 +19,10 @@ def main():
 			for share in Share.get_all(lo, school.name):
 				share_udm = share.get_udm_object(lo)
 				if "nfs" in share_udm.options:
-					nfs_shares.append((school.name, share.name))
+					if share.name in ["Marktplatz", "iTALC-Installation"]:
+						print("*** Ignoring //{}/{} (Bug #42514)".format(school.name, share.name))
+					else:
+						nfs_shares.append((school.name, share.name))
 
 		if nfs_shares:
 			utils.fail("Found NFS shares:\n* {}".format("\n* ".join(["school: %r share: %r" % nfs_share for nfs_share in nfs_shares])))
