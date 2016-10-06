@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
-fix:
+fix: 6.0.7-6.117.201610061203
 desc: |
  This update addresses the following issue(s):
  * Remove unnecessary initialization code (Bug #41699)
