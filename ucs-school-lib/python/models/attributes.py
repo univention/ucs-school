@@ -184,6 +184,7 @@ class SchoolAttribute(CommonName):
 	udm_name = None
 
 class SchoolClassesAttribute(Attribute):
+	udm_name = None
 	value_dict = True
 
 class SchoolClassAttribute(Attribute):

@@ -74,6 +74,11 @@ class User(UCSSchoolHelperAbstractClass):
 		super(User, self).__init__(*args, **kwargs)
 		if self.school_classes is None:
 			self.school_classes = {}
+		if self.schools is None:
+			if self.school:
+				self.schools = [self.school]
+			else:
+				self.schools = []
 
 	@classmethod
 	def shall_create_mail_domain(cls):
