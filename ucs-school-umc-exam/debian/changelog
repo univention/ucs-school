@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.7-6) unstable; urgency=low
+
+  * Bug #40213: do not crash on OUs missing cn=examusers
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 06 Oct 2016 11:56:20 +0200
+
 ucs-school-umc-exam (6.0.7-5) unstable; urgency=low
 
   * Bug #42219: Corrected some typos.

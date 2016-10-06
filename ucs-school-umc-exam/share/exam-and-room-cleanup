@@ -41,6 +41,7 @@ import univention.uldap
 import univention.admin.uldap
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.lib.umc_connection import UMCConnection
+from univention.admin.uexceptions import noObject
 from ldap.filter import escape_filter_chars
 from socket import error as SocketError
 from ldap import LDAPError
@@ -142,7 +143,11 @@ class ExamCleanupHelper(object):
 			for ou_dn, ou_attrs in ou_list:
 				ou_name = ou_attrs['ou'][0]
 				searchbase = SchoolSearchBase([ou_name], dn=ou_dn)
-				userlist = mod_user.lookup({}, lo, 'uid=%s*' % (escape_filter_chars(self.exam_prefix),), base=searchbase.examUsers)
+				try:
+					userlist = mod_user.lookup({}, lo, 'uid=%s*' % (escape_filter_chars(self.exam_prefix),), base=searchbase.examUsers)
+				except noObject:
+					# no exam users container in this OU
+					continue
 				for user in userlist:
 					ud.debug(ud.MAIN, ud.PROCESS, 'Removing exam user %r' % (user.dn,))
 					if self.options.dryrun:
