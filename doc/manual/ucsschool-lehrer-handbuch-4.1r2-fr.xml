@@ -62,7 +62,7 @@ feedback@univention.de
       <para>
         <figure id="ssl-warning">
           <title>Avertissement relatif au certificat de sécurité, affiché dans Firefox</title>
-          <graphic scalefit="1" width="80%" align="center" fileref="illustrations41/firefox_ssl_certificate.png"/>
+          <graphic scalefit="1" width="80%" align="center" fileref="illustrations41/firefox_ssl_certificate_fr.png"/>
         </figure>
       </para>
       <para>Certains navigateurs anciens ne sont pas pris en charge. L'interface demande au moins les versions suivantes : </para>
@@ -92,7 +92,7 @@ feedback@univention.de
       <para>
         <figure id="moduluebersicht">
           <title>Page de vue d'ensemble des fonctionnalités offertes à l'administrateur de l'école</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/moduluebersicht_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/moduluebersicht_41_fr.png"/>
         </figure>
       </para>
     </section>
@@ -101,7 +101,7 @@ feedback@univention.de
     <title>Fonctionnalités d'administration pour les enseignants</title>
     <section id="lehrerdoku:schuelerpasswort">
       <title>Mots de passe (élèves)</title>
-      <para>Ce module permet aux enseignants de réinitialiser les mots de passe des élèves. Pour des raisons de sécurité, les mots de passe existants ne peuvent pas être récupérés ; lorsqu'un élève oublie son mot de passe, un nouveau mot de passe doit être fourni. Les étapes suivantes décrivent comment réinitialiser le mot de passe d'un élève : <itemizedlist><listitem><simpara>La fonctionnalité de réinitialisation des mots de passe est accessible via <guimenu>Mots de passe (élèves)</guimenu>. </simpara></listitem><listitem><para>Cela ouvre une liste de tous les élèves de l'école. La liste des élèves peut être affinée en choisissant un élément dans le champ de sélection <guimenu>Classe ou groupe de travail</guimenu>. Seuls les élèves de la classe en question sont alors affichés. </para><para><figure id="passwordreset1"><title>Réinitialisation du mot de passe d'un élève</title><graphic scalefit="1" width="95%" align="center" fileref="illustrations41/students_passwords_41.png"/></figure></para></listitem><listitem><para>Vous pouvez rechercher un élève en particulier en saisissant son nom d'utilisateur, son nom de famille et / ou son prénom dans le champ de saisie <guimenu>Nom</guimenu>, puis en cliquant sur <guimenu>Rechercher</guimenu> </para><para><figure id="searchingpupils"><title>Chercher des comptes d'élèves</title><graphic scalefit="1" width="95%" align="center" fileref="illustrations41/students_passwords_selected_41.png"/></figure></para></listitem><listitem><para>Vous pouvez alors sélectionner un ou plusieurs élèves dans la liste en cochant les cases grises correspondantes figurant devant leurs noms. Pour conclure l'opération, cliquez sur le bouton <guimenu>Réinitialiser le mot de passe</guimenu> figurant au dessus de la liste. </para><para><figure id="passwordreset2"><title>Réinitialiser le mot de passe d'un élève</title><graphic scalefit="1" width="60%" align="center" fileref="illustrations41/student_password_reset_41.png"/></figure></para></listitem><listitem><simpara>Vous pouvez saisir le nouveau mot de passe destiné aux élèves dans le champ <guimenu>Nouveau mot de passe</guimenu>. Si la case figurant devant le champ <guimenu>L'utilisateur doit modifier son mot de passe à sa prochaine connexion</guimenu> est cochée, le mot de passe ainsi renseigné n'est valable que de façon temporaire. Lorsque l'élève se connecte avec son mot de passe temporaire, celui-ci doit être changé immédiatement. Pour des raisons de sécurité, il est recommandé de laisser cette option activée. Ainsi, le nouveau mot de passe choisi par l'élève n'est connu que de lui seul. </simpara></listitem><listitem><simpara>Il est possible de définir des exigences minimales pour les mots de passe, par exemple une longueur de huit caractères au moins. Lorsque le mot de passe saisi ne répond pas à ces critères, un avertissement est émis et un nouveau mot de passe doit être saisi. </simpara></listitem></itemizedlist>
+      <para>Ce module permet aux enseignants de réinitialiser les mots de passe des élèves. Pour des raisons de sécurité, les mots de passe existants ne peuvent pas être récupérés ; lorsqu'un élève oublie son mot de passe, un nouveau mot de passe doit être fourni. Les étapes suivantes décrivent comment réinitialiser le mot de passe d'un élève : <itemizedlist><listitem><simpara>La fonctionnalité de réinitialisation des mots de passe est accessible via <guimenu>Mots de passe (élèves)</guimenu>. </simpara></listitem><listitem><para>Cela ouvre une liste de tous les élèves de l'école. La liste des élèves peut être affinée en choisissant un élément dans le champ de sélection <guimenu>Classe ou groupe de travail</guimenu>. Seuls les élèves de la classe en question sont alors affichés. </para><para><figure id="passwordreset1"><title>Réinitialisation du mot de passe d'un élève</title><graphic scalefit="1" width="95%" align="center" fileref="illustrations41/students_passwords_41_fr.png"/></figure></para></listitem><listitem><para>Vous pouvez rechercher un élève en particulier en saisissant son nom d'utilisateur, son nom de famille et / ou son prénom dans le champ de saisie <guimenu>Nom</guimenu>, puis en cliquant sur <guimenu>Rechercher</guimenu> </para><para><figure id="searchingpupils"><title>Chercher des comptes d'élèves</title><graphic scalefit="1" width="95%" align="center" fileref="illustrations41/students_passwords_selected_41_fr.png"/></figure></para></listitem><listitem><para>Vous pouvez alors sélectionner un ou plusieurs élèves dans la liste en cochant les cases grises correspondantes figurant devant leurs noms. Pour conclure l'opération, cliquez sur le bouton <guimenu>Réinitialiser le mot de passe</guimenu> figurant au dessus de la liste. </para><para><figure id="passwordreset2"><title>Réinitialiser le mot de passe d'un élève</title><graphic scalefit="1" width="60%" align="center" fileref="illustrations41/student_password_reset_41_fr.png"/></figure></para></listitem><listitem><simpara>Vous pouvez saisir le nouveau mot de passe destiné aux élèves dans le champ <guimenu>Nouveau mot de passe</guimenu>. Si la case figurant devant le champ <guimenu>L'utilisateur doit modifier son mot de passe à sa prochaine connexion</guimenu> est cochée, le mot de passe ainsi renseigné n'est valable que de façon temporaire. Lorsque l'élève se connecte avec son mot de passe temporaire, celui-ci doit être changé immédiatement. Pour des raisons de sécurité, il est recommandé de laisser cette option activée. Ainsi, le nouveau mot de passe choisi par l'élève n'est connu que de lui seul. </simpara></listitem><listitem><simpara>Il est possible de définir des exigences minimales pour les mots de passe, par exemple une longueur de huit caractères au moins. Lorsque le mot de passe saisi ne répond pas à ces critères, un avertissement est émis et un nouveau mot de passe doit être saisi. </simpara></listitem></itemizedlist>
 		</para>
     </section>
     <section id="lehrerdoku:computerraum">
@@ -112,7 +112,7 @@ feedback@univention.de
       <para>
         <figure id="choose-computerroom">
           <title>Choix d'une salle informatique</title>
-          <graphic scalefit="1" width="45%" align="center" fileref="illustrations41/choose_computerroom_41.png"/>
+          <graphic scalefit="1" width="45%" align="center" fileref="illustrations41/choose_computerroom_41_fr.png"/>
         </figure>
       </para>
       <para>Après avoir cliqué sur <guimenu>Salle informatique</guimenu> apparaît un formulaire de sélection dans lequel vous pouvez choisir une salle informatique.  </para>
@@ -127,7 +127,7 @@ feedback@univention.de
         <para>
           <figure id="computerraum">
             <title>Supervision d'une salle informatique</title>
-            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/italc_computerroom_41.png"/>
+            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/italc_computerroom_41_fr.png"/>
           </figure>
         </para>
         <para>Une série d'actions est disponible dans la vue d'ensemble des ordinateurs des élèves. Si vous déplacez la souris vers le bouton <guimenu>Surveiller</guimenu> correspondant à un ordinateur, cela fait apparaître une vue réduite du bureau de l'élève dans son état courant. Si vous cliquez sur ce bouton, vous pouvez alors afficher cette vue réduite en plein écran. La vue du bureau de l'élève est rafraîchie continuellement. </para>
@@ -164,7 +164,7 @@ feedback@univention.de
         <para>
           <figure id="praesentation">
             <title>Démarrer une présentation</title>
-            <graphic scalefit="1" width="80%" align="center" fileref="illustrations41/starting_presentation_41.png"/>
+            <graphic scalefit="1" width="80%" align="center" fileref="illustrations41/starting_presentation_41_fr.png"/>
           </figure>
         </para>
         <para>Pour démarrer une présentation : dans <guimenu>plus</guimenu>, choisissez l'option <guimenu>Démarrer une présentation</guimenu> qui apparaît avec la liste des ordinateurs. Un message apparaît, indiquant que la présentation va démarrer et d'ici peu être diffusée sur l'ensemble des autres ordinateurs. Le cercle correspondant à l'ordinateur émetteur passe en rouge tandis que les cercles des ordinateurs récepteurs passent en vert. Un clic sur le bouton <guimenu>Terminer la présentation</guimenu> arrête la présentation. </para>
@@ -203,7 +203,7 @@ feedback@univention.de
         <title>Redémarrer les ordinateurs des élèves</title>
         <figure id="fig:klassenarbeit:neustart">
           <title>Redémarrer les ordinateurs des élèves</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/exam_reboot_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/exam_reboot_41_fr.png"/>
         </figure>
         <para>Pour terminer la configuration de l'examen, il est important de redémarrer tous les ordinateurs des élèves dans la salle informatique. Ce n'est qu'en redémarrant les ordinateurs concernés que les configurations et autorisations spécifiques mis en place pour l'examen prendont effet. </para>
         <para>Le module d'examen propose une fonctionnalité auxiliaire permettant en grande partie d'automatiser ce processus. Une connexion est établie vers tous les ordinateurs allumés et ceux-ci sont répertoriés comme décrit à la section<xref linkend="fig:klassenarbeit:neustart"/>. Les ordinateurs apparaissant dans la liste peuvent être redémarrés automatiquement d'un clic sur le bouton <guimenu>Redémarrer les ordinateurs des élèves</guimenu>. Les ordinateurs auxquels l'enseignant est connecté sont automatiquement exclus de cette action. La seule condition à cela est que l'utilisateur soit correctement identifié en tant qu'enseignant (voir également la colonne <guimenu>Utilisateur</guimenu> du tableau). Il est également possible de sélectionner des ordinateurs individuels et de les redémarrer au moyen du bouton <guimenu>Redémarrer les ordinateurs sélectionnés</guimenu>. Dans ce cas, l'ordinateur sera redémarré indépendamment de l'utilisateur qui y est connecté (y compris l'enseignant !). </para>
@@ -218,7 +218,7 @@ feedback@univention.de
         <title>Gestion et clôture de l'examen</title>
         <figure id="fig:klassenarbeit:computerraum">
           <title>Gestion d'un examen dans le module Salle informatique en mode examen</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/exam_computerroom_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/exam_computerroom_41_fr.png"/>
         </figure>
         <para>L'examen se déroule et est géré par l'intermédiaire du module &ucsUMC; <guimenu>Salle informatique</guimenu> (voir <xref linkend="fig:klassenarbeit:computerraum"/>). Pendant l'examen, le module affiche le temps restant pour l'examen ainsi que des actions spécifiques au mode examen. Vous pouvez collecter les résultats intermédiaires de la classe au moyen du bouton <guimenu>Collecter les résultats</guimenu>. Vous pouvez réaliser cette action aussi souvent que souhaité. Pour clore l'examen, cliquez sur le bouton <guimenu>Conclure l'examen</guimenu>. </para>
         <note>
@@ -232,7 +232,7 @@ feedback@univention.de
       <para>
         <figure id="helpdesk">
           <title>Demande au centre d'aide</title>
-          <graphic scalefit="1" width="40%" align="center" fileref="illustrations41/contact_helpdesk_41.png"/>
+          <graphic scalefit="1" width="40%" align="center" fileref="illustrations41/contact_helpdesk_41_fr.png"/>
         </figure>
       </para>
       <para>La liste déroulante <guimenu>Catégorie</guimenu> permet de définir le type de demande, par exemple une demande relative à un problème matériel. </para>
@@ -249,7 +249,7 @@ feedback@univention.de
       <para>
         <figure id="select-workgroup">
           <title>Sélection d'un groupe de travail</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/workgroup_selected_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/workgroup_selected_41_fr.png"/>
         </figure>
       </para>
       <para>Un clic sur le nom d'un groupe de travail ouvre une nouvelle fenêtre. Le nom d'un <guimenu>groupe de travail</guimenu> existant ne peut pas être modifié ultérieurement. </para>
@@ -257,7 +257,7 @@ feedback@univention.de
       <para>
         <figure id="assign-pupils">
           <title>Affectation d'élèves à un groupe de travail</title>
-          <graphic scalefit="1" width="40%" align="center" fileref="illustrations41/workgroup_add_students_41.png"/>
+          <graphic scalefit="1" width="40%" align="center" fileref="illustrations41/workgroup_add_students_41_fr.png"/>
         </figure>
       </para>
       <para>Cela affiche une liste de tous les élèves et enseignants de l'école. La liste des utilisateurs affichés peut être restreinte à une classe ou un groupe de travail au moyen de la liste déroulante <guimenu>Groupe d'utilisateurs ou classe</guimenu> : les seuls utilisateurs affichés sont alors les élèves et enseignants de la classe demandée. Vous pouvez également chercher un utilisateur particulier en saisissant un nom d'utilisateur, un nom de famille et / ou un prénom dans le champ de saisie <guimenu>Nom</guimenu> puis en cliquant sur <guimenu>Rechercher</guimenu>. Vous pouvez sélectionner les utilisateurs à ajouter au groupe de travail en cochant la case correspondante devant le nom de l'utilisateur. Un clic sur <guimenu>Ajouter</guimenu> met l'utilisateur dans le groupe de travail. </para>
@@ -269,7 +269,7 @@ feedback@univention.de
       <para>
         <figure id="printer-moderation">
           <title>Modération des tâches d'impression</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/print_jobs_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/print_jobs_41_fr.png"/>
         </figure>
       </para>
       <para>
@@ -281,7 +281,7 @@ feedback@univention.de
             <simpara>Une liste des tâches d'impression en attente apparaît alors. Vous pouvez restreindre la liste des élèves à une classe ou un groupe de travail donnés au moyen de la liste déroulante <guimenu>Classe ou groupe de travail</guimenu>. Seuls les élèves de cette classe sont alors affichés. </simpara>
           </listitem>
           <listitem>
-            <para>Chaque tâche d'impression est présentée sur une seule ligne. La colonne <guimenu>Tâche d'impression</guimenu> contient le nom du fichier à imprimer, en plus du nombre de pages et de la date de la tâche d'impression. <figure id="printer-selection"><title>Sélection de l'imprimante après avoir accepté une tâche d'impression</title><graphic scalefit="1" width="60%" align="center" fileref="illustrations41/printer_choice_41.png"/></figure>
+            <para>Chaque tâche d'impression est présentée sur une seule ligne. La colonne <guimenu>Tâche d'impression</guimenu> contient le nom du fichier à imprimer, en plus du nombre de pages et de la date de la tâche d'impression. <figure id="printer-selection"><title>Sélection de l'imprimante après avoir accepté une tâche d'impression</title><graphic scalefit="1" width="60%" align="center" fileref="illustrations41/printer_choice_41_fr.png"/></figure>
 			  </para>
           </listitem>
           <listitem>
@@ -302,7 +302,7 @@ feedback@univention.de
         <para>
           <figure id="verteilungsprojekte">
             <title>Liste des projets de distribution de documents</title>
-            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/distribution_projects_41.png"/>
+            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/distribution_projects_41_fr.png"/>
           </figure>
         </para>
         <para>Le menu principal comporte la liste de tous les projets visibles. Chaque projet est associé à un enseignant qui apparaît sous <guimenu>Propriétaire</guimenu> L'option <mousebutton>Prendre en charge</mousebutton> permet de confier le projet à un autre enseignant. Les projets existants peuvent également être modifiés ou supprimés. </para>
@@ -314,7 +314,7 @@ feedback@univention.de
         <para>
           <figure id="verteilungsprojekt">
             <title>Création d'un projet de distribution de documents</title>
-            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/distribution_project_creation_41.png"/>
+            <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/distribution_project_creation_41_fr.png"/>
           </figure>
         </para>
         <para>
@@ -346,7 +346,7 @@ feedback@univention.de
         <para>
           <figure id="verteilungsprojekt-einsammeln">
             <title>Collecte d'un projet de distribution de documents</title>
-            <graphic scalefit="1" width="60%" align="center" fileref="illustrations41/distribution_collect_project_41.png"/>
+            <graphic scalefit="1" width="60%" align="center" fileref="illustrations41/distribution_collect_project_41_fr.png"/>
           </figure>
         </para>
         <para>Les fichiers collectés sont déposés dans le répertoire personnel de l'enseignant ayant créé le projet de distribution et ce, quel que soitl'enseignant qui lance la collecte de fichiers ! Les fichiers sont déposés dans le répertoire <emphasis>Matériel pédagogique</emphasis> du répertoire personnel de l'enseignant. Un répertoire individuel portant le nom du projet est créé pour chaque projet de distribution. Dans ce répertoire, un répertoire est créé pour chaque élève et contient les fichiers collectés de l'élève en question, de sorte qu'il toujours facile d'identifier l'élève par la suite. </para>
@@ -366,7 +366,7 @@ feedback@univention.de
       <para>
         <figure id="computerroom-list">
           <title>Gestion des salles informatiques</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/computerrooms_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/computerrooms_41_fr.png"/>
         </figure>
       </para>
       <para><guimenu>Ajouter une salle</guimenu> permet de définir une nouvelle salle informatique. Outre un <guimenu>Nom</guimenu>, vous pouvez également indiquer une <guimenu>Description</guimenu>. </para>
@@ -374,7 +374,7 @@ feedback@univention.de
       <para>
         <figure id="add-to-computerroom">
           <title>Affectation d'ordinateurs à une salle informatique</title>
-          <graphic scalefit="1" width="35%" align="center" fileref="illustrations41/computerrooms_add_computers_41.png"/>
+          <graphic scalefit="1" width="35%" align="center" fileref="illustrations41/computerrooms_add_computers_41_fr.png"/>
         </figure>
       </para>
       <para>Les salles informatiques existantes peuvent également être modifiées ou supprimées ultérieurement au moyen des icônes idoines. </para>
@@ -385,7 +385,7 @@ feedback@univention.de
       <para>
         <figure id="lesson-times">
           <title>Définition des horaires de cours</title>
-          <graphic scalefit="1" width="55%" align="center" fileref="illustrations41/lesson_times_41.png"/>
+          <graphic scalefit="1" width="55%" align="center" fileref="illustrations41/lesson_times_41_fr.png"/>
         </figure>
       </para>
       <para>Il est recommandé de repousser la fin des heures de cours y compris les pauses au plus proche du début de l'heure de cours suivante, car les horaires de cours sont utilisés comme modèle pour les réglages relatifs aux salles. Ainsi, vous évitez de désactiver l'accès à Internet immédiatement lorsque la cloche de la pause sonne. </para>
@@ -396,7 +396,7 @@ feedback@univention.de
       <para>
         <figure id="liste-klassen">
           <title>Liste des classes d'une école</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/classes_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/classes_41_fr.png"/>
         </figure>
       </para>
       <para>L'affectation peut se faire par le biais de deux modules : <guimenu>Affecter un enseignant</guimenu> et <guimenu>Affecter une classe</guimenu>. </para>
@@ -405,7 +405,7 @@ feedback@univention.de
       <para>
         <figure id="assign-teacher">
           <title>Affectation d'enseignants à une classe</title>
-          <graphic scalefit="1" width="35%" align="center" fileref="illustrations41/assign_teacher_to_class_41.png"/>
+          <graphic scalefit="1" width="35%" align="center" fileref="illustrations41/assign_teacher_to_class_41_fr.png"/>
         </figure>
       </para>
     </section>
@@ -419,7 +419,7 @@ feedback@univention.de
       <para>
         <figure id="internet-rules">
           <title>Gestion des règles d'accès à Internet</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/internet_rules_41.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/internet_rules_41_fr.png"/>
         </figure>
       </para>
       <para><guimenu>Ajouter une règle</guimenu> permet de définir une nouvelle règle de filtrage. Il faut d'abord d'indiquer un <guimenu>Nom</guimenu>. Le <guimenu>Type de règle</guimenu> permet de différencier deux types de règles : </para>
@@ -434,7 +434,7 @@ feedback@univention.de
       <para>
         <figure id="wikipedia-whitelist">
           <title>Créer une liste blanche pour Wikipedia</title>
-          <graphic scalefit="1" width="50%" align="center" fileref="illustrations41/internet_rules_whitelist_41.png"/>
+          <graphic scalefit="1" width="50%" align="center" fileref="illustrations41/internet_rules_whitelist_41_fr.png"/>
         </figure>
       </para>
       <para>Vous pouvez donner dans <guimenu>Domaines Internet</guimenu> une liste d'adresses, par exemple <uri>wikipedia.org</uri> ou <uri>facebook.com</uri>. Il est recommandé de ne fournir que la partie du domaine de l'adresse, par exemple seulement <uri>wikipedia.org</uri> et non <uri>www.wikipedia.org</uri>. </para>
