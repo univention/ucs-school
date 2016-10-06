@@ -200,11 +200,11 @@ class Instance(SchoolBaseModule, SchoolImport):
 			if obj.errors:
 				ret.append({'result' : {'message' : obj.get_error_msg()}})
 				continue
+			# first load object from LDAP, then modify it
 			obj_loaded = obj.from_dn(obj.dn, obj.school, ldap_user_read)
 			for name, _attr in obj._attributes.iteritems():
-				old_value = getattr(obj_loaded, name)
 				new_value = getattr(obj, name)
-				if name != "schools":
+				if name != "schools":  # UMC always returns schools=None, which would leave us with a broken user object
 					setattr(obj_loaded, name, new_value)
 			try:
 				obj_loaded.modify(ldap_user_write, validate=False)
