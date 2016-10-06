@@ -200,8 +200,14 @@ class Instance(SchoolBaseModule, SchoolImport):
 			if obj.errors:
 				ret.append({'result' : {'message' : obj.get_error_msg()}})
 				continue
+			obj_loaded = obj.from_dn(obj.dn, obj.school, ldap_user_read)
+			for name, _attr in obj._attributes.iteritems():
+				old_value = getattr(obj_loaded, name)
+				new_value = getattr(obj, name)
+				if name != "schools":
+					setattr(obj_loaded, name, new_value)
 			try:
-				obj.modify(ldap_user_write, validate=False)
+				obj_loaded.modify(ldap_user_write, validate=False)
 			except uldapBaseException as exc:
 				ret.append({'result' : {'message' : get_exception_msg(exc)}})
 			else:
