@@ -222,7 +222,7 @@ define([
 				if (!values.school_classes[school]) {
 					values.school_classes[school] = [null];
 				}
-				values.school_classes[school][0] = school + '-' + school_class;
+				values.school_classes[school][0] = school_class;
 			}
 			return values;
 		},
