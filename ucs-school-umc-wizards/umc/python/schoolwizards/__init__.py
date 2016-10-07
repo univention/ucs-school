@@ -201,11 +201,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 				ret.append({'result' : {'message' : obj.get_error_msg()}})
 				continue
 			# first load object from LDAP, then modify it
-			dn = obj.old_dn if hasattr(obj, "old_dn") else obj.dn
-			obj_loaded = obj.from_dn(dn, obj.school, ldap_user_read)
+			obj_loaded = obj.from_dn(obj.dn, obj.school, ldap_user_read)
 			for name, _attr in obj._attributes.iteritems():
 				new_value = getattr(obj, name)
-
 				if name != "schools":  # UMC always returns schools=None, which would leave us with a broken user object
 					setattr(obj_loaded, name, new_value)
 			try:
