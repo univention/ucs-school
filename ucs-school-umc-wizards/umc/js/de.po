@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-06-10 14:07+0200\n"
+"POT-Creation-Date: 2016-10-07 14:09+0200\n"
 "PO-Revision-Date: 2015-02-21 20:51+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,7 +67,7 @@ msgstr "Zurück"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolwizards/UserGrid.js:72 umc/js/schoolwizards/UserWizard.js:132
+#: umc/js/schoolwizards/UserGrid.js:72 umc/js/schoolwizards/UserWizard.js:140
 msgid "Class"
 msgstr "Klasse"
 
@@ -145,7 +145,7 @@ msgstr "Ausgewählte %s löschen."
 msgid "Description"
 msgstr "Beschreibung"
 
-#: umc/js/schoolwizards/UserWizard.js:136
+#: umc/js/schoolwizards/UserWizard.js:144
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -206,7 +206,7 @@ msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Benutzers an."
 msgid "Filter"
 msgstr "Filter"
 
-#: umc/js/schoolwizards/UserWizard.js:104
+#: umc/js/schoolwizards/UserWizard.js:112
 msgid "Firstname"
 msgstr "Vorname"
 
@@ -220,7 +220,7 @@ msgstr "IP-Adresse"
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: umc/js/schoolwizards/UserWizard.js:109
+#: umc/js/schoolwizards/UserWizard.js:117
 msgid "Lastname"
 msgstr "Nachname"
 
@@ -249,8 +249,8 @@ msgstr "Verwaltung von Schulbenutzern"
 msgid "Management of schools"
 msgstr "Verwaltung von Schulen"
 
-#: umc/js/schoolwizards/UserWizard.js:121
-#: umc/js/schoolwizards/UserWizard.js:127
+#: umc/js/schoolwizards/UserWizard.js:129
+#: umc/js/schoolwizards/UserWizard.js:135
 #, python-format
 msgid ""
 "Microsoft Active Directory limits usernames to 20 characters. To prevent "
@@ -327,7 +327,7 @@ msgstr ""
 msgid "No school found"
 msgstr "Es konnte keine Schule gefunden werden"
 
-#: umc/js/schoolwizards/UserWizard.js:140
+#: umc/js/schoolwizards/UserWizard.js:148
 msgid "Password"
 msgstr "Passwort"
 
@@ -392,10 +392,10 @@ msgid "Save"
 msgstr "Speichern"
 
 #: umc/js/schoolwizards/ClassGrid.js:76
-#: umc/js/schoolwizards/ComputerGrid.js:85
-#: umc/js/schoolwizards/UserGrid.js:115 umc/js/schoolwizards/Grid.js:181
-#: umc/js/schoolwizards/Wizard.js:194
+#: umc/js/schoolwizards/ComputerGrid.js:85 umc/js/schoolwizards/Grid.js:181
+#: umc/js/schoolwizards/UserGrid.js:115
 #: umc/js/schoolwizards/UserGridChooseSchool.js:81
+#: umc/js/schoolwizards/Wizard.js:194
 msgid "School"
 msgstr "Schule"
 
@@ -407,6 +407,10 @@ msgstr "Schulkürzel"
 #: umc/js/schoolwizards/SchoolWizard.js:121
 msgid "School information"
 msgstr "Schulinformationen"
+
+#: umc/js/schoolwizards/UserWizard.js:104
+msgid "Schools"
+msgstr "Schulen"
 
 #: umc/js/schoolwizards/Grid.js:260
 msgid "Search"
@@ -482,7 +486,7 @@ msgstr ""
 msgid "This action cannot be undone."
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
 
-#: umc/js/schoolwizards/UserWizard.js:178
+#: umc/js/schoolwizards/UserWizard.js:186
 #, python-format
 msgid ""
 "User \"%s\" has been successfully created. Continue to create another user "
@@ -492,7 +496,7 @@ msgstr ""
 "Benutzer erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" "
 "beendet werden."
 
-#: umc/js/schoolwizards/UserWizard.js:114
+#: umc/js/schoolwizards/UserWizard.js:122
 msgid "Username"
 msgstr "Benutzername"
 
@@ -562,23 +566,3 @@ msgstr "{itemSchool}: {itemType} erstellen"
 #, python-brace-format
 msgid "{itemSchool}: edit {itemType} {itemName}"
 msgstr "{itemSchool}: {itemType} {itemName} bearbeiten"
-
-#~ msgid "Internal school ID"
-#~ msgstr "Interne Schul-ID"
-
-#~ msgid ""
-#~ "The computer name must be a valid NetBIOS hostname. This requires a "
-#~ "maximum length of 12 characters."
-#~ msgstr ""
-#~ "Der Rechnername muss ein gültiger NetBIOS-Rechnername sein. Das erfordert "
-#~ "eine maximale Länge von 12 Zeichen."
-
-#~ msgid ""
-#~ "The maximum length of usernames is limited to %s characters. Please "
-#~ "choose a shorter username."
-#~ msgstr ""
-#~ "Die maximale Länge von Benutzernamen ist beschränkt auf %s Zeichen. Bitte "
-#~ "wählen Sie einen kürzeren Benutzernamen."
-
-#~ msgid "Type"
-#~ msgstr "Typ"
