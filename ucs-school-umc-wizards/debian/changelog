@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.0-10) unstable; urgency=medium
+
+  * Bug #42441: fix modifications of user objects
+
+ -- Florian Best <best@univention.de>  Fri, 07 Oct 2016 13:08:31 +0200
+
 ucs-school-umc-wizards (8.0.0-9) unstable; urgency=medium
 
   * Bug #41293: enhance check for school (so that further adaptions doesn't

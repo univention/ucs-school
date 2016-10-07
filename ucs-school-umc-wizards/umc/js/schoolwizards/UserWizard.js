@@ -99,6 +99,14 @@ define([
 					})
 				}],
 				widgets: [{
+					type: MultiInput,
+					name: 'schools',
+					label: _('Schools'),
+					initialValue: [this.selectedSchool],
+					subtypes: [{
+						type: TextBox,
+					}]
+				}, {
 					type: TextBox,
 					name: 'firstname',
 					label: _('Firstname'),
@@ -166,7 +174,7 @@ define([
 			tools.forIn(this.getPage('item')._form._widgets, function(iname, iwidget) {
 				if (iname === 'password') {
 					iwidget._setValueAttr(null);
-				} else if (iname !== 'school_classes') {
+				} else if (iname !== 'school_classes' && iwidget.reset) {
 					iwidget.reset();
 				}
 			});
@@ -234,16 +242,15 @@ define([
 			}
 			this.umcpCommand('schoolwizards/classes', {'school': school}).then(lang.hitch(this, function(response) {
 				var classes = array.map(response.result, function(item) {
-					return item.label;
+					return {
+						id: tools.explodeDn(item.id, true)[0],
+						label: item.label
+					}
 				});
 				var widget = this.getWidget('item', 'school_classes');
 				widget.set('staticValues', classes);
 				if (this.loadedValues) {
-					var value = (this.loadedValues.school_classes[school] || [null])[0];
-					if (value) {
-						value = value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1);
-					}
-					widget.set('value', value);
+					widget.set('value', (this.loadedValues.school_classes[school] || [null])[0]);
 				}
 			}));
 		}
