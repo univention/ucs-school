@@ -249,8 +249,9 @@ class UCSSchoolHelperAbstractClass(object):
 		self._udm_obj = None
 		kwargs['name'] = name
 		kwargs['school'] = school
-		for key in self._attributes:
-			setattr(self, key, kwargs.get(key))
+		for key, attr in self._attributes.items():
+			default = attr.value_type() if attr.value_type else None
+			setattr(self, key, kwargs.get(key, default))
 		self.__position = None
 		self.old_dn = None
 		self.old_dn = self.dn

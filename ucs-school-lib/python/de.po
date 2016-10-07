@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-lib\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-06-07 16:04+0200\n"
+"POT-Creation-Date: 2016-10-07 14:08+0200\n"
 "PO-Revision-Date: 2016-05-17 11:20+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -11,17 +11,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: python/models/attributes.py:88
+#: python/models/attributes.py:75
+#, python-format
+msgid "\"%(label)s\" needs to be a %(type)s"
+msgstr "\"%(label)s\" muss vom Typ %(type)s sein"
+
+#: python/models/attributes.py:80
 #, python-format
 msgid "\"%s\" is required. Please provide this information."
 msgstr "\"%s\" ist erforderlich. Bitte ergänzen Sie diese Information."
 
-#: python/models/attributes.py:153
+#: python/models/attributes.py:145
 msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 msgstr ""
 "Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
-#: python/models/school.py:57
+#: python/models/school.py:58
 msgid "Administrative servers"
 msgstr "Verwaltungsserver"
 
@@ -29,7 +34,7 @@ msgstr "Verwaltungsserver"
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: python/models/dhcp.py:173 python/models/network.py:45
+#: python/models/dhcp.py:178 python/models/network.py:45
 msgid "Broadcast"
 msgstr "Broadcast"
 
@@ -41,7 +46,7 @@ msgstr "Klasse"
 msgid "Computer"
 msgstr "Rechner"
 
-#: python/models/misc.py:90
+#: python/models/misc.py:83
 msgid "Computer path"
 msgstr "Pfad für Rechner"
 
@@ -49,7 +54,7 @@ msgstr "Pfad für Rechner"
 msgid "Container"
 msgstr "Container"
 
-#: python/schoolldap.py:364
+#: python/schoolldap.py:375
 msgid ""
 "Could not find any school. You have to create a school before continuing. "
 "Use the 'Add school' UMC module to create one."
@@ -57,19 +62,19 @@ msgstr ""
 "Es konnte keine Schule gefunden werden. Um Fortzufahren, muss zuerst eine "
 "Schule erstellt werden, dazu kann 'Schule hinzufügen' verwendet werden."
 
-#: python/models/school.py:50
+#: python/models/school.py:51
 msgid "DC Name"
 msgstr "DC Name"
 
-#: python/models/school.py:51
+#: python/models/school.py:52
 msgid "DC Name administrative server"
 msgstr "DC Name administrativer Server"
 
-#: python/models/misc.py:93
+#: python/models/misc.py:86
 msgid "DHCP path"
 msgstr "Pfad für DHCP"
 
-#: python/models/dhcp.py:143 python/models/dhcp.py:174
+#: python/models/dhcp.py:148 python/models/dhcp.py:179
 msgid "DHCP service"
 msgstr "DHCP-Dienst"
 
@@ -85,15 +90,15 @@ msgstr "Gerät mit IP-Adresse"
 msgid "Disabled"
 msgstr "Deaktiviert"
 
-#: python/models/school.py:54
+#: python/models/school.py:55
 msgid "Display name"
 msgstr "Anzeigename"
 
-#: python/models/dhcp.py:42
+#: python/models/dhcp.py:43
 msgid "Domain"
 msgstr "Domäne"
 
-#: python/models/school.py:56
+#: python/models/school.py:57
 msgid "Educational servers"
 msgstr "Edukative Schulserver"
 
@@ -105,7 +110,7 @@ msgstr "E-Mail"
 msgid "Empty attributes"
 msgstr "Leere Attribute"
 
-#: python/models/user.py:660
+#: python/models/user.py:668
 msgid "Exam student"
 msgstr "Klassenarbeit-Schüler"
 
@@ -113,7 +118,7 @@ msgstr "Klassenarbeit-Schüler"
 msgid "First name"
 msgstr "Vorname"
 
-#: python/models/misc.py:92
+#: python/models/misc.py:85
 msgid "Group path"
 msgstr "Pfad für Gruppen"
 
@@ -121,11 +126,11 @@ msgstr "Pfad für Gruppen"
 msgid "Groups"
 msgstr "Gruppen"
 
-#: python/models/dhcp.py:41
+#: python/models/dhcp.py:42
 msgid "Hostname"
 msgstr "Hostname"
 
-#: python/models/group.py:262
+#: python/models/group.py:263
 msgid "Hosts"
 msgstr "Hosts"
 
@@ -133,11 +138,11 @@ msgstr "Hosts"
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: python/models/attributes.py:150
+#: python/models/attributes.py:142
 msgid "Invalid Domain Controller name"
 msgstr "Ungültiger Domänencontrollername"
 
-#: python/models/attributes.py:142
+#: python/models/attributes.py:134
 msgid "Invalid school name"
 msgstr "Ungültiger Schulname"
 
@@ -145,7 +150,7 @@ msgstr "Ungültiger Schulname"
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: python/models/user.py:400 python/models/user.py:408
+#: python/models/user.py:376 python/models/user.py:384
 #, python-format
 msgid ""
 "It is not supported to change the role of a user. %(old_role)s %(name)s "
@@ -166,24 +171,16 @@ msgstr "MAC-Adresse"
 msgid "Mac OS X"
 msgstr "Mac OS X"
 
-#: python/models/attributes.py:101
+#: python/models/attributes.py:93
 msgid "May not contain special characters"
 msgstr "Darf keine besonderen Zeichen enthalten"
 
-#: python/models/share.py:41 python/models/base.py:192
-#: python/models/group.py:74 python/models/group.py:194
+#: python/models/share.py:41 python/models/group.py:74
+#: python/models/group.py:195 python/models/base.py:192
 msgid "Name"
 msgstr "Name"
 
-#: python/models/attributes.py:81
-msgid "Needs to be a dict!"
-msgstr "Muss ein Mapping sein!"
-
-#: python/models/attributes.py:77
-msgid "Needs to be a list of values!"
-msgstr "Muss eine Liste von Werten sein!"
-
-#: python/models/dhcp.py:172 python/models/network.py:43
+#: python/models/dhcp.py:177 python/models/network.py:43
 msgid "Netmask"
 msgstr "Netzmaske"
 
@@ -191,7 +188,7 @@ msgstr "Netzmaske"
 msgid "Network"
 msgstr "Netzwerk"
 
-#: python/models/misc.py:91
+#: python/models/misc.py:84
 msgid "Network path"
 msgstr "Pfad für Netzwerk"
 
@@ -203,11 +200,11 @@ msgstr "Überlappende Schulstunden sind nicht erlaubt"
 msgid "Password"
 msgstr "Passwort"
 
-#: python/models/misc.py:94
+#: python/models/misc.py:87
 msgid "Policy path"
 msgstr "Pfad für Richtlinien"
 
-#: python/models/misc.py:96
+#: python/models/misc.py:89
 msgid "Printer path"
 msgstr "Pfad für Drucker"
 
@@ -219,7 +216,7 @@ msgstr "Schule"
 msgid "School class"
 msgstr "Schulklasse"
 
-#: python/models/school.py:49
+#: python/models/school.py:50
 msgid "School name"
 msgstr "Schulname"
 
@@ -227,31 +224,31 @@ msgstr "Schulname"
 msgid "Schools"
 msgstr "Schulen"
 
-#: python/models/school.py:53
+#: python/models/school.py:54
 msgid "Server for Windows home directories"
 msgstr "Server für Windows-Heimatverzeichnisse"
 
-#: python/models/school.py:52
+#: python/models/school.py:53
 msgid "Server for class shares"
 msgstr "Server für Klassenfreigaben"
 
-#: python/models/dhcp.py:142
+#: python/models/dhcp.py:147
 msgid "Server name"
 msgstr "Servername"
 
-#: python/models/dhcp.py:40
+#: python/models/dhcp.py:41
 msgid "Service"
 msgstr "Dienst"
 
-#: python/models/misc.py:95
+#: python/models/misc.py:88
 msgid "Share path"
 msgstr "Pfad für Freigaben"
 
-#: python/models/user.py:601
+#: python/models/user.py:609
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: python/models/user.py:549
+#: python/models/user.py:557
 msgid "Student"
 msgstr "Schüler"
 
@@ -259,7 +256,7 @@ msgstr "Schüler"
 msgid "Subnet"
 msgstr "Subnetz"
 
-#: python/models/dhcp.py:171
+#: python/models/dhcp.py:176
 msgid "Subnet address"
 msgstr "Subnetz-Adresse"
 
@@ -267,15 +264,15 @@ msgstr "Subnetz-Adresse"
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: python/models/user.py:582
+#: python/models/user.py:590
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: python/models/user.py:642
+#: python/models/user.py:650
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: python/models/user.py:416
+#: python/models/user.py:392
 msgid ""
 "The email address is already taken by another user. Please change the email "
 "address."
@@ -291,7 +288,7 @@ msgstr ""
 "Die IP-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
 "ändern Sie die IP-Adresse."
 
-#: python/models/attributes.py:155
+#: python/models/attributes.py:147
 msgid ""
 "The length of fully qualified domain name is greater than 63 characters."
 msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
@@ -304,7 +301,7 @@ msgstr ""
 "Die MAC-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
 "ändern Sie die MAC-Adresse."
 
-#: python/models/base.py:294
+#: python/models/base.py:305
 msgid ""
 "The name is already used somewhere outside the school. It may not be taken "
 "twice and has to be changed."
@@ -312,7 +309,7 @@ msgstr ""
 "Der Name wird bereits außerhalb dieser Schule genutzt. Er darf nicht zweimal "
 "vorkommen und muss verändert werden."
 
-#: python/models/base.py:297
+#: python/models/base.py:308
 #, python-format
 msgid ""
 "The school \"%s\" does not exist. Please choose an existing one or create it."
@@ -320,7 +317,7 @@ msgstr ""
 "Die Schule \"%s\" existiert nicht. Bitte wählen Sie eine existierende oder "
 "erstellen Sie sie."
 
-#: python/models/base.py:312
+#: python/models/base.py:323
 #, python-format
 msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
@@ -333,7 +330,7 @@ msgstr "Im Subnetz sind keine weiteren Adressen mehr frei!"
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
-#: python/models/misc.py:89
+#: python/models/misc.py:82
 msgid "User path"
 msgstr "Pfad für Benutzer"
 

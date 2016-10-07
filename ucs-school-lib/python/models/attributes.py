@@ -49,8 +49,7 @@ class Attribute(object):
 	udm_name = None
 	syntax = None
 	extended = False
-	value_list = False
-	value_dict = False
+	value_type = None
 
 	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False):
 		self.label = label
@@ -72,16 +71,9 @@ class Attribute(object):
 
 	def validate(self, value):
 		if value is not None:
-			if self.value_list:
-				if not isinstance(value, (list, tuple)):
-					raise ValueError(_('Needs to be a list of values!'))
-				values = value
-			elif self.value_dict:
-				if not isinstance(value, dict):
-					raise ValueError(_('Needs to be a dict!'))
-				values = value
-			else:
-				values = [value]
+			if self.value_type and not isinstance(value, self.value_type):
+				raise ValueError(_('"%(label)s" needs to be a %(type)s') % {'type': self.value_type.__name__, 'label': self.label})
+			values = value if self.value_type else [value]
 			self._validate_syntax(values)
 		else:
 			if self.required:
@@ -185,7 +177,7 @@ class SchoolAttribute(CommonName):
 
 class SchoolClassesAttribute(Attribute):
 	udm_name = None
-	value_dict = True
+	value_type = dict
 
 class SchoolClassAttribute(Attribute):
 	pass
@@ -211,12 +203,12 @@ class ShareFileServer(Attribute):
 
 class Groups(Attribute):
 	syntax = GroupDN
-	value_list = True
+	value_type = list
 
 class Users(Attribute):
 	udm_name = 'users'
 	syntax = UserDN
-	value_list = True
+	value_type = list
 
 class IPAddress(Attribute):
 	udm_name = 'ip'
@@ -256,12 +248,12 @@ class InventoryNumber(Attribute):
 
 class Hosts(Attribute):
 	udm_name = 'hosts'
-	value_list = True
+	value_type = list
 	syntax = UDM_Objects
 
 class Schools(Attribute):
 	udm_name = 'school'
-	value_list = True
+	value_type = list
 	syntax = string  # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined DC Slave)
 	extended = True
 

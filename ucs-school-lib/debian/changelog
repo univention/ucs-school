@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.24-1) unstable; urgency=medium
+
+  * Bug #42441: ensure the correct type is set as default value
+
+ -- Florian Best <best@univention.de>  Fri, 07 Oct 2016 13:59:06 +0200
+
 ucs-school-lib (9.0.23-7) unstable; urgency=low
 
   * Bug #42441: initialize Users schools attribute in constructor
