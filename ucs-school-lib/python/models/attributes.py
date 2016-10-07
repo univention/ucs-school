@@ -50,6 +50,7 @@ class Attribute(object):
 	syntax = None
 	extended = False
 	value_type = None
+	value_default = None
 
 	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False):
 		self.label = label
@@ -178,6 +179,7 @@ class SchoolAttribute(CommonName):
 class SchoolClassesAttribute(Attribute):
 	udm_name = None
 	value_type = dict
+	value_default = dict
 
 class SchoolClassAttribute(Attribute):
 	pass
@@ -254,6 +256,7 @@ class Hosts(Attribute):
 class Schools(Attribute):
 	udm_name = 'school'
 	value_type = list
+	value_default = list
 	syntax = string  # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined DC Slave)
 	extended = True
 
