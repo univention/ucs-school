@@ -9,7 +9,7 @@ desc: |
  * Remove unnecessary initialization code (Bug #41699)
  * Add cleanup script "exam-and-room-cleanup", that tries to shut down all
    running exams gracefully and removes leftover users and files from LDAP
-   and disk. The script is scheduled to run at night and is deactived by
+   and disk. The script is scheduled to run at night and is deactivated by
    default. To enable it, edit /etc/cron.d/ucs-school-umc-exam on the
    educational DC slaves and /etc/cron.d/ucs-school-umc-exam-master on the
    DC master (Bug #40213).
