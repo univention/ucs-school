@@ -28,8 +28,8 @@ msgstr "Die Datei %r konnte nicht gedruckt werden da sie nicht (mehr) existiert.
 
 #: umc/python/printermoderation/__init__.py:252
 #, python-format
-msgid "Failed to print on %(printer)s: %(stderr)s"
-msgstr "Auf Drucker %(printer)s konnte nicht gedruckt werden: %(stderr)s"
+msgid "Failed to print on %(printer)s: %(stderr)s (error %(errno)d)."
+msgstr "Auf Drucker %(printer)s konnte nicht gedruckt werden: %(stderr)s (Fehler %(errno)d)."
 
 #: umc/python/printermoderation/__init__.py:252
 #, python-format
