@@ -3,8 +3,8 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
-fix: 9.0.23-7.262.201610061608
+fix: 9.0.24-2.264.201610071626
 desc: |
- * An error was fixed, that made it impossible to change a users class
-   assignment or password through the UCS@school user module (Bug #42441).
+ * An error was fixed, that made it impossible to change the class assignment
+   or the password of a user via the UMC module "Users (schools)" (Bug #42441).
 bug: [42441]

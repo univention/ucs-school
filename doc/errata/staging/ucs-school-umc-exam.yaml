@@ -5,14 +5,18 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
 fix: 6.0.7-6.117.201610061203
 desc: |
- This update addresses the following issue(s):
- * Remove unnecessary initialization code (Bug #41699)
- * Add cleanup script "exam-and-room-cleanup", that tries to shut down all
-   running exams gracefully and removes leftover users and files from LDAP
-   and disk. The script is scheduled to run at night and is deactivated by
-   default. To enable it, edit /etc/cron.d/ucs-school-umc-exam on the
-   educational DC slaves and /etc/cron.d/ucs-school-umc-exam-master on the
-   DC master (Bug #40213).
- * Some typos in the description text of the UMC module "UCS@school exam" have
+ * Unnecessary initialization code has been removed. No functional change
+   (Bug #41699)
+ * The cleanup script "exam-and-room-cleanup" has been added, that tries to
+   shut down all running exams gracefully and removes leftover users and
+   files from LDAP and disk. The script can be scheduled to run during the
+   night but is deactivated by default. To enable it, call "ucr set
+   ucsschool/exam/cron/cleanup='30 2 * * *'" on the UCS@school master domain
+   controller in single server environments or on the UCS@school slave
+   domain controllers in multi server environments. In multi server
+   environments also call "ucr set
+   ucsschool/exam/cron/cleanup-master='30 3 * * *'" on the UCS@school
+   master domain controller (Bug #40213).
+ * Some typos in the description text of the UMC module "Start exam" have
    been corrected (Bug #42219).
 bug: [41699,40213,42219]

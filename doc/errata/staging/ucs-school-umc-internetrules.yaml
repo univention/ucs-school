@@ -1,11 +1,10 @@
 product: ucsschool
 release: "4.1"
 version: [1]
-scope: ucs_4.1-0-ucs-school-4.1
+scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-internetrules
 fix: 12.0.0-2.40.201609021440
 desc: |
- This update addresses the following issue(s):
- * A typo in the description text of the UMC module "UCS@school internetrules"
+ * A typo in the description text of the UMC module "Define internet rules"
    has been corrected (Bug #42217).
 bug: [42217]
