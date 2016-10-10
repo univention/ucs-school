@@ -142,12 +142,12 @@ class ImportUser(User):
 
 	def create(self, lo, validate=True):
 		self._lo = lo
+		self._check_consistency()
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running create() from within a hook.")
 			return self.create_without_hooks(lo, validate)
 		else:
-			self._check_consistency()
 			return super(ImportUser, self).create(lo, validate)
 
 	@classmethod

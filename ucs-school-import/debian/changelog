@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-30) unstable; urgency=low
+
+  * Bug #42513: check consistency also when creating users from within hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Oct 2016 14:37:07 +0200
+
 ucs-school-import (14.0.16-29) unstable; urgency=low
 
   * Bug #42513: use correct interface for setting UDM properties
