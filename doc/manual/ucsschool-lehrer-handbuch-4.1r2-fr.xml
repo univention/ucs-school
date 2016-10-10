@@ -385,7 +385,7 @@ feedback@univention.de
       <para>
         <figure id="lesson-times">
           <title>Définition des horaires de cours</title>
-          <graphic scalefit="1" width="55%" align="center" fileref="illustrations41/lesson_times_41_fr.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/lesson_times_41_fr.png"/>
         </figure>
       </para>
       <para>Il est recommandé de repousser la fin des heures de cours y compris les pauses au plus proche du début de l'heure de cours suivante, car les horaires de cours sont utilisés comme modèle pour les réglages relatifs aux salles. Ainsi, vous évitez de désactiver l'accès à Internet immédiatement lorsque la cloche de la pause sonne. </para>
@@ -434,7 +434,7 @@ feedback@univention.de
       <para>
         <figure id="wikipedia-whitelist">
           <title>Créer une liste blanche pour Wikipedia</title>
-          <graphic scalefit="1" width="50%" align="center" fileref="illustrations41/internet_rules_whitelist_41_fr.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations41/internet_rules_whitelist_41_fr.png"/>
         </figure>
       </para>
       <para>Vous pouvez donner dans <guimenu>Domaines Internet</guimenu> une liste d'adresses, par exemple <uri>wikipedia.org</uri> ou <uri>facebook.com</uri>. Il est recommandé de ne fournir que la partie du domaine de l'adresse, par exemple seulement <uri>wikipedia.org</uri> et non <uri>www.wikipedia.org</uri>. </para>
