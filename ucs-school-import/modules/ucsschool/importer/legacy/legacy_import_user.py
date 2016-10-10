@@ -48,6 +48,28 @@ class LegacyImportUser(ImportUser):
 		"""
 		pass
 
+	def make_firstname(self):
+		"""
+		Do not normalize given names.
+		"""
+		if self.firstname:
+			return
+		elif "firstname" in self.config["scheme"]:
+			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
+		else:
+			self.firstname = ""
+
+	def make_lastname(self):
+		"""
+		Do not normalize family names.
+		"""
+		if self.lastname:
+			return
+		elif "lastname" in self.config["scheme"]:
+			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
+		else:
+			self.lastname = ""
+
 	def make_username(self):
 		super(LegacyImportUser, self).make_username()
 		self.old_name = self.name  # for LegacyNewUserPasswordCsvExporter.serialize()

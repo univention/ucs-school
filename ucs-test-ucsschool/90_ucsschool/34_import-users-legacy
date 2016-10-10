@@ -6,13 +6,14 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [42288]
+## bugs: [41934, 42288]
 
 import shutil
 import logging
 import sys
 import subprocess
 import tempfile
+import random
 
 import univention.testing.ucr
 import univention.testing.strings as uts
@@ -45,27 +46,29 @@ class Bunch(object):
 		return str(self)
 
 
-def write_user_line(fd, ou, is_teacher, is_staff):
-	data = {
-		'username': uts.random_string(),
-		'firstname': uts.random_string(),
-		'lastname': uts.random_string(),
-		'ou': ou,
-		'teacher': '1' if is_teacher else '0',
-		'staff': '1' if is_staff else '0',
-	}
-	line = 'A	%(username)s	%(lastname)s	%(firstname)s	%(ou)s				%(teacher)s	1	%(staff)s\n'
-	fd.write(line % data)
-
-
 class CLI_Legacy_Import_Tester(object):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	line = 'A	%(username)s	%(lastname)s	%(firstname)s	%(ou)s				%(teacher)s	1	%(staff)s\n'
 
 	def __init__(self):
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users-legacy.', dir='/tmp/')
 		self.log = logging.getLogger('main')
 		self.ucr.load()
 		self.ou_A = Bunch()
+
+	def create_user_data(self, ou, is_teacher, is_staff, user_data=None):
+		data = {
+			'username': uts.random_string(),
+			'firstname': uts.random_string(),
+			'lastname': uts.random_string(),
+			'ou': ou,
+			'teacher': '1' if is_teacher else '0',
+			'staff': '1' if is_staff else '0',
+		}
+		if user_data:
+			data.update(user_data)
+		self.log.debug('user data=%r', data)
+		return data
 
 	def cleanup(self):
 		self.log.info('Purging %r', self.tmpdir)
@@ -85,26 +88,67 @@ class CLI_Legacy_Import_Tester(object):
 			utils.fail('Import failed with exit code %r' % (exitcode,))
 		return exitcode
 
-	def import_users_with_empty_class(self):
+	def test_import_users_with_empty_class(self):
 		"""
-		Import users with empty class
+		Bug #42288: Import users with empty class
 		"""
-		self.log.info('*** Importing users without specified class')
+		self.log.info('*** Importing users without specifying class')
 		fn = tempfile.mkstemp(prefix='empty_class.', dir=self.tmpdir)[1]
 		with open(fn, 'w') as fd:
-			write_user_line(fd, self.ou_A.name, False, False)
-			write_user_line(fd, self.ou_A.name, True, False)
-			write_user_line(fd, self.ou_A.name, False, True)
-			write_user_line(fd, self.ou_A.name, True, True)
+			fd.write(self.line % self.create_user_data(self.ou_A.name, False, False))
+			fd.write(self.line % self.create_user_data(self.ou_A.name, True, False))
+			fd.write(self.line % self.create_user_data(self.ou_A.name, False, True))
+			fd.write(self.line % self.create_user_data(self.ou_A.name, True, True))
 		self.run_import(fn)
-		self.log.info('*** TEST WAS SUCCESSFUL')
+		self.log.info('*** import_users_with_empty_class WAS SUCCESSFUL\n')
+
+	def test_no_name_normalization(self):
+		"""
+		Bug #41934: Import users with umlauts in given name and family name.
+		They should not be normalized to ASCII.
+		"""
+		umlauts = u'äöüßáàñ'
+
+		def names_with_umlauts():
+			fn = list(uts.random_string() + umlauts)
+			random.shuffle(fn)
+			ln = list(uts.random_string() + umlauts)
+			random.shuffle(ln)
+			return dict(
+				firstname=u''.join(fn),
+				lastname=u''.join(ln)
+			)
+
+		self.log.info('*** Importing users with umlauts in given name and family name')
+		users = [
+			self.create_user_data(self.ou_A.name, False, False, names_with_umlauts()),
+			self.create_user_data(self.ou_A.name, True, False, names_with_umlauts()),
+			self.create_user_data(self.ou_A.name, False, True, names_with_umlauts()),
+			self.create_user_data(self.ou_A.name, True, True, names_with_umlauts())
+		]
+		fn = tempfile.mkstemp(prefix='no_normalization.', dir=self.tmpdir)[1]
+		with open(fn, 'w') as fd:
+			fd.writelines([self.line % user for user in users])
+		self.run_import(fn)
+		for user in users:
+			dn = self.lo.searchDn(filter='uid={}'.format(user['username']), base='cn=users,{}'.format(self.ou_A.dn))
+			if not dn:
+				utils.fail('Could not find user with "uid={}" below "cn=users,{}".'.format(user['username'], self.ou_A.dn))
+			utils.verify_ldap_object(
+				dn[0],
+				expected_attr={'givenName': [user['firstname'].encode('utf-8')], 'sn': [user['lastname'].encode('utf-8')]},
+				strict=False,
+				should_exist=True)
+		self.log.info('*** test_no_name_normalization WAS SUCCESSFUL\n')
 
 	def run(self):
 		try:
 			with utu.UCSTestSchool() as schoolenv:
 				self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+				self.lo = schoolenv.open_ldap_connection(admin=True)
 
-				self.import_users_with_empty_class()
+				self.test_import_users_with_empty_class()
+				self.test_no_name_normalization()
 		finally:
 			self.cleanup()
 

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-26) unstable; urgency=low
+
+  * Bug #41934: add check, that the legacy user import does not normalize
+    given name and family name
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Oct 2016 10:34:21 +0200
+
 ucs-test-ucsschool (3.0.16-25) unstable; urgency=low
 
   * Bug #40655: activate test, fix typos
