@@ -35,3 +35,13 @@ msgstr "Auf Drucker %(printer)s konnte nicht gedruckt werden: %(stderr)s"
 #, python-format
 msgid "Failed to connect to print server %(printserver)s."
 msgstr "Die Verbindung zum Druck-Server %(printserver)s konnte nicht hergestellt werden."
+
+#: umc/python/printermoderation/__init__.py:252
+#, python-format
+msgid "No permission to print"
+msgstr "Keine Berechtigung für diesen Drucker"
+
+#: umc/python/printermoderation/__init__.py:252
+#, python-format
+msgid "Wrong password"
+msgstr "Falsches Passwort"
