@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (13.0.3-5) unstable; urgency=low
+
+  * Bug #41374: support restricted printers
+
+ -- Felix Botner <botner@univention.de>  Mon, 10 Oct 2016 12:35:38 +0200
+
 ucs-school-umc-printermoderation (13.0.3-4) unstable; urgency=low
 
   * Bug #41374: support restricted printers

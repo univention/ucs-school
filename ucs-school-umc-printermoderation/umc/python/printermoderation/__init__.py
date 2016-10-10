@@ -243,8 +243,13 @@ class Instance(SchoolBaseModule):
 			conn.printFile(printer, path, Printjob.filename2label(printjob), {})
 		except RuntimeError:
 			raise UMC_Error(_('Failed to connect to print server %(printserver)s.') % {'printserver': spoolhost})
-		except cups.IPPError as e:
-			raise UMC_Error(_('Failed to print on %(printer)s: %(stderr)s') % {'printer': printer, 'stderr': e})
+		except cups.IPPError as (errno, description):
+			IPP_AUTHENTICATION_CANCELED = 4096
+			description = {
+				cups.IPP_NOT_AUTHORIZED: _('No permission to print'),
+				IPP_AUTHENTICATION_CANCELED: _('Wrong password'),
+			}.get(errno, description)
+			raise UMC_Error(_('Failed to print on %(printer)s: %(stderr)s (error %(errno)d).') % {'printer': printer, 'stderr': description, 'errno': errno})
 
 		# delete file
 		MODULE.info('Deleting print job %r' % (path,))
