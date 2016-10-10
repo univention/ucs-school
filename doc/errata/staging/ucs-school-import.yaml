@@ -3,9 +3,10 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-28.320.201610101044
+fix:
 desc: |
  * A regression in the legacy user import script was fixed. It does not
    normalize (remove german umlauts etc) given names and family names
    anymore (Bug #41934).
-bug: [41934]
+ * The import script now honors UDM syntax checks (Bug #42513).
+bug: [41934, 42513]

@@ -130,6 +130,10 @@ class ToManyErrors(UcsSchoolImportFatalError):
 		self.errors = errors
 
 
+class UDMValueError(UcsSchoolImportError):
+	pass
+
+
 class UnkownAction(UcsSchoolImportError):
 	pass
 

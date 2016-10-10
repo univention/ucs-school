@@ -36,7 +36,7 @@ import datetime
 from collections import defaultdict
 from ldap.filter import filter_format
 
-from univention.admin.uexceptions import noObject
+from univention.admin.uexceptions import noObject, noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
@@ -44,7 +44,7 @@ from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
+from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.pyhooks_loader import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
@@ -147,12 +147,8 @@ class ImportUser(User):
 			self.logger.warn("Running create() from within a hook.")
 			return self.create_without_hooks(lo, validate)
 		else:
+			self._check_consistency()
 			return super(ImportUser, self).create(lo, validate)
-
-	def create_without_hooks(self, lo, validate):
-		success = super(ImportUser, self).create_without_hooks(lo, validate)
-		self.store_udm_properties(lo)
-		return success
 
 	@classmethod
 	def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
@@ -190,6 +186,16 @@ class ImportUser(User):
 		super(ImportUser, self)._alter_udm_obj(udm_obj)
 		if self._userexpiry is not None:
 			udm_obj["userexpiry"] = self._userexpiry
+
+		for property_, value in (self.udm_properties or {}).items():
+			try:
+				udm_obj[property_] = value
+			except (KeyError, noProperty) as exc:
+				raise UnknownProperty("UDM properties could not be set. Unknown property: '{}'".format(exc),
+					entry=self.entry_count, import_user=self)
+			except (valueError, valueInvalidSyntax) as exc:
+				raise UDMValueError("UDM properties could not be set. Bad value: '{}'".format(exc),
+					entry=self.entry_count, import_user=self)
 
 	def has_expired(self, connection):
 		"""
@@ -492,16 +498,13 @@ class ImportUser(User):
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		# must set udm_properties first, as they contain overridePWHistory and
-		# overridePWLength
-		self.store_udm_properties(lo)
+		self._check_consistency()
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
 			udm_obj = self.get_udm_object(lo)
 			self.school_classes = self.get_school_classes(udm_obj, self)
-		success = super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
-		return success
+		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
 		self._lo = lo
@@ -728,14 +731,14 @@ class ImportUser(User):
 				for meth_name, meths in self._pyhook_cache.items()]))
 		return pyhooks
 
-	def store_udm_properties(self, connection):
+	def _check_consistency(self):
 		"""
-		Copy data from self.udm_properties into UDM object of this user.
-
-		:param connection: LDAP connection
+		Make sure users do not store values for ucsschool.lib mapped Attributes
+		in udm_properties.
 		"""
 		if not self.udm_properties:
 			return
+
 		forbidden_attributes = set(x.udm_name for x in self._attributes.values() if x.udm_name)
 		bad_props = set(self.udm_properties.keys()).intersection(forbidden_attributes)
 		if bad_props:
@@ -746,14 +749,6 @@ class ImportUser(User):
 			self.logger.warn("UDM property 'e-mail' is used for storing contact information. The users mailbox "
 			"address is stored in the 'email' attribute of the {} object (not in udm_properties).".format(
 				self.__class__.__name__))
-
-		udm_obj = self.get_udm_object(connection)
-		udm_obj.info.update(self.udm_properties)
-		try:
-			udm_obj.modify()
-		except KeyError as exc:
-			raise UnknownProperty("UDM properties could not be set. Unknown property: '{}'".format(exc),
-				entry=self.entry_count, import_user = self)
 
 	def update(self, other):
 		"""

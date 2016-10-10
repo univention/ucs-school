@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-29) unstable; urgency=low
+
+  * Bug #42513: use correct interface for setting UDM properties
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Oct 2016 14:23:28 +0200
+
 ucs-school-import (14.0.16-28) unstable; urgency=low
 
   * Bug #41934: do not normalize given name and family name in legacy import
