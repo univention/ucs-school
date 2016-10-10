@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-printermoderation
-fix: 13.0.3-4.64.201609301513
+fix: 13.0.3-7.67.201610101249
 desc: |
  This update addresses the following issue(s):
  * The use of restricted printers is supported.
