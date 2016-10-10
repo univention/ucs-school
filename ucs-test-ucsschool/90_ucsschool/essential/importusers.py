@@ -11,6 +11,7 @@ import univention.testing.ucr
 import univention.testing.utils as utils
 import univention.testing.udm as udm_test
 from univention.testing.decorators import SetTimeout
+from univention.testing.ucs_samba import wait_for_s4connector
 import univention.uldap
 import univention.config_registry
 from ucsschool.lib.models import Student as StudentLib
@@ -111,7 +112,7 @@ class Person(object):
 	def set_mode_to_delete(self):
 		self.mode = 'D'
 		# wait for S4-create-round-trip before removing
-		utils.wait_for_connector_replication()
+		wait_for_s4connector()
 
 	def set_active(self):
 		self.active = True
