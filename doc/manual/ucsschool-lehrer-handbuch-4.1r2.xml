@@ -1006,7 +1006,7 @@ feedback@univention.de
 		<para>
 		  <figure id="wikipedia-whitelist">
 			<title>Anlegen einer Whitelist für Wikipedia</title>
-			<graphic scalefit="1" width="50%" align="center" fileref="illustrations41/internet_rules_whitelist_41.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations41/internet_rules_whitelist_41.png"/>
 		  </figure>
 		</para>
 		<para>
