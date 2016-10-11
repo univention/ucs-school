@@ -120,10 +120,10 @@ class MyHook(UserPyHook):
 		self.logger.info("***** Running {} {} hook for user {}.".format(when, action, user))
 		# udm_properties[k] is only filled from LDAP, if k was in the input
 		# don't try to get_udm_object() on a user not {anymore, yet} in ldap
-		if not user.udm_properties.get('organisation') and not ((action == 'create' and when == 'pre') or (action == 'remove' and when == 'post')):
+		if not user.udm_properties.get('street') and not ((action == 'create' and when == 'pre') or (action == 'remove' and when == 'post')):
 			obj = user.get_udm_object(self.lo)
-			user.udm_properties['organisation'] = obj.info.get('organisation', '')
-		user.udm_properties['organisation'] = user.udm_properties.get('organisation', '') + ',{}-{}'.format(when, action)
+			user.udm_properties['street'] = obj.info.get('street', '')
+		user.udm_properties['street'] = user.udm_properties.get('street', '') + ',{}-{}'.format(when, action)
 		if when == 'post' and action != 'remove':
 			user.modify(self.lo)
 		fn_touchfile = os.path.join(%(tmpdir)r, '%%s-%%s' %% (when, action))

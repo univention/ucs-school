@@ -62,7 +62,7 @@ class Test(CLI_Import_v2_Tester):
 				# update dn+username of person and verify LDAP attributes
 				for person in person_list:
 					person.verify()
-				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create']}, strict=True, should_exist=True)
+				utils.verify_ldap_object(person.dn, expected_attr={'street': [',pre-create,post-create']}, strict=True, should_exist=True)
 
 				def assert_and_print(exists, fn):
 					status = os.path.exists(os.path.join(hooks.tmpdir, fn))
@@ -90,7 +90,7 @@ class Test(CLI_Import_v2_Tester):
 				# verify LDAP attributes
 				for person in person_list:
 					person.verify()
-				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create,pre-modify,post-modify']}, strict=True, should_exist=True)
+				utils.verify_ldap_object(person.dn, expected_attr={'street': [',pre-create,post-create,pre-modify,post-modify']}, strict=True, should_exist=True)
 				for fn in ('pre-create', 'post-create', 'pre-modify', 'post-modify'):
 					assert_and_print(True, fn)
 				for fn in ('pre-remove', 'post-remove'):
