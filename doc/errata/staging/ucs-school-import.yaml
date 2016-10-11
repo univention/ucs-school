@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-31.323.201610110923
+fix: 14.0.16-32.324.201610111108
 desc: |
  * A regression in the legacy user import script was fixed. It does not
    normalize (remove german umlauts etc) given names and family names
