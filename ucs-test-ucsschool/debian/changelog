@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-29) unstable; urgency=low
+
+  * Bug #42513: add test to check if UDM syntax checks are applied to
+    ImportUser.udm_properties
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 11 Oct 2016 09:46:21 +0200
+
 ucs-test-ucsschool (3.0.16-28) unstable; urgency=low
 
   * Bug #42513: 'organisation' is to short (string64), use 'street' instead
