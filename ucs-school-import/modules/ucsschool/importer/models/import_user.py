@@ -142,7 +142,6 @@ class ImportUser(User):
 
 	def create(self, lo, validate=True):
 		self._lo = lo
-		self._check_consistency()
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running create() from within a hook.")
@@ -183,6 +182,7 @@ class ImportUser(User):
 		self._userexpiry = expiry
 
 	def _alter_udm_obj(self, udm_obj):
+		self._prevent_mapped_attributes_in_udm_properties()
 		super(ImportUser, self)._alter_udm_obj(udm_obj)
 		if self._userexpiry is not None:
 			udm_obj["userexpiry"] = self._userexpiry
@@ -498,7 +498,6 @@ class ImportUser(User):
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		self._check_consistency()
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
@@ -731,7 +730,7 @@ class ImportUser(User):
 				for meth_name, meths in self._pyhook_cache.items()]))
 		return pyhooks
 
-	def _check_consistency(self):
+	def _prevent_mapped_attributes_in_udm_properties(self):
 		"""
 		Make sure users do not store values for ucsschool.lib mapped Attributes
 		in udm_properties.
