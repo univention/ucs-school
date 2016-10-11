@@ -14,7 +14,7 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 
 from ucsschool.importer.utils.shell import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, logger, config
-from ucsschool.importer.exceptions import UDMValueError
+from ucsschool.importer.exceptions import NotSupportedError, UDMValueError
 
 
 def main():
@@ -25,11 +25,14 @@ def main():
 			ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			lo = schoolenv.open_ldap_connection(admin=True)
 			for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+				#
+				# check if UDM syntax checks are applied
+				#
 				user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
 				user.udm_properties['organisation'] = uts.random_name(65)
 				try:
 					user.create(lo)
-					utils.fail('UDMValueError should have been raised in create() (tryed to store 65 chars in string64).')
+					utils.fail('UDMValueError should have been raised in create() (tried to store 65 chars in string64).')
 				except UDMValueError as exc:
 					logger.info('*** Caught expected UDMValueError exception: %s', exc)
 				user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
@@ -38,9 +41,32 @@ def main():
 				user.udm_properties['organisation'] = uts.random_name(65)
 				try:
 					user.modify(lo)
-					utils.fail('UDMValueError should have been raised in modify() (tryed to store 65 chars in string64).')
+					utils.fail('UDMValueError should have been raised in modify() (tried to store 65 chars in string64).')
 				except UDMValueError as exc:
 					logger.info('*** Caught expected UDMValueError exception: %s', exc)
+				#
+				# check if attributes mapped by the ucsschool.lib are prevented
+				# from being read from udm_properties
+				#
+				mapped_props = ['birthday', 'disabled', 'firstname', 'lastname', 'mailPrimaryAddress', 'password',
+					'school', 'ucsschoolRecordUID', 'ucsschoolSourceUID', 'username']  #  ImportUser._attributes
+				for prop in mapped_props:
+					user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
+					user.udm_properties[prop] = uts.random_name()
+					try:
+						user.create(lo)
+						utils.fail('NotSupportedError should have been raised in create() when storing "{}" from udm_properties.'.format(prop))
+					except NotSupportedError as exc:
+						logger.info('*** Caught expected NotSupportedError exception: %s', exc)
+					user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
+					user.create(lo)
+					utils.verify_ldap_object(user.dn, expected_attr={'uid': [user.name]}, strict=False, should_exist=True)
+					user.udm_properties[prop] = uts.random_name()
+					try:
+						user.modify(lo)
+						utils.fail('NotSupportedError should have been raised in modify() when storing "{}" from udm_properties.'.format(prop))
+					except NotSupportedError as exc:
+						logger.info('*** Caught expected NotSupportedError exception: %s', exc)
 			logger.info('Test was successful.\n\n\n')
 
 if __name__ == '__main__':
