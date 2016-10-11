@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-31) unstable; urgency=low
+
+  * Bug #42513: make exception message more informative
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 11 Oct 2016 09:22:06 +0200
+
 ucs-school-import (14.0.16-30) unstable; urgency=low
 
   * Bug #42513: check consistency also when creating users from within hooks
