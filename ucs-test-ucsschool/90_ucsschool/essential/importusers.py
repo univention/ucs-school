@@ -107,6 +107,8 @@ class Person(object):
 			pass
 
 	def set_mode_to_modify(self):
+		# wait for S4-create-round-trip before modifying
+		wait_for_s4connector()
 		self.mode = 'M'
 
 	def set_mode_to_delete(self):
@@ -320,6 +322,7 @@ class Person(object):
 
 	def verify(self):
 		print 'verify person: %s' % self.username
+		utils.wait_for_replication()
 		# reload UCR
 		configRegistry.load()
 
