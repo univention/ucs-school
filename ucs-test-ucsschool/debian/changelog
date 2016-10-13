@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-33) unstable; urgency=low
+
+  * Bug #41361: wait for squidguard reload after changing black/whitelists
+    in 14_http_proxy_basic_auth_check
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 13 Oct 2016 16:51:38 +0200
+
 ucs-test-ucsschool (3.0.16-32) unstable; urgency=low
 
   * Bug #36784: reenabled test script 102_rename_class

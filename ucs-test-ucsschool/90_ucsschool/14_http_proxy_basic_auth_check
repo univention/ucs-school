@@ -13,6 +13,7 @@ from univention.testing.ucsschool import UMCConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+import time
 
 # Checks a list of rules defined and return the active rule
 # for a specific user
@@ -36,6 +37,11 @@ def ruleInControl(user, ruleList, host, banPage):
 			]
 	print 'Rule in control =', result
 	return result[0]
+
+def printHeader(comment):
+	print '-' * 80
+	print comment
+	print '-' * 80
 
 # Perform the whole check steps for a user and two rules
 def doCheck(
@@ -99,11 +105,9 @@ def main():
 			rule1.assign(school, newClass.name, 'class')
 
 			utils.wait_for_replication_and_postrun()
-			# Check for whitelist and student
-			# for one rule
+			printHeader('Check for whitelist and student for one rule')
 			doCheck(host, banPage, stu,'whitelist', rule1)
-			# Check for whitelist and teacher
-			# for one rule
+			printHeader('Check for whitelist and teacher for one rule')
 			doCheck(host, banPage, tea,'whitelist', rule1)
 
 			# create a workgroup
@@ -126,34 +130,30 @@ def main():
 			rule2.assign(school, newWorkgroup.name, 'workgroup')
 			utils.wait_for_replication_and_postrun()
 
-			# Check for whitelist and student
-			# for two rules with different priotities
+			printHeader('Check for whitelist and student for two rules with different priorities')
 			doCheck(host, banPage, stu,'whitelist', rule2, rule1)
 
-			# Check for whitelist and teacher
-			# for two rules with different priotities
+			printHeader('Check for whitelist and teacher for two rules with different priorities')
 			doCheck(host, banPage, tea,'whitelist', rule2, rule1)
 
 			# switch rule1 to be 'blacklist' with higher proirity
 			rule1.put(new_type='blacklist', new_priority=5)
-			
-			# Check for blacklist and student
-			# for one rule
+			time.sleep(17)  # wait for reload of squid/squidguard - limited to 1 reload every 15 seconds
+
+			printHeader('Check for blacklist and student for one rule')
 			doCheck(host, banPage, stu,'blacklist', rule1)
 
-			# Check for blacklist and teacher
-			# for one rule
+			printHeader('Check for blacklist and teacher for one rule')
 			doCheck(host, banPage, tea,'blacklist', rule1)
 
 			# switch rule2 to be 'blacklist' with higher proirity
 			rule2.put(new_type='blacklist', new_priority=6)
+			time.sleep(17)  # wait for reload of squid/squidguard - limited to 1 reload every 15 seconds
 
-			# Check for blacklist and student
-			# for two rules with different priotities
+			printHeader('Check for blacklist and student for two rules with different priorities')
 			doCheck(host, banPage, stu,'blacklist', rule2, rule1)
 
-			# Check for blacklist and teacher
-			# for two rules with different priotities
+			printHeader('Check for blacklist and teacher for two rules with different priorities')
 			doCheck(host, banPage, tea,'blacklist', rule2, rule1)
 
 
