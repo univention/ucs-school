@@ -225,6 +225,31 @@
 		  </listitem>
 		</itemizedlist>
 		<caution>
+			<para>
+				Bei der nachträglichen Installation eines Schulservers kann der Fall eintreten, dass
+				im Univention App Center bereits eine neuere Version von &ucsUAS; bereitgestellt wird als auf auf
+				dem DC Master installiert ist. Die &ucsUAS;-Version eines Schulservers darf
+				<emphasis>nicht</emphasis> neuer sein als die des DC Masters. Es stehen für einen solchen Fall zwei
+				Lösungen zur Verfügung:
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Der DC Master wird auf die neueste im Univention App Center verfügbare
+							&ucsUAS;-Version aktualisiert. Anschließend kann der Schulserver wie oben beschrieben installiert
+							werden.
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Auf dem Schulserver wird manuell die gleiche Version von &ucsUAS;
+							installiert, die auch auf dem DC Master installiert ist. Wie hierbei vorzugehen ist, wird in <xref
+							linkend="school:installation:slave-cli"/> beschrieben.
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</caution>
+		<caution>
 		  <para>
 			Für den Verwaltungsserver muss ein vom edukativen Netz physikalisch getrenntes
 			Netzwerksegment sowie ein eigenes IP-Subnetz verwendet wird, um Konflikte mit dem Schulserver des
@@ -249,7 +274,44 @@
 		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems abgeschlossen werden.
 		</para>
 	  </section>
-	</section>
+	  <section id="school:installation:slave-cli">
+		<title>Manuelle Installation eines Schulservers auf der Kommandozeile</title>
+		<para>
+			In einigen Fällen ist es notwendig, das Konfigurationsmodul von &ucsUAS; manuell in
+			einer bestimmten Version zu installieren. Dies wird derzeit nur auf der Kommandozeile unterstützt.
+			Sind die hier gezeigten Schritte durchgeführt worden, kann mit der webbasierten Konfiguration, wie
+			in <xref linkend="school:installation:slave-cli"/> beschrieben, fortgefahren werden.
+		</para>
+		<para>
+			Auf dem DC Master muss zunächst über die &ucsUMC; die installierte Version von &ucsUAS; ermittelt werden. Alternativ kann dies auch auf der Kommandozeile über den Befehl <command>univention-app info</command> erfolgen.
+			<programlisting language="sh">
+master# univention-app info 
+UCS: 4.1-3 errata282
+App Center compatibility: 4
+Installed: cups=1.5.3 samba4=4.3 squid=3.1 ucsschool=4.1 R2 v5
+Upgradable:
+master#
+			</programlisting>
+			Im gezeigten Beispiel ist &ucsUAS; in der Version "4.1 R2 v5" installiert. Diese Versionsangabe wird benötigt, um auf der Kommandozeile des neu zu installierenden Schulservers &ucsUAS; in der gleichen Version zu installieren. Dies erfolgt über den Befehl <command>univention-app install "ucsschool=VERSION"</command>:
+			<programlisting language="sh">
+slave# univention-app install "ucsschool=4.1 R2 v5"
+Going to install UCS@school (4.1 R2 v5)
+Creating data directories for ucsschool...
+Registering UCR for ucsschool
+Marking ucsschool=4.1 R2 v5 as installed
+[…]
+slave#
+			</programlisting>
+			Nach der Installation müssen über das Kommando
+			<command>univention-run-join-scripts</command> oder in der &ucsUMC; im Modul
+			<guimenu>Domänenbeitritt</guimenu> noch ausstehende Join-Skripte ausgeführt werden.
+		</para>
+		<para>
+			Im Anschluss kann mit der webbasierten Konfiguration fortgefahren werden, wie sie in
+			<xref linkend="school:installation:slave-cli"/> beschrieben wird.
+		</para>
+	  </section>
+  	</section>
 
 	<section id="school:installation:domjoin">
 	  <title>(Erneuter) Domänenbeitritt eines Schulservers</title>
