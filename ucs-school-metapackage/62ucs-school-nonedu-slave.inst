@@ -162,16 +162,6 @@ ignore_user "dns-$hostname"
 ignore_user "krbtgt"
 ignore_user "Guest"
 
-# Added some local groups to the ignore list
-if [ -z "$connector_s4_mapping_group_ignorelist" ]; then
-	ucr set connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Replicators,Printer-Admins,System Operators"
-else
-	for g in Replicators Printer-Admins "System Operators"; do
-		ucr get connector/s4/mapping/group/ignorelist | egrep -q "(,${g},|^${g},|,${g}$)" || \
-				ucr set connector/s4/mapping/group/ignorelist="$(ucr get connector/s4/mapping/group/ignorelist),$g"
-	done
-fi
-
 # remove schoolslave as dns server from forward lookup zone (Bug #40139)
 if is_ucr_false dns/nameserver/registration/forward_zone; then
     zone="$(udm dns/forward_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"

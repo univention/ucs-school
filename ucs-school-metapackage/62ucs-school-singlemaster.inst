@@ -126,16 +126,6 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 3 ] ; then
 	fi
 fi
 
-# Added some local groups to the ignore list
-if [ -z "$connector_s4_mapping_group_ignorelist" ]; then
-	ucr set connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Replicators,Printer-Admins,System Operators"
-else
-	for g in Replicators Printer-Admins "System Operators"; do
-		ucr get connector/s4/mapping/group/ignorelist | egrep -q "(,${g},|^${g},|,${g}$)" || \
-				ucr set connector/s4/mapping/group/ignorelist="$(ucr get connector/s4/mapping/group/ignorelist),$g"
-	done
-fi
-
 # create dhcp dns policies for all local OUs (Bug #31930)
 if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 	IFS="

@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-8) unstable; urgency=medium
+
+  * Bug #40418: Add groups to connector/s4/mapping/group/ignorelist
+
+ -- Arvid Requate <requate@univention.de>  Thu, 13 Oct 2016 19:15:34 +0200
+
 ucs-school-metapackage (9.0.2-7) unstable; urgency=low
 
   * Bug #40262: quote DN, tell user to reboot slave
