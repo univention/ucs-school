@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-32) unstable; urgency=low
+
+  * Bug #36784: reenabled test script 102_rename_class
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 13 Oct 2016 15:20:45 +0200
+
 ucs-test-ucsschool (3.0.16-31) unstable; urgency=low
 
   * Bug #40475: added UCS version check
