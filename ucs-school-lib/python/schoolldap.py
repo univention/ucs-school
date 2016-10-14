@@ -423,11 +423,11 @@ class SchoolBaseModule(Base):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
 		import ucsschool.lib.models
 		if not user_type:
-			cls = ucsschool.lib.models.User
+			classes = [ucsschool.lib.models.User]
 		elif user_type.lower() in ('teachers', 'teacher'):
-			cls = ucsschool.lib.models.Teacher
+			classes = [ucsschool.lib.models.Teacher, ucsschool.lib.models.TeachersAndStaff]
 		elif user_type.lower() in ('student', 'students', 'pupil', 'pupils'):
-			cls = ucsschool.lib.models.Student
+			classes = [ucsschool.lib.models.Student]
 		else:
 			raise TypeError('user_type %r unknown.' % (user_type,))
 
@@ -451,24 +451,27 @@ class SchoolBaseModule(Base):
 					search_filter_list.append(LDAP_Filter.forUsers(pattern))
 				# concatenate LDAP filters
 				search_filter = unicode(conjunction('&', [parse(subfilter) for subfilter in search_filter_list]))
-				try:
-					udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)
-				except noObject:
-					MODULE.error('Possible group inconsistency detected: %r contains member %r but member was not found in LDAP' % (group, userdn))
-					udm_obj = None
-
-				if udm_obj is not None:
-					# make sure that the found UDM object is of requested user type
+				for cls in classes:
 					try:
-						user = cls.from_udm_obj(udm_obj, school, ldap_connection)
-					except (UnknownModel, WrongModel):
-						continue
+						udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)
+					except noObject:
+						MODULE.error('Possible group inconsistency detected: %r contains member %r but member was not found in LDAP' % (group, userdn))
+						udm_obj = None
 
-					users.append(udm_obj)
+					if udm_obj is not None:
+						# make sure that the found UDM object is of requested user type
+						try:
+							user = cls.from_udm_obj(udm_obj, school, ldap_connection)
+						except (UnknownModel, WrongModel):
+							continue
+
+						users.append(udm_obj)
 		else:
 			# be aware that this search opens all user objects of specified type and may take some time!
-			users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
-			users = [user.get_udm_object(ldap_connection) for user in users]
+			users = []
+			for cls in classes:
+				_users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
+				users.extend(user.get_udm_object(ldap_connection) for user in _users)
 
 		return users
 

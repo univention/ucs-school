@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.25-1) unstable; urgency=medium
+
+  * Bug #42461: Also get TeachersAndStaff users when querying for teachers in
+  	UMC modules (SchoolBaseModule._users()).
+
+ -- Florian Best <best@univention.de>  Fri, 14 Oct 2016 11:42:38 +0200
+
 ucs-school-lib (9.0.24-2) unstable; urgency=medium
 
   * Bug #42441: make default value explicitly setable to allow None values
