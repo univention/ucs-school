@@ -116,13 +116,22 @@ class UserMap( dict ):
 			MODULE.info( 'Unknown user "%s"' % username )
 			dict.__setitem__( self, userstr, UserInfo( '', '' ) )
 		else:
+			result[0].open()
 			userobj = UserInfo( result[ 0 ].dn, username )
-			for grp in result[ 0 ][ 'groups' ]:
-				if grp.endswith( search_base.workgroups ):
-					userobj.workgroups.append( udm_uldap.explodeDn( grp, True )[ 0 ] )
-				elif grp.endswith( search_base.classes ):
-					userobj.school_class = udm_uldap.explodeDn( grp, True )[ 0 ]
 			userobj.isTeacher = search_base.isTeacher( userobj.dn )
+
+			blacklisted_groups = set([x.strip().lower() for x in ucr.get('ucsschool/umc/computerroom/hide_screenshots/groups', 'Domain Admins').split(',')])
+			users_groupmemberships = set([udm_uldap.explodeDn(x, True)[0].lower() for x in result[0]['groups']])
+			MODULE.info('UserMap: %s: hide screenshots for following groups: %s' % (username, blacklisted_groups,))
+			MODULE.info('UserMap: %s: user is member of following groups: %s' % (username, users_groupmemberships,))
+			userobj.hide_screenshot = bool(blacklisted_groups & users_groupmemberships)
+
+			if ucr.is_true('ucsschool/umc/computerroom/hide_screenshots/teachers', False) and userobj.isTeacher:
+				MODULE.info('UserMap: %s: is teacher hiding screenshot' % (username,))
+				userobj.hide_screenshot = True
+
+			MODULE.info('UserMap: %s: hide_screenshot=%r' % (username, userobj.hide_screenshot))
+
 			dict.__setitem__( self, userstr, userobj )
 
 _usermap = UserMap()
@@ -407,6 +416,13 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	@property
 	def macAddress( self ):
 		return (self._computer.info.get('mac') or [''])[ 0 ]
+
+	@property
+	def hide_screenshot(self):
+		try:
+			return _usermap[str(self._username.current)].hide_screenshot
+		except AttributeError:
+			return False
 
 	@property
 	def isTeacher( self ):

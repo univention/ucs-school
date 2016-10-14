@@ -77,7 +77,8 @@ from notifier.nf_qt import _exit
 _ = Translation('ucs-school-umc-computerroom').translate
 
 ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
-
+FN_SCREENSHOT_DENIED = _('/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg')
+FN_SCREENSHOT_NOTREADY = _('/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg')
 
 def _getRoomFile(roomDN):
 	if roomDN.startswith('cn='):
@@ -505,17 +506,27 @@ class Instance(SchoolBaseModule):
 		"""
 
 		tmpfile = computer.screenshot
-		if tmpfile is None:
-			# vnc has not (yet) received any screenshots from the computer
-			# dont worry, try again later
-			self.finished(request.id, None)
-			return
+		if computer.hide_screenshot:
+			filename = FN_SCREENSHOT_DENIED
+		elif tmpfile is None:
+			filename = FN_SCREENSHOT_NOTREADY
+		else:
+			filename = tmpfile.name
+
 		response = Response(mime_type = MIMETYPE_JPEG)
 		response.id = request.id
 		response.command = 'COMMAND'
-		with open(tmpfile.name, 'rb') as fd:
-			response.body = fd.read()
-		os.unlink(tmpfile.name)
+		MODULE.info('screenshot(%s): hide screenshot = %r' % (computer.name, computer.hide_screenshot))
+		try:
+			with open(filename, 'rb') as fd:
+				response.body = fd.read()
+		except (IOError, OSError) as ex:
+			MODULE.error('Unable to load screenshot file %r: %s' % (filename, ex))
+		try:
+			if tmpfile:
+				os.unlink(tmpfile.name)
+		except (IOError, OSError) as ex:
+			MODULE.error('Unable to remove temporary screenshot file %r: %s' % (tmpfile.name, ex))
 		self.finished(request.id, response)
 
 	@check_room_access
