@@ -1,0 +1,13 @@
+product: ucsschool
+release: "3.2"
+version: [r2]
+scope: ucs_3.2-0-ucs-school-3.2r2
+src: ucs-school-umc-computerroom
+fix: 5.0.10-3.193.201610141342
+desc: |
+ This update addresses the following issue(s):
+ * It is now possible to prevent that screenshots of specific users or groups
+   are shown in the UMC module. See UCR variables
+   ucsschool/umc/computerroom/hide_screenshots/teachers and
+   ucsschool/umc/computerroom/hide_screenshots/groups (Bug #41746).
+bug: [41746]
