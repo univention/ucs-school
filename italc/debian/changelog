@@ -1,3 +1,9 @@
+italc (2:2.0.25-8) unstable; urgency=medium
+
+  * Bug #38213: rebase to latest upstream changes
+
+ -- Florian Best <best@univention.de>  Mon, 17 Oct 2016 12:50:48 +0200
+
 italc (2:2.0.25-7) unstable; urgency=medium
 
   * Bug #38213: fixup
