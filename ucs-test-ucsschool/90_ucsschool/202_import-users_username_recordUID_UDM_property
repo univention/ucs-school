@@ -12,6 +12,7 @@ import copy
 import os.path
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_s4connector
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester, PyHooks
 from essential.importusers import Person
 
@@ -32,7 +33,7 @@ class Test(CLI_Import_v2_Tester):
 			hooks = PyHooks()
 			hooks.create_hooks()
 			try:
-				self.log.info('*** Importing a new single user with role %r and username and recordUID', role)
+				self.log.info('*** Importing two users with role %r and username and recordUID', role)
 
 				source_uid = 'sourceUID-%s' % (uts.random_string(),)
 				record_uid_A = uts.random_name()
@@ -62,7 +63,7 @@ class Test(CLI_Import_v2_Tester):
 				# update dn+username of person and verify LDAP attributes
 				for person in person_list:
 					person.verify()
-				utils.verify_ldap_object(person.dn, expected_attr={'street': [',pre-create,post-create']}, strict=True, should_exist=True)
+					utils.verify_ldap_object(person.dn, expected_attr={'street': [',pre-create,post-create']}, strict=True, should_exist=True)
 
 				def assert_and_print(exists, fn):
 					status = os.path.exists(os.path.join(hooks.tmpdir, fn))
@@ -74,7 +75,8 @@ class Test(CLI_Import_v2_Tester):
 				for fn in ('pre-modify', 'post-modify', 'pre-remove', 'post-remove'):
 					assert_and_print(False, fn)
 
-				self.log.info('*** Modifying a single user with role %r and username and recordUID', role)
+				self.log.info('*** Modifying both users with role %r and username and recordUID', role)
+				self.log.info('Changing firstname of %r and lastname of %r.', person_list[0], person_list[1])
 
 				person_list[0].firstname = uts.random_name()
 				person_list[1].lastname = uts.random_name()
@@ -84,19 +86,20 @@ class Test(CLI_Import_v2_Tester):
 				self.save_ldap_status()
 				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
+				wait_for_s4connector()
 				# check for new users in LDAP
 				self.check_new_and_removed_users(0, 0)
 
 				# verify LDAP attributes
 				for person in person_list:
 					person.verify()
-				utils.verify_ldap_object(person.dn, expected_attr={'street': [',pre-create,post-create,pre-modify,post-modify']}, strict=True, should_exist=True)
+					utils.verify_ldap_object(person.dn, expected_attr={'street': [',pre-create,post-create,pre-modify,post-modify']}, strict=True, should_exist=True)
 				for fn in ('pre-create', 'post-create', 'pre-modify', 'post-modify'):
 					assert_and_print(True, fn)
 				for fn in ('pre-remove', 'post-remove'):
 					assert_and_print(False, fn)
 
-				self.log.info('*** Remove a single user with role %r and username and recordUID', role)
+				self.log.info('*** Remove user %r with role %r and username and recordUID', person_list[0].username, role)
 
 				# mark first person as removed
 				person_list[0].set_mode_to_delete()

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-36) unstable; urgency=low
+
+  * Bug #40527: reactivate 04_ucs-school-reset-password-check
+  * Bug #40321: fix indent for verify calls, wait for s4 connector
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 Oct 2016 12:51:37 +0200
+
 ucs-test-ucsschool (3.0.16-35) unstable; urgency=low
 
   * Bug #41244: fix typo
