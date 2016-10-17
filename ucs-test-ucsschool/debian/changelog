@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-34) unstable; urgency=low
+
+  * Bug #41244: wait for s4 connector (prevents error from alegedly reusing an
+    email address of a previously deleted user)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 Oct 2016 10:56:01 +0200
+
 ucs-test-ucsschool (3.0.16-33) unstable; urgency=low
 
   * Bug #41361: wait for squidguard reload after changing black/whitelists
