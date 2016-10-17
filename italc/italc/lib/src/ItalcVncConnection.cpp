@@ -116,25 +116,22 @@ rfbBool ItalcVncConnection::hookNewClient( rfbClient *cl )
 
 	const int size = (int) cl->width * cl->height *
 					( cl->format.bitsPerPixel / 8 );
-	if(t->m_image.width() != cl->width && t->m_image.height() != cl->height)
+	if( t->m_frameBuffer )
 	{
-		if( t->m_frameBuffer )
-		{
-			// do not leak if we get a new framebuffer size
-			delete [] t->m_frameBuffer;
-		}
-		t->m_frameBuffer = new uint8_t[size];
-		t->m_framebufferInitialized = false;
-		cl->frameBuffer = t->m_frameBuffer;
-		memset( cl->frameBuffer, '\0', size );
-		cl->format.bitsPerPixel = 32;
-		cl->format.redShift = 16;
-		cl->format.greenShift = 8;
-		cl->format.blueShift = 0;
-		cl->format.redMax = 0xff;
-		cl->format.greenMax = 0xff;
-		cl->format.blueMax = 0xff;
+		// do not leak if we get a new framebuffer size
+		delete [] t->m_frameBuffer;
 	}
+	t->m_frameBuffer = new uint8_t[size];
+	t->m_framebufferInitialized = false;
+	cl->frameBuffer = t->m_frameBuffer;
+	memset( cl->frameBuffer, '\0', size );
+	cl->format.bitsPerPixel = 32;
+	cl->format.redShift = 16;
+	cl->format.greenShift = 8;
+	cl->format.blueShift = 0;
+	cl->format.redMax = 0xff;
+	cl->format.greenMax = 0xff;
+	cl->format.blueMax = 0xff;
 
 	// only use remote cursor for remote control
 	cl->appData.useRemoteCursor = false;

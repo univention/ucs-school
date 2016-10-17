@@ -47,6 +47,7 @@ ItalcCoreServer * ItalcCoreServer::_this = NULL;
 ItalcCoreServer::ItalcCoreServer() :
 	QObject(),
 	m_allowedIPs(),
+	m_failedAuthHosts(),
 	m_slaveManager()
 {
 	Q_ASSERT( _this == NULL );
@@ -189,7 +190,7 @@ int ItalcCoreServer::handleItalcClientMessage( socketDispatcher sock,
 	}
 	else if( cmd == ItalcCore::DisplayTextMessage )
 	{
-		m_slaveManager.messageBox( msgIn.arg( "text" ) );
+		m_slaveManager.messageBox( msgIn.arg( "title" ), msgIn.arg( "text" ) );
 	}
 	else if( cmd == ItalcCore::LockScreen )
 	{
@@ -342,11 +343,14 @@ bool ItalcCoreServer::authSecTypeItalc( socketDispatcher sd, void *user )
 
 void ItalcCoreServer::errorMsgAuth( const QString &ip )
 {
-	_this->m_slaveManager.systemTrayMessage(
-			tr( "Authentication error" ),
-			tr( "Somebody (IP: %1) tried to access this computer "
-					"but could not authenticate itself "
-					"successfully!" ).arg( ip ) );
+	if( _this->m_failedAuthHosts.contains( ip ) == false )
+	{
+		_this->m_failedAuthHosts += ip;
+		_this->m_slaveManager.systemTrayMessage(
+					tr( "Authentication error" ),
+					tr( "Somebody (IP: %1) tried to access this computer "
+						"but could not authenticate successfully!" ).arg( ip ) );
+	}
 }
 
 
