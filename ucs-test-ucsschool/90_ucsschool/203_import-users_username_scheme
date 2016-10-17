@@ -26,7 +26,7 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Test creation of usernames from a special username scheme (Bug #41243, #41244).
 		"""
-		for role in ('student', 'teacher'):#, 'staff', 'teacher_and_staff'):
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
 				self.log.info('*** Importing a new single user with role %r, username scheme %r and recordUID 1. time', role, scheme)
 

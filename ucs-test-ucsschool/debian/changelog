@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-35) unstable; urgency=low
+
+  * Bug #41244: fix typo
+  * Bug #41469: wait for s4 connector
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 Oct 2016 11:21:52 +0200
+
 ucs-test-ucsschool (3.0.16-34) unstable; urgency=low
 
   * Bug #41244: wait for s4 connector (prevents error from alegedly reusing an

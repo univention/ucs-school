@@ -14,6 +14,7 @@ import random
 import datetime
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_s4connector
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
 
@@ -64,11 +65,11 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()  # verify LDAP attributes
 
 			self.log.info('*** (1/3) Removing a single user with role %r', role)
-			person.set_mode_to_delete()  # mark person as removed
 			self.create_csv_file(person_list=[], fn_csv=fn_csv, mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
+			person.set_mode_to_delete()  # mark person as removed
 			self.check_new_and_removed_users(0, 1)
 			person.verify()
 
@@ -103,6 +104,7 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
+			wait_for_s4connector()
 			self.check_new_and_removed_users(0, 0)
 			# check exp. date
 			exp_date = (datetime.datetime.now() + datetime.timedelta(days=exp_days)).strftime("%Y-%m-%d")
@@ -123,6 +125,7 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
+			wait_for_s4connector()
 			self.check_new_and_removed_users(0, 0)
 			person.verify()
 
@@ -156,6 +159,7 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
+			wait_for_s4connector()
 			self.check_new_and_removed_users(0, 0)
 			# check exp. date
 			exp_date = (datetime.datetime.now() + datetime.timedelta(days=exp_days)).strftime("%Y-%m-%d")
