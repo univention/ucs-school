@@ -1,7 +1,7 @@
 /*
  * ItalcVncConnection.h - declaration of ItalcVncConnection class
  *
- * Copyright (c) 2008-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2008-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -33,10 +33,10 @@
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QThread>
 #include <QtCore/QWaitCondition>
+#include <QtGui/QImage>
 
 #include "ItalcCore.h"
 #include "ItalcRfbExt.h"
-#include "FastQImage.h"
 
 class PrivateDSAKey;
 
@@ -86,7 +86,7 @@ public:
 
 	const QImage image( int x = 0, int y = 0, int w = 0, int h = 0 ) const;
 	void setImage( const QImage &img );
-	void stop();
+	void stop( bool deleteAfterFinished = false );
 	void reset( const QString &host );
 	void setHost( const QString &host );
 	void setPort( int port );
@@ -159,7 +159,7 @@ public:
 		}
 	}
 
-	FastQImage scaledScreen()
+	QImage scaledScreen()
 	{
 		rescaleScreen();
 		return m_scaledScreen;
@@ -205,6 +205,10 @@ protected:
 
 
 private:
+	enum {
+		ThreadTerminationTimeout = 10000
+	};
+
 	// hooks for LibVNCClient
 	static rfbBool hookNewClient( rfbClient *cl );
 	static void hookUpdateFB( rfbClient *cl, int x, int y, int w, int h );
@@ -229,13 +233,12 @@ private:
 	mutable QReadWriteLock m_imgLock;
 	QQueue<ClientEvent *> m_eventQueue;
 
-	FastQImage m_image;
+	QImage m_image;
 	bool m_scaledScreenNeedsUpdate;
-	FastQImage m_scaledScreen;
+	QImage m_scaledScreen;
 	QSize m_scaledSize;
 
 	volatile State m_state;
-	volatile bool m_stopped;
 
 
 } ;

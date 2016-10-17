@@ -2,7 +2,7 @@
  * Client.cpp - code for client-windows, which are displayed in several
  *              instances in the main-window of iTALC
  *
- * Copyright (c) 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2004-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -41,15 +41,14 @@
 #include "LocalSystem.h"
 #include "Snapshot.h"
 #include "Dialogs.h"
-#include "DecoratedMessageBox.h"
 
 
 
 const QSize DEFAULT_CLIENT_SIZE( 256, 192 );
 const int DECO_WIDTH = 4;
 const int TITLE_HEIGHT = 23;
-const QPoint CONTENT_OFFSET( DECO_WIDTH, DECO_WIDTH + TITLE_HEIGHT ); 
-const QSize CONTENT_SIZE_SUB( 2*DECO_WIDTH, 2*DECO_WIDTH + TITLE_HEIGHT ); 
+const QPoint CONTENT_OFFSET( DECO_WIDTH, DECO_WIDTH + TITLE_HEIGHT );
+const QSize CONTENT_SIZE_SUB( 2*DECO_WIDTH, 2*DECO_WIDTH + TITLE_HEIGHT );
 
 
 // resolve static symbols...
@@ -147,49 +146,49 @@ void ClientAction::process( QVector<Client *> _clients, TargetGroup _target )
 				cl->changeMode( Client::Mode_Overview );
 			}
 			break;
-			
+
 		case FullscreenDemo:
 			foreach( Client * cl, _clients )
 			{
 				cl->changeMode( Client::Mode_FullscreenDemo );
 			}
 			break;
-			
+
 		case WindowDemo:
 			foreach( Client * cl, _clients )
 			{
 				cl->changeMode( Client::Mode_WindowDemo );
 			}
 			break;
-			
+
 		case Locked:
 			foreach( Client * cl, _clients )
 			{
 				cl->changeMode( Client::Mode_Locked );
 			}
 			break;
-			
+
 		case ViewLive:
 			foreach( Client * cl, _clients )
 			{
 				cl->viewLive();
 			}
 			break;
-			
+
 		case RemoteControl:
 			foreach( Client * cl, _clients )
 			{
 				cl->remoteControl();
 			}
 			break;
-			
+
 		case ClientDemo:
 			foreach( Client * cl, _clients )
 			{
 				cl->clientDemo();
 			}
 			break;
-			
+
 		case SendTextMessage:
 			{
 				QString msg;
@@ -197,7 +196,7 @@ void ClientAction::process( QVector<Client *> _clients, TargetGroup _target )
 
 				if( tmd.exec() == QDialog::Accepted &&
 					!msg.isEmpty() )
-				{ 
+				{
 					foreach( Client * cl, _clients )
 					{
 						cl->sendTextMessage( msg );
@@ -349,7 +348,7 @@ bool ClientAction::confirmLogout( TargetGroup _target ) const
 	QString question = ( _target == VisibleClients ?
 		tr( "Are you sure want logout all users on all visible computers ?" ) :
 		tr( "Are you sure want logout all users on all selected computers ?" ) );
-	
+
 	return QMessageBox::question( NULL, tr( "Logout user" ),
 				question, QMessageBox::Yes, QMessageBox::No )
 		== QMessageBox::Yes;
@@ -390,7 +389,7 @@ clientMenu::clientMenu( const QString & _title, const QList<QAction *> _actions,
 			QWidget * _parent, const bool _fullMenu ) :
 	QMenu( _title, _parent )
 {
-	setIcon( scaledIcon( "client.png" ) );
+	setIcon( scaledIcon( "preferences-desktop-display.png" ) );
 
 	foreach ( QAction * action, _actions )
 	{
@@ -411,47 +410,45 @@ QMenu * clientMenu::createDefault( QWidget * _parent )
 	QMenu * menu = new QMenu( _parent );
 
 	menu->addAction( new ClientAction( ClientAction::Overview,
-		scaledIcon( "overview_mode.png" ), tr( "Overview" ), menu ) );
+		scaledIcon( "presentation-none.png" ), tr( "Overview" ), menu ) );
 	menu->addAction( new ClientAction( ClientAction::FullscreenDemo,
-		scaledIcon( "fullscreen_demo.png" ), tr( "Fullscreen demo" ), menu ) );
+		scaledIcon( "presentation-fullscreen.png" ), tr( "Fullscreen demo" ), menu ) );
 	menu->addAction( new ClientAction( ClientAction::WindowDemo,
-		scaledIcon( "window_demo.png" ), tr( "Window demo" ), menu ) );
+		scaledIcon( "presentation-window.png" ), tr( "Window demo" ), menu ) );
 	menu->addAction( new ClientAction(	ClientAction::Locked,
-		scaledIcon( "locked.png" ), tr( "Locked display" ), menu ) );
+		scaledIcon( "system-lock-screen.png" ), tr( "Locked display" ), menu ) );
 	menu->addSeparator();
 
 	menu->addAction( new ClientAction( ClientAction::ViewLive,
-		scaledIcon( "viewmag.png" ), tr( "View live" ), menu,
+		scaledIcon( "kmag.png" ), tr( "View live" ), menu,
 		ClientAction::FullMenu ) );
 	menu->addAction( new ClientAction( ClientAction::RemoteControl,
-		scaledIcon( "remote_control.png" ), tr( "Remote control" ), menu,
+		scaledIcon( "kmag.png" ), tr( "Remote control" ), menu,
 		ClientAction::FullMenu ) );
 	menu->addAction( new ClientAction( ClientAction::ClientDemo,
-		scaledIcon( "client_demo.png" ), tr( "Let student show demo" ), menu,
+		scaledIcon( "preferences-desktop-display-orange.png" ), tr( "Let student show demo" ), menu,
 		ClientAction::FullMenu ) );
 
 	menu->addAction( new ClientAction( ClientAction::SendTextMessage,
-		scaledIcon( "text_message.png" ), tr( "Send text message" ), menu ) );
+		scaledIcon( "dialog-information.png" ), tr( "Send text message" ), menu ) );
 	menu->addSeparator();
 
-/*	menu->addAction( new ClientAction( ClientAction::LogonUser,
-		scaledIcon( "remotelogon.png" ), tr( "Logon user" ), menu ) );*/
 	menu->addAction( new ClientAction( ClientAction::LogoutUser,
-		scaledIcon( "logout.png" ), tr( "Logout user" ), menu ) );
+		scaledIcon( "system-suspend-hibernate.png" ), tr( "Logout user" ), menu ) );
 	menu->addSeparator();
 
 	menu->addAction( new ClientAction( ClientAction::Snapshot,
-		scaledIcon( "snapshot.png" ), tr( "Take a snapshot" ), menu ) );
+		scaledIcon( "camera-photo.png" ), tr( "Take a snapshot" ), menu ) );
 	menu->addSeparator();
 
 	menu->addAction( new ClientAction( ClientAction::PowerOn,
-		scaledIcon( "power_on.png" ), tr( "Power on" ), menu ) );
+		scaledIcon( "preferences-system-power-management.png" ), tr( "Power on" ), menu ) );
 	menu->addAction( new ClientAction( ClientAction::Reboot,
-		scaledIcon( "reboot.png" ), tr( "Reboot" ), menu ) );
+		scaledIcon( "system-reboot.png" ), tr( "Reboot" ), menu ) );
 	menu->addAction( new ClientAction( ClientAction::PowerDown,
-		scaledIcon( "power_off.png" ), tr( "Power down" ), menu ) );
+		scaledIcon( "system-shutdown.png" ), tr( "Power down" ), menu ) );
 	menu->addAction( new ClientAction( ClientAction::ExecCmds,
-		scaledIcon( "run.png" ), tr( "Execute commands" ), menu ) );
+		scaledIcon( "run-build.png" ), tr( "Execute commands" ), menu ) );
 
 	return menu;
 }
@@ -508,7 +505,7 @@ Client::Client( const QString & _hostname,
 	m_connection = new ItalcCoreConnection( m_vncConn );
 
 	setAttribute( Qt::WA_OpaquePaintEvent );
-	setWindowIcon( QPixmap( ":/resources/classroom_manager.png" ) );
+	setWindowIcon( QPixmap( ":/resources/applications-education.png" ) );
 
 /*	setWhatsThis( tr( "This is a client-window. It either displays the "
 				"screen of the according client or a message "
@@ -742,11 +739,11 @@ void Client::hideEvent( QHideEvent * )
 
 void Client::enlarge()
 {
-	if ( m_origSize.isValid() ) 
+	if ( m_origSize.isValid() )
 	{
 		QWidget * workspace = m_mainWindow->workspace();
 		QSize s = QSize( m_origSize );
-		
+
 		s.scale( workspace->parentWidget()->size(),
 							Qt::KeepAspectRatio );
 		setFixedSize( s );
@@ -779,7 +776,7 @@ void Client::zoom()
 void Client::zoomBack()
 {
 	if ( m_origSize.isValid() )
-	{	
+	{
 		move( m_origPos );
 		setFixedSize( m_origSize );
 		/* reset value: */
@@ -878,15 +875,15 @@ void Client::paintEvent( QPaintEvent * _pe )
 	static QImage * img_locked = NULL;
 
 	if( img_unknown == NULL )
-		img_unknown = new QImage( ":/resources/error.png" );
+		img_unknown = new QImage( ":/resources/preferences-desktop-display-gray.png" );
 	if( img_no_user == NULL )
-		img_no_user = new QImage( ":/resources/no_user.png" );
+		img_no_user = new QImage( ":/resources/preferences-system-login.png" );
 	if( img_host_unreachable == NULL )
-		img_host_unreachable = new QImage( ":/resources/host_unreachable.png" );
+		img_host_unreachable = new QImage( ":/resources/preferences-desktop-display-red.png" );
 	if( img_demo == NULL )
-		img_demo = new QImage( ":/resources/window_demo.png" );
+		img_demo = new QImage( ":/resources/preferences-desktop-display-orange.png" );
 	if( img_locked == NULL )
-		img_locked = new QImage( ":/resources/locked.png" );
+		img_locked = new QImage( ":/resources/preferences-desktop-display-purple.png" );
 
 	QPainter p( this );
 	p.setBrush( Qt::white );
@@ -957,7 +954,7 @@ void Client::paintEvent( QPaintEvent * _pe )
 	QSize s( pm->size() );
 	s.scale( aw-10, ah-r.height()-20, Qt::KeepAspectRatio );
 	p.drawImage( ( aw-s.width() ) / 2, height()-ah,
-						FastQImage( *pm ).scaled( s ) );
+						QImage( *pm ).scaled( s ) );
 
 	p.setPen( QColor( 0, 0, 0 ) );
 	p.drawText( QRect( 5, height()-r.height()-10, aw - 10,
@@ -1103,7 +1100,7 @@ void Client::remoteControl()
 
 void Client::sendTextMessage( const QString & _msg )
 {
-	m_connection->displayTextMessage( _msg );
+	m_connection->displayTextMessage( tr( "Message from teacher" ), _msg );
 }
 
 

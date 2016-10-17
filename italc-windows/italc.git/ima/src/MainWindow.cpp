@@ -1,7 +1,7 @@
 /*
  * MainWindow.cpp - implementation of MainWindow class
  *
- * Copyright (c) 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2004-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -64,9 +64,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 	m_systemTrayIcon( this ),
 	m_openedTabInSideBar( 1 ),
 	m_localICA( NULL ),
-	m_rctrlLock(),
 	m_remoteControlWidget( NULL ),
-	m_stopDemo( FALSE ),
 	m_remoteControlScreen( _rctrl_screen > -1 ?
 				qMin( _rctrl_screen,
 					QApplication::desktop()->numScreens() )
@@ -133,7 +131,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 	addToolBar( Qt::TopToolBarArea, m_toolBar );
 
 	ToolButton * scr = new ToolButton(
-			QPixmap( ":/resources/classroom.png" ),
+			QPixmap( ":/resources/applications-education.png" ),
 			tr( "Classroom" ), QString::null,
 			tr( "Switch classroom" ),
 			tr( "Click this button to open a menu where you can "
@@ -148,7 +146,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 
 	QAction * a;
 
-	a = new QAction( QIcon( ":/resources/overview_mode.png" ),
+	a = new QAction( QIcon( ":/resources/presentation-none.png" ),
 						tr( "Overview mode" ), this );
 	m_sysTrayActions << a;
 	ToolButton * overview_mode = new ToolButton(
@@ -161,7 +159,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 			this, SLOT( mapOverview() ), m_toolBar );
 
 
-	a = new QAction( QIcon( ":/resources/fullscreen_demo.png" ),
+	a = new QAction( QIcon( ":/resources/presentation-fullscreen.png" ),
 						tr( "Fullscreen demo" ), this );
 	m_sysTrayActions << a;
 	ToolButton * fsdemo_mode = new ToolButton(
@@ -172,7 +170,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 				"devices are locked in this mode." ),
 			this, SLOT( mapFullscreenDemo() ), m_toolBar );
 
-	a = new QAction( QIcon( ":/resources/window_demo.png" ),
+	a = new QAction( QIcon( ":/resources/presentation-window.png" ),
 						tr( "Window demo" ), this );
 	m_sysTrayActions << a;
 	ToolButton * windemo_mode = new ToolButton(
@@ -183,7 +181,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 				"can continue to work." ),
 			this, SLOT( mapWindowDemo() ), m_toolBar );
 
-	a = new QAction( QIcon( ":/resources/locked.png" ),
+	a = new QAction( QIcon( ":/resources/system-lock-screen.png" ),
 					tr( "Lock/unlock desktops" ), this );
 	m_sysTrayActions << a;
 	ToolButton * lock_mode = new ToolButton(
@@ -208,7 +206,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 
 
 
-	a = new QAction( QIcon( ":/resources/text_message.png" ),
+	a = new QAction( QIcon( ":/resources/dialog-information.png" ),
 					tr( "Send text message" ), this );
 //	m_sysTrayActions << a;
 	ToolButton * text_msg = new ToolButton(
@@ -218,7 +216,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 			m_classroomManager, SLOT( sendMessage() ), m_toolBar );
 
 
-	a = new QAction( QIcon( ":/resources/power_on.png" ),
+	a = new QAction( QIcon( ":/resources/preferences-system-power-management.png" ),
 					tr( "Power on computers" ), this );
 	m_sysTrayActions << a;
 	ToolButton * power_on = new ToolButton(
@@ -229,7 +227,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 			m_classroomManager, SLOT( powerOnClients() ),
 								m_toolBar );
 
-	a = new QAction( QIcon( ":/resources/power_off.png" ),
+	a = new QAction( QIcon( ":/resources/system-shutdown.png" ),
 					tr( "Power down computers" ), this );
 	m_sysTrayActions << a;
 	ToolButton * power_off = new ToolButton(
@@ -239,15 +237,6 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 				"button." ),
 			m_classroomManager,
 					SLOT( powerDownClients() ), m_toolBar );
-
-/*	ToolButton * remotelogon = new ToolButton(
-			QPixmap( ":/resources/remotelogon.png" ),
-			tr( "Logon" ), QString::null,
-			tr( "Remote logon" ),
-			tr( "After clicking this button you can enter a "
-				"username and password to log on the "
-				"according user on all visible computers." ),
-			m_classroomManager, SLOT( remoteLogon() ), m_toolBar );*/
 
 	ToolButton * directsupport = new ToolButton(
 			QPixmap( ":/resources/remote_control.png" ),
@@ -259,7 +248,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 			m_classroomManager, SLOT( directSupport() ), m_toolBar );
 
 	ToolButton * adjust_size = new ToolButton(
-			QPixmap( ":/resources/adjust_size.png" ),
+			QPixmap( ":/resources/zoom-fit-best.png" ),
 			tr( "Adjust/align" ), QString::null,
 			tr( "Adjust windows and their size" ),
 			tr( "When clicking this button the biggest possible "
@@ -268,7 +257,7 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 			m_classroomManager, SLOT( adjustWindows() ), m_toolBar );
 
 	ToolButton * auto_arrange = new ToolButton(
-			QPixmap( ":/resources/auto_arrange.png" ),
+			QPixmap( ":/resources/vcs-locally-modified.png" ),
 			tr( "Auto view" ), QString::null,
 			tr( "Auto re-arrange windows and their size" ),
 			tr( "When clicking this button all visible windows "
@@ -287,7 +276,6 @@ MainWindow::MainWindow( int _rctrl_screen ) :
 	text_msg->addTo( m_toolBar );
 	power_on->addTo( m_toolBar );
 	power_off->addTo( m_toolBar );
-	//remotelogon->addTo( m_toolBar );
 	directsupport->addTo( m_toolBar );
 	adjust_size->addTo( m_toolBar );
 	auto_arrange->addTo( m_toolBar );
@@ -483,7 +471,7 @@ void MainWindow::handleSystemTrayEvent( QSystemTrayIcon::ActivationReason _r )
 			m.addSeparator();
 
 			QAction * qa = m.addAction(
-					QIcon( ":/resources/quit.png" ),
+					QIcon( ":/resources/application-exit.png" ),
 					tr( "Quit" ) );
 			connect( qa, SIGNAL( triggered( bool ) ),
 					this, SLOT( close() ) );
@@ -508,41 +496,38 @@ void MainWindow::remoteControlClient( QAction * _a )
 
 
 
-void MainWindow::remoteControlDisplay( const QString & _hostname,
-						bool _view_only,
-						bool _stop_demo_afterwards )
+void MainWindow::remoteControlDisplay( const QString& hostname,
+										bool viewOnly,
+										bool stopDemoAfterwards )
 {
-	QWriteLocker wl( &m_rctrlLock );
 	if( m_remoteControlWidget )
 	{
 		return;
 	}
-	m_remoteControlWidget = new RemoteControlWidget( _hostname, _view_only );
+
+	m_remoteControlWidget = new RemoteControlWidget( hostname, viewOnly );
+
+	// determine screen offset where to show the remote control window
 	int x = 0;
 	for( int i = 0; i < m_remoteControlScreen; ++i )
 	{
 		x += QApplication::desktop()->screenGeometry( i ).width();
 	}
 	m_remoteControlWidget->move( x, 0 );
-	m_stopDemo = _stop_demo_afterwards;
-	connect( m_remoteControlWidget, SIGNAL( destroyed( QObject * ) ),
-			this, SLOT( remoteControlWidgetClosed( QObject * ) ) );
+
+	if( stopDemoAfterwards )
+	{
+		connect( m_remoteControlWidget, SIGNAL( objectDestroyed( QObject* ) ),
+				this, SLOT( stopDemoAfterRemoteControl() ) );
+	}
 }
 
 
 
 
-void MainWindow::remoteControlWidgetClosed( QObject * )
+void MainWindow::stopDemoAfterRemoteControl()
 {
-	m_rctrlLock.lockForWrite();
-	m_remoteControlWidget = NULL;
-	m_rctrlLock.unlock();
-	if( m_stopDemo )
-	{
-		m_classroomManager->changeGlobalClientMode(
-							Client::Mode_Overview );
-		m_stopDemo = FALSE;
-	}
+	m_classroomManager->changeGlobalClientMode( Client::Mode_Overview );
 }
 
 

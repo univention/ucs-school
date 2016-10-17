@@ -1,7 +1,7 @@
 /*
  * ClassroomManager.cpp - implementation of classroom-manager
  *
- * Copyright (c) 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2004-2016 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -51,7 +51,6 @@
 #include "ItalcConfiguration.h"
 #include "LocalSystem.h"
 #include "ToolButton.h"
-#include "DecoratedMessageBox.h"
 
 #define DEFAULT_WINDOW_WIDTH	1005
 #define DEFAULT_WINDOW_HEIGHT	700
@@ -81,7 +80,7 @@ QPixmap * classRoomItem::s_clientObservedPixmap = NULL;
 
 ClassroomManager::ClassroomManager( MainWindow * _main_window,
 							QWidget * _parent ) :
-	SideBarWidget( QPixmap( ":/resources/classroom_manager.png" ),
+	SideBarWidget( QPixmap( ":/resources/applications-education.png" ),
 			tr( "Classroom-Manager" ),
 			tr( "Use this workspace to manage your computers and "
 				"classrooms in an easy way." ),
@@ -146,8 +145,8 @@ ClassroomManager::ClassroomManager( MainWindow * _main_window,
 	l->addSpacing( 16 );
 
 	m_exportToFileBtn = new QPushButton(
-				QPixmap( ":/resources/filesave.png" ),
-						tr( "Export to text-file" ),
+				QPixmap( ":/resources/document-save.png" ),
+						tr( "Export to text file" ),
 							contentParent() );
 	l->addWidget( m_exportToFileBtn );
 	connect( m_exportToFileBtn, SIGNAL( clicked() ),
@@ -188,12 +187,12 @@ void ClassroomManager::setupMenus()
 
 /*	m_quickSwitchMenu->addSeparator();
 
-	m_quickSwitchMenu->addAction( QPixmap( ":/resources/adjust_size.png" ),
+	m_quickSwitchMenu->addAction( QPixmap( ":/resources/zoom-fit-best.png" ),
 				tr( "Adjust windows and their size" ),
 						this, SLOT( adjustWindows() ) );
 
 	m_quickSwitchMenu->addAction(
-				QPixmap( ":/resources/auto_arrange.png" ),
+				QPixmap( ":/resources/vcs-locally-modified.png" ),
 				tr( "Auto re-arrange windows" ),
 					this, SLOT( arrangeWindows() ) );*/
 
@@ -201,18 +200,18 @@ void ClassroomManager::setupMenus()
 
 	m_classRoomItemActionGroup = new QActionGroup( this );
 
-	act = m_classRoomItemActionGroup->addAction( 
-			QPixmap( ":/resources/client_show.png" ),
+	act = m_classRoomItemActionGroup->addAction(
+			QPixmap( ":/resources/edit-find.png" ),
 			tr( "Show/hide" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( showHideClient() ) );
 
-	act = m_classRoomItemActionGroup->addAction( 
-			QPixmap( ":/resources/config.png" ),
+	act = m_classRoomItemActionGroup->addAction(
+			QPixmap( ":/resources/document-edit.png" ),
 			tr( "Edit settings" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( editClientSettings() ) );
 
 	act = m_classRoomItemActionGroup->addAction(
-			QPixmap( ":/resources/client_remove.png" ),
+			QPixmap( ":/resources/list-remove.png" ),
 			tr( "Remove" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( removeClient() ) );
 
@@ -223,7 +222,7 @@ void ClassroomManager::setupMenus()
 	m_classRoomActionGroup = new QActionGroup( this );
 
 	act = m_classRoomActionGroup->addAction(
-			QPixmap( ":/resources/classroom_show.png" ),
+			QPixmap( ":/resources/edit-find.png" ),
 			tr( "Show all computers in classroom" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( showSelectedClassRooms() ) );
 
@@ -233,17 +232,17 @@ void ClassroomManager::setupMenus()
 	connect( act, SIGNAL( triggered() ), this, SLOT( hideSelectedClassRooms() ) );
 
 	act = m_classRoomActionGroup->addAction(
-			QPixmap( ":/resources/no_user.png" ),
+			QPixmap( ":/resources/preferences-system-login.png" ),
 			tr( "Hide teacher computers" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( hideTeacherClients() ) );
 
 	act = m_classRoomActionGroup->addAction(
-			QPixmap( ":/resources/config.png" ),
+			QPixmap( ":/resources/document-edit.png" ),
 			tr( "Edit name" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( editClassRoomName() ) );
 
 	act = m_classRoomActionGroup->addAction(
-			QPixmap( ":/resources/classroom_remove.png" ),
+			QPixmap( ":/resources/edit-delete.png" ),
 			tr("Remove classroom" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( removeClassRoom() ) );
 
@@ -254,19 +253,19 @@ void ClassroomManager::setupMenus()
 	m_contextActionGroup = new QActionGroup( this );
 
 	act = m_contextActionGroup->addAction(
-			QPixmap( ":/resources/client_add.png" ),
+			QPixmap( ":/resources/list-add.png" ),
 			tr( "Add computer" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( addClient() ) );
 
 	act = m_contextActionGroup->addAction(
-			QPixmap( ":/resources/classroom_add.png" ),
+			QPixmap( ":/resources/folder-add.png" ),
 			tr( "Add classroom" ) );
 	connect( act, SIGNAL( triggered() ), this, SLOT( addClassRoom() ) );
 
 	/*** Default client Menu ***/
 
 	m_clientMenu = clientMenu::createDefault( this );
-	
+
 }
 
 
@@ -362,7 +361,7 @@ void ClassroomManager::savePersonalConfig( void )
 	globalsettings.setAttribute( "win-width", mainWindow()->width() );
 	globalsettings.setAttribute( "win-height", mainWindow()->height() );
 	globalsettings.setAttribute( "win-x", mainWindow()->x() );
-	globalsettings.setAttribute( "win-y", mainWindow()->y() );	
+	globalsettings.setAttribute( "win-y", mainWindow()->y() );
 	globalsettings.setAttribute( "ismaximized",
 					mainWindow()->isMaximized() );
 	globalsettings.setAttribute( "opened-tab",
@@ -478,11 +477,11 @@ void ClassroomManager::saveSettingsOfChildren( QDomDocument & _doc,
 						c->isVisible() ? "yes" : "no" );
 						client_element.setAttribute(
 			"x", QString::number( c->pos().x() ) );
- 						client_element.setAttribute(
+						client_element.setAttribute(
 			"y", QString::number( c->pos().y() ) );
 						client_element.setAttribute(
 			"w", QString::number( c->width() ) );
- 						client_element.setAttribute(
+						client_element.setAttribute(
 			"h", QString::number( c->height() ) );
 				}
 				classroom.appendChild( client_element );
@@ -595,7 +594,7 @@ mainWindow()->move( node.toElement().attribute( "win-x" ).toInt(),
 			else
 			{
 				setDefaultWindowsSizeAndPosition();
- 			}
+			}
 			if( node.toElement().attribute( "opened-tab" ) !=
 								QString::null )
 			{
@@ -649,7 +648,7 @@ mainWindow()->move( node.toElement().attribute( "win-x" ).toInt(),
 				node.toElement().attribute( "showUserColumn" ).toInt() );
 		}
 		node = node.nextSibling();
-        }
+		}
 }
 
 
@@ -706,7 +705,7 @@ void ClassroomManager::loadTree( classRoom * _parent_item,
 				QString nickname = e.attribute( "name" );
 
 				// add new client
-                                Client * c = new Client( hostname,
+								Client * c = new Client( hostname,
 						mac,
 						nickname,
 						(Client::Types)e.attribute(
@@ -769,7 +768,7 @@ void ClassroomManager::loadMenuElement( QDomElement _e )
 	{
 		QString name = _e.attribute( "remote-cmd",
 				_e.attribute( "local-cmd" ) );
-		QString icon = _e.attribute( "icon", ":resources/run.png" );
+		QString icon = _e.attribute( "icon", ":resources/run-build.png" );
 		QString before = _e.attribute( "before" );
 
 		if ( name.isEmpty() )
@@ -834,16 +833,11 @@ void ClassroomManager::loadGlobalClientConfig( void )
 		{
 			splashScreen->close();
 		}
-		DecoratedMessageBox::information(
-					tr( "No configuration-file found" ),
-					tr( "Could not open configuration "
-						"file %1.\nYou will have to "
-						"add at least one classroom "
-						"and computers using the "
-						"classroom-manager which "
-						"you'll find inside the "
-						"program in the sidebar on the "
-						"left side."
+		QMessageBox::information( this, tr( "No configuration file found" ),
+					tr( "Could not open configuration file %1. You will have to "
+						"add at least one classroom and computers using the "
+						"classroom manager which you'll find inside the program "
+						"in the sidebar on the left side."
 					).arg( m_globalClientConfiguration ) );
 		return;
 	}
@@ -856,16 +850,11 @@ void ClassroomManager::loadGlobalClientConfig( void )
 		{
 			splashScreen->close();
 		}
-		DecoratedMessageBox::information(
-					tr( "Error in configuration-file" ),
-					tr( "Error while parsing configuration-"
-						"file %1.\nPlease edit it. "
-						"Otherwise you should delete "
-						"this file and have to add all "
-						"classrooms and computers "
-						"again."
-					).arg( m_globalClientConfiguration ),
-					QPixmap( ":/resources/error.png" ) );
+		QMessageBox::critical( this, tr( "Error in configuration file" ),
+					tr( "Error while parsing configuration file %1. Please fix the "
+						"file manually. Otherwise you should delete the file and "
+						"add all classrooms and computers again." ).
+								  arg( m_globalClientConfiguration ) );
 		cfg_file.close();
 		return;
 	}
@@ -895,7 +884,7 @@ void ClassroomManager::loadGlobalClientConfig( void )
 void ClassroomManager::setDefaultWindowsSizeAndPosition( void )
 {
 	mainWindow()->resize( DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT );
-	mainWindow()->move( QPoint( 0, 0 ) );	
+	mainWindow()->move( QPoint( 0, 0 ) );
 }
 
 
@@ -926,14 +915,10 @@ void ClassroomManager::loadPersonalConfig( void )
 		{
 			splashScreen->close();
 		}
-		DecoratedMessageBox::information(
-					tr( "Error in configuration-file" ),
-					tr( "Error while parsing configuration-"
-						"file %1.\nPlease edit it. "
-						"Otherwise you should delete "
-						"this file."
-					).arg( m_personalConfiguration ),
-					QPixmap( ":/resources/error.png" ) );
+		QMessageBox::critical( this, tr( "Error in configuration file" ),
+					tr( "Error while parsing configuration file %1. Please fix the "
+						"file manually. Otherwise you should delete the file." ).
+					arg( m_personalConfiguration ) );
 		cfg_file.close();
 		setDefaultWindowsSizeAndPosition();
 		return;
@@ -1397,7 +1382,7 @@ void ClassroomManager::contextMenuRequest( const QPoint & _pos )
 		contextMenu->addActions( m_classRoomActionGroup->actions() );
 	}
 	else
-	{ 
+	{
 		/* no items */
 		foreach ( classRoom * cr, m_classRooms )
 		{
@@ -1565,7 +1550,7 @@ void ClassroomManager::setStateOfClassRoom( classRoom * _cr, bool _shown )
 {
 	if( _shown )
 	{
-		_cr->setMenuItemIcon( QIcon( ":/resources/greenled.png" ) );
+		_cr->setMenuItemIcon( QIcon( ":/resources/dot-green.png" ) );
 	}
 	else
 	{
@@ -1781,7 +1766,7 @@ void ClassroomManager::addClassRoom( void )
 
 			if ( !sel_cr && dynamic_cast<classRoomItem *>( item ) )
 			{
-				sel_cr = dynamic_cast<classRoom *>( 
+				sel_cr = dynamic_cast<classRoom *>(
 					item->parent() );
 			}
 
@@ -1854,7 +1839,7 @@ classTreeWidget::classTreeWidget( QWidget * _parent ) :
 {
 	setDragEnabled( true );
 	setAcceptDrops( true );
-	setDropIndicatorShown( true ); 
+	setDropIndicatorShown( true );
 	setDragDropMode( QAbstractItemView::InternalMove );
 
 	connect( this, SIGNAL( itemSelectionChanged( void ) ),
@@ -1891,7 +1876,7 @@ void classTreeWidget::mousePressEvent( QMouseEvent * _me )
 
 void classTreeWidget::mouseMoveEvent( QMouseEvent * _me )
 {
-	if ( m_clientPressed ) 
+	if ( m_clientPressed )
 	{
 		m_clientPressed->zoomBack();
 		m_clientPressed = NULL;
@@ -1905,7 +1890,7 @@ void classTreeWidget::mouseMoveEvent( QMouseEvent * _me )
 
 void classTreeWidget::mouseReleaseEvent( QMouseEvent * _me )
 {
-	if ( m_clientPressed ) 
+	if ( m_clientPressed )
 	{
 		m_clientPressed->zoomBack();
 		m_clientPressed = NULL;
@@ -1919,14 +1904,14 @@ void classTreeWidget::mouseReleaseEvent( QMouseEvent * _me )
 
 bool classTreeWidget::droppingOnItself( QTreeWidgetItem * _target )
 {
-    QList<QTreeWidgetItem *> selected = selectedItems();
-    while ( _target )
-    {
-	    if ( selected.contains( _target ) )
-		    return true;
-	    _target = dynamic_cast<QTreeWidgetItem * >( _target->parent() );
-    }
-    return false;
+	QList<QTreeWidgetItem *> selected = selectedItems();
+	while ( _target )
+	{
+		if ( selected.contains( _target ) )
+			return true;
+		_target = dynamic_cast<QTreeWidgetItem * >( _target->parent() );
+	}
+	return false;
 }
 
 
@@ -1934,7 +1919,7 @@ bool classTreeWidget::droppingOnItself( QTreeWidgetItem * _target )
 
 void classTreeWidget::dragMoveEvent( QDragMoveEvent * _e )
 {
-	if ( _e->source() == this ) 
+	if ( _e->source() == this )
 	{
 		int clients_selected = 0;
 		foreach( QTreeWidgetItem * item, selectedItems() )
@@ -1946,7 +1931,7 @@ void classTreeWidget::dragMoveEvent( QDragMoveEvent * _e )
 		}
 
 		QTreeWidgetItem * target = itemAt( _e->pos() );
-		
+
 		/* Don't drop clients to the root nor
 		 * classroom to its own child */
 		if ( ( clients_selected && ! target ) ||
@@ -1967,9 +1952,9 @@ void classTreeWidget::dragMoveEvent( QDragMoveEvent * _e )
 
 void classTreeWidget::dropEvent( QDropEvent * _e )
 {
-    if ( _e->source() == this &&
-    	dragDropMode() == QAbstractItemView::InternalMove )
-    {
+	if ( _e->source() == this &&
+		dragDropMode() == QAbstractItemView::InternalMove )
+	{
 		QTreeWidgetItem * target = itemAt( _e->pos() );
 
 		/* Use client's parent as target */
@@ -1997,7 +1982,7 @@ void classTreeWidget::dropEvent( QDropEvent * _e )
 					takeTopLevelItem( indexOfTopLevelItem( item ) );
 				}
 
-				if ( target ) 
+				if ( target )
 				{
 					target->addChild( item );
 				}
@@ -2011,7 +1996,7 @@ void classTreeWidget::dropEvent( QDropEvent * _e )
 		setSortingEnabled( sortingEnabled );
 
 		_e->accept();
-    }
+	}
 }
 
 
@@ -2134,13 +2119,13 @@ classRoomItem::classRoomItem( Client * _client, QTreeWidgetItem * _parent ) :
 {
 	if( s_clientPixmap == NULL )
 	{
-		s_clientPixmap = new QPixmap( ":/resources/client_hidden.png" );
+		s_clientPixmap = new QPixmap( ":/resources/preferences-desktop-display-gray.png" );
 	}
 
 	if( s_clientObservedPixmap == NULL )
 	{
 		s_clientObservedPixmap = new QPixmap(
-					":/resources/client_visible.png" );
+					":/resources/preferences-desktop-display-blue.png" );
 	}
 
 	setFlags( Qt::ItemIsSelectable | Qt::ItemIsDragEnabled |
