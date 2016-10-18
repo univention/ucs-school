@@ -107,14 +107,10 @@ class Person(object):
 			pass
 
 	def set_mode_to_modify(self):
-		# wait for S4-create-round-trip before modifying
-		wait_for_s4connector()
 		self.mode = 'M'
 
 	def set_mode_to_delete(self):
 		self.mode = 'D'
-		# wait for S4-create-round-trip before removing
-		wait_for_s4connector()
 
 	def set_active(self):
 		self.active = True
@@ -400,6 +396,7 @@ class ImportFile:
 			print 'SCHOOL DATA     :\n%s' % str(self.user_import)
 			if pre_result != post_result != str(self.user_import):
 				raise UserHookResult()
+			wait_for_s4connector()
 		finally:
 			hooks.cleanup()
 			try:

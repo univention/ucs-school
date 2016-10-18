@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-38) unstable; urgency=low
+
+  * Bug #41469: wait for s4 connector after each import run
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 18 Oct 2016 08:37:23 +0200
+
 ucs-test-ucsschool (3.0.16-37) unstable; urgency=low
 
   * Bug #41469: normalize given names like import does, enable debug output

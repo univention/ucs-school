@@ -12,7 +12,6 @@ import copy
 import os.path
 import univention.testing.strings as uts
 import univention.testing.utils as utils
-from univention.testing.ucs_samba import wait_for_s4connector
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester, PyHooks
 from essential.importusers import Person
 
@@ -86,7 +85,6 @@ class Test(CLI_Import_v2_Tester):
 				self.save_ldap_status()
 				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
-				wait_for_s4connector()
 				# check for new users in LDAP
 				self.check_new_and_removed_users(0, 0)
 
