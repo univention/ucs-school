@@ -24,13 +24,13 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.admin.uldap import explodeDn
 from univention.config_registry import handler_set
-from ucsschool.lib.models import  utils as lib_utils
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import TestUserCsvExporter
+from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose
 
 CONFIG = os.path.join(os.path.dirname(__file__), "factoryconftest.json")
-lib_utils.logger.handlers = lib_utils.get_logger("ucs-test", level="DEBUG").handlers
+make_stdout_verbose()
 
 class Bunch(object):
 	def __init__(self, **kwds):
@@ -46,7 +46,7 @@ class FactoryConfTest(object):
 		self.ou_name2 = None
 		self.ou_dn2 = None
 		self.lo = None
-		self.logger = lib_utils.logger
+		self.logger = get_logger()
 		self.test_user_exporter = TestUserCsvExporter()
 		self.test_user_creator = None
 
@@ -92,7 +92,7 @@ class FactoryConfTest(object):
 	def create_csv(self):
 		csvfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
 		self.logger.info("*** Writing user information to CSV file '%s'...", csvfile.name)
-		users = [x for x in self.test_user_creator.make_users()]
+		users = list(self.test_user_creator.make_users())
 		self.test_user_exporter.dump(users, csvfile.name)
 		return users, csvfile
 
@@ -273,8 +273,8 @@ class FactoryConfTest(object):
 		jsout = json.load(outfile)
 		if len(jsout) != 8:
 			utils.fail("Expected %d objects in export, found %d." % (8, len(jsout)))
-		vn_in = {x["Vorname"] for x in users}
-		vn_out = {ImportUser.normalize(x["firstname"]) for x in jsout}
+		vn_in = {ImportUser.normalize(x["Vorname"]) for x in users}
+		vn_out = {x["firstname"] for x in jsout}
 		if vn_in.difference(vn_out):
 			utils.fail("Input and output does not match:\nvn_in=%r\nvn_out=%r\nvn_in.difference(vn_out)=%r" % (
 				vn_in, vn_out, vn_in.difference(vn_out)))

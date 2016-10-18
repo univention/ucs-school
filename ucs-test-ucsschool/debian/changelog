@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-37) unstable; urgency=low
+
+  * Bug #41469: normalize given names like import does, enable debug output
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 18 Oct 2016 08:14:58 +0200
+
 ucs-test-ucsschool (3.0.16-36) unstable; urgency=low
 
   * Bug #40527: reactivate 04_ucs-school-reset-password-check
