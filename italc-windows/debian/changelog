@@ -1,3 +1,10 @@
+italc-windows (3.0.3-1) unstable; urgency=medium
+
+  * Bug #38221: revert removing iTALC Master from installer
+  * Bug #38415: rebase to latest iTALC 3.0.0
+
+ -- Florian Best <best@univention.de>  Wed, 19 Oct 2016 15:06:49 +0200
+
 italc-windows (3.0.2-2) unstable; urgency=medium
 
   * Bug #38415: switch to ucs-school-4.1 branch and rebase

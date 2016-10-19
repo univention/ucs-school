@@ -71,7 +71,7 @@ fi
 #
 apt-get update
 apt-get install -y --force-yes git subversion cmake nsis tofrodos gcj-jdk make
-apt-get --no-install-recommends install -y --force-yes qt5base-mingw-w64  gcc-mingw-w64  g++-mingw-w64 openssl-mingw-w64 libz-mingw-w64-dev libpng-mingw-w64 libjpeg-mingw-w64
+apt-get --no-install-recommends install -y --force-yes qt5base-mingw-w64 qt5tools-mingw-w64 gcc-mingw-w64 g++-mingw-w64 openssl-mingw-w64 libz-mingw-w64-dev libpng-mingw-w64 libjpeg-mingw-w64 qt4-linguist-tools 
 
 #
 # get source
