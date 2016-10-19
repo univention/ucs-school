@@ -12,6 +12,7 @@ import copy
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
+from univention.testing.ucs_samba import wait_for_drs_replication
 
 
 class Test(CLI_Import_v2_Tester):
@@ -48,10 +49,12 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(config=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
+			wait_for_drs_replication('cn={}'.format(person.username))
 			self.check_new_and_removed_users(1, 0)
 			person.verify()
 
-			self.log.info('*** Importing a new single user with role %r and same email address %r...', role, email)
+			self.log.info('*** Importing a new single user with role %r and same email address %r (and thus deleting '
+				'previously imported user)...', role, email)
 			person = Person(self.ou_A.name, role)
 			record_uid = uts.random_name()
 			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)

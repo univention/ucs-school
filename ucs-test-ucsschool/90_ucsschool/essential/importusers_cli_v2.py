@@ -20,7 +20,6 @@ import univention.testing.udm
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
-from univention.testing.ucs_samba import wait_for_s4connector
 
 
 class Bunch(object):
@@ -316,7 +315,6 @@ class CLI_Import_v2_Tester(object):
 		if fail_on_error and exitcode:
 			self.log.error('As requested raising an exception due to non-zero exit code')
 			raise ImportException('Non-zero exit code %r' % (exitcode,))
-		wait_for_s4connector()
 		return exitcode
 
 	def check_new_and_removed_users(self, exp_new, exp_removed):

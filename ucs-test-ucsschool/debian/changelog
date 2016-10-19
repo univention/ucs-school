@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.16-39) unstable; urgency=low
+
+  * Bug #41469: do not use wait_for_s4connector() after each import run, it
+    makes jenkins run way to long. Try to compensate with
+    wait_for_drs_replication().
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 19 Oct 2016 08:18:48 +0200
+
 ucs-test-ucsschool (3.0.16-38) unstable; urgency=low
 
   * Bug #41469: wait for s4 connector after each import run
