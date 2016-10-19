@@ -1,0 +1,22 @@
+ucs-school-l10n-fr (1.1.0-0) unstable; urgency=medium
+
+  * Bug #41777:
+    - rebuild with updated translation-template to include more special
+      cases
+    - merged current UCS@school 4.1r2 branch into the received french
+      translation to include new and changed msgids
+    - renamed package
+
+ -- Eduard Mai <mai@univention.de>  Wed, 19 Oct 2016 14:54:39 +0200
+
+ucs-school-translation-fr (1.0.1-0) unstable; urgency=medium
+
+  * Bug #41777: restructure Makefile, addtional targets
+
+ -- Eduard Mai <mai@univention.de>  Fri, 09 Sep 2016 17:04:00 +0200
+
+ucs-school-translation-fr (1.0.0-1) unstable; urgency=medium
+
+  * Inital release
+
+ -- Eduard Mai <mai@univention.de>  Fri, 19 Aug 2016 15:56:43 +0200

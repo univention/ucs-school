@@ -1,0 +1,81 @@
+# Copyright 2003-2016 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of the software contained in this package
+# as well as the source package itself are made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this package provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use the software under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+#
+# Nicolas Ternisien <nicolas@bureau-cornavin.com>, 2016.
+# Éric Bischoff <ebischoff@bureau-cornavin.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: univention-management-console-helpdesk 0.1\n"
+"Report-Msgid-Bugs-To: forge.univention.org\n"
+"POT-Creation-Date: 2016-10-19 03:18+0200\n"
+"PO-Revision-Date: 2016-07-03 17:11+0100\n"
+"Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
+"Language-Team: German <fr@bureau-cornavin.com>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:94
+msgid "Basic Values"
+msgstr "Valeurs de base"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:81
+msgid "Category"
+msgstr "Catégorie"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:70
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:71
+msgid "Description"
+msgstr "Description"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:94
+msgid "General"
+msgstr "Général"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:82
+msgid "Helpdesk Category"
+msgstr "Catégorie du centre d'aide"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:60
+msgid "Name"
+msgstr "Nom"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:61
+msgid "Name of Console-Helpdesk-Settings-Object"
+msgstr "Nom de l'objet Console-Helpdesk-Settings"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:51
+msgid "Settings for Univention Console Helpdesk Module"
+msgstr "Réglages du module d'aide de la console Univention"
+
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:50
+msgid "Settings: Console Helpdesk"
+msgstr "Configuration : centre d'aide de la console"
