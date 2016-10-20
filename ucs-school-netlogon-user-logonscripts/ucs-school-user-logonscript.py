@@ -462,7 +462,7 @@ def gidShares(gid):
 
 
 def userchange(dn, new, old):
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: sync by user')
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: sync by user (dn=%r, new=%r)' % (dn, new))
 
 	global scriptpath
 
@@ -480,14 +480,17 @@ def userchange(dn, new, old):
 
 			if new == 'search': # called from groupchange
 				try:
-					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: got to search %s' % dn)
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: got to search %s' % (dn,))
 					res = lo.search(base=dn, scope="base", filter='objectClass=*')
 					if len(res) > 0:
 						new = res[0][1]
 						# get groups we are member of:
 						membershipIDs.add(new['gidNumber'][0])
-				except:
-					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: LDAP-search failed for user %s in userchange()' % (dn))
+				except ldap.NO_SUCH_OBJECT:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: userchange(): user %r not found' % (dn,))
+					return
+				except Exception:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: LDAP-search failed for user %s in userchange()' % (dn))
 					raise
 			else:
 				membershipIDs.add(new['gidNumber'][0])
@@ -500,10 +503,10 @@ def userchange(dn, new, old):
 
 			# Gruppen suchen mit uniqueMember=dn
 			# shares suchen mit GID wie Gruppe
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: handle user %s' % dn)
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: handle user %s' % (dn,))
 			membershipIDs.update(userGids(dn))
 
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: groups are %s' % membershipIDs)
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: groups are %s' % (membershipIDs,))
 
 			mappings = {}
 			classre = re.compile('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),(?:ou=[^,]+,)?%s$' % re.escape(ldapbase))
@@ -541,7 +544,7 @@ def userchange(dn, new, old):
 						if classmatches and len(classmatches.groups()) == 2:
 							mappings[linkname] = {'server': hostname, 'letter': classShareLetter}
 
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: links %s" % links)
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: links %s" % (links,))
 
 			writeWindowsLinkSkripts(new['uid'][0], links, mappings, dn)
 			if listener.baseConfig.is_true("ucsschool/userlogon/mac"):
