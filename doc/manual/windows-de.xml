@@ -189,8 +189,8 @@ invoke-rc.d univention-directory-listener restart
 	  </figure>
 	<para>
 	  iTALC bringt ein Installationsprogramm mit, das durch alle notwendigen Schritte führt. Während
-	  der Installation sollte nur der <emphasis>iTALC Service</emphasis> installiert und der
-	  <emphasis>iTALC Master</emphasis> abgewählt werden.
+	  der Installation sollte nur der <emphasis>iTALC Service</emphasis> installiert werden. Der
+	  <emphasis>iTALC Master</emphasis> wird für die Funktion von UCS@school nicht benötigt.
 	</para>
 	<para>
 	  Nach der Installation von iTALC auf dem Windows-Client muss der öffentliche Schlüssel
