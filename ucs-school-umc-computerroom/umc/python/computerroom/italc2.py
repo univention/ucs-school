@@ -144,6 +144,7 @@ class LockableAttribute(object):
 		self._lock = locking and threading.Lock() or None
 		# MODULE.info('Locking object: %s' % self._lock)
 		self._old = initial_value
+		self._has_changed = False
 		self._current = copy.deepcopy(initial_value)
 
 	def lock(self):
@@ -181,7 +182,8 @@ class LockableAttribute(object):
 	@property
 	def hasChanged(self):
 		self.lock()
-		diff = self._old != self._current
+		diff = self._has_changed
+		self._has_changed = False
 		self._old = copy.deepcopy(self._current)
 		self.unlock()
 		return diff
@@ -195,6 +197,8 @@ class LockableAttribute(object):
 	def set(self, value, force=False):
 		self.lock()
 		if value != self._current or force:
+			if value != self._current:
+				self._has_changed = True
 			self._old = copy.deepcopy(self._current)
 			self._current = copy.deepcopy(value)
 		self.unlock()

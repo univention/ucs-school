@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (8.0.6-1) unstable; urgency=low
+
+  * Bug #41752: fixed logic of "hasChanged"
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 21 Oct 2016 14:00:21 +0200
+
 ucs-school-umc-computerroom (8.0.5-2) unstable; urgency=low
 
   * Bug #42221: Corrected some typos.
