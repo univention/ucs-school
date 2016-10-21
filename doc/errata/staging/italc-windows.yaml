@@ -3,8 +3,10 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: italc-windows
-fix: 
+fix: 3.0.3-2.8.201610211631
 desc: |
  This update addresses the following issue(s):
- * iTalc has been updated to 3.0-0.
-bug: [38415]
+ * iTALC has been updated to 3.0-0 (Bug #38415).
+ * iTALC-Master is not selected by default in the iTALC installer anymore
+   (Bug #38221).
+bug: [38415, 38221]
