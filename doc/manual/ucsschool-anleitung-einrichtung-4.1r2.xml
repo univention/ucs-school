@@ -108,7 +108,7 @@ feedback@univention.de
 					  Webdienste</title>
 				  <mediaobject>
 					  <imageobject>
-						  <imagedata fileref="Szenarien/1_zentrale.png" />
+						  <imagedata fileref="illustrations41/1_zentrale.png" />
 					  </imageobject>
 					  <textobject><phrase>Szenario 1: Zentraler Verzeichnisdienst
 							  für Webdienste</phrase></textobject>
@@ -132,7 +132,7 @@ feedback@univention.de
 					  Schulen, ggf. inkl. Webdienste</title>
 				  <mediaobject>
 					  <imageobject>
-						  <imagedata fileref="Szenarien/2_zentrale_wlan.png" />
+						  <imagedata fileref="illustrations41/2_zentrale_wlan.png" />
 					  </imageobject>
 					  <textobject><phrase>Szenario 2: Zentraler Verzeichnisdienst
 							  und WLAN für Schulen, ggf. inkl.
@@ -159,7 +159,7 @@ feedback@univention.de
 					  Schulserver an den Schulen und Softwareverteilung</title>
 				  <mediaobject>
 					  <imageobject>
-						  <imagedata fileref="Szenarien/3_zentrale_wlan_schulserver.png" />
+						  <imagedata fileref="illustrations41/3_zentrale_wlan_schulserver.png" />
 					  </imageobject>
 					  <textobject><phrase>Szenario 3: Zentraler Verzeichnisdienst
 							  und WLAN mit Schulserver an den Schulen und
@@ -183,7 +183,7 @@ feedback@univention.de
 					  Schulserver im Rechenzentrum und Softwareverteilung</title>
 				  <mediaobject>
 					  <imageobject>
-						  <imagedata fileref="Szenarien/4_zentrale_wlan_schulserver_rz.png" />
+						  <imagedata fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" />
 					  </imageobject>
 					  <textobject><phrase>Szenario 4: Zentraler Verzeichnisdienst
 							  und WLAN mit Schulserver im Rechenzentrum und
