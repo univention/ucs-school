@@ -13,6 +13,7 @@
 
 import univention.config_registry as config_registry
 import subprocess
+from ldap.dn import escape_dn_chars
 import univention.testing.udm as udm_test
 import univention.testing.strings as uts
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
@@ -31,7 +32,7 @@ if __name__ == "__main__":
 		user = udm.create_user(username=username, password=password)
 
 		print "Waiting for DRS replication..."
-		wait_for_drs_replication("(sAMAccountName=%s)" % (username,), attrs="objectSid")
+		wait_for_drs_replication("(sAMAccountName=%s)" % (escape_dn_chars(username),), attrs="objectSid")
 		wait_for_s4connector()
 
 		cmd = ("/usr/bin/smbclient", "-U%s%%%s" % (username, password), "//%s/sysvol" % ucr.get('hostname'), '-c', 'ls')

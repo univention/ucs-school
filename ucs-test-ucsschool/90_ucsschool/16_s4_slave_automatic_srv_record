@@ -13,6 +13,7 @@ import sys
 sys.dont_write_bytecode = True
 import subprocess
 import time
+from ldap.dn import escape_dn_chars
 import univention.testing.utils as testing_utils
 import univention.testing.ucr as testing_ucr
 import univention.testing.udm as testing_udm
@@ -153,7 +154,7 @@ class Test():
 				dummy_password = uts.random_string()
 				udm.create_user(username=dummy_username, password=dummy_password)
 				testing_utils.wait_for_replication_and_postrun()
-				wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
+				wait_for_drs_replication("(sAMAccountName=%s)" % (escape_dn_chars(dummy_username),), attrs="sAMAccountName")
 
 				# The replication in a multi shool environment need more time
 				time.sleep(15)
@@ -195,7 +196,7 @@ class Test():
 			dummy_password = uts.random_string()
 			udm.create_user(username=dummy_username, password=dummy_password)
 			testing_utils.wait_for_replication_and_postrun()
-			wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
+			wait_for_drs_replication("(sAMAccountName=%s)" % (escape_dn_chars(dummy_username),), attrs="sAMAccountName")
 		# The replication in a multi shool environment need more time
 		time.sleep(15)
 

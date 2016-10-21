@@ -8,6 +8,7 @@
 ## exposure: careful
 
 from sys import exit
+from ldap.dn import escape_dn_chars
 
 from essential.test_samba4 import TestSamba4
 
@@ -79,7 +80,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 												 username=student_name,
 												 password=student_password)[1]
 
-		wait_for_drs_replication("(sAMAccountName=%s)" % student_name,
+		wait_for_drs_replication("(sAMAccountName=%s)" % escape_dn_chars(student_name),
 								 attrs="objectSid")
 		wait_for_s4connector()
 		return student_name, student_dn, student_password

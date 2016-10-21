@@ -9,6 +9,7 @@
 ## bugs: [41544]
 
 import copy
+from ldap.dn import escape_dn_chars
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
@@ -49,7 +50,7 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(config=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
-			wait_for_drs_replication('cn={}'.format(person.username))
+			wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
 			self.check_new_and_removed_users(1, 0)
 			person.verify()
 
