@@ -193,7 +193,7 @@ ExecWait '"$INSTDIR\ica.exe" -quiet -startservice'
 WriteRegDWORD ${REG_ROOT} "SYSTEM\CurrentControlSet\Control\Lsa"  "ForceGuest" "0"
 SectionEnd
 
-Section "iTALC Master"
+Section /o "iTALC Master"
 ${INSTALL_TYPE}
 SetOutPath "$INSTDIR"
 File "italc-${VERSION}\italc.exe"
