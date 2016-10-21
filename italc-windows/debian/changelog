@@ -1,3 +1,9 @@
+italc-windows (3.0.3-2) unstable; urgency=medium
+
+  * Bug #38221: deselect iTALC Master in installer
+
+ -- Florian Best <best@univention.de>  Fri, 21 Oct 2016 16:24:54 +0200
+
 italc-windows (3.0.3-1) unstable; urgency=medium
 
   * Bug #38221: revert removing iTALC Master from installer
