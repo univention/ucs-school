@@ -30,7 +30,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import ldap
+from ldap.dn import dn2str, str2dn
+from ldap.filter import filter_format
 import ipaddr
 
 from ucsschool.lib.models.attributes import DHCPServiceName, Attribute, DHCPSubnetName, DHCPSubnetMask, BroadcastAddress, DHCPServiceAttribute, DHCPServerName
@@ -100,7 +101,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 					logger.info('Skipping invalid interface %s:\n%s', interface_name, exc)
 			subnet_dns = DHCPSubnet.find_all_dns_below_base(old_dhcp_server_container, lo)
 			for subnet_dn in subnet_dns:
-				dhcp_subnet = DHCPSubnet.from_dn(subnet_dn, self.school, lo, superordinate=self)
+				dhcp_subnet = DHCPSubnet.from_dn(subnet_dn, self.school, lo, superordinate=self.get_udm_object(lo))
 				subnet = dhcp_subnet.get_ipv4_subnet()
 				if subnet in interfaces: # subnet matches any local subnet
 					logger.info('Creating new DHCPSubnet from %s', subnet_dn)
@@ -134,9 +135,9 @@ class AnyDHCPService(DHCPService):
 	def get_servers(self, lo):
 		old_name = self.name
 		old_position = self.position
-		old_dn = ldap.dn.str2dn(self.old_dn or self.dn)
-		self.position = ldap.dn.dn2str(old_dn[1:])
-		self.name = ldap.dn.dn2str(old_dn[0]).split('=', 1)[-1]
+		old_dn = str2dn(self.old_dn or self.dn)
+		self.position = dn2str(old_dn[1:])
+		self.name = old_dn[0][0][1]
 		try:
 			return super(AnyDHCPService, self).get_servers(lo)
 		finally:
@@ -155,14 +156,15 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):
 		return cls.get_search_base(school).dhcp
 
-	def get_superordinate(self):
-		return self.dhcp_service
+	def get_superordinate(self, lo):
+		if self.dhcp_service:
+			return self.dhcp_service.get_udm_object(lo)
 
 	@classmethod
 	def find_any_dn_with_name(cls, name, lo):
 		logger.debug('Searching first dhcpServer with cn=%s', name)
 		try:
-			dn = lo.searchDn(filter='(&(objectClass=dhcpServer)(cn=%s))' % name, base=ucr.get('ldap/base'))[0]
+			dn = lo.searchDn(filter=filter_format('(&(objectClass=dhcpServer)(cn=%s))', [name]), base=ucr.get('ldap/base'))[0]
 		except IndexError:
 			dn = None
 		logger.debug('... %r found', dn)
@@ -186,8 +188,9 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):
 		return cls.get_search_base(school).dhcp
 
-	def get_superordinate(self):
-		return self.dhcp_service
+	def get_superordinate(self, lo):
+		if self.dhcp_service:
+			return self.dhcp_service.get_udm_object(lo)
 
 	def get_ipv4_subnet(self):
 		network_str = '%s/%s' % (self.name, self.subnet_mask)

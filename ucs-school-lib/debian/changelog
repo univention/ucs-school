@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.26-1) unstable; urgency=medium
+
+  * Bug #42736: Fix UDM superordinate handling
+
+ -- Florian Best <best@univention.de>  Mon, 24 Oct 2016 13:05:38 +0200
+
 ucs-school-lib (9.0.25-1) unstable; urgency=medium
 
   * Bug #42461: Also get TeachersAndStaff users when querying for teachers in

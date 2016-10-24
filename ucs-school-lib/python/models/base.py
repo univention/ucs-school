@@ -439,7 +439,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		try:
 			pos.setDn(container)
-			udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, superordinate=self.get_superordinate())
+			udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, superordinate=self.get_superordinate(lo))
 			udm_obj.open()
 
 			# here is the real logic
@@ -644,7 +644,7 @@ class UCSSchoolHelperAbstractClass(object):
 		self.init_udm_module(lo)
 		if self._udm_obj_searched is False or (self._udm_obj and self._udm_obj.lo.binddn != lo.binddn):
 			dn = self.old_dn or self.dn
-			superordinate = self.get_superordinate()
+			superordinate = self.get_superordinate(lo)
 			if dn is None:
 				logger.debug('Getting %s UDM object: No DN!', self.__class__.__name__)
 				return
@@ -677,7 +677,7 @@ class UCSSchoolHelperAbstractClass(object):
 			logger.warning('%r does not exist!', school)
 			return None
 
-	def get_superordinate(self):
+	def get_superordinate(self, lo):
 		return None
 
 	def get_own_container(self):
