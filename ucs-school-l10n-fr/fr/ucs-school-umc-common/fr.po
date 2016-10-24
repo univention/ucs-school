@@ -15,8 +15,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 1.5\n"
 
-#~ msgid "Education"
-#~ msgstr "Enseignement"
+msgid "Education"
+msgstr "Enseignement"
 
-#~ msgid "School administration"
-#~ msgstr "Administration de l'école"
+msgid "School administration"
+msgstr "Administration de l'école"

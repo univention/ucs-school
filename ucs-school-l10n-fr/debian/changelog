@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (1.1.0-2) unstable; urgency=medium
+
+  * Bug #41777: fixed translation of category names
+
+ -- Eduard Mai <mai@univention.de>  Mon, 24 Oct 2016 19:25:31 +0200
+
 ucs-school-l10n-fr (1.1.0-1) unstable; urgency=medium
 
   * Bug #41777: check and correct fuzzy entries
