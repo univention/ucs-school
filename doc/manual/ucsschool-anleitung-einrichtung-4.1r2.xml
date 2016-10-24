@@ -104,7 +104,7 @@ feedback@univention.de
 		<section id="scenario-1">
 			<title>Szenario 1: Zentraler Verzeichnisdienst für
 				Webdienste</title>
-			<figure>
+			<figure id="fig-scenario-1">
 				<title>Szenario 1: Zentraler Verzeichnisdienst für
 					Webdienste</title>
 				<mediaobject>
@@ -128,7 +128,7 @@ feedback@univention.de
 		<section id="scenario-2">
 			<title>Szenario 2: Zentraler Verzeichnisdienst und WLAN für
 				Schulen, ggf. inkl. Webdienste</title>
-			<figure>
+			<figure id="fig-scenario-2">
 				<title>Szenario 2: Zentraler Verzeichnisdienst und WLAN für
 					Schulen, ggf. inkl. Webdienste</title>
 				<mediaobject>
@@ -155,7 +155,7 @@ feedback@univention.de
 		<section id="scenario-3">
 			<title>Szenario 3: Zentraler Verzeichnisdienst und WLAN mit
 				Schulserver an den Schulen und Softwareverteilung</title>
-			<figure>
+			<figure id="fig-scenario-3">
 				<title>Szenario 3: Zentraler Verzeichnisdienst und WLAN mit
 					Schulserver an den Schulen und Softwareverteilung</title>
 				<mediaobject>
@@ -179,7 +179,7 @@ feedback@univention.de
 		<section id="scenario-4">
 			<title>Szenario 4: Zentraler Verzeichnisdienst und WLAN mit
 				Schulserver im Rechenzentrum und Softwareverteilung</title>
-			<figure>
+			<figure id="fig-scenario-4">
 				<title>Szenario 4: Zentraler Verzeichnisdienst und WLAN mit
 					Schulserver im Rechenzentrum und Softwareverteilung</title>
 				<mediaobject>
@@ -206,7 +206,7 @@ feedback@univention.de
 		<para>
 			In vergangenen Projekten haben sich folgende Schritte bewährt:
 		</para>
-		<section>
+		<section id="preparations:workshop">
 			<title>Workshop mit Partner und/oder Hersteller</title>
 			<para>
 				Dabei werden Konzepte erstellt oder besprochen, es findet ein
@@ -216,7 +216,7 @@ feedback@univention.de
 				Demo-Schule installiert.
 			</para>
 		</section>
-		<section>
+		<section id="preparations:info">
 			<title>Info-Veranstaltung für die Schulen</title>
 			<para>
 				Die Demo-Schule kann dann dazu dienen das System initial zu
@@ -235,7 +235,7 @@ feedback@univention.de
 				Projekts bei.
 			</para>
 		</section>
-		<section>
+		<section id="preparations:school-selection">
 			<title>Schulen auswählen</title>
 			<para>
 				Es empfiehlt sich die ersten Schulen nach gewissen Kriterien
@@ -252,7 +252,7 @@ feedback@univention.de
 				in aller Regel mit der Zeit nach.
 			</para>
 		</section>
-		<section>
+		<section id="preparations:training">
 			<title>Schulung</title>
 			<para>
 				Die Lehrkräfte müssen im Umgang mit den Rechnern und
@@ -269,7 +269,7 @@ feedback@univention.de
 			Projekten des Professional Services Team von Univention bewährt
 			haben.
 		</para>
-		<section>
+		<section id="concepts:network">
 			<title>Netzkonzept</title>
 			<para>
 				<emphasis>für Szenario 2, 3 und 4</emphasis>
@@ -328,7 +328,7 @@ feedback@univention.de
 				10.1.0.10)
 			</para>
 		</section>
-		<section>
+		<section id="concepts:names">
 			<title>Namenskonzept</title>
 			<para>
 				In einer UCS@school-Domäne müssen viele Namen eindeutig sein,
@@ -338,7 +338,7 @@ feedback@univention.de
 				sein werden, ist es hilfreich bereits am Namen selbst ein Objekt
 				und seine grundlegenden Eigenschaften identifizieren zu können.
 			</para>
-			<section>
+			<section id="concepts:names:domain">
 				<title>Name der Domäne</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
@@ -432,7 +432,7 @@ feedback@univention.de
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section id="concepts:names:servers">
 				<title>Zentrale Server</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
@@ -443,7 +443,7 @@ feedback@univention.de
 					ucssl04, UCS Memberserver: ucsme05
 				</para>
 			</section>
-			<section>
+			<section id="concepts:names:clients-and-servers">
 				<title>Clients und Schulserver</title>
 				<para>
 					<emphasis>für Szenario 3 und 4</emphasis>
@@ -465,7 +465,7 @@ feedback@univention.de
 					Schulverwaltung: sadm042-01
 				</para>
 			</section>
-			<section>
+			<section id="concepts:names:user-classes">
 				<title>Benutzerkonten und Klassen</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
@@ -488,7 +488,7 @@ feedback@univention.de
 					042-1b, 011-5a, 011-5b
 				</para>
 			</section>
-			<section>
+			<section id="concepts:names:misc">
 				<title>Weiteres</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
@@ -502,7 +502,7 @@ feedback@univention.de
 				</para>
 			</section>
 		</section>
-		<section>
+		<section id="concepts:backup">
 			<title>Datensicherung</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
@@ -540,7 +540,7 @@ feedback@univention.de
 				ein Monitoring-Plugin, dass bei Misserfolg warnt
 			</para>
 		</section>
-		<section>
+		<section id="concepts:support">
 			<title>Support-Kanäle</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
@@ -604,9 +604,9 @@ feedback@univention.de
 			des Systems durch eine Monitoring-Software überwacht und die den
 			VMs zugeteilten Ressourcen bei Bedarf anpassen kann.
 		</para>
-		<section>
+		<section id="infrastructure-and_hardware-requirements:servers">
 			<title>Zentrale Server</title>
-			<section>
+			<section id="infrastructure-and_hardware-requirements:servers:master">
 				<title>UCS Master und UCS Backup für das Identity
 					Management</title>
 				<para>
@@ -637,7 +637,7 @@ feedback@univention.de
 					Backup Server installiert werden.
 				</para>
 			</section>
-			<section>
+			<section id="infrastructure-and_hardware-requirements:servers:slave">
 				<title>UCS Slave für Webdienste / Groupware / Collaboration /
 					Lernplattformen</title>
 				<para>
@@ -655,7 +655,7 @@ feedback@univention.de
 					Software
 				</para>
 			</section>
-			<section>
+			<section id="infrastructure-and_hardware-requirements:servers:radius">
 				<title>UCS Slave für RADIUS</title>
 				<para>
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
@@ -665,7 +665,7 @@ feedback@univention.de
 					Speicherplatz
 				</para>
 			</section>
-			<section>
+			<section id="infrastructure-and_hardware-requirements:servers:monitoring">
 				<title>UCS Memberserver für Monitoring</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
@@ -676,9 +676,9 @@ feedback@univention.de
 				</para>
 			</section>
 		</section>
-		<section>
+		<section id="infrastructure-and_hardware-requirements:school">
 			<title>Dezentrale Systeme</title>
-			<section>
+			<section id="infrastructure-and_hardware-requirements:school:server">
 				<title>UCS Slave als Schulserver</title>
 				<para>
 					<emphasis>für Szenarien 3 und 4</emphasis>
@@ -703,9 +703,9 @@ feedback@univention.de
 				</para>
 			</section>
 		</section>
-		<section>
+		<section id="infrastructure-and_hardware-requirements:infrastructure">
 			<title>Infrastruktur</title>
-			<section>
+			<section id="infrastructure-and_hardware-requirements:infrastructure:vpn">
 				<title>VPN oder Standleitung</title>
 				<para>
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
@@ -761,7 +761,7 @@ feedback@univention.de
 				</para>
 			</listitem>
 		</itemizedlist>
-		<section>
+		<section id="installation:master">
 			<title>Installation UCS Master</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis> - vergeben einer
@@ -784,7 +784,7 @@ feedback@univention.de
 				ausstehenden Joinskripte aus (UMC → Domäne → Domänenbeitritt)
 			</para>
 		</section>
-		<section>
+		<section id="installation:backup">
 			<title>Installation UCS Backup</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis> - vergeben einer
@@ -805,7 +805,7 @@ feedback@univention.de
 				aus (UMC → Domäne → Domänenbeitritt)
 			</para>
 		</section>
-		<section>
+		<section id="installation:slave">
 			<title>Installation UCS Slave für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
 			<para>
@@ -829,7 +829,7 @@ feedback@univention.de
 				→ Domänenbeitritt)
 			</para>
 		</section>
-		<section>
+		<section id="installation:member">
 			<title>Installation UCS Memberserver für Monitoring</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis> - vergeben einer
@@ -861,7 +861,7 @@ feedback@univention.de
 			<emphasis role="strong">vor</emphasis> dem Anlegen der ersten
 			Schulen umgesetzt werden:
 		</para>
-		<section>
+		<section id="base-configuration:globale-ucr">
 			<title>Globale UCR-Richtlinie</title>
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -945,7 +945,7 @@ feedback@univention.de
 				</listitem>
 			</itemizedlist>
 		</section>
-		<section>
+		<section id="base-configuration:central-ucr">
 			<title>Zentale UCR-Richtlinie</title>
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1057,7 +1057,7 @@ feedback@univention.de
 			unabhängig von der UCS Domäne abgelegt, gesichert und versioniert
 			werden.
 		</para>
-		<section>
+		<section id="import:schools">
 			<title>Schulen</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
@@ -1151,7 +1151,7 @@ feedback@univention.de
 				</listitem>
 			</itemizedlist>
 		</section>
-		<section>
+		<section id="import:networks">
 			<title>Netzwerke</title>
 			<para>
 				<emphasis>für Szenarien 2, 3 und 4</emphasis>
@@ -1186,7 +1186,7 @@ feedback@univention.de
 				erstellt.
 			</para>
 		</section>
-		<section>
+		<section id="import:clients">
 			<title>Clients</title>
 			<para>
 				<emphasis>für Szenarien 2, 3 und 4</emphasis>
@@ -1217,7 +1217,7 @@ feedback@univention.de
 				</listitem>
 			</itemizedlist>
 		</section>
-		<section>
+		<section id="import:printers">
 			<title>Drucker-Freigaben</title>
 			<para>
 				<emphasis>für Szenarien 3 und 4</emphasis>
@@ -1248,7 +1248,7 @@ feedback@univention.de
 				</listitem>
 			</itemizedlist>
 		</section>
-		<section>
+		<section id="import:users-classes">
 			<title>Benutzer / Klassen</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
@@ -1272,7 +1272,7 @@ feedback@univention.de
 	</chapter>
 	<chapter id="additional-services">
 		<title>Weitere Angebote einrichten</title>
-		<section>
+		<section id="additional-services:radius">
 			<title>WLAN / RADIUS</title>
 			<para>
 				<emphasis>für Szenarien 2, 3 und 4</emphasis>
@@ -1281,7 +1281,7 @@ feedback@univention.de
 				TODO
 			</para>
 		</section>
-		<section>
+		<section id="additional-services:proxy">
 			<title>Internetzugang für Clients</title>
 			<para>
 				<emphasis>für Szenarien 2, 3 und 4</emphasis>
@@ -1290,7 +1290,7 @@ feedback@univention.de
 				TODO
 			</para>
 		</section>
-		<section>
+		<section id="additional-services:factory">
 			<title>Schulserver-Rollout</title>
 			<para>
 				<emphasis>für Szenarien 3 und 4</emphasis> &quot;Factory&quot;
@@ -1300,7 +1300,7 @@ feedback@univention.de
 				TODO
 			</para>
 		</section>
-		<section>
+		<section id="additional-services:opsi">
 			<title>OPSI Softwareverteilung</title>
 			<para>
 				<emphasis>für Szenarien 3 und 4</emphasis> Serverinstallation
@@ -1310,7 +1310,7 @@ feedback@univention.de
 				TODO
 			</para>
 		</section>
-		<section>
+		<section id="additional-services:quota">
 			<title>Quota</title>
 			<para>
 				<emphasis>für Szenarien 3 und 4</emphasis>
@@ -1319,7 +1319,7 @@ feedback@univention.de
 				TODO
 			</para>
 		</section>
-		<section>
+		<section id="additional-services:gpos">
 			<title>Gruppenrichtlinien</title>
 			<para>
 				<emphasis>für Szenarien 3 und 4</emphasis>
