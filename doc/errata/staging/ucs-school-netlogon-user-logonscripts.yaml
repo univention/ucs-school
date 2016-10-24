@@ -15,5 +15,9 @@ desc: |
  * The listener module for generating NETLOGON scripts for all UCS@school
    users failed with a traceback if one of the scanned group members could
    not be found in LDAP (e.g. users of another school). In this case
-   incomplete logon scripts may have been generated. To recreate all NETLOGON script, please run "univention-directory-listener ctrl ucs-school-user-logonscript". This command takes quite some time and meanwhile the LDAP replication is stopped (Bug #42457).
+   incomplete logon scripts may have been generated. To recreate all NETLOGON
+   scripts, please run
+   "univention-directory-listener ctrl ucs-school-user-logonscript". This
+   command takes quite some time and meanwhile the LDAP replication is stopped
+   (Bug #42457).
 bug: [41173, 42457]
