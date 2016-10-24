@@ -236,7 +236,6 @@ msgstr ""
 "Modifier » ou en cliquant sur la valeur de la première colonne « Action »."
 
 #: umc/js/schoolcsvimport.js:695
-#, fuzzy
 msgid ""
 "The birthdate does not follow the format for dates. Please change the "
 "birthdate."

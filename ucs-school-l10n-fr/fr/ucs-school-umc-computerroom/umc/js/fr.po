@@ -452,12 +452,10 @@ msgstr ""
 "Veuillez sélectionner une autre salle."
 
 #: umc/js/computerroom.js:441 umc/js/computerroom.js:462
-#, fuzzy
 msgid "The selected computers are being locked."
-msgstr "Les ordinateurs sélectionnés sont déverrouillés."
+msgstr "Les ordinateurs sélectionnés sont verrouillés."
 
 #: umc/js/computerroom.js:441 umc/js/computerroom.js:462
-#, fuzzy
 msgid "The selected computers are being unlocked."
 msgstr "Les ordinateurs sélectionnés sont déverrouillés."
 

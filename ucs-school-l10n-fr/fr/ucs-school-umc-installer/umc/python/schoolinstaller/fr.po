@@ -32,7 +32,7 @@ msgstr ""
 "valides."
 
 #: umc/python/schoolinstaller/__init__.py:668
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Cannot connect to the master domain controller system %s. Please make sure "
 "that the system is reachable. If not this could be due to wrong DNS name "
@@ -111,12 +111,10 @@ msgid "Preparing domain join..."
 msgstr "Préparation pour rejoindre le domaine..."
 
 #: umc/python/schoolinstaller/__init__.py:639
-#, fuzzy
 msgid "Server type has to be set for domain controller slave"
 msgstr "Le type de serveur doit être défini à contrôleur de domaine esclave"
 
 #: umc/python/schoolinstaller/__init__.py:397
-#, fuzzy
 msgid ""
 "Software packages have been installed successfully, however, some join "
 "scripts could not be executed. More details can be found in the log file /"

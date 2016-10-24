@@ -25,7 +25,6 @@ msgstr ""
 "correspondant doit d'abord être supprimé."
 
 #: umc/js/schoolinstaller.js:100
-#, fuzzy
 msgid ""
 "<p>In a multi server environment, the master domain controller system is "
 "configured as central instance hosting the complete set of LDAP data. Each "
@@ -67,7 +66,6 @@ msgstr ""
 "performance dans de grands environnements.</p>"
 
 #: umc/js/schoolinstaller.js:211
-#, fuzzy
 msgid ""
 "<p>The UCS@school multi server environment distinguishes between educational "
 "servers and administrative servers. The educational servers provide all "
@@ -149,7 +147,6 @@ msgid "Close"
 msgstr "Fermer"
 
 #: umc/js/schoolinstaller.js:329
-#, fuzzy
 msgid "Could not find the DNS entry for the domain controller master."
 msgstr ""
 "Impossible de trouver l'enregistrement DNS pour le contrôleur de domaine "
@@ -164,7 +161,6 @@ msgid "Domain username"
 msgstr "Nom d'utilisateur du domaine"
 
 #: umc/js/schoolinstaller.js:222
-#, fuzzy
 msgid ""
 "During installation this server will be configured as administrative server. "
 "To create the specified school, the name of a second/future domain "
@@ -272,7 +268,6 @@ msgid "Name of educational school server"
 msgstr "Nom du serveur d'école éducatif"
 
 #: umc/js/schoolinstaller.js:227
-#, fuzzy
 msgid ""
 "Name of the educational domain controller slave for the new school. The "
 "server name may consist of the letters a-z, the digits 0-9 and hyphens (-). "
@@ -313,7 +308,6 @@ msgid "Please choose an environment type:"
 msgstr "Veuillez choisir un type d'environnement :"
 
 #: umc/js/schoolinstaller.js:215
-#, fuzzy
 msgid "Please choose the server type for this domain controller slave:"
 msgstr ""
 "Veuillez choisir le type de serveur pour ce contrôleur de domaine esclave :"

@@ -411,9 +411,8 @@ msgid "School information"
 msgstr "Informations sur l'école"
 
 #: umc/js/schoolwizards/UserWizard.js:104
-#, fuzzy
 msgid "Schools"
-msgstr "École"
+msgstr "Écoles"
 
 #: umc/js/schoolwizards/Grid.js:260
 msgid "Search"

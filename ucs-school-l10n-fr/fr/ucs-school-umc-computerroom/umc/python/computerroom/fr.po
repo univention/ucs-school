@@ -25,7 +25,6 @@ msgid "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"
 msgstr ""
 
 #: umc/python/computerroom/__init__.py:419
-#, fuzzy
 msgid "A different user is already running a computer room session."
 msgstr "Un autre utilisateur est déjà dans une session de salle informatique"
 

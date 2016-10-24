@@ -201,7 +201,6 @@ msgid ""
 msgstr "Précise le motif partiel cherché dans les propriétés du groupe"
 
 #: umc/js/internetrules/AdminPage.js:152
-#, fuzzy
 msgid ""
 "Specifies the substring pattern which is searched for in the rules' names "
 "and their domain lists"

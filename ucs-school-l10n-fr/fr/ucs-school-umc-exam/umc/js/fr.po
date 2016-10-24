@@ -180,7 +180,6 @@ msgid "Exam name"
 msgstr "Nom de l'examen"
 
 #: umc/js/schoolexam.js:302
-#, fuzzy
 msgid "Exam successfully prepared"
 msgstr "Examen préparé avec succès"
 
@@ -347,7 +346,6 @@ msgstr ""
 "Internet standard de l'administrateur de l'école."
 
 #: umc/js/schoolexam.js:122
-#, fuzzy
 msgid "Select room and participants"
 msgstr "Sélectionnez la salle et les participants"
 
@@ -372,7 +370,6 @@ msgid "Take over"
 msgstr "Prendre la main"
 
 #: umc/js/schoolexam.js:92
-#, fuzzy
 msgid "The name of the exam, e.g., \"Math exam algebra 02/2013\"."
 msgstr "Le nom de l'examen, par exemple « Test de maths algèbre 02/2016 »."
 
