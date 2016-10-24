@@ -104,6 +104,15 @@ feedback@univention.de
 		<section id="scenario-1">
 			<title>Szenario 1: Zentraler Verzeichnisdienst für
 				Webdienste</title>
+			<para>
+				Dies ist das Szenario mit der geringsten Komplexität. Die UCS
+				Systeme werden zentral in einem Rechenzentrum betrieben und
+				dienen als Identity- und Access-Management. Beispielsweise
+				lassen sich Groupware- und Collaboration-Lösungen oder
+				Lernmanagement-Software anbinden und ermöglichen so den
+				Anwender_innen die Nutzung der Dienste mit ein und dem selben
+				Benutzerkonto und -passwort.
+			</para>
 			<figure id="fig-scenario-1">
 				<title>Szenario 1: Zentraler Verzeichnisdienst für
 					Webdienste</title>
@@ -115,19 +124,21 @@ feedback@univention.de
 							für Webdienste</phrase></textobject>
 				</mediaobject>
 			</figure>
-			<para>
-				Dies ist das Szenario mit der geringsten Komplexität. Die UCS
-				Systeme werden zentral in einem Rechenzentrum betrieben und
-				dienen als Identity- und Access-Management. Beispielsweise
-				lassen sich Groupware- und Collaboration-Lösungen oder
-				Lernmanagement-Software anbinden und ermöglichen so den
-				Anwender_innen die Nutzung der Dienste mit ein und dem selben
-				Benutzerkonto und -passwort.
-			</para>
 		</section>
 		<section id="scenario-2">
 			<title>Szenario 2: Zentraler Verzeichnisdienst und WLAN für
 				Schulen, ggf. inkl. Webdienste</title>
+			<para>
+				Dieses Szenario fokussiert sich auf die Authentifizierung von
+				WLAN-Geräten an den Schulen. Dazu werden UCS Systeme zentral in
+				einem Rechenzentrum betrieben und dienen als Identity- und
+				Access-Management. Zudem sind die Schulen über VPN, Standleitung
+				oder ähnliches an das Rechenzentrum angebunden. An den Schulen
+				werden WLAN-Access-Points installiert, die RADIUS unterstützen
+				(WPA-Enterprise / IEEE 802.1X). Ergänzend können auch wie in
+				Szenario 1 weitere Webdienste an die zentralen Systeme
+				angebunden werden.
+			</para>
 			<figure id="fig-scenario-2">
 				<title>Szenario 2: Zentraler Verzeichnisdienst und WLAN für
 					Schulen, ggf. inkl. Webdienste</title>
@@ -140,21 +151,18 @@ feedback@univention.de
 							Webdienste</phrase></textobject>
 				</mediaobject>
 			</figure>
-			<para>
-				Dieses Szenario fokussiert sich auf die Authentifizierung von
-				WLAN-Geräten an den Schulen. Dazu werden UCS Systeme zentral in
-				einem Rechenzentrum betrieben und dienen als Identity- und
-				Access-Management. Zudem sind die Schulen über VPN, Standleitung
-				oder ähnliches an das Rechenzentrum angebunden. An den Schulen
-				werden WLAN-Access-Points installiert, die RADIUS unterstützen
-				(WPA-Enterprise / IEEE 802.1X). Ergänzend können auch wie in
-				Szenario 1 weitere Webdienste an die zentralen Systeme
-				angebunden werden.
-			</para>
 		</section>
 		<section id="scenario-3">
 			<title>Szenario 3: Zentraler Verzeichnisdienst und WLAN mit
 				Schulserver an den Schulen und Softwareverteilung</title>
+			<para>
+				Dieses Szenario baut auf dem Szenario 2 auf und ergänzt es um
+				Schulserver an den Schulen. Diese Schulserver stellen vor Ort
+				diverse Dienste bereit wie DHCP, DNS, Active Directory
+				kompatible Domäne, Dateifreigaben, Proxy, aber auch edukative
+				Funktionen wie Computerraumsteuerung, Klassenarbeitsmodus,
+				Passwörter zurücksetzen, Client-Software-Management und mehr.
+			</para>
 			<figure id="fig-scenario-3">
 				<title>Szenario 3: Zentraler Verzeichnisdienst und WLAN mit
 					Schulserver an den Schulen und Softwareverteilung</title>
@@ -167,18 +175,18 @@ feedback@univention.de
 							Softwareverteilung</phrase></textobject>
 				</mediaobject>
 			</figure>
-			<para>
-				Dieses Szenario baut auf dem Szenario 2 auf und ergänzt es um
-				Schulserver an den Schulen. Diese Schulserver stellen vor Ort
-				diverse Dienste bereit wie DHCP, DNS, Active Directory
-				kompatible Domäne, Dateifreigaben, Proxy, aber auch edukative
-				Funktionen wie Computerraumsteuerung, Klassenarbeitsmodus,
-				Passwörter zurücksetzen, Client-Software-Management und mehr.
-			</para>
 		</section>
 		<section id="scenario-4">
 			<title>Szenario 4: Zentraler Verzeichnisdienst und WLAN mit
 				Schulserver im Rechenzentrum und Softwareverteilung</title>
+			<para>
+				Dieses Szenario ähnelt dem Szenario 3, nur dass in diesem Fall
+				die Schulserver nicht an der Schule stehen sondern im
+				Rechenzentrum gehostet werden. Dies erlaubt es die
+				Hardwarekosten zu verringern, erfordert allerdings auch eine
+				sehr gute Anbindung der Schulen an das Rechenzentrum (1 Gbit/s
+				oder mehr).
+			</para>
 			<figure id="fig-scenario-4">
 				<title>Szenario 4: Zentraler Verzeichnisdienst und WLAN mit
 					Schulserver im Rechenzentrum und Softwareverteilung</title>
@@ -191,14 +199,6 @@ feedback@univention.de
 							Softwareverteilung</phrase></textobject>
 				</mediaobject>
 			</figure>
-			<para>
-				Dieses Szenario ähnelt dem Szenario 3, nur dass in diesem Fall
-				die Schulserver nicht an der Schule stehen sondern im
-				Rechenzentrum gehostet werden. Dies erlaubt es die
-				Hardwarekosten zu verringern, erfordert allerdings auch eine
-				sehr gute Anbindung der Schulen an das Rechenzentrum (1 Gbit/s
-				oder mehr).
-			</para>
 		</section>
 	</chapter>
 	<chapter id="preparations">
@@ -296,13 +296,13 @@ feedback@univention.de
 				&quot;Berufsschule&quot;).
 			</para>
 			<para>
-				[Tabelle Netzkwerkonzept Grundschule]
+				TODO [Tabelle Netzkwerkonzept Grundschule]
 			</para>
 			<para>
 				Ein Subetz mit Server und Clients (DHCP-Range!)
 			</para>
 			<para>
-				[Tabelle Netzkwerkonzept Berufsschule]
+				TODO [Tabelle Netzkwerkonzept Berufsschule]
 			</para>
 			<para>
 				Viele Subnetze, Edukativnetze, Verwaltungsnetze, getrennte
@@ -449,20 +449,31 @@ feedback@univention.de
 					<emphasis>für Szenario 3 und 4</emphasis>
 				</para>
 				<para>
-					Rechner: - Schema:
-					Schulkürzel-Betriebssystemkürzel-Gebäude/Etage/Raum-ID -
-					Beispiele: 042win033-001, 042win033-002, 011mac001-011
+					Rechner:
+					<itemizedlist>
+						<listitem><para>Schema: Schulkürzel-Betriebssystemkürzel-Gebäude/Etage/Raum-ID</para></listitem>
+						<listitem><para>Beispiele: 042win033-001, 042win033-002, 011mac001-011</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
 					Netzwerkgeräte und weitere Geräte wie Router, Switches, USV,
-					Drucker sowie Druckerfreigaben: - Schema:
-					Schulkürzel-Typkürzel-Gebäude/Etage/Raum-ID - Beispiele:
-					042rou001-001, 042swi002-003, 011usv000-001, 012dru002-012
+					Drucker sowie Druckerfreigaben:
+					<itemizedlist>
+						<listitem><para>Schema: Schulkürzel-Typkürzel-Gebäude/Etage/Raum-ID</para></listitem>
+						<listitem><para>Beispiele: 042rou001-001, 042swi002-003, 011usv000-001, 012dru002-012</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
-					Schulserver: - Schema: Rollenkürzel-Schulkürzel-ID -
-					Beispiele: Edukativer Schulserver: sedu042-01, Schulserver
-					Schulverwaltung: sadm042-01
+					Schulserver:
+					<itemizedlist>
+						<listitem><para>Schema: Rollenkürzel-Schulkürzel-ID</para></listitem>
+						<listitem><para>Beispiele:
+								<itemizedlist>
+									<listitem><para>Edukativer Schulserver: sedu042-01</para></listitem>
+									<listitem><para>Schulserver Schulverwaltung: sadm042-01</para></listitem>
+								</itemizedlist>
+						</para></listitem>
+					</itemizedlist>
 				</para>
 			</section>
 			<section id="concepts:names:user-classes">
@@ -471,21 +482,30 @@ feedback@univention.de
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Schüler_innen: Schema: Vorname-1.Buchstabe Nachname-ID
-					Beispiel: Mary Somerville → marys01
+					Schüler_innen:
+					<itemizedlist>
+						<listitem><para>Schema: Vorname-1.Buchstabe Nachname-ID</para></listitem>
+						<listitem><para>Beispiel: Mary Somerville → marys01</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
-					Lehrkräfte und Mitarbeiter_innen: Schema: 1.Buchstabe
-					Vorname-Nachname-ID Beispiel: Ada Lovelace → alovelace01
+					Lehrkräfte und Mitarbeiter_innen:
+					<itemizedlist>
+						<listitem><para>Schema: 1.Buchstabe Vorname-Nachname-ID</para></listitem>
+						<listitem><para>Beispiel: Ada Lovelace → alovelace01</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
-					→ Beispiel für Benutzer-Import-Config (JSON), siehe
+					Beispiel für Benutzer-Import-Config (JSON), siehe
 					https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html
 				</para>
 				<para>
 					Klassen müssen mit dem entsprechenden Schulkürzel als Präfix
-					angelegt werden: Schema: Schulkürzel-Klasse Beispiele: 042-1a,
-					042-1b, 011-5a, 011-5b
+					angelegt werden:
+					<itemizedlist>
+						<listitem><para>Schema: Schulkürzel-Klasse</para></listitem>
+						<listitem><para>Beispiele: 042-1a, 042-1b, 011-5a, 011-5b</para></listitem>
+					</itemizedlist>
 				</para>
 			</section>
 			<section id="concepts:names:misc">
@@ -495,10 +515,14 @@ feedback@univention.de
 				</para>
 				<para>
 					Folgende Punkte haben sich als Best Practices
-					herauskristallisiert: - Durchgängige Verwendung von
-					Kleinbuchstaben - Namen nicht länger als 15 Zeichen - Ein
-					Grundriss der Gebäude, in dem eingezeichnet ist, wo welche
-					Server und welche Clients zu finden sind, ist sehr hilfreich
+					herauskristallisiert:
+					<itemizedlist>
+						<listitem><para>Durchgängige Verwendung von Kleinbuchstaben</para></listitem>
+						<listitem><para>Namen nicht länger als 15 Zeichen</para></listitem>
+						<listitem><para>Ein Grundriss der Gebäude, in dem
+								eingezeichnet ist, wo welche Server und welche
+								Clients zu finden sind, ist sehr hilfreich</para></listitem>
+					</itemizedlist>
 				</para>
 			</section>
 		</section>
@@ -513,31 +537,46 @@ feedback@univention.de
 				von rsync erfolgen. Folgende Daten sind mindestens zu sichern:
 			</para>
 			<para>
-				Auf den zentralen Servern: -
-				<literal>/var/univention-backup/</literal>: Umfasst nächtlich
-				angelegte Dumps der UCR-Variablen, sofern vorhanden der
-				OpenLDAP-Datenbank, sofern vorhanden der Samba-Datenbank sowie
-				das Sysvol-Verzeichnis - <literal>/etc/univention/ssl</literal>
-				auf dem UCS Master und den UCS Backups: Beinhaltet das
-				Root-Zertifikat der internen Zertifizierungsstelle und alle
-				Host-Zertifikate
+				Auf den zentralen Servern:
+				<itemizedlist>
+					<listitem><para><literal>/var/univention-backup/</literal>:
+							Umfasst nächtlich angelegte Dumps der UCR-Variablen,
+							sofern vorhanden der OpenLDAP-Datenbank, sofern
+							vorhanden der Samba-Datenbank sowie das
+							Sysvol-Verzeichnis</para></listitem>
+					<listitem><para><literal>/etc/univention/ssl</literal> auf
+							dem UCS Master und den UCS Backups: Beinhaltet das
+							Root-Zertifikat der internen Zertifizierungsstelle
+							und alle Host-Zertifikate</para></listitem>
+				</itemizedlist>
 			</para>
 			<para>
-				Sofern vorhanden, auf den Schulservern: -
-				<literal>/var/univention-backup/</literal>: Insbesondere der
-				UCR-Dump. Die Sicherung der OpenLDAP- und Samba-Datenbanken ist
-				weniger relevant, da dies bspw. bei einer Neuinstallation des
-				Schulservers vom UCS Master/Backup aufrepliziert wird. -
-				<literal>/home</literal>: Beinhaltet die Benutzerprofile und die
-				Home-Laufwerke der Benutzer_innen. Außerdem die Daten der
-				Klassenfreigaben - ggf. weitere, manuell angelegte Freigaben
+				Sofern vorhanden, auf den Schulservern:
+				<itemizedlist>
+					<listitem><para><literal>/var/univention-backup/</literal>:
+							Insbesondere der UCR-Dump. Die Sicherung der
+							OpenLDAP- und Samba-Datenbanken ist weniger
+							relevant, da dies bspw. bei einer Neuinstallation
+							des Schulservers vom UCS Master/Backup aufrepliziert
+							wird.</para></listitem>
+					<listitem><para><literal>/home</literal>: Beinhaltet die
+							Benutzerprofile und die Home-Laufwerke der
+							Benutzer_innen. Außerdem die Daten der
+							Klassenfreigaben - ggf. weitere, manuell angelegte
+							Freigaben</para></listitem>
+				</itemizedlist>
 			</para>
 			<para>
 				Folgende Punkte haben sich als Best Practices
-				herauskristallisiert: - Die Sicherung sollte auf ein vom UCS
-				System physikalisch getrenntes Gerät erfolgen, bspw. ein
-				NAS-System - Die Sicherung sollte überwacht werden, bspw. durch
-				ein Monitoring-Plugin, dass bei Misserfolg warnt
+				herauskristallisiert:
+				<itemizedlist>
+					<listitem><para>Die Sicherung sollte auf ein vom UCS System
+							physikalisch getrenntes Gerät erfolgen, bspw. ein
+							NAS-System</para></listitem>
+					<listitem><para>Die Sicherung sollte überwacht werden, bspw.
+							durch ein Monitoring-Plugin, dass bei Misserfolg
+							warnt</para></listitem>
+				</itemizedlist>
 			</para>
 		</section>
 		<section id="concepts:support">
@@ -613,17 +652,25 @@ feedback@univention.de
 					<emphasis>alle Szenarien</emphasis>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen: - 4 CPUs - 8 GB RAM - 100 GB
-					Speicherplatz
+					Minimale Systemvoraussetzungen:
+					<itemizedlist>
+						<listitem><para>4 CPUs</para></listitem>
+						<listitem><para>8 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
-					Die Hauptaufgaben des UCS Master sind: - viele lesende
-					Zugriffe auf die LDAP-Datenbank, da neben den Administratoren
-					auch alle weiteren UCS-Systeme beständig Information abfragen
-					- schreibende Zugriffe auf die LDAP-Datenbanken, sobald
-					Änderungen vorgenommen werden. Insbesondere beim initialen
-					Import und beim Schuljahreswechsel wird entsprechende Last
-					erzeugt.
+					Die Hauptaufgaben des UCS Master sind:
+					<itemizedlist>
+						<listitem><para>viele lesende Zugriffe auf die
+								LDAP-Datenbank, da neben den Administratoren auch
+								alle weiteren UCS-Systeme beständig Information
+								abfragen</para></listitem>
+						<listitem><para>schreibende Zugriffe auf die
+								LDAP-Datenbanken, sobald Änderungen vorgenommen
+								werden. Insbesondere beim initialen Import und beim
+								Schuljahreswechsel wird entsprechende Last erzeugt.</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
 					Aus diesen Gründen spielt die I/O-Performance eine
@@ -650,9 +697,13 @@ feedback@univention.de
 					berücksichtigt werden.
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen UCS: - 2 CPUs - 2 GB RAM - 80
-					GB Speicherplatz - Plus Anforderungen der eingesetzten
-					Software
+					Minimale Systemvoraussetzungen UCS:
+					<itemizedlist>
+						<listitem><para>2 CPUs</para></listitem>
+						<listitem><para>2 GB RAM</para></listitem>
+						<listitem><para>80 GB Speicherplatz</para></listitem>
+						<listitem><para>Plus Anforderungen der eingesetzten Software</para></listitem>
+					</itemizedlist>
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements:servers:radius">
@@ -661,8 +712,12 @@ feedback@univention.de
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen: - 4 CPUs - 12 GB RAM - 100 GB
-					Speicherplatz
+					Minimale Systemvoraussetzungen:
+					<itemizedlist>
+						<listitem><para>4 CPUs</para></listitem>
+						<listitem><para>12 GB RAM</para></listitem>
+						<listitem><para>80 GB Speicherplatz</para></listitem>
+					</itemizedlist>
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements:servers:monitoring">
@@ -671,8 +726,12 @@ feedback@univention.de
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen: - 2 CPUs - 4 GB RAM - 100 GB
-					Speicherplatz
+					Minimale Systemvoraussetzungen:
+					<itemizedlist>
+						<listitem><para>2 CPUs</para></listitem>
+						<listitem><para>4 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz</para></listitem>
+					</itemizedlist>
 				</para>
 			</section>
 		</section>
@@ -685,16 +744,27 @@ feedback@univention.de
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen Szenario &quot;Grundschule (25
-					Desktoprechner, 25 Tablets)&quot;: - 2 CPUs - 4 GB RAM - 100
-					GB Speicherplatz für das System selbst - Benutzerdaten nach
-					Anforderung, bspw. 2 TiB bei 200 Benutzern mit 1 GiB Quota
+					Desktoprechner, 25 Tablets)&quot;:
+					<itemizedlist>
+						<listitem><para>2 CPUs</para></listitem>
+						<listitem><para>4 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
+						<listitem><para>Benutzerdaten nach Anforderung, bspw. 2
+								TiB bei 200 Benutzern mit 1 GiB
+								Quota</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen Szenario &quot;Berufsschule
-					(300 Desktoprechner, 200 Tablets)&quot;: - 8 CPUs - 32 GB RAM
-					- 100 GB Speicherplatz für das System selbst - Benutzerdaten
-					nach Anforderung, bspw. 15 TiB bei 1500 Benutzern mit 1 GiB
-					Quota
+					(300 Desktoprechner, 200 Tablets)&quot;:
+					<itemizedlist>
+						<listitem><para>8 CPUs</para></listitem>
+						<listitem><para>32 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
+						<listitem><para>Benutzerdaten nach Anforderung, bspw. 15
+								TiB bei 1500 Benutzern mit 1 GiB
+								Quota</para></listitem>
+					</itemizedlist>
 				</para>
 				<para>
 					Grundsätzlich müssen die Ressourcen abhängig von der Anzahl
@@ -729,7 +799,7 @@ feedback@univention.de
 		<itemizedlist spacing="compact">
 			<listitem>
 				<para>
-					dabei sollte die aktuellste UCS DVD (ISO) verwendet werden:
+					Dabei sollte die aktuellste UCS DVD (ISO) verwendet werden:
 					https://www.univention.de/download/ucs-download/iso-installationsimage/
 				</para>
 			</listitem>
@@ -764,90 +834,138 @@ feedback@univention.de
 		<section id="installation:master">
 			<title>Installation UCS Master</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis> - vergeben einer
-				IP-Adresskonfiguration entsprechend des Netzkonzepts - Externer
-				DNS Server / DNS Forwarder:
-				|IP-des-DNS-Servers-ihres-Internetanbieters| - Wählen sie
-				&quot;Erstellen einer neuen UCS-Domäne&quot; - Die automatisch
-				vorgeschlagenen LDAP-Basis sollte nicht geändert werden -
-				<emphasis>für Szenarien 3 und 4</emphasis>: Wählen sie
-				&quot;Active Directory kompatibler Domänen-Controller&quot; als
-				zu installierende Software-Komponente. Das ist notwendig, wenn
-				sie zentral Gruppenrichtlinien für Windows-Clients konfigurieren
-				möchten - Aktualisieren sie das System bis zum letzten
-				verfügbaren Errata-Update - Rufen sie nach Abschluss der
-				Installation das Univention App Center auf und installieren Sie
-				die UCS@school App - Starten sie im Anschluss in der
-				orangefarbenen Kategorie &quot;Schuladministration&quot; den
-				UCS@school Einrichtungsassistenten und wählen dort
-				&quot;Multi-Server Umgebung&quot; - Führen sie alle evtl.
-				ausstehenden Joinskripte aus (UMC → Domäne → Domänenbeitritt)
+				<emphasis>für alle Szenarien</emphasis>
+				<itemizedlist>
+					<listitem><para>vergeben einer IP-Adresskonfiguration
+							entsprechend des Netzkonzepts</para></listitem>
+					<listitem><para>Externer DNS Server / DNS Forwarder:
+							|IP-des-DNS-Servers-ihres-Internetanbieters|
+					</para></listitem>
+					<listitem><para>Wählen sie &quot;Erstellen einer neuen
+							UCS-Domäne&quot; </para></listitem>
+					<listitem><para>Die automatisch vorgeschlagenen LDAP-Basis
+							sollte nicht geändert werden </para></listitem>
+					<listitem><para><emphasis>für Szenarien 3 und 4</emphasis>:
+							Wählen sie &quot;Active Directory kompatibler
+							Domänen-Controller&quot; als zu installierende
+							Software-Komponente. Das ist notwendig, wenn sie
+							zentral Gruppenrichtlinien für Windows-Clients
+							konfigurieren möchten</para></listitem>
+					<listitem><para>Aktualisieren sie das System bis zum letzten
+							verfügbaren Errata-Update</para></listitem>
+					<listitem><para>Rufen sie nach Abschluss der Installation
+							das Univention App Center auf und installieren Sie
+							die UCS@school App</para></listitem>
+					<listitem><para>Starten sie im Anschluss in der
+							orangefarbenen Kategorie
+							&quot;Schuladministration&quot; den UCS@school
+							Einrichtungsassistenten und wählen dort
+							&quot;Multi-Server Umgebung&quot; </para></listitem>
+					<listitem><para>Führen sie alle evtl.  ausstehenden
+							Joinskripte aus (UMC → Domäne →
+							Domänenbeitritt)</para></listitem>
+				</itemizedlist>
 			</para>
 		</section>
 		<section id="installation:backup">
 			<title>Installation UCS Backup</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis> - vergeben einer
-				IP-Adresskonfiguration entsprechend des Netzkonzepts - DNS
-				Server: 10.0.0.10 (IP des UCS Master, DNS Forwarder wird beim
-				Join vom automatisch UCS Master übernommen) - Wählen sie
-				&quot;Einer bestehenden UCS-Domäne beitreten&quot; und dann
-				&quot;Domänencontroller Backup&quot; - Stellen sie sicher, dass
-				der UCS Master alle verfügbaren Updates installiert hat -
-				Aktualisieren sie das System bis zum letzten verfügbaren
-				Errata-Update und lassen sie das System der Domäne beitreten
-				(Join) - Rufen sie nach Abschluss der Installation das
-				Univention App Center auf und installieren Sie die UCS@school
-				App - Starten sie im Anschluss in der orangefarbenen Kategorie
-				&quot;Schuladministration&quot; den UCS@school
-				Einrichtungsassistenten und wählen dort &quot;Multi-Server
-				Umgebung&quot; - Führen sie alle evtl. ausstehenden Joinskripte
-				aus (UMC → Domäne → Domänenbeitritt)
+				<emphasis>für alle Szenarien</emphasis>
+				<itemizedlist>
+					<listitem><para>vergeben einer IP-Adresskonfiguration
+							entsprechend des Netzkonzepts</para></listitem>
+					<listitem><para>DNS Server: 10.0.0.10 (IP des UCS Master,
+							DNS Forwarder wird beim Join vom automatisch UCS
+							Master übernommen)</para></listitem>
+					<listitem><para>Wählen sie &quot;Einer bestehenden
+							UCS-Domäne beitreten&quot; und dann
+							&quot;Domänencontroller
+							Backup&quot;</para></listitem>
+					<listitem><para>Stellen sie sicher, dass der UCS Master alle
+							verfügbaren Updates installiert
+							hat</para></listitem> <listitem><para>Aktualisieren
+							sie das System bis zum letzten verfügbaren
+							Errata-Update und lassen sie das System der Domäne
+							beitreten (Join)</para></listitem>
+					<listitem><para>Rufen sie nach Abschluss der Installation
+							das Univention App Center auf und installieren Sie
+							die UCS@school App</para></listitem>
+					<listitem><para>Starten sie im Anschluss in der
+							orangefarbenen Kategorie
+							&quot;Schuladministration&quot; den UCS@school
+							Einrichtungsassistenten und wählen dort
+							&quot;Multi-Server Umgebung&quot;</para></listitem>
+					<listitem><para>Führen sie alle evtl. ausstehenden
+							Joinskripte aus (UMC → Domäne →
+							Domänenbeitritt)</para></listitem>
+				</itemizedlist>
 			</para>
 		</section>
 		<section id="installation:slave">
 			<title>Installation UCS Slave für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis> - Verwenden sie nach
-				Möglichkeit für jeden Dienst einen eigene UCS Slave Server -
-				vergeben einer IP-Adresskonfiguration entsprechend des
-				Netzkonzepts - DNS Server: 10.0.0.10, 10.0.0.11 (IP des UCS
-				Master und des UCS Backup, DNS Forwarder wird beim Join
-				automatisch vom UCS Master übernommen) - Wählen sie &quot;Einer
-				bestehenden UCS-Domäne beitreten&quot; und dann
-				&quot;Domänencontroller Slave&quot; - Stellen sie sicher, dass
-				der UCS Master alle verfügbaren Updates installiert hat -
-				Aktualisieren sie das System bis zum letzten verfügbaren
-				Errata-Update und lassen sie das System der Domäne beitreten
-				(Join) - Rufen sie nach Abschluss der Installation das
-				Univention App Center auf und installieren Sie die RADIUS App
-				(oder die gewünschte App für Groupware, Collaboration,
-				Lernplattformen usw.) - Installieren sie
-				<emphasis role="strong">nicht</emphasis> die UCS@school App -
-				Führen sie alle evtl. ausstehenden Joinskripte aus (UMC → Domäne
-				→ Domänenbeitritt)
+				<emphasis>für alle Szenarien</emphasis>
+				<itemizedlist>
+				<listitem><para>Verwenden sie nach Möglichkeit für jeden Dienst
+						einen eigene UCS Slave Server</para></listitem>
+				<listitem><para>vergeben einer IP-Adresskonfiguration
+						entsprechend des Netzkonzepts</para></listitem>
+				<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des UCS
+						Master und des UCS Backup, DNS Forwarder wird beim Join
+						automatisch vom UCS Master übernommen)</para></listitem>
+				<listitem><para>Wählen sie &quot;Einer bestehenden UCS-Domäne
+						beitreten&quot; und dann &quot;Domänencontroller
+						Slave&quot;</para></listitem> <listitem><para>Stellen
+						sie sicher, dass der UCS Master alle verfügbaren Updates
+						installiert hat</para></listitem>
+				<listitem><para>Aktualisieren sie das System bis zum letzten
+						verfügbaren Errata-Update und lassen sie das System der
+						Domäne beitreten (Join)</para></listitem>
+				<listitem><para>Rufen sie nach Abschluss der Installation das
+						Univention App Center auf und installieren Sie die
+						RADIUS App (oder die gewünschte App für Groupware,
+						Collaboration, Lernplattformen usw.)</para></listitem>
+				<listitem><para>Installieren sie <emphasis
+							role="strong">nicht</emphasis> die UCS@school
+						App</para></listitem> <listitem><para>Führen sie alle
+						evtl. ausstehenden Joinskripte aus (UMC → Domäne →
+						Domänenbeitritt)</para></listitem>
+				</itemizedlist>
 			</para>
 		</section>
 		<section id="installation:member">
 			<title>Installation UCS Memberserver für Monitoring</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis> - vergeben einer
-				IP-Adresskonfiguration entsprechend des Netzkonzepts - DNS
-				Server: 10.0.0.10, 10.0.0.11 (IP des UCS Master und des UCS
-				Backup, DNS Forwarder wird beim Join automatisch vom UCS Master
-				übernommen) - Wählen sie &quot;Einer bestehenden UCS-Domäne
-				beitreten&quot; und dann &quot;Memberserver&quot; - Stellen sie
-				sicher, dass der UCS Master alle verfügbaren Updates installiert
-				hat - Aktualisieren sie das System bis zum letzten verfügbaren
-				Errata-Update und lassen sie das System der Domäne beitreten
-				(Join) - Rufen sie nach Abschluss der Installation das
-				Univention App Center auf und installieren Sie die Icinga App -
-				Ergänzen sie ein Langzeitmonitoring wie bspw. munin:
-				http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin
-				- Installieren sie <emphasis role="strong">nicht</emphasis> die
-				UCS@school App - Führen sie alle evtl. ausstehenden Joinskripte
-				aus (UMC → Domäne → Domänenbeitritt)
+				<emphasis>für alle Szenarien</emphasis>
+				<itemizedlist>
+					<listitem><para>vergeben einer IP-Adresskonfiguration
+							entsprechend des Netzkonzepts</para></listitem>
+					<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des UCS
+							Master und des UCS Backup, DNS Forwarder wird beim
+							Join automatisch vom UCS Master
+							übernommen)</para></listitem> <listitem><para>Wählen
+							sie &quot;Einer bestehenden UCS-Domäne
+							beitreten&quot; und dann
+							&quot;Memberserver&quot;</para></listitem>
+					<listitem><para>Stellen sie sicher, dass der UCS Master alle
+							verfügbaren Updates installiert
+							hat</para></listitem> <listitem><para>Aktualisieren
+							sie das System bis zum letzten verfügbaren
+							Errata-Update und lassen sie das System der Domäne
+							beitreten (Join)</para></listitem>
+					<listitem><para>Rufen sie nach Abschluss der Installation
+							das Univention App Center auf und installieren Sie
+							die Icinga App</para></listitem>
+					<listitem><para>Ergänzen sie ein Langzeitmonitoring wie
+							bspw. munin:
+							http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin</para></listitem>
+					<listitem><para>Installieren sie <emphasis
+								role="strong">nicht</emphasis> die UCS@school
+							App</para></listitem> <listitem><para>Führen sie
+							alle evtl. ausstehenden Joinskripte aus (UMC →
+							Domäne → Domänenbeitritt)</para></listitem>
+				</itemizedlist>
 			</para>
 		</section>
 	</chapter>
