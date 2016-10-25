@@ -1,3 +1,9 @@
+italc-windows (3.0.3-3) unstable; urgency=medium
+
+  * Bug #38415: rebase
+
+ -- Florian Best <best@univention.de>  Tue, 25 Oct 2016 13:01:58 +0200
+
 italc-windows (3.0.3-2) unstable; urgency=medium
 
   * Bug #38221: deselect iTALC Master in installer
