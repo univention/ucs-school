@@ -125,7 +125,7 @@ public:
 	void unlockInput();
 	void logonUser( const QString &uname, const QString &pw, const QString &domain );
 	void logoutUser();
-	void displayTextMessage( const QString &msg );
+	void displayTextMessage(const QString& title, const QString& msg);
 
 	void powerOnComputer( const QString &mac );
 	void powerDownComputer();

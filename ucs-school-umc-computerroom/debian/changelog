@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (8.0.7-1) unstable; urgency=medium
+
+  * Bug #38213: implement API Change in displayTextMessage()
+
+ -- Florian Best <best@univention.de>  Tue, 25 Oct 2016 13:26:25 +0200
+
 ucs-school-umc-computerroom (8.0.6-1) unstable; urgency=low
 
   * Bug #41752: fixed logic of "hasChanged"

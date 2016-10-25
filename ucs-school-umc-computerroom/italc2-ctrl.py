@@ -95,7 +95,7 @@ def when_connected( computer, options ):
 		wait4state( computer, 'input-lock', options.input_lock )
 	elif options.message is not None:
 		print 'display message', options.message
-		computer.message( options.message )
+		computer.message('Title', options.message)
 		wait4state( computer, 'MessageBox', True )
 	else:
 		print >>sys.stderr, 'Unknown action'

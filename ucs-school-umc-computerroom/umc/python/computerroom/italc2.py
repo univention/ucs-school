@@ -529,11 +529,11 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 			self._core.unlockInput()
 
 	# iTalc: message box
-	def message(self, text):
+	def message(self, title, text):
 		if not self.connected():
 			MODULE.warn('%s: not connected - skipping message' % (self.ipAddress,))
 			return
-		self._core.displayTextMessage(text)
+		self._core.displayTextMessage(title, text)
 
 	# iTalc: Demo
 	def denyClients(self):
