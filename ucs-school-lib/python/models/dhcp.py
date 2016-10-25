@@ -38,6 +38,7 @@ from ucsschool.lib.models.attributes import DHCPServiceName, Attribute, DHCPSubn
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.utils import ucr, _, logger
 
+
 class DHCPService(UCSSchoolHelperAbstractClass):
 	name = DHCPServiceName(_('Service'))
 	hostname = Attribute(_('Hostname'))
@@ -71,13 +72,13 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 		existing_dhcp_server_dn = DHCPServer.find_any_dn_with_name(dc_name, lo)
 		if existing_dhcp_server_dn:
 			logger.info('DHCP server %s exists!', existing_dhcp_server_dn)
-			old_dhcp_server_container = ','.join(lo.explodeDn(existing_dhcp_server_dn)[1:])
+			old_dhcp_server_container = lo.parentDn(existing_dhcp_server_dn)
 			dhcpd_ldap_base = ucr.get('dhcpd/ldap/base', '')
 			# only move if
 			# - forced via kwargs OR
 			# - in multiserver environments OR
 			# - desired dhcp server DN matches with UCR config
-			if force_dhcp_server_move or not(ucr.is_true('ucsschool/singlemaster', False)) or (dhcp_server.dn.endswith(',%s' % dhcpd_ldap_base)):
+			if force_dhcp_server_move or not ucr.is_true('ucsschool/singlemaster', False) or dhcp_server.dn.endswith(',%s' % dhcpd_ldap_base):
 				# move if existing DN does not match with desired DN
 				if existing_dhcp_server_dn != dhcp_server.dn:
 					# move existing dhcp server object to OU/DHCP service
@@ -101,14 +102,16 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 					logger.info('Skipping invalid interface %s:\n%s', interface_name, exc)
 			subnet_dns = DHCPSubnet.find_all_dns_below_base(old_dhcp_server_container, lo)
 			for subnet_dn in subnet_dns:
-				dhcp_subnet = DHCPSubnet.from_dn(subnet_dn, self.school, lo, superordinate=self.get_udm_object(lo))
+				dhcp_service = DHCPSubnet.find_udm_superordinate(subnet_dn, lo)
+				dhcp_subnet = DHCPSubnet.from_dn(subnet_dn, self.school, lo, superordinate=dhcp_service)
 				subnet = dhcp_subnet.get_ipv4_subnet()
-				if subnet in interfaces: # subnet matches any local subnet
+				if subnet in interfaces:  # subnet matches any local subnet
 					logger.info('Creating new DHCPSubnet from %s', subnet_dn)
-					dhcp_subnet.dhcp_service = self
-					dhcp_subnet.position = dhcp_subnet.get_own_container()
-					dhcp_subnet.set_dn(dhcp_subnet.dn)
-					dhcp_subnet.create(lo)
+					new_dhcp_subnet = DHCPSubnet(**dhcp_subnet.to_dict())
+					new_dhcp_subnet.dhcp_service = self
+					new_dhcp_subnet.position = new_dhcp_subnet.get_own_container()
+					new_dhcp_subnet.set_dn(new_dhcp_subnet.dn)
+					new_dhcp_subnet.create(lo)
 				else:
 					logger.info('Skipping non-local subnet %s', subnet)
 		else:
@@ -124,6 +127,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 
 	class Meta:
 		udm_module = 'dhcp/service'
+
 
 class AnyDHCPService(DHCPService):
 	school = None
@@ -143,6 +147,7 @@ class AnyDHCPService(DHCPService):
 		finally:
 			self.position = old_position
 			self.name = old_name
+
 
 class DHCPServer(UCSSchoolHelperAbstractClass):
 	name = DHCPServerName(_('Server name'))
@@ -173,6 +178,7 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
 	class Meta:
 		udm_module = 'dhcp/server'
 		name_is_unique = True
+
 
 class DHCPSubnet(UCSSchoolHelperAbstractClass):
 	name = DHCPSubnetName(_('Subnet address'))
@@ -206,4 +212,3 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
 
 	class Meta:
 		udm_module = 'dhcp/subnet'
-
