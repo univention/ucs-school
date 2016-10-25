@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-italc
-fix: 10.0.0-2.54.201610251320
+fix: 10.0.0-3.56.201610251332
 desc: |
  This update addresses the following issue(s):
  * Upgrade to iTALC 3.0-0.

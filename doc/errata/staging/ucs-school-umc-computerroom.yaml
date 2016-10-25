@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-computerroom
-fix: 8.0.5-2.192.201609021339
+fix: 8.0.7-1.196.201610251334
 desc: |
  * The iTALC handling has been revised and improved. Several bugs have been
    fixed which makes iTALC connections more reliable (Bug #41752).
@@ -13,4 +13,5 @@ desc: |
    ucsschool/umc/computerroom/hide_screenshots/groups (Bug #40210).
  * Some typos in the description text of the UMC module
    "UCS@school computerroom" have been corrected (Bug #42221).
-bug: [41752, 40210, 42221]
+ * Adjusted internal code for API changes in iTALC 3 (Bug #38213).
+bug: [41752, 40210, 42221, 38213]
