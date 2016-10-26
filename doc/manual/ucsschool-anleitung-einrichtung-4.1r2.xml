@@ -185,7 +185,10 @@ feedback@univention.de
 				Rechenzentrum gehostet werden. Dies erlaubt es die
 				Hardwarekosten zu verringern, erfordert allerdings auch eine
 				sehr gute Anbindung der Schulen an das Rechenzentrum (1 Gbit/s
-				oder mehr).
+				oder mehr). Szenario 3 und 4 können auch kombiniert werden,
+				sodass die Schulserver für gut angebundene Schulen im
+				Rechenzentrum betrieben werden und die Schulserver von weniger
+				gut angebundenen Schulen an den Schulen vor Ort.
 			</para>
 			<figure id="fig-scenario-4">
 				<title>Szenario 4: Zentraler Verzeichnisdienst und WLAN mit
