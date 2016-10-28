@@ -217,8 +217,8 @@ feedback@univention.de
 			<para>
 				Dabei werden Konzepte erstellt oder besprochen, es findet ein
 				Know-How-Transfer statt und das Univention Team oder der
-				Partner geben eine Einführung in Best Practices rund um UCS 
-				und UCS@school. Oft werden in diesem Rahmen bereits die 
+				Partner geben eine Einführung in Best Practices rund um UCS
+				und UCS@school. Oft werden in diesem Rahmen bereits die
 				zentralen Systeme und eine Demo-Schule installiert.
 			</para>
 		</section>
@@ -316,27 +316,27 @@ feedback@univention.de
 			</para>
 			<para>
 				In <xref linkend="import:networks" /> ist eine Tabellenvorlage
-				hinterlegt, die für die Import-Phase passende CSV-Dateien 
+				hinterlegt, die für die Import-Phase passende CSV-Dateien
 				erzeugen kann.
 			</para>
 			<para>
 				Folgende Punkte haben sich als Best Practices
-				herauskristallisiert: 
+				herauskristallisiert:
 				<itemizedlist spacing="compact">
 					<listitem>
 						<para>
-							die Netzwerksegementierung sollte auf Ebene der 
-							Netzwerkgeräte wie Router, Firewall und 
+							die Netzwerksegementierung sollte auf Ebene der
+							Netzwerkgeräte wie Router, Firewall und
 							Layer-3-Switches stattfinden. UCS unterstützt zwar
 							VLANs auch direkt auf dem eigenen
-							Netzwerkinterface, allerdings raten wir für ein 
+							Netzwerkinterface, allerdings raten wir für ein
 							umfangreiches Setup wie beim Modell
 							&quot;Berufsschule&quot; davon ab
 						</para>
 					</listitem>
 					<listitem>
 						<para>
-							Ein Grundriss der Gebäude, in dem eingezeichnet 
+							Ein Grundriss der Gebäude, in dem eingezeichnet
 							ist, wo welches Netzwerkgerät zu finden ist
 							und welches Subnetz anliegt, ist sehr hilfreich
 						</para>
@@ -344,12 +344,12 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Die IP-Adresse für das Gateway sollte auf .1 enden
-							(bspw. 10.1.0.1) 
+							(bspw. 10.1.0.1)
 						</para>
 					</listitem>
 					<listitem>
 						<para>
-							Die IP-Adresse des Schulservers sollte auf .10 
+							Die IP-Adresse des Schulservers sollte auf .10
 							enden (bspw. 10.1.0.10)
 						</para>
 					</listitem>
