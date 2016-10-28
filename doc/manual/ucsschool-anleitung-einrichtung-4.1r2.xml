@@ -59,7 +59,7 @@ feedback@univention.de
 		<itemizedlist spacing="compact" mark="whitesquare">
 			<listitem>
 				<para>
-					Szenario wählen: <xref linkend="scenarios" />
+					□ Szenario wählen: <xref linkend="scenarios" />
 				</para>
 			</listitem>
 			<listitem>
