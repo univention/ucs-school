@@ -56,7 +56,7 @@ feedback@univention.de
 			können auch einzeln verwendet werden, um bestehende Installationen
 			und Verfahren zu prüfen:
 		</para>
-		<orderedlist numeration="arabic" spacing="compact">
+		<itemizedlist spacing="compact" mark="whitesquare">
 			<listitem>
 				<para>
 					Szenario wählen: <xref linkend="scenarios" />
@@ -97,7 +97,7 @@ feedback@univention.de
 					Weitere Angebote einrichten: <xref linkend="additional-services" />
 				</para>
 			</listitem>
-		</orderedlist>
+		</itemizedlist>
 	</chapter>
 	<chapter id="scenarios">
 		<title>Szenarien</title>
