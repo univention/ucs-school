@@ -67,6 +67,7 @@ feedback@univention.de
 					<listitem><para>□ Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
 					<listitem><para>□ Verfügt der Betreiber über das erforderliche Know-How?  Siehe <xref linkend="preparations:workshop" />.</para></listitem>
 					<listitem><para>□ Wie werden Schulen über die Einführung von UCS@school informiert?  Siehe <xref linkend="preparations:info" />.</para></listitem>
+					<listitem><para>□ Wer baut in den Schulen Server, Clients und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
 					<listitem><para>□ In welcher Reihenfolge erfolgt der Rollout an den Schulen?  Siehe <xref linkend="preparations:school-selection" />.</para></listitem>
 					<listitem><para>□ In welchem zeitlichen Rahmen soll der Rollout der Pilotumgebung und später der Gesamtinfrastruktur erfolgen?</para></listitem>
 					<listitem><para>□ Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, z.B. Passwörter zurücksetzen?</para></listitem>
