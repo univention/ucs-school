@@ -343,36 +343,230 @@ feedback@univention.de
 				benötigt.
 			</para>
 			<para>
-				Wir empfehlen die Verwendung des privaten 10.0.0.0/8 Netzwerkes
-				für die UCS@school-Domäne. Dieses kann dann in viele kleinere
-				Subnetze zerlegt und den Schulen zugeteilt werden. Vorausgesetzt
-				wird, dass die Netzwerkinfrastruktur die Netzwerke an den
-				Schulen mit dem zentralen Netzwerk verbinden kann (Routing).
+				Wir empfehlen die Verwendung des privaten 10.0.0.0/8 Netzes
+				für die UCS@school-Domäne. Dieses wird dann in viele kleinere
+				Netze zerlegt. Für jede Schule wird ein /16-Netz reserviert,
+				das dann wiederum je nach Bedarf in kleinere Subnetze 
+				aufgeteilt wird.
 			</para>
 			<para>
-				Wir geben hier zwei Beispielkonzepte für die Schulnetzwerke -
+				<table id="table:network_concept_schools">
+					<title>Aufteilung der Netze auf die Schulen</title>
+					<tgroup cols="2">
+						<colspec colnum="1" colname="cidr"/>
+						<colspec colnum="2" colname="school"/>
+						<thead>
+							<row>
+								<entry>Netzwerk (CIDR)</entry>
+								<entry>Schule</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><code>10.0.0.0/16</code></entry>
+								<entry>Zentrale Systeme</entry>
+							</row>
+							<row>
+								<entry><code>10.1.0.0/16</code></entry>
+								<entry>Schule 1</entry>
+							</row>
+							<row>
+								<entry><code>10.2.0.0/16</code></entry>
+								<entry>Schule 2</entry>
+							</row>
+							<row>
+								<entry><code>10.3.0.0/16</code></entry>
+								<entry>Schule 3</entry>
+							</row>
+							<row>
+								<entry><code>10.4.0.0/16</code></entry>
+								<entry>Schule 4</entry>
+							</row>
+							<row>
+								<entry><code>...</code></entry>
+								<entry><code>...</code></entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<para>
+				Vorausgesetzt wird, dass die Netzwerkinfrastruktur die
+				Netze an den Schulen jeweils mit dem zentralen Netz
+				verbinden kann (Routing). Die eigentliche Verbindung kann bspw.
+				über Site-to-Site VPNs oder eine Standleitung erfolgen.
+				Eine Verbindung der Schulen untereinander ist nicht notwendig
+				und muss in den meisten Fällen sogar vermieden werden.
+			</para>
+			<note>
+				<para>
+					Bei mehr als 254 Schulen muss das vorgeschlagene Konzept
+					entsprechend erweitert werden.
+				</para>
+			</note>
+			<para>
+				Wir geben hier zwei Beispiele für die Schulnetze -
 				eines für kleine Schulen mit wenigen Clients (Modell
 				&quot;Grundschule&quot;) und eines für sehr große Schulen mit
 				vielen Clients und Netzwerksegmentierung (Modell
 				&quot;Berufsschule&quot;).
-			</para>
-			<para>
-				TODO [Tabelle Netzkwerkonzept Grundschule]
-			</para>
-			<para>
-				Ein Subetz mit Server und Clients (DHCP-Range!)
-			</para>
-			<para>
-				TODO [Tabelle Netzkwerkonzept Berufsschule]
-			</para>
-			<para>
-				Viele Subnetze, Edukativnetze, Verwaltungsnetze, getrennte
-				Servernetze, große Subnetze für WLAN
+				Zudem benötigen die zentralen Systeme ebenfalls ein Netz.
 			</para>
 			<para>
 				In <xref linkend="import:networks" /> ist eine Tabellenvorlage
-				hinterlegt, die für die Import-Phase passende CSV-Dateien
-				erzeugen kann.
+				für das Netzkonzept hinterlegt. Bitte tragen sie ihr
+				individuelles Netzkonzept in diese Tablle ein. Die Tabelle
+				kann später für die Import-Phase gleich die passenden CSV-Dateien
+				erzeugen.
+			</para>
+			<para>
+				<table id="table:network_concept_central">
+					<title>Netze zentral</title>
+					<tgroup cols="4">
+						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+						<colspec colnum="2" colname="range" colwidth="2*"/>
+						<colspec colnum="3" colname="number_of_ips" colwidth="0.5*"/>
+						<colspec colnum="4" colname="usage" colwidth="1.75*"/>
+						<thead>
+							<row>
+								<entry>Netz (CIDR)</entry>
+								<entry>DHCP-Adressbereich</entry>
+								<entry>Anzahl IPs</entry>
+								<entry>Verwendung</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><code>10.0.0.0/24</code></entry>
+								<entry><code>-</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Netz für zentrale UCS Systeme</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<para>
+				Alle zentralen UCS Systeme werden in diesem Netz installiert.
+				Auf eine Adressvergabe via DHCP wird verzichtet, alle Systeme
+				erhalten eine statische IP-Konfiguration.
+				Besteht Bedarf an einer DMZ, so muss diese entsprechend
+				ergänzt werden (bspw. <code>10.0.1.0/24</code>).
+			</para>
+			<para>
+				<table id="table:network_concept_small_school">
+					<title>Netze für Modell Grundschule</title>
+					<tgroup cols="4">
+						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+						<colspec colnum="2" colname="range" colwidth="2*"/>
+						<colspec colnum="3" colname="number_of_ips" colwidth="0.5*"/>
+						<colspec colnum="4" colname="usage" colwidth="1.75*"/>
+						<thead>
+							<row>
+								<entry>Netz (CIDR)</entry>
+								<entry>DHCP-Adressbereich</entry>
+								<entry>Anzahl IPs</entry>
+								<entry>Verwendung</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><code>10.1.0.0/24</code></entry>
+								<entry><code>10.1.0.1-10.1.0.254</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Kleines Netz für eine Grundschule</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<para>
+				In diesem Beispiel werden evtl. vorhandene Server, Netzwerkgeräte
+				und Clients im selben Netz betrieben. Dieses Modell richtet
+				sich an kleine Schulen mit wenigen Clients. Durch die
+				Reservierung des /16-Netzes kann das /24-Netz auch nachträglich
+				erweitert werden.
+			</para>
+			<para>
+				<table id="table:network_concept_large_school">
+					<title>Netze für Modell Berufsschule</title>
+					<tgroup cols="4">
+						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+						<colspec colnum="2" colname="range" colwidth="2*"/>
+						<colspec colnum="3" colname="number_of_ips" colwidth="0.5*"/>
+						<colspec colnum="4" colname="usage" colwidth="1.75*"/>
+						<thead>
+							<row>
+								<entry>Netz (CIDR)</entry>
+								<entry>DHCP-Adressbereich</entry>
+								<entry>Anzahl IPs</entry>
+								<entry>Verwendung</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><code>10.1.1.0/24</code></entry>
+								<entry><code>-</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Netz für Server und Netzwerkgeräte, statische IP-Adressen</entry>
+							</row>
+							<row>
+								<entry><code>10.1.2.0/24</code></entry>
+								<entry><code>10.1.2.10-10.1.2.250</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Netz für Schulverwaltung, erweiterbar auf /23 (510 IP-Adressen)</entry>
+							</row>
+							<row>
+								<entry><code>10.1.4.0/24</code></entry>
+								<entry><code>10.1.4.10-10.1.4.250</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Netz für edukativen Bereich 1, erweiterbar auf /23 (510 IP-Adressen)</entry>
+							</row>
+							<row>
+								<entry><code>10.1.6.0/24</code></entry>
+								<entry><code>10.1.6.10-10.1.6.250</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Netz für edukativen Bereich 2, erweiterbar auf /23 (510 IP-Adressen)</entry>
+							</row>
+							<row>
+								<entry><code>10.1.8.0/24</code></entry>
+								<entry><code>10.1.8.10-10.1.8.250</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Netz für edukativen Bereich 3, erweiterbar auf /23 (510 IP-Adressen)</entry>
+							</row>
+							<row>
+								<entry><code>10.1.10.0/24</code></entry>
+								<entry><code>10.1.10.10-10.1.10.250</code></entry>
+								<entry><code>254</code></entry>
+								<entry>Netz für edukativen Bereich 4, erweiterbar auf /23 (510 IP-Adressen)</entry>
+							</row>
+							<row>
+								<entry><code>10.1.128.0/20</code></entry>
+								<entry><code>10.1.128.100-10.1.143.250</code></entry>
+								<entry><code>4094</code></entry>
+								<entry>Gäste WLAN / BYOD, erweiterbar auf /18 (16382 IP-Adressen)</entry>
+							</row>
+							<row>
+								<entry><code>10.1.192.0/20</code></entry>
+								<entry><code>10.1.192.100-10.1.207.250</code></entry>
+								<entry><code>4094</code></entry>
+								<entry>Schuleigenes WLAN mit RADIUS-Authentifizierung, erweiterbar auf /18 (16382 IP-Adressen)</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<para>
+				In diesem Beispiel werden einzelne Subnetze für WLAN, Server,
+				Verwaltungsbereich und edukativen Bereich betrieben. Dieses
+				Modell richtet sich an große Schulen mit vielen Clients. Die
+				Auswahl der Subnetze ist so gewählt, dass sie sich Bedarf noch
+				erweitern lassen. Die Separierung des edukativen Bereichs in
+				einzelne Subnetze kann bspw. pro Gebäude, pro Etage oder sogar
+				pro Computerraum erfolgen. Netzwerkdrucker können in die
+				Subnetze aufgenommen werden, in dem sich auch die zugehörigen
+				Clients befinden oder es wird ein eigenes Druckernetz
+				hinzugefügt.
 			</para>
 			<para>
 				Folgende Punkte haben sich als Best Practices
@@ -386,7 +580,9 @@ feedback@univention.de
 							VLANs auch direkt auf dem eigenen
 							Netzwerkinterface, allerdings raten wir für ein
 							umfangreiches Setup wie beim Modell
-							&quot;Berufsschule&quot; davon ab
+							&quot;Berufsschule&quot; davon ab. Wichtig ist,
+							dass auf den Switches dann auch die DHCP-Relay- bzw.
+							IP-Helper-Funktionen korrekt konfiguriert sind.
 						</para>
 					</listitem>
 					<listitem>
