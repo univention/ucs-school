@@ -60,7 +60,7 @@ feedback@univention.de
 			Inhalte des Dokuments.
 		</para>
 		<section id="setup-manual:organisation">
-			<title>Checkliste UCS@school-Einführung: Organisation</title>
+			<title>Checkliste: Organisation</title>
 			<para>
 				<itemizedlist spacing="compact" mark="none">
 					<listitem><para>□ Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
@@ -78,7 +78,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual:zentrale">
-			<title>Checkliste UCS@school-Einführung: Zentrale Services</title>
+			<title>Checkliste: Zentrale Services</title>
 			<para>
 				<itemizedlist spacing="compact" mark="none">
 					<listitem><para>□ Wo werden die zentralen UCS@school-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements:servers" />.</para></listitem>
@@ -106,7 +106,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual:schulen">
-			<title>Checkliste UCS@school-Einführung: Dezentrale Services an den Schulen</title>
+			<title>Checkliste: Dezentrale Services an den Schulen</title>
 			<para>
 				<itemizedlist spacing="compact" mark="none">
 					<listitem><para>□ Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
@@ -138,7 +138,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual:wlan">
-			<title>Checkliste UCS@school-Einführung: WLAN und BYOD</title>
+			<title>Checkliste: WLAN und BYOD</title>
 			<para>
 				<!-- <itemizedlist spacing="compact" mark="whitesquare"> -->
 				<itemizedlist spacing="compact" mark="none">
