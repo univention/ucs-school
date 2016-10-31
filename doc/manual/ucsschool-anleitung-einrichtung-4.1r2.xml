@@ -142,7 +142,7 @@ feedback@univention.de
 			<para>
 				<!-- <itemizedlist spacing="compact" mark="whitesquare"> -->
 				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Sind die Voraussetzungen für ein VPN gegeben?  Siehe <xref linkend="setup-manual:schulen" endterm="" />.</para></listitem>
+					<listitem><para>□ Sind die Voraussetzungen für ein VPN gegeben?  Siehe <xref linkend="setup-manual:schulen" />.</para></listitem>
 					<listitem><para>□ Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
 					<listitem><para>□ Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
 					<listitem><para>□ Wo wird der RADIUS-Service betrieben?  Siehe <xref linkend="additional-services:radius" /></para></listitem>
