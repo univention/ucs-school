@@ -73,13 +73,14 @@ feedback@univention.de
 					<listitem><para>□ Verfügt der Betreiber über das erforderliche Know-How?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
 					<listitem><para>□ Wie werden Schulen über die Einführung von UCS@school informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
 					<listitem><para>□ Wer baut in den Schulen Server, Clients und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
-					<listitem><para>□ In welcher Reihenfolge erfolgt der Rollout an den Schulen?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
+					<listitem><para>□ In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
 					<listitem><para>□ In welchem zeitlichen Rahmen soll der Rollout der Pilotumgebung und später der Gesamtinfrastruktur erfolgen?</para></listitem>
 					<listitem><para>□ Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, z.B. Passwörter zurücksetzen?</para></listitem>
 					<listitem><para>□ Wie werden Schulen mit UCS@school vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
 					<listitem><para>□ Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
-					<listitem><para>□ Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter (KPIs)?</para></listitem>
+					<listitem><para>□ Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter (Key Performance Indicators, KPIs)?</para></listitem>
 					<listitem><para>□ Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen erfasst und von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
+					<listitem><para>□ Wer ist verantwortlich für die Pflege von Information in der Schulverwaltungssoftware und wie können diese Daten importiert werden?</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -148,7 +149,7 @@ feedback@univention.de
 			<para>
 				<!-- <itemizedlist spacing="compact" mark="whitesquare"> -->
 				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Sind die Voraussetzungen für ein VPN gegeben?  Siehe <xref linkend="setup-manual_schulen" />.</para></listitem>
+					<listitem><para>□ Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
 					<listitem><para>□ Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
 					<listitem><para>□ Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
 					<listitem><para>□ Wo wird der RADIUS-Service betrieben?  Siehe <xref linkend="additional-services_radius" /></para></listitem>
@@ -1213,6 +1214,8 @@ feedback@univention.de
 			<title>Installation UCS Backup</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
+				Zur Lastverteilung bei der LDAP-Replikation können neben dem 1.
+				Backup Server zusätzlich noch weitere Server aufgesetzt werden.
 				<itemizedlist>
 					<listitem><para>vergeben einer IP-Adresskonfiguration
 							entsprechend des Netzkonzepts</para></listitem>
@@ -1322,6 +1325,14 @@ feedback@univention.de
 			<emphasis role="strong">vor</emphasis> dem Anlegen der ersten
 			Schulen umgesetzt werden:
 		</para>
+		<section xml:id="base-configuration_mail">
+			<para>
+				UCS-Sever verschicken regelmäßig E-Mails, um den aktuellen
+				Systemstatus zu kommunizieren.  Z.B. über Cron und über Nagios.
+				Um diese E-Mail verarbeiten zu können ist die Mailauslieferung
+				zu konfigurieren.  Dazu ist wie folgt vorzugehen: TODO
+			</para>
+		</section>
 		<section xml:id="base-configuration_globale-ucr">
 			<title>Globale UCR-Richtlinie</title>
 			<!-- TODO: in Tabelle überführen -->
@@ -1751,9 +1762,9 @@ feedback@univention.de
 			</para>
 		</section>
 		<section xml:id="additional-services_patchmanagement">
-			<title>Patch Management für Server</title>
+			<title>Patch-Management für Server</title>
 			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis>
+				<emphasis>für alle Szenarien</emphasis>
 			</para>
 			<para>
 				TODO
@@ -1771,7 +1782,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section xml:id="additional-services_patchmanagement_clients">
-			<title>Patch Management für Clients: Softwareverteilung</title>
+			<title>Patch-Management für Clients: Softwareverteilung</title>
 			<para>
 				<emphasis>für Szenarien 3 und 4</emphasis>
 			</para>
@@ -1800,6 +1811,15 @@ feedback@univention.de
 				TODO
 			</para>
 		</section>
+		<section xml:id="additional-services_proxy">
+			<title>Internetzugang für Clients / BYOD</title>
+			<para>
+				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+			</para>
+			<para>
+				TODO
+			</para>
+		</section>
 		<section xml:id="additional-services_radius">
 			<title>WLAN / RADIUS</title>
 			<para>
@@ -1809,13 +1829,32 @@ feedback@univention.de
 				TODO
 			</para>
 		</section>
-		<section xml:id="additional-services_proxy">
-			<title>Internetzugang für Clients / BYOD</title>
+		<section xml:id="additional-services_dienstmail">
+			<title>Dienstmail/Groupware</title>
 			<para>
-				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+				<emphasis>für alle Szenarien</emphasis>
 			</para>
 			<para>
 				TODO
+			</para>
+		</section>
+		<section xml:id="additional-services_lernplattform">
+			<title>Lernplattform</title>
+			<para>
+				<emphasis>für alle Szenarien</emphasis>
+			</para>
+			<para>
+				TODO
+			</para>
+		</section>
+		<section xml:id="additional-services_filesync">
+			<title>File Share und Sync</title>
+			<para>
+				<emphasis>für alle Szenarien</emphasis>
+			</para>
+			<para>
+				TODO
+				ownCloud und Co.
 			</para>
 		</section>
 	</chapter>
