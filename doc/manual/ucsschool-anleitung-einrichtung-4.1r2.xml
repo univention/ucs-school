@@ -65,13 +65,14 @@ feedback@univention.de
 				<itemizedlist spacing="compact" mark="none">
 					<listitem><para>□ Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
 					<listitem><para>□ Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
-					<listitem><para>□ Verfügt der Betreiber über das erfoderliche Know-How?  Siehe <xref linkend="preparations:workshop" />.</para></listitem>
+					<listitem><para>□ Verfügt der Betreiber über das erforderliche Know-How?  Siehe <xref linkend="preparations:workshop" />.</para></listitem>
 					<listitem><para>□ Wie werden Schulen über die Einführung von UCS@school informiert?  Siehe <xref linkend="preparations:info" />.</para></listitem>
 					<listitem><para>□ In welcher Reihenfolge erfolgt der Rollout an den Schulen?  Siehe <xref linkend="preparations:school-selection" />.</para></listitem>
+					<listitem><para>□ In welchem zeitlichen Rahmen soll der Rollout der Pilotumgebung und später der Gesamtinfrastruktur erfolgen?</para></listitem>
 					<listitem><para>□ Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, z.B. Passwörter zurücksetzen?</para></listitem>
 					<listitem><para>□ Wie werden Schulen mit UCS@school vertraut gemacht?  Siehe <xref linkend="preparations:training" />.</para></listitem>
 					<listitem><para>□ Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts:support" />.</para></listitem>
-					<listitem><para>□ Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenen Parameter (KPIs)?</para></listitem>
+					<listitem><para>□ Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter (KPIs)?</para></listitem>
 					<listitem><para>□ Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
 				</itemizedlist>
 			</para>
@@ -80,10 +81,10 @@ feedback@univention.de
 			<title>Checkliste UCS@school-Einführung: Zentrale Services</title>
 			<para>
 				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Wo werden die zentralen UCS@school-Server gehostet?  Siehe <xref linkend="infrastructure-and_hardware-requirements:servers" />.</para></listitem>
+					<listitem><para>□ Wo werden die zentralen UCS@school-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements:servers" />.</para></listitem>
 					<listitem><para>□ Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
 					<listitem><para>□ Wie wird die Aufrecherhaltung des Betriebs sichergestellt, z.B. Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation:member" /> und <xref linkend="concepts:backup" />.</para></listitem>
-					<listitem><para>□ Wer führt initiale Einrichtung durch?</para>
+					<listitem><para>□ Wer führt die initiale Installation und Einrichtung durch?</para>
 						<para>
 							<itemizedlist spacing="compact" mark="none">
 								<listitem><para>□ Installation UCS-Server mit UCS@school-App: <xref linkend="installation" /></para></listitem>
@@ -93,7 +94,7 @@ feedback@univention.de
 						</para>
 					</listitem>
 					<listitem><para>□ Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements:infrastructure:vpn" /></para></listitem>
-					<listitem><para>□ Welche über UCS@school hinausgehenden Dienste und Einstelungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
+					<listitem><para>□ Welche über UCS@school hinausgehenden Dienste und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
 						<para>
 							<itemizedlist spacing="compact" mark="none">
 								<listitem><para>□ Wie werden die über das Internet zugänglichen zentralen Dienste vor unerwünschtem Zugriff geschützt?</para></listitem>
@@ -115,7 +116,7 @@ feedback@univention.de
 						</itemizedlist>
 					</listitem>
 					<listitem><para>□ Wie schnell und stabil ist der Internetzugang der Schule?  Siehe <xref linkend="infrastructure-and_hardware-requirements:infrastructure:internet" />.</para></listitem>
-					<listitem><para>□ Wer bereibt den Internetzugang und ist für die Entstörung zuständig?</para></listitem>
+					<listitem><para>□ Wer betreibt den Internetzugang und ist für die Entstörung zuständig?</para></listitem>
 					<listitem><para>□ Welche aktiven und passiven Netzkomponenten sind im Einsatz, z.B. DSL-Router/Switches/Access Points, und wer kennt die Zugangsdaten? </para></listitem>
 					<listitem><para>□ Welches IP-Netz wird aktuell in der Schule verwendet?</para>
 						<para>
@@ -137,17 +138,17 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual:wlan">
-			<title>Checkliste in Schulen: WLAN</title>
+			<title>Checkliste UCS@school-Einführung: WLAN und BYOD</title>
 			<para>
 				<!-- <itemizedlist spacing="compact" mark="whitesquare"> -->
 				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Siehe </para></listitem>
+					<listitem><para>□ Sind die Voraussetzungen für ein VPN gegeben?  Siehe <xref linkend="setup-manual:schulen" endterm="" />.</para></listitem>
 					<listitem><para>□ Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
-					<listitem><para>□ Access Point Management Software vorhanden</para></listitem>
-					<listitem><para>□ Lokalen Schulserver ersetzen?</para></listitem>
-					<listitem><para>□ Lokalen Schulserver weiter betreiben?</para></listitem>
-					<listitem><para>□ Verwendete lokale IP-Netze</para></listitem>
-					<listitem><para>□ </para></listitem>
+					<listitem><para>□ Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
+					<listitem><para>□ Wo wird der RADIUS-Service betrieben?  Siehe <xref linkend="additional-services:radius" /></para></listitem>
+					<listitem><para>□ Wie greifen die mobilen Geräte auf das Internet zu, z.B. direkt oder über einen transparenter Proxy?</para></listitem>
+					<listitem><para>□ Wie hoch sind die notwendigen Investitionen, um die Betriebsbereitschaft für das WLAN herzustellen?</para></listitem>
+					<listitem><para>□ Welche IT-Angebote, zentral und dezentral, sollen von den Geräten im WLAN verwendet werden können?</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -212,7 +213,7 @@ feedback@univention.de
 				Dieses Szenario baut auf dem Szenario 2 auf und ergänzt es um
 				Schulserver an den Schulen. Diese Schulserver stellen vor Ort
 				diverse Dienste bereit wie DHCP, DNS, Active Directory
-				kompatible Domäne, Dateifreigaben, Proxy, aber auch edukative
+				kompatible Domäne, Dateifreigaben, Proxy, aber auch pädagogische
 				Funktionen wie Computerraumsteuerung, Klassenarbeitsmodus,
 				Passwörter zurücksetzen, Client-Software-Management und mehr.
 			</para>
@@ -235,7 +236,7 @@ feedback@univention.de
 			<para>
 				Dieses Szenario ähnelt dem Szenario 3, nur dass in diesem Fall
 				die Schulserver nicht an der Schule stehen sondern im
-				Rechenzentrum gehostet werden. Dies erlaubt es die
+				Rechenzentrum betrieben werden. Dies erlaubt es die
 				Hardwarekosten zu verringern, erfordert allerdings auch eine
 				sehr gute Anbindung der Schulen an das Rechenzentrum (1 Gbit/s
 				oder mehr). Szenario 3 und 4 können auch kombiniert werden,
@@ -303,7 +304,7 @@ feedback@univention.de
 				an IT-Infrastruktur, positive Einstellung gegenüber dem Projekt
 				usw. Es sollte vermieden werden, mit der größten Schule zu
 				starten, die vermutlich das komplexeste lokale Setup mit
-				Extrawünschen bedeutet, vermutlich auch über selbstbetriebene
+				Extrawünschen bedeutet, vermutlich auch über selbst betriebene
 				IT-Systeme verfügt, die sie ungerne abgelöst sieht und dem neuen
 				System gegenüber sehr zurückhaltend ist. Der Fokus sollte sein,
 				für den Großteil der Schulen eine stabile Lösung mit Mehrwert
@@ -315,7 +316,7 @@ feedback@univention.de
 			<title>Schulung</title>
 			<para>
 				Die Lehrkräfte müssen im Umgang mit den Rechnern und
-				insbesondere mit den edukativen Funktionen von UCS@school
+				insbesondere mit den pädagogische Funktionen von UCS@school
 				geschult werden. Dazu sollten wiederkehrende Termine angeboten
 				werden.
 			</para>
@@ -790,7 +791,7 @@ feedback@univention.de
 				</para>
 				<para>
 					UCS Backup Server dienen der Lastverteilung und
-					Ausfallsicherheit. Ab einer bestimmten Umgebungsgröße (bspw.
+					Ausfallsicherheit. Ab einer bestimmten Größe der Umgebung (bspw.
 					ab 100 Schulservern) sollte aus diesen Gründen ein zweiter UCS
 					Backup Server installiert werden.
 				</para>
@@ -1121,6 +1122,7 @@ feedback@univention.de
 		</para>
 		<section id="base-configuration:globale-ucr">
 			<title>Globale UCR-Richtlinie</title>
+			<!-- TODO: in Tabelle überführen -->
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
@@ -1205,6 +1207,7 @@ feedback@univention.de
 		</section>
 		<section id="base-configuration:central-ucr">
 			<title>Zentale UCR-Richtlinie</title>
+			<!-- TODO: in Tabelle überführen -->
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
