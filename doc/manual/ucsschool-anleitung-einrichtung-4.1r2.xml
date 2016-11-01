@@ -352,11 +352,11 @@ feedback@univention.de
 				Wir empfehlen die Verwendung des privaten 10.0.0.0/8 Netzes
 				für die UCS@school-Domäne. Dieses wird dann in viele kleinere
 				Netze zerlegt. Für jede Schule wird ein /16-Netz reserviert,
-				das dann wiederum je nach Bedarf in kleinere Subnetze 
+				das dann wiederum je nach Bedarf in kleinere Subnetze
 				aufgeteilt wird.
 			</para>
 			<para>
-				<table id="table:network_concept_schools">
+				<table xml:id="table_network_concept_schools">
 					<title>Aufteilung der Netze auf die Schulen</title>
 					<tgroup cols="2">
 						<colspec colnum="1" colname="cidr"/>
@@ -426,7 +426,7 @@ feedback@univention.de
 				erzeugen.
 			</para>
 			<para>
-				<table id="table:network_concept_central">
+				<table xml:id="table_network_concept_central">
 					<title>Netze zentral</title>
 					<tgroup cols="4">
 						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
@@ -460,7 +460,7 @@ feedback@univention.de
 				ergänzt werden (bspw. <code>10.0.1.0/24</code>).
 			</para>
 			<para>
-				<table id="table:network_concept_small_school">
+				<table xml:id="table_network_concept_small_school">
 					<title>Netze für Modell Grundschule</title>
 					<tgroup cols="4">
 						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
@@ -494,7 +494,7 @@ feedback@univention.de
 				erweitert werden.
 			</para>
 			<para>
-				<table id="table:network_concept_large_school">
+				<table xml:id="table_network_concept_large_school">
 					<title>Netze für Modell Berufsschule</title>
 					<tgroup cols="4">
 						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
@@ -1096,7 +1096,7 @@ feedback@univention.de
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
 				</para>
 				<para>
-					Die Schulen müssen über eine strukturierte Netzwerk-Verkabelung verfügen. 
+					Die Schulen müssen über eine strukturierte Netzwerk-Verkabelung verfügen.
 				</para>
 			</section>
 			<section xml:id="infrastructure-and_hardware-requirements_infrastructure_internet">
@@ -1326,6 +1326,7 @@ feedback@univention.de
 			Schulen umgesetzt werden:
 		</para>
 		<section xml:id="base-configuration_mail">
+			<title>E-Mail Basisdienst</title>
 			<para>
 				UCS-Sever verschicken regelmäßig E-Mails, um den aktuellen
 				Systemstatus zu kommunizieren.  Z.B. über Cron und über Nagios.
