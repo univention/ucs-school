@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-40) unstable; urgency=low
+
+  * Bug #42503: temporary workaround for Bug 42503
+  * wait for deleted user
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 02 Nov 2016 16:35:30 +0100
+
 ucs-test-ucsschool (3.0.16-39) unstable; urgency=low
 
   * Bug #41469: do not use wait_for_s4connector() after each import run, it

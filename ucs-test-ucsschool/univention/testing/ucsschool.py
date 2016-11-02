@@ -52,6 +52,7 @@ import univention.testing.udm as utu
 import univention.testing.strings as uts
 import univention.testing.udm as udm_test
 
+from univention.config_registry import handler_set, handler_unset
 import univention.admin.uldap as udm_uldap
 import univention.admin.uexceptions as udm_errors
 from univention.lib.umc_connection import UMCConnection as _UMCConnection
@@ -386,9 +387,18 @@ class UCSTestSchool(object):
 				tmp_file.write(line)
 				tmp_file.flush()
 
-				cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
-				print '*** Calling following command: %r' % cmd
-				retval = subprocess.call(cmd)
+				# workaround for Bug #42503
+				unset_ucr = False
+				if not self._ucr.get('mail/hosteddomains'):
+					unset_ucr = True
+					handler_set(['mail/hosteddomains={hostname}.{domainname}'.format(self._ucr)])
+				try:
+					cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
+					print '*** Calling following command: %r' % cmd
+					retval = subprocess.call(cmd)
+				finally:
+					if unset_ucr:
+						handler_unset(['mail/hosteddomains'])
 				if retval:
 					utils.fail('create_ou failed with exitcode %s' % retval)
 
