@@ -286,7 +286,7 @@ Function MapDrive(Drive,Share)
  End if
  end function
 
-''' % desktopfolder.replace('"', '""')
+''' % desktopfolder.translate(None, '\/:*?"<>|')
 
 	# create shortcuts to shares
 	for linkName in links:

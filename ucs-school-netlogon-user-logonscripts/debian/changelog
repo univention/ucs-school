@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (12.0.4-3) unstable; urgency=low
+
+  * Bug #41173: remove characters that are forbidden by Windows from
+    folder name
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 02 Nov 2016 17:58:09 +0100
+
 ucs-school-netlogon-user-logonscripts (12.0.4-2) unstable; urgency=low
 
   * Bug #41173: escape double quotes for VBS
