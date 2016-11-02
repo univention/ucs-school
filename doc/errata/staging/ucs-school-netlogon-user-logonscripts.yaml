@@ -9,8 +9,9 @@ desc: |
    is now configurable using the UCR variable
    ucsschool/userlogon/shares_foldername. If changed, all logon scripts
    must be rewritten by running the commands:
-   # invoke-rc.d univention-directory-listener restart
+   # invoke-rc.d univention-directory-listener stop
    # univention-directory-listener-ctrl resync ucs-school-user-logonscript
+   # invoke-rc.d univention-directory-listener start
    (Bug #41173).
  * The listener module for generating NETLOGON scripts for all UCS@school
    users failed with a traceback if one of the scanned group members could
