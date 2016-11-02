@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
-fix: 
+fix: 9.0.27-1.267.201610251145
 desc: |
  * The "Passwords (teachers)" and "Assigning teachers" modules now also show
    teachers which are also staff users (Bug #42461).
