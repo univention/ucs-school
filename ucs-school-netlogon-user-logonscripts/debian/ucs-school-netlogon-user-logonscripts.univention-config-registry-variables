@@ -35,8 +35,8 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/shares_foldername]
-Description[de]=Name des Verzeichnisses das Links zu Laufwerken des Benutzers enthält (Standard: "Eigene Shares"). Wenn verändert, müssen alle logon Skripte neu geschrieben werden: "invoke-rc.d univention-directory-listener restart; univention-directory-listener-ctrl resync ucs-school-user-logonscript"
-Description[en]=Name of the directory containing links to the users shares (default: "Eigene Shares"). If changed, all logon scripts must be rewritten: "invoke-rc.d univention-directory-listener restart; univention-directory-listener-ctrl resync ucs-school-user-logonscript"
+Description[de]=Name für das Verzeichnis auf dem Desktop, das Links zu Benutzerfreigaben enthält (Standard: "Eigene Shares").
+Description[en]=Name of the directory on the desktop containing links to the users shares (default: "Eigene Shares").
 Type=str
 Categories=ucsschool-netlogon
 

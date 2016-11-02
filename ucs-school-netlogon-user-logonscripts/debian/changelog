@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (12.0.4-2) unstable; urgency=low
+
+  * Bug #41173: escape double quotes for VBS
+  * remove listener resync instructions (they are in the advisory)
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 02 Nov 2016 10:40:22 +0100
+
 ucs-school-netlogon-user-logonscripts (12.0.4-1) unstable; urgency=low
 
   * Bug #42457: do not fail to create netlogon script if user cannot be
