@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-umc-internetrules
+fix: 12.0.0-2.40.201609021440
+desc: |
+ * Within the UMC module <guimenu>Assign internet rules</guimenu> the description text <emphasis>default settings</emphasis> has been changed to <emphasis>Default (unrestricted)</emphasis> (Bug #27236).
+bug: [27236]
