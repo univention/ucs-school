@@ -6,7 +6,8 @@ src: ucs-school-umc-computerroom
 fix: 8.0.7-1.196.201610251334
 desc: |
  * The iTALC handling has been revised and improved. Several bugs have been
-   fixed which makes iTALC connections more reliable (Bug #41752).
+   fixed which makes iTALC connections more reliable. E.g. locking of screens
+   and input devices is now faster and more reliable (Bug #41752).
  * It is now possible to prevent that screenshots of specific users or groups
    are shown in the UMC module. See UCR variables
    ucsschool/umc/computerroom/hide_screenshots/teachers and
