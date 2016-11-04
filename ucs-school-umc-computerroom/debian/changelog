@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (5.0.11-2) unstable; urgency=low
+
+  * Bug #41752/41758: enable buttons in grid only if available; merged duplicate code
+    in one function; update grid buttons upon state changes
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 04 Nov 2016 15:45:18 +0100
+
 ucs-school-umc-computerroom (5.0.11-1) unstable; urgency=low
 
   * Bug #41752/41758: fixed logic for locking screen/input if iTALC icon has

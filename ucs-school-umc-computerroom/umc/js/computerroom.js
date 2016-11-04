@@ -301,7 +301,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('lockInput', lang.hitch(this, function(item) {
-					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
+					return !this._demo.running && this._canExecuteLockInput(item, false);
 				})),
 				callback: lang.hitch(this, '_lockInput', true)
 			}, {
@@ -311,7 +311,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('unlockInput', lang.hitch(this, function(item) {
-					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
+					return !this._demo.running && this._canExecuteLockInput(item, true);
 				})),
 				callback: lang.hitch(this, '_lockInput', false)
 			}, {
@@ -332,7 +332,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('ScreenLock', lang.hitch(this, function(item) {
-					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
+					return !this._demo.running && this._canExecuteLockScreen(item, false);
 				})),
 				callback: lang.hitch(this, '_lockScreen', true)
 			}, {
@@ -343,7 +343,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('ScreenUnLock', lang.hitch(this, function(item) {
-					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
+					return !this._demo.running && this._canExecuteLockScreen(item, true);
 				})),
 				callback: lang.hitch(this, '_lockScreen', false)
 			}];
@@ -431,44 +431,44 @@ define([
 			dialog.alert(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation."), _('Presentation'));
 		},
 
+		_canExecuteLockInput: function(comp, current_locking_state) {
+			return (isConnected(comp) && // is connected?
+					comp.user && comp.user[0] && // is user logged on?
+					(!comp.teacher || comp.teacher[0] === false) && // is no teacher logged in?
+					comp.InputLock[0] === current_locking_state); // is input lock in expected state?
+		},
+
 		_lockInput: function(lock, ids, items) {
 			array.forEach(items, lang.hitch(this, function(comp) {
-				if (comp.connection[0] != 'connected' || // not connected
-					!comp.user || !comp.user[0] || // no user logged on
-					(comp.teacher && comp.teacher[0] === true) || // teacher logged in
-					comp.InputLock[0] === null || // unclear status
-					comp.InputLock[0] === lock // already locked/unlocked
-				) {
-					// ignore them
-					return;
+				if (this._canExecuteLockInput(comp, !lock)) {
+					this.umcpCommand('computerroom/lock', {
+						computer: comp.id[0],
+						device: 'input',
+						lock: lock
+					});
+					this._objStore.put({ id: comp.id[0], InputLock: null });
 				}
-				this.umcpCommand('computerroom/lock', {
-					computer: comp.id[0],
-					device: 'input',
-					lock: lock
-				});
-				this._objStore.put({ id: comp.id[0], InputLock: null });
 			}));
 			this.addNotification(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
 		},
 
+		_canExecuteLockScreen: function(comp, current_locking_state) {
+			return (isConnected(comp) && // is connected?
+					comp.user && comp.user[0] && // is user logged on?
+					(!comp.teacher || comp.teacher[0] === false) && // is no teacher logged in?
+					comp.ScreenLock[0] === current_locking_state); // is screen lock in expected state?
+		},
+
 		_lockScreen: function(lock, ids, items) {
 			array.forEach(items, lang.hitch(this, function(comp) {
-				if (comp.connection[0] != 'connected' || // not connected
-					!comp.user || !comp.user[0] || // no user logged on
-					(comp.teacher && comp.teacher[0] === true) || // teacher logged in
-					comp.ScreenLock[0] === null || // unclear status
-					comp.ScreenLock[0] === lock // already locked/unlocked
-				) {
-					// ignore them
-					return;
+				if (this._canExecuteLockScreen(comp, !lock)) {
+					this.umcpCommand('computerroom/lock', {
+						computer: comp.id[0],
+						device: 'screen',
+						lock: lock
+					});
+					this._objStore.put({ id: comp.id[0], ScreenLock: null });
 				}
-				this.umcpCommand('computerroom/lock', {
-					computer: comp.id[0],
-					device: 'screen',
-					lock: lock
-				});
-				this._objStore.put({ id: comp.id[0], ScreenLock: null });
 			}));
 			this.addNotification(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
 		},
@@ -1231,6 +1231,7 @@ define([
 
 				if (response.result.computers.length) {
 					this._grid._updateFooterContent();
+					this._grid._selectionChanged();
 				}
 
 				var settingColorStyle = 'color: inherit;';
