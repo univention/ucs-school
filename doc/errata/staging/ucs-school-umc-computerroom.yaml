@@ -3,11 +3,14 @@ release: "3.2"
 version: [r2]
 scope: ucs_3.2-0-ucs-school-3.2r2
 src: ucs-school-umc-computerroom
-fix: 5.0.10-3.193.201610141342
+fix: 5.0.11-2.201.201611041651
 desc: |
  This update addresses the following issue(s):
+ * The iTALC handling has been revised and improved. Several bugs have been
+   fixed which makes iTALC connections more reliable. E.g. locking of screens
+   and input devices is now faster and more reliable (Bug #41758).
  * It is now possible to prevent that screenshots of specific users or groups
    are shown in the UMC module. See UCR variables
    ucsschool/umc/computerroom/hide_screenshots/teachers and
    ucsschool/umc/computerroom/hide_screenshots/groups (Bug #41746).
-bug: [41746]
+bug: [41746,41758]
