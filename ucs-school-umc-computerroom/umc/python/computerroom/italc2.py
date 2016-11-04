@@ -324,6 +324,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 	@pyqtSlot(int)
 	def _slaveStateFlags(self, flags):
+		# MODULE.info('%s: received slave state flags: (old=%r, new=%r)' % (self.ipAddress, self._flags.old, flags))
 		self._flags.set(flags)
 		if self._flags.old is None:
 			diff = self._flags.current
@@ -373,15 +374,17 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 	@property
 	def dict(self):
-		item = {'id': self.name,
-				 'name': self.name,
-				 'user': self.user.current,
-				 'teacher': self.isTeacher,
-				 'connection': self.state.current,
-				 'description': self.description,
-				 'ip': self.ipAddress,
-				 'mac': self.macAddress,
-				 'objectType': self.objectType}
+		item = {
+			'id': self.name,
+			'name': self.name,
+			'user': self.user.current,
+			'teacher': self.isTeacher,
+			'connection': self.state.current,
+			'description': self.description,
+			'ip': self.ipAddress,
+			'mac': self.macAddress,
+			'objectType': self.objectType
+		}
 		item.update(self.flagsDict)
 		return item
 
@@ -435,31 +438,31 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 	@property
 	def screenLock(self):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isScreenLockRunning()
 
 	@property
 	def inputLock(self):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isInputLockRunning()
 
 	@property
 	def demoServer(self):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isDemoServerRunning()
 
 	@property
 	def demoClient(self):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isDemoClientRunning()
 
 	@property
 	def messageBox(self):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isMessageBoxRunning()
 
@@ -612,6 +615,9 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 			return
 		self._core.logoutUser()
 
+	def __repr__(self):
+		return '<%s(%s)>' % (type(self).__name__, self.ipAddress,)
+
 
 class ITALC_Manager(dict, notifier.signals.Provider):
 	SCHOOL = None
@@ -673,7 +679,7 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 		try:  # room DN
 			ldap.dn.str2dn(room)
 		except ldap.DECODING_ERROR:  # room name
-			room_dn = None # got a name instead of a DN
+			room_dn = None  # got a name instead of a DN
 
 		try:
 			if room_dn:
