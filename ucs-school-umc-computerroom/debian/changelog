@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (5.0.11-1) unstable; urgency=low
+
+  * Bug #41752/41758: fixed logic for locking screen/input if iTALC icon has
+    been disabled on windows client
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 04 Nov 2016 14:18:04 +0100
+
 ucs-school-umc-computerroom (5.0.10-4) unstable; urgency=low
 
   * Bug #41752/41758: fixed logic of "hasChanged"

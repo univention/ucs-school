@@ -451,31 +451,31 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	@property
 	def screenLock( self ):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isScreenLockRunning()
 
 	@property
 	def inputLock( self ):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isInputLockRunning()
 
 	@property
 	def demoServer( self ):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isDemoServerRunning()
 
 	@property
 	def demoClient( self ):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isDemoClientRunning()
 
 	@property
 	def messageBox( self ):
-		if not self._core or self._core.slaveStateFlags() == 0:
+		if not self._core:
 			return None
 		return self._core.isMessageBoxRunning()
 
@@ -627,6 +627,9 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			MODULE.error('%s: not connected - skipping logOut' % (self.ipAddress,))
 			return
 		self._core.logoutUser()
+
+	def __repr__(self):
+		return '<%s(%s)>' % (type(self).__name__, self.ipAddress,)
 
 
 class ITALC_Manager( dict, notifier.signals.Provider ):
