@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-41) unstable; urgency=low
+
+  * Bug #42503: fix last commit
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 04 Nov 2016 17:39:12 +0100
+
 ucs-test-ucsschool (3.0.16-40) unstable; urgency=low
 
   * Bug #42503: temporary workaround for Bug 42503

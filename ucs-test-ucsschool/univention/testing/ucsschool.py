@@ -391,7 +391,7 @@ class UCSTestSchool(object):
 				unset_ucr = False
 				if not self._ucr.get('mail/hosteddomains'):
 					unset_ucr = True
-					handler_set(['mail/hosteddomains={hostname}.{domainname}'.format(self._ucr)])
+					handler_set(['mail/hosteddomains={hostname}.{domainname}'.format(**dict(self._ucr.items()))])
 				try:
 					cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
 					print '*** Calling following command: %r' % cmd
