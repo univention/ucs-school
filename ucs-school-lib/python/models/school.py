@@ -46,6 +46,7 @@ from ucsschool.lib.models.misc import Container, OU
 from ucsschool.lib.models.computer import AnyComputer, SchoolDCSlave, SchoolDC
 from ucsschool.lib.models.utils import flatten, ucr, _, logger
 
+
 class School(UCSSchoolHelperAbstractClass):
 	name = SchoolName(_('School name'))
 	dc_name = DCName(_('DC Name'))

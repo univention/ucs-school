@@ -52,6 +52,7 @@ _listTypes = {
 }
 _listTypesInv = dict([(_i[1], _i[0]) for _i in _listTypes.iteritems()])
 
+
 class Rule(object):
 
 	def __init__(self, name, type=WHITELIST, priority=0, wlan=False, domains=[], userRule=False):
@@ -160,6 +161,7 @@ class Rule(object):
 		if rmVars:
 			univention.config_registry.handler_unset(rmVars)
 
+
 def findUCRVariables(filterName=None, userRule=False):
 	'''Returns a dict of all UCR variables or all variables matching the
 	specified rule name.'''
@@ -187,6 +189,7 @@ def findUCRVariables(filterName=None, userRule=False):
 	# return all matched variables
 	return vars
 
+
 def remove(name, userRule=False):
 	'''Removes the UCR variables corresponding to the specified rule.'''
 	if not name:
@@ -197,9 +200,11 @@ def remove(name, userRule=False):
 		return True
 	return False
 
+
 def load(name, userRule=False):
 	'''Wrapper for list(name).'''
 	return list(name, userRule)
+
 
 def list(filterName=None, userRule=False):
 	'''Returns a list of all existing rules. If name is given, returns only the
@@ -266,6 +271,7 @@ def list(filterName=None, userRule=False):
 
 	return rules.values()
 
+
 def getGroupRuleName(groupNames):
 	'''Return the name of the filter rule for the specified group name. 
 	Usage:
@@ -276,6 +282,7 @@ def getGroupRuleName(groupNames):
 	if not isinstance(groupNames, type([])):
 		return ucr.get('proxy/filter/groupdefault/%s' % groupNames)
 	return dict([(iname, ucr.get('proxy/filter/groupdefault/%s' % iname)) for iname in groupNames])
+
 
 def unsetGroupRuleName(groupNames):
 	'''Unset the default rule for the given group name.
@@ -289,6 +296,7 @@ def unsetGroupRuleName(groupNames):
 	else:
 		vars = ['proxy/filter/groupdefault/%s' % iname for iname in groupNames]
 	univention.config_registry.handler_unset(vars)
+
 
 def setGroupRuleName(*args):
 	'''Set the default rule for the given group name.

@@ -9,6 +9,7 @@ import univention.testing.utils as utils
 
 EXPECTED_VERSION = '4.1'
 
+
 def main():
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()

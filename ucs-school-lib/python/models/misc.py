@@ -39,6 +39,7 @@ from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 
 from ucsschool.lib.models.utils import ucr, _, logger
 
+
 class MailDomain(UCSSchoolHelperAbstractClass):
 	school = None
 
@@ -48,6 +49,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 
 	class Meta:
 		udm_module = 'mail/domain'
+
 
 class OU(UCSSchoolHelperAbstractClass):
 
@@ -77,6 +79,7 @@ class OU(UCSSchoolHelperAbstractClass):
 
 	class Meta:
 		udm_module = 'container/ou'
+
 
 class Container(OU):
 	user_path = ContainerPath(_('User path'), udm_name='userPath')

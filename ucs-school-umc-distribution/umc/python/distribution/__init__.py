@@ -52,6 +52,7 @@ from ucsschool.lib.models.user import User
 
 _ = Translation('ucs-school-umc-distribution').translate
 
+
 def compare_dn(a, b):
 	return a and b and a.lower() == b.lower()
 

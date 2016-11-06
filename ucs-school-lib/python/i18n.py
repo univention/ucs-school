@@ -43,6 +43,7 @@ ucs_school_l10n_languages = {
 	'de': ucs_school_l10n_languages_de,
 }
 
+
 def ucs_school_name_i18n(name, lang='de'):
 	'''i18n function for localization of UCS@school standard names'''
 

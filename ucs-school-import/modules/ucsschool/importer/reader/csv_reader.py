@@ -46,6 +46,7 @@ from ucsschool.importer.exceptions import UnknownProperty
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 import univention.admin.modules
 
+
 class CsvReader(BaseReader):
 	_attrib_names = dict()  # cache for Attribute names
 	encoding = "utf-8"
@@ -233,6 +234,7 @@ class UTF8Recoder(object):
 	Iterator that reads an encoded stream and reencodes the input to UTF-8.
 	Blatantly copied from docs.python.org/2/library/csv.html
 	"""
+
 	def __init__(self, f, encoding):
 		self.reader = codecs.getreader(encoding)(f)
 

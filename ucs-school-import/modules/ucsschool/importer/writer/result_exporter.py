@@ -42,6 +42,7 @@ class ResultExporter(object):
 	Subclasses implement get_iter() to create a stream of objects to serialize
 	and run serialize() on each of them.
 	"""
+
 	def __init__(self, *arg, **kwargs):
 		"""
 		Create a CSV file writer.

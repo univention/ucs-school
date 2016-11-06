@@ -56,8 +56,10 @@ from univention.management.console.config import ucr
 
 _ = Translation('univention-management-console-selective-udm').translate
 
+
 class CreationDenied(Exception):
 	pass
+
 
 class Instance(SchoolBaseModule):
 

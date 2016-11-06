@@ -82,6 +82,7 @@ ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
 FN_SCREENSHOT_DENIED = _('/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg')
 FN_SCREENSHOT_NOTREADY = _('/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg')
 
+
 def _getRoomFile(roomDN):
 	if roomDN.startswith('cn='):
 		dnParts = explodeDn(roomDN, True)

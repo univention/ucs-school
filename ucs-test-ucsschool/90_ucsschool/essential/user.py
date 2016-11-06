@@ -43,6 +43,7 @@ class User(Person):
 	:param school_classes: dictionary of school -> list of names of the class which contain the user
 	:type school_classes: dict
 	"""
+
 	def __init__(
 			self,
 			school,

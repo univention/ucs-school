@@ -56,6 +56,7 @@ class DefaultUserImportFactory(object):
 	Subclass this and store the fully dotted class name in config["factory"]
 	to make the importer code use your classes.
 	"""
+
 	def __init__(self):
 		self.config = Configuration()
 		self.logger = get_logger()

@@ -15,6 +15,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
+
 def main():
 	MIN_DIST_TIME = 8 * 60
 	MIN_COLL_TIME = 18 * 60

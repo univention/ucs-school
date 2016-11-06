@@ -23,6 +23,7 @@ import univention.testing.utils as utils
 
 
 class Bunch(object):
+
 	def __init__(self, **kwds):
 		self.__dict__.update(kwds)
 
@@ -32,12 +33,14 @@ class ImportException(Exception):
 
 
 class TestFailed(Exception):
+
 	def __init__(self, msg, stack):
 		self.msg = msg
 		self.stack = stack
 
 
 class ConfigDict(dict):
+
 	def update_entry(self, key, value):
 		"""
 		update_entry('foo:bar:baz', 'my value')
@@ -59,6 +62,7 @@ class ConfigDict(dict):
 
 
 class PyHooks(object):
+
 	def __init__(self, hook_basedir=None):
 		self.hook_basedir = hook_basedir if hook_basedir else '/usr/share/ucs-school-import/pyhooks'
 		self.tmpdir = tempfile.mkdtemp(prefix='pyhook.', dir='/tmp')

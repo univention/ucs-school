@@ -17,6 +17,7 @@ from univention.testing.ucs_samba import wait_for_drs_replication
 
 
 class Test(CLI_Import_v2_Tester):
+
 	def __init__(self):
 		self.ou_B = None
 		self.ou_C = None

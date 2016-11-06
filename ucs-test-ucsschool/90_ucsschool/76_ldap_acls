@@ -15,11 +15,14 @@ from univention.uldap import getMachineConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 
+
 class FailAcl(Exception):
 	pass
 
+
 class FailCmd(Exception):
 	pass
+
 
 class Attributes(object):
 	base = [
@@ -248,6 +251,7 @@ class Attributes(object):
 			'sambaPasswordHistory',
 			]
 
+
 class Access(object):
 	Read = 'read'
 	Write = 'write'
@@ -257,6 +261,7 @@ class Access(object):
 
 
 class LDAPACLTestMatrix(object):
+
 	def __init__(self, auth_dn, default):
 		self.auth_dn = auth_dn
 		self.default = default
@@ -362,6 +367,7 @@ class LDAPACLTestMatrix(object):
 				self.addDn(dn, attrs, access)
 			else:
 				self.addSubtree(dn, attrs, access)
+
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:

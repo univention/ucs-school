@@ -16,6 +16,7 @@ from univention.testing.ucsschool import UMCConnection
 from univention.testing.mail import MailSink
 from univention.testing.network import NetworkRedirector
 
+
 def main():
 	# initializing mail data
 	message = time.time() * 1000

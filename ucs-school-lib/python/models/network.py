@@ -39,6 +39,7 @@ from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.dhcp import DHCPSubnet
 from ucsschool.lib.models.utils import ucr, _, logger
 
+
 class Network(UCSSchoolHelperAbstractClass):
 	netmask = Netmask(_('Netmask'))
 	network = NetworkAttribute(_('Network'))
@@ -125,6 +126,7 @@ class Network(UCSSchoolHelperAbstractClass):
 
 	class Meta:
 		udm_module = 'networks/network'
+
 
 class DNSReverseZone(UCSSchoolHelperAbstractClass):
 	name = SubnetName(_('Subnet'))

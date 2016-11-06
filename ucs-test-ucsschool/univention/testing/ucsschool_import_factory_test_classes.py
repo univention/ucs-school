@@ -105,6 +105,7 @@ class NullImport(MassImport):
 	"""
 	This MassImport does not import users.
 	"""
+
 	def import_users(self):
 		self.logger.info("*** NullImport.import_users()")
 		self.logger.info("------ NOT importing users. ------")
@@ -114,6 +115,7 @@ class UniventionPasswordExporter(NewUserPasswordCsvExporter):
 	"""
 	Export password table as if all passwords were 'univention'.
 	"""
+
 	def serialize(self, user):
 		logger.info("*** UniventionPasswordExporter.serialize()")
 		res = super(UniventionPasswordExporter, self).serialize(user)
@@ -125,6 +127,7 @@ class AnonymizeResultExporter(UserImportCsvResultExporter):
 	"""
 	Export import job results with wrong names and birthday.
 	"""
+
 	def serialize(self, obj):
 		logger.info("*** AnonymizeResultExporter.serialize()")
 		res = super(AnonymizeResultExporter, self).serialize(obj)
@@ -140,6 +143,7 @@ class BirthdayUserImport(UserImport):
 	"""
 	Prevent deletion of users on their birthday.
 	"""
+
 	def do_delete(self, user):
 		self.logger.info("*** BirthdayUserImport.do_delete() user.birthday=%r", user.birthday)
 		if user.birthday == time.strftime("%Y-%m-%d"):
@@ -168,6 +172,7 @@ class JsonWriter(BaseWriter):
 	"""
 	Crude JSON writer
 	"""
+
 	def __init__(self, *arg, **kwargs):
 		logger.info("*** JsonWrite.__init()")
 		self._filename = None

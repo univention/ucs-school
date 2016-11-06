@@ -37,6 +37,7 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
 class LegacyCsvReader(CsvReader):
+
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""
 		Mark __is_staff and __is_teacher as already handled (in get_roles()).

@@ -40,7 +40,9 @@ REGEX_LOCKED_FILES = re.compile(r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMo
 REGEX_USERS = re.compile(r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s+$')
 REGEX_SERVICES = re.compile(r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$')
 
+
 class SMB_LockedFile(dict):
+
 	@property
 	def filename(self):
 		return self['filename']
@@ -55,7 +57,9 @@ class SMB_LockedFile(dict):
 
 		return self.filename
 
+
 class SMB_Process(dict):
+
 	def __init__(self, args):
 		dict.__init__(self, args)
 		self._locked_files = []
@@ -107,7 +111,9 @@ class SMB_Process(dict):
 		services = '  services: %s' % ', '.join(self.services)
 		return '\n'.join((title, files, services))
 
+
 class SMB_Status(list):
+
 	def __init__(self, testdata=None):
 		list.__init__(self)
 		self.parse(testdata)

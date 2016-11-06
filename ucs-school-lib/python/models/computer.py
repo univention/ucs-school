@@ -43,7 +43,9 @@ from ucsschool.lib.models.network import Network
 from ucsschool.lib.models.group import BasicGroup
 from ucsschool.lib.models.utils import ucr, _, logger
 
+
 class AnyComputer(UCSSchoolHelperAbstractClass):
+
 	@classmethod
 	def get_container(cls, school=None):
 		from ucsschool.lib.models.school import School
@@ -53,6 +55,7 @@ class AnyComputer(UCSSchoolHelperAbstractClass):
 
 	class Meta:
 		udm_module = 'computers/computer'
+
 
 class SchoolDC(UCSSchoolHelperAbstractClass):
 	# NOTE: evaluate filter (&(service=UCS@school)(service=UCS@school Education)) # UCS@school Administration
@@ -71,6 +74,7 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 		if univention_object_class == 'computers/domaincontroller_slave':
 			return SchoolDCSlave
 		return cls
+
 
 class SchoolDCSlave(SchoolDC):
 	groups = Groups(_('Groups'))
@@ -147,6 +151,7 @@ class SchoolDCSlave(SchoolDC):
 		udm_module = 'computers/domaincontroller_slave'
 		name_is_unique = True
 		allow_school_change = True
+
 
 class SchoolComputer(UCSSchoolHelperAbstractClass):
 	ip_address = IPAddress(_('IP address'), required=True)
@@ -302,12 +307,14 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		udm_module = 'computers/computer'
 		name_is_unique = True
 
+
 class WindowsComputer(SchoolComputer):
 	type_name = _('Windows system')
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/windows'
 		hook_path = 'computer'
+
 
 class MacComputer(SchoolComputer):
 	type_name = _('Mac OS X')
@@ -316,12 +323,14 @@ class MacComputer(SchoolComputer):
 		udm_module = 'computers/macos'
 		hook_path = 'computer'
 
+
 class IPComputer(SchoolComputer):
 	type_name = _('Device with IP address')
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/ipmanagedclient'
 		hook_path = 'computer'
+
 
 class UCCComputer(SchoolComputer):
 	type_name = _('Univention Corporate Client')

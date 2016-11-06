@@ -59,6 +59,7 @@ class DeletionError(UcsSchoolImportError):
 
 
 class FormatError(UcsSchoolImportError):
+
 	def __init__(self, msg, scheme, data, *args, **kwargs):
 		super(FormatError, self).__init__(msg, *args, **kwargs)
 		self.scheme = scheme
@@ -86,6 +87,7 @@ class LookupError(UcsSchoolImportError):
 
 
 class MissingMandatoryAttribute(UcsSchoolImportError):
+
 	def __init__(self, msg, mandatory_attributes, *args, **kwargs):
 		super(MissingMandatoryAttribute, self).__init__(msg, *args, **kwargs)
 		self.mandatory_attributes = mandatory_attributes
@@ -120,11 +122,13 @@ class NoUsernameAtAll(UcsSchoolImportFatalError):
 
 
 class ReadOnlyConfiguration(UcsSchoolImportFatalError):
+
 	def __init__(self, *args, **kwargs):
 		super(ReadOnlyConfiguration, self).__init__("Changing the configuration is not allowed.", *args, **kwargs)
 
 
 class ToManyErrors(UcsSchoolImportFatalError):
+
 	def __init__(self, msg, errors, *args, **kwargs):
 		super(ToManyErrors, self).__init__(msg, *args, **kwargs)
 		self.errors = errors
@@ -166,6 +170,7 @@ class UserValidationError(UcsSchoolImportError):
 	"""
 	Wraps ucsschool.lib.models.attributes.ValidationError
 	"""
+
 	def __init__(self, msg, validation_error, *args, **kwargs):
 		super(UserValidationError, self).__init__(msg, *args, **kwargs)
 		self.validation_error = validation_error

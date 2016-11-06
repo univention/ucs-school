@@ -39,6 +39,7 @@ class ParseUserImportCmdline(object):
 	"""
 	Setup a command line frontend.
 	"""
+
 	def __init__(self):
 		"""
 		Setup the parser. Override to add more arguments or change the defaults.

@@ -17,6 +17,7 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool import UMCConnection
 
+
 def activate_groupmembers(group_name, newStatus, change_passwd):
 	# [0|1] optional: deactivate     | activate
 	# [0|1] optional: keep passwords | set random passwords
@@ -33,6 +34,7 @@ def activate_groupmembers(group_name, newStatus, change_passwd):
 	if outfile:
 		return outfile.group(1)
 
+
 def get_new_password(outfile, lastname):
 	with open(outfile) as fi:
 		for line in fi:
@@ -40,6 +42,7 @@ def get_new_password(outfile, lastname):
 				found = re.search(r'%s\t(\S+)' % lastname, line)
 				if found:
 					return found.group(1)
+
 
 def check_usernames_in_csv(outfile, usernames):
 	"""
@@ -52,6 +55,7 @@ def check_usernames_in_csv(outfile, usernames):
 	if not set(usernames).issubset(found_usernames):
 		utils.fail('Not all usernames found in CSV files - missing usernames: ' + str(set(usernames) - found_usernames))
 
+
 def check_auth(username, passwd, should_pass=True):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		connection = UMCConnection(ucr.get('hostname'))
@@ -63,6 +67,7 @@ def check_auth(username, passwd, should_pass=True):
 			else:
 				print 'Cought an expected exception'
 
+
 def is_active(username):
 	cmd = ['udm', 'users/user', 'list', '--filter', 'uid=%s' % username]
 	out, err = subprocess.Popen(
@@ -73,8 +78,10 @@ def is_active(username):
 		print 'disabled = ', found
 		return found == 'none'
 
+
 def checK_status(username, should_pass):
 	return should_pass == is_active(username)
+
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:

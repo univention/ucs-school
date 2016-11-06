@@ -12,6 +12,7 @@ from essential.importou import TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE, remo
 import univention.testing.strings as uts
 import subprocess
 
+
 class CreateDC(Exception):
 	pass
 

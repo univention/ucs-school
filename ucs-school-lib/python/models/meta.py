@@ -36,7 +36,9 @@ import univention.admin.modules as udm_modules
 
 from ucsschool.lib.models.attributes import Attribute
 
+
 class UCSSchoolHelperOptions(object):
+
 	def __init__(self, klass, meta=None):
 		self.set_from_meta_object(meta, 'udm_module', None)
 		self.set_from_meta_object(meta, 'udm_filter', '')
@@ -78,7 +80,9 @@ class UCSSchoolHelperOptions(object):
 	def set_from_meta_object(self, meta, name, default):
 		setattr(self, name, getattr(meta, name, default))
 
+
 class UCSSchoolHelperMetaClass(type):
+
 	def __new__(mcs, cls_name, bases, attrs):
 		attributes = {}
 		meta = attrs.get('Meta')

@@ -57,6 +57,7 @@ ucr.load()
 
 
 class FileNotFound(UMC_Error):
+
 	def __init__(self):
 		super(FileNotFound, self).__init__(self.error_message, status=500)
 
@@ -68,8 +69,10 @@ class FileNotFound(UMC_Error):
 			_('The import has to be restarted.')
 		])
 
+
 def generate_random():
 	return create_passwd(length=30)
+
 
 def license_check(users):
 	change = 0
@@ -85,7 +88,9 @@ def license_check(users):
 	except LicenseInsufficient as e:
 		return str(e) + ' ' + _('You may proceed with the import, but the domain management may be limited afterwards until a new UCS license is imported. Please note that this warning is based on the assumption that all users will be imported. You may ignore certain lines in the following.')
 
+
 class FileInfo(object):
+
 	def __init__(self, filename, school, user_klass, dialect, has_header, delete_not_mentioned, date_format=None, columns=None):
 		self.filename = filename
 		self.school = school
@@ -95,6 +100,7 @@ class FileInfo(object):
 		self.delete_not_mentioned = delete_not_mentioned
 		self.date_format = date_format
 		self.columns = columns
+
 
 class Instance(SchoolBaseModule, ProgressMixin):
 

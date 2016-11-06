@@ -37,6 +37,7 @@ import stat
 
 logging = '>> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1'
 
+
 def printHeader(fn):
 
 	print >> fn, 'Set objShell = WScript.CreateObject("WScript.Shell")'
@@ -58,6 +59,7 @@ def printHeader(fn):
 	print >> fn, 'end sub'
 	print >> fn
 
+
 def runCmd(script, fn, windowStyle, checkReturn):
 
 	print >> fn, 'printToLog logfile, "running %s"' % script
@@ -70,6 +72,7 @@ def runCmd(script, fn, windowStyle, checkReturn):
 
 	print >> fn
 	print >> fn
+
 
 def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 
@@ -84,6 +87,7 @@ def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 
 	print >> fn
 	print >> fn
+
 
 def handler(configRegistry, changes):
 

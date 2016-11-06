@@ -316,6 +316,7 @@ from _csv import reader
 
 
 class DictReader(object):
+
     def __init__(self, f, fieldnames=None, restkey=None, restval=None,
                  dialect="excel", *args, **kwds):
         self._fieldnames = fieldnames   # list of keys for the dict

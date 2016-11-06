@@ -58,6 +58,7 @@ description = 'UCS@school S4 branch site module'
 HOOKS_BASEDIR = "/usr/lib/univention-directory-listener/hooks"
 LISTENER_HOOKS_BASEDIR = os.path.join(HOOKS_BASEDIR, "%s.d" % (name,))
 
+
 def load_hooks():
 	hooks = []
 	if not os.path.isdir(LISTENER_HOOKS_BASEDIR):
@@ -81,6 +82,7 @@ def load_hooks():
 
 	return hooks
 
+
 def run_hooks(fname, *args):
 	global _hooks
 	for hook in _hooks:
@@ -101,6 +103,7 @@ _s4_connector_restart = False
 _local_domainname = listener.configRegistry.get('domainname')
 _ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
 _hooks = []
+
 
 @LDAP_Connection(MACHINE_READ)
 def on_load(ldap_machine_read=None, ldap_position=None):
@@ -180,6 +183,8 @@ STD_S4_SRV_RECORDS = {
 ## _ldap._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-slave ?
 
 ### Listener code
+
+
 @LDAP_Connection(MACHINE_READ)
 def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None):
 	global filter
@@ -278,6 +283,7 @@ def update_ucr_overrides(excludeDN=None):
 		univention.config_registry.handler_set(ucr_key_value_list)
 		_s4_connector_restart = True
 
+
 @LDAP_Connection(MACHINE_READ)
 def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None):
 	global _record_type
@@ -304,12 +310,14 @@ def add(dn, new):
 	finally:
 		listener.unsetuid()
 
+
 def modify(dn, new, old):
 	listener.setuid(0)
 	try:
 		update_ucr_overrides()
 	finally:
 		listener.unsetuid()
+
 
 def delete(old_dn, old, command):
 	## this is also called on modrdn (command == 'r').

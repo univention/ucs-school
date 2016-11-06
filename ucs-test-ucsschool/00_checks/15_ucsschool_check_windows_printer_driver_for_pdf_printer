@@ -25,6 +25,7 @@ def check_value(path, key, value):
 	if not found:
 		utils.fail("value in '%s' is '%s' not!" % (path + '\\' + key, value))
 
+
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		driver_name = ucr.get('ucsschool/printermoderation/windows/driver/name')

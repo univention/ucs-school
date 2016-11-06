@@ -75,8 +75,10 @@ def main():
 		pop2.terminate()
 		pop3.terminate()
 
+
 def get_ipaddress():
 	return socket.gethostbyname(socket.gethostname())
+
 
 def check_attributes(process, expected_values):
 	_attrs = [

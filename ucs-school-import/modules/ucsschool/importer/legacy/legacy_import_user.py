@@ -41,6 +41,7 @@ from ucsschool.importer.exceptions import UnkownAction
 
 
 class LegacyImportUser(ImportUser):
+
 	def make_disabled(self):
 		"""
 		Handled in LegacyCsvReader.handle_input(). Overwriting here, so

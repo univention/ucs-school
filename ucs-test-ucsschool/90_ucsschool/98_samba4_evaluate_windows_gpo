@@ -30,6 +30,7 @@ from ucsschool.lib.models import School
 from essential.computerroom import Room
 from essential.exam import Exam
 
+
 def run_cmd(cmd, stdout=PIPE, stdin=None, std_in=None):
 	"""
 	Creates a process as a Popen instance with a given 'cmd'
@@ -97,6 +98,7 @@ def windows_link_gpo(gpo_name, container, server=""):
 				"STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr))
 	except univention.winexe.WinExeFailed as exc:
 		utils.fail("An Error occured while linking a GPO remotely: %r" % exc)
+
 
 def windows_force_gpo_update():
 	print "Forcing GPO update on Windows:"
@@ -436,7 +438,9 @@ def windows_remove_test_gpo(gpo_name, server=""):
 	except (univention.winexe.WinExeFailed, NameError) as exc:
 		print ("An Error occured while removing GPO remotely: %r" % exc)
 
+
 class GPO_Test(object):
+
 	def __init__(self, school_dn, student_name, student_pwd, windows_hostname, security_filter_group):
 		self.school_dn = school_dn
 		self.student_name = student_name

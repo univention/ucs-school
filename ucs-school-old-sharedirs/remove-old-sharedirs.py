@@ -56,6 +56,8 @@ prefixlist = listener.configRegistry.get("ucsschool/listener/oldsharedir/prefixe
 fs_types = listener.configRegistry.get("ucsschool/listener/oldsharedir/fs_types", DEFAUL_FS).split(":")
 
 # either returns "" if everything is ok, or returns an error message
+
+
 def check_target_dir(dir):
 
 	if not dir:
@@ -88,6 +90,8 @@ def check_target_dir(dir):
 	return ""
 
 # either returns "" if everything is ok, or returns an error message
+
+
 def check_source_dir(prefixlist, dir):
 
 	# check dir
@@ -107,6 +111,8 @@ def check_source_dir(prefixlist, dir):
 	return "%s does not match any value in ucsschool/listener/oldsharedir/prefixes" % dir
 
 # make sure that we are dealing with a known filesystem
+
+
 def check_filesystem(dir):
 
 	ret, out = commands.getstatusoutput("LC_ALL=C stat -f '%s'" % dir)
@@ -123,6 +129,8 @@ def check_filesystem(dir):
 	return "%s for %s is not on a known filesystem" % (myFs, dir)
 
 # move directory
+
+
 def move_dir(src, dst, listener):
 
 	newName = os.path.basename(src) + ".%s" % int(time.time())
@@ -138,6 +146,7 @@ def move_dir(src, dst, listener):
 		listener.unsetuid()
 
 	return ret
+
 
 def handler(dn, new, old, command):
 

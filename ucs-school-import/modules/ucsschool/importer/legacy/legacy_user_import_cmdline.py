@@ -38,6 +38,7 @@ from ucsschool.lib.models.utils import stopped_notifier
 
 
 class LegacyUserImportCommandLine(UserImportCommandLine):
+
 	def parse_cmdline(self):
 		parser = LegacyUserImportParseUserImportCmdline()
 		self.args = parser.parse_cmdline()

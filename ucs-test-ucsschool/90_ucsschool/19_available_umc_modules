@@ -12,8 +12,10 @@ import univention.testing.ucsschool as utu
 import univention.testing.udm as udm_test
 import univention.testing.utils as utils
 
+
 def listUnion(firstList, secondList):
 	return list(set(firstList).union(set(secondList)))
+
 
 def contains(big, small):
 	print 'small =', small
@@ -21,6 +23,7 @@ def contains(big, small):
 	intersection = [x for x in small if x in big]
 	print 'intersect=', intersection
 	return sorted(intersection) == sorted(small)
+
 
 def listAllModules(con):
 	httpcon = con.get_connection()
@@ -31,12 +34,14 @@ def listAllModules(con):
 	print 'modules = ', modules_names
 	return modules_names
 
+
 def removeListFromOther(big, small):
 	big_copy = big[:]
 	for item in big_copy:
 		if item in small:
 			big_copy.remove(item)
 	return big_copy
+
 
 def checkModules(modules, userType, serverRole, singleMaster):
 	defaultList = [('passwordchange', None),
@@ -143,6 +148,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		if not success:
 			utils.fail('Modules (%r) for %s and %s are not correct' % (
 				modules, userType, serverRole))
+
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:

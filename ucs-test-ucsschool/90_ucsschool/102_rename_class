@@ -19,6 +19,7 @@ import univention.testing.utils as utils
 
 BACKUP_PATH = '/home/backup/groups'
 
+
 def ldap_info(cn):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		basedn = ucr.get('ldap/base')
@@ -33,11 +34,13 @@ def ldap_info(cn):
 			'univentionShareUid': univentionShareUid
 			}
 
+
 def check_backup(cn):
 	print '** Checking backup.. '
 	for _dir in glob.glob('%s/*' % BACKUP_PATH):
 		if os.path.exists(_dir) and cn in _dir:
 			utils.fail('%s was moved to backup' % cn)
+
 
 def check_ldap(school, old_name, new_name):
 	utils.verify_ldap_object(class_dn(old_name, school), should_exist=False)
@@ -45,20 +48,24 @@ def check_ldap(school, old_name, new_name):
 	utils.verify_ldap_object(class_dn(new_name, school), should_exist=True)
 	utils.verify_ldap_object(share_dn(new_name, school), should_exist=True)
 
+
 def share_dn(class_name, school):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		return 'cn=%s,cn=klassen,cn=shares,ou=%s,%s' % (
 				class_name, school, ucr.get('ldap/base'))
+
 
 def class_dn(class_name, school):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		return 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (
 				class_name, school, ucr.get('ldap/base'))
 
+
 def share_path(class_name, school):
 	path = '/home/%s/groups/klassen/%s' % (school, class_name)
 	if os.path.exists(path):
 		return path
+
 
 def permissions(dir_path):
 	"""Returns a tuple =
@@ -88,6 +95,7 @@ def permissions(dir_path):
 				result = dict(result.items() + sub_result.items())
 	return dir_permissions, result
 
+
 def check_permissions(old_dir, old_dir_permissions, new_dir, new_dir_permissions):
 	current = old_dir_permissions[0][1]
 	expected = os.path.basename(old_dir)
@@ -107,6 +115,7 @@ def check_permissions(old_dir, old_dir_permissions, new_dir, new_dir_permissions
 	if old_dir_permissions[1] != new_dir_permissions[1]:
 		utils.fail('Permissions are changed old= %r, new= %r' % (
 			old_dir_permissions[1], new_dir_permissions[1]))
+
 
 def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
 	old_dir = share_path(old_name, school)
@@ -155,12 +164,14 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
 			new_dir_permissions = permissions(new_dir)
 			check_permissions(old_dir, old_dir_permissions, new_dir, new_dir_permissions)
 
+
 def create_two_users(schoolenv, school, class_name):
 	tea, teadn = schoolenv.create_user(
 			school, classes=class_name, is_teacher=True, use_cli=True)
 	stu, studn = schoolenv.create_user(
 			school, classes=class_name, use_cli=True)
 	return tea, stu
+
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:

@@ -55,6 +55,7 @@ class _MayHaveSchoolPrefix(object):
 			return '%s-%s' % (school, self.get_relative_name())
 		return self.name
 
+
 class _MayHaveSchoolSuffix(object):
 
 	def get_relative_name(self):

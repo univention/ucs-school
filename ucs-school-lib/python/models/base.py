@@ -86,6 +86,7 @@ class WrongObjectType(NoObject):
 
 
 class MultipleObjectsError(Exception):
+
 	def __init__(self, objs, *args, **kwargs):
 		super(MultipleObjectsError, self).__init__(*args, **kwargs)
 		self.objs = objs

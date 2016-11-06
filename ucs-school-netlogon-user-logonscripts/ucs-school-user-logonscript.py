@@ -63,6 +63,8 @@ reTeacher = re.compile(listener.baseConfig.get('ucsschool/userlogon/umclink/re',
 filterTeacher = listener.baseConfig.get('ucsschool/userlogon/umclink/filter', '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
 
 # create netlogon scripts for samba3 and samba4
+
+
 def getScriptPath():
 
 	global scriptpath

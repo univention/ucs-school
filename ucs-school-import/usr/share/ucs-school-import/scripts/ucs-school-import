@@ -160,7 +160,10 @@ def is_valid_hostname(name):
 
 # exception classes
 class DeleteObjectError(Exception): pass
+
+
 class CreateObjectError(Exception): pass
+
 
 class Hooks(object):
 	OBJECTS = ('user', 'group', 'printer', 'computer', 'network', 'router', 'ou')
@@ -215,7 +218,9 @@ class Hooks(object):
 
 hooks = Hooks()
 
+
 class ucsschool_person_modify:
+
 	def __init__(self, line):
 
 		# parse line here
@@ -362,6 +367,7 @@ class ucsschool_person_modify:
 			roles.append(role_pupil)
 		return roles
 
+
 def extract_district(schoolNr):
 	try:
 		return schoolNr[:2]
@@ -369,6 +375,7 @@ def extract_district(schoolNr):
 		# TODO: add more debug output
 		print "ERROR: Unable to extract district from school number: %s' % schoolNr + \
 				'\n\tIf you don't use the district model deactivate UCR variable ucsschool/ldap/district/enable"
+
 
 def getDN(schoolNr, base='school', basedn=baseDN):
 	"""
@@ -464,6 +471,7 @@ def create_policy(cn, container, values, policy_module):
 			print "WARNING: Error creating policy cn=%s,%s failed" % (cn, container)
 			traceback.print_exc(100, sys.stdout)
 	return (exists, created)
+
 
 def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 
@@ -579,7 +587,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			if modified:
 				dcobject.modify()
 		
-
 	created, dn = verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
 	if created:
 		# get name of new dc
@@ -940,6 +947,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		# for OUs the temporary file contains the LDAP DN
 		hooks.post('ou', 'A', dn=ou_base, line=myline)
 
+
 def move_object(o, newdn):
 	if o.dn == newdn:
 		return
@@ -1024,6 +1032,7 @@ def verify_containers(position_dn, module, co, lo, superordinate, base, path="")
 			# found an object/container that can not be created
 			break
 
+
 def verify_container(position_dn, module, co, lo, superordinate, base, path="userPath"):
 	"""
 	look if goal-container exists, else create it
@@ -1065,6 +1074,7 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 			exists, dn = e.args
 
 	return (created, dn)
+
 
 def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 
@@ -1115,7 +1125,6 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		else:
 			gid = gids["gidNumber"][0]
 
-
 		# set default server
 		serverfqdn = "dc%s-01.%s" % (schoolNr.lower(), domainname)
 
@@ -1147,7 +1156,6 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 			result = lo.get(result['ucsschoolClassShareFileServer'][0], ['cn'])
 			if result:
 				serverfqdn = "%s.%s" % (result['cn'][0], serverDomainName)
-
 
 		position = univention.admin.uldap.position(base)
 		position.setDn(position_dn[string.find(position_dn, ",") + 1:])
@@ -1221,7 +1229,6 @@ def verify_group(position_dn, co, lo, superordinate, base):
 		object.open()
 		object["name"] = position_dn[3:string.find(position_dn, ",")]
 
-
 		try:
 			create_object(object)
 		except:
@@ -1229,6 +1236,7 @@ def verify_group(position_dn, co, lo, superordinate, base):
 
 	if not position_dn in verified_groups:
 		verified_groups.append(position_dn)
+
 
 def delete_dn(dn, module, co, lo):
 
@@ -1253,6 +1261,7 @@ def delete_dn(dn, module, co, lo):
 	traceback.print_exc(100, sys.stdout)
 	raise DeleteObjectError(message)
 
+
 def delete_user(person, module, co, lo):
 
 	success = True
@@ -1265,6 +1274,7 @@ def delete_user(person, module, co, lo):
 		success = False
 
 	return success
+
 
 def verifyMailDomain(email):
 
@@ -1285,6 +1295,7 @@ def verifyMailDomain(email):
 		create_object(obj)
 		mailDomains[domain] = 1
 	return
+
 
 def modify_user(person, module, co, lo):
 	default_groups = person.default_groups()
@@ -1368,6 +1379,7 @@ def findComputerNameWithService(service, ou):
 		return computer['name']
 	return None
 
+
 def calculateProfilePath(ou):
 	if UCRV_serverprofile_option is not None:
 		return UCRV_serverprofile_option
@@ -1381,6 +1393,7 @@ def calculateProfilePath(ou):
 	return calculateProfilePath.results[ou]
 calculateProfilePath.results = {}
 calculateProfilePath.string = '%s\\%%USERNAME%%\\windows-profiles\\default'
+
 
 def tryFindHomeShareFileServer(ouDn):
 	# if defined then use UCR value
@@ -1402,9 +1415,11 @@ def tryFindHomeShareFileServer(ouDn):
 	return tryFindHomeShareFileServer.results.get(ouDn)
 tryFindHomeShareFileServer.results = {}
 
+
 def calculateSambahomePath(ouDn, username):
 	if tryFindHomeShareFileServer(ouDn) is not None:
 		return "%s\\%s" % (tryFindHomeShareFileServer(ouDn), username, )
+
 
 def create_user(person, baseDN, module, password, OUTFILE, line):
 	success = True
@@ -1437,7 +1452,6 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		elif container_position[:2] == "ou":
 			verify_container(container_position, ou_module, co, lo, superordinate, baseDN)
 		else: print "WARNING: unknown container type", container_position
-
 
 	groups = person.default_groups()
 	for group in groups:
@@ -1505,6 +1519,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 
 	return success
 
+
 def import_user():
 
 	# usage
@@ -1535,7 +1550,6 @@ def import_user():
 			sys.exit(1)
 		print "outfile is: " + options.outfile 
 		OUT = open(options.outfile, "w")
-
 
 	with stopped_notifier():
 		problem_hints = ""
@@ -1670,6 +1684,7 @@ def import_user():
 
 		print message
 
+
 def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserver=None, netbiosserver=None):
 	"""
 	@param	network	The network address MUST contain the netmask!! it could also be a ipaddr.IPv4Network object
@@ -1680,7 +1695,6 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	success = True
 	dn = None
 	verify_school_ou(schoolNr, co, lo, baseDN)
-
 
 	if check_network(schoolNr, network):
 		print "Network %s/%d exists in school %s!" % (network.network, network.prefixlen, schoolNr)
@@ -1764,6 +1778,7 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 
 	return (success, dn)
 
+
 def check_network(schoolNr, network):
 	"""
 	@param	network	ipaddr.IPv4Network object
@@ -1780,6 +1795,7 @@ def check_network(schoolNr, network):
 
 	return None
 
+
 def check_macAddress(mac, base=''):
 	if not base:
 		base = baseDN
@@ -1787,6 +1803,7 @@ def check_macAddress(mac, base=''):
 
 	if result and result[0][1]['macAddress'][0] == mac:
 		return result[0][0]
+
 
 def generate_new_mac(schoolNr, IP):
 	ipnum = string.replace(IP, '.', '')
@@ -1808,6 +1825,7 @@ def generate_new_mac(schoolNr, IP):
 
 	return mac
 
+
 def check_computer(module, name, schoolNr):
 	objects = univention.admin.modules.lookup(
 		module, co, lo, scope='sub', superordinate=superordinate,
@@ -1819,6 +1837,7 @@ def check_computer(module, name, schoolNr):
 				return 1
 	return None
 
+
 def get_computer_dn(name):
 	objects = univention.admin.modules.lookup(
 		computer_module, co, lo, scope='sub', superordinate=superordinate,
@@ -1828,6 +1847,7 @@ def get_computer_dn(name):
 			if object.dn.startswith("cn=%s," % name):
 				return object.dn
 	return None
+
 
 def import_networks(router_only=False):
 
@@ -1869,6 +1889,7 @@ def import_networks(router_only=False):
 			network = parsed[1]  # netmask new
 			# the broadcast address is generated automatically by the
 			# combination of network and netmask
+
 			def parseString(parsed, idx, default=None):
 				res = default
 				if len(parsed) > idx:
@@ -1981,6 +2002,7 @@ def import_networks(router_only=False):
 
 		inf.close()
 
+
 def set_inventory_number_for_computer():
 
 	# usage
@@ -2046,6 +2068,7 @@ def set_inventory_number_for_computer():
 					problem_hints = problem_hints + "mac address does not match while modifying %s" % name
 
 		inf.close()
+
 
 def set_policy_for_dhcp_subnet(network, schoolNr, policy_module, policy_dn, cn, values=None, overwrite_policy=False):
 	"""
@@ -2124,6 +2147,7 @@ def set_policy_for_dhcp_subnet(network, schoolNr, policy_module, policy_dn, cn, 
 
 	return (success, dn)
 
+
 def set_netbiosserver_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 	"""
 	@param	ip	ipaddr object for the netbios server
@@ -2138,6 +2162,7 @@ def set_netbiosserver_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 	dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (values['name'], getDN(schoolNr))
 	return set_policy_for_dhcp_subnet(network, schoolNr, policy_dhcp_netbios_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
+
 def set_nameserver_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 	"""
 	@param	ip	ipaddr object for the netbios server
@@ -2150,6 +2175,7 @@ def set_nameserver_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 	dn = "cn=%s,cn=dns,cn=dhcp,cn=policies,%s" % (values['name'], getDN(schoolNr))
 	return set_policy_for_dhcp_subnet(network, schoolNr, policy_dhcp_dns_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
+
 def set_router_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 	"""
 	@param	ip	ipaddr object for the router
@@ -2160,6 +2186,7 @@ def set_router_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 			'routers': str(ip)}
 	dn = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s" % (values['name'], getDN(schoolNr))
 	return set_policy_for_dhcp_subnet(network, schoolNr, policy_dhcp_routing_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
+
 
 def import_computer():
 
@@ -2288,12 +2315,14 @@ def import_computer():
 
 		inf.close()
 
+
 def import_router():
 	"""
 	No computer object is created on importing routers! But the dhcp-routing
 	policy is set to the IP address of the router
 	"""
 	import_networks(router_only=True)
+
 
 def import_group():
 
@@ -2349,7 +2378,6 @@ def import_group():
 	## 			object.modify()
 	## 			verify_group_share(schoolNr, ClassID, co, lo, superordinate, baseDN)
 
-
 	## 		elif action == 'M':	# M)odify group
 				verify_group(group_dn, co, lo, superordinate, baseDN)
 				object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn)
@@ -2372,6 +2400,7 @@ def import_group():
 				hooks.post('group', action, dn=dn, line=line)
 
 		inf.close()
+
 
 def import_printer():
 
@@ -2410,6 +2439,7 @@ def import_printer():
 				spoolHost = '%s.%s' % (spoolHost, configRegistry['domainname'])
 			printerName = parsed[3]
 			printerUri = parsed[4]
+
 			def parseString(parsed, idx, default=None):
 				res = default
 				if len(parsed) > idx:
@@ -2471,6 +2501,7 @@ def import_printer():
 
 		inf.close()
 
+
 def activate_groupmembers():
 	#  syntax: $0 <groupXXX> [0|1] [0|1]"
 	# <groupXXX>    group
@@ -2480,7 +2511,6 @@ def activate_groupmembers():
 	chgrp = 1
 	chpasswd = 0
 	status = None
-
 
 	# usage
 	usage = "%prog [options] <groupName> <newStatus> <changePassword>\n"
@@ -2540,7 +2570,6 @@ def activate_groupmembers():
 			sys.exit()
 		outf = open(outfile, 'w')
 
-
 		# get group
 		objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
 												  filter=univention.admin.filter.expression('cn', actgrp))
@@ -2593,6 +2622,7 @@ def activate_groupmembers():
 
 		outf.close()
 
+
 def export_computer():
 	#  syntax: $0 <ou> <filename>"
 	# <ou>        computers of OU <ou> shall be exported
@@ -2643,6 +2673,7 @@ def export_computer():
 		outf.write(out_line % (host['name'], ou, inventoryNumber, ip, mac))
 	outf.close()
 
+
 def set_ou_sharefileserver():
 
 	# usage
@@ -2674,7 +2705,6 @@ def set_ou_sharefileserver():
 	else:
 		ShareFileServer = objects[0]
 
-
 	with stopped_notifier():
 		r = lo.get(getDN(ouname), ['objectClass'])
 		if 'ucsschoolOrganizationalUnit' not in r['objectClass']:
@@ -2690,6 +2720,7 @@ def set_ou_sharefileserver():
 			r = lo.modify(getDN(ouname), [('ucsschoolClassShareFileServer', r, ShareFileServer)
 							   ])
 	sys.exit(0)
+
 
 def rename_class():
 
@@ -2888,7 +2919,6 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 		print 'ERROR: The system has no LDAP access to the OU'
 		sys.exit(1)
 
-
 	if slave.dn.endswith(',%s' % ouDn):
 		print 'domaincontroller slave "%s" is already located below ou "%s" - stopping here' % (options.dcname, options.ou)
 		sys.exit(0)
@@ -2924,7 +2954,6 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 			print 'Updating %s ...' % ou.dn
 			ou.modify()
 
-
 	removed = False
 	ou_dhcpservice = None
 
@@ -2955,7 +2984,6 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 		except:
 			print "ERROR: Failed to create dhcp server: %s" % (position.getDn(),)
 
-
 	print 'Move complete'
 	print 'HINT: the domaincontroller slave has to be rejoined into the domain!'
 
@@ -2980,7 +3008,6 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		print 'ERROR: specified OU %r does not exist' % ou_name
 		sys.exit(1)
 
-
 	# get list of desired group memberships
 	group_dn_list = {TYPE_DC_ADMINISTRATIVE: ['cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou_name.lower(), baseDN),
 										   'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (baseDN,),
@@ -2991,7 +3018,6 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 					  }[dc_type]
 	for grpdn in group_dn_list:
 		verify_group(grpdn, co, lo, superordinate, baseDN)
-
 
 	host_objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
 												   filter=univention.admin.filter.expression('cn', dc_name))

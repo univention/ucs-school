@@ -10,6 +10,7 @@ import subprocess
 import sys
 import univention.testing.ucr as ucr_test
 
+
 def main():
 	dpkgQuery = subprocess.Popen(["dpkg-query", "-W", "-f", '${Status}\n', "ucs-school-singlemaster"],
 	stdout=subprocess.PIPE).communicate()[0]

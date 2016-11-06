@@ -45,6 +45,7 @@ from ucsschool.importer.exceptions import InitialisationError, ToManyErrors, Ucs
 
 
 class CommandLine(object):
+
 	def __init__(self):
 		self.logger = get_logger()
 		self.args = None

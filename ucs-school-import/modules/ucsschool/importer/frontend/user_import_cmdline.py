@@ -36,6 +36,7 @@ from ucsschool.importer.frontend.cmdline import CommandLine
 
 
 class UserImportCommandLine(CommandLine):
+
 	@property
 	def configuration_files(self):
 		"""

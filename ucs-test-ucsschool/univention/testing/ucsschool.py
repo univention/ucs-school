@@ -67,8 +67,11 @@ add_stream_logger_to_schoollib()
 class SchoolError(Exception):
 	pass
 
+
 class SchoolMissingOU(SchoolError):
 	pass
+
+
 class SchoolLDAPError(SchoolError):
 	pass
 
@@ -344,7 +347,6 @@ class UCSTestSchool(object):
 
 	def create_teacher_and_staff(self, *args, **kwargs):
 		return self.create_user(*args, is_staff=True, is_teacher=True, **kwargs)
-
 
 	def create_user(self, ou_name, schools=None, username=None, firstname=None, lastname=None, classes=None,
 					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention',

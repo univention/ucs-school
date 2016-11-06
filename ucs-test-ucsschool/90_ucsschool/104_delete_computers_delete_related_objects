@@ -15,17 +15,21 @@ import univention.testing.utils as utils
 ucr = ucr_test.UCSTestConfigRegistry()
 ucr.load()
 
+
 def dns_forward():
 	return 'zoneName=%s,cn=dns,%s' % (
 			ucr.get('domainname'), ucr.get('ldap/base'))
+
 
 def dns_reverse(ip):
 	return 'zoneName=%s.in-addr.arpa,cn=dns,%s' % (
 			'.'.join(reversed(ip.split('.')[:3])), ucr.get('ldap/base'))
 
+
 def dhcp_dn(school, computer_name):
 	return 'cn=%s,cn=%s,cn=dhcp,ou=%s,%s' % (
 		computer_name, school, school, ucr.get('ldap/base'))
+
 
 def check_ldap(school, computers, should_exist):
 	lo = getMachineConnection()

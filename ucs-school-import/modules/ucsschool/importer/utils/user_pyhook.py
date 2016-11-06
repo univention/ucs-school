@@ -37,6 +37,7 @@ from ucsschool.importer.utils.pyhook import PyHook
 # An example is provided in /usr/share/doc/ucs-school-import/hook_example.py
 #
 
+
 class UserPyHook(PyHook):
 	#
 	# The base class' init() provides the following attributes:

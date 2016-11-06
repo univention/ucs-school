@@ -47,6 +47,7 @@ import ucsschool.lib.schoolldap as usl
 import univention.config_registry as ucr
 from univention.management.console.log import log_init, log_set_level
 
+
 def show_state(options):
 	FORMAT = '%(name)-15s %(user)-25s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s %(DemoServer)-8s %(DemoClient)-8s %(Flags)5s'
 	# clear screen and set position to HOME

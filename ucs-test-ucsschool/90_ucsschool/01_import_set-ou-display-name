@@ -20,6 +20,7 @@ ucr.load()
 # multiple whitespaces to increase chance to get several words
 charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
 
+
 def setRandomDisplayNameViaCreateOU(ou_name):
 	""" Tries to set an optional display name while creating/updating the given OU """
 	ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
@@ -32,6 +33,7 @@ def setRandomDisplayNameViaCreateOU(ou_name):
 
 	ou_dn = 'ou=%s,%s' % (ou_name, ucr.get('ldap/base'))
 	utils.verify_ldap_object(ou_dn, expected_attr={'ou': [ou_name], 'displayName': [ou_displayName]}, strict=True, should_exist=True)
+
 
 def main():
 	# create short OU name

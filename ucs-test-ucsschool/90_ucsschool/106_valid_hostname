@@ -21,6 +21,7 @@ INVALID_CHARS = INVALID_CHARS_CLI + ['_']
 INVALID_STARTING_CHARS = INVALID_CHARS + ['-']
 INVALID_ENDING_CHARS = INVALID_STARTING_CHARS
 
+
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		with utu.UCSTestSchool() as schoolenv:

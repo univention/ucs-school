@@ -45,6 +45,7 @@ class MassImport(object):
 
 	Currently only implemented for users.
 	"""
+
 	def __init__(self, dry_run=True):
 		"""
 		:param dry_run: bool: set to False to actually commit changes to LDAP

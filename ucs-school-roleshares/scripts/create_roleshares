@@ -41,6 +41,7 @@ from univention.admincli.admin import _2utf8
 import univention.admin.modules as udm_modules
 udm_modules.update()
 
+
 @LDAP_Connection(MACHINE_READ)
 def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=None):
 	if not ucr:

@@ -17,6 +17,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
+
 def resetPasswd(host, userdn, flavor, nextLogin):
 	print 'Resetting password for (%r)' % (userdn,)
 	newpassword = uts.random_string()
@@ -35,6 +36,7 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 	else:
 		utils.fail('Password reset for (%r) unsuccessful' % (userdn,))
 
+
 def authProxy(host, url, name, passwd, authTyp, expected_response):
 	auth_text = 'basic authentication' if authTyp == 1 else 'NTLM authentication'
 	print 'Performing auth %r check' % (auth_text,)
@@ -45,6 +47,7 @@ def authProxy(host, url, name, passwd, authTyp, expected_response):
 			auth_text,
 			result,
 			expected_response))
+
 
 def main():
 	url = 'http://www.univention.de'

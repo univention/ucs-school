@@ -46,6 +46,7 @@ from ucsschool.lib.models import User, Student, Teacher, Staff, TeachersAndStaff
 
 _ = Translation('ucs-school-umc-csv-import').translate
 
+
 def unformat_date(value, date_format):
 	try:
 		date_obj = datetime.strptime(value, date_format)
@@ -58,15 +59,18 @@ def unformat_date(value, date_format):
 	except (TypeError, ValueError):
 		return value
 
+
 def format_date(value, date_format):
 	try:
 		return datetime.strptime(value, '%Y-%m-%d').strftime(date_format)
 	except (TypeError, ValueError):
 		return value
 
+
 class Birthday(Attribute):
 	udm_name = 'birthday'
 	# no syntax = iso8601Date, error message is misleading (some iso standard, not our python_format)
+
 
 class CSVUser(User):
 
@@ -287,11 +291,14 @@ class CSVUser(User):
 # it from base class CSVUser
 birthday_attr = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
 
+
 class CSVStudent(CSVUser, Student):
 	birthday = birthday_attr
 
+
 class CSVTeacher(CSVUser, Teacher):
 	birthday = birthday_attr
+
 
 class CSVStaff(CSVUser, Staff):
 	birthday = birthday_attr
@@ -306,6 +313,7 @@ class CSVStaff(CSVUser, Staff):
 		fields.remove('school_classes')
 		return fields
 
+
 class CSVTeachersAndStaff(CSVUser, TeachersAndStaff):
 	birthday = birthday_attr
 
@@ -316,8 +324,10 @@ import univention.admin.uexceptions as uexceptions
 from univention.admincli import license_check
 import univention.admin.uldap
 
+
 class LicenseInsufficient(Exception):
 	pass
+
 
 class UCS_License_detection(object):
 

@@ -30,6 +30,7 @@ from samba.ndr import ndr_pack, ndr_unpack
 import base64
 import re
 
+
 class TestS4DNSSRVReplication(TestSamba4):
 
 	def __init__(self):

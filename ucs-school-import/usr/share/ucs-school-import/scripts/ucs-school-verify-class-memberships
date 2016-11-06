@@ -79,8 +79,8 @@ class InvalidGroupDetected(Problem):
 			msg('FIXED: removed %r from %r' % (user.dn, group.dn))
 
 
-
 class StudentIsInAnotherSchool(Problem):
+
 	def __str__(self):
 		return 'ERROR: User %r is not in school %s. DN: %s' % (self.args[0], self.line['school'], self.args[1])
 

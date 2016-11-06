@@ -172,6 +172,7 @@ def migrate_admin_groups(lo, options):
 	if errors:
 		raise MigrationFailed(errors)
 
+
 def migrate_ous(lo, options):
 	errors = []
 	try:

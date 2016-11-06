@@ -61,9 +61,11 @@ __bind_callback = None
 
 _ = Translation('python-ucs-school').translate
 
+
 def set_bind_function(bind_callback):
 	global __bind_callback
 	__bind_callback = bind_callback
+
 
 def set_credentials(dn, passwd):
 	set_bind_function(lambda lo: lo.lo.bind(dn, passwd))
@@ -154,6 +156,7 @@ LDAP_Connection._school = None
 
 class SchoolSearchBase(object):
 	"""Deprecated utility class that generates DNs of common school containers for a OU"""
+
 	def __init__(self, availableSchools, school=None, dn=None, ldapBase=None):
 		self._ldapBase = ldapBase or ucr.get('ldap/base')
 
@@ -345,6 +348,7 @@ class SchoolBaseModule(Base):
 			SchoolBaseModule.init(self)
 			# ... custom code
 	"""
+
 	def init(self):
 		set_bind_function(self.bind_user_connection)
 
@@ -477,6 +481,7 @@ class SchoolBaseModule(Base):
 
 
 class LDAP_Filter:
+
 	@staticmethod
 	def forSchool(school):
 		return filter_format('(ucsschoolSchool=%s)', [school])
@@ -495,6 +500,7 @@ class LDAP_Filter:
 		return LDAP_Filter.forAll(pattern, ['name', 'description'], ['mac', 'ip'])
 
 	regWhiteSpaces = re.compile(r'\s+')
+
 	@staticmethod
 	def forAll(pattern, subMatch=[], fullMatch=[], prefixes={}):
 		expressions = []
@@ -522,6 +528,7 @@ class LDAP_Filter:
 
 
 class Display:
+
 	@staticmethod
 	def user(udm_object):
 		fullname = udm_object['lastname']

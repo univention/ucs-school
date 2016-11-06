@@ -46,6 +46,7 @@ from ucsschool.importer.utils.ldap_connection import get_admin_connection
 
 
 class UserImport(object):
+
 	def __init__(self, dry_run=True):
 		"""
 		:param dry_run: bool: set to False to actually commit changes to LDAP

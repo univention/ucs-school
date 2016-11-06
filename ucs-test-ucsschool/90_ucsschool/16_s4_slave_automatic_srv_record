@@ -28,6 +28,7 @@ try:
 	from univention.testing.ucs_samba import wait_for_drs_replication
 except ImportError:
 	print "WARNING: Using dummy implementation for wait_for_drs_replication."
+
 	def wait_for_drs_replication(ldap_filter, attrs=None):
 		print "wait_for_drs_replication: sleeping 15 seconds"
 		time.sleep(15)
@@ -65,6 +66,7 @@ def handler(dn, new, old, command):
 def postrun():
 	ud.debug(ud.LISTENER, ud.ERROR, "%(modulename)s postrun %(secret)s called")
 '''
+
 
 class Test():
 
@@ -207,7 +209,6 @@ class Test():
 			if stdout.find(postitive_test_fqdn) != -1:
 				testing_utils.fail(log_message="%s still found in DNS SRV record %s" % (postitive_test_fqdn, test_srv_record))
 
-
 		## verify that the "negative" DCs of the other Role (Education/Administration) are not in DNS/Samba4
 		for negative_test_fqdn in negative_test_fqdn_list:
 			if stdout.find(negative_test_fqdn) != -1:
@@ -217,7 +218,6 @@ class Test():
 		local_fqdn = ".".join((ucr.get("hostname"), ucr.get("domainname")))
 		if stdout.find(local_fqdn) == -1:
 			testing_utils.fail(log_message="%s not present in DNS SRV record %s" % (local_fqdn, test_srv_record))
-
 
 		## verify that the positive test DCs are removed from the UCR variable
 		ucr2 = univention.config_registry.ConfigRegistry()

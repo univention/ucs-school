@@ -10,8 +10,10 @@ from univention.testing.ucsschool import UMCConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
+
 def getLessons(connection):
 	return connection.request('lessontimes/get')
+
 
 def addLesson(connection, name, begin, end):
 	lesson = [name, begin, end]
@@ -19,6 +21,7 @@ def addLesson(connection, name, begin, end):
 	lessonsList.append(lesson)
 	data = {"lessons": lessonsList}
 	return connection.request('lessontimes/set', data=data)
+
 
 def delLesson(connection, name, begin, end):
 	lessonsList = getLessons(connection)
@@ -29,6 +32,7 @@ def delLesson(connection, name, begin, end):
 			"lessons": lessonsList
 			}
 	return connection.request('lessontimes/set', param)
+
 
 def main():
 	ucr = ucr_test.UCSTestConfigRegistry()

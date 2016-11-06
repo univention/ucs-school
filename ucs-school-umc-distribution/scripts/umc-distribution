@@ -43,6 +43,8 @@ configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
 import inspect
+
+
 def debugmsg(component, level, msg):
 	info = inspect.getframeinfo(inspect.currentframe().f_back)[0:3]
 	printInfo = []
@@ -53,6 +55,7 @@ def debugmsg(component, level, msg):
 	printInfo.extend(info[1:3])
 	ud.debug(component, level, "%s:%s: %s" % (printInfo[0], printInfo[1], msg))
 	print msg
+
 
 def main():
 	exitcode = 0

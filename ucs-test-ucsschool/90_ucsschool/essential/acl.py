@@ -336,7 +336,6 @@ class Acl(object):
 		]
 		self.assert_acl(share_dn, access, share_attribute_list, access_allowance)
 
-
 	def assert_shares(self, shares_dn, access):
 		"""Lehrer und Mitglieder der lokalen Administratoren duerfen Shares anlegen,
 		Klassenshares aber nicht aendern

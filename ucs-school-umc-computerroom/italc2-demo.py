@@ -48,6 +48,7 @@ import univention.config_registry as ucr
 
 italcManager = None
 
+
 def start_demo(server, start, fullscreen):
 	if start:
 		print 'starting demo'

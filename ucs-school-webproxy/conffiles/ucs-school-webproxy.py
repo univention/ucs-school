@@ -66,9 +66,11 @@ TXT_GLOBAL_BLACKLIST_COMMENT = '###GLOBAL-BLACKLIST-COMMENT###'
 UCR_FORCED_GLOBAL_BLACKLIST = 'proxy/filter/global/blacklists/forced'
 RELOAD_SOCKET_PATH = '/var/run/univention-reload-service.socket'
 
+
 def logerror(msg):
 	logfd = open(PATH_LOG, 'a+')
 	print >> logfd, '%s [%s] %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), os.getpid(), msg)
+
 
 def move_file(fnsrc, fndst):
 	if os.path.isfile(fnsrc):
@@ -77,6 +79,7 @@ def move_file(fnsrc, fndst):
 		except Exception, e:
 			logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
 			raise
+
 
 def quote(string):
 	'Replace every unsafe byte with hex value'
@@ -91,11 +94,14 @@ def quote(string):
 	return newstring
 quote.safeBytes = set('abcdefghijklmnopqrstuvwxyz012345679ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
+
 def preinst(configRegistry, changes):
 	pass
 
+
 def postinst(configRegistry, changes):
 	pass
+
 
 def handler(configRegistry, changes):
 	# create temporary directory
@@ -116,9 +122,11 @@ def handler(configRegistry, changes):
 	removeTempDirectory(DIR_TEMP)
 	reloadSquid()
 
+
 def reloadSquid():
 	if not signalReloadProcess():
 		reloadSquidDirectly()
+
 
 def signalReloadProcess():
 	try:
@@ -130,8 +138,10 @@ def signalReloadProcess():
 	except socket.error:
 		return False
 
+
 def reloadSquidDirectly():
 	subprocess.call(('/etc/init.d/squid3', 'reload', ))
+
 
 def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 	# create config in temporary directory with temporary "dbhome" setting
@@ -350,6 +360,7 @@ def writeGlobalBlacklist(configRegistry, DIR_TEMP, changes):
 						continue
 					fout.write(content)
 
+
 def writeSettinglist(configRegistry, DIR_TEMP):
 	proxy_settinglist = set()
 	regex = re.compile('^proxy/filter/setting((?:-user)?)/([^/]+)/.*$')
@@ -378,6 +389,7 @@ def writeSettinglist(configRegistry, DIR_TEMP):
 						f.write('%s\n' % value)
 				f.close()
 
+
 def writeBlackWhiteLists(configRegistry, DIR_TEMP):
 	for filtertype in ['domain', 'url']:
 		for itemtype in ['blacklisted', 'whitelisted']:
@@ -399,6 +411,7 @@ def writeBlackWhiteLists(configRegistry, DIR_TEMP):
 					f.write('%s\n' % value)
 			f.close()
 
+
 def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 	domain = configRegistry['windows/domain']
 	for key in configRegistry:
@@ -411,6 +424,7 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 				f.write('%s\n' % (memberUid))
 				f.write('%s\\%s\n' % (domain, memberUid))
 			f.close()
+
 
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	# create all db files
@@ -426,6 +440,7 @@ def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	tempConfig.write(content)
 	tempConfig.close()
 
+
 def moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA):
 	# move all files from DIR_TEMP to DIR_DATA (should be atomic)
 	for fn in os.listdir(DIR_TEMP):
@@ -436,6 +451,7 @@ def moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA):
 		move_file(fnsrc, fndst)
 	# move fixed config file to /etc/squidguard
 	move_file(fn_temp_config, fn_config)
+
 
 def removeTempDirectory(DIR_TEMP):
 	try:

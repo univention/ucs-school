@@ -565,7 +565,6 @@ class ImportUser(User):
 			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc),
 				self.config["mandatory_attributes"], entry=self.entry_count, import_user=self)
 
-
 		if self.record_uid in self._unique_ids["recordUID"]:
 			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid),
 				entry=self.entry_count, import_user=self)

@@ -45,6 +45,7 @@ from univention.lib.misc import custom_groupname
 import univention.admin.modules as udm_modules
 udm_modules.update()
 
+
 def roleshare_name(role, school_ou, ucr):
 	custom_roleshare_name = ucr.get('ucsschool/import/roleshare/%s' % (role,))
 	if custom_roleshare_name:
@@ -52,12 +53,14 @@ def roleshare_name(role, school_ou, ucr):
 	else:
 		return '-'.join((ucs_school_name_i18n(role), school_ou))
 
+
 def roleshare_path(role, school_ou, ucr):
 	custom_roleshare_path = ucr.get('ucsschool/import/roleshare/%s/path' % (role,))
 	if custom_roleshare_path:
 		return custom_roleshare_path
 	else:
 		return os.path.join(school_ou, ucs_school_name_i18n(role))
+
 
 def roleshare_home_subdir(school_ou, roles, ucr=None):
 	if not ucr:
@@ -108,6 +111,7 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 	else:
 		print 'Object created: %s' % _2utf8(udm_obj.dn)
 
+
 @LDAP_Connection(MACHINE_READ)
 def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None):
 	fqdn = None
@@ -118,6 +122,7 @@ def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None):
 	except IndexError:
 		print 'Could not determine FQDN for %s' % (server_dn,)
 	return fqdn
+
 
 @LDAP_Connection(MACHINE_READ)
 def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None):

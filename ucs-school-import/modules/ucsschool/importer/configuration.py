@@ -50,6 +50,7 @@ def setup_configuration(conffiles, **kwargs):
 
 
 class ConfigurationFile(object):
+
 	def __init__(self, filename):
 		self.filename = filename
 		self.logger = get_logger()
@@ -73,6 +74,7 @@ class ConfigurationFile(object):
 
 
 class ReadOnlyDict(dict):
+
 	@classmethod
 	def _recursive_typed_update(cls, a, b):
 		for k, v in b.items():
@@ -110,6 +112,7 @@ class Configuration(object):
 	"""
 	class __SingleConf:
 		conffiles = list()
+
 		def __init__(self, filenames):
 			if not filenames:
 				raise InitialisationError("Configuration not yet loaded.")

@@ -54,6 +54,8 @@ ucr = ConfigRegistry()
 ucr.load()
 
 # TODO: remove once this is implemented in uexceptions, see Bug #30088
+
+
 def get_exception_msg(e):
 	msg = getattr(e, 'message', '')
 	if getattr(e, 'args', False):
@@ -61,6 +63,7 @@ def get_exception_msg(e):
 			for arg in e.args:
 				msg += ' ' + arg
 	return msg
+
 
 def get_user_class(user_type):
 	return {
@@ -70,6 +73,7 @@ def get_user_class(user_type):
 		'teachersAndStaff': TeachersAndStaff,
 	}.get(user_type, User)
 
+
 def get_computer_class(computer_type):
 	return {
 		'windows': WindowsComputer,
@@ -77,6 +81,7 @@ def get_computer_class(computer_type):
 		'ucc': UCCComputer,
 		'ipmanagedclient': IPComputer,
 	}.get(computer_type, SchoolComputer)
+
 
 def iter_objects_in_request(request):
 	klass = {
@@ -105,6 +110,7 @@ def iter_objects_in_request(request):
 		if dn:
 			obj.old_dn = dn
 		yield obj
+
 
 def response(func):
 	@functools.wraps(func)

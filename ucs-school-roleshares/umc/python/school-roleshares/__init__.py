@@ -48,7 +48,9 @@ _ = Translation('ucs-school-umc-roleshares').translate
 ucr = ConfigRegistry()
 ucr.load()
 
+
 class Instance(SchoolBaseModule):
+
 	def init(self):
 		super(Instance, self).init()
 		self.module_name = "school-roleshares"
@@ -152,7 +154,6 @@ class Instance(SchoolBaseModule):
 		if not self.valid_role_from_roleshare_name(sharename):
 			MODULE.error('%s.modify: sharename is not a role share: %s' % (self.module_name, sharename,))
 			return result  # TODO: How to communicate the error?
-
 
 		school_ou = self.valid_school_from_roleshare_name(sharename, search_base.availableSchools)
 		if not school_ou:

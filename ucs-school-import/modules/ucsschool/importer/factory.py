@@ -66,6 +66,7 @@ class Factory(object):
 	Singleton to the global abstract factory object.
 	"""
 	class __SingleFac:
+
 		def __init__(self, factory):
 			if not factory:
 				raise InitialisationError("Concrete factory not yet configured.")

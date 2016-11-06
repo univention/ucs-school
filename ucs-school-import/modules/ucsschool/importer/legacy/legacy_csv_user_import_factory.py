@@ -42,6 +42,7 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
 class LegacyCsvUserImportFactory(DefaultUserImportFactory):
+
 	def make_reader(self, **kwargs):
 		"""
 		Creates a reader for legacy CSV files.

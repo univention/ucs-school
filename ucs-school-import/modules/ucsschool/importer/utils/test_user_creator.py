@@ -44,6 +44,7 @@ logger = get_logger()
 
 
 class TestUserCreator(object):
+
 	def __init__(self, ous, staff=0, students=0, teachers=0, staffteachers=0, classes=0, inclasses=2, schools=2, email=False):
 		self.ous = sorted(ous)
 		self.num_staff = staff

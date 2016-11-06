@@ -31,6 +31,7 @@
 from univention.admin.hook import simpleHook
 import univention.debug as ud
 
+
 class schoolAdminGroup(simpleHook):
 
 	def hook_open(self, module):

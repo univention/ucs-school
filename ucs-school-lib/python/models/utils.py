@@ -280,6 +280,7 @@ def stopped_notifier(strict=True):
 	>>> 	...
 	'''
 	service_name = 'univention-directory-notifier'
+
 	def _run(args):
 		process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		stdout, stderr = process.communicate()

@@ -42,6 +42,8 @@ import univention.uldap
 
 userToGroup = {}  # { "user": ["group1", "group2", ], }
 groupInfo = {}  # { "group1": (23, True, ), }
+
+
 def loadInfo():
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
@@ -69,6 +71,7 @@ SAMBA_ACCOUNT_FLAG_DISABLED = 'D'
 SAMBA_ACCOUNT_FLAG_LOCKED = 'L'
 DISALLOWED_SAMBA_ACCOUNT_FLAGS = frozenset((SAMBA_ACCOUNT_FLAG_DISABLED, SAMBA_ACCOUNT_FLAG_LOCKED, ))
 
+
 def getNTPasswordHash(username, stationId):
 	'stationId may be None if it was not supplied to the program'
 	groups = userToGroup.get(username)
@@ -88,6 +91,7 @@ def getNTPasswordHash(username, stationId):
 	if sambaAccountFlags & DISALLOWED_SAMBA_ACCOUNT_FLAGS:
 		return None
 	return result[0][1]['sambaNTPassword'][0].decode('hex')
+
 
 def main():
 	parser = optparse.OptionParser()

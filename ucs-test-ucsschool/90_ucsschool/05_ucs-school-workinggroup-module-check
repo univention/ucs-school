@@ -42,7 +42,6 @@ def main():
 					group_should_exist=True,
 					share_should_exist=True)
 
-
 			# 3 creating unempty workgroup
 			group = Workgroup(
 					schoolName,

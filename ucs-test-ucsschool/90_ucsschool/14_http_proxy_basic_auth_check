@@ -17,6 +17,8 @@ import time
 
 # Checks a list of rules defined and return the active rule
 # for a specific user
+
+
 def ruleInControl(user, ruleList, host, banPage):
 	inCtrl = []
 	localCurl = SimpleCurl(proxy=host, username=user)
@@ -38,12 +40,15 @@ def ruleInControl(user, ruleList, host, banPage):
 	print 'Rule in control =', result
 	return result[0]
 
+
 def printHeader(comment):
 	print '-' * 80
 	print comment
 	print '-' * 80
 
 # Perform the whole check steps for a user and two rules
+
+
 def doCheck(
 		host,
 		banPage,

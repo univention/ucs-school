@@ -36,6 +36,7 @@ class BaseWriter(object):
 	"""
 	Abstraction of a data dump mechanism like CSV, JSON, XML, sockets etc.
 	"""
+
 	def __init__(self, *arg, **kwargs):
 		"""
 		Create a writer.

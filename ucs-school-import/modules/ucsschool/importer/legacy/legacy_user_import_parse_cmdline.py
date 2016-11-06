@@ -40,6 +40,7 @@ from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImpor
 
 
 class LegacyUserImportParseUserImportCmdline(ParseUserImportCmdline):
+
 		def __init__(self):
 			self.defaults = dict()
 			self.parser = ArgumentParser(description="Create/modify/delete user accounts according to import file for "

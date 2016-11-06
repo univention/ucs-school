@@ -40,6 +40,7 @@ from ucsschool.importer.utils.logging import get_logger
 
 
 class PyHooksLoader(object):
+
 	def __init__(self, base_dir, base_class):
 		self.base_dir = base_dir
 		self.base_class = base_class

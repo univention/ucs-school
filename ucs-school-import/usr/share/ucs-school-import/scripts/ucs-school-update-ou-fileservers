@@ -52,6 +52,7 @@ def findComputerNameWithService(computer_module, co, lo, service, ouDn):
 		return computer.dn
 	return None
 
+
 def main():
 	usage = '''%prog [--dry-run] [--ou <ou_name>] --auto-detect
 

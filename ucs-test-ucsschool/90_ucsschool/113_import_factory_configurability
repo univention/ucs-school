@@ -32,12 +32,15 @@ from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose
 CONFIG = os.path.join(os.path.dirname(__file__), "factoryconftest.json")
 make_stdout_verbose()
 
+
 class Bunch(object):
+
 	def __init__(self, **kwds):
 		self.__dict__.update(kwds)
 
 
 class FactoryConfTest(object):
+
 	def __init__(self, tmpdir):
 		self.tmpdir = tmpdir
 		self.ldap_status = None

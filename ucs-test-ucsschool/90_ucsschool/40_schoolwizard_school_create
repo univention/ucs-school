@@ -125,7 +125,6 @@ def main():
 				grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
 				utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
 
-
 		msg = 'new random OU, new random DC and then try to add a second new random DC'
 		print '---------------------------[%s]---------------------------' % (msg, )
 		ou_name = uts.random_string()
@@ -154,7 +153,6 @@ def main():
 			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
 			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
 
-
 		msg = 'new random OU, new random administrative DC'
 		print '---------------------------[%s]---------------------------' % (msg, )
 		ou_name = uts.random_string()
@@ -177,7 +175,6 @@ def main():
 					  ):
 			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
 			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn_administrative]}, strict=False, should_exist=True)
-
 
 		msg = 'new random OU, new random educational DC and then try to add a second new random administrative DC'
 		print '---------------------------[%s]---------------------------' % (msg, )

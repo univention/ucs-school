@@ -39,6 +39,7 @@ from ucsschool.importer.writer.base_writer import BaseWriter
 
 
 class CsvWriter(BaseWriter):
+
 	def __init__(self, field_names, dialect=None):
 		"""
 		Create a CSV file writer.

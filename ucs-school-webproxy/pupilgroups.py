@@ -44,8 +44,10 @@ attributes = ['memberUid']
 dnPattern = re.compile(',cn=groups,ou=[^,]+,(ou=[^,]+,)?dc=', re.I)
 keyPattern = 'proxy/filter/usergroup/%s'
 
+
 def initialize():
 	pass
+
 
 def handler(dn, new, old):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, 'pupilgroups: dn: %s' % dn)
@@ -65,6 +67,7 @@ def handler(dn, new, old):
 				univention.config_registry.handler_unset([key.encode()])
 	finally:
 		listener.unsetuid()
+
 
 def postrun():
 	pass

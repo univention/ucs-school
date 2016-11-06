@@ -51,6 +51,7 @@ LOGFILE = '/var/log/univention/ucs-school-exam-cleanup.log'
 
 
 class ExamCleanupHelper(object):
+
 	def __init__(self, options):
 		self.options = options
 		self.ucr = univention.config_registry.ConfigRegistry()

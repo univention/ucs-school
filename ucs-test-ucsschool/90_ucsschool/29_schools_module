@@ -10,6 +10,7 @@ from essential.school import School, create_dc_slave
 import univention.testing.udm as udm_test
 import time
 
+
 def main():
 	with udm_test.UCSTestUDM() as udm:
 		schools = []

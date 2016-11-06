@@ -47,11 +47,15 @@ import univention.config_registry as ucr
 
 from PyQt4 import QtCore, QtGui
 
+
 class ViewerApp(QtGui.QApplication):
+
 	def recvQuit(self, mmsg, data=None):
 		self.quit()
 
+
 class ImageViewer(QtGui.QMainWindow):
+
 	def __init__(self, options):
 		super(ImageViewer, self).__init__()
 

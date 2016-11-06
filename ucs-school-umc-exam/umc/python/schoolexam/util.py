@@ -41,7 +41,9 @@ distribution.DISTRIBUTION_DATA_PATH = ucr.get('ucsschool/exam/cache', '/var/lib/
 distribution.POSTFIX_DATADIR_SENDER = ucr.get('ucsschool/exam/datadir/sender', 'Klassenarbeiten')
 distribution.POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/exam/datadir/recipient', 'Klassenarbeiten')
 
+
 class Progress(object):
+
 	def __init__(self, max_steps=100):
 		self.reset(max_steps)
 

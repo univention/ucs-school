@@ -19,6 +19,7 @@ ucr.load()
 # multiple whitespaces to increase chance to get several words
 charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
 
+
 def main():
 	with univention.testing.udm.UCSTestUDM() as udm:
 		print '*** Stopping existing UDM CLI server'

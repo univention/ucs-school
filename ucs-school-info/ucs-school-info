@@ -46,6 +46,7 @@ lo = None
 
 univention.admin.modules.update()
 
+
 def _print(_str):
 	print _str
 	print '-' * len(_str)
@@ -62,6 +63,7 @@ def get_object(dn, module, superordinate=None):
 
 	return univention.admin.objects.get(_module, co, lo, position=position,
 			superordinate=superordinate, dn=dn)
+
 
 def get_objects(module, base=baseDN, _filter=None, superordinate=None):
 	"""Get objects.
@@ -80,6 +82,7 @@ def get_objects(module, base=baseDN, _filter=None, superordinate=None):
 		return univention.admin.modules.lookup(_module, co, lo, \
 				base=base, scope='sub', superordinate=superordinate,
 				filter=univention.admin.filter.expression(*_filter))
+
 
 def user(base=baseDN):
 	"""List user information for specified ou."""
@@ -116,6 +119,7 @@ def user(base=baseDN):
 			print _str
 	print
 
+
 def computer(base=baseDN):
 	"""List computer information for specified ou."""
 	computers = get_objects('computers/computer', base=base)
@@ -140,6 +144,7 @@ def computer(base=baseDN):
 		else:
 			print _str
 	print
+
 
 def network(base=baseDN):
 	"""List network information for specified ou."""

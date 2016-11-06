@@ -15,12 +15,15 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 # Generate the required time variables in the correct format
+
+
 def getDateTime(starttime, deadline):
 	distTime = time.strftime('%H:%M', starttime)
 	distDate = time.strftime('%Y-%m-%d', starttime)
 	collTime = time.strftime('%H:%M', deadline)
 	collDate = time.strftime('%Y-%m-%d', deadline)
 	return distTime, distDate, collTime, collDate
+
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:

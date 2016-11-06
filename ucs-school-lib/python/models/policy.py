@@ -35,7 +35,9 @@ from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 
 from ucsschool.lib.models.utils import _, logger
 
+
 class Policy(UCSSchoolHelperAbstractClass):
+
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).policies
@@ -61,9 +63,12 @@ class Policy(UCSSchoolHelperAbstractClass):
 		else:
 			logger.info('Already attached!')
 
+
 class UMCPolicy(Policy):
+
 	class Meta:
 		udm_module = 'policies/umc'
+
 
 class DHCPDNSPolicy(Policy):
 	empty_attributes = EmptyAttributes(_('Empty attributes'))

@@ -16,6 +16,7 @@ from essential.importusers import Person
 
 
 class Test(CLI_Import_v2_Tester):
+
 	def __init__(self):
 		super(Test, self).__init__()
 		self.ou_B = None
@@ -42,6 +43,7 @@ class Test(CLI_Import_v2_Tester):
 			config.update_entry('user_role', role)
 
 			class MultiPerson(Person):
+
 				def __init__(self, school, role):
 					Person.__init__(self, school, role)
 					self.mailAlternativeAddress = '%s@example.com;%s@example.com;%s@example.com' % (uts.random_name(), uts.random_name(), uts.random_name())

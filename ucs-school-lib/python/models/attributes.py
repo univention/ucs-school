@@ -42,8 +42,10 @@ from univention.admin.uexceptions import valueError
 
 from ucsschool.lib.models.utils import ucr, _
 
+
 class ValidationError(Exception):
 	pass
+
 
 class Attribute(object):
 	udm_name = None
@@ -80,6 +82,7 @@ class Attribute(object):
 			if self.required:
 				raise ValueError(_('"%s" is required. Please provide this information.') % self.label)
 
+
 class CommonName(Attribute):
 	udm_name = 'name'
 	syntax = None
@@ -93,36 +96,46 @@ class CommonName(Attribute):
 		if value != escaped:
 			raise ValueError(_('May not contain special characters'))
 
+
 class Username(CommonName):
 	udm_name = 'username'
 	syntax = uid_umlauts
 
+
 class DHCPServerName(CommonName):
 	udm_name = 'server'
+
 
 class DHCPServiceName(CommonName):
 	udm_name = 'service'
 
+
 class GroupName(CommonName):
 	syntax = gid
 
+
 class SchoolClassName(GroupName):
+
 	def _validate_syntax(self, values, syntax=None):
 		super(SchoolClassName, self)._validate_syntax(values)
 		# needs to check ShareName.syntax, too: SchoolClass will
 		#   create a share with its own name
 		super(SchoolClassName, self)._validate_syntax(values, syntax=ShareName.syntax)
 
+
 class ShareName(CommonName):
 	syntax = string_numbers_letters_dots_spaces
+
 
 class SubnetName(CommonName):
 	udm_name = 'subnet'
 	syntax = reverseLookupSubnet
 
+
 class DHCPSubnetName(SubnetName):
 	udm_name = 'subnet'
 	syntax = ipv4Address
+
 
 class SchoolName(CommonName):
 	udm_name = 'name'
@@ -134,7 +147,9 @@ class SchoolName(CommonName):
 			if not regex.match(value):
 				raise ValueError(_('Invalid school name'))
 
+
 class DCName(Attribute):
+
 	def validate(self, value):
 		super(DCName, self).validate(value)
 		if value:
@@ -147,15 +162,19 @@ class DCName(Attribute):
 				if sum([len(value), 1, len(ucr.get('domainname', ''))]) > 63:
 					raise ValueError(_('The length of fully qualified domain name is greater than 63 characters.'))
 
+
 class Firstname(Attribute):
 	udm_name = 'firstname'
+
 
 class Lastname(Attribute):
 	udm_name = 'lastname'
 
+
 class Birthday(Attribute):
 	udm_name = 'birthday'
 	syntax = iso8601Date
+
 
 class Email(Attribute):
 	udm_name = 'mailPrimaryAddress'
@@ -166,92 +185,116 @@ class Email(Attribute):
 			# do not validate ''
 			super(Email, self).validate(value)
 
+
 class Password(Attribute):
 	udm_name = 'password'
+
 
 class Disabled(Attribute):
 	udm_name = 'disabled'
 	syntax = disabled
 
+
 class SchoolAttribute(CommonName):
 	udm_name = None
+
 
 class SchoolClassesAttribute(Attribute):
 	udm_name = None
 	value_type = dict
 	value_default = dict
 
+
 class SchoolClassAttribute(Attribute):
 	pass
+
 
 class Description(Attribute):
 	udm_name = 'description'
 
+
 class DisplayName(Attribute):
 	udm_name = 'displayName'
 	extended = True
+
 
 class EmptyAttributes(Attribute):
 	udm_name = 'emptyAttributes'
 	# syntax = dhcp_dnsFixedAttributes # only set internally, no need to use.
 	#   also, it is not part of the "main" syntax.py!
 
+
 class ContainerPath(Attribute):
 	syntax = boolean
+
 
 class ShareFileServer(Attribute):
 	syntax = UDM_Objects  # UCSSchool_Server_DN is not always available. Easy check: DN
 	extended = True
 
+
 class Groups(Attribute):
 	syntax = GroupDN
 	value_type = list
+
 
 class Users(Attribute):
 	udm_name = 'users'
 	syntax = UserDN
 	value_type = list
 
+
 class IPAddress(Attribute):
 	udm_name = 'ip'
 	syntax = ipAddress
 
+
 class SubnetMask(Attribute):
 	pass
+
 
 class DHCPSubnetMask(Attribute):
 	udm_name = 'subnetmask'
 	syntax = v4netmask
 
+
 class DHCPServiceAttribute(Attribute):
 	pass
+
 
 class BroadcastAddress(Attribute):
 	udm_name = 'broadcastaddress'
 	syntax = ipv4Address
 
+
 class NetworkBroadcastAddress(Attribute):
 	syntax = ipv4Address
+
 
 class NetworkAttribute(Attribute):
 	udm_name = 'network'
 	syntax = ipAddress
 
+
 class Netmask(Attribute):
 	udm_name = 'netmask'
 	syntax = netmask
+
 
 class MACAddress(Attribute):
 	udm_name = 'mac'
 	syntax = MAC_Address
 
+
 class InventoryNumber(Attribute):
 	pass
+
 
 class Hosts(Attribute):
 	udm_name = 'hosts'
 	value_type = list
 	syntax = UDM_Objects
+
 
 class Schools(Attribute):
 	udm_name = 'school'
@@ -260,10 +303,12 @@ class Schools(Attribute):
 	syntax = string  # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined DC Slave)
 	extended = True
 
+
 class RecordUID(Attribute):
 	udm_name = 'ucsschoolRecordUID'
 	syntax = string
 	extended = True
+
 
 class SourceUID(Attribute):
 	udm_name = 'ucsschoolSourceUID'

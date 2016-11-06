@@ -13,6 +13,7 @@ import subprocess
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
+
 def checkAuths(host, passwd, url, (basic, ntlm, gneg), expect_wrong_password):
 	# in case all auth are disabled, all return 200
 	http_basic, http_ntlm, http_gneg = (200, 200, 200)
@@ -26,6 +27,7 @@ def checkAuths(host, passwd, url, (basic, ntlm, gneg), expect_wrong_password):
 	checkNTLM(host, passwd, url, http_ntlm)
 	checkGssnegotiate(host, passwd, url, http_gneg, expect_wrong_password)
 
+
 def checkBasic(host, passwd, url, http_code):
 	print 'Performing Basic proxy auth check'
 	curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_BASIC)
@@ -33,12 +35,14 @@ def checkBasic(host, passwd, url, http_code):
 	if http_code != result:
 		utils.fail('Basic proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
 
+
 def checkNTLM(host, passwd, url, http_code):
 	print 'Performing NTLM proxy auth check'
 	curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_NTLM)
 	result = curl.response(url)
 	if http_code != result:
 		utils.fail('NTLM proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
+
 
 def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
 	print 'Performing Gssnegotiate proxy auth check'
@@ -60,6 +64,7 @@ def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
 		if not expect_wrong_password and pop.returncode != 0:
 			utils.fail('kinit: correct Password used but did not work')
 
+
 def setAuthVariables((basic, ntlm, gneg)):
 	"""set ucr variables according to the auth states, and restart Squid"""
 	if basic:
@@ -76,11 +81,13 @@ def setAuthVariables((basic, ntlm, gneg)):
 		handler_unset(['squid/krb5auth', 'squid/krb5auth/keepalive'])
 	subprocess.call(["/etc/init.d/squid3", "restart"])
 
+
 def printHeader(state, passwd, expect_wrong_password):
 	print '-' * 40
 	print '(Basic, NTLM, Gssnegotiate) = %s' % (state,)
 	print 'Password used: %s, expect_wrong_password: %s' % (
 			passwd, expect_wrong_password)
+
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:

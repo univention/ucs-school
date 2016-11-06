@@ -36,6 +36,7 @@ import subprocess
 
 import univention.admin.uldap
 
+
 def normalize_permission(perms):
 	level_to_priv = {
 		'none': '0',

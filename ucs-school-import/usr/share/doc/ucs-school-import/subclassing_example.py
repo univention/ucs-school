@@ -44,6 +44,7 @@ from ucsschool.importer.mass_import.user_import import UserImport
 
 
 class MyUserImport(UserImport):
+
 	def do_delete(self, user):
 		"""
 		Delete or deactivate a user.
