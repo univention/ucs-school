@@ -921,4 +921,3 @@ class UCSSchoolHelperAbstractClass(object):
 				val = 1
 			attrs.append(str(val))
 		return HOOK_SEP_CHAR.join(attrs)
-

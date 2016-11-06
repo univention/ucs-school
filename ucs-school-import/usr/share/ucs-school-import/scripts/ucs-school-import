@@ -477,7 +477,7 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 
 	objects = univention.admin.modules.lookup(
 		module, co, lo, scope=scope,
-		superordinate=superordinate, 
+		superordinate=superordinate,
 		base=base, filter=filter)
 
 	if objects:
@@ -488,7 +488,7 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 		for o in objects:
 			if o.dn.lower() == dn.lower():
 				return o
-	
+
 	return None
 
 
@@ -563,7 +563,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		dcobject = object_exists(
 			server_module, co, lo, 'sub', superordinate, baseDN,
 			univention.admin.filter.expression('cn', dccn), None)
-	
+
 		if dcobject:
 			zone = "edukativ"
 			dcobject.open()
@@ -586,7 +586,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					dcobject['groups'].append(grp)
 			if modified:
 				dcobject.modify()
-		
+
 	created, dn = verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
 	if created:
 		# get name of new dc
@@ -1363,7 +1363,7 @@ def modify_user(person, module, co, lo):
 
 def check_user(person, baseDN, module):
 	objects = univention.admin.modules.lookup(
-		module, co, lo, scope='sub', superordinate=superordinate, 
+		module, co, lo, scope='sub', superordinate=superordinate,
 		base=person.getPosition_dn(),
 		filter=univention.admin.filter.expression('uid', person.login))
 	if objects:
@@ -1438,7 +1438,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 			pass
 
 	verify_school_ou(person.sNr, co, lo, baseDN)
-	# check if needed subtree exists, this should not be neccessary be after 
+	# check if needed subtree exists, this should not be neccessary be after
 	# verify of the ou but we may crash if someone makes changes by hand
 	more_instances = 1
 	container_position = baseDN
@@ -1548,7 +1548,7 @@ def import_user():
 		if os.path.isfile(options.outfile):
 			print "ERROR: outfile exists, will not overwrite existing file"
 			sys.exit(1)
-		print "outfile is: " + options.outfile 
+		print "outfile is: " + options.outfile
 		OUT = open(options.outfile, "w")
 
 	with stopped_notifier():
@@ -1876,7 +1876,7 @@ def import_networks(router_only=False):
 	problem_hints = ""
 
 	with stopped_notifier():
-		for line in inf:	
+		for line in inf:
 
 			if emptyLineRe.match(line):
 				continue
@@ -2745,13 +2745,13 @@ def rename_class():
 	myShares = {}
 	for group in univention.admin.modules.lookup(
 		group_module, co, lo, scope="sub",
-		superordinate=superordinate, 
+		superordinate=superordinate,
 		base=baseDN, filter="(objectClass=univentionGroup)"):
 		cn = group.dn.split(",")[0].replace("cn=", "", 1)
 		myGroups[cn] = group
 	for share in univention.admin.modules.lookup(
 		share_module, co, lo, scope="sub",
-		superordinate=superordinate, 
+		superordinate=superordinate,
 		base=baseDN, filter="(objectClass=univentionShare)"):
 		cn = share.dn.split(",")[0].replace("cn=", "", 1)
 		myShares[cn] = share
@@ -2854,7 +2854,7 @@ def rename_class():
 						shareObject['sambaName'] = newName
 					if shareObject['sambaForceGroup'] == '+%s' % (oldName, ):
 						shareObject['sambaForceGroup'] = '+%s' % (newName, )
-					shareObject['path'] = os.path.sep.join(path)	
+					shareObject['path'] = os.path.sep.join(path)
 					try:
 						univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Renaming of share %r to %r' % (oldName, newName))
 						shareObject.modify()

@@ -100,4 +100,3 @@ if __name__ == '__main__':
 		timer = notifier.timer_add(2000, notifier.Callback(show_state, options))
 
 	notifier.loop()
-

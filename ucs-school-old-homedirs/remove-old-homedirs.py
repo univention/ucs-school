@@ -97,7 +97,7 @@ def check_source_dir(dir):
 	ret = check_filesystem(dir)
 	if ret:
 		return ret
-	
+
 	return ""
 
 # make sure that we are dealing with a known filesystem
@@ -113,7 +113,7 @@ def check_filesystem(dir):
 			myFs = tmp[1].strip()
 			for fs in fs_types:
 				if fs.lower() == myFs.lower():
-					# ok, 
+					# ok,
 					return ""
 			break
 	return "%s for %s is not on a known filesystem" % (myFs, dir)
@@ -126,7 +126,7 @@ def move_dir(src, dst, listener):
 	newName = os.path.basename(src) + ".%s" % int(time.time())
 	dst = os.path.join(dst, newName)
 	ret = ""
-	
+
 	listener.setuid(0)
 	try:
 		shutil.move(src, dst)

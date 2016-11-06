@@ -338,4 +338,3 @@ class UCCComputer(SchoolComputer):
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/ucc'
 		hook_path = 'computer'
-

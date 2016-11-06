@@ -135,5 +135,3 @@ class Instance(SchoolBaseModule):
 			self.finished(request.id, {}, message, success=False)
 		else:
 			self.finished(request.id, {}, success=True)
-
-

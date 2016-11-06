@@ -337,4 +337,3 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			if os.path.exists(filename):
 				os.unlink(filename)
 		return super(Instance, self).destroy()
-

@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Check if a new group gets a domain sid
 ## tags: [apptest,ucsschool]
-## roles: 
+## roles:
 ##  - domaincontroller_master
 ##  - domaincontroller_backup,
 ##  - domaincontroller_slave,
@@ -31,4 +31,3 @@ if __name__ == '__main__':
 		group_sid = lo.get(group_dn)['sambaSID'][0]
 		if not group_sid.startswith('S-1-5-21-'):
 			raise WrongSID()
-

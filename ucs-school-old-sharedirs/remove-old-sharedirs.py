@@ -123,7 +123,7 @@ def check_filesystem(dir):
 			myFs = tmp[1].strip()
 			for fs in fs_types:
 				if fs.lower() == myFs.lower():
-					# ok, 
+					# ok,
 					return ""
 			break
 	return "%s for %s is not on a known filesystem" % (myFs, dir)
@@ -177,7 +177,7 @@ def handler(dn, new, old, command):
 		ret = check_source_dir(prefixlist, share_dir)
 		if ret:
 			univention.debug.debug(
-				univention.debug.LISTENER, univention.debug.WARN, 
+				univention.debug.LISTENER, univention.debug.WARN,
 				"not removing share directory of share %s: %s" % (name, ret))
 			return
 

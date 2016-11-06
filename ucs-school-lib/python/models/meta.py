@@ -100,4 +100,3 @@ class UCSSchoolHelperMetaClass(type):
 		cls._attributes = attributes
 		cls._meta = UCSSchoolHelperOptions(cls, meta)
 		return cls
-

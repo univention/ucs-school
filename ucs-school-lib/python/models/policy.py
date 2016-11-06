@@ -75,4 +75,3 @@ class DHCPDNSPolicy(Policy):
 
 	class Meta:
 		udm_module = 'policies/dhcp_dns'
-

@@ -119,10 +119,10 @@ def windows_set_gpo_security_filter(gpo_name, permission_level, target_name, tar
 	"""
 	if not permission_level in ("GpoRead", "GpoApply", "GpoEdit", "GpoEditDeleteModifySecurity", "None"):
 		utils.fail("Set-GPPermissions: unsupported permission_level: %s" % permission_level)
-		
+
 	if not target_type in ("Computer", "User", "Group"):
 		utils.fail("Set-GPPermissions: unsupported target_type: %s" % target_type)
-	
+
 	print("\nSet-GPPermissions on '%s' for '%s' '%s' to '%s'"
 		% (gpo_name, target_name, target_type, permission_level))
 	try:
@@ -554,7 +554,7 @@ class GPO_Test(object):
 		# case 1: checks with user GPO
 		## TODO: Doesn't work as Admin, needs to be checked with the student-account!
 		# windows_check_registry_key("HKCU\Software\Policies\Microsoft\UCSTestKey", "TestUserValueOne", self.test_user_gpo_value)
-	
+
 		# case 2: checks with computer GPO
 		windows_check_registry_key("HKLM\Software\Policies\Microsoft\UCSTestKey", "TestComputerValueTwo", self.test_machine_gpo_value)
 
@@ -659,4 +659,3 @@ if __name__ == '__main__':
 	with univention.testing.udm.UCSTestUDM() as udm:
 		with utu.UCSTestSchool() as schoolenv:
 			test_exam_gpo(ucr, udm, schoolenv, windows_client)
-

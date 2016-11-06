@@ -183,4 +183,3 @@ class Instance(SchoolBaseModule):
 		udm_obj.modify()
 
 		return result  # TODO: How to communicate the success?
-

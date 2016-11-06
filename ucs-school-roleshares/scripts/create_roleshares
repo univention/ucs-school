@@ -47,7 +47,7 @@ def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=N
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
-		
+
 	ldap_filter = '(username=%s)' % (username,)
 	try:
 		udm_obj = udm_modules.lookup('users/user', None, ldap_machine_read, scope='sub', base=ucr.get('ldap/base'), filter=str(ldap_filter))[0]
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 	if not opts.roleshares:
 		print 'Required option missing: --create'
 		sys.exit(2)
-	
+
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 			username = raw_input("Administrator name: ")
 			if not opts.bindpwd:
 				opts.bindpwd = raw_input("Password: ")
-			
+
 			opts.binddn = dn_from_username(username, ucr)
 			if not opts.binddn:
 				print 'User not found'

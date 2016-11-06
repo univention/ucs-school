@@ -261,7 +261,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 
 			try:
 				stdout, stderr = self.create_and_run_process(cmd + record_cmd)
-			except IndexError as exc:  # some records in some setups do not exist 
+			except IndexError as exc:  # some records in some setups do not exist
 				pass  # workaround for Bug #38064
 			if stderr:
 				# ignore the 'Does not exist' messages

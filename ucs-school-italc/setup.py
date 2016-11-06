@@ -80,4 +80,3 @@ content = {
 # This creates the italcconfig.py module from the italcconfig.py.in
 # template and the dictionary.
 #sipconfig.create_config_module("italcconfig.py", "config.py.in", content)
-

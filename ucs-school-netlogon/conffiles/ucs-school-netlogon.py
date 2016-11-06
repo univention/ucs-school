@@ -79,7 +79,7 @@ def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 	print >> fn, 'printToLog logfile, "running %s"' % script
 	print >> fn, 'script = objFSO.BuildPath(baseName, "%s")' % script
 	print >> fn, 'return = objShell.run("%s %s " & script & " %s", %s, true)' % (vbsInt, vbsOpts, logging, windowStyle)
-	
+
 	if checkReturn:
 		print >> fn, 'if return <> 0  then'
 		print >> fn, '    MsgBox "%s failed with error code: " & return' % script

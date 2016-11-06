@@ -427,4 +427,3 @@ class UCS_License_detection(object):
 
 		if not license_sufficient:
 			raise LicenseInsufficient(error_msg)
-

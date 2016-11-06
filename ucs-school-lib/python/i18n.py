@@ -52,4 +52,3 @@ def ucs_school_name_i18n(name, lang='de'):
 		return ucs_school_l10n_languages[lang].get(name, name)
 	else:
 		return name
-

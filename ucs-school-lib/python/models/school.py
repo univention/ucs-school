@@ -463,4 +463,3 @@ class School(UCSSchoolHelperAbstractClass):
 	class Meta:
 		udm_module = 'container/ou'
 		udm_filter = 'objectClass=ucsschoolOrganizationalUnit'
-

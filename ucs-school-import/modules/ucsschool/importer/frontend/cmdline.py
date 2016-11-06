@@ -103,7 +103,7 @@ class CommandLine(object):
 			self.setup_logging(self.args.verbose, self.args.logfile)
 
 			self.logger.info("------ UCS@school import tool starting ------")
-	
+
 			self.setup_config()
 			# logging configured by config file
 			self.setup_logging(self.config["verbose"], self.config["logfile"])
@@ -112,7 +112,7 @@ class CommandLine(object):
 			self.logger.info("Used configuration files: %s.", self.config.conffiles)
 			self.logger.info("Using command line arguments: %r", self.args.settings)
 			self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
-	
+
 			self.factory = setup_factory(self.config["factory"])
 			self.do_import()
 			if self.errors:

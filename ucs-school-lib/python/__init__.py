@@ -32,4 +32,3 @@
 # <http://www.gnu.org/licenses/>.
 
 from ucsschool.lib.schoolldap import *
-

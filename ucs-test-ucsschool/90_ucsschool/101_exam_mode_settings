@@ -26,7 +26,7 @@ def main():
 
 				print ' ** Initial Status'
 				existing_rejects = get_s4_rejected()
-				
+
 				if ucr.is_true('ucsschool/singlemaster'):
 					edudc = None
 				else:

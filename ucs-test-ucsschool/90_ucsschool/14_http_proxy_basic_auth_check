@@ -31,7 +31,7 @@ def ruleInControl(user, ruleList, host, banPage):
 			if all(localCurl.getPage(dom) != banPage for dom in rule.domains):
 				inCtrl.append(rule)
 	localCurl.close()
-	# return the bigger rule 
+	# return the bigger rule
 	# in case one rule is contained in another
 	result = [
 			x.name for x in inCtrl if len(x.domains) == max(

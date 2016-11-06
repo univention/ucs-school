@@ -42,4 +42,3 @@ from ucsschool.lib.models.dhcp import *
 from ucsschool.lib.models.network import *
 from ucsschool.lib.models.policy import *
 from ucsschool.lib.models.misc import *
-

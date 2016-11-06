@@ -73,7 +73,7 @@ def main():
 					exam_group_dn = "cn=OU%s-Klassenarbeit,cn=ucsschool,cn=groups,%s" % (school, ucr.get('ldap/base'))
 					memberUid = lo.search(base=exam_group_dn)[0][1].get('memberUid')
 					uniqueMember = lo.search(base=exam_group_dn)[0][1].get('uniqueMember')
-					
+
 					if (set(memberUid) != set(expected_memberUid)):
 						utils.fail("Current memberUid = %r\nExpected = %r" % (memberUid, expected_memberUid))
 					if (set(uniqueMember) != set(expected_uniqueMember)):

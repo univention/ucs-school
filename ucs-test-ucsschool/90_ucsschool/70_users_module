@@ -22,7 +22,7 @@ def main():
 			class_02 = Klasse(school=ou)
 			class_02.create()
 			users = []
-			
+
 			# creating students and teachers
 			for role in ['student', 'teacher']:
 				user = User(school=ou, role=role, school_classes={ou: ['%s-%s' % (ou, class_01.name)]})

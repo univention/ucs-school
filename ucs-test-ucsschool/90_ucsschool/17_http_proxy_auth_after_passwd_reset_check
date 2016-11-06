@@ -1,6 +1,6 @@
-#!/usr/share/ucs-test/runner python 
-## desc: http_proxy_auth_after_passwd_reset_check 
-## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver] 
+#!/usr/share/ucs-test/runner python
+## desc: http_proxy_auth_after_passwd_reset_check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## versions:
 ##  4.0-0: skip
 ## tags: [apptest, ucsschool]
@@ -69,9 +69,9 @@ def main():
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 200)
 
 			print "resetting student user password"
-			newpasswd = resetPasswd(host, studn, 'student', False) 
+			newpasswd = resetPasswd(host, studn, 'student', False)
 			utils.wait_for_replication_and_postrun()
-			
+
 			print "check student auth with the old password"
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
@@ -79,7 +79,7 @@ def main():
 			print 'check student auth with the new password'
 			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
 			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
-			
+
 			tea, teadn = schoolenv.create_user(school, is_teacher=True)
 
 			print 'check teacher auth with initial state'
@@ -87,7 +87,7 @@ def main():
 			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 200)
 
 			print 'resetting teacher user password'
-			newpasswd = resetPasswd(host, teadn, 'teacher', False) 
+			newpasswd = resetPasswd(host, teadn, 'teacher', False)
 			utils.wait_for_replication_and_postrun()
 
 			print 'check teacher auth with the old password'

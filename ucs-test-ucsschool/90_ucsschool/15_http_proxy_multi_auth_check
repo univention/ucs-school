@@ -99,7 +99,7 @@ def main():
 		passwords = [('univention', False), ('wrong_passwd', True)]
 
 		# Generate all the possibilities for the auth states
-		# [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1), 
+		# [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1),
 		#  (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)]
 		authStates = list(itertools.product([0, 1], repeat=3))
 

@@ -66,7 +66,7 @@ def roleshare_home_subdir(school_ou, roles, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
-		
+
 	if ucr.is_true('ucsschool/import/roleshare', True):
 		for role in (role_pupil, role_teacher, role_staff):
 			if role in roles:
@@ -150,7 +150,7 @@ def create_roleshare_for_searchbase(role, school, ucr=None, ldap_user_read=None)
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
-		
+
 	school_ou = school.name
 	share_container_dn = school.get_search_base(school.name).shares
 
@@ -168,7 +168,7 @@ def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=N
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
-		
+
 	supported_roles = (role_pupil, role_teacher, role_staff)
 	supported_role_aliases = {'student': 'pupil'}
 

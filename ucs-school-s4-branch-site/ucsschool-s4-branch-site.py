@@ -278,7 +278,7 @@ def update_ucr_overrides(excludeDN=None):
 
 		## always trigger S4 Connector
 		_relativeDomainName_trigger_set.add(relativeDomainName)
-	
+
 	if ucr_key_value_list:
 		univention.config_registry.handler_set(ucr_key_value_list)
 		_s4_connector_restart = True
