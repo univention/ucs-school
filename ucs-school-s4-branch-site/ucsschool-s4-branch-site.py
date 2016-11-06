@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-__package__='' 	# workaround for PEP 366
+__package__ = '' 	# workaround for PEP 366
 import listener
 import univention.debug as ud
 import univention.admin.uexceptions as udm_errors
@@ -137,8 +137,8 @@ finally:
 
 ### Listener registration data
 filter = '(&(univentionService=S4 SlavePDC)%s)' % (_ucsschool_service_specialization_filter,)
-attributes = ['cn', 'associatedDomain', 'description']	## support retrigger via description
-modrdn = "1"	# use the modrdn listener extension
+attributes = ['cn', 'associatedDomain', 'description']  # support retrigger via description
+modrdn = "1"  # use the modrdn listener extension
 
 ### Contants
 _record_type = "srv_record"
@@ -225,25 +225,25 @@ def update_ucr_overrides(excludeDN=None):
 		## check old value
 		old_ucr_locations = ucr.get(key)
 		if old_ucr_locations == None or old_ucr_locations == 'ignore':
-			continue	## don't touch if unset or ignored
+			continue  # don't touch if unset or ignored
 		## Extract current prio/weight/port
 		old_server_fqdn_list = []
 		old_prio_weight_port = {}
-		priority=None; weight=None; port=None; target=None
+		priority = None; weight = None; port = None; target = None
 		for v in old_ucr_locations.split(' '):
 			try:
 				## Check explicit for None, because the int values may be 0
-				if priority == None: priority=int(v)
-				elif weight == None: weight=int(v)
-				elif port == None: port=int(v)
-				elif not target: target=v.rstrip('.')
+				if priority == None: priority = int(v)
+				elif weight == None: weight = int(v)
+				elif port == None: port = int(v)
+				elif not target: target = v.rstrip('.')
 				if priority != None and weight != None and port != None and target:
 					old_server_fqdn_list.append(target)
 					old_prio_weight_port[target] = (priority, weight, port)
-					priority=None; weight=None; port=None; target=None
+					priority = None; weight = None; port = None; target = None
 			except ValueError as ex:
 				ud.debug(ud.LISTENER, ud.ERROR, '%s: Error parsing UCR variable %s: %s' % (name, key, ex))
-				priority=None; weight=None; port=None; target=None
+				priority = None; weight = None; port = None; target = None
 
 		## create new value
 		ucr_locations_list = []
@@ -329,7 +329,7 @@ def handler(dn, new, old, command):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.ALL, '%s: command: %s, dn: %s, new? %s, old? %s' % (name, command, dn, bool(new), bool(old)))
 
 	if new:
-		if ',ou=' not in dn.lower():	## only handle DCs in school branch sites
+		if ',ou=' not in dn.lower():  # only handle DCs in school branch sites
 			return
 
 		if old:

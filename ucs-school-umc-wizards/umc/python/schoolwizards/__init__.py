@@ -152,11 +152,11 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection()
 	def share_servers(self, request, ldap_user_read=None):
 		# udm/syntax/choices UCSSchool_Server_DN
-		ret = [{'id' : '', 'label' : ''}]
+		ret = [{'id': '', 'label': ''}]
 		for module in ['computers/domaincontroller_master', 'computers/domaincontroller_backup', 'computers/domaincontroller_slave', 'computers/memberserver']:
 			for obj in udm_modules.lookup(module, None, ldap_user_read, scope='sub'):
 				obj.open()
-				ret.append({'id' : obj.dn, 'label' : obj.info.get('fqdn', obj.info['name'])})
+				ret.append({'id': obj.dn, 'label': obj.info.get('fqdn', obj.info['name'])})
 		return ret
 
 	@response
@@ -170,42 +170,42 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return ret
 
 	@response
-	@LDAP_Connection( USER_READ, USER_WRITE )
+	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _create_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
 			MODULE.process('Creating %r' % (obj,))
 			obj.validate(ldap_user_read)
 			if obj.errors:
-				ret.append({'result' : {'message' : obj.get_error_msg()}})
+				ret.append({'result': {'message': obj.get_error_msg()}})
 				MODULE.process('Validation failed %r' % (ret[-1],))
 				continue
 			try:
 				if obj.create(ldap_user_write, validate=False):
 					ret.append(True)
 				else:
-					ret.append({'result' : {'message' : _('"%s" already exists!') % obj.name}})
+					ret.append({'result': {'message': _('"%s" already exists!') % obj.name}})
 			except uldapBaseException as exc:
-				ret.append({'result' : {'message' : get_exception_msg(exc)}})
+				ret.append({'result': {'message': get_exception_msg(exc)}})
 				MODULE.process('Creation failed %r' % (ret[-1],))
 		return ret
 
 	@response
-	@LDAP_Connection( USER_READ, USER_WRITE )
+	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
 			MODULE.process('Modifying %r' % (obj))
 			obj.validate(ldap_user_read)
 			if obj.errors:
-				ret.append({'result' : {'message' : obj.get_error_msg()}})
+				ret.append({'result': {'message': obj.get_error_msg()}})
 				continue
 			try:
 				obj.modify(ldap_user_write, validate=False)
 			except uldapBaseException as exc:
-				ret.append({'result' : {'message' : get_exception_msg(exc)}})
+				ret.append({'result': {'message': get_exception_msg(exc)}})
 			else:
-				ret.append(True) # no changes? who cares?
+				ret.append(True)  # no changes? who cares?
 		return ret
 
 	@response
@@ -218,7 +218,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			if obj.remove(ldap_user_write):
 				ret.append(True)
 			else:
-				ret.append({'result' : {'message' : _('"%s" does not exist!') % obj.name}})
+				ret.append({'result': {'message': _('"%s" does not exist!') % obj.name}})
 		return ret
 
 	def _get_all(self, klass, school, filter_str, lo):
@@ -251,7 +251,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_write)
 			success = obj.remove_from_school(school, ldap_user_write)
 			if not success:
-				success = {'result' : {'message' : _('Failed to remove user from school.')}}
+				success = {'result': {'message': _('Failed to remove user from school.')}}
 			ret.append(success)
 		return ret
 

@@ -39,33 +39,33 @@ import subprocess
 if __name__ == '__main__':
 	parser = OptionParser()
 
-	parser.add_option( '-r', '--remove', action = 'append', dest = 'remove', default = [] )
-	parser.add_option( '-e', '--extract', action = 'append', dest = 'extract', default = [] )
+	parser.add_option('-r', '--remove', action='append', dest='remove', default=[])
+	parser.add_option('-e', '--extract', action='append', dest='extract', default=[])
 
 	options, hosts = parser.parse_args()
 
 	ucr = ConfigRegistry()
 	ucr.load()
 
-	hosts = set( hosts )
+	hosts = set(hosts)
 	vset = {}
 
 	# extract values
 	for variable in options.extract:
 		if ucr.get(variable):
-			old = set( ucr[ variable ].split( ' ' ) )
+			old = set(ucr[variable].split(' '))
 		else:
 			old = set()
-		new = old.difference( hosts )
+		new = old.difference(hosts)
 		if new:
-			vset[ variable ] = ' '.join( new )
+			vset[variable] = ' '.join(new)
 		else:
-			options.remove.append( variable )
+			options.remove.append(variable)
 
-	handler_set( map( lambda x: '%s=%s' % x, vset.items() ) )
+	handler_set(map(lambda x: '%s=%s' % x, vset.items()))
 
 	# remove values
-	handler_unset( options.remove )
+	handler_unset(options.remove)
 	
 	#reload cups
 	if os.path.exists('/etc/init.d/cups'):

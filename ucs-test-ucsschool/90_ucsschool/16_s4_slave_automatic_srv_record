@@ -128,11 +128,11 @@ class Test():
 			for school in School.get_all(ldap_machine_read):
 				positive_test_hostname = uts.random_name()
 				udm.create_object("computers/domaincontroller_slave",
-					name = positive_test_hostname,
-					position = "cn=dc,cn=server,cn=computers,%s" % (school.dn,),
-					domain = ucr.get('domainname'),
-					service = ("S4 SlavePDC", _local_ucsschool_service),
-					groups = ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)
+					name=positive_test_hostname,
+					position="cn=dc,cn=server,cn=computers,%s" % (school.dn,),
+					domain=ucr.get('domainname'),
+					service=("S4 SlavePDC", _local_ucsschool_service),
+					groups=("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)
 					)
 
 				positive_test_fqdn = ".".join((positive_test_hostname, ucr.get('domainname')))
@@ -140,11 +140,11 @@ class Test():
 
 				negative_test_hostname = uts.random_name()
 				udm.create_object("computers/domaincontroller_slave",
-					name = negative_test_hostname,
-					position = "cn=dc,cn=server,cn=computers,%s" % (school.dn,),
-					domain = ucr.get('domainname'),
-					service = ("S4 SlavePDC", _not_local_ucsschool_service),
-					groups = ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)
+					name=negative_test_hostname,
+					position="cn=dc,cn=server,cn=computers,%s" % (school.dn,),
+					domain=ucr.get('domainname'),
+					service=("S4 SlavePDC", _not_local_ucsschool_service),
+					groups=("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)
 					)
 
 				negative_test_fqdn = ".".join((negative_test_hostname, ucr.get('domainname')))
@@ -214,7 +214,7 @@ class Test():
 				testing_utils.fail(log_message="%s present in DNS SRV record %s" % (negative_test_fqdn, test_srv_record))
 
 		## verify that the local DC is still in DNS/Samba4
-		local_fqdn = ".".join((ucr.get("hostname"),ucr.get("domainname")))
+		local_fqdn = ".".join((ucr.get("hostname"), ucr.get("domainname")))
 		if stdout.find(local_fqdn) == -1:
 			testing_utils.fail(log_message="%s not present in DNS SRV record %s" % (local_fqdn, test_srv_record))
 

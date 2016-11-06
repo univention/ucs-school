@@ -11,7 +11,7 @@ import sys
 import univention.testing.ucr as ucr_test
 
 def main():
-	dpkgQuery = subprocess.Popen(["dpkg-query","-W","-f",'${Status}\n',"ucs-school-singlemaster"],
+	dpkgQuery = subprocess.Popen(["dpkg-query", "-W", "-f", '${Status}\n', "ucs-school-singlemaster"],
 	stdout=subprocess.PIPE).communicate()[0]
 	ucr = ucr_test.UCSTestConfigRegistry()
 	ucr.load()
@@ -27,11 +27,11 @@ def main():
 	else:
 		if (dpkgQuery == "install ok installed\n"):
 			print 'ucs-school-singlemaster is installed '
-			print "ucsschool/singlemaster = false",  ' (Wrong Value)'
+			print "ucsschool/singlemaster = false", ' (Wrong Value)'
 			returnValue = 1
 		else:
 			print 'ucs-school-singlemaster is not installed '
-			print "ucsschool/singlemaster = false",  ' (Correct Value)'
+			print "ucsschool/singlemaster = false", ' (Correct Value)'
 			returnValue = 0
 	return returnValue
 

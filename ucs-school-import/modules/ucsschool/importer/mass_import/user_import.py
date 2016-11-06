@@ -80,7 +80,7 @@ class UserImport(object):
 			except StopIteration:
 				break
 			except UcsSchoolImportError as exc:
-				self.logger.exception("Error reading %d. user: %s",  num, exc)
+				self.logger.exception("Error reading %d. user: %s", num, exc)
 				self._add_error(exc)
 			num += 1
 		self.logger.info("------ Read %d users from input data. ------", len(self.imported_users))
@@ -155,10 +155,10 @@ class UserImport(object):
 						"not " if user.action == "M" else "already "), entry=user.entry_count, import_user=user)
 
 			except (CreationError, ModificationError) as exc:
-				self.logger.error("Entry #%d: %s",  exc.entry, exc)  # traceback useless
+				self.logger.error("Entry #%d: %s", exc.entry, exc)  # traceback useless
 				self._add_error(exc)
 			except UcsSchoolImportError as exc:
-				self.logger.exception("Entry #%d: %s",  exc.entry, exc)
+				self.logger.exception("Entry #%d: %s", exc.entry, exc)
 				self._add_error(exc)
 		num_added_users = sum(map(len, self.added_users.values()))
 		num_modified_users = sum(map(len, self.modified_users.values()))
@@ -273,7 +273,7 @@ class UserImport(object):
 						import_user=user)
 				self.deleted_users[user.__class__.__name__].append(user)
 			except UcsSchoolImportError as exc:
-				self.logger.exception("Error in entry #%d: %s",  exc.entry, exc)
+				self.logger.exception("Error in entry #%d: %s", exc.entry, exc)
 				self._add_error(exc)
 		self.logger.info("------ Deleted %d users. ------", len(self.deleted_users))
 		return self.errors, self.deleted_users
@@ -368,13 +368,13 @@ class UserImport(object):
 		for cls_name in sorted(cls_names):
 			self.logger.info("Created %s: %d", cls_name, len(self.added_users.get(cls_name, [])))
 			for i in range(0, len(self.added_users[cls_name]), columns):
-				self.logger.info("  %s", [iu.name for iu in self.added_users[cls_name][i:i+columns]])
+				self.logger.info("  %s", [iu.name for iu in self.added_users[cls_name][i:i + columns]])
 			self.logger.info("Modified %s: %d", cls_name, len(self.modified_users.get(cls_name, [])))
 			for i in range(0, len(self.modified_users[cls_name]), columns):
-				self.logger.info("  %s", [iu.name for iu in self.modified_users[cls_name][i:i+columns]])
+				self.logger.info("  %s", [iu.name for iu in self.modified_users[cls_name][i:i + columns]])
 			self.logger.info("Deleted %s: %d", cls_name, len(self.deleted_users.get(cls_name, [])))
 			for i in range(0, len(self.deleted_users[cls_name]), columns):
-				self.logger.info("  %s", [iu.name for iu in self.deleted_users[cls_name][i:i+columns]])
+				self.logger.info("  %s", [iu.name for iu in self.deleted_users[cls_name][i:i + columns]])
 		self.logger.info("Errors: %d", len(self.errors))
 		if self.errors:
 			self.logger.info("Entry #: Error description")

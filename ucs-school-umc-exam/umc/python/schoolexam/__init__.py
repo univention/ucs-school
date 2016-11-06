@@ -274,7 +274,7 @@ class Instance(SchoolBaseModule):
 			# wait for the replication of all users to be finished
 			progress.component(_('Preparing user home directories'))
 			recipients = []  # list of User objects for all exam users
-			openAttempts = 300 # wait max. 5 minutes for replication
+			openAttempts = 300  # wait max. 5 minutes for replication
 			while (len(examUsers) > len(usersReplicated)) and (openAttempts > 0):
 				openAttempts -= 1
 				MODULE.info('waiting for replication to be finished, %s user objects missing' % (len(examUsers) - len(usersReplicated)))

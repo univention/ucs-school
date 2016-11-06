@@ -208,7 +208,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
 				self.return_code_result_skip()
 
 			self.remote_host = 'ldap://' + self.ldap_master
-			self.host_or_ip = '-H'	# to use hostname as an arg for samba-tool
+			self.host_or_ip = '-H'  # to use hostname as an arg for samba-tool
 			print("\nCurrent server role is DC-Slave, the DC-Master '%s' "
 				  "will be selected as the remote host for the test"
 				  % self.remote_host)

@@ -40,7 +40,7 @@ from ucsschool.lib.schoollessons import SchoolLessons
 _ = Translation('ucs-school-umc-lessontimes').translate
 
 class Instance(SchoolBaseModule):
-	def init (self):
+	def init(self):
 		SchoolBaseModule.init(self)
 		self._lessons = SchoolLessons()
 

@@ -182,7 +182,7 @@ def migrate_ous(lo, options):
 
 	for dn, attrs in schools:
 		ou_name = attrs['ou'][0]
-		if attrs.get('displayName',[''])[0]:
+		if attrs.get('displayName', [''])[0]:
 			yield '%r has already been converted' % (dn,)
 		else:
 			modlist = [('displayName', [], [ou_name])]

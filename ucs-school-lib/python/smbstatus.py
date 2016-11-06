@@ -36,120 +36,120 @@ import subprocess
 
 import univention.debug as ud
 
-REGEX_LOCKED_FILES = re.compile( r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$' )
-REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s+$' )
-REGEX_SERVICES = re.compile( r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$' )
+REGEX_LOCKED_FILES = re.compile(r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$')
+REGEX_USERS = re.compile(r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s+$')
+REGEX_SERVICES = re.compile(r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$')
 
-class SMB_LockedFile( dict ):
+class SMB_LockedFile(dict):
 	@property
-	def filename( self ):
-		return self[ 'filename' ]
+	def filename(self):
+		return self['filename']
 
 	@property
-	def sharePath( self ):
-		return self[ 'sharePath' ]
+	def sharePath(self):
+		return self['sharePath']
 
-	def __str__( self ):
+	def __str__(self):
 		if self.filename == '.':
 			return self.sharePath
 
 		return self.filename
 
-class SMB_Process( dict ):
-	def __init__( self, args ):
-		dict.__init__( self, args )
+class SMB_Process(dict):
+	def __init__(self, args):
+		dict.__init__(self, args)
 		self._locked_files = []
 		self._services = []
 
 	@property
-	def username( self ):
-		return self[ 'username' ]
+	def username(self):
+		return self['username']
 
 	@property
-	def pid( self ):
-		return self[ 'pid' ]
+	def pid(self):
+		return self['pid']
 
 	@property
-	def machine( self ):
-		return self[ 'machine' ]
+	def machine(self):
+		return self['machine']
 
 	@property
-	def lockedFiles( self ):
+	def lockedFiles(self):
 		return self._locked_files
 
 	@property
-	def services( self ):
+	def services(self):
 		return self._services
 
 	@property
-	def ipv4address( self ):
-		return self[ 'ipv4Address' ]
+	def ipv4address(self):
+		return self['ipv4Address']
 
 	@property
-	def ipv6address( self ):
-		return self[ 'ipv6Address' ]
+	def ipv6address(self):
+		return self['ipv6Address']
 
 	@property
-	def ipaddress( self ):
+	def ipaddress(self):
 		return self.get('ipAddress') or self.ipv4address or self.ipv6address
 
-	def update( self, dictionary ):
+	def update(self, dictionary):
 		if 'sharePath' in dictionary:
-			self._locked_files.append( SMB_LockedFile( dictionary ) )
+			self._locked_files.append(SMB_LockedFile(dictionary))
 		elif 'service' in dictionary:
-			self._services.append( dictionary[ 'service' ] )
+			self._services.append(dictionary['service'])
 		else:
-			dict.update( self, dictionary )
+			dict.update(self, dictionary)
 
-	def __str__( self ):
+	def __str__(self):
 		title = 'Process %(pid)s: User: %(username)s (group: %(group)s)' % self
-		files = '  locked files: %s' % ', '.join( map( str, self.lockedFiles ) )
-		services = '  services: %s' % ', '.join( self.services )
-		return '\n'.join( ( title, files, services ) )
+		files = '  locked files: %s' % ', '.join(map(str, self.lockedFiles))
+		services = '  services: %s' % ', '.join(self.services)
+		return '\n'.join((title, files, services))
 
-class SMB_Status( list ):
-	def __init__( self, testdata = None ):
-		list.__init__( self )
-		self.parse( testdata )
+class SMB_Status(list):
+	def __init__(self, testdata=None):
+		list.__init__(self)
+		self.parse(testdata)
 
-	def parse( self, testdata = None ):
+	def parse(self, testdata=None):
 		while self:
 			self.pop()
 		if testdata is None:
-			smbstatus = subprocess.Popen( [ '/usr/bin/smbstatus' ], shell = False, stdout = subprocess.PIPE, stderr = subprocess.PIPE )
-			data = [ '%s\n' % x for x in smbstatus.communicate()[0].splitlines() ]
+			smbstatus = subprocess.Popen(['/usr/bin/smbstatus'], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			data = ['%s\n' % x for x in smbstatus.communicate()[0].splitlines()]
 		else:
 			data = testdata
-		regexps = [ REGEX_USERS, REGEX_SERVICES, REGEX_LOCKED_FILES ]
+		regexps = [REGEX_USERS, REGEX_SERVICES, REGEX_LOCKED_FILES]
 		regex = None
 		for line in data:
-			if line.startswith( '-----' ):
-				regex = regexps.pop( 0 )
+			if line.startswith('-----'):
+				regex = regexps.pop(0)
 			if not line.strip() or regex is None:
 				continue
-			match = regex.match( line )
+			match = regex.match(line)
 			if match is None:
 				continue
-			serv = SMB_Process( match.groupdict() )
-			self.update( serv )
+			serv = SMB_Process(match.groupdict())
+			self.update(serv)
 
 		for process in self[:]:
 			if not 'username' in process:
-				ud.debug( ud.PARSER, ud.ERROR, 'Invalid SMB process definition' )
-				ud.debug( ud.PARSER, ud.INFO, '%s' % ''.join( data ) )
-				self.remove( process )
+				ud.debug(ud.PARSER, ud.ERROR, 'Invalid SMB process definition')
+				ud.debug(ud.PARSER, ud.INFO, '%s' % ''.join(data))
+				self.remove(process)
 
-	def update( self, service ):
+	def update(self, service):
 		for item in self:
 			if item.pid == service.pid:
-				item.update( service )
+				item.update(service)
 				break
 		else:
-			self.append( service )
+			self.append(service)
 
 if __name__ == '__main__':
-	ud.init( '/var/log/univention/smbstatus.log', 0 , 0 )
-	ud.set_level( ud.PARSER, 4 )
+	ud.init('/var/log/univention/smbstatus.log', 0, 0)
+	ud.set_level(ud.PARSER, 4)
 	TESTDATA = '''
 Samba version 4.2.0rc2-Debian
 PID     Username      Group         Machine            Protocol Version       
@@ -190,6 +190,6 @@ Pid          Uid        DenyMode   Access      R/W        Oplock           Share
 '''
 	status = SMB_Status()
 	# status = SMB_Status( testdata = TESTDATA.split( '\n' ) )
-	for process in map( str, status ):
+	for process in map(str, status):
 		print process
 		print

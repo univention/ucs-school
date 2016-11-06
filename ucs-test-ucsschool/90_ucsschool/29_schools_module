@@ -21,35 +21,35 @@ def main():
 				schools.append(school)
 
 			dc_slave1, dc_slave1_dn = create_dc_slave(udm, schools[0].name)
-			dc_slave2 , dc_slave2_dn= create_dc_slave(udm, schools[0].name)
+			dc_slave2, dc_slave2_dn = create_dc_slave(udm, schools[0].name)
 			dc_slave3, dc_slave3_dn = create_dc_slave(udm, schools[1].name)
-			dc_slave4 , dc_slave4_dn= create_dc_slave(udm, schools[1].name)
+			dc_slave4, dc_slave4_dn = create_dc_slave(udm, schools[1].name)
 
 			schools[0].check_query([schools[0].name, schools[1].name])
 
 			new_attrs = {
-				'display_name':'S2',
-				'home_share_file_server':dc_slave1,
-				'class_share_file_server':dc_slave2
+				'display_name': 'S2',
+				'home_share_file_server': dc_slave1,
+				'class_share_file_server': dc_slave2
 			}
 			schools[0].edit(new_attrs)
 			expected_attrs = {
-				'display_name':'S2',
-				'home_share_file_server':dc_slave1_dn,
-				'class_share_file_server':dc_slave2_dn
+				'display_name': 'S2',
+				'home_share_file_server': dc_slave1_dn,
+				'class_share_file_server': dc_slave2_dn
 			}
 			schools[0].check_get(expected_attrs)
 
 			new_attrs = {
-				'display_name':'S3',
-				'home_share_file_server':dc_slave3,
-				'class_share_file_server':dc_slave4
+				'display_name': 'S3',
+				'home_share_file_server': dc_slave3,
+				'class_share_file_server': dc_slave4
 			}
 			schools[1].edit(new_attrs)
 			expected_attrs = {
-				'display_name':'S3',
-				'home_share_file_server':dc_slave3_dn,
-				'class_share_file_server':dc_slave4_dn
+				'display_name': 'S3',
+				'home_share_file_server': dc_slave3_dn,
+				'class_share_file_server': dc_slave4_dn
 			}
 			schools[1].check_get(expected_attrs)
 

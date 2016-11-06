@@ -68,13 +68,13 @@ makefile.generate()
 content = {
     # Publish where the SIP specifications for this module will be
     # installed.
-    "italc_sip_dir":    config.default_sip_dir,
+    "italc_sip_dir": config.default_sip_dir,
 
     # Publish the set of SIP flags needed by this module.  As these are the
     # same flags needed by the qt module we could leave it out, but this
     # allows us to change the flags at a later date without breaking
     # scripts that import the configuration module.
-    "italc_sip_flags":  qt_sip_flags
+    "italc_sip_flags": qt_sip_flags
 }
 
 # This creates the italcconfig.py module from the italcconfig.py.in

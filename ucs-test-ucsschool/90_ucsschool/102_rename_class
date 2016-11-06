@@ -48,12 +48,12 @@ def check_ldap(school, old_name, new_name):
 def share_dn(class_name, school):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		return 'cn=%s,cn=klassen,cn=shares,ou=%s,%s' % (
-				class_name, school,ucr.get('ldap/base'))
+				class_name, school, ucr.get('ldap/base'))
 
 def class_dn(class_name, school):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		return 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (
-				class_name, school,ucr.get('ldap/base'))
+				class_name, school, ucr.get('ldap/base'))
 
 def share_path(class_name, school):
 	path = '/home/%s/groups/klassen/%s' % (school, class_name)

@@ -27,7 +27,7 @@ def main():
 					(True, 0), (False, 4), (True, 5), (False, 10)]
 
 			for (wlan, priority) in rules_attrs:
-				rule = 	InternetRule(wlan=wlan, priority=priority)
+				rule = InternetRule(wlan=wlan, priority=priority)
 				rule.define()
 				rules.append(rule)
 
@@ -54,7 +54,7 @@ def main():
 			for (rule, group) in zip(rules, groups):
 				rule.assign(school, group.name, 'workgroup')
 
-			radius_secret = 'testing123' # parameter set in  /etc/freeradius/clients.conf
+			radius_secret = 'testing123'  # parameter set in  /etc/freeradius/clients.conf
 			password = 'univention'
 			allow_radius_access = [True, False, False]
 			test_couples = zip(users, allow_radius_access)

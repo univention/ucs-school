@@ -89,7 +89,7 @@ def main():
 		# create database files and config
 		write_lists()
 		write_sg_cfg('')
-		exitcode = subprocess.call(['squidGuard', '-d', '-c', fn_cfg, '-C', 'all'], stdin=open('/dev/null', 'r'), stdout=open(fn_log,'a+'), stderr=open(fn_log, 'a+'))
+		exitcode = subprocess.call(['squidGuard', '-d', '-c', fn_cfg, '-C', 'all'], stdin=open('/dev/null', 'r'), stdout=open(fn_log, 'a+'), stderr=open(fn_log, 'a+'))
 		print_sg_log()
 		if exitcode:
 			utils.fail('Creating databases failed')
@@ -100,7 +100,7 @@ def main():
 		truncate_sg_log()
 		cnt_old_vartmp = count_bdb_files('/var/tmp')
 		cnt_old_tempdir = count_bdb_files(tempdir)
-		exitcode = subprocess.call(['squidGuard', '-d', '-c', fn_cfg], stdin=open('/dev/null', 'r'), stdout=open(fn_log,'a+'), stderr=open(fn_log, 'a+'))
+		exitcode = subprocess.call(['squidGuard', '-d', '-c', fn_cfg], stdin=open('/dev/null', 'r'), stdout=open(fn_log, 'a+'), stderr=open(fn_log, 'a+'))
 		print_sg_log()
 		if exitcode:
 			utils.fail('squidguard run 1 failed')

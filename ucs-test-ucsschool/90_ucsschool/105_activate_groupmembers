@@ -50,7 +50,7 @@ def check_usernames_in_csv(outfile, usernames):
 	for row in csvreader:
 		found_usernames.add(row[2])  # row 2 is username
 	if not set(usernames).issubset(found_usernames):
-		utils.fail('Not all usernames found in CSV files - missing usernames: ' + str(set(usernames)-found_usernames))
+		utils.fail('Not all usernames found in CSV files - missing usernames: ' + str(set(usernames) - found_usernames))
 
 def check_auth(username, passwd, should_pass=True):
 	with ucr_test.UCSTestConfigRegistry() as ucr:

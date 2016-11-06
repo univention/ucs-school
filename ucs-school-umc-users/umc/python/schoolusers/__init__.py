@@ -60,7 +60,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(**{
 		'school': StringSanitizer(required=True),
-		'class': StringSanitizer(required=True), # allow_none=True
+		'class': StringSanitizer(required=True),  # allow_none=True
 		'pattern': StringSanitizer(required=True),
 	})
 	@LDAP_Connection()

@@ -99,13 +99,13 @@ class School(UCSSchoolHelperAbstractClass):
 			group_containers.append(cn_staff)
 		containers_with_path = {
 			'printer_path': ['printers'],
-			'user_path' : ['users', user_containers],
-			'computer_path' : ['computers', ['server', ['dc']]],
-			'network_path' : ['networks'],
-			'group_path' : ['groups', group_containers],
-			'dhcp_path' : ['dhcp'],
-			'policy_path' : ['policies'],
-			'share_path' : ['shares', [cn_classes]],
+			'user_path': ['users', user_containers],
+			'computer_path': ['computers', ['server', ['dc']]],
+			'network_path': ['networks'],
+			'group_path': ['groups', group_containers],
+			'dhcp_path': ['dhcp'],
+			'policy_path': ['policies'],
+			'share_path': ['shares', [cn_classes]],
 		}
 
 		def _add_container(name, last_dn, base_dn, path, lo):
@@ -146,7 +146,7 @@ class School(UCSSchoolHelperAbstractClass):
 		# OU%s-Member-Edukativnetz
 		administrative_group_names = self.get_administrative_group_name('educational', domain_controller='both', ou_specific='both')
 		if self.shall_create_administrative_objects():
-			administrative_group_names.extend(self.get_administrative_group_name('administrative', domain_controller='both', ou_specific='both')) # same with Verwaltungsnetz
+			administrative_group_names.extend(self.get_administrative_group_name('administrative', domain_controller='both', ou_specific='both'))  # same with Verwaltungsnetz
 		for administrative_group_name in administrative_group_names:
 			group = BasicGroup.cache(name=administrative_group_name, container=administrative_group_container)
 			group.create(lo)
@@ -191,7 +191,7 @@ class School(UCSSchoolHelperAbstractClass):
 
 	def get_dc_name_fallback(self, administrative=False):
 		if administrative:
-			return 'dc%sv-01' % self.name.lower() # this is the naming convention, a trailing v for Verwaltungsnetz DCs
+			return 'dc%sv-01' % self.name.lower()  # this is the naming convention, a trailing v for Verwaltungsnetz DCs
 		else:
 			return 'dc%s-01' % self.name.lower()
 
@@ -322,7 +322,7 @@ class School(UCSSchoolHelperAbstractClass):
 					return
 
 				if hostlist:
-					continue # if at least one DC has control over this OU then jump to next 'school_dcs' item ==> do not create default slave objects
+					continue  # if at least one DC has control over this OU then jump to next 'school_dcs' item ==> do not create default slave objects
 
 				self.create_dc_slave(lo, dc_name, administrative=administrative)
 

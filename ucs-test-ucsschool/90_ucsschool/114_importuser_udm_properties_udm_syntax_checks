@@ -49,7 +49,7 @@ def main():
 				# from being read from udm_properties
 				#
 				mapped_props = ['birthday', 'disabled', 'firstname', 'lastname', 'mailPrimaryAddress', 'password',
-					'school', 'ucsschoolRecordUID', 'ucsschoolSourceUID', 'username']  #  ImportUser._attributes
+					'school', 'ucsschoolRecordUID', 'ucsschoolSourceUID', 'username']  # ImportUser._attributes
 				for prop in mapped_props:
 					user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
 					user.udm_properties[prop] = uts.random_name()

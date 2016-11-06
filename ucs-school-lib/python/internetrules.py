@@ -45,12 +45,12 @@ _filterTypes = {
 	'blacklist-pass': BLACKLIST,
 	'whitelist-block': WHITELIST,
 }
-_filterTypesInv = dict([ (_i[1], _i[0]) for _i in _filterTypes.iteritems() ])
+_filterTypesInv = dict([(_i[1], _i[0]) for _i in _filterTypes.iteritems()])
 _listTypes = {
 	'blacklisted': BLACKLIST,
 	'whitelisted': WHITELIST,
 }
-_listTypesInv = dict([ (_i[1], _i[0]) for _i in _listTypes.iteritems() ])
+_listTypesInv = dict([(_i[1], _i[0]) for _i in _listTypes.iteritems()])
 
 class Rule(object):
 
@@ -70,19 +70,19 @@ class Rule(object):
 		return self.__str__()
 
 	def _getIndexedDomains(self, type):
-		return [ i for i in sorted(self._domains) if i[0] >= 0 and i[2] == type ]
+		return [i for i in sorted(self._domains) if i[0] >= 0 and i[2] == type]
 
 	def _getAppendedDomains(self, type):
-		return [ i for i in self._domains if i[0] < 0 and i[2] == type ]
+		return [i for i in self._domains if i[0] < 0 and i[2] == type]
 
 	def _getDomains(self, type):
-		return [ i for i in self._getIndexedDomains(type) + self._getAppendedDomains(type) ]
+		return [i for i in self._getIndexedDomains(type) + self._getAppendedDomains(type)]
 
 	@property
 	def domains(self):
 		'''Return list of all domains, the order respects the indeces.
 		Show only the entries that match the current filter type.'''
-		return [ i[1] for i in self._getDomains(self.type) ]
+		return [i[1] for i in self._getDomains(self.type)]
 
 	@domains.setter
 	def domains(self, domains):
@@ -133,8 +133,8 @@ class Rule(object):
 				orgDomains = orgRule._getIndexedDomains(itype) + orgRule._getAppendedDomains(itype)
 
 			# prepare list of current domains with indeces
-			domains = [ i[1] for i in self._getDomains(itype) ]
-			domains = [ (i + 1, domains[i], itype) for i in range(len(domains)) ]
+			domains = [i[1] for i in self._getDomains(itype)]
+			domains = [(i + 1, domains[i], itype) for i in range(len(domains))]
 
 			# find the entries that need to be changed/added
 			domainPrefix = '%s/domain/%s' % (prefix, _listTypesInv[itype])
@@ -275,7 +275,7 @@ def getGroupRuleName(groupNames):
 	ucr.load()
 	if not isinstance(groupNames, type([])):
 		return ucr.get('proxy/filter/groupdefault/%s' % groupNames)
-	return dict([ (iname, ucr.get('proxy/filter/groupdefault/%s' % iname)) for iname in groupNames ])
+	return dict([(iname, ucr.get('proxy/filter/groupdefault/%s' % iname)) for iname in groupNames])
 
 def unsetGroupRuleName(groupNames):
 	'''Unset the default rule for the given group name.
@@ -287,7 +287,7 @@ def unsetGroupRuleName(groupNames):
 	if not isinstance(groupNames, type([])):
 		vars.append('proxy/filter/groupdefault/%s' % groupNames)
 	else:
-		vars = [ 'proxy/filter/groupdefault/%s' % iname for iname in groupNames ]
+		vars = ['proxy/filter/groupdefault/%s' % iname for iname in groupNames]
 	univention.config_registry.handler_unset(vars)
 
 def setGroupRuleName(*args):
@@ -298,7 +298,7 @@ def setGroupRuleName(*args):
 		setGroupRuleName({ <groupName>: <ruleName>, ... })'''
 	vars = []
 	if len(args) > 1:
-		vars = [ 'proxy/filter/groupdefault/%s=%s' % (args[0], args[1]) ]
+		vars = ['proxy/filter/groupdefault/%s=%s' % (args[0], args[1])]
 	else:
-		vars = [ 'proxy/filter/groupdefault/%s=%s' % (iname, irule) for iname, irule in args[0].iteritems() ]
+		vars = ['proxy/filter/groupdefault/%s=%s' % (iname, irule) for iname, irule in args[0].iteritems()]
 	univention.config_registry.handler_set(vars)

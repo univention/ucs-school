@@ -312,13 +312,13 @@ class LDAPACLTestMatrix(object):
 			}
 		"""
 		containers = list(self.walkThroughContainer(base))
-		return dict([(y, [k for k in x]) for y,x in containers])
+		return dict([(y, [k for k in x]) for y, x in containers])
 
 	def gather_attributes_as_set(self, base_list):
 		result = set(['children', 'entry'])
 		for base in base_list:
 			containers = list(self.walkThroughContainer(base))
-			s = set([u for x,y in containers for u in y])
+			s = set([u for x, y in containers for u in y])
 			result = result | s
 		return result
 
@@ -364,7 +364,7 @@ class LDAPACLTestMatrix(object):
 				self.addSubtree(dn, attrs, access)
 
 def main():
-	with utu.UCSTestSchool()  as schoolenv:
+	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			base_dn = ucr.get('ldap/base')
 			school, school_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))

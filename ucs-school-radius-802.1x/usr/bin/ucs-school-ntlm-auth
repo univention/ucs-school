@@ -40,8 +40,8 @@ import univention.config_registry
 import univention.pyMsChapV2 as pyMsChapV2
 import univention.uldap
 
-userToGroup = {} # { "user": ["group1", "group2", ], }
-groupInfo = {} # { "group1": (23, True, ), }
+userToGroup = {}  # { "user": ["group1", "group2", ], }
+groupInfo = {}  # { "group1": (23, True, ), }
 def loadInfo():
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()

@@ -156,7 +156,7 @@ class FactoryConfTest(object):
 		dialect.doublequote = True
 		dialect.quoting = QUOTE_ALL
 		field_names = ("line", "success", "error", "action", "role", "username", "schools", "firstname", "lastname",
-			"birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg") # from UserImportCsvResultExporter
+			"birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg")  # from UserImportCsvResultExporter
 		myreader = DictReader(outfile, dialect=dialect, fieldnames=field_names)
 		expected = dict(
 			firstname="s3cr31",

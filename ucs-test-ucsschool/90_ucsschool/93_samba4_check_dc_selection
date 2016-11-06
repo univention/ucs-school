@@ -30,7 +30,7 @@ class TestS4DCLocatorDNS(TestSamba4):
 		"""
 		super(TestS4DCLocatorDNS, self).__init__()
 
-		self.site_dcs = []	# stores DCs located at the same school site/branch
+		self.site_dcs = []  # stores DCs located at the same school site/branch
 
 	def check_dc_location(self):
 		"""

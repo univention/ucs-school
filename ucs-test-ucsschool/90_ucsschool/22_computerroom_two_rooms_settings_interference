@@ -68,7 +68,7 @@ def main():
 					# Create new workgroup and assign new internet rule to it
 					group = Workgroup(school, members=[tea_dn])
 					global_domains = ['download.univention.de', 'google.de']
-					rule = InternetRule(typ='whitelist',domains=global_domains)
+					rule = InternetRule(typ='whitelist', domains=global_domains)
 					rule.define()
 					rule.assign(school, group.name, 'workgroup')
 
@@ -97,7 +97,7 @@ def main():
 					# Testing loop over room1 settings
 					for i in xrange(24):
 						room1_period = datetime.time.strftime(
-								(datetime.datetime.now() + datetime.timedelta(0,room1_time)).time(), '%H:%M')
+								(datetime.datetime.now() + datetime.timedelta(0, room1_time)).time(), '%H:%M')
 
 						# get room1 old settings
 						room1.aquire_room(umc_connection)
@@ -120,7 +120,7 @@ def main():
 						for j in xrange(24):
 							try:
 								room2_period = datetime.time.strftime(
-										(datetime.datetime.now() + datetime.timedelta(0,room2_time)).time(), '%H:%M')
+										(datetime.datetime.now() + datetime.timedelta(0, room2_time)).time(), '%H:%M')
 								room2_rule, room2_printmode, room2_sharemode = next(room2_settings)
 
 								print_header(

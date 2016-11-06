@@ -75,7 +75,7 @@ def parse_acls(lo, binddn, output=sys.stdout, valid_ou_names=None):
 				code = sub_code
 			entry.update(sub_entry)
 		writer.unparse(dn, entry)
-	print '*** Runtime for parse_acls: %fs' % (time.time()-time_start,)
+	print '*** Runtime for parse_acls: %fs' % (time.time() - time_start,)
 	return code
 
 
@@ -93,26 +93,26 @@ def main():
 				generic.master_dn = lo.searchDn(filter='univentionObjectType=computers/domaincontroller_master')[0]
 				generic.backup_dn = udm.create_object(
 					"computers/domaincontroller_backup",
-					name = 'schoolTestBackup',
-					position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
-					domain = ucr.get('domainname'),
+					name='schoolTestBackup',
+					position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
+					domain=ucr.get('domainname'),
 					)
 				generic.slave_dn = udm.create_object(
 					"computers/domaincontroller_slave",
-					name = 'schoolTestSlave',
-					position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
-					domain = ucr.get('domainname'),
+					name='schoolTestSlave',
+					position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
+					domain=ucr.get('domainname'),
 					)
 				generic.member_dn = udm.create_object(
 					"computers/memberserver",
-					name = 'schoolTestMember',
-					position = "cn=computers,%(ldap/base)s" % ucr,
-					domain = ucr.get('domainname'),
+					name='schoolTestMember',
+					position="cn=computers,%(ldap/base)s" % ucr,
+					domain=ucr.get('domainname'),
 					)
 				generic.winclient_dn = udm.create_object(
 					"computers/windows",
-					name = 'schoolTestWinDom',
-					position = "cn=computers,%(ldap/base)s" % ucr,
+					name='schoolTestWinDom',
+					position="cn=computers,%(ldap/base)s" % ucr,
 					)
 				generic.domain_user_dn = udm.create_user(username='domainUser')[0]
 
@@ -140,8 +140,8 @@ def main():
 
 					school.winclient_dn = udm.create_object(
 						"computers/windows",
-						name = 'schoolwin%s' % (suffix,),
-						position = "cn=computers,%s" % (school.dn,),
+						name='schoolwin%s' % (suffix,),
+						position="cn=computers,%s" % (school.dn,),
 					)
 
 				def do_test(resultdir, valid_ou_names):

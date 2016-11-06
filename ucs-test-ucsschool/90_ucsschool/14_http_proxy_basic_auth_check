@@ -53,11 +53,11 @@ def doCheck(
 		ruleWithLowerPrio=None):
 	ruleInCtrl = ruleInControl(
 			user,
-			[ruleWithLowerPrio,	ruleWithHigherPrio],
+			[ruleWithLowerPrio, ruleWithHigherPrio],
 			host,
 			banPage)
 	if ruleInCtrl != ruleWithHigherPrio.name:
-		utils.fail('rule in Ctrl for user (%s): expected (%s), current (%s)' %(
+		utils.fail('rule in Ctrl for user (%s): expected (%s), current (%s)' % (
 			user, ruleWithHigherPrio.name, ruleInCtrl))
 	else:
 		print 'TEST PASSED: rule in Ctrl for user (%s) is (%s)' % (
@@ -65,7 +65,7 @@ def doCheck(
 
 
 def main():
-	with utu.UCSTestSchool()  as schoolenv:
+	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			host = ucr.get('hostname')
 			connection = UMCConnection(host)
@@ -81,9 +81,9 @@ def main():
 			newClass.create()
 
 			# create user in that class student/teacher
-			tea, teadn = schoolenv.create_user(school,	classes='%s-%s' % (
+			tea, teadn = schoolenv.create_user(school, classes='%s-%s' % (
 				school, newClass.name), is_teacher=True)
-			stu, studn = schoolenv.create_user(school,	classes='%s-%s' % (
+			stu, studn = schoolenv.create_user(school, classes='%s-%s' % (
 				school, newClass.name))
 
 			# Getting the redirection page when blocked
@@ -106,9 +106,9 @@ def main():
 
 			utils.wait_for_replication_and_postrun()
 			printHeader('Check for whitelist and student for one rule')
-			doCheck(host, banPage, stu,'whitelist', rule1)
+			doCheck(host, banPage, stu, 'whitelist', rule1)
 			printHeader('Check for whitelist and teacher for one rule')
-			doCheck(host, banPage, tea,'whitelist', rule1)
+			doCheck(host, banPage, tea, 'whitelist', rule1)
 
 			# create a workgroup
 			newWorkgroup = Workgroup(
@@ -131,30 +131,30 @@ def main():
 			utils.wait_for_replication_and_postrun()
 
 			printHeader('Check for whitelist and student for two rules with different priorities')
-			doCheck(host, banPage, stu,'whitelist', rule2, rule1)
+			doCheck(host, banPage, stu, 'whitelist', rule2, rule1)
 
 			printHeader('Check for whitelist and teacher for two rules with different priorities')
-			doCheck(host, banPage, tea,'whitelist', rule2, rule1)
+			doCheck(host, banPage, tea, 'whitelist', rule2, rule1)
 
 			# switch rule1 to be 'blacklist' with higher proirity
 			rule1.put(new_type='blacklist', new_priority=5)
 			time.sleep(17)  # wait for reload of squid/squidguard - limited to 1 reload every 15 seconds
 
 			printHeader('Check for blacklist and student for one rule')
-			doCheck(host, banPage, stu,'blacklist', rule1)
+			doCheck(host, banPage, stu, 'blacklist', rule1)
 
 			printHeader('Check for blacklist and teacher for one rule')
-			doCheck(host, banPage, tea,'blacklist', rule1)
+			doCheck(host, banPage, tea, 'blacklist', rule1)
 
 			# switch rule2 to be 'blacklist' with higher proirity
 			rule2.put(new_type='blacklist', new_priority=6)
 			time.sleep(17)  # wait for reload of squid/squidguard - limited to 1 reload every 15 seconds
 
 			printHeader('Check for blacklist and student for two rules with different priorities')
-			doCheck(host, banPage, stu,'blacklist', rule2, rule1)
+			doCheck(host, banPage, stu, 'blacklist', rule2, rule1)
 
 			printHeader('Check for blacklist and teacher for two rules with different priorities')
-			doCheck(host, banPage, tea,'blacklist', rule2, rule1)
+			doCheck(host, banPage, tea, 'blacklist', rule2, rule1)
 
 
 if __name__ == '__main__':

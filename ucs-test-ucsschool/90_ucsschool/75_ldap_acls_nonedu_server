@@ -18,7 +18,7 @@ class Bunch(object):
 		self.__dict__.update(kwds)
 
 def main():
-	with utu.UCSTestSchool()  as schoolenv:
+	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			admindc = Bunch(name=uts.random_name())
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'), name_admindc=admindc.name)

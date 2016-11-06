@@ -322,7 +322,7 @@ class UCSSchoolHelperAbstractClass(object):
 							old_value = getattr(original_self, name)
 							if new_value and old_value:
 								if new_value != old_value:
-									self.add_warning(name, _('The value changed from %(old)s. This seems unlikely.') % {'old' : old_value})
+									self.add_warning(name, _('The value changed from %(old)s. This seems unlikely.') % {'old': old_value})
 
 	def add_warning(self, attribute, warning_message):
 		warnings = self.warnings.setdefault(attribute, [])
@@ -758,7 +758,7 @@ class UCSSchoolHelperAbstractClass(object):
 	def build_easy_filter(cls, filter_str):
 		if filter_str:
 			sanitizer = LDAPSearchSanitizer()
-			filter_str = sanitizer.sanitize('filter_str', {'filter_str' : filter_str})
+			filter_str = sanitizer.sanitize('filter_str', {'filter_str': filter_str})
 			expressions = []
 			for key in cls._attrs_for_easy_filter():
 				expressions.append(expression(key, filter_str))
@@ -785,7 +785,7 @@ class UCSSchoolHelperAbstractClass(object):
 				raise WrongModel(udm_obj.dn, klass, cls)
 			return klass.from_udm_obj(udm_obj, school, lo)
 		udm_obj.open()
-		attrs = {'school' : cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
+		attrs = {'school': cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
 		for name, attr in cls._attributes.iteritems():
 			if attr.udm_name:
 				udm_value = udm_obj[attr.udm_name]
@@ -892,7 +892,7 @@ class UCSSchoolHelperAbstractClass(object):
 		a browser as JSON.
 		By default the attributes are present as well as the dn and
 		the udm_module.'''
-		ret = {'$dn$' : self.dn, 'objectType' : self._meta.udm_module}
+		ret = {'$dn$': self.dn, 'objectType': self._meta.udm_module}
 		for name, attr in self._attributes.iteritems():
 			if not attr.internal:
 				ret[name] = getattr(self, name)

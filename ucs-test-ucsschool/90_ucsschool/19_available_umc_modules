@@ -145,7 +145,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 				modules, userType, serverRole))
 
 def main():
-	with  utu.UCSTestSchool() as schoolenv:
+	with utu.UCSTestSchool() as schoolenv:
 		with udm_test.UCSTestUDM() as udm:
 			with ucr_test.UCSTestConfigRegistry() as ucr:
 				host = ucr.get('hostname')
@@ -161,7 +161,7 @@ def main():
 				utils.wait_for_replication_and_postrun()
 
 				basedn = ucr.get('ldap/base')
-				position = 'cn=admins,cn=users,ou=%s,%s' % (school, basedn )
+				position = 'cn=admins,cn=users,ou=%s,%s' % (school, basedn)
 				groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, basedn)]
 				dn, schooladmin = udm.create_user(position=position, groups=groups)
 				groups = ["cn=Domain Admins,cn=groups,%s" % (basedn,)]

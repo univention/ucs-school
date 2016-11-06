@@ -27,13 +27,13 @@ def main():
 				else:
 					edudc = ucr.get('hostname')
 				school, oudn = schoolenv.create_ou(name_edudc=edudc)
-				klasse_dn = udm.create_object('groups/group',name='%s-AA1' % school, position="cn=klassen,cn=schueler,cn=groups,%s" % oudn)
+				klasse_dn = udm.create_object('groups/group', name='%s-AA1' % school, position="cn=klassen,cn=schueler,cn=groups,%s" % oudn)
 
 				tea, teadn = schoolenv.create_user(school, is_teacher=True)
 				stu, studn = schoolenv.create_user(school)
 
-				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn] })
-				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn] })
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
 
 				print ' ** After Creating users and classes'
 				wait_replications_check_rejected_uniqueMember(existing_rejects)
@@ -67,8 +67,8 @@ def main():
 				exam = Exam(
 						school=school,
 						room=room2.dn,				# room dn
-						examEndTime=chosen_time.strftime("%H:%M"),	# in format "HH:mm"
-						recipients=[klasse_dn]	# list of classes dns
+						examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+						recipients=[klasse_dn]  # list of classes dns
 						)
 
 				exam.start()

@@ -39,26 +39,26 @@ import univention.admin.localization
 
 import univention.debug
 
-translation=univention.admin.localization.translation('univention.admin.handlers.settings.helpdesk')
-_=translation.translate
+translation = univention.admin.localization.translation('univention.admin.handlers.settings.helpdesk')
+_ = translation.translate
 
 module = 'settings/console_helpdesk'
-operations=['add','edit','remove','search','move']
-superordinate='settings/cn'
+operations = ['add', 'edit', 'remove', 'search', 'move']
+superordinate = 'settings/cn'
 
-childs=0
-short_description=_('Settings: Console Helpdesk')
-long_description=_('Settings for Univention Console Helpdesk Module')
-options={
+childs = 0
+short_description = _('Settings: Console Helpdesk')
+long_description = _('Settings for Univention Console Helpdesk Module')
+options = {
 }
 
-default_containers = [ 'cn=config,cn=console,cn=univention' ]
+default_containers = ['cn=config,cn=console,cn=univention']
 
 
-property_descriptions={
+property_descriptions = {
 	'name': univention.admin.property(
-			short_description= _('Name'),
-			long_description= _('Name of Console-Helpdesk-Settings-Object'),
+			short_description=_('Name'),
+			long_description=_('Name of Console-Helpdesk-Settings-Object'),
 			syntax=univention.admin.syntax.string_numbers_letters_dots,
 			multivalue=0,
 			options=[],
@@ -78,8 +78,8 @@ property_descriptions={
 			identifies=0,
 		),
 	'category': univention.admin.property(
-			short_description= _('Category'),
-			long_description= _('Helpdesk Category'),
+			short_description=_('Category'),
+			long_description=_('Helpdesk Category'),
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
 			options=[],
@@ -91,13 +91,13 @@ property_descriptions={
 
 
 layout = [
-	Tab( _( 'General' ), _('Basic Values'), layout = [
+	Tab(_('General'), _('Basic Values'), layout=[
 		'description',
 		'category',
-		] ),
+		]),
 	]
 
-mapping=univention.admin.mapping.mapping()
+mapping = univention.admin.mapping.mapping()
 
 mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
 mapping.register('description', 'description', None, univention.admin.mapping.ListToString)
@@ -105,19 +105,19 @@ mapping.register('category', 'univentionUMCHelpdeskCategory')
 
 
 class object(univention.admin.handlers.simpleLdap):
-	module=module
+	module = module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None, attributes = [] ):
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=[]):
 		global mapping
 		global property_descriptions
 
-		self.co=co
-		self.lo=lo
-		self.dn=dn
-		self.position=position
-		self._exists=0
-		self.mapping=mapping
-		self.descriptions=property_descriptions
+		self.co = co
+		self.lo = lo
+		self.dn = dn
+		self.position = position
+		self._exists = 0
+		self.mapping = mapping
+		self.descriptions = property_descriptions
 
 		super(object, self).__init__(co, lo, position, dn, superordinate, attributes)
 
@@ -125,24 +125,24 @@ class object(univention.admin.handlers.simpleLdap):
 		return self._exists
 
 	def _ldap_pre_create(self):
-		self.dn='%s=%s,%s' % (mapping.mapName('name'), mapping.mapValue('name', self.info['name']), self.position.getDn())
+		self.dn = '%s=%s,%s' % (mapping.mapName('name'), mapping.mapValue('name', self.info['name']), self.position.getDn())
 
 	def _ldap_addlist(self):
-		return [ ('objectClass', ['top', 'univentionUMCHelpdeskClass']) ]
+		return [('objectClass', ['top', 'univentionUMCHelpdeskClass'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=0, required=0, timeout=-1, sizelimit=0):
 
-	filter=univention.admin.filter.conjunction('&', [
+	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression('objectClass', 'univentionUMCHelpdeskClass')
 		])
 
 	if filter_s:
-		filter_p=univention.admin.filter.parse(filter_s)
+		filter_p = univention.admin.filter.parse(filter_s)
 		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
-	res=[]
+	res = []
 	try:
 		for dn in lo.searchDn(unicode(filter), base, scope, unique, required, timeout, sizelimit):
 			res.append(object(co, lo, None, dn))

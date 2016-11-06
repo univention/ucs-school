@@ -33,8 +33,8 @@ def main():
 						)
 				tea, teadn = schoolenv.create_user(school, is_teacher=True)
 				stu, studn = schoolenv.create_user(school)
-				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn] })
-				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn] })
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
 
 				# import random computers
 				open_ldap_co = schoolenv.open_ldap_connection()
@@ -58,7 +58,7 @@ def main():
 				exam = Exam(
 						school=school,
 						room=room2.dn,								# room dn
-						examEndTime=chosen_time.strftime("%H:%M"),	# in format "HH:mm"
+						examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
 						recipients=[klasse_dn]						# list of classes dns
 						)
 				exam.start()

@@ -33,38 +33,38 @@ def create_environment(self, udm, ucr):
 	env.master_dn = lo.searchDn(filter='univentionObjectType=computers/domaincontroller_master')[0]
 	env.backup_dn = udm.create_object(
 		"computers/domaincontroller_backup",
-		name = random_name(),
+		name=random_name(),
 		password=PASSWORD,
-		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
-		domain = ucr.get('domainname'),
+		position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
+		domain=ucr.get('domainname'),
 		)
 	env.slave_dn = udm.create_object(
 		"computers/domaincontroller_slave",
-		name = random_name(),
+		name=random_name(),
 		password=PASSWORD,
-		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
-		domain = ucr.get('domainname'),
+		position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
+		domain=ucr.get('domainname'),
 		)
 	slave2_name = random_name()
 	env.slave_dn2 = udm.create_object(
 		"computers/domaincontroller_slave",
-		name = slave2_name,
+		name=slave2_name,
 		password=PASSWORD,
-		position = "cn=dc,cn=computers,%(ldap/base)s" % ucr,
-		domain = ucr.get('domainname'),
+		position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
+		domain=ucr.get('domainname'),
 		)
 	env.member_dn = udm.create_object(
 		"computers/memberserver",
-		name = random_name(),
+		name=random_name(),
 		password=PASSWORD,
-		position = "cn=computers,%(ldap/base)s" % ucr,
-		domain = ucr.get('domainname'),
+		position="cn=computers,%(ldap/base)s" % ucr,
+		domain=ucr.get('domainname'),
 		)
 	env.winclient_dn = udm.create_object(
 		"computers/windows",
-		name = random_name(),
+		name=random_name(),
 		password=PASSWORD,
-		position = "cn=computers,%(ldap/base)s" % ucr,
+		position="cn=computers,%(ldap/base)s" % ucr,
 		)
 	env.domain_user_dn = udm.create_user(username='domainUser')[0]
 	env.schoolA = Environment()
@@ -96,9 +96,9 @@ def create_environment(self, udm, ucr):
 
 		school.winclient_dn = udm.create_object(
 			"computers/windows",
-			name = 'schoolwin%s' % (suffix,),
+			name='schoolwin%s' % (suffix,),
 			password=PASSWORD,
-			position = "cn=computers,%s" % (school.dn,),
+			position="cn=computers,%s" % (school.dn,),
 		)
 
 	return env

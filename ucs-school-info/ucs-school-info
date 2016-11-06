@@ -162,9 +162,9 @@ def network(base=baseDN):
 			_base = base
 			dnx = univention.admin.uldap.explodeDn(n.dn)
 			if dnx.count('cn=networks'):
-				_base = ','.join(dnx[dnx.index('cn=networks')+1:])
+				_base = ','.join(dnx[dnx.index('cn=networks') + 1:])
 
-			for subnet in  get_objects('dhcp/subnet', base=_base, superordinate=n['dhcpEntryZone']):
+			for subnet in get_objects('dhcp/subnet', base=_base, superordinate=n['dhcpEntryZone']):
 				subnet.open()
 				brd_ip = ipaddr.IPv4Address(subnet['broadcastaddress'])
 				if brd_ip not in net_ip:
@@ -176,7 +176,7 @@ def network(base=baseDN):
 
 				# FIXME: This is very ugly but it seems like you can't get the
 				# type of a policy object easily
-				policy_dns = lo.get (subnet.dn, ['univentionPolicyReference']).get ('univentionPolicyReference', [])
+				policy_dns = lo.get(subnet.dn, ['univentionPolicyReference']).get('univentionPolicyReference', [])
 				policy_dns.sort()
 
 				for dn in policy_dns:
@@ -229,8 +229,8 @@ if __name__ == '__main__':
 
 	baseDN = configRegistry['ldap/base']
 
-	secretFile = open('/etc/machine.secret','r')
-	machinepwd = secretFile.readline().replace('\n','')
+	secretFile = open('/etc/machine.secret', 'r')
+	machinepwd = secretFile.readline().replace('\n', '')
 	machinedn = configRegistry.get('ldap/hostdn')
 	if not machinedn or not machinepwd:
 		print 'Cannot get machine account dn or machine credentials'
@@ -247,7 +247,7 @@ if __name__ == '__main__':
 
 	exitcode = 0
 	for _ou in args:
-		res = lo.search('ou=%s' %_ou)
+		res = lo.search('ou=%s' % _ou)
 		if not res:
 			print >>sys.stderr, 'WARNING: Unable to find OU %s.' % _ou
 			exitcode = 1

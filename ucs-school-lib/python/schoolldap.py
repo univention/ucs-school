@@ -49,7 +49,7 @@ from ldap.filter import escape_filter_chars, filter_format
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
-from univention.management.console.ldap import get_machine_connection, get_admin_connection, get_user_connection#, reset_cache as reset_connection_cache
+from univention.management.console.ldap import get_machine_connection, get_admin_connection, get_user_connection  # , reset_cache as reset_connection_cache
 from univention.management.console.modules import Base, UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
@@ -305,7 +305,7 @@ class SchoolSearchBase(object):
 	@property
 	def examGroupName(self):
 		## replace '%(ou)s' strings in generic exam_group_name
-		ucr_value_keywords = { 'ou': self.school }
+		ucr_value_keywords = {'ou': self.school}
 		return self._examGroupNameTemplate % ucr_value_keywords
 
 	@property
@@ -373,7 +373,7 @@ class SchoolBaseModule(Base):
 		schools = School.from_binddn(ldap_user_read)
 		if not schools:
 			raise UMC_Error(_('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.'))
-		self.finished(request.id, [{'id' : school.name, 'label' : school.display_name} for school in schools])
+		self.finished(request.id, [{'id': school.name, 'label': school.display_name} for school in schools])
 
 	def _groups(self, ldap_connection, school, ldap_base, pattern=None, scope='sub'):
 		"""Returns a list of all groups of the given school"""
@@ -381,7 +381,7 @@ class SchoolBaseModule(Base):
 		ldapFilter = None
 		if pattern:
 			ldapFilter = LDAP_Filter.forGroups(pattern)
-		groupresult = udm_modules.lookup('groups/group', None, ldap_connection, scope = scope, base = ldap_base, filter = ldapFilter)
+		groupresult = udm_modules.lookup('groups/group', None, ldap_connection, scope=scope, base=ldap_base, filter=ldapFilter)
 		name_pattern = re.compile('^%s-' % (re.escape(school)), flags=re.I)
 		return [{'id': grp.dn, 'label': name_pattern.sub('', grp['name'])} for grp in groupresult]
 
@@ -482,49 +482,49 @@ class LDAP_Filter:
 		return filter_format('(ucsschoolSchool=%s)', [school])
 
 	@staticmethod
-	def forUsers( pattern ):
+	def forUsers(pattern):
 		return LDAP_Filter.forAll(pattern, ['lastname', 'username', 'firstname'])
 
 	@staticmethod
-	def forGroups( pattern, school = None ):
+	def forGroups(pattern, school=None):
 		# school parameter is deprecated
 		return LDAP_Filter.forAll(pattern, ['name', 'description'])
 
 	@staticmethod
-	def forComputers( pattern ):
+	def forComputers(pattern):
 		return LDAP_Filter.forAll(pattern, ['name', 'description'], ['mac', 'ip'])
 
 	regWhiteSpaces = re.compile(r'\s+')
 	@staticmethod
-	def forAll( pattern, subMatch = [], fullMatch = [], prefixes = {} ):
+	def forAll(pattern, subMatch=[], fullMatch=[], prefixes={}):
 		expressions = []
-		for iword in LDAP_Filter.regWhiteSpaces.split( pattern or '' ):
+		for iword in LDAP_Filter.regWhiteSpaces.split(pattern or ''):
 			# evaluate the subexpression (search word over different attributes)
 			subexpr = []
 			# all expressions for a full string match
 			iword = escape_filter_chars(iword)
 			if iword:
-				subexpr += [ '(%s=%s)' % ( jattr, iword ) for jattr in fullMatch ]
+				subexpr += ['(%s=%s)' % (jattr, iword) for jattr in fullMatch]
 
 			# all expressions for a substring match
 			if not iword:
 				iword = '*'
 			elif iword.find('*') < 0:
 				iword = '*%s*' % iword
-			subexpr += [ '(%s=%s%s)' % ( jattr, prefixes.get( jattr, '' ), iword ) for jattr in subMatch ]
+			subexpr += ['(%s=%s%s)' % (jattr, prefixes.get(jattr, ''), iword) for jattr in subMatch]
 
 			# append to list of all search expressions
 			expressions.append('(|%s)' % ''.join(subexpr))
 
 		if not expressions:
 			return ''
-		return '(&%s)' % ''.join( expressions )
+		return '(&%s)' % ''.join(expressions)
 
 
 class Display:
 	@staticmethod
-	def user( udm_object ):
-		fullname = udm_object[ 'lastname' ]
+	def user(udm_object):
+		fullname = udm_object['lastname']
 		if 'firstname' in udm_object and udm_object['firstname']:
 			fullname += ', %(firstname)s' % udm_object
 

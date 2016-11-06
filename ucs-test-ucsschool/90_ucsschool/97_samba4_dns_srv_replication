@@ -18,7 +18,7 @@ from os import path
 from subprocess import PIPE
 
 try:
-	from cStringIO import StringIO	# a faster version
+	from cStringIO import StringIO  # a faster version
 except ImportError:
 	from StringIO import StringIO
 
@@ -74,7 +74,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 		return sed_stdout.split()
 
 	def get_samba4_dns_searchbase_for_record(self, record_name):
-		if self.UCR.get('connector/s4/mapping/dns/position','').lower() == 'legacy':
+		if self.UCR.get('connector/s4/mapping/dns/position', '').lower() == 'legacy':
 			dns_searchbase = "CN=MicrosoftDNS,CN=System,%s" % (self.ldap_base,)
 			zone_name = self.domainname
 		else:
@@ -133,14 +133,14 @@ class TestS4DNSSRVReplication(TestSamba4):
 
 		# unique test values set that was added to tested records in Samba
 		(priority, weight, port, target) = (35, 888, 35512, "ucs_test_2.hostname.local")
-		s=SRVRecord(target, port, priority, weight)
+		s = SRVRecord(target, port, priority, weight)
 		base64.b64encode(ndr_pack(s))
 		LDIFRecord.write('dnsRecord:: %s' % base64.b64encode(ndr_pack(s)))
 
 		cmd = ('ldbmodify',
 			'-H', self.sam_ldb_path,
 			'--user=' + self.admin_username + '%' + self.admin_password,
-			'-k', 'no')	# do not use kerberos
+			'-k', 'no')  # do not use kerberos
 
 		stdout, stderr = self.create_and_run_process(cmd, PIPE, LDIFRecord.getvalue())
 		LDIFRecord.close()
@@ -372,7 +372,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 		self.server_role = self.UCR.get('server/role')
 		print("\nDetermining the test scenario, current DC role is '%s'" % self.server_role)
 		if self.server_role == 'domaincontroller_master':
-			dc_slaves = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(),	"^  name: ").split()
+			dc_slaves = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(), "^  name: ").split()
 
 			if dc_slaves:
 				# multi-school domain with DC-Slave(s), no replication
@@ -488,7 +488,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 			utils.wait_for_replication()
 			utils.wait_for_connector_replication()
 
-			for srv_record in dns_srv_records:	# and in samba
+			for srv_record in dns_srv_records:  # and in samba
 				self.add_remove_srv_record_location_via_ldbmodify(srv_record, 'delete')
 			utils.wait_for_connector_replication()
 			utils.wait_for_replication()

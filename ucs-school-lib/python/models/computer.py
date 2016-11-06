@@ -157,7 +157,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 	type_name = _('Computer')
 
-	DEFAULT_PREFIX_LEN = 24 # 255.255.255.0
+	DEFAULT_PREFIX_LEN = 24  # 255.255.255.0
 
 	def get_inventory_numbers(self):
 		if isinstance(self.inventory_number, basestring):

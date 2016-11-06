@@ -34,13 +34,13 @@
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 ucs_school_l10n_languages_de = {
-	role_pupil:	'schueler',
-	role_teacher:	'lehrer',
-	role_staff:	'mitarbeiter',
+	role_pupil: 'schueler',
+	role_teacher: 'lehrer',
+	role_staff: 'mitarbeiter',
 	}
 
 ucs_school_l10n_languages = {
-	'de' : ucs_school_l10n_languages_de,
+	'de': ucs_school_l10n_languages_de,
 }
 
 def ucs_school_name_i18n(name, lang='de'):

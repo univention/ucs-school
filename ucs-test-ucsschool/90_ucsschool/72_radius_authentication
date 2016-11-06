@@ -41,7 +41,7 @@ def main():
 
 			utils.wait_for_replication_and_postrun()
 
-			radius_secret = 'testing123' # parameter set in  /etc/freeradius/clients.conf
+			radius_secret = 'testing123'  # parameter set in  /etc/freeradius/clients.conf
 			password = 'univention'
 			test_couples = [(tea, True), (stu, True), (tea2, False), (stu2, False)]
 

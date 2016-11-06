@@ -224,7 +224,7 @@ class User(UCSSchoolHelperAbstractClass):
 		password_created = False
 		if not self.password:
 			logger.debug('No password given. Generating random one')
-			old_password = self.password # None or ''
+			old_password = self.password  # None or ''
 			self.password = create_passwd(dn=self.dn)
 			password_created = True
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
@@ -374,17 +374,17 @@ class User(UCSSchoolHelperAbstractClass):
 		except WrongModel as exc:
 			udm_obj = None
 			self.add_error('name', _('It is not supported to change the role of a user. %(old_role)s %(name)s cannot become a %(new_role)s.') % {
-				'old_role' : exc.model.type_name,
-				'name' : self.name,
-				'new_role' : self.type_name
+				'old_role': exc.model.type_name,
+				'name': self.name,
+				'new_role': self.type_name
 			})
 		if udm_obj:
 			original_class = self.get_class_for_udm_obj(udm_obj, self.school)
 			if original_class is not self.__class__:
 				self.add_error('name', _('It is not supported to change the role of a user. %(old_role)s %(name)s cannot become a %(new_role)s.') % {
-					'old_role' : original_class.type_name,
-					'name' : self.name,
-					'new_role' : self.type_name
+					'old_role': original_class.type_name,
+					'name': self.name,
+					'new_role': self.type_name
 				})
 		if self.email:
 			name, email = escape_filter_chars(self.name), escape_filter_chars(self.email)
@@ -492,7 +492,7 @@ class User(UCSSchoolHelperAbstractClass):
 				self.firstname,
 				self.school,
 				school_class,
-				'', # TODO: rights?
+				'',  # TODO: rights?
 				self.email,
 				is_teacher,
 				self.is_active(),

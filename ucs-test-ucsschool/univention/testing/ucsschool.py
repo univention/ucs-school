@@ -266,7 +266,7 @@ class UCSTestSchool(object):
 			print '*** Creating new OU %r' % (ou_name,)
 			lo = self.open_ldap_connection()
 			School.invalidate_all_caches()
-			School.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+			School.init_udm_module(lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			result = School(**kwargs).create(lo)
 			print '*** Result of School(...).create(): %r' % (result,)
 			print '\n\n'
@@ -301,7 +301,7 @@ class UCSTestSchool(object):
 		Returns the LDAP DN for the given school OU name (the district mode will be considered).
 		"""
 		return '%(school)s,%(district)s%(basedn)s' % {
-			'school':'ou=%s' % ou_name,
+			'school': 'ou=%s' % ou_name,
 			'basedn': self.LDAP_BASE,
 			'district': 'ou=%s,' % self.get_district(ou_name) if self._ucr.is_true('ucsschool/ldap/district/enable') else ''
 		}
@@ -423,7 +423,7 @@ class UCSTestSchool(object):
 			print '*** Creating new user %r with %r.' % (username, kwargs)
 			lo = self.open_ldap_connection()
 			User.invalidate_all_caches()
-			User.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+			User.init_udm_module(lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			if is_teacher and is_staff:
 				result = TeachersAndStaff(**kwargs).create(lo)
 			elif is_teacher and not is_staff:
@@ -617,7 +617,7 @@ class UMCConnection(_UMCConnection):
 if __name__ == '__main__':
 	with UCSTestSchool() as schoolenv:
 		# create ou
-		ou_name, ou_dn = schoolenv.create_ou(displayName='') # FIXME: displayName has been disabled for backward compatibility
+		ou_name, ou_dn = schoolenv.create_ou(displayName='')  # FIXME: displayName has been disabled for backward compatibility
 		print 'NEW OU'
 		print '  ', ou_name
 		print '  ', ou_dn

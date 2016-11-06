@@ -46,7 +46,7 @@ class UCSSchoolHelperOptions(object):
 		if self.udm_module:
 			udm_module_short = self.udm_module.split('/')[1]
 		self.set_from_meta_object(meta, 'udm_module_short', udm_module_short)
-		self.set_from_meta_object(meta, 'hook_path', udm_module_short) # default same as udm_module_short
+		self.set_from_meta_object(meta, 'hook_path', udm_module_short)  # default same as udm_module_short
 		if self.udm_module:
 			module = udm_modules.get(self.udm_module)
 			if not module:

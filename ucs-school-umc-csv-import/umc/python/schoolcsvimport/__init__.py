@@ -78,7 +78,7 @@ def license_check(users):
 			change -= 1
 		if user.action == 'create':
 			change += 1
-	user_info = {'users' : change}
+	user_info = {'users': change}
 	ucs_license = UCS_License_detection(ucr)
 	try:
 		ucs_license.check_license(user_info)
@@ -167,8 +167,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			with open(filename, 'wb') as f:
 				reader = csv.reader(lines, dialect)
 				writer = csv.writer(f, dialect)
-				csv_columns = [] # Benutzername,Vorname,Irgendwas
-				columns = [] # name,firstname,unused2
+				csv_columns = []  # Benutzername,Vorname,Irgendwas
+				columns = []  # name,firstname,unused2
 				first_lines = []
 				for line in reader:
 					line = [cell.strip() for cell in line]
@@ -314,9 +314,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 					'delete': _('deleted'),
 				}.get(user.action, user.action)
 				if user.commit(lo):
-					yield {'username' : user.name, 'action' : action, 'success' : True}
+					yield {'username': user.name, 'action': action, 'success': True}
 				else:
-					yield {'username' : user.name, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
+					yield {'username': user.name, 'action': action, 'success': False, 'msg': user.get_error_msg()}
 		if file_info:
 			os.unlink(file_info.filename)
 			del self.file_map[file_id]

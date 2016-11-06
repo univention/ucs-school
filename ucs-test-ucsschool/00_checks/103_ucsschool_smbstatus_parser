@@ -23,15 +23,15 @@ def main():
 		# build up smb connections
 		pop1 = subprocess.Popen(
 				['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/netlogon' % host],
-				stdin = subprocess.PIPE, shell=False
+				stdin=subprocess.PIPE, shell=False
 				)
 		pop2 = subprocess.Popen(
 				['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/sysvol' % host],
-				stdin = subprocess.PIPE, shell=False
+				stdin=subprocess.PIPE, shell=False
 				)
 		pop3 = subprocess.Popen(
 				['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/IPC$' % host],
-				stdin = subprocess.PIPE, shell=False
+				stdin=subprocess.PIPE, shell=False
 				)
 
 		# wait for the connections to establish
@@ -99,7 +99,7 @@ def check_attributes(process, expected_values):
 				value = value.rsplit(':', 1)[0]
 			if value != expected_values[attr]:
 				utils.fail('Attribute (%s) is parsed wrong as (%s), expected in (%r)' % (
-					attr, value, expected_values[attr]) )
+					attr, value, expected_values[attr]))
 
 
 if __name__ == '__main__':

@@ -15,7 +15,7 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool import UMCConnection
 
-INVALID_CHARS_CLI = ['ä', 'ö', 'ü', 'ß', '%', '§' , '$', '!', '&',
+INVALID_CHARS_CLI = ['ä', 'ö', 'ü', 'ß', '%', '§', '$', '!', '&',
 					'[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
 INVALID_CHARS = INVALID_CHARS_CLI + ['_']
 INVALID_STARTING_CHARS = INVALID_CHARS + ['-']
@@ -102,42 +102,42 @@ def main():
 
 			# Checking legal chars in dc_name
 			for count in xrange(5):
-				dc_name= uts.random_name()
+				dc_name = uts.random_name()
 				school = uts.random_name()
 				process_school(school, dc_name, should_fail=False)
 				process_school_cli(school, dc_name, should_fail=False)
-				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name, should_fail=False)
 
 			# Checking illegal char in the beginning of the dc_name
 			for char in INVALID_STARTING_CHARS:
-				dc_name='%s%s' % (char, uts.random_name(6))
+				dc_name = '%s%s' % (char, uts.random_name(6))
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
-				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name)
 
 			# Checking illegal char in the middle of the dc_name
 			for char in INVALID_CHARS:
-				dc_name='%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
+				dc_name = '%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
 				school = uts.random_name()
 				process_school(school, dc_name)
-				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name)
 
 			for char in INVALID_CHARS_CLI:
-				dc_name='%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
+				dc_name = '%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
 				school = uts.random_name()
 				process_school_cli(school, dc_name)
 
 			# Checking illegal char in the end of the dc_name
 			for char in INVALID_ENDING_CHARS:
-				dc_name='%s%s' % (uts.random_name(6), char)
+				dc_name = '%s%s' % (uts.random_name(6), char)
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
-				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name)
 
 

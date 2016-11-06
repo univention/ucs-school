@@ -98,7 +98,7 @@ class Instance(SchoolBaseModule):
 
 		if not search_base.availableSchools:
 			MODULE.error('%s.query: No schools available to this user!' % (self.module_name,))
-			return result	## empty
+			return result  # empty
 
 		## sanitize the search pattern to match only role shares and only in ou
 		role_specified = self.valid_role_from_roleshare_name(pattern)
@@ -131,10 +131,10 @@ class Instance(SchoolBaseModule):
 
 		if not udm_filter:
 			MODULE.error('%s.query: invalid search filter: %s' % (self.module_name, pattern,))
-			return result	## empty
+			return result  # empty
 
 		udm_modules.init(ldap_user_read, ldap_position, udm_modules.get(self.udm_module_name))
-		res = udm_modules.lookup(self.udm_module_name, None, ldap_user_read, base=ucr['ldap/base'],  scope='sub', filter=udm_filter)
+		res = udm_modules.lookup(self.udm_module_name, None, ldap_user_read, base=ucr['ldap/base'], scope='sub', filter=udm_filter)
 		result['shares'] = [obj['name'] for obj in res]
 		return result
 
@@ -146,25 +146,25 @@ class Instance(SchoolBaseModule):
 		supported_accessmodes = ("none", "read", "read,write")
 		if accessmode not in supported_accessmodes:
 			MODULE.error('%s.modify: invalid access mode: %s' % (self.module_name, accessmode,))
-			return result	## TODO: How to communicate the error?
+			return result  # TODO: How to communicate the error?
 
 		## sanitize the sharename to match only role shares
 		if not self.valid_role_from_roleshare_name(sharename):
 			MODULE.error('%s.modify: sharename is not a role share: %s' % (self.module_name, sharename,))
-			return result	## TODO: How to communicate the error?
+			return result  # TODO: How to communicate the error?
 
 
 		school_ou = self.valid_school_from_roleshare_name(sharename, search_base.availableSchools)
 		if not school_ou:
 			MODULE.error('%s.modify: sharename "%s" is not in an accessible school (%s)' % (self.module_name, sharename, search_base.availableSchools,))
-			return result	## TODO: How to communicate the error?
+			return result  # TODO: How to communicate the error?
 
 		udm_modules.init(ldap_user_read, ldap_position, udm_modules.get(self.udm_module_name))
-		udm_filter="name=%s" % (sharename,)
-		res = udm_modules.lookup(self.udm_module_name, None, ldap_user_read, base=ucr['ldap/base'],  scope='sub', filter=udm_filter)
+		udm_filter = "name=%s" % (sharename,)
+		res = udm_modules.lookup(self.udm_module_name, None, ldap_user_read, base=ucr['ldap/base'], scope='sub', filter=udm_filter)
 		if not res:
 			MODULE.error('%s.modify: share note found: %s' % (self.module_name, sharename,))
-			return result	## TODO: How to communicate the error?
+			return result  # TODO: How to communicate the error?
 
 		teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school_ou))
 
@@ -172,14 +172,14 @@ class Instance(SchoolBaseModule):
 		if accessmode == "read":
 			udm_obj['sambaWriteable'] = 0
 			udm_obj['group'] = grp.getgrnam(teacher_groupname).gr_gid
-		elif  accessmode == "read,write":
+		elif accessmode == "read,write":
 			udm_obj['sambaWriteable'] = 1
 			udm_obj['group'] = grp.getgrnam(teacher_groupname).gr_gid
-		elif  accessmode == "none":
+		elif accessmode == "none":
 			udm_obj['sambaWriteable'] = 0
 			udm_obj['group'] = grp.getgrnam('nogroup').gr_gid
 
 		udm_obj.modify()
 
-		return result	## TODO: How to communicate the success?
+		return result  # TODO: How to communicate the success?
 

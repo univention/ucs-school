@@ -43,11 +43,11 @@ configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
 import inspect
-def debugmsg( component, level, msg ):
+def debugmsg(component, level, msg):
 	info = inspect.getframeinfo(inspect.currentframe().f_back)[0:3]
 	printInfo = []
-	if len(info[0])>28:
-		printInfo.append('...'+info[0][-25:])
+	if len(info[0]) > 28:
+		printInfo.append('...' + info[0][-25:])
 	else:
 		printInfo.append(info[0])
 	printInfo.extend(info[1:3])
@@ -56,42 +56,42 @@ def debugmsg( component, level, msg ):
 
 def main():
 	exitcode = 0
-	debug_level = int( configRegistry.get('umc/module/debug/level','1') )
+	debug_level = int(configRegistry.get('umc/module/debug/level', '1'))
 	if debug_level < 1:
 		debug_level = 1
 	if configRegistry.get('ucsschool/datadistribution/debug/level', None):
-		debug_level = int( configRegistry.get('ucsschool/datadistribution/debug/level') )
+		debug_level = int(configRegistry.get('ucsschool/datadistribution/debug/level'))
 
 	parser = OptionParser()
-	parser.add_option( '-d', '--debug', action = 'store', type = 'int',
-					   dest = 'debug', default = debug_level,
-					   help = 'if set, debugging is activated and set to the specified level' )
+	parser.add_option('-d', '--debug', action='store', type='int',
+					   dest='debug', default=debug_level,
+					   help='if set, debugging is activated and set to the specified level')
 
 #	parser.add_option( '-i', '--init', action = 'store_true',
 #					   dest = 'init', default = False,
 #					   help = 'init specified project' )
 
-	parser.add_option( '-c', '--collect', action = 'store_true',
-					   dest = 'collect', default = False,
-					   help = 'collect specified project' )
+	parser.add_option('-c', '--collect', action='store_true',
+					   dest='collect', default=False,
+					   help='collect specified project')
 
-	parser.add_option( '-s', '--distribute', action = 'store_true',
-					   dest = 'distribute', default = False,
-					   help = 'distribute specified project' )
+	parser.add_option('-s', '--distribute', action='store_true',
+					   dest='distribute', default=False,
+					   help='distribute specified project')
 
 #	parser.add_option( '-f', '--force', action = 'store_true',
 #					   dest = 'force', default = False,
 #					   help = 'force action' )
 
-	parser.add_option( '-r', '--remove', action = 'store_true',
-					   dest = 'remove', default = False,
-					   help = 'remove project data' )
+	parser.add_option('-r', '--remove', action='store_true',
+					   dest='remove', default=False,
+					   help='remove project data')
 
-	( options, args ) = parser.parse_args()
+	(options, args) = parser.parse_args()
 
 	# open logging
-	ud.init( '/var/log/univention/ucs-school-umc-distribution.log', 1, 1 )
-	ud.set_level( ud.ADMIN, options.debug )
+	ud.init('/var/log/univention/ucs-school-umc-distribution.log', 1, 1)
+	ud.set_level(ud.ADMIN, options.debug)
 	debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution started: args=%s' % sys.argv)
 
 	if int(options.collect) + int(options.distribute) + int(options.remove) != 1:
@@ -99,10 +99,10 @@ def main():
 		sys.exit(250)
 
 	if len(args):
-		if not os.path.exists( args[0] ):
+		if not os.path.exists(args[0]):
 			debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution: file does not exist: %s' % args[0])
 			exitcode = 10
-		elif not os.path.isfile( args[0] ):
+		elif not os.path.isfile(args[0]):
 			debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution: is not a file: %s' % args[0])
 			exitcode = 20
 		else:

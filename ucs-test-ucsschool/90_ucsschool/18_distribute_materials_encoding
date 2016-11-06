@@ -31,13 +31,13 @@ def main():
 			utils.wait_for_replication_and_postrun()
 
 			filename1 = "%s%s%s%s" % (
-					u'\xc4'.encode('UTF-8'), # Ä
+					u'\xc4'.encode('UTF-8'),  # Ä
 					uts.random_name_special_characters(3),
-					u'\u2192'.encode('UTF-8'), # →
+					u'\u2192'.encode('UTF-8'),  # →
 					uts.random_name_special_characters(3),
 					)
 			filename2 = "%s%s" % (
-					u'\xc4'.encode('UTF-8') ,
+					u'\xc4'.encode('UTF-8'),
 					uts.random_name_special_characters(6),
 					)
 			filename3 = "%s%s%s" % (
@@ -47,10 +47,10 @@ def main():
 					)
 			filename4 = uts.random_name()
 
-			files = [(filename1,'utf-8')]
-			files.append((filename2,'utf-8'))
-			files.append((filename3,'iso8859-1'))
-			files.append((filename4,'utf-8'))
+			files = [(filename1, 'utf-8')]
+			files.append((filename2, 'utf-8'))
+			files.append((filename3, 'iso8859-1'))
+			files.append((filename4, 'utf-8'))
 
 			con.auth(tea, 'univention')
 			# Create new project

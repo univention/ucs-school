@@ -101,7 +101,7 @@ class Exam(object):
 			self,
 			school,
 			room,			# room dn
-			examEndTime,	# in format "HH:mm"
+			examEndTime,  # in format "HH:mm"
 			recipients,		# list of classes dns
 			name=None,
 			directory=None,

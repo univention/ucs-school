@@ -138,7 +138,7 @@ class Instance(SchoolBaseModule):
 			members.append({'id': user.dn, 'label': Display.user(user.get_udm_object(ldap_user_read))})
 		result['members'] = members
 
-		self.finished(request.id, [result,])
+		self.finished(request.id, [result, ])
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
 	@LDAP_Connection(USER_READ, MACHINE_WRITE)

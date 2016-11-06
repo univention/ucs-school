@@ -67,13 +67,13 @@ UCR_FORCED_GLOBAL_BLACKLIST = 'proxy/filter/global/blacklists/forced'
 RELOAD_SOCKET_PATH = '/var/run/univention-reload-service.socket'
 
 def logerror(msg):
-	logfd = open( PATH_LOG, 'a+')
+	logfd = open(PATH_LOG, 'a+')
 	print >> logfd, '%s [%s] %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), os.getpid(), msg)
 
 def move_file(fnsrc, fndst):
-	if os.path.isfile( fnsrc ):
+	if os.path.isfile(fnsrc):
 		try:
-			shutil.move( fnsrc, fndst )
+			shutil.move(fnsrc, fndst)
 		except Exception, e:
 			logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
 			raise
@@ -141,7 +141,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 	else:
 		default_redirect = 'http://%s.%s/blocked-by-squid.html' % (configRegistry['hostname'], configRegistry['domainname'])
 
-	f = open( fn_temp_config, "w")
+	f = open(fn_temp_config, "w")
 
 	f.write('logdir /var/log/squidguard\n')
 	f.write('dbhome %s/\n' % DIR_TEMP)
@@ -157,9 +157,9 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 			proxy_settinglist.add(match.group(1))
 	proxy_settinglist = list(proxy_settinglist)
 
-	roomIPs = {} # { 'theBigRoom': ['127.0.0.1', '127.4.5.7'], 'otherRoom': ['127.2.3.4'] }
-	roomRule = {} # { 'kmiyagi': ['theBigRoom', 'otherRoom'] }
-	roomRules = [] # [ 'kmiyagi' ]
+	roomIPs = {}  # { 'theBigRoom': ['127.0.0.1', '127.4.5.7'], 'otherRoom': ['127.2.3.4'] }
+	roomRule = {}  # { 'kmiyagi': ['theBigRoom', 'otherRoom'] }
+	roomRules = []  # [ 'kmiyagi' ]
 	for key in keylist:
 		if key.startswith('proxy/filter/room/'):
 			parts = key.split('/')
@@ -181,21 +181,21 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 		f.write('}\n')
 
 	roomlist = []
-	usergroupSetting = [] # [ (priority, usergroupname, proxy_setting, ) ] # for sorting by priority
+	usergroupSetting = []  # [ (priority, usergroupname, proxy_setting, ) ] # for sorting by priority
 	for key in keylist:
 		if key.startswith('proxy/filter/hostgroup/blacklisted/'):
-			room = key[ len('proxy/filter/hostgroup/blacklisted/') : ]
+			room = key[len('proxy/filter/hostgroup/blacklisted/'):]
 			if room[0].isdigit():
 				room = 'univention-%s' % room
 			roomlist.append(room)
-			f.write('src %s {\n' % quote(room) )
+			f.write('src %s {\n' % quote(room))
 			ipaddrs = configRegistry[key].split(' ')
 			for ipaddr in ipaddrs:
 				f.write('	 ip %s\n' % ipaddr)
 			f.write('}\n\n')
 		# usergroup
 		if key.startswith('proxy/filter/usergroup/'):
-			usergroupname=key.rsplit('/', 1)[1]
+			usergroupname = key.rsplit('/', 1)[1]
 			default = configRegistry.get('proxy/filter/groupdefault/%s' % usergroupname)
 			if default and default in proxy_settinglist:
 				priority = configRegistry.get('proxy/filter/setting/%s/priority' % default)
@@ -207,22 +207,22 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 
 	# src usergroup
 	for (priority, usergroupname, proxy_setting) in reversed(sorted(usergroupSetting)):
-		f.write('src usergroup-%s {\n' % quote(usergroupname) )
-		f.write('        userlist usergroup-%s\n' % quote(usergroupname) )
+		f.write('src usergroup-%s {\n' % quote(usergroupname))
+		f.write('        userlist usergroup-%s\n' % quote(usergroupname))
 		f.write('}\n\n')
-		touchfnlist.append( 'usergroup-%s' % quote(usergroupname) )
+		touchfnlist.append('usergroup-%s' % quote(usergroupname))
 
 	f.write('dest blacklist {\n')
 	f.write('	 domainlist blacklisted-domain\n')
 	f.write('	 urllist	blacklisted-url\n')
 	f.write('}\n\n')
-	touchfnlist.extend( ['blacklisted-domain', 'blacklisted-url'] )
+	touchfnlist.extend(['blacklisted-domain', 'blacklisted-url'])
 
 	f.write('dest whitelist {\n')
 	f.write('	 domainlist whitelisted-domain\n')
 	f.write('	 urllist	whitelisted-url\n')
 	f.write('}\n\n')
-	touchfnlist.extend( ['whitelisted-domain', 'whitelisted-url'] )
+	touchfnlist.extend(['whitelisted-domain', 'whitelisted-url'])
 
 	for proxy_setting in map(quote, proxy_settinglist) + [quote(username) + '-user' for username in roomRule]:
 		f.write('dest blacklist-%s {\n' % proxy_setting)
@@ -233,11 +233,11 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 		f.write('	 domainlist whitelisted-domain-%s\n' % proxy_setting)
 		f.write('	 urllist	whitelisted-url-%s\n' % proxy_setting)
 		f.write('}\n\n')
-		touchfnlist.extend( ['blacklisted-domain-%s' % proxy_setting,
+		touchfnlist.extend(['blacklisted-domain-%s' % proxy_setting,
 							 'blacklisted-url-%s' % proxy_setting,
 							 'whitelisted-domain-%s' % proxy_setting,
 							 'whitelisted-url-%s' % proxy_setting,
-							 ] )
+							 ])
 
 	# disable the domainlist/urllist within the temporary config file - processing the global blacklists
 	# may take several seconds (depending on their size). The entry is reenabled when copied to target
@@ -319,7 +319,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 	# NOTE: touch all referenced database files to prevent squidguard
 	#       from shutting down due to missing files
 	for fn in touchfnlist:
-		tmp = open( os.path.join(DIR_TEMP, fn), 'a+')
+		tmp = open(os.path.join(DIR_TEMP, fn), 'a+')
 
 
 def checkGlobalBlacklist(configRegistry, DIR_DATA, changes):
@@ -358,68 +358,68 @@ def writeSettinglist(configRegistry, DIR_TEMP):
 		if match:
 			proxy_settinglist.add(match.groups())
 	for (userpart, proxy_setting, ) in proxy_settinglist:
-		for filtertype in [ 'domain', 'url' ]:
-			for itemtype in [ 'blacklisted', 'whitelisted' ]:
-				filename='%s-%s-%s%s' % (itemtype, filtertype, quote(proxy_setting), userpart)
+		for filtertype in ['domain', 'url']:
+			for itemtype in ['blacklisted', 'whitelisted']:
+				filename = '%s-%s-%s%s' % (itemtype, filtertype, quote(proxy_setting), userpart)
 				dbfn = '%s/%s' % (DIR_TEMP, filename)
 				f = open(dbfn, "w")
 				for key in configRegistry:
 					if key.startswith('proxy/filter/setting%s/%s/%s/%s/' % (userpart, proxy_setting, filtertype, itemtype)):
-						value = configRegistry[ key ]
+						value = configRegistry[key]
 						if value.startswith('http://'):
-							value = value[ len('http://') : ]
+							value = value[len('http://'):]
 						if value.startswith('https://'):
-							value = value[ len('https://') : ]
+							value = value[len('https://'):]
 						if value.startswith('ftp://'):
-							value = value[ len('ftp://') : ]
+							value = value[len('ftp://'):]
 						if filtertype == 'url':
 							if value.startswith('www.'):
-								value = value[ len('www.') : ]
+								value = value[len('www.'):]
 						f.write('%s\n' % value)
 				f.close()
 
 def writeBlackWhiteLists(configRegistry, DIR_TEMP):
-	for filtertype in [ 'domain', 'url' ]:
-		for itemtype in [ 'blacklisted', 'whitelisted' ]:
-			filename='%s-%s' % (itemtype, filtertype)
+	for filtertype in ['domain', 'url']:
+		for itemtype in ['blacklisted', 'whitelisted']:
+			filename = '%s-%s' % (itemtype, filtertype)
 			dbfn = '%s/%s' % (DIR_TEMP, filename)
 			f = open(dbfn, "w")
 			for key in configRegistry:
 				if key.startswith('proxy/filter/%s/%s/' % (filtertype, itemtype)):
-					value = configRegistry[ key ]
+					value = configRegistry[key]
 					if value.startswith('http://'):
-						value = value[ len('http://') : ]
+						value = value[len('http://'):]
 					if value.startswith('https://'):
-						value = value[ len('https://') : ]
+						value = value[len('https://'):]
 					if value.startswith('ftp://'):
-						value = value[ len('ftp://') : ]
+						value = value[len('ftp://'):]
 					if filtertype == 'url':
 						if value.startswith('www.'):
-							value = value[ len('www.') : ]
+							value = value[len('www.'):]
 					f.write('%s\n' % value)
 			f.close()
 
 def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
-	domain=configRegistry['windows/domain']
+	domain = configRegistry['windows/domain']
 	for key in configRegistry:
 		if key.startswith('proxy/filter/usergroup/'):
-			usergroupname=key.rsplit('/', 1)[1]
-			filename='usergroup-%s' % quote(usergroupname)
+			usergroupname = key.rsplit('/', 1)[1]
+			filename = 'usergroup-%s' % quote(usergroupname)
 			dbfn = '%s/%s' % (DIR_TEMP, filename)
 			f = open(dbfn, "w")
 			for memberUid in configRegistry[key].split(','):
-				f.write('%s\n' % (memberUid) )
-				f.write('%s\\%s\n' % (domain, memberUid) )
+				f.write('%s\n' % (memberUid))
+				f.write('%s\\%s\n' % (domain, memberUid))
 			f.close()
 
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	# create all db files
 	subprocess.call(('squidGuard', '-c', fn_temp_config, '-C', 'all', ), stdin=open('/dev/null', 'r'))
 	# fix permissions
-	subprocess.call(('chmod', '-R', 'a=,ug+rw',   DIR_TEMP, fn_temp_config, ))
+	subprocess.call(('chmod', '-R', 'a=,ug+rw', DIR_TEMP, fn_temp_config, ))
 	subprocess.call(('chown', '-R', 'root:proxy', DIR_TEMP, fn_temp_config, ))
 	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
-	content = open( fn_temp_config, "r").read()
+	content = open(fn_temp_config, "r").read()
 	content = content.replace('\ndbhome %s/\n' % DIR_TEMP, '\ndbhome %s/\n' % DIR_DATA)
 	content = content.replace(TXT_GLOBAL_BLACKLIST_COMMENT, '')  # reenable global blacklist entries
 	tempConfig = open(fn_temp_config, "w")

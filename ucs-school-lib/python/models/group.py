@@ -163,7 +163,7 @@ class BasicGroup(Group):
 
 	def create_without_hooks(self, lo, validate):
 		# prepare LDAP: create containers where this basic group lives if necessary
-		container_dn = self.get_own_container()[:-len(ucr.get('ldap/base'))-1]
+		container_dn = self.get_own_container()[:-len(ucr.get('ldap/base')) - 1]
 		containers = str2dn(container_dn)
 		super_container_dn = ucr.get('ldap/base')
 		for container_info in reversed(containers):

@@ -15,13 +15,13 @@ import univention.testing.ucsschool as utu
 
 
 def main():
-	with utu.UCSTestSchool()  as schoolenv:
+	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			school_admin, school_admin_dn = schoolenv.create_school_admin(school)
 
-			staff, staff_dn  = schoolenv.create_user(school, is_staff=True)
-			tea_staff, tea_staff_dn  = schoolenv.create_user(school, is_teacher=True, is_staff=True)
+			staff, staff_dn = schoolenv.create_user(school, is_staff=True)
+			tea_staff, tea_staff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
 			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
 			stu, stu_dn = schoolenv.create_user(school)
 			class_name, class_dn = schoolenv.create_school_class(school)

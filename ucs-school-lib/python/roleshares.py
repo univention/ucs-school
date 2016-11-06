@@ -106,7 +106,7 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		print 'Object exists: %s' % (dn,)
 		pass
 	else:
-		print 'Object created: %s' % _2utf8( udm_obj.dn )
+		print 'Object created: %s' % _2utf8(udm_obj.dn)
 
 @LDAP_Connection(MACHINE_READ)
 def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None):
@@ -165,7 +165,7 @@ def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=N
 		ucr.load()
 		
 	supported_roles = (role_pupil, role_teacher, role_staff)
-	supported_role_aliases = { 'student': 'pupil' }
+	supported_role_aliases = {'student': 'pupil'}
 
 	roles = []
 	for name in role_list:

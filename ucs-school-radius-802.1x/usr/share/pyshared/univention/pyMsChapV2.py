@@ -49,7 +49,7 @@ def DesEncrypt(data, key):
 			number += ord(key.pop(0))
 		key = []
 		while number:
-			key.append(chr(number % 128*2))
+			key.append(chr(number % 128 * 2))
 			number /= 128
 		return ''.join(reversed(key))
 	return pyDes.des(expandDesKey(key), pyDes.ECB).encrypt(data)
@@ -75,8 +75,8 @@ def HashNtPasswordHash(PasswordHash):
 def ChallengeResponse(Challenge, PasswordHash):
 	ZPasswordHash = PasswordHash.ljust(21, '\0')
 	Response = DesEncrypt(Challenge, ZPasswordHash[0:7])
-	Response+= DesEncrypt(Challenge, ZPasswordHash[7:14])
-	Response+= DesEncrypt(Challenge, ZPasswordHash[14:21])
+	Response += DesEncrypt(Challenge, ZPasswordHash[7:14])
+	Response += DesEncrypt(Challenge, ZPasswordHash[14:21])
 	return Response
 
 def GenerateAuthenticatorResponse(Password, NtResponse, PeerChallenge, AuthenticatorChallenge, UserName):
@@ -86,7 +86,7 @@ def GenerateAuthenticatorResponse(Password, NtResponse, PeerChallenge, Authentic
 	PasswordHashHash = HashNtPasswordHash(PasswordHash)
 	Challenge = ChallengeHash(PeerChallenge, AuthenticatorChallenge, UserName)
 	Digest = hashlib.sha1(PasswordHashHash + NtResponse + Magic1).digest()
-	Digest = hashlib.sha1(Digest           + Challenge  + Magic2).digest()
+	Digest = hashlib.sha1(Digest + Challenge + Magic2).digest()
 	AuthenticatorResponse = 'S=' + Digest.encode('hex').upper()
 	return AuthenticatorResponse
 

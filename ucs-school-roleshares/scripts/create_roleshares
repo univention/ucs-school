@@ -53,7 +53,7 @@ def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=N
 	except IndexError:
 		return None
 	else:
-		return  _2utf8(udm_obj.dn)
+		return _2utf8(udm_obj.dn)
 
 if __name__ == '__main__':
 	from optparse import OptionParser
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 	if not opts.binddn:
 		if ucr['server/role'] == 'domaincontroller_master':
 			try:
-				opts.bindpwd = open('/etc/ldap.secret','r').read()
+				opts.bindpwd = open('/etc/ldap.secret', 'r').read()
 				opts.binddn = "cn=admin,%s" % (ucr.get('ldap/base'),)
 				print 'Using cn=admin account'
 			except IOError, ex:
@@ -96,6 +96,6 @@ if __name__ == '__main__':
 				print 'User not found'
 				sys.exit(1)
 
-	set_credentials(opts.binddn, opts.bindpwd) ## for @LDAP_Connection(USER_*)
+	set_credentials(opts.binddn, opts.bindpwd)  # for @LDAP_Connection(USER_*)
 
 	create_roleshares(opts.roleshares, opts.schools, ucr)

@@ -187,15 +187,15 @@ class CSVUser(User):
 
 	@classmethod
 	def get_columns_for_assign(cls):
-		columns = [{'name' : 'unused', 'label' : _('Unused')}]
+		columns = [{'name': 'unused', 'label': _('Unused')}]
 		columns.extend(cls.get_columns_for_frontend(cls.find_all_fields()))
 		return columns
 
 	@classmethod
 	def get_columns_for_spreadsheet(cls, column_names):
-		columns = [{'name' : 'action', 'label' : _('Action')}]
+		columns = [{'name': 'action', 'label': _('Action')}]
 		columns.extend(cls.get_columns_for_frontend(column_names))
-		columns.append({'name' : 'line', 'label' : _('Line')})
+		columns.append({'name': 'line', 'label': _('Line')})
 		return columns
 
 	@classmethod
@@ -204,7 +204,7 @@ class CSVUser(User):
 		for field in column_names:
 			label = cls.find_field_label_from_name(field)
 			if label:
-				columns.append({'name' : field, 'label' : label})
+				columns.append({'name': field, 'label': label})
 		return columns
 
 	def to_dict(self, format_birthday):
@@ -330,7 +330,7 @@ class UCS_License_detection(object):
 			self.License = univention.admin.license.License
 			self._license = univention.admin.license._license
 			self.ignored_users_list = self._license.sysAccountNames
-		except ImportError:	## GPLversion
+		except ImportError:  # GPLversion
 			self.GPLversion = True
 			self.ignored_users_list = []
 
@@ -342,15 +342,15 @@ class UCS_License_detection(object):
 		v = self._license.version
 		types = self._license.licenses[v]
 		if dn is None:
-			max = [ self._license.licenses[v][type]
-				for type in types ]
+			max = [self._license.licenses[v][type]
+				for type in types]
 		else:
-			max = [ lo.get(dn)[self._license.keys[v][type]][0]
-				for type in types ]
+			max = [lo.get(dn)[self._license.keys[v][type]][0]
+				for type in types]
 
-		objs = [ lo.searchDn(filter=self._license.filters[v][type])
-			for type in types ]
-		num = [ mylen (obj)
+		objs = [lo.searchDn(filter=self._license.filters[v][type])
+			for type in types]
+		num = [mylen(obj)
 			for obj in objs]
 		self._license.checkObjectCounts(max, num)
 		result = []
@@ -359,7 +359,7 @@ class UCS_License_detection(object):
 			n = num[i]
 			if i == self.License.USERS or i == self.License.ACCOUNT:
 				n -= self._license.sysAccountsFound
-				if n < 0: n=0
+				if n < 0: n = 0
 			l = self._license.names[v][i]
 			if m:
 				if i == self.License.USERS or i == self.License.ACCOUNT:
@@ -378,11 +378,11 @@ class UCS_License_detection(object):
 			bindpw = pwfile.readline().strip()
 
 		try:
-			lo = univention.admin.uldap.access(host = self.ucr['ldap/master'],
-							port = int(self.ucr.get('ldap/master/port', '7389')),
-							base = self.ucr['ldap/base'],
-							binddn = binddn,
-							bindpw = bindpw)
+			lo = univention.admin.uldap.access(host=self.ucr['ldap/master'],
+							port=int(self.ucr.get('ldap/master/port', '7389')),
+							base=self.ucr['ldap/base'],
+							binddn=binddn,
+							bindpw=bindpw)
 		except uexceptions.authFail:
 			raise LicenseInsufficient(_('Internal Error: License check failed.'))
 
@@ -395,7 +395,7 @@ class UCS_License_detection(object):
 			check_array = self.determine_license(lo, dn)
 
 		## some name translation
-		object_displayname_for_licensetype= {'Accounts': _('users'), 'Users': _('users')}
+		object_displayname_for_licensetype = {'Accounts': _('users'), 'Users': _('users')}
 		import_object_count_for_licensetype = {'Accounts': domain_info['users'], 'Users': domain_info['users']}
 
 		license_sufficient = True
@@ -409,9 +409,9 @@ class UCS_License_detection(object):
 			if self._license.compare(sum_objs, max_objs) > 0:
 				license_sufficient = False
 				error_msg = _('Number of %(object_name)s after the import would be %(sum)s. This would exceed the number of licensed objects (%(max)s).') % {
-							'object_name' : object_displayname,
-							'sum' : sum_objs,
-							'max' : max_objs,
+							'object_name': object_displayname,
+							'sum': sum_objs,
+							'max': max_objs,
 						}
 				MODULE.warn(error_msg)
 

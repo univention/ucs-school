@@ -321,4 +321,4 @@ def stopped_notifier(strict=True):
 			if not start_disabled and _run(command):
 				logger.info('%s started', service_name)
 			else:
-				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command)) # correct: shlex... unnecessary
+				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command))  # correct: shlex... unnecessary

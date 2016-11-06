@@ -20,8 +20,8 @@ def main():
 			persons_list = []
 
 			print 'Check healthy import with healthy data'
-			user_types = ['student', 'teacher', 'staff',  'teachersAndStaff']
-			nr_of_lines = 2 # number of users to import for each type
+			user_types = ['student', 'teacher', 'staff', 'teachersAndStaff']
+			nr_of_lines = 2  # number of users to import for each type
 			print 'Generate import files ; staff does not have class attr'
 			files_01 = [
 					stu_tea_file(nr_of_lines, school),

@@ -72,13 +72,13 @@ def main():
 
 			def set_room_printmode(settings):
 				settings.room.aquire_room(umc_connection)
-				period = datetime.time.strftime((datetime.datetime.now() + datetime.timedelta(0,600)).time(), '%H:%M')
+				period = datetime.time.strftime((datetime.datetime.now() + datetime.timedelta(0, 600)).time(), '%H:%M')
 				settings.room.set_room_settings(umc_connection, {
-						'customRule':	'',
-						'printMode':	settings.printmode,
+						'customRule': '',
+						'printMode': settings.printmode,
 						'internetRule': 'none',
-						'shareMode':	'all',
-						'period':	period,
+						'shareMode': 'all',
+						'period': period,
 						})
 
 			def ucr_check_both_values(settings):

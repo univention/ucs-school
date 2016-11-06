@@ -17,7 +17,7 @@ def addLesson(connection, name, begin, end):
 	lesson = [name, begin, end]
 	lessonsList = getLessons(connection)
 	lessonsList.append(lesson)
-	data =	{"lessons": lessonsList}
+	data = {"lessons": lessonsList}
 	return connection.request('lessontimes/set', data=data)
 
 def delLesson(connection, name, begin, end):
@@ -25,7 +25,7 @@ def delLesson(connection, name, begin, end):
 	for item in lessonsList:
 		if name in item:
 			lessonsList.remove(item)
-	param =  {
+	param = {
 			"lessons": lessonsList
 			}
 	return connection.request('lessontimes/set', param)

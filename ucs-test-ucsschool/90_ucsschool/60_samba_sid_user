@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 		# create an user who is ignored by the connector
 		position = 'cn=univention,%s' % ucr.get('ldap/base')
-		user_dn,username = udm.create_user(position=position)
+		user_dn, username = udm.create_user(position=position)
 
 		lo = uldap.getMachineConnection()
 		user_sid = lo.get(user_dn)['sambaSID'][0]

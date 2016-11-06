@@ -20,7 +20,7 @@ def main():
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			open_ldap_co = schoolenv.open_ldap_connection()
 
-			radius_secret = 'testing123' # parameter set in  /etc/freeradius/clients.conf
+			radius_secret = 'testing123'  # parameter set in  /etc/freeradius/clients.conf
 			password = 'univention'
 
 			# importing random 2 computers

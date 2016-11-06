@@ -53,7 +53,7 @@ def findComputerNameWithService(computer_module, co, lo, service, ouDn):
 	return None
 
 def main():
-	usage  = '''%prog [--dry-run] [--ou <ou_name>] --auto-detect
+	usage = '''%prog [--dry-run] [--ou <ou_name>] --auto-detect
 
 %prog updates the (specified) OU objects and sets the file servers for
 class shares and home shares. These servers are read from the import scripts
@@ -86,8 +86,8 @@ during creation of new classes or users.
 	dcmaster_module = univention.admin.modules.get("computers/domaincontroller_master")
 	ou_module = univention.admin.modules.get("container/ou")
 	cn_module = univention.admin.modules.get("container/cn")
-	for module in ( computer_module, dcmaster_module, ou_module, cn_module ):
-		univention.admin.modules.init (lo, position, module)
+	for module in (computer_module, dcmaster_module, ou_module, cn_module):
+		univention.admin.modules.init(lo, position, module)
 
 	is_singlemaster = ucr.is_true('ucsschool/singlemaster', False)
 	master_dn = None
@@ -119,7 +119,7 @@ during creation of new classes or users.
 
 		ou_attrs = lo.get(ou_dn)
 		if 'ucsschoolOrganizationalUnit' not in ou_attrs['objectClass']:
-			modlist.append( ('objectClass', '', 'ucsschoolOrganizationalUnit') )
+			modlist.append(('objectClass', '', 'ucsschoolOrganizationalUnit'))
 
 		if is_singlemaster:
 			# in single server environments the DC master is always the correct fileserver for shares
@@ -148,13 +148,13 @@ during creation of new classes or users.
 
 		print 'OU: %s' % ou_dn
 		if not ou_attrs.get('ucsschoolClassShareFileServer', [''])[0]:
-			modlist.append(('ucsschoolClassShareFileServer', ou_attrs.get('ucsschoolClassShareFileServer',[''])[0], classshareserver))
+			modlist.append(('ucsschoolClassShareFileServer', ou_attrs.get('ucsschoolClassShareFileServer', [''])[0], classshareserver))
 			print '    ==> ucsschoolClassShareFileServer = %s' % classshareserver
 		else:
 			print '    ==> ucsschoolClassShareFileServer has already been set'
 
 		if not ou_attrs.get('ucsschoolHomeShareFileServer', [''])[0]:
-			modlist.append(('ucsschoolHomeShareFileServer', ou_attrs.get('ucsschoolHomeShareFileServer',[''])[0], homeshareserver))
+			modlist.append(('ucsschoolHomeShareFileServer', ou_attrs.get('ucsschoolHomeShareFileServer', [''])[0], homeshareserver))
 			print '    ==> ucsschoolHomeShareFileServer = %s' % homeshareserver
 		else:
 			print '    ==> ucsschoolHomeShareFileServer has already been set'

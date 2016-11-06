@@ -123,7 +123,7 @@ def create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayn
 	User._samba_home_path_cache.clear()
 
 	lo = univention.admin.uldap.getAdminConnection()[0]
-	School.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+	School.init_udm_module(lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 	School(**kwargs).create(lo)
 
 

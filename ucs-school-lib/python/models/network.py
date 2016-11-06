@@ -111,14 +111,14 @@ class Network(UCSSchoolHelperAbstractClass):
 				network = cls.from_dn(dn, school, lo)
 			except noObject:
 				return
-			netmask = network.netmask # e.g. '24'
+			netmask = network.netmask  # e.g. '24'
 			network_str = '0.0.0.0/%s' % netmask
 			try:
 				ipv4_network = IPv4Network(network_str)
 			except (AddressValueError, NetmaskValueError, ValueError):
 				logger.warning('Unparsable network: %r', network_str)
 			else:
-				netmask = str(ipv4_network.netmask) # e.g. '255.255.255.0'
+				netmask = str(ipv4_network.netmask)  # e.g. '255.255.255.0'
 			logger.debug('Network mask: %r is %r', dn, netmask)
 			cls._netmask_cache[dn] = netmask
 		return cls._netmask_cache[dn]

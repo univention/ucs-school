@@ -27,9 +27,9 @@ def main():
 			# import pdb; pdb.set_trace()
 			klassen[0].check_query([klassen[0].name, klassen[1].name])
 
-			new_attrs = {'name':'K2', 'description':'K2 desc'}
+			new_attrs = {'name': 'K2', 'description': 'K2 desc'}
 			klassen[0].edit(new_attrs)
-			new_attrs = {'name':'K3', 'description':'K3 desc'}
+			new_attrs = {'name': 'K3', 'description': 'K3 desc'}
 			klassen[1].edit(new_attrs)
 
 			klassen[0].check_query(['K2', 'K3'])

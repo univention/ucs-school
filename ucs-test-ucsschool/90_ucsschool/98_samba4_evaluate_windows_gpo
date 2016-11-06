@@ -143,9 +143,9 @@ def windows_check_registry_key(reg_key, subkey, expected_value):
 		% (reg_key, subkey, expected_value))
 
 	if reg_key.startswith('HKCU\\'):
-		item = 'HKCU:'+reg_key[4:]
+		item = 'HKCU:' + reg_key[4:]
 	elif reg_key.startswith('HKLM\\'):
-		item = 'HKLM:'+reg_key[4:]
+		item = 'HKLM:' + reg_key[4:]
 	else:
 		utils.fail("The given registry key '%s' should be either HKCU or HKLM"
 			% reg_key)
@@ -256,7 +256,7 @@ def windows_check_gpo_report(gpo_name, identity_name, server=""):
 
 		# check name tag of the 'Trustee':
 		for name in trust_perm.iter("{%s}Name" % gpo_types):
-			trustee = name.text.split('\\',1)[-1]  ## cut off netbios domain prefix
+			trustee = name.text.split('\\', 1)[-1]  # cut off netbios domain prefix
 			if identity_name == trustee:
 				print "Found GPO test identity '%s'." % identity_name
 
@@ -545,7 +545,7 @@ class GPO_Test(object):
 
 	def check(self):
 		print "\nGPOTest.check"
-		windows_force_gpo_update()	## seems to be necessary even for machine GPO after reboot
+		windows_force_gpo_update()  # seems to be necessary even for machine GPO after reboot
 
 		# case 1: checks with user GPO
 		## TODO: Doesn't work as Admin, needs to be checked with the student-account!
@@ -588,7 +588,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 	exam = Exam(
 		school=school,
 		room=room.dn,
-		examEndTime=chosen_time.strftime("%H:%M"),	# in format "HH:mm"
+		examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
 		recipients=[klasse_dn]
 		)
 
@@ -628,7 +628,7 @@ if __name__ == '__main__':
 	domain_admin_dn = ucr.get('tests/domainadmin/account')
 	domain_admin_password = ucr.get('tests/domainadmin/pwd')
 	windows_admin = ucr.get('tests/windowsadmin/account', 'Administrator')
-	windows_admin_password =  ucr.get('tests/windowsadmin/pwd', 'univention')
+	windows_admin_password = ucr.get('tests/windowsadmin/pwd', 'univention')
 	domainname = ucr.get('domainname')
 	hostname = ucr.get('hostname')
 	ldap_base = ucr.get('ldap/base')

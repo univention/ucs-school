@@ -95,7 +95,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 								"--password=" + self.admin_password]
 
 			self.create_samba4_user(['Foo1' + random_string()])  # gen-d pass
-			self.create_samba4_user(["--random-password"])	# tool's random
+			self.create_samba4_user(["--random-password"])  # tool's random
 		finally:
 			if self.remove_user:
 				self.delete_samba4_user()

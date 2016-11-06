@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-__package__=''  # workaround for PEP 366
+__package__ = ''  # workaround for PEP 366
 import listener
 import re
 import commands
@@ -39,14 +39,14 @@ import shutil
 import time
 import univention.debug
 
-name='remove-old-homedirs'
-description='moves directories of removed users away from home'
-filter='(objectClass=posixAccount)'
-attributes=[]
-modrdn='1'
+name = 'remove-old-homedirs'
+description = 'moves directories of removed users away from home'
+filter = '(objectClass=posixAccount)'
+attributes = []
+modrdn = '1'
 
-DEFAUL_FS="ext2/ext3:ext2:ext3:ext4:xfs:btrfs"
-TARGET_BLACKLIST="/:/boot:/sys:/proc:/etc:/dev"
+DEFAUL_FS = "ext2/ext3:ext2:ext3:ext4:xfs:btrfs"
+TARGET_BLACKLIST = "/:/boot:/sys:/proc:/etc:/dev"
 
 target_dir = listener.configRegistry.get("ucsschool/listener/oldhomedir/targetdir")
 fs_types = listener.configRegistry.get("ucsschool/listener/oldhomedir/fs_types", DEFAUL_FS).split(":")

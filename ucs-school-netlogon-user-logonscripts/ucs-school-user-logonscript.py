@@ -148,7 +148,7 @@ end tell
 def writeMacLinkScripts(uid, homepath, links):
 	listener.setuid(0)
 	try:
-		if not (os.path.exists(homepath) and not os.path.isdir(homepath)): # may be /dev/null
+		if not (os.path.exists(homepath) and not os.path.isdir(homepath)):  # may be /dev/null
 			# check existence of home
 			uidnumber = 0
 			gidnumber = 0
@@ -409,7 +409,7 @@ def groupchange(dn, new, old):
 	else:
 		return
 	for dn in members:
-		if dn[:2].lower() != 'cn': # don't sync computer-accounts
+		if dn[:2].lower() != 'cn':  # don't sync computer-accounts
 			userchange(dn, 'search', {})
 
 
@@ -471,14 +471,14 @@ def userchange(dn, new, old):
 		if new:
 
 			try:
-				if new['uid'][0][-1] == "$": # machine account
+				if new['uid'][0][-1] == "$":  # machine account
 					return
 			except:
 				pass
 			ldapbase = listener.baseConfig['ldap/base']
 			membershipIDs = set()
 
-			if new == 'search': # called from groupchange
+			if new == 'search':  # called from groupchange
 				try:
 					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: got to search %s' % (dn,))
 					res = lo.search(base=dn, scope="base", filter='objectClass=*')
@@ -499,7 +499,7 @@ def userchange(dn, new, old):
 					new.get('uid') == old.get('uid') and \
 					new.get('gidNumber') == old.get('gidNumber') and \
 					new.get('homeDirectory') == old.get('homeDirectory'):
-				return # skip unused attributes
+				return  # skip unused attributes
 
 			# Gruppen suchen mit uniqueMember=dn
 			# shares suchen mit GID wie Gruppe
@@ -534,7 +534,7 @@ def userchange(dn, new, old):
 
 					# hostname is either an IP or an FQDN
 					hostname = share[1]['univentionShareHost'][0]
-					if hostname.strip('012456789.'): # no IP-Address
+					if hostname.strip('012456789.'):  # no IP-Address
 						hostname = hostname.split('.', 1)[0]
 
 					# save link and mapping

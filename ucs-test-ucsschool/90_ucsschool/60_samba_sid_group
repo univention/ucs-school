@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 		# create a group which is ignored by the connector
 		position = 'cn=univention,%s' % ucr.get('ldap/base')
-		group_dn,groupname = udm.create_group(position=position)
+		group_dn, groupname = udm.create_group(position=position)
 
 		lo = uldap.getMachineConnection()
 		group_sid = lo.get(group_dn)['sambaSID'][0]

@@ -31,9 +31,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-role_pupil   = 'pupil'
+role_pupil = 'pupil'
 role_teacher = 'teacher'
-role_staff   = 'staff'
+role_staff = 'staff'
 
-supported_roles = (role_pupil, role_teacher, role_staff)	## note: pupil SHOULD come first here for checks
+supported_roles = (role_pupil, role_teacher, role_staff)  # note: pupil SHOULD come first here for checks
 

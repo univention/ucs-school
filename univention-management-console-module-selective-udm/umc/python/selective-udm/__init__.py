@@ -54,7 +54,7 @@ from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WR
 
 from univention.management.console.config import ucr
 
-_ = Translation( 'univention-management-console-selective-udm' ).translate
+_ = Translation('univention-management-console-selective-udm').translate
 
 class CreationDenied(Exception):
 	pass
@@ -65,7 +65,7 @@ class Instance(SchoolBaseModule):
 
 		allowed_groups = ucr.get('ucsschool/windows/join/groups', 'Domain Admins').split(',')
 
-		result  = lo.search('sambaSID=%s' %usersid, attr=['dn'])
+		result = lo.search('sambaSID=%s' % usersid, attr=['dn'])
 		if not result:
 			raise CreationDenied('SID %s was not found' % usersid)
 
@@ -76,19 +76,19 @@ class Instance(SchoolBaseModule):
 		if not result:
 			raise CreationDenied('No group memberships for SID %s found' % usersid)
 
-		for dn,attr in result:
+		for dn, attr in result:
 			if attr.get('cn', [])[0] in allowed_groups:
 				return
 
 		raise CreationDenied('SID %s is not member of one of the following groups: %s. The allowed groups can be modified by setting the UCR variable ucsschool/windows/join/groups.' % (usersid, allowed_groups))
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def create_windows_computer(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
+	def create_windows_computer(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
 
 		self.required_options(request, 'name')
 
 		if not search_base.school:
-			raise UMC_Error( _('Could not determine schoolOU') )
+			raise UMC_Error(_('Could not determine schoolOU'))
 
 		try:
 			# Set new position
@@ -108,7 +108,7 @@ class Instance(SchoolBaseModule):
 			# In Samba 3 the samba attributes must be set by Samba itself
 			samba3_mode = request.options.get('samba3_mode')
 			if samba3_mode and samba3_mode.lower() in ['true', 'yes']:
-				computer.options=['posix']
+				computer.options = ['posix']
 
 			computer['name'] = name
 

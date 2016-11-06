@@ -76,5 +76,5 @@ class Progress(object):
 		MODULE.warn('%s - %s' % (self._component, err))
 		self._errors.append(err)
 
-	def add_steps(self, steps = 1):
+	def add_steps(self, steps=1):
 		self._steps += steps

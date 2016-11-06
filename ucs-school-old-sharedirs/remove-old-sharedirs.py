@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-__package__=''  # workaround for PEP 366
+__package__ = ''  # workaround for PEP 366
 import listener
 import re
 import commands
@@ -39,17 +39,17 @@ import time
 import shutil
 import univention.debug
 
-hostname=listener.baseConfig['hostname']
-domainname=listener.baseConfig['domainname']
-ip=listener.baseConfig['interfaces/eth0/address']
-name='remove-old-sharedirs'
-description='moves directories of removed group shares to backup folder'
-filter='(&(objectClass=univentionShare)(|(univentionShareHost=%s.%s)(univentionShareHost=%s)))' % (hostname, domainname, ip)
-attributes=[]
-modrdn='1'
+hostname = listener.baseConfig['hostname']
+domainname = listener.baseConfig['domainname']
+ip = listener.baseConfig['interfaces/eth0/address']
+name = 'remove-old-sharedirs'
+description = 'moves directories of removed group shares to backup folder'
+filter = '(&(objectClass=univentionShare)(|(univentionShareHost=%s.%s)(univentionShareHost=%s)))' % (hostname, domainname, ip)
+attributes = []
+modrdn = '1'
 
-DEFAUL_FS="ext2/ext3:ext2:ext3:ext4:xfs:btrfs"
-TARGET_BLACKLIST="/:/boot:/sys:/proc:/etc:/dev"
+DEFAUL_FS = "ext2/ext3:ext2:ext3:ext4:xfs:btrfs"
+TARGET_BLACKLIST = "/:/boot:/sys:/proc:/etc:/dev"
 
 target_dir = listener.configRegistry.get("ucsschool/listener/oldsharedir/targetdir")
 prefixlist = listener.configRegistry.get("ucsschool/listener/oldsharedir/prefixes", "").split(":")

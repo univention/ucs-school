@@ -13,7 +13,7 @@ import subprocess
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
-def checkAuths(host, passwd,  url, (basic, ntlm, gneg), expect_wrong_password):
+def checkAuths(host, passwd, url, (basic, ntlm, gneg), expect_wrong_password):
 	# in case all auth are disabled, all return 200
 	http_basic, http_ntlm, http_gneg = (200, 200, 200)
 	if basic or ntlm or gneg:
@@ -89,12 +89,12 @@ def main():
 		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 
 		# list of tuples (passwd, expect_wrong_password) used in the test
-		passwords = [('univention', False),('wrong_passwd',True)]
+		passwords = [('univention', False), ('wrong_passwd', True)]
 
 		# Generate all the possibilities for the auth states
 		# [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1), 
 		#  (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)]
-		authStates = list(itertools.product([0,1], repeat=3))
+		authStates = list(itertools.product([0, 1], repeat=3))
 
 		for passwd, expect_wrong_password in passwords:
 			for state in authStates:

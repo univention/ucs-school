@@ -17,7 +17,7 @@ def main():
 	ucr = ucr_test.UCSTestConfigRegistry()
 	ucr.load()
 	host = ucr.get('hostname')
-	with utu.UCSTestSchool()  as schoolenv:
+	with utu.UCSTestSchool() as schoolenv:
 		schoolName, oudn = schoolenv.create_ou(name_edudc=host)
 		tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
 		stu, studn = schoolenv.create_user(schoolName)
@@ -61,7 +61,7 @@ def main():
 			# 6 should fail: creating a new working group with a duplicate name
 			group2 = Workgroup(
 					schoolName,
-					name = group.name,
+					name=group.name,
 					umcConnection=connection)
 			group2.create(expect_creation_fails_due_to_duplicated_name=True)
 

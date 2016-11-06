@@ -37,8 +37,8 @@ import sys
 import notifier
 import optparse
 
-script_dir = os.path.abspath( os.path.dirname( inspect.getfile(inspect.currentframe() ) ) )
-sys.path.insert( 0, os.path.join( script_dir, 'umc/python/computerroom' ) )
+script_dir = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())))
+sys.path.insert(0, os.path.join(script_dir, 'umc/python/computerroom'))
 
 import italc2
 import ucsschool.lib.schoolldap as usl
@@ -47,12 +47,12 @@ import univention.config_registry as ucr
 
 from PyQt4 import QtCore, QtGui
 
-class ViewerApp( QtGui.QApplication ):
-	def recvQuit( self, mmsg, data = None ):
+class ViewerApp(QtGui.QApplication):
+	def recvQuit(self, mmsg, data=None):
 		self.quit()
 
 class ImageViewer(QtGui.QMainWindow):
-	def __init__( self, options ):
+	def __init__(self, options):
 		super(ImageViewer, self).__init__()
 
 		self.printer = QtGui.QPrinter()
@@ -68,7 +68,7 @@ class ImageViewer(QtGui.QMainWindow):
 		self.scrollArea.setBackgroundRole(QtGui.QPalette.Dark)
 		self.scrollArea.setWidget(self.imageLabel)
 		self.setCentralWidget(self.scrollArea)
-		self.scrollArea.setWidgetResizable( True )
+		self.scrollArea.setWidgetResizable(True)
 
 		self.setWindowTitle("Image Viewer")
 		self.resize(500, 400)
@@ -76,15 +76,15 @@ class ImageViewer(QtGui.QMainWindow):
 		self.italcManager = italc2.ITALC_Manager()
 		self.italcManager.school = options.school
 		self.italcManager.room = options.room
-		self.computer = self.italcManager[ options.computer ]
-		self._timer = notifier.timer_add( 500, self.updateScreenshot )
+		self.computer = self.italcManager[options.computer]
+		self._timer = notifier.timer_add(500, self.updateScreenshot)
 
-	def updateScreenshot( self, dummy ):
+	def updateScreenshot(self, dummy):
 		if not self.computer.screenshotQImage.isNull():
-			self.open( image = self.computer.screenshotQImage )
+			self.open(image=self.computer.screenshotQImage)
 		return True
 
-	def open( self, fileName = None, image = None ):
+	def open(self, fileName=None, image=None):
 		if fileName:
 			image = QtGui.QImage(fileName)
 		if image.isNull():
@@ -94,7 +94,7 @@ class ImageViewer(QtGui.QMainWindow):
 
 		self.imageLabel.setPixmap(QtGui.QPixmap.fromImage(image))
 		self.scaleFactor = 1.0
-		self.resize( image.width(), image.height() )
+		self.resize(image.width(), image.height())
 
 	def scaleImage(self, factor):
 		self.scaleFactor *= factor
@@ -108,7 +108,7 @@ class ImageViewer(QtGui.QMainWindow):
 
 	def adjustScrollBar(self, scrollBar, factor):
 		scrollBar.setValue(int(factor * scrollBar.value()
-								+ ((factor - 1) * scrollBar.pageStep()/2)))
+								+ ((factor - 1) * scrollBar.pageStep() / 2)))
 
 
 if __name__ == '__main__':
@@ -116,22 +116,22 @@ if __name__ == '__main__':
 	config = ucr.ConfigRegistry()
 	config.load()
 
-	notifier.init( notifier.QT )
+	notifier.init(notifier.QT)
 
 	parser = optparse.OptionParser()
-	parser.add_option( '-s', '--school', dest = 'school', default = '711' )
-	parser.add_option( '-r', '--room', dest = 'room', default = 'room01' )
-	parser.add_option( '-c', '--computer', dest = 'computer', default = 'WIN7PRO' )
-	parser.add_option( '-u', '--username', dest = 'username', default = 'Administrator' )
-	parser.add_option( '-p', '--password', dest = 'password', default = 'univention' )
+	parser.add_option('-s', '--school', dest='school', default='711')
+	parser.add_option('-r', '--room', dest='room', default='room01')
+	parser.add_option('-c', '--computer', dest='computer', default='WIN7PRO')
+	parser.add_option('-u', '--username', dest='username', default='Administrator')
+	parser.add_option('-p', '--password', dest='password', default='univention')
 	options, args = parser.parse_args()
 
-	usl.set_credentials( 'uid=%s,cn=users,%s' % ( options.username, config.get( 'ldap/base' ) ), options.password )
+	usl.set_credentials('uid=%s,cn=users,%s' % (options.username, config.get('ldap/base')), options.password)
 
-	app = ViewerApp( sys.argv )
+	app = ViewerApp(sys.argv)
 	print app.quitOnLastWindowClosed()
-	app.lastWindowClosed.connect( app.quit, QtCore.Qt.DirectConnection )
-	imageViewer = ImageViewer( options )
+	app.lastWindowClosed.connect(app.quit, QtCore.Qt.DirectConnection)
+	imageViewer = ImageViewer(options)
 	imageViewer.show()
 
 	notifier.loop()

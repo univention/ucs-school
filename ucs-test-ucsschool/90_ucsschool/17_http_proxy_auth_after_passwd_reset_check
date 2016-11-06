@@ -35,7 +35,7 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 	else:
 		utils.fail('Password reset for (%r) unsuccessful' % (userdn,))
 
-def authProxy(host,url, name, passwd, authTyp, expected_response):
+def authProxy(host, url, name, passwd, authTyp, expected_response):
 	auth_text = 'basic authentication' if authTyp == 1 else 'NTLM authentication'
 	print 'Performing auth %r check' % (auth_text,)
 	curl = SimpleCurl(proxy=host, username=name, password=passwd, auth=authTyp)
@@ -57,7 +57,7 @@ def main():
 		'squid/ntlmauth/children=1'])
 		handler_unset(['squid/ntlmauth/keepalive'])
 		subprocess.call(["/etc/init.d/squid3", "restart"])
-		with utu.UCSTestSchool()  as schoolenv:
+		with utu.UCSTestSchool() as schoolenv:
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			stu, studn = schoolenv.create_user(school)
 
@@ -66,7 +66,7 @@ def main():
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 200)
 
 			print "resetting student user password"
-			newpasswd = resetPasswd(host, studn,'student', False) 
+			newpasswd = resetPasswd(host, studn, 'student', False) 
 			utils.wait_for_replication_and_postrun()
 			
 			print "check student auth with the old password"
@@ -84,7 +84,7 @@ def main():
 			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 200)
 
 			print 'resetting teacher user password'
-			newpasswd = resetPasswd(host, teadn,'teacher', False) 
+			newpasswd = resetPasswd(host, teadn, 'teacher', False) 
 			utils.wait_for_replication_and_postrun()
 
 			print 'check teacher auth with the old password'

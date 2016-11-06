@@ -432,7 +432,7 @@ class Instance(SchoolBaseModule):
 			raise UMC_Error('no room selected')
 
 		if request.options.get('reload', False):
-			self._italc.room = self._italc.room # believe me that makes sense :)
+			self._italc.room = self._italc.room  # believe me that makes sense :)
 
 		result = [computer.dict for computer in self._italc.values()]
 		result.sort(key=lambda c: c['id'])
@@ -615,9 +615,9 @@ class Instance(SchoolBaseModule):
 		# find end of lesson
 		period = self._lessons.current
 		if period is None:
-			if self._lessons.next: # between two lessons
+			if self._lessons.next:  # between two lessons
 				period = self._lessons.next.end
-			else: # school is out ... 1 hour should be good (FIXME: configurable?)
+			else:  # school is out ... 1 hour should be good (FIXME: configurable?)
 				period = datetime.datetime.now() + datetime.timedelta(hours=1)
 				period = period.time()
 		else:

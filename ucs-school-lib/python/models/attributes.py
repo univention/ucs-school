@@ -54,7 +54,7 @@ class Attribute(object):
 
 	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False):
 		self.label = label
-		self.aka = aka or [] # also_known_as
+		self.aka = aka or []  # also_known_as
 		self.required = required
 		self.unlikely_to_change = unlikely_to_change
 		self.internal = internal
@@ -200,7 +200,7 @@ class ContainerPath(Attribute):
 	syntax = boolean
 
 class ShareFileServer(Attribute):
-	syntax = UDM_Objects # UCSSchool_Server_DN is not always available. Easy check: DN
+	syntax = UDM_Objects  # UCSSchool_Server_DN is not always available. Easy check: DN
 	extended = True
 
 class Groups(Attribute):
