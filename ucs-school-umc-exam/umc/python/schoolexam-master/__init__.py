@@ -49,10 +49,10 @@ from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, Mul
 
 import univention.admin.uexceptions
 import univention.admin.modules
-univention.admin.modules.update()
 
 from univention.lib.i18n import Translation
 _ = Translation('ucs-school-umc-exam-master').translate
+univention.admin.modules.update()
 
 
 class Instance(SchoolBaseModule):

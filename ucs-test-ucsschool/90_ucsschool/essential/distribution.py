@@ -1,7 +1,6 @@
-"""""""""""""""""""""""""""""""""""""""
-  **Class Distribution**\n
-"""""""""""""""""""""""""""""""""""""""
 """
+  **Class Distribution**\n
+
 .. module:: distribution
 	:platform: Unix
 

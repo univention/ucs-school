@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import grp
+
 from univention.lib.i18n import Translation
 from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.roles import role_teacher, supported_roles
@@ -41,7 +43,6 @@ from univention.admin.filter import conjunction, expression
 from univention.config_registry import ConfigRegistry
 import univention.admin.modules as udm_modules
 udm_modules.update()
-import grp
 
 _ = Translation('ucs-school-umc-roleshares').translate
 

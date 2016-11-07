@@ -4,6 +4,8 @@ import os
 import string
 import subprocess
 import tempfile
+
+import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 from ucsschool.lib.models import SchoolClass as GroupLib
@@ -22,7 +24,6 @@ class ImportGroup(Exception):
 class GroupHookResult(Exception):
 	pass
 
-import univention.config_registry
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 

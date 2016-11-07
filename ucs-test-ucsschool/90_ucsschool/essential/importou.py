@@ -1,26 +1,28 @@
 # -*- coding: utf-8 -*-
 
-import univention.testing.utils as utils
-import univention.testing.strings as uts
-import univention.testing.udm
-import univention.testing.ucr
-import univention.uldap
-import univention.admin.uldap
-from univention.testing.ucsschool import UCSTestSchool
 import os
 import random
 import subprocess
 import string
+
+import univention.testing.utils as utils
+import univention.testing.strings as uts
+import univention.testing.udm
+import univention.testing.ucr
+from univention.testing.ucsschool import UCSTestSchool
+
+import univention.uldap
+import univention.admin.uldap
 import univention.admin.modules
 import univention.admin.filter
-univention.admin.modules.update()
+import univention.config_registry
 from univention.config_registry.interfaces import Interfaces
+
 from ucsschool.lib.models import School, User
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
 
-import univention.config_registry
-
+univention.admin.modules.update()
 add_stream_logger_to_schoollib()
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'

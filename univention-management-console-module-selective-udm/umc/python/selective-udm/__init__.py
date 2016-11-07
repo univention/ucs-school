@@ -43,16 +43,16 @@ import univention.admin.uldap
 import univention.admin.handlers.users.user
 import univention.admin.handlers.computers.windows
 
-univention.admin.modules.update()
-
-# update choices-lists which are defined in LDAP
-univention.admin.syntax.update_choices()
-
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
 from univention.management.console.config import ucr
+
+univention.admin.modules.update()
+
+# update choices-lists which are defined in LDAP
+univention.admin.syntax.update_choices()
 
 _ = Translation('univention-management-console-selective-udm').translate
 

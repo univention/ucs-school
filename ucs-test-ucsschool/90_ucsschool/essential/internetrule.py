@@ -1,8 +1,7 @@
-"""""""""""""""""""""""""""""""""""""""
+"""
   **Class InternetRule**\n
   All the operations related to internet rules
-"""""""""""""""""""""""""""""""""""""""
-"""
+
 .. module:: internetrule
 	:platform: Unix
 

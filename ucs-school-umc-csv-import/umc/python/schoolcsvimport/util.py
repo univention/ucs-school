@@ -42,6 +42,10 @@ from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 from univention.admin.filter import conjunction, expression
 
+import univention.admin.uexceptions as uexceptions
+from univention.admincli import license_check
+import univention.admin.uldap
+
 from ucsschool.lib.models import User, Student, Teacher, Staff, TeachersAndStaff, Attribute
 
 _ = Translation('ucs-school-umc-csv-import').translate
@@ -318,14 +322,8 @@ class CSVStaff(CSVUser, Staff):
 class CSVTeachersAndStaff(CSVUser, TeachersAndStaff):
 	birthday = birthday_attr
 
-# 
+
 # LICENSE CHECK - copied from ad-takeover ###########################
-
-import univention.admin.uexceptions as uexceptions
-from univention.admincli import license_check
-import univention.admin.uldap
-
-
 class LicenseInsufficient(Exception):
 	pass
 

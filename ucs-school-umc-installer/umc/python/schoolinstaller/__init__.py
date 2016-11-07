@@ -64,13 +64,12 @@ from univention.management.console.modules.sanitizers import StringSanitizer, Ch
 import univention.uldap
 import univention.admin.uldap
 import univention.admin.modules as udm_modules
-udm_modules.update()
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
 from univention.lib.i18n import Translation
 
 _ = Translation('ucs-school-umc-installer').translate
-ucr.load()
+udm_modules.update()
 # switch back to default umask
 os.umask(0o022)
 

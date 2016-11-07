@@ -32,17 +32,15 @@
 
 import os
 import sys
+import inspect
+from optparse import OptionParser
 
 import univention.debug as ud
 import univention.config_registry
 import univention.management.console.modules.distribution.util as util
 
-from optparse import OptionParser
-
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
-
-import inspect
 
 
 def debugmsg(component, level, msg):

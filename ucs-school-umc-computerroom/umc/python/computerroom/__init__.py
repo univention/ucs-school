@@ -48,7 +48,6 @@ from ipaddr import IPAddress
 from ldap.filter import filter_format
 
 from univention.management.console.config import ucr
-ucr.load()
 
 from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
