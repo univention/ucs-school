@@ -60,32 +60,32 @@ property_descriptions = {
 			short_description=_('Name'),
 			long_description=_('Name of Console-Helpdesk-Settings-Object'),
 			syntax=univention.admin.syntax.string_numbers_letters_dots,
-			multivalue=0,
+			multivalue=False,
 			options=[],
-			required=1,
-			may_change=0,
-			identifies=1
+			required=True,
+			may_change=False,
+			identifies=True
 	),
 	'description': univention.admin.property(
 			short_description=_('Description'),
 			long_description=_('Description'),
 			syntax=univention.admin.syntax.string,
-			multivalue=0,
+			multivalue=False,
 			options=[],
-			dontsearch=1,
-			required=0,
-			may_change=1,
-			identifies=0,
+			dontsearch=True,
+			required=False,
+			may_change=True,
+			identifies=False,
 	),
 	'category': univention.admin.property(
 			short_description=_('Category'),
 			long_description=_('Helpdesk Category'),
 			syntax=univention.admin.syntax.string,
-			multivalue=1,
+			multivalue=True,
 			options=[],
-			required=0,
-			may_change=1,
-			identifies=0
+			required=False,
+			may_change=True,
+			identifies=False
 	),
 }
 
@@ -131,7 +131,7 @@ class object(univention.admin.handlers.simpleLdap):
 		return [('objectClass', ['top', 'univentionUMCHelpdeskClass'])]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=0, required=0, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
 
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression('objectClass', 'univentionUMCHelpdeskClass')
