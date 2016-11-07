@@ -44,7 +44,6 @@ class BaseWriter(object):
 		:param arg: list
 		:param kwargs: dict
 		"""
-		pass
 
 	def open(self, filename, mode="wb"):
 		"""
@@ -66,7 +65,6 @@ class BaseWriter(object):
 		:param header: object to write as header
 		:return: None
 		"""
-		pass
 
 	def write_footer(self, footer):
 		"""
@@ -76,7 +74,6 @@ class BaseWriter(object):
 		:param footer: object to write as footer
 		:return: None
 		"""
-		pass
 
 	def write_obj(self, obj):
 		"""

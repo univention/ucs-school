@@ -34,7 +34,6 @@
 
 import optparse
 import sys
-import time
 import univention.admin.filter
 import univention.config_registry
 import univention.pyMsChapV2 as pyMsChapV2

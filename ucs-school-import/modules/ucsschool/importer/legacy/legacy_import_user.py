@@ -47,7 +47,6 @@ class LegacyImportUser(ImportUser):
 		Handled in LegacyCsvReader.handle_input(). Overwriting here, so
 		changes in ImportUser do not change behavior of LegacyImportUser.
 		"""
-		pass
 
 	def make_firstname(self):
 		"""

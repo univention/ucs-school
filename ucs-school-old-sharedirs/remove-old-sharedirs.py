@@ -31,9 +31,7 @@
 
 __package__ = ''  # workaround for PEP 366
 import listener
-import re
 import commands
-import sys
 import os
 import time
 import shutil

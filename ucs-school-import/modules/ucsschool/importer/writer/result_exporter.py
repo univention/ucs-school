@@ -50,7 +50,6 @@ class ResultExporter(object):
 		:param arg: list
 		:param kwargs: dict
 		"""
-		pass
 
 	def dump(self, import_handler, filename):
 		"""
@@ -75,7 +74,6 @@ class ResultExporter(object):
 
 		:return: object that can be used by the writer to create a footer
 		"""
-		pass
 
 	def get_header(self):
 		"""
@@ -84,7 +82,6 @@ class ResultExporter(object):
 
 		:return: object that can be used by the writer to create a header
 		"""
-		pass
 
 	def get_iter(self, import_handler):
 		"""
