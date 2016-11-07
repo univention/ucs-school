@@ -83,7 +83,7 @@ def get_computer_class(computer_type):
 	}.get(computer_type, SchoolComputer)
 
 
-def iter_objects_in_request(request):
+def iter_objects_in_request(request, lo):
 	klass = {
 		'schoolwizards/schools': School,
 		'schoolwizards/users': User,
@@ -106,7 +106,13 @@ def iter_objects_in_request(request):
 		if issubclass(klass, SchoolClass):
 			# workaround to be able to reuse this function everywhere
 			obj_props['name'] = '%s-%s' % (obj_props['school'], obj_props['name'])
-		obj = klass(**obj_props)
+		if dn:
+			obj = klass.from_dn(dn, obj_props.get('school'), lo)
+			for key, value in obj_props.iteritems():
+				if key in obj._attributes:
+					setattr(obj, key, value)
+		else:
+			obj = klass(**obj_props)
 		if dn:
 			obj.old_dn = dn
 		yield obj
@@ -169,7 +175,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection()
 	def _get_obj(self, request, ldap_user_read=None):
 		ret = []
-		for obj in iter_objects_in_request(request):
+		for obj in iter_objects_in_request(request, ldap_user_read):
 			MODULE.process('Getting %r' % (obj))
 			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
 			ret.append(obj.to_dict())
@@ -179,7 +185,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _create_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
-		for obj in iter_objects_in_request(request):
+		for obj in iter_objects_in_request(request, ldap_user_write):
 			MODULE.process('Creating %r' % (obj,))
 			obj.validate(ldap_user_read)
 			if obj.errors:
@@ -200,7 +206,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
-		for obj in iter_objects_in_request(request):
+		for obj in iter_objects_in_request(request, ldap_user_write):
 			MODULE.process('Modifying %r' % (obj))
 			obj.validate(ldap_user_read)
 			if obj.errors:
@@ -218,7 +224,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
-		for obj in iter_objects_in_request(request):
+		for obj in iter_objects_in_request(request, ldap_user_write):
 			obj.name = obj.get_name_from_dn(obj.old_dn)
 			MODULE.process('Deleting %r' % (obj))
 			if obj.remove(ldap_user_write):
@@ -252,7 +258,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def delete_user(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
-		for i, obj in enumerate(iter_objects_in_request(request)):
+		for i, obj in enumerate(iter_objects_in_request(request, ldap_user_write)):
 			school = request.options[i]['object']['school']
 			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_write)
 			success = obj.remove_from_school(school, ldap_user_write)
