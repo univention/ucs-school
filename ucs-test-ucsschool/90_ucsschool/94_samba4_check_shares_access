@@ -28,7 +28,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 		self.TestSchool = UCSTestSchool()
 
 	def connect_to_master_sysvol_share(self, username, password,
-									   use_kerberos=False):
+												use_kerberos=False):
 		"""
 		Using 'smbclient' and given credentials executes the 'cmd' to list
 		the sysvol contents on the DC-Master. Tries to use Kerberos if
@@ -36,7 +36,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 		"""
 		domain_name = self.UCR.get('domainname')
 		cmd = ("smbclient", "//" + self.UCR.get('ldap/master') + "/sysvol",
-			   "--user=" + username + "%" + password, "--timeout=120",
+						"--user=" + username + "%" + password, "--timeout=120",
 				"--workgroup=" + domain_name.upper(), "--command=ls")
 
 		if use_kerberos:
@@ -44,27 +44,27 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 			cmd = cmd + ("-k",)
 
 		print("\nTrying to connect to Sysvol on DC-Master and "
-			  "list the contents using Samba client:")
+					"list the contents using Samba client:")
 		print cmd
 
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
 			print("\nThe Samba client produced the following output "
-				  "to STDERR:\n%s" % stderr)
+						"to STDERR:\n%s" % stderr)
 
 		if not stdout.strip():
 			utils.fail("The Samba client did not produce any output to STDOUT,"
-					   " while DC-Master Sysvol contents were expected")
+								" while DC-Master Sysvol contents were expected")
 		print("The Samba client produced the following output to STDOUT:\n%s"
-			  % stdout)
+					% stdout)
 
 		connection_errors = ('NT_STATUS_CONNECTION_REFUSED', 'failed', 'Error')
 		if any(err_string in stdout for err_string in connection_errors):
 			utils.fail("\nThe connection with DC-Master failed. "
-					   "See the stdout.")
+								"See the stdout.")
 		if domain_name not in stdout:
 			utils.fail("The Samba client output of DC-Master Sysvol contents "
-					   "does not include folder with the domain name.")
+								"does not include folder with the domain name.")
 
 	def create_student(self):
 		"""
@@ -74,14 +74,14 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 		student_password = 'Foo3' + random_username(8)
 
 		print("\nCreating a student for the test with a name '%s' "
-			  "and a password '%s'" % (student_name, student_password))
+					"and a password '%s'" % (student_name, student_password))
 
 		student_dn = self.TestSchool.create_user(self.select_school_ou(True),
-												 username=student_name,
-												 password=student_password)[1]
+													username=student_name,
+													password=student_password)[1]
 
 		wait_for_drs_replication("(sAMAccountName=%s)" % escape_dn_chars(student_name),
-								 attrs="objectSid")
+									attrs="objectSid")
 		wait_for_s4connector()
 		return student_name, student_dn, student_password
 

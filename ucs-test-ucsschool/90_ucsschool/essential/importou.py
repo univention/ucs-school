@@ -404,11 +404,11 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	dcslave_module = univention.admin.modules.get("computers/domaincontroller_slave")
 
 	masterobjs = univention.admin.modules.lookup(dcmaster_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-										 filter=univention.admin.filter.expression('cn', dc_name))
+											filter=univention.admin.filter.expression('cn', dc_name))
 	backupobjs = univention.admin.modules.lookup(dcbackup_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-										 filter=univention.admin.filter.expression('cn', dc_name))
+											filter=univention.admin.filter.expression('cn', dc_name))
 	slaveobjs = univention.admin.modules.lookup(dcslave_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-										 filter=univention.admin.filter.expression('cn', dc_name))
+											filter=univention.admin.filter.expression('cn', dc_name))
 
 	# check group membership
 	#  slave should be member

@@ -120,7 +120,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(
 		filenames=ListSanitizer(min_elements=1),
-#		project=StringSanitizer(allow_none=True)
+		# project=StringSanitizer(allow_none=True)
 	)
 	@simple_response
 	def checkfiles(self, project, filenames):

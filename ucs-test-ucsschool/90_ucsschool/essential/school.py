@@ -49,30 +49,28 @@ def create_dc_slave(udm, school=None):
 		name = uts.random_name()
 
 		def dns_forward():
-			return 'zoneName=%s,cn=dns,%s' % (
-					ucr.get('domainname'), ucr.get('ldap/base'))
+			return 'zoneName=%s,cn=dns,%s' % (ucr.get('domainname'), ucr.get('ldap/base'))
 
 		def dns_reverse(ip):
-				return 'zoneName=%s.in-addr.arpa,cn=dns,%s' % (
-						'.'.join(reversed(ip.split('.')[:3])), ucr.get('ldap/base'))
+			return 'zoneName=%s.in-addr.arpa,cn=dns,%s' % ('.'.join(reversed(ip.split('.')[:3])), ucr.get('ldap/base'))
 
 		print 'Creating DC Slave (%s)' % name
 		position = 'cn=dc,cn=computers,%s' % ldap_base
 		if not ucr.is_true('ucsschool/singlemaster', False):
 			position = 'cn=dc,cn=server,cn=computers,ou=%s,%s' % (school, ldap_base)
 		dn = udm.create_object(
-				'computers/domaincontroller_slave',
-				binddn=admin,
-				bindpwd=passwd,
-				position=position,
-				ip=ip,
-				name=name,
-				options=[
-					"samba=True",
-					"kerberos=True",
-					"posix=True",
-					"nagios=False",
-    ]
+			'computers/domaincontroller_slave',
+			binddn=admin,
+			bindpwd=passwd,
+			position=position,
+			ip=ip,
+			name=name,
+			options=[
+				"samba=True",
+				"kerberos=True",
+				"posix=True",
+				"nagios=False",
+			]
 		)
 		if dn:
 			return name, dn
@@ -96,12 +94,7 @@ class School(object):
 
 	# Initialization (Random by default)
 
-	def __init__(self,
-				 display_name=None,
-				 name=None,
-				 dc_name=None,
-				 ucr=None,
-				 umcConnection=None):
+	def __init__(self, display_name=None, name=None, dc_name=None, ucr=None, umcConnection=None):
 		self.class_share_file_server = None
 		self.home_share_file_server = None
 		self.name = name if name else uts.random_string()
@@ -190,7 +183,7 @@ class School(object):
 				k, names))
 
 	def dn(self):
-		 return UCSTestSchool().get_ou_base_dn(self.name)
+		return UCSTestSchool().get_ou_base_dn(self.name)
 
 	def remove(self):
 		"""Remove school"""
@@ -389,11 +382,11 @@ class School(object):
 		dcslave_module = univention.admin.modules.get("computers/domaincontroller_slave")
 
 		masterobjs = univention.admin.modules.lookup(dcmaster_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-											 filter=univention.admin.filter.expression('cn', dc_name))
+												filter=univention.admin.filter.expression('cn', dc_name))
 		backupobjs = univention.admin.modules.lookup(dcbackup_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-											 filter=univention.admin.filter.expression('cn', dc_name))
+												filter=univention.admin.filter.expression('cn', dc_name))
 		slaveobjs = univention.admin.modules.lookup(dcslave_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-											 filter=univention.admin.filter.expression('cn', dc_name))
+												filter=univention.admin.filter.expression('cn', dc_name))
 
 		# check group membership
 		#  slave should be member

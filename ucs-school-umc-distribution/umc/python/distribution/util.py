@@ -174,7 +174,7 @@ class User(_Dict):
 			firstname='',
 			lastname='',
 			dn=''
-                 )
+		)
 
 		# update specified entries
 		if len(args):

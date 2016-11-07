@@ -31,7 +31,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 		self.credentials = []  # for use with 'samba-tool'
 		self.remove_user = ''  # in case user is created, will store username
 		self.fail_pattern = regex_compile("univention_samaccountname_ldap_check:"
-										  ".* is disabled")
+												".* is disabled")
 
 	def delete_samba4_user(self):
 		"""
@@ -39,7 +39,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 		using 'samba-tool'.
 		"""
 		print("\nAttempting to remove a user with a username '%s' "
-			  "using 'samba-tool'" % self.remove_user)
+					"using 'samba-tool'" % self.remove_user)
 
 		cmd = ["samba-tool", "user", "delete", self.remove_user]
 		cmd.extend(self.credentials)
@@ -47,10 +47,10 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
 			print("An error occured during '%s' user deletion: '%s'"
-				  % (self.remove_user, stderr))
+						% (self.remove_user, stderr))
 		if stdout:
 			print("The 'samba-tool' has produced the following output: '%s'"
-				  % stdout.rstrip())
+						% stdout.rstrip())
 
 	def create_samba4_user(self, creation_options):
 		"""
@@ -60,7 +60,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 		"""
 		username = 'ucs_test_school_user_' + random_string(8)
 		print("\nAttempting to create a user with a username '%s' and "
-			  "options: %s" % (username, creation_options))
+					"options: %s" % (username, creation_options))
 
 		cmd = ["samba-tool", "user", "add", username]
 		cmd.extend(creation_options)
@@ -69,21 +69,21 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stdout:
 			print("The 'samba-tool' produced the following output to STDOUT:",
-				  stdout)
+						stdout)
 
 			if bool(search(".*User .* created successfully.*", stdout)):
 				self.remove_user = username
 				utils.fail("The creation of user '%s' succeded, while should "
-						   "be disabled on DC-Slave with Samba4" % username)
+									"be disabled on DC-Slave with Samba4" % username)
 
 		if not stderr.strip():
 			utils.fail("Expecting the user creation to fail, however, the "
-					   "'samba-tool' did not produce any output to STDERR.")
+								"'samba-tool' did not produce any output to STDERR.")
 
 		if not bool(self.fail_pattern.match(stderr)):
 			utils.fail("The 'samba-tool' output produced to STDERR does not "
-					   "match the '%s' pattern. STDERR: '%s'"
-					   % (self.fail_pattern.pattern, stderr))
+								"match the '%s' pattern. STDERR: '%s'"
+								% (self.fail_pattern.pattern, stderr))
 
 	def main(self):
 		"""

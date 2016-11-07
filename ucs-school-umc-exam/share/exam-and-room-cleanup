@@ -242,15 +242,15 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
 	parser.add_option('-n', '--dry-run', dest='dryrun', default=False, action='store_true', help='do not change anything')
 	parser.add_option('-d', '--debug', dest='debug', default=False, action='store_true', help='write additional debug output to logfile')
 	parser.add_option('--skip-exam-shutdown', dest='skip_stop_running_exams', default=False, action='store_true',
-					  help='do not try to shutdown running exams gracefully')
+							help='do not try to shutdown running exams gracefully')
 	parser.add_option('--skip-exam-user-removal', dest='skip_exam_user_removal', default=False, action='store_true',
-					  help='do not remove all existing exam users (only on DC master / DC backup)')
+							help='do not remove all existing exam users (only on DC master / DC backup)')
 	parser.add_option('--skip-ucr-cleanup', dest='skip_remove_ucr_debris', default=False, action='store_true',
-					  help='do not purge exam/room related UCR variables')
+							help='do not purge exam/room related UCR variables')
 	parser.add_option('--skip-exam-cleanup', dest='skip_remove_exam_file_debris', default=False, action='store_true',
-					  help='do not purge exam data/metadata files')
+							help='do not purge exam data/metadata files')
 	parser.add_option('--skip-room-cleanup', dest='skip_remove_room_debris', default=False, action='store_true',
-					  help='do not purge room metadata files')
+							help='do not purge room metadata files')
 	(options, _) = parser.parse_args()
 
 	debug_level = ud.ALL if options.debug else ud.PROCESS

@@ -123,7 +123,8 @@ class User(Person):
 			'object': {
 				'$dn$': self.dn,
 				'school': self.school
-		}}]
+			}
+		}]
 		reqResult = self.umc_connection.request(
 				'schoolwizards/users/get', param, flavor)
 		if not reqResult[0]:

@@ -215,23 +215,21 @@ html5
 			recipients.append(item.dn())
 		print 'recipients=', recipients
 		files = [file_name.decode(encoding).encode('UTF-8') for file_name, encoding in self.files]
-		param = [
-			{
-				'object': {
-					'collectDate': self.collectDate,
-					'collectTime': self.collectTime,
-					'collectType': self.collectType,
-					'description': self.description,
-					'distributeDate': self.distributeDate,
-					'distributeTime': self.distributeTime,
-					'distributeType': self.distributeType,
-					'files': files,
-					'name': self.name,
-					'recipients': recipients
-    },
-				'options': None
-   }
-		]
+		param = [{
+			'object': {
+				'collectDate': self.collectDate,
+				'collectTime': self.collectTime,
+				'collectType': self.collectType,
+				'description': self.description,
+				'distributeDate': self.distributeDate,
+				'distributeTime': self.distributeTime,
+				'distributeType': self.distributeType,
+				'files': files,
+				'name': self.name,
+				'recipients': recipients
+			},
+			'options': None
+		}]
 		print 'param=', param
 		reqResult = self.umcConnection.request(
 			'distribution/add',

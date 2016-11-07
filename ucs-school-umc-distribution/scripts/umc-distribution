@@ -67,28 +67,28 @@ def main():
 
 	parser = OptionParser()
 	parser.add_option('-d', '--debug', action='store', type='int',
-					   dest='debug', default=debug_level,
-					   help='if set, debugging is activated and set to the specified level')
+								dest='debug', default=debug_level,
+								help='if set, debugging is activated and set to the specified level')
 
 #	parser.add_option( '-i', '--init', action = 'store_true',
 #					   dest = 'init', default = False,
 #					   help = 'init specified project' )
 
 	parser.add_option('-c', '--collect', action='store_true',
-					   dest='collect', default=False,
-					   help='collect specified project')
+								dest='collect', default=False,
+								help='collect specified project')
 
 	parser.add_option('-s', '--distribute', action='store_true',
-					   dest='distribute', default=False,
-					   help='distribute specified project')
+								dest='distribute', default=False,
+								help='distribute specified project')
 
 #	parser.add_option( '-f', '--force', action = 'store_true',
 #					   dest = 'force', default = False,
 #					   help = 'force action' )
 
 	parser.add_option('-r', '--remove', action='store_true',
-					   dest='remove', default=False,
-					   help='remove project data')
+								dest='remove', default=False,
+								help='remove project data')
 
 	(options, args) = parser.parse_args()
 

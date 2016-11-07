@@ -102,7 +102,8 @@ class Workgroup(object):
 				'school': self.school,
 				'members': self.members,
 				'description': self.description
-		}}]
+			}
+		}]
 		requestResult = self.umcConnection.request(
 				'schoolgroups/add',
 				param,

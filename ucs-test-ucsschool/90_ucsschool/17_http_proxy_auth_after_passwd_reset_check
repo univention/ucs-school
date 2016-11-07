@@ -22,10 +22,10 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 	print 'Resetting password for (%r)' % (userdn,)
 	newpassword = uts.random_string()
 	options = {
-			'userDN': userdn,
-			'newPassword': newpassword,
-			'nextLogin': nextLogin
-			}
+		'userDN': userdn,
+		'newPassword': newpassword,
+		'nextLogin': nextLogin
+	}
 	connection = UMCConnection(host)
 	account = utils.UCSTestDomainAdminCredentials()
 	admin = account.username
@@ -54,10 +54,11 @@ def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 		handler_set([
-		'squid/basicauth=yes',
-		'squid/basicauth/children=1',
-		'squid/ntlmauth=yes',
-		'squid/ntlmauth/children=1'])
+			'squid/basicauth=yes',
+			'squid/basicauth/children=1',
+			'squid/ntlmauth=yes',
+			'squid/ntlmauth/children=1'
+		])
 		handler_unset(['squid/ntlmauth/keepalive'])
 		subprocess.call(["/etc/init.d/squid3", "restart"])
 		with utu.UCSTestSchool() as schoolenv:

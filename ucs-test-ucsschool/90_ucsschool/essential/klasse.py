@@ -52,12 +52,12 @@ class Klasse(object):
 	"""
 
 	def __init__(self,
-				 school,
-				 umcConnection=None,
-				 ucr=None,
-				 name=None,
-				 users=None,
-				 description=None):
+					school,
+					umcConnection=None,
+					ucr=None,
+					name=None,
+					users=None,
+					description=None):
 		self.school = school
 		self.users = users or []
 		self.name = name if name else uts.random_string()

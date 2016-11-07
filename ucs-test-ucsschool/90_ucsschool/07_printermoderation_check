@@ -42,8 +42,8 @@ def orderPrint(printer, userName, _file):
 	cmds = [
 		['lpr', '-P', printer, '-U', userName, _file],
 		["smbclient", "//%s/%s" % (master, printer), "-d3", "-U",
-			   "%s%%%s" % (userName, "univention"), "-c",
-			   "print %s" % _file]
+						"%s%%%s" % (userName, "univention"), "-c",
+						"print %s" % _file]
 	]
 	# cmd = ['smbclient', "-N", "-L", "//%s/%s" % (master, printer)]
 	for cmd in cmds:
@@ -81,7 +81,7 @@ def doPrinter(operation, printer_name, school, spool_host, domainname):
 	print_server = '%s.%s' % (spool_host, domainname)
 	f = tempfile.NamedTemporaryFile(suffix='.csv')
 	line = '%s\t%s\t%s\t%s\t%s\n' % (operation, school, print_server,
-									 printer_name, uri)
+										printer_name, uri)
 	f.write(line)
 	f.flush()
 	cmd = ['/usr/share/ucs-school-import/scripts/import_printer', f.name]
@@ -114,17 +114,17 @@ def queryPrintJobs(
 	else:
 		cdn = cName
 	param = {'school': school,
-			 'class': cdn,
-			 'pattern': pattern
-			 }
+				'class': cdn,
+				'pattern': pattern
+				}
 	return connection.request('printermoderation/query', param)
 
 
 # delete a specific printjob
 def delPrintJob(connection, userName, printJob):
 	param = {'username': userName,
-			 'printjob': printJob
-			 }
+				'printjob': printJob
+				}
 	if not connection.request('printermoderation/delete', param):
 		utils.fail('Could not delete print jobs')
 
@@ -144,8 +144,8 @@ def checkPrintJobs(printJobs):
 # download print jobs
 def downloadPrintJobs(connection, userName, printJob):
 	param = {'username': userName,
-			 'printjob': os.path.basename(printJob)
-			 }
+				'printjob': os.path.basename(printJob)
+				}
 	try:
 		connection.request('printermoderation/download', param)
 	except Exception as e:
@@ -170,9 +170,9 @@ def acceptprint(
 	printJob = printJobPath.split('/')[-1]
 	printerURI = '%s.%s://%s' % (spoolHost, domainname, printerName)
 	param = {'username': userName,
-			 'printjob': printJob,
-			 'printer': printerURI
-			 }
+				'printjob': printJob,
+				'printer': printerURI
+				}
 	reqResult = connection.request('printermoderation/print', param)
 	print 'reqResult = ', reqResult
 	if not reqResult:

@@ -194,12 +194,12 @@ class UCSTestSchool(object):
 		print '*** Purging OU %s and related objects' % ou_name
 		# remove OU specific groups
 		for grpdn in ('cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
-					  'cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
-					  'cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s',
-					  'cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
-					  'cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
-					  'cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s',
-					  ):
+							'cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+							'cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s',
+							'cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+							'cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+							'cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s',
+							):
 			grpdn = grpdn % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
 			self._remove_udm_object('groups/group', grpdn)
 
@@ -214,7 +214,7 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 
 	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None,
-				  use_cli=False, wait_for_replication=True):
+						use_cli=False, wait_for_replication=True):
 		"""
 		Creates a new OU with random or specified name. The function may also set a specified
 		displayName. If "displayName" is None, a random displayName will be set. If "displayName"

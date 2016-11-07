@@ -37,4 +37,4 @@ def main():
 	return returnValue
 
 if __name__ == '__main__':
-		sys.exit(main())
+	sys.exit(main())

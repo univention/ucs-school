@@ -120,11 +120,11 @@ class Test():
 			testing_utils.fail(log_message="Error accessing LDAP: %s" % (e,))
 
 		for (record_dn, obj) in res:
-				if 'associatedDomain' in obj:
-					domainname = obj['associatedDomain'][0]
-				else:
-					domainname = ucr['domainname']
-				negative_test_fqdn_list.append(".".join((obj['cn'][0], domainname)))
+			if 'associatedDomain' in obj:
+				domainname = obj['associatedDomain'][0]
+			else:
+				domainname = ucr['domainname']
+			negative_test_fqdn_list.append(".".join((obj['cn'][0], domainname)))
 
 		with testing_udm.UCSTestUDM() as udm:
 			for school in School.get_all(ldap_machine_read):

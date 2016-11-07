@@ -273,7 +273,7 @@ def list(filterName=None, userRule=False):
 
 
 def getGroupRuleName(groupNames):
-	'''Return the name of the filter rule for the specified group name. 
+	'''Return the name of the filter rule for the specified group name.
 	Usage:
 		getGroupRuleName([<groupName>, ...]) -> { <groupName>:<ruleName>, ... }
 	or

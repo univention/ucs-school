@@ -427,7 +427,7 @@ class Room(object):
 				t += 60
 				rule, printMode, shareMode = next(settings)
 				print
-				print '***', i, '-(internetRule, printMode, shareMode) = (',\
+				print '***', i, '-(internetRule, printMode, shareMode) = (', \
 					rule, ',', printMode, ',', shareMode, ')', '-' * 10
 				new_settings = {
 					'customRule': white_page,
@@ -495,7 +495,7 @@ class Room(object):
 				t += 60
 				rule, printMode, shareMode = next(settings)
 				print
-				print '***', i, '-(internetRule, printMode, shareMode) = (',\
+				print '***', i, '-(internetRule, printMode, shareMode) = (', \
 					rule, ',', printMode, ',', shareMode, ')', '-' * 10
 				new_settings = {
 					'customRule': white_page,
@@ -615,7 +615,7 @@ class Room(object):
 
 		# check atjobs
 		partial_new_settings = {
-      #			'period': period,
+		    #			'period': period,
 			'printMode': printMode,
 			'shareMode': shareMode,
 			'internetRule': internetRule

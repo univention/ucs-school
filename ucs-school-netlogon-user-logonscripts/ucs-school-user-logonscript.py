@@ -83,16 +83,16 @@ def getScriptPath():
 		scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
 
 	for path in scriptpath:
-			listener.setuid(0)
-			try:
-				if not os.path.isdir(path):
-					os.makedirs(path)
+		listener.setuid(0)
+		try:
+			if not os.path.isdir(path):
+				os.makedirs(path)
 
 				# copy the umc icon to the netlogon share, maybe there is a better way? ...
-				if not os.path.isfile(os.path.join(path, "univention-management-console.ico")):
-					shutil.copy("/usr/share/ucs-school-netlogon-user-logonscripts/univention-management-console.ico", path)
-			finally:
-				listener.unsetuid()
+			if not os.path.isfile(os.path.join(path, "univention-management-console.ico")):
+				shutil.copy("/usr/share/ucs-school-netlogon-user-logonscripts/univention-management-console.ico", path)
+		finally:
+			listener.unsetuid()
 
 
 def getCommandOutput(command):
@@ -192,7 +192,7 @@ def writeMacLinkScripts(uid, homepath, links):
 				os.chmod(macscriptfile, 0o700)
 				os.chown(macscriptfile, uidnumber, gidnumber)
 	finally:
-			listener.unsetuid()
+		listener.unsetuid()
 
 
 def generateWindowsLinkScript(desktopfolder, links, mappings, dn):

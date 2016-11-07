@@ -69,7 +69,7 @@ def test_ruleset(ucr, test_settings):
 		expected_strings = [
 			'\ndest blacklist-%s {\ndomainlist blacklisted-domain-%s\nurllist blacklisted-url-%s' % (quote(rule), quote(rule), quote(rule)),
 			'\ndest whitelist-%s {\ndomainlist whitelisted-domain-%s\nurllist whitelisted-url-%s' % (quote(rule), quote(rule), quote(rule)),
-			]
+		]
 
 		if ucr.is_true('proxy/filter/global/blacklists/forced'):
 			expected_strings.append('\nroom-%s {\npass !global-blacklist whitelist-%s none' % (quote(room), quote(rule)))
@@ -82,11 +82,11 @@ def test_ruleset(ucr, test_settings):
 
 		for line in expected_strings:
 			if not line in content:
-#				print '---[expected strings]----------------------------------------------------------'
-#				print expected_strings
-#				print '---[/etc/squidguard/squidGuard.conf]------------------------------------------------'
-#				print content
-#				print '-------------------------------------------------------------------------------'
+				# print '---[expected strings]----------------------------------------------------------'
+				# print expected_strings
+				# print '---[/etc/squidguard/squidGuard.conf]------------------------------------------------'
+				# print content
+				# print '-------------------------------------------------------------------------------'
 				utils.fail('Cannot find string %r in squidGuard.conf' % line)
 
 
