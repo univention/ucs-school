@@ -51,13 +51,7 @@ class Klasse(object):
 	:type description: str
 	"""
 
-	def __init__(self,
-					school,
-					umcConnection=None,
-					ucr=None,
-					name=None,
-					users=None,
-					description=None):
+	def __init__(self, school, umcConnection=None, ucr=None, name=None, users=None, description=None):
 		self.school = school
 		self.users = users or []
 		self.name = name if name else uts.random_string()
@@ -157,7 +151,8 @@ class Klasse(object):
 			return reqResult[0]
 
 	def check_get(self):
-		info = {'$dn$': self.dn(),
+		info = {
+			'$dn$': self.dn(),
 			'school': self.school,
 			'description': self.description,
 			'name': self.name,

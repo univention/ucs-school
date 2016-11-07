@@ -42,8 +42,7 @@ class UserImportCsvResultExporter(ResultExporter):
 	"""
 	Export the results of the user import to a CSV file.
 	"""
-	field_names = ("line", "success", "error", "action", "role", "username", "schools", "firstname", "lastname",
-		"birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg")
+	field_names = ("line", "success", "error", "action", "role", "username", "schools", "firstname", "lastname", "birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg")
 
 	def __init__(self, *arg, **kwargs):
 		"""

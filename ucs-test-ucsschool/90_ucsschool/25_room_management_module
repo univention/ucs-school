@@ -30,11 +30,7 @@ def main():
 
 			room.check_query([room.name])
 
-			new_attrs = {
-					'name': 'new_name',
-					'description': 'new_description',
-					'computers': [computers_dns[1]]
-					}
+			new_attrs = {'name': 'new_name', 'description': 'new_description', 'computers': [computers_dns[1]]}
 			room.check_put(new_attrs)
 
 			# Test creating new room with the same name

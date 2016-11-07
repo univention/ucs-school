@@ -345,9 +345,7 @@ class ucsschool_person_modify:
 		default_groups.append("cn=Domain Users " + self.sNr + ",cn=groups,%s" % (getDN(self.sNr), ))
 
 		for role in self.getRole():
-			user_grp_prefix = {role_teacher: grp_prefix_teachers,
-											role_pupil: grp_prefix_pupils,
-											role_staff: grp_prefix_staff}[role]
+			user_grp_prefix = {role_teacher: grp_prefix_teachers, role_pupil: grp_prefix_pupils, role_staff: grp_prefix_staff}[role]
 			if role == role_staff and not configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
 				continue
 			# class if available
@@ -455,8 +453,10 @@ def create_policy(cn, container, values, policy_module):
 	exists = False
 	verify_containers(container, cn_module, co, lo, superordinate, baseDN, path='policyPath')
 
-	objlist = univention.admin.modules.lookup(policy_module, co, lo, scope='one', superordinate=superordinate,
-													base=container, filter=univention.admin.filter.expression('cn', cn))
+	objlist = univention.admin.modules.lookup(
+		policy_module, co, lo, scope='one', superordinate=superordinate,
+		base=container, filter=univention.admin.filter.expression('cn', cn)
+	)
 	exists = bool(objlist)
 	if not objlist:
 		cnpos = univention.admin.uldap.position(baseDN)
@@ -510,16 +510,17 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 
 	print "verify ou for school nr %s" % schoolNr
 	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
-	container = {'0printerPath': ['cn=printers'],
-						'1userPath': ['cn=users', 'cn=%s,cn=users' % cn_pupils, 'cn=%s,cn=users' % cn_teachers, 'cn=%s,cn=users' % cn_admins],
-						'2computerPath': ['cn=computers', 'cn=server,cn=computers', 'cn=dc,cn=server,cn=computers'],
-						'3networkPath': ['cn=networks'],
-						'4groupPath': ['cn=groups', 'cn=%s,cn=groups' % cn_pupils, 'cn=%s,cn=groups' % cn_teachers, 'cn=klassen,cn=%s,cn=groups' % cn_pupils, 'cn=raeume,cn=groups'],
-						'5dhcpPath': ['cn=dhcp'],
-						'6policyPath': ['cn=policies'],
-						'7sharePath': ['cn=shares', 'cn=klassen,cn=shares'],
-						'8none': ['cn=dc,cn=server,cn=computers']
-						}
+	container = {
+		'0printerPath': ['cn=printers'],
+		'1userPath': ['cn=users', 'cn=%s,cn=users' % cn_pupils, 'cn=%s,cn=users' % cn_teachers, 'cn=%s,cn=users' % cn_admins],
+		'2computerPath': ['cn=computers', 'cn=server,cn=computers', 'cn=dc,cn=server,cn=computers'],
+		'3networkPath': ['cn=networks'],
+		'4groupPath': ['cn=groups', 'cn=%s,cn=groups' % cn_pupils, 'cn=%s,cn=groups' % cn_teachers, 'cn=klassen,cn=%s,cn=groups' % cn_pupils, 'cn=raeume,cn=groups'],
+		'5dhcpPath': ['cn=dhcp'],
+		'6policyPath': ['cn=policies'],
+		'7sharePath': ['cn=shares', 'cn=klassen,cn=shares'],
+		'8none': ['cn=dc,cn=server,cn=computers']
+	}
 	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
 		container['1userPath'].extend(['cn=%s,cn=users' % cn_staff, 'cn=%s,cn=users' % cn_teachers_staff])
 		container['4groupPath'].append('cn=%s,cn=groups' % cn_staff)
@@ -616,11 +617,12 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			# use found dn
 			ShareFileServer = objects[0]
 
-		r = lo.modify(dn, [('objectClass', '', 'ucsschoolOrganizationalUnit'),
-							('ucsschoolClassShareFileServer', '', ShareFileServer),  # set file server for class shares
-							('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
-							('displayName', '', displayName),                       # set display name for UCS@school
-							])
+		r = lo.modify(dn, [
+			('objectClass', '', 'ucsschoolOrganizationalUnit'),
+			('ucsschoolClassShareFileServer', '', ShareFileServer),  # set file server for class shares
+			('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
+			('displayName', '', displayName),                       # set display name for UCS@school
+		])
 	else:
 		if ShareFileServer is not None:
 			print "WARNING: sharefileserver ignored because OU already exists!"
@@ -638,15 +640,14 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 
 	# create groups if not existant
 	grp_ouadmins = "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower(), baseDN)
-	groups = [(grp_ouadmins, grp_policy_admins),
-				("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)), grp_policy_pupils),
-				("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)), grp_policy_teachers),
-			]
+	groups = [
+		(grp_ouadmins, grp_policy_admins),
+		("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)), grp_policy_pupils),
+		("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)), grp_policy_teachers),
+	]
 
 	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
-		groups.append(
-				("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)), grp_policy_staff),
-				)
+		groups.append(("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)), grp_policy_staff), )
 	if configRegistry.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 		domain_users_school = "cn=Domain Users %s,cn=groups,%s" % (schoolNr.lower(), getDN(schoolNr))
 		groups.append((domain_users_school, "cn=default-umc-users,cn=UMC,cn=policies,%s" % (baseDN,)))
@@ -683,8 +684,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			else:
 				dccn = 'dc%s-01' % schoolNr.lower()
 
-		dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN),
-					"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
+		dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN), "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
 
 		if dc == 'verwaltung':
 			if not configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
@@ -696,12 +696,16 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					dccn = configRegistry.get('hostname')
 				else:
 					dccn = 'dc%sv-01' % schoolNr.lower()  # this is the naming convention, a trailing v for Verwaltungsnetz DCs
-			dcgroups = ["cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN),
-					"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
+			dcgroups = [
+				"cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN),
+				"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )
+			]
 
 		# create server if not exsistant
-		objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-														filter=univention.admin.filter.expression('cn', dccn))
+		objects = univention.admin.modules.lookup(
+			computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+			filter=univention.admin.filter.expression('cn', dccn)
+		)
 
 		# * check if computer exists
 		# * if computer is exists, test the following things
@@ -732,14 +736,20 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 
 		if server_exists:
 			# check if existing system is a DC master or DC backup
-			masterobjs = univention.admin.modules.lookup(dcmaster_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-															filter=univention.admin.filter.expression('cn', dccn))
-			backupobjs = univention.admin.modules.lookup(dcbackup_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-															filter=univention.admin.filter.expression('cn', dccn))
+			masterobjs = univention.admin.modules.lookup(
+				dcmaster_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+				filter=univention.admin.filter.expression('cn', dccn)
+			)
+			backupobjs = univention.admin.modules.lookup(
+				dcbackup_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+				filter=univention.admin.filter.expression('cn', dccn)
+			)
 			is_master_or_backup = (masterobjs or backupobjs)
 			# check if existing system is a DC slave
-			slaveobjs = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-															filter=univention.admin.filter.expression('cn', dccn))
+			slaveobjs = univention.admin.modules.lookup(
+				server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+				filter=univention.admin.filter.expression('cn', dccn)
+			)
 			is_slave = len(slaveobjs) > 0
 
 			if dcName:
@@ -847,8 +857,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			interfaces = []
 			for interface_name in set([key.split('/')[1] for key in configRegistry.keys() if key.startswith('interfaces/eth')]):
 				try:
-					address = ipaddr.IPv4Network('%s/%s' % (configRegistry['interfaces/%s/address' % interface_name],
-					                                        configRegistry['interfaces/%s/netmask' % interface_name], ))
+					address = ipaddr.IPv4Network('%s/%s' % (
+						configRegistry['interfaces/%s/address' % interface_name],
+						configRegistry['interfaces/%s/netmask' % interface_name],
+					))
 					interfaces.append(address)
 				except ValueError, error:
 					print "Skipping invalid interface %s:\n%s" % (interface_name, error, )
@@ -1106,8 +1118,10 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 	type = position_dn[0:string.find(position_dn, "=")]
 	name = position_dn[string.find(position_dn, "=") + 1:string.find(position_dn, ",")]
 	position = position_dn[string.find(position_dn, ",") + 1:]
-	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, base=position,
-													filter=univention.admin.filter.expression(type, name))
+	objects = univention.admin.modules.lookup(
+		module, co, lo, scope='sub', superordinate=superordinate, base=position,
+		filter=univention.admin.filter.expression(type, name)
+	)
 	if objects:
 		for object in objects:
 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower() == position_dn.lower():
@@ -1218,8 +1232,10 @@ def verify_group(position_dn, co, lo, superordinate, base):
 		else:
 			print "WARNING: unknown container type", container_position
 
-	objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=position,
-													filter=univention.admin.filter.expression(type, name))
+	objects = univention.admin.modules.lookup(
+		group_module, co, lo, scope='sub', superordinate=superordinate, base=position,
+		filter=univention.admin.filter.expression(type, name)
+	)
 	if objects:
 		for object in objects:
 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower() == position_dn.lower():
@@ -1333,9 +1349,11 @@ def modify_user(person, module, co, lo):
 			# if ( ( ( parts[0].startswith( 'cn=%s' % grp_prefix_pupils) or parts[0].startswith( 'cn=%s' % grp_prefix_pupils) ) and parts[1] == 'cn=groups' and parts[2].startswith('ou=') ) or
 			# 	 ( parts[1] == 'cn=klassen' and parts[2] == 'cn=%s' % cn_pupils and parts[3] == 'cn=groups' and parts[4].startswith('ou=') ) ):
 
-			if (parts[0].startswith('cn=%s' % grp_prefix_pupils) or
-					parts[0].startswith('cn=%s' % grp_prefix_teachers) or
-					(parts[1] == 'cn=klassen' and parts[2] == 'cn=%s' % cn_pupils)):
+			if (
+				parts[0].startswith('cn=%s' % grp_prefix_pupils) or
+				parts[0].startswith('cn=%s' % grp_prefix_teachers) or
+				(parts[1] == 'cn=klassen' and parts[2] == 'cn=%s' % cn_pupils)
+			):
 				# group looks like a default group, so we don't need it anymore
 				print "remove from group: %s" % group
 				remove_groups.append(group)
@@ -1448,8 +1466,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	more_instances = 1
 	container_position = baseDN
 	while more_instances:
-		container_position = person.getPosition_dn()[string.rfind(person.getPosition_dn(), ",", 0,
-																	len(person.getPosition_dn()) - len(container_position) - 1) + 1:]
+		container_position = person.getPosition_dn()[string.rfind(person.getPosition_dn(), ",", 0, len(person.getPosition_dn()) - len(container_position) - 1) + 1:]
 		if container_position == person.getPosition_dn():
 			more_instances = 0
 		if container_position[:2] == "cn":
@@ -1512,7 +1529,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 			print "created:", person.getDN()
 			if OUTFILE:
 				OUTFILE.write("%s\t%s\t%s" % (person.login, password, line))
-		except CreateObjectError, e:
+		except CreateObjectError:
 			success = False
 			print "ERROR: there were problems creating this user:", person.getDN()
 			person.problem_hints += "ERROR: there were problems creating this user: " + person.getDN() + "\n"
@@ -1608,9 +1625,10 @@ def import_user():
 			elif main_person.modtype in ["M", "D"]:
 				# look if there are existing persons in other ou's remaining, this will fail if the users's departmentNumbers
 				# are changed manually
-				filter = univention.admin.filter.conjunction(
-					"|", [univention.admin.filter.expression('uid', "%s_*" % main_person.login),
-					univention.admin.filter.expression('uid', "%s" % main_person.login)])
+				filter = univention.admin.filter.conjunction("|", [
+					univention.admin.filter.expression('uid', "%s_*" % main_person.login),
+					univention.admin.filter.expression('uid', "%s" % main_person.login)
+				])
 				objects = univention.admin.modules.lookup(
 					user_module, co, lo, scope='sub', superordinate=superordinate,
 					base=baseDN, filter=filter)
@@ -1959,15 +1977,12 @@ def import_networks(router_only=False):
 					print "ERROR: %s is not a valid ip address" % e
 					continue
 				iprange = (iprangeStart, iprangeEnd)
-				if iprange[0] < network.network + 1 \
-						or iprange[0] > iprange[1] \
-						or iprange[1] >= network.broadcast:
+				if iprange[0] < network.network + 1 or iprange[0] > iprange[1] or iprange[1] >= network.broadcast:
 					print line.strip()
 					print 'ERROR: IP host range not valid: %s-%s' % (iprange[0], iprange[1])
 					continue
 			elif network.prefixlen == 24:
-				iprange = (network.network + 20,
-									network.network + 250)
+				iprange = (network.network + 20, network.network + 250)
 
 			if defaultrouter:
 				try:
@@ -2089,8 +2104,10 @@ def set_policy_for_dhcp_subnet(network, schoolNr, policy_module, policy_dn, cn, 
 
 	# check if routing policy needs to be created
 	so = "cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr))
-	objects = univention.admin.modules.lookup(dhcp_subnet_module, co, lo, scope='sub', superordinate=so,
-			base=baseDN, filter=univention.admin.filter.expression('cn', str(network.network)))
+	objects = univention.admin.modules.lookup(
+		dhcp_subnet_module, co, lo, scope='sub', superordinate=so,
+		base=baseDN, filter=univention.admin.filter.expression('cn', str(network.network))
+	)
 	dhcp_subnet_object = None
 	subnet = "cn=%s,cn=%s,cn=dhcp,%s" % (str(network.network), schoolNr.lower(), getDN(schoolNr))
 	if objects:
@@ -2101,8 +2118,10 @@ def set_policy_for_dhcp_subnet(network, schoolNr, policy_module, policy_dn, cn, 
 		print "ERROR: Unable to set policy for dhcp subnet because it does not exist: %s" % subnet
 		return (False, dn)
 
-	objects = univention.admin.modules.lookup(policy_module, co, lo, scope='sub', superordinate=superordinate,
-			base=baseDN, filter=univention.admin.filter.expression('cn', cn))
+	objects = univention.admin.modules.lookup(
+		policy_module, co, lo, scope='sub', superordinate=superordinate,
+		base=baseDN, filter=univention.admin.filter.expression('cn', cn)
+	)
 	policy_object = None
 	if objects:
 		for o in objects:
@@ -2162,10 +2181,7 @@ def set_netbiosserver_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 
 	The Netbios node type is set to 8 H-node: Hybrid - WINS, then broadcast
 	"""
-	values = {
-			'name': '%s-%s' % (schoolNr.lower(), network.network),
-			'netbios_node_type': '8',
-			'netbios_name_servers': str(ip)}
+	values = {'name': '%s-%s' % (schoolNr.lower(), network.network), 'netbios_node_type': '8', 'netbios_name_servers': str(ip)}
 	dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (values['name'], getDN(schoolNr))
 	return set_policy_for_dhcp_subnet(network, schoolNr, policy_dhcp_netbios_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
@@ -2175,10 +2191,7 @@ def set_nameserver_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 	@param	ip	ipaddr object for the netbios server
 	@param	schoolNr	school number
 	"""
-	values = {
-			'name': '%s-%s' % (schoolNr.lower(), network.network),
-			'domain_name': domainname,
-			'domain_name_servers': str(ip)}
+	values = {'name': '%s-%s' % (schoolNr.lower(), network.network), 'domain_name': domainname, 'domain_name_servers': str(ip)}
 	dn = "cn=%s,cn=dns,cn=dhcp,cn=policies,%s" % (values['name'], getDN(schoolNr))
 	return set_policy_for_dhcp_subnet(network, schoolNr, policy_dhcp_dns_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
@@ -2188,9 +2201,7 @@ def set_router_for_subnet(network, ip, schoolNr, overwrite_policy=False):
 	@param	ip	ipaddr object for the router
 	@param	schoolNr	school number
 	"""
-	values = {
-			'name': '%s-%s' % (schoolNr.lower(), network.network),
-			'routers': str(ip)}
+	values = {'name': '%s-%s' % (schoolNr.lower(), network.network), 'routers': str(ip)}
 	dn = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s" % (values['name'], getDN(schoolNr))
 	return set_policy_for_dhcp_subnet(network, schoolNr, policy_dhcp_routing_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
@@ -2566,8 +2577,6 @@ def activate_groupmembers():
 	else:
 		disabled = "none"
 
-	# 
-
 	with stopped_notifier():
 		# outfile = os.path.basename(actgrp+'.csv')
 		outfile = "/var/lib/ucs-school-import/activate-grp-%s-%s.csv" % (time.strftime("%Y%m%d-%H%M%S"), actgrp)
@@ -2578,8 +2587,10 @@ def activate_groupmembers():
 		outf = open(outfile, 'w')
 
 		# get group
-		objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-														filter=univention.admin.filter.expression('cn', actgrp))
+		objects = univention.admin.modules.lookup(
+			group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+			filter=univention.admin.filter.expression('cn', actgrp)
+		)
 		out_line = ('%%s%(sep)s' * 8 + '\n') % {'sep': sepchar}
 		for grp in objects:
 
@@ -2589,8 +2600,10 @@ def activate_groupmembers():
 				for memberdn in grpmembers:
 
 					membergrplist = ""
-					grpobjlist = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-																	filter=univention.admin.filter.expression('uniqueMember', memberdn))
+					grpobjlist = univention.admin.modules.lookup(
+						group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+						filter=univention.admin.filter.expression('uniqueMember', memberdn)
+					)
 					for grpobj in grpobjlist:
 						if grpobj.dn != grp.dn:
 							if len(membergrplist):
@@ -2715,17 +2728,14 @@ def set_ou_sharefileserver():
 	with stopped_notifier():
 		r = lo.get(getDN(ouname), ['objectClass'])
 		if 'ucsschoolOrganizationalUnit' not in r['objectClass']:
-			r = lo.modify(getDN(ouname), [('objectClass', '', 'ucsschoolOrganizationalUnit'),
-										('ucsschoolClassShareFileServer', '', ShareFileServer)
-										])
+			r = lo.modify(getDN(ouname), [('objectClass', '', 'ucsschoolOrganizationalUnit'), ('ucsschoolClassShareFileServer', '', ShareFileServer)])
 		else:
 			r = lo.get(getDN(ouname), ['ucsschoolClassShareFileServer'])
 			if r:
 				r = r['ucsschoolClassShareFileServer'][0]
 			else:
 				r = ''
-			r = lo.modify(getDN(ouname), [('ucsschoolClassShareFileServer', r, ShareFileServer)
-										])
+			r = lo.modify(getDN(ouname), [('ucsschoolClassShareFileServer', r, ShareFileServer)])
 	sys.exit(0)
 
 
@@ -2914,12 +2924,12 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 	ouDn = oulist[0].dn
 
 	group_filter = univention.admin.filter.conjunction('&', [
-			univention.admin.filter.conjunction('|', [
-					univention.admin.filter.expression('cn', 'OU%s-DC-Edukativnetz' % options.ou),
-					univention.admin.filter.expression('cn', 'OU%s-DC-Verwaltungsnetz' % options.ou),
-					]),
-			univention.admin.filter.expression('uniqueMember', slave.dn),
-			])
+		univention.admin.filter.conjunction('|', [
+			univention.admin.filter.expression('cn', 'OU%s-DC-Edukativnetz' % options.ou),
+			univention.admin.filter.expression('cn', 'OU%s-DC-Verwaltungsnetz' % options.ou),
+		]),
+		univention.admin.filter.expression('uniqueMember', slave.dn),
+	])
 	groups = univention.admin.modules.lookup(group_module, co, lo, scope='sub', base=baseDN, filter=group_filter)
 	if not groups:
 		print 'ERROR: cannot move domaincontroller slave with hostname "%s" to OU "%s"' % (options.dcname, options.ou)
@@ -3009,27 +3019,36 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		sys.exit(1)
 
 	# verify if OU already exists - abort otherwise
-	ou_objects = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-													filter=univention.admin.filter.expression('ou', ou_name))
+	ou_objects = univention.admin.modules.lookup(
+		ou_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+		filter=univention.admin.filter.expression('ou', ou_name)
+	)
 	if not ou_objects:
 		print 'ERROR: specified OU %r does not exist' % ou_name
 		sys.exit(1)
 
 	# get list of desired group memberships
-	group_dn_list = {TYPE_DC_ADMINISTRATIVE: ['cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou_name.lower(), baseDN),
-													'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (baseDN,),
-													],
-							TYPE_DC_EDUCATIONAL: ['cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (baseDN,),
-												'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou_name.lower(), baseDN),
-												],
-							}[dc_type]
+	group_dn_list = {
+		TYPE_DC_ADMINISTRATIVE: [
+			'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou_name.lower(), baseDN),
+			'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (baseDN,),
+		],
+		TYPE_DC_EDUCATIONAL: [
+			'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (baseDN,),
+			'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou_name.lower(), baseDN),
+		],
+	}[dc_type]
 	for grpdn in group_dn_list:
 		verify_group(grpdn, co, lo, superordinate, baseDN)
 
-	host_objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-															filter=univention.admin.filter.expression('cn', dc_name))
-	slave_objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-													filter=univention.admin.filter.expression('cn', dc_name))
+	host_objects = univention.admin.modules.lookup(
+		computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+		filter=univention.admin.filter.expression('cn', dc_name)
+	)
+	slave_objects = univention.admin.modules.lookup(
+		server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+		filter=univention.admin.filter.expression('cn', dc_name)
+	)
 	if host_objects and not slave_objects:
 		print 'ERROR: given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.' % dc_name
 		sys.exit(1)
@@ -3114,25 +3133,25 @@ setting_module = univention.admin.modules.get("settings/default")
 maildomain_module = univention.admin.modules.get("mail/domain")
 
 for m in (
-		user_module,
-		group_module,
-		cn_module,
-		ou_module,
-		server_module,
-		share_module,
-		printer_module,
-		computer_module,
-		dhcp_server_module,
-		dhcp_service_module,
-		dhcp_subnet_module,
-		dns_reverse_zone_module,
-		network_module,
-		policy_dhcp_routing_module,
-		policy_dhcp_netbios_module,
-		policy_dhcp_dns_module,
-		setting_module,
-		maildomain_module,
-		):
+	user_module,
+	group_module,
+	cn_module,
+	ou_module,
+	server_module,
+	share_module,
+	printer_module,
+	computer_module,
+	dhcp_server_module,
+	dhcp_service_module,
+	dhcp_subnet_module,
+	dns_reverse_zone_module,
+	network_module,
+	policy_dhcp_routing_module,
+	policy_dhcp_netbios_module,
+	policy_dhcp_dns_module,
+	setting_module,
+	maildomain_module,
+):
 	univention.admin.modules.init(lo, position, m)
 
 # get mail domains

@@ -534,7 +534,8 @@ class Instance(Base):
 			MODULE.warn('Could not query the LDAP base of the master system %s: %s' % (master, exc))
 			return {'success': False, 'error': str(exc)}
 
-		values = {'exists': False,
+		values = {
+			'exists': False,
 			'school': schoolOU,
 			'classShareServer': None,
 			'homeShareServer': None,
@@ -816,10 +817,7 @@ class Instance(Base):
 				progress_state.error_handler(_('An unexpected error occurred during installation: %s') % result)
 
 		# launch thread
-		thread = notifier.threads.Simple('ucsschool-install',
-			notifier.Callback(_thread, self, installPackages),
-			notifier.Callback(_finished)
-		)
+		thread = notifier.threads.Simple('ucsschool-install', notifier.Callback(_thread, self, installPackages), notifier.Callback(_finished))
 		thread.run()
 
 		# finish request

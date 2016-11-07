@@ -193,13 +193,14 @@ class UCSTestSchool(object):
 		print ''
 		print '*** Purging OU %s and related objects' % ou_name
 		# remove OU specific groups
-		for grpdn in ('cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
-							'cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
-							'cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s',
-							'cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
-							'cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
-							'cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s',
-							):
+		for grpdn in (
+			'cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s',
+		):
 			grpdn = grpdn % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
 			self._remove_udm_object('groups/group', grpdn)
 
@@ -213,8 +214,7 @@ class UCSTestSchool(object):
 		if wait_for_replication:
 			utils.wait_for_replication()
 
-	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None,
-						use_cli=False, wait_for_replication=True):
+	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None, use_cli=False, wait_for_replication=True):
 		"""
 		Creates a new OU with random or specified name. The function may also set a specified
 		displayName. If "displayName" is None, a random displayName will be set. If "displayName"
@@ -225,7 +225,7 @@ class UCSTestSchool(object):
 		If use_cli is set to True, the old CLI interface is used. Otherwise the UCS@school python
 		library is used.
 		PLEASE NOTE: if name_edudc is set to the hostname of the master or backup, name_edudc will be unset automatically,
-					 because it's not allowed to specify the hostname of the master or any backup in any situation!
+					because it's not allowed to specify the hostname of the master or any backup in any situation!
 
 		Return value: (ou_name, ou_dn)
 			ou_name: name of the created OU
@@ -348,9 +348,11 @@ class UCSTestSchool(object):
 	def create_teacher_and_staff(self, *args, **kwargs):
 		return self.create_user(*args, is_staff=True, is_teacher=True, **kwargs)
 
-	def create_user(self, ou_name, schools=None, username=None, firstname=None, lastname=None, classes=None,
-					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention',
-					use_cli=False, wait_for_replication=True):
+	def create_user(
+		self, ou_name, schools=None, username=None, firstname=None, lastname=None, classes=None,
+		mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention',
+		use_cli=False, wait_for_replication=True
+	):
 		"""
 		Create a user in specified OU with given attributes. If attributes are not specified, random
 		values will be used for username, firstname and lastname. If password is not None, the given
@@ -383,8 +385,7 @@ class UCSTestSchool(object):
 				if not all(["-" in c for c in classes.split(',')]):
 					utils.fail('*** Class names must be <school-ou>-<class-name>.')
 			# create import file
-			line = 'A\t%s\t%s\t%s\t%s\t%s\t\t%s\t%d\t%d\t%d\n' % (username, lastname, firstname, ou_name, classes,
-																mailaddress, int(is_teacher), int(is_active), int(is_staff))
+			line = 'A\t%s\t%s\t%s\t%s\t%s\t\t%s\t%d\t%d\t%d\n' % (username, lastname, firstname, ou_name, classes, mailaddress, int(is_teacher), int(is_active), int(is_staff))
 			with tempfile.NamedTemporaryFile() as tmp_file:
 				tmp_file.write(line)
 				tmp_file.flush()
@@ -441,8 +442,7 @@ class UCSTestSchool(object):
 
 		return username, user_dn
 
-	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None,
-			mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
+	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None, mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (ou_name, self.LDAP_BASE)]
 		if username is None:

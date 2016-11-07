@@ -43,13 +43,10 @@ class LegacyUserImportParseUserImportCmdline(ParseUserImportCmdline):
 
 	def __init__(self):
 		self.defaults = dict()
-		self.parser = ArgumentParser(description="Create/modify/delete user accounts according to import file for "
-			"UCS@school.")
+		self.parser = ArgumentParser(description="Create/modify/delete user accounts according to import file for " "UCS@school.")
 		self.parser.add_argument('importFile', help="CSV file with users to import [mandatory].")
-		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (e.g. "
-			"/var/lib/ucs-school-import/configs/user_import_legacy.json).")
-		self.parser.add_argument("-o", "--outfile", dest="outfile", help="File to write passwords of created users "
-			"to.")
+		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (e.g. " "/var/lib/ucs-school-import/configs/user_import_legacy.json).")
+		self.parser.add_argument("-o", "--outfile", dest="outfile", help="File to write passwords of created users " "to.")
 
 	def parse_cmdline(self):
 		super(LegacyUserImportParseUserImportCmdline, self).parse_cmdline()

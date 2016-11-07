@@ -158,9 +158,7 @@ class CLI_Import_v2_Tester(object):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
 
 	def __init__(self):
-		logging.basicConfig(stream=sys.stdout, level=logging.DEBUG,
-			format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s',
-			datefmt='%Y-%m-%d %H:%M:%S')
+		logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
 		self.log = logging.getLogger('main')
 		self.lo = None
@@ -325,13 +323,11 @@ class CLI_Import_v2_Tester(object):
 		ldap_diff = self.diff_ldap_status()
 		new_users = [x for x in ldap_diff.new if x.startswith('uid=')]
 		if len(new_users) != exp_new:
-			self.log.error('Invalid number of new users (expected %d, found %d)! Found new objects: %r',
-				exp_new, len(new_users), new_users)
+			self.log.error('Invalid number of new users (expected %d, found %d)! Found new objects: %r', exp_new, len(new_users), new_users)
 			self.fail('Stopping because of invalid number of new users.')
 		removed_users = [x for x in ldap_diff.removed if x.startswith('uid=')]
 		if len(removed_users) != exp_removed:
-			self.log.error('Invalid number of removed users (expected %d, found %d)! Removed objects: %r',
-				exp_removed, len(removed_users), removed_users)
+			self.log.error('Invalid number of removed users (expected %d, found %d)! Removed objects: %r', exp_removed, len(removed_users), removed_users)
 			self.fail('Stopping because of invalid number of removed users.')
 
 	def fail(self, msg, returncode=1):
@@ -341,8 +337,7 @@ class CLI_Import_v2_Tester(object):
 		apt_cache = AptCache()
 		res = "{}\n{}\n{}{}\nInstalled package versions:".format(msg, "-" * 40, "".join(traceback.format_stack()), "-" * 40)
 		for pck in ["ucs-test-ucsschool", "python-ucs-school", "ucs-school-import"]:
-			res += "\n{:<20} {}".format(pck,
-				apt_cache[pck].installed.version if apt_cache[pck].is_installed else "Not installed")
+			res += "\n{:<20} {}".format(pck, apt_cache[pck].installed.version if apt_cache[pck].is_installed else "Not installed")
 		utils.fail(res, returncode)
 
 	def run(self):

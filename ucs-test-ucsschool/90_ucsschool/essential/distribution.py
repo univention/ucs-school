@@ -1,5 +1,5 @@
 """
-  **Class Distribution**\n
+**Class Distribution**\n
 
 .. module:: distribution
 	:platform: Unix
@@ -52,22 +52,23 @@ class Distribution(object):
 	"""
 
 	def __init__(
-			self,
-			school,
-			umcConnection=None,
-			sender=None,
-			flavor=None,
-			ucr=None,
-			description=None,
-			name=None,
-			distributeType='manual',
-			distributeTime=None,
-			distributeDate=None,
-			collectType='manual',
-			collectTime=None,
-			collectDate=None,
-			files=[],
-			recipients=[]):
+		self,
+		school,
+		umcConnection=None,
+		sender=None,
+		flavor=None,
+		ucr=None,
+		description=None,
+		name=None,
+		distributeType='manual',
+		distributeTime=None,
+		distributeDate=None,
+		collectType='manual',
+		collectTime=None,
+		collectDate=None,
+		files=[],
+		recipients=[]
+	):
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
@@ -82,10 +83,8 @@ class Distribution(object):
 			self.distributeDate = distributeDate
 		else:
 			self.distributeDate = time.strftime('%Y-%m-%d')
-		self.collectTime = collectTime if collectTime else time.strftime(
-			'%I:%M')
-		self.collectDate = collectDate if collectDate else time.strftime(
-			'%Y-%m-%d')
+		self.collectTime = collectTime if collectTime else time.strftime('%I:%M')
+		self.collectDate = collectDate if collectDate else time.strftime('%Y-%m-%d')
 		self.distributeType = distributeType
 		self.collectType = collectType
 		self.files = files
@@ -107,14 +106,8 @@ class Distribution(object):
 		:type pattern: str
 		"""
 		flavor = self.flavor
-		param = {
-			'filter': filt,
-			'pattern': pattern
-		}
-		reqResult = self.umcConnection.request(
-			'distribution/query',
-			param,
-			flavor)
+		param = {'filter': filt, 'pattern': pattern}
+		reqResult = self.umcConnection.request('distribution/query', param, flavor)
 		result = [x['name'] for x in reqResult if reqResult is not None]
 		return result
 
@@ -181,17 +174,11 @@ html5
 		data = self.genData(file_name, content_type, boundary, self.flavor)
 		headers = dict(self.umcConnection._headers)  # copy headers!
 		httpcon = self.umcConnection.get_connection()
-		header_content = {
-			'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)
-		}
+		header_content = {'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)}
 		headers.update(header_content)
 		headers['Cookie'] = headers['Cookie'].split(";")[0]
 		headers['Accept'] = 'application/json'
-		httpcon.request(
-			"POST",
-			'/univention-management-console/upload/distribution/upload',
-			data,
-			headers=headers)
+		httpcon.request("POST", '/univention-management-console/upload/distribution/upload', data, headers=headers)
 		r = httpcon.getresponse().status
 		if r != 200:
 			print 'httpcon.response().status=', r
@@ -230,10 +217,7 @@ html5
 			'options': None
 		}]
 		print 'param=', param
-		reqResult = self.umcConnection.request(
-			'distribution/add',
-			param,
-			flavor)
+		reqResult = self.umcConnection.request('distribution/add', param, flavor)
 		print 'reqResult =', reqResult
 		if not reqResult[0]['success']:
 			utils.fail('Unable to add project (%r)' % (param,))
@@ -247,17 +231,7 @@ html5
 		if not (self.name in current):
 			utils.fail('Project %s was not added successfully' % (self.name,))
 
-	def put(
-			self,
-			description=None,
-			distributeType=None,
-			distributeTime=None,
-			distributeDate=None,
-			collectType=None,
-			collectTime=None,
-			collectDate=None,
-			files=[],
-			recipients=[]):
+	def put(self, description=None, distributeType=None, distributeTime=None, distributeDate=None, collectType=None, collectTime=None, collectDate=None, files=[], recipients=[]):
 		"""Modifies the already existing project.\n
 		:param description: description of the project to be added later
 		:type description: str
@@ -316,10 +290,7 @@ html5
 			},
 			'options': None
 		}]
-		reqResult = self.umcConnection.request(
-			'distribution/put',
-			param,
-			flavor)
+		reqResult = self.umcConnection.request('distribution/put', param, flavor)
 		print 'reqResult =', reqResult
 		if not reqResult[0]['success']:
 			utils.fail('Unable to edit project with params =(%r)' % (param,))
@@ -381,9 +352,7 @@ html5
 
 		fail_state = supposed != current
 		if fail_state:
-			utils.fail(
-				'Project %s was not modified successfully,supposed!=current' %
-				(self.name,))
+			utils.fail('Project %s was not modified successfully,supposed!=current' % (self.name,))
 
 		# check distribute
 		check = 'distribution'
@@ -393,17 +362,9 @@ html5
 		after_time = found['starttime']
 		before_atJob = previousGetResult['atJobNumDistribute']
 		after_atJob = found['atJobNumDistribute']
-		fail_state = fail_state or self.put_fail(
-				before_type,
-				after_type,
-				before_time,
-				after_time,
-				before_atJob,
-				after_atJob)
+		fail_state = fail_state or self.put_fail(before_type, after_type, before_time, after_time, before_atJob, after_atJob)
 		if fail_state:
-			utils.fail(
-				'Project %s was not modified successfully, %s: %s -> %s' %
-				(self.name, check, before_type, after_type))
+			utils.fail('Project %s was not modified successfully, %s: %s -> %s' % (self.name, check, before_type, after_type))
 
 		# check collect
 		check = 'collection'
@@ -413,26 +374,11 @@ html5
 		after_time = found['deadline']
 		before_atJob = previousGetResult['atJobNumCollect']
 		after_atJob = found['atJobNumCollect']
-		fail_state = fail_state or self.put_fail(
-				before_type,
-				after_type,
-				before_time,
-				after_time,
-				before_atJob,
-				after_atJob)
+		fail_state = fail_state or self.put_fail(before_type, after_type, before_time, after_time, before_atJob, after_atJob)
 		if fail_state:
-			utils.fail(
-				'Project %s was not modified successfully, %s: %s -> %s' %
-				(self.name, check, before_type, after_type))
+			utils.fail('Project %s was not modified successfully, %s: %s -> %s' % (self.name, check, before_type, after_type))
 
-	def put_fail(
-			self,
-			before_type,
-			after_type,
-			before_time,
-			after_time,
-			before_atJob,
-			after_atJob):
+	def put_fail(self, before_type, after_type, before_time, after_time, before_atJob, after_atJob):
 		"""Checks if the atjobs are in the expected formats
 		:param before_type: type before using put command
 		:type before_type: str
@@ -466,13 +412,8 @@ html5
 		# automatic -> automatic
 		# atJobs int1 -> int2 & int1 < int2
 		if before_type == 'automatic' and after_type == 'automatic':
-			fail1 = not (
-				isinstance(
-					before_atJob, (int, long)) and isinstance(
-					after_atJob, (int, long)))
-			fail2 = not (
-				before_time != after_time and (
-					before_atJob < after_atJob))
+			fail1 = not (isinstance(before_atJob, (int, long)) and isinstance(after_atJob, (int, long)))
+			fail2 = not (before_time != after_time and (before_atJob < after_atJob))
 			fail_state = fail1 or fail2
 		return fail_state
 
@@ -480,10 +421,7 @@ html5
 		"""Calls 'distribution/distribute'"""
 		print 'Distributing Project %s' % (self.name)
 		flavor = self.flavor
-		reqResult = self.umcConnection.request(
-			'distribution/distribute',
-			[self.name],
-			flavor)
+		reqResult = self.umcConnection.request('distribution/distribute', [self.name], flavor)
 		if not reqResult[0]['success']:
 			utils.fail('Unable to distribute project (%r)' % (self.name,))
 
@@ -501,18 +439,13 @@ html5
 			print 'existingFiles=', existingFiles
 			files = [x for x, y in self.files]
 			if files != existingFiles:
-				utils.fail(
-					'Project files were not distributed for user %s' %
-					(user,))
+				utils.fail('Project files were not distributed for user %s' % (user,))
 
 	def collect(self):
 		"""Calls 'distribution/collect'"""
 		print 'Collecting Project %s' % (self.name)
 		flavor = self.flavor
-		reqResult = self.umcConnection.request(
-			'distribution/collect',
-			[self.name],
-			flavor)
+		reqResult = self.umcConnection.request('distribution/collect', [self.name], flavor)
 		if not reqResult[0]['success']:
 			utils.fail('Unable to collect project (%r)' % (self.name,))
 
@@ -530,22 +463,14 @@ html5
 			print 'existingFiles=', existingFiles
 			files = [x for x, y in self.files]
 			if files != existingFiles:
-				utils.fail(
-					'Project files were not collected for user %s' %
-					(user,))
+				utils.fail('Project files were not collected for user %s' % (user,))
 
 	def remove(self):
 		"""Calls 'distribution/remove'"""
 		print 'Removing Project %s' % (self.name)
 		flavor = self.flavor
-		param = [{
-			'object': self.name,
-			'options': None
-		}]
-		reqResult = self.umcConnection.request(
-			'distribution/remove',
-			param,
-			flavor)
+		param = [{'object': self.name, 'options': None}]
+		reqResult = self.umcConnection.request('distribution/remove', param, flavor)
 		if reqResult:
 			utils.fail('Unable to remove project (%r)' % (param,))
 
@@ -556,22 +481,14 @@ html5
 		print 'Checking %s removal' % (self.name,)
 		current = self.query(pattern=self.name)
 		if self.name in current:
-			utils.fail(
-				'Project %s was not removed successfully' %
-				(self.name,))
+			utils.fail('Project %s was not removed successfully' % (self.name,))
 
 	def checkFiles(self, files):
 		"""Calls 'distribution/checkfiles'"""
 		print 'Checking files Project %s' % (self.name)
 		flavor = self.flavor
-		param = {
-			'project': self.name,
-			'filenames': files
-		}
-		reqResult = self.umcConnection.request(
-			'distribution/checkfiles',
-			param,
-			flavor)
+		param = {'project': self.name, 'filenames': files}
+		reqResult = self.umcConnection.request('distribution/checkfiles', param, flavor)
 		if reqResult:
 			utils.fail('Unable to chack files for project (%r)' % (param,))
 
@@ -579,10 +496,7 @@ html5
 		"""Calls 'distribute/adopt'"""
 		print 'Adopting project', self.name
 		flavor = self.flavor
-		reqResult = self.umcConnection.request(
-			'distribution/adopt',
-			[project_name],
-			flavor)
+		reqResult = self.umcConnection.request('distribution/adopt', [project_name], flavor)
 		if reqResult:
 			utils.fail('Failed to adopt project (%r)' % (project_name,))
 
@@ -590,9 +504,7 @@ html5
 		print 'Checking adopting'
 		q = self.query(pattern=project_name)
 		if not (project_name in q):
-			utils.fail(
-				'Project %s was not adopted successfully' %
-				(project_name,))
+			utils.fail('Project %s was not adopted successfully' % (project_name,))
 
 	def getUserFilesPath(self, user, purpose='distribute'):
 		"""Gets the correct files path for a specific user depending on
@@ -609,20 +521,10 @@ html5
 			if roleshare == 'no' or roleshare is False:
 				path = '/home/{0}/Unterrichtsmaterial/{1}/'.format(user, self.name)
 			else:
-				path = '/home/{0}/schueler/{1}/Unterrichtsmaterial/{2}'.format(
-					self.school,
-					user,
-					self.name)
+				path = '/home/{0}/schueler/{1}/Unterrichtsmaterial/{2}'.format(self.school, user, self.name)
 		elif purpose == 'collect':
 			if roleshare == 'no' or roleshare is False:
-				path = '/home/{0}/Unterrichtsmaterial/{1}/{2}/'.format(
-						self.sender,
-						self.name,
-						user)
+				path = '/home/{0}/Unterrichtsmaterial/{1}/{2}/'.format(self.sender, self.name, user)
 			else:
-				path = '/home/{0}/lehrer/{1}/Unterrichtsmaterial/{2}/{3}'.format(
-					self.school,
-					self.sender,
-					self.name,
-					user)
+				path = '/home/{0}/lehrer/{1}/Unterrichtsmaterial/{2}/{3}'.format(self.school, self.sender, self.name, user)
 		return path

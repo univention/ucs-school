@@ -63,8 +63,7 @@ class Test(CLI_Import_v2_Tester):
 			if same_ou:
 				person.update(school_classes={self.ou_A.name: [cls1_name, cls2_name]})
 			else:
-				person.update(school_classes={self.ou_A.name: [cls1_name], self.ou_B.name: [cls2_name]},
-					schools=[self.ou_A.name, self.ou_B.name])
+				person.update(school_classes={self.ou_A.name: [cls1_name], self.ou_B.name: [cls2_name]}, schools=[self.ou_A.name, self.ou_B.name])
 			return person, cls1_dn, cls2_dn
 
 		def import_check_changes(config, person, class_check, add_user, rm_user):

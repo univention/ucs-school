@@ -17,13 +17,11 @@ ucr.load()
 
 
 def dns_forward():
-	return 'zoneName=%s,cn=dns,%s' % (
-			ucr.get('domainname'), ucr.get('ldap/base'))
+	return 'zoneName=%s,cn=dns,%s' % (ucr.get('domainname'), ucr.get('ldap/base'))
 
 
 def dns_reverse(ip):
-	return 'zoneName=%s.in-addr.arpa,cn=dns,%s' % (
-			'.'.join(reversed(ip.split('.')[:3])), ucr.get('ldap/base'))
+	return 'zoneName=%s.in-addr.arpa,cn=dns,%s' % ('.'.join(reversed(ip.split('.')[:3])), ucr.get('ldap/base'))
 
 
 def dhcp_dn(school, computer_name):

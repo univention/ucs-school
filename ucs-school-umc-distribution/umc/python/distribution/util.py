@@ -166,15 +166,7 @@ class User(_Dict):
 
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(self, TYPE_USER,
-			unixhome='',
-			username='',
-			uidNumber='',
-			gidNumber='',
-			firstname='',
-			lastname='',
-			dn=''
-		)
+		_Dict.__init__(self, TYPE_USER, unixhome='', username='', uidNumber='', gidNumber='', firstname='', lastname='', dn='')
 
 		# update specified entries
 		if len(args):
@@ -190,11 +182,7 @@ class User(_Dict):
 class Group(_Dict):
 
 	def __init__(self, *args, **_props):
-		_Dict.__init__(self, TYPE_GROUP,
-						dn='',
-						name='',
-						members=[]
-						)
+		_Dict.__init__(self, TYPE_GROUP, dn='', name='', members=[])
 		# update specified entries
 		if len(args):
 			self.update(args[0])
@@ -241,7 +229,9 @@ class Project(_Dict):
 
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(self, TYPE_PROJECT,
+		_Dict.__init__(
+			self,
+			TYPE_PROJECT,
 			name=None,
 			description=None,
 			files=[],

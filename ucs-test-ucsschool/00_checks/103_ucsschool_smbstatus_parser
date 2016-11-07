@@ -21,18 +21,9 @@ def main():
 		host = ucr.get('hostname')
 
 		# build up smb connections
-		pop1 = subprocess.Popen(
-				['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/netlogon' % host],
-				stdin=subprocess.PIPE, shell=False
-				)
-		pop2 = subprocess.Popen(
-				['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/sysvol' % host],
-				stdin=subprocess.PIPE, shell=False
-				)
-		pop3 = subprocess.Popen(
-				['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/IPC$' % host],
-				stdin=subprocess.PIPE, shell=False
-				)
+		pop1 = subprocess.Popen(['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/netlogon' % host], stdin=subprocess.PIPE, shell=False)
+		pop2 = subprocess.Popen(['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/sysvol' % host], stdin=subprocess.PIPE, shell=False)
+		pop3 = subprocess.Popen(['smbclient', '-U', '%s%%%s' % (admin, passwd), '//%s/IPC$' % host], stdin=subprocess.PIPE, shell=False)
 
 		# wait for the connections to establish
 		time.sleep(10)
@@ -48,24 +39,9 @@ def main():
 					return process
 
 		ipaddress = get_ipaddress()
-		expected_process_values = [
-				{
-					'services': ['netlogon']
-				},
-				{
-					'services': ['sysvol']
-				},
-				{
-					'services': ['IPC$']
-				}
-				]
+		expected_process_values = [{'services': ['netlogon']}, {'services': ['sysvol']}, {'services': ['IPC$']}]
 		for expected_values in expected_process_values:
-			expected_values.update(
-					{
-						'username': admin,
-						'ipaddress': ipaddress
-					}
-					)
+			expected_values.update({'username': admin, 'ipaddress': ipaddress})
 			process = get_proccess_by_services(expected_values['services'])
 			if not process:
 				utils.fail('The process with services %s was not recognized by smbstatus' % (

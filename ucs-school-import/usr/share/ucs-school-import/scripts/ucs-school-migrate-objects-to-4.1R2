@@ -96,8 +96,7 @@ def migrate_users(lo, options):
 				old_object_classes = object_attrs.get('objectClass', [])
 				new_schools = set(old_schools) | set([school])
 				new_object_classes = set(old_object_classes) | set(object_classes)
-				if (set(old_schools) == set(new_schools) and
-					set(old_object_classes) == set(new_object_classes)):
+				if (set(old_schools) == set(new_schools) and set(old_object_classes) == set(new_object_classes)):
 					yield '%r has already been converted.' % (object_dn,)
 					continue
 				yield 'Adding %r into school %r' % (object_dn, ', '.join(new_schools))
@@ -147,8 +146,7 @@ def migrate_admin_groups(lo, options):
 		old_object_classes = object_attrs.get('objectClass', [])
 		new_schools = set(old_schools) | set([school])
 		new_object_classes = set(old_object_classes) | set(['ucsschoolType', 'ucsschoolAdministratorGroup'])
-		if (set(old_schools) == set(new_schools) and
-			set(old_object_classes) == set(new_object_classes)):
+		if (set(old_schools) == set(new_schools) and set(old_object_classes) == set(new_object_classes)):
 			yield '%r has already been converted.' % (object_dn,)
 			continue
 		yield 'Adding %r into school %r' % (object_dn, ', '.join(new_schools))

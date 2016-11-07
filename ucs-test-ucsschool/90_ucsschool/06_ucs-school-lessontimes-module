@@ -28,9 +28,7 @@ def delLesson(connection, name, begin, end):
 	for item in lessonsList:
 		if name in item:
 			lessonsList.remove(item)
-	param = {
-			"lessons": lessonsList
-			}
+	param = {"lessons": lessonsList}
 	return connection.request('lessontimes/set', param)
 
 

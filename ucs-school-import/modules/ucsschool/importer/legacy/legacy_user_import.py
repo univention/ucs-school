@@ -71,8 +71,7 @@ class LegacyUserImport(UserImport):
 		"""
 		if imported_user.action == "A":
 			try:
-				user = imported_user.get_by_import_id_or_username(self.connection, imported_user.source_uid,
-					imported_user.record_uid, imported_user.name)
+				user = imported_user.get_by_import_id_or_username(self.connection, imported_user.source_uid, imported_user.record_uid, imported_user.name)
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
 					imported_user.old_user = user
@@ -96,8 +95,7 @@ class LegacyUserImport(UserImport):
 				user = imported_user
 		elif imported_user.action == "M":
 			try:
-				user = imported_user.get_by_import_id_or_username(self.connection, imported_user.source_uid,
-					imported_user.record_uid, imported_user.name)
+				user = imported_user.get_by_import_id_or_username(self.connection, imported_user.source_uid, imported_user.record_uid, imported_user.name)
 				imported_user.old_user = user
 				imported_user.prepare_all(new_user=False)
 				if user.school != imported_user.school:

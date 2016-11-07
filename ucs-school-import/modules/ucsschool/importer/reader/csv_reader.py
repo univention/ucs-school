@@ -85,8 +85,7 @@ class CsvReader(BaseReader):
 			try:
 				dialect = self.get_dialect(fp)
 			except CsvError as exc:
-				raise InitialisationError, InitialisationError("Could not determine CSV dialect. Try setting the "
-					"csv:delimiter configuration. Error: {}".format(exc)), sys.exc_info()[2]
+				raise InitialisationError, InitialisationError("Could not determine CSV dialect. Try setting the " "csv:delimiter configuration. Error: {}".format(exc)), sys.exc_info()[2]
 			fp.seek(0)
 			if self.header_lines == 1:
 				# let DictReader figure it out itself
@@ -181,8 +180,7 @@ class CsvReader(BaseReader):
 				try:
 					prop_desc = udm_user_module.property_descriptions[v]
 				except KeyError:
-					raise UnknownProperty("Unknown UDM property: '{}'.".format(v), entry=self.entry_count,
-						import_user=import_user)
+					raise UnknownProperty("Unknown UDM property: '{}'.".format(v), entry=self.entry_count, import_user=import_user)
 				if prop_desc.multivalue:
 					try:
 						delimiter = self.config["csv"]["incell-delimiter"][k]
@@ -191,8 +189,7 @@ class CsvReader(BaseReader):
 					import_user.udm_properties[v] = input_data[k].split(delimiter)
 				else:
 					import_user.udm_properties[v] = input_data[k]
-		self.logger.debug("%s attributes=%r udm_properties=%r action=%r", import_user, import_user.to_dict(),
-			import_user.udm_properties, import_user.action)
+		self.logger.debug("%s attributes=%r udm_properties=%r action=%r", import_user, import_user.to_dict(), import_user.udm_properties, import_user.action)
 		return import_user
 
 	def get_data_mapping(self, input_data):

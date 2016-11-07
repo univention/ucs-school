@@ -501,15 +501,15 @@ class UserHooks:
 
 	def create_hooks(self):
 		self.pre_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'user_create_pre.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'user_remove_pre.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'user_modify_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'user_create_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'user_remove_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'user_modify_pre.d'), uts.random_name()),
 		]
 
 		self.post_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'user_create_post.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'user_modify_post.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'user_remove_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'user_create_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'user_modify_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'user_remove_post.d'), uts.random_name()),
 		]
 
 		for pre_hook in self.pre_hooks:

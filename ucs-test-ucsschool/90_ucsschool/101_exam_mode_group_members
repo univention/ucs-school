@@ -27,11 +27,7 @@ def main():
 				else:
 					edudc = ucr.get('hostname')
 				school, oudn = schoolenv.create_ou(name_edudc=edudc)
-				klasse_dn = udm.create_object(
-						'groups/group',
-						name='%s-AA1' % school,
-						position="cn=klassen,cn=schueler,cn=groups,%s" % oudn
-						)
+				klasse_dn = udm.create_object('groups/group', name='%s-AA1' % school, position="cn=klassen,cn=schueler,cn=groups,%s" % oudn)
 				tea, teadn = schoolenv.create_user(school, is_teacher=True)
 				stu, studn = schoolenv.create_user(school)
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
@@ -46,22 +42,17 @@ def main():
 				room1 = Room(school, host_members=pc1.dn)
 				room2 = Room(school, host_members=pc2.dn)
 				for room in [room1, room2]:
-					schoolenv.create_computerroom(
-							school,
-							name=room.name,
-							description=room.description,
-							host_members=room.host_members
-							)
+					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 
 				# Set an exam and start it
 				current_time = datetime.now()
 				chosen_time = current_time + timedelta(hours=2)
 				exam = Exam(
-						school=school,
-						room=room2.dn,								# room dn
-						examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
-						recipients=[klasse_dn]						# list of classes dns
-						)
+					school=school,
+					room=room2.dn,  # room dn
+					examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+					recipients=[klasse_dn]  # list of classes dns
+				)
 				exam.start()
 
 				try:

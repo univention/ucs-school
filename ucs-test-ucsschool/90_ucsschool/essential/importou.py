@@ -240,9 +240,7 @@ def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, o
 		'ucsschool/import/generate/policy/dhcp/dns/clearou=%s' % ('true' if dhcp_dns_clearou else 'false'),
 	])
 	if unset_dhcpd_base:
-		univention.config_registry.handler_unset([
-				'dhcpd/ldap/base'
-		])
+		univention.config_registry.handler_unset(['dhcpd/ldap/base'])
 	ucr.load()
 
 	base_dn = ucr.get('ldap/base')
@@ -405,18 +403,14 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	dcbackup_module = univention.admin.modules.get("computers/domaincontroller_backup")
 	dcslave_module = univention.admin.modules.get("computers/domaincontroller_slave")
 
-	masterobjs = univention.admin.modules.lookup(dcmaster_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-											filter=univention.admin.filter.expression('cn', dc_name))
-	backupobjs = univention.admin.modules.lookup(dcbackup_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-											filter=univention.admin.filter.expression('cn', dc_name))
-	slaveobjs = univention.admin.modules.lookup(dcslave_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-											filter=univention.admin.filter.expression('cn', dc_name))
+	masterobjs = univention.admin.modules.lookup(dcmaster_module, None, lo, scope='sub', superordinate=None, base=base_dn, filter=univention.admin.filter.expression('cn', dc_name))
+	backupobjs = univention.admin.modules.lookup(dcbackup_module, None, lo, scope='sub', superordinate=None, base=base_dn, filter=univention.admin.filter.expression('cn', dc_name))
+	slaveobjs = univention.admin.modules.lookup(dcslave_module, None, lo, scope='sub', superordinate=None, base=base_dn, filter=univention.admin.filter.expression('cn', dc_name))
 
 	# check group membership
 	#  slave should be member
 	#  master and backup should not be member
-	dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (ou, base_dn),
-				"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (base_dn)]
+	dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (ou, base_dn), "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (base_dn)]
 
 	if must_exist:
 		if masterobjs:
@@ -481,8 +475,8 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 
 def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
 	''' Arguments:
-        dc_name: name of the domaincontroller (cn)
-        dc_type: type of the domaincontroller ('educational' or 'administrative')
+	dc_name: name of the domaincontroller (cn)
+	dc_type: type of the domaincontroller ('educational' or 'administrative')
 	'''
 	assert(dc_type in (TYPE_DC_ADMINISTRATIVE, TYPE_DC_EDUCATIONAL))
 
@@ -562,19 +556,19 @@ def import_ou_basics(use_cli_api=True, use_python_api=False):
 											ou_displayname = uts.random_string(length=random.randint(1, 50), charset=charset)
 											try:
 												create_and_verify_ou(
-														ucr,
-														ou=ou_name,
-														ou_displayname=ou_displayname,
-														dc=(uts.random_name() if dc else None),
-														dc_administrative=(uts.random_name() if dc_administrative else None),
-														sharefileserver=sharefileserver,
-														singlemaster=singlemaster,
-														noneducational_create_objects=noneducational_create_object,
-														district_enable=district_enable,
-														default_dcs=default_dcs,
-														dhcp_dns_clearou=dhcp_dns_clearou,
-														use_cli_api=use_cli_api,
-														use_python_api=use_python_api,
+													ucr,
+													ou=ou_name,
+													ou_displayname=ou_displayname,
+													dc=(uts.random_name() if dc else None),
+													dc_administrative=(uts.random_name() if dc_administrative else None),
+													sharefileserver=sharefileserver,
+													singlemaster=singlemaster,
+													noneducational_create_objects=noneducational_create_object,
+													district_enable=district_enable,
+													default_dcs=default_dcs,
+													dhcp_dns_clearou=dhcp_dns_clearou,
+													use_cli_api=use_cli_api,
+													use_python_api=use_python_api,
 												)
 											finally:
 												remove_ou(ou_name)

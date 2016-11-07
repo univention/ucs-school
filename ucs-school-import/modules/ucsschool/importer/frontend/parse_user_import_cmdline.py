@@ -56,30 +56,21 @@ class ParseUserImportCmdline(object):
 			verbose=False
 		)
 		self.parser = ArgumentParser(description="UCS@school import tool")
-		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (see "
-			"/usr/share/doc/ucs-school-import for an explanation on configuration file stacking).")
+		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (see " "/usr/share/doc/ucs-school-import for an explanation on configuration file stacking).")
 		self.parser.add_argument('-i', '--infile', dest="infile", help="CSV file with users to import (shortcut for --set input:filename=...).")
-		self.parser.add_argument('-l', '--logfile',
-			help="Write to additional logfile (shortcut for --set logfile=...).")
-		self.parser.add_argument("--set", dest="settings", metavar="KEY=VALUE", nargs='*',
-			help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values "
-			"(e.g. 'scheme:email=...').")
-		self.parser.add_argument("-m", "--no-delete", dest="no_delete", action="store_true",
+		self.parser.add_argument('-l', '--logfile', help="Write to additional logfile (shortcut for --set logfile=...).")
+		self.parser.add_argument("--set", dest="settings", metavar="KEY=VALUE", nargs='*', help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values " "(e.g. 'scheme:email=...').")
+		self.parser.add_argument(
+			"-m", "--no-delete", dest="no_delete", action="store_true",
 			help="Do not delete user objects if actions are automatically determined. User objects in input data are "
-				"only added/modified. Please note: if user objects in input data are explicitely marked for deletion "
-				"(__action=D), the objects will be still deleted! (shortcut for --set no_delete=...) [default: %(default)s].")
-		self.parser.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
-			help="Dry run - don't actually commit changes to LDAP (shortcut for --set dry_run=...) "
-				"[default: %(default)s].")
-		self.parser.add_argument("--sourceUID", help="The ID of the source database (shortcut for --set sourceUID=...) "
-			"[mandatory either here or in the configuration file].")
-		self.parser.add_argument("-s", "--school", help="Name of school. Set only, if the source data does not contain "
-			"the name of the school and all users are from one school (shortcut for --set school=...) "
-			"[default: %(default)s].")
-		self.parser.add_argument("-u", "--user_role", help="Set this, if the source data contains users with only one "
-			"role <student|staff|teacher|teacher_and_staff> (shortcut for --set user_role=...) [default: %(default)s].")
-		self.parser.add_argument("-v", "--verbose", action="store_true",
-			help="Enable debugging output on the console [default: %(default)s].")
+			"only added/modified. Please note: if user objects in input data are explicitely marked for deletion "
+			"(__action=D), the objects will be still deleted! (shortcut for --set no_delete=...) [default: %(default)s]."
+		)
+		self.parser.add_argument("-n", "--dry-run", dest="dry_run", action="store_true", help="Dry run - don't actually commit changes to LDAP (shortcut for --set dry_run=...) " "[default: %(default)s].")
+		self.parser.add_argument("--sourceUID", help="The ID of the source database (shortcut for --set sourceUID=...) " "[mandatory either here or in the configuration file].")
+		self.parser.add_argument("-s", "--school", help="Name of school. Set only, if the source data does not contain " "the name of the school and all users are from one school (shortcut for --set school=...) " "[default: %(default)s].")
+		self.parser.add_argument("-u", "--user_role", help="Set this, if the source data contains users with only one " "role <student|staff|teacher|teacher_and_staff> (shortcut for --set user_role=...) [default: %(default)s].")
+		self.parser.add_argument("-v", "--verbose", action="store_true", help="Enable debugging output on the console [default: %(default)s].")
 		self.parser.set_defaults(**self.defaults)
 
 	def parse_cmdline(self):
@@ -91,8 +82,7 @@ class ParseUserImportCmdline(object):
 		"""
 		self.args = self.parser.parse_args()
 
-		if (hasattr(self.args, "user_role") and self.args.user_role and
-			self.args.user_role not in ["student", "staff", "teacher", "teacher_and_staff"]):
+		if (hasattr(self.args, "user_role") and self.args.user_role and self.args.user_role not in ["student", "staff", "teacher", "teacher_and_staff"]):
 			self.parser.error("Invalid user role. Must be one of student, staff, teacher, teacher_and_staff.")
 
 		settings = dict()

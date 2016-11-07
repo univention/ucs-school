@@ -29,12 +29,7 @@ def main():
 
 			# computer rooms contains the created computers
 			room = Room(school, host_members=computers_dns)
-			schoolenv.create_computerroom(
-					school,
-					name=room.name,
-					description=room.description,
-					host_members=room.host_members
-					)
+			schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 			umc_connection = UMCConnection(ucr.get('hostname'))
 			umc_connection.auth(tea, 'univention')
 

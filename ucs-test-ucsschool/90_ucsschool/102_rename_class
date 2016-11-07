@@ -28,11 +28,7 @@ def ldap_info(cn):
 		memberUid = lo.search(filter="cn=%s" % cn, base=basedn)[0][1].get('memberUid')
 		univentionShareGid = lo.search(filter="cn=%s" % cn, base=basedn)[1][1].get('univentionShareGid')
 		univentionShareUid = lo.search(filter="cn=%s" % cn, base=basedn)[1][1].get('univentionShareUid')
-	return {'gidNumber': gidNumber,
-			'memberUid': memberUid,
-			'univentionShareGid': univentionShareGid,
-			'univentionShareUid': univentionShareUid
-			}
+	return {'gidNumber': gidNumber, 'memberUid': memberUid, 'univentionShareGid': univentionShareGid, 'univentionShareUid': univentionShareUid}
 
 
 def check_backup(cn):
@@ -51,14 +47,12 @@ def check_ldap(school, old_name, new_name):
 
 def share_dn(class_name, school):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
-		return 'cn=%s,cn=klassen,cn=shares,ou=%s,%s' % (
-				class_name, school, ucr.get('ldap/base'))
+		return 'cn=%s,cn=klassen,cn=shares,ou=%s,%s' % (class_name, school, ucr.get('ldap/base'))
 
 
 def class_dn(class_name, school):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
-		return 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (
-				class_name, school, ucr.get('ldap/base'))
+		return 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (class_name, school, ucr.get('ldap/base'))
 
 
 def share_path(class_name, school):
@@ -74,22 +68,11 @@ def permissions(dir_path):
 	"""
 	result = {}
 	st = os.stat(dir_path)
-	dir_permissions = (
-			(oct(st.st_mode), pwd.getpwuid(st.st_uid)[0]),
-			grp.getgrgid(st.st_gid)[0]
-			)
+	dir_permissions = ((oct(st.st_mode), pwd.getpwuid(st.st_uid)[0]), grp.getgrgid(st.st_gid)[0])
 	for f in glob.glob('%s/*' % dir_path):
 		if not os.path.islink(f):
 			st = os.stat(f)
-			result.update(
-					{
-						os.path.basename(f): (
-							oct(st.st_mode),
-							pwd.getpwuid(st.st_uid)[0],
-							grp.getgrgid(st.st_gid)[0]
-						)
-					}
-					)
+			result.update({os.path.basename(f): (oct(st.st_mode), pwd.getpwuid(st.st_uid)[0], grp.getgrgid(st.st_gid)[0])})
 			if os.path.isdir(f):
 				sub_result = permissions(f)
 				result = dict(result.items() + sub_result.items())
@@ -155,8 +138,7 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
 		# the renamed group should still include the same users as before
 		new_ldap_info = ldap_info(new_name)
 		if old_ldap_info != new_ldap_info:
-			utils.fail('%s has changed after renaming the class' %
-					[x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0])
+			utils.fail('%s has changed after renaming the class' % [x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0])
 
 		# the renamed share object should be still accessable
 		new_dir = share_path(new_name, school)
@@ -166,10 +148,8 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
 
 
 def create_two_users(schoolenv, school, class_name):
-	tea, teadn = schoolenv.create_user(
-			school, classes=class_name, is_teacher=True, use_cli=True)
-	stu, studn = schoolenv.create_user(
-			school, classes=class_name, use_cli=True)
+	tea, teadn = schoolenv.create_user(school, classes=class_name, is_teacher=True, use_cli=True)
+	stu, studn = schoolenv.create_user(school, classes=class_name, use_cli=True)
 	return tea, stu
 
 

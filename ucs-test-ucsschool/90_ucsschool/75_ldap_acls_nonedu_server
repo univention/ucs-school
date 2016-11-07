@@ -42,11 +42,7 @@ def main():
 			acl = Acl(school, admindc.dn, 'ALLOWED')
 			# TODO: following attribute list is incomplete, but gives a rough idea if replication of this user is allowed
 			attr_list = ['uid', 'givenName', 'sn', 'uidNumber', 'userPassword', 'sambaHomePath', 'gidNumber', 'krb5Key', 'sambaSID']
-			for user_dn, allowance in (
-					(staff_dn, 'ALLOWED'),
-					(teastaff_dn, 'ALLOWED'),
-					(tea_dn, 'DENIED'),
-					(stu_dn, 'DENIED')):
+			for user_dn, allowance in ((staff_dn, 'ALLOWED'), (teastaff_dn, 'ALLOWED'), (tea_dn, 'DENIED'), (stu_dn, 'DENIED')):
 				acl.assert_acl(user_dn, 'read', attr_list, allowance)
 
 

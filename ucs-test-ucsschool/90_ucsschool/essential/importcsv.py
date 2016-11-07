@@ -318,33 +318,33 @@ def random_email():
 def random_line_stu_tea(school):
 	"""create random line to import random student/teacher/teacher and staff"""
 	return '%s,%s,%s,%s%s.%s%s.%s,%s,%s,%s\n' % (
-			uts.random_username(),
-			uts.random_name(),
-			uts.random_name(),
-			uts.random_int(1, 2),
-			uts.random_int(1, 8),
-			uts.random_int(0, 0),
-			uts.random_int(1, 9),
-			uts.random_int(1980, 2014),
-			uts.random_name(),
-			random_email(),
-			"{}-{}".format(school, uts.random_string()),
+		uts.random_username(),
+		uts.random_name(),
+		uts.random_name(),
+		uts.random_int(1, 2),
+		uts.random_int(1, 8),
+		uts.random_int(0, 0),
+		uts.random_int(1, 9),
+		uts.random_int(1980, 2014),
+		uts.random_name(),
+		random_email(),
+		"{}-{}".format(school, uts.random_string()),
 	)
 
 
 def random_line_staff():
 	"""create random line to import random staff"""
 	return '%s,%s,%s,%s%s.%s%s.%s,%s,%s\n' % (
-			uts.random_username(),
-			uts.random_name(),
-			uts.random_name(),
-			uts.random_int(0, 2),
-			uts.random_int(1, 8),
-			uts.random_int(0, 0),
-			uts.random_int(1, 9),
-			uts.random_int(1980, 2014),
-			uts.random_name(),
-			random_email(),
+		uts.random_username(),
+		uts.random_name(),
+		uts.random_name(),
+		uts.random_int(0, 2),
+		uts.random_int(1, 8),
+		uts.random_int(0, 0),
+		uts.random_int(1, 9),
+		uts.random_int(1980, 2014),
+		uts.random_name(),
+		random_email(),
 	)
 
 

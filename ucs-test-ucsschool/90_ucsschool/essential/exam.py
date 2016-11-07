@@ -1,5 +1,5 @@
 """
-  **Class Exam**\n
+**Class Exam**
 
 .. module:: exam
 	:platform: Unix
@@ -97,18 +97,18 @@ class Exam(object):
 	"""
 
 	def __init__(
-			self,
-			school,
-			room,			# room dn
-			examEndTime,  # in format "HH:mm"
-			recipients,		# list of classes dns
-			name=None,
-			directory=None,
-			files=[],
-			shareMode="home",
-			internetRule="none",
-			customRule='',
-			umcConnection=None
+		self,
+		school,
+		room,  # room dn
+		examEndTime,  # in format "HH:mm"
+		recipients,  # list of classes dns
+		name=None,
+		directory=None,
+		files=[],
+		shareMode="home",
+		internetRule="none",
+		customRule='',
+		umcConnection=None
 	):
 		self.school = school
 		self.room = room
@@ -137,45 +137,30 @@ class Exam(object):
 	def start(self):
 		"""Starts an exam"""
 		param = {
-				'school': self.school,
-				'name': self.name,
-				'room': self.room,
-				'examEndTime': self.examEndTime,
-				'recipients': self.recipients,
-				'directory': self.directory,
-				'files': self.files,
-				'shareMode': self.shareMode,
-				'internetRule': self.internetRule,
-				'customRule': self.customRule
+			'school': self.school,
+			'name': self.name,
+			'room': self.room,
+			'examEndTime': self.examEndTime,
+			'recipients': self.recipients,
+			'directory': self.directory,
+			'files': self.files,
+			'shareMode': self.shareMode,
+			'internetRule': self.internetRule,
+			'customRule': self.customRule
 		}
-		print 'Starting exam %s in room %s' % (
-				self.name,
-				self.room
-		)
+		print 'Starting exam %s in room %s' % (self.name, self.room)
 		print 'param = %s' % param
-		reqResult = self.umcConnection.request(
-				'schoolexam/exam/start',
-				param
-		)
+		reqResult = self.umcConnection.request('schoolexam/exam/start', param)
 		print 'Start exam response = ', reqResult
 		if not reqResult['success']:
 			raise StartFail('Unable to start exam (%r)' % (param,))
 
 	def finish(self):
 		"""Finish an exam"""
-		param = {
-				'exam': self.name,
-				'room': self.room
-		}
-		print 'Finishing exam %s in room %s' % (
-				self.name,
-				self.room
-		)
+		param = {'exam': self.name, 'room': self.room}
+		print 'Finishing exam %s in room %s' % (self.name, self.room)
 		print 'param = %s' % param
-		reqResult = self.umcConnection.request(
-				'schoolexam/exam/finish',
-				param
-		)
+		reqResult = self.umcConnection.request('schoolexam/exam/finish', param)
 		print 'Finish exam response = ', reqResult
 		if not reqResult['success']:
 			raise FinishFail('Unable to finish exam (%r)' % param)
@@ -221,17 +206,11 @@ html5
 		data = self.genData(file_name, content_type, boundary)
 		headers = dict(self.umcConnection._headers)  # copy headers!
 		httpcon = self.umcConnection.get_connection()
-		header_content = {
-			'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)
-		}
+		header_content = {'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)}
 		headers.update(header_content)
 		headers['Cookie'] = headers['Cookie'].split(";")[0]
 		headers['Accept'] = 'application/json'
-		httpcon.request(
-			"POST",
-			'/univention-management-console/upload/schoolexam/upload',
-			data,
-			headers=headers)
+		httpcon.request("POST", '/univention-management-console/upload/schoolexam/upload', data, headers=headers)
 		r = httpcon.getresponse().status
 		print 'Uploading file response =', r
 		if r != 200:

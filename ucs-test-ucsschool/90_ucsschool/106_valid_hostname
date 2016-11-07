@@ -15,8 +15,7 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool import UMCConnection
 
-INVALID_CHARS_CLI = ['ä', 'ö', 'ü', 'ß', '%', '§', '$', '!', '&',
-					'[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
+INVALID_CHARS_CLI = ['ä', 'ö', 'ü', 'ß', '%', '§', '$', '!', '&', '[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
 INVALID_CHARS = INVALID_CHARS_CLI + ['_']
 INVALID_STARTING_CHARS = INVALID_CHARS + ['-']
 INVALID_ENDING_CHARS = INVALID_STARTING_CHARS
@@ -40,20 +39,14 @@ def main():
 				try:
 					ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name)
 					if should_fail:
-						print 'Creating a school(%s) with dc_name=%s was expected to fail)' % (
-								school, dc_name)
+						print 'Creating a school(%s) with dc_name=%s was expected to fail)' % (school, dc_name)
 					else:
-						print 'Creating a school(%s) with dc_name=%s was expected to succeed' % (
-								school, dc_name)
+						print 'Creating a school(%s) with dc_name=%s was expected to succeed' % (school, dc_name)
 				except ValidationError as ex:
 					if should_fail and 'dc_name' in str(ex):
-						print 'Creating a school(%s) with dc_name=%s was expected to fail: %s)' % (
-								school, dc_name, str(ex))
+						print 'Creating a school(%s) with dc_name=%s was expected to fail: %s)' % (school, dc_name, str(ex))
 					else:
-						utils.fail(
-								'Creating school(%s) with dc_name=%s fail unexpectedly: %s)' % (
-									school, dc_name, str(ex))
-								)
+						utils.fail('Creating school(%s) with dc_name=%s fail unexpectedly: %s)' % (school, dc_name, str(ex)))
 
 			# Using ucs-school-import
 			def process_school_cli(school, dc_name, should_fail=True):
@@ -62,22 +55,14 @@ def main():
 				err = pop.communicate()
 				if pop.returncode:
 					if should_fail:
-						print 'Creating a school(%s) cli with dc_name=%s was expected to fail: %r)' % (
-								school, dc_name, err)
+						print 'Creating a school(%s) cli with dc_name=%s was expected to fail: %r)' % (school, dc_name, err)
 					else:
-						utils.fail(
-								'Creating a school(%s) cli with dc_name=%s failed unexpectedly' % (
-									school, dc_name)
-								)
+						utils.fail('Creating a school(%s) cli with dc_name=%s failed unexpectedly' % (school, dc_name))
 				else:
 					if should_fail:
-						utils.fail(
-								'Creating a school(%s) cli with dc_name=%s was unexpectedly successful' % (
-									school, dc_name)
-								)
+						utils.fail('Creating a school(%s) cli with dc_name=%s was unexpectedly successful' % (school, dc_name))
 					else:
-						print 'Creating a school(%s) cli with dc_name=%s was expected to succeed: %r)' % (
-								school, dc_name, err)
+						print 'Creating a school(%s) cli with dc_name=%s was expected to succeed: %r)' % (school, dc_name, err)
 
 			# Using UMCP
 			def process_school_umcp(school, dc_name, should_fail=True):
@@ -85,21 +70,14 @@ def main():
 					school.create()
 					school.remove()
 					if should_fail:
-						utils.fail(
-								'Creating a school(%s) umcp with dc_name=%s was unexpectedly successful' % (
-									school.name, dc_name))
+						utils.fail('Creating a school(%s) umcp with dc_name=%s was unexpectedly successful' % (school.name, dc_name))
 					else:
-						print 'Creating a school(%s) umcp with dc_name=%s was unexpectedly successful' % (
-								school.name, dc_name)
+						print 'Creating a school(%s) umcp with dc_name=%s was unexpectedly successful' % (school.name, dc_name)
 				except CreateFail as ex:
 					if should_fail and 'DC Name:' in str(ex):
-						print 'Creating a school(%s) umcp with dc_name=%s was expected to fail: %s)' % (
-								school.name, dc_name, str(ex))
+						print 'Creating a school(%s) umcp with dc_name=%s was expected to fail: %s)' % (school.name, dc_name, str(ex))
 					else:
-						utils.fail(
-								'Creating school(%s) umcp with dc_name=%s fail unexpectedly: %s)' % (
-									school.name, dc_name, str(ex))
-								)
+						utils.fail('Creating school(%s) umcp with dc_name=%s fail unexpectedly: %s)' % (school.name, dc_name, str(ex)))
 
 			# Checking legal chars in dc_name
 			for count in xrange(5):

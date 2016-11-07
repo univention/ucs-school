@@ -82,8 +82,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 				# move if existing DN does not match with desired DN
 				if existing_dhcp_server_dn != dhcp_server.dn:
 					# move existing dhcp server object to OU/DHCP service
-					logger.info('DHCP server %s not in school %r! Removing and creating new one at %s!',
-						existing_dhcp_server_dn, school, dhcp_server.dn)
+					logger.info('DHCP server %s not in school %r! Removing and creating new one at %s!', existing_dhcp_server_dn, school, dhcp_server.dn)
 					old_superordinate = DHCPServer.find_udm_superordinate(existing_dhcp_server_dn, lo)
 					old_dhcp_server = DHCPServer.from_dn(existing_dhcp_server_dn, None, lo, superordinate=old_superordinate)
 					old_dhcp_server.remove(lo)

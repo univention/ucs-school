@@ -62,12 +62,9 @@ during creation of new classes or users.
 '''
 
 	parser = optparse.OptionParser(usage=usage)
-	parser.add_option('--dry-run', action='store_true', dest='dryrun', default=False,
-						help='do not change any object but print changes instead to stdout')
-	parser.add_option('--auto-detect', action='store_true', dest='autodetect', default=False,
-						help='this option tries to detect the file servers automatically')
-	parser.add_option('--ou', action='store', dest='ou', default=None,
-						help='name of ou that shall be updated/modified')
+	parser.add_option('--dry-run', action='store_true', dest='dryrun', default=False, help='do not change any object but print changes instead to stdout')
+	parser.add_option('--auto-detect', action='store_true', dest='autodetect', default=False, help='this option tries to detect the file servers automatically')
+	parser.add_option('--ou', action='store', dest='ou', default=None, help='name of ou that shall be updated/modified')
 	(options, args, ) = parser.parse_args()
 
 	if not options.autodetect:
@@ -129,10 +126,7 @@ during creation of new classes or users.
 		else:
 			# otherwise try to find a suitable server object in OU with one of the following services -
 			# the first match wins
-			for servicename in ('Windows Home Server',
-								'Samba 4',
-								'Samba 3',
-								):
+			for servicename in ('Windows Home Server', 'Samba 4', 'Samba 3', ):
 				serverDn = findComputerNameWithService(computer_module, co, lo, servicename, ou_dn)
 				if serverDn is not None:
 					if options.dryrun:

@@ -41,19 +41,11 @@ def main():
 
 			users[0].check_query([users[0].dn, users[1].dn])
 
-			new_attrs = {
-					'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')),
-					'firstname': 'first_name1',
-					'lastname': 'last_name1',
-					}
+			new_attrs = {'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')), 'firstname': 'first_name1', 'lastname': 'last_name1', }
 			users[0].edit(new_attrs)
 			users[0].check_get(expected_attrs=new_attrs)
 
-			new_attrs = {
-					'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')),
-					'firstname': 'first_name2',
-					'lastname': 'last_name2',
-					}
+			new_attrs = {'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')), 'firstname': 'first_name2', 'lastname': 'last_name2', }
 			users[1].edit(new_attrs)
 			users[1].check_get(expected_attrs=new_attrs)
 

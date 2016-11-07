@@ -125,8 +125,7 @@ class TestUserCreator(object):
 	def make_users(self):
 		given_name = self._get_new_given_name()
 		family_name = self._get_new_family_name()
-		jobs = ((self.num_staff, "staff"), (self.num_students, "student"), (self.num_teachers, "teacher"),
-			(self.num_staffteachers, "staffteacher"))
+		jobs = ((self.num_staff, "staff"), (self.num_students, "student"), (self.num_teachers, "teacher"), (self.num_staffteachers, "staffteacher"))
 		total_users_num = sum([job[0] for job in jobs])
 		total_users_count = 0
 
@@ -141,8 +140,7 @@ class TestUserCreator(object):
 					Nachname=next(family_name),
 					Klassen=None,
 					Beschreibung="A {}.".format(kind),
-					Telefon="+{:>02}-{:>03}-{}".format(random.randint(1, 99), random.randint(1, 999),
-						random.randint(1000, 999999))
+					Telefon="+{:>02}-{:>03}-{}".format(random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999))
 				)
 				if not self.email:
 					user["EMail"] = ""
@@ -159,8 +157,7 @@ class TestUserCreator(object):
 					user["Klassen"] = dict([(school, self._get_class_name(school)) for school in user["Schulen"]])
 				else:
 					# [staff]teachers can be in multiple classes
-					user["Klassen"] = dict([(school, [self._get_class_name(school) for _x in range(self.num_inclasses)])
-						for school in user["Schulen"]])
+					user["Klassen"] = dict([(school, [self._get_class_name(school) for _x in range(self.num_inclasses)]) for school in user["Schulen"]])
 				total_users_count += 1
 				logger.debug("(%d/%d) Created: %r", total_users_count, total_users_num, user)
 				yield user

@@ -190,9 +190,7 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
 	global filter
 	_visible_samba4_school_dcs = []
 	try:
-		res = ldap_machine_read.search(base=ldap_position.getDn(),
-			filter=filter,
-			attr=['cn', 'associatedDomain'])
+		res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
 			# select only school branches and exclude a modrdn 'r' phase DN which still exists
 			if SchoolSearchBase.getOU(record_dn) and record_dn != excludeDN:

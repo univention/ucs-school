@@ -29,16 +29,9 @@ def main():
 			for school in [school1, school2]:
 				try:
 					print 'Checking school %s' % school
-					expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (
-							ucr.get('ldap/base'),)
-					base = "cn=Domain Users %s,cn=groups,%s" % (
-							school.lower(), schoolenv.get_ou_base_dn(school)
-							)
-					found_attr = lo.search(
-							base=base,
-							scope='base',
-							attr=['univentionPolicyReference']
-							)[0][1]['univentionPolicyReference']
+					expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get('ldap/base'),)
+					base = "cn=Domain Users %s,cn=groups,%s" % (school.lower(), schoolenv.get_ou_base_dn(school))
+					found_attr = lo.search(base=base, scope='base', attr=['univentionPolicyReference'])[0][1]['univentionPolicyReference']
 					if expected_attr not in found_attr:
 						utils.fail('Incorrect attributes found: %r\nexpected: %r' % (
 							found_attr, expected_attr))

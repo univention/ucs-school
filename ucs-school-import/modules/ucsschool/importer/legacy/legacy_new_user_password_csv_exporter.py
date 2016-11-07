@@ -44,8 +44,7 @@ class LegacyNewUserPasswordCsvExporter(NewUserPasswordCsvExporter):
 	Recreate line from legacy import script:
 	OUTFILE.write("%s\t%s\t%s" % (person.login, password, line))
 	"""
-	field_names = ("username", "password", "action", "name", "lastname", "firstname", "school", "school_class",
-		"ignore", "email", "is_teacher", "activate", "is_staff")
+	field_names = ("username", "password", "action", "name", "lastname", "firstname", "school", "school_class", "ignore", "email", "is_teacher", "activate", "is_staff")
 
 	def __init__(self, *arg, **kwargs):
 		super(LegacyNewUserPasswordCsvExporter, self).__init__(*arg, **kwargs)

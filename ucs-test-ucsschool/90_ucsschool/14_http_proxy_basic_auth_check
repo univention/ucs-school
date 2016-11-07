@@ -33,10 +33,7 @@ def ruleInControl(user, ruleList, host, banPage):
 	localCurl.close()
 	# return the bigger rule
 	# in case one rule is contained in another
-	result = [
-			x.name for x in inCtrl if len(x.domains) == max(
-				len(y.domains) for y in inCtrl)
-			]
+	result = [x.name for x in inCtrl if len(x.domains) == max(len(y.domains) for y in inCtrl)]
 	print 'Rule in control =', result
 	return result[0]
 
@@ -49,24 +46,13 @@ def printHeader(comment):
 # Perform the whole check steps for a user and two rules
 
 
-def doCheck(
-		host,
-		banPage,
-		user,
-		rulesType,
-		ruleWithHigherPrio,
-		ruleWithLowerPrio=None):
-	ruleInCtrl = ruleInControl(
-			user,
-			[ruleWithLowerPrio, ruleWithHigherPrio],
-			host,
-			banPage)
+def doCheck(host, banPage, user, rulesType, ruleWithHigherPrio, ruleWithLowerPrio=None):
+	ruleInCtrl = ruleInControl(user, [ruleWithLowerPrio, ruleWithHigherPrio], host, banPage)
 	if ruleInCtrl != ruleWithHigherPrio.name:
 		utils.fail('rule in Ctrl for user (%s): expected (%s), current (%s)' % (
 			user, ruleWithHigherPrio.name, ruleInCtrl))
 	else:
-		print 'TEST PASSED: rule in Ctrl for user (%s) is (%s)' % (
-				user, ruleInCtrl)
+		print 'TEST PASSED: rule in Ctrl for user (%s) is (%s)' % (user, ruleInCtrl)
 
 
 def main():
@@ -98,12 +84,7 @@ def main():
 			adminCurl.close()
 
 			# define whitelist internet rule
-			rule1 = InternetRule(
-					ucr=ucr,
-					umcConnection=connection,
-					typ='whitelist',
-					domains=['univention.de'],
-					priority=3)
+			rule1 = InternetRule(ucr=ucr, umcConnection=connection, typ='whitelist', domains=['univention.de'], priority=3)
 			rule1.define()
 
 			# assign whitelist rule1 to the class
@@ -123,12 +104,7 @@ def main():
 			newWorkgroup.create()
 
 			# define different rule with higher priority
-			rule2 = InternetRule(
-					ucr=ucr,
-					umcConnection=connection,
-					typ='whitelist',
-					domains=['google.de', 'gmx.net'],
-					priority=4)
+			rule2 = InternetRule(ucr=ucr, umcConnection=connection, typ='whitelist', domains=['google.de', 'gmx.net'], priority=4)
 			rule2.define()
 
 			# Assign whitelist rule to the new Workgroup

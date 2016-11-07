@@ -243,11 +243,12 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 		f.write('	 domainlist whitelisted-domain-%s\n' % proxy_setting)
 		f.write('	 urllist	whitelisted-url-%s\n' % proxy_setting)
 		f.write('}\n\n')
-		touchfnlist.extend(['blacklisted-domain-%s' % proxy_setting,
-								'blacklisted-url-%s' % proxy_setting,
-								'whitelisted-domain-%s' % proxy_setting,
-								'whitelisted-url-%s' % proxy_setting,
-								])
+		touchfnlist.extend([
+			'blacklisted-domain-%s' % proxy_setting,
+			'blacklisted-url-%s' % proxy_setting,
+			'whitelisted-domain-%s' % proxy_setting,
+			'whitelisted-url-%s' % proxy_setting,
+		])
 
 	# disable the domainlist/urllist within the temporary config file - processing the global blacklists
 	# may take several seconds (depending on their size). The entry is reenabled when copied to target

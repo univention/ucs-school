@@ -64,8 +64,7 @@ class ImageViewer(QtGui.QMainWindow):
 
 		self.imageLabel = QtGui.QLabel()
 		self.imageLabel.setBackgroundRole(QtGui.QPalette.Base)
-		self.imageLabel.setSizePolicy(QtGui.QSizePolicy.Ignored,
-				QtGui.QSizePolicy.Ignored)
+		self.imageLabel.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
 		self.imageLabel.setScaledContents(True)
 
 		self.scrollArea = QtGui.QScrollArea()
@@ -92,8 +91,7 @@ class ImageViewer(QtGui.QMainWindow):
 		if fileName:
 			image = QtGui.QImage(fileName)
 		if image.isNull():
-			QtGui.QMessageBox.information(self, "Image Viewer",
-					"Cannot load %s." % fileName)
+			QtGui.QMessageBox.information(self, "Image Viewer", "Cannot load %s." % fileName)
 			return
 
 		self.imageLabel.setPixmap(QtGui.QPixmap.fromImage(image))
@@ -111,8 +109,7 @@ class ImageViewer(QtGui.QMainWindow):
 		self.zoomOutAct.setEnabled(self.scaleFactor > 0.333)
 
 	def adjustScrollBar(self, scrollBar, factor):
-		scrollBar.setValue(int(factor * scrollBar.value() +
-								 ((factor - 1) * scrollBar.pageStep() / 2)))
+		scrollBar.setValue(int(factor * scrollBar.value() + ((factor - 1) * scrollBar.pageStep() / 2)))
 
 
 if __name__ == '__main__':

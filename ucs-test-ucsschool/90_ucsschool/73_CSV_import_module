@@ -23,23 +23,11 @@ def main():
 			user_types = ['student', 'teacher', 'staff', 'teachersAndStaff']
 			nr_of_lines = 2  # number of users to import for each type
 			print 'Generate import files ; staff does not have class attr'
-			files_01 = [
-					stu_tea_file(nr_of_lines, school),
-					stu_tea_file(nr_of_lines, school),
-					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines, school)
-					]
+			files_01 = [stu_tea_file(nr_of_lines, school), stu_tea_file(nr_of_lines, school), staff_file(nr_of_lines), stu_tea_file(nr_of_lines, school)]
 			expected_upload_status = 200
 			delete_not_mentioned = False
 			print 'checking importing the users'
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_01,
-					delete_not_mentioned,
-					expected_upload_status,
-					[],
-					[])
+			users, errors, warnings = check_import_users(school, user_types, files_01, delete_not_mentioned, expected_upload_status, [], [])
 			print 'update persons list with the actual persons imported'
 			update_persons(school, persons_list, users)
 			print 'verify imported persons in ldap'
@@ -47,90 +35,36 @@ def main():
 
 			print 'do the same steps with delete_not_mentioned=True'
 			nr_of_lines = 1
-			files_02 = [
-					stu_tea_file(nr_of_lines, school),
-					stu_tea_file(nr_of_lines, school),
-					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines, school)
-					]
+			files_02 = [stu_tea_file(nr_of_lines, school), stu_tea_file(nr_of_lines, school), staff_file(nr_of_lines), stu_tea_file(nr_of_lines, school)]
 			delete_not_mentioned = True
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_02,
-					delete_not_mentioned,
-					expected_upload_status,
-					[],
-					[]
-					)
+			users, errors, warnings = check_import_users(school, user_types, files_02, delete_not_mentioned, expected_upload_status, [], [])
 			update_persons(school, persons_list, users)
 			verify_persons(persons_list)
 
 			print 'Check warnings for changing firstname, lastname and birthday of an existing user'
-			warnings_keys = [
-					'firstname', 'lastname', 'birthday', 'email',
-					'firstname', 'lastname', 'birthday', 'email',
-					'firstname', 'lastname', 'birthday', 'email',
-					'firstname', 'lastname', 'birthday', 'email'
-					]
+			warnings_keys = ['firstname', 'lastname', 'birthday', 'email', 'firstname', 'lastname', 'birthday', 'email', 'firstname', 'lastname', 'birthday', 'email', 'firstname', 'lastname', 'birthday', 'email']
 			nr_of_lines = 1
-			files_03 = [
-					stu_tea_file(nr_of_lines, school),
-					stu_tea_file(nr_of_lines, school),
-					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines, school)
-					]
+			files_03 = [stu_tea_file(nr_of_lines, school), stu_tea_file(nr_of_lines, school), staff_file(nr_of_lines), stu_tea_file(nr_of_lines, school)]
 			print 'Assign the same usernames of users in files_02 to users in files_03'
 			transform_usernames(files_02, files_03, nr_of_lines)
 			delete_not_mentioned = False
 			print '''Try to import the new users with the same names
 			check if warnings/ errors are detected'''
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_03,
-					delete_not_mentioned,
-					expected_upload_status,
-					[],
-					warnings_keys
-					)
+			users, errors, warnings = check_import_users(school, user_types, files_03, delete_not_mentioned, expected_upload_status, [], warnings_keys)
 			update_persons(school, persons_list, users)
 			verify_persons(persons_list)
 
 			print 'import new users with delete_not_mentioned=False'
-			files_02 = [
-					stu_tea_file(nr_of_lines, school),
-					stu_tea_file(nr_of_lines, school),
-					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines, school)
-					]
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_02,
-					delete_not_mentioned,
-					expected_upload_status,
-					[],
-					[])
+			files_02 = [stu_tea_file(nr_of_lines, school), stu_tea_file(nr_of_lines, school), staff_file(nr_of_lines), stu_tea_file(nr_of_lines, school)]
+			users, errors, warnings = check_import_users(school, user_types, files_02, delete_not_mentioned, expected_upload_status, [], [])
 			update_persons(school, persons_list, users)
 			verify_persons(persons_list)
 
-			files_04 = [stu_tea_file(nr_of_lines, school),
-					stu_tea_file(nr_of_lines, school),
-					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines, school)
-					]
+			files_04 = [stu_tea_file(nr_of_lines, school), stu_tea_file(nr_of_lines, school), staff_file(nr_of_lines), stu_tea_file(nr_of_lines, school)]
 			print 'Assign the same usernames of users in files_02 to users in files_04'
 			transform_usernames(files_02, files_04, nr_of_lines)
 			delete_not_mentioned = True
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_04,
-					delete_not_mentioned,
-					expected_upload_status,
-					[],
-					warnings_keys)
+			users, errors, warnings = check_import_users(school, user_types, files_04, delete_not_mentioned, expected_upload_status, [], warnings_keys)
 			update_persons(school, persons_list, users)
 			verify_persons(persons_list)
 
@@ -138,14 +72,7 @@ def main():
 			user_types = ['teacher', 'teachersAndStaff', 'staff', 'student']
 			delete_not_mentioned = False
 			errors_keys = ['name', 'name', 'name']
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_04,
-					delete_not_mentioned,
-					expected_upload_status,
-					errors_keys,
-					[])
+			users, errors, warnings = check_import_users(school, user_types, files_04, delete_not_mentioned, expected_upload_status, errors_keys, [])
 			verify_persons(persons_list)
 
 if __name__ == '__main__':

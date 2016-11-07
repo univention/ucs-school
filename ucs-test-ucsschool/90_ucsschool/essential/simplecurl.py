@@ -32,18 +32,7 @@ class SimpleCurl(object):
 	:type auth: int
 	"""
 
-	def __init__(
-			self,
-			proxy,
-			username=None,
-			password=None,
-			bFollowLocation=1,
-			maxReDirs=5,
-			connectTimout=10,
-			timeOut=10,
-			port=3128,
-			auth=pycurl.HTTPAUTH_BASIC,
-			cookie=None):
+	def __init__(self, proxy, username=None, password=None, bFollowLocation=1, maxReDirs=5, connectTimout=10, timeOut=10, port=3128, auth=pycurl.HTTPAUTH_BASIC, cookie=None):
 			# Perform basic authentication by default
 		self.curl = pycurl.Curl()
 		self.curl.setopt(pycurl.FOLLOWLOCATION, bFollowLocation)

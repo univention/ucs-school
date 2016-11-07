@@ -63,10 +63,8 @@ class Test(CLI_Import_v2_Tester):
 				username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
 				self.log.info("Calculated username_prefix is %r.", username_prefix)
 				if person.username != "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""):
-					self.fail('username %r is not expected string "%s%s"' %
-						(person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""))
-				self.log.info('Username %r is expected with string "%s%s"',
-						person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")
+					self.fail('username %r is not expected string "%s%s"' % (person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""))
+				self.log.info('Username %r is expected with string "%s%s"', person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")
 
 				# check if username history object exists
 				self.log.info('Checking for unique-usernames object...')

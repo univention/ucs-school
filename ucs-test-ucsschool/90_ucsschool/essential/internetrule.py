@@ -1,6 +1,6 @@
 """
-  **Class InternetRule**\n
-  All the operations related to internet rules
+**Class InternetRule**\n
+All the operations related to internet rules
 
 .. module:: internetrule
 	:platform: Unix
@@ -37,15 +37,7 @@ class InternetRule(object):
 	:type priority: [int]
 	"""
 
-	def __init__(
-			self,
-			umcConnection=None,
-			ucr=None,
-			name=None,
-			typ=None,
-			domains=None,
-			wlan=None,
-			priority=None):
+	def __init__(self, umcConnection=None, ucr=None, name=None, typ=None, domains=None, wlan=None, priority=None):
 		self.name = name if name else uts.random_string()
 		self.typ = typ if typ else random.choice(['whitelist', 'blacklist'])
 		if domains:
@@ -89,9 +81,7 @@ class InternetRule(object):
 				'priority': self.priority
 			}
 		}]
-		print 'defining rule %s with UMCP:%s' % (
-			self.name,
-			'internetrules/add')
+		print 'defining rule %s with UMCP:%s' % (self.name, 'internetrules/add')
 		print 'param = %r' % (param,)
 		reqResult = self.umcConnection.request('internetrules/add', param)
 		if not reqResult[0]['success']:
@@ -101,23 +91,12 @@ class InternetRule(object):
 		"""gets internet rule via UMCP\n
 		:param should_exist: True if the rule is expected to be found
 		:type should_exist: bool"""
-		print 'Calling %s for %s' % (
-			'internetrules/get',
-			self.name)
-		reqResult = self.umcConnection.request(
-			'internetrules/get', [self.name])
+		print 'Calling %s for %s' % ('internetrules/get', self.name)
+		reqResult = self.umcConnection.request('internetrules/get', [self.name])
 		if bool(reqResult) != should_exist:
-			utils.fail(
-				'Unexpected fetching result for internet rule (%r)' %
-				(self.name))
+			utils.fail('Unexpected fetching result for internet rule (%r)' % (self.name))
 
-	def put(
-			self,
-			new_name=None,
-			new_type=None,
-			new_domains=None,
-			new_wlan=None,
-			new_priority=None):
+	def put(self, new_name=None, new_type=None, new_domains=None, new_wlan=None, new_priority=None):
 		"""Modify internet rule via UMCP\n
 		with no args passed this only reset the rule properties\n
 		:param new_name:
@@ -147,9 +126,7 @@ class InternetRule(object):
 			},
 			'options': {'name': self.name}
 		}]
-		print 'Modifying rule %s with UMCP:%s' % (
-			self.name,
-			'internetrules/put')
+		print 'Modifying rule %s with UMCP:%s' % (self.name, 'internetrules/put')
 		print 'param = %r' % (param,)
 		reqResult = self.umcConnection.request('internetrules/put', param)
 		if not reqResult[0]['success']:
@@ -163,13 +140,9 @@ class InternetRule(object):
 
 	def remove(self):
 		"""removes internet rule via UMCP"""
-		print 'Calling %s for %s' % (
-			'internetrules/remove',
-			self.name)
+		print 'Calling %s for %s' % ('internetrules/remove', self.name)
 		options = [{'object': self.name}]
-		reqResult = self.umcConnection.request(
-			'internetrules/remove',
-			options)
+		reqResult = self.umcConnection.request('internetrules/remove', options)
 		if not reqResult[0]['success']:
 			utils.fail('Unable to remove rule (%r)' % (self.name,))
 
@@ -185,13 +158,9 @@ class InternetRule(object):
 		print 'Checking UCR for %s' % self.name
 		self.ucr.load()
 		# extract related items from ucr
-		exItems = dict([
-			(key.split('/')[-1], value)
-			for (key, value) in self.ucr.items() if self.name in key])
+		exItems = dict([(key.split('/')[-1], value) for (key, value) in self.ucr.items() if self.name in key])
 		if bool(exItems) != should_match:
-			utils.fail(
-				'Unexpected registery items (should_match=%r items=%r)' %
-				(should_match, exItems))
+			utils.fail('Unexpected registery items (should_match=%r items=%r)' % (should_match, exItems))
 		elif should_match:
 			wlan = str(self.wlan).lower()
 			typ = self.typ
@@ -202,24 +171,15 @@ class InternetRule(object):
 			curtype = exItems['filtertype']
 			curWlan = exItems['wlan']
 			curPriority = int(exItems['priority'])
-			exDomains = dict([
-				(key, value)for (key, value) in exItems.items()
-				if unicode(key).isnumeric()])
+			exDomains = dict([(key, value)for (key, value) in exItems.items() if unicode(key).isnumeric()])
 			curDomains = sorted(exDomains.values())
 			currentState = (curtype, curPriority, curWlan, curDomains)
 			if currentState != (typ, self.priority, wlan, self.domains):
-				utils.fail(
-					'Values in UCR are not updated for rule (%r)' %
-					(self.name))
+				utils.fail('Values in UCR are not updated for rule (%r)' % (self.name))
 
 	# Assign internet rules to workgroups/classes
 	# return a tuple (groupName, ruleName)
-	def assign(
-			self,
-			school,
-			groupName,
-			groupType,
-			default=False):
+	def assign(self, school, groupName, groupType, default=False):
 		"""Assign internet rule via UMCP\n
 		:param school: name of the ou
 		:type school: str
@@ -239,29 +199,18 @@ class InternetRule(object):
 			ucsschool = UCSTestSchool()
 			groupdn = ucsschool.get_workinggroup_dn(school, groupName)
 		elif groupType == 'class':
-			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s' % (
-				school, groupName, school_basedn)
+			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s' % (school, groupName, school_basedn)
 
 		if default:
 			name = '$default$'
 		else:
 			name = self.name
-		param = [{
-			'group': groupdn,
-			'rule': name
-		}]
-		print 'Assigning rule %s to %s: %s' % (
-			self.name,
-			groupType,
-			groupName)
+		param = [{'group': groupdn, 'rule': name}]
+		print 'Assigning rule %s to %s: %s' % (self.name, groupType, groupName)
 		print 'param = %r' % (param,)
-		result = self.umcConnection.request(
-			'internetrules/groups/assign',
-			param)
+		result = self.umcConnection.request('internetrules/groups/assign', param)
 		if not result:
-			utils.fail(
-				'Unable to assign internet rule to workgroup (%r)' %
-				(param,))
+			utils.fail('Unable to assign internet rule to workgroup (%r)' % (param,))
 		else:
 			return (groupName, self.name)
 
@@ -287,7 +236,6 @@ class InternetRule(object):
 		"""
 		print 'Calling %s = get all defined rules' % ('internetrules/query')
 		ruleList = []
-		rules = self.umcConnection.request(
-			'internetrules/query', {'pattern': ''})
+		rules = self.umcConnection.request('internetrules/query', {'pattern': ''})
 		ruleList = sorted([(x['name']) for x in rules])
 		return ruleList

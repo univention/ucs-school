@@ -167,12 +167,13 @@ class ExamCleanupHelper(object):
 		remove_list = []
 		for key in self.ucr.keys():
 			if key in (
-					'samba/othershares/hosts/deny',
-					'samba/othershares/hosts/none',
-					'samba/printmode/hosts/none',
-					'samba/printmode/hosts/all',
-					'cups/printmode/hosts/none',
-					'cups/printmode/hosts/all'):
+				'samba/othershares/hosts/deny',
+				'samba/othershares/hosts/none',
+				'samba/printmode/hosts/none',
+				'samba/printmode/hosts/all',
+				'cups/printmode/hosts/none',
+				'cups/printmode/hosts/all'
+			):
 				remove_list.append(key)
 			elif key.startswith('proxy/filter/room/') and (key.endswith('/ip') or key.endswith('/rule')):
 				remove_list.append(key)
@@ -241,16 +242,23 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
 	parser = optparse.OptionParser(description=description)
 	parser.add_option('-n', '--dry-run', dest='dryrun', default=False, action='store_true', help='do not change anything')
 	parser.add_option('-d', '--debug', dest='debug', default=False, action='store_true', help='write additional debug output to logfile')
-	parser.add_option('--skip-exam-shutdown', dest='skip_stop_running_exams', default=False, action='store_true',
-							help='do not try to shutdown running exams gracefully')
-	parser.add_option('--skip-exam-user-removal', dest='skip_exam_user_removal', default=False, action='store_true',
-							help='do not remove all existing exam users (only on DC master / DC backup)')
-	parser.add_option('--skip-ucr-cleanup', dest='skip_remove_ucr_debris', default=False, action='store_true',
-							help='do not purge exam/room related UCR variables')
-	parser.add_option('--skip-exam-cleanup', dest='skip_remove_exam_file_debris', default=False, action='store_true',
-							help='do not purge exam data/metadata files')
-	parser.add_option('--skip-room-cleanup', dest='skip_remove_room_debris', default=False, action='store_true',
-							help='do not purge room metadata files')
+	parser.add_option(
+		'--skip-exam-shutdown', dest='skip_stop_running_exams', default=False, action='store_true',
+		help='do not try to shutdown running exams gracefully'
+	)
+	parser.add_option(
+		'--skip-exam-user-removal', dest='skip_exam_user_removal', default=False, action='store_true',
+		help='do not remove all existing exam users (only on DC master / DC backup)'
+	)
+	parser.add_option(
+		'--skip-ucr-cleanup', dest='skip_remove_ucr_debris', default=False, action='store_true',
+		help='do not purge exam/room related UCR variables'
+	)
+	parser.add_option(
+		'--skip-exam-cleanup', dest='skip_remove_exam_file_debris', default=False, action='store_true',
+		help='do not purge exam data/metadata files'
+	)
+	parser.add_option('--skip-room-cleanup', dest='skip_remove_room_debris', default=False, action='store_true', help='do not purge room metadata files')
 	(options, _) = parser.parse_args()
 
 	debug_level = ud.ALL if options.debug else ud.PROCESS

@@ -133,8 +133,7 @@ class Acl(object):
 		:type access: str='read' 'write' or 'none'
 		"""
 		access_allowance = access_allowance if access_allowance else self.access_allowance
-		print '\n * Targetdn = %s\n * Authdn = %s\n * Access = %s\n * Access allowance = %s\n' % (
-				target_dn, self.auth_dn, access, access_allowance)
+		print '\n * Targetdn = %s\n * Authdn = %s\n * Access = %s\n * Access allowance = %s\n' % (target_dn, self.auth_dn, access, access_allowance)
 		cmd = [
 			'slapacl',
 			'-f',
@@ -461,8 +460,7 @@ class Acl(object):
 		self.assert_acl(user_dn, access, attrs)
 
 	def assert_dhcp(self, client, access):
-		client_dhcp_dn = 'cn=%s,cn=%s,cn=dhcp,%s' % (
-				client, self.school, utu.UCSTestSchool().get_ou_base_dn(self.school))
+		client_dhcp_dn = 'cn=%s,cn=%s,cn=dhcp,%s' % (client, self.school, utu.UCSTestSchool().get_ou_base_dn(self.school))
 		attrs = [
 			'entry',
 			'children',

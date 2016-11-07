@@ -21,14 +21,9 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 
 
-def print_header(
-		i, room1_rule, room1_printmode, room1_sharemode,
-		j, room2_rule, room2_printmode, room2_sharemode
-		):
-	print '\n** ROOM 1\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)' % (
-			i, room1_rule, room1_printmode, room1_sharemode)
-	print '\n** ROOM 2\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)' % (
-			j, room2_rule, room2_printmode, room2_sharemode)
+def print_header(i, room1_rule, room1_printmode, room1_sharemode, j, room2_rule, room2_printmode, room2_sharemode):
+	print '\n** ROOM 1\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)' % (i, room1_rule, room1_printmode, room1_sharemode)
+	print '\n** ROOM 2\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)' % (j, room2_rule, room2_printmode, room2_sharemode)
 
 
 def main():
@@ -50,12 +45,7 @@ def main():
 				room2 = Room(school, host_members=computers_dns[1])
 				# Creating the rooms
 				for room in [room1, room2]:
-					schoolenv.create_computerroom(
-							school,
-							name=room.name,
-							description=room.description,
-							host_members=room.host_members
-							)
+					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 
 				# preparing the network loop
 				nethelper.add_loop(computers_ips[0], computers_ips[1])
@@ -73,13 +63,7 @@ def main():
 					rule.assign(school, group.name, 'workgroup')
 
 					# Add new hardware printer
-					add_printer(
-							printer_name,
-							school,
-							ucr.get('hostname'),
-							ucr.get('domainname'),
-							ucr.get('ldap/base')
-							)
+					add_printer(printer_name, school, ucr.get('hostname'), ucr.get('domainname'), ucr.get('ldap/base'))
 
 					# generate all the possible combinations for (rule, printmode, sharemode)
 					white_page = 'download.univention.de'
@@ -96,8 +80,7 @@ def main():
 
 					# Testing loop over room1 settings
 					for i in xrange(24):
-						room1_period = datetime.time.strftime(
-								(datetime.datetime.now() + datetime.timedelta(0, room1_time)).time(), '%H:%M')
+						room1_period = datetime.time.strftime((datetime.datetime.now() + datetime.timedelta(0, room1_time)).time(), '%H:%M')
 
 						# get room1 old settings
 						room1.aquire_room(umc_connection)
@@ -106,34 +89,19 @@ def main():
 						room1_old_settings['period'] = room1_old_settings['period'][:-3]
 
 						room1_rule, room1_printmode, room1_sharemode = next(room1_settings)
-						room1_new_settings = {
-								'customRule': white_page,
-								'printMode': room1_printmode,
-								'internetRule': room1_rule,
-								'shareMode': room1_sharemode,
-								'period': room1_period
-								}
+						room1_new_settings = {'customRule': white_page, 'printMode': room1_printmode, 'internetRule': room1_rule, 'shareMode': room1_sharemode, 'period': room1_period}
 						room1.set_room_settings(umc_connection, room1_new_settings)
 
 						# Testing loop over room2 settings
 						room2_settings = itertools.product(rules, printmodes, sharemodes)
 						for j in xrange(24):
 							try:
-								room2_period = datetime.time.strftime(
-										(datetime.datetime.now() + datetime.timedelta(0, room2_time)).time(), '%H:%M')
+								room2_period = datetime.time.strftime((datetime.datetime.now() + datetime.timedelta(0, room2_time)).time(), '%H:%M')
 								room2_rule, room2_printmode, room2_sharemode = next(room2_settings)
 
-								print_header(
-										i, room1_rule, room1_printmode, room1_sharemode,
-										j, room2_rule, room2_printmode, room2_sharemode)
+								print_header(i, room1_rule, room1_printmode, room1_sharemode, j, room2_rule, room2_printmode, room2_sharemode)
 
-								room2_new_settings = {
-										'customRule': white_page,
-										'printMode': room2_printmode,
-										'internetRule': room2_rule,
-										'shareMode': room2_sharemode,
-										'period': room2_period
-										}
+								room2_new_settings = {'customRule': white_page, 'printMode': room2_printmode, 'internetRule': room2_rule, 'shareMode': room2_sharemode, 'period': room2_period}
 								room1.set_room_settings(umc_connection, room1_new_settings)
 
 								room2.aquire_room(umc_connection)
@@ -142,15 +110,7 @@ def main():
 								# Check room1 settings
 								room1.aquire_room(umc_connection)
 								room1.check_room_settings(umc_connection, room1_new_settings)
-								room1.check_behavior(
-										room1_old_settings,
-										room1_new_settings,
-										tea,
-										computers_ips[1],
-										printer_name,
-										white_page,
-										global_domains,
-										ucr)
+								room1.check_behavior(room1_old_settings, room1_new_settings, tea, computers_ips[1], printer_name, white_page, global_domains, ucr)
 								# For DEBUG purposes
 								# run_commands([['ucr', 'search', room1.name], ['ucr','search', room2.name], ['atq']], {})
 								clean_folder('/home/gsmitte/groups/Marktplatz/')

@@ -55,8 +55,7 @@ class Test(CLI_Import_v2_Tester):
 			self.check_new_and_removed_users(1, 0)
 			person.verify()
 
-			self.log.info('*** Importing a new single user with role %r and same email address %r (and thus deleting '
-				'previously imported user)...', role, email)
+			self.log.info('*** Importing a new single user with role %r and same email address %r (and thus deleting ' 'previously imported user)...', role, email)
 			person = Person(self.ou_A.name, role)
 			record_uid = uts.random_name()
 			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)

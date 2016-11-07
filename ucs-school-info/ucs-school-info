@@ -61,8 +61,7 @@ def get_object(dn, module, superordinate=None):
 	position = univention.admin.uldap.position(baseDN)
 	univention.admin.modules.init(lo, position, _module)
 
-	return univention.admin.objects.get(_module, co, lo, position=position,
-			superordinate=superordinate, dn=dn)
+	return univention.admin.objects.get(_module, co, lo, position=position, superordinate=superordinate, dn=dn)
 
 
 def get_objects(module, base=baseDN, _filter=None, superordinate=None):
@@ -74,14 +73,15 @@ def get_objects(module, base=baseDN, _filter=None, superordinate=None):
 	position = univention.admin.uldap.position(baseDN)
 	univention.admin.modules.init(lo, position, _module)
 	if not _filter:
-		return univention.admin.modules.lookup(_module, co, lo,
-				superordinate=superordinate, base=base, scope='sub')
+		return univention.admin.modules.lookup(_module, co, lo, superordinate=superordinate, base=base, scope='sub')
 	else:
 		if len(_filter) != 2:
 			raise ValueError('_filter consists of other than two arguments!')
-		return univention.admin.modules.lookup(_module, co, lo,
-				base=base, scope='sub', superordinate=superordinate,
-				filter=univention.admin.filter.expression(*_filter))
+		return univention.admin.modules.lookup(
+			_module, co, lo,
+			base=base, scope='sub', superordinate=superordinate,
+			filter=univention.admin.filter.expression(*_filter)
+		)
 
 
 def user(base=baseDN):
@@ -211,14 +211,10 @@ if __name__ == '__main__':
 	usage = "%prog [options] <ou> [<ou>...]"
 
 	parser = OptionParser(usage=usage)
-	parser.add_option("-u", "--user", dest="user", action="store_true",
-			help="Display user information")
-	parser.add_option("-n", "--network", action="store_true", dest="network",
-			help="Display network information")
-	parser.add_option("-c", "--computer", action="store_true", dest="computer",
-			help="Display computer information")
-	parser.add_option("-a", "--all", action="store_true", dest="all",
-			help="Display all available information (user, network, computer) [default]")
+	parser.add_option("-u", "--user", dest="user", action="store_true", help="Display user information")
+	parser.add_option("-n", "--network", action="store_true", dest="network", help="Display network information")
+	parser.add_option("-c", "--computer", action="store_true", dest="computer", help="Display computer information")
+	parser.add_option("-a", "--all", action="store_true", dest="all", help="Display all available information (user, network, computer) [default]")
 
 	parser.set_defaults(user=False, network=False, computer=False, all=False)
 
@@ -245,8 +241,7 @@ if __name__ == '__main__':
 	try:
 		lo = univention.admin.uldap.access(host=configRegistry['ldap/server/name'], base=baseDN, binddn=machinedn, bindpw=machinepwd, start_tls=2)
 	except Exception, e:
-		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN,
-				'authentication error: %s' % str(e))
+		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
 		print 'ERROR: authentication error: %s' % str(e)
 		sys.exit(1)
 

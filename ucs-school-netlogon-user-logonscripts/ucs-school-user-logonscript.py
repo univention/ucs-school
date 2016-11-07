@@ -458,8 +458,7 @@ def gidShares(gid):
 		with LDAPConnection() as lo:
 			return lo.search(scope="sub", filter=filter_format('(&(objectClass=univentionShareSamba)(univentionShareGid=%s))', (gid,)), attr=['cn', 'univentionShareHost', 'univentionShareSambaName'])
 	except ldap.LDAPError as msg:
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN,
-			'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s: %r' % (gid, msg))
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s: %r' % (gid, msg))
 		return ()
 
 
@@ -497,10 +496,7 @@ def userchange(dn, new, old):
 			else:
 				membershipIDs.add(new['gidNumber'][0])
 
-			if old and \
-					new.get('uid') == old.get('uid') and \
-					new.get('gidNumber') == old.get('gidNumber') and \
-					new.get('homeDirectory') == old.get('homeDirectory'):
+			if old and new.get('uid') == old.get('uid') and new.get('gidNumber') == old.get('gidNumber') and new.get('homeDirectory') == old.get('homeDirectory'):
 				return  # skip unused attributes
 
 			# Gruppen suchen mit uniqueMember=dn

@@ -351,16 +351,12 @@ class UCS_License_detection(object):
 		v = self._license.version
 		types = self._license.licenses[v]
 		if dn is None:
-			max = [self._license.licenses[v][type]
-				for type in types]
+			max = [self._license.licenses[v][type] for type in types]
 		else:
-			max = [lo.get(dn)[self._license.keys[v][type]][0]
-				for type in types]
+			max = [lo.get(dn)[self._license.keys[v][type]][0] for type in types]
 
-		objs = [lo.searchDn(filter=self._license.filters[v][type])
-			for type in types]
-		num = [mylen(obj)
-			for obj in objs]
+		objs = [lo.searchDn(filter=self._license.filters[v][type]) for type in types]
+		num = [mylen(obj) for obj in objs]
 		self._license.checkObjectCounts(max, num)
 		result = []
 		for i in types.keys():
@@ -388,11 +384,13 @@ class UCS_License_detection(object):
 			bindpw = pwfile.readline().strip()
 
 		try:
-			lo = univention.admin.uldap.access(host=self.ucr['ldap/master'],
-							port=int(self.ucr.get('ldap/master/port', '7389')),
-							base=self.ucr['ldap/base'],
-							binddn=binddn,
-							bindpw=bindpw)
+			lo = univention.admin.uldap.access(
+				host=self.ucr['ldap/master'],
+				port=int(self.ucr.get('ldap/master/port', '7389')),
+				base=self.ucr['ldap/base'],
+				binddn=binddn,
+				bindpw=bindpw
+			)
 		except uexceptions.authFail:
 			raise LicenseInsufficient(_('Internal Error: License check failed.'))
 
@@ -419,10 +417,10 @@ class UCS_License_detection(object):
 			if self._license.compare(sum_objs, max_objs) > 0:
 				license_sufficient = False
 				error_msg = _('Number of %(object_name)s after the import would be %(sum)s. This would exceed the number of licensed objects (%(max)s).') % {
-							'object_name': object_displayname,
-							'sum': sum_objs,
-							'max': max_objs,
-						}
+					'object_name': object_displayname,
+					'sum': sum_objs,
+					'max': max_objs,
+				}
 				MODULE.warn(error_msg)
 
 		if not license_sufficient:

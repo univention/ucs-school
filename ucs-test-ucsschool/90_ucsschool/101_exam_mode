@@ -52,12 +52,7 @@ def main():
 
 				# Creating the rooms
 				for room in [room1, room2]:
-					schoolenv.create_computerroom(
-							school,
-							name=room.name,
-							description=room.description,
-							host_members=room.host_members
-							)
+					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 
 				current_time = datetime.now()
 				chosen_time = current_time + timedelta(hours=2)
@@ -66,11 +61,11 @@ def main():
 				wait_replications_check_rejected_uniqueMember(existing_rejects)
 
 				exam = Exam(
-						school=school,
-						room=room2.dn,				# room dn
-						examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
-						recipients=[klasse_dn]  # list of classes dns
-						)
+					school=school,
+					room=room2.dn,  # room dn
+					examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+					recipients=[klasse_dn]  # list of classes dns
+				)
 
 				exam.start()
 				print ' ** After starting the exam'

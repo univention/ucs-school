@@ -43,18 +43,14 @@ class TestSamba4(object):
 		input_str = input_str.replace('WARNING: No path in service IPC$ - making it unavailable!', '')
 		return input_str.replace('NOTE: Service IPC$ is flagged unavailable.', '').strip()
 
-	def create_and_run_process(self, cmd,
-										stdin=None, std_input=None,
-										shell=False, stdout=PIPE):
+	def create_and_run_process(self, cmd, stdin=None, std_input=None, shell=False, stdout=PIPE):
 		"""
 		Creates a process as a Popen instance with a given 'cmd'
 		and executes it. When stdin is needed, it can be provided with kwargs.
 		To write to a file an istance can be provided to stdout.
 		"""
 		print '\n create_and_run_process(%r, shell=%r)' % (cmd, shell)
-		proc = Popen(cmd,
-						stdin=stdin, stdout=stdout, stderr=PIPE,
-						shell=shell, close_fds=True)
+		proc = Popen(cmd, stdin=stdin, stdout=stdout, stderr=PIPE, shell=shell, close_fds=True)
 
 		stdout, stderr = proc.communicate(input=std_input)
 
@@ -76,19 +72,14 @@ class TestSamba4(object):
 
 			stdout, stderr = self.create_and_run_process(cmd)
 			if stderr:
-				utils.fail("An error occured during %sing the '%s' service: %s"
-									% (action, service, stderr))
+				utils.fail("An error occured during %sing the '%s' service: %s" % (action, service, stderr))
 
 			stdout = stdout.strip()
 			if not stdout:
-				utils.fail("The %s command did not produce any output to "
-									"stdout, while a confirmation was expected"
-									% action)
+				utils.fail("The %s command did not produce any output to " "stdout, while a confirmation was expected" % action)
 			print stdout
 		else:
-			print("\nUnknown state '%s' is given for the service "
-						"'%s', accepted 'start' to start it 'stop' to stop or "
-						"'restart' to restart" % (action, service))
+			print("\nUnknown state '%s' is given for the service " "'%s', accepted 'start' to start it 'stop' to stop or " "'restart' to restart" % (action, service))
 
 	def dc_master_has_samba4(self):
 		"""
@@ -97,8 +88,7 @@ class TestSamba4(object):
 		if not self.ldap_master:
 			self.ldap_master = self.UCR.get('ldap/master')
 
-		if self.ldap_master in self.get_udm_list_dcs('domaincontroller_master',
-														with_samba4=True):
+		if self.ldap_master in self.get_udm_list_dcs('domaincontroller_master', with_samba4=True):
 			return True
 
 	def is_a_school_branch_site(self, host_dn):
@@ -113,12 +103,9 @@ class TestSamba4(object):
 		"""
 		Runs grep on given 'grep_in' with a given 'key'. Returns the output.
 		"""
-		stdout, stderr = self.create_and_run_process(("grep", key),
-														PIPE,
-														grep_in)
+		stdout, stderr = self.create_and_run_process(("grep", key), PIPE, grep_in)
 		if stderr:
-			utils.fail("An error occured while running a grep with a "
-								"keyword '%s':\n'%s'" % (key, stderr))
+			utils.fail("An error occured while running a grep with a " "keyword '%s':\n'%s'" % (key, stderr))
 		return stdout
 
 	def sed_for_key(self, input, key):
@@ -128,8 +115,7 @@ class TestSamba4(object):
 		cmd = ("sed", "-n", "s/%s//p" % (key,))
 		stdout, stderr = self.create_and_run_process(cmd, PIPE, input)
 		if stderr:
-			utils.fail("An error occured while running a sed command "
-								"'%s':\n'%s'" % (" ".join(cmd), stderr))
+			utils.fail("An error occured while running a sed command " "'%s':\n'%s'" % (" ".join(cmd), stderr))
 		return stdout
 
 	def get_udm_list_dcs(self, dc_type, with_samba4=True):
@@ -137,9 +123,7 @@ class TestSamba4(object):
 		Runs the "udm computers/'dc_type' list" and returns the output.
 		If 'with_samba4' is 'True' returns only those running Samba 4.
 		"""
-		if dc_type not in ('domaincontroller_master',
-									'domaincontroller_backup',
-									'domaincontroller_slave'):
+		if dc_type not in ('domaincontroller_master', 'domaincontroller_backup', 'domaincontroller_slave'):
 
 			print "\nThe given DC type '%s' is unknown" % dc_type
 			self.return_code_result_skip()
@@ -150,9 +134,7 @@ class TestSamba4(object):
 
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
-			utils.fail("An error occured while running a '%s' command to "
-								"find all '%s' in the domain:\n'%s'"
-								% (" ".join(cmd), dc_type, stderr))
+			utils.fail("An error occured while running a '%s' command to " "find all '%s' in the domain:\n'%s'" % (" ".join(cmd), dc_type, stderr))
 		return stdout
 
 	def get_udm_list_dc_slaves_with_samba4(self):
@@ -177,15 +159,13 @@ class TestSamba4(object):
 			return ous[0]
 		except IndexError:
 			print "\nselect_school_ou: split: %s" % (sed_stdout.split(),)
-			utils.fail("Could not find the DN in the udm list output, thus "
-								"cannot select the School OU to use as a container")
+			utils.fail("Could not find the DN in the udm list output, thus " "cannot select the School OU to use as a container")
 
 	def get_samba_sam_ldb_path(self):
 		"""
 		Returns the 'sam.ldb' path using samba conf or defaults.
 		"""
-		print("\nObtaining the Samba configuration to determine "
-					"Samba private path")
+		print("\nObtaining the Samba configuration to determine " "Samba private path")
 		smb_conf_path = getenv("SMB_CONF_PATH")
 		SambaLP = LoadParm()
 
@@ -200,8 +180,7 @@ class TestSamba4(object):
 		"""
 		Loads the UCR to get credentials for the test.
 		"""
-		print("\nObtaining Administrator username and password "
-					"for the test from the UCR")
+		print("\nObtaining Administrator username and password " "for the test from the UCR")
 		try:
 			self.UCR.load()
 
@@ -210,8 +189,7 @@ class TestSamba4(object):
 			self.admin_username = self.admin_username.split(',')[0][len('uid='):]
 			self.admin_password = self.UCR['tests/domainadmin/pwd']
 		except KeyError as exc:
-			print("\nAn exception while trying to read data from the UCR for "
-						"the test: '%s'. Skipping the test." % exc)
+			print("\nAn exception while trying to read data from the UCR for " "the test: '%s'. Skipping the test." % exc)
 			self.return_code_result_skip()
 
 	def create_umc_connection_authenticate(self):
@@ -226,30 +204,24 @@ class TestSamba4(object):
 			self.UMCConnection = UMCConnection(self.ldap_master)
 			self.UMCConnection.auth(self.admin_username, self.admin_password)
 		except HTTPException as exc:
-			print("An HTTPException occured while trying to authenticate "
-						"to UMC: %r" % exc)
+			print("An HTTPException occured while trying to authenticate " "to UMC: %r" % exc)
 			print "Waiting 10 seconds and making another attempt"
 			sleep(10)
 			self.UMCConnection.auth(self.admin_username, self.admin_password)
 		except Exception as exc:
-			utils.fail("Failed to authenticate, hostname '%s' : %s" %
-								(self.ldap_master, exc))
+			utils.fail("Failed to authenticate, hostname '%s' : %s" % (self.ldap_master, exc))
 
 	def delete_samba_gpo(self):
 		"""
 		Deletes the Group Policy Object using the 'samba-tool gpo del'.
 		"""
-		print("\nRemoving previously created Group Policy Object (GPO) with "
-					"a reference: %s" % self.gpo_reference)
+		print("\nRemoving previously created Group Policy Object (GPO) with " "a reference: %s" % self.gpo_reference)
 
-		cmd = ("samba-tool", "gpo", "del", self.gpo_reference,
-						"--username=" + self.admin_username,
-						"--password=" + self.admin_password)
+		cmd = ("samba-tool", "gpo", "del", self.gpo_reference, "--username=" + self.admin_username, "--password=" + self.admin_password)
 
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
 			print "\nExecuting cmd:", cmd
-			print("\nAn error message while removing the GPO using "
-						"'samba-tool':\n%s" % stderr)
+			print("\nAn error message while removing the GPO using " "'samba-tool':\n%s" % stderr)
 
 		print "\nSamba-tool produced the following output:\n", stdout

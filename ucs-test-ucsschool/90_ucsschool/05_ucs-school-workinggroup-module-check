@@ -38,30 +38,20 @@ def main():
 			# 2 checking the created workgroup and its file share object in ldap
 			# import pdb; pdb.set_trace()
 			utils.wait_for_replication()
-			emptyGroup.verify_exists(
-					group_should_exist=True,
-					share_should_exist=True)
+			emptyGroup.verify_exists(group_should_exist=True, share_should_exist=True)
 
 			# 3 creating unempty workgroup
-			group = Workgroup(
-					schoolName,
-					umcConnection=connection,
-					members=memberListdn)
+			group = Workgroup(schoolName, umcConnection=connection, members=memberListdn)
 			group.create()
 
 			# 4 checking the created workgroup and its file share object in ldap
-			group.verify_exists(
-					group_should_exist=True,
-					share_should_exist=True)
+			group.verify_exists(group_should_exist=True, share_should_exist=True)
 
 			# 5 checking if the atrriputes for the group is correct in ldap
 			group.verify_ldap_attributes()
 
 			# 6 should fail: creating a new working group with a duplicate name
-			group2 = Workgroup(
-					schoolName,
-					name=group.name,
-					umcConnection=connection)
+			group2 = Workgroup(schoolName, name=group.name, umcConnection=connection)
 			group2.create(expect_creation_fails_due_to_duplicated_name=True)
 
 			# 7 add members to group
@@ -108,9 +98,7 @@ def main():
 			group.remove()
 
 			# 13 check if the object is removed from ldap
-			group.verify_exists(
-					group_should_exist=False,
-					share_should_exist=False)
+			group.verify_exists(group_should_exist=False, share_should_exist=False)
 
 
 if __name__ == '__main__':

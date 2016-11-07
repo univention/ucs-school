@@ -44,14 +44,7 @@ def main():
 			con.auth(tea, 'univention')
 
 			# Create new project
-			project = Distribution(
-					school,
-					sender=tea,
-					umcConnection=con,
-					ucr=ucr,
-					files=[(filename, 'utf8')],
-					recipients=[group],
-					flavor='teacher')
+			project = Distribution(school, sender=tea, umcConnection=con, ucr=ucr, files=[(filename, 'utf8')], recipients=[group], flavor='teacher')
 			project.add()
 			project.check_add()
 			project.distribute()
@@ -64,14 +57,7 @@ def main():
 			con2.auth(tea2, 'univention')
 			filename = uts.random_string()
 			# create new project
-			project2 = Distribution(
-					school,
-					sender=tea2,
-					umcConnection=con2,
-					ucr=ucr,
-					files=[(filename, 'utf8')],
-					recipients=[group],
-					flavor='teacher')
+			project2 = Distribution(school, sender=tea2, umcConnection=con2, ucr=ucr, files=[(filename, 'utf8')], recipients=[group], flavor='teacher')
 			project2.add()
 			project.adopt(project2.name)
 			project.check_adopt(project2.name)
@@ -90,15 +76,7 @@ def main():
 					new_description = uts.random_string()
 					new_group = Workgroup(school, members=[studn])
 					new_group.create()
-					project.put(
-							description=new_description,
-							distributeType=distType,
-							distributeTime=distTime,
-							distributeDate=distDate,
-							collectType=collType,
-							collectTime=collTime,
-							collectDate=collDate,
-							recipients=[new_group])
+					project.put(description=new_description, distributeType=distType, distributeTime=distTime, distributeDate=distDate, collectType=collType, collectTime=collTime, collectDate=collDate, recipients=[new_group])
 					project.check_put(get)
 					MIN_DIST_TIME += 3 * 60
 					MIN_COLL_TIME += 3 * 60

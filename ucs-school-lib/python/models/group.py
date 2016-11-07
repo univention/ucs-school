@@ -131,22 +131,13 @@ class Group(UCSSchoolHelperAbstractClass):
 	def build_hook_line(self, hook_time, func_name):
 		code = self._map_func_name_to_code(func_name)
 		if code != 'M':
-			return self._build_hook_line(
-					code,
-					self.school,
-					self.name,
-					self.description,
-			)
+			return self._build_hook_line(code, self.school, self.name, self.description, )
 		else:
 			# This is probably a bug. See ucs-school-import and Bug #34736
 			old_name = self.get_name_from_dn(self.old_dn)
 			new_name = self.name
 			if old_name != new_name:
-				return self._build_hook_line(
-						code,
-						old_name,
-						new_name,
-				)
+				return self._build_hook_line(code, old_name, new_name, )
 
 	class Meta:
 		udm_module = 'groups/group'

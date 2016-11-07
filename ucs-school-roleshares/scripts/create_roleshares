@@ -59,16 +59,10 @@ def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=N
 if __name__ == '__main__':
 	from optparse import OptionParser
 	parser = OptionParser()
-	parser.add_option('--create', dest='roleshares',
-		action='append',
-		help='create role share')
-	parser.add_option('--school', dest='schools',
-		action='append',
-		help='select school')
-	parser.add_option('--binddn', dest='binddn',
-		help='udm binddn')
-	parser.add_option('--bindpwd', dest='bindpwd',
-		help='udm bindpwd')
+	parser.add_option('--create', dest='roleshares', action='append', help='create role share')
+	parser.add_option('--school', dest='schools', action='append', help='select school')
+	parser.add_option('--binddn', dest='binddn', help='udm binddn')
+	parser.add_option('--bindpwd', dest='bindpwd', help='udm bindpwd')
 	(opts, args) = parser.parse_args()
 
 	if not opts.roleshares:

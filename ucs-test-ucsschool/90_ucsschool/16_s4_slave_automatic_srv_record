@@ -129,7 +129,8 @@ class Test():
 		with testing_udm.UCSTestUDM() as udm:
 			for school in School.get_all(ldap_machine_read):
 				positive_test_hostname = uts.random_name()
-				udm.create_object("computers/domaincontroller_slave",
+				udm.create_object(
+					"computers/domaincontroller_slave",
 					name=positive_test_hostname,
 					position="cn=dc,cn=server,cn=computers,%s" % (school.dn,),
 					domain=ucr.get('domainname'),
@@ -141,7 +142,8 @@ class Test():
 				positive_test_fqdn_list.append(positive_test_fqdn)
 
 				negative_test_hostname = uts.random_name()
-				udm.create_object("computers/domaincontroller_slave",
+				udm.create_object(
+					"computers/domaincontroller_slave",
 					name=negative_test_hostname,
 					position="cn=dc,cn=server,cn=computers,%s" % (school.dn,),
 					domain=ucr.get('domainname'),

@@ -124,10 +124,7 @@ def main():
 				schoolA = Bunch()
 				schoolB = Bunch()
 
-				for suffix, school in (
-						('A', schoolA),
-						('B', schoolB),
-						):
+				for suffix, school in (('A', schoolA), ('B', schoolB), ):
 					print '---%s-----------------------------------------------------' % (suffix,)
 					school.name, school.dn = schoolenv.create_ou(ou_name='school%s' % (suffix,), name_edudc=ucr.get('hostname'))
 
@@ -152,29 +149,29 @@ def main():
 				def do_test(resultdir, valid_ou_names):
 					os.makedirs(resultdir)
 					for i, dn in enumerate([
-							'cn=admin,%(ldap/base)s' % ucr,
-							generic.master_dn,
-							generic.backup_dn,
-							generic.slave_dn,
-							generic.member_dn,
-							generic.winclient_dn,
-							'uid=Administrator,cn=users,%(ldap/base)s' % ucr,
-							generic.domain_user_dn,
-							schoolA.schoolserver_dn,
-							schoolB.schoolserver_dn,
-							schoolA.winclient_dn,
-							schoolB.winclient_dn,
-							schoolA.teacher_dn,
-							schoolB.teacher_dn,
-							schoolA.student_dn,
-							schoolB.student_dn,
-							schoolA.teacher_staff_dn,
-							schoolB.teacher_staff_dn,
-							schoolA.staff_dn,
-							schoolB.staff_dn,
-							schoolA.admin_dn,
-							schoolB.admin_dn,
-							]):
+						'cn=admin,%(ldap/base)s' % ucr,
+						generic.master_dn,
+						generic.backup_dn,
+						generic.slave_dn,
+						generic.member_dn,
+						generic.winclient_dn,
+						'uid=Administrator,cn=users,%(ldap/base)s' % ucr,
+						generic.domain_user_dn,
+						schoolA.schoolserver_dn,
+						schoolB.schoolserver_dn,
+						schoolA.winclient_dn,
+						schoolB.winclient_dn,
+						schoolA.teacher_dn,
+						schoolB.teacher_dn,
+						schoolA.student_dn,
+						schoolB.student_dn,
+						schoolA.teacher_staff_dn,
+						schoolB.teacher_staff_dn,
+						schoolA.staff_dn,
+						schoolB.staff_dn,
+						schoolA.admin_dn,
+						schoolB.admin_dn,
+					]):
 						with open(os.path.join(resultdir, 'dn.txt'), 'a+') as fd:
 							fd.write('%d ==> %s\n' % (i, dn))
 						parse_acls(lo, dn, output=os.path.join(resultdir, 'dn%d.ldif' % (i,)), valid_ou_names=valid_ou_names)

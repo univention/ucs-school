@@ -36,8 +36,7 @@ def main():
 					utils.fail("User {} already migrated.".format(user))
 
 			print("*\n*** Migrating users to 4.1R2...\n*")
-			cmd_block = ["/usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2", "--verbose",
-				"--migrate-ous", "--migrate-users"]
+			cmd_block = ["/usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2", "--verbose", "--migrate-ous", "--migrate-users"]
 			print("cmd_block: {}".format(cmd_block))
 			retcode = subprocess.call(cmd_block, shell=False)
 			if retcode:

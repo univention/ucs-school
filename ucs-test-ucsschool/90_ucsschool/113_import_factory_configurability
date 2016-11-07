@@ -71,13 +71,11 @@ class FactoryConfTest(object):
 		ldap_diff = self.diff_ldap_status()
 		new_users = [x for x in ldap_diff.new if x.startswith('uid=')]
 		if len(new_users) != exp_new:
-			self.logger.error('Invalid number of new users (expected %d, found %d)! Found new objects: %r',
-				exp_new, len(new_users), new_users)
+			self.logger.error('Invalid number of new users (expected %d, found %d)! Found new objects: %r', exp_new, len(new_users), new_users)
 			utils.fail('Stopping because of invalid number of new users.')
 		removed_users = [x for x in ldap_diff.removed if x.startswith('uid=')]
 		if len(removed_users) != exp_removed:
-			self.logger.error('Invalid number of removed users (expected %d, found %d)! Removed objects: %r',
-				exp_removed, len(removed_users), removed_users)
+			self.logger.error('Invalid number of removed users (expected %d, found %d)! Removed objects: %r', exp_removed, len(removed_users), removed_users)
 			utils.fail('Stopping because of invalid number of removed users.')
 
 	def run_import(self, args, fail_on_error=True):
@@ -158,8 +156,10 @@ class FactoryConfTest(object):
 		dialect = excel()
 		dialect.doublequote = True
 		dialect.quoting = QUOTE_ALL
-		field_names = ("line", "success", "error", "action", "role", "username", "schools", "firstname", "lastname",
-			"birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg")  # from UserImportCsvResultExporter
+		field_names = (
+			"line", "success", "error", "action", "role", "username", "schools", "firstname", "lastname",
+			"birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg"
+		)  # from UserImportCsvResultExporter
 		myreader = DictReader(outfile, dialect=dialect, fieldnames=field_names)
 		expected = dict(
 			firstname="s3cr31",
@@ -192,8 +192,7 @@ class FactoryConfTest(object):
 				user["Geburtstag"] = today
 				today_birthday_users.append(user)
 			else:
-				user["Geburtstag"] = "{}-{:>02}-{:>02}".format(uts.random_int(1900, 2000), uts.random_int(1, 12),
-					uts.random_int(1, 27))
+				user["Geburtstag"] = "{}-{:>02}-{:>02}".format(uts.random_int(1900, 2000), uts.random_int(1, 12), uts.random_int(1, 27))
 				random_birthday_users.append(user)
 		test_user_exporter_with_birthday = TestUserCsvExporter()
 		field_names = list(test_user_exporter_with_birthday.field_names)
@@ -290,8 +289,7 @@ class FactoryConfTest(object):
 				self.ou_name, self.ou_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 				self.ou_name2, self.ou_dn2 = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 				self.lo = schoolenv.open_ldap_connection(admin=True)
-				self.test_user_creator = TestUserCreator([self.ou_name, self.ou_name2], staff=2, students=2, teachers=2,
-					staffteachers=2, classes=2, inclasses=2, schools=2)
+				self.test_user_creator = TestUserCreator([self.ou_name, self.ou_name2], staff=2, students=2, teachers=2, staffteachers=2, classes=2, inclasses=2, schools=2)
 				self.test_user_creator.make_classes()
 				if not ucr.get('mail/hosteddomains'):
 					handler_set(['mail/hosteddomains={}'.format(ucr['domainname'])])

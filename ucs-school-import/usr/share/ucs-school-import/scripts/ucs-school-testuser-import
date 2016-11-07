@@ -56,40 +56,26 @@ def parse_cmdline():
 		email=False,
 		verbose=False
 	)
-	parser = ArgumentParser(
-		description="UCS@school import test users tool",
-		epilog="When using --create-email-addresses either an email domain must be created in the corresponding "
-			"UMC-module or must be configured on the command line with --set maildomain=...")
+	parser = ArgumentParser(description="UCS@school import test users tool", epilog="When using --create-email-addresses either an email domain must be created in the corresponding " "UMC-module or must be configured on the command line with --set maildomain=...")
 	parser.add_argument("-c", "--csvfile", dest="csvfile", help="File to write to [default: %(default)s].")
-	parser.add_argument("-n", "--nostart", action="store_true",
-						help="Disable automatic start of import script [default: %(default)s].")
+	parser.add_argument("-n", "--nostart", action="store_true", help="Disable automatic start of import script [default: %(default)s].")
 	parser.add_argument("--staff", dest="staff", type=int, help="Number of staff to create [default: %(default)s].")
-	parser.add_argument("--students", dest="students", type=int,
-						help="Number of students to create [default: %(default)s].")
-	parser.add_argument("--teachers", dest="teachers", type=int,
-						help="Number of teachers to create [default: %(default)s].")
-	parser.add_argument("--staffteachers", dest="staffteachers", type=int,
-						help="Number of staff_and_teacher users to create [default: %(default)s].")
-	parser.add_argument("--classes", dest="classes", type=int,
-						help="Number of classes to create [default: %(default)s].")
-	parser.add_argument("--inclasses", dest="inclasses", type=int,
-						help="Number of classes to put users (except students) into per school [default: %(default)s].")
-	parser.add_argument("--schools", dest="schools", type=int,
-						help="Number of schools to put users (except students) into (if #OUs > 1) [default: %(default)s].")
-	parser.add_argument("--create-email-addresses", dest="email", action="store_true",
-						help="Create email addresses for users [default: %(default)s].")
-	parser.add_argument("-v", "--verbose", action="store_true",
-						help="Enable debugging output on the console [default: %(default)s].")
-	parser.add_argument("OU", metavar='OU', nargs='+',
-						help="Name of school (OU) the users will be put into.")
+	parser.add_argument("--students", dest="students", type=int, help="Number of students to create [default: %(default)s].")
+	parser.add_argument("--teachers", dest="teachers", type=int, help="Number of teachers to create [default: %(default)s].")
+	parser.add_argument("--staffteachers", dest="staffteachers", type=int, help="Number of staff_and_teacher users to create [default: %(default)s].")
+	parser.add_argument("--classes", dest="classes", type=int, help="Number of classes to create [default: %(default)s].")
+	parser.add_argument("--inclasses", dest="inclasses", type=int, help="Number of classes to put users (except students) into per school [default: %(default)s].")
+	parser.add_argument("--schools", dest="schools", type=int, help="Number of schools to put users (except students) into (if #OUs > 1) [default: %(default)s].")
+	parser.add_argument("--create-email-addresses", dest="email", action="store_true", help="Create email addresses for users [default: %(default)s].")
+	parser.add_argument("-v", "--verbose", action="store_true", help="Enable debugging output on the console [default: %(default)s].")
+	parser.add_argument("OU", metavar='OU', nargs='+', help="Name of school (OU) the users will be put into.")
 	parser.add_argument("ImportArguments", nargs=REMAINDER, help="All arguments following the OU names (first one must start with a dash) will be passed to the import script.")
 	parser.set_defaults(**defaults)
 
 	args = parser.parse_args()
 	if args.staff + args.students + args.teachers + args.staffteachers == 0:
 		parser.error("Please supply number and type of users to create.")
-	if any([num < 0 for num in
-		[args.staff, args.students, args.teachers, args.staffteachers, args.classes, args.inclasses, args.schools]]):
+	if any([num < 0 for num in [args.staff, args.students, args.teachers, args.staffteachers, args.classes, args.inclasses, args.schools]]):
 		parser.error("Negative numbers are not allowed.")
 	if args.students + args.teachers + args.staffteachers > 0 and args.classes == 0:
 		parser.error("Please supply number of classes to create.")
@@ -104,9 +90,7 @@ def main():
 	logger = get_logger()
 	args = parse_cmdline()
 	logger.info("------ Creating user information... ------")
-	test_user_creator = TestUserCreator(args.OU, staff=args.staff, students=args.students, teachers=args.teachers,
-		staffteachers=args.staffteachers, classes=args.classes, inclasses=args.inclasses, schools=args.schools,
-		email=args.email)
+	test_user_creator = TestUserCreator(args.OU, staff=args.staff, students=args.students, teachers=args.teachers, staffteachers=args.staffteachers, classes=args.classes, inclasses=args.inclasses, schools=args.schools, email=args.email)
 	test_user_creator.make_classes()
 	test_user_exporter = TestUserCsvExporter(email=args.email)
 	logger.info("------ Writing user information to CSV file '%s'... ------", args.csvfile)
@@ -116,8 +100,7 @@ def main():
 		return
 	else:
 		logger.info("------ Starting import of CSV file: '%s'... ------", args.csvfile)
-		cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-c",
-			"/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json", "-i", args.csvfile]
+		cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-c", "/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json", "-i", args.csvfile]
 		cmd.extend(args.ImportArguments)
 		logger.info("Running: %s", " ".join(cmd))
 		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)

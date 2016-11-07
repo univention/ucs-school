@@ -32,20 +32,13 @@ def main():
 			utils.wait_for_replication_and_postrun()
 
 			filename1 = "%s%s%s%s" % (
-					u'\xc4'.encode('UTF-8'),  # Ä
-					uts.random_name_special_characters(3),
-					u'\u2192'.encode('UTF-8'),  # →
-					uts.random_name_special_characters(3),
-					)
-			filename2 = "%s%s" % (
-					u'\xc4'.encode('UTF-8'),
-					uts.random_name_special_characters(6),
-					)
-			filename3 = "%s%s%s" % (
-					uts.random_name_special_characters(3),
-					u'\xc4'.encode('ISO8859-1'),
-					uts.random_name_special_characters(3),
-					)
+				u'\xc4'.encode('UTF-8'),  # Ä
+				uts.random_name_special_characters(3),
+				u'\u2192'.encode('UTF-8'),  # →
+				uts.random_name_special_characters(3),
+			)
+			filename2 = "%s%s" % (u'\xc4'.encode('UTF-8'), uts.random_name_special_characters(6), )
+			filename3 = "%s%s%s" % (uts.random_name_special_characters(3), u'\xc4'.encode('ISO8859-1'), uts.random_name_special_characters(3), )
 			filename4 = uts.random_name()
 
 			files = [(filename1, 'utf-8')]
@@ -55,14 +48,7 @@ def main():
 
 			con.auth(tea, 'univention')
 			# Create new project
-			project = Distribution(
-					school,
-					sender=tea,
-					umcConnection=con,
-					files=files,
-					ucr=ucr,
-					recipients=[group],
-					flavor='teacher')
+			project = Distribution(school, sender=tea, umcConnection=con, files=files, ucr=ucr, recipients=[group], flavor='teacher')
 			project.add()
 			project.check_add()
 			project.distribute()

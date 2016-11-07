@@ -48,95 +48,85 @@ def checkModules(modules, userType, serverRole, singleMaster):
 	ignoreList = [('lib', None)]
 
 	# Lehrer auf dem DC Master
-	dc_teacher = defaultList + [
-			('schoolgroups', 'workgroup-admin'),
-			('schoolusers', 'student')
-			]
+	dc_teacher = defaultList + [('schoolgroups', 'workgroup-admin'), ('schoolusers', 'student')]
 	# Lehrer auf dem Schul-DC
 	dcs_teacher = defaultList + [
-			('computerroom', None),
-			('distribution', 'teacher'),
-			('schoolexam', None),
-			('helpdesk', None),
-			('printermoderation', None),
-			('schoolgroups', 'workgroup-admin'),
-			('schoolusers', 'student'),
-			]
+		('computerroom', None),
+		('distribution', 'teacher'),
+		('schoolexam', None),
+		('helpdesk', None),
+		('printermoderation', None),
+		('schoolgroups', 'workgroup-admin'),
+		('schoolusers', 'student'),
+	]
 	# Schuladmin sollte auf dem DC Master
-	dc_schooladmin = defaultList + [
-			('schoolusers', 'student'),
-			('schoolusers', 'teacher'),
-			('schoolrooms', None),
-			('schoolgroups', 'workgroup-admin'),
-			('schoolgroups', 'class'),
-			('schoolgroups', 'teacher'),
-			]
+	dc_schooladmin = defaultList + [('schoolusers', 'student'), ('schoolusers', 'teacher'), ('schoolrooms', None), ('schoolgroups', 'workgroup-admin'), ('schoolgroups', 'class'), ('schoolgroups', 'teacher'), ]
 	# Schuladmin sollte auf dem Schul-DC
 	dcs_schooladmin = defaultList + [
-			('computerroom', None),
-			('distribution', 'admin'),
-			('schoolexam', None),
-			('printermoderation', None),
-			('helpdesk', None),
-			('schoolusers', 'student'),
-			('schoolusers', 'teacher'),
-			('schoolrooms', None),
-			('schoolgroups', 'class'),
-			('schoolgroups', 'teacher'),
-			('schoolgroups', 'workgroup-admin'),
-			('internetrules', 'admin'),
-			('internetrules', 'assign'),
-			('lessontimes', None),
-			]
+		('computerroom', None),
+		('distribution', 'admin'),
+		('schoolexam', None),
+		('printermoderation', None),
+		('helpdesk', None),
+		('schoolusers', 'student'),
+		('schoolusers', 'teacher'),
+		('schoolrooms', None),
+		('schoolgroups', 'class'),
+		('schoolgroups', 'teacher'),
+		('schoolgroups', 'workgroup-admin'),
+		('internetrules', 'admin'),
+		('internetrules', 'assign'),
+		('lessontimes', None),
+	]
 	# Domanenadministrator auf dem DC Master
 	dc_domainadmin = defaultList + [
-			('udm', 'users/user'),
-			('udm', 'groups/group'),
-			('udm', 'computers/computer'),
-			('schoolwizards', 'schoolwizards/schools'),
-			('schoolcsvimport', None),
-			('schoolusers', 'student'),
-			('schoolusers', 'teacher'),
-			('schoolrooms', None),
-			('schoolgroups', 'class'),
-			('schoolgroups', 'teacher'),
-			('schoolgroups', 'workgroup-admin'),
-			]
+		('udm', 'users/user'),
+		('udm', 'groups/group'),
+		('udm', 'computers/computer'),
+		('schoolwizards', 'schoolwizards/schools'),
+		('schoolcsvimport', None),
+		('schoolusers', 'student'),
+		('schoolusers', 'teacher'),
+		('schoolrooms', None),
+		('schoolgroups', 'class'),
+		('schoolgroups', 'teacher'),
+		('schoolgroups', 'workgroup-admin'),
+	]
 	# Domanenadministrator auf dem Schul-DC
 	dcs_domainadmin = defaultList + [
-			('computerroom', None),
-			('distribution', 'admin'),
-			('schoolexam', None),
-			('printermoderation', None),
-			('helpdesk', None),
-			('schoolinstaller', None),
-			('schoolusers', 'student'),
-			('schoolusers', 'teacher'),
-			('schoolrooms', None),
-			('schoolgroups', 'class'),
-			('schoolgroups', 'teacher'),
-			('schoolgroups', 'workgroup-admin'),
-			('internetrules', 'admin'),
-			('internetrules', 'assign'),
-			('lessontimes', None),
-			]
+		('computerroom', None),
+		('distribution', 'admin'),
+		('schoolexam', None),
+		('printermoderation', None),
+		('helpdesk', None),
+		('schoolinstaller', None),
+		('schoolusers', 'student'),
+		('schoolusers', 'teacher'),
+		('schoolrooms', None),
+		('schoolgroups', 'class'),
+		('schoolgroups', 'teacher'),
+		('schoolgroups', 'workgroup-admin'),
+		('internetrules', 'admin'),
+		('internetrules', 'assign'),
+		('lessontimes', None),
+	]
 	checks = {
-			('student', 'domaincontroller_master', False): defaultList,
-			('student', 'domaincontroller_slave', False): defaultList,
-			('staff', 'domaincontroller_master', False): defaultList,
-			('teacher', 'domaincontroller_master', False): dc_teacher,
-			('teacher', 'domaincontroller_slave', False): dcs_teacher,
-			('schooladmin', 'domaincontroller_master', False): dc_schooladmin,
-			('schooladmin', 'domaincontroller_slave', False): dcs_schooladmin,
-			('domainadmin', 'domaincontroller_master', False): dc_domainadmin,
-			('domainadmin', 'domaincontroller_slave', False): dcs_domainadmin,
-			('student', 'domaincontroller_master', True): defaultList,
-			('student', 'domaincontroller_slave', True): defaultList,
-			('staff', 'domaincontroller_master', True): defaultList,
-			('teacher', 'domaincontroller_master', True): listUnion(dc_teacher, dcs_teacher),
-			('schooladmin', 'domaincontroller_master', True): listUnion(dc_schooladmin, dcs_schooladmin),
-			('domainadmin', 'domaincontroller_master', True): listUnion(dc_domainadmin, dcs_domainadmin)
-			}
+		('student', 'domaincontroller_master', False): defaultList,
+		('student', 'domaincontroller_slave', False): defaultList,
+		('staff', 'domaincontroller_master', False): defaultList,
+		('teacher', 'domaincontroller_master', False): dc_teacher,
+		('teacher', 'domaincontroller_slave', False): dcs_teacher,
+		('schooladmin', 'domaincontroller_master', False): dc_schooladmin,
+		('schooladmin', 'domaincontroller_slave', False): dcs_schooladmin,
+		('domainadmin', 'domaincontroller_master', False): dc_domainadmin,
+		('domainadmin', 'domaincontroller_slave', False): dcs_domainadmin,
+		('student', 'domaincontroller_master', True): defaultList,
+		('student', 'domaincontroller_slave', True): defaultList,
+		('staff', 'domaincontroller_master', True): defaultList,
+		('teacher', 'domaincontroller_master', True): listUnion(dc_teacher, dcs_teacher),
+		('schooladmin', 'domaincontroller_master', True): listUnion(dc_schooladmin, dcs_schooladmin),
+		('domainadmin', 'domaincontroller_master', True): listUnion(dc_domainadmin, dcs_domainadmin)
+	}
 	modules = removeListFromOther(modules, ignoreList)
 	if userType != 'domainadmin':
 		if sorted(modules) != sorted(checks[(userType, serverRole, singleMaster)]):
@@ -173,13 +163,7 @@ def main():
 				dn, domainadmin = udm.create_user(position=position, groups=groups)
 				utils.wait_for_replication_and_postrun()
 
-				users = [
-						(stu, 'student'),
-						(tea, 'teacher'),
-						(staf, 'staff'),
-						(schooladmin, 'schooladmin'),
-						(domainadmin, 'domainadmin')
-						]
+				users = [(stu, 'student'), (tea, 'teacher'), (staf, 'staff'), (schooladmin, 'schooladmin'), (domainadmin, 'domainadmin')]
 
 				for (user, userType) in users:
 					# staff is not able to login to dc-slave

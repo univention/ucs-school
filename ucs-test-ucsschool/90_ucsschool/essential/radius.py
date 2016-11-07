@@ -29,8 +29,7 @@ def peap_auth(username, password, radius_secret):
 
 
 def test_peap_auth(username, password, radius_secret, should_succeed=True):
-	print '*** PEAP AUTH: user: %s, password: %s, should_succeed: %r' % (
-			username, password, should_succeed), '-' * 40
+	print '*** PEAP AUTH: user: %s, password: %s, should_succeed: %r' % (username, password, should_succeed), '-' * 40
 	auth_result = peap_auth(username, password, radius_secret)
 	if auth_result != should_succeed:
 		raise TestFail('PEAP authentication unexpected result (%r), while the expected is (%r)\nUser=%s' % (

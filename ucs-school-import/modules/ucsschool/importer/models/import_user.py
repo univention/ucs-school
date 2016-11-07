@@ -160,8 +160,7 @@ class ImportUser(User):
 		:param superordinate: str: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
 		"""
-		filter_s = filter_format("(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
-			(source_uid, record_uid))
+		filter_s = filter_format("(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))", (source_uid, record_uid))
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
 		if not obj:
 			raise noObject("No user with source_uid={0} and record_uid={1} found.".format(source_uid, record_uid))
@@ -191,11 +190,9 @@ class ImportUser(User):
 			try:
 				udm_obj[property_] = value
 			except (KeyError, noProperty) as exc:
-				raise UnknownProperty("UDM property '{}' could not be set: {}".format(property_, exc),
-					entry=self.entry_count, import_user=self)
+				raise UnknownProperty("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
 			except (valueError, valueInvalidSyntax) as exc:
-				raise UDMValueError("UDM property '{}' could not be set: {}".format(property_, exc),
-					entry=self.entry_count, import_user=self)
+				raise UDMValueError("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
 
 	def has_expired(self, connection):
 		"""
@@ -337,8 +334,7 @@ class ImportUser(User):
 			try:
 				activate = self.config["activate_new_users"]["default"]
 			except KeyError:
-				raise UnkownDisabledSetting("Cannot find 'disabled' ('activate_new_users') setting for role '{}' or "
-					"'default'.".format(self.role_sting), self.entry_count, import_user=self)
+				raise UnkownDisabledSetting("Cannot find 'disabled' ('activate_new_users') setting for role '{}' or " "'default'.".format(self.role_sting), self.entry_count, import_user=self)
 		self.disabled = "none" if activate else "all"
 
 	def make_firstname(self):
@@ -383,8 +379,7 @@ class ImportUser(User):
 			try:
 				maildomain = self.ucr["mail/hosteddomains"].split()[0]
 			except (AttributeError, IndexError):
-				raise MissingMailDomain("Could not retrieve mail domain from configuration nor from UCRV "
-					"mail/hosteddomains.", entry=self.entry_count, import_user=self)
+				raise MissingMailDomain("Could not retrieve mail domain from configuration nor from UCRV " "mail/hosteddomains.", entry=self.entry_count, import_user=self)
 		self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
 
 	def make_password(self):
@@ -430,8 +425,7 @@ class ImportUser(User):
 		elif self.schools and isinstance(self.schools, basestring):
 			self.make_schools()  # this will recurse back, but schools will be a list then
 		else:
-			raise MissingSchoolName("Primary school name (ou) was not set on the cmdline or in the configuration file "
-				"and was not found in the input data.", entry=self.entry_count, import_user=self)
+			raise MissingSchoolName("Primary school name (ou) was not set on the cmdline or in the configuration file " "and was not found in the input data.", entry=self.entry_count, import_user=self)
 
 	def make_schools(self):
 		"""
@@ -562,12 +556,10 @@ class ImportUser(User):
 		try:
 			[self.udm_properties.get(ma) or getattr(self, ma) for ma in self.config["mandatory_attributes"]]
 		except (AttributeError, KeyError) as exc:
-			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc),
-				self.config["mandatory_attributes"], entry=self.entry_count, import_user=self)
+			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc), self.config["mandatory_attributes"], entry=self.entry_count, import_user=self)
 
 		if self.record_uid in self._unique_ids["recordUID"]:
-			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid),
-				entry=self.entry_count, import_user=self)
+			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid), entry=self.entry_count, import_user=self)
 		self._unique_ids["recordUID"].add(self.record_uid)
 
 		if check_username:
@@ -575,17 +567,14 @@ class ImportUser(User):
 				raise NoUsername("No username was created.", entry=self.entry_count, import_user=self)
 
 			if len(self.name) > self.username_max_length:
-				raise UsernameToLong("Username '{}' is longer than allowed.".format(self.name),
-					entry=self.entry_count, import_user=self)
+				raise UsernameToLong("Username '{}' is longer than allowed.".format(self.name), entry=self.entry_count, import_user=self)
 
 			if self.name in self._unique_ids["name"]:
-				raise UniqueIdError("Username '{}' has already been used in this import.".format(self.name),
-					entry=self.entry_count, import_user=self)
+				raise UniqueIdError("Username '{}' has already been used in this import.".format(self.name), entry=self.entry_count, import_user=self)
 			self._unique_ids["name"].add(self.name)
 
 			if len(self.password) < self.config["password_length"]:
-				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]),
-					entry=self.entry_count, import_user=self)
+				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry=self.entry_count, import_user=self)
 
 		if self.email:
 			# email_pattern:
@@ -595,20 +584,17 @@ class ImportUser(User):
 			# * all characters are allowed (international domains)
 			email_pattern = r"[^@]+@.+\..+"
 			if not re.match(email_pattern, self.email):
-				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry=self.entry_count,
-					import_user=self)
+				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry=self.entry_count, import_user=self)
 
 			if self.email in self._unique_ids["email"]:
-				raise UniqueIdError("Email address '{}' has already been used in this import.".format(self.email),
-					entry=self.entry_count, import_user=self)
+				raise UniqueIdError("Email address '{}' has already been used in this import.".format(self.email), entry=self.entry_count, import_user=self)
 			self._unique_ids["email"].add(self.email)
 
 		if self.birthday:
 			try:
 				datetime.datetime.strptime(self.birthday, "%Y-%m-%d")
 			except ValueError as exc:
-				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry=self.entry_count,
-					import_user=self)
+				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry=self.entry_count, import_user=self)
 
 	@property
 	def role_sting(self):
@@ -707,8 +693,7 @@ class ImportUser(User):
 		:param lo: LDAP connection object for hooks
 		:return: list: loaded PyHook objects
 		"""
-		pyhooks = [pyhook_cls(lo)
-			for pyhook_cls in PyHooksLoader(PLUGINS_BASE_PATH, UserPyHook).get_plugins()]
+		pyhooks = [pyhook_cls(lo) for pyhook_cls in PyHooksLoader(PLUGINS_BASE_PATH, UserPyHook).get_plugins()]
 
 		# fill cache: find all enabled hook methods
 		pyhook_cache = defaultdict(list)
@@ -724,9 +709,7 @@ class ImportUser(User):
 		for meth_name, meth_list in pyhook_cache.items():
 			self._pyhook_cache[meth_name] = [x[0] for x in sorted(meth_list, key=lambda x: x[1], reverse=True)]
 
-		self.logger.info("Registered hooks: %r.",
-			dict([(meth_name, ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths])
-				for meth_name, meths in self._pyhook_cache.items()]))
+		self.logger.info("Registered hooks: %r.", dict([(meth_name, ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths]) for meth_name, meths in self._pyhook_cache.items()]))
 		return pyhooks
 
 	def _prevent_mapped_attributes_in_udm_properties(self):
@@ -740,13 +723,10 @@ class ImportUser(User):
 		forbidden_attributes = set(x.udm_name for x in self._attributes.values() if x.udm_name)
 		bad_props = set(self.udm_properties.keys()).intersection(forbidden_attributes)
 		if bad_props:
-			raise NotSupportedError("UDM properties '{}' must be set as attributes of the {} object (not in "
-				"udm_properties).".format("', '".join(bad_props), self.__class__.__name__))
+			raise NotSupportedError("UDM properties '{}' must be set as attributes of the {} object (not in " "udm_properties).".format("', '".join(bad_props), self.__class__.__name__))
 		if "e-mail" in self.udm_properties.keys() and not self.email:
 			# this might be an mistake, so let's warn the user
-			self.logger.warn("UDM property 'e-mail' is used for storing contact information. The users mailbox "
-			"address is stored in the 'email' attribute of the {} object (not in udm_properties).".format(
-				self.__class__.__name__))
+			self.logger.warn("UDM property 'e-mail' is used for storing contact information. The users mailbox " "address is stored in the 'email' attribute of the {} object (not in udm_properties).".format(self.__class__.__name__))
 
 	def update(self, other):
 		"""

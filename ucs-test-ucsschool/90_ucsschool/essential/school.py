@@ -137,10 +137,7 @@ class School(object):
 		}]
 		print 'Creating school %s' % (self.name,)
 		print 'param = %s' % (param,)
-		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/add',
-				param,
-				flavor)
+		reqResult = self.umcConnection.request('schoolwizards/schools/add', param, flavor)
 		if reqResult[0] is not True:
 			raise CreateFail('Unable to create school (%r)' % (reqResult,))
 		else:
@@ -152,8 +149,7 @@ class School(object):
 		param = [{'object': {
 			'$dn$': self.dn()
 		}}]
-		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/get', param, flavor)
+		reqResult = self.umcConnection.request('schoolwizards/schools/get', param, flavor)
 		return reqResult
 
 	def check_get(self, attrs):
@@ -171,8 +167,7 @@ class School(object):
 			'school': 'undefined',
 			'filter': ""
 		}
-		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/query', param, flavor)
+		reqResult = self.umcConnection.request('schoolwizards/schools/query', param, flavor)
 		return reqResult
 
 	def check_query(self, names):
@@ -195,8 +190,7 @@ class School(object):
 			},
 			'options': None
 		}]
-		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/remove', param, flavor)
+		reqResult = self.umcConnection.request('schoolwizards/schools/remove', param, flavor)
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove school (%s)' % self.name)
 		else:
@@ -209,26 +203,22 @@ class School(object):
 			host = self.dc_name
 			if new_attributes.get('home_share_file_server'):
 				host = new_attributes['home_share_file_server']
-			home_share = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (
-					host, UCSTestSchool().get_ou_base_dn(self.name))
+			home_share = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (host, UCSTestSchool().get_ou_base_dn(self.name))
 
 			host = self.dc_name
 			if new_attributes.get('class_share_file_server'):
 				host = new_attributes['class_share_file_server']
-			class_share = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (
-					host, UCSTestSchool().get_ou_base_dn(self.name))
+			class_share = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (host, UCSTestSchool().get_ou_base_dn(self.name))
 		else:
 			host = self.ucr.get('hostname')
 			if new_attributes.get('home_share_file_server'):
 				host = new_attributes['home_share_file_server']
-			home_share = 'cn=%s,cn=dc,cn=computers,%s' % (
-					host, self.ucr.get('ldap/base'))
+			home_share = 'cn=%s,cn=dc,cn=computers,%s' % (host, self.ucr.get('ldap/base'))
 
 			host = self.ucr.get('hostname')
 			if new_attributes.get('class_share_file_server'):
 				host = new_attributes['class_share_file_server']
-			class_share = 'cn=%s,cn=dc,cn=computers,%s' % (
-					host, self.ucr.get('ldap/base'))
+			class_share = 'cn=%s,cn=dc,cn=computers,%s' % (host, self.ucr.get('ldap/base'))
 		param = [{
 			'object': {
 				'$dn$': self.dn(),
@@ -242,10 +232,7 @@ class School(object):
 		}]
 		print 'Editing school %s' % (self.name,)
 		print 'param = %s' % (param,)
-		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/put',
-				param,
-				flavor)
+		reqResult = self.umcConnection.request('schoolwizards/schools/put', param, flavor)
 		if not reqResult[0]:
 			raise EditFail('Unable to edit school (%s) with the parameters (%r)' % (self.name, param))
 		else:
@@ -381,18 +368,14 @@ class School(object):
 		dcbackup_module = univention.admin.modules.get("computers/domaincontroller_backup")
 		dcslave_module = univention.admin.modules.get("computers/domaincontroller_slave")
 
-		masterobjs = univention.admin.modules.lookup(dcmaster_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-												filter=univention.admin.filter.expression('cn', dc_name))
-		backupobjs = univention.admin.modules.lookup(dcbackup_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-												filter=univention.admin.filter.expression('cn', dc_name))
-		slaveobjs = univention.admin.modules.lookup(dcslave_module, None, lo, scope='sub', superordinate=None, base=base_dn,
-												filter=univention.admin.filter.expression('cn', dc_name))
+		masterobjs = univention.admin.modules.lookup(dcmaster_module, None, lo, scope='sub', superordinate=None, base=base_dn, filter=univention.admin.filter.expression('cn', dc_name))
+		backupobjs = univention.admin.modules.lookup(dcbackup_module, None, lo, scope='sub', superordinate=None, base=base_dn, filter=univention.admin.filter.expression('cn', dc_name))
+		slaveobjs = univention.admin.modules.lookup(dcslave_module, None, lo, scope='sub', superordinate=None, base=base_dn, filter=univention.admin.filter.expression('cn', dc_name))
 
 		# check group membership
 		#  slave should be member
 		#  master and backup should not be member
-		dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (ou, base_dn),
-					"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (base_dn)]
+		dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (ou, base_dn), "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (base_dn)]
 
 		if must_exist:
 			if masterobjs:

@@ -23,8 +23,7 @@ def main():
 			users = []
 			rules = []
 
-			rules_attrs = [(False, 2), (True, 6), (True, 1), (False, 9),
-					(True, 0), (False, 4), (True, 5), (False, 10)]
+			rules_attrs = [(False, 2), (True, 6), (True, 1), (False, 9), (True, 0), (False, 4), (True, 5), (False, 10)]
 
 			for (wlan, priority) in rules_attrs:
 				rule = InternetRule(wlan=wlan, priority=priority)

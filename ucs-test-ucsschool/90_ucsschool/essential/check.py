@@ -13,7 +13,7 @@ import univention.testing.utils as utils
 class Check(object):
 
 	"""Contains the needed functuality for checks related to internet rules
-     within groups/classes.\n
+	within groups/classes.\n
 	:param school: name of the ou
 	:type school: str
 	:param groupRuleCouples: couples of groups and rules assigned to them
@@ -24,12 +24,7 @@ class Check(object):
 	:type ucr: UCR object
 	"""
 
-	def __init__(
-			self,
-			school,
-			groupRuleCouples,
-			umcConnection=None,
-			ucr=None):
+	def __init__(self, school, groupRuleCouples, umcConnection=None, ucr=None):
 		self.school = school
 		self.groupRuleCouples = groupRuleCouples
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()

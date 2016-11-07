@@ -163,13 +163,13 @@ class Instance(SchoolBaseModule):
 	@simple_response
 	def query(self, pattern, filter):
 		result = [dict(
-				# only show necessary information
-				description=i.description,
-				name=i.name,
-				sender=i.sender.username,
-				recipients=len(i.recipients),
-				files=len(i.files),
-				isDistributed=i.isDistributed
+			# only show necessary information
+			description=i.description,
+			name=i.name,
+			sender=i.sender.username,
+			recipients=len(i.recipients),
+			files=len(i.files),
+			isDistributed=i.isDistributed
 		) for i in util.Project.list()
 			if (pattern.match(i.name) or pattern.match(i.description)) and (filter == 'all' or compare_dn(i.sender.dn, self.user_dn))
 		]

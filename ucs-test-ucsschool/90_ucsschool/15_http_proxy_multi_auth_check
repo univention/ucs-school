@@ -46,15 +46,10 @@ def checkNTLM(host, passwd, url, http_code):
 
 def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
 	print 'Performing Gssnegotiate proxy auth check'
-	curl = SimpleCurl(
-			proxy=host,
-			password=passwd,
-			auth=pycurl.HTTPAUTH_GSSNEGOTIATE)
+	curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_GSSNEGOTIATE)
 	account = utils.UCSTestDomainAdminCredentials()
 	admin = account.username
-	pop = subprocess.Popen(
-			["kinit", "--password-file=STDIN", admin],
-			stdin=subprocess.PIPE)
+	pop = subprocess.Popen(["kinit", "--password-file=STDIN", admin], stdin=subprocess.PIPE)
 	pop.communicate(passwd)
 	subprocess.call(["klist"])
 	result = curl.response(url)
@@ -85,8 +80,7 @@ def setAuthVariables((basic, ntlm, gneg)):
 def printHeader(state, passwd, expect_wrong_password):
 	print '-' * 40
 	print '(Basic, NTLM, Gssnegotiate) = %s' % (state,)
-	print 'Password used: %s, expect_wrong_password: %s' % (
-			passwd, expect_wrong_password)
+	print 'Password used: %s, expect_wrong_password: %s' % (passwd, expect_wrong_password)
 
 
 def main():

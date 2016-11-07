@@ -597,16 +597,7 @@ class Room(object):
 			group.remove()
 			remove_printer(printer, school, ucr.get('ldap/base'))
 
-	def check_behavior(
-			self,
-			partial_old_settings,
-			new_settings,
-			user,
-			ip_address,
-			printer,
-			white_page,
-			global_domains,
-			ucr):
+	def check_behavior(self, partial_old_settings, new_settings, user, ip_address, printer, white_page, global_domains, ucr):
 		# extract the new_settings
 		period = new_settings['period']
 		internetRule = new_settings['internetRule']
@@ -615,7 +606,7 @@ class Room(object):
 
 		# check atjobs
 		partial_new_settings = {
-		    #			'period': period,
+			# 'period': period,
 			'printMode': printMode,
 			'shareMode': shareMode,
 			'internetRule': internetRule
@@ -773,16 +764,7 @@ def set_windows_pc_password(dn, password):
 
 class UmcComputer(object):
 
-	def __init__(
-			self,
-			school,
-			typ,
-			name=None,
-			ip_address=None,
-			subnet_mask=None,
-			mac_address=None,
-			inventory_number=None
-	):
+	def __init__(self, school, typ, name=None, ip_address=None, subnet_mask=None, mac_address=None, inventory_number=None):
 		self.school = school
 		self.typ = typ
 		self.name = name if name else uts.random_name()

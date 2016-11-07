@@ -95,8 +95,7 @@ class Test(CLI_Import_v2_Tester):
 			# check usernames
 			for person, lastname in names.items():
 				person.update(username=remove_bad_chars("{}1".format(lastname[:12])))
-				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False,
-					should_exist=True)
+				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
 
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (1/5)')
 		unh = UsernameHandler(15)  # 20 - len("exam-")
@@ -116,12 +115,10 @@ class Test(CLI_Import_v2_Tester):
 				out = unh.format_username(input_name)
 				self.unique_basenames_to_remove.append(expected)
 				if out != expected:
-					self.fail("UsernameHandler.format_username(%r) returned %r, expected %r." %
-						(input_name, out, expected))
+					self.fail("UsernameHandler.format_username(%r) returned %r, expected %r." % (input_name, out, expected))
 			except FormatError:
 				if expected is not None:
-					self.fail("UsernameHandler.format_username(%r) raise a FormatError, expected it to return %r." %
-						(input_name, expected))
+					self.fail("UsernameHandler.format_username(%r) raise a FormatError, expected it to return %r." % (input_name, expected))
 				continue
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (2/5)')
 		for i in range(1000):

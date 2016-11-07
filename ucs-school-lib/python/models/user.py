@@ -486,18 +486,18 @@ class User(UCSSchoolHelperAbstractClass):
 		is_staff = isinstance(self, Staff) or isinstance(self, TeachersAndStaff)
 		school_class = ','.join(self.school_classes.get(self.school, []))  # legacy format: only classes of the primary school
 		return self._build_hook_line(
-				code,
-				self.name,
-				self.lastname,
-				self.firstname,
-				self.school,
-				school_class,
-				'',  # TODO: rights?
-				self.email,
-				is_teacher,
-				self.is_active(),
-				is_staff,
-				self.password,
+			code,
+			self.name,
+			self.lastname,
+			self.firstname,
+			self.school,
+			school_class,
+			'',  # TODO: rights?
+			self.email,
+			is_teacher,
+			self.is_active(),
+			is_staff,
+			self.password,
 		)
 
 	def to_dict(self):

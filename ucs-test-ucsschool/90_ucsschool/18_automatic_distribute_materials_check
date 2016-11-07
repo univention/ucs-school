@@ -50,19 +50,20 @@ def main():
 
 				# Creating new project
 				project = Distribution(
-						school,
-						sender=tea,
-						umcConnection=con,
-						ucr=ucr,
-						files=[("file_name", 'utf8')],
-						recipients=[group],
-						distributeType='automatic',
-						distributeTime=distTime,
-						distributeDate=distDate,
-						collectType='automatic',
-						collectTime=collTime,
-						collectDate=collDate,
-						flavor='teacher')
+					school,
+					sender=tea,
+					umcConnection=con,
+					ucr=ucr,
+					files=[("file_name", 'utf8')],
+					recipients=[group],
+					distributeType='automatic',
+					distributeTime=distTime,
+					distributeDate=distDate,
+					collectType='automatic',
+					collectTime=collTime,
+					collectDate=collDate,
+					flavor='teacher'
+				)
 				project.add()
 				project.check_add()
 

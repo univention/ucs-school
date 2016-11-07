@@ -21,14 +21,8 @@ from univention.testing.ucsschool import UMCConnection
 def activate_groupmembers(group_name, newStatus, change_passwd):
 	# [0|1] optional: deactivate     | activate
 	# [0|1] optional: keep passwords | set random passwords
-	cmd = [
-			'/usr/share/ucs-school-import/scripts/activate_groupmembers',
-			group_name,
-			newStatus,
-			change_passwd
-			]
-	out, err = subprocess.Popen(
-			cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+	cmd = ['/usr/share/ucs-school-import/scripts/activate_groupmembers', group_name, newStatus, change_passwd]
+	out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 	print out, err
 	outfile = re.search(r"outfile\sis\s:\s([^\n]+)", out)
 	if outfile:
@@ -70,8 +64,7 @@ def check_auth(username, passwd, should_pass=True):
 
 def is_active(username):
 	cmd = ['udm', 'users/user', 'list', '--filter', 'uid=%s' % username]
-	out, err = subprocess.Popen(
-			cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+	out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 	found = re.search(r"disabled:\s(\w+)", out)
 	if found:
 		found = found.group(1)
@@ -94,23 +87,11 @@ def main():
 			staff_lastname = uts.random_name()
 			school_admin_lastname = uts.random_name()
 
-			tea, tea_dn = schoolenv.create_user(
-					school,
-					is_teacher=True,
-					lastname=tea_lastname)
-			tea_staff, tea_staff_dn = schoolenv.create_user(
-					school,
-					is_teacher=True,
-					is_staff=True,
-					lastname=tea_staff_lastname)
-			staff, staff_dn = schoolenv.create_user(
-					school,
-					is_staff=True,
-					lastname=staff_lastname)
+			tea, tea_dn = schoolenv.create_user(school, is_teacher=True, lastname=tea_lastname)
+			tea_staff, tea_staff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True, lastname=tea_staff_lastname)
+			staff, staff_dn = schoolenv.create_user(school, is_staff=True, lastname=staff_lastname)
 			stu, stu_dn = schoolenv.create_user(school, lastname=stu_lastname)
-			school_admin, school_admin_dn = schoolenv.create_school_admin(
-					school,
-					lastname=school_admin_lastname)
+			school_admin, school_admin_dn = schoolenv.create_school_admin(school, lastname=school_admin_lastname)
 
 			users_dn = [tea_dn, tea_staff_dn, staff_dn, stu_dn, school_admin_dn]
 			users = [tea, tea_staff, staff, stu, school_admin]

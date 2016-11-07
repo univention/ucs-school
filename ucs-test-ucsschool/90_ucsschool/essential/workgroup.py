@@ -30,15 +30,7 @@ class Workgroup(object):
 	:type members: [str=memberdn]
 	"""
 
-	def __init__(
-			self,
-			school,
-			umcConnection=None,
-			ulConnection=None,
-			ucr=None,
-			name=None,
-			description=None,
-			members=None):
+	def __init__(self, school, umcConnection=None, ulConnection=None, ucr=None, name=None, description=None, members=None):
 		self.school = school
 		self.name = name if name else uts.random_string()
 		self.description = description if description else uts.random_string()
@@ -79,10 +71,11 @@ class Workgroup(object):
 		except httplib.HTTPException as e:
 			group_fullname = '%s-%s' % (self.school, self.name)
 			exception_strings = [
-					'The groupname is already in use as groupname or as username',
-					'Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet',
-					'Die Arbeitsgruppe \'%s\' existiert bereits!' % group_fullname,
-					'The workgroup \'%s\' already exists!' % group_fullname]
+				'The groupname is already in use as groupname or as username',
+				'Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet',
+				'Die Arbeitsgruppe \'%s\' existiert bereits!' % group_fullname,
+				'The workgroup \'%s\' already exists!' % group_fullname
+			]
 			for entry in exception_strings:
 				if expect_creation_fails_due_to_duplicated_name and entry in str(e):
 					print('Fail : %s' % (e))
@@ -104,10 +97,7 @@ class Workgroup(object):
 				'description': self.description
 			}
 		}]
-		requestResult = self.umcConnection.request(
-				'schoolgroups/add',
-				param,
-				flavor)
+		requestResult = self.umcConnection.request('schoolgroups/add', param, flavor)
 		if not requestResult:
 			utils.fail('Unable to add workgroup (%r)' % (param,))
 		return requestResult
@@ -133,10 +123,7 @@ class Workgroup(object):
 		groupdn = self.dn()
 		flavor = 'workgroup-admin'
 		removingParam = [{"object": [groupdn], "options":options}]
-		requestResult = self.umcConnection.request(
-				'schoolgroups/remove',
-				removingParam,
-				flavor)
+		requestResult = self.umcConnection.request('schoolgroups/remove', removingParam, flavor)
 		if not requestResult:
 			utils.fail('Group %s failed to be removed' % self.name)
 		utils.wait_for_replication()
@@ -150,8 +137,7 @@ class Workgroup(object):
 		"""
 		print 'Adding members  %r to group %s' % (memberListdn, self.name)
 		groupdn = self.dn()
-		currentMembers = sorted(
-				self.ulConnection.getAttr(groupdn, 'uniqueMember'))
+		currentMembers = sorted(self.ulConnection.getAttr(groupdn, 'uniqueMember'))
 		for member in memberListdn:
 			if member not in currentMembers:
 				currentMembers.append(member)
@@ -168,8 +154,7 @@ class Workgroup(object):
 		"""
 		print 'Removing members  %r from group %s' % (memberListdn, self.name)
 		groupdn = self.dn()
-		currentMembers = sorted(
-				self.ulConnection.getAttr(groupdn, 'uniqueMember'))
+		currentMembers = sorted(self.ulConnection.getAttr(groupdn, 'uniqueMember'))
 		for member in memberListdn:
 			if member in currentMembers:
 				currentMembers.remove(member)
@@ -193,10 +178,7 @@ class Workgroup(object):
 			},
 			'options': options
 		}]
-		requestResult = self.umcConnection.request(
-				'schoolgroups/put',
-				creationParam,
-				flavor)
+		requestResult = self.umcConnection.request('schoolgroups/put', creationParam, flavor)
 		if not requestResult:
 			utils.fail('Members %s failed to be set' % new_members)
 		else:
@@ -223,10 +205,7 @@ class Workgroup(object):
 		groupdn = self.dn()
 		utils.verify_ldap_object(groupdn, should_exist=group_should_exist)
 		ucsschool = UCSTestSchool()
-		sharedn = 'cn=%s-%s,cn=shares,%s' % (
-					self.school,
-					self.name,
-					ucsschool.get_ou_base_dn(self.school))
+		sharedn = 'cn=%s-%s,cn=shares,%s' % (self.school, self.name, ucsschool.get_ou_base_dn(self.school))
 		utils.verify_ldap_object(sharedn, should_exist=share_should_exist)
 
 	def dn(self):

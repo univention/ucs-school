@@ -29,10 +29,7 @@ configRegistry.load()
 
 
 def get_reverse_net(network, netmask):
-	p = subprocess.Popen(['/usr/bin/univention-ipcalc', '--ip', network,
-				'--netmask', netmask,
-				'--output', 'reverse',
-				'--calcdns'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	p = subprocess.Popen(['/usr/bin/univention-ipcalc', '--ip', network, '--netmask', netmask, '--output', 'reverse', '--calcdns'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	(stdout, stderr) = p.communicate()
 
 	output = stdout.strip().split('.')
@@ -109,17 +106,14 @@ class Network:
 		if self.defaultrouter:
 			defaultrouter_policy_dn = 'cn=%s,cn=routing,cn=dhcp,cn=policies,%s' % (self.name, self.school_base)
 			utils.verify_ldap_object(defaultrouter_policy_dn, expected_attr={'univentionDhcpRouters': [str(self.defaultrouter)]}, should_exist=True)
-			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [defaultrouter_policy_dn]},
-								strict=False, should_exist=True)
+			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [defaultrouter_policy_dn]}, strict=False, should_exist=True)
 		if self.nameserver and not self.router_mode:
 			nameserver_policy_dn = 'cn=%s,cn=dns,cn=dhcp,cn=policies,%s' % (self.name, self.school_base)
-			utils.verify_ldap_object(nameserver_policy_dn, expected_attr={'univentionDhcpDomainName': [configRegistry.get('domainname')],
-								'univentionDhcpDomainNameServers': [str(self.nameserver)]}, should_exist=True)
+			utils.verify_ldap_object(nameserver_policy_dn, expected_attr={'univentionDhcpDomainName': [configRegistry.get('domainname')], 'univentionDhcpDomainNameServers': [str(self.nameserver)]}, should_exist=True)
 			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [nameserver_policy_dn]}, strict=False, should_exist=True)
 		if self.netbiosserver and not self.router_mode:
 			netbios_policy_dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (self.name, self.school_base)
-			utils.verify_ldap_object(netbios_policy_dn, expected_attr={'univentionDhcpNetbiosNodeType': ['8'],
-								'univentionDhcpNetbiosNameServers': [str(self.netbiosserver)]}, should_exist=True)
+			utils.verify_ldap_object(netbios_policy_dn, expected_attr={'univentionDhcpNetbiosNodeType': ['8'], 'univentionDhcpNetbiosNameServers': [str(self.netbiosserver)]}, should_exist=True)
 			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [netbios_policy_dn]}, strict=False, should_exist=True)
 
 	def set_mode_to_router(self):

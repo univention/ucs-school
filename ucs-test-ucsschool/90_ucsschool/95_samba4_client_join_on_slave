@@ -52,8 +52,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 		Creates temporary folder to use as a private directory for the test
 		and returns its path.
 		"""
-		print("\nSetting up credentials and a temporary private directory "
-					"for Samba:")
+		print("\nSetting up credentials and a temporary private directory " "for Samba:")
 
 		smb_conf_path = getenv("SMB_CONF_PATH")
 
@@ -72,9 +71,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 		self.SambaCreds.set_kerberos_state(DONT_USE_KERBEROS)
 		self.SambaCreds.guess(self.SambaLP)
 
-		self.SambaNet = Net(self.SambaCreds,
-							self.SambaLP,
-							server=self.UCR.get('interfaces/eth0/address'))
+		self.SambaNet = Net(self.SambaCreds, self.SambaLP, server=self.UCR.get('interfaces/eth0/address'))
 
 		return private_dir
 
@@ -84,20 +81,12 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 		Samba libnet. Returns machine password.
 		"""
 		machine_pass = generate_random_password(20, 32)
-		print("\nInitiating a join of a computer with a name '%s' and a "
-					"generated machine password '%s' using libnet:"
-					% (netbios_name, machine_pass))
+		print("\nInitiating a join of a computer with a name '%s' and a " "generated machine password '%s' using libnet:" % (netbios_name, machine_pass))
 
 		join_password = domain_sid = domain_name = ''
-		join_password, domain_sid, domain_name = self.SambaNet.join_member(
-															self.domain_name,
-															netbios_name,
-															LIBNET_JOIN_AUTOMATIC,
-															machinepass=machine_pass)
+		join_password, domain_sid, domain_name = self.SambaNet.join_member(self.domain_name, netbios_name, LIBNET_JOIN_AUTOMATIC, machinepass=machine_pass)
 		if not all((join_password, domain_sid, domain_name)):
-			utils.fail("The join password, domain SID and domain name should "
-								"be returned by the libnet join, however at least "
-								"one of them is empty")
+			utils.fail("The join password, domain SID and domain name should " "be returned by the libnet join, however at least " "one of them is empty")
 		utils.wait_for_replication()
 
 		print "Join Password:", join_password
@@ -111,52 +100,38 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 		Tries to access the sysvol using 'smb-client' with given credentials
 		for a created Windows Client account and lists the contents.
 		"""
-		print("\nTrying to access the Samba SYSVOL using joined Windows "
-					"client credentials: computer name '%s' and "
-					"machine password '%s'" % (computer_name, machine_password))
+		print("\nTrying to access the Samba SYSVOL using joined Windows " "client credentials: computer name '%s' and " "machine password '%s'" % (computer_name, machine_password))
 
-		cmd = ("smbclient",
-						"//" + self.UCR.get('ldap/server/name') + "/sysvol",
-						"--user=" + computer_name + "$%" + machine_password,
-						"-c", "ls")
+		cmd = ("smbclient", "//" + self.UCR.get('ldap/server/name') + "/sysvol", "--user=" + computer_name + "$%" + machine_password, "-c", "ls")
 
 		print "\nExecuting command:", cmd
 		stdout, stderr = self.create_and_run_process(cmd)
 
 		if stderr:
-			print("The 'smbclient' has produced the following output "
-						"to STDERR: %s" % stderr)
+			print("The 'smbclient' has produced the following output " "to STDERR: %s" % stderr)
 		if not stdout:
-			utils.fail("The 'smbclient' did not produce any output to STDOUT, "
-								"while Samba SYSVOL contents listing were expected")
+			utils.fail("The 'smbclient' did not produce any output to STDOUT, " "while Samba SYSVOL contents listing were expected")
 		if self.domain_name not in stdout:
-			utils.fail("The folder with the domain name '%s' was not found in "
-								"the 'smbclient' STDOUT: %s"
-								% (self.domain_name, stdout))
+			utils.fail("The folder with the domain name '%s' was not found in " "the 'smbclient' STDOUT: %s" % (self.domain_name, stdout))
 
 	def check_computer_via_udm(self, computer_name):
 		"""
 		Lists the Windows computers via udm and checks the output for a given
 		'computer_name'.
 		"""
-		print("\nListing all Windows computers to check the presence of the "
-					"test client with a name '%s':" % computer_name)
+		print("\nListing all Windows computers to check the presence of the " "test client with a name '%s':" % computer_name)
 
 		cmd = ("udm", "computers/windows", "list")
 		print "Executing command:", cmd
 		stdout, stderr = self.create_and_run_process(cmd)
 
 		if stderr:
-			utils.fail("An error occured while running the udm command. "
-								"STDERR: %s" % stderr)
+			utils.fail("An error occured while running the udm command. " "STDERR: %s" % stderr)
 		if not stdout.strip():
-			utils.fail("The udm command did not produce any output to STDOUT,"
-								" while a computer with a name '%s' was expected "
-								"to be listed" % computer_name)
+			utils.fail("The udm command did not produce any output to STDOUT," " while a computer with a name '%s' was expected " "to be listed" % computer_name)
 
 		if computer_name not in stdout:
-			utils.fail("The computer with a name '%s' was not listed in the "
-								"udm command output" % computer_name)
+			utils.fail("The computer with a name '%s' was not listed in the " "udm command output" % computer_name)
 
 	def generate_windows_client_ldif(self, computer_name):
 		"""
@@ -180,10 +155,12 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 			"operatingSystemServicePack: Service Pack 1\n"
 			"operatingSystemVersion: 6.1 (7601)\n"
 			"userPrincipalName: host/{computer_name}.{domain_name}@{kerberos_realm}"
-		).format(computer_name=computer_name,
-					ldap_base=self.UCR.get('samba4/ldap/base'),
-					domain_name=self.domain_name,
-					kerberos_realm=self.UCR.get('kerberos/realm'))
+		).format(
+			computer_name=computer_name,
+			ldap_base=self.UCR.get('samba4/ldap/base'),
+			domain_name=self.domain_name,
+			kerberos_realm=self.UCR.get('kerberos/realm')
+		)
 
 		return computer_ldif
 
@@ -193,27 +170,20 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 		given computer_name and generated ldif.
 		"""
 		computer_ldif = self.generate_windows_client_ldif(computer_name)
-		print("\nCreating a Windows Client Computer for the test with a name "
-					" %s via 'ldbadd':" % computer_name)
+		print("\nCreating a Windows Client Computer for the test with a name " " %s via 'ldbadd':" % computer_name)
 
-		cmd = ("ldbadd", "-H", "ldap://" + self.UCR.get('ldap/server/name'),
-						"-U", self.admin_username + "%" + self.admin_password)
+		cmd = ("ldbadd", "-H", "ldap://" + self.UCR.get('ldap/server/name'), "-U", self.admin_username + "%" + self.admin_password)
 
 		stdout, stderr = self.create_and_run_process(cmd, PIPE, computer_ldif)
 		if stderr:
-			utils.fail("An error occured while creating computer in SamDB "
-								"using 'ldbadd' tool: '%s'" % stderr)
+			utils.fail("An error occured while creating computer in SamDB " "using 'ldbadd' tool: '%s'" % stderr)
 		if not stdout.strip():
-			utils.fail("The 'ldbadd' tool did not produce any output to "
-								"STDOUT, while a confirmation of computer record "
-								"add was expected")
+			utils.fail("The 'ldbadd' tool did not produce any output to " "STDOUT, while a confirmation of computer record " "add was expected")
 		else:
 			print "The 'ldbadd' produced the following output:", stdout
 
-		if not bool(match('.*Added 1 record.* successfully',
-								stdout, IGNORECASE)):
-			utils.fail("Could not find the confirmation of a successful record"
-								" addition to the database from 'ldbadd'.")
+		if not bool(match('.*Added 1 record.* successfully', stdout, IGNORECASE)):
+			utils.fail("Could not find the confirmation of a successful record" " addition to the database from 'ldbadd'.")
 
 	def remove_computer_via_udm(self, computer_name):
 		"""
@@ -272,23 +242,19 @@ if __name__ == '__main__':
 	TestWindowsClientJoin = TestS4ClientJoinIntoSchool()
 
 	# case 1: first create a computer in ldb and than join it:
-	print("Running test case 1: join of a Windows client with a pre-creation "
-				"of a computer account:")
+	print("Running test case 1: join of a Windows client with a pre-creation " "of a computer account:")
 	TestProcess = Process(target=TestWindowsClientJoin.main, args=(True,))
 	TestProcess.start()
 	TestProcess.join(150)
 
 	if TestProcess.exitcode:
-		utils.fail("There were errors during join with a pre-created computer "
-							"account, test failed.")
+		utils.fail("There were errors during join with a pre-created computer " "account, test failed.")
 
 	# case 2: join without a pre-created computer account:
-	print("\nRunning test case 2: join of a Windows client with no computer "
-				"account pre-created beforehand:")
+	print("\nRunning test case 2: join of a Windows client with no computer " "account pre-created beforehand:")
 	TestProcess = Process(target=TestWindowsClientJoin.main)
 	TestProcess.start()
 	TestProcess.join(120)
 
 	if TestProcess.exitcode:
-		utils.fail("There were errors during join without a pre-created "
-							"computer account, test failed.")
+		utils.fail("There were errors during join without a pre-created " "computer account, test failed.")

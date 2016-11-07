@@ -39,12 +39,7 @@ class FailRemove(Exception):
 
 class ComputerRoom(object):
 
-	def __init__(
-			self,
-			school,
-			name=None,
-			description=None,
-			host_members=[]):
+	def __init__(self, school, name=None, description=None, host_members=[]):
 		self.school = school
 		self.name = name if name else uts.random_name()
 		self.description = description if description else uts.random_name()
@@ -59,8 +54,7 @@ class ComputerRoom(object):
 		self.umc_connection.auth(admin, passwd)
 
 	def dn(self):
-		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (
-				self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
+		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
 
 	def add(self, should_pass=True):
 		param = [{
@@ -118,8 +112,7 @@ class ComputerRoom(object):
 		"""
 		print 'Calling %s = get all school rooms' % ('schoolrooms/query')
 		try:
-			rooms = self.umc_connection.request(
-					'schoolrooms/query', {'school': self.school, 'pattern': ''})
+			rooms = self.umc_connection.request('schoolrooms/query', {'school': self.school, 'pattern': ''})
 			return [x['name'] for x in rooms]
 		except FailQuery:
 			raise

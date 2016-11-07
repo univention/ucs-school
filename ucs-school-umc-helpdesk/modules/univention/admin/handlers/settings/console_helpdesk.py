@@ -57,35 +57,35 @@ default_containers = ['cn=config,cn=console,cn=univention']
 
 property_descriptions = {
 	'name': univention.admin.property(
-			short_description=_('Name'),
-			long_description=_('Name of Console-Helpdesk-Settings-Object'),
-			syntax=univention.admin.syntax.string_numbers_letters_dots,
-			multivalue=False,
-			options=[],
-			required=True,
-			may_change=False,
-			identifies=True
+		short_description=_('Name'),
+		long_description=_('Name of Console-Helpdesk-Settings-Object'),
+		syntax=univention.admin.syntax.string_numbers_letters_dots,
+		multivalue=False,
+		options=[],
+		required=True,
+		may_change=False,
+		identifies=True
 	),
 	'description': univention.admin.property(
-			short_description=_('Description'),
-			long_description=_('Description'),
-			syntax=univention.admin.syntax.string,
-			multivalue=False,
-			options=[],
-			dontsearch=True,
-			required=False,
-			may_change=True,
-			identifies=False,
+		short_description=_('Description'),
+		long_description=_('Description'),
+		syntax=univention.admin.syntax.string,
+		multivalue=False,
+		options=[],
+		dontsearch=True,
+		required=False,
+		may_change=True,
+		identifies=False,
 	),
 	'category': univention.admin.property(
-			short_description=_('Category'),
-			long_description=_('Helpdesk Category'),
-			syntax=univention.admin.syntax.string,
-			multivalue=True,
-			options=[],
-			required=False,
-			may_change=True,
-			identifies=False
+		short_description=_('Category'),
+		long_description=_('Helpdesk Category'),
+		syntax=univention.admin.syntax.string,
+		multivalue=True,
+		options=[],
+		required=False,
+		may_change=True,
+		identifies=False
 	),
 }
 

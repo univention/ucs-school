@@ -44,17 +44,7 @@ class User(Person):
 	:type school_classes: dict
 	"""
 
-	def __init__(
-			self,
-			school,
-			role,
-			school_classes,
-			mode='A',
-			username=None,
-			firstname=None,
-			lastname=None,
-			password=None,
-			mail=None):
+	def __init__(self, school, role, school_classes, mode='A', username=None, firstname=None, lastname=None, password=None, mail=None):
 		super(User, self).__init__(school, role)
 
 		if username:
@@ -109,8 +99,7 @@ class User(Person):
 		}]
 		print 'Creating user %s' % (self.username,)
 		print 'param = %s' % (param,)
-		reqResult = self.umc_connection.request(
-				'schoolwizards/users/add', param, flavor)
+		reqResult = self.umc_connection.request('schoolwizards/users/add', param, flavor)
 		if not reqResult[0]:
 			raise CreateFail('Unable to create user (%r)' % (param,))
 		else:
@@ -125,8 +114,7 @@ class User(Person):
 				'school': self.school
 			}
 		}]
-		reqResult = self.umc_connection.request(
-				'schoolwizards/users/get', param, flavor)
+		reqResult = self.umc_connection.request('schoolwizards/users/get', param, flavor)
 		if not reqResult[0]:
 			raise GetFail('Unable to get user (%s)' % self.username)
 		else:
@@ -134,21 +122,21 @@ class User(Person):
 
 	def check_get(self, expected_attrs={}):
 		info = {
-				'$dn$': self.dn,
-				'display_name': ' '.join([self.firstname, self.lastname]),
-				'name': self.username,
-				'firstname': self.firstname,
-				'lastname': self.lastname,
-				'type_name': self.type_name(),
-				'school': self.school,
-				'schools': [self.school],
-				'disabled': 'none',
-				'birthday': None,
-				'password': None,
-				'type': self.typ,
-				'email': self.mail,
-				'objectType': 'users/user',
-				'school_classes': {},
+			'$dn$': self.dn,
+			'display_name': ' '.join([self.firstname, self.lastname]),
+			'name': self.username,
+			'firstname': self.firstname,
+			'lastname': self.lastname,
+			'type_name': self.type_name(),
+			'school': self.school,
+			'schools': [self.school],
+			'disabled': 'none',
+			'birthday': None,
+			'password': None,
+			'type': self.typ,
+			'email': self.mail,
+			'objectType': 'users/user',
+			'school_classes': {},
 		}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
 			info.update({'school_classes': self.school_classes})
@@ -184,8 +172,7 @@ class User(Person):
 			'type': 'all',
 			'filter': ""
 		}
-		reqResult = self.umc_connection.request(
-				'schoolwizards/users/query', param, flavor)
+		reqResult = self.umc_connection.request('schoolwizards/users/query', param, flavor)
 		return reqResult
 
 	def check_query(self, users_dn):
@@ -206,8 +193,7 @@ class User(Person):
 			},
 			'options': None
 		}]
-		reqResult = self.umc_connection.request(
-				'schoolwizards/users/remove', param, flavor)
+		reqResult = self.umc_connection.request('schoolwizards/users/remove', param, flavor)
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove user (%s)' % self.username)
 		else:
@@ -233,10 +219,7 @@ class User(Person):
 		}]
 		print 'Editing user %s' % (self.username,)
 		print 'param = %s' % (param,)
-		reqResult = self.umc_connection.request(
-				'schoolwizards/users/put',
-				param,
-				flavor)
+		reqResult = self.umc_connection.request('schoolwizards/users/put', param, flavor)
 		if not reqResult[0]:
 			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username, param))
 		else:

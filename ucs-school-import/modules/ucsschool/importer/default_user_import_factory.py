@@ -105,8 +105,7 @@ class DefaultUserImportFactory(object):
 				self.logger.exception("Loading super class %r: %s", v, exc)
 				raise InitialisationError("Cannot load super class '{}'.".format(v))
 			if not issubclass(klass, super_klass):
-				self.logger.error("Class %s.%s is not a subclass of %s.%s, ignoring.",
-					klass.__module__, klass.__name__, super_klass.__module__, super_klass.__name__)
+				self.logger.error("Class %s.%s is not a subclass of %s.%s, ignoring.", klass.__module__, klass.__name__, super_klass.__module__, super_klass.__name__)
 				continue
 			setattr(self, make_name, klass)
 			self.logger.info("%s.%s is now %s.", self.__class__.__name__, make_name, klass)

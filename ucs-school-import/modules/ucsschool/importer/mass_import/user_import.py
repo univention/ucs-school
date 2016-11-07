@@ -118,8 +118,7 @@ class UserImport(object):
 						user, user.source_uid, user.record_uid, user.action), entry=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
-					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes=%r udm_properties=%r...",
-						action_str, user, user.source_uid, user.record_uid, user.to_dict(), user.udm_properties)
+					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes=%r udm_properties=%r...", action_str, user, user.source_uid, user.record_uid, user.to_dict(), user.udm_properties)
 
 				try:
 					if user.action == "A":
@@ -142,13 +141,10 @@ class UserImport(object):
 						# delete
 						continue
 				except ValidationError as exc:
-					raise UserValidationError, UserValidationError("ValidationError when {} {} "
-						"(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid,
-						user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
+					raise UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
 
 				if success:
-					self.logger.info("Success %s %s (source_uid:%s record_uid: %s).", action_str.lower(), user,
-						user.source_uid, user.record_uid)
+					self.logger.info("Success %s %s (source_uid:%s record_uid: %s).", action_str.lower(), user, user.source_uid, user.record_uid)
 					store.append(user)
 				else:
 					raise err("Error {} {} (source_uid:{} record_uid: {}), does probably {}exist.".format(
@@ -178,8 +174,7 @@ class UserImport(object):
 		from LDAP
 		"""
 		try:
-			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
-				imported_user.record_uid)
+			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
 			imported_user.old_user = user
 			imported_user.prepare_all(new_user=False)
 			if user.school != imported_user.school:
@@ -209,8 +204,7 @@ class UserImport(object):
 		a_user = self.factory.make_import_user([])
 
 		if self.config["no_delete"]:
-			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------",
-				self.config["no_delete"])
+			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------", self.config["no_delete"])
 			for user in self.imported_users:
 				if user.action == "D":
 					try:
@@ -243,8 +237,7 @@ class UserImport(object):
 				ldap_user.action = "D"  # mark for logging/csv-output purposes
 				users_to_delete.append(ldap_user)
 			except noObject as exc:
-				self.logger.error("Cannot delete non existing user with source_uid=%r, record_uid=%r: %s",
-					ucs_id_not_in_import[0], ucs_id_not_in_import[1], exc)
+				self.logger.error("Cannot delete non existing user with source_uid=%r, record_uid=%r: %s", ucs_id_not_in_import[0], ucs_id_not_in_import[1], exc)
 
 		self.logger.debug("users_to_delete=%r", users_to_delete)
 		return users_to_delete
@@ -266,12 +259,9 @@ class UserImport(object):
 			try:
 				success = self.do_delete(user)
 				if success:
-					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name,
-						user.source_uid, user.record_uid)
+					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name, user.source_uid, user.record_uid)
 				else:
-					raise DeletionError("Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already "
-						"been deleted.".format(user.name, user.source_uid, user.record_uid), entry=user.entry_count,
-						import_user=user)
+					raise DeletionError("Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already " "been deleted.".format(user.name, user.source_uid, user.record_uid), entry=user.entry_count, import_user=user)
 				self.deleted_users[user.__class__.__name__].append(user)
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error in entry #%d: %s", exc.entry, exc)
@@ -302,11 +292,9 @@ class UserImport(object):
 		else:
 			res = user.change_school(imported_user.school, self.connection)
 		if not res:
-			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school),
-				entry=imported_user.entry_count, import_user=imported_user)
+			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school), entry=imported_user.entry_count, import_user=imported_user)
 		# refetch user from LDAP
-		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
-			imported_user.record_uid)
+		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
 		return user
 
 	def do_delete(self, user):
@@ -380,8 +368,7 @@ class UserImport(object):
 		if self.errors:
 			self.logger.info("Entry #: Error description")
 		for error in self.errors:
-			self.logger.info("  %d: %s: %s", error.entry, error.import_user.name if error.import_user else "NoName",
-				error)
+			self.logger.info("  %d: %s: %s", error.entry, error.import_user.name if error.import_user else "NoName", error)
 		self.logger.info("------ End of user import statistics ------")
 
 	def _add_error(self, err):
