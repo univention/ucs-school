@@ -279,7 +279,7 @@ class Instance(SchoolBaseModule):
 					exam_user_description = None  # that's done
 				elif key == 'univentionObjectFlag':
 					foundUniventionObjectFlag = True
-					if not 'temporary' in value:
+					if 'temporary' not in value:
 						value += ['temporary']
 				al.append((key, value))
 

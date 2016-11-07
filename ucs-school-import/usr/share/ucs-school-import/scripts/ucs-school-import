@@ -179,7 +179,7 @@ class Hooks(object):
 
 	def __run(self, phase, module, action, **kwargs):
 		# verify phase
-		if not action in Hooks.OPERATIONS:
+		if action not in Hooks.OPERATIONS:
 			return False
 
 		# verify path
@@ -414,14 +414,14 @@ def verify_policy(objdn, schoolNr, policy_dn_list):
 			print "Object to be referenced does not exist: " + poldn
 			problem_hints = problem_hints + "there were problems verifying ou %s: Object to be referenced does not exist: %s\n" % (schoolNr, poldn)
 			break
-		elif not 'univentionPolicy' in oc['objectClass']:
+		elif 'univentionPolicy' not in oc['objectClass']:
 			print "Object to be referenced is no valid policy: " + poldn
 			problem_hints = problem_hints + "there were problems verifying ou %s: Object to be referenced is no valid policy: %s\n" % (schoolNr, poldn)
 			break
 	else:
 		# add univentionPolicyReference if neccessary
 		oc = lo.get(objdn, ['objectClass'])
-		if not 'univentionPolicyReference' in oc.get('objectClass', []):
+		if 'univentionPolicyReference' not in oc.get('objectClass', []):
 			try:
 				lo.modify(objdn, [('objectClass', '', 'univentionPolicyReference')])
 			except:
@@ -431,7 +431,7 @@ def verify_policy(objdn, schoolNr, policy_dn_list):
 		pl = lo.get(objdn, ['univentionPolicyReference'])
 		modlist = []
 		for poldn in policy_dn_list:
-			if not poldn in pl.get('univentionPolicyReference', []):
+			if poldn not in pl.get('univentionPolicyReference', []):
 				modlist.append(('univentionPolicyReference', '', poldn))
 				print 'need to attach policy: %s' % poldn
 		try:
@@ -581,7 +581,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 				groups.append("cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN))
 			modified = False
 			for grp in groups:
-				if not grp in dcobject['groups']:
+				if grp not in dcobject['groups']:
 					modified = True
 					dcobject['groups'].append(grp)
 			if modified:
@@ -657,7 +657,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	obj = univention.admin.objects.get(group_module, co, lo, position='', dn=grp_ouadmins)
 	obj.open()
 	admin_option = 'ucsschoolAdministratorGroup'
-	if not admin_option in obj.options:
+	if admin_option not in obj.options:
 		obj.options.append(admin_option)
 	obj['school'] = schoolNr
 	obj.modify()
@@ -884,7 +884,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			except:
 				pass
 
-	if not schoolNr in verified_ous:
+	if schoolNr not in verified_ous:
 		verified_ous.append(schoolNr)
 
 	# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
@@ -924,14 +924,14 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 				print "Object to be referenced does not exist: " + poldn
 				problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
 				break
-			elif not 'univentionPolicy' in oc['objectClass']:
+			elif 'univentionPolicy' not in oc['objectClass']:
 				print "Object to be referenced is no valid policy: " + poldn
 				problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
 				break
 		else:
 			# add univentionPolicyReference if neccessary
 			oc = lo.get(containerdn, ['objectClass'])
-			if not 'univentionPolicyReference' in oc.get('objectClass', []):
+			if 'univentionPolicyReference' not in oc.get('objectClass', []):
 				lo.modify(containerdn, [('objectClass', '', 'univentionPolicyReference')])
 			# add all missing policies
 			pl = lo.get(containerdn, ['univentionPolicyReference'])
@@ -1186,7 +1186,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		except:
 			pass
 
-	if not classNr in verified_group_shares:
+	if classNr not in verified_group_shares:
 		verified_group_shares.append((schoolNr, classNr.lower()))
 
 
@@ -1234,7 +1234,7 @@ def verify_group(position_dn, co, lo, superordinate, base):
 		except:
 			pass
 
-	if not position_dn in verified_groups:
+	if position_dn not in verified_groups:
 		verified_groups.append(position_dn)
 
 
@@ -1283,7 +1283,7 @@ def verifyMailDomain(email):
 	if not UCRV_create_mail_domain:
 		return
 
-	if not "@" in email:
+	if "@" not in email:
 		return
 
 	domain = email.rsplit("@", 1)[-1]
@@ -2298,7 +2298,7 @@ def import_computer():
 						print "set ip to %s is not net %s" % (ip.ip, ip.network)
 					object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower(), ip.network, getDN(schoolNr))
 					for grp in groups:
-						if not grp in object['groups']:
+						if grp not in object['groups']:
 							object['groups'].append(grp)
 					try:
 						create_object(object)
@@ -2989,7 +2989,7 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 
 
 def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
-	if not dc_type in (TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE):
+	if dc_type not in (TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE):
 		print 'ERROR: invalid type for domaincontroller given in create_dc(): %r' % (dc_type, )
 		sys.exit(1)
 
@@ -3256,7 +3256,7 @@ elif sys.argv[0].endswith("create_dc"):
 		parser.print_help()
 		sys.exit(1)
 
-	if not options.dc_type in (TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE):
+	if options.dc_type not in (TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE):
 		print 'ERROR: invalid type specified'
 		print
 		parser.print_help()

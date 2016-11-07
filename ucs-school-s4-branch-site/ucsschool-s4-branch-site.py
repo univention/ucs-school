@@ -263,7 +263,7 @@ def update_ucr_overrides(excludeDN=None):
 				ud.debug(ud.LISTENER, ud.ALL, '%s: server in UCR not visible in LDAP: %s' % (name, server_fqdn))
 		## append the ones visible in LDAP but not yet in UCR:
 		for server_fqdn in server_fqdn_list:
-			if not server_fqdn in done_list:
+			if server_fqdn not in done_list:
 				_prio_weight_port_str = " ".join(map(str, prio_weight_port))
 				ucr_locations_list.append("%s %s." % (_prio_weight_port_str, server_fqdn))
 		ucr_locations = " ".join(ucr_locations_list)

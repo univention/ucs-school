@@ -126,7 +126,7 @@ class Instance(SchoolBaseModule):
 	def _parseRule(iprops, forceAllProperties=False):
 		# validate types
 		for ikey, itype in (('name', basestring), ('type', basestring), ('priority', (int, basestring)), ('wlan', bool), ('domains', list)):
-			if not ikey in iprops:
+			if ikey not in iprops:
 				if forceAllProperties:
 					# raise exception as the key is not present
 					raise ValueError(_('The key "%s" has not been specified: %s') % (ikey, iprops))

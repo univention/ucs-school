@@ -140,7 +140,7 @@ class SMB_Status(list):
 			self.update(serv)
 
 		for process in self[:]:
-			if not 'username' in process:
+			if 'username' not in process:
 				ud.debug(ud.PARSER, ud.ERROR, 'Invalid SMB process definition')
 				ud.debug(ud.PARSER, ud.INFO, '%s' % ''.join(data))
 				self.remove(process)

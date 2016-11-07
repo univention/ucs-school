@@ -81,7 +81,7 @@ def test_ruleset(ucr, test_settings):
 			expected_strings.append('src room-%s {\nip %s' % (quote(room), '\nip '.join(addr_list)))
 
 		for line in expected_strings:
-			if not line in content:
+			if line not in content:
 				# print '---[expected strings]----------------------------------------------------------'
 				# print expected_strings
 				# print '---[/etc/squidguard/squidGuard.conf]------------------------------------------------'

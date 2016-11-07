@@ -117,10 +117,10 @@ def windows_set_gpo_security_filter(gpo_name, permission_level, target_name, tar
 	Applies the 'gpo_name' GPO to the 'target_name' of the 'target_type'
 	by executing a powershell script on Windows host via winexe.
 	"""
-	if not permission_level in ("GpoRead", "GpoApply", "GpoEdit", "GpoEditDeleteModifySecurity", "None"):
+	if permission_level not in ("GpoRead", "GpoApply", "GpoEdit", "GpoEditDeleteModifySecurity", "None"):
 		utils.fail("Set-GPPermissions: unsupported permission_level: %s" % permission_level)
 
-	if not target_type in ("Computer", "User", "Group"):
+	if target_type not in ("Computer", "User", "Group"):
 		utils.fail("Set-GPPermissions: unsupported target_type: %s" % target_type)
 
 	print("\nSet-GPPermissions on '%s' for '%s' '%s' to '%s'"

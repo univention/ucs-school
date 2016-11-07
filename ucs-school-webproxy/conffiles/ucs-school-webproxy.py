@@ -253,10 +253,10 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 	# may take several seconds (depending on their size). The entry is reenabled when copied to target
 	# config directory.
 	f.write('dest global-blacklist {\n')
-	if not 'proxy/filter/global/blacklists/domains' in changes:
+	if 'proxy/filter/global/blacklists/domains' not in changes:
 		f.write(TXT_GLOBAL_BLACKLIST_COMMENT)
 	f.write(' 	 domainlist %s-domains\n' % (FN_GLOBAL_BLACKLIST_PREFIX,))
-	if not 'proxy/filter/global/blacklists/urls' in changes:
+	if 'proxy/filter/global/blacklists/urls' not in changes:
 		f.write(TXT_GLOBAL_BLACKLIST_COMMENT)
 	f.write(' 	 urllist    %s-urls\n' % (FN_GLOBAL_BLACKLIST_PREFIX,))
 	f.write('}\n\n')

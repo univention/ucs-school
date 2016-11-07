@@ -652,7 +652,7 @@ class Project(_Dict):
 		sanitize project filename - if the file fn_project lies outside DISTRIBUTION_DATA_PATH
 		any user is able to place a json project file and use that for file distribution/collection.
 		'''
-		if not os.path.sep in path:
+		if os.path.sep not in path:
 			path = os.path.join(DISTRIBUTION_DATA_PATH, path)
 		if not os.path.abspath(path).startswith(DISTRIBUTION_DATA_PATH):
 			MODULE.error('Path %r does not contain prefix %r' % (path, DISTRIBUTION_DATA_PATH))

@@ -81,7 +81,7 @@ def getNTPasswordHash(username, stationId):
 	if not groups:
 		return None
 	(maxPriority, _, ) = max(groups)
-	if not True in [wlanEnabled for (priority, wlanEnabled, ) in groups if priority == maxPriority]:
+	if True not in [wlanEnabled for (priority, wlanEnabled, ) in groups if priority == maxPriority]:
 		return None
 	# user is authorized to use the W-LAN, retrieve NT-password-hash from LDAP and return it
 	result = ldapConnection.search(filter=str(univention.admin.filter.expression('uid', username)), attr=['sambaNTPassword', 'sambaAcctFlags'])

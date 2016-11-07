@@ -173,7 +173,7 @@ def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None,
 def _getRoomOwner(roomDN):
 	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
 	info = _readRoomInfo(roomDN) or dict()
-	if not 'pid' in info:
+	if 'pid' not in info:
 		return None
 	return info.get('user')
 
@@ -895,7 +895,7 @@ class Instance(SchoolBaseModule):
 		self.required_options(request, 'state')
 
 		state = request.options['state']
-		if not state in ('poweroff', 'poweron', 'restart'):
+		if state not in ('poweroff', 'poweron', 'restart'):
 			raise UMC_OptionTypeError('unkown state %s' % state)
 
 		# prevent UCC
