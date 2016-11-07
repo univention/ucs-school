@@ -498,7 +498,7 @@ class User(UCSSchoolHelperAbstractClass):
 				self.is_active(),
 				is_staff,
 				self.password,
-			)
+		)
 
 	def to_dict(self):
 		ret = super(User, self).to_dict()

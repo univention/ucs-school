@@ -281,7 +281,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 			'%swhitelist-%%(username)s none\n' % (forced_blacklist,),
 		'blacklist-pass':
 			'!blacklist-%(username)s !global-blacklist all\n',
-		}
+	}
 
 	for (username, rooms, ) in roomRule.items():
 		for room in rooms:

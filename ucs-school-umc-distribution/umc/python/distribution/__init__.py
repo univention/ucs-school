@@ -170,7 +170,7 @@ class Instance(SchoolBaseModule):
 				recipients=len(i.recipients),
 				files=len(i.files),
 				isDistributed=i.isDistributed
-			) for i in util.Project.list()
+		) for i in util.Project.list()
 			if (pattern.match(i.name) or pattern.match(i.description)) and (filter == 'all' or compare_dn(i.sender.dn, self.user_dn))
 		]
 		return result

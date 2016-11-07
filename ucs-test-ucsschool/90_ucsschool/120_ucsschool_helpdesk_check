@@ -42,7 +42,7 @@ def main():
 					'school': school,
 					'category': 'Sonstige',
 					'message': message
-					}
+				}
 				# Sending the mail message with the unique id
 				print 'Sending message...'
 				result = connection.request('helpdesk/send', params)

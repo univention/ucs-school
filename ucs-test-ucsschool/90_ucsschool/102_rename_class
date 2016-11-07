@@ -87,8 +87,8 @@ def permissions(dir_path):
 							oct(st.st_mode),
 							pwd.getpwuid(st.st_uid)[0],
 							grp.getgrgid(st.st_gid)[0]
-							)
-						}
+						)
+					}
 					)
 			if os.path.isdir(f):
 				sub_result = permissions(f)

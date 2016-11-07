@@ -88,7 +88,7 @@ class Klasse(object):
 			'name': self.name,
 			'school': self.school,
 			'description': self.description,
-			},
+		},
 			'options': None
 		}]
 		print 'Creating class %s in school %s' % (
@@ -175,7 +175,7 @@ class Klasse(object):
 		param = [{'object': {
 			'$dn$': self.dn(),
 			'school': self.school
-			},
+		},
 			'options': None
 		}]
 		reqResult = self.umcConnection.request(
@@ -192,7 +192,7 @@ class Klasse(object):
 			'name': new_attributes['name'],
 			'school': self.school,
 			'description': new_attributes['description']
-			},
+		},
 			'options': None
 		}]
 		print 'Editing class %s in school %s' % (

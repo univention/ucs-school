@@ -571,7 +571,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		'groups/group',
 		name=schoolclassname,
 		position="cn=klassen,cn=schueler,cn=groups,%s" % school_dn
-		)
+	)
 
 	student_pwd = "univention"
 	student_name, student_dn = schoolenv.create_user(school, password=student_pwd)
@@ -584,7 +584,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		name=room.name,
 		description=room.description,
 		host_members=room.host_members
-		)
+	)
 
 	# Set an exam and start it
 	current_time = datetime.now()
@@ -594,7 +594,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		room=room.dn,
 		examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
 		recipients=[klasse_dn]
-		)
+	)
 
 	with GPO_Test(school_dn, student_name, student_pwd, windows_client['hostname'], exam_group_name) as gpo_test:
 

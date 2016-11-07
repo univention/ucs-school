@@ -455,7 +455,7 @@ def main():
 				sid_temp_dn,
 				groupName_temp_dn,
 				mac_temp_dn
-				])
+			])
 
 if __name__ == '__main__':
 	main()

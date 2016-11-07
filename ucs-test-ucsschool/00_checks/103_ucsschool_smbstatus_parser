@@ -51,20 +51,20 @@ def main():
 		expected_process_values = [
 				{
 					'services': ['netlogon']
-					},
+				},
 				{
 					'services': ['sysvol']
-					},
+				},
 				{
 					'services': ['IPC$']
-					}
+				}
 				]
 		for expected_values in expected_process_values:
 			expected_values.update(
 					{
 						'username': admin,
 						'ipaddress': ipaddress
-						}
+					}
 					)
 			process = get_proccess_by_services(expected_values['services'])
 			if not process:

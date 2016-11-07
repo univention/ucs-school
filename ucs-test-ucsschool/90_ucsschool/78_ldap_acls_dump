@@ -101,24 +101,24 @@ def main():
 					name='schoolTestBackup',
 					position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
 					domain=ucr.get('domainname'),
-					)
+				)
 				generic.slave_dn = udm.create_object(
 					"computers/domaincontroller_slave",
 					name='schoolTestSlave',
 					position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
 					domain=ucr.get('domainname'),
-					)
+				)
 				generic.member_dn = udm.create_object(
 					"computers/memberserver",
 					name='schoolTestMember',
 					position="cn=computers,%(ldap/base)s" % ucr,
 					domain=ucr.get('domainname'),
-					)
+				)
 				generic.winclient_dn = udm.create_object(
 					"computers/windows",
 					name='schoolTestWinDom',
 					position="cn=computers,%(ldap/base)s" % ucr,
-					)
+				)
 				generic.domain_user_dn = udm.create_user(username='domainUser')[0]
 
 				schoolA = Bunch()

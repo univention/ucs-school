@@ -896,7 +896,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		values = {
 			'name': name,
 			'emptyAttributes': ['univentionDhcpDomainNameServers'],
-			}
+		}
 		exists, created = create_policy(name, container, values, policy_dhcp_dns_module)
 		if not created and not exists:
 			print "Policy object %s cannot be created" % dn
@@ -2874,7 +2874,7 @@ def rename_class():
 		level = {
 			False: univention.debug.PROCESS,
 			True: univention.debug.ERROR,
-			}[isError]
+		}[isError]
 		univention.debug.debug(univention.debug.MAIN, level, msg)
 		print msg
 

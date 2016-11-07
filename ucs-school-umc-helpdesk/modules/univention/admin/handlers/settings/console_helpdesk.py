@@ -65,7 +65,7 @@ property_descriptions = {
 			required=1,
 			may_change=0,
 			identifies=1
-		),
+	),
 	'description': univention.admin.property(
 			short_description=_('Description'),
 			long_description=_('Description'),
@@ -76,7 +76,7 @@ property_descriptions = {
 			required=0,
 			may_change=1,
 			identifies=0,
-		),
+	),
 	'category': univention.admin.property(
 			short_description=_('Category'),
 			long_description=_('Helpdesk Category'),
@@ -86,7 +86,7 @@ property_descriptions = {
 			required=0,
 			may_change=1,
 			identifies=0
-		),
+	),
 }
 
 
@@ -94,8 +94,8 @@ layout = [
 	Tab(_('General'), _('Basic Values'), layout=[
 		'description',
 		'category',
-		]),
-	]
+	]),
+]
 
 mapping = univention.admin.mapping.mapping()
 
@@ -135,7 +135,7 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=0,
 
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression('objectClass', 'univentionUMCHelpdeskClass')
-		])
+	])
 
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)

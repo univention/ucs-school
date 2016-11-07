@@ -37,14 +37,14 @@ def create_environment(self, udm, ucr):
 		password=PASSWORD,
 		position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
 		domain=ucr.get('domainname'),
-		)
+	)
 	env.slave_dn = udm.create_object(
 		"computers/domaincontroller_slave",
 		name=random_name(),
 		password=PASSWORD,
 		position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
 		domain=ucr.get('domainname'),
-		)
+	)
 	slave2_name = random_name()
 	env.slave_dn2 = udm.create_object(
 		"computers/domaincontroller_slave",
@@ -52,20 +52,20 @@ def create_environment(self, udm, ucr):
 		password=PASSWORD,
 		position="cn=dc,cn=computers,%(ldap/base)s" % ucr,
 		domain=ucr.get('domainname'),
-		)
+	)
 	env.member_dn = udm.create_object(
 		"computers/memberserver",
 		name=random_name(),
 		password=PASSWORD,
 		position="cn=computers,%(ldap/base)s" % ucr,
 		domain=ucr.get('domainname'),
-		)
+	)
 	env.winclient_dn = udm.create_object(
 		"computers/windows",
 		name=random_name(),
 		password=PASSWORD,
 		position="cn=computers,%(ldap/base)s" % ucr,
-		)
+	)
 	env.domain_user_dn = udm.create_user(username='domainUser')[0]
 	env.schoolA = Environment()
 	env.schoolB = Environment()

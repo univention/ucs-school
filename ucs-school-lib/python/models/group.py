@@ -136,7 +136,7 @@ class Group(UCSSchoolHelperAbstractClass):
 					self.school,
 					self.name,
 					self.description,
-				)
+			)
 		else:
 			# This is probably a bug. See ucs-school-import and Bug #34736
 			old_name = self.get_name_from_dn(self.old_dn)
@@ -146,7 +146,7 @@ class Group(UCSSchoolHelperAbstractClass):
 						code,
 						old_name,
 						new_name,
-					)
+				)
 
 	class Meta:
 		udm_module = 'groups/group'

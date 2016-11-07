@@ -119,4 +119,4 @@ class UserImportCsvResultExporter(ResultExporter):
 			source_uid=user.source_uid,
 			record_uid=user.record_uid,
 			error_msg=str(obj) if isinstance(obj, UcsSchoolImportError) else ""
-			)
+		)

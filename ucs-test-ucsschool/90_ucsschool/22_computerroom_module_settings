@@ -58,7 +58,7 @@ def main():
 			name=room.name,
 			description=room.description,
 			host_members=room.host_members
-			)
+		)
 
 		umc_connection = UMCConnection(ucr.get('hostname'))
 		umc_connection.auth(teacher, 'univention')

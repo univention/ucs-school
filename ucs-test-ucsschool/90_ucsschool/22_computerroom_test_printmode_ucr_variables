@@ -41,7 +41,7 @@ def main():
 					name=room.name,
 					description=room.description,
 					host_members=room.host_members
-					)
+				)
 
 			umc_connection = UMCConnection(ucr.get('hostname'))
 			umc_connection.auth(tea, 'univention')
@@ -54,7 +54,7 @@ def main():
 				ucr.get('hostname'),
 				ucr.get('domainname'),
 				ucr.get('ldap/base')
-				)
+			)
 
 			ucr = schoolenv._ucr
 
