@@ -192,7 +192,7 @@ def network(base=baseDN):
 							print '\tRouters:\t%s' % '; '.join(policy['routers'])
 						elif dnx[1] == 'cn=netbios':
 							policy = get_object(dn, 'policies/dhcp_netbios')
-							#print '\tNetBIOS Scope:\t%s' % policy['netbios_scope']
+							# print '\tNetBIOS Scope:\t%s' % policy['netbios_scope']
 							print '\tNetBIOS Server:\t%s' % '; '.join(policy['netbios_name_servers'])
 						elif dnx[1] == 'cn=dns':
 							policy = get_object(dn, 'policies/dhcp_dns')

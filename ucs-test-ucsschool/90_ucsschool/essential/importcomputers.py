@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import os
 import random
@@ -7,11 +7,11 @@ import subprocess
 import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
-#from ucsschool.lib.models import SchoolComputer as SchoolComputerLib
+# from ucsschool.lib.models import SchoolComputer as SchoolComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import IPComputer as IPComputerLib
-#from ucsschool.lib.models import UCCComputer as UCCComputerLib
+# from ucsschool.lib.models import UCCComputer as UCCComputerLib
 from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
 

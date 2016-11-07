@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import univention.testing.utils as utils
 import univention.testing.strings as uts
@@ -370,7 +370,7 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 		utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=True)
 		utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=True)
 	# This will fail because we don't cleanup these groups in cleanup_ou
-	#else:
+	# else:
 	#	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
 	#	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
 	#	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)

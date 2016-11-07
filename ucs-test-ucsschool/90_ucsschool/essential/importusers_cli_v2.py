@@ -292,7 +292,7 @@ class CLI_Import_v2_Tester(object):
 	@classmethod
 	def syntax_date2_dateformat(cls, userexpirydate):
 		# copied from 61_udm-users/26_password_expire_date
-		## Note: this is a timezone dependend value
+		# Note: this is a timezone dependend value
 		_re_iso = re.compile('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
 		_re_de = re.compile('^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$')
 		if _re_iso.match(userexpirydate):
@@ -305,7 +305,7 @@ class CLI_Import_v2_Tester(object):
 	@classmethod
 	def udm_formula_for_shadowExpire(cls, userexpirydate):
 		# copied from 61_udm-users/26_password_expire_date
-		## Note: this is a timezone dependend value
+		# Note: this is a timezone dependend value
 		dateformat = cls.syntax_date2_dateformat(userexpirydate)
 		return str(long(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
 

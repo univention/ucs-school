@@ -60,7 +60,7 @@ def wait4state(computer, signal, value):
 	computer.signal_connect(signal, notifier.Callback(_sig_handler, value))
 	# def _tick():
 	# 	global italcManager, count
-	# 	if not value: # ugly hack
+	# if not value: # ugly hack
 	# 		count -= 1
 	# 		if not count:
 	# 			sys.exit( 0 )

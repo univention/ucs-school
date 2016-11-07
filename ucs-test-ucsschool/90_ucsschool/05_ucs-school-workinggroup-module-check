@@ -87,7 +87,7 @@ def main():
 				else:
 					break
 
-			#11 Change the members of a group
+			# 11 Change the members of a group
 			group.set_members([memberListdn[0]])
 
 			# 11 checking if the atrriputes for the group is correct in ldap

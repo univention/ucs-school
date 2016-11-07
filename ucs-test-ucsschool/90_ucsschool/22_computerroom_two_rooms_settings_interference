@@ -155,7 +155,7 @@ def main():
 								# run_commands([['ucr', 'search', room1.name], ['ucr','search', room2.name], ['atq']], {})
 								clean_folder('/home/gsmitte/groups/Marktplatz/')
 								clean_folder('/home/%s/lehrer/%s/' % (school, tea))
-							#TODO Exception Errno4
+							# TODO Exception Errno4
 							except httplib.HTTPException as e:
 								if '[Errno 4] Unterbrechung' in str(e):
 									print 'FAILED to get or set room (%s) settings, exception [Errno4]' % (room2.name,)

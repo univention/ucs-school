@@ -72,16 +72,16 @@ class Network(UCSSchoolHelperAbstractClass):
 
 		# TODO:
 		# set netbios and router for dhcp subnet
-		#if defaultrouter:
+		# if defaultrouter:
 		#	print 'setting default router'
 		#	set_router_for_subnet (network, defaultrouter, schoolNr)
 
-		#if netbiosserver:
+		# if netbiosserver:
 		#	print 'setting netbios server'
 		#	set_netbiosserver_for_subnet (network, netbiosserver, schoolNr)
 
-		## set default value for nameserver
-		#if nameserver:
+		# set default value for nameserver
+		# if nameserver:
 		#	print 'setting nameserver'
 		#	set_nameserver_for_subnet (network, nameserver, schoolNr)
 
@@ -90,7 +90,7 @@ class Network(UCSSchoolHelperAbstractClass):
 	def do_create(self, udm_obj, lo):
 		from ucsschool.lib.models.school import School
 		# TODO:
-		#if iprange:
+		# if iprange:
 		#	object['ipRange']=[[str(iprange[0]), str(iprange[1])]]
 
 		# TODO: this is a DHCPServer created when school is created (not implemented yet)

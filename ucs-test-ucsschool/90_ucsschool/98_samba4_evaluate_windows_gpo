@@ -485,7 +485,7 @@ class GPO_Test(object):
 		windows_set_gpo_security_filter(gpo_name, 'GpoRead',
 			'"Authenticated Users"', 'Group', 'True')
 		if ucr.is_true("connector/s4/mapping/gpo/ntsd", False):
-			## Workaround for Bug #35336
+			# Workaround for Bug #35336
 			utils.wait_for_connector_replication()
 			utils.wait_for_replication()
 			utils.wait_for_connector_replication()
@@ -527,7 +527,7 @@ class GPO_Test(object):
 		windows_set_gpo_security_filter(gpo_name, 'GpoRead',
 			'"Authenticated Users"', 'Group', 'True')
 		if ucr.is_true("connector/s4/mapping/gpo/ntsd", False):
-			## Workaround for Bug #35336
+			# Workaround for Bug #35336
 			utils.wait_for_connector_replication()
 			utils.wait_for_replication()
 			utils.wait_for_connector_replication()
@@ -551,7 +551,7 @@ class GPO_Test(object):
 		windows_force_gpo_update()  # seems to be necessary even for machine GPO after reboot
 
 		# case 1: checks with user GPO
-		## TODO: Doesn't work as Admin, needs to be checked with the student-account!
+		# TODO: Doesn't work as Admin, needs to be checked with the student-account!
 		# windows_check_registry_key("HKCU\Software\Policies\Microsoft\UCSTestKey", "TestUserValueOne", self.test_user_gpo_value)
 
 		# case 2: checks with computer GPO

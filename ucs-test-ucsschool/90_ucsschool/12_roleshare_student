@@ -29,7 +29,7 @@ from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 add_stream_logger_to_schoollib()
 
 
-### Initialize globals
+# Initialize globals
 ucr = testing_ucr.UCSTestConfigRegistry()
 ucr.load()
 TESTS_DOMAINADMIN_ACCOUNT = ucr.get('tests/domainadmin/account')
@@ -104,19 +104,19 @@ def access_roleshare_student_on_all_school_fileservers(school_id, name_student, 
 	print "INFO: staff name = %s" % (name_staff,)
 	print "INFO: student name = %s" % (name_student,)
 	for fqdn in roleshares.fileservers_for_school(school_id):
-		## trigger home creation for stu1 and create a test file
+		# trigger home creation for stu1 and create a test file
 		userfilename = "testfile1"
 		create_testfile_on_homeshare(fqdn, name_student, password, userfilename)
 
-		## and test access with teacher
+		# and test access with teacher
 		access_user_dir(name_teacher, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=False, read_access=True)
-		## and test access with teacher and staff
+		# and test access with teacher and staff
 		access_user_dir(name_teacherstaff, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=False, read_access=True)
-		## and test access with staff
+		# and test access with staff
 		access_user_dir(name_staff, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=False, read_access=False)
-		## and test access with student
+		# and test access with student
 		access_user_dir(name_student, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=False, read_access=False)
-		## and test access with Administrator
+		# and test access with Administrator
 		access_user_dir(TESTS_DOMAINADMIN, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=False, read_access=True)
 
 
@@ -132,7 +132,7 @@ def smb_server_offers_roleshare_student(fqdn, school_id):
 
 
 def create_roleshare_student(school_id):
-	## create roleshares
+	# create roleshares
 	cmd = ["/usr/share/ucs-school-import/scripts/create_roleshares", "--create", "student", "--school", str(school_id), "--binddn", TESTS_DOMAINADMIN_ACCOUNT, "--bindpwd", TESTS_DOMAINADMIN_PWD]
 	if run_cmd(cmd):
 		utils.fail('Creating student roleshare failed: %r' % (cmd,))

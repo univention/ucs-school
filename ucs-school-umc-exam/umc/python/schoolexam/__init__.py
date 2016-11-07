@@ -83,7 +83,7 @@ class Instance(SchoolBaseModule):
 		self._cleanTmpDir()
 
 	def _cleanTmpDir(self):
-		### copied from distribution module
+		# copied from distribution module
 		# clean up the temporary upload directory
 		if self._tmpDir:
 			MODULE.info('Clean up temporary directory: %s' % self._tmpDir)
@@ -96,7 +96,7 @@ class Instance(SchoolBaseModule):
 		tmpfile=StringSanitizer(required=True),
 	), required=True))
 	def upload(self, request):
-		### copied from distribution module
+		# copied from distribution module
 		# create a temporary upload directory, if it does not already exist
 		if not self._tmpDir:
 			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
@@ -111,7 +111,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, None)
 
 	def __workaround_filename_bug(self, file):
-		### the following code block is a heuristic to support both: fixed and unfixed Bug #37716
+		# the following code block is a heuristic to support both: fixed and unfixed Bug #37716
 		filename = file['filename']
 		try:
 			# The UMC-Webserver decodes filename in latin-1, need to revert
@@ -128,12 +128,12 @@ class Instance(SchoolBaseModule):
 			except UnicodeDecodeError:
 				filename = file['filename'].encode('UTF-8')  # Bug #37716 was fixed
 		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
-		### the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+		# the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
 		return filename
 
 	@simple_response
 	def internetrules(self):
-		### copied from computerroom module
+		# copied from computerroom module
 		"""Returns a list of available internet rules"""
 		return [x.name for x in internetrules.list()]
 

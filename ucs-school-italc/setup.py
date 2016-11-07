@@ -43,12 +43,12 @@ installs.append(["italcconfig.py", config.default_mod_dir])
 # Create the Makefile.  The QtModuleMakefile class provided by the
 # pyqtconfig module takes care of all the extra preprocessor, compiler and
 # linker flags needed by the Qt library.
-#makefile = sipconfig.SIPModuleMakefile(config, build_file)
+# makefile = sipconfig.SIPModuleMakefile(config, build_file)
 
 makefile = pyqtconfig.QtGuiModuleMakefile(
 	configuration=config,
 	build_file=build_file,
-	#installs=installs
+	# installs=installs
 )
 
 # Add the library we are wrapping.  The name doesn't include any platform
@@ -80,4 +80,4 @@ content = {
 
 # This creates the italcconfig.py module from the italcconfig.py.in
 # template and the dictionary.
-#sipconfig.create_config_module("italcconfig.py", "config.py.in", content)
+# sipconfig.create_config_module("italcconfig.py", "config.py.in", content)

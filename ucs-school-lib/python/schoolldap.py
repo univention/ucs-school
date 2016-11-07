@@ -307,7 +307,7 @@ class SchoolSearchBase(object):
 
 	@property
 	def examGroupName(self):
-		## replace '%(ou)s' strings in generic exam_group_name
+		# replace '%(ou)s' strings in generic exam_group_name
 		ucr_value_keywords = {'ou': self.school}
 		return self._examGroupNameTemplate % ucr_value_keywords
 

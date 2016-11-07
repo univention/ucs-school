@@ -44,7 +44,7 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
-#import univention.admin.modules as udm_modules
+# import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
 import ucsschool.lib.models
@@ -360,13 +360,13 @@ class Project(_Dict):
 			raise ValueError(_('The specified project directory may at most be 254 characters long.'))
 		if not (isinstance(self.description, basestring) and self.description):
 			raise ValueError(_('The given project description must be non-empty.'))
-		#if not (isinstance(self.files, list)): # and self.files):
+		# if not (isinstance(self.files, list)): # and self.files):
 		#	raise ValueError(_('At least one file must be specified.'))
-		#if not (isinstance(self.recipients, list)): # and self.recipients):
+		# if not (isinstance(self.recipients, list)): # and self.recipients):
 		#	raise ValueError(_('At least one recipient must be specified.'))
 		if not self.sender or not self.sender.username or not self.sender.homedir:
 			raise ValueError(_('A valid project owner needs to be specified.'))
-		#TODO: the following checks are necessary to make sure that the project name
+		# TODO: the following checks are necessary to make sure that the project name
 		#      has not been used so far:
 		# sender_projectdir -> does not exist yet?
 		# recipients projectdir -> does not exist yet?

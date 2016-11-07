@@ -158,7 +158,7 @@ def main():
 			p.stdin.write('http://www.univention.de/%s/%s.html 10.20.30.40/- %s GET\n' % (random_string(), random_string(), username))
 			p.stdout.readline()
 		print
-		#p.stdin.close()
+		# p.stdin.close()
 		p.communicate()
 		print_sg_log()
 		if p.returncode:

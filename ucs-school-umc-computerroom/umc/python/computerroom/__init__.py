@@ -70,7 +70,7 @@ from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules
 from ucsschool.lib.models import School, ComputerRoom, User
 
-#import univention.management.console.modules.schoolexam.util as exam_util
+# import univention.management.console.modules.schoolexam.util as exam_util
 
 from .italc2 import ITALC_Manager, ITALC_Error
 
@@ -703,7 +703,7 @@ class Instance(SchoolBaseModule):
 			_finished()
 			return
 
-		## collect new settings
+		# collect new settings
 		vset = {}
 		vappend = {}
 		vunset = []
@@ -769,7 +769,7 @@ class Instance(SchoolBaseModule):
 		else:
 			vunset_now.append('proxy/filter/room/%s/ip' % self._italc.room)
 			vunset_now.append('proxy/filter/room/%s/rule' % self._italc.room)
-		## write configuration
+		# write configuration
 		# remove old values
 		handler_unset(vunset_now)
 

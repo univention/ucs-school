@@ -98,7 +98,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, None)
 
 	def __workaround_filename_bug(self, file):
-		### the following code block is a heuristic to support both: fixed and unfixed Bug #37716
+		# the following code block is a heuristic to support both: fixed and unfixed Bug #37716
 		filename = file['filename']
 		try:
 			# The UMC-Webserver decodes filename in latin-1, need to revert
@@ -115,7 +115,7 @@ class Instance(SchoolBaseModule):
 			except UnicodeDecodeError:
 				filename = file['filename'].encode('UTF-8')  # Bug #37716 was fixed
 		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
-		### the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+		# the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
 		return filename
 
 	@sanitize(

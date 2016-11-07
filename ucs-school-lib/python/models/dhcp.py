@@ -88,9 +88,9 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 					old_dhcp_server = DHCPServer.from_dn(existing_dhcp_server_dn, None, lo, superordinate=old_superordinate)
 					old_dhcp_server.remove(lo)
 					dhcp_server.create(lo)
-			################
+			# 
 			# copy subnets #
-			################
+			# 
 			# find local interfaces
 			interfaces = []
 			for interface_name in set([key.split('/')[1] for key in ucr.keys() if key.startswith('interfaces/eth')]):

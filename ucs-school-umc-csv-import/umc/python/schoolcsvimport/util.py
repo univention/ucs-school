@@ -318,8 +318,8 @@ class CSVStaff(CSVUser, Staff):
 class CSVTeachersAndStaff(CSVUser, TeachersAndStaff):
 	birthday = birthday_attr
 
-########################################################################
-#### LICENSE CHECK - copied from ad-takeover ###########################
+# 
+# LICENSE CHECK - copied from ad-takeover ###########################
 
 import univention.admin.uexceptions as uexceptions
 from univention.admincli import license_check
@@ -406,7 +406,7 @@ class UCS_License_detection(object):
 			dn, expired = license_check.choose_license(lo, dns)
 			check_array = self.determine_license(lo, dn)
 
-		## some name translation
+		# some name translation
 		object_displayname_for_licensetype = {'Accounts': _('users'), 'Users': _('users')}
 		import_object_count_for_licensetype = {'Accounts': domain_info['users'], 'Users': domain_info['users']}
 

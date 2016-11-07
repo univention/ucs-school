@@ -66,7 +66,7 @@ def wait_replications_check_rejected_uniqueMember(existing_rejects):
 	utils.wait_for_replication()
 	wait_for_s4connector()
 	check_s4_rejected(existing_rejects)
-	#TODO uncomment next line after fixing bug #36251
+	# TODO uncomment next line after fixing bug #36251
 	# check_proof_uniqueMember()
 
 

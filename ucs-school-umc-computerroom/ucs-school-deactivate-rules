@@ -67,6 +67,6 @@ if __name__ == '__main__':
 	# remove values
 	handler_unset(options.remove)
 
-	#reload cups
+	# reload cups
 	if os.path.exists('/etc/init.d/cups'):
 		subprocess.call(['/etc/init.d/cups', 'reload'])

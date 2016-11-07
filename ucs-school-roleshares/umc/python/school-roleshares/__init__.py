@@ -102,7 +102,7 @@ class Instance(SchoolBaseModule):
 			MODULE.error('%s.query: No schools available to this user!' % (self.module_name,))
 			return result  # empty
 
-		## sanitize the search pattern to match only role shares and only in ou
+		# sanitize the search pattern to match only role shares and only in ou
 		role_specified = self.valid_role_from_roleshare_name(pattern)
 		school_ou_specified = self.valid_school_from_roleshare_name(pattern, search_base.availableSchools)
 
@@ -123,7 +123,7 @@ class Instance(SchoolBaseModule):
 				if hints:
 					udm_filter = conjunction('&', hints)
 			else:
-				## invalid pattern, ignore
+				# invalid pattern, ignore
 				hints = []
 				for role in supported_roles:
 					for school_ou in search_base.availableSchools:
@@ -150,7 +150,7 @@ class Instance(SchoolBaseModule):
 			MODULE.error('%s.modify: invalid access mode: %s' % (self.module_name, accessmode,))
 			return result  # TODO: How to communicate the error?
 
-		## sanitize the sharename to match only role shares
+		# sanitize the sharename to match only role shares
 		if not self.valid_role_from_roleshare_name(sharename):
 			MODULE.error('%s.modify: sharename is not a role share: %s' % (self.module_name, sharename,))
 			return result  # TODO: How to communicate the error?

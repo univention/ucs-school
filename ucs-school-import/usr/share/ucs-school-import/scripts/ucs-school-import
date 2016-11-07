@@ -525,7 +525,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		container['4groupPath'].append('cn=%s,cn=groups' % cn_staff)
 	# FIXME: die Policies sollten besser mit der Gruppe verknüpft werden, um
 	# z.B. Mitarbeiter und Lehrer im selben Container pflegen zu können
-	#container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=UMC,cn=policies,' + baseDN] }
+	# container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=UMC,cn=policies,' + baseDN] }
 	container_policies = {}
 
 	ou_base = getDN(schoolNr)
@@ -840,9 +840,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					except:
 						print "Failed to create dhcp server: %s" % (position.getDn(), )
 						problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
-			################
+			# 
 			# copy subnets #
-			################
+			# 
 			# find local interfaces
 			interfaces = []
 			for interface_name in set([key.split('/')[1] for key in configRegistry.keys() if key.startswith('interfaces/eth')]):
@@ -1348,7 +1348,7 @@ def modify_user(person, module, co, lo):
 			verify_group(group, co, lo, superordinate, baseDN)
 			print "need to add group %s" % group
 
-	#print "user is in groups: %s" % object['groups']
+	# print "user is in groups: %s" % object['groups']
 
 	for cnr in person.cNr:
 		verify_group_share(person.sNr, cnr, co, lo, superordinate, baseDN)
@@ -2566,7 +2566,7 @@ def activate_groupmembers():
 	else:
 		disabled = "none"
 
-	###
+	# 
 
 	with stopped_notifier():
 		# outfile = os.path.basename(actgrp+'.csv')
@@ -3065,9 +3065,9 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		create_object(slave_object)
 
 
-#------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------#
 # MAIN                                                                                     #
-#------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------#
 
 # init univention-directory-manager
 tls = 2

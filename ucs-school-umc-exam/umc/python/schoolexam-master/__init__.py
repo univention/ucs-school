@@ -62,7 +62,7 @@ class Instance(SchoolBaseModule):
 
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 
-		## cache objects
+		# cache objects
 		self._udm_modules = dict()
 		self._examGroup = None
 		self._examUserContainerDN = None
@@ -80,12 +80,12 @@ class Instance(SchoolBaseModule):
 				univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
 				self._udm_modules['groups/group'] = module_groups_group
 
-			## Determine exam_group_dn
+			# Determine exam_group_dn
 			try:
 				ldap_filter = '(objectClass=univentionGroup)'
 				ldap_admin_write.searchDn(ldap_filter, examGroup, scope='base')
 				self._examGroup = module_groups_group.object(None, ldap_admin_write, ldap_position, examGroup)
-				## self._examGroup.create() # currently not necessary
+				# self._examGroup.create() # currently not necessary
 			except univention.admin.uexceptions.noObject:
 				try:
 					position = univention.admin.uldap.position(ldap_position.getBase())
@@ -148,7 +148,7 @@ class Instance(SchoolBaseModule):
 
 		user_orig = user.get_udm_object(ldap_admin_write)
 
-		### uid and DN of exam_user
+		# uid and DN of exam_user
 		exam_user_uid = "".join((self._examUserPrefix, user_orig['username']))
 		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN(ldap_admin_write, ldap_position, user.school))
 
@@ -171,12 +171,12 @@ class Instance(SchoolBaseModule):
 			))
 			return
 
-		### Check if it's blacklisted
+		# Check if it's blacklisted
 		for prohibited_object in univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, ''):
 			if exam_user_uid in prohibited_object['usernames']:
 				raise UMC_Error(_('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % (exam_user_uid, prohibited_object['name']))
 
-		### Allocate new uid
+		# Allocate new uid
 		alloc = []
 		try:
 			uid = univention.admin.allocators.request(ldap_admin_write, ldap_position, 'uid', value=exam_user_uid)
@@ -191,18 +191,18 @@ class Instance(SchoolBaseModule):
 			), success=True)
 			return
 
-		### Ok, we have a valid target uid, so start cloning the user
-		## deepcopy(user_orig) soes not help much, as we cannot use users.user.object.create()
-		## because it currently cannot be convinced to preserve the password. So we do it manually:
+		# Ok, we have a valid target uid, so start cloning the user
+		# deepcopy(user_orig) soes not help much, as we cannot use users.user.object.create()
+		# because it currently cannot be convinced to preserve the password. So we do it manually:
 		try:
-			## Allocate new uidNumber
+			# Allocate new uidNumber
 			if 'posix' in user_orig.options:
 				uidNum = univention.admin.allocators.request(ldap_admin_write, ldap_position, 'uidNumber')
 				alloc.append(('uidNumber', uidNum))
 
-			## Allocate new sambaSID
+			# Allocate new sambaSID
 			if 'samba' in user_orig.options:
-				## code copied from users.user.object.__generate_user_sid:
+				# code copied from users.user.object.__generate_user_sid:
 				userSid = None
 				if user_orig.s4connector_present:
 					# In this case Samba 4 must create the SID, the s4 connector will sync the
@@ -223,7 +223,7 @@ class Instance(SchoolBaseModule):
 							num = str(int(num) + 1)
 					alloc.append(('sid', userSid))
 
-			## Determine description attribute for exam_user
+			# Determine description attribute for exam_user
 			exam_user_description = request.options.get('description')
 			if not exam_user_description:
 				exam_user_description = _('Exam for user %s') % user_orig['username']
@@ -237,7 +237,7 @@ class Instance(SchoolBaseModule):
 
 			blacklisted_attributes = getBlacklistSet('ucsschool/exam/user/ldap/blacklist')
 
-			## Now create the addlist, fixing up attributes as we go
+			# Now create the addlist, fixing up attributes as we go
 			al = []
 			foundUniventionObjectFlag = False
 			for (key, value) in user_orig.oldattr.items():
@@ -289,7 +289,7 @@ class Instance(SchoolBaseModule):
 			if exam_user_description and 'description' not in blacklisted_attributes:
 				al.append(('description', [exam_user_description]))
 
-			## And create the exam_user
+			# And create the exam_user
 			ldap_admin_write.add(exam_user_dn, al)
 
 		except (SystemExit, KeyboardInterrupt, SyntaxError):
@@ -300,7 +300,7 @@ class Instance(SchoolBaseModule):
 			MODULE.error('Creation of exam user account failed: %s' % (traceback.format_exc(),))
 			raise
 
-		## Add exam_user to groups
+		# Add exam_user to groups
 		if 'groups/group' in self._udm_modules:
 			module_groups_group = self._udm_modules['groups/group']
 		else:
@@ -316,11 +316,11 @@ class Instance(SchoolBaseModule):
 				grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group)
 				grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
 
-		## Add exam_user to examGroup
+		# Add exam_user to examGroup
 		examGroup = self.examGroup(ldap_admin_write, ldap_position, user.school)
 		examGroup.fast_member_add([exam_user_dn], [exam_user_uid])
 
-		## finally confirm allocated IDs
+		# finally confirm allocated IDs
 		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
 		if 'samba' in user_orig.options:
 			univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'sid', userSid)
@@ -382,7 +382,7 @@ class Instance(SchoolBaseModule):
 		except univention.admin.uexceptions.ldapError:
 			raise
 
-		## Add all host members of room to examGroup
+		# Add all host members of room to examGroup
 		host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room.hosts]
 		examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
 		examGroup.fast_member_add(room.hosts, host_uid_list)  # adds any uniqueMember and member listed if not already present
@@ -405,7 +405,7 @@ class Instance(SchoolBaseModule):
 		except univention.admin.uexceptions.ldapError:
 			raise
 
-		## Remove all host members of room from examGroup
+		# Remove all host members of room from examGroup
 		host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room.hosts]
 		examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
 		examGroup.fast_member_remove(room.hosts, host_uid_list)  # removes any uniqueMember and member listed if still present

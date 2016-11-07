@@ -38,7 +38,7 @@ import univention.admin.uexceptions as udm_errors
 import univention.uldap
 import univention.config_registry
 
-## import s4-connector listener module code, but don't generate pyc file
+# import s4-connector listener module code, but don't generate pyc file
 import os
 import sys
 import ldap
@@ -50,11 +50,11 @@ from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ, SchoolSearch
 import traceback
 import subprocess
 
-### Listener registration data
+# Listener registration data
 name = 'ucsschool-s4-branch-site'
 description = 'UCS@school S4 branch site module'
 
-################ <Hooks handling> ###############
+# <Hooks handling> ###############
 HOOKS_BASEDIR = "/usr/lib/univention-directory-listener/hooks"
 LISTENER_HOOKS_BASEDIR = os.path.join(HOOKS_BASEDIR, "%s.d" % (name,))
 
@@ -93,10 +93,10 @@ def run_hooks(fname, *args):
 			except Exception as ex:
 				ud.debug(ud.LISTENER, ud.ERROR, "Error running %s.%s():" % (hook.__name__, fname))
 				ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
-################ </Hooks handling> ##############
+# </Hooks handling> ##############
 
 
-### Global variables
+# Global variables
 _ucsschool_service_specialization_filter = ''
 _relativeDomainName_trigger_set = set()
 _s4_connector_restart = False
@@ -129,7 +129,7 @@ def on_load(ldap_machine_read=None, ldap_position=None):
 			_ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
 			break
 
-### Initialization of global variables
+# Initialization of global variables
 listener.setuid(0)
 try:
 	on_load()
@@ -138,12 +138,12 @@ except ldap.INVALID_CREDENTIALS as ex:
 finally:
 	listener.unsetuid()
 
-### Listener registration data
+# Listener registration data
 filter = '(&(univentionService=S4 SlavePDC)%s)' % (_ucsschool_service_specialization_filter,)
 attributes = ['cn', 'associatedDomain', 'description']  # support retrigger via description
 modrdn = "1"  # use the modrdn listener extension
 
-### Contants
+# Contants
 _record_type = "srv_record"
 STD_SRV_PRIO = 0
 STD_SRV_WEIGHT = 100
@@ -179,10 +179,10 @@ STD_S4_SRV_RECORDS = {
 	"_ldap._tcp.default-first-site-name._sites": STD_SRV_PRIO_WEIGHT_PORT['s4_ldap'],
 	"_gc._tcp.default-first-site-name._sites": STD_SRV_PRIO_WEIGHT_PORT['gc_ldap'],
 }
-## _kerberos._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-master ?
-## _ldap._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-slave ?
+# _kerberos._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-master ?
+# _ldap._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-slave ?
 
-### Listener code
+# Listener code
 
 
 @LDAP_Connection(MACHINE_READ)
@@ -194,7 +194,7 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
 			filter=filter,
 			attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
-			## select only school branches and exclude a modrdn 'r' phase DN which still exists
+			# select only school branches and exclude a modrdn 'r' phase DN which still exists
 			if SchoolSearchBase.getOU(record_dn) and record_dn != excludeDN:
 				if 'associatedDomain' in obj:
 					domainname = obj['associatedDomain'][0]
@@ -222,16 +222,16 @@ def update_ucr_overrides(excludeDN=None):
 
 	ucr_key_value_list = []
 	for (relativeDomainName, prio_weight_port) in STD_S4_SRV_RECORDS.items():
-		## construct ucr key name
+		# construct ucr key name
 		record_fqdn = ".".join((relativeDomainName, _local_domainname))
 		key = 'connector/s4/mapping/dns/%s/%s/location' % (_record_type, record_fqdn)
 		ud.debug(ud.LISTENER, ud.ALL, '%s: UCR check: %s' % (name, key))
 
-		## check old value
+		# check old value
 		old_ucr_locations = ucr.get(key)
 		if old_ucr_locations is None or old_ucr_locations == 'ignore':
 			continue  # don't touch if unset or ignored
-		## Extract current prio/weight/port
+		# Extract current prio/weight/port
 		old_server_fqdn_list = []
 		old_prio_weight_port = {}
 		priority = None
@@ -240,7 +240,7 @@ def update_ucr_overrides(excludeDN=None):
 		target = None
 		for v in old_ucr_locations.split(' '):
 			try:
-				## Check explicit for None, because the int values may be 0
+				# Check explicit for None, because the int values may be 0
 				if priority is None:
 					priority = int(v)
 				elif weight is None:
@@ -263,9 +263,9 @@ def update_ucr_overrides(excludeDN=None):
 				port = None
 				target = None
 
-		## create new value
+		# create new value
 		ucr_locations_list = []
-		## add the old ones in ucr given order, if they are still visible
+		# add the old ones in ucr given order, if they are still visible
 		done_list = []
 		for server_fqdn in old_server_fqdn_list:
 			if server_fqdn in server_fqdn_list:
@@ -274,14 +274,14 @@ def update_ucr_overrides(excludeDN=None):
 				done_list.append(server_fqdn)
 			else:
 				ud.debug(ud.LISTENER, ud.ALL, '%s: server in UCR not visible in LDAP: %s' % (name, server_fqdn))
-		## append the ones visible in LDAP but not yet in UCR:
+		# append the ones visible in LDAP but not yet in UCR:
 		for server_fqdn in server_fqdn_list:
 			if server_fqdn not in done_list:
 				_prio_weight_port_str = " ".join(map(str, prio_weight_port))
 				ucr_locations_list.append("%s %s." % (_prio_weight_port_str, server_fqdn))
 		ucr_locations = " ".join(ucr_locations_list)
 
-		## set new value
+		# set new value
 		if ucr_locations == old_ucr_locations:
 			ud.debug(ud.LISTENER, ud.ALL, '%s: UCR skip: %s' % (name, ucr_locations))
 		else:
@@ -289,7 +289,7 @@ def update_ucr_overrides(excludeDN=None):
 			ud.debug(ud.LISTENER, ud.PROCESS, '%s: UCR set: %s="%s"' % (name, key, ucr_locations))
 			ucr_key_value_list.append(ucr_key_value)
 
-		## always trigger S4 Connector
+		# always trigger S4 Connector
 		_relativeDomainName_trigger_set.add(relativeDomainName)
 
 	if ucr_key_value_list:
@@ -304,7 +304,7 @@ def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None):
 	global _relativeDomainName_trigger_set
 
 	for relativeDomainName in list(_relativeDomainName_trigger_set):
-		### trigger S4 Connector
+		# trigger S4 Connector
 		ldap_filter = '(&(univentionObjectType=dns/%s)(zoneName=%s)(relativeDomainName=%s))' % (_record_type, _local_domainname, relativeDomainName)
 		try:
 			ud.debug(ud.LISTENER, ud.PROCESS, '%s: trigger s4 connector: %s' % (name, relativeDomainName))
@@ -333,10 +333,10 @@ def modify(dn, new, old):
 
 
 def delete(old_dn, old, command):
-	## this is also called on modrdn (command == 'r').
+	# this is also called on modrdn (command == 'r').
 	listener.setuid(0)
 	try:
-		## in modrdn phase 'r' the DN is still present in local LDAP, so we explicitly exclude it
+		# in modrdn phase 'r' the DN is still present in local LDAP, so we explicitly exclude it
 		update_ucr_overrides(excludeDN=old_dn)
 	finally:
 		listener.unsetuid()
@@ -359,7 +359,7 @@ def handler(dn, new, old, command):
 			add(dn, new)
 	else:
 		if old:
-			## this is also called on modrdn (command == 'r').
+			# this is also called on modrdn (command == 'r').
 			delete(dn, old, command)
 		else:
 			pass

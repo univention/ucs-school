@@ -438,7 +438,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 			'_kpasswd._udp',
 			'_kerberos._tcp.Default-First-Site-Name._sites.dc._msdcs',
 			'_kerberos._tcp.Default-First-Site-Name._sites',
-			#'_ldap._tcp.Default-First-Site-Name._sites.gc._msdcs',	# is not ignored by s4-connector
+			# '_ldap._tcp.Default-First-Site-Name._sites.gc._msdcs',	# is not ignored by s4-connector
 			'_ldap._tcp.Default-First-Site-Name._sites.dc._msdcs',
 			'_ldap._tcp.Default-First-Site-Name._sites',
 			'_gc._tcp.Default-First-Site-Name._sites')

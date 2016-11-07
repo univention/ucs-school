@@ -53,7 +53,7 @@ import dns.exception
 import paramiko
 
 # univention
-#from univention.lib import escape_value
+# from univention.lib import escape_value
 from univention.lib.package_manager import PackageManager
 from univention.lib.umc_connection import UMCConnection
 from univention.management.console.modules import Base
@@ -84,7 +84,7 @@ CMD_DISABLE_EXEC = '/usr/share/univention-updater/disable-apache2-umc'
 
 CERTIFICATE_PATH = '/etc/univention/ssl/ucsCA/CAcert.pem'
 
-#class SetupSanitizer(StringSanitizer):
+# class SetupSanitizer(StringSanitizer):
 #	def _sanitize(self, value, name, further_args):
 #		ucr.load()
 #		server_role = ucr.get('server/role')
@@ -177,31 +177,31 @@ def get_master_dns_lookup():
 		MODULE.error('DNSException during query for %s: %s' % (query, exc))
 	return ''
 
-#def ou_exists(ou, username, password, master = None):
+# def ou_exists(ou, username, password, master = None):
 #	"""Indicates whether a specified OU already exists or not."""
 #	with tempfile.NamedTemporaryFile() as passwordFile:
 #		passwordFile.write('%s' % password)
 #		passwordFile.flush()
 #		credentials = [ '-U', username, '-y', passwordFile.name ]
 #		if ucr.get('system/role') == 'domaincontroller_slave':
-#			# on a slave, we need to access the master
+# on a slave, we need to access the master
 #			credentials.extend(['-s', master])
 #
-#		# UMC call
+# UMC call
 #		cmd = ['/usr/sbin/umc-command'] + credentials + ['-f', 'container/ou', 'udm/query', '-o', 'objectProperty=None']
 #		process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 #		stdout, stderr = process.communicate()
 #
-#		# parse output
+# parse output
 #		match = regUMCResult.match(stdout)
 #
-#		# check for errors
+# check for errors
 #		if process.returncode != 0 or not match:
-#			# error case... should not happen
+# error case... should not happen
 #			MODULE.error('Failed to launch UMC query:\n%s%s' % (stderr, stdout))
 #			raise RuntimeError(_('Cannot query LDAP information.'))
 #
-#		# parse the result and filter out entries that match the specifed OU
+# parse the result and filter out entries that match the specifed OU
 #		result = ast.literal_eval(match.groupdict().get('result'))
 #		result = [ ientry for ientry in res if ientry.get('$dn$') == 'ou=%s,%s' % (ou, ucr.get('ldap/base')) ]
 #		return bool(result)
