@@ -111,7 +111,8 @@ class CSVUser(User):
 		firstname = self.RE_UID_INVALID.sub('', firstname)
 		lastname = self.RE_UID_INVALID.sub('', lastname)
 
-		replace_invalid_chars = lambda u: re.sub(r'^(?:[^\w]+)?(.*?)(?:[^\w]+)?$', r'\1', u, re.UNICODE)
+		def replace_invalid_chars(u):
+			return re.sub(r'^(?:[^\w]+)?(.*?)(?:[^\w]+)?$', r'\1', u, re.UNICODE)
 
 		if ucr.is_true('ucsschool/csvimport/username/generation/firstname_lastname', False):
 			username = firstname + (u'.' if firstname else u'') + lastname
