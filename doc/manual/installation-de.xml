@@ -274,7 +274,7 @@
 			In einigen Fällen ist es notwendig, das Konfigurationsmodul von &ucsUAS; manuell in
 			einer bestimmten Version zu installieren. Dies wird derzeit nur auf der Kommandozeile unterstützt.
 			Sind die hier gezeigten Schritte durchgeführt worden, kann mit der webbasierten Konfiguration, wie
-			in <xref linkend="school:installation:slave-cli"/> beschrieben, fortgefahren werden.
+			in <xref linkend="school:installation:slave"/> beschrieben, fortgefahren werden.
 		</para>
 		<para>
 			Auf dem DC Master muss zunächst über die &ucsUMC; die installierte Version von &ucsUAS; ermittelt werden. Alternativ kann dies auch auf der Kommandozeile über den Befehl <command>univention-app info</command> erfolgen.
@@ -302,7 +302,7 @@ slave#
 		</para>
 		<para>
 			Im Anschluss kann mit der webbasierten Konfiguration fortgefahren werden, wie sie in
-			<xref linkend="school:installation:slave-cli"/> beschrieben wird.
+			<xref linkend="school:installation:slave"/> beschrieben wird.
 		</para>
 	  </section>
   	</section>
