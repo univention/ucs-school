@@ -159,10 +159,12 @@ def is_valid_hostname(name):
 
 
 # exception classes
-class DeleteObjectError(Exception): pass
+class DeleteObjectError(Exception):
+	pass
 
 
-class CreateObjectError(Exception): pass
+class CreateObjectError(Exception):
+	pass
 
 
 class Hooks(object):
@@ -630,7 +632,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	keys.sort()
 	for path in keys:
 		for dn in container[path]:
-			if path[1:] == 'none': path = ' '
+			if path[1:] == 'none':
+				path = ' '
 			verify_container('%s,%s' % (dn, ou_base), cn_module, co, lo, superordinate, baseDN, path=path[1:])
 
 	# create groups if not existant
@@ -1095,7 +1098,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 			verify_container(container_position, cn_module, co, lo, superordinate, base, path="groupPath")
 		elif container_position[:2] == "ou":
 			verify_container(container_position, ou_module, co, lo, superordinate, base)
-		else: print "WARNING: unknown container type", container_position
+		else:
+			print "WARNING: unknown container type", container_position
 
 	# look if share exists, else create it
 	share_exists = 0
@@ -1211,7 +1215,8 @@ def verify_group(position_dn, co, lo, superordinate, base):
 			verify_container(container_position, cn_module, co, lo, superordinate, base, path="groupPath")
 		elif container_position[:2] == "ou":
 			verify_container(container_position, ou_module, co, lo, superordinate, base)
-		else: print "WARNING: unknown container type", container_position
+		else:
+			print "WARNING: unknown container type", container_position
 
 	objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=position,
 													filter=univention.admin.filter.expression(type, name))
@@ -1451,7 +1456,8 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 			verify_container(container_position, cn_module, co, lo, superordinate, baseDN)
 		elif container_position[:2] == "ou":
 			verify_container(container_position, ou_module, co, lo, superordinate, baseDN)
-		else: print "WARNING: unknown container type", container_position
+		else:
+			print "WARNING: unknown container type", container_position
 
 	groups = person.default_groups()
 	for group in groups:
@@ -1504,7 +1510,8 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 			exists, dn = create_object(object)
 			lo.modify(person.getDN(), [("departmentNumber", [], person.allsNrs)])
 			print "created:", person.getDN()
-			if OUTFILE: OUTFILE.write("%s\t%s\t%s" % (person.login, password, line))
+			if OUTFILE:
+				OUTFILE.write("%s\t%s\t%s" % (person.login, password, line))
 		except CreateObjectError, e:
 			success = False
 			print "ERROR: there were problems creating this user:", person.getDN()
@@ -3139,7 +3146,8 @@ default_group = "cn=Domain Users,cn=groups,%s" % baseDN  # fallback
 for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub', superordinate=superordinate, base='', filter=''):
 	if object.has_key("defaultGroup"):
 		default_group = object["defaultGroup"]
-	else: print "WARNING, no default group found"
+	else:
+		print "WARNING, no default group found"
 
 univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Starting %s %s' % (os.path.basename(sys.argv[0]), ' '.join([repr(x) for x in sys.argv[1:]])))
 
@@ -3202,7 +3210,7 @@ Arguments:
 			print 'ERROR: hostname of educational DC and administrative DC may not be equal!'
 			sys.exit(1)
 
-		if not options.ShareFileServer is None:
+		if options.ShareFileServer is not None:
 			if options.ShareFileServer and not is_valid_hostname(options.ShareFileServer):
 				print 'ERROR: invalid share server name given: "%s"' % options.ShareFileServer
 				sys.exit(1)

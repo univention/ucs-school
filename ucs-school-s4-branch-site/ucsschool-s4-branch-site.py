@@ -229,26 +229,39 @@ def update_ucr_overrides(excludeDN=None):
 
 		## check old value
 		old_ucr_locations = ucr.get(key)
-		if old_ucr_locations == None or old_ucr_locations == 'ignore':
+		if old_ucr_locations is None or old_ucr_locations == 'ignore':
 			continue  # don't touch if unset or ignored
 		## Extract current prio/weight/port
 		old_server_fqdn_list = []
 		old_prio_weight_port = {}
-		priority = None; weight = None; port = None; target = None
+		priority = None
+		weight = None
+		port = None
+		target = None
 		for v in old_ucr_locations.split(' '):
 			try:
 				## Check explicit for None, because the int values may be 0
-				if priority == None: priority = int(v)
-				elif weight == None: weight = int(v)
-				elif port == None: port = int(v)
-				elif not target: target = v.rstrip('.')
-				if priority != None and weight != None and port != None and target:
+				if priority is None:
+					priority = int(v)
+				elif weight is None:
+					weight = int(v)
+				elif port is None:
+					port = int(v)
+				elif not target:
+					target = v.rstrip('.')
+				if priority is not None and weight is not None and port is not None and target:
 					old_server_fqdn_list.append(target)
 					old_prio_weight_port[target] = (priority, weight, port)
-					priority = None; weight = None; port = None; target = None
+					priority = None
+					weight = None
+					port = None
+					target = None
 			except ValueError as ex:
 				ud.debug(ud.LISTENER, ud.ERROR, '%s: Error parsing UCR variable %s: %s' % (name, key, ex))
-				priority = None; weight = None; port = None; target = None
+				priority = None
+				weight = None
+				port = None
+				target = None
 
 		## create new value
 		ucr_locations_list = []

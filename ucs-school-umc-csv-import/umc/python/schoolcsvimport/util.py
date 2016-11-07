@@ -369,7 +369,8 @@ class UCS_License_detection(object):
 			n = num[i]
 			if i == self.License.USERS or i == self.License.ACCOUNT:
 				n -= self._license.sysAccountsFound
-				if n < 0: n = 0
+				if n < 0:
+					n = 0
 			l = self._license.names[v][i]
 			if m:
 				if i == self.License.USERS or i == self.License.ACCOUNT:

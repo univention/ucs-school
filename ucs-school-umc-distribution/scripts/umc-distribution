@@ -123,7 +123,8 @@ def main():
 					project.distribute(usersFailed)
 					for iuser in usersFailed:
 						debugmsg(ud.ADMIN, ud.ERROR, '  distribution to user failed: %s' % iuser)
-					if usersFailed: exitcode = 40
+					if usersFailed:
+						exitcode = 40
 					debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution finished: distributing: args=%s' % sys.argv)
 
 				elif options.collect:
@@ -132,7 +133,8 @@ def main():
 					res = project.collect(dirsFailed)
 					for idir in dirsFailed:
 						debugmsg(ud.ADMIN, ud.ERROR, '  collecting from user failed: %s' % idir)
-					if dirsFailed: exitcode = 50
+					if dirsFailed:
+						exitcode = 50
 					debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution finished: collecting: args=%s' % sys.argv)
 
 				elif options.remove:

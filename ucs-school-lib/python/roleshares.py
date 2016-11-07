@@ -84,7 +84,7 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		teacher_groupname = '-'.join((ucs_school_name_i18n(role_teacher), school_ou))
 		teacher_group = Group(name=teacher_groupname, school=school_ou).get_udm_object(ldap_user_read)
 		if not teacher_group:
-			raise univention.admin.uexceptions.noObject, 'Group not found: %s.' % teacher_groupname
+			raise univention.admin.uexceptions.noObject('Group not found: %s.' % teacher_groupname)
 	else:
 		teacher_groupname = teacher_group['name']
 
@@ -157,7 +157,7 @@ def create_roleshare_for_searchbase(role, school, ucr=None, ldap_user_read=None)
 	teacher_groupname = '-'.join((ucs_school_name_i18n(role_teacher), school_ou))
 	teacher_group = Group(name=teacher_groupname, school=school_ou).get_udm_object(ldap_user_read)
 	if not teacher_group:
-		raise univention.admin.uexceptions.noObject, 'Group not found: %s.' % teacher_groupname
+		raise univention.admin.uexceptions.noObject('Group not found: %s.' % teacher_groupname)
 
 	for serverfqdn in fileservers_for_school(school_ou):
 		create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group, ucr)

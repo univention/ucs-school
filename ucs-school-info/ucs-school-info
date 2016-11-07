@@ -74,12 +74,12 @@ def get_objects(module, base=baseDN, _filter=None, superordinate=None):
 	position = univention.admin.uldap.position(baseDN)
 	univention.admin.modules.init(lo, position, _module)
 	if not _filter:
-		return univention.admin.modules.lookup(_module, co, lo, \
+		return univention.admin.modules.lookup(_module, co, lo,
 				superordinate=superordinate, base=base, scope='sub')
 	else:
 		if len(_filter) != 2:
 			raise ValueError('_filter consists of other than two arguments!')
-		return univention.admin.modules.lookup(_module, co, lo, \
+		return univention.admin.modules.lookup(_module, co, lo,
 				base=base, scope='sub', superordinate=superordinate,
 				filter=univention.admin.filter.expression(*_filter))
 
@@ -245,7 +245,7 @@ if __name__ == '__main__':
 	try:
 		lo = univention.admin.uldap.access(host=configRegistry['ldap/server/name'], base=baseDN, binddn=machinedn, bindpw=machinepwd, start_tls=2)
 	except Exception, e:
-		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, \
+		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN,
 				'authentication error: %s' % str(e))
 		print 'ERROR: authentication error: %s' % str(e)
 		sys.exit(1)

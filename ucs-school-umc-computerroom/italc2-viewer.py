@@ -111,8 +111,8 @@ class ImageViewer(QtGui.QMainWindow):
 		self.zoomOutAct.setEnabled(self.scaleFactor > 0.333)
 
 	def adjustScrollBar(self, scrollBar, factor):
-		scrollBar.setValue(int(factor * scrollBar.value()
-								+ ((factor - 1) * scrollBar.pageStep() / 2)))
+		scrollBar.setValue(int(factor * scrollBar.value() +
+								 ((factor - 1) * scrollBar.pageStep() / 2)))
 
 
 if __name__ == '__main__':

@@ -60,7 +60,8 @@ def main():
 
 			did_fail = False
 
-			class settings(object): pass
+			class settings(object):
+				pass
 			settings1 = settings()
 			settings1.room = room1
 			settings1.ip = computers_ips[0]
@@ -87,7 +88,8 @@ def main():
 				print '==> samba/printmode/hosts/all = %r' % ucr.get('samba/printmode/hosts/all')
 				print '==> samba/printmode/hosts/none = %r' % ucr.get('samba/printmode/hosts/none')
 
-				class NotOk(Exception): pass
+				class NotOk(Exception):
+					pass
 
 				try:
 					# if everything is on default, then no variable is set
