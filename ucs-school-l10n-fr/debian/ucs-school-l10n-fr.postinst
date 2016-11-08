@@ -9,5 +9,6 @@ case "${locale}" in
 esac
 
 ucr set ucs/server/languages/fr_FR?"Français"
+/usr/share/ucs-school-l10n-fr/ucs-school-ucs-l10n fr
 
 exit 0

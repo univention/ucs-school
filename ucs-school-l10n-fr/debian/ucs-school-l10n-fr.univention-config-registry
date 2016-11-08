@@ -1,0 +1,3 @@
+Type: script
+Script: ucs-school-ucr-l10n-fr
+Variables: ucs/web/overview/entries/.*/(link|description|label)$

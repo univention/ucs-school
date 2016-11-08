@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (1.1.1-0) unstable; urgency=medium
+
+  * provide translation for UCR variables
+
+ -- Eduard Mai <mai@univention.de>  Tue, 08 Nov 2016 14:17:35 +0100
+
 ucs-school-l10n-fr (1.1.0-2) unstable; urgency=medium
 
   * Bug #41777: fixed translation of category names

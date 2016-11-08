@@ -1,4 +1,5 @@
-#!/usr/bin/make -f
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright 2016 Univention GmbH
 #
@@ -27,13 +28,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-override_dh_auto_install:
-	univention-install-config-registry
-	dh_auto_install
+import argparse
+import gettext
 
-override_dh_auto_test:
-	ucslint -m 0008
-	dh_auto_test
+from univention.config_registry import ConfigRegistry
 
-%:
-	dh $@
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('language_code',
+						type=str,
+						help="two char language code, e.g. 'fr'")
+	args = parser.parse_args()
+	gettext.translation('ucs-school-ucr-l10n', languages=[args.language_code]).install()
+	ucr = ConfigRegistry()
+	ucr.load()
+	overview_ucrvs = {k: v for k, v in ucr.items() if 'ucs/web/overview/entries' in k}
+	ucrvs_translated = {}
+	for ucrv, value in overview_ucrvs.items():
+		translation = _(value)
+		if not translation == value:
+			ucrvs_translated['{}/{}'.format(ucrv, args.language_code)] = translation
+	ucr.update(ucrvs_translated)
+	ucr.save()
