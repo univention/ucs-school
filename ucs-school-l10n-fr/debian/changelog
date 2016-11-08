@@ -1,6 +1,12 @@
+ucs-school-l10n-fr (1.1.1-1) unstable; urgency=medium
+
+  * Bug #41777: fix typo in debian/*.postinst
+
+ -- Eduard Mai <mai@univention.de>  Tue, 08 Nov 2016 14:25:14 +0100
+
 ucs-school-l10n-fr (1.1.1-0) unstable; urgency=medium
 
-  * provide translation for UCR variables
+  * Bug #41777: provide translation for UCR variables
 
  -- Eduard Mai <mai@univention.de>  Tue, 08 Nov 2016 14:17:35 +0100
 
