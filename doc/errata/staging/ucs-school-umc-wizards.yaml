@@ -3,8 +3,8 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-wizards
-fix: 
+fix: 8.0.0-12.147.201611071337
 desc: |
- * When a teacher was modified in the "Users (schools)" module all his school
-   class memberships were removed. This has been fixed (Bug #42863).
+ * When a teacher was modified via the UMC module "Users (schools)" all his school
+   class memberships have been removed. This bug has been fixed (Bug #42863).
 bug: [42863]
