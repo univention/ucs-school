@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-43) unstable; urgency=low
+
+  * Bug #42863: adjusted essential/user.py to reproduce UMC behaviour
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 08 Nov 2016 13:56:22 +0100
+
 ucs-test-ucsschool (3.0.16-42) unstable; urgency=medium
 
   * Bug #41571: Adjust 98_samba4_evaluate_windows_gpo to changes in

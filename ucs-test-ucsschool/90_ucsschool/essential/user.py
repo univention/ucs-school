@@ -202,19 +202,22 @@ class User(Person):
 	def edit(self, new_attributes):
 		"""Edit object user"""
 		flavor = 'schoolwizards/users'
+		object_props = {
+			'school': self.school,
+			'schools': [self.school],
+			'email': new_attributes.get('email') if new_attributes.get('email') else self.mail,
+			'name': self.username,
+			'type': self.typ,
+			'firstname': new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname,
+			'lastname': new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname,
+			'password': new_attributes.get('password') if new_attributes.get('password') else self.password,
+			'$dn$': self.dn,
+		}
+		if self.typ not in ('teacher', 'staff', 'teacherAndStaff'):
+			object_props['school_classes'] = new_attributes.get('school_classes', self.school_classes)
+
 		param = [{
-			'object': {
-				'school': self.school,
-				'schools': [self.school],
-				'school_classes': new_attributes.get('school_classes', self.school_classes),
-				'email': new_attributes.get('email') if new_attributes.get('email') else self.mail,
-				'name': self.username,
-				'type': self.typ,
-				'firstname': new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname,
-				'lastname': new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname,
-				'password': new_attributes.get('password') if new_attributes.get('password') else self.password,
-				'$dn$': self.dn,
-			},
+			'object': object_props,
 			'options': None
 		}]
 		print 'Editing user %s' % (self.username,)
