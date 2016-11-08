@@ -247,7 +247,7 @@
         </para>
         <note>
             <para>
-                Seit &ucsUAS; 4.1R2 werden neue Freigaben (sowohl automatisch, als auch manuell erstellte)
+                Seit &ucsUAS; 4.1 R2 v5 werden neue Freigaben (sowohl automatisch, als auch manuell erstellte)
                 standardmäßig nur noch per Samba/CIFS freigegeben. Um neue Freigaben standardmäßig auch per NFS zu exportieren,
                 muss die &ucsUCRV; <envar>ucsschool/default/share/nfs</envar> auf allen &ucsUAS;-Systemen auf den Wert <literal>yes</literal>
                 gesetzt werden.
