@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-l10n-fr
+fix: 1.1.1-2.5.201611091750
+desc: |
+ * Provide French translation for UCS@school packages (Bug #41777).
+bug: [41777]
