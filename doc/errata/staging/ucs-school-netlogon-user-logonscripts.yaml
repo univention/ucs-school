@@ -5,20 +5,24 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-netlogon-user-logonscripts
 fix: 12.0.4-3.59.201611021759
 desc: |
- * The name of the directory containing links to the users shares
+ * The default &ucsUAS; NETLOGON script automatically creates a folder
+   on each users desktop that contains links/shortcuts to all &ucsUAS;
+   shares accessible by the user. In the past the folder name was
+   hardcoded to <emphasis>Eigene Shares</emphasis>. The folder name
    is now configurable using the UCR variable
-   ucsschool/userlogon/shares_foldername. If changed, all logon scripts
-   must be rewritten by running the commands:
-   # invoke-rc.d univention-directory-listener stop
-   # univention-directory-listener-ctrl resync ucs-school-user-logonscript
-   # invoke-rc.d univention-directory-listener start
+   <envar>ucsschool/userlogon/shares_foldername</envar>. If changed,
+   all logon scripts have to be rewritten by running the following commands:
+   <command>invoke-rc.d univention-directory-listener stop</command>
+   <command>univention-directory-listener-ctrl resync ucs-school-user-logonscript</command>
+   <command>invoke-rc.d univention-directory-listener start</command>
    (Bug #41173).
  * The listener module for generating NETLOGON scripts for all UCS@school
    users failed with a traceback if one of the scanned group members could
    not be found in LDAP (e.g. users of another school). In this case
    incomplete logon scripts may have been generated. To recreate all NETLOGON
    scripts, please run
-   "univention-directory-listener ctrl ucs-school-user-logonscript". This
+   <command>univention-directory-listener ctrl ucs-school-user-logonscript</command>
+   on all UCS@school systems. This
    command takes quite some time and meanwhile the LDAP replication is stopped
    (Bug #42457).
 bug: [41173, 42457]

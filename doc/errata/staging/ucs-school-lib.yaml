@@ -5,7 +5,9 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
 fix: 9.0.27-1.267.201610251145
 desc: |
- * The "Passwords (teachers)" and "Assigning teachers" modules now also show
+ * The UMC module <guimenu>Passwords (teachers)</guimenu> and
+   <guimenu>Assigning teachers</guimenu> now also show
    teachers which are also staff users (Bug #42461).
- * The internal handling of superordinates has been fixed (Bug #42736).
+ * The internal handling of superordinates for DHCP objects has been fixed
+   (Bug #42736).
 bug: [42461, 42736]

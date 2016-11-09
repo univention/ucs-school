@@ -5,7 +5,8 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-groups
 fix: 6.0.3-2.81.201607251314
 desc: |
- This update addresses the following issue(s):
- * Adding users that don't belong to any school to workgroups, is now
-   prevented (Bug #40539).
+ * Additional security check have been added. In the past, by using specially
+   crafted HTTP requests it was possible to add non-&ucsUAS; users to
+   &ucsUAS; working groups. This was problematic e.g. for users of the group
+   domain admins (Bug #40539).
 bug: [40539]
