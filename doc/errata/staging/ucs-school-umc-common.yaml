@@ -5,5 +5,5 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-common
 fix: 6.0.0-2.18.201611091749
 desc: |
- * Ensure that French translations is installed by default (Bug #41777).
+ * Ensure that French translation is installed by default (Bug #41777).
 bug: [41777]
