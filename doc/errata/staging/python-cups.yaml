@@ -5,7 +5,6 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: python-cups
 fix: 1.9.48-1.9.201609261456
 desc: |
- This update addresses the following issue(s):
- * python-cups has been added to the UCS@school software
-   repository.
+ * The package python-cups has been added to the UCS@school app
+   repository (Bug #41374).
 bug: [41374]

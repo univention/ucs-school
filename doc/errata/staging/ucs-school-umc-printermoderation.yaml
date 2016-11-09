@@ -5,7 +5,12 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-printermoderation
 fix: 13.0.3-7.67.201610101249
 desc: |
- This update addresses the following issue(s):
- * The use of restricted printers is supported.
-   Proper error messages are displayed in case printing fails.
+ * Up to this update the UMC module "printer moderation" was unable to
+   handle restricted printers that require the user to authenticate
+   before printing. Print jobs redirected to those printers have simply
+   never been printed. The UMC module now passes the credentials of
+   the logged on UMC user to the print server. If the user password is
+   not available (e.g. due to single sign on) the user is asked to
+   enter its password. In case passing the print job to the print server
+   fails, proper error messages are shown to the UMC user (Bug #41374).
 bug: [41374]
