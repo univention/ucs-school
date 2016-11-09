@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 R2 v7 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.1 R2 v6 nach 4.1 R2 v7</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.1 R2 v7
+Stand: 09. November 2016
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2016
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 R2 v6 nach 4.1 R2 v7.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-umc-internetrules" lang="en">
+				<title>Source package ucs-school-umc-internetrules</title>
+				<itemizedlist>
+					<listitem><simpara>Within the UMC module <guimenu>Assign internet rules</guimenu> the description text <emphasis>default settings</emphasis> has been changed to <emphasis>Default (unrestricted)</emphasis> (<u:bug>27236</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-wizards" lang="en">
+				<title>Source package ucs-school-umc-wizards</title>
+				<itemizedlist>
+					<listitem><simpara>When a teacher was modified via the UMC module <guimenu>Users (schools)</guimenu> all his school class memberships have been removed. This bug has been fixed (<u:bug>42863</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-italc" lang="en">
+				<title>Source package ucs-school-italc</title>
+				<itemizedlist>
+					<listitem><simpara>The internal iTALC libraries of the UCS@school UMC modules have been updated to iTALC 3.0.0 (<u:bug>38213</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-printermoderation" lang="en">
+				<title>Source package ucs-school-umc-printermoderation</title>
+				<itemizedlist>
+					<listitem><simpara>Up to this update of &ucsUAS; the UMC module <guimenu>printer moderation</guimenu> was unable to handle restricted printers that require the user to authenticate before printing. Print jobs redirected to those printers have simply never been printed. The UMC module now passes the current UMC user's credentials to the print server. If the user password is not available (e.g. due to single sign on) the user is asked to enter its password. In case passing the print job to the print server fails, proper error messages are shown to the UMC user (<u:bug>41374</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-netlogon-user-logonscripts" lang="en">
+				<title>Source package ucs-school-netlogon-user-logonscripts</title>
+				<itemizedlist>
+					<listitem><simpara>The default &ucsUAS; NETLOGON script automatically creates a folder on each users desktop that contains links/shortcuts to all &ucsUAS; shares accessible by the user. In the past the folder name was hardcoded to <emphasis>Eigene Shares</emphasis>. The folder name is now configurable using the UCR variable <envar>ucsschool/userlogon/shares_foldername</envar>. If changed, all logon scripts have to be rewritten by running the following commands: <programlisting>invoke-rc.d univention-directory-listener stop
+univention-directory-listener-ctrl resync ucs-school-user-logonscript
+invoke-rc.d univention-directory-listener start</programlisting> (<u:bug>41173</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The listener module for generating NETLOGON scripts for all UCS@school users failed with a traceback if one of the scanned group members could not be found in LDAP (e.g. users of another school). In this case incomplete logon scripts may have been generated. To recreate all NETLOGON scripts, please run <command>univention-directory-listener ctrl ucs-school-user-logonscript</command> on all UCS@school systems. This command takes quite some time and meanwhile the LDAP replication is stopped (<u:bug>42457</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-groups" lang="en">
+				<title>Source package ucs-school-umc-groups</title>
+				<itemizedlist>
+					<listitem><simpara>Additional security check have been added. In the past, by using specially crafted HTTP requests it was possible to add non-&ucsUAS; users to &ucsUAS; working groups. This was problematic e.g. for users of the group domain admins (<u:bug>40539</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:italc-windows" lang="en">
+				<title>Source package italc-windows</title>
+				<itemizedlist>
+					<listitem><simpara>iTALC has been updated to 3.0-0 (<u:bug>38415</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>iTALC-Master is not selected by default in the iTALC installer anymore (<u:bug>38221</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><simpara>A regression was fixed. Umlauts in given name and family name are not normalized anymore in the legacy user import script (<u:bug>41934</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The import script now honors UDM syntax checks (<u:bug>42513</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><simpara>The UMC module <guimenu>Passwords (teachers)</guimenu> and <guimenu>Assigning teachers</guimenu> now also show teachers which are also staff users (<u:bug>42461</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The internal handling of superordinates for DHCP objects has been fixed (<u:bug>42736</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-computerroom" lang="en">
+				<title>Source package ucs-school-umc-computerroom</title>
+				<itemizedlist>
+					<listitem><simpara>The iTALC handling has been revised and improved. Several bugs have been fixed which makes iTALC connections more reliable. E.g. locking of screens and input devices is now faster and more reliable (<u:bug>41752</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>It is now possible to prevent that screenshots of specific users or groups are shown in the UMC module. See UCR variables <envar>ucsschool/umc/computerroom/hide_screenshots/teachers</envar> and <envar>ucsschool/umc/computerroom/hide_screenshots/groups</envar> (<u:bug>40210</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Some typos in the description text of the UMC module <guimenu>UCS@school computerroom</guimenu> have been corrected (<u:bug>42221</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Adjusted internal code for API changes in iTALC 3.0 (<u:bug>38213</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
