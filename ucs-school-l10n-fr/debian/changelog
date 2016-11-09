@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (1.1.1-3) unstable; urgency=medium
+
+  * Bug #41777: adjust dependencies
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 09 Nov 2016 20:00:22 +0100
+
 ucs-school-l10n-fr (1.1.1-2) unstable; urgency=medium
 
   * Bug #41777: don't register french language by default
