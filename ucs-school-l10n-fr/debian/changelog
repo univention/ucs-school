@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (1.1.1-2) unstable; urgency=medium
+
+  * Bug #41777: don't register french language by default
+
+ -- Florian Best <best@univention.de>  Wed, 09 Nov 2016 17:47:28 +0100
+
 ucs-school-l10n-fr (1.1.1-1) unstable; urgency=medium
 
   * Bug #41777: fix typo in debian/*.postinst
