@@ -40,7 +40,7 @@ override_dh_strip:
 	dh_strip --dbg-package=italc-dbg
 
 override_dh_clean:
-	mv italc/* .
+	mv italc*/* .
 	dh_clean
 
 override_dh_install:
