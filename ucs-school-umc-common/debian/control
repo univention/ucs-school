@@ -10,6 +10,7 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-umc-common
 Architecture: all
+Recommends: ucs-school-l10n-fr
 Description: Package containing common data for UCS@school UMC modules
  This package contains common data that is shared by the UCS@school
  UMC module packages.
