@@ -8,9 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.1r2-setup"
-	xmlns='http://docbook.org/ns/docbook'
-	>
+<book lang="de" id="ucsschool-4.1r2-setup">
 	<bookinfo>
 		<title>
 			&ucsUAS;
@@ -720,9 +718,11 @@ feedback@univention.de
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Zentrale Server: - Schema: Rollenkürzel-ID - Beispiele: UCS
-					Master: ucsma01, UCS Backup: ucsba02, ucsba03, UCS Slave:
-					ucssl04, UCS Memberserver: ucsme05
+					Zentrale Server: - Schema: Rollenkürzel-ID - Beispiele:
+					UCS Master: <systemitem class="systemname">ucsma01</systemitem>,
+					UCS Backup: <systemitem class="systemname">ucsba02</systemitem>, <systemitem class="systemname">ucsba03</systemitem>,
+					UCS Slave: <systemitem class="systemname">ucssl04</systemitem>,
+					UCS Memberserver: <systemitem class="systemname">ucsme05</systemitem>
 				</para>
 			</section>
 			<section id="concepts_names_clients-and-servers">
@@ -734,7 +734,7 @@ feedback@univention.de
 					Rechner:
 					<itemizedlist>
 						<listitem><para>Schema: Schulkürzel-Betriebssystemkürzel-Gebäude/Etage/Raum-ID</para></listitem>
-						<listitem><para>Beispiele: 042win033-001, 042win033-002, 011mac001-011</para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">042win033-001</systemitem>, <systemitem class="service">042win033-002</systemitem>, <systemitem class="service">011mac001-011</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
@@ -742,7 +742,7 @@ feedback@univention.de
 					Drucker sowie Druckerfreigaben:
 					<itemizedlist>
 						<listitem><para>Schema: Schulkürzel-Typkürzel-Gebäude/Etage/Raum-ID</para></listitem>
-						<listitem><para>Beispiele: 042rou001-001, 042swi002-003, 011usv000-001, 012dru002-012</para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
@@ -751,8 +751,8 @@ feedback@univention.de
 						<listitem><para>Schema: Rollenkürzel-Schulkürzel-ID</para></listitem>
 						<listitem><para>Beispiele:
 								<itemizedlist>
-									<listitem><para>Edukativer Schulserver: sedu042-01</para></listitem>
-									<listitem><para>Schulserver Schulverwaltung: sadm042-01</para></listitem>
+									<listitem><para>Edukativer Schulserver: <systemitem class="service">sedu042-01</systemitem></para></listitem>
+									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">sadm042-01</systemitem></para></listitem>
 								</itemizedlist>
 						</para></listitem>
 					</itemizedlist>
@@ -767,14 +767,14 @@ feedback@univention.de
 					Schüler_innen:
 					<itemizedlist>
 						<listitem><para>Schema: Vorname-1.Buchstabe Nachname-ID</para></listitem>
-						<listitem><para>Beispiel: Mary Somerville → marys01</para></listitem>
+						<listitem><para>Beispiel: Mary Somerville → <systemitem class="username">marys01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Lehrkräfte und Mitarbeiter_innen:
 					<itemizedlist>
 						<listitem><para>Schema: 1.Buchstabe Vorname-Nachname-ID</para></listitem>
-						<listitem><para>Beispiel: Ada Lovelace → alovelace01</para></listitem>
+						<listitem><para>Beispiel: Ada Lovelace → <systemitem class="username">alovelace01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
@@ -846,7 +846,7 @@ feedback@univention.de
 			<para>
 				Die Sicherung der Daten muss gewährleistet sein. Als
 				Minimalumfang muss eine Datei-basierte Sicherung bspw. auf Basis
-				von rsync erfolgen. Folgende Daten sind mindestens zu sichern:
+				von <command>rsync</command> erfolgen. Folgende Daten sind mindestens zu sichern:
 			</para>
 			<para>
 				Auf den zentralen Servern:
@@ -1355,42 +1355,42 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						directory/manager/web/modules/autosearch: 0 → deaktiviert
+						<envar>directory/manager/web/modules/autosearch</envar>: 0 → deaktiviert
 						die automatische Suche nach allen Objekten beim Öffnen der
 						UCS Module
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						ucsschool/wizards/autosearch: false → deaktiviert die
+						<envar>ucsschool/wizards/autosearch</envar>: <literal>false</literal> → deaktiviert die
 						automatische Suche nach allen Objekten beim Öffnen der
 						UCS@school Module
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						samba4/sysvol/sync/from_downstream: false → konfiguriert den
+						<envar>samba4/sysvol/sync/from_downstream</envar>: <literal>false</literal> → konfiguriert den
 						Sysvol-Sync unidirektional vom UCS Master zu den UCS@school
 						Schulservern
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						nagios/client/allowedhosts: 10.0.0.20 → erlaubt den Zugriff
+						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 → erlaubt den Zugriff
 						des Monitoring-Servers auf den NRPE-Dienst der übrigen UCS
 						Systeme
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						munin/node/allowedhosts: 10.0.0.20/32 → erlaubt den Zugriff
+						<envar>munin/node/allowedhosts</envar>: 10.0.0.20/32 → erlaubt den Zugriff
 						des Monitoring-Servers auf die munin-Nodes der übrigen UCS
 						Systeme (Achtung CIDR-Schreibweise!)
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						ucsschool/helpdesk/recipient:
+						<envar>ucsschool/helpdesk/recipient</envar>:
 						<email>mail-adresse-des-support-teams@schultraeger.de</email>
 						→ E-Mail-Adresse, an die Nachrichten vom UCS@school
 						Helpdesk-Modul geschickt werden - Zustellung testen!
@@ -1398,7 +1398,7 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						mail/alias/root:
+						<envar>mail/alias/root</envar>:
 						<email>mail-adresse-des-support-teams@schultraeger.de</email>
 						→ E-Mail-Adresse für Systemmails (Cron / Monitoring) -
 						Zustellung testen!
@@ -1406,7 +1406,7 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						ucsschool/import/generate/policy/dhcp/dns/set_per_ou: false
+						<envar>ucsschool/import/generate/policy/dhcp/dns/set_per_ou</envar>: <literal>false</literal>
 						→ verhindert das automatische Anlegen bestimmter DHCP DNS
 						Richtlinien für den Edukativ-Bereich der Schulen. Bei der
 						Verwendung des Verwaltungsnetzes ist dies hinderlich. Die
@@ -1430,7 +1430,7 @@ feedback@univention.de
 					<para>
 						Erstellen sie eine neue Richtlinie im Container
 						&quot;policies/config-registry&quot; vom Typ
-						&quot;Univention Configuration Registry&quot; (UCR)
+						&ucsUCR; (UCR)
 					</para>
 				</listitem>
 				<listitem>
@@ -1445,16 +1445,16 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						timeserver: |FQDN-externer-Zeitserver-1| → bspw.
-						&quot;ptbtime1.ptb.de&quot; oder
-						&quot;0.europe.pool.ntp.org&quot;
+						<envar>timeserver</envar>: |FQDN-externer-Zeitserver-1| → bspw.
+						<systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder
+						<systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						timeserver2: |FQDN-externer-Zeitserver-2| → bspw.
-						&quot;ptbtime2.ptb.de&quot; oder
-						&quot;1.europe.pool.ntp.org&quot;
+						<envar>timeserver2</envar>: |FQDN-externer-Zeitserver-2| → bspw.
+						<systemitem class="fqdomainname">ptbtime2.ptb.de</systemitem> oder
+						<systemitem class="fqdomainname">1.europe.pool.ntp.org</systemitem>
 					</para>
 				</listitem>
 				<listitem>
@@ -1542,7 +1542,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx">ucsschool-import-vorlagen.xlsx</ulink>,
+				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabelle &quot;Schulen&quot;.
 			</para>
 			<para>
@@ -1565,8 +1565,8 @@ feedback@univention.de
 					<para>
 						Speichern sie Datei bitte im Unix-Format ab.  Wenn sie
 						sich unsicher sind, wenden sie unter UCS einmal
-						&quot;dos2unix&quot; auf die Datei an.
-						(&quot;dos2unix&quot; muss aus dem
+						<command>dos2unix</command> auf die Datei an.
+						(<package>dos2unix</package> muss aus dem
 						&quot;unmaintained&quot;-Repository installiert
 						werden, siehe
 						<ulink url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Repository-Konfiguration</ulink>
@@ -1576,32 +1576,32 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Erstellen sie auf dem UCS Master folgendes Verzeichnis:
-						<literal>/usr/local/ucsschool/import_data/</literal>
+						<filename>/usr/local/ucsschool/import_data/</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Kopieren sie die CSV-Datei auf den UCS Master nach
-						<literal>/usr/local/ucsschool/import_data/schulen.csv</literal>
+						<filename>/usr/local/ucsschool/import_data/schulen.csv</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Entfernen sie die Kopfzeile:
-						<literal>sed -i '1d' /usr/local/ucsschool/import_data/schulen.csv</literal>
+						<command>sed -i '1d' /usr/local/ucsschool/import_data/schulen.csv</command>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Erstellen sie folgende Datei:
-						<literal>/usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh</literal>
+						<filename>/usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Öffnen sie die Datei mit einem Editor und fügen folgendes
 						ein:
-						<literal>#!/bin/bash IFS=',' while read schoolid fullname serveredu serveradm; do  /usr/share/ucs-school-import/scripts/create_ou --displayName=${fullname} \  ${schoolid} \  ${serveredu} \  ${serveradm} done &lt; &quot;$1&quot;</literal>
+						<command>#!/bin/bash IFS=',' while read schoolid fullname serveredu serveradm; do  /usr/share/ucs-school-import/scripts/create_ou --displayName=${fullname} \  ${schoolid} \  ${serveredu} \  ${serveradm} done &lt; &quot;$1&quot;</command>
 					</para>
 				</listitem>
 				<listitem>
@@ -1612,14 +1612,14 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Machen sie die Datei ausführbar:
-						<literal>chmod u+x /usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh</literal>
+						<command>chmod u+x /usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh</command>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Rufen sie das Skript auf und übergeben den Pfad zur
 						CSV-Datei:
-						<literal>/usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh /usr/local/ucsschool/import_data/schulen.csv</literal>
+						<filename>/usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh /usr/local/ucsschool/import_data/schulen.csv</filename>
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -1637,20 +1637,20 @@ feedback@univention.de
 			</para>
 			<para>
 				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx">ucsschool-import-vorlagen.xlsx</ulink>,
+				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabelle &quot;Netzwerke&quot;.
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
 						Speichern sie die CSV-Datei auf den UCS Master nach
-						<literal>/usr/local/ucsschool/import_data/networks.csv</literal>
+						<filename>/usr/local/ucsschool/import_data/networks.csv</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Importieren sie die Netzwerke über folgenden Befehl:
-						<literal>/usr/share/ucs-school-import/scripts/import_networks /usr/local/ucsschool/import_data/networks.csv</literal>
+						<filename>/usr/share/ucs-school-import/scripts/import_networks /usr/local/ucsschool/import_data/networks.csv</filename>
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -1672,20 +1672,20 @@ feedback@univention.de
 			</para>
 			<para>
 				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx">ucsschool-import-vorlagen.xlsx</ulink>,
+				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabelle &quot;Clients&quot;.
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
 						Speichern sie die CSV-Datei auf den UCS Master nach
-						<literal>/usr/local/ucsschool/import_data/computers_schulkuerzel.csv</literal>
+						<filename>/usr/local/ucsschool/import_data/computers_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Importieren sie die Netzwerke über folgenden Befehl:
-						<literal>/usr/share/ucs-school-import/scripts/import_computer /usr/local/ucsschool/import_data/computers_schulkuerzel.csv</literal>
+						<filename>/usr/share/ucs-school-import/scripts/import_computer /usr/local/ucsschool/import_data/computers_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -1704,20 +1704,20 @@ feedback@univention.de
 			</para>
 			<para>
 				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx">ucsschool-import-vorlagen.xlsx</ulink>,
+				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabelle &quot;Drucker&quot;.
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
 						Speichern sie die CSV-Datei auf den UCS Master nach
-						<literal>/usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</literal>
+						<filename>/usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Importieren sie die Netzwerke über folgenden Befehl:
-						<literal>/usr/share/ucs-school-import/scripts/import_printer /usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</literal>
+						<filename>/usr/share/ucs-school-import/scripts/import_printer /usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -1729,7 +1729,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx">ucsschool-import-vorlagen.xlsx</ulink>,
+				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabellen &quot;Benutzer&quot; und &quot;Klassen&quot;.
 			</para>
 			<para>
