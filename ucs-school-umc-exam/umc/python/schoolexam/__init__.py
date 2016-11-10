@@ -41,6 +41,7 @@ import datetime
 from httplib import HTTPException
 from socket import error as SocketError
 
+import ldap
 import notifier
 
 from univention.management.console.config import ucr
@@ -57,8 +58,6 @@ from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSe
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, User
-
-import univention.admin.uexceptions as udm_exceptions
 
 _ = Translation('ucs-school-umc-exam').translate
 
@@ -280,27 +279,27 @@ class Instance(SchoolBaseModule):
 				MODULE.info('waiting for replication to be finished, %s user objects missing' % (len(examUsers) - len(usersReplicated)))
 				for idn in examUsers - usersReplicated:
 					try:
-						# try to open the user
-						iuser = util.distribution.openRecipients(idn, ldap_user_read)
-						if iuser:
-							MODULE.info('user has been replicated: %s' % idn)
+						ldap_user_read.get(idn, required=True)
+					except ldap.NO_SUCH_OBJECT:
+						continue  # not replicated yet
+					iuser = util.distribution.openRecipients(idn, ldap_user_read)
+					if not iuser:
+						continue  # not a users/user object
+					MODULE.info('user has been replicated: %s' % idn)
 
-							# call hook scripts
-							if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):
-								msg = 'failed to run hook scripts for user %r' % (iuser.username)
-								MODULE.error(msg)
-								raise ValueError(msg)
+					# call hook scripts
+					if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):
+						msg = 'failed to run hook scripts for user %r' % (iuser.username)
+						MODULE.error(msg)
+						raise ValueError(msg)
 
-							# store User object in list of final recipients
-							recipients.append(iuser)
+					# store User object in list of final recipients
+					recipients.append(iuser)
 
-							# mark the user as replicated
-							usersReplicated.add(idn)
-							progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
-							progress.add_steps(percentPerUser)
-					except udm_exceptions.noObject:
-						# access failed
-						pass
+					# mark the user as replicated
+					usersReplicated.add(idn)
+					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+					progress.add_steps(percentPerUser)
 
 				# wait a second
 				time.sleep(1)
