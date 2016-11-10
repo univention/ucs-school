@@ -5,5 +5,8 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-l10n-fr
 fix: 1.1.1-4.7.201611092047
 desc: |
- * Provide French translation for UCS@school packages (Bug #41777).
+ * French translations for UCS@school packages have been added and will work
+   from UCS 4.1-4 onwards. In order to install the translations on existing
+   UCS@school systems, the packages univention-l10n-fr and ucs-school-l10n-fr
+   need to be installed manually (Bug #41777).
 bug: [41777]
