@@ -150,7 +150,7 @@ feedback@univention.de
       </simpara></listitem>
       <listitem><simpara>
         Wenn Samba nicht bereits installiert ist, kann im nächsten Schritt die zu installierende
-        Samba-Version festgelegt werden (Samba4 ist die empfohlene Version).
+        Samba-Version festgelegt werden (<guimenu><wordasword>Samba 4</wordasword></guimenu> ist die empfohlene Version).
       </simpara></listitem>
       <listitem><simpara>
         Zuletzt wird der Name der Schule und ein Schulkürzel festgelegt (z.B.
