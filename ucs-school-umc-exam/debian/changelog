@@ -1,3 +1,11 @@
+ucs-school-umc-exam (6.0.7-7) unstable; urgency=medium
+
+  * Bug #41568: Make it possible to start exam for student not underneath of
+  	any OU
+  * Bug #41562: prevent error message when user is not yet replicated
+
+ -- Florian Best <best@univention.de>  Thu, 10 Nov 2016 19:08:13 +0100
+
 ucs-school-umc-exam (6.0.7-6) unstable; urgency=low
 
   * Bug #40213: do not crash on OUs missing cn=examusers

@@ -31,7 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 '''
 UCS@School UMC module schoolexam-master
- UMC module delivering backend services for ucs-school-umc-exam
+UMC module delivering backend services for ucs-school-umc-exam
 '''
 
 import os.path
@@ -133,9 +133,10 @@ class Instance(SchoolBaseModule):
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		'''Create an exam account cloned from a given user account.
-		   The exam account is added to a special exam group to allow GPOs and other restrictions
-		   to be enforced via the name of this group.
-		   The group has to be created earlier, e.g. by create_ou (ucs-school-import).'''
+		The exam account is added to a special exam group to allow GPOs and other restrictions
+		to be enforced via the name of this group.
+		The group has to be created earlier, e.g. by create_ou (ucs-school-import).
+		'''
 
 		school = request.options['school']
 		userdn = request.options['userdn']
@@ -150,7 +151,7 @@ class Instance(SchoolBaseModule):
 
 		# uid and DN of exam_user
 		exam_user_uid = "".join((self._examUserPrefix, user_orig['username']))
-		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN(ldap_admin_write, ldap_position, user.school))
+		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN(ldap_admin_write, ldap_position, user.school or school))
 
 		try:
 			exam_user = ExamStudent.get_only_udm_obj(ldap_admin_write, filter_format('uid=%s', (exam_user_uid,)))
@@ -292,9 +293,7 @@ class Instance(SchoolBaseModule):
 			# And create the exam_user
 			ldap_admin_write.add(exam_user_dn, al)
 
-		except (SystemExit, KeyboardInterrupt, SyntaxError):
-			raise
-		except:
+		except BaseException:  # noqa
 			for i, j in alloc:
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
 			MODULE.error('Creation of exam user account failed: %s' % (traceback.format_exc(),))
@@ -317,7 +316,7 @@ class Instance(SchoolBaseModule):
 				grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
 
 		# Add exam_user to examGroup
-		examGroup = self.examGroup(ldap_admin_write, ldap_position, user.school)
+		examGroup = self.examGroup(ldap_admin_write, ldap_position, user.school or school)
 		examGroup.fast_member_add([exam_user_dn], [exam_user_uid])
 
 		# finally confirm allocated IDs
@@ -340,7 +339,7 @@ class Instance(SchoolBaseModule):
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None):
 		'''Remove an exam account cloned from a given user account.
-		   The exam account is removed from the special exam group.'''
+		The exam account is removed from the special exam group.'''
 
 		userdn = request.options['userdn']
 		school = request.options['school']
