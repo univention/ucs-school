@@ -1,3 +1,10 @@
+ucs-school-import (14.0.16-33) unstable; urgency=medium
+
+  * Bug #42478: Simplify UsernameHandler.format_username() and increase
+  	robustness
+
+ -- Florian Best <best@univention.de>  Thu, 10 Nov 2016 18:00:20 +0100
+
 ucs-school-import (14.0.16-32) unstable; urgency=low
 
   * Bug #42513: rename and move consistency check to common code path

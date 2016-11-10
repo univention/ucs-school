@@ -42,13 +42,68 @@ from ucsschool.importer.utils.logging import get_logger
 
 
 class UsernameHandler(object):
-	replacement_variable_pattern = re.compile(r"\[.*?\]")
+	"""
+	>>> BAD_CHARS = ''.join(sorted(set(map(chr, range(128))) - set('.1032547698ACBEDGFIHKJMLONQPSRUTWVYXZacbedgfihkjmlonqpsrutwvyxz')))
+	>>> UsernameHandler(20).format_username('Max.Mustermann')
+	'Max.Mustermann'
+	>>> UsernameHandler(20).format_username('Foo[COUNTER2][COUNTER2]')   # doctest: +IGNORE_EXCEPTION_DETAIL
+	Traceback (most recent call last):
+	...
+	FormatError:
+	>>> UsernameHandler(20).format_username('.')   # doctest: +IGNORE_EXCEPTION_DETAIL
+	Traceback (most recent call last):
+	...
+	FormatError:
+	>>> UsernameHandler(20).format_username('.Max.Mustermann.')
+	'Max.Mustermann'
+	>>> UsernameHandler(4).format_username('Max.Mustermann')
+	'Max'
+	>>> for c in BAD_CHARS:
+	...  assert 'Max' == UsernameHandler(20).format_username('Ma%sx' % (c,))
+	...
+	>>> UsernameHandler(20).format_username('Max.Mustermann12.4567890')
+	'Max.Mustermann12.456'
+	>>> for c in '.1032547698ACBEDGFIHKJMLONQPSRUTWVYXZacbedgfihkjmlonqpsrutwvyxz':
+	...  assert 'Ma%sx' % (c,) == UsernameHandler(20).format_username('Ma%sx' % (c,))
+	...
+	>>> UsernameHandler(20).format_username('Max[Muster]Mann')
+	'MaxMusterMann'
+	>>> UsernameHandler(20).format_username('Max[ALWAYSCOUNTER].Mustermann')
+	'Max1.Mustermann'
+	>>> UsernameHandler(20).format_username('Max[ALWAYSCOUNTER].Mustermann')
+	'Max2.Mustermann'
+	>>> UsernameHandler(20).format_username('Max[ALWAYSCOUNTER].Mustermann')
+	'Max3.Mustermann'
+	>>> UsernameHandler(20).format_username('Max[COUNTER2].Mustermann')
+	'Max4.Mustermann'
+	>>> UsernameHandler(20).format_username('Maria[ALWAYSCOUNTER].Musterfrau')
+	'Maria1.Musterfrau'
+	>>> UsernameHandler(20).format_username('Moritz[COUNTER2]')
+	'Moritz'
+	>>> UsernameHandler(20).format_username('Moritz[COUNTER2]')
+	'Moritz2'
+	>>> UsernameHandler(20).format_username('Foo[ALWAYSCOUNTER]')
+	'Foo1'
+	>>> for i, c in enumerate(BAD_CHARS + BAD_CHARS, 2):
+	...  username = UsernameHandler(20).format_username('Fo%so[ALWAYSCOUNTER]' % (c,))
+	...  assert 'Foo%d' % (i,) == username, (username, i, c)
+	>>> UsernameHandler(8).format_username('aaaa[COUNTER2]bbbbcccc')
+	'aaaab'
+	>>> UsernameHandler(8).format_username('aaaa[COUNTER2]bbbbcccc')
+	'aaaa2b'
+	>>> UsernameHandler(8).format_username('bbbb[ALWAYSCOUNTER]ccccdddd')
+	'bbbb1c'
+	>>> UsernameHandler(8).format_username('bbbb[ALWAYSCOUNTER]ccccdddd')
+	'bbbb2c'
+	"""
+
 	allowed_chars = string.ascii_letters + string.digits + "."
 
 	def __init__(self, username_max_length):
 		self.username_max_length = username_max_length
 		self.logger = get_logger()
 		self.connection, self.position = get_admin_connection()
+		self.replacement_variable_pattern = re.compile(r'(%s)' % '|'.join(map(re.escape, self.counter_variable_to_function.keys())), flags=re.I)
 
 	def add_to_ldap(self, username, first_number):
 		assert isinstance(username, basestring)
@@ -92,9 +147,9 @@ class UsernameHandler(object):
 		:param name: str: username to check
 		:return: str: copy of input, possibly modified
 		"""
-		bad_chars = "".join(sorted(set(name).difference(set(self.allowed_chars))))
+		bad_chars = ''.join(set(name).difference(set(self.allowed_chars)))
 		if bad_chars:
-			self.logger.warn("Removing disallowed characters %r from username %r.", bad_chars, name)
+			self.logger.warn("Removing disallowed characters %r from username %r.", ''.join(sorted(bad_chars)), name)
 		if name.startswith(".") or name.endswith("."):
 			self.logger.warn("Removing disallowed dot from start and end of username %r.", name)
 			name = name.strip(".")
@@ -116,62 +171,39 @@ class UsernameHandler(object):
 		:return: str: unique username
 		"""
 		assert isinstance(name, basestring)
-		ori_name = name
-		cut_pos = self.username_max_length - 3  # numbers >999 are not supported
+		PATTERN_FUNC_MAXLENGTH = 3  # maximum a counter function can produce is len('999')
+		username = name
 
 		match = self.replacement_variable_pattern.search(name)
-		if not match:
-			# no counter variable used, just check characters and length
-			name = self.remove_bad_chars(name)
-			if len(name) > self.username_max_length:
-				res = name[:self.username_max_length]
-				self.logger.warn("Username %r too long, shortened to %r.", name, res)
-			else:
-				res = name
-			return res
+		if match:
+			func = self.counter_variable_to_function[match.group().upper()]
+			cut_pos = self.username_max_length - PATTERN_FUNC_MAXLENGTH
 
-		if len(self.replacement_variable_pattern.split(name)) > 2:
-			raise FormatError("More than one counter variable found in username scheme '{}'.".format(name), name, name)
+			# it's not allowed to have two [COUNTER] patterns
+			if len(self.replacement_variable_pattern.findall(name)) >= 2:
+				raise FormatError("More than one counter variable found in username scheme '{}'.".format(name), name, name)
 
-		# need username without counter variable to calculate length
-		_base_name = "".join(self.replacement_variable_pattern.split(name))
-		base_name = self.remove_bad_chars(_base_name)
-		if _base_name != base_name:
-			# recalculate position of pattern
-			name = "{}{}{}".format(base_name[:match.start()], match.group(), base_name[match.end():])
-			match = self.replacement_variable_pattern.search(name)
+			# the variable must no be the [COUNTER] pattern
+			without_pattern = self.replacement_variable_pattern.sub('', name)
+			without_pattern = self.remove_bad_chars(without_pattern)
 
-		variable = match.group()
-		start = match.start()
-		end = match.end()
+			username = name
+			if len(without_pattern) > cut_pos:
+				without_pattern = without_pattern[:cut_pos]
+				start, end = without_pattern[:match.start()], without_pattern[match.start():]
+				username = '%s[%s]%s' % (start, match.group(), end)
+			username = self.replacement_variable_pattern.sub(func(without_pattern), username)
 
-		if start == 0 and end == len(name):
-			raise FormatError("No username in '{}'.".format(name), ori_name, ori_name)
+		username = self.remove_bad_chars(username)
 
-		# get counter function
-		try:
-			func = self.counter_variable_to_function[variable.upper()]
-		except KeyError as exc:
-			raise FormatError("Unknown variable name '{}' in username scheme '{}': '{}' not in known variables: '{}'".format(
-				variable, ori_name, exc, self.counter_variable_to_function.keys()), variable, name)
-		except AttributeError as exc:
-			raise FormatError("No method '{}' can be found for variable name '{}' in username scheme '{}': {}".format(
-				self.counter_variable_to_function[variable], variable, name, exc), variable, ori_name)
+		if not match and len(name) > self.username_max_length:
+			username = username[:self.username_max_length]
+			self.logger.warn("Username %r too long, shortened to %r.", name, username)
 
-		if len(base_name) > cut_pos:
-			# base name without variable to long, we have to shorten it
-			# numbers will only be appended, no inserting possible anymore
-			res = base_name[:cut_pos]
-			insert_position = cut_pos
-			self.logger.warn("Username %r too long, shortened to %r.", base_name, res)
-			res = self.remove_bad_chars(res)  # dot from middle might be at end now
-		else:
-			insert_position = start
-			res = u"{}{}".format(name[:start], name[end:])
-
-		counter = func(res)  # get counter number to insert/append
-		ret = "{}{}{}".format(res[:insert_position], counter, res[insert_position:])
-		return ret
+		username = username.strip('.')
+		if not username:
+			raise FormatError("No username in '{}'.".format(name), name, name)
+		return username
 
 	@property
 	def counter_variable_to_function(self):
