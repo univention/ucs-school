@@ -139,7 +139,7 @@ feedback@univention.de
   <para>
     Im UMC-Modul App Center ist die Applikation <emphasis>&ucsUAS;</emphasis> auszuwählen und anschließend
     auf <guimenu>Installieren</guimenu> zu klicken. Nach Abschluss der Installation von &ucsUAS; kann in der
-    Univention Management Console das neue Modul &ucsUAS;-Konfigurations-Assistent aufgerufen werden.
+    Univention Management Console das neue Modul <guimenu>&ucsUAS;-Konfigurationsassistent</guimenu> aufgerufen werden.
   </para>
 
   <para>
@@ -154,7 +154,7 @@ feedback@univention.de
       </simpara></listitem>
       <listitem><simpara>
         Zuletzt wird der Name der Schule und ein Schulkürzel festgelegt (z.B.
-        <emphasis>Gesamtschule Nord</emphasis> und <emphasis>gsnord</emphasis>). 
+        <emphasis><wordasword>Gesamtschule Nord</wordasword></emphasis> und <emphasis><wordasword>gsnord</wordasword></emphasis>). 
       </simpara></listitem>
     </itemizedlist>
     Mit der Bestätigung der Einstellungen wird das System konfiguriert und benötigte Pakete automatisch
@@ -182,7 +182,7 @@ feedback@univention.de
         <emphasis>Lehrer</emphasis> erhalten gegenüber Schülern zusätzliche Rechte, um z.B. auf UMC-Module
         zugreifen zu können, die das Zurücksetzen von Schülerpasswörtern oder das Auswählen von
         Internetfiltern ermöglichen.
-        Die zugriffsberechtigten Module können individuell definiert werden. Lehrer erhalten in der Regel
+        Die für Lehrer freigegebenen Module können individuell definiert werden. Lehrer erhalten in der Regel
         aber nur Zugriff auf einen Teil der von der Univention Management Console bereitgestellten Funktionen.
       </simpara></listitem>
       <listitem><simpara>
@@ -347,7 +347,7 @@ feedback@univention.de
 
   <para>
     Nun tritt der Microsoft Windows-Client der Domäne bei (in diesem Quickstart Guide auf Basis von Windows 7).
-    Der Beitritt kann nur mit einer domänenfähigen Version durchgeführt, d.h. nicht mit
+    Der Beitritt kann nur mit einer Windows-Version mit Domänenunterstützung durchgeführt werden, d.h. nicht mit
     Microsoft Windows 7 Home. Die Vorgehensweise gilt analog auch für Microsoft Windows 8.
   </para>
 
@@ -358,7 +358,7 @@ feedback@univention.de
 
   <para>
     Auf dem Windows-System muss die aktuelle Zeit konfiguriert werden. Wenn mit Virtualisierung gearbeitet wird,
-    muss beachtet werden, dass Suspend/Resume-Zyklen zu inkorrekten Systemuhren führen können.
+    muss beachtet werden, dass <wordasword>Suspend/Resume-Zyklen</wordasword> zu inkorrekten Systemuhren führen können.
   </para>
 
   <para>
