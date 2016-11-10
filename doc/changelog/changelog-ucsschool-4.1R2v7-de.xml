@@ -59,7 +59,19 @@ feedback@univention.de
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
-						<section id="changelog:ucsschool:ucs-school-umc-internetrules" lang="en">
+			<section id="changelog:ucsschool:ucs-school-umc-common" lang="en">
+				<title>Source package ucs-school-umc-common</title>
+				<itemizedlist>
+					<listitem><simpara>Ensure that the French translation is installed by default from UCS 4.1-4 onwards (<u:bug>41777</u:bug>).</simpara></listitem>
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-l10n-fr" lang="en">
+				<title>Source package ucs-school-l10n-fr</title>
+				<itemizedlist>
+					<listitem><simpara>French translations for UCS@school packages have been added and will work from UCS 4.1-4 onwards. In order to install the translations on existing UCS@school systems, the packages <package>univention-l10n-fr</package> and <package>ucs-school-l10n-fr</package> need to be installed manually (<u:bug>41777</u:bug>).</simpara></listitem>
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-internetrules" lang="en">
 				<title>Source package ucs-school-umc-internetrules</title>
 				<itemizedlist>
 					<listitem><simpara>Within the UMC module <guimenu>Assign internet rules</guimenu> the description text <emphasis>default settings</emphasis> has been changed to <emphasis>Default (unrestricted)</emphasis> (<u:bug>27236</u:bug>).</simpara></listitem>
