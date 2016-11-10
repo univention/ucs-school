@@ -102,9 +102,10 @@ feedback@univention.de
 			<section id="changelog:ucsschool:ucs-school-netlogon-user-logonscripts" lang="en">
 				<title>Source package ucs-school-netlogon-user-logonscripts</title>
 				<itemizedlist>
-					<listitem><simpara>The default &ucsUAS; NETLOGON script automatically creates a folder on each users desktop that contains links/shortcuts to all &ucsUAS; shares accessible by the user. In the past the folder name was hardcoded to <emphasis>Eigene Shares</emphasis>. The folder name is now configurable using the UCR variable <envar>ucsschool/userlogon/shares_foldername</envar>. If changed, all logon scripts have to be rewritten by running the following commands: <programlisting>invoke-rc.d univention-directory-listener stop
+					<listitem><simpara>The default &ucsUAS; NETLOGON script automatically creates a folder on each users desktop that contains links/shortcuts to all &ucsUAS; shares accessible by the user. In the past the folder name was hardcoded to <emphasis>Eigene Shares</emphasis>. The folder name is now configurable using the UCR variable <envar>ucsschool/userlogon/shares_foldername</envar>. If changed, all logon scripts have to be rewritten by running the following commands (<u:bug>41173</u:bug>):</simpara>
+						<programlisting>invoke-rc.d univention-directory-listener stop
 univention-directory-listener-ctrl resync ucs-school-user-logonscript
-invoke-rc.d univention-directory-listener start</programlisting> (<u:bug>41173</u:bug>).</simpara></listitem>
+invoke-rc.d univention-directory-listener start</programlisting></listitem>
 
 					<listitem><simpara>The listener module for generating NETLOGON scripts for all UCS@school users failed with a traceback if one of the scanned group members could not be found in LDAP (e.g. users of another school). In this case incomplete logon scripts may have been generated. To recreate all NETLOGON scripts, please run <command>univention-directory-listener ctrl ucs-school-user-logonscript</command> on all UCS@school systems. This command takes quite some time and meanwhile the LDAP replication is stopped (<u:bug>42457</u:bug>).</simpara></listitem>
 
