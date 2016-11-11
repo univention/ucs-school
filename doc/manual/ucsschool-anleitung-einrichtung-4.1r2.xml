@@ -62,95 +62,86 @@ feedback@univention.de
 		<section id="setup-manual_organisation">
 			<title>Checkliste: Organisation</title>
 			<para>
-				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
-					<listitem><para>□ Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
-					<listitem><para>□ Verfügt der Betreiber über das erforderliche Know-How?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
-					<listitem><para>□ Wie werden Schulen über die Einführung von UCS@school informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
-					<listitem><para>□ Wer baut in den Schulen Server, Clients und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
-					<listitem><para>□ In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
-					<listitem><para>□ In welchem zeitlichen Rahmen soll der Rollout der Pilotumgebung und später der Gesamtinfrastruktur erfolgen?</para></listitem>
-					<listitem><para>□ Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, z.B. Passwörter zurücksetzen?</para></listitem>
-					<listitem><para>□ Wie werden Schulen mit UCS@school vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
-					<listitem><para>□ Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
-					<listitem><para>□ Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter (Key Performance Indicators, KPIs)?</para></listitem>
-					<listitem><para>□ Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen erfasst und von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
-					<listitem><para>□ Wer ist verantwortlich für die Pflege von Information in der Schulverwaltungssoftware und wie können diese Daten importiert werden?</para></listitem>
+				<itemizedlist spacing="compact" mark="whitesquare">
+					<listitem><para>Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
+					<listitem><para>Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
+					<listitem><para>Verfügt der Betreiber über das erforderliche Know-How?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
+					<listitem><para>Wie werden Schulen über die Einführung von UCS@school informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
+					<listitem><para>Wer baut in den Schulen Server, Clients und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
+					<listitem><para>In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
+					<listitem><para>In welchem zeitlichen Rahmen soll der Rollout der Pilotumgebung und später der Gesamtinfrastruktur erfolgen?</para></listitem>
+					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, z.B. Passwörter zurücksetzen?</para></listitem>
+					<listitem><para>Wie werden Schulen mit UCS@school vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
+					<listitem><para>Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
+					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter (Key Performance Indicators, KPIs)?</para></listitem>
+					<listitem><para>Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen erfasst und von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
+					<listitem><para>Wer ist verantwortlich für die Pflege von Information in der Schulverwaltungssoftware und wie können diese Daten importiert werden?</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
 		<section id="setup-manual_zentrale">
 			<title>Checkliste: Zentrale Services</title>
 			<para>
-				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Wo werden die zentralen UCS@school-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
-					<listitem><para>□ Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
-					<listitem><para>□ Wie wird die Aufrecherhaltung des Betriebs sichergestellt, z.B. Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
-					<listitem><para>□ Wer führt die initiale Installation und Einrichtung durch?</para>
-						<para>
-							<itemizedlist spacing="compact" mark="none">
-								<listitem><para>□ Installation UCS-Server mit UCS@school-App: <xref linkend="installation" /></para></listitem>
-								<listitem><para>□ Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
-								<listitem><para>□ Import von Benutzer-, Client- und Netzwerkdaten: <xref linkend="import" /></para></listitem>
+				<itemizedlist spacing="compact" mark="whitesquare">
+					<listitem><para>Wo werden die zentralen UCS@school-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
+					<listitem><para>Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
+					<listitem><para>Wie wird die Aufrecherhaltung des Betriebs sichergestellt, z.B. Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
+					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
+							<itemizedlist spacing="compact" mark="whitesquare">
+								<listitem><para>Installation UCS-Server mit UCS@school-App: <xref linkend="installation" /></para></listitem>
+								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
+								<listitem><para>Import von Benutzer-, Client- und Netzwerkdaten: <xref linkend="import" /></para></listitem>
 							</itemizedlist>
-						</para>
 					</listitem>
-					<listitem><para>□ Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
-					<listitem><para>□ Welche über UCS@school hinausgehenden Dienste und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
-						<para>
-							<itemizedlist spacing="compact" mark="none">
-								<listitem><para>□ Wie werden die über das Internet zugänglichen zentralen Dienste vor unerwünschtem Zugriff geschützt?</para></listitem>
+					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
+					<listitem><para>Welche über UCS@school hinausgehenden Dienste und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
+							<itemizedlist spacing="compact" mark="whitesquare">
+								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Dienste vor unerwünschtem Zugriff geschützt?</para></listitem>
 							</itemizedlist>
-						</para>
 					</listitem>
-					<listitem><para>□ Soll die Schulen zukünftig über einen zentralen Proxy auf das Internet zugreifen?  Siehe <xref linkend="additional-services_proxy" /></para></listitem>
+					<listitem><para>Soll die Schulen zukünftig über einen zentralen Proxy auf das Internet zugreifen?  Siehe <xref linkend="additional-services_proxy" /></para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
 		<section id="setup-manual_schulen">
 			<title>Checkliste: Dezentrale Services an den Schulen</title>
 			<para>
-				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
-					<listitem><para>□ Setzt die Schule bereits eine Schulserver-Lösung ein?</para>
-						<itemizedlist spacing="compact" mark="none">
-							<listitem><para>□ Welche Funktionen sind der Schule wichtig und wie sie durch UCS@school abgelöst werden (nicht in allen Szenarien notwendig)?</para></listitem>
+				<itemizedlist spacing="compact" mark="whitesquare">
+					<listitem><para>Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
+					<listitem><para>Setzt die Schule bereits eine Schulserver-Lösung ein?</para>
+						<itemizedlist spacing="compact" mark="whitesquare">
+							<listitem><para>Welche Funktionen sind der Schule wichtig und wie sie durch UCS@school abgelöst werden (nicht in allen Szenarien notwendig)?</para></listitem>
 						</itemizedlist>
 					</listitem>
-					<listitem><para>□ Wie schnell und stabil ist der Internetzugang der Schule?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_internet" />.</para></listitem>
-					<listitem><para>□ Wer betreibt den Internetzugang und ist für die Entstörung zuständig?</para></listitem>
-					<listitem><para>□ Welche aktiven und passiven Netzkomponenten sind im Einsatz, z.B. DSL-Router/Switches/Access Points, und wer kennt die Zugangsdaten? </para></listitem>
-					<listitem><para>□ Welches IP-Netz wird aktuell in der Schule verwendet?</para>
-						<para>
-							<itemizedlist spacing="compact" mark="none">
-								<listitem><para>□ Welche Komponenten müssen angepasst werden, um das Netzkonzept (siehe <xref linkend="setup-manual_zentrale" />) umzusetzen?</para></listitem>
+					<listitem><para>Wie schnell und stabil ist der Internetzugang der Schule?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_internet" />.</para></listitem>
+					<listitem><para>Wer betreibt den Internetzugang und ist für die Entstörung zuständig?</para></listitem>
+					<listitem><para>Welche aktiven und passiven Netzkomponenten sind im Einsatz, z.B. DSL-Router/Switches/Access Points, und wer kennt die Zugangsdaten? </para></listitem>
+					<listitem><para>Welches IP-Netz wird aktuell in der Schule verwendet?</para>
+							<itemizedlist spacing="compact" mark="whitesquare">
+								<listitem><para>Welche Komponenten müssen angepasst werden, um das Netzkonzept (siehe <xref linkend="setup-manual_zentrale" />) umzusetzen?</para></listitem>
 							</itemizedlist>
-						</para>
 					</listitem>
-					<listitem><para>□ Ist in der Schule strukturierte Netzwerk-Verkabelung in allen Computerräumen vorhanden? Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_network" /></para>
-						<para>
-							<itemizedlist spacing="compact" mark="none">
-								<listitem><para>□ Wie sind die Patchfelder und Netzdosen belegt?</para></listitem>
+					<listitem><para>Ist in der Schule strukturierte Netzwerk-Verkabelung in allen Computerräumen vorhanden? Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_network" /></para>
+							<itemizedlist spacing="compact" mark="whitesquare">
+								<listitem><para>Wie sind die Patchfelder und Netzdosen belegt?</para></listitem>
 							</itemizedlist>
-						</para>
 					</listitem>
-					<listitem><para>□ Welche Bau-/Verlegearbeiten und Beschaffungen müssen vorgenommen werden, um die Betriebsbereitschaft für die Schule herzustellen?</para></listitem>
-					<listitem><para>□ Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" />.</para></listitem>
+					<listitem><para>Welche Bau-/Verlegearbeiten und Beschaffungen müssen vorgenommen werden, um die Betriebsbereitschaft für die Schule herzustellen?</para></listitem>
+					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" />.</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
 		<section id="setup-manual_wlan">
 			<title>Checkliste: WLAN und BYOD</title>
 			<para>
-				<!-- <itemizedlist spacing="compact" mark="whitesquare"> -->
-				<itemizedlist spacing="compact" mark="none">
-					<listitem><para>□ Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
-					<listitem><para>□ Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
-					<listitem><para>□ Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
-					<listitem><para>□ Wo wird der RADIUS-Service betrieben?  Siehe <xref linkend="additional-services_radius" /></para></listitem>
-					<listitem><para>□ Wie greifen die mobilen Geräte auf das Internet zu, z.B. direkt oder über einen transparenter Proxy?</para></listitem>
-					<listitem><para>□ Wie hoch sind die notwendigen Investitionen, um die Betriebsbereitschaft für das WLAN herzustellen?</para></listitem>
-					<listitem><para>□ Welche IT-Angebote, zentral und dezentral, sollen von den Geräten im WLAN verwendet werden können?</para></listitem>
+				<itemizedlist spacing="compact" mark="whitesquare">
+					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
+					<listitem><para>Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
+					<listitem><para>Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
+					<listitem><para>Wo wird der RADIUS-Service betrieben?  Siehe <xref linkend="additional-services_radius" /></para></listitem>
+					<listitem><para>Wie greifen die mobilen Geräte auf das Internet zu, z.B. direkt oder über einen transparenter Proxy?</para></listitem>
+					<listitem><para>Wie hoch sind die notwendigen Investitionen, um die Betriebsbereitschaft für das WLAN herzustellen?</para></listitem>
+					<listitem><para>Welche IT-Angebote, zentral und dezentral, sollen von den Geräten im WLAN verwendet werden können?</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
