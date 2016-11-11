@@ -95,6 +95,16 @@ class UsernameHandler(object):
 	'bbbb1c'
 	>>> UsernameHandler(8).format_username('bbbb[ALWAYSCOUNTER]ccccdddd')
 	'bbbb2c'
+	>>> INVALID = ['..[ALWAYSCOUNTER]..', '[ALWAYSCOUNTER]', ]
+	>>> for invalid in INVALID:
+	...  try:
+	...   UsernameHandler(20).format_username(invalid)
+	...  except ucsschool.importer.exceptions.FormatError:
+	...   pass
+	...  else:
+	...   raise AssertionError(invalid)
+	>>> UsernameHandler(20).format_username('[FOObar]')
+	'FOObar'
 	"""
 
 	allowed_chars = string.ascii_letters + string.digits + "."
@@ -192,7 +202,8 @@ class UsernameHandler(object):
 				without_pattern = without_pattern[:cut_pos]
 				start, end = without_pattern[:match.start()], without_pattern[match.start():]
 				username = '%s[%s]%s' % (start, match.group(), end)
-			username = self.replacement_variable_pattern.sub(func(without_pattern), username)
+			counter = func(without_pattern) if without_pattern else ''
+			username = self.replacement_variable_pattern.sub(counter, username)
 
 		username = self.remove_bad_chars(username)
 

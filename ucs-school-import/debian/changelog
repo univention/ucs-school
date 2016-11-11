@@ -1,3 +1,10 @@
+ucs-school-import (14.0.16-34) unstable; urgency=medium
+
+  * Bug #42478: prevent ldap.INVALID_DN_SYNTAX cn=,cn=unique-usernames,...
+    error for usernames without any valid character
+
+ -- Florian Best <best@univention.de>  Fri, 11 Nov 2016 13:32:01 +0100
+
 ucs-school-import (14.0.16-33) unstable; urgency=medium
 
   * Bug #42478: Simplify UsernameHandler.format_username() and increase
