@@ -47,7 +47,7 @@ from univention.management.console.modules.decorators import require_password
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
-from ucsschool.lib import LDAP_Connection, SchoolBaseModule, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.models import School
 
 import univention.admin.modules as udm_modules
@@ -101,7 +101,7 @@ class Instance(SchoolBaseModule):
 		return [x for x in all_user_dirs if x.lower() == username.lower()]
 
 	@sanitize(
-		school=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
 	)
 	@LDAP_Connection()
 	def printers(self, request, ldap_user_read=None):
@@ -128,7 +128,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, result)
 
 	@sanitize(**{
-		'school': StringSanitizer(required=True),
+		'school': SchoolSanitizer(required=True),
 		'class': StringSanitizer(required=True),
 		'pattern': StringSanitizer(required=True),
 	})

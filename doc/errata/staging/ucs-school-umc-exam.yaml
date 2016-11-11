@@ -9,4 +9,5 @@ desc: |
    school exams (Bug #41568).
  * Don't log a error message if the exam user is not yet replicated
    (Bug #41562).
-bug: [41568, 41562]
+ * Proper error messages are shown when no school exists (Bug #42399).
+bug: [41568, 41562, 42399]

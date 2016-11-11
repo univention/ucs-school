@@ -39,7 +39,7 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.lib.i18n import Translation
 from univention.admin.handlers.users.user import object as User
 
-from ucsschool.lib import LDAP_Connection, SchoolBaseModule
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.models import School
 
 import traceback
@@ -61,7 +61,7 @@ def sanitize_header(header):
 class Instance(SchoolBaseModule):
 
 	@sanitize(
-		school=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
 		message=StringSanitizer(required=True),
 		category=StringSanitizer(required=True),
 	)

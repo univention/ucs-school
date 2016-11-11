@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (13.0.1-1) unstable; urgency=medium
+
+  * Bug #42399: use SchoolSanitizer
+
+ -- Florian Best <best@univention.de>  Fri, 11 Nov 2016 16:53:39 +0100
+
 ucs-school-umc-rooms (13.0.0-2) unstable; urgency=medium
 
   * Bug #41130: use ucsschool.lib everywhere

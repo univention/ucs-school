@@ -54,7 +54,7 @@ from univention.management.console.modules.schoolexam import util
 from univention.lib.i18n import Translation
 from univention.lib.umc_connection import UMCConnection
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, User
@@ -150,7 +150,7 @@ class Instance(SchoolBaseModule):
 	@sanitize(
 		name=StringSanitizer(required=True),
 		room=StringSanitizer(required=True),
-		school=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
 		directory=StringSanitizer(required=True),
 		shareMode=StringSanitizer(required=True),
 		internetRule=StringSanitizer(required=True),

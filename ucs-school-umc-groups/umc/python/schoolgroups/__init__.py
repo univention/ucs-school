@@ -41,7 +41,7 @@ from univention.management.console.log import MODULE
 
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE, MACHINE_WRITE
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE, MACHINE_WRITE, SchoolSanitizer
 from ucsschool.lib.models import User, Teacher, TeachersAndStaff, SchoolClass, WorkGroup
 
 _ = Translation('ucs-school-umc-groups').translate
@@ -66,7 +66,7 @@ def get_group_class(request):
 class Instance(SchoolBaseModule):
 
 	@sanitize(
-		school=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
 		pattern=StringSanitizer(default=''),
 	)
 	@LDAP_Connection()
@@ -88,7 +88,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(
 		pattern=StringSanitizer(default=''),
-		school=StringSanitizer()
+		school=SchoolSanitizer(required=True)
 	)
 	@LDAP_Connection()
 	def query(self, request, ldap_user_read=None, ldap_position=None):
@@ -268,7 +268,7 @@ class Instance(SchoolBaseModule):
 	@sanitize(**{
 		'$dn$': StringSanitizer(required=True),
 		'classes': ListSanitizer(StringSanitizer(required=True), required=True),
-		'school': StringSanitizer(required=True),
+		'school': SchoolSanitizer(required=True),
 	})
 	@LDAP_Connection(USER_READ, MACHINE_WRITE)
 	def add_teacher_to_classes(self, request, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):

@@ -44,7 +44,7 @@ from univention.management.console.log import MODULE
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, SchoolSanitizer
 from ucsschool.lib.models import Group
 import ucsschool.lib.internetrules as rules
 
@@ -62,7 +62,7 @@ class Instance(SchoolBaseModule):
 	def query(self, request):
 		"""Searches for internet filter rules
 		requests.options = {}
-		  'pattern' -- pattern to match within the rule name or the list of domains
+		'pattern' -- pattern to match within the rule name or the list of domains
 		"""
 		MODULE.info('internetrules.query: options: %s' % str(request.options))
 		pattern = request.options.get('pattern', '').lower()
@@ -291,7 +291,7 @@ class Instance(SchoolBaseModule):
 					raise ValueError(_('The rule does not exist and cannot be modified: %s') % iprops.get('name', ''))
 
 				# parse the properties
-				parsedProps = self._parseRule(iprops)
+				self._parseRule(iprops)
 
 				if iprops.get('name', iname) != iname:
 					# name has been changed -> remove old rule and create a new one
@@ -338,7 +338,7 @@ class Instance(SchoolBaseModule):
 		# return the results
 		self.finished(request.id, result)
 
-	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
+	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
 	def groups_query(self, request, ldap_user_read=None, ldap_position=None):
 		"""List all groups (classes, workgroups) and their assigned internet rule"""

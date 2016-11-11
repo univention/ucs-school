@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: 
+fix: 
+desc: |
+ * Proper error messages are shown when no school exists (Bug #42399).
+bug: [42399]

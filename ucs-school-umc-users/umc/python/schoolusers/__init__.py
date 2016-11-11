@@ -40,7 +40,7 @@ import univention.admin.objects as udm_objects
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib import LDAP_Connection, SchoolBaseModule, Display, USER_WRITE
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, USER_WRITE, SchoolSanitizer
 
 
 _ = Translation('ucs-school-umc-schoolusers').translate
@@ -59,7 +59,7 @@ def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089,
 class Instance(SchoolBaseModule):
 
 	@sanitize(**{
-		'school': StringSanitizer(required=True),
+		'school': SchoolSanitizer(required=True),
 		'class': StringSanitizer(required=True),  # allow_none=True
 		'pattern': StringSanitizer(required=True),
 	})

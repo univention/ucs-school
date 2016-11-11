@@ -37,7 +37,7 @@ from univention.management.console.modules.decorators import sanitize
 
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE, SchoolSanitizer
 from ucsschool.lib.models import ComputerRoom, SchoolComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
@@ -50,7 +50,7 @@ class Instance(SchoolBaseModule):
 		super(Instance, self).init()
 		add_module_logger_to_schoollib()
 
-	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
+	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
 	def computers(self, request, ldap_user_read=None):
 		pattern = LDAP_Filter.forComputers(request.options.get('pattern', ''))
@@ -63,7 +63,7 @@ class Instance(SchoolBaseModule):
 
 		self.finished(request.id, result)
 
-	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
+	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
 	def query(self, request, ldap_user_read=None):
 		school = request.options['school']

@@ -63,7 +63,7 @@ import univention.admin.uexceptions as udm_exceptions
 
 from univention.uldap import explodeDn
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules
@@ -355,7 +355,7 @@ class Instance(SchoolBaseModule):
 			)
 		))
 
-	@sanitize(school=StringSanitizer(required=True))
+	@sanitize(school=SchoolSanitizer(required=True))
 	@LDAP_Connection()
 	def rooms(self, request, ldap_user_read=None):
 		"""Returns a list of all available rooms"""
