@@ -1,0 +1,39 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: remove illegal characters from username
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [42313, 42478]
+
+from ucsschool.importer.utils.username_handler import UsernameHandler
+import ucsschool.importer.utils.username_handler
+ucsschool.importer.utils.username_handler.noObject = KeyError
+
+
+class UsernameHandler(UsernameHandler):
+	__doc__ = UsernameHandler.__doc__
+	usernames = {}
+
+	def add_to_ldap(self, username, first_number):
+		self.usernames[username] = int(first_number)
+
+	def get_next_number(self, username):
+		return self.usernames[username]
+
+	def get_and_raise_number(self, username):
+		if not username:
+			raise SyntaxError('INVALID DN Syntax: cn=,cn=unique-usernames')
+		cur = self.get_next_number(username)
+		self.usernames.setdefault(username, 0)
+		self.usernames[username] += 1
+		return str(cur)
+
+
+if __name__ == '__main__':
+	import doctest
+	doctest.testmod()
+	if result.failed or not result.attempted:
+		raise ValueError(result)

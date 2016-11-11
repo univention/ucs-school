@@ -103,12 +103,13 @@ class Test(CLI_Import_v2_Tester):
 		usernames = {
 			".abc.def.": "abc.def",
 			"...abc...def...": "abc...def",
-			"": "",
+			"": None,
 			"..[ALWAYSCOUNTER]..": None,
 			"[ALWAYSCOUNTER]": None,
-			"[FOObar]": None,
+			"[FOObar]": "FOObar",
 			"{}.[COUNTER2]".format(name12): name12,
-			".": ""
+			".": None,
+			'M'*14 + '.' + 'A': 'M' * 14,
 		}
 		for input_name, expected in usernames.items():
 			try:
