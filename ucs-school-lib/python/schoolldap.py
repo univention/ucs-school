@@ -93,11 +93,11 @@ def LDAP_Connection(*connection_types):
 	This decorator can only be used after set_bind_function() has been executed.
 
 	example:
-	  @LDAP_Connection()
-	  def do_ldap_stuff(arg1, arg2, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
-		  ...
-		  ldap_user_read.searchDn(..., position=ldap_position)
-		  ...
+	@LDAP_Connection()
+	def do_ldap_stuff(arg1, arg2, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+		...
+		ldap_user_read.searchDn(..., position=ldap_position)
+		...
 	"""
 
 	if not connection_types:  # TODO: remove. We still need this for backwards compatibility with other broken decorators
@@ -152,6 +152,16 @@ def LDAP_Connection(*connection_types):
 #		return wraps(func)(decorated)
 	return inner_wrapper
 LDAP_Connection._school = None
+
+
+class SchoolSanitizer(StringSanitizer):
+
+	def _sanitize(self, value, name, further_args):
+		value = super(SchoolSanitizer, self)._sanitize(value, name, further_args)
+
+		if not value and self.required:
+			raise UMC_Error(_('The request did not specify any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.'), status=503, result={'no_school_found': True})
+		return value
 
 
 class SchoolSearchBase(object):
@@ -376,7 +386,7 @@ class SchoolBaseModule(Base):
 		from ucsschool.lib.models import School
 		schools = School.from_binddn(ldap_user_read)
 		if not schools:
-			raise UMC_Error(_('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.'))
+			raise UMC_Error(_('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.'), status=503, result={'no_school_found': True})
 		self.finished(request.id, [{'id': school.name, 'label': school.display_name} for school in schools])
 
 	def _groups(self, ldap_connection, school, ldap_base, pattern=None, scope='sub'):
@@ -389,7 +399,7 @@ class SchoolBaseModule(Base):
 		name_pattern = re.compile('^%s-' % (re.escape(school)), flags=re.I)
 		return [{'id': grp.dn, 'label': name_pattern.sub('', grp['name'])} for grp in groupresult]
 
-	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
+	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
 	def classes(self, request, ldap_user_read=None):
 		"""Returns a list of all classes of the given school"""
@@ -397,7 +407,7 @@ class SchoolBaseModule(Base):
 		from ucsschool.lib.models import SchoolClass
 		self.finished(request.id, self._groups(ldap_user_read, school, SchoolClass.get_container(school), request.options['pattern']))
 
-	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
+	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
 	def workgroups(self, request, ldap_user_read=None):
 		"""Returns a list of all working groups of the given school"""
@@ -405,7 +415,7 @@ class SchoolBaseModule(Base):
 		from ucsschool.lib.models import WorkGroup
 		self.finished(request.id, self._groups(ldap_user_read, school, WorkGroup.get_container(school), request.options['pattern'], 'one'))
 
-	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
+	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
 	def groups(self, request, ldap_user_read=None):
 		"""Returns a list of all groups (classes and workgroups) of the given school"""
@@ -415,7 +425,7 @@ class SchoolBaseModule(Base):
 		from ucsschool.lib.models import WorkGroup
 		self.finished(request.id, self._groups(ldap_user_read, school, WorkGroup.get_container(school), request.options['pattern']))
 
-	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
+	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
 	def rooms(self, request, ldap_user_read=None):
 		"""Returns a list of all available school"""
@@ -465,7 +475,7 @@ class SchoolBaseModule(Base):
 					if udm_obj is not None:
 						# make sure that the found UDM object is of requested user type
 						try:
-							user = cls.from_udm_obj(udm_obj, school, ldap_connection)
+							cls.from_udm_obj(udm_obj, school, ldap_connection)
 						except (UnknownModel, WrongModel):
 							continue
 

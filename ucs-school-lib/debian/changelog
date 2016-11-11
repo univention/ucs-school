@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.28-1) unstable; urgency=medium
+
+  * Bug #42399: Add SchoolSanitizer with correct error handling
+
+ -- Florian Best <best@univention.de>  Fri, 11 Nov 2016 16:37:27 +0100
+
 ucs-school-lib (9.0.27-1) unstable; urgency=medium
 
   * Bug #42736: Fix UDM superordinate handling
