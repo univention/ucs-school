@@ -13,6 +13,7 @@ import string
 from ldap.dn import escape_dn_chars
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.admin.uldap import getAdminConnection
 from univention.admin.uexceptions import noObject, ldapError
 from ucsschool.importer.utils.username_handler import UsernameHandler
@@ -49,20 +50,23 @@ class Test(CLI_Import_v2_Tester):
 		* "Username must only contain numbers, letters and dots, and may not be 'admin'!"
 		* but no dot at beginning
 		"""
-		allowed_chars = string.ascii_letters + string.digits + "."
-
 		def remove_bad_chars(name):
-			bad_chars = "".join(sorted(set(name).difference(set(allowed_chars))))
-			name = name.strip(".")
+			allowed_chars = string.ascii_letters + string.digits + "."
+			bad_chars = ''.join(set(name).difference(set(allowed_chars)))
+			if bad_chars:
+				self.log.warn("Removing disallowed characters %r from username %r.", ''.join(sorted(bad_chars)), name)
+			if name.startswith(".") or name.endswith("."):
+				self.log.warn("Removing disallowed dot from start and end of username %r.", name)
+				name = name.strip(".")
 			return name.translate(None, bad_chars)
 
-		punkts = string.punctuation.translate(None, '[]')  # those will create bad counter vars
-
 		for role in ('student', 'teacher', 'teacher_and_staff'):
-			lastnames = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in punkts]
+			lastnames = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in string.punctuation]
 			lastnames.append(".{}".format(uts.random_username()))
 			lastnames.append(".{}.{}".format(uts.random_username(4), uts.random_username(4)))
+			lastnames.append("{}[{}]{}".format(uts.random_username(3), uts.random_username(3), uts.random_username(3)))
 			lastnames.append(uts.random_username(40))
+			self.unique_basenames_to_remove.extend(lastnames)
 			self.log.info('*** Importing new users with role %r and the following lastnames:\n%r', role, lastnames)
 
 			config = copy.deepcopy(self.default_config)
@@ -88,13 +92,33 @@ class Test(CLI_Import_v2_Tester):
 			# save ldap state for later comparison
 			self.save_ldap_status()
 			# start import
-			self.unique_basenames_to_remove.extend(lastnames)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 			# check for new users in LDAP
 			self.check_new_and_removed_users(len(persons), 0)
 			# check usernames
 			for person, lastname in names.items():
 				person.update(username=remove_bad_chars("{}1".format(lastname[:12])))
+				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
+				wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))  # wait for creation before deletion
+
+			# delete users
+			fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			utils.wait_for_replication()
+
+			# recreate users, but move position of COUNTER variable
+			config.update_entry('scheme:username:default', "[ALWAYSCOUNTER]<lastname>")
+			fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			self.check_new_and_removed_users(len(persons), 0)
+			for person, lastname in names.items():
+				person.update(username=remove_bad_chars("2{}".format(lastname[:12])))
 				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
 
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (1/5)')
