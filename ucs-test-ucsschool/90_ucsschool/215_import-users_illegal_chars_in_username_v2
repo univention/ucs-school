@@ -8,6 +8,7 @@
 ##   - ucs-school-import
 ## bugs: [42313, 42478]
 
+import doctest
 from ucsschool.importer.utils.username_handler import UsernameHandler
 import ucsschool.importer.utils.username_handler
 ucsschool.importer.utils.username_handler.noObject = KeyError
@@ -33,7 +34,6 @@ class UsernameHandler(UsernameHandler):
 
 
 if __name__ == '__main__':
-	import doctest
-	doctest.testmod()
+	result = doctest.testmod()
 	if result.failed or not result.attempted:
 		raise ValueError(result)

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-44) unstable; urgency=low
+
+  * Bug #42478: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Sun, 13 Nov 2016 17:37:38 +0100
+
 ucs-test-ucsschool (3.0.16-43) unstable; urgency=medium
 
   * Bug #42478: adjust test case
