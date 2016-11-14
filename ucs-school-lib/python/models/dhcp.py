@@ -87,15 +87,16 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 					old_dhcp_server = DHCPServer.from_dn(existing_dhcp_server_dn, None, lo, superordinate=old_superordinate)
 					old_dhcp_server.remove(lo)
 					dhcp_server.create(lo)
-			# 
-			# copy subnets #
-			# 
+
+			# copy subnets
 			# find local interfaces
 			interfaces = []
 			for interface_name in set([key.split('/')[1] for key in ucr.keys() if key.startswith('interfaces/eth')]):
 				try:
-					address = ipaddr.IPv4Network('%s/%s' % (ucr['interfaces/%s/address' % interface_name],
-					                                        ucr['interfaces/%s/netmask' % interface_name]))
+					address = ipaddr.IPv4Network('%s/%s' % (
+						ucr['interfaces/%s/address' % interface_name],
+						ucr['interfaces/%s/netmask' % interface_name],
+					))
 					interfaces.append(address)
 				except ValueError as exc:
 					logger.info('Skipping invalid interface %s:\n%s', interface_name, exc)

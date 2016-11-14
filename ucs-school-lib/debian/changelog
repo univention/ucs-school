@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.29-1) unstable; urgency=medium
+
+  * Bug #42495: optimize internal handling of group modifications
+
+ -- Florian Best <best@univention.de>  Mon, 14 Nov 2016 19:08:36 +0100
+
 ucs-school-lib (9.0.28-2) unstable; urgency=medium
 
   * Bug #42399: use the correct DN string of objectExists

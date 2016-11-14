@@ -232,6 +232,12 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 		ret['name'] = self.get_relative_name()
 		return ret
 
+	@classmethod
+	def get_class_for_udm_obj(cls, udm_obj, school):
+		if not cls.is_school_class(school, udm_obj.dn):
+			return  # is a workgroup
+		return cls
+
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 
