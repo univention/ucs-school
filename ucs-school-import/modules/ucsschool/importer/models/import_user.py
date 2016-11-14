@@ -193,6 +193,10 @@ class ImportUser(User):
 				raise UnknownProperty("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
 			except (valueError, valueInvalidSyntax) as exc:
 				raise UDMValueError("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
+			except Exception as exc:
+				self.logger.error("UDM property '{}' could not be set for user '{}' in import line {}: exception: {!s}".format(property_, self.name, self.entry_count, exc))
+				raise
+
 
 	def has_expired(self, connection):
 		"""

@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-35) unstable; urgency=low
+
+  * Bug #42942: added additional log output in case of an exception
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 14 Nov 2016 11:03:10 +0100
+
 ucs-school-import (14.0.16-34) unstable; urgency=medium
 
   * Bug #42478: prevent ldap.INVALID_DN_SYNTAX cn=,cn=unique-usernames,...
