@@ -7,6 +7,6 @@ fix: 14.0.16-36.328.201611141205
 desc: |
  * The UsernameHandler.format_username() function has been improved to not
    produce illegal usernames (e.g. ending with a dot) anymore (Bug #42478).
- * Added additional log output for simplier debugging of a specific exception
+ * Added additional log output for simpler debugging of a specific exception
    case during user import (Bug #42942).
 bug: [42478,42942]
