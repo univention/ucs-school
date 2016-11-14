@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-36) unstable; urgency=medium
+
+  * Bug #42478: remove duplicated code
+
+ -- Florian Best <best@univention.de>  Mon, 14 Nov 2016 11:53:00 +0100
+
 ucs-school-import (14.0.16-35) unstable; urgency=low
 
   * Bug #42942: added additional log output in case of an exception

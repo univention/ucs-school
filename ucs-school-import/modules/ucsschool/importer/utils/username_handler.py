@@ -197,11 +197,10 @@ class UsernameHandler(object):
 			without_pattern = self.replacement_variable_pattern.sub('', name)
 			without_pattern = self.remove_bad_chars(without_pattern)
 
-			username = name
 			if len(without_pattern) > cut_pos:
 				without_pattern = without_pattern[:cut_pos]
 				start, end = without_pattern[:match.start()], without_pattern[match.start():]
-				username = '%s[%s]%s' % (start, match.group(), end)
+				username = '%s%s%s' % (start, match.group(), end)
 			counter = func(without_pattern) if without_pattern else ''
 			username = self.replacement_variable_pattern.sub(counter, username)
 
