@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-06-10 14:07+0200\n"
+"POT-Creation-Date: 2016-11-14 16:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:187
+#: umc/python/schoolwizards/__init__.py:210
 #, python-format
 msgid "\"%s\" already exists!"
 msgstr "\"%s\" existiert bereits!"
 
-#: umc/python/schoolwizards/__init__.py:221
+#: umc/python/schoolwizards/__init__.py:252
 #, python-format
 msgid "\"%s\" does not exist!"
 msgstr "\"%s\" existiert nicht!"
@@ -39,6 +39,11 @@ msgstr "Der Benutzer konnte nicht erstellt werden"
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:254
+#: umc/python/schoolwizards/__init__.py:296
 msgid "Failed to remove user from school."
 msgstr "Konnte den Benutzer nicht aus der Schule entfernen."
+
+#: umc/python/schoolwizards/__init__.py:108
+#, python-format
+msgid "The %s %r does not exists or might be removed in the meanwhile."
+msgstr "%s %r existiert nicht oder wurde in der Zwischenzeit gelöscht."

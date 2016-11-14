@@ -36,26 +36,23 @@ import functools
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
+from univention.management.console.base import UMC_Error
 from univention.management.console.modules.decorators import simple_response, sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer
-from univention.admin.uexceptions import base as uldapBaseException
+from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, DNSanitizer, ChoicesSanitizer
+from univention.admin.uexceptions import base as uldapBaseException, noObject
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE, SchoolSanitizer
 from ucsschool.lib.models import SchoolClass, School, User, Student, Teacher, Staff, TeachersAndStaff, SchoolComputer, WindowsComputer, MacComputer, IPComputer, UCCComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
-from univention.config_registry import ConfigRegistry
 
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
 
 _ = Translation('ucs-school-umc-wizards').translate
 
-ucr = ConfigRegistry()
-ucr.load()
 
 # TODO: remove once this is implemented in uexceptions, see Bug #30088
-
-
 def get_exception_msg(e):
 	msg = getattr(e, 'message', '')
 	if getattr(e, 'args', False):
@@ -65,25 +62,23 @@ def get_exception_msg(e):
 	return msg
 
 
-def get_user_class(user_type):
-	return {
-		'student': Student,
-		'teacher': Teacher,
-		'staff': Staff,
-		'teachersAndStaff': TeachersAndStaff,
-	}.get(user_type, User)
+USER_TYPES = {
+	'student': Student,
+	'teacher': Teacher,
+	'staff': Staff,
+	'teachersAndStaff': TeachersAndStaff,
+}
 
 
-def get_computer_class(computer_type):
-	return {
-		'windows': WindowsComputer,
-		'macos': MacComputer,
-		'ucc': UCCComputer,
-		'ipmanagedclient': IPComputer,
-	}.get(computer_type, SchoolComputer)
+COMPUTER_TYPES = {
+	'windows': WindowsComputer,
+	'macos': MacComputer,
+	'ucc': UCCComputer,
+	'ipmanagedclient': IPComputer,
+}
 
 
-def iter_objects_in_request(request, lo):
+def iter_objects_in_request(request, lo, require_dn=False):
 	klass = {
 		'schoolwizards/schools': School,
 		'schoolwizards/users': User,
@@ -96,9 +91,9 @@ def iter_objects_in_request(request, lo):
 			if isinstance(value, basestring):
 				obj_props[key] = value.strip()
 		if issubclass(klass, User):
-			klass = get_user_class(obj_props.get('type'))
+			klass = USER_TYPES.get(obj_props.get('type'), User)
 		elif issubclass(klass, SchoolComputer):
-			klass = get_computer_class(obj_props.get('type'))
+			klass = COMPUTER_TYPES.get(obj_props.get('type'), SchoolComputer)
 		dn = obj_props.get('$dn$')
 		if 'name' not in obj_props:
 			# important for get_school in district_mode!
@@ -106,8 +101,11 @@ def iter_objects_in_request(request, lo):
 		if issubclass(klass, SchoolClass):
 			# workaround to be able to reuse this function everywhere
 			obj_props['name'] = '%s-%s' % (obj_props['school'], obj_props['name'])
-		if dn:
-			obj = klass.from_dn(dn, obj_props.get('school'), lo)
+		if require_dn:
+			try:
+				obj = klass.from_dn(dn, obj_props.get('school'), lo)
+			except noObject:
+				raise UMC_Error(_('The %s %r does not exists or might be removed in the meanwhile.') % (getattr(klass, 'type_name', klass.__name__), obj_props['name']))
 			for key, value in obj_props.iteritems():
 				if key in obj._attributes:
 					setattr(obj, key, value)
@@ -124,6 +122,12 @@ def response(func):
 		ret = func(self, request, *a, **kw)
 		self.finished(request.id, ret)
 	return _decorated
+
+
+def sanitize_object(**kwargs):
+	def _decorator(func):
+		return sanitize(DictSanitizer(dict(object=DictSanitizer(kwargs))))(func)
+	return _decorator
 
 
 class Instance(SchoolBaseModule, SchoolImport):
@@ -152,6 +156,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		computer_types = [WindowsComputer, MacComputer, IPComputer]
 		try:
 			import univention.admin.handlers.computers.ucc as ucc
+			del ucc
 		except ImportError:
 			pass
 		else:
@@ -171,11 +176,14 @@ class Instance(SchoolBaseModule, SchoolImport):
 				ret.append({'id': obj.dn, 'label': obj.info.get('fqdn', obj.info['name'])})
 		return ret
 
+	@sanitize_object(**{
+		'$dn$': DNSanitizer(required=True),
+	})
 	@response
 	@LDAP_Connection()
 	def _get_obj(self, request, ldap_user_read=None):
 		ret = []
-		for obj in iter_objects_in_request(request, ldap_user_read):
+		for obj in iter_objects_in_request(request, ldap_user_read, True):
 			MODULE.process('Getting %r' % (obj))
 			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
 			ret.append(obj.to_dict())
@@ -202,11 +210,14 @@ class Instance(SchoolBaseModule, SchoolImport):
 				MODULE.process('Creation failed %r' % (ret[-1],))
 		return ret
 
+	@sanitize_object(**{
+		'$dn$': DNSanitizer(required=True),
+	})
 	@response
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
-		for obj in iter_objects_in_request(request, ldap_user_write):
+		for obj in iter_objects_in_request(request, ldap_user_write, True):
 			MODULE.process('Modifying %r' % (obj))
 			obj.validate(ldap_user_read)
 			if obj.errors:
@@ -220,11 +231,14 @@ class Instance(SchoolBaseModule, SchoolImport):
 				ret.append(True)  # no changes? who cares?
 		return ret
 
+	@sanitize_object(**{
+		'$dn$': DNSanitizer(required=True),
+	})
 	@response
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
-		for obj in iter_objects_in_request(request, ldap_user_write):
+		for obj in iter_objects_in_request(request, ldap_user_write, True):
 			obj.name = obj.get_name_from_dn(obj.old_dn)
 			MODULE.process('Deleting %r' % (obj))
 			if obj.remove(ldap_user_write):
@@ -240,38 +254,54 @@ class Instance(SchoolBaseModule, SchoolImport):
 			schools = School.from_binddn(lo)
 		objs = []
 		for school in schools:
-			objs.extend(klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=True))
+			try:
+				objs.extend(klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=True))
+			except noObject as exc:
+				MODULE.error('Could not get all objects of %r: %r' % (klass.__name__, exc))
 		return [obj.to_dict() for obj in objs]
 
+	@sanitize(
+		school=StringSanitizer(required=True),
+		type=ChoicesSanitizer(['all'] + USER_TYPES.keys(), required=True),
+		filter=StringSanitizer(default=''),
+	)
 	@response
 	@LDAP_Connection()
 	def get_users(self, request, ldap_user_read=None):
 		school = request.options['school']
-		user_class = get_user_class(request.options['type'])
+		user_class = USER_TYPES.get(request.options['type'], User)
 		return self._get_all(user_class, school, request.options.get('filter'), ldap_user_read)
 
 	get_user = _get_obj
 	modify_user = _modify_obj
 	create_user = _create_obj
 
+	@sanitize_object(**{
+		'school': SchoolSanitizer(required=True),
+		'$dn$': DNSanitizer(required=True),
+	})
 	@response
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def delete_user(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
-		for i, obj in enumerate(iter_objects_in_request(request, ldap_user_write)):
+		for i, obj in enumerate(iter_objects_in_request(request, ldap_user_write, True)):
 			school = request.options[i]['object']['school']
-			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_write)
 			success = obj.remove_from_school(school, ldap_user_write)
 			if not success:
 				success = {'result': {'message': _('Failed to remove user from school.')}}
 			ret.append(success)
 		return ret
 
+	@sanitize(
+		school=StringSanitizer(required=True),
+		type=ChoicesSanitizer(['all'] + COMPUTER_TYPES.keys(), required=True),
+		filter=StringSanitizer(default=''),
+	)
 	@response
 	@LDAP_Connection()
 	def get_computers(self, request, ldap_user_read=None):
 		school = request.options['school']
-		computer_class = get_computer_class(request.options['type'])
+		computer_class = COMPUTER_TYPES.get(request.options['type'], SchoolComputer)
 		return self._get_all(computer_class, school, request.options.get('filter'), ldap_user_read)
 
 	get_computer = _get_obj
@@ -279,6 +309,10 @@ class Instance(SchoolBaseModule, SchoolImport):
 	create_computer = _create_obj
 	delete_computer = _delete_obj
 
+	@sanitize(
+		school=StringSanitizer(required=True),
+		filter=StringSanitizer(default=''),
+	)
 	@response
 	@LDAP_Connection()
 	def get_classes(self, request, ldap_user_read=None):

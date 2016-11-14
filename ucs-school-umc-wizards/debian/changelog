@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.0-13) unstable; urgency=medium
+
+  * Bug #41229: add error handling for noObject exceptions
+
+ -- Florian Best <best@univention.de>  Mon, 14 Nov 2016 15:35:03 +0100
+
 ucs-school-umc-wizards (8.0.0-12) unstable; urgency=medium
 
   * Bug #42863: don't remove teacher from classes when editing her
