@@ -5,9 +5,9 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
 fix: 6.0.7-7.118.201611101949
 desc: |
- * School users which lie outside of any OU are now able to participate in
+ * School users stored outside of any OU can now participate in
    school exams (Bug #41568).
- * Don't log a error message if the exam user is not yet replicated
+ * Don't log an error message if the exam user is not yet replicated
    (Bug #41562).
  * Proper error messages are shown when no school exists (Bug #42399).
 bug: [41568, 41562, 42399]
