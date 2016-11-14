@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-33.325.201611101809
+fix: 14.0.16-35.327.201611141130
 desc: |
  * The UsernameHandler.format_username() function has been improoved to not
    produce illegal usernames (e.g. ending with a dot) anymore (Bug #42478).
