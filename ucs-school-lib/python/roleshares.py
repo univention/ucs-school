@@ -105,8 +105,8 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		udm_obj['sambaValidUsers'] = '@"%s" @"%s"' % (teacher_groupname, custom_groupname_domainadmins)
 		udm_obj['sambaCustomSettings'] = [('admin users', '@"%s" @"%s"' % (teacher_groupname, custom_groupname_domainadmins))]
 		udm_obj.create()
-	except univention.admin.uexceptions.objectExists, dn:
-		print 'Object exists: %s' % (dn,)
+	except univention.admin.uexceptions.objectExists as exc:
+		print 'Object exists: %s' % (exc.args[0],)
 	else:
 		print 'Object created: %s' % _2utf8(udm_obj.dn)
 
