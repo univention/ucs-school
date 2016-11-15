@@ -1,3 +1,10 @@
+ucs-school-umc-installer (4.0.1-1) unstable; urgency=medium
+
+  * Bug #41007: use UMC instead of SSH when receiving information about
+  	schools
+
+ -- Florian Best <best@univention.de>  Tue, 15 Nov 2016 16:10:50 +0100
+
 ucs-school-umc-installer (4.0.0-5) unstable; urgency=medium
 
   * Bug #42215: Corrected a typo.

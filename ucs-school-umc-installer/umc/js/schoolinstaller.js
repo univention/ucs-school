@@ -434,16 +434,13 @@ define([
 							     password: this.getWidget('credentials', 'password').get('value'),
 							     master: this.getWidget('credentials', 'master').get('value')};
 					next = this.standbyDuring(tools.umcpCommand('schoolinstaller/get/schoolinfo', args)).then(lang.hitch(this, function(data) {
-						// on error, stop here
-						if ((!(data.result.success)) && (data.result.error.length > 0)) {
-							return dialog.alert(data.result.error);
-						}
+						var schoolinfo = data.result;
 
 						if (this.getWidget('server_type', 'server_type').get('value') == 'educational') {
 							// check if there are other UCS@school slaves defined
-							if ((data.result.schoolinfo.educational_slaves.length > 0) && (array.indexOf(data.result.schoolinfo.educational_slaves, this._hostname) < 0)) {
+							if ((schoolinfo.educational_slaves.length > 0) && (array.indexOf(schoolinfo.educational_slaves, this._hostname) < 0)) {
 								// show error message and then jump back to server role selection
-								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one educational server per school. Please check if the educational server "') + data.result.schoolinfo.educational_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
+								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one educational server per school. Please check if the educational server "') + schoolinfo.educational_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
 									name: 'ok',
 									label: _('Ok'),
 									'default': true
@@ -456,9 +453,9 @@ define([
 							}
 						} else {
 							// check if there are other UCS@school slaves defined
-							if ((data.result.schoolinfo.administrative_slaves.length > 0) && (array.indexOf(data.result.schoolinfo.administrative_slaves, this._hostname) < 0)) {
+							if ((schoolinfo.administrative_slaves.length > 0) && (array.indexOf(schoolinfo.administrative_slaves, this._hostname) < 0)) {
 								// show error message and then jump back to server role selection
-								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one administrative server per school. Please check if the administrative server "') + data.result.schoolinfo.administrative_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
+								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one administrative server per school. Please check if the administrative server "') + schoolinfo.administrative_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
 									name: 'ok',
 									label: _('Ok'),
 									'default': true
@@ -467,8 +464,8 @@ define([
 								}));
 							} else  {
 								// otherwise ask for a name of the educational slave if none is already define; if defined, start the installation
-								if (data.result.schoolinfo.educational_slaves.length > 0) {
-									this.getWidget('administrativesetup', 'nameEduServer').set('value', data.result.schoolinfo.educational_slaves[0]);
+								if (schoolinfo.educational_slaves.length > 0) {
+									this.getWidget('administrativesetup', 'nameEduServer').set('value', schoolinfo.educational_slaves[0]);
 									return this._start_installation(pageName); // Warning: the deferred object returns a deferred object!
 								} else {
 									return 'administrativesetup';
@@ -526,11 +523,6 @@ define([
 				this.getWidget('credentials', 'password').set('state', 'Incomplete');
 
 				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
-					if (!result.result.success) {
-						this.getWidget('error', 'info').set('content', result.result.error);
-						return 'error';
-					}
-
 					this._progressBar.setInfo(null, null, 0); // 0%
 					var deferred = new Deferred();
 					this._progressBar.auto(
@@ -543,8 +535,7 @@ define([
 					);
 					return deferred;
 				}), lang.hitch(this, function(error) {
-					// an unexpected error occurred
-					this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
+					this.getWidget('error', 'info').set('content', tools.parseError(error).message);
 					return 'error';
 				}));
 			}));

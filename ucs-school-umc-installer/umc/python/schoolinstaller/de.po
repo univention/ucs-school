@@ -3,46 +3,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-02-20 13:39+0100\n"
+"POT-Creation-Date: 2016-11-15 16:18+0100\n"
 "PO-Revision-Date: 2014-05-19 20:53+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Last-Translator: Univention GmbH <packages@univention.de>\n"
+"Language-Team: Univention GmbH <packages@univention.de>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolinstaller/__init__.py:819
+#: umc/python/schoolinstaller/__init__.py:622
 #, python-format
 msgid "An unexpected error occurred during installation: %s"
 msgstr "Ein unerwarteter Fehler trat während der Installation auf: %s"
 
-#: umc/python/schoolinstaller/__init__.py:223
-#, python-format
-msgid "Cannot connect to UMC server %s."
-msgstr "Der UMC-Server %s kann nicht erreicht werden."
-
-#: umc/python/schoolinstaller/__init__.py:674
-#, python-format
-msgid ""
-"Cannot connect to the master domain controller system %s. It seems that the "
-"specified domain credentials are not valid."
-msgstr ""
-"Die Verbindung zum Domänencontroller-Master-System %s schlug fehl. Scheinbar "
-"sind die angegebenen Anmeldedaten nicht gültig."
-
-#: umc/python/schoolinstaller/__init__.py:670
-#, python-format
-msgid ""
-"Cannot connect to the master domain controller system %s. Please make sure "
-"that the system is reachable. If not this could be due to wrong DNS "
-"name server settings."
-msgstr ""
-"Die Verbindung zum Domänencontroller-Master-System %s schlug fehl. Bitte "
-"stellen Sie sicher, dass das System erreichbar ist. Ist dies nicht der Fall, "
-"kann das mit falschen DNS-Einstellungen für den Nameserver zusammenhängen."
-
-#: umc/python/schoolinstaller/__init__.py:692
+#: umc/python/schoolinstaller/__init__.py:509
 msgid ""
 "Cannot get lock for installation process. Another package manager seems to "
 "block the operation."
@@ -50,24 +25,33 @@ msgstr ""
 "Die Sperre für den Installationsprozess konnte nicht angelegt werden. Eine "
 "andere Paket-Manager-Instanz scheint die Ausführung zu blockieren."
 
-#: umc/python/schoolinstaller/__init__.py:765
+#: umc/python/schoolinstaller/__init__.py:388
+#, python-format
+msgid "Could not connect to the DC Master %s: %s"
+msgstr "Konnte nicht mit dem DC Master %s verbinden: %s"
+
+#: umc/python/schoolinstaller/__init__.py:570
 msgid "Creation of LDAP school structure"
 msgstr "Erstellen der LDAP-Schul-Struktur"
 
-#: umc/python/schoolinstaller/__init__.py:796
+#: umc/python/schoolinstaller/__init__.py:597
 msgid "Domain join"
 msgstr "Domänenbeitritt"
 
-#: umc/python/schoolinstaller/__init__.py:379
+#: umc/python/schoolinstaller/__init__.py:221
 #, python-format
 msgid "Executing join script %s"
 msgstr "Ausführung des Join-Skriptes %s"
 
-#: umc/python/schoolinstaller/__init__.py:801
+#: umc/python/schoolinstaller/__init__.py:602
 msgid "Executing join scripts..."
 msgstr "Ausführung der Join-Skripte..."
 
-#: umc/python/schoolinstaller/__init__.py:666
+#: umc/python/schoolinstaller/__init__.py:565
+msgid "Failed to install packages."
+msgstr "Konnte keine Pakete installieren."
+
+#: umc/python/schoolinstaller/__init__.py:503
 msgid ""
 "In order to install UCS@school on a backup domain controller, the system "
 "needs to be joined first."
@@ -75,19 +59,19 @@ msgstr ""
 "Bevor UCS@school auf einem Domänencontroller Backup installiert werden kann, "
 "muss dieses System zuerst der Domäne beigetreten sein."
 
-#: umc/python/schoolinstaller/__init__.py:421
+#: umc/python/schoolinstaller/__init__.py:265
 msgid "Initializing"
 msgstr "Einrichten"
 
-#: umc/python/schoolinstaller/__init__.py:744
+#: umc/python/schoolinstaller/__init__.py:557
 msgid "Installation of UCS@school packages"
 msgstr "Installation der UCS@school-Pakete"
 
-#: umc/python/schoolinstaller/__init__.py:730
+#: umc/python/schoolinstaller/__init__.py:544
 msgid "Invalid UCS@school configuration."
 msgstr "Ungültige UCS@school-Konfiguration"
 
-#: umc/python/schoolinstaller/__init__.py:637
+#: umc/python/schoolinstaller/__init__.py:475
 msgid ""
 "Invalid server role! UCS@school can only be installed on the system roles "
 "master domain controller, backup domain controller, or slave domain "
@@ -97,7 +81,13 @@ msgstr ""
 "Domänencontroller Master, Domänencontroller Backup sowie Domänencontroller "
 "Slave installiert werden."
 
-#: umc/python/schoolinstaller/__init__.py:657
+#: umc/python/schoolinstaller/__init__.py:386
+msgid ""
+"Make sure ucs-school-umc-installer is installed on the DC Master and all "
+"join scripts are executed."
+msgstr "Bitte stellen Sie sicher, dass ucs-school-umc-installer auf dem DC Master installiert ist und alle Joinskripte ausgeführt wurden."
+
+#: umc/python/schoolinstaller/__init__.py:497
 msgid ""
 "Please install UCS@school on the master domain controller system. Cannot "
 "proceed installation on this system."
@@ -105,17 +95,17 @@ msgstr ""
 "Bitte installieren Sie UCS@school auf dem Domänencontroller-Master-System. "
 "Die Installation kann nicht fortgesetzt werden."
 
-#: umc/python/schoolinstaller/__init__.py:798
+#: umc/python/schoolinstaller/__init__.py:599
 msgid "Preparing domain join..."
 msgstr "Vorbereiten des Domänenbeitritts..."
 
-#: umc/python/schoolinstaller/__init__.py:641
+#: umc/python/schoolinstaller/__init__.py:478
 msgid "Server type has to be set for domain controller slave"
 msgstr ""
 "Es muss ein Servertyp (Edukativ/Verwaltung) für den Domänencontroller Slave "
 "angegeben werden."
 
-#: umc/python/schoolinstaller/__init__.py:405
+#: umc/python/schoolinstaller/__init__.py:247
 msgid ""
 "Software packages have been installed successfully, however, some join "
 "scripts could not be executed. More details can be found in the log file /"
@@ -128,7 +118,7 @@ msgstr ""
 "Konflikte können die entsprecheden Join-Skripte über das UMC-Modul "
 "\"Domänenbeitritt\" noch einmal ausgeführt werden."
 
-#: umc/python/schoolinstaller/__init__.py:373
+#: umc/python/schoolinstaller/__init__.py:215
 #, python-format
 msgid ""
 "Software packages have been installed, however, the system join could not be "
@@ -142,14 +132,12 @@ msgstr ""
 "entsprechenden Konflikte kann der Domänenbeitritt über das UMC-Modul "
 "\"Domänenbeitritt\" abgeschlossen werden."
 
-#: umc/python/schoolinstaller/__init__.py:584
-#: umc/python/schoolinstaller/__init__.py:685
-#, python-format
-msgid "The LDAP connection to the master system %s failed."
+#: umc/python/schoolinstaller/__init__.py:409
+msgid "The LDAP connection to the master system failed."
 msgstr ""
-"Eine LDAP-Verbindung zu dem Master-System %s konnte nicht aufgebaut werden."
+"Eine LDAP-Verbindung zu dem Master-System konnte nicht aufgebaut werden."
 
-#: umc/python/schoolinstaller/__init__.py:663
+#: umc/python/schoolinstaller/__init__.py:501
 msgid ""
 "The UCS@school master domain controller needs to be configured similarly to "
 "this backup system. Please choose the correct environment type for this "
@@ -159,7 +147,7 @@ msgstr ""
 "Domänencontroller-Backup-System konfiguriert werden. Bitte wählen Sie die "
 "dem Master-System entsprechende Konfiguration für dieses System aus."
 
-#: umc/python/schoolinstaller/__init__.py:783
+#: umc/python/schoolinstaller/__init__.py:582
 msgid ""
 "The UCS@school software packages have been installed, however, a school OU "
 "could not be created and consequently a re-join of the system has not been "
@@ -174,11 +162,11 @@ msgstr ""
 "Sie einen Domänenbeitritt auf diesem Slave-System über das UMC-Modul "
 "\"Domänenbeitritt\" durch."
 
-#: umc/python/schoolinstaller/__init__.py:110
+#: umc/python/schoolinstaller/__init__.py:108
 msgid "The entered FQDN is not a valid value"
 msgstr "Der eingegebene Domänenname ist ungültig"
 
-#: umc/python/schoolinstaller/__init__.py:660
+#: umc/python/schoolinstaller/__init__.py:499
 msgid ""
 "The master domain controller is not configured for a UCS@school multi server "
 "environment. Cannot proceed installation on this system."
@@ -186,7 +174,7 @@ msgstr ""
 "Das UCS@school-Domänencontroller-Master-System ist nicht für den Multi-"
 "Server-Einsatz konfiguriert. Die Installation kann nicht fortgesetzt werden."
 
-#: umc/python/schoolinstaller/__init__.py:645
+#: umc/python/schoolinstaller/__init__.py:481
 msgid ""
 "The name of an educational server has to be specified if the system shall be "
 "configured as administrative server."
@@ -194,7 +182,7 @@ msgstr ""
 "Der Name eines edukativen Schulservers muss angegeben werden, wenn das "
 "aktuelle System als Verwaltungsserver konfiguriert werden soll."
 
-#: umc/python/schoolinstaller/__init__.py:649
+#: umc/python/schoolinstaller/__init__.py:484
 msgid ""
 "The name of the educational server may not be equal to the name of the "
 "administrative slave."
@@ -202,12 +190,11 @@ msgstr ""
 "Der Name eines edukativen Schulservers darf nicht mit dem Namen des "
 "Verwaltungsservers übereinstimmen!"
 
-#: umc/python/schoolinstaller/__init__.py:522
-#: umc/python/schoolinstaller/__init__.py:632
+#: umc/python/schoolinstaller/__init__.py:471
 msgid "The specified school OU is not valid."
 msgstr "Die angegebene Schul-OU ist ungültig."
 
-#: umc/python/schoolinstaller/__init__.py:791
+#: umc/python/schoolinstaller/__init__.py:594
 msgid ""
 "Validating the LDAP school OU structure failed. It seems that the current "
 "slave system has already been assigned to a different school or that the "
@@ -217,9 +204,26 @@ msgstr ""
 "dass das aktuelle Slave-System bereits einer anderen Schule zugeordnet ist, "
 "oder dass der angegebene Schul-OU-Name bereits in Verwendung ist."
 
-#: umc/python/schoolinstaller/__init__.py:814
+#: umc/python/schoolinstaller/__init__.py:613
 msgid "finished..."
 msgstr "beendet..."
+
+#~ msgid ""
+#~ "Cannot connect to the master domain controller system %s. It seems that "
+#~ "the specified domain credentials are not valid."
+#~ msgstr ""
+#~ "Die Verbindung zum Domänencontroller-Master-System %s schlug fehl. "
+#~ "Scheinbar sind die angegebenen Anmeldedaten nicht gültig."
+
+#~ msgid ""
+#~ "Cannot connect to the master domain controller system %s. Please make "
+#~ "sure that the system is reachable. If not this could be due to wrong DNS "
+#~ "name server settings."
+#~ msgstr ""
+#~ "Die Verbindung zum Domänencontroller-Master-System %s schlug fehl. Bitte "
+#~ "stellen Sie sicher, dass das System erreichbar ist. Ist dies nicht der "
+#~ "Fall, kann das mit falschen DNS-Einstellungen für den Nameserver "
+#~ "zusammenhängen."
 
 #~ msgid ""
 #~ "The OU \"%s\" is already in use and has been assigned to a different "
