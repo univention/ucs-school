@@ -58,6 +58,7 @@ class Test(CLI_Import_v2_Tester):
 
 			self.save_ldap_status()  # save ldap state for later comparison
 			self.run_import(['-c', fn_config])  # start import
+			wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
 			ldap_diff = self.diff_ldap_status()
 			if len([x for x in ldap_diff.new if x.startswith('uid=')]) > 1:
 				# On single-server s4-all-components previously removed users
@@ -71,7 +72,6 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
-			wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
 			person.set_mode_to_delete()  # mark person as removed
 			self.check_new_and_removed_users(0, 1)
 			person.verify()
@@ -98,6 +98,7 @@ class Test(CLI_Import_v2_Tester):
 
 			self.save_ldap_status()  # save ldap state for later comparison
 			self.run_import(['-c', fn_config])  # start import
+			wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
 			self.check_new_and_removed_users(1, 0)  # check for new users in LDAP
 			person.verify()  # verify LDAP attributes
 
@@ -107,7 +108,6 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
-			wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
 			self.check_new_and_removed_users(0, 0)
 			# check exp. date
 			exp_date = (datetime.datetime.now() + datetime.timedelta(days=exp_days)).strftime("%Y-%m-%d")
@@ -154,6 +154,7 @@ class Test(CLI_Import_v2_Tester):
 
 			self.save_ldap_status()  # save ldap state for later comparison
 			self.run_import(['-c', fn_config])  # start import
+			wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
 			self.check_new_and_removed_users(1, 0)  # check for new users in LDAP
 			person.verify()  # verify LDAP attributes
 
@@ -162,7 +163,6 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
-			wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
 			self.check_new_and_removed_users(0, 0)
 			# check exp. date
 			exp_date = (datetime.datetime.now() + datetime.timedelta(days=exp_days)).strftime("%Y-%m-%d")

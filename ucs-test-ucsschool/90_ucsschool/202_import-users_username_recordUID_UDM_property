@@ -58,6 +58,8 @@ class Test(CLI_Import_v2_Tester):
 
 				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
+				wait_for_drs_replication('cn={}'.format(escape_dn_chars(person_list[0].username)))
+				wait_for_drs_replication('cn={}'.format(escape_dn_chars(person_list[1].username)))
 
 				# check for new users in LDAP
 				self.check_new_and_removed_users(2, 0)
@@ -113,7 +115,6 @@ class Test(CLI_Import_v2_Tester):
 
 				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
-				wait_for_drs_replication('cn={}'.format(escape_dn_chars(person_list[0].username)))
 
 				# check for new users in LDAP
 				self.check_new_and_removed_users(0, 1)

@@ -63,7 +63,6 @@ class Test(CLI_Import_v2_Tester):
 				person.append_random_class()
 
 			self.create_csv_file(person_list=[person], fn_csv=fn_csv)
-			fn_config = self.create_config_json(values=config)
 			# save ldap state for later comparison
 			self.save_ldap_status()
 
@@ -81,7 +80,6 @@ class Test(CLI_Import_v2_Tester):
 			# mark person as removed
 			person.set_mode_to_delete()
 			self.create_csv_file(person_list=[], fn_csv=fn_csv)
-			fn_config = self.create_config_json(values=config)
 			# save ldap state for later comparison
 			self.save_ldap_status()
 

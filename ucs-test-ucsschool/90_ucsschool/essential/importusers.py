@@ -200,11 +200,10 @@ class Person(object):
 		return line
 
 	def append_random_class(self, schools=None):
-		if schools:
-			for school in schools:
-				self.school_classes.setdefault(school, []).append('%s-%s%s%s' % (school, uts.random_int(), uts.random_int(), uts.random_string(length=2, alpha=True, numeric=False)))
-		else:
-			self.school_classes.setdefault(self.school, []).append('%s-%s%s%s' % (self.school, uts.random_int(), uts.random_int(), uts.random_string(length=2, alpha=True, numeric=False)))
+		if not schools:
+			schools = [self.school]
+		for school in schools:
+			self.school_classes.setdefault(school, []).append('%s-%s%s%s' % (school, uts.random_int(), uts.random_int(), uts.random_string(length=2, alpha=True, numeric=False)))
 
 	def append_random_working_group(self):
 		return

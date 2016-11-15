@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.16-46) unstable; urgency=low
+
+  * Bug #41344: wait_for_drs_replication after creation, not after deletion
+  * fix 29_schools_module
+  * cleanup string line breaks after autopep8
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 15 Nov 2016 09:12:47 +0100
+
 ucs-test-ucsschool (3.0.16-45) unstable; urgency=low
 
   * Bug #42478: add test with moved COUNTER variable

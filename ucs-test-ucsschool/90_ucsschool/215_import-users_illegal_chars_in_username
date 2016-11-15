@@ -111,6 +111,10 @@ class Test(CLI_Import_v2_Tester):
 
 			# recreate users, but move position of COUNTER variable
 			config.update_entry('scheme:username:default', "[ALWAYSCOUNTER]<lastname>")
+			for person in persons:
+				# Prevent 'The email address is already taken by another user. Please change the email address.'
+				# because of slow s4 replication. Username is the same, so it doesn't change what's tested.
+				person.mail = '{}{}'.format(uts.random_username(4), person.mail)
 			fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
 			config.update_entry('input:filename', fn_csv)
 			fn_config = self.create_config_json(config=config)
