@@ -203,8 +203,11 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', password_file.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 			failed_join_scripts = []
+			executed_join_scripts = set()
 
 			def parse(line):
+				if not line.strip():
+					return
 				MODULE.process(repr(line.strip()).strip('"\''))
 
 				# parse output... first check for errors
@@ -216,10 +219,13 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 				# check for currently called join script
 				m = joinscript_pattern.match(line)
 				if m:
-					info_handler(_('Executing join script %s') % m.groupdict().get('script'))
-					step_handler(steps_per_script)
+					current_script = m.groupdict().get('script')
+					info_handler(_('Executing join script %s') % (current_script,))
+					if current_script not in executed_join_scripts:
+						executed_join_scripts.add(current_script)
+						step_handler(steps_per_script)
 					if 'failed' in line:
-						failed_join_scripts.append(m.groupdict().get('script'))
+						failed_join_scripts.append(current_script)
 					return
 
 				# check for other information
@@ -321,6 +327,7 @@ class Instance(Base):
 		self._finishedLock = threading.Lock()
 		self._errors = []
 		self.progress_state = Progress()
+		self._installation_started = False
 		self.package_manager = PackageManager(
 			info_handler=self.progress_state.info_handler,
 			step_handler=self.progress_state.step_handler,
@@ -368,6 +375,9 @@ class Instance(Base):
 
 	@simple_response
 	def progress(self):
+		if not self._installation_started:
+			self.progress_state.finish()
+			self.progress_state.error_handler('Critical: There is no current installation running. Maybe the previous process died?')
 		return self.progress_state.poll()
 
 	@sanitize(
@@ -477,6 +487,9 @@ class Instance(Base):
 		server_role = ucr.get('server/role')
 		joined = os.path.exists('/var/univention-join/joined')
 
+		if self._installation_started:
+			raise ValueError('The installation was started twice. This should not have happened.')
+
 		if server_role != 'domaincontroller_slave':
 			# use the credentials of the currently authenticated user on a master/backup system
 			self.require_password()
@@ -574,6 +587,7 @@ class Instance(Base):
 			steps += 10  # move_slave_into_ou -> 10
 		steps += 100  # system_join -> 100 steps
 
+		self._installation_started = True
 		progress_state = self.progress_state
 		progress_state.reset(steps)
 		progress_state.component = _('Installation of UCS@school packages')
@@ -632,6 +646,7 @@ class Instance(Base):
 
 		def _finished(thread, result):
 			MODULE.info('Finished installation')
+			progress_state.finish()
 			progress_state.info = _('finished...')
 			if isinstance(result, SchoolInstallerError):
 				MODULE.warn('Error during installation: %s' % (result,))
@@ -642,7 +657,6 @@ class Instance(Base):
 				msg = ''.join(traceback.format_exception(*thread.exc_info))
 				MODULE.error('Exception during installation: %s' % msg)
 				progress_state.error_handler(_('An unexpected error occurred during installation: %s') % result)
-			progress_state.finish()
 
 		# launch thread
 		thread = notifier.threads.Simple('ucsschool-install', notifier.Callback(_thread, self, packages_to_install), notifier.Callback(_finished))
