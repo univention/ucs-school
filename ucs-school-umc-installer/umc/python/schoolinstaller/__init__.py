@@ -41,6 +41,8 @@ import subprocess
 import traceback
 import urllib
 import filecmp
+import fcntl
+import errno
 from httplib import HTTPException
 
 import notifier
@@ -201,19 +203,15 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', password_file.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 			failed_join_scripts = []
-			while True:
-				# get the next line
-				line = process.stdout.readline()
-				if not line:
-					# no more text from stdout
-					break
-				MODULE.process(line.strip())
+
+			def parse(line):
+				MODULE.process(repr(line.strip()).strip('"\''))
 
 				# parse output... first check for errors
 				m = error_pattern.match(line)
 				if m:
 					error_handler(_('Software packages have been installed, however, the system join could not be completed: %s. More details can be found in the log file /var/log/univention/join.log. Please retry the join process via the UMC module "Domain join" after resolving any conflicting issues.') % m.groupdict().get('message'))
-					continue
+					return
 
 				# check for currently called join script
 				m = joinscript_pattern.match(line)
@@ -222,13 +220,37 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 					step_handler(steps_per_script)
 					if 'failed' in line:
 						failed_join_scripts.append(m.groupdict().get('script'))
-					continue
+					return
 
 				# check for other information
 				m = info_pattern.match(line)
 				if m:
 					info_handler(m.groupdict().get('message'))
-					continue
+					return
+
+			# make stdout file descriptor of the process non-blocking
+			fd = process.stdout.fileno()
+			fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+			fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+
+			unfinished_line = ''
+			while True:
+				# get the next line
+				try:
+					line = process.stdout.read()
+				except IOError as exc:
+					if exc.errno == errno.EAGAIN:
+						continue
+					raise
+
+				if not line:
+					break  # no more text from stdout
+
+				unfinished_line = '' if line.endswith('\n') else '%s%s' % (unfinished_line, line.rsplit('\n', 1)[-1])
+				for line in line.splitlines():
+					parse(line)
+				if unfinished_line:
+					parse(unfinished_line)
 
 			# get all remaining output
 			stdout, stderr = process.communicate()
