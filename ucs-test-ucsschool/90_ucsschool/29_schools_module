@@ -55,7 +55,7 @@ def main():
 			schools[1].check_get(expected_attrs)
 
 			while schools:
-				school = schools.pop(0)
+				school = schools[0]
 				school.verify_ldap(True)
 				school.remove()
 
@@ -71,6 +71,7 @@ def main():
 							raise
 					else:
 						break
+				schools.pop(0)
 
 		finally:
 			for school in schools:
