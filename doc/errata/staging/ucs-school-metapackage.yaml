@@ -3,7 +3,10 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix: 9.0.2-8.185.201610131938
+fix:
 desc: |
  * Update connector/s4/mapping/group/ignorelist to avoid rejects (Bug #40418)
-bug: [40418]
+ * A (re)join is now aborted if the version of the UCS@school app on the
+   joining system differs to the one installed on the DC master. A link to
+   an SDB article is printed to join.log (Bug #41760).
+bug: [40418,41760]

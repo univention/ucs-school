@@ -34,6 +34,21 @@ VERSION=3
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
+if ! /usr/share/ucs-school-nonedu-slave/scripts/app_version.py -v ucsschool; then
+	if [ "$FORCE_JOIN_WITH_DIFFERENT_APP_VERSION" = "1" ]; then
+		echo "**********************************************************************"
+		echo "Running join script although local and DC masters app versions differ."
+		echo "**********************************************************************"
+	else
+		echo "****************************************************************************"
+		echo "The version of the UCS@school app on the DC master differs to the version on"
+		echo "this host. Please consult the Univention Support Database on how to proceed:"
+		echo "http://sdb.univention.de/TODO"
+		echo "****************************************************************************"
+		exit 1
+	fi
+fi
+
 eval "$(ucr shell)"
 . /usr/share/ucs-school-lib/base.sh
 . /usr/share/univention-lib/all.sh

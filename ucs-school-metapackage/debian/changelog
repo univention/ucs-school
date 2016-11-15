@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-9) unstable; urgency=low
+
+  * Bug #41760: check if app versions on local host and DC master differ
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 15 Nov 2016 16:05:09 +0100
+
 ucs-school-metapackage (9.0.2-8) unstable; urgency=medium
 
   * Bug #40418: Add groups to connector/s4/mapping/group/ignorelist
