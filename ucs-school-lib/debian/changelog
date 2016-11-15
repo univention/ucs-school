@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.29-2) unstable; urgency=medium
+
+  * Bug #42495: fix indentation
+
+ -- Florian Best <best@univention.de>  Tue, 15 Nov 2016 13:02:26 +0100
+
 ucs-school-lib (9.0.29-1) unstable; urgency=medium
 
   * Bug #42495: optimize internal handling of group modifications

@@ -255,35 +255,35 @@ class User(UCSSchoolHelperAbstractClass):
 			self.password = old_password
 		return success
 
-		def do_modify(self, udm_obj, lo):
-			self.create_mail_domain(lo)
-			self.password = self.password or None
-			mandatory_groups = self.groups_used(lo)
-			for group_dn in udm_obj['groups'][:]:
-					logger.debug('Checking group %s for removal', group_dn)
-					if group_dn not in mandatory_groups:
-							logger.debug('Group not mandatory! Part of a school?')
-							try:
-									school_class = SchoolClass.from_dn(group_dn, None, lo)
-							except noObject:
-									logger.debug('No. Leaving it alone...')
-									continue
-							logger.debug('Yes, part of %s!', school_class.school)
-							if school_class.school not in self.school_classes:
-									continue  # if the key isn't set we don't change anything to the groups. to remove the groups it has to be an empty list
-							classes = self.school_classes[school_class.school]
-							remove = school_class.name not in classes and school_class.get_relative_name() not in classes
-							if remove:
-									logger.debug('Removing it!')
-									udm_obj['groups'].remove(group_dn)
-							else:
-									logger.debug('Leaving it alone: Part of own school and either non-school class or new school classes were not defined at all')
-			for group_dn in mandatory_groups:
-					logger.debug('Checking group %s for adding', group_dn)
-					if group_dn not in udm_obj['groups']:
-							logger.debug('Group is not yet part of the user. Adding...')
-							udm_obj['groups'].append(group_dn)
-			return super(User, self).do_modify(udm_obj, lo)
+	def do_modify(self, udm_obj, lo):
+		self.create_mail_domain(lo)
+		self.password = self.password or None
+		mandatory_groups = self.groups_used(lo)
+		for group_dn in udm_obj['groups'][:]:
+				logger.debug('Checking group %s for removal', group_dn)
+				if group_dn not in mandatory_groups:
+						logger.debug('Group not mandatory! Part of a school?')
+						try:
+								school_class = SchoolClass.from_dn(group_dn, None, lo)
+						except noObject:
+								logger.debug('No. Leaving it alone...')
+								continue
+						logger.debug('Yes, part of %s!', school_class.school)
+						if school_class.school not in self.school_classes:
+								continue  # if the key isn't set we don't change anything to the groups. to remove the groups it has to be an empty list
+						classes = self.school_classes[school_class.school]
+						remove = school_class.name not in classes and school_class.get_relative_name() not in classes
+						if remove:
+								logger.debug('Removing it!')
+								udm_obj['groups'].remove(group_dn)
+						else:
+								logger.debug('Leaving it alone: Part of own school and either non-school class or new school classes were not defined at all')
+		for group_dn in mandatory_groups:
+				logger.debug('Checking group %s for adding', group_dn)
+				if group_dn not in udm_obj['groups']:
+						logger.debug('Group is not yet part of the user. Adding...')
+						udm_obj['groups'].append(group_dn)
+		return super(User, self).do_modify(udm_obj, lo)
 
 	def do_school_change(self, udm_obj, lo, old_school):
 		super(User, self).do_school_change(udm_obj, lo, old_school)
