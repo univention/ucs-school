@@ -10,7 +10,7 @@
 
 import copy
 import pprint
-from ldap.dn import escape_dn_chars
+from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -53,7 +53,7 @@ class Test(CLI_Import_v2_Tester):
 
 				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
-				wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
+				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
 
 				# check for new users in LDAP
 				self.check_new_and_removed_users(1, 0)
@@ -99,7 +99,7 @@ class Test(CLI_Import_v2_Tester):
 					fn_config = self.create_config_json(config=config)
 					self.save_ldap_status()
 					self.run_import(['-c', fn_config, '-i', fn_csv])
-					wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))
+					wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
 					self.check_new_and_removed_users(1, 0)
 
 					new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-47) unstable; urgency=medium
+
+  * Bug #41344: fix escaping
+
+ -- Florian Best <best@univention.de>  Tue, 15 Nov 2016 10:35:47 +0100
+
 ucs-test-ucsschool (3.0.16-46) unstable; urgency=low
 
   * Bug #41344: wait_for_drs_replication after creation, not after deletion

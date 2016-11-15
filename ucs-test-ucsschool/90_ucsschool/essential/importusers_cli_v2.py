@@ -218,8 +218,7 @@ class CLI_Import_v2_Tester(object):
 		"""
 		Creates a config file for "ucs-school-user-import".
 		Default values may be overridden via a dict called values.
-		>>> values = {'user_role': 'teacher',
-					  'input:type': 'csv' }
+		>>> values = {'user_role': 'teacher', 'input:type': 'csv' }
 		>>> create_config_json(values=values)
 		'/tmp/config.dkgfcsdz'
 		>>> create_config_json(values=values, config=DEFAULT_CONFIG)

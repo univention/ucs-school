@@ -11,6 +11,7 @@
 import copy
 import string
 from ldap.dn import escape_dn_chars
+from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -99,7 +100,7 @@ class Test(CLI_Import_v2_Tester):
 			for person, lastname in names.items():
 				person.update(username=remove_bad_chars("{}1".format(lastname[:12])))
 				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
-				wait_for_drs_replication('cn={}'.format(escape_dn_chars(person.username)))  # wait for creation before deletion
+				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))  # wait for creation before deletion
 
 			# delete users
 			fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
