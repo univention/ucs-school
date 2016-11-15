@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define console*/
+/*global define*/
 
 define([
 	"dojo/_base/declare",
@@ -85,7 +85,7 @@ define([
 							}
 
 							// single server environment is only allowed on DC master + DC backup
-							if (this._serverRole != 'domaincontroller_slave') {
+							if (this._serverRole !== 'domaincontroller_slave') {
 								values.push({ id: 'singlemaster', label: _('Single server environment') });
 							}
 
@@ -104,7 +104,7 @@ define([
 						// update the help text according to the value chosen...
 						var text = texts[newVal] || '';
 
-						if (this._serverRole == 'domaincontroller_slave') {
+						if (this._serverRole === 'domaincontroller_slave') {
 							// adaptations for text of a multi server environment on slave domain controllers
 							//text = _('<p>The local server role is slave domain controller, for which only a multi server environment can be configured.</p>') + text;
 							text = '';
@@ -314,7 +314,7 @@ define([
 				var guessedMaster = data.result.guessed_master;
 
 				// update some widgets with the intial results
-				if (this._serverRole == 'domaincontroller_slave') {
+				if (this._serverRole === 'domaincontroller_slave') {
 					this._pages.setup.set('helpText', _('This wizard guides you step by step through the installation of an UCS@school slave domain controller. Before continuing please make sure that an UCS@school master domain controller has already been set up for a multi server environment.'));
 				}
 				if (this._samba) {
@@ -341,7 +341,7 @@ define([
 			var info = this._progressBar.getErrors();
 			var nextPage = info.errors.length ? 'error' : 'success';
 
-			if (info.errors.length == 1) {
+			if (info.errors.length === 1) {
 				// one error can be displayed as text
 				this.getWidget(nextPage, 'info').set('content', info.errors[0]);
 			}
@@ -374,7 +374,7 @@ define([
 			}
 
 			// if we retry from the error page, resend the intial query
-			if (pageName == 'error') {
+			if (pageName === 'error') {
 				this._initialQuery();
 			}
 
@@ -386,7 +386,7 @@ define([
 				}
 
 				// a DC backup needs to be joined
-				if (this._serverRole == 'domaincontroller_backup' && !this._joined) {
+				if (this._serverRole === 'domaincontroller_backup' && !this._joined) {
 					dialog.alert(_('In order to install UCS@school on a backup domain controller, the system needs to be joined first.'));
 					return 'setup';
 				}
@@ -402,33 +402,33 @@ define([
 				}
 
 				// retry when an error occurred
-				if (pageName == 'error') {
+				if (pageName === 'error') {
 					next = 'setup';
 				}
 
 				// show credentials page only on domaincontroller slave
-				if (next == 'credentials' && this._serverRole != 'domaincontroller_slave') {
+				if (next === 'credentials' && this._serverRole !== 'domaincontroller_slave') {
 					next = 'samba';
 				}
 
 				// only display samba page for a single server environment or on a
 				// slave and only if samba is not already installed
-				if (next == 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_slave'))) {
+				if (next === 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') === 'multiserver' && this._serverRole !== 'domaincontroller_slave'))) {
 					next = 'school';
 				}
 
 				// no schoolOU/server_type/administrativesetup page on a DC master w/multi server environment and a DC backup in general
-				if (next == 'school' && ((this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole == 'domaincontroller_master') || this._serverRole == 'domaincontroller_backup')) {
+				if (next === 'school' && ((this.getWidget('setup', 'setup').get('value') === 'multiserver' && this._serverRole === 'domaincontroller_master') || this._serverRole === 'domaincontroller_backup')) {
 					next = 'install';
 				}
 
 				// show server type page only on domaincontroller slave
-				if (next == 'server_type' && this._serverRole != 'domaincontroller_slave') {
+				if (next === 'server_type' && this._serverRole !== 'domaincontroller_slave') {
 					next = 'install';
 				}
 
 				// show managementsetup page only if no slave has been specified or OU does not exist yet
-				if (next == 'administrativesetup') {
+				if (next === 'administrativesetup') {
 					var args = { schoolOU: this.getWidget('school', 'schoolOU').get('value'),
 							     username: this.getWidget('credentials', 'username').get('value'),
 							     password: this.getWidget('credentials', 'password').get('value'),
@@ -436,7 +436,7 @@ define([
 					next = this.standbyDuring(tools.umcpCommand('schoolinstaller/get/schoolinfo', args)).then(lang.hitch(this, function(data) {
 						var schoolinfo = data.result;
 
-						if (this.getWidget('server_type', 'server_type').get('value') == 'educational') {
+						if (this.getWidget('server_type', 'server_type').get('value') === 'educational') {
 							// check if there are other UCS@school slaves defined
 							if ((schoolinfo.educational_slaves.length > 0) && (array.indexOf(schoolinfo.educational_slaves, this._hostname) < 0)) {
 								// show error message and then jump back to server role selection
@@ -476,12 +476,12 @@ define([
 				}
 
 				// after the administrativesetup page, the installation begins
-				if (pageName == 'administrativesetup') {
+				if (pageName === 'administrativesetup') {
 					next = 'install';
 				}
 
 				// installation
-				if (next == 'install') {
+				if (next === 'install') {
 					next = this._start_installation(pageName);
 				}
 
@@ -509,7 +509,7 @@ define([
 				name: 'install',
 				label: _('Install')
 			}]).then(lang.hitch(this, function(install) {
-				if (install == 'cancel') {
+				if (install === 'cancel') {
 					return pageName;
 				}
 
@@ -522,7 +522,7 @@ define([
 				this.getWidget('credentials', 'password').set('value', '');
 				this.getWidget('credentials', 'password').set('state', 'Incomplete');
 
-				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
+				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function() {
 					this._progressBar.setInfo(null, null, 0); // 0%
 					var deferred = new Deferred();
 					this._progressBar.auto(
@@ -545,8 +545,8 @@ define([
 
 		_update_school_page: function() {
 			var values = this.getValues();
-			this.getWidget('school', 'infoTextMaster').set('visible', this._serverRole != 'domaincontroller_slave' && values.setup == 'singlemaster');
-			this.getWidget('school', 'infoTextSlave').set('visible', this._serverRole == 'domaincontroller_slave');
+			this.getWidget('school', 'infoTextMaster').set('visible', this._serverRole !== 'domaincontroller_slave' && values.setup === 'singlemaster');
+			this.getWidget('school', 'infoTextSlave').set('visible', this._serverRole === 'domaincontroller_slave');
 		},
 
 		_update_success_page: function() {
@@ -558,15 +558,15 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			return pageName != 'success' && pageName != 'alreadyInstalled';
+			return pageName !== 'success' && pageName !== 'alreadyInstalled';
 		},
 
 		hasNext: function(pageName) {
-			return pageName != 'success' && pageName != 'alreadyInstalled';
+			return pageName !== 'success' && pageName !== 'alreadyInstalled';
 		},
 
 		hasPrevious: function(pageName) {
-			return this.inherited(arguments) && pageName != 'error' && pageName != 'success' && pageName != 'alreadyInstalled';
+			return this.inherited(arguments) && pageName !== 'error' && pageName !== 'success' && pageName !== 'alreadyInstalled';
 		},
 
 		previous: function(pageName) {
@@ -574,14 +574,14 @@ define([
 
 			// only display samba page for a single server environment or on a
 			// slave and only if samba is not already installed
-			if (previous == 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_slave'))) {
+			if (previous === 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') === 'multiserver' && this._serverRole !== 'domaincontroller_slave'))) {
 				previous = 'credentials';
 			}
 
 			// show credentials page only on DC Slave
-			if (previous == 'credentials' && this._serverRole != 'domaincontroller_slave') {
+			if (previous === 'credentials' && this._serverRole !== 'domaincontroller_slave') {
 				previous = 'setup';
-			} else if (previous == 'error') {
+			} else if (previous === 'error') {
 				previous = 'school';
 			}
 
@@ -590,7 +590,7 @@ define([
 
 		// only DC master, DC backup, and DC slave are valid system roles for this module
 		_validServerRole: function() {
-			return this._serverRole == 'domaincontroller_master' || this._serverRole == 'domaincontroller_backup' || this._serverRole == 'domaincontroller_slave';
+			return this._serverRole === 'domaincontroller_master' || this._serverRole === 'domaincontroller_backup' || this._serverRole === 'domaincontroller_slave';
 		}
 
 	});
