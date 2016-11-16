@@ -1,3 +1,10 @@
+univention-management-console-module-selective-udm (5.0.0-2) unstable; urgency=medium
+
+  * Bug #40435: Make selective-udm return the DN
+  * Plus other fixes by fbest
+
+ -- Arvid Requate <requate@univention.de>  Wed, 16 Nov 2016 20:10:14 +0100
+
 univention-management-console-module-selective-udm (5.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development
