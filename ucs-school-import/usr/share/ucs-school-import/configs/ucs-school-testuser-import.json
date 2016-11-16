@@ -22,8 +22,7 @@
 		"email": "<firstname>.<lastname>@<maildomain>",
 		"recordUID": "<firstname>.<lastname>",
 		"username": {
-		    "default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]",
-		    "student": "<:umlauts><firstname><:lower>[COUNTER2]"
+		    "default": "<:umlauts><firstname>.<lastname><:lower>[COUNTER2]"
 		}
 	},
 	"sourceUID": "TESTID",
