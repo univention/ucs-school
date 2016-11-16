@@ -383,7 +383,13 @@ class ImportUser(User):
 			try:
 				maildomain = self.ucr["mail/hosteddomains"].split()[0]
 			except (AttributeError, IndexError):
-				raise MissingMailDomain("Could not retrieve mail domain from configuration nor from UCRV " "mail/hosteddomains.", entry=self.entry_count, import_user=self)
+				if "email" in self.config["mandatory_attributes"] or "mailPrimaryAttribute" in self.config["mandatory_attributes"]:
+					raise MissingMailDomain(
+						"Could not retrieve mail domain from configuration nor from UCRV mail/hosteddomains.",
+						entry=self.entry_count,
+						import_user=self)
+				else:
+					return
 		self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
 
 	def make_password(self):

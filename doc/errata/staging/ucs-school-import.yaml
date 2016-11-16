@@ -9,4 +9,8 @@ desc: |
    produce illegal usernames (e.g. ending with a dot) anymore (Bug #42478).
  * Added additional log output for simpler debugging of a specific exception
    case during user import (Bug #42942).
-bug: [42478,42942]
+ * The configration directive "mandatory_attributes" is now honored, when
+   checking if an email address was created. It is now only an error, if
+   "email" is listed in "mandatory_attributes" and no email address was
+   created (Bug #42503).
+bug: [42478,42503,42942]
