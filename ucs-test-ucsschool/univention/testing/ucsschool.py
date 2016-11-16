@@ -390,18 +390,9 @@ class UCSTestSchool(object):
 				tmp_file.write(line)
 				tmp_file.flush()
 
-				# workaround for Bug #42503
-				unset_ucr = False
-				if not self._ucr.get('mail/hosteddomains'):
-					unset_ucr = True
-					handler_set(['mail/hosteddomains={hostname}.{domainname}'.format(**dict(self._ucr.items()))])
-				try:
-					cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
-					print '*** Calling following command: %r' % cmd
-					retval = subprocess.call(cmd)
-				finally:
-					if unset_ucr:
-						handler_unset(['mail/hosteddomains'])
+				cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
+				print '*** Calling following command: %r' % cmd
+				retval = subprocess.call(cmd)
 				if retval:
 					utils.fail('create_ou failed with exitcode %s' % retval)
 

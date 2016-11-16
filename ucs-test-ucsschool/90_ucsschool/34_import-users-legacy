@@ -79,10 +79,7 @@ class CLI_Legacy_Import_Tester(object):
 		cmd = ['/usr/share/ucs-school-import/scripts/import_user', fn]
 		sys.stdout.flush()
 		sys.stderr.flush()
-		with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
-			if not ucr.get('mail/hosteddomains'):
-				handler_set(['mail/hosteddomains={}'.format(ucr['domainname'])])
-			exitcode = subprocess.call(cmd)
+		exitcode = subprocess.call(cmd)
 		self.log.info('Import process exited with exit code %r', exitcode)
 		if fail_on_error and exitcode:
 			self.log.error('Import failed with exit code %r', exitcode)
