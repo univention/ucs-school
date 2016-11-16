@@ -3,9 +3,9 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-distribution
-fix: 14.0.2-2.87.201607281631
+fix: 14.0.2-3.88.201611161503
 desc: |
  This update addresses the following issue(s):
- * Under some circumstances a file distribution (for an exam) could get
-   stuck. This has been fixed (Bug #41252).
+ * If a cache directory already exists an error message will not be shown
+   anymore (Bug #41252).
 bug: [41252]
