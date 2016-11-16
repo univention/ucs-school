@@ -34,6 +34,7 @@
 import os
 import re
 import json
+import errno
 import shutil
 import traceback
 from pipes import quote
@@ -416,7 +417,7 @@ class Project(_Dict):
 			os.makedirs(self.cachedir, 0o700)
 			os.chown(self.cachedir, 0, 0)
 		except (OSError, IOError) as exc:
-			if exc.errno == 17:
+			if exc.errno == errno.EEXIST:
 				MODULE.info('cache dir %s exists.' % self.cachedir)
 			else:
 				MODULE.error('Failed to create cachedir: %s' % (exc,))

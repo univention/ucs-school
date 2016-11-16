@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (14.0.2-3) unstable; urgency=low
+
+  * Bug #41252: use symbol from python lib instead of number
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 16 Nov 2016 14:59:18 +0100
+
 ucs-school-umc-distribution (14.0.2-2) unstable; urgency=low
 
   * Bug #41252: don't fail, when trying to create cachedir a second time
