@@ -85,7 +85,10 @@ class CsvReader(BaseReader):
 			try:
 				dialect = self.get_dialect(fp)
 			except CsvError as exc:
-				raise InitialisationError, InitialisationError("Could not determine CSV dialect. Try setting the " "csv:delimiter configuration. Error: {}".format(exc)), sys.exc_info()[2]
+				raise (
+					InitialisationError,
+					InitialisationError("Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(exc)),
+					sys.exc_info()[2])
 			fp.seek(0)
 			if self.header_lines == 1:
 				# let DictReader figure it out itself

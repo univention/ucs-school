@@ -338,7 +338,11 @@ class ImportUser(User):
 			try:
 				activate = self.config["activate_new_users"]["default"]
 			except KeyError:
-				raise UnkownDisabledSetting("Cannot find 'disabled' ('activate_new_users') setting for role '{}' or " "'default'.".format(self.role_sting), self.entry_count, import_user=self)
+				raise UnkownDisabledSetting(
+					"Cannot find 'disabled' ('activate_new_users') setting for role '{}' or 'default'.".format(
+						self.role_sting),
+					self.entry_count,
+					import_user=self)
 		self.disabled = "none" if activate else "all"
 
 	def make_firstname(self):
@@ -435,7 +439,11 @@ class ImportUser(User):
 		elif self.schools and isinstance(self.schools, basestring):
 			self.make_schools()  # this will recurse back, but schools will be a list then
 		else:
-			raise MissingSchoolName("Primary school name (ou) was not set on the cmdline or in the configuration file " "and was not found in the input data.", entry=self.entry_count, import_user=self)
+			raise MissingSchoolName(
+				"Primary school name (ou) was not set on the cmdline or in the configuration file and was not found in "
+				"the input data.",
+				entry=self.entry_count,
+				import_user=self)
 
 	def make_schools(self):
 		"""
@@ -733,10 +741,15 @@ class ImportUser(User):
 		forbidden_attributes = set(x.udm_name for x in self._attributes.values() if x.udm_name)
 		bad_props = set(self.udm_properties.keys()).intersection(forbidden_attributes)
 		if bad_props:
-			raise NotSupportedError("UDM properties '{}' must be set as attributes of the {} object (not in " "udm_properties).".format("', '".join(bad_props), self.__class__.__name__))
+			raise NotSupportedError(
+				"UDM properties '{}' must be set as attributes of the {} object (not in udm_properties).".format(
+					"', '".join(bad_props), self.__class__.__name__)
+			)
 		if "e-mail" in self.udm_properties.keys() and not self.email:
 			# this might be an mistake, so let's warn the user
-			self.logger.warn("UDM property 'e-mail' is used for storing contact information. The users mailbox " "address is stored in the 'email' attribute of the {} object (not in udm_properties).".format(self.__class__.__name__))
+			self.logger.warn(
+				"UDM property 'e-mail' is used for storing contact information. The users mailbox address is stored in "
+				"the 'email' attribute of the {} object (not in udm_properties).".format(self.__class__.__name__))
 
 	def update(self, other):
 		"""

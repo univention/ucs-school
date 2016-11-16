@@ -141,7 +141,15 @@ class UserImport(object):
 						# delete
 						continue
 				except ValidationError as exc:
-					raise UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
+					raise (
+						UserValidationError,
+						UserValidationError(
+							"ValidationError when {} {} (source_uid:{} record_uid: {}): {}".format(
+								action_str.lower(), user, user.source_uid, user.record_uid, exc),
+							validation_error=exc,
+							import_user=user),
+						sys.exc_info()[2]
+					)
 
 				if success:
 					self.logger.info("Success %s %s (source_uid:%s record_uid: %s).", action_str.lower(), user, user.source_uid, user.record_uid)
@@ -261,7 +269,11 @@ class UserImport(object):
 				if success:
 					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name, user.source_uid, user.record_uid)
 				else:
-					raise DeletionError("Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already " "been deleted.".format(user.name, user.source_uid, user.record_uid), entry=user.entry_count, import_user=user)
+					raise DeletionError(
+						"Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already been deleted.".format(
+							user.name, user.source_uid, user.record_uid),
+						entry=user.entry_count,
+						import_user=user)
 				self.deleted_users[user.__class__.__name__].append(user)
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error in entry #%d: %s", exc.entry, exc)
