@@ -1,6 +1,7 @@
 @!@
 # -*- coding: utf-8 -*-
 import re
+from univention.lib.misc import custom_groupname
 
 aclset = """
 # Master und Backup-Systeme duerfen die Einträge aller OUs lesen und schreiben
@@ -25,7 +26,7 @@ def replace_ucr_variables(template):
 	dir_ucsschool[ 'GRPADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
 	dir_ucsschool[ 'EXAM' ] = configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers')
 
-
+	dir_ucsschool['DOMAIN_ADMINS'] = custom_groupname('Domain Admins')
 	while 1:
 		i = variable_token.finditer(template)
 		try:
@@ -236,6 +237,7 @@ access to dn.regex="^uid=([^,]+),cn=@$@EXAM@$@,ou=([^,]+),@$@DISTRICT@$@@%@ldap/
 # Schul-Slave-Server duerfen nur Eintraege ihrer OU lesen und schreiben (Passwortaenderungen etc.)
 # Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
 	by set.expand="[ldap:///ou=$2,@%@ldap/base@%@?ou?base?%28%21%28objectClass%3DucsschoolOrganizationalUnit%29%29]/ou" +0 break
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
