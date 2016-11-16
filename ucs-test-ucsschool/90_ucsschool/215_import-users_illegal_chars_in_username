@@ -121,7 +121,6 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(config=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config, '-i', fn_csv])
-			self.check_new_and_removed_users(len(persons), 0)
 			for person, lastname in names.items():
 				person.update(username=remove_bad_chars("2{}".format(lastname[:12])))
 				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)

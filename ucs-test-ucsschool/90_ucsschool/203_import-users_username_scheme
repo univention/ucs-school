@@ -53,14 +53,14 @@ class Test(CLI_Import_v2_Tester):
 
 				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
-				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
-
-				# check for new users in LDAP
-				self.check_new_and_removed_users(1, 0)
 
 				# update dn+username of person and verify LDAP attributes
 				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 				person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
+				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
+
+				# check for new users in LDAP
+				self.check_new_and_removed_users(1, 0)
 				person.verify()
 
 				username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
