@@ -2,6 +2,8 @@ ucs-school-ldap-acls-master (14.0.2-1) unstable; urgency=medium
 
   * Bug #42437: fix ACL's for school users which are domain admins at the same
     time
+  * Bug #42065: restrict access to shares; school admins still can create
+    shares
 
  -- Florian Best <best@univention.de>  Wed, 16 Nov 2016 15:32:56 +0100
 
