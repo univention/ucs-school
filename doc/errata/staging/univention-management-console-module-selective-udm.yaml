@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.1"
+version: [4]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: univention-management-console-module-selective-udm
+fix: 5.0.0-2.22.201611162010
+desc: |
+ * The UMC call selectiveudm/create_windows_computer now returns the DN
+   of the created object. This is required to fix Bug 40435.
+bug: [42981]
