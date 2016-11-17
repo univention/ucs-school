@@ -34,5 +34,6 @@ def main():
 		check_value(registry_path, 'Printer Driver', driver_name)
 		check_value(registry_path + '\DsSpooler', 'driverName', driver_name)
 
+
 if __name__ == '__main__':
 	main()

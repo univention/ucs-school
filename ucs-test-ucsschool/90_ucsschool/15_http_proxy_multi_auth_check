@@ -107,5 +107,6 @@ def main():
 				# Perform the checks
 				checkAuths(host, passwd, url, state, expect_wrong_password)
 
+
 if __name__ == '__main__':
 	main()

@@ -206,6 +206,7 @@ def network(base=baseDN):
 
 		print
 
+
 if __name__ == '__main__':
 	# parse arguments
 	usage = "%prog [options] <ou> [<ou>...]"

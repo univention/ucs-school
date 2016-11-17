@@ -63,5 +63,6 @@ def main():
 				for username in user_list:
 					test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)
 
+
 if __name__ == '__main__':
 	main()

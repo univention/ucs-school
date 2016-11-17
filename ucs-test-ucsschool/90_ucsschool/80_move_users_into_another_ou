@@ -92,5 +92,6 @@ def main():
 			assert '{}-{}'.format(b, grp1_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], 'Old school class "{}" was created in target school.'.format(grp1_name)
 			assert '{}-{}'.format(b, grp2_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], 'Old school class "{}" was created in target school.'.format(grp2_name)
 
+
 if __name__ == '__main__':
 	main()

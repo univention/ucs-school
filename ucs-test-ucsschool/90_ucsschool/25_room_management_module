@@ -44,5 +44,6 @@ def main():
 			room.remove()
 			room.verify_ldap(must_exist=False)
 
+
 if __name__ == '__main__':
 	main()

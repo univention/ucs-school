@@ -283,5 +283,6 @@ def main():
 				# delete the created printer
 				doPrinter('D', newPrinterName, school, host, domainname)
 
+
 if __name__ == '__main__':
 	main()

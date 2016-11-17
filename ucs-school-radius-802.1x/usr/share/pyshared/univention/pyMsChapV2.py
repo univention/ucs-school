@@ -125,5 +125,6 @@ def executeTestVectors():
 	AuthenticatorResponse = 'S=407A5589115FD0D6209F510FE9C04566932CDA56'
 	assert GenerateAuthenticatorResponse(Password, NtResponse, PeerChallenge, AuthenticatorChallenge, UserName) == AuthenticatorResponse
 
+
 if __name__ == "__main__":
 	executeTestVectors()

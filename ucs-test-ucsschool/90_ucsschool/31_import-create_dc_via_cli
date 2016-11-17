@@ -16,6 +16,7 @@ import subprocess
 class CreateDC(Exception):
 	pass
 
+
 if __name__ == '__main__':
 	dc_name = uts.random_name()
 	ou_name = uts.random_name()

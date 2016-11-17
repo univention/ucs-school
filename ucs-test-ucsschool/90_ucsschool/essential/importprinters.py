@@ -21,6 +21,7 @@ class ImportPrinter(Exception):
 class PrinterHookResult(Exception):
 	pass
 
+
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 

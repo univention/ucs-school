@@ -274,5 +274,6 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
 	helper = ExamCleanupHelper(options)
 	helper.cleanup()
 
+
 if __name__ == '__main__':
 	main()

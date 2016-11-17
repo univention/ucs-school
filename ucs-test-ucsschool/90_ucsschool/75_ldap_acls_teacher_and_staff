@@ -63,5 +63,6 @@ def main():
 			# acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
 			# acl.assert_share_object_access(share_dn, 'write', 'DENIED')
 
+
 if __name__ == '__main__':
 	main()

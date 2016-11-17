@@ -135,6 +135,8 @@ class UserMap(dict):
 		MODULE.info('UserMap: %s: hide_screenshot=%r' % (username, hide_screenshot))
 
 		dict.__setitem__(self, userstr, UserInfo(user.dn, username, isTeacher=user.is_teacher(lo), hide_screenshot=hide_screenshot))
+
+
 _usermap = UserMap()
 
 

@@ -66,6 +66,7 @@ def loadInfo():
 			if wlanEnabled is not None:
 				groupInfo[group] = (priority, wlanEnabled, )
 
+
 SAMBA_ACCOUNT_FLAG_DISABLED = 'D'
 SAMBA_ACCOUNT_FLAG_LOCKED = 'L'
 DISALLOWED_SAMBA_ACCOUNT_FLAGS = frozenset((SAMBA_ACCOUNT_FLAG_DISABLED, SAMBA_ACCOUNT_FLAG_LOCKED, ))
@@ -128,6 +129,7 @@ def main():
 	else:
 		print 'Logon failure (0xc000006d)'
 		return 1
+
 
 if __name__ == "__main__":
 	ldapConnection = univention.uldap.getMachineConnection()

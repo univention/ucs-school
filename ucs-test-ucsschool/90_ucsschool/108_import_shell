@@ -29,5 +29,6 @@ def main():
 				utils.verify_ldap_object(user.dn, expected_attr={"uid": [user.name]}, strict=False, should_exist=True)
 			logger.info("Test was successful.\n\n\n")
 
+
 if __name__ == '__main__':
 	main()

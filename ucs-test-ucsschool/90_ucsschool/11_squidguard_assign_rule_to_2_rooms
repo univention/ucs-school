@@ -24,6 +24,8 @@ def quote(string):
 		else:
 			newstring += '-' + byte.encode('hex')
 	return newstring
+
+
 quote.safeBytes = set('abcdefghijklmnopqrstuvwxyz012345679ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
 
@@ -104,6 +106,7 @@ def main():
 		# test with the same rule for three rooms
 		test_ruleset(ucr, {'Raum1': 'Nur-Univention', 'Raum2': 'Nur-Univention', 'Raum-Drei': 'Nur-Univention'})
 		test_ruleset(ucr, {'Raum1': 'Nur Wikipedia', 'Raum2': 'Nur Wikipedia', 'Raum-Drei': 'Nur Wikipedia'})
+
 
 if __name__ == '__main__':
 	main()

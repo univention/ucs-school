@@ -67,5 +67,6 @@ def main():
 				'Existing rules (%r) do not match the actual ones (%r)' %
 				(definedRules2, definedRules))
 
+
 if __name__ == '__main__':
 	main()

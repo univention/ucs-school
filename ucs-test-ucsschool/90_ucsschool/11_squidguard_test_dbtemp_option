@@ -169,5 +169,6 @@ def main():
 	finally:
 		subprocess.call(['rm', '-Rf', tempdir])
 
+
 if __name__ == '__main__':
 	main()

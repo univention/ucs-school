@@ -537,6 +537,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
 		finally:
 			exam.finish()
 
+
 if __name__ == '__main__':
 	"""
 	IMPORTANT: Windows Host should be joined to the domain prior test run!

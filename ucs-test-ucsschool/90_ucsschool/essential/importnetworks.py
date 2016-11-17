@@ -24,6 +24,7 @@ class ImportNetwork(Exception):
 class NetworkHookResult(Exception):
 	pass
 
+
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 

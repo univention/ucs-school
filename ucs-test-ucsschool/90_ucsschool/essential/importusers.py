@@ -35,6 +35,7 @@ class ImportUser(Exception):
 class UserHookResult(Exception):
 	pass
 
+
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 

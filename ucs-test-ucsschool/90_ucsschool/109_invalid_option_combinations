@@ -64,5 +64,6 @@ def main():
 
 	print("*\n*** Test was successful.\n*")
 
+
 if __name__ == '__main__':
 	main()

@@ -18,6 +18,7 @@ import univention.config_registry as config_registry
 class WrongSID(Exception):
 	pass
 
+
 if __name__ == '__main__':
 	with udm_test.UCSTestUDM() as udm:
 		ucr = config_registry.ConfigRegistry()

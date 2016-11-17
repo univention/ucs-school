@@ -69,5 +69,6 @@ def main():
 	if fail:
 		utils.fail('Unique id was not found in target file')
 
+
 if __name__ == '__main__':
 	sys.exit(main())

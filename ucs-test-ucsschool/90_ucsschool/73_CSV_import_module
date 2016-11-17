@@ -75,5 +75,6 @@ def main():
 			users, errors, warnings = check_import_users(school, user_types, files_04, delete_not_mentioned, expected_upload_status, errors_keys, [])
 			verify_persons(persons_list)
 
+
 if __name__ == '__main__':
 	main()

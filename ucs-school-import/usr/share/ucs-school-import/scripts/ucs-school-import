@@ -218,6 +218,7 @@ class Hooks(object):
 	def post(self, module, action, **kwargs):
 		return self.__run('post', module, action, **kwargs)
 
+
 hooks = Hooks()
 
 
@@ -1414,6 +1415,8 @@ def calculateProfilePath(ou):
 	else:
 		calculateProfilePath.results[ou] = calculateProfilePath.string % ('%LOGONSERVER%', )
 	return calculateProfilePath.results[ou]
+
+
 calculateProfilePath.results = {}
 calculateProfilePath.string = '%s\\%%USERNAME%%\\windows-profiles\\default'
 
@@ -1436,6 +1439,8 @@ def tryFindHomeShareFileServer(ouDn):
 			for server in serverlist:
 				tryFindHomeShareFileServer.results[ouDn] = '\\\\%s' % server['name']
 	return tryFindHomeShareFileServer.results.get(ouDn)
+
+
 tryFindHomeShareFileServer.results = {}
 
 

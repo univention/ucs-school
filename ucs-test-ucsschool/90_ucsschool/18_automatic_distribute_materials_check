@@ -81,5 +81,6 @@ def main():
 		call(['invoke-rc.d', 'univention-management-console-web-server', 'restart'])
 		call(['invoke-rc.d', 'univention-management-console-server', 'restart'])
 
+
 if __name__ == '__main__':
 	main()

@@ -42,5 +42,6 @@ def main():
 		dn = udm.modify_object('container/ou', dn=dn, displayName=ou_displayName)
 		utils.verify_ldap_object(dn, expected_attr={'ou': [ou_name], 'displayName': [ou_displayName]}, strict=True, should_exist=True)
 
+
 if __name__ == '__main__':
 	main()

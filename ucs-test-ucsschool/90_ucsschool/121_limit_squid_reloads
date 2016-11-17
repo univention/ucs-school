@@ -56,5 +56,6 @@ def main():
 			utils.fail("Wrong number of reloads ({}) were triggered.".format(reload_count))
 		print("*** OK: Squid was reloaded {} times.".format(reload_count))
 
+
 if __name__ == '__main__':
 	main()

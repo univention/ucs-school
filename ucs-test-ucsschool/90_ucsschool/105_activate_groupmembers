@@ -117,5 +117,6 @@ def main():
 
 				check_usernames_in_csv(outfile, users)
 
+
 if __name__ == '__main__':
 	main()

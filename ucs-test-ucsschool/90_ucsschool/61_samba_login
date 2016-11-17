@@ -20,6 +20,7 @@ import univention.testing.strings as uts
 class SambaLoginFailed(Exception):
 	pass
 
+
 if __name__ == "__main__":
 	ucr = config_registry.ConfigRegistry()
 	ucr.load()

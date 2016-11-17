@@ -19,5 +19,6 @@ def main():
 		utils.fail('Expected UCS version (%s) does not match with installed UCS version (%s)!' % (
 			EXPECTED_VERSION, current_version))
 
+
 if __name__ == '__main__':
 	main()

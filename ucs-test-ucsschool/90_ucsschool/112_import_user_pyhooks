@@ -80,6 +80,7 @@ def main():
 				user.remove(lo)
 			logger.info("Test was successful.\n\n\n")
 
+
 if __name__ == '__main__':
 	try:
 		main()

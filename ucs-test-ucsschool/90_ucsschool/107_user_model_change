@@ -76,5 +76,6 @@ def main():
 
 			print("*** All tests succeeded.")
 
+
 if __name__ == '__main__':
 	main()

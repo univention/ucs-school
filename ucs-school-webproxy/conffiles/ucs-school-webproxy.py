@@ -92,6 +92,8 @@ def quote(string):
 		else:
 			newstring += '-' + byte.encode('hex')
 	return newstring
+
+
 quote.safeBytes = set('abcdefghijklmnopqrstuvwxyz012345679ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
 

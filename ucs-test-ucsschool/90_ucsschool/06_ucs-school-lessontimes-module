@@ -68,5 +68,6 @@ def main():
 	# 5 removing a lesson
 	delLesson(connection, "99. Stunde", "00:00", "1:00")
 
+
 if __name__ == '__main__':
 	main()

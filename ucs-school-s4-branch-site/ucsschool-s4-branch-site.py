@@ -130,6 +130,8 @@ def on_load(ldap_machine_read=None, ldap_position=None):
 			break
 
 # Initialization of global variables
+
+
 listener.setuid(0)
 try:
 	on_load()

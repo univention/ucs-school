@@ -71,5 +71,6 @@ def main():
 						logger.info('*** Caught expected NotSupportedError exception: %s', exc)
 			logger.info('Test was successful.\n\n\n')
 
+
 if __name__ == '__main__':
 	main()

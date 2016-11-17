@@ -24,6 +24,7 @@ class ImportGroup(Exception):
 class GroupHookResult(Exception):
 	pass
 
+
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 

@@ -128,5 +128,6 @@ def main():
 			if did_fail:
 				utils.fail('At least one combination failed!')
 
+
 if __name__ == '__main__':
 	main()

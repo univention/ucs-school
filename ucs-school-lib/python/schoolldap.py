@@ -70,6 +70,7 @@ def set_bind_function(bind_callback):
 def set_credentials(dn, passwd):
 	set_bind_function(lambda lo: lo.lo.bind(dn, passwd))
 
+
 USER_READ = 'ldap_user_read'
 USER_WRITE = 'ldap_user_write'
 MACHINE_READ = 'ldap_machine_read'
@@ -151,6 +152,8 @@ def LDAP_Connection(*connection_types):
 #				return wrapper_func(*args, **kwargs)
 #		return wraps(func)(decorated)
 	return inner_wrapper
+
+
 LDAP_Connection._school = None
 
 

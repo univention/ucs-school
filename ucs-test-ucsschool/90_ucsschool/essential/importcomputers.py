@@ -33,6 +33,7 @@ class ComputerHookResult(Exception):
 class WrongMembership(Exception):
 	pass
 
+
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 

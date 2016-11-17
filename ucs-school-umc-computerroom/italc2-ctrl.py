@@ -103,6 +103,7 @@ def when_connected(computer, options):
 		print >>sys.stderr, 'Unknown action'
 		sys.exit(1)
 
+
 if __name__ == '__main__':
 	config = ucr.ConfigRegistry()
 	config.load()

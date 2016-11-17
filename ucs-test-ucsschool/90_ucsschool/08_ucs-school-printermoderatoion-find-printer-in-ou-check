@@ -86,5 +86,6 @@ def main():
 			# delete the created printer
 			doPrinter('D', newPrinterName, schoolName1, host, domainname)
 
+
 if __name__ == '__main__':
 	main()

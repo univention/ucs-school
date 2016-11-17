@@ -153,6 +153,7 @@ class SMB_Status(list):
 		else:
 			self.append(service)
 
+
 if __name__ == '__main__':
 	ud.init('/var/log/univention/smbstatus.log', 0, 0)
 	ud.set_level(ud.PARSER, 4)

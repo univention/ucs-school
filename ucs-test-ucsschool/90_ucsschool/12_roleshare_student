@@ -189,6 +189,7 @@ def main(ldap_machine_read=None):
 
 	return status
 
+
 if __name__ == '__main__':
 	sys.exit(main())
 

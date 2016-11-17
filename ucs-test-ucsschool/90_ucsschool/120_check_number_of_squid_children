@@ -22,5 +22,6 @@ def main():
 		else:
 			print 'UCR variable: %s=%r' % (key, value)
 
+
 if __name__ == '__main__':
 	main()

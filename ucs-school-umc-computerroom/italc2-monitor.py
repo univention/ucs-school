@@ -64,6 +64,7 @@ def show_state(options):
 		print FORMAT % info
 	return True
 
+
 if __name__ == '__main__':
 	config = ucr.ConfigRegistry()
 	config.load()

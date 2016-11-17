@@ -26,5 +26,6 @@ def main():
 			utils.wait_for_replication()
 			utils.verify_ldap_object('cn=Marktplatz,cn=shares,%s' % (oudn,), strict=True, should_exist=should_exist)
 
+
 if __name__ == '__main__':
 	main()
