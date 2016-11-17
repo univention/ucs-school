@@ -225,7 +225,7 @@ class UCSTestSchool(object):
 		If use_cli is set to True, the old CLI interface is used. Otherwise the UCS@school python
 		library is used.
 		PLEASE NOTE: if name_edudc is set to the hostname of the master or backup, name_edudc will be unset automatically,
-					because it's not allowed to specify the hostname of the master or any backup in any situation!
+			because it's not allowed to specify the hostname of the master or any backup in any situation!
 
 		Return value: (ou_name, ou_dn)
 			ou_name: name of the created OU

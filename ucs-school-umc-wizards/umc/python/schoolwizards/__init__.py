@@ -105,7 +105,7 @@ def iter_objects_in_request(request, lo, require_dn=False):
 			try:
 				obj = klass.from_dn(dn, obj_props.get('school'), lo)
 			except noObject:
-				raise UMC_Error(_('The %s %r does not exists or might be removed in the meanwhile.') % (getattr(klass, 'type_name', klass.__name__), obj_props['name']))
+				raise UMC_Error(_('The %s %r does not exists or might have been removed in the meanwhile.') % (getattr(klass, 'type_name', klass.__name__), obj_props['name']))
 			for key, value in obj_props.iteritems():
 				if key in obj._attributes:
 					setattr(obj, key, value)

@@ -374,7 +374,7 @@ def extract_district(schoolNr):
 	except IndexError:
 		# TODO: add more debug output
 		print "ERROR: Unable to extract district from school number: %s' % schoolNr + \
-				'\n\tIf you don't use the district model deactivate UCR variable ucsschool/ldap/district/enable"
+			'\n\tIf you don't use the district model deactivate UCR variable ucsschool/ldap/district/enable"
 
 
 def getDN(schoolNr, base='school', basedn=baseDN):
