@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-38) unstable; urgency=low
+
+  * Bug #42112: don't change an existing expiration date when "deleting"
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 18 Nov 2016 12:30:34 +0100
+
 ucs-school-import (14.0.16-37) unstable; urgency=low
 
   * Bug #42503: make_email() now honors config[mandatory_attributes]

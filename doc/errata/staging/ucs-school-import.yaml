@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-36.328.201611141205
+fix:
 desc: |
  * The UsernameHandler.format_username() function has been improved to not
    produce illegal usernames (e.g. ending with a dot) anymore (Bug #42478).
@@ -13,4 +13,9 @@ desc: |
    checking if an email address was created. It is now only an error, if
    "email" is listed in "mandatory_attributes" and no email address was
    created (Bug #42503).
-bug: [42478,42503,42942]
+ * When a user should be deleted and the import is configured to instead set
+   an expiration date is set, the expiration date was being reset,
+   effectively pushing the expiration date forward in time. This has been
+   fixed: if a user already has an expiration date set, it is not changed
+   (Bug #42112).
+bug: [42478,42503,42942,42112]

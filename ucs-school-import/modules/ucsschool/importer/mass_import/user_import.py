@@ -327,28 +327,41 @@ class UserImport(object):
 				success = user.remove(self.connection)
 		elif self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
 			# set expiration date, don't delete, don't deactivate
-			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
-			expiry_str = expiry.strftime("%Y-%m-%d")
-			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-			user.expire(expiry_str)
-			if self.dry_run:
-				self.logger.info("Dry run - not expiring the user.")
+			if user.has_expiry(self.connection):
+				self.logger.info("User %s has already an expiration date set, not changing it.", user)
 			else:
-				user.modify(lo=self.connection)
+				expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
+				expiry_str = expiry.strftime("%Y-%m-%d")
+				self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
+				user.expire(expiry_str)
+				if self.dry_run:
+					self.logger.info("Dry run - not expiring the user.")
+				else:
+					user.modify(lo=self.connection)
 			success = True
 		elif not self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
 			# don't delete but deactivate with an expiration data
-			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
-			expiry_str = expiry.strftime("%Y-%m-%d")
-			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-			self.logger.info("Deactivating user %s...", user)
-			user.expire(expiry_str)
-			user.deactivate()
+			modified = False
+			if user.has_expiry(self.connection):
+				self.logger.info("User %s has already an expiration date set, not changing it.", user)
+			else:
+				expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
+				expiry_str = expiry.strftime("%Y-%m-%d")
+				self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
+				user.expire(expiry_str)
+				modified = True
+			if not user.disabled == "all":
+				self.logger.info("Deactivating user %s...", user)
+				user.deactivate()
+				modified = True
 			if self.dry_run:
 				self.logger.info("Dry run - not expiring and not deactivating the user.")
+				success = True
+			elif modified:
+				success = user.modify(lo=self.connection)
 			else:
-				user.modify(lo=self.connection)
-			success = True
+				# not a dry_run, but user is already disabled and has an expiration date
+				success = True
 		else:
 			raise UnknownDeleteSetting("Don't know what to do with user_deletion=%r and expiration=%r.".format(
 				self.config["user_deletion"]["delete"], self.config["user_deletion"]["expiration"]),
