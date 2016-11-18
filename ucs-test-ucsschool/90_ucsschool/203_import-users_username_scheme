@@ -99,11 +99,11 @@ class Test(CLI_Import_v2_Tester):
 					fn_config = self.create_config_json(config=config)
 					self.save_ldap_status()
 					self.run_import(['-c', fn_config, '-i', fn_csv])
+					new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+					person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
 					wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
 					self.check_new_and_removed_users(1, 0)
 
-					new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-					person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
 					person.verify()
 					if person.username != "{}{}".format(username_prefix, ext):
 						self.fail('username %r is not expected string "%s%d"' % (person.username, username_prefix, ext))

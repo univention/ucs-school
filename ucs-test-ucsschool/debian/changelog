@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-50) unstable; urgency=low
+
+  * Bug #41243: get username from user in LDAP to prevent AttributeError for
+    escape_filter_chars(None) in 203_import-users_username_scheme
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 18 Nov 2016 08:15:57 +0100
+
 ucs-test-ucsschool (3.0.16-49) unstable; urgency=low
 
   * Bug #42105: lower chance of name clash
