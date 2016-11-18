@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.2-1) unstable; urgency=medium
+
+  * Bug #41007: fix python2.6 syntax, remove obsolete dependency
+
+ -- Florian Best <best@univention.de>  Fri, 18 Nov 2016 09:59:55 +0100
+
 ucs-school-umc-installer (4.0.1-1) unstable; urgency=medium
 
   * Bug #41007: use UMC instead of SSH when receiving information about

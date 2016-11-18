@@ -595,10 +595,11 @@ class Instance(Base):
 
 		def _thread(_self, packages):
 			MODULE.process('Starting package installation')
-			with _self.package_manager.locked(reset_status=True, set_finished=True), _self.package_manager.no_umc_restart(exclude_apache=True):
-				_self.package_manager.update()
-				if not _self.package_manager.install(*packages):
-					raise SchoolInstallerError(_('Failed to install packages.'))
+			with _self.package_manager.locked(reset_status=True, set_finished=True):
+				with _self.package_manager.no_umc_restart(exclude_apache=True):
+					_self.package_manager.update()
+					if not _self.package_manager.install(*packages):
+						raise SchoolInstallerError(_('Failed to install packages.'))
 
 			if server_role != 'domaincontroller_backup' and not (server_role == 'domaincontroller_master' and setup == 'multiserver'):
 				# create the school OU (not on backup and not on master w/multi server environment)

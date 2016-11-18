@@ -14,7 +14,6 @@ Package: ucs-school-umc-installer
 Architecture: all
 Depends: ${misc:Depends},
  univention-management-console-server,
- python-paramiko,
  python-dnspython,
  python-notifier,
  univention-updater,
@@ -37,7 +36,6 @@ Architecture: all
 Provides: ucs-school-umc-installer
 Depends: ${misc:Depends},
  univention-management-console-server,
- python-paramiko,
  python-dnspython,
  python-notifier,
  univention-updater,
