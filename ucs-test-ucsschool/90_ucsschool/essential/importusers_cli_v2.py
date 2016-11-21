@@ -167,8 +167,8 @@ class CLI_Import_v2_Tester(object):
 		self.errors = list()
 		self.udm = None
 		self.ou_A = Bunch()
-		self.ou_B = Bunch()  # set to None is not needed
-		self.ou_C = Bunch()  # set to None is not needed
+		self.ou_B = Bunch()  # set to None if not needed
+		self.ou_C = Bunch()  # set to None if not needed
 		self.ucr.load()
 		try:
 			maildomain = self.ucr["mail/hosteddomains"].split()[0]

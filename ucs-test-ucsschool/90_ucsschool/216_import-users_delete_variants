@@ -32,9 +32,9 @@ class Test(CLI_Import_v2_Tester):
 		Bug #41344: support deletion of users in different ways
 
 		* simply delete: user_deletion": {"delete": True, "expiration": 0}
-		* do not delete, but deactivate with an expiration data: user_deletion": {"delete": False, "expiration": 7}
+		* do not delete, but deactivate with an expiration date: user_deletion": {"delete": False, "expiration": 7}
 		  + creating a user with the deactived users SUID+RUID -> reactive account
-		* store an expiration data (that is in the future) for the user, so it can
+		* store an expiration date (that is in the future) for the user, so it can
 		  access its data for some days, before deletion: user_deletion": {"delete": True, "expiration": 7}
 		"""
 		self.log.info('*** 1/3: simply delete ***')
@@ -76,7 +76,7 @@ class Test(CLI_Import_v2_Tester):
 			self.check_new_and_removed_users(0, 1)
 			person.verify()
 
-		self.log.info('*** 2/3: do not delete, but deactivate with an expiration data ***')
+		self.log.info('*** 2/3: do not delete, but deactivate with an expiration date ***')
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			exp_days = random.randint(1, 20)
 			self.log.info('*** (2/3) Importing a new single user with role %r', role)
@@ -132,7 +132,7 @@ class Test(CLI_Import_v2_Tester):
 			self.check_new_and_removed_users(0, 0)
 			person.verify()
 
-		self.log.info('*** 3/3: store an expiration data for the user ***')
+		self.log.info('*** 3/3: store an expiration date for the user ***')
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** (3/3) Importing a new single user with role %r', role)
 			exp_days = random.randint(1, 20)
