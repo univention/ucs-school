@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.16-53) unstable; urgency=low
+
+  * Bug #41910: test that when moving a user into another school, the
+    workgroups of the previous school are removed
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 21 Nov 2016 15:49:19 +0100
+
 ucs-test-ucsschool (3.0.16-52) unstable; urgency=low
 
   * Bug #41989: add test for deletion of users home directory by listener

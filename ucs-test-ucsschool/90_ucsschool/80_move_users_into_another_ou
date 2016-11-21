@@ -2,9 +2,10 @@
 ## desc: move user into another school
 ## roles: [domaincontroller_master]
 ## tags: [apptest, ucsschool]
-## bugs: [40870, 41601, 41609, 41620]
+## bugs: [40870, 41601, 41609, 41620, 41910]
 ## exposure: dangerous
 
+import os.path
 from univention.testing.ucsschool import UCSTestSchool
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.udm import UCSTestUDM
@@ -53,21 +54,24 @@ def main():
 				[domain_users_school, teacher_group, staff_group, global_group_dn]),
 		]
 		lo = env.open_ldap_connection()
-		workgroup = WorkGroup.from_dn(workgroup_dn, a, lo)
+		workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
 		users_dns = [dn for (user, dn,), roleshare_path, groups in users]
 		udm.modify_object('groups/group', dn=global_group_dn, append={'users': users_dns})
 		workgroup.users.extend(users_dns)
 		workgroup.modify(lo)
+		workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
+		print('*** Users in workgroup {}: {}'.format(workgroup.name, workgroup.users))
 
 		for (user, dn,), roleshare_path, groups in users:
+			user = User.from_dn(dn, None, lo)
+			print('*** Groups {} is in: {}'.format(user, user.get_udm_object(lo)['groups']))
 
 			print '################################'
 			print '#### moving user at', dn, 'to', b
 			print '################################'
 
-			user = User.from_dn(dn, a, lo)
 			attrs = {
-				'homeDirectory': ['/home/%s/%s/%s' % (b, roleshare_path, user.name)],
+				'homeDirectory': [os.path.join('/home', b, roleshare_path, user.name)],
 				'ucsschoolSchool': [b],
 				'departmentNumber': [b],
 				# TODO: add sambaHomeDrive sambaHomePath sambaLogonScript sambaProfilePath
@@ -80,6 +84,12 @@ def main():
 			assert user.dn != dn
 			assert b in user.dn
 			utils.wait_for_replication()
+			user = User.from_dn(user.dn, None, lo)
+			print('*** Groups {} is in: {}'.format(user, user.get_udm_object(lo)['groups']))
+			workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
+			if user.dn in workgroup.users:
+				print('*** Users in workgroup {}: {}'.format(workgroup.name, workgroup.users))
+				utils.fail('User %r was not removed from workgroup.' % user)
 			try:
 				utils.verify_ldap_object(user.dn, expected_attr=attrs, strict=True, should_exist=True)
 			except utils.LDAPObjectValueMissing:
@@ -88,7 +98,7 @@ def main():
 				print 'FAIL2: %r; attrs=%r' % (user.dn, lo.get(user.dn))
 				raise
 
-			assert set(groups) == set(user.get_udm_object(lo)['groups']), 'Moving the user failed... Expected groups %r != %r' % (groups, user.get_udm_object(lo)['groups'])
+			assert set(groups) == set(user.get_udm_object(lo)['groups']), 'Moving the user %r failed... Expected groups %r != %r' % (user, groups, user.get_udm_object(lo)['groups'])
 			assert '{}-{}'.format(b, grp1_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], 'Old school class "{}" was created in target school.'.format(grp1_name)
 			assert '{}-{}'.format(b, grp2_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], 'Old school class "{}" was created in target school.'.format(grp2_name)
 
