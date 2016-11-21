@@ -86,6 +86,20 @@ class Person(object):
 	def make_dn(self):
 		return 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
 
+	@property
+	def homedir(self):
+		subdir = ''
+		if configRegistry.is_true('ucsschool/import/roleshare', True):
+			if self.is_student():
+				subdir = os.path.join(self.school, 'schueler')
+			elif self.is_teacher():
+				subdir = os.path.join(self.school, 'lehrer')
+			elif self.is_teacher_staff():
+				subdir = os.path.join(self.school, 'lehrer')
+			elif self.is_staff():
+				subdir = os.path.join(self.school, 'mitarbeiter')
+		return os.path.join('/home', subdir, self.username)
+
 	def make_school_base(self):
 		return get_school_base(self.school)
 
@@ -242,17 +256,7 @@ class Person(object):
 		if self.description:
 			attr['description'] = [self.description]
 
-		subdir = ''
-		if configRegistry.is_true('ucsschool/import/roleshare', True):
-			if self.is_student():
-				subdir = os.path.join(self.school, 'schueler')
-			elif self.is_teacher():
-				subdir = os.path.join(self.school, 'lehrer')
-			elif self.is_teacher_staff():
-				subdir = os.path.join(self.school, 'lehrer')
-			elif self.is_staff():
-				subdir = os.path.join(self.school, 'mitarbeiter')
-		attr['homeDirectory'] = ['/home/%s' % os.path.join(subdir, self.username)]
+		attr['homeDirectory'] = [self.homedir]
 
 		if self.is_active():
 			attr['krb5KDCFlags'] = ['126']

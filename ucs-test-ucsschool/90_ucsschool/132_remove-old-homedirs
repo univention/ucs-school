@@ -1,0 +1,105 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: test deletion of users home directory by listener module
+## roles: [domaincontroller_master]
+## tags: [apptest, ucsschool]
+## bugs: [41989]
+## packages: [ucs-school-old-homedirs, ucs-school-import, ucs-school-singlemaster]
+## exposure: dangerous
+
+import os
+import copy
+import univention.testing.strings as uts
+from univention.testing import utils
+import univention.testing.udm
+import univention.testing.ucsschool as utu
+from ucsschool.lib.models import SchoolClass
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_A = None
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def run(self):
+		try:
+			with univention.testing.udm.UCSTestUDM() as udm:
+				self.udm = udm
+				with utu.UCSTestSchool() as schoolenv:
+					self.lo = schoolenv.open_ldap_connection(admin=True)
+					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou()
+					self.log.info(
+						'*** This host is responsible for OU %r, but not for OU %r.',
+						self.ou_A.name,
+						self.ou_B.name)
+
+					self.test()
+					self.log.info('Test was successful.\n\n\n')
+		finally:
+			self.cleanup()
+
+	def test(self):
+		class_A_dn, class_A_name = self.udm.create_group(
+			position=SchoolClass.get_container(self.ou_A.name),
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+		class_B_dn, class_B_name = self.udm.create_group(
+			position=SchoolClass.get_container(self.ou_B.name),
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
+
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r in OUs %r', role, [self.ou_A.name, self.ou_B.name])
+			person = Person(sorted([self.ou_A.name, self.ou_B.name])[0], role)
+			person.update(schools=[self.ou_A.name, self.ou_B.name])
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				person.school_classes.setdefault(self.ou_A.name, []).append(class_A_name)
+				person.school_classes.setdefault(self.ou_B.name, []).append(class_B_name)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			person.update(record_uid=record_uid, source_uid=source_uid)
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(values=config)
+
+			self.run_import(['-c', fn_config])
+			person.verify()
+
+			os.makedirs(person.homedir, 0750)
+			if not os.path.exists(person.homedir):
+				utils.fail('Homedir %r was not created.' % person.homedir)
+
+			self.log.info(
+				'*** Removing %r from OU %r, should remove home directory on this host...',
+				role,
+				self.ou_A.name)
+			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				del person.school_classes[self.ou_A.name]
+			self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'], fn_csv=fn_csv)
+			self.run_import(['-c', fn_config])
+			utils.wait_for_replication_and_postrun()
+			person.verify()
+			if os.path.exists(person.homedir):
+				utils.fail('Homedir %r was not removed.' % person.homedir)
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()

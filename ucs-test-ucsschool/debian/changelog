@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.16-52) unstable; urgency=low
+
+  * Bug #41989: add test for deletion of users home directory by listener
+    module, test if home is also removed if user is not deleted, but moved
+    to another OU
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 21 Nov 2016 13:11:34 +0100
+
 ucs-test-ucsschool (3.0.16-51) unstable; urgency=medium
 
   * Bug #40527: reenable test
