@@ -36,11 +36,14 @@ import shutil
 import time
 from psutil import disk_partitions
 import univention.debug
+from ucsschool.lib.models import School
+from univention.admin.uldap import getMachineConnection
+
 
 name = 'remove-old-homedirs'
 description = 'moves directories of removed users away from home'
 filter = '(objectClass=ucsschoolType)'
-attributes = []
+attributes = ["ucsschoolSchool"]
 modrdn = '1'
 
 DEFAUL_FS = "ext2/ext3:ext2:ext3:ext4:xfs:btrfs"
@@ -135,11 +138,25 @@ def warn(msg):
 		msg
 	)
 
-def handler(dn, new, old, command):
-	# remove empty home directories
-	# if object is really removed (not renamed)
-	if old and not new and not command == "r":
 
+def get_my_ous():
+	"""find out which OUs this host is responsible for, returns list of strings"""
+	listener.setuid(0)
+	try:
+		lo, po = getMachineConnection(ldap_master=False)
+	finally:
+		listener.unsetuid()
+	return [s.name for s in School.get_all(lo)]
+
+
+def handler(dn, new, old, command):
+	my_ous = set(get_my_ous())
+	users_schools = set(new.get("ucsschoolSchool", []))
+
+	if (
+		old and not new and not command == "r" or
+		old and new and command == "m" and my_ous.isdisjoint(users_schools)
+	):
 		uid = old["uid"][0]
 
 		home_dir = old.get("homeDirectory", [None])[0]

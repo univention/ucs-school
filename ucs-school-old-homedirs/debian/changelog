@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (11.0.0-2) unstable; urgency=low
+
+  * Bug #41989: remove-old-homedirs listener adapted to ou-overlapping users
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 18 Nov 2016 17:08:31 +0100
+
 ucs-school-old-homedirs (11.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development

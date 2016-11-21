@@ -9,7 +9,8 @@ Package: ucs-school-old-homedirs
 Architecture: all
 Depends: ${misc:Depends},
  univention-directory-listener,
- univention-config-registry
+ univention-config-registry,
+ python-psutil
 Description: UCS@school listener module to move away obsolete home directories
  This package contains a univention directory listener module that
  moves away obsolete home directories on deletion of user accounts.
