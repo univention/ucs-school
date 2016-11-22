@@ -37,6 +37,7 @@ define([
 	"dojo/topic",
 	"dojo/Deferred",
 	"dojo/dom-class",
+	"umc/app",
 	"umc/dialog",
 	"umc/tools",
 	"umc/modules/schoolexam/RebootGrid",
@@ -53,7 +54,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, aspect, all, topic, Deferred, domClass, dialog, tools, RebootGrid, Wizard, Module,
+], function(declare, lang, array, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, Wizard, Module,
 			TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
@@ -706,6 +707,12 @@ define([
 		},
 
 		onFinished: function(values) {
+			// switch the room of the currently opened computerroom
+			array.forEach(app._tabContainer.getChildren(), function(child) {
+				if (child.moduleID === 'computerroom') {
+					child._acquireRoom(values.room, false);
+				}
+			});
 			// open the computer room
 			topic.publish('/umc/modules/open', 'computerroom', /*flavor*/ null, {
 				room: values.room
