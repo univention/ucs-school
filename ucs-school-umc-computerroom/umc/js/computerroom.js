@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define window require console*/
+/*global define,window,require,console*/
 
 define([
 	"dojo/_base/declare",
@@ -1005,7 +1005,7 @@ define([
 				);
 
 				// things to do after finishing the exam
-				deferred.then(lang.hitch(this, function() {
+				deferred.then(this.umcpCommand('computerroom/exam/finish')).then(lang.hitch(this, function() {
 					// stop standby
 					this.standby(false);
 

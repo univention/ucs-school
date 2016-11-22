@@ -31,19 +31,20 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import datetime
 import os
 import shlex
-import signal
-import subprocess
 import fcntl
-from random import Random
-from pipes import quote
-import urlparse
+import signal
 import psutil
+import inspect
+import datetime
+import urlparse
 import importlib
 import traceback
-import inspect
+import subprocess
+from random import Random
+from pipes import quote
+
 from ipaddr import IPAddress
 from ldap.filter import filter_format
 
@@ -51,13 +52,12 @@ from univention.management.console.config import ucr
 
 from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
-import univention.lib.atjobs as atjobs
+from univention.lib import atjobs
 
-from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer, StringSanitizer
+from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer, StringSanitizer, ChoicesSanitizer, BooleanSanitizer
 from univention.management.console.modules.decorators import sanitize, simple_response
-from univention.management.console.modules import UMC_OptionTypeError, UMC_Error
+from univention.management.console.modules import UMC_Error
 from univention.management.console.log import MODULE
-from univention.management.console.protocol import MIMETYPE_JPEG, Response
 
 import univention.admin.uexceptions as udm_exceptions
 
@@ -108,7 +108,7 @@ def _isUmcProcess(pid):
 def _readRoomInfo(roomDN):
 	'''returns a dict of properties for the current room.'''
 	roomFile = _getRoomFile(roomDN)
-	info = None
+	info = {}
 	if os.path.exists(roomFile):
 		try:
 			with open(roomFile) as f:
@@ -120,23 +120,21 @@ def _readRoomInfo(roomDN):
 			MODULE.warn('Failed to read file %s: %s' % (roomFile, exc))
 
 	# special handling for the PID
-	if isinstance(info, dict) and 'pid' in info:
+	if 'pid' in info:
 		try:
 			# translate PID to int and verify that it is a UMC process
 			pid = int(info.pop('pid'))
 			if _isUmcProcess(pid):
 				info['pid'] = pid
-
 		except (ValueError, OverflowError):
-			# invalid format, do nothing
-			pass
+			pass  # invalid format, do nothing
 
 	return info
 
 
 def _updateRoomInfo(roomDN, **kwargs):
 	'''Update infos for a room, i.e., leave unspecified values untouched.'''
-	info = _readRoomInfo(roomDN) or dict()
+	info = _readRoomInfo(roomDN)
 	newKwargs = dict()
 	for key in ('user', 'cmd', 'exam', 'examDescription', 'examEndTime'):
 		if key in kwargs:
@@ -152,26 +150,24 @@ def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None,
 	'''Set infos for a room and lock the room.'''
 	info = dict(room=roomDN, user=user, cmd=cmd, exam=exam, examDescription=examDescription, examEndTime=examEndTime, pid=os.getpid())
 	MODULE.info('Writing info file for room "%s": %s' % (roomDN, info))
-	fd = None
 	try:
 		# write user DN in the room file
-		fd = open(_getRoomFile(roomDN), 'w')
-		fcntl.lockf(fd, fcntl.LOCK_EX)
-		for key, val in info.iteritems():
-			if val is not None:
-				fd.write('%s=%s\n' % (key, val))
-	except (OSError, IOError):
+		with open(_getRoomFile(roomDN), 'w') as fd:
+			fcntl.lockf(fd, fcntl.LOCK_EX)
+			try:
+				for key, val in info.iteritems():
+					if val is not None:
+						fd.write('%s=%s\n' % (key, val))
+			finally:
+				# make sure that the file is unlocked
+				fcntl.lockf(fd, fcntl.LOCK_UN)
+	except EnvironmentError:
 		MODULE.warn('Failed to write file: %s' % _getRoomFile(roomDN))
-	finally:
-		# make sure that the file is unlocked
-		if fd:
-			fcntl.lockf(fd, fcntl.LOCK_UN)
-			fd.close()
 
 
 def _getRoomOwner(roomDN):
 	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
-	info = _readRoomInfo(roomDN) or dict()
+	info = _readRoomInfo(roomDN)
 	if 'pid' not in info:
 		return None
 	return info.get('user')
@@ -197,26 +193,18 @@ def check_room_access(func):
 	return _decorated
 
 
-def get_computer(func):
-	"""Adds the ITALC_Computer instance given in request.options['computer'] as parameter"""
-
-	def _decorated(self, request):
-		self.required_options(request, 'computer')
-		computer = self._italc.get(request.options['computer'], None)
-		if not computer:
-			raise UMC_Error('Unknown computer')
-		return func(self, request, computer)
-	return _decorated
-
-
-def prevent_ucc(func):
+def prevent_ucc(func=None, condition=None):
 	"""Prevent method from being called for UCC clients"""
 
-	def _decorated(self, request, computer):
-		if computer.objectType == 'computers/ucc':
-			MODULE.warn('Requested unavailable action (%s) for UCC client' % (func.__name__))
-			raise UMC_Error(_('Action unavailable for UCC clients.'))
-		return func(self, request, computer)
+	if func is None:
+		return lambda f: prevent_ucc(f, condition)
+
+	def _decorated(self, request, computer, *args, **kwargs):
+		if request.options['computer'].objectType == 'computers/ucc':
+			if condition is None or condition(request):
+				MODULE.warn('Requested unavailable action (%s) for UCC client' % (func.__name__))
+				raise UMC_Error(_('Action unavailable for UCC clients.'))
+		return func(self, request, computer, *args, **kwargs)
 	return _decorated
 
 
@@ -227,6 +215,18 @@ class IPAddressSanitizer(Sanitizer):
 			return IPAddress(value)
 		except ValueError as exc:
 			self.raise_validation_error('%s' % (exc,))
+
+
+class ComputerSanitizer(StringSanitizer):
+
+	instance = None
+
+	def _sanitize(self, value, name, further_args):
+		value = super(ComputerSanitizer, self)._sanitize(value, name, further_args)
+		try:
+			return self.instance._italc.get(value)
+		except KeyError:
+			raise UMC_Error('Unknown computer')
 
 
 class Plugin(object):
@@ -251,6 +251,7 @@ class Instance(SchoolBaseModule):
 
 	def init(self):
 		SchoolBaseModule.init(self)
+		ComputerSanitizer.instance = self
 		self._italc = ITALC_Manager()
 		self._random = Random()
 		self._random.seed()
@@ -281,7 +282,7 @@ class Instance(SchoolBaseModule):
 		MODULE.info('Cleaning up')
 		if self._italc.room:
 			# do not remove lock file during exam mode
-			info = _readRoomInfo(self._italc.roomDN) or dict()
+			info = _readRoomInfo(self._italc.roomDN)
 			MODULE.info('room info: %s' % info)
 			if info and not info.get('exam'):
 				MODULE.info('Removing lock file for room %s (%s)' % (self._italc.room, self._italc.roomDN))
@@ -295,14 +296,14 @@ class Instance(SchoolBaseModule):
 			current = self._lessons.previous
 
 		if current:
-			lessons = filter(lambda x: x.begin >= current.begin, self._lessons.lessons)
+			lessons = [x for x in self._lessons.lessons if x.begin >= current.begin]
 		else:
 			lessons = self._lessons.lessons
-		self.finished(request.id, map(lambda x: x.name, lessons))
+		self.finished(request.id, [x.name for x in lessons])
 
 	def internetrules(self, request):
 		"""Returns a list of available internet rules"""
-		self.finished(request.id, map(lambda x: x.name, internetrules.list()))
+		self.finished(request.id, [x.name for x in internetrules.list()])
 
 	@sanitize(room=StringSanitizer(required=True))
 	@LDAP_Connection()
@@ -364,9 +365,11 @@ class Instance(SchoolBaseModule):
 			all_rooms = ComputerRoom.get_all(ldap_user_read, request.options['school'])
 		except udm_exceptions.noObject:
 			all_rooms = []
+
 		for room in all_rooms:
-			room_info = _readRoomInfo(room.dn) or dict()
+			room_info = _readRoomInfo(room.dn)
 			user_dn = room_info.get('user')
+
 			locked = user_dn and user_dn != self._user_dn and ('pid' in room_info or 'exam' in room_info)
 			if locked:
 				try:
@@ -374,6 +377,7 @@ class Instance(SchoolBaseModule):
 					user_dn = Display.user(User.from_dn(user_dn, None, ldap_user_read).get_udm_object(ldap_user_read))
 				except udm_exceptions.base as exc:
 					MODULE.warn('Cannot open LDAP information for user %r: %s' % (user_dn, exc))
+
 			rooms.append({
 				'id': room.dn,
 				'label': room.get_relative_name(),
@@ -410,8 +414,7 @@ class Instance(SchoolBaseModule):
 
 	def _checkRoomAccess(self):
 		if not self._italc.room:
-			# no room has been selected so far
-			return
+			return  # no room has been selected so far
 
 		# make sure that we run the current room session
 		userDN = _getRoomOwner(self._italc.roomDN)
@@ -420,14 +423,8 @@ class Instance(SchoolBaseModule):
 
 	@LDAP_Connection()
 	def query(self, request, ldap_user_read=None):
-		"""Searches for entries. This is not allowed if the room could not be acquired.
+		"""Searches for entries. This is not allowed if the room could not be acquired."""
 
-		requests.options = {}
-		  'school'
-		  'room' -- DN of the selected room
-
-		return: [{ '$dn$' : <LDAP DN>, 'name': '...', 'description': '...' }, ...]
-		"""
 		if not self._italc.school or not self._italc.room:
 			raise UMC_Error('no room selected')
 
@@ -437,7 +434,7 @@ class Instance(SchoolBaseModule):
 		result = [computer.dict for computer in self._italc.values()]
 		result.sort(key=lambda c: c['id'])
 
-		MODULE.info('computerroom.query: result: %s' % str(result))
+		MODULE.info('computerroom.query: result: %s' % (result,))
 		self.finished(request.id, result)
 
 	@LDAP_Connection()
@@ -485,39 +482,30 @@ class Instance(SchoolBaseModule):
 		return end - now
 
 	@check_room_access
-	@get_computer
-	def lock(self, request, computer):
-		"""Returns the objects for the given IDs
+	@sanitize(
+		computer=ComputerSanitizer(required=True),
+		device=ChoicesSanitizer(['screen', 'input'], required=True),
+		lock=BooleanSanitizer(required=True),
+	)
+	@simple_response
+	def lock(self, computer, device, lock):
+		"""Lock or Unlock the screen or input of a specific computer"""
 
-		requests.options = { 'computer' : <computer name>, 'device' : (screen|input), 'lock' : <boolean or string> }
-
-		return: { 'success' : True|False, ['details' : <message>] }
-		"""
-
-		self.required_options(request, 'device', 'lock')
-		device = request.options['device']
-		if device not in ('screen', 'input'):
-			raise UMC_OptionTypeError('unknown device %s' % device)
-
-		MODULE.warn('Locking device %s' % device)
+		MODULE.warn('Locking device %s' % (device,))
 		if device == 'screen':
-			computer.lockScreen(request.options['lock'])
+			computer.lockScreen(lock)
 		else:
-			computer.lockInput(request.options['lock'])
-		self.finished(request.id, {'success': True, 'details': ''})
+			computer.lockInput(lock)
 
 	@check_room_access
-	@get_computer
+	@sanitize(
+		computer=ComputerSanitizer(required=True),
+	)
 	@prevent_ucc
-	def screenshot(self, request, computer):
-		"""Returns a JPEG image containing a screenshot of the given
-		computer. The computer must be in the current room
+	def screenshot(self, request):
+		"""Returns a JPEG image containing a screenshot of the given computer."""
 
-		requests.options = { 'computer' : <computer name>[, 'size' : (thumbnail|...)] }
-
-		return (MIME-type image/jpeg): screenshot
-		"""
-
+		computer = request.options['computer']
 		tmpfile = computer.screenshot
 		if computer.hide_screenshot:
 			filename = FN_SCREENSHOT_DENIED
@@ -526,13 +514,10 @@ class Instance(SchoolBaseModule):
 		else:
 			filename = tmpfile.name
 
-		response = Response(mime_type=MIMETYPE_JPEG)
-		response.id = request.id
-		response.command = 'COMMAND'
 		MODULE.info('screenshot(%s): hide screenshot = %r' % (computer.name, computer.hide_screenshot))
 		try:
 			with open(filename, 'rb') as fd:
-				response.body = fd.read()
+				response = fd.read()
 		except EnvironmentError as exc:
 			MODULE.error('Unable to load screenshot file %r: %s' % (filename, exc))
 		try:
@@ -541,22 +526,18 @@ class Instance(SchoolBaseModule):
 		except EnvironmentError as exc:
 			MODULE.error('Unable to remove temporary screenshot file %r: %s' % (tmpfile.name, exc))
 
-		self.finished(request.id, response)
+		self.finished(request.id, response, mimetype='image/jpeg')
 
 	@check_room_access
-	@get_computer
-	def vnc(self, request, computer):
-		"""
-		Returns a ultraVNC file for the given computer. The computer must be in the current room
-
-		requests.options = { 'computer' : <computer name> }
-
-		return  (MIME-type application/x-vnc): vnc
-		"""
+	@sanitize(
+		computer=ComputerSanitizer(required=True),
+	)
+	def vnc(self, request):
+		"""Returns a ultraVNC file for the given computer."""
 
 		# check whether VNC is enabled
 		if ucr.is_false('ucsschool/umc/computerroom/ultravnc/enabled', True):
-			self.finished(request.id, 'VNC is disabled')
+			raise UMC_Error('VNC is disabled')
 
 		try:
 			with open('/usr/share/ucs-school-umc-computerroom/ultravnc.vnc', 'rb') as fd:
@@ -565,24 +546,15 @@ class Instance(SchoolBaseModule):
 			raise UMC_Error('VNC template file does not exists')
 
 		port = ucr.get('ucsschool/umc/computerroom/vnc/port', '11100')
-		hostname = computer.ipAddress
+		hostname = request.options['computer'].ipAddress
 
-		# Insert Hostname and Port
-		content = content.replace('@%@HOSTNAME@%@', hostname).replace('@%@PORT@%@', port)
+		response = content.replace('@%@HOSTNAME@%@', hostname).replace('@%@PORT@%@', port)
+		self.finished(request.id, response, mimetype='application/x-vnc')
 
-		response = Response(mime_type='application/x-vnc')
-		response.id = request.id
-		response.command = 'COMMAND'
-		response.body = content
-		self.finished(request.id, response)
+	@simple_response
+	def settings_get(self):
+		"""Return the current settings for a room"""
 
-	def settings_get(self, request):
-		"""return the current settings for a room
-
-		requests.options = { 'server' : <computer> }
-
-		return: [True|False)
-		"""
 		if not self._italc.school or not self._italc.room:
 			raise UMC_Error('no room selected')
 
@@ -630,36 +602,39 @@ class Instance(SchoolBaseModule):
 					period = lesson
 					break
 
-		self.finished(request.id, {
+		return {
 			'internetRule': rule,
 			'customRule': '\n'.join(custom_rules),
 			'shareMode': shareMode,
 			'printMode': printMode,
-			'period': str(period)
-		})
+			'period': str(period),
+		}
 
+	@simple_response
+	def exam_finish(self):
+		_updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, examEndTime=None)
+
+	@sanitize(
+		printMode=ChoicesSanitizer(['none', 'all', 'default'], required=True),
+		internetRule=StringSanitizer(required=True),
+		shareMode=ChoicesSanitizer(['home', 'all'], required=True),
+		period=StringSanitizer(default='', required=False),
+		# exam=StringSanitizer(allow_none=True),
+		# examDescription=StringSanitizer(allow_none=True),
+		# examEndTime=StringSanitizer(allow_none=True),
+	)
 	@check_room_access
 	def settings_set(self, request):
-		"""Defines settings for a room
+		"""Defines settings for a room"""
 
-		request.options = { 'server' : <computer> }
-
-		return: [True|False]
-		"""
-
-		self.required_options(request, 'printMode', 'internetRule', 'shareMode')
-		exam = request.options.get('exam')
-		if not exam:
-			self.required_options(request, 'period')
 		if not self._italc.school or not self._italc.room:
 			raise UMC_Error('no room selected')
 
+		roomInfo = _readRoomInfo(self._italc.roomDN)
 		printMode = request.options['printMode']
 		shareMode = request.options['shareMode']
 		internetRule = request.options['internetRule']
-
-		# if the exam description has not been specified, try to load it from the room info file
-		roomInfo = _readRoomInfo(self._italc.roomDN) or dict()
+		exam = request.options.get('exam', roomInfo.get('exam'))
 		examDescription = request.options.get('examDescription', roomInfo.get('examDescription', exam))
 		examEndTime = request.options.get('examEndTime', roomInfo.get('examEndTime'))
 
@@ -678,28 +653,15 @@ class Instance(SchoolBaseModule):
 			except (OSError, IOError):
 				MODULE.warn('Failed to reinitialize current room settings: %s' % roomInfo['cmd'])
 
-		# local helper function that writes an exam file
-		cmd = ''
+		new_room_infos = dict(cmd=None, user=self._user_dn, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
 
-		def _finished():
-			self.reset_smb_connections()
-
-			self.reload_cups()
-
-			kwargs = dict(cmd=None, exam=None, examDescription=None, examEndTime=None)
-			if exam:
-				# a new exam has been indicated
-				kwargs = dict(cmd=cmd, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
-
-			MODULE.info('updating room info/lock file...')
-
-			_updateRoomInfo(self._italc.roomDN, user=self._user_dn, **kwargs)
-			self.finished(request.id, True)
-
-		# do we need to setup a new at job with custom settings?
+		# reset to defaults. No atjob is necessary.
 		if internetRule == 'none' and shareMode == 'all' and printMode == 'default':
 			self._ruleEndAt = None
-			_finished()
+			self.reset_smb_connections()
+			self.reload_cups()
+			_updateRoomInfo(self._italc.roomDN, **new_room_infos)
+			self.finished(request.id, True)
 			return
 
 		# collect new settings
@@ -807,7 +769,7 @@ class Instance(SchoolBaseModule):
 			del vunset[varname]
 
 		# set values
-		ucr_vars = sorted(map(lambda x: '%s=%s' % x, vset.items()))
+		ucr_vars = sorted('%s=%s' % x for x in vset.items())
 		MODULE.info('Writing room rules: %s' % '\n'.join(ucr_vars))
 		handler_set(ucr_vars)
 
@@ -818,10 +780,9 @@ class Instance(SchoolBaseModule):
 		MODULE.info('Will extract: %s' % ' '.join(extract_vars))
 
 		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % (' '.join(unset_vars), ' '.join(extract_vars), ' '.join(quote(x) for x in hosts))
-		MODULE.info('command for reinitialization is: %s' % cmd)
+		MODULE.info('command for reinitialization is: %s' % (cmd,))
 
 		if not exam:
-			# AT job for the normal case
 			try:
 				endtime = datetime.datetime.strptime(request.options['period'], '%H:%M')
 				endtime = endtime.time()
@@ -834,11 +795,19 @@ class Instance(SchoolBaseModule):
 			starttime = starttime.replace(hour=endtime.hour, minute=endtime.minute)
 			while starttime < datetime.datetime.now():  # prevent problems due to intra-day limit
 				starttime += datetime.timedelta(days=1)
-			MODULE.info('Remove settings at %s' % starttime)
+
+			# AT job for the normal case
+			MODULE.info('Remove settings at %s' % (starttime,))
 			atjobs.add(cmd, starttime, {Instance.ATJOB_KEY: self._italc.room})
 			self._ruleEndAt = starttime
+		else:
+			# Command for the exam mode to be executed manually when changing the settings again...
+			new_room_infos['cmd'] = cmd
 
-		_finished()
+		self.reset_smb_connections()
+		self.reload_cups()
+		_updateRoomInfo(self._italc.roomDN, **new_room_infos)
+		self.finished(request.id, True)
 
 	def reload_cups(self):
 		if os.path.exists('/etc/init.d/cups'):
@@ -856,51 +825,31 @@ class Instance(SchoolBaseModule):
 				MODULE.info('Kill SMB process %s' % process.pid)
 				os.kill(int(process.pid), signal.SIGTERM)
 
+	@sanitize(
+		server=StringSanitizer(required=True),
+	)
 	@check_room_access
 	def demo_start(self, request):
-		"""Starts a demo
-
-		requests.options = { 'server' : <computer> }
-
-		return: [True|False)
-		"""
-
-		self.required_options(request, 'server')
+		"""Starts a presentation mode"""
 		self._italc.startDemo(request.options['server'], True)
 		self.finished(request.id, True)
 
 	@check_room_access
 	def demo_stop(self, request):
-		"""Stops a demo
-
-		requests.options = none
-
-		return: [True|False)
-		"""
+		"""Stops a presentation mode"""
 
 		self._italc.stopDemo()
 		self.finished(request.id, True)
 
+	@sanitize(
+		state=ChoicesSanitizer(['poweroff', 'poweron', 'restart']),
+		computer=ComputerSanitizer(required=True),
+	)
 	@check_room_access
-	@get_computer
-	def computer_state(self, request, computer):
-		"""Stops, starts or restarts a computer
-
-		requests.options = { 'computer' : <computer', 'state' : (poweroff|poweron|restart) }
-
-		return: [True|False)
-		"""
-
-		self.required_options(request, 'state')
-
-		state = request.options['state']
-		if state not in ('poweroff', 'poweron', 'restart'):
-			raise UMC_OptionTypeError('unkown state %s' % state)
-
-		# prevent UCC
-		if state != 'poweron':
-			prevent = prevent_ucc(lambda self, request, computer: None)
-			prevent(self, request, computer)
+	@prevent_ucc(test=lambda request: request.options['state'] != 'poweron')
+	@simple_response
+	def computer_state(self, computer, state):
+		"""Stops, starts or restarts a computer"""
 
 		if state == 'poweroff':
 			computer.powerOff()
@@ -908,23 +857,19 @@ class Instance(SchoolBaseModule):
 			computer.powerOn()
 		elif state == 'restart':
 			computer.restart()
-
-		self.finished(request.id, True)
+		return True
 
 	@check_room_access
-	@get_computer
+	@sanitize(
+		computer=ComputerSanitizer(required=True),
+	)
 	@prevent_ucc
-	def user_logout(self, request, computer):
-		"""Log out the user at the given computer
-
-		requests.options = { 'computer' : <computer' }
-
-		return: [True|False)
-		"""
+	@simple_response
+	def user_logout(self, computer):
+		"""Log out the user at the given computer"""
 
 		computer.logOut()
-
-		self.finished(request.id, True)
+		return True
 
 	@simple_response
 	def plugins_load(self):

@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define dijit*/
+/*global define,dijit*/
 
 define([
 	"dojo/_base/declare",
@@ -72,7 +72,7 @@ define([
 				staticValues: [ { id: 'none', label: _( 'Default (global settings)' ) },
 								{ id: 'custom', label: myRules } ],
 				onChange: lang.hitch( this, function( value ) {
-					this._form.getWidget( 'customRule' ).set( 'disabled', value != 'custom' );
+					this._form.getWidget( 'customRule' ).set( 'disabled', value !== 'custom' );
 				} )
 			}, {
 				type: TextArea,
@@ -83,7 +83,7 @@ define([
 				sizeClass: 'One',
 				description: _( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>' ),
 				validate: lang.hitch( this, function() {
-					return !( this._form.getWidget( 'internetRule' ).get( 'value' ) == 'custom' && ! this._form.getWidget( 'customRule' ).get( 'value' ) );
+					return !( this._form.getWidget( 'internetRule' ).get( 'value' ) === 'custom' && ! this._form.getWidget( 'customRule' ).get( 'value' ) );
 				} ),
 				onFocus: lang.hitch( this, function() {
 					dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode ); // FIXME
@@ -199,7 +199,7 @@ define([
 
 		personalActive: function() {
 			var values = this._form.get('value');
-			return values.internetRule != 'none' || values.shareMode != 'all' || values.printMode != 'default';
+			return values.internetRule !== 'none' || values.shareMode !== 'all' || values.printMode !== 'default';
 		},
 
 		onClose: function() {

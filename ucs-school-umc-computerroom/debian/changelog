@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (8.0.10-1) unstable; urgency=medium
+
+  * Bug #40901: prevent removing exam state if the javascript frontend does
+  	not know about an currently written exam
+
+ -- Florian Best <best@univention.de>  Tue, 22 Nov 2016 21:07:37 +0100
+
 ucs-school-umc-computerroom (8.0.9-1) unstable; urgency=medium
 
   * Bug #42399: use SchoolSanitizer
