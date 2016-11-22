@@ -3,10 +3,12 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix:
+fix: 9.0.2-10.186.201611221556
 desc: |
  * Update connector/s4/mapping/group/ignorelist to avoid rejects (Bug #40418)
  * A (re)join is now aborted if the version of the UCS@school app on the
-   joining system differs to the one installed on the DC master. A link to
-   an SDB article is printed to join.log (Bug #41760).
+   joining system is higher that version of the app on the DC master. UCRV
+   ucsschool/join/ignore-version-mismatch/.* allows to override the test.
+   Instruction on how to install differing app version can be found in the
+   SDB article at http://sdb.univention.de/1373 (Bug #41760).
 bug: [40418,41760]
