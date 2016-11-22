@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.8-2) unstable; urgency=low
+
+  * Bug #37955: remove leftover home directories from previous exams
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 22 Nov 2016 10:35:16 +0100
+
 ucs-school-umc-exam (6.0.8-1) unstable; urgency=medium
 
   * Bug #42399: use SchoolSanitizer

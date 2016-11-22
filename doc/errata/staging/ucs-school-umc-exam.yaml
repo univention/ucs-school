@@ -3,11 +3,13 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
-fix: 6.0.7-7.118.201611101949
+fix:
 desc: |
  * School users stored outside of any OU can now participate in
    school exams (Bug #41568).
  * Don't log an error message if the exam user is not yet replicated
    (Bug #41562).
  * Proper error messages are shown when no school exists (Bug #42399).
-bug: [41568, 41562, 42399]
+ * Leftover home directories from users of previous exams are now removed
+   (Bug #37955)
+bug: [41568, 41562, 42399, 37955]
