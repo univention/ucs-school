@@ -34,6 +34,7 @@ import listener
 import os
 import shutil
 import time
+from ldap import INVALID_CREDENTIALS, SERVER_DOWN
 from psutil import disk_partitions
 import univention.debug
 from ucsschool.lib.models import School
@@ -150,12 +151,16 @@ def get_my_ous():
 
 
 def handler(dn, new, old, command):
-	my_ous = set(get_my_ous())
-	users_schools = set(new.get("ucsschoolSchool", []))
+	try:
+		my_ous = set(get_my_ous())
+	except (INVALID_CREDENTIALS, SERVER_DOWN) as exc:
+		warn("%s: %s" % (name, exc))
+		return
+	users_ous = set(new.get("ucsschoolSchool", []))
 
 	if (
 		old and not new and not command == "r" or
-		old and new and command == "m" and my_ous.isdisjoint(users_schools)
+		old and new and command == "m" and my_ous.isdisjoint(users_ous)
 	):
 		uid = old["uid"][0]
 
