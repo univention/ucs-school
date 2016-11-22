@@ -418,15 +418,15 @@ class UCSTestSchool(object):
 			lo = self.open_ldap_connection()
 			User.invalidate_all_caches()
 			User.init_udm_module(lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+			cls = Student
 			if is_teacher and is_staff:
-				result = TeachersAndStaff(**kwargs).create(lo)
+				cls = TeachersAndStaff
 			elif is_teacher and not is_staff:
-				result = Teacher(**kwargs).create(lo)
+				cls = Teacher
 			elif not is_teacher and is_staff:
-				result = Staff(**kwargs).create(lo)
-			else:
-				result = Student(**kwargs).create(lo)
-			print '*** Result of User(...).create(): %r' % (result,)
+				cls = Staff
+			result = cls(**kwargs).create(lo)
+			print '*** Result of %s(...).create(): %r' % (cls.__name__, result,)
 
 		if wait_for_replication:
 			utils.wait_for_replication()

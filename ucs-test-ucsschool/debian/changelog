@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.16-55) unstable; urgency=medium
+
+  * Bug #40527: fix password changing tests
+
+ -- Florian Best <best@univention.de>  Tue, 22 Nov 2016 18:31:15 +0100
+
 ucs-test-ucsschool (3.0.16-54) unstable; urgency=low
 
   * Bug #42313: wait for replication
