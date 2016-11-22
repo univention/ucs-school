@@ -94,6 +94,7 @@ class Test(CLI_Import_v2_Tester):
 			self.save_ldap_status()
 			# start import
 			self.run_import(['-c', fn_config, '-i', fn_csv])
+			utils.wait_for_replication()
 			# check for new users in LDAP
 			self.check_new_and_removed_users(len(persons), 0)
 			# check usernames
@@ -121,6 +122,7 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(config=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config, '-i', fn_csv])
+			utils.wait_for_replication()
 			for person, lastname in names.items():
 				person.update(username=remove_bad_chars("2{}".format(lastname[:12])))
 				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
