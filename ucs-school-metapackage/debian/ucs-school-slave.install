@@ -1,4 +1,5 @@
+00ucs-school-app-version-check.inst usr/lib/univention-install/
 00ucs-school-slave-check-ou.inst usr/lib/univention-install/
 62ucs-school-slave.inst usr/lib/univention-install/
 ucsschool.png usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/50x50
-app_version.py usr/share/ucs-school-slave/scripts
+app_version.py usr/share/ucs-school-metapackage/scripts

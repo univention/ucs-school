@@ -30,12 +30,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import re
 import sys
 from distutils.version import LooseVersion
 from univention.appcenter.actions import get_action
 from univention.appcenter.app import AppManager
-from univention.appcenter.ucr import ucr_get
+from univention.appcenter.ucr import ucr_get, ucr_is_true
 
 
 if len(sys.argv) < 2 or sys.argv[-1] == '-v':
@@ -45,12 +44,15 @@ app_name = sys.argv[-1]
 
 hostname_master = ucr_get('ldap/master').split('.')[0]
 app = AppManager.find(app_name)
+if app is None:
+	print('Unknown app "{}".'.format(app_name))
+	sys.exit(2)
 domain = get_action('domain')
 info = domain.to_dict([app])[0]
 
 if not app.is_installed():
 	print('App "{}" is not installed on this host.'.format(app_name))
-	sys.exit(1)
+	sys.exit(2)
 
 try:
 	master_version = info['installations'][hostname_master]['version']
@@ -58,19 +60,22 @@ try:
 		raise KeyError
 except KeyError:
 	print('App "{}" is not installed on DC master.'.format(app_name))
-	sys.exit(1)
+	sys.exit(2)
 
-av = re.sub(r' v\d.*$', '', app.version)
-mv = re.sub(r' v\d.*$', '', master_version)
-
-ret = LooseVersion(av) != LooseVersion(mv)
+ret = LooseVersion(app.version) > LooseVersion(master_version)
 
 if '-v' in sys.argv:
 	print('Version of app "{}" on this host: "{}"'.format(app_name, app.version))
 	print('Version of app "{}" on DC master: "{}"'.format(app_name, master_version))
 	if ret:
-		print('Error: local and DC masters versions of app "{}" differ!'.format(app_name))
+		print('Error: local version of app "{}" higher than DC masters versions!'.format(app_name))
 	else:
-		print('OK: local and DC masters versions of app "{}" are the same ({}).'.format(app_name, av))
+		print('OK: local version of app "{}" is lower or equal to that of the DC master.'.format(app_name))
+
+ucrv = 'ucsschool/join/ignore-version-mismatch/{}/{}'.format(master_version, app.version)
+if ucr_is_true(ucrv):
+	if '-v' in sys.argv:
+		print('Ignoring version mismatch, because "{}" is set.'.format(ucrv))
+	sys.exit(0)
 
 sys.exit(int(ret))

@@ -1,3 +1,12 @@
+ucs-school-metapackage (9.0.2-10) unstable; urgency=low
+
+  * Bug #41760: compare app versions in separate join script
+  * compare exact versions
+  * add support for overriding result with UCRV
+    ucsschool/join/ignore-version-mismatch/$MASTERVER/$SLAVEVER=yes
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 22 Nov 2016 15:18:59 +0100
+
 ucs-school-metapackage (9.0.2-9) unstable; urgency=low
 
   * Bug #41760: check if app versions on local host and DC master differ

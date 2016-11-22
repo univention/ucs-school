@@ -1,0 +1,5 @@
+[ucsschool/join/ignore-version-mismatch/.*]
+Description[de]=Mit Hilfe dieser Variablen kann die Versionsprüfung beim Domain-Join übergangen werden. Weitere Informationen bitte unter http://sdb.univention.de/1373 nachlesen (Standard: nicht gesetzt).
+Description[en]=Using this variable it is possible to override the version check during domain join. For further information please read http://sdb.univention.de/1373 (Default: unset).
+Type=bool
+Categories=ucsschool-base

@@ -152,6 +152,7 @@ fi
 
 /etc/init.d/univention-directory-listener crestart
 
+call_joinscript 00ucs-school-app-version-check.inst
 call_joinscript 62ucs-school-master.inst
 
 #DEBHELPER#
