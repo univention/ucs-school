@@ -18,8 +18,8 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.1 R2 v1
-				Stand: 12. Juli 2016
+				Version 4.1 R2 v8
+				Stand: 1. Dezember 2016
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
@@ -44,67 +44,104 @@
 	<chapter id="introduction">
 		<title>Einführung</title>
 		<para>
-			Zur Übernahme von Benutzerdaten, die in einer Schulverwaltungssoftware gespeichert sind, existiert in &ucsUAS; eine Importschnittstelle.
-			Sie wurde so konzipiert, dass sie an die unterschiedlichen Gegebenheiten in Schulen mit möglichst geringem Aufwand anpassbar ist.
+			Wie bereits im &ucsUAS;-Handbuch für Administratoren beschrieben wurde, bringt &ucsUAS;
+			für viele regelmäßig wiederkehrende Verwaltungsaufgaben entsprechende Werkzeuge und Schnittstellen
+			mit.  Die Übernahme von Benutzerdaten aus der Schulverwaltung ist eine dieser wiederkehrenden
+			Aufgaben, die über die neue Importschnittstelle für Benutzer automatisiert erledigt werden können.
 		</para>
 		<para>
-			Im Folgenden wird dargestellt, wie der automatische, nicht-interaktive Import abläuft, welche Konfigurationsmöglichkeiten es gibt und wie die Software um neue Funktionalität erweitert werden kann.
+			Die Schnittstelle ermöglicht es Benutzerdaten aus einer Datei auszulesen, die Daten zu
+			normieren, automatisch eindeutige Benutzernamen zu generieren und notwendige Änderungen
+			(Hinzufügen/Modifizieren/Löschen) automatisch zu erkennen. Sie wurde so konzipiert, dass sie
+			sich automatisch mit dem Datenbestand eines vorhandenen Benutzerverzeichnisses abgleichen kann.
 		</para>
-		<caution>
-			<simpara>
-				Dies ist eine <emphasis>Vorveröffentlichung</emphasis>.
-				Das Dokument hat noch nicht Univentions Qualitätskontrolle passiert.
-			</simpara>
-		</caution>
+		<para>
+			Die Importschnittstelle ist darauf ausgelegt, mit möglichst geringem Aufwand an die
+			unterschiedlichen Gegebenheiten in Schulen angepasst zu werden.  So ist die Basis der
+			Importschnittstelle bereits vorbereitet, um unterschiedliche Dateiformate einlesen zu
+			können. /ucsUAS; bringt einen Importfilter für CSV-Dateien mit, der für unterschiedlichste
+			CSV-Formate konfiguriert werden kann.
+		</para>
+		<para>
+			Über eigene Python-Plugins kann die Schnittstelle erheblich erweitert werden. Dies
+			umfasst sowohl die Unterstützung für zusätzliche Dateiformat als auch die Implementierung von
+			zusätzlichen Automatismen, die während des Imports greifen.
+		</para>
+		<para>
+			In den nachfolgenden Kapiteln werden der Ablauf eines Imports, die unterschiedlichen
+			Konfigurationsmöglichkeiten sowie die Erweiterungsmöglichkeiten der Schnittstelle um neue
+			Funktionalitäten beschrieben.
+		</para>
 	</chapter>
 
 	<chapter id="procedure">
-		<title>Ablauf eines Importauftrags</title>
+		<title>Ablauf des Importvorgangs</title>
 		<para>
-			Der Ablauf eines Imports ist grob folgender:
+			Die Importschnittstelle wurde als ein kommandozeilen-basiertes Tool umgesetzt, welches darauf ausgelegt ist, einen
+			automatischen, nicht-interaktiven Import durchzuführen. Um dies zu erreichen, müssen bestimmte Voraussetzungen erfüllt
+			werden, die in diesem Abschnitt anhand des Importablaufes erläutert werden.
+		</para>
+		<para>
+			Das Tool wurde in der Skriptsprache Python implementiert und ist in der Lage, zusätzliche/kundenspezifische Python-Dateien
+			zu laden, die ein abweichendes Verhalten oder zusätzliche Funktionalitäten der Importschnittstelle hinzufügen.
+		</para>
+		<para>
+			Der Ablauf eines automatischen Imports wird über die nachfolgenden Schritte skizziert:
 			<orderedlist>
 				<listitem>
 					<simpara>
-						Aus dem Quellverzeichnis werden die zu übernehmenden Benutzerdaten exportiert.
+						Die zu übernehmenden Benutzerdaten müssen automatisch oder manuell aus dem Quellverzeichnis exportiert und als Datei gespeichert werden.
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
-						Es wird eine Konfiguration erstellt bzw. verwendet, die dem Importtool <command>ucs-school-user-import</command> ermöglicht, die exportierten Daten einzulesen und Benutzern im Verzeichnisdienst von &ucsUAS; zuzuordnen.
+						Für den Import muss vorab einmalig eine Konfigurationsdatei erstellt werden, die bei jedem weiteren Import wiederverwendet werden kann.
+						Die Konfigurationsdatei ermöglicht es dem Importtool <command>ucs-school-user-import</command>, die exportierten Daten einzulesen und die Eingabedatensätze (Benutzerdaten) konkreten &ucsUAS;-Benutzern im LDAP-Verzeichnisdienst zuzuordnen.
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
-						Je nach Konfiguration werden die Eingabedaten als vollständiger Soll-Zustand interpretiert oder als inkrementelles Update zum Ist-Zustand.
+						Die Importschnittstelle unterstützt zwei unterschiedliche Modi, die festlegen, ob die Eingabedatensätze als neuer Soll-Zustand oder als inkrementelles Update zum Ist-Zustand interpretiert werden sollen.
 					</simpara>
 					<itemizedlist>
 						<listitem>
 							<simpara>
-								Im ersten Fall wird ein automatischer Abgleich zwischen &ucsUAS;-Verzeichnisdienst und dem übergebenen Soll-Zustand durchgeführt.
-								Es wird ermittelt, welche Benutzer im Verzeichnisdienst angelegt, modifiziert oder gelöscht werden müssen, um den Soll-Zustand zu erreichen.
+								Im ersten Fall werden die Eingabedatensätze als neuer Soll-Zustand verwendet. Dazu wird ein automatischer Abgleich zwischen den &ucsUAS;-Benutzern im
+								LDAP-Verzeichnisdienst und den übergebenen Eingabedatensätzen durchgeführt, um zu ermitteln, welche &ucsUAS;-Benutzer im LDAP-Verzeichnisdienst angelegt, modifiziert
+								oder gelöscht werden müssen, um den neuen Soll-Zustand zu erreichen.
 							</simpara>
 						</listitem>
 						<listitem>
 							<simpara>
-								Im zweiten Fall werden keine &ucsUAS;-Benutzer, oder nur solche für die es in den Eingabedaten explizit vermerkt ist, gelöscht.
+								Im zweiten Fall findet kein automatischer Abgleich statt. Stattdessen muss bei jedem Eingabedatensatz speziell vermerkt werden, ob der dazu passenden &ucsUAS;-Benutzer im
+								LDAP-Verzeichnis angelegt, modifziert oder gelöscht werden. Dieser teilautomatische Ansatz erfordert erheblich mehr Prozesslogik bei der Bereitstellung der Eingabedatensätze,
+								da die entsprechenden Teile in der Importschnittstelle deaktiviert sind.
 							</simpara>
 						</listitem>
 					</itemizedlist>
 				</listitem>
 				<listitem>
 					<simpara>
-						Existierende &ucsUAS;-Benutzer werden verändert, fehlende angelegt.
+						Je nach Konfiguration werden die Werte des Eingabedatensatzes nach dem Einlesen automatisch geprüft, modifiziert und/oder erweitert. Darunter fällt z.B. auch die automatische Zuweisung eines eindeutigen Benutzernamens oder die Generierung einer Mail-Adresse.
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
-						Neuen &ucsUAS;-Benutzern werden automatisch sichere Passwörter zugeteilt.
-						Da diese später nicht mehr ausgelesen werden könne, werden sie nun in einer CSV-Datei abgelegt.
+						Während des vollständigen Einlesens und Verarbeitens der Eingabedatensätze werden noch keine Änderungen am LDAP-Verzeichnis vorgenommen.
+						Sind alle Eingabedatensätze verarbeitet, werden im Anschluss die notwendigen Änderungen am LDAP-Verzeichnis durchgeführt: &ucsUAS;-Benutzer werden gelöscht, verändert oder angelegt.
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
-						Abschließend wird ein Bericht in Form einer CSV-Datei erzeugt, mit dessen Hilfe sich schnell die Eingabedaten und die durch sie verursachte Änderung sowie aufgetretene Probleme nachvollziehen lassen.
+						Neuen &ucsUAS;-Benutzern werden während des Imports automatisch sichere, zufällige Passwörter zugeteilt.
+						Da Passwörter im LDAP-Verzeichnis grundsätzlich nicht im Klartext vorliegen und somit später nicht mehr ausgelesen werden können,
+						werden die Passwörter für neue Benutzer, sofern explizit konfiguriert, in einer speziellen CSV-Datei abgelegt.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						Nach den erfolgten Änderungen am LDAP-Verzeichniss wird abschließend ein Bericht in Form einer CSV-Datei erzeugt, mit dessen Hilfe sich schnell die Eingabedaten
+						und die durch sie verursachten Änderungen sowie eventuell aufgetretene Probleme nachvollziehen lassen.
 					</simpara>
 				</listitem>
 			</orderedlist>
@@ -114,48 +151,54 @@
 				<title>Ablauf eines Benutzerimports</title>
 				<graphic scalefit="1" width="95%" align="center" fileref="illustrations41/import_ablauf.png"/>
 			</figure>
-			Während des gesamten Imports wird ein ausführliches Protokoll über alle technischen Vorgänge geführt. Logdateien in unterschiedlichen Detailtiefen helfen bei der Analyse von Problemen.
+			Für die Analyse von Problemen wird während des gesamten Imports ein Protokoll über alle technischen Vorgänge in Logdateien mit unterschiedlichen Detailtiefen geführt.
 			Wenn nicht anders konfiguriert, sind das die Dateien <filename>/var/log/univention/ucs-school-import.log</filename> und <filename>/var/log/univention/ucs-school-import.info</filename>.
 		</para>
 
 		<section id="procedure:fileformat">
-			<title>Datenformat</title>
+			<title>Datenformate</title>
 			<para>
-			  Die Importsoftware liest gegenwärtig Daten nur aus CSV-Dateien<footnote><para>Wikipedia CSV: <ulink url="https://de.wikipedia.org/wiki/CSV_(Dateiformat)"/></para></footnote> ein. Wie Unterstützung für weitere Dateiformate (JSON, XML etc.) hinzugefügt werden kann, steht in <xref linkend="extending"/>.
+			  Die Importsoftware kann gegenwärtig Daten nur aus CSV-Dateien<footnote><para>Wikipedia CSV: <ulink url="https://de.wikipedia.org/wiki/CSV_(Dateiformat)"/></para></footnote> einlesen. Wie eine Unterstützung für weitere Dateiformate (z.B. JSON, XML etc.) hinzugefügt werden kann, kann dem <xref linkend="extending"/> entnommen werden.
 			</para>
 		</section>
 		<section id="procedure:assignment">
 			<title>Zuordnung von Benutzern des Quellverzeichnisses zu &ucsUAS;-Benutzern</title>
 			<para>
-			  Nach dem Einlesen eines Eingabedatensatzes, müssen die Informationen einem Benutzer im &ucsUAS;-Verzeichnisdienst zugeordnet werden. Das <command>usc-school-user-import</command> Tool unterstützt den Import von Benutzerdaten aus mehreren Quellverzeichnissen. Um jeden &ucsUAS;-Benutzer einem Benutzer in einer Quelldatenbank eindeutig zuordnen zu können werden am Benutzerobjekt zwei zusätzliche Attribute gespeichert: <property>sourceUID</property> und <property>recordUID</property>.
+			  Das Tool <command>ucs-school-user-import</command> unterstützt den Import von Benutzerdaten aus mehreren Quellverzeichnissen. Um jeden &ucsUAS;-Benutzer einem Benutzer in einer Quelldatenbank eindeutig zuordnen zu können, werden am UCS@school-Benutzerobjekt zwei zusätzliche Attribute gespeichert: <property>sourceUID</property> und <property>recordUID</property>.
 			</para>
 			<para>
-				Die <property>sourceUID</property> ist der eindeutige Bezeichner für die Quelldatenbank von der ein Benutzer importiert wurde. Die <property>recordUID</property> ist der eindeutige Bezeichner für den Benutzer in dieser Quelldatenbank. Durch die Kombination dieser beiden Attribute kann ein &ucsUAS;-Benutzer genau einem Benutzer in einem Quellverzeichnis zugeordnet werden.
+				Die <property>sourceUID</property> ist ein eindeutiger Bezeichner für die Quelldatenbank von der ein Benutzer importiert wurde. Der Bezeichner kann frei gewählt werden und muss für jede Quelldatenbank eindeutig sein. Er ist während des Imports auf der Kommandozeile bzw. in der Konfigurationsdatei für jede Quelldatenbank explizit mit anzugeben.
 			</para>
 			<para>
-				<property>sourceUID</property> und <property>recordUID</property> müssen eindeutig und unveränderlich sein, sonst werden &ucsUAS;-Benutzer beim Abgleich mit den Eingabedaten nicht gefunden und ggf. gelöscht bzw. es werden die falschen &ucsUAS;-Benutzerobjekte modifiziert.
+				Die <property>recordUID</property> ist ein eindeutiger Bezeichner für den Benutzer in der Quelldatenbank. Als Bezeichner kann z.B. auf vorhandene Attribute innerhalb der Quelldatenbank, wie z.B. eine Schüler- oder Mitarbeiternummer, zurückgegriffen werden. Sollte kein eindeutig identifizierendes Attribut in der Quelldatenbank vorhanden sein, kann auch durch die Konkatenation von mehreren Attributen der Quelldatenbank ein ein eindeutiger Bezeichner generiert werden.
 			</para>
-		</section>
-		<section id="procedure:action_decision">
-			<title>Anlegen, Ändern oder Löschen?</title>
 			<para>
-				Mit Hilfe der <property>sourceUID</property> und <property>recordUID</property> kann ein Eingabedatensatz einem &ucsUAS;-Benutzer zugeordnet werden.
+				Durch die Kombination dieser beiden Bezeichner kann ein &ucsUAS;-Benutzer genau einem Benutzer in einem bestimmten Quellverzeichnis zugeordnet werden.
+			</para>
+			<caution>
+				<para>
+					<property>sourceUID</property> und <property>recordUID</property> müssen eindeutig und unveränderlich sein, sonst werden &ucsUAS;-Benutzer beim Abgleich mit den Eingabedaten nicht gefunden und ggf. gelöscht bzw. es werden die falschen &ucsUAS;-Benutzerobjekte modifiziert.
+				</para>
+			</caution>
+
+			<para>
+				Mit Hilfe der beiden Bezeichner <property>sourceUID</property> und <property>recordUID</property> wird versucht, jeden Eingabedatensatz genau einem &ucsUAS;-Benutzer zuzuordnen:
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							Existiert dieser bereits, wird er von <command>ucs-school-user-import</command> modifiziert.
-							Die Importsoftware gleicht die Eingabedaten mit dem &ucsUAS;-Verzeichnisdienst ab.
-							Werden Abweichungen gefunden, werden sie übernommen.
+							Wurde kein &ucsUAS;-Benutzer mit passenden Bezeichnern im LDAP-Verzeichnis gefunden, wird ein neuer &ucsUAS;-Benutzer auf Basis des Eingabedatensatzes erstellt.
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							Existiert der Benutzer noch nicht, so wird er angelegt.
+							Existiert ein passender &ucsUAS;-Benutzer bereits, wird er von <command>ucs-school-user-import</command> modifiziert.
+							Die Importsoftware gleicht die Eingabedaten mit dem LDAP-Verzeichnisdienst ab und passt den &ucsUAS;-Benutzer entsprechend dem Eingabedatensatz an.
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							Existiert ein Benutzer im &ucsUAS;-Verzeichnis aber nicht in den Eingabedaten, so wird er gelöscht.
+							Während des Abgleichs wird auch geprüft, ob im LDAP-Verzeichnis &ucsUAS;-Benutzer der betreffenden Quelldatenbank vorhanden sind, die in den Eingabedatensätzen nicht mehr vorhanden sind.
+							Die betroffenen &ucsUAS;-Benutzer werden dann automatisch gelöscht.
 						</simpara>
 					</listitem>
 				</itemizedlist>
