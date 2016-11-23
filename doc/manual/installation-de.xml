@@ -311,7 +311,7 @@ slave#
 	  <title>(Erneuter) Domänenbeitritt eines Schulservers</title>
 	  <para>
 	    Die Einrichtung eines Schulservers ist auch ohne das oben beschriebene UMC-Konfigurationsmodul möglich
-		bzw. notwendig, wenn während des Konfigrationsprozesses Probleme auftreten sollten.
+		bzw. notwendig, wenn während des Konfigurationsprozesses Probleme auftreten sollten.
 		Nur in einem solchen Szenario müssen die in diesem Abschnitt beschriebenen Schritte manuell durchgeführt werden:
 	  </para>
 	  <itemizedlist>

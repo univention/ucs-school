@@ -1244,24 +1244,24 @@ class MyHook(UserPyHook):
 					</listitem>
 					<listitem>
 						<simpara>
-							In <methodname>pre_remove()</methodname> wird ein Backup des Heimatverzeichnises des Benutzers gemacht, bevor er gelöscht wird.
+							In <methodname>pre_remove()</methodname> wird ein Backup des Heimatverzeichnisses des Benutzers gemacht, bevor er gelöscht wird.
 						</simpara>
 					</listitem>
 				</itemizedlist>
 			</para>
 			<para>
 				In <methodname>pre_create()</methodname> wird in <varname>udm_properties</varname> an den Schlüssel description der Wert <literal>Herzlichen Glückwunsch</literal> geschrieben.
-			Das expliziete Abspeichern des <literal>user</literal> Objektes ist in dieser Funktion nicht nötig, da dies ja beim auf den Hook folgenden <methodname>create</methodname> geschieht.
+			Das explizite Abspeichern des <literal>user</literal> Objektes ist in dieser Funktion nicht nötig, da dies ja beim auf den Hook folgenden <methodname>create</methodname> geschieht.
 			</para>
 			<para>
 				In der Funktion wird außerdem mit <methodname>self.logger.info()</methodname> ein Text zu Protokoll gegeben.
 				Es handelt sich bei <property>self.logger</property> um eine Instanz eines Python <classname>logging</classname> Objekts<footnote><para>Python Dokumentation: <ulink url="https://docs.python.org/2/library/logging.html"/></para></footnote>.
 			</para>
 			<para>
-				In <methodname>pre_remove()</methodname> wird das Heimatverzeichnises des Benutzers benötigt.
+				In <methodname>pre_remove()</methodname> wird das Heimatverzeichnisses des Benutzers benötigt.
 				Da dies nicht eines der direkt am Objekt stehenden Daten ist (siehe <xref linkend="extending:import_user_class"/>), muss zuerst das gesamte Benutzerobjekt aus dem LDAP geladen werden.
 				Dies tut <methodname>user.get_udm_object()</methodname>, welches als Argument ein LDAP-Verbindungsobjekt erwartet.
-				Dieses ist im Hook-Objekt an <property>self.lo</property> gespeichert.
+				Dieses ist im <wordasword>Hook-Objekt</wordasword> an <property>self.lo</property> gespeichert.
 			</para>
 			<caution>
 				<para>
@@ -1348,7 +1348,7 @@ Anton0003
 					Im Fall der Importsoftware ist die <foreignphrase>abstract factory</foreignphrase> jedoch nicht Abstrakt, alle Methoden wurden implementiert.
 				</para>
 				<para>
-					An allen Stellen der Importsoftware die z.B. mit dem Einlesen von CSV-Dateien zu tun haben, wird nicht die Klasse <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname> direkt instanziiert, sondern es wird von der eingesetzten <property>factory</property> eine Instanz verlangt (<methodname>factory.make_reader()</methodname>) und verwendet.
+					An allen Stellen der Importsoftware die z.B. mit dem Einlesen von CSV-Dateien zu tun haben, wird nicht die Klasse <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname> direkt instantiiert, sondern es wird von der eingesetzten <property>factory</property> eine Instanz verlangt (<methodname>factory.make_reader()</methodname>) und verwendet.
 					Welche Klasse dem verwendeten Objekt zugrunde liegt ist nicht bekannt, sie muss nur die Methoden der ersetzten Klasse mit der gleichen Signatur implementieren.
 					Auf diese Art könnte z.B. der <classname>CSV-Reader</classname> durch einen <classname>JSON-Reader</classname> ersetzt werden.
 					Alles was dann zu tun bleibt, ist, die <property>factory</property> zu verändern.
@@ -1561,7 +1561,7 @@ class MyUserImportFactory(DefaultUserImportFactory):
 							<listitem>
 								<simpara>
 									contra: Es wird an jeder Schule eines Benutzers ein eigenes Heimatverzeichnis für ihn angelegt.
-									Einmailger Installationsaufwand: An jeder Schule müssen ein paar &ucsUCR;-Variablen eingestellt werden.
+									Einmaliger Installationsaufwand: An jeder Schule müssen ein paar &ucsUCR;-Variablen eingestellt werden.
 								</simpara>
 							</listitem>
 						</itemizedlist>
