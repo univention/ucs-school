@@ -3,10 +3,8 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-ldap-acls-master
-fix: 14.0.2-1.85.201611161757
+fix: 14.0.2-2.86.201611231214
 desc: |
  * Domain Admins which are also school administrators are allowed to operate
    domain wide again (Bug #42437).
- * More restrictions regarding the creation and modifications of shares
-   have been added (Bug #42065).
-bug: [42437, 42065]
+bug: [42437]

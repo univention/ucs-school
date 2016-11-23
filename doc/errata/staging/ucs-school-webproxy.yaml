@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-webproxy
-fix: 12.0.4-1.123.201611211251
+fix: 12.0.4-2.124.201611231142
 desc: |
  * The squidguard configuration is only written for groups and users
    belonging to the schools of the specific server. This decreases the system
