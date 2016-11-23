@@ -94,12 +94,4 @@ def handler(dn, new, old):
 
 def postrun():
 	global lo
-	try:
-		try:
-			lo.unbind()  # UCS >= 4.2
-		except AttributeError:
-			lo.lo.lo.unbind_s()  # UCS < 4.2
-	except ldap.LDAPError:
-		pass
-	finally:
-		lo = None
+	lo = None  # close LDAP connection

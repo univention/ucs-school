@@ -1,3 +1,9 @@
+ucs-school-webproxy (12.0.4-2) unstable; urgency=medium
+
+  * Bug #41749: make unbind implicit
+
+ -- Florian Best <best@univention.de>  Wed, 23 Nov 2016 11:41:08 +0100
+
 ucs-school-webproxy (12.0.4-1) unstable; urgency=medium
 
   * Bug #41749: adjust listener to only react to groups belonging to local
