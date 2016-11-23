@@ -191,7 +191,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 	def create_without_hooks(self, lo, validate):
 		success = super(SchoolClass, self).create_without_hooks(lo, validate)
 		if self.exists(lo):
-			success = success and self.create_share(lo)
+			success = success and self.create_share(self.get_machine_connection())
 		return success
 
 	def create_share(self, lo):
@@ -211,16 +211,17 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 				share.name = self.name
 		success = super(SchoolClass, self).modify_without_hooks(lo, validate, move_if_necessary)
 		if success:
-			if share.exists(lo):
-				success = share.modify(lo)
+			lo_machine = self.get_machine_connection()
+			if share.exists(lo_machine):
+				success = share.modify(lo_machine)
 			else:
-				success = self.create_share(lo)
+				success = self.create_share(lo_machine)
 		return success
 
 	def remove_without_hooks(self, lo):
 		success = super(SchoolClass, self).remove_without_hooks(lo)
 		share = self.ShareClass.from_school_group(self)
-		success = success and share.remove(lo)
+		success = success and share.remove(self.get_machine_connection())
 		return success
 
 	@classmethod

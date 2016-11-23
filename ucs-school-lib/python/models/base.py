@@ -47,7 +47,7 @@ import univention.admin.objects as udm_objects
 from univention.admin.filter import conjunction, expression
 from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 
-from ucsschool.lib.schoolldap import SchoolSearchBase
+from ucsschool.lib.schoolldap import SchoolSearchBase, LDAP_Connection
 from ucsschool.lib.models.meta import UCSSchoolHelperMetaClass
 from ucsschool.lib.models.attributes import CommonName, SchoolAttribute, ValidationError
 from ucsschool.lib.models.utils import ucr, _, logger
@@ -260,6 +260,12 @@ class UCSSchoolHelperAbstractClass(object):
 		self.old_dn = self.dn
 		self.errors = {}
 		self.warnings = {}
+
+	@classmethod
+	@LDAP_Connection()
+	def get_machine_connection(cls, ldap_user_read=None, ldap_machine_write=None):
+		"""Shortcut to get a cached ldap connection to the DC Master using this host's credentials"""
+		return ldap_machine_write
 
 	@property
 	def position(self):

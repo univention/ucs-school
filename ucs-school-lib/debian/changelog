@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.29-3) unstable; urgency=medium
+
+  * Bug #42065: Create shares of workgroups with the host account instead of
+  	e.g. the teacher
+
+ -- Florian Best <best@univention.de>  Wed, 23 Nov 2016 11:28:45 +0100
+
 ucs-school-lib (9.0.29-2) unstable; urgency=medium
 
   * Bug #42495: fix indentation
