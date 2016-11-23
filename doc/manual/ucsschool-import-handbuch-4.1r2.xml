@@ -59,7 +59,7 @@
 			Die Importschnittstelle ist darauf ausgelegt, mit möglichst geringem Aufwand an die
 			unterschiedlichen Gegebenheiten in Schulen angepasst zu werden.  So ist die Basis der
 			Importschnittstelle bereits vorbereitet, um unterschiedliche Dateiformate einlesen zu
-			können. /ucsUAS; bringt einen Importfilter für CSV-Dateien mit, der für unterschiedlichste
+			können. &ucsUAS; bringt einen Importfilter für CSV-Dateien mit, der für unterschiedlichste
 			CSV-Formate konfiguriert werden kann.
 		</para>
 		<para>
@@ -77,7 +77,7 @@
 	<chapter id="procedure">
 		<title>Ablauf des Importvorgangs</title>
 		<para>
-			Die Importschnittstelle wurde als ein kommandozeilen-basiertes Tool umgesetzt, welches darauf ausgelegt ist, einen
+			Die Importschnittstelle wurde als ein kommandozeilenbasiertes Tool umgesetzt, welches darauf ausgelegt ist, einen
 			automatischen, nicht-interaktiven Import durchzuführen. Um dies zu erreichen, müssen bestimmte Voraussetzungen erfüllt
 			werden, die in diesem Abschnitt anhand des Importablaufes erläutert werden.
 		</para>
@@ -114,7 +114,7 @@
 						<listitem>
 							<simpara>
 								Im zweiten Fall findet kein automatischer Abgleich statt. Stattdessen muss bei jedem Eingabedatensatz speziell vermerkt werden, ob der dazu passenden &ucsUAS;-Benutzer im
-								LDAP-Verzeichnis angelegt, modifziert oder gelöscht werden. Dieser teilautomatische Ansatz erfordert erheblich mehr Prozesslogik bei der Bereitstellung der Eingabedatensätze,
+								LDAP-Verzeichnis angelegt, modifiziert oder gelöscht werden. Dieser teilautomatische Ansatz erfordert erheblich mehr Prozesslogik bei der Bereitstellung der Eingabedatensätze,
 								da die entsprechenden Teile in der Importschnittstelle deaktiviert sind.
 							</simpara>
 						</listitem>
@@ -140,7 +140,7 @@
 				</listitem>
 				<listitem>
 					<simpara>
-						Nach den erfolgten Änderungen am LDAP-Verzeichniss wird abschließend ein Bericht in Form einer CSV-Datei erzeugt, mit dessen Hilfe sich schnell die Eingabedaten
+						Nach den erfolgten Änderungen am LDAP-Verzeichnis wird abschließend ein Bericht in Form einer CSV-Datei erzeugt, mit dessen Hilfe sich schnell die Eingabedaten
 						und die durch sie verursachten Änderungen sowie eventuell aufgetretene Probleme nachvollziehen lassen.
 					</simpara>
 				</listitem>
@@ -364,7 +364,7 @@ optional arguments:
 			</note>
 			<para>
 				Das JSON-Format erlaubt Daten in verschachtelten Strukturen zu speichern, und ist sowohl von Computer als auch Menschen zuverlässig zu lesen und zu schreiben.
-				Nach dem Editieren einer JSON-Datei kann ihre syntaktische Korrektheit mit Hilfe einer Webseite zur JSON Validierung (z.B. <uri>http://zaach.github.com/jsonlint/</uri>) oder eines Kommandozeilenprogrammes überprüft werden:
+				Nach dem Editieren einer JSON-Datei kann ihre syntaktische Korrektheit mit Hilfe einer Webseite zur JSON Validierung (z.B. <uri>http://zaach.github.com/jsonlint/</uri>) oder eines Kommandozeilenprogramms überprüft werden:
 				<programlisting>
 univention-install libjson-xs-perl
 
@@ -633,7 +633,7 @@ Zu den oben beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[
 								<entry morerows="1"><literallayout><varname>no_delete</varname>
 <option>-m</option>
 <option>--no-delete</option></literallayout></entry>
-								<entry>Wenn auf <literal>true</literal> gesetzt, werden keine Benutzer gelöscht, oder nur solche für die es in den Eingabedaten <emphasis>explizit</emphasis> vermerkt ist. Dies kann genutzt werden um eine Änderung an der &ucsUAS;-Benutzerdatenbank vorzunehmen, ohne einen vollständigen Soll-Zustand zu übergeben.</entry>
+								<entry>Wenn auf <literal>true</literal> gesetzt, werden keine Benutzer gelöscht, oder nur solche für die es in den Eingabedaten <emphasis>explizit</emphasis> vermerkt ist. Dies kann genutzt werden um eine Änderung an &ucsUAS;-Benutzern vorzunehmen, ohne einen vollständigen Soll-Zustand zu übergeben.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>bool</classname>): <literal>false</literal></entry>
@@ -1020,7 +1020,7 @@ udm users/user
 	<chapter id="extending">
 	<title>Erweiterung um neue Funktionalität</title>
 		<para>
-			Die &ucsUAS; Importsoftware ist so geschrieben worden, dass ihre Funktionalität möglichst einfach und gleichzeitig umfangreich veränder- und erweiterbar ist.
+			Die &ucsUAS; Importsoftware ist so geschrieben worden, dass ihre Funktionalität möglichst einfach und gleichzeitig umfangreich veränderbar und erweiterbar ist.
 			Dazu stehen zwei Methoden zur Verfügung:
 				<itemizedlist>
 					<listitem>
@@ -1117,7 +1117,7 @@ udm users/user
 							<row>
 								<entry><varname>udm_properties</varname></entry>
 								<entry>object</entry>
-								<entry><simpara>Alle anderen &ucsUDM; Attribute die in den Eingabedaten enthalten waren, werden in dieses Python <wordasword>dictionary</wordasword> gespeichert.</simpara><simpara>Oben stehende Attribute und ihre &ucsUDM;-Pendants (<varname>name</varname> &rarr; <varname>username</varname>, <varname>email</varname> &rarr; <varname>mailPrimaryAddress</varname>) sind hier nicht erlaubt.</simpara></entry>
+								<entry><simpara>Alle anderen &ucsUDM; Attribute die in den Eingabedaten enthalten waren, werden in dieses Python <wordasword>dictionary</wordasword> gespeichert.</simpara><simpara>Oben stehende Attribute und ihre <wordasword>&ucsUDM;-Pendants</wordasword> (<varname>name</varname> &rarr; <varname>username</varname>, <varname>email</varname> &rarr; <varname>mailPrimaryAddress</varname>) sind hier nicht erlaubt.</simpara></entry>
 							</row>
 						</tbody>
 					</tgroup>
@@ -1180,7 +1180,7 @@ udm users/user
 			</para>
 			<note>
 				<simpara>
-					Der Source-Code der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/pymodules/python2.7/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
+					Der Quellcode der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/pymodules/python2.7/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
 				</simpara>
 			</note>
 			<para>
