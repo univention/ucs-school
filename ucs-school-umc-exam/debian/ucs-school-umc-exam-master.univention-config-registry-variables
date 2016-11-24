@@ -18,8 +18,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/exam/user/ldap/blacklist]
-Description[de]=Pipe-separierte (|) Blacklist mit Attributnamen, die nicht für die Prüfungsbenutzer übernommen werden (Vorgabe: 'mailPrimaryAddress|mailAlternativeAddress')
-Description[en]=Pipe-separated (|) blacklist of attribute names, that are stripped from exam users (Default: 'mailPrimaryAddress|mailAlternativeAddress')
+Description[de]=Pipe-separierte (|) Blacklist mit Attributnamen, die nicht für die Prüfungsbenutzer übernommen werden (Vorgabe: 'mail|mailPrimaryAddress|mailAlternativeAddress|ucsschoolSourceUID|ucsschoolRecordUID')
+Description[en]=Pipe-separated (|) blacklist of attribute names, that are stripped from exam users (Default: 'mail|mailPrimaryAddress|mailAlternativeAddress|ucsschoolSourceUID|ucsschoolRecordUID')
 Type=str
 Categories=ucsschool-base
 

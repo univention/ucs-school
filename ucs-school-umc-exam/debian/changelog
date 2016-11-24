@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.10-1) unstable; urgency=low
+
+  * Bug #43045: do not copy RecordUID and SourceUID for exam users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 24 Nov 2016 11:58:43 +0100
+
 ucs-school-umc-exam (6.0.9-1) unstable; urgency=medium
 
   * Bug #40901: fix loading of exam state if the computerroom module is already opened

@@ -34,8 +34,12 @@
 
 eval "$(univention-config-registry shell)"
 
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 6.0.10-1; then
+	ucr set 'ucsschool/exam/user/ldap/blacklist'="$ucsschool_exam_user_ldap_blacklist|ucsschoolSourceUID|ucsschoolRecordUID"
+fi
+
 ucr set \
-	'ucsschool/exam/user/ldap/blacklist?mail|mailPrimaryAddress|mailAlternativeAddress' \
+	'ucsschool/exam/user/ldap/blacklist?mail|mailPrimaryAddress|mailAlternativeAddress|ucsschoolSourceUID|ucsschoolRecordUID' \
 	'ucsschool/exam/cron/cleanup-master/options?--skip-exam-shutdown --skip-ucr-cleanup --skip-exam-cleanup --skip-room-cleanup'
 
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
