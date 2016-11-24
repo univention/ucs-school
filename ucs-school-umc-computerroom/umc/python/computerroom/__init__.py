@@ -846,7 +846,7 @@ class Instance(SchoolBaseModule):
 		computer=ComputerSanitizer(required=True),
 	)
 	@check_room_access
-	@prevent_ucc(test=lambda request: request.options['state'] != 'poweron')
+	@prevent_ucc(condition=lambda request: request.options['state'] != 'poweron')
 	@simple_response
 	def computer_state(self, computer, state):
 		"""Stops, starts or restarts a computer"""
