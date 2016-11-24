@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.3-1) unstable; urgency=medium
+
+  * Bug #41007: close file descriptors of subprocesses
+
+ -- Florian Best <best@univention.de>  Thu, 24 Nov 2016 16:29:42 +0100
+
 ucs-school-umc-installer (4.0.2-1) unstable; urgency=medium
 
   * Bug #41007: fix python2.6 syntax, remove obsolete dependency

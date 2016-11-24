@@ -149,7 +149,7 @@ def create_ou_local(ou, display_name):
 	# call create_ou
 	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', '--displayName', display_name, ou]
 	MODULE.info('Executing: %s' % ' '.join(cmd))
-	process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
 	stdout, stderr = process.communicate()
 
 	# check for errors
@@ -196,11 +196,11 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 			if server_role == 'domaincontroller_slave':
 				# DC slave -> complete re-join
 				MODULE.process('Performing system join...')
-				process = subprocess.Popen(['/usr/sbin/univention-join', '-dcaccount', username, '-dcpwd', password_file.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+				process = subprocess.Popen(['/usr/sbin/univention-join', '-dcaccount', username, '-dcpwd', password_file.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
 			else:
 				# DC backup/master -> only run join scripts
 				MODULE.process('Executing join scripts ...')
-				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', password_file.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', password_file.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
 
 			failed_join_scripts = []
 			executed_join_scripts = set()
