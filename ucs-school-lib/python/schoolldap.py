@@ -163,7 +163,7 @@ class SchoolSanitizer(StringSanitizer):
 		value = super(SchoolSanitizer, self)._sanitize(value, name, further_args)
 
 		if not value and self.required:
-			raise UMC_Error(_('The request did not specify any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.'), status=503, result={'no_school_found': True})
+			raise UMC_Error(_('The request did not specify any school. You have to create a school before continuing. Use the "Schools" UMC module to create one.'), status=503, result={'no_school_found': True})
 		return value
 
 
@@ -389,7 +389,7 @@ class SchoolBaseModule(Base):
 		from ucsschool.lib.models import School
 		schools = School.from_binddn(ldap_user_read)
 		if not schools:
-			raise UMC_Error(_('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.'), status=503, result={'no_school_found': True})
+			raise UMC_Error(_('Could not find any school. You have to create a school before continuing. Use the "Schools" UMC module to create one.'), status=503, result={'no_school_found': True})
 		self.finished(request.id, [{'id': school.name, 'label': school.display_name} for school in schools])
 
 	def _groups(self, ldap_connection, school, ldap_base, pattern=None, scope='sub'):

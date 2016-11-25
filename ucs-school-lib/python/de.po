@@ -57,10 +57,10 @@ msgstr "Container"
 #: python/schoolldap.py:389
 msgid ""
 "Could not find any school. You have to create a school before continuing. "
-"Use the 'Add school' UMC module to create one."
+"Use the \"Schools\" UMC module to create one."
 msgstr ""
 "Es konnte keine Schule gefunden werden. Um Fortzufahren, muss zuerst eine "
-"Schule erstellt werden, dazu kann 'Schule hinzufügen' verwendet werden."
+"Schule erstellt werden, dazu kann das \"Schulen\"-Modul verwendet werden."
 
 #: python/models/school.py:52
 msgid "DC Name"
@@ -312,10 +312,10 @@ msgstr ""
 #: python/schoolldap.py:163
 msgid ""
 "The request did not specify any school. You have to create a school before "
-"continuing. Use the 'Add school' UMC module to create one."
+"continuing. Use the \"Schools\" UMC module to create one."
 msgstr ""
 "Die Anfrage enthält keine Schule. Um Fortzufahren, muss zuerst eine "
-"Schule erstellt werden, dazu kann 'Schule hinzufügen' verwendet werden."
+"Schule erstellt werden, dazu kann das \"Schulen\"-Modul verwendet werden."
 
 #: python/models/base.py:311
 #, python-format
