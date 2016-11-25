@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-3) unstable; urgency=medium
+
+  * Bug #40527: handle authentication failure
+
+ -- Florian Best <best@univention.de>  Fri, 25 Nov 2016 16:40:32 +0100
+
 ucs-test-ucsschool (3.0.17-2) unstable; urgency=medium
 
   * Bug #40527: fix typo
