@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-4) unstable; urgency=low
+
+  * Bug #41568: modify tests to check it it is possible to start exam for
+    student not underneath of any OU
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 25 Nov 2016 16:41:51 +0100
+
 ucs-test-ucsschool (3.0.17-3) unstable; urgency=medium
 
   * Bug #40527: handle authentication failure

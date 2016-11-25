@@ -4,7 +4,7 @@
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
-## bugs: [36251]
+## bugs: [36251, 41568]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
@@ -15,12 +15,16 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.udm
 import univention.testing.utils as utils
+import univention.testing.strings as uts
+from ucsschool.lib.models import Student
 
 
 def main():
 	with univention.testing.udm.UCSTestUDM() as udm:
 		with utu.UCSTestSchool() as schoolenv:
 			with ucr_test.UCSTestConfigRegistry() as ucr:
+				open_ldap_co = schoolenv.open_ldap_connection()
+				ucr.load()
 
 				if ucr.is_true('ucsschool/singlemaster'):
 					edudc = None
@@ -30,11 +34,18 @@ def main():
 				klasse_dn = udm.create_object('groups/group', name='%s-AA1' % school, position="cn=klassen,cn=schueler,cn=groups,%s" % oudn)
 				tea, teadn = schoolenv.create_user(school, is_teacher=True)
 				stu, studn = schoolenv.create_user(school)
+				student2 = Student(
+					name=uts.random_username(),
+					school=school,
+					firstname=uts.random_name(),
+					lastname=uts.random_name())
+				student2.position = "cn=users,%s" % ucr['ldap/base']
+				student2.create(open_ldap_co)
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [student2.dn]})
 
 				# import random computers
-				open_ldap_co = schoolenv.open_ldap_connection()
 				computers = Computers(open_ldap_co, school, 2, 0, 0)
 				pc1, pc2 = computers.create()
 
@@ -56,8 +67,8 @@ def main():
 				exam.start()
 
 				try:
-					expected_memberUid = ["%s$" % pc2.name, "exam-%s" % stu]
-					expected_uniqueMember = ["%s" % pc2.dn, "uid=exam-%s,cn=examusers,%s" % (stu, oudn)]
+					expected_memberUid = ["%s$" % pc2.name, "exam-%s" % stu, "exam-%s" % student2.name]
+					expected_uniqueMember = ["%s" % pc2.dn, "uid=exam-%s,cn=examusers,%s" % (stu, oudn), "uid=exam-%s,cn=examusers,%s" % (student2.name, oudn)]
 
 					# Get the current attributes values
 					lo = getMachineConnection()
@@ -72,6 +83,7 @@ def main():
 
 				finally:
 					exam.finish()
+					student2.remove(open_ldap_co)
 
 
 if __name__ == '__main__':

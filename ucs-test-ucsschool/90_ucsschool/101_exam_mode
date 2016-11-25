@@ -4,7 +4,7 @@
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
-## bugs: [36251]
+## bugs: [36251, 41568]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
@@ -13,12 +13,16 @@ from essential.exam import Exam, get_s4_rejected, wait_replications_check_reject
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.udm
+import univention.testing.strings as uts
+from ucsschool.lib.models import Student
 
 
 def main():
 	with univention.testing.udm.UCSTestUDM() as udm:
 		with utu.UCSTestSchool() as schoolenv:
 			with ucr_test.UCSTestConfigRegistry() as ucr:
+				open_ldap_co = schoolenv.open_ldap_connection()
+				ucr.load()
 
 				print ' ** Initial Status'
 				existing_rejects = get_s4_rejected()
@@ -32,14 +36,20 @@ def main():
 
 				tea, teadn = schoolenv.create_user(school, is_teacher=True)
 				stu, studn = schoolenv.create_user(school)
+				student2 = Student(
+					name=uts.random_username(),
+					school=school,
+					firstname=uts.random_name(),
+					lastname=uts.random_name())
+				student2.position = "cn=users,%s" % ucr['ldap/base']
+				student2.create(open_ldap_co)
 
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [student2.dn]})
 
 				print ' ** After Creating users and classes'
 				wait_replications_check_rejected_uniqueMember(existing_rejects)
-
-				open_ldap_co = schoolenv.open_ldap_connection()
 
 				# importing random computers
 				computers = Computers(open_ldap_co, school, 2, 0, 0)
@@ -74,6 +84,7 @@ def main():
 				exam.finish()
 				print ' ** After finishing the exam'
 				wait_replications_check_rejected_uniqueMember(existing_rejects)
+				student2.remove(open_ldap_co)
 
 
 if __name__ == '__main__':

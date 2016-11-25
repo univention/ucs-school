@@ -52,7 +52,6 @@ import univention.testing.udm as utu
 import univention.testing.strings as uts
 import univention.testing.udm as udm_test
 
-from univention.config_registry import handler_set, handler_unset
 import univention.admin.uldap as udm_uldap
 import univention.admin.uexceptions as udm_errors
 from univention.lib.umc_connection import UMCConnection as _UMCConnection
