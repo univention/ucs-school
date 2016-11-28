@@ -11,7 +11,7 @@
 <book lang="de" id="ucsschool-4.1r2-setup">
 	<bookinfo>
 		<title>
-			&ucsUAS; Szenarien-Guide
+			&ucsUAS; Szenarien-Handbuch
 		</title>
 		<subtitle>
 			Organisation und Aufbau von IT-Infrastrukturen für Schulen
@@ -48,15 +48,15 @@ feedback@univention.de
 		<title>Verwendung des Dokuments</title>
 		<para>
 			Diese Anleitung zeigt das empfohlene Vorgehen für den Aufbau der
-			definierten Standardszenarien von UCS@school bei Schulträgern auf.
+			definierten Standardszenarien von &ucsUAS; bei Schulträgern auf.
 		</para>
 		<para>
 			Die Anleitung ist in mehrere Kapitel aufgeteilt, die nacheinander
 			abgearbeitet werden sollten. Die Kapitel bauen aufeinander auf und
 			können auch einzeln verwendet werden, um bestehende Installationen
 			und Verfahren zu prüfen.  Im Folgenden sind die Inhalte, die für die
-			Einführung von UCS@school geprüft werden sollten, in Form von
-			Checklisten beschrieben.  Diese verlinken auf die weiterführenden
+			Einführung von &ucsUAS; geprüft werden sollten, in Form von
+			Checklisten beschrieben.  Diese verweisen auf die weiterführenden
 			Inhalte des Dokuments.
 		</para>
 		<section id="setup-manual_organisation">
@@ -65,15 +65,15 @@ feedback@univention.de
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
 					<listitem><para>Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
-					<listitem><para>Verfügt der Betreiber über das erforderliche Know-How?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
-					<listitem><para>Wie werden Schulen über die Einführung von UCS@school informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
+					<listitem><para>Verfügt der Betreiber über das erforderliche Wissen?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
+					<listitem><para>Wie werden Schulen über die Einführung von &ucsUAS; informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
 					<listitem><para>Wer baut in den Schulen Server, Clients und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
 					<listitem><para>In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
-					<listitem><para>In welchem zeitlichen Rahmen soll der Rollout der Pilotumgebung und später der Gesamtinfrastruktur erfolgen?</para></listitem>
+					<listitem><para>In welchem zeitlichen Rahmen soll der Rollout der Pilot-Installation und später der Gesamtinfrastruktur erfolgen?</para></listitem>
 					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, z.B. Passwörter zurücksetzen?</para></listitem>
-					<listitem><para>Wie werden Schulen mit UCS@school vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
+					<listitem><para>Wie werden Schulen mit &ucsUAS; vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
 					<listitem><para>Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
-					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter (Key Performance Indicators, KPIs)?</para></listitem>
+					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter, um dies zu messen?</para></listitem>
 					<listitem><para>Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen erfasst und von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
 					<listitem><para>Wer ist verantwortlich für die Pflege von Information in der Schulverwaltungssoftware und wie können diese Daten importiert werden?</para></listitem>
 				</itemizedlist>
@@ -83,18 +83,18 @@ feedback@univention.de
 			<title>Checkliste: Zentrale Services</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
-					<listitem><para>Wo werden die zentralen UCS@school-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
+					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
 					<listitem><para>Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
-					<listitem><para>Wie wird die Aufrecherhaltung des Betriebs sichergestellt, z.B. Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
+					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, z.B. Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
 					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
 							<itemizedlist spacing="compact" mark="whitesquare">
-								<listitem><para>Installation UCS-Server mit UCS@school-App: <xref linkend="installation" /></para></listitem>
+								<listitem><para>Installation UCS-Server mit &ucsUAS;-App: <xref linkend="installation" /></para></listitem>
 								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
 								<listitem><para>Import von Benutzer-, Client- und Netzwerkdaten: <xref linkend="import" /></para></listitem>
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
-					<listitem><para>Welche über UCS@school hinausgehenden Dienste und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
+					<listitem><para>Welche über &ucsUAS; hinausgehenden Dienste und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
 							<itemizedlist spacing="compact" mark="whitesquare">
 								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Dienste vor unerwünschtem Zugriff geschützt?</para></listitem>
 							</itemizedlist>
@@ -110,7 +110,7 @@ feedback@univention.de
 					<listitem><para>Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
 					<listitem><para>Setzt die Schule bereits eine Schulserver-Lösung ein?</para>
 						<itemizedlist spacing="compact" mark="whitesquare">
-							<listitem><para>Welche Funktionen sind der Schule wichtig und wie sie durch UCS@school abgelöst werden (nicht in allen Szenarien notwendig)?</para></listitem>
+							<listitem><para>Welche Funktionen sind der Schule wichtig und wie sie durch &ucsUAS; abgelöst werden (nicht in allen Szenarien notwendig)?</para></listitem>
 						</itemizedlist>
 					</listitem>
 					<listitem><para>Wie schnell und stabil ist der Internetzugang der Schule?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_internet" />.</para></listitem>
@@ -126,7 +126,7 @@ feedback@univention.de
 								<listitem><para>Wie sind die Patchfelder und Netzdosen belegt?</para></listitem>
 							</itemizedlist>
 					</listitem>
-					<listitem><para>Welche Bau-/Verlegearbeiten und Beschaffungen müssen vorgenommen werden, um die Betriebsbereitschaft für die Schule herzustellen?</para></listitem>
+					<listitem><para>Welche Bauarbeiten und Beschaffungen müssen vorgenommen werden, um die Betriebsbereitschaft für die Schule herzustellen?</para></listitem>
 					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" />.</para></listitem>
 				</itemizedlist>
 			</para>
@@ -155,10 +155,9 @@ feedback@univention.de
 				Dies ist das Szenario mit der geringsten Komplexität. Die UCS
 				Systeme werden zentral in einem Rechenzentrum betrieben und
 				dienen als Identity- und Access-Management. Beispielsweise
-				lassen sich Groupware- und Collaboration-Lösungen oder
-				Lernmanagement-Software anbinden und ermöglichen so den
-				Anwender_innen die Nutzung der Dienste mit ein und dem selben
-				Benutzerkonto und -passwort.
+				lassen sich Groupware-Lösungen oder Lernmanagement-Software
+				anbinden und ermöglichen so den Anwender_innen die Nutzung der
+				Dienste mit ein und dem selben Benutzerkonto und -passwort.
 			</para>
 			<figure id="fig-scenario-1">
 				<title>Szenario 1: Zentraler Verzeichnisdienst für
@@ -182,7 +181,7 @@ feedback@univention.de
 				Access-Management. Zudem sind die Schulen über VPN, Standleitung
 				oder ähnliches an das Rechenzentrum angebunden. An den Schulen
 				werden WLAN-Access-Points installiert, die RADIUS unterstützen
-				(WPA-Enterprise / IEEE 802.1X). Ergänzend können auch wie in
+				(WPA2-Enterprise / IEEE 802.1X). Ergänzend können auch wie in
 				Szenario 1 weitere Webdienste an die zentralen Systeme
 				angebunden werden.
 			</para>
@@ -231,7 +230,7 @@ feedback@univention.de
 				die Schulserver nicht an der Schule stehen sondern im
 				Rechenzentrum betrieben werden. Dies erlaubt es die
 				Hardwarekosten zu verringern, erfordert allerdings auch eine
-				sehr gute Anbindung der Schulen an das Rechenzentrum (1 Gbit/s
+				sehr gute Anbindung der Schulen an das Rechenzentrum (1 GBit/s
 				oder mehr). Szenario 3 und 4 können auch kombiniert werden,
 				sodass die Schulserver für gut angebundene Schulen im
 				Rechenzentrum betrieben werden und die Schulserver von weniger
@@ -263,10 +262,10 @@ feedback@univention.de
 			<title>Workshop mit Partner und/oder Hersteller</title>
 			<para>
 				Dabei werden Konzepte erstellt oder besprochen, es findet ein
-				Know-How-Transfer statt und das Univention Team oder der
-				Partner geben eine Einführung in Best Practices rund um UCS
-				und UCS@school. Oft werden in diesem Rahmen bereits die
-				zentralen Systeme und eine Demo-Schule installiert.
+				Wissenstransfer statt und das Univention Team oder der
+				Partner geben eine Einführung in bewährte Vorgehensweisen rund
+				um &ucsUCS; und &ucsUAS;. Oft werden in diesem Rahmen bereits
+				die zentralen Systeme und eine Demo-Schule installiert.
 			</para>
 		</section>
 		<section id="preparations_info">
@@ -298,18 +297,17 @@ feedback@univention.de
 				usw. Es sollte vermieden werden, mit der größten Schule zu
 				starten, die vermutlich das komplexeste lokale Setup mit
 				Extrawünschen bedeutet, vermutlich auch über selbst betriebene
-				IT-Systeme verfügt, die sie ungerne abgelöst sieht und dem neuen
-				System gegenüber sehr zurückhaltend ist. Der Fokus sollte sein,
-				für den Großteil der Schulen eine stabile Lösung mit Mehrwert
-				anzubieten. Große, komplexe oder zögerliche Schulen ziehen dann
-				in aller Regel mit der Zeit nach.
+				IT-Systeme verfügt, die nur mit hohem Aufwand abgelöst werden
+				können. Der Fokus sollte sein, für den Großteil der Schulen eine
+				stabile Lösung mit Mehrwert anzubieten. Große, komplexe oder
+				zögerliche Schulen ziehen dann in aller Regel mit der Zeit nach.
 			</para>
 		</section>
 		<section id="preparations_training">
 			<title>Schulung</title>
 			<para>
 				Die Lehrkräfte müssen im Umgang mit den Rechnern und
-				insbesondere mit den pädagogische Funktionen von UCS@school
+				insbesondere mit den pädagogische Funktionen von &ucsUAS;
 				geschult werden. Dazu sollten wiederkehrende Termine angeboten
 				werden.
 			</para>
@@ -328,7 +326,7 @@ feedback@univention.de
 				<emphasis>für Szenario 2, 3 und 4</emphasis>
 			</para>
 			<para>
-				In UCS@school wird für jede Schule mindestens ein Subnetz
+				In &ucsUAS; wird für jede Schule mindestens ein Subnetz
 				benötigt, sobald an den Schulen Endgeräte eingesetzt werden
 				(WLAN-Geräte, Windows/Linux Rechner ...). Je nach Konzept und
 				Szenario werden auch schnell deutlich mehr Subnetze pro Schule
@@ -336,7 +334,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Wir empfehlen die Verwendung des privaten 10.0.0.0/8 Netzes
-				für die UCS@school-Domäne. Dieses wird dann in viele kleinere
+				für die &ucsUAS;-Domäne. Dieses wird dann in viele kleinere
 				Netze zerlegt. Für jede Schule wird ein /16-Netz reserviert,
 				das dann wiederum je nach Bedarf in kleinere Subnetze
 				aufgeteilt wird.
@@ -407,7 +405,7 @@ feedback@univention.de
 			<para>
 				In <xref linkend="import_networks" /> ist eine Tabellenvorlage
 				für das Netzkonzept hinterlegt. Bitte tragen sie ihr
-				individuelles Netzkonzept in diese Tablle ein. Die Tabelle
+				individuelles Netzkonzept in diese Tabelle ein. Die Tabelle
 				kann später für die Import-Phase gleich die passenden CSV-Dateien
 				erzeugen.
 			</para>
@@ -423,7 +421,7 @@ feedback@univention.de
 							<row>
 								<entry>Netz (CIDR)</entry>
 								<entry>DHCP-Adressbereich</entry>
-								<entry>Anzahl IPs</entry>
+								<entry>Anzahl IP-Adressen</entry>
 								<entry>Verwendung</entry>
 							</row>
 						</thead>
@@ -441,8 +439,8 @@ feedback@univention.de
 			<para>
 				Alle zentralen UCS Systeme werden in diesem Netz installiert.
 				Auf eine Adressvergabe via DHCP wird verzichtet, alle Systeme
-				erhalten eine statische IP-Konfiguration.
-				Besteht Bedarf an einer DMZ, so muss diese entsprechend
+				erhalten eine statische IP-Konfiguration.  Besteht Bedarf an
+				einer Demilitarisierten Zone (DMZ), so muss diese entsprechend
 				ergänzt werden (bspw. <code>10.0.1.0/24</code>).
 			</para>
 			<para>
@@ -457,7 +455,7 @@ feedback@univention.de
 							<row>
 								<entry>Netz (CIDR)</entry>
 								<entry>DHCP-Adressbereich</entry>
-								<entry>Anzahl IPs</entry>
+								<entry>Anzahl IP-Adressen</entry>
 								<entry>Verwendung</entry>
 							</row>
 						</thead>
@@ -491,7 +489,7 @@ feedback@univention.de
 							<row>
 								<entry>Netz (CIDR)</entry>
 								<entry>DHCP-Adressbereich</entry>
-								<entry>Anzahl IPs</entry>
+								<entry>Anzahl IP-Adressen</entry>
 								<entry>Verwendung</entry>
 							</row>
 						</thead>
@@ -553,7 +551,7 @@ feedback@univention.de
 				Verwaltungsbereich und edukativen Bereich betrieben. Dieses
 				Modell richtet sich an große Schulen mit vielen Clients. Die
 				Auswahl der Subnetze ist so gewählt, dass sie sich Bedarf noch
-				erweitern lassen. Die Separierung des edukativen Bereichs in
+				erweitern lassen. Die Unterteilung des edukativen Bereichs in
 				einzelne Subnetze kann bspw. pro Gebäude, pro Etage oder sogar
 				pro Computerraum erfolgen. Netzwerkdrucker können in die
 				Subnetze aufgenommen werden, in dem sich auch die zugehörigen
@@ -561,20 +559,19 @@ feedback@univention.de
 				hinzugefügt.
 			</para>
 			<para>
-				Folgende Punkte haben sich als Best Practices
+				Folgende Punkte haben sich als bewährte Vorgehensweisen
 				herauskristallisiert:
 				<itemizedlist spacing="compact">
 					<listitem>
 						<para>
-							die Netzwerksegementierung sollte auf Ebene der
-							Netzwerkgeräte wie Router, Firewall und
-							Layer-3-Switches stattfinden. UCS unterstützt zwar
-							VLANs auch direkt auf dem eigenen
-							Netzwerkinterface, allerdings raten wir für ein
-							umfangreiches Setup wie beim
+							die Segmentierung der Netze sollte auf Ebene der
+							Netzgeräte wie Router, Firewall und Layer-3-Switches
+							stattfinden. UCS unterstützt zwar VLANs auch direkt
+							auf dem eigenen Netzwerkinterface, allerdings raten
+							wir für ein umfangreiches Setup wie beim
 							Beispiel-&quot;Berufsschule&quot; davon ab. Wichtig
 							ist, dass auf den Switches dann auch die DHCP-Relay-
-							bzw.  IP-Helper-Funktionen korrekt konfiguriert
+							bzw. IP-Helper-Funktionen korrekt konfiguriert
 							sind.
 						</para>
 					</listitem>
@@ -603,10 +600,10 @@ feedback@univention.de
 		<section id="concepts_names">
 			<title>Namenskonzepte</title>
 			<para>
-				In einer UCS@school-Domäne müssen viele Namen eindeutig sein,
+				In einer &ucsUAS;-Domäne müssen viele Namen eindeutig sein,
 				bspw. Benutzernamen, E-Mail-Adressen, Rechnernamen, Schulkürzel
-				(Organizational Unit, OU), Gruppen und Klassen usw. Da in einer
-				UCS@school-Domäne sehr viele Objekte mit einem Namen vorhanden
+				(Organisationseinheit, OU), Gruppen und Klassen usw. Da in einer
+				&ucsUAS;-Domäne sehr viele Objekte mit einem Namen vorhanden
 				sein werden, ist es hilfreich bereits am Namen selbst ein Objekt
 				und seine grundlegenden Eigenschaften identifizieren zu können.
 			</para>
@@ -658,7 +655,7 @@ feedback@univention.de
 							als Endung für den Domänennamen führt aus diesem Grund
 							häufig zu Problemen beim Einsatz von Unix-basierten
 							Betriebssystemen und ist darüberhinaus nicht
-							standardkonform.
+							konform zum Standard.
 						</para>
 					</listitem>
 					<listitem>
@@ -770,8 +767,10 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Beispiel für Benutzer-Import-Config (JSON), siehe
-					<ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">UCS@school Handbuch zur CLI-Import-Schnittstelle</ulink>
+					Beispiel für eine Konfiguration zum Import von
+					Benutzerkonten (JSON), siehe <ulink
+						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
+						zur CLI-Import-Schnittstelle</ulink>
 				</para>
 				<para>
 					Klassen müssen mit dem entsprechenden Schulkürzel als Präfix
@@ -788,7 +787,7 @@ feedback@univention.de
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Folgende Punkte haben sich als Best Practices
+					Folgende Punkte haben sich als bewährte Vorgehensweisen
 					herauskristallisiert:
 					<itemizedlist>
 						<listitem><para>Durchgängige Verwendung von Kleinbuchstaben</para></listitem>
@@ -814,9 +813,9 @@ feedback@univention.de
 				den täglichen IT-Betrieb unabdingbar.
 			</para>
 			<para>
-				Das Monitoring erfolgt für UCS@school immer aus der Zentrale
-				heraus, entsprechend ist ein Server-System für den Betrieb des
-				Monitorings vorzusehen, siehe <xref
+				Das Monitoring erfolgt für &ucsUAS; immer aus der Zentrale
+				heraus.  Entsprechend ist ein Server-System für den Betrieb des
+				Monitoring-Dienstes vorzusehen, siehe <xref
 					linkend="installation_member" />.
 			</para>
 			<para>
@@ -825,7 +824,7 @@ feedback@univention.de
 				Langzeitinformationen gespeichert werden, z.B. die Entwicklung
 				der Festplattenbelegung.  Diese sind jedoch für den Betrieb
 				einer umfangreichen IT-Infrastruktur erforderlich.  Eine Lösung,
-				deren Konfiguration für UCS dokumientiert ist, ist z.B. <ulink
+				deren Konfiguration für UCS dokumentiert ist, ist z.B. <ulink
 					url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Munin</ulink>,
 				welches bei Bedarf eingerichtet werden kann.
 			</para>
@@ -844,39 +843,40 @@ feedback@univention.de
 				Auf den zentralen Servern:
 				<itemizedlist>
 					<listitem><para><literal>/var/univention-backup/</literal>:
-							Umfasst nächtlich angelegte Dumps der UCR-Variablen,
-							sofern vorhanden der OpenLDAP-Datenbank, sofern
-							vorhanden der Samba-Datenbank sowie das
-							Sysvol-Verzeichnis</para></listitem>
+							Umfasst nächtlich angelegte Ausgaben der
+							&ucsUCR;-Variablen, der OpenLDAP- und der
+							Samba-Datenbank sowie das Sysvol-Verzeichnis, sofern
+							vorhanden</para></listitem>
 					<listitem><para><literal>/etc/univention/ssl</literal> auf
 							dem UCS Master und den UCS Backups: Beinhaltet das
 							Root-Zertifikat der internen Zertifizierungsstelle
-							und alle Host-Zertifikate</para></listitem>
+							und alle Rechner-Zertifikate</para></listitem>
 				</itemizedlist>
 			</para>
 			<para>
 				Sofern vorhanden, auf den Schulservern:
 				<itemizedlist>
 					<listitem><para><literal>/var/univention-backup/</literal>:
-							Insbesondere der UCR-Dump. Die Sicherung der
-							OpenLDAP- und Samba-Datenbanken ist weniger
-							relevant, da dies bspw. bei einer Neuinstallation
-							des Schulservers vom UCS Master/Backup aufrepliziert
+							Insbesondere die Sicherung der &ucsUCR;-Variablen.
+							Die Sicherung der OpenLDAP- und Samba-Datenbanken
+							ist weniger relevant, da dies bspw. bei einer
+							Neuinstallation des Schulservers vom UCS
+							Master/Backup erneut repliziert
 							wird.</para></listitem>
 					<listitem><para><literal>/home</literal>: Beinhaltet die
-							Benutzerprofile und die Home-Laufwerke der
+							Benutzerprofile und die Heimatlaufwerke der
 							Benutzer_innen. Außerdem die Daten der
 							Klassenfreigaben - ggf. weitere, manuell angelegte
 							Freigaben</para></listitem>
 				</itemizedlist>
 			</para>
 			<para>
-				Folgende Punkte haben sich als Best Practices
+				Folgende Punkte haben sich als bewährtes Vorgehen
 				herauskristallisiert:
 				<itemizedlist>
 					<listitem><para>Die Sicherung sollte auf ein vom UCS System
 							physikalisch getrenntes Gerät erfolgen, bspw. ein
-							NAS-System</para></listitem>
+							Network Attached Storage (NAS)</para></listitem>
 					<listitem><para>Die Sicherung sollte überwacht werden, bspw.
 							durch ein Monitoring-Plugin, dass bei Misserfolg
 							warnt</para></listitem>
@@ -889,13 +889,13 @@ feedback@univention.de
 				<emphasis>für alle Szenarien</emphasis>
 			</para>
 			<para>
-				Für den Betrieb der UCS@school-Umgebung muss ein Team an
+				Für den Betrieb der &ucsUAS;-Umgebung muss ein Team an
 				technischen Mitarbeiter_innen aufgebaut werden, die auch im
 				Fehlerfall kontaktiert werden können. Dabei sollten bei diesem
 				Support-Team entsprechende Werkzeuge zur Kommunikation, bspw.
 				ein Ticket-System (bspw. KIX aus dem Univention App Center, das
 				sich direkt in die UCS Benutzerverwaltung integriert) und zur
-				Remoteunterstützung zum Einsatz kommen.
+				Fernwartung zum Einsatz kommen.
 			</para>
 			<para>
 				Es müssen auch die Support- und Eskalationswege definiert und an
@@ -906,14 +906,14 @@ feedback@univention.de
 					<para>
 						IT-Verantwortliche an den Schulen kontaktieren das
 						Support-Team des Betreibers entweder über das Helpdesk-Modul
-						von UCS@school oder direkt per E-Mail an das Ticketsystem.
+						von &ucsUAS; oder direkt per E-Mail an das Ticketsystem.
 						Bei dringenden / kritischen Fällen sollte das telefonisch
 						erfolgen.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Das Support-Team des Betreibers übernimmt den First-Level
+						Das Support-Team des Betreibers übernimmt den First-
 						und Second-Level-Support oder ein Univention Partner
 						übernimmt den Second-Level-Support.
 					</para>
@@ -934,17 +934,19 @@ feedback@univention.de
 			Virtualisierungsserver muss sich dabei an den Anforderungen der
 			virtualisierten Systeme richten und dabei noch genügend
 			Möglichkeiten zur nachträglichen Erweiterung bereithalten. Von
-			einer Überprovisionierung der Hardwareressourcen wird abgeraten.
-			Für den Speicherplatz sollten SAS-Festplatten mit 10.000 oder
-			15.000 rpm zum Einsatz kommen (oder vergleichbar). SSDs bringen
-			natürlich ein weiteren Leistungsschub, sind aber kein Muss.
+			einer Zuweisung von mehr als den vorhandenen Hardwareressourcen zu
+			den virtuellen Maschinen wird abgeraten.  Für den Speicherplatz
+			sollten SAS-Festplatten mit 10.000 oder 15.000 Umdrehungen pro
+			Minute zum Einsatz kommen (oder vergleichbar). Solid State Disks
+			(SSDs) bringen natürlich ein weiteren Leistungsschub, sind aber kein
+			Muss.
 		</para>
 		<para>
 			Dies genannten Werte sind die Minimalanforderungen für die oben
 			genannten Szenarien. Je nach Größe der Umgebung und Anzahl der
 			aktiven Geräte und Benutzer können die Anforderungen höher liegen.
 			Es wird erwartet, dass der Betreiber die tatsächliche Auslastung
-			des Systems durch eine Monitoring-Software überwacht und die den
+			des Systems durch eine Software zum Monitoring überwacht und die den
 			VMs zugeteilten Ressourcen bei Bedarf anpassen kann.
 		</para>
 		<section id="infrastructure-and_hardware-requirements_servers">
@@ -1047,8 +1049,8 @@ feedback@univention.de
 					<emphasis>für Szenarien 3 und 4</emphasis>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen Szenario &quot;Grundschule (25
-					Desktoprechner, 25 Tablets)&quot;:
+					Minimale Systemvoraussetzungen Szenario &quot;Grundschule
+					(25 Computer, 25 Tablets)&quot;:
 					<itemizedlist>
 						<listitem><para>2 CPUs</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
@@ -1060,7 +1062,7 @@ feedback@univention.de
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen Szenario &quot;Berufsschule
-					(300 Desktoprechner, 200 Tablets)&quot;:
+					(300 Computer, 200 Tablets)&quot;:
 					<itemizedlist>
 						<listitem><para>8 CPUs</para></listitem>
 						<listitem><para>32 GB RAM</para></listitem>
@@ -1099,8 +1101,8 @@ feedback@univention.de
 					Geschwindigkeit des Zugangs sollte mindestens 6 MBit/s
 					betragen.  Ausschlaggebend für die notwendige
 					Geschwindigkeit ist die Anzahl der gleichzeitig aktiven
-					Clients.  Als Richtwert kann von einem Bedarf von mind. 0,3
-					MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
+					Clients.  Als Richtwert kann von einem Bedarf von mindestens
+					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
 					inbesondere bei der Einführung von BYOD zu beachten, da
 					Nutzer ggf. mehr als ein Gerät mitbringen, z.B.  Laptop,
 					Smartphone und Tablet.
@@ -1119,7 +1121,7 @@ feedback@univention.de
 				<para>
 					Die Bandbreite dieser Anbindung ist entscheidend. Szenario 4
 					ist bspw. nur bei einer sehr guten Anbindung im Bereich von 1
-					Gbit/s oder mehr sinnvoll. Bei VPN über handelsübliche
+					GBit/s oder mehr sinnvoll. Bei VPN über handelsübliche
 					DSL-Verbindungen empfiehlt sich stattdessen das Szenario 3.
 				</para>
 			</section>
@@ -1132,7 +1134,7 @@ feedback@univention.de
 				<para>
 					Dabei sollte die <ulink
 						url="https://www.univention.de/download/ucs-download/iso-installationsimage/">aktuellste
-						UCS DVD (ISO)</ulink> verwendet werden.
+						&ucsUCS; DVD (ISO)</ulink> verwendet werden.
 				</para>
 			</listitem>
 			<listitem>
@@ -1150,9 +1152,9 @@ feedback@univention.de
 			</listitem>
 			<listitem>
 				<para>
-					Partitionierung: Wenn sie geübt im Umgang mit LVM sind, wählen
-					sie LVM als Partitionierungsoption. Andernfalls wählen sie
-					kein LVM.
+					Partitionierung: Wenn sie geübt im Umgang mit LVM sind,
+					wählen sie LVM als Option für die Partitionierung.
+					Andernfalls wählen sie kein LVM.
 				</para>
 			</listitem>
 			<listitem>
@@ -1164,7 +1166,7 @@ feedback@univention.de
 			</listitem>
 		</itemizedlist>
 		<section id="installation_master">
-			<title>Installation UCS Master</title>
+			<title>Installation &ucsUCS; Master</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 				<itemizedlist>
@@ -1174,7 +1176,7 @@ feedback@univention.de
 							|IP-des-DNS-Servers-ihres-Internetanbieters|
 					</para></listitem>
 					<listitem><para>Wählen sie &quot;Erstellen einer neuen
-							UCS-Domäne&quot; </para></listitem>
+							&ucsUCS;-Domäne&quot; </para></listitem>
 					<listitem><para>Die automatisch vorgeschlagenen LDAP-Basis
 							sollte nicht geändert werden </para></listitem>
 					<listitem><para><emphasis>für Szenarien 3 und 4</emphasis>:
@@ -1187,10 +1189,10 @@ feedback@univention.de
 							verfügbaren Errata-Update</para></listitem>
 					<listitem><para>Rufen sie nach Abschluss der Installation
 							das Univention App Center auf und installieren Sie
-							die UCS@school App</para></listitem>
+							die &ucsUAS; App</para></listitem>
 					<listitem><para>Starten sie im Anschluss in der
 							orangefarbenen Kategorie
-							&quot;Schuladministration&quot; den UCS@school
+							&quot;Schuladministration&quot; den &ucsUAS;
 							Einrichtungsassistenten und wählen dort
 							&quot;Multi-Server Umgebung&quot; </para></listitem>
 					<listitem><para>Führen sie alle evtl.  ausstehenden
@@ -1200,7 +1202,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_backup">
-			<title>Installation UCS Backup</title>
+			<title>Installation &ucsUCS; Backup</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 				Zur Lastverteilung bei der LDAP-Replikation können neben dem 1.
@@ -1208,14 +1210,14 @@ feedback@univention.de
 				<itemizedlist>
 					<listitem><para>vergeben einer IP-Adresskonfiguration
 							entsprechend des Netzkonzepts</para></listitem>
-					<listitem><para>DNS Server: 10.0.0.10 (IP des UCS Master,
-							DNS Forwarder wird beim Join vom automatisch UCS
+					<listitem><para>DNS Server: 10.0.0.10 (IP des &ucsUCS; Master,
+							DNS Forwarder wird beim Join vom automatisch &ucsUCS;
 							Master übernommen)</para></listitem>
 					<listitem><para>Wählen sie &quot;Einer bestehenden
-							UCS-Domäne beitreten&quot; und dann
+							&ucsUCS;-Domäne beitreten&quot; und dann
 							&quot;Domänencontroller
 							Backup&quot;</para></listitem>
-					<listitem><para>Stellen sie sicher, dass der UCS Master alle
+					<listitem><para>Stellen sie sicher, dass der &ucsUCS; Master alle
 							verfügbaren Updates installiert
 							hat</para></listitem> <listitem><para>Aktualisieren
 							sie das System bis zum letzten verfügbaren
@@ -1223,10 +1225,10 @@ feedback@univention.de
 							beitreten (Join)</para></listitem>
 					<listitem><para>Rufen sie nach Abschluss der Installation
 							das Univention App Center auf und installieren Sie
-							die UCS@school App</para></listitem>
+							die &ucsUAS; App</para></listitem>
 					<listitem><para>Starten sie im Anschluss in der
 							orangefarbenen Kategorie
-							&quot;Schuladministration&quot; den UCS@school
+							&quot;Schuladministration&quot; den &ucsUAS;
 							Einrichtungsassistenten und wählen dort
 							&quot;Multi-Server Umgebung&quot;</para></listitem>
 					<listitem><para>Führen sie alle evtl. ausstehenden
@@ -1236,22 +1238,22 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_slave">
-			<title>Installation UCS Slave für RADIUS, Groupware,
+			<title>Installation &ucsUCS; Slave für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 				<itemizedlist>
 				<listitem><para>Verwenden sie nach Möglichkeit für jeden Dienst
-						einen eigene UCS Slave Server</para></listitem>
+						einen eigene &ucsUCS; Slave Server</para></listitem>
 				<listitem><para>vergeben einer IP-Adresskonfiguration
 						entsprechend des Netzkonzepts</para></listitem>
-				<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des UCS
-						Master und des UCS Backup, DNS Forwarder wird beim Join
-						automatisch vom UCS Master übernommen)</para></listitem>
-				<listitem><para>Wählen sie &quot;Einer bestehenden UCS-Domäne
+				<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des &ucsUCS;
+						Master und des &ucsUCS; Backup, DNS Forwarder wird beim Join
+						automatisch vom &ucsUCS; Master übernommen)</para></listitem>
+				<listitem><para>Wählen sie &quot;Einer bestehenden &ucsUCS;-Domäne
 						beitreten&quot; und dann &quot;Domänencontroller
 						Slave&quot;</para></listitem> <listitem><para>Stellen
-						sie sicher, dass der UCS Master alle verfügbaren Updates
+						sie sicher, dass der &ucsUCS; Master alle verfügbaren Updates
 						installiert hat</para></listitem>
 				<listitem><para>Aktualisieren sie das System bis zum letzten
 						verfügbaren Errata-Update und lassen sie das System der
@@ -1261,7 +1263,7 @@ feedback@univention.de
 						RADIUS App (oder die gewünschte App für Groupware,
 						Collaboration, Lernplattformen usw.)</para></listitem>
 				<listitem><para>Installieren sie <emphasis
-							role="strong">nicht</emphasis> die UCS@school
+							role="strong">nicht</emphasis> die &ucsUAS;
 						App</para></listitem> <listitem><para>Führen sie alle
 						evtl. ausstehenden Joinskripte aus (UMC → Domäne →
 						Domänenbeitritt)</para></listitem>
@@ -1269,20 +1271,20 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_member">
-			<title>Installation UCS Memberserver für Monitoring</title>
+			<title>Installation &ucsUCS; Memberserver für Monitoring</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 				<itemizedlist>
 					<listitem><para>vergeben einer IP-Adresskonfiguration
 							entsprechend des Netzkonzepts</para></listitem>
-					<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des UCS
-							Master und des UCS Backup, DNS Forwarder wird beim
-							Join automatisch vom UCS Master
+					<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des &ucsUCS;
+							Master und des &ucsUCS; Backup, DNS Forwarder wird beim
+							Join automatisch vom &ucsUCS; Master
 							übernommen)</para></listitem> <listitem><para>Wählen
-							sie &quot;Einer bestehenden UCS-Domäne
+							sie &quot;Einer bestehenden &ucsUCS;-Domäne
 							beitreten&quot; und dann
 							&quot;Memberserver&quot;</para></listitem>
-					<listitem><para>Stellen sie sicher, dass der UCS Master alle
+					<listitem><para>Stellen sie sicher, dass der &ucsUCS; Master alle
 							verfügbaren Updates installiert
 							hat</para></listitem> <listitem><para>Aktualisieren
 							sie das System bis zum letzten verfügbaren
@@ -1291,12 +1293,13 @@ feedback@univention.de
 					<listitem><para>Rufen sie nach Abschluss der Installation
 							das Univention App Center auf und installieren Sie
 							die Icinga App</para></listitem>
-					<listitem><para>Ergänzen sie ein Langzeitmonitoring, wie
-							bspw. <ulink
+					<listitem><para>Ergänzen sie ein Monitoring mit
+							Langzeit-Speicherung von Messwerten, wie bspw.
+							<ulink
 								url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Munin</ulink>
 							</para></listitem>
 					<listitem><para>Installieren sie <emphasis
-								role="strong">nicht</emphasis> die UCS@school
+								role="strong">nicht</emphasis> die &ucsUAS;
 							App</para></listitem> <listitem><para>Führen sie
 							alle evtl. ausstehenden Joinskripte aus (UMC →
 							Domäne → Domänenbeitritt)</para></listitem>
@@ -1317,7 +1320,7 @@ feedback@univention.de
 		<section id="base-configuration_mail">
 			<title>E-Mail Basisdienst</title>
 			<para>
-				UCS-Sever verschicken regelmäßig E-Mails, um den aktuellen
+				&ucsUCS;-Sever verschicken regelmäßig E-Mails, um den aktuellen
 				Systemstatus zu kommunizieren.  Z.B. über Cron und über Nagios.
 				Um diese E-Mail verarbeiten zu können ist die Mailauslieferung
 				zu konfigurieren.  Dazu ist wie folgt vorzugehen: TODO
@@ -1349,34 +1352,34 @@ feedback@univention.de
 					<para>
 						<envar>directory/manager/web/modules/autosearch</envar>: 0 → deaktiviert
 						die automatische Suche nach allen Objekten beim Öffnen der
-						UCS Module
+						&ucsUCS; Module
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>ucsschool/wizards/autosearch</envar>: <literal>false</literal> → deaktiviert die
 						automatische Suche nach allen Objekten beim Öffnen der
-						UCS@school Module
+						&ucsUAS; Module
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>samba4/sysvol/sync/from_downstream</envar>: <literal>false</literal> → konfiguriert den
-						Sysvol-Sync unidirektional vom UCS Master zu den UCS@school
+						Sysvol-Sync unidirektional vom &ucsUCS; Master zu den &ucsUAS;
 						Schulservern
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 → erlaubt den Zugriff
-						des Monitoring-Servers auf den NRPE-Dienst der übrigen UCS
+						des Monitoring-Servers auf den NRPE-Dienst der übrigen &ucsUCS;
 						Systeme
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>munin/node/allowedhosts</envar>: 10.0.0.20/32 → erlaubt den Zugriff
-						des Monitoring-Servers auf die munin-Nodes der übrigen UCS
+						des Monitoring-Servers auf die munin-Nodes der übrigen &ucsUCS;
 						Systeme (Achtung CIDR-Schreibweise!)
 					</para>
 				</listitem>
@@ -1384,7 +1387,7 @@ feedback@univention.de
 					<para>
 						<envar>ucsschool/helpdesk/recipient</envar>:
 						<email>mail-adresse-des-support-teams@schultraeger.de</email>
-						→ E-Mail-Adresse, an die Nachrichten vom UCS@school
+						→ E-Mail-Adresse, an die Nachrichten vom &ucsUAS;
 						Helpdesk-Modul geschickt werden - Zustellung testen!
 					</para>
 				</listitem>
@@ -1479,7 +1482,7 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Im Reiter Richtlinien scrollen sie bis &quot;Richtlinie:
-						Univention Configuration Registry&quot; und klappen diese
+						&ucsUCR;&quot; und klappen diese
 						Option auf
 					</para>
 				</listitem>
@@ -1499,13 +1502,13 @@ feedback@univention.de
 					<para>
 						Die Richtlinie wird nun auf alle Systeme unterhalb des
 						Containers &quot;computer&quot; vererbt. Unterhalb dieses
-						Containers befinden sich die zentralen UCS Systeme
+						Containers befinden sich die zentralen &ucsUCS; Systeme
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Hinweis: Die UCS@school Schulserver setzen automatisch den
-						UCS Master und die UCS Backups als Zeitserver. Damit wird
+						Hinweis: Die &ucsUAS; Schulserver setzen automatisch den
+						&ucsUCS; Master und die &ucsUCS; Backups als Zeitserver. Damit wird
 						automatisch eine Kaskadierung erreicht
 					</para>
 				</listitem>
@@ -1518,7 +1521,7 @@ feedback@univention.de
 			Sind die zentralen Systeme soweit installiert und konfiguriert,
 			wird mit dem Datenimport begonnen. Dabei sollte die vorgeschlagene
 			Reihenfolge eingehalten werden. Die erstellten CSV-Dateien sollten
-			unabhängig von der UCS Domäne abgelegt, gesichert und versioniert
+			unabhängig von der &ucsUCS; Domäne abgelegt, gesichert und versioniert
 			werden.
 		</para>
 		<section id="import_schools">
@@ -1556,7 +1559,7 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Speichern sie Datei bitte im Unix-Format ab.  Wenn sie
-						sich unsicher sind, wenden sie unter UCS einmal
+						sich unsicher sind, wenden sie unter &ucsUCS; einmal
 						<command>dos2unix</command> auf die Datei an.
 						(<package>dos2unix</package> muss aus dem
 						&quot;unmaintained&quot;-Repository installiert
@@ -1567,13 +1570,13 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Erstellen sie auf dem UCS Master folgendes Verzeichnis:
+						Erstellen sie auf dem &ucsUCS; Master folgendes Verzeichnis:
 						<filename>/usr/local/ucsschool/import_data/</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Kopieren sie die CSV-Datei auf den UCS Master nach
+						Kopieren sie die CSV-Datei auf den &ucsUCS; Master nach
 						<filename>/usr/local/ucsschool/import_data/schulen.csv</filename>
 					</para>
 				</listitem>
@@ -1623,7 +1626,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:network:import">UCS@school-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
 				beschrieben, eine CSV-Datei, die alle Schul-Netzwerke
 				entsprechend des Netzkonzeptes enthält.
 			</para>
@@ -1635,7 +1638,7 @@ feedback@univention.de
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
-						Speichern sie die CSV-Datei auf den UCS Master nach
+						Speichern sie die CSV-Datei auf den &ucsUCS; Master nach
 						<filename>/usr/local/ucsschool/import_data/networks.csv</filename>
 					</para>
 				</listitem>
@@ -1658,7 +1661,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:computers">UCS@school-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
 				beschrieben, eine CSV-Datei pro Schule, die alle Clients der
 				Schule entsprechend des Netz- und Namenskonzeptes enthält.
 			</para>
@@ -1670,7 +1673,7 @@ feedback@univention.de
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
-						Speichern sie die CSV-Datei auf den UCS Master nach
+						Speichern sie die CSV-Datei auf den &ucsUCS; Master nach
 						<filename>/usr/local/ucsschool/import_data/computers_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
@@ -1689,7 +1692,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:setup:cli:printers">UCS@school-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
 				beschrieben, eine CSV-Datei pro Schule, die alle
 				Druckerfreigaben der Schule entsprechend des Netz- und
 				Namenskonzeptes enthält.
@@ -1702,7 +1705,7 @@ feedback@univention.de
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
-						Speichern sie die CSV-Datei auf den UCS Master nach
+						Speichern sie die CSV-Datei auf den &ucsUCS; Master nach
 						<filename>/usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
