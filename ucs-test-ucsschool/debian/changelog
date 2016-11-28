@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-6) unstable; urgency=medium
+
+  * Tag UCS@school import tests. This allows it to split these tests
+    into separate jobs (Bug #43043)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 28 Nov 2016 16:00:33 +0100
+
 ucs-test-ucsschool (3.0.17-5) unstable; urgency=low
 
   * Bug #41344: hostname must not begin with a number
