@@ -199,12 +199,12 @@ def prevent_ucc(func=None, condition=None):
 	if func is None:
 		return lambda f: prevent_ucc(f, condition)
 
-	def _decorated(self, request, computer, *args, **kwargs):
+	def _decorated(self, request, *args, **kwargs):
 		if request.options['computer'].objectType == 'computers/ucc':
 			if condition is None or condition(request):
 				MODULE.warn('Requested unavailable action (%s) for UCC client' % (func.__name__))
 				raise UMC_Error(_('Action unavailable for UCC clients.'))
-		return func(self, request, computer, *args, **kwargs)
+		return func(self, request, *args, **kwargs)
 	return _decorated
 
 
