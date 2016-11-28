@@ -261,6 +261,8 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 	def close(self):
 		MODULE.info('Closing VNC connection to %s' % (self.ipAddress))
 		if self._core:
+			self._core.receivedUserInfo.disconnect(self._userInfo)
+			self._core.receivedSlaveStateFlags.disconnect(self._slaveStateFlags)
 			# WARNING: destructor of iTalcCoreConnection calls iTalcVncConnection->stop() ; do not call the stop() function again!
 			del self._core
 			self._core = None
@@ -290,6 +292,9 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 		if not self._core and self._state.current == 'connected' and self._state.old != 'connected':
 			MODULE.process('%s: VNC connection established' % (self.ipAddress,))
+			if self._vnc is None:
+				MODULE.error('%s: self._vnc is None!' % (self.ipAddress,))
+				return
 			self._core = italc.ItalcCoreConnection(self._vnc)
 			self._core.receivedUserInfo.connect(self._userInfo)
 			self._core.receivedSlaveStateFlags.connect(self._slaveStateFlags)
