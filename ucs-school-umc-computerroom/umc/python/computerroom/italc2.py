@@ -52,7 +52,6 @@ import notifier.signals
 import notifier.threads
 
 from PyQt4.QtCore import QObject, pyqtSlot
-from PyQt4.QtGui import QImageWriter
 
 import italc
 import ldap
@@ -510,9 +509,9 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 			return None
 		tmpfile = tempfile.NamedTemporaryFile(delete=False)
 		tmpfile.close()
-		writer = QImageWriter(tmpfile.name, 'JPG')
-		writer.write(image)
-		return tmpfile
+
+		if image.save(tmpfile.name, 'JPG'):
+			return tmpfile
 
 	@property
 	def screenshotQImage(self):

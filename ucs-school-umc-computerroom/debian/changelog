@@ -1,6 +1,7 @@
 ucs-school-umc-computerroom (8.0.12-1) unstable; urgency=medium
 
   * Bug #43044: fix threading issue which caused segfault
+  * Bug #43051: enhance screenshot creation
 
  -- Florian Best <best@univention.de>  Mon, 28 Nov 2016 17:46:29 +0100
 
