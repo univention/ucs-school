@@ -11,15 +11,15 @@
 <book lang="de" id="ucsschool-4.1r2-setup">
 	<bookinfo>
 		<title>
-			&ucsUAS;
+			&ucsUAS; Szenarien-Guide
 		</title>
 		<subtitle>
-			UCS@school - Anleitung zur Einrichtung für Schulträger
+			Organisation und Aufbau von IT-Infrastrukturen für Schulen
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.1 R2 v1
-Stand: 24. Oktober 2016
+Version 4.1 R2 v8
+Stand: 23. November 2016
 			</literallayout>
 
 			<literallayout lang="">
@@ -45,7 +45,7 @@ feedback@univention.de
 	</bookinfo>
 
 	<chapter id="setup-manual">
-		<title>Verwendung der Anleitung</title>
+		<title>Verwendung des Dokuments</title>
 		<para>
 			Diese Anleitung zeigt das empfohlene Vorgehen für den Aufbau der
 			definierten Standardszenarien von UCS@school bei Schulträgern auf.
@@ -926,7 +926,7 @@ feedback@univention.de
 		</section>
 	</chapter>
 	<chapter id="infrastructure-and_hardware-requirements">
-		<title>Infrastruktur und Hardware Voraussetzungen</title>
+		<title>Infrastruktur- und Hardware-Voraussetzungen</title>
 		<para>
 			Es wird stark empfohlen, eine Virtualisierungslösung für die
 			UCS-Systeme einzusetzen. Die Hardwaredimensionierung der
