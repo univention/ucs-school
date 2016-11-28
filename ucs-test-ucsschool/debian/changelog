@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-5) unstable; urgency=low
+
+  * Bug #41344: hostname must not begin with a number
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 28 Nov 2016 09:34:47 +0100
+
 ucs-test-ucsschool (3.0.17-4) unstable; urgency=low
 
   * Bug #41568: modify tests to check it it is possible to start exam for
