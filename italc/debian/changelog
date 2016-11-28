@@ -1,3 +1,9 @@
+italc (2:2.0.25-12) unstable; urgency=medium
+
+  * Bug #43044 / Bug #43051: fix segfaults
+
+ -- Florian Best <best@univention.de>  Mon, 28 Nov 2016 13:41:37 +0100
+
 italc (2:2.0.25-11) unstable; urgency=medium
 
   * Bug #38213: fix amd64 build
