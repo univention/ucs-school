@@ -398,11 +398,11 @@ feedback@univention.de
 			</note>
 			<para>
 				Wir geben hier zwei Beispiele für die Schulnetze -
-				eines für kleine Schulen mit wenigen Clients (Modell
-				&quot;Grundschule&quot;) und eines für sehr große Schulen mit
-				vielen Clients und Netzwerksegmentierung (Modell
-				&quot;Berufsschule&quot;).
-				Zudem benötigen die zentralen Systeme ebenfalls ein Netz.
+				eines für kleine Schulen mit wenigen Clients
+				(Beispiel-&quot;Grundschule&quot;) und eines für sehr große
+				Schulen mit vielen Clients und Netzwerksegmentierung
+				(Beispiel-&quot;Berufsschule&quot;).  Zudem benötigen die
+				zentralen Systeme ebenfalls ein Netz.
 			</para>
 			<para>
 				In <xref linkend="import_networks" /> ist eine Tabellenvorlage
@@ -447,7 +447,7 @@ feedback@univention.de
 			</para>
 			<para>
 				<table id="table_network_concept_small_school">
-					<title>Netze für Modell Grundschule</title>
+					<title>Netze für Beispiel-Grundschule</title>
 					<tgroup cols="4">
 						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
 						<colspec colnum="2" colname="range" colwidth="2*"/>
@@ -481,7 +481,7 @@ feedback@univention.de
 			</para>
 			<para>
 				<table id="table_network_concept_large_school">
-					<title>Netze für Modell Berufsschule</title>
+					<title>Netze für Beispiel-Berufsschule</title>
 					<tgroup cols="4">
 						<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
 						<colspec colnum="2" colname="range" colwidth="2*"/>
@@ -571,10 +571,11 @@ feedback@univention.de
 							Layer-3-Switches stattfinden. UCS unterstützt zwar
 							VLANs auch direkt auf dem eigenen
 							Netzwerkinterface, allerdings raten wir für ein
-							umfangreiches Setup wie beim Modell
-							&quot;Berufsschule&quot; davon ab. Wichtig ist,
-							dass auf den Switches dann auch die DHCP-Relay- bzw.
-							IP-Helper-Funktionen korrekt konfiguriert sind.
+							umfangreiches Setup wie beim
+							Beispiel-&quot;Berufsschule&quot; davon ab. Wichtig
+							ist, dass auf den Switches dann auch die DHCP-Relay-
+							bzw.  IP-Helper-Funktionen korrekt konfiguriert
+							sind.
 						</para>
 					</listitem>
 					<listitem>
