@@ -3,10 +3,14 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-computerroom
-fix: 8.0.10-1.203.201611222150
+fix: 8.0.12-1.205.201611281749
 desc: |
  * Proper error messages are shown when no school exists (Bug #42399).
  * If the computerroom module was already opened when starting a exam
    and the settings were changed the exam was terminated and the exam
    user accounts have not been removed (Bug #40901).
-bug: [42399, 40901]
+ * A segfault in the UMC module process has been fixed which occurred
+   during a reconnection of a client (Bug #43044).
+ * A segfault in the UMC module process has been fixed which occurred
+   during creation of a screenshot (Bug #43051).
+bug: [42399, 40901, 43044, 43051]
