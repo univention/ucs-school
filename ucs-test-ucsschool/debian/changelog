@@ -1,3 +1,12 @@
+ucs-test-ucsschool (3.0.17-7) unstable; urgency=low
+
+  * Bug #41989: fix 132_remove-old-homedirs to not use import anymore, doesn't
+    work on slaves
+  * Bug #41749: add pupilgroups listener test (122_pupilgroups_updates_ucr)
+
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 28 Nov 2016 18:12:48 +0100
+
 ucs-test-ucsschool (3.0.17-6) unstable; urgency=medium
 
   * Tag UCS@school import tests. This allows it to split these tests

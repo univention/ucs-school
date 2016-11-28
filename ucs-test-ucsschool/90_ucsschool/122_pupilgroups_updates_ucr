@@ -1,0 +1,81 @@
+#!/usr/share/ucs-test/runner python
+## desc: ucs-school-webproxy - pupilgroups listener updates UCRVs
+## roles: [domaincontroller_slave]
+## tags: [apptest,ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-webproxy]
+## bugs: [41749]
+
+
+import univention.testing.udm
+import univention.testing.ucsschool as utu
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from ucsschool.lib.models import School, SchoolClass
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		self.ou_A = None
+		self.ou_B = None
+		self.ou_C = None
+		super(Test, self).__init__()
+
+	def run(self):
+		try:
+			with univention.testing.udm.UCSTestUDM() as udm:
+				self.udm = udm
+				with utu.UCSTestSchool() as schoolenv:
+					self.lo = schoolenv.open_ldap_connection()
+					self.schoolenv = schoolenv
+					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou()
+					self.log.info(
+						'*** This host is responsible for OU %r, but not for OU %r.',
+						self.ou_A.name,
+						self.ou_B.name)
+					all_local_schools = [school.dn for school in School.get_all(self.lo)]
+					self.log.info('*** This hosts school OUs: %r\n\n', all_local_schools)
+					if self.ou_B.name in all_local_schools:
+						utils.fail('Found OU %r in local schools.' % self.ou_B.name)
+
+					self.test()
+					self.log.info('Test was successful.\n\n\n')
+		finally:
+			self.cleanup()
+
+	def test(self):
+		class_A_dn, class_A_name = self.udm.create_group(
+			position=SchoolClass.get_container(self.ou_A.name),
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+		ucr_A = 'proxy/filter/usergroup/%s' % class_A_name
+		class_B_dn, class_B_name = self.udm.create_group(
+			position=SchoolClass.get_container(self.ou_B.name),
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
+		ucr_B = 'proxy/filter/usergroup/%s' % class_B_name
+
+		user_a_name, user_a_dn = self.schoolenv.create_user(self.ou_A.name, classes=class_A_name)
+		user_b_name, user_b_dn = self.schoolenv.create_user(self.ou_B.name, classes=class_B_name)
+
+		utils.wait_for_replication_and_postrun()
+		self.ucr.load()
+
+		if user_a_name not in self.ucr.get(ucr_A, '').split(','):
+			utils.fail('Username %r not in UCRV %r.' % (user_a_name, ucr_A))
+		if self.ucr.get(ucr_B, ''):
+			self.log.warn('*** UCRV %r exists: %r', ucr_B, self.ucr.get(ucr_B, ''))
+		if user_b_name in self.ucr.get(ucr_B, '').split(','):
+			utils.fail('Username %r in UCRV %r.' % (user_b_name, ucr_B))
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
