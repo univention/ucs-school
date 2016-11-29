@@ -88,7 +88,7 @@ feedback@univention.de
 					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, z.B. Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
 					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
 							<itemizedlist spacing="compact" mark="whitesquare">
-								<listitem><para>Installation UCS-Server mit &ucsUAS;-App: <xref linkend="installation" /></para></listitem>
+								<listitem><para>Installation UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
 								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
 								<listitem><para>Import von Benutzer-, Client- und Netzwerkdaten: <xref linkend="import" /></para></listitem>
 							</itemizedlist>
@@ -180,7 +180,7 @@ feedback@univention.de
 				einem Rechenzentrum betrieben und dienen als Identity- und
 				Access-Management. Zudem sind die Schulen über VPN, Standleitung
 				oder ähnliches an das Rechenzentrum angebunden. An den Schulen
-				werden WLAN-Access-Points installiert, die RADIUS unterstützen
+				werden WLAN Access Points installiert, die RADIUS unterstützen
 				(WPA2-Enterprise / IEEE 802.1X). Ergänzend können auch wie in
 				Szenario 1 weitere Webdienste an die zentralen Systeme
 				angebunden werden.
@@ -397,9 +397,9 @@ feedback@univention.de
 			<para>
 				Wir geben hier zwei Beispiele für die Schulnetze -
 				eines für kleine Schulen mit wenigen Clients
-				(Beispiel-&quot;Grundschule&quot;) und eines für sehr große
+				(Beispiel <emphasis>Grundschule</emphasis>) und eines für sehr große
 				Schulen mit vielen Clients und Netzwerksegmentierung
-				(Beispiel-&quot;Berufsschule&quot;).  Zudem benötigen die
+				(Beispiel <emphasis>Berufsschule</emphasis>).  Zudem benötigen die
 				zentralen Systeme ebenfalls ein Netz.
 			</para>
 			<para>
@@ -569,7 +569,7 @@ feedback@univention.de
 							stattfinden. UCS unterstützt zwar VLANs auch direkt
 							auf dem eigenen Netzwerkinterface, allerdings raten
 							wir für ein umfangreiches Setup wie beim
-							Beispiel-&quot;Berufsschule&quot; davon ab. Wichtig
+							Beispiel <emphasis>Berufsschule</emphasis> davon ab. Wichtig
 							ist, dass auf den Switches dann auch die DHCP-Relay-
 							bzw. IP-Helper-Funktionen korrekt konfiguriert
 							sind.
@@ -616,12 +616,12 @@ feedback@univention.de
 					Wir empfehlen den Domänennamen wie folgt aufzubauen:
 				</para>
 				<para>
-					<literal>schulen.schultraeger.de</literal>
+					<systemitem class="domainname">schulen.schultraeger.de</systemitem>
 				</para>
 				<itemizedlist spacing="compact">
 					<listitem>
 						<para>
-							<literal>schultraeger</literal> ist dabei ein Platzhalter
+							<systemitem class="domainname">schultraeger</systemitem> ist dabei ein Platzhalter
 							für den Namen des Schulträgers, des Betreibers, der Stadt
 							oder des Landkreises.
 						</para>
@@ -629,7 +629,7 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Wichtig ist, dass die übergeordnete Domäne
-							<literal>schultraeger.de</literal> bzw. deren öffentliche
+							<systemitem class="domainname">schultraeger.de</systemitem> bzw. deren öffentliche
 							DNS-Konfiguration vom Betreiber kontrolliert wird.
 							Konflikte mit öffentlich erreichbaren Domänennamen müssen
 							vermieden werden.
@@ -639,19 +639,19 @@ feedback@univention.de
 						<para>
 							UCS stellt <emphasis role="strong">intern</emphasis>
 							DNS-Dienste für die Domäne
-							<literal>schulen.schultraeger.de</literal> zur Verfügung.
+							<systemitem class="domainname">schulen.schultraeger.de</systemitem> zur Verfügung.
 							Alle DNS-Anfragen, die nicht für die Domäne
-							<literal>schulen.schultraeger.de</literal> bestimmt sind,
+							<systemitem class="domainname">schulen.schultraeger.de</systemitem> bestimmt sind,
 							werden an externe DNS Server weitergeleitet (DNS
 							Forwarder)
 						</para>
 					</listitem>
 					<listitem>
 						<para>
-							Bitte wählen sie nicht <literal>.local</literal> als
-							Endung für den Domänennamen. <literal>.local</literal> ist
+							Bitte wählen sie nicht <systemitem class="domainname">.local</systemitem> als
+							Endung für den Domänennamen. <systemitem class="domainname">.local</systemitem> ist
 							offiziell für die Verwendung von mDNS (Multicast DNS)
-							vorgesehen. Die Verwendung von <literal>.local</literal>
+							vorgesehen. Die Verwendung von <systemitem class="domainname">.local</systemitem>
 							als Endung für den Domänennamen führt aus diesem Grund
 							häufig zu Problemen beim Einsatz von Unix-basierten
 							Betriebssystemen und ist darüberhinaus nicht
@@ -661,14 +661,14 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Bitte wählen sie keine inoffiziellen Endungen für den
-							Domänennamen wie <literal>.corp</literal> oder
-							<literal>.lan</literal>
+							Domänennamen wie <systemitem class="domainname">.corp</systemitem> oder
+							<systemitem class="domainname">.lan</systemitem>
 						</para>
 					</listitem>
 					<listitem>
 						<para>
 							Bitte wählen sie keine offiziell vergebenen Endungen für
-							den Domänennamen wie <literal>.int</literal>, solange sie
+							den Domänennamen wie <systemitem class="domainname">.int</systemitem>, solange sie
 							nicht einen offiziellen Domänennamen mit dieser Endung
 							besitzen.
 						</para>
@@ -676,11 +676,11 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Wenn zwingend für die Anmeldung bspw. an Windows Clients
-							nicht <literal>SCHULEN\benutzer</literal>, sondern
-							<literal>SCHULTRAEGER\benutzer</literal> verwendet werden
-							soll, muss vor der Installation der App &quot;Active
-							Directory kompatibler Domänencontroller&quot; der Name der
-							NeTBIOS-Domäne manuell angepasst werden.
+							nicht <systemitem class="domainname">SCHULEN\benutzer</systemitem>, sondern
+							<systemitem class="domainname">SCHULTRAEGER\benutzer</systemitem> verwendet werden
+							soll, muss vor der Installation der App <package>Active
+								Directory kompatibler Domänencontroller</package> der Name der
+							NetBIOS-Domäne manuell angepasst werden.
 						</para>
 					</listitem>
 					<listitem>
@@ -698,7 +698,7 @@ feedback@univention.de
 							Dazwischen sorgt ein Router/Firewall für die
 							Adressübersetzung. Clients greifen grundsätzlich
 							über die externe Adresse
-							<literal>https://moodle.schultraeger.de/</literal>
+							<systemitem class="domainname">https://moodle.schultraeger.de/</systemitem>
 							zu.
 						</para>
 					</listitem>
@@ -759,21 +759,21 @@ feedback@univention.de
 					Schüler_innen:
 					<itemizedlist>
 						<listitem><para>Schema: Vorname-1.Buchstabe Nachname-ID</para></listitem>
-						<listitem><para>Beispiel: Mary Somerville → <systemitem class="username">marys01</systemitem></para></listitem>
+						<listitem><para>Beispiel: Mary <wordasword>Somerville</wordasword> → <systemitem class="username">marys01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Lehrkräfte und Mitarbeiter_innen:
 					<itemizedlist>
 						<listitem><para>Schema: 1.Buchstabe Vorname-Nachname-ID</para></listitem>
-						<listitem><para>Beispiel: Ada Lovelace → <systemitem class="username">alovelace01</systemitem></para></listitem>
+						<listitem><para>Beispiel: Ada <wordasword>Lovelace</wordasword> → <systemitem class="username">alovelace01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Beispiel für eine Konfiguration zum Import von
 					Benutzerkonten (JSON), siehe <ulink
 						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
-						zur CLI-Import-Schnittstelle</ulink>
+						zur <wordasword>CLI-Import-Schnittstelle</wordasword></ulink>
 				</para>
 				<para>
 					Klassen müssen mit dem entsprechenden Schulkürzel als Präfix
@@ -845,12 +845,12 @@ feedback@univention.de
 			<para>
 				Auf den zentralen Servern:
 				<itemizedlist>
-					<listitem><para><literal>/var/univention-backup/</literal>:
+					<listitem><para><filename>/var/univention-backup/</filename>:
 							Umfasst nächtlich angelegte Ausgaben der
 							&ucsUCR;-Variablen, der OpenLDAP- und der
-							Samba-Datenbank sowie das SYSVOL-Verzeichnis, sofern
+							Samba-Datenbank sowie die SYSVOL-Freigabe, sofern
 							vorhanden</para></listitem>
-					<listitem><para><literal>/etc/univention/ssl</literal> auf
+					<listitem><para><filename>/etc/univention/ssl</filename> auf
 							dem UCS Master und den UCS Backups: Beinhaltet das
 							Root-Zertifikat der internen Zertifizierungsstelle
 							und alle Rechner-Zertifikate</para></listitem>
@@ -859,14 +859,14 @@ feedback@univention.de
 			<para>
 				Sofern vorhanden, auf den Schulservern:
 				<itemizedlist>
-					<listitem><para><literal>/var/univention-backup/</literal>:
+					<listitem><para><filename>/var/univention-backup/</filename>:
 							Insbesondere die Sicherung der &ucsUCR;-Variablen.
 							Die Sicherung der OpenLDAP- und Samba-Datenbanken
 							ist weniger relevant, da dies bspw. bei einer
 							Neuinstallation des Schulservers vom UCS
 							Master/Backup erneut repliziert
 							wird.</para></listitem>
-					<listitem><para><literal>/home</literal>: Beinhaltet die
+					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
 							Benutzer_innen. Außerdem die Daten der
 							Klassenfreigaben - ggf. weitere, manuell angelegte
@@ -896,7 +896,7 @@ feedback@univention.de
 				technischen Mitarbeiter_innen aufgebaut werden, die auch im
 				Fehlerfall kontaktiert werden können. Dabei sollten bei diesem
 				Support-Team entsprechende Werkzeuge zur Kommunikation, bspw.
-				ein Ticket-System (bspw. KIX aus dem Univention App Center, das
+				ein Ticket-System (bspw. <wordasword>KIX</wordasword> aus dem Univention App Center, das
 				sich direkt in die UCS Benutzerverwaltung integriert) und zur
 				Fernwartung zum Einsatz kommen.
 			</para>
@@ -1052,8 +1052,7 @@ feedback@univention.de
 					<emphasis>für Szenarien 3 und 4</emphasis>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen Szenario &quot;Grundschule
-					(25 Computer, 25 Tablets)&quot;:
+					Minimale Systemvoraussetzungen Szenario <emphasis>Grundschule</emphasis> (25 Computer, 25 Tablets):
 					<itemizedlist>
 						<listitem><para>2 CPUs</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
@@ -1064,8 +1063,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen Szenario &quot;Berufsschule
-					(300 Computer, 200 Tablets)&quot;:
+					Minimale Systemvoraussetzungen Szenario <emphasis>Berufsschule</emphasis> (300 Computer, 200 Tablets):
 					<itemizedlist>
 						<listitem><para>8 CPUs</para></listitem>
 						<listitem><para>32 GB RAM</para></listitem>
@@ -1106,7 +1104,7 @@ feedback@univention.de
 					Geschwindigkeit ist die Anzahl der gleichzeitig aktiven
 					Clients.  Als Richtwert kann von einem Bedarf von mindestens
 					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
-					inbesondere bei der Einführung von BYOD zu beachten, da
+					insbesondere bei der Einführung von BYOD zu beachten, da
 					Nutzer ggf. mehr als ein Gerät mitbringen, z.B.  Laptop,
 					Smartphone und Tablet.
 				</para>
@@ -1142,13 +1140,13 @@ feedback@univention.de
 			</listitem>
 			<listitem>
 				<para>
-					Vergeben eines Kennworts für den Benutzer &quot;root&quot;.
+					Vergeben eines Kennworts für den Benutzer <systemitem class="username">root</systemitem>.
 					Wählen sie ein langes Kennwort, verwenden sie einen
 					Passwort-Manager und speichern sie das Passwort dort. Das
-					Passwort für den lokalen Benutzer &quot;root&quot; ist initial
+					Passwort für den lokalen Benutzer <systemitem class="username">root</systemitem> ist initial
 					auch das Passwort des Domänen-Benutzers
-					&quot;Administrator&quot;. Ändern Sie das Passwort für den
-					Domänen-Benutzer &quot;Administrator&quot; im Anschluss an die
+					<systemitem class="username">Administrator</systemitem>. Ändern Sie das Passwort für den
+							Domänen-Benutzer <systemitem class="username">Administrator</systemitem> im Anschluss an die
 					Installation, sodass sich die beiden Passwörter zukünftig
 					unterscheiden.
 				</para>
@@ -1162,7 +1160,7 @@ feedback@univention.de
 			</listitem>
 			<listitem>
 				<para>
-					<literal>/var/log</literal> sollte auf eine eigenen Partition
+					<filename>/var/log</filename> sollte auf eine eigenen Partition
 					gelegt werden, damit bei einem stark erhöhten Log-Aufkommen
 					nicht die Systempartition vollgeschrieben wird
 				</para>
@@ -1179,7 +1177,7 @@ feedback@univention.de
 							|IP-des-DNS-Servers-ihres-Internetanbieters|
 					</para></listitem>
 					<listitem><para>Wählen sie &quot;Erstellen einer neuen
-							&ucsUCS;-Domäne&quot; </para></listitem>
+							&ucsUCS;-Domäne&quot;</para></listitem>
 					<listitem><para>Die automatisch vorgeschlagenen LDAP-Basis
 							sollte nicht geändert werden </para></listitem>
 					<listitem><para><emphasis>für Szenarien 3 und 4</emphasis>:
@@ -1323,7 +1321,7 @@ feedback@univention.de
 		<section id="base-configuration_mail">
 			<title>E-Mail Basisdienst</title>
 			<para>
-				&ucsUCS;-Sever verschicken regelmäßig E-Mails, um den aktuellen
+				&ucsUCS;-Systeme verschicken regelmäßig E-Mails, um den aktuellen
 				Systemstatus zu kommunizieren.  Z.B. über Cron und über Nagios.
 				Um diese E-Mail verarbeiten zu können ist die Mailauslieferung
 				zu konfigurieren.  Dazu ist wie folgt vorzugehen: TODO
@@ -1342,13 +1340,13 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Suchen und öffnen sie die Richtlinie
-						&quot;ucsschool-ucr-settings&quot; vom Typ UCR
+						<command>ucsschool-ucr-settings</command> vom Typ UCR
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Erweitern sie die Richtlinie
-						&quot;ucsschool-ucr-settings&quot; um folgende Einträge:
+						<command>ucsschool-ucr-settings</command> um folgende Einträge:
 					</para>
 				</listitem>
 				<listitem>
@@ -1368,22 +1366,22 @@ feedback@univention.de
 				<listitem>
 					<para>
 						<envar>samba4/sysvol/sync/from_downstream</envar>: <literal>false</literal> → konfiguriert den
-						SYSVOL-Sync unidirektional vom &ucsUCS; Master zu den &ucsUAS;
+						SYSVOL-Replikation unidirektional vom &ucsUCS; Master zu den &ucsUAS;
 						Schulservern
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 → erlaubt den Zugriff
-						des Monitoring-Servers auf den NRPE-Dienst der übrigen &ucsUCS;
+						des <wordasword>Monitoring-Servers</wordasword> auf den NRPE-Dienst der übrigen &ucsUCS;
 						Systeme
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>munin/node/allowedhosts</envar>: 10.0.0.20/32 → erlaubt den Zugriff
-						des Monitoring-Servers auf die munin-Nodes der übrigen &ucsUCS;
-						Systeme (Achtung CIDR-Schreibweise!)
+						des <wordasword>Monitoring-Servers</wordasword> auf die munin-Nodes der übrigen &ucsUCS;
+						Systeme (Achtung <wordasword>CIDR-Schreibweise</wordasword>!)
 					</para>
 				</listitem>
 				<listitem>
@@ -1415,7 +1413,7 @@ feedback@univention.de
 			</itemizedlist>
 		</section>
 		<section id="base-configuration_central-ucr">
-			<title>Zentale UCR-Richtlinie</title>
+			<title>Zentrale UCR-Richtlinie</title>
 			<!-- TODO: in Tabelle überführen -->
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1427,13 +1425,13 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Erstellen sie eine neue Richtlinie im Container
-						&quot;policies/config-registry&quot; vom Typ
+						<uri>policies/config-registry</uri> vom Typ
 						&ucsUCR; (UCR)
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Nennen sie die neue Richtlinie &quot;ucr_central&quot;
+						Nennen sie die neue Richtlinie <userinput>ucr_central</userinput>
 					</para>
 				</listitem>
 				<listitem>
@@ -1443,14 +1441,14 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						<envar>timeserver</envar>: |FQDN-externer-Zeitserver-1| → bspw.
+						<envar>timeserver</envar>: |<wordasword>FQDN-externer-Zeitserver-1</wordasword>| → bspw.
 						<systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder
 						<systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						<envar>timeserver2</envar>: |FQDN-externer-Zeitserver-2| → bspw.
+						<envar>timeserver2</envar>: |<wordasword>FQDN-externer-Zeitserver-2</wordasword>| → bspw.
 						<systemitem class="fqdomainname">ptbtime2.ptb.de</systemitem> oder
 						<systemitem class="fqdomainname">1.europe.pool.ntp.org</systemitem>
 					</para>
@@ -1467,44 +1465,44 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Wählen sie in der blauen Kategorie &quot;Domäne&quot; das
-						Modul &quot;LDAP-Verzeichnis&quot;
+						Wählen sie in der blauen Kategorie <emphasis>Domäne</emphasis> das
+						Modul <emphasis>LDAP-Verzeichnis</emphasis>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Wählen sie dort den Container &quot;computers&quot; aus
+						Wählen sie dort den Container <uri>computers</uri> aus
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Klicken sie mit der rechten Maustaste auf den Container und
-						wählen &quot;Bearbeiten&quot;
+						wählen <emphasis>Bearbeiten</emphasis>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Im Reiter Richtlinien scrollen sie bis &quot;Richtlinie:
-						&ucsUCR;&quot; und klappen diese
+						Im Reiter Richtlinien scrollen sie bis <emphasis>Richtlinie:
+							&ucsUCR;</emphasis> und klappen diese
 						Option auf
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Wählen sie aus dem Dropdown
-						&quot;Richtlinien-Konfiguration&quot; die eben erstellte
-						Richtlinie &quot;ucr_central&quot;
+						<emphasis>Richtlinien-Konfiguration</emphasis> die eben erstellte
+						Richtlinie <userinput>ucr_central</userinput>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Speichern sie das Container-Objekt &quot;computers&quot;
+						Speichern sie das Container-Objekt <uri>computers</uri>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Die Richtlinie wird nun auf alle Systeme unterhalb des
-						Containers &quot;computer&quot; vererbt. Unterhalb dieses
+						Containers <uri>computer</uri> vererbt. Unterhalb dieses
 						Containers befinden sich die zentralen &ucsUCS; Systeme
 					</para>
 				</listitem>
@@ -1524,8 +1522,7 @@ feedback@univention.de
 			Sind die zentralen Systeme soweit installiert und konfiguriert,
 			wird mit dem Datenimport begonnen. Dabei sollte die vorgeschlagene
 			Reihenfolge eingehalten werden. Die erstellten CSV-Dateien sollten
-			unabhängig von der &ucsUCS; Domäne abgelegt, gesichert und versioniert
-			werden.
+			unabhängig von der &ucsUAS;-Domäne abgelegt und gesichert werden.
 		</para>
 		<section id="import_schools">
 			<title>Schulen</title>
@@ -1541,22 +1538,22 @@ feedback@univention.de
 			<para>
 				Vorlage für den Import in der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle &quot;Schulen&quot;.
+				Tabelle <emphasis>Schulen</emphasis>.
 			</para>
 			<para>
-				---------------------- viel besser: wir erstellen ein
-				LibreOffice Calc-Template wo die richtige CSV-Datei rausfällt!
+				---------------------- TODO viel besser: wir erstellen ein
+				LibreOffice <wordasword>Calc-Vorlage</wordasword> aus der die CSV-Datei im richtigen Format exportiert werden kann!
 			</para>
 			<para>
-				Schulkürzel Anzeigename Edukativer Server Verwaltungsserver 011
-				Grundschule Nord sedu011-01 sadm011-01 012 Grundschule West
-				sedu012-01 sadm012-01 042 Berufsschule Tec sedu042-01 sadm042-01
+				Schulkürzel Anzeigename Edukativer Server Verwaltungsserver <userinput>011</userinput>
+				Grundschule Nord <userinput>sedu011-01</userinput> <userinput>sadm011-01</userinput> <userinput>012</userinput> Grundschule West
+				<userinput>sedu012-01</userinput> <userinput>sadm012-01</userinput> <userinput>042</userinput> Berufsschule Technik <userinput>sedu042-01</userinput> <userinput>sadm042-01</userinput>
 				... ... ... ...
 			</para>
 			<itemizedlist>
 				<listitem>
 					<para>
-						Verwenden sie TAB als Spaltentrenner.
+						Verwenden sie <wordasword>Tab</wordasword> als Trennzeichen zwischen Spalten.
 					</para>
 				</listitem>
 				<listitem>
@@ -1565,9 +1562,9 @@ feedback@univention.de
 						sich unsicher sind, wenden sie unter &ucsUCS; einmal
 						<command>dos2unix</command> auf die Datei an.
 						(<package>dos2unix</package> muss aus dem
-						&quot;unmaintained&quot;-Repository installiert
+						<application>unmaintained</application>-Repository installiert
 						werden, siehe
-						<ulink url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Repository-Konfiguration</ulink>
+						<ulink url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Konfiguration des Repository-Servers</ulink>
 						)
 					</para>
 				</listitem>
@@ -1636,7 +1633,7 @@ feedback@univention.de
 			<para>
 				Vorlage für den Import in der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle &quot;Netzwerke&quot;.
+				Tabelle <emphasis>Netzwerke</emphasis>.
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1671,7 +1668,7 @@ feedback@univention.de
 			<para>
 				Vorlage für den Import in der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle &quot;Clients&quot;.
+				Tabelle <emphasis>Clients</emphasis>.
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1703,7 +1700,7 @@ feedback@univention.de
 			<para>
 				Vorlage für den Import in der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle &quot;Drucker&quot;.
+				Tabelle <emphasis>Drucker</emphasis>.
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1748,13 +1745,12 @@ feedback@univention.de
 	<chapter id="additional-services">
 		<title>Weitere Angebote einrichten</title>
 		<section id="additional-services_factory">
-			<title>Schulserver-Rollout</title>
+			<title>Rollout der Schulserver</title>
 			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis> &quot;Factory&quot;
-				ab 20 Schulen empfohlen
+				<emphasis>für Szenarien 3 und 4</emphasis>
 			</para>
 			<para>
-				TODO
+				TODO <foreignphrase>Factory</foreignphrase> ab 20 Schulen empfohlen
 			</para>
 		</section>
 		<section id="additional-services_patchmanagement">
@@ -1768,13 +1764,13 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="additional-services_factory_clients">
-			<title>Client-Rollout</title>
+			<title>Rollout der Clients in den Schulen</title>
 			<para>
 				<emphasis>für Szenarien 3 und 4</emphasis>
 			</para>
 			<para>
 				TODO
-				Client-Rollout mittels Softwareverteilung
+				Rollout der Clients in den Schulen mittels Softwareverteilung
 			</para>
 		</section>
 		<section id="additional-services_patchmanagement_clients">
@@ -1844,7 +1840,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="additional-services_filesync">
-			<title>File Share und Sync</title>
+			<title><foreignphrase>File Share und Sync</foreignphrase></title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 			</para>
