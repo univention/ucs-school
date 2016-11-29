@@ -157,7 +157,7 @@ feedback@univention.de
 				dienen als Identity- und Access-Management. Beispielsweise
 				lassen sich Groupware-Lösungen oder Lernmanagement-Software
 				anbinden und ermöglichen so den Anwender_innen die Nutzung der
-				Dienste mit ein und dem selben Benutzerkonto und -passwort.
+				Dienste mit ein und dem selben Benutzerkonto und Passwort.
 			</para>
 			<figure id="fig-scenario-1">
 				<title>Szenario 1: Zentraler Verzeichnisdienst für
@@ -680,7 +680,7 @@ feedback@univention.de
 							<literal>SCHULTRAEGER\benutzer</literal> verwendet werden
 							soll, muss vor der Installation der App &quot;Active
 							Directory kompatibler Domänencontroller&quot; der Name der
-							NETBIOS-Domäne manuell angepasst werden.
+							NeTBIOS-Domäne manuell angepasst werden.
 						</para>
 					</listitem>
 					<listitem>
@@ -690,13 +690,16 @@ feedback@univention.de
 							weitere Dienste wie bspw. Groupware oder Lernplattformen
 							über eine Subdomain öffentlich verfügbar gemacht werden.
 							Über NAT kann eine Adressübersetzung der öffentlich
-							verfügbaren Subdomain auf ein internes System realisiert
-							werden. Ein Beispiel: Externe Adresse:
-							moodle.schultraeger.de Internes System:
-							moodle.schulen.schultraeger.de Dazwischen sorgt ein
-							Router/Firewall für die Adressübersetzung. Clients greifen
-							grundsätzlich über die externe Adresse
-							<literal>https://moodle.schultraeger.de/</literal> zu
+							verfügbaren Subdomain auf ein internes System
+							realisiert werden. Ein Beispiel: Externe Adresse:
+							<wordasword>moodle.schultraeger.de</wordasword>
+							Internes System:
+							<wordasword>moodle.schulen.schultraeger.de</wordasword>
+							Dazwischen sorgt ein Router/Firewall für die
+							Adressübersetzung. Clients greifen grundsätzlich
+							über die externe Adresse
+							<literal>https://moodle.schultraeger.de/</literal>
+							zu.
 						</para>
 					</listitem>
 				</itemizedlist>
@@ -845,7 +848,7 @@ feedback@univention.de
 					<listitem><para><literal>/var/univention-backup/</literal>:
 							Umfasst nächtlich angelegte Ausgaben der
 							&ucsUCR;-Variablen, der OpenLDAP- und der
-							Samba-Datenbank sowie das Sysvol-Verzeichnis, sofern
+							Samba-Datenbank sowie das SYSVOL-Verzeichnis, sofern
 							vorhanden</para></listitem>
 					<listitem><para><literal>/etc/univention/ssl</literal> auf
 							dem UCS Master und den UCS Backups: Beinhaltet das
@@ -1365,7 +1368,7 @@ feedback@univention.de
 				<listitem>
 					<para>
 						<envar>samba4/sysvol/sync/from_downstream</envar>: <literal>false</literal> → konfiguriert den
-						Sysvol-Sync unidirektional vom &ucsUCS; Master zu den &ucsUAS;
+						SYSVOL-Sync unidirektional vom &ucsUCS; Master zu den &ucsUAS;
 						Schulservern
 					</para>
 				</listitem>
