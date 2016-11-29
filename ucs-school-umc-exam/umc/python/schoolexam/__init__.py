@@ -255,6 +255,9 @@ class Instance(SchoolBaseModule):
 			usersReplicated = set()
 			for iuser in users:
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+				# remove stale home directory (users does not contain existing accounts)
+				shutil.rmtree(iuser.unixhome, ignore_errors=True)
+
 				try:
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
 						school=request.options['school'],
@@ -274,7 +277,6 @@ class Instance(SchoolBaseModule):
 			progress.component(_('Preparing user home directories'))
 			recipients = []  # list of User objects for all exam users
 			openAttempts = 300  # wait max. 5 minutes for replication
-			parallel_users = self.parallel_users(my.project.name)
 			while (len(examUsers) > len(usersReplicated)) and (openAttempts > 0):
 				openAttempts -= 1
 				MODULE.info('waiting for replication to be finished, %s user objects missing' % (len(examUsers) - len(usersReplicated)))
@@ -288,9 +290,6 @@ class Instance(SchoolBaseModule):
 						continue  # not a users/user object
 					MODULE.info('user has been replicated: %s' % idn)
 
-					if iuser.username not in parallel_users:
-						# remove stale home directory
-						shutil.rmtree(iuser.unixhome, ignore_errors=True)
 					# call hook scripts
 					if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):
 						msg = 'failed to run hook scripts for user %r' % (iuser.username)
@@ -456,7 +455,13 @@ class Instance(SchoolBaseModule):
 
 			# delete exam users accounts
 			if project:
-				parallelUsers = self.parallel_users(project.name)
+				# get a list of user accounts in parallel exams
+				parallelUsers = dict([
+					(iuser.username, iproject.description)
+					for iproject in util.distribution.Project.list()
+					if iproject.name != project.name
+					for iuser in iproject.recipients
+				])
 
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
@@ -506,13 +511,3 @@ class Instance(SchoolBaseModule):
 
 		thread = notifier.threads.Simple('start_exam', _thread, _finished)
 		thread.run()
-
-	@staticmethod
-	def parallel_users(this_projects_name):
-		""" get a list of user accounts in parallel exams"""
-		return dict([
-			(iuser.username, iproject.description)
-			for iproject in util.distribution.Project.list()
-			if iproject.name != this_projects_name
-			for iuser in iproject.recipients
-		])
