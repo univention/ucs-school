@@ -61,6 +61,17 @@ class Test(CLI_Import_v2_Tester):
 		utils.wait_for_replication_and_postrun()
 		self.ucr.load()
 
+		sc_a = SchoolClass.from_dn(class_A_dn, None, self.lo)
+		users_a = sc_a.get_udm_object(self.lo)['users']
+		if user_a_dn not in users_a:
+			self.log.error('Users in %r: %r' % (class_A_name, users_a))
+			utils.fail('User %r is not in school class %r.' % (user_a_dn, sc_a))
+		sc_b = SchoolClass.from_dn(class_B_dn, None, self.lo)
+		users_b = sc_b.get_udm_object(self.lo)['users']
+		if user_b_dn not in users_b:
+			self.log.error('Users in %r: %r' % (class_B_name, users_b))
+			utils.fail('User %r is not in school class %r.' % (user_b_dn, sc_b))
+
 		if user_a_name not in self.ucr.get(ucr_A, '').split(','):
 			utils.fail('Username %r not in UCRV %r.' % (user_a_name, ucr_A))
 		if self.ucr.get(ucr_B, ''):

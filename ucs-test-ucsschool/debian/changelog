@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-8) unstable; urgency=low
+
+  * Bug #41989: test also what happends if user is removed (not moved)
+  * Bug #41749: check school class members
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 29 Nov 2016 15:36:32 +0100
+
 ucs-test-ucsschool (3.0.17-7) unstable; urgency=low
 
   * Bug #41989: fix 132_remove-old-homedirs to not use import anymore, doesn't

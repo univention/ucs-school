@@ -8,6 +8,8 @@
 ## exposure: dangerous
 
 import os
+import time
+from pwd import getpwnam
 from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
 from univention.testing import utils
@@ -57,6 +59,18 @@ class Test(CLI_Import_v2_Tester):
 			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
 
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Creating user with role %r in OU %r', role, self.ou_A.name)
+			kwargs = dict(
+				ou_name=self.ou_A.name,
+				schools=[self.ou_A.name],
+				classes=class_A_name,
+			)
+			if role in ['teacher', 'teacher_and_staff']:
+				kwargs['is_teacher'] = True
+			if role in ['staff', 'teacher_and_staff']:
+				kwargs['is_staff'] = True
+			username1, userdn1 = self.schoolenv.create_user(**kwargs)
+
 			self.log.info('*** Creating user with role %r in OUs %r', role, [self.ou_A.name, self.ou_B.name])
 			kwargs = dict(
 				ou_name=self.ou_A.name,
@@ -67,25 +81,52 @@ class Test(CLI_Import_v2_Tester):
 				kwargs['is_teacher'] = True
 			if role in ['staff', 'teacher_and_staff']:
 				kwargs['is_staff'] = True
-			username, userdn = self.schoolenv.create_user(**kwargs)
-			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username)))
-			user = User.from_dn(userdn, None, self.lo)
-			homedir = user.get_udm_object(self.lo)['unixhome']
-			self.log.info('homedir=%r', homedir)
-			os.makedirs(homedir, 0750)
-			if not os.path.exists(homedir) and os.path.isdir(homedir):
-				utils.fail('Homedir %r was not created.' % homedir)
+			username2, userdn2 = self.schoolenv.create_user(**kwargs)
+			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username1)))
+			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username2)))
+			user1 = User.from_dn(userdn1, None, self.lo)
+			user2 = User.from_dn(userdn2, None, self.lo)
+			homedir1 = user1.get_udm_object(self.lo)['unixhome']
+			homedir2 = user2.get_udm_object(self.lo)['unixhome']
+			self.log.debug('homedir1=%r', homedir1)
+			self.log.debug('homedir2=%r', homedir2)
+			os.makedirs(homedir1, 0711)
+			os.makedirs(homedir2, 0711)
+			os.chown(homedir1, getpwnam(username1).pw_uid, getpwnam(username1).pw_gid)
+			os.chown(homedir2, getpwnam(username2).pw_uid, getpwnam(username2).pw_gid)
+			if not (os.path.exists(homedir1) and os.path.isdir(homedir1)):
+				utils.fail('Homedir %r was not created.' % homedir1)
+			else:
+				self.log.info("Created homedir %r: %r", homedir1, os.stat(homedir1))
+			if not (os.path.exists(homedir2) and os.path.isdir(homedir2)):
+				utils.fail('Homedir %r was not created.' % homedir2)
+			else:
+				self.log.info("Created homedir %r: %r", homedir2, os.stat(homedir2))
+			time.sleep(30)
 
 			self.log.info(
-				'*** Removing %r from OU %r, should remove home directory %r on this host...',
+				'*** Deleting %r %r, should remove home directory %r on this host...',
 				role,
-				self.ou_A.name,
-				homedir)
-			user.remove_from_school(self.ou_A.name, self.lo)
+				user1,
+				homedir1)
+			user1.remove(self.lo)
 			utils.wait_for_replication_and_postrun()
-			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username)))
-			if os.path.exists(homedir):
-				utils.fail('Homedir %r was not removed.' % homedir)
+			if os.path.exists(homedir1):
+				utils.fail('Homedir %r was not removed.' % homedir1)
+			self.log.info("OK 1: homedir %r was removed.", homedir1)
+
+			self.log.info(
+				'*** Removing %r %r from OU %r, should remove home directory %r on this host...',
+				role,
+				user2,
+				self.ou_A.name,
+				homedir2)
+			user2.remove_from_school(self.ou_A.name, self.lo)
+			utils.wait_for_replication_and_postrun()
+			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username2)))
+			if os.path.exists(homedir2):
+				utils.fail('Homedir %r was not removed.' % homedir2)
+			self.log.info("OK 2: homedir %r was removed.", homedir2)
 
 
 def main():
