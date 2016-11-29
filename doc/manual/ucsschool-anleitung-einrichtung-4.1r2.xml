@@ -881,7 +881,7 @@ feedback@univention.de
 							physikalisch getrenntes Gerät erfolgen, bspw. ein
 							Network Attached Storage (NAS)</para></listitem>
 					<listitem><para>Die Sicherung sollte überwacht werden, bspw.
-							durch ein Monitoring-Plugin, dass bei Misserfolg
+							durch ein <wordasword>Monitoring-Plugin</wordasword>, dass bei Misserfolg
 							warnt</para></listitem>
 				</itemizedlist>
 			</para>
@@ -1373,14 +1373,14 @@ feedback@univention.de
 				<listitem>
 					<para>
 						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 → erlaubt den Zugriff
-						des <wordasword>Monitoring-Servers</wordasword> auf den NRPE-Dienst der übrigen &ucsUCS;
+						des <wordasword>Monitoring-Servers</wordasword> auf den <wordasword>NRPE-Dienst</wordasword> der übrigen &ucsUCS;
 						Systeme
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>munin/node/allowedhosts</envar>: 10.0.0.20/32 → erlaubt den Zugriff
-						des <wordasword>Monitoring-Servers</wordasword> auf die munin-Nodes der übrigen &ucsUCS;
+						des <wordasword>Monitoring-Servers</wordasword> auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen &ucsUCS;
 						Systeme (Achtung <wordasword>CIDR-Schreibweise</wordasword>!)
 					</para>
 				</listitem>
