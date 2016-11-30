@@ -12,7 +12,7 @@ desc: |
  * Proper error messages are shown when no school exists (Bug #42399).
  * Leftover home directories from users of previous exams are now removed
    (Bug #37955)
- * If the computerroom module was already opened when starting a exam
+ * If the computerroom module was already opened when starting an exam
    and the settings were changed the exam was terminated and the exam
-   user accounts have not been removed (Bug #40901).
+   user accounts were not removed (Bug #40901).
 bug: [41568, 41562, 42399, 37955, 40901]
