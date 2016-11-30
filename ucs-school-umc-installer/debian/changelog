@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.4-1) unstable; urgency=medium
+
+  * Bug #41007: use select() instead of permanently read
+
+ -- Florian Best <best@univention.de>  Wed, 30 Nov 2016 16:08:10 +0100
+
 ucs-school-umc-installer (4.0.3-1) unstable; urgency=medium
 
   * Bug #41007: close file descriptors of subprocesses

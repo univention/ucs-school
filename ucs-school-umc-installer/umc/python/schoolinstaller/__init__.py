@@ -42,6 +42,7 @@ import traceback
 import urllib
 import filecmp
 import fcntl
+import select
 import errno
 from httplib import HTTPException
 
@@ -241,13 +242,16 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 
 			unfinished_line = ''
 			while True:
-				# get the next line
 				try:
-					line = process.stdout.read()
-				except IOError as exc:
-					if exc.errno == errno.EAGAIN:
+					fd = select.select([process.stdout], [], [])[0][0]
+				except IndexError:
+					continue  # not ready / no further data
+				except select.error as exc:
+					if exc.args[0] == errno.EINTR:
 						continue
 					raise
+				# get the next line
+				line = fd.read()
 
 				if not line:
 					break  # no more text from stdout
@@ -264,17 +268,14 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 				# write stderr into the log file
 				MODULE.warn('stderr from univention-join: %s' % stderr)
 
-			success = True
 			# check for errors
 			if process.returncode != 0:
 				# error case
 				MODULE.warn('Could not perform system join: %s%s' % (stdout, stderr))
-				success = False
+				error_handler(_('Software packages have been installed successfully, however, the join process could not be executed. More details can be found in the log file /var/log/univention/join.log. Please retry to join the system via the UMC module "Domain join" after resolving any conflicting issues.'))
 			elif failed_join_scripts:
 				MODULE.warn('The following join scripts could not be executed: %s' % failed_join_scripts)
 				error_handler(_('Software packages have been installed successfully, however, some join scripts could not be executed. More details can be found in the log file /var/log/univention/join.log. Please retry to execute the join scripts via the UMC module "Domain join" after resolving any conflicting issues.'))
-				success = False
-			return success
 	finally:
 		# make sure that UMC servers and apache can be restarted again
 		MODULE.info('enabling UMC and apache server restart')
