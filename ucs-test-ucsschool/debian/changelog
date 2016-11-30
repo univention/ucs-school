@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-12) unstable; urgency=medium
+
+  * Tag more UCS@school import tests (Bug #43043)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 30 Nov 2016 17:44:21 +0100
+
 ucs-test-ucsschool (3.0.17-11) unstable; urgency=low
 
   * Bug #41344: revert r74750: with Bug #25354 fixed, hostnames can begin with
