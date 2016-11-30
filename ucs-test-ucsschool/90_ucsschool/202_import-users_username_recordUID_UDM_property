@@ -80,7 +80,7 @@ class Test(CLI_Import_v2_Tester):
 					assert_and_print(False, fn)
 
 				self.log.info('*** Modifying both users with role %r and username and recordUID', role)
-				self.log.info('Changing firstname of %r and lastname of %r.', person_list[0], person_list[1])
+				self.log.info('Changing firstname of %r and lastname of %r.', person_list[0].username, person_list[1].username)
 
 				person_list[0].firstname = uts.random_name()
 				person_list[1].lastname = uts.random_name()

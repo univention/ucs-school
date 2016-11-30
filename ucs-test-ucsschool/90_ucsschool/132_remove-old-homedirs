@@ -9,6 +9,7 @@
 
 import os
 import time
+import ctypes
 from pwd import getpwnam
 from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
@@ -53,10 +54,12 @@ class Test(CLI_Import_v2_Tester):
 	def test(self):
 		class_A_dn, class_A_name = self.udm.create_group(
 			position=SchoolClass.get_container(self.ou_A.name),
-			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()),
+			check_for_drs_replication=False)
 		class_B_dn, class_B_name = self.udm.create_group(
 			position=SchoolClass.get_container(self.ou_B.name),
-			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()),
+			check_for_drs_replication=False)
 
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Creating user with role %r in OU %r', role, self.ou_A.name)
@@ -82,8 +85,6 @@ class Test(CLI_Import_v2_Tester):
 			if role in ['staff', 'teacher_and_staff']:
 				kwargs['is_staff'] = True
 			username2, userdn2 = self.schoolenv.create_user(**kwargs)
-			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username1)))
-			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username2)))
 			user1 = User.from_dn(userdn1, None, self.lo)
 			user2 = User.from_dn(userdn2, None, self.lo)
 			homedir1 = user1.get_udm_object(self.lo)['unixhome']
@@ -92,8 +93,12 @@ class Test(CLI_Import_v2_Tester):
 			self.log.debug('homedir2=%r', homedir2)
 			os.makedirs(homedir1, 0711)
 			os.makedirs(homedir2, 0711)
-			os.chown(homedir1, getpwnam(username1).pw_uid, getpwnam(username1).pw_gid)
-			os.chown(homedir2, getpwnam(username2).pw_uid, getpwnam(username2).pw_gid)
+			try:
+				os.chown(homedir1, getpwnam(username1).pw_uid, getpwnam(username1).pw_gid)
+				os.chown(homedir2, getpwnam(username2).pw_uid, getpwnam(username2).pw_gid)
+			except KeyError as exc:
+				self.log.error("*** getpwnam() failure -> user not found -> probably replication error: %s", exc)
+				self.log.error("*** if test fails now, it's because of this")
 			if not (os.path.exists(homedir1) and os.path.isdir(homedir1)):
 				utils.fail('Homedir %r was not created.' % homedir1)
 			else:
@@ -121,9 +126,9 @@ class Test(CLI_Import_v2_Tester):
 				user2,
 				self.ou_A.name,
 				homedir2)
+			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username2)))
 			user2.remove_from_school(self.ou_A.name, self.lo)
 			utils.wait_for_replication_and_postrun()
-			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username2)))
 			if os.path.exists(homedir2):
 				utils.fail('Homedir %r was not removed.' % homedir2)
 			self.log.info("OK 2: homedir %r was removed.", homedir2)

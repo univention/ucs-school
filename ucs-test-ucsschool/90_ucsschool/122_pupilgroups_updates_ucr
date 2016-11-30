@@ -48,11 +48,13 @@ class Test(CLI_Import_v2_Tester):
 	def test(self):
 		class_A_dn, class_A_name = self.udm.create_group(
 			position=SchoolClass.get_container(self.ou_A.name),
-			name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+			name="{}-{}".format(self.ou_A.name, uts.random_groupname()),
+			check_for_drs_replication=False)
 		ucr_A = 'proxy/filter/usergroup/%s' % class_A_name
 		class_B_dn, class_B_name = self.udm.create_group(
 			position=SchoolClass.get_container(self.ou_B.name),
-			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
+			name="{}-{}".format(self.ou_B.name, uts.random_groupname()),
+			check_for_drs_replication=False)
 		ucr_B = 'proxy/filter/usergroup/%s' % class_B_name
 
 		user_a_name, user_a_dn = self.schoolenv.create_user(self.ou_A.name, classes=class_A_name)

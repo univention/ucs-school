@@ -10,6 +10,7 @@
 
 import copy
 import string
+import random
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
@@ -62,9 +63,11 @@ class Test(CLI_Import_v2_Tester):
 			return name.translate(None, bad_chars)
 
 		for role in ('student', 'teacher', 'teacher_and_staff'):
-			lastnames = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in string.punctuation]
+			random_puncts = list(string.punctuation)
+			random.shuffle(random_puncts)
+			lastnames = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in random_puncts[:4]]
 			lastnames.append(".{}".format(uts.random_username()))
-			lastnames.append(".{}.{}".format(uts.random_username(4), uts.random_username(4)))
+			lastnames.append(".{}.{}.".format(uts.random_username(4), uts.random_username(4)))
 			lastnames.append("{}[{}]{}".format(uts.random_username(3), uts.random_username(3), uts.random_username(3)))
 			lastnames.append(uts.random_username(40))
 			self.unique_basenames_to_remove.extend(lastnames)
@@ -104,6 +107,7 @@ class Test(CLI_Import_v2_Tester):
 				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))  # wait for creation before deletion
 
 			# delete users
+			self.log.info('*** Deleting users with role %r and the following lastnames:\n%r', role, lastnames)
 			fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
 			config.update_entry('input:filename', fn_csv)
 			fn_config = self.create_config_json(config=config)
@@ -112,6 +116,10 @@ class Test(CLI_Import_v2_Tester):
 			utils.wait_for_replication()
 
 			# recreate users, but move position of COUNTER variable
+			self.log.info(
+				'*** Importing users with role %r and the same lastnames, but move position of COUNTER variable:\n%r',
+				role,
+				lastnames)
 			config.update_entry('scheme:username:default', "[ALWAYSCOUNTER]<lastname>")
 			for person in persons:
 				# Prevent 'The email address is already taken by another user. Please change the email address.'
