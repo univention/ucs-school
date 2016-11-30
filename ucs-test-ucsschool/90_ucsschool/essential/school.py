@@ -105,7 +105,7 @@ class School(object):
 		if singlemaster:
 			self.dc_name = None
 		else:
-			self.dc_name = dc_name if dc_name else uts.random_name()
+			self.dc_name = dc_name if dc_name else uts.random_string()
 		if umcConnection:
 			self.umcConnection = umcConnection
 		else:

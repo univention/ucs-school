@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-11) unstable; urgency=low
+
+  * Bug #41344: revert r74750: with Bug #25354 fixed, hostnames can begin with
+    a number
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 30 Nov 2016 11:38:38 +0100
+
 ucs-test-ucsschool (3.0.17-10) unstable; urgency=low
 
   * Bug #42313: 215_import-users_illegal_chars_in_username is taking over 1h,
