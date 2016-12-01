@@ -382,7 +382,7 @@ class Instance(Base):
 		return self.progress_state.poll()
 
 	@sanitize(
-		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU),
+		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU_OR_EMPTY),
 	)
 	def get_schoolinfo(self, request):
 		school = request.options['schoolOU']
@@ -405,7 +405,7 @@ class Instance(Base):
 		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),  # TODO: add regex error message; Bug #42955
 		username=StringSanitizer(required=True, minimum=1),
 		password=StringSanitizer(required=True, minimum=1),
-		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU),  # TODO: add regex error message
+		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU_OR_EMPTY),  # TODO: add regex error message
 	)
 	@simple_response
 	def get_schoolinfo_slave(self, username, password, master, schoolOU):
@@ -427,6 +427,8 @@ class Instance(Base):
 		"""
 
 		try:
+			if not school_ou:  # domaincontroller_backup
+				raise noObject('')
 			lo, po = get_machine_connection(write=True)
 			school = School.from_dn(School(name=school_ou).dn, None, lo)
 		except noObject:
@@ -457,6 +459,7 @@ class Instance(Base):
 		return {
 			'exists': exists,
 			'school': school_ou,
+			'samba': self.get_samba_version(),
 			'school_version': school_version,
 			'classShareServer': class_share_server,
 			'homeShareServer': home_share_server,
@@ -469,7 +472,7 @@ class Instance(Base):
 		password=StringSanitizer(required=True),
 		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME_OR_EMPTY),
 		samba=ChoicesSanitizer(['3', '4']),
-		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU_OR_EMPTY, allow_none=True),
+		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU_OR_EMPTY),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 		server_type=ChoicesSanitizer(['educational', 'administrative']),
 		nameEduServer=StringSanitizer(regex_pattern=RE_HOSTNAME_OR_EMPTY),  # javascript wizard page always passes value to backend, even if empty

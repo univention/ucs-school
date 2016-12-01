@@ -119,6 +119,10 @@ define([
 					content: ''
 				}]
 			}, {
+				name: 'backupsetup',
+				headerText: _('UCS@school - server setup'),
+				widgets: []
+			}, {
 				name: 'credentials',
 				headerText: _('UCS@school - domain credentials'),
 				helpText: _('In order to setup this system as UCS@school slave domain controller, please enter the domain credentials of a domain account with join privileges.'),
@@ -336,6 +340,16 @@ define([
 			})));
 		},
 
+		getSchoolInfo: function() {
+			var args = {
+				schoolOU: this.getWidget('school', 'schoolOU').get('value'),
+				username: this.getWidget('credentials', 'username').get('value'),
+				password: this.getWidget('credentials', 'password').get('value'),
+				master: this.getWidget('credentials', 'master').get('value')
+			};
+			return tools.umcpCommand('schoolinstaller/get/schoolinfo', args);
+		},
+
 		_installationFinished: function(deferred) {
 			// get all error information and decide which next page to display
 			var info = this._progressBar.getErrors();
@@ -397,13 +411,28 @@ define([
 				}
 
 				// make sure that all form elements are filled out correctly
-				if (pageName && !this.getPage(pageName)._form.validate()) {
+				if (pageName && this.getPage(pageName)._form && !this.getPage(pageName)._form.validate()) {
 					return pageName;
 				}
 
 				// retry when an error occurred
 				if (pageName === 'error') {
 					next = 'setup';
+				}
+
+				// domaincontroller backup can start directly
+				if (next === 'setup' && this._serverRole === 'domaincontroller_backup') {
+					return this.standbyDuring(this.getSchoolInfo().then(lang.hitch(this, function(data) {
+						var schoolinfo = data.result;
+						this.getWidget('setup', 'setup').set('value', schoolinfo.school_version);
+						this.getWidget('samba', 'samba').set('value', schoolinfo.samba);
+						this._start_installation(pageName);
+						return 'backupsetup';
+					})));
+				}
+
+				if (next === 'backupsetup' && this._serverRole !== 'domaincontroller_backup') {
+					next = 'credentials';
 				}
 
 				// show credentials page only on domaincontroller slave
@@ -429,11 +458,7 @@ define([
 
 				// show managementsetup page only if no slave has been specified or OU does not exist yet
 				if (next === 'administrativesetup') {
-					var args = { schoolOU: this.getWidget('school', 'schoolOU').get('value'),
-							     username: this.getWidget('credentials', 'username').get('value'),
-							     password: this.getWidget('credentials', 'password').get('value'),
-							     master: this.getWidget('credentials', 'master').get('value')};
-					next = this.standbyDuring(tools.umcpCommand('schoolinstaller/get/schoolinfo', args)).then(lang.hitch(this, function(data) {
+					next = this.standbyDuring(this.getSchoolInfo()).then(lang.hitch(this, function(data) {
 						var schoolinfo = data.result;
 
 						if (this.getWidget('server_type', 'server_type').get('value') === 'educational') {
@@ -477,6 +502,10 @@ define([
 
 				// after the administrativesetup page, the installation begins
 				if (pageName === 'administrativesetup') {
+					next = 'install';
+				}
+
+				if (pageName === 'backupsetup') {
 					next = 'install';
 				}
 

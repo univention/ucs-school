@@ -1,3 +1,10 @@
+ucs-school-umc-installer (4.0.5-1) unstable; urgency=medium
+
+  * Bug #41007: fix backup installation;
+  * Bug #38683: skip environment type selection page on DC Master
+
+ -- Florian Best <best@univention.de>  Thu, 01 Dec 2016 20:29:42 +0100
+
 ucs-school-umc-installer (4.0.4-1) unstable; urgency=medium
 
   * Bug #41007: use select() instead of permanently read
