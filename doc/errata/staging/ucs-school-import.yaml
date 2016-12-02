@@ -13,9 +13,8 @@ desc: |
    checking if an email address was created. It is now only an error, if
    "email" is listed in "mandatory_attributes" and no email address was
    created (Bug #42503).
- * When a user should be deleted and the import is configured to instead set
-   an expiration date is set, the expiration date was being reset,
-   effectively pushing the expiration date forward in time. This has been
-   fixed: if a user already has an expiration date set, it is not changed
+ * The expiration date is not overriden anymore when the user already has
+   an expiration date set. This prevents that an import which marks users
+   for deactivation will push the expiration date forward in time.
    (Bug #42112).
 bug: [42478,42503,42942,42112]
