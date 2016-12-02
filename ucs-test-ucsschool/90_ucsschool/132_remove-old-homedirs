@@ -9,15 +9,13 @@
 
 import os
 import time
-import ctypes
 from pwd import getpwnam
 from ldap.filter import escape_filter_chars
-import univention.testing.strings as uts
 from univention.testing import utils
 import univention.testing.udm
 import univention.testing.ucsschool as utu
 from univention.testing.ucs_samba import wait_for_drs_replication
-from ucsschool.lib.models import School, SchoolClass, User
+from ucsschool.lib.models import School, User
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 
 
@@ -52,21 +50,11 @@ class Test(CLI_Import_v2_Tester):
 			self.cleanup()
 
 	def test(self):
-		class_A_dn, class_A_name = self.udm.create_group(
-			position=SchoolClass.get_container(self.ou_A.name),
-			name="{}-{}".format(self.ou_A.name, uts.random_groupname()),
-			check_for_drs_replication=False)
-		class_B_dn, class_B_name = self.udm.create_group(
-			position=SchoolClass.get_container(self.ou_B.name),
-			name="{}-{}".format(self.ou_B.name, uts.random_groupname()),
-			check_for_drs_replication=False)
-
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Creating user with role %r in OU %r', role, self.ou_A.name)
+		for role in ('student', 'teacher', 'teacher_and_staff'):
+			self.log.info('*** Creating user 1 with role %r in OU %r', role, self.ou_A.name)
 			kwargs = dict(
 				ou_name=self.ou_A.name,
 				schools=[self.ou_A.name],
-				classes=class_A_name,
 			)
 			if role in ['teacher', 'teacher_and_staff']:
 				kwargs['is_teacher'] = True
@@ -74,11 +62,10 @@ class Test(CLI_Import_v2_Tester):
 				kwargs['is_staff'] = True
 			username1, userdn1 = self.schoolenv.create_user(**kwargs)
 
-			self.log.info('*** Creating user with role %r in OUs %r', role, [self.ou_A.name, self.ou_B.name])
+			self.log.info('*** Creating user 2 with role %r in OUs %r', role, [self.ou_A.name, self.ou_B.name])
 			kwargs = dict(
 				ou_name=self.ou_A.name,
 				schools=[self.ou_A.name, self.ou_B.name],
-				classes=','.join([class_A_name, class_B_name]),
 			)
 			if role in ['teacher', 'teacher_and_staff']:
 				kwargs['is_teacher'] = True
@@ -100,28 +87,28 @@ class Test(CLI_Import_v2_Tester):
 				self.log.error("*** getpwnam() failure -> user not found -> probably replication error: %s", exc)
 				self.log.error("*** if test fails now, it's because of this")
 			if not (os.path.exists(homedir1) and os.path.isdir(homedir1)):
-				utils.fail('Homedir %r was not created.' % homedir1)
+				utils.fail('Homedir 1 %r was not created.' % homedir1)
 			else:
-				self.log.info("Created homedir %r: %r", homedir1, os.stat(homedir1))
+				self.log.info("Created homedir 1 %r: %r", homedir1, os.stat(homedir1))
 			if not (os.path.exists(homedir2) and os.path.isdir(homedir2)):
-				utils.fail('Homedir %r was not created.' % homedir2)
+				utils.fail('Homedir 2 %r was not created.' % homedir2)
 			else:
-				self.log.info("Created homedir %r: %r", homedir2, os.stat(homedir2))
+				self.log.info("Created homedir 2 %r: %r", homedir2, os.stat(homedir2))
 			time.sleep(30)
 
 			self.log.info(
-				'*** Deleting %r %r, should remove home directory %r on this host...',
+				'*** Deleting %r 1 %r, should remove home directory %r on this host...',
 				role,
 				user1,
 				homedir1)
 			user1.remove(self.lo)
 			utils.wait_for_replication_and_postrun()
 			if os.path.exists(homedir1):
-				utils.fail('Homedir %r was not removed.' % homedir1)
+				utils.fail('Homedir 1 %r was not removed.' % homedir1)
 			self.log.info("OK 1: homedir %r was removed.", homedir1)
 
 			self.log.info(
-				'*** Removing %r %r from OU %r, should remove home directory %r on this host...',
+				'*** Removing %r 2 %r from OU %r, should remove home directory %r on this host...',
 				role,
 				user2,
 				self.ou_A.name,
@@ -130,7 +117,7 @@ class Test(CLI_Import_v2_Tester):
 			user2.remove_from_school(self.ou_A.name, self.lo)
 			utils.wait_for_replication_and_postrun()
 			if os.path.exists(homedir2):
-				utils.fail('Homedir %r was not removed.' % homedir2)
+				utils.fail('Homedir 2 %r was not removed.' % homedir2)
 			self.log.info("OK 2: homedir %r was removed.", homedir2)
 
 

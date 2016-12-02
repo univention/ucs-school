@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-13) unstable; urgency=low
+
+  * Bug #41989: Staff users not replicated to edu-slaves, remove irrelevant
+    school classes from test, improve logging
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 02 Dec 2016 10:51:46 +0100
+
 ucs-test-ucsschool (3.0.17-12) unstable; urgency=medium
 
   * Tag more UCS@school import tests (Bug #43043)
