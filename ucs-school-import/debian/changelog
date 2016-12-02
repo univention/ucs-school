@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-39) unstable; urgency=low
+
+  * Bug #42503: fix syntax error from r74475
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 02 Dec 2016 10:09:33 +0100
+
 ucs-school-import (14.0.16-38) unstable; urgency=low
 
   * Bug #42112: don't change an existing expiration date when "deleting"

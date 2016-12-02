@@ -141,15 +141,7 @@ class UserImport(object):
 						# delete
 						continue
 				except ValidationError as exc:
-					raise (
-						UserValidationError,
-						UserValidationError(
-							"ValidationError when {} {} (source_uid:{} record_uid: {}): {}".format(
-								action_str.lower(), user, user.source_uid, user.record_uid, exc),
-							validation_error=exc,
-							import_user=user),
-						sys.exc_info()[2]
-					)
+					raise UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
 
 				if success:
 					self.logger.info("Success %s %s (source_uid:%s record_uid: %s).", action_str.lower(), user, user.source_uid, user.record_uid)
