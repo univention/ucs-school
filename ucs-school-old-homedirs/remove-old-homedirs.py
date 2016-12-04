@@ -44,7 +44,7 @@ from univention.admin.uldap import getMachineConnection
 name = 'remove-old-homedirs'
 description = 'moves directories of removed users away from home'
 filter = '(objectClass=ucsschoolType)'
-attributes = ["ucsschoolSchool"]
+attributes = ["posixAccount"]
 modrdn = '1'
 
 DEFAUL_FS = "ext2/ext3:ext2:ext3:ext4:xfs:btrfs"
@@ -72,7 +72,7 @@ def check_target_dir(dir):
 		listener.setuid(0)
 		try:
 			os.makedirs(dir)
-		except OSError as exc:
+		except EnvironmentError as exc:
 			return "failed to create target directory %s: %s" % (dir, exc)
 		finally:
 			listener.unsetuid()
@@ -124,7 +124,7 @@ def move_dir(src, dst, listener):
 	listener.setuid(0)
 	try:
 		shutil.move(src, dst)
-	except Exception as exc:
+	except EnvironmentError as exc:
 		ret = str(exc)
 	finally:
 		listener.unsetuid()
