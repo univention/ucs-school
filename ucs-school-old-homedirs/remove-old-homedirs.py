@@ -34,7 +34,7 @@ import listener
 import os
 import shutil
 import time
-from ldap import INVALID_CREDENTIALS, SERVER_DOWN
+from ldap import LDAPError
 from psutil import disk_partitions
 import univention.debug
 from ucsschool.lib.models import School
@@ -52,6 +52,7 @@ TARGET_BLACKLIST = ["/", "/boot", "/sys", "/proc", "/etc", "/dev"]
 
 target_dir = listener.configRegistry.get("ucsschool/listener/oldhomedir/targetdir")
 fs_types = listener.configRegistry.get("ucsschool/listener/oldhomedir/fs_types", DEFAUL_FS).split(":")
+lo = None
 
 
 def check_target_dir(dir):
@@ -136,26 +137,34 @@ def warn(msg):
 	univention.debug.debug(
 		univention.debug.LISTENER,
 		univention.debug.WARN,
-		msg
+		"remove-old-homedirs: {}".format(msg)
 	)
 
 
 def get_my_ous():
 	"""find out which OUs this host is responsible for, returns list of strings"""
-	listener.setuid(0)
-	try:
-		lo, po = getMachineConnection(ldap_master=False)
-	finally:
-		listener.unsetuid()
 	return [s.name for s in School.get_all(lo)]
 
 
-def handler(dn, new, old, command):
+def prerun():
+	global lo
+	listener.setuid(0)
 	try:
-		my_ous = set(get_my_ous())
-	except (INVALID_CREDENTIALS, SERVER_DOWN) as exc:
-		warn("%s: %s" % (name, exc))
+		lo, po = getMachineConnection(ldap_master=False)
+	except LDAPError as exc:
+		warn(str(exc))
 		return
+	finally:
+		listener.unsetuid()
+
+
+def postrun():
+	global lo
+	lo = None  # close LDAP connection
+
+
+def handler(dn, new, old, command):
+	my_ous = set(get_my_ous())
 	users_ous = set(new.get("ucsschoolSchool", []))
 
 	if (

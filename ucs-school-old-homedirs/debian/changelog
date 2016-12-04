@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (11.0.0-5) unstable; urgency=low
+
+  * Bug #41989: reuse LDAP connection
+
+ -- Daniel Troeder <troeder@univention.de>  Sun, 04 Dec 2016 09:39:24 +0100
+
 ucs-school-old-homedirs (11.0.0-4) unstable; urgency=low
 
   * Bug #41989: also handle non-school users
