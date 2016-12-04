@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-old-homedirs
-fix: 11.0.0-4.25.201612040856
+fix: 11.0.0-5.26.201612040940
 desc: |
     * The listener module that backuped or removed home directories of
       deleted users was adapted to ou-overlapping user accounts. It is now
