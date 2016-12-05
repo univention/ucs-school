@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-14) unstable; urgency=medium
+
+  * 90_ucsschool/93_samba4_check_dc_selection: Skip test case again
+    (Bug #34223)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 05 Dec 2016 16:48:26 +0100
+
 ucs-test-ucsschool (3.0.17-13) unstable; urgency=low
 
   * Bug #41989: Staff users not replicated to edu-slaves, remove irrelevant
