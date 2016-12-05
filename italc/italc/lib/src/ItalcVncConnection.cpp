@@ -118,16 +118,9 @@ rfbBool ItalcVncConnection::hookNewClient( rfbClient *cl )
 					( cl->format.bitsPerPixel / 8 );
 	if( t->m_frameBuffer )
 	{
-		// reset QImage instance which directly uses the framebuffer memory we're going
-		// to delete now
-		t->m_imgLock.lockForWrite();
-		t->m_image = QImage();
-		t->m_imgLock.unlock();
-
 		// do not leak if we get a new framebuffer size
 		delete [] t->m_frameBuffer;
 	}
-
 	t->m_frameBuffer = new uint8_t[size];
 	t->m_framebufferInitialized = false;
 	cl->frameBuffer = t->m_frameBuffer;
@@ -474,7 +467,7 @@ const QImage ItalcVncConnection::image( int x, int y, int w, int h ) const
 
 	if( w == 0 || h == 0 ) // full image requested
 	{
-		return m_image.copy(m_image.rect());
+		return m_image.copy();
 	}
 	return m_image.copy( x, y, w, h );
 }

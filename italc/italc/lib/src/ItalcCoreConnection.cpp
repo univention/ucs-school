@@ -73,12 +73,10 @@ ItalcCoreConnection::ItalcCoreConnection( ItalcVncConnection *vncConn ):
 		rfbClientRegisterExtension( __italcProtocolExt );
 	}
 
-	if (!connect( m_vncConn, SIGNAL( newClient( rfbClient * ) ),
-			this, SLOT( initNewClient( rfbClient * ) ),
-			Qt::DirectConnection ))
-	{
-		ilog(Error, "ITalcCoreConnection: cannot connect to m_vncConn");
-		m_vncConn = NULL;
+	if (m_vncConn) {
+		connect( m_vncConn, SIGNAL( newClient( rfbClient * ) ),
+				this, SLOT( initNewClient( rfbClient * ) ),
+				Qt::DirectConnection );
 	}
 }
 
@@ -357,8 +355,8 @@ void ItalcCoreConnection::enqueueMessage( const ItalcCore::Msg &msg )
 	ItalcCore::Msg m( msg );
 	if (!m_vncConn)
 	{
-	  ilog(Error, "ItalcCoreConnection: cannot call enqueueEvent - m_vncConn is NULL");
-	  return;
+		ilog(Error, "ItalcCoreConnection: cannot call enqueueEvent - m_vncConn is NULL");
+		return;
 	}
 	m_vncConn->enqueueEvent( new ItalcMessageEvent( m ) );
 }

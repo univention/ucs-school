@@ -1,3 +1,9 @@
+italc (2:2.0.25-16) unstable; urgency=medium
+
+  * Bug #43051: fix segfaults during screenshot creation
+
+ -- Florian Best <best@univention.de>  Mon, 05 Dec 2016 18:33:08 +0100
+
 italc (2:2.0.25-15) unstable; urgency=medium
 
   * Bug #43051: fix segfaults during screenshot creation
