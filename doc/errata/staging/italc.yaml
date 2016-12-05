@@ -3,10 +3,11 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: italc
-fix: 
+fix: 2:2.0.25-16.99.201612051833
 desc: |
  * A segfault in the UMC module process has been fixed which occurred
    during a reconnection of a client (Bug #43044).
  * A segfault in the UMC module process has been fixed which occurred
-   during creation of a screenshot (Bug #43051).
+   during creation of a screenshot and concurrent changing of the
+   screen resolution which happens for example during logon (Bug #43051).
 bug: [43044, 43051]
