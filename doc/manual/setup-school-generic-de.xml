@@ -364,7 +364,7 @@
         <title>Konfiguration des Computerraum-Moduls</title>
         <para>
             Im UMC-Modul <guimenu>Computerraum</guimenu> kann z.B. über die Funktion <guimenu>Beobachten</guimenu> eine verkleinerte
-            Desktop-Ansicht der aufgelistet Windows-Rechner angezeigt werden. Dabei ist es möglich, die Desktops bestimmter
+            Desktop-Ansicht der aufgelisteten Windows-Rechner angezeigt werden. Dabei ist es möglich, die Desktops bestimmter
             Benutzergruppen von dieser Anzeige auszuschließen. In der Standardkonfiguration ist dies die Gruppe
             <literal>Domain Admins</literal>.
         </para>
