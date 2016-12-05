@@ -15,4 +15,11 @@ desc: |
  * If the computerroom module was already opened when starting an exam
    and the settings were changed the exam was terminated and the exam
    user accounts were not removed (Bug #40901).
-bug: [41568, 41562, 42399, 37955, 40901]
+ * When starting the exam mode, the user accounts of the selected groups
+   are duplicated as new exam users. Mistakenly the LDAP attributes
+   <property>ucsschoolRecordUID</property> and <property>ucsschoolSourceUID</property>
+   have been duplicated, too, which caused error messages when using the &ucsUAS;
+   import scripts <command>ucs-school-user-import</command> or
+   <command>import_user</command>. Starting from this release, these two LDAP
+   attributes are no longer duplicated (Bug #43045).
+bug: [41568, 41562, 42399, 37955, 40901, 43045]
