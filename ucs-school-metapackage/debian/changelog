@@ -1,3 +1,11 @@
+ucs-school-metapackage (9.0.2-12) unstable; urgency=low
+
+  * Bug #40418:
+    - fixed package version comparison
+    - remove trailing comma in connector/s4/mapping/group/ignorelist
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 Dec 2016 21:59:59 +0100
+
 ucs-school-metapackage (9.0.2-11) unstable; urgency=low
 
   * Bug #41760: set executable flag on app version test script

@@ -151,7 +151,7 @@ if [ "$1" = "configure" ] ; then
 	fi
 fi
 
-if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 9.0.2-7; then
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 9.0.2-8; then
 	# Add some local groups to the ignore list
 	# Note: This must be in sync with univention-s4-connector.postinst (Bug #40418):
 	# TODO: Exceptions of Bug 29486 Comment 3
@@ -161,6 +161,10 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 9.0.2-7; then
 		echo "$group_ignorelist" | egrep -q "(,${g},|^${g},|,${g}$)" \
 			|| updated_group_ignorelist="$updated_group_ignorelist,$g"
 	done
+	if echo "$updated_group_ignorelist" | egrep -q "^," ; then
+		# cut off leading comma
+		updated_group_ignorelist="$(echo "$updated_group_ignorelist" | sed -re 's/^,+//')"
+	fi
 	if [ "$updated_group_ignorelist" != "$group_ignorelist" ]; then
 			ucr set connector/s4/mapping/group/ignorelist="$updated_group_ignorelist"
 			if [ -x /etc/init.d/univention-s4-connector ]; then
