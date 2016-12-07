@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (8.0.14-1) unstable; urgency=medium
+
+  * Bug #40901: fix exam starting/finishing when multiple browsers are
+    involved
+
+ -- Florian Best <best@univention.de>  Wed, 07 Dec 2016 15:00:43 +0100
+
 ucs-school-umc-computerroom (8.0.13-1) unstable; urgency=medium
 
   * Bug #43044: also unregister signal handlers of VNC connection

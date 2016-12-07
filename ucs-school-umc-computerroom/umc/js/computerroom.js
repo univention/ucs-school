@@ -71,7 +71,7 @@ define([
 	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
 	styles.insertCssRule('.umcRedColor, .umcRedColor .dijitButtonText', 'color: red!important;');
 
-	var isConnected = function(item) { return item.connection[0] == 'connected'; };
+	var isConnected = function(item) { return item.connection[0] === 'connected'; };
 	var isUCC = function(item) { return item.objectType[0] === 'computers/ucc'; };
 	var filterUCC = function(items) { return array.filter(items, function(item) { return !isUCC(item); }); };
 	var alert_UCC_unavailable = function(items) {
@@ -242,7 +242,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('computerStart', function(item) {
-					return (item.connection[0] == 'disconnected' || item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0];
+					return (item.connection[0] === 'disconnected' || item.connection[0] === 'error' || item.connection[0] === 'autherror' || item.connection[0] === 'offline') && item.mac[0];
 				}),
 				callback: lang.hitch(this, '_computerStart')
 			}, {
@@ -652,9 +652,9 @@ define([
 					if (isConnected(item)) {
 						icon = 'demo-offline';
 						status_ = _('Monitoring is activated');
-					} else if (item.connection[0] == 'autherror') {
+					} else if (item.connection[0] === 'autherror') {
 						status_ = _('The monitoring mode has failed. It seems that the monitoring service is not configured properly.');
-					} else if (item.connection[0] == 'error') {
+					} else if (item.connection[0] === 'error') {
 						status_ = _('The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.');
 					}
 					if (item.DemoServer[0] === true) {
@@ -813,7 +813,7 @@ define([
 					var cls = button.type || Button;
 					container.addChild(this._headButtons[button.name] = new cls(button));
 					container.own(this._headButtons[button.name]);
-					if (button.name == 'settings') {
+					if (button.name === 'settings') {
 						this._changeSettingsLabel = button.label;
 					}
 				});
@@ -841,7 +841,7 @@ define([
 
 							var _room;
 							array.forEach(response.result, function(iroom) {
-								if (iroom.id == guessed.roomdn) {
+								if (iroom.id === guessed.roomdn) {
 									_room = iroom;
 								}
 							});
@@ -859,7 +859,7 @@ define([
 		},
 
 		_acquireRoom: function(room, promptAlert) {
-			promptAlert = promptAlert === undefined || promptAlert;  // default value == true
+			promptAlert = promptAlert === undefined || promptAlert;  // default value === true
 			return tools.umcpCommand('computerroom/room/acquire', {
 				room: room
 			}).then(lang.hitch(this, function(response) {
@@ -867,7 +867,7 @@ define([
 					// we could not acquire the room
 					if (promptAlert) {
 						// prompt a message if wanted
-						if (response.result.message == 'EMPTY_ROOM') {
+						if (response.result.message === 'EMPTY_ROOM') {
 							dialog.alert(_('The room is empty or the computers are not configured correctly. Please select another room.'));
 						}
 						else {
@@ -930,7 +930,7 @@ define([
 				name: 'collect',
 				label: _('Collect results')
 			}]).then(lang.hitch(this, function(response) {
-				if (response == 'cancel') {
+				if (response === 'cancel') {
 					// user canceled the dialog
 					return;
 				}
@@ -979,7 +979,7 @@ define([
 				name: 'finish',
 				label: _('Finish exam')
 			}]).then(lang.hitch(this, function(response) {
-				if (response == 'cancel') {
+				if (response === 'cancel') {
 					// user canceled the dialog
 					return;
 				}
@@ -994,21 +994,17 @@ define([
 				// create a 'real' ProgressBar
 				var deferred = new Deferred();
 				this._progressBar.reset(_('Finishing exam...'));
-				this.standby(true, this._progressBar);
-				this._progressBar.auto(
-					'schoolexam/progress',
-					{},
-					function() {
-						// when progress is finished, resolve the given Deferred object
-						deferred.resolve();
-					}
-				);
+				this.standbyDuring(deferred, this._progressBar);
+				this._progressBar.auto('schoolexam/progress', {}, function() {
+					// when progress is finished, resolve the given Deferred object
+					deferred.resolve();
+				});
 
 				// things to do after finishing the exam
-				deferred.then(this.umcpCommand('computerroom/exam/finish')).then(lang.hitch(this, function() {
-					// stop standby
-					this.standby(false);
-
+				deferred.then(this.umcpCommand('computerroom/exam/finish', {
+					exam: info.exam,
+					room: info.room
+				})).then(lang.hitch(this, function() {
 					// on success, prompt info to user
 					if (this._progressBar.getErrors().errors.length === 0) {
 						dialog.alert(_("<p>The exam has been successfully finished. All related exam documents have been collected from the students' home directories.</p><p><b>Note:</b> All computers need to be either switched off or rebooted before they can be used again for regular schooling.</p>"));
@@ -1043,7 +1039,7 @@ define([
 			var _getRoom = function(roomDN) {
 				var room = null;
 				array.some(form.getWidget('room').getAllItems(), function(iroom) {
-					if (iroom.id == roomDN) {
+					if (iroom.id === roomDN) {
 						room = iroom;
 						return true;
 					}
@@ -1165,7 +1161,7 @@ define([
 				name: 'takeover',
 				label: _('Take over')
 			}]).then(function(response) {
-				if (response != 'takeover') {
+				if (response !== 'takeover') {
 					// cancel deferred chain
 					throw false;
 				}
@@ -1206,6 +1202,9 @@ define([
 			this.umcpCommand('computerroom/update', {}, false).then(lang.hitch(this, function(response) {
 				var demo = false, demo_server = null, demo_user = null, demo_systems = 0;
 
+				if (this.get('roomInfo') !== response.result.room_info) {
+					this.set('roomInfo', response.result.room_info);
+				}
 				this._nUpdateFailures = 0; // update was successful
 
 				if (response.result.locked) {
@@ -1220,6 +1219,8 @@ define([
 					}));
 					return;
 				}
+
+				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 2000);
 
 				array.forEach(response.result.computers, function(item) {
 					this._objStore.put(item);
@@ -1239,7 +1240,7 @@ define([
 					this._headButtons.settings.set('label', labelValidUntil);
 					redColor = (response.result.settingEndsIn <= 5);
 				} else {
-					if (this._headButtons.settings.get('label') != this._changeSettingsLabel) {
+					if (this._headButtons.settings.get('label') !== this._changeSettingsLabel) {
 						this._headButtons.settings.set('label', this._changeSettingsLabel);
 						this._settingsDialog.update();
 					}
@@ -1248,7 +1249,7 @@ define([
 					domClass.toggle(this._headButtons.settings.domNode, 'umcRedColor', redColor);
 				}
 
-				var endTime = this.get('roomInfo').examEndTime;
+				var endTime = (this.get('roomInfo') || {}).examEndTime;
 				if (endTime) {
 					endTime = endTime.split(':');
 					var now = new Date();
@@ -1263,8 +1264,6 @@ define([
 					}
 					this._headButtons.examEndTime.set('content', content);
 				}
-
-				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 2000);
 
 				// update the grid actions
 				this._dataStore.fetch({
@@ -1282,7 +1281,7 @@ define([
 					})
 				});
 
-				var changed = (this._demo.running != demo || this._demo.server != demo_server);
+				var changed = (this._demo.running !== demo || this._demo.server !== demo_server);
 				this._demo = {
 					running: demo,
 					server: demo_server,

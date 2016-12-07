@@ -54,7 +54,7 @@ from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
 from univention.lib import atjobs
 
-from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer, StringSanitizer, ChoicesSanitizer, BooleanSanitizer
+from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer, StringSanitizer, ChoicesSanitizer, BooleanSanitizer, DNSanitizer
 from univention.management.console.modules.decorators import sanitize, simple_response
 from univention.management.console.modules import UMC_Error
 from univention.management.console.log import MODULE
@@ -94,15 +94,11 @@ def _getRoomFile(roomDN):
 
 def _isUmcProcess(pid):
 	if not psutil.pid_exists(pid):
-		# process is not running anymore
-		return False
-	else:
-		# process is running
-		cmdline = psutil.Process(pid).cmdline
-		if 'computerroom' not in cmdline or not any('univention-management-console-module' in l for l in cmdline):
-			# the process is not the computerroom UMC module
-			return False
-	return True
+		return False  # process is not running anymore
+	# process is running
+	cmdline = psutil.Process(pid).cmdline
+	# check if the process is the computerroom UMC module
+	return 'computerroom' in cmdline and any('univention-management-console-module' in l for l in cmdline)
 
 
 def _readRoomInfo(roomDN):
@@ -135,15 +131,12 @@ def _readRoomInfo(roomDN):
 def _updateRoomInfo(roomDN, **kwargs):
 	'''Update infos for a room, i.e., leave unspecified values untouched.'''
 	info = _readRoomInfo(roomDN)
-	newKwargs = dict()
+	new_info = dict()
 	for key in ('user', 'cmd', 'exam', 'examDescription', 'examEndTime'):
-		if key in kwargs:
-			# set the specified value (can also be None for deleting the attribute)
-			newKwargs[key] = kwargs[key]
-		else:
-			# leave the original value
-			newKwargs[key] = info.get(key)
-	_writeRoomInfo(roomDN, **newKwargs)
+		# set the specified value (can also be None for deleting the attribute)
+		# or fallback to currently set value
+		new_info[key] = kwargs.get(key, info.get(key))
+	_writeRoomInfo(roomDN, **new_info)
 
 
 def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None, examEndTime=None):
@@ -217,6 +210,15 @@ class IPAddressSanitizer(Sanitizer):
 			self.raise_validation_error('%s' % (exc,))
 
 
+class PeriodSanitizer(StringSanitizer):
+
+	def _sanitize(self, value, name, further_fields):
+		try:
+			return datetime.datetime.strptime(value or '00:00', '%H:%M').time()
+		except ValueError as exc:
+			self.raise_validation_error('Failed to read end time: %s' % (exc,))
+
+
 class ComputerSanitizer(StringSanitizer):
 
 	instance = None
@@ -286,7 +288,7 @@ class Instance(SchoolBaseModule):
 			MODULE.info('room info: %s' % info)
 			if info and not info.get('exam'):
 				MODULE.info('Removing lock file for room %s (%s)' % (self._italc.room, self._italc.roomDN))
-				_freeRoom(self._italc.roomDN, self._user_dn)
+				_freeRoom(self._italc.roomDN, self.user_dn)
 		_exit(0)
 
 	def lessons(self, request):
@@ -305,12 +307,10 @@ class Instance(SchoolBaseModule):
 		"""Returns a list of available internet rules"""
 		self.finished(request.id, [x.name for x in internetrules.list()])
 
-	@sanitize(room=StringSanitizer(required=True))
+	@sanitize(room=DNSanitizer(required=True))
 	@LDAP_Connection()
 	def room_acquire(self, request, ldap_user_read=None):
-		"""Acquires the specified computerroom:
-		requests.options = { 'room': <roomDN> }
-		"""
+		"""Acquires the specified computerroom"""
 		roomDN = request.options['room']
 
 		success = True
@@ -336,8 +336,8 @@ class Instance(SchoolBaseModule):
 
 		# update the room info file
 		if success:
-			_updateRoomInfo(roomDN, user=self._user_dn)
-			if not _getRoomOwner(roomDN) == self._user_dn:
+			_updateRoomInfo(roomDN, user=self.user_dn)
+			if _getRoomOwner(roomDN) != self.user_dn:
 				success = False
 				message = 'ALREADY_LOCKED'
 
@@ -370,7 +370,7 @@ class Instance(SchoolBaseModule):
 			room_info = _readRoomInfo(room.dn)
 			user_dn = room_info.get('user')
 
-			locked = user_dn and user_dn != self._user_dn and ('pid' in room_info or 'exam' in room_info)
+			locked = user_dn and user_dn != self.user_dn and ('pid' in room_info or 'exam' in room_info)
 			if locked:
 				try:
 					# open the corresponding UDM object to get a displayable user name
@@ -418,7 +418,7 @@ class Instance(SchoolBaseModule):
 
 		# make sure that we run the current room session
 		userDN = _getRoomOwner(self._italc.roomDN)
-		if userDN and userDN != self._user_dn:
+		if userDN and userDN != self.user_dn:
 			raise UMC_Error(_('A different user is already running a computer room session.'))
 
 	@LDAP_Connection()
@@ -448,21 +448,23 @@ class Instance(SchoolBaseModule):
 			raise UMC_Error('no room selected')
 
 		computers = [computer.dict for computer in self._italc.values() if computer.hasChanged]
-		result = {'computers': computers}
+		info = _readRoomInfo(self._italc.roomDN)
+		result = {
+			'computers': computers,
+			'room_info': info,
+			'locked': info.get('user', self.user_dn) != self.user_dn,
+			'user': self.user_dn,
+		}
 
-		userDN = _getRoomOwner(self._italc.roomDN)
-		result['locked'] = False
-		result['user'] = self._user_dn
-		if userDN and userDN != self._user_dn:
+		if result['locked'] and 'pid' in info:
+			result['user'] = info['user']
 			# somebody else acquired the room, the room is locked
-			result['locked'] = True
 			try:
 				# open the corresponding UDM object to get a displayable user name
-				result['user'] = Display.user(User.from_dn(userDN, None, ldap_user_read).get_udm_object(ldap_user_read))
+				result['user'] = Display.user(User.from_dn(result['user'], None, ldap_user_read).get_udm_object(ldap_user_read))
 			except udm_exceptions.base as exc:
 				# could not oben the LDAP object, show the DN
-				result['user'] = userDN
-				MODULE.warn('Cannot open LDAP information for user "%s": %s' % (userDN, exc))
+				MODULE.warn('Cannot open LDAP information for user %r: %s' % (result['user'], exc))
 
 		# settings info
 		if self._ruleEndAt is not None:
@@ -610,33 +612,42 @@ class Instance(SchoolBaseModule):
 			'period': str(period),
 		}
 
+	@check_room_access
 	@simple_response
-	def exam_finish(self):
+	def finish_exam(self):
+		"""Finish the exam in the current room"""
 		_updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, examEndTime=None)
+
+	@sanitize(
+		room=DNSanitizer(required=True),
+		exam=StringSanitizer(required=True),
+		examDescription=StringSanitizer(required=True),
+		examEndTime=StringSanitizer(required=True),
+	)
+	@check_room_access
+	@simple_response
+	def start_exam(self, room, exam, examDescription, examEndTime):
+		"""Start an exam in the current room"""
+		info = _readRoomInfo(room)
+		if info.get('exam'):
+			raise UMC_Error(_('In this room an exam is currently already written. Please select another room.'))
+
+		_updateRoomInfo(self._italc.roomDN, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
 
 	@sanitize(
 		printMode=ChoicesSanitizer(['none', 'all', 'default'], required=True),
 		internetRule=StringSanitizer(required=True),
 		shareMode=ChoicesSanitizer(['home', 'all'], required=True),
-		period=StringSanitizer(default='', required=False),
-		# exam=StringSanitizer(allow_none=True),
-		# examDescription=StringSanitizer(allow_none=True),
-		# examEndTime=StringSanitizer(allow_none=True),
+		period=PeriodSanitizer(default='00:00', required=False),
+		customRule=StringSanitizer(allow_none=True, required=False),
 	)
 	@check_room_access
-	def settings_set(self, request):
+	@simple_response
+	def settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
 		"""Defines settings for a room"""
 
 		if not self._italc.school or not self._italc.room:
 			raise UMC_Error('no room selected')
-
-		roomInfo = _readRoomInfo(self._italc.roomDN)
-		printMode = request.options['printMode']
-		shareMode = request.options['shareMode']
-		internetRule = request.options['internetRule']
-		exam = request.options.get('exam', roomInfo.get('exam'))
-		examDescription = request.options.get('examDescription', roomInfo.get('examDescription', exam))
-		examEndTime = request.options.get('examEndTime', roomInfo.get('examEndTime'))
 
 		# find AT jobs for the room and execute it to remove current settings
 		jobs = atjobs.list(extended=True)
@@ -645,23 +656,23 @@ class Instance(SchoolBaseModule):
 				job.rm()
 				subprocess.call(shlex.split(job.command))
 
+		roomInfo = _readRoomInfo(self._italc.roomDN)
+		in_exam_mode = roomInfo.get('exam')
+
 		# for the exam mode, remove current settings before setting new ones
-		if roomInfo.get('exam') and roomInfo.get('cmd'):
+		if in_exam_mode and roomInfo.get('cmd'):
 			MODULE.info('unsetting room settings for exam (%s): %s' % (roomInfo['exam'], roomInfo['cmd']))
 			try:
 				subprocess.call(shlex.split(roomInfo['cmd']))
 			except (OSError, IOError):
 				MODULE.warn('Failed to reinitialize current room settings: %s' % roomInfo['cmd'])
-
-		new_room_infos = dict(cmd=None, user=self._user_dn, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
+			_updateRoomInfo(self._italc.roomDN, cmd=None)
 
 		# reset to defaults. No atjob is necessary.
 		if internetRule == 'none' and shareMode == 'all' and printMode == 'default':
 			self._ruleEndAt = None
 			self.reset_smb_connections()
 			self.reload_cups()
-			_updateRoomInfo(self._italc.roomDN, **new_room_infos)
-			self.finished(request.id, True)
 			return
 
 		# collect new settings
@@ -698,7 +709,7 @@ class Instance(SchoolBaseModule):
 		if internetRule != 'none':
 			vextract.append('proxy/filter/room/%s/ip' % self._italc.room)
 			vappend[vextract[-1]] = hosts
-			if internetRule == 'custom' and 'customRule' in request.options:
+			if internetRule == 'custom':
 				# remove old rules
 				i = 1
 				while True:
@@ -712,7 +723,7 @@ class Instance(SchoolBaseModule):
 				vset[vunset[-1]] = self._username
 				vset['proxy/filter/setting-user/%s/filtertype' % self._username] = 'whitelist-block'
 				i = 1
-				for domain in request.options.get('customRule').split('\n'):
+				for domain in (customRule or '').split('\n'):
 					MODULE.info('Setting whitelist entry for domain %s' % domain)
 					if not domain:
 						continue
@@ -782,17 +793,14 @@ class Instance(SchoolBaseModule):
 		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % (' '.join(unset_vars), ' '.join(extract_vars), ' '.join(quote(x) for x in hosts))
 		MODULE.info('command for reinitialization is: %s' % (cmd,))
 
-		if not exam:
-			try:
-				endtime = datetime.datetime.strptime(request.options['period'], '%H:%M')
-				endtime = endtime.time()
-			except ValueError as exc:
-				raise UMC_Error('Failed to read end time: %s' % (exc,))
-
+		if in_exam_mode:
+			# Command for the exam mode to be executed manually when changing the settings again...
+			_updateRoomInfo(self._italc.roomDN, cmd=cmd)
+		else:
 			starttime = datetime.datetime.now()
 			MODULE.info('Now: %s' % starttime)
-			MODULE.info('Endtime: %s' % endtime)
-			starttime = starttime.replace(hour=endtime.hour, minute=endtime.minute)
+			MODULE.info('Endtime: %s' % period)
+			starttime = starttime.replace(hour=period.hour, minute=period.minute)
 			while starttime < datetime.datetime.now():  # prevent problems due to intra-day limit
 				starttime += datetime.timedelta(days=1)
 
@@ -800,14 +808,9 @@ class Instance(SchoolBaseModule):
 			MODULE.info('Remove settings at %s' % (starttime,))
 			atjobs.add(cmd, starttime, {Instance.ATJOB_KEY: self._italc.room})
 			self._ruleEndAt = starttime
-		else:
-			# Command for the exam mode to be executed manually when changing the settings again...
-			new_room_infos['cmd'] = cmd
 
 		self.reset_smb_connections()
 		self.reload_cups()
-		_updateRoomInfo(self._italc.roomDN, **new_room_infos)
-		self.finished(request.id, True)
 
 	def reload_cups(self):
 		if os.path.exists('/etc/init.d/cups'):
