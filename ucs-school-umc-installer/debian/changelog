@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.6-1) unstable; urgency=medium
+
+  * Bug #41007: Add special page for DC Backup installation
+
+ -- Florian Best <best@univention.de>  Wed, 07 Dec 2016 19:01:35 +0100
+
 ucs-school-umc-installer (4.0.5-1) unstable; urgency=medium
 
   * Bug #41007: fix backup installation;

@@ -52,6 +52,7 @@ define([
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
+		installationLock: null,
 
 		// entries returned from the initial request
 		_serverRole: null,
@@ -121,7 +122,11 @@ define([
 			}, {
 				name: 'backupsetup',
 				headerText: _('UCS@school - server setup'),
-				widgets: []
+				widgets: [{
+					type: Text,
+					name: 'backup_text',
+					content: _('The UCS@school configuration wizard detected all necessary information to install UCS@school on this DC Backup. Click <i>next</i> to start the installation.')
+				}]
 			}, {
 				name: 'credentials',
 				headerText: _('UCS@school - domain credentials'),
@@ -217,8 +222,10 @@ define([
 					type: ComboBox,
 					name: 'server_type',
 					label: _('Please choose the server type for this domain controller slave:'),
-					staticValues: [ { id: 'educational', label: _('Educational server') },
-									{ id: 'administrative', label: _('Administrative server') }]
+					staticValues: [
+						{ id: 'educational', label: _('Educational server') },
+						{ id: 'administrative', label: _('Administrative server') }
+					]
 				}]
 			}, {
 				name: 'administrativesetup',
@@ -426,7 +433,6 @@ define([
 						var schoolinfo = data.result;
 						this.getWidget('setup', 'setup').set('value', schoolinfo.school_version);
 						this.getWidget('samba', 'samba').set('value', schoolinfo.samba);
-						this._start_installation(pageName);
 						return 'backupsetup';
 					})));
 				}
@@ -528,6 +534,10 @@ define([
 
 		_start_installation: function(pageName) {
 			var values = this.getValues();
+			if (this.installationLock && !this.installationLock.isFulfilled()) {
+				console.error('The installation is already running. Cannot do parallel installations.');
+				throw 'The installation is already running. Cannot do parallel installations.';
+			}
 
 			// request installation
 			var next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
@@ -569,6 +579,8 @@ define([
 				}));
 			}));
 
+			this.installationLock = next;
+
 			return next;
 		},
 
@@ -595,7 +607,7 @@ define([
 		},
 
 		hasPrevious: function(pageName) {
-			return this.inherited(arguments) && pageName !== 'error' && pageName !== 'success' && pageName !== 'alreadyInstalled';
+			return this.inherited(arguments) && pageName !== 'error' && pageName !== 'success' && pageName !== 'alreadyInstalled' && pageName !== 'backupsetup';
 		},
 
 		previous: function(pageName) {
@@ -605,6 +617,11 @@ define([
 			// slave and only if samba is not already installed
 			if (previous === 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') === 'multiserver' && this._serverRole !== 'domaincontroller_slave'))) {
 				previous = 'credentials';
+			}
+
+			// DC Master/Slave doesn't have the backup page
+			if (previous === 'backupsetup') {
+				previous = 'setup';
 			}
 
 			// show credentials page only on DC Slave

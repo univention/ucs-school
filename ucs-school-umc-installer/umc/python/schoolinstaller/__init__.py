@@ -377,8 +377,10 @@ class Instance(Base):
 	@simple_response
 	def progress(self):
 		if not self._installation_started:
-			self.progress_state.finish()
-			self.progress_state.error_handler('Critical: There is no current installation running. Maybe the previous process died?')
+			if self._installation_started is False:
+				self.progress_state.finish()
+				self.progress_state.error_handler('Critical: There is no current installation running. Maybe the previous process died?')
+			self._installation_started = False
 		return self.progress_state.poll()
 
 	@sanitize(
@@ -653,6 +655,7 @@ class Instance(Base):
 			MODULE.info('Finished installation')
 			progress_state.finish()
 			progress_state.info = _('finished...')
+			self._installation_started = None
 			if isinstance(result, SchoolInstallerError):
 				MODULE.warn('Error during installation: %s' % (result,))
 				self.restore_original_certificate()
@@ -663,11 +666,8 @@ class Instance(Base):
 				MODULE.error('Exception during installation: %s' % msg)
 				progress_state.error_handler(_('An unexpected error occurred during installation: %s') % result)
 
-		# launch thread
 		thread = notifier.threads.Simple('ucsschool-install', notifier.Callback(_thread, self, packages_to_install), notifier.Callback(_finished))
 		thread.run()
-
-		# finish request
 		self.finished(request.id, None)
 
 	def retrieve_root_certificate(self, master):
