@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-40) unstable; urgency=low
+
+  * Bug #42942: updated log output in case of an exception
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 Dec 2016 13:53:52 +0100
+
 ucs-school-import (14.0.16-39) unstable; urgency=low
 
   * Bug #42503: fix syntax error from r74475

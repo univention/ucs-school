@@ -31,6 +31,7 @@ Representation of a user read from a file.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import traceback
 import re
 import datetime
 from collections import defaultdict
@@ -44,7 +45,7 @@ from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
+from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.pyhooks_loader import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
@@ -194,8 +195,8 @@ class ImportUser(User):
 			except (valueError, valueInvalidSyntax) as exc:
 				raise UDMValueError("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
 			except Exception as exc:
-				self.logger.error("UDM property '{}' could not be set for user '{}' in import line {}: exception: {!s}".format(property_, self.name, self.entry_count, exc))
-				raise
+				self.logger.error("Unexpected exception caught: UDM property '{}' could not be set for user '{}' in import line {}: exception: {!s}\n{}".format(property_, self.name, self.entry_count, exc, traceback.format_exc()))
+				raise UDMError("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
 
 
 	def has_expired(self, connection):

@@ -134,7 +134,11 @@ class ToManyErrors(UcsSchoolImportFatalError):
 		self.errors = errors
 
 
-class UDMValueError(UcsSchoolImportError):
+class UDMError(UcsSchoolImportError):
+	pass
+
+
+class UDMValueError(UDMError):
 	pass
 
 
