@@ -1,9 +1,9 @@
 product: ucsschool
 release: "4.1"
-version: [3]
+version: [4]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix: 9.0.2-12.188.201612072201
+fix: 9.0.2-13.189.201612072218
 desc: |
  * The &ucsUAS; meta packages maintained its own values for the UCR variable <envar>connector/s4/mapping/group/ignorelist</envar>.
    These values were out of sync with the values of univention-s4-connector and have been resynced to avoid rejects (Bug #40418).
