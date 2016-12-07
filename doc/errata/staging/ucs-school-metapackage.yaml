@@ -3,9 +3,10 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-metapackage
-fix: 9.0.2-11.187.201611231200
+fix: 9.0.2-12.188.201612072201
 desc: |
- * Update connector/s4/mapping/group/ignorelist to avoid rejects (Bug #40418)
+ * The &ucsUAS; meta packages maintained its own values for the UCR variable <envar>connector/s4/mapping/group/ignorelist</envar>.
+   These values were out of sync with the values of univention-s4-connector and have been resynced to avoid rejects (Bug #40418).
  * A (re)join is now aborted if the version of the UCS@school app on the
    joining system is higher that version of the app on the DC master. UCRV
    ucsschool/join/ignore-version-mismatch/.* allows to override the test.
