@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-webproxy - pupilgroups listener updates UCRVs
 ## roles: [domaincontroller_slave]
-## tags: [apptest,ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest,ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-webproxy]
 ## bugs: [41749]
