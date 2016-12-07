@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: support deletion of users in different ways (Bug 41344)
-## tags: [apptest,ucsschool,ucsschool_import]
+## tags: [apptest,ucsschool,skip_in_multiserver,ucsschool_import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:

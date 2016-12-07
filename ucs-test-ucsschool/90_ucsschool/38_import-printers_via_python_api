@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Import printers via python API
-## tags: [apptest,ucsschool,ucsschool_import]
+## tags: [apptest,ucsschool,skip_in_multiserver,ucsschool_import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## timeout: 14400
