@@ -13,8 +13,8 @@ RETVAL=0
 
 eval "$(ucr shell)"
 
-if [ "$connector_s4_mapping_group_syncmode" != "write" ]; then
-	fail_test 1 "connector/s4/mapping/group/syncmode is set to $connector_s4_mapping_group_syncmode, expected: write"
+if [ ! "$connector_s4_mapping_group_syncmode" = "write" ]; then
+    fail_test 1 "connector/s4/mapping/group/syncmode is set to '$connector_s4_mapping_group_syncmode', expected: 'write'"
 fi
 
 exit $RETVAL
