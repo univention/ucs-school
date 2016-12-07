@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-13) unstable; urgency=low
+
+  * Bug #40418: reverted some changes of last commit
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 Dec 2016 22:12:31 +0100
+
 ucs-school-metapackage (9.0.2-12) unstable; urgency=low
 
   * Bug #40418:
