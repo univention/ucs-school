@@ -1,3 +1,10 @@
+ucs-school-umc-exam (6.0.10-3) unstable; urgency=medium
+
+  * Bug #40901: fix exam starting/finishing when multiple browsers are
+  	involved
+
+ -- Florian Best <best@univention.de>  Wed, 07 Dec 2016 14:59:17 +0100
+
 ucs-school-umc-exam (6.0.10-2) unstable; urgency=low
 
   * Bug #37955: revert r74660, remove homedir before user creation

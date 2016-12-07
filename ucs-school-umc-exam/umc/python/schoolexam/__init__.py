@@ -48,7 +48,7 @@ from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, ListSanitizer
+from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, ListSanitizer, DNSanitizer
 from univention.management.console.modules.schoolexam import util
 
 from univention.lib.i18n import Translation
@@ -154,6 +154,7 @@ class Instance(SchoolBaseModule):
 		directory=StringSanitizer(required=True),
 		shareMode=StringSanitizer(required=True),
 		internetRule=StringSanitizer(required=True),
+		customRule=StringSanitizer(),
 		examEndTime=StringSanitizer(required=True),
 		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
 		files=ListSanitizer(StringSanitizer()),
@@ -174,7 +175,6 @@ class Instance(SchoolBaseModule):
 
 		# create that holds a reference to project, otherwise _thread() cannot
 		# set the project variable in the scope of start_exam:
-		# http://stackoverflow.com/questions/7935966/python-overwriting-variables-in-nested-functions
 		my = type("", (), dict(
 			project=None
 		))()
@@ -182,25 +182,23 @@ class Instance(SchoolBaseModule):
 		# create a User object for the teacher
 		# perform this LDAP operation outside the thread, to avoid tracebacks
 		# in case of an LDAP timeout
-		sender = util.distribution.openRecipients(self._user_dn, ldap_user_read)
+		sender = util.distribution.openRecipients(self.user_dn, ldap_user_read)
+		if not sender:
+			raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
 
 		def _thread():
-			if not sender:
-				MODULE.error('Could not find user DN: %s' % self._user_dn)
-				raise RuntimeError(_('Could not authenticate user "%s"!') % self._user_dn)
-
 			# make sure that a project with the same name does not exist
-			opts = request.options
+			directory = request.options['directory']
 			# get absolute path of project file and test for existance
-			fn_test_project = util.distribution.Project.sanitize_project_filename(opts.get('directory'))
+			fn_test_project = util.distribution.Project.sanitize_project_filename(directory)
 			if os.path.exists(fn_test_project):
-				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % opts.get('directory'))
+				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % (directory,))
 
 			# validate the project data and save project
 			my.project = util.distribution.Project(dict(
-				name=opts.get('directory'),
-				description=opts.get('name'),
-				files=opts.get('files'),
+				name=directory,
+				description=request.options['name'],
+				files=request.options.get('files'),
 				sender=sender,
 			))
 			my.project.validate()
@@ -265,8 +263,8 @@ class Instance(SchoolBaseModule):
 					))
 					examUsers.add(ires.get('examuserdn'))
 					MODULE.info('Exam user has been created: %s' % ires.get('examuserdn'))
-				except (HTTPException, SocketError) as e:
-					MODULE.warn('Could not create exam user account for: %s' % iuser.dn)
+				except (HTTPException, SocketError) as exc:
+					MODULE.warn('Could not create exam user account for %r: %s' % (iuser.dn, exc))
 
 				# indicate the the user has been processed
 				progress.add_steps(percentPerUser)
@@ -292,9 +290,7 @@ class Instance(SchoolBaseModule):
 
 					# call hook scripts
 					if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):
-						msg = 'failed to run hook scripts for user %r' % (iuser.username)
-						MODULE.error(msg)
-						raise ValueError(msg)
+						raise ValueError('failed to run hook scripts for user %r' % (iuser.username))
 
 					# store User object in list of final recipients
 					recipients.append(iuser)
@@ -311,9 +307,7 @@ class Instance(SchoolBaseModule):
 
 			if openAttempts <= 0:
 				MODULE.error('replication timeout - %s user objects missing: %r ' % ((len(examUsers) - len(usersReplicated)), (examUsers - usersReplicated)))
-				msg = _('Replication timeout: could not create all exam users')
-				MODULE.error(msg)
-				raise UMC_Error(msg)
+				raise UMC_Error(_('Replication timeout: could not create all exam users'))
 
 			# update the final list of recipients
 			my.project.recipients = recipients
@@ -340,72 +334,84 @@ class Instance(SchoolBaseModule):
 			#   first step: acquire room
 			#   second step: adjust room settings
 			progress.component(_('Prepare room settings'))
-			userConnection = UMCConnection('localhost', username=self.username, password=self.password)
-			if not userConnection:
-				MODULE.error('Could not connect to UMC on local server: %s' % e)
+			try:
+				userConnection = UMCConnection('localhost', username=self.username, password=self.password)
+			except (HTTPException, SocketError) as exc:
 				raise UMC_Error(_('Could not connect to local UMC server.'))
-			MODULE.info('Acquire room: %(room)s' % opts)
+
+			room = request.options['room']
+			MODULE.info('Acquire room: %s' % (room,))
 			userConnection.request('computerroom/room/acquire', dict(
-				room=opts.get('room')
+				room=request.options['room'],
 			))
-			progress.add_steps(5)
-			MODULE.info('Adjust room settings:\n%s' % '\n'.join(['  %s=%s' % (k, v) for k, v in opts.iteritems()]))
+			progress.add_steps(1)
+			MODULE.info('Adjust room settings:\n%s' % '\n'.join(['  %s=%s' % (k, v) for k, v in request.options.iteritems()]))
+			userConnection.request('computerroom/exam/start', dict(
+				room=room,
+				examDescription=request.options['name'],
+				exam=directory,
+				examEndTime=request.options.get('examEndTime'),
+			))
+			progress.add_steps(4)
 			userConnection.request('computerroom/settings/set', dict(
-				internetRule=opts.get('internetRule'),
-				customRule=opts.get('customRule'),
-				shareMode=opts.get('shareMode'),
+				room=room,
+				internetRule=request.options['internetRule'],
+				customRule=request.options.get('customRule'),
+				shareMode=request.options['shareMode'],
 				printMode='default',
-				examDescription=opts.get('name'),
-				exam=opts.get('directory'),
-				examEndTime=opts.get('examEndTime'),
 			))
 			progress.add_steps(5)
 
-		def _finished(thread, result):
+		def _finished(thread, result, request):
 			# mark the progress state as finished
 			progress.info(_('finished...'))
 			progress.finish()
 
 			# finish the request at the end in order to force the module to keep
 			# running until all actions have been completed
-			if isinstance(result, BaseException):
-				msg = '%s\n%s: %s\n' % (''.join(traceback.format_tb(thread.exc_info[2])), thread.exc_info[0].__name__, str(thread.exc_info[1]))
-				MODULE.error('Exception during start_exam: %s' % msg)
-				self.finished(request.id, dict(success=False))
-				progress.error(_('An unexpected error occurred during the preparation: %s') % result)
+			success = not isinstance(result, BaseException)
+			response = dict(success=success)
+			if success:
+				# remove uploaded files from cache
+				self._cleanTmpDir()
+			else:
+				msg = str(result)
+				if not isinstance(result, UMC_Error):
+					response = result
+					msg = ''.join(traceback.format_exception(*thread.exc_info))
+				progress.error(msg)
 
 				# in case a distribution project has already be written to disk, purge it
 				if my.project:
 					my.project.purge()
-			else:
-				self.finished(request.id, dict(success=True))
 
-				# remove uploaded files from cache
-				self._cleanTmpDir()
+			self.thread_finished_callback(thread, response, request)
 
-		thread = notifier.threads.Simple('start_exam', _thread, _finished)
+		thread = notifier.threads.Simple('start_exam', _thread, notifier.Callback(_finished, request))
 		thread.run()
 
-	def collect_exam(self, request):
-		self.required_options(request, 'exam')
-
-		# try to open project file
-		project = util.distribution.Project.load(request.options.get('exam'))
+	@sanitize(
+		exam=StringSanitizer(required=True),
+	)
+	@simple_response
+	def collect_exam(self, exam):
+		project = util.distribution.Project.load(exam)
 		if not project:
 			raise UMC_Error(_('No files have been distributed'))
 
-		# collect files
 		project.collect()
+		return True
 
-		self.finished(request.id, True)
-
+	@sanitize(
+		room=DNSanitizer(required=True),
+	)
 	@LDAP_Connection()
 	def validate_room(self, request, ldap_user_read=None, ldap_position=None):
-		self.required_options(request, 'room')
 		error = None
-		dn = request.options.get('room')
+		dn = request.options['room']
 		room = ComputerRoom.from_dn(dn, None, ldap_user_read)
 		if not room.hosts:
+			# FIXME: raise UMC_Error()
 			error = _('Room "%s" does not contain any computers. Empty rooms may not be used to start an exam.') % room.get_relative_name()
 		self.finished(request.id, error)
 
@@ -495,7 +501,7 @@ class Instance(SchoolBaseModule):
 
 			# running until all actions have been completed
 			if isinstance(result, BaseException):
-				msg = '%s\n%s: %s\n' % (''.join(traceback.format_tb(thread.exc_info[2])), thread.exc_info[0].__name__, str(thread.exc_info[1]))
+				msg = ''.join(traceback.format_exception(*thread.exc_info))
 				MODULE.error('Exception during exam_finish: %s' % msg)
 				self.finished(request.id, dict(success=False))
 				progress.error(_('An unexpected error occurred during the preparation: %s') % result)
