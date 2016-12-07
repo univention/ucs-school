@@ -572,7 +572,7 @@ class Room(object):
 				wait_for_s4connector()
 
 				# give the CUPS and Samba server a little bit more time
-				time.sleep(5)
+				time.sleep(15)
 
 				# check if displayed values match
 				self.check_room_settings(umc_connection, new_settings)
@@ -700,7 +700,7 @@ def add_printer(name, school, hostname, domainname, ldap_base):
 	utils.wait_for_replication_and_postrun()
 
 	# give the CUPS and Samba server a little bit more time
-	time.sleep(5)
+	time.sleep(15)
 
 
 def remove_printer(name, school, ldap_base):

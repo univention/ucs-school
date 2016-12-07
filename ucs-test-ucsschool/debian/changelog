@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-24) unstable; urgency=medium
+
+  * essential/computerroom.py: increase timeout to 15 seconds. Lets wait
+    and see if it helps (Bug #42034)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 07 Dec 2016 21:16:40 +0100
+
 ucs-test-ucsschool (3.0.17-23) unstable; urgency=low
 
   * Bug #40473: removed bashism
