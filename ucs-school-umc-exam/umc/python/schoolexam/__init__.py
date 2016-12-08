@@ -253,8 +253,6 @@ class Instance(SchoolBaseModule):
 			usersReplicated = set()
 			for iuser in users:
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
-				# remove stale home directory (users does not contain existing accounts)
-				shutil.rmtree(iuser.unixhome, ignore_errors=True)
 
 				try:
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
@@ -287,6 +285,9 @@ class Instance(SchoolBaseModule):
 					if not iuser:
 						continue  # not a users/user object
 					MODULE.info('user has been replicated: %s' % idn)
+
+					# remove stale home directory
+					shutil.rmtree(iuser.homedir, ignore_errors=True)
 
 					# call hook scripts
 					if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):

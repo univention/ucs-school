@@ -1,7 +1,13 @@
+ucs-school-umc-exam (6.0.10-4) unstable; urgency=low
+
+  * Bug #37955: remove homedir of exam user
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Dec 2016 15:18:17 +0100
+
 ucs-school-umc-exam (6.0.10-3) unstable; urgency=medium
 
   * Bug #40901: fix exam starting/finishing when multiple browsers are
-  	involved
+    involved
 
  -- Florian Best <best@univention.de>  Wed, 07 Dec 2016 14:59:17 +0100
 
