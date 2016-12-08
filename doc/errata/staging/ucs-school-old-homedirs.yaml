@@ -5,8 +5,8 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-old-homedirs
 fix: 11.0.0-6.27.201612081454
 desc: |
-    * Code cleanup of the listener module. As the
-      univention-directory-listener is now aware of OU changes, the
-      listener module now also backupes or removes home directories of
-      users that are moved to another school (Bug #41989).
+ * Code cleanup of the listener module. As the
+   univention-directory-listener is now aware of OU changes, the
+   listener module now also backups or removes home directories of
+   users that are moved to another school (Bug #41989).
 bug: [41989]
