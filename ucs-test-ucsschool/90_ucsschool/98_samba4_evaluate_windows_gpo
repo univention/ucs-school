@@ -11,7 +11,7 @@
 from os import path
 from sys import exit
 import re
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, STDOUT
 import xml.etree.ElementTree as ET
 
 import univention.winexe
@@ -22,6 +22,7 @@ from univention.testing.codes import TestCodes
 from univention.testing.strings import random_username
 from univention.testing.ucs_samba import force_drs_replication
 from univention.config_registry import ConfigRegistry
+ucr = ConfigRegistry()
 
 from datetime import datetime, timedelta
 from ucsschool.lib.schoolldap import SchoolSearchBase
@@ -29,6 +30,8 @@ from ucsschool.lib.models import School
 from essential.computerroom import Room
 from essential.exam import Exam
 
+from univention.testing.ucs_samba import get_available_s4connector_dc
+import glob
 
 def run_cmd(cmd, stdout=PIPE, stdin=None, std_in=None):
 	"""
@@ -63,6 +66,21 @@ def run_samba_tool(cmd, stdout=PIPE):
 		stdout = remove_samba_warnings(stdout)
 	return stdout, stderr
 
+def print_domain_ips():
+	domainname = ucr.get('domainname')
+	dig_sources = []
+	for source in ['nameserver1', 'nameserver2', 'nameserver3']:
+		if source in ucr:
+			dig_sources.append("@%s" % ucr[source])
+
+	for dig_source in dig_sources:
+		try:
+			cmd = ['dig', dig_source, domainname, '+search', '+short']
+			p1 = Popen(cmd, close_fds=True, stdout=PIPE, stderr=STDOUT)
+			stdout, stderr = p1.communicate()
+			print "IPs for %s: %s" % (domainname, stdout.strip())
+		except OSError as ex:
+			print "\n%s failed: %s" % (cmd, ex.args[1])
 
 def windows_create_gpo(gpo_name, gpo_comment, server=""):
 	"""
@@ -152,7 +170,6 @@ def windows_check_registry_key(reg_key, subkey, expected_value):
 		return True
 	utils.fail("Get-ItemProperty for %s did not return expected value (%s) for subkey %s" % (reg_key, expected_value, subkey))
 
-
 def samba_check_gpo_exists(gpo_name):
 	"""
 	Checks that GPO with 'gpo_name' exists via samba-tool.
@@ -164,6 +181,9 @@ def samba_check_gpo_exists(gpo_name):
 	if not stdout:
 		utils.fail("The samba-tool did not produce any output when list of all GPOs is expected.")
 	if gpo_name not in stdout:
+		print "Output of %s: %s" % (cmd, stdout.strip())
+		gpo_dirs = glob.glob("/var/lib/samba/sysvol/*/Policies/*")
+		print "Files in sysvol: %s" % (gpo_dirs,)
 		utils.fail("The GPO '%s' was not found in the list of all GPOs." % gpo_name)
 
 
@@ -408,6 +428,12 @@ class GPO_Test(object):
 		print "\nGPOTest.__enter__"
 		# case 1: checks with user GPO
 		gpo_name = self.test_user_gpo
+
+		## START test case debugging:
+		print_domain_ips()
+		print "get_available_s4connector_dc: %s" % (get_available_s4connector_dc(),)
+		## END test case debugging
+
 		windows_create_gpo(gpo_name, "GPO for %s Group %s" % (self.student_name, self.security_filter_group))
 		force_drs_replication()
 		force_drs_replication(direction="out")
@@ -557,7 +583,6 @@ if __name__ == '__main__':
 	GPOs are applied using 'Security Filtering',
 	'Authenticated Users' are set to have only GpoRead permissions.
 	"""
-	ucr = ConfigRegistry()
 	ucr.load()
 
 	domain_admin_dn = ucr.get('tests/domainadmin/account')
