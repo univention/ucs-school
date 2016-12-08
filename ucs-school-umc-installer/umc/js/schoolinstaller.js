@@ -321,7 +321,7 @@ define([
 				this._hostname = data.result.hostname;
 				this._joined = data.result.joined;
 				this._samba = data.result.samba;
-				this._ucsschool = data.result.ucsschool;
+				this._ucsschool = data.result.school_environment;
 				var guessedMaster = data.result.guessed_master;
 
 				// update some widgets with the intial results
@@ -349,7 +349,7 @@ define([
 
 		getSchoolInfo: function() {
 			var args = {
-				schoolOU: this.getWidget('school', 'schoolOU').get('value'),
+				school: this.getWidget('school', 'schoolOU').get('value'),
 				username: this.getWidget('credentials', 'username').get('value'),
 				password: this.getWidget('credentials', 'password').get('value'),
 				master: this.getWidget('credentials', 'master').get('value')
@@ -429,10 +429,13 @@ define([
 
 				// domaincontroller backup can start directly
 				if (next === 'setup' && this._serverRole === 'domaincontroller_backup') {
-					return this.standbyDuring(this.getSchoolInfo().then(lang.hitch(this, function(data) {
-						var schoolinfo = data.result;
-						this.getWidget('setup', 'setup').set('value', schoolinfo.school_version);
-						this.getWidget('samba', 'samba').set('value', schoolinfo.samba);
+					return this.standbyDuring(tools.umcpCommand('schoolinstaller/get/metainfo').then(lang.hitch(this, function(data) {
+						var metainfo = data.result;
+						if (!metainfo) {
+							return 'credentials';  // the DC Backup is not joined yet/anymore. Continue with the next page. Cannot happen as UCS@school is now installed via the AppCenter so the system must be joined.
+						}
+						this.getWidget('setup', 'setup').set('value', metainfo.school_environment);
+						this.getWidget('samba', 'samba').set('value', metainfo.samba);
 						return 'backupsetup';
 					})));
 				}

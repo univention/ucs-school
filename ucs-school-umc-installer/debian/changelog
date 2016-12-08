@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.7-1) unstable; urgency=medium
+
+  * Bug #41007: enhance the API / make it future proof
+
+ -- Florian Best <best@univention.de>  Thu, 08 Dec 2016 16:14:00 +0100
+
 ucs-school-umc-installer (4.0.6-1) unstable; urgency=medium
 
   * Bug #41007: Add special page for DC Backup installation

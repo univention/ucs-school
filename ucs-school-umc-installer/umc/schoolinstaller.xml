@@ -13,5 +13,8 @@
 	<command name="schoolinstaller/samba" function="samba"/>
 	<command name="schoolinstaller/progress" function="progress"/>
 	<command name="schoolinstaller/get/schoolinfo" function="get_schoolinfo"/>
+	<command name="schoolinstaller/get/metainfo" function="get_metainfo"/>
+	<command name="schoolinstaller/get/schoolinfo/master" function="get_schoolinfo_master"/>
+	<command name="schoolinstaller/get/metainfo/master" function="get_metainfo_master"/>
   </module>
 </umc>

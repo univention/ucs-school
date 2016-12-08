@@ -352,13 +352,16 @@ class Instance(Base):
 			return 3
 		return None
 
-	def get_ucs_school_version(self):
+	def get_school_environment(self):
 		'''Returns 'singlemaster', 'multiserver', or None'''
 		if self.package_manager.is_installed('ucs-school-singlemaster'):
 			return 'singlemaster'
 		elif self.package_manager.is_installed('ucs-school-slave') or self.package_manager.is_installed('ucs-school-nonedu-slave') or self.package_manager.is_installed('ucs-school-master'):
 			return 'multiserver'
 		return None
+
+	def get_school_version(self):
+		return ucr.get('appcenter/apps/ucsschool/version')
 
 	@simple_response
 	def query(self, **kwargs):
@@ -369,7 +372,7 @@ class Instance(Base):
 			'server_role': ucr.get('server/role'),
 			'joined': os.path.exists('/var/univention-join/joined'),
 			'samba': self.get_samba_version(),
-			'ucsschool': self.get_ucs_school_version(),
+			'school_environment': self.get_school_environment(),
 			'guessed_master': get_master_dns_lookup(),
 			'hostname': ucr.get('hostname'),
 		}
@@ -383,56 +386,39 @@ class Instance(Base):
 			self._installation_started = False
 		return self.progress_state.poll()
 
-	@sanitize(
-		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU_OR_EMPTY),
-	)
-	def get_schoolinfo(self, request):
-		school = request.options['schoolOU']
-
-		server_role = ucr.get('server/role')
-		if server_role == 'domaincontroller_master':
-			self.finished(request.id, self._get_schoolinfo(school))
+	@simple_response
+	def get_metainfo(self):
+		"""Queries the specified DC Master for metainformation about the UCS@school environment"""
+		master = ucr.get('ldap/master') or get_master_dns_lookup()
+		if not master:
 			return
-
-		if server_role == 'domaincontroller_backup':
-			# use the credentials of the currently authenticated user on a backup system
-			self.require_password()
-			request.options['master'] = ucr.get('ldap/master')
-			request.options['username'] = self.username
-			request.options['password'] = self.password
-
-		self.get_schoolinfo_slave(request)
+		return self._umc_master(self.username, self.password, master, 'schoolinstaller/get/metainfo/master')
 
 	@sanitize(
 		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),  # TODO: add regex error message; Bug #42955
 		username=StringSanitizer(required=True, minimum=1),
 		password=StringSanitizer(required=True, minimum=1),
-		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU_OR_EMPTY),  # TODO: add regex error message
+		school=StringSanitizer(required=True, regex_pattern=RE_OU),  # TODO: add regex error message
 	)
 	@simple_response
-	def get_schoolinfo_slave(self, username, password, master, schoolOU):
-		return self._get_schoolinfo_from_master(username, password, master, schoolOU)
+	def get_schoolinfo(self, username, password, master, school):
+		"""Queries the specified DC Master for information about the specified school"""
+		return self._umc_master(username, password, master, 'schoolinstaller/get/schoolinfo/master', {'school': school})
 
-	def _get_schoolinfo_from_master(self, username, password, master, school):
-		try:
-			try:
-				return umc(username, password, master, 'schoolinstaller/get/schoolinfo', {'master': None, 'username': None, 'password': None, 'schoolOU': school})
-			except NotImplementedError:
-				raise HTTPException(_('Make sure ucs-school-umc-installer is installed on the DC Master and all join scripts are executed.'))
-		except HTTPException as exc:
-			raise SchoolInstallerError(_('Could not connect to the DC Master %s: %s') % (master, exc))  # TODO: set status, message, result
-
-	def _get_schoolinfo(self, school_ou):
+	@sanitize(
+		school=StringSanitizer(required=True, regex_pattern=RE_OU),  # TODO: add regex error message
+	)
+	@simple_response
+	def get_schoolinfo_master(self, school):
 		"""
 		Fetches LDAP information from master about specified OU.
 		This function assumes that the given arguments have already been validated!
 		"""
 
+		school_name = school
 		try:
-			if not school_ou:  # domaincontroller_backup
-				raise noObject('')
 			lo, po = get_machine_connection(write=True)
-			school = School.from_dn(School(name=school_ou).dn, None, lo)
+			school = School.from_dn(School(name=school_name).dn, None, lo)
 		except noObject:
 			exists = False
 			class_share_server = None
@@ -451,23 +437,32 @@ class Instance(Base):
 			educational_slaves = [SchoolDCSlave.from_dn(dn, None, lo).name for dn in school.educational_servers]
 			administrative_slaves = [SchoolDCSlave.from_dn(dn, None, lo).name for dn in school.administrative_servers]
 
-		school_version = None
-		for package, version in (('ucs-school-singlemaster', 'singlemaster'), ('ucs-school-slave', 'multiserver'), ('ucs-school-master', 'multiserver')):
-			package = self.package_manager.get_package(package)
-			if package and package.is_installed:
-				school_version = version
-				break
-
 		return {
 			'exists': exists,
-			'school': school_ou,
-			'samba': self.get_samba_version(),
-			'school_version': school_version,
+			'school': school_name,
 			'classShareServer': class_share_server,
 			'homeShareServer': home_share_server,
 			'educational_slaves': educational_slaves,
 			'administrative_slaves': administrative_slaves,
 		}
+
+	@simple_response
+	def get_metainfo_master(self, request):
+		"""Returns information about the UCS@school Installation on the DC Master."""
+		return {
+			'samba': self.get_samba_version(),
+			'school_environment': self.get_school_environment(),
+			'school_version': self.get_school_version(),
+		}
+
+	def _umc_master(self, username, password, master, uri, data=None):
+		try:
+			try:
+				return umc(username, password, master, uri, data)
+			except NotImplementedError:
+				raise HTTPException(_('Make sure ucs-school-umc-installer is installed on the DC Master and all join scripts are executed.'))
+		except (EnvironmentError, HTTPException) as exc:
+			raise SchoolInstallerError(_('Could not connect to the DC Master %s: %s') % (master, exc))  # TODO: set status, message, result
 
 	@sanitize(
 		username=StringSanitizer(required=True),
@@ -532,13 +527,13 @@ class Instance(Base):
 		if server_role != 'domaincontroller_master':
 			# check for a compatible environment on the DC master
 
-			schoolinfo = self._get_schoolinfo_from_master(username, password, master, school_ou)
-			school_version = schoolinfo['school_version']
-			if not school_version:
+			masterinfo = self._umc_master(username, password, master, 'schoolinstaller/get/metainfo')
+			school_environment = masterinfo['school_environment']
+			if not school_environment:
 				raise SchoolInstallerError(_('Please install UCS@school on the master domain controller system. Cannot proceed installation on this system.'))
-			if server_role == 'domaincontroller_slave' and school_version != 'multiserver':
+			if server_role == 'domaincontroller_slave' and school_environment != 'multiserver':
 				raise SchoolInstallerError(_('The master domain controller is not configured for a UCS@school multi server environment. Cannot proceed installation on this system.'))
-			if server_role == 'domaincontroller_backup' and school_version != setup:
+			if server_role == 'domaincontroller_backup' and school_environment != setup:
 				raise SchoolInstallerError(_('The UCS@school master domain controller needs to be configured similarly to this backup system. Please choose the correct environment type for this system.'))
 			if server_role == 'domaincontroller_backup' and not joined:
 				raise SchoolInstallerError(_('In order to install UCS@school on a backup domain controller, the system needs to be joined first.'))
