@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (8.0.14-2) unstable; urgency=medium
+
+  * Bug #40901: fix race conditions and null pointer exceptions
+
+ -- Florian Best <best@univention.de>  Thu, 08 Dec 2016 13:39:55 +0100
+
 ucs-school-umc-computerroom (8.0.14-1) unstable; urgency=medium
 
   * Bug #40901: fix exam starting/finishing when multiple browsers are

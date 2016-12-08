@@ -548,8 +548,8 @@ define([
 		},
 
 		_updateHeader: function() {
-			if (!this._searchPage) {
-				return;
+			if (!this._searchPage || !this._headButtons) {
+				return;  // not ready yet
 			}
 			var roomInfo = this.get('roomInfo');
 			if (!roomInfo) {
@@ -605,23 +605,14 @@ define([
 		},
 
 		renderSearchPage: function() {
-			// render all GUI elements for the search formular and the grid
-
-			// render the search page
 			this._searchPage = new Page({
 				headerText: this.description,
 				helpText: _("Here you can watch the students' computers, lock the computers, show presentations, control the internet access and define the available printers and shares.")
 			});
 
-			// umc.widgets.Module is also a StackContainer instance that can hold
-			// different pages (see also umc.widgets.TabbedModule)
 			this.addChild(this._searchPage);
 
 			this._updateHeader();
-
-			//
-			// data grid
-			//
 
 			// add VNC button to actionlist
 			if (this._vncEnabled) {
@@ -639,7 +630,6 @@ define([
 				});
 			}
 
-			// define the grid columns
 			var columns = [{
 				name: 'name',
 				width: '35%',
@@ -745,7 +735,6 @@ define([
 				})
 			}];
 
-			// generate the data grid
 			this._grid = new Grid({
 				actions: lang.clone(this._actions),
 				columns: columns,
@@ -774,17 +763,12 @@ define([
 				})
 			});
 
-			// add the grid to the title pane
 			this._searchPage.addChild(this._grid);
 
 			this.addHeaderContainer();
 			this._grid.watch('actions', lang.hitch(this, function() {
 				this.addHeaderContainer();
 			}));
-
-			//
-			// conclusion
-			//
 
 			// we need to call page's startup method manually as all widgets have
 			// been added to the page container object
@@ -1030,9 +1014,16 @@ define([
 			// define a cleanup function
 			var _dialog = null, form = null, okButton = null;
 			var _cleanup = function() {
-				_dialog.hide();
-				_dialog.destroyRecursive();
-				form.destroyRecursive();
+				if (_dialog) {
+					_dialog.hide().always(function() {
+						_dialog.destroyRecursive();
+						_dialog = null;
+					});
+				}
+				if (form) {
+					form.destroyRecursive();
+					form = null;
+				}
 			};
 
 			// helper function to get the current room
