@@ -447,7 +447,7 @@ class Instance(Base):
 		}
 
 	@simple_response
-	def get_metainfo_master(self, request):
+	def get_metainfo_master(self):
 		"""Returns information about the UCS@school Installation on the DC Master."""
 		return {
 			'samba': self.get_samba_version(),
