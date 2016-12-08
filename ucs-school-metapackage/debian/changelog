@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-15) unstable; urgency=low
+
+  * Bug #41760: install 00ucs-school-app-version-check on DC backup
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Dec 2016 15:04:37 +0100
+
 ucs-school-metapackage (9.0.2-14) unstable; urgency=low
 
   * Bug #41760: don't install 00ucs-school-app-version-check on master
