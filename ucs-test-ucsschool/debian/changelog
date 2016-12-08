@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-25) unstable; urgency=medium
+
+  * 23_password_reset: Since the test case is not stable and tagged for
+    interim-4, I've disabled the test case (Bug #40527)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 08 Dec 2016 09:59:30 +0100
+
 ucs-test-ucsschool (3.0.17-24) unstable; urgency=medium
 
   * essential/computerroom.py: increase timeout to 15 seconds. Lets wait
