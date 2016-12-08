@@ -1,3 +1,10 @@
+ucs-school-old-homedirs (11.0.0-6) unstable; urgency=low
+
+  * Bug #41989: listener issues command='d' now, when a user is moved out of
+    the local LDAPs reach, so no need to handle a school change anymore
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Dec 2016 14:51:28 +0100
+
 ucs-school-old-homedirs (11.0.0-5) unstable; urgency=low
 
   * Bug #41989: reuse LDAP connection

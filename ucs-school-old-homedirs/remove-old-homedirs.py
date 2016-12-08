@@ -29,16 +29,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-__package__ = ''  # workaround for PEP 366
+from __future__ import absolute_import
 import listener
 import os
 import shutil
 import time
-from ldap import LDAPError
 from psutil import disk_partitions
 import univention.debug
-from ucsschool.lib.models import School
-from univention.admin.uldap import getMachineConnection
 
 
 name = 'remove-old-homedirs'
@@ -52,7 +49,6 @@ TARGET_BLACKLIST = ["/", "/boot", "/sys", "/proc", "/etc", "/dev"]
 
 target_dir = listener.configRegistry.get("ucsschool/listener/oldhomedir/targetdir")
 fs_types = listener.configRegistry.get("ucsschool/listener/oldhomedir/fs_types", DEFAUL_FS).split(":")
-lo = None
 
 
 def check_target_dir(dir):
@@ -141,36 +137,8 @@ def warn(msg):
 	)
 
 
-def get_my_ous():
-	"""find out which OUs this host is responsible for, returns list of strings"""
-	return [s.name for s in School.get_all(lo)]
-
-
-def prerun():
-	global lo
-	listener.setuid(0)
-	try:
-		lo, po = getMachineConnection(ldap_master=False)
-	except LDAPError as exc:
-		warn(str(exc))
-		return
-	finally:
-		listener.unsetuid()
-
-
-def postrun():
-	global lo
-	lo = None  # close LDAP connection
-
-
 def handler(dn, new, old, command):
-	my_ous = set(get_my_ous())
-	users_ous = set(new.get("ucsschoolSchool", []))
-
-	if (
-		old and not new and not command == "r" or
-		old and new and command == "m" and my_ous.isdisjoint(users_ous)
-	):
+	if old and not new and command != "r":  # user was deleted or moved to another OU
 		uid = old["uid"][0]
 
 		home_dir = old.get("homeDirectory", [None])[0]
