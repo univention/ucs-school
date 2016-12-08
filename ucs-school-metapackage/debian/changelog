@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-14) unstable; urgency=low
+
+  * Bug #41760: don't install 00ucs-school-app-version-check on master
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 08 Dec 2016 14:10:01 +0100
+
 ucs-school-metapackage (9.0.2-13) unstable; urgency=low
 
   * Bug #40418: reverted some changes of last commit
