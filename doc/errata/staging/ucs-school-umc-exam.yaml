@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
-fix: 6.0.10-3.124.201612071756
+fix: 6.0.10-4.125.201612081519
 desc: |
  * School users stored outside of any OU can now participate in
    school exams (Bug #41568).
