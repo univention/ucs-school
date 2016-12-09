@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (11.0.0-7) unstable; urgency=low
+
+  * Bug #41989: log a message when the home directory is moved
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 09 Dec 2016 08:43:52 +0100
+
 ucs-school-old-homedirs (11.0.0-6) unstable; urgency=low
 
   * Bug #41989: listener issues command='d' now, when a user is moved out of

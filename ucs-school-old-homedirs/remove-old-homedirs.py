@@ -125,6 +125,7 @@ def move_dir(src, dst, listener):
 		ret = str(exc)
 	finally:
 		listener.unsetuid()
+	warn("moved %s to %s." % (src, dst))
 
 	return ret
 
