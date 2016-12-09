@@ -253,9 +253,6 @@ class Instance(SchoolBaseModule):
 			usersReplicated = set()
 			for iuser in users:
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
-				# remove stale home directory (users does not contain existing accounts)
-				shutil.rmtree(iuser.unixhome, ignore_errors=True)
-
 				try:
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
 						school=request.options['school'],
