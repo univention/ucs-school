@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-16) unstable; urgency=low
+
+  * Bug #42959: fix link to SDB article
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 09 Dec 2016 07:52:33 +0100
+
 ucs-school-metapackage (9.0.2-15) unstable; urgency=low
 
   * Bug #41760: install 00ucs-school-app-version-check on DC backup

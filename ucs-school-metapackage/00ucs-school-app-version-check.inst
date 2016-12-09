@@ -39,7 +39,7 @@ if [ "$(ucr get server/role)" = "domaincontroller_backup" -o "$(ucr get server/r
 		echo "****************************************************************************"
 		echo "The version of the UCS@school app on the DC master is lower than the version"
 		echo "on this host. Please consult the Univention Support Database on how to"
-		echo "proceed: http://sdb.univention.de/1373"
+		echo "proceed: http://sdb.univention.de/1374"
 		echo "****************************************************************************"
 		exit 1
 	fi
