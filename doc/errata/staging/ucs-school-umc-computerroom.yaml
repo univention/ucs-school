@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-computerroom
-fix: 8.0.14-2.208.201612081342
+fix: 8.0.15-1.209.201612091247
 desc: |
  * Proper error messages are shown when no school exists (Bug #42399).
  * If the computerroom module was already opened when starting an exam
