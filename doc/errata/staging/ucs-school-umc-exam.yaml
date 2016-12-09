@@ -3,15 +3,17 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
-fix: 6.0.10-5.126.201612091607
+fix: 6.0.10-7.127.201612091818
 desc: |
  * School users stored outside of any OU can now participate in
    school exams (Bug #41568).
  * Don't log an error message if the exam user is not yet replicated
    (Bug #41562).
  * Proper error messages are shown when no school exists (Bug #42399).
- * Leftover home directories from users of previous exams are now removed
-   (Bug #37955)
+ * Each exam user now gets a unique home directory containing a time stamp
+   and is placed (in default configuration) in /home/$OU/schueler/exam-homes/$UID.$TIMESTAMP.
+   This prevents problems with orphaned home directories of previous exam runs.
+   (Bug #37955).
  * If the computerroom module was already opened when starting an exam
    and the settings were changed the exam was terminated and the exam
    user accounts were not removed (Bug #40901).
