@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.10-5) unstable; urgency=low
+
+  * Bug #37955: remove homedir of exam user before creating it
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 09 Dec 2016 16:06:54 +0100
+
 ucs-school-umc-exam (6.0.10-4) unstable; urgency=low
 
   * Bug #37955: remove homedir of exam user
