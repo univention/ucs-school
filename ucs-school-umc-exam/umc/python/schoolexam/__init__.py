@@ -57,12 +57,11 @@ from univention.lib.umc_connection import UMCConnection
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
-from ucsschool.lib.models import ComputerRoom, ExamStudent, Student, User
+from ucsschool.lib.models import ComputerRoom, User
 
 _ = Translation('ucs-school-umc-exam').translate
 
 CREATE_USER_POST_HOOK_DIR = '/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/'
-user_prefix_exam = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 
 
 class Instance(SchoolBaseModule):
@@ -254,24 +253,7 @@ class Instance(SchoolBaseModule):
 			usersReplicated = set()
 			for iuser in users:
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
-				if iuser.dn.endswith(Student.get_container(request.options['school'])):
-					# its a student. check if home directory from previous
-					# user with same username exists and remove it
-					exam_dn = 'uid={}{},{}'.format(
-						user_prefix_exam,
-						iuser.username,
-						ExamStudent.get_container(request.options['school']))
-					try:
-						ldap_user_read.get(exam_dn, required=True)
-					except ldap.NO_SUCH_OBJECT:
-						_tmp_split_path = iuser.homedir.rsplit(os.path.sep, 1)
-						if len(_tmp_split_path) != 2:
-							MODULE.error("Failed parsing homeDirectory of original user: %s" % (iuser.homedir,))
-						else:
-							exam_user_homedir = os.path.join(_tmp_split_path[0], iuser.username)
-							if os.path.exists(exam_user_homedir):
-								MODULE.warn('Removing stale home directory %r.' % exam_user_homedir)
-								shutil.rmtree(exam_user_homedir, ignore_errors=True)
+
 				try:
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
 						school=request.options['school'],
@@ -303,6 +285,9 @@ class Instance(SchoolBaseModule):
 					if not iuser:
 						continue  # not a users/user object
 					MODULE.info('user has been replicated: %s' % idn)
+
+					# remove stale home directory
+					shutil.rmtree(iuser.homedir, ignore_errors=True)
 
 					# call hook scripts
 					if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):
