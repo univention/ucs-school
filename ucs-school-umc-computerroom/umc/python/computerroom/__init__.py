@@ -800,7 +800,7 @@ class Instance(SchoolBaseModule):
 			starttime = datetime.datetime.now()
 			MODULE.info('Now: %s' % starttime)
 			MODULE.info('Endtime: %s' % period)
-			starttime = starttime.replace(hour=period.hour, minute=period.minute)
+			starttime = starttime.replace(hour=period.hour, minute=period.minute, second=0, microsecond=0)
 			while starttime < datetime.datetime.now():  # prevent problems due to intra-day limit
 				starttime += datetime.timedelta(days=1)
 

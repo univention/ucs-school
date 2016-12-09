@@ -985,9 +985,11 @@ define([
 				});
 
 				// things to do after finishing the exam
-				deferred.then(this.umcpCommand('computerroom/exam/finish', {
-					exam: info.exam,
-					room: info.room
+				deferred.then(lang.hitch(this, function() {
+					return this.umcpCommand('computerroom/exam/finish', {
+						exam: info.exam,
+						room: info.room
+					});
 				})).then(lang.hitch(this, function() {
 					// on success, prompt info to user
 					if (this._progressBar.getErrors().errors.length === 0) {

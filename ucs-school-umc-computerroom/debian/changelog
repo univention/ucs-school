@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (8.0.15-1) unstable; urgency=medium
+
+  * Bug #40901: execute at jobs to reset settings at second 0
+  * Bug #40901: fix function call causing that no error handling is done
+
+ -- Florian Best <best@univention.de>  Fri, 09 Dec 2016 12:43:49 +0100
+
 ucs-school-umc-computerroom (8.0.14-2) unstable; urgency=medium
 
   * Bug #40901: fix race conditions and null pointer exceptions
