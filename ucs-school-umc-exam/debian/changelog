@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.10-7) unstable; urgency=low
+
+  * Bug #37955: use unique home directories for exam users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 Dec 2016 17:36:55 +0100
+
 ucs-school-umc-exam (6.0.10-6) unstable; urgency=low
 
   * Bug #37955: reverted last 2 commits

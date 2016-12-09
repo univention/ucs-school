@@ -34,6 +34,7 @@ UCS@School UMC module schoolexam-master
 UMC module delivering backend services for ucs-school-umc-exam
 '''
 
+import datetime
 import os.path
 import traceback
 import re
@@ -264,7 +265,8 @@ class Instance(SchoolBaseModule):
 						english_error_detail = "Failed parsing homeDirectory of original user: %s" % (user_orig_homeDirectory,)
 						message = _('ERROR: Creation of exam user account failed\n%s') % (english_error_detail,)
 						raise UMC_Error(message)
-					value = [os.path.join(_tmp_split_path[0], exam_user_uid)]
+					exam_user_unixhome = '%s.%s' % (exam_user_uid, datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
+					value = [os.path.join(_tmp_split_path[0], 'exam-homes', exam_user_unixhome)]
 				elif key == 'sambaHomePath':
 					user_orig_sambaHomePath = value[0]
 					value = [user_orig_sambaHomePath.replace(user_orig['username'], exam_user_uid)]
