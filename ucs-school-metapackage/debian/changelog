@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.2-17) unstable; urgency=low
+
+  * Bug #42959: fix link to SDB article
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 09 Dec 2016 13:35:00 +0100
+
 ucs-school-metapackage (9.0.2-16) unstable; urgency=low
 
   * Bug #42959: fix link to SDB article
