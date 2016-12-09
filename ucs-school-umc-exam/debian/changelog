@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.10-6) unstable; urgency=low
+
+  * Bug #37955: reverted last 2 commits
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 Dec 2016 17:23:56 +0100
+
 ucs-school-umc-exam (6.0.10-5) unstable; urgency=low
 
   * Bug #37955: remove homedir of exam user before creating it
