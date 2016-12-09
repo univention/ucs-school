@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-41) unstable; urgency=low
+
+  * Bug #43103: fixed regression in import_networks
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 Dec 2016 15:27:57 +0100
+
 ucs-school-import (14.0.16-40) unstable; urgency=low
 
   * Bug #42942: updated log output in case of an exception

@@ -1,9 +1,9 @@
 product: ucsschool
 release: "4.1"
-version: [3]
+version: [4]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-40.331.201612071408
+fix: 
 desc: |
  * The UsernameHandler.format_username() function has been improved to not
    produce illegal usernames (e.g. ending with a dot) anymore (Bug #42478).
@@ -17,4 +17,6 @@ desc: |
    an expiration date set. This prevents that an import which marks users
    for deactivation will push the expiration date forward in time.
    (Bug #42112).
-bug: [42478,42503,42942,42112]
+ * A regression in <command>import_networks</command> has been fixed that
+   prevented the automatic assignment of DHCP policies to new IP subnets (Bug #43103).
+bug: [42478,42503,42942,42112,43103]

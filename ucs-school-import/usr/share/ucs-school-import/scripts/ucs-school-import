@@ -68,6 +68,7 @@ univention.debug.init('/var/log/univention/ucs-school-import.log', 1, 0)
 univention.debug.set_level(univention.debug.MAIN, 4)
 
 import ldap
+import ldap.filter
 import univention.admin.uldap
 import univention.admin.uexceptions
 import univention.admin.modules
@@ -1760,20 +1761,26 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object['contact'] = 'root@%s' % domainname
 	try:
 		create_object(object, ignore_exists=True)
-	except:
+	except CreateObjectError:
 		pass
 
-	position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
-	object = dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
-	object = dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_subnet_module)
-	object.open()
-	object['subnet'] = str(network.network)
-	object['subnetmask'] = str(network.netmask)
-	object['broadcastaddress'] = str(network.broadcast)
-	try:
-		create_object(object, ignore_exists=True)
-	except:
+	position.setDn("cn=%s,cn=dhcp,%s" % (ldap.dn.escape_dn_chars(schoolNr.lower()), getDN(schoolNr)))
+	dhcp_service_objects = univention.admin.modules.lookup(
+		dhcp_service_module, co, lo, scope='sub', superordinate=superordinate,
+		base=baseDN, filter=univention.admin.filter.expression('cn', ldap.filter.escape_filter_chars(schoolNr.lower())))
+	if not dhcp_service_objects:
+		print 'ERROR: DHCP service object for %r not found' % (schoolNr.lower(),)
 		success = False
+	else:
+		object = dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_service_objects[0])
+		object.open()
+		object['subnet'] = str(network.network)
+		object['subnetmask'] = str(network.netmask)
+		object['broadcastaddress'] = str(network.broadcast)
+		try:
+			create_object(object, ignore_exists=True)
+		except CreateObjectError:
+			print '%r already existed - usually no problem' % (object.dn,)
 
 	position.setDn("cn=networks,%s" % (getDN(schoolNr), ))
 	object = network_module.object(co, lo, position=position, superordinate=superordinate)
@@ -1789,7 +1796,7 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 
 	try:
 		exists, dn = create_object(object, ignore_exists=True)
-	except:
+	except CreateObjectError:
 		success = False
 
 	# set netbios and router for dhcp subnet
