@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-27) unstable; urgency=low
+
+  * Bug #37955: added new test for checking exam home directories
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 11 Dec 2016 22:37:59 +0100
+
 ucs-test-ucsschool (3.0.17-26) unstable; urgency=medium
 
   * Bug #43142: Additional debug output for flaky GPO test
