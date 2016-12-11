@@ -6,9 +6,10 @@ src: ucs-school-umc-computerroom
 fix: 8.0.15-1.209.201612091247
 desc: |
  * Proper error messages are shown when no school exists (Bug #42399).
- * If the computerroom module was already opened when starting an exam
-   and the settings were changed, the exam was terminated and the exam
-   user accounts and other restrictions were not removed (Bug #40901).
+ * A problem with the exam status of a computer room has been fixed. If the UMC module <guimenu>Computer room</guimenu>
+   had been opened before starting a new exam and the exam room settings were changed via the
+   previously opened <guimenu>Computer room</guimenu>, the exam was terminated mistakenly and
+   the exam user accounts were not removed (Bug #40901).
  * A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which could occur
    during a reconnection of a client (Bug #43044).
  * A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which occurred

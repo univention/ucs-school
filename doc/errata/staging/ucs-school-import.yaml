@@ -5,15 +5,15 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
 fix: 14.0.16-41.332.201612091542
 desc: |
- * The UsernameHandler.format_username() function has been improved to not
-   produce illegal usernames (e.g. ending with a dot) anymore (Bug #42478).
+ * The function <property>UsernameHandler.format_username()</property> has been improved to not
+   produce illegal usernames anymore (e.g. ending with a dot) (Bug #42478).
  * Added additional log output for simpler debugging of a specific exception
    case during user import (Bug #42942).
- * The configration directive "mandatory_attributes" is now honored, when
+ * The configration directive <property>mandatory_attributes</property> is now honored, when
    checking if an email address was created. It is now only an error, if
-   "email" is listed in "mandatory_attributes" and no email address was
+   <property>email</property> is listed in <property>mandatory_attributes</property> and no email address was
    created (Bug #42503).
- * The expiration date is not overriden anymore when the user already has
+ * The expiration date is not overriden anymore when the user object already has
    an expiration date set. This prevents that an import which marks users
    for deactivation will push the expiration date forward in time.
    (Bug #42112).

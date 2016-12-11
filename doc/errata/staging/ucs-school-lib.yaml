@@ -9,5 +9,5 @@ desc: |
  * The internal handling of group modifications has been optimized
    (Bug #42495).
  * Creation and modifications of shares which belong to classes or working
-   groups are now done with permissions of the school server (Bug #42065).
+   groups are now performed with the host account of the school server (Bug #42065).
 bug: [42399, 42495, 42065]

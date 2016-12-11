@@ -5,6 +5,6 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-wizards
 fix: 8.0.0-13.148.201611141732
 desc: |
- * The error handling regarding not existing objects has been improved
+ * The error handling regarding non-existing objects has been improved
    (Bug #41229).
 bug: [41229]
