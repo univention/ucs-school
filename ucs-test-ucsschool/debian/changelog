@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-28) unstable; urgency=medium
+
+  * essential/importusers.py: wait for S4 connector (Bug #43154)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 12 Dec 2016 06:38:51 +0100
+
 ucs-test-ucsschool (3.0.17-27) unstable; urgency=low
 
   * Bug #37955: added new test for checking exam home directories

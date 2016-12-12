@@ -21,6 +21,7 @@ from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, create_ou_cli, get_school_base
+from univention.testing.ucs_samba import wait_for_s4connector
 
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object, 5)
 ucsschool.lib.models.utils.logger.handlers = ucsschool.lib.models.utils.get_logger("ucs-test", level="DEBUG").handlers
@@ -753,7 +754,9 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 							print '****    windows_profile_server: %s' % windows_profile_server
 							print ''
 							create_and_verify_users(use_cli_api, use_python_api, school_name, 3, 3, 3, 3)
+							wait_for_s4connector()
 						finally:
 							remove_ou(school_name)
 
 	utils.wait_for_replication()
+	wait_for_s4connector()
