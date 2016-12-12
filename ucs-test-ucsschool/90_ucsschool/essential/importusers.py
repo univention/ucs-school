@@ -667,16 +667,19 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=
 
 	print '********** Create users'
 	import_file.run_import(user_import)
+	wait_for_s4connector()
 	user_import.verify()
 
 	print '********** Modify users'
 	user_import.modify()
 	import_file.run_import(user_import)
+	wait_for_s4connector()
 	user_import.verify()
 
 	print '********** Delete users'
 	user_import.delete()
 	import_file.run_import(user_import)
+	wait_for_s4connector()
 	user_import.verify()
 
 
@@ -754,9 +757,7 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 							print '****    windows_profile_server: %s' % windows_profile_server
 							print ''
 							create_and_verify_users(use_cli_api, use_python_api, school_name, 3, 3, 3, 3)
-							wait_for_s4connector()
 						finally:
 							remove_ou(school_name)
 
 	utils.wait_for_replication()
-	wait_for_s4connector()
