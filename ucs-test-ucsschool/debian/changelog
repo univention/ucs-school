@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-31) unstable; urgency=low
+
+  * Bug #43169: disabled 72_radius_machine_authentication
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 12 Dec 2016 10:23:15 +0100
+
 ucs-test-ucsschool (3.0.17-30) unstable; urgency=medium
 
   * Bug #37955: fix TypeError
