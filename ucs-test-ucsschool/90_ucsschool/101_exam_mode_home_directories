@@ -22,8 +22,8 @@ from ucsschool.lib.models import Student
 def create_homedirs(member_dn_list, open_ldap_co):
 	# create home directories
 	for dn in member_dn_list:
-		for attrs in open_ldap_co.get(dn, attrs=['homeDirectory']):
-			homedir = attrs.get('homeDirectory')
+		for attr in open_ldap_co.getAttr(dn, 'homeDirectory'):
+			homedir = attr[0]
 			if not homedir:
 				utils.fail('No homeDirectory attribute found for %r' % (dn,))
 			if not os.path.exists(homedir):
@@ -33,8 +33,8 @@ def create_homedirs(member_dn_list, open_ldap_co):
 def check_homedirs(member_dn_list, open_ldap_co, should_exist=True):
 	# create home directories
 	for dn in member_dn_list:
-		for attrs in open_ldap_co.get(dn, attrs=['homeDirectory']):
-			homedir = attrs.get('homeDirectory')
+		for attr in open_ldap_co.getAttr(dn, 'homeDirectory'):
+			homedir = attr[0]
 			if not homedir:
 				utils.fail('No homeDirectory attribute found for %r' % (dn,))
 			if os.path.exists(homedir) != should_exist:

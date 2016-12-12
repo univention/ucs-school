@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-30) unstable; urgency=medium
+
+  * Bug #37955: fix TypeError
+
+ -- Florian Best <best@univention.de>  Mon, 12 Dec 2016 06:59:45 +0100
+
 ucs-test-ucsschool (3.0.17-29) unstable; urgency=medium
 
   * essential/importusers.py: wait for S4 connector (Bug #43154)
