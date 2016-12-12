@@ -26,7 +26,7 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Test moving a user from ou_A to ou_B (Bug #41609).
 		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff')[:1]:
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r and change school afterwards', role)
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
