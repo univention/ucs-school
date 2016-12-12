@@ -16,7 +16,7 @@
 		<legalnotice>
 			<literallayout>
 Version 4.1 R2 v9
-Stand: 11. December 2016
+Stand: 11. Dezember 2016
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
@@ -83,9 +83,9 @@ feedback@univention.de
 			<section id="changelog:ucsschool:ucs-school-italc" lang="en">
 				<title>Source package ucs-school-italc</title>
 				<itemizedlist>
-					<listitem><simpara>A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which could occur during a reconnection of a client (<u:bug>43044</u:bug>).</simpara></listitem>
+					<listitem><simpara>A segmentation fault in the UMC module <guimenu>Computer room</guimenu> has been fixed which could occur during a reconnection of a client (<u:bug>43044</u:bug>).</simpara></listitem>
 
-					<listitem><simpara>A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which occurred during creation of a screenshot after changing the Windows client's screen resolution (<u:bug>43051</u:bug>).</simpara></listitem>
+					<listitem><simpara>A segmentation fault in the UMC module <guimenu>Computer room</guimenu> has been fixed which occurred during creation of a screenshot after changing the Windows client's screen resolution (<u:bug>43051</u:bug>).</simpara></listitem>
 
 				</itemizedlist>
 			</section>
@@ -144,7 +144,7 @@ feedback@univention.de
 			<section id="changelog:ucsschool:ucs-school-metapackage" lang="en">
 				<title>Source package ucs-school-metapackage</title>
 				<itemizedlist>
-					<listitem><simpara>The &ucsUAS; meta packages maintained its own values for the UCR variable <envar>connector/s4/mapping/group/ignorelist</envar>. These values were out of sync with the values of univention-s4-connector and have been resynced to avoid rejects (<u:bug>40418</u:bug>).</simpara></listitem>
+					<listitem><simpara>The &ucsUAS; meta packages maintained its own values for the UCR variable <envar>connector/s4/mapping/group/ignorelist</envar>. These values were out of sync with the values of univention-s4-connector and have been resynchronized to avoid rejects (<u:bug>40418</u:bug>).</simpara></listitem>
 
 					<listitem><simpara>A (re)join is now aborted by a safety check if the version of the UCS@school app on the joining system is higher than the version of the app on the DC master. UCR variables with the prefix <envar>ucsschool/join/ignore-version-mismatch/...</envar> allow to override the safety check. Instruction on how to install differing app version can be found in the SDB article at <uri>http://sdb.univention.de/1374</uri> (<u:bug>41760</u:bug>).</simpara></listitem>
 
@@ -171,9 +171,9 @@ feedback@univention.de
 
 					<listitem><simpara>Added additional log output for simpler debugging of a specific exception case during user import (<u:bug>42942</u:bug>).</simpara></listitem>
 
-					<listitem><simpara>The configration directive <property>mandatory_attributes</property> is now honored, when checking if an email address was created. It is now only an error, if <property>email</property> is listed in <property>mandatory_attributes</property> and no email address was created (<u:bug>42503</u:bug>).</simpara></listitem>
+					<listitem><simpara>The configuration directive <property>mandatory_attributes</property> is now honored, when checking if an email address was created. It is now only an error, if <property>email</property> is listed in <property>mandatory_attributes</property> and no email address was created (<u:bug>42503</u:bug>).</simpara></listitem>
 
-					<listitem><simpara>The expiration date is not overriden anymore when the user object already has an expiration date set. This prevents that an import which marks users for deactivation will push the expiration date forward in time. (<u:bug>42112</u:bug>).</simpara></listitem>
+					<listitem><simpara>The expiration date is not overridden anymore when the user object already has an expiration date set. This prevents that an import which marks users for deactivation will push the expiration date forward in time. (<u:bug>42112</u:bug>).</simpara></listitem>
 
 					<listitem><simpara>A regression in <command>import_networks</command> has been fixed that prevented the automatic assignment of DHCP policies to new IP subnets (<u:bug>43103</u:bug>).</simpara></listitem>
 
@@ -197,9 +197,9 @@ feedback@univention.de
 
 					<listitem><simpara>A problem with the exam status of a computer room has been fixed. If the UMC module <guimenu>Computer room</guimenu> had been opened before starting a new exam and the exam room settings were changed via the previously opened <guimenu>Computer room</guimenu>, the exam was terminated mistakenly and the exam user accounts were not removed (<u:bug>40901</u:bug>).</simpara></listitem>
 
-					<listitem><simpara>A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which could occur during a reconnection of a client (<u:bug>43044</u:bug>).</simpara></listitem>
+					<listitem><simpara>A segmentation fault in the UMC module <guimenu>Computer room</guimenu> has been fixed which could occur during a reconnection of a client (<u:bug>43044</u:bug>).</simpara></listitem>
 
-					<listitem><simpara>A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which occurred during creation of a screenshot after changing the Windows client's screen resolution (<u:bug>43051</u:bug>).</simpara></listitem>
+					<listitem><simpara>A segmentation fault in the UMC module <guimenu>Computer room</guimenu> has been fixed which occurred during creation of a screenshot after changing the Windows client's screen resolution (<u:bug>43051</u:bug>).</simpara></listitem>
 
 				</itemizedlist>
 			</section>
