@@ -340,8 +340,12 @@ class Person(object):
 				cl_group_dn = 'cn=%s,cn=klassen,cn=%s,cn=groups,%s' % (cl, cn_pupils, get_school_base(school))
 				utils.verify_ldap_object(cl_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
 
-		role_group_dn = 'cn=%s%s,cn=groups,%s' % (self.grp_prefix, self.school, self.school_base)
-		utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
+		assert self.school in self.schools
+
+		for school in self.schools:
+			role_group_dn = 'cn=%s%s,cn=groups,%s' % (self.grp_prefix, school, get_school_base(school))
+			utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
+
 		print 'person OK: %s' % self.username
 
 

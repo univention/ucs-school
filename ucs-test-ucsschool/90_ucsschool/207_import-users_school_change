@@ -10,6 +10,7 @@
 
 import copy
 import pprint
+import ldap.filter
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
@@ -25,7 +26,7 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Test moving a user from ou_A to ou_B (Bug #41609).
 		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff')[:1]:
 			self.log.info('*** Importing a new single user with role %r and change school afterwards', role)
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
@@ -38,32 +39,79 @@ class Test(CLI_Import_v2_Tester):
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('user_role', role)
 
-			# create person in school A
+			print '**** 1.1 create person in school A: %r' % (self.ou_A.name,)
 			person = Person(self.ou_A.name, role)
 			person.update(record_uid=person.username, source_uid=source_uid, school_classes={})
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
-			# start import
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 
-			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			self.log_person_infos(person)
 			person.verify()
 
-			# move person to school B
+			print '**** 1.2 move person to school B: %r' % (self.ou_B.name,)
 			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
-			# start import
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 
-			userlist = self.lo.searchDn('uid=%s' % (person.username,))
+			userlist = self.lo.searchDn(ldap.filter.filter_format('uid=%s', (person.username,)))
 			if len(userlist) != 1:
 				self.log.error('Invalid number of user objects for user %r! Found new objects: %r', person.username, userlist)
 				self.fail('Stopping here')
 
 			person.update(dn=userlist[0])
-			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			self.log_person_infos(person)
 			person.verify()
+			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
+
+			print '**** 2.1 Add person to school A'
+			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log_person_infos(person)
+			person.verify()
+
+			print '**** 2.2 remove person from school A'
+			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log_person_infos(person)
+			person.verify()
+			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
+
+			print '**** 3.1 (Re)Add person to school A'
+			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log_person_infos(person)
+			person.verify()
+
+			print '**** 3.2 remove person from school B'
+			person.update(school=self.ou_A.name, schools=[self.ou_A.name])
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			person.update(dn=self.lo.searchDn(ldap.filter.filter_format('uid=%s', (person.username,)))[0])
+			self.log_person_infos(person)
+			person.verify()
+			self.verify_removed_schoolgroup_membership(person, self.ou_B.name)
+
+	def log_person_infos(self, person):
+		self.log.warn('User object %r:\n%s', person.dn, pprint.pformat(self.lo.get(person.dn), indent=2))
+		self.log.warn('Membership: %s', pprint.pformat(self.lo.searchDn(ldap.filter.filter_format('uniqueMember=%s', [person.dn])), indent=2))
+
+	def verify_removed_schoolgroup_membership(self, person, school_removed_from):
+		groups = self.lo.searchDn(ldap.filter.filter_format('uniqueMember=%s', [person.dn]))
+		if any(school_removed_from in g for g in groups):
+			print 'FAIL: ', school_removed_from, 'still in', groups
+			# TODO: Bug #41910 actually fail here!
 
 
 def main():
