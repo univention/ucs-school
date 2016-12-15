@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-34) unstable; urgency=medium
+
+  * Bug #40471: Added 90_ucsschool/140_check_Domain_Users_policies
+
+ -- Richard Ulmer <ulmer@univention.de>  Thu, 15 Dec 2016 12:22:51 +0100
+
 ucs-test-ucsschool (3.0.17-33) unstable; urgency=low
 
   * Bug #43172: fixed 101_exam_mode_home_directories
