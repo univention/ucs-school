@@ -24,7 +24,7 @@
 	Die Proxykonfiguration wird in der Grundeinstellung durch DHCP verteilt, diese Einstellung wird
 	jedoch nicht von allen Browsern unterstützt. Die Konfiguration kann alternativ über eine
 	Proxy-Autokonfigurationsdatei (PAC-Datei) automatisiert werden. In PAC-Dateien sind die relevanten
-	Konfigurationparameter zusammengestellt. Die PAC-Datei eines Schulservers steht unter der folgenden URL bereit:
+	Konfigurationsparameter zusammengestellt. Die PAC-Datei eines Schulservers steht unter der folgenden URL bereit:
   </para>
   <para>
 	<uri>http://<replaceable>schulserver.domaene.de</replaceable>/proxy.pac</uri>
