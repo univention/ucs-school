@@ -23,7 +23,10 @@ import ucsschool.lib.models.utils
 from essential.importou import remove_ou, create_ou_cli, get_school_base
 from univention.testing.ucs_samba import wait_for_s4connector
 
-utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object, 5)
+
+utils.verify_ldap_object_orig = utils.verify_ldap_object
+utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)
+
 ucsschool.lib.models.utils.logger.handlers = ucsschool.lib.models.utils.get_logger("ucs-test", level="DEBUG").handlers
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'

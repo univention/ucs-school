@@ -15,9 +15,15 @@ import datetime
 from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.testing.decorators import SetTimeout
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
 from univention.testing.ucs_samba import wait_for_drs_replication
+
+
+# this test fails every now and then for teachers when checking shadowExpire in (2/3)
+# lets see if more waiting helps
+utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
 
 
 class Test(CLI_Import_v2_Tester):
