@@ -1,0 +1,55 @@
+#!/usr/share/ucs-test/runner python
+## bugs: [40470]
+## desc: >
+##   Check that school-servers (except master and backup) were not added
+##   to the DNS forward and reverse lookup zones.
+## exposure: safe
+## join: true
+## roles:
+##  - domaincontroller_master
+##  - domaincontroller_slave
+## tags: [ucsschool]
+
+import ldap
+from ldap.filter import filter_format
+import univention.testing.utils as utils
+from sys import exit
+from univention.config_registry import ConfigRegistry
+
+lo = utils.get_ldap_connection()
+ucr = ConfigRegistry()
+ucr.load()
+ldapBase = ucr.get('ldap/base')
+
+# Store all (visible) school servers in schoolServers.
+edukativnetz = lo.search(base=filter_format('cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s', (ldapBase,)))
+if not edukativnetz:
+    utils.fail("The group 'DC-Edukativnetz' is missing in the Domain.")
+edukativMembers = edukativnetz[0][1].get('uniqueMember', [])
+schoolServers = []
+for edukativMember in edukativMembers:
+	cn = ldap.explode_rdn(edukativMember)[0]
+	schoolServer = lo.search(filter=filter_format('(&(%s)(objectClass=univentionDomainController))', (cn,)))
+	# Since school slaves cannot see domain controllers of other schools in the
+	# ldap they will only be able to add fqdns of their own school to
+	# schoolServers.
+	if schoolServer:
+		schoolServerCompact = schoolServer[0][1]['cn'][0] + "." + schoolServer[0][1]['associatedDomain'][0]
+		schoolServers.append(schoolServerCompact)
+
+# Store all authorative DNS servers in dnsServers.
+zoneName = ".".join([rdn[3:] for rdn in  ldapBase.split(',')])
+zone = lo.search(base=filter_format('zoneName=%s,cn=dns,%s', (zoneName, ldapBase)), scope='base')
+dnsServers = zone[0][1].get('nSRecord', [])
+dnsServers = [dnsServer.strip('.') for dnsServer in dnsServers]
+
+print "DNS Servers   : %r" % (dnsServers,)
+print "School Servers: %r" % (schoolServers,)
+
+# Check that none of the dnsServers is a schoolServer.
+for schoolServer in schoolServers:
+	if schoolServer in dnsServers:
+		utils.fail("The school server %r is listed as DNS server, which it must not be." % (schoolServer,))
+
+exit(0)
+

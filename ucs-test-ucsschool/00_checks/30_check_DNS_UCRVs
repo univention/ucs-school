@@ -1,0 +1,25 @@
+#!/usr/share/ucs-test/runner python
+## bugs: [40470]
+## desc: >
+##   Check that school-servers (except master and backup) have their DNS
+##   related ucr variables set to the right values.
+## exposure: safe
+## roles:
+##  - domaincontroller_slave
+## tags: [ucsschool]
+
+import univention.testing.utils as utils
+from sys import exit
+from univention.config_registry import ConfigRegistry
+
+ucr = ConfigRegistry()
+ucr.load()
+
+ucrvForward = ucr.get('dns/nameserver/registration/forward_zone')
+if ucrvForward != 'no':
+    utils.fail("The ucr variable 'dns/nameserver/registration/forward_zone' is set to '%s', but must be set to 'no'." % (ucrvForward,))
+ucrvReverse = ucr.get('dns/nameserver/registration/reverse_zone')
+if ucrvReverse != 'no':
+    utils.fail("The ucr variable 'dns/nameserver/registration/reverse_zone' is set to '%s', but must be set to 'no'." % (ucrvReverse,))
+
+exit(0)
