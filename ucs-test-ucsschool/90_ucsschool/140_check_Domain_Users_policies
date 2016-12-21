@@ -1,44 +1,22 @@
 #!/usr/share/ucs-test/runner python
-## desc: >
-##   Check that all groups "Domain Users $SCHOOL" are connected to the
-##   policy "default-umc-users"
-## exposure: safe
 ## bugs: [40471]
+## desc: Check that the group "Domain Users $SCHOOL" is connected to the policy "default-umc-users"
+## exposure: dangerous
+## tags: [apptest, ucsschool]
 
-from ldap.filter import filter_format
 import univention.testing.utils as utils
-from sys import exit
+from univention.testing.ucr import UCSTestConfigRegistry
+from univention.testing.ucsschool import UCSTestSchool
 
-lo = utils.get_ldap_connection()
+def main():
+	lo = utils.get_ldap_connection()
 
-# Search for policies with the name "default-umc-users".
-# There is supposed to be exactly one.
-policies = lo.search(filter='(&(cn=default-umc-users)(objectClass=univentionPolicy))')
-if len(policies) == 0:
-	utils.fail("There is no policy with 'cn=default-umc-users'.")
-elif len(policies) != 1:
-	utils.fail("There are multiple policies with 'cn=default-umc-users'.")
-policyDn = policies[0][0]
+	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr:
+		policy_dn = 'cn=default-umc-users,cn=UMC,cn=policies,%s' % (ucr.get('ldap/base'),)
+		school, _ = env.create_ou(name_edudc=ucr.get('hostname'))
 
-# Check that all groups "Domain Users $SCHOOL" are connected to the
-# policy "default-umc-users".
-schools = lo.search(filter='(&(objectClass=ucsschoolOrganizationalUnit)(objectClass=organizationalUnit))')
-for schoolDn, schoolAttributes in schools:
-	# Store the school's name in schoolName.
-	schoolName = schoolAttributes['ou'][0]
+		domain_users = lo.get('cn=Domain Users %s,cn=groups,ou=%s,%s' % (school, school, ucr.get('ldap/base'),))
+		assert policy_dn in domain_users.get('univentionPolicyReference', []), "The policy %r is not connected to the 'Domain Users %s' group, but should be." % (policy_dn, school)
 
-	# Find the "Domain Users $SCHOOL" group for that school.
-	domainUsersGroups = lo.search(filter=filter_format('(&(cn=Domain Users %s)(objectClass=univentionGroup))', (schoolName,)))
-	if len(domainUsersGroups) == 0:
-		utils.fail("The group 'Domain Users %s' is missing." % (schoolName,))
-	elif len(domainUsersGroups) != 1:
-		utils.fail("There are multiple groups with cn='Domain Users %s'." % (schoolName,))
-
-	# Check if the "default-umc-users" policy is connected to the
-	# "Domain Users $SCHOOL" group.
-	domainUsersGroupDn, domainUsersGroupAttributes = domainUsersGroups[0]
-	hasRequiredPolicy = policyDn in domainUsersGroupAttributes.get('univentionPolicyReference', [])
-	if not hasRequiredPolicy:
-		utils.fail("The policy %r is not connected to the group %r, but should be." % (policyDn, domainUsersGroupDn))
-
-exit(0)
+if __name__ == '__main__':
+	main()
