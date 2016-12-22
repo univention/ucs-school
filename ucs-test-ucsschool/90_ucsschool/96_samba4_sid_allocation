@@ -21,6 +21,7 @@ import univention.testing.utils as utils
 from univention.uldap import getMachineConnection
 from univention.testing.udm import UCSTestUDM
 from univention.testing.strings import random_username
+from univention.testing.ucs_samba import wait_for_drs_replication
 
 
 class TestS4SIDAllocation(TestSamba4):
@@ -209,7 +210,7 @@ class TestS4SIDAllocation(TestSamba4):
 
 			# start the S4-Connector
 			self.start_stop_s4_connector(True)
-			sleep(30)  # wait for replication
+			wait_for_drs_replication(s4_user_filter)
 
 			# get 'rIDNextRID' after user is created and replicated
 			next_rid_post_sync = self.s4_search('(objectClass=rIDSet)', 'rIDNextRID')
