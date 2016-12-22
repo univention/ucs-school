@@ -6,7 +6,7 @@
 ## - domaincontroller_backup
 ## - domaincontroller_slave
 ## packages: [univention-s4-connector, univention-samba4]
-## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 
 import re
