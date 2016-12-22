@@ -130,29 +130,6 @@ class TestS4SIDAllocation(TestSamba4):
 
 		return samba_sid
 
-	def get_samba_rid_via_udm(self, username):
-		"""
-		Lists the 'username' user attributes using UDM and
-		returns the sambaRID out of them.
-		"""
-		print "\nLooking for a 'sambaRID' of a user with a name: %s" % username
-
-		cmd = ('udm', 'users/user', 'list', '--filter', 'username=%s' % username)
-
-		print "Executing command:", cmd
-		stdout, stderr = self.create_and_run_process(cmd)
-
-		if stderr:
-			utils.fail("An error occured while looking for a user '%s' via UDM" % username)
-		if not stdout.strip():
-			utils.fail("Executed UDM command did not produce any output, while '%s' user attributes were expected" % username)
-
-		sed_stdout = self.sed_for_key(stdout, "^  sambaRID: ")
-		sed_stdout = sed_stdout.strip()
-		if not sed_stdout:
-			utils.fail("The sed process did not return any output, while the 'sambaRID' was expected.")
-		return sed_stdout
-
 	def dc_master_has_s4(self):
 		"""
 		Returns 'True' if the DC-Master has S4 running or False otherwise.
@@ -236,13 +213,6 @@ class TestS4SIDAllocation(TestSamba4):
 
 			if ldap_sid != samba_sid:
 				utils.fail("The SID in the LDAP and Samba4 for the test user '%s' are different: '%s' vs. '%s' in Samba4 LDB." % (test_username, ldap_sid, samba_sid))
-
-			print "\nComparing the RID in Samba4 and UDM:"
-			udm_rid = self.get_samba_rid_via_udm(test_username)
-			next_rid = samba_sid.split('-')[-1]  # the last part of SID
-
-			if udm_rid != next_rid:
-				utils.fail("The RID in the UDM and Samba4 for the test user '%s' are different: '%s' vs. '%s' in Samba4 LDB." % (test_username, udm_rid, next_rid))
 
 			# perform remote check when needed
 			if self.test_remotely:
