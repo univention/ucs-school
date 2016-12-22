@@ -9,6 +9,7 @@
 ## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
 
+import re
 from sys import exit
 from time import sleep
 from httplib import HTTPException
@@ -69,25 +70,22 @@ class TestS4SIDAllocation(TestSamba4):
 		else:
 			print("\nUnknown state '%s' is given for S4 connector, accepted 'True' to start or 'False' to stop." % connector_should_run)
 
-	def get_samba_rid(self):
+	def s4_search(self, filter_string, attribute):
 		"""
-		Returns the rIDNextRID of a rIDSet as found in Samba.
+		Search in S4 LDAP via univention-s4-search
 		"""
-		print "\nLooking for 'rIDNextRID' using univention-s4search."
-		cmd = ('univention-s4search', '(objectClass=rIDSet)', 'rIDNextRID')
+
+		print "\nLooking for %s using univention-s4search." % attribute
+		cmd = ('univention-s4search', filter_string, attribute)
 
 		print "Executing command:", cmd
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
 			utils.fail("An error occured while running univention-s4search: %r" % stderr)
-		if not stdout.strip():
-			utils.fail("The 'univention-s4search' did not produce any output to the stdout.")
-
-		sed_stdout = self.sed_for_key(stdout, "^rIDNextRID: ")
-		sed_stdout = sed_stdout.strip()
-		if not sed_stdout:
-			utils.fail("The sed process did not return any output, while the 'rIDNextRID' was expected.")
-		return sed_stdout
+		matches = re.findall("^%s: (.*)$" % attribute, stdout, re.MULTILINE)
+		if not matches:
+			utils.fail("The 'univention-s4search' did not produce any %s." % attribute)
+		return matches[0]
 
 	def get_sid_via_ldbsearch(self, user_dn, ldburl):
 		"""
@@ -106,14 +104,11 @@ class TestS4SIDAllocation(TestSamba4):
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
 			utils.fail("An error occured while performing a 'ldbsearch' for a user with DN '%s'. STDERR: '%s'" % (user_dn, stderr))
-		if not stdout.strip():
-			utils.fail("The 'ldbsearch' did not produce any output to the STDOUT, while an LDB entry was expected.")
 
-		sed_stdout = self.sed_for_key(stdout, "^objectSid: ")
-		sed_stdout = sed_stdout.strip()
-		if not sed_stdout:
-			utils.fail("The sed process did not return any output, while the 'objectSid' was expected.")
-		return sed_stdout
+		object_sids = re.findall("^objectSid: (\d+)$", stdout, re.MULTILINE)
+		if not object_sids:
+			utils.fail("The 'ldbsearch' did not produce objectSid.")
+		return object_sids[0]
 
 	def get_sid_from_ldap(self, user_dn):
 		"""
@@ -190,7 +185,7 @@ class TestS4SIDAllocation(TestSamba4):
 			self.start_stop_s4_connector(False)
 
 			# get 'rIDNextRID' from Samba4 before user creation:
-			initial_next_rid = self.get_samba_rid()
+			initial_next_rid = self.s4_search('(objectClass=rIDSet)', 'rIDNextRID')
 
 			# create regular user for the test. this skips the drs replication
 			# check, as the s4-connector was previously stopped.
@@ -199,7 +194,7 @@ class TestS4SIDAllocation(TestSamba4):
 			                               check_for_drs_replication=False)[0]
 
 			# get 'rIDNextRID' after user is created and replicated
-			next_rid_pre_sync = self.get_samba_rid()
+			next_rid_pre_sync = self.s4_search('(objectClass=rIDSet)', 'rIDNextRID')
 			if next_rid_pre_sync != initial_next_rid:
 				utils.fail(("The 'rIDNextRID' changed after user creation. Was: %s."
 				            " Now: %s." % (initial_next_rid, next_rid_pre_sync)))
@@ -213,7 +208,7 @@ class TestS4SIDAllocation(TestSamba4):
 			sleep(30)  # wait for replication
 
 			# get 'rIDNextRID' after user is created and replicated
-			next_rid_post_sync = self.get_samba_rid()
+			next_rid_post_sync = self.s4_search('(objectClass=rIDSet)', 'rIDNextRID')
 			if next_rid_post_sync != initial_next_rid:
 				utils.fail(("The 'rIDNextRID' changed after user sync. Was: %s."
 				            " Now: %s." % (initial_next_rid, next_rid_post_sync)))
