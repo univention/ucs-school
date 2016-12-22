@@ -192,8 +192,11 @@ class TestS4SIDAllocation(TestSamba4):
 			# get 'rIDNextRID' from Samba4 before user creation:
 			initial_next_rid = self.get_samba_rid()
 
-			# create regular user for the test
-			test_user_dn = UDM.create_user(password='univention', username=test_username)[0]
+			# create regular user for the test. this skips the drs replication
+			# check, as the s4-connector was previously stopped.
+			test_user_dn = UDM.create_user(password='univention',
+			                               username=test_username,
+			                               check_for_drs_replication=False)[0]
 
 			# get 'rIDNextRID' after user is created and replicated
 			new_next_rid = self.get_samba_rid()
