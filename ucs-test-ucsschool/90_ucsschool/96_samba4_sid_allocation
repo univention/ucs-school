@@ -199,23 +199,40 @@ class TestS4SIDAllocation(TestSamba4):
 			                               check_for_drs_replication=False)[0]
 
 			# get 'rIDNextRID' after user is created and replicated
-			new_next_rid = self.get_samba_rid()
-			if new_next_rid != initial_next_rid:
-				utils.fail("The 'rIDNextRID' changed after user creation. Was: %s. Now: %s." % (initial_next_rid, new_next_rid))
+			next_rid_pre_sync = self.get_samba_rid()
+			if next_rid_pre_sync != initial_next_rid:
+				utils.fail(("The 'rIDNextRID' changed after user creation. Was: %s."
+				            " Now: %s." % (initial_next_rid, next_rid_pre_sync)))
 
-			print("\nComparing the SID for test user as stored in LDAP and Samba4:")
+			print("\nComparing the SID for test user as stored in LDAP after sync:")
 			# get SID from LDAP
-			ldap_sid = self.get_sid_from_ldap(test_user_dn)
+			ldap_sid_pre_sync = self.get_sid_from_ldap(test_user_dn)
 
 			# start the S4-Connector
 			self.start_stop_s4_connector(True)
 			sleep(30)  # wait for replication
 
+			# get 'rIDNextRID' after user is created and replicated
+			next_rid_post_sync = self.get_samba_rid()
+			if next_rid_post_sync != initial_next_rid:
+				utils.fail(("The 'rIDNextRID' changed after user sync. Was: %s."
+				            " Now: %s." % (initial_next_rid, next_rid_post_sync)))
+
+			# get SID from LDAP
+			ldap_sid_post_sync = self.get_sid_from_ldap(test_user_dn)
+
+			if ldap_sid_pre_sync != ldap_sid_post_sync:
+				utils.fail(("The SID in the LDAP after S4 sync for the test user '%s'"
+				            " is different from pre sync: '%s' vs. '%s' in Samba4 LDB."
+				            % (test_username, ldap_sid_pre_sync, ldap_sid_post_sync)))
+
 			# get SID from Samba4
 			samba_sid = self.get_sid_via_ldbsearch(test_user_dn, sam_ldb_url)
 
-			if ldap_sid != samba_sid:
-				utils.fail("The SID in the LDAP and Samba4 for the test user '%s' are different: '%s' vs. '%s' in Samba4 LDB." % (test_username, ldap_sid, samba_sid))
+			if ldap_sid_pre_sync != samba_sid:
+				utils.fail(("The SID in the LDAP and Samba4 for the test user '%s'"
+				           " are different: '%s' vs. '%s' in Samba4 LDB."
+				            % (test_username, ldap_sid_pre_sync, samba_sid)))
 
 			# perform remote check when needed
 			if self.test_remotely:
@@ -223,10 +240,10 @@ class TestS4SIDAllocation(TestSamba4):
 				samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn, 'ldap://' + self.ldap_master + sam_ldb_url)
 
 				# compare objectSid@locally vs. objectSid@Master
-				if ldap_sid != samba_sid_master:
-					utils.fail(
-						"The SID in the LDAP and Samba4 on the DC-Master for the test user '%s' are different: '%s' vs. "
-						"'%s' in Samba4 LDB." % (test_username, ldap_sid, samba_sid_master))
+				if ldap_sid_pre_sync != samba_sid_master:
+					utils.fail(("The SID in the LDAP and Samba4 on the DC-Master for"
+					            " the test user '%s' are different: '%s' vs. '%s' in"
+					            " Samba4 LDB." % (test_username, ldap_sid_pre_sync, samba_sid_master)))
 		finally:
 			if test_user_dn:
 				print "\nRemoving the test user:", test_username
