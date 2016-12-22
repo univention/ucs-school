@@ -10,6 +10,7 @@
 ## exposure: dangerous
 
 import re
+import ldap
 from sys import exit
 from time import sleep
 from httplib import HTTPException
@@ -193,6 +194,10 @@ class TestS4SIDAllocation(TestSamba4):
 			                               username=test_username,
 			                               check_for_drs_replication=False)[0]
 
+			test_user_dn_exploded = ldap.dn.str2dn(test_user_dn)
+			(_attr, test_user_cn, _flags) = test_user_dn_exploded[0][0]
+			s4_user_filter = ldap.filter.filter_format("(cn=%s)", (test_user_cn,))
+
 			# get 'rIDNextRID' after user is created and replicated
 			next_rid_pre_sync = self.s4_search('(objectClass=rIDSet)', 'rIDNextRID')
 			if next_rid_pre_sync != initial_next_rid:
@@ -222,7 +227,7 @@ class TestS4SIDAllocation(TestSamba4):
 				            % (test_username, ldap_sid_pre_sync, ldap_sid_post_sync)))
 
 			# get SID from Samba4
-			samba_sid = self.get_sid_via_ldbsearch(test_user_dn, sam_ldb_url)
+			samba_sid = self.s4_search(s4_user_filter, "objectSid")
 
 			if ldap_sid_pre_sync != samba_sid:
 				utils.fail(("The SID in the LDAP and Samba4 for the test user '%s'"
