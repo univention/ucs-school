@@ -99,16 +99,16 @@ class TestS4SIDAllocation(TestSamba4):
 			"\nSearching for the 'objectSid' of the user with DN: '%s' in the database located at '%s' using "
 			"'ldbsearch'" % (user_dn, ldburl))
 
-		cmd = ('ldbsearch', '-H', ldburl, '--user=' + self.admin_username + '%' + self.admin_password, '-b', user_dn)
+		cmd = ('ldbsearch', '-H', ldburl, '--user=' + self.admin_username + '%' + self.admin_password, '-b', user_dn, 'objectSid')
 
 		print "Executing command:", cmd
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
 			utils.fail("An error occured while performing a 'ldbsearch' for a user with DN '%s'. STDERR: '%s'" % (user_dn, stderr))
 
-		object_sids = re.findall("^objectSid: (\d+)$", stdout, re.MULTILINE)
+		object_sids = re.findall("^objectSid: (.*)$", stdout, re.MULTILINE)
 		if not object_sids:
-			utils.fail("The 'ldbsearch' did not produce objectSid.")
+			return ""
 		return object_sids[0]
 
 	def get_sid_from_ldap(self, user_dn):
@@ -177,7 +177,6 @@ class TestS4SIDAllocation(TestSamba4):
 
 		try:
 			self.ldap_master = self.UCR.get('ldap/master')
-			sam_ldb_url = self.get_samba_sam_ldb_path()
 
 			# determine if test should take into account a remote DC:
 			self.determine_test_scenario()
@@ -237,7 +236,14 @@ class TestS4SIDAllocation(TestSamba4):
 			# perform remote check when needed
 			if self.test_remotely:
 				print "\nComparing the SID on DC-Master with the local one:"
-				samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn, 'ldap://' + self.ldap_master + sam_ldb_url)
+
+				uri = 'ldap://' + self.ldap_master
+				for _ in range(5):  # poor man's replication check
+					samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn, uri)
+					if samba_sid_master:
+						break
+					print "\nNot yet replicated to master. Sleep for 10 seconds and retry."
+					sleep(10)
 
 				# compare objectSid@locally vs. objectSid@Master
 				if ldap_sid_pre_sync != samba_sid_master:
