@@ -1,3 +1,13 @@
+ucs-test-ucsschool (3.0.17-39) unstable; urgency=medium
+
+  * Bug #34221: 96_samba4_sid_allocation: improve and fix the test
+    - check ldap sid post sync
+    - check s4 rIDNextRID post sync
+    - use `wait_for_drs_replication()`
+    - remove skip tag
+
+ -- Lukas Oyen <oyen@univention.de>  Thu, 22 Dec 2016 13:30:46 +0100
+
 ucs-test-ucsschool (3.0.17-38) unstable; urgency=medium
 
   * Bug #40471: Fixed 90_ucsschool/140_check_Domain_Users_policies
