@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: italc
+fix: 2:2.0.25-17.100.201701021326
+desc: |
+ * A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which occurred
+   during receiving a screenshot from a clients computer (Bug #43244).
+bug: [43244]
