@@ -282,7 +282,10 @@ static QString querySessionInformation( DWORD sessionId,
 User User::loggedOnUser()
 {
 	QString userName = "unknown";
+	static QMutex test;
+	test.lock();
 	QString domainName = QHostInfo::localDomainName();
+	test.unlock();
 
 #ifdef ITALC_BUILD_WIN32
 
