@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-41) unstable; urgency=medium
+
+  * Bug #40527: fix more cases
+
+ -- Florian Best <best@univention.de>  Tue, 03 Jan 2017 19:03:28 +0100
+
 ucs-test-ucsschool (3.0.17-40) unstable; urgency=medium
 
   * Bug #40527: reenable test
