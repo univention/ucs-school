@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-44) unstable; urgency=medium
+
+  * Bug #40470: Fixed 00_checks/30_check_DNS_UCRVs and 90_ucsschool/141_check_DNS_settings
+
+ -- Richard Ulmer <ulmer@univention.de>  Thu, 05 Jan 2017 12:19:09 +0100
+
 ucs-test-ucsschool (3.0.17-43) unstable; urgency=medium
 
   * Bug #40471: Fixed 90_ucsschool/140_check_Domain_Users_policies

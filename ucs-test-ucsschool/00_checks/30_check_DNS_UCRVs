@@ -1,25 +1,20 @@
 #!/usr/share/ucs-test/runner python
 ## bugs: [40470]
-## desc: >
-##   Check that school-servers (except master and backup) have their DNS
-##   related ucr variables set to the right values.
+## desc: Check that school-servers (except master and backup) have their DNS related ucr variables set to the right values.
 ## exposure: safe
 ## roles:
 ##  - domaincontroller_slave
-## tags: [ucsschool]
+## tags: [apptest, ucsschool]
 
 import univention.testing.utils as utils
-from sys import exit
-from univention.config_registry import ConfigRegistry
+from univention.testing.ucr import UCSTestConfigRegistry
 
-ucr = ConfigRegistry()
-ucr.load()
+def main():
+	with UCSTestConfigRegistry() as ucr:
+		ucrv_forward = ucr.get('dns/nameserver/registration/forward_zone')
+		assert ucrv_forward == 'no', "The ucr variable 'dns/nameserver/registration/forward_zone' is set to '%s', but must be set to 'no'." % (ucrv_forward,)
+		ucrv_reverse = ucr.get('dns/nameserver/registration/reverse_zone')
+		assert ucrv_reverse == 'no', "The ucr variable 'dns/nameserver/registration/reverse_zone' is set to '%s', but must be set to 'no'." % (ucrv_reverse,)
 
-ucrvForward = ucr.get('dns/nameserver/registration/forward_zone')
-if ucrvForward != 'no':
-    utils.fail("The ucr variable 'dns/nameserver/registration/forward_zone' is set to '%s', but must be set to 'no'." % (ucrvForward,))
-ucrvReverse = ucr.get('dns/nameserver/registration/reverse_zone')
-if ucrvReverse != 'no':
-    utils.fail("The ucr variable 'dns/nameserver/registration/reverse_zone' is set to '%s', but must be set to 'no'." % (ucrvReverse,))
-
-exit(0)
+if __name__ == '__main__':
+	main()
