@@ -2,6 +2,9 @@
 ## bugs: [40471]
 ## desc: Check that the group "Domain Users $SCHOOL" is connected to the policy "default-umc-users"
 ## exposure: dangerous
+## roles:
+##  - domaincontroller_master
+##  - domaincontroller_slave
 ## tags: [apptest, ucsschool]
 
 import univention.testing.utils as utils
