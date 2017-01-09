@@ -6,8 +6,8 @@
 ##  - domaincontroller_slave
 ## tags: [apptest, ucsschool]
 
-import univention.testing.utils as utils
 from univention.testing.ucr import UCSTestConfigRegistry
+
 
 def main():
 	with UCSTestConfigRegistry() as ucr:
@@ -15,6 +15,7 @@ def main():
 		assert ucr.is_false(value=ucrv_forward), "The ucr variable 'dns/nameserver/registration/forward_zone' is set to '%s', but must be set to 'no'." % (ucrv_forward,)
 		ucrv_reverse = ucr.get('dns/nameserver/registration/reverse_zone')
 		assert ucr.is_false(value=ucrv_reverse), "The ucr variable 'dns/nameserver/registration/reverse_zone' is set to '%s', but must be set to 'no'." % (ucrv_reverse,)
+
 
 if __name__ == '__main__':
 	main()
