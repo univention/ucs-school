@@ -7,7 +7,7 @@
 ##  - domaincontroller_slave
 ## tags: [apptest, ucsschool]
 
-from ldap.filter import filter_format
+from ldap.dn import escape_dn_chars
 from univention.testing.ucr import UCSTestConfigRegistry
 import univention.testing.utils as utils
 
@@ -15,12 +15,11 @@ import univention.testing.utils as utils
 def main():
 	with UCSTestConfigRegistry() as ucr:
 		lo = utils.get_ldap_connection()
-		ldap_base = ucr.get('ldap/base')
-		zone_name = ".".join([rdn[3:] for rdn in ldap_base.split(',')])
+		zone_name = ucr.get('domainname')
 
 		school_server = ucr.get('hostname') + "." + zone_name
 
-		zone = lo.get(filter_format('zoneName=%s,cn=dns,%s', (zone_name, ldap_base)))
+		zone = lo.get('zoneName=%s,cn=dns,%s' % (escape_dn_chars(zone_name), ucr.get('ldap/base')))
 		dns_servers = zone.get('nSRecord', [])
 		dns_servers = [dns_server.strip('.') for dns_server in dns_servers]
 
