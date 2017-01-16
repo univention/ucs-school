@@ -7,7 +7,7 @@
 ##  - domaincontroller_slave
 ## tags: [apptest, ucsschool]
 
-from ldap.filter import filter_format
+from ldap.dn import escape_dn_chars
 from univention.testing.ucr import UCSTestConfigRegistry
 import univention.testing.utils as utils
 
@@ -15,11 +15,17 @@ import univention.testing.utils as utils
 def main():
 	with UCSTestConfigRegistry() as ucr:
 		lo = utils.get_ldap_connection()
-		zone_name = '%s.%s.' % (ucr.get('hostname'), ucr.get('domainname'))
-		print 'Search for DNS zones with nsRecord=%r' % (zone_name,)
-		zones = lo.search(filter_format('nSRecord=%s', zone_name))
+		zone_name = ucr.get('domainname')
 
-		assert not zones, "The school server is listed as DNS server, which it must not be: %r" % (zones,)
+		school_server = ucr.get('hostname') + "." + zone_name
+
+		zone = lo.get('zoneName=%s,cn=dns,%s' % (escape_dn_chars(zone_name), ucr.get('ldap/base')))
+		dns_servers = zone.get('nSRecord', [])
+		dns_servers = [dns_server.strip('.') for dns_server in dns_servers]
+
+		print "DNS Servers  : %r" % (dns_servers,)
+		print "School Server: %r" % (school_server,)
+		assert school_server not in dns_servers, "The school server %r is listed as DNS server, which it must not be." % (school_server,)
 
 
 if __name__ == '__main__':
