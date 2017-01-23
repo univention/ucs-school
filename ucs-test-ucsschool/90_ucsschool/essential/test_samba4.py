@@ -1,16 +1,16 @@
 from sys import exit
 from os import getenv
 from time import sleep
-from httplib import HTTPException
 from samba.param import LoadParm
 from subprocess import Popen, PIPE
 
 from ucsschool.lib import schoolldap
 from univention.testing import utils
+from univention.testing.umc2 import ConnectionError, HTTPError
 
 from univention.testing.codes import TestCodes
 from univention.config_registry import ConfigRegistry
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 
 
 class TestSamba4(object):
@@ -20,7 +20,7 @@ class TestSamba4(object):
 		Test class constructor
 		"""
 		self.UCR = ConfigRegistry()
-		self.UMCConnection = None
+		self.client = None
 
 		self.admin_username = ''
 		self.admin_password = ''
@@ -201,15 +201,12 @@ class TestSamba4(object):
 			self.ldap_master = self.UCR.get('ldap/master')
 
 		try:
-			self.UMCConnection = UMCConnection(self.ldap_master)
-			self.UMCConnection.auth(self.admin_username, self.admin_password)
-		except HTTPException as exc:
-			print("An HTTPException occured while trying to authenticate to UMC: %r" % exc)
+			self.client = Client(self.ldap_master, self.admin_username, self.admin_password)
+		except (ConnectionError, HTTPError) as exc:
+			print("An HTTP Error occured while trying to authenticate to UMC: %r" % exc)
 			print "Waiting 10 seconds and making another attempt"
 			sleep(10)
-			self.UMCConnection.auth(self.admin_username, self.admin_password)
-		except Exception as exc:
-			utils.fail("Failed to authenticate, hostname '%s' : %s" % (self.ldap_master, exc))
+			self.client.authenticate(self.admin_username, self.admin_password)
 
 	def delete_samba_gpo(self):
 		"""

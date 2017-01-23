@@ -12,7 +12,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 from univention.config_registry import handler_set
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 from univention.testing.mail import MailSink
 from univention.testing.network import NetworkRedirector
 
@@ -30,7 +30,7 @@ def main():
 				utils.wait_for_replication_and_postrun()
 				handler_set(['ucsschool/helpdesk/recipient=ucstest@univention.de'])
 				host = ucr.get('hostname')
-				connection = UMCConnection(host)
+				connection = Client(host)
 				connection.auth(tea, 'univention')
 				f = tempfile.NamedTemporaryFile(suffix='.eml', dir='/tmp')
 				print 'Creating temp mail file %s' % (f.name)
@@ -45,7 +45,7 @@ def main():
 				}
 				# Sending the mail message with the unique id
 				print 'Sending message...'
-				result = connection.request('helpdesk/send', params)
+				result = connection.umc_command('helpdesk/send', params).result
 				if not result:
 					utils.fail('Message was not sent successfully')
 				print 'Message sent.'

@@ -6,7 +6,7 @@
 """
 import univention.testing.strings as uts
 import univention.testing.utils as utils
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.ucr as ucr_test
 from univention.testing.ucsschool import UCSTestSchool
 
@@ -41,8 +41,8 @@ class Klasse(object):
 	By default they are randomly formed except the OU, should be provided\n
 	:param school: name of the ou
 	:type school: str
-	:param umcConnection:
-	:type umcConnection: UMC connection object
+	:param connection:
+	:type connection: UMC connection object
 	:param ucr:
 	:type ucr: UCR object
 	:param name: name of the class to be created later
@@ -51,23 +51,16 @@ class Klasse(object):
 	:type description: str
 	"""
 
-	def __init__(self, school, umcConnection=None, ucr=None, name=None, users=None, description=None):
+	def __init__(self, school, connection=None, ucr=None, name=None, users=None, description=None):
 		self.school = school
 		self.users = users or []
 		self.name = name if name else uts.random_string()
 		self.description = description if description else uts.random_string()
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
-		if umcConnection:
-			self.umcConnection = umcConnection
+		if connection:
+			self.client = connection
 		else:
-			self.ucr = ucr_test.UCSTestConfigRegistry()
-			self.ucr.load()
-			host = self.ucr.get('ldap/master')
-			self.umcConnection = UMCConnection(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			self.umcConnection.auth(admin, passwd)
+			self.client = Client.get_get_test_connection()
 
 	def __enter__(self):
 		return self
@@ -89,10 +82,7 @@ class Klasse(object):
 			self.name,
 			self.school)
 		print 'param = %s' % (param,)
-		reqResult = self.umcConnection.request(
-			'schoolwizards/classes/add',
-			param,
-			flavor)
+		reqResult = self.client.umc_command('schoolwizards/classes/add', param, flavor).result
 		if not reqResult[0]:
 			raise CreateFail('Unable to create class (%r)' % (param,))
 
@@ -107,7 +97,7 @@ class Klasse(object):
 		print 'Creating classesList'
 		cList = []
 		for i in xrange(count):
-			c = self.__class__(self.school, self.umcConnection, ucr=self.ucr)
+			c = self.__class__(self.school, self.client, ucr=self.ucr)
 			c.create()
 			cList.append(c)
 		return cList
@@ -119,8 +109,7 @@ class Klasse(object):
 			'school': self.school,
 			'filter': ""
 		}
-		reqResult = self.umcConnection.request(
-			'schoolwizards/classes/query', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/classes/query', param, flavor).result
 		return reqResult
 
 	def check_query(self, classes_names):
@@ -143,8 +132,7 @@ class Klasse(object):
 			'$dn$': self.dn(),
 			'school': self.school
 		}}]
-		reqResult = self.umcConnection.request(
-			'schoolwizards/classes/get', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/classes/get', param, flavor).result
 		if not reqResult[0]:
 			raise GetFail('Unable to get class (%s)' % self.name)
 		else:
@@ -173,8 +161,7 @@ class Klasse(object):
 		},
 			'options': None
 		}]
-		reqResult = self.umcConnection.request(
-			'schoolwizards/classes/remove', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/classes/remove', param, flavor).result
 
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove class (%s)' % self.name)
@@ -194,10 +181,7 @@ class Klasse(object):
 			self.name,
 			self.school)
 		print 'param = %s' % (param,)
-		reqResult = self.umcConnection.request(
-			'schoolwizards/classes/put',
-			param,
-			flavor)
+		reqResult = self.client.umc_command('schoolwizards/classes/put', param, flavor).result
 		if not reqResult[0]:
 			raise EditFail('Unable to edit class (%s) with the parameters (%r)' % (self.name, param))
 		else:

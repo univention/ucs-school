@@ -10,7 +10,7 @@
 
 from essential.distribution import Distribution
 from essential.workgroup import Workgroup
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
@@ -21,7 +21,7 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			host = ucr.get('hostname')
-			con = UMCConnection(host)
+			connection = Client(host)
 
 			# Create ou, teacher, student, group
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
@@ -46,9 +46,9 @@ def main():
 			files.append((filename3, 'iso8859-1'))
 			files.append((filename4, 'utf-8'))
 
-			con.auth(tea, 'univention')
+			connection.auth(tea, 'univention')
 			# Create new project
-			project = Distribution(school, sender=tea, umcConnection=con, files=files, ucr=ucr, recipients=[group], flavor='teacher')
+			project = Distribution(school, sender=tea, connection=connection, files=files, ucr=ucr, recipients=[group], flavor='teacher')
 			project.add()
 			project.check_add()
 			project.distribute()

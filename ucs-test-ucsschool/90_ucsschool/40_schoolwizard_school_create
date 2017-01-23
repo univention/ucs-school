@@ -13,7 +13,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.udm
-from univention.testing.ucsschool import UCSTestSchool, UMCConnection
+from univention.testing.ucsschool import UCSTestSchool, Client
 
 ucr = ucr_test.UCSTestConfigRegistry()
 ucr.load()
@@ -26,8 +26,8 @@ def schoolwizards_schools_create(ou_name, dc_name=None, dc_name_administrative=N
 	if dc_name_administrative:
 		jsonargs[0]['object']['dc_name_administrative'] = dc_name_administrative
 
-	connection = UMCConnection('%s.%s' % (ucr.get('hostname'), ucr.get('domainname')), 'Administrator', 'univention')
-	assert connection.request('schoolwizards/schools/create', jsonargs, 'schoolwizards/schools')[0] is True
+	connection = Client.get_get_test_connection()
+	assert connection.umc_command('schoolwizards/schools/create', jsonargs, 'schoolwizards/schools').result[0] is True
 
 
 def main():

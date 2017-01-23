@@ -5,7 +5,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 import univention.testing.utils as utils
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.ucr as ucr_test
 from essential.importusers import Person
 
@@ -65,12 +65,12 @@ class User(Person):
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		host = self.ucr.get('ldap/master')
-		self.umc_connection = UMCConnection(host)
+		self.client = Client(host)
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
 		self.password = password if password else passwd
-		self.umc_connection.auth(admin, passwd)
+		self.client.auth(admin, passwd)
 
 	def append_random_groups(self):
 		pass
@@ -99,7 +99,7 @@ class User(Person):
 		}]
 		print 'Creating user %s' % (self.username,)
 		print 'param = %s' % (param,)
-		reqResult = self.umc_connection.request('schoolwizards/users/add', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/users/add', param, flavor).result
 		if not reqResult[0]:
 			raise CreateFail('Unable to create user (%r)' % (param,))
 		else:
@@ -114,7 +114,7 @@ class User(Person):
 				'school': self.school
 			}
 		}]
-		reqResult = self.umc_connection.request('schoolwizards/users/get', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/users/get', param, flavor).result
 		if not reqResult[0]:
 			raise GetFail('Unable to get user (%s)' % self.username)
 		else:
@@ -172,7 +172,7 @@ class User(Person):
 			'type': 'all',
 			'filter': ""
 		}
-		reqResult = self.umc_connection.request('schoolwizards/users/query', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/users/query', param, flavor).result
 		return reqResult
 
 	def check_query(self, users_dn):
@@ -193,7 +193,7 @@ class User(Person):
 			},
 			'options': None
 		}]
-		reqResult = self.umc_connection.request('schoolwizards/users/remove', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/users/remove', param, flavor).result
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove user (%s)' % self.username)
 		else:
@@ -222,7 +222,7 @@ class User(Person):
 		}]
 		print 'Editing user %s' % (self.username,)
 		print 'param = %s' % (param,)
-		reqResult = self.umc_connection.request('schoolwizards/users/put', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/users/put', param, flavor).result
 		if not reqResult[0]:
 			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username, param))
 		else:

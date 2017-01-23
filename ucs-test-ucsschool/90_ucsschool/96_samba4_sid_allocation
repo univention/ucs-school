@@ -13,7 +13,6 @@ import re
 import ldap
 from sys import exit
 from time import sleep
-from httplib import HTTPException
 
 from essential.test_samba4 import TestSamba4
 
@@ -40,15 +39,7 @@ class TestS4SIDAllocation(TestSamba4):
 		Makes a UMC request to DC-Master to stop or start the S4-Connector.
 		"""
 		print("\nMaking a UMC request to %s the S4-Connector service on the DC-Master\n" % action)
-		try:
-			request_result = self.UMCConnection.request('services/' + action, ['univention-s4-connector'])
-			if not request_result:
-				utils.fail("Request 'services/%s' failed, no response from hostname '%s'" % (action, self.ldap_master))
-			if not request_result['success']:
-				utils.fail("Request 'services/%s' failed, no success in response. Hostname '%s', response '%s'" % (
-					action, self.ldap_master, request_result))
-		except (HTTPException, NotImplementedError, KeyError) as exc:
-			utils.fail("Exception while making 'services/%s' UMC request: %s" % (action, exc))
+		assert self.connection.umc_command('services/' + action, ['univention-s4-connector']).result.get('success'), 'Restarting S4-Connector service failed'
 
 	def start_stop_s4_connector(self, connector_should_run):
 		"""

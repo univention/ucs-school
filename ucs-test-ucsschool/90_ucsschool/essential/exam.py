@@ -7,14 +7,13 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 from univention.testing.ucs_samba import wait_for_s4connector
 import glob
 import os
 import re
 import subprocess
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
 
@@ -92,8 +91,8 @@ class Exam(object):
 	:type internetRule: str
 	:param customRule: cutom internet rule
 	:type customRule: str
-	:param umcConnection:
-	:type umcConnection: UMC connection object
+	:param connection:
+	:type connection: UMC connection object
 	"""
 
 	def __init__(
@@ -108,7 +107,7 @@ class Exam(object):
 		shareMode="home",
 		internetRule="none",
 		customRule='',
-		umcConnection=None
+		connection=None
 	):
 		self.school = school
 		self.room = room
@@ -122,17 +121,10 @@ class Exam(object):
 		self.internetRule = internetRule
 		self.customRule = customRule
 
-		if umcConnection:
-			self.umcConnection = umcConnection
+		if connection:
+			self.client = connection
 		else:
-			self.ucr = ucr_test.UCSTestConfigRegistry()
-			self.ucr.load()
-			host = self.ucr.get('hostname')
-			self.umcConnection = UMCConnection(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			self.umcConnection.auth(admin, passwd)
+			self.client = Client.get_get_test_connection()
 
 	def start(self):
 		"""Starts an exam"""
@@ -150,7 +142,7 @@ class Exam(object):
 		}
 		print 'Starting exam %s in room %s' % (self.name, self.room)
 		print 'param = %s' % param
-		reqResult = self.umcConnection.request('schoolexam/exam/start', param)
+		reqResult = self.client.umc_command('schoolexam/exam/start', param).result
 		print 'Start exam response = ', reqResult
 		if not reqResult['success']:
 			raise StartFail('Unable to start exam (%r)' % (param,))
@@ -160,7 +152,7 @@ class Exam(object):
 		param = {'exam': self.name, 'room': self.room}
 		print 'Finishing exam %s in room %s' % (self.name, self.room)
 		print 'param = %s' % param
-		reqResult = self.umcConnection.request('schoolexam/exam/finish', param)
+		reqResult = self.client.umc_command('schoolexam/exam/finish', param).result
 		print 'Finish exam response = ', reqResult
 		if not reqResult['success']:
 			raise FinishFail('Unable to finish exam (%r)' % param)
@@ -204,22 +196,12 @@ html5
 		print 'Uploading file %s' % file_name
 		boundary = '---------------------------12558488471903363215512784168'
 		data = self.genData(file_name, content_type, boundary)
-		headers = dict(self.umcConnection._headers)  # copy headers!
-		httpcon = self.umcConnection.get_connection()
 		header_content = {'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)}
-		headers.update(header_content)
-		headers['Cookie'] = headers['Cookie'].split(";")[0]
-		headers['Accept'] = 'application/json'
-		httpcon.request("POST", '/univention-management-console/upload/schoolexam/upload', data, headers=headers)
-		r = httpcon.getresponse().status
-		print 'Uploading file response =', r
-		if r != 200:
-			print 'httpcon.response().status=', r
-			utils.fail('Unable to upload the file.')
+		self.client.request('POST', 'upload/schoolexam/upload', data, headers=header_content)
 
 	def get_internetRules(self):
 		"""Get internet rules"""
-		reqResult = self.umcConnection.request('schoolexam/internetrules', {})
+		reqResult = self.client.umc_command('schoolexam/internetrules', {}).result
 		print 'InternetRules = ', reqResult
 		return reqResult
 
@@ -229,7 +211,7 @@ html5
 
 	def get_schools(self):
 		"""Get schools"""
-		reqResult = self.umcConnection.request('schoolexam/schools', {})
+		reqResult = self.client.umc_command('schoolexam/schools', {}).result
 		schools = [x['label'] for x in reqResult]
 		print 'Schools = ', schools
 		return schools
@@ -240,7 +222,7 @@ html5
 
 	def get_groups(self):
 		"""Get groups"""
-		reqResult = self.umcConnection.request('schoolexam/groups', {'school': self.school, 'pattern': "", })
+		reqResult = self.client.umc_command('schoolexam/groups', {'school': self.school, 'pattern': "", }).result
 		print 'Groups response = ', reqResult
 		groups = [x['label'] for x in reqResult]
 		print 'Groups = ', groups
@@ -252,7 +234,7 @@ html5
 
 	def get_lessonEnd(self):
 		"""Get lessonEnd"""
-		reqResult = self.umcConnection.request('schoolexam/lesson_end', {})
+		reqResult = self.client.umc_command('schoolexam/lesson_end', {}).result
 		print 'Lesson End = ', reqResult
 		return reqResult
 
@@ -262,7 +244,7 @@ html5
 
 	def collect(self):
 		"""Collect results"""
-		reqResult = self.umcConnection.request('schoolexam/exam/collect', {'exam': self.name})
+		reqResult = self.client.umc_command('schoolexam/exam/collect', {'exam': self.name}).result
 		print 'Collect respose = ', reqResult
 		return reqResult
 

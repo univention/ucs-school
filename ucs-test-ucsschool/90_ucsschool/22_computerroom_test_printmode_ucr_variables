@@ -8,7 +8,7 @@
 
 
 from essential.computerroom import Room, Computers, add_printer
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import datetime
 from univention.testing import utils
 import univention.testing.strings as uts
@@ -43,8 +43,8 @@ def main():
 					host_members=room.host_members
 				)
 
-			umc_connection = UMCConnection(ucr.get('hostname'))
-			umc_connection.auth(tea, 'univention')
+			client = Client(ucr.get('hostname'))
+			client.auth(tea, 'univention')
 
 			# Add new hardware printer
 			printer_name = uts.random_string()
@@ -73,9 +73,9 @@ def main():
 			settings3.ip = computers_ips[2]
 
 			def set_room_printmode(settings):
-				settings.room.aquire_room(umc_connection)
+				settings.room.aquire_room(client)
 				period = datetime.time.strftime((datetime.datetime.now() + datetime.timedelta(0, 600)).time(), '%H:%M')
-				settings.room.set_room_settings(umc_connection, {'customRule': '', 'printMode': settings.printmode, 'internetRule': 'none', 'shareMode': 'all', 'period': period, })
+				settings.room.set_room_settings(client, {'customRule': '', 'printMode': settings.printmode, 'internetRule': 'none', 'shareMode': 'all', 'period': period, })
 
 			def ucr_check_both_values(settings):
 				ucr.load()

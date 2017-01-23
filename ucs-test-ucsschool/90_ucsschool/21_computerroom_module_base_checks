@@ -6,7 +6,7 @@
 ## packages: [ucs-school-umc-computerroom]
 
 from essential.computerroom import Room, Computers
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 
@@ -35,22 +35,20 @@ def main():
 				schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 
 			print 'Checking empty room properties'
-			umc_connection1 = UMCConnection(ucr.get('hostname'))
-			umc_connection1.auth(tea1, 'univention')
-			room1.checK_room_aquire(umc_connection1, 'EMPTY_ROOM')
-			room1.check_room_user(umc_connection1, None)
+			client1 = Client(None, tea1, 'univention')
+			room1.checK_room_aquire(client1, 'EMPTY_ROOM')
+			room1.check_room_user(client1, None)
 
 			print 'Checking non-empty room properties'
-			umc_connection2 = UMCConnection(ucr.get('hostname'))
-			umc_connection2.auth(tea2, 'univention')
-			room2.checK_room_aquire(umc_connection2, 'OK')
-			room2.check_room_user(umc_connection1, tea2)
-			room2.check_room_computers(umc_connection2, created_computers_dn[0:4])
+			client2 = Client(None, tea2, 'univention')
+			room2.checK_room_aquire(client2, 'OK')
+			room2.check_room_user(client1, tea2)
+			room2.check_room_computers(client2, created_computers_dn[0:4])
 
 			print 'switching room for tea2'
-			room3.checK_room_aquire(umc_connection2, 'OK')
-			room3.check_room_user(umc_connection1, tea2)
-			room3.check_room_computers(umc_connection2, created_computers_dn[4:9])
+			room3.checK_room_aquire(client2, 'OK')
+			room3.check_room_user(client1, tea2)
+			room3.check_room_computers(client2, created_computers_dn[4:9])
 
 
 if __name__ == '__main__':

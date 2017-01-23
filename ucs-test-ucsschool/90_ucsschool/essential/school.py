@@ -7,7 +7,7 @@
 from essential.importcomputers import random_ip
 from essential.importou import DCNotFound, DCMembership, DhcpdLDAPBase, TYPE_DC_ADMINISTRATIVE
 from essential.importou import get_ou_base, verify_dc, get_school_ou_from_dn, TYPE_DC_EDUCATIONAL
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 from univention.testing.ucsschool import UCSTestSchool
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
@@ -82,8 +82,8 @@ class School(object):
 
 	"""Contains the needed functuality for schools in the UMC module schoolwizards/schools.
 	By default they are randomly formed.\n
-	:param umcConnection:
-	:type umcConnection: UMC connection object
+	:param connection:
+	:type connection: UMC connection object
 	:param ucr:
 	:type ucr: UCR object
 	:param name: name of the school to be created later
@@ -94,7 +94,7 @@ class School(object):
 
 	# Initialization (Random by default)
 
-	def __init__(self, display_name=None, name=None, dc_name=None, ucr=None, umcConnection=None):
+	def __init__(self, display_name=None, name=None, dc_name=None, ucr=None, connection=None):
 		self.class_share_file_server = None
 		self.home_share_file_server = None
 		self.name = name if name else uts.random_string()
@@ -106,17 +106,10 @@ class School(object):
 			self.dc_name = None
 		else:
 			self.dc_name = dc_name if dc_name else uts.random_string()
-		if umcConnection:
-			self.umcConnection = umcConnection
+		if connection:
+			self.client = connection
 		else:
-			self.ucr = ucr_test.UCSTestConfigRegistry()
-			self.ucr.load()
-			host = self.ucr.get('ldap/master')
-			self.umcConnection = UMCConnection(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			self.umcConnection.auth(admin, passwd)
+			self.client = Client.get_get_test_connection()
 
 	def __enter__(self):
 		return self
@@ -137,7 +130,7 @@ class School(object):
 		}]
 		print 'Creating school %s' % (self.name,)
 		print 'param = %s' % (param,)
-		reqResult = self.umcConnection.request('schoolwizards/schools/add', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/schools/add', param, flavor).result
 		if reqResult[0] is not True:
 			raise CreateFail('Unable to create school (%r)' % (reqResult,))
 		else:
@@ -149,7 +142,7 @@ class School(object):
 		param = [{'object': {
 			'$dn$': self.dn()
 		}}]
-		reqResult = self.umcConnection.request('schoolwizards/schools/get', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/schools/get', param, flavor).result
 		return reqResult
 
 	def check_get(self, attrs):
@@ -167,7 +160,7 @@ class School(object):
 			'school': 'undefined',
 			'filter': ""
 		}
-		reqResult = self.umcConnection.request('schoolwizards/schools/query', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/schools/query', param, flavor).result
 		return reqResult
 
 	def check_query(self, names):
@@ -190,7 +183,7 @@ class School(object):
 			},
 			'options': None
 		}]
-		reqResult = self.umcConnection.request('schoolwizards/schools/remove', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/schools/remove', param, flavor).result
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove school (%s)' % self.name)
 		else:
@@ -232,7 +225,7 @@ class School(object):
 		}]
 		print 'Editing school %s' % (self.name,)
 		print 'param = %s' % (param,)
-		reqResult = self.umcConnection.request('schoolwizards/schools/put', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/schools/put', param, flavor).result
 		if not reqResult[0]:
 			raise EditFail('Unable to edit school (%s) with the parameters (%r)' % (self.name, param))
 		else:

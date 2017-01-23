@@ -13,7 +13,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 
 INVALID_CHARS_CLI = ['ä', 'ö', 'ü', 'ß', '%', '§', '$', '!', '&', '[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
 INVALID_CHARS = INVALID_CHARS_CLI + ['_']
@@ -25,11 +25,11 @@ def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		with utu.UCSTestSchool() as schoolenv:
 			host = ucr.get('ldap/master')
-			umc_connection = UMCConnection(host)
+			client = Client(host)
 			account = utils.UCSTestDomainAdminCredentials()
 			admin = account.username
 			passwd = account.bindpw
-			umc_connection.auth(admin, passwd)
+			client.auth(admin, passwd)
 			if ucr.is_true('ucsschool/singlemaster'):
 				print "This test is only for Multi Server Environments"
 				exit(0)
@@ -85,7 +85,7 @@ def main():
 				school = uts.random_name()
 				process_school(school, dc_name, should_fail=False)
 				process_school_cli(school, dc_name, should_fail=False)
-				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, connection=client)
 				process_school_umcp(school, dc_name, should_fail=False)
 
 			# Checking illegal char in the beginning of the dc_name
@@ -94,7 +94,7 @@ def main():
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
-				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, connection=client)
 				process_school_umcp(school, dc_name)
 
 			# Checking illegal char in the middle of the dc_name
@@ -102,7 +102,7 @@ def main():
 				dc_name = '%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
 				school = uts.random_name()
 				process_school(school, dc_name)
-				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, connection=client)
 				process_school_umcp(school, dc_name)
 
 			for char in INVALID_CHARS_CLI:
@@ -116,7 +116,7 @@ def main():
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
-				school = School(dc_name=dc_name, ucr=ucr, umcConnection=umc_connection)
+				school = School(dc_name=dc_name, ucr=ucr, connection=client)
 				process_school_umcp(school, dc_name)
 
 

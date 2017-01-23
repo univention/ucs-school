@@ -9,7 +9,7 @@ from essential.distribution import Distribution
 from essential.workgroup import Workgroup
 from subprocess import call
 from univention.config_registry import handler_set
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import time
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
@@ -27,7 +27,7 @@ def main():
 				handler_set(['umc/module/timeout=1200'])
 				call(['invoke-rc.d', 'univention-management-console-web-server', 'restart'])
 				call(['invoke-rc.d', 'univention-management-console-server', 'restart'])
-				con = UMCConnection(host)
+				connection = Client(host)
 
 				# Create ou, teacher, student, group
 				school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
@@ -37,7 +37,7 @@ def main():
 				group.create()
 				utils.wait_for_replication_and_postrun()
 
-				con.auth(tea, 'univention')
+				connection.auth(tea, 'univention')
 
 				# Prepare times for auto distribution and collection
 				local = list(time.localtime(time.time() + MIN_DIST_TIME))
@@ -52,7 +52,7 @@ def main():
 				project = Distribution(
 					school,
 					sender=tea,
-					umcConnection=con,
+					connection=connection,
 					ucr=ucr,
 					files=[("file_name", 'utf8')],
 					recipients=[group],

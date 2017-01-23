@@ -7,7 +7,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import os
 import time
 import univention.testing.strings as uts
@@ -21,8 +21,8 @@ class Distribution(object):
 	By default the distribution is manual.\n
 	:param school: name of the ou
 	:type school: str
-	:param umcConnection:
-	:type umcConnection: UMC connection object
+	:param connection:
+	:type connection: UMC connection object
 	:param ucr:
 	:type ucr: UCR object
 	:param name: name of distribution project to be added later
@@ -54,7 +54,7 @@ class Distribution(object):
 	def __init__(
 		self,
 		school,
-		umcConnection=None,
+		connection=None,
 		sender=None,
 		flavor=None,
 		ucr=None,
@@ -92,13 +92,10 @@ class Distribution(object):
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
 		self.sender = sender if sender else admin
 		self.flavor = flavor if flavor else 'admin'
-		if umcConnection:
-			self.umcConnection = umcConnection
+		if connection:
+			self.client = connection
 		else:
-			self.ucr.load()
-			host = self.ucr.get('hostname')
-			self.umcConnection = UMCConnection(host)
-			self.umcConnection.auth(admin, passwd)
+			self.client = Client(None, admin, passwd)
 
 	def query(self, filt='private', pattern=''):
 		"""Calles 'distribution/query'
@@ -107,14 +104,14 @@ class Distribution(object):
 		"""
 		flavor = self.flavor
 		param = {'filter': filt, 'pattern': pattern}
-		reqResult = self.umcConnection.request('distribution/query', param, flavor)
+		reqResult = self.client.umc_command('distribution/query', param, flavor).result
 		result = [x['name'] for x in reqResult if reqResult is not None]
 		return result
 
 	def get(self):
 		"""Calls 'distribute/get'"""
 		name = [self.name]
-		reqResult = self.umcConnection.request('distribution/get', name, self.flavor)
+		reqResult = self.client.umc_command('distribution/get', name, self.flavor).result
 		return reqResult[0]
 
 	def idir(self, path):
@@ -172,17 +169,8 @@ html5
 		print 'Uploading a file'
 		boundary = '---------------------------103454444410473823401882756'
 		data = self.genData(file_name, content_type, boundary, self.flavor)
-		headers = dict(self.umcConnection._headers)  # copy headers!
-		httpcon = self.umcConnection.get_connection()
 		header_content = {'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)}
-		headers.update(header_content)
-		headers['Cookie'] = headers['Cookie'].split(";")[0]
-		headers['Accept'] = 'application/json'
-		httpcon.request("POST", '/univention-management-console/upload/distribution/upload', data, headers=headers)
-		r = httpcon.getresponse().status
-		if r != 200:
-			print 'httpcon.response().status=', r
-			utils.fail('Unable to upload the file.')
+		self.client.umc_command('POST', 'upload/distribution/upload', data, headers=header_content).result
 
 	def add(self):
 		"""Create files and upload them then add the project,
@@ -217,7 +205,7 @@ html5
 			'options': None
 		}]
 		print 'param=', param
-		reqResult = self.umcConnection.request('distribution/add', param, flavor)
+		reqResult = self.client.umc_command('distribution/add', param, flavor).result
 		print 'reqResult =', reqResult
 		if not reqResult[0]['success']:
 			utils.fail('Unable to add project (%r)' % (param,))
@@ -290,7 +278,7 @@ html5
 			},
 			'options': None
 		}]
-		reqResult = self.umcConnection.request('distribution/put', param, flavor)
+		reqResult = self.client.umc_command('distribution/put', param, flavor).result
 		print 'reqResult =', reqResult
 		if not reqResult[0]['success']:
 			utils.fail('Unable to edit project with params =(%r)' % (param,))
@@ -421,7 +409,7 @@ html5
 		"""Calls 'distribution/distribute'"""
 		print 'Distributing Project %s' % (self.name)
 		flavor = self.flavor
-		reqResult = self.umcConnection.request('distribution/distribute', [self.name], flavor)
+		reqResult = self.client.umc_command('distribution/distribute', [self.name], flavor).result
 		if not reqResult[0]['success']:
 			utils.fail('Unable to distribute project (%r)' % (self.name,))
 
@@ -445,7 +433,7 @@ html5
 		"""Calls 'distribution/collect'"""
 		print 'Collecting Project %s' % (self.name)
 		flavor = self.flavor
-		reqResult = self.umcConnection.request('distribution/collect', [self.name], flavor)
+		reqResult = self.client.umc_command('distribution/collect', [self.name], flavor).result
 		if not reqResult[0]['success']:
 			utils.fail('Unable to collect project (%r)' % (self.name,))
 
@@ -470,7 +458,7 @@ html5
 		print 'Removing Project %s' % (self.name)
 		flavor = self.flavor
 		param = [{'object': self.name, 'options': None}]
-		reqResult = self.umcConnection.request('distribution/remove', param, flavor)
+		reqResult = self.client.umc_command('distribution/remove', param, flavor).result
 		if reqResult:
 			utils.fail('Unable to remove project (%r)' % (param,))
 
@@ -488,7 +476,7 @@ html5
 		print 'Checking files Project %s' % (self.name)
 		flavor = self.flavor
 		param = {'project': self.name, 'filenames': files}
-		reqResult = self.umcConnection.request('distribution/checkfiles', param, flavor)
+		reqResult = self.client.umc_command('distribution/checkfiles', param, flavor).result
 		if reqResult:
 			utils.fail('Unable to chack files for project (%r)' % (param,))
 
@@ -496,7 +484,7 @@ html5
 		"""Calls 'distribute/adopt'"""
 		print 'Adopting project', self.name
 		flavor = self.flavor
-		reqResult = self.umcConnection.request('distribution/adopt', [project_name], flavor)
+		reqResult = self.client.umc_command('distribution/adopt', [project_name], flavor).result
 		if reqResult:
 			utils.fail('Failed to adopt project (%r)' % (project_name,))
 

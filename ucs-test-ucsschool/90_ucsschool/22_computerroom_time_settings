@@ -10,7 +10,7 @@
 ## bugs: [40655]
 
 from essential.computerroom import Room, Computers
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 
@@ -30,10 +30,10 @@ def main():
 			# computer rooms contains the created computers
 			room = Room(school, host_members=computers_dns)
 			schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
-			umc_connection = UMCConnection(ucr.get('hostname'))
-			umc_connection.auth(tea, 'univention')
+			client = Client(ucr.get('hostname'))
+			client.auth(tea, 'univention')
 
-			room.test_time_settings(umc_connection)
+			room.test_time_settings(client)
 
 
 if __name__ == '__main__':

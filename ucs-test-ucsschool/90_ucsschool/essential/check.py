@@ -5,7 +5,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
@@ -18,26 +18,21 @@ class Check(object):
 	:type school: str
 	:param groupRuleCouples: couples of groups and rules assigned to them
 	:type groupRuleCouples: tuple(str,str)
-	:param umcConnection:
-	:type umcConnection: UMC connection object
+	:param connection:
+	:type connection: UMC connection object
 	:param ucr:
 	:type ucr: UCR object
 	"""
 
-	def __init__(self, school, groupRuleCouples, umcConnection=None, ucr=None):
+	def __init__(self, school, groupRuleCouples, connection=None, ucr=None):
 		self.school = school
 		self.groupRuleCouples = groupRuleCouples
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
-		if umcConnection:
-			self.umcConnection = umcConnection
+		if connection:
+			self.client = connection
 		else:
 			self.ucr.load()
-			host = self.ucr.get('hostname')
-			self.umcConnection = UMCConnection(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			self.umcConnection.auth(admin, passwd)
+			self.client = Client.get_get_test_connection()
 
 	def __enter__(self):
 		return self
@@ -55,9 +50,7 @@ class Check(object):
 			}
 			if ruleName is None:
 				ruleName = ['-- Default (unrestricted) --', '-- Voreinstellungen (Unbeschränkt) --']
-			result = self.umcConnection.request(
-				'internetrules/groups/query',
-				param)[0]['rule']
+			result = self.client.umc_command('internetrules/groups/query', param).result[0]['rule']
 			if result not in ruleName:
 				utils.fail(
 					'Assigned rule (%r) to workgroup (%r) doesn\'t match' %

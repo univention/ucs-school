@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import univention.testing.ucr as ucr_test
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 import tempfile
-import re
 from pprint import pprint
 from essential.user import User
+from univention.testing.umc2 import HTTPError
 
 
 class FailHTTPStatus(Exception):
@@ -56,11 +56,11 @@ class CSVImport(object):
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		host = self.ucr.get('hostname')
-		self.umc_connection = UMCConnection(host)
+		self.client = Client(host)
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
-		self.umc_connection.auth(admin, passwd)
+		self.client.auth(admin, passwd)
 
 	def genData(self, boundary, file_name, content_type, school, user_type, delete_not_mentioned):
 		"""Generates data in the form to be sent via http POST request.\n
@@ -138,37 +138,23 @@ html5
 		print 'Uploading file %r' % file_name
 		boundary = '---------------------------18209455381072592677374099768'
 		data = self.genData(boundary, file_name, content_type, self.school, self.user_type, delete_not_mentioned)
-		headers = dict(self.umc_connection._headers)  # copy headers!
-		httpcon = self.umc_connection.get_connection()
+
 		header_content = {
 			'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)
 		}
-		headers.update(header_content)
-		headers['Cookie'] = headers['Cookie'].split(";")[0]
-		headers['Accept'] = 'application/json'
+
 		try:
-			httpcon.request(
-				"POST",
-				'/univention-management-console/upload/schoolcsvimport/save',
-				data,
-				headers=headers)
-			response = httpcon.getresponse()
-			status = response.status
-			if status != expected_upload_status:
-				print "DEBUG: request response message = ", response.msg, response.reason, response.read()
-				raise FailHTTPStatus('Unexpected httpcon.response().status=%r' % status)
-			elif status == 200:
-				response_text = response.read()
-				# replace some string values with other types
-				rep = {'null': 'None', 'true': 'True'}
-				pattern = re.compile("|".join(rep.keys()))
-				response_dict = eval(pattern.sub(lambda m: rep[re.escape(m.group(0))], response_text))
-				self.file_id = response_dict['result'][0]['file_id']
-				self.id_nr = 1
-			else:
-				print 'Expected http_status = %r' % status
-		except FailUploadFile:
-			raise
+			response = self.client.request('POST', 'upload/schoolcsvimport/save', data, headers=header_content)
+		except HTTPError as exc:
+			response = exc.response
+		status = response.status
+		if status != expected_upload_status:
+			raise FailHTTPStatus('Unexpected response status=%r' % status)
+		elif status == 200:
+			self.file_id = response.result[0]['file_id']
+			self.id_nr = 1
+		else:
+			print 'Expected http_status = %r' % status
 		return status
 
 	def show(self):
@@ -179,7 +165,7 @@ html5
 		if self.user_type == 'staff':
 			param['columns'].remove('school_classes')
 		try:
-			reqResult = self.umc_connection.request('schoolcsvimport/show', param)
+			reqResult = self.client.umc_command('schoolcsvimport/show', param).result
 			self.id_nr = reqResult['id']
 		except FailShow:
 			raise
@@ -189,7 +175,7 @@ html5
 			'progress_id': self.id_nr
 		}
 		try:
-			reqResult = self.umc_connection.request('schoolcsvimport/progress', param)
+			reqResult = self.client.umc_command('schoolcsvimport/progress', param).result
 		except FailProgress:
 			raise
 		return reqResult
@@ -200,7 +186,7 @@ html5
 			'user_attrs': [user]
 		}
 		try:
-			reqResult = self.umc_connection.request('schoolcsvimport/recheck', param)
+			reqResult = self.client.umc_command('schoolcsvimport/recheck', param).result
 			print 'RECHECK RESULT = ', reqResult
 			return reqResult
 		except FailRecheck:
@@ -208,7 +194,7 @@ html5
 
 	def schools(self):
 		try:
-			reqResult = self.umc_connection.request('schoolcsvimport/schools', {})
+			reqResult = self.client.umc_command('schoolcsvimport/schools', {}).result
 		except FailSchools:
 			raise
 		return [x['id'] for x in reqResult]
@@ -257,7 +243,7 @@ html5
 			param.append(options)
 		try:
 			pprint(('Importing users with parameters=', param))
-			reqResult = self.umc_connection.request('schoolcsvimport/import', param)
+			reqResult = self.client.umc_command('schoolcsvimport/import', param).result
 			self.id_nr = reqResult['id']
 			utils.wait_for_replication()
 		except FailImport:

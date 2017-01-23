@@ -1,4 +1,4 @@
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
@@ -46,12 +46,7 @@ class ComputerRoom(object):
 		self.host_members = host_members if host_members else []
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
-		host = self.ucr.get('hostname')
-		self.umc_connection = UMCConnection(host)
-		account = utils.UCSTestDomainAdminCredentials()
-		admin = account.username
-		passwd = account.bindpw
-		self.umc_connection.auth(admin, passwd)
+		self.client = Client.get_get_test_connection()
 
 	def dn(self):
 		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
@@ -70,7 +65,7 @@ class ComputerRoom(object):
 			self.name,
 			'schoolrooms/add')
 		print 'param = %r' % (param,)
-		reqResult = self.umc_connection.request('schoolrooms/add', param)
+		reqResult = self.client.umc_command('schoolrooms/add', param).result
 		utils.wait_for_replication()
 		if reqResult[0] and should_pass:
 			print 'School room created successfully: %s' % (self.name,)
@@ -90,8 +85,7 @@ class ComputerRoom(object):
 		print 'Calling %s for %s' % (
 			'schoolrooms/get',
 			self.dn())
-		reqResult = self.umc_connection.request(
-			'schoolrooms/get', [self.dn()])
+		reqResult = self.client.umc_command('schoolrooms/get', [self.dn()]).result
 		if bool(reqResult[0]['name']) != should_exist:
 			raise FailGet('Unexpected fetching result for school room (%r)' % (self.dn()))
 		else:
@@ -112,7 +106,7 @@ class ComputerRoom(object):
 		"""
 		print 'Calling %s = get all school rooms' % ('schoolrooms/query')
 		try:
-			rooms = self.umc_connection.request('schoolrooms/query', {'school': self.school, 'pattern': ''})
+			rooms = self.client.umc_command('schoolrooms/query', {'school': self.school, 'pattern': ''}).result
 			return [x['name'] for x in rooms]
 		except FailQuery:
 			raise
@@ -146,7 +140,7 @@ class ComputerRoom(object):
 			self.dn(),
 			'schoolrooms/put')
 		print 'param = %r' % (param,)
-		reqResult = self.umc_connection.request('schoolrooms/put', param)
+		reqResult = self.client.umc_command('schoolrooms/put', param).result
 		if not reqResult:
 			raise FailPut('Unable to modify school room (%r)' % (param,))
 		else:
@@ -171,9 +165,7 @@ class ComputerRoom(object):
 			'schoolrooms/remove',
 			self.dn())
 		options = [{'object': [self.dn()], 'options': None}]
-		reqResult = self.umc_connection.request(
-			'schoolrooms/remove',
-			options)
+		reqResult = self.client.umc_command('schoolrooms/remove', options).result
 		utils.wait_for_replication()
 		if not reqResult[0]['success']:
 			raise FailRemove('Unable to remove school room (%r)' % (self.dn(),))

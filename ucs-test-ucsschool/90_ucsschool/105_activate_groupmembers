@@ -6,7 +6,6 @@
 ## packages: [ucs-school-umc-groups,ucs-school-import,ucs-school-singlemaster]
 
 from essential.workgroup import Workgroup
-from httplib import HTTPException
 import itertools
 import csv
 import re
@@ -15,7 +14,8 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
+from univention.testing.umc2 import Unauthorized
 
 
 def activate_groupmembers(group_name, newStatus, change_passwd):
@@ -51,15 +51,14 @@ def check_usernames_in_csv(outfile, usernames):
 
 
 def check_auth(username, passwd, should_pass=True):
-	with ucr_test.UCSTestConfigRegistry() as ucr:
-		connection = UMCConnection(ucr.get('hostname'))
-		try:
-			connection.auth(username, passwd)
-		except HTTPException as ex:
-			if should_pass:
-				utils.fail('Unexpected exception %r' % ex)
-			else:
-				print 'Cought an expected exception'
+	try:
+		Client(None, username, passwd)
+	except Unauthorized:
+		if should_pass:
+			raise
+	else:
+		if not should_pass:
+			utils.fail('Authentication succeeded while it should not')
 
 
 def is_active(username):

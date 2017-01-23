@@ -8,7 +8,7 @@ All the operations related to internet rules
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 from .randomdomain import RandomDomain
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 import random
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
@@ -21,8 +21,8 @@ class InternetRule(object):
 
 	"""Contains the needed functionality for internet rules.
 	By default they are randomly formed\n
-	:param umcConnection:
-	:type umcConnection: UMC connection object
+	:param connection:
+	:type connection: UMC connection object
 	:param ucr:
 	:type ucr: UCR object
 	:param name: name of the internet rule to be created later
@@ -37,7 +37,7 @@ class InternetRule(object):
 	:type priority: [int]
 	"""
 
-	def __init__(self, umcConnection=None, ucr=None, name=None, typ=None, domains=None, wlan=None, priority=None):
+	def __init__(self, connection=None, ucr=None, name=None, typ=None, domains=None, wlan=None, priority=None):
 		self.name = name if name else uts.random_string()
 		self.typ = typ if typ else random.choice(['whitelist', 'blacklist'])
 		if domains:
@@ -52,16 +52,10 @@ class InternetRule(object):
 			self.wlan = random.choice([True, False])
 		self.priority = priority if priority else random.randint(1, 10)
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
-		if umcConnection:
-			self.umcConnection = umcConnection
+		if connection:
+			self.client = connection
 		else:
-			self.ucr.load()
-			host = self.ucr.get('hostname')
-			self.umcConnection = UMCConnection(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			self.umcConnection.auth(admin, passwd)
+			self.client = Client.get_get_test_connection()
 
 	def __enter__(self):
 		return self
@@ -83,7 +77,7 @@ class InternetRule(object):
 		}]
 		print 'defining rule %s with UMCP:%s' % (self.name, 'internetrules/add')
 		print 'param = %r' % (param,)
-		reqResult = self.umcConnection.request('internetrules/add', param)
+		reqResult = self.client.umc_command('internetrules/add', param).result
 		if not reqResult[0]['success']:
 			utils.fail('Unable to define rule (%r)' % (param,))
 
@@ -92,7 +86,7 @@ class InternetRule(object):
 		:param should_exist: True if the rule is expected to be found
 		:type should_exist: bool"""
 		print 'Calling %s for %s' % ('internetrules/get', self.name)
-		reqResult = self.umcConnection.request('internetrules/get', [self.name])
+		reqResult = self.client.umc_command('internetrules/get', [self.name]).result
 		if bool(reqResult) != should_exist:
 			utils.fail('Unexpected fetching result for internet rule (%r)' % (self.name))
 
@@ -128,7 +122,7 @@ class InternetRule(object):
 		}]
 		print 'Modifying rule %s with UMCP:%s' % (self.name, 'internetrules/put')
 		print 'param = %r' % (param,)
-		reqResult = self.umcConnection.request('internetrules/put', param)
+		reqResult = self.client.umc_command('internetrules/put', param).result
 		if not reqResult[0]['success']:
 			utils.fail('Unable to modify rule (%r)' % (param,))
 		else:
@@ -142,7 +136,7 @@ class InternetRule(object):
 		"""removes internet rule via UMCP"""
 		print 'Calling %s for %s' % ('internetrules/remove', self.name)
 		options = [{'object': self.name}]
-		reqResult = self.umcConnection.request('internetrules/remove', options)
+		reqResult = self.client.umc_command('internetrules/remove', options).result
 		if not reqResult[0]['success']:
 			utils.fail('Unable to remove rule (%r)' % (self.name,))
 
@@ -208,7 +202,7 @@ class InternetRule(object):
 		param = [{'group': groupdn, 'rule': name}]
 		print 'Assigning rule %s to %s: %s' % (self.name, groupType, groupName)
 		print 'param = %r' % (param,)
-		result = self.umcConnection.request('internetrules/groups/assign', param)
+		result = self.client.umc_command('internetrules/groups/assign', param).result
 		if not result:
 			utils.fail('Unable to assign internet rule to workgroup (%r)' % (param,))
 		else:
@@ -224,7 +218,7 @@ class InternetRule(object):
 		print 'Defining ruleList'
 		ruleList = []
 		for i in xrange(count):
-			rule = self.__class__(self.umcConnection)
+			rule = self.__class__(self.client)
 			rule.define()
 			ruleList.append(rule)
 		return ruleList
@@ -236,6 +230,6 @@ class InternetRule(object):
 		"""
 		print 'Calling %s = get all defined rules' % ('internetrules/query')
 		ruleList = []
-		rules = self.umcConnection.request('internetrules/query', {'pattern': ''})
+		rules = self.client.umc_command('internetrules/query', {'pattern': ''}).result
 		ruleList = sorted([(x['name']) for x in rules])
 		return ruleList

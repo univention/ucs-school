@@ -4,12 +4,13 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-import httplib
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap as uu
-from univention.testing.ucsschool import UCSTestSchool, UMCConnection
+from univention.testing.umc2 import HTTPError
+from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.umc2 import Client
 
 
 class Workgroup(object):
@@ -18,8 +19,8 @@ class Workgroup(object):
 	By default they are randomly formed except the OU, should be provided\n
 	:param school: name of the ou
 	:type school: str
-	:param umcConnection:
-	:type umcConnection: UMC connection object
+	:param connection:
+	:type connection: UMC connection object
 	:param ucr:
 	:type ucr: UCR object
 	:param name: name of the class to be created later
@@ -30,7 +31,7 @@ class Workgroup(object):
 	:type members: [str=memberdn]
 	"""
 
-	def __init__(self, school, umcConnection=None, ulConnection=None, ucr=None, name=None, description=None, members=None):
+	def __init__(self, school, connection=None, ulConnection=None, ucr=None, name=None, description=None, members=None):
 		self.school = school
 		self.name = name if name else uts.random_string()
 		self.description = description if description else uts.random_string()
@@ -41,15 +42,10 @@ class Workgroup(object):
 			self.ulConnection = ulConnection
 		else:
 			self.ulConnection = uu.getMachineConnection(ldap_master=False)
-		if umcConnection:
-			self.umcConnection = umcConnection
+		if connection:
+			self.client = connection
 		else:
-			host = self.ucr.get('hostname')
-			self.umcConnection = UMCConnection(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			self.umcConnection.auth(admin, passwd)
+			self.client = Client.get_get_test_connection()
 
 	def __enter__(self):
 		return self
@@ -68,7 +64,7 @@ class Workgroup(object):
 			if createResult and expect_creation_fails_due_to_duplicated_name:
 				utils.fail('Workgroup %s already exists, though a new workgroup is created with a the same name' % self.name)
 			utils.wait_for_replication()
-		except httplib.HTTPException as e:
+		except HTTPError as exc:
 			group_fullname = '%s-%s' % (self.school, self.name)
 			exception_strings = [
 				'The groupname is already in use as groupname or as username',
@@ -77,11 +73,11 @@ class Workgroup(object):
 				'The workgroup \'%s\' already exists!' % group_fullname
 			]
 			for entry in exception_strings:
-				if expect_creation_fails_due_to_duplicated_name and entry in str(e):
-					print('Fail : %s' % (e))
+				if expect_creation_fails_due_to_duplicated_name and entry in str(exc.message):
+					print('Fail : %s' % (exc))
 					break
 			else:
-				print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+				print("Exception: '%s' '%s' '%r'" % (str(exc), type(exc), exc))
 				raise
 
 	def _create(self):
@@ -97,7 +93,7 @@ class Workgroup(object):
 				'description': self.description
 			}
 		}]
-		requestResult = self.umcConnection.request('schoolgroups/add', param, flavor)
+		requestResult = self.client.umc_command('schoolgroups/add', param, flavor).result
 		if not requestResult:
 			utils.fail('Unable to add workgroup (%r)' % (param,))
 		return requestResult
@@ -123,7 +119,7 @@ class Workgroup(object):
 		groupdn = self.dn()
 		flavor = 'workgroup-admin'
 		removingParam = [{"object": [groupdn], "options":options}]
-		requestResult = self.umcConnection.request('schoolgroups/remove', removingParam, flavor)
+		requestResult = self.client.umc_command('schoolgroups/remove', removingParam, flavor).result
 		if not requestResult:
 			utils.fail('Group %s failed to be removed' % self.name)
 		utils.wait_for_replication()
@@ -178,7 +174,7 @@ class Workgroup(object):
 			},
 			'options': options
 		}]
-		requestResult = self.umcConnection.request('schoolgroups/put', creationParam, flavor)
+		requestResult = self.client.umc_command('schoolgroups/put', creationParam, flavor).result
 		if not requestResult:
 			utils.fail('Members %s failed to be set' % new_members)
 		else:

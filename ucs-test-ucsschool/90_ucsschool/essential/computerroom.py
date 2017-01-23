@@ -7,10 +7,10 @@ from essential.workgroup import Workgroup
 from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
+from univention.testing.umc2 import ConnectionError
 import copy
 import datetime
-import httplib
 import itertools
 import os
 import re
@@ -97,14 +97,14 @@ class Room(object):
 		self.description = description if description else uts.random_name()
 		self.host_members = host_members or []
 
-	def get_room_user(self, umc_connection):
+	def get_room_user(self, client):
 		print 'Executing command: computerroom/rooms in school:', self.school
-		reqResult = umc_connection.request('computerroom/rooms', {'school': self.school})
+		reqResult = client.umc_command('computerroom/rooms', {'school': self.school}).result
 		return [x.get('user') for x in reqResult if x['label'] == self.name][0]
 
-	def check_room_user(self, umc_connection, expected_user):
+	def check_room_user(self, client, expected_user):
 		print 'Checking computer room(%s) users..........' % self.name
-		current_user = self.get_room_user(umc_connection)
+		current_user = self.get_room_user(client)
 		print 'Room %s is in use by user %r' % (self.name, current_user)
 		if current_user:
 			user_id = re.search(r'\((\w+)\)', current_user).group(1)
@@ -114,73 +114,73 @@ class Room(object):
 			utils.fail('Room in use by user %s, expected: %s' % (
 				user_id, expected_user))
 
-	def aquire_room(self, umc_connection):
+	def aquire_room(self, client):
 		print 'Executing command: computerroom/room/acquire'
-		return umc_connection.request('computerroom/room/acquire', {'room': self.dn})
+		return client.umc_command('computerroom/room/acquire', {'room': self.dn}).result
 
-	def checK_room_aquire(self, umc_connection, expected_answer):
+	def checK_room_aquire(self, client, expected_answer):
 		print 'Checking room aquire... (%s)' % self.name
-		answer = self.aquire_room(umc_connection)['message']
+		answer = self.aquire_room(client)['message']
 		if answer == expected_answer:
 			print 'Room %s is %s' % (self.name, answer)
 		else:
 			utils.fail('Unexpected room aquire result: %s' % (answer,))
 
-	def get_room_computers(self, umc_connection):
+	def get_room_computers(self, client):
 		print 'Executing command: computerroom/query... (%s)' % self.name
-		reqResult = umc_connection.request('computerroom/query', {'reload': False})
+		reqResult = client.umc_command('computerroom/query', {'reload': False}).result
 		return [x['name'] for x in reqResult]
 
-	def check_room_computers(self, umc_connection, expected_computer_list):
+	def check_room_computers(self, client, expected_computer_list):
 		print 'Checking room computers........... (%s)' % self.name
-		current_computers = self.get_room_computers(umc_connection)
+		current_computers = self.get_room_computers(client)
 		print 'Current computers in room %s are %r' % (self.name, current_computers)
 		for i, computer in enumerate(sorted(current_computers)):
 			if computer not in sorted(expected_computer_list)[i]:
 				utils.fail('Computers found %r do not match the expected: %r' % (
 					current_computers, expected_computer_list))
 
-	def set_room_settings(self, umc_connection, new_settings):
+	def set_room_settings(self, client, new_settings):
 		print 'Executing command: computerroom/settings/set'
 		print 'new_settings = %r' % (new_settings,)
-		reqResult = umc_connection.request('computerroom/settings/set', new_settings)
+		reqResult = client.umc_command('computerroom/settings/set', new_settings).result
 		return reqResult
 
-	def get_room_settings(self, umc_connection):
+	def get_room_settings(self, client):
 		print 'Executing command: computerroom/settings/get'
-		reqResult = umc_connection.request('computerroom/settings/get')
+		reqResult = client.umc_command('computerroom/settings/get').result
 		return reqResult
 
-	def check_room_settings(self, umc_connection, expected_settings):
+	def check_room_settings(self, client, expected_settings):
 		print 'Checking computerroom (%s) settings ...........' % self.name
 		try:
-			current_settings = self.get_room_settings(umc_connection)
+			current_settings = self.get_room_settings(client)
 			d = dict(expected_settings)  # copy dictionary
 			d['period'] = current_settings['period']
 			d['customRule'] = current_settings['customRule']  # TODO Bug 35258 remove
 			if current_settings != d:
 				print 'FAIL: Current settings (%r) do not match expected ones (%r)' % (current_settings, d)
 				utils.fail('Current settings (%r) do not match expected ones (%r)' % (current_settings, d))
-		except httplib.HTTPException as e:
-			if '[Errno 4] ' in str(e):
+		except ConnectionError as exc:
+			if '[Errno 4] ' in str(exc):
 				print 'failed to check room (%s) settings, exception [Errno4]' % self.name
-			print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+			print("Exception: '%s' '%s' '%r'" % (str(exc), type(exc), exc))
 			raise
 
-	def get_internetRules(self, umc_connection):
+	def get_internetRules(self, client):
 		print 'Executing command: computerroom/internetrules'
-		reqResult = umc_connection.request('computerroom/internetrules')
+		reqResult = client.umc_command('computerroom/internetrules').result
 		return reqResult
 
-	def check_internetRules(self, umc_connection):
+	def check_internetRules(self, client):
 		"""Check if the fetched internetrules match the already defined ones
 		in define internet module.
-		:param umc_connection: umc connection
-		:type umc_connection: UMCConnection(uce.get('hostname'))
+		:param client: umc connection
+		:type client: Client(uce.get('hostname'))
 		"""
 		rule = InternetRule()
 		current_rules = rule.allRules()
-		internetRules = self.get_internetRules(umc_connection)
+		internetRules = self.get_internetRules(client)
 		if (sorted(current_rules) != sorted(internetRules)):
 			utils.fail('Fetched internetrules %r, do not match the existing ones %r' % (
 				internetRules, current_rules))
@@ -200,8 +200,8 @@ class Room(object):
 				print 'Job %s: %s  owner=%s\n%s' % (i, item, item.owner, item.command)
 			utils.fail('Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)' % (period, expected_existence, exist))
 
-	def check_displayTime(self, umc_connection, period):
-		displayed_period = self.get_room_settings(umc_connection)['period'][0:-3]
+	def check_displayTime(self, client, period):
+		displayed_period = self.get_room_settings(client)['period'][0:-3]
 		if period == displayed_period:
 			print 'Time displayed (%r) is same as time at Atjobs (%r)' % (
 				displayed_period, period)
@@ -209,9 +209,9 @@ class Room(object):
 			utils.fail('Time displayed (%r) is different from time at Atjobs (%r)' % (
 				displayed_period, period))
 
-	def test_time_settings(self, umc_connection):
-		self.aquire_room(umc_connection)
-		settings = self.get_room_settings(umc_connection)
+	def test_time_settings(self, client):
+		self.aquire_room(client)
+		settings = self.get_room_settings(client)
 		period = datetime.time.strftime(
 			(datetime.datetime.now() + datetime.timedelta(0, 120)).time(), '%H:%M')
 		new_settings = {
@@ -224,7 +224,7 @@ class Room(object):
 
 		ula_length = len(ula.list())
 		time_out = 30  # seconds
-		self.set_room_settings(umc_connection, new_settings)
+		self.set_room_settings(client, new_settings)
 		for i in xrange(time_out, 0, -1):
 			print i
 			if len(ula.list()) > ula_length:
@@ -237,11 +237,11 @@ class Room(object):
 		self.check_atjobs(period, True)
 
 		# TODO FAILS because of Bug #35195
-		# self.check_displayTime(umc_connection, period)
+		# self.check_displayTime(client, period)
 
 		print '*** Waiting 2 mins for settings to expire.............'
 		time.sleep(2 * 60 + 2)
-		current_settings = self.get_room_settings(umc_connection)
+		current_settings = self.get_room_settings(client)
 
 		# Time field is not considered in the comparision
 		current_settings['period'] = settings['period']
@@ -330,9 +330,9 @@ class Room(object):
 		else:
 			utils.fail('shareMode invalid value = (%s)' % shareMode)
 
-	def test_share_access_settings(self, user, ip_address, umc_connection):
-		self.aquire_room(umc_connection)
-		print self.get_room_settings(umc_connection)
+	def test_share_access_settings(self, user, ip_address, client):
+		self.aquire_room(client)
+		print self.get_room_settings(client)
 
 		# generate all the possible combinations for (rule, printmode, sharemode)
 		white_page = 'univention.de'
@@ -357,10 +357,10 @@ class Room(object):
 				'shareMode': shareMode,
 				'period': period
 			}
-			self.aquire_room(umc_connection)
-			self.set_room_settings(umc_connection, new_settings)
+			self.aquire_room(client)
+			self.set_room_settings(client, new_settings)
 			# check if displayed values match
-			self.check_room_settings(umc_connection, new_settings)
+			self.check_room_settings(client, new_settings)
 			self.check_share_behavior(user, ip_address, shareMode)
 
 	def check_smb_print(self, ip, printer, user, expected_result):
@@ -397,10 +397,10 @@ class Room(object):
 		else:
 			utils.fail('printMode invalid value = (%s)' % printMode)
 
-	def test_printMode_settings(self, school, user, ip_address, umc_connection, ucr):
+	def test_printMode_settings(self, school, user, ip_address, client, ucr):
 		ucr = ucr_test.UCSTestConfigRegistry()
 		ucr.load()
-		self.aquire_room(umc_connection)
+		self.aquire_room(client)
 
 		printer = uts.random_string()
 		add_printer(
@@ -436,10 +436,10 @@ class Room(object):
 					'shareMode': shareMode,
 					'period': period
 				}
-				self.aquire_room(umc_connection)
-				self.set_room_settings(umc_connection, new_settings)
+				self.aquire_room(client)
+				self.set_room_settings(client, new_settings)
 				# check if displayed values match
-				self.check_room_settings(umc_connection, new_settings)
+				self.check_room_settings(client, new_settings)
 				self.check_print_behavior(user, ip_address, printer, printMode)
 
 		finally:
@@ -466,7 +466,7 @@ class Room(object):
 		if rule_in_control != expected_rule:
 			utils.fail('rule in control (%s) does not match the expected one (%s)' % (rule_in_control, expected_rule))
 
-	def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
+	def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, client):
 		# Create new workgroup and assign new internet rule to it
 		group = Workgroup(school, members=[user_dn])
 		group.create()
@@ -476,8 +476,8 @@ class Room(object):
 			rule.define()
 			rule.assign(school, group.name, 'workgroup')
 
-			self.check_internetRules(umc_connection)
-			self.aquire_room(umc_connection)
+			self.check_internetRules(client)
+			self.aquire_room(client)
 
 			# generate all the possible combinations for (rule, printmode, sharemode)
 			white_page = 'univention.de'
@@ -504,10 +504,10 @@ class Room(object):
 					'shareMode': shareMode,
 					'period': period
 				}
-				self.aquire_room(umc_connection)
-				self.set_room_settings(umc_connection, new_settings)
+				self.aquire_room(client)
+				self.set_room_settings(client, new_settings)
 				# check if displayed values match
-				self.check_room_settings(umc_connection, new_settings)
+				self.check_room_settings(client, new_settings)
 				self.checK_internetrules(
 					ucr,
 					user,
@@ -518,10 +518,10 @@ class Room(object):
 		finally:
 			group.remove()
 
-	def test_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
+	def test_settings(self, school, user, user_dn, ip_address, ucr, client):
 		printer = uts.random_string()
 		# Create new workgroup and assign new internet rule to it
-		group = Workgroup(school, umc_connection, members=[user_dn])
+		group = Workgroup(school, client, members=[user_dn])
 		group.create()
 		try:
 			global_domains = ['univention.de', 'google.de']
@@ -529,7 +529,7 @@ class Room(object):
 			rule.define()
 			rule.assign(school, group.name, 'workgroup')
 
-			self.check_internetRules(umc_connection)
+			self.check_internetRules(client)
 
 			# Add new hardware printer
 			add_printer(
@@ -564,9 +564,9 @@ class Room(object):
 					'shareMode': shareMode,
 					'period': period
 				}
-				self.aquire_room(umc_connection)
-				old_settings = self.get_room_settings(umc_connection)
-				self.set_room_settings(umc_connection, new_settings)
+				self.aquire_room(client)
+				old_settings = self.get_room_settings(client)
+				self.set_room_settings(client, new_settings)
 
 				utils.wait_for_replication_and_postrun()
 				wait_for_s4connector()
@@ -575,7 +575,7 @@ class Room(object):
 				time.sleep(15)
 
 				# check if displayed values match
-				self.check_room_settings(umc_connection, new_settings)
+				self.check_room_settings(client, new_settings)
 				# old_period = old_settings['period']
 				partial_old_settings = {
 					'period': old_settings['period'],
@@ -775,11 +775,11 @@ class UmcComputer(object):
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		host = self.ucr.get('ldap/master')
-		self.umc_connection = UMCConnection(host)
+		self.client = Client(host)
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
-		self.umc_connection.auth(admin, passwd)
+		self.client.auth(admin, passwd)
 
 	def create(self, should_succeed=True):
 		"""Creates object Computer"""
@@ -798,8 +798,7 @@ class UmcComputer(object):
 		}]
 		print 'Creating Computer %s' % (self.name,)
 		print 'param = %s' % (param,)
-		reqResult = self.umc_connection.request(
-			'schoolwizards/computers/add', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/computers/add', param, flavor).result
 		if reqResult[0] == should_succeed:
 			utils.wait_for_replication()
 		elif should_succeed in reqResult[0]['result']['message']:
@@ -817,8 +816,7 @@ class UmcComputer(object):
 			},
 			'options': None
 		}]
-		reqResult = self.umc_connection.request(
-			'schoolwizards/computers/remove', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/computers/remove', param, flavor).result
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove computer (%s)' % self.name)
 		else:
@@ -836,8 +834,7 @@ class UmcComputer(object):
 				'school': self.school
 			}
 		}]
-		reqResult = self.umc_connection.request(
-			'schoolwizards/computers/get', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/computers/get', param, flavor).result
 		if not reqResult[0]:
 			raise GetFail('Unable to get computer (%s)' % self.name)
 		else:
@@ -890,8 +887,7 @@ class UmcComputer(object):
 		}]
 		print 'Editing computer %s' % (self.name,)
 		print 'param = %s' % (param,)
-		reqResult = self.umc_connection.request(
-			'schoolwizards/computers/put', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/computers/put', param, flavor).result
 		if not reqResult[0]:
 			raise EditFail('Unable to edit computer (%s) with the parameters (%r)' % (self.name, param))
 		else:
@@ -909,8 +905,7 @@ class UmcComputer(object):
 			'filter': "",
 			'type': 'all'
 		}
-		reqResult = self.umc_connection.request(
-			'schoolwizards/computers/query', param, flavor)
+		reqResult = self.client.umc_command('schoolwizards/computers/query', param, flavor).result
 		return reqResult
 
 	def check_query(self, computers):

@@ -8,17 +8,17 @@
 ## packages: [ucs-school-umc-computerroom]
 
 
-from essential.computerroom import Room, Computers, add_printer, remove_printer, clean_folder, run_commands
+from essential.computerroom import Room, Computers, add_printer, remove_printer, clean_folder
 from essential.internetrule import InternetRule
 from essential.workgroup import Workgroup
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 from univention.testing.network import NetworkRedirector
 import datetime
-import httplib
 import itertools
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
+from univention.testing.umc2 import ConnectorError
 
 
 def print_header(i, room1_rule, room1_printmode, room1_sharemode, j, room2_rule, room2_printmode, room2_sharemode):
@@ -50,8 +50,8 @@ def main():
 				# preparing the network loop
 				nethelper.add_loop(computers_ips[0], computers_ips[1])
 
-				umc_connection = UMCConnection(ucr.get('hostname'))
-				umc_connection.auth(tea, 'univention')
+				client = Client(ucr.get('hostname'))
+				client.auth(tea, 'univention')
 
 				printer_name = uts.random_string()
 				try:
@@ -83,14 +83,14 @@ def main():
 						room1_period = datetime.time.strftime((datetime.datetime.now() + datetime.timedelta(0, room1_time)).time(), '%H:%M')
 
 						# get room1 old settings
-						room1.aquire_room(umc_connection)
-						room1_old_settings = room1.get_room_settings(umc_connection)
+						room1.aquire_room(client)
+						room1_old_settings = room1.get_room_settings(client)
 						del room1_old_settings['customRule']
 						room1_old_settings['period'] = room1_old_settings['period'][:-3]
 
 						room1_rule, room1_printmode, room1_sharemode = next(room1_settings)
 						room1_new_settings = {'customRule': white_page, 'printMode': room1_printmode, 'internetRule': room1_rule, 'shareMode': room1_sharemode, 'period': room1_period}
-						room1.set_room_settings(umc_connection, room1_new_settings)
+						room1.set_room_settings(client, room1_new_settings)
 
 						# Testing loop over room2 settings
 						room2_settings = itertools.product(rules, printmodes, sharemodes)
@@ -102,21 +102,21 @@ def main():
 								print_header(i, room1_rule, room1_printmode, room1_sharemode, j, room2_rule, room2_printmode, room2_sharemode)
 
 								room2_new_settings = {'customRule': white_page, 'printMode': room2_printmode, 'internetRule': room2_rule, 'shareMode': room2_sharemode, 'period': room2_period}
-								room1.set_room_settings(umc_connection, room1_new_settings)
+								room1.set_room_settings(client, room1_new_settings)
 
-								room2.aquire_room(umc_connection)
-								room2.set_room_settings(umc_connection, room2_new_settings)
+								room2.aquire_room(client)
+								room2.set_room_settings(client, room2_new_settings)
 
 								# Check room1 settings
-								room1.aquire_room(umc_connection)
-								room1.check_room_settings(umc_connection, room1_new_settings)
+								room1.aquire_room(client)
+								room1.check_room_settings(client, room1_new_settings)
 								room1.check_behavior(room1_old_settings, room1_new_settings, tea, computers_ips[1], printer_name, white_page, global_domains, ucr)
 								# For DEBUG purposes
 								# run_commands([['ucr', 'search', room1.name], ['ucr','search', room2.name], ['atq']], {})
 								clean_folder('/home/gsmitte/groups/Marktplatz/')
 								clean_folder('/home/%s/lehrer/%s/' % (school, tea))
 							# TODO Exception Errno4
-							except httplib.HTTPException as e:
+							except ConnectorError as e:
 								if '[Errno 4] Unterbrechung' in str(e):
 									print 'FAILED to get or set room (%s) settings, exception [Errno4]' % (room2.name,)
 								else:

@@ -7,37 +7,10 @@
 ## packages: [ucs-school-umc-computerroom]
 
 from essential.computerroom import Room, Computers
-from univention.testing.ucsschool import UMCConnection as OrgUMCConnection
 from univention.testing.network import NetworkRedirector
-from univention.testing.ucs_samba import wait_for_s4connector
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-from httplib import HTTPException
-
-
-class UMCConnection(OrgUMCConnection):
-	"""Reauthenticates if ran into session timeout."""
-
-	def __init__(self, *args, **kwargs):
-		self.__username = None
-		self.__password = None
-		super(UMCConnection, self).__init__(*args, **kwargs)
-
-	def auth(self, username, password, *args, **kwargs):
-		self.__username = username
-		self.__password = password
-		print 'UMCConnection: authenticate with %r %r' % (username, password)
-		super(UMCConnection, self).auth(username, password, *args, **kwargs)
-
-	def request(self, *args, **kwargs):
-		try:
-			return super(UMCConnection, self).request(*args, **kwargs)
-		except HTTPException as exc:
-			if not str(exc).startswith('401') or not self.__password:
-				raise
-			print '#### FAILED request due to session timeout: %s; args=%r' % (exc, (args, kwargs))
-			self.auth(self.__username, self.__password)
-			return super(UMCConnection, self).request(*args, **kwargs)
+from univention.testing.umc2 import Client
 
 
 def main():
@@ -60,8 +33,7 @@ def main():
 			host_members=room.host_members
 		)
 
-		umc_connection = UMCConnection(ucr.get('hostname'))
-		umc_connection.auth(teacher, 'univention')
+		client = Client(None, teacher, 'univention', automatic_reauthentication=True)
 
 		# preparing the network loop
 		nethelper.add_loop(created_computers[0].ip, created_computers[1].ip)
@@ -73,7 +45,7 @@ def main():
 			teacher_dn,
 			created_computers[1].ip,
 			ucr,
-			umc_connection)
+			client)
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.udm
 import univention.testing.utils as utils
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 
 
 def _dir(userName):
@@ -88,7 +88,7 @@ def doPrinter(operation, printer_name, school, spool_host, domainname):
 
 # check the existance of the created printer
 def printerExist(connection, printerName, school):
-	requestResult = connection.request('printermoderation/printers', {"school": school})
+	requestResult = connection.umc_command('printermoderation/printers', {"school": school}).result
 	return any(d for d in requestResult if d['label'] == printerName)
 
 
@@ -102,13 +102,13 @@ def queryPrintJobs(connection, printerName, cName, school, pattern, basedn):
 	else:
 		cdn = cName
 	param = {'school': school, 'class': cdn, 'pattern': pattern}
-	return connection.request('printermoderation/query', param)
+	return connection.umc_command('printermoderation/query', param).result
 
 
 # delete a specific printjob
 def delPrintJob(connection, userName, printJob):
 	param = {'username': userName, 'printjob': printJob}
-	if not connection.request('printermoderation/delete', param):
+	if not connection.umc_command('printermoderation/delete', param).result:
 		utils.fail('Could not delete print jobs')
 
 
@@ -123,16 +123,13 @@ def checkPrintJobs(printJobs):
 			utils.fail('Unexpected file type')
 
 
-# Bug #34498: no file type is check at the moment
 # download print jobs
-def downloadPrintJobs(connection, userName, printJob):
+def downloadPrintJobs(client, userName, printJob):
 	param = {'username': userName, 'printjob': os.path.basename(printJob)}
-	try:
-		connection.request('printermoderation/download', param)
-	except Exception as e:
-		ex_en = 'No JSON object could be decoded'
-		if ex_en not in e:
-			utils.fail('Unexpected exception: %r' % e)
+	response = client.umc_command('printermoderation/download', param, print_response=False)
+	assert response.get_header('Content-Type') == 'application/pdf'
+	assert response.body
+	# TODO: validate the content, e.g. with magic()
 
 
 # get print jobs for a specific user
@@ -145,7 +142,7 @@ def acceptprint(connection, userName, printJobPath, printerName, spoolHost, doma
 	printJob = printJobPath.split('/')[-1]
 	printerURI = '%s.%s://%s' % (spoolHost, domainname, printerName)
 	param = {'username': userName, 'printjob': printJob, 'printer': printerURI}
-	reqResult = connection.request('printermoderation/print', param)
+	reqResult = connection.umc_command('printermoderation/print', param).result
 	print 'reqResult = ', reqResult
 	if not reqResult:
 		utils.fail('Could not pass print jobs to hard printer')
@@ -215,14 +212,14 @@ def main():
 
 				utils.wait_for_replication_and_postrun()
 
-				co = UMCConnection(host)
-				co.auth(tea, 'univention')
+				connection = Client(host)
+				connection.auth(tea, 'univention')
 
 				# add new printer
 				doPrinter('A', newPrinterName, school, host, domainname)
 
 				# check if the printer exists
-				if not printerExist(co, newPrinterName, school):
+				if not printerExist(connection, newPrinterName, school):
 					utils.fail('Printer not found')
 
 				# order print jobs
@@ -231,7 +228,7 @@ def main():
 
 				# query all orderd print jobs
 				alljobs = queryPrintJobs(
-					co,
+					connection,
 					newPrinterName,
 					'None',
 					school,
@@ -239,7 +236,7 @@ def main():
 					basedn)
 				# query all orderd print jobs from classes 1A
 				alljobs1A = queryPrintJobs(
-					co,
+					connection,
 					newPrinterName,
 					'%s-1A' %
 					school,
@@ -247,7 +244,7 @@ def main():
 					"",
 					basedn)
 				alljobs2B = queryPrintJobs(
-					co,
+					connection,
 					newPrinterName,
 					'%s-2B' %
 					school,
@@ -269,16 +266,16 @@ def main():
 
 				for stu in (stu1, stu3):
 					# download print jobs for stu and check the filetype
-					downloadPrintJobs(co, stu, printJobs.get(stu)[0])
+					downloadPrintJobs(connection, stu, printJobs.get(stu)[0])
 
 					# accepting a print job from stu
-					acceptprint(co, stu, printJobs.get(stu)[0], newPrinterName, host, domainname)
+					acceptprint(connection, stu, printJobs.get(stu)[0], newPrinterName, host, domainname)
 
 					# delete a print job for stu 1
-					delPrintJob(co, stu, printJobs.get(stu)[0])
+					delPrintJob(connection, stu, printJobs.get(stu)[0])
 
 				# delete a print job for stu 2
-				delPrintJob(co, stu2, printJobs.get(stu2)[0])
+				delPrintJob(connection, stu2, printJobs.get(stu2)[0])
 
 				# delete the created printer
 				doPrinter('D', newPrinterName, school, host, domainname)

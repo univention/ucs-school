@@ -6,21 +6,19 @@
 ## exposure: careful
 ## packages: [ucs-school-umc-lessontimes]
 
-from univention.testing.ucsschool import UMCConnection
-import univention.testing.ucr as ucr_test
+from univention.testing.umc2 import Client
 import univention.testing.utils as utils
 
 
 def getLessons(connection):
-	return connection.request('lessontimes/get')
+	return connection.umc_command('lessontimes/get').result
 
 
 def addLesson(connection, name, begin, end):
 	lesson = [name, begin, end]
 	lessonsList = getLessons(connection)
 	lessonsList.append(lesson)
-	data = {"lessons": lessonsList}
-	return connection.request('lessontimes/set', data=data)
+	return connection.umc_command('lessontimes/set', {"lessons": lessonsList}).result
 
 
 def delLesson(connection, name, begin, end):
@@ -29,22 +27,12 @@ def delLesson(connection, name, begin, end):
 		if name in item:
 			lessonsList.remove(item)
 	param = {"lessons": lessonsList}
-	return connection.request('lessontimes/set', param)
+	return connection.umc_command('lessontimes/set', param).result
 
 
 def main():
-	ucr = ucr_test.UCSTestConfigRegistry()
-	ucr.load()
-	host = ucr.get('hostname')
-	connection = UMCConnection(host)
-	account = utils.UCSTestDomainAdminCredentials()
-	admin = account.username
-	passwd = account.bindpw
-	connection.auth(admin, passwd)
-	try:
-		connection.request(None, {'locale': 'en_US'}, command='set')
-	except KeyError:
-		pass
+	connection = Client.get_get_test_connection(language='en-US')
+	connection.umc_set({'locale': 'en_US'})
 
 	# 1 adding a lesson
 	addLesson(connection, "99. Stunde", "00:00", "0:05")

@@ -16,7 +16,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
-from univention.testing.ucsschool import UMCConnection
+from univention.testing.umc2 import Client
 
 
 # add / del / modify Printer
@@ -43,10 +43,7 @@ def doPrinter(operation, printer_name, schoolName, spool_host, domainname):
 
 # check the existance of the created printer
 def printerExist(connection, printerName, schoolName):
-	requestResult = connection.request(
-		'printermoderation/printers',
-		{'school': schoolName}
-	)
+	requestResult = connection.umc_command('printermoderation/printers', {'school': schoolName}).result
 	printerFound = [d for d in requestResult if d['label'] == printerName]
 	if printerFound:
 		return True
@@ -60,11 +57,11 @@ def main():
 			newPrinterName = uts.random_string()
 			host = ucr.get('hostname')
 			domainname = ucr.get('domainname')
-			co = UMCConnection(host)
+			connection = Client(host)
 			account = utils.UCSTestDomainAdminCredentials()
 			admin = account.username
 			passwd = account.bindpw
-			co.auth(admin, passwd)
+			connection.auth(admin, passwd)
 
 			# create more than one OU
 			schoolName1, _ = schoolenv.create_ou(name_edudc=host)
@@ -76,11 +73,11 @@ def main():
 
 			# check if the printer exists in the correct OU
 			for i in xrange(5):
-				if not printerExist(co, newPrinterName, schoolName1):
+				if not printerExist(connection, newPrinterName, schoolName1):
 					utils.fail('Printer not found in the specified OU')
 
 				for school in [schoolName2, schoolName3]:
-					if printerExist(co, newPrinterName, school):
+					if printerExist(connection, newPrinterName, school):
 						utils.fail('Printer underneath of wrong OU was found.')
 
 			# delete the created printer
