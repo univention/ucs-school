@@ -36,13 +36,11 @@ API for testing UCS@school and cleaning up after performed tests
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
-import sys
 import ldap
 import random
 import tempfile
 import subprocess
 import traceback
-import pprint
 from ldap import LDAPError
 from collections import defaultdict
 
@@ -54,7 +52,6 @@ import univention.testing.udm as udm_test
 
 import univention.admin.uldap as udm_uldap
 import univention.admin.uexceptions as udm_errors
-from univention.lib.umc_connection import UMCConnection as _UMCConnection
 
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
@@ -588,22 +585,6 @@ class UCSTestSchool(object):
 
 	def create_school_dc_slave(self):
 		pass
-
-
-class UMCConnection(_UMCConnection):
-
-	def request(self, url, data=None, flavor=None, command='command'):
-		print ''
-		print '*** UMC request: "%s/%s" %s \ndata = %s' % (command, url, '(%s)' % (flavor,) if flavor else '', pprint.pformat(data))
-		try:
-			response = super(UMCConnection, self).request(url, data, flavor, command)
-		except:
-			print 'UMC request failed: %s' % (sys.exc_info()[1],)
-			print ''
-			raise
-		print '*** UMC response: %s' % (pprint.pformat(response),)
-		print ''
-		return response
 
 
 if __name__ == '__main__':

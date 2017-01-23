@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-48) unstable; urgency=medium
+
+  * Bug #43389: use univention.lib.umc_connection
+
+ -- Florian Best <best@univention.de>  Mon, 23 Jan 2017 20:08:04 +0100
+
 ucs-test-ucsschool (3.0.17-47) unstable; urgency=medium
 
   * Bug #40470: Improved code in 90_ucsschool/141_check_DNS_settings
