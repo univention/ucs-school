@@ -118,7 +118,7 @@ class TestSamba4(object):
 			utils.fail("An error occured while running a sed command '%s':\n'%s'" % (" ".join(cmd), stderr))
 		return stdout
 
-	def get_udm_list_dcs(self, dc_type, with_samba4=True):
+	def get_udm_list_dcs(self, dc_type, with_samba4=True, with_ucsschool=False):
 		"""
 		Runs the "udm computers/'dc_type' list" and returns the output.
 		If 'with_samba4' is 'True' returns only those running Samba 4.
@@ -131,18 +131,20 @@ class TestSamba4(object):
 		cmd = ("udm", "computers/" + dc_type, "list")
 		if with_samba4:
 			cmd += ("--filter", "service=Samba 4")
+		if with_ucsschool:
+			cmd += ("--filter", "service=UCS@school")
 
 		stdout, stderr = self.create_and_run_process(cmd)
 		if stderr:
 			utils.fail("An error occured while running a '%s' command to find all '%s' in the domain:\n'%s'" % (" ".join(cmd), dc_type, stderr))
 		return stdout
 
-	def get_udm_list_dc_slaves_with_samba4(self):
+	def get_udm_list_dc_slaves_with_samba4(self, with_ucsschool=False):
 		"""
 		Returns the output of "udm computers/domaincontroller_slave list
 		--filter service=Samba 4" command.
 		"""
-		return self.get_udm_list_dcs("domaincontroller_slave")
+		return self.get_udm_list_dcs("domaincontroller_slave", with_ucsschool=with_ucsschool)
 
 	def select_school_ou(self, schoolname_only=False):
 		"""

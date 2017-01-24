@@ -138,7 +138,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
 		replication from.
 		"""
 		print("\nCurrent server role is DC-Master, trying to find a DC-Slave in the domain for the test")
-		udm_stdout = self.get_udm_list_dc_slaves_with_samba4()
+		udm_stdout = self.get_udm_list_dc_slaves_with_samba4(with_ucsschool=True)
 
 		if "serverRole: slave" not in udm_stdout.strip():
 			print(
