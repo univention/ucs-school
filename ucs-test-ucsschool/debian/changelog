@@ -1,3 +1,13 @@
+ucs-test-ucsschool (3.0.17-51) unstable; urgency=medium
+
+  * Bug #34216: reduce flakiness in 91_samba4_gpc_two_way_replication
+  * Bug #34216: fix school-ou selection in 91_samba4_gpc_two_way_replication.
+    This fixes the random selection of any school-OU, to a selection of a school-OU
+    assigned to the selected school-slave DC.
+  * Bug #34216: reenable 91_samba4_gpc_two_way_replication
+
+ -- Lukas Oyen <oyen@univention.de>  Tue, 24 Jan 2017 13:21:49 +0100
+
 ucs-test-ucsschool (3.0.17-50) unstable; urgency=medium
 
   * Bug #34214: move rename 91b_samba4_gpc_two_way_replication
