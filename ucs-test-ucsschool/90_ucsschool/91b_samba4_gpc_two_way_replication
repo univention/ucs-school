@@ -11,7 +11,7 @@ from sys import exit
 from re import search
 from time import sleep
 
-from univention.uldap import getMachineConnection
+from univention.admin.uldap import getMachineConnection
 
 import ucsschool.lib.models
 from essential.test_samba4 import TestSamba4
@@ -57,7 +57,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
 			utils.fail("The 'samba-tool' did not list the replicated test GPO in the 'dn', STDOUT: '%s'" % stdout)
 
 	def find_school_ou(self):
-		lo = getMachineConnection(ldap_master=True)
+		(lo, _pos) = getMachineConnection(ldap_master=True)
 		schools = ucsschool.lib.models.School.get_all(lo)
 
 		server_role = self.UCR.get("server/role")
