@@ -11,7 +11,8 @@ from sys import exit
 from re import search
 from time import sleep
 
-from univention.uldap import getMachineConnection
+import univention.admin.uexceptions
+from univention.admin.uldap import getMachineConnection
 
 import ucsschool.lib.models
 from essential.test_samba4 import TestSamba4
@@ -28,7 +29,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
 		"""
 		try:
 			self.get_ucr_test_credentials()
-			self.ldap = getMachineConnection(ldap_master=True)
+			(self.ldap, _pos) = getMachineConnection(ldap_master=True)
 
 			# Create GPO and check replication against master:
 			gpo_reference = self.create_gpo()
@@ -89,7 +90,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
 		for _ in range(5):
 			try:
 				result = self.ldap.search(filter=gpo_search, attr=["cn"], required=True)
-			except ldap.NO_SUCH_OBJECT:
+			except univention.admin.uexceptions.noObject:
 				print("GPO not yet replicated, sleeping..")
 				sleep(5)
 			else:
