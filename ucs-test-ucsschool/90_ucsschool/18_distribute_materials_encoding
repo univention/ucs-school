@@ -46,7 +46,7 @@ def main():
 			files.append((filename3, 'iso8859-1'))
 			files.append((filename4, 'utf-8'))
 
-			connection.auth(tea, 'univention')
+			connection.authenticate(tea, 'univention')
 			# Create new project
 			project = Distribution(school, sender=tea, connection=connection, files=files, ucr=ucr, recipients=[group], flavor='teacher')
 			project.add()

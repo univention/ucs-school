@@ -63,7 +63,7 @@ def main():
 			account = utils.UCSTestDomainAdminCredentials()
 			admin = account.username
 			passwd = account.bindpw
-			connection.auth(admin, passwd)
+			connection.authenticate(admin, passwd)
 
 			# create ou
 			school, oudn = schoolenv.create_ou(name_edudc=host)

@@ -31,7 +31,7 @@ def main():
 			room = Room(school, host_members=computers_dns)
 			schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 			client = Client(ucr.get('hostname'))
-			client.auth(tea, 'univention')
+			client.authenticate(tea, 'univention')
 
 			room.test_time_settings(client)
 

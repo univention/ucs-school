@@ -70,7 +70,7 @@ class User(Person):
 		admin = account.username
 		passwd = account.bindpw
 		self.password = password if password else passwd
-		self.client.auth(admin, passwd)
+		self.client.authenticate(admin, passwd)
 
 	def append_random_groups(self):
 		pass

@@ -30,7 +30,7 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 	account = utils.UCSTestDomainAdminCredentials()
 	admin = account.username
 	passwd = account.bindpw
-	connection.auth(admin, passwd)
+	connection.authenticate(admin, passwd)
 	if connection.umc_command('schoolusers/password/reset', options, flavor).result:
 		return newpassword
 	else:

@@ -37,7 +37,7 @@ def main():
 				group.create()
 				utils.wait_for_replication_and_postrun()
 
-				connection.auth(tea, 'univention')
+				connection.authenticate(tea, 'univention')
 
 				# Prepare times for auto distribution and collection
 				local = list(time.localtime(time.time() + MIN_DIST_TIME))

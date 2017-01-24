@@ -29,7 +29,7 @@ def main():
 			account = utils.UCSTestDomainAdminCredentials()
 			admin = account.username
 			passwd = account.bindpw
-			client.auth(admin, passwd)
+			client.authenticate(admin, passwd)
 			if ucr.is_true('ucsschool/singlemaster'):
 				print "This test is only for Multi Server Environments"
 				exit(0)

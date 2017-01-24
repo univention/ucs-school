@@ -41,7 +41,7 @@ def main():
 			utils.wait_for_replication_and_postrun()
 
 			filename = uts.random_string()
-			connection.auth(tea, 'univention')
+			connection.authenticate(tea, 'univention')
 
 			# Create new project
 			project = Distribution(school, sender=tea, connection=connection, ucr=ucr, files=[(filename, 'utf8')], recipients=[group], flavor='teacher')

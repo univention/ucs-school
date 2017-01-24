@@ -31,7 +31,7 @@ def main():
 
 		for user in [tea]:
 			connection = Client(host)
-			connection.auth(user, passwd)
+			connection.authenticate(user, passwd)
 			# 1 creating empty workgroup
 			emptyGroup = Workgroup(schoolName, connection=connection)
 			emptyGroup.create()

@@ -60,7 +60,7 @@ class CSVImport(object):
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
-		self.client.auth(admin, passwd)
+		self.client.authenticate(admin, passwd)
 
 	def genData(self, boundary, file_name, content_type, school, user_type, delete_not_mentioned):
 		"""Generates data in the form to be sent via http POST request.\n

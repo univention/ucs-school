@@ -779,7 +779,7 @@ class UmcComputer(object):
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
-		self.client.auth(admin, passwd)
+		self.client.authenticate(admin, passwd)
 
 	def create(self, should_succeed=True):
 		"""Creates object Computer"""

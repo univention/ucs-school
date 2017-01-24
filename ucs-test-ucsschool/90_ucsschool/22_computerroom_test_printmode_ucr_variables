@@ -44,7 +44,7 @@ def main():
 				)
 
 			client = Client(ucr.get('hostname'))
-			client.auth(tea, 'univention')
+			client.authenticate(tea, 'univention')
 
 			# Add new hardware printer
 			printer_name = uts.random_string()

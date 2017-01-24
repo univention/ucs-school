@@ -31,7 +31,7 @@ def main():
 				handler_set(['ucsschool/helpdesk/recipient=ucstest@univention.de'])
 				host = ucr.get('hostname')
 				connection = Client(host)
-				connection.auth(tea, 'univention')
+				connection.authenticate(tea, 'univention')
 				f = tempfile.NamedTemporaryFile(suffix='.eml', dir='/tmp')
 				print 'Creating temp mail file %s' % (f.name)
 				nethelper.add_redirection('0.0.0.0/0', 25, 60025)
