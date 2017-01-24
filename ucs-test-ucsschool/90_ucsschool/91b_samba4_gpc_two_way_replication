@@ -3,7 +3,7 @@
 ## bugs: [34214, 34216]
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## packages: [univention-samba4, ucs-school-slave|ucs-school-master]
-## tags: [SKIP-UCSSCHOOL, apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 
 import ldap
