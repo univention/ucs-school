@@ -39,7 +39,7 @@ class TestS4SIDAllocation(TestSamba4):
 		Makes a UMC request to DC-Master to stop or start the S4-Connector.
 		"""
 		print("\nMaking a UMC request to %s the S4-Connector service on the DC-Master\n" % action)
-		assert self.connection.umc_command('services/' + action, ['univention-s4-connector']).result.get('success'), 'Restarting S4-Connector service failed'
+		assert self.client.umc_command('services/' + action, ['univention-s4-connector']).result.get('success'), 'Restarting S4-Connector service failed'
 
 	def start_stop_s4_connector(self, connector_should_run):
 		"""
