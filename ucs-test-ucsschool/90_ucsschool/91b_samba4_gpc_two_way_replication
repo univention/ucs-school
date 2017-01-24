@@ -2,14 +2,18 @@
 ## desc: Test the Samba4 GPC objects and links replication from DC-Master to DC-Slave or vice versa.
 ## bugs: [34214, 34216]
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## packages: [univention-samba4]
+## packages: [univention-samba4, ucs-school-slave|ucs-school-master]
 ## tags: [SKIP-UCSSCHOOL, apptest, ucsschool]
 ## exposure: dangerous
 
+import ldap
 from sys import exit
 from re import search
 from time import sleep
 
+from univention.uldap import getMachineConnection
+
+import ucsschool.lib.models
 from essential.test_samba4 import TestSamba4
 
 import univention.testing.utils as utils
@@ -51,6 +55,28 @@ class TestGPCReplicationTwoWays(TestSamba4):
 		gpo_dn = "CN=%s,CN=Policies,CN=System" % self.gpo_reference
 		if gpo_dn not in stdout:
 			utils.fail("The 'samba-tool' did not list the replicated test GPO in the 'dn', STDOUT: '%s'" % stdout)
+
+	def find_school_ou(self):
+		lo = getMachineConnection(ldap_master=True)
+		schools = ucsschool.lib.models.School.get_all(lo)
+
+		server_role = self.UCR.get("server/role")
+		if server_role == "domaincontroller_master":
+			slave_filter = "(&(aRecord=%s)(objectClass=univentionDomainController))"
+			filter_string = ldap.filter.filter_format(slave_filter, (self.remote_host,))
+			(host_dn, _) = lo.search(filter=filter_string, attr=["dn"])[0]
+
+			def get_names(school):
+				for s in school.get_administrative_server_names(lo):
+					yield s.lower()
+				for s in school.get_educational_server_names(lo):
+					yield s.lower()
+
+			schools = [s for s in schools if host_dn.lower() in get_names(s)]
+
+		if not schools:
+			utils.fail("Could not find the a School-OU")
+		return schools[0].dn
 
 	def create_gpo_on_remote_host(self):
 		"""
@@ -205,7 +231,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
 			self.check_gpo_replicated_locally()
 
 			# Create remotely GPO link to School OU and check replication:
-			school_ou_dn = self.select_school_ou()
+			school_ou_dn = self.find_school_ou()
 			self.create_gpo_link_on_remote_host(school_ou_dn)
 			self.check_gpo_link_replicated_locally(school_ou_dn)
 		finally:
