@@ -109,7 +109,7 @@ class School(object):
 		if connection:
 			self.client = connection
 		else:
-			self.client = Client.get_get_test_connection()
+			self.client = Client.get_test_connection()
 
 	def __enter__(self):
 		return self

@@ -26,7 +26,7 @@ def schoolwizards_schools_create(ou_name, dc_name=None, dc_name_administrative=N
 	if dc_name_administrative:
 		jsonargs[0]['object']['dc_name_administrative'] = dc_name_administrative
 
-	connection = Client.get_get_test_connection()
+	connection = Client.get_test_connection()
 	assert connection.umc_command('schoolwizards/schools/create', jsonargs, 'schoolwizards/schools').result[0] is True
 
 

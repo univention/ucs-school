@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-49) unstable; urgency=medium
+
+  * Bug #43389: fix duplicated sed :/
+
+ -- Florian Best <best@univention.de>  Tue, 24 Jan 2017 10:14:38 +0100
+
 ucs-test-ucsschool (3.0.17-48) unstable; urgency=medium
 
   * Bug #43389: use univention.lib.umc_connection

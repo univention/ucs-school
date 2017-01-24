@@ -46,7 +46,7 @@ class ComputerRoom(object):
 		self.host_members = host_members if host_members else []
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
-		self.client = Client.get_get_test_connection()
+		self.client = Client.get_test_connection()
 
 	def dn(self):
 		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))

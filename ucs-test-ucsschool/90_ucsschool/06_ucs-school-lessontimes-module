@@ -31,7 +31,7 @@ def delLesson(connection, name, begin, end):
 
 
 def main():
-	connection = Client.get_get_test_connection(language='en-US')
+	connection = Client.get_test_connection(language='en-US')
 	connection.umc_set({'locale': 'en_US'})
 
 	# 1 adding a lesson
