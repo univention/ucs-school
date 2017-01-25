@@ -59,11 +59,6 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			host = ucr.get('hostname')
-			connection = Client(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			connection.authenticate(admin, passwd)
 
 			# create ou
 			school, oudn = schoolenv.create_ou(name_edudc=host)
@@ -83,8 +78,10 @@ def main():
 			banPage = adminCurl.getPage(redirUri)
 			adminCurl.close()
 
+			client = Client.get_test_connection(host)
+
 			# define whitelist internet rule
-			rule1 = InternetRule(ucr=ucr, connection=connection, typ='whitelist', domains=['univention.de'], priority=3)
+			rule1 = InternetRule(ucr=ucr, connection=client, typ='whitelist', domains=['univention.de'], priority=3)
 			rule1.define()
 
 			# assign whitelist rule1 to the class
@@ -104,7 +101,7 @@ def main():
 			newWorkgroup.create()
 
 			# define different rule with higher priority
-			rule2 = InternetRule(ucr=ucr, connection=connection, typ='whitelist', domains=['google.de', 'gmx.net'], priority=4)
+			rule2 = InternetRule(ucr=ucr, connection=client, typ='whitelist', domains=['google.de', 'gmx.net'], priority=4)
 			rule2.define()
 
 			# Assign whitelist rule to the new Workgroup

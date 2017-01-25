@@ -170,7 +170,7 @@ html5
 		boundary = '---------------------------103454444410473823401882756'
 		data = self.genData(file_name, content_type, boundary, self.flavor)
 		header_content = {'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)}
-		self.client.umc_command('POST', 'upload/distribution/upload', data, headers=header_content).result
+		self.client.request('POST', 'upload/distribution/upload', data, headers=header_content).result
 
 	def add(self):
 		"""Create files and upload them then add the project,

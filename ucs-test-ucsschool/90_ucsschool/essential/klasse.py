@@ -57,10 +57,11 @@ class Klasse(object):
 		self.name = name if name else uts.random_string()
 		self.description = description if description else uts.random_string()
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
+		self.ucr.load()
 		if connection:
 			self.client = connection
 		else:
-			self.client = Client.get_test_connection()
+			self.client = Client.get_test_connection(self.ucr.get('ldap/master'))
 
 	def __enter__(self):
 		return self
@@ -71,16 +72,15 @@ class Klasse(object):
 	def create(self):
 		"""Creates object class"""
 		flavor = 'schoolwizards/classes'
-		param = [{'object': {
-			'name': self.name,
-			'school': self.school,
-			'description': self.description,
-		},
+		param = [{
+			'object': {
+				'name': self.name,
+				'school': self.school,
+				'description': self.description,
+			},
 			'options': None
 		}]
-		print 'Creating class %s in school %s' % (
-			self.name,
-			self.school)
+		print 'Creating class %s in school %s' % (self.name, self.school)
 		print 'param = %s' % (param,)
 		reqResult = self.client.umc_command('schoolwizards/classes/add', param, flavor).result
 		if not reqResult[0]:

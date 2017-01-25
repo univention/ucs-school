@@ -13,7 +13,8 @@ import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.udm
-from univention.testing.ucsschool import UCSTestSchool, Client
+from univention.testing.umc2 import Client
+from univention.testing.ucsschool import UCSTestSchool
 
 ucr = ucr_test.UCSTestConfigRegistry()
 ucr.load()
