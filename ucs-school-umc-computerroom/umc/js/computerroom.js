@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojo/io-query",
 	"dojo/aspect",
 	"dojo/dom",
 	"dojo/dom-class",
@@ -60,7 +61,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, domClass, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
+], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
             Dialog, Tooltip, styles, entities, dialog, tools, app, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -112,6 +113,9 @@ define([
 
 		// holds information about the active room
 		roomInfo: null,
+
+		// holds the flavour which should be loaded after acquiring a computerroom
+		flavour: null,
 
 		// internal reference to the grid
 		_grid: null,
@@ -880,6 +884,10 @@ define([
 						this._showExamFinishedDialog();
 					}
 				}
+
+				// read flavour from url
+				var flavour = ioQuery.queryToObject(window.location.search.substring(1))['flavour'] || '';
+				this.set('flavour', flavour);
 			}));
 		},
 
@@ -1289,6 +1297,13 @@ define([
 					}
 
 				}
+
+				// change to flavour only once
+				var flavour = this.get('flavour')
+				if (flavour === 'screenshot') {
+					 this._screenshot(null, this._grid.getAllItems())
+				}
+				this.set('flavour', null);
 
 			}), lang.hitch(this, function(err) {
 				// error case, update went wrong, try to reinitiate the computer room (see Bug #27202)
