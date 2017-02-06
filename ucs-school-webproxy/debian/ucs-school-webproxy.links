@@ -1,2 +1,3 @@
 /usr/share/univention-runit/sleep-dynamic etc/runit/univention-reload-service/finish
 /etc/runit/univention-reload-service /etc/runit/univention/univention-reload-service
+/var/www/proxy.pac /var/www/wpad.dat

@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-webproxy
+fix: 
+desc: |
+ * The file wpad.dat is now created as a link to proxy.pac (Bug #31728).
+bug: [31728]
