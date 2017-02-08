@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (12.0.4-5) unstable; urgency=medium
+
+  * Bug #43504: strip whitespace from commonshare prefix
+
+ -- Florian Best <best@univention.de>  Wed, 08 Feb 2017 18:08:44 +0100
+
 ucs-school-netlogon-user-logonscripts (12.0.4-4) unstable; urgency=low
 
   * Bug #37256: make folder names for share links customizable

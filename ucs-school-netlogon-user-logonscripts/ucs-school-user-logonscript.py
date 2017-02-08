@@ -128,7 +128,7 @@ def get_global_links():
 	# search in baseconfig for shares which are common for all users
 	global_links = dict()
 	Log.info("search for global links")
-	share_keys = [x for x in listener.baseConfig.get('ucsschool/userlogon/commonshares', '').split(',') if x.strip()]
+	share_keys = [x.strip() for x in listener.baseConfig.get('ucsschool/userlogon/commonshares', '').split(',') if x.strip()]
 	with LDAPConnection() as lo:
 		for key in share_keys:
 			# check if share exists

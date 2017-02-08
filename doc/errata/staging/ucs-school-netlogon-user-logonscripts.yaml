@@ -10,4 +10,5 @@ desc: |
    ucsschool/userlogon/myshares/name defaults to "Eigene Dateien" and
    ucsschool/userlogon/mypictures/name defaults to "Eigene Bilder"
    (Bug #37256).
-bug: [37256]
+ * Whitespace is now stripped when splitting the UCR variable ucsschool/userlogon/commonshares (Bug #43504).
+bug: [37256, 43504]
