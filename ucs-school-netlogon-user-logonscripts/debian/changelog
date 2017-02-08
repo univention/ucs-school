@@ -361,7 +361,7 @@ ucs-school-netlogon-user-logonscripts (4.0.0-1) unstable; urgency=low
 
 ucs-school-netlogon-user-logonscripts (4.0.0-0) unstable; urgency=low
 
-  * ported package to component ucs@school
+  * ported package to component UCS@school
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Jul 2009 13:29:23 +0200
 

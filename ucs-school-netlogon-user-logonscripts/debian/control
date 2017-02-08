@@ -14,7 +14,7 @@ Depends: univention-config-registry,
  ucs-school-netlogon,
  shell-univention-lib,
  univention-config
-Description: ucs@school userspecific netlogon scripts
+Description: UCS@school userspecific netlogon scripts
  This package provides a listener-module that creates
  specific netlogon scripts for each local user.
  .
