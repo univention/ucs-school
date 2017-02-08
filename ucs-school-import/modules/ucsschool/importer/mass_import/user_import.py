@@ -54,9 +54,9 @@ class UserImport(object):
 		self.dry_run = dry_run
 		self.errors = list()
 		self.imported_users = list()
-		self.added_users = defaultdict(list)
-		self.modified_users = defaultdict(list)
-		self.deleted_users = defaultdict(list)
+		self.added_users = defaultdict(list)  # dict of lists of dicts: {ImportStudent: [ImportStudent.to_dict(), ..], ..}
+		self.modified_users = defaultdict(list)  # like added_users
+		self.deleted_users = defaultdict(list)  # like added_users
 		self.config = Configuration()
 		self.logger = get_logger()
 		self.connection, self.position = get_admin_connection()
@@ -67,7 +67,7 @@ class UserImport(object):
 		"""
 		Read users from input data.
 		* UcsSchoolImportErrors are stored in in self.errors (with input entry
-		number in error.entry).
+		number in error.entry_count).
 
 		:return: list: ImportUsers found in input
 		"""
@@ -99,11 +99,15 @@ class UserImport(object):
 		:return tuple: (self.errors, self.added_users, self.modified_users)
 		"""
 		self.logger.info("------ Creating / modifying users... ------")
-		for imported_user in imported_users:
+		usernum = 0
+		total = len(imported_users)
+		while imported_users:
+			imported_user = imported_users.pop(0)
+			usernum += 1
 			if imported_user.action == "D":
 				continue
 			try:
-				self.logger.debug("Creating / modifying user %s...", imported_user)
+				self.logger.debug("Creating / modifying user %d/%d %s...", usernum, total, imported_user)
 				user = self.determine_add_modify_action(imported_user)
 				cls_name = user.__class__.__name__
 
@@ -115,11 +119,11 @@ class UserImport(object):
 					}[user.action]
 				except KeyError:
 					raise UnkownAction("{}  (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
-						user, user.source_uid, user.record_uid, user.action), entry=user.entry_count, import_user=user)
+						user, user.source_uid, user.record_uid, user.action), entry_count=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
 					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes=%r udm_properties=%r...", action_str, user, user.source_uid, user.record_uid, user.to_dict(), user.udm_properties)
-
+				password = user.password  # save password of new user for later export (NewUserPasswordCsvExporter)
 				try:
 					if user.action == "A":
 						err = CreationError
@@ -144,18 +148,19 @@ class UserImport(object):
 					raise UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
 
 				if success:
-					self.logger.info("Success %s %s (source_uid:%s record_uid: %s).", action_str.lower(), user, user.source_uid, user.record_uid)
-					store.append(user)
+					self.logger.info("Success %s %d/%d %s (source_uid:%s record_uid: %s).", action_str.lower(), usernum, total, user, user.source_uid, user.record_uid)
+					user.password = password
+					store.append(user.to_dict())
 				else:
-					raise err("Error {} {} (source_uid:{} record_uid: {}), does probably {}exist.".format(
-						action_str.lower(), user, user.source_uid, user.record_uid,
-						"not " if user.action == "M" else "already "), entry=user.entry_count, import_user=user)
+					raise err("Error {} {}/{} {} (source_uid:{} record_uid: {}), does probably {}exist.".format(
+						action_str.lower(), usernum, len(imported_users), user, user.source_uid, user.record_uid,
+						"not " if user.action == "M" else "already "), entry_count=user.entry_count, import_user=user)
 
 			except (CreationError, ModificationError) as exc:
-				self.logger.error("Entry #%d: %s", exc.entry, exc)  # traceback useless
+				self.logger.error("Entry #%d: %s", exc.entry_count, exc)  # traceback useless
 				self._add_error(exc)
 			except UcsSchoolImportError as exc:
-				self.logger.exception("Entry #%d: %s", exc.entry, exc)
+				self.logger.exception("Entry #%d: %s", exc.entry_count, exc)
 				self._add_error(exc)
 		num_added_users = sum(map(len, self.added_users.values()))
 		num_modified_users = sum(map(len, self.modified_users.values()))
@@ -197,24 +202,21 @@ class UserImport(object):
 		"""
 		Find difference between source database and UCS user database.
 
-		:return list: ImportUsers to delete (objects loaded from LDAP)
+		:return list of tuples: [(source_uid, record_uid), ..]
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
 		users_to_delete = list()
-		a_user = self.factory.make_import_user([])
 
 		if self.config["no_delete"]:
 			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------", self.config["no_delete"])
 			for user in self.imported_users:
 				if user.action == "D":
 					try:
-						ldap_user = a_user.get_by_import_id(self.connection, user.source_uid, user.record_uid)
-						ldap_user.update(user)  # need user.input_data for hooks
-						users_to_delete.append(ldap_user)
+						users_to_delete.append((user.source_uid, user.record_uid))
 					except noObject:
 						msg = "User to delete not found in LDAP: {}.".format(user)
 						self.logger.error(msg)
-						self._add_error(DeletionError(msg, entry=user.entry_count, import_user=user))
+						self._add_error(DeletionError(msg, entry_count=user.entry_count, import_user=user))
 			return users_to_delete
 
 		source_uid = self.config["sourceUID"]
@@ -230,15 +232,7 @@ class UserImport(object):
 		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
 		ucs_user_ids = set([(lu[1]["ucsschoolSourceUID"][0], lu[1]["ucsschoolRecordUID"][0]) for lu in ucs_ldap_users])
 
-		# collect ucschool objects for those users to delete in imported_users
-		for ucs_id_not_in_import in (ucs_user_ids - imported_user_ids):
-			try:
-				ldap_user = a_user.get_by_import_id(self.connection, ucs_id_not_in_import[0], ucs_id_not_in_import[1])
-				ldap_user.action = "D"  # mark for logging/csv-output purposes
-				users_to_delete.append(ldap_user)
-			except noObject as exc:
-				self.logger.error("Cannot delete non existing user with source_uid=%r, record_uid=%r: %s", ucs_id_not_in_import[0], ucs_id_not_in_import[1], exc)
-
+		users_to_delete = list(ucs_user_ids - imported_user_ids)
 		self.logger.debug("users_to_delete=%r", users_to_delete)
 		return users_to_delete
 
@@ -251,26 +245,37 @@ class UserImport(object):
 		object in error.import_user).
 		* To add or change a deletion strategy overwrite do_delete().
 
-		:param users: list: ImportUsers with record_uid and source_uid set.
+		:param users: list of tuples: [(source_uid, record_uid), ..]
 		:return: tuple: (self.errors, self.deleted_users)
 		"""
 		self.logger.info("------ Deleting %d users... ------", len(users))
-		for user in users:
+		a_user = self.factory.make_import_user([])
+		for num, ucs_id_not_in_import in enumerate(users, start=1):
+			try:
+				user = a_user.get_by_import_id(self.connection, ucs_id_not_in_import[0], ucs_id_not_in_import[1])
+				user.action = "D"  # mark for logging/csv-output purposes
+			except noObject as exc:
+				self.logger.error(
+					"Cannot delete non existing user with source_uid=%r, record_uid=%r: %s",
+					ucs_id_not_in_import[0], ucs_id_not_in_import[1], exc)
+				continue
 			try:
 				success = self.do_delete(user)
 				if success:
-					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name, user.source_uid, user.record_uid)
+					self.logger.info(
+						"Success deleting %d/%d %r (source_uid:%s record_uid: %s).", num, len(users),
+						user.name, user.source_uid, user.record_uid)
 				else:
 					raise DeletionError(
 						"Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already been deleted.".format(
 							user.name, user.source_uid, user.record_uid),
-						entry=user.entry_count,
+						entry_count=user.entry_count,
 						import_user=user)
-				self.deleted_users[user.__class__.__name__].append(user)
+				self.deleted_users[user.__class__.__name__].append(user.to_dict())
 			except UcsSchoolImportError as exc:
-				self.logger.exception("Error in entry #%d: %s", exc.entry, exc)
+				self.logger.exception("Error in entry #%d: %s", exc.entry_count, exc)
 				self._add_error(exc)
-		self.logger.info("------ Deleted %d users. ------", len(self.deleted_users))
+		self.logger.info("------ Deleted %d users. ------", sum(map(len, self.deleted_users.values())))
 		return self.errors, self.deleted_users
 
 	def school_move(self, imported_user, user):
@@ -296,7 +301,7 @@ class UserImport(object):
 		else:
 			res = user.change_school(imported_user.school, self.connection)
 		if not res:
-			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school), entry=imported_user.entry_count, import_user=imported_user)
+			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school), entry_count=imported_user.entry_count, import_user=imported_user)
 		# refetch user from LDAP
 		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
 		return user
@@ -357,7 +362,8 @@ class UserImport(object):
 		else:
 			raise UnknownDeleteSetting("Don't know what to do with user_deletion=%r and expiration=%r.".format(
 				self.config["user_deletion"]["delete"], self.config["user_deletion"]["expiration"]),
-				entry=user.entry_count, import_user=user)
+				entry_count=user.entry_count, import_user=user)
+		user.invalidate_all_caches()
 		return success
 
 	def log_stats(self):
@@ -374,18 +380,18 @@ class UserImport(object):
 		for cls_name in sorted(cls_names):
 			self.logger.info("Created %s: %d", cls_name, len(self.added_users.get(cls_name, [])))
 			for i in range(0, len(self.added_users[cls_name]), columns):
-				self.logger.info("  %s", [iu.name for iu in self.added_users[cls_name][i:i + columns]])
+				self.logger.info("  %s", [iu["name"] for iu in self.added_users[cls_name][i:i+columns]])
 			self.logger.info("Modified %s: %d", cls_name, len(self.modified_users.get(cls_name, [])))
 			for i in range(0, len(self.modified_users[cls_name]), columns):
-				self.logger.info("  %s", [iu.name for iu in self.modified_users[cls_name][i:i + columns]])
+				self.logger.info("  %s", [iu["name"] for iu in self.modified_users[cls_name][i:i+columns]])
 			self.logger.info("Deleted %s: %d", cls_name, len(self.deleted_users.get(cls_name, [])))
 			for i in range(0, len(self.deleted_users[cls_name]), columns):
-				self.logger.info("  %s", [iu.name for iu in self.deleted_users[cls_name][i:i + columns]])
+				self.logger.info("  %s", [iu["name"] for iu in self.deleted_users[cls_name][i:i+columns]])
 		self.logger.info("Errors: %d", len(self.errors))
 		if self.errors:
 			self.logger.info("Entry #: Error description")
 		for error in self.errors:
-			self.logger.info("  %d: %s: %s", error.entry, error.import_user.name if error.import_user else "NoName", error)
+			self.logger.info("  %d: %s: %s", error.entry_count, error.import_user.name if error.import_user else "NoName", error)
 		self.logger.info("------ End of user import statistics ------")
 
 	def _add_error(self, err):

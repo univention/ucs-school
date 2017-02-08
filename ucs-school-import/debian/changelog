@@ -1,3 +1,17 @@
+ucs-school-import (14.0.16-42) unstable; urgency=low
+
+  * Bug #41882: lower memory footprint of import:
+    - avoid collecting ImportUser objects (collects dict-representations
+      for A and M and only rUID+sUID for D)
+    - release created objects as early as possible
+    - fix class attribute usage
+  * API change: UcsSchoolImportError.count -> UcsSchoolImportError.entry_count
+  * log import progress
+  * sort password and summary CSV output by input order
+  * adapt password and summary CSV output code to memory-footprint-changes
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 08 Feb 2017 17:19:29 +0100
+
 ucs-school-import (14.0.16-41) unstable; urgency=low
 
   * Bug #43103: fixed regression in import_networks

@@ -81,6 +81,10 @@ class ImportUser(User):
 	reader = None
 	logger = None
 	_pyhook_cache = None
+	# non-Attribute attributes (not in self._attributes) that can also be used
+	# as arguments for object creation and will be exported by to_dict():
+	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
+	prop = uadmin_property("_replace")
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -89,13 +93,21 @@ class ImportUser(User):
 		self.input_data = list()      # raw input data created by SomeReader.read()
 		self.old_user = None          # user in LDAP, when modifying
 		self.in_hook = False          # if a hook is currently running
+
+		for attr in self._additional_props:
+			try:
+				val = kwargs.pop(attr)
+				setattr(self, attr, val)
+			except KeyError:
+				pass
+
 		if not self.factory:
-			self.factory = Factory()
-			self.ucr = self.factory.make_ucr()
-			self.config = Configuration()
-			self.reader = self.factory.make_reader()
-			self.logger = get_logger()
-			self.username_max_length = 20 - len(self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+			self.__class__.factory = Factory()
+			self.__class__.ucr = self.factory.make_ucr()
+			self.__class__.config = Configuration()
+			self.__class__.reader = self.factory.make_reader()
+			self.__class__.logger = get_logger()
+			self.__class__.username_max_length = 20 - len(self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
 		self._lo = None
 		self._userexpiry = None
 		super(ImportUser, self).__init__(name, school, **kwargs)
@@ -181,6 +193,21 @@ class ImportUser(User):
 		"""
 		self._userexpiry = expiry
 
+	@classmethod
+	def from_dict(cls, a_dict):
+		assert isinstance(a_dict, dict)
+		user_dict = a_dict.copy()
+		for attr in ("$dn$", "objectType", "type", "type_name"):
+			# those should be generated upon creation
+			try:
+				del user_dict[attr]
+			except KeyError:
+				pass
+		roles = user_dict.pop("roles", [])
+		if not cls.factory:
+			cls.factory = Factory()
+		return cls.factory.make_import_user(roles, **user_dict)
+
 	def _alter_udm_obj(self, udm_obj):
 		self._prevent_mapped_attributes_in_udm_properties()
 		super(ImportUser, self)._alter_udm_obj(udm_obj)
@@ -191,13 +218,15 @@ class ImportUser(User):
 			try:
 				udm_obj[property_] = value
 			except (KeyError, noProperty) as exc:
-				raise UnknownProperty("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
+				raise UnknownProperty("UDM property '{}' could not be set: {}".format(property_, exc), entry_count=self.entry_count, import_user=self)
 			except (valueError, valueInvalidSyntax) as exc:
-				raise UDMValueError("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
+				raise UDMValueError("UDM property '{}' could not be set: {}".format(property_, exc), entry_count=self.entry_count, import_user=self)
 			except Exception as exc:
 				self.logger.error("Unexpected exception caught: UDM property '{}' could not be set for user '{}' in import line {}: exception: {!s}\n{}".format(property_, self.name, self.entry_count, exc, traceback.format_exc()))
-				raise UDMError("UDM property '{}' could not be set: {}".format(property_, exc), entry=self.entry_count, import_user=self)
-
+				raise UDMError(
+					"UDM property '{}' could not be set: {}".format(property_, exc),
+					entry_count=self.entry_count,
+					import_user=self)
 
 	def has_expired(self, connection):
 		"""
@@ -391,7 +420,7 @@ class ImportUser(User):
 				if "email" in self.config["mandatory_attributes"] or "mailPrimaryAttribute" in self.config["mandatory_attributes"]:
 					raise MissingMailDomain(
 						"Could not retrieve mail domain from configuration nor from UCRV mail/hosteddomains.",
-						entry=self.entry_count,
+						entry_count=self.entry_count,
 						import_user=self)
 				else:
 					return
@@ -443,7 +472,7 @@ class ImportUser(User):
 			raise MissingSchoolName(
 				"Primary school name (ou) was not set on the cmdline or in the configuration file and was not found in "
 				"the input data.",
-				entry=self.entry_count,
+				entry_count=self.entry_count,
 				import_user=self)
 
 	def make_schools(self):
@@ -498,7 +527,7 @@ class ImportUser(User):
 			raise FormatError("No username was created from scheme '{}'.".format(
 				self.username_scheme), self.username_scheme, self.to_dict())
 		if not self.username_handler:
-			self.username_handler = self.factory.make_username_handler(self.username_max_length)
+			self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length)
 		self.name = self.username_handler.format_username(self.name)
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
@@ -522,8 +551,8 @@ class ImportUser(User):
 		self._lo = lo
 		return super(ImportUser, self).move(lo, udm_obj, force)
 
-	@staticmethod
-	def normalize(s):
+	@classmethod
+	def normalize(cls, s):
 		"""
 		Normalize string (german umlauts etc)
 
@@ -531,8 +560,7 @@ class ImportUser(User):
 		:return: str: normalized s
 		"""
 		if isinstance(s, basestring):
-			prop = uadmin_property("_replace")
-			s = prop._replace("<:umlauts>{}".format(s), {})
+			s = cls.prop._replace("<:umlauts>{}".format(s), {})
 		return s
 
 	def normalize_udm_properties(self):
@@ -575,25 +603,25 @@ class ImportUser(User):
 		try:
 			[self.udm_properties.get(ma) or getattr(self, ma) for ma in self.config["mandatory_attributes"]]
 		except (AttributeError, KeyError) as exc:
-			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc), self.config["mandatory_attributes"], entry=self.entry_count, import_user=self)
+			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc), self.config["mandatory_attributes"], entry_count=self.entry_count, import_user=self)
 
 		if self.record_uid in self._unique_ids["recordUID"]:
-			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid), entry=self.entry_count, import_user=self)
+			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid), entry_count=self.entry_count, import_user=self)
 		self._unique_ids["recordUID"].add(self.record_uid)
 
 		if check_username:
 			if not self.name:
-				raise NoUsername("No username was created.", entry=self.entry_count, import_user=self)
+				raise NoUsername("No username was created.", entry_count=self.entry_count, import_user=self)
 
 			if len(self.name) > self.username_max_length:
-				raise UsernameToLong("Username '{}' is longer than allowed.".format(self.name), entry=self.entry_count, import_user=self)
+				raise UsernameToLong("Username '{}' is longer than allowed.".format(self.name), entry_count=self.entry_count, import_user=self)
 
 			if self.name in self._unique_ids["name"]:
-				raise UniqueIdError("Username '{}' has already been used in this import.".format(self.name), entry=self.entry_count, import_user=self)
+				raise UniqueIdError("Username '{}' has already been used in this import.".format(self.name), entry_count=self.entry_count, import_user=self)
 			self._unique_ids["name"].add(self.name)
 
 			if len(self.password) < self.config["password_length"]:
-				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry=self.entry_count, import_user=self)
+				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
 
 		if self.email:
 			# email_pattern:
@@ -603,17 +631,17 @@ class ImportUser(User):
 			# * all characters are allowed (international domains)
 			email_pattern = r"[^@]+@.+\..+"
 			if not re.match(email_pattern, self.email):
-				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry=self.entry_count, import_user=self)
+				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry_count=self.entry_count, import_user=self)
 
 			if self.email in self._unique_ids["email"]:
-				raise UniqueIdError("Email address '{}' has already been used in this import.".format(self.email), entry=self.entry_count, import_user=self)
+				raise UniqueIdError("Email address '{}' has already been used in this import.".format(self.email), entry_count=self.entry_count, import_user=self)
 			self._unique_ids["email"].add(self.email)
 
 		if self.birthday:
 			try:
 				datetime.datetime.strptime(self.birthday, "%Y-%m-%d")
 			except ValueError as exc:
-				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry=self.entry_count, import_user=self)
+				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry_count=self.entry_count, import_user=self)
 
 	@property
 	def role_sting(self):
@@ -631,6 +659,10 @@ class ImportUser(User):
 				return "teacher"
 		else:
 			return "staff"
+
+	@property
+	def school_classes_as_str(self):
+		return ','.join(','.join(sc) for sc in self.school_classes.values())
 
 	@property
 	def username_scheme(self):
@@ -671,12 +703,11 @@ class ImportUser(User):
 			all_fields = self.reader.get_data_mapping(self.input_data)
 		else:
 			all_fields = dict()
-		all_fields.update(self.to_dict().copy())
+		all_fields.update(self.to_dict())
 		all_fields.update(self.udm_properties)
 		all_fields.update(kwargs)
 
-		prop = uadmin_property("_replace")
-		res = prop._replace(scheme, all_fields)
+		res = self.prop._replace(scheme, all_fields)
 		if not res:
 			self.logger.warn("Created empty '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
 				prop_name=prop_name, scheme=scheme, data=all_fields))
@@ -752,6 +783,12 @@ class ImportUser(User):
 				"UDM property 'e-mail' is used for storing contact information. The users mailbox address is stored in "
 				"the 'email' attribute of the {} object (not in udm_properties).".format(self.__class__.__name__))
 
+	def to_dict(self):
+		res = super(ImportUser, self).to_dict()
+		for attr in self._additional_props:
+			res[attr] = getattr(self, attr)
+		return res
+
 	def update(self, other):
 		"""
 		Copy attributes of other ImportUser into this one.
@@ -761,14 +798,9 @@ class ImportUser(User):
 		:param other: ImportUser: data source
 		"""
 		for k, v in other.to_dict().items():
-			if k == "name" and v is None:
+			if (k == "name" or k in self._additional_props) and not v:
 				continue
 			setattr(self, k, v)
-		self.action = other.action or self.action
-		self.entry_count = other.entry_count or self.entry_count
-		if other.udm_properties:
-			self.udm_properties.update(other.udm_properties)
-		self.input_data = other.input_data or self.input_data
 
 
 class ImportStaff(ImportUser, Staff):

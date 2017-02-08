@@ -121,7 +121,7 @@ class CommandLine(object):
 		except ToManyErrors as tme:
 			self.logger.error("%s Exiting. Errors:", tme)
 			for error in tme.errors:
-				self.logger.error("%d: %s", error.entry, error)
+				self.logger.error("%d: %s", error.entry_count, error)
 			self._fatal()
 			return 1
 		except InitialisationError as exc:

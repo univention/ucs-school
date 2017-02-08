@@ -51,6 +51,7 @@ class UserImportCsvResultExporter(ResultExporter):
 		"""
 		super(UserImportCsvResultExporter, self).__init__(*arg, **kwargs)
 		self.factory = Factory()
+		self.a_user = self.factory.make_import_user([])
 
 	def get_iter(self, user_import):
 		"""
@@ -65,13 +66,14 @@ class UserImportCsvResultExporter(ResultExporter):
 				entry_count = exc.import_user.entry_count
 			else:
 				entry_count = 0
-			return max(exc.entry, entry_count)
+			return max(exc.entry_count, entry_count)
 
 		li = sorted(user_import.errors, key=exc_count)
 		for users in [user_import.added_users, user_import.modified_users, user_import.deleted_users]:
 			tmp = list()
 			map(tmp.extend, [u for u in users.values() if u])
-			li.extend(sorted(tmp, key=lambda x: x.entry_count))
+			li.extend(tmp)
+		li.sort(key=lambda x: int(x['entry_count']) if isinstance(x, dict) else int(x.entry_count))
 		return li
 
 	def get_writer(self):
@@ -90,21 +92,25 @@ class UserImportCsvResultExporter(ResultExporter):
 		:return: dict: attr_name->strings that will be used to write the
 		output file
 		"""
+		is_error = False
 		if isinstance(obj, ImportUser):
 			user = obj
 		elif isinstance(obj, UcsSchoolImportError):
 			user = obj.import_user
+			is_error = True
+		elif isinstance(obj, dict):
+			user = self.a_user.from_dict(obj)
 		else:
-			raise TypeError("Expected ImportUser or UcsSchoolImportError, got {}. Repr: {}".format(type(obj), repr(obj)))
+			raise TypeError("Expected ImportUser, UcsSchoolImportError or dict but got {}. Repr: {}".format(type(obj), repr(obj)))
 		if not user:
 			# error during reading of input data
 			user = self.factory.make_import_user([role_pupil])  # set some role
 			user.roles = []  # remove role
 
 		return dict(
-			line=max(getattr(user, "entry_count", 0), getattr(obj, "entry", 0)),
-			success=int(bool(isinstance(obj, ImportUser))),
-			error=int(bool(isinstance(obj, UcsSchoolImportError))),
+			line=getattr(user, "entry_count", 0),
+			success=int(not is_error),
+			error=int(is_error),
 			action=user.action,
 			role=user.role_sting if user.roles else "",
 			username=user.name,
@@ -114,8 +120,8 @@ class UserImportCsvResultExporter(ResultExporter):
 			birthday=user.birthday,
 			email=user.email,
 			disabled="0" if user.disabled == "none" else "1",
-			classes=getattr(user, "school_class", ""),
+			classes=user.school_classes_as_str,
 			source_uid=user.source_uid,
 			record_uid=user.record_uid,
-			error_msg=str(obj) if isinstance(obj, UcsSchoolImportError) else ""
+			error_msg=str(obj) if is_error else ""
 		)

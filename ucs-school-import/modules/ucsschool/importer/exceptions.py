@@ -36,7 +36,7 @@ class UcsSchoolImportError(Exception):
 	is_fatal = False
 
 	def __init__(self, *args, **kwargs):
-		self.entry = kwargs.pop("entry", 0)
+		self.entry_count = kwargs.pop("entry_count", 0)
 		self.input = kwargs.pop("input", None)
 		self.import_user = kwargs.pop("import_user", None)
 		super(UcsSchoolImportError, self).__init__(*args, **kwargs)

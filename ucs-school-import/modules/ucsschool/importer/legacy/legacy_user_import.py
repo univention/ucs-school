@@ -49,13 +49,11 @@ class LegacyUserImport(UserImport):
 		for user in self.imported_users:
 			if user.action == "D":
 				try:
-					ldap_user = a_user.get_by_import_id_or_username(self.connection, user.source_uid, user.record_uid, user.name)
-					ldap_user.update(user)  # need user.input_data for hooks
-					users_to_delete.append(ldap_user)
+					users_to_delete.append((user.source_uid, user.record_uid))
 				except noObject:
 					msg = "User to delete not found in LDAP: {}.".format(user)
 					self.logger.error(msg)
-					self._add_error(DeletionError(msg, entry=user.entry_count, import_user=user))
+					self._add_error(DeletionError(msg, entry_count=user.entry_count, import_user=user))
 		return users_to_delete
 
 	def determine_add_modify_action(self, imported_user):
@@ -88,7 +86,7 @@ class LegacyUserImport(UserImport):
 				else:
 					raise CreationError("User {} (source_uid:{} record_uid: {}) exist, but input demands 'A'.".format(
 						imported_user, imported_user.source_uid, imported_user.record_uid),
-						entry=imported_user.entry_count, import_user=imported_user)
+						entry_count=imported_user.entry_count, import_user=imported_user)
 			except noObject:
 				# this is expected
 				imported_user.prepare_all(new_user=True)
@@ -116,5 +114,5 @@ class LegacyUserImport(UserImport):
 		else:
 			raise UnkownAction("{} (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
 				imported_user, imported_user.source_uid, imported_user.record_uid, imported_user.action),
-				entry=imported_user.entry_count, import_user=imported_user)
+				entry_count=imported_user.entry_count, import_user=imported_user)
 		return user

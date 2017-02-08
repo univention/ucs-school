@@ -152,7 +152,7 @@ class CsvReader(BaseReader):
 				"teacher_and_staff": [role_teacher, role_staff]
 			}[self.config["user_role"]]
 		except KeyError:
-			raise UnkownRole("No role in configuration.", entry=self.entry_count)
+			raise UnkownRole("No role in configuration.", entry_count=self.entry_count)
 
 	def map(self, input_data, cur_user_roles):
 		"""
@@ -180,7 +180,7 @@ class CsvReader(BaseReader):
 				try:
 					prop_desc = udm_user_module.property_descriptions[v]
 				except KeyError:
-					raise UnknownProperty("Unknown UDM property: '{}'.".format(v), entry=self.entry_count, import_user=import_user)
+					raise UnknownProperty("Unknown UDM property: '{}'.".format(v), entry_count=self.entry_count, import_user=import_user)
 				if prop_desc.multivalue:
 					try:
 						delimiter = self.config["csv"]["incell-delimiter"][k]

@@ -84,7 +84,7 @@ class ReadOnlyDict(dict):
 			else:
 				# Try to use any other type than str (when overwriting
 				# configuration from cmdline).
-				if v is None:
+				if v is None or callable(v):
 					a[k] = v
 				else:
 					t = type(v)

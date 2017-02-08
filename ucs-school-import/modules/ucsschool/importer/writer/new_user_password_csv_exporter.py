@@ -32,6 +32,7 @@ Write the passwords of newly created users to a CSV file.
 # <http://www.gnu.org/licenses/>.
 
 from ucsschool.importer.factory import Factory
+from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.writer.result_exporter import ResultExporter
 
 
@@ -44,6 +45,7 @@ class NewUserPasswordCsvExporter(ResultExporter):
 	def __init__(self, *arg, **kwargs):
 		super(NewUserPasswordCsvExporter, self).__init__(*arg, **kwargs)
 		self.factory = Factory()
+		self.a_user = self.factory.make_import_user([])
 
 	def get_iter(self, user_import):
 		"""
@@ -51,7 +53,7 @@ class NewUserPasswordCsvExporter(ResultExporter):
 		"""
 		li = list()
 		map(li.extend, user_import.added_users.values())
-		li.sort(key=lambda x: x.entry_count)
+		li.sort(key=lambda x: int(x['entry_count']) if isinstance(x, dict) else int(x.entry_count))
 		return li
 
 	def get_writer(self):
@@ -61,12 +63,12 @@ class NewUserPasswordCsvExporter(ResultExporter):
 		return self.factory.make_user_writer(field_names=self.field_names)
 
 	def serialize(self, user):
-		school_classes = getattr(user, "school_classes", "")
-		if school_classes:
-			sc = ""
-			for school, classes in school_classes.items():
-				sc = ",".join([sc, ",".join(["{}-{}".format(school, cls) for cls in classes])])
-			school_classes = sc.strip(",")
+		if isinstance(user, ImportUser):
+			pass
+		elif isinstance(user, dict):
+			user = self.a_user.from_dict(user)
+		else:
+			raise TypeError("Expected ImportUser or dict but got {}. Repr: {}".format(type(user), repr(user)))
 
 		return dict(
 			username=user.name,
@@ -75,5 +77,5 @@ class NewUserPasswordCsvExporter(ResultExporter):
 			lastname=user.lastname,
 			firstname=user.firstname,
 			schools=",".join(user.schools),
-			classes=school_classes,
+			classes=user.school_classes_as_str,
 		)
