@@ -28,9 +28,21 @@ Description[en]=Set path to the personal directory? (default: no)
 Type=bool
 Categories=ucsschool-netlogon
 
+[ucsschool/userlogon/myshares/name]
+Description[de]=Name des persönlichen Verzeichnisses. (Standard: Eigene Dateien)
+Description[en]=Name of the personal directory. (default: Eigene Dateien)
+Type=str
+Categories=ucsschool-netlogon
+
 [ucsschool/userlogon/mysharespath]
-Description[de]=Pfad für das persönliche Verzeichnis (default: $(ucr get samba/homedirletter):\Eigene Dateien)
-Description[en]=Path to the personal directory (default: $(ucr get samba/homedirletter):\Eigene Dateien)
+Description[de]=Pfad für das persönliche Verzeichnis (default: nicht gesetzt, wird erstellt als $(ucr get samba/homedirletter):\$(ucr get ucsschool/userlogon/myshares/name))
+Description[en]=Path to the personal directory (default: unset, will be created as $(ucr get samba/homedirletter):\$(ucr get ucsschool/userlogon/myshares/name))
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/mypictures/name]
+Description[de]=Name des persönlichen Bilder-Verzeichnisses. (Standard: Eigene Bilder)
+Description[en]=Name of the personal picture directory. (default: Eigene Bilder)
 Type=str
 Categories=ucsschool-netlogon
 

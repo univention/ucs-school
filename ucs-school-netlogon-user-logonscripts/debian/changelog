@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (12.0.4-4) unstable; urgency=low
+
+  * Bug #37256: make folder names for share links customizable
+  * major code cleanup
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 08 Feb 2017 17:19:29 +0100
+
 ucs-school-netlogon-user-logonscripts (12.0.4-3) unstable; urgency=low
 
   * Bug #41173: remove characters that are forbidden by Windows from
