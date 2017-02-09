@@ -3,12 +3,14 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-netlogon-user-logonscripts
-fix: 12.0.4-4.61.201702081738
+fix: 12.0.4-5.62.201702081812
 desc: |
  * The names of the folder links on the users desktop can now be set via UCR:
    ucsschool/userlogon/shares_foldername defaults to "Eigene Shares",
    ucsschool/userlogon/myshares/name defaults to "Eigene Dateien" and
    ucsschool/userlogon/mypictures/name defaults to "Eigene Bilder"
    (Bug #37256).
- * Whitespace is now stripped when splitting the UCR variable ucsschool/userlogon/commonshares (Bug #43504).
+ * Whitespace is the list of share names in the UCR variable
+   ucsschool/userlogon/commonshares is now handled more securely (Bug
+   #43504).
 bug: [37256, 43504]
