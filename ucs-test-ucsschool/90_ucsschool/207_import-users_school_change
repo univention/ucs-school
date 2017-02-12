@@ -39,7 +39,7 @@ class Test(CLI_Import_v2_Tester):
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('user_role', role)
 
-			print '**** 1.1 create person in school A: %r' % (self.ou_A.name,)
+			print('**** 1.1 create person in school A (%r)' % (self.ou_A.name,))
 			person = Person(self.ou_A.name, role)
 			person.update(record_uid=person.username, source_uid=source_uid, school_classes={})
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
@@ -49,7 +49,7 @@ class Test(CLI_Import_v2_Tester):
 			self.log_person_infos(person)
 			person.verify()
 
-			print '**** 1.2 move person to school B: %r' % (self.ou_B.name,)
+			print('**** 1.2 move person to school B (%r)' % (self.ou_B.name,))
 			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
@@ -65,7 +65,8 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
 
-			print '**** 2.1 Add person to school A'
+			print('**** 2.1 Add person to a 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)' % (
+				self.ou_B.name, self.ou_A.name, self.ou_B.name))
 			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
@@ -74,7 +75,8 @@ class Test(CLI_Import_v2_Tester):
 			self.log_person_infos(person)
 			person.verify()
 
-			print '**** 2.2 remove person from school A'
+			print('**** 2.2 remove person from 2nd school (A) -> school=B (%r), schools=[B] (%r)' % (
+				self.ou_B.name, self.ou_B.name))
 			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
@@ -84,7 +86,8 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
 
-			print '**** 3.1 (Re)Add person to school A'
+			print('**** 3.1 (Re)Add person to 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)' % (
+				self.ou_B.name, self.ou_A.name, self.ou_B.name))
 			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
@@ -93,7 +96,8 @@ class Test(CLI_Import_v2_Tester):
 			self.log_person_infos(person)
 			person.verify()
 
-			print '**** 3.2 remove person from school B'
+			print('**** 3.2 remove person from primary school (B) -> school=A (%r), schools=[A] (%r)' % (
+				self.ou_A.name, self.ou_A.name))
 			person.update(school=self.ou_A.name, schools=[self.ou_A.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
@@ -110,7 +114,7 @@ class Test(CLI_Import_v2_Tester):
 	def verify_removed_schoolgroup_membership(self, person, school_removed_from):
 		groups = self.lo.searchDn(ldap.filter.filter_format('uniqueMember=%s', [person.dn]))
 		if any(school_removed_from in g for g in groups):
-			print 'FAIL: ', school_removed_from, 'still in', groups
+			print('FAIL: ', school_removed_from, 'still in', groups)
 			# TODO: Bug #41910 actually fail here!
 
 

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-54) unstable; urgency=low
+
+  * Bug #41910: fix setting school and schools in same update() call
+  * always check users school(s) attribute(s)
+
+ -- Daniel Troeder <troeder@univention.de>  Sun, 12 Feb 2017 19:40:15 +0100
+
 ucs-test-ucsschool (3.0.17-53) unstable; urgency=medium
 
   * Bug #43389: fix some typos

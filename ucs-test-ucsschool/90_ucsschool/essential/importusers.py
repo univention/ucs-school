@@ -139,6 +139,15 @@ class Person(object):
 	def is_active(self):
 		return self.active
 
+	def _set_school(self, school):
+		self.school = school
+		if len(self.schools) == 1:
+			self.schools = [self.school]
+		elif self.school not in self.schools:
+			self.schools.append(self.school)
+		self.school_base = self.make_school_base()
+		self.dn = self.make_dn()
+
 	def update(self, **kwargs):
 		for key in kwargs:
 			if key == 'dn':
@@ -148,18 +157,10 @@ class Person(object):
 				self.username = kwargs[key]
 				self.dn = self.make_dn()
 			elif key == 'school':
-				self.school = kwargs[key]
-				if len(self.schools) == 1:
-					self.schools = [self.school]
-				elif self.school not in self.schools:
-					self.schools.append(self.school)
-				self.school_base = self.make_school_base()
-				self.dn = self.make_dn()
+				self._set_school(kwargs[key])
 			elif key == 'schools':
-				if not self.school:
-					self.school = sorted(kwargs[key])[0]
-					self.school_base = self.make_school_base()
-					self.dn = self.make_dn()
+				if not self.school and 'school' not in kwargs:
+					self._set_school(sorted(kwargs[key])[0])
 				self.schools = kwargs[key]
 			elif hasattr(self, key):
 				setattr(self, key, kwargs[key])
@@ -270,6 +271,7 @@ class Person(object):
 			attr['krb5KDCFlags'] = ['254']
 			attr['sambaAcctFlags'] = ['[UD         ]']
 			attr['shadowExpire'] = ['1']
+		attr['ucsschoolSchool'] = self.schools
 		attr['departmentNumber'] = [self.school]
 
 		if self.password:
