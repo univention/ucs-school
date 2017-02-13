@@ -242,7 +242,7 @@ class Person(object):
 	def is_teacher_staff(self):
 		return self.role in ('teacher_staff', 'teacher_and_staff')
 
-	def expected_attributes(self):
+	def expected_attributes(self, legacy=False):
 		attr = {}
 		attr['uid'] = [self.username]
 		attr['givenName'] = [self.firstname]
@@ -271,7 +271,8 @@ class Person(object):
 			attr['krb5KDCFlags'] = ['254']
 			attr['sambaAcctFlags'] = ['[UD         ]']
 			attr['shadowExpire'] = ['1']
-		attr['ucsschoolSchool'] = self.schools
+		if not legacy:
+			attr['ucsschoolSchool'] = self.schools
 		attr['departmentNumber'] = [self.school]
 
 		if self.password:
@@ -325,7 +326,7 @@ class Person(object):
 
 		return server + '\\%USERNAME%\\windows-profiles\\default'
 
-	def verify(self):
+	def verify(self, legacy=False):
 		print 'verify person: %s' % self.username
 		utils.wait_for_replication()
 		# reload UCR
@@ -335,7 +336,7 @@ class Person(object):
 			utils.verify_ldap_object(self.dn, should_exist=False)
 			return
 
-		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), strict=True, should_exist=True)
+		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(legacy), strict=True, should_exist=True)
 
 		default_group_dn = 'cn=Domain Users %s,cn=groups,%s' % (self.school, self.school_base)
 		utils.verify_ldap_object(default_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
@@ -612,18 +613,18 @@ class UserImport:
 
 		return '\n'.join(lines)
 
-	def verify(self):
+	def verify(self, legacy=False):
 		for student in self.students:
-			student.verify()
+			student.verify(legacy)
 
 		for teacher in self.teachers:
-			teacher.verify()
+			teacher.verify(legacy)
 
 		for staff in self.staff:
-			staff.verify()
+			staff.verify(legacy)
 
 		for teacher_staff in self.teacher_staff:
-			teacher_staff.verify()
+			teacher_staff.verify(legacy)
 
 	def modify(self):
 		for student in self.students:

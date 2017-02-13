@@ -27,7 +27,7 @@ def main():
 			import_file = ImportFile(True, False)
 			import_file.cli_path = "/usr/share/ucs-school-import/scripts/ucs-school-import"
 			import_file.run_import(user_import)
-			user_import.verify()
+			user_import.verify(legacy=True)
 			# verify that users are not even migrated to 4.1R2 yet
 			all_users = user_import.staff + user_import.students + user_import.teachers + user_import.teacher_staff
 			for user in all_users:
