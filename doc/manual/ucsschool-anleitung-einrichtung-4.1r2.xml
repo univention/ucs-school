@@ -1351,9 +1351,16 @@ feedback@univention.de
 							</para></listitem>
 					<listitem><para>Installieren sie <emphasis
 								role="strong">nicht</emphasis> die &ucsUAS;
-							App</para></listitem> <listitem><para>Führen sie
+							App</para></listitem>
+					<listitem><para>Führen sie
 							alle evtl. ausstehenden Joinskripte aus (UMC →
 							Domäne → Domänenbeitritt)</para></listitem>
+					<listitem><para>Achten Sie darauf, dass die globale UCR-Richtlinie "ucsschool-ucr-settings" auf alle anderen Systeme wirkt.
+							Auf den anderen Systemen prüfen:
+							(UMC → System → Univention Configuration Registry → Suche: nagios/client/allowedhosts und munin/node/allowedhosts).
+							Starten Sie gegebenenfalls den Service univention-directory-listener neu
+							(UMC → System → Systemdienste → univention-directory-listener → Neustarten).
+							Starten Sie außerdem gegebenenfalls auf allen Clients die Services (nagios-nrpe-server und munin-node) neu.</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
