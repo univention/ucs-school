@@ -963,7 +963,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>4 CPUs</para></listitem>
+						<listitem><para>4 CPU-Kerne (ggf. vCPU)</para></listitem>
 						<listitem><para>8 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1008,7 +1008,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen UCS:
 					<itemizedlist>
-						<listitem><para>2 CPUs</para></listitem>
+						<listitem><para>2 CPU-Kerne (ggf. vCPU)</para></listitem>
 						<listitem><para>2 GB RAM</para></listitem>
 						<listitem><para>80 GB Speicherplatz</para></listitem>
 						<listitem><para>Plus Anforderungen der eingesetzten Software</para></listitem>
@@ -1023,7 +1023,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>4 CPUs</para></listitem>
+						<listitem><para>4 CPU-Kerne (ggf. vCPU)</para></listitem>
 						<listitem><para>12 GB RAM</para></listitem>
 						<listitem><para>80 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1037,7 +1037,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>2 CPUs</para></listitem>
+						<listitem><para>2 CPU-Kerne (ggf. vCPU)</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1054,7 +1054,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen Szenario <emphasis>Grundschule</emphasis> (25 Computer, 25 Tablets):
 					<itemizedlist>
-						<listitem><para>2 CPUs</para></listitem>
+						<listitem><para>2 CPU-Kerne (ggf. vCPU)</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
 						<listitem><para>Benutzerdaten nach Anforderung, bspw. 2
@@ -1065,7 +1065,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen Szenario <emphasis>Berufsschule</emphasis> (300 Computer, 200 Tablets):
 					<itemizedlist>
-						<listitem><para>8 CPUs</para></listitem>
+						<listitem><para>8 CPU-Kerne (ggf. vCPU)</para></listitem>
 						<listitem><para>32 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
 						<listitem><para>Benutzerdaten nach Anforderung, bspw. 15
