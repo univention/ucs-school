@@ -20,6 +20,7 @@ import univention.testing.udm
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+import univention.testing.format.text
 
 
 class Bunch(object):
@@ -160,7 +161,7 @@ class CLI_Import_v2_Tester(object):
 	def __init__(self):
 		logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
-		self.log = logging.getLogger('main')
+		self.log = ColoredLogger('main')
 		self.lo = None
 		self.ldap_status = None
 		self.hook_fn_set = set()
@@ -345,14 +346,77 @@ class CLI_Import_v2_Tester(object):
 				self.udm = udm
 				with utu.UCSTestSchool() as schoolenv:
 					self.lo = schoolenv.open_ldap_connection(admin=True)
+					self.log.info('Creating OUs...')
 					for ou in [self.ou_A, self.ou_B, self.ou_C]:
 						if ou is not None:
 							ou.name, ou.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+							self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
 
 					self.test()
-					self.log.info('Test was successful.\n\n\n')
+					self.log.info('Test was successful.\n\n')
 		finally:
 			self.cleanup()
 
 	def test(self):
 		raise NotImplemented()
+
+
+class ColoredLogger(object):
+	# BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE
+	_colors = {
+		'critical': 'RED',
+		'debug': 'WHITE',
+		'error': 'RED',
+		'exception': 'RED',
+		'info': 'YELLOW',
+		'warning': 'CYAN',
+	}
+
+	def __init__(self, name):
+		logging.basicConfig(
+			stream=sys.stdout,
+			level=logging.DEBUG,
+			format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s',
+			datefmt='%Y-%m-%d %H:%M:%S')
+		self.logger = logging.getLogger(name)
+
+		self.utext = univention.testing.format.text.Text()
+		self.colorize = False
+		if sys.stdout.isatty():
+			self.colorize = True
+		else:
+			# try to use the stdout of the parent process if it's ucs-test
+			ppid = os.getppid()
+			if 'ucs-test' in open('/proc/{}/cmdline'.format(ppid), 'rb').read():
+				fd = open('/proc/{}/fd/1'.format(ppid), 'a')
+				if fd.isatty():
+					self.utext.term = univention.testing.format.text._Term(fd)
+					self.colorize = True
+
+	def _colorize(self, msg, color):
+		if self.colorize:
+			return '{}{}{}'.format(getattr(self.utext.term, self._colors[color]), msg, self.utext.term.NORMAL)
+		else:
+			return msg
+
+	def critical(self, msg, *args, **kwargs):
+		self.logger.critical(self._colorize(msg, self._colors['critical']), *args, **kwargs)
+
+	fatal = critical
+
+	def debug(self, msg, *args, **kwargs):
+		self.logger.debug(self._colorize(msg, 'debug'), *args, **kwargs)
+
+	def error(self, msg, *args, **kwargs):
+		self.logger.error(self._colorize(msg, 'error'), *args, **kwargs)
+
+	def exception(self, msg, *args, **kwargs):
+		self.logger.exception(self._colorize(msg, 'exception'), *args, **kwargs)
+
+	def info(self, msg, *args, **kwargs):
+		self.logger.info(self._colorize(msg, 'info'), *args, **kwargs)
+
+	def warning(self, msg, *args, **kwargs):
+		self.logger.warning(self._colorize(msg, 'warning'), *args, **kwargs)
+
+	warn = warning

@@ -23,11 +23,19 @@ def main():
 
 			print("*\n*** Doing old-legacy import...\n*")
 			user_import = UserImport(school_name=ou_name, nr_students=3, nr_teachers=3, nr_staff=3, nr_teacher_staff=3)
+			for user in user_import.students:
+				user.legacy = True
+			for user in user_import.teachers:
+				user.legacy = True
+			for user in user_import.staff:
+				user.legacy = True
+			for user in user_import.teacher_staff:
+				user.legacy = True
 			print(user_import)
 			import_file = ImportFile(True, False)
 			import_file.cli_path = "/usr/share/ucs-school-import/scripts/ucs-school-import"
 			import_file.run_import(user_import)
-			user_import.verify(legacy=True)
+			user_import.verify()
 			# verify that users are not even migrated to 4.1R2 yet
 			all_users = user_import.staff + user_import.students + user_import.teachers + user_import.teacher_staff
 			for user in all_users:

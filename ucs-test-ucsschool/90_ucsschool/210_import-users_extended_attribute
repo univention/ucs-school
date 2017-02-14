@@ -65,8 +65,8 @@ class Test(CLI_Import_v2_Tester):
 					result[value_map.get(ext_attr_name, '__EMPTY__')] = self.extattr
 					return result
 
-				def expected_attributes(self, legacy=False):
-					result = Person.expected_attributes(self, legacy=False)
+				def expected_attributes(self):
+					result = Person.expected_attributes(self)
 					result['univentionFreeAttributes15'] = [self.extattr]
 
 			# create person with extended attribute (today)

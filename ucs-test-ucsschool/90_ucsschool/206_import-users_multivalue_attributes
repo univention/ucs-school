@@ -53,8 +53,8 @@ class Test(CLI_Import_v2_Tester):
 					result[value_map.get('mailAlternativeAddress', '__EMPTY__')] = self.mailAlternativeAddress
 					return result
 
-				def expected_attributes(self, legacy=False):
-					result = Person.expected_attributes(self, legacy=False)
+				def expected_attributes(self):
+					result = Person.expected_attributes(self)
 					result['mailAlternativeAddress'] = self.mailAlternativeAddress.split(',')
 
 			# create person with 3 alternative mail addresses

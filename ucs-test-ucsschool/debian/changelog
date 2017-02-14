@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-57) unstable; urgency=low
+
+  * Bug #41910: make 'legacy' an attribute
+  * add colored log output
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 14 Feb 2017 11:04:25 +0100
+
 ucs-test-ucsschool (3.0.17-56) unstable; urgency=low
 
   * Bug #41910: adapt derived classes to API change

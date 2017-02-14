@@ -60,6 +60,7 @@ class Person(object):
 		self.firstname = uts.random_name()
 		self.lastname = uts.random_name()
 		self.username = uts.random_name()
+		self.legacy = False
 		self.school = school
 		self.schools = [school]
 		self.role = role
@@ -242,17 +243,19 @@ class Person(object):
 	def is_teacher_staff(self):
 		return self.role in ('teacher_staff', 'teacher_and_staff')
 
-	def expected_attributes(self, legacy=False):
-		attr = {}
-		attr['uid'] = [self.username]
-		attr['givenName'] = [self.firstname]
-		attr['sn'] = [self.lastname]
-		if self.mail:
-			attr['mailPrimaryAddress'] = [self.mail]
-			attr['mail'] = [self.mail]
-		else:
-			attr['mailPrimaryAddress'] = []
-			attr['mail'] = []
+	def expected_attributes(self):
+		attr = dict(
+			departmentNumber=[self.school],
+			givenName=[self.firstname],
+			homeDirectory=[self.homedir],
+			krb5KDCFlags=['126'] if self.is_active() else ['254'],
+			mail=[self.mail] if self.mail else [],
+			mailPrimaryAddress=[self.mail] if self.mail else [],
+			sambaAcctFlags=['[U          ]'] if self.is_active() else ['[UD         ]'],
+			shadowExpire=[] if self.is_active() else ['1'],
+			sn=[self.lastname],
+			uid=[self.username],
+		)
 
 		if self.source_uid:
 			attr['ucsschoolSourceUID'] = [self.source_uid]
@@ -260,21 +263,8 @@ class Person(object):
 			attr['ucsschoolRecordUID'] = [self.record_uid]
 		if self.description:
 			attr['description'] = [self.description]
-
-		attr['homeDirectory'] = [self.homedir]
-
-		if self.is_active():
-			attr['krb5KDCFlags'] = ['126']
-			attr['sambaAcctFlags'] = ['[U          ]']
-			attr['shadowExpire'] = []
-		else:
-			attr['krb5KDCFlags'] = ['254']
-			attr['sambaAcctFlags'] = ['[UD         ]']
-			attr['shadowExpire'] = ['1']
-		if not legacy:
+		if not self.legacy:
 			attr['ucsschoolSchool'] = self.schools
-		attr['departmentNumber'] = [self.school]
-
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
 
@@ -326,7 +316,7 @@ class Person(object):
 
 		return server + '\\%USERNAME%\\windows-profiles\\default'
 
-	def verify(self, legacy=False):
+	def verify(self):
 		print 'verify person: %s' % self.username
 		utils.wait_for_replication()
 		# reload UCR
@@ -336,7 +326,7 @@ class Person(object):
 			utils.verify_ldap_object(self.dn, should_exist=False)
 			return
 
-		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(legacy), strict=True, should_exist=True)
+		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), strict=True, should_exist=True)
 
 		default_group_dn = 'cn=Domain Users %s,cn=groups,%s' % (self.school, self.school_base)
 		utils.verify_ldap_object(default_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
@@ -613,18 +603,18 @@ class UserImport:
 
 		return '\n'.join(lines)
 
-	def verify(self, legacy=False):
+	def verify(self):
 		for student in self.students:
-			student.verify(legacy)
+			student.verify()
 
 		for teacher in self.teachers:
-			teacher.verify(legacy)
+			teacher.verify()
 
 		for staff in self.staff:
-			staff.verify(legacy)
+			staff.verify()
 
 		for teacher_staff in self.teacher_staff:
-			teacher_staff.verify(legacy)
+			teacher_staff.verify()
 
 	def modify(self):
 		for student in self.students:
