@@ -54,8 +54,8 @@ class Test(CLI_Import_v2_Tester):
 					result[value_map.get('birthday', '__EMPTY__')] = self.birthday
 					return result
 
-				def expected_attributes(self):
-					result = Person.expected_attributes(self)
+				def expected_attributes(self, legacy=False):
+					result = Person.expected_attributes(self, legacy=False)
 					result['birthday'] = [self.birthday]
 
 			# create person with ISO birthday (today)
