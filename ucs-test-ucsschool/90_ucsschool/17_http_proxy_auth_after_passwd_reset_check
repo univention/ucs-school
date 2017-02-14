@@ -3,6 +3,7 @@
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## versions:
 ##  4.0-0: skip
+##  4.1-4: fixed
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-webproxy]
@@ -51,54 +52,57 @@ def authProxy(host, url, name, passwd, authTyp, expected_response):
 
 def main():
 	url = 'http://www.univention.de'
-	with ucr_test.UCSTestConfigRegistry() as ucr:
-		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
-		handler_set([
-			'squid/basicauth=yes',
-			'squid/basicauth/children=1',
-			'squid/ntlmauth=yes',
-			'squid/ntlmauth/children=1'
-		])
-		handler_unset(['squid/ntlmauth/keepalive'])
+	try:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
+			handler_set([
+				'squid/basicauth=yes',
+				'squid/basicauth/children=1',
+				'squid/ntlmauth=yes',
+				'squid/ntlmauth/children=1',
+				'squid/ntlmauth/cache/timeout=10',
+			])
+			handler_unset(['squid/ntlmauth/keepalive'])
+			subprocess.call(["/etc/init.d/squid3", "restart"])
+			with utu.UCSTestSchool() as schoolenv:
+				school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+				stu, studn = schoolenv.create_user(school)
+
+				print 'check student auth with initial state'
+				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 200)
+				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 200)
+
+				print "resetting student user password"
+				newpasswd = resetPasswd(host, studn, 'student', False)
+				utils.wait_for_replication_and_postrun()
+
+				print "check student auth with the old password"
+				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
+				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
+
+				print 'check student auth with the new password'
+				authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
+				authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
+
+				tea, teadn = schoolenv.create_user(school, is_teacher=True)
+
+				print 'check teacher auth with initial state'
+				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 200)
+				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 200)
+
+				print 'resetting teacher user password'
+				newpasswd = resetPasswd(host, teadn, 'teacher', False)
+				utils.wait_for_replication_and_postrun()
+
+				print 'check teacher auth with the old password'
+				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407)
+				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407)
+
+				print 'check teacher auth with the new password'
+				authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
+				authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
+	finally:
 		subprocess.call(["/etc/init.d/squid3", "restart"])
-		with utu.UCSTestSchool() as schoolenv:
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			stu, studn = schoolenv.create_user(school)
-
-			print 'check student auth with initial state'
-			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 200)
-			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 200)
-
-			print "resetting student user password"
-			newpasswd = resetPasswd(host, studn, 'student', False)
-			utils.wait_for_replication_and_postrun()
-
-			print "check student auth with the old password"
-			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
-			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
-
-			print 'check student auth with the new password'
-			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
-			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
-
-			tea, teadn = schoolenv.create_user(school, is_teacher=True)
-
-			print 'check teacher auth with initial state'
-			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 200)
-			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 200)
-
-			print 'resetting teacher user password'
-			newpasswd = resetPasswd(host, teadn, 'teacher', False)
-			utils.wait_for_replication_and_postrun()
-
-			print 'check teacher auth with the old password'
-			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407)
-			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407)
-
-			print 'check teacher auth with the new password'
-			authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
-			authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
-
 
 if __name__ == '__main__':
 	main()
