@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-computerroom
-fix: 8.0.15-2.210.201702061453
+fix: 8.0.15-3.211.201702141553
 desc: |
  * It is now possible to create web links pointing directly to the computer
    room screenshots (Bug #42356).
