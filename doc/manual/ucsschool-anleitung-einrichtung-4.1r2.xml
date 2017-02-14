@@ -1108,6 +1108,8 @@ feedback@univention.de
 					Nutzer ggf. mehr als ein Gerät mitbringen, z.B.  Laptop,
 					Smartphone und Tablet.
 				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_infrastructure_bandbreiten">
 				<title>Bandbreiten</title>
 				<para>
 					<emphasis>für Szenario 4</emphasis>
@@ -1122,9 +1124,9 @@ feedback@univention.de
 						<title>Grobe Richtwerte für die Anbindung nach Schultyp</title>
 							<tgroup cols="4">
 								<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
-								<colspec colnum="2" colname="range" colwidth="2*"/>
-								<colspec colnum="3" colname="number_of_ips" colwidth="0.5*"/>
-								<colspec colnum="4" colname="usage" colwidth="1.75*"/>
+								<colspec colnum="2" colname="range" colwidth="1*"/>
+								<colspec colnum="3" colname="number_of_ips" colwidth="2*"/>
+								<colspec colnum="4" colname="usage" colwidth="1*"/>
 							<thead>
 								<row>
 									<entry>Schultyp</entry>
