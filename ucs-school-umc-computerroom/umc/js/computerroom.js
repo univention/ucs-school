@@ -48,7 +48,6 @@ define([
 	"dojox/html/entities",
 	"umc/dialog",
 	"umc/tools",
-	"umc/app",
 	"umc/widgets/Grid",
 	"umc/widgets/Button",
 	"umc/widgets/Module",
@@ -62,7 +61,7 @@ define([
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
-            Dialog, Tooltip, styles, entities, dialog, tools, app, Grid, Button, Module, Page, Form,
+            Dialog, Tooltip, styles, entities, dialog, tools, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
@@ -886,7 +885,7 @@ define([
 				}
 
 				// read flavour from url
-				var flavour = ioQuery.queryToObject(window.location.search.substring(1))['flavour'] || '';
+				var flavour = ioQuery.queryToObject(window.location.search.substring(1)).flavour || '';
 				this.set('flavour', flavour);
 			}));
 		},
@@ -1299,9 +1298,9 @@ define([
 				}
 
 				// change to flavour only once
-				var flavour = this.get('flavour')
+				var flavour = this.get('flavour');
 				if (flavour === 'screenshot') {
-					 this._screenshot(null, this._grid.getAllItems())
+					 this._screenshot(null, this._grid.getAllItems());
 				}
 				this.set('flavour', null);
 

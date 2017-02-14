@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (8.0.15-3) unstable; urgency=medium
+
+  * Bug #42356: coding style + missing semicolon
+
+ -- Florian Best <best@univention.de>  Tue, 14 Feb 2017 15:52:44 +0100
+
 ucs-school-umc-computerroom (8.0.15-2) unstable; urgency=low
 
   * Bug #42356: add url flavour=screenshot to show screen view automatically
