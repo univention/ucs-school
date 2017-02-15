@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.31-1) unstable; urgency=low
+
+  * support automatic removal of secondary schools from User objects,
+    including removal of groups from removed school (Bug #41910)
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Feb 2017 09:33:21 +0100
+
 ucs-school-lib (9.0.30-1) unstable; urgency=medium
 
   * Bug #42399: adjust text

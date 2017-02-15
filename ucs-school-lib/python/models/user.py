@@ -258,6 +258,17 @@ class User(UCSSchoolHelperAbstractClass):
 	def do_modify(self, udm_obj, lo):
 		self.create_mail_domain(lo)
 		self.password = self.password or None
+
+		removed_schools = set(udm_obj['school']) - set(self.schools)
+		if removed_schools:
+			# change self.schools back, so schools can be removed by remove_from_school()
+			self.schools = udm_obj['school']
+		for removed_school in removed_schools:
+			logger.info('Removing %r from school %r...', self, removed_school)
+			if not self.remove_from_school(removed_school, lo):
+				logger.error('Error removing %r from school %r.', self, removed_school)
+				return False
+
 		mandatory_groups = self.groups_used(lo)
 		for group_dn in udm_obj['groups'][:]:
 			logger.debug('Checking group %s for removal', group_dn)
@@ -394,6 +405,7 @@ class User(UCSSchoolHelperAbstractClass):
 			logger.warning('User is not part of school %r. Not removing.', school)
 			return False
 		if not self.schools:
+			logger.warning('User %r not part of any school, removing it.', self)
 			return self.remove(lo)
 		if self.school == school:
 			if not self.change_school(self.schools[0], lo):
@@ -401,7 +413,7 @@ class User(UCSSchoolHelperAbstractClass):
 		else:
 			self.remove_from_groups_of_school(school, lo)
 		self.school_classes.pop(school, None)
-		return self.modify(lo)
+		return True
 
 	def remove_from_groups_of_school(self, school, lo):
 		for cls in (SchoolClass, WorkGroup, SchoolGroup):
@@ -411,7 +423,7 @@ class User(UCSSchoolHelperAbstractClass):
 				except ValueError:
 					pass
 				else:
-					logger.info('Removing %r from group %r of old school.', self.dn, group.dn)
+					logger.info('Removing %r from group %r of school %r.', self.dn, group.dn, school)
 					group.modify(lo)
 
 	def get_group_dn(self, group_name, school):

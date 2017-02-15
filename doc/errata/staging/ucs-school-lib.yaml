@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-lib
+fix: 
+desc: |
+    * Add support for complete removal of a ou-overlapping user from a
+      secondary school, including removal of all groups (Bug #41910).
+bug: [41910]
