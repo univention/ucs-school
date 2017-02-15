@@ -1,19 +1,34 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Test moving a user from ou_A to ou_B (Bug #41609)
+## desc: Test moving a user from ou_A to ou_B
 ## tags: [apptest,ucsschool,skip_in_multiserver,ucsschool_import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [41609]
+## bugs: [41609, 41910]
 
 import copy
 import pprint
 import ldap.filter
+from ucsschool.lib.models import SchoolClass, User, WorkGroup as LibWorkGroup
 import univention.testing.strings as uts
+from univention.testing.ucs_samba import wait_for_drs_replication
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
+from essential.importou import get_school_base
+from essential.workgroup import Workgroup
+
+
+class PersonWithSchool(Person):
+	def map_to_dict(self, value_map):
+		result = super(PersonWithSchool, self).map_to_dict(value_map)
+		result[value_map.get('school', '__EMPTY__')] = self.school
+		try:
+			del result['__EMPTY__']
+		except KeyError:
+			pass
+		return result
 
 
 class Test(CLI_Import_v2_Tester):
@@ -26,96 +41,148 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Test moving a user from ou_A to ou_B (Bug #41609).
 		"""
+		self.log.info('*** school A=%r school B=%r' % (self.ou_A.name, self.ou_B.name))
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			self.log.info('*** Importing a new single user with role %r and change school afterwards', role)
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 
 			config = copy.deepcopy(self.default_config)
-			config.update_entry('sourceUID', source_uid)
 			config.update_entry('csv:mapping:Benutzername', 'username')
 			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('csv:mapping:school', 'school')
 			config.update_entry('scheme:recordUID', '<username>')
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('user_role', role)
 
-			print('**** 1.1 create person in school A (%r)' % (self.ou_A.name,))
-			person = Person(self.ou_A.name, role)
+			self.log.info('**** 1.1 create %r in school A (%r)', role, self.ou_A.name)
+			person = PersonWithSchool(self.ou_A.name, role)
 			person.update(record_uid=person.username, source_uid=source_uid, school_classes={})
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
-
+			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
 			self.log_person_infos(person)
 			person.verify()
+			self.verify_exact_schoolgroup_membership(person)
 
-			print('**** 1.2 move person to school B (%r)' % (self.ou_B.name,))
+			self.log.info('**** 1.2 move %r to school B (%r)', role, self.ou_B.name)
 			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
-
-			userlist = self.lo.searchDn(ldap.filter.filter_format('uid=%s', (person.username,)))
-			if len(userlist) != 1:
-				self.log.error('Invalid number of user objects for user %r! Found new objects: %r', person.username, userlist)
-				self.fail('Stopping here')
-
-			person.update(dn=userlist[0])
+			userlist = self.uid_to_dn(person.username)
+			person.update(dn=userlist)
+			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
 			self.log_person_infos(person)
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
+			self.verify_exact_schoolgroup_membership(person)
 
-			print('**** 2.1 Add person to a 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)' % (
-				self.ou_B.name, self.ou_A.name, self.ou_B.name))
+			self.log.info(
+				'**** 2.1 Add %r to a 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)',
+				role, self.ou_B.name, self.ou_A.name, self.ou_B.name)
 			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				self.log.info('**** 2.1.1 Creating a school_class for %s...', role)
+				class_A_dn, class_A_name = self.udm.create_group(
+					position=SchoolClass.get_container(self.ou_A.name),
+					name="{}-{}".format(self.ou_A.name, uts.random_groupname()))
+				person.school_classes.setdefault(self.ou_A.name, []).append(class_A_name)
+			else:
+				self.log.info('**** 2.1.1 No school_class for staff...')
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
+			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
 
 			self.log_person_infos(person)
 			person.verify()
+			self.verify_exact_schoolgroup_membership(person)
 
-			print('**** 2.2 remove person from 2nd school (A) -> school=B (%r), schools=[B] (%r)' % (
-				self.ou_B.name, self.ou_B.name))
+			self.log.info(
+				'**** 2.1.2 Add %r to a workgroup in 2nd school (A)', role)
+			wg = Workgroup(self.ou_A.name, ulConnection=self.lo, ucr=self.ucr, members=[person.dn])
+			wg.create()
+			self.log_person_infos(person)
+			self.verify_exact_schoolgroup_membership(person)
+
+			self.log.info(
+				'**** 2.2 remove %r from 2nd school (A) -> school=B (%r), schools=[B] (%r)',
+				role, self.ou_B.name, self.ou_B.name)
 			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				person.school_classes.pop(self.ou_A.name, [])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
+			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
 
 			self.log_person_infos(person)
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
+			self.verify_exact_schoolgroup_membership(person)
 
-			print('**** 3.1 (Re)Add person to 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)' % (
-				self.ou_B.name, self.ou_A.name, self.ou_B.name))
+			self.log.info(
+				'**** 3.1 (Re)Add %r to 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)',
+				role, self.ou_B.name, self.ou_A.name, self.ou_B.name)
 			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
+			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
 
 			self.log_person_infos(person)
 			person.verify()
+			self.verify_exact_schoolgroup_membership(person)
 
-			print('**** 3.2 remove person from primary school (B) -> school=A (%r), schools=[A] (%r)' % (
-				self.ou_A.name, self.ou_A.name))
+			self.log.info(
+				'**** 3.2 remove %r from primary school (B) -> school=A (%r), schools=[A] (%r)',
+				role, self.ou_A.name, self.ou_A.name)
 			person.update(school=self.ou_A.name, schools=[self.ou_A.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
-			person.update(dn=self.lo.searchDn(ldap.filter.filter_format('uid=%s', (person.username,)))[0])
+			person.update(dn=self.uid_to_dn(person.username))
+			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
 			self.log_person_infos(person)
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_B.name)
+			self.verify_exact_schoolgroup_membership(person)
+
+	def get_group_membership(self, dn):
+		return self.lo.searchDn(ldap.filter.filter_format('uniqueMember=%s', (dn,)))
+
+	def uid_to_dn(self, uid):
+		userlist = self.lo.searchDn(ldap.filter.filter_format('uid=%s', (uid,)))
+		if len(userlist) != 1:
+			self.fail('Invalid number of user objects for uid %r! Found new objects: %r' % (uid, userlist))
+		return userlist[0]
 
 	def log_person_infos(self, person):
 		self.log.warn('User object %r:\n%s', person.dn, pprint.pformat(self.lo.get(person.dn), indent=2))
-		self.log.warn('Membership: %s', pprint.pformat(self.lo.searchDn(ldap.filter.filter_format('uniqueMember=%s', [person.dn])), indent=2))
+		self.log.info('Membership: %s', pprint.pformat(self.get_group_membership(person.dn), indent=2))
 
 	def verify_removed_schoolgroup_membership(self, person, school_removed_from):
-		groups = self.lo.searchDn(ldap.filter.filter_format('uniqueMember=%s', [person.dn]))
-		if any(school_removed_from in g for g in groups):
-			print('FAIL: ', school_removed_from, 'still in', groups)
-			# TODO: Bug #41910 actually fail here!
+		groups = self.get_group_membership(person.dn)
+		ou_dn = get_school_base(school_removed_from)
+		if any(g.endswith(ou_dn) for g in groups):
+			self.fail('User still has groups from OU %r: %r' % (school_removed_from, groups))
+		else:
+			self.log.info('*** OK: User is in no groups from school %r anymore.', school_removed_from)
+
+	def verify_exact_schoolgroup_membership(self, person):
+		user = User.from_dn(person.dn, person.school, self.lo)
+		expected_groups = set(user.get_specific_groups(self.lo))
+		for school in person.schools:
+			workgroups = LibWorkGroup.get_all(self.lo, school, ldap.filter.filter_format('uniqueMember=%s', (person.dn,)))
+			expected_groups.update(set(wg.dn for wg in workgroups))
+		membership = set(self.get_group_membership(person.dn))
+		if expected_groups != membership:
+			self.fail('Group membership not like expected:\nexpected groups=%r\nfound membership=%r' % (
+				expected_groups, membership))
+		else:
+			self.log.info('*** OK: Users group membership is as expected.')
 
 
 def main():

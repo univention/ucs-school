@@ -335,10 +335,11 @@ class CLI_Import_v2_Tester(object):
 		Print package versions, traceback and error message.
 		"""
 		apt_cache = AptCache()
-		res = "{}\n{}\n{}{}\nInstalled package versions:".format(msg, "-" * 40, "".join(traceback.format_stack()), "-" * 40)
+		self.log.error('\n%s\n%s%s', '=' * 79, ''.join(traceback.format_stack()), '=' * 79)
+		self.log.info('Installed package versions:')
 		for pck in ["ucs-test-ucsschool", "python-ucs-school", "ucs-school-import"]:
-			res += "\n{:<20} {}".format(pck, apt_cache[pck].installed.version if apt_cache[pck].is_installed else "Not installed")
-		utils.fail(res, returncode)
+			self.log.info('{:<20} {}'.format(pck, apt_cache[pck].installed.version if apt_cache[pck].is_installed else 'Not installed'))
+		utils.fail(msg, returncode)
 
 	def run(self):
 		try:

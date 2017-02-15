@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.17-59) unstable; urgency=low
+
+  * Bug #41910: modify 207_import-users_school_change to check group
+    membership when adding and removing schools to/from a user
+  * adapt 132_remove-old-homedirs to API change of User.remove_from_school()
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Feb 2017 11:32:39 +0100
+
 ucs-test-ucsschool (3.0.17-58) unstable; urgency=low
 
   * Bug #34206: reenabled test 17_http_proxy_auth_after_passwd_reset_check

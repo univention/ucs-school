@@ -115,6 +115,7 @@ class Test(CLI_Import_v2_Tester):
 				homedir2)
 			wait_for_drs_replication('cn={}'.format(escape_filter_chars(username2)))
 			user2.remove_from_school(self.ou_A.name, self.lo)
+			user2.modify(self.lo)
 			utils.wait_for_replication_and_postrun()
 			if os.path.exists(homedir2):
 				utils.fail('Homedir 2 %r was not removed.' % homedir2)

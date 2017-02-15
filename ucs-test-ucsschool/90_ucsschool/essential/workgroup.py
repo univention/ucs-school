@@ -15,7 +15,7 @@ from univention.testing.umc2 import Client
 
 class Workgroup(object):
 
-	"""Contains the needed functuality for workgroups in an already created OU,
+	"""Contains the needed functionality for workgroups in an already created OU,
 	By default they are randomly formed except the OU, should be provided\n
 	:param school: name of the ou
 	:type school: str
