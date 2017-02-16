@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (8.0.0-15) unstable; urgency=low
+
+  * Bug #43170: fix removal of users from secondary OUs
+  * Bug #41910: adapt to change in User.remove_from_school()
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 16 Feb 2017 16:01:20 +0100
+
 ucs-school-umc-wizards (8.0.0-14) unstable; urgency=medium
 
   * Bug #41229: adjust translation

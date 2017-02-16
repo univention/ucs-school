@@ -286,7 +286,15 @@ class Instance(SchoolBaseModule, SchoolImport):
 		ret = []
 		for i, obj in enumerate(iter_objects_in_request(request, ldap_user_write, True)):
 			school = request.options[i]['object']['school']
+			if request.options[i]['object']['$dn$'] != obj.dn and request.options[i]['object']['$dn$'] == obj.old_dn:
+				# Bug #43170: the users DN didn't change: iter_objects_in_request() is not ou-overlapping-users aware
+				# 'obj.school' can be wrong in case of a User, resulting in the wrong DN and 'school' attribute
+				user_ = obj.from_dn(request.options[i]['object']['$dn$'], None, ldap_user_write)
+				obj.school = user_.school
+				obj.position = user_.position
 			success = obj.remove_from_school(school, ldap_user_write)
+			if success:
+				success = obj.modify(ldap_user_write)
 			if not success:
 				success = {'result': {'message': _('Failed to remove user from school.')}}
 			ret.append(success)
