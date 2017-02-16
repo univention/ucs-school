@@ -5,6 +5,7 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
 fix: 9.0.31-1.275.201702151147
 desc: |
-    * Add support for complete removal of a ou-overlapping user from a
-      secondary school, including removal of all groups (Bug #41910).
-bug: [41910]
+ * Add support for complete removal of a ou-overlapping user from a
+   secondary school, including removal of all groups (Bug #41910).
+ * Adjust UMC wizard to behavioral change in UCS@school lib (Bug #43170).
+bug: [41910, 43170]
