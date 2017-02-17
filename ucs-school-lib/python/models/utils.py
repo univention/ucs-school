@@ -294,7 +294,7 @@ def stopped_notifier(strict=True):
 	logger.warning('Stopping %s', service_name)
 	for process in process_iter():
 		try:
-			if process.name == service_name:
+			if process.name() == service_name:
 				notifier_running = True
 				break
 		except (IOError, NoSuchProcess):
