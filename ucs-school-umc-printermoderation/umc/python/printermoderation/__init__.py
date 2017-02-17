@@ -41,9 +41,8 @@ import cups
 from univention.lib.i18n import Translation
 
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
-from univention.management.console.modules.decorators import require_password
+from univention.management.console.modules.decorators import sanitize, simple_response, require_password, allow_get, prevent_xsrf_check, prevent_referer_check
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
@@ -151,6 +150,9 @@ class Instance(SchoolBaseModule):
 
 		self.finished(request.id, printjoblist)
 
+	@allow_get
+	@prevent_referer_check
+	@prevent_xsrf_check
 	@sanitize(
 		username=StringSanitizer(required=True),
 		printjob=StringSanitizer(required=True),
