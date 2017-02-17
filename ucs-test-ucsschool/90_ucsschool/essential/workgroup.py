@@ -8,9 +8,9 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap as uu
-from univention.testing.umc2 import HTTPError
+from univention.testing.umc import HTTPError
 from univention.testing.ucsschool import UCSTestSchool
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 
 
 class Workgroup(object):

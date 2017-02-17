@@ -7,7 +7,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 from univention.testing.ucs_samba import wait_for_s4connector
 import glob
 import os

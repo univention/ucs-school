@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.0-1) unstable; urgency=medium
+
+  * Bug #43389: use univention.lib.umc.Client
+
+ -- Florian Best <best@univention.de>  Fri, 17 Feb 2017 10:27:51 +0100
+
 ucs-test-ucsschool (3.0.17-59) unstable; urgency=low
 
   * Bug #41910: modify 207_import-users_school_change to check group
@@ -77,7 +83,7 @@ ucs-test-ucsschool (3.0.17-49) unstable; urgency=medium
 
 ucs-test-ucsschool (3.0.17-48) unstable; urgency=medium
 
-  * Bug #43389: use univention.lib.umc_connection
+  * Bug #43389: use univention.lib.umc.Client
 
  -- Florian Best <best@univention.de>  Mon, 23 Jan 2017 20:08:04 +0100
 

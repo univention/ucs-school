@@ -12,7 +12,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 from univention.config_registry import handler_set
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 from univention.testing.mail import MailSink
 from univention.testing.network import NetworkRedirector
 

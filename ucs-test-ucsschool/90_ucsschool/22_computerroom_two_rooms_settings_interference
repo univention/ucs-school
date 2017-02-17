@@ -11,14 +11,14 @@
 from essential.computerroom import Room, Computers, add_printer, remove_printer, clean_folder
 from essential.internetrule import InternetRule
 from essential.workgroup import Workgroup
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 from univention.testing.network import NetworkRedirector
 import datetime
 import itertools
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-from univention.testing.umc2 import ConnectorError
+from univention.testing.umc import ConnectorError
 
 
 def print_header(i, room1_rule, room1_printmode, room1_sharemode, j, room2_rule, room2_printmode, room2_sharemode):

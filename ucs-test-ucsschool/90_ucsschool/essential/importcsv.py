@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import univention.testing.ucr as ucr_test
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 import tempfile
 from pprint import pprint
 from essential.user import User
-from univention.testing.umc2 import HTTPError
+from univention.testing.umc import HTTPError
 
 
 class FailHTTPStatus(Exception):

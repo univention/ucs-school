@@ -8,7 +8,7 @@ All the operations related to internet rules
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 from .randomdomain import RandomDomain
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 import random
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test

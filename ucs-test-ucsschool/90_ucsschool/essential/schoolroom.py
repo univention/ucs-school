@@ -1,4 +1,4 @@
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu

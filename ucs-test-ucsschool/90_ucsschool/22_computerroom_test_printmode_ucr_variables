@@ -8,7 +8,7 @@
 
 
 from essential.computerroom import Room, Computers, add_printer
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 import datetime
 from univention.testing import utils
 import univention.testing.strings as uts

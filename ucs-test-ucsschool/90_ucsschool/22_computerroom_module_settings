@@ -10,7 +10,7 @@ from essential.computerroom import Room, Computers
 from univention.testing.network import NetworkRedirector
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 
 
 def main():

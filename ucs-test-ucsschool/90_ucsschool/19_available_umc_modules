@@ -10,7 +10,7 @@ import univention.testing.ucsschool as utu
 import univention.testing.udm as udm_test
 import univention.testing.utils as utils
 
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 
 
 def listUnion(firstList, secondList):

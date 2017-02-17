@@ -6,11 +6,11 @@ from subprocess import Popen, PIPE
 
 from ucsschool.lib import schoolldap
 from univention.testing import utils
-from univention.testing.umc2 import ConnectionError, HTTPError
+from univention.testing.umc import ConnectionError, HTTPError
 
 from univention.testing.codes import TestCodes
 from univention.config_registry import ConfigRegistry
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 
 
 class TestSamba4(object):

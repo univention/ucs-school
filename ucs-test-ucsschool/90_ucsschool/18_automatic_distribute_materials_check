@@ -9,7 +9,7 @@ from essential.distribution import Distribution
 from essential.workgroup import Workgroup
 from subprocess import call
 from univention.config_registry import handler_set
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 import time
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu

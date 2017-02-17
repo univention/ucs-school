@@ -5,7 +5,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 import univention.testing.utils as utils
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
 from essential.importusers import Person
 

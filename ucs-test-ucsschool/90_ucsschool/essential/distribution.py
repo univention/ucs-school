@@ -7,7 +7,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.testing.umc2 import Client
+from univention.testing.umc import Client
 import os
 import time
 import univention.testing.strings as uts
