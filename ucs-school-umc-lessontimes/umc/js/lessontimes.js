@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/topic",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Form",
@@ -41,7 +42,7 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/TimeBox",
 	"umc/i18n!umc/modules/lessontimes"
-], function(declare, lang, topic, dialog, ContainerWidget, Form, Module, Page, MultiInput, TextBox, TimeBox, _) {
+], function(declare, lang, topic, entities, dialog, ContainerWidget, Form, Module, Page, MultiInput, TextBox, TimeBox, _) {
 
 	return declare("umc.modules.lessontimes", [ Module ], {
 
@@ -137,7 +138,7 @@ define([
 		onSubmit: function(values) {
 			this.standbyDuring(this.umcpCommand('lessontimes/set', values)).then(lang.hitch(this, function(response) {
 				if (response.result.message) {
-					dialog.alert(response.result.message);
+					dialog.alert(entities.encode(response.result.message));
 				}
 			}));
 		}

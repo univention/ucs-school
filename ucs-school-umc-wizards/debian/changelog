@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.0-1) unstable; urgency=medium
+
+  * Bug #42408: fix Cross Site Scripting (XSS) vulnerabilities
+
+ -- Florian Best <best@univention.de>  Fri, 17 Feb 2017 11:51:19 +0100
+
 ucs-school-umc-wizards (8.0.0-15) unstable; urgency=low
 
   * Bug #43170: fix removal of users from secondary OUs

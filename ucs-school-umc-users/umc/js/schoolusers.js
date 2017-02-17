@@ -35,6 +35,7 @@ define([
 	"dojo/date/locale",
 	"dojo/Deferred",
 	"dijit/Dialog",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Module",
@@ -50,7 +51,7 @@ define([
 	"umc/widgets/ProgressInfo",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/schoolusers"
-], function(declare, lang, array, locale, Deferred, Dialog, dialog, tools, Module, ExpandingTitlePane,
+], function(declare, lang, array, locale, Deferred, Dialog, entities, dialog, tools, Module, ExpandingTitlePane,
             Grid, Page, Form, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 
 	return declare("umc.modules.schoolusers", [ Module ], {
@@ -85,27 +86,13 @@ define([
 			this.standbyOpacity = 1;
 			this.standby( true );
 
-
-			// render the page containing search form and grid
-			this.renderSearchPage();
-		},
-
-		renderSearchPage: function(containers, superordinates) {
 			// render all GUI elements for the search formular and the grid
-
 			this._searchPage = new Page({
 				headerText: this.description,
 				helpText: ''
 			});
 
 			this.addChild(this._searchPage);
-
-			// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-			var titlePane = new ExpandingTitlePane({
-				title: _('Search results')
-			});
-			this._searchPage.addChild(titlePane);
-
 
 			//
 			// data grid
@@ -149,7 +136,7 @@ define([
 			});
 
 			// add the grid to the title pane
-			titlePane.addChild(this._grid);
+			this._searchPage.addChild(this._grid);
 
 
 			//
@@ -215,7 +202,7 @@ define([
 			});
 
 			// add search form to the title pane
-			titlePane.addChild(this._searchForm);
+			this._searchPage.addChild(this._searchForm);
 
 			// setup a progress bar with some info text
 			this._progressInfo = new ProgressInfo( {
@@ -254,7 +241,7 @@ define([
 						style: 'max-height: 500px'
 					} );
 					array.forEach( errors, function( item ) {
-						message += '<li>' + item.name + '<br>' + item.message + '</li>';
+						message += '<li>' + entities.encode(item.name) + '<br>' + entities.encode(item.message) + '</li>';
 					} );
 					message += '</ul>';
 					_content.addChild( new Text( { content: message } ) );
@@ -278,7 +265,7 @@ define([
 							newPassword: password,
 							nextLogin: nextLogin
 						} ).then( function( response ) {
-							if ( typeof  response.result  == "string" ) {
+							if ( typeof  response.result  === "string" ) {
 								errors.push( { name: item.name, message: response.result } );
 							}
 						} );

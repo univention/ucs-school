@@ -36,6 +36,7 @@ define([
 	"dojo/topic",
 	"dojo/query",
 	"dojo/aspect",
+	"dojox/html/entities",
 	"umc/tools",
 	"umc/dialog",
 	"umc/store",
@@ -46,7 +47,7 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, query, aspect, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
+], function(declare, lang, array, topic, query, aspect, entities, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
 
 	return declare("umc.modules.schoolwizards.Grid", [Page, StandbyMixin], {
 
@@ -80,7 +81,7 @@ define([
 			var widget = this._searchForm.getWidget('school');
 			if (widget) {
 				var val = widget.get('value');
-				if (val == '/') {
+				if (val === '/') {
 					val = '';
 				}
 				return val;
@@ -91,7 +92,7 @@ define([
 			var widget = this._searchForm.getWidget('type');
 			if (widget) {
 				var val = widget.get('value');
-				if (val == 'all') {
+				if (val === 'all') {
 					val = '';
 				}
 				return val;
@@ -204,7 +205,7 @@ define([
 			};
 			if (0 === nItemsTotal) {
 				return _('No %(objPlural)s could be found', map);
-			} else if (1 == nItems) {
+			} else if (1 === nItems) {
 				return _('%(nSelected)d %(objSingular)s of %(nTotal)d selected', map);
 			} else {
 				return _('%(nSelected)d %(objPlural)s of %(nTotal)d selected', map);
@@ -243,7 +244,7 @@ define([
 								'default': true,
 								label: _('Create')
 							}], title).then(lang.hitch(this, function(response) {
-								if (response == 'add') {
+								if (response === 'add') {
 									this.createObject();
 								}
 							}));
@@ -331,7 +332,7 @@ define([
 
 		getDeleteConfirmMessage: function(objects) {
 			var msg = _('Please confirm to delete the %(num)d selected %(objectNamePlural)s.', {num: objects.length, objectNamePlural: this.objectNamePlural});
-			if (objects.length == 1) {
+			if (objects.length === 1) {
 				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s".', {objectNameSingular: this.objectNameSingular, objectName: this.getObjectIdName(objects[0])});
 			}
 			return msg;
@@ -347,7 +348,7 @@ define([
 				name: 'delete',
 				label: _('Delete')
 			}]).then(lang.hitch(this, function(response) {
-				if (response == 'delete') {
+				if (response === 'delete') {
 					this.deleteObjects(ids, objects);
 				}
 			}));
@@ -370,7 +371,7 @@ define([
 						}
 					});
 					if (errorMessages.length) {
-						dialog.alert(errorMessages.join(' '));
+						dialog.alert(entities.encode(errorMessages.join(' ')));
 						return false;
 					}
 					return true;

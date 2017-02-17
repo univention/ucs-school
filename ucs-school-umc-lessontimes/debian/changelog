@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (5.0.0-1) unstable; urgency=medium
+
+  * Bug #42408: fix Cross Site Scripting (XSS) vulnerabilities
+
+ -- Florian Best <best@univention.de>  Fri, 17 Feb 2017 11:49:46 +0100
+
 ucs-school-umc-lessontimes (4.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development

@@ -35,7 +35,7 @@ define([
 	"dojo/topic",
 	"dojo/Deferred",
 	"dojo/when",
-	"umc/app",
+	"dojox/html/entities",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/ComboBox",
@@ -48,7 +48,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/modules/lib/server",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, array, topic, Deferred, when, app, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
+], function(declare, lang, array, topic, Deferred, when, entities, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
@@ -266,10 +266,10 @@ define([
 					type: Text,
 					name: 'info',
 					content: (function() {
-						var classLink = app.linkToModule('schoolwizards', 'schoolwizards/classes');
-						var userLink = app.linkToModule('schoolwizards', 'schoolwizards/users');
-						var groupLink = app.linkToModule('schoolgroups', 'class');
-						var workgroupLink = app.linkToModule('schoolgroups', 'workgroup-admin');
+						var classLink = tools.linkToModule({module: 'schoolwizards', flavor: 'schoolwizards/classes'});
+						var userLink = tools.linkToModule({module: 'schoolwizards', flavor: 'schoolwizards/users'});
+						var groupLink = tools.linkToModule({module: 'schoolgroups', flavor: 'class'});
+						var workgroupLink = tools.linkToModule({module: 'schoolgroups', flavor: 'workgroup-admin'});
 
 						if (!(classLink || userLink || groupLink || workgroupLink)) {
 							return '';
@@ -577,7 +577,7 @@ define([
 					);
 					return deferred;
 				}), lang.hitch(this, function(error) {
-					this.getWidget('error', 'info').set('content', tools.parseError(error).message);
+					this.getWidget('error', 'info').set('content', entities.encode(tools.parseError(error).message));
 					return 'error';
 				}));
 			}));

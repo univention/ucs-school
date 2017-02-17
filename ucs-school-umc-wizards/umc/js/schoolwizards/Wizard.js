@@ -35,13 +35,14 @@ define([
 	"dojo/_base/array",
 	"dojo/when",
 	"dojo/promise/all",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/app",
 	"umc/tools",
 	"umc/widgets/Wizard",
 	"umc/widgets/ComboBox",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, when, all, dialog, UMCApplication, tools, Wizard, ComboBox, _) {
+], function(declare, lang, array, when, all, entities, dialog, app, tools, Wizard, ComboBox, _) {
 
 	return declare("umc.modules.schoolwizards.Wizard", [Wizard], {
 
@@ -74,7 +75,7 @@ define([
 		},
 
 		addUDMLink: function(page) {
-			if (this.udmLinkEnabled && this.editMode && this.objectType && UMCApplication.getModule('udm', 'navigation')) {
+			if (this.udmLinkEnabled && this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
 				var buttons = page.buttons;
 				if (!buttons) {
 					buttons = page.buttons = [];
@@ -83,7 +84,7 @@ define([
 					name: 'udm_link',
 					label: _('Advanced settings'),
 					callback: lang.hitch(this, function() {
-						UMCApplication.openModule('udm', 'navigation', {openObject: {objectType: this.objectType, objectDN: this.$dn$}});
+						app.openModule('udm', 'navigation', {openObject: {objectType: this.objectType, objectDN: this.$dn$}});
 						this.onFinished();  // close this wizard
 					})
 				});
@@ -179,7 +180,7 @@ define([
 				// seems not appropriate to set header to:
 				// School: Create new Teacher although you can still
 				// change it
-				if (page.name != 'general') {
+				if (page.name !== 'general') {
 					page.set('headerText', header);
 				}
 			});
@@ -261,7 +262,7 @@ define([
 			values.school = this.school;
 			return this.standbyDuring(this.store.put(values)).then(lang.hitch(this, function(response) {
 				if (response.result) {
-					dialog.alert(response.result.message);
+					dialog.alert(entities.encode(response.result.message));
 				} else {
 					this.onFinished();  // close this wizard
 				}
@@ -273,7 +274,7 @@ define([
 			var buttons = this.inherited(arguments);
 			if (this._getPageIndex(pageName) === (this.pages.length - 1)) {
 				array.forEach(buttons, lang.hitch(this, function(button) {
-					if (button.name == 'next') {
+					if (button.name === 'next') {
 						button.label = _('Save');
 					}
 				}));
@@ -296,7 +297,7 @@ define([
 			return this.standbyDuring(this.store.add(values)).then(
 				function(response) {
 					if (response.result) {
-						dialog.alert(response.result.message);
+						dialog.alert(entities.encode(response.result.message));
 						return false;
 					}
 					return true;

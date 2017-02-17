@@ -1,3 +1,9 @@
+ucs-school-umc-users (13.0.0-1) unstable; urgency=medium
+
+  * Bug #42408: fix Cross Site Scripting (XSS) vulnerabilities
+
+ -- Florian Best <best@univention.de>  Fri, 17 Feb 2017 11:50:59 +0100
+
 ucs-school-umc-users (12.0.2-1) unstable; urgency=medium
 
   * Bug #42399: use SchoolSanitizer
