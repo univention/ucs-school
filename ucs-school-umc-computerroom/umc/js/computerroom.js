@@ -38,8 +38,8 @@ define([
 	"dojo/dom-class",
 	"dojo/Deferred",
 	"dojo/data/ItemFileWriteStore",
+	"dojo/store/Observable",
 	"dojo/store/DataStore",
-	"dojo/store/Memory",
 	"dojo/promise/all",
 	"dijit/ProgressBar",
 	"dijit/Dialog",
@@ -60,7 +60,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
+], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, ItemFileWriteStore, Observable, DataStore, all, DijitProgressBar,
             Dialog, Tooltip, styles, entities, dialog, tools, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -71,13 +71,13 @@ define([
 	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
 	styles.insertCssRule('.umcRedColor, .umcRedColor .dijitButtonText', 'color: red!important;');
 
-	var isConnected = function(item) { return item.connection[0] === 'connected'; };
-	var isUCC = function(item) { return item.objectType[0] === 'computers/ucc'; };
+	var isConnected = function(item) { return item.connection === 'connected'; };
+	var isUCC = function(item) { return item.objectType === 'computers/ucc'; };
 	var filterUCC = function(items) { return array.filter(items, function(item) { return !isUCC(item); }); };
 	var alert_UCC_unavailable = function(items) {
 		var clients = array.filter(items, lang.clone(isUCC));
 		if (clients.length) {
-			dialog.alert(_('The action is unavailable for UCC computers.<br>The following computers will be omitted: %s', array.map(clients, function(comp) { return comp.id[0]; }).join(', ')));
+			dialog.alert(_('The action is unavailable for UCC computers.<br>The following computers will be omitted: %s', array.map(clients, function(comp) { return comp.id; }).join(', ')));
 		}
 	};
 
@@ -225,7 +225,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('logout', function(item) {
-					return isConnected(item) && item.user[0];
+					return isConnected(item) && item.user;
 				}),
 				callback: lang.hitch(this, '_logout')
 			}, {
@@ -245,7 +245,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('computerStart', function(item) {
-					return (item.connection[0] === 'disconnected' || item.connection[0] === 'error' || item.connection[0] === 'autherror' || item.connection[0] === 'offline') && item.mac[0];
+					return (item.connection === 'disconnected' || item.connection === 'error' || item.connection === 'autherror' || item.connection === 'offline') && item.mac;
 				}),
 				callback: lang.hitch(this, '_computerStart')
 			}, {
@@ -284,7 +284,7 @@ define([
 				isContextAction: true,
 				isMultiAction: false,
 				canExecute: checkUCC('demoStart', function(item) {
-					return isConnected(item) && item.user[0] && item.DemoServer[0] !== true;
+					return isConnected(item) && item.user && item.DemoServer !== true;
 				}),
 				callback: lang.hitch(this, '_demoStart')
 			}, {
@@ -333,7 +333,7 @@ define([
 			array.forEach(items, function(item) {
 				this.umcpCommand('computerroom/plugins/execute', {
 					plugin: plugin.name,
-					computer: item.id[0]
+					computer: item.id
 				});
 			}, this);
 			if (plugin.state_message) {
@@ -357,8 +357,8 @@ define([
 				return isConnected(item) && !isUCC(item);
 			}), function(item) {
 				return {
-					computer: item.id[0],
-					username: item.user[0]
+					computer: item.id,
+					username: item.user
 				};
 			}));
 		},
@@ -370,7 +370,7 @@ define([
 				return;
 			}
 			array.forEach(items, lang.hitch(this, function(comp) {
-				this.umcpCommand('computerroom/user/logout', { computer: comp.id[0] });
+				this.umcpCommand('computerroom/user/logout', { computer: comp.id });
 			}));
 
 			this.addNotification(_('The selected users are logging off.'));
@@ -384,7 +384,7 @@ define([
 			}
 			array.forEach(items, lang.hitch(this, function(comp) {
 				this.umcpCommand('computerroom/computer/state', {
-					computer: comp.id[0],
+					computer: comp.id,
 					state: state
 				});
 			}));
@@ -400,13 +400,13 @@ define([
 
 		_computerStart: function(ids, items) {
 			array.forEach(items, lang.hitch(this, function(comp, i) {
-				if (comp.connection && comp.connection[0] === 'connected') {
+				if (comp.connection && comp.connection === 'connected') {
 					return; // computer is already turned on
 				}
 				// wait 300ms between every wake up to not cause an power breakdown
 				window.setTimeout(lang.hitch(this, function() {
 					this.umcpCommand('computerroom/computer/state', {
-						computer: comp.id[0],
+						computer: comp.id,
 						state: 'poweron'
 					});
 				}), 300*i);
@@ -415,30 +415,30 @@ define([
 		},
 
 		_demoStart: function(ids, items) {
-			if (isUCC(items[0])) {
+			if (isUCC(items)) {
 				dialog.alert(_("UCC clients can not serve presentations."));
 				return;
 			}
-			this.umcpCommand('computerroom/demo/start', { server: items[0].id[0] });
+			this.umcpCommand('computerroom/demo/start', { server: items.id });
 			dialog.alert(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation."), _('Presentation'));
 		},
 
 		_canExecuteLockInput: function(comp, current_locking_state) {
 			return (isConnected(comp) && // is connected?
-					comp.user && comp.user[0] && // is user logged on?
-					(!comp.teacher || comp.teacher[0] === false) && // is no teacher logged in?
-					comp.InputLock[0] === current_locking_state); // is input lock in expected state?
+					comp.user && comp.user && // is user logged on?
+					(!comp.teacher || comp.teacher === false) && // is no teacher logged in?
+					comp.InputLock === current_locking_state); // is input lock in expected state?
 		},
 
 		_lockInput: function(lock, ids, items) {
 			array.forEach(items, lang.hitch(this, function(comp) {
 				if (this._canExecuteLockInput(comp, !lock)) {
 					this.umcpCommand('computerroom/lock', {
-						computer: comp.id[0],
+						computer: comp.id,
 						device: 'input',
 						lock: lock
 					});
-					this._objStore.put({ id: comp.id[0], InputLock: null });
+					this._objStore.put({ id: comp.id, InputLock: null });
 				}
 			}));
 			this.addNotification(lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.'));
@@ -446,20 +446,20 @@ define([
 
 		_canExecuteLockScreen: function(comp, current_locking_state) {
 			return (isConnected(comp) && // is connected?
-					comp.user && comp.user[0] && // is user logged on?
-					(!comp.teacher || comp.teacher[0] === false) && // is no teacher logged in?
-					comp.ScreenLock[0] === current_locking_state); // is screen lock in expected state?
+					comp.user && comp.user && // is user logged on?
+					(!comp.teacher || comp.teacher === false) && // is no teacher logged in?
+					comp.ScreenLock === current_locking_state); // is screen lock in expected state?
 		},
 
 		_lockScreen: function(lock, ids, items) {
 			array.forEach(items, lang.hitch(this, function(comp) {
 				if (this._canExecuteLockScreen(comp, !lock)) {
 					this.umcpCommand('computerroom/lock', {
-						computer: comp.id[0],
+						computer: comp.id,
 						device: 'screen',
 						lock: lock
 					});
-					this._objStore.put({ id: comp.id[0], ScreenLock: null });
+					this._objStore.put({ id: comp.id, ScreenLock: null });
 				}
 			}));
 			this.addNotification(lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.'));
@@ -625,7 +625,7 @@ define([
 					isStandardAction: false,
 					isMultiAction: false,
 					canExecute: checkUCC('viewVNC', function(item) {
-						return isConnected(item) && item.user[0];
+						return isConnected(item) && item.user;
 					}),
 					callback: lang.hitch(this, function(item) {
 						window.open('/univention-management-console/command/computerroom/vnc?computer=' + item);
@@ -645,15 +645,15 @@ define([
 					if (isConnected(item)) {
 						icon = 'demo-offline';
 						status_ = _('Monitoring is activated');
-					} else if (item.connection[0] === 'autherror') {
+					} else if (item.connection === 'autherror') {
 						status_ = _('The monitoring mode has failed. It seems that the monitoring service is not configured properly.');
-					} else if (item.connection[0] === 'error') {
+					} else if (item.connection === 'error') {
 						status_ = _('The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.');
 					}
-					if (item.DemoServer[0] === true) {
+					if (item.DemoServer === true) {
 						icon = 'demo-server';
 						status_ = _('The computer is currently showing a presentation');
-					} else if (item.DemoClient[0] === true) {
+					} else if (item.DemoClient === true) {
 						icon = 'demo-client';
 						status_ = _('The computer is currently participating in a presentation');
 					}
@@ -668,7 +668,7 @@ define([
 					var computertype = {
 						'computers/windows': _('Windows'),
 						'computers/ucc': _('Univention Corporate Client') + '<br>' + _('(The computer does not support all iTALC features)')
-					}[item.objectType[0]] || _('Unknown');
+					}[item.objectType] || _('Unknown');
 
 					var label = '<table>';
 					label += '<tr><td><b>{lblComputerType}</b></td><td>{computertype}</td></tr>';
@@ -682,9 +682,9 @@ define([
 						lblStatus: _('Status'),
 						status: status_,
 						lblIP: _('IP address'),
-						ip: item.ip[0],
+						ip: item.ip,
 						lblMAC: _('MAC address'),
-						mac: item.mac ? item.mac[0] : ''
+						mac: item.mac ? item.mac : ''
 					});
 					var tooltip = new Tooltip({
 						'class': 'umcTooltip',
@@ -707,7 +707,7 @@ define([
 					if (isUCC(item) || !isConnected(item)) {
 						return '';
 					}
-					var id = item.id[0];
+					var id = item.id;
 					var label = lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" alt="{1}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', [
 						id,
 						entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
@@ -738,11 +738,19 @@ define([
 				})
 			}];
 
+			this._dataStore = new ItemFileWriteStore({data: {
+				identifier: 'id',
+				label: 'name',
+				items: []
+			}});
+			this._objStore = new Observable(new DataStore({ store: this._dataStore, idProperty: 'id' }));
+
 			this._grid = new Grid({
+				_dataStore: this._dataStore,
+				moduleStore: this._objStore,
 				actions: lang.clone(this._actions),
 				columns: columns,
 				cacheRowWidgets: false,
-				moduleStore: new Memory(),
 				sortIndex: 1,
 				footerFormatter: lang.hitch(this, function(nItems, nItemsTotal) {
 					var failed = 0;
@@ -776,15 +784,6 @@ define([
 			// we need to call page's startup method manually as all widgets have
 			// been added to the page container object
 			this._searchPage.startup();
-			this._dataStore = new ItemFileWriteStore({data: {
-				identifier: 'id',
-				label: 'name',
-				items: []
-			}});
-			this._objStore = new DataStore({ store: this._dataStore, idProperty: 'id' });
-			this._grid.moduleStore = this._objStore;
-			this._grid._dataStore = this._dataStore;
-			this._grid._grid.setStore(this._dataStore);
 		},
 
 		addHeaderContainer: function() {
@@ -870,7 +869,8 @@ define([
 				this.queryRoom();
 
 				// update the header text containing the room
-				this._grid._updateFooterContent();
+/* FIXME 4.2 */
+//				this._grid._updateFooterContent();
 
 				// examEndTimer dialog
 				if (response.result.info.examEndTime) {
@@ -1227,7 +1227,8 @@ define([
 				}, this);
 
 				if (response.result.computers.length) {
-					this._grid._updateFooterContent();
+/* FIXME 4.2 */
+//					this._grid._updateFooterContent();
 					this._grid._selectionChanged();
 				}
 
@@ -1269,12 +1270,12 @@ define([
 				this._dataStore.fetch({
 					query: '',
 					onItem: lang.hitch(this, function(item) {
-						if (item.DemoServer[0] === true) {
+						if (item.DemoServer === true) {
 							demo = true;
-							demo_server = item.id[0];
-							demo_user = item.user[0];
+							demo_server = item.id;
+							demo_user = item.user;
 							demo_systems += 1;
-						} else if (item.DemoClient[0] === true) {
+						} else if (item.DemoClient === true) {
 							demo = true;
 							demo_systems += 1;
 						}

@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (9.0.3-1) unstable; urgency=medium
+
+  * Bug #43575: make grid visible again
+
+ -- Florian Best <best@univention.de>  Fri, 17 Feb 2017 18:39:28 +0100
+
 ucs-school-umc-computerroom (9.0.2-1) unstable; urgency=medium
 
   * Bug #39378: psutil API change
