@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.1"
-version: [3]
-scope: ucs_4.1-0-ucs-school-4.1r2
-src: ucs-school-import
-fix: 14.0.16-42.333.201702081756
-desc: |
- * The memory footprint has been massively lowered (Bug #41882).
-bug: [41882]
