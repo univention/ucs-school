@@ -44,7 +44,6 @@ import filecmp
 import fcntl
 import select
 import errno
-from httplib import HTTPException
 
 import notifier
 import notifier.threads
@@ -53,7 +52,7 @@ import dns.exception
 import ldap
 
 from univention.lib.package_manager import PackageManager
-from univention.lib.umc_connection import UMCConnection
+from univention.lib.umc import Client, ConnectionError, HTTPError, Forbidden
 from univention.admin.uexceptions import noObject
 from univention.management.console.base import Base, UMC_Error
 from univention.management.console.log import MODULE
@@ -135,10 +134,10 @@ def get_master_dns_lookup():
 	return ''
 
 
-def umc(username, password, master, path='', options=None, flavor=None, command='command'):
-	connection = UMCConnection(master, username, password, error_handler=MODULE.warn)
-	MODULE.info('Executing on %r: %r %r flavor=%r options=%r' % (master, command, path, flavor, options))
-	return connection.request(path or '', options, flavor, command=command)
+def umc(username, password, master, path, options=None, flavor=None):
+	MODULE.info('Executing on %r: %r %r flavor=%r options=%r' % (master, path, flavor, options))
+	client = Client(master, username, password)
+	return client.umc_command(path, options, flavor)
 
 
 def create_ou_local(ou, display_name):
@@ -165,7 +164,7 @@ def create_ou_remote(master, username, password, ou, display_name, educational_s
 		options['dc_name_administrative'] = administrative_slave
 	try:
 		umc(username, password, master, 'schoolwizards/schools/create', [{'object': options}], 'schoolwizards/schools')
-	except (EnvironmentError, HTTPException) as exc:
+	except (ConnectionError, HTTPError) as exc:
 		raise SchoolInstallerError('Failed creating OU: %s' % (exc,))
 
 
@@ -457,11 +456,10 @@ class Instance(Base):
 
 	def _umc_master(self, username, password, master, uri, data=None):
 		try:
-			try:
-				return umc(username, password, master, uri, data)
-			except NotImplementedError:
-				raise HTTPException(_('Make sure ucs-school-umc-installer is installed on the DC Master and all join scripts are executed.'))
-		except (EnvironmentError, HTTPException) as exc:
+			return umc(username, password, master, uri, data).result
+		except Forbidden:
+			raise SchoolInstallerError(_('Make sure ucs-school-umc-installer is installed on the DC Master and all join scripts are executed.'))
+		except (ConnectionError, HTTPError) as exc:
 			raise SchoolInstallerError(_('Could not connect to the DC Master %s: %s') % (master, exc))  # TODO: set status, message, result
 
 	@sanitize(
