@@ -1,3 +1,9 @@
+ucs-school-umc-common (7.0.0-1) unstable; urgency=low
+
+  * Bug #43570: version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:16:27 +0100
+
 ucs-school-umc-common (6.0.0-2) unstable; urgency=medium
 
   * Bug #41777: add recommended package ucs-school-l10n-fr

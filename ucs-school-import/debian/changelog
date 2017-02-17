@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-1) unstable; urgency=low
+
+  * version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:12:31 +0100
+
 ucs-school-import (14.0.16-42) unstable; urgency=low
 
   * Bug #41882: lower memory footprint of import:

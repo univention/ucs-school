@@ -1,3 +1,9 @@
+italc (3:2.0.2-1) unstable; urgency=low
+
+  * Bug #43570: version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:27:06 +0100
+
 italc (2:2.0.25-18) unstable; urgency=medium
 
   * Bug #43092: try to prevent segfault by mutex locking

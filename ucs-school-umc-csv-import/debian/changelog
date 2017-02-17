@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (4.0.0-1) unstable; urgency=low
+
+  * Bug #43570: version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:16:46 +0100
+
 ucs-school-umc-csv-import (3.0.4-8) unstable; urgency=low
 
   * Bug #41987: allow import without classes in CSV

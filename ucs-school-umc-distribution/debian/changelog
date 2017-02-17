@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (15.0.0-1) unstable; urgency=low
+
+  * Bug #43570: version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:17:05 +0100
+
 ucs-school-umc-distribution (14.0.2-3) unstable; urgency=low
 
   * Bug #41252: use symbol from python lib instead of number

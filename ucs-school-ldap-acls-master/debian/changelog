@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (15.0.0-1) unstable; urgency=low
+
+  * Bug #43570: version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:14:30 +0100
+
 ucs-school-ldap-acls-master (14.0.2-2) unstable; urgency=medium
 
   * Revert svn r74509  "Bug #42065: restrict access to shares; school

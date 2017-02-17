@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (6.0.0-1) unstable; urgency=low
+
+  * Bug #43570: version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:19:28 +0100
+
 univention-management-console-module-selective-udm (5.0.0-2) unstable; urgency=medium
 
   * Bug #40435: Make selective-udm return the DN

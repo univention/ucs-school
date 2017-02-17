@@ -1,3 +1,9 @@
+ucs-school-webproxy (13.0.0-1) unstable; urgency=low
+
+  * Bug #43570: version bump for UCS@school 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Feb 2017 12:19:09 +0100
+
 ucs-school-webproxy (12.0.4-3) unstable; urgency=low
 
   * Bug #31728: create symlink wpad.dat -> proxy.pac
