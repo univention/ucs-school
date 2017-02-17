@@ -4,7 +4,7 @@
 """
 Write the result of a user import job to a CSV file.
 """
-# Copyright 2016 Univention GmbH
+# Copyright 2016-2017 Univention GmbH
 #
 # http://www.univention.de/
 #

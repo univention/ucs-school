@@ -4,7 +4,7 @@
 """
 Base class for all Python based hooks.
 """
-# Copyright 2016 Univention GmbH
+# Copyright 2016-2017 Univention GmbH
 #
 # http://www.univention.de/
 #
