@@ -96,7 +96,7 @@ def _isUmcProcess(pid):
 	if not psutil.pid_exists(pid):
 		return False  # process is not running anymore
 	# process is running
-	cmdline = psutil.Process(pid).cmdline
+	cmdline = psutil.Process(pid).cmdline()
 	# check if the process is the computerroom UMC module
 	return 'computerroom' in cmdline and any('univention-management-console-module' in l for l in cmdline)
 
