@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.0-1) unstable; urgency=medium
+
+  * Bug #43389: use univention.lib.umc.Client
+
+ -- Florian Best <best@univention.de>  Fri, 17 Feb 2017 10:26:42 +0100
+
 ucs-school-umc-exam (6.0.10-7) unstable; urgency=low
 
   * Bug #37955: use unique home directories for exam users

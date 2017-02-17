@@ -33,17 +33,15 @@ import os
 import grp
 import shutil
 import traceback
-import httplib
 import optparse
 import univention.debug as ud
 import univention.config_registry
 import univention.uldap
 import univention.admin.uldap
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.lib.umc_connection import UMCConnection
+from univention.lib.umc import Client, ConnectionError, HTTPError
 from univention.admin.uexceptions import noObject
 from ldap.filter import escape_filter_chars
-from socket import error as SocketError
 from ldap import LDAPError
 
 
@@ -73,28 +71,22 @@ class ExamCleanupHelper(object):
 
 	def get_UMCP_connection(self):
 		ud.debug(ud.MAIN, ud.INFO, 'Opening UMCP connection to %s with machine account' % (self.hostname,))
-		con = UMCConnection(self.hostname)
-		username = '%s$' % self.hostname
 		try:
-			with open('/etc/machine.secret') as machine_file:
-				password = machine_file.readline().strip()
-			con.auth(username, password)
-		except (OSError, IOError) as exc:
-			ud.debug(ud.MAIN, ud.ERROR, 'Could not read /etc/machine.secret: %s' % exc)
-			sys.exit(1)
-		except (httplib.HTTPException, SocketError) as exc:
+			client = Client(self.hostname)
+			client.authenticate_with_machine_account()
+		except (ConnectionError, HTTPError) as exc:
 			ud.debug(ud.MAIN, ud.ERROR, 'Could not connect to UMC on %s: %s' % (self.hostname, exc))
 			sys.exit(1)
-		return con
+		return client
 
 	def running_exam_iter(self):
 		ou_list = self.lo.search(filter='(objectClass=ucsschoolOrganizationalUnit)')
 		for ou_dn, ou_attrs in ou_list:
 			ou_name = ou_attrs.get('ou')[0]
 			try:
-				room_list = self.umcp.request('computerroom/rooms', {'school': ou_name})
-			except httplib.HTTPException, ex:
-				ud.debug(ud.MAIN, ud.ERROR, 'Cannot get room list for OU %r:\n%s' % (ou_name, ex))
+				room_list = self.umcp.umc_command('computerroom/rooms', {'school': ou_name}).result
+			except (ConnectionError, HTTPError) as exc:
+				ud.debug(ud.MAIN, ud.ERROR, 'Cannot get room list for OU %r:\n%s' % (ou_name, exc))
 				continue
 			for room in room_list:
 				ud.debug(ud.MAIN, ud.INFO, '%s: %r' % (ou_name, room))
@@ -115,14 +107,14 @@ class ExamCleanupHelper(object):
 				continue
 
 			try:
-				result = self.umcp.request(
+				result = self.umcp.umc_command(
 					'schoolexam/exam/finish',
-					{'exam': room.get('exam'), 'room': room.get('id')})
+					{'exam': room.get('exam'), 'room': room.get('id')}).result
 				ud.debug(ud.MAIN, ud.INFO, 'result of schoolexam/exam/finish: %r' % (result,))
-			except httplib.HTTPException, ex:
+			except (ConnectionError, HTTPError) as exc:
 				ud.debug(
 					ud.MAIN, ud.ERROR,
-					'Cannot stop exam %r in room %r:\n%s' % (room.get('exam'), room.get('id'), ex))
+					'Cannot stop exam %r in room %r:\n%s' % (room.get('exam'), room.get('id'), exc))
 				continue
 
 	def remove_exam_user(self):

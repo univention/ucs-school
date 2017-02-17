@@ -52,7 +52,7 @@ from univention.management.console.modules.sanitizers import StringSanitizer, Di
 from univention.management.console.modules.schoolexam import util
 
 from univention.lib.i18n import Translation
-from univention.lib.umc_connection import UMCConnection
+from univention.lib.umc import Client, ConnectionError, HTTPError
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer
 from ucsschool.lib import internetrules
@@ -215,17 +215,20 @@ class Instance(SchoolBaseModule):
 						os.chown(itarget, 0, 0)
 
 			# open a new connection to the master UMC
-			connection = UMCConnection.get_machine_connection()
-			if not connection:
-				MODULE.error('Could not connect to UMC on %s' % (ucr.get('ldap/master')))
+			try:
+				master = ucr['ldap/master']
+				client = Client(master)
+				client.authenticate_with_machine_account()
+			except (ConnectionError, HTTPError) as exc:
+				MODULE.error('Could not connect to UMC on %s: %s' % (master, exc))
 				raise UMC_Error(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
 
 			# mark the computer room for exam mode
 			progress.component(_('Preparing the computer room for exam mode...'))
-			connection.request('schoolexam-master/set-computerroom-exammode', dict(
+			client.umc_command('schoolexam-master/set-computerroom-exammode', dict(
 				school=request.options['school'],
 				roomdn=request.options['room'],
-			))
+			)).result  # FIXME: no error handling
 			progress.add_steps(5)
 
 			# read all recipients and fetch all user objects
@@ -254,13 +257,13 @@ class Instance(SchoolBaseModule):
 			for iuser in users:
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 				try:
-					ires = connection.request('schoolexam-master/create-exam-user', dict(
+					ires = client.umc_command('schoolexam-master/create-exam-user', dict(
 						school=request.options['school'],
 						userdn=iuser.dn
-					))
+					)).result
 					examUsers.add(ires.get('examuserdn'))
 					MODULE.info('Exam user has been created: %s' % ires.get('examuserdn'))
-				except (HTTPException, SocketError) as exc:
+				except (ConnectionError, HTTPError) as exc:
 					MODULE.warn('Could not create exam user account for %r: %s' % (iuser.dn, exc))
 
 				# indicate the the user has been processed
@@ -332,31 +335,32 @@ class Instance(SchoolBaseModule):
 			#   second step: adjust room settings
 			progress.component(_('Prepare room settings'))
 			try:
-				userConnection = UMCConnection('localhost', username=self.username, password=self.password)
-			except (HTTPException, SocketError) as exc:
+				user_client = Client(None, self.username, self.password)
+			except (ConnectionError, HTTPError) as exc:
+				MODULE.warn('Authentication failed: %s' % (exc,))
 				raise UMC_Error(_('Could not connect to local UMC server.'))
 
 			room = request.options['room']
 			MODULE.info('Acquire room: %s' % (room,))
-			userConnection.request('computerroom/room/acquire', dict(
+			user_client.umc_command('computerroom/room/acquire', dict(
 				room=request.options['room'],
-			))
+			)).result
 			progress.add_steps(1)
 			MODULE.info('Adjust room settings:\n%s' % '\n'.join(['  %s=%s' % (k, v) for k, v in request.options.iteritems()]))
-			userConnection.request('computerroom/exam/start', dict(
+			user_client.umc_command('computerroom/exam/start', dict(
 				room=room,
 				examDescription=request.options['name'],
 				exam=directory,
 				examEndTime=request.options.get('examEndTime'),
-			))
+			)).result
 			progress.add_steps(4)
-			userConnection.request('computerroom/settings/set', dict(
+			user_client.umc_command('computerroom/settings/set', dict(
 				room=room,
 				internetRule=request.options['internetRule'],
 				customRule=request.options.get('customRule'),
 				shareMode=request.options['shareMode'],
 				printMode='default',
-			))
+			)).result
 			progress.add_steps(5)
 
 		def _finished(thread, result, request):
@@ -441,19 +445,22 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(10)
 
 			# open a new connection to the master UMC
-			connection = UMCConnection.get_machine_connection()
-			if not connection:
-				MODULE.error('Could not connect to UMC on %s' % (ucr.get('ldap/master')))
-				raise UMC_Error(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
+			master = ucr['ldap/master']
+			try:
+				client = Client(master)
+				client.authenticate_with_machine_account()
+			except (ConnectionError, HTTPError) as exc:
+				MODULE.error('Could not connect to UMC on %s: %s' % (master, exc))
+				raise UMC_Error(_('Could not connect to master server %s.') % (master,))
 
 			school = SchoolSearchBase.getOU(request.options['room'])
 
 			# unset exam mode for the given computer room
 			progress.component(_('Configuring the computer room...'))
-			connection.request('schoolexam-master/unset-computerroom-exammode', dict(
+			client.umc_command('schoolexam-master/unset-computerroom-exammode', dict(
 				roomdn=request.options['room'],
 				school=school,
-			))
+			)).result
 			progress.add_steps(5)
 
 			# delete exam users accounts
@@ -476,10 +483,10 @@ class Instance(SchoolBaseModule):
 							shutil.rmtree(iuser.unixhome, ignore_errors=True)
 
 							# remove LDAP user entry
-							connection.request('schoolexam-master/remove-exam-user', dict(
+							client.umc_command('schoolexam-master/remove-exam-user', dict(
 								userdn=iuser.dn,
 								school=school,
-							))
+							)).result
 							MODULE.info('Exam user has been removed: %s' % iuser.dn)
 						else:
 							MODULE.process('Cannot remove the user account %s as it is registered for the running exam "%s", as well' % (iuser.dn, parallelUsers[iuser.username]))
