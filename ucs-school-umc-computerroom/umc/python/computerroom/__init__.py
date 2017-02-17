@@ -55,7 +55,7 @@ from univention.lib.i18n import Translation
 from univention.lib import atjobs
 
 from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer, StringSanitizer, ChoicesSanitizer, BooleanSanitizer, DNSanitizer
-from univention.management.console.modules.decorators import sanitize, simple_response
+from univention.management.console.modules.decorators import sanitize, simple_response, allow_get, prevent_xsrf_check, prevent_referer_check
 from univention.management.console.modules import UMC_Error
 from univention.management.console.log import MODULE
 
@@ -499,6 +499,9 @@ class Instance(SchoolBaseModule):
 		else:
 			computer.lockInput(lock)
 
+	@allow_get
+	@prevent_referer_check
+	@prevent_xsrf_check
 	@check_room_access
 	@sanitize(
 		computer=ComputerSanitizer(required=True),
