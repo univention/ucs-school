@@ -94,12 +94,6 @@ define([
 
 
 	return declare("umc.modules.computerroom", [ Module ], {
-		// summary:
-		//		Template module to ease the UMC module development.
-		// description:
-		//		This module is a template module in order to aid the development of
-		//		new modules for Univention Management Console.
-
 		// make sure the computerroom module can only be opened once
 		unique: true,
 
@@ -121,13 +115,6 @@ define([
 
 		// internal reference to the search page
 		_searchPage: null,
-
-		// internal reference to the detail page for editing an object
-		_detailPage: null,
-
-		// widget to stop presentation
-		// _presentationWidget: null,
-		// _presentationText: '',
 
 		_progressBar: null,
 
@@ -199,7 +186,9 @@ define([
 			this._headActions = [{
 				name: 'settings',
 				label: _('Change settings'),
-				callback: lang.hitch(this, function() { this._settingsDialog.show(); })
+				callback: lang.hitch(this, function() {
+					this._settingsDialog.show();
+				})
 			}, {
 				name: 'select_room',
 				label: _('Change room'),
@@ -211,7 +200,6 @@ define([
 				callback: lang.hitch(this, '_stopPresentation')
 			}];
 
-			// define grid actions
 			this._actions = [ {
 				name: 'screenshot',
 				label: _('Watch'),
@@ -341,8 +329,6 @@ define([
 			}
 		},
 
-		// grid actions:
-
 		_screenshot: function(ids, items) {
 			if (!items.length) {
 				items = this._grid.getSelectedItems();
@@ -409,7 +395,7 @@ define([
 						computer: comp.id,
 						state: 'poweron'
 					});
-				}), 300*i);
+				}), 300 * i);
 			}));
 			this.addNotification(_('The selected computers are booting up.'));
 		},
@@ -425,8 +411,8 @@ define([
 
 		_canExecuteLockInput: function(comp, current_locking_state) {
 			return (isConnected(comp) && // is connected?
-					comp.user && comp.user && // is user logged on?
-					(!comp.teacher || comp.teacher === false) && // is no teacher logged in?
+					comp.user && // is user logged on?
+					comp.teacher === false && // is no teacher logged in?
 					comp.InputLock === current_locking_state); // is input lock in expected state?
 		},
 
@@ -446,8 +432,8 @@ define([
 
 		_canExecuteLockScreen: function(comp, current_locking_state) {
 			return (isConnected(comp) && // is connected?
-					comp.user && comp.user && // is user logged on?
-					(!comp.teacher || comp.teacher === false) && // is no teacher logged in?
+					comp.user && // is user logged on?
+					comp.teacher === false && // is no teacher logged in?
 					comp.ScreenLock === current_locking_state); // is screen lock in expected state?
 		},
 
@@ -479,7 +465,6 @@ define([
 				lang.hitch(this, '_renderPages')
 			);
 
-			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();
 			this.own(this._progressBar);
 		},
@@ -582,7 +567,6 @@ define([
 				this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
 			}
 			if (this._headButtons.examEndTime.domNode) {
-				// FIXME: Text widget does not support visible (Bug #32823)
 				this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam);
 			}
 			if (!roomInfo || !roomInfo.exam) {
@@ -591,9 +575,6 @@ define([
 
 			// hide time period input field in settings dialog
 			this._settingsDialog.set('exam', roomInfo.exam);
-
-			// Bug #33413, remove in future!
-			this._grid.layout();
 		},
 
 		_setRoomInfoAttr: function(roomInfo) {
@@ -628,7 +609,7 @@ define([
 						return isConnected(item) && item.user;
 					}),
 					callback: lang.hitch(this, function(item) {
-						window.open('/univention-management-console/command/computerroom/vnc?computer=' + item);
+						window.open('/univention-management-console/command/computerroom/vnc?computer=' + encodeURIComponent(item));
 					})
 				});
 			}
@@ -637,8 +618,7 @@ define([
 				name: 'name',
 				width: '35%',
 				label: _('Name'),
-				formatter: lang.hitch(this, function(value, rowIndex) {
-					var item = this._grid._grid.getItem(rowIndex);
+				formatter: lang.hitch(this, function(value, item) {
 					var icon = 'offline';
 					var status_ = _('The computer is not running');
 
@@ -689,7 +669,7 @@ define([
 					var tooltip = new Tooltip({
 						'class': 'umcTooltip',
 						label: label,
-						connectId: [ widget.domNode ]
+						connectId: [widget.domNode]
 					});
 					widget.own(tooltip);
 
@@ -702,8 +682,7 @@ define([
 			}, {
 				name: '_watch',
 				label: ' ',
-				formatter: lang.hitch(this, function(v, rowIndex) {
-					var item = this._grid._grid.getItem(rowIndex);
+				formatter: lang.hitch(this, function(v, item) {
 					if (isUCC(item) || !isConnected(item)) {
 						return '';
 					}
@@ -724,11 +703,11 @@ define([
 					var tooltip = new Tooltip({
 						'class': 'umcTooltip',
 						label: label,
-						connectId: [ widget.domNode ],
-						onShow: function(target) {
+						connectId: [widget.domNode],
+						onShow: function() {
 							var image = dom.byId('screenshotTooltip-' + id);
 							if (image) {
-								image.src = '/univention-management-console/command/computerroom/screenshot?computer=' + id + '&random=' + Math.random();
+								image.src = '/univention-management-console/command/computerroom/screenshot?computer=' + encodeURIComponent(id) + '&random=' + encodeURIComponent(Math.random());
 							}
 						}
 					});
@@ -753,20 +732,8 @@ define([
 				cacheRowWidgets: false,
 				sortIndex: 1,
 				footerFormatter: lang.hitch(this, function(nItems, nItemsTotal) {
-					var failed = 0;
 					var msg = lang.replace(_('{0} computers are in this room'), [nItemsTotal]);
-
-					if (! this._dataStore) {
-						return '';
-					}
-					this._dataStore.fetch({
-						query: '',
-						onItem: lang.hitch(this, function(item) {
-							if (!isConnected(item)) {
-								failed += 1;
-							}
-						})
-					});
+					var failed = array.filter(this._grid.getAllItems(), function(item) { return !isConnected(item); }).length;
 					if (failed) {
 						msg += ' ('+ lang.replace(_('{0} powered off/misconfigured'), [failed]) + ')';
 					}
@@ -817,31 +784,28 @@ define([
 				// try to auto load the specified room
 				// show the changeRoom dialog on failure
 				this.standbyDuring(this._acquireRoom(room, false)).then(undefined, lang.hitch(this, 'changeRoom'));
-			} else {
-				// no auto load of a specific room, try to guess one
-				this.standbyDuring(this._guessRoomOfTeacher()).then(
-					lang.hitch(this, function(guessed) {
-						this.umcpCommand('computerroom/rooms', {school: guessed.school}).then(lang.hitch(this, function(response) {
-							var deferred = new Deferred();
-							deferred.resolve();
-
-							var _room;
-							array.forEach(response.result, function(iroom) {
-								if (iroom.id === guessed.roomdn) {
-									_room = iroom;
-								}
-							});
-							if (_room && _room.locked) {
-								deferred = this.displayRoomTakeoverDialog(_room);
-							}
-							deferred.then(lang.hitch(this, function() {
-								this.standbyDuring(this._acquireRoom(guessed.roomdn, true)).then(undefined, lang.hitch(this, 'changeRoom'));
-							}), lang.hitch(this, 'changeRoom'));
-						}));
-					}),
-					lang.hitch(this, 'changeRoom')
-				);
+				return;
 			}
+			// no auto load of a specific room, try to guess one
+			this.standbyDuring(this._guessRoomOfTeacher()).then(lang.hitch(this, function(guessed) {
+				this.umcpCommand('computerroom/rooms', {school: guessed.school}).then(lang.hitch(this, function(response) {
+					var deferred = new Deferred();
+					deferred.resolve();
+
+					var _room;
+					array.forEach(response.result, function(iroom) {
+						if (iroom.id === guessed.roomdn) {
+							_room = iroom;
+						}
+					});
+					if (_room && _room.locked) {
+						deferred = this.displayRoomTakeoverDialog(_room);
+					}
+					deferred.then(lang.hitch(this, function() {
+						this.standbyDuring(this._acquireRoom(guessed.roomdn, true)).then(undefined, lang.hitch(this, 'changeRoom'));
+					}), lang.hitch(this, 'changeRoom'));
+				}));
+			}), lang.hitch(this, 'changeRoom'));
 		},
 
 		_acquireRoom: function(room, promptAlert) {
@@ -896,7 +860,7 @@ define([
 				label: _('Remind again'),
 				'default': true,
 				callback: lang.hitch(this, function() {
-					this._examEndTimer = window.setTimeout(lang.hitch(this, '_showExamFinishedDialog'), 5*60*1000);
+					this._examEndTimer = window.setTimeout(lang.hitch(this, '_showExamFinishedDialog'), 5 * 60 * 1000);
 				})
 			}, {
 				name: 'finish_exam',
@@ -948,14 +912,10 @@ define([
 
 				// start standby animation
 				this.standby(false);
-				this.standby(true, container);
-
-				deferred.then(lang.hitch(this, function() {
-					this.standby(false);
+				this.standbyDuring(deferred, container).then(lang.hitch(this, function() {
 					container.destroyRecursive();
 					dialog.alert(_("All related exam documents have been collected successfully from the students' home directories."));
 				}), lang.hitch(this, function() {
-					this.standby(false);
 					container.destroyRecursive();
 				}));
 			}));
@@ -1113,7 +1073,6 @@ define([
 				'class': 'umcSize-One'
 			}];
 
-			// define buttons and callbacks
 			var buttons = [{
 				name: 'submit',
 				label: _('Select room'),
@@ -1125,11 +1084,9 @@ define([
 				callback: _cleanup
 			}];
 
-			// generate the search form
 			form = new Form({
-				// property that defines the widget's position in a dijit.layout.BorderContainer
 				widgets: widgets,
-				layout: [ 'school', 'room', 'message' ],
+				layout: ['school', 'room', 'message'],
 				buttons: buttons
 			});
 			okButton = form.getButton('submit');
@@ -1141,7 +1098,6 @@ define([
 				okButton.set('disabled', false);
 			});
 
-			// show the dialog
 			_dialog = new Dialog({
 				title: _('Select computer room'),
 				content: form,
@@ -1179,12 +1135,11 @@ define([
 			}
 
 			// remove all entries for the computer room
-			var that = this;
-			this._objStore.query().then(function(items) {
+			this._objStore.query().then(lang.hitch(this, function(items) {
 				array.forEach(items, function(iitem) {
-					that._objStore.remove(iitem.id);
-				});
-			});
+					this._objStore.remove(iitem.id);
+				}, this);
+			}));
 
 			// query new list of entries and populate store
 			this.umcpCommand('computerroom/query', {
@@ -1295,7 +1250,6 @@ define([
 					if (this._headButtons !== null && this._headButtons.stop_presentation && this._headButtons.stop_presentation.domNode) {
 						this._headButtons.stop_presentation.set('visible', demo);
 					}
-
 				}
 
 				// change to flavour only once
