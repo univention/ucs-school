@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define window*/
+/*global define,window*/
 
 define([
 	"dojo/_base/declare",
@@ -87,7 +87,7 @@ define([
 				callback: lang.hitch( this, function( ids, items ) {
 					array.forEach( items, lang.hitch( this, function ( item ) {
 						// document.location.host + '//' + document.location.host +
-						var url = lang.replace( '/univention-management-console/command/printermoderation/download?username={0}&printjob={1}', [ item.username, item.filename ] );
+						var url = lang.replace( '/univention/command/printermoderation/download?username={0}&printjob={1}', [encodeURIComponent(item.username), encodeURIComponent(item.filename)] );
 						window.open( url );
 					} ) );
 				} )
@@ -125,9 +125,9 @@ define([
 				name: 'date',
 				label: _( 'Date' ),
 				width: '20%',
-				formatter: lang.hitch( this, function( key, rowIndex ) {
+				formatter: lang.hitch( this, function(key) {
 					return locale.format( new Date( key[ 0 ], key[ 1 ] - 1, key[ 2 ], key[ 3 ], key[ 4 ] ), { formatLength: 'short' } );
-				} )
+				})
 			}];
 
 			this._grid = new Grid({
@@ -258,7 +258,7 @@ define([
 			} );
 
 			var message = '';
-			if ( ids.length == 1 ) {
+			if (ids.length === 1) {
 				message = lang.replace( _( 'A printer must be selected on which the document <i>{printjob}</i> should be printed.' ), items[ 0 ] );
 			} else {
 				message = lang.replace( _( 'A printer must be selected on which the {0} documents should be printed.' ), [ items.length ] );
