@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (4.0.1-1) unstable; urgency=medium
+
+  * Bug #36789: adjust header buttons to new UMC design; applied patch
+    from Richard
+
+ -- Florian Best <best@univention.de>  Sat, 18 Feb 2017 05:03:04 +0100
+
 ucs-school-umc-csv-import (4.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2
