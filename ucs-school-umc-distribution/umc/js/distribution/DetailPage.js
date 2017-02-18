@@ -78,16 +78,19 @@ define([
 			this.headerText = _('Project properties');
 			this.helpText = _('This page allows to modify properties of an existing or new distribution project.');
 
-			// configure buttons for the footer of the detail page
-			this.footerButtons = [{
+			// configure buttons for the header of the detail page, overwriting
+			// the close button
+			this.headerButtons = [{
 				name: 'submit',
 				label: _('Save changes'),
+				iconClass: 'umcSaveIconWhite',
 				callback: lang.hitch(this, function() {
 					this._save(this._form.get('value'));
 				})
 			}, {
-				name: 'cancel',
+				name: 'close',
 				label: _('Back to overview'),
+				iconClass: 'umcArrowLeftIconWhite',
 				callback: lang.hitch(this, function() {
 					this.onClose();
 					this._resetForm();
@@ -418,7 +421,7 @@ define([
 			// during loading show the standby animation
 			this._resetForm();
 
-			this._footerButtons.submit.set('label', _('Save changes'));
+			this._headerButtons.submit.set('label', _('Save changes'));
 
 			// the project directory name cannot be modified
 			this._form.getWidget('name').set('disabled', true);
@@ -429,7 +432,7 @@ define([
 		newObject: function() {
 			this._form.getWidget('name').set('disabled', false);
 			this._resetForm();
-			this._footerButtons.submit.set('label', _('Create project'));
+			this._headerButtons.submit.set('label', _('Create project'));
 		},
 
 		onClose: function(dn, objectType) {
