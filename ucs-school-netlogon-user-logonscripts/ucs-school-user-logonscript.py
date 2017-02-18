@@ -60,7 +60,7 @@ globalLinks = {}
 strTeacher = listener.baseConfig.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 strStaff = listener.baseConfig.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 ldapbase = listener.baseConfig.get('ldap/base', '')
-umcLink = listener.baseConfig.get('ucsschool/userlogon/umclink/link', 'http://%s.%s/univention-management-console' % (hostname, domainname))
+umcLink = listener.baseConfig.get('ucsschool/userlogon/umclink/link', 'http://%s.%s/univention/management/' % (hostname, domainname))
 reTeacher = re.compile(listener.baseConfig.get('ucsschool/userlogon/umclink/re', '^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (re.escape(strTeacher), re.escape(strStaff), re.escape(ldapbase))))
 filterTeacher = listener.baseConfig.get('ucsschool/userlogon/umclink/filter', '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
 
