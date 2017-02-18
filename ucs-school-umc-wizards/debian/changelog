@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (9.0.1-1) unstable; urgency=medium
+
+  * Bug #36789: adjust header buttons to new UMC design; applied patch
+    from Richard
+
+ -- Florian Best <best@univention.de>  Sat, 18 Feb 2017 05:19:38 +0100
+
 ucs-school-umc-wizards (9.0.0-1) unstable; urgency=medium
 
   * Bug #42408: fix Cross Site Scripting (XSS) vulnerabilities

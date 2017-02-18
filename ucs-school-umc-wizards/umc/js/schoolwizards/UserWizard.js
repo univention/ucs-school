@@ -245,7 +245,7 @@ define([
 					return {
 						id: tools.explodeDn(item.id, true)[0],
 						label: item.label
-					}
+					};
 				});
 				var widget = this.getWidget('item', 'school_classes');
 				widget.set('staticValues', classes);

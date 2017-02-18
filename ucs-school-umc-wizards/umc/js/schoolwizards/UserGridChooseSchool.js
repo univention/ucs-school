@@ -98,7 +98,7 @@ define([
 			}))[0];
 			var _backToSchool = new Button({
 				name: 'back',
-				label: _('Back'),
+				label: _('Change school'),
 				region: 'footer',
 				onClick: lang.hitch(this, 'chooseDifferentSchool')
 			});

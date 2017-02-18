@@ -60,6 +60,10 @@ msgstr "Alle"
 msgid "Back"
 msgstr "Zurück"
 
+#: umc/js/schoolwizards/UserGridChooseSchool.js:101
+msgid "Change school"
+msgstr "Schule wechseln"
+
 #: umc/js/schoolwizards/Grid.js:240 umc/js/schoolwizards/Grid.js:345
 #: umc/js/schoolwizards/SchoolGrid.js:145
 msgid "Cancel"

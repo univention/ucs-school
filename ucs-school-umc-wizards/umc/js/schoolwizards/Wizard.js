@@ -74,6 +74,49 @@ define([
 			this.pages.push(itemPage);
 		},
 
+		buildRendering: function() {
+			this.inherited(arguments);
+			this.headerButtons = this.getHeaderButtons();
+		},
+
+		getHeaderButtons: function() {
+			return [{
+				name: 'close',
+				label: _('Cancel'),
+				iconClass: 'umcArrowLeftIconWhite',
+				callback: lang.hitch(this, 'onCancel')
+			}];
+		},
+
+		getFooterButtons: function(pageName) {
+			var buttons = [{
+				name: 'previous',
+				label: _('Back'),
+				align: 'right',
+				callback: lang.hitch(this, '_previous', pageName)
+			}, {
+				name: 'next',
+				defaultButton: true,
+				label: _('Next'),
+				callback: lang.hitch(this, '_next', pageName)
+			}, {
+				name: 'finish',
+				defaultButton: true,
+				label: _('Finish'),
+				callback: lang.hitch(this, '_finish', pageName)
+			}];
+
+			if (this._getPageIndex(pageName) === (this.pages.length - 1)) {
+				array.forEach(buttons, lang.hitch(this, function(button) {
+					if (button.name === 'next') {
+						button.label = _('Save');
+					}
+				}));
+			}
+
+			return buttons;
+		},
+
 		addUDMLink: function(page) {
 			if (this.udmLinkEnabled && this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
 				var buttons = page.buttons;
@@ -268,18 +311,6 @@ define([
 				}
 				return currentPage;
 			}));
-		},
-
-		getFooterButtons: function(pageName) {
-			var buttons = this.inherited(arguments);
-			if (this._getPageIndex(pageName) === (this.pages.length - 1)) {
-				array.forEach(buttons, lang.hitch(this, function(button) {
-					if (button.name === 'next') {
-						button.label = _('Save');
-					}
-				}));
-			}
-			return buttons;
 		},
 
 		_validateForm: function() {
