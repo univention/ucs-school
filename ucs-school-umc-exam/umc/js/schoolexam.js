@@ -583,7 +583,9 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			return array.indexOf(['reboot', 'finished'], pageName) < 0;
+			// deactivate this, because the wizard can be closed via the header
+			// button anyways
+			return false;
 		},
 
 		_validate: function() {
