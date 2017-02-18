@@ -65,16 +65,19 @@ define([
 			this.headerText = _('');
 			this.helpText = _('');
 
-			// configure buttons for the footer of the detail page
-			this.footerButtons = [{
+			// configure buttons for the header of the detail page, overwriting
+			// the close button
+			this.headerButtons = [{
 				name: 'submit',
 				label: _('Save'),
+				iconClass: 'umcSaveIconWhite',
 				callback: lang.hitch(this, function() {
 					this._save(this._form.get('value'));
 				})
 			}, {
-				name: 'cancel',
+				name: 'close',
 				label: _('Cancel'),
+				iconClass: 'umcArrowLeftIconWhite',
 				callback: lang.hitch(this, 'onClose')
 			}];
 		},
