@@ -1,3 +1,10 @@
+ucs-school-metapackage (10.0.0-2) unstable; urgency=medium
+
+  * Bug #43578: Adjust paths from /univention-management-console/ to
+    /univention/management/
+
+ -- Florian Best <best@univention.de>  Sat, 18 Feb 2017 04:31:54 +0100
+
 ucs-school-metapackage (10.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2

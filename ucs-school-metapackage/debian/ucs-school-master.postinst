@@ -45,19 +45,20 @@ univention-config-registry set \
 	connector/s4/mapping/gpo/ntsd?yes \
 	connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Replicators,Printer-Admins,System Operators,Enterprise Domain Controllers,Remote Interactive Logon,SChannel Authentication,Digest Authentication,Terminal Server User,NTLM Authentication,Other Organization,This Organization,Anonymous Logon,Network Service,Creator Group,Creator Owner,Local Service,Owner Rights,Interactive,Restricted,Network,Service,Dialup,System,Batch,Proxy,IUSR,Self" \
 	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true \
-	ucs/web/overview/entries/service/teacherconsole/icon?"/univention-management-console/js/dijit/themes/umc/icons/50x50/ucsschool.png" \
+	ucs/web/overview/entries/service/teacherconsole/icon?"/univention/js/dijit/themes/umc/icons/50x50/ucsschool.png" \
 	ucs/web/overview/entries/service/teacherconsole/label?"UCS@school" \
 	ucs/web/overview/entries/service/teacherconsole/label/de?"UCS@school" \
 	ucs/web/overview/entries/service/teacherconsole/description?"Access to the UCS@school modules in the Univention Management Console" \
 	ucs/web/overview/entries/service/teacherconsole/description/de?"Zugriff auf die UCS@school Module in der Univention Management Console" \
-	ucs/web/overview/entries/service/teacherconsole/link?"/univention-management-console" \
+	ucs/web/overview/entries/service/teacherconsole/link?"/univention/management/" \
 	ucs/web/overview/entries/service/teacherconsole/priority?"10"
 
 
-if dpkg --compare-versions "$2" lt 6.0.8-8 ; then
-	# Bug #34831
-	if [ "$(ucr get ucs/web/overview/entries/service/teacherconsole/icon)" = "/univention-management-console/js/dijit/themes/umc/icons/50x50/univention-management-console.png" ]; then
-		ucr set ucs/web/overview/entries/service/teacherconsole/icon="/univention-management-console/js/dijit/themes/umc/icons/50x50/ucsschool.png"
+if dpkg --compare-versions "$2" lt 10.0.0-1; then
+	# Upgrade to UCS@school 4.2
+	ucr set ucs/web/overview/entries/service/teacherconsole/link="/univention/management/"
+	if [ "$(ucr get ucs/web/overview/entries/service/teacherconsole/icon)" = "/univention-management-console/js/dijit/themes/umc/icons/50x50/ucsschool.png" ]; then
+		ucr set ucs/web/overview/entries/service/teacherconsole/icon="/univention/js/dijit/themes/umc/icons/50x50/ucsschool.png"
 	fi
 fi
 
