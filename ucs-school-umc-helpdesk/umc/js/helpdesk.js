@@ -73,7 +73,7 @@ define([
 //				headerTextRegion: 'main',
 				helpText: '',
 //				helpTextRegsion: 'main',
-				navButtons: buttons
+				headerButtons: buttons
 			});
 
 			var widgets = [{
@@ -90,13 +90,14 @@ define([
 			}, {
 				type: TextArea,
 				name: 'message',
-				style: 'height: 200px;',
+				// FIXME: rows don't work.
+				rows: 10,
+				size: 'Two',
 				label: _('Message to the helpdesk team')
 			}];
 
 			var layout = [
-				'school',
-				'category',
+				['school', 'category'],
 				'message'
 			];
 
