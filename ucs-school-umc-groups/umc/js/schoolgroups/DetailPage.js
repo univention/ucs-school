@@ -53,14 +53,17 @@ define([
 		postMixInProperties: function() {
 			this.inherited(arguments);
 
-			// configure buttons for the footer of the detail page
-			this.footerButtons = [{
+			// configure buttons for the header of the detail page, overwriting
+			// the "close" button
+			this.headerButtons = [{
 				name: 'submit',
 				label: _('Save changes'),
+				iconClass: 'umcSaveIconWhite',
 				callback: lang.hitch(this, '_save')
 			}, {
-				name: 'back',
+				name: 'close',
 				label: _('Back to overview'),
+				iconClass: 'umcArrowLeftIconWhite',
 				callback: lang.hitch(this, 'onClose')
 			}];
 		},
