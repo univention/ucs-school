@@ -109,7 +109,7 @@ define([
 			this._page = new Page({
 				headerText: this.description,
 				helpText: _('The lesson times are used internally for the default session duration by the computer room module. It is advisable to set the end time of a lesson to a time immediately before the beginning of the following lesson.'),
-				footerButtons: buttons
+				headerButtons: buttons
 			});
 			this.addChild(this._page);
 

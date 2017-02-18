@@ -1,4 +1,4 @@
-ucs-school-umc-lessontimes (5.0.0-2) unstable; urgency=medium
+ucs-school-umc-lessontimes (5.0.1-1) unstable; urgency=medium
 
   * Bug #36789: adjust header buttons to new UMC design; applied patch
     from Richard
