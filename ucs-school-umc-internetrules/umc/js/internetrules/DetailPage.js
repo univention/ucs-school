@@ -65,18 +65,22 @@ define([
 			// set the page header
 			this.headerText = _('Edit internet rule');
 
-			// configure buttons for the footer of the detail page
-			this.footerButtons = [{
+			// Configure buttons for the header of the detail page. The "Close"
+			// button gets replaced by the "Back to overview" button.
+			var headerButtons = [{
 				name: 'submit',
 				label: _('Save'),
+				iconClass: 'umcSaveIconWhite',
 				callback: lang.hitch(this, function() {
 					this._save(this._form.get('value'));
 				})
 			}, {
-				name: 'back',
+				name: 'close',
+				iconClass: 'umcArrowLeftIconWhite',
 				label: _('Back to overview'),
 				callback: lang.hitch(this, 'onClose')
 			}];
+			this.set('headerButtons', headerButtons);
 		},
 
 		buildRendering: function() {
