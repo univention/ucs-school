@@ -609,7 +609,7 @@ define([
 						return isConnected(item) && item.user;
 					}),
 					callback: lang.hitch(this, function(item) {
-						window.open('/univention-management-console/command/computerroom/vnc?computer=' + encodeURIComponent(item));
+						window.open('/univention/command/computerroom/vnc?computer=' + encodeURIComponent(item));
 					})
 				});
 			}
@@ -707,7 +707,7 @@ define([
 						onShow: function() {
 							var image = dom.byId('screenshotTooltip-' + id);
 							if (image) {
-								image.src = '/univention-management-console/command/computerroom/screenshot?computer=' + encodeURIComponent(id) + '&random=' + encodeURIComponent(Math.random());
+								image.src = '/univention/command/computerroom/screenshot?computer=' + encodeURIComponent(id) + '&random=' + encodeURIComponent(Math.random());
 							}
 						}
 					});

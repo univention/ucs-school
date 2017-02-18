@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define console window*/
+/*global define*/
 
 define([
 	"dojo/_base/declare",
@@ -63,7 +63,7 @@ define([
 	// 	random: null,
 
 	// 	// pattern for the image URI
-	// 	_pattern: '/univention-management-console/command/computerroom/screenshot?computer={computer}&random={random}',
+	// 	_pattern: '/univention/command/computerroom/screenshot?computer={computer}&random={random}',
 
 	// 	// tiemr to update the iamges
 	// 	_timer: null,
@@ -133,7 +133,7 @@ define([
 		style: 'float: left; padding: 8px; position: relative;',
 
 		// pattern for the image URI
-		_pattern: '/univention-management-console/command/computerroom/screenshot?computer={computer}&random={random}',
+		_pattern: '/univention/command/computerroom/screenshot?computer={computer}&random={random}',
 
 		// tiemr to update the iamges
 		_timer: null,
@@ -152,13 +152,12 @@ define([
 
 		_createURI: function() {
 			this.random = Math.random();
-			return lang.replace( this._pattern, this );
+			return lang.replace(this._pattern, {computer: encodeURIComponent(this.computer), random: encodeURIComponent(this.random)});
 		},
 
 		_updateImage: function( size ) {
 			var img = dom.byId( lang.replace( 'img-{computer}', this ) );
 			var em = dom.byId( lang.replace( 'em-{computer}', this ) );
-			var tooltip = dom.byId( lang.replace( 'screenshotTooltip-{computer}', this ) );
 
 			if ( size === undefined ) {
 				size = this.defaultSize;
