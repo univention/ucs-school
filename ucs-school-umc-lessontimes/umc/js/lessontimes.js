@@ -104,20 +104,6 @@ define([
 					var values = this._form.get('value');
 					this.onSubmit(values);
 				})
-			}, {
-				name: 'close',
-				label: _('Close'),
-				callback: lang.hitch(this, function() {
-					dialog.confirm(_('Should the UMC module be closed? All unsaved modification will be lost.'), [{
-						label: _('Close'),
-						callback: lang.hitch(this, function() {
-							topic.publish('/umc/tabs/close', this);
-						})
-					}, {
-						label: _('Cancel'),
-						'default': true
-					}]);
-				})
 			}];
 
 			this._page = new Page({
