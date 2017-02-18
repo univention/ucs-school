@@ -245,19 +245,17 @@ define([
 
 			this.inherited(arguments);
 
-			var footer = new ContainerWidget( {
-				'class': 'umcPageFooter',
-				region: 'bottom'
-			} );
-			footer.addChild( new Button( {
-				label: _( 'Back to overview' ),
-				style: 'float: left',
-				onClick: lang.hitch( this, function() {
+			var headerButtons = [{
+				name: 'close',
+				label: _('Back to overview'),
+				iconClass: 'umcArrowLeftIconWhite',
+				onClick: lang.hitch(this, function() {
 					this._cleanup();
 					this.onClose();
-				} )
-			} ) );
-			this.addChild( footer );
+				})
+			}];
+
+			this.set('headerButtons', headerButtons);
 
 			var header = new ContainerWidget( {
 				'class': 'umcPageHeader',

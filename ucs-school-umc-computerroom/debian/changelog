@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (9.0.5-1) unstable; urgency=medium
+
+  * Bug #36789: adjust header buttons to new UMC design; applied patch from
+  	Richard
+
+ -- Florian Best <best@univention.de>  Sat, 18 Feb 2017 05:01:22 +0100
+
 ucs-school-umc-computerroom (9.0.4-1) unstable; urgency=medium
 
   * Bug #43578: Adjust paths from /univention-management-console/ to
