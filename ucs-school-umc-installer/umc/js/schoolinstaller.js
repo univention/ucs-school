@@ -602,7 +602,9 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			return pageName !== 'success' && pageName !== 'alreadyInstalled';
+			// deactivate this, because the wizard can be closed via the header
+			// button anyways
+			return false;
 		},
 
 		hasNext: function(pageName) {
