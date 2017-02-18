@@ -833,8 +833,7 @@ define([
 				this.queryRoom();
 
 				// update the header text containing the room
-/* FIXME 4.2 */
-//				this._grid._updateFooterContent();
+				this._grid._updateFooterContent();
 
 				// examEndTimer dialog
 				if (response.result.info.examEndTime) {
@@ -1182,8 +1181,7 @@ define([
 				}, this);
 
 				if (response.result.computers.length) {
-/* FIXME 4.2 */
-//					this._grid._updateFooterContent();
+					this._grid._updateFooterContent();
 					this._grid._selectionChanged();
 				}
 
