@@ -61,13 +61,14 @@ define([
 	"umc/widgets/CheckBox",
 	"umc/widgets/Wizard",
 	"umc/modules/schoolcsvimport/DateBox",
-	"umc/widgets/Grid",
+	"umc/modules/schoolcsvimport/Grid",
 	"umc/widgets/Module",
 	"umc/modules/schoolcsvimport/User",
 	"umc/i18n!umc/modules/schoolcsvimport"
 ], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, EnhancedGrid, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, _Grid, Module, User, _) {
 
 	var Grid = declare(_Grid, {
+		style: 'width: 600px; height: 700px;',
 		// Bug #37831 (Grid in combination with Memory store does not show more than 30 entries), (remove when Bug #37857 is fixed)
 		buildRendering: function() {
 			this.inherited(arguments);

@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (4.0.2-1) unstable; urgency=medium
+
+  * Bug #43577: Add old Grid from UCS 4.1 as fallback
+
+ -- Florian Best <best@univention.de>  Mon, 20 Feb 2017 10:22:46 +0100
+
 ucs-school-umc-csv-import (4.0.1-1) unstable; urgency=medium
 
   * Bug #36789: adjust header buttons to new UMC design; applied patch
