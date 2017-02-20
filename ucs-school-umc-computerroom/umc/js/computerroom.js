@@ -729,7 +729,6 @@ define([
 				moduleStore: this._objStore,
 				actions: lang.clone(this._actions),
 				columns: columns,
-				cacheRowWidgets: false,
 				sortIndex: 1,
 				footerFormatter: lang.hitch(this, function(nItems, nItemsTotal) {
 					var msg = lang.replace(_('{0} computers are in this room'), [nItemsTotal]);
