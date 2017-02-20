@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-umc-helpdesk
+fix: 
+desc: |
+ * The join script now fails completely if any of its parts fails
+   (Bug #38389)
+bug: [38389]
