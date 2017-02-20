@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (14.0.3-1) unstable; urgency=medium
+
+  * Bug #42408: decorator was renamed
+
+ -- Florian Best <best@univention.de>  Mon, 20 Feb 2017 11:09:11 +0100
+
 ucs-school-umc-printermoderation (14.0.2-1) unstable; urgency=medium
 
   * Bug #43578: Adjust paths from /univention-management-console/ to

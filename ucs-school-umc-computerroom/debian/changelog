@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (9.0.6-1) unstable; urgency=medium
+
+  * Bug #42408: decorator was renamed
+
+ -- Florian Best <best@univention.de>  Mon, 20 Feb 2017 11:08:40 +0100
+
 ucs-school-umc-computerroom (9.0.5-1) unstable; urgency=medium
 
   * Bug #36789: adjust header buttons to new UMC design; applied patch from
