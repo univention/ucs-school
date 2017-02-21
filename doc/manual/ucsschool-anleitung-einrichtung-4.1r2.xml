@@ -11,20 +11,20 @@
 <book lang="de" id="ucsschool-4.1r2-setup">
 	<bookinfo>
 		<title>
-			&ucsUAS; Szenarien-Handbuch
+			&ucsUAS; Einsatzszenarien
 		</title>
 		<subtitle>
-			Organisation und Aufbau von IT-Infrastrukturen für Schulen
+			Organisation und Aufbau zentraler IT-Infrastrukturen für Schulen
 		</subtitle>
 		<legalnotice>
 			<literallayout>
 Version 4.1 R2 v8
-Stand: 23. November 2016
+Stand: 21. Februar 2017
 			</literallayout>
 
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2016
+(c) 2002-2017
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -178,9 +178,9 @@ feedback@univention.de
 		<section id="scenario-1">
 			<title>Szenario 1: Bildungscloud</title>
 			<para>
-				Dies ist das Szenario mit der geringsten Komplexität. Die UCS
-				Systeme werden zentral in einem Rechenzentrum betrieben und
-				dienen als Identity- und Access-Management. Beispielsweise
+				Dies ist das Szenario mit der geringsten Komplexität. Die
+				&ucsUCS;-Systeme werden zentral in einem Rechenzentrum betrieben
+				und dienen als Identity- und Access-Management. Beispielsweise
 				lassen sich Groupware-Lösungen oder Lernmanagement-Software
 				anbinden und ermöglichen so den Anwender_innen die Nutzung der
 				Dienste mit ein und dem selben Benutzerkonto und Passwort.
@@ -200,7 +200,7 @@ feedback@univention.de
 			<title>Szenario 2: Bildungscloud mit WLAN-Unterstützung</title>
 			<para>
 				Dieses Szenario fokussiert sich auf die Authentifizierung von
-				WLAN-Geräten an den Schulen. Dazu werden UCS Systeme zentral in
+				WLAN-Geräten an den Schulen. Dazu werden &ucsUCS;-Systeme zentral in
 				einem Rechenzentrum betrieben und dienen als Identity- und
 				Access-Management. Zudem sind die Schulen über VPN, Standleitung
 				oder ähnliches an das Rechenzentrum angebunden. An den Schulen
@@ -227,10 +227,11 @@ feedback@univention.de
 			<para>
 				Dieses Szenario baut auf dem Szenario 2 auf und ergänzt es um
 				Schulserver an den Schulen. Diese Schulserver stellen vor Ort
-				diverse Dienste bereit wie DHCP, DNS, Active Directory
-				kompatible Domäne, Dateifreigaben, Proxy, aber auch pädagogische
-				Funktionen wie Computerraumsteuerung, Klassenarbeitsmodus,
-				Passwörter zurücksetzen, Client-Software-Management und mehr.
+				die benötigten Infrastruktur-Dienste bereit wie DHCP, DNS,
+				Active Directory kompatible Domäne, Dateifreigaben, Proxy, aber
+				auch pädagogische Funktionen wie Computerraumsteuerung,
+				Klassenarbeitsmodus, Passwörter zurücksetzen,
+				Client-Software-Management und mehr.
 			</para>
 			<figure id="fig-scenario-3">
 				<title>Szenario 3: Zentraler Verzeichnisdienst und WLAN mit
@@ -453,14 +454,14 @@ feedback@univention.de
 								<entry><code>10.0.0.0/24</code></entry>
 								<entry><code>-</code></entry>
 								<entry><code>254</code></entry>
-								<entry>Netz für zentrale UCS Systeme</entry>
+								<entry>Netz für zentrale &ucsUCS;-Systeme</entry>
 							</row>
 						</tbody>
 					</tgroup>
 				</table>
 			</para>
 			<para>
-				Alle zentralen UCS Systeme werden in diesem Netz installiert.
+				Alle zentralen &ucsUCS;-Systeme werden in diesem Netz installiert.
 				Auf eine Adressvergabe via DHCP wird verzichtet, alle Systeme
 				erhalten eine statische IP-Konfiguration.  Besteht Bedarf an
 				einer Demilitarisierten Zone (DMZ), so muss diese entsprechend
@@ -589,12 +590,13 @@ feedback@univention.de
 						<para>
 							die Segmentierung der Netze sollte auf Ebene der
 							Netzgeräte wie Router, Firewall und Layer-3-Switches
-							stattfinden. UCS unterstützt zwar VLANs auch direkt
-							auf dem eigenen Netzwerkinterface, allerdings raten
-							wir für ein umfangreiches Setup wie beim
-							Beispiel <emphasis>Berufsschule</emphasis> davon ab. Wichtig
-							ist, dass auf den Switches dann auch die DHCP-Relay-
-							bzw. IP-Helper-Funktionen korrekt konfiguriert
+							stattfinden. &ucsUCS; unterstützt zwar VLANs auch
+							direkt auf dem eigenen Netzwerkinterface, allerdings
+							raten wir für ein umfangreiches Setup wie beim
+							Beispiel <emphasis>Berufsschule</emphasis> davon ab.
+							Wichtig ist, dass auf den Switches dann auch die
+							DHCP-Relay- bzw. IP-Helper-Funktionen korrekt
+							konfiguriert
 							sind.
 						</para>
 					</listitem>
@@ -660,7 +662,7 @@ feedback@univention.de
 					</listitem>
 					<listitem>
 						<para>
-							UCS stellt <emphasis role="strong">intern</emphasis>
+							&ucsUCS; stellt <emphasis role="strong">intern</emphasis>
 							DNS-Dienste für die Domäne
 							<systemitem class="domainname">schulen.schultraeger.de</systemitem> zur Verfügung.
 							Alle DNS-Anfragen, die nicht für die Domäne
@@ -734,10 +736,10 @@ feedback@univention.de
 				</para>
 				<para>
 					Zentrale Server: - Schema: Rollenkürzel-ID - Beispiele:
-					UCS Master: <systemitem class="systemname">ucsma01</systemitem>,
-					UCS Backup: <systemitem class="systemname">ucsba02</systemitem>, <systemitem class="systemname">ucsba03</systemitem>,
-					UCS Slave: <systemitem class="systemname">ucssl04</systemitem>,
-					UCS Memberserver: <systemitem class="systemname">ucsme05</systemitem>
+					&ucsUCS; Master: <systemitem class="systemname">ucsma01</systemitem>,
+					&ucsUCS; Backup: <systemitem class="systemname">ucsba02</systemitem>, <systemitem class="systemname">ucsba03</systemitem>,
+					&ucsUCS; Slave: <systemitem class="systemname">ucssl04</systemitem>,
+					&ucsUCS; Memberserver: <systemitem class="systemname">ucsme05</systemitem>
 				</para>
 			</section>
 			<section id="concepts_names_clients-and-servers">
@@ -833,7 +835,7 @@ feedback@univention.de
 			<para>
 				Die rechtzeitige Erkennung von Fehlern und Anzeichen für Fehler
 				ist ein elementarer Bestandteil des professionellen IT-Betriebs.
-				UCS hat deshalb die Monitoring-Software Nagios fest integriert
+				&ucsUCS; hat deshalb die Monitoring-Software Nagios fest integriert
 				und für viele relevante Parameter vorkonfiguriert.  Nagios
 				selbst dient zum Monitoring des aktuellen Zustands und ist für
 				den täglichen IT-Betrieb unabdingbar.
@@ -850,7 +852,7 @@ feedback@univention.de
 				Langzeitinformationen gespeichert werden, z.B. die Entwicklung
 				der Festplattenbelegung.  Diese sind jedoch für den Betrieb
 				einer umfangreichen IT-Infrastruktur erforderlich.  Eine Lösung,
-				deren Konfiguration für UCS dokumentiert ist, ist z.B. <ulink
+				deren Konfiguration für &ucsUCS; dokumentiert ist, ist z.B. <ulink
 					url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Munin</ulink>,
 				welches bei Bedarf eingerichtet werden kann.
 			</para>
@@ -874,7 +876,7 @@ feedback@univention.de
 							Samba-Datenbank sowie die SYSVOL-Freigabe, sofern
 							vorhanden</para></listitem>
 					<listitem><para><filename>/etc/univention/ssl</filename> auf
-							dem UCS Master und den UCS Backups: Beinhaltet das
+							dem &ucsUCS; Master und den &ucsUCS; Backups: Beinhaltet das
 							Root-Zertifikat der internen Zertifizierungsstelle
 							und alle Rechner-Zertifikate</para></listitem>
 				</itemizedlist>
@@ -886,7 +888,7 @@ feedback@univention.de
 							Insbesondere die Sicherung der &ucsUCR;-Variablen.
 							Die Sicherung der OpenLDAP- und Samba-Datenbanken
 							ist weniger relevant, da dies bspw. bei einer
-							Neuinstallation des Schulservers vom UCS
+							Neuinstallation des Schulservers vom &ucsUCS;
 							Master/Backup erneut repliziert
 							wird.</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
@@ -900,7 +902,7 @@ feedback@univention.de
 				Folgende Punkte haben sich als bewährtes Vorgehen
 				herauskristallisiert:
 				<itemizedlist>
-					<listitem><para>Die Sicherung sollte auf ein vom UCS System
+					<listitem><para>Die Sicherung sollte auf ein vom &ucsUCS;-System
 							physikalisch getrenntes Gerät erfolgen, bspw. ein
 							Network Attached Storage (NAS)</para></listitem>
 					<listitem><para>Die Sicherung sollte überwacht werden, bspw.
@@ -920,7 +922,7 @@ feedback@univention.de
 				Fehlerfall kontaktiert werden können. Dabei sollten bei diesem
 				Support-Team entsprechende Werkzeuge zur Kommunikation, bspw.
 				ein Ticket-System (bspw. <wordasword>KIX</wordasword> aus dem Univention App Center, das
-				sich direkt in die UCS Benutzerverwaltung integriert) und zur
+				sich direkt in die &ucsUCS; Benutzerverwaltung integriert) und zur
 				Fernwartung zum Einsatz kommen.
 			</para>
 			<para>
@@ -956,7 +958,7 @@ feedback@univention.de
 		<title>Infrastruktur- und Hardware-Voraussetzungen</title>
 		<para>
 			Es wird stark empfohlen, eine Virtualisierungslösung für die
-			UCS-Systeme einzusetzen. Die Hardwaredimensionierung der
+			&ucsUCS;-Systeme einzusetzen. Die Hardwaredimensionierung der
 			Virtualisierungsserver muss sich dabei an den Anforderungen der
 			virtualisierten Systeme richten und dabei noch genügend
 			Möglichkeiten zur nachträglichen Erweiterung bereithalten. Von
@@ -978,7 +980,7 @@ feedback@univention.de
 		<section id="infrastructure-and_hardware-requirements_servers">
 			<title>Zentrale Server</title>
 			<section id="infrastructure-and_hardware-requirements_servers_master">
-				<title>UCS Master und UCS Backup für das Identity
+				<title>&ucsUCS; Master und &ucsUCS; Backup für das Identity
 					Management</title>
 				<para>
 					<emphasis>alle Szenarien</emphasis>
@@ -992,11 +994,11 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Die Hauptaufgaben des UCS Master sind:
+					Die Hauptaufgaben des &ucsUCS; Master sind:
 					<itemizedlist>
 						<listitem><para>viele lesende Zugriffe auf die
 								LDAP-Datenbank, da neben den Administratoren auch
-								alle weiteren UCS-Systeme beständig Information
+								alle weiteren &ucsUCS;-Systeme beständig Information
 								abfragen</para></listitem>
 						<listitem><para>schreibende Zugriffe auf die
 								LDAP-Datenbanken, sobald Änderungen vorgenommen
@@ -1010,14 +1012,14 @@ feedback@univention.de
 					Import/Schuljahreswechsel entscheidend.
 				</para>
 				<para>
-					UCS Backup Server dienen der Lastverteilung und
+					&ucsUCS; Backup Server dienen der Lastverteilung und
 					Ausfallsicherheit. Ab einer bestimmten Größe der Umgebung (bspw.
-					ab 100 Schulservern) sollte aus diesen Gründen ein zweiter UCS
+					ab 100 Schulservern) sollte aus diesen Gründen ein zweiter &ucsUCS;
 					Backup Server installiert werden.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_slave">
-				<title>UCS Slave für Webdienste / Groupware / Collaboration /
+				<title>&ucsUCS; Slave für Webdienste / Groupware / Collaboration /
 					Lernplattformen</title>
 				<para>
 					<emphasis>alle Szenarien</emphasis>
@@ -1029,7 +1031,7 @@ feedback@univention.de
 					berücksichtigt werden.
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen UCS:
+					Minimale Systemvoraussetzungen &ucsUCS;:
 					<itemizedlist>
 						<listitem><para>2 CPU-Kerne (ggf. vCPU)</para></listitem>
 						<listitem><para>2 GB RAM</para></listitem>
@@ -1039,7 +1041,7 @@ feedback@univention.de
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_radius">
-				<title>UCS Slave für RADIUS</title>
+				<title>&ucsUCS; Slave für RADIUS</title>
 				<para>
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
 				</para>
@@ -1053,7 +1055,7 @@ feedback@univention.de
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_monitoring">
-				<title>UCS Memberserver für Monitoring</title>
+				<title>&ucsUCS; Memberserver für Monitoring</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
@@ -1070,7 +1072,7 @@ feedback@univention.de
 		<section id="infrastructure-and_hardware-requirements_school">
 			<title>Dezentrale Systeme</title>
 			<section id="infrastructure-and_hardware-requirements_school_server">
-				<title>UCS Slave als Schulserver</title>
+				<title>&ucsUCS; Slave als Schulserver</title>
 				<para>
 					<emphasis>für Szenarien 3 und 4</emphasis>
 				</para>
