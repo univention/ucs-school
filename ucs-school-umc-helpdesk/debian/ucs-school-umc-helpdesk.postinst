@@ -32,9 +32,10 @@
 
 . /usr/share/univention-lib/base.sh
 
+#DEBHELPER#
+
 echo "kill all running univention-cli-server"
 stop_udm_cli_server
 
-#DEBHELPER#
 
 exit 0
