@@ -49,7 +49,7 @@ feedback@univention.de
 		<para>
 			&ucsUAS; ist die Lösung, um zentral gemanagte IT-Infrastruktur mit
 			einem einheitlichen Identity-Management aufzubauen, in das
-			integrierte IT-Dienste eingebunden und Schul- genauso wie
+			integrierte IT-Dienste eingebunden und schul- genauso wie
 			geräteübergreifend zur Verfügung gestellt werden können. So können
 			Schulträger die Anforderungen aus den Medienentwicklungsplänen nach
 			orts- und zeitunabhängiger Verfügbarkeit von Inhalten und Diensten
@@ -107,7 +107,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual_zentrale">
-			<title>Zentral breitgestellte IT-Dienste</title>
+			<title>Zentral bereitgestellte IT-Dienste</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
@@ -736,10 +736,10 @@ feedback@univention.de
 				</para>
 				<para>
 					Zentrale Server: - Schema: Rollenkürzel-ID - Beispiele:
-					&ucsUCS; Master: <systemitem class="systemname">ucsma01</systemitem>,
-					&ucsUCS; Backup: <systemitem class="systemname">ucsba02</systemitem>, <systemitem class="systemname">ucsba03</systemitem>,
-					&ucsUCS; Slave: <systemitem class="systemname">ucssl04</systemitem>,
-					&ucsUCS; Memberserver: <systemitem class="systemname">ucsme05</systemitem>
+					&ucsMaster;: <systemitem class="systemname">ucsma01</systemitem>,
+					&ucsBackup;: <systemitem class="systemname">ucsba02</systemitem>, <systemitem class="systemname">ucsba03</systemitem>,
+					&ucsSlave;: <systemitem class="systemname">ucssl04</systemitem>,
+					&ucsMember;: <systemitem class="systemname">ucsme05</systemitem>
 				</para>
 			</section>
 			<section id="concepts_names_clients-and-servers">
@@ -876,7 +876,7 @@ feedback@univention.de
 							Samba-Datenbank sowie die SYSVOL-Freigabe, sofern
 							vorhanden</para></listitem>
 					<listitem><para><filename>/etc/univention/ssl</filename> auf
-							dem &ucsUCS; Master und den &ucsUCS; Backups: Beinhaltet das
+							dem &ucsMaster; und den &ucsBackup;-Servern: Beinhaltet das
 							Root-Zertifikat der internen Zertifizierungsstelle
 							und alle Rechner-Zertifikate</para></listitem>
 				</itemizedlist>
@@ -888,8 +888,8 @@ feedback@univention.de
 							Insbesondere die Sicherung der &ucsUCR;-Variablen.
 							Die Sicherung der OpenLDAP- und Samba-Datenbanken
 							ist weniger relevant, da dies bspw. bei einer
-							Neuinstallation des Schulservers vom &ucsUCS;
-							Master/Backup erneut repliziert
+							Neuinstallation des Schulservers vom &ucsMaster;
+							oder &ucsBackup; erneut repliziert
 							wird.</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
@@ -980,7 +980,7 @@ feedback@univention.de
 		<section id="infrastructure-and_hardware-requirements_servers">
 			<title>Zentrale Server</title>
 			<section id="infrastructure-and_hardware-requirements_servers_master">
-				<title>&ucsUCS; Master und &ucsUCS; Backup für das Identity
+				<title>&ucsMaster; und &ucsBackup; für das Identity
 					Management</title>
 				<para>
 					<emphasis>alle Szenarien</emphasis>
@@ -994,7 +994,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Die Hauptaufgaben des &ucsUCS; Master sind:
+					Die Hauptaufgaben des &ucsMaster; sind:
 					<itemizedlist>
 						<listitem><para>viele lesende Zugriffe auf die
 								LDAP-Datenbank, da neben den Administratoren auch
@@ -1012,10 +1012,10 @@ feedback@univention.de
 					Import/Schuljahreswechsel entscheidend.
 				</para>
 				<para>
-					&ucsUCS; Backup Server dienen der Lastverteilung und
+					&ucsBackup; Server dienen der Lastverteilung und
 					Ausfallsicherheit. Ab einer bestimmten Größe der Umgebung (bspw.
-					ab 100 Schulservern) sollte aus diesen Gründen ein zweiter &ucsUCS;
-					Backup Server installiert werden.
+					ab 100 Schulservern) sollte aus diesen Gründen ein zweiter
+					&ucsBackup; installiert werden.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_slave">
@@ -1055,7 +1055,7 @@ feedback@univention.de
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_monitoring">
-				<title>&ucsUCS; Memberserver für Monitoring</title>
+				<title>&ucsMember; für Monitoring</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
@@ -1242,7 +1242,7 @@ feedback@univention.de
 			</listitem>
 		</itemizedlist>
 		<section id="installation_master">
-			<title>Installation &ucsUCS; Master</title>
+			<title>Installation &ucsMaster;</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 				<itemizedlist>
@@ -1278,22 +1278,21 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_backup">
-			<title>Installation &ucsUCS; Backup</title>
+			<title>Installation &ucsBackup;</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 				Zur Lastverteilung bei der LDAP-Replikation können neben dem 1.
-				Backup Server zusätzlich noch weitere Server aufgesetzt werden.
+				&ucsBackup; Server zusätzlich noch weitere Server aufgesetzt werden.
 				<itemizedlist>
 					<listitem><para>vergeben einer IP-Adresskonfiguration
 							entsprechend des Netzkonzepts</para></listitem>
-					<listitem><para>DNS Server: 10.0.0.10 (IP des &ucsUCS; Master,
-							DNS Forwarder wird beim Join vom automatisch &ucsUCS;
-							Master übernommen)</para></listitem>
+					<listitem><para>DNS Server: 10.0.0.10 (IP des &ucsMaster;,
+							DNS Forwarder wird beim Join vom automatisch
+							&ucsMaster; übernommen)</para></listitem>
 					<listitem><para>Wählen sie &quot;Einer bestehenden
 							&ucsUCS;-Domäne beitreten&quot; und dann
-							&quot;Domänencontroller
-							Backup&quot;</para></listitem>
-					<listitem><para>Stellen sie sicher, dass der &ucsUCS; Master alle
+							&ucsBackup;</para></listitem>
+					<listitem><para>Stellen sie sicher, dass der &ucsMaster; alle
 							verfügbaren Updates installiert
 							hat</para></listitem> <listitem><para>Aktualisieren
 							sie das System bis zum letzten verfügbaren
@@ -1323,13 +1322,14 @@ feedback@univention.de
 						einen eigene &ucsUCS; Slave Server</para></listitem>
 				<listitem><para>vergeben einer IP-Adresskonfiguration
 						entsprechend des Netzkonzepts</para></listitem>
-				<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des &ucsUCS;
-						Master und des &ucsUCS; Backup, DNS Forwarder wird beim Join
-						automatisch vom &ucsUCS; Master übernommen)</para></listitem>
+				<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des
+						&ucsMaster; und des &ucsBackup;, DNS Forwarder wird
+						beim Join automatisch vom &ucsMaster;
+						übernommen)</para></listitem>
 				<listitem><para>Wählen sie &quot;Einer bestehenden &ucsUCS;-Domäne
 						beitreten&quot; und dann &quot;Domänencontroller
 						Slave&quot;</para></listitem> <listitem><para>Stellen
-						sie sicher, dass der &ucsUCS; Master alle verfügbaren Updates
+						sie sicher, dass der &ucsMaster; alle verfügbaren Updates
 						installiert hat</para></listitem>
 				<listitem><para>Aktualisieren sie das System bis zum letzten
 						verfügbaren Errata-Update und lassen sie das System der
@@ -1347,20 +1347,20 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_member">
-			<title>Installation &ucsUCS; Memberserver für Monitoring</title>
+			<title>Installation &ucsMember; für Monitoring</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 				<itemizedlist>
 					<listitem><para>vergeben einer IP-Adresskonfiguration
 							entsprechend des Netzkonzepts</para></listitem>
-					<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des &ucsUCS;
-							Master und des &ucsUCS; Backup, DNS Forwarder wird beim
-							Join automatisch vom &ucsUCS; Master
+					<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des
+							&ucsMaster; und des &ucsBackup;, DNS Forwarder
+							wird beim Join automatisch vom &ucsMaster;
 							übernommen)</para></listitem> <listitem><para>Wählen
-							sie &quot;Einer bestehenden &ucsUCS;-Domäne
+							sie &quot;Einer bestehenden Domäne
 							beitreten&quot; und dann
-							&quot;Memberserver&quot;</para></listitem>
-					<listitem><para>Stellen sie sicher, dass der &ucsUCS; Master alle
+							&ucsMember;[</para></listitem>
+					<listitem><para>Stellen sie sicher, dass der &ucsMaster; alle
 							verfügbaren Updates installiert
 							hat</para></listitem> <listitem><para>Aktualisieren
 							sie das System bis zum letzten verfügbaren
@@ -1448,7 +1448,7 @@ feedback@univention.de
 				<listitem>
 					<para>
 						<envar>samba4/sysvol/sync/from_downstream</envar>: <literal>false</literal> → konfiguriert den
-						SYSVOL-Replikation unidirektional vom &ucsUCS; Master zu den &ucsUAS;
+						SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS;
 						Schulservern
 					</para>
 				</listitem>
@@ -1591,7 +1591,7 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Hinweis: Die &ucsUAS; Schulserver setzen automatisch den
-						&ucsUCS; Master und die &ucsUCS; Backups als Zeitserver. Damit wird
+						&ucsMaster; und die &ucsBackup;-Server als Zeitserver. Damit wird
 						automatisch eine Kaskadierung erreicht
 					</para>
 				</listitem>
@@ -1652,13 +1652,13 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Erstellen sie auf dem &ucsUCS; Master folgendes Verzeichnis:
+						Erstellen sie auf dem &ucsMaster; folgendes Verzeichnis:
 						<filename>/usr/local/ucsschool/import_data/</filename>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Kopieren sie die CSV-Datei auf den &ucsUCS; Master nach
+						Kopieren sie die CSV-Datei auf den &ucsMaster; nach
 						<filename>/usr/local/ucsschool/import_data/schulen.csv</filename>
 					</para>
 				</listitem>
@@ -1720,7 +1720,7 @@ feedback@univention.de
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
-						Speichern sie die CSV-Datei auf den &ucsUCS; Master nach
+						Speichern sie die CSV-Datei auf den &ucsMaster; nach
 						<filename>/usr/local/ucsschool/import_data/networks.csv</filename>
 					</para>
 				</listitem>
@@ -1755,7 +1755,7 @@ feedback@univention.de
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
-						Speichern sie die CSV-Datei auf den &ucsUCS; Master nach
+						Speichern sie die CSV-Datei auf den &ucsMaster; nach
 						<filename>/usr/local/ucsschool/import_data/computers_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
@@ -1787,7 +1787,7 @@ feedback@univention.de
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
-						Speichern sie die CSV-Datei auf den &ucsUCS; Master nach
+						Speichern sie die CSV-Datei auf den &ucsMaster; nach
 						<filename>/usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
