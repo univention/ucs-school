@@ -176,8 +176,7 @@ feedback@univention.de
 	<chapter id="scenarios">
 		<title>Szenarien</title>
 		<section id="scenario-1">
-			<title>Szenario 1: Zentraler Verzeichnisdienst für
-				Webdienste</title>
+			<title>Szenario 1: Bildungscloud</title>
 			<para>
 				Dies ist das Szenario mit der geringsten Komplexität. Die UCS
 				Systeme werden zentral in einem Rechenzentrum betrieben und
@@ -187,8 +186,7 @@ feedback@univention.de
 				Dienste mit ein und dem selben Benutzerkonto und Passwort.
 			</para>
 			<figure id="fig-scenario-1">
-				<title>Szenario 1: Zentraler Verzeichnisdienst für
-					Webdienste</title>
+				<title>Szenario 1: Zentraler Verzeichnisdienst für Webdienste</title>
 				<mediaobject>
 					<imageobject>
 						<imagedata fileref="illustrations41/1_zentrale.png" scale="53" />
@@ -199,8 +197,7 @@ feedback@univention.de
 			</figure>
 		</section>
 		<section id="scenario-2">
-			<title>Szenario 2: Zentraler Verzeichnisdienst und WLAN für
-				Schulen, ggf. inkl. Webdienste</title>
+			<title>Szenario 2: Bildungscloud mit WLAN-Unterstützung</title>
 			<para>
 				Dieses Szenario fokussiert sich auf die Authentifizierung von
 				WLAN-Geräten an den Schulen. Dazu werden UCS Systeme zentral in
@@ -226,8 +223,7 @@ feedback@univention.de
 			</figure>
 		</section>
 		<section id="scenario-3">
-			<title>Szenario 3: Zentraler Verzeichnisdienst und WLAN mit
-				Schulserver an den Schulen und Softwareverteilung</title>
+			<title>Szenario 3: Zentral verwaltete Schul-IT-Infrastruktur</title>
 			<para>
 				Dieses Szenario baut auf dem Szenario 2 auf und ergänzt es um
 				Schulserver an den Schulen. Diese Schulserver stellen vor Ort
@@ -250,8 +246,8 @@ feedback@univention.de
 			</figure>
 		</section>
 		<section id="scenario-4">
-			<title>Szenario 4: Zentraler Verzeichnisdienst und WLAN mit
-				Schulserver im Rechenzentrum und Softwareverteilung</title>
+			<title>Szenario 4: Zukünftige Schul-IT-Infrastruktur ohne
+				Schulserver</title>
 			<para>
 				Dieses Szenario ähnelt dem Szenario 3, nur dass in diesem Fall
 				die Schulserver nicht an der Schule stehen sondern im
