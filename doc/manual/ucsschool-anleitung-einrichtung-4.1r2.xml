@@ -988,7 +988,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>4 CPU-Kerne (ggf. vCPU)</para></listitem>
+						<listitem><para>4 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
 						<listitem><para>8 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1033,7 +1033,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen &ucsUCS;:
 					<itemizedlist>
-						<listitem><para>2 CPU-Kerne (ggf. vCPU)</para></listitem>
+						<listitem><para>2 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
 						<listitem><para>2 GB RAM</para></listitem>
 						<listitem><para>80 GB Speicherplatz</para></listitem>
 						<listitem><para>Plus Anforderungen der eingesetzten Software</para></listitem>
@@ -1048,7 +1048,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>4 CPU-Kerne (ggf. vCPU)</para></listitem>
+						<listitem><para>4 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
 						<listitem><para>12 GB RAM</para></listitem>
 						<listitem><para>80 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1062,7 +1062,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>2 CPU-Kerne (ggf. vCPU)</para></listitem>
+						<listitem><para>2 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1079,7 +1079,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen Szenario <emphasis>Grundschule</emphasis> (25 Computer, 25 Tablets):
 					<itemizedlist>
-						<listitem><para>2 CPU-Kerne (ggf. vCPU)</para></listitem>
+						<listitem><para>2 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
 						<listitem><para>Benutzerdaten nach Anforderung, bspw. 2
@@ -1090,7 +1090,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen Szenario <emphasis>Berufsschule</emphasis> (300 Computer, 200 Tablets):
 					<itemizedlist>
-						<listitem><para>8 CPU-Kerne (ggf. vCPU)</para></listitem>
+						<listitem><para>8 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
 						<listitem><para>32 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
 						<listitem><para>Benutzerdaten nach Anforderung, bspw. 15
@@ -1380,12 +1380,12 @@ feedback@univention.de
 					<listitem><para>Führen sie
 							alle evtl. ausstehenden Joinskripte aus (UMC →
 							Domäne → Domänenbeitritt)</para></listitem>
-					<listitem><para>Achten Sie darauf, dass die globale UCR-Richtlinie "ucsschool-ucr-settings" auf alle anderen Systeme wirkt.
+					<listitem><para>Achten Sie darauf, dass die globale UCR-Richtlinie <property>ucsschool-ucr-settings</property> auf alle anderen Systeme wirkt.
 							Auf den anderen Systemen prüfen:
-							(UMC → System → Univention Configuration Registry → Suche: nagios/client/allowedhosts und munin/node/allowedhosts).
-							Starten Sie gegebenenfalls den Service univention-directory-listener neu
-							(UMC → System → Systemdienste → univention-directory-listener → Neustarten).
-							Starten Sie außerdem gegebenenfalls auf allen Clients die Services (nagios-nrpe-server und munin-node) neu.</para></listitem>
+							(UMC → System → Univention Configuration Registry → Suche: <envar>nagios/client/allowedhosts</envar> und <envar>munin/node/allowedhosts</envar>).
+							Starten Sie gegebenenfalls den Service <command>univention-directory-listener</command> neu
+							(UMC → System → Systemdienste → <command>univention-directory-listener</command> → Neustarten).
+							Starten Sie außerdem gegebenenfalls auf allen Clients die Services (<command>nagios-nrpe-server</command> und <command>munin-node</command>) neu.</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
