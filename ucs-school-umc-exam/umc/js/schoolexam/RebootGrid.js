@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global require define window*/
+/*global require,define,window*/
 
 define([
 	"dojo/_base/declare",
@@ -53,6 +53,9 @@ define([
 		teacherIPs: null,
 
 		constructor: function() {
+			this.gridOptions = {
+				selectionMode: 'none'
+			};
 			this.moduleStore = new Memory();
 			this.teacherIPs = [];
 			this.actions = [{

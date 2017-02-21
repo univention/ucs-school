@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.2-1) unstable; urgency=medium
+
+  * Bug #43575: hide checkboxes in reboot grid
+
+ -- Florian Best <best@univention.de>  Tue, 21 Feb 2017 15:54:21 +0100
+
 ucs-school-umc-exam (7.0.1-1) unstable; urgency=medium
 
   * Bug #36789: adjust header buttons to new UMC design; applied patch
