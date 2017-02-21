@@ -47,20 +47,47 @@ feedback@univention.de
 	<chapter id="setup-manual">
 		<title>Verwendung des Dokuments</title>
 		<para>
-			Diese Anleitung zeigt das empfohlene Vorgehen für den Aufbau der
-			definierten Standardszenarien von &ucsUAS; bei Schulträgern auf.
+			&ucsUAS; ist die Lösung, um zentral gemanagte IT-Infrastruktur mit
+			einem einheitlichen Identitymanagement aufzubauen, in das
+			integrierte IT-Dienste eingebunden und Schul- genauso wie
+			geräteübergreifend zur Verfügung gestellt werden können. So können
+			Schulträger die Anforderungen aus den Medienentwicklungsplänen nach
+			orts- und zeitunabhängiger Verfügbarkeit von Inhalten und Diensten
+			kosteneffizient und sicher erfüllen.
 		</para>
 		<para>
-			Die Anleitung ist in mehrere Kapitel aufgeteilt, die nacheinander
-			abgearbeitet werden sollten. Die Kapitel bauen aufeinander auf und
-			können auch einzeln verwendet werden, um bestehende Installationen
-			und Verfahren zu prüfen.  Im Folgenden sind die Inhalte, die für die
-			Einführung von &ucsUAS; geprüft werden sollten, in Form von
-			Checklisten beschrieben.  Diese verweisen auf die weiterführenden
-			Inhalte des Dokuments.
+			Diese Anleitung zeigt das Vorgehen für den Aufbau von definierten
+			Standardszenarien für &ucsUAS; bei Schulträgern auf. Die
+			Informationen entstammen den Erfahrungen, die Univention in
+			Projekten mit &ucsUAS; gewonnen hat und sich als erfolgreich
+			herausgestellt haben.
+		</para>
+		<para>
+			Für den Aufbau einer neuen &ucsUAS;-Umgebung sollten die Kapitel
+			dieser Anleitung nacheinander abgearbeitet werden. In bestehenden
+			Umgebungen können die Kapitel auch einzeln verwendet werden, um
+			Ausbau- und Verbesserungsmöglichkeiten zu identifizieren.
+		</para>
+		<para>
+			Für den Einstieg in das Dokument sind <xref
+				linkend="setup-checklist" /> und <xref linkend="scenarios" />
+			vorgesehen. Die Kapitel geben einen Überblick zu den üblichen
+			Einsatzszenarien und bieten Checklisten mit Fragen, deren
+			Beantwortung für die Einführung von &ucsUAS; notwendig ist. Die
+			Checklisten verweisen darüberhinaus auf die weiterführenden
+			technischen Themen in diesem Dokument, die besten Lösungen
+			aufzeigen.
+		</para>
+	</chapter>
+	<chapter id="setup-checklist">
+		<title>Checklisten: organisatorisch und technisch</title>
+		<para>
+			Im Folgenden sind die Inhalte, die für die Einführung von &ucsUAS;
+			geprüft werden sollten, in Form von Checklisten beschrieben.  Diese
+			verweisen auf die weiterführenden Inhalte des Dokuments.
 		</para>
 		<section id="setup-manual_organisation">
-			<title>Checkliste: Organisation</title>
+			<title>Organisation</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
@@ -80,7 +107,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual_zentrale">
-			<title>Checkliste: Zentrale Services</title>
+			<title>Zentral breitgestellte IT-Dienste</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
@@ -104,7 +131,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual_schulen">
-			<title>Checkliste: Dezentrale Services an den Schulen</title>
+			<title>Dezentral an den Schulen bereitgestellte IT-Dienste</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
@@ -132,7 +159,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual_wlan">
-			<title>Checkliste: WLAN und BYOD</title>
+			<title>WLAN und BYOD</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
