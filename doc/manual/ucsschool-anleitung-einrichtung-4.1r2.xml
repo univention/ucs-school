@@ -1164,7 +1164,7 @@ feedback@univention.de
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
 				</para>
 				<para>
-					Die Schulen müssen über eine strukturierte Netzwerk-Verkabelung verfügen.
+					Die Schulen müssen über eine strukturierte Netzwerk-Verkabelung verfügen. Außerdem sind professionelle Access Points (beispielsweise von Cisco, Aerohive oder ubiqui) wichtig. Diese müssen VLANs und mehrere SSIDs unterstützen.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_infrastructure_internet">
