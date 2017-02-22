@@ -204,7 +204,7 @@ feedback@univention.de
 					<listitem><para>Bereitstellung orts- und zeitunabhängige IT-Angebote für Schulen</para></listitem>
 					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
 					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
-					<listitem><para>Senkung des Helpdesk-Aufkommens durch Self-Service für vergessene Passwörter</para></listitem>
+					<listitem><para>Senkung des <wordasword>Helpdesk</wordasword>-Aufkommens durch Self-Service für vergessene Passwörter</para></listitem>
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-1">
