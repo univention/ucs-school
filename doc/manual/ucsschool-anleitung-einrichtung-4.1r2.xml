@@ -11,10 +11,10 @@
 <book lang="de" id="ucsschool-4.1r2-setup">
 	<bookinfo>
 		<title>
-			&ucsUAS; Einsatzszenarien
+			Szenarien zum Einsatz von &ucsUAS;
 		</title>
 		<subtitle>
-			Organisation und Aufbau zentraler IT-Infrastrukturen für Schulen
+			Organisation und Aufbau zentral verwalteter IT-Infrastrukturen für Schulen
 		</subtitle>
 		<legalnotice>
 			<literallayout>
@@ -49,10 +49,10 @@ feedback@univention.de
 		<para>
 			&ucsUAS; ist die Lösung, um zentral gemanagte IT-Infrastruktur mit
 			einem einheitlichen Identity-Management aufzubauen, in das
-			integrierte IT-Dienste eingebunden und schul- genauso wie
+			integrierte IT-Angebote eingebunden und schul- genauso wie
 			geräteübergreifend zur Verfügung gestellt werden können. So können
 			Schulträger die Anforderungen aus den Medienentwicklungsplänen nach
-			orts- und zeitunabhängiger Verfügbarkeit von Inhalten und Diensten
+			orts- und zeitunabhängiger Verfügbarkeit von Inhalten und Angeboten
 			kosteneffizient und sicher erfüllen.
 		</para>
 		<para>
@@ -73,10 +73,10 @@ feedback@univention.de
 				linkend="setup-checklist" /> und <xref linkend="scenarios" />
 			vorgesehen. Die Kapitel geben einen Überblick zu den üblichen
 			Einsatzszenarien und bieten Checklisten mit Fragen, deren
-			Beantwortung für die Einführung von &ucsUAS; notwendig ist. Die
+			Beantwortung die Einführung von &ucsUAS; erleichtert. Die
 			Checklisten verweisen darüberhinaus auf die weiterführenden
-			technischen Themen in diesem Dokument, die besten Lösungen
-			aufzeigen.
+			technischen Themen in diesem Dokument, die die besten Lösungen
+			aus der Praxis aufzeigen.
 		</para>
 	</chapter>
 	<chapter id="setup-checklist">
@@ -107,7 +107,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual_zentrale">
-			<title>Zentral bereitgestellte IT-Dienste</title>
+			<title>Zentral bereitgestellte IT-Angebote</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
@@ -121,9 +121,9 @@ feedback@univention.de
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
-					<listitem><para>Welche über &ucsUAS; hinausgehenden Dienste und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
+					<listitem><para>Welche über &ucsUAS; hinausgehenden Angebote und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
 							<itemizedlist spacing="compact" mark="whitesquare">
-								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Dienste vor unerwünschtem Zugriff geschützt?</para></listitem>
+								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Angebote vor unerwünschtem Zugriff geschützt?</para></listitem>
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Soll die Schulen zukünftig über einen zentralen Proxy auf das Internet zugreifen?  Siehe <xref linkend="additional-services_proxy" /></para></listitem>
@@ -131,7 +131,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="setup-manual_schulen">
-			<title>Dezentral an den Schulen bereitgestellte IT-Dienste</title>
+			<title>Dezentral an den Schulen bereitgestellte IT-Angebote</title>
 			<para>
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
@@ -175,101 +175,152 @@ feedback@univention.de
 	</chapter>
 	<chapter id="scenarios">
 		<title>Szenarien</title>
+		<para>
+			In diesem Kapitel werden Szenarien beschrieben, in denen &ucsUAS;
+			häufig eingesetzt wird.  Die Szenarien sind in ihrem Umfang klar
+			voneinander abgegrenzt.  In der Praxis ist diese strikte Trennung
+			nur selten zu finden, stattdessen sind vielfach Mischformen zu
+			finden.  Die Umsetzung eines bestimmten Szenarios schließt somit
+			nicht aus, dass im Laufe der Zeit weitere Szenarien auf Basis
+			bestehenden Lösung umgesetzt werden können.
+		</para>
 		<section id="scenario-1">
 			<title>Szenario 1: Bildungscloud</title>
 			<para>
-				Dies ist das Szenario mit der geringsten Komplexität. Die
-				&ucsUCS;-Systeme werden zentral in einem Rechenzentrum betrieben
-				und dienen als Identity- und Access-Management. Beispielsweise
-				lassen sich Groupware-Lösungen oder Lernmanagement-Software
-				anbinden und ermöglichen so den Anwender_innen die Nutzung der
-				Dienste mit ein und dem selben Benutzerkonto und Passwort.
+				Dieses Szenario ermöglicht es Schulträgern eine effiziente
+				Bildungscloud für ihre Schulen aufzubauen.  Die &ucsUCS;-Systeme
+				werden zentral in einem Rechenzentrum betrieben und stellen das
+				Identity- und Access-Management zur Verfügung. An dieses werden
+				unterschiedliche IT-Angebote angebunden, die von den Schulen
+				benötigt werden.  Zum Beispiel E-Mail und Groupware-Lösungen und
+				Lernmanagement-Systeme.  Lehrkräfte und Schüler können alle
+				angeschlossenen Angebote ihrem persönlichen Benutzerkonto und
+				Passwort.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Unabhängigkeit von der IT-Ausstattung der Schulen</para></listitem>
+					<listitem><para>Bereitstellung orts- und zeitunabhängige IT-Angebote für Schulen</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+					<listitem><para>Senkung des Helpdesk-Aufkommens durch Self-Service für vergessene Passwörter</para></listitem>
+				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-1">
-				<title>Szenario 1: Zentraler Verzeichnisdienst für Webdienste</title>
+				<title>Zentrales Identity-Management mit integrierten
+					IT-Angeboten</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/1_zentrale.png" scale="53" />
+						<imagedata fileref="illustrations41/1_zentrale.png" scale="36" />
 					</imageobject>
-					<textobject><phrase>Szenario 1: Zentraler Verzeichnisdienst
-							für Webdienste</phrase></textobject>
+					<textobject><phrase>Zentrales Identity-Management mit integrierten
+					IT-Angeboten</phrase></textobject>
 				</mediaobject>
 			</figure>
 		</section>
 		<section id="scenario-2">
-			<title>Szenario 2: Bildungscloud mit WLAN-Unterstützung</title>
+			<title>Szenario 2: WLAN in den Schulen</title>
 			<para>
-				Dieses Szenario fokussiert sich auf die Authentifizierung von
-				WLAN-Geräten an den Schulen. Dazu werden &ucsUCS;-Systeme zentral in
-				einem Rechenzentrum betrieben und dienen als Identity- und
-				Access-Management. Zudem sind die Schulen über VPN, Standleitung
-				oder ähnliches an das Rechenzentrum angebunden. An den Schulen
-				werden WLAN Access Points installiert, die RADIUS unterstützen
-				(WPA2-Enterprise / IEEE 802.1X). Ergänzend können auch wie in
-				Szenario 1 weitere Webdienste an die zentralen Systeme
-				angebunden werden.
+				Dieses Szenario ermöglicht es Schulträgern den Zugang zum WLAN
+				in ihren Schulen zentral zu steuern und nur bekannten
+				Lehrkräften und Schülern Zugang zu gewähren.  Dazu werden
+				&ucsUCS;-Systeme zentral in einem Rechenzentrum betrieben und
+				dienen als Identity- und Access-Management. Zudem sind die
+				Schulen mit dem Rechenzentrum verbunden, z.B. mittels eines
+				VPNs. An den Schulen werden WLAN Access Points installiert, die
+				RADIUS unterstützen (WPA2-Enterprise / IEEE 802.1X). Ergänzend
+				können auch wie in Szenario 1 weitere IT-Angebote an die
+				zentralen Systeme angebunden werden.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Unabhängigkeit von Schulserver-Lösungen in den Schulen</para></listitem>
+					<listitem><para>Absicherung des WLAN-Zugangs durch Verwendung persönlicher Zugangsdaten für Lehrkräfte und Schüler</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-2">
-				<title>Szenario 2: Zentraler Verzeichnisdienst und WLAN für
-					Schulen, ggf. inkl. Webdienste</title>
+				<title>Zentrales Identity-Management, WLAN und weitere
+					IT-Angebote für Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/2_zentrale_wlan.png" scale="53" />
+						<imagedata fileref="illustrations41/2_zentrale_wlan.png" scale="36" />
 					</imageobject>
-					<textobject><phrase>Szenario 2: Zentraler Verzeichnisdienst
-							und WLAN für Schulen, ggf. inkl.
-							Webdienste</phrase></textobject>
+					<textobject><phrase>Zentrales Identity-Management, WLAN und
+							weitere IT-Angebote für
+							Schulen</phrase></textobject>
 				</mediaobject>
 			</figure>
 		</section>
 		<section id="scenario-3">
 			<title>Szenario 3: Zentral verwaltete Schul-IT-Infrastruktur</title>
 			<para>
-				Dieses Szenario baut auf dem Szenario 2 auf und ergänzt es um
-				Schulserver an den Schulen. Diese Schulserver stellen vor Ort
-				die benötigten Infrastruktur-Dienste bereit wie DHCP, DNS,
-				Active Directory kompatible Domäne, Dateifreigaben, Proxy, aber
-				auch pädagogische Funktionen wie Computerraumsteuerung,
-				Klassenarbeitsmodus, Passwörter zurücksetzen,
-				Client-Software-Management und mehr.
+				Dieses Szenario ermöglicht es Schulträgern die gesamte
+				IT-Infrastruktur ihrer Schulen zentral zu verwalten und
+				pädagogische Funktionen dezentral in den Schulen bereitzustellen.
+				Dazu ergänzt es Szenario 2 um Schulserver an den Schulen. Diese
+				Schulserver stellen vor Ort die benötigten Infrastruktur-Dienste
+				bereit wie DHCP, DNS, Active Directory kompatible Domäne,
+				Dateifreigaben, Proxy, aber auch pädagogische Funktionen wie
+				Computerraumsteuerung, Klassenarbeitsmodus, Passwörter
+				zurücksetzen und Softwareverteilung.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Vollständige Bereitstellung der IT-Infrastruktur in den Schulen</para></listitem>
+					<listitem><para>Unabhängigkeit der Schule gegenüber Ausfällen des Internetzugangs/VPNs</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-3">
-				<title>Szenario 3: Zentraler Verzeichnisdienst und WLAN mit
-					Schulserver an den Schulen und Softwareverteilung</title>
+				<title>Zentral verwaltete Schul-IT-Infrastruktur mit
+					Schulservern an den Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/3_zentrale_wlan_schulserver.png" scale="53" />
+						<imagedata fileref="illustrations41/3_zentrale_wlan_schulserver.png" scale="36" />
 					</imageobject>
-					<textobject><phrase>Szenario 3: Zentraler Verzeichnisdienst
-							und WLAN mit Schulserver an den Schulen und
-							Softwareverteilung</phrase></textobject>
+					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur mit
+					Schulservern an den Schulen</phrase></textobject>
 				</mediaobject>
 			</figure>
 		</section>
 		<section id="scenario-4">
-			<title>Szenario 4: Zukünftige Schul-IT-Infrastruktur ohne
+			<title>Szenario 4: Schul-IT-Infrastruktur ohne dezentrale
 				Schulserver</title>
 			<para>
-				Dieses Szenario ähnelt dem Szenario 3, nur dass in diesem Fall
-				die Schulserver nicht an der Schule stehen sondern im
-				Rechenzentrum betrieben werden. Dies erlaubt es die
-				Hardwarekosten zu verringern, erfordert allerdings auch eine
-				sehr gute Anbindung der Schulen an das Rechenzentrum (1 GBit/s
-				oder mehr). Szenario 3 und 4 können auch kombiniert werden,
-				sodass die Schulserver für gut angebundene Schulen im
-				Rechenzentrum betrieben werden und die Schulserver von weniger
-				gut angebundenen Schulen an den Schulen vor Ort.
+				Dieses Szenario ermöglicht es Schulträgern die gesamte
+				IT-Infrastruktur ihrer Schulen zentral zu verwalten, wie in
+				Szenario 3, mit der Ergänzung, dass die Schulserver im
+				Rechenzentrum betrieben werden. Voraussetzung ist eine sehr gute
+				und zuverlässige Anbindung der Schulen an das Rechenzentrum.
+				Durch die Verlagerung der Schulserver ins Rechenzentrum können
+				die Hardware-Ressourcen effizienter verwendet werden und
+				gleichzeitig reduzieren sich die Kosten für die Wartung.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Vollständige Bereitstellung der IT-Infrastruktur in den Schulen</para></listitem>
+					<listitem><para>Abhängigkeit der Schule gegenüber Ausfällen des Internetzugangs/VPNs</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration und bessere Ressourcennutzung</para></listitem>
+					<listitem><para>Effizienz in der Wartung durch einfacheren Zugang zu den Systemen</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-4">
-				<title>Szenario 4: Zentraler Verzeichnisdienst und WLAN mit
-					Schulserver im Rechenzentrum und Softwareverteilung</title>
+				<title>Zentral verwaltete Schul-IT-Infrastruktur
+					ohne dezentrale Schulserver</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" scale="53" />
+						<imagedata fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" scale="36" />
 					</imageobject>
-					<textobject><phrase>Szenario 4: Zentraler Verzeichnisdienst
-							und WLAN mit Schulserver im Rechenzentrum und
-							Softwareverteilung</phrase></textobject>
+					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur
+					ohne dezentrale Schulserver</phrase></textobject>
 				</mediaobject>
 			</figure>
 		</section>
@@ -712,7 +763,7 @@ feedback@univention.de
 						<para>
 							Dadurch, dass der Betreiber die öffentliche
 							DNS-Konfiguration für die Domäne kontrolliert, können auch
-							weitere Dienste wie bspw. Groupware oder Lernplattformen
+							weitere IT-Angebote wie bspw. Groupware oder Lernplattformen
 							über eine Subdomain öffentlich verfügbar gemacht werden.
 							Über NAT kann eine Adressübersetzung der öffentlich
 							verfügbaren Subdomain auf ein internes System
@@ -781,14 +832,14 @@ feedback@univention.de
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Schüler_innen:
+					Schüler:
 					<itemizedlist>
 						<listitem><para>Schema: Vorname-1.Buchstabe Nachname-ID</para></listitem>
 						<listitem><para>Beispiel: Mary <wordasword>Somerville</wordasword> → <systemitem class="username">marys01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
-					Lehrkräfte und Mitarbeiter_innen:
+					Lehrkräfte und Mitarbeiter:
 					<itemizedlist>
 						<listitem><para>Schema: 1.Buchstabe Vorname-Nachname-ID</para></listitem>
 						<listitem><para>Beispiel: Ada <wordasword>Lovelace</wordasword> → <systemitem class="username">alovelace01</systemitem></para></listitem>
@@ -893,7 +944,7 @@ feedback@univention.de
 							wird.</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
-							Benutzer_innen. Außerdem die Daten der
+							Benutzer. Außerdem die Daten der
 							Klassenfreigaben - ggf. weitere, manuell angelegte
 							Freigaben</para></listitem>
 				</itemizedlist>
@@ -918,7 +969,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Für den Betrieb der &ucsUAS;-Umgebung muss ein Team an
-				technischen Mitarbeiter_innen aufgebaut werden, die auch im
+				technischen Mitarbeiter aufgebaut werden, die auch im
 				Fehlerfall kontaktiert werden können. Dabei sollten bei diesem
 				Support-Team entsprechende Werkzeuge zur Kommunikation, bspw.
 				ein Ticket-System (bspw. <wordasword>KIX</wordasword> aus dem Univention App Center, das
@@ -1019,7 +1070,7 @@ feedback@univention.de
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_slave">
-				<title>&ucsUCS; Slave für Webdienste / Groupware / Collaboration /
+				<title>&ucsUCS; Slave für IT-Angebote / Groupware / Collaboration /
 					Lernplattformen</title>
 				<para>
 					<emphasis>alle Szenarien</emphasis>
@@ -1824,114 +1875,114 @@ feedback@univention.de
 			</para>
 		</section>
 	</chapter>
-	<chapter id="additional-services">
-		<title>Weitere Angebote einrichten</title>
-		<section id="additional-services_factory">
-			<title>Rollout der Schulserver</title>
-			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis>
-			</para>
-			<para>
-				TODO <foreignphrase>Factory</foreignphrase> ab 20 Schulen empfohlen
-			</para>
-		</section>
-		<section id="additional-services_patchmanagement">
-			<title>Patch-Management für Server</title>
-			<para>
-				<emphasis>für alle Szenarien</emphasis>
-			</para>
-			<para>
-				TODO
-				Installation OPSI
-			</para>
-		</section>
-		<section id="additional-services_factory_clients">
-			<title>Rollout der Clients in den Schulen</title>
-			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis>
-			</para>
-			<para>
-				TODO
-				Rollout der Clients in den Schulen mittels Softwareverteilung
-			</para>
-		</section>
-		<section id="additional-services_patchmanagement_clients">
-			<title>Patch-Management für Clients: Softwareverteilung</title>
-			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis>
-			</para>
-			<para>
-				TODO
-				Installation OPSI
-			</para>
-		</section>
-		<section id="additional-services_windows">
-			<title>Windows Client-Konfiguration</title>
-			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis>
-			</para>
-			<para>
-				TODO
-				Gruppenrichtlinien
-				Profilkonfiguration
-			</para>
-		</section>
-		<section id="additional-services_quota">
-			<title>Quota</title>
-			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis>
-			</para>
-			<para>
-				TODO
-			</para>
-		</section>
-		<section id="additional-services_proxy">
-			<title>Internetzugang für Clients / BYOD</title>
-			<para>
-				<emphasis>für Szenarien 2, 3 und 4</emphasis>
-			</para>
-			<para>
-				TODO
-			</para>
-		</section>
-		<section id="additional-services_radius">
-			<title>WLAN / RADIUS</title>
-			<para>
-				<emphasis>für Szenarien 2, 3 und 4</emphasis>
-			</para>
-			<para>
-				TODO
-			</para>
-		</section>
-		<section id="additional-services_dienstmail">
-			<title>Dienstmail/Groupware</title>
-			<para>
-				<emphasis>für alle Szenarien</emphasis>
-			</para>
-			<para>
-				TODO
-			</para>
-		</section>
-		<section id="additional-services_lernplattform">
-			<title>Lernplattform</title>
-			<para>
-				<emphasis>für alle Szenarien</emphasis>
-			</para>
-			<para>
-				TODO
-			</para>
-		</section>
-		<section id="additional-services_filesync">
-			<title><foreignphrase>File Share und Sync</foreignphrase></title>
-			<para>
-				<emphasis>für alle Szenarien</emphasis>
-			</para>
-			<para>
-				TODO
-				ownCloud und Co.
-			</para>
-		</section>
-	</chapter>
+	<!-- <chapter id="additional-services"> -->
+	<!-- 	<title>Weitere Angebote einrichten</title> -->
+	<!-- 	<section id="additional-services_factory"> -->
+	<!-- 		<title>Rollout der Schulserver</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO <foreignphrase>Factory</foreignphrase> ab 20 Schulen empfohlen -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_patchmanagement"> -->
+	<!-- 		<title>Patch-Management für Server</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Installation OPSI -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_factory_clients"> -->
+	<!-- 		<title>Rollout der Clients in den Schulen</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Rollout der Clients in den Schulen mittels Softwareverteilung -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_patchmanagement_clients"> -->
+	<!-- 		<title>Patch-Management für Clients: Softwareverteilung</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Installation OPSI -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_windows"> -->
+	<!-- 		<title>Windows Client-Konfiguration</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Gruppenrichtlinien -->
+	<!-- 			Profilkonfiguration -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_quota"> -->
+	<!-- 		<title>Quota</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_proxy"> -->
+	<!-- 		<title>Internetzugang für Clients / BYOD</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 2, 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_radius"> -->
+	<!-- 		<title>WLAN / RADIUS</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 2, 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_dienstmail"> -->
+	<!-- 		<title>Dienstmail/Groupware</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_lernplattform"> -->
+	<!-- 		<title>Lernplattform</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_filesync"> -->
+	<!-- 		<title><foreignphrase>File Share und Sync</foreignphrase></title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			ownCloud und Co. -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- </chapter> -->
 </book>
 
 <!-- vi: ft=docbk:tw=80:sw=4:ts=4:sts=4:noet
