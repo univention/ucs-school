@@ -40,16 +40,16 @@ joinscript_init
 
 umc_init
 
-umc_operation_create "helpdesk-all" "Helpdesk" "" "helpdesk/*"
+umc_operation_create "helpdesk-all" "Helpdesk" "" "helpdesk/*" || die
 
 # create container for UMC config objects
-udm container/cn create "$@" --ignore_exists --position cn=UMC,cn=univention,$ldap_base --set name=config
+udm container/cn create "$@" --ignore_exists --position cn=UMC,cn=univention,$ldap_base --set name=config || die
 
 # create HELPDESK settings
 # Update to UCS 3.0, move old helpdesk category object
 if univention-ldapsearch -x -s base -b "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" >/dev/null; then
 	udm settings/console_helpdesk move "$@" --dn "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" \
-		--position "cn=config,cn=UMC,cn=univention,$ldap_base"
+		--position "cn=config,cn=UMC,cn=univention,$ldap_base" || die
 else
 	udm settings/console_helpdesk create "$@" --ignore_exists \
 		--position "cn=config,cn=UMC,cn=univention,$ldap_base" \
@@ -57,11 +57,11 @@ else
 		--set description="Helpdesk Einstellungen" \
 		--append category="Hardware" \
 		--append category="Software" \
-		--append category="Sonstiges"
+		--append category="Sonstiges" || die
 fi
 
-ucs_school_policies_create "helpdesk-admin"
-ucs_school_policies_append "helpdesk-all" "helpdesk-admin"
+ucs_school_policies_create "helpdesk-admin" || die
+ucs_school_policies_append "helpdesk-all" "helpdesk-admin" || die
 
 joinscript_save_current_version
 
