@@ -1875,8 +1875,8 @@ feedback@univention.de
 			</para>
 		</section>
 	</chapter>
-	<!-- <chapter id="additional-services"> -->
-	<!-- 	<title>Weitere Angebote einrichten</title> -->
+	<chapter id="additional-services">
+		<title>Weitere Angebote einrichten</title>
 	<!-- 	<section id="additional-services_factory"> -->
 	<!-- 		<title>Rollout der Schulserver</title> -->
 	<!-- 		<para> -->
@@ -1936,24 +1936,24 @@ feedback@univention.de
 	<!-- 			TODO -->
 	<!-- 		</para> -->
 	<!-- 	</section> -->
-	<!-- 	<section id="additional-services_proxy"> -->
-	<!-- 		<title>Internetzugang für Clients / BYOD</title> -->
-	<!-- 		<para> -->
-	<!-- 			<emphasis>für Szenarien 2, 3 und 4</emphasis> -->
-	<!-- 		</para> -->
-	<!-- 		<para> -->
-	<!-- 			TODO -->
-	<!-- 		</para> -->
-	<!-- 	</section> -->
-	<!-- 	<section id="additional-services_radius"> -->
-	<!-- 		<title>WLAN / RADIUS</title> -->
-	<!-- 		<para> -->
-	<!-- 			<emphasis>für Szenarien 2, 3 und 4</emphasis> -->
-	<!-- 		</para> -->
-	<!-- 		<para> -->
-	<!-- 			TODO -->
-	<!-- 		</para> -->
-	<!-- 	</section> -->
+		<section id="additional-services_proxy">
+			<title>Internetzugang für Clients / BYOD</title>
+			<para>
+				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+			</para>
+			<para>
+				TODO
+			</para>
+		</section>
+		<section id="additional-services_radius">
+			<title>WLAN / RADIUS</title>
+			<para>
+				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+			</para>
+			<para>
+				TODO
+			</para>
+		</section>
 	<!-- 	<section id="additional-services_dienstmail"> -->
 	<!-- 		<title>Dienstmail/Groupware</title> -->
 	<!-- 		<para> -->
@@ -1982,7 +1982,7 @@ feedback@univention.de
 	<!-- 			ownCloud und Co. -->
 	<!-- 		</para> -->
 	<!-- 	</section> -->
-	<!-- </chapter> -->
+	</chapter>
 </book>
 
 <!-- vi: ft=docbk:tw=80:sw=4:ts=4:sts=4:noet
