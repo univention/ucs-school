@@ -1431,7 +1431,7 @@ feedback@univention.de
 					<listitem><para>Führen sie
 							alle evtl. ausstehenden Joinskripte aus (UMC →
 							Domäne → Domänenbeitritt)</para></listitem>
-					<listitem><para>Achten Sie darauf, dass die globale UCR-Richtlinie <property>ucsschool-ucr-settings</property> auf alle anderen Systeme wirkt.
+					<listitem><para>Achten Sie darauf, dass die globale &ucsUCR;-Richtlinie <property>ucsschool-ucr-settings</property> auf alle anderen Systeme wirkt.
 							Auf den anderen Systemen prüfen:
 							(UMC → System → Univention Configuration Registry → Suche: <envar>nagios/client/allowedhosts</envar> und <envar>munin/node/allowedhosts</envar>).
 							Starten Sie gegebenenfalls den Service <command>univention-directory-listener</command> neu
@@ -1461,7 +1461,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="base-configuration_globale-ucr">
-			<title>Globale UCR-Richtlinie</title>
+			<title>Globale &ucsUCR;-Richtlinie</title>
 			<!-- TODO: in Tabelle überführen -->
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1473,7 +1473,7 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Suchen und öffnen sie die Richtlinie
-						<command>ucsschool-ucr-settings</command> vom Typ UCR
+						<command>ucsschool-ucr-settings</command> vom Typ &ucsUCR;
 					</para>
 				</listitem>
 				<listitem>
@@ -1546,7 +1546,7 @@ feedback@univention.de
 			</itemizedlist>
 		</section>
 		<section id="base-configuration_central-ucr">
-			<title>Zentrale UCR-Richtlinie</title>
+			<title>Zentrale &ucsUCR;-Richtlinie</title>
 			<!-- TODO: in Tabelle überführen -->
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1559,7 +1559,7 @@ feedback@univention.de
 					<para>
 						Erstellen sie eine neue Richtlinie im Container
 						<uri>policies/config-registry</uri> vom Typ
-						&ucsUCR; (UCR)
+						&ucsUCR;
 					</para>
 				</listitem>
 				<listitem>
