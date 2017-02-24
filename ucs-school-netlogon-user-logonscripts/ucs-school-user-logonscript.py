@@ -590,16 +590,15 @@ def handler(dn, new, old):
 		scriptpath = get_script_path()
 
 	globalLinks = get_global_links()
-
-	univention_object_type = new.get('univentionObjectType', [''])[0] or old.get('univentionObjectType', [''])[0]
-	if univention_object_type == 'users/user':
+	object_class = new.get('objectClass', [''])[0] or old.get('univentionObjectType', [''])[0]
+	if 'posixAccount' in object_class:
 		user_change(dn, new, old)
-	elif univention_object_type == 'shares/share':
+	elif 'univentionShare' in object_class:
 		share_change(dn, new, old)
-	elif univention_object_type == 'groups/group':
+	elif 'posixGroup' in object_class:
 		group_change(dn, new, old)
 	else:
-		raise RuntimeError('Unknown univentionObjectType: {!r}'.format(univention_object_type))
+		raise RuntimeError('Unknown object. objectClass: {!r}'.format(object_class))
 
 
 def initialize():
