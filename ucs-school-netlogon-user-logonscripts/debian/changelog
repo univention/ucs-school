@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (12.0.4-7) unstable; urgency=low
+
+  * Bug #43526: refactor functions to class methods, remove global variables
+  * code paths were not changed!
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Feb 2017 16:14:14 +0100
+
 ucs-school-netlogon-user-logonscripts (12.0.4-6) unstable; urgency=low
 
   * Bug #37256: not safe to use univentionObjectType, use objectClass instead

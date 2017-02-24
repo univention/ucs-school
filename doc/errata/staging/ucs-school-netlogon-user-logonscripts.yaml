@@ -13,4 +13,6 @@ desc: |
  * Whitespace in the list of share names in the UCR variable
    ucsschool/userlogon/commonshares is now handled more securely (Bug
    #43504).
-bug: [37256, 43504]
+ * Certain elements of the user netlogon script can now be disabled (Bug
+   #43526).
+bug: [37256, 43504, 43526]
