@@ -58,6 +58,30 @@ Description[en]=Name of the directory containing links to the users shares, for 
 Type=str
 Categories=ucsschool-netlogon
 
+[ucsschool/userlogon/shares_folder_icon]
+Description[de]=Icon des Verzeichnisses das Links zu Laufwerken des Benutzers enthält. Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,143". Standard: nicht gesetzt.
+Description[en]=Icon of the directory containing links to the users shares. No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,143". Default: unset.
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/my_files_link_name]
+Description[de]=Name für den Link zu den "Eigenen Dateien" im Verzeichnis das Links der Benutzerfreigaben (Standard: "Meine Dateien").
+Description[en]=Name of the link to "My Files" in the directory containing links to the users shares (default: "Meine Dateien").
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/my_files_link_icon]
+Description[de]=Icon des Links zu den "Eigenen Dateien" des Benutzers. Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,207". Standard: nicht gesetzt.
+Description[en]=Icon of the link to users "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,207". Default: unset.
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/other_links_icon]
+Description[de]=Icon für Links zu anderen Freigaben des Benutzers als "Eigenen Dateien". Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,193". Standard: nicht gesetzt.
+Description[en]=Icon for links to other shares than "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,193". Default: unset.
+Type=str
+Categories=ucsschool-netlogon
+
 [ucsschool/userlogon/shares/validservers]
 Description[de]=Definiert von welchen Servern Freigaben eingebunden werden (default: leer, möglich: leer [nur Freigaben vom lokalen Rechner], Komma separierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
 Description[en]=Defines the valid servers for network shares (default: empty, possible: empty [only shares from the local host], Comma-separated list of servers [shares from these servers], * [all shares]

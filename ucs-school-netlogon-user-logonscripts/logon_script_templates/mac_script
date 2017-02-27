@@ -1,0 +1,5 @@
+#!/usr/bin/osascript
+tell application "Finder"
+open location "smb://{uid}@{host}/{name}"
+activate
+end tell

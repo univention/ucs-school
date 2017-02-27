@@ -36,6 +36,7 @@ import os
 import pwd
 import re
 import time
+import copy
 import shutil
 import ldap
 import traceback
@@ -121,8 +122,12 @@ class UserLogonScriptListener(object):
 	hostname = listener.baseConfig['hostname']
 	domainname = listener.baseConfig['domainname']
 
-	desktopFolderName = listener.configRegistry.get('ucsschool/userlogon/shares_foldername', "Eigene Shares")
-	desktopFolderNameMacOS = listener.configRegistry.get('ucsschool/userlogon/mac/foldername', desktopFolderName)
+	desktop_folder_name = listener.configRegistry.get('ucsschool/userlogon/shares_foldername', 'Eigene Shares')
+	desktop_folder_name_macos = listener.configRegistry.get('ucsschool/userlogon/mac/foldername', desktop_folder_name)
+	desktop_folder_icon = listener.configRegistry.get('ucsschool/userlogon/shares_folder_icon')  # '%SystemRoot%\system32\imageres.dll,143'
+	my_files_link_name = listener.configRegistry.get('ucsschool/userlogon/my_files_link_name', 'Meine Dateien')
+	my_files_link_icon = listener.configRegistry.get('ucsschool/userlogon/my_files_link_icon')  # '%SystemRoot%\system32\imageres.dll,207'
+	other_links_icon = listener.configRegistry.get('ucsschool/userlogon/other_links_icon')  # '%SystemRoot%\system32\imageres.dll,193'
 	myshares_name = listener.configRegistry.get('ucsschool/userlogon/myshares/name', 'Eigene Dateien')
 	mypictures_name = listener.configRegistry.get('ucsschool/userlogon/mypictures/name', 'Eigene Bilder')
 
@@ -139,7 +144,13 @@ class UserLogonScriptListener(object):
 	filterTeacher = listener.baseConfig.get(
 		'ucsschool/userlogon/umclink/filter',
 		'(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
-
+	template_paths = dict(
+		main='/usr/share/ucs-school-netlogon-user-logonscripts/net-logon-script.vbs',
+		shortcut_to_share='/usr/share/ucs-school-netlogon-user-logonscripts/shortcut-to-share.vbs',
+		teacher_umc_link='/usr/share/ucs-school-netlogon-user-logonscripts/teacher-umc-link.vbs',
+		mac_script='/usr/share/ucs-school-netlogon-user-logonscripts/mac_script',
+	)
+	_template_cache = dict()
 	_script_path = list()
 
 	def __init__(self, dn, new, old):
@@ -163,9 +174,7 @@ class UserLogonScriptListener(object):
 
 	@classmethod
 	def get_script_path(cls):
-		Log.warn('get_script_path()')
 		if not cls._script_path:
-			Log.warn('get_script_path() not cls._script_path')
 			ucsschool_netlogon_path = listener.configRegistry.get('ucsschool/userlogon/netlogon/path', '').strip().rstrip('/')
 			samba_netlogon_path = listener.configRegistry.get('samba/share/netlogon/path', '').strip().rstrip('/')
 			cls._script_path = list()
@@ -183,7 +192,6 @@ class UserLogonScriptListener(object):
 
 	@staticmethod
 	def get_global_links():
-		Log.warn('get_global_links()')
 		# search in baseconfig for shares which are common for all users
 		global_links = dict()
 		Log.info("search for global links")
@@ -211,14 +219,9 @@ class UserLogonScriptListener(object):
 		Log.info("got global links %s" % global_links)
 		return global_links
 
-	@staticmethod
-	def generate_mac_script(uid, name, host):
-		return '''#!/usr/bin/osascript
-tell application "Finder"
-open location "smb://%s@%s/%s"
-activate
-end tell
-''' % (uid, host, name)
+	@classmethod
+	def generate_mac_script(cls, uid, name, host):
+		return cls.get_logon_template(cls.template_paths['mac_script']).format(uid=uid, host=host, name=name)
 
 	@classmethod
 	def write_mac_link_scripts(cls, uid, homepath, links):
@@ -234,29 +237,29 @@ end tell
 				except:
 					pass
 
-				if not os.path.exists(os.path.join(homepath, "Desktop", cls.desktopFolderNameMacOS)):
+				if not os.path.exists(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos)):
 					if not os.path.exists(homepath):
 						os.mkdir(homepath, 0o700)
 						os.chown(homepath, uidnumber, gidnumber)
 
-					for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", cls.desktopFolderNameMacOS)]:
+					for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos)]:
 						if not os.path.exists(path):
 							os.mkdir(path)
 							os.chown(path, uidnumber, gidnumber)
 
 				# remove old scripts
-				for filename in os.listdir(os.path.join(homepath, "Desktop", cls.desktopFolderNameMacOS)):
+				for filename in os.listdir(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos)):
 					try:
-						if os.path.isdir(os.path.join(homepath, "Desktop", cls.desktopFolderNameMacOS, filename)):
-							shutil.rmtree(os.path.join(homepath, "Desktop", cls.desktopFolderNameMacOS, filename))
+						if os.path.isdir(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, filename)):
+							shutil.rmtree(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, filename))
 						else:
-							os.remove(os.path.join(homepath, "Desktop", cls.desktopFolderNameMacOS, filename))
+							os.remove(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, filename))
 					except:
 						Log.error("failed to remove %s" % filename)
 						raise
 
 				for filename in links:
-					macscriptpath = os.path.join(homepath, "Desktop", cls.desktopFolderNameMacOS, "%s.app" % filename)
+					macscriptpath = os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, "%s.app" % filename)
 					os.mkdir(macscriptpath)
 					os.chown(macscriptpath, uidnumber, gidnumber)
 					macscriptfile = os.path.join(macscriptpath, filename)
@@ -269,114 +272,81 @@ end tell
 			listener.unsetuid()
 
 	@classmethod
-	def generate_windows_link_script(cls, desktopfolder, links, mappings, dn):
-		Log.warn('generate_windows_link_script()')
-		# desktopfolder is a strings, links is a list of tupels which contain linkname and linkgoal
-		skript = '''Const DESKTOP = &H10&
-Const FolderName = "{desktop_folder_name}"
-Const HKEY_CURRENT_USER= &H80000001
+	def get_logon_template(cls, path, format_dict=None, no_icons=None):
+		"""
+		Fetch a VBS/mac template and apply text replacements.
 
-Set objShell = CreateObject("Shell.Application")
-Set objFolder = objShell.Namespace(DESKTOP)
-Set objFolderItem = objFolder.Self
-Set FileSysObj = WScript.CreateObject("Scripting.FileSystemObject")
-Set WSHNetwork = WScript.CreateObject("WScript.Network")
+		:param path: str: path to template file
+		:param format_dict: dict: if not None, text replacements will be
+		applied with str.format(**format_dict). Attention: templates will be
+		cached. They can be "compiled" with format_dict only once! Use None to
+		format them individually.
+		:param no_icons: list of strings: remove lines that contain the listed
+		format-keys (e.g. 'my_files_link_icon' to remove icon from My Files
+		link).
+		:return: str: template text
+		"""
+		if path not in cls._template_cache:
+			# read file into list of strings
+			with open(path, 'rb') as fp:
+				tmp = fp.readlines()
+			# remove icon lines
+			for key in (no_icons or list()):
+				try:
+					del format_dict[key]
+				except KeyError:  # key not in format_dict
+					pass
+				except TypeError:  # format_dict is None
+					pass
+				for line in tmp:
+					if '{%s}' % key in line:
+						tmp.remove(line)
+			# list 2 string
+			tmp = ''.join(tmp)
+			# format string
+			if format_dict:
+				assert isinstance(format_dict, dict)
+				tmp = tmp.format(**format_dict)
+			cls._template_cache[path] = tmp
+		# return a copy, so string in cache will not be modified
+		return copy.copy(cls._template_cache[path])
 
-FolderPath = objFolderItem.Path + "\\" + FolderName
+	@classmethod
+	def generate_windows_link_script(cls, links, mappings, dn):
+		"""
+		Create windows user netlogon script.
 
-\' Delete Folder
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-If objFSO.FolderExists(FolderPath) Then
-	objFSO.DeleteFolder(FolderPath)
-End If
-
-\' Recreate Folder
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-Set objFolder = objFSO.CreateFolder(FolderPath)
-
-\' Link to HOMEDRIVE
-Set oShell = CreateObject("Wscript.Shell")
-homepath = oShell.Environment("Process").Item("HOMEDRIVE") & oShell.Environment("Process").Item("HOMEPATH")
-
-Set oWS = WScript.CreateObject("WScript.Shell")
-sLinkFile = FolderPath + "\\Meine Dateien.LNK"
-
-Set oLink = oWS.CreateShortcut(sLinkFile)
-
-oLink.TargetPath = homepath
-oLink.Save
-
-Function SetMyShares(strPersonal)
- strKeyPath1="Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
- strKeyPath2="Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders"
-
- strComputer = GetComputerName
- Set objReg = GetObject("winmgmts:{{impersonationLevel=impersonate}}!" & strComputer & "\\root\\default:StdRegProv")
-
- \' Check if folder {myshares_name} exists
- Set fso = CreateObject("Scripting.FileSystemObject")
- If not (fso.FolderExists(strPersonal)) then
-	 ON ERROR RESUME NEXT
-	 Set f = fso.CreateFolder(strPersonal)
- End If
-
- intRet1= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath1, "Personal", strPersonal)
- If intRet1 <> 0 Then
-    Wscript.echo "Error: Setting Shell Folder Key Personal"
- End If
-
- intRet2= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath2, "Personal", strPersonal)
- If intRet2 <> 0 Then
-     Wscript.echo "Error: Setting User Shell Folder Key Personal"
- End If
-
- \' Check if folder {mypictures_name} exists
- Set fso = CreateObject("Scripting.FileSystemObject")
- If not (fso.FolderExists(strPersonal & "\{mypictures_name}")) then
-	 ON ERROR RESUME NEXT
-	 Set f = fso.CreateFolder(strPersonal & "\{mypictures_name}")
- End If
-
- intRet3= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath1, "My Pictures", strPersonal & "\{mypictures_name}")
- If intRet3 <> 0 Then
-	Wscript.echo "Error: Setting Shell Folder Key Personal"
- End If
-
- intRet4= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath2, "My Pictures", strPersonal & "\{mypictures_name}")
- If intRet4 <> 0 Then
-	 Wscript.echo "Error: Setting User Shell Folder Key Personal"
- End If
-
- end function
-
-Function MapDrive(Drive,Share)
- ON ERROR RESUME NEXT
- If FileSysObj.DriveExists(share)=True then
- if FileSysObj.DriveExists(Drive)=True then
- WSHNetwork.RemoveNetworkDrive Drive
- end if
- end if
- WSHNetwork.MapNetworkDrive Drive, Share
- If err.number >0 then
- msgbox "ERROR: " & err.description & vbcr & Drive & " " & share
- err.clear
- End if
- end function
-
-'''.format(
-	desktop_folder_name=desktopfolder.translate(None, '\/:*?"<>|'),
-	myshares_name=cls.myshares_name,
-	mypictures_name=cls.mypictures_name)
+		:param links: list of tupels which contain link name and link target
+		:param mappings:
+		:param dn:
+		:return: str: the script
+		"""
+		str_replacements = dict(
+			desktop_folder_name=cls.desktop_folder_name.translate(None, '\/:*?"<>|'),
+			myshares_name=cls.myshares_name,
+			mypictures_name=cls.mypictures_name,
+			desktop_folder_icon=cls.desktop_folder_icon,
+			my_files_link_name=cls.my_files_link_name,
+			my_files_link_icon=cls.my_files_link_icon,
+		)
+		no_icons = list()
+		if not cls.desktop_folder_icon:
+			no_icons.append('desktop_folder_icon')
+		if not cls.my_files_link_icon:
+			no_icons.append('my_files_link_icon')
+		skript = cls.get_logon_template(cls.template_paths['main'], str_replacements, no_icons)
 
 		# create shortcuts to shares
-		for linkName in links:
-			skript += '''Set oWS = WScript.CreateObject("WScript.Shell")
-sLinkFile = FolderPath + "\\{link_name}.LNK"
-Set oLink = oWS.CreateShortcut(sLinkFile)
-oLink.TargetPath = "\\\\{links_link_name}\\{link_name}"
-oLink.Save
+		no_icons = list()
+		if not cls.other_links_icon:
+			no_icons.append('other_links_icon')
+		for share, server in links.items():
+			res = cls.get_logon_template(cls.template_paths['shortcut_to_share'], no_icons=no_icons).format(
+				share=share,
+				server=server,
+				other_links_icon=cls.other_links_icon)
 
-'''.format(link_name=linkName, links_link_name=links[linkName])
+			skript += res
 
 		# create shortcut to umc for teachers
 		with LDAPConnection() as lo:
@@ -387,20 +357,8 @@ oLink.Save
 			if not is_teacher:
 				is_teacher = cls.reTeacher.match(dn)  # old format before migration
 		if is_teacher:
-			skript += '''Set WshShell = CreateObject("WScript.Shell")
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-strLinkPath = WshShell.SpecialFolders("Desktop") & "\Univention Management Console.URL"
-If Not objFSO.FileExists(strLinkPath) Then
-	Set oUrlLink = WshShell.CreateShortcut(strLinkPath)
-	oUrlLink.TargetPath = "{umc_link}"
-	oUrlLink.Save
-	set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)
-	objFile.WriteLine("IconFile=\\\\{hostname}.{domainname}\\netlogon\\user\\univention-management-console.ico")
-	objFile.WriteLine("IconIndex=0")
-	objFile.Close
-
-End If
-'''.format(umc_link=cls.umcLink, hostname=cls.hostname, domainname=cls.domainname)
+			str_replacements = dict(umc_link=cls.umcLink, hostname=cls.hostname, domainname=cls.domainname)
+			skript += cls.get_logon_template(cls.template_paths['teacher_umc_link'], str_replacements)
 
 		lettersinuse = {}
 		for key in mappings.keys():
@@ -430,16 +388,17 @@ End If
 		if homePath and listener.baseConfig.is_true('ucsschool/userlogon/myshares/enabled', False):
 			skript += '\n'
 			skript += 'SetMyShares "%s"\n' % homePath
+		if cls.desktop_folder_icon:
+			skript += 'CreateDesktopIcon\n'
 
 		return skript
 
 	def write_windows_link_skripts(self, uid, links, mappings):
-		Log.warn('write_windows_link_skripts()')
 		for path in self.get_script_path():
-			script = self.generate_windows_link_script(self.desktopFolderName, links, mappings, self.dn).replace('\n', '\r\n')
+			script = self.generate_windows_link_script(links, mappings, self.dn).replace('\n', '\r\n')
 			listener.setuid(0)
 			try:
-				filepath = "%s/%s.vbs" % (path, uid)
+				filepath = os.path.join(path, '{}.vbs'.format(uid))
 				with open(filepath, 'w') as fp:
 					fp.write(script)
 				os.chmod(filepath, 0o755)
@@ -458,7 +417,6 @@ End If
 		:param old: may be set to None in share_change()
 		"""
 		Log.info('sync by group')
-		Log.warn('group_change()')
 		if new:
 			members = self.new.get('uniqueMember', ())
 			if old and 'uniqueMember' in old:
@@ -473,7 +431,6 @@ End If
 
 	def share_change(self):
 		Log.info('sync by share')
-		Log.warn('share_change()')
 		if self.new:
 			use = self.new
 		elif self.old:
@@ -503,7 +460,7 @@ End If
 					scope="sub",
 					filter=filter_format("(&(objectClass=posixGroup)(uniqueMember=%s))", (dn,)),
 					attr=["gidNumber"])
-				return frozenset([attributes['gidNumber'][0] for (dn_, attributes, ) in res])
+				return frozenset([attributes['gidNumber'][0] for (dn_, attributes,) in res])
 		except ldap.LDAPError as msg:
 			Log.error("ldap search for %s failed in user_gids() (%s)" % (dn, msg))
 		return frozenset()
@@ -531,11 +488,6 @@ End If
 		:param old: may be set to {} in group_change()
 		"""
 		Log.info('sync by user')
-		Log.warn('user_change()')
-		Log.debug('self.dn=%r' % (self.dn,))
-		Log.debug('new=%r' % (new,))
-		Log.debug('old=%r' % (old,))
-
 		with LDAPConnection() as lo:
 			if new:
 				try:
@@ -549,7 +501,7 @@ End If
 				if new == 'search':  # called from group_change
 					try:
 						Log.info('got to search %s' % (self.dn,))
-						res = lo.search(base=self.dn, scope="base", filter='objectClass=*')
+						res = lo.search(base=self.dn, scope="base", filter='objectClass=posixAccount')
 						if len(res) > 0:
 							new = res[0][1]
 							# get groups we are member of:
@@ -621,19 +573,20 @@ End If
 				if listener.baseConfig.is_true("ucsschool/userlogon/mac"):
 					self.write_mac_link_scripts(new['uid'][0], new['homeDirectory'][0], links)
 
-			elif old and not new:
+			elif old and 'posixAccount' in old['objectClass'] and not new:
 				listener.setuid(0)
 				try:
 					for path in self.get_script_path():
-						if os.path.exists("%s/%s.vbs" % (path, old['uid'][0])):
-							os.remove("%s/%s.vbs" % (path, old['uid'][0]))
+						vbs_path = os.path.join(path, '{}.vbs'.format(old['uid'][0]))
+						if os.path.exists(vbs_path):
+							Log.warn('Deleting netlogon script {}...'.format(vbs_path))
+							os.remove(vbs_path)
 				finally:
 					listener.unsetuid()
 
 
 def handler(dn, new, old):
 	object_class = new.get('objectClass', []) or old.get('objectClass', [])
-	Log.warn('objectClass={!r}\n\nold={!r}\n\nnew={!r}'.format(object_class, old, new))
 	script_handler = UserLogonScriptListener(dn, new, old)
 	if 'posixAccount' in object_class:
 		script_handler.user_change(new, old)
@@ -645,7 +598,14 @@ def handler(dn, new, old):
 		raise RuntimeError('Unknown object. objectClass={!r}\n\nold={!r}\n\nnew={!r}'.format(object_class, old, new))
 
 
+def initialize():
+	for path in UserLogonScriptListener.template_paths.values():
+		if not os.path.exists(path):
+			raise Exception('Missing template file {!r}.'.format(path))
+
+
 def clean():
+	Log.warn('Deleting all netlogon scripts in {!r}...'.format(UserLogonScriptListener.get_script_path()))
 	listener.setuid(0)
 	try:
 		for path in UserLogonScriptListener.get_script_path():
