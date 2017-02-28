@@ -20,6 +20,8 @@ desc: |
  * Whitespace in the list of share names in the UCR variable
    ucsschool/userlogon/commonshares is now handled more securely (Bug
    #43504).
- * Certain elements of the user netlogon script can now be disabled (Bug
-   #43526).
+ * Certain elements of the user netlogon script can now be disabled. It
+   is now possible to configure the path in which the directory for the
+   links will be created by setting the UCR variable
+   ucsschool/userlogon/shares_folder_parent_path (Bug #43526).
 bug: [37256, 41375, 43504, 43526]

@@ -3,12 +3,14 @@ Const FolderName = "{desktop_folder_name}"
 Const HKEY_CURRENT_USER= &H80000001
 
 Set objShell = CreateObject("Shell.Application")
-Set objFolder = objShell.Namespace(DESKTOP)
-Set objFolderItem = objFolder.Self
+Set oShellScript = CreateObject("WScript.Shell")
 Set FileSysObj = WScript.CreateObject("Scripting.FileSystemObject")
 Set WSHNetwork = WScript.CreateObject("WScript.Network")
 
-FolderPath = objFolderItem.Path + "\" + FolderName
+Set objFolder = objShell.Namespace(DESKTOP)
+Set objFolderItem = objFolder.Self
+strDesktopFolderPath = {desktop_folder_path}
+FolderPath = strDesktopFolderPath + "\" + FolderName
 
 ' Delete Folder
 Set objFSO = CreateObject("Scripting.FileSystemObject")

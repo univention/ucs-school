@@ -64,6 +64,12 @@ Description[en]=Icon of the directory containing links to the users shares. No i
 Type=str
 Categories=ucsschool-netlogon
 
+[ucsschool/userlogon/shares_folder_parent_path]
+Description[de]=Pfad des Verzeichnisses in dem das Verzeichnis mit den Links zu Laufwerken des Benutzers erstellt werden soll. Wenn nicht gesetzt, wird es vom Logon-Skript ausgerechnet. Beipiel: "%USERPROFILE%\Desktop". Standard: nicht gesetzt.
+Description[en]=Path to the directory containing the directory for the links to the users shares. Will be calculated by the logon-script, if unset. Example: "%USERPROFILE%\Desktop". Default: unset.
+Type=str
+Categories=ucsschool-netlogon
+
 [ucsschool/userlogon/my_files_link_name]
 Description[de]=Name für den Link zu den "Eigenen Dateien" im Verzeichnis das Links der Benutzerfreigaben (Standard: "Meine Dateien").
 Description[en]=Name of the link to "My Files" in the directory containing links to the users shares (default: "Meine Dateien").

@@ -122,6 +122,12 @@ class UserLogonScriptListener(object):
 	hostname = listener.baseConfig['hostname']
 	domainname = listener.baseConfig['domainname']
 
+	desktop_folder_path = listener.configRegistry.get('ucsschool/userlogon/shares_folder_parent_path')
+	if desktop_folder_path:
+		desktop_folder_path = desktop_folder_path.strip('"').rstrip('\\')
+		desktop_folder_path = 'oShellScript.ExpandEnvironmentStrings("{}")'.format(desktop_folder_path)
+	else:
+		desktop_folder_path = 'objFolderItem.Path'
 	desktop_folder_name = listener.configRegistry.get('ucsschool/userlogon/shares_foldername', 'Eigene Shares')
 	desktop_folder_name_macos = listener.configRegistry.get('ucsschool/userlogon/mac/foldername', desktop_folder_name)
 	desktop_folder_icon = listener.configRegistry.get('ucsschool/userlogon/shares_folder_icon')  # '%SystemRoot%\system32\imageres.dll,143'
@@ -328,6 +334,7 @@ class UserLogonScriptListener(object):
 			desktop_folder_icon=cls.desktop_folder_icon,
 			my_files_link_name=cls.my_files_link_name,
 			my_files_link_icon=cls.my_files_link_icon,
+			desktop_folder_path=cls.desktop_folder_path,
 		)
 		no_icons = list()
 		if not cls.desktop_folder_icon:
