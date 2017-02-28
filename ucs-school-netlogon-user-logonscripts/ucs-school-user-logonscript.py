@@ -119,8 +119,8 @@ class LDAPConnection(object):
 
 
 class UserLogonScriptListener(object):
-	hostname = listener.baseConfig['hostname']
-	domainname = listener.baseConfig['domainname']
+	hostname = listener.configRegistry['hostname']
+	domainname = listener.configRegistry['domainname']
 
 	desktop_folder_path = listener.configRegistry.get('ucsschool/userlogon/shares_folder_parent_path')
 	if desktop_folder_path:
@@ -136,18 +136,23 @@ class UserLogonScriptListener(object):
 	other_links_icon = listener.configRegistry.get('ucsschool/userlogon/other_links_icon')  # '%SystemRoot%\system32\imageres.dll,193'
 	myshares_name = listener.configRegistry.get('ucsschool/userlogon/myshares/name', 'Eigene Dateien')
 	mypictures_name = listener.configRegistry.get('ucsschool/userlogon/mypictures/name', 'Eigene Bilder')
+	create_drive_mappings = listener.configRegistry.is_true('ucsschool/userlogon/create_drive_mappings', True)
+	create_myfiles_link = listener.configRegistry.is_true('ucsschool/userlogon/create_myfiles_link', True)
+	create_personal_files_mapping = listener.configRegistry.is_true('ucsschool/userlogon/myshares/enabled', False)
+	create_shortcuts = listener.configRegistry.is_true('ucsschool/userlogon/create_shortcuts', True)
+	create_teacher_umc_link = listener.configRegistry.is_true('ucsschool/userlogon/create_teacher_umc_link', True)
 
-	strTeacher = listener.baseConfig.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-	strStaff = listener.baseConfig.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-	ldapbase = listener.baseConfig.get('ldap/base', '')
-	umcLink = listener.baseConfig.get(
+	strTeacher = listener.configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+	strStaff = listener.configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
+	ldapbase = listener.configRegistry.get('ldap/base', '')
+	umcLink = listener.configRegistry.get(
 		'ucsschool/userlogon/umclink/link',
 		'http://%s.%s/univention-management-console' % (hostname, domainname))
-	reTeacher = re.compile(listener.baseConfig.get(
+	reTeacher = re.compile(listener.configRegistry.get(
 		'ucsschool/userlogon/umclink/re',
 		'^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (
 			re.escape(strTeacher), re.escape(strStaff), re.escape(ldapbase))))
-	filterTeacher = listener.baseConfig.get(
+	filterTeacher = listener.configRegistry.get(
 		'ucsschool/userlogon/umclink/filter',
 		'(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
 	template_paths = dict(
@@ -156,6 +161,7 @@ class UserLogonScriptListener(object):
 		teacher_umc_link='/usr/share/ucs-school-netlogon-user-logonscripts/teacher-umc-link.vbs',
 		mac_script='/usr/share/ucs-school-netlogon-user-logonscripts/mac_script',
 	)
+	_disabled_share_links = dict()
 	_template_cache = dict()
 	_script_path = list()
 
@@ -179,6 +185,16 @@ class UserLogonScriptListener(object):
 			listener.unsetuid()
 
 	@classmethod
+	def get_disabled_share_links(cls):
+		if not cls._disabled_share_links:
+			for k, v in listener.configRegistry.items():
+				if k.startswith('ucsschool/userlogon/disabled_share_links/'):
+					server = k.rpartition('/')[-1]
+					shares = [l.strip().rstrip('/') for l in v.split(',')]
+					cls._disabled_share_links[server] = shares
+		return cls._disabled_share_links
+
+	@classmethod
 	def get_script_path(cls):
 		if not cls._script_path:
 			ucsschool_netlogon_path = listener.configRegistry.get('ucsschool/userlogon/netlogon/path', '').strip().rstrip('/')
@@ -198,10 +214,10 @@ class UserLogonScriptListener(object):
 
 	@staticmethod
 	def get_global_links():
-		# search in baseconfig for shares which are common for all users
+		# search in configRegistry for shares which are common for all users
 		global_links = dict()
 		Log.info("search for global links")
-		share_keys = [x.strip() for x in listener.baseConfig.get('ucsschool/userlogon/commonshares', '').split(',') if x.strip()]
+		share_keys = [x.strip() for x in listener.configRegistry.get('ucsschool/userlogon/commonshares', '').split(',') if x.strip()]
 		with LDAPConnection() as lo:
 			for key in share_keys:
 				# check if share exists
@@ -216,14 +232,23 @@ class UserLogonScriptListener(object):
 				except:
 					continue
 				Log.info("search global links for %s" % key)
-				server = listener.baseConfig.get('ucsschool/userlogon/commonshares/server/%s' % key)
-				letter = listener.baseConfig.get('ucsschool/userlogon/commonshares/letter/%s' % key, '').replace(':', '')
+				server = listener.configRegistry.get('ucsschool/userlogon/commonshares/server/%s' % key)
+				letter = listener.configRegistry.get('ucsschool/userlogon/commonshares/letter/%s' % key, '').replace(':', '')
 				if server:
 					global_links[key] = {'server': server}
 					if letter:
 						global_links[key]['letter'] = letter
 		Log.info("got global links %s" % global_links)
 		return global_links
+
+	@classmethod
+	def get_home_path(cls):
+		res = ''
+		if listener.configRegistry.get('samba/homedirletter'):
+			res = "{}:\{}".format(listener.configRegistry['samba/homedirletter'], cls.myshares_name)
+		if listener.configRegistry.get('ucsschool/userlogon/mysharespath'):
+			res = listener.configRegistry['ucsschool/userlogon/mysharespath']
+		return res
 
 	@classmethod
 	def generate_mac_script(cls, uid, name, host):
@@ -318,55 +343,8 @@ class UserLogonScriptListener(object):
 		return copy.copy(cls._template_cache[path])
 
 	@classmethod
-	def generate_windows_link_script(cls, links, mappings, dn):
-		"""
-		Create windows user netlogon script.
-
-		:param links: list of tupels which contain link name and link target
-		:param mappings:
-		:param dn:
-		:return: str: the script
-		"""
-		str_replacements = dict(
-			desktop_folder_name=cls.desktop_folder_name.translate(None, '\/:*?"<>|'),
-			myshares_name=cls.myshares_name,
-			mypictures_name=cls.mypictures_name,
-			desktop_folder_icon=cls.desktop_folder_icon,
-			my_files_link_name=cls.my_files_link_name,
-			my_files_link_icon=cls.my_files_link_icon,
-			desktop_folder_path=cls.desktop_folder_path,
-		)
-		no_icons = list()
-		if not cls.desktop_folder_icon:
-			no_icons.append('desktop_folder_icon')
-		if not cls.my_files_link_icon:
-			no_icons.append('my_files_link_icon')
-		skript = cls.get_logon_template(cls.template_paths['main'], str_replacements, no_icons)
-
-		# create shortcuts to shares
-		no_icons = list()
-		if not cls.other_links_icon:
-			no_icons.append('other_links_icon')
-		for share, server in links.items():
-			res = cls.get_logon_template(cls.template_paths['shortcut_to_share'], no_icons=no_icons).format(
-				share=share,
-				server=server,
-				other_links_icon=cls.other_links_icon)
-
-			skript += res
-
-		# create shortcut to umc for teachers
-		with LDAPConnection() as lo:
-			try:
-				is_teacher = bool(lo.search(base=dn, scope='base', filter=cls.filterTeacher)[0])
-			except (ldap.NO_SUCH_OBJECT, IndexError):
-				is_teacher = False
-			if not is_teacher:
-				is_teacher = cls.reTeacher.match(dn)  # old format before migration
-		if is_teacher:
-			str_replacements = dict(umc_link=cls.umcLink, hostname=cls.hostname, domainname=cls.domainname)
-			skript += cls.get_logon_template(cls.template_paths['teacher_umc_link'], str_replacements)
-
+	def generate_drive_mappings_snippet(cls, mappings):
+		res = ''
 		lettersinuse = {}
 		for key in mappings.keys():
 			if mappings[key].get('letter'):
@@ -382,23 +360,102 @@ class UserLogonScriptListener(object):
 							key=key,
 							lettersinuse=lettersinuse[mappings[key]['letter']]))
 				else:
-					skript += 'MapDrive "%s:","\\\\%s\\%s"\n' % (mappings[key]['letter'], mappings[key]['server'], key)
+					res += 'MapDrive "%s:","\\\\%s\\%s"\n' % (mappings[key]['letter'], mappings[key]['server'], key)
 					lettersinuse[mappings[key]['letter']] = mappings[key]['server']
+		return res
 
-		homePath = ""
-		if listener.baseConfig.get('samba/homedirletter'):
-			homePath = "{}:\{}".format(listener.baseConfig['samba/homedirletter'], cls.myshares_name)
+	@classmethod
+	def generate_header_and_functions_snippet(cls):
+		str_replacements = dict(
+			desktop_folder_icon=cls.desktop_folder_icon,
+			desktop_folder_name=cls.desktop_folder_name.translate(None, '\/:*?"<>|'),
+			desktop_folder_path=cls.desktop_folder_path,
+			domainname=cls.domainname,
+			hostname=cls.hostname,
+			my_files_link_icon=cls.my_files_link_icon,
+			my_files_link_name=cls.my_files_link_name,
+			mypictures_name=cls.mypictures_name,
+			myshares_name=cls.myshares_name,
+			other_links_icon=cls.other_links_icon,
+			umc_link=cls.umcLink,
+		)
+		no_icons = list()
+		if not cls.desktop_folder_icon:
+			no_icons.append('desktop_folder_icon')
+		if not cls.my_files_link_icon:
+			no_icons.append('my_files_link_icon')
+		if not cls.other_links_icon:
+			no_icons.append('other_links_icon')
+		return cls.get_logon_template(cls.template_paths['main'], str_replacements, no_icons)
 
-		if listener.baseConfig.get('ucsschool/userlogon/mysharespath'):
-			homePath = listener.baseConfig['ucsschool/userlogon/mysharespath']
+	@classmethod
+	def generate_shares_shortcuts_snippet(cls, links):
+		res = ''
+		disabled_share_links = cls.get_disabled_share_links()
+		for share, server in links.items():
+			disabled_server_links = disabled_share_links.get(server, [])
+			if 'all' in disabled_server_links or any(re.match(disabled_link, share) for disabled_link in disabled_server_links):
+				continue
+			res += 'CreateShareShortcut "{}","{}"\n'.format(server, share)
+		return res
 
-		if homePath and listener.baseConfig.is_true('ucsschool/userlogon/myshares/enabled', False):
-			skript += '\n'
-			skript += 'SetMyShares "%s"\n' % homePath
-		if cls.desktop_folder_icon:
-			skript += 'CreateDesktopIcon\n'
+	@classmethod
+	def generate_teacher_umc_link_snippet(cls, dn):
+		with LDAPConnection() as lo:
+			try:
+				is_teacher = bool(lo.search(base=dn, scope='base', filter=cls.filterTeacher)[0])
+			except (ldap.NO_SUCH_OBJECT, IndexError):
+				is_teacher = False
+			if not is_teacher:
+				is_teacher = cls.reTeacher.match(dn)  # old format before migration
+		if is_teacher:
+			return 'CreateTeacherUmcLink\n'
+		return ''
 
-		return skript
+	@classmethod
+	def generate_windows_link_script(cls, links, mappings, dn):
+		"""
+		Create windows user netlogon script.
+
+		:param links: list of tupels which contain link name and link target
+		:param mappings:
+		:param dn:
+		:return: str: a VBS script
+		"""
+		# create constants and functions
+		script = cls.generate_header_and_functions_snippet()
+
+		# create shortcuts to shares
+		if cls.create_shortcuts:
+			# create folder
+			script += 'CreateLinkFolder\n'
+
+			# create custom folder icon
+			if cls.desktop_folder_icon:
+				script += 'CreateDesktopIcon\n'
+
+			# create My Files link
+			if cls.create_myfiles_link:
+				script += 'CreateLinkToMyFiles\n'
+
+			# create shortcuts to shares
+			# disable individually using ucsschool/userlogon/disabled_share_links/*
+			script += cls.generate_shares_shortcuts_snippet(links)
+
+		# create shortcut to umc for teachers
+		if cls.create_teacher_umc_link:
+			script += cls.generate_teacher_umc_link_snippet(dn)
+
+		# map personal files from c:\users\<uid> to \\server\<uid>
+		home_path = cls.get_home_path()
+		if cls.create_personal_files_mapping and home_path:
+			script += 'SetMyShares "%s"\n' % home_path
+
+		# create drive mappings
+		if cls.create_drive_mappings:
+			script += cls.generate_drive_mappings_snippet(mappings)
+
+		return script
 
 	def write_windows_link_skripts(self, uid, links, mappings):
 		for path in self.get_script_path():
@@ -502,7 +559,7 @@ class UserLogonScriptListener(object):
 						return
 				except:
 					pass
-				ldapbase = listener.baseConfig['ldap/base']
+				ldapbase = listener.configRegistry['ldap/base']
 				membershipIDs = set()
 
 				if new == 'search':  # called from group_change
@@ -535,7 +592,7 @@ class UserLogonScriptListener(object):
 				mappings = {}
 				classre = re.compile('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),(?:ou=[^,]+,)?%s$' % re.escape(ldapbase))
 				links = {}
-				validservers = frozenset(listener.baseConfig.get(
+				validservers = frozenset(listener.configRegistry.get(
 					'ucsschool/userlogon/shares/validservers',
 					self.hostname
 				).split(','))
@@ -550,7 +607,7 @@ class UserLogonScriptListener(object):
 								'letter': self.global_links[name]["letter"],
 							}
 
-				classShareLetter = listener.baseConfig.get('ucsschool/userlogon/classshareletter', 'K').replace(':', '')
+				classShareLetter = listener.configRegistry.get('ucsschool/userlogon/classshareletter', 'K').replace(':', '')
 				for ID in membershipIDs:
 					for share in self.gid_shares(ID):
 						# linkname is identical to the sharename
@@ -577,7 +634,7 @@ class UserLogonScriptListener(object):
 				Log.info("links %s" % (links,))
 
 				self.write_windows_link_skripts(new['uid'][0], links, mappings)
-				if listener.baseConfig.is_true("ucsschool/userlogon/mac"):
+				if listener.configRegistry.is_true("ucsschool/userlogon/mac"):
 					self.write_mac_link_scripts(new['uid'][0], new['homeDirectory'][0], links)
 
 			elif old and 'posixAccount' in old['objectClass'] and not new:

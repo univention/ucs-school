@@ -12,26 +12,30 @@ Set objFolderItem = objFolder.Self
 strDesktopFolderPath = {desktop_folder_path}
 FolderPath = strDesktopFolderPath + "\" + FolderName
 
-' Delete Folder
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-If objFSO.FolderExists(FolderPath) Then
-	objFSO.DeleteFolder(FolderPath)
-End If
+Function CreateLinkFolder()
+	' Delete Folder
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	If objFSO.FolderExists(FolderPath) Then
+		objFSO.DeleteFolder(FolderPath)
+	End If
 
-' Recreate Folder
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-Set objFolder = objFSO.CreateFolder(FolderPath)
+	' Recreate Folder
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	Set objFolder = objFSO.CreateFolder(FolderPath)
+end function
 
-' Link to HOMEDRIVE
-Set oShell = CreateObject("Wscript.Shell")
-homepath = oShell.Environment("Process").Item("HOMEDRIVE") & oShell.Environment("Process").Item("HOMEPATH")
+Function CreateLinkToMyFiles()
+	' Link to HOMEDRIVE
+	Set oShell = CreateObject("Wscript.Shell")
+	homepath = oShell.Environment("Process").Item("HOMEDRIVE") & oShell.Environment("Process").Item("HOMEPATH")
 
-Set oWS = WScript.CreateObject("WScript.Shell")
-sLinkFile = FolderPath + "\{my_files_link_name}.LNK"
-Set oLink = oWS.CreateShortcut(sLinkFile)
-oLink.TargetPath = homepath
-oLink.IconLocation = "{my_files_link_icon}"
-oLink.Save
+	Set oWS = WScript.CreateObject("WScript.Shell")
+	sLinkFile = FolderPath + "\{my_files_link_name}.LNK"
+	Set oLink = oWS.CreateShortcut(sLinkFile)
+	oLink.TargetPath = homepath
+	oLink.IconLocation = "{my_files_link_icon}"
+	oLink.Save
+end function
 
 Function SetMyShares(strPersonal)
 	strKeyPath1="Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
@@ -112,3 +116,29 @@ Function CreateDesktopIcon()
 	Set objFile = FileSysObj.GetFolder(FolderPath)
 	objFile.Attributes = objFile.Attributes OR SYSTEM
 end function
+
+Function CreateShareShortcut(strServer, strShare)
+	' Create shortcut to \\strServer\strShare
+	Set oWS = WScript.CreateObject("WScript.Shell")
+	sLinkFile = FolderPath + "\" + strShare + ".LNK"
+	Set oLink = oWS.CreateShortcut(sLinkFile)
+	oLink.TargetPath = "\\" + strServer + "\" + strShare
+	oLink.IconLocation = "{other_links_icon}"
+	oLink.Save
+end function
+
+Function CreateTeacherUmcLink()
+	Set WshShell = CreateObject("WScript.Shell")
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	strLinkPath = strDesktopFolderPath + "\Univention Management Console.URL"
+	If Not objFSO.FileExists(strLinkPath) Then
+		Set oUrlLink = WshShell.CreateShortcut(strLinkPath)
+		oUrlLink.TargetPath = "{umc_link}"
+		oUrlLink.Save
+		set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)
+		objFile.WriteLine("IconFile=\\{hostname}.{domainname}\netlogon\user\univention-management-console.ico")
+		objFile.WriteLine("IconIndex=0")
+		objFile.Close
+	End If
+end function
+

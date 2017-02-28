@@ -16,6 +16,36 @@ Description[en]=Defines the drive letter of the network share
 Type=str
 Categories=ucsschool-netlogon
 
+[ucsschool/userlogon/create_drive_mappings]
+Description[de]=Laufwerksverknüpfungen zu Freigaben anlegen? (Standard: yes)
+Description[en]=Map network drives? (default: yes)
+Type=bool
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/create_myfiles_link]
+Description[de]=Link zur "Meine Dokumente" anlegen? (Standard: yes)
+Description[en]=Create link to "My Files"? (default: yes)
+Type=bool
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/create_shortcuts]
+Description[de]=Verzeichnis mit Links anlegen? Vorraussetzung für ../shares_folder_icon und ../create_myfiles_link. (Standard: yes)
+Description[en]=Create directory for links? Precondition for ../shares_folder_icon and ../create_myfiles_link. (Default: yes)
+Type=bool
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/create_teacher_umc_link]
+Description[de]=Link zur UMC auf dem Desktop von Lehrern anlegen? (Standard: yes)
+Description[en]=Create link to the UMC on teachers desktops? (default: yes)
+Type=bool
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/disabled_share_links/*]
+Description[de]=Kommaseparierte Liste von Freigaben pro Server für die kein Link erzeugt werden soll. Die Namen der Freigaben dürfen Regular Expressions enthalten. Bsp.: um zu verhindern, dass für die 1. Klasse der "GS_Nord" auf dem Server "mydc" Links zu Freigaben angelegt werden, sowie kein Link "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='GS_Nord-1.*,Marktplatz'. Der Wert "all" verhindert das Anlegen jeglicher Links zu Freigaben (Standard: nicht gesetzt).
+Description[de]=Comma separated list of shares per server for which not to create links. The shares names can contain regular expressions. Example: To prevent the creation of links to shares for the 1st class of the school "GS_Nord" on the server "mydc" and the link to "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='GS_Nord-1.*,Marktplatz'. The value "all" prevents the creation of all share links. (default: not defined)
+Type=str
+Categories=ucsschool-netlogon
+
 [ucsschool/userlogon/netlogon/path]
 Description[de]=Definiert das Verzeichnis, in dem die Netlogon-Skripte durch das Listener-Modul ucs-school-user-logonscript erstellt werden (Standard: nicht gesetzt)
 Description[de]=Defines the directory in which the netlogon scripts will be created by the listener module ucs-school-user-logonscript (default: not defined)
@@ -59,32 +89,32 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/shares_folder_icon]
-Description[de]=Icon des Verzeichnisses das Links zu Laufwerken des Benutzers enthält. Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,143". Standard: nicht gesetzt.
-Description[en]=Icon of the directory containing links to the users shares. No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,143". Default: unset.
+Description[de]=Icon des Verzeichnisses das Links zu Laufwerken des Benutzers enthält. Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,143". (Standard: nicht gesetzt)
+Description[en]=Icon of the directory containing links to the users shares. No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,143". (default: unset)
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/shares_folder_parent_path]
-Description[de]=Pfad des Verzeichnisses in dem das Verzeichnis mit den Links zu Laufwerken des Benutzers erstellt werden soll. Wenn nicht gesetzt, wird es vom Logon-Skript ausgerechnet. Beipiel: "%USERPROFILE%\Desktop". Standard: nicht gesetzt.
-Description[en]=Path to the directory containing the directory for the links to the users shares. Will be calculated by the logon-script, if unset. Example: "%USERPROFILE%\Desktop". Default: unset.
+Description[de]=Pfad des Verzeichnisses in dem das Verzeichnis mit den Links zu Laufwerken des Benutzers erstellt werden soll. Wenn nicht gesetzt, wird es vom Logon-Skript ausgerechnet. Beipiel: "%USERPROFILE%\Desktop". (Standard: nicht gesetzt)
+Description[en]=Path to the directory containing the directory for the links to the users shares. Will be calculated by the logon-script, if unset. Example: "%USERPROFILE%\Desktop". (default: unset)
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/my_files_link_name]
-Description[de]=Name für den Link zu den "Eigenen Dateien" im Verzeichnis das Links der Benutzerfreigaben (Standard: "Meine Dateien").
-Description[en]=Name of the link to "My Files" in the directory containing links to the users shares (default: "Meine Dateien").
+Description[de]=Name für den Link zu den "Eigenen Dateien" im Verzeichnis das Links der Benutzerfreigaben. (Standard: "Meine Dateien")
+Description[en]=Name of the link to "My Files" in the directory containing links to the users shares. (default: "Meine Dateien")
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/my_files_link_icon]
 Description[de]=Icon des Links zu den "Eigenen Dateien" des Benutzers. Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,207". Standard: nicht gesetzt.
-Description[en]=Icon of the link to users "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,207". Default: unset.
+Description[en]=Icon of the link to users "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,207". (default: unset)
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/other_links_icon]
-Description[de]=Icon für Links zu anderen Freigaben des Benutzers als "Eigenen Dateien". Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,193". Standard: nicht gesetzt.
-Description[en]=Icon for links to other shares than "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,193". Default: unset.
+Description[de]=Icon für Links zu anderen Freigaben des Benutzers als "Eigenen Dateien". Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,193". (Standard: nicht gesetzt)
+Description[en]=Icon for links to other shares than "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,193". (default: unset)
 Type=str
 Categories=ucsschool-netlogon
 

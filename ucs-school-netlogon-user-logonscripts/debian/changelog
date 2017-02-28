@@ -1,3 +1,17 @@
+ucs-school-netlogon-user-logonscripts (12.0.4-10) unstable; urgency=low
+
+  * Bug #43526: support switching off parts of logon script, introducing
+    UCRVs: ucsschool/userlogon/create_drive_mappings,
+    ucsschool/userlogon/create_myfiles_link,
+    ucsschool/userlogon/create_shortcuts,
+    ucsschool/userlogon/create_teacher_umc_link,
+    ucsschool/userlogon/disabled_share_links/*
+  * refactor more code from generate_windows_link_script into separate methods
+  * move all VBS code into one template, format and call appropriately
+  * s/listener.baseConfig/listener.configRegistry/g
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 28 Feb 2017 15:02:57 +0100
+
 ucs-school-netlogon-user-logonscripts (12.0.4-9) unstable; urgency=low
 
   * Bug #43526: set the path in which to create the directory for the links
