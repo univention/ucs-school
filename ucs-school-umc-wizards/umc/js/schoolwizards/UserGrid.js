@@ -122,6 +122,7 @@ define([
 				name: 'type',
 				label: _('Role'),
 				size: 'TwoThirds',
+				sortDynamicValues: false,
 				dynamicValues: utils.getStaticValuesUserRolesWithAll
 			}, {
 				type: TextBox,

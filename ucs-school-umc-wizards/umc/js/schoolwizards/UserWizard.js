@@ -69,6 +69,7 @@ define([
 				type: ComboBox,
 				name: 'type',
 				label: _('Role'),
+				sortDynamicValues: false,
 				dynamicValues: utils.getStaticValuesUserRolesWithoutAll
 			});
 			page.layout.push('type');
