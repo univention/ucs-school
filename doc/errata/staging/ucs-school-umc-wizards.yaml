@@ -5,6 +5,9 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-wizards
 fix: 8.0.0-15.151.201702161609
 desc: |
+ * Single user roles (student, teacher, staff, teachersAndStaff) can now be
+   disabled in UMC module <gui>Users (schools)</gui> via the UCR variable
+   ucsschool/wizards/schoolwizards/users/roles/disabled (Bug #42349) .
  * Fix error when removing an OU-overlapping user account from a secondary
    OU (Bug #43170).
  * Adjust to behavioral change in UCS@school lib (Bug #41910).
