@@ -64,8 +64,9 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/Module",
 	"umc/modules/schoolcsvimport/User",
+	"umc/modules/schoolcsvimport/utils",
 	"umc/i18n!umc/modules/schoolcsvimport"
-], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, EnhancedGrid, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, _Grid, Module, User, _) {
+], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, EnhancedGrid, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, _Grid, Module, User, utils, _) {
 
 	var Grid = declare(_Grid, {
 		// Bug #37831 (Grid in combination with Memory store does not show more than 30 entries), (remove when Bug #37857 is fixed)
@@ -98,19 +99,8 @@ define([
 					type: ComboBox,
 					name: 'type',
 					label: _('User role'),
-					staticValues: [{
-						id: 'student',
-						label: _('Student')
-					}, {
-						id: 'teacher',
-						label: _('Teacher')
-					}, {
-						id: 'staff',
-						label: _('Staff')
-					}, {
-						id: 'teachersAndStaff',
-						label: _('Teachers and staff')
-					}]
+					sortDynamicValues: false,
+					dynamicValues: utils.getStaticValuesUserRolesWithoutAll
 				}]
 			}, {
 				name: 'upload',
