@@ -53,26 +53,26 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/myshares/enabled]
-Description[de]=Pfad für das persönliche Verzeichnis setzen? (Standard: no)
-Description[en]=Set path to the personal directory? (default: no)
+Description[de]=Pfad für das persönliche Verzeichnis setzen? (Standard: "no")
+Description[en]=Set path to the personal directory? (default: "no")
 Type=bool
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/myshares/name]
-Description[de]=Name des persönlichen Verzeichnisses. (Standard: Eigene Dateien)
-Description[en]=Name of the personal directory. (default: Eigene Dateien)
+Description[de]=Name des persönlichen Verzeichnisses mit eigenen Dateien (Standard: "Eigene Dateien")
+Description[en]=Name of the directory with personal files (default: "Eigene Dateien")
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/mysharespath]
-Description[de]=Pfad für das persönliche Verzeichnis (default: nicht gesetzt, wird erstellt als $(ucr get samba/homedirletter):\$(ucr get ucsschool/userlogon/myshares/name))
-Description[en]=Path to the personal directory (default: unset, will be created as $(ucr get samba/homedirletter):\$(ucr get ucsschool/userlogon/myshares/name))
+Description[de]=Windows-Pfad für das persönliche Verzeichnis. Falls der Wert nicht gesetzt ist, wird "$(ucr get samba/homedirletter):\$(ucr get ucsschool/userlogon/myshares/name)" verwendet (Standard: nicht gesetzt)
+Description[en]=Windows-Path to the personal directory. If the value is unset, "$(ucr get samba/homedirletter):\$(ucr get ucsschool/userlogon/myshares/name)" will be used (default: not defined)
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/mypictures/name]
-Description[de]=Name des persönlichen Bilder-Verzeichnisses. (Standard: Eigene Bilder)
-Description[en]=Name of the personal picture directory. (default: Eigene Bilder)
+Description[de]=Name des persönlichen Bilder-Verzeichnisses (Standard: "Eigene Bilder")
+Description[en]=Name of the personal picture directory (default: "Eigene Bilder")
 Type=str
 Categories=ucsschool-netlogon
 
@@ -119,8 +119,8 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/shares/validservers]
-Description[de]=Definiert von welchen Servern Freigaben eingebunden werden (default: leer, möglich: leer [nur Freigaben vom lokalen Rechner], Komma separierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
-Description[en]=Defines the valid servers for network shares (default: empty, possible: empty [only shares from the local host], Comma-separated list of servers [shares from these servers], * [all shares]
+Description[de]=Definiert von welchen Servern Freigaben eingebunden werden (default: nicht gesetzt, mögliche Werte: leer [nur Freigaben vom lokalen Rechner], Komma separierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
+Description[en]=Defines the valid servers for network shares (default: not defined, possible values: empty [only shares from the local host], Comma-separated list of servers [shares from these servers], * [all shares]
 Type=str
 Categories=ucsschool-netlogon
 
