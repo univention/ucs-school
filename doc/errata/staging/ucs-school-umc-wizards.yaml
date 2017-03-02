@@ -3,7 +3,7 @@ release: "4.1"
 version: [4]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-wizards
-fix: 8.0.0-15.151.201702161609
+fix: 8.0.1-2.153.201703021519
 desc: |
  * Single user roles (student, teacher, staff, teachersAndStaff) can now be
    disabled in UMC module <gui>Users (schools)</gui> via the UCR variable
