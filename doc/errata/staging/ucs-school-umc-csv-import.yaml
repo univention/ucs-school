@@ -3,7 +3,7 @@ release: "4.1"
 version: [4]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-csv-import
-fix: 3.0.5-1.54.201703021514
+fix: 3.0.5-2.55.201703021537
 desc: |
  * Single user roles (student, teacher, staff, teachersAndStaff) can now be
    disabled in UMC module <gui>CSV import</gui> via the UCR variable
