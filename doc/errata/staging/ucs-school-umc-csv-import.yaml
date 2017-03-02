@@ -8,7 +8,7 @@ desc: |
  * Single user roles (student, teacher, staff, teachersAndStaff) can now be
    disabled in UMC module <gui>CSV import</gui> via the UCR variable
    ucsschool/csvimport/users/roles/disabled (Bug #41387) .
- * A broken code path that has never been executed as been removed from
+ * A broken code path that has never been executed has been removed from the
    postinst script of package <package>ucs-school-umc-csv-import</package>
    (Bug #41418).
 bug: [41387,41418]
