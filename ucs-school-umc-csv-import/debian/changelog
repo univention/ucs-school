@@ -8,6 +8,7 @@ ucs-school-umc-csv-import (4.0.3-1) unstable; urgency=low
 
   * Bug #41387: hide disabled user roles in drop downs by setting the UCR
     variable ucsschool/csvimport/user/roles/disabled
+  * Bug #41418: remove broken code block in postinst
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 02 Mar 2017 13:06:23 +0100
 
