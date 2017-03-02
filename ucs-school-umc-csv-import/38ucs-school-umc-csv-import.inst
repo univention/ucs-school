@@ -1,3 +1,4 @@
+pick bf64164 Bug #41387, 41418: added advisory
 #!/bin/sh
 # -*- coding: utf-8 -*-
 #
