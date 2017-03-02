@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (4.0.3-2) unstable; urgency=low
+
+  * Bug #41387: fix 38ucs-school-umc-csv-import.inst
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 02 Mar 2017 15:36:19 +0100
+
 ucs-school-umc-csv-import (4.0.3-1) unstable; urgency=low
 
   * Bug #41387: hide disabled user roles in drop downs by setting the UCR
