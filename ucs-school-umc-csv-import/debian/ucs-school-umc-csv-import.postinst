@@ -2,7 +2,7 @@
 #
 # UCS@school
 #
-# Copyright 2015-2016 Univention GmbH
+# Copyright 2015-2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -28,10 +28,6 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
-if "$1" == "configure" && dpkg --compare-versions "$2" lt 2.0.7-1; then
-	ucr set ucsschool/csvimport/username/generation/firstname_lastname=true
-fi
 
 #DEBHELPER#
 
