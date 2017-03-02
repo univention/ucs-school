@@ -37,8 +37,9 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/UserWizard",
 	"umc/modules/schoolwizards/Grid",
+	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, TextBox, ComboBox, UserWizard, Grid, _) {
+], function(declare, lang, array, TextBox, ComboBox, UserWizard, Grid, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserGrid", [Grid], {
 
@@ -121,22 +122,7 @@ define([
 				name: 'type',
 				label: _('Role'),
 				size: 'TwoThirds',
-				staticValues: [{
-					id: 'all',
-					label: _('All')
-				}, {
-					id: 'student',
-					label: _('Student')
-				}, {
-					id: 'teacher',
-					label: _('Teacher')
-				}, {
-					id: 'staff',
-					label: _('Staff')
-				}, {
-					id: 'teachersAndStaff',
-					label: _('Teachers and staff')
-				}]
+				dynamicValues: utils.getStaticValuesUserRolesWithAll
 			}, {
 				type: TextBox,
 				size: 'TwoThirds',

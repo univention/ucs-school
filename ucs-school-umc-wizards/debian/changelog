@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.2-1) unstable; urgency=low
+
+  * Bug #43701/42349: hide disabled user roles in drop downs
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 02 Mar 2017 12:29:28 +0100
+
 ucs-school-umc-wizards (9.0.1-1) unstable; urgency=medium
 
   * Bug #36789: adjust header buttons to new UMC design; applied patch

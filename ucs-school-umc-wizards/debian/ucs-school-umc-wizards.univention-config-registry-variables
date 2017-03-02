@@ -1,0 +1,5 @@
+[ucsschool/wizards/schoolwizards/users/roles/disabled]
+Description[de]=Kommaseparierte Liste von UCS@school-Benutzerrollen, die im UCS@school-Benutzerwizard deaktiviert werden (Standard: <nicht gesetzt>; mögliche Werte: student,teacher,staff,teachersAndStaff)
+Description[en]=Comma-separated list of UCS@school user roles, that shall be disabled in UCS@school user wizard (Default: <unset>; possible values: student,teacher,staff,teachersAndStaff)
+Type=str
+Categories=management-umc

@@ -40,8 +40,9 @@ define([
 	"umc/widgets/MultiInput",
 	"umc/widgets/PasswordInputBox",
 	"umc/modules/schoolwizards/Wizard",
+	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, PasswordInputBox, Wizard, _) {
+], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, PasswordInputBox, Wizard, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
@@ -68,19 +69,7 @@ define([
 				type: ComboBox,
 				name: 'type',
 				label: _('Role'),
-				staticValues: [{
-					id: 'student',
-					label: _('Student')
-				}, {
-					id: 'teacher',
-					label: _('Teacher')
-				}, {
-					id: 'staff',
-					label: _('Staff')
-				}, {
-					id: 'teachersAndStaff',
-					label: _('Teachers and staff')
-				}]
+				dynamicValues: utils.getStaticValuesUserRolesWithoutAll
 			});
 			page.layout.push('type');
 			return page;
