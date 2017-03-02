@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (9.0.6-1.1) unstable; urgency=low
+
+  * Bug #43527: enable hiding the teachers screen by default
+    (ucsschool/umc/computerroom/hide_screenshots/teachers)
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 02 Mar 2017 11:40:13 +0100
+
 ucs-school-umc-computerroom (9.0.6-1) unstable; urgency=medium
 
   * Bug #42408: decorator was renamed

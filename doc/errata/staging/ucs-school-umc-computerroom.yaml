@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-computerroom
+fix: 
+desc: |
+ * Hide teachers screens in the computerroom by default. To revert to the
+   previous behavior (displaying teachers screens like those of students),
+   setucsschool/umc/computerroom/hide_screenshots/teachers=no (Bug #43527).
+bug: [43527]

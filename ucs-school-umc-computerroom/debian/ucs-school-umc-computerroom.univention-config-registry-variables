@@ -17,7 +17,7 @@ Type=str
 Categories=management-umc
 
 [ucsschool/umc/computerroom/hide_screenshots/teachers]
-Description[de]=Der Wert "true" verhindert die Anzeige von Screenshots von Lehrer-Rechnern im Computerraum-Modul (Standard: false)
-Description[en]=By setting this variable to "true", screenshots of teacher's computers are not shown in computer room module (Default: false)
+Description[de]=Der Wert "yes" verhindert die Anzeige von Screenshots von Lehrer-Rechnern im Computerraum-Modul (Standard: yes).
+Description[en]=By setting this variable to "yes", screenshots of teacher's computers are not shown in computer room module (default: yes).
 Type=bool
 Categories=management-umc

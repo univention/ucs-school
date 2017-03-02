@@ -127,7 +127,7 @@ class UserMap(dict):
 		MODULE.info('UserMap: %s: user is member of following groups: %s' % (username, users_groupmemberships,))
 		hide_screenshot = bool(blacklisted_groups & users_groupmemberships)
 
-		if ucr.is_true('ucsschool/umc/computerroom/hide_screenshots/teachers', False) and user.is_teacher(lo):
+		if ucr.is_true('ucsschool/umc/computerroom/hide_screenshots/teachers', True) and user.is_teacher(lo):
 			MODULE.info('UserMap: %s: is teacher hiding screenshot' % (username,))
 			hide_screenshot = True
 
