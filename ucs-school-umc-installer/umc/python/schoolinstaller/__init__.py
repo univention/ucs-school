@@ -135,7 +135,7 @@ def get_master_dns_lookup():
 
 
 def umc(username, password, master, path, options=None, flavor=None):
-	MODULE.info('Executing on %r: %r %r flavor=%r options=%r' % (master, path, flavor, options))
+	MODULE.info('Executing on %r as %r: %r flavor=%r options=%r' % (master, username, path, flavor, options))
 	client = Client(master, username, password)
 	return client.umc_command(path, options, flavor)
 
