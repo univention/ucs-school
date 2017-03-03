@@ -1,3 +1,9 @@
+ucs-school-umc-installer (5.0.0-4) unstable; urgency=medium
+
+  * Bug #43389: Bug #43718: fix typo
+
+ -- Florian Best <best@univention.de>  Fri, 03 Mar 2017 18:20:31 +0100
+
 ucs-school-umc-installer (5.0.0-3) unstable; urgency=medium
 
   * Bug #43389: Bug #43711: fix typo in svn r76783

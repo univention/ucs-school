@@ -624,7 +624,7 @@ class Instance(Base):
 			if server_role == 'domaincontroller_slave':
 				# make sure that the slave is correctly moved below its OU
 				MODULE.info('Trying to move the slave entry in the right OU structure...')
-				result = umc(username, password, master, 'schoolwizards/schools/move_dc', {'schooldc': ucr.get('hostname'), 'schoolou': school_ou}, 'schoolwizards/schools')
+				result = umc(username, password, master, 'schoolwizards/schools/move_dc', {'schooldc': ucr.get('hostname'), 'schoolou': school_ou}, 'schoolwizards/schools').result
 				if not result.get('success'):
 					MODULE.warn('Could not successfully move the slave DC into its correct OU structure:\n%s' % result.get('message'))
 					raise SchoolInstallerError(_('Validating the LDAP school OU structure failed. It seems that the current slave system has already been assigned to a different school or that the specified school OU name is already in use.'))
