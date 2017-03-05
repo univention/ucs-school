@@ -17,8 +17,8 @@ desc: |
    ucsschool/userlogon/shares_folder_icon,
    ucsschool/userlogon/my_files_link_icon,
    ucsschool/userlogon/other_links_icon.
-   The name of the "My Files" directory in the folders created by the
-   netlogon script, can now be set with the UCR variable
+   The name of the "My Files" directory within the folder, created by the
+   netlogon script, can now be set via the UCR variable
    ucsschool/userlogon/my_files_link_name (Bug #41375).
  * Whitespace in the list of share names in the UCR variable
    ucsschool/userlogon/commonshares is now handled more securely (Bug
