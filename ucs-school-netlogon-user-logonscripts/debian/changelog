@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (12.0.5-2) unstable; urgency=low
+
+  * Bug #43526: fix UCR variable description
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 06 Mar 2017 00:37:12 +0100
+
 ucs-school-netlogon-user-logonscripts (12.0.5-1) unstable; urgency=low
 
   * Bug #37256: update of UCR variable descriptions and translations

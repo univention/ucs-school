@@ -41,8 +41,8 @@ Type=bool
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/disabled_share_links/*]
-Description[de]=Kommaseparierte Liste von Freigaben pro Server für die kein Link erzeugt werden soll. Die Namen der Freigaben dürfen Regular Expressions enthalten. Bsp.: um zu verhindern, dass für die 1. Klasse der "GS_Nord" auf dem Server "mydc" Links zu Freigaben angelegt werden, sowie kein Link "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='GS_Nord-1.*,Marktplatz'. Der Wert "all" verhindert das Anlegen jeglicher Links zu Freigaben (Standard: nicht gesetzt).
-Description[de]=Comma separated list of shares per server for which not to create links. The shares names can contain regular expressions. Example: To prevent the creation of links to shares for the 1st class of the school "GS_Nord" on the server "mydc" and the link to "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='GS_Nord-1.*,Marktplatz'. The value "all" prevents the creation of all share links. (default: not defined)
+Description[de]=Kommaseparierte Liste von Freigaben pro Server für die kein Link erzeugt werden soll. Die Namen der Freigaben sind als reguläre Ausdrücke zu formulieren. Bsp.: um zu verhindern, dass für die 1. Klasse der "GS_Nord" auf dem Server "mydc" Links zu Freigaben angelegt werden, sowie kein Link "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='^GS_Nord-1.*$,^Marktplatz$'. Der Wert "all" verhindert das Anlegen jeglicher Links zu Freigaben (Standard: nicht gesetzt).
+Description[de]=Comma separated list of shares per server for which not to create links. The shares names have to be specified as regular expressions. Example: To prevent the creation of links to shares for the 1st class of the school "GS_Nord" on the server "mydc" and the link to "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='^GS_Nord-1.*$,^Marktplatz$'. The value "all" prevents the creation of all share links. (default: not defined)
 Type=str
 Categories=ucsschool-netlogon
 
