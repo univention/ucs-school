@@ -5,8 +5,11 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-netlogon-user-logonscripts
 fix: 12.0.4-10.65.201702281511
 desc: |
- * The names of the folder links on the users desktop can now be set via UCR:
-   ucsschool/userlogon/shares_foldername defaults to "Eigene Shares",
+ * The name of the folder link on the user's desktop can now be set via UCR:
+   ucsschool/userlogon/shares_foldername defaults to "Eigene Shares". If the
+   special folders "My Files" and "My Pictures" are redirected from local
+   profile path to the user's network home directory, the directory names
+   of those folder within user's home directory may now be specified via UCR:
    ucsschool/userlogon/myshares/name defaults to "Eigene Dateien" and
    ucsschool/userlogon/mypictures/name defaults to "Eigene Bilder"
    (Bug #37256).
