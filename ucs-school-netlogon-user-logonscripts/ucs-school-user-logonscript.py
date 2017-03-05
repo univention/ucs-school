@@ -673,7 +673,8 @@ def clean():
 		for path in UserLogonScriptListener.get_script_path():
 			if os.path.exists(path):
 				for f in os.listdir(path):
-					os.unlink(os.path.join(path, f))
+					if f.lower.endswith('.vbs'):
+						os.unlink(os.path.join(path, f))
 	finally:
 		listener.unsetuid()
 
