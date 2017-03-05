@@ -157,8 +157,6 @@ class UserLogonScriptListener(object):
 		'(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
 	template_paths = dict(
 		main='/usr/share/ucs-school-netlogon-user-logonscripts/net-logon-script.vbs',
-		shortcut_to_share='/usr/share/ucs-school-netlogon-user-logonscripts/shortcut-to-share.vbs',
-		teacher_umc_link='/usr/share/ucs-school-netlogon-user-logonscripts/teacher-umc-link.vbs',
 		mac_script='/usr/share/ucs-school-netlogon-user-logonscripts/mac_script',
 	)
 	_disabled_share_links = dict()
