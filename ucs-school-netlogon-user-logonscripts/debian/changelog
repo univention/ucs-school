@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.1-2) unstable; urgency=low
+
+  * Bug #43655: merge directory
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Mar 2017 14:22:25 +0100
+
 ucs-school-netlogon-user-logonscripts (13.0.1-1.1) unstable; urgency=low
 
   * Bug #43655: merge changes of r77127 (sschwardt) and r77237 (dtroeder) and
