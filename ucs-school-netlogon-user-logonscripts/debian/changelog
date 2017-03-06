@@ -1,3 +1,20 @@
+ucs-school-netlogon-user-logonscripts (13.0.1-1.1) unstable; urgency=low
+
+  * Bug #43655: merge changes of r77127 (sschwardt) and r77237 (dtroeder) and
+    activate icon creation by default
+  * Bug #37256: update of UCR variable descriptions and translations
+  * Bug #43526: support switching off parts of logon script, introducing
+    UCRVs: ucsschool/userlogon/create_drive_mappings,
+    ucsschool/userlogon/create_myfiles_link,
+    ucsschool/userlogon/create_shortcuts,
+    ucsschool/userlogon/create_teacher_umc_link,
+    ucsschool/userlogon/disabled_share_links/*
+  * refactor more code from generate_windows_link_script into separate methods
+  * move all VBS code into one template, format and call appropriately
+  * s/listener.baseConfig/listener.configRegistry/g
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Mar 2017 13:59:00 +0100
+
 ucs-school-netlogon-user-logonscripts (13.0.1-1) unstable; urgency=medium
 
   * Bug #43578: Adjust paths from /univention-management-console/ to

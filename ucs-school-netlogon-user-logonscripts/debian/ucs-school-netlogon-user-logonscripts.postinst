@@ -43,7 +43,10 @@ univention-config-registry set \
     ucsschool/userlogon/commonshares/letter/Marktplatz?"M" \
     ucsschool/userlogon/classshareletter?"K" \
     ucsschool/netlogon/ucs-school-netlogon-user-logonscripts/script?'user\%USERNAME%.vbs' \
-	ucsschool/userlogon/myshares/enabled?no
+	ucsschool/userlogon/myshares/enabled?no \
+	ucsschool/userlogon/shares_folder_icon?'%SystemRoot%\system32\imageres.dll,143' \
+	ucsschool/userlogon/my_files_link_icon?'%SystemRoot%\system32\imageres.dll,207' \
+	ucsschool/userlogon/other_links_icon?'%SystemRoot%\system32\imageres.dll,193'
 
 # samba 3
 mkdir -p /var/lib/samba/netlogon/user
