@@ -32,6 +32,6 @@
 
 #DEBHELPER#
 
-a2dissite wpad-config
+a2dissite wpad.conf
 
 exit 0

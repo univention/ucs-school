@@ -77,7 +77,7 @@ case "$1" in
 			/etc/init.d/squid3 restart
 		fi
 
-		a2ensite wpad-config
+		a2ensite wpad.conf
 		invoke-rc.d apache2 reload
 
 		univention-config-registry set \

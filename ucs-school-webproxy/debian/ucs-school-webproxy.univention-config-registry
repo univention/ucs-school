@@ -15,7 +15,7 @@ Variables: squid/parent/host
 Variables: squid/parent/port
 
 Type: file
-File: etc/apache2/sites-available/wpad-config
+File: etc/apache2/sites-available/wpad.conf
 
 Type: file
 File: etc/cron.d/ucs-school-webproxy

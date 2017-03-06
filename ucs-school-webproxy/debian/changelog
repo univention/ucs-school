@@ -1,3 +1,9 @@
+ucs-school-webproxy (13.0.0-2) unstable; urgency=low
+
+  * Bug #42407: adapt site configuration filename to Apache 2.4 scheme
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Mar 2017 13:48:24 +0100
+
 ucs-school-webproxy (13.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2
