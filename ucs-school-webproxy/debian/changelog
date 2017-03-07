@@ -1,3 +1,9 @@
+ucs-school-webproxy (13.0.0-3) unstable; urgency=low
+
+  * Bug #42407: remove old config file and symlink
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Mar 2017 10:44:03 +0100
+
 ucs-school-webproxy (13.0.0-2) unstable; urgency=low
 
   * Bug #42407: adapt site configuration filename to Apache 2.4 scheme

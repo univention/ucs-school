@@ -41,6 +41,11 @@ if [ "$1" = upgrade -a -n "$2" ] && dpkg --compare-versions "$2" lt 12.0.1-3; th
 	fi
 fi
 
+# Bug #42407 - migrate wpad-config to wpad.conf for Apache 2.4
+if [ "$1" = upgrade -a -n "$2" ] && dpkg --compare-versions "$2" lt 13.0.0-2; then
+	a2dissite wpad-config 2> /dev/null || rm -f /etc/apache2/sites-enabled/wpad-config
+fi
+
 # defaults (set them before univention-squid!)
 univention-config-registry set \
 	squid/redirect?squidguard \
