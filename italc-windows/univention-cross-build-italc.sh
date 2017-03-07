@@ -37,7 +37,7 @@ REPOUSER=""
 REPODIR="/root/mingw-repo"
 BUILDDIR="/root/src/italc"
 CROSSCOMPILER="192.168.0.10:/var/univention/buildsystem2/contrib/iTALC-mingw-xenial/*/*/*.deb"
-SVN_ITALC="192.168.0.3/var/svn/dev/branches/ucs-4.1/ucs-school-4.1r2/italc-windows"
+SVN_ITALC="192.168.0.3/var/svn/dev/branches/ucs-4.2/ucs-school-4.2/italc-windows"
 TIMESERVER="192.168.0.3"
 
 #
