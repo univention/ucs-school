@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.1"
-version: [3]
-scope: ucs_4.1-0-ucs-school-4.1r2
-src: ucs-school-umc-users
-fix: 12.0.2-1.36.201611111712
-desc: |
- * Proper error messages are shown when no school exists (Bug #42399).
-bug: [42399]
