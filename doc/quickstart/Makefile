@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-MAIN := quickstart-ucsschool-4.1R2-de
+MAIN := quickstart-ucsschool-4.2-de
 STYLESHEET := univention_extdocs
 quickstart-de%: lang := de
 

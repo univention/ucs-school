@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.1r2-setup">
+<book lang="de" id="ucsschool-4.2-setup">
 	<bookinfo>
 		<title>
 			&ucsUAS; Szenarien-Handbuch
@@ -18,13 +18,13 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.1 R2 v8
-Stand: 23. November 2016
+Version 4.2 v1
+Stand: 04. April 2017
 			</literallayout>
 
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2016
+(c) 2002-2017
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -164,7 +164,7 @@ feedback@univention.de
 					Webdienste</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/1_zentrale.png" scale="53" />
+						<imagedata fileref="illustrations42/1_zentrale.png" scale="53" />
 					</imageobject>
 					<textobject><phrase>Szenario 1: Zentraler Verzeichnisdienst
 							für Webdienste</phrase></textobject>
@@ -190,7 +190,7 @@ feedback@univention.de
 					Schulen, ggf. inkl. Webdienste</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/2_zentrale_wlan.png" scale="53" />
+						<imagedata fileref="illustrations42/2_zentrale_wlan.png" scale="53" />
 					</imageobject>
 					<textobject><phrase>Szenario 2: Zentraler Verzeichnisdienst
 							und WLAN für Schulen, ggf. inkl.
@@ -214,7 +214,7 @@ feedback@univention.de
 					Schulserver an den Schulen und Softwareverteilung</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/3_zentrale_wlan_schulserver.png" scale="53" />
+						<imagedata fileref="illustrations42/3_zentrale_wlan_schulserver.png" scale="53" />
 					</imageobject>
 					<textobject><phrase>Szenario 3: Zentraler Verzeichnisdienst
 							und WLAN mit Schulserver an den Schulen und
@@ -241,7 +241,7 @@ feedback@univention.de
 					Schulserver im Rechenzentrum und Softwareverteilung</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" scale="53" />
+						<imagedata fileref="illustrations42/4_zentrale_wlan_schulserver_rz.png" scale="53" />
 					</imageobject>
 					<textobject><phrase>Szenario 4: Zentraler Verzeichnisdienst
 							und WLAN mit Schulserver im Rechenzentrum und
@@ -772,7 +772,7 @@ feedback@univention.de
 				<para>
 					Beispiel für eine Konfiguration zum Import von
 					Benutzerkonten (JSON), siehe <ulink
-						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
+						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html">&ucsUAS;-Handbuch
 						zur <wordasword>CLI-Import-Schnittstelle</wordasword></ulink>
 				</para>
 				<para>
@@ -1621,7 +1621,7 @@ feedback@univention.de
 						(<package>dos2unix</package> muss aus dem
 						<application>unmaintained</application>-Repository installiert
 						werden, siehe
-						<ulink url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Konfiguration des Repository-Servers</ulink>
+						<ulink url="https://docs.software-univention.de/handbuch-4.2.html#software::configrepo">Konfiguration des Repository-Servers</ulink>
 						)
 					</para>
 				</listitem>
@@ -1683,7 +1683,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
 				beschrieben, eine CSV-Datei, die alle Schul-Netzwerke
 				entsprechend des Netzkonzeptes enthält.
 			</para>
@@ -1718,7 +1718,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
 				beschrieben, eine CSV-Datei pro Schule, die alle Clients der
 				Schule entsprechend des Netz- und Namenskonzeptes enthält.
 			</para>
@@ -1749,7 +1749,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
 				beschrieben, eine CSV-Datei pro Schule, die alle
 				Druckerfreigaben der Schule entsprechend des Netz- und
 				Namenskonzeptes enthält.
@@ -1788,7 +1788,7 @@ feedback@univention.de
 				Für den Benutzerimport benötigen sie ebenfalls eine CSV-Datei,
 				die idealerweise von der Schulverwaltungssoftware bereitgestellt
 				wird. Folgende <ulink
-					url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html#configuration:mapping">Informationen</ulink>
+					url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html#configuration:mapping">Informationen</ulink>
 				müssen enthalten sein:
 				<itemizedlist>
 					<listitem><para>Vorname</para></listitem>

@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.1r2-import">
+<book lang="de" id="ucsschool-4.2-import">
 	<bookinfo>
 		<title>
 			&ucsUAS;
@@ -18,8 +18,8 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.1 R2 v9
-				Stand: 15. Dezember 2016
+				Version 4.2 v1
+				Stand: 04. April 2017
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
@@ -149,7 +149,7 @@
 		<para>
 			<figure id="procedure_import">
 				<title>Ablauf eines Benutzerimports</title>
-				<graphic scalefit="1" width="95%" align="center" fileref="illustrations41/import_ablauf.png"/>
+				<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ablauf.png"/>
 			</figure>
 			Für die Analyse von Problemen wird während des gesamten Imports ein Protokoll über alle technischen Vorgänge in Logdateien mit unterschiedlichen Detailtiefen geführt.
 			Wenn nicht anders konfiguriert, sind das die Dateien <filename>/var/log/univention/ucs-school-import.log</filename> und <filename>/var/log/univention/ucs-school-import.info</filename>.
