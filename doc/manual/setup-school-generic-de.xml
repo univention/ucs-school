@@ -373,7 +373,7 @@
             <envar>ucsschool/umc/computerroom/hide_screenshots/groups</envar> kann eine abweichende
             kommaseparierte Liste mit Gruppennamen konfiguriert werden, z.B. <literal>Domain
             Admins,Helpdesk</literal>.  Da &ucsUAS; für jede Schule für die dort agierenden Lehrer eine eigene Benutzergruppe anlegt, wurde
-            zur Vereinfachung eine weitere &ucsUAS;-Variable
+            zur Vereinfachung eine weitere &ucsUCR;-Variable
             <envar>ucsschool/umc/computerroom/hide_screenshots/teachers</envar> eingeführt.  Wird in dieser
             Variable der Wert <literal>true</literal> hinterlegt, ist das Betrachten der Desktop-Ansicht von
             Rechnern, an denen Lehrer angemeldet sind, nicht mehr möglich.
