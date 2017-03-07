@@ -1,6 +1,12 @@
+ucs-school-metapackage (10.0.0-4) unstable; urgency=low
+
+  * Bug #43579: unset deprecated UCR variables
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Mar 2017 12:18:19 +0100
+
 ucs-school-metapackage (10.0.0-3) unstable; urgency=low
 
-  * Bug #42407: migrate ucs-overview entries to 4.2 portal entries
+  * Bug #43579: migrate ucs-overview entries to 4.2 portal entries
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 07 Mar 2017 09:35:45 +0100
 
