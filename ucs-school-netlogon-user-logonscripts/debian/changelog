@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.1-3) unstable; urgency=low
+
+  * Bug #43655: fix UMC path (previous commit overwrote change of r43578)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Mar 2017 13:58:52 +0100
+
 ucs-school-netlogon-user-logonscripts (13.0.1-2) unstable; urgency=low
 
   * Bug #43655: merge directory

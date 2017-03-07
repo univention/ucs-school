@@ -147,7 +147,7 @@ class UserLogonScriptListener(object):
 	ldapbase = listener.configRegistry.get('ldap/base', '')
 	umcLink = listener.configRegistry.get(
 		'ucsschool/userlogon/umclink/link',
-		'http://%s.%s/univention-management-console' % (hostname, domainname))
+		'http://%s.%s/univention/management' % (hostname, domainname))
 	reTeacher = re.compile(listener.configRegistry.get(
 		'ucsschool/userlogon/umclink/re',
 		'^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (
