@@ -57,18 +57,18 @@ After that follow
 	}
 },
 "scheme" [1]: {
-	"email": str: schema of email address, variables may be used as described in manual-4.1:users:templates
-	"recordUID": str [1]: schema of RecordUID, variables may be used as described in manual-4.1:users:templates
+	"email": str: schema of email address, variables may be used as described in manual-4.2:users:templates
+	"recordUID": str [1]: schema of RecordUID, variables may be used as described in manual-4.2:users:templates
 	"username" [1]: {
 		"allow_rename":      bool: whether changing usernames should be allowed (currently not supported,
 		                           in the future may only work if scheme->recordUID does not contain the username)
 		"default":           str [2]: schema of username, variables may be used
-		"student":           str [3]:                     as described in manual-4.1:users:templates
+		"student":           str [3]:                     as described in manual-4.2:users:templates
 		"staff":             str [3]:                     plus [COUNTER2] which is replaced by numbers
 		"teacher":           str [3]:                     starting from 2 or [ALWAYSCOUNTER] which is
 		"teacher_and_staff": str [3]:                     always replaced by numbers starting from 1.
 	},
-	<udm attribute name>:	str: scheme (manual-4.1:users:templates) to create a UDM attribute from
+	<udm attribute name>:	str: scheme (manual-4.2:users:templates) to create a UDM attribute from
 },
 "maildomain": str: value of 'maildomain' variable that can be used in scheme->email. If unset will try to find one in system.
 "mandatory_attributes": list: list of UDM attribute names that must be set by the import
