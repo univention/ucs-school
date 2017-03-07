@@ -1,3 +1,9 @@
+ucs-school-metapackage (10.0.0-3) unstable; urgency=low
+
+  * Bug #42407: migrate ucs-overview entries to 4.2 portal entries
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Mar 2017 09:35:45 +0100
+
 ucs-school-metapackage (10.0.0-2) unstable; urgency=medium
 
   * Bug #43578: Adjust paths from /univention-management-console/ to

@@ -1,8 +1,10 @@
 #!/bin/sh
+
 #
 # UCS@school
+#  unjoin script
 #
-# Copyright 2014-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,13 +31,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-. /usr/share/univention-lib/base.sh
+VERSION=1
 
-#DEBHELPER#
+. /usr/share/univention-join/joinscripthelper.lib
 
-if [ "$1" = "remove" ]
-then
-	call_unjoinscript 17ucs-school-portal-entry.uinst
-fi
+joinscript_init
+
+eval "$(ucr shell)"
+univention-directory-manager settings/portal_entry remove "$@" \
+	--dn "cn=teacherconsole,cn=portal,cn=univention,$ldap_base"
+
+joinscript_remove_script_from_status_file ucs-school-metapackage
 
 exit 0

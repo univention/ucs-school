@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # UCS@school
 #
@@ -29,15 +29,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+. /usr/share/univention-lib/base.sh
+
 #DEBHELPER#
 
-univention-config-registry unset \
-	ucs/web/overview/entries/service/teacherconsole/icon \
-	ucs/web/overview/entries/service/teacherconsole/label \
-	ucs/web/overview/entries/service/teacherconsole/label/de \
-	ucs/web/overview/entries/service/teacherconsole/description \
-	ucs/web/overview/entries/service/teacherconsole/description/de \
-	ucs/web/overview/entries/service/teacherconsole/link \
-	ucs/web/overview/entries/service/teacherconsole/priority
+if [ "$1" = "remove" ]
+then
+	call_unjoinscript 17ucs-school-portal-entry.uinst
+fi
 
 exit 0

@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# UCS@school
+# prerm script for UCS@school
 #
-# Copyright 2014-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,13 +29,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-. /usr/share/univention-lib/base.sh
-
 #DEBHELPER#
 
 if [ "$1" = "remove" ]
 then
-	call_unjoinscript 17ucs-school-portal-entry.uinst
+	cp /usr/lib/univention-uninstall/17ucs-school-portal-entry.uinst \
+		/usr/lib/univention-install/
 fi
 
 exit 0

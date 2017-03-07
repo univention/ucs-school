@@ -1,8 +1,9 @@
 #!/bin/sh
 #
 # UCS@school
+#  join script that creates a local portal entry
 #
-# Copyright 2014-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,13 +30,30 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-. /usr/share/univention-lib/base.sh
+VERSION=1
 
-#DEBHELPER#
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
 
-if [ "$1" = "remove" ]
-then
-	call_unjoinscript 17ucs-school-portal-entry.uinst
-fi
+eval "$(ucr shell)"
+
+univention-directory-manager settings/portal_entry create --ignore_exists "$@" \
+	--position "cn=portal,cn=univention,$ldap_base" \
+	--set name="teacherconsole" \
+	--append displayName="de_DE UCS@school" \
+	--append displayName="en_US UCS@school" \
+	--append displayName="fr_FR UCS@school" \
+	--set portal="cn=local,cn=portal,cn=univention,$ldap_base" \
+	--set icon="$(base64 /usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/50x50/ucsschool.png)" \
+	--set link="/univention/management/" \
+	--append description='de_DE "UCS@school Module in der Univention Management Console"' \
+	--append description='en_US "UCS@school modules in the Univention Management Console"' \
+	--append description='fr_FR "Modules UCS@school dans Univention Management"' \
+	--set category="service" \
+	--set activated="TRUE" \
+	--set authRestriction="anonymous" \
+	--set favorite=""
+
+joinscript_save_current_version
 
 exit 0
