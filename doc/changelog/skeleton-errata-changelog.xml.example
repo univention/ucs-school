@@ -8,14 +8,14 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="errata-changelog-4.1-de">
+<book lang="de" id="errata-changelog-4.2-de">
 
 	<bookinfo>
- 		<title>UCS@school 4.1 vYZ Changelog</title>
-		<subtitle>Changelog für das Update von UCS@school 4.1 vXY nach vYZ</subtitle>
+ 		<title>UCS@school 4.2 vYZ Changelog</title>
+		<subtitle>Changelog für das Update von UCS@school 4.2 vXY nach vYZ</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.1 v4
+Version 4.2 v4
 Stand: 08. März 2016
 			</literallayout>
 			<literallayout lang="">
@@ -41,7 +41,7 @@ feedback@univention.de
 	<chapter id="changelog:main">
 		<title>&ucsUAS;-Update</title>
 		<para>
-			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 vXY nach 4.1 vYZ.
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.2 vXY nach 4.2 vYZ.
 			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
 			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
 		</para>
