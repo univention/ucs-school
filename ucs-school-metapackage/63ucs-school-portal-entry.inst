@@ -37,6 +37,19 @@ joinscript_init
 
 eval "$(ucr shell)"
 
+ucr unset \
+	ucs/web/overview/entries/service/teacherconsole/icon \
+	ucs/web/overview/entries/service/teacherconsole/label \
+	ucs/web/overview/entries/service/teacherconsole/label/de \
+	ucs/web/overview/entries/service/teacherconsole/label/fr \
+	ucs/web/overview/entries/service/teacherconsole/description \
+	ucs/web/overview/entries/service/teacherconsole/description/de \
+	ucs/web/overview/entries/service/teacherconsole/description/fr \
+	ucs/web/overview/entries/service/teacherconsole/link \
+	ucs/web/overview/entries/service/teacherconsole/link/de \
+	ucs/web/overview/entries/service/teacherconsole/link/fr \
+	ucs/web/overview/entries/service/teacherconsole/priority 2> /dev/null
+
 univention-directory-manager settings/portal_entry create --ignore_exists "$@" \
 	--position "cn=portal,cn=univention,$ldap_base" \
 	--set name="teacherconsole" \
