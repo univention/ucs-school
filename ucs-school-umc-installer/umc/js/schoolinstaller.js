@@ -308,7 +308,6 @@ define([
 			// change labels of default footer buttons
 //			this._pages.school._footerButtons.next.set('label', _('Install'));
 			this._pages.error._footerButtons.next.set('label', _('Retry'));
-			this._pages.alreadyInstalled._footerButtons.finish.set('label', _('Close'));
 
 			// initial query for server details
 			this._initialQuery();
@@ -605,6 +604,14 @@ define([
 			// deactivate this, because the wizard can be closed via the header
 			// button anyways
 			return false;
+		},
+		
+		getFooterButtons: function(pageName) {
+			var buttons = this.inherited(arguments);
+			if (pageName === 'alreadyInstalled') {
+				buttons = array.filter(buttons, function(button) { return button.name !== 'finish'; });
+			}
+			return buttons;
 		},
 
 		hasNext: function(pageName) {
