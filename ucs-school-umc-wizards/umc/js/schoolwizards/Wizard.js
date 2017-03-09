@@ -70,17 +70,31 @@ define([
 				this.pages.push(generalPage);
 			}
 			var itemPage = this.getItemPage();
-			this.addUDMLink(itemPage);
 			this.pages.push(itemPage);
 		},
 
 		getHeaderButtons: function(pageName) {
-			return [{
+			var buttons =[];
+
+			buttons.push({
 				name: 'close',
 				label: _('Cancel'),
 				iconClass: 'umcArrowLeftIconWhite',
 				callback: lang.hitch(this, 'onCancel')
-			}];
+			});
+
+			if (this.udmLinkEnabled && this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
+				buttons.push({
+					name: 'udm_link',
+					label: _('Advanced settings'),
+					callback: lang.hitch(this, function() {
+						app.openModule('udm', 'navigation', {openObject: {objectType: this.objectType, objectDN: this.$dn$}});
+						this.onFinished();  // close this wizard
+					})
+				});
+			}
+
+			return buttons;
 		},
 
 		getFooterButtons: function(pageName) {
@@ -110,24 +124,6 @@ define([
 			}
 
 			return buttons;
-		},
-
-		addUDMLink: function(page) {
-			if (this.udmLinkEnabled && this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
-				var buttons = page.buttons;
-				if (!buttons) {
-					buttons = page.buttons = [];
-				}
-				buttons.push({
-					name: 'udm_link',
-					label: _('Advanced settings'),
-					callback: lang.hitch(this, function() {
-						app.openModule('udm', 'navigation', {openObject: {objectType: this.objectType, objectDN: this.$dn$}});
-						this.onFinished();  // close this wizard
-					})
-				});
-				page.layout.push('udm_link');
-			}
 		},
 
 		loadVariables: function() {

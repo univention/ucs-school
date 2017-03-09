@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.2-3) unstable; urgency=medium
+
+  * Bug #36789: Put "Advanced settings"-button into the header.
+
+ -- Richard Ulmer <ulmer@univention.de>  Thu, 09 Mar 2017 17:33:56 +0100
+
 ucs-school-umc-wizards (9.0.2-2) unstable; urgency=low
 
   * Bug #43701/42349: fix regression of last commit: disable sorting of user roles
