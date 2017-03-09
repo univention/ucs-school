@@ -9,6 +9,7 @@
 ## bugs: [42373]
 ## versions:
 ##  4.1: skip
+##  4.2: skip
 
 import os
 import re
