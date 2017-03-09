@@ -1,3 +1,10 @@
+ucs-school-webproxy (13.0.0-4) unstable; urgency=low
+
+  * Bug #40442: set dhcpd/authoritative=yes only for fresh installations
+  * remove unnecessary init dependecies of univention-reload-service
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 09 Mar 2017 09:34:08 +0100
+
 ucs-school-webproxy (13.0.0-3) unstable; urgency=low
 
   * Bug #42407: remove old config file and symlink

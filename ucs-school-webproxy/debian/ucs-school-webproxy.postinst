@@ -84,8 +84,14 @@ case "$1" in
 			'proxy/filter/setting/Kein Internet/filtertype?whitelist-block' \
 			'proxy/filter/setting/Unbeschränkt/filtertype?blacklist-pass' \
 			'proxy/filter/global/blacklists/forced?no' \
-			'dhcpd/options/wpad/252=text' \
-			'dhcpd/authoritative=yes'
+			'dhcpd/options/wpad/252=text'
+
+		# Set dhcpd/authoritative=yes only for fresh installations.
+		# This is needed for windows clients before Win 8 to accept the
+		# "wpad" DHCP-option (Bug #40442).
+		if [ -z "$2" ]; then
+			univention-config-registry set 'dhcpd/authoritative=yes'
+		fi
 
 		# set variable on fresh installation and during update to version 10.0.3 (aka UCS@school 3.2R2)
 		if dpkg --compare-versions "$2" lt 10.0.3 ; then
