@@ -74,12 +74,7 @@ define([
 			this.pages.push(itemPage);
 		},
 
-		buildRendering: function() {
-			this.inherited(arguments);
-			this.headerButtons = this.getHeaderButtons();
-		},
-
-		getHeaderButtons: function() {
+		getHeaderButtons: function(pageName) {
 			return [{
 				name: 'close',
 				label: _('Cancel'),
