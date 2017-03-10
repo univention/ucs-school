@@ -3,6 +3,7 @@ ucs-school-umc-installer (5.0.0-6) unstable; urgency=low
   * Bug #42905: remove samba 3 from installer
     Please note: starting from this point, UCS@school is no longer able
     to be installed in Samba 3 domains. Any attempt will be rejected.
+  * removed outdated binary package ucs-school-umc-installer-preview
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 08 Mar 2017 13:02:02 +0100
 

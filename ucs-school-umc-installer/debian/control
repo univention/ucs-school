@@ -30,26 +30,3 @@ Description: This installation wizard guides the installation of UCS@school in t
  integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
-
-Package: ucs-school-umc-installer-preview
-Architecture: all
-Provides: ucs-school-umc-installer
-Depends: ${misc:Depends},
- univention-management-console-server,
- python-dnspython,
- python-notifier,
- univention-updater,
- python-univention-lib (>= 2.0.17-1.116),
- python-univention-directory-manager,
- univention-management-console-module-lib,
- ucs-school-umc-common,
- python-ucs-school,
- shell-univention-lib,
-Description: This installation wizard guides the installation of an UCS@school preview
- This installation wizard guides the installation of an UCS@school milestone in
- the domain.
- .
- It is part of Univention Corporate Server (UCS), an
- integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
