@@ -60,6 +60,13 @@ feedback@univention.de
 			werden, bevor das Update auf den übrigen &ucsUAS;-Systemen der Domäne gestartet werden
 			kann. Ansonsten wird es zu Problemen auf den übrigen &ucsUAS;-Schulservern kommen.
 		</para>
+		<section id="relnote:prepare:samba3">
+			<title>Unterstützung von Samba 3 abgekündigt</title>
+			<para>
+				Beginnend mit Version 4.2 wird von UCS@school nur noch die Samba-Version 4 unterstützt. UCS@school-Domänen, die noch Samba 3 einsetzen, müssen diese spätestens nach dem Update auf UCS 4.2-0 auf Samba 4 migrieren.
+				Eine Anleitung für die Migration findet sich <emphasis>HIER DIE URL EINTRAGEN</emphasis>.
+			</para>
+		</section>
 		<section id="relnote:prepare:LDAP">
 			<title>Änderungen im LDAP-Verzeichnis</title>
 			<para>
