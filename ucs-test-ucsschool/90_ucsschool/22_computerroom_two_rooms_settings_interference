@@ -18,7 +18,7 @@ import itertools
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-from univention.testing.umc import ConnectorError
+from univention.lib.umc import ConnectionError
 
 
 def print_header(i, room1_rule, room1_printmode, room1_sharemode, j, room2_rule, room2_printmode, room2_sharemode):
@@ -116,7 +116,7 @@ def main():
 								clean_folder('/home/gsmitte/groups/Marktplatz/')
 								clean_folder('/home/%s/lehrer/%s/' % (school, tea))
 							# TODO Exception Errno4
-							except ConnectorError as e:
+							except ConnectionError as e:
 								if '[Errno 4] Unterbrechung' in str(e):
 									print 'FAILED to get or set room (%s) settings, exception [Errno4]' % (room2.name,)
 								else:

@@ -7,7 +7,7 @@ import univention.testing.utils as utils
 import tempfile
 from pprint import pprint
 from essential.user import User
-from univention.testing.umc import HTTPError
+from univention.lib.umc import HTTPError
 
 
 class FailHTTPStatus(Exception):

@@ -8,7 +8,7 @@ from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
 from univention.testing.umc import Client
-from univention.testing.umc import ConnectionError
+from univention.lib.umc import ConnectionError
 import copy
 import datetime
 import itertools

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.1-1) unstable; urgency=medium
+
+  * Bug #43389: fix imports
+
+ -- Florian Best <best@univention.de>  Fri, 10 Mar 2017 17:44:54 +0100
+
 ucs-test-ucsschool (4.0.0-2) unstable; urgency=medium
 
   * Bug #43389: add missing dependency to pytest
