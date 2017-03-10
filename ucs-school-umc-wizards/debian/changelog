@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.3-1) unstable; urgency=medium
+
+  * Bug #36789: removed leftover from old grid
+
+ -- Florian Best <best@univention.de>  Fri, 10 Mar 2017 17:05:32 +0100
+
 ucs-school-umc-wizards (9.0.2-3) unstable; urgency=medium
 
   * Bug #36789: Put "Advanced settings"-button into the header.

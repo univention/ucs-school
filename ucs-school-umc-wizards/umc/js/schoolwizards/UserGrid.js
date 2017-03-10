@@ -81,11 +81,6 @@ define([
 //				name: 'mailPrimaryAddress',
 //				label: _('E-Mail address'),
 //				description: _('E-Mail address of the %s.', this.objectNameSingular)
-			}, {
-				name: 'empty',  // workaround: EnhancedGrid
-				label: '&nbsp;',
-				width: '10px',
-				formatter: function() { return ''; }
 			}];
 		},
 
@@ -99,7 +94,7 @@ define([
 
 		getDeleteConfirmMessage: function(objects) {
 			var msg = _('Please confirm to delete the %(num)d selected %(objectNamePlural)s from school %(school)s.', {num: objects.length, objectNamePlural: this.objectNamePlural, school: this.schoolLabel});
-			if (objects.length == 1) {
+			if (objects.length === 1) {
 				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s" from school %(school)s.', {objectNameSingular: this.objectNameSingular, objectName: this.getObjectIdName(objects[0]), school: this.schoolLabel});
 			}
 			return msg;
