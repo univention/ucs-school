@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-08 12:36+0000\n"
-"PO-Revision-Date: 2017-03-08 13:05+0100\n"
+"POT-Creation-Date: 2016-12-07 19:02+0100\n"
+"PO-Revision-Date: 2017-03-08 17:42+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "Language: de\n"
@@ -306,13 +306,9 @@ msgstr "Die DNS-Einstellungen können im %s angepasst werden."
 
 #: umc/js/schoolinstaller.js:127
 msgid ""
-"The UCS@school configuration wizard detected all necessary information to "
-"install UCS@school on this DC Backup. Click <i>next</i> to start the "
-"installation."
-msgstr ""
-"Der UCS@school Einrichtungsassistent hat alle nötigen Informationen erkannt, "
-"um UCS@school auf diesem DC Backup zu installieren. Klicken Sie auf "
-"<i>Weiter</i> um die Installation zu starten."
+"The UCS@school configuration wizard detected all necessary information to install "
+"UCS@school on this DC Backup. Click <i>next</i> to start the installation."
+msgstr "Der UCS@school-Konfigurationsassistent hat alle benötigten Informationen erkannt, um UCS@school auf diesem DC Backup zu installieren. Klicken Sie auf <i>Weiter</i> um die Installation zu starten."
 
 #: umc/js/schoolinstaller.js:164
 msgid "The given value will be shown as school's name within UCS@school."
@@ -395,7 +391,7 @@ msgstr ""
 
 #: umc/js/schoolinstaller.js:232
 msgid "UCS@school configuration wizard"
-msgstr "UCS@school Einrichtungsassistent"
+msgstr "UCS@school-Konfigurationsassistent"
 
 #: umc/js/schoolinstaller.js:233
 msgid "UCS@school has already been configured on this system."
