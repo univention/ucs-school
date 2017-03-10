@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-2) unstable; urgency=low
+
+  * Bug #43748: adapt ou-creation to new DHCP-options behavior
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 10 Mar 2017 10:03:05 +0100
+
 ucs-school-import (15.0.0-1) unstable; urgency=low
 
   * version bump for UCS@school 4.2
