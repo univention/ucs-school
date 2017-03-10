@@ -57,7 +57,6 @@ define([
 		// entries returned from the initial request
 		_serverRole: null,
 		_joined: null,
-		_samba: null,
 		_requestRestart: false,
 		_hostname: null,
 
@@ -153,36 +152,6 @@ define([
 					name: 'dnsLookupError',
 					content: '',
 					visible: false
-				}]
-			}, {
-				name: 'samba',
-				headerText: _('UCS@school - samba setup'),
-				helpText: _('For providing Windows domain services, UCS@school requires the installation of the Samba software component. The Samba component is available in two different versions: Samba 3 and Samba 4. It is recommended to use domain-wide the same Samba version.'),
-				widgets: [{
-					type: ComboBox,
-					name: 'samba',
-					label: _('Please choose which Samba version you would like to install:'),
-					size: 'OneAndAHalf',
-					staticValues: [
-						{ id: '4', label: _('Active Directory-compatible domain controller (Samba 4)') },
-						{ id: '3', label: _('NT-compatible domain controller (Samba 3)') }
-					],
-					onChange: lang.hitch(this, function(newVal, widgets) {
-						var texts = {
-							'samba4': _('Samba 4 is the next generation of the Samba suite. The most important innovation of Samba 4 is the support of domain, directory and authentication services which are compatible with Microsoft Active Directory. This means that Active Directory-compatible Windows domains can be constructed with Samba 4. These also allow the use of the tools provided by Microsoft for the management of users or group policies (GPOs) for example. Samba4 is the recommended version to use.'),
-							'samba3': _('Samba 3 implements domain services based on the domain technology of Microsoft Windows NT. Samba 3 is the current, stable and tried-and-tested main release series of the Samba project and has been integrated in UCS for many years.')
-						};
-
-						// update the help text according to the value chosen...
-						var text = texts['samba' + newVal];
-
-						// update widget
-						widgets.infoText.set('content', text);
-					})
-				}, {
-					type: Text,
-					name: 'infoText',
-					content: ''
 				}]
 			}, {
 				name: 'school',
@@ -319,16 +288,12 @@ define([
 				this._serverRole = data.result.server_role;
 				this._hostname = data.result.hostname;
 				this._joined = data.result.joined;
-				this._samba = data.result.samba;
 				this._ucsschool = data.result.school_environment;
 				var guessedMaster = data.result.guessed_master;
 
 				// update some widgets with the intial results
 				if (this._serverRole === 'domaincontroller_slave') {
 					this._pages.setup.set('helpText', _('This wizard guides you step by step through the installation of an UCS@school slave domain controller. Before continuing please make sure that an UCS@school master domain controller has already been set up for a multi server environment.'));
-				}
-				if (this._samba) {
-					this.getWidget('samba', 'samba').set('value', this._samba);
 				}
 				this.getWidget('credentials', 'master').set('value', guessedMaster);
 				if (!guessedMaster) {
@@ -434,7 +399,6 @@ define([
 							return 'credentials';  // the DC Backup is not joined yet/anymore. Continue with the next page. Cannot happen as UCS@school is now installed via the AppCenter so the system must be joined.
 						}
 						this.getWidget('setup', 'setup').set('value', metainfo.school_environment);
-						this.getWidget('samba', 'samba').set('value', metainfo.samba);
 						return 'backupsetup';
 					})));
 				}
@@ -445,12 +409,6 @@ define([
 
 				// show credentials page only on domaincontroller slave
 				if (next === 'credentials' && this._serverRole !== 'domaincontroller_slave') {
-					next = 'samba';
-				}
-
-				// only display samba page for a single server environment or on a
-				// slave and only if samba is not already installed
-				if (next === 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') === 'multiserver' && this._serverRole !== 'domaincontroller_slave'))) {
 					next = 'school';
 				}
 
@@ -624,12 +582,6 @@ define([
 
 		previous: function(pageName) {
 			var previous = this.inherited(arguments);
-
-			// only display samba page for a single server environment or on a
-			// slave and only if samba is not already installed
-			if (previous === 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') === 'multiserver' && this._serverRole !== 'domaincontroller_slave'))) {
-				previous = 'credentials';
-			}
 
 			// DC Master/Slave doesn't have the backup page
 			if (previous === 'backupsetup') {

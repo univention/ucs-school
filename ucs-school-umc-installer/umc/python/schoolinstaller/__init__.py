@@ -466,7 +466,6 @@ class Instance(Base):
 		username=StringSanitizer(required=True),
 		password=StringSanitizer(required=True),
 		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME_OR_EMPTY),
-		samba=ChoicesSanitizer(['3', '4']),
 		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU_OR_EMPTY),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 		server_type=ChoicesSanitizer(['educational', 'administrative']),
@@ -477,7 +476,6 @@ class Instance(Base):
 		username = request.options.get('username')
 		password = request.options.get('password')
 		master = request.options.get('master')
-		samba = request.options.get('samba')
 		school_ou = request.options.get('schoolOU')
 		educational_slave = request.options.get('nameEduServer')
 		ou_display_name = request.options.get('OUdisplayname', school_ou)  # use school OU name as fallback
@@ -527,8 +525,11 @@ class Instance(Base):
 
 			masterinfo = self._umc_master(username, password, master, 'schoolinstaller/get/metainfo')
 			school_environment = masterinfo['school_environment']
+			master_samba_version = masterinfo['samba']
 			if not school_environment:
 				raise SchoolInstallerError(_('Please install UCS@school on the master domain controller system. Cannot proceed installation on this system.'))
+			if master_samba_version == 3:
+				raise SchoolInstallerError(_('This UCS domain uses Samba 3 which is no longer supported by UCS@school. Please update all domain systems to samba 4 to be able to continue.'))
 			if server_role == 'domaincontroller_slave' and school_environment != 'multiserver':
 				raise SchoolInstallerError(_('The master domain controller is not configured for a UCS@school multi server environment. Cannot proceed installation on this system.'))
 			if server_role == 'domaincontroller_backup' and school_environment != setup:
@@ -546,19 +547,11 @@ class Instance(Base):
 		MODULE.process('performing UCS@school installation')
 		packages_to_install = []
 		installed_samba_version = self.get_samba_version()
+		if installed_samba_version == 3:
+			raise SchoolInstallerError(_('This UCS domain uses Samba 3 which is no longer supported by UCS@school. Please update all domain systems to samba 4 to be able to continue.'))
 		if server_role == 'domaincontroller_slave':
 			# slave
-			# Please note that the UCS installer only installs univention-samba. To install UCS@school on a Samba 3 system,
-			# the packages "univention-samba-slave-pdc" AND "ucs-school-slave" have to be installed together or consecutively
-			# in that order. Otherwise ucs-school-slave always installs samba 4.
-			if samba == '3':
-				packages_to_install.extend(['univention-samba', 'univention-samba-slave-pdc'])
-			elif samba == '4':
-				packages_to_install.extend(['univention-samba4', 'univention-s4-connector'])
-			elif installed_samba_version == 3:  # safety fallback if samba is unset
-				packages_to_install.extend(['univention-samba', 'univention-samba-slave-pdc'])
-			elif installed_samba_version == 4:  # safety fallback if samba is unset
-				packages_to_install.extend(['univention-samba4', 'univention-s4-connector'])
+			packages_to_install.extend(['univention-samba4', 'univention-s4-connector'])
 			if server_type == 'educational':
 				packages_to_install.append('ucs-school-slave')
 			else:
@@ -567,9 +560,7 @@ class Instance(Base):
 			if setup == 'singlemaster':
 				if installed_samba_version:
 					pass  # do not install samba a second time
-				elif samba == '3':
-					packages_to_install.append('univention-samba')
-				else:  # -> samba4
+				else:  # otherwise install samba4
 					packages_to_install.extend(['univention-samba4', 'univention-s4-connector'])
 				packages_to_install.append('ucs-school-singlemaster')
 			elif setup == 'multiserver':

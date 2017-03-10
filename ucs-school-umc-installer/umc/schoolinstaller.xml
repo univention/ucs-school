@@ -10,7 +10,6 @@
 	<command name="schoolinstaller/query" function="query"/>
 	<command name="schoolinstaller/install" function="install"/>
 	<command name="schoolinstaller/credentials" function="credentials"/>
-	<command name="schoolinstaller/samba" function="samba"/>
 	<command name="schoolinstaller/progress" function="progress"/>
 	<command name="schoolinstaller/get/schoolinfo" function="get_schoolinfo"/>
 	<command name="schoolinstaller/get/metainfo" function="get_metainfo"/>
