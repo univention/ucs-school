@@ -13,6 +13,7 @@ Architecture: all
 Depends: ucs-test-libs,
  ucs-test-framework,
  python-pycurl,
+ python-pytest,
  eapol
  ${misc:Depends}
 Provides: ucs-test-module
