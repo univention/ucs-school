@@ -42,7 +42,7 @@ joinscript_init
 set -e
 
 # determine OU
-ou_base="$(univention-ldapsearch -xLLL "(&(objectClass=ucsschoolOrganizationalUnit)(ucsschoolHomeShareFileServer=$ldap_hostdn))" dn | ldapsearch-wrapper | sed -nre 's/^dn: //p')"
+ou_base="$(univention-ldapsearch -xLLL "(&(objectClass=ucsschoolOrganizationalUnit)(ucsschoolHomeShareFileServer=$ldap_hostdn))" dn | ldapsearch-wrapper | sed -nre 's/^dn: //p' | head -1)"
 if [ -z "$ou_base" ] ; then
 	echo "ERROR: $(basename "$0"): cannot determine ou ldap base for $ldap_hostdn"
 	exit 1
