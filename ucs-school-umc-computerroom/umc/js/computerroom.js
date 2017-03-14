@@ -1172,7 +1172,7 @@ define([
 
 				if (response.result.computers.length) {
 					this._grid._selectionChanged();
-					this._grid.filter();
+					this._grid.update(true);
 				}
 
 				var redColor = false;
