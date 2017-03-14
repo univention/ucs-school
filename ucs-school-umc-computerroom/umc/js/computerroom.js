@@ -37,9 +37,8 @@ define([
 	"dojo/dom",
 	"dojo/dom-class",
 	"dojo/Deferred",
-	"dojo/data/ItemFileWriteStore",
 	"dojo/store/Observable",
-	"dojo/store/DataStore",
+	"dojo/store/Memory",
 	"dojo/promise/all",
 	"dijit/ProgressBar",
 	"dijit/Dialog",
@@ -60,7 +59,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, ItemFileWriteStore, Observable, DataStore, all, DijitProgressBar,
+], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
             Dialog, Tooltip, styles, entities, dialog, tools, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -717,15 +716,9 @@ define([
 				})
 			}];
 
-			this._dataStore = new ItemFileWriteStore({data: {
-				identifier: 'id',
-				label: 'name',
-				items: []
-			}});
-			this._objStore = new Observable(new DataStore({ store: this._dataStore, idProperty: 'id' }));
+			this._objStore = new Observable(new Memory({ data: [], idProperty: 'id' }));
 
 			this._grid = new Grid({
-				_dataStore: this._dataStore,
 				moduleStore: this._objStore,
 				actions: lang.clone(this._actions),
 				columns: columns,
@@ -1133,10 +1126,8 @@ define([
 			}
 
 			// remove all entries for the computer room
-			this._objStore.query().then(lang.hitch(this, function(items) {
-				array.forEach(items, function(iitem) {
-					this._objStore.remove(iitem.id);
-				}, this);
+			this._objStore.query().forEach(lang.hitch(this, function(item) {
+				this._objStore.remove(item.id);
 			}));
 
 			// query new list of entries and populate store
@@ -1180,8 +1171,8 @@ define([
 				}, this);
 
 				if (response.result.computers.length) {
-					this._grid._updateFooterContent();
 					this._grid._selectionChanged();
+					this._grid.filter();
 				}
 
 				var redColor = false;
@@ -1219,20 +1210,17 @@ define([
 				}
 
 				// update the grid actions
-				this._dataStore.fetch({
-					query: '',
-					onItem: lang.hitch(this, function(item) {
-						if (item.DemoServer === true) {
-							demo = true;
-							demo_server = item.id;
-							demo_user = item.user;
-							demo_systems += 1;
-						} else if (item.DemoClient === true) {
-							demo = true;
-							demo_systems += 1;
-						}
-					})
-				});
+				this._objStore.query().forEach(lang.hitch(this, function(item) {
+					if (item.DemoServer === true) {
+						demo = true;
+						demo_server = item.id;
+						demo_user = item.user;
+						demo_systems += 1;
+					} else if (item.DemoClient === true) {
+						demo = true;
+						demo_systems += 1;
+					}
+				}));
 
 				var changed = (this._demo.running !== demo || this._demo.server !== demo_server);
 				this._demo = {
