@@ -723,14 +723,14 @@ define([
 				actions: lang.clone(this._actions),
 				columns: columns,
 				sortIndex: 1,
-				footerFormatter: lang.hitch(this, function(nItems, nItemsTotal) {
+				footerFormatter: function(nItems, nItemsTotal) {
 					var msg = lang.replace(_('{0} computers are in this room'), [nItemsTotal]);
-					var failed = array.filter(this._grid.getAllItems(), function(item) { return !isConnected(item); }).length;
+					var failed = array.filter(this.getAllItems(), function(item) { return !isConnected(item); }).length;
 					if (failed) {
 						msg += ' ('+ lang.replace(_('{0} powered off/misconfigured'), [failed]) + ')';
 					}
 					return msg;
-				})
+				}
 			});
 
 			this._searchPage.addChild(this._grid);

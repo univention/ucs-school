@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (9.0.6-5) unstable; urgency=medium
+
+  * Bug #43575: fix grid footerFormatter
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 15 Mar 2017 10:46:37 +0100
+
 ucs-school-umc-computerroom (9.0.6-4) unstable; urgency=medium
 
   * Bug #43575: preserve previous selection when updating grid
