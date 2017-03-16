@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (15.0.0-2) unstable; urgency=low
+
+  * Bug #41725: massive changes to LDAP acls for better security
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Mar 2017 15:40:06 +0100
+
 ucs-school-ldap-acls-master (15.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2
