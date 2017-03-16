@@ -15,28 +15,26 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 
 def replace_ucr_variables(template):
 	variable_token = re.compile('@[$]@')
+	replacements = {
+		'DISTRICT': 'ou=[^,]+,' if configRegistry.is_true('ucsschool/ldap/district/enable', False) else '',
+		'PUPILS': configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler'),
+		'TEACHERS': configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer'),
+		'STAFF': configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter'),
+		'TEACHERS-STAFF': configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter'),
+		'ADMINS': configRegistry.get('ucsschool/ldap/default/container/admins', 'admins'),
+		'GRPADMINS': configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-'),
+		'EXAM': configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers'),
+		'DOMAIN_ADMINS': custom_groupname('Domain Admins'),
+	}
 
-	dir_ucsschool = { }
-	dir_ucsschool[ 'DISTRICT' ] = ''
-	if configRegistry.get('ucsschool/ldap/district/enable','no').lower() in ( 'yes', 'true', '1' ):
-		dir_ucsschool[ 'DISTRICT' ] = 'ou=[^,]+,'
-	dir_ucsschool[ 'PUPILS' ] =   configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
-	dir_ucsschool[ 'TEACHERS' ] = configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-	dir_ucsschool[ 'STAFF' ] =	  configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
-	dir_ucsschool[ 'TEACHERS-STAFF' ] = configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-	dir_ucsschool[ 'ADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/container/admins', 'admins')
-	dir_ucsschool[ 'GRPADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
-	dir_ucsschool[ 'EXAM' ] = configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers')
-
-	dir_ucsschool['DOMAIN_ADMINS'] = custom_groupname('Domain Admins')
-	while 1:
+	while True:
 		i = variable_token.finditer(template)
 		try:
 			start = i.next()
 			end = i.next()
 			name = template[start.end():end.start()]
 
-			template = template[:start.start()] + dir_ucsschool.get(name,'') + template[end.end():]
+			template = template[:start.start()] + replacements.get(name, '') + template[end.end():]
 		except StopIteration:
 			break
 
