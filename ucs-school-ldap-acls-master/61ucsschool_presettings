@@ -19,21 +19,21 @@ access to filter="(objectClass=sambaDomain)"
 	by * +0 break
 
 # grant write access to domaincontroller slave/member server for certain univention app center settings
-access to dn.regex="^univentionAppID=([^,]+),cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" filter="(objectClass=univentionApp)"
+access to dn.regex="^univentionAppID=([^,]+),cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" filter="(objectClass=univentionApp)" attrs=entry,@univentionApp,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-access to dn.regex="^cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" attrs=children,entry
+access to dn.regex="^cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" attrs=children,entry,@organizationalRole,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-access to dn="cn=apps,cn=univention,@%@ldap/base@%@" attrs=children,entry
+access to dn="cn=apps,cn=univention,@%@ldap/base@%@" attrs=children
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -41,14 +41,14 @@ access to dn="cn=apps,cn=univention,@%@ldap/base@%@" attrs=children,entry
 	by * +0 break
 
 # Slave controllers and memberservers require write access to virtual machine manager objects
-access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachine)"
+access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachine)" attrs=entry,@univentionVirtualMachine,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-access to dn.regex="^cn=([^,]+),cn=CloudConnection,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachineCloudConnection)"
+access to dn.regex="^cn=([^,]+),cn=CloudConnection,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachineCloudConnection)" attrs=entry,@univentionVirtualMachineCloudConnection,@univentionVirtualMachineHostOC,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
