@@ -1,3 +1,11 @@
+ucs-test-ucsschool (4.0.2-1) unstable; urgency=low
+
+  * Bug #41725:
+    - add UCS@school admin with correct objectClass ucsschoolAdministrator
+    - added new version of 78_ldap_acls_dump
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 Mar 2017 22:49:39 +0100
+
 ucs-test-ucsschool (4.0.1-1) unstable; urgency=medium
 
   * Bug #43389: fix imports
