@@ -1,154 +1,112 @@
-# -*- coding: utf-8 -*-
+# start 61ucsschool_presettings
+
+# revert rule from UCS; Bug #41402
+access to attrs=entry,objectClass,uniqueMember,ou,uid,loginShell,homeDirectory,uidNumber,gidNumber,sn,cn,gecos,description,memberUid
+	by dn.regex=".*cn=computers,ou=([^,]+),(ou=[^,]+,)?@%@ldap/base@%@" none break
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none break
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none break
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none break
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none break
+	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolAdministrator])" none break
+	by * +0 break
 
 # Slave-Controller und Member-Server duerfen Samba-Domaenenobjekt(e) modifizieren
 access to filter="(objectClass=sambaDomain)"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by * none break
-
-# Slave-Controller und Memberserver duerfen ausschliesslich den univention-Container replizieren
-access to dn="cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break
-
-# Slave-Controller may replicate license container
-access to dn.subtree="cn=license,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break
-
-# Slave-Controller duerfen custom attributes-Container und dessen Inhalt replizieren
-access to dn.subtree="cn=custom attributes,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break
-
-# Slave-Controller benoetigen den Console-Container fuer die Berechtigungen an der Lehrerconsole
-access to dn.subtree="cn=console,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
-
-# Slave-Controller benoetigen den UMC-Container fuer die Berechtigungen an der Lehrerconsole
-access to dn.subtree="cn=UMC,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
 # grant write access to domaincontroller slave/member server for certain univention app center settings
 access to dn.regex="^univentionAppID=([^,]+),cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" filter="(objectClass=univentionApp)"
-        by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by * none break
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
 access to dn.regex="^cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" attrs=children,entry
-        by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by * none break
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
 access to dn="cn=apps,cn=univention,@%@ldap/base@%@" attrs=children,entry
-        by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-        by * none break
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
-# grant read access to domaincontroller slave/member server for all other univention app center settings
-access to dn.subtree="cn=apps,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
+# Slave controllers and memberservers require write access to virtual machine manager objects
+access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachine)"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
-access to dn.subtree="cn=udm_module,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
+access to dn.regex="^cn=([^,]+),cn=CloudConnection,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachineCloudConnection)"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
-access to dn.subtree="cn=udm_hook,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
-
-access to dn.subtree="cn=udm_syntax,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
-
-access to dn.subtree="cn=ldapacl,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
-
-access to dn.subtree="cn=ldapschema,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
+access to dn="cn=(Information|CloudConnection),cn=Virtual Machine Manager,@%@ldap/base@%@" attrs=children,entry
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by dn.regex="^[^,]+,cn=dc,cn=computers,@%@ldap/base@%@$$" write
+	by dn.regex="^[^,]+,cn=memberserver,cn=computers,@%@ldap/base@%@$$" write
+	by * +0 break
 
 # Slave-Controller und Member-Server benoetigen idmap-Container
 access to dn.base="cn=idmap,cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by * none break 
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
 # Slave-Controller und Member-Server benoetigen ID-Mapping
 access to dn.subtree="cn=idmap,cn=univention,@%@ldap/base@%@" filter="(|(&(objectClass=sambaUnixIdPool)(objectClass=organizationalRole)(objectClass=top))(&(objectClass=sambaIdmapEntry)(objectClass=sambaSidEntry)))"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-   by * none break
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
 
-# Slave-Controller und Memberserver duerfen samba-Container und dessen Inhalt replizieren
-access to dn.subtree="cn=samba,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break
+# Slave-Controller und Member-Server benoetigen nicht alle Container
+access to dn.subtree="cn=backup,@%@ldap/base@%@"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by * +0 break
 
-# Slave-Controller needs the builtin groups
-access to dn.subtree="cn=Builtin,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break 
+access to dn.subtree="cn=printers,@%@ldap/base@%@"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by * +0 break
 
-# sonst duerfen sie nichts aus cn=univention,BASEDN replizieren
-access to dn.subtree="cn=univention,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-   by * none break
+access to dn.subtree="cn=networks,@%@ldap/base@%@"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by * +0 break
+
+access to dn.regex="^(.*,)?cn=(cups|ppolicy|packages|services|templates|admin-settings|default containers|saml-serviceprovider),cn=univention,@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by * +0 break
+
+# end 61ucsschool_presettings
