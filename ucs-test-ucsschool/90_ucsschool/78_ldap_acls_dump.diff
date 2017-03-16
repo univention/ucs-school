@@ -1,0 +1,25 @@
+#!/bin/sh
+
+BASEDIR=$1
+
+if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" ] ; then
+    echo "missing directory argument"
+    echo "example:"
+    echo "  $(basename "$0") /var/log/univention/78_ldap_acls_dump.1489461536.oldconfig"
+    exit 1
+fi
+
+for i in ${BASEDIR}/dn*.ldif ; do
+    FN="$(basename "$i")"
+    DIRNAME="$(basename $(basename $(dirname "$i") .oldconfig) .newconfig)"
+	FN_A="/var/log/univention/${DIRNAME}.oldconfig/${FN}"
+	FN_B="/var/log/univention/${DIRNAME}.newconfig/${FN}"
+	[ ! -f "$FN_A" ] && echo "$FN_A is missing" && continue
+	[ ! -f "$FN_B" ] && echo "$FN_B is missing" && continue
+    (
+		echo "$FN_A"
+		echo "$FN_B"
+		echo
+		compareldif -a "$FN_A" "$FN_B"
+	) | HLdiff | less -FSRX
+done
