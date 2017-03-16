@@ -260,7 +260,7 @@ access to dn.regex="^cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
+access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(objectClass=univentionGroup)" attrs=entry,@$@GROUPATTRS@$@
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
