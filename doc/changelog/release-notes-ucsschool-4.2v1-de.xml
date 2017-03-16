@@ -70,7 +70,16 @@ feedback@univention.de
 		<section id="relnote:prepare:LDAP">
 			<title>Änderungen im LDAP-Verzeichnis</title>
 			<para>
-				ADD SECTION ABOUT UPDATED LDAP ACLS
+				Mit UCS 4.2 wurden die LDAP-ACLs optimiert, was auch eine Anpassung der LDAP-ACLs von UCS@school notwendig gemacht hat.
+				Falls eigene Anpassungen am LDAP (erweiterte Attribute, LDAP-Schemata, LDAP-ACLs oder ähnliches) verwendet werden, wird daher empfohlen,
+				diese in einer Testumgebung ausführlich auf ihre Kompatibilität mit UCS@school 4.2 zu testen.
+			</para>
+			<para>
+				<notice>
+					Wenn UCS@school 4.2 auf dem Domaincontroller Master installiert wird, müssen die übrigen
+					UCS@school-Systeme zuvor mindestens auf UCS@school 4.1 R2 v9 aktualisiert werden, da es
+					ansonsten zu Zugriffsproblemen im LDAP kommt (z.B. beim Anlegen und Löschen von Arbeitsgruppen).
+				</notice>
 			</para>
 		</section>
 	</chapter>
