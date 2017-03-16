@@ -449,6 +449,7 @@ class UCSTestSchool(object):
 			'email': mailaddress,
 			'password': password,
 			'disabled': not(is_active),
+			'options': ['samba', 'ucsschoolAdministrator', 'kerberos', 'posix', 'mail'],
 		}
 		udm = udm_test.UCSTestUDM()
 		dn, school_admin = udm.create_user(position=position, groups=groups, **kwargs)
