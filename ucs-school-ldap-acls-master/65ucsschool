@@ -25,6 +25,14 @@ def replace_ucr_variables(template):
 		'GRPADMINS': configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-'),
 		'EXAM': configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers'),
 		'DOMAIN_ADMINS': custom_groupname('Domain Admins'),
+		'SCHOOLOUATTRS': '@top,@organizationalUnit,@ucsschoolOrganizationalUnit,@univentionObject,@univentionPolicyReference',  # FIXME: extended attributes which adds object classes doesn't work
+		# FIXME: the following rules aren't enough but we need to support extended attributes/options
+		'CONTAINERATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!SambaSamAccount',
+		'USERATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixGroup',
+		'GROUPATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixAccount,!SambaSamAccount',
+		'SHAREATTRS': '!posixGroup,!posixAccount,!SambaSamAccount',
+		'DHCPSERVICEATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+		'DHCPATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
 	}
 
 	while True:
