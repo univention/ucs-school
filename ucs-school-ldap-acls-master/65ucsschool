@@ -1,3 +1,5 @@
+# start 65ucsschool
+
 @!@
 # -*- coding: utf-8 -*-
 import re
@@ -273,3 +275,5 @@ access to dn.regex="^(.+,)?cn=(users|kerberos|computers),@%@ldap/base@%@$$"
 
 print replace_ucr_variables(aclset)
 @!@
+
+# end 65ucsschool
