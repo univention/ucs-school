@@ -77,7 +77,7 @@ feedback@univention.de
 			<para>
 				<notice>
 					Wenn UCS@school 4.2 auf dem Domaincontroller Master installiert wird, müssen die übrigen
-					UCS@school-Systeme zuvor mindestens auf UCS@school 4.1 R2 v9 aktualisiert werden, da es
+					UCS@school-Systeme zuvor mindestens auf UCS@school 4.1 R2 v1 aktualisiert werden, da es
 					ansonsten zu Zugriffsproblemen im LDAP kommt (z.B. beim Anlegen und Löschen von Arbeitsgruppen).
 				</notice>
 			</para>
