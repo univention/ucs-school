@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 R2 v10 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.1 R2 v9 nach 4.1 R2 v10</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.1 R2 v10
+Stand: 17. March 2017
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2017
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 R2 v9 nach 4.1 R2 v10.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-umc-wizards" lang="en">
+				<title>Source package ucs-school-umc-wizards</title>
+				<itemizedlist>
+					<listitem><simpara>Single user roles (student, teacher, staff, teachersAndStaff) can now be disabled in UMC module <guimenu>Users (schools)</guimenu> via the UCR variable <envar>ucsschool/wizards/schoolwizards/users/roles/disabled</envar> (<u:bug>42349</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A logic error has been fixed that prevented the removal of a OU-overlapping user account from a secondary OU (<u:bug>43170</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Changes within the UCS@school lib required some internal adjustments to this package (<u:bug>41910</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-csv-import" lang="en">
+				<title>Source package ucs-school-umc-csv-import</title>
+				<itemizedlist>
+					<listitem><simpara>Single user roles (student, teacher, staff, teachersAndStaff) can now be disabled in UMC module <guimenu>CSV import</guimenu> via the UCR variable <envar>ucsschool/csvimport/users/roles/disabled</envar> (<u:bug>41387</u:bug>) .</simpara></listitem>
+
+					<listitem><simpara>A broken code path that has never been executed has been removed from the postinst script of package <package>ucs-school-umc-csv-import</package> (<u:bug>41418</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-webproxy" lang="en">
+				<title>Source package ucs-school-webproxy</title>
+				<itemizedlist>
+					<listitem><simpara>The file <filename>wpad.dat</filename> for browser proxy configuration is now created as a symlink to <filename>proxy.pac</filename> (<u:bug>31728</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-netlogon-user-logonscripts" lang="en">
+				<title>Source package ucs-school-netlogon-user-logonscripts</title>
+				<itemizedlist>
+					<listitem><simpara>The name of the folder link on the user's desktop can now be set via UCR: <envar>ucsschool/userlogon/shares_foldername</envar> defaults to <literal>Eigene Shares</literal>. If the special folders <literal>My Files</literal> and <literal>My Pictures</literal> are redirected from local profile path to the user's network home directory, the directory names of those folder within user's home directory may now be specified via UCR: <envar>ucsschool/userlogon/myshares/name</envar> defaults to <literal>Eigene Dateien</literal> and <envar>ucsschool/userlogon/mypictures/name</envar> defaults to <literal>Eigene Bilder</literal> (<u:bug>37256</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The icons of the folders created by the netlogon script can now be set: <envar>ucsschool/userlogon/shares_folder_icon</envar>, <envar>ucsschool/userlogon/my_files_link_icon</envar>, <envar>ucsschool/userlogon/other_links_icon</envar>. The name of the <literal>My Files</literal> directory within the folder, created by the netlogon script, can now be set via the UCR variable <envar>ucsschool/userlogon/my_files_link_name</envar> (<u:bug>41375</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Whitespace in the list of share names in the UCR variable <envar>ucsschool/userlogon/commonshares</envar> is now handled more securely (<u:bug>43504</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Certain elements of the user netlogon script can now be disabled. See UCR descriptions for <envar>ucsschool/userlogon/create_myfiles_link</envar>, <envar>ucsschool/userlogon/create_shortcuts</envar>, <envar>ucsschool/userlogon/create_teacher_umc_link</envar> and <envar>ucsschool/userlogon/disabled_share_links/*</envar>.  It is now possible to configure the path in which the directory for the links will be created by setting the UCR variable <envar>ucsschool/userlogon/shares_folder_parent_path</envar> (<u:bug>43526</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><simpara>Add support for complete removal of a ou-overlapping user from a secondary school, including removal of all groups (<u:bug>41910</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Adjust UMC wizard to behavioral change in UCS@school lib (<u:bug>43170</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-computerroom" lang="en">
+				<title>Source package ucs-school-umc-computerroom</title>
+				<itemizedlist>
+					<listitem><simpara>The computerroom module now supports web links that point directly to the computerroom supervision/screenshot page (<u:bug>42356</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:italc" lang="en">
+				<title>Source package italc</title>
+				<itemizedlist>
+					<listitem><simpara>A segfault in the UMC module <guimenu>Computer room</guimenu> has been fixed which occurred during receiving a screenshot from a client's computer (<u:bug>43244</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A segfault in the UMC module <guimenu>Computer room</guimenu> could occur randomly when determining the current user on a windows client. The segfault has now been fixed (<u:bug>43092</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
