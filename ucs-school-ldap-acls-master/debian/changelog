@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (15.0.0-3) unstable; urgency=low
+
+  * Bug #43042: revert last commit
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 17 Mar 2017 09:55:22 +0100
+
 ucs-school-ldap-acls-master (15.0.0-2) unstable; urgency=low
 
   * Bug #41725: massive changes to LDAP acls for better security
