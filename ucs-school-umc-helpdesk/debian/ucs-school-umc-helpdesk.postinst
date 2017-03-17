@@ -37,5 +37,8 @@
 echo "kill all running univention-cli-server"
 stop_udm_cli_server
 
+# Bug #38389: call joinscript again even if DEBHELPER has called it before
+call_joinscript 38ucs-school-umc-helpdesk.inst || true
 
 exit 0
+
