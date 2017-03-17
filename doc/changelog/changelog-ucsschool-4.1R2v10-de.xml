@@ -99,6 +99,13 @@ feedback@univention.de
 
 				</itemizedlist>
 			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-helpdesk" lang="en">
+				<title>Source package ucs-school-umc-helpdesk</title>
+				<itemizedlist>
+					<listitem><simpara>The category creation upon package installation does not fail anymore (<u:bug>38389</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
 			<section id="changelog:ucsschool:ucs-school-lib" lang="en">
 				<title>Source package ucs-school-lib</title>
 				<itemizedlist>
