@@ -50,13 +50,28 @@ ucr unset \
 	ucs/web/overview/entries/service/teacherconsole/link/fr \
 	ucs/web/overview/entries/service/teacherconsole/priority 2> /dev/null
 
+univention-directory-manager settings/portal create "$@" --ignore_exists \
+	--position "cn=portal,cn=univention,$ldap_base" \
+	--set name="school-edu" \
+	--append displayName='"en_US" "Startsite for {hostname}"' \
+	--append displayName='"de_DE" "Startseite für {hostname}"' \
+	--append displayName='"fr_FR" "Page d'\''accueil pour {hostname}"' \
+	--set showMenu=TRUE \
+	--set showSearch=TRUE \
+	--set showLogin=TRUE \
+	--set showApps=TRUE \
+	--set showServers=TRUE || die
+
+univention-directory-manager "computers/$server_role" modify "$@" --dn="$ldap_hostdn" \
+	--set portal="cn=school-edu,cn=portal,cn=univention,$ldap_base" || die
+
 univention-directory-manager settings/portal_entry create --ignore_exists "$@" \
 	--position "cn=portal,cn=univention,$ldap_base" \
 	--set name="teacherconsole" \
 	--append displayName="de_DE UCS@school" \
 	--append displayName="en_US UCS@school" \
 	--append displayName="fr_FR UCS@school" \
-	--set portal="cn=local,cn=portal,cn=univention,$ldap_base" \
+	--set portal="cn=school-edu,cn=portal,cn=univention,$ldap_base" \
 	--set icon="$(base64 /usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/50x50/ucsschool.png)" \
 	--set link="/univention/management/" \
 	--append description='de_DE "UCS@school Module in der Univention Management Console"' \
@@ -65,7 +80,7 @@ univention-directory-manager settings/portal_entry create --ignore_exists "$@" \
 	--set category="service" \
 	--set activated="TRUE" \
 	--set authRestriction="anonymous" \
-	--set favorite=""
+	--set favorite="" || die
 
 joinscript_save_current_version
 

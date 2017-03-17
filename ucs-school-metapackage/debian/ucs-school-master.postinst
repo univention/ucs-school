@@ -139,7 +139,6 @@ fi
 
 call_joinscript 00ucs-school-app-version-check.inst
 call_joinscript 62ucs-school-master.inst
-call_joinscript 63ucs-school-portal-entry.inst
 
 #DEBHELPER#
 

@@ -1,3 +1,9 @@
+ucs-school-metapackage (10.0.0-6) unstable; urgency=low
+
+  * Bug #43579: create separate portal 'school-edu' only for edu-slaves
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Mar 2017 09:07:24 +0100
+
 ucs-school-metapackage (10.0.0-5) unstable; urgency=low
 
   * Bug #43579: fix UCR unset in wrong file
