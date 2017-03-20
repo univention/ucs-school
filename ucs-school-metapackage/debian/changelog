@@ -1,3 +1,9 @@
+ucs-school-metapackage (10.0.1-1) unstable; urgency=medium
+
+  * Bug #43579: remove variables dynamically
+
+ -- Florian Best <best@univention.de>  Mon, 20 Mar 2017 14:23:18 +0100
+
 ucs-school-metapackage (10.0.0-6) unstable; urgency=low
 
   * Bug #43579: create separate portal 'school-edu' only for edu-slaves
