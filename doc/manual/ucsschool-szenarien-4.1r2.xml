@@ -191,16 +191,17 @@ feedback@univention.de
 				unterschiedlichen Servicestufen an.  Kunden entscheiden beim
 				Kauf von &ucsUAS; welche Servicestufe in der aktuellen Situation
 				am passendsten ist.  Ein Wechsel zwischen den Servicestufen ist
-				jederzeit möglich.  Vorraussetzung in allen Servicestufen ist
-				das Vorhandensein eines User Helpdesks, der die Supportanfragen
-				aus den Schulen bearbeitet.
+				jederzeit möglich.  Voraussetzung in allen Servicestufen ist
+				das Vorhandensein eines User <wordasword>Helpdesks</wordasword>,
+				der die <wordasword>Supportanfragen</wordasword> aus den Schulen
+				bearbeitet.
 			</para>
 			<para>
 				Servicestufen:
 				<orderedlist numeration="upperalpha">
 					<listitem><para>Software und Support: Univention liefert Software und Support, der Kunde kümmert sich selbst um Betrieb, Updates und Backup</para></listitem>
 					<listitem><para>Betrieb im Rechenzentrum des Kunden: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im Rechenzentrum des Kunden</para></listitem>
-					<listitem><para>&ucsUAS; as a Service: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im eigenen Rechenzentrum.  Kunden können sofort starten, ohne Investitionen in Hardware oder Software zu tätigen</para></listitem>
+					<listitem><para>&ucsUAS; <wordasword>as</wordasword> a Service: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im eigenen Rechenzentrum.  Kunden können sofort starten, ohne Investitionen in Hardware oder Software zu tätigen</para></listitem>
 				</orderedlist>
 			</para>
 			<figure id="fig-scenario-5">
