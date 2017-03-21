@@ -57,8 +57,8 @@ feedback@univention.de
 		</para>
 		<para>
 			Diese Anleitung zeigt das Vorgehen für den Aufbau von definierten
-			Standardszenarien für &ucsUAS; bei Schulträgern auf. Die
-			Informationen entstammen den Erfahrungen, die Univention in
+			Standardszenarien für &ucsUAS; bei Schulträgern und Ministerien auf.
+			Die Informationen entstammen den Erfahrungen, die Univention in
 			Projekten mit &ucsUAS; gewonnen hat und sich als erfolgreich
 			herausgestellt haben.
 		</para>
@@ -204,34 +204,36 @@ feedback@univention.de
 					<listitem><para>&ucsUAS; <wordasword>as</wordasword> a Service: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im eigenen Rechenzentrum.  Kunden können sofort starten, ohne Investitionen in Hardware oder Software zu tätigen</para></listitem>
 				</orderedlist>
 			</para>
-			<figure id="fig-scenario-5">
+			<figure id="fig-scenario-0">
 				<title>Servicestufen: &ucsUAS;</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations41/5_ucsatschool_as_a_service.png" scale="60" />
+						<imagedata align="center" fileref="illustrations41/0_ucsatschool_as_a_service.png" scale="60" />
 					</imageobject>
-					<textobject><phrase>UCS@school as a Service</phrase></textobject>
+					<textobject><phrase>Servicestufen: &ucsUAS;</phrase></textobject>
 				</mediaobject>
 			</figure>
 		</section>
 		<section id="scenario-1">
 			<title>Szenario 1: Bildungscloud</title>
 			<para>
-				Dieses Szenario ermöglicht es Schulträgern eine effiziente
-				Bildungscloud für ihre Schulen aufzubauen.  Die &ucsUCS;-Systeme
-				werden zentral in einem Rechenzentrum betrieben und stellen das
-				Identity- und Access-Management zur Verfügung. An dieses werden
-				unterschiedliche IT-Angebote angebunden, die von den Schulen
-				benötigt werden.  Zum Beispiel E-Mail und Groupware-Lösungen und
-				Lernmanagement-Systeme.  Lehrkräfte und Schüler können alle
-				angeschlossenen Angebote ihrem persönlichen Benutzerkonto und
-				Passwort.
+				Dieses Szenario ermöglicht es Schulträgern und Ministerien eine
+				effiziente Bildungscloud für ihre Schulen aufzubauen.  Die
+				Instanzen von &ucsUCS; werden zentral in einem Rechenzentrum
+				betrieben und stellen das Identity- und Access-Management zur
+				Verfügung.  An dieses werden unterschiedliche IT-Angebote
+				angebunden, die von den Schulen benötigt werden.  Zum Beispiel
+				E-Mail und Groupware-Lösungen und Lernmanagement-Systeme.
+				Lehrkräfte und Schüler können alle angeschlossenen Angebote
+				ihrem persönlichen Benutzerkonto und Passwort nutzen.  Die
+				Angebote stehen dabei sowohl vor Ort in den Schulen zur
+				Verfügung als auch unterwegs oder zu Hause.
 			</para>
 			<para>
 				Merkmale:
 				<itemizedlist mark="bullet">
 					<listitem><para>Unabhängigkeit von der IT-Ausstattung der Schulen</para></listitem>
-					<listitem><para>Bereitstellung orts- und zeitunabhängige IT-Angebote für Schulen</para></listitem>
+					<listitem><para>Bereitstellung orts- und zeitunabhängiger IT-Angebote für Lehrkräfte und Schüler</para></listitem>
 					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
 					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
 					<listitem><para>Senkung des <wordasword>Helpdesk</wordasword>-Aufkommens durch Self-Service für vergessene Passwörter</para></listitem>
@@ -254,8 +256,8 @@ feedback@univention.de
 			<para>
 				Dieses Szenario ermöglicht es Schulträgern den Zugang zum WLAN
 				in ihren Schulen zentral zu steuern und nur bekannten
-				Lehrkräften und Schülern Zugang zu gewähren.  Dazu werden
-				&ucsUCS;-Systeme zentral in einem Rechenzentrum betrieben und
+				Lehrkräften und Schülern Zugang zu gewähren.  Dazu wird
+				&ucsUCS; zentral in einem Rechenzentrum betrieben und
 				dienen als Identity- und Access-Management. Zudem sind die
 				Schulen mit dem Rechenzentrum verbunden, z.B. mittels eines
 				VPNs. An den Schulen werden WLAN Access Points installiert, die
@@ -267,6 +269,7 @@ feedback@univention.de
 				Merkmale:
 				<itemizedlist mark="bullet">
 					<listitem><para>Unabhängigkeit von Schulserver-Lösungen in den Schulen</para></listitem>
+					<listitem><para>Geringe zusätzliche Anforderungen an die Bandbreite der Schule</para></listitem>
 					<listitem><para>Absicherung des WLAN-Zugangs durch Verwendung persönlicher Zugangsdaten für Lehrkräfte und Schüler</para></listitem>
 					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
 					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
@@ -535,18 +538,18 @@ feedback@univention.de
 								<entry><code>10.0.0.0/24</code></entry>
 								<entry><code>-</code></entry>
 								<entry><code>254</code></entry>
-								<entry>Netz für zentrale &ucsUCS;-Systeme</entry>
+								<entry>Netz für zentrale Systeme</entry>
 							</row>
 						</tbody>
 					</tgroup>
 				</table>
 			</para>
 			<para>
-				Alle zentralen &ucsUCS;-Systeme werden in diesem Netz installiert.
-				Auf eine Adressvergabe via DHCP wird verzichtet, alle Systeme
-				erhalten eine statische IP-Konfiguration.  Besteht Bedarf an
-				einer Demilitarisierten Zone (DMZ), so muss diese entsprechend
-				ergänzt werden (bspw. <code>10.0.1.0/24</code>).
+				Alle zentralen Instanzen von &ucsUCS; werden in diesem Netz
+				installiert.  Auf eine Adressvergabe via DHCP wird verzichtet,
+				alle Systeme erhalten eine statische IP-Konfiguration.  Besteht
+				Bedarf an einer Demilitarisierten Zone (DMZ), so muss diese
+				entsprechend ergänzt werden (bspw. <code>10.0.1.0/24</code>).
 			</para>
 			<para>
 				<table id="table_network_concept_small_school">
@@ -1038,8 +1041,8 @@ feedback@univention.de
 	<chapter id="infrastructure-and_hardware-requirements">
 		<title>Infrastruktur- und Hardware-Voraussetzungen</title>
 		<para>
-			Es wird stark empfohlen, eine Virtualisierungslösung für die
-			&ucsUCS;-Systeme einzusetzen. Die Hardwaredimensionierung der
+			Es wird stark empfohlen, eine Virtualisierungslösung für
+			&ucsUCS; einzusetzen. Die Hardwaredimensionierung der
 			Virtualisierungsserver muss sich dabei an den Anforderungen der
 			virtualisierten Systeme richten und dabei noch genügend
 			Möglichkeiten zur nachträglichen Erweiterung bereithalten. Von
@@ -1079,7 +1082,7 @@ feedback@univention.de
 					<itemizedlist>
 						<listitem><para>viele lesende Zugriffe auf die
 								LDAP-Datenbank, da neben den Administratoren auch
-								alle weiteren &ucsUCS;-Systeme beständig Information
+								alle weiteren Systeme beständig Information
 								abfragen</para></listitem>
 						<listitem><para>schreibende Zugriffe auf die
 								LDAP-Datenbanken, sobald Änderungen vorgenommen
@@ -1484,7 +1487,7 @@ feedback@univention.de
 		<section id="base-configuration_mail">
 			<title>E-Mail Basisdienst</title>
 			<para>
-				&ucsUCS;-Systeme verschicken regelmäßig E-Mails, um den aktuellen
+				&ucsUCS; verschickt regelmäßig E-Mails, um den aktuellen
 				Systemstatus zu kommunizieren.  Z.B. über Cron und über Nagios.
 				Um diese E-Mail verarbeiten zu können ist die Mailauslieferung
 				zu konfigurieren.  Dazu ist wie folgt vorzugehen: TODO
@@ -1536,14 +1539,14 @@ feedback@univention.de
 				<listitem>
 					<para>
 						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 → erlaubt den Zugriff
-						des <wordasword>Monitoring-Servers</wordasword> auf den <wordasword>NRPE-Dienst</wordasword> der übrigen &ucsUCS;
+						des <wordasword>Monitoring-Servers</wordasword> auf den <wordasword>NRPE-Dienst</wordasword> der übrigen
 						Systeme
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>munin/node/allowedhosts</envar>: 10.0.0.20/32 → erlaubt den Zugriff
-						des <wordasword>Monitoring-Servers</wordasword> auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen &ucsUCS;
+						des <wordasword>Monitoring-Servers</wordasword> auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen
 						Systeme (Achtung <wordasword>CIDR-Schreibweise</wordasword>!)
 					</para>
 				</listitem>
@@ -1666,7 +1669,8 @@ feedback@univention.de
 					<para>
 						Die Richtlinie wird nun auf alle Systeme unterhalb des
 						Containers <uri>computer</uri> vererbt. Unterhalb dieses
-						Containers befinden sich die zentralen &ucsUCS; Systeme
+						Containers befinden sich die zentralen Instanzen von
+						&ucsUCS;
 					</para>
 				</listitem>
 				<listitem>
