@@ -19,7 +19,7 @@
 		<legalnotice>
 			<literallayout>
 Version 4.1 R2 v8
-Stand: 21. Februar 2017
+Stand: 21. März 2017
 			</literallayout>
 
 			<literallayout lang="">
@@ -184,6 +184,35 @@ feedback@univention.de
 			nicht aus, dass im Laufe der Zeit weitere Szenarien auf Basis
 			bestehenden Lösung umgesetzt werden können.
 		</para>
+		<section id="scenario-0">
+			<title>Servicestufen: &ucsUAS;</title>
+			<para>
+				Univention bietet die folgenden Szenarien 1 bis 4 in
+				unterschiedlichen Servicestufen an.  Kunden entscheiden beim
+				Kauf von &ucsUAS; welche Servicestufe in der aktuellen Situation
+				am passendsten ist.  Ein Wechsel zwischen den Servicestufen ist
+				jederzeit möglich.  Vorraussetzung in allen Servicestufen ist
+				das Vorhandensein eines User Helpdesks, der die Supportanfragen
+				aus den Schulen bearbeitet.
+			</para>
+			<para>
+				Servicestufen:
+				<orderedlist numeration="upperalpha">
+					<listitem><para>Software und Support: Univention liefert Software und Support, der Kunde kümmert sich selbst um Betrieb, Updates und Backup</para></listitem>
+					<listitem><para>Betrieb im Rechenzentrum des Kunden: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im Rechenzentrum des Kunden</para></listitem>
+					<listitem><para>&ucsUAS; as a Service: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im eigenen Rechenzentrum.  Kunden können sofort starten, ohne Investitionen in Hardware oder Software zu tätigen</para></listitem>
+				</orderedlist>
+			</para>
+			<figure id="fig-scenario-5">
+				<title>Servicestufen: &ucsUAS;</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="center" fileref="illustrations41/5_ucsatschool_as_a_service.png" scale="60" />
+					</imageobject>
+					<textobject><phrase>UCS@school as a Service</phrase></textobject>
+				</mediaobject>
+			</figure>
+		</section>
 		<section id="scenario-1">
 			<title>Szenario 1: Bildungscloud</title>
 			<para>
@@ -212,7 +241,7 @@ feedback@univention.de
 					IT-Angeboten</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/1_zentrale.png" scale="56" />
+						<imagedata align="center" fileref="illustrations41/1_zentrale.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentrales Identity-Management mit integrierten
 					IT-Angeboten</phrase></textobject>
@@ -247,7 +276,7 @@ feedback@univention.de
 					IT-Angebote für Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/2_zentrale_wlan.png" scale="56" />
+						<imagedata align="center" fileref="illustrations41/2_zentrale_wlan.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentrales Identity-Management, WLAN und
 							weitere IT-Angebote für
@@ -282,7 +311,7 @@ feedback@univention.de
 					Schulservern an den Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/3_zentrale_wlan_schulserver.png" scale="56" />
+						<imagedata align="center" fileref="illustrations41/3_zentrale_wlan_schulserver.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur mit
 					Schulservern an den Schulen</phrase></textobject>
@@ -317,7 +346,7 @@ feedback@univention.de
 					ohne dezentrale Schulserver</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" scale="56" />
+						<imagedata align="center" fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur
 					ohne dezentrale Schulserver</phrase></textobject>
