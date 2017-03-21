@@ -499,7 +499,7 @@ feedback@univention.de
 					nicht verwendet werden.
 				</para>
 			</note>
-			<section>
+			<section id="concepts_network_examples">
 				<title>Beispiele für Subnetzkonzepte</title>
 				<para>
 					Im Folgenden werden zwei Beispiele für die Schulnetze
@@ -552,7 +552,7 @@ feedback@univention.de
 					Zone (DMZ), können bei Bedarf ergänzt werden.
 				</para>
 			</section>
-			<section>
+			<section id="concepts_network_examples_primary">
 				<title>Beispiel Subnetz Grundschule</title>
 				<para>
 					<table id="table_network_concept_small_school">
@@ -590,7 +590,7 @@ feedback@univention.de
 					ausgeschöpft wurde.
 				</para>
 			</section>
-			<section>
+			<section id="concepts_network_examples_highschool">
 				<title>Beispiel Subnetz Berufsschule</title>
 				<para>
 					<table id="table_network_concept_large_school">
