@@ -97,7 +97,7 @@ feedback@univention.de
 					<listitem><para>Wer baut in den Schulen Server, Clients und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
 					<listitem><para>In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
 					<listitem><para>In welchem zeitlichen Rahmen soll der Rollout der Pilot-Installation und später der Gesamtinfrastruktur erfolgen?</para></listitem>
-					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, z.B. Passwörter zurücksetzen?</para></listitem>
+					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, zum Beispiel Passwörter zurücksetzen?</para></listitem>
 					<listitem><para>Wie werden Schulen mit &ucsUAS; vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
 					<listitem><para>Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
 					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter, um dies zu messen?</para></listitem>
@@ -112,7 +112,7 @@ feedback@univention.de
 				<itemizedlist spacing="compact" mark="whitesquare">
 					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
 					<listitem><para>Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
-					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, z.B. Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
+					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, zum Beispiel Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
 					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
 							<itemizedlist spacing="compact" mark="whitesquare">
 								<listitem><para>Installation UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
@@ -142,7 +142,7 @@ feedback@univention.de
 					</listitem>
 					<listitem><para>Wie schnell und stabil ist der Internetzugang der Schule?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_internet" />.</para></listitem>
 					<listitem><para>Wer betreibt den Internetzugang und ist für die Entstörung zuständig?</para></listitem>
-					<listitem><para>Welche aktiven und passiven Netzkomponenten sind im Einsatz, z.B. DSL-Router/Switches/Access Points, und wer kennt die Zugangsdaten? </para></listitem>
+					<listitem><para>Welche aktiven und passiven Netzkomponenten sind im Einsatz, zum Beispiel DSL-Router/Switches/Access Points, und wer kennt die Zugangsdaten? </para></listitem>
 					<listitem><para>Welches IP-Netz wird aktuell in der Schule verwendet?</para>
 							<itemizedlist spacing="compact" mark="whitesquare">
 								<listitem><para>Welche Komponenten müssen angepasst werden, um das Netzkonzept (siehe <xref linkend="setup-manual_zentrale" />) umzusetzen?</para></listitem>
@@ -166,7 +166,7 @@ feedback@univention.de
 					<listitem><para>Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
 					<listitem><para>Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
 					<listitem><para>Wo wird der RADIUS-Service betrieben?  Siehe <xref linkend="additional-services_radius" /></para></listitem>
-					<listitem><para>Wie greifen die mobilen Geräte auf das Internet zu, z.B. direkt oder über einen transparenter Proxy?</para></listitem>
+					<listitem><para>Wie greifen die mobilen Geräte auf das Internet zu, zum Beispiel direkt oder über einen transparenter Proxy?</para></listitem>
 					<listitem><para>Wie hoch sind die notwendigen Investitionen, um die Betriebsbereitschaft für das WLAN herzustellen?</para></listitem>
 					<listitem><para>Welche IT-Angebote, zentral und dezentral, sollen von den Geräten im WLAN verwendet werden können?</para></listitem>
 				</itemizedlist>
@@ -259,11 +259,11 @@ feedback@univention.de
 				Lehrkräften und Schülern Zugang zu gewähren.  Dazu wird
 				&ucsUCS; zentral in einem Rechenzentrum betrieben und
 				dienen als Identity- und Access-Management. Zudem sind die
-				Schulen mit dem Rechenzentrum verbunden, z.B. mittels eines
-				VPNs. An den Schulen werden WLAN Access Points installiert, die
-				RADIUS unterstützen (WPA2-Enterprise / IEEE 802.1X). Ergänzend
-				können auch wie in Szenario 1 weitere IT-Angebote an die
-				zentralen Systeme angebunden werden.
+				Schulen mit dem Rechenzentrum verbunden, zum Beispiel mittels
+				eines VPNs. An den Schulen werden WLAN Access Points
+				installiert, die RADIUS unterstützen (WPA2-Enterprise / IEEE
+				802.1X). Ergänzend können auch wie in Szenario 1 weitere
+				IT-Angebote an die zentralen Systeme angebunden werden.
 			</para>
 			<para>
 				Merkmale:
@@ -745,8 +745,9 @@ feedback@univention.de
 										<para>
 											Offizielle DNS-Domänen sollten nicht
 											verwendet werden, wenn sie nicht
-											unter eigener Kontrolle stehen, z.B.
-											kann vermutlich nicht <systemitem
+											unter eigener Kontrolle stehen, zum
+											Beispiel kann vermutlich nicht
+											<systemitem
 												class="domainname">deutschland.de</systemitem>
 											verwendet werden.
 										</para>
@@ -1238,7 +1239,7 @@ feedback@univention.de
 					Clients.  Als Richtwert kann von einem Bedarf von mindestens
 					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
 					insbesondere bei der Einführung von BYOD zu beachten, da
-					Nutzer ggf. mehr als ein Gerät mitbringen, z.B.  Laptop,
+					Nutzer ggf. mehr als ein Gerät mitbringen, zum Beispiel Laptop,
 					Smartphone und Tablet.
 				</para>
 			</section>
@@ -1512,7 +1513,7 @@ feedback@univention.de
 			<title>E-Mail Basisdienst</title>
 			<para>
 				&ucsUCS; verschickt regelmäßig E-Mails, um den aktuellen
-				Systemstatus zu kommunizieren.  Z.B. über Cron und über Nagios.
+				Systemstatus zu kommunizieren.  Zum Beispiel über Cron und über Nagios.
 				Um diese E-Mail verarbeiten zu können ist die Mailauslieferung
 				zu konfigurieren.  Dazu ist wie folgt vorzugehen: TODO
 			</para>
