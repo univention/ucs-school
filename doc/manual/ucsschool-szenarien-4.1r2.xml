@@ -676,14 +676,21 @@ feedback@univention.de
 			</section>
 		</section>
 		<section id="concepts_names">
-			<title>Namenskonzepte</title>
+			<title>Benennungskonzept für Objekte</title>
 			<para>
-				In einer &ucsUAS;-Domäne müssen viele Namen eindeutig sein,
-				bspw. Benutzernamen, E-Mail-Adressen, Rechnernamen, Schulkürzel
-				(Organisationseinheit, OU), Gruppen und Klassen usw. Da in einer
-				&ucsUAS;-Domäne sehr viele Objekte mit einem Namen vorhanden
-				sein werden, ist es hilfreich bereits am Namen selbst ein Objekt
-				und seine grundlegenden Eigenschaften identifizieren zu können.
+				In einer &ucsUAS;-Domäne für ein oder mehrere Schulen gibt es
+				viele Objekte, die eindeutige Namen benötigen, zum Beispiel
+				Benutzerkonten brauchen eindeutige Benutzernamen und
+				E-Mail-Adressen, Schulklassen brauchen eindeutige Bezeichnungen,
+				um sie von gleichnamigen Klassen in anderen Schulen zu
+				unterscheiden, Rechnerobjekte benötigen Rechnernamen und
+				Schulen benötigen eine Kurzbezeichnung für den Container, in dem
+				die zugehörigen Objekte gespeichert werden.
+				Ein Konzept zur Benennung von Objekten verfolgt die Ziele,
+				Eindeutigkeit herzustellen und gleichzeitig die Bedeutung und
+				Zuordnung des jeweiligen Objekts offensichtlich zu machen.
+				Im Folgenden zeigen wir Konzepte für unterschiedliche
+				Objekttypen auf, die sich in der Praxis bewährt haben.
 			</para>
 			<section id="concepts_names_domain">
 				<title>Name der Domäne</title>
@@ -691,96 +698,101 @@ feedback@univention.de
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Wir empfehlen den Domänennamen wie folgt aufzubauen:
+					Der Name der Domäne definiert mehrere zugehörige Namen:
+					LDAP-Basis, DNS-Domäne, Kerberos-Realm und Samba/Active
+					Directory-Domäne.  Die Wahl dieses Namens hat umfangreiche
+					Auswirkungen auf die gesamte &ucsUAS;-Installation und
+					sollte entsprechend mit Überlegung gewählt werden,
+					insbesondere weil eine nachträgliche Änderung nicht möglich
+					ist.
 				</para>
 				<para>
-					<systemitem class="domainname">schulen.schultraeger.de</systemitem>
+					Wir empfehlen den Domänennamen nach folgendem Muster aufzubauen:
 				</para>
-				<itemizedlist spacing="compact">
-					<listitem>
-						<para>
-							<systemitem class="domainname">schultraeger</systemitem> ist dabei ein Platzhalter
-							für den Namen des Schulträgers, des Betreibers, der Stadt
-							oder des Landkreises.
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							Wichtig ist, dass die übergeordnete Domäne
-							<systemitem class="domainname">schultraeger.de</systemitem> bzw. deren öffentliche
-							DNS-Konfiguration vom Betreiber kontrolliert wird.
-							Konflikte mit öffentlich erreichbaren Domänennamen müssen
-							vermieden werden.
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							&ucsUCS; stellt <emphasis role="strong">intern</emphasis>
-							DNS-Dienste für die Domäne
-							<systemitem class="domainname">schulen.schultraeger.de</systemitem> zur Verfügung.
-							Alle DNS-Anfragen, die nicht für die Domäne
-							<systemitem class="domainname">schulen.schultraeger.de</systemitem> bestimmt sind,
-							werden an externe DNS Server weitergeleitet (DNS
-							Forwarder)
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							Bitte wählen sie nicht <systemitem class="domainname">.local</systemitem> als
-							Endung für den Domänennamen. <systemitem class="domainname">.local</systemitem> ist
-							offiziell für die Verwendung von mDNS (Multicast DNS)
-							vorgesehen. Die Verwendung von <systemitem class="domainname">.local</systemitem>
-							als Endung für den Domänennamen führt aus diesem Grund
-							häufig zu Problemen beim Einsatz von Unix-basierten
-							Betriebssystemen und ist darüberhinaus nicht
-							konform zum Standard.
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							Bitte wählen sie keine inoffiziellen Endungen für den
-							Domänennamen wie <systemitem class="domainname">.corp</systemitem> oder
-							<systemitem class="domainname">.lan</systemitem>
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							Bitte wählen sie keine offiziell vergebenen Endungen für
-							den Domänennamen wie <systemitem class="domainname">.int</systemitem>, solange sie
-							nicht einen offiziellen Domänennamen mit dieser Endung
-							besitzen.
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							Wenn zwingend für die Anmeldung bspw. an Windows Clients
-							nicht <systemitem class="domainname">SCHULEN\benutzer</systemitem>, sondern
-							<systemitem class="domainname">SCHULTRAEGER\benutzer</systemitem> verwendet werden
-							soll, muss vor der Installation der App <package>Active
-								Directory kompatibler Domänencontroller</package> der Name der
-							NetBIOS-Domäne manuell angepasst werden.
-						</para>
-					</listitem>
-					<listitem>
-						<para>
-							Dadurch, dass der Betreiber die öffentliche
-							DNS-Konfiguration für die Domäne kontrolliert, können auch
-							weitere IT-Angebote wie bspw. Groupware oder Lernplattformen
-							über eine Subdomain öffentlich verfügbar gemacht werden.
-							Über NAT kann eine Adressübersetzung der öffentlich
-							verfügbaren Subdomain auf ein internes System
-							realisiert werden. Ein Beispiel: Externe Adresse:
-							<wordasword>moodle.schultraeger.de</wordasword>
-							Internes System:
-							<wordasword>moodle.schulen.schultraeger.de</wordasword>
-							Dazwischen sorgt ein Router/Firewall für die
-							Adressübersetzung. Clients greifen grundsätzlich
-							über die externe Adresse
-							<systemitem class="domainname">https://moodle.schultraeger.de/</systemitem>
-							zu.
-						</para>
-					</listitem>
-				</itemizedlist>
+				<para>
+					<systemitem class="domainname">schulen.[DNS-Domäne der Organisation]</systemitem>
+				</para>
+				<para>
+					Beispiel: <systemitem class="domainname">schulen.bremen.de</systemitem>
+				</para>
+				<para>
+					<itemizedlist spacing="compact">
+						<listitem>
+							<para>
+								<systemitem class="domainname">[DNS-Domäne der
+									Organisation]</systemitem> ist dabei ein
+								Platzhalter für die DNS-Domäne/Internetseite des
+								Betreibers, zum Beispiel Stadt, Landkreises oder
+								Bundesland.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Wichtig ist, dass die DNS-Domäne vom Betreiber
+								verwaltet wird.  Es muss unter allen Umständen
+								vermieden werden, dass der gewählte Domänenname
+								im öffentlichen Internet verwendet wird.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Wenn die Verwendung einer öffentlichen
+								DNS-Domäne nicht möglich ist und stattdessen
+								eine selbst gewählter Name verwendet wird, so
+								sind folgende Regeln zu beachten:
+								<itemizedlist>
+									<listitem>
+										<para>
+											Offizielle DNS-Domänen sollten nicht
+											verwendet werden, wenn sie nicht
+											unter eigener Kontrolle stehen, z.B.
+											kann vermutlich nicht <systemitem
+												class="domainname">deutschland.de</systemitem>
+											verwendet werden.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											Inoffiziell verwendete
+											Top-Level-Domänen sollten nicht
+											verwendet werden, zum Beispiel
+											<systemitem
+												class="domainname">.corp</systemitem>
+											oder <systemitem
+												class="domainname">.lan</systemitem>.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<systemitem
+												class="domainname">.local</systemitem>
+											sollte nicht als Top-Level-Domäne
+											gewählt werden. Die Endung ist
+											offiziell für mDNS (Multicast DNS)
+											vorgesehen und führt bei Verwendung
+											zu Problemen mit MacOS, Windows und
+											Linux-Betriebssystemen.
+										</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Es besteht die Möglichkeit den Namen der Samba-/Active
+					Directory-Domäne unabhängig von dem eigentlichen
+					Domänennamen zu definieren.  Dies ermöglicht es, dass
+					Benutzer einen anderen Domänen bei Anmeldung an Windows
+					Clients verwenden können, zum Beispiel wird statt <systemitem
+						class="domainname">SCHULEN\benutzername</systemitem> nun
+					<systemitem
+						class="domainname">SCHULTRÄGER\benutzername</systemitem>
+					verwendet.  Um dies zu erreichen, ist auf dem
+					&ucsUAS;-Server vor der Installation von &ucsUAS; der
+					gewünschte NetBIOS-Domänenname in der &ucsUCR;-Variablen
+					<envar>windows/domain</envar> zu setzen.
+				</para>
 			</section>
 			<section id="concepts_names_servers">
 				<title>Zentrale Server</title>
@@ -788,11 +800,19 @@ feedback@univention.de
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Zentrale Server: - Schema: Rollenkürzel-ID - Beispiele:
-					&ucsMaster;: <systemitem class="systemname">ucsma01</systemitem>,
-					&ucsBackup;: <systemitem class="systemname">ucsba02</systemitem>, <systemitem class="systemname">ucsba03</systemitem>,
-					&ucsSlave;: <systemitem class="systemname">ucssl04</systemitem>,
-					&ucsMember;: <systemitem class="systemname">ucsme05</systemitem>
+					Zentrale Server:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="systemname">[Rollenbezeichnung]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiele:
+								<itemizedlist>
+									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucsma-01</systemitem></para></listitem>
+									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucsba-02</systemitem>, <systemitem class="systemname">ucsba03</systemitem></para></listitem>
+									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucssl-04</systemitem></para></listitem>
+									<listitem><para>&ucsMember;: <systemitem class="systemname">ucsme-05</systemitem></para></listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</itemizedlist>
 				</para>
 			</section>
 			<section id="concepts_names_clients-and-servers">
@@ -803,79 +823,111 @@ feedback@univention.de
 				<para>
 					Rechner:
 					<itemizedlist>
-						<listitem><para>Schema: Schulkürzel-Betriebssystemkürzel-Gebäude/Etage/Raum-ID</para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Betriebssystem][Gebäude/Etage/Raum][Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele: <systemitem class="service">042win033-001</systemitem>, <systemitem class="service">042win033-002</systemitem>, <systemitem class="service">011mac001-011</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
-					Netzwerkgeräte und weitere Geräte wie Router, Switches, USV,
-					Drucker sowie Druckerfreigaben:
+					Netzwerkgeräte, wie Router, Switches, USVs, Drucker:
 					<itemizedlist>
-						<listitem><para>Schema: Schulkürzel-Typkürzel-Gebäude/Etage/Raum-ID</para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Typ][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Schulserver:
 					<itemizedlist>
-						<listitem><para>Schema: Rollenkürzel-Schulkürzel-ID</para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Rollenbezeichnung]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele:
 								<itemizedlist>
-									<listitem><para>Edukativer Schulserver: <systemitem class="service">sedu042-01</systemitem></para></listitem>
-									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">sadm042-01</systemitem></para></listitem>
+									<listitem><para>Edukativer Schulserver: <systemitem class="service">042sedu-01</systemitem></para></listitem>
+									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">042sadm-01</systemitem></para></listitem>
 								</itemizedlist>
 						</para></listitem>
 					</itemizedlist>
 				</para>
 			</section>
 			<section id="concepts_names_user-classes">
-				<title>Benutzerkonten und Klassen</title>
+				<title>Benutzernamen und Klassenbezeichnungen</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
+					Benutzerkonten und Klassen hängen in &ucsUAS; sehr eng
+					zusammen.  So werden beim Import von Benutzerkonten
+					ebenfalls die Klassen angegeben, zu denen die jeweiligen
+					Konten gehören.  D.h. sowohl beim Import von Klassen, also
+					auch beim Import von Benutzerkonten müssen die gleichen
+					Bezeichnungen für Klassen verwendet werden und es ist
+					deshalb hilfreich ein einheitliches Schema zu spezifizieren.
+				</para>
+				<para>
+					Bei Benutzerkonten ergibt sich darüber hinaus die
+					Herausforderung, dass sich die Benutzernamen ggf. ändern,
+					zum Beispiel aufgrund der Behebung von Tippfehlern, Heirat
+					oder Scheidung.  In der Praxis hat sich nicht bewährt
+					unveränderliche Daten, wie Personal- oder Schülernummern als
+					Benutzernamen zu verwenden, da diese unpersönlich und schwer
+					zu merken sind.
+				</para>
+				<para>
+					Die Änderung von Benutzernamen stellt eine große
+					Herausforderung im Betrieb dar, weil die an &ucsUAS;
+					angeschlossenen Subsysteme ggf. den Benutzernamen zur
+					Zuordnung von Daten zu Personen verwenden.  Beispiele für
+					Subsysteme sind E-Maildienste, Dateifreigaben und
+					-tauschsysteme und Lernplattformen.  Der E-Maildienst könnte
+					zum Beispiel das E-Mailpostfach einer Lehrkraft dem
+					Benutzernamen zugeordnen.  Ändert sich dieser, so müsste das
+					E-Mailpostfach ggf. manuell mit großem Aufwand umbenannt
+					werden.  Dies Problem kann umgangen werden, wenn frühzeitig,
+					vor der Einführung eines neuen Subsystems darauf geachtet
+					wird, dass die Zuordnung von Daten zu Personen über ein
+					unveränderliches Merkmal geschieht, zum Beispiel die
+					Personalnummer.  Gleichzeitig muss sichergestellt werden,
+					dass die Anmeldung am Subsystem jedoch über den einfach zu
+					merkenden Benutzernamen erfolgt.
+				</para>
+				<para>
 					Schüler:
 					<itemizedlist>
-						<listitem><para>Schema: Vorname-1.Buchstabe Nachname-ID</para></listitem>
+						<listitem><para>Schema: <systemitem class="username">[Vorname][1. Buchstabe Nachname][Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiel: Mary <wordasword>Somerville</wordasword> → <systemitem class="username">marys01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Lehrkräfte und Mitarbeiter:
 					<itemizedlist>
-						<listitem><para>Schema: 1.Buchstabe Vorname-Nachname-ID</para></listitem>
-						<listitem><para>Beispiel: Ada <wordasword>Lovelace</wordasword> → <systemitem class="username">alovelace01</systemitem></para></listitem>
+						<listitem><para>Schema: <systemitem class="username">[1. Buchstabe Vorname][Nachname][Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiel: Mareike <wordasword>Müller</wordasword> → <systemitem class="username">mmueller01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
-					Beispiel für eine Konfiguration zum Import von
-					Benutzerkonten (JSON), siehe <ulink
+					Für Benutzerkonten kann das gewünschte Schema im
+					Importmechanismus hinterlegt werden, siehe <ulink
 						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
-						zur <wordasword>CLI-Import-Schnittstelle</wordasword></ulink>
+						zur
+						<wordasword>CLI-Import-Schnittstelle</wordasword></ulink>
 				</para>
 				<para>
-					Klassen müssen mit dem entsprechenden Schulkürzel als Präfix
-					angelegt werden:
+					Klassen sollten mit der Kurzbezeichnung der Schule als
+					Präfix benannt werden:
 					<itemizedlist>
-						<listitem><para>Schema: Schulkürzel-Klasse</para></listitem>
-						<listitem><para>Beispiele: 042-1a, 042-1b, 011-5a, 011-5b</para></listitem>
+						<listitem><para>Schema: <systemitem class="groupname">[Kurzbezeichnung Schule]-[Klasse]</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="groupname">042-1a</systemitem>, <systemitem class="groupname">042-1b</systemitem>, <systemitem class="groupname">011-5a</systemitem>, <systemitem class="groupname">011-5b</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 			</section>
 			<section id="concepts_names_misc">
-				<title>Weiteres</title>
+				<title>Allgemeine Konventionen</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
-					Folgende Punkte haben sich als bewährte Vorgehensweisen
-					herauskristallisiert:
+					Folgende Konventionen haben sich in allen Szenarien bewährt:
 					<itemizedlist>
-						<listitem><para>Durchgängige Verwendung von Kleinbuchstaben</para></listitem>
-						<listitem><para>Namen nicht länger als 15 Zeichen</para></listitem>
-						<listitem><para>Ein Grundriss der Gebäude, in dem
-								eingezeichnet ist, wo welche Server und welche
-								Clients zu finden sind, ist sehr hilfreich</para></listitem>
+						<listitem><para>Alle Objektnamen sollten durchgängige Kleinbuchstaben verwenden</para></listitem>
+						<listitem><para>Die Länge von Objektnamen sollte 15 Zeichen nicht überschreiten</para></listitem>
 					</itemizedlist>
 				</para>
 			</section>
