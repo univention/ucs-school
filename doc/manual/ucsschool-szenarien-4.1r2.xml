@@ -367,7 +367,7 @@ feedback@univention.de
 			In vergangenen Projekten haben sich folgende Schritte bewährt:
 		</para>
 		<section id="preparations_workshop">
-			<title>Kick-off Workshop</title>
+			<title>Initialer Workshop</title>
 			<para>
 				Ziel des Workshops ist es die existierenden Konzepte auf die
 				konkrete Umsetzung abzubilden.  Dabei hat es sich bewährt auf
@@ -382,16 +382,16 @@ feedback@univention.de
 			<title>Informationsveranstaltung für die Schulen</title>
 			<para>
 				Ziel der Informationsveranstaltung ist es die Lehrkräfte in den
-				Schulen mit in den Prozess der &ucsUAS;-Einführung zu integrieren.
-				Die bereits installierte Demo-Schule kann dazu dienen das System
-				initial zu präsentieren.  Es hat sich in vielen Projekten
-				gezeigt, dass diese Informationsveranstaltungen auch nach dem
-				Rollout regelmäßig stattfinden sollten, um neue Anforderungen
-				und Feedback aufzuehmen.
+				Schulen mit in den Prozess der Einführung von &ucsUAS; zu
+				integrieren.  Die bereits installierte Demo-Schule kann dazu
+				dienen das System initial zu präsentieren.  Es hat sich in
+				vielen Projekten gezeigt, dass diese Informationsveranstaltungen
+				auch nach dem Rollout regelmäßig stattfinden sollten, um neue
+				Anforderungen und Feedback aufzunehmen.
 			</para>
 		</section>
 		<section id="preparations_school-selection">
-			<title>Rollout-Planung</title>
+			<title>Planung des Rollout</title>
 			<para>
 				Ziel ist es den Rollout von &ucsUAS; mit Erfolgen zu beginnen.
 				Dafür gilt es die Schulen zu identifizieren, die als erste
@@ -511,7 +511,7 @@ feedback@univention.de
 					Systeme.
 				</para>
 				<para>
-					Um die Subnetze in &ucsUAS; bekanntzumachen müssen diese
+					Um die Subnetze in &ucsUAS; bekannt zu machen müssen diese
 					importiert werden.  In <xref linkend="import_networks" />
 					ist beschrieben wie der Import vorzunehmen ist, welche
 					Informationen anzugeben sind und welche Hilfsmittel dafür
@@ -676,7 +676,7 @@ feedback@univention.de
 			</section>
 		</section>
 		<section id="concepts_names">
-			<title>Benennungskonzept für Objekte</title>
+			<title>Konzept zur Benennung von Objekten</title>
 			<para>
 				In einer &ucsUAS;-Domäne für ein oder mehrere Schulen gibt es
 				viele Objekte, die eindeutige Namen benötigen, zum Beispiel
@@ -770,8 +770,9 @@ feedback@univention.de
 											gewählt werden. Die Endung ist
 											offiziell für mDNS (Multicast DNS)
 											vorgesehen und führt bei Verwendung
-											zu Problemen mit MacOS, Windows und
-											Linux-Betriebssystemen.
+											zu Problemen mit
+											<wordasword>MacOS</wordasword>,
+											Windows und Linux-Betriebssystemen.
 										</para>
 									</listitem>
 								</itemizedlist>
@@ -790,8 +791,9 @@ feedback@univention.de
 						class="domainname">SCHULTRÄGER\benutzername</systemitem>
 					verwendet.  Um dies zu erreichen, ist auf dem
 					&ucsUAS;-Server vor der Installation von &ucsUAS; der
-					gewünschte NetBIOS-Domänenname in der &ucsUCR;-Variablen
-					<envar>windows/domain</envar> zu setzen.
+					gewünschte <wordasword>NetBIOS-Domänenname</wordasword> in
+					der &ucsUCR;-Variablen <envar>windows/domain</envar> zu
+					setzen.
 				</para>
 			</section>
 			<section id="concepts_names_servers">
@@ -828,7 +830,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Netzwerkgeräte, wie Router, Switches, USVs, Drucker:
+					Netzwerkgeräte, wie Router, Switches, <wordasword>USVs,</wordasword> Drucker:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Typ][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
@@ -876,17 +878,17 @@ feedback@univention.de
 					angeschlossenen Subsysteme ggf. den Benutzernamen zur
 					Zuordnung von Daten zu Personen verwenden.  Beispiele für
 					Subsysteme sind E-Maildienste, Dateifreigaben und
-					-tauschsysteme und Lernplattformen.  Der E-Maildienst könnte
-					zum Beispiel das E-Mailpostfach einer Lehrkraft dem
-					Benutzernamen zugeordnen.  Ändert sich dieser, so müsste das
-					E-Mailpostfach ggf. manuell mit großem Aufwand umbenannt
-					werden.  Dies Problem kann umgangen werden, wenn frühzeitig,
-					vor der Einführung eines neuen Subsystems darauf geachtet
-					wird, dass die Zuordnung von Daten zu Personen über ein
-					unveränderliches Merkmal geschieht, zum Beispiel die
-					Personalnummer.  Gleichzeitig muss sichergestellt werden,
-					dass die Anmeldung am Subsystem jedoch über den einfach zu
-					merkenden Benutzernamen erfolgt.
+					<wordasword>-tauschsysteme</wordasword> und Lernplattformen.
+					Der E-Maildienst könnte zum Beispiel das E-Mailpostfach
+					einer Lehrkraft dem Benutzernamen zuordnen.  Ändert sich
+					dieser, so müsste das E-Mailpostfach ggf. manuell mit großem
+					Aufwand umbenannt werden.  Dies Problem kann umgangen
+					werden, wenn frühzeitig, vor der Einführung eines neuen
+					Subsystems darauf geachtet wird, dass die Zuordnung von
+					Daten zu Personen über ein unveränderliches Merkmal
+					geschieht, zum Beispiel die Personalnummer.  Gleichzeitig
+					muss sichergestellt werden, dass die Anmeldung am Subsystem
+					jedoch über den einfach zu merkenden Benutzernamen erfolgt.
 				</para>
 				<para>
 					Schüler:
@@ -899,7 +901,7 @@ feedback@univention.de
 					Lehrkräfte und Mitarbeiter:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="username">[1. Buchstabe Vorname][Nachname][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiel: Mareike <wordasword>Müller</wordasword> → <systemitem class="username">mmueller01</systemitem></para></listitem>
+						<listitem><para>Beispiel: <wordasword>Mareike Müller</wordasword> → <systemitem class="username">mmueller01</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
@@ -938,12 +940,12 @@ feedback@univention.de
 				<emphasis>für alle Szenarien</emphasis>
 			</para>
 			<para>
-				Die rechtzeitige Erkennung von Fehlern und Anzeichen für Fehler
+				Die rechtzeitige Erkennung von Fehlern und möglichen Anzeichen
 				ist ein elementarer Bestandteil des professionellen IT-Betriebs.
-				&ucsUCS; hat deshalb die Monitoring-Software Nagios fest integriert
-				und für viele relevante Parameter vorkonfiguriert.  Nagios
-				selbst dient zum Monitoring des aktuellen Zustands und ist für
-				den täglichen IT-Betrieb unabdingbar.
+				&ucsUCS; hat deshalb die Monitoring-Software Nagios fest
+				integriert und für viele relevante Parameter vorkonfiguriert.
+				Nagios selbst dient zum Monitoring des aktuellen Zustands und
+				ist für den täglichen IT-Betrieb unabdingbar.
 			</para>
 			<para>
 				Das Monitoring erfolgt für &ucsUAS; immer aus der Zentrale
