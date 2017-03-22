@@ -117,7 +117,7 @@ feedback@univention.de
 							<itemizedlist spacing="compact" mark="whitesquare">
 								<listitem><para>Installation UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
 								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
-								<listitem><para>Import von Benutzer-, Client- und Netzwerkdaten: <xref linkend="import" /></para></listitem>
+								<listitem><para>Import von Benutzer-, Client- und Netzdaten: <xref linkend="import" /></para></listitem>
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
@@ -148,7 +148,7 @@ feedback@univention.de
 								<listitem><para>Welche Komponenten müssen angepasst werden, um das Netzkonzept (siehe <xref linkend="setup-manual_zentrale" />) umzusetzen?</para></listitem>
 							</itemizedlist>
 					</listitem>
-					<listitem><para>Ist in der Schule strukturierte Netzwerk-Verkabelung in allen Computerräumen vorhanden? Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_network" /></para>
+					<listitem><para>Ist in der Schule strukturierte Verkabelung in allen Computerräumen vorhanden? Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_network" /></para>
 							<itemizedlist spacing="compact" mark="whitesquare">
 								<listitem><para>Wie sind die Patchfelder und Netzdosen belegt?</para></listitem>
 							</itemizedlist>
@@ -623,7 +623,7 @@ feedback@univention.de
 									<entry><code>10.2.1.0/24</code></entry>
 									<entry><code>-</code></entry>
 									<entry><code>254</code></entry>
-									<entry>Netz für Server und Netzwerkgeräte, statische IP-Adressen</entry>
+									<entry>Netz für Server und Netzgeräte, statische IP-Adressen</entry>
 								</row>
 								<row>
 									<entry><code>10.2.2.0/24</code></entry>
@@ -678,7 +678,7 @@ feedback@univention.de
 					Die Subnetze sind so gewählt, dass sie sich Bedarf noch
 					erweitern lassen. Die Unterteilung des edukativen Bereichs
 					in einzelne Subnetze kann beispielsweise pro Gebäude, pro
-					Etage oder sogar pro Computerraum erfolgen. Netzwerkdrucker
+					Etage oder sogar pro Computerraum erfolgen. Netzdrucker
 					können in die Subnetze aufgenommen werden, in denen sich
 					auch die zugehörigen Endgeräte befinden oder es wird ein
 					eigenes Druckernetz hinzugefügt.
@@ -841,7 +841,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Netzwerkgeräte, wie Router, Switches, USV, Drucker:
+					Netzgeräte, wie Router, Switches, USV, Drucker:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Gerätetyp][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
@@ -1098,40 +1098,51 @@ feedback@univention.de
 		</section>
 	</chapter>
 	<chapter id="infrastructure-and_hardware-requirements">
-		<title>Infrastruktur- und Hardware-Voraussetzungen</title>
+		<title>Netzinfrastruktur- und Hardware-Voraussetzungen</title>
 		<para>
-			Es wird stark empfohlen, eine Virtualisierungslösung für
-			&ucsUCS; einzusetzen. Die Hardwaredimensionierung der
-			Virtualisierungsserver muss sich dabei an den Anforderungen der
-			virtualisierten Systeme richten und dabei noch genügend
-			Möglichkeiten zur nachträglichen Erweiterung bereithalten. Von
-			einer Zuweisung von mehr als den vorhandenen Hardwareressourcen zu
-			den virtuellen Maschinen wird abgeraten.  Für den Speicherplatz
-			sollten SAS-Festplatten mit 10.000 oder 15.000 Umdrehungen pro
-			Minute zum Einsatz kommen (oder vergleichbar). Solid State Disks
-			(SSDs) bringen natürlich ein weiteren Leistungsschub, sind aber kein
-			Muss.
+			Im Folgenden werden die Netzinfrastruktur- und
+			Hardware-Voraussetzungen für den Einsatz von &ucsUAS; beschrieben.
+			Die beschrieben Voraussetzungen sind Richtwerte, die wir ermittelt
+			haben.  Im Einzelfall ist jedoch genau zu prüfen ob die
+			Voraussetzungen mit den gestellten Anforderungen übereinstimmen.  Es
+			hat sich gezeigt, dass abhängig von den gestellten Anforderungen
+			erhebliche Abweichungen bei den Voraussetzungen entstehen können.
 		</para>
 		<para>
-			Dies genannten Werte sind die Minimalanforderungen für die oben
-			genannten Szenarien. Je nach Größe der Umgebung und Anzahl der
-			aktiven Geräte und Benutzer können die Anforderungen höher liegen.
-			Es wird erwartet, dass der Betreiber die tatsächliche Auslastung
-			des Systems durch eine Software zum Monitoring überwacht und die den
-			VMs zugeteilten Ressourcen bei Bedarf anpassen kann.
+			Allgemein hat sich für den Betrieb von &ucsUCS; bewährt eine
+			Virtualisierungslösung einzusetzen. Die Dimensionierung der
+			Virtualisierungsserver muss sich dabei an den Anforderungen der
+			virtualisierten Systeme richten und dabei noch genügend
+			Möglichkeiten zur nachträglichen Erweiterung bereithalten.  Eine
+			Zuweisung von mehr als den vorhandenen Ressourcen
+			(Überprovisionierung) wird abgeraten.  Für den Speicherplatz sollten
+			mindestens SAS-Festplatten mit 10.000 Umdrehungen pro Minute zum
+			Einsatz kommen.
+		</para>
+		<para>
+			Die genannten Werte sind die Minimalanforderungen für die oben
+			beschriebenen Szenarien.  Abhängig von der Größe der Umgebung und
+			Anzahl der aktiven Geräte und Personen können die Anforderungen
+			höher liegen.  Die tatsächliche Auslastung der einzelnen Systeme
+			sollte fortlaufend durch das <xref
+				linkend="concepts_monitoring">Monitoring</xref> überwacht
+			werden, um Engpässe zu vermeiden.  Im Folgenden werden die Server,
+			ihre Funktionen und die jeweiligen Anforderungen beschrieben.
 		</para>
 		<section id="infrastructure-and_hardware-requirements_servers">
 			<title>Zentrale Server</title>
 			<section id="infrastructure-and_hardware-requirements_servers_master">
-				<title>&ucsMaster; und &ucsBackup; für das Identity
-					Management</title>
+				<title>Identity Management</title>
 				<para>
 					<emphasis>alle Szenarien</emphasis>
 				</para>
+				<para>Systeme vom Typ &ucsMaster; und &ucsBackup; stellen das
+					Identitätsmanagement mit der zugrundeliegenden
+					LDAP-Datenbank zur Verfügung.</para>
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>4 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
+						<listitem><para>4 CPU-Kerne</para></listitem>
 						<listitem><para>8 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1139,124 +1150,156 @@ feedback@univention.de
 				<para>
 					Die Hauptaufgaben des &ucsMaster; sind:
 					<itemizedlist>
-						<listitem><para>viele lesende Zugriffe auf die
-								LDAP-Datenbank, da neben den Administratoren auch
-								alle weiteren Systeme beständig Information
-								abfragen</para></listitem>
-						<listitem><para>schreibende Zugriffe auf die
-								LDAP-Datenbanken, sobald Änderungen vorgenommen
-								werden. Insbesondere beim initialen Import und beim
-								Schuljahreswechsel wird entsprechende Last erzeugt</para></listitem>
+						<listitem><para>Viele lesende Zugriffe auf die
+								LDAP-Datenbank, da neben der Administration alle
+								weiteren Systeme regelmäßig Information
+								abfragen.</para></listitem>
+						<listitem><para>Schreibende Zugriffe auf die
+								LDAP-Datenbank, sobald Änderungen vorgenommen
+								werden. Insbesondere beim initialen Import und
+								beim Schuljahreswechsel wird die LDAP-Datenbank
+								stark belastet.</para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
-					Aus diesen Gründen spielt die I/O-Performance eine
-					übergeordnete Rolle. Genügend Arbeitsspeicher ist u.a. beim
-					Import/Schuljahreswechsel entscheidend.
+					Die I/O-Performance der Festplatten dieser Server ist
+					besonders wichtig, zusammen mit ausreichend Arbeitsspeicher,
+					der insbesondere beim initialen Import und beim
+					Schuljahreswechsel notwendig ist.
 				</para>
 				<para>
-					&ucsBackup; Server dienen der Lastverteilung und
-					Ausfallsicherheit. Ab einer bestimmten Größe der Umgebung (zum Beispiel
-					ab 100 Schulservern) sollte aus diesen Gründen ein zweiter
-					&ucsBackup; installiert werden.
-				</para>
-			</section>
-			<section id="infrastructure-and_hardware-requirements_servers_slave">
-				<title>&ucsUCS; Slave für IT-Angebote / Groupware / Collaboration /
-					Lernplattformen</title>
-				<para>
-					<emphasis>alle Szenarien</emphasis>
-				</para>
-				<para>
-					Hier sind die Anforderungen stark abhängig von der
-					eingesetzten Software und es sollten unbedingt die
-					Systemvoraussetzungen des jeweiligen Herstellers
-					berücksichtigt werden.
-				</para>
-				<para>
-					Minimale Systemvoraussetzungen &ucsUCS;:
-					<itemizedlist>
-						<listitem><para>2 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
-						<listitem><para>2 GB RAM</para></listitem>
-						<listitem><para>80 GB Speicherplatz</para></listitem>
-						<listitem><para>Plus Anforderungen der eingesetzten Software</para></listitem>
-					</itemizedlist>
+					&ucsBackup; dienen der Lastverteilung und Ausfallsicherheit.
+					Es sollte immer mindestens ein &ucsBackup; vorhanden sein.
+					Darüber hinaus können weitere Server bei Bedarf hinzugefügt
+					werden.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_radius">
-				<title>&ucsUCS; Slave für RADIUS</title>
+				<title>RADIUS</title>
 				<para>
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>4 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
-						<listitem><para>12 GB RAM</para></listitem>
-						<listitem><para>80 GB Speicherplatz</para></listitem>
+						<listitem><para>2 CPU-Kerne</para></listitem>
+						<listitem><para>4 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_monitoring">
-				<title>&ucsMember; für Monitoring</title>
+				<title>Monitoring</title>
 				<para>
 					<emphasis>für alle Szenarien</emphasis>
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>2 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
+						<listitem><para>2 CPU-Kerne</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_servers_slave">
+				<title>IT-Angebote, wie Groupware und Lernplattformen</title>
+				<para>
+					<emphasis>alle Szenarien</emphasis>
+				</para>
+				<para>
+					Für weitere IT-Angebote können keine Minimalanforderungen
+					genannt werden, da diese sowohl von der Anzahl der
+					parallelen Benutzer als auch von dem IT-Angebot selbst
+					abhängig sind.  Eine Abstimmung mit dem Hersteller ist
+					insbesondere bei Angeboten notwendig, die von allen
+					Personen, die ein Benutzerkonto in der Umgebung haben,
+					genutzt werden.
 				</para>
 			</section>
 		</section>
 		<section id="infrastructure-and_hardware-requirements_school">
 			<title>Dezentrale Systeme</title>
 			<section id="infrastructure-and_hardware-requirements_school_server">
-				<title>&ucsUCS; Slave als Schulserver</title>
+				<title>Schulserver</title>
 				<para>
 					<emphasis>für Szenarien 3 und 4</emphasis>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen Szenario <emphasis>Grundschule</emphasis> (25 Computer, 25 Tablets):
+					Minimale Systemvoraussetzungen für
+					<emphasis>Grundschulen</emphasis> (25 Computer, 25 Tablets,
+					150 Benutzerkonten):
 					<itemizedlist>
-						<listitem><para>2 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
+						<listitem><para>2 CPU-Kerne</para></listitem>
 						<listitem><para>4 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
-						<listitem><para>Benutzerdaten nach Anforderung, zum Beispiel 2
-								TiB bei 200 Benutzern mit 1 GiB
-								Quota</para></listitem>
+						<listitem><para>bis zu 100 GB Speicherplatz für Benutzerdaten</para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
-					Minimale Systemvoraussetzungen Szenario <emphasis>Berufsschule</emphasis> (300 Computer, 200 Tablets):
+					Minimale Systemvoraussetzungen für
+					<emphasis>mittlere Schulen</emphasis> (100 Computer, 100
+					Tablets, 600 Benutzerkonten):
 					<itemizedlist>
-						<listitem><para>8 CPU-Kerne (ggf. <wordasword>vCPU</wordasword>)</para></listitem>
+						<listitem><para>4 CPU-Kerne</para></listitem>
+						<listitem><para>16 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
+						<listitem><para>ab 400 GB Speicherplatz für Benutzerdaten</para></listitem>
+					</itemizedlist>
+				</ppara>
+					Minimale Systemvoraussetzungen für
+					<emphasis>Berufsschulen</emphasis> (300 Computer, 200
+					Tablets, 1500 Benutzerkonten):
+					<itemizedlist>
+						<listitem><para>8 CPU-Kerne</para></listitem>
 						<listitem><para>32 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
-						<listitem><para>Benutzerdaten nach Anforderung, zum Beispiel 15
-								TiB bei 1500 Benutzern mit 1 GiB
-								Quota</para></listitem>
+						<listitem><para>ab 1.000 GB Speicherplatz für Benutzerdaten</para></listitem>
 					</itemizedlist>
-				</para>
-				<para>
-					Grundsätzlich müssen die Ressourcen abhängig von der Anzahl
-					der an der Schule vorhandenen Benutzer und Clients gewählt
-					werden.
 				</para>
 			</section>
 		</section>
 		<section id="infrastructure-and_hardware-requirements_infrastructure">
-			<title>Infrastruktur</title>
+			<title>Netzinfrastruktur</title>
 			<section id="infrastructure-and_hardware-requirements_infrastructure_network">
-				<title>Netzwerkinfrastruktur</title>
+				<title>Strukturierte Verkabelung</title>
 				<para>
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
 				</para>
 				<para>
-					Die Schulen müssen über eine strukturierte Netzwerk-Verkabelung verfügen. Außerdem sind professionelle Access Points (beispielsweise von Cisco, Aerohive oder ubiqui) wichtig. Diese müssen VLANs und mehrere SSIDs unterstützen.
+					Die Schulen sollten über eine strukturierte Verkabelung
+					im Schulgebäude verfügen.  Dies schließt ein, dass möglichst
+					nur managebare Switches und Netzkomponenten verwendet
+					werden.  Damit werden Fehler ausgeschlossen, die durch
+					fehlerhafte Verkabelung entstehen und es wird möglich die
+					Qualität der erbrachten Leistung bis auf Ebene des Netzes zu
+					messen.  Darüber hinaus können Sicherheitsmechanismen
+					implementiert werden, die bei zunehmender Verwendung der
+					IT-Infrastruktur immer wichtiger werden.
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_infrastructure_wifi">
+				<title>WLAN-Infrastruktur</title>
+				<para>
+					<emphasis>für Szenarien 2, 3 und 4</emphasis>
+				</para>
+				<para>
+					Für Einführung von WLAN in Schulen gehen wir heute davon aus,
+					dass die gesamte Schule mit WLAN ausgestattet werden soll
+					und alle Schüler mit mindestens einem mobilen Endgerät im
+					WLAN aktiv sein werden.  Auch wenn dies nicht sofort
+					realisiert werden kann, so ist unserem Verständnis nach dies
+					das Ziel.
+				</para>
+				<para>
+					Um dies Ziel zu erreichen, ist eine <xref
+						linkend="infrastructure-and_hardware-requirements_infrastructure_network">strukturierte
+						Verkabelung</xref> Grundvoraussetzung.  Darüber hinaus
+					werden professionelle Access Points benötigt, die mehr als
+					40 parallel eingebuchte mobile Geräte unterstützen, ohne
+					dass der Access Point aufgrund von Speichermangel abstürzt.
+					Mit professionellen Access Points lassen sich darüber hinaus
+					auch weitere Sicherheitsmechanismen, wie VLAN, realisieren.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_infrastructure_internet">
@@ -1270,78 +1313,86 @@ feedback@univention.de
 					Geschwindigkeit des Zugangs sollte mindestens 6 MBit/s
 					betragen.  Ausschlaggebend für die notwendige
 					Geschwindigkeit ist die Anzahl der gleichzeitig aktiven
-					Clients.  Als Richtwert kann von einem Bedarf von mindestens
+					Endgeräte.  Als Richtwert kann von einem Bedarf von mindestens
 					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
-					insbesondere bei der Einführung von BYOD zu beachten, da
-					Nutzer ggf. mehr als ein Gerät mitbringen, zum Beispiel Laptop,
-					Smartphone und Tablet.
+					insbesondere bei der Einführung von WLAN und Bring Your Own
+					Device (BYOD) zu beachten, da Lehrkäfte und Schüler ggf.
+					mehr als ein Gerät pro Person mitbringen werden.
 				</para>
 			</section>
-			<section id="infrastructure-and_hardware-requirements_infrastructure_bandbreiten">
-				<title>Bandbreiten</title>
-				<para>
-					<emphasis>für Szenario 4</emphasis>
-				</para>
-				<para>
-					Die nötigen Bandbreiten für schuleigene Geräte können je nach Anwendungsfall stark schwanken.
-					Die folgende Tabelle gibt einen groben Überblick über Richtwerte nach Schultyp.
-					Die Spanne liegt hier zwischen 1-3 MBit/s für schuleigene Geräte.
-				</para>
-				<para>
-					<table id="table_infrastructure-and_hardware-requirements_infrastructure_internet">
-						<title>Grobe Richtwerte für die Anbindung nach Schultyp</title>
-							<tgroup cols="4">
-								<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
-								<colspec colnum="2" colname="range" colwidth="1*"/>
-								<colspec colnum="3" colname="number_of_ips" colwidth="2*"/>
-								<colspec colnum="4" colname="usage" colwidth="1*"/>
-							<thead>
-								<row>
-									<entry>Schultyp</entry>
-									<entry>Typische Anzahl Clients</entry>
-									<entry>Typische Netzwerknutzung</entry>
-									<entry>Nötige Bandbreite</entry>
-								</row>
-							</thead>
-							<tbody>
-								<row>
-									<entry>Grundschulen</entry>
-									<entry>~20 Clients</entry>
-									<entry>Geringe Netzwerknutzung (~1 MBit/s)</entry>
-									<entry>20 MBit/s</entry>
-								</row>
-								<row>
-									<entry>Weiterführende Schulen</entry>
-									<entry>~90 Clients</entry>
-									<entry>Mittlere Netzwerknutzung (~2 MBit/s)</entry>
-									<entry>180 MBit/s</entry>
-								</row>
-								<row>
-									<entry>Berufsschulen</entry>
-									<entry>~300 Clients</entry>
-									<entry>Hohe Netzwerknutzung (>3 MBit/s)</entry>
-									<entry>1 GBit/s</entry>
-								</row>
-							</tbody>
-							</tgroup>
-					</table>
-				</para>
-			</section>
+			<!-- Jan Christoph, 2017-03-22: ich bin mir nicht sicher was genau mit dieser Sektion gemeint
+			ist: Internetzugang oder LAN .. insgesamt erscheint es mir für den Internetzugang zu viel -->
+			<!-- <section id="infrastructure-and_hardware-requirements_infrastructure_bandbreiten"> -->
+			<!-- 	<title>Bandbreite im lokalen Netz</title> -->
+			<!-- 	<para> -->
+			<!-- 		<emphasis>für Szenario 4</emphasis> -->
+			<!-- 	</para> -->
+			<!-- 	<para> -->
+			<!-- 		Die nötigen Bandbreiten im lokalen Schulnetz können je -->
+			<!-- 		nach Anwendungsfall stark schwanken.  Die folgende -->
+			<!-- 		Tabelle gibt einen groben Überblick über Richtwerte nach -->
+			<!-- 		Schultyp.  Die benötigte Bandbreite liegt zwischen 1-3 -->
+			<!-- 		MBit/s für schuleigene Geräte. -->
+			<!-- 	</para> -->
+			<!-- 	<para> -->
+			<!-- 		<table id="table_infrastructure-and_hardware-requirements_infrastructure_internet"> -->
+			<!-- 			<title>Grobe Richtwerte für die Anbindung nach Schultyp</title> -->
+			<!-- 			<tgroup cols="4"> -->
+			<!-- 				<colspec colnum="1" colname="cidr" colwidth="1.25*"/> -->
+			<!-- 				<colspec colnum="2" colname="range" colwidth="1*"/> -->
+			<!-- 				<colspec colnum="3" colname="number_of_ips" colwidth="2*"/> -->
+			<!-- 				<colspec colnum="4" colname="usage" colwidth="1*"/> -->
+			<!-- 				<thead> -->
+			<!-- 					<row> -->
+			<!-- 						<entry>Schultyp</entry> -->
+			<!-- 						<entry>Typische Anzahl Clients</entry> -->
+			<!-- 						<entry>Typische Netznutzung</entry> -->
+			<!-- 						<entry>Nötige Bandbreite</entry> -->
+			<!-- 					</row> -->
+			<!-- 				</thead> -->
+			<!-- 				<tbody> -->
+			<!-- 					<row> -->
+			<!-- 						<entry>Grundschulen</entry> -->
+			<!-- 						<entry>~20 Clients</entry> -->
+			<!-- 						<entry>Geringe Netznutzung (~1 MBit/s)</entry> -->
+			<!-- 						<entry>20 MBit/s</entry> -->
+			<!-- 					</row> -->
+			<!-- 					<row> -->
+			<!-- 						<entry>Weiterführende Schulen</entry> -->
+			<!-- 						<entry>~90 Clients</entry> -->
+			<!-- 						<entry>Mittlere Netznutzung (~2 MBit/s)</entry> -->
+			<!-- 						<entry>180 MBit/s</entry> -->
+			<!-- 					</row> -->
+			<!-- 					<row> -->
+			<!-- 						<entry>Berufsschulen</entry> -->
+			<!-- 						<entry>~300 Clients</entry> -->
+			<!-- 						<entry>Hohe Netznutzung (>3 MBit/s)</entry> -->
+			<!-- 						<entry>1 GBit/s</entry> -->
+			<!-- 					</row> -->
+			<!-- 				</tbody> -->
+			<!-- 			</tgroup> -->
+			<!-- 		</table> -->
+			<!-- 	</para> -->
+			<!-- </section> -->
 			<section id="infrastructure-and_hardware-requirements_infrastructure_vpn">
-				<title>VPN oder Standleitung</title>
+				<title>Verbindung zur Zentrale</title>
 				<para>
 					<emphasis>für Szenarien 2, 3 und 4</emphasis>
 				</para>
 				<para>
-					Die Schulen müssen über VPN-Technologien oder Standleitungen
-					an die zentralen Systeme im Rechenzentrum angebunden werden,
-					inkl. entsprechender Netzwerkgeräte bzgl. Routing / Firewall.
+					Die Schulen mit den müssen an die zentralen Systeme
+					angebunden werden, damit eine Steuerung der Netze, Endgeräte
+					und ggf. Server von zentraler Stelle möglich wird.
+					Um die Verbindung aufzubauen, können VPN-Technologien,
+					Standleitungen oder private Netze verwendet werden.
 				</para>
 				<para>
-					Die Bandbreite dieser Anbindung ist entscheidend. Szenario 4
-					ist zum Beispiel nur bei einer sehr guten Anbindung im Bereich von 1
-					GBit/s oder mehr sinnvoll. Bei VPN über handelsübliche
-					DSL-Verbindungen empfiehlt sich stattdessen das Szenario 3.
+					Die Bandbreite der verfügbaren Anbindung beeinflusst
+					entscheidend die möglichen Szenarien. Szenario 4 ist zum
+					Beispiel nur bei einer sehr guten Anbindung im Bereich von 1
+					GBit/s oder mehr sinnvoll möglich.  Bei VPN über
+					handelsübliche DSL-Leitungen empfiehlt sich stattdessen die
+					Umsetzung von Szenario 3.
 				</para>
 			</section>
 		</section>
@@ -1632,7 +1683,7 @@ feedback@univention.de
 						Richtlinien für den Edukativ-Bereich der Schulen. Bei der
 						Verwendung des Verwaltungsnetzes ist dies hinderlich. Die
 						notwendigen DHCP Richtlinien werden später durch den
-						Netzwerkimport korrekt angelegt
+						Netzimport korrekt angelegt
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -1846,20 +1897,20 @@ feedback@univention.de
 			</itemizedlist>
 		</section>
 		<section id="import_networks">
-			<title>Netzwerke</title>
+			<title>Netze</title>
 			<para>
 				<emphasis>für Szenarien 2, 3 und 4</emphasis>
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
 					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
-				beschrieben, eine CSV-Datei, die alle Schul-Netzwerke
+				beschrieben, eine CSV-Datei, die alle Schul-Netze
 				entsprechend des Netzkonzeptes enthält.
 			</para>
 			<para>
 				Vorlage für den Import in der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle <emphasis>Netzwerke</emphasis>.
+				Tabelle <emphasis>Netze</emphasis>.
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1870,7 +1921,7 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Importieren sie die Netzwerke über folgenden Befehl:
+						Importieren sie die Netze über folgenden Befehl:
 						<filename>/usr/share/ucs-school-import/scripts/import_networks /usr/local/ucsschool/import_data/networks.csv</filename>
 					</para>
 				</listitem>
@@ -1905,7 +1956,7 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Importieren sie die Netzwerke über folgenden Befehl:
+						Importieren sie die Netze über folgenden Befehl:
 						<filename>/usr/share/ucs-school-import/scripts/import_computer /usr/local/ucsschool/import_data/computers_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
@@ -1937,7 +1988,7 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Importieren sie die Netzwerke über folgenden Befehl:
+						Importieren sie die Netze über folgenden Befehl:
 						<filename>/usr/share/ucs-school-import/scripts/import_printer /usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</filename>
 					</para>
 				</listitem>
