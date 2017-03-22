@@ -1246,7 +1246,8 @@ feedback@univention.de
 						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
 						<listitem><para>ab 400 GB Speicherplatz für Benutzerdaten</para></listitem>
 					</itemizedlist>
-				</ppara>
+				</para>
+				<para>
 					Minimale Systemvoraussetzungen für
 					<emphasis>Berufsschulen</emphasis> (300 Computer, 200
 					Tablets, 1500 Benutzerkonten):
