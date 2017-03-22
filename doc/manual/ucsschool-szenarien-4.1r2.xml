@@ -199,9 +199,19 @@ feedback@univention.de
 			<para>
 				Servicestufen:
 				<orderedlist numeration="upperalpha">
-					<listitem><para>Software und Support: Univention liefert Software und Support, der Kunde kümmert sich selbst um Betrieb, Updates und Backup</para></listitem>
-					<listitem><para>Betrieb im Rechenzentrum des Kunden: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im Rechenzentrum des Kunden</para></listitem>
-					<listitem><para>&ucsUAS; <wordasword>as</wordasword> a Service: Univention liefert Software und Support und übernimmt Betrieb, Updates und Backup im eigenen Rechenzentrum.  Kunden können sofort starten, ohne Investitionen in Hardware oder Software zu tätigen</para></listitem>
+					<listitem><para>Software und Support: Univention liefert
+							Software und Support, der Kunde kümmert sich selbst
+							um Betrieb, Updates und Backup</para></listitem>
+					<listitem><para>Betrieb im Rechenzentrum des Kunden:
+							Univention liefert Software und Support und
+							übernimmt Betrieb, Updates und Backup im
+							Rechenzentrum des Kunden</para></listitem>
+					<listitem><para>&ucsUAS; <wordasword>as</wordasword> a
+							Service: Univention liefert Software und Support und
+							übernimmt Betrieb, Updates und Backup im eigenen
+							Rechenzentrum.  Kunden können sofort starten, ohne
+							Investitionen in Hardware oder Software zu
+							tätigen</para></listitem>
 				</orderedlist>
 			</para>
 			<figure id="fig-scenario-0">
@@ -610,50 +620,50 @@ feedback@univention.de
 							</thead>
 							<tbody>
 								<row>
-									<entry><code>10.1.1.0/24</code></entry>
+									<entry><code>10.2.1.0/24</code></entry>
 									<entry><code>-</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für Server und Netzwerkgeräte, statische IP-Adressen</entry>
 								</row>
 								<row>
-									<entry><code>10.1.2.0/24</code></entry>
-									<entry><code>10.1.2.10-10.1.2.250</code></entry>
+									<entry><code>10.2.2.0/24</code></entry>
+									<entry><code>10.2.2.10-10.2.2.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für Schulverwaltung, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.1.4.0/24</code></entry>
-									<entry><code>10.1.4.10-10.1.4.250</code></entry>
+									<entry><code>10.2.4.0/24</code></entry>
+									<entry><code>10.2.4.10-10.2.4.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 1, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.1.6.0/24</code></entry>
-									<entry><code>10.1.6.10-10.1.6.250</code></entry>
+									<entry><code>10.2.6.0/24</code></entry>
+									<entry><code>10.2.6.10-10.2.6.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 2, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.1.8.0/24</code></entry>
-									<entry><code>10.1.8.10-10.1.8.250</code></entry>
+									<entry><code>10.2.8.0/24</code></entry>
+									<entry><code>10.2.8.10-10.2.8.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 3, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.1.10.0/24</code></entry>
-									<entry><code>10.1.10.10-10.1.10.250</code></entry>
+									<entry><code>10.2.10.0/24</code></entry>
+									<entry><code>10.2.10.10-10.2.10.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 4, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.1.128.0/20</code></entry>
-									<entry><code>10.1.128.100-10.1.143.250</code></entry>
+									<entry><code>10.2.128.0/20</code></entry>
+									<entry><code>10.2.128.100-10.2.143.250</code></entry>
 									<entry><code>4094</code></entry>
 									<entry>Gäste WLAN / BYOD, erweiterbar auf /18 (16382 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.1.192.0/20</code></entry>
-									<entry><code>10.1.192.100-10.1.207.250</code></entry>
+									<entry><code>10.2.192.0/20</code></entry>
+									<entry><code>10.2.192.100-10.2.207.250</code></entry>
 									<entry><code>4094</code></entry>
 									<entry>Schuleigenes WLAN mit RADIUS-Authentifizierung, erweiterbar auf /18 (16382 IP-Adressen)</entry>
 								</row>
@@ -1049,10 +1059,10 @@ feedback@univention.de
 			<para>
 				Für den erfolgreichen Betrieb von &ucsUAS; ist es erforderlich,
 				dass ein Helpdesk aufgebaut wird, der Fragen aus den Schulen
-				direkt annehmen kann.  Abhängig von der gewünschten Servicestufe
-				kann es darüber hinaus notwendig sein ein Team von
-				technischen Mitarbeitern zu schulen, die den Betrieb der
-				Umgebung durchführen.
+				direkt annehmen kann.  Abhängig von der gewünschten <xref
+					linkend="scenario-0">Servicestufe</xref> kann es darüber
+				hinaus notwendig sein ein Team von technischen Mitarbeitern zu
+				schulen, die den Betrieb der Umgebung durchführen.
 			</para>
 			<para>
 				Neben passenden Werkzeugen zur Kommunikation und Fernwartung,
