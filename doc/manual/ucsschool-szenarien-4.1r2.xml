@@ -1008,11 +1008,11 @@ feedback@univention.de
 				Schulserver, sofern vorhanden:
 				<itemizedlist>
 					<listitem><para><filename>/var/univention-backup</filename>:
-							Nächtliche Sicherung der &ucsUCR;-Datenbank.
-							Die Sicherung der OpenLDAP- und Samba-Datenbanken
-							braucht normalerweise nicht gesichert zu werden, da
-							diese beim erneuten Domänenbeitritt des Schulservers
-							vom &ucsMaster; oder &ucsBackup; repliziert
+							Nächtliche Sicherung der &ucsUCR;.  Die Sicherung
+							der OpenLDAP- und Samba-Datenbanken braucht
+							normalerweise nicht gesichert zu werden, da diese
+							beim erneuten Domänenbeitritt des Schulservers vom
+							&ucsMaster; oder &ucsBackup; repliziert
 							werden</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
