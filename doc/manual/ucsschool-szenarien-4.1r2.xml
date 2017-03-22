@@ -1047,38 +1047,41 @@ feedback@univention.de
 				<emphasis>für alle Szenarien</emphasis>
 			</para>
 			<para>
-				Für den Betrieb der &ucsUAS;-Umgebung muss ein Team an
-				technischen Mitarbeitern aufgebaut werden, die auch im
-				Fehlerfall kontaktiert werden können. Dabei sollten bei diesem
-				Support-Team entsprechende Werkzeuge zur Kommunikation, zum Beispiel
-				ein Ticket-System (zum Beispiel <wordasword>KIX</wordasword> aus dem Univention App Center, das
-				sich direkt in die &ucsUCS; Benutzerverwaltung integriert) und zur
-				Fernwartung zum Einsatz kommen.
+				Für den erfolgreichen Betrieb von &ucsUAS; ist es erforderlich,
+				dass ein Helpdesk aufgebaut wird, der Fragen aus den Schulen
+				direkt annehmen kann.  Abhängig von der gewünschten Servicestufe
+				kann es darüber hinaus notwendig sein ein Team von
+				technischen Mitarbeitern zu schulen, die den Betrieb der
+				Umgebung durchführen.
 			</para>
 			<para>
-				Es müssen auch die Support- und Eskalationswege definiert und an
-				alle Beteiligten kommuniziert werden, zum Beispiel:
+				Neben passenden Werkzeugen zur Kommunikation und Fernwartung,
+				zum Beispiel ein Ticket-System wie <wordasword>KIX</wordasword>
+				aus dem Univention App Center, müssen auch die Support- und
+				Eskalationswege definiert und abgestimmt werden.  Im Folgenden
+				ein Beispiel für Eskalationswege:
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
 					<para>
-						IT-Verantwortliche an den Schulen kontaktieren das
-						Support-Team des Betreibers entweder über das Helpdesk-Modul
-						von &ucsUAS; oder direkt per E-Mail an das Ticketsystem.
-						Bei dringenden / kritischen Fällen sollte das telefonisch
-						erfolgen.
+						IT-Verantwortliche an den Schulen kontaktieren den
+						Helpdesk über das Helpdesk-Modul in &ucsUAS; oder direkt
+						per E-Mail an das Ticketsystem.  In dringenden Fällen
+						steht eine Hotline zur Verfügung, die telefonisch
+						erreicht werden kann
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Das Support-Team des Betreibers übernimmt den First-
-						und Second-Level-Support oder ein Univention Partner
-						übernimmt den Second-Level-Support.
+						Der Helpdesk übernimmt den First- und
+						Second-Level-Support, ggf. in Zusammenarbeit mit einem
+						lokalen Dienstleister
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Den Third-Level-Support übernimmt Univention selbst
+						In weitergehenden Fällen unterstützt Univention mit
+						Third-Level-Support
 					</para>
 				</listitem>
 			</itemizedlist>
