@@ -37,6 +37,10 @@ joinscript_init
 
 eval "$(ucr shell)"
 
+#
+# This join script is for single-server master and edu-slaves only!
+#
+
 # TODO: remove after UCS@school 4.2 and version 1 was executued
 keys=$(ucr --keys-only search --key 'ucs/web/overview/entries/service/teacherconsole/.*')
 if [ -n "$keys" ]; then
@@ -45,7 +49,8 @@ fi
 
 if [ "$server_role" = "domaincontroller_master" ]; then
 	# singleserver master
-	PORTAL="cn=domain,cn=portal,cn=univention,$ldap_base"
+	TARGET_PORTAL="cn=domain,cn=portal,cn=univention,$ldap_base"
+	UCS_PORTAL="cn=domain,cn=portal,cn=univention,$ldap_base"
 else
 	# edu dc slave
 	univention-directory-manager settings/portal create "$@" --ignore_exists \
@@ -60,19 +65,36 @@ else
 		--set showApps=TRUE \
 		--set showServers=TRUE || die
 
-	PORTAL="cn=school-edu,cn=portal,cn=univention,$ldap_base"
+	TARGET_PORTAL="cn=school-edu,cn=portal,cn=univention,$ldap_base"
+	UCS_PORTAL="cn=local,cn=portal,cn=univention,$ldap_base"
 fi
 
-univention-directory-manager "computers/$server_role" modify "$@" --dn="$ldap_hostdn" \
-	--set portal="cn=school-edu,cn=portal,cn=univention,$ldap_base" || die
+# change computer portal only if unchanged from original
+CURRENT_PORTAL=$(univention-ldapsearch -LLL -b "cn=computers,$ldap_base" "cn=$hostname" univentionComputerPortal | ldapsearch-wrapper | egrep -v ^dn: | cut -f 2 -d ' ')
+if [ "$CURRENT_PORTAL" = "$UCS_PORTAL" ]; then
+	# computer portal unchanged from original
+	univention-directory-manager "computers/$server_role" modify "$@" --dn="$ldap_hostdn" \
+		--set portal="cn=school-edu,cn=portal,cn=univention,$ldap_base" || die
+elif [ -n "$CURRENT_PORTAL" ]; then
+	# append to custom portal
+	TARGET_PORTAL="$CURRENT_PORTAL"
+fi
 
-univention-directory-manager settings/portal_entry create --ignore_exists "$@" \
+# If portal_entry exists: modify, else create, or if it exists and 'create' is
+# used, the "--append portal" will have no effect.
+if udm settings/portal_entry list "$@" --filter cn=teacherconsole | egrep -q ^DN; then
+	OPERATION="modify --dn=cn=teacherconsole,cn=portal,cn=univention,$ldap_base"
+else
+	OPERATION=create
+fi
+
+univention-directory-manager settings/portal_entry $OPERATION --ignore_exists "$@" \
 	--position "cn=portal,cn=univention,$ldap_base" \
 	--set name="teacherconsole" \
 	--append displayName="de_DE UCS@school" \
 	--append displayName="en_US UCS@school" \
 	--append displayName="fr_FR UCS@school" \
-	--set portal="$PORTAL" \
+	--append portal="$TARGET_PORTAL" \
 	--set icon="$(base64 /usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/50x50/ucsschool.png)" \
 	--set link="/univention/management/" \
 	--append description='de_DE "UCS@school Module in der Univention Management Console"' \

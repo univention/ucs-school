@@ -1,3 +1,10 @@
+ucs-school-metapackage (10.0.1-2) unstable; urgency=low
+
+  * Bug #43579: handle custom computer portal
+  * allow portal_entry to be appended to multiple portals
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 22 Mar 2017 15:34:46 +0100
+
 ucs-school-metapackage (10.0.1-1.1) unstable; urgency=low
 
   * Bug #43579: only create portal 'school-edu' on edu-slaves, use 'domain'
