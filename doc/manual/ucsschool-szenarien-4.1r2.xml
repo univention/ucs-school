@@ -980,9 +980,12 @@ feedback@univention.de
 				zur Verfügung gestellt werden.  Dreierlei Daten sind dabei zu
 				unterscheiden:
 				<itemizedlist>
-					<listitem><para>Konfigurationen und Einstellungen, die Administratoren vorgenommen haben</para></listitem>
-					<listitem><para>Steuerinformationen, zum Beispiel die Daten im Identitätsmanagement</para></listitem>
-					<listitem><para>Von Personen erzeugte Daten, zum Beispiel E-Mails</para></listitem>
+					<listitem><para>Konfigurationen und Einstellungen, die
+							Administratoren vorgenommen haben</para></listitem>
+					<listitem><para>Steuerinformationen, zum Beispiel die Daten
+							im Identitätsmanagement</para></listitem>
+					<listitem><para>Von Personen erzeugte Daten, zum Beispiel
+							E-Mails</para></listitem>
 				</itemizedlist>
 				Die Sicherung der Daten muss gewährleistet sein, um im
 				Fehlerfall die Funktionsfähigkeit wiederherzustellen. Als
@@ -999,9 +1002,10 @@ feedback@univention.de
 							&ucsUCR;-, OpenLDAP- und Samba-Datenbank sowie der
 							Inhalte der SYSVOL-Freigabe</para></listitem>
 					<listitem><para><filename>/etc/univention/ssl</filename> auf
-							dem &ucsMaster; und den &ucsBackup;-Servern: Beinhaltet das
-							Root-Zertifikat der internen Zertifizierungsstelle
-							und alle Rechner-Zertifikate</para></listitem>
+							dem &ucsMaster; und den &ucsBackup;-Servern:
+							Beinhaltet das Root-Zertifikat der internen
+							Zertifizierungsstelle und alle
+							Rechner-Zertifikate</para></listitem>
 				</itemizedlist>
 			</para>
 			<para>
@@ -1044,7 +1048,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Für den Betrieb der &ucsUAS;-Umgebung muss ein Team an
-				technischen Mitarbeiter aufgebaut werden, die auch im
+				technischen Mitarbeitern aufgebaut werden, die auch im
 				Fehlerfall kontaktiert werden können. Dabei sollten bei diesem
 				Support-Team entsprechende Werkzeuge zur Kommunikation, zum Beispiel
 				ein Ticket-System (zum Beispiel <wordasword>KIX</wordasword> aus dem Univention App Center, das
@@ -1129,7 +1133,7 @@ feedback@univention.de
 						<listitem><para>schreibende Zugriffe auf die
 								LDAP-Datenbanken, sobald Änderungen vorgenommen
 								werden. Insbesondere beim initialen Import und beim
-								Schuljahreswechsel wird entsprechende Last erzeugt.</para></listitem>
+								Schuljahreswechsel wird entsprechende Last erzeugt</para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
