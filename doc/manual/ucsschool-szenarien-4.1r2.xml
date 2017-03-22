@@ -438,7 +438,7 @@ feedback@univention.de
 		<section id="concepts_network">
 			<title>Netzkonzept</title>
 			<para>
-				<emphasis>für Szenario 2, 3 und 4</emphasis>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
 				In &ucsUAS; wird für jede Schule mindestens ein Subnetz
@@ -705,7 +705,7 @@ feedback@univention.de
 			<section id="concepts_names_domain">
 				<title>Name der Domäne</title>
 				<para>
-					<emphasis>für alle Szenarien</emphasis>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
 				<para>
 					Der Name der Domäne definiert mehrere zugehörige Namen:
@@ -831,7 +831,7 @@ feedback@univention.de
 			<section id="concepts_names_clients-and-servers">
 				<title>Clients und Schulserver</title>
 				<para>
-					<emphasis>für Szenario 3 und 4</emphasis>
+					<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
 					Rechner:
@@ -934,7 +934,7 @@ feedback@univention.de
 			<section id="concepts_names_misc">
 				<title>Allgemeine Konventionen</title>
 				<para>
-					<emphasis>für alle Szenarien</emphasis>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
 				<para>
 					Folgende Konventionen haben sich in allen Szenarien bewährt:
@@ -948,7 +948,7 @@ feedback@univention.de
 		<section id="concepts_monitoring">
 			<title>Monitoring</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				Die rechtzeitige Erkennung von Fehlern und möglichen Anzeichen
@@ -979,7 +979,7 @@ feedback@univention.de
 		<section id="concepts_backup">
 			<title>Datensicherung und Wiederherstellung</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				Eine zentral mit &ucsUAS; verwalteten Umgebung stellt
@@ -1059,8 +1059,8 @@ feedback@univention.de
 			<para>
 				Für den erfolgreichen Betrieb von &ucsUAS; ist es erforderlich,
 				dass ein Helpdesk aufgebaut wird, der Fragen aus den Schulen
-				direkt annehmen kann.  Abhängig von der gewünschten <xref
-					linkend="scenario-0">Servicestufe</xref> kann es darüber
+				direkt annehmen kann.  Abhängig von der gewünschten <link
+					linkend="scenario-0">Servicestufe</link> kann es darüber
 				hinaus notwendig sein ein Team von technischen Mitarbeitern zu
 				schulen, die den Betrieb der Umgebung durchführen.
 			</para>
@@ -1124,8 +1124,8 @@ feedback@univention.de
 			beschriebenen Szenarien.  Abhängig von der Größe der Umgebung und
 			Anzahl der aktiven Geräte und Personen können die Anforderungen
 			höher liegen.  Die tatsächliche Auslastung der einzelnen Systeme
-			sollte fortlaufend durch das <xref
-				linkend="concepts_monitoring">Monitoring</xref> überwacht
+			sollte fortlaufend durch das <link
+				linkend="concepts_monitoring">Monitoring</link> überwacht
 			werden, um Engpässe zu vermeiden.  Im Folgenden werden die Server,
 			ihre Funktionen und die jeweiligen Anforderungen beschrieben.
 		</para>
@@ -1177,7 +1177,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_servers_radius">
 				<title>RADIUS</title>
 				<para>
-					<emphasis>für Szenarien 2, 3 und 4</emphasis>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen:
@@ -1191,7 +1191,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_servers_monitoring">
 				<title>Monitoring</title>
 				<para>
-					<emphasis>für alle Szenarien</emphasis>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen:
@@ -1205,7 +1205,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_servers_slave">
 				<title>IT-Angebote, wie Groupware und Lernplattformen</title>
 				<para>
-					<emphasis>alle Szenarien</emphasis>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
 				<para>
 					Für weitere IT-Angebote können keine Minimalanforderungen
@@ -1223,7 +1223,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_school_server">
 				<title>Schulserver</title>
 				<para>
-					<emphasis>für Szenarien 3 und 4</emphasis>
+					<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen für
@@ -1265,7 +1265,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_infrastructure_network">
 				<title>Strukturierte Verkabelung</title>
 				<para>
-					<emphasis>für Szenarien 2, 3 und 4</emphasis>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
 					Die Schulen sollten über eine strukturierte Verkabelung
@@ -1282,7 +1282,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_infrastructure_wifi">
 				<title>WLAN-Infrastruktur</title>
 				<para>
-					<emphasis>für Szenarien 2, 3 und 4</emphasis>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
 					Für Einführung von WLAN in Schulen gehen wir heute davon aus,
@@ -1293,9 +1293,9 @@ feedback@univention.de
 					das Ziel.
 				</para>
 				<para>
-					Um dies Ziel zu erreichen, ist eine <xref
+					Um dies Ziel zu erreichen, ist eine <link
 						linkend="infrastructure-and_hardware-requirements_infrastructure_network">strukturierte
-						Verkabelung</xref> Grundvoraussetzung.  Darüber hinaus
+						Verkabelung</link> Grundvoraussetzung.  Darüber hinaus
 					werden professionelle Access Points benötigt, die mehr als
 					40 parallel eingebuchte mobile Geräte unterstützen, ohne
 					dass der Access Point aufgrund von Speichermangel abstürzt.
@@ -1306,7 +1306,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_infrastructure_internet">
 				<title>Internetzugang</title>
 				<para>
-					<emphasis>für Szenarien 2, 3 und 4</emphasis>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
 					Die Schulen sollten über zuverlässige Internetzugänge
@@ -1378,7 +1378,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_infrastructure_vpn">
 				<title>Verbindung zur Zentrale</title>
 				<para>
-					<emphasis>für Szenarien 2, 3 und 4</emphasis>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
 					Die Schulen mit den müssen an die zentralen Systeme
@@ -1439,7 +1439,9 @@ feedback@univention.de
 		<section id="installation_master">
 			<title>Installation &ucsMaster;</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
 				<itemizedlist>
 					<listitem><para>vergeben einer IP-Adresskonfiguration
 							entsprechend des Netzkonzepts</para></listitem>
@@ -1450,7 +1452,8 @@ feedback@univention.de
 							&ucsUCS;-Domäne&quot;</para></listitem>
 					<listitem><para>Die automatisch vorgeschlagenen LDAP-Basis
 							sollte nicht geändert werden </para></listitem>
-					<listitem><para><emphasis>für Szenarien 3 und 4</emphasis>:
+					<listitem><para>
+							<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>:
 							Wählen sie &quot;Active Directory kompatibler
 							Domänen-Controller&quot; als zu installierende
 							Software-Komponente. Das ist notwendig, wenn sie
@@ -1475,7 +1478,9 @@ feedback@univention.de
 		<section id="installation_backup">
 			<title>Installation &ucsBackup;</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
 				Zur Lastverteilung bei der LDAP-Replikation können neben dem 1.
 				&ucsBackup; Server zusätzlich noch weitere Server aufgesetzt werden.
 				<itemizedlist>
@@ -1511,7 +1516,9 @@ feedback@univention.de
 			<title>Installation &ucsUCS; Slave für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
 				<itemizedlist>
 				<listitem><para>Verwenden sie nach Möglichkeit für jeden Dienst
 						einen eigene &ucsUCS; Slave Server</para></listitem>
@@ -1544,7 +1551,9 @@ feedback@univention.de
 		<section id="installation_member">
 			<title>Installation &ucsMember; für Monitoring</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
 				<itemizedlist>
 					<listitem><para>vergeben einer IP-Adresskonfiguration
 							entsprechend des Netzkonzepts</para></listitem>
@@ -1588,7 +1597,7 @@ feedback@univention.de
 	<chapter id="base-configuration">
 		<title>Basiskonfiguration</title>
 		<para>
-			<emphasis>für alle Szenarien</emphasis>
+			<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 		</para>
 		<para>
 			Folgende Konfiguration müssen
@@ -1805,7 +1814,7 @@ feedback@univention.de
 		<section id="import_schools">
 			<title>Schulen</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				Im ersten Schritt müssen die Schulen importiert werden. Dabei
@@ -1900,7 +1909,7 @@ feedback@univention.de
 		<section id="import_networks">
 			<title>Netze</title>
 			<para>
-				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
@@ -1935,7 +1944,7 @@ feedback@univention.de
 		<section id="import_clients">
 			<title>Clients</title>
 			<para>
-				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
@@ -1966,7 +1975,7 @@ feedback@univention.de
 		<section id="import_printers">
 			<title>Drucker-Freigaben</title>
 			<para>
-				<emphasis>für Szenarien 3 und 4</emphasis>
+				<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
 				Erstellen sie, wie im <ulink
@@ -1998,7 +2007,7 @@ feedback@univention.de
 		<section id="import_users-classes">
 			<title>Benutzer / Klassen</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				Vorlage für den Import in der Datei
@@ -2084,7 +2093,7 @@ feedback@univention.de
 		<section id="additional-services_proxy">
 			<title>Internetzugang für Clients / BYOD</title>
 			<para>
-				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
 				TODO
@@ -2093,7 +2102,7 @@ feedback@univention.de
 		<section id="additional-services_radius">
 			<title>WLAN / RADIUS</title>
 			<para>
-				<emphasis>für Szenarien 2, 3 und 4</emphasis>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
 				TODO
