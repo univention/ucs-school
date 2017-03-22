@@ -1,3 +1,10 @@
+ucs-school-metapackage (10.0.1-3) unstable; urgency=low
+
+  * Bug #43579: don't append to custom portal
+  * don't change portal on single-master
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 22 Mar 2017 16:02:43 +0100
+
 ucs-school-metapackage (10.0.1-2) unstable; urgency=low
 
   * Bug #43579: handle custom computer portal

@@ -67,17 +67,14 @@ else
 
 	TARGET_PORTAL="cn=school-edu,cn=portal,cn=univention,$ldap_base"
 	UCS_PORTAL="cn=local,cn=portal,cn=univention,$ldap_base"
-fi
 
-# change computer portal only if unchanged from original
-CURRENT_PORTAL=$(univention-ldapsearch -LLL -b "cn=computers,$ldap_base" "cn=$hostname" univentionComputerPortal | ldapsearch-wrapper | egrep -v ^dn: | cut -f 2 -d ' ')
-if [ "$CURRENT_PORTAL" = "$UCS_PORTAL" ]; then
-	# computer portal unchanged from original
-	univention-directory-manager "computers/$server_role" modify "$@" --dn="$ldap_hostdn" \
-		--set portal="cn=school-edu,cn=portal,cn=univention,$ldap_base" || die
-elif [ -n "$CURRENT_PORTAL" ]; then
-	# append to custom portal
-	TARGET_PORTAL="$CURRENT_PORTAL"
+	# change computer portal only if unchanged from original
+	CURRENT_PORTAL=$(univention-ldapsearch -LLL -b "$ldap_hostdn" univentionComputerPortal | ldapsearch-wrapper | egrep -v ^dn: | cut -f 2 -d ' ')
+	if [ "$CURRENT_PORTAL" = "$UCS_PORTAL" ]; then
+		# computer portal unchanged from original
+		univention-directory-manager "computers/$server_role" modify "$@" --dn="$ldap_hostdn" \
+			--set portal="cn=school-edu,cn=portal,cn=univention,$ldap_base" || die
+	fi
 fi
 
 # If portal_entry exists: modify, else create, or if it exists and 'create' is
