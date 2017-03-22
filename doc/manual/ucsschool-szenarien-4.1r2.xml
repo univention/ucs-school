@@ -967,23 +967,37 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="concepts_backup">
-			<title>Datensicherung</title>
+			<title>Datensicherung und Wiederherstellung</title>
 			<para>
 				<emphasis>für alle Szenarien</emphasis>
 			</para>
 			<para>
-				Die Sicherung der Daten muss gewährleistet sein. Als
-				Minimalumfang muss eine Datei-basierte Sicherung bspw. auf Basis
-				von <command>rsync</command> erfolgen. Folgende Daten sind mindestens zu sichern:
+				Eine zentral mit &ucsUAS; verwalteten Umgebung stellt
+				üblicherweise Dienste für tausende Personen zur Verfügung.  Mit
+				der zunehmenden Anforderung nach orts- und zeitunabhängiger
+				Verfügbarkeit muss sichergestellt werden, dass nicht nur die
+				Dienste, sondern auch die Daten den Anforderungen entsprechend
+				zur Verfügung gestellt werden.  Dreierlei Daten sind dabei zu
+				unterscheiden:
+				<itemizedlist>
+					<listitem><para>Konfigurationen und Einstellungen, die Administratoren vorgenommen haben</para></listitem>
+					<listitem><para>Steuerinformationen, zum Beispiel die Daten im Identitätsmanagement</para></listitem>
+					<listitem><para>Von Personen erzeugte Daten, zum Beispiel E-Mails</para></listitem>
+				</itemizedlist>
+				Die Sicherung der Daten muss gewährleistet sein, um im
+				Fehlerfall die Funktionsfähigkeit wiederherzustellen. Als
+				Minimalumfang muss eine Datei-basierte Sicherung, zum Beispiel
+				auf Basis mit Hilfe des Befehls <command>rsync</command>
+				erfolgen. Folgende Daten sollten in der Sicherung berücksichtigt
+				werden:
 			</para>
 			<para>
-				Auf den zentralen Servern:
+				Zentrale Server:
 				<itemizedlist>
-					<listitem><para><filename>/var/univention-backup/</filename>:
-							Umfasst nächtlich angelegte Ausgaben der
-							&ucsUCR;-Variablen, der OpenLDAP- und der
-							Samba-Datenbank sowie die SYSVOL-Freigabe, sofern
-							vorhanden</para></listitem>
+					<listitem><para><filename>/var/univention-backup</filename>:
+							Nächtliche Sicherung der
+							&ucsUCR;-, OpenLDAP- und Samba-Datenbank sowie der
+							Inhalte der SYSVOL-Freigabe</para></listitem>
 					<listitem><para><filename>/etc/univention/ssl</filename> auf
 							dem &ucsMaster; und den &ucsBackup;-Servern: Beinhaltet das
 							Root-Zertifikat der internen Zertifizierungsstelle
@@ -991,32 +1005,33 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 			<para>
-				Sofern vorhanden, auf den Schulservern:
+				Schulserver, sofern vorhanden:
 				<itemizedlist>
-					<listitem><para><filename>/var/univention-backup/</filename>:
-							Insbesondere die Sicherung der &ucsUCR;-Variablen.
+					<listitem><para><filename>/var/univention-backup</filename>:
+							Nächtliche Sicherung der &ucsUCR;-Datenbank.
 							Die Sicherung der OpenLDAP- und Samba-Datenbanken
-							ist weniger relevant, da dies bspw. bei einer
-							Neuinstallation des Schulservers vom &ucsMaster;
-							oder &ucsBackup; erneut repliziert
-							wird.</para></listitem>
+							braucht normalerweise nicht gesichert zu werden, da
+							diese beim erneuten Domänenbeitritt des Schulservers
+							vom &ucsMaster; oder &ucsBackup; repliziert
+							werden</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
-							Benutzer. Außerdem die Daten der
-							Klassenfreigaben - ggf. weitere, manuell angelegte
-							Freigaben</para></listitem>
+							Benutzer, sowie die Freigaben der Klassen und
+							Arbeitsgruppen</para></listitem>
 				</itemizedlist>
 			</para>
 			<para>
-				Folgende Punkte haben sich als bewährtes Vorgehen
+				Folgende Punkte haben sich als allgemein bewährtes Vorgehen
 				herauskristallisiert:
 				<itemizedlist>
-					<listitem><para>Die Sicherung sollte auf ein vom &ucsUCS;-System
-							physikalisch getrenntes Gerät erfolgen, bspw. ein
-							Network Attached Storage (NAS)</para></listitem>
-					<listitem><para>Die Sicherung sollte überwacht werden, bspw.
-							durch ein <wordasword>Monitoring-Plugin</wordasword>, dass bei Misserfolg
-							warnt</para></listitem>
+					<listitem><para>Die Datensicherung sollte auf ein vom
+							&ucsUCS;-System physikalisch getrenntes Gerät
+							erfolgen, zum Beispiel ein Network Attached Storage
+							(NAS)</para></listitem>
+					<listitem><para>Die Datensicherung sollte überwacht werden,
+							zum Beispiel durch ein
+							<wordasword>Monitoring-Plugin</wordasword>, dass bei
+							Misserfolg warnt</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
