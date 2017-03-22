@@ -944,8 +944,7 @@ feedback@univention.de
 				ist ein elementarer Bestandteil des professionellen IT-Betriebs.
 				&ucsUCS; hat deshalb die Monitoring-Software Nagios fest
 				integriert und für viele relevante Parameter vorkonfiguriert.
-				Nagios selbst dient zum Monitoring des aktuellen Zustands und
-				ist für den täglichen IT-Betrieb unabdingbar.
+				Nagios selbst dient zum Monitoring des aktuellen Zustands.
 			</para>
 			<para>
 				Das Monitoring erfolgt für &ucsUAS; immer aus der Zentrale
@@ -954,14 +953,16 @@ feedback@univention.de
 					linkend="installation_member" />.
 			</para>
 			<para>
-				Nagios selbst liefert kaum Informationen darüber in welche
-				Richtung sich eine IT-Umgebung entwickelt, da keine
-				Langzeitinformationen gespeichert werden, z.B. die Entwicklung
-				der Festplattenbelegung.  Diese sind jedoch für den Betrieb
-				einer umfangreichen IT-Infrastruktur erforderlich.  Eine Lösung,
-				deren Konfiguration für &ucsUCS; dokumentiert ist, ist z.B. <ulink
-					url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Munin</ulink>,
-				welches bei Bedarf eingerichtet werden kann.
+				Nagios selbst ist nicht darauf ausgelegt Informationen darüber
+				zu liefern in welche Richtung sich eine Umgebung entwickelt,
+				da keine Langzeitinformationen gespeichert werden.  Ein Beispiel
+				ist Entwicklung der Belegung des Festplattenplatzes.  Solche
+				Informationen sind für den Betrieb einer umfangreichen
+				IT-Infrastruktur erforderlich.  Um diese Informationen zu
+				erfassen, kann zum Beispiel Munin verwendet werden, dessen
+				<ulink
+					url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Einrichtung</ulink>
+				für &ucsUCS; dokumentiert ist.
 			</para>
 		</section>
 		<section id="concepts_backup">
