@@ -1032,6 +1032,8 @@ feedback@univention.de
 							zum Beispiel durch ein
 							<wordasword>Monitoring-Plugin</wordasword>, dass bei
 							Misserfolg warnt</para></listitem>
+					<listitem><para>Die Wiederherstellung sollte in regelmäßigen
+							Abständen getestet werden</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
