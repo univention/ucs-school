@@ -808,7 +808,7 @@ feedback@univention.de
 						<listitem><para>Beispiele:
 								<itemizedlist>
 									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucsma-01</systemitem></para></listitem>
-									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucsba-02</systemitem>, <systemitem class="systemname">ucsba03</systemitem></para></listitem>
+									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucsba-02</systemitem>, <systemitem class="systemname">ucsba-03</systemitem></para></listitem>
 									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucssl-04</systemitem></para></listitem>
 									<listitem><para>&ucsMember;: <systemitem class="systemname">ucsme-05</systemitem></para></listitem>
 								</itemizedlist>
@@ -830,9 +830,9 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Netzwerkgeräte, wie Router, Switches, <wordasword>USVs,</wordasword> Drucker:
+					Netzwerkgeräte, wie Router, Switches, USV, Drucker:
 					<itemizedlist>
-						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Typ][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Gerätetyp][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
@@ -909,7 +909,7 @@ feedback@univention.de
 					Importmechanismus hinterlegt werden, siehe <ulink
 						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
 						zur
-						<wordasword>CLI-Import-Schnittstelle</wordasword></ulink>
+						<wordasword>CLI-Import-Schnittstelle</wordasword></ulink>.
 				</para>
 				<para>
 					Klassen sollten mit der Kurzbezeichnung der Schule als
