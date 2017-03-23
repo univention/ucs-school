@@ -33,7 +33,7 @@
 import sys
 from distutils.version import LooseVersion
 from univention.appcenter.actions import get_action
-from univention.appcenter.app import AppManager
+from univention.appcenter.app_cache import Apps
 from univention.appcenter.ucr import ucr_get, ucr_is_true
 
 
@@ -43,7 +43,7 @@ if len(sys.argv) < 2 or sys.argv[-1] == '-v':
 app_name = sys.argv[-1]
 
 hostname_master = ucr_get('ldap/master').split('.')[0]
-app = AppManager.find(app_name)
+app = Apps().find(app_name)
 if app is None:
 	print('Unknown app "{}".'.format(app_name))
 	sys.exit(2)
