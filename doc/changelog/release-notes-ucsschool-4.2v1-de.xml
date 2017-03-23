@@ -130,6 +130,19 @@ feedback@univention.de
 			</para>
 		  </listitem>
 		</itemizedlist>
+		<section id="relnote:post:netlogon">
+			<title>Änderungen in den Netlogon-Skripten</title>
+			<para>
+				Mit der Installation von UCS@school 4.2 wurden den Verknüpfungen auf den Windows-Desktops, die über die Netlogon-Skripte erstellt werden,
+				neue Icons zugewiesen. Ohne weitere Eingriffe werden die neuen Icons automatisch nur bei Benutzern aktiviert, deren Netlogonskript z.B. durch
+				eine Änderung der Gruppenmitgliedschaften neu erstellt wird. Alle anderen Benutzer nutzen weiterhin die alten Icons. Um die neuen Icons für
+				alle Benutzer zu aktivieren, kann nach dem Update auf dem Master (Single-Server-Umgebung) bzw. den edukativen Schulservern
+				(Multi-Server-Umgebung) der folgende Befehl ausgeführt werden, um alle Netlogon-Skripte neu zu generieren:
+			</para>
+			<para>
+				<cmdline>univention-directory-listener-ctrl resync ucs-school-user-logonscript</cmdline>
+			</para>
+		</section>
 	</chapter>
 
 	<chapter id="relnotes:umc">
