@@ -41,6 +41,8 @@ feedback@univention.de
 		<title>Release-Highlights</title>
 		<para>
 			PLEASE FILL IN SOME HIGHLIGHTS HERE
+			- Icons für Desktopverknüpfungen
+			- 
 		</para>
 	</chapter>
 
@@ -64,7 +66,7 @@ feedback@univention.de
 			<title>Unterstützung von Samba 3 abgekündigt</title>
 			<para>
 				Beginnend mit Version 4.2 wird von UCS@school nur noch die Samba-Version 4 unterstützt. UCS@school-Domänen, die noch Samba 3 einsetzen, müssen diese spätestens nach dem Update auf UCS 4.2-0 auf Samba 4 migrieren.
-				Eine Anleitung für die Migration findet sich <emphasis>HIER DIE URL EINTRAGEN</emphasis>.
+				Eine Anleitung für die Migration findet sich <url>HIER DIE URL EINTRAGEN</url>.
 			</para>
 		</section>
 		<section id="relnote:prepare:LDAP">
