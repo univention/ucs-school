@@ -905,14 +905,16 @@ feedback@univention.de
 					Schüler:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="username">[Vorname][1. Buchstabe Nachname][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiel: Mary <wordasword>Somerville</wordasword> → <systemitem class="username">marys01</systemitem></para></listitem>
+						<listitem><para>Beispiel: Mary <wordasword>Somerville</wordasword> → <systemitem class="username">marys</systemitem></para></listitem>
+						<listitem><para>Beispiel Namenskonflikt: Mary Sander → <systemitem class="username">marys2</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Lehrkräfte und Mitarbeiter:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="username">[1. Buchstabe Vorname][Nachname][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiel: <wordasword>Mareike Müller</wordasword> → <systemitem class="username">mmueller01</systemitem></para></listitem>
+						<listitem><para>Beispiel: <wordasword>Mareike Müller</wordasword> → <systemitem class="username">mmueller</systemitem></para></listitem>
+						<listitem><para>Beispiel Namenskonflikt: <wordasword>Martina Müller</wordasword> → <systemitem class="username">mmueller2</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
