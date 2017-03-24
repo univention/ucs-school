@@ -64,7 +64,8 @@ def main():
 
 			acl.assert_computers(computers_dns[0], 'write')
 
-			acl.assert_dhcp(computers_hostnames[0], 'write')
+			acl.assert_dhcp(computers_hostnames[0], 'read')
+			acl.assert_dhcp(computers_hostnames[0], 'write', modify_only_attrs=True)
 
 			acl.assert_member_server('write')
 

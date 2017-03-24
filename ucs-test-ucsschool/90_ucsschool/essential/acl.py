@@ -451,16 +451,25 @@ class Acl(object):
 		]
 		self.assert_acl(user_dn, access, attrs)
 
-	def assert_dhcp(self, client, access):
+	def assert_dhcp(self, client, access, modify_only_attrs=False):
+		"""
+		Check access to DHCP host objects.
+		By default, all attributes are checked. If modify_only_attrs is True,
+		only attributes that are required to modify the DHCP host object are
+		checked.
+		"""
 		client_dhcp_dn = 'cn=%s,cn=%s,cn=dhcp,%s' % (client, self.school, utu.UCSTestSchool().get_ou_base_dn(self.school))
 		attrs = [
 			'entry',
 			'children',
-			'objectClass',
-			'univentionObjectType',
 			'dhcpOption',
-			'cn',
 		]
+		if not modify_only_attrs:
+			attrs += [
+				'objectClass',
+				'univentionObjectType',
+				'cn',
+			]
 		self.assert_acl(client_dhcp_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(client_dhcp_dn)
 		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
