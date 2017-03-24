@@ -1,6 +1,0 @@
-#!/bin/sh
-#DEBHELPER#
-
-/usr/share/ucs-school-l10n-fr/ucs-school-ucr-l10n fr
-
-exit 0
