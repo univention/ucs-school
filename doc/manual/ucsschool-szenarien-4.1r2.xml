@@ -191,10 +191,9 @@ feedback@univention.de
 				unterschiedlichen Servicestufen an.  Kunden entscheiden beim
 				Kauf von &ucsUAS; welche Servicestufe in der aktuellen Situation
 				am passendsten ist.  Ein Wechsel zwischen den Servicestufen ist
-				jederzeit möglich.  Voraussetzung in allen Servicestufen ist
-				das Vorhandensein eines User <wordasword>Helpdesks</wordasword>,
-				der die <wordasword>Supportanfragen</wordasword> aus den Schulen
-				bearbeitet.
+				jederzeit möglich.  Voraussetzung in allen Servicestufen ist das
+				Vorhandensein eines User Helpdesks, der die Supportanfragen aus
+				den Schulen bearbeitet.
 			</para>
 			<para>
 				Servicestufen:
@@ -206,12 +205,11 @@ feedback@univention.de
 							Univention liefert Software und Support und
 							übernimmt Betrieb, Updates und Backup im
 							Rechenzentrum des Kunden</para></listitem>
-					<listitem><para>&ucsUAS; <wordasword>as</wordasword> a
-							Service: Univention liefert Software und Support und
-							übernimmt Betrieb, Updates und Backup im eigenen
-							Rechenzentrum.  Kunden können sofort starten, ohne
-							Investitionen in Hardware oder Software zu
-							tätigen</para></listitem>
+					<listitem><para>&ucsUAS; as a Service: Univention liefert
+							Software und Support und übernimmt Betrieb, Updates
+							und Backup im eigenen Rechenzentrum.  Kunden können
+							sofort starten, ohne Investitionen in Hardware oder
+							Software zu tätigen</para></listitem>
 				</orderedlist>
 			</para>
 			<figure id="fig-scenario-0">
@@ -246,7 +244,7 @@ feedback@univention.de
 					<listitem><para>Bereitstellung orts- und zeitunabhängiger IT-Angebote für Lehrkräfte und Schüler</para></listitem>
 					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
 					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
-					<listitem><para>Senkung des <wordasword>Helpdesk</wordasword>-Aufkommens durch Self-Service für vergessene Passwörter</para></listitem>
+					<listitem><para>Senkung des Helpdesk-Aufkommens durch Self-Service für vergessene Passwörter</para></listitem>
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-1">
@@ -781,9 +779,8 @@ feedback@univention.de
 											gewählt werden. Die Endung ist
 											offiziell für mDNS (Multicast DNS)
 											vorgesehen und führt bei Verwendung
-											zu Problemen mit
-											<wordasword>MacOS</wordasword>,
-											Windows und Linux-Betriebssystemen.
+											zu Problemen mit MacOS, Windows und
+											Linux-Betriebssystemen.
 										</para>
 									</listitem>
 								</itemizedlist>
@@ -802,7 +799,8 @@ feedback@univention.de
 						class="domainname">SCHULTRÄGER\benutzername</systemitem>
 					verwendet.  Um dies zu erreichen, ist auf dem
 					&ucsUAS;-Server vor der Installation von &ucsUAS; der
-					gewünschte <wordasword>NetBIOS-Domänenname</wordasword> in
+					gewünschte <systemitem
+						class="domainname">NetBIOS-Domänenname</systemitem> in
 					der &ucsUCR;-Variablen <envar>windows/domain</envar> zu
 					setzen.
 				</para>
@@ -889,23 +887,23 @@ feedback@univention.de
 					angeschlossenen Subsysteme ggf. den Benutzernamen zur
 					Zuordnung von Daten zu Personen verwenden.  Beispiele für
 					Subsysteme sind E-Maildienste, Dateifreigaben und
-					<wordasword>-tauschsysteme</wordasword> und Lernplattformen.
-					Der E-Maildienst könnte zum Beispiel das E-Mailpostfach
-					einer Lehrkraft dem Benutzernamen zuordnen.  Ändert sich
-					dieser, so müsste das E-Mailpostfach ggf. manuell mit großem
-					Aufwand umbenannt werden.  Dies Problem kann umgangen
-					werden, wenn frühzeitig, vor der Einführung eines neuen
-					Subsystems darauf geachtet wird, dass die Zuordnung von
-					Daten zu Personen über ein unveränderliches Merkmal
-					geschieht, zum Beispiel die Personalnummer.  Gleichzeitig
-					muss sichergestellt werden, dass die Anmeldung am Subsystem
-					jedoch über den einfach zu merkenden Benutzernamen erfolgt.
+					-tauschsysteme und Lernplattformen.  Der E-Maildienst könnte
+					zum Beispiel das E-Mailpostfach einer Lehrkraft dem
+					Benutzernamen zuordnen.  Ändert sich dieser, so müsste das
+					E-Mailpostfach ggf. manuell mit großem Aufwand umbenannt
+					werden.  Dies Problem kann umgangen werden, wenn frühzeitig,
+					vor der Einführung eines neuen Subsystems darauf geachtet
+					wird, dass die Zuordnung von Daten zu Personen über ein
+					unveränderliches Merkmal geschieht, zum Beispiel die
+					Personalnummer.  Gleichzeitig muss sichergestellt werden,
+					dass die Anmeldung am Subsystem jedoch über den einfach zu
+					merkenden Benutzernamen erfolgt.
 				</para>
 				<para>
 					Schüler:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="username">[Vorname][1. Buchstabe Nachname][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiel: Mary <wordasword>Somerville</wordasword> → <systemitem class="username">marys</systemitem></para></listitem>
+						<listitem><para>Beispiel: Mary Selig → <systemitem class="username">marys</systemitem></para></listitem>
 						<listitem><para>Beispiel Namenskonflikt: Mary Sander → <systemitem class="username">marys2</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
@@ -921,8 +919,7 @@ feedback@univention.de
 					Für Benutzerkonten kann das gewünschte Schema im
 					Importmechanismus hinterlegt werden, siehe <ulink
 						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
-						zur
-						<wordasword>CLI-Import-Schnittstelle</wordasword></ulink>.
+						zur CLI-Import-Schnittstelle</ulink>.
 				</para>
 				<para>
 					Klassen sollten mit der Kurzbezeichnung der Schule als
@@ -1045,8 +1042,7 @@ feedback@univention.de
 							erfolgen, zum Beispiel ein Network Attached Storage
 							(NAS)</para></listitem>
 					<listitem><para>Die Datensicherung sollte überwacht werden,
-							zum Beispiel durch ein
-							<wordasword>Monitoring-Plugin</wordasword>, dass bei
+							zum Beispiel durch ein Monitoring-Plugin, dass bei
 							Misserfolg warnt</para></listitem>
 					<listitem><para>Die Wiederherstellung sollte in regelmäßigen
 							Abständen getestet werden</para></listitem>
@@ -1068,10 +1064,11 @@ feedback@univention.de
 			</para>
 			<para>
 				Neben passenden Werkzeugen zur Kommunikation und Fernwartung,
-				zum Beispiel ein Ticket-System wie <wordasword>KIX</wordasword>
-				aus dem Univention App Center, müssen auch die Support- und
-				Eskalationswege definiert und abgestimmt werden.  Im Folgenden
-				ein Beispiel für Eskalationswege:
+				zum Beispiel ein Ticket-System wie
+				<application>KIX</application> aus dem Univention App Center,
+				müssen auch die Support- und Eskalationswege definiert und
+				abgestimmt werden.  Im Folgenden ein Beispiel für
+				Eskalationswege:
 			</para>
 			<itemizedlist spacing="compact">
 				<listitem>
@@ -1139,7 +1136,7 @@ feedback@univention.de
 					<emphasis>alle Szenarien</emphasis>
 				</para>
 				<para>Systeme vom Typ &ucsMaster; und &ucsBackup; stellen das
-					Identitätsmanagement mit der zugrundeliegenden
+					Identitätsmanagement mit der zugrunde liegenden
 					LDAP-Datenbank zur Verfügung.</para>
 				<para>
 					Minimale Systemvoraussetzungen:
@@ -1272,13 +1269,14 @@ feedback@univention.de
 				<para>
 					Die Schulen sollten über eine strukturierte Verkabelung
 					im Schulgebäude verfügen.  Dies schließt ein, dass möglichst
-					nur managebare Switches und Netzkomponenten verwendet
-					werden.  Damit werden Fehler ausgeschlossen, die durch
-					fehlerhafte Verkabelung entstehen und es wird möglich die
-					Qualität der erbrachten Leistung bis auf Ebene des Netzes zu
-					messen.  Darüber hinaus können Sicherheitsmechanismen
-					implementiert werden, die bei zunehmender Verwendung der
-					IT-Infrastruktur immer wichtiger werden.
+					nur Switches und Netzkomponenten mit Management-Funktion
+					verwendet werden.  Damit werden Fehler ausgeschlossen, die
+					durch fehlerhafte Verkabelung entstehen und es wird möglich
+					die Qualität der erbrachten Leistung bis auf Ebene des
+					Netzes zu messen.  Darüber hinaus können
+					Sicherheitsmechanismen implementiert werden, die bei
+					zunehmender Verwendung der IT-Infrastruktur immer wichtiger
+					werden.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_infrastructure_wifi">
@@ -1660,16 +1658,16 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 → erlaubt den Zugriff
-						des <wordasword>Monitoring-Servers</wordasword> auf den <wordasword>NRPE-Dienst</wordasword> der übrigen
-						Systeme
+						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 →
+						erlaubt den Zugriff des Monitoring-Servers auf den
+						NRPE-Dienst der übrigen Systeme
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						<envar>munin/node/allowedhosts</envar>: 10.0.0.20/32 → erlaubt den Zugriff
-						des <wordasword>Monitoring-Servers</wordasword> auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen
-						Systeme (Achtung <wordasword>CIDR-Schreibweise</wordasword>!)
+						des Monitoring-Servers auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen
+						Systeme (Achtung CIDR-Schreibweise!)
 					</para>
 				</listitem>
 				<listitem>
@@ -1729,14 +1727,14 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						<envar>timeserver</envar>: |<wordasword>FQDN-externer-Zeitserver-1</wordasword>| → zum Beispiel
+						<envar>timeserver</envar>: |<systemitem class="fqdomainname">FQDN-externer-Zeitserver-1</systemitem>| → zum Beispiel
 						<systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder
 						<systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						<envar>timeserver2</envar>: |<wordasword>FQDN-externer-Zeitserver-2</wordasword>| → zum Beispiel
+						<envar>timeserver2</envar>: |<systemitem class="fqdomainname">FQDN-externer-Zeitserver-2</systemitem>| → zum Beispiel
 						<systemitem class="fqdomainname">ptbtime2.ptb.de</systemitem> oder
 						<systemitem class="fqdomainname">1.europe.pool.ntp.org</systemitem>
 					</para>
@@ -1831,7 +1829,7 @@ feedback@univention.de
 			</para>
 			<para>
 				---------------------- TODO viel besser: wir erstellen ein
-				LibreOffice <wordasword>Calc-Vorlage</wordasword> aus der die CSV-Datei im richtigen Format exportiert werden kann!
+				LibreOffice Calc-Vorlage aus der die CSV-Datei im richtigen Format exportiert werden kann!
 			</para>
 			<para>
 				Schulkürzel Anzeigename Edukativer Server Verwaltungsserver <userinput>011</userinput>
@@ -1842,7 +1840,7 @@ feedback@univention.de
 			<itemizedlist>
 				<listitem>
 					<para>
-						Verwenden sie <wordasword>Tab</wordasword> als Trennzeichen zwischen Spalten.
+						Verwenden sie Tabulator als Trennzeichen zwischen Spalten.
 					</para>
 				</listitem>
 				<listitem>
