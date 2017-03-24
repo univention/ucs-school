@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:54+0100\n"
+"POT-Creation-Date: 2016-10-19 03:18+0200\n"
 "PO-Revision-Date: 2016-07-03 15:49+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -16,27 +16,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/computerroom/__init__.py:81
+#: umc/python/computerroom/__init__.py:82
 msgid "/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg"
 msgstr ""
 
-#: umc/python/computerroom/__init__.py:82
+#: umc/python/computerroom/__init__.py:83
 msgid "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"
 msgstr ""
 
-#: umc/python/computerroom/__init__.py:422
+#: umc/python/computerroom/__init__.py:419
 msgid "A different user is already running a computer room session."
 msgstr "Un autre utilisateur est déjà dans une session de salle informatique"
 
-#: umc/python/computerroom/__init__.py:199
+#: umc/python/computerroom/__init__.py:218
 msgid "Action unavailable for UCC clients."
 msgstr "Action non disponible pour les clients UCC."
-
-#: umc/python/computerroom/__init__.py:633
-msgid ""
-"In this room an exam is currently already written. Please select another "
-"room."
-msgstr ""
 
 #: umc/python/computerroom/__init__.py:90
 #, python-format

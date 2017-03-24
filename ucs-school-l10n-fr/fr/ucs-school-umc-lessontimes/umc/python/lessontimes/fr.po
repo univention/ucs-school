@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lessontimes\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:54+0100\n"
+"POT-Creation-Date: 2016-10-19 03:18+0200\n"
 "PO-Revision-Date: 2016-07-03 16:53+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -16,10 +16,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/lessontimes/__init__.py:70
+#: umc/python/lessontimes/__init__.py:68
 msgid "A description for a lesson is missing"
 msgstr "Description de cours manquante"
 
-#: umc/python/lessontimes/__init__.py:79
+#: umc/python/lessontimes/__init__.py:77
 msgid "Lesson times were successfully set"
 msgstr "L'horaire du cours a été correctement défini"
