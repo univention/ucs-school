@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (2.0.0-22 unstable; urgency=medium
+
+  * Bug #43731: update for UCS@school 4.1
+
+ -- Eduard Mai <mai@univention.de>  Fri, 24 Mar 2017 11:48:12 +0100
+
 ucs-school-l10n-fr (2.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2
