@@ -1647,207 +1647,235 @@ feedback@univention.de
 			<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 		</para>
 		<para>
-			Folgende Konfiguration müssen
-			<emphasis role="strong">vor</emphasis> dem Anlegen der ersten
-			Schulen umgesetzt werden:
+			Folgende Konfiguration müssen <emphasis role="strong">vor</emphasis>
+			dem Anlegen der ersten Schulen umgesetzt werden:
 		</para>
 		<section id="base-configuration_mail">
-			<title>E-Mail Basisdienst</title>
+			<title>Zustellung von Systemmails</title>
 			<para>
-				&ucsUCS; verschickt regelmäßig E-Mails, um den aktuellen
-				Systemstatus zu kommunizieren.  Zum Beispiel über Cron und über Nagios.
-				Um diese E-Mail verarbeiten zu können ist die Mailauslieferung
-				zu konfigurieren.  Dazu ist wie folgt vorzugehen: TODO
+				&ucsUCS; verschickt regelmäßig E-Mails, um aktuelle
+				Ereignisse aus dem Monitoring und Ergebnisse von Routineaufgaben
+				zu kommunizieren.  Diese E-Mails sind für den Betrieb von
+				großer Wichtigkeit und müssen unbedingt beachtet werden.
+				Damit diese E-Mail zugestellt werden können ist der
+				E-Mailversand wie folgt zu konfigurieren.  Für die Konfiguration
+				von &ucrUCR;-Variablen sollten &ucrUCR;-Richtlinien verwendet
+				werden.
+			</para>
+			<para>
+				<orderedlist>
+					<listitem>
+						<para>
+							E-Mailalias für <systemitem
+								class="username">root</systemitem> auf ein
+							System stellen/umleiten.  Wenn z.B. alle E-Mails an
+							den Benutzer <systemitem
+								class="username">root</systemitem> auf dem
+							&ucsMaster; umgeleitet werden sollen, ist die
+							&ucrUCR;-Variable <envar>mail/alias/root</envar> auf
+							den Wert
+							<literal>root@ucsma-01.schulen.bremen.de</literal>
+							zu stellen.  <literal>schulen.bremen.de</literal>
+							muss durch den tatsächlichen Domänennamen ersetzt
+							werden.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Anschließend ist auf dem Zielsystem, in diesem
+							Beispiel auf dem &ucsMaster;, die Zieladress für
+							alle E-Mails an <systemitem
+								class="username">root</systemitem> zu
+							hinterlegen.  Die E-Mailadresse wird ebenfalls über
+							&ucrUCR;-Variable <envar>mail/alias/root</envar>
+							festgelegt, zum Beispiel
+							<literal>admins@example.org</literal>.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Damit das Zielsystem die E-Mail ordentlich zustellen
+							kann, ist auf dem Zielsystem die App
+							<package>Mailserver</package> zu installieren.
+							Außerdem ist der Zugang zu einem entfernten
+							Mailserver zu konfigurieren, über den die E-Mails
+							zugestellt werden können.  Die <ulink
+								url="https://docs.software-univention.de/handbuch-4.1.html#mail::serverconfig::relay">Konfiguration
+								dieses sogenannten Relayhosts</ulink> ist im
+							&ucsUCS;-Handbuch beschrieben.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Mit dieser Konfiguration werden alle E-Mails, die
+							auf einem beliebigen Server an den Benutzer
+							<systemitem
+								class="username">root</systemitem> geschickt
+							werden, an die konfigurierte E-Mailadresse
+							weitergeleitet.  Es ist sinnvoll zu prüfen, ob es
+							weitere lokale Konten von Systembenutzern gibt, die
+							E-Mails erhalten.  Diese sollte alle auf den Benutzer
+							<systemitem class="username">root</systemitem>
+							umgeleitet werden.  Insbesondere sind die
+							&ucrUCR;-Variablen
+							<envar>mail/alias/postmaster</envar> und
+							<envar>mail/alias/webmaster</envar> auf den Wert
+							<literal>root</literal> zu setzen.
+						</para>
+					</listitem>
+				</orderedlist>
 			</para>
 		</section>
 		<section id="base-configuration_globale-ucr">
 			<title>Globale &ucsUCR;-Richtlinie</title>
-			<!-- TODO: in Tabelle überführen -->
-			<itemizedlist>
-				<listitem>
-					<para>
-						Öffnen sie in der UMC die blaue Kategorie &quot;Domäne&quot;
-						und dort das Modul &quot;Richtlinien&quot;
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Suchen und öffnen sie die Richtlinie
-						<command>ucsschool-ucr-settings</command> vom Typ &ucsUCR;
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Erweitern sie die Richtlinie
-						<command>ucsschool-ucr-settings</command> um folgende Einträge:
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>directory/manager/web/modules/autosearch</envar>: 0 → deaktiviert
-						die automatische Suche nach allen Objekten beim Öffnen der
-						&ucsUCS; Module
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>ucsschool/wizards/autosearch</envar>: <literal>false</literal> → deaktiviert die
-						automatische Suche nach allen Objekten beim Öffnen der
-						&ucsUAS; Module
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>samba4/sysvol/sync/from_downstream</envar>: <literal>false</literal> → konfiguriert den
-						SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS;
-						Schulservern
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>nagios/client/allowedhosts</envar>: 10.0.0.20 →
-						erlaubt den Zugriff des Monitoring-Servers auf den
-						NRPE-Dienst der übrigen Systeme
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>munin/node/allowedhosts</envar>: 10.0.0.20/32 → erlaubt den Zugriff
-						des Monitoring-Servers auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen
-						Systeme (Achtung CIDR-Schreibweise!)
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>ucsschool/helpdesk/recipient</envar>:
-						<email>mail-adresse-des-support-teams@schultraeger.de</email>
-						→ E-Mail-Adresse, an die Nachrichten vom &ucsUAS;
-						Helpdesk-Modul geschickt werden - Zustellung testen!
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>mail/alias/root</envar>:
-						<email>mail-adresse-des-support-teams@schultraeger.de</email>
-						→ E-Mail-Adresse für Systemmails (Cron / Monitoring) -
-						Zustellung testen!
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>ucsschool/import/generate/policy/dhcp/dns/set_per_ou</envar>: <literal>false</literal>
-						→ verhindert das automatische Anlegen bestimmter DHCP DNS
-						Richtlinien für den Edukativ-Bereich der Schulen. Bei der
-						Verwendung des Verwaltungsnetzes ist dies hinderlich. Die
-						notwendigen DHCP Richtlinien werden später durch den
-						Netzimport korrekt angelegt
-					</para>
-				</listitem>
-			</itemizedlist>
+			<para>
+				Die globale &ucsUCR;-Richtlinie wird in der &ucsUMC;
+				über die Kategorie <emphasis>Domäne</emphasis> und das
+				Modul <emphasis>Richtlinien</emphasis> bearbeitet.  Die
+				Richtlinie hat den Namen
+				<command>ucsschool-ucr-settings</command> und ist vom Typ
+				&ucsUCR;.  Um folgende Einträge sollte die Richtlinie erweitert
+				werden:
+			</para>
+			<para>
+				<table id="table_global_ucr_settings">
+					<title>Zuteilung der Subnetze zu Schulen</title>
+					<tgroup cols="3">
+						<colspec colnum="1" colname="variable"/>
+						<colspec colnum="2" colname="value"/>
+						<colspec colnum="3" colname="description"/>
+						<thead>
+							<row>
+								<entry>&ucsUCR;-Variable</entry>
+								<entry>Wert</entry>
+								<entry>Beschreibung</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><envar>directory/manager/web/modules/autosearch</envar></entry>
+								<entry><literal>0</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach
+									allen Objekten beim Öffnen der &ucsUCS;
+									Module.  Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/wizards/autosearch</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen der &ucsUAS; Module.  Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>samba4/sysvol/sync/from_downstream</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS; Schulservern.  Dies beugt Problemen mit der Replikation vor.</entry>
+							</row>
+							<row>
+								<entry><envar>nagios/client/allowedhosts</envar></entry>
+								<entry><literal>[IP-Adresse des Monitoring Servers, z.B. 10.0.0.20]</literal></entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, Nagios oder Icinga, auf den NRPE-Dienst der übrigen Systeme.</entry>
+							</row>
+							<row>
+								<entry><envar>munin/node/allowedhosts</envar></entry>
+								<entry><literal>[IP-Adresse des Monitoring Servers, z.B. 10.0.0.20/32]</literal></entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, Munin, auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen Systeme (Achtung CIDR-Schreibweise!).</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/helpdesk/recipient</envar></entry>
+								<entry><literal>[E-Mailadresse des Helpdesks, z.B. admins@example.org]</literal></entry>
+								<entry>Definiert die E-Mailadresse, an die Nachrichten vom &ucsUAS; Helpdesk-Modul geschickt werden.  Die Zustellung sollte unbedingt getestet werden!  Siehe auch <xref linkend="base-configuration_mail" />.</entry>
+							</row>
+							<row>
+								<entry><envar>mail/alias/root</envar></entry>
+								<entry><literal>[E-Mailadresse des Betreibers, z.B. admins@example.org]</literal></entry>
+								<entry>Definiert die E-Mailadresse für Systemmails (Cron / Monitoring).  Die Zustellung sollte unbedingt getestet werden!  Siehe auch <xref linkend="base-configuration_mail" />.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/import/generate/policy/dhcp/dns/set_per_ou</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Verhindert das automatische Anlegen bestimmter DHCP DNS Richtlinien für den Edukativ-Bereich der Schulen.  Bei der Verwendung des Verwaltungsnetzes ist dies hinderlich.  Die notwendigen DHCP Richtlinien werden später durch den Netzimport korrekt angelegt</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
 		</section>
 		<section id="base-configuration_central-ucr">
 			<title>Zentrale &ucsUCR;-Richtlinie</title>
-			<!-- TODO: in Tabelle überführen -->
-			<itemizedlist>
-				<listitem>
-					<para>
-						Öffnen sie in der UMC die blaue Kategorie &quot;Domäne&quot;
-						und dort das Modul &quot;Richtlinien&quot;
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Erstellen sie eine neue Richtlinie im Container
-						<uri>policies/config-registry</uri> vom Typ
-						&ucsUCR;
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Nennen sie die neue Richtlinie <userinput>ucr_central</userinput>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Erweitern sie die Richtlinie um folgende Einträge:
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>timeserver</envar>: |<systemitem class="fqdomainname">FQDN-externer-Zeitserver-1</systemitem>| → zum Beispiel
-						<systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder
-						<systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<envar>timeserver2</envar>: |<systemitem class="fqdomainname">FQDN-externer-Zeitserver-2</systemitem>| → zum Beispiel
-						<systemitem class="fqdomainname">ptbtime2.ptb.de</systemitem> oder
-						<systemitem class="fqdomainname">1.europe.pool.ntp.org</systemitem>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Speichern sie die Richtlinie
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Verknüpfen sie die Richtlinie wie folgt:
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Wählen sie in der blauen Kategorie <emphasis>Domäne</emphasis> das
-						Modul <emphasis>LDAP-Verzeichnis</emphasis>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Wählen sie dort den Container <uri>computers</uri> aus
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Klicken sie mit der rechten Maustaste auf den Container und
-						wählen <emphasis>Bearbeiten</emphasis>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Im Reiter Richtlinien scrollen sie bis <emphasis>Richtlinie:
-							&ucsUCR;</emphasis> und klappen diese
-						Option auf
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Wählen sie aus dem Dropdown
-						<emphasis>Richtlinien-Konfiguration</emphasis> die eben erstellte
-						Richtlinie <userinput>ucr_central</userinput>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Speichern sie das Container-Objekt <uri>computers</uri>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Die Richtlinie wird nun auf alle Systeme unterhalb des
-						Containers <uri>computer</uri> vererbt. Unterhalb dieses
-						Containers befinden sich die zentralen Instanzen von
-						&ucsUCS;
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Hinweis: Die &ucsUAS; Schulserver setzen automatisch den
-						&ucsMaster; und die &ucsBackup;-Server als Zeitserver. Damit wird
-						automatisch eine Kaskadierung erreicht
-					</para>
-				</listitem>
-			</itemizedlist>
+			<para>
+				Eine &ucsUCR;-Richtlinie für die zentralen Server wird benötigt,
+				um sicherzustellen, dass die Konfigurationen der Server
+				gleichartig sind.  Dazu ist in der &ucsUMC; über die Kategorie
+				<emphasis>Domäne</emphasis> und das Modul
+				<emphasis>Richtlinien</emphasis> zu öffnen und die zentrale
+				Richtlinie anzulegen.
+			</para>
+			<para>
+				Dazu wird eine neue Richtlinie vom Typ &ucsUCR; im Container
+				<uri>policies/config-registry</uri> erstellt.  Die Richtlinie
+				soll <userinput>ucr_central</userinput> heißen und folgende
+				Einträge enthalten:
+			</para>
+			<para>
+				<table id="table_global_ucr_settings">
+					<title>Zuteilung der Subnetze zu Schulen</title>
+					<tgroup cols="3">
+						<colspec colnum="1" colname="variable"/>
+						<colspec colnum="2" colname="value"/>
+						<colspec colnum="3" colname="description"/>
+						<thead>
+							<row>
+								<entry>&ucsUCR;-Variable</entry>
+								<entry>Wert</entry>
+								<entry>Beschreibung</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><envar>timeserver</envar></entry>
+								<entry><literal>[FQDN oder IP-Adresse des ersten externen Zeitservers]</literal></entry>
+								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beisiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
+							</row>
+							<row>
+								<entry><envar>timeserver2</envar></entry>
+								<entry><literal>[FQDN oder IP-Adresse des zweiten externen Zeitservers]</literal></entry>
+								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beisiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
+							</row>
+							<row>
+								<entry><envar>timeserver2</envar></entry>
+								<entry><literal>[FQDN oder IP-Adresse des zweiten externen Zeitservers]</literal></entry>
+								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beisiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<note>
+				<para>
+					Hinweis: Die &ucsUAS; Schulserver setzen automatisch den
+					&ucsMaster; und die &ucsBackup;-Server als Zeitserver. Damit
+					wird automatisch eine Kaskadierung erreicht
+				</para>
+			</note>
+			<para>
+				Abschließend ist die Richtlinie mit den zentralen Servern zu
+				verknüpfen.  In der &ucsUMC; ist dazu in der Kategorie
+				<emphasis>Domäne</emphasis> das Modul
+				<emphasis>LDAP-Verzeichnis</emphasis> auszuwählen und
+				der Container <uri>computers</uri> zu öffnen.  Nun ist mit der
+				rechten Maustaste der Container anzuklicken und die Option
+				<option>Bearbeiten</option> zu selektieren.
+			</para>
+			<para>
+				Auf Reiter Richtlinien ist nun der Punkt <emphasis>Richtlinie:
+					&ucsUCR;</emphasis> zu öffnen und als dem Dropdown
+				<emphasis>Richtlinien-Konfiguration</emphasis> die eben
+				erstellte Richtlinie <userinput>ucr_central</userinput>
+				auszuwählen.
+			</para>
+			<para>
+				Die Richtlinie wird nun auf alle Systeme unterhalb des
+				Containers <uri>computer</uri> vererbt.
+			</para>
 		</section>
 	</chapter>
 	<chapter id="import">
