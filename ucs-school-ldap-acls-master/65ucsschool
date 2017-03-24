@@ -31,8 +31,8 @@ def replace_ucr_variables(template):
 		'USERATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixGroup',
 		'GROUPATTRS': 'cn,objectClass,description,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixAccount,!SambaSamAccount',
 		'SHAREATTRS': 'description,!posixGroup,!posixAccount,!SambaSamAccount',
-		'DHCPSERVICEATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
-		'DHCPATTRS': '!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+		'DHCPSERVICEATTRS': 'cn,!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+		'DHCPATTRS': 'cn,!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
 	}
 
 	while True:
