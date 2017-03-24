@@ -1627,7 +1627,7 @@ feedback@univention.de
 							&ucsUCR;-Richtlinie
 							<property>ucsschool-ucr-settings</property> auf alle
 							anderen Systeme wirkt.  Dies kann überprüft werden,
-							in dem die Werte der &ucrUCR;-Variablen
+							in dem die Werte der &ucsUCR;-Variablen
 							<envar>nagios/client/allowedhosts</envar> und
 							<envar>munin/node/allowedhosts</envar> auf den
 							anderen Servern geprüft werden.  Sollten trotzdem
@@ -1659,7 +1659,7 @@ feedback@univention.de
 				großer Wichtigkeit und müssen unbedingt beachtet werden.
 				Damit diese E-Mail zugestellt werden können ist der
 				E-Mailversand wie folgt zu konfigurieren.  Für die Konfiguration
-				von &ucrUCR;-Variablen sollten &ucrUCR;-Richtlinien verwendet
+				von &ucsUCR;-Variablen sollten &ucsUCR;-Richtlinien verwendet
 				werden.
 			</para>
 			<para>
@@ -1672,7 +1672,7 @@ feedback@univention.de
 							den Benutzer <systemitem
 								class="username">root</systemitem> auf dem
 							&ucsMaster; umgeleitet werden sollen, ist die
-							&ucrUCR;-Variable <envar>mail/alias/root</envar> auf
+							&ucsUCR;-Variable <envar>mail/alias/root</envar> auf
 							den Wert
 							<literal>root@ucsma-01.schulen.bremen.de</literal>
 							zu stellen.  <literal>schulen.bremen.de</literal>
@@ -1687,7 +1687,7 @@ feedback@univention.de
 							alle E-Mails an <systemitem
 								class="username">root</systemitem> zu
 							hinterlegen.  Die E-Mailadresse wird ebenfalls über
-							&ucrUCR;-Variable <envar>mail/alias/root</envar>
+							&ucsUCR;-Variable <envar>mail/alias/root</envar>
 							festgelegt, zum Beispiel
 							<literal>admins@example.org</literal>.
 						</para>
@@ -1717,7 +1717,7 @@ feedback@univention.de
 							E-Mails erhalten.  Diese sollte alle auf den Benutzer
 							<systemitem class="username">root</systemitem>
 							umgeleitet werden.  Insbesondere sind die
-							&ucrUCR;-Variablen
+							&ucsUCR;-Variablen
 							<envar>mail/alias/postmaster</envar> und
 							<envar>mail/alias/webmaster</envar> auf den Wert
 							<literal>root</literal> zu setzen.
@@ -1816,7 +1816,7 @@ feedback@univention.de
 				Einträge enthalten:
 			</para>
 			<para>
-				<table id="table_global_ucr_settings">
+				<table id="table_central_ucr_settings">
 					<title>Zuteilung der Subnetze zu Schulen</title>
 					<tgroup cols="3">
 						<colspec colnum="1" colname="variable"/>
