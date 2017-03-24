@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 # coding=utf-8
-## desc: ucs-school-ldap-acls-admins
+## desc: Check if school admins have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]
 ## tags: [apptest]
 ## exposure: dangerous
