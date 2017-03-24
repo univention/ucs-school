@@ -155,10 +155,10 @@ access to dn.regex="^cn=([^,]+),cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/ba
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-access to dn.regex="^cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,children,@univentionObject,@univentionPolicyReference,@$@DHCPSERVICEATTRS@$@
+access to dn.regex="^cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,children,objectClass,@univentionObject,@univentionPolicyReference,@$@DHCPSERVICEATTRS@$@
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
-access to dn.regex="^cn=([^,]+),cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@univentionObject,@univentionPolicyReference,@$@DHCPATTRS@$@
+access to dn.regex="^cn=([^,]+),cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,objectClass,@univentionObject,@univentionPolicyReference,@$@DHCPATTRS@$@
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$3,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
