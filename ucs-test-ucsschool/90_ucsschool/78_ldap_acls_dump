@@ -199,10 +199,13 @@ class LDAPDiffCheck(object):
 				schools = [self.schoolA.name]
 			else:
 				schools = [self.schoolA.name, self.schoolB.name]
-			school.teacher_name, school.teacher_dn = self.schoolenv.create_user(school.name, username='teacher%s' % (suffix,), schools=schools, is_teacher=True)
-			school.teacher_staff_name, school.teacher_staff_dn = self.schoolenv.create_user(school.name, username='teachstaff%s' % (suffix,), schools=schools, is_teacher=True, is_staff=True)
+			school.teacher_name, school.teacher_dn = self.schoolenv.create_user(school.name, username='teacher%s' % (suffix,), schools=schools, is_teacher=True,
+																				classes='%s-class1' % (school.name,))
+			school.teacher_staff_name, school.teacher_staff_dn = self.schoolenv.create_user(school.name, username='teachstaff%s' % (suffix,), schools=schools, is_teacher=True, is_staff=True,
+																				classes='%s-class1' % (school.name,))
 			school.staff_name, school.staff_dn = self.schoolenv.create_user(school.name, username='staff%s' % (suffix,), schools=schools, is_staff=True)
-			school.student_name, school.student_dn = self.schoolenv.create_user(school.name, username='student%s' % (suffix,), schools=schools)
+			school.student_name, school.student_dn = self.schoolenv.create_user(school.name, username='student%s' % (suffix,), schools=schools,
+																				classes='%s-class1' % (school.name,))
 			school.admin_name, school.admin_dn = self.schoolenv.create_school_admin(school.name, username='schooladmin%s' % (suffix,), schools=schools)
 
 			school.schoolserver_dn = self.lo.searchDn(base=school.dn, filter='univentionObjectType=computers/domaincontroller_slave')[0]
@@ -214,6 +217,17 @@ class LDAPDiffCheck(object):
 				mac=uts.random_mac(),
 				ip=uts.random_ip(),
 			)
+
+			# create additional class, first workgroup and first computer room
+			school.class2_name, school.class2_dn = self.schoolenv.create_school_class(
+				school.name, class_name=None, description='Test class 2',
+				users=[school.student_dn, school.teacher_dn]
+			)
+			school.workgroup1_name, school.workgroup1_dn = self.schoolenv.create_workgroup(
+				school.name, workgroup_name=None, description='Test workgroup',
+				users=[school.student_dn, school.teacher_dn]
+			)
+			school.room1_name = self.schoolenv.create_computerroom(school.name, description='Test room1')[0]
 
 	def collect_dns(self, valid_ou_names=None):
 		valid_ous = valid_ou_names or [',ou=%s' % (x,) for x in [self.schoolA.name, self.schoolB.name, 'Domain Controllers']]
