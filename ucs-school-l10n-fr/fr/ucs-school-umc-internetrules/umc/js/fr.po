@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-internetrules\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-10-19 03:18+0200\n"
+"POT-Creation-Date: 2017-03-22 09:55+0100\n"
 "PO-Revision-Date: 2016-07-03 19:08+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -141,13 +141,13 @@ msgid "Name"
 msgstr "Nom"
 
 #: umc/js/internetrules/AdminPage.js:197
-#, python-format
+#, javascript-format
 msgid "Please confirm to remove the following %d filter rules: %s"
 msgstr ""
 "Veuillez confirmer la suppression des %d règles de filtrage suivantes : %s"
 
 #: umc/js/internetrules/AdminPage.js:197
-#, python-format
+#, javascript-format
 msgid "Please confirm to remove the following filter rule: %s"
 msgstr ""
 "Veuillez confirmer la suppression de la règle de filtrage suivante : %s"
@@ -158,7 +158,7 @@ msgid "Priority"
 msgstr "Priorité"
 
 #: umc/js/internetrules/AdminPage.js:224
-#, python-format
+#, javascript-format
 msgid "Removal of the following rules failed:%s"
 msgstr "Échec de la suppression des règles suivantes : %s"
 
@@ -209,7 +209,7 @@ msgstr ""
 "règle"
 
 #: umc/js/internetrules/AssignPage.js:169
-#, python-format
+#, javascript-format
 msgid "The chosen internet rule will be assigned to the following group: %s"
 msgstr "La règle Internet choisie sera assignée au groupe suivant : %s"
 
