@@ -36,9 +36,10 @@
 build:
 
 include all_targets.mk
+ADDITIONAL = $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-ucr-l10n.mo
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-ucr-l10n.mo: fr/ucs-school-ucr-l10n.po
 
-install: $(ALL_TARGETS)
+install: $(ALL_TARGETS) $(ADDITIONAL)
 
 %.mo:
 	mkdir -p $(@D)
