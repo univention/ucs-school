@@ -1405,7 +1405,7 @@ feedback@univention.de
 				url="https://docs.software-univention.de/handbuch-4.1.html#installation:chapter">Handbuch
 				zu &ucsUCS;</ulink> und im <ulink
 				url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#installation">&ucsUAS;
-				Handbuch für Administatoren</ulink> beschrieben.  In diesem
+				Handbuch für Administratoren</ulink> beschrieben.  In diesem
 			Abschnitt geben wir zusätzliche Hinweise zur Installation,
 			insbesondere im Hinblick auf die Umsetzung der definierten Konzepte.
 		</para>
@@ -1423,7 +1423,7 @@ feedback@univention.de
 						Der Pfad <filename>/var/log</filename> sollte auf eine
 						eigenen Partition gelegt werden, damit bei erhöhten
 						Aufkommen an Log-Informationen nicht die Systempartition
-						vollläuft und in der Folge die Funktionsfähigkeit des
+						voll läuft und in der Folge die Funktionsfähigkeit des
 						Gesamtsystems zusammenbricht.
 					</para>
 				</listitem>
@@ -1454,7 +1454,7 @@ feedback@univention.de
 									linkend="scenario-4">4</link></emphasis></para>
 						<para>
 							Um Gruppenrichtlinien für alle Schulen über eine
-							zenstale Stelle verwalten zu können ist die
+							zentrale Stelle verwalten zu können ist die
 							Software-Komponente <package>Active Directory
 								kompatibler Domänen-Controller</package> bei der
 							Installation auszuwählen. </para></listitem>
