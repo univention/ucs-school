@@ -58,6 +58,7 @@ from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.models.group import ComputerRoom
 
 add_stream_logger_to_schoollib()
+random.seed()
 
 
 class SchoolError(Exception):
