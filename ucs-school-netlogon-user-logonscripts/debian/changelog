@@ -1,3 +1,12 @@
+ucs-school-netlogon-user-logonscripts (13.0.1-5) unstable; urgency=low
+
+  * Bug #43729: merge from 4.1r2, original changelog entries follow:
+  * Bug #43526: fixed UCR variable description
+  * Bug #43526: only remove VBS files otherwise the icon for teacher's UMC link
+  is always removed
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Mar 2017 08:42:13 +0100
+
 ucs-school-netlogon-user-logonscripts (13.0.1-4) unstable; urgency=low
 
   * Bug #43655: add trailing slash
