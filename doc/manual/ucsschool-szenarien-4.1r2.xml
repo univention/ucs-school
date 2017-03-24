@@ -1683,7 +1683,7 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Anschließend ist auf dem Zielsystem, in diesem
-							Beispiel auf dem &ucsMaster;, die Zieladress für
+							Beispiel auf dem &ucsMaster;, die Zieladresse für
 							alle E-Mails an <systemitem
 								class="username">root</systemitem> zu
 							hinterlegen.  Die E-Mailadresse wird ebenfalls über
