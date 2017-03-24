@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (15.0.0-4) unstable; urgency=low
+
+  * Bug #41725: ACL fixup for group, share and DHCP objects
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 24 Mar 2017 23:18:34 +0100
+
 ucs-school-ldap-acls-master (15.0.0-3) unstable; urgency=low
 
   * Bug #43042: revert last commit
