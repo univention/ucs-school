@@ -89,7 +89,7 @@ feedback@univention.de
 		<section id="setup-manual_organisation">
 			<title>Organisation</title>
 			<para>
-				<itemizedlist spacing="compact" mark="whitesquare">
+				<itemizedlist mark="whitesquare">
 					<listitem><para>Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
 					<listitem><para>Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
 					<listitem><para>Verfügt der Betreiber über das erforderliche Wissen?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
@@ -109,12 +109,12 @@ feedback@univention.de
 		<section id="setup-manual_zentrale">
 			<title>Zentral bereitgestellte IT-Angebote</title>
 			<para>
-				<itemizedlist spacing="compact" mark="whitesquare">
+				<itemizedlist mark="whitesquare">
 					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
 					<listitem><para>Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
 					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, zum Beispiel Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
 					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
-							<itemizedlist spacing="compact" mark="whitesquare">
+							<itemizedlist mark="whitesquare">
 								<listitem><para>Installation UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
 								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
 								<listitem><para>Import von Benutzer-, Client- und Netzdaten: <xref linkend="import" /></para></listitem>
@@ -122,7 +122,7 @@ feedback@univention.de
 					</listitem>
 					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
 					<listitem><para>Welche über &ucsUAS; hinausgehenden Angebote und Einstellungen sollen angeboten werden?  Siehe <xref linkend="additional-services" />.</para>
-							<itemizedlist spacing="compact" mark="whitesquare">
+							<itemizedlist mark="whitesquare">
 								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Angebote vor unerwünschtem Zugriff geschützt?</para></listitem>
 							</itemizedlist>
 					</listitem>
@@ -133,10 +133,10 @@ feedback@univention.de
 		<section id="setup-manual_schulen">
 			<title>Dezentral an den Schulen bereitgestellte IT-Angebote</title>
 			<para>
-				<itemizedlist spacing="compact" mark="whitesquare">
+				<itemizedlist mark="whitesquare">
 					<listitem><para>Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
 					<listitem><para>Setzt die Schule bereits eine Schulserver-Lösung ein?</para>
-						<itemizedlist spacing="compact" mark="whitesquare">
+						<itemizedlist mark="whitesquare">
 							<listitem><para>Welche Funktionen sind der Schule wichtig und wie sie durch &ucsUAS; abgelöst werden (nicht in allen Szenarien notwendig)?</para></listitem>
 						</itemizedlist>
 					</listitem>
@@ -144,12 +144,12 @@ feedback@univention.de
 					<listitem><para>Wer betreibt den Internetzugang und ist für die Entstörung zuständig?</para></listitem>
 					<listitem><para>Welche aktiven und passiven Netzkomponenten sind im Einsatz, zum Beispiel DSL-Router/Switches/Access Points, und wer kennt die Zugangsdaten? </para></listitem>
 					<listitem><para>Welches IP-Netz wird aktuell in der Schule verwendet?</para>
-							<itemizedlist spacing="compact" mark="whitesquare">
+							<itemizedlist mark="whitesquare">
 								<listitem><para>Welche Komponenten müssen angepasst werden, um das Netzkonzept (siehe <xref linkend="setup-manual_zentrale" />) umzusetzen?</para></listitem>
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Ist in der Schule strukturierte Verkabelung in allen Computerräumen vorhanden? Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_network" /></para>
-							<itemizedlist spacing="compact" mark="whitesquare">
+							<itemizedlist mark="whitesquare">
 								<listitem><para>Wie sind die Patchfelder und Netzdosen belegt?</para></listitem>
 							</itemizedlist>
 					</listitem>
@@ -161,7 +161,7 @@ feedback@univention.de
 		<section id="setup-manual_wlan">
 			<title>WLAN und BYOD</title>
 			<para>
-				<itemizedlist spacing="compact" mark="whitesquare">
+				<itemizedlist mark="whitesquare">
 					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
 					<listitem><para>Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
 					<listitem><para>Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
@@ -724,7 +724,7 @@ feedback@univention.de
 					Beispiel: <systemitem class="domainname">schulen.bremen.de</systemitem>
 				</para>
 				<para>
-					<itemizedlist spacing="compact">
+					<itemizedlist>
 						<listitem>
 							<para>
 								<systemitem class="domainname">[DNS-Domäne der
@@ -1070,7 +1070,7 @@ feedback@univention.de
 				abgestimmt werden.  Im Folgenden ein Beispiel für
 				Eskalationswege:
 			</para>
-			<itemizedlist spacing="compact">
+			<itemizedlist>
 				<listitem>
 					<para>
 						IT-Verantwortliche an den Schulen kontaktieren den
@@ -1400,78 +1400,85 @@ feedback@univention.de
 	</chapter>
 	<chapter id="installation">
 		<title>Installation</title>
-		<itemizedlist spacing="compact">
-			<listitem>
-				<para>
-					Dabei sollte die <ulink
-						url="https://www.univention.de/download/ucs-download/iso-installationsimage/">aktuellste
-						&ucsUCS; DVD (ISO)</ulink> verwendet werden.
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					Vergeben eines Kennworts für den Benutzer <systemitem class="username">root</systemitem>.
-					Wählen sie ein langes Kennwort, verwenden sie einen
-					Passwort-Manager und speichern sie das Passwort dort. Das
-					Passwort für den lokalen Benutzer <systemitem class="username">root</systemitem> ist initial
-					auch das Passwort des Domänen-Benutzers
-					<systemitem class="username">Administrator</systemitem>. Ändern Sie das Passwort für den
-							Domänen-Benutzer <systemitem class="username">Administrator</systemitem> im Anschluss an die
-					Installation, sodass sich die beiden Passwörter zukünftig
-					unterscheiden.
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					Partitionierung: Wenn sie geübt im Umgang mit LVM sind,
-					wählen sie LVM als Option für die Partitionierung.
-					Andernfalls wählen sie kein LVM.
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<filename>/var/log</filename> sollte auf eine eigenen Partition
-					gelegt werden, damit bei einem stark erhöhten Log-Aufkommen
-					nicht die Systempartition vollgeschrieben wird
-				</para>
-			</listitem>
-		</itemizedlist>
+		<para>
+			Die Installation von &ucsUAS; ist grundlegend im <ulink
+				url="https://docs.software-univention.de/handbuch-4.1.html#installation:chapter">Handbuch
+				zu &ucsUCS;</ulink> und im <ulink
+				url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#installation">&ucsUAS;
+				Handbuch für Administatoren</ulink> beschrieben.  In diesem
+			Abschnitt geben wir zusätzliche Hinweise zur Installation,
+			insbesondere im Hinblick auf die Umsetzung der definierten Konzepte.
+		</para>
+		<para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Zur Installation sollte das <ulink
+							url="https://www.univention.de/download/ucs-download/iso-installationsimage/">aktuellste
+							&ucsUCS; Installationsmedium</ulink> verwendet werden.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Der Pfad <filename>/var/log</filename> sollte auf eine
+						eigenen Partition gelegt werden, damit bei erhöhten
+						Aufkommen an Log-Informationen nicht die Systempartition
+						vollläuft und in der Folge die Funktionsfähigkeit des
+						Gesamtsystems zusammenbricht.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
 		<section id="installation_master">
-			<title>Installation &ucsMaster;</title>
+			<title>Installation des &ucsMaster;</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				<itemizedlist>
-					<listitem><para>vergeben einer IP-Adresskonfiguration
-							entsprechend des Netzkonzepts</para></listitem>
-					<listitem><para>Externer DNS Server / DNS Forwarder:
-							|IP-des-DNS-Servers-ihres-Internetanbieters|
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als Externer DNS Server bzw. DNS Forwarder
+							ist die IP-Adresse des DNS-Servers des
+							Internetproviders einzutragen.
 					</para></listitem>
-					<listitem><para>Wählen sie &quot;Erstellen einer neuen
-							&ucsUCS;-Domäne&quot;</para></listitem>
-					<listitem><para>Die automatisch vorgeschlagenen LDAP-Basis
-							sollte nicht geändert werden </para></listitem>
-					<listitem><para>
-							<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>:
-							Wählen sie &quot;Active Directory kompatibler
-							Domänen-Controller&quot; als zu installierende
-							Software-Komponente. Das ist notwendig, wenn sie
-							zentral Gruppenrichtlinien für Windows-Clients
-							konfigurieren möchten</para></listitem>
-					<listitem><para>Aktualisieren sie das System bis zum letzten
-							verfügbaren Errata-Update</para></listitem>
-					<listitem><para>Rufen sie nach Abschluss der Installation
-							das Univention App Center auf und installieren Sie
-							die &ucsUAS; App</para></listitem>
-					<listitem><para>Starten sie im Anschluss in der
-							orangefarbenen Kategorie
-							&quot;Schuladministration&quot; den &ucsUAS;
-							Einrichtungsassistenten und wählen dort
-							&quot;Multi-Server Umgebung&quot; </para></listitem>
-					<listitem><para>Führen sie alle evtl.  ausstehenden
-							Joinskripte aus (UMC → Domäne →
-							Domänenbeitritt)</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsMaster; zu installieren: <option>Erstellen einer
+								neuen &ucsUCS;-Domäne</option></para></listitem>
+					<listitem><para>Nach der Eingabe des Domänennamen sollte die
+							automatisch vorgeschlagenen LDAP-Basis sollte nicht
+							geändert werden.</para></listitem>
+					<listitem>
+						<para><emphasis>für Szenario <link
+									linkend="scenario-3">3</link> und <link
+									linkend="scenario-4">4</link></emphasis></para>
+						<para>
+							Um Gruppenrichtlinien für alle Schulen über eine
+							zenstale Stelle verwalten zu können ist die
+							Software-Komponente <package>Active Directory
+								kompatibler Domänen-Controller</package> bei der
+							Installation auszuwählen. </para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die App
+							<package>&ucsUAS;</package> zu
+							installieren.</para></listitem>
+					<listitem><para>Im Anschluss an die Installation der
+							<package>&ucsUAS;</package> App ist in der &ucsUMC;
+							in der Kategorie
+							<emphasis>Schuladministration</emphasis> der
+							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							zu starten und die Option &quot;Multi-Server
+							Umgebung&quot; zu wählen und der Assistent bis zum
+							Ende auszuführen.</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -1481,34 +1488,47 @@ feedback@univention.de
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
-				Zur Lastverteilung bei der LDAP-Replikation können neben dem 1.
-				&ucsBackup; Server zusätzlich noch weitere Server aufgesetzt werden.
+				Zur Lastverteilung bei der LDAP-Replikation können neben dem
+				ersten, unbedingt notwendigen &ucsBackup; Server zusätzlich noch
+				weitere &ucsBackup; Systeme aufgesetzt werden.
 				<itemizedlist>
-					<listitem><para>vergeben einer IP-Adresskonfiguration
-							entsprechend des Netzkonzepts</para></listitem>
-					<listitem><para>DNS Server: 10.0.0.10 (IP des &ucsMaster;,
-							DNS Forwarder wird beim Join vom automatisch
-							&ucsMaster; übernommen)</para></listitem>
-					<listitem><para>Wählen sie &quot;Einer bestehenden
-							&ucsUCS;-Domäne beitreten&quot; und dann
-							&ucsBackup;</para></listitem>
-					<listitem><para>Stellen sie sicher, dass der &ucsMaster; alle
-							verfügbaren Updates installiert
-							hat</para></listitem> <listitem><para>Aktualisieren
-							sie das System bis zum letzten verfügbaren
-							Errata-Update und lassen sie das System der Domäne
-							beitreten (Join)</para></listitem>
-					<listitem><para>Rufen sie nach Abschluss der Installation
-							das Univention App Center auf und installieren Sie
-							die &ucsUAS; App</para></listitem>
-					<listitem><para>Starten sie im Anschluss in der
-							orangefarbenen Kategorie
-							&quot;Schuladministration&quot; den &ucsUAS;
-							Einrichtungsassistenten und wählen dort
-							&quot;Multi-Server Umgebung&quot;</para></listitem>
-					<listitem><para>Führen sie alle evtl. ausstehenden
-							Joinskripte aus (UMC → Domäne →
-							Domänenbeitritt)</para></listitem>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS Server ist die IP-Adresse des
+							&ucsMaster; einzutragen.  Der DNS Forwarder wird
+							beim Domänenbeitritt automatisch vom &ucsMaster;
+							übernommen und braucht somit nicht eingetragen zu
+							werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsBackup; als Mitglied der Domäne zu installieren
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsBackup; auszuwählen.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass der &ucsMaster;
+							alle verfügbaren Updates installiert
+							hat.</para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.  Anschließend ist der Domänenbeitritt
+							zu starten.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation
+							ist über das Univention App Center die
+							<package>&ucsUAS;</package> App zu
+							installieren.</para></listitem>
+					<listitem><para>Im Anschluss an die Installation der
+							<package>&ucsUAS;</package> App ist in der &ucsUMC;
+							in der Kategorie
+							<emphasis>Schuladministration</emphasis> der
+							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							zu starten und die Option &quot;Multi-Server
+							Umgebung&quot; zu wählen und der Assistent bis zum
+							Ende auszuführen.</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -1519,32 +1539,41 @@ feedback@univention.de
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
+				Nach Möglichkeit sollte für jeden Dienst ein separater
+				&ucsSlave; Server verwendet werden.
 				<itemizedlist>
-				<listitem><para>Verwenden sie nach Möglichkeit für jeden Dienst
-						einen eigene &ucsUCS; Slave Server</para></listitem>
-				<listitem><para>vergeben einer IP-Adresskonfiguration
-						entsprechend des Netzkonzepts</para></listitem>
-				<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des
-						&ucsMaster; und des &ucsBackup;, DNS Forwarder wird
-						beim Join automatisch vom &ucsMaster;
-						übernommen)</para></listitem>
-				<listitem><para>Wählen sie &quot;Einer bestehenden &ucsUCS;-Domäne
-						beitreten&quot; und dann &quot;Domänencontroller
-						Slave&quot;</para></listitem> <listitem><para>Stellen
-						sie sicher, dass der &ucsMaster; alle verfügbaren Updates
-						installiert hat</para></listitem>
-				<listitem><para>Aktualisieren sie das System bis zum letzten
-						verfügbaren Errata-Update und lassen sie das System der
-						Domäne beitreten (Join)</para></listitem>
-				<listitem><para>Rufen sie nach Abschluss der Installation das
-						Univention App Center auf und installieren Sie die
-						RADIUS App (oder die gewünschte App für Groupware,
-						Collaboration, Lernplattformen usw.)</para></listitem>
-				<listitem><para>Installieren sie <emphasis
-							role="strong">nicht</emphasis> die &ucsUAS;
-						App</para></listitem> <listitem><para>Führen sie alle
-						evtl. ausstehenden Joinskripte aus (UMC → Domäne →
-						Domänenbeitritt)</para></listitem>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS Server sind die IP-Adressen des
+							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							DNS Forwarder wird beim Domänenbeitritt automatisch
+							vom &ucsMaster; übernommen und braucht somit nicht
+							eingetragen zu werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsBackup; als Mitglied der Domäne zu installieren
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsSlave; auszuwählen.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass der &ucsMaster;
+							alle verfügbaren Updates installiert
+							hat.</para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.  Anschließend ist der Domänenbeitritt
+							zu starten.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die gewünschte App, zum
+							Beispiel <package>RADIUS</package>, zu
+							installieren.</para></listitem>
+					<listitem><para>Die App <package>&ucsUAS;</package> darf
+							<emphasis role="strong">nicht</emphasis> installiert
+							werden!</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -1555,41 +1584,59 @@ feedback@univention.de
 			</para>
 			<para>
 				<itemizedlist>
-					<listitem><para>vergeben einer IP-Adresskonfiguration
-							entsprechend des Netzkonzepts</para></listitem>
-					<listitem><para>DNS Server: 10.0.0.10, 10.0.0.11 (IP des
-							&ucsMaster; und des &ucsBackup;, DNS Forwarder
-							wird beim Join automatisch vom &ucsMaster;
-							übernommen)</para></listitem> <listitem><para>Wählen
-							sie &quot;Einer bestehenden Domäne
-							beitreten&quot; und dann
-							&ucsMember;[</para></listitem>
-					<listitem><para>Stellen sie sicher, dass der &ucsMaster; alle
-							verfügbaren Updates installiert
-							hat</para></listitem> <listitem><para>Aktualisieren
-							sie das System bis zum letzten verfügbaren
-							Errata-Update und lassen sie das System der Domäne
-							beitreten (Join)</para></listitem>
-					<listitem><para>Rufen sie nach Abschluss der Installation
-							das Univention App Center auf und installieren Sie
-							die Icinga App</para></listitem>
-					<listitem><para>Ergänzen sie ein Monitoring mit
-							Langzeit-Speicherung von Messwerten, wie zum Beispiel
-							<ulink
-								url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Munin</ulink>
-							</para></listitem>
-					<listitem><para>Installieren sie <emphasis
-								role="strong">nicht</emphasis> die &ucsUAS;
-							App</para></listitem>
-					<listitem><para>Führen sie
-							alle evtl. ausstehenden Joinskripte aus (UMC →
-							Domäne → Domänenbeitritt)</para></listitem>
-					<listitem><para>Achten Sie darauf, dass die globale &ucsUCR;-Richtlinie <property>ucsschool-ucr-settings</property> auf alle anderen Systeme wirkt.
-							Auf den anderen Systemen prüfen:
-							(UMC → System → Univention Configuration Registry → Suche: <envar>nagios/client/allowedhosts</envar> und <envar>munin/node/allowedhosts</envar>).
-							Starten Sie gegebenenfalls den Service <command>univention-directory-listener</command> neu
-							(UMC → System → Systemdienste → <command>univention-directory-listener</command> → Neustarten).
-							Starten Sie außerdem gegebenenfalls auf allen Clients die Services (<command>nagios-nrpe-server</command> und <command>munin-node</command>) neu.</para></listitem>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS Server sind die IP-Adressen des
+							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							DNS Forwarder wird beim Domänenbeitritt automatisch
+							vom &ucsMaster; übernommen und braucht somit nicht
+							eingetragen zu werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsBackup; als Mitglied der Domäne zu installieren
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsMember; auszuwählen.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass der &ucsMaster;
+							alle verfügbaren Updates installiert
+							hat.</para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.  Anschließend ist der Domänenbeitritt
+							zu starten.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die App
+							<package>Icinga</package>, zu
+							installieren.</para></listitem>
+					<listitem><para>Es ist empfohlen das Monitoring des
+							aktuellen Zustands der Umgebung um die Speicherung
+							von Langzeitinformationen zu ergänzen.  Weitere
+							Informationen sind in <xref
+								linkend="concepts_monitoring" /> zu
+							finden.</para></listitem>
+					<listitem><para>Die App <package>&ucsUAS;</package> darf
+							<emphasis role="strong">nicht</emphasis> installiert
+							werden!</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
+					<listitem><para>Damit Icinga und Munin lauffähig sind, muss
+							sichergestellt sein, dass die globale
+							&ucsUCR;-Richtlinie
+							<property>ucsschool-ucr-settings</property> auf alle
+							anderen Systeme wirkt.  Dies kann überprüft werden,
+							in dem die Werte der &ucrUCR;-Variablen
+							<envar>nagios/client/allowedhosts</envar> und
+							<envar>munin/node/allowedhosts</envar> auf den
+							anderen Servern geprüft werden.  Sollten trotzdem
+							keine Statusinformationen über einen Server
+							angezeigt werden, so sollten ggf. die Dienste
+							<command>univention-directory-listener</command>,
+							<command>nagios-nrpe-server</command> und
+							<command>munin-node</command> neu gestartet
+							werden.</para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -1616,7 +1663,7 @@ feedback@univention.de
 		<section id="base-configuration_globale-ucr">
 			<title>Globale &ucsUCR;-Richtlinie</title>
 			<!-- TODO: in Tabelle überführen -->
-			<itemizedlist spacing="compact">
+			<itemizedlist>
 				<listitem>
 					<para>
 						Öffnen sie in der UMC die blaue Kategorie &quot;Domäne&quot;
@@ -1701,7 +1748,7 @@ feedback@univention.de
 		<section id="base-configuration_central-ucr">
 			<title>Zentrale &ucsUCR;-Richtlinie</title>
 			<!-- TODO: in Tabelle überführen -->
-			<itemizedlist spacing="compact">
+			<itemizedlist>
 				<listitem>
 					<para>
 						Öffnen sie in der UMC die blaue Kategorie &quot;Domäne&quot;
@@ -1922,7 +1969,7 @@ feedback@univention.de
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabelle <emphasis>Netze</emphasis>.
 			</para>
-			<itemizedlist spacing="compact">
+			<itemizedlist>
 				<listitem>
 					<para>
 						Speichern sie die CSV-Datei auf den &ucsMaster; nach
@@ -1957,7 +2004,7 @@ feedback@univention.de
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabelle <emphasis>Clients</emphasis>.
 			</para>
-			<itemizedlist spacing="compact">
+			<itemizedlist>
 				<listitem>
 					<para>
 						Speichern sie die CSV-Datei auf den &ucsMaster; nach
@@ -1989,7 +2036,7 @@ feedback@univention.de
 				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
 				Tabelle <emphasis>Drucker</emphasis>.
 			</para>
-			<itemizedlist spacing="compact">
+			<itemizedlist>
 				<listitem>
 					<para>
 						Speichern sie die CSV-Datei auf den &ucsMaster; nach
