@@ -40,9 +40,24 @@ feedback@univention.de
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
 		<para>
-			PLEASE FILL IN SOME HIGHLIGHTS HERE
-			- Icons für Desktopverknüpfungen
-			- 
+			<itemizedlist>
+				<listitem>
+					<para>
+						PLEASE FILL IN SOME HIGHLIGHTS HERE
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						- ICONS FÜR DESKTOPVERKNÜPFUNGEN WERDEN JETZT GESETZT
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Im UMC-Modul <guimenu>Computerraum</guimenu> wurde die Standardeinstellung geändert. Es werden keine Screenshots mehr von Rechnern
+						mit angemeldetem Lehrer angezeigt, wenn die Beobachten-Funktion genutzt wird.
+					</para>
+				</listitem>
+			</itemizedlist>
 		</para>
 	</chapter>
 
