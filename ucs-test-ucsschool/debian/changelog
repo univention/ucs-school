@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-1) unstable; urgency=low
+
+  * Bug #41725: updated and fixed 75_ldap_acls_* and 78_ldap_acls_dump
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 24 Mar 2017 23:19:44 +0100
+
 ucs-test-ucsschool (4.0.3-1) unstable; urgency=medium
 
   * Bug #41725: reenable test script 79_ldap_acl_access_to_uidNumber0
