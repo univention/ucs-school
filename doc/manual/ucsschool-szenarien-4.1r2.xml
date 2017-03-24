@@ -244,7 +244,7 @@ feedback@univention.de
 					<listitem><para>Bereitstellung orts- und zeitunabhängiger IT-Angebote für Lehrkräfte und Schüler</para></listitem>
 					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
 					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
-					<listitem><para>Senkung des Helpdesk-Aufkommens durch Self-Service für vergessene Passwörter</para></listitem>
+					<listitem><para>Senkung des Aufkommens im Helpdesk durch Self-Service für vergessene Passwörter</para></listitem>
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-1">
@@ -904,7 +904,7 @@ feedback@univention.de
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="username">[Vorname][1. Buchstabe Nachname][Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiel: Mary Selig → <systemitem class="username">marys</systemitem></para></listitem>
-						<listitem><para>Beispiel Namenskonflikt: Mary Sander → <systemitem class="username">marys2</systemitem></para></listitem>
+						<listitem><para>Beispiel Namenskonflikt: Mary <wordasword>Sander</wordasword> → <systemitem class="username">marys2</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
@@ -1317,7 +1317,7 @@ feedback@univention.de
 					Endgeräte.  Als Richtwert kann von einem Bedarf von mindestens
 					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
 					insbesondere bei der Einführung von WLAN und Bring Your Own
-					Device (BYOD) zu beachten, da Lehrkäfte und Schüler ggf.
+					Device (BYOD) zu beachten, da Lehrkräfte und Schüler ggf.
 					mehr als ein Gerät pro Person mitbringen werden.
 				</para>
 			</section>
