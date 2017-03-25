@@ -168,7 +168,7 @@ access to dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ld
 	by * +0 break
 
 access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
-	by dn.regex="^uid=([^,]+),cn=@$@ADMINS@$@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
+	by set="user/objectClass & [ucsschoolAdministrator]" write
 	by * +0 break
 
 # domaincontroller slaves and memberservers of management group are not allowed to replicate pupils and teachers
