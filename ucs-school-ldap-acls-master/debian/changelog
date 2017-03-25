@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (15.0.0-5) unstable; urgency=low
+
+  * Bug #43908: remove old rule / replace old rule with new construct
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sat, 25 Mar 2017 01:08:53 +0100
+
 ucs-school-ldap-acls-master (15.0.0-4) unstable; urgency=low
 
   * Bug #41725: ACL fixup for group, share and DHCP objects
