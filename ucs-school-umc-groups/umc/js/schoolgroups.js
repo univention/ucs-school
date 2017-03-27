@@ -37,14 +37,14 @@ define([
 	"umc/widgets/Module",
 	"umc/widgets/Grid",
 	"umc/widgets/Page",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/SearchForm",
 	"umc/modules/schoolgroups/WorkgroupDetailPage",
 	"umc/modules/schoolgroups/ClassDetailPage",
 	"umc/modules/schoolgroups/TeacherDetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, array, tools, dialog, Module, Grid, Page, TextBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
+], function(declare, lang, array, tools, dialog, Module, Grid, Page, SearchBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
 	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
@@ -91,18 +91,23 @@ define([
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				autoHide: true
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				name: 'pattern',
 				size: 'TwoThirds',
 				description: _('Specifies the substring pattern which is searched for in the displayed name'),
-				label: _('Search pattern')
+				label: _('Search pattern'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 
 			this._searchForm = new SearchForm({
 				region: 'top',
+				hideSubmitButton: true,
 				widgets: widgets,
 				layout: [
-					['school', 'pattern', 'submit']
+					['school', 'pattern']
 				],
 				onSearch: lang.hitch(this, function(values) {
 					if (values.school) {
