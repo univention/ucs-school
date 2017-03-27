@@ -34,12 +34,12 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/topic",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/ClassWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, TextBox, ComboBox, ClassWizard, Grid, _) {
+], function(declare, lang, array, topic, SearchBox, ComboBox, ClassWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.ClassGrid", [Grid], {
 
@@ -77,15 +77,19 @@ define([
 				staticValues: schools,
 				autoHide: true
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				size: 'TwoThirds',
 				name: 'filter',
-				label: _('Filter')
+				label: _('Filter'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 		},
 
 		getSearchLayout: function() {
-			return [['school', 'filter', 'submit']];
+			return [['school', 'filter']];
 		}
 	});
 });

@@ -34,12 +34,12 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/topic",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/ComputerWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, TextBox, ComboBox, ComputerWizard, Grid, _) {
+], function(declare, lang, array, topic, SearchBox, ComboBox, ComputerWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.ComputerGrid", [Grid], {
 
@@ -102,15 +102,19 @@ define([
 				}),
 				sortDynamicValues: false
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				size: 'TwoThirds',
 				name: 'filter',
-				label: _('Filter')
+				label: _('Filter'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 		},
 
 		getSearchLayout: function() {
-			return [['school', 'type', 'filter', 'submit']];
+			return [['school', 'type', 'filter']];
 		}
 	});
 });

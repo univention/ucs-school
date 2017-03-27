@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.3-2) unstable; urgency=medium
+
+  * Bug #36789: adapt search form to new UMC design
+
+ -- Johannes Keiser <keiser@univention.de>  Mon, 27 Mar 2017 20:18:52 +0200
+
 ucs-school-umc-wizards (9.0.3-1) unstable; urgency=medium
 
   * Bug #36789: removed leftover from old grid

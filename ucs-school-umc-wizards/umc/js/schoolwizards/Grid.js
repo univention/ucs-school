@@ -220,6 +220,7 @@ define([
 
 			this._searchForm = new SearchForm({
 				region: 'top',
+				hideSubmitButton: true,
 				widgets: widgets,
 				layout: layout,
 				buttons: buttons,

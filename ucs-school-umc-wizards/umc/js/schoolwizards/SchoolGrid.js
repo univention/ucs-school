@@ -37,11 +37,11 @@ define([
 	"dojo/Deferred",
 	"umc/tools",
 	"umc/dialog",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/modules/schoolwizards/SchoolWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, Deferred, tools, dialog, TextBox, SchoolWizard, Grid, _) {
+], function(declare, lang, array, topic, Deferred, tools, dialog, SearchBox, SchoolWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.SchoolGrid", [Grid], {
 
@@ -102,14 +102,18 @@ define([
 
 		getSearchWidgets: function() {
 			return [{
-				type: TextBox,
+				type: SearchBox,
 				name: 'filter',
-				label: _('Filter')
+				label: _('Filter'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 		},
 
 		getSearchLayout: function() {
-			return [['filter', 'submit']];
+			return [['filter']];
 		},
 
 		getDeleteConfirmMessage: function(objects) {

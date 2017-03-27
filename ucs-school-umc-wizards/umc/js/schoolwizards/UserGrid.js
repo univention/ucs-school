@@ -33,13 +33,13 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/UserWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, TextBox, ComboBox, UserWizard, Grid, utils, _) {
+], function(declare, lang, array, SearchBox, ComboBox, UserWizard, Grid, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserGrid", [Grid], {
 
@@ -89,7 +89,7 @@ define([
 		},
 
 		getSearchLayout: function() {
-			return [['school', 'type', 'filter', 'submit']];
+			return [['school', 'type', 'filter']];
 		},
 
 		getDeleteConfirmMessage: function(objects) {
@@ -120,10 +120,14 @@ define([
 				sortDynamicValues: false,
 				dynamicValues: utils.getStaticValuesUserRolesWithAll
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				size: 'TwoThirds',
 				name: 'filter',
-				label: _('Filter')
+				label: _('Filter'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 		}
 	});
