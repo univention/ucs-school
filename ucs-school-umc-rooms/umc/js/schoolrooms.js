@@ -37,11 +37,11 @@ define([
 	"umc/widgets/Module",
 	"umc/widgets/Page",
 	"umc/widgets/SearchForm",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolrooms/DetailPage",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, dialog, ExpandingTitlePane, Grid, Module, Page, SearchForm, TextBox, ComboBox, DetailPage, _) {
+], function(declare, lang, dialog, ExpandingTitlePane, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	return declare("umc.modules.schoolrooms", [ Module ], {
 		// summary:
@@ -189,22 +189,27 @@ define([
             	} ),
 				autoHide: true
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				name: 'pattern',
 				description: _('Specifies the substring pattern which is searched for in the displayed name'),
-				label: _('Search pattern')
+				label: _('Search pattern'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 
 			// the layout is an 2D array that defines the organization of the form elements...
 			// here we arrange the form elements in one row and add the 'submit' button
 			var layout = [
-				[ 'school', 'pattern', 'submit' ]
+				[ 'school', 'pattern' ]
 			];
 
 			// generate the search form
 			this._searchForm = new SearchForm({
 				// property that defines the widget's position in a dijit.layout.BorderContainer
 				region: 'top',
+				hideSubmitButton: true,
 				widgets: widgets,
 				layout: layout,
 				onSearch: lang.hitch(this, function(values) {
