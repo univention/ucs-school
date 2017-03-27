@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (13.0.1-6) unstable; urgency=low
+
+  * Bug #43729: merge from 4.1r2, original changelog entries follow:
+  * Bug #43526: removed check for non-existant VBS templates
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 27 Mar 2017 09:07:00 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.1-5) unstable; urgency=low
 
   * Bug #43729: merge from 4.1r2, original changelog entries follow:
