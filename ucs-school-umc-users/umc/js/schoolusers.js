@@ -43,6 +43,7 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
+	"umc/widgets/SearchBox",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/CheckBox",
@@ -52,7 +53,7 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/schoolusers"
 ], function(declare, lang, array, locale, Deferred, Dialog, entities, dialog, tools, Module, ExpandingTitlePane,
-            Grid, Page, Form, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
+            Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 
 	return declare("umc.modules.schoolusers", [ Module ], {
 		// summary:
@@ -170,24 +171,29 @@ define([
 					deferred.resolve();
 				}
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				name: 'pattern',
 				size: 'TwoThirds',
 				value: '',
 				description: _('Specifies the substring pattern which is searched for in the first name, surname and username'),
-				label: _('Name')
+				label: _('Name'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 
 			// the layout is an 2D array that defines the organization of the form elements...
 			// here we arrange the form elements in one row and add the 'submit' button
 			var layout = [
-				[ 'school', 'class', 'pattern', 'submit' ]
+				[ 'school', 'class', 'pattern' ]
 			];
 
 			// generate the search form
 			this._searchForm = new SearchForm({
 				// property that defines the widget's position in a dijit.layout.BorderContainer
 				region: 'top',
+				hideSubmitButton: true,
 				widgets: widgets,
 				layout: layout,
 				onSearch: lang.hitch(this, function(values) {
