@@ -50,6 +50,7 @@ define([
 	"dijit/CheckedMenuItem",
 	"dojox/timing/_base",
 	"dojox/grid/EnhancedGrid",
+	"dojox/html/styles",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Text",
@@ -66,10 +67,13 @@ define([
 	"umc/modules/schoolcsvimport/User",
 	"umc/modules/schoolcsvimport/utils",
 	"umc/i18n!umc/modules/schoolcsvimport"
-], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, EnhancedGrid, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, _Grid, Module, User, utils, _) {
+], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, EnhancedGrid, styles, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, _Grid, Module, User, utils, _) {
 
+	styles.insertCssRule('.ucsschoolGrid .dojoxGrid', 'clear: both;');
+	styles.insertCssRule('.ucsschoolGrid .umcGridHeader', 'float: none!important; display: block!important;');
 	var Grid = declare(_Grid, {
-		style: 'width: 600px; height: 700px;',
+		style: 'width: 600px; height: 500px;',
+		'class': 'ucsschoolGrid',
 		// Bug #37831 (Grid in combination with Memory store does not show more than 30 entries), (remove when Bug #37857 is fixed)
 		buildRendering: function() {
 			this.inherited(arguments);

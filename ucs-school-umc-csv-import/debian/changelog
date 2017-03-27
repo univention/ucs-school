@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (4.0.5-1) unstable; urgency=medium
+
+  * Bug #43577: fix grid visibility due to changes in upstream UMC
+
+ -- Florian Best <best@univention.de>  Mon, 27 Mar 2017 15:59:48 +0200
+
 ucs-school-umc-csv-import (4.0.4-1) unstable; urgency=medium
 
   * Bug #43577: replace dijitHidden by dijitDisplayNone
