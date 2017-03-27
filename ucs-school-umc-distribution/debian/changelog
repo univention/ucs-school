@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (15.0.1-2) unstable; urgency=medium
+
+  * Bug #36789: adapt search form to new UMC design
+
+ -- Johannes Keiser <keiser@univention.de>  Mon, 27 Mar 2017 18:34:11 +0200
+
 ucs-school-umc-distribution (15.0.1-1) unstable; urgency=medium
 
   * Bug #36789: adjust header buttons to new UMC design; applied patch

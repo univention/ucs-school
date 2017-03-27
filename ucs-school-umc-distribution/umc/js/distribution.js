@@ -37,11 +37,11 @@ define([
 	"umc/widgets/Module",
 	"umc/widgets/Page",
 	"umc/widgets/SearchForm",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/distribution/DetailPage",
 	"umc/i18n!umc/modules/distribution"
-], function(declare, lang, dialog, tools, Grid, Module, Page, SearchForm, TextBox, ComboBox, DetailPage, _) {
+], function(declare, lang, dialog, tools, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	var cmpUsername = function(a, b) {
 		return a && b && a.toLowerCase() == b.toLowerCase();
@@ -166,18 +166,23 @@ define([
 					{ id: 'all', label: _('All projects') }
 				]
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				name: 'pattern',
+				inlineLabel: _('Search...'),
 				description: _('Specifies the substring pattern which is searched for in the projects.'),
-				label: _('Search pattern')
+				label: _('Search pattern'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 
 			var layout = [
-				[ 'filter', 'pattern', 'submit' ]
+				[ 'filter', 'pattern' ]
 			];
 
 			this._searchForm = new SearchForm({
 				region: 'top',
+				hideSubmitButton: true,
 				widgets: widgets,
 				layout: layout,
 				onSearch: lang.hitch(this, function(values) {
