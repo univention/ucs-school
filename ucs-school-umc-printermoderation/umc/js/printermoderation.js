@@ -73,6 +73,7 @@ define([
 			this.own(this._progressInfo);
 
 			this._searchPage = new Page({
+				fullWidth: true,
 				headerText: this.description,
 				helpText: ''
 			});

@@ -556,7 +556,8 @@ define([
 				// normal mode
 				header = _('Computer room: %s', room);
 			}
-			this._searchPage.set('headerText', header);
+//			this._searchPage.set('headerText', header);
+			this.set('title', header);
 
 			// update visibility of header buttons
 			if (this._headButtons.finishExam.domNode) {
@@ -589,6 +590,7 @@ define([
 
 		renderSearchPage: function() {
 			this._searchPage = new Page({
+				fullWidth: true,
 				headerText: this.description,
 				helpText: _("Here you can watch the students' computers, lock the computers, show presentations, control the internet access and define the available printers and shares.")
 			});

@@ -68,6 +68,7 @@ define([
 		renderSearchForm: function() {
 
 			this._searchPage = new Page({
+				fullWidth: true,
 				headerText: this.description,
 				helpText: this.helpText
 			});

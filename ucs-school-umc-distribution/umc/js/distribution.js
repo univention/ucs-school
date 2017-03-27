@@ -62,6 +62,7 @@ define([
 			this.inherited(arguments);
 
 			this._searchPage = new Page({
+				fullWidth: true,
 				headerText: this.description,
 				helpText: ''
 			});

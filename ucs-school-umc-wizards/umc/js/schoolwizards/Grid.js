@@ -51,6 +51,7 @@ define([
 
 	return declare("umc.modules.schoolwizards.Grid", [Page, StandbyMixin], {
 
+		fullWidth: true,
 		autoSearch: true,
 		udmLinkEnabled: null,
 		module: null,

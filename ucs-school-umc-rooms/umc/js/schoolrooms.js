@@ -96,6 +96,7 @@ define([
 			// setup search page and its main widgets
 			// for the styling, we need a title pane surrounding search form and grid
 			this._searchPage = new Page({
+				fullWidth: true,
 				headerText: this.description,
 				helpText: ''
 			});

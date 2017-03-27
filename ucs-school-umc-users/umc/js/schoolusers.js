@@ -88,6 +88,7 @@ define([
 
 			// render all GUI elements for the search formular and the grid
 			this._searchPage = new Page({
+				fullWidth: true,
 				headerText: this.description,
 				helpText: ''
 			});

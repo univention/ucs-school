@@ -226,6 +226,8 @@ define([
 		// internal reference to the flavored umcpCommand function
 		umcpCommand: null,
 
+		fullWidth: true,
+
 		_container: null,
 
 		_cbxSize: null,
