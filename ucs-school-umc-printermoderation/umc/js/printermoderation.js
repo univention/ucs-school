@@ -42,13 +42,13 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/SearchForm",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ProgressInfo",
 	"umc/i18n!umc/modules/printermoderation"
 ], function(declare, lang, array, Deferred, Dialog, locale, dialog, tools, Grid,
-            Module, Page, Form, SearchForm, TextBox, Text, ComboBox, ProgressInfo, _) {
+            Module, Page, Form, SearchForm, SearchBox, Text, ComboBox, ProgressInfo, _) {
 
 	return declare("umc.modules.printermoderation", [ Module ], {
 		// summary:
@@ -161,19 +161,25 @@ define([
 				dynamicValues: 'printermoderation/groups',
 				depends: 'school'
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				name: 'pattern',
+				size: 'TwoThirds',
+				inlineLabel: _('Search...'),
 				value: '',
 				description: _('Specifies the substring pattern which is searched for in the first name, surname and username'),
-				label: _('Name')
+				label: _('Name'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 
 			var layout = [
-				[ 'school', 'class', 'pattern', 'submit' ]
+				[ 'school', 'class', 'pattern' ]
 			];
 
 			this._searchForm = new SearchForm({
 				region: 'nav',
+				hideSubmitButton: true,
 				widgets: widgets,
 				layout: layout,
 				onSearch: lang.hitch(this, function(values) {
