@@ -126,7 +126,7 @@ feedback@univention.de
 								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Angebote vor unerwünschtem Zugriff geschützt?</para></listitem>
 							</itemizedlist>
 					</listitem>
-					<listitem><para>Soll die Schulen zukünftig über einen zentralen Proxy auf das Internet zugreifen?  Siehe <xref linkend="additional-services_proxy" /></para></listitem>
+					<listitem><para>Soll die Schulen zukünftig über einen zentralen Proxy auf das Internet zugreifen?  <!-- Siehe <xref linkend="additional-services_proxy" /> --></para></listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -165,7 +165,7 @@ feedback@univention.de
 					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
 					<listitem><para>Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
 					<listitem><para>Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
-					<listitem><para>Wo wird der RADIUS-Service betrieben?  Siehe <xref linkend="additional-services_radius" /></para></listitem>
+					<listitem><para>Wo wird der RADIUS-Service betrieben?  <!-- Siehe <xref linkend="additional-services_radius" />  --></para></listitem>
 					<listitem><para>Wie greifen die mobilen Geräte auf das Internet zu, zum Beispiel direkt oder über einen transparenter Proxy?</para></listitem>
 					<listitem><para>Wie hoch sind die notwendigen Investitionen, um die Betriebsbereitschaft für das WLAN herzustellen?</para></listitem>
 					<listitem><para>Welche IT-Angebote, zentral und dezentral, sollen von den Geräten im WLAN verwendet werden können?</para></listitem>
@@ -2395,24 +2395,24 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/klassen.csv
 	<!-- 			TODO -->
 	<!-- 		</para> -->
 	<!-- 	</section> -->
-		<section id="additional-services_proxy">
-			<title>Internetzugang für Rechner / BYOD</title>
-			<para>
-				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
-			</para>
-			<para>
-				TODO
-			</para>
-		</section>
-		<section id="additional-services_radius">
-			<title>WLAN / RADIUS</title>
-			<para>
-				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
-			</para>
-			<para>
-				TODO
-			</para>
-		</section>
+		<!-- <section id="additional-services_proxy"> -->
+		<!-- 	<title>Internetzugang für Rechner / BYOD</title> -->
+		<!-- 	<para> -->
+		<!-- 		<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis> -->
+		<!-- 	</para> -->
+		<!-- 	<para> -->
+		<!-- 		TODO -->
+		<!-- 	</para> -->
+		<!-- </section> -->
+		<!-- <section id="additional-services_radius"> -->
+		<!-- 	<title>WLAN / RADIUS</title> -->
+		<!-- 	<para> -->
+		<!-- 		<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis> -->
+		<!-- 	</para> -->
+		<!-- 	<para> -->
+		<!-- 		TODO -->
+		<!-- 	</para> -->
+		<!-- </section> -->
 	<!-- 	<section id="additional-services_dienstmail"> -->
 	<!-- 		<title>Dienstmail/Groupware</title> -->
 	<!-- 		<para> -->
