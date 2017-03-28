@@ -21,7 +21,6 @@ ALL_TARGETS = $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-printerm
 	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-lessontimes.mo \
 	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/lessontimes.json \
 	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/lessontimes.mo \
-	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-installer-preview.mo \
 	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/schoolinstaller.json \
 	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolinstaller.mo \
 	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-installer.mo \
@@ -73,7 +72,6 @@ $(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolrooms.mo: fr/uc
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-lessontimes.mo: fr/ucs-school-umc-lessontimes/umc/python/lessontimes/fr.po
 $(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/lessontimes.json: fr/ucs-school-umc-lessontimes/umc/js/fr.po
 $(DESTDIR)/usr/share/univention-management-console/i18n/fr/lessontimes.mo: fr/ucs-school-umc-lessontimes/umc/fr.po
-$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-installer-preview.mo: fr/ucs-school-umc-installer/umc/python/schoolinstaller/fr.po
 $(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/schoolinstaller.json: fr/ucs-school-umc-installer/umc/js/fr.po
 $(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolinstaller.mo: fr/ucs-school-umc-installer/umc/fr.po
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-installer.mo: fr/ucs-school-umc-installer/umc/python/schoolinstaller/fr.po
