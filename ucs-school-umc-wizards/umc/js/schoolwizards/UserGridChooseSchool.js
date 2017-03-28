@@ -96,12 +96,11 @@ define([
 			var selectedSchool = array.filter(this.schools, lang.hitch(this, function(school) {
 				return school.id === this._form.getWidget('schools').get('value');
 			}))[0];
-			var _backToSchool = new Button({
-				name: 'back',
+			var headerButtons = (this.schools.length > 1) ? [{
+				name: 'changeSchool',
 				label: _('Change school'),
-				region: 'footer',
-				onClick: lang.hitch(this, 'chooseDifferentSchool')
-			});
+				callback: lang.hitch(this, 'chooseDifferentSchool')
+			}] : null;
 			var userGrid = new UserGrid({
 				description: this.description,
 				schools: [selectedSchool],
@@ -111,13 +110,11 @@ define([
 				autoSearch: this.autoSearch,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				moduleFlavor: this.moduleFlavor,
-				module: this.module
+				module: this.module,
+				headerButtons: headerButtons
 			});
 
 			// add UserGrid to module
-			if (this.schools.length > 1) {
-				userGrid.addChild(_backToSchool);
-			}
 			this.module.addChild(userGrid);
 			this.module.selectChild(userGrid);
 

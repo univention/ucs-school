@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (9.0.3-3) unstable; urgency=medium
+
+  * Bug #36789: Move 'Change school' button in Users (schools) module
+    into module header
+
+ -- Johannes Keiser <keiser@univention.de>  Tue, 28 Mar 2017 17:46:52 +0200
+
 ucs-school-umc-wizards (9.0.3-2) unstable; urgency=medium
 
   * Bug #36789: adapt search form to new UMC design
