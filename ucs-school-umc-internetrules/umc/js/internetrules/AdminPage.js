@@ -37,10 +37,10 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/internetrules"
-], function(declare, lang, array, dialog, store, Page, ExpandingTitlePane, Grid, TextBox, SearchForm, _) {
+], function(declare, lang, array, dialog, store, Page, ExpandingTitlePane, Grid, SearchBox, SearchForm, _) {
 
 	return declare("umc.modules.internetrules.AdminPage", [ Page ], {
 		// summary:
@@ -147,16 +147,21 @@ define([
 			//
 
 			var widgets = [{
-				type: TextBox,
+				type: SearchBox,
 				name: 'pattern',
 				description: _('Specifies the substring pattern which is searched for in the rules\' names and their domain lists'),
-				label: _('Search pattern')
+				label: _('Search pattern'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 
 			this._searchForm = new SearchForm({
 				region: 'top',
+				hideSubmitButton: true,
 				widgets: widgets,
-				layout: [ [ 'pattern', 'submit' ] ],
+				layout: [ [ 'pattern' ] ],
 				onSearch: lang.hitch(this, function(values) {
 					this._grid.filter(values);
 				})

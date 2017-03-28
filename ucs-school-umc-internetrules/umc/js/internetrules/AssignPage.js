@@ -38,14 +38,14 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/Grid",
-	"umc/widgets/TextBox",
+	"umc/widgets/SearchBox",
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/SearchForm",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/internetrules"
 ], function(declare, lang, array, Dialog, tools, store, Page, Form,
-            Grid, TextBox, Text, ComboBox, SearchForm, StandbyMixin, _) {
+            Grid, SearchBox, Text, ComboBox, SearchForm, StandbyMixin, _) {
 
 // create helper class: combination of Form and StandbyMixin
 var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, StandbyMixin ], {});
@@ -119,16 +119,21 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 				label: _('School'),
 				autoHide: true
 			}, {
-				type: TextBox,
+				type: SearchBox,
 				name: 'pattern',
 				description: _('Specifies the substring pattern which is searched for in the group properties'),
-				label: _('Search pattern')
+				label: _('Search pattern'),
+				inlineLabel: _('Search...'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
 			}];
 
 			this._searchForm = new SearchForm({
 				region: 'top',
+				hideSubmitButton: true,
 				widgets: widgets,
-				layout: [ [ 'school', 'pattern', 'submit' ] ],
+				layout: [ [ 'school', 'pattern' ] ],
 				onSearch: lang.hitch(this, function(values) {
 					this._grid.filter(values);
 				})
