@@ -845,6 +845,7 @@ define([
 			var progressBar = new ProgressBar({});
 			this.inherited(arguments);
 			var wizard = new UploadWizard({
+				'class': 'umcCard',
 				description: this.description,
 				progressBar: progressBar
 			});

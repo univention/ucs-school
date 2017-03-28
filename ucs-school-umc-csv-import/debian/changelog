@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (4.0.6-1) unstable; urgency=medium
+
+  * Bug #44089: adjust to UCS 4.2 design
+
+ -- Florian Best <best@univention.de>  Tue, 28 Mar 2017 17:50:32 +0200
+
 ucs-school-umc-csv-import (4.0.5-1) unstable; urgency=medium
 
   * Bug #43577: fix grid visibility due to changes in upstream UMC
