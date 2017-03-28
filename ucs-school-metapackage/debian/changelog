@@ -1,3 +1,9 @@
+ucs-school-metapackage (10.0.2-1) unstable; urgency=low
+
+  * Bug #43752: removed outdated installer-preview package
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 28 Mar 2017 23:50:37 +0200
+
 ucs-school-metapackage (10.0.1-5) unstable; urgency=low
 
   * Bug #43579: adapt version check to appcenter API change
