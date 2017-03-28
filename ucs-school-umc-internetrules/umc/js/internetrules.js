@@ -56,14 +56,14 @@ define([
 			// render the correct pages corresponding to the given flavor
 			if (this.moduleFlavor == 'assign') {
 				// flavor for assigning rules to groups
-				this._assignPage = new AssignPage({});
+				this._assignPage = new AssignPage({ fullWidth: true });
 				this.addChild(this._assignPage);
 			}
 			else {
 				// flavor for managing internet rules
-				this._adminPage = new AdminPage({});
+				this._adminPage = new AdminPage({ fullWidth: true });
 				this.addChild(this._adminPage);
-				this._detailPage = new DetailPage({});
+				this._detailPage = new DetailPage({ fullWidth: true });
 				this.addChild(this._detailPage);
 
 				// the module needs to handle the visibilities of different pages

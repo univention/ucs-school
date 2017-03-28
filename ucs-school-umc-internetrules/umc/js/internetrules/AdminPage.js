@@ -57,7 +57,6 @@ define([
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
-			this.headerText = _('Administration of internet rules');
 			this.moduleStore = store('name', 'internetrules');
 		},
 

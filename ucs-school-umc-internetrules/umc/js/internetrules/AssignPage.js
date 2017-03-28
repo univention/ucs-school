@@ -65,7 +65,6 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
-			this.headerText = _('Assignment of internet rules');
 			this.moduleStore = store('$dn$', 'internetrules/groups');
 		},
 

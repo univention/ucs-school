@@ -62,9 +62,6 @@ define([
 			// get the module store
 			this.moduleStore = store('id', 'internetrules');
 
-			// set the page header
-			this.headerText = _('Edit internet rule');
-
 			// Configure buttons for the header of the detail page. The "Close"
 			// button gets replaced by the "Back to overview" button.
 			var headerButtons = [{
