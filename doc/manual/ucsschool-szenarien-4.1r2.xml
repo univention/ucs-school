@@ -1306,7 +1306,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_infrastructure_internet">
 				<title>Internetzugang</title>
 				<para>
-					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link> und <link linkend="scenario-3">3</link></emphasis>
 				</para>
 				<para>
 					Die Schulen sollten über zuverlässige Internetzugänge
@@ -1323,58 +1323,68 @@ feedback@univention.de
 			</section>
 			<!-- Jan Christoph, 2017-03-22: ich bin mir nicht sicher was genau mit dieser Sektion gemeint
 			ist: Internetzugang oder LAN .. insgesamt erscheint es mir für den Internetzugang zu viel -->
-			<!-- <section id="infrastructure-and_hardware-requirements_infrastructure_bandbreiten"> -->
-			<!-- 	<title>Bandbreite im lokalen Netz</title> -->
-			<!-- 	<para> -->
-			<!-- 		<emphasis>für Szenario 4</emphasis> -->
-			<!-- 	</para> -->
-			<!-- 	<para> -->
-			<!-- 		Die nötigen Bandbreiten im lokalen Schulnetz können je -->
-			<!-- 		nach Anwendungsfall stark schwanken.  Die folgende -->
-			<!-- 		Tabelle gibt einen groben Überblick über Richtwerte nach -->
-			<!-- 		Schultyp.  Die benötigte Bandbreite liegt zwischen 1-3 -->
-			<!-- 		MBit/s für schuleigene Geräte. -->
-			<!-- 	</para> -->
-			<!-- 	<para> -->
-			<!-- 		<table id="table_infrastructure-and_hardware-requirements_infrastructure_internet"> -->
-			<!-- 			<title>Grobe Richtwerte für die Anbindung nach Schultyp</title> -->
-			<!-- 			<tgroup cols="4"> -->
-			<!-- 				<colspec colnum="1" colname="cidr" colwidth="1.25*"/> -->
-			<!-- 				<colspec colnum="2" colname="range" colwidth="1*"/> -->
-			<!-- 				<colspec colnum="3" colname="number_of_ips" colwidth="2*"/> -->
-			<!-- 				<colspec colnum="4" colname="usage" colwidth="1*"/> -->
-			<!-- 				<thead> -->
-			<!-- 					<row> -->
-			<!-- 						<entry>Schultyp</entry> -->
-			<!-- 						<entry>Typische Anzahl Clients</entry> -->
-			<!-- 						<entry>Typische Netznutzung</entry> -->
-			<!-- 						<entry>Nötige Bandbreite</entry> -->
-			<!-- 					</row> -->
-			<!-- 				</thead> -->
-			<!-- 				<tbody> -->
-			<!-- 					<row> -->
-			<!-- 						<entry>Grundschulen</entry> -->
-			<!-- 						<entry>~20 Clients</entry> -->
-			<!-- 						<entry>Geringe Netznutzung (~1 MBit/s)</entry> -->
-			<!-- 						<entry>20 MBit/s</entry> -->
-			<!-- 					</row> -->
-			<!-- 					<row> -->
-			<!-- 						<entry>Weiterführende Schulen</entry> -->
-			<!-- 						<entry>~90 Clients</entry> -->
-			<!-- 						<entry>Mittlere Netznutzung (~2 MBit/s)</entry> -->
-			<!-- 						<entry>180 MBit/s</entry> -->
-			<!-- 					</row> -->
-			<!-- 					<row> -->
-			<!-- 						<entry>Berufsschulen</entry> -->
-			<!-- 						<entry>~300 Clients</entry> -->
-			<!-- 						<entry>Hohe Netznutzung (>3 MBit/s)</entry> -->
-			<!-- 						<entry>1 GBit/s</entry> -->
-			<!-- 					</row> -->
-			<!-- 				</tbody> -->
-			<!-- 			</tgroup> -->
-			<!-- 		</table> -->
-			<!-- 	</para> -->
-			<!-- </section> -->
+			<section id="infrastructure-and_hardware-requirements_infrastructure_bandwidth">
+				<title>Internetzugang: Schulserver im Rechenzentrum</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Die folgende Schätzung der notwendigen Bandbreite des
+					Internetzugangs bezieht sich ausschließlich auf <link
+						linkend="scenario-4">Szenario  4</link>, in dem alle
+					Schulserver aus den Schulen in ein zentrales Rechenzentrum
+					überführt werden.  In den Schulen verbleiben nur die
+					Endgeräte, die zur Nutzung der IT notwendig sind.  Die
+					Anforderungen zu den anderen Szenarien sind in <xref
+						linkend="infrastructure-and_hardware-requirements_infrastructure_internet"/>
+					beschrieben.
+				</para>
+				<para>
+					Die folgende Tabelle gibt einen Überblick über Richtwerte
+					für den Internetzugang nach Schultyp.  Die benötigte
+					Bandbreite liegt zwischen 1-3 MBit/s je Endgerät, das Teil
+					der Domäne ist.
+				</para>
+				<para>
+					<table id="table_infrastructure-and_hardware-requirements_infrastructure_internet">
+						<title>Richtwerte für die Internetanbindung nach Schultyp</title>
+						<tgroup cols="4">
+							<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+							<colspec colnum="2" colname="range" colwidth="1*"/>
+							<colspec colnum="3" colname="number_of_ips" colwidth="2*"/>
+							<colspec colnum="4" colname="usage" colwidth="1*"/>
+							<thead>
+								<row>
+									<entry>Schultyp</entry>
+									<entry>Anzahl Clients</entry>
+									<entry>Erwartete Nutzung</entry>
+									<entry>Internetanbindung</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry>Grundschulen</entry>
+									<entry>ca. 20 Clients</entry>
+									<entry>Geringe Nutzung, ca. 1 MBit/s je Endgerät</entry>
+									<entry>20 MBit/s</entry>
+								</row>
+								<row>
+									<entry>Weiterführende Schulen</entry>
+									<entry>ca. 90 Clients</entry>
+									<entry>Mittlere Nutzung, ca. 2 MBit/s je Endgerät</entry>
+									<entry>180 MBit/s</entry>
+								</row>
+								<row>
+									<entry>Berufsschulen</entry>
+									<entry>ca. 300 Clients</entry>
+									<entry>Hohe Nutzung, mehr als 3 MBit/s je Endgerät</entry>
+									<entry>1 GBit/s</entry>
+								</row>
+							</tbody>
+						</tgroup>
+					</table>
+				</para>
+			</section>
 			<section id="infrastructure-and_hardware-requirements_infrastructure_vpn">
 				<title>Verbindung zur Zentrale</title>
 				<para>
