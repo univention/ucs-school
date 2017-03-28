@@ -229,7 +229,6 @@ define([
 				}]
 			}, {
 				name: 'alreadyInstalled',
-				headerText: _('UCS@school configuration wizard'),
 				helpText: _('UCS@school has already been configured on this system.'),
 				widgets: [{
 					type: Text,
@@ -614,7 +613,7 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this._installer = new Installer({});
+			this._installer = new Installer({ 'class': 'umcCard' });
 			this.addChild(this._installer);
 
 			this._installer.on('finished', lang.hitch(this, function() {
