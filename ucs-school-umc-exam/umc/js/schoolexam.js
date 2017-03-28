@@ -762,6 +762,7 @@ define([
 			this.inherited(arguments);
 
 			this._examWizard = new ExamWizard({
+				'class': 'umcCard',
 				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
 			this.addChild(this._examWizard);

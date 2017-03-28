@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.3-1) unstable; urgency=medium
+
+  * Bug #44089: adjust design to UCS 4.2
+
+ -- Florian Best <best@univention.de>  Tue, 28 Mar 2017 17:40:47 +0200
+
 ucs-school-umc-exam (7.0.2-1) unstable; urgency=medium
 
   * Bug #43575: hide checkboxes in reboot grid
