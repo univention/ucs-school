@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (9.0.6-6) unstable; urgency=medium
+
+  * Bug #36789: adjust layout
+
+ -- Florian Best <best@univention.de>  Tue, 28 Mar 2017 17:36:32 +0200
+
 ucs-school-umc-computerroom (9.0.6-5) unstable; urgency=medium
 
   * Bug #43575: fix grid footerFormatter
