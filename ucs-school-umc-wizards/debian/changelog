@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.4-1) unstable; urgency=medium
+
+  * Bug #44089: adjust to UCS 4.2 design
+
+ -- Florian Best <best@univention.de>  Tue, 28 Mar 2017 17:55:31 +0200
+
 ucs-school-umc-wizards (9.0.3-3) unstable; urgency=medium
 
   * Bug #36789: Move 'Change school' button in Users (schools) module

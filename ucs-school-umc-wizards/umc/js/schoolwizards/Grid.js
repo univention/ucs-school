@@ -286,7 +286,8 @@ define([
 				selectedSchool: this.getSelectedSchool(),
 				type: this.getSelectedType(),
 				itemType: tools.capitalize(this.objectNameSingular),
-				objectType: null
+				objectType: null,
+				'class': 'umcCard'
 			});
 		},
 
