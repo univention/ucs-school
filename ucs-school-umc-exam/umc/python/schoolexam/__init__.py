@@ -412,6 +412,7 @@ class Instance(SchoolBaseModule):
 			error = _('Room "%s" does not contain any computers. Empty rooms may not be used to start an exam.') % room.get_relative_name()
 		self.finished(request.id, error)
 
+	@require_password
 	@sanitize(
 		room=StringSanitizer(required=True),
 		exam=StringSanitizer(required=True),
@@ -421,9 +422,10 @@ class Instance(SchoolBaseModule):
 		# steps:
 		#   10 -> collecting exam files
 		#   5 -> for preparing exam room
+		#   2+3 -> for resetting computerroom settings
 		#   25 -> for cloning users
 		progress = self._progress_state
-		progress.reset(40)
+		progress.reset(45)
 		progress.component(_('Initializing'))
 
 		# try to open project file
@@ -455,6 +457,32 @@ class Instance(SchoolBaseModule):
 				school=school,
 			))
 			progress.add_steps(5)
+
+			# remove room settings via UMCP...
+			#   first step: acquire room
+			#   second step: adjust room settings
+			progress.component(_('Resetting room settings'))
+			try:
+				userConnection = UMCConnection('localhost', username=self.username, password=self.password)
+			except (HTTPException, SocketError) as exc:
+				raise UMC_Error(_('Could not connect to local UMC server.'))
+
+			room = request.options['room']
+			MODULE.info('Acquire room: %s' % (room,))
+			userConnection.request('computerroom/room/acquire', dict(
+				room=request.options['room'],
+			))
+			progress.add_steps(2)
+			MODULE.info('Reset room settings: %s' % (room,))
+			# resetting room settings back to defaults
+			userConnection.request('computerroom/settings/set', dict(
+				room=room,
+				internetRule='none',
+				customRule='',
+				shareMode='all',
+				printMode='default',
+			))
+			progress.add_steps(3)
 
 			# delete exam users accounts
 			if project:

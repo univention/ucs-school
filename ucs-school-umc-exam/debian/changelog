@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.10-8) unstable; urgency=low
+
+  * Bug #44082: reset computerroom settings after exam has been finished
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 28 Mar 2017 13:28:02 +0200
+
 ucs-school-umc-exam (6.0.10-7) unstable; urgency=low
 
   * Bug #37955: use unique home directories for exam users
