@@ -94,7 +94,7 @@ feedback@univention.de
 					<listitem><para>Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
 					<listitem><para>Verfügt der Betreiber über das erforderliche Wissen?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
 					<listitem><para>Wie werden Schulen über die Einführung von &ucsUAS; informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
-					<listitem><para>Wer baut in den Schulen Server, Clients und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
+					<listitem><para>Wer baut in den Schulen Server, Rechner und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
 					<listitem><para>In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
 					<listitem><para>In welchem zeitlichen Rahmen soll der Rollout der Pilot-Installation und später der Gesamtinfrastruktur erfolgen?</para></listitem>
 					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, zum Beispiel Passwörter zurücksetzen?</para></listitem>
@@ -117,7 +117,7 @@ feedback@univention.de
 							<itemizedlist mark="whitesquare">
 								<listitem><para>Installation UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
 								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
-								<listitem><para>Import von Benutzer-, Client- und Netzdaten: <xref linkend="import" /></para></listitem>
+								<listitem><para>Import von Benutzer-, Rechner- und Netzdaten: <xref linkend="import" /></para></listitem>
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
@@ -592,7 +592,7 @@ feedback@univention.de
 				<para>
 					In diesem Beispiel werden evtl. vorhandene Server und
 					Endgeräte im selben Netz betrieben. Dieses Modell richtet
-					sich an kleine Schulen mit wenigen Clients.  Bei Bedarf
+					sich an kleine Schulen mit wenigen Rechnern.  Bei Bedarf
 					können weitere Subnetze ergänzt werden, da das für die
 					Schule reservierte Klasse-B Netz nur zu einem kleinen Teil
 					ausgeschöpft wurde.
@@ -793,7 +793,7 @@ feedback@univention.de
 					Directory-Domäne unabhängig von dem eigentlichen
 					Domänennamen zu definieren.  Dies ermöglicht es, dass
 					Benutzer einen anderen Domänen bei Anmeldung an Windows
-					Clients verwenden können, zum Beispiel wird statt <systemitem
+					Rechnern verwenden können, zum Beispiel wird statt <systemitem
 						class="domainname">SCHULEN\benutzername</systemitem> nun
 					<systemitem
 						class="domainname">SCHULTRÄGER\benutzername</systemitem>
@@ -827,7 +827,7 @@ feedback@univention.de
 				</para>
 			</section>
 			<section id="concepts_names_clients-and-servers">
-				<title>Clients und Schulserver</title>
+				<title>Rechner und Schulserver</title>
 				<para>
 					<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
@@ -1851,9 +1851,9 @@ feedback@univention.de
 			</para>
 			<note>
 				<para>
-					Hinweis: Die &ucsUAS; Schulserver setzen automatisch den
-					&ucsMaster; und die &ucsBackup;-Server als Zeitserver. Damit
-					wird automatisch eine Kaskadierung erreicht
+					Die &ucsUAS; Schulserver setzen automatisch den &ucsMaster;
+					und die &ucsBackup;-Server als Zeitserver. Damit wird
+					automatisch eine Kaskadierung erreicht
 				</para>
 			</note>
 			<para>
@@ -1879,12 +1879,21 @@ feedback@univention.de
 		</section>
 	</chapter>
 	<chapter id="import">
-		<title>Import</title>
+		<title>Datenimport</title>
 		<para>
-			Sind die zentralen Systeme soweit installiert und konfiguriert,
-			wird mit dem Datenimport begonnen. Dabei sollte die vorgeschlagene
-			Reihenfolge eingehalten werden. Die erstellten CSV-Dateien sollten
-			unabhängig von der &ucsUAS;-Domäne abgelegt und gesichert werden.
+			Nach Abschluss der Installation der zentralen Systeme sind die
+			Daten in das LDAP-Verzeichnis zu importieren, die für die
+			Einrichtung und den Betrieb von Schulen benötigt werden.  Dies sind
+			Informationen über die Schulen, die IP-Netze, Benutzerkonten und
+			weitere Objekte.
+		</para>
+		<para>
+			Der Datenimport sollte erfolgen bevor Schulserver und Rechner
+			ausgerollt werden.   Weiterhin sollten die unterschiedlichen Daten
+			in der Reihenfolge importiert werden, wie sie in diesem Kapitel
+			vorgegeben ist.  Darüber hinaus sollten die Daten, die in
+			CSV-Dateien gespeichert werden, für die spätere Analyse und
+			Überarbeitung gesichert abgelegt werden.
 		</para>
 		<section id="import_schools">
 			<title>Schulen</title>
@@ -1892,94 +1901,157 @@ feedback@univention.de
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
-				Im ersten Schritt müssen die Schulen importiert werden. Dabei
-				wird auch die LDAP-Struktur erstellt, die im weiteren Verlauf
-				notwendig ist. Um alle Schulen in einem Schritt anzulegen, legen
-				sie bitte ein CSV-Datei in folgendem Format an:
+				Im ersten Schritt werden die Schulen importiert.  Durch den
+				Datenimport wird im LDAP-Verzeichnis die Container-Struktur
+				erstellt, die für die späteren Importe benötigt wird.  Um alle
+				Schulen in einem Schritt zu importieren, ist eine CSV-Datei
+				zu erstellen.
 			</para>
 			<para>
-				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle <emphasis>Schulen</emphasis>.
+				Das Vorgehen zum Import ist wie folgt:
+				<itemizedlist>
+					<listitem>
+						<para>
+							<ulink url="ucsschool-import-vorlagen.xlsx">Vorlage
+								für den Import</ulink> öffnen und Tabelle
+							<emphasis>Schulen</emphasis> ausfüllen.
+						</para>
+						<para>
+							<figure id="fig-import-schools">
+								<title>Tabelle: Schulen</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata align="center" fileref="illustrations41/1_schulen_import.png" scale="60" />
+									</imageobject>
+									<textobject><phrase>Tabelle: Schulen</phrase></textobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Export der Tabelle ins CSV-Format mit Tabulator als
+							Feldtrenner und ohne Texttrenner.
+						</para>
+						<para>
+							<figure id="fig-import-schools-save-as">
+								<title>Kopie speichern als CSV-Datei</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata align="center" fileref="illustrations41/2_schulen_save_as.png" scale="60" />
+									</imageobject>
+									<textobject><phrase>Kopie speichern als CSV-Datei</phrase></textobject>
+								</mediaobject>
+							</figure>
+						</para>
+						<para>
+							<figure id="fig-import-schools-csv-parameters">
+								<title>Export Parameter</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata align="center" fileref="illustrations41/3_schulen_csv-parameters.png" scale="60" />
+									</imageobject>
+									<textobject><phrase>Export Parameter</phrase></textobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei <filename>schulen.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Um die CSV-Datei weiterverarbeiten zu können, muss
+							sie im Unix-Format vorliegen.  Sollte sie auf unter
+							Windows oder MacOS gespeichert worden sein, so muss
+							sie konvertiert werden.  Dazu ist auf dem &ucsMaster;
+							der folgende Befehl auf die Datei anzuwenden:
+							<programlisting>
+								<![CDATA[
+dos2unix schulen.csv
+								]]>
+							</programlisting>
+						</para>
+						<para>
+							Vorweg ist muss das Paket
+							<package>dos2unix</package> installiert werden, in
+							dem das
+							<application>unmaintained</application>-Repository
+							aktiviert wird, siehe <ulink
+								url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Konfiguration
+								des Repository-Servers</ulink>.  Nach der
+							Aktivierung des Repositories ist der folgende Befehl
+							zu Installation des Pakets auszuführen:
+							<programlisting>
+								<![CDATA[
+apt-get update; apt-get install dos2unix
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die
+							mit dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/schulen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Zum automatisierten Einlesen aller Schulen ist
+							einmalig ein Skript zu erstellen.  Dazu sind
+							folgende Befehle auszuführen, um das Skript
+							anzulegen:
+							<programlisting>
+								<![CDATA[
+mkdir -p /usr/local/bin/ucsschool/helper_scripts/
+touch /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
+chmod a+x /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
+nano /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
+								]]>
+							</programlisting>
+						</para>
+						<para>
+							Der folgende Programmtext ist zu kopieren und
+							einzufügen.  Abschließend ist mit den Tastenkürzeln
+							<command>Strg-O</command> und
+							<command>Strg-X</command> die Datei zu speichern.
+							<programlisting>
+								<![CDATA[
+#!/bin/bash
+IFS=$'\t'
+while read schoolid fullname serveredu serveradm; do
+/usr/share/ucs-school-import/scripts/create_ou --displayName="${fullname}" "${schoolid}" "${serveredu}" "${serveradm}"
+done < "$1"
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Das Import ist kann abschließend mit folgendem
+							Befehl ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/local/bin/ucsschool/helper_scripts/import_schools.sh \
+    /usr/local/ucsschool/import_data/schulen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
 			</para>
-			<para>
-				---------------------- TODO viel besser: wir erstellen ein
-				LibreOffice Calc-Vorlage aus der die CSV-Datei im richtigen Format exportiert werden kann!
-			</para>
-			<para>
-				Schulkürzel Anzeigename Edukativer Server Verwaltungsserver <userinput>011</userinput>
-				Grundschule Nord <userinput>sedu011-01</userinput> <userinput>sadm011-01</userinput> <userinput>012</userinput> Grundschule West
-				<userinput>sedu012-01</userinput> <userinput>sadm012-01</userinput> <userinput>042</userinput> Berufsschule Technik <userinput>sedu042-01</userinput> <userinput>sadm042-01</userinput>
-				... ... ... ...
-			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Verwenden sie Tabulator als Trennzeichen zwischen Spalten.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Speichern sie Datei bitte im Unix-Format ab.  Wenn sie
-						sich unsicher sind, wenden sie unter &ucsUCS; einmal
-						<command>dos2unix</command> auf die Datei an.
-						(<package>dos2unix</package> muss aus dem
-						<application>unmaintained</application>-Repository installiert
-						werden, siehe
-						<ulink url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Konfiguration des Repository-Servers</ulink>
-						)
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Erstellen sie auf dem &ucsMaster; folgendes Verzeichnis:
-						<filename>/usr/local/ucsschool/import_data/</filename>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Kopieren sie die CSV-Datei auf den &ucsMaster; nach
-						<filename>/usr/local/ucsschool/import_data/schulen.csv</filename>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Entfernen sie die Kopfzeile:
-						<command>sed -i '1d' /usr/local/ucsschool/import_data/schulen.csv</command>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Erstellen sie folgende Datei:
-						<filename>/usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh</filename>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Öffnen sie die Datei mit einem Editor und fügen folgendes
-						ein:
-						<command>#!/bin/bash IFS=',' while read schoolid fullname serveredu serveradm; do  /usr/share/ucs-school-import/scripts/create_ou --displayName=${fullname} \  ${schoolid} \  ${serveredu} \  ${serveradm} done &lt; &quot;$1&quot;</command>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Speichern sie die Datei
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Machen sie die Datei ausführbar:
-						<command>chmod u+x /usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh</command>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Rufen sie das Skript auf und übergeben den Pfad zur
-						CSV-Datei:
-						<filename>/usr/local/bin/ucsschool/helper_scripts/batch_import_schools.sh /usr/local/ucsschool/import_data/schulen.csv</filename>
-					</para>
-				</listitem>
-			</itemizedlist>
 		</section>
 		<section id="import_networks">
 			<title>Netze</title>
@@ -1987,97 +2059,175 @@ feedback@univention.de
 				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
-				Erstellen sie, wie im <ulink
+				Der Import der Netze ist notwendig, um Rechner und Server in den
+				Schulen einrichten zu können.  Beim Import werden unter anderem
+				passende Richtlinien für DHCP, DNS und Routing erstellt.
+			</para>
+			<para>
+				Die Netze sind entsprechend der <link
+					linkend="concepts_network">Definition im Netzkonzept</link>
+				in eine CSV-Datei einzutragen.  Im <ulink
 					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
-				beschrieben, eine CSV-Datei, die alle Schul-Netze
-				entsprechend des Netzkonzeptes enthält.
+				ist das Datenformat für den Import beschrieben.  In der Datei
+				<ulink url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage
+				in der Tabelle <emphasis>Netze</emphasis> vorhanden, die
+				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
 			</para>
 			<para>
-				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle <emphasis>Netze</emphasis>.
+				<itemizedlist>
+					<listitem>
+						<para>
+							Die CSV-Datei <filename>networks.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem
+							Befehl ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_networks \
+    /usr/local/ucsschool/import_data/networks.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
 			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Speichern sie die CSV-Datei auf den &ucsMaster; nach
-						<filename>/usr/local/ucsschool/import_data/networks.csv</filename>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Importieren sie die Netze über folgenden Befehl:
-						<filename>/usr/share/ucs-school-import/scripts/import_networks /usr/local/ucsschool/import_data/networks.csv</filename>
-					</para>
-				</listitem>
-			</itemizedlist>
 			<para>
-				Dabei werden u.a. passende DHCP Richtlinien für DNS und Routing
-				erstellt.
 			</para>
 		</section>
 		<section id="import_clients">
-			<title>Clients</title>
+			<title>Rechner</title>
 			<para>
 				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
-				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
-				beschrieben, eine CSV-Datei pro Schule, die alle Clients der
-				Schule entsprechend des Netz- und Namenskonzeptes enthält.
+				Der Import von Rechnern ist insbesondere notwendig, um die
+				Rechner in den Schulen mit der richtigen MAC-Adresse in &ucsUAS;
+				zu hinterlegen, so dass diese mit den Zugangsdaten zum Netz
+				versorgt werden können.  Weitere Dienste, wie
+				Softwareverteilungslösungen verwenden diese Informationen
+				ebenfalls weiter.
 			</para>
 			<para>
-				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle <emphasis>Clients</emphasis>.
+				Das Datenformat der CSV-Datei ist im <ulink
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
+				beschrieben.  Es sollte eine CSV-Datei je Schule erstellt
+				werden, die alle Rechner der jeweiligen Schule entsprechend des
+				Netz- und Namenskonzeptes enthält.  In der Datei <ulink
+					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
+				der Tabelle <emphasis>Rechner</emphasis> vorhanden, die
+				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
 			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Speichern sie die CSV-Datei auf den &ucsMaster; nach
-						<filename>/usr/local/ucsschool/import_data/computers_schulkuerzel.csv</filename>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Importieren sie die Netze über folgenden Befehl:
-						<filename>/usr/share/ucs-school-import/scripts/import_computer /usr/local/ucsschool/import_data/computers_schulkuerzel.csv</filename>
-					</para>
-				</listitem>
-			</itemizedlist>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>computers_SCHULE.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_computer \
+     /usr/local/ucsschool/import_data/computers_SCHULE.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
 		</section>
 		<section id="import_printers">
-			<title>Drucker-Freigaben</title>
+			<title>Drucker</title>
 			<para>
 				<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
 			<para>
-				Erstellen sie, wie im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
-				beschrieben, eine CSV-Datei pro Schule, die alle
-				Druckerfreigaben der Schule entsprechend des Netz- und
-				Namenskonzeptes enthält.
+				Der Import der Drucker ist notwendig, damit Drucker in den
+				Schulen zur Verfügung stehen.
 			</para>
 			<para>
-				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabelle <emphasis>Drucker</emphasis>.
+				Das Datenformat der CSV-Datei ist im <ulink
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
+				beschrieben.  In der Datei <ulink
+					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
+				der Tabelle <emphasis>Drucker</emphasis> vorhanden, die
+				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
 			</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Speichern sie die CSV-Datei auf den &ucsMaster; nach
-						<filename>/usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</filename>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Importieren sie die Netze über folgenden Befehl:
-						<filename>/usr/share/ucs-school-import/scripts/import_printer /usr/local/ucsschool/import_data/printershares_schulkuerzel.csv</filename>
-					</para>
-				</listitem>
-			</itemizedlist>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>printers.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_printer \
+     /usr/local/ucsschool/import_data/printers.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
 		</section>
 		<section id="import_users-classes">
 			<title>Benutzer / Klassen</title>
@@ -2085,21 +2235,101 @@ feedback@univention.de
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
-				Vorlage für den Import in der Datei
-				<ulink url="ucsschool-import-vorlagen.xlsx"/>,
-				Tabellen &quot;Benutzer&quot; und &quot;Klassen&quot;.
+				Der Import von Benutzerkonten erleichtert die Pflege,
+				insbesondere in sehr großen Umgebungen.  Mit dem Import wird
+				ebenfalls der Schuljahreswechsel durchgeführt.
 			</para>
 			<para>
-				Für den Benutzerimport benötigen sie ebenfalls eine CSV-Datei,
-				die idealerweise von der Schulverwaltungssoftware bereitgestellt
-				wird. Folgende <ulink
-					url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html#configuration:mapping">Informationen</ulink>
-				müssen enthalten sein:
+				Das Datenformat der CSV-Datei ist im <ulink
+					url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html#configuration:mapping">&ucsUAS;-Handbuch</ulink>
+				beschrieben.  Folgende Informationen müssen enthalten sein:
 				<itemizedlist>
 					<listitem><para>Vorname</para></listitem>
 					<listitem><para>Nachname</para></listitem>
 					<listitem><para>Schulen</para></listitem>
 					<listitem><para>Klassen</para></listitem>
+				</itemizedlist>
+				In der Datei <ulink
+					url="ucsschool-import-vorlagen.xlsx"/> sind Vorlagen in
+				den Tabellen <emphasis>Benutzer</emphasis> und
+				<emphasis>Klassen</emphasis> vorhanden.  Das weitere Vorgehen
+				ist wie folgt:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>students.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/students.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_user \
+    /usr/local/ucsschool/import_data/students.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Beim Import von Klassen ist analog vorzugehen:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>klassen.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/klassen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_user \
+    /usr/local/ucsschool/import_data/klassen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -2166,7 +2396,7 @@ feedback@univention.de
 	<!-- 		</para> -->
 	<!-- 	</section> -->
 		<section id="additional-services_proxy">
-			<title>Internetzugang für Clients / BYOD</title>
+			<title>Internetzugang für Rechner / BYOD</title>
 			<para>
 				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 			</para>
