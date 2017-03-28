@@ -369,7 +369,7 @@ feedback@univention.de
 	<chapter id="preparations">
 		<title>Vorbereitende Maßnahmen</title>
 		<para>
-			<emphasis>für alle Szenarien</emphasis>
+			<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 		</para>
 		<para>
 			In vergangenen Projekten haben sich folgende Schritte bewährt:
@@ -808,7 +808,7 @@ feedback@univention.de
 			<section id="concepts_names_servers">
 				<title>Zentrale Server</title>
 				<para>
-					<emphasis>für alle Szenarien</emphasis>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
 				<para>
 					Zentrale Server:
@@ -861,7 +861,7 @@ feedback@univention.de
 			<section id="concepts_names_user-classes">
 				<title>Benutzernamen und Klassenbezeichnungen</title>
 				<para>
-					<emphasis>für alle Szenarien</emphasis>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
 				<para>
 					Benutzerkonten und Klassen hängen in &ucsUAS; sehr eng
@@ -1052,7 +1052,7 @@ feedback@univention.de
 		<section id="concepts_support">
 			<title>Support-Kanäle</title>
 			<para>
-				<emphasis>für alle Szenarien</emphasis>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				Für den erfolgreichen Betrieb von &ucsUAS; ist es erforderlich,
@@ -1133,7 +1133,7 @@ feedback@univention.de
 			<section id="infrastructure-and_hardware-requirements_servers_master">
 				<title>Identity Management</title>
 				<para>
-					<emphasis>alle Szenarien</emphasis>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
 				<para>Systeme vom Typ &ucsMaster; und &ucsBackup; stellen das
 					Identitätsmanagement mit der zugrunde liegenden
