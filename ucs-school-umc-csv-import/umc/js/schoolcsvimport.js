@@ -70,7 +70,7 @@ define([
 ], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, EnhancedGrid, styles, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, _Grid, Module, User, utils, _) {
 
 	styles.insertCssRule('.ucsschoolGrid .dojoxGrid', 'clear: both;');
-	styles.insertCssRule('.ucsschoolGrid .umcGridHeader', 'float: none!important; display: block!important;');
+	styles.insertCssRule('.ucsschoolGrid .umcGridHeader', 'margin: 0!important;');
 	var Grid = declare(_Grid, {
 		style: 'width: 600px; height: 500px;',
 		'class': 'ucsschoolGrid',
@@ -617,6 +617,7 @@ define([
 			parentWidget.addChild(grid);
 			parentWidget._grid = grid;
 			query('.dojoxGridScrollbox', grid.domNode).style('overflowX', 'auto');
+			style.set(grid.domNode, 'height', '');
 			return grid;
 		},
 
