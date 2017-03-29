@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (4.0.7-1) unstable; urgency=medium
+
+  * Bug #43577: remove shadow arround inline grids
+
+ -- Florian Best <best@univention.de>  Wed, 29 Mar 2017 13:44:01 +0200
+
 ucs-school-umc-csv-import (4.0.6-2) unstable; urgency=medium
 
   * Bug #43577: Fix grid in CSV import module overlapping buttons
