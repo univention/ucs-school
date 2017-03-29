@@ -30,9 +30,9 @@ msgstr ""
 "gestionnaire de paquetages semble bloquer l'opération."
 
 #: umc/python/schoolinstaller/__init__.py:465
-#, fuzzy, python-format
+#, python-format
 msgid "Could not connect to the DC Master %s: %s"
-msgstr "Impossible de se connecter au serveur UMC %s."
+msgstr "Impossible de se connecter au contrôleur de domaine maître %s: %s"
 
 #: umc/python/schoolinstaller/__init__.py:608
 msgid "Creation of LDAP school structure"
@@ -122,7 +122,6 @@ msgstr ""
 "éventuels."
 
 #: umc/python/schoolinstaller/__init__.py:275
-#, fuzzy
 msgid ""
 "Software packages have been installed successfully, however, the join "
 "process could not be executed. More details can be found in the log file /"
@@ -151,9 +150,8 @@ msgstr ""
 "domaine » après avoir résolu les problèmes de conflits éventuels."
 
 #: umc/python/schoolinstaller/__init__.py:432
-#, fuzzy
 msgid "The LDAP connection to the master system failed."
-msgstr "Échec de la connexion LDAP au système maître %s."
+msgstr "Échec de la connexion LDAP au système maître."
 
 #: umc/python/schoolinstaller/__init__.py:537
 msgid ""

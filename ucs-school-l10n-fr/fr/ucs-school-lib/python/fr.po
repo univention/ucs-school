@@ -58,13 +58,12 @@ msgid "Container"
 msgstr "Conteneur"
 
 #: python/schoolldap.py:392
-#, fuzzy
 msgid ""
 "Could not find any school. You have to create a school before continuing. "
 "Use the \"Schools\" UMC module to create one."
 msgstr ""
 "Impossible de trouver une école. Vous devez créer une école avant de "
-"continuer. Utiliser le module UMC « Ajouter une école » pour en créer une."
+"continuer. Utiliser le module UMC « Ecoles » pour en créer une."
 
 #: python/models/school.py:52
 msgid "DC Name"
@@ -316,13 +315,12 @@ msgstr ""
 "plusieurs fois et doit être modifié."
 
 #: python/schoolldap.py:166
-#, fuzzy
 msgid ""
 "The request did not specify any school. You have to create a school before "
 "continuing. Use the \"Schools\" UMC module to create one."
 msgstr ""
 "Impossible de trouver une école. Vous devez créer une école avant de "
-"continuer. Utiliser le module UMC « Ajouter une école » pour en créer une."
+"continuer. Utiliser le module UMC « Ecoles » pour en créer une."
 
 #: python/models/base.py:317
 #, python-format
