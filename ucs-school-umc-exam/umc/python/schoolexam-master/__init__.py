@@ -62,6 +62,13 @@ class Instance(SchoolBaseModule):
 		SchoolBaseModule.__init__(self)
 
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
+		self._examGroupExcludeRegEx = None
+		try:
+			value = ucr.get('ucsschool/exam/group/ldap/blacklist/regex', '')
+			if value.strip():
+				self._examGroupExcludeRegEx = re.compile(value, re.I)
+		except Exception as ex:
+			MODULE.error('Failed to get/compile regexp provided by ucsschool/exam/group/ldap/blacklist/regex: %s' % (ex,))
 
 		# cache objects
 		self._udm_modules = dict()
@@ -314,6 +321,9 @@ class Instance(SchoolBaseModule):
 			grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
 
 			for group in user_orig.info.get('groups', []):
+				if self._examGroupExcludeRegEx and self._examGroupExcludeRegEx.search(group):
+					MODULE.info('create_exam_user(): ignoring group %r as requested via regexp' % (group,))
+					continue
 				grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group)
 				grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
 

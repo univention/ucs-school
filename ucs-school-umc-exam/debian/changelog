@@ -1,3 +1,10 @@
+ucs-school-umc-exam (6.0.11-1) unstable; urgency=low
+
+  * Bug #44073: added ucsschool/exam/group/ldap/blacklist/regex for
+    excluding custom group memberships for exam users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 29 Mar 2017 16:21:04 +0200
+
 ucs-school-umc-exam (6.0.10-9) unstable; urgency=low
 
   * Bug #44082: updated translations
