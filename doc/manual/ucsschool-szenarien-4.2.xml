@@ -1,0 +1,2456 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="ucsschool-4.1r2-setup">
+	<bookinfo>
+		<title>
+			Szenarien zum Einsatz von &ucsUAS;
+		</title>
+		<subtitle>
+			Organisation und Aufbau zentral verwalteter IT-Infrastrukturen für Schulen
+		</subtitle>
+		<legalnotice>
+			<literallayout>
+Version 4.1 R2 v8
+Stand: 21. März 2017
+			</literallayout>
+
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2017
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="setup-manual">
+		<title>Verwendung des Dokuments</title>
+		<para>
+			&ucsUAS; ist die Lösung, um zentral verwaltete IT-Infrastruktur mit
+			einem einheitlichen Identity-Management aufzubauen, in das
+			integrierte IT-Angebote eingebunden und schul- genauso wie
+			geräteübergreifend zur Verfügung gestellt werden können. So können
+			Schulträger und Ministerien die Anforderungen aus den
+			Medienentwicklungsplänen kosteneffizient und sicher erfüllen.
+		</para>
+		<para>
+			Diese Anleitung dokumentiert das Vorgehen zum Aufbau von definierten
+			Szenarien für &ucsUAS; bei Schulträgern und Ministerien.  Die
+			Informationen beruhen auf den Erfahrungen, die Univention in
+			Projekten mit &ucsUAS; gewonnen hat und sich als erfolgreich
+			herausgestellt haben.
+		</para>
+		<para>
+			Für den Aufbau einer neuen &ucsUAS;-Umgebung sollten die Kapitel
+			dieser Anleitung nacheinander gelesen und umgesetzt werden. In
+			bestehenden Umgebungen können die Kapitel auch einzeln verwendet
+			werden, um Ausbau- und Verbesserungsmöglichkeiten zu identifizieren.
+		</para>
+		<para>
+			Für den Einstieg in das Dokument sind <xref linkend="scenarios" />
+			und <xref linkend="setup-checklist" /> vorgesehen.  Die Kapitel
+			geben einen Überblick zu den üblichen Einsatzszenarien und bieten
+			Checklisten mit Fragen, deren Beantwortung die Einführung von
+			&ucsUAS; erleichtert.  Die Checklisten verweisen darüberhinaus auf
+			die weiterführenden technischen Themen in diesem Dokument, die
+			erprobte Lösungen aus der Praxis aufzeigen.
+		</para>
+	</chapter>
+	<chapter id="scenarios">
+		<title>Szenarien</title>
+		<para>
+			In diesem Kapitel werden Szenarien beschrieben, in denen &ucsUAS;
+			häufig eingesetzt wird.  Die Szenarien sind in ihrem Umfang klar
+			voneinander abgegrenzt.  In der Praxis ist diese strikte Trennung
+			nur selten zu finden, stattdessen sind vielfach Mischformen zu
+			finden.  Die Umsetzung eines bestimmten Szenarios schließt somit
+			nicht aus, dass im Laufe der Zeit weitere Szenarien auf Basis der
+			bestehenden Umgebung umgesetzt werden können.
+		</para>
+		<section id="scenario-0">
+			<title>Servicestufen: &ucsUAS;</title>
+			<para>
+				Univention bietet die folgenden Szenarien 1 bis 4 in
+				unterschiedlichen Servicestufen an.  Kunden entscheiden beim
+				Kauf von &ucsUAS; welche Servicestufe in der aktuellen Situation
+				am passendsten ist.  Ein Wechsel zwischen den Servicestufen ist
+				jederzeit möglich.  Voraussetzung in allen Servicestufen ist das
+				Vorhandensein eines User Helpdesks, der die Supportanfragen aus
+				den Schulen bearbeitet.
+			</para>
+			<para>
+				Servicestufen:
+				<orderedlist numeration="upperalpha">
+					<listitem><para>Software und Support: Univention liefert
+							Software und Support, der Kunde kümmert sich selbst
+							um Betrieb, Updates und Backup</para></listitem>
+					<listitem><para>Betrieb im Rechenzentrum des Kunden:
+							Univention liefert Software und Support und
+							übernimmt Betrieb, Updates und Backup im
+							Rechenzentrum des Kunden</para></listitem>
+					<listitem><para>&ucsUAS; as a Service: Univention liefert
+							Software und Support und übernimmt Betrieb, Updates
+							und Backup im eigenen Rechenzentrum.  Kunden können
+							sofort starten, ohne Investitionen in Hardware oder
+							Software zu tätigen</para></listitem>
+				</orderedlist>
+			</para>
+			<figure id="fig-scenario-0">
+				<title>Servicestufen: &ucsUAS;</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="center" fileref="illustrations41/0_ucsatschool_as_a_service.png" scale="60" />
+					</imageobject>
+					<textobject><phrase>Servicestufen: &ucsUAS;</phrase></textobject>
+				</mediaobject>
+			</figure>
+		</section>
+		<section id="scenario-1">
+			<title>Szenario 1: Bildungscloud</title>
+			<para>
+				Dieses Szenario ermöglicht es Schulträgern und Ministerien eine
+				effiziente Bildungscloud für ihre Schulen aufzubauen.  Die
+				Instanzen von &ucsUCS; werden zentral in einem Rechenzentrum
+				betrieben und stellen das Identity- und Access-Management zur
+				Verfügung.  An dieses werden unterschiedliche IT-Angebote
+				angebunden, die von den Schulen benötigt werden.  Zum Beispiel
+				E-Mail und Groupware-Lösungen und Lernmanagement-Systeme.
+				Lehrkräfte und Schüler können alle angeschlossenen Angebote
+				ihrem persönlichen Benutzerkonto und Passwort nutzen.  Die
+				Angebote stehen dabei sowohl vor Ort in den Schulen zur
+				Verfügung als auch unterwegs oder zu Hause.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Unabhängigkeit von der IT-Ausstattung der Schulen</para></listitem>
+					<listitem><para>Bereitstellung orts- und zeitunabhängiger IT-Angebote für Lehrkräfte und Schüler</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+					<listitem><para>Senkung des Aufkommens im Helpdesk durch Self-Service für vergessene Passwörter</para></listitem>
+				</itemizedlist>
+			</para>
+			<figure id="fig-scenario-1">
+				<title>Zentrales Identity-Management mit integrierten
+					IT-Angeboten</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="center" fileref="illustrations41/1_zentrale.png" scale="56" />
+					</imageobject>
+					<textobject><phrase>Zentrales Identity-Management mit integrierten
+					IT-Angeboten</phrase></textobject>
+				</mediaobject>
+			</figure>
+		</section>
+		<section id="scenario-2">
+			<title>Szenario 2: WLAN in den Schulen</title>
+			<para>
+				Dieses Szenario ermöglicht es Schulträgern den Zugang zum WLAN
+				in ihren Schulen zentral zu steuern und nur bekannten
+				Lehrkräften und Schülern Zugang zu gewähren.  Dazu wird
+				&ucsUCS; zentral in einem Rechenzentrum betrieben und
+				dienen als Identity- und Access-Management. Zudem sind die
+				Schulen mit dem Rechenzentrum verbunden, zum Beispiel mittels
+				eines VPNs. An den Schulen werden WLAN Access Points
+				installiert, die RADIUS unterstützen (WPA2-Enterprise / IEEE
+				802.1X). Ergänzend können auch wie in Szenario 1 weitere
+				IT-Angebote an die zentralen Systeme angebunden werden.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Unabhängigkeit von Schulserver-Lösungen in den Schulen</para></listitem>
+					<listitem><para>Geringe zusätzliche Anforderungen an die Bandbreite der Schule</para></listitem>
+					<listitem><para>Absicherung des WLAN-Zugangs durch Verwendung persönlicher Zugangsdaten für Lehrkräfte und Schüler</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+				</itemizedlist>
+			</para>
+			<figure id="fig-scenario-2">
+				<title>Zentrales Identity-Management, WLAN und weitere
+					IT-Angebote für Schulen</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="center" fileref="illustrations41/2_zentrale_wlan.png" scale="56" />
+					</imageobject>
+					<textobject><phrase>Zentrales Identity-Management, WLAN und
+							weitere IT-Angebote für
+							Schulen</phrase></textobject>
+				</mediaobject>
+			</figure>
+		</section>
+		<section id="scenario-3">
+			<title>Szenario 3: Zentral verwaltete Schul-IT-Infrastruktur</title>
+			<para>
+				Dieses Szenario ermöglicht es Schulträgern die gesamte
+				IT-Infrastruktur ihrer Schulen zentral zu verwalten und
+				pädagogische Funktionen dezentral in den Schulen bereitzustellen.
+				Dazu ergänzt es Szenario 2 um Schulserver an den Schulen. Diese
+				Schulserver stellen vor Ort die benötigten Infrastruktur-Dienste
+				bereit wie DHCP, DNS, Active Directory kompatible Domäne,
+				Dateifreigaben, Proxy, aber auch pädagogische Funktionen wie
+				Computerraumsteuerung, Klassenarbeitsmodus, Passwörter
+				zurücksetzen und Softwareverteilung.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Vollständige Bereitstellung der IT-Infrastruktur in den Schulen</para></listitem>
+					<listitem><para>Unabhängigkeit der Schule gegenüber Ausfällen des Internetzugangs/VPNs</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+				</itemizedlist>
+			</para>
+			<figure id="fig-scenario-3">
+				<title>Zentral verwaltete Schul-IT-Infrastruktur mit
+					Schulservern an den Schulen</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="center" fileref="illustrations41/3_zentrale_wlan_schulserver.png" scale="56" />
+					</imageobject>
+					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur mit
+					Schulservern an den Schulen</phrase></textobject>
+				</mediaobject>
+			</figure>
+		</section>
+		<section id="scenario-4">
+			<title>Szenario 4: Schul-IT-Infrastruktur ohne dezentrale
+				Schulserver</title>
+			<para>
+				Dieses Szenario ermöglicht es Schulträgern die gesamte
+				IT-Infrastruktur ihrer Schulen zentral zu verwalten, wie in
+				Szenario 3, mit der Ergänzung, dass die Schulserver im
+				Rechenzentrum betrieben werden. Voraussetzung ist eine sehr gute
+				und zuverlässige Anbindung der Schulen an das Rechenzentrum.
+				Durch die Verlagerung der Schulserver ins Rechenzentrum können
+				die Hardware-Ressourcen effizienter verwendet werden und
+				gleichzeitig reduzieren sich die Kosten für die Wartung.
+			</para>
+			<para>
+				Merkmale:
+				<itemizedlist mark="bullet">
+					<listitem><para>Vollständige Bereitstellung der IT-Infrastruktur in den Schulen</para></listitem>
+					<listitem><para>Abhängigkeit der Schule gegenüber Ausfällen des Internetzugangs/VPNs</para></listitem>
+					<listitem><para>Effizienz im Betrieb durch zentrale Administration und bessere Ressourcennutzung</para></listitem>
+					<listitem><para>Effizienz in der Wartung durch einfacheren Zugang zu den Systemen</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+				</itemizedlist>
+			</para>
+			<figure id="fig-scenario-4">
+				<title>Zentral verwaltete Schul-IT-Infrastruktur
+					ohne dezentrale Schulserver</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="center" fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" scale="56" />
+					</imageobject>
+					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur
+					ohne dezentrale Schulserver</phrase></textobject>
+				</mediaobject>
+			</figure>
+		</section>
+	</chapter>
+	<chapter id="setup-checklist">
+		<title>Checklisten: organisatorisch und technisch</title>
+		<para>
+			Im Folgenden sind die Inhalte, die für die Einführung von &ucsUAS;
+			geprüft werden sollten, in Form von Checklisten beschrieben.  Diese
+			verweisen auf die weiterführenden Inhalte des Dokuments.
+		</para>
+		<section id="setup-manual_organisation">
+			<title>Organisation</title>
+			<para>
+				<itemizedlist mark="whitesquare">
+					<listitem><para>Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
+					<listitem><para>Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
+					<listitem><para>Verfügt der Betreiber über das erforderliche Wissen?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
+					<listitem><para>Wie werden Schulen über die Einführung von &ucsUAS; informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
+					<listitem><para>Wer baut in den Schulen Server, Rechner und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
+					<listitem><para>In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
+					<listitem><para>In welchem zeitlichen Rahmen soll der Rollout der Pilot-Installation und später der Gesamtinfrastruktur erfolgen?</para></listitem>
+					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, zum Beispiel Passwörter zurücksetzen?</para></listitem>
+					<listitem><para>Wie werden Schulen mit &ucsUAS; vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
+					<listitem><para>Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
+					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter, um dies zu messen?</para></listitem>
+					<listitem><para>Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen erfasst und von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
+					<listitem><para>Wer ist verantwortlich für die Pflege von Information in der Schulverwaltungssoftware und wie können diese Daten importiert werden?</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="setup-manual_zentrale">
+			<title>Zentral bereitgestellte IT-Angebote</title>
+			<para>
+				<itemizedlist mark="whitesquare">
+					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
+					<listitem><para>Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
+					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, zum Beispiel Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
+					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
+							<itemizedlist mark="whitesquare">
+								<listitem><para>Installation UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
+								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
+								<listitem><para>Import von Benutzer-, Rechner- und Netzdaten: <xref linkend="import" /></para></listitem>
+							</itemizedlist>
+					</listitem>
+					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
+					<listitem>
+						<para>Welche über &ucsUAS; hinausgehenden Angebote und Einstellungen sollen angeboten werden?  <!-- Siehe <xref linkend="additional-services" />. -->
+						</para>
+							<itemizedlist mark="whitesquare">
+								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Angebote vor unerwünschtem Zugriff geschützt?</para></listitem>
+							</itemizedlist>
+					</listitem>
+					<listitem><para>Soll die Schulen zukünftig über einen zentralen Proxy auf das Internet zugreifen?  <!-- Siehe <xref linkend="additional-services_proxy" /> --></para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="setup-manual_schulen">
+			<title>Dezentral an den Schulen bereitgestellte IT-Angebote</title>
+			<para>
+				<itemizedlist mark="whitesquare">
+					<listitem><para>Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
+					<listitem><para>Setzt die Schule bereits eine Schulserver-Lösung ein?</para>
+						<itemizedlist mark="whitesquare">
+							<listitem><para>Welche Funktionen sind der Schule wichtig und wie sie durch &ucsUAS; abgelöst werden (nicht in allen Szenarien notwendig)?</para></listitem>
+						</itemizedlist>
+					</listitem>
+					<listitem><para>Wie schnell und stabil ist der Internetzugang der Schule?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_internet" />.</para></listitem>
+					<listitem><para>Wer betreibt den Internetzugang und ist für die Entstörung zuständig?</para></listitem>
+					<listitem><para>Welche aktiven und passiven Netzkomponenten sind im Einsatz, zum Beispiel DSL-Router/Switches/Access Points, und wer kennt die Zugangsdaten? </para></listitem>
+					<listitem><para>Welches IP-Netz wird aktuell in der Schule verwendet?</para>
+							<itemizedlist mark="whitesquare">
+								<listitem><para>Welche Komponenten müssen angepasst werden, um das Netzkonzept (siehe <xref linkend="setup-manual_zentrale" />) umzusetzen?</para></listitem>
+							</itemizedlist>
+					</listitem>
+					<listitem><para>Ist in der Schule strukturierte Verkabelung in allen Computerräumen vorhanden? Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_network" /></para>
+							<itemizedlist mark="whitesquare">
+								<listitem><para>Wie sind die Patchfelder und Netzdosen belegt?</para></listitem>
+							</itemizedlist>
+					</listitem>
+					<listitem><para>Welche Bauarbeiten und Beschaffungen müssen vorgenommen werden, um die Betriebsbereitschaft für die Schule herzustellen?</para></listitem>
+					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" />.</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="setup-manual_wlan">
+			<title>WLAN und BYOD</title>
+			<para>
+				<itemizedlist mark="whitesquare">
+					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
+					<listitem><para>Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
+					<listitem><para>Wie können die Access Point zentral konfiguriert werden, ist eine Management Software vorhanden?</para></listitem>
+					<listitem><para>Wo wird der RADIUS-Service betrieben?  <!-- Siehe <xref linkend="additional-services_radius" />  --></para></listitem>
+					<listitem><para>Wie greifen die mobilen Geräte auf das Internet zu, zum Beispiel direkt oder über einen transparenter Proxy?</para></listitem>
+					<listitem><para>Wie hoch sind die notwendigen Investitionen, um die Betriebsbereitschaft für das WLAN herzustellen?</para></listitem>
+					<listitem><para>Welche IT-Angebote, zentral und dezentral, sollen von den Geräten im WLAN verwendet werden können?</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+	</chapter>
+	<chapter id="preparations">
+		<title>Vorbereitende Maßnahmen</title>
+		<para>
+			<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+		</para>
+		<para>
+			In vergangenen Projekten haben sich folgende Schritte bewährt:
+		</para>
+		<section id="preparations_workshop">
+			<title>Initialer Workshop</title>
+			<para>
+				Ziel des Workshops ist es die existierenden Konzepte auf die
+				konkrete Umsetzung abzubilden.  Dabei hat es sich bewährt auf
+				guten Erfahrungen und Vorgehensweisen aufzubauen, die unter
+				anderem auch in diesem Dokument erfasst sind.  Es hat sich
+				bewährt im Rahmen des Workshops gleich die zentralen Systeme und
+				eine Demo-Schule zu installieren, die in der folgenden Zeit als
+				Referenz verwendet werden kann.
+			</para>
+		</section>
+		<section id="preparations_info">
+			<title>Informationsveranstaltung für die Schulen</title>
+			<para>
+				Ziel der Informationsveranstaltung ist es die Lehrkräfte in den
+				Schulen mit in den Prozess der Einführung von &ucsUAS; zu
+				integrieren.  Die bereits installierte Demo-Schule kann dazu
+				dienen das System initial zu präsentieren.  Es hat sich in
+				vielen Projekten gezeigt, dass diese Informationsveranstaltungen
+				auch nach dem Rollout regelmäßig stattfinden sollten, um neue
+				Anforderungen und Feedback aufzunehmen.
+			</para>
+		</section>
+		<section id="preparations_school-selection">
+			<title>Planung des Rollout</title>
+			<para>
+				Ziel ist es den Rollout von &ucsUAS; mit Erfolgen zu beginnen.
+				Dafür gilt es die Schulen zu identifizieren, die als erste
+				ausgestattet werden sollen.  In Projekten haben wir die
+				Erfahrung gemacht, dass Schulen, die die folgenden Kriterien
+				erfüllen besonders gut für den Start geeignet sind:
+				<itemizedlist>
+					<listitem><para>Überschaubare, gut ausgebaute IT-Infrastruktur</para></listitem>
+					<listitem><para>Konkreter Bedarf nach einer Lösung</para></listitem>
+					<listitem><para>Geringer Migrationsaufwand von bestehenden Lösungen</para></listitem>
+					<listitem><para>Wenige Sonderfälle</para></listitem>
+				</itemizedlist>
+				Sind diese Schulen erfolgreich ausgestattet worden, so können
+				diese als Referenz für anderen Schulen dienen.  Schrittweise
+				können nun komplexere Umgebungen ausgerollt werden.
+			</para>
+		</section>
+		<section id="preparations_training">
+			<title>Schulung der Lehrkräfte</title>
+			<para>
+				Die Lehrkräfte sollten im Umgang mit den Rechnern und den
+				pädagogischen Funktionen in &ucsUAS; geschult werden. Dazu
+				sollten wiederkehrende Termine angeboten werden.
+			</para>
+		</section>
+	</chapter>
+	<chapter id="concepts">
+		<title>Konzeptionelle Voraussetzungen</title>
+		<para>
+			Die folgenden Empfehlungen bauen auf den Erfahrungen, die sich in
+			Projekten bewährt haben.  Sie sind jedoch nicht zwingend umzusetzen
+			und Abweichungen sind jederzeit möglich.
+		</para>
+		<section id="concepts_network">
+			<title>Netzkonzept</title>
+			<para>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+			</para>
+			<para>
+				In &ucsUAS; wird für jede Schule mindestens ein Subnetz
+				benötigt, sobald an den Schulen Endgeräte eingesetzt werden
+				sollen. Abhängig vom Szenario kann eine einzelne Schule auch
+				mehr als ein Subnetz erhalten.
+			</para>
+			<para>
+				Für den Aufbau einer Umgebung mit mehreren Schulen empfehlen die
+				Verwendung des privaten Klasse-A Netzes,
+				<code>10.0.0.0/8</code>. Dieses wird für die Schulen in viele
+				Subnetze unterteilt. Für jede Schule wird ein
+				Klasse-B Netz reserviert, das Platz für 65.536 IP-Adressen
+				bietet und nach Bedarf in weitere Subnetze unterteilt wird.
+			</para>
+			<para>
+				<table id="table_network_concept_schools">
+					<title>Zuteilung der Subnetze zu Schulen</title>
+					<tgroup cols="2">
+						<colspec colnum="1" colname="cidr"/>
+						<colspec colnum="2" colname="school"/>
+						<thead>
+							<row>
+								<entry>Subnetz (CIDR)</entry>
+								<entry>Schule</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><code>10.0.0.0/16</code></entry>
+								<entry>Zentrale Systeme</entry>
+							</row>
+							<row>
+								<entry><code>10.1.0.0/16</code></entry>
+								<entry>1. Schule</entry>
+							</row>
+							<row>
+								<entry><code>10.2.0.0/16</code></entry>
+								<entry>2. Schule</entry>
+							</row>
+							<row>
+								<entry><code>10.3.0.0/16</code></entry>
+								<entry>3. Schule</entry>
+							</row>
+							<row>
+								<entry><code>10.4.0.0/16</code></entry>
+								<entry>4. Schule</entry>
+							</row>
+							<row>
+								<entry><code>10...../16</code></entry>
+								<entry><code>Weitere Schulen</code></entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<para>
+				Voraussetzung für die Verwendung von Subnetzen ist, dass
+				aus dem Netz, in dem die zentralen Systeme stehen, alle anderen
+				Subnetze erreicht werden können.  Dies kann beispielsweise über
+				ein Site-to-Site VPN oder eine Standleitung realisiert werden.
+				Eine Verbindung zwischen Schulen ist nicht notwendig und wird
+				häufig auch nicht gewünscht.
+			</para>
+			<note>
+				<para>
+					Bei mehr als 255 Schulen kann das vorgeschlagene Netzkonzept
+					nicht verwendet werden.
+				</para>
+			</note>
+			<section id="concepts_network_examples">
+				<title>Beispiele für Subnetzkonzepte</title>
+				<para>
+					Im Folgenden werden zwei Beispiele für die Schulnetze
+					gezeigt.  Das erste für eines für kleinere Schulen mit
+					wenigen Endgeräten, zum Beispiel Grundschulen, und das
+					zweite für sehr große Schulen mit vielen Endgeräten und
+					mehreren Subnetzen, zum Beispiel Berufsschulen.  Vorweg
+					erfolgt die Definition des Subnetzes für die zentralen
+					Systeme.
+				</para>
+				<para>
+					Um die Subnetze in &ucsUAS; bekannt zu machen müssen diese
+					importiert werden.  In <xref linkend="import_networks" />
+					ist beschrieben wie der Import vorzunehmen ist, welche
+					Informationen anzugeben sind und welche Hilfsmittel dafür
+					zur Verfügung stehen.
+				</para>
+				<para>
+					<table id="table_network_concept_central">
+						<title>Zentrales Subnetz</title>
+						<tgroup cols="4">
+							<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+							<colspec colnum="2" colname="range" colwidth="2*"/>
+							<colspec colnum="3" colname="number_of_ips" colwidth="0.5*"/>
+							<colspec colnum="4" colname="usage" colwidth="1.75*"/>
+							<thead>
+								<row>
+									<entry>Subnetz (CIDR)</entry>
+									<entry>DHCP-Adressbereich</entry>
+									<entry>Anzahl IP-Adressen</entry>
+									<entry>Verwendung</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry><code>10.0.0.0/24</code></entry>
+									<entry><code>-</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Subnetz für zentrale Systeme</entry>
+								</row>
+							</tbody>
+						</tgroup>
+					</table>
+				</para>
+				<para>
+					Alle zentralen Instanzen von &ucsUAS; werden in diesem Netz
+					installiert.  Auf eine Adressvergabe via DHCP wird verzichtet,
+					alle Systeme erhalten eine statisch zugewiesene IP-Adresse.
+					Weitere Subnetze, wie zum Beispiel eine Demilitarisierte
+					Zone (DMZ), können bei Bedarf ergänzt werden.
+				</para>
+			</section>
+			<section id="concepts_network_examples_primary">
+				<title>Beispiel Subnetz Grundschule</title>
+				<para>
+					<table id="table_network_concept_small_school">
+						<title>Netze für Beispiel-Grundschule</title>
+						<tgroup cols="4">
+							<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+							<colspec colnum="2" colname="range" colwidth="2*"/>
+							<colspec colnum="3" colname="number_of_ips" colwidth="0.5*"/>
+							<colspec colnum="4" colname="usage" colwidth="1.75*"/>
+							<thead>
+								<row>
+									<entry>Subnetz (CIDR)</entry>
+									<entry>DHCP-Adressbereich</entry>
+									<entry>Anzahl IP-Adressen</entry>
+									<entry>Verwendung</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry><code>10.1.0.0/24</code></entry>
+									<entry><code>10.1.0.1-10.1.0.254</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Kleines Netz für eine Grundschule</entry>
+								</row>
+							</tbody>
+						</tgroup>
+					</table>
+				</para>
+				<para>
+					In diesem Beispiel werden evtl. vorhandene Server und
+					Endgeräte im selben Netz betrieben. Dieses Modell richtet
+					sich an kleine Schulen mit wenigen Rechnern.  Bei Bedarf
+					können weitere Subnetze ergänzt werden, da das für die
+					Schule reservierte Klasse-B Netz nur zu einem kleinen Teil
+					ausgeschöpft wurde.
+				</para>
+			</section>
+			<section id="concepts_network_examples_highschool">
+				<title>Beispiel Subnetz Berufsschule</title>
+				<para>
+					<table id="table_network_concept_large_school">
+						<title>Netze für Beispiel-Berufsschule</title>
+						<tgroup cols="4">
+							<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+							<colspec colnum="2" colname="range" colwidth="2*"/>
+							<colspec colnum="3" colname="number_of_ips" colwidth="0.5*"/>
+							<colspec colnum="4" colname="usage" colwidth="1.75*"/>
+							<thead>
+								<row>
+									<entry>Subnetz (CIDR)</entry>
+									<entry>DHCP-Adressbereich</entry>
+									<entry>Anzahl IP-Adressen</entry>
+									<entry>Verwendung</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry><code>10.2.1.0/24</code></entry>
+									<entry><code>-</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Netz für Server und Netzgeräte, statische IP-Adressen</entry>
+								</row>
+								<row>
+									<entry><code>10.2.2.0/24</code></entry>
+									<entry><code>10.2.2.10-10.2.2.250</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Netz für Schulverwaltung, erweiterbar auf /23 (510 IP-Adressen)</entry>
+								</row>
+								<row>
+									<entry><code>10.2.4.0/24</code></entry>
+									<entry><code>10.2.4.10-10.2.4.250</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Netz für edukativen Bereich 1, erweiterbar auf /23 (510 IP-Adressen)</entry>
+								</row>
+								<row>
+									<entry><code>10.2.6.0/24</code></entry>
+									<entry><code>10.2.6.10-10.2.6.250</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Netz für edukativen Bereich 2, erweiterbar auf /23 (510 IP-Adressen)</entry>
+								</row>
+								<row>
+									<entry><code>10.2.8.0/24</code></entry>
+									<entry><code>10.2.8.10-10.2.8.250</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Netz für edukativen Bereich 3, erweiterbar auf /23 (510 IP-Adressen)</entry>
+								</row>
+								<row>
+									<entry><code>10.2.10.0/24</code></entry>
+									<entry><code>10.2.10.10-10.2.10.250</code></entry>
+									<entry><code>254</code></entry>
+									<entry>Netz für edukativen Bereich 4, erweiterbar auf /23 (510 IP-Adressen)</entry>
+								</row>
+								<row>
+									<entry><code>10.2.128.0/20</code></entry>
+									<entry><code>10.2.128.100-10.2.143.250</code></entry>
+									<entry><code>4094</code></entry>
+									<entry>Gäste WLAN / BYOD, erweiterbar auf /18 (16382 IP-Adressen)</entry>
+								</row>
+								<row>
+									<entry><code>10.2.192.0/20</code></entry>
+									<entry><code>10.2.192.100-10.2.207.250</code></entry>
+									<entry><code>4094</code></entry>
+									<entry>Schuleigenes WLAN mit RADIUS-Authentifizierung, erweiterbar auf /18 (16382 IP-Adressen)</entry>
+								</row>
+							</tbody>
+						</tgroup>
+					</table>
+				</para>
+				<para>
+					In diesem Beispiel werden einzelne Subnetze für WLAN,
+					Server, Verwaltung und edukativen Bereich betrieben. Dieses
+					Modell richtet sich an große Schulen mit vielen Endgeräten.
+					Die Subnetze sind so gewählt, dass sie sich Bedarf noch
+					erweitern lassen. Die Unterteilung des edukativen Bereichs
+					in einzelne Subnetze kann beispielsweise pro Gebäude, pro
+					Etage oder sogar pro Computerraum erfolgen. Netzdrucker
+					können in die Subnetze aufgenommen werden, in denen sich
+					auch die zugehörigen Endgeräte befinden oder es wird ein
+					eigenes Druckernetz hinzugefügt.
+				</para>
+			</section>
+		</section>
+		<section id="concepts_names">
+			<title>Konzept zur Benennung von Objekten</title>
+			<para>
+				In einer &ucsUAS;-Domäne für ein oder mehrere Schulen gibt es
+				viele Objekte, die eindeutige Namen benötigen, zum Beispiel
+				Benutzerkonten brauchen eindeutige Benutzernamen und
+				E-Mail-Adressen, Schulklassen brauchen eindeutige Bezeichnungen,
+				um sie von gleichnamigen Klassen in anderen Schulen zu
+				unterscheiden, Rechnerobjekte benötigen Rechnernamen und
+				Schulen benötigen eine Kurzbezeichnung für den Container, in dem
+				die zugehörigen Objekte gespeichert werden.
+				Ein Konzept zur Benennung von Objekten verfolgt die Ziele,
+				Eindeutigkeit herzustellen und gleichzeitig die Bedeutung und
+				Zuordnung des jeweiligen Objekts offensichtlich zu machen.
+				Im Folgenden zeigen wir Konzepte für unterschiedliche
+				Objekttypen auf, die sich in der Praxis bewährt haben.
+			</para>
+			<section id="concepts_names_domain">
+				<title>Name der Domäne</title>
+				<para>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+				</para>
+				<para>
+					Der Name der Domäne definiert mehrere zugehörige Namen:
+					LDAP-Basis, DNS-Domäne, Kerberos-Realm und Samba/Active
+					Directory-Domäne.  Die Wahl dieses Namens hat umfangreiche
+					Auswirkungen auf die gesamte &ucsUAS;-Installation und
+					sollte entsprechend mit Überlegung gewählt werden,
+					insbesondere weil eine nachträgliche Änderung nicht möglich
+					ist.
+				</para>
+				<para>
+					Wir empfehlen den Domänennamen nach folgendem Muster aufzubauen:
+				</para>
+				<para>
+					<systemitem class="domainname">schulen.[DNS-Domäne der Organisation]</systemitem>
+				</para>
+				<para>
+					Beispiel: <systemitem class="domainname">schulen.bremen.de</systemitem>
+				</para>
+				<para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								<systemitem class="domainname">[DNS-Domäne der
+									Organisation]</systemitem> ist dabei ein
+								Platzhalter für die DNS-Domäne/Internetseite des
+								Betreibers, zum Beispiel Stadt, Landkreises oder
+								Bundesland.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Wichtig ist, dass die DNS-Domäne vom Betreiber
+								verwaltet wird.  Es muss unter allen Umständen
+								vermieden werden, dass der gewählte Domänenname
+								im öffentlichen Internet verwendet wird.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Wenn die Verwendung einer öffentlichen
+								DNS-Domäne nicht möglich ist und stattdessen
+								eine selbst gewählter Name verwendet wird, so
+								sind folgende Regeln zu beachten:
+								<itemizedlist>
+									<listitem>
+										<para>
+											Offizielle DNS-Domänen sollten nicht
+											verwendet werden, wenn sie nicht
+											unter eigener Kontrolle stehen, zum
+											Beispiel kann vermutlich nicht
+											<systemitem
+												class="domainname">deutschland.de</systemitem>
+											verwendet werden.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											Inoffiziell verwendete
+											Top-Level-Domänen sollten nicht
+											verwendet werden, zum Beispiel
+											<systemitem
+												class="domainname">.corp</systemitem>
+											oder <systemitem
+												class="domainname">.lan</systemitem>.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<systemitem
+												class="domainname">.local</systemitem>
+											sollte nicht als Top-Level-Domäne
+											gewählt werden. Die Endung ist
+											offiziell für mDNS (Multicast DNS)
+											vorgesehen und führt bei Verwendung
+											zu Problemen mit MacOS, Windows und
+											Linux-Betriebssystemen.
+										</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Es besteht die Möglichkeit den Namen der Samba-/Active
+					Directory-Domäne unabhängig von dem eigentlichen
+					Domänennamen zu definieren.  Dies ermöglicht es, dass
+					Benutzer eine andere Domäne bei Anmeldung an Windows
+					Rechnern verwenden können, zum Beispiel wird statt <systemitem
+						class="domainname">SCHULEN\benutzername</systemitem> nun
+					<systemitem
+						class="domainname">SCHULTRÄGER\benutzername</systemitem>
+					verwendet.  Um dies zu erreichen, ist auf dem
+					&ucsUAS;-Server vor der Installation von &ucsUAS; der
+					gewünschte <systemitem
+						class="domainname">NetBIOS-Domänenname</systemitem> in
+					der &ucsUCR;-Variablen <envar>windows/domain</envar> zu
+					setzen.
+				</para>
+			</section>
+			<section id="concepts_names_servers">
+				<title>Zentrale Server</title>
+				<para>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+				</para>
+				<para>
+					Zentrale Server:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="systemname">[Rollenbezeichnung]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiele:
+								<itemizedlist>
+									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucsma-01</systemitem></para></listitem>
+									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucsba-02</systemitem>, <systemitem class="systemname">ucsba-03</systemitem></para></listitem>
+									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucssl-04</systemitem></para></listitem>
+									<listitem><para>&ucsMember;: <systemitem class="systemname">ucsme-05</systemitem></para></listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</section>
+			<section id="concepts_names_clients-and-servers">
+				<title>Rechner und Schulserver</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Rechner:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Betriebssystem][Gebäude/Etage/Raum][Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">042win033-001</systemitem>, <systemitem class="service">042win033-002</systemitem>, <systemitem class="service">011mac001-011</systemitem></para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Netzgeräte, wie Router, Switches, USV, Drucker:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Gerätetyp][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Schulserver:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Rollenbezeichnung]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiele:
+								<itemizedlist>
+									<listitem><para>Edukativer Schulserver: <systemitem class="service">042sedu-01</systemitem></para></listitem>
+									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">042sadm-01</systemitem></para></listitem>
+								</itemizedlist>
+						</para></listitem>
+					</itemizedlist>
+				</para>
+			</section>
+			<section id="concepts_names_user-classes">
+				<title>Benutzernamen und Klassenbezeichnungen</title>
+				<para>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+				</para>
+				<para>
+					Benutzerkonten und Klassen hängen in &ucsUAS; sehr eng
+					zusammen.  So werden beim Import von Benutzerkonten
+					ebenfalls die Klassen angegeben, zu denen die jeweiligen
+					Konten gehören.  Das heißt sowohl beim Import von Klassen,
+					also auch beim Import von Benutzerkonten müssen die gleichen
+					Bezeichnungen für Klassen verwendet werden und es ist
+					deshalb hilfreich ein einheitliches Schema zu spezifizieren.
+				</para>
+				<para>
+					Bei Benutzerkonten ergibt sich darüber hinaus die
+					Herausforderung, dass sich die Benutzernamen ggf. ändern,
+					zum Beispiel aufgrund der Behebung von Tippfehlern, Heirat
+					oder Scheidung.  In der Praxis hat sich nicht bewährt
+					unveränderliche Daten, wie Personal- oder Schülernummern als
+					Benutzernamen zu verwenden, da diese unpersönlich und schwer
+					zu merken sind.
+				</para>
+				<para>
+					Die Änderung von Benutzernamen stellt eine große
+					Herausforderung im Betrieb dar, weil die an &ucsUAS;
+					angeschlossenen Subsysteme ggf. den Benutzernamen zur
+					Zuordnung von Daten zu Personen verwenden.  Beispiele für
+					Subsysteme sind E-Maildienste, Dateifreigaben und
+					-tauschsysteme und Lernplattformen.  Der E-Maildienst könnte
+					zum Beispiel das E-Mailpostfach einer Lehrkraft dem
+					Benutzernamen zuordnen.  Ändert sich dieser, so müsste das
+					E-Mailpostfach ggf. manuell mit großem Aufwand umbenannt
+					werden.  Dies Problem kann umgangen werden, wenn frühzeitig,
+					vor der Einführung eines neuen Subsystems darauf geachtet
+					wird, dass die Zuordnung von Daten zu Personen über ein
+					unveränderliches Merkmal geschieht, zum Beispiel die
+					Personalnummer.  Gleichzeitig muss sichergestellt werden,
+					dass die Anmeldung am Subsystem jedoch über den einfach zu
+					merkenden Benutzernamen erfolgt.
+				</para>
+				<para>
+					Schüler:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="username">[Vorname][1. Buchstabe Nachname][Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiel: Mary Selig → <systemitem class="username">marys</systemitem></para></listitem>
+						<listitem><para>Beispiel Namenskonflikt: Mary <wordasword>Sander</wordasword> → <systemitem class="username">marys2</systemitem></para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Lehrkräfte und Mitarbeiter:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="username">[1. Buchstabe Vorname][Nachname][Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiel: <wordasword>Mareike Müller</wordasword> → <systemitem class="username">mmueller</systemitem></para></listitem>
+						<listitem><para>Beispiel Namenskonflikt: <wordasword>Martina Müller</wordasword> → <systemitem class="username">mmueller2</systemitem></para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Für Benutzerkonten kann das gewünschte Schema im
+					Importmechanismus hinterlegt werden, siehe <ulink
+						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
+						zur CLI-Import-Schnittstelle</ulink>.
+				</para>
+				<para>
+					Klassen sollten mit der Kurzbezeichnung der Schule als
+					Präfix benannt werden:
+					<itemizedlist>
+						<listitem><para>Schema: <systemitem class="groupname">[Kurzbezeichnung Schule]-[Klasse]</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="groupname">042-1a</systemitem>, <systemitem class="groupname">042-1b</systemitem>, <systemitem class="groupname">011-5a</systemitem>, <systemitem class="groupname">011-5b</systemitem></para></listitem>
+					</itemizedlist>
+				</para>
+			</section>
+			<section id="concepts_names_misc">
+				<title>Allgemeine Konventionen</title>
+				<para>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+				</para>
+				<para>
+					Folgende Konventionen haben sich in allen Szenarien bewährt:
+					<itemizedlist>
+						<listitem><para>Alle Objektnamen sollten durchgängige Kleinbuchstaben verwenden</para></listitem>
+						<listitem><para>Die Länge von Objektnamen sollte 15 Zeichen nicht überschreiten</para></listitem>
+					</itemizedlist>
+				</para>
+			</section>
+		</section>
+		<section id="concepts_monitoring">
+			<title>Monitoring</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				Die rechtzeitige Erkennung von Fehlern und möglichen Anzeichen
+				ist ein elementarer Bestandteil des professionellen IT-Betriebs.
+				&ucsUCS; hat deshalb die Monitoring-Software Nagios fest
+				integriert und für viele relevante Parameter vorkonfiguriert.
+				Nagios selbst dient zum Monitoring des aktuellen Zustands.
+			</para>
+			<para>
+				Das Monitoring erfolgt für &ucsUAS; immer aus der Zentrale
+				heraus.  Entsprechend ist ein Server-System für den Betrieb des
+				Monitoring-Dienstes vorzusehen, siehe <xref
+					linkend="installation_member" />.
+			</para>
+			<para>
+				Nagios selbst ist nicht darauf ausgelegt Informationen darüber
+				zu liefern in welche Richtung sich eine Umgebung entwickelt,
+				da keine Langzeitinformationen gespeichert werden.  Ein Beispiel
+				ist Entwicklung der Belegung des Festplattenplatzes.  Solche
+				Informationen sind für den Betrieb einer umfangreichen
+				IT-Infrastruktur erforderlich.  Um diese Informationen zu
+				erfassen, kann zum Beispiel Munin verwendet werden, dessen
+				<ulink
+					url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Einrichtung</ulink>
+				für &ucsUCS; dokumentiert ist.
+			</para>
+		</section>
+		<section id="concepts_backup">
+			<title>Datensicherung und Wiederherstellung</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				Eine zentral mit &ucsUAS; verwalteten Umgebung stellt
+				üblicherweise Dienste für tausende Personen zur Verfügung.  Mit
+				der zunehmenden Anforderung nach orts- und zeitunabhängiger
+				Verfügbarkeit muss sichergestellt werden, dass nicht nur die
+				Dienste, sondern auch die Daten den Anforderungen entsprechend
+				zur Verfügung gestellt werden.  Dreierlei Daten sind dabei zu
+				unterscheiden:
+				<itemizedlist>
+					<listitem><para>Konfigurationen und Einstellungen, die
+							Administratoren vorgenommen haben</para></listitem>
+					<listitem><para>Steuerinformationen, zum Beispiel die Daten
+							im Identitätsmanagement</para></listitem>
+					<listitem><para>Von Personen erzeugte Daten, zum Beispiel
+							E-Mails</para></listitem>
+				</itemizedlist>
+				Die Sicherung der Daten muss gewährleistet sein, um im
+				Fehlerfall die Funktionsfähigkeit wiederherzustellen. Als
+				Minimalumfang muss eine Datei-basierte Sicherung, zum Beispiel
+				auf Basis mit Hilfe des Befehls <command>rsync</command>
+				erfolgen. Folgende Daten sollten in der Sicherung berücksichtigt
+				werden:
+			</para>
+			<para>
+				Zentrale Server:
+				<itemizedlist>
+					<listitem><para><filename>/var/univention-backup</filename>:
+							Nächtliche Sicherung der
+							&ucsUCR;-, OpenLDAP- und Samba-Datenbank sowie der
+							Inhalte der SYSVOL-Freigabe</para></listitem>
+					<listitem><para><filename>/etc/univention/ssl</filename> auf
+							dem &ucsMaster; und den &ucsBackup;-Servern:
+							Beinhaltet das Root-Zertifikat der internen
+							Zertifizierungsstelle und alle
+							Rechner-Zertifikate</para></listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Schulserver, sofern vorhanden:
+				<itemizedlist>
+					<listitem><para><filename>/var/univention-backup</filename>:
+							Nächtliche Sicherung der &ucsUCR;.  Die Sicherung
+							der OpenLDAP- und Samba-Datenbanken braucht
+							normalerweise nicht gesichert zu werden, da diese
+							beim erneuten Domänenbeitritt des Schulservers vom
+							&ucsMaster; oder &ucsBackup; repliziert
+							werden</para></listitem>
+					<listitem><para><filename>/home</filename>: Beinhaltet die
+							Benutzerprofile und die Heimatlaufwerke der
+							Benutzer, sowie die Freigaben der Klassen und
+							Arbeitsgruppen</para></listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Folgende Punkte haben sich als allgemein bewährtes Vorgehen
+				herauskristallisiert:
+				<itemizedlist>
+					<listitem><para>Die Datensicherung sollte auf ein vom
+							&ucsUCS;-System physikalisch getrenntes Gerät
+							erfolgen, zum Beispiel ein Network Attached Storage
+							(NAS)</para></listitem>
+					<listitem><para>Die Datensicherung sollte überwacht werden,
+							zum Beispiel durch ein Monitoring-Plugin, dass bei
+							Misserfolg warnt</para></listitem>
+					<listitem><para>Die Wiederherstellung sollte in regelmäßigen
+							Abständen getestet werden</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="concepts_support">
+			<title>Support-Kanäle</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				Für den erfolgreichen Betrieb von &ucsUAS; ist es erforderlich,
+				dass ein Helpdesk aufgebaut wird, der Fragen aus den Schulen
+				direkt annehmen kann.  Abhängig von der gewünschten <link
+					linkend="scenario-0">Servicestufe</link> kann es darüber
+				hinaus notwendig sein ein Team von technischen Mitarbeitern zu
+				schulen, die den Betrieb der Umgebung durchführen.
+			</para>
+			<para>
+				Neben passenden Werkzeugen zur Kommunikation und Fernwartung,
+				zum Beispiel ein Ticket-System wie
+				<application>KIX</application> aus dem Univention App Center,
+				müssen auch die Support- und Eskalationswege definiert und
+				abgestimmt werden.  Im Folgenden ein Beispiel für
+				Eskalationswege:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						IT-Verantwortliche an den Schulen kontaktieren den
+						Helpdesk über das Helpdesk-Modul in &ucsUAS; oder direkt
+						per E-Mail an das Ticketsystem.  In dringenden Fällen
+						steht eine Hotline zur Verfügung, die telefonisch
+						erreicht werden kann
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Der Helpdesk übernimmt den First- und
+						Second-Level-Support, ggf. in Zusammenarbeit mit einem
+						lokalen Dienstleister
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						In weitergehenden Fällen unterstützt Univention mit
+						Third-Level-Support
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+	</chapter>
+	<chapter id="infrastructure-and_hardware-requirements">
+		<title>Netzinfrastruktur- und Hardware-Voraussetzungen</title>
+		<para>
+			Im Folgenden werden die Netzinfrastruktur- und
+			Hardware-Voraussetzungen für den Einsatz von &ucsUAS; beschrieben.
+			Die beschriebenen Voraussetzungen sind Richtwerte, die wir ermittelt
+			haben.  Im Einzelfall ist jedoch genau zu prüfen, ob die
+			Voraussetzungen mit den gestellten Anforderungen übereinstimmen.  Es
+			hat sich gezeigt, dass abhängig von den gestellten Anforderungen
+			erhebliche Abweichungen bei den Voraussetzungen entstehen können.
+		</para>
+		<para>
+			Allgemein hat sich für den Betrieb von &ucsUCS; bewährt eine
+			Virtualisierungslösung einzusetzen. Die Dimensionierung der
+			Virtualisierungsserver muss sich dabei an den Anforderungen der
+			virtualisierten Systeme richten und dabei noch genügend
+			Möglichkeiten zur nachträglichen Erweiterung bereithalten.  Eine
+			Zuweisung von mehr als den vorhandenen Ressourcen
+			(Überprovisionierung) wird abgeraten.  Für den Speicherplatz sollten
+			mindestens SAS-Festplatten mit 10.000 Umdrehungen pro Minute zum
+			Einsatz kommen.
+		</para>
+		<para>
+			Die genannten Werte sind die Minimalanforderungen für die oben
+			beschriebenen Szenarien.  Abhängig von der Größe der Umgebung und
+			Anzahl der aktiven Geräte und Personen können die Anforderungen
+			höher liegen.  Die tatsächliche Auslastung der einzelnen Systeme
+			sollte fortlaufend durch das <link
+				linkend="concepts_monitoring">Monitoring</link> überwacht
+			werden, um Engpässe zu vermeiden.  Im Folgenden werden die Server,
+			ihre Funktionen und die jeweiligen Anforderungen beschrieben.
+		</para>
+		<section id="infrastructure-and_hardware-requirements_servers">
+			<title>Zentrale Server</title>
+			<section id="infrastructure-and_hardware-requirements_servers_master">
+				<title>Identity Management</title>
+				<para>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+				</para>
+				<para>Systeme vom Typ &ucsMaster; und &ucsBackup; stellen das
+					Identitätsmanagement mit der zugrunde liegenden
+					LDAP-Datenbank zur Verfügung.</para>
+				<para>
+					Minimale Systemvoraussetzungen:
+					<itemizedlist>
+						<listitem><para>4 CPU-Kerne</para></listitem>
+						<listitem><para>8 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz</para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Die Hauptaufgaben des &ucsMaster; sind:
+					<itemizedlist>
+						<listitem><para>Viele lesende Zugriffe auf die
+								LDAP-Datenbank, da neben der Administration alle
+								weiteren Systeme regelmäßig Information
+								abfragen.</para></listitem>
+						<listitem><para>Schreibende Zugriffe auf die
+								LDAP-Datenbank, sobald Änderungen vorgenommen
+								werden. Insbesondere beim initialen Import und
+								beim Schuljahreswechsel wird die LDAP-Datenbank
+								stark belastet.</para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Die I/O-Performance der Festplatten dieser Server ist
+					besonders wichtig, zusammen mit ausreichend Arbeitsspeicher,
+					der insbesondere beim initialen Import und beim
+					Schuljahreswechsel notwendig ist.
+				</para>
+				<para>
+					&ucsBackup; dienen der Lastverteilung und Ausfallsicherheit.
+					Es sollte immer mindestens ein &ucsBackup; vorhanden sein.
+					Darüber hinaus können weitere Server bei Bedarf hinzugefügt
+					werden.
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_servers_radius">
+				<title>RADIUS</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Minimale Systemvoraussetzungen:
+					<itemizedlist>
+						<listitem><para>2 CPU-Kerne</para></listitem>
+						<listitem><para>4 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz</para></listitem>
+					</itemizedlist>
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_servers_monitoring">
+				<title>Monitoring</title>
+				<para>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+				</para>
+				<para>
+					Minimale Systemvoraussetzungen:
+					<itemizedlist>
+						<listitem><para>2 CPU-Kerne</para></listitem>
+						<listitem><para>4 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz</para></listitem>
+					</itemizedlist>
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_servers_slave">
+				<title>IT-Angebote, wie Groupware und Lernplattformen</title>
+				<para>
+					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+				</para>
+				<para>
+					Für weitere IT-Angebote können keine Minimalanforderungen
+					genannt werden, da diese sowohl von der Anzahl der
+					parallelen Benutzer als auch von dem IT-Angebot selbst
+					abhängig sind.  Eine Abstimmung mit dem Hersteller ist
+					insbesondere bei Angeboten notwendig, die von allen
+					Personen, die ein Benutzerkonto in der Umgebung haben,
+					genutzt werden.
+				</para>
+			</section>
+		</section>
+		<section id="infrastructure-and_hardware-requirements_school">
+			<title>Dezentrale Systeme</title>
+			<section id="infrastructure-and_hardware-requirements_school_server">
+				<title>Schulserver</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Minimale Systemvoraussetzungen für
+					<emphasis>Grundschulen</emphasis> (25 Computer, 25 Tablets,
+					150 Benutzerkonten):
+					<itemizedlist>
+						<listitem><para>2 CPU-Kerne</para></listitem>
+						<listitem><para>4 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
+						<listitem><para>bis zu 100 GB Speicherplatz für Benutzerdaten</para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Minimale Systemvoraussetzungen für
+					<emphasis>mittlere Schulen</emphasis> (100 Computer, 100
+					Tablets, 600 Benutzerkonten):
+					<itemizedlist>
+						<listitem><para>4 CPU-Kerne</para></listitem>
+						<listitem><para>16 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
+						<listitem><para>ab 400 GB Speicherplatz für Benutzerdaten</para></listitem>
+					</itemizedlist>
+				</para>
+				<para>
+					Minimale Systemvoraussetzungen für
+					<emphasis>Berufsschulen</emphasis> (300 Computer, 200
+					Tablets, 1500 Benutzerkonten):
+					<itemizedlist>
+						<listitem><para>8 CPU-Kerne</para></listitem>
+						<listitem><para>32 GB RAM</para></listitem>
+						<listitem><para>100 GB Speicherplatz für das System selbst</para></listitem>
+						<listitem><para>ab 1.000 GB Speicherplatz für Benutzerdaten</para></listitem>
+					</itemizedlist>
+				</para>
+			</section>
+		</section>
+		<section id="infrastructure-and_hardware-requirements_infrastructure">
+			<title>Netzinfrastruktur</title>
+			<section id="infrastructure-and_hardware-requirements_infrastructure_network">
+				<title>Strukturierte Verkabelung</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Die Schulen sollten über eine strukturierte Verkabelung
+					im Schulgebäude verfügen.  Dies schließt ein, dass möglichst
+					nur Switches und Netzkomponenten mit Management-Funktion
+					verwendet werden.  Damit werden Fehler ausgeschlossen, die
+					durch fehlerhafte Verkabelung entstehen und es wird möglich
+					die Qualität der erbrachten Leistung bis auf Ebene des
+					Netzes zu messen.  Darüber hinaus können
+					Sicherheitsmechanismen implementiert werden, die bei
+					zunehmender Verwendung der IT-Infrastruktur immer wichtiger
+					werden.
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_infrastructure_wifi">
+				<title>WLAN-Infrastruktur</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Für Einführung von WLAN in Schulen gehen wir heute davon aus,
+					dass die gesamte Schule mit WLAN ausgestattet werden soll
+					und alle Schüler mit mindestens einem mobilen Endgerät im
+					WLAN aktiv sein werden.  Auch wenn dies nicht sofort
+					realisiert werden kann, so ist unserem Verständnis nach dies
+					das Ziel.
+				</para>
+				<para>
+					Um dies Ziel zu erreichen, ist eine <link
+						linkend="infrastructure-and_hardware-requirements_infrastructure_network">strukturierte
+						Verkabelung</link> Grundvoraussetzung.  Darüber hinaus
+					werden professionelle Access Points benötigt, die mehr als
+					40 parallel eingebuchte mobile Geräte unterstützen, ohne
+					dass der Access Point aufgrund von Speichermangel abstürzt.
+					Mit professionellen Access Points lassen sich darüber hinaus
+					auch weitere Sicherheitsmechanismen, wie VLAN, realisieren.
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_infrastructure_internet">
+				<title>Internetzugang</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link> und <link linkend="scenario-3">3</link></emphasis>
+				</para>
+				<para>
+					Die Schulen sollten über zuverlässige Internetzugänge
+					verfügen, die maximal 1x pro Nacht getrennt werden.  Die
+					Geschwindigkeit des Zugangs sollte mindestens 6 MBit/s
+					betragen.  Ausschlaggebend für die notwendige
+					Geschwindigkeit ist die Anzahl der gleichzeitig aktiven
+					Endgeräte.  Als Richtwert kann von einem Bedarf von mindestens
+					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
+					insbesondere bei der Einführung von WLAN und Bring Your Own
+					Device (BYOD) zu beachten, da Lehrkräfte und Schüler ggf.
+					mehr als ein Gerät pro Person mitbringen werden.
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_infrastructure_bandwidth">
+				<title>Internetzugang: Schulserver im Rechenzentrum</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Die folgende Schätzung der Bandbreite ist ausschließlich für
+					<link linkend="scenario-4">Szenario  4</link>, in dem alle
+					Schulserver aus den Schulen in ein zentrales Rechenzentrum
+					überführt werden.  In den Schulen verbleiben nur die
+					Endgeräte, die zur Nutzung der IT notwendig sind.  Die
+					Anforderungen zu den anderen Szenarien sind in <xref
+						linkend="infrastructure-and_hardware-requirements_infrastructure_internet"/>
+					beschrieben.
+				</para>
+				<para>
+					Die nötigen Bandbreiten im lokalen Schulnetz können je
+					nach Anwendungsfall stark schwanken.  Die folgende
+					Tabelle gibt einen groben Überblick über Richtwerte nach
+					Schultyp.  Die benötigte Bandbreite liegt zwischen 1-3
+					MBit/s für schuleigene Geräte.
+				</para>
+				<para>
+					<table id="table_infrastructure-and_hardware-requirements_infrastructure_internet">
+						<title>Grobe Richtwerte für die Anbindung nach Schultyp</title>
+						<tgroup cols="4">
+							<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
+							<colspec colnum="2" colname="range" colwidth="1*"/>
+							<colspec colnum="3" colname="number_of_ips" colwidth="2*"/>
+							<colspec colnum="4" colname="usage" colwidth="1*"/>
+							<thead>
+								<row>
+									<entry>Schultyp</entry>
+									<entry>Typische Anzahl Clients</entry>
+									<entry>Typische Netznutzung</entry>
+									<entry>Nötige Bandbreite</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry>Grundschulen</entry>
+									<entry>~20 Clients</entry>
+									<entry>Geringe Netznutzung (~1 MBit/s)</entry>
+									<entry>20 MBit/s</entry>
+								</row>
+								<row>
+									<entry>Weiterführende Schulen</entry>
+									<entry>~90 Clients</entry>
+									<entry>Mittlere Netznutzung (~2 MBit/s)</entry>
+									<entry>180 MBit/s</entry>
+								</row>
+								<row>
+									<entry>Berufsschulen</entry>
+									<entry>~300 Clients</entry>
+									<entry>Hohe Netznutzung (>3 MBit/s)</entry>
+									<entry>1 GBit/s</entry>
+								</row>
+							</tbody>
+						</tgroup>
+					</table>
+				</para>
+			</section>
+			<section id="infrastructure-and_hardware-requirements_infrastructure_vpn">
+				<title>Verbindung zur Zentrale</title>
+				<para>
+					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Die Schulen mit den müssen an die zentralen Systeme
+					angebunden werden, damit eine Steuerung der Netze, Endgeräte
+					und ggf. Server von zentraler Stelle möglich wird.
+					Um die Verbindung aufzubauen, können VPN-Technologien,
+					Standleitungen oder private Netze verwendet werden.
+				</para>
+				<para>
+					Die Bandbreite der verfügbaren Anbindung beeinflusst
+					entscheidend die möglichen Szenarien. Szenario 4 ist zum
+					Beispiel nur bei einer sehr guten Anbindung im Bereich von 1
+					GBit/s oder mehr sinnvoll möglich.  Bei VPN über
+					handelsübliche DSL-Leitungen empfiehlt sich stattdessen die
+					Umsetzung von Szenario 3.
+				</para>
+			</section>
+		</section>
+	</chapter>
+	<chapter id="installation">
+		<title>Installation</title>
+		<para>
+			Die Installation von &ucsUAS; ist grundlegend im <ulink
+				url="https://docs.software-univention.de/handbuch-4.1.html#installation:chapter">Handbuch
+				zu &ucsUCS;</ulink> und im <ulink
+				url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#installation">&ucsUAS;
+				Handbuch für Administratoren</ulink> beschrieben.  In diesem
+			Abschnitt geben wir zusätzliche Hinweise zur Installation,
+			insbesondere im Hinblick auf die Umsetzung der definierten Konzepte.
+		</para>
+		<para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Zur Installation sollte das <ulink
+							url="https://www.univention.de/download/ucs-download/iso-installationsimage/">aktuellste
+							&ucsUCS; Installationsmedium</ulink> verwendet werden.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Der Pfad <filename>/var/log</filename> sollte auf eine
+						eigene Partition gelegt werden, damit bei erhöhten
+						Aufkommen an Log-Informationen nicht die Systempartition
+						voll läuft und in der Folge die Funktionsfähigkeit des
+						Gesamtsystems zusammenbricht.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<section id="installation_master">
+			<title>Installation des &ucsMaster;</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als Externer DNS-Server bzw. DNS-Forwarder
+							ist die IP-Adresse des DNS-Servers des
+							Internetproviders einzutragen.
+					</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsMaster; zu installieren: <option>Erstellen einer
+								neuen &ucsUCS;-Domäne</option></para></listitem>
+					<listitem><para>Nach der Eingabe des Domänennamen sollte die
+							automatisch vorgeschlagenen LDAP-Basis sollte nicht
+							geändert werden.</para></listitem>
+					<listitem>
+						<para><emphasis>für Szenario <link
+									linkend="scenario-3">3</link> und <link
+									linkend="scenario-4">4</link></emphasis></para>
+						<para>
+							Um Gruppenrichtlinien für alle Schulen über eine
+							zentrale Stelle verwalten zu können ist die
+							Software-Komponente <package>Active Directory
+								kompatibler Domänen-Controller</package> bei der
+							Installation auszuwählen. </para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die App
+							<package>&ucsUAS;</package> zu
+							installieren.</para></listitem>
+					<listitem><para>Im Anschluss an die Installation der
+							<package>&ucsUAS;</package> App ist in der &ucsUMC;
+							in der Kategorie
+							<emphasis>Schuladministration</emphasis> der
+							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							zu starten und die Option &quot;Multi-Server
+							Umgebung&quot; zu wählen und der Assistent bis zum
+							Ende auszuführen.</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="installation_backup">
+			<title>Installation &ucsBackup;</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				Zur Lastverteilung bei der LDAP-Replikation können neben dem
+				ersten, unbedingt notwendigen &ucsBackup; Server zusätzlich noch
+				weitere &ucsBackup; Systeme aufgesetzt werden.
+				<itemizedlist>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS-Server ist die IP-Adresse des
+							&ucsMaster; einzutragen.  Der DNS-Forwarder wird
+							beim Domänenbeitritt automatisch vom &ucsMaster;
+							übernommen und braucht somit nicht eingetragen zu
+							werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsBackup; als Mitglied der Domäne zu installieren
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsBackup; auszuwählen.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass der &ucsMaster;
+							alle verfügbaren Updates installiert
+							hat.</para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.  Anschließend ist der Domänenbeitritt
+							zu starten.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation
+							ist über das Univention App Center die
+							<package>&ucsUAS;</package> App zu
+							installieren.</para></listitem>
+					<listitem><para>Im Anschluss an die Installation der
+							<package>&ucsUAS;</package> App ist in der &ucsUMC;
+							in der Kategorie
+							<emphasis>Schuladministration</emphasis> der
+							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							zu starten und die Option &quot;Multi-Server
+							Umgebung&quot; zu wählen und der Assistent bis zum
+							Ende auszuführen.</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="installation_slave">
+			<title>Installation &ucsUCS; Slave für RADIUS, Groupware,
+				Collaboration, Lernplattformen usw.</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				Nach Möglichkeit sollte für jeden Dienst ein separater
+				&ucsSlave; Server verwendet werden.
+				<itemizedlist>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS-Server sind die IP-Adressen des
+							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							DNS-Forwarder wird beim Domänenbeitritt automatisch
+							vom &ucsMaster; übernommen und braucht somit nicht
+							eingetragen zu werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsBackup; als Mitglied der Domäne zu installieren
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsSlave; auszuwählen.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass der &ucsMaster;
+							alle verfügbaren Updates installiert
+							hat.</para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.  Anschließend ist der Domänenbeitritt
+							zu starten.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die gewünschte App, zum
+							Beispiel <package>RADIUS</package>, zu
+							installieren.</para></listitem>
+					<listitem><para>Die App <package>&ucsUAS;</package> darf
+							<emphasis role="strong">nicht</emphasis> installiert
+							werden!</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="installation_member">
+			<title>Installation &ucsMember; für Monitoring</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS-Server sind die IP-Adressen des
+							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							DNS-Forwarder wird beim Domänenbeitritt automatisch
+							vom &ucsMaster; übernommen und braucht somit nicht
+							eingetragen zu werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsBackup; als Mitglied der Domäne zu installieren
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsMember; auszuwählen.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass der &ucsMaster;
+							alle verfügbaren Updates installiert
+							hat.</para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.  Anschließend ist der Domänenbeitritt
+							zu starten.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die App
+							<package>Icinga</package>, zu
+							installieren.</para></listitem>
+					<listitem><para>Es ist empfohlen das Monitoring des
+							aktuellen Zustands der Umgebung um die Speicherung
+							von Langzeitinformationen zu ergänzen.  Weitere
+							Informationen sind in <xref
+								linkend="concepts_monitoring" /> zu
+							finden.</para></listitem>
+					<listitem><para>Die App <package>&ucsUAS;</package> darf
+							<emphasis role="strong">nicht</emphasis> installiert
+							werden!</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
+					<listitem><para>Damit Icinga und Munin lauffähig sind, muss
+							sichergestellt sein, dass die globale
+							&ucsUCR;-Richtlinie
+							<property>ucsschool-ucr-settings</property> auf alle
+							anderen Systeme wirkt.  Dies kann überprüft werden,
+							in dem die Werte der &ucsUCR;-Variablen
+							<envar>nagios/client/allowedhosts</envar> und
+							<envar>munin/node/allowedhosts</envar> auf den
+							anderen Servern geprüft werden.  Sollten trotzdem
+							keine Statusinformationen über einen Server
+							angezeigt werden, so sollten ggf. die Dienste
+							<command>univention-directory-listener</command>,
+							<command>nagios-nrpe-server</command> und
+							<command>munin-node</command> neu gestartet
+							werden.</para></listitem>
+				</itemizedlist>
+			</para>
+		</section>
+	</chapter>
+	<chapter id="base-configuration">
+		<title>Basiskonfiguration</title>
+		<para>
+			<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+		</para>
+		<para>
+			Folgende Konfiguration müssen <emphasis role="strong">vor</emphasis>
+			dem Anlegen der ersten Schulen umgesetzt werden:
+		</para>
+		<section id="base-configuration_mail">
+			<title>Zustellung von Systemmails</title>
+			<para>
+				&ucsUCS; verschickt regelmäßig E-Mails, um aktuelle
+				Ereignisse aus dem Monitoring und Ergebnisse von Routineaufgaben
+				zu kommunizieren.  Diese E-Mails sind für den Betrieb von
+				großer Wichtigkeit und müssen unbedingt beachtet werden.
+				Damit diese E-Mail zugestellt werden können ist der
+				E-Mailversand wie folgt zu konfigurieren.  Für die Konfiguration
+				von &ucsUCR;-Variablen sollten &ucsUCR;-Richtlinien verwendet
+				werden.
+			</para>
+			<para>
+				<orderedlist>
+					<listitem>
+						<para>
+							E-Mailalias für <systemitem
+								class="username">root</systemitem> auf ein
+							System stellen/umleiten.  Wenn zum Beispiel alle
+							E-Mails an den Benutzer <systemitem
+								class="username">root</systemitem> auf dem
+							&ucsMaster; umgeleitet werden sollen, ist die
+							&ucsUCR;-Variable <envar>mail/alias/root</envar> auf
+							den Wert
+							<literal>root@ucsma-01.schulen.bremen.de</literal>
+							zu stellen.  <literal>schulen.bremen.de</literal>
+							muss durch den tatsächlichen Domänennamen ersetzt
+							werden.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Anschließend ist auf dem Zielsystem, in diesem
+							Beispiel auf dem &ucsMaster;, die Zieladresse für
+							alle E-Mails an <systemitem
+								class="username">root</systemitem> zu
+							hinterlegen.  Die E-Mailadresse wird ebenfalls über
+							&ucsUCR;-Variable <envar>mail/alias/root</envar>
+							festgelegt, zum Beispiel
+							<literal>admins@example.org</literal>.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Damit das Zielsystem die E-Mail ordentlich zustellen
+							kann, ist auf dem Zielsystem die App
+							<package>Mailserver</package> zu installieren.
+							Außerdem ist der Zugang zu einem entfernten
+							Mailserver zu konfigurieren, über den die E-Mails
+							zugestellt werden können.  Die <ulink
+								url="https://docs.software-univention.de/handbuch-4.1.html#mail::serverconfig::relay">Konfiguration
+								dieses sogenannten Relayhosts</ulink> ist im
+							&ucsUCS;-Handbuch beschrieben.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Mit dieser Konfiguration werden alle E-Mails, die
+							auf einem beliebigen Server an den Benutzer
+							<systemitem
+								class="username">root</systemitem> geschickt
+							werden, an die konfigurierte E-Mailadresse
+							weitergeleitet.  Es ist sinnvoll zu prüfen, ob es
+							weitere lokale Konten von Systembenutzern gibt, die
+							E-Mails erhalten.  Diese sollte alle auf den Benutzer
+							<systemitem class="username">root</systemitem>
+							umgeleitet werden.  Insbesondere sind die
+							&ucsUCR;-Variablen
+							<envar>mail/alias/postmaster</envar> und
+							<envar>mail/alias/webmaster</envar> auf den Wert
+							<literal>root</literal> zu setzen.
+						</para>
+					</listitem>
+				</orderedlist>
+			</para>
+		</section>
+		<section id="base-configuration_globale-ucr">
+			<title>Globale &ucsUCR;-Richtlinie</title>
+			<para>
+				Die globale &ucsUCR;-Richtlinie wird in der &ucsUMC;
+				über die Kategorie <emphasis>Domäne</emphasis> und das
+				Modul <emphasis>Richtlinien</emphasis> bearbeitet.  Die
+				Richtlinie hat den Namen
+				<command>ucsschool-ucr-settings</command> und ist vom Typ
+				&ucsUCR;.  Um folgende Einträge sollte die Richtlinie erweitert
+				werden:
+			</para>
+			<para>
+				<table id="table_global_ucr_settings">
+					<title>Zuteilung der Subnetze zu Schulen</title>
+					<tgroup cols="3">
+						<colspec colnum="1" colname="variable"/>
+						<colspec colnum="2" colname="value"/>
+						<colspec colnum="3" colname="description"/>
+						<thead>
+							<row>
+								<entry>&ucsUCR;-Variable</entry>
+								<entry>Wert</entry>
+								<entry>Beschreibung</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><envar>directory/manager/web/modules/autosearch</envar></entry>
+								<entry><literal>0</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach
+									allen Objekten beim Öffnen der &ucsUCS;
+									Module.  Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/wizards/autosearch</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen der &ucsUAS; Module.  Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>samba4/sysvol/sync/from_downstream</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS; Schulservern.  Dies beugt Problemen mit der Replikation vor.</entry>
+							</row>
+							<row>
+								<entry><envar>nagios/client/allowedhosts</envar></entry>
+								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20]</literal></entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, Nagios oder Icinga, auf den NRPE-Dienst der übrigen Systeme.</entry>
+							</row>
+							<row>
+								<entry><envar>munin/node/allowedhosts</envar></entry>
+								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20/32]</literal></entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, Munin, auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen Systeme (Achtung CIDR-Schreibweise!).</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/helpdesk/recipient</envar></entry>
+								<entry><literal>[E-Mailadresse des Helpdesks, zum Beispiel admins@example.org]</literal></entry>
+								<entry>Definiert die E-Mailadresse, an die Nachrichten vom &ucsUAS; Helpdesk-Modul geschickt werden.  Die Zustellung sollte unbedingt getestet werden!  Siehe auch <xref linkend="base-configuration_mail" />.</entry>
+							</row>
+							<row>
+								<entry><envar>mail/alias/root</envar></entry>
+								<entry><literal>[E-Mailadresse des Betreibers, zum Beispiel admins@example.org]</literal></entry>
+								<entry>Definiert die E-Mailadresse für Systemmails (Cron / Monitoring).  Die Zustellung sollte unbedingt getestet werden!  Siehe auch <xref linkend="base-configuration_mail" />.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/import/generate/policy/dhcp/dns/set_per_ou</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Verhindert das automatische Anlegen bestimmter DHCP-DNS-Richtlinien für den Edukativ-Bereich der Schulen.  Bei der Verwendung des Verwaltungsnetzes ist dies hinderlich.  Die notwendigen DHCP-Richtlinien werden später durch den Netzimport korrekt angelegt</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+		</section>
+		<section id="base-configuration_central-ucr">
+			<title>Zentrale &ucsUCR;-Richtlinie</title>
+			<para>
+				Eine &ucsUCR;-Richtlinie für die zentralen Server wird benötigt,
+				um sicherzustellen, dass die Konfigurationen der Server
+				gleichartig sind.  Dazu ist in der &ucsUMC; über die Kategorie
+				<emphasis>Domäne</emphasis> und das Modul
+				<emphasis>Richtlinien</emphasis> zu öffnen und die zentrale
+				Richtlinie anzulegen.
+			</para>
+			<para>
+				Dazu wird eine neue Richtlinie vom Typ &ucsUCR; im Container
+				<uri>policies/config-registry</uri> erstellt.  Die Richtlinie
+				soll <userinput>ucr_central</userinput> heißen und folgende
+				Einträge enthalten:
+			</para>
+			<para>
+				<table id="table_central_ucr_settings">
+					<title>Zuteilung der Subnetze zu Schulen</title>
+					<tgroup cols="3">
+						<colspec colnum="1" colname="variable"/>
+						<colspec colnum="2" colname="value"/>
+						<colspec colnum="3" colname="description"/>
+						<thead>
+							<row>
+								<entry>&ucsUCR;-Variable</entry>
+								<entry>Wert</entry>
+								<entry>Beschreibung</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry><envar>timeserver</envar></entry>
+								<entry><literal>[FQDN oder IP-Adresse des ersten externen Zeitservers]</literal></entry>
+								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beisiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
+							</row>
+							<row>
+								<entry><envar>timeserver2</envar></entry>
+								<entry><literal>[FQDN oder IP-Adresse des zweiten externen Zeitservers]</literal></entry>
+								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beisiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
+							</row>
+							<row>
+								<entry><envar>timeserver2</envar></entry>
+								<entry><literal>[FQDN oder IP-Adresse des zweiten externen Zeitservers]</literal></entry>
+								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beisiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+			</para>
+			<note>
+				<para>
+					Die &ucsUAS; Schulserver setzen automatisch den &ucsMaster;
+					und die &ucsBackup;-Server als Zeitserver. Damit wird
+					automatisch eine Kaskadierung erreicht
+				</para>
+			</note>
+			<para>
+				Abschließend ist die Richtlinie mit den zentralen Servern zu
+				verknüpfen.  In der &ucsUMC; ist dazu in der Kategorie
+				<emphasis>Domäne</emphasis> das Modul
+				<emphasis>LDAP-Verzeichnis</emphasis> auszuwählen und
+				der Container <uri>computers</uri> zu öffnen.  Nun ist mit der
+				rechten Maustaste der Container anzuklicken und die Option
+				<option>Bearbeiten</option> zu selektieren.
+			</para>
+			<para>
+				Auf Reiter Richtlinien ist nun der Punkt <emphasis>Richtlinie:
+					&ucsUCR;</emphasis> zu öffnen und als dem Dropdown
+				<emphasis>Richtlinien-Konfiguration</emphasis> die eben
+				erstellte Richtlinie <userinput>ucr_central</userinput>
+				auszuwählen.
+			</para>
+			<para>
+				Die Richtlinie wird nun auf alle Systeme unterhalb des
+				Containers <uri>computer</uri> vererbt.
+			</para>
+		</section>
+	</chapter>
+	<chapter id="import">
+		<title>Datenimport</title>
+		<para>
+			Nach Abschluss der Installation der zentralen Systeme sind die
+			Daten in das LDAP-Verzeichnis zu importieren, die für die
+			Einrichtung und den Betrieb von Schulen benötigt werden.  Dies sind
+			Informationen über die Schulen, die IP-Netze, Benutzerkonten und
+			weitere Objekte.
+		</para>
+		<para>
+			Der Datenimport sollte erfolgen bevor Schulserver und Rechner
+			ausgerollt werden.   Weiterhin sollten die unterschiedlichen Daten
+			in der Reihenfolge importiert werden, wie sie in diesem Kapitel
+			vorgegeben ist.  Darüber hinaus sollten die Daten, die in
+			CSV-Dateien gespeichert werden, für die spätere Analyse und
+			Überarbeitung gesichert abgelegt werden.
+		</para>
+		<section id="import_schools">
+			<title>Schulen</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				Im ersten Schritt werden die Schulen importiert.  Durch den
+				Datenimport wird im LDAP-Verzeichnis die Container-Struktur
+				erstellt, die für die späteren Importe benötigt wird.  Um alle
+				Schulen in einem Schritt zu importieren, ist eine CSV-Datei
+				zu erstellen.
+			</para>
+			<para>
+				Das Vorgehen zum Import ist wie folgt:
+				<itemizedlist>
+					<listitem>
+						<para>
+							<ulink url="ucsschool-import-vorlagen.xlsx">Vorlage
+								für den Import</ulink> öffnen und Tabelle
+							<emphasis>Schulen</emphasis> ausfüllen.
+						</para>
+						<para>
+							<figure id="fig-import-schools">
+								<title>Tabelle: Schulen</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata align="center" fileref="illustrations41/1_schulen_import.png" scale="60" />
+									</imageobject>
+									<textobject><phrase>Tabelle: Schulen</phrase></textobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Export der Tabelle ins CSV-Format mit Tabulator als
+							Feldtrenner und ohne Texttrenner.
+						</para>
+						<para>
+							<figure id="fig-import-schools-save-as">
+								<title>Kopie speichern als CSV-Datei</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata align="center" fileref="illustrations41/2_schulen_save_as.png" scale="60" />
+									</imageobject>
+									<textobject><phrase>Kopie speichern als CSV-Datei</phrase></textobject>
+								</mediaobject>
+							</figure>
+						</para>
+						<para>
+							<figure id="fig-import-schools-csv-parameters">
+								<title>Export Parameter</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata align="center" fileref="illustrations41/3_schulen_csv-parameters.png" scale="60" />
+									</imageobject>
+									<textobject><phrase>Export Parameter</phrase></textobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei <filename>schulen.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Um die CSV-Datei weiterverarbeiten zu können, muss
+							sie im Unix-Format vorliegen.  Sollte sie auf unter
+							Windows oder MacOS gespeichert worden sein, so muss
+							sie konvertiert werden.  Dazu ist auf dem &ucsMaster;
+							der folgende Befehl auf die Datei anzuwenden:
+							<programlisting>
+								<![CDATA[
+dos2unix schulen.csv
+								]]>
+							</programlisting>
+						</para>
+						<para>
+							Vorweg ist muss das Paket
+							<package>dos2unix</package> installiert werden, in
+							dem das
+							<application>unmaintained</application>-Repository
+							aktiviert wird, siehe <ulink
+								url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Konfiguration
+								des Repository-Servers</ulink>.  Nach der
+							Aktivierung des Repositories ist der folgende Befehl
+							zu Installation des Pakets auszuführen:
+							<programlisting>
+								<![CDATA[
+apt-get update; apt-get install dos2unix
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die
+							mit dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/schulen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Zum automatisierten Einlesen aller Schulen ist
+							einmalig ein Skript zu erstellen.  Dazu sind
+							folgende Befehle auszuführen, um das Skript
+							anzulegen:
+							<programlisting>
+								<![CDATA[
+mkdir -p /usr/local/bin/ucsschool/helper_scripts/
+touch /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
+chmod a+x /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
+nano /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
+								]]>
+							</programlisting>
+						</para>
+						<para>
+							Der folgende Programmtext ist zu kopieren und
+							einzufügen.  Abschließend ist mit den Tastenkürzeln
+							<command>Strg-O</command> und
+							<command>Strg-X</command> die Datei zu speichern.
+							<programlisting>
+								<![CDATA[
+#!/bin/bash
+IFS=$'\t'
+while read schoolid fullname serveredu serveradm; do
+/usr/share/ucs-school-import/scripts/create_ou --displayName="${fullname}" "${schoolid}" "${serveredu}" "${serveradm}"
+done < "$1"
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Das Import ist kann abschließend mit folgendem
+							Befehl ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/local/bin/ucsschool/helper_scripts/import_schools.sh \
+    /usr/local/ucsschool/import_data/schulen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="import_networks">
+			<title>Netze</title>
+			<para>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+			</para>
+			<para>
+				Der Import der Netze ist notwendig, um Rechner und Server in den
+				Schulen einrichten zu können.  Beim Import werden unter anderem
+				passende Richtlinien für DHCP, DNS und Routing erstellt.
+			</para>
+			<para>
+				Die Netze sind entsprechend der <link
+					linkend="concepts_network">Definition im Netzkonzept</link>
+				in eine CSV-Datei einzutragen.  Im <ulink
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
+				ist das Datenformat für den Import beschrieben.  In der Datei
+				<ulink url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage
+				in der Tabelle <emphasis>Netze</emphasis> vorhanden, die
+				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>
+							Die CSV-Datei <filename>networks.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem
+							Befehl ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_networks \
+    /usr/local/ucsschool/import_data/networks.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+			</para>
+		</section>
+		<section id="import_clients">
+			<title>Rechner</title>
+			<para>
+				<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+			</para>
+			<para>
+				Der Import von Rechnern ist insbesondere notwendig, um die
+				Rechner in den Schulen mit der richtigen MAC-Adresse in &ucsUAS;
+				zu hinterlegen, so dass diese mit den Zugangsdaten zum Netz
+				versorgt werden können.  Weitere Dienste, wie
+				Softwareverteilungslösungen verwenden diese Informationen
+				ebenfalls weiter.
+			</para>
+			<para>
+				Das Datenformat der CSV-Datei ist im <ulink
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
+				beschrieben.  Es sollte eine CSV-Datei je Schule erstellt
+				werden, die alle Rechner der jeweiligen Schule entsprechend des
+				Netz- und Namenskonzeptes enthält.  In der Datei <ulink
+					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
+				der Tabelle <emphasis>Rechner</emphasis> vorhanden, die
+				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>computers_SCHULE.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_computer \
+     /usr/local/ucsschool/import_data/computers_SCHULE.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="import_printers">
+			<title>Drucker</title>
+			<para>
+				<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+			</para>
+			<para>
+				Der Import der Drucker ist notwendig, damit Drucker in den
+				Schulen zur Verfügung stehen.
+			</para>
+			<para>
+				Das Datenformat der CSV-Datei ist im <ulink
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
+				beschrieben.  In der Datei <ulink
+					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
+				der Tabelle <emphasis>Drucker</emphasis> vorhanden, die
+				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>printers.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_printer \
+     /usr/local/ucsschool/import_data/printers.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section id="import_users-classes">
+			<title>Benutzer / Klassen</title>
+			<para>
+				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+			</para>
+			<para>
+				Der Import von Benutzerkonten erleichtert die Pflege,
+				insbesondere in sehr großen Umgebungen.  Mit dem Import wird
+				ebenfalls der Schuljahreswechsel durchgeführt.
+			</para>
+			<para>
+				Das Datenformat der CSV-Datei ist im <ulink
+					url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html#configuration:mapping">&ucsUAS;-Handbuch</ulink>
+				beschrieben.  Folgende Informationen müssen enthalten sein:
+				<itemizedlist>
+					<listitem><para>Vorname</para></listitem>
+					<listitem><para>Nachname</para></listitem>
+					<listitem><para>Schulen</para></listitem>
+					<listitem><para>Klassen</para></listitem>
+				</itemizedlist>
+				In der Datei <ulink
+					url="ucsschool-import-vorlagen.xlsx"/> sind Vorlagen in
+				den Tabellen <emphasis>Benutzer</emphasis> und
+				<emphasis>Klassen</emphasis> vorhanden.  Das weitere Vorgehen
+				ist wie folgt:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>students.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/students.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_user \
+    /usr/local/ucsschool/import_data/students.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Beim Import von Klassen ist analog vorzugehen:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						<para>>
+							Die CSV-Datei <filename>klassen.csv</filename> ist
+							auf dem &ucsMaster; in folgendem Verzeichnis
+							abzulegen:
+							<filename>/usr/local/ucsschool/import_data/</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die CSV-Datei enthält noch zwei Kopfzeilen, die mit
+							dem Zeichen <literal>#</literal> beginnen, diese
+							müssen vor der weiteren Verarbeitung entfernt
+							werden:
+							<programlisting>
+								<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/klassen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der Import kann abschließend mit folgendem Befehl
+							ausgeführt werden:
+							<programlisting>
+								<![CDATA[
+/usr/share/ucs-school-import/scripts/import_user \
+    /usr/local/ucsschool/import_data/klassen.csv
+								]]>
+							</programlisting>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+	</chapter>
+	<!-- <chapter id="additional-services"> -->
+	<!-- 	<title>Weitere Angebote einrichten</title> -->
+	<!-- 	<section id="additional-services_factory"> -->
+	<!-- 		<title>Rollout der Schulserver</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO <foreignphrase>Factory</foreignphrase> ab 20 Schulen empfohlen -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_patchmanagement"> -->
+	<!-- 		<title>Patch-Management für Server</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Installation OPSI -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_factory_clients"> -->
+	<!-- 		<title>Rollout der Clients in den Schulen</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Rollout der Clients in den Schulen mittels Softwareverteilung -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_patchmanagement_clients"> -->
+	<!-- 		<title>Patch-Management für Clients: Softwareverteilung</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Installation OPSI -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_windows"> -->
+	<!-- 		<title>Windows Client-Konfiguration</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			Gruppenrichtlinien -->
+	<!-- 			Profilkonfiguration -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_quota"> -->
+	<!-- 		<title>Quota</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für Szenarien 3 und 4</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+		<!-- <section id="additional-services_proxy"> -->
+		<!-- 	<title>Internetzugang für Rechner / BYOD</title> -->
+		<!-- 	<para> -->
+		<!-- 		<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis> -->
+		<!-- 	</para> -->
+		<!-- 	<para> -->
+		<!-- 		TODO -->
+		<!-- 	</para> -->
+		<!-- </section> -->
+		<!-- <section id="additional-services_radius"> -->
+		<!-- 	<title>WLAN / RADIUS</title> -->
+		<!-- 	<para> -->
+		<!-- 		<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis> -->
+		<!-- 	</para> -->
+		<!-- 	<para> -->
+		<!-- 		TODO -->
+		<!-- 	</para> -->
+		<!-- </section> -->
+	<!-- 	<section id="additional-services_dienstmail"> -->
+	<!-- 		<title>Dienstmail/Groupware</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_lernplattform"> -->
+	<!-- 		<title>Lernplattform</title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- 	<section id="additional-services_filesync"> -->
+	<!-- 		<title><foreignphrase>File Share und Sync</foreignphrase></title> -->
+	<!-- 		<para> -->
+	<!-- 			<emphasis>für alle Szenarien</emphasis> -->
+	<!-- 		</para> -->
+	<!-- 		<para> -->
+	<!-- 			TODO -->
+	<!-- 			ownCloud und Co. -->
+	<!-- 		</para> -->
+	<!-- 	</section> -->
+	<!-- </chapter> -->
+</book>
+
+<!-- vi: ft=docbk:tw=80:sw=4:ts=4:sts=4:noet
+-->
