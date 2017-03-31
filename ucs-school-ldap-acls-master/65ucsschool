@@ -39,7 +39,7 @@ def replace_ucr_variables(template):
 	}
 
 	# enable objectclasses only if corresponding LDAP schema is present (Bug #41725)
-	if os.path.exists('/var/lib/univention-ldap/local-schema/msgpo.schema'):
+	if os.path.exists('/var/lib/univention-ldap/local-schema/mswmi.schema'):
 		replacements['MSWMI_FILTER'] += ',@msWMISom'
 	if os.path.exists('/var/lib/univention-ldap/local-schema/msgpo.schema'):
 		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msGPOContainer'

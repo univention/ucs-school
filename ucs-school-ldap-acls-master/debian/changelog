@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (15.0.0-7) unstable; urgency=low
+
+  * Bug #41725: use correct LDAP schema file name
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 31 Mar 2017 13:33:45 +0200
+
 ucs-school-ldap-acls-master (15.0.0-6) unstable; urgency=low
 
   * Bug #41725: add fix for LDAP ACLs to prevent missing ACLs if
