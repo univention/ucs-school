@@ -2,6 +2,7 @@ ucs-school-ldap-acls-master (15.0.0-6) unstable; urgency=low
 
   * Bug #41725: add fix for LDAP ACLs to prevent missing ACLs if
     univention-printerserver is not installed
+  * Bug #41725: join script should stop if any command fails
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 31 Mar 2017 12:31:03 +0200
 

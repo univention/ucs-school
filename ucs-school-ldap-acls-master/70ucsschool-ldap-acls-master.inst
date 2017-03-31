@@ -40,18 +40,18 @@ eval "$(univention-config-registry shell)"
 univention-directory-manager container/cn create "$@" \
 	--ignore_exist \
 	--position="cn=groups,$ldap_base" \
-	--set name="ucsschool"
+	--set name="ucsschool" || die
 
 # create global groups required for LDAP ACLs for UCS@school
 for grp in "DC-Verwaltungsnetz" "Member-Verwaltungsnetz" "DC-Edukativnetz" "Member-Edukativnetz" ; do
 	univention-directory-manager groups/group create "$@" \
 		--ignore_exist \
 		--position="cn=ucsschool,cn=groups,$ldap_base" \
-		--set name="$grp"
+		--set name="$grp" || die
 done
 
-ucs_registerLDAPExtension "$@" --acl /usr/share/ucs-school-ldap-acls-master/61ucsschool_presettings
-ucs_registerLDAPExtension "$@" --acl /usr/share/ucs-school-ldap-acls-master/65ucsschool
+ucs_registerLDAPExtension "$@" --acl /usr/share/ucs-school-ldap-acls-master/61ucsschool_presettings || die
+ucs_registerLDAPExtension "$@" --acl /usr/share/ucs-school-ldap-acls-master/65ucsschool || die
 
 joinscript_save_current_version
 
