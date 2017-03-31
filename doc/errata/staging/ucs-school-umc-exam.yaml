@@ -7,10 +7,10 @@ fix:
 desc: |
  * Some UCR variables have not been cleaned up after the exam mode has been finished.
    This problem has bow been fixed (Bug #44082).
- * In some customer environments the UCS@school users are member of additional
-   groups that are not required for exam users. Each additional group membership
-   slows down the creation of exam users.
+ * The creation of exam users is slowed down with each additional group
+   membership of the participating students. If groups are not required
+   for exam users, they can now be ignored when the exam users are created.
    Via the UCR variable <envar>ucsschool/exam/group/ldap/blacklist/regex</envar> a
    regular expression may be specified. Each matching group DN is blacklisted for
-   exam users. The UCR variable has to be specified on DC master.
+   exam users. The UCR variable has to be specified on the DC master.
 bug: [44073,44082]
