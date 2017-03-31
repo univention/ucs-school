@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.1r2-setup">
+<book lang="de" id="ucsschool-4.2-szenarien">
 	<bookinfo>
 		<title>
 			Szenarien zum Einsatz von &ucsUAS;
@@ -18,8 +18,8 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.1 R2 v8
-Stand: 21. März 2017
+Version 4.2
+Stand: 31. März 2017
 			</literallayout>
 
 			<literallayout lang="">
@@ -120,7 +120,7 @@ feedback@univention.de
 				<title>Servicestufen: &ucsUAS;</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations41/0_ucsatschool_as_a_service.png" scale="60" />
+						<imagedata align="center" fileref="illustrations42/0_ucsatschool_as_a_service.png" scale="60" />
 					</imageobject>
 					<textobject><phrase>Servicestufen: &ucsUAS;</phrase></textobject>
 				</mediaobject>
@@ -156,7 +156,7 @@ feedback@univention.de
 					IT-Angeboten</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations41/1_zentrale.png" scale="56" />
+						<imagedata align="center" fileref="illustrations42/1_zentrale.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentrales Identity-Management mit integrierten
 					IT-Angeboten</phrase></textobject>
@@ -192,7 +192,7 @@ feedback@univention.de
 					IT-Angebote für Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations41/2_zentrale_wlan.png" scale="56" />
+						<imagedata align="center" fileref="illustrations42/2_zentrale_wlan.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentrales Identity-Management, WLAN und
 							weitere IT-Angebote für
@@ -227,7 +227,7 @@ feedback@univention.de
 					Schulservern an den Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations41/3_zentrale_wlan_schulserver.png" scale="56" />
+						<imagedata align="center" fileref="illustrations42/3_zentrale_wlan_schulserver.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur mit
 					Schulservern an den Schulen</phrase></textobject>
@@ -262,7 +262,7 @@ feedback@univention.de
 					ohne dezentrale Schulserver</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations41/4_zentrale_wlan_schulserver_rz.png" scale="56" />
+						<imagedata align="center" fileref="illustrations42/4_zentrale_wlan_schulserver_rz.png" scale="56" />
 					</imageobject>
 					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur
 					ohne dezentrale Schulserver</phrase></textobject>
@@ -918,7 +918,7 @@ feedback@univention.de
 				<para>
 					Für Benutzerkonten kann das gewünschte Schema im
 					Importmechanismus hinterlegt werden, siehe <ulink
-						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html">&ucsUAS;-Handbuch
+						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html">&ucsUAS;-Handbuch
 						zur CLI-Import-Schnittstelle</ulink>.
 				</para>
 				<para>
@@ -1410,9 +1410,9 @@ feedback@univention.de
 		<title>Installation</title>
 		<para>
 			Die Installation von &ucsUAS; ist grundlegend im <ulink
-				url="https://docs.software-univention.de/handbuch-4.1.html#installation:chapter">Handbuch
+				url="https://docs.software-univention.de/handbuch-4.2.html#installation:chapter">Handbuch
 				zu &ucsUCS;</ulink> und im <ulink
-				url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#installation">&ucsUAS;
+				url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#installation">&ucsUAS;
 				Handbuch für Administratoren</ulink> beschrieben.  In diesem
 			Abschnitt geben wir zusätzliche Hinweise zur Installation,
 			insbesondere im Hinblick auf die Umsetzung der definierten Konzepte.
@@ -1708,7 +1708,7 @@ feedback@univention.de
 							Außerdem ist der Zugang zu einem entfernten
 							Mailserver zu konfigurieren, über den die E-Mails
 							zugestellt werden können.  Die <ulink
-								url="https://docs.software-univention.de/handbuch-4.1.html#mail::serverconfig::relay">Konfiguration
+								url="https://docs.software-univention.de/handbuch-4.2.html#mail::serverconfig::relay">Konfiguration
 								dieses sogenannten Relayhosts</ulink> ist im
 							&ucsUCS;-Handbuch beschrieben.
 						</para>
@@ -1929,7 +1929,7 @@ feedback@univention.de
 								<title>Tabelle: Schulen</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata align="center" fileref="illustrations41/1_schulen_import.png" scale="60" />
+										<imagedata align="center" fileref="illustrations42/1_schulen_import.png" scale="60" />
 									</imageobject>
 									<textobject><phrase>Tabelle: Schulen</phrase></textobject>
 								</mediaobject>
@@ -1946,7 +1946,7 @@ feedback@univention.de
 								<title>Kopie speichern als CSV-Datei</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata align="center" fileref="illustrations41/2_schulen_save_as.png" scale="60" />
+										<imagedata align="center" fileref="illustrations42/2_schulen_save_as.png" scale="60" />
 									</imageobject>
 									<textobject><phrase>Kopie speichern als CSV-Datei</phrase></textobject>
 								</mediaobject>
@@ -1957,7 +1957,7 @@ feedback@univention.de
 								<title>Export Parameter</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata align="center" fileref="illustrations41/3_schulen_csv-parameters.png" scale="60" />
+										<imagedata align="center" fileref="illustrations42/3_schulen_csv-parameters.png" scale="60" />
 									</imageobject>
 									<textobject><phrase>Export Parameter</phrase></textobject>
 								</mediaobject>
@@ -1991,7 +1991,7 @@ dos2unix schulen.csv
 							dem das
 							<application>unmaintained</application>-Repository
 							aktiviert wird, siehe <ulink
-								url="https://docs.software-univention.de/handbuch-4.1.html#software::configrepo">Konfiguration
+								url="https://docs.software-univention.de/handbuch-4.2.html#software::configrepo">Konfiguration
 								des Repository-Servers</ulink>.  Nach der
 							Aktivierung des Repositories ist der folgende Befehl
 							zu Installation des Pakets auszuführen:
@@ -2075,7 +2075,7 @@ done < "$1"
 				Die Netze sind entsprechend der <link
 					linkend="concepts_network">Definition im Netzkonzept</link>
 				in eine CSV-Datei einzutragen.  Im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
 				ist das Datenformat für den Import beschrieben.  In der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage
 				in der Tabelle <emphasis>Netze</emphasis> vorhanden, die
@@ -2136,7 +2136,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
 			</para>
 			<para>
 				Das Datenformat der CSV-Datei ist im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
 				beschrieben.  Es sollte eine CSV-Datei je Schule erstellt
 				werden, die alle Rechner der jeweiligen Schule entsprechend des
 				Netz- und Namenskonzeptes enthält.  In der Datei <ulink
@@ -2193,7 +2193,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
 			</para>
 			<para>
 				Das Datenformat der CSV-Datei ist im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.1R2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
 				beschrieben.  In der Datei <ulink
 					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
 				der Tabelle <emphasis>Drucker</emphasis> vorhanden, die
@@ -2249,7 +2249,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
 			</para>
 			<para>
 				Das Datenformat der CSV-Datei ist im <ulink
-					url="https://docs.software-univention.de/ucsschool-import-handbuch-4.1R2.html#configuration:mapping">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html#configuration:mapping">&ucsUAS;-Handbuch</ulink>
 				beschrieben.  Folgende Informationen müssen enthalten sein:
 				<itemizedlist>
 					<listitem><para>Vorname</para></listitem>
