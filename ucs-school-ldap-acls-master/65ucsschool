@@ -3,6 +3,7 @@
 @!@
 # -*- coding: utf-8 -*-
 import re
+import os
 from univention.lib.misc import custom_groupname
 
 aclset = """
@@ -33,7 +34,17 @@ def replace_ucr_variables(template):
 		'SHAREATTRS': 'description,!posixGroup,!posixAccount,!SambaSamAccount',
 		'DHCPSERVICEATTRS': 'cn,!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
 		'DHCPATTRS': 'cn,!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+		'MSGPO_MSPRINT_CONTAINER': '@univentionObject,@organizationalRole',
+		'MSWMI_FILTER': '@univentionObject,@organizationalRole'
 	}
+
+	# enable objectclasses only if corresponding LDAP schema is present (Bug #41725)
+	if os.path.exists('/var/lib/univention-ldap/local-schema/msgpo.schema'):
+		replacements['MSWMI_FILTER'] += ',@msWMISom'
+	if os.path.exists('/var/lib/univention-ldap/local-schema/msgpo.schema'):
+		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msGPOContainer'
+	if os.path.exists('/var/lib/univention-ldap/local-schema/msprintconnectionpolicy.schema'):
+		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msPrintConnectionPolicy'
 
 	while True:
 		i = variable_token.finditer(template)
@@ -63,7 +74,7 @@ access to dn.base="cn=policies,cn=system,@%@ldap/base@%@" attrs=children
 	by * +0 break
 
 # Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects (part 2)
-access to dn.children="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))" attrs=entry,children,@univentionObject,@organizationalRole,@msPrintConnectionPolicy,@msGPOContainer
+access to dn.children="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))" attrs=entry,children,@$@MSGPO_MSPRINT_CONTAINER@$@
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
@@ -75,7 +86,7 @@ access to dn.base="cn=WMIPolicy,cn=system,@%@ldap/base@%@" attrs=children
 	by * +0 break
 
 # Slave DCs can read and write policy containers for MS WMI filter objects (part 2)
-access to dn.children="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))" attrs=entry,@univentionObject,@organizationalRole,@msWMISom
+access to dn.children="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))" attrs=entry,@$@MSWMI_FILTER@$@
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break

@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (15.0.0-6) unstable; urgency=low
+
+  * Bug #41725: add fix for LDAP ACLs to prevent missing ACLs if
+    univention-printerserver is not installed
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 31 Mar 2017 12:31:03 +0200
+
 ucs-school-ldap-acls-master (15.0.0-5) unstable; urgency=low
 
   * Bug #43908: remove old rule / replace old rule with new construct
