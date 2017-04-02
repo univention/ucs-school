@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (15.0.0-8) unstable; urgency=low
+
+  * Bug #41725: grant read access to school slaves to internal attributes of school OUs
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 02 Apr 2017 22:37:04 +0200
+
 ucs-school-ldap-acls-master (15.0.0-7) unstable; urgency=low
 
   * Bug #41725: use correct LDAP schema file name

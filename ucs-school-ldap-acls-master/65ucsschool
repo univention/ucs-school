@@ -26,7 +26,7 @@ def replace_ucr_variables(template):
 		'GRPADMINS': configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-'),
 		'EXAM': configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers'),
 		'DOMAIN_ADMINS': custom_groupname('Domain Admins'),
-		'SCHOOLOUATTRS': '@top,@organizationalUnit,@ucsschoolOrganizationalUnit,@univentionObject,@univentionPolicyReference',  # FIXME: extended attributes which adds object classes doesn't work
+		'SCHOOLOUATTRS': 'structuralObjectClass,entryUUID,creatorsName,createTimestamp,entryCSN,modifiersName,modifyTimestamp,@top,@organizationalUnit,@ucsschoolOrganizationalUnit,@univentionObject,@univentionPolicyReference',  # FIXME: extended attributes which adds object classes doesn't work
 		# FIXME: the following rules aren't enough but we need to support extended attributes/options
 		'CONTAINERATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!SambaSamAccount',
 		'USERATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixGroup',
@@ -213,7 +213,7 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=use
 	by * +0 break
 
 # Alle DC-Slaves muessen alle Benutzercontainer und Gruppen jeder Schule lesen koennen
-access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=ucsschoolOrganizationalUnit" attrs=entry,@$@SCHOOLOUATTRS@$@
+access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=ucsschoolOrganizationalUnit" attrs=entry,children,@$@SCHOOLOUATTRS@$@
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
