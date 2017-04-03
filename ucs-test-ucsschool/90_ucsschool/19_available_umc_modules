@@ -34,7 +34,7 @@ def removeListFromOther(big, small):
 
 
 def checkModules(modules, userType, serverRole, singleMaster):
-	defaultList = [('passwordchange', None), ]
+	defaultList = []
 	ignoreList = [('lib', None)]
 
 	# Lehrer auf dem DC Master

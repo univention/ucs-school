@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-3) unstable; urgency=low
+
+  * Bug #44253: update module list in 19_available_umc_modules
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 03 Apr 2017 21:39:17 +0200
+
 ucs-test-ucsschool (4.0.4-2) unstable; urgency=low
 
   * Bug #41725: also compare operational attributes in 78_ldap_acls_dump.diff
