@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-2) unstable; urgency=low
+
+  * Bug #41725: also compare operational attributes in 78_ldap_acls_dump.diff
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 03 Apr 2017 12:49:19 +0200
+
 ucs-test-ucsschool (4.0.4-1) unstable; urgency=low
 
   * Bug #41725: updated and fixed 75_ldap_acls_* and 78_ldap_acls_dump

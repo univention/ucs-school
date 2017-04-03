@@ -20,6 +20,6 @@ for i in ${BASEDIR}/dn*.ldif ; do
 		echo "$FN_A"
 		echo "$FN_B"
 		echo
-		compareldif -a "$FN_A" "$FN_B"
+		diff-ldif --operational -a "$FN_A" "$FN_B"
 	) | HLdiff | less -FSRX
 done
