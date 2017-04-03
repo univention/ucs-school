@@ -1,3 +1,12 @@
+ucs-school-ldap-acls-master (15.0.0-9) unstable; urgency=low
+
+  * Bug #41725
+    - revert last change
+    - grant at least read access to school slave controllers to
+      operational attributes in 61ucsschool_presettings
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 02 Apr 2017 23:15:19 +0200
+
 ucs-school-ldap-acls-master (15.0.0-8) unstable; urgency=low
 
   * Bug #41725: grant read access to school slaves to internal attributes of school OUs
