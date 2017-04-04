@@ -17,7 +17,7 @@ import univention.testing.utils as utils
 from univention.config_registry import handler_set, handler_unset
 
 LOGFILE = "/var/log/squid3/cache.log"
-RELOAD_PATTERN = r"(..../../.. ..:..:..\| Reconfiguring Squid Cache?)"
+RELOAD_PATTERN = r"(..../../.. ..:..:.. \w+\| Reconfiguring Squid Cache?)"
 TEST_UCR = ("proxy/filter/domain/whitelisted/2000", "www.univention.com")
 
 

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-5) unstable; urgency=low
+
+  * Bug #44251: fix regex for detecting squid reload
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 04 Apr 2017 15:06:03 +0200
+
 ucs-test-ucsschool (4.0.4-4) unstable; urgency=low
 
   * Bug #44249: fix import
