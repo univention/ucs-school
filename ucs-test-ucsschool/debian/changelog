@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-4) unstable; urgency=low
+
+  * Bug #44249: fix import
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 04 Apr 2017 14:39:53 +0200
+
 ucs-test-ucsschool (4.0.4-3) unstable; urgency=low
 
   * Bug #44253: update module list in 19_available_umc_modules
