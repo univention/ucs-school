@@ -1,3 +1,10 @@
+ucs-test-ucsschool (4.0.4-8) unstable; urgency=low
+
+  * Bug #44248: fixed typo in 04_ucs-school-reset-password-check and add
+    reset checks for admins
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 05 Apr 2017 23:32:01 +0200
+
 ucs-test-ucsschool (4.0.4-7) unstable; urgency=low
 
   * Bug #44250: squidguard does not leave temporary files anymore
