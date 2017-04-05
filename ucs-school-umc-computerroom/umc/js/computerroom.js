@@ -400,11 +400,11 @@ define([
 		},
 
 		_demoStart: function(ids, items) {
-			if (isUCC(items)) {
+			if (isUCC(items[0])) {
 				dialog.alert(_("UCC clients can not serve presentations."));
 				return;
 			}
-			this.umcpCommand('computerroom/demo/start', { server: items.id });
+			this.umcpCommand('computerroom/demo/start', { server: ids[0] });
 			dialog.alert(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation."), _('Presentation'));
 		},
 
