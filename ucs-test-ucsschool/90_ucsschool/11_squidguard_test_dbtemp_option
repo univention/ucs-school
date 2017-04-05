@@ -5,6 +5,8 @@
 ## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages: [squidguard]
+## versions:
+##  4.2-0: skip
 
 from univention.testing.strings import random_string
 import univention.testing.utils as utils
