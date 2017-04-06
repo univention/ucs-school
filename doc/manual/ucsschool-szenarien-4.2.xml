@@ -19,7 +19,7 @@
 		<legalnotice>
 			<literallayout>
 Version 4.2
-Stand: 31. März 2017
+Stand: 06. April 2017
 			</literallayout>
 
 			<literallayout lang="">
@@ -47,25 +47,30 @@ feedback@univention.de
 	<chapter id="setup-manual">
 		<title>Verwendung des Dokuments</title>
 		<para>
-			&ucsUAS; ist die Lösung, um zentral verwaltete IT-Infrastruktur mit
-			einem einheitlichen Identity-Management aufzubauen, in das
-			integrierte IT-Angebote eingebunden und schul- genauso wie
-			geräteübergreifend zur Verfügung gestellt werden können. So können
-			Schulträger und Ministerien die Anforderungen aus den
-			Medienentwicklungsplänen kosteneffizient und sicher erfüllen.
+			&ucsUAS; bietet die ideale Lösung, um eine zentral verwaltbare
+			IT-Infrastruktur mit einem einheitlichen Identity-Management
+			aufzubauen. Weitere IT-Dienste können integriert und anschließend
+			zentral über das UCS Management verwaltet und schulübergreifend für
+			den Zugriff über unterschiedlichste Geräte  zur Verfügung gestellt
+			werden. Damit  werden Schulträger und Ministerien in die Lage
+			versetzt,  aktuelle Anforderungen aus Medienentwicklungsplänen und
+			von Schulen kosteneffizient und sicher zu erfüllen.
 		</para>
 		<para>
-			Diese Anleitung dokumentiert das Vorgehen zum Aufbau von definierten
-			Szenarien für &ucsUAS; bei Schulträgern und Ministerien.  Die
-			Informationen beruhen auf den Erfahrungen, die Univention in
-			Projekten mit &ucsUAS; gewonnen hat und sich als erfolgreich
-			herausgestellt haben.
+			Mit diesem Whitepaper möchten wir Ihnen eine Anleitung an die Hand
+			geben, um typische Szenarien für den Einsatz von &ucsUAS;
+			effizient aufzubauen.  Wir greifen dabei auf langjährige Erfahrungen
+			zurück, die Univention in diversen Projekten mit Schulträgern beim
+			erfolgreichen Einsatz von &ucsUAS; gewonnen hat.
 		</para>
 		<para>
-			Für den Aufbau einer neuen &ucsUAS;-Umgebung sollten die Kapitel
-			dieser Anleitung nacheinander gelesen und umgesetzt werden. In
-			bestehenden Umgebungen können die Kapitel auch einzeln verwendet
-			werden, um Ausbau- und Verbesserungsmöglichkeiten zu identifizieren.
+			Falls Sie den Aufbau einer komplett neuen Umgebung mit &ucsUAS;
+			planen, sollten Sie die einzelnen Kapitel dieses Dokuments
+			idealerweise nacheinander lesen und die Anleitungen daraus Schritt
+			für Schritt umsetzen. Wenn Sie bereits eine &ucsUAS; Umgebung
+			betreiben, können Sie die betreffenden Kapitel auch separat lesen,
+			um Ausbau- und Verbesserungsmöglichkeiten für Ihre Umgebung zu
+			identifizieren.
 		</para>
 		<para>
 			Für den Einstieg in das Dokument sind <xref linkend="scenarios" />
@@ -75,45 +80,61 @@ feedback@univention.de
 			&ucsUAS; erleichtert.  Die Checklisten verweisen darüberhinaus auf
 			die weiterführenden technischen Themen in diesem Dokument, die
 			erprobte Lösungen aus der Praxis aufzeigen.
+
+			Die Kapitel <link linkend="scenarios">2</link> und <link
+				linkend="setup-checklist">3</link> geben einen Überblick zu
+			üblichen Einsatzszenarien von &ucsUAS; (Bildungscloud, Zentrales
+			Schul-WLAN, zentrales Management, Schul-IT ohne Schulserver) und
+			bieten Checklisten mit Fragen, anhand derer Sie einfach überprüfen
+			können, ob Sie bereits die notwendigen Voraussetzungen für  die
+			Einführung von &ucsUAS; erfüllen oder ob Sie in bestimmten
+			Bereichen noch Bedingungen erfüllen müssen. . Die Checklisten
+			verweisen darüber hinaus auch auf weiterführende technische Themen,
+			die in diesem Dokument vorgestellt werden und die erprobte Lösungen
+			aus der Praxis aufzeigen.
 		</para>
 	</chapter>
 	<chapter id="scenarios">
 		<title>Szenarien</title>
 		<para>
-			In diesem Kapitel werden Szenarien beschrieben, in denen &ucsUAS;
-			häufig eingesetzt wird.  Die Szenarien sind in ihrem Umfang klar
-			voneinander abgegrenzt.  In der Praxis ist diese strikte Trennung
-			nur selten zu finden, stattdessen sind vielfach Mischformen zu
-			finden.  Die Umsetzung eines bestimmten Szenarios schließt somit
-			nicht aus, dass im Laufe der Zeit weitere Szenarien auf Basis der
-			bestehenden Umgebung umgesetzt werden können.
+			In diesem Kapitel beschreiben wir Ihnen Szenarien, in denen
+			&ucsUAS; häufig eingesetzt wird. In diesem Dokument sind diese
+			Szenarien in ihrem Umfang klar voneinander abgegrenzt. In der Praxis
+			ist diese strikte Trennung nur selten der Fall und es treten in der
+			Regel gemischte Formen auf  . Die Umsetzung eines bestimmten in
+			diesem Papier beschriebenen Szenarios schließt somit nicht aus, dass
+			Sie im Laufe der Zeit weitere Szenarien auf Basis der bestehenden
+			Umgebung umsetzen können.
 		</para>
 		<section id="scenario-0">
 			<title>Servicestufen: &ucsUAS;</title>
 			<para>
-				Univention bietet die folgenden Szenarien 1 bis 4 in
-				unterschiedlichen Servicestufen an.  Kunden entscheiden beim
-				Kauf von &ucsUAS; welche Servicestufe in der aktuellen Situation
-				am passendsten ist.  Ein Wechsel zwischen den Servicestufen ist
-				jederzeit möglich.  Voraussetzung in allen Servicestufen ist das
-				Vorhandensein eines User Helpdesks, der die Supportanfragen aus
-				den Schulen bearbeitet.
+				Univention bietet für die Szenarien 1 bis 4 unterschiedliche
+				Servicestufen für die Unterstützung in Projekten an. Kunden
+				entscheiden beim Kauf von &ucsUAS; welche Servicestufe für Sie
+				in der aktuellen Situation am passendsten ist. Ein Wechsel auf
+				eine andere Servicestufe ist jederzeit möglich. Voraussetzung in
+				allen Servicestufen ist das Vorhandensein eines User Helpdesks,
+				der die Supportanfragen aus den Schulen entgegen nimmt und die
+				weitere Bearbeitung einleitet.
 			</para>
 			<para>
-				Servicestufen:
+				Welche Servicestufen gibt es?
 				<orderedlist numeration="upperalpha">
-					<listitem><para>Software und Support: Univention liefert
-							Software und Support, der Kunde kümmert sich selbst
-							um Betrieb, Updates und Backup</para></listitem>
-					<listitem><para>Betrieb im Rechenzentrum des Kunden:
+					<listitem><para><emphasis>Software und Support</emphasis>:
+							Univention liefert Software und Support, der Kunde
+							kümmert sich selbst um Betrieb, Updates und
+							Backup.</para></listitem>
+					<listitem><para><emphasis>Betrieb im Rechenzentrum des
+								Kunden</emphasis>: Univention liefert Software
+							und Support und übernimmt Betrieb, Updates und
+							Backup im Rechenzentrum des Kunden.</para></listitem>
+					<listitem><para><emphasis>&ucsUAS; as a Service</emphasis>:
 							Univention liefert Software und Support und
-							übernimmt Betrieb, Updates und Backup im
-							Rechenzentrum des Kunden</para></listitem>
-					<listitem><para>&ucsUAS; as a Service: Univention liefert
-							Software und Support und übernimmt Betrieb, Updates
-							und Backup im eigenen Rechenzentrum.  Kunden können
-							sofort starten, ohne Investitionen in Hardware oder
-							Software zu tätigen</para></listitem>
+							übernimmt Betrieb, Updates und Backup im eigenen
+							Rechenzentrum.  Kunden können sofort starten, ohne
+							Investitionen in Hardware oder Software tätigen zu
+							müssen.</para></listitem>
 				</orderedlist>
 			</para>
 			<figure id="fig-scenario-0">
@@ -129,25 +150,26 @@ feedback@univention.de
 		<section id="scenario-1">
 			<title>Szenario 1: Bildungscloud</title>
 			<para>
-				Dieses Szenario ermöglicht es Schulträgern und Ministerien eine
-				effiziente Bildungscloud für ihre Schulen aufzubauen.  Die
-				Instanzen von &ucsUCS; werden zentral in einem Rechenzentrum
-				betrieben und stellen das Identity- und Access-Management zur
-				Verfügung.  An dieses werden unterschiedliche IT-Angebote
-				angebunden, die von den Schulen benötigt werden.  Zum Beispiel
-				E-Mail und Groupware-Lösungen und Lernmanagement-Systeme.
-				Lehrkräfte und Schüler können alle angeschlossenen Angebote
-				ihrem persönlichen Benutzerkonto und Passwort nutzen.  Die
-				Angebote stehen dabei sowohl vor Ort in den Schulen zur
-				Verfügung als auch unterwegs oder zu Hause.
+				Dieses Szenario ermöglicht es Schulträgern und Ministerien, eine
+				effiziente Bildungscloud für ihre Schulen aufzubauen. Die
+				Instanzen von Univention Corporate Server werden zentral in
+				einem Rechenzentrum betrieben und stellen das Identity- und
+				Access-Management zur Verfügung. An dieses werden
+				unterschiedliche IT-Angebote angebunden, die von den Schulen
+				benötigt werden. Zum Beispiel E-Mail und Groupware-Lösungen oder
+				Lernmanagement-Systeme. Lehrkräfte und Schüler können alle
+				angeschlossenen Angebote mit einem  einzigen persönlichen
+				Benutzerkonto und Passwort nutzen. Die Angebote können dabei
+				sowohl vor Ort in den Schulen als auch von unterwegs oder von zu
+				Hause genutzte werden.
 			</para>
 			<para>
 				Merkmale:
 				<itemizedlist mark="bullet">
-					<listitem><para>Unabhängigkeit von der IT-Ausstattung der Schulen</para></listitem>
+					<listitem><para>Unabhängigkeit von der jeweiligen IT-Ausstattung der Schulen</para></listitem>
 					<listitem><para>Bereitstellung orts- und zeitunabhängiger IT-Angebote für Lehrkräfte und Schüler</para></listitem>
-					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
-					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+					<listitem><para>Effizienter Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote oder vorkonfigurierter Angebote aus dem Univention App Center</para></listitem>
 					<listitem><para>Senkung des Aufkommens im Helpdesk durch Self-Service für vergessene Passwörter</para></listitem>
 				</itemizedlist>
 			</para>
@@ -164,18 +186,18 @@ feedback@univention.de
 			</figure>
 		</section>
 		<section id="scenario-2">
-			<title>Szenario 2: WLAN in den Schulen</title>
+			<title>Szenario 2: Zentrales Schul-WLAN</title>
 			<para>
-				Dieses Szenario ermöglicht es Schulträgern den Zugang zum WLAN
-				in ihren Schulen zentral zu steuern und nur bekannten
-				Lehrkräften und Schülern Zugang zu gewähren.  Dazu wird
-				&ucsUCS; zentral in einem Rechenzentrum betrieben und
-				dienen als Identity- und Access-Management. Zudem sind die
-				Schulen mit dem Rechenzentrum verbunden, zum Beispiel mittels
-				eines VPNs. An den Schulen werden WLAN Access Points
-				installiert, die RADIUS unterstützen (WPA2-Enterprise / IEEE
-				802.1X). Ergänzend können auch wie in Szenario 1 weitere
-				IT-Angebote an die zentralen Systeme angebunden werden.
+				Dieses Szenario ermöglicht es Schulträgern, den Zugang zum WLAN
+				in ihren Schulen zentral zu steuern und den Zugang nur bekannten
+				Lehrkräften und Schülern zu gewähren. Dazu wird Univention
+				Corporate Server zentral in einem Rechenzentrum betrieben und
+				dient als Identity- und Access-Management. Die Schulen sind mit
+				diesem Rechenzentrum beispielsweise mittels eines VPN-Zugangs
+				verbunden. In den Schulen werden WLAN Access Points installiert,
+				die RADIUS unterstützen (WPA2-Enterprise / IEEE 802.1X).
+				Ergänzend können auch wie in Szenario 1 weitere IT-Angebote an
+				die zentralen Systeme angebunden werden.
 			</para>
 			<para>
 				Merkmale:
@@ -183,8 +205,8 @@ feedback@univention.de
 					<listitem><para>Unabhängigkeit von Schulserver-Lösungen in den Schulen</para></listitem>
 					<listitem><para>Geringe zusätzliche Anforderungen an die Bandbreite der Schule</para></listitem>
 					<listitem><para>Absicherung des WLAN-Zugangs durch Verwendung persönlicher Zugangsdaten für Lehrkräfte und Schüler</para></listitem>
-					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
-					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+					<listitem><para>Effizienter Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote oder vorkonfigurierter Angebote aus dem Univention App Center</para></listitem>
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-2">
@@ -203,23 +225,24 @@ feedback@univention.de
 		<section id="scenario-3">
 			<title>Szenario 3: Zentral verwaltete Schul-IT-Infrastruktur</title>
 			<para>
-				Dieses Szenario ermöglicht es Schulträgern die gesamte
+				Dieses Szenario ermöglicht es Schulträgern, die gesamte
 				IT-Infrastruktur ihrer Schulen zentral zu verwalten und
-				pädagogische Funktionen dezentral in den Schulen bereitzustellen.
-				Dazu ergänzt es Szenario 2 um Schulserver an den Schulen. Diese
-				Schulserver stellen vor Ort die benötigten Infrastruktur-Dienste
-				bereit wie DHCP, DNS, Active Directory kompatible Domäne,
-				Dateifreigaben, Proxy, aber auch pädagogische Funktionen wie
-				Computerraumsteuerung, Klassenarbeitsmodus, Passwörter
-				zurücksetzen und Softwareverteilung.
+				pädagogische Funktionen dezentral in den Schulen
+				bereitzustellen. Dazu ergänzt es die in Szenario 2 beschriebene
+				WLAN Lösung um an den Schulen betriebene Schulserver. Diese
+				stellen vor Ort die benötigten Infrastruktur-Dienste wie DHCP,
+				DNS, Active Directory kompatible Domäne, Dateifreigaben, Proxy,
+				aber auch pädagogische Funktionen wie Computerraumsteuerung,
+				Klassenarbeitsmodus, Passwörter zurücksetzen und
+				Softwareverteilung bereit.
 			</para>
 			<para>
 				Merkmale:
 				<itemizedlist mark="bullet">
 					<listitem><para>Vollständige Bereitstellung der IT-Infrastruktur in den Schulen</para></listitem>
 					<listitem><para>Unabhängigkeit der Schule gegenüber Ausfällen des Internetzugangs/VPNs</para></listitem>
-					<listitem><para>Effizienz im Betrieb durch zentrale Administration</para></listitem>
-					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+					<listitem><para>Effizienter Betrieb durch zentrale Administration</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote oder vorkonfigurierter Angebote aus dem Univention App Center</para></listitem>
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-3">
@@ -238,23 +261,24 @@ feedback@univention.de
 			<title>Szenario 4: Schul-IT-Infrastruktur ohne dezentrale
 				Schulserver</title>
 			<para>
-				Dieses Szenario ermöglicht es Schulträgern die gesamte
+				Dieses Szenario ermöglicht es Schulträgern, die gesamte
 				IT-Infrastruktur ihrer Schulen zentral zu verwalten, wie in
-				Szenario 3, mit der Ergänzung, dass die Schulserver im
-				Rechenzentrum betrieben werden. Voraussetzung ist eine sehr gute
-				und zuverlässige Anbindung der Schulen an das Rechenzentrum.
-				Durch die Verlagerung der Schulserver ins Rechenzentrum können
-				die Hardware-Ressourcen effizienter verwendet werden und
-				gleichzeitig reduzieren sich die Kosten für die Wartung.
+				Szenario 3 beschrieben, mit der Ergänzung, dass die Schulserver
+				nicht in den Schulen, sondern im Rechenzentrum betrieben werden.
+				Voraussetzung ist eine sehr gute und zuverlässige Anbindung der
+				Schulen an dieses Rechenzentrum. Durch die Verlagerung der
+				Schulserver ins Rechenzentrum können die Hardware-Ressourcen
+				effizienter verwendet werden und gleichzeitig reduzieren sich
+				die Kosten für die Wartung.
 			</para>
 			<para>
 				Merkmale:
 				<itemizedlist mark="bullet">
 					<listitem><para>Vollständige Bereitstellung der IT-Infrastruktur in den Schulen</para></listitem>
 					<listitem><para>Abhängigkeit der Schule gegenüber Ausfällen des Internetzugangs/VPNs</para></listitem>
-					<listitem><para>Effizienz im Betrieb durch zentrale Administration und bessere Ressourcennutzung</para></listitem>
-					<listitem><para>Effizienz in der Wartung durch einfacheren Zugang zu den Systemen</para></listitem>
-					<listitem><para>Integration beliebiger IT-Angebote, vorkonfigurierte Angebote im Univention App Center</para></listitem>
+					<listitem><para>Effizienter Betrieb durch zentrale Administration und bessere Ressourcennutzung</para></listitem>
+					<listitem><para>Effiziente Wartung durch einfacheren Zugang zu den Systemen</para></listitem>
+					<listitem><para>Integration beliebiger IT-Angebote oder vorkonfigurierter Angebote aus dem Univention App Center</para></listitem>
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-4">
@@ -273,9 +297,10 @@ feedback@univention.de
 	<chapter id="setup-checklist">
 		<title>Checklisten: organisatorisch und technisch</title>
 		<para>
-			Im Folgenden sind die Inhalte, die für die Einführung von &ucsUAS;
-			geprüft werden sollten, in Form von Checklisten beschrieben.  Diese
-			verweisen auf die weiterführenden Inhalte des Dokuments.
+			Im Folgenden sind die Fragen, die Sie vor der Einführung von
+			&ucsUAS; beantworten sollten, in Form von Checklisten beschrieben.
+			Sie finden außerdem Verweise auf weiterführenden technische
+			Beschreibungen die später in diesem Dokument thematisiert werden.
 		</para>
 		<section id="setup-manual_organisation">
 			<title>Organisation</title>
@@ -378,11 +403,11 @@ feedback@univention.de
 			<title>Initialer Workshop</title>
 			<para>
 				Ziel des Workshops ist es die existierenden Konzepte auf die
-				konkrete Umsetzung abzubilden.  Dabei hat es sich bewährt auf
-				guten Erfahrungen und Vorgehensweisen aufzubauen, die unter
-				anderem auch in diesem Dokument erfasst sind.  Es hat sich
-				bewährt im Rahmen des Workshops gleich die zentralen Systeme und
-				eine Demo-Schule zu installieren, die in der folgenden Zeit als
+				konkrete Umsetzung abzubilden.  Dabei hat es sich bewährt, auf
+				Erfahrungen und Vorgehensweisen aufzubauen, die unter
+				anderem auch in diesem Dokument erfasst sind.  Im Rahmen des
+				Workshops sollten direkt die zentralen Systeme und eine
+				Demo-Schule installiert werden, die in der folgenden Zeit als
 				Referenz verwendet werden kann.
 			</para>
 		</section>
@@ -393,19 +418,21 @@ feedback@univention.de
 				Schulen mit in den Prozess der Einführung von &ucsUAS; zu
 				integrieren.  Die bereits installierte Demo-Schule kann dazu
 				dienen das System initial zu präsentieren.  Es hat sich in
-				vielen Projekten gezeigt, dass diese Informationsveranstaltungen
-				auch nach dem Rollout regelmäßig stattfinden sollten, um neue
-				Anforderungen und Feedback aufzunehmen.
+				vielen Projekten gezeigt, dass solche
+				Informationsveranstaltungen auch nach dem Rollout regelmäßig
+				stattfinden sollten, um neue Anforderungen und Feedback
+				aufzunehmen.
 			</para>
 		</section>
 		<section id="preparations_school-selection">
 			<title>Planung des Rollout</title>
 			<para>
-				Ziel ist es den Rollout von &ucsUAS; mit Erfolgen zu beginnen.
-				Dafür gilt es die Schulen zu identifizieren, die als erste
-				ausgestattet werden sollen.  In Projekten haben wir die
-				Erfahrung gemacht, dass Schulen, die die folgenden Kriterien
-				erfüllen besonders gut für den Start geeignet sind:
+				Ziel ist es den Rollout von &ucsUAS; mit erfolgreichen Projekten
+				zu beginnen.  Dafür gilt es, die am besten geeigneten Schulen zu
+				identifizieren und diese als erste auszustatten.  In vielen
+				Projekten haben wir die Erfahrung gemacht, dass Schulen, die die
+				folgenden Kriterien erfüllen besonders gut für den Start
+				geeignet sind:
 				<itemizedlist>
 					<listitem><para>Überschaubare, gut ausgebaute IT-Infrastruktur</para></listitem>
 					<listitem><para>Konkreter Bedarf nach einer Lösung</para></listitem>
@@ -413,7 +440,7 @@ feedback@univention.de
 					<listitem><para>Wenige Sonderfälle</para></listitem>
 				</itemizedlist>
 				Sind diese Schulen erfolgreich ausgestattet worden, so können
-				diese als Referenz für anderen Schulen dienen.  Schrittweise
+				sie als Referenz für anderen Schulen dienen.  Schrittweise
 				können nun komplexere Umgebungen ausgerollt werden.
 			</para>
 		</section>
@@ -421,7 +448,7 @@ feedback@univention.de
 			<title>Schulung der Lehrkräfte</title>
 			<para>
 				Die Lehrkräfte sollten im Umgang mit den Rechnern und den
-				pädagogischen Funktionen in &ucsUAS; geschult werden. Dazu
+				pädagogischen Funktionen in &ucsUAS; geschult werden. Auch dazu
 				sollten wiederkehrende Termine angeboten werden.
 			</para>
 		</section>
@@ -429,9 +456,9 @@ feedback@univention.de
 	<chapter id="concepts">
 		<title>Konzeptionelle Voraussetzungen</title>
 		<para>
-			Die folgenden Empfehlungen bauen auf den Erfahrungen, die sich in
-			Projekten bewährt haben.  Sie sind jedoch nicht zwingend umzusetzen
-			und Abweichungen sind jederzeit möglich.
+			Die folgenden Empfehlungen bauen auf Erfahrungen auf, die sich in
+			diversen Projekten bewährt haben.  Sie sind jedoch nicht zwingend
+			umzusetzen und Abweichungen sind jederzeit möglich.
 		</para>
 		<section id="concepts_network">
 			<title>Netzkonzept</title>
@@ -445,8 +472,8 @@ feedback@univention.de
 				mehr als ein Subnetz erhalten.
 			</para>
 			<para>
-				Für den Aufbau einer Umgebung mit mehreren Schulen empfehlen die
-				Verwendung des privaten Klasse-A Netzes,
+				Für den Aufbau einer Umgebung mit mehreren Schulen empfehlen wir
+				die Verwendung des privaten Klasse-A Netzes,
 				<code>10.0.0.0/8</code>. Dieses wird für die Schulen in viele
 				Subnetze unterteilt. Für jede Schule wird ein
 				Klasse-B Netz reserviert, das Platz für 65.536 IP-Adressen
@@ -511,8 +538,8 @@ feedback@univention.de
 				<title>Beispiele für Subnetzkonzepte</title>
 				<para>
 					Im Folgenden werden zwei Beispiele für die Schulnetze
-					gezeigt.  Das erste für eines für kleinere Schulen mit
-					wenigen Endgeräten, zum Beispiel Grundschulen, und das
+					gezeigt.  Das erste für ein Schulnetz für kleinere Schulen
+					mit wenigen Endgeräten, zum Beispiel Grundschulen, das
 					zweite für sehr große Schulen mit vielen Endgeräten und
 					mehreren Subnetzen, zum Beispiel Berufsschulen.  Vorweg
 					erfolgt die Definition des Subnetzes für die zentralen
@@ -687,14 +714,14 @@ feedback@univention.de
 			<title>Konzept zur Benennung von Objekten</title>
 			<para>
 				In einer &ucsUAS;-Domäne für ein oder mehrere Schulen gibt es
-				viele Objekte, die eindeutige Namen benötigen, zum Beispiel
-				Benutzerkonten brauchen eindeutige Benutzernamen und
+				viele Objekte, die eindeutige Namen benötigen, so brauchen zum
+				Beispiel Benutzerkonten eindeutige Benutzernamen und
 				E-Mail-Adressen, Schulklassen brauchen eindeutige Bezeichnungen,
 				um sie von gleichnamigen Klassen in anderen Schulen zu
 				unterscheiden, Rechnerobjekte benötigen Rechnernamen und
 				Schulen benötigen eine Kurzbezeichnung für den Container, in dem
 				die zugehörigen Objekte gespeichert werden.
-				Ein Konzept zur Benennung von Objekten verfolgt die Ziele,
+				Ein Konzept zur Benennung von Objekten verfolgt das Ziele,
 				Eindeutigkeit herzustellen und gleichzeitig die Bedeutung und
 				Zuordnung des jeweiligen Objekts offensichtlich zu machen.
 				Im Folgenden zeigen wir Konzepte für unterschiedliche
@@ -710,7 +737,7 @@ feedback@univention.de
 					LDAP-Basis, DNS-Domäne, Kerberos-Realm und Samba/Active
 					Directory-Domäne.  Die Wahl dieses Namens hat umfangreiche
 					Auswirkungen auf die gesamte &ucsUAS;-Installation und
-					sollte entsprechend mit Überlegung gewählt werden,
+					sollte entsprechend mit Bedacht gewählt werden,
 					insbesondere weil eine nachträgliche Änderung nicht möglich
 					ist.
 				</para>
@@ -876,7 +903,7 @@ feedback@univention.de
 					Bei Benutzerkonten ergibt sich darüber hinaus die
 					Herausforderung, dass sich die Benutzernamen ggf. ändern,
 					zum Beispiel aufgrund der Behebung von Tippfehlern, Heirat
-					oder Scheidung.  In der Praxis hat sich nicht bewährt
+					oder Scheidung.  In der Praxis hat sich nicht bewährt,
 					unveränderliche Daten, wie Personal- oder Schülernummern als
 					Benutzernamen zu verwenden, da diese unpersönlich und schwer
 					zu merken sind.
@@ -891,7 +918,7 @@ feedback@univention.de
 					zum Beispiel das E-Mailpostfach einer Lehrkraft dem
 					Benutzernamen zuordnen.  Ändert sich dieser, so müsste das
 					E-Mailpostfach ggf. manuell mit großem Aufwand umbenannt
-					werden.  Dies Problem kann umgangen werden, wenn frühzeitig,
+					werden.  Dieses Problem kann umgangen werden, wenn frühzeitig,
 					vor der Einführung eines neuen Subsystems darauf geachtet
 					wird, dass die Zuordnung von Daten zu Personen über ein
 					unveränderliches Merkmal geschieht, zum Beispiel die
@@ -938,7 +965,7 @@ feedback@univention.de
 				<para>
 					Folgende Konventionen haben sich in allen Szenarien bewährt:
 					<itemizedlist>
-						<listitem><para>Alle Objektnamen sollten durchgängige Kleinbuchstaben verwenden</para></listitem>
+						<listitem><para>Alle Objektnamen sollten durchgängig Kleinbuchstaben verwenden</para></listitem>
 						<listitem><para>Die Länge von Objektnamen sollte 15 Zeichen nicht überschreiten</para></listitem>
 					</itemizedlist>
 				</para>
@@ -952,9 +979,11 @@ feedback@univention.de
 			<para>
 				Die rechtzeitige Erkennung von Fehlern und möglichen Anzeichen
 				ist ein elementarer Bestandteil des professionellen IT-Betriebs.
-				&ucsUCS; hat deshalb die Monitoring-Software Nagios fest
-				integriert und für viele relevante Parameter vorkonfiguriert.
-				Nagios selbst dient zum Monitoring des aktuellen Zustands.
+				&ucsUCS; hat deshalb die Monitoring-Software <systemitem
+					class="service">Nagios</systemitem> fest integriert und für
+				viele relevante Parameter vorkonfiguriert.
+				<systemitem class="service">Nagios</systemitem> selbst dient zum
+						Monitoring des aktuellen Zustands.
 			</para>
 			<para>
 				Das Monitoring erfolgt für &ucsUAS; immer aus der Zentrale
@@ -963,13 +992,15 @@ feedback@univention.de
 					linkend="installation_member" />.
 			</para>
 			<para>
-				Nagios selbst ist nicht darauf ausgelegt Informationen darüber
-				zu liefern in welche Richtung sich eine Umgebung entwickelt,
-				da keine Langzeitinformationen gespeichert werden.  Ein Beispiel
-				ist Entwicklung der Belegung des Festplattenplatzes.  Solche
+				<systemitem class="service">Nagios</systemitem> selbst ist nicht
+				darauf ausgelegt Informationen darüber zu liefern in welche
+				Richtung sich eine Umgebung entwickelt, da keine
+				Langzeitinformationen gespeichert werden.  Ein Beispiel ist die
+				Entwicklung der Belegung des Festplattenplatzes.  Solche
 				Informationen sind für den Betrieb einer umfangreichen
 				IT-Infrastruktur erforderlich.  Um diese Informationen zu
-				erfassen, kann zum Beispiel Munin verwendet werden, dessen
+				erfassen, kann zum Beispiel <systemitem
+					class="service">Munin</systemitem> verwendet werden, dessen
 				<ulink
 					url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Einrichtung</ulink>
 				für &ucsUCS; dokumentiert ist.
@@ -999,9 +1030,8 @@ feedback@univention.de
 				Die Sicherung der Daten muss gewährleistet sein, um im
 				Fehlerfall die Funktionsfähigkeit wiederherzustellen. Als
 				Minimalumfang muss eine Datei-basierte Sicherung, zum Beispiel
-				auf Basis mit Hilfe des Befehls <command>rsync</command>
-				erfolgen. Folgende Daten sollten in der Sicherung berücksichtigt
-				werden:
+				mit Hilfe des Befehls <command>rsync</command> erfolgen.
+				Folgende Daten sollten in der Sicherung berücksichtigt werden:
 			</para>
 			<para>
 				Zentrale Server:
@@ -1103,9 +1133,7 @@ feedback@univention.de
 			Hardware-Voraussetzungen für den Einsatz von &ucsUAS; beschrieben.
 			Die beschriebenen Voraussetzungen sind Richtwerte, die wir ermittelt
 			haben.  Im Einzelfall ist jedoch genau zu prüfen, ob die
-			Voraussetzungen mit den gestellten Anforderungen übereinstimmen.  Es
-			hat sich gezeigt, dass abhängig von den gestellten Anforderungen
-			erhebliche Abweichungen bei den Voraussetzungen entstehen können.
+			Voraussetzungen mit den gestellten Anforderungen übereinstimmen.
 		</para>
 		<para>
 			Allgemein hat sich für den Betrieb von &ucsUCS; bewährt eine
@@ -1271,7 +1299,7 @@ feedback@univention.de
 					im Schulgebäude verfügen.  Dies schließt ein, dass möglichst
 					nur Switches und Netzkomponenten mit Management-Funktion
 					verwendet werden.  Damit werden Fehler ausgeschlossen, die
-					durch fehlerhafte Verkabelung entstehen und es wird möglich
+					durch fehlerhafte Verkabelung entstehen und es wird möglich,
 					die Qualität der erbrachten Leistung bis auf Ebene des
 					Netzes zu messen.  Darüber hinaus können
 					Sicherheitsmechanismen implementiert werden, die bei
@@ -1285,15 +1313,14 @@ feedback@univention.de
 					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
-					Für Einführung von WLAN in Schulen gehen wir heute davon aus,
-					dass die gesamte Schule mit WLAN ausgestattet werden soll
-					und alle Schüler mit mindestens einem mobilen Endgerät im
-					WLAN aktiv sein werden.  Auch wenn dies nicht sofort
-					realisiert werden kann, so ist unserem Verständnis nach dies
-					das Ziel.
+					Für die Einführung von WLAN in Schulen gehen wir hier davon
+					aus, dass die gesamte Schule mit WLAN ausgestattet werden
+					soll und alle Schüler mit mindestens einem mobilen Endgerät
+					im WLAN aktiv sein werden, auch wenn dies nicht sofort
+					realisiert werden kann.
 				</para>
 				<para>
-					Um dies Ziel zu erreichen, ist eine <link
+					Um dieses Ziel zu erreichen, ist eine <link
 						linkend="infrastructure-and_hardware-requirements_infrastructure_network">strukturierte
 						Verkabelung</link> Grundvoraussetzung.  Darüber hinaus
 					werden professionelle Access Points benötigt, die mehr als
@@ -1327,12 +1354,12 @@ feedback@univention.de
 					<emphasis>für Szenario <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
-					Die folgende Schätzung der Bandbreite ist ausschließlich für
+					Die folgende Schätzung der Bandbreite gilt ausschließlich für
 					<link linkend="scenario-4">Szenario  4</link>, in dem alle
 					Schulserver aus den Schulen in ein zentrales Rechenzentrum
 					überführt werden.  In den Schulen verbleiben nur die
 					Endgeräte, die zur Nutzung der IT notwendig sind.  Die
-					Anforderungen zu den anderen Szenarien sind in <xref
+					Anforderungen der anderen Szenarien sind in <xref
 						linkend="infrastructure-and_hardware-requirements_infrastructure_internet"/>
 					beschrieben.
 				</para>
@@ -1389,11 +1416,11 @@ feedback@univention.de
 					<emphasis>für Szenario <link linkend="scenario-2">2</link>, <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
 				</para>
 				<para>
-					Die Schulen mit den müssen an die zentralen Systeme
-					angebunden werden, damit eine Steuerung der Netze, Endgeräte
-					und ggf. Server von zentraler Stelle möglich wird.
-					Um die Verbindung aufzubauen, können VPN-Technologien,
-					Standleitungen oder private Netze verwendet werden.
+					Die Schulen müssen an die zentralen Systeme angebunden
+					werden, damit eine Steuerung der Netze, Endgeräte und ggf.
+					Server von zentraler Stelle möglich wird.  Um die Verbindung
+					aufzubauen, können VPN-Technologien, Standleitungen oder
+					private Netze verwendet werden.
 				</para>
 				<para>
 					Die Bandbreite der verfügbaren Anbindung beeinflusst
@@ -1445,7 +1472,7 @@ feedback@univention.de
 			<para>
 				<itemizedlist>
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
-							entsprechend des Netzkonzepts.</para></listitem>
+							entsprechend dem Netzkonzept.</para></listitem>
 					<listitem><para>Als Externer DNS-Server bzw. DNS-Forwarder
 							ist die IP-Adresse des DNS-Servers des
 							Internetproviders einzutragen.
@@ -1454,7 +1481,7 @@ feedback@univention.de
 							&ucsMaster; zu installieren: <option>Erstellen einer
 								neuen &ucsUCS;-Domäne</option></para></listitem>
 					<listitem><para>Nach der Eingabe des Domänennamen sollte die
-							automatisch vorgeschlagenen LDAP-Basis sollte nicht
+							automatisch vorgeschlagenen LDAP-Basis nicht
 							geändert werden.</para></listitem>
 					<listitem>
 						<para><emphasis>für Szenario <link
@@ -1465,7 +1492,7 @@ feedback@univention.de
 							zentrale Stelle verwalten zu können ist die
 							Software-Komponente <package>Active Directory
 								kompatibler Domänen-Controller</package> bei der
-							Installation auszuwählen. </para></listitem>
+							Installation auszuwählen.</para></listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.</para></listitem>
@@ -1613,7 +1640,7 @@ feedback@univention.de
 							zu starten.</para></listitem>
 					<listitem><para>Nach Abschluss der Installation ist über das
 							Univention App Center die App
-							<package>Icinga</package>, zu
+							<systemitem class="service">Icinga</systemitem>, zu
 							installieren.</para></listitem>
 					<listitem><para>Es ist empfohlen das Monitoring des
 							aktuellen Zustands der Umgebung um die Speicherung
@@ -1630,9 +1657,11 @@ feedback@univention.de
 							<emphasis>Domäne</emphasis> mit dem Modul
 							<emphasis>Domänenbeitritt</emphasis> geprüft
 							werden.</para></listitem>
-					<listitem><para>Damit Icinga und Munin lauffähig sind, muss
-							sichergestellt sein, dass die globale
-							&ucsUCR;-Richtlinie
+					<listitem><para>Damit <systemitem
+								class="service">Icinga</systemitem> und
+							<systemitem class="service">Munin</systemitem>
+							lauffähig sind, muss sichergestellt sein, dass die
+							globale &ucsUCR;-Richtlinie
 							<property>ucsschool-ucr-settings</property> auf alle
 							anderen Systeme wirkt.  Dies kann überprüft werden,
 							in dem die Werte der &ucsUCR;-Variablen
@@ -1780,12 +1809,12 @@ feedback@univention.de
 							<row>
 								<entry><envar>nagios/client/allowedhosts</envar></entry>
 								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20]</literal></entry>
-								<entry>Erlaubt den Zugriff des Monitoring-Servers, Nagios oder Icinga, auf den NRPE-Dienst der übrigen Systeme.</entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Nagios</systemitem> oder <systemitem class="service">Icinga</systemitem>, auf den <systemitem class="service">NRPE-Dienst</systemitem> der übrigen Systeme.</entry>
 							</row>
 							<row>
 								<entry><envar>munin/node/allowedhosts</envar></entry>
 								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20/32]</literal></entry>
-								<entry>Erlaubt den Zugriff des Monitoring-Servers, Munin, auf die Munin <foreignphrase>Nodes</foreignphrase> der übrigen Systeme (Achtung CIDR-Schreibweise!).</entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Munin</systemitem>, auf die <systemitem class="service">Munin Nodes</systemitem> der übrigen Systeme (Achtung CIDR-Schreibweise!).</entry>
 							</row>
 							<row>
 								<entry><envar>ucsschool/helpdesk/recipient</envar></entry>
@@ -1986,9 +2015,8 @@ dos2unix schulen.csv
 							</programlisting>
 						</para>
 						<para>
-							Vorweg ist muss das Paket
-							<package>dos2unix</package> installiert werden, in
-							dem das
+							Vorweg muss das Paket <package>dos2unix</package>
+							installiert werden, in dem das
 							<application>unmaintained</application>-Repository
 							aktiviert wird, siehe <ulink
 								url="https://docs.software-univention.de/handbuch-4.2.html#software::configrepo">Konfiguration
@@ -2048,7 +2076,7 @@ done < "$1"
 					</listitem>
 					<listitem>
 						<para>
-							Das Import ist kann abschließend mit folgendem
+							Der Import kann abschließend mit folgendem
 							Befehl ausgeführt werden:
 							<programlisting>
 								<![CDATA[
