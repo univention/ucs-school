@@ -2116,17 +2116,18 @@ def set_policy_for_dhcp_subnet(network, schoolNr, policy_module, policy_dn, cn, 
 		values = {}
 
 	# check if routing policy needs to be created
-	so = "cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr))
-	objects = univention.admin.modules.lookup(
-		dhcp_subnet_module, co, lo, scope='sub', superordinate=so,
-		base=baseDN, filter=univention.admin.filter.expression('cn', str(network.network))
-	)
 	dhcp_subnet_object = None
-	subnet = "cn=%s,cn=%s,cn=dhcp,%s" % (str(network.network), schoolNr.lower(), getDN(schoolNr))
-	if objects:
-		for o in objects:
-			if o.dn == subnet:
-				dhcp_subnet_object = o
+	dhcp_service_list = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', base=getDN(schoolNr))
+	for dhcp_service_dn in dhcp_service_list:
+		dhcp_subnet_list = univention.admin.modules.lookup(
+			dhcp_subnet_module, co, lo, scope='sub', superordinate=dhcp_service_dn,
+			base=baseDN, filter=univention.admin.filter.expression('cn', str(network.network)))
+
+		subnet_dn = "cn=%s,cn=%s,cn=dhcp,%s" % (str(network.network), schoolNr.lower(), getDN(schoolNr))
+		for dhcp_subnet in dhcp_subnet_list:
+			if dhcp_subnet.dn == subnet_dn:
+				dhcp_subnet_object = dhcp_subnet
+
 	if not dhcp_subnet_object:
 		print "ERROR: Unable to set policy for dhcp subnet because it does not exist: %s" % subnet
 		return (False, dn)

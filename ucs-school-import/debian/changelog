@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-3) unstable; urgency=low
+
+  * Bug #44313: fixed import_networks after superordinate changes
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 06 Apr 2017 18:08:29 +0200
+
 ucs-school-import (15.0.0-2) unstable; urgency=low
 
   * Bug #43748: adapt ou-creation to new DHCP-options behavior
