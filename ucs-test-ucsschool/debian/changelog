@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-10) unstable; urgency=low
+
+  * Bug #44254: fix 75_ldap_acls_admin
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 06 Apr 2017 16:55:44 +0200
+
 ucs-test-ucsschool (4.0.4-9) unstable; urgency=low
 
   * Bug #44256: 17_http_proxy_auth_after_passwd_reset_check:

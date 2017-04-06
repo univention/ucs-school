@@ -471,8 +471,6 @@ class Acl(object):
 				'cn',
 			]
 		self.assert_acl(client_dhcp_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(client_dhcp_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_member_server(self, access):
 		"""Mitglieder der lokalen Administratoren duerfen den DC-Slave und Memberserver
