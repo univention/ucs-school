@@ -77,8 +77,9 @@ def main():
 				utils.wait_for_replication_and_postrun()
 
 				print "check student auth with the old password"
-				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
 				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
+				# DISABLED DUE TO BUG 44303: credentials ttl for basic auth is currently hardcoded to 2 hours
+				# authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
 
 				print 'check student auth with the new password'
 				authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
