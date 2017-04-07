@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.3-2) unstable; urgency=low
+
+  * Bug #44255: fixed regression when creating exam objects
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 07 Apr 2017 14:49:21 +0200
+
 ucs-school-umc-exam (7.0.3-1) unstable; urgency=medium
 
   * Bug #44089: adjust design to UCS 4.2

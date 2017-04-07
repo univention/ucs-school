@@ -91,7 +91,7 @@ class Instance(SchoolBaseModule):
 				try:
 					position = univention.admin.uldap.position(ldap_position.getBase())
 					position.setDn(ldap_admin_write.parentDn(examGroup))
-					self._examGroup = module_groups_group.object(None, ldap_admin_write, position, examGroup)
+					self._examGroup = module_groups_group.object(None, ldap_admin_write, position)
 					self._examGroup.open()
 					self._examGroup['name'] = examGroupName
 					self._examGroup['sambaGroupType'] = self._examGroup.descriptions['sambaGroupType'].base_default[0]
@@ -115,7 +115,7 @@ class Instance(SchoolBaseModule):
 					univention.admin.modules.init(ldap_admin_write, ldap_position, module_containers_cn)
 					position = univention.admin.uldap.position(ldap_position.getBase())
 					position.setDn(ldap_admin_write.parentDn(examUsers))
-					exam_user_container = module_containers_cn.object(None, ldap_admin_write, position, examUsers)
+					exam_user_container = module_containers_cn.object(None, ldap_admin_write, position)
 					exam_user_container.open()
 					exam_user_container['name'] = examUserContainerName
 					exam_user_container.create()
