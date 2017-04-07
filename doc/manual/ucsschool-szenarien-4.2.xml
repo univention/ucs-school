@@ -878,8 +878,8 @@ feedback@univention.de
 						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Rollenbezeichnung]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele:
 								<itemizedlist>
-									<listitem><para>Edukativer Schulserver: <systemitem class="service">042sedu-01</systemitem></para></listitem>
-									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">042sadm-01</systemitem></para></listitem>
+									<listitem><para>Edukativer Schulserver: <systemitem class="service">sedu042-01</systemitem></para></listitem>
+									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">sadm042-01</systemitem></para></listitem>
 								</itemizedlist>
 						</para></listitem>
 					</itemizedlist>
