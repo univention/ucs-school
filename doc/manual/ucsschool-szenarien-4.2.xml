@@ -875,7 +875,7 @@ feedback@univention.de
 				<para>
 					Schulserver:
 					<itemizedlist>
-						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Rollenbezeichnung]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Rollenbezeichnung][Kurzbezeichnung Schule]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele:
 								<itemizedlist>
 									<listitem><para>Edukativer Schulserver: <systemitem class="service">sedu042-01</systemitem></para></listitem>
