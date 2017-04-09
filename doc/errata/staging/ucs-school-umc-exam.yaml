@@ -12,5 +12,5 @@ desc: |
    for exam users, they can now be ignored when the exam users are created.
    Via the UCR variable <envar>ucsschool/exam/group/ldap/blacklist/regex</envar> a
    regular expression may be specified. Each matching group DN is blacklisted for
-   exam users. The UCR variable has to be specified on the DC master.
+   exam users. The UCR variable has to be specified on the DC master (Bug #44073).
 bug: [44073,44082]
