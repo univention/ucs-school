@@ -43,17 +43,18 @@ feedback@univention.de
 			<itemizedlist>
 				<listitem>
 					<para>
-						PLEASE FILL IN SOME HIGHLIGHTS HERE
+						&ucsUAS; wurde an das Release 4.2 von &ucsUCS; angepasst. Dies umfasst u.a. Anpassungen für das neue Univention Portal, LDAP ACLs und systemd.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						- ICONS FÜR DESKTOPVERKNÜPFUNGEN WERDEN JETZT GESETZT
+						&ucsUAS; bringt für &ucsUAS;-Benutzer ein Netlogon-Skript mit, welches Verknüpfungen auf Freigaben des Schulservers automatisch auf dem Benutzerdesktop anlegt.
+						Es ist jetzt möglich, bestimmte Icons für diese Verknüpfungen vorzugeben. Nähere Hinweise finden sich im Abschnitt <xref linkend="relnotes:post" />.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Im UMC-Modul <guimenu>Computerraum</guimenu> wurde die Standardeinstellung geändert. Es werden keine Screenshots mehr von Rechnern
+						Für das UMC-Modul <guimenu>Computerraum</guimenu> wurde eine Standardeinstellung geändert. Es werden keine Screenshots mehr von Rechnern
 						mit angemeldetem Lehrer angezeigt, wenn die Beobachten-Funktion genutzt wird.
 					</para>
 				</listitem>
