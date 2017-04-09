@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-61) unstable; urgency=low
+
+  * Bug #44248/#40527: fixed typo in 04_ucs-school-reset-password-check and add
+    reset checks for admins
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 09 Apr 2017 22:29:57 +0200
+
 ucs-test-ucsschool (3.0.17-60) unstable; urgency=low
 
   * Bug #43389: fix dependency
