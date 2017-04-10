@@ -8,6 +8,7 @@
 ## exposure: careful
 
 from sys import exit
+from dns import resolver
 from ldap.filter import escape_filter_chars
 
 from essential.test_samba4 import TestSamba4
@@ -34,11 +35,15 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 		respective kwarg 'use_kerberos'==True.
 		"""
 		domain_name = self.UCR.get('domainname')
-		cmd = ("smbclient", "//" + self.UCR.get('ldap/master') + "/sysvol", "--user=" + username + "%" + password, "--timeout=120", "--workgroup=" + domain_name.upper(), "--command=ls")
+		ldap_master = self.UCR.get('ldap/master')
 
 		if use_kerberos:
+			cmd = ("smbclient", "//" + ldap_master + "/sysvol", "--user=" + username + "%" + password, "--timeout=120", "--workgroup=" + domain_name.upper(), "--command=ls")
 			print "\nKerberos authentication will be used:"
 			cmd = cmd + ("-k",)
+		else:
+			ldap_master_ip = resolver.query(ldap_master)[0].address
+			cmd = ("smbclient", "//" + ldap_master_ip + "/sysvol", "--user=" + username + "%" + password, "--timeout=120", "--workgroup=" + domain_name.upper(), "--command=ls")
 
 		print("\nTrying to connect to Sysvol on DC-Master and list the contents using Samba client:")
 		print cmd
