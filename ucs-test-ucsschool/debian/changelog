@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-12) unstable; urgency=low
+
+  * Bug #44252: reenable test, as #44287 has been fixed
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Apr 2017 10:38:40 +0200
+
 ucs-test-ucsschool (4.0.4-11) unstable; urgency=low
 
   * Bug #44309: disabled verification of shadowExpire
