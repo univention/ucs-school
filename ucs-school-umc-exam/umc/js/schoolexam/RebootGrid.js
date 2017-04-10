@@ -33,14 +33,13 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/Deferred",
-	"dojo/data/ItemFileWriteStore",
-	"dojo/store/DataStore",
+	"dojo/store/Observable",
 	"dojo/store/Memory",
 	"umc/tools",
 	"umc/widgets/Grid",
 	"umc/widgets/Text",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, Deferred, ItemFileWriteStore, DataStore, Memory, tools, Grid, Text, _) {
+], function(declare, lang, array, Deferred, Observable, Memory, tools, Grid, Text, _) {
 	return declare("umc.modules.schoolexam.RebootGrid", [ Grid ], {
 		minUpdateDelay: 20,
 		maxUpdateDelay: 120,
@@ -53,10 +52,7 @@ define([
 		teacherIPs: null,
 
 		constructor: function() {
-			this.gridOptions = {
-				selectionMode: 'none'
-			};
-			this.moduleStore = new Memory();
+			this.moduleStore = new Observable(new Memory({ data: [], idProperty: 'id' }));
 			this.teacherIPs = [];
 			this.actions = [{
 				name: 'reboot_all',
@@ -75,22 +71,15 @@ define([
 				},
 				enablingMode: 'some',
 				callback: lang.hitch(this, function(ids, items) {
-					this.moduleStore.query().then(lang.hitch(this, function(i) {
-						this.onReboot(array.filter(i, function(c) {
-							if (ids.indexOf(c.id) !== -1) {
-								return true;
-							}
-						}));
-					}));
+					this.onReboot(items);
 				})
 			}];
 			this.columns = [{
 				name: 'name',
 				label: _('Name'),
-				formatter: lang.hitch(this, function(value, rowIndex) {
-					var item = this._grid.getItem(rowIndex);
+				formatter: lang.hitch(this, function(value, item) {
 					var icon = 'offline';
-					if (item.connection[0] == 'connected') {
+					if (item.connection == 'connected') {
 						icon = 'demo-offline';
 					}
 					var widget = new Text({});
@@ -104,9 +93,8 @@ define([
 			}, {
 				name: 'connection',
 				label: _('Reboot'),
-				formatter: lang.hitch(this, function(value, rowIndex) {
-					var item = this._grid.getItem(rowIndex);
-					if (this.teacherIPs.indexOf(item.ip[0]) !== -1 || item.teacher[0]) {
+				formatter: lang.hitch(this, function(value, item) {
+					if (this.teacherIPs.indexOf(item.ip) !== -1 || item.teacher) {
 						// indicate that a reboot is not necessary for teacher computers
 						// or computers with IP of the current UMC session
 						return _('No reboot necessary');
@@ -133,7 +121,9 @@ define([
 				room: room
 			}).then(lang.hitch(this, function() {
 				return this.umcpCommand('computerroom/query').then(lang.hitch(this, function(response) {
-					this._initGridData(response.result);
+					array.forEach(response.result, function(item) {
+						this.moduleStore.put(item);
+					}, this);
 					this._lastUpdate = new Date();
 					this._firstUpdate = new Date();
 //					this.standby(true);
@@ -188,24 +178,6 @@ define([
 			return deferred;
 		},
 
-		_initGridData: function(data) {
-			// set up the store objects for the grid
-			// create a data store and wrap it in order to have a object store
-			// available for easier access
-			var dataStore = new ItemFileWriteStore({data: {
-				identifier: 'id',
-				label: 'name',
-				items: data
-			}});
-			var store = new DataStore({
-				store: dataStore,
-				idProperty: 'id'
-			});
-			this.moduleStore = store;
-			this._dataStore = dataStore;
-			this._grid.setStore(dataStore);
-		},
-
 		_updateRooms: function() {
 			var update = function() {
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRooms'), 1000);
@@ -235,6 +207,8 @@ define([
 						this._lastUpdate = new Date();
 					}
 				}, this);
+
+				this.update();
 
 				// update status again
 				lang.hitch(this, update)();
