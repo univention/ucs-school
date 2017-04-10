@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.4-2) unstable; urgency=low
+
+  * Bug #44318: test if user still exists first, before modifying it
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Apr 2017 11:53:25 +0200
+
 ucs-school-umc-wizards (9.0.4-1) unstable; urgency=medium
 
   * Bug #44089: adjust to UCS 4.2 design
