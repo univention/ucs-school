@@ -38,17 +38,16 @@ joinscript_init
 eval "$(ucr shell)"
 
 #
-# This join script is for single-server master and edu-slaves only!
+# This join script is for all roles except non-edu slaves.
 #
 
-# TODO: remove after UCS@school 4.2 and version 1 was executued
+# TODO: remove after UCS@school 4.2 and version 1 was executed
 keys=$(ucr --keys-only search --key 'ucs/web/overview/entries/service/teacherconsole/.*')
 if [ -n "$keys" ]; then
 	univention-config-registry unset $keys
 fi
 
-if [ "$server_role" = "domaincontroller_master" ]; then
-	# singleserver master
+if [ "$server_role" = "domaincontroller_master" -o "$server_role" = "domaincontroller_backup" ]; then
 	TARGET_PORTAL="cn=domain,cn=portal,cn=univention,$ldap_base"
 	UCS_PORTAL="cn=domain,cn=portal,cn=univention,$ldap_base"
 else

@@ -1,3 +1,9 @@
+ucs-school-metapackage (10.0.2-2) unstable; urgency=low
+
+  * Bug #43579: install portal_entry on multi-master too
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Apr 2017 13:03:36 +0200
+
 ucs-school-metapackage (10.0.2-1) unstable; urgency=low
 
   * Bug #43752: removed outdated installer-preview package
