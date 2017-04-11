@@ -14,7 +14,7 @@
 		<legalnotice>
 			<literallayout>
 Version 4.2 v1
-Stand: 04. April 2017
+Stand: 11. April 2017
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
@@ -40,22 +40,34 @@ feedback@univention.de
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
 		<para>
+			&ucsUAS; 4.2 steht jetzt auch für das zweite Minor Release des Univention Corporate
+			Server (UCS) zur Verfügung. Es profitiert von einer Reihe an umfangreichen Funktionserweiterungen
+			und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die
+			in UCS 4.2 eingeflossen sind. Die wichtigsten Änderungen im Überblick:
 			<itemizedlist>
 				<listitem>
 					<para>
-						&ucsUAS; wurde an das Release 4.2 von &ucsUCS; angepasst. Dies umfasst u.a. Anpassungen für das neue Univention Portal, LDAP ACLs und systemd.
+						&ucsUAS; 4.2 basiert genau wie UCS jetzt auf Debian GNU/Linux 8
+						(Jessie). Mehr als 16.000 Source Pakete wurden in UCS aktualisiert und an die Bedürfnisse der
+						UCS-Administratoren angepasst. Einige Kernkomponenten, wie der Linux Kernel (4.9), Docker (1.12)
+						oder QEMU (2.8) sind in UCS 4.2 aktueller als in Debian GNU/Linux 8. Als Standard-Init-System wird
+						nun systemd verwendet.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						&ucsUAS; bringt für &ucsUAS;-Benutzer ein Netlogon-Skript mit, welches Verknüpfungen auf Freigaben des Schulservers automatisch auf dem Benutzerdesktop anlegt.
-						Es ist jetzt möglich, bestimmte Icons für diese Verknüpfungen vorzugeben. Nähere Hinweise finden sich im Abschnitt <xref linkend="relnotes:post" />.
+						Das Managementsystem bietet ab UCS 4.2 ein zentrales Portal für einen
+						schnellen Zugriff auf alle Anwendungen der Umgebung, sowie die Verwaltung der unterschiedlichen
+						UCS-Systeme. Damit können Nutzer einfacher auf freigeschaltete Anwendungen zugreifen. Das Portal ist
+						konfigurierbar und kann auf die individuellen Bedürfnisse zugeschnitten werden.
+						Die Univention Management Console wird auf &ucsUAS;-Systemen automatisch im Univention Portal eingetragen.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Für das UMC-Modul <guimenu>Computerraum</guimenu> wurde eine Standardeinstellung geändert. Es werden keine Screenshots mehr von Rechnern
-						mit angemeldetem Lehrer angezeigt, wenn die Beobachten-Funktion genutzt wird.
+						Das Design von &ucsUAS; wurde an das Design von UCS 4.2 angepasst und weiter
+						verbessert. Das Managementsystem verwendet nun per Default SAML (Web Single Sign-on), sofern die
+						Voraussetzungen, wie eine funktionierende Namensauflösung, gegeben sind.
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -81,8 +93,9 @@ feedback@univention.de
 		<section id="relnote:prepare:samba3">
 			<title>Unterstützung von Samba 3 abgekündigt</title>
 			<para>
-				Beginnend mit Version 4.2 wird von UCS@school nur noch die Samba-Version 4 unterstützt. UCS@school-Domänen, die noch Samba 3 einsetzen, müssen diese spätestens nach dem Update auf UCS 4.2-0 auf Samba 4 migrieren.
-				Eine Anleitung für die Migration findet sich <url>HIER DIE URL EINTRAGEN</url>.
+				Beginnend mit Version 4.2 wird von UCS@school nur noch die Samba 4
+				unterstützt. UCS@school-Domänen, die noch Samba 3 einsetzen, müssen diese spätestens nach dem Update
+				auf UCS 4.2-0 auf Samba 4 migrieren.
 			</para>
 		</section>
 		<section id="relnote:prepare:LDAP">
@@ -92,13 +105,13 @@ feedback@univention.de
 				Falls eigene Anpassungen am LDAP (erweiterte Attribute, LDAP-Schemata, LDAP-ACLs oder ähnliches) verwendet werden, wird daher empfohlen,
 				diese in einer Testumgebung ausführlich auf ihre Kompatibilität mit UCS@school 4.2 zu testen.
 			</para>
-			<para>
-				<notice>
+			<caution>
+				<para>
 					Wenn UCS@school 4.2 auf dem Domaincontroller Master installiert wird, müssen die übrigen
 					UCS@school-Systeme zuvor mindestens auf UCS@school 4.1 R2 v1 aktualisiert werden, da es
 					ansonsten zu Zugriffsproblemen im LDAP kommt (z.B. beim Anlegen und Löschen von Arbeitsgruppen).
-				</notice>
-			</para>
+				</para>
+			</caution>
 		</section>
 	</chapter>
 
@@ -122,9 +135,8 @@ feedback@univention.de
 		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
 		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
 		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei einer Unterbrechung
-		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
-		<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
-		Systemrollen installiert sind.
+		der Netzverbindung trotzdem weiterläuft. Hierfür kann beispielsweise das Tool
+		<command>screen</command> eingesetzt werden, das auf allen Systemrollen installiert ist.
 	  </para>
 	</chapter>
 
@@ -156,7 +168,7 @@ feedback@univention.de
 				(Multi-Server-Umgebung) der folgende Befehl ausgeführt werden, um alle Netlogon-Skripte neu zu generieren:
 			</para>
 			<para>
-				<cmdline>univention-directory-listener-ctrl resync ucs-school-user-logonscript</cmdline>
+				<command>univention-directory-listener-ctrl resync ucs-school-user-logonscript</command>
 			</para>
 		</section>
 	</chapter>
@@ -191,10 +203,60 @@ feedback@univention.de
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-		  gepflegt. Aufgeführt sind die Änderungen zwischen den &ucsUAS;-Versionen 4.1 R2 v10 und 4.2 v1. Die
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den &ucsUAS;-Versionen 4.1 R2 v11 und 4.2 v1. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="https://docs.software-univention.de/"/>.
 		</para>
-		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.2v1.xml" xpointer="xpointer(/chapter/section)"/>
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-netlogon-user-logonscripts" lang="en">
+				<title>Source package ucs-school-netlogon-user-logonscripts</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Icons for the folder with links on the users desktop are now enabled by
+							default. Please rebuild all netlogon scripts by running <command>univention-directory-listener-ctrl resync
+							ucs-school-user-logonscript</command> (<u:bug>43655</u:bug>).
+						</simpara>
+					</listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-computerroom" lang="en">
+				<title>Source package ucs-school-umc-computerroom</title>
+				<itemizedlist>
+					<listitem><simpara>Hide teacher's screens in the computerroom by default. To
+					revert to the previous behavior (displaying teacher's screens like those of students), set
+					<envar>ucsschool/umc/computerroom/hide_screenshots/teachers</envar> to <literal>no</literal>
+					(<u:bug>43527</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-metapackage" lang="en">
+				<title>Source package ucs-school-metapackage</title>
+				<itemizedlist>
+					<listitem><simpara>The entries in the overview page have been migrated to the new Univention Portal entries of UCS 4.2 (<u:bug>42407</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The outdated preview installer package has been removed from source (<u:bug>43752</u:bug>).</simpara></listitem>
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-installer" lang="en">
+				<title>Source package ucs-school-umc-installer</title>
+				<itemizedlist>
+					<listitem><simpara>Starting with UCS@school 4.2 Samba 3 is no longer supported by UCS@school. The UCS@school installer has been adapted accordingly (<u:bug>42905</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The outdated ucs-school-umc-installer-preview has been removed (<u:bug>43752</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><simpara>A traceback in <command>import_networks</command> has been fixed (<u:bug>44313</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
 	</chapter>
 </book>
