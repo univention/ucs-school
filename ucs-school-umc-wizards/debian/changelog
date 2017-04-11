@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (9.0.4-3) unstable; urgency=low
+
+  * Bug #44318: use dn from object, as ucsschool lib will have modified it, if
+    the user was moved
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 11 Apr 2017 09:26:55 +0200
+
 ucs-school-umc-wizards (9.0.4-2) unstable; urgency=low
 
   * Bug #44318: test if user still exists first, before modifying it
