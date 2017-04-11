@@ -385,7 +385,7 @@ feedback@univention.de
       <para>
         <figure id="lesson-times">
           <title>Définition des horaires de cours</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/lesson_times_41_fr.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/lesson_times_fr.png"/>
         </figure>
       </para>
       <para>Il est recommandé de repousser la fin des heures de cours y compris les pauses au plus proche du début de l'heure de cours suivante, car les horaires de cours sont utilisés comme modèle pour les réglages relatifs aux salles. Ainsi, vous évitez de désactiver l'accès à Internet immédiatement lorsque la cloche de la pause sonne. </para>
@@ -396,7 +396,7 @@ feedback@univention.de
       <para>
         <figure id="liste-klassen">
           <title>Liste des classes d'une école</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/classes_41_fr.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/classes_fr.png"/>
         </figure>
       </para>
       <para>L'affectation peut se faire par le biais de deux modules : <guimenu>Affecter un enseignant</guimenu> et <guimenu>Affecter une classe</guimenu>. </para>
@@ -405,7 +405,7 @@ feedback@univention.de
       <para>
         <figure id="assign-teacher">
           <title>Affectation d'enseignants à une classe</title>
-          <graphic scalefit="1" width="35%" align="center" fileref="illustrations42/assign_teacher_to_class_41_fr.png"/>
+          <graphic scalefit="1" width="35%" align="center" fileref="illustrations42/assign_teachers_to_class_fr.png"/>
         </figure>
       </para>
     </section>
@@ -419,7 +419,7 @@ feedback@univention.de
       <para>
         <figure id="internet-rules">
           <title>Gestion des règles d'accès à Internet</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_41_fr.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_1_fr.png"/>
         </figure>
       </para>
       <para><guimenu>Ajouter une règle</guimenu> permet de définir une nouvelle règle de filtrage. Il faut d'abord d'indiquer un <guimenu>Nom</guimenu>. Le <guimenu>Type de règle</guimenu> permet de différencier deux types de règles : </para>
@@ -434,7 +434,7 @@ feedback@univention.de
       <para>
         <figure id="wikipedia-whitelist">
           <title>Créer une liste blanche pour Wikipedia</title>
-          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_whitelist_41_fr.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_2_fr.png"/>
         </figure>
       </para>
       <para>Vous pouvez donner dans <guimenu>Domaines Internet</guimenu> une liste d'adresses, par exemple <uri>wikipedia.org</uri> ou <uri>facebook.com</uri>. Il est recommandé de ne fournir que la partie du domaine de l'adresse, par exemple seulement <uri>wikipedia.org</uri> et non <uri>www.wikipedia.org</uri>. </para>

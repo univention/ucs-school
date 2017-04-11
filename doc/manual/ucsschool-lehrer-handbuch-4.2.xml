@@ -388,7 +388,7 @@ feedback@univention.de
 		<para>
 		  <figure id="praesentation">
 			<title>Start einer Bildschirmpräsentation</title>
-			<graphic scalefit="1" width="80%" align="center" fileref="illustrations42/starting_presentation_41.png"/>
+			<graphic scalefit="1" width="80%" align="center" fileref="illustrations42/computerroom_3_start_presentation.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -509,7 +509,7 @@ feedback@univention.de
 		  <title>Neustart der Schülerrechner</title>
 		  <figure id="fig:klassenarbeit:neustart">
 			<title>Neustart der Schülerrechner</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/exam_reboot_41.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/exam_1_reboot.png"/>
 		  </figure>
 		  <para>
 			Um die Einrichtung der Klassenarbeit abzuschließen, ist es wichtig, dass alle Schülerrechner des Computerraums neu gestartet werden.
@@ -539,7 +539,7 @@ feedback@univention.de
 		  <title>Verwaltung und Abschluss der Klassenarbeit</title>
 		  <figure id="fig:klassenarbeit:computerraum">
 			<title>Verwaltung der Klassenarbeit über das Computerraum-Modul im Klassenarbeitsmodus</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/exam_computerroom_41.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/exam_2_computerroom.png"/>
 		  </figure>
 		  <para>
 			Die Klassenarbeit wird durchgeführt und verwaltet über das &ucsUMC;-Modul <guimenu>Computerraum</guimenu> (siehe <xref linkend="fig:klassenarbeit:computerraum"/>).
@@ -829,7 +829,7 @@ feedback@univention.de
 		<para>
 		  <figure id="verteilungsprojekt-einsammeln">
 			<title>Einsammeln eines Materialverteilungsprojekts</title>
-			<graphic scalefit="1" width="60%" align="center" fileref="illustrations42/distribution_collect_project_41.png"/>
+			<graphic scalefit="1" width="60%" align="center" fileref="illustrations42/distribution_projects_4.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -870,7 +870,7 @@ feedback@univention.de
 		<para>
 		  <figure id="computerroom-list">
 			<title>Verwaltung von Computerräumen</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/computerrooms_41.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/computerrooms_1_overview.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -886,7 +886,7 @@ feedback@univention.de
 		<para>
 		  <figure id="add-to-computerroom">
 			<title>Zuweisen von Computern zu einem Computerraum</title>
-			<graphic scalefit="1" width="35%" align="center" fileref="illustrations42/computerrooms_add_computers_41.png"/>
+			<graphic scalefit="1" width="35%" align="center" fileref="illustrations42/computerrooms_2_add_computers.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -905,7 +905,7 @@ feedback@univention.de
 		<para>
 		  <figure id="lesson-times">
 			<title>Festlegung der Unterrichtszeiten</title>
-			<graphic scalefit="1" width="55%" align="center" fileref="illustrations42/lesson_times_41.png"/>
+			<graphic scalefit="1" width="55%" align="center" fileref="illustrations42/lesson_times.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -925,7 +925,7 @@ feedback@univention.de
 		<para>
 		  <figure id="liste-klassen">
 			<title>Liste der Klassen einer Schule</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/classes_41.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/classes.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -946,7 +946,7 @@ feedback@univention.de
 		<para>
 		  <figure id="assign-teacher">
 			<title>Zuweisen von Lehrern zu einer Klasse</title>
-			<graphic scalefit="1" width="35%" align="center" fileref="illustrations42/assign_teacher_to_class_41.png"/>
+			<graphic scalefit="1" width="35%" align="center" fileref="illustrations42/assign_teachers_to_class.png"/>
 		  </figure>
 		</para>
 	  </section>
@@ -981,7 +981,7 @@ feedback@univention.de
 		<para>
 		  <figure id="internet-rules">
 			<title>Verwaltung von Internetregeln</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_41.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_1.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -1006,7 +1006,7 @@ feedback@univention.de
 		<para>
 		  <figure id="wikipedia-whitelist">
 			<title>Anlegen einer Whitelist für Wikipedia</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_whitelist_41.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations42/internet_rules_2.png"/>
 		  </figure>
 		</para>
 		<para>
