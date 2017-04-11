@@ -40,7 +40,7 @@ feedback@univention.de
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
 		<para>
-			&ucsUAS; 4.2 steht jetzt auch für das zweite Minor Release des Univention Corporate
+			&ucsUAS; 4.2 steht jetzt auch für das zweite Minor Release von Univention Corporate
 			Server (UCS) zur Verfügung. Es profitiert von einer Reihe an umfangreichen Funktionserweiterungen
 			und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die
 			in UCS 4.2 eingeflossen sind. Die wichtigsten Änderungen im Überblick:
@@ -71,6 +71,9 @@ feedback@univention.de
 					</para>
 				</listitem>
 			</itemizedlist>
+
+			Als Ergänzung zu diesem Dokument finden sich die Release Notes für UCS 4.2-0 unter der folgenden URL:
+			<ulink url="http://docs.software-univention.de/release-notes-4.2-0-de.html" />
 		</para>
 	</chapter>
 
