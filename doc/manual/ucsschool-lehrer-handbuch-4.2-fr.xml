@@ -232,7 +232,7 @@ feedback@univention.de
       <para>
         <figure id="helpdesk">
           <title>Demande au centre d'aide</title>
-          <graphic scalefit="1" width="40%" align="center" fileref="illustrations42/helpdesk_fr.png"/>
+          <graphic scalefit="1" width="100%" align="center" fileref="illustrations42/helpdesk_fr.png"/>
         </figure>
       </para>
       <para>La liste déroulante <guimenu>Catégorie</guimenu> permet de définir le type de demande, par exemple une demande relative à un problème matériel. </para>
