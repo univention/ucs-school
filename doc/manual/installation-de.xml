@@ -47,8 +47,7 @@
 			<listitem>
 				<simpara>
 			  &ucsUAS; benötigt für die Bereitstellung von Datei- und Drucker-Freigaben den
-			  Samba-Dienst. Sofern auf dem DC Master noch kein Samba-Dienst installiert ist, kann zwischen
-			  <emphasis>Samba 3</emphasis> und <emphasis>Samba 4</emphasis> ausgewählt werden.
+			  Samba-Dienst. Seit Version 4.2 v1 wird nur noch <emphasis>Samba 4</emphasis> unterstützt.
 				</simpara>
 			</listitem>
 			<listitem>
@@ -179,8 +178,7 @@
 		  <listitem>
 			<simpara>
 			  &ucsUAS; benötigt für die Bereitstellung von Datei- und Drucker-Freigaben den
-			  Samba-Dienst. Sofern auf dem DC Master noch kein Samba-Dienst installiert ist, kann zwischen
-			  <emphasis>Samba 3</emphasis> und <emphasis>Samba 4</emphasis> ausgewählt werden.
+			  Samba-Dienst. Seit Version 4.2 v1 wird nur noch <emphasis>Samba 4</emphasis> unterstützt.
 			</simpara>
 		  </listitem>
 		  <listitem>
@@ -412,7 +410,7 @@ invoke-rc.d univention-management-console-server restart
 	  <caution>
 		<para>
 		  Es ist zu beachten, dass auch nach der abgeschlossenen Umwandlung in eine
-		  Multi-Server-Umgebung der auf dem DC Master installierte Samba3- oder Samba4-Dienst bestehen bleibt
+		  Multi-Server-Umgebung der auf dem DC Master installierte Samba4-Dienst bestehen bleibt
 		  und nicht automatisch deinstalliert wird.
 		</para>
 	  </caution>

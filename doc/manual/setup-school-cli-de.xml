@@ -175,7 +175,7 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	</para>
 	<caution>
 	  <para>
-		Bei der Verwendung von Samba 4 benötigt der S4-Connector einige Zeit, um die Benutzer in die
+		Der S4-Connector benötigt einige Zeit, um die Benutzer in die
 		Samba 4-Benutzerdatenbank zu synchronisieren. Je nach Menge der Importdaten und der verwendeten
 		Hardware kann die Synchronisation einige Stunden benötigen. Währenddessen kann es zu Verzögerungen
 		in der Synchronisation von nicht-import-abhängigen Änderungen im LDAP oder Active Directory kommen

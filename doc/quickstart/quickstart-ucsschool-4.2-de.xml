@@ -332,8 +332,7 @@ feedback@univention.de
     Windows-Clients über Samba bereitgestellt. &ucsUAS; integriert Samba 4, die nächste Generation der
     Samba-Suite. Es unterstützt Domänen-, Verzeichnis- und Authentifizierungsdiensten, die kompatibel zu
     Microsoft Active Directory sind. Dies ermöglicht die Verwendung der von Microsoft bereit gestellten
-    Werkzeuge für die Verwaltung von Benutzern oder Gruppenrichtlinien (GPOs). Optional kann auch weiterhin
-    Samba 3 eingesetzt werden.
+    Werkzeuge für die Verwaltung von Benutzern oder Gruppenrichtlinien (GPOs).
   </para>
 
   <para>
