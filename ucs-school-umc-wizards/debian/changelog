@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.4-4) unstable; urgency=low
+
+  * Bug #44318: objects DN is None, when ucsschool lib removed it
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 11 Apr 2017 11:11:04 +0200
+
 ucs-school-umc-wizards (9.0.4-3) unstable; urgency=low
 
   * Bug #44318: use dn from object, as ucsschool lib will have modified it, if

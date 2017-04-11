@@ -293,14 +293,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 				obj.school = user_.school
 				obj.position = user_.position
 			success = obj.remove_from_school(school, ldap_user_write)
-			if success:
-				try:
-					# Testing if user still exists first, because the ucsschool lib might have deleted it, if the
-					# removed school was the last school (Bug #44318).
-					obj.from_dn(obj.dn, None, ldap_user_write)
-					success = obj.modify(ldap_user_write)
-				except noObject:
-					pass
+			# obj.dn is None when the ucsschool lib has deleted the user after the last school was removed from it
+			if success and obj.dn is not None:
+				success = obj.modify(ldap_user_write)
 			if not success:
 				success = {'result': {'message': _('Failed to remove user from school.')}}
 			ret.append(success)
