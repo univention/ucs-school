@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #   Administration of groups
 #
-# Copyright 2012-2016 Univention GmbH
+# Copyright 2012-2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -155,23 +155,23 @@ class Instance(SchoolBaseModule):
 			return self.add_teacher_to_classes(request)
 
 		klass = get_group_class(request)
-		for group in request.options:
-			group = group['object']
-			group_dn = group['$dn$']
+		for group_from_umc in request.options:
+			group_from_umc = group_from_umc['object']
+			group_from_umc_dn = group_from_umc['$dn$']
 			break
 
 		try:
-			grp = klass.from_dn(group_dn, None, ldap_machine_write)
+			group_from_ldap = klass.from_dn(group_from_umc_dn, None, ldap_machine_write)
 		except udm_exceptions.noObject:
 			raise UMC_Error('unknown group object')
 
-		MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp.users))
-		MODULE.info('New members: %s' % group['members'])
+		MODULE.info('Modifying group "%s" with members: %s' % (group_from_ldap.dn, group_from_ldap.users))
+		MODULE.info('New members: %s' % group_from_umc['members'])
 
 		if request.flavor == 'workgroup-admin':
 			# do not allow groups to be renamed in order to avoid conflicts with shares
 			# grp.name = '%(school)s-%(name)s' % group
-			grp.description = group['description']
+			group_from_ldap.description = group_from_umc['description']
 
 		# Workgroup admin view → update teachers, admins, students, (staff)
 		# Class view → update only the group's teachers (keep all non teachers)
@@ -179,41 +179,41 @@ class Instance(SchoolBaseModule):
 
 		users = []
 		# keep specific users from the group
-		for userdn in grp.users:
+		for userdn in group_from_ldap.users:
 			try:
 				user = User.from_dn(userdn, None, ldap_machine_write)
 			except udm_exceptions.noObject:  # no permissions/is not a user/does not exists → keep the old value
 				users.append(userdn)
 				continue
-			if not user.schools or not set(user.schools) & set([grp.school]):
+			if not user.schools or not set(user.schools) & set([group_from_ldap.school]):
 				users.append(userdn)
 				continue
 			if (request.flavor == 'class' and not user.is_teacher(ldap_machine_write)) or (request.flavor == 'workgroup' and not user.is_student(ldap_machine_write)) or request.flavor == 'workgroup-admin':
 				users.append(userdn)
 
 		# add only certain users to the group
-		for userdn in group['members']:
+		for userdn in group_from_umc['members']:
 			try:
 				user = User.from_dn(userdn, None, ldap_machine_write)
 			except udm_exceptions.noObject as exc:
 				MODULE.error('Not adding not existing user %r to group: %r.' % (userdn, exc))
 				continue
-			if not user.schools or not set(user.schools) & set([grp.school]):
-				raise UMC_Error(_('User %s does not belong to school %r.') % (Display.user(user.get_udm_object(ldap_machine_write)), grp.school))
+			if not user.schools or not set(user.schools) & set([group_from_ldap.school]):
+				raise UMC_Error(_('User %s does not belong to school %r.') % (Display.user(user.get_udm_object(ldap_machine_write)), group_from_ldap.school))
 			if request.flavor == 'workgroup-admin' and not user.is_student(ldap_machine_write) and not user.is_administrator(ldap_machine_write) and not user.is_staff(ldap_machine_write) and not user.is_teacher(ldap_machine_write):
-				raise UMC_Error(_('User %s does not belong to school %r.') % (Display.user(user.get_udm_object(ldap_machine_write)), grp.school))
+				raise UMC_Error(_('User %s does not belong to school %r.') % (Display.user(user.get_udm_object(ldap_machine_write)), group_from_ldap.school))
 			if request.flavor == 'class' and not user.is_teacher(ldap_machine_write):
 				raise UMC_Error(_('User %s is not a teacher.') % (Display.user(user.get_udm_object(ldap_machine_write)),))
 			if request.flavor == 'workgroup' and not user.is_student(ldap_machine_write):
 				raise UMC_Error(_('User %s is not a student.') % (Display.user(user.get_udm_object(ldap_machine_write)),))
 			users.append(user.dn)
 
-		grp.users = list(set(users))
+		group_from_ldap.users = list(set(users))
 		try:
-			success = grp.modify(ldap_machine_write)
-			MODULE.info('Modified, group has now members: %s' % (grp.users,))
+			success = group_from_ldap.modify(ldap_machine_write)
+			MODULE.info('Modified, group has now members: %s' % (group_from_ldap.users,))
 		except udm_exceptions.base as exc:
-			MODULE.process('An error occurred while modifying "%s": %s' % (group['$dn$'], exc.message))
+			MODULE.process('An error occurred while modifying "%s": %s' % (group_from_umc['$dn$'], exc.message))
 			raise UMC_Error(_('Failed to modify group (%s).') % exc.message)
 
 		self.finished(request.id, success)
