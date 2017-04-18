@@ -1,3 +1,9 @@
+ucs-school-umc-groups (7.0.0-4) unstable; urgency=low
+
+  * Bug #44351: fix UMC not removing users from workgroup
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 18 Apr 2017 15:02:02 +0200
+
 ucs-school-umc-groups (7.0.0-3) unstable; urgency=medium
 
   * Bug #36789: adapt search form to new UMC design

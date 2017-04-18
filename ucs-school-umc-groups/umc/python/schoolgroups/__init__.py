@@ -208,7 +208,7 @@ class Instance(SchoolBaseModule):
 				raise UMC_Error(_('User %s is not a student.') % (Display.user(user.get_udm_object(ldap_machine_write)),))
 			users.append(user.dn)
 
-		group_from_ldap.users = list(set(users))
+		group_from_ldap.users = list(set(users).intersection(set(group_from_umc['members'])))  # remove removed users
 		try:
 			success = group_from_ldap.modify(ldap_machine_write)
 			MODULE.info('Modified, group has now members: %s' % (group_from_ldap.users,))
