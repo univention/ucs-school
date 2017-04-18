@@ -346,7 +346,7 @@ feedback@univention.de
         <para>
           <figure id="verteilungsprojekt-einsammeln">
             <title>Collecte d'un projet de distribution de documents</title>
-            <graphic scalefit="1" width="60%" align="center" fileref="illustrations42/distribution_projects_3_fr.png"/>
+            <graphic scalefit="1" width="60%" align="center" fileref="illustrations42/distribution_projects_4_fr.png"/>
           </figure>
         </para>
         <para>Les fichiers collectés sont déposés dans le répertoire personnel de l'enseignant ayant créé le projet de distribution et ce, quel que soitl'enseignant qui lance la collecte de fichiers ! Les fichiers sont déposés dans le répertoire <emphasis>Matériel pédagogique</emphasis> du répertoire personnel de l'enseignant. Un répertoire individuel portant le nom du projet est créé pour chaque projet de distribution. Dans ce répertoire, un répertoire est créé pour chaque élève et contient les fichiers collectés de l'élève en question, de sorte qu'il toujours facile d'identifier l'élève par la suite. </para>
