@@ -38,6 +38,10 @@ import datetime
 import os.path
 import traceback
 import re
+import os
+import cPickle
+import subprocess
+import tempfile
 from ldap.filter import filter_format
 
 from univention.management.console.config import ucr
@@ -54,6 +58,8 @@ import univention.admin.modules
 from univention.lib.i18n import Translation
 _ = Translation('ucs-school-umc-exam-master').translate
 univention.admin.modules.update()
+
+CREATE_USER_PRE_HOOK_DIR = '/usr/share/ucs-school-exam-master/hooks/create_exam_user_pre.d/'
 
 
 class Instance(SchoolBaseModule):
@@ -242,6 +248,7 @@ class Instance(SchoolBaseModule):
 			# Now create the addlist, fixing up attributes as we go
 			al = []
 			foundUniventionObjectFlag = False
+			homedir = ''
 			for (key, value) in user_orig.oldattr.items():
 				# ignore blacklisted attributes
 				if key in blacklisted_attributes:
@@ -267,6 +274,7 @@ class Instance(SchoolBaseModule):
 						raise UMC_Error(message)
 					exam_user_unixhome = '%s.%s' % (exam_user_uid, datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
 					value = [os.path.join(_tmp_split_path[0], 'exam-homes', exam_user_unixhome)]
+					homedir = value[0]
 				elif key == 'sambaHomePath':
 					user_orig_sambaHomePath = value[0]
 					value = [user_orig_sambaHomePath.replace(user_orig['username'], exam_user_uid)]
@@ -291,6 +299,25 @@ class Instance(SchoolBaseModule):
 
 			if exam_user_description and 'description' not in blacklisted_attributes:
 				al.append(('description', [exam_user_description]))
+
+			# call hook scripts
+			fd = filename = None
+			try:
+				fd, filename = tempfile.mkstemp()
+				os.write(fd, cPickle.dumps(al))
+				os.close(fd)
+				fd = None
+				# arguments are the same as in the post hook in ucs-school-umc-exam, plus the pickled AL
+				cmd = ['/bin/run-parts', CREATE_USER_PRE_HOOK_DIR, '--arg', exam_user_uid, '--arg', exam_user_dn, '--arg', homedir, '--arg', filename]
+				if 0 != subprocess.call(cmd):
+					raise ValueError('failed to run pre-create hook scripts for user %r' % (exam_user_uid))
+				with open(filename, 'rb') as fp:
+					al = cPickle.load(fp)
+			finally:
+				if fd is not None:
+					os.close(fd)
+				if filename is not None:
+					os.remove(filename)
 
 			# And create the exam_user
 			ldap_admin_write.add(exam_user_dn, al)
