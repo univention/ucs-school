@@ -1,3 +1,11 @@
+ucs-school-umc-exam (7.0.3-5) unstable; urgency=low
+
+  * Bug #44109: reset computerroom settings after exam has been finished
+  * original commit to 4.1 R2: r78409 by Sönke Schwardt-Krummrich
+    <schwardt@univention.de>  Tue, 28 Mar 2017 13:28:02 +0200
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 20 Apr 2017 09:35:12 +0200
+
 ucs-school-umc-exam (7.0.3-4) unstable; urgency=low
 
   * Bug #44225: run hooks on the master before creating ExamUsers
