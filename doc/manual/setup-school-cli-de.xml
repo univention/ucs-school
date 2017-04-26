@@ -342,7 +342,8 @@ gymmitte-5B		gymmitte-6B</programlisting>
 	<para>
 	  Netzwerke können derzeit nur auf der Kommandozeile über das Skript
 	  <command>/usr/share/ucs-school-import/scripts/import_networks</command> importiert werden. Das
-	  Skript muss auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden. Das Format
+	  Skript muss auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden.
+	  In der Import-Datei sind die einzelnen Felder durch ein Tabulatorzeichen zu trennen. Das Format
 	  der Import-Datei ist wie folgt aufgebaut:
 	</para>
 	<informaltable>
