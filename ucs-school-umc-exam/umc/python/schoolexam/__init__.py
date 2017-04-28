@@ -470,25 +470,25 @@ class Instance(SchoolBaseModule):
 			#   second step: adjust room settings
 			progress.component(_('Resetting room settings'))
 			try:
-				userConnection = UMCConnection('localhost', username=self.username, password=self.password)
+				user_client = Client(hostname=None, username=self.username, password=self.password)
 			except (HTTPException, SocketError) as exc:
 				raise UMC_Error(_('Could not connect to local UMC server.'))
 
 			room = request.options['room']
 			MODULE.info('Acquire room: %s' % (room,))
-			userConnection.request('computerroom/room/acquire', dict(
+			user_client.umc_command('computerroom/room/acquire', dict(
 				room=request.options['room'],
-			))
+			)).result
 			progress.add_steps(2)
 			MODULE.info('Reset room settings: %s' % (room,))
 			# resetting room settings back to defaults
-			userConnection.request('computerroom/settings/set', dict(
+			user_client.umc_command('computerroom/settings/set', dict(
 				room=room,
 				internetRule='none',
 				customRule='',
 				shareMode='all',
 				printMode='default',
-			))
+			)).result
 			progress.add_steps(3)
 
 			# delete exam users accounts

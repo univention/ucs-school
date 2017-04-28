@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.3-7) unstable; urgency=low
+
+  * Bug #44109: use univention.lib.umc.Client instead of UMCConnection
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 28 Apr 2017 09:48:19 +0200
+
 ucs-school-umc-exam (7.0.3-6) unstable; urgency=medium
 
   * Bug #44109: fix fuzzy i18n
