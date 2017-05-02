@@ -11,6 +11,7 @@
 import copy
 import pprint
 import ldap.filter
+from univention.admin.uldap import explodeDn
 from ucsschool.lib.models import SchoolClass, User, WorkGroup as LibWorkGroup
 import univention.testing.strings as uts
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -66,7 +67,8 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 			self.verify_exact_schoolgroup_membership(person)
 
-			self.log.info('**** 1.2 move %r to school B (%r)', role, self.ou_B.name)
+			self.log.info('**** 1.2 move %r %r to school B (%r)', role, person.username, self.ou_B.name)
+			old_groups = self.get_group_membership(person.dn)
 			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
@@ -75,13 +77,18 @@ class Test(CLI_Import_v2_Tester):
 			person.update(dn=userlist)
 			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
 			self.log_person_infos(person)
+			current_groups = self.get_group_membership(person.dn)
+			for grp_dn in current_groups:
+				wait_for_drs_replication(ldap.filter.escape_filter_chars(explodeDn(grp_dn)[0]))
+			for grp_dn in set(old_groups) - set(current_groups):
+				self.wait_for_drs_replication_of_membership(grp_dn, person.username, is_member=False, base=self.ou_A.dn)
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
 			self.verify_exact_schoolgroup_membership(person)
 
 			self.log.info(
-				'**** 2.1 Add %r to a 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)',
-				role, self.ou_B.name, self.ou_A.name, self.ou_B.name)
+				'**** 2.1 Add %r %r to a 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)',
+				role, person.username, self.ou_B.name, self.ou_A.name, self.ou_B.name)
 			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
 			if role in ('student', 'teacher', 'teacher_and_staff'):
 				self.log.info('**** 2.1.1 Creating a school_class for %s...', role)
@@ -95,21 +102,26 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
+			current_groups = self.get_group_membership(person.dn)
+			for grp_dn in current_groups:
+				wait_for_drs_replication(ldap.filter.escape_filter_chars(explodeDn(grp_dn)[0]))
 
 			self.log_person_infos(person)
 			person.verify()
 			self.verify_exact_schoolgroup_membership(person)
 
 			self.log.info(
-				'**** 2.1.2 Add %r to a workgroup in 2nd school (A)', role)
-			wg = Workgroup(self.ou_A.name, ulConnection=self.lo, ucr=self.ucr, members=[person.dn])
+				'**** 2.1.2 Add %r %r to a workgroup in 2nd school (A) (%r)', role, person.username, self.ou_A.name)
+			wg = Workgroup(self.ou_A.name, ucr=self.ucr, members=[person.dn])
 			wg.create()
 			self.log_person_infos(person)
+			self.wait_for_drs_replication_of_membership(wg.dn(), person.username, base=self.ou_A.dn)
 			self.verify_exact_schoolgroup_membership(person)
 
 			self.log.info(
-				'**** 2.2 remove %r from 2nd school (A) -> school=B (%r), schools=[B] (%r)',
-				role, self.ou_B.name, self.ou_B.name)
+				'**** 2.2 remove %r %r from 2nd school (A) -> school=B (%r), schools=[B] (%r)',
+				role, person.username, self.ou_B.name, self.ou_B.name)
+			old_groups = self.get_group_membership(person.dn)
 			person.update(school=self.ou_B.name, schools=[self.ou_B.name])
 			if role in ('student', 'teacher', 'teacher_and_staff'):
 				person.school_classes.pop(self.ou_A.name, [])
@@ -117,6 +129,11 @@ class Test(CLI_Import_v2_Tester):
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
+			current_groups = self.get_group_membership(person.dn)
+			for grp_dn in current_groups:
+				wait_for_drs_replication(ldap.filter.escape_filter_chars(explodeDn(grp_dn)[0]))
+			for grp_dn in set(old_groups) - set(current_groups):
+				self.wait_for_drs_replication_of_membership(grp_dn, person.username, is_member=False, base=self.ou_B.dn)
 
 			self.log_person_infos(person)
 			person.verify()
@@ -124,27 +141,36 @@ class Test(CLI_Import_v2_Tester):
 			self.verify_exact_schoolgroup_membership(person)
 
 			self.log.info(
-				'**** 3.1 (Re)Add %r to 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)',
-				role, self.ou_B.name, self.ou_A.name, self.ou_B.name)
+				'**** 3.1 (Re)Add %r %r to 2nd school (A) -> school=B (%r), schools=[A, B] (%r, %r)',
+				role, person.username, self.ou_B.name, self.ou_A.name, self.ou_B.name)
 			person.update(school=self.ou_B.name, schools=[self.ou_A.name, self.ou_B.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
+			current_groups = self.get_group_membership(person.dn)
+			for grp_dn in current_groups:
+				wait_for_drs_replication(ldap.filter.escape_filter_chars(explodeDn(grp_dn)[0]))
 
 			self.log_person_infos(person)
 			person.verify()
 			self.verify_exact_schoolgroup_membership(person)
 
 			self.log.info(
-				'**** 3.2 remove %r from primary school (B) -> school=A (%r), schools=[A] (%r)',
-				role, self.ou_A.name, self.ou_A.name)
+				'**** 3.2 remove %r %r from primary school (B) -> school=A (%r), schools=[A] (%r)',
+				role, person.username, self.ou_A.name, self.ou_A.name)
+			old_groups = self.get_group_membership(person.dn)
 			person.update(school=self.ou_A.name, schools=[self.ou_A.name])
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(config=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 			person.update(dn=self.uid_to_dn(person.username))
 			wait_for_drs_replication('cn={}'.format(ldap.filter.escape_filter_chars(person.username)))
+			current_groups = self.get_group_membership(person.dn)
+			for grp_dn in current_groups:
+				wait_for_drs_replication(ldap.filter.escape_filter_chars(explodeDn(grp_dn)[0]))
+			for grp_dn in set(old_groups) - set(current_groups):
+				self.wait_for_drs_replication_of_membership(grp_dn, person.username, is_member=False, base=self.ou_A.dn)
 			self.log_person_infos(person)
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_B.name)

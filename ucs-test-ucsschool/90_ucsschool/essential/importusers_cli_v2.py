@@ -13,6 +13,7 @@ import subprocess
 import time
 import re
 import traceback
+from ldap.filter import escape_filter_chars
 from apt.cache import Cache as AptCache
 from essential.importusers import Person
 import univention.testing.ucr
@@ -21,6 +22,7 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 import univention.testing.format.text
+from univention.testing.ucs_samba import wait_for_drs_replication
 
 
 class Bunch(object):
@@ -336,9 +338,9 @@ class CLI_Import_v2_Tester(object):
 		"""
 		apt_cache = AptCache()
 		self.log.error('\n%s\n%s%s', '=' * 79, ''.join(traceback.format_stack()), '=' * 79)
-		self.log.info('Installed package versions:')
-		for pck in ["ucs-test-ucsschool", "python-ucs-school", "ucs-school-import"]:
-			self.log.info('{:<20} {}'.format(pck, apt_cache[pck].installed.version if apt_cache[pck].is_installed else 'Not installed'))
+
+		pck_s = ['{:<40} {}'.format(pck, apt_cache[pck].installed.version if apt_cache[pck].is_installed else 'Not installed') for pck in sorted([pck for pck in apt_cache.keys() if 'school' in pck])]
+		self.log.info('Installed package versions:\n{}'.format('\n'.join(pck_s)))
 		utils.fail(msg, returncode)
 
 	def run(self):
@@ -360,6 +362,34 @@ class CLI_Import_v2_Tester(object):
 
 	def test(self):
 		raise NotImplemented()
+
+	def wait_for_drs_replication_of_membership(self, group_dn, member_uid, is_member=True, **kwargs):
+		"""
+		wait_for_drs_replication() of a user to become a member of a group.
+		:param group: str: DN of a group
+		:param member_uid: str: username
+		:param is_member: bool: whether the user should be a member or not
+		:return: None | <ldb result>
+		"""
+		try:
+			user_filter = kwargs['ldap_filter']
+			if user_filter and not user_filter.startswith('('):
+				user_filter = '({})'.format(user_filter)
+		except KeyError:
+			user_filter = ''
+		if is_member:
+			member_filter = '(memberOf={})'.format(escape_filter_chars(group_dn))
+		else:
+			member_filter = '(!(memberOf={}))'.format(escape_filter_chars(group_dn))
+		kwargs['ldap_filter'] = '(&(cn={}){}{})'.format(
+			escape_filter_chars(member_uid),
+			member_filter,
+			user_filter
+		)
+		res = wait_for_drs_replication(**kwargs)
+		if not res:
+			self.log.warn('No result from wait_for_drs_replication().')
+		return res
 
 
 class ColoredLogger(object):
