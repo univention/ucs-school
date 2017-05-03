@@ -270,7 +270,7 @@ class Instance(SchoolBaseModule):
 					for grp in ires.get('groups', []):
 						groups[grp].setdefault('dns', set()).add(examuser_dn)
 						groups[grp].setdefault('uids', set()).add(examuser_uid)
-					MODULE.info('Exam user has been created: %s' % examuser_dn)
+					MODULE.info('Exam user has been created: %r' % examuser_dn)
 				except (ConnectionError, HTTPError) as exc:
 					MODULE.warn('Could not create exam user account for %r: %s' % (iuser.dn, exc))
 

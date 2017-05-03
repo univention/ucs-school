@@ -402,7 +402,7 @@ class Instance(SchoolBaseModule):
 			grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group['group_dn'])
 			grpobj.fast_member_add(group['dns'], group['uids'])
 
-		self.finished(request.id, {}, success=True)
+		self.finished(request.id, None)
 
 	@sanitize(
 		userdn=StringSanitizer(required=True),
