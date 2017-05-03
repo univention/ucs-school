@@ -282,6 +282,7 @@ class Instance(SchoolBaseModule):
 				grp_list = [dict(group_dn=k, dns=list(v['dns']), uids=list(v['uids'])) for k, v in groups.items()]
 				client.umc_command('schoolexam-master/add-exam-users-to-groups', dict(
 					groups=grp_list,
+					school=request.options['school'],
 				)).result
 
 			progress.add_steps(percentPerUser)

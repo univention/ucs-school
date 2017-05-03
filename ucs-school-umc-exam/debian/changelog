@@ -1,3 +1,10 @@
+ucs-school-umc-exam (7.0.3-10) unstable; urgency=low
+
+  * Bug #43019: exam users can only gain groups the original users already
+    have
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 03 May 2017 17:18:53 +0200
+
 ucs-school-umc-exam (7.0.3-9) unstable; urgency=low
 
   * Bug #43019: add user only to primary group if share access is restricted
