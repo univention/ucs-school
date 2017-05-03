@@ -83,6 +83,7 @@ class CSVUser(User):
 	def __init__(self, **kwargs):
 		self._error_msg = None
 		self.action = None
+		self.udm_properties = dict()
 		super(CSVUser, self).__init__(**kwargs)
 
 	def guess_username(self, lo, date_format):
@@ -240,6 +241,9 @@ class CSVUser(User):
 			for field, errors in self.errors.iteritems():
 				self._error_msg = errors[0]
 			return False
+		if self.action == 'modify' and self.password:
+			self.udm_properties['overridePWHistory'] = '1'
+			self.udm_properties['overridePWLength'] = '1'
 		try:
 			if self.action == 'create':
 				self.create(lo, validate=False)
@@ -290,6 +294,12 @@ class CSVUser(User):
 			return CSVStaff
 		MODULE.warn('No mapping for %r, using %r' % (model.__name__, cls.__name__))
 		return cls
+
+	def _alter_udm_obj(self, udm_obj):
+		super(CSVUser, self)._alter_udm_obj(udm_obj)
+		for k, v in self.udm_properties.items():
+			udm_obj[k] = v
+
 
 # same as normal but without syntax validation (done by our validate function)
 # has to be specified in each class, otherwise the base class Student would overwrite
