@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.2"
+version: [2]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-csv-import
+fix: 4.0.7-2A~4.2.0.201705030929
+desc: |
+ * A regression in the UMC CSV import module that prevented imports of
+   users reusing previous paswords, has been fixed (Bug #34923).
+bug: [34923]
