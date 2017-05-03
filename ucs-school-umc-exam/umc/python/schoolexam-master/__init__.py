@@ -135,7 +135,8 @@ class Instance(SchoolBaseModule):
 	@sanitize(
 		userdn=StringSanitizer(required=True),
 		description=StringSanitizer(default=''),
-		school=StringSanitizer(default='')
+		school=StringSanitizer(default=''),
+		share_mode=StringSanitizer(required=True)
 	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
@@ -332,9 +333,8 @@ class Instance(SchoolBaseModule):
 		groups = list()
 		if 'posix' in user_orig.options:
 			groups.append(user_orig['primaryGroup'])
-
-			for group in user_orig.info.get('groups', []):
-				groups.append(group)
+			if request.options['share_mode'] != 'home':
+				groups.extend(user_orig.info.get('groups', []))
 
 		examGroup = self.examGroup(ldap_admin_write, ldap_position, user.school or school)
 		groups.append(examGroup.dn)

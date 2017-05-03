@@ -261,7 +261,8 @@ class Instance(SchoolBaseModule):
 				try:
 					ires = client.umc_command('schoolexam-master/create-exam-user', dict(
 						school=request.options['school'],
-						userdn=iuser.dn
+						userdn=iuser.dn,
+						share_mode=request.options['shareMode'],
 					)).result
 					examuser_dn = ires.get('examuserdn')
 					examuser_uid = ires.get('examuseruid')

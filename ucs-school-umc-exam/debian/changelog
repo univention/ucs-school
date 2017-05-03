@@ -1,3 +1,10 @@
+ucs-school-umc-exam (7.0.3-9) unstable; urgency=low
+
+  * Bug #43019: add user only to primary group if share access is restricted
+    to home share
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 03 May 2017 15:41:50 +0200
+
 ucs-school-umc-exam (7.0.3-8) unstable; urgency=low
 
   * Bug #43019: add all exam users to their groups in one go
