@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.3-8) unstable; urgency=low
+
+  * Bug #43019: add all exam users to their groups in one go
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 03 May 2017 15:24:31 +0200
+
 ucs-school-umc-exam (7.0.3-7) unstable; urgency=low
 
   * Bug #44109: use univention.lib.umc.Client instead of UMCConnection

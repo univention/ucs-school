@@ -48,7 +48,7 @@ from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer
+from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, ListSanitizer
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError
 
@@ -328,25 +328,16 @@ class Instance(SchoolBaseModule):
 			MODULE.error('Creation of exam user account failed: %s' % (traceback.format_exc(),))
 			raise
 
-		# Add exam_user to groups
-		if 'groups/group' in self._udm_modules:
-			module_groups_group = self._udm_modules['groups/group']
-		else:
-			module_groups_group = univention.admin.modules.get('groups/group')
-			univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
-			self._udm_modules['groups/group'] = module_groups_group
-
+		# collect groups to be modified later in add_exam_users_to_groups()
+		groups = list()
 		if 'posix' in user_orig.options:
-			grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, user_orig['primaryGroup'])
-			grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
+			groups.append(user_orig['primaryGroup'])
 
 			for group in user_orig.info.get('groups', []):
-				grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group)
-				grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
+				groups.append(group)
 
-		# Add exam_user to examGroup
 		examGroup = self.examGroup(ldap_admin_write, ldap_position, user.school or school)
-		examGroup.fast_member_add([exam_user_dn], [exam_user_uid])
+		groups.append(examGroup.dn)
 
 		# finally confirm allocated IDs
 		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
@@ -359,7 +350,32 @@ class Instance(SchoolBaseModule):
 			success=True,
 			userdn=userdn,
 			examuserdn=exam_user_dn,
+			examuseruid=exam_user_uid,
+			groups=groups,
 		), success=True)
+
+	@sanitize(
+		groups=ListSanitizer(DictSanitizer(dict(
+			group_dn=StringSanitizer(required=True),
+			dns=ListSanitizer(StringSanitizer(required=True), required=True),
+			uids=ListSanitizer(StringSanitizer(required=True), required=True),
+			),
+			required=True)))
+	@LDAP_Connection(USER_READ, ADMIN_WRITE)
+	def add_exam_users_to_groups(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
+		"""
+		Add previously created exam users to groups.
+		"""
+		if 'groups/group' not in self._udm_modules:
+			self._udm_modules['groups/group'] = univention.admin.modules.get('groups/group')
+			univention.admin.modules.init(ldap_admin_write, ldap_position, self._udm_modules['groups/group'])
+		module_groups_group = self._udm_modules['groups/group']
+
+		for group in request.options['groups']:
+			grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group['group_dn'])
+			grpobj.fast_member_add(group['dns'], group['uids'])
+
+		self.finished(request.id, {}, success=True)
 
 	@sanitize(
 		userdn=StringSanitizer(required=True),
