@@ -169,9 +169,11 @@ class CLI_Import_v2_Tester(object):
 		self.hook_fn_set = set()
 		self.errors = list()
 		self.udm = None
-		self.ou_A = Bunch()
-		self.ou_B = Bunch()  # set to None if not needed
-		self.ou_C = Bunch()  # set to None if not needed
+		self.ou_A = Bunch(name='AA{}'.format(uts.random_string(length=random.randint(1, 9))))
+		# set ou_B to None if a second OU is not needed
+		self.ou_B = Bunch(name='BB{}'.format(uts.random_string(length=random.randint(1, 9))))
+		# set ou_C to None if a third OU is not needed
+		self.ou_C = Bunch(name='CC{}'.format(uts.random_string(length=random.randint(1, 9))))
 		self.ucr.load()
 		try:
 			maildomain = self.ucr["mail/hosteddomains"].split()[0]
@@ -352,7 +354,7 @@ class CLI_Import_v2_Tester(object):
 					self.log.info('Creating OUs...')
 					for ou in [self.ou_A, self.ou_B, self.ou_C]:
 						if ou is not None:
-							ou.name, ou.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+							ou.name, ou.dn = schoolenv.create_ou(ou_name=ou.name, name_edudc=self.ucr.get('hostname'))
 							self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
 
 					self.test()
@@ -369,6 +371,7 @@ class CLI_Import_v2_Tester(object):
 		:param group: str: DN of a group
 		:param member_uid: str: username
 		:param is_member: bool: whether the user should be a member or not
+		:param kwargs: dict: will be passed to wait_for_drs_replication() with a modified 'ldap_filter'
 		:return: None | <ldb result>
 		"""
 		try:

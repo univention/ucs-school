@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-15) unstable; urgency=low
+
+  * Bug #44310: increase timeout for s4sync wait
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 04 May 2017 09:20:55 +0200
+
 ucs-test-ucsschool (4.0.4-14) unstable; urgency=low
 
   * Bug #44310: wait for group membership to be synced to s4
