@@ -83,7 +83,7 @@ define([
 			this.pages = [{
 				name: 'general',
 				headerText: _('Start a new exam'),
-				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and specify its end time</p>'),
+				helpText: _('<p>The exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and specify its end time</p>'),
 //				layout: ['name', 'examEndTime'],
 				widgets: [{
 					name: 'name',

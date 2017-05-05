@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-1) unstable; urgency=medium
+
+  * Bug #44543: remove UCS@school specific terms for branding
+
+ -- Florian Best <best@univention.de>  Fri, 05 May 2017 13:10:49 +0200
+
 ucs-school-umc-exam (7.0.3-10) unstable; urgency=low
 
   * Bug #43019: exam users can only gain groups the original users already
