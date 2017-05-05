@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-1) unstable; urgency=medium
+
+  * Bug #44546: fix an error during removing users from school
+
+ -- Florian Best <best@univention.de>  Fri, 05 May 2017 13:35:31 +0200
+
 ucs-school-lib (10.0.1-3) unstable; urgency=medium
 
   * Bug #42408: fix typo when calling School.from_binddn()
