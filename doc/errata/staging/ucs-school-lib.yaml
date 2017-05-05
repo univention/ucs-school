@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [2]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-lib
+fix: 9.0.33-1.277.201705051340
+desc: |
+ * An error during removing users from school has been fixed (Bug #41994).
+bug: [41994]
