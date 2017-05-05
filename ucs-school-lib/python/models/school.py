@@ -405,7 +405,7 @@ class School(UCSSchoolHelperAbstractClass):
 			schools = []
 			for ou in user_schools:
 				try:
-					schools.append(cls.from_dn(cls(name=ou).dn, lo))
+					schools.append(cls.from_dn(cls(name=ou).dn, None, lo))
 				except noObject:
 					pass
 			return cls._filter_local_schools(schools, lo)

@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.32-1) unstable; urgency=medium
+
+  * Bug #42408: fix typo when calling School.from_binddn()
+
+ -- Florian Best <best@univention.de>  Tue, 14 Mar 2017 11:18:21 +0100
+
 ucs-school-lib (9.0.31-1) unstable; urgency=low
 
   * support automatic removal of secondary schools from User objects,
