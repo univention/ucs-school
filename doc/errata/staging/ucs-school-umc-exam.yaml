@@ -3,11 +3,12 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-exam
-fix: 7.0.3-10A~4.2.0.201705031730
+fix: 7.0.4-1A~4.2.0.201705051318
 desc: |
  * It is now possible to run hooks on the DC master before the creation
    of exam users (Bug #44225).
  * Some UCR variables have not been cleaned up after the exam mode has been finished.
    This problem has bow been fixed (Bug #44109).
  * The time needed to create exam users has been reduced (Bug #43019).
-bug: [44225, 44109, 43019]
+ * The term "UCS@school" has been removed from some texts for branding purposes (Bug #44543).
+bug: [44225, 44109, 43019, 44543]
