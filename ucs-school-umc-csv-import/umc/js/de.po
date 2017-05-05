@@ -262,12 +262,12 @@ msgstr ""
 
 #: umc/js/schoolcsvimport.js:89
 msgid ""
-"This assistant guides through the individual steps for importing UCS@school "
+"This assistant guides through the individual steps for importing school "
 "users with a CSV file. At first, the user role for the users from the CSV "
 "file needs to be specified."
 msgstr ""
 "Dieser Assistent führt durch die einzelnen Schritte für den Import von "
-"UCS@school-Benutzern über CSV-Dateien. Zunächst muss angegeben werden, "
+"Schulbenutzern über CSV-Dateien. Zunächst muss angegeben werden, "
 "welche Benutzerrolle die Benutzer aus der CSV-Datei erhalten sollen."
 
 #: umc/js/schoolcsvimport.js:401 umc/js/schoolcsvimport.js:474

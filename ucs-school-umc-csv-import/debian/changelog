@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (4.0.8-1) unstable; urgency=medium
+
+  * Bug #44544: remove UCS@school specific terms for branding
+
+ -- Florian Best <best@univention.de>  Fri, 05 May 2017 13:14:55 +0200
+
 ucs-school-umc-csv-import (4.0.7-2) unstable; urgency=low
 
   * Bug #34923: ignore password history/complexity check when modifying
