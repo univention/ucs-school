@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (3.0.5-3) unstable; urgency=medium
+
+  * Bug #44491: remove UCS@school specific terms for branding
+
+ -- Florian Best <best@univention.de>  Fri, 05 May 2017 12:48:38 +0200
+
 ucs-school-umc-csv-import (3.0.5-2) unstable; urgency=low
 
   * Bug #41387: fix 38ucs-school-umc-csv-import.inst
