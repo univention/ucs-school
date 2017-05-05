@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.1"
+version: [4]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-umc-csv-import
+fix: 3.0.5-3.56.201705051305
+desc: |
+ * The term "UCS@school" has been removed from some texts for branding purposes (Bug #44491).
+bug: [44491]
