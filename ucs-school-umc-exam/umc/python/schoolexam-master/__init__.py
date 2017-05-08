@@ -44,12 +44,13 @@ import subprocess
 import tempfile
 from ldap.filter import filter_format
 from ldap import explode_dn
+from collections import defaultdict
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, ListSanitizer
+from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, ListSanitizer
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError
 
@@ -136,8 +137,7 @@ class Instance(SchoolBaseModule):
 	@sanitize(
 		userdn=StringSanitizer(required=True),
 		description=StringSanitizer(default=''),
-		school=StringSanitizer(default=''),
-		share_mode=StringSanitizer(required=True)
+		school=StringSanitizer(default='')
 	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
@@ -202,7 +202,7 @@ class Instance(SchoolBaseModule):
 			return
 
 		# Ok, we have a valid target uid, so start cloning the user
-		# deepcopy(user_orig) soes not help much, as we cannot use users.user.object.create()
+		# deepcopy(user_orig) does not help much, as we cannot use users.user.object.create()
 		# because it currently cannot be convinced to preserve the password. So we do it manually:
 		try:
 			# Allocate new uidNumber
@@ -330,16 +330,6 @@ class Instance(SchoolBaseModule):
 			MODULE.error('Creation of exam user account failed: %s' % (traceback.format_exc(),))
 			raise
 
-		# collect groups to be modified later in add_exam_users_to_groups()
-		groups = list()
-		if 'posix' in user_orig.options:
-			groups.append(user_orig['primaryGroup'])
-			if request.options['share_mode'] != 'home':
-				groups.extend(user_orig.info.get('groups', []))
-
-		examGroup = self.examGroup(ldap_admin_write, ldap_position, school or user.school)
-		groups.append(examGroup.dn)
-
 		# finally confirm allocated IDs
 		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
 		if 'samba' in user_orig.options:
@@ -352,55 +342,51 @@ class Instance(SchoolBaseModule):
 			userdn=userdn,
 			examuserdn=exam_user_dn,
 			examuseruid=exam_user_uid,
-			groups=groups,
-		), success=True)
+		))
 
 	@sanitize(
-		groups=ListSanitizer(DictSanitizer(dict(
-			group_dn=StringSanitizer(required=True),
-			dns=ListSanitizer(StringSanitizer(required=True), required=True),
-			uids=ListSanitizer(StringSanitizer(required=True), required=True),
-			))),
-		school = StringSanitizer(required=True))
+		users=ListSanitizer(DNSanitizer(required=True), required=True),
+		school=StringSanitizer(required=True),
+		share_mode=StringSanitizer(required=True)
+	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def add_exam_users_to_groups(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		"""
 		Add previously created exam users to groups.
 		"""
-		user_cache = dict()
-		search_base = School.get_search_base(request.options['school'])
-		exam_group_dn = search_base.examGroup
+		groups = defaultdict(dict)
+		exam_group = self.examGroup(ldap_admin_write, ldap_position, request.options['school'])
 
-		if 'groups/group' not in self._udm_modules:
-			self._udm_modules['groups/group'] = univention.admin.modules.get('groups/group')
-			univention.admin.modules.init(ldap_admin_write, ldap_position, self._udm_modules['groups/group'])
-		module_groups_group = self._udm_modules['groups/group']
+		for user_dn in request.options['users']:
+			try:
+				ori_student = Student.from_dn(user_dn, None, ldap_admin_write)
+				exam_student = ExamStudent.from_student_dn(ldap_admin_write, ori_student.school, ori_student.dn)
+			except univention.admin.uexceptions.noObject:
+				raise UMC_Error(_('Student %r not found.') % (user_dn,))
+			except univention.admin.uexceptions.ldapError:
+				raise
 
-		def check_group_members(group_dn, dns, uids):
-			if set(uids) != set(explode_dn(dn, 1)[0] for dn in dns):
-				MODULE.error('Usernames (%r) and DNs (%r) don\'t match.' % (uids, dns))
-				return False
-			for user_dn in dns:
-				if user_dn not in user_cache:
-					uid = explode_dn(user_dn, 1)[0][len(self._examUserPrefix):]
-					user_dn = 'uid={},{}'.format(uid, search_base.students)
-					try:
-						user_cache[user_dn] = Student.from_dn(user_dn, None, ldap_admin_write)
-					except univention.admin.uexceptions.noObject:
-						raise UMC_Error(_('Student %r not found.') % (user_dn,))
-					except univention.admin.uexceptions.ldapError:
-						raise
-				user = user_cache[user_dn]
-				if group_dn not in user.get_udm_object(ldap_admin_write)['groups']:
-					MODULE.error('User %r is not in group %r.' % (user_dn, group_dn))
-					return False
-			return True
+			udm_ori_student = ori_student.get_udm_object(ldap_admin_write)
+			if 'posix' in udm_ori_student.options:  # why only if posix?
+				groups[udm_ori_student['primaryGroup']].setdefault('dns', set()).add(exam_student.dn)
+				groups[udm_ori_student['primaryGroup']].setdefault('uids', set()).add(exam_student.name)
+				if request.options['share_mode'] != 'home':
+					for grp in udm_ori_student.info.get('groups', []):
+						groups[grp].setdefault('dns', set()).add(exam_student.dn)
+						groups[grp].setdefault('uids', set()).add(exam_student.name)
 
-		for group in request.options['groups']:
-			if group['group_dn'] != exam_group_dn and not check_group_members(group['group_dn'], group['dns'], group['uids']):
-				raise UMC_Error(_('Invalid data in request.'))
-			grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group['group_dn'])
-			grpobj.fast_member_add(group['dns'], group['uids'])
+			groups[exam_group.dn].setdefault('dns', set()).add(exam_student.dn)
+			groups[exam_group.dn].setdefault('uids', set()).add(exam_student.name)
+
+			if 'groups/group' not in self._udm_modules:
+				self._udm_modules['groups/group'] = univention.admin.modules.get('groups/group')
+				univention.admin.modules.init(ldap_admin_write, ldap_position, self._udm_modules['groups/group'])
+			module_groups_group = self._udm_modules['groups/group']
+
+			for group_dn, users in groups.items():
+				grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group_dn)
+				MODULE.info('Adding users %r to group %r...' % (users['uids'], group_dn))
+				grpobj.fast_member_add(users['dns'], users['uids'])
 
 		self.finished(request.id, None)
 

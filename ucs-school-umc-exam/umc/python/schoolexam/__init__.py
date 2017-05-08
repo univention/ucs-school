@@ -40,7 +40,6 @@ import subprocess
 import datetime
 from httplib import HTTPException
 from socket import error as SocketError
-from collections import defaultdict
 
 import ldap
 import notifier
@@ -254,22 +253,18 @@ class Instance(SchoolBaseModule):
 			progress.component(_('Preparing exam accounts'))
 			percentPerUser = 25.0 / (1 + len(users))
 			examUsers = set()
+			student_dns = set()
 			usersReplicated = set()
-			groups = defaultdict(dict)
 			for iuser in users:
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 				try:
 					ires = client.umc_command('schoolexam-master/create-exam-user', dict(
 						school=request.options['school'],
 						userdn=iuser.dn,
-						share_mode=request.options['shareMode'],
 					)).result
 					examuser_dn = ires.get('examuserdn')
-					examuser_uid = ires.get('examuseruid')
 					examUsers.add(examuser_dn)
-					for grp in ires.get('groups', []):
-						groups[grp].setdefault('dns', set()).add(examuser_dn)
-						groups[grp].setdefault('uids', set()).add(examuser_uid)
+					student_dns.add(iuser.dn)
 					MODULE.info('Exam user has been created: %r' % examuser_dn)
 				except (ConnectionError, HTTPError) as exc:
 					MODULE.warn('Could not create exam user account for %r: %s' % (iuser.dn, exc))
@@ -277,13 +272,11 @@ class Instance(SchoolBaseModule):
 				# indicate the the user has been processed
 				progress.add_steps(percentPerUser)
 
-			# Add exam users to groups
-			if groups:
-				grp_list = [dict(group_dn=k, dns=list(v['dns']), uids=list(v['uids'])) for k, v in groups.items()]
-				client.umc_command('schoolexam-master/add-exam-users-to-groups', dict(
-					groups=grp_list,
-					school=request.options['school'],
-				)).result
+			client.umc_command('schoolexam-master/add-exam-users-to-groups', dict(
+				users=list(student_dns),
+				share_mode=request.options['shareMode'],
+				school=request.options['school'],
+			))
 
 			progress.add_steps(percentPerUser)
 
