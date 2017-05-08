@@ -346,8 +346,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(
 		users=ListSanitizer(DNSanitizer(required=True), required=True),
-		school=StringSanitizer(required=True),
-		share_mode=StringSanitizer(required=True)
+		school=StringSanitizer(required=True)
 	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def add_exam_users_to_groups(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
@@ -370,10 +369,9 @@ class Instance(SchoolBaseModule):
 			if 'posix' in udm_ori_student.options:  # why only if posix?
 				groups[udm_ori_student['primaryGroup']].setdefault('dns', set()).add(exam_student.dn)
 				groups[udm_ori_student['primaryGroup']].setdefault('uids', set()).add(exam_student.name)
-				if request.options['share_mode'] != 'home':
-					for grp in udm_ori_student.info.get('groups', []):
-						groups[grp].setdefault('dns', set()).add(exam_student.dn)
-						groups[grp].setdefault('uids', set()).add(exam_student.name)
+				for grp in udm_ori_student.info.get('groups', []):
+					groups[grp].setdefault('dns', set()).add(exam_student.dn)
+					groups[grp].setdefault('uids', set()).add(exam_student.name)
 
 			groups[exam_group.dn].setdefault('dns', set()).add(exam_student.dn)
 			groups[exam_group.dn].setdefault('uids', set()).add(exam_student.name)

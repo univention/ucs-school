@@ -274,7 +274,6 @@ class Instance(SchoolBaseModule):
 
 			client.umc_command('schoolexam-master/add-exam-users-to-groups', dict(
 				users=list(student_dns),
-				share_mode=request.options['shareMode'],
 				school=request.options['school'],
 			))
 
