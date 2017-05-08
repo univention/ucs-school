@@ -1,14 +1,14 @@
+ucs-school-lib (9.0.33-2) unstable; urgency=medium
+
+  * Bug #42408: revert accidental commit
+
+ -- Florian Best <best@univention.de>  Mon, 08 May 2017 14:16:05 +0200
+
 ucs-school-lib (9.0.33-1) unstable; urgency=medium
 
   * Bug #41994: fix an error during removing users from school
 
  -- Florian Best <best@univention.de>  Fri, 05 May 2017 13:39:13 +0200
-
-ucs-school-lib (9.0.32-1) unstable; urgency=medium
-
-  * Bug #42408: fix typo when calling School.from_binddn()
-
- -- Florian Best <best@univention.de>  Tue, 14 Mar 2017 11:18:21 +0100
 
 ucs-school-lib (9.0.31-1) unstable; urgency=low
 
