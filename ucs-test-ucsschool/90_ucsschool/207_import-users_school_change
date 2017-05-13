@@ -81,7 +81,7 @@ class Test(CLI_Import_v2_Tester):
 			for grp_dn in current_groups:
 				wait_for_drs_replication(ldap.filter.escape_filter_chars(explodeDn(grp_dn)[0]))
 			for grp_dn in set(old_groups) - set(current_groups):
-				self.wait_for_drs_replication_of_membership(grp_dn, person.username, is_member=False, base=self.ou_A.dn, timeout=600)
+				self.wait_for_drs_replication_of_membership(grp_dn, person.username, is_member=False, base=self.ou_A.dn, timeout=1800)
 			person.verify()
 			self.verify_removed_schoolgroup_membership(person, self.ou_A.name)
 			self.verify_exact_schoolgroup_membership(person)
