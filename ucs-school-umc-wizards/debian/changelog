@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.4-5) unstable; urgency=medium
+
+  * Bug #44537: fix removal of users
+
+ -- Florian Best <best@univention.de>  Tue, 16 May 2017 17:08:41 +0200
+
 ucs-school-umc-wizards (9.0.4-4) unstable; urgency=low
 
   * Bug #44318: objects DN is None, when ucsschool lib removed it

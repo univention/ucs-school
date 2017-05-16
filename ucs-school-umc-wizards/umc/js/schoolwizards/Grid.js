@@ -362,7 +362,7 @@ define([
 			array.forEach(objects, function(object) {
 				this._grid.moduleStore.remove({
 					$dn$: object.$dn$,
-					school: object.schools ? this.school : object.school  // if it's a user on multiple schools we need to remove him only from one school -> send the selected school
+					remove_from_school: object.schools ? this.school : object.school  // if it's a user on multiple schools we need to remove him only from one school -> send the selected school
 				});
 			}, this);
 			return this.standbyDuring(transaction.commit()).then(
