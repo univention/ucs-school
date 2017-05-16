@@ -199,11 +199,11 @@ class Test(CLI_Import_v2_Tester):
 
 	def verify_exact_schoolgroup_membership(self, person):
 		user = User.from_dn(person.dn, person.school, self.lo)
-		expected_groups = set(user.get_specific_groups(self.lo))
+		expected_groups = set(g.lower() for g in user.get_specific_groups(self.lo))
 		for school in person.schools:
 			workgroups = LibWorkGroup.get_all(self.lo, school, ldap.filter.filter_format('uniqueMember=%s', (person.dn,)))
-			expected_groups.update(set(wg.dn for wg in workgroups))
-		membership = set(self.get_group_membership(person.dn))
+			expected_groups.update(set(wg.dn.lower() for wg in workgroups))
+		membership = set(g.lower() for g in self.get_group_membership(person.dn))
 		if expected_groups != membership:
 			self.fail('Group membership not like expected:\nexpected groups=%r\nfound membership=%r' % (
 				expected_groups, membership))

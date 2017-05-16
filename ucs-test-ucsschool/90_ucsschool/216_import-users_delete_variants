@@ -23,7 +23,7 @@ from univention.testing.ucs_samba import wait_for_drs_replication
 
 # this test fails every now and then for teachers when checking shadowExpire in (2/3)
 # lets see if more waiting helps
-utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 600)
+utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 1200)
 
 
 class Test(CLI_Import_v2_Tester):
@@ -116,6 +116,7 @@ class Test(CLI_Import_v2_Tester):
 			self.run_import(['-c', fn_config])
 			self.log.info('Sleeping 60s for s4 sync...')
 			time.sleep(60)
+			wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
 			self.check_new_and_removed_users(0, 0)
 			# check exp. date
 			exp_date = (datetime.datetime.now() + datetime.timedelta(days=exp_days)).strftime("%Y-%m-%d")
