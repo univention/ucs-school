@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.1-3) unstable; urgency=medium
+
+  * Bug #44537: fix removal of users
+
+ -- Florian Best <best@univention.de>  Tue, 16 May 2017 17:08:41 +0200
+
 ucs-school-umc-wizards (8.0.1-2) unstable; urgency=low
 
   * Bug #42349: fix regression of last commit: disable sorting of user roles
