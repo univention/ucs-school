@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-users\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:54+0100\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-07-03 19:44+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -16,20 +16,20 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/js/schoolusers.js:176
+#: umc/js/schoolusers.js:165
 msgid "All classes and workgroups"
 msgstr "Toutes les classes et groupes de travail"
 
-#: umc/js/schoolusers.js:333
+#: umc/js/schoolusers.js:327
 msgid "Cancel"
 msgstr "Annuler"
 
-#: umc/js/schoolusers.js:174
+#: umc/js/schoolusers.js:163
 msgid "Class or workgroup"
 msgstr "Classe ou groupe de travail"
 
 #. i18n: 0: number of selected users; 1 and 2: "students" / "teachers"
-#: umc/js/schoolusers.js:301
+#: umc/js/schoolusers.js:295
 msgid ""
 "Clicking the <i>Reset</i> button will set the password for all {0} selected "
 "{1} to the given password. For security reasons the {2} should be forced to "
@@ -40,64 +40,64 @@ msgstr ""
 "raisons de sécurité, les {2} devront obligatoirement modifier ce mot de "
 "passe à la prochaine authentification."
 
-#: umc/js/schoolusers.js:251
+#: umc/js/schoolusers.js:245
 msgid "Failed to reset the password for the following users:"
 msgstr ""
 "Échec de la réinitialisation des mots de passe des utilisateurs suivants :"
 
-#: umc/js/schoolusers.js:248
+#: umc/js/schoolusers.js:242
 msgid "Finished"
 msgstr "Terminé"
 
-#: umc/js/schoolusers.js:127 umc/js/schoolusers.js:190
+#: umc/js/schoolusers.js:116 umc/js/schoolusers.js:179
 msgid "Name"
 msgstr "Nom"
 
-#: umc/js/schoolusers.js:311
+#: umc/js/schoolusers.js:305
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: umc/js/schoolusers.js:131
+#: umc/js/schoolusers.js:120
 msgid "Password expiration date"
 msgstr "Date d'expiration du mot de passe"
 
-#: umc/js/schoolusers.js:315
+#: umc/js/schoolusers.js:309
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: umc/js/schoolusers.js:117
+#: umc/js/schoolusers.js:106
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
 
-#: umc/js/schoolusers.js:340
+#: umc/js/schoolusers.js:334
 msgid "Reset passwords"
 msgstr "Réinitialiser les mots de passe"
 
-#: umc/js/schoolusers.js:118
+#: umc/js/schoolusers.js:107
 msgid "Resets password of user."
 msgstr "Réinitialise le mot de passe de l'utilisateur."
 
-#: umc/js/schoolusers.js:165
+#: umc/js/schoolusers.js:154
 msgid "School"
 msgstr "École"
 
-#: umc/js/schoolusers.js:105
-msgid "Search results"
-msgstr "Résultats de la recherche"
+#: umc/js/schoolusers.js:180
+msgid "Search..."
+msgstr ""
 
-#: umc/js/schoolusers.js:173
+#: umc/js/schoolusers.js:162
 msgid "Select a class or workgroup."
 msgstr "Sélectionnez une classe ou un groupe de travail."
 
-#: umc/js/schoolusers.js:164
+#: umc/js/schoolusers.js:153
 msgid "Select the school."
 msgstr "Sélectionnez l'école."
 
-#: umc/js/schoolusers.js:269
+#: umc/js/schoolusers.js:263
 msgid "Setting passwords"
 msgstr "Définition des mots de passe"
 
-#: umc/js/schoolusers.js:189
+#: umc/js/schoolusers.js:178
 msgid ""
 "Specifies the substring pattern which is searched for in the first name, "
 "surname and username"
@@ -105,18 +105,21 @@ msgstr ""
 "Précise le motif partiel cherché dans le prénom, le nom de famille et le nom "
 "d'utilisateur"
 
-#: umc/js/schoolusers.js:275
+#: umc/js/schoolusers.js:269
 msgid "User: "
 msgstr "Utilisateur :"
 
-#: umc/js/schoolusers.js:293
+#: umc/js/schoolusers.js:287
 msgid "students"
 msgstr "étudiants"
 
-#: umc/js/schoolusers.js:294
+#: umc/js/schoolusers.js:288
 msgid "teachers"
 msgstr "enseignants"
 
-#: umc/js/schoolusers.js:306
+#: umc/js/schoolusers.js:300
 msgid "user has to change password on next login"
 msgstr "l'utilisateur doit modifier son mot de passe à sa prochaine connexion"
+
+#~ msgid "Search results"
+#~ msgstr "Résultats de la recherche"

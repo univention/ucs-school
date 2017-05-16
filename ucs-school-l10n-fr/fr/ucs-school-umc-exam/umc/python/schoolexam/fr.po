@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:55+0100\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-07-03 16:48+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -25,16 +25,16 @@ msgstr ""
 "Un examen du nom de « %s » existe déjà. Veuillez choisir un autre nom pour "
 "cet examen."
 
-#: umc/python/schoolexam/__init__.py:504
+#: umc/python/schoolexam/__init__.py:547
 #, python-format
 msgid "An unexpected error occurred during the preparation: %s"
 msgstr "Une erreur inattendue est survenue lors de la préparation : %s"
 
-#: umc/python/schoolexam/__init__.py:438
+#: umc/python/schoolexam/__init__.py:452
 msgid "Collecting exam files..."
 msgstr "Collecte des fichiers des examens..."
 
-#: umc/python/schoolexam/__init__.py:452
+#: umc/python/schoolexam/__init__.py:469
 msgid "Configuring the computer room..."
 msgstr "Configuration de la salle informatique..."
 
@@ -43,54 +43,59 @@ msgstr "Configuration de la salle informatique..."
 msgid "Could not authenticate user \"%s\"!"
 msgstr "Impossible d'authentifier l'utilisateur « %s » !"
 
-#: umc/python/schoolexam/__init__.py:337
+#: umc/python/schoolexam/__init__.py:349 umc/python/schoolexam/__init__.py:483
 msgid "Could not connect to local UMC server."
 msgstr "Impossible de se connecter au serveur UMC local."
 
-#: umc/python/schoolexam/__init__.py:221 umc/python/schoolexam/__init__.py:447
+#: umc/python/schoolexam/__init__.py:224 umc/python/schoolexam/__init__.py:464
 #, python-format
 msgid "Could not connect to master server %s."
 msgstr "Impossible de se connecter au serveur maître %s."
 
-#: umc/python/schoolexam/__init__.py:325
+#: umc/python/schoolexam/__init__.py:336
 msgid "Distributing exam files"
 msgstr "Distribution des fichiers d'examen"
 
-#: umc/python/schoolexam/__init__.py:174 umc/python/schoolexam/__init__.py:427
+#: umc/python/schoolexam/__init__.py:174 umc/python/schoolexam/__init__.py:441
 msgid "Initializing"
 msgstr "Initialisation"
 
-#: umc/python/schoolexam/__init__.py:397
+#: umc/python/schoolexam/__init__.py:409
 msgid "No files have been distributed"
 msgstr "Aucun fichier n'a été distribué"
 
-#: umc/python/schoolexam/__init__.py:333
+#: umc/python/schoolexam/__init__.py:344
 msgid "Prepare room settings"
 msgstr "Préparer la configuration de la salle"
 
-#: umc/python/schoolexam/__init__.py:250
+#: umc/python/schoolexam/__init__.py:253
 msgid "Preparing exam accounts"
 msgstr "Préparation des comptes d'examen"
 
-#: umc/python/schoolexam/__init__.py:224
+#: umc/python/schoolexam/__init__.py:227
 msgid "Preparing the computer room for exam mode..."
 msgstr "Préparation de la salle informatique pour le mode examen..."
 
-#: umc/python/schoolexam/__init__.py:272
+#: umc/python/schoolexam/__init__.py:283
 msgid "Preparing user home directories"
 msgstr "Préparation des répertoires personnels des utilisateurs"
 
-#: umc/python/schoolexam/__init__.py:469
+#: umc/python/schoolexam/__init__.py:512
 msgid "Removing exam accounts"
 msgstr "Suppression des comptes de l'examen"
 
-#: umc/python/schoolexam/__init__.py:307
+#: umc/python/schoolexam/__init__.py:318
 msgid "Replication timeout: could not create all exam users"
 msgstr ""
 "Délai de réplication dépassé : impossible de créer tous les utilisateurs de "
 "l'examen"
 
-#: umc/python/schoolexam/__init__.py:412
+#: umc/python/schoolexam/__init__.py:479
+#, fuzzy
+msgid "Resetting room settings"
+msgstr "Préparer la configuration de la salle"
+
+#: umc/python/schoolexam/__init__.py:424
 #, python-format
 msgid ""
 "Room \"%s\" does not contain any computers. Empty rooms may not be used to "
@@ -99,6 +104,6 @@ msgstr ""
 "La salle « %s » ne contient pas d'ordinateur. Les salles vides ne peuvent "
 "pas être employées pour démarrer un examen."
 
-#: umc/python/schoolexam/__init__.py:364 umc/python/schoolexam/__init__.py:496
+#: umc/python/schoolexam/__init__.py:376 umc/python/schoolexam/__init__.py:539
 msgid "finished..."
 msgstr "terminé..."

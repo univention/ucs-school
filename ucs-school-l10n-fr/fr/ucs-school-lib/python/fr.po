@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-lib\n"
 "Report-Msgid-Bugs-To: forge.univention.org\n"
-"POT-Creation-Date: 2017-03-22 09:55+0100\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-07-06 20:25+0200\n"
 "Last-Translator: Nicolas Ternisien <nicolas@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -37,7 +37,7 @@ msgstr "Serveurs administratifs"
 msgid "Birthday"
 msgstr "Date de naissance"
 
-#: python/models/dhcp.py:186 python/models/network.py:46
+#: python/models/network.py:46 python/models/dhcp.py:187
 msgid "Broadcast"
 msgstr "Diffuser"
 
@@ -77,7 +77,7 @@ msgstr "Serveur administratif de noms CD"
 msgid "DHCP path"
 msgstr "Emplacement DHCP"
 
-#: python/models/dhcp.py:154 python/models/dhcp.py:187
+#: python/models/dhcp.py:155 python/models/dhcp.py:188
 msgid "DHCP service"
 msgstr "Service DHCP"
 
@@ -178,12 +178,12 @@ msgstr "Mac OS X"
 msgid "May not contain special characters"
 msgstr "Ne peut pas contenir de caractères spéciaux"
 
-#: python/models/base.py:193 python/models/share.py:41
 #: python/models/group.py:75 python/models/group.py:187
+#: python/models/share.py:41 python/models/base.py:193
 msgid "Name"
 msgstr "Nom"
 
-#: python/models/dhcp.py:185 python/models/network.py:44
+#: python/models/network.py:44 python/models/dhcp.py:186
 msgid "Netmask"
 msgstr "Masque réseau"
 
@@ -235,7 +235,7 @@ msgstr "Serveur pour les répertoires personnels Windows"
 msgid "Server for class shares"
 msgstr "Serveur pour les partages de la classe"
 
-#: python/models/dhcp.py:153
+#: python/models/dhcp.py:154
 msgid "Server name"
 msgstr "Nom du serveur"
 
@@ -259,7 +259,7 @@ msgstr "Étudiant"
 msgid "Subnet"
 msgstr "Sous-réseau"
 
-#: python/models/dhcp.py:184
+#: python/models/dhcp.py:185
 msgid "Subnet address"
 msgstr "Adresse de sous-réseau"
 

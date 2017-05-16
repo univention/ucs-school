@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam-master\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:55+0100\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-07-03 16:49+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/schoolexam-master/__init__.py:366
+#: umc/python/schoolexam-master/__init__.py:420
 #, python-format
 msgid "Could not remove exam user %r: %s"
 msgstr "Impossible de supprimer l'utilisateur d'examen %r: %s"
 
-#: umc/python/schoolexam-master/__init__.py:266
+#: umc/python/schoolexam-master/__init__.py:275
 #, python-format
 msgid ""
 "ERROR: Creation of exam user account failed\n"
@@ -30,17 +30,17 @@ msgstr ""
 "ERREUR : échec de création du compte utilisateur pour l'examen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:231
+#: umc/python/schoolexam-master/__init__.py:239
 #, python-format
 msgid "Exam for user %s"
 msgstr "Examen pour l'utilisateur %s"
 
-#: umc/python/schoolexam-master/__init__.py:351
+#: umc/python/schoolexam-master/__init__.py:405
 #, python-format
 msgid "Exam student %r not found."
 msgstr "Étudiant %r pour l'examen non trouvé."
 
-#: umc/python/schoolexam-master/__init__.py:123
+#: umc/python/schoolexam-master/__init__.py:131
 #, python-format
 msgid ""
 "Failed to create exam container\n"
@@ -49,7 +49,7 @@ msgstr ""
 "Impossible de créer le conteneur d'examen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:100
+#: umc/python/schoolexam-master/__init__.py:108
 #, python-format
 msgid ""
 "Failed to create exam group\n"
@@ -58,7 +58,7 @@ msgstr ""
 "Impossible de créer le groupe d'examen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:179
+#: umc/python/schoolexam-master/__init__.py:187
 #, python-format
 msgid ""
 "Requested exam username %s is not allowed according to settings/"
@@ -67,13 +67,14 @@ msgstr ""
 "Le nom d'utilisateur d'examen %s demandé n'a pas les droits requis d'après "
 "l'objet « settings/prohibited_username » %s"
 
-#: umc/python/schoolexam-master/__init__.py:147
+#: umc/python/schoolexam-master/__init__.py:155
+#: umc/python/schoolexam-master/__init__.py:364
 #, python-format
 msgid "Student %r not found."
 msgstr "Étudiant %r non trouvé."
 
-#: umc/python/schoolexam-master/__init__.py:168
-#: umc/python/schoolexam-master/__init__.py:188
+#: umc/python/schoolexam-master/__init__.py:176
+#: umc/python/schoolexam-master/__init__.py:196
 #, python-format
 msgid "The exam account does already exist for: %s"
 msgstr "Le compte d'examen existe déjà pour : %s."

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: Mon, 07 May 2012 12:11:25 +0200\n"
+"POT-Creation-Date: Fri, 14 Apr 2017 01:22:57 +0200\n"
 "PO-Revision-Date: 2016-06-17 21:06+0200\n"
 "Last-Translator: Nicolas Ternisien <nicolas@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -18,6 +18,6 @@ msgstr ""
 msgid "CSV import"
 msgstr "Importation CSV"
 
-msgid "CSV import of UCS@school users"
+#, fuzzy
+msgid "CSV import of school users"
 msgstr "Importation CSV d'utilisateurs UCS@school"
-

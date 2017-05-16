@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lessontimes\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-10-19 03:18+0200\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-07-03 16:55+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -16,41 +16,27 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/js/lessontimes.js:116
-msgid "Cancel"
-msgstr "Annuler"
-
-#: umc/js/lessontimes.js:108 umc/js/lessontimes.js:111
-msgid "Close"
-msgstr "Fermer"
-
-#: umc/js/lessontimes.js:66
+#: umc/js/lessontimes.js:67
 msgid "Description"
 msgstr "Description"
 
-#: umc/js/lessontimes.js:76
+#: umc/js/lessontimes.js:77
 msgid "End time"
 msgstr "Heure de fin"
 
-#: umc/js/lessontimes.js:83
+#: umc/js/lessontimes.js:84
 msgid "Lesson times"
 msgstr "Horaire du cours"
 
-#: umc/js/lessontimes.js:110
-msgid "Should the UMC module be closed? All unsaved modification will be lost."
-msgstr ""
-"Le module UMC doit-il être fermé ? Toutes les modifications non enregistrées "
-"seront perdues."
-
-#: umc/js/lessontimes.js:71
+#: umc/js/lessontimes.js:72
 msgid "Start time"
 msgstr "Heure de début"
 
-#: umc/js/lessontimes.js:100
+#: umc/js/lessontimes.js:101
 msgid "Submit"
 msgstr "Soumettre"
 
-#: umc/js/lessontimes.js:124
+#: umc/js/lessontimes.js:111
 msgid ""
 "The lesson times are used internally for the default session duration by the "
 "computer room module. It is advisable to set the end time of a lesson to a "
@@ -59,3 +45,15 @@ msgstr ""
 "L'horaire du cours est utilisée en interne par le module de salle "
 "informatiquepour la durée de la session par défaut. Il est conseillé de "
 "définir une heure de fin de cours juste avant le début du cours suivant."
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#~ msgid "Close"
+#~ msgstr "Fermer"
+
+#~ msgid ""
+#~ "Should the UMC module be closed? All unsaved modification will be lost."
+#~ msgstr ""
+#~ "Le module UMC doit-il être fermé ? Toutes les modifications non "
+#~ "enregistrées seront perdues."

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:54+0100\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-07-03 15:49+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -32,7 +32,7 @@ msgstr "Un autre utilisateur est déjà dans une session de salle informatique"
 msgid "Action unavailable for UCC clients."
 msgstr "Action non disponible pour les clients UCC."
 
-#: umc/python/computerroom/__init__.py:633
+#: umc/python/computerroom/__init__.py:634
 msgid ""
 "In this room an exam is currently already written. Please select another "
 "room."

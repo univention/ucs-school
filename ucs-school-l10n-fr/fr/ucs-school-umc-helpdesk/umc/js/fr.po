@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-helpdesk\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-05-19 18:13+0200\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-07-03 17:12+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Category"
 msgstr "Catégorie"
 
-#: umc/js/helpdesk.js:94
+#: umc/js/helpdesk.js:96
 msgid "Message to the helpdesk team"
 msgstr "Message de l'équipe d'aide"
 
@@ -32,7 +32,7 @@ msgstr "École"
 msgid "Send"
 msgstr "Envoyer"
 
-#: umc/js/helpdesk.js:116
+#: umc/js/helpdesk.js:117
 msgid "The report has been sent to the helpdesk team"
 msgstr "Le rapport a été envoyé à l'équipe d'aide"
 
@@ -41,7 +41,5 @@ msgid ""
 "The required message is missing. Therefore, no report has been sent to the "
 "helpdesk team."
 msgstr ""
-"Le message requis est manquant. Par conséquent, le rapport n'a pas été envoyé "
-"à l'équipe d'aide."
-
-
+"Le message requis est manquant. Par conséquent, le rapport n'a pas été "
+"envoyé à l'équipe d'aide."

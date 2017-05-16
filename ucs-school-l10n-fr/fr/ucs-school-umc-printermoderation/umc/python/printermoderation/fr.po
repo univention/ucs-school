@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-printermoderation\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-10-19 03:18+0200\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas Ternisien <nicolas@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "File %r could not be printed as it does not exists (anymore)."
 msgstr ""
 
-#: umc/python/printermoderation/__init__.py:91
+#: umc/python/printermoderation/__init__.py:90
 #: umc/python/printermoderation/__init__.py:170
 msgid "Invalid file"
 msgstr ""

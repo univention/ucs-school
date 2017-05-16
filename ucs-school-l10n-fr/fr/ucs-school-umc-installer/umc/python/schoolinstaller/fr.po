@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:54+0100\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-06-21 21:05+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/schoolinstaller/__init__.py:662
+#: umc/python/schoolinstaller/__init__.py:651
 #, python-format
 msgid "An unexpected error occurred during installation: %s"
 msgstr "Une erreur inattendue est apparue lors de l'installation : %s"
 
-#: umc/python/schoolinstaller/__init__.py:545
+#: umc/python/schoolinstaller/__init__.py:544
 msgid ""
 "Cannot get lock for installation process. Another package manager seems to "
 "block the operation."
@@ -29,33 +29,33 @@ msgstr ""
 "Impossible d'obtenir le verrou du processus d'installation. Un autre "
 "gestionnaire de paquetages semble bloquer l'opération."
 
-#: umc/python/schoolinstaller/__init__.py:465
+#: umc/python/schoolinstaller/__init__.py:463
 #, python-format
 msgid "Could not connect to the DC Master %s: %s"
 msgstr "Impossible de se connecter au contrôleur de domaine maître %s: %s"
 
-#: umc/python/schoolinstaller/__init__.py:608
+#: umc/python/schoolinstaller/__init__.py:597
 msgid "Creation of LDAP school structure"
 msgstr "Création de la structure LDAP de l'école"
 
-#: umc/python/schoolinstaller/__init__.py:635
+#: umc/python/schoolinstaller/__init__.py:624
 msgid "Domain join"
 msgstr "Rejoindre le domaine"
 
-#: umc/python/schoolinstaller/__init__.py:224
+#: umc/python/schoolinstaller/__init__.py:223
 #, python-format
 msgid "Executing join script %s"
 msgstr "Exécution du script de jonction %s"
 
-#: umc/python/schoolinstaller/__init__.py:640
+#: umc/python/schoolinstaller/__init__.py:629
 msgid "Executing join scripts..."
 msgstr "Exécution des scripts de jonction..."
 
-#: umc/python/schoolinstaller/__init__.py:603
+#: umc/python/schoolinstaller/__init__.py:592
 msgid "Failed to install packages."
 msgstr ""
 
-#: umc/python/schoolinstaller/__init__.py:539
+#: umc/python/schoolinstaller/__init__.py:538
 msgid ""
 "In order to install UCS@school on a backup domain controller, the system "
 "needs to be joined first."
@@ -63,19 +63,19 @@ msgstr ""
 "Afin d'installer UCS@school sur un contrôleur de domaine de secours, le "
 "système doit d'abord rejoindre le domaine."
 
-#: umc/python/schoolinstaller/__init__.py:294
+#: umc/python/schoolinstaller/__init__.py:293
 msgid "Initializing"
 msgstr "Initialisation..."
 
-#: umc/python/schoolinstaller/__init__.py:594
+#: umc/python/schoolinstaller/__init__.py:583
 msgid "Installation of UCS@school packages"
 msgstr "Installation des paquetages UCS@school"
 
-#: umc/python/schoolinstaller/__init__.py:580
+#: umc/python/schoolinstaller/__init__.py:569
 msgid "Invalid UCS@school configuration."
 msgstr "Configuration UCS@school invalide."
 
-#: umc/python/schoolinstaller/__init__.py:511
+#: umc/python/schoolinstaller/__init__.py:507
 msgid ""
 "Invalid server role! UCS@school can only be installed on the system roles "
 "master domain controller, backup domain controller, or slave domain "
@@ -85,13 +85,13 @@ msgstr ""
 "contrôleur de domaine maître des rôles système, le contrôleur de domaine de "
 "secours, ou le contrôleur de domaine esclave."
 
-#: umc/python/schoolinstaller/__init__.py:463
+#: umc/python/schoolinstaller/__init__.py:461
 msgid ""
 "Make sure ucs-school-umc-installer is installed on the DC Master and all "
 "join scripts are executed."
 msgstr ""
 
-#: umc/python/schoolinstaller/__init__.py:533
+#: umc/python/schoolinstaller/__init__.py:530
 msgid ""
 "Please install UCS@school on the master domain controller system. Cannot "
 "proceed installation on this system."
@@ -99,15 +99,15 @@ msgstr ""
 "Veuillez installer UCS@school sur le système du contrôleur de domaine "
 "maître. Impossible de procéder à l'installation sur ce système."
 
-#: umc/python/schoolinstaller/__init__.py:637
+#: umc/python/schoolinstaller/__init__.py:626
 msgid "Preparing domain join..."
 msgstr "Préparation pour rejoindre le domaine..."
 
-#: umc/python/schoolinstaller/__init__.py:514
+#: umc/python/schoolinstaller/__init__.py:510
 msgid "Server type has to be set for domain controller slave"
 msgstr "Le type de serveur doit être défini à contrôleur de domaine esclave"
 
-#: umc/python/schoolinstaller/__init__.py:278
+#: umc/python/schoolinstaller/__init__.py:277
 msgid ""
 "Software packages have been installed successfully, however, some join "
 "scripts could not be executed. More details can be found in the log file /"
@@ -121,7 +121,7 @@ msgstr ""
 "Rejoindre le domaine » après avoir résolu les problèmes de conflits "
 "éventuels."
 
-#: umc/python/schoolinstaller/__init__.py:275
+#: umc/python/schoolinstaller/__init__.py:274
 msgid ""
 "Software packages have been installed successfully, however, the join "
 "process could not be executed. More details can be found in the log file /"
@@ -135,7 +135,7 @@ msgstr ""
 "Rejoindre le domaine » après avoir résolu les problèmes de conflits "
 "éventuels."
 
-#: umc/python/schoolinstaller/__init__.py:217
+#: umc/python/schoolinstaller/__init__.py:216
 #, python-format
 msgid ""
 "Software packages have been installed, however, the system join could not be "
@@ -149,11 +149,11 @@ msgstr ""
 "d'exécuter les scripts de jonction par le biais du module UMC « Rejoindre le "
 "domaine » après avoir résolu les problèmes de conflits éventuels."
 
-#: umc/python/schoolinstaller/__init__.py:432
+#: umc/python/schoolinstaller/__init__.py:431
 msgid "The LDAP connection to the master system failed."
 msgstr "Échec de la connexion LDAP au système maître."
 
-#: umc/python/schoolinstaller/__init__.py:537
+#: umc/python/schoolinstaller/__init__.py:536
 msgid ""
 "The UCS@school master domain controller needs to be configured similarly to "
 "this backup system. Please choose the correct environment type for this "
@@ -163,7 +163,7 @@ msgstr ""
 "identique à celle de ce système de secours. Veuillez choisir le type "
 "d'environnement correct pour ce système."
 
-#: umc/python/schoolinstaller/__init__.py:620
+#: umc/python/schoolinstaller/__init__.py:609
 msgid ""
 "The UCS@school software packages have been installed, however, a school OU "
 "could not be created and consequently a re-join of the system has not been "
@@ -178,11 +178,11 @@ msgstr ""
 "faire en sorte que cette machine rejoigne le domaine par le biais du module "
 "UMC « Rejoindre le domaine »."
 
-#: umc/python/schoolinstaller/__init__.py:111
+#: umc/python/schoolinstaller/__init__.py:110
 msgid "The entered FQDN is not a valid value"
 msgstr "Le FQDN saisi n'est pas correct"
 
-#: umc/python/schoolinstaller/__init__.py:535
+#: umc/python/schoolinstaller/__init__.py:534
 msgid ""
 "The master domain controller is not configured for a UCS@school multi server "
 "environment. Cannot proceed installation on this system."
@@ -191,7 +191,7 @@ msgstr ""
 "multi-serveurs UCS@school. Impossible d'effectuer l'installation sur ce "
 "système."
 
-#: umc/python/schoolinstaller/__init__.py:517
+#: umc/python/schoolinstaller/__init__.py:513
 msgid ""
 "The name of an educational server has to be specified if the system shall be "
 "configured as administrative server."
@@ -199,7 +199,7 @@ msgstr ""
 "Le nom d'un serveur éducatif doit être précisé si le système est prévu pour "
 "être configuré comme serveur administratif."
 
-#: umc/python/schoolinstaller/__init__.py:520
+#: umc/python/schoolinstaller/__init__.py:516
 msgid ""
 "The name of the educational server may not be equal to the name of the "
 "administrative slave."
@@ -207,11 +207,18 @@ msgstr ""
 "Le nom du serveur éducatif ne peut être le même que celui du serveur "
 "administratif esclave."
 
-#: umc/python/schoolinstaller/__init__.py:507
+#: umc/python/schoolinstaller/__init__.py:503
 msgid "The specified school OU is not valid."
 msgstr "L'UO de l'école précisée est invalide."
 
-#: umc/python/schoolinstaller/__init__.py:632
+#: umc/python/schoolinstaller/__init__.py:532
+#: umc/python/schoolinstaller/__init__.py:551
+msgid ""
+"This UCS domain uses Samba 3 which is no longer supported by UCS@school. "
+"Please update all domain systems to samba 4 to be able to continue."
+msgstr ""
+
+#: umc/python/schoolinstaller/__init__.py:621
 msgid ""
 "Validating the LDAP school OU structure failed. It seems that the current "
 "slave system has already been assigned to a different school or that the "
@@ -221,7 +228,7 @@ msgstr ""
 "que le système esclave actuel ait déjà été assigné à une école différente ou "
 "que le nom d'UO de l'école fourni est déjà utilisé."
 
-#: umc/python/schoolinstaller/__init__.py:652
+#: umc/python/schoolinstaller/__init__.py:641
 msgid "finished..."
 msgstr "terminé..."
 

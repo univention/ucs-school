@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-22 09:54+0100\n"
+"POT-Creation-Date: 2017-04-14 01:22+0200\n"
 "PO-Revision-Date: 2016-06-20 18:57+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -21,26 +21,26 @@ msgstr ""
 msgid "%(username)s %(action)s"
 msgstr "%(username)s %(action)s"
 
-#: umc/python/schoolcsvimport/util.py:277
+#: umc/python/schoolcsvimport/util.py:281
 #, python-format
 msgid "%s could not be changed."
 msgstr "Impossible de modifier %s."
 
-#: umc/python/schoolcsvimport/util.py:273
+#: umc/python/schoolcsvimport/util.py:277
 #, python-format
 msgid "%s could not be created."
 msgstr "Impossible de créer %s."
 
-#: umc/python/schoolcsvimport/util.py:275
+#: umc/python/schoolcsvimport/util.py:279
 #, python-format
 msgid "%s could not be deleted."
 msgstr "Impossible de supprimer %s."
 
-#: umc/python/schoolcsvimport/util.py:205
+#: umc/python/schoolcsvimport/util.py:206
 msgid "Action"
 msgstr "Action"
 
-#: umc/python/schoolcsvimport/util.py:299
+#: umc/python/schoolcsvimport/util.py:309
 msgid "Birthday"
 msgstr "Date de naissance"
 
@@ -52,15 +52,15 @@ msgstr "Vérification des utilisateurs du fichier CSV"
 msgid "Checking users from database"
 msgstr "Vérification des utilisateurs de la base de données"
 
-#: umc/python/schoolcsvimport/util.py:397
+#: umc/python/schoolcsvimport/util.py:407
 msgid "Internal Error: License check failed."
 msgstr "Erreur interne : échec de la vérification de la licence."
 
-#: umc/python/schoolcsvimport/util.py:207
+#: umc/python/schoolcsvimport/util.py:208
 msgid "Line"
 msgstr "Ligne"
 
-#: umc/python/schoolcsvimport/util.py:421
+#: umc/python/schoolcsvimport/util.py:431
 #, python-format
 msgid ""
 "Number of %(object_name)s after the import would be %(sum)s. This would "
@@ -82,7 +82,7 @@ msgstr "L'importation doit redémarrer."
 msgid "The uploaded CSV file was not found on the server."
 msgstr "Impossible de trouver le fichier CSV envoyé sur le serveur."
 
-#: umc/python/schoolcsvimport/util.py:261
+#: umc/python/schoolcsvimport/util.py:265
 msgid ""
 "The user already exists and cannot be created. Please change the username to "
 "one that does not yet exist or change the action to be taken."
@@ -90,7 +90,7 @@ msgstr ""
 "L'utilisateur existe déjà et ne peut pas être créé. Veuillez modifier le nom "
 "d'utilisateur en un nom unique ou changer l'action à effectuer."
 
-#: umc/python/schoolcsvimport/util.py:266
+#: umc/python/schoolcsvimport/util.py:270
 msgid ""
 "The user does not yet exist and cannot be deleted. Please change the "
 "username to one that exists or change the action to be taken."
@@ -98,7 +98,7 @@ msgstr ""
 "L'utilisateur n'existe pas et ne peut être supprimé. Veuillez modifier le "
 "nom d'utilisateur en un nom existant ou changer l'action à effectuer."
 
-#: umc/python/schoolcsvimport/util.py:264
+#: umc/python/schoolcsvimport/util.py:268
 msgid ""
 "The user does not yet exist and cannot be modified. Please change the "
 "username to one that exists or change the action to be taken."
@@ -114,7 +114,7 @@ msgstr ""
 "Cela peut être dû à un redémarrage récent de Univention Management Console "
 "Server."
 
-#: umc/python/schoolcsvimport/util.py:199
+#: umc/python/schoolcsvimport/util.py:200
 msgid "Unused"
 msgstr "Non utilisé"
 
@@ -143,6 +143,6 @@ msgstr "supprimé"
 msgid "modified"
 msgstr "modifié"
 
-#: umc/python/schoolcsvimport/util.py:408
+#: umc/python/schoolcsvimport/util.py:418
 msgid "users"
 msgstr "utilisateurs"
