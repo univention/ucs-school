@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [2]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-wizards
+fix: 9.0.4-5A~4.2.0.201705161710
+desc: |
+ * Don't display an error message after removing users from a school (Bug #44537)
+bug: [44537]
