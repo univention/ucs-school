@@ -341,7 +341,6 @@ class Instance(SchoolBaseModule):
 			success=True,
 			userdn=userdn,
 			examuserdn=exam_user_dn,
-			examuseruid=exam_user_uid,
 		))
 
 	@sanitize(

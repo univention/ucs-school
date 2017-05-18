@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-4) unstable; urgency=low
+
+  * Bug #43019: cleanup leftover code
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 18 May 2017 09:29:51 +0200
+
 ucs-school-umc-exam (7.0.4-3) unstable; urgency=low
 
   * Bug #43019: add exam students to all groups regardless of share
