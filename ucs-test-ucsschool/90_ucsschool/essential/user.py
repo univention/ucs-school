@@ -7,6 +7,7 @@
 import univention.testing.utils as utils
 from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
+from univention.lib.umc import BadRequest
 from essential.importusers import Person
 
 
@@ -44,7 +45,7 @@ class User(Person):
 	:type school_classes: dict
 	"""
 
-	def __init__(self, school, role, school_classes, mode='A', username=None, firstname=None, lastname=None, password=None, mail=None):
+	def __init__(self, school, role, school_classes, mode='A', username=None, firstname=None, lastname=None, password=None, mail=None, schools=None):
 		super(User, self).__init__(school, role)
 
 		if username:
@@ -58,6 +59,7 @@ class User(Person):
 			self.mail = mail
 		if school_classes:
 			self.school_classes = school_classes
+		self.schools = schools or [self.school]
 		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
 		self.mode = mode
 
@@ -87,6 +89,7 @@ class User(Person):
 		param = [{
 			'object': {
 				'school': self.school,
+				'schools': self.schools,
 				'school_classes': self.school_classes,
 				'email': self.mail,
 				'name': self.username,
@@ -97,8 +100,8 @@ class User(Person):
 			},
 			'options': None
 		}]
-		print 'Creating user %s' % (self.username,)
-		print 'param = %s' % (param,)
+		print '#### Creating user %s' % (self.username,)
+		print '#### param = %s' % (param,)
 		reqResult = self.client.umc_command('schoolwizards/users/add', param, flavor).result
 		if not reqResult[0]:
 			raise CreateFail('Unable to create user (%r)' % (param,))
@@ -114,7 +117,13 @@ class User(Person):
 				'school': self.school
 			}
 		}]
-		reqResult = self.client.umc_command('schoolwizards/users/get', param, flavor).result
+		try:
+			reqResult = self.client.umc_command('schoolwizards/users/get', param, flavor).result
+		except BadRequest as exc:
+			if exc.status == 400:
+				reqResult = ['']
+			else:
+				raise
 		if not reqResult[0]:
 			raise GetFail('Unable to get user (%s)' % self.username)
 		else:
@@ -129,7 +138,7 @@ class User(Person):
 			'lastname': self.lastname,
 			'type_name': self.type_name(),
 			'school': self.school,
-			'schools': [self.school],
+			'schools': set(self.schools),
 			'disabled': 'none',
 			'birthday': None,
 			'password': None,
@@ -147,11 +156,13 @@ class User(Person):
 		get_result = self.get()
 		# Type_name is only used for display, Ignored
 		info['type_name'] = get_result['type_name']
+		# ignore OU order
+		get_result['schools'] = set(get_result['schools'])
 		if get_result != info:
 			diff = []
 			for key in (set(get_result.keys()) | set(info.keys())):
 				if get_result.get(key) != info.get(key):
-					diff.append('%s: Got: %r; expected: %r' % (key, get_result.get(key), info.get(key)))
+					diff.append('%s: Got:\n%r; expected:\n%r' % (key, get_result.get(key), info.get(key)))
 			raise GetCheckFail('Failed get request for user %s:\n%s' % (self.username, '\n'.join(diff)))
 
 	def type_name(self):
@@ -182,13 +193,14 @@ class User(Person):
 			raise QueryCheckFail('users from query do not contain the existing users, found (%r), expected (%r)' % (
 				k, users_dn))
 
-	def remove(self):
+	def remove(self, remove_from_school=None):
 		"""Remove user"""
-		print 'Removing User (%s)' % self.username
+		remove_from_school = remove_from_school or self.school
+		print('#### Removing User %r (%s) from school %r.' % (self.username, self.dn, remove_from_school))
 		flavor = 'schoolwizards/users'
 		param = [{
 			'object': {
-				'school': self.school,
+				'remove_from_school': remove_from_school,
 				'$dn$': self.dn,
 			},
 			'options': None
@@ -197,14 +209,23 @@ class User(Person):
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove user (%s)' % self.username)
 		else:
-			self.set_mode_to_delete()
+			schools = self.schools[:]
+			schools.remove(remove_from_school)
+			if not schools:
+				self.set_mode_to_delete()
+			else:
+				self.update(school=sorted(schools)[0], schools=schools, mode='M')
+				try:
+					del self.school_classes[remove_from_school]
+				except KeyError:
+					pass
 
 	def edit(self, new_attributes):
 		"""Edit object user"""
 		flavor = 'schoolwizards/users'
 		object_props = {
 			'school': self.school,
-			'schools': [self.school],
+			'schools': self.schools,
 			'email': new_attributes.get('email') if new_attributes.get('email') else self.mail,
 			'name': self.username,
 			'type': self.typ,
@@ -220,8 +241,8 @@ class User(Person):
 			'object': object_props,
 			'options': None
 		}]
-		print 'Editing user %s' % (self.username,)
-		print 'param = %s' % (param,)
+		print '#### Editing user %s' % (self.username,)
+		print '#### param = %s' % (param,)
 		reqResult = self.client.umc_command('schoolwizards/users/put', param, flavor).result
 		if not reqResult[0]:
 			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username, param))

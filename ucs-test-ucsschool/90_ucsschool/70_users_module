@@ -6,11 +6,59 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
+from copy import deepcopy
 from essential.klasse import Klasse
 from essential.user import User
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
+
+
+def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None):
+	print('\n>>>> Creating 4 users...\n')
+	users = []
+
+	user = User(school=schools[0], role='student', school_classes=deepcopy(student_classes), schools=schools)
+	user.create()
+	user.verify()
+	user.check_get()
+	users.append(user)
+
+	user = User(school=schools[0], role='teacher', school_classes=deepcopy(teacher_classes), schools=schools)
+	user.create()
+	user.verify()
+	user.check_get()
+	users.append(user)
+
+	user = User(school=schools[0], role='staff', school_classes={}, schools=schools)
+	user.create()
+	user.verify()
+	user.check_get()
+	users.append(user)
+
+	user = User(school=schools[0], role='teacher_staff', school_classes=deepcopy(teacher_classes), schools=schools)
+	user.create()
+	user.verify()
+	user.check_get()
+	users.append(user)
+
+	users[0].check_query([users[0].dn, users[1].dn])
+
+	print('\n>>>> Editing and removing (remove_from_school=%r) 4 users...\n' % (remove_from_school,))
+	for num, user in enumerate(users):
+		new_attrs = {
+			'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')),
+			'firstname': 'first_name%d' % num,
+			'lastname': 'last_name%d' % num,
+		}
+		user.edit(new_attrs)
+		user.check_get(expected_attrs=new_attrs)
+
+		user.verify()
+		user.remove(remove_from_school)
+		user.verify()
+
+	return users
 
 
 def main():
@@ -21,39 +69,38 @@ def main():
 			class_01.create()
 			class_02 = Klasse(school=ou)
 			class_02.create()
-			users = []
+			student_classes = {ou: ['%s-%s' % (ou, class_01.name)]}
+			teacher_classes = {ou: ['%s-%s' % (ou, class_01.name), '%s-%s' % (ou, class_02.name)]}
 
-			# creating students and teachers
-			for role in ['student', 'teacher']:
-				user = User(school=ou, role=role, school_classes={ou: ['%s-%s' % (ou, class_01.name)]})
-				user.create()
-				user.verify()
-				user.check_get()
-				users.append(user)
+			print('\n>>>> Testing module with users in 1 OU ({}).\n'.format(ou))
+			test(student_classes, teacher_classes, [ou], ucr, ou)
 
-			# creating staff and teacher and staff members
-			for role in ['staff', 'teacher_staff']:
-				user = User(school=ou, role=role, school_classes={})
-				user.create()
-				user.verify()
-				user.check_get()
-				users.append(user)
+			ou2, oudn2 = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			class_03 = Klasse(school=ou2)
+			class_03.create()
+			student_classes = {ou: ['%s-%s' % (ou, class_01.name)], ou2: ['%s-%s' % (ou2, class_03.name)]}
+			teacher_classes = {ou: ['%s-%s' % (ou, class_01.name), '%s-%s' % (ou, class_02.name)], ou2: ['%s-%s' % (ou2, class_03.name)]}
 
-			users[0].check_query([users[0].dn, users[1].dn])
-
-			new_attrs = {'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')), 'firstname': 'first_name1', 'lastname': 'last_name1', }
-			users[0].edit(new_attrs)
-			users[0].check_get(expected_attrs=new_attrs)
-
-			new_attrs = {'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')), 'firstname': 'first_name2', 'lastname': 'last_name2', }
-			users[1].edit(new_attrs)
-			users[1].check_get(expected_attrs=new_attrs)
+			print('\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).'.format(ou, ou2))
+			print('>>>> Removing user from primary OU first.\n')
+			users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou)
 
 			for user in users:
+				print(user.username, user.role, user.school, user.schools)
+				user.get()
 				user.verify()
 				user.remove()
 				user.verify()
 
+			print('\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).'.format(ou, ou2))
+			print('>>>> Removing user from secondary OU first.\n')
+			users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou2)
+
+			for user in users:
+				user.get()
+				user.verify()
+				user.remove()
+				user.verify()
 
 if __name__ == '__main__':
 	main()
