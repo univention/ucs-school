@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.17-62) unstable; urgency=low
+
+  * Bug #44588: add support for multiple schools to test User
+  * check removal of single, primary and secondary schools from User
+  * adapt to schoolwizards/users/remove API change
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 18 May 2017 15:26:30 +0200
+
 ucs-test-ucsschool (3.0.17-61) unstable; urgency=low
 
   * Bug #44248/#40527: fixed typo in 04_ucs-school-reset-password-check and add
