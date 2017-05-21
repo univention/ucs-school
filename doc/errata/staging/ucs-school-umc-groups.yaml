@@ -3,8 +3,8 @@ release: "4.1"
 version: [11]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-groups
-fix: 
+fix: 6.0.4-3.84.201705211336
 desc: |
- * An error in the workgroups wizard was fixed: users removed from a
-   workgroup were silently readded when safing (Bug #44350).
+ * An error in the workgroups wizard was fixed, that made it impossible
+   to remove users from a workgroup (Bug #44350).
 bug: [44350]
