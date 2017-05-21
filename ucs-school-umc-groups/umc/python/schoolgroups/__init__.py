@@ -119,15 +119,20 @@ class Instance(SchoolBaseModule):
 			result['classes'] = [{'id': class_.dn, 'label': class_.get_relative_name()} for class_ in classes]
 			self.finished(request.id, [result])
 			return
+		result['members'] = self._filter_members(request, group, result.pop('users', []), ldap_user_read)
 
+		self.finished(request.id, [result, ])
+
+	@staticmethod
+	def _filter_members(request, group, users, ldap_user_read=None):
 		members = []
-		for member_dn in result.pop('users', []):
+		for member_dn in users:
 			try:
 				user = User.from_dn(member_dn, None, ldap_user_read)
 			except udm_exceptions.noObject:
 				MODULE.process('Could not open (foreign) user %r: no permissions/does not exists/not a user' % (member_dn,))
 				continue
-			if not user.schools or not set(user.schools) & set([group.school]):
+			if not user.schools or not set(user.schools) & {group.school}:
 				continue
 			if request.flavor == 'class' and not user.is_teacher(ldap_user_read):
 				continue  # only display teachers
@@ -136,9 +141,7 @@ class Instance(SchoolBaseModule):
 			elif request.flavor == 'workgroup-admin' and not user.is_student(ldap_user_read) and not user.is_administrator(ldap_user_read) and not user.is_staff(ldap_user_read) and not user.is_teacher(ldap_user_read):
 				continue  # only display school users
 			members.append({'id': user.dn, 'label': Display.user(user.get_udm_object(ldap_user_read))})
-		result['members'] = members
-
-		self.finished(request.id, [result, ])
+		return members
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
 	@LDAP_Connection(USER_READ, MACHINE_WRITE)
@@ -165,8 +168,12 @@ class Instance(SchoolBaseModule):
 		except udm_exceptions.noObject:
 			raise UMC_Error('unknown group object')
 
+		old_members = self._filter_members(request, group_from_ldap, group_from_ldap.users, ldap_user_read)
+		removed_members = set(o['id'] for o in old_members) - set(group_from_umc['members'])
+
 		MODULE.info('Modifying group "%s" with members: %s' % (group_from_ldap.dn, group_from_ldap.users))
 		MODULE.info('New members: %s' % group_from_umc['members'])
+		MODULE.info('Removed members: %s' % (removed_members,))
 
 		if request.flavor == 'workgroup-admin':
 			# do not allow groups to be renamed in order to avoid conflicts with shares
@@ -208,7 +215,7 @@ class Instance(SchoolBaseModule):
 				raise UMC_Error(_('User %s is not a student.') % (Display.user(user.get_udm_object(ldap_machine_write)),))
 			users.append(user.dn)
 
-		group_from_ldap.users = list(set(users).intersection(set(group_from_umc['members'])))  # remove removed users
+		group_from_ldap.users = list(set(users) - removed_members)
 		try:
 			success = group_from_ldap.modify(ldap_machine_write)
 			MODULE.info('Modified, group has now members: %s' % (group_from_ldap.users,))

@@ -1,3 +1,9 @@
+ucs-school-umc-groups (6.0.4-3) unstable; urgency=low
+
+  * Bug #44350: fix removing to many users (patch by fbest)
+
+ -- Daniel Troeder <troeder@univention.de>  Sun, 21 May 2017 13:36:12 +0200
+
 ucs-school-umc-groups (6.0.4-2) unstable; urgency=low
 
   * Bug #44350: fix UMC not removing users from workgroup
