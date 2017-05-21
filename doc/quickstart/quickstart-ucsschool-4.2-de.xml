@@ -482,7 +482,7 @@ feedback@univention.de
   </biblioentry>
   <biblioentry id="ucs-vm-images">
     <publishername>Univention GmbH</publishername>
-    <pubdate>2015</pubdate>
+    <pubdate>2017</pubdate>
     <title>Inbetriebnahme und Konfiguration des Demosystems in VMware oder VirtualBox</title>
     <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=Inbetriebnahme_und_Konfiguration_des_Demosystems_in_VMware_oder_VirtualBox"/></releaseinfo>
   </biblioentry>
