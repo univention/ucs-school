@@ -42,10 +42,9 @@
   <section id="school:windows:samba">
 	<title>Anmeldedienste mit Samba</title>
 	  <para>
-		<emphasis>Samba 4</emphasis> ist die nächste Generation der Samba-Suite. Die wichtigste
-		Neuerung von Samba 4 besteht in der Unterstützung von Domänen-, Verzeichnis- und
-		Authentifizierungsdiensten, die kompatibel zu Microsoft Active Directory sind. Mit Samba 4 lassen
-		sich deswegen Active Directory-kompatible Windows-Domänen aufbauen. Diese ermöglichen auch die
+		&ucsUAS; integriert <emphasis>Samba 4</emphasis>. Die Unterstützung von Domänen-, Verzeichnis- und
+		Authentifizierungsdiensten, die kompatibel zu Microsoft Active Directory sind, erlauben den Aufbau
+		von Active Directory-kompatiblen Windows-Domänen. Diese ermöglichen u.a. die
 		Verwendung der von Microsoft bereit gestellten Werkzeuge beispielsweise für die Verwaltung von
 		Benutzern oder Gruppenrichtlinien (GPOs). Univention
 		hat die benötigten Komponenten für die Bereitstellung von Active Directory kompatiblen
