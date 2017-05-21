@@ -479,7 +479,7 @@ class Instance(SchoolBaseModule):
 			progress.component(_('Resetting room settings'))
 			try:
 				user_client = Client(hostname=None, username=self.username, password=self.password)
-			except (HTTPException, SocketError) as exc:
+			except (ConnectionError, HTTPError) as exc:
 				raise UMC_Error(_('Could not connect to local UMC server.'))
 
 			room = request.options['room']
@@ -526,7 +526,7 @@ class Instance(SchoolBaseModule):
 							MODULE.info('Exam user has been removed: %s' % iuser.dn)
 						else:
 							MODULE.process('Cannot remove the user account %s as it is registered for the running exam "%s", as well' % (iuser.dn, parallelUsers[iuser.username]))
-					except (HTTPException, SocketError) as e:
+					except (ConnectionError, HTTPError) as e:
 						MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
 
 					# indicate the user has been processed
