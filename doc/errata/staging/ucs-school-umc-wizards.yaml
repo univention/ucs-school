@@ -6,4 +6,5 @@ src: ucs-school-umc-wizards
 fix: 
 desc: |
  * Don't display an error message after removing users from a school (Bug #44588)
-bug: [44588]
+ * A special UCR variable has been added that may enable the use of LDAP admin connections in the UMC user/class/computer/school wizards. This UCR variable should only be used, if familiar with the related security implications! (Bug #44641).
+bug: [44588,44641]

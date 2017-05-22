@@ -43,7 +43,7 @@ from univention.management.console.modules.sanitizers import StringSanitizer, Di
 from univention.admin.uexceptions import base as uldapBaseException, noObject
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE, SchoolSanitizer
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE, ADMIN_WRITE, SchoolSanitizer
 from ucsschool.lib.models import SchoolClass, School, User, Student, Teacher, Staff, TeachersAndStaff, SchoolComputer, WindowsComputer, MacComputer, IPComputer, UCCComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
@@ -190,8 +190,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return ret
 
 	@response
-	@LDAP_Connection(USER_READ, USER_WRITE)
-	def _create_obj(self, request, ldap_user_read=None, ldap_user_write=None):
+	@LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
+	def _create_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
+		# Bug #44641: workaround with security implications!
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			ldap_user_write = ldap_admin_write
+
 		ret = []
 		for obj in iter_objects_in_request(request, ldap_user_write):
 			MODULE.process('Creating %r' % (obj,))
@@ -214,8 +218,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 		'$dn$': DNSanitizer(required=True),
 	})
 	@response
-	@LDAP_Connection(USER_READ, USER_WRITE)
-	def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None):
+	@LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
+	def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
+		# Bug #44641: workaround with security implications!
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			ldap_user_write = ldap_admin_write
+
 		ret = []
 		for obj in iter_objects_in_request(request, ldap_user_write, True):
 			MODULE.process('Modifying %r' % (obj))
@@ -235,8 +243,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 		'$dn$': DNSanitizer(required=True),
 	})
 	@response
-	@LDAP_Connection(USER_READ, USER_WRITE)
-	def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None):
+	@LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
+	def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
+		# Bug #44641: workaround with security implications!
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			ldap_user_write = ldap_admin_write
+
 		ret = []
 		for obj in iter_objects_in_request(request, ldap_user_write, True):
 			obj.name = obj.get_name_from_dn(obj.old_dn)
@@ -281,8 +293,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 		'$dn$': DNSanitizer(required=True),
 	})
 	@response
-	@LDAP_Connection(USER_READ, USER_WRITE)
-	def delete_user(self, request, ldap_user_read=None, ldap_user_write=None):
+	@LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
+	def delete_user(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
+		# Bug #44641: workaround with security implications!
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			ldap_user_write = ldap_admin_write
+
 		ret = []
 		for i, obj in enumerate(iter_objects_in_request(request, ldap_user_write, True)):
 			school = request.options[i]['object']['remove_from_school']

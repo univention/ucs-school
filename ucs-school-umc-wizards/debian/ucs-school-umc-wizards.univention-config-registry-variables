@@ -3,3 +3,9 @@ Description[de]=Kommaseparierte Liste von UCS@school-Benutzerrollen, die im UCS@
 Description[en]=Comma-separated list of UCS@school user roles, that shall be disabled in UCS@school user wizard (Default: <unset>; possible values: student,teacher,staff,teachersAndStaff)
 Type=str
 Categories=management-umc
+
+[ucsschool/wizards/schoolwizards/workaround/admin-connection]
+Description[de]=Diese UCR-Variable aktiviert projektspezifische Anpassungen. Sie sollte nur auf "yes" gesetzt werden, wenn die Sicherheitsimplikationen vollständig bekannt sind! (Standard: no)
+Description[en]=This UCR variable activates project specific modifications. The variable should be set to "yes" ONLY, if familiar with all related security implications (default: no).
+Type=bool
+Categories=management-umc
