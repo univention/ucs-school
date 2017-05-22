@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-2) unstable; urgency=medium
+
+  * Bug #44546: only catch ValueError
+
+ -- Florian Best <best@univention.de>  Mon, 22 May 2017 14:24:07 +0200
+
 ucs-school-lib (10.0.2-1) unstable; urgency=medium
 
   * Bug #44546: fix an error during removing users from school
