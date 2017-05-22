@@ -3,7 +3,7 @@ release: "4.1"
 version: [4]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-csv-import
-fix: 3.0.5-3.56.201705051305
+fix: 3.0.6-1.57.201705221128
 desc: |
  * The term "UCS@school" has been removed from some texts for branding purposes (Bug #44491).
  * A special UCR variable has been added that may enable the use of LDAP admin connections during the UMC CSV import. This UCR variable should only be used, if familiar with the related security implications! (Bug #44641).
