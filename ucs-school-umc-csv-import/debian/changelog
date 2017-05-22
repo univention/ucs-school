@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (4.0.9-1) unstable; urgency=low
+
+  * Bug #44641: add workaround for using admin connections for UMC
+    CSV import if explicitly enabled
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 22 May 2017 09:39:27 +0200
+
 ucs-school-umc-csv-import (4.0.8-1) unstable; urgency=medium
 
   * Bug #44544: remove UCS@school specific terms for branding

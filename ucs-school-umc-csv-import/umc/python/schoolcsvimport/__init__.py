@@ -39,7 +39,7 @@ import locale
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
-from univention.management.console.ldap import get_user_connection
+from univention.management.console.ldap import get_user_connection, get_admin_connection
 from univention.management.console.modules.decorators import file_upload, simple_response, multi_response
 from univention.management.console.modules.mixins import ProgressMixin
 from univention.management.console.modules import UMC_Error
@@ -242,7 +242,10 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		result = {}
 		progress.title = _('Checking users from CSV file')
 		file_info = self._get_info(file_id)
-		lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			lo, po = get_admin_connection()
+		else:
+			lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
 		with open(file_info.filename, 'rb') as f:
 			lines = f.readlines()
 			if file_info.has_header:
@@ -295,7 +298,10 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@simple_response
 	def recheck_users(self, file_id, user_attrs):
 		file_info = self._get_info(file_id)
-		lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			lo, po = get_admin_connection()
+		else:
+			lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
 		users = []
 		for attrs in user_attrs:
 			user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
@@ -305,7 +311,10 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@multi_response(progress=[_('Processing %d user(s)'), _('%(username)s %(action)s')])
 	def import_users(self, iterator, file_id, attrs):
-		lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			lo, po = get_admin_connection()
+		else:
+			lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
 		file_info = None
 		with stopped_notifier():
 			CSVUser.invalidate_all_caches()

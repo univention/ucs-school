@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (9.0.5-1) unstable; urgency=medium
+
+  * Bug #44641: add workaround for using admin connections for UMC
+    user/class/computer/school wizards if explicitly enabled
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sat, 20 May 2017 22:58:20 +0200
+
 ucs-school-umc-wizards (9.0.4-5) unstable; urgency=medium
 
   * Bug #44537: fix removal of users
