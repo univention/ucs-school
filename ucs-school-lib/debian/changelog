@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.33-3) unstable; urgency=medium
+
+  * Bug #41994: catch only ValueError
+
+ -- Florian Best <best@univention.de>  Mon, 22 May 2017 14:25:58 +0200
+
 ucs-school-lib (9.0.33-2) unstable; urgency=medium
 
   * Bug #42408: revert accidental commit

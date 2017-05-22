@@ -401,7 +401,7 @@ class User(UCSSchoolHelperAbstractClass):
 			return False
 		try:
 			(self.schools or [school]).remove(school)
-		except (ValueError, IndexError):
+		except ValueError:
 			logger.warning('User is not part of school %r. Not removing.', school)
 			return False
 		if not self.schools:
