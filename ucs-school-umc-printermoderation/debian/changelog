@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (14.0.3-3) unstable; urgency=medium
+
+  * Bug #44335: fix sort by date
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 23 May 2017 14:30:28 +0200
+
 ucs-school-umc-printermoderation (14.0.3-2) unstable; urgency=medium
 
   * Bug #36789: adapt search form to new UMC design

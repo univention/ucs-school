@@ -109,6 +109,10 @@ define([
 				callback: lang.hitch(this, '_deletePrintJobs')
 			}];
 
+			var _array2Date = function(key) {
+				 return new Date( key[ 0 ], key[ 1 ] - 1, key[ 2 ], key[ 3 ], key[ 4 ] );
+			};
+
 			// define the grid columns
 			var columns = [{
 				name: 'user',
@@ -127,7 +131,7 @@ define([
 				label: _( 'Date' ),
 				width: '20%',
 				formatter: lang.hitch( this, function(key) {
-					return locale.format( new Date( key[ 0 ], key[ 1 ] - 1, key[ 2 ], key[ 3 ], key[ 4 ] ), { formatLength: 'short' } );
+					return locale.format( _array2Date(key), { formatLength: 'short' } );
 				})
 			}];
 
@@ -136,7 +140,8 @@ define([
 				defaultAction: 'view',
 				columns: columns,
 				moduleStore: this.moduleStore,
-				sortIndex: -4
+				sortIndex: -4,
+				sortRepresentations: {date: _array2Date}
 			});
 
 			this._searchPage.addChild(this._grid);
