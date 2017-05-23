@@ -45,7 +45,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 from univention.management.console.modules import UMC_Error
 from univention.config_registry import ConfigRegistry
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection
+from ucsschool.lib.schoolldap import SchoolBaseModule
 from ucsschool.lib.models.utils import create_passwd, add_module_logger_to_schoollib, stopped_notifier
 
 from univention.management.console.modules.schoolcsvimport.util import CSVUser, CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff, UCS_License_detection, LicenseInsufficient
