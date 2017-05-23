@@ -115,19 +115,9 @@ define([
 				actions: this.getGridActions(),
 				columns: this.getGridColumns(),
 				moduleStore: this.getGridStore(),
-				sortIndex: null,
+				sortIndex: 1,
 				standbyDuring: lang.hitch(this, 'standbyDuring')
 			});
-			// when using All schools, sort by school, name
-			grid._grid.sortFields = array.map(this.sortFields, function(field) {
-				return {
-					attribute: field,
-					descending: false
-				};
-			});
-
-			// Add horizontal scrollbar
-			//query('.dojoxGridScrollbox', grid.domNode).style('overflowX', 'auto');
 			return grid;
 		},
 
