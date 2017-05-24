@@ -38,8 +38,6 @@ import time
 import traceback
 import subprocess
 import datetime
-from httplib import HTTPException
-from socket import error as SocketError
 
 import ldap
 import notifier
