@@ -75,6 +75,7 @@ class Instance(SchoolBaseModule):
 		self._udm_modules = dict()
 		self._examGroup = None
 		self._examUserContainerDN = None
+		self._pre_create_hooks = None
 
 	def examGroup(self, ldap_admin_write, ldap_position, school):
 		'''fetch the examGroup object, create it if missing'''
@@ -303,23 +304,7 @@ class Instance(SchoolBaseModule):
 				al.append(('description', [exam_user_description]))
 
 			# call hook scripts
-			fd = filename = None
-			try:
-				fd, filename = tempfile.mkstemp()
-				os.write(fd, cPickle.dumps(al))
-				os.close(fd)
-				fd = None
-				# arguments are the same as in the post hook in ucs-school-umc-exam, plus the pickled AL
-				cmd = ['/bin/run-parts', CREATE_USER_PRE_HOOK_DIR, '--arg', exam_user_uid, '--arg', exam_user_dn, '--arg', homedir, '--arg', filename]
-				if 0 != subprocess.call(cmd):
-					raise ValueError('failed to run pre-create hook scripts for user %r' % (exam_user_uid))
-				with open(filename, 'rb') as fp:
-					al = cPickle.load(fp)
-			finally:
-				if fd is not None:
-					os.close(fd)
-				if filename is not None:
-					os.remove(filename)
+			al = self.run_pre_create_hooks(al, exam_user_uid, exam_user_dn, homedir)
 
 			# And create the exam_user
 			ldap_admin_write.add(exam_user_dn, al)
@@ -465,3 +450,40 @@ class Instance(SchoolBaseModule):
 		examGroup.fast_member_remove(room.hosts, host_uid_list)  # removes any uniqueMember and member listed if still present
 
 		self.finished(request.id, {}, success=True)
+
+	@classmethod
+	def run_pre_create_hooks(cls, al, exam_user_uid, exam_user_dn, exam_user_homedir):
+		if cls._pre_create_hooks is None:
+			cls._pre_create_hooks = os.listdir(CREATE_USER_PRE_HOOK_DIR)
+
+		if not cls._pre_create_hooks:
+			return al
+
+		fd = filename = None
+		try:
+			fd, filename = tempfile.mkstemp()
+			os.write(fd, cPickle.dumps(al))
+			os.close(fd)
+			fd = None
+			# arguments are the same as in the post hook in ucs-school-umc-exam, plus the pickled AL
+			cmd = [
+				'/bin/run-parts',
+				CREATE_USER_PRE_HOOK_DIR,
+				'--arg',
+				exam_user_uid,
+				'--arg',
+				exam_user_dn,
+				'--arg',
+				exam_user_homedir,
+				'--arg',
+				filename
+			]
+			if 0 != subprocess.call(cmd):
+				raise ValueError('failed to run pre-create hook scripts for user %r' % (exam_user_uid))
+			with open(filename, 'rb') as fp:
+				return cPickle.load(fp)
+		finally:
+			if fd is not None:
+				os.close(fd)
+			if filename is not None:
+				os.remove(filename)

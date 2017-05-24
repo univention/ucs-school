@@ -1,3 +1,10 @@
+ucs-school-umc-exam (7.0.4-6) unstable; urgency=low
+
+  * Bug #44225: dump AL and start run-parts for pre create hooks only if
+    there are any hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 24 May 2017 09:33:50 +0200
+
 ucs-school-umc-exam (7.0.4-5) unstable; urgency=low
 
   * Bug #44109: fix exception handling
