@@ -51,11 +51,6 @@ define([
 		createObjectWizard: UserWizard,
 		sortFields: ['display_name'],
 
-		postCreate: function() {
-			this.inherited(arguments);
-			this._grid.sortRepresentations.school_classes = lang.hitch(this, 'school_classesFormatter');
-		},
-
 		getGridColumnsWithSchool: function() {
 			return this.getGridColumns();
 		},
@@ -77,7 +72,8 @@ define([
 				name: 'school_classes',
 				label: _('Class'),
 				description: _('Class of the %s.', this.objectNameSingular),
-				formatter: lang.hitch(this, 'school_classesFormatter')
+				formatter: lang.hitch(this, 'school_classesFormatter'),
+				sortFormatter: lang.hitch(this, 'school_classesFormatter')
 //			}, {
 //				name: 'mailPrimaryAddress',
 //				label: _('E-Mail address'),
