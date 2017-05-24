@@ -2,9 +2,8 @@ product: ucsschool
 release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-umc-printermoderation 
+src: ucs-school-umc-printermoderation
 fix: 14.0.3-3A~4.2.0.201705231432
 desc: |
- * In previous versions the printing queue wasn't reliable sorted by date.
-   (Bug #44335) 
+ * It is now possible to sort the printing queue by date (Bug #44335).
 bug: [44335]

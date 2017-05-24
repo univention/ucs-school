@@ -7,6 +7,6 @@ fix: 9.0.5-2A~4.2.0.201705231352
 desc: |
  * Don't display an error message after removing users from a school (Bug #44537)
  * A special UCR variable has been added that may enable the use of LDAP admin connections in the UMC user/class/computer/school wizards. This UCR variable should only be used, if familiar with the related security implications! (Bug #44642).
- * In previous versions the Users (Schools) module didn't reliable sort by class. (Bug #44663)
- * Some grids for the school administration were unsorted after loading data. (Bug #42756)
+ * It is possible to sort users by class in the Users (Schools) module (Bug #42756).
+ * The grids for the school administration modules are now sorted by default (Bug #44663).
 bug: [44537,44642,42756,44663]
