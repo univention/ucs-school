@@ -132,7 +132,8 @@ define([
 				width: '20%',
 				formatter: lang.hitch( this, function(key) {
 					return locale.format( _array2Date(key), { formatLength: 'short' } );
-				})
+				}),
+				sortFormatter: _array2Date
 			}];
 
 			this._grid = new Grid({
@@ -140,8 +141,7 @@ define([
 				defaultAction: 'view',
 				columns: columns,
 				moduleStore: this.moduleStore,
-				sortIndex: -4,
-				sortRepresentations: {date: _array2Date}
+				sortIndex: -4
 			});
 
 			this._searchPage.addChild(this._grid);
