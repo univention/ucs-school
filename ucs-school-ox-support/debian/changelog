@@ -1,0 +1,5 @@
+ucs-school-ox-support (1.0.0-1) unstable; urgency=low
+
+  * Bug #44225: add exam user pre-create hook
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 May 2017 13:24:21 +0200

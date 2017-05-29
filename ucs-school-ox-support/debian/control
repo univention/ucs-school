@@ -1,0 +1,21 @@
+Source: ucs-school-ox-support
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>> 3.0.0), univention-config-dev, ucslint
+Standards-Version: 3.8.2
+
+Package: ucs-school-ox-support
+Architecture: all
+Depends: shell-univention-lib,
+ python-univention,
+ python-univention-lib,
+Description: Package for running Open-Xchange in a UCS@school domain
+ This package provides scripts for running Open-Xchange in a
+ UCS@school domain
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
