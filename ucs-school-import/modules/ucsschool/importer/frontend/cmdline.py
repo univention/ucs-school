@@ -5,7 +5,7 @@
 """
 Base class for UCS@school import tool cmdline frontends.
 """
-# Copyright 2016 Univention GmbH
+# Copyright 2016-2017 Univention GmbH
 #
 # http://www.univention.de/
 #
