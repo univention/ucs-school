@@ -1,4 +1,4 @@
-ucs-school-ox-support (1.0.0-1) unstable; urgency=low
+ucs-school-ox-support (0.0.1-1) unstable; urgency=low
 
   * Bug #44225: add exam user pre-create hook
 
