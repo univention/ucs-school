@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.33-4) unstable; urgency=low
+
+  * Bug #44408: move PyHook code to ucsschool.lib 
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 May 2017 15:11:39 +0200
+
 ucs-school-lib (9.0.33-3) unstable; urgency=medium
 
   * Bug #41994: catch only ValueError

@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-43) unstable; urgency=low
+
+  * Bug #44408: move PyHook code to ucsschool.lib
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 May 2017 15:06:30 +0200
+
 ucs-school-import (14.0.16-42) unstable; urgency=low
 
   * Bug #41882: lower memory footprint of import:

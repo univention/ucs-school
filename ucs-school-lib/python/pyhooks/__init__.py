@@ -2,9 +2,9 @@
 #
 # Univention UCS@school
 """
-Base class for all Python based hooks.
+Python based hooks.
 """
-# Copyright 2016 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,19 +31,6 @@ Base class for all Python based hooks.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.models.utils import logger
 
-#
-# Do not use this class directly, use one of its subclasses like UserPyHook.
-#
-
-
-class PyHook(object):
-
-	# If multiple hook classes are found, hook functions with higher
-	# priorities run before those with lower priorities.
-	priority = {}
-
-	def __init__(self, lo):
-		self.lo = lo          # LDAP object
-		self.logger = logger  # Python logging instance
+from ucsschool.lib.pyhooks.pyhook import PyHook
+from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader

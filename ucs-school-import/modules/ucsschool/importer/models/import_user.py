@@ -4,7 +4,7 @@
 """
 Representation of a user read from a file.
 """
-# Copyright 2016 Univention GmbH
+# Copyright 2016-2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -47,7 +47,7 @@ from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.pyhooks_loader import PyHooksLoader
+from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 
@@ -131,7 +131,8 @@ class ImportUser(User):
 		:return: int: return code of lib hooks
 		"""
 		if self._pyhook_cache is None:
-			self.setup_pyhooks(self._lo)
+			pyloader = PyHooksLoader(PLUGINS_BASE_PATH, UserPyHook, self.logger)
+			self.__class__._pyhook_cache = pyloader.get_hook_objects(self._lo)
 		if hook_time == "post" and self.action in ["A", "M"]:
 			# update self from LDAP
 			user = self.get_by_import_id(self._lo, self.source_uid, self.record_uid)
@@ -735,32 +736,6 @@ class ImportUser(User):
 			# school_classes was set from input data
 			self.make_classes()
 		return super(ImportUser, self).get_school_class_objs()
-
-	def setup_pyhooks(self, lo):
-		"""
-		Initialize PyHooks and sort by priority.
-
-		:param lo: LDAP connection object for hooks
-		:return: list: loaded PyHook objects
-		"""
-		pyhooks = [pyhook_cls(lo) for pyhook_cls in PyHooksLoader(PLUGINS_BASE_PATH, UserPyHook).get_plugins()]
-
-		# fill cache: find all enabled hook methods
-		pyhook_cache = defaultdict(list)
-		for pyhook in pyhooks:
-			if not hasattr(pyhook, "priority") or not isinstance(pyhook.priority, dict):
-				continue
-			for meth_name, prio in pyhook.priority.items():
-				if hasattr(pyhook, meth_name) and isinstance(pyhook.priority.get(meth_name), int):
-					pyhook_cache[meth_name].append((getattr(pyhook, meth_name), pyhook.priority[meth_name]))
-		if self._pyhook_cache is None:
-			self.__class__._pyhook_cache = dict()
-		# sort by priority
-		for meth_name, meth_list in pyhook_cache.items():
-			self._pyhook_cache[meth_name] = [x[0] for x in sorted(meth_list, key=lambda x: x[1], reverse=True)]
-
-		self.logger.info("Registered hooks: %r.", dict([(meth_name, ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths]) for meth_name, meths in self._pyhook_cache.items()]))
-		return pyhooks
 
 	def _prevent_mapped_attributes_in_udm_properties(self):
 		"""

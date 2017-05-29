@@ -4,7 +4,7 @@
 """
 Base class for all Python based User hooks.
 """
-# Copyright 2016 Univention GmbH
+# Copyright 2016-2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,16 +31,16 @@ Base class for all Python based User hooks.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.importer.utils.pyhook import PyHook
+from ucsschool.importer.utils.import_pyhook import ImportPyHook
 
 #
 # An example is provided in /usr/share/doc/ucs-school-import/hook_example.py
 #
 
 
-class UserPyHook(PyHook):
+class UserPyHook(ImportPyHook):
 	#
-	# The base class' init() provides the following attributes:
+	# The base class' __init__() provides the following attributes:
 	#
 	# self.lo          # LDAP object
 	# self.logger      # Python logging instance
