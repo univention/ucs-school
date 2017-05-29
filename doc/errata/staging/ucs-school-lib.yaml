@@ -6,6 +6,6 @@ src: ucs-school-lib
 fix: 10.0.2-3A~4.2.0.201705291401
 desc: |
  * An error during removing users from school has been fixed (Bug #44546).
- * Code for createing hooks was moved from the import package to the lib
+ * Code for creating hooks was moved from the import package to the lib
    package (Bug #44225)
 bug: [44546, 44225]
