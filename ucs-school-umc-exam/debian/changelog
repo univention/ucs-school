@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.11-4) unstable; urgency=low
+
+  * Bug #44225: run pre-create hooks through ExamUserPyHook interface
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 May 2017 15:31:11 +0200
+
 ucs-school-umc-exam (6.0.11-3) unstable; urgency=medium
 
   * Bug #44492: remove UCS@school specific terms for branding

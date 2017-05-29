@@ -39,10 +39,8 @@ import os.path
 import traceback
 import re
 import os
-import cPickle
-import subprocess
-import tempfile
 from ldap.filter import filter_format
+from collections import defaultdict
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -51,6 +49,9 @@ from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError
+from ucsschool.lib.models.utils import logger as lib_logger, add_module_logger_to_schoollib
+from ucsschool.lib.pyhooks import PyHooksLoader
+from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 
 import univention.admin.uexceptions
 import univention.admin.modules
@@ -59,10 +60,11 @@ from univention.lib.i18n import Translation
 _ = Translation('ucs-school-umc-exam-master').translate
 univention.admin.modules.update()
 
-CREATE_USER_PRE_HOOK_DIR = '/usr/share/ucs-school-exam-master/hooks/create_exam_user_pre.d/'
+CREATE_USER_PRE_HOOK_DIR = '/usr/share/ucs-school-exam-master/pyhooks/create_exam_user_pre/'
 
 
 class Instance(SchoolBaseModule):
+	_pre_create_hooks = None
 
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
@@ -308,23 +310,7 @@ class Instance(SchoolBaseModule):
 				al.append(('description', [exam_user_description]))
 
 			# call hook scripts
-			fd = filename = None
-			try:
-				fd, filename = tempfile.mkstemp()
-				os.write(fd, cPickle.dumps(al))
-				os.close(fd)
-				fd = None
-				# arguments are the same as in the post hook in ucs-school-umc-exam, plus the pickled AL
-				cmd = ['/bin/run-parts', CREATE_USER_PRE_HOOK_DIR, '--arg', exam_user_uid, '--arg', exam_user_dn, '--arg', homedir, '--arg', filename]
-				if 0 != subprocess.call(cmd):
-					raise ValueError('failed to run pre-create hook scripts for user %r' % (exam_user_uid))
-				with open(filename, 'rb') as fp:
-					al = cPickle.load(fp)
-			finally:
-				if fd is not None:
-					os.close(fd)
-				if filename is not None:
-					os.remove(filename)
+			al = self.run_pre_create_hooks(exam_user_dn, al, ldap_admin_write)
 
 			# And create the exam_user
 			ldap_admin_write.add(exam_user_dn, al)
@@ -449,3 +435,15 @@ class Instance(SchoolBaseModule):
 		examGroup.fast_member_remove(room.hosts, host_uid_list)  # removes any uniqueMember and member listed if still present
 
 		self.finished(request.id, {}, success=True)
+
+	@classmethod
+	def run_pre_create_hooks(cls, exam_user_dn, al, ldap_admin_write):
+		if cls._pre_create_hooks is None:
+			add_module_logger_to_schoollib()
+			pyloader = PyHooksLoader(CREATE_USER_PRE_HOOK_DIR, ExamUserPyHook, lib_logger)
+			cls._pre_create_hooks = pyloader.get_hook_objects(ldap_admin_write, lib_logger)
+
+		for hook in cls._pre_create_hooks['pre_create']:
+			al = hook(exam_user_dn, al)
+
+		return al

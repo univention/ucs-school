@@ -1,2 +1,3 @@
 hooks/ou_create_post.d/60schoolexam-master	usr/share/ucs-school-import/hooks/ou_create_post.d
 share/* usr/share/ucs-school-exam-master/
+modules/ucsschool usr/share/pyshared/
