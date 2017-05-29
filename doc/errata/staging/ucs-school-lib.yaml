@@ -3,7 +3,9 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-lib
-fix: 9.0.33-3.279.201705221427
+fix: 9.0.33-4.280.201705291537
 desc: |
  * An error during removing users from school has been fixed (Bug #41994).
-bug: [41994]
+ * Code for creating hooks was moved from the import package to the lib
+   package (Bug #44408)
+bug: [41994, 44408]
