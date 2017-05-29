@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (2.0.0-7) unstable; urgency=medium
+
+  * Bug #44698: update missing French translations
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 29 May 2017 09:10:16 +0200
+
 ucs-school-l10n-fr (2.0.0-6) unstable; urgency=medium
 
   * Bug #43731: update catalogs to current SVN state

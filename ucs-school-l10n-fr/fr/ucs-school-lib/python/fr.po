@@ -1,24 +1,25 @@
 # Nicolas Ternisien <nicolas@bureau-cornavin.com>, 2016.
 # Éric Bischoff <ebischoff@bureau-cornavin.com>, 2016.
+# Nicolas Ternisien <nicolas@workshop-chapina.com>, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-lib\n"
 "Report-Msgid-Bugs-To: forge.univention.org\n"
 "POT-Creation-Date: 2017-04-14 01:22+0200\n"
-"PO-Revision-Date: 2016-07-06 20:25+0200\n"
-"Last-Translator: Nicolas Ternisien <nicolas@bureau-cornavin.com>\n"
-"Language-Team: French <fr@bureau-cornavin.com>\n"
-"Language: de\n"
+"PO-Revision-Date: 2017-05-23 22:26+0100\n"
+"Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
+"Language-Team: French <fr@workshop-chapina.com>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: python/models/attributes.py:78
 #, python-format
 msgid "\"%(label)s\" needs to be a %(type)s"
-msgstr ""
+msgstr "« %(label)s » doit être de type %(type)s"
 
 #: python/models/attributes.py:83
 #, python-format
@@ -95,7 +96,7 @@ msgstr "Désactivé"
 
 #: python/models/school.py:56
 msgid "Display name"
-msgstr "Nom d'affichage"
+msgstr "Nom à l'affichage"
 
 #: python/models/dhcp.py:45
 msgid "Domain"
@@ -363,8 +364,3 @@ msgstr "Système Windows"
 msgid "Zone"
 msgstr "Zone"
 
-#~ msgid "Needs to be a dict!"
-#~ msgstr "Doit être un « dict » !"
-
-#~ msgid "Needs to be a list of values!"
-#~ msgstr "Doit être une liste de valeurs !"
