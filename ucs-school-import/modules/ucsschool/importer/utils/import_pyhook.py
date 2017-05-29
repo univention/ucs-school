@@ -2,9 +2,9 @@
 #
 # Univention UCS@school
 """
-Loader for Python based hooks.
+Base class for all Python based import hooks.
 """
-# Copyright 2016-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,41 +31,15 @@ Loader for Python based hooks.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import imp
-import inspect
-from os import listdir
-import os.path
-
+from ucsschool.lib.pyhooks import PyHook
 from ucsschool.importer.utils.logging import get_logger
 
 
-class PyHooksLoader(object):
-
-	def __init__(self, base_dir, base_class):
-		self.base_dir = base_dir
-		self.base_class = base_class
-		self.logger = get_logger()
-		self._plugins = None
-
-	def get_plugins(self):
-		if self._plugins:
-			return self._plugins
-		self.logger.info("Searching for plugins in: %s...", self.base_dir)
-		self._plugins = list()
-		for filename in listdir(self.base_dir):
-			if filename.endswith(".py") and os.path.isfile(os.path.join(self.base_dir, filename)):
-				info = imp.find_module(filename[:-3], [self.base_dir])
-				plugin = self._load_plugin(filename[:-3], info, self.base_class)
-				if plugin:
-					self._plugins.append(plugin)
-		self.logger.info("Found plugins: %r", self._plugins)
-		return self._plugins
-
-	@classmethod
-	def _load_plugin(cls, cls_name, info, super_class):
-		res = imp.load_module(cls_name, *info)
-		for thing in dir(res):
-			candidate = getattr(res, thing)
-			if inspect.isclass(candidate) and issubclass(candidate, super_class) and candidate is not super_class:
-				return candidate
-		return None
+class ImportPyHook(PyHook):
+	def __init__(self, lo, *args, **kwargs):
+		"""
+		:param lo: LDAP object
+		"""
+		super(ImportPyHook, self).__init__(*args, **kwargs)
+		self.lo = lo  # LDAP object
+		self.logger = get_logger()  # Python logging instance

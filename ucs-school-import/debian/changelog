@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-4) unstable; urgency=low
+
+  * Bug #44225: move PyHook code to ucsschool.lib
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 May 2017 13:46:24 +0200
+
 ucs-school-import (15.0.0-3) unstable; urgency=low
 
   * Bug #44313: fixed import_networks after superordinate changes
