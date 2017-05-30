@@ -257,7 +257,6 @@ class Instance(SchoolBaseModule):
 			# Now create the addlist, fixing up attributes as we go
 			al = []
 			foundUniventionObjectFlag = False
-			homedir = ''
 			for (key, value) in user_orig.oldattr.items():
 				# ignore blacklisted attributes
 				if key in blacklisted_attributes:
@@ -283,7 +282,6 @@ class Instance(SchoolBaseModule):
 						raise UMC_Error(message)
 					exam_user_unixhome = '%s.%s' % (exam_user_uid, datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
 					value = [os.path.join(_tmp_split_path[0], 'exam-homes', exam_user_unixhome)]
-					homedir = value[0]
 				elif key == 'sambaHomePath':
 					user_orig_sambaHomePath = value[0]
 					value = [user_orig_sambaHomePath.replace(user_orig['username'], exam_user_uid)]
