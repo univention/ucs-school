@@ -340,22 +340,23 @@ class Instance(SchoolBaseModule):
 		for user_dn in request.options['users']:
 			try:
 				ori_student = Student.from_dn(user_dn, None, ldap_admin_write)
-				exam_student = ExamStudent.from_student_dn(ldap_admin_write, ori_student.school, ori_student.dn)
-			except univention.admin.uexceptions.noObject:
-				raise UMC_Error(_('Student %r not found.') % (user_dn,))
+				exam_user_uid = ''.join((self._examUserPrefix, ori_student.name))
+				exam_student = ExamStudent.get_only_udm_obj(ldap_admin_write, filter_format('uid=%s', (exam_user_uid,)))
+			except univention.admin.uexceptions.noObject as exc:
+				raise UMC_Error(_('Student %(user_dn)r or exam user not found: %(exc)r.') % {'user_dn': user_dn, 'exc': exc})
 			except univention.admin.uexceptions.ldapError:
 				raise
 
 			udm_ori_student = ori_student.get_udm_object(ldap_admin_write)
 			if 'posix' in udm_ori_student.options:  # why only if posix?
 				groups[udm_ori_student['primaryGroup']].setdefault('dns', set()).add(exam_student.dn)
-				groups[udm_ori_student['primaryGroup']].setdefault('uids', set()).add(exam_student.name)
+				groups[udm_ori_student['primaryGroup']].setdefault('uids', set()).add(exam_student['username'])
 				for grp in udm_ori_student.info.get('groups', []):
 					groups[grp].setdefault('dns', set()).add(exam_student.dn)
-					groups[grp].setdefault('uids', set()).add(exam_student.name)
+					groups[grp].setdefault('uids', set()).add(exam_student['username'])
 
 			groups[exam_group.dn].setdefault('dns', set()).add(exam_student.dn)
-			groups[exam_group.dn].setdefault('uids', set()).add(exam_student.name)
+			groups[exam_group.dn].setdefault('uids', set()).add(exam_student['username'])
 
 			if 'groups/group' not in self._udm_modules:
 				self._udm_modules['groups/group'] = univention.admin.modules.get('groups/group')

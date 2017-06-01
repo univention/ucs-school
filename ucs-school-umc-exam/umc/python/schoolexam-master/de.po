@@ -78,3 +78,8 @@ msgstr "Schüler %r nicht gefunden."
 #, python-format
 msgid "The exam account does already exist for: %s"
 msgstr "Der Klassenarbeitsbenutzername %s existiert schon"
+
+#: umc/python/schoolexam-master/__init__.py:346
+#, python-format
+msgid "Student %(user_dn)r or exam user not found: %(exc)r."
+msgstr "Schüler %(user_dn)r oder Klassenarbeitsbenutzer nicht gefunden: %(exc)r."
