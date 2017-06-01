@@ -929,7 +929,7 @@ define([
 				}
 
 				// start finishing the exam
-				var info = this.get('roomInfo') || {};
+				var info = lang.clone(this.get('roomInfo') || {});
 				this.umcpCommand('schoolexam/exam/finish', {
 					exam: info.exam,
 					room: info.room
@@ -959,9 +959,6 @@ define([
 						delete info.examEndTime;
 						this.set('roomInfo', info);
 
-						// reset room settings
-						this._settingsDialog.reset();
-						this._settingsDialog.save();
 					}
 				}));
 			}));

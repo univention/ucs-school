@@ -82,6 +82,10 @@ FN_SCREENSHOT_DENIED = _('/usr/share/ucs-school-umc-computerroom/screenshot_deni
 FN_SCREENSHOT_NOTREADY = _('/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg')
 
 
+def compare_dn(a, b):
+	return a and b and a.lower() == b.lower()
+
+
 def _getRoomFile(roomDN):
 	if roomDN.startswith('cn='):
 		dnParts = explodeDn(roomDN, True)
@@ -337,7 +341,7 @@ class Instance(SchoolBaseModule):
 		# update the room info file
 		if success:
 			_updateRoomInfo(roomDN, user=self.user_dn)
-			if _getRoomOwner(roomDN) != self.user_dn:
+			if not compare_dn(_getRoomOwner(roomDN), self.user_dn):
 				success = False
 				message = 'ALREADY_LOCKED'
 
@@ -370,7 +374,7 @@ class Instance(SchoolBaseModule):
 			room_info = _readRoomInfo(room.dn)
 			user_dn = room_info.get('user')
 
-			locked = user_dn and user_dn != self.user_dn and ('pid' in room_info or 'exam' in room_info)
+			locked = user_dn and not compare_dn(user_dn, self.user_dn) and ('pid' in room_info or 'exam' in room_info)
 			if locked:
 				try:
 					# open the corresponding UDM object to get a displayable user name
@@ -418,7 +422,7 @@ class Instance(SchoolBaseModule):
 
 		# make sure that we run the current room session
 		userDN = _getRoomOwner(self._italc.roomDN)
-		if userDN and userDN != self.user_dn:
+		if userDN and not compare_dn(userDN, self.user_dn):
 			raise UMC_Error(_('A different user is already running a computer room session.'))
 
 	@LDAP_Connection()
@@ -617,6 +621,7 @@ class Instance(SchoolBaseModule):
 	@simple_response
 	def finish_exam(self):
 		"""Finish the exam in the current room"""
+		self._settings_set(internetRule='none', customRule='', shareMode='all', printMode='default')
 		_updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, examEndTime=None)
 
 	@sanitize(
@@ -645,6 +650,9 @@ class Instance(SchoolBaseModule):
 	@check_room_access
 	@simple_response
 	def settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
+		return self._settings_set(printMode, internetRule, shareMode, period, customRule)
+
+	def _settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
 		"""Defines settings for a room"""
 
 		if not self._italc.school or not self._italc.room:
