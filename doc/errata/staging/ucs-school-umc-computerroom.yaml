@@ -3,8 +3,9 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-computerroom
-fix: 9.0.7-1A~4.2.0.201706011257
+fix: 9.0.8-1A~4.2.0.201706011309
 desc: |
  * Some UCR variables have not been cleaned up after the exam mode has been finished.
    This problem has now been fixed (Bug #44109).
-bug: [44109]
+ * A syntax error during resetting of UCR variables has been fixed (Bug #37840).
+bug: [44109, 37840]
