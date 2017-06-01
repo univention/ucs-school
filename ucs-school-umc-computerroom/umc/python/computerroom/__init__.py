@@ -621,7 +621,7 @@ class Instance(SchoolBaseModule):
 	@simple_response
 	def finish_exam(self):
 		"""Finish the exam in the current room"""
-		self._settings_set(internetRule='none', customRule='', shareMode='all', printMode='default')
+		self._settings_set(printMode='default', internetRule='none', shareMode='all', customRule='')
 		_updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, examEndTime=None)
 
 	@sanitize(
@@ -786,7 +786,7 @@ class Instance(SchoolBaseModule):
 			# remove empty items ('""') in list
 			vset[varname] = ' '.join([x for x in vset[varname].split(' ') if x != '""'])
 		if varname in vunset:
-			del vunset[varname]
+			vunset.remove(varname)
 
 		# set values
 		ucr_vars = sorted('%s=%s' % x for x in vset.items())

@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (9.0.8-1) unstable; urgency=medium
+
+  * Bug #37840: fix syntax error
+
+ -- Florian Best <best@univention.de>  Thu, 01 Jun 2017 13:08:38 +0200
+
 ucs-school-umc-computerroom (9.0.7-1) unstable; urgency=medium
 
   * Bug #44109: fix unsetting of computerroom settings after exam mode
