@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-10) unstable; urgency=medium
+
+  * Bug #44109: revert
+
+ -- Florian Best <best@univention.de>  Thu, 01 Jun 2017 12:51:11 +0200
+
 ucs-school-umc-exam (7.0.4-9) unstable; urgency=low
 
   * Bug #44225: remove leftover from r78833 + r79712
