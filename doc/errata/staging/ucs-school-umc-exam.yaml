@@ -3,7 +3,7 @@ release: "4.1"
 version: [11]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
-fix: 6.0.11-4.135.201705291538
+fix: 6.0.11-6.137.201706020918
 desc: |
  * It is now possible to run hooks on the DC master before the creation
    of exam users (Bug #44408).
