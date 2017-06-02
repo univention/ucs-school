@@ -441,7 +441,7 @@ class Instance(SchoolBaseModule):
 			pyloader = PyHooksLoader(CREATE_USER_PRE_HOOK_DIR, ExamUserPyHook, lib_logger)
 			cls._pre_create_hooks = pyloader.get_hook_objects(ldap_admin_write, lib_logger)
 
-		for hook in cls._pre_create_hooks['pre_create']:
+		for hook in cls._pre_create_hooks.get('pre_create', []):
 			al = hook(exam_user_dn, al)
 
 		return al
