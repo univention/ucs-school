@@ -140,7 +140,7 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
 		if old_ldap_info != new_ldap_info:
 			utils.fail('%s has changed after renaming the class' % [x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0])
 
-		# the renamed share object should be still accessable
+		# the renamed share object should be still accessible
 		new_dir = share_path(new_name, school)
 		if new_dir:
 			new_dir_permissions = permissions(new_dir)

@@ -12,6 +12,11 @@ from essential.user import User
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+from univention.testing.decorators import SetTimeout
+
+# this test fails every now and then, lets see if more waiting helps
+utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
 
 
 def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None):
