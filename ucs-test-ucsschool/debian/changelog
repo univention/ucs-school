@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-20) unstable; urgency=low
+
+  * Bug #44310: trigger resync of group object to s4 if membership is not synced
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Jun 2017 08:16:17 +0200
+
 ucs-test-ucsschool (4.0.4-19) unstable; urgency=low
 
   * Bug #44310: wait longer in 70_users_module

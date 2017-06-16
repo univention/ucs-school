@@ -365,12 +365,14 @@ class CLI_Import_v2_Tester(object):
 	def test(self):
 		raise NotImplemented()
 
-	def wait_for_drs_replication_of_membership(self, group_dn, member_uid, is_member=True, **kwargs):
+	def wait_for_drs_replication_of_membership(self, group_dn, member_uid, is_member=True, try_resync=True, **kwargs):
 		"""
 		wait_for_drs_replication() of a user to become a member of a group.
 		:param group: str: DN of a group
 		:param member_uid: str: username
 		:param is_member: bool: whether the user should be a member or not
+		:param try_resync: bool: if waiting for drs replication didn't succeed, run
+		"/usr/share/univention-s4-connector/resync_object_from_ucs.py <group_dn>" and wait again
 		:param kwargs: dict: will be passed to wait_for_drs_replication() with a modified 'ldap_filter'
 		:return: None | <ldb result>
 		"""
@@ -392,6 +394,13 @@ class CLI_Import_v2_Tester(object):
 		res = wait_for_drs_replication(**kwargs)
 		if not res:
 			self.log.warn('No result from wait_for_drs_replication().')
+			if try_resync:
+				cmd = ['/usr/share/univention-s4-connector/resync_object_from_ucs.py', group_dn]
+				self.log.info('Running subprocess.call(%r)...', cmd)
+				subprocess.call(cmd)
+				self.log.info('Waiting again. Executing: wait_for_drs_replication_of_membership(group_dn=%r, member_uid=%r, is_member=%r, try_resync=False, **kwargs=%r)...', group_dn, member_uid, is_member, kwargs)
+				# recursion once with try_resync=False
+				res = self.wait_for_drs_replication_of_membership(group_dn=group_dn, member_uid=member_uid, is_member=is_member, try_resync=False, **kwargs)
 		return res
 
 
