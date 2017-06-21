@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-21) unstable; urgency=medium
+
+  * Bug #44370: add test case 219_import_users_umlauts
+
+ -- Florian Best <best@univention.de>  Wed, 21 Jun 2017 19:38:58 +0200
+
 ucs-test-ucsschool (4.0.4-20) unstable; urgency=low
 
   * Bug #44310: trigger resync of group object to s4 if membership is not synced
