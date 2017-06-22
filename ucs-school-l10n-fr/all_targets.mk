@@ -27,8 +27,8 @@ ALL_TARGETS = $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-helpdesk
 	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-exam-master.mo \
 	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/schoolexam-master.json \
 	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolexam-master.mo \
-	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/umc-core.json \
-	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/umc-core.mo \
+	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/ucs-school-common.json \
+	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/ucs-school-common.mo \
 	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-distribution.mo \
 	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/distribution.json \
 	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/distribution.mo \
@@ -77,8 +77,8 @@ $(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolexam.mo: fr/ucs
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-exam-master.mo: fr/ucs-school-umc-exam/umc/python/schoolexam-master/fr.po
 $(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/schoolexam-master.json: fr/ucs-school-umc-exam/umc/js-master/fr.po
 $(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolexam-master.mo: fr/ucs-school-umc-exam/umc/fr.po
-$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/umc-core.json: fr/ucs-school-umc-common/fr.po
-$(DESTDIR)/usr/share/univention-management-console/i18n/fr/umc-core.mo: fr/ucs-school-umc-common/fr.po
+$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/ucs-school-common.json: fr/ucs-school-umc-common/fr.po
+$(DESTDIR)/usr/share/univention-management-console/i18n/fr/ucs-school-common.mo: fr/ucs-school-umc-common/fr.po
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-distribution.mo: fr/ucs-school-umc-distribution/umc/python/distribution/fr.po
 $(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/distribution.json: fr/ucs-school-umc-distribution/umc/js/fr.po
 $(DESTDIR)/usr/share/univention-management-console/i18n/fr/distribution.mo: fr/ucs-school-umc-distribution/umc/fr.po

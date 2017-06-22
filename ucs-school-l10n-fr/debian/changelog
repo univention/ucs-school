@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (2.0.0-9) unstable; urgency=medium
+
+  * Bug #44698: fix umc-common install path
+
+ -- Eduard Mai <mai@univention.de>  Thu, 22 Jun 2017 11:10:03 +0200
+
 ucs-school-l10n-fr (2.0.0-8) unstable; urgency=low
 
   * Bug #43019: update translation
