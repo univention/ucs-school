@@ -7,6 +7,5 @@ fix: 6.0.11-6.137.201706020918
 desc: |
  * It is now possible to run hooks on the DC master before the creation
    of exam users (Bug #44408).
- * The term "UCS@school" has been removed from some texts for branding
-   purposes (Bug #44492).
+ * Some description texts within the UMC module have been altered (Bug #44492).
 bug: [44408, 44492]

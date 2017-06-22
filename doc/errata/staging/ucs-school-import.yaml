@@ -5,6 +5,6 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
 fix: 14.0.16-43.334.201705291538
 desc: |
- * Code for running hooks was moved from the import package to the ucsschool
-   lib (Bug #44408).
+ * Code for running hooks was moved from the import package to the &ucsUAS;
+   python library (Bug #44408).
 bug: [44408]

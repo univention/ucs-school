@@ -5,7 +5,6 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-ox-support
 fix: 0.0.1-1.1.201705291546
 desc: |
- * This new package helps running Open-Xchange in a UCS@school environment.
-   It provides a hook, to prevent the creation of temporary exam users
-   with Open-Xchange accounts (Bug #44408).
+ * A new package <package>ucs-school-ox-support</package> has been introduced that helps running Open-Xchange in a &ucsUAS; environment.
+   It provides a hook, to prevent the creation of temporary exam users with Open-Xchange accounts (Bug #44408).
 bug: [44408]

@@ -1,11 +1,11 @@
 product: ucsschool
-release: "4.2"
-version: [2]
-scope: ucs_4.2-0-ucs-school-4.2
+release: "4.1"
+version: [4]
+scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
 fix: 9.0.33-4.280.201705291537
 desc: |
- * An error during removing users from school has been fixed (Bug #41994).
- * Code for creating hooks was moved from the import package to the lib
-   package (Bug #44408)
+ * An error during the removal of users from a school has been fixed (Bug #41994).
+ * Code for creating hooks was moved from the import package to the &ucsUAS;
+   python library (Bug #44408).
 bug: [41994, 44408]
