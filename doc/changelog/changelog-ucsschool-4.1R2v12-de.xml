@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 R2 v12 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.1 R2 v11 nach 4.1 R2 v12</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.1 R2 v12
+Stand: 22. June 2017
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2017
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 R2 v11 nach 4.1 R2 v12.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-umc-wizards" lang="en">
+				<title>Source package ucs-school-umc-wizards</title>
+				<itemizedlist>
+					<listitem><simpara>An error message was shown after removing users from a school via the &ucsUAS; user wizard. The triggering error has been fixed (<u:bug>44588</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A special UCR variable has been added that may enable the use of LDAP admin connections in the UMC user/class/computer/school wizards. This UCR variable should only be used, if familiar with the related security implications! (<u:bug>44641</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-csv-import" lang="en">
+				<title>Source package ucs-school-umc-csv-import</title>
+				<itemizedlist>
+					<listitem><simpara>Some description texts within the UMC module have been altered (<u:bug>44491</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A special UCR variable has been added that may enable the use of LDAP admin connections during the UMC CSV import. This UCR variable should only be used, if familiar with the related security implications! (<u:bug>44641</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-exam" lang="en">
+				<title>Source package ucs-school-umc-exam</title>
+				<itemizedlist>
+					<listitem><simpara>It is now possible to run hooks on the DC master before the creation of exam users (<u:bug>44408</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Some description texts within the UMC module have been altered (<u:bug>44492</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-ox-support" lang="en">
+				<title>Source package ucs-school-ox-support</title>
+				<itemizedlist>
+					<listitem><simpara>A new package <package>ucs-school-ox-support</package> has been introduced that helps running Open-Xchange in a &ucsUAS; environment. It provides a hook, to prevent the creation of temporary exam users with Open-Xchange accounts (<u:bug>44408</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-groups" lang="en">
+				<title>Source package ucs-school-umc-groups</title>
+				<itemizedlist>
+					<listitem><simpara>An error in the workgroups wizard was fixed, that made it impossible to remove users from a workgroup (<u:bug>44350</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><simpara>Code for running hooks was moved from the import package to the &ucsUAS; python library (<u:bug>44408</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><simpara>An error during the removal of users from a school has been fixed (<u:bug>41994</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Code for creating hooks was moved from the import package to the &ucsUAS; python library (<u:bug>44408</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
