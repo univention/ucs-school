@@ -8,5 +8,5 @@ desc: |
  * It is now possible to run hooks on the DC master before the creation
    of exam users (Bug #44225).
  * The time needed to create exam users has been reduced (Bug #43019).
- * The term "UCS@school" has been removed from some texts for branding purposes (Bug #44543).
+ * Some description texts within the UMC module have been altered (Bug #44543).
 bug: [44225, 43019, 44543]
