@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.2-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.2 v2 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.2 v1 nach 4.2 v2</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.2 v2
+Stand: 22. Juni 2017
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2017
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.2 v1 nach 4.2 v2.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-umc-exam" lang="en">
+				<title>Source package ucs-school-umc-exam</title>
+				<itemizedlist>
+					<listitem><simpara>It is now possible to run hooks on the DC master before the creation of exam users (<u:bug>44225</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The time needed to create exam users has been reduced (<u:bug>43019</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Some description texts within the UMC module have been altered (<u:bug>44543</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-wizards" lang="en">
+				<title>Source package ucs-school-umc-wizards</title>
+				<itemizedlist>
+					<listitem><simpara>An error message was shown after removing users from a school via the &ucsUAS; user wizard. The triggering error has been fixed (<u:bug>44537</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A special UCR variable has been added that may enable the use of LDAP admin connections in the UMC user/class/computer/school wizards. This UCR variable should only be used, if familiar with the related security implications! (<u:bug>44642</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>It is now possible to sort users by class in the module <guimenu>Users (Schools)</guimenu> (<u:bug>42756</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The grids for the school administration modules are now sorted by default (<u:bug>44663</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-csv-import" lang="en">
+				<title>Source package ucs-school-umc-csv-import</title>
+				<itemizedlist>
+					<listitem><simpara>A regression in the UMC module <guimenu>CSV import</guimenu> has been fixed that prevented imports of users reusing previous passwords (<u:bug>34923</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Some description texts within the UMC module have been altered (<u:bug>44544</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A special UCR variable has been added that may enable the use of LDAP admin connections during the UMC CSV import. This UCR variable should only be used, if familiar with the related security implications! (<u:bug>44642</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-l10n-fr" lang="en">
+				<title>Source package ucs-school-l10n-fr</title>
+				<itemizedlist>
+					<listitem><simpara>Missing French translations have been updated (<u:bug>44698</u:bug>)</simpara></listitem>
+
+					<listitem><simpara>Missing French translations have been updated (<u:bug>43019</u:bug>)</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-printermoderation" lang="en">
+				<title>Source package ucs-school-umc-printermoderation</title>
+				<itemizedlist>
+					<listitem><simpara>It is now possible to sort the printing queue by date (<u:bug>44335</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-ox-support" lang="en">
+				<title>Source package ucs-school-ox-support</title>
+				<itemizedlist>
+					<listitem><simpara>This new package helps running Open-Xchange in a UCS@school environment. It provides a hook, to prevent the creation of temporary exam users with Open-Xchange accounts (<u:bug>44225</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-groups" lang="en">
+				<title>Source package ucs-school-umc-groups</title>
+				<itemizedlist>
+					<listitem><simpara>An error in the workgroups wizard was fixed, that made it impossible to remove users from a workgroup (<u:bug>44351</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><simpara>Code for running hooks was moved from the import package to the &ucsUAS; python library (<u:bug>44225</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><simpara>An error during removing users from school has been fixed (<u:bug>44546</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Code for creating hooks was moved from the import package to the &ucsUAS; python library (<u:bug>44225</u:bug>)</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-computerroom" lang="en">
+				<title>Source package ucs-school-umc-computerroom</title>
+				<itemizedlist>
+					<listitem><simpara>The reset of a computer room's UCR variables to their defaults at the end of an exam is now more reliable (<u:bug>44109</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>A syntax error during resetting of UCR variables has been fixed (<u:bug>37840</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
