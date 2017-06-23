@@ -1,9 +1,9 @@
 product: ucsschool
 release: "4.2"
-version: [2]
+version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-l10n-fr
-fix: 2.0.0-8A~4.2.0.201706011431
+fix: 2.0.0-9A~4.2.0.201706221119
 desc: |
  * Missing French translations have been updated (Bug #44698)
  * Missing French translations have been updated (Bug #43019)

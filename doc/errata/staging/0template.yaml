@@ -1,10 +1,10 @@
 product: ucsschool
 release: "4.2"
-version: [2]
+version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: 
 fix: 
 desc: |
- * description 1 (Bug #00000)
- * description 2 (Bug #00000)
+ * May contain docbook tags like <package>package</package> or <envar>foo/bar/ding=dong</envar> (Bug #00000)
+ * The line length is *NOT* limited to 80 columns! (Bug #00000)
 bug: []
