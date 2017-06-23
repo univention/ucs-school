@@ -19,7 +19,7 @@
 		<legalnotice>
 			<literallayout>
 Version 4.2
-Stand: 06. April 2017
+Stand: 23. Juni 2017
 			</literallayout>
 
 			<literallayout lang="">
@@ -742,31 +742,22 @@ feedback@univention.de
 					ist.
 				</para>
 				<para>
-					Wir empfehlen den Domänennamen nach folgendem Muster aufzubauen:
+					Wird vom &ucsUAS;-Betreiber (z.B. Stadt, Landkreis oder Bundesland) bereits eine DNS-Domäne verwendet
+					(z.B. <systemitem class="domainname">example.com</systemitem>), empfehlen wir,
+					als Domänennamen für &ucsUAS; eine Subdomäne zu verwenden:
 				</para>
 				<para>
-					<systemitem class="domainname">schulen.[DNS-Domäne der Organisation]</systemitem>
+					Beispiel: <systemitem class="domainname">schulen.example.com</systemitem>
 				</para>
 				<para>
-					Beispiel: <systemitem class="domainname">schulen.bremen.de</systemitem>
-				</para>
-				<para>
+					Bei der Wahl des Domänennamens sind einige Punkte zu beachten:
 					<itemizedlist>
 						<listitem>
 							<para>
-								<systemitem class="domainname">[DNS-Domäne der
-									Organisation]</systemitem> ist dabei ein
-								Platzhalter für die DNS-Domäne/Internetseite des
-								Betreibers, zum Beispiel von Stadt, Landkreis oder
-								Bundesland.
-							</para>
-						</listitem>
-						<listitem>
-							<para>
-								Wichtig ist, dass die DNS-Domäne vom Betreiber
+								Es ist wichtig, dass die DNS-Domäne vom Betreiber
 								verwaltet wird.  Es muss unter allen Umständen
-								vermieden werden, dass der gewählte Domänenname
-								im öffentlichen Internet verwendet wird.
+								sichergestellt werden, dass der gewählte Domänenname für &ucsUAS;
+								im öffentlichen Internet noch nicht verwendet wurde oder zukünftig wird.
 							</para>
 						</listitem>
 						<listitem>
@@ -780,11 +771,8 @@ feedback@univention.de
 										<para>
 											Offizielle DNS-Domänen sollten nicht
 											verwendet werden, wenn sie nicht
-											unter eigener Kontrolle stehen, zum
-											Beispiel kann vermutlich nicht
-											<systemitem
-												class="domainname">deutschland.de</systemitem>
-											verwendet werden.
+											unter eigener Kontrolle stehen, z.B.
+											<systemitem	class="domainname">deutschland.de</systemitem>.
 										</para>
 									</listitem>
 									<listitem>
@@ -795,7 +783,8 @@ feedback@univention.de
 											<systemitem
 												class="domainname">.corp</systemitem>
 											oder <systemitem
-												class="domainname">.lan</systemitem>.
+											class="domainname">.lan</systemitem>. Bei ihnen besteht
+											die Gefahr, dass es zu späteren Namenskollisionen kommt.
 										</para>
 									</listitem>
 									<listitem>
@@ -805,12 +794,20 @@ feedback@univention.de
 											sollte nicht als Top-Level-Domäne
 											gewählt werden. Die Endung ist
 											offiziell für mDNS (Multicast DNS)
-											vorgesehen und führt bei Verwendung
+											vorgesehen und führt bei einer Verwendung
 											zu Problemen mit MacOS, Windows und
 											Linux-Betriebssystemen.
 										</para>
 									</listitem>
 								</itemizedlist>
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Dem Domänennamen für &ucsUAS; werden die Namen der Rechner und Server vorangestellt,
+								um für diese Systeme einen vollqualifizierten DNS-Namen (FQDN) zu bilden. Zum Beispiel
+								ist der Rechner	<systemitem	class="domainname">ucsma-01</systemitem> somit unter dem FQDN
+								<systemitem	class="domainname">ucsma-01.schulen.example.com</systemitem> zu erreichen.
 							</para>
 						</listitem>
 					</itemizedlist>
@@ -1374,7 +1371,9 @@ feedback@univention.de
 					nach Anwendungsfall stark schwanken.  Die folgende
 					Tabelle gibt einen groben Überblick über Richtwerte nach
 					Schultyp.  Die benötigte Bandbreite liegt zwischen 1-3
-					MBit/s für schuleigene Geräte.
+					MBit/s für schuleigene Geräte. Dabei ist zu beachten, dass
+					z.B. zum Schulstundenbeginn oder zum Pausenbeginn mit
+					Lastspitzen zu rechnen ist.
 				</para>
 				<para>
 					<table id="table_infrastructure-and_hardware-requirements_infrastructure_internet">
@@ -1501,11 +1500,13 @@ feedback@univention.de
 									linkend="scenario-3">3</link> und <link
 									linkend="scenario-4">4</link></emphasis></para>
 						<para>
-							Um Gruppenrichtlinien für alle Schulen über eine
-							zentrale Stelle verwalten zu können, ist die
-							Software-Komponente <package>Active Directory
-								kompatibler Domänen-Controller</package> bei der
-							Installation auszuwählen.</para></listitem>
+							Um Gruppenrichtlinien für alle Schulen über eine zentrale Stelle
+							verwalten zu können, ist die Software-Komponente <package>Active Directory kompatibler
+							Domänen-Controller</package> bei der Installation auszuwählen. Sollen in der &ucsUAS;-Domäne
+							mehr als 50.000 Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention in Verbindung,
+							um Möglichkeiten zur Performanceoptimierung zu besprechen.
+						</para>
+					</listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.</para></listitem>
@@ -1531,7 +1532,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_backup">
-			<title>Installation &ucsBackup;</title>
+			<title>Installation eines &ucsBackup;</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
@@ -1550,7 +1551,7 @@ feedback@univention.de
 							übernommen und braucht somit nicht eingetragen zu
 							werden.</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsBackup; als Mitglied der Domäne zu installieren
+							&ucsBackup; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
 							<option>&ucsBackup;</option> auszuwählen.</para></listitem>
@@ -1578,8 +1579,59 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 		</section>
+		<section id="installation_schulserver">
+			<title>Installation eines &ucsSlave; als Schulserver </title>
+			<para>
+				<emphasis>für Szenario 3</emphasis>
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
+							alle verfügbaren Updates installiert wurden.</para></listitem>
+					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
+							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
+							aufgrund von übermäßig viele Benutzerdaten die Systempartition nicht vollläuft.</para></listitem>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS-Server sind die IP-Adressen des
+							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							DNS-Forwarder wird beim Domänenbeitritt automatisch
+							vom &ucsMaster; übernommen und braucht somit nicht
+							eingetragen zu werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsSlave; als Mitglied der Domäne zu installieren:
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsSlave; auszuwählen.</para></listitem>
+					<listitem><para>Das installierte System ist abschließend bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren.  Anschließend ist der Domänenbeitritt
+							zu starten.</para></listitem>
+					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die App
+							<package>&ucsUAS;</package> zu
+							installieren.</para></listitem>
+					<listitem><para>Im Anschluss an die Installation der
+							<package>&ucsUAS;</package> App ist in der &ucsUMC;
+							in der Kategorie
+							<emphasis>Schuladministration</emphasis> der
+							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							zu starten und der Assistent bis zum
+							Ende auszuführen.</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
+				</itemizedlist>
+				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS;-Einrichtungsassistent finden sich auch im
+				<ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:installation:slave">&ucsUAS;
+				Handbuch für Administratoren</ulink>.
+			</para>
+		</section>
 		<section id="installation_slave">
-			<title>Installation &ucsUCS; Slave für RADIUS, Groupware,
+			<title>Installation eines &ucsSlave; für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
@@ -1598,7 +1650,7 @@ feedback@univention.de
 							vom &ucsMaster; übernommen und braucht somit nicht
 							eingetragen zu werden.</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsBackup; als Mitglied der Domäne zu installieren
+							&ucsSlave; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
 							&ucsSlave; auszuwählen.</para></listitem>
@@ -1623,7 +1675,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_member">
-			<title>Installation &ucsMember; für Monitoring</title>
+			<title>Installation eines &ucsMember; für Monitoring</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
@@ -1639,7 +1691,7 @@ feedback@univention.de
 							vom &ucsMaster; übernommen und braucht somit nicht
 							eingetragen zu werden.</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsBackup; als Mitglied der Domäne zu installieren
+							&ucsSlave; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
 							&ucsMember; auszuwählen.</para></listitem>
@@ -1723,8 +1775,8 @@ feedback@univention.de
 							&ucsMaster; umgeleitet werden sollen, ist die
 							&ucsUCR;-Variable <envar>mail/alias/root</envar> auf
 							den Wert
-							<literal>root@ucsma-01.schulen.bremen.de</literal>
-							zu stellen.  <literal>schulen.bremen.de</literal>
+							<literal>root@ucsma-01.schulen.example.com</literal>
+							zu stellen.  <literal>schulen.example.com</literal>
 							muss durch den tatsächlichen Domänennamen ersetzt
 							werden.
 						</para>
