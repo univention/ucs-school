@@ -528,7 +528,7 @@ class ImportUser(User):
 			raise FormatError("No username was created from scheme '{}'.".format(
 				self.username_scheme), self.username_scheme, self.to_dict())
 		if not self.username_handler:
-			self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length)
+			self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length, self.config['dry_run'])
 		self.name = self.username_handler.format_username(self.name)
 
 	def modify(self, lo, validate=True, move_if_necessary=None):

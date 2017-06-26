@@ -214,15 +214,16 @@ class DefaultUserImportFactory(object):
 		"""
 		return ucr
 
-	def make_username_handler(self, username_max_length):
+	def make_username_handler(self, username_max_length, dry_run=True):
 		"""
 		Get a UsernameHandler instance.
 
 		:param username_max_length: int: created usernames must not be longer
 		than this
+		:param dry_run: bool: set to False to actually commit changes to LDAP
 		:return: UsernameHandler object
 		"""
-		return UsernameHandler(username_max_length)
+		return UsernameHandler(username_max_length, dry_run)
 
 	def make_user_writer(self, *arg, **kwargs):
 		"""

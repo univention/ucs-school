@@ -35,10 +35,105 @@ import re
 import string
 
 from ldap.dn import escape_dn_chars
-from univention.admin.uexceptions import noObject
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
-from ucsschool.importer.exceptions import FormatError
+from univention.admin.uexceptions import noObject, objectExists
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
+from ucsschool.importer.exceptions import BadValueStored, FormatError, NoValueStored, UsernameKeyExists
 from ucsschool.importer.utils.logging import get_logger
+
+
+class UsernameCounterStorageBackend(object):
+	def create(self, username, value):
+		"""
+		Store a value for a new username.
+
+		:param username: str
+		:param value: int
+		:return: None | objectExists
+		"""
+		raise NotImplementedError()
+
+	def modify(self, username, old_value, new_value):
+		"""
+		Store a value for an existing username.
+
+		:param username: str
+		:param old_value: int
+		:param new_value: int
+		:return: None | UsernameKeyExists
+		"""
+		raise NotImplementedError()
+
+	def retrieve(self, username):
+		"""
+		Retrieve a value for a username.
+
+		:param username: str
+		:return: int | NoValueStored | BadValueStored
+		"""
+		raise NotImplementedError()
+
+
+class LdapStorageBackend(UsernameCounterStorageBackend):
+	def __init__(self, lo=None, pos=None):
+		if lo and pos:
+			self.lo, _pos = lo, pos
+		else:
+			self.lo, _pos = get_admin_connection()
+
+	def create(self, username, value):
+		try:
+			self.lo.add(
+				"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
+					escape_dn_chars(username), self.lo.base),
+				[
+					("objectClass", "ucsschoolUsername"),
+					("ucsschoolUsernameNextNumber", str(value))
+				]
+			)
+		except objectExists:
+			raise UsernameKeyExists("Cannot create key {!r} - already exists.".format(username))
+
+	def modify(self, username, old_value, new_value):
+		try:
+			self.lo.modify(
+				"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
+					escape_dn_chars(username), self.lo.base),
+				[("ucsschoolUsernameNextNumber", str(old_value), str(new_value))]
+			)
+		except noObject:
+			raise NoValueStored("Username {!r} not found.".format(username))
+
+	def retrieve(self, username):
+		try:
+			res = self.lo.get(
+				"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
+					escape_dn_chars(username), self.lo.base),
+				attr=["ucsschoolUsernameNextNumber"])["ucsschoolUsernameNextNumber"][0]
+		except (KeyError, noObject):
+			raise NoValueStored("Username {!r} not found.".format(username))
+		try:
+			return int(res)
+		except ValueError as exc:
+			raise BadValueStored("Value for username {!r} has wrong format: {}".format(username, exc))
+
+
+class MemoryStorageBackend(UsernameCounterStorageBackend):
+	_mem_store = dict()
+	ldap_backend = LdapStorageBackend(get_machine_connection())
+
+	def create(self, username, value):
+		self._mem_store[username] = value
+
+	def modify(self, username, old_value, new_value):
+		self._mem_store[username] = new_value
+
+	def retrieve(self, username):
+		try:
+			res = self._mem_store[username]
+		except KeyError:
+			res = self.ldap_backend.retrieve(username)
+			self._mem_store[username] = res
+		return res
 
 
 class UsernameHandler(object):
@@ -109,44 +204,27 @@ class UsernameHandler(object):
 
 	allowed_chars = string.ascii_letters + string.digits + "."
 
-	def __init__(self, username_max_length):
+	def __init__(self, username_max_length, dry_run=True):
+		"""
+		:param username_max_length: int: created usernames will be no longer
+		than this
+		:param dry_run: bool: if False use LDAP to store already-used usernames
+		if True store for one run only in memory
+		"""
 		self.username_max_length = username_max_length
+		self.dry_run = dry_run
 		self.logger = get_logger()
-		self.connection, self.position = get_admin_connection()
+		self.storage_backend = self.get_storage_backend()
 		self.replacement_variable_pattern = re.compile(r'(%s)' % '|'.join(map(re.escape, self.counter_variable_to_function.keys())), flags=re.I)
 
-	def add_to_ldap(self, username, first_number):
-		assert isinstance(username, basestring)
-		assert isinstance(first_number, basestring)
-		self.connection.add(
-			"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
-				escape_dn_chars(username), self.connection.base),
-			[
-				("objectClass", "ucsschoolUsername"),
-				("ucsschoolUsernameNextNumber", first_number)
-			]
-		)
-
-	def get_next_number(self, username):
-		assert isinstance(username, basestring)
-		try:
-			return self.connection.get(
-				"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
-					escape_dn_chars(username), self.connection.base),
-				attr=["ucsschoolUsernameNextNumber"])["ucsschoolUsernameNextNumber"][0]
-		except KeyError:
-			raise noObject("Username '{}' not found.".format(username))
-
-	def get_and_raise_number(self, username):
-		assert isinstance(username, basestring)
-		cur = self.get_next_number(username)
-		next = int(cur) + 1
-		self.connection.modify(
-			"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
-				escape_dn_chars(username), self.connection.base),
-			[("ucsschoolUsernameNextNumber", cur, str(next))]
-		)
-		return cur
+	def get_storage_backend(self):
+		"""
+		:return: UsernameCounterStorageBackend instance
+		"""
+		if self.dry_run:
+			return MemoryStorageBackend()
+		else:
+			return LdapStorageBackend()
 
 	def remove_bad_chars(self, name):
 		"""
@@ -191,7 +269,7 @@ class UsernameHandler(object):
 
 			# it's not allowed to have two [COUNTER] patterns
 			if len(self.replacement_variable_pattern.findall(name)) >= 2:
-				raise FormatError("More than one counter variable found in username scheme '{}'.".format(name), name, name)
+				raise FormatError('More than one counter variable found in username scheme {!r}.'.format(name), name, name)
 
 			# the variable must no be the [COUNTER] pattern
 			without_pattern = self.replacement_variable_pattern.sub('', name)
@@ -212,7 +290,7 @@ class UsernameHandler(object):
 
 		username = username.strip('.')
 		if not username:
-			raise FormatError("No username in '{}'.".format(name), name, name)
+			raise FormatError("No username in {!r}.".format(name), name, name)
 		return username
 
 	@property
@@ -238,7 +316,7 @@ class UsernameHandler(object):
 		:param name_base: str: the (base) username
 		:return: str: number to append to username
 		"""
-		return self._counters(name_base, "1")
+		return self.get_and_raise(name_base, "1")
 
 	def counter2(self, name_base):
 		"""
@@ -247,15 +325,21 @@ class UsernameHandler(object):
 		:param name_base: str: the (base) username
 		:return: str: number to append to username
 		"""
-		return self._counters(name_base, "")
+		return self.get_and_raise(name_base, "")
 
-	def _counters(self, name_base, first_time):
+	def get_and_raise(self, name_base, initial_value):
 		"""
-		Common code of always_counter() and counter2().
+		Returns the current counter value or initial_value if unset and stores
+		it raised by 1.
+
+		:param name_base: str
+		:param initial_value: str
+		:return str
 		"""
 		try:
-			num = self.get_and_raise_number(name_base)
-		except noObject:
-			num = first_time
-			self.add_to_ldap(name_base, "2")
-		return num
+			num = self.storage_backend.retrieve(name_base)
+			self.storage_backend.modify(name_base, num, num + 1)
+		except NoValueStored:  # not handling BadValueStored, because a data corruption should stop the import
+			num = initial_value
+			self.storage_backend.create(name_base, 2)
+		return str(num)
