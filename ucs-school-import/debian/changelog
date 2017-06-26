@@ -1,3 +1,10 @@
+ucs-school-import (14.0.16-44) unstable; urgency=low
+
+  * Bug #42465: UsernameHandler does not increase counter in LDAP with dry_run
+    anymore
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 22 Jun 2017 09:33:14 +0200
+
 ucs-school-import (14.0.16-43) unstable; urgency=low
 
   * Bug #44408: move PyHook code to ucsschool.lib

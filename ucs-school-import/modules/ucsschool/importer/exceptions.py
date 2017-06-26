@@ -50,6 +50,10 @@ class BadPassword(UcsSchoolImportError):
 	pass
 
 
+class BadValueStored(UcsSchoolImportFatalError):
+	pass
+
+
 class CreationError(UcsSchoolImportError):
 	pass
 
@@ -121,6 +125,10 @@ class NoUsernameAtAll(UcsSchoolImportFatalError):
 	pass
 
 
+class NoValueStored(UcsSchoolImportFatalError):
+	pass
+
+
 class ReadOnlyConfiguration(UcsSchoolImportFatalError):
 
 	def __init__(self, *args, **kwargs):
@@ -163,6 +171,10 @@ class UnkownRole(UcsSchoolImportError):
 
 
 class UniqueIdError(UcsSchoolImportError):
+	pass
+
+
+class UsernameKeyExists(UcsSchoolImportFatalError):
 	pass
 
 

@@ -37,6 +37,8 @@ from ucsschool.importer.exceptions import UcsSchoolImportFatalError
 
 _admin_connection = None
 _admin_position = None
+_machine_connection = None
+_machine_position = None
 
 
 def get_admin_connection():
@@ -47,3 +49,10 @@ def get_admin_connection():
 		except IOError:
 			raise UcsSchoolImportFatalError("This script must be executed on a DC Master.")
 	return _admin_connection, _admin_position
+
+
+def get_machine_connection():
+	global _machine_connection, _machine_position
+	if not _machine_connection or not _machine_position:
+		_machine_connection, _machine_position = uldap.getMachineConnection()
+	return _machine_connection, _machine_position
