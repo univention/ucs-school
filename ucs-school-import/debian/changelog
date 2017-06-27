@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-45) unstable; urgency=low
+
+  * Bug #42465: don't create LDAP connection at import time
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 27 Jun 2017 11:26:01 +0200
+
 ucs-school-import (14.0.16-44) unstable; urgency=low
 
   * Bug #42465: UsernameHandler does not increase counter in LDAP with dry_run
