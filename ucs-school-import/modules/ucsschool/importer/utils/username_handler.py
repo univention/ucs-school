@@ -119,7 +119,11 @@ class LdapStorageBackend(UsernameCounterStorageBackend):
 
 class MemoryStorageBackend(UsernameCounterStorageBackend):
 	_mem_store = dict()
-	ldap_backend = LdapStorageBackend(get_machine_connection())
+	ldap_backend = None
+
+	def __init__(self):
+		if not self.ldap_backend:
+			self.__class__.ldap_backend = LdapStorageBackend(get_machine_connection())
 
 	def create(self, username, value):
 		self._mem_store[username] = value
