@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-7) unstable; urgency=low
+
+  * Bug #44838: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 27 Jun 2017 18:35:16 +0200
+
 ucs-school-import (15.0.0-6) unstable; urgency=low
 
   * Bug #44838: don't create LDAP connection at import time
