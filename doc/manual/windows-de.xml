@@ -136,10 +136,10 @@ ucr set ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	  </programlisting>
 	  Die zwei UCR-Variablen müssen auf allen Samba4-Domänencontrollern gesetzt werden. Dies kann
 	  z.B. in der UMC über eine UCR-Richtlinien global definiert werden. Nach der Änderung müssen die
-	  Dienste <systemitem class="service">samba4</systemitem> und <systemitem class="service">univention-directory-listener</systemitem> neu
+	  Dienste <systemitem class="service">samba</systemitem> und <systemitem class="service">univention-directory-listener</systemitem> neu
 	  gestartet werden:
 	  <programlisting language="sh">
-invoke-rc.d samba4 restart
+invoke-rc.d samba restart
 invoke-rc.d univention-directory-listener restart
 	  </programlisting>
 	</para>
