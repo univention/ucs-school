@@ -47,8 +47,8 @@ case "$1" in
 			security/packetfilter/package/ucs-school-radius-802.1x/udp/1813/all \
 			security/packetfilter/package/ucs-school-radius-802.1x/udp/1813/all/en \
 			security/packetfilter/package/ucs-school-radius-802.1x/udp/1814/all \
-			security/packetfilter/package/ucs-school-radius-802.1x/udp/1814/all/en \
-			[ -x "/etc/init.d/univention-firewall" ] && invoke-rc.d univention-firewall restart
+			security/packetfilter/package/ucs-school-radius-802.1x/udp/1814/all/en
+		[ -x "/etc/init.d/univention-firewall" ] && invoke-rc.d univention-firewall restart
 		;;
 esac
 exit 0
