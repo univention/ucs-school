@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-radius-802.1x
+fix: 
+desc: |
+ * A syntax error in the script <filename>ucs-school-802.1x.postrm</filename> has been fixed (Bug #44901).
+bug: [44901]
