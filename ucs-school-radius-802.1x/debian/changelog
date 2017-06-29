@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (6.0.0-2) unstable; urgency=low
+
+  * Bug #44901: fixed syntax error in postrm script
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 29 Jun 2017 16:04:02 +0200
+
 ucs-school-radius-802.1x (6.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2
