@@ -5,5 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
 fix: 15.0.0-7A~4.2.0.201706271839
 desc: |
- * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #42465).
-bug: [42465]
+ * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #44838).
+bug: [44838]
