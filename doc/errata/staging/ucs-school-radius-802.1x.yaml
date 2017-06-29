@@ -3,7 +3,7 @@ release: "4.1"
 version: [4]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-radius-802.1x
-fix: 
+fix: 5.0.0-2.16.201706291610
 desc: |
  * A syntax error in the script <filename>ucs-school-802.1x.postrm</filename> has been fixed (Bug #44900).
 bug: [44900]
