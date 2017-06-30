@@ -34,6 +34,7 @@
 
 import optparse
 import sys
+import time
 import univention.admin.filter
 import univention.config_registry
 import univention.pyMsChapV2 as pyMsChapV2
@@ -41,6 +42,12 @@ import univention.uldap
 
 userToGroup = {}  # { "user": ["group1", "group2", ], }
 groupInfo = {}  # { "group1": (23, True, ), }
+log_target = None
+
+
+def debug(msg):
+	if log_target:
+		log_target.write('%s [%s] %s\n' % (time.strftime('%Y-%m-%d %H:%M:%S'), os.getpid(), msg))
 
 
 def loadInfo():
@@ -79,7 +86,7 @@ def getNTPasswordHash(username, stationId):
 	a hostname (e.g. 'win-02$') or
 	a kerberos principal without realm (e.g. 'host/win-02.example.com'):
 	'''
-
+	debug('getNTPasswordHash: username=%r  stationId=%r' % (username, stationId))
 	if username.startswith('host/'):
 		# seems to be a kerberos principal
 		username = username.split('/', 1)[1]
@@ -87,33 +94,43 @@ def getNTPasswordHash(username, stationId):
 			username = username.split('.', 1)[0]
 		if '$' not in username:
 			username += '$'
+	debug('getNTPasswordHash: username2=%r  stationId=%r' % (username, stationId))
 
 	groups = userToGroup.get(username)
 	if groups is None:
+		debug('getNTPasswordHash: user not found in any group - access denied')
 		return None
 	groups = [groupInfo[group] for group in groups if group in groupInfo]
 	if not groups:
+		debug('getNTPasswordHash: user not found in any WLAN enabled group - access denied')
 		return None
 	(maxPriority, _, ) = max(groups)
 	if True not in [wlanEnabled for (priority, wlanEnabled, ) in groups if priority == maxPriority]:
+		debug('getNTPasswordHash: WLAN is not enabled in group with highest priority - access denied (maxPriority=%r)' % (maxPriority))
 		return None
 	# user is authorized to use the W-LAN, retrieve NT-password-hash from LDAP and return it
 	result = ldapConnection.search(filter=str(univention.admin.filter.expression('uid', username)), attr=['sambaNTPassword', 'sambaAcctFlags'])
 	if not result:
+		debug('getNTPasswordHash: could not fetch sambaNTPassword for user %r - access denied' % (username,))
 		return None
 	sambaAccountFlags = frozenset(result[0][1]['sambaAcctFlags'][0])
 	if sambaAccountFlags & DISALLOWED_SAMBA_ACCOUNT_FLAGS:
+		debug('getNTPasswordHash: user is disabled via sambaAcctFlags - access denied')
 		return None
+	debug('getNTPasswordHash: returning sambaNTPassword hash')
 	return result[0][1]['sambaNTPassword'][0].decode('hex')
 
 
 def main():
+	global log_target
 	parser = optparse.OptionParser()
 	parser.add_option('--request-nt-key', action='store_true', dest='requestNtKey')
 	parser.add_option('--username', dest='Username')
 	parser.add_option('--challenge', dest='Challenge')
 	parser.add_option('--nt-response', dest='Response')
 	parser.add_option('--station-id', dest='stationId')
+	parser.add_option('--debug-stderr', dest='debug_stderr', action='store_true', default=False)
+	parser.add_option('--debug-fn', dest='debug_fn')
 	(options, args, ) = parser.parse_args()
 	if not options.requestNtKey:
 		print 'Missing required parameter --request-nt-key!'
@@ -127,6 +144,11 @@ def main():
 	if not options.Response:
 		print 'Missing required parameter --nt-response!'
 		return 1
+	if options.debug_stderr:
+		log_target = sys.stderr
+	if options.debug_fn:
+		log_target = open(options.debug_fn, 'a')
+	debug('main: username = %r' % (options.Username,))
 	if not options.stationId:
 		stationId = None
 	else:
@@ -135,14 +157,19 @@ def main():
 		# remove all non-hex characters, so different formats may be decoded
 		# e.g. 11:22:33:44:55:66 or 1122.3344.5566 or 11-22-33-44-55-66 or ...
 		stationId = ''.join([c for c in stationId if c in '0123456789abcdef'])
+		debug('main: reformatted stationId = %r' % (stationId,))
 		stationId = stationId.decode('hex')
+	debug('main: Challenge = %r' % (options.Challenge,))
+	debug('main: Response = %r' % (options.Response,))
 	options.Challenge = options.Challenge.decode('hex')
 	options.Response = options.Response.decode('hex')
 	PasswordHash = getNTPasswordHash(options.Username, stationId)
 	if PasswordHash and pyMsChapV2.ChallengeResponse(options.Challenge, PasswordHash) == options.Response:
+		debug('main: successfully authenticated')
 		print 'NT_KEY: %s' % (pyMsChapV2.HashNtPasswordHash(PasswordHash).encode('hex').upper(), )
 		return 0
 	else:
+		debug('main: authentication failed')
 		print 'Logon failure (0xc000006d)'
 		return 1
 
