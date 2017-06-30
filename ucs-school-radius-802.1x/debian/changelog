@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (5.0.1-1) unstable; urgency=low
+
+  * Bug #44603: add handling of kerberos principals
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 30 Jun 2017 17:16:15 +0200
+
 ucs-school-radius-802.1x (5.0.0-2) unstable; urgency=low
 
   * Bug #44900: fixed syntax error in postrm script
