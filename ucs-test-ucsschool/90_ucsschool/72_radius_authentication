@@ -49,6 +49,12 @@ def main():
 			for username, should_succeed in test_couples:
 				test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)
 
+			# Test with station id (other station Id formats are currently not supported by CLI tool "eapol_test")
+			for station_id in ('11:22:33:44:55:66',):
+				test_peap_auth(tea, password, radius_secret, station_id=station_id, should_succeed=True)
+
+			print '*** SUCCESS ***'
+
 
 if __name__ == '__main__':
 	main()
