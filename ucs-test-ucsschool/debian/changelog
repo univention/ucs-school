@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-22) unstable; urgency=low
+
+  * Bug #44838: adapt test to code changes
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 13 Jul 2017 10:15:09 +0200
+
 ucs-test-ucsschool (4.0.4-21) unstable; urgency=medium
 
   * Bug #44370: add test case 219_import_users_umlauts

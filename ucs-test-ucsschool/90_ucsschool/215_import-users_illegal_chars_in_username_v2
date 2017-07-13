@@ -9,28 +9,21 @@
 ## bugs: [42313, 42478]
 
 import doctest
-from ucsschool.importer.utils.username_handler import UsernameHandler
+from ucsschool.importer.utils.username_handler import UsernameHandler, MemoryStorageBackend
 import ucsschool.importer.utils.username_handler
 ucsschool.importer.utils.username_handler.noObject = KeyError
+
+
+static_memory_storage_backend = MemoryStorageBackend()
 
 
 class UsernameHandler(UsernameHandler):
 	__doc__ = UsernameHandler.__doc__
 	usernames = {}
 
-	def add_to_ldap(self, username, first_number):
-		self.usernames[username] = int(first_number)
-
-	def get_next_number(self, username):
-		return self.usernames[username]
-
-	def get_and_raise_number(self, username):
-		if not username:
-			raise SyntaxError('INVALID DN Syntax: cn=,cn=unique-usernames')
-		cur = self.get_next_number(username)
-		self.usernames.setdefault(username, 0)
-		self.usernames[username] += 1
-		return str(cur)
+	def __init__(self, username_max_length, dry_run=True):
+		super(UsernameHandler, self).__init__(username_max_length, dry_run)
+		self.storage_backend = static_memory_storage_backend
 
 
 if __name__ == '__main__':
