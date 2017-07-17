@@ -30,7 +30,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=12
+VERSION=13
+
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
 joinscript_init
@@ -54,6 +55,7 @@ univention-directory-manager settings/service  create "$@" --ignore_exists --set
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Profile Server"  --position "cn=services,cn=univention,$ldap_base"
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="ucsschool" --position "cn=univention,$ldap_base"
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="unique-usernames" --position "cn=ucsschool,cn=univention,$ldap_base"
+univention-directory-manager container/cn      create "$@" --ignore_exists --set name="unique-email" --position "cn=ucsschool,cn=univention,$ldap_base"
 
 ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-school-import.schema || die
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolOU.py || die

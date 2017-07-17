@@ -77,6 +77,7 @@ class ImportUser(User):
 	_unique_ids = defaultdict(set)
 	factory = None
 	ucr = None
+	unique_email_handler = None
 	username_handler = None
 	reader = None
 	logger = None
@@ -426,6 +427,9 @@ class ImportUser(User):
 				else:
 					return
 		self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
+		if not self.unique_email_handler:
+			self.__class__.unique_email_handler = self.factory.make_unique_email_handler(dry_run=self.config['dry_run'])
+		self.email = self.unique_email_handler.format_name(self.email)
 
 	def make_password(self):
 		"""
@@ -529,7 +533,7 @@ class ImportUser(User):
 				self.username_scheme), self.username_scheme, self.to_dict())
 		if not self.username_handler:
 			self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length, self.config['dry_run'])
-		self.name = self.username_handler.format_username(self.name)
+		self.name = self.username_handler.format_name(self.name)
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
 		self._lo = lo
@@ -706,6 +710,8 @@ class ImportUser(User):
 			all_fields = dict()
 		all_fields.update(self.to_dict())
 		all_fields.update(self.udm_properties)
+		if "username" not in all_fields:
+			all_fields["username"] = all_fields["name"]
 		all_fields.update(kwargs)
 
 		res = self.prop._replace(scheme, all_fields)

@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-8) unstable; urgency=low
+
+  * Bug #44993: add support for COUNTER variables in email address schemes
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 Jul 2017 09:57:06 +0200
+
 ucs-school-import (15.0.0-7) unstable; urgency=low
 
   * Bug #44838: fix typo
