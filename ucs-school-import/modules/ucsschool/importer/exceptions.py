@@ -113,6 +113,10 @@ class MoveError(UcsSchoolImportError):
 	pass
 
 
+class NameKeyExists(UcsSchoolImportFatalError):
+	pass
+
+
 class NotSupportedError(UcsSchoolImportError):
 	pass
 
@@ -174,7 +178,10 @@ class UniqueIdError(UcsSchoolImportError):
 	pass
 
 
-class UsernameKeyExists(UcsSchoolImportFatalError):
+class UsernameKeyExists(NameKeyExists):
+	"""
+	Deprecated. Please use NameKeyExists.
+	"""
 	pass
 
 

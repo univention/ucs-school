@@ -43,7 +43,7 @@ from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.mass_import.user_import import UserImport
-from ucsschool.importer.utils.username_handler import UsernameHandler
+from ucsschool.importer.utils.username_handler import EmailHandler, UsernameHandler
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.factory import load_class
 from ucsschool.importer.exceptions import InitialisationError
@@ -82,6 +82,7 @@ class DefaultUserImportFactory(object):
 			"password_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
 			"result_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
 			"user_importer": "ucsschool.importer.mass_import.user_import.UserImport",
+			"unique_email_handler": "ucsschool.importer.utils.username_handler.EmailHandler",
 			"username_handler": "ucsschool.importer.utils.username_handler.UsernameHandler",
 			"user_writer": "ucsschool.importer.writer.base_writer.BaseWriter"
 		}
@@ -214,16 +215,27 @@ class DefaultUserImportFactory(object):
 		"""
 		return ucr
 
-	def make_username_handler(self, username_max_length, dry_run=True):
+	def make_unique_email_handler(self, max_length=254, dry_run=True):
+		"""
+		Get a EmailHandler instance.
+
+		:param max_length: int: created email adresses must not be longer
+		than this
+		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:return: EmailHandler object
+		"""
+		return EmailHandler(max_length, dry_run)
+
+	def make_username_handler(self, max_length, dry_run=True):
 		"""
 		Get a UsernameHandler instance.
 
-		:param username_max_length: int: created usernames must not be longer
+		:param max_length: int: created usernames must not be longer
 		than this
 		:param dry_run: bool: set to False to actually commit changes to LDAP
 		:return: UsernameHandler object
 		"""
-		return UsernameHandler(username_max_length, dry_run)
+		return UsernameHandler(max_length, dry_run)
 
 	def make_user_writer(self, *arg, **kwargs):
 		"""
