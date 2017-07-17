@@ -14,15 +14,14 @@ import ucsschool.importer.utils.username_handler
 ucsschool.importer.utils.username_handler.noObject = KeyError
 
 
-static_memory_storage_backend = MemoryStorageBackend()
+static_memory_storage_backend = MemoryStorageBackend('usernames')
 
 
 class UsernameHandler(UsernameHandler):
 	__doc__ = UsernameHandler.__doc__
-	usernames = {}
 
-	def __init__(self, username_max_length, dry_run=True):
-		super(UsernameHandler, self).__init__(username_max_length, dry_run)
+	def __init__(self, max_length, dry_run=True):
+		super(UsernameHandler, self).__init__(max_length, dry_run)
 		self.storage_backend = static_memory_storage_backend
 
 
