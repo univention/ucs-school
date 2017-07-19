@@ -57,7 +57,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 		username = 'ucs_test_school_user_' + random_string(8)
 		print("\nAttempting to create a user with a username '%s' and options: %s" % (username, creation_options))
 
-		cmd = ["samba-tool", "user", "add", username]
+		cmd = ["samba-tool", "user", "create", username]
 		cmd.extend(creation_options)
 		cmd.extend(self.credentials)
 

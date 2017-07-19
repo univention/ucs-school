@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-24) unstable; urgency=medium
+
+  * Bug #41344: fix deprecated samba-tool user add
+
+ -- Florian Best <best@univention.de>  Wed, 19 Jul 2017 10:15:24 +0200
+
 ucs-test-ucsschool (4.0.4-23) unstable; urgency=low
 
   * Bug #44993: adapt test to API change
