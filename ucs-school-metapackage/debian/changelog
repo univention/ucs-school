@@ -1,4 +1,4 @@
-ucs-school-metapackage (10.0.2-3) unstable; urgency=medium
+ucs-school-metapackage (10.0.2-4) unstable; urgency=medium
 
   * Bug #44667: replace PNG image with SVG
 
