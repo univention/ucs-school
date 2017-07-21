@@ -1,3 +1,9 @@
+ucs-school-metapackage (10.0.2-3) unstable; urgency=medium
+
+  * Bug #44667: replace PNG image with SVG
+
+ -- Florian Best <best@univention.de>  Fri, 21 Jul 2017 16:10:21 +0200
+
 ucs-school-metapackage (10.0.2-2) unstable; urgency=low
 
   * Bug #43579: install portal_entry on multi-master too
