@@ -19,7 +19,6 @@ import univention.testing.ucr
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
-from univention.config_registry import handler_set
 
 
 class Bunch(object):
@@ -49,7 +48,7 @@ class Bunch(object):
 
 class CLI_Legacy_Import_Tester(object):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
-	line = 'A	%(username)s	%(lastname)s	%(firstname)s	%(ou)s				%(teacher)s	1	%(staff)s\n'
+	line = 'A	%(username)s	%(lastname)s	%(firstname)s	%(ou)s			%(email)s	%(teacher)s	1	%(staff)s\n'
 
 	def __init__(self):
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users-legacy.', dir='/tmp/')
@@ -65,6 +64,7 @@ class CLI_Legacy_Import_Tester(object):
 			'ou': ou,
 			'teacher': '1' if is_teacher else '0',
 			'staff': '1' if is_staff else '0',
+			'email': '{}@{}'.format(uts.random_name(), self.ucr['mail/hosteddomains'].split()[-1])
 		}
 		if user_data:
 			data.update(user_data)

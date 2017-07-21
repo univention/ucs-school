@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.17-65) unstable; urgency=medium
+
+  * Bug #44993: fix tests
+
+ -- Florian Best <best@univention.de>  Wed, 19 Jul 2017 10:15:24 +0200
+
 ucs-test-ucsschool (3.0.17-64) unstable; urgency=low
 
   * Bug #44993: adapt test to API change
