@@ -13,6 +13,7 @@ import subprocess
 import time
 import re
 import traceback
+from collections import Mapping
 from ldap.filter import escape_filter_chars
 from apt.cache import Cache as AptCache
 from essential.importusers import Person
@@ -58,7 +59,10 @@ class ConfigDict(dict):
 		items = key.split(':')
 		while items:
 			if len(items) == 1:
-				mydict[items[0]] = value
+				if items[0] in mydict and isinstance(mydict[items[0]], Mapping):
+					mydict[items[0]].update(value)
+				else:
+					mydict[items[0]] = value
 			else:
 				mydict = mydict.setdefault(items[0], {})
 			del items[0]
@@ -237,6 +241,7 @@ class CLI_Import_v2_Tester(object):
 				config.update_entry(config_option, value)
 		with open(fn, 'w') as fd:
 			json.dump(config, fd)
+			self.log.info('Config: %r' % config)
 
 		return fn
 
@@ -259,7 +264,7 @@ class CLI_Import_v2_Tester(object):
 
 		header_row = header2properties.keys()
 		random.shuffle(header_row)
-		self.log.debug('Header row = %r', header_row)
+		self.log.info('Header row = %r', header_row)
 
 		fn = fn_csv if fn_csv else tempfile.mkstemp(prefix='users.', dir=self.tmpdir)[1]
 		writer = csv.DictWriter(
@@ -272,7 +277,7 @@ class CLI_Import_v2_Tester(object):
 		writer.writeheader()
 		for person in person_list:
 			person_dict = person.map_to_dict(properties2headers)
-			self.log.debug('Person data = %r', person_dict)
+			self.log.info('Person data = %r', person_dict)
 			writer.writerow(person_dict)
 		return fn
 

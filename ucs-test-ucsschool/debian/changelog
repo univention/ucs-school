@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-25) unstable; urgency=low
+
+  * Bug #44993: fix tests
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Jul 2017 14:57:08 +0200
+
 ucs-test-ucsschool (4.0.4-24) unstable; urgency=medium
 
   * Bug #41344: fix deprecated samba-tool user add
