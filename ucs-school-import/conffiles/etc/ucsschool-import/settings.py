@@ -68,7 +68,7 @@ DEBUG = ucr.is_true('ucsschool/import/http_api/django_debug')
 if 'ucsschool/import/http_api/ALLOWED_HOSTS' in ucr:
 	ALLOWED_HOSTS = [h.strip() for h in ucr.get('ucsschool/import/http_api/ALLOWED_HOSTS').split(',')]
 else:
-	ALLOWED_HOSTS = ['127.0.0.1']
+	ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '{}.{}'.format(ucr['hostname'], ucr['domainname'])]
 	for k, v in ucr.items():
 		if re.match(r'^interfaces/.*/address$', k):
 			ALLOWED_HOSTS.append(v)
