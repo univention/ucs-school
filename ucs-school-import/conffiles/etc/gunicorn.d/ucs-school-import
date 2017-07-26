@@ -1,0 +1,15 @@
+# -*- coding: utf-8 -*-
+@%@UCRWARNING=# @%@
+
+CONFIG = {
+    'mode': 'wsgi',
+    'working_dir': '/var/spool/ucs-school-import/',
+    'user': 'root',
+    'group': 'root',
+    'args': (
+        '--bind=127.0.0.1:8000',
+        '--workers=4',
+        '--timeout=60',
+        'ucsschool.http_api.app.wsgi:application',
+    ),
+}

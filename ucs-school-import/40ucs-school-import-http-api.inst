@@ -1,0 +1,157 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@school import HTTP API
+#  join script
+#
+# Copyright 2017 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+VERSION=1
+
+. /usr/share/univention-join/joinscripthelper.lib
+. /usr/share/univention-lib/base.sh
+. /usr/share/univention-lib/ldap.sh
+. /usr/share/univention-celery/celery.sh
+
+joinscript_init
+
+eval "$(ucr shell)"
+
+CONF_DIR="/etc/ucsschool-import"
+
+DJANGO_SECRET_FILE="$CONF_DIR/django_key.secret"
+RABBITMQ_SECRET_FILE="$CONF_DIR/rabbitmq.secret"
+POSTGRES_SECRET_FILE="$CONF_DIR/postgres.secret"
+
+RABBITMQ_USER="importhttpapi"
+RABBITMQ_VHOST="importhttpapi"
+POSTGRES_USER="importhttpapi"
+POSTGRES_DB="importhttpapi"
+
+
+write_secret () {
+	local filename="$1" secret="${2:-}"
+	mkdir -p "$(dirname $filename)"
+	touch "$filename"
+	chmod 0600 "$filename"
+	chown root:root "$filename"
+	if [ -n "$secret" ];
+	then
+	    echo "$secret" >"$filename"
+	else
+        echo "ERROR: refusing to write empty string to $filename"
+        return 1
+    fi
+}
+
+
+#
+# TODO: Bug #45026: add schema and extended attributes for groups (ACLs)
+#
+# ucs_registerLDAPExtension "$@" \
+#    --schema ... || die
+#
+# udm settings/extended_attribute create "$@" --ignore_exists \
+# ...
+#
+# deb-systemd-invoke restart slapd.service
+# stop_udm_cli_server
+# deb-systemd-invoke restart univention-management-console-server.service
+#
+
+if [ -e "$DJANGO_SECRET_FILE" ];
+then
+    echo "Using exiting secret for HTTP API service."
+else
+    echo "Creating secret for HTTP API service."
+    DJANGO_SECRET_PW="$(makepasswd --chars=50 )"
+    write_secret "$DJANGO_SECRET_FILE" "$DJANGO_SECRET_PW" || die
+fi
+
+if [ -e "$RABBITMQ_SECRET_FILE" ];
+then
+    echo "Using exiting password for RabbitMQ."
+    RABBITMQ_PW="$(cat "$RABBITMQ_SECRET_FILE" | cut -d : -f 2)"
+else
+    echo "Creating new password for RabbitMQ."
+    RABBITMQ_PW="$(makepasswd --chars=50)"
+    write_secret "$RABBITMQ_SECRET_FILE" "$RABBITMQ_USER:$RABBITMQ_PW" || die
+fi
+
+if rabbitmqctl list_users | grep -q "$RABBITMQ_USER";
+then
+    echo "Using exiting RabbitMQ user and vhost."
+else
+    echo "Creating new RabbitMQ user and vhost."
+    rabbitmq_add_vhost "$RABBITMQ_USER" "$RABBITMQ_PW" "$RABBITMQ_VHOST" || die
+fi
+
+if [ -e "$POSTGRES_SECRET_FILE" ];
+then
+    echo "Using exiting password for PostgreSQL."
+    POSTGRES_PW="$(cat "$POSTGRES_SECRET_FILE")"
+else
+    echo "Creating new password for PostgreSQL."
+    POSTGRES_PW="$(makepasswd --chars=50)"
+    write_secret "$POSTGRES_SECRET_FILE" "$POSTGRES_PW" || die
+fi
+
+if echo "\du $POSTGRES_USER" | su - postgres -c psql | grep -q "$POSTGRES_USER";
+then
+    echo "Setting password on exiting PostgreSQL user."
+else
+    echo "Creating new PostgreSQL user."
+    su - postgres -c "echo \"CREATE ROLE $POSTGRES_USER WITH LOGIN;\" | psql" || die
+fi
+su - postgres -c "echo \"ALTER ROLE $POSTGRES_USER WITH ENCRYPTED PASSWORD '$POSTGRES_PW';\" | psql" || die
+
+if echo '\list' | su - postgres -c psql | grep -q "$POSTGRES_DB";
+then
+    echo "Using exiting PostgreSQL database."
+else
+    echo "Creating new PostgreSQL database."
+    su - postgres -c "createdb -E UTF8 -O $POSTGRES_USER -T template0 $POSTGRES_DB" || die
+fi
+
+python /usr/share/pyshared/ucsschool/http_api/manage.py check --no-color --deploy || die
+python /usr/share/pyshared/ucsschool/http_api/manage.py collectstatic --no-color --noinput --link || die
+python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput || die
+
+a2enmod proxy_http
+a2ensite ucs-school-import-http-api.conf
+
+systemctl daemon-reload
+for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql gunicorn apache2;
+do
+    deb-systemd-invoke enable "$SERVICE.service"
+    deb-systemd-invoke start "$SERVICE.service"
+done
+
+joinscript_save_current_version
+
+exit 0

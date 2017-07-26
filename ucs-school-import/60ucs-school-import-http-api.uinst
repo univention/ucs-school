@@ -1,8 +1,9 @@
-#!/usr/bin/make -f
+#!/bin/sh
 #
-# UCS@school import
 #
-# Copyright 2007-2017 Univention GmbH
+# Univention UCS@school import HTTP API
+#
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,27 +30,18 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-PO_FILES := $(shell find udm_hook -name '*.po')
-MO_FILES := $(PO_FILES:%.po=%.mo)
+VERSION=1
 
-%.mo:	%.po
-	msgfmt --check -o $@ $<
+. /usr/share/univention-join/joinscripthelper.lib
+. /usr/share/univention-celery/celery.sh
 
-override_dh_auto_build: $(MO_FILES)
-	dh_auto_build
+joinscript_init
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
+RABBITMQ_USER="importhttpapi"
+RABBITMQ_VHOST="importhttpapi"
 
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-import.conffiles
-	rm -f debian/ucs-school-import-schema.conffiles
+rabbitmq_remove_vhost "$RABBITMQ_USER" "$RABBITMQ_VHOST"
 
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
+joinscript_remove_script_from_status_file ucs-school-import-http-api
 
-%:
-	dh $@ --with python_support
+exit 0

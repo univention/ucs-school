@@ -1,8 +1,9 @@
-#!/usr/bin/make -f
+#!/bin/bash
 #
-# UCS@school import
+# UCS@school HTTP import API
+#  postinst script for the debian package
 #
-# Copyright 2007-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,27 +30,19 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-PO_FILES := $(shell find udm_hook -name '*.po')
-MO_FILES := $(PO_FILES:%.po=%.mo)
+#DEBHELPER#
 
-%.mo:	%.po
-	msgfmt --check -o $@ $<
+if [ "$1" = "configure" ]; then
+	uinst=/usr/lib/univention-install/60ucs-school-import-http-api.uinst
+	[ -e "$uinst" ] && rm "$uinst"
+fi
 
-override_dh_auto_build: $(MO_FILES)
-	dh_auto_build
+. /usr/share/univention-lib/base.sh
+call_joinscript 40ucs-school-import-http-api.inst
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
+for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql gunicorn apache2;
+do
+    deb-systemd-invoke restart "$SERVICE.service"
+done
 
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-import.conffiles
-	rm -f debian/ucs-school-import-schema.conffiles
-
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
-
-%:
-	dh $@ --with python_support
+exit 0

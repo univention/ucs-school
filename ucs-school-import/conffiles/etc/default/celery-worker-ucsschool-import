@@ -1,0 +1,42 @@
+@%@UCRWARNING=# @%@
+# Edit the options in this file to match your projects environment.
+# See http://ask.github.com/celery/cookbook/daemonizing.html for the complete
+# documentation on the options.
+
+# WARNING: This script is only designed to run the worker(s) for a single
+# project. If you need to start workers for multiple projects you should
+# consider using supervisor.
+# Examples can be found in /usr/share/doc/python-celery/supervisord/
+
+# Change this to true when done to enable the init.d script.
+# Default: false
+ENABLED="true"
+
+# Name of nodes to start
+CELERYD_NODES="dryrun import"
+
+# Where to chdir at start.
+CELERYD_CHDIR="/var/spool/ucs-school-import"
+
+# Extra arguments to celeryd
+# http://docs.celeryproject.org/en/latest/reference/celery.bin.worker.html
+# -c --concurrency
+# -Q, --queues
+# -O optimization profile
+# -l, --loglevel
+CELERYD_OPTS="-c:dryrun 4 -c:import 1 -Q:dryrun dryrun -Q:import import -O:dryrun fair -O:import fair -l:dryrun DEBUG -l:import DEBUG"
+
+# Name of the celery config module.
+CELERY_CONFIG_MODULE=
+
+# %n will be replaced with the nodename.
+CELERYD_LOG_FILE="/var/log/univention/ucs-school-import/workers-%n.log"
+
+# Workers should run as an unprivileged user.
+# But we need root access, to run the listener code.
+CELERYD_USER="root"
+CELERYD_GROUP="root"
+
+CELERY_APP="ucsschool.http_api.app.celery:app"
+CELERYD_PID_FILE="/run/ucs-school-import-worker/%n.pid"
+CELERY_CREATE_DIRS=1

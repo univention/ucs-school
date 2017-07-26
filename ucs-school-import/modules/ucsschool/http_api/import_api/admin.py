@@ -1,8 +1,11 @@
-#!/usr/bin/make -f
+# -*- coding: utf-8 -*-
+"""
+Django Admin
+"""
 #
-# UCS@school import
+# Univention UCS@school
 #
-# Copyright 2007-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,27 +32,18 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-PO_FILES := $(shell find udm_hook -name '*.po')
-MO_FILES := $(PO_FILES:%.po=%.mo)
+from __future__ import absolute_import, unicode_literals
+from django.contrib import admin
+from .models import School, UserImportJob, Logfile
 
-%.mo:	%.po
-	msgfmt --check -o $@ $<
 
-override_dh_auto_build: $(MO_FILES)
-	dh_auto_build
+class ImportJobAdmin(admin.ModelAdmin):
+	list_display = ('school', 'status', 'principal')
+	search_fields = ('id', 'school__name', 'source_uid', 'status', 'principal')  # __username')
+	list_filter = ('school__name', 'status', 'principal')  # __username')
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
 
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-import.conffiles
-	rm -f debian/ucs-school-import-schema.conffiles
+admin.site.register(UserImportJob, ImportJobAdmin)
 
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
-
-%:
-	dh $@ --with python_support
+for m in (School, Logfile):
+	admin.site.register(m)

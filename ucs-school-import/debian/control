@@ -12,7 +12,7 @@ Replaces: sfb-import
 Conflicts: sfb-import
 Provides: sfb-import
 Depends: univention-directory-manager,
- ucs-school-import-schema,
+ ucs-school-import-schema (= ${source:Version}),
  univention-policy-tools (>= 5.0.8),
  shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-18),
@@ -47,3 +47,26 @@ Description: UCS@school: LDAP import schema and custom attributes
  an integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
+
+Package: ucs-school-import-http-api
+Architecture: all
+Depends: ${misc:Depends},
+ univention-config,
+ ucs-school-import (= ${source:Version}),
+ univention-celery (>=1.0.0-1),
+ python-django (>=1.8),
+ python-djangorestframework (>= 3.4.0-2),
+ python-django-celery (>=3.1.16-1),
+ gunicorn (>=19.0-1),
+ univention-postgresql-9.4,
+ python-psycopg2 (>=2.5.4),
+ python-django-pam (>=1.2.0-1),
+ python-pampy (>=1.8.2-1),
+Description: UCS@school: RESTful API for importing users
+ This package provides a service for importing users using a RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/

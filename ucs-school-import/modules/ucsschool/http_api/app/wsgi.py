@@ -1,8 +1,11 @@
-#!/usr/bin/make -f
+# -*- coding: utf-8 -*-
+"""
+WSGI
+"""
 #
-# UCS@school import
+# Univention UCS@school
 #
-# Copyright 2007-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,27 +32,19 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-PO_FILES := $(shell find udm_hook -name '*.po')
-MO_FILES := $(PO_FILES:%.po=%.mo)
+from __future__ import absolute_import, unicode_literals
+import os
 
-%.mo:	%.po
-	msgfmt --check -o $@ $<
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
 
-override_dh_auto_build: $(MO_FILES)
-	dh_auto_build
+from django.core.wsgi import get_wsgi_application  # noqa
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
+_application = get_wsgi_application()
 
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-import.conffiles
-	rm -f debian/ucs-school-import-schema.conffiles
 
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
+def application(environ, start_response):
+	script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
+	if script_name:
+		environ['SCRIPT_NAME'] = script_name
 
-%:
-	dh $@ --with python_support
+	return _application(environ, start_response)

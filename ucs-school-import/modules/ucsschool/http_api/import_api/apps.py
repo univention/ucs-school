@@ -1,8 +1,11 @@
-#!/usr/bin/make -f
+# -*- coding: utf-8 -*-
+"""
+App registry
+"""
 #
-# UCS@school import
+# Univention UCS@school
 #
-# Copyright 2007-2017 Univention GmbH
+# Copyright 2017 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,27 +32,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-PO_FILES := $(shell find udm_hook -name '*.po')
-MO_FILES := $(PO_FILES:%.po=%.mo)
+from __future__ import unicode_literals
 
-%.mo:	%.po
-	msgfmt --check -o $@ $<
+from django.apps import AppConfig
 
-override_dh_auto_build: $(MO_FILES)
-	dh_auto_build
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
-
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-import.conffiles
-	rm -f debian/ucs-school-import-schema.conffiles
-
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
-
-%:
-	dh $@ --with python_support
+class HttpApiConfig(AppConfig):
+    name = 'import_api'
+    verbose_name = 'UCS@school import API'

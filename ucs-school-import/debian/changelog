@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-9) unstable; urgency=low
+
+  * Bug #45024: add RESTful HTTP-API for user import (WIP)
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 20 Jul 2017 02:22:03 +0200
+
 ucs-school-import (15.0.0-8) unstable; urgency=low
 
   * Bug #44993: add support for COUNTER variables in email address schemes
