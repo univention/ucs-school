@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-11) unstable; urgency=low
+
+  * Bug #45022: add Python client library
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 26 Jul 2017 18:33:35 +0200
+
 ucs-school-import (15.0.0-10) unstable; urgency=low
 
   * Bug #45024: allow connecting from FQDN

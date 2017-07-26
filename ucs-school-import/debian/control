@@ -70,3 +70,18 @@ Description: UCS@school: RESTful API for importing users
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
 Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: ucs-school-import-http-api-client
+Architecture: all
+Depends: ${misc:Depends},
+ python-requests,
+ python-magic,
+ python-univention-config-registry,
+Description: UCS@school: Python client library for the US@school API
+ This package provides a Python client for accessing the RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
