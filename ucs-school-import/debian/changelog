@@ -1,3 +1,11 @@
+ucs-school-import (15.0.0-12) unstable; urgency=low
+
+  * Bug #45024: make URLs and port configurable
+  * fix Debian 'install' files mixup
+  * fix URL patterns
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 27 Jul 2017 10:25:12 +0200
+
 ucs-school-import (15.0.0-11) unstable; urgency=low
 
   * Bug #45022: add Python client library

@@ -53,6 +53,7 @@ Architecture: all
 Depends: ${misc:Depends},
  univention-config,
  ucs-school-import (= ${source:Version}),
+ ucs-school-import-http-api-common (= ${source:Version}),
  univention-celery (>=1.0.0-1),
  python-django (>=1.8),
  python-djangorestframework (>= 3.4.0-2),
@@ -77,8 +78,21 @@ Depends: ${misc:Depends},
  python-requests,
  python-magic,
  python-univention-config-registry,
+ ucs-school-import-http-api-common (= ${source:Version}),
 Description: UCS@school: Python client library for the US@school API
  This package provides a Python client for accessing the RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: ucs-school-import-http-api-common
+Architecture: all
+Depends: ${misc:Depends}
+Description: UCS@school: Common files for UCS@school API client and server
+ This package provides common files of the RESTful HTTP API client and server.
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing

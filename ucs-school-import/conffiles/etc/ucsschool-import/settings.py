@@ -55,7 +55,7 @@ SPOOL_DIR = '/var/spool/ucs-school-import'
 POSTGRES_USER = 'importhttpapi'
 POSTGRES_DB = 'importhttpapi'
 POSTGRES_HOST = 'localhost'
-POSTGRES_POST = '5432'
+POSTGRES_PORT = '5432'
 RABBITMQ_VHOST="importhttpapi"
 
 
@@ -126,7 +126,7 @@ DATABASES = {
 		'USER': POSTGRES_USER,
 		'PASSWORD': _postgres_pw,
 		'HOST': POSTGRES_HOST,
-		'PORT': POSTGRES_POST,
+		'PORT': POSTGRES_PORT,
 	}
 }
 
@@ -154,9 +154,9 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_ROOT = os.path.join(VAR_LIB_DIR, 'static')
-STATIC_URL = '/ucsschool-static/'
+STATIC_URL = '/{}/'.format(ucr.get('ucsschool/import/http_api/URL_path/static', 'ucsschool-static').strip().strip('/'))
 MEDIA_ROOT = os.path.join(SPOOL_DIR, 'media')  # uploads go here
-MEDIA_URL = '/ucsschool-media/'
+MEDIA_URL = '/{}/'.format(ucr.get('ucsschool/import/http_api/URL_path/media', 'ucsschool-media').strip().strip('/'))
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True

@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 @%@UCRWARNING=# @%@
 
+from univention.config_registry import ConfigRegistry
+ucr = ConfigRegistry()
+ucr.load()
+port = ucr.get('ucsschool/import/http_api/wsgi_server_port', '8000')
+
 CONFIG = {
     'mode': 'wsgi',
     'working_dir': '/var/spool/ucs-school-import/',
     'user': 'root',
     'group': 'root',
     'args': (
-        '--bind=127.0.0.1:8000',
+        '--bind=127.0.0.1:{}'.format(port),
         '--workers=4',
         '--timeout=60',
         'ucsschool.http_api.app.wsgi:application',

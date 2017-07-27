@@ -1,1 +1,6 @@
-modules/ucsschool/http_api/client.py                  usr/share/pyshared/ucsschool/
+40ucs-school-import-http-api.inst               usr/lib/univention-install/
+60ucs-school-import-http-api.uinst              usr/lib/univention-uninstall/
+modules/ucsschool/http_api/manage.py            usr/share/pyshared/ucsschool/http_api/
+modules/ucsschool/http_api/app                  usr/share/pyshared/ucsschool/http_api/
+modules/ucsschool/http_api/import_api           usr/share/pyshared/ucsschool/http_api/
+usr/share/ucs-school-import-http-api            usr/share/

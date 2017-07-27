@@ -1,5 +1,9 @@
 Type: file
 File: etc/apache2/sites-available/ucs-school-import-http-api.conf
+Variables: ucsschool/import/http_api/wsgi_server_port
+Variables: ucsschool/import/http_api/URL_path/api
+Variables: ucsschool/import/http_api/URL_path/media
+Variables: ucsschool/import/http_api/URL_path/static
 
 Type: file
 File: etc/default/celery-worker-ucsschool-import

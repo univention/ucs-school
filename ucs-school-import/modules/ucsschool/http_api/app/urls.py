@@ -47,9 +47,9 @@ router.register(r'imports/users', views.UserImportJobViewSet)
 
 urlpatterns = [
 	url(r'^(?P<version>(v1))/', include(router.urls)),
-	url(r'(?P<version>(v1))/schools/(?P<ou>\w+)/imports/users', views.UserImportJobViewSet.as_view({'post': 'create'})),
-	url(r'(?P<version>(v1))/schools/(?P<ou>\w+)/imports/users', views.UserImportJobViewSet.as_view({'get': 'redirect_get_from_schools'})),
-	url(r'(?P<version>(v1))/imports/users/(?P<pk>\d+)/results', views.LogFileViewSet.as_view({'get': 'list'})),
+	url(r'^(?P<version>(v1))/schools/(?P<ou>\w+)/imports/users', views.UserImportJobViewSet.as_view({'post': 'create'})),
+	url(r'^(?P<version>(v1))/schools/(?P<ou>\w+)/imports/users', views.UserImportJobViewSet.as_view({'get': 'redirect_get_from_schools'})),
+	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/results', views.LogFileViewSet.as_view({'get': 'list'})),
 	url(r'^admin/', admin.site.urls),
 	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

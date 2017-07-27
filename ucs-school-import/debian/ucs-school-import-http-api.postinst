@@ -40,6 +40,7 @@ fi
 . /usr/share/univention-lib/base.sh
 call_joinscript 40ucs-school-import-http-api.inst
 
+systemctl daemon-reload
 for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql gunicorn apache2;
 do
     deb-systemd-invoke restart "$SERVICE.service"
