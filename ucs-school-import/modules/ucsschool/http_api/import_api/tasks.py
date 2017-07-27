@@ -32,7 +32,13 @@ Celery tasks
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+#
+# To monitor the celery queue run in an ncurses terminal UI:
+#    celery --app=ucsschool.http_api.app.celery:app control enable_events
+#    celery --app=ucsschool.http_api.app.celery:app events
+#
+
+from __future__ import unicode_literals
 import time
 import logging
 from celery import shared_task
@@ -40,12 +46,13 @@ from celery.utils.log import get_task_logger
 from celery.signals import task_postrun
 from django.core.exceptions import ObjectDoesNotExist
 from ucsschool.importer.exceptions import InitialisationError
-from .models import UserImportJob, Logfile, JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
-from .http_api_import_frontend import HttpApiImportFrontend
+from ucsschool.http_api.import_api.models import UserImportJob, Logfile, JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
+from ucsschool.http_api.import_api.http_api_import_frontend import HttpApiImportFrontend
 
 
 logger = get_task_logger(__name__)
 logger.level = logging.DEBUG
+logging.root.setLevel(logging.INFO)  # someone sets this to DEBUG, and then we catch all of Djangos SQL queries!
 
 
 def run_import_job(task, importjob_id):
@@ -62,7 +69,7 @@ def run_import_job(task, importjob_id):
 		importjob.refresh_from_db()
 		timeout -= 1
 		if timeout <= 0:
-			raise InitialisationError('UserImportJob {} did not reache JOB_SCHEDULED state in 60s.'.format(importjob_id))
+			raise InitialisationError('{} did not reach JOB_SCHEDULED state in 60s.'.format(importjob))
 	runner = HttpApiImportFrontend(importjob, task, logger)
 	importjob.log_file = Logfile.objects.create(path=runner.logfile_path)
 	importjob.status = JOB_STARTED

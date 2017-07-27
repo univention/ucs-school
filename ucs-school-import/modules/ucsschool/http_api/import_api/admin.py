@@ -32,9 +32,9 @@ Django Admin
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 from django.contrib import admin
-from .models import School, UserImportJob, Logfile
+from ucsschool.http_api.import_api.models import School, UserImportJob, Logfile
 
 
 class ImportJobAdmin(admin.ModelAdmin):

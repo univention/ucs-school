@@ -11,10 +11,13 @@ CONFIG = {
     'working_dir': '/var/spool/ucs-school-import/',
     'user': 'root',
     'group': 'root',
-    'args': (
+    'args': [
         '--bind=127.0.0.1:{}'.format(port),
         '--workers=4',
         '--timeout=60',
         'ucsschool.http_api.app.wsgi:application',
-    ),
+    ],
 }
+
+if ucr.is_true('ucsschool/import/http_api/django_debug'):
+    CONFIG['args'].insert(-1, '--reload')

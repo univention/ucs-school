@@ -33,7 +33,7 @@ Django settings for the UCS@school import HTTP API.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 import os
 import re
 import logging
@@ -177,8 +177,7 @@ REST_FRAMEWORK = {
 with open(os.path.join(CONF_DIR, 'rabbitmq.secret'), 'rb') as fp:
 	_celery_broker_credentials = fp.read().strip()
 
-CELERY_BROKER_URL = 'amqp://{}@localhost:5672/{}'.format(_celery_broker_credentials, RABBITMQ_VHOST)
-BROKER_URL = CELERY_BROKER_URL
+BROKER_URL = 'amqp://{}@localhost:5672/{}'.format(_celery_broker_credentials, RABBITMQ_VHOST)
 CELERYD_TASK_LOG_FORMAT = '[%(asctime)s: %(levelname)-8s/%(processName)s] %(task_name)s[%(task_id)s] %(module)s.%(funcName)s:%(lineno)d: %(message)s'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_EVENT_SERIALIZER = 'json'
@@ -186,17 +185,17 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ENABLE_UTC = True
 CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
-CELERY_RESULT_EXPIRES = 0
-CELERY_TASK_ROUTES = {
+CELERY_TASK_RESULT_EXPIRES = 0
+CELERY_ROUTES = {
 	'ucsschool.http_api.import_api.tasks.dry_run': {'queue':  'dryrun'},
-	'ucsschool.http_api.import_api.tasks.import_users': {'queue': 'import'}
+	'ucsschool.http_api.import_api.tasks.import_users': {'queue': 'import'},
 }
-CELERY_TASK_TRACK_STARTED = True
+CELERY_TRACK_STARTED = True
 CELERY_TIMEZONE = TIME_ZONE
-# CELERY_WORKER_HIJACK_ROOT_LOGGER = False
-# CELERY_WORKER_LOG_FORMAT = '%(asctime)s %(levelname)-8s [%(processName)s] %(module)s.%(funcName)s:%(lineno)d  %(message)s'
-# CELERY_WORKER_MAX_TASKS_PER_CHILD = 1
-# CELERY_WORKER_TASK_LOG_FORMAT = '%(asctime)s %(levelname)-8s [%(processName)s %(task_name)s(%(task_id)s)] %(module)s.%(funcName)s:%(lineno)d  %(message)s'
+CELERYD_HIJACK_ROOT_LOGGER = False
+# CELERYD_LOG_FORMAT = '%(asctime)s %(levelname)-8s [%(processName)s] %(module)s.%(funcName)s:%(lineno)d  %(message)s'
+CELERYD_MAX_TASKS_PER_CHILD = 1
+# CELERYD_TASK_LOG_FORMAT = '%(asctime)s %(levelname)-8s [%(processName)s %(task_name)s(%(task_id)s)] %(module)s.%(funcName)s:%(lineno)d  %(message)s'
 
 
 # import settings

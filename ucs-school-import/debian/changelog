@@ -1,3 +1,11 @@
+ucs-school-import (15.0.0-13) unstable; urgency=low
+
+  * Bug #45024: fix configuration names for Celery < 4.0
+  * use full python path for all imports
+  * don't log Django debug (SQL queries)
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 27 Jul 2017 13:24:59 +0200
+
 ucs-school-import (15.0.0-12) unstable; urgency=low
 
   * Bug #45024: make URLs and port configurable

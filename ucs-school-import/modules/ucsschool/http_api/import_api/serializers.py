@@ -32,7 +32,7 @@ Model/HTTP-API Serializers
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 import os
 import json
 import datetime
@@ -40,8 +40,8 @@ from django.conf import settings
 from rest_framework import serializers
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from .models import ConfigurationError, ConfigFile, Hook, Logfile, UserImportJob, School, JOB_NEW, JOB_SCHEDULED, USER_STUDENT
-from .logging import logger
-from .tasks import dry_run, import_users
+from ucsschool.http_api.import_api.import_logging import logger
+from ucsschool.http_api.import_api.tasks import dry_run, import_users
 
 
 class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):

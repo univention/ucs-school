@@ -32,16 +32,17 @@ Database / Resource models
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 import json
 import codecs
 import os.path
+import shutil
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 # from django.contrib.postgres.fields import JSONField  # pgsql >= 9,4, django >= 1.9
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
-from .logging import logger
+from ucsschool.http_api.import_api.import_logging import logger
 
 
 JOB_NEW = 'New'
@@ -104,6 +105,7 @@ class School(models.Model):
 
 
 class ConfigFile(models.Model):
+	# TODO: complete makeover
 	school = models.ForeignKey(School)
 	version = models.IntegerField(default=0)
 	path = models.CharField(max_length=255, blank=True)
@@ -133,10 +135,11 @@ class ConfigFile(models.Model):
 		directory = os.path.dirname(path)
 		if not os.path.exists(directory):
 			self.mkdir(directory)
-		with codecs.open(path, 'wb', encoding='utf-8') as fp:
-			# pgsql >= 9.4 -> JsonField
-			# fp.write(json.dumps(self.text, sort_keys=True, indent=4, separators=(',', ': ')))
-			fp.write(self.text)
+		# with codecs.open(path, 'wb', encoding='utf-8') as fp:
+		# 	# pgsql >= 9.4 -> JsonField
+		# 	# fp.write(json.dumps(self.text, sort_keys=True, indent=4, separators=(',', ': ')))
+		# 	fp.write(self.text)
+		shutil.copy2('/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json', path)
 
 	def mkdir(self, path, mode=0755):
 		try:

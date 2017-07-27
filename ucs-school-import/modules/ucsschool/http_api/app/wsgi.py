@@ -32,7 +32,7 @@ WSGI
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")

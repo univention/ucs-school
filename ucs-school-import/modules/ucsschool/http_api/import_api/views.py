@@ -32,20 +32,21 @@ Django Views
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 import codecs
 import urlparse
+from ldap.filter import escape_filter_chars
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 # from rest_framework.decorators import detail_route
-from .models import UserImportJob, Logfile, School, JOB_STARTED
-from .serializers import (
+from ucsschool.importer.utils.ldap_connection import get_machine_connection
+from ucsschool.http_api.import_api.models import UserImportJob, Logfile, School, JOB_STARTED
+from ucsschool.http_api.import_api.serializers import (
 	UserImportJobSerializer,
 	LogFileSerializer,
 	SchoolSerializer,
 )
-from .logging import logger
-from .ldap import get_ous
+from ucsschool.http_api.import_api.import_logging import logger
 
 
 # TODO: use django-guardian to filter object access?
@@ -151,7 +152,6 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
 		instance_url = request.build_absolute_uri()
 		instance.user_import = urlparse.urljoin(instance_url, 'imports/users')
 		serializer = self.get_serializer(instance)
-		logger.info('serializer.data=%r', serializer.data)
 		return Response(serializer.data)
 
 	def list(self, request, *args, **kwargs):
@@ -167,3 +167,11 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
 class ImportTypeViewSet(viewsets.ReadOnlyModelViewSet):
 	# TODO
 	pass
+
+
+def get_ous(ou=None):
+	lo, po = get_machine_connection()
+	if ou:
+		return lo.search(filter='(&(objectClass=ucsschoolOrganizationalUnit)(ou={}))'.format(escape_filter_chars(ou)))
+	else:
+		return lo.search(filter='objectClass=ucsschoolOrganizationalUnit')

@@ -32,7 +32,7 @@ UCS@school import frontent class
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 import os
 import errno
 import shutil
@@ -41,7 +41,7 @@ from django.conf import settings
 from celery.states import STARTED as CELERY_STATES_STARTED
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.exceptions import InitialisationError
-from .models import Hook, HOOK_TYPE_LEGACY, HOOK_TYPE_PYHOOK
+from ucsschool.http_api.import_api.models import Hook, HOOK_TYPE_LEGACY, HOOK_TYPE_PYHOOK
 
 
 class ArgParseFake(object):
@@ -71,14 +71,15 @@ class HttpApiImportFrontend(UserImportCommandLine):
 				raise InitialisationError(
 					'Cannot create directory "{}" for import job {}: {}'.format(dir_, self.import_job.pk, str(exc)))
 		self.logfile_path = os.path.join(self.basedir, 'ucs-school-import.log')
-		task_handler = logging.FileHandler(os.path.join(self.basedir, 'task.log'), encoding='utf-8')
-		task_handler.setLevel(logging.DEBUG)
-		task_handler.setFormatter(logging.Formatter(
-			datefmt=settings.UCSSCHOOL_IMPORT['logging']['api_datefmt'],
-			fmt=settings.CELERY_WORKER_TASK_LOG_FORMAT))
-		task_handler.name = 'import job {}'.format(self.import_job.pk)
-		self.logger.info('Adding logging handler for UserImportJob %r.', self.import_job.pk)
-		self.logger.addHandler(task_handler)
+		self.logger.info('Logging for this import job will go to %r.', self.logfile_path)
+		# task_handler = logging.FileHandler(os.path.join(self.basedir, 'task.log'), encoding='utf-8')
+		# task_handler.setLevel(logging.DEBUG)
+		# task_handler.setFormatter(logging.Formatter(
+		# 	datefmt=settings.UCSSCHOOL_IMPORT['logging']['api_datefmt'],
+		# 	fmt=settings.CELERYD_TASK_LOG_FORMAT))
+		# task_handler.name = 'import job {}'.format(self.import_job.pk)
+		# self.logger.info('Adding logging handler for UserImportJob %r.', self.import_job.pk)
+		# self.logger.addHandler(task_handler)
 		self.data_path = os.path.join(self.basedir, os.path.basename(self.import_job.input_file.name))
 		data_source_path = os.path.join(settings.MEDIA_ROOT, self.import_job.input_file.name)
 		shutil.copy2(data_source_path, self.data_path)

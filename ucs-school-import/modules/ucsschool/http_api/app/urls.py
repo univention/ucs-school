@@ -32,7 +32,7 @@ URLs
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
