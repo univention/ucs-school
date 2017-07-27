@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-14) unstable; urgency=medium
+
+  * Bug #45026: add object class, attributes for UCS@school groups
+
+ -- Florian Best <best@univention.de>  Thu, 27 Jul 2017 14:04:11 +0200
+
 ucs-school-import (15.0.0-13) unstable; urgency=low
 
   * Bug #45024: fix configuration names for Celery < 4.0
