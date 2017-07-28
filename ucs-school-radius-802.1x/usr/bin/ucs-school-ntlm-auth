@@ -93,8 +93,7 @@ def getNTPasswordHash(username, stationId):
 		username = username.split('/', 1)[1]
 		if '.' in username:
 			username = username.split('.', 1)[0]
-		if '$' not in username:
-			username += '$'
+		username += '$'
 	debug('getNTPasswordHash: username2=%r  stationId=%r' % (username, stationId.encode('hex')))
 
 	groups = userToGroup.get(username)
