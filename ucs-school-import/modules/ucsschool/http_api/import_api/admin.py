@@ -34,16 +34,59 @@ Django Admin
 
 from __future__ import unicode_literals
 from django.contrib import admin
-from ucsschool.http_api.import_api.models import School, UserImportJob, Logfile
+from djcelery.models import TaskMeta
+from ucsschool.http_api.import_api.models import School, UserImportJob, Logfile, SummaryFile, PasswordsFile
+from ucsschool.http_api.import_api.import_logging import logger
 
 
-class ImportJobAdmin(admin.ModelAdmin):
-	list_display = ('school', 'status', 'principal')
-	search_fields = ('id', 'school__name', 'source_uid', 'status', 'principal')  # __username')
-	list_filter = ('school__name', 'status', 'principal')  # __username')
+# TODO: load file data r/o for Logfile, SummaryFile, PasswordsFile in admin view
 
 
-admin.site.register(UserImportJob, ImportJobAdmin)
+class UserQueryFilterMixin(object):
+	def get_queryset(self, request):
+		qs = super(UserQueryFilterMixin, self).get_queryset(request)
+		if request.user.is_superuser:
+			return qs
+		return qs.filter(principal=request.user)
 
-for m in (School, Logfile):
-	admin.site.register(m)
+
+class ProxyModelFilterMixin(object):
+	def get_queryset(self, request):
+		qs = super(ProxyModelFilterMixin, self).get_queryset(request)
+		return qs.filter(userimportjob__isnull=False)
+
+
+@admin.register(UserImportJob)
+class UserImportJobAdmin(UserQueryFilterMixin, admin.ModelAdmin):
+	list_display = ('id', 'school', 'status', 'principal', 'task_id')
+	search_fields = ('id', 'school__name', 'source_uid', 'status', 'principal__username')
+	list_filter = ('school__name', 'status', 'principal')
+
+# for m in (School, Logfile, SummaryFile, PasswordsFile, TaskMeta):
+
+
+@admin.register(Logfile)
+class LogFileAdmin(ProxyModelFilterMixin, admin.ModelAdmin):
+	pass
+
+
+@admin.register(PasswordsFile)
+class PasswordsFileAdmin(ProxyModelFilterMixin, admin.ModelAdmin):
+	pass
+
+
+@admin.register(SummaryFile)
+class SummaryFileAdmin(ProxyModelFilterMixin, admin.ModelAdmin):
+	pass
+
+
+@admin.register(TaskMeta)
+class TaskMetaAdmin(UserQueryFilterMixin, admin.ModelAdmin):
+	def get_queryset(self, request):
+		qs = super(TaskMetaAdmin, self).get_queryset(request)
+		if request.user.is_superuser:
+			return qs
+		return qs.filter(userimportjob__principal=request.user)
+
+
+admin.site.register(School)

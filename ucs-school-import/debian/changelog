@@ -1,3 +1,16 @@
+ucs-school-import (15.0.0-15) unstable; urgency=low
+
+  * Bug #45024: add endpoints for logfile, password and summary subresources
+  * make subresources not appear in API root anymore
+  * initialize School list in join script
+  * create Django superuser (Administrator)
+  * filter objects in admin view
+  * allow imports with empty school string from below school URI (WIP: should
+    be without school argument)
+  * load text artifacts only in detail view from disk, not in list view
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 28 Jul 2017 07:57:36 +0200
+
 ucs-school-import (15.0.0-14) unstable; urgency=medium
 
   * Bug #45026: add object class, attributes for UCS@school groups

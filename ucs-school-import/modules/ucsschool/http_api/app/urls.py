@@ -36,20 +36,23 @@ from __future__ import unicode_literals
 from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
-# from rest_framework.documentation import include_docs_urls
+# from rest_framework.documentation import include_docs_urls  # DRF >= 3.6.0
 from ucsschool.http_api.import_api import views
 
 
 router = routers.DefaultRouter()
 router.register(r'schools', views.SchoolViewSet)
 router.register(r'imports/users', views.UserImportJobViewSet)
-# router.register(r'imports/logfiles', views.LogFileViewSet)
 
 urlpatterns = [
-	url(r'^(?P<version>(v1))/', include(router.urls)),
-	url(r'^(?P<version>(v1))/schools/(?P<ou>\w+)/imports/users', views.UserImportJobViewSet.as_view({'post': 'create'})),
-	url(r'^(?P<version>(v1))/schools/(?P<ou>\w+)/imports/users', views.UserImportJobViewSet.as_view({'get': 'redirect_get_from_schools'})),
-	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/results', views.LogFileViewSet.as_view({'get': 'list'})),
+	# url(r'^docs/', include_docs_urls(title='UCS@school import API'))
 	url(r'^admin/', admin.site.urls),
 	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/logfiles/', views.LogFileViewSet.as_view({'get': 'retrieve'}), name='logfile-detail'),
+	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/passwords/', views.PasswordsViewSet.as_view({'get': 'retrieve'}), name='passwordsfile-detail'),
+	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/summary/', views.SummaryViewSet.as_view({'get': 'retrieve'}), name='summaryfile-detail'),
+	url(r'^(?P<version>(v1))/', include(router.urls)),
 ]
+
+
+

@@ -70,20 +70,6 @@ write_secret () {
 }
 
 
-#
-# TODO: Bug #45026: add schema and extended attributes for groups (ACLs)
-#
-# ucs_registerLDAPExtension "$@" \
-#    --schema ... || die
-#
-# udm settings/extended_attribute create "$@" --ignore_exists \
-# ...
-#
-# deb-systemd-invoke restart slapd.service
-# stop_udm_cli_server
-# deb-systemd-invoke restart univention-management-console-server.service
-#
-
 if [ -e "$DJANGO_SECRET_FILE" ];
 then
     echo "Using exiting secret for HTTP API service."
@@ -141,6 +127,8 @@ fi
 python /usr/share/pyshared/ucsschool/http_api/manage.py check --no-color --deploy || die
 python /usr/share/pyshared/ucsschool/http_api/manage.py collectstatic --no-color --noinput --link || die
 python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput || die
+python /usr/share/pyshared/ucsschool/http_api/manage.py createsuperuser --username Administrator --email "root@$hostname.$domainname" --no-color --noinput
+echo 'from ucsschool.http_api.import_api.models import School; School.update_from_ldap()' | python /usr/share/pyshared/ucsschool/http_api/manage.py shell --no-color --plain
 
 a2enmod proxy_http
 a2ensite ucs-school-import-http-api.conf

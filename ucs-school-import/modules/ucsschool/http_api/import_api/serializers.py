@@ -36,23 +36,64 @@ from __future__ import unicode_literals
 import os
 import json
 import datetime
+import collections
 from django.conf import settings
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
-from .models import ConfigurationError, ConfigFile, Hook, Logfile, UserImportJob, School, JOB_NEW, JOB_SCHEDULED, USER_STUDENT
+from .models import ConfigurationError, ConfigFile, Hook, Logfile, PasswordsFile, SummaryFile, TextArtifact, UserImportJob, School, JOB_NEW, JOB_SCHEDULED, USER_STUDENT
 from ucsschool.http_api.import_api.import_logging import logger
 from ucsschool.http_api.import_api.tasks import dry_run, import_users
 
 
+class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = TaskMeta
+		fields = ('status', 'result', 'date_done', 'traceback')
+		# exclude = (,)
+		read_only_fields = ('status', 'result', 'date_done', 'traceback')  # not really necessary, as the view is a ReadOnlyModelViewSet
+
+	def to_representation(self, instance):
+		# Internal representation of TaskResult.result isn't getting converted
+		# automatically.
+		res = super(TaskResultSerializer, self).to_representation(instance)
+		res['result'] = instance.result
+		return res
+
+
+class UsernameField(serializers.CharField):
+	"""
+	Reduce a Django user object to its username string.
+	"""
+	def run_validation(self, data=serializers.empty):
+		if data and isinstance(data, User):
+			return super(UsernameField, self).run_validation(data.username)
+		else:
+			return super(UsernameField, self).run_validation(data)
+
+	def to_internal_value(self, data):
+		return super(UsernameField, self).to_internal_value(data.username)
+
+	def to_representation(self, value):
+		return super(UsernameField, self).to_representation(value.username)
+
+
 class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 	input_file = serializers.FileField()
+	log_file = serializers.URLField(read_only=True)
+	password_file = serializers.URLField(read_only=True)
+	summary_file = serializers.URLField(read_only=True)
+	result = TaskResultSerializer(read_only=True)
+	principal = UsernameField(read_only=True)
+
+	# TODO: allow not setting school from below OU
 
 	class Meta:
 		model = UserImportJob
 		# fields = (,)
-		exclude = ('task_id', 'basedir', 'config_file')
-		read_only_fields = (
-			'created', 'status', 'task_id', 'result', 'principal', 'log_file', 'config_file', 'hooks', 'progress', 'basedir', 'input_file', 'input_file_type')  # not really necessary, as the view is Create & Read only
+		exclude = ('basedir', 'config_file', 'hooks', 'input_file', 'input_file_type', 'task_id')
+		read_only_fields = ('created', 'status', 'result', 'principal', 'progress')
+		# depth = 1
 
 	def create(self, validated_data):
 		"""
@@ -111,27 +152,41 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		return instance
 
 
-class LogFileSerializer(serializers.HyperlinkedModelSerializer):
+class TextArtifactSerializer(serializers.HyperlinkedModelSerializer):
+	userimportjob = serializers.HyperlinkedRelatedField(read_only=True, view_name='userimportjob-detail')
+
 	class Meta:
-		model = Logfile
-		fields = ('url', 'text', 'importjob')
+		model = TextArtifact
+		fields = ('url', 'text', 'userimportjob')
 		# exclude = ()
-		read_only_fields = ('path', 'text')  # not really necessary, as the view is a ReadOnlyModelViewSet
+		read_only_fields = ('text',)  # not really necessary, as the view is a ReadOnlyModelViewSet
+
+	def to_representation(self, instance):
+		# when reading an item, read logfile from disk, when listing all LogFiles don't
+		res = super(TextArtifactSerializer, self).to_representation(instance)
+		if not isinstance(self.instance, collections.Iterable):
+			res['text'] = instance.get_text()
+		return res
+
+
+class LogFileSerializer(TextArtifactSerializer):
+	class Meta(TextArtifactSerializer.Meta):
+		model = Logfile
+
+
+class PasswordFileSerializer(TextArtifactSerializer):
+	class Meta(TextArtifactSerializer.Meta):
+		model = PasswordsFile
+
+
+class SummarySerializer(TextArtifactSerializer):
+	class Meta(TextArtifactSerializer.Meta):
+		model = SummaryFile
 
 
 class SchoolSerializer(serializers.HyperlinkedModelSerializer):
-	user_import = serializers.URLField(read_only=True)
+	user_imports = serializers.URLField(read_only=True)
 
 	class Meta:
 		model = School
-		# fields = (,)
-		# exclude = (,)
-		read_only_fields = ('name', 'displayName', 'user_import')  # not really necessary, as the view is a ReadOnlyModelViewSet
-
-
-class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
-	class Meta:
-		model = TaskMeta
-		fields = ('url', 'status', 'result', 'date_done', 'traceback', 'importjob')
-		# exclude = ()  # ('hidden',)
-		read_only_fields = ('status', 'result', 'date_done', 'traceback')  # not really necessary, as the view is a ReadOnlyModelViewSet
+		read_only_fields = ('name', 'displayName', 'user_imports')

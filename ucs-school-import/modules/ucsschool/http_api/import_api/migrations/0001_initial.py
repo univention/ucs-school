@@ -3,12 +3,14 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ('djcelery', '__first__'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -48,19 +50,22 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Logfile',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('path', models.CharField(unique=True, max_length=255)),
-                ('text', models.TextField(blank=True)),
-            ],
-        ),
-        migrations.CreateModel(
             name='School',
             fields=[
                 ('name', models.CharField(max_length=255, serialize=False, primary_key=True)),
                 ('displayName', models.CharField(max_length=255, blank=True)),
             ],
+        ),
+        migrations.CreateModel(
+            name='TextArtifact',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('path', models.CharField(unique=True, max_length=255)),
+                ('text', models.TextField(blank=True)),
+            ],
+            options={
+                'ordering': ('-pk',),
+            },
         ),
         migrations.CreateModel(
             name='UserImportJob',
@@ -69,16 +74,15 @@ class Migration(migrations.Migration):
                 ('source_uid', models.CharField(max_length=255)),
                 ('status', models.CharField(default='New', max_length=10, choices=[('New', 'New'), ('Scheduled', 'Scheduled'), ('Started', 'Started'), ('Aborted', 'Aborted'), ('Finished', 'Finished')])),
                 ('task_id', models.CharField(max_length=40, blank=True)),
-                ('principal', models.CharField(max_length=255)),
                 ('progress', models.TextField(blank=True)),
                 ('dryrun', models.BooleanField(default=True)),
                 ('basedir', models.CharField(max_length=255)),
-                ('created', models.DateTimeField(auto_now_add=True)),
+                ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('input_file', models.FileField(upload_to='uploads/%Y-%m-%d/')),
                 ('input_file_type', models.CharField(default='csv', max_length=10, choices=[('csv', 'csv')])),
                 ('config_file', models.ForeignKey(to='import_api.ConfigFile')),
                 ('hooks', models.ManyToManyField(to='import_api.Hook', blank=True)),
-                ('log_file', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, blank=True, to='import_api.Logfile')),
+                ('principal', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('result', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, blank=True, to='djcelery.TaskMeta')),
                 ('school', models.ForeignKey(to='import_api.School')),
             ],
@@ -95,6 +99,48 @@ class Migration(migrations.Migration):
             model_name='configfile',
             name='school',
             field=models.ForeignKey(to='import_api.School'),
+        ),
+        migrations.CreateModel(
+            name='Logfile',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('import_api.textartifact',),
+        ),
+        migrations.CreateModel(
+            name='PasswordsFile',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('import_api.textartifact',),
+        ),
+        migrations.CreateModel(
+            name='SummaryFile',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('import_api.textartifact',),
+        ),
+        migrations.AddField(
+            model_name='userimportjob',
+            name='log_file',
+            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, blank=True, to='import_api.Logfile'),
+        ),
+        migrations.AddField(
+            model_name='userimportjob',
+            name='password_file',
+            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, blank=True, to='import_api.PasswordsFile'),
+        ),
+        migrations.AddField(
+            model_name='userimportjob',
+            name='summary_file',
+            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, blank=True, to='import_api.SummaryFile'),
         ),
         migrations.AlterUniqueTogether(
             name='hook',

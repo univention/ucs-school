@@ -37,11 +37,14 @@ import json
 import codecs
 import os.path
 import shutil
+from ldap.filter import escape_filter_chars
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 # from django.contrib.postgres.fields import JSONField  # pgsql >= 9,4, django >= 1.9
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+from ucsschool.importer.utils.ldap_connection import get_machine_connection
 from ucsschool.http_api.import_api.import_logging import logger
 
 
@@ -102,6 +105,35 @@ class School(models.Model):
 
 	def __unicode__(self):
 		return self.name
+
+	@staticmethod
+	def _get_ous_from_ldap(ou=None):
+		lo, po = get_machine_connection()
+		if ou:
+			return lo.search(
+				filter='(&(objectClass=ucsschoolOrganizationalUnit)(ou={}))'.format(escape_filter_chars(ou)))
+		else:
+			return lo.search(filter='objectClass=ucsschoolOrganizationalUnit')
+
+	@classmethod
+	def update_from_ldap(cls, ou_str=None):
+		"""
+		Update one or all School objects from OUs in LDAP.
+
+		:param ou_str: name of School object to update, all will be updated if None
+		:return: None
+		"""
+		for dn, ou in cls._get_ous_from_ldap(ou_str):
+			name = ou['ou'][0]
+			display_name = ou['displayName'][0]
+			obj, created = cls.objects.get_or_create(
+				name=name,
+				defaults={'displayName': display_name},
+			)
+			if not created and obj.displayName != display_name:
+				obj.displayName = display_name
+				obj.save()
+		# TODO: remove non-existent Schools
 
 
 class ConfigFile(models.Model):
@@ -198,15 +230,40 @@ class Hook(models.Model):
 			raise
 
 
-class Logfile(models.Model):
+class TextArtifact(models.Model):
 	path = models.CharField(max_length=255, unique=True)
 	text = models.TextField(blank=True)
 
+	class Meta:
+		ordering = ('-pk',)
+
 	def __unicode__(self):
 		try:
-			return 'Logfile of importjob {}.'.format(self.importjob.pk)
-		except ObjectDoesNotExist:
-			return 'Logfile of importjob n/a.'
+			pk = '#{}'.format(self.userimportjob.pk)
+		except (AttributeError, ObjectDoesNotExist):
+			pk = 'n/a'
+		return '{} #{} of importjob {}'.format(self.__class__.__name__, self.pk, pk)
+
+	def get_text(self):
+		if not self.text:
+			with codecs.open(self.path, 'rb', encoding='utf-8') as fp:
+				self.text = fp.read()
+		return self.text
+
+
+class Logfile(TextArtifact):
+	class Meta:
+		proxy = True
+
+
+class PasswordsFile(TextArtifact):
+	class Meta:
+		proxy = True
+
+
+class SummaryFile(TextArtifact):
+	class Meta:
+		proxy = True
 
 
 class UserImportJob(models.Model):
@@ -215,14 +272,16 @@ class UserImportJob(models.Model):
 	status = models.CharField(max_length=10, default=JOB_NEW, choices=JOB_CHOICES)
 	task_id = models.CharField(max_length=40, blank=True)
 	result = models.OneToOneField(TaskMeta, on_delete=models.SET_NULL, null=True, blank=True)
-	principal = models.CharField(max_length=255)  # models.ForeignKey(settings.AUTH_USER_MODEL)
+	principal = models.ForeignKey(User)
 	log_file = models.OneToOneField(Logfile, on_delete=models.SET_NULL, null=True, blank=True)
+	password_file = models.OneToOneField(PasswordsFile, on_delete=models.SET_NULL, null=True, blank=True)
+	summary_file = models.OneToOneField(SummaryFile, on_delete=models.SET_NULL, null=True, blank=True)
 	config_file = models.ForeignKey(ConfigFile)
 	hooks = models.ManyToManyField(Hook, blank=True)
 	progress = models.TextField(blank=True)  # pgsql >= 9.4 -> JsonField(blank=True)
 	dryrun = models.BooleanField(default=True)
 	basedir = models.CharField(max_length=255)
-	created = models.DateTimeField(auto_now_add=True)
+	date_created = models.DateTimeField(auto_now_add=True)
 	input_file = models.FileField(upload_to='uploads/%Y-%m-%d/')
 	input_file_type = models.CharField(max_length=10, default=INPUT_FILE_CSV, choices=INPUT_FILE_CHOICES)
 

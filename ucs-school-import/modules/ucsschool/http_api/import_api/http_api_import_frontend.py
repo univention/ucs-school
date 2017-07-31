@@ -71,7 +71,14 @@ class HttpApiImportFrontend(UserImportCommandLine):
 				raise InitialisationError(
 					'Cannot create directory "{}" for import job {}: {}'.format(dir_, self.import_job.pk, str(exc)))
 		self.logfile_path = os.path.join(self.basedir, 'ucs-school-import.log')
-		self.logger.info('Logging for this import job will go to %r.', self.logfile_path)
+		self.password_file = os.path.join(
+			self.basedir,
+			settings.UCSSCHOOL_IMPORT['new_user_passwords_filename']
+		)
+		self.summary_file = os.path.join(
+					self.basedir,
+					settings.UCSSCHOOL_IMPORT['user_import_summary_filename'])
+		self.logger.info('Logging for import job %r will go to %r.', self.import_job.pk, self.logfile_path)
 		# task_handler = logging.FileHandler(os.path.join(self.basedir, 'task.log'), encoding='utf-8')
 		# task_handler.setLevel(logging.DEBUG)
 		# task_handler.setFormatter(logging.Formatter(
@@ -114,12 +121,8 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			'input': {'filename': self.data_path, 'type': self.import_job.input_file_type.lower()},
 			'logfile': self.logfile_path,
 			'output': {
-				'new_user_passwords': os.path.join(
-					self.basedir,
-					settings.UCSSCHOOL_IMPORT['new_user_passwords_filename']),
-				'user_import_summary': os.path.join(
-					self.basedir,
-					settings.UCSSCHOOL_IMPORT['user_import_summary_filename'])
+				'new_user_passwords': self.password_file,
+				'user_import_summary': self.summary_file,
 			},
 			'school': self.import_job.config_file.school.name,
 			'sourceUID': self.import_job.source_uid,

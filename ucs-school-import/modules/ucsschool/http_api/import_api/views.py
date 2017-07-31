@@ -33,17 +33,19 @@ Django Views
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
-import codecs
 import urlparse
-from ldap.filter import escape_filter_chars
+from django.shortcuts import get_object_or_404, redirect
+from rest_framework import status
+from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
-# from rest_framework.decorators import detail_route
-from ucsschool.importer.utils.ldap_connection import get_machine_connection
-from ucsschool.http_api.import_api.models import UserImportJob, Logfile, School, JOB_STARTED
+from rest_framework.decorators import detail_route
+from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, School, JOB_STARTED
 from ucsschool.http_api.import_api.serializers import (
 	UserImportJobSerializer,
 	LogFileSerializer,
+	PasswordFileSerializer,
+	SummarySerializer,
 	SchoolSerializer,
 )
 from ucsschool.http_api.import_api.import_logging import logger
@@ -61,117 +63,193 @@ class UserImportJobViewSet(
 Manage Import jobs.
 
 * Only GET and POST are allowed.
-* The `source_uid` must match `config_file.source_uid`.
-* The `school` must match `config_file.school`.
-* `result`, `log_file`, `hooks` and `principal` will be set automatically
-(data in POST will be ignored).
-* In a POST request `source_uid`, `school` and `config_file` are mandatory.
+* In a POST request `source_uid`, `dryrun`, `input_file` and `school` are mandatory.
+* `source_uid` is of type string
+* `dryrun` is of type boolean
+* `input_file` has to be the key for a multipart-encoded file upload
+* `school` must be an absolute URI from `/{version}/schools/`
 	"""
 	queryset = UserImportJob.objects.order_by('-pk')
 	serializer_class = UserImportJobSerializer
 
 	def perform_create(self, serializer):
-		# store user
-		serializer.save(principal=self.request.user.username)
+		# store user when saving object
+		serializer.save(principal=self.request.user)
 
-# class UserImportJobGetViewSet(
-# 	mixins.RetrieveModelMixin,
-# 	mixins.ListModelMixin,
-# 	UserImportJobViewSet):
-# 	"""
-# Manage Import jobs.
-#
-# * Only GET and POST are allowed.
-# * The `source_uid` must match `config_file.source_uid`.
-# * The `school` must match `config_file.school`.
-# * `result`, `log_file`, `hooks` and `principal` will be set automatically
-# (data in POST will be ignored).
-# * In a POST request `source_uid`, `school` and `config_file` are mandatory.
-# 	"""
+	@staticmethod
+	def _get_subresource_urls(instance_url):
+		# instance_url = request.build_absolute_uri()
+		return {
+			'log_file': urlparse.urljoin(instance_url, 'logfile/'),
+			'password_file': urlparse.urljoin(instance_url, 'passwords/'),
+			'summary_file': urlparse.urljoin(instance_url, 'summary/'),
+		}
+
 	def retrieve(self, request, *args, **kwargs):
-		# update progress if job is active
 		instance = self.get_object()
+		# update progress if job is active
 		if instance.status == JOB_STARTED:
 			instance.update_progress()
-		return super(UserImportJobViewSet, self).retrieve(request, *args, **kwargs)
+		serializer = self.get_serializer(instance)
+		data = serializer.data
+		# inject /imports/users/{pk}/(logfile|passwords|summary) URLs
+		data.update(self._get_subresource_urls(data['url']))
+		# remove 'input_file' from view
+		del data['input_file']
+		return Response(data)
 
 	def list(self, request, *args, **kwargs):
-		# update progress of running jobs
 		queryset = self.filter_queryset(self.get_queryset())
+
+		# coming from GET SchoolViewSet.user_imports()?
+		try:
+			school = kwargs['school']
+			queryset = queryset.filter(school=school)
+		except KeyError:
+			pass
+
+		# update progress of running jobs
 		for ij in queryset.filter(status=JOB_STARTED):
 			ij.update_progress()
-		return super(UserImportJobViewSet, self).list(request, *args, **kwargs)
 
-	def redirect_get_from_schools(self, request, *args, **kwargs):
-		logger.debug('args=%r kwargs=%r', args, kwargs)
-		return
+		page = self.paginate_queryset(queryset)
+		if page is not None:
+			serializer = self.get_serializer(page, many=True)
+			return self.get_paginated_response(serializer.data)
 
-class LogFileViewSet(viewsets.ReadOnlyModelViewSet):
+		serializer = self.get_serializer(queryset, many=True)
+		data = serializer.data
+
+		for d in data:
+			# inject /imports/users/{pk}/(logfile|passwords|summary) URLs
+			d.update(self._get_subresource_urls(d['url']))
+			# remove 'input_file' from view
+			del d['input_file']
+		return Response(data)
+
+	@detail_route(methods=['get'], url_path='logfile')
+	def logfile(self, request, *args, **kwargs):
+		instance = self.get_object()
+		serializer = LogFileSerializer(instance.log_file, context={'request': request})
+		# fix URL: /imports/users/{summary-pk}/logfile/ -> /imports/users/{import-pk}/logfile/
+		data = serializer.data
+		data['url'] = reverse('logfile-detail', kwargs=kwargs, request=request)
+		return Response(data)
+
+	@detail_route(methods=['get'], url_path='passwords')
+	def passwords(self, request, *args, **kwargs):
+		instance = self.get_object()
+		serializer = PasswordFileSerializer(instance.password_file, context={'request': request})
+		# fix URL: /imports/users/{summary-pk}/passwords/ -> /imports/users/{import-pk}/passwords/
+		data = serializer.data
+		data['url'] = reverse('passwordsfile-detail', kwargs=kwargs, request=request)
+		return Response(data)
+
+	@detail_route(methods=['get'], url_path='summary')
+	def summary(self, request, *args, **kwargs):
+		instance = self.get_object()
+		serializer = SummarySerializer(instance.summary_file, context={'request': request})
+		# fix URL: /imports/users/{summary-pk}/summary/ -> /imports/users/{import-pk}/summary/
+		data = serializer.data
+		data['url'] = reverse('summaryfile-detail', kwargs=kwargs, request=request)
+		return Response(data)
+
+
+class SubResourceMixin(object):
+	def retrieve(self, request, *args, **kwargs):
+		model = self.get_serializer_class().Meta.model
+		instance = get_object_or_404(model, userimportjob__pk=kwargs.get('pk', 0))
+		serializer = self.get_serializer(instance)
+		# fix URL: /imports/users/{summary-pk}/summary -> /imports/users/{import-pk}/summary
+		data = serializer.data
+		data['url'] = reverse('{}-detail'.format(model.__name__.lower()), kwargs=kwargs, request=request)
+		return Response(data)
+
+
+class LogFileViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
 	"""
-Readonly representation of import job logfiles in the Web API.
+Log file of import job.
+
+* Only GET is allowed.
 	"""
-	queryset = Logfile.objects.all()
+	queryset = Logfile.objects.filter(userimportjob__isnull=False)  # all() would list all TextArtifact objects
 	serializer_class = LogFileSerializer
 
-	# def get_queryset(self):
-	# 	user = self.request.user
-	# 	return LogFileViewSet.objects.filter(importjob__principal=user)
 
-	def retrieve(self, request, *args, **kwargs):
-		# read logfile from disk
-		instance = self.get_object()
-		if not instance.text:
-			with codecs.open(instance.path, 'rb', encoding='utf-8') as fp:
-				instance.text = fp.read()
-		serializer = self.get_serializer(instance)
-		return Response(serializer.data)
+class PasswordsViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
+	"""
+New users password file of import job.
+
+* Only GET is allowed.
+	"""
+	queryset = PasswordsFile.objects.filter(userimportjob__isnull=False)
+	serializer_class = PasswordFileSerializer
+
+
+class SummaryViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
+	"""
+Summary file of import job.
+
+* Only GET is allowed.
+	"""
+	queryset = SummaryFile.objects.filter(userimportjob__isnull=False)
+	serializer_class = SummarySerializer
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
+	"""
+Read-only list of Schools (OUs).
+
+`user_imports` provides navigation to start an import for the respective school.
+	"""
 	queryset = School.objects.order_by('name')
 	serializer_class = SchoolSerializer
 
-	@staticmethod
-	def _update_sqldb_from_ldap(ou_str=None):
-		for dn, ou in get_ous(ou_str):
-			name = ou['ou'][0]
-			display_name = ou['displayName'][0]
-			obj, created = School.objects.get_or_create(
-				name=name,
-				defaults={'displayName': display_name},
-			)
-			if not created and obj.displayName != display_name:
-				obj.displayName = display_name
-				obj.save()
-
 	def retrieve(self, request, *args, **kwargs):
-		# update entry from LDAP
-		self._update_sqldb_from_ldap(kwargs.get('pk'))
 		instance = self.get_object()
+		# update entry from LDAP
+		instance.update_from_ldap(instance.pk)
 		# inject /schools/{ou}/imports/users URL
 		instance_url = request.build_absolute_uri()
-		instance.user_import = urlparse.urljoin(instance_url, 'imports/users')
+		instance.user_imports = urlparse.urljoin(instance_url, 'imports/users')
 		serializer = self.get_serializer(instance)
 		return Response(serializer.data)
 
 	def list(self, request, *args, **kwargs):
 		# update list from LDAP
-		self._update_sqldb_from_ldap()
-		return super(SchoolViewSet, self).list(request, *args, **kwargs)
+		School.update_from_ldap()
 
-	# @detail_route(methods=['post'], url_path='imports/users')
-	# def create_user_import(self, request, pk=None):
-	# 	logger.info('SchoolViewSet.create_user_import() pk=%r', pk)
-	# 	pass
+		# add import URL
+		queryset = self.filter_queryset(self.get_queryset())
 
-class ImportTypeViewSet(viewsets.ReadOnlyModelViewSet):
-	# TODO
-	pass
+		page = self.paginate_queryset(queryset)
+		if page is not None:
+			serializer = self.get_serializer(page, many=True)
+			return self.get_paginated_response(serializer.data)
 
+		serializer = self.get_serializer(queryset, many=True)
+		data = serializer.data
+		for d in data:
+			d['user_imports'] = urlparse.urljoin(d['url'], 'imports/users')
+		return Response(data)
 
-def get_ous(ou=None):
-	lo, po = get_machine_connection()
-	if ou:
-		return lo.search(filter='(&(objectClass=ucsschoolOrganizationalUnit)(ou={}))'.format(escape_filter_chars(ou)))
-	else:
-		return lo.search(filter='objectClass=ucsschoolOrganizationalUnit')
+	@detail_route(methods=['get', 'post'], url_path='imports/users')
+	def user_imports(self, request, *args, **kwargs):
+		"""
+		schools/{ou}/imports/users/
+		"""
+		instance = self.get_object()
+		uivs = UserImportJobViewSet(request=request, **kwargs)
+		uivs.initial(request=request, *args, **kwargs)
+		if request.method == 'GET':
+			kwargs['school'] = instance.name
+			return uivs.list(request, *args, **kwargs)
+		elif request.method == 'POST':
+			school_serializer = self.get_serializer(instance=instance, context={'request': request})
+			data = request.data.copy()
+			data['school'] = school_serializer.data['url']
+			uij_serializer = UserImportJobSerializer(data=data, context={'request': request})
+			uij_serializer.is_valid(raise_exception=True)
+			uivs.perform_create(uij_serializer)
+			headers = uivs.get_success_headers(uij_serializer.data)
+			return Response(uij_serializer.data, status=status.HTTP_201_CREATED, headers=headers)

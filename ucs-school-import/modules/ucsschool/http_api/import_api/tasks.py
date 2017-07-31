@@ -46,7 +46,7 @@ from celery.utils.log import get_task_logger
 from celery.signals import task_postrun
 from django.core.exceptions import ObjectDoesNotExist
 from ucsschool.importer.exceptions import InitialisationError
-from ucsschool.http_api.import_api.models import UserImportJob, Logfile, JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
+from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
 from ucsschool.http_api.import_api.http_api_import_frontend import HttpApiImportFrontend
 
 
@@ -72,8 +72,10 @@ def run_import_job(task, importjob_id):
 			raise InitialisationError('{} did not reach JOB_SCHEDULED state in 60s.'.format(importjob))
 	runner = HttpApiImportFrontend(importjob, task, logger)
 	importjob.log_file = Logfile.objects.create(path=runner.logfile_path)
+	importjob.password_file = PasswordsFile.objects.create(path=runner.password_file)
+	importjob.summary_file = SummaryFile.objects.create(path=runner.summary_file)
 	importjob.status = JOB_STARTED
-	importjob.save(update_fields=('status', 'log_file'))
+	importjob.save(update_fields=('log_file', 'password_file', 'summary_file', 'status'))
 
 	res = runner.main()
 

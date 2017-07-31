@@ -54,5 +54,4 @@ if 'http_api.log' not in [h.name for h in logger.handlers]:
 	))
 	_file_handler.setLevel(level=settings.UCSSCHOOL_IMPORT['logging']['api_level'])
 	logger.addHandler(_file_handler)
-	if _file_handler.level > logger.level:
-		logger.setLevel(_file_handler.level)
+	logger.setLevel(max(logger.level, _file_handler.level))

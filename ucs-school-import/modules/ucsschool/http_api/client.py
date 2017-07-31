@@ -119,9 +119,9 @@ class Client(object):
 		self.logger.request('%s(%s)', method, ', '.join('{}={!r}'.format(k, v) for k, v in request_kwargs.items()))
 		meth = getattr(requests, method)
 		response = meth(**request_kwargs)
-		self.logger.response(response.content)
+		self.logger.response('%s (%r): %r', response.reason, response.status_code, response.content)
 		if not response.ok:
-			raise ApiError('Received status_code={!r} with reason={!r} for requests.{}(**{}).'.format(response.status_code, getattr(response, 'reason'), method, ', '.join('{}={!r}'.format(k, v) for k, v in request_kwargs.items())))
+			raise ApiError('Received status_code={!r} with reason={!r} for requests.{}(**{}).'.format(response.status_code, response.reason, method, ', '.join('{}={!r}'.format(k, v) for k, v in request_kwargs.items())))
 		return response.json()
 
 	@staticmethod
@@ -153,9 +153,10 @@ class Client(object):
 		filename = filename or 'noname'
 		if not file_obj:
 			file_obj = open(filename, 'rb')
-		file_data = file_obj.read()
-		mime_type = self._get_mime_type(file_data[:32])
-		files = {'input_file': (os.path.basename(filename), file_data, mime_type)}
+		file_data = file_obj.read(32)
+		mime_type = self._get_mime_type(file_data)
+		file_obj.seek(os.SEEK_SET)
+		files = {'input_file': (os.path.basename(filename), file_obj, mime_type)}
 		return self._call_api('post', self.IMPORT_USERS_URL, data=data, files=files)
 
 	def get_importjobs(self, importjob_id=None):
