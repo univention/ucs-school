@@ -85,7 +85,7 @@ import pipes
 helper_cmd = '/usr/bin/ucs-school-ntlm-auth-suidwrapper --request-nt-key --username=%{%{Stripped-User-Name}:-%{%{User-Name}:-None}} --challenge=%{%{mschap:Challenge}:-00} --nt-response=%{%{mschap:NT-Response}:-00} --station-id=%{outer.request:Calling-Station-Id}'
 logfile = configRegistry.get('freeradius/conf/auth-type/mschap/authhelper-logfile', None)
 if logfile:
-	helper_cmd += ' --debug-fn=%s' % (pipes.quote(logfile),)
+	helper_cmd += ' --logfile=%s' % (pipes.quote(logfile),)
 print '\tntlm_auth = "%s"' % (helper_cmd,)
 @!@
 }
