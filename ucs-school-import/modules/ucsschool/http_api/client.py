@@ -42,6 +42,8 @@ except ImportError:
 	from urllib.parse import urljoin
 import logging
 import inspect
+import collections
+import dateutil.parser
 
 import requests
 import magic
@@ -52,16 +54,25 @@ ucr = ConfigRegistry()
 ucr.load()
 MIME_TYPE = magic.open(magic.MAGIC_MIME_TYPE)
 MIME_TYPE.load()
-__resource_class_registry = list()
+__resource_client_class_registry = list()
+__resource_representation_class_registry = dict()
 
 
-def register_resource_class(cls):
-	if cls not in __resource_class_registry:
-		__resource_class_registry.append(cls)
+def register_resource_client_class(cls):
+	if cls not in __resource_client_class_registry:
+		__resource_client_class_registry.append(cls)
 
 
-def get_resource_classes():
-	return __resource_class_registry
+def get_resource_client_classes():
+	return __resource_client_class_registry
+
+
+def register_resource_representation_class(resource_name, cls):
+	__resource_representation_class_registry[resource_name] = cls
+
+
+def get_resource_representation_classes(resource_name):
+	return __resource_representation_class_registry[resource_name]
 
 
 class ApiError(Exception):
@@ -77,9 +88,9 @@ class BadRequest(ApiError):
 	pass
 
 
-class LoginError(ApiError):
+class PermissionError(ApiError):
 	"""
-	HTTP 403
+	HTTP 401|403
 	"""
 	pass
 
@@ -105,11 +116,95 @@ class ConnectionError(ApiError):
 	pass
 
 
-class _ResourceMetaClass(type):
+class _ResourceClientMetaClass(type):
 	def __new__(cls, clsname, bases, attrs):
-		kls = super(_ResourceMetaClass, cls).__new__(cls, clsname, bases, attrs)
-		register_resource_class(kls)
+		kls = super(_ResourceClientMetaClass, cls).__new__(cls, clsname, bases, attrs)
+		register_resource_client_class(kls)
 		return kls
+
+
+class _ResourceRepresentationMetaClass(type):
+	def __new__(cls, clsname, bases, attrs):
+		kls = super(_ResourceRepresentationMetaClass, cls).__new__(cls, clsname, bases, attrs)
+		register_resource_representation_class(kls.resource_name, kls)
+		return kls
+
+
+class ResourceRepresentation(object):
+	class _ResourceReprBase(object):
+		resource_name = ''
+		_attribute_repr = {}
+
+		def __init__(self, resource_client, resource):
+			self._resource_client = resource_client
+			self._resource = resource
+
+			for k, v in resource.items():
+				if k == 'url':
+					continue
+				if k not in dir(self):
+					try:
+						val = self._attribute_repr[k](v)
+					except KeyError:
+						val = v
+					setattr(self, k, val)
+
+		def __repr__(self):
+			return '{}({}, {}={!r})'.format(
+				self.__class__.__name__,
+				self._resource_client.resource_name,
+				self._resource_client.pk_name,
+				getattr(self, self._resource_client.pk_name)
+			)
+
+	class SchoolResource(_ResourceReprBase):
+		__metaclass__ = _ResourceRepresentationMetaClass
+		resource_name = 'schools'
+
+		@property
+		def user_imports(self):
+			return self._resource_client.client.userimportjob.list()  # TODO: filter(school=self.name)
+
+	class ResultResource(_ResourceReprBase):
+		resource_name = 'result'
+		_attribute_repr = {
+			'date_done': lambda x: dateutil.parser.parse(x)
+		}
+
+		def __repr__(self):
+			return '{}(status={!r})'.format(self.__class__.__name__, self.status)
+
+	class UserImportJobResource(_ResourceReprBase):
+		__metaclass__ = _ResourceRepresentationMetaClass
+		resource_name = 'imports/users'
+		_attribute_repr = {
+			'date_created': lambda x: dateutil.parser.parse(x)
+		}
+
+		@property
+		def log_file(self):
+			return 'TODO: log_file'
+
+		@property
+		def password_file(self):
+			return 'TODO: password_file'
+
+		@property
+		def school(self):
+			return self._resource_client.client.school.get(self._resource['school'])
+
+		@property
+		def summary_file(self):
+			return 'TODO: summary_file'
+
+		@property
+		def result(self):
+			return ResourceRepresentation.ResultResource(self._resource_client, self._resource['result'])
+
+
+	@classmethod
+	def get_repr(cls, resource_client, resource):
+		return get_resource_representation_classes(resource_client.resource_name)(resource_client, resource)
 
 
 class Client(object):
@@ -133,14 +228,22 @@ class Client(object):
 		self.ssl_verify = ssl_verify
 		self.base_url = 'https://{}/api/v{}/'.format(self.server, self.version)
 		self.logger = self._setup_logging(log_level)
+		self._resource_urls = None
 		self.logger.debug('Registering resources and methods:')
-		for kls in get_resource_classes():
-			setattr(self, kls.__name__.lower(), kls(self))
+		for kls in get_resource_client_classes():
+			cls_name = kls.__name__.lower().strip('_')
+			setattr(self, cls_name, kls(self))
 			self.logger.debug(
 				'  %s: %s',
-				kls.__name__,
-				', '.join([m[0] for m in inspect.getmembers(kls, predicate=inspect.ismethod) if m[0] != '__init__'])
+				cls_name,
+				', '.join([m[0] for m in inspect.getmembers(kls, predicate=inspect.ismethod) if not m[0].startswith('_')])
 			)
+
+	@property
+	def resource_urls(self):
+		if not self._resource_urls:
+			self._resource_urls = self.call_api('get', '.')
+		return self._resource_urls
 
 	@classmethod
 	def _setup_logging(cls, log_level):
@@ -175,6 +278,7 @@ class Client(object):
 			files=files,
 			params=params,
 			auth=(self.username, self.password),
+			headers={'Accept': 'application/json'},
 			**kwargs)
 		if not self.ssl_verify:
 			request_kwargs['verify'] = False
@@ -186,13 +290,13 @@ class Client(object):
 			response = meth(**request_kwargs)
 		except requests.ConnectionError as exc:
 			raise ConnectionError(str(exc))
-		self.logger.response('%s -> %s (%r): %r', response.url, response.reason, response.status_code, response.content)
+		self.logger.response('%s -> %s (%r) headers:%r content:%r', response.url, response.reason, response.status_code, response.headers, response.content)
 		if not response.ok:
 			msg = 'Received status_code={!r} with reason={!r} for requests.{}(**{}).'.format(response.status_code, response.reason, method, ', '.join('{}={!r}'.format(k, v) for k, v in log_request_kwargs.items()))
 			if response.status_code == 400:
 				exc = BadRequest
-			elif response.status_code == 403:
-				exc = LoginError
+			elif response.status_code in (401, 403):
+				exc = PermissionError
 			elif response.status_code == 404:
 				exc = ObjectNotFound
 			elif 499 < response.status_code < 600:
@@ -202,21 +306,37 @@ class Client(object):
 			raise exc(msg, status_code=response.status_code)
 		return response.json()
 
-	class _Resource(object):
-		RESOURCE_URL = ''
+	class _ResourceClient(object):
+		resource_name = ''
+		pk_name = ''
 
 		def __init__(self, client):
 			self.client = client
+			self.resource_url = self.client.resource_urls[self.resource_name]
+
+		def _to_python(self, resource):
+			if isinstance(resource, collections.Iterable) and not isinstance(resource, collections.Mapping):
+				return [self._to_python(r) for r in resource]
+			return ResourceRepresentation.get_repr(self, resource)
+
+		def _resource_from_url(self, url):
+			return self.client.call_api('get', url)
+
+		def _get_resource(self, pk):
+			url = urljoin(self.resource_url, str(pk))
+			return self._resource_from_url(url)
+
+		def _list_resource(self):
+			return self._resource_from_url(self.resource_url)
 
 		def get(self, pk):
 			"""
 			Read Resource.
 
 			:param pk: str: primary key (name, id, ..)
-			:return: dict
+			:return: Resource object
 			"""
-			url = urljoin(self.RESOURCE_URL, str(pk))
-			return self.client.call_api('get', url)
+			return self._to_python(self._get_resource(pk))
 
 		def list(self):
 			"""
@@ -224,15 +344,23 @@ class Client(object):
 
 			:return: list of dicts
 			"""
-			return self.client.call_api('get', self.RESOURCE_URL)
+			return self._to_python(self._list_resource())
 
-	class School(_Resource):
-		__metaclass__ = _ResourceMetaClass
-		RESOURCE_URL = 'schools/'
+	class _School(_ResourceClient):
+		__metaclass__ = _ResourceClientMetaClass
+		resource_name = 'schools'
+		pk_name = 'name'
 
-	class UserImportJob(_Resource):
-		__metaclass__ = _ResourceMetaClass
-		RESOURCE_URL = 'imports/users/'
+		# def _get_resource_repr(self, resource):
+		# 	return SchoolResource(self, resource)
+
+	class _UserImportJob(_ResourceClient):
+		__metaclass__ = _ResourceClientMetaClass
+		resource_name = 'imports/users'
+		pk_name = 'id'
+
+		# def _get_resource_repr(self, resource):
+		# 	return UserImportJobResource(self, resource)
 
 		def create(self, filename, source_uid, school, user_role=None, dryrun=True, file_obj=None):
 			"""
@@ -271,7 +399,7 @@ class Client(object):
 			mime_type = self._get_mime_type(file_data)
 			file_obj.seek(os.SEEK_SET)
 			files = {'input_file': (os.path.basename(filename), file_obj, mime_type)}
-			return self.client.call_api('post', self.RESOURCE_URL, data=data, files=files)
+			return self.client.call_api('post', self.resource_url, data=data, files=files)
 
 		@staticmethod
 		def _get_mime_type(data):
