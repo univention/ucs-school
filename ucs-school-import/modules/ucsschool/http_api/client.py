@@ -133,7 +133,7 @@ class Client(object):
 		self.logger = self._setup_logging(log_level)
 		self.logger.debug('Registering resources and methods:')
 		for kls in get_resource_classes():
-			setattr(self, kls.__name__, kls(self))
+			setattr(self, kls.__name__.lower(), kls(self))
 			self.logger.debug(
 				'  %s: %s',
 				kls.__name__,
