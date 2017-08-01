@@ -202,4 +202,5 @@ class SchoolSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
 		model = School
+		fields = ('name', 'displayName', 'url', 'user_imports')
 		read_only_fields = ('name', 'displayName', 'user_imports')
