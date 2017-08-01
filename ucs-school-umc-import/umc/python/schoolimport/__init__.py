@@ -39,7 +39,7 @@ import time
 import notifier.threads
 
 from univention.management.console.log import MODULE
-#from univention.management.console.config import ucr
+from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, file_upload, require_password
 from univention.management.console.modules.mixins import ProgressMixin
 import univention.admin.syntax
@@ -107,10 +107,12 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		while not finished:
 			time.sleep(0.5)
 			job = self.client.userimportjob.get(jobid)
-			finished = job['status'] == 'Finished'
-		job['summary'] = _('FIXME: The dry run was successful.')  # TODO: make a query to the summary file and return this?
-		# FIXME: don't return job but an dict() with our own structure!
-		return job
+			if job['status'] == 'Started':
+				progress.current = 75.0
+			finished = job['status'] in ('Finished', 'Aborted')
+		if job['result']['status'] != 'SUCCESS':
+			raise UMC_Error('dry-run-failed: %s' % (job['result']['traceback'] or ''))  # FIXME
+		return {'summary': job['result']['result']}
 
 	def __thread_error_handling(self, thread, result, progress):
 		# caution! if an exception happens in this function the module process will die!
