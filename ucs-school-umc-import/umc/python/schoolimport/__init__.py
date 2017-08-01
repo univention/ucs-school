@@ -65,8 +65,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@require_password
 	@simple_response
 	def schools(self):
-		schools = (x['displayName'] for x in self.client.school.list())
-		return [dict(id=school, label=school) for school in schools]
+		return [dict(id=school['name'], label=school['displayName']) for school in self.client.school.list()]
 
 	@require_password
 	@simple_response
