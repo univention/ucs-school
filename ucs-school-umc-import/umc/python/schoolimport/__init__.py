@@ -40,7 +40,8 @@ import notifier.threads
 
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import simple_response, file_upload, require_password
+from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.modules.mixins import ProgressMixin
 import univention.admin.syntax
 
@@ -60,6 +61,7 @@ def random_string():
 class Instance(SchoolBaseModule, ProgressMixin):
 
 	def init(self):
+		self._progress_objs = {}
 		self.client = Client(self.username, self.password, log_level=Client.LOG_RESPONSE)
 
 	@require_password
@@ -80,6 +82,11 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		shutil.move(filename, destination)
 		self.finished(request.id, {'filename': os.path.basename(destination)})
 
+	@sanitize(
+		filename=StringSanitizer(required=True),
+		usertype=StringSanitizer(required=True),
+		school=StringSanitizer(required=True),
+	)
 	@require_password
 	@simple_response
 	def dry_run(self, filename, usertype, school):
@@ -121,6 +128,11 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			return
 		progress.finish_with_result(result)
 
+	@sanitize(
+		filename=StringSanitizer(required=True),
+		usertype=StringSanitizer(required=True),
+		school=StringSanitizer(required=True),
+	)
 	@require_password
 	def start_import(self, request):
 		thread = notifier.threads.Simple('import', notifier.Callback(self._start_import, request), notifier.Callback(self.thread_finished_callback, request))
