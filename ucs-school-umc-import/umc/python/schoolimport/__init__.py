@@ -117,7 +117,10 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				progress.current = 75.0
 			finished = job['status'] in ('Finished', 'Aborted')
 		if job['result']['status'] != 'SUCCESS':
-			raise UMC_Error('dry-run-failed: %s' % (job['result']['traceback'] or ''))  # FIXME
+			message = _('The tests were not successful. Please consider reading the logfiles for further information.')
+			if job['result']['traceback']:
+				message = '%s\n%s' % (message, job['result']['traceback'])
+			raise UMC_Error(message)
 		return {'summary': job['result']['result']}
 
 	def __thread_error_handling(self, thread, result, progress):
