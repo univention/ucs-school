@@ -1,0 +1,5 @@
+ucs-school-umc-import (0.0.0-1) unstable; urgency=medium
+
+  * Initial release (Bug #45023)
+
+ -- Florian Best <best@univention.de>  Mon, 24 Jul 2017 16:04:24 +0200

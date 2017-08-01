@@ -1,0 +1,6 @@
+Module: schoolimport
+Python: umc/python
+Definition: umc/schoolimport.xml
+Category: umc/categories/schoolimport.xml
+Javascript: umc/js
+Icons: umc/icons

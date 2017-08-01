@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <module id="schoolimport" version="1.0">
+	<name>User Import</name>
+	<description>Automatic UCS@school user import</description>
+	<keywords>import</keywords>
+	<categories>
+	  <category name="ucs-school-admin"/>
+	</categories>
+
+	<command name="schoolimport/schools" function="schools"/>
+	<command name="schoolimport/usertypes" function="user_types"/>
+	<command name="schoolimport/upload-file" function="upload_file"/>
+	<command name="schoolimport/dry-run/start" function="dry_run"/>
+	<command name="schoolimport/dry-run/progress" function="poll_dry_run"/>
+	<command name="schoolimport/import/start" function="start_import"/>
+	<command name="schoolimport/job/logfile.txt" function="get_logfile"/>
+	<command name="schoolimport/job/passwords.csv" function="get_password"/>
+	<command name="schoolimport/job/summary.csv" function="get_summary"/>
+	<command name="schoolimport/jobs/query" function="jobs"/>
+  </module>
+</umc>
