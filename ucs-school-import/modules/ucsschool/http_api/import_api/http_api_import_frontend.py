@@ -36,7 +36,7 @@ from __future__ import unicode_literals
 import os
 import errno
 import shutil
-import logging
+import pprint
 from django.conf import settings
 from celery.states import STARTED as CELERY_STATES_STARTED
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
@@ -60,7 +60,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 	def __init__(self, import_job, task, logger):
 		self.import_job = import_job
 		self.task = task
-		self.logger = logger
+		self.task_logger = logger
 		self.basedir = self.import_job.basedir
 		self.hook_dir = os.path.join(self.basedir, 'hooks')
 		self.pyhook_dir = os.path.join(self.basedir, 'pyhooks')
@@ -78,7 +78,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 		self.summary_file = os.path.join(
 					self.basedir,
 					settings.UCSSCHOOL_IMPORT['user_import_summary_filename'])
-		self.logger.info('Logging for import job %r will go to %r.', self.import_job.pk, self.logfile_path)
+		self.task_logger.info('Logging for import job %r will go to %r.', self.import_job.pk, self.logfile_path)
 		# task_handler = logging.FileHandler(os.path.join(self.basedir, 'task.log'), encoding='utf-8')
 		# task_handler.setLevel(logging.DEBUG)
 		# task_handler.setFormatter(logging.Formatter(
@@ -130,7 +130,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			'user_role': self.import_job.config_file.user_role,
 			'verbose': True  # TODO: read verbose from self.import_job.config_file['verbose']
 		}
-		self.logger.info('HttpApiImportFrontend: Set up import job with args=%r', self.args.__dict__)
+		self.task_logger.info('HttpApiImportFrontend: Set up import job with args:\n%s', pprint.pformat(self.args.__dict__))
 		return self.args
 
 	@property

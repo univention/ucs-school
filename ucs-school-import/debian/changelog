@@ -1,3 +1,13 @@
+ucs-school-import (15.0.0-16) unstable; urgency=low
+
+  * Bug #45024: add support for user type
+  * make user_role choices match ucsschool-lib type names
+  * fix logging in celery task
+  * handle non-existent artifacts
+  * add 'id' property to UserImportJob resource
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 01 Aug 2017 11:18:45 +0200
+
 ucs-school-import (15.0.0-15) unstable; urgency=low
 
   * Bug #45024: add endpoints for logfile, password and summary subresources

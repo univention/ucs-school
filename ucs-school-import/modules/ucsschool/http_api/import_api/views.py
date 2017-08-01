@@ -34,7 +34,7 @@ Django Views
 
 from __future__ import unicode_literals
 import urlparse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets
@@ -68,6 +68,7 @@ Manage Import jobs.
 * `dryrun` is of type boolean
 * `input_file` has to be the key for a multipart-encoded file upload
 * `school` must be an absolute URI from `/{version}/schools/`
+* `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`
 	"""
 	queryset = UserImportJob.objects.order_by('-pk')
 	serializer_class = UserImportJobSerializer

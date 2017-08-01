@@ -41,7 +41,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
-from .models import ConfigurationError, ConfigFile, Hook, Logfile, PasswordsFile, SummaryFile, TextArtifact, UserImportJob, School, JOB_NEW, JOB_SCHEDULED, USER_STUDENT
+from .models import ConfigurationError, ConfigFile, Hook, Logfile, PasswordsFile, SummaryFile, TextArtifact, UserImportJob, School, JOB_NEW, JOB_SCHEDULED, USER_STUDENT, USER_ROLES_CHOICES
 from ucsschool.http_api.import_api.import_logging import logger
 from ucsschool.http_api.import_api.tasks import dry_run, import_users
 
@@ -85,14 +85,15 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 	summary_file = serializers.URLField(read_only=True)
 	result = TaskResultSerializer(read_only=True)
 	principal = UsernameField(read_only=True)
+	user_role = serializers.ChoiceField(choices=USER_ROLES_CHOICES, allow_blank=True)
 
 	# TODO: allow not setting school from below OU
 
 	class Meta:
 		model = UserImportJob
-		# fields = (,)
-		exclude = ('basedir', 'config_file', 'hooks', 'input_file', 'input_file_type', 'task_id')
-		read_only_fields = ('created', 'status', 'result', 'principal', 'progress')
+		fields = ('id', 'url', 'date_created', 'dryrun', 'input_file', 'principal', 'progress', 'result', 'school', 'source_uid', 'status', 'user_role', 'log_file', 'password_file', 'summary_file')
+		# exclude = ('basedir', 'config_file', 'hooks', 'input_file', 'input_file_type', 'task_id')
+		read_only_fields = ('id', 'created', 'status', 'result', 'principal', 'progress')
 		# depth = 1
 
 	def create(self, validated_data):
@@ -120,11 +121,19 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		# if not validated_data['config_file'].enabled:
 		# 	raise ConfigurationError('Configuration file {} is not enabled.'.format(validated_data['config_file']))
 
+		if validated_data['user_role']:
+			user_role = validated_data['user_role']
+		else:
+			# TODO: how should this be handled??
+			logger.warn('user_role not set, using %r.', USER_STUDENT)
+			user_role = USER_STUDENT
+		del validated_data['user_role']
+
 		# TODO: get correct config file
 		validated_data['config_file'], created = ConfigFile.objects.get_or_create(
 			school=validated_data['school'],
 			path='/var/lib/ucs-school-import/configs/user_import.json',
-			user_role=USER_STUDENT
+			user_role=user_role
 		)
 
 		validated_data['task_id'] = ''
@@ -150,6 +159,10 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		instance.status = JOB_SCHEDULED
 		instance.save(update_fields=('task_id', 'status'))
 		return instance
+
+	def to_representation(self, instance):
+		instance.user_role = instance.config_file.user_role
+		return super(UserImportJobSerializer, self).to_representation(instance)
 
 
 class TextArtifactSerializer(serializers.HyperlinkedModelSerializer):

@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('version', models.IntegerField(default=0)),
                 ('path', models.CharField(max_length=255, blank=True)),
                 ('enabled', models.BooleanField(default=True)),
-                ('user_role', models.CharField(max_length=20, choices=[('staff', 'Staff'), ('student', 'Student'), ('teacher', 'Teacher'), ('teacher_and_staff', 'Teacher and Staff')])),
+                ('user_role', models.CharField(max_length=20, choices=[('staff', 'staff'), ('student', 'student'), ('teacher', 'teacher'), ('teacher_and_staff', 'teacher_and_staff')])),
                 ('created', models.DateTimeField(auto_now_add=True)),
             ],
             options={

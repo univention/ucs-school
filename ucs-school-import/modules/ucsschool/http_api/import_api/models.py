@@ -56,10 +56,10 @@ JOB_FINISHED = 'Finished'
 JOB_STATES = (JOB_NEW, JOB_SCHEDULED, JOB_STARTED, JOB_ABORTED, JOB_FINISHED)
 JOB_CHOICES = zip(JOB_STATES, JOB_STATES)
 
-USER_STAFF = 'Staff'
-USER_STUDENT = 'Student'
-USER_TEACHER = 'Teacher'
-USER_TEACHER_AND_STAFF = 'Teacher and Staff'
+USER_STAFF = 'staff'
+USER_STUDENT = 'student'
+USER_TEACHER = 'teacher'
+USER_TEACHER_AND_STAFF = 'teacher_and_staff'
 USER_ROLES = (USER_STAFF, USER_STUDENT, USER_TEACHER, USER_TEACHER_AND_STAFF)
 USER_ROLES_CHOICES = zip([u.lower().replace(' ', '_') for u in USER_ROLES], USER_ROLES)
 
@@ -246,8 +246,12 @@ class TextArtifact(models.Model):
 
 	def get_text(self):
 		if not self.text:
-			with codecs.open(self.path, 'rb', encoding='utf-8') as fp:
-				self.text = fp.read()
+			try:
+				with codecs.open(self.path, 'rb', encoding='utf-8') as fp:
+					self.text = fp.read()
+			except IOError as exc:
+				logger.error('Could not read %r: %s', self.path, exc)
+				return ''
 		return self.text
 
 
