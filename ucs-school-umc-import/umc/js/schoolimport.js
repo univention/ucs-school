@@ -31,8 +31,10 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/_base/array",
 	"dojo/on",
 	"dojo/topic",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/store",
 	"umc/tools",
@@ -47,10 +49,14 @@ define([
 	"umc/widgets/ProgressBar",
 	"umc/widgets/Text",
 	"umc/widgets/Grid",
+	"umc/widgets/HiddenInput",
 	"umc/i18n!umc/modules/schoolimport"
-], function(declare, lang, on, topic, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, CheckBox, Uploader, ProgressBar, Text, Grid, _) {
+], function(declare, lang, array, on, topic, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, CheckBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
 
 	var ImportWizard = declare("umc.modules.schoolimport.ImportWizard", [Wizard], {
+
+		autoValidate: true,
+
 		postMixInProperties: function() {
 			this.pages = this.getPages();
 			this._progressBar = new ProgressBar();
@@ -61,7 +67,7 @@ define([
 			return [{
 				name: 'start',
 				headerText: _('Perform new import'),
-				helpText: 'foobar',
+				helpText: _('Please select the school and a user type for the import ...'),
 				widgets: [{
 					type: ComboBox,
 					name: 'school',
@@ -78,7 +84,6 @@ define([
 					autoHide: true,
 					required: true,
 					dynamicValues: 'schoolimport/usertypes'
-
 				}]
 			},{
 				name: 'select-file',
@@ -90,7 +95,6 @@ define([
 					label: _('Upload file'),
 					labelPosition: 'right',
 					command: 'schoolimport/upload-file',
-				//	dynamicOptions: lang.hitch(this, 'getUploaderParams'),
 					onUploadStarted: lang.hitch(this, function() {
 						this._progressBar.reset();
 						this.standby(true, this._progressBar);
@@ -99,6 +103,9 @@ define([
 					onError: lang.hitch(this, function() {
 						this.standby(false);
 					})
+				}, {
+					type: HiddenInput,
+					name: 'filename',
 				}]
 			},{
 				name: 'dry-run-overview',
@@ -106,8 +113,8 @@ define([
 				helpText: _('The following changes will be applied to the domain when continuing the import.'),
 				widgets: [{
 					name: 'summary',
-					type: Text,  // FIXME: grid?
-					content: '- 30 Benutzerkonten modifiziert,<br> - 10 Benutzerkonten gelöscht<br> - 100 Benutzerkonten neu angelegt'  // FIXME: get summary
+					type: Text,
+					content: ''
 				}, {
 					type: CheckBox,
 					name: 'email-notification',
@@ -119,7 +126,7 @@ define([
 				helpText: _('The list shows all current running imports.... You can download ...')
 			},{
 				name: 'error',  // FIXME: implement
-				headerText: _('error'),
+				headerText: _('An error occurred.'),
 				helpText: _('error')
 			},/*{
 				name: '',
@@ -132,18 +139,28 @@ define([
 		getUploaderParams: function() {
 			return {
 				usertype: this.getWidget('start', 'usertype').get('value'),
-				school: this.getWidget('start', 'school').get('value')
+				school: this.getWidget('start', 'school').get('value'),
+				filename: this.getWidget('select-file', 'filename').get('value') || undefined
 			};
 		},
 
 		startDryRun: function(response) {
-			tools.umcpProgressCommand(this._progressBar, 'schoolimport/dry-run/start', lang.mixin(lang.clone(response.result), this.getUploaderParams())).then(lang.hitch(this, function() {
+			this.getWidget('select-file', 'filename').set('value', response.result.filename);
+			tools.umcpProgressCommand(this._progressBar, 'schoolimport/dry-run/start', this.getUploaderParams()).then(lang.hitch(this, function(result) {
+				this.getWidget('dry-run-overview', 'summary').set('content', entities.encode(result.summary));
 				this.standby(false);
 				this._next('select-file');
 			}), lang.hitch(this, function() {
 				this.standby(false);
-				// FIXME: show error page
+				this.switchPage('error');
 			}));
+		},
+
+		isPageVisible: function(pageName) {
+			if (pageName === 'error') {
+				return false;
+			}
+			return this.inherited(arguments);
 		},
 
 		next: function(pageName) {
@@ -152,7 +169,7 @@ define([
 				nextPage = 'start';
 			}
 			if (nextPage === 'import-started') {
-				return this.standbyDuring(this.umcpCommand('schoolimport/import/start')).then(lang.hitch(this, function() {
+				return this.standbyDuring(tools.umcpCommand('schoolimport/import/start', this.getUploaderParams())).then(lang.hitch(this, function() {
 					this.buildImportsGrid(this.getPage(nextPage));
 					return nextPage;
 				}), lang.hitch(this, function() {
@@ -162,8 +179,38 @@ define([
 			return nextPage;
 		},
 
-		canFinish: function() {
-			return true;
+		getFooterButtons: function(pageName) {
+			var buttons = this.inherited(arguments);
+			array.forEach(buttons, lang.hitch(this, function(button) {
+				if (pageName === 'import-started' && button.name === 'next') {
+					button.label = _('Start a new import');
+				}
+			}));
+			return buttons;
+		},
+
+		hasNext: function(pageName) {
+			if (pageName === 'error') {
+				return false;
+			}
+			if (pageName === 'import-started') {
+				return true;
+			}
+			return this.inherited(arguments);
+		},
+
+		hasPrevious: function(pageName) {
+			if (~array.indexOf(['import-started', 'dry-run-overview', 'error'], pageName)) {
+				return false;
+			}
+			return this.inherited(arguments);
+		},
+
+		canFinish: function(pageName) {
+			if (pageName === 'error') {
+				return true;
+			}
+			return false;  // the wizard is a loop which starts at the beginning
 		},
 
 		buildImportsGrid: function(parentWidget) {

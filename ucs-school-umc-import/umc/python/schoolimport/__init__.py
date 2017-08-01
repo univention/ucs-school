@@ -91,7 +91,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	def _dry_run(self, filename, usertype, school, progress):
 		progress.progress(True, _('Validating import.'))
-		progress.current = 20.0
+		progress.current = 25.0
 		progress.job = None
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
@@ -108,6 +108,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			time.sleep(0.5)
 			job = self.client.userimportjob.get(jobid)
 			finished = job['status'] == 'Finished'
+		job['summary'] = _('FIXME: The dry run was successful.')  # TODO: make a query to the summary file and return this?
+		# FIXME: don't return job but an dict() with our own structure!
 		return job
 
 	def __thread_error_handling(self, thread, result, progress):
@@ -120,7 +122,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@require_password
 	def start_import(self, request):
-		thread = notifier.threads.Simple('import', notifier.Callback(self._start_import, request), notifier.Callback(self.__thread_finished_callback, request))
+		thread = notifier.threads.Simple('import', notifier.Callback(self._start_import, request), notifier.Callback(self.thread_finished_callback, request))
 		thread.run()
 
 	def _start_import(self, request):
