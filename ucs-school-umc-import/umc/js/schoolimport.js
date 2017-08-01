@@ -190,7 +190,7 @@ define([
 		},
 
 		hasNext: function(pageName) {
-			if (pageName === 'error') {
+			if (~array.indexOf(['select-file', 'error'], pageName)) {
 				return false;
 			}
 			if (pageName === 'import-started') {
