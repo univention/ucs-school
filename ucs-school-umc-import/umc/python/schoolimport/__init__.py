@@ -167,5 +167,14 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			'creator': job['principal'],
 			'user_type': job['source_uid'],
 			'date': job['date_created'],  # FIXME: locale aware format
-			'status': job['status'],  # FIXME: parse the state
+			'status': self._parse_status(job['status']),
 		} for job in self.client.userimportjob.list() if not job['dryrun']]
+
+	def _parse_status(self, status):
+		return {
+			'New': _('new'),
+			'Scheduled': _('scheduled'),
+			'Started': _('started'),
+			'Finished': _('finished'),
+			'Aborted': _('aborted'),
+		}.get(status, status)
