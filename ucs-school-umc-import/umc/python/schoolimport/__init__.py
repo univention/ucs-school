@@ -45,7 +45,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 import univention.admin.syntax
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
-from ucsschool.http_api.client import Client
+from ucsschool.http_api.client import Client, ConnectionError, ObjectNotFound, ServerError
 
 from univention.lib.i18n import Translation
 
@@ -65,7 +65,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@require_password
 	@simple_response
 	def schools(self):
-		schools = (x['displayName'] for x in self.client.get_schools())
+		schools = (x['displayName'] for x in self.client.school.list())
 		return [dict(id=school, label=school) for school in schools]
 
 	@require_password
@@ -95,19 +95,18 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		progress.job = None
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
-			school_url = self.client.get_schools(school)['url']  # FIXME: API expects a URI
-			importjob = self.client.create_importjob(filename=import_file, source_uid=usertype, school=school_url, dryrun=True)
-		except:  # FIXME: error handling
+			importjob = self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=True)
+		except (ConnectionError, ServerError, ObjectNotFound):
 			raise
 
-		jobid = importjob['url'].strip('/').split('/')[-1]
+		jobid = importjob['id']
 		progress.progress(True, _('Dry run.'))
 		progress.current = 50.0
 
 		finished = False
 		while not finished:
 			time.sleep(0.5)
-			job = self.client.get_importjobs(jobid)
+			job = self.client.userimportjob.get(jobid)
 			finished = job['status'] == 'Finished'
 		return job
 
@@ -129,10 +128,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		filename = request.options['filename']
 		usertype = request.options['usertype']
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
-		school_url = self.client.get_schools(school)  # FIXME: API expects a URI
 		try:
-			self.client.create_importjob(filename=import_file, source_uid=usertype, school=school_url, dryrun=False)
-		except:  # FIXME: error handling
+			self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=False)
+		except (ConnectionError, ServerError, ObjectNotFound):
 			raise
 		os.remove(import_file)
 
@@ -149,10 +147,10 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@simple_response
 	def jobs(self):
 		return [{
-			'id': job['url'],  # FIXME: no ID property exists
+			'id': job['id'],
 			'school': job['school'],  # FIXME: contains URL
 			'creator': job['principal'],
 			'user_type': job['source_uid'],
 			'date': job['date_created'],  # FIXME: locale aware format
 			'status': job['status'],  # FIXME: parse the state
-		} for job in self.client.get_importjobs() if not job['dryrun']]
+		} for job in self.client.userimportjob.list() if not job['dryrun']]
