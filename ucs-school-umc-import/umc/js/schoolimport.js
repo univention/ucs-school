@@ -206,7 +206,7 @@ define([
 			return this.inherited(arguments);
 		},
 
-		canFinish: function(pageName) {
+		canFinish: function(values, pageName) {
 			if (pageName === 'error') {
 				return true;
 			}
