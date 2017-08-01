@@ -63,6 +63,7 @@ Depends: ${misc:Depends},
  python-psycopg2 (>=2.5.4),
  python-django-pam (>=1.2.0-1),
  python-pampy (>=1.8.2-1),
+Conflicts: python3-celery
 Description: UCS@school: RESTful API for importing users
  This package provides a service for importing users using a RESTful HTTP API.
  .

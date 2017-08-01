@@ -58,6 +58,7 @@ class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
 		# automatically.
 		res = super(TaskResultSerializer, self).to_representation(instance)
 		res['result'] = instance.result
+		# TODO: check if .result->status and .status match
 		return res
 
 
