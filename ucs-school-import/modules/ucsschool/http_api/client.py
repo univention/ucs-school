@@ -76,6 +76,7 @@ class BadRequest(ApiError):
 	"""
 	pass
 
+
 class LoginError(ApiError):
 	"""
 	HTTP 403
@@ -95,6 +96,7 @@ class ServerError(ApiError):
 	HTTP 5xx
 	"""
 	pass
+
 
 class ConnectionError(ApiError):
 	"""
@@ -224,11 +226,9 @@ class Client(object):
 			"""
 			return self.client.call_api('get', self.RESOURCE_URL)
 
-
 	class School(_Resource):
 		__metaclass__ = _ResourceMetaClass
 		RESOURCE_URL = 'schools/'
-
 
 	class UserImportJob(_Resource):
 		__metaclass__ = _ResourceMetaClass
@@ -254,7 +254,7 @@ class Client(object):
 			assert (isinstance(file_obj, file) or file_obj is None)
 
 			try:
-				school_resource = self.client.School.get(school)
+				school_resource = self.client.school.get(school)
 			except ObjectNotFound:
 				raise ObjectNotFound('School {!r} is unknown.'.format(school))
 
