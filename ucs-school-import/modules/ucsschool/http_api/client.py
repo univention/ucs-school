@@ -350,7 +350,7 @@ class Client(object):
 
 			return self._to_python(self._get_resource(pk))
 
-		def get_last(self):
+		def latest(self):
 			"""
 			Get newest Resource this user has access to.
 
@@ -402,14 +402,14 @@ class Client(object):
 			assert (isinstance(file_obj, file) or file_obj is None)
 
 			try:
-				school_resource = self.client.school.get(school)
+				school_obj = self.client.school.get(school)
 			except ObjectNotFound:
 				raise ObjectNotFound('School {!r} is unknown.'.format(school))
 
 			data = {
 				'source_uid': source_uid,
 				'dryrun': dryrun,
-				'school': school_resource['url'],
+				'school': school_obj._resource['url'],
 				'user_role': user_role,
 			}
 			filename = filename or 'noname'
