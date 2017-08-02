@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-19) unstable; urgency=low
+
+  * Bug #45022: add support for text artifacts
+  * add get_last() method to retrieve newest resource
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 02 Aug 2017 09:17:14 +0200
+
 ucs-school-import (15.0.0-18) unstable; urgency=low
 
   * Bug #45024: block installation of Python 3 version of Celery

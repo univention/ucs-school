@@ -183,11 +183,17 @@ class ResourceRepresentation(object):
 
 		@property
 		def log_file(self):
-			return 'TODO: log_file'
+			try:
+				return self._resource_client._resource_from_url(self._resource['log_file']).get('text')
+			except ObjectNotFound:
+				return None
 
 		@property
 		def password_file(self):
-			return 'TODO: password_file'
+			try:
+				return self._resource_client._resource_from_url(self._resource['password_file']).get('text')
+			except ObjectNotFound:
+				return None
 
 		@property
 		def school(self):
@@ -195,12 +201,14 @@ class ResourceRepresentation(object):
 
 		@property
 		def summary_file(self):
-			return 'TODO: summary_file'
+			try:
+				return self._resource_client._resource_from_url(self._resource['summary_file']).get('text')
+			except ObjectNotFound:
+				return None
 
 		@property
 		def result(self):
 			return ResourceRepresentation.ResultResource(self._resource_client, self._resource['result'])
-
 
 	@classmethod
 	def get_repr(cls, resource_client, resource):
@@ -315,7 +323,9 @@ class Client(object):
 			self.resource_url = self.client.resource_urls[self.resource_name]
 
 		def _to_python(self, resource):
-			if isinstance(resource, collections.Iterable) and not isinstance(resource, collections.Mapping):
+			if resource is None:
+				return None
+			elif isinstance(resource, collections.Iterable) and not isinstance(resource, collections.Mapping):
 				return [self._to_python(r) for r in resource]
 			return ResourceRepresentation.get_repr(self, resource)
 
@@ -336,7 +346,22 @@ class Client(object):
 			:param pk: str: primary key (name, id, ..)
 			:return: Resource object
 			"""
+			assert (isinstance(pk, basestring) or isinstance(pk, int))
+
 			return self._to_python(self._get_resource(pk))
+
+		def get_last(self):
+			"""
+			Get newest Resource this user has access to.
+
+			:return: Resource object
+			"""
+			# TODO: use filtering and sorting
+			res = self.list()
+			try:
+				return res[0]
+			except IndexError:
+				raise ObjectNotFound('Empty resource list.')
 
 		def list(self):
 			"""
@@ -344,6 +369,7 @@ class Client(object):
 
 			:return: list of dicts
 			"""
+			# TODO: support filtering, sorting and paging
 			return self._to_python(self._list_resource())
 
 	class _School(_ResourceClient):
@@ -351,16 +377,10 @@ class Client(object):
 		resource_name = 'schools'
 		pk_name = 'name'
 
-		# def _get_resource_repr(self, resource):
-		# 	return SchoolResource(self, resource)
-
 	class _UserImportJob(_ResourceClient):
 		__metaclass__ = _ResourceClientMetaClass
 		resource_name = 'imports/users'
 		pk_name = 'id'
-
-		# def _get_resource_repr(self, resource):
-		# 	return UserImportJobResource(self, resource)
 
 		def create(self, filename, source_uid, school, user_role=None, dryrun=True, file_obj=None):
 			"""
