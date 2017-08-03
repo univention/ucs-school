@@ -40,7 +40,7 @@ import notifier.threads
 
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize
+from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize, allow_get_request
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.modules.mixins import ProgressMixin
 import univention.admin.syntax
@@ -67,12 +67,18 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@require_password
 	@simple_response
 	def schools(self):
-		return [dict(id=school.name, label=school.displayName) for school in self.client.school.list()]
+		schools = [dict(id=school.name, label=school.displayName) for school in self.client.school.list()]
+		if not schools:
+			raise UMC_Error(_('No permissions for running an import for any school.'))
+		return schools
 
 	@require_password
 	@simple_response
 	def user_types(self):
-		return [dict(id=id, label=label) for id, label in univention.admin.syntax.ucsschoolTypes.choices]
+		user_types = [dict(id=id, label=label) for id, label in univention.admin.syntax.ucsschoolTypes.choices]
+		if not user_types:
+			raise UMC_Error(_('No permissions for running an import for any user role.'))
+		return user_types
 
 	@require_password
 	@file_upload
@@ -109,6 +115,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		progress.progress(True, _('Dry run.'))
 		progress.current = 50.0
 
+		i = 0
 		finished = False
 		while not finished:
 			time.sleep(0.5)
@@ -116,11 +123,16 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			if job.status == 'Started':
 				progress.current = 75.0
 			finished = job.status in ('Finished', 'Aborted')
+			i += 1
+			if i > 120:  # 1 minute
+				raise UMC_Error(_('The dry-run timed out.'))
+
 		if job.result.status != 'SUCCESS':
 			message = _('The tests were not successful. Please consider reading the logfiles for further information.')
 			if job.result.traceback:
 				message = '%s\n%s' % (message, job.result.traceback)
 			raise UMC_Error(message)
+
 		return {'summary': job.result.result}
 
 	def __thread_error_handling(self, thread, result, progress):
@@ -181,3 +193,15 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			'Finished': _('finished'),
 			'Aborted': _('aborted'),
 		}.get(status, status)
+
+	@allow_get_request
+	@sanitize(job=StringSanitizer(required=True))
+	def get_password(self, request):
+		response = self.client.userimportjob.get(request.options['job']).password_file
+		self.finished(request.id, response, mimetype='text/csv')
+
+	@allow_get_request
+	@sanitize(job=StringSanitizer(required=True))
+	def get_summary(self, request):
+		response = self.client.userimportjob.get(request.options['job']).summary_file
+		self.finished(request.id, response, mimetype='text/csv')

@@ -44,14 +44,13 @@ define([
 	"umc/widgets/Wizard",
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ComboBox",
-	"umc/widgets/CheckBox",
 	"umc/widgets/Uploader",
 	"umc/widgets/ProgressBar",
 	"umc/widgets/Text",
 	"umc/widgets/Grid",
 	"umc/widgets/HiddenInput",
 	"umc/i18n!umc/modules/schoolimport"
-], function(declare, lang, array, on, topic, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, CheckBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
+], function(declare, lang, array, on, topic, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
 
 	var ImportWizard = declare("umc.modules.schoolimport.ImportWizard", [Wizard], {
 
@@ -65,6 +64,12 @@ define([
 
 		getPages: function() {
 			return [{
+				name: 'overview',
+				headerText: _('All finished imports.'),
+				headerTextRegion: 'main',
+				helpText: _('The list shows all current running imports.... You can download ...'),
+				helpTextRegion: 'main'
+			},{
 				name: 'start',
 				headerText: _('Perform new import'),
 				helpText: _('Please select the school and a user type for the import ...'),
@@ -115,15 +120,11 @@ define([
 					name: 'summary',
 					type: Text,
 					content: ''
-				}, {
-					type: CheckBox,
-					name: 'email-notification',
-					label: _('Inform me via E-Mail after the import was performed.')
 				}]
 			},{
 				name: 'import-started',
 				headerText: _('The import was started successfully.'),
-				helpText: _('The list shows all current running imports.... You can download ...')
+				helpText: _('.....'),
 			},{
 				name: 'error',  // FIXME: implement
 				headerText: _('An error occurred.'),
@@ -166,15 +167,17 @@ define([
 		next: function(pageName) {
 			var nextPage = this.inherited(arguments);
 			if (pageName === 'import-started') {
-				nextPage = 'start';
+				nextPage = 'overview';
 			}
 			if (nextPage === 'import-started') {
 				return this.standbyDuring(tools.umcpCommand('schoolimport/import/start', this.getUploaderParams())).then(lang.hitch(this, function() {
-					this.buildImportsGrid(this.getPage(nextPage));
 					return nextPage;
 				}), lang.hitch(this, function() {
 					return 'error';
 				}));
+			}
+			if (nextPage === 'overview') {
+				this.buildImportsGrid(this.getPage(nextPage));
 			}
 			return nextPage;
 		},
@@ -182,11 +185,19 @@ define([
 		getFooterButtons: function(pageName) {
 			var buttons = this.inherited(arguments);
 			array.forEach(buttons, lang.hitch(this, function(button) {
-				if (pageName === 'import-started' && button.name === 'next') {
+				if (pageName === 'overview' && button.name === 'next') {
 					button.label = _('Start a new import');
 				}
+				if (pageName === 'import-started' && button.name === 'next') {
+					button.label = _('View finished imports');
+				}
 			}));
-			return buttons;
+			return array.filter(buttons, function(button) {
+				if (pageName === 'select-file' && button.name === 'finish') {
+					return false;
+				}
+				return true;
+			});
 		},
 
 		hasNext: function(pageName) {
@@ -236,31 +247,22 @@ define([
 				}, {
 					name: 'status',
 					label: _('Status')
-				}],
-				actions: [{
+				}, {
 					name: 'download-summary',
 					label: _('Download summary'),
-					description: _('......'),
-					isStandardAction: true,
-					isMultiAction: false,
-					callback: function() {},
-					canExecute: function(item) { return item.status === 'Finished'; }
-				},{
+					formatter: function(value, item) {
+						return new Text({
+							content: _('<a href="/univention/command/schoolimport/job/summary.csv?job=%s" target="_blank">Download summary</>', encodeURIComponent(item.id))
+						});
+					}
+				}, {
 					name: 'download-passwords',
 					label: _('Download passwords'),
-					description: _('......'),
-					isStandardAction: true,
-					isMultiAction: false,
-					callback: function() {},
-					canExecute: function(item) { return item.status === 'Finished'; }
-				}, {
-					name: 'download-logfile',
-					label: _('Download logfiles'),
-					description: _('......'),
-					isStandardAction: true,
-					isMultiAction: false,
-					callback: function() {},
-					canExecute: function(item) { return item.status === 'Finished'; }
+					formatter: function(value, item) {
+						return new Text({
+							content: _('<a href="/univention/command/schoolimport/job/passwords.csv?job=%s" target="_blank">Download passwords</>', encodeURIComponent(item.id))
+						});
+					}
 				}]
 			});
 
