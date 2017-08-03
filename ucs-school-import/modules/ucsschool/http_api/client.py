@@ -387,16 +387,21 @@ class Client(object):
 
 			return self._to_python(self._get_resource(pk))
 
-		def latest(self):
+		def latest(self, **params):
 			"""
 			Get newest Resource this user has access to.
 
+			All arguments will be passed as parameters to the request. Example:
+			latest(dryrun=True)
+
 			:return: Resource object
 			"""
-			for ioj in self.list(
+			list_kwargs = dict(
 				ordering='-{}'.format(self.pk_name),
 				limit='1'
-			):
+			)
+			list_kwargs.update(params)
+			for ioj in self.list(**list_kwargs):
 				return ioj
 			raise ObjectNotFound('No {!r} resources exist.'.format(self.resource_name))
 
@@ -404,8 +409,8 @@ class Client(object):
 			"""
 			List all Resource this user has access to.
 
-			:param params: dict: parameters to pass to request. Example:
-			{'status': ['Aborted', 'Finished'], 'ordering': 'id,-dryrun'}
+			All arguments will be passed as parameters to the request. Example:
+			list(status=['Aborted', 'Finished'], dryrun=False, ordering='id', limit=1)
 
 			:return: iterator: Resource objects
 			"""

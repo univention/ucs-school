@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-22) unstable; urgency=low
+
+  * Bug #45022: allow parameters for latest()
+  * fix method doc
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 03 Aug 2017 19:43:22 +0200
+
 ucs-school-import (15.0.0-21) unstable; urgency=low
 
   * Bug #45024: add support for paging, filtering and ordering
