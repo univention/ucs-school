@@ -67,7 +67,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@require_password
 	@simple_response
 	def schools(self):
-		return [dict(id=school['name'], label=school['displayName']) for school in self.client.school.list()]
+		return [dict(id=school.name, label=school.displayName) for school in self.client.school.list()]
 
 	@require_password
 	@simple_response
@@ -113,15 +113,15 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		while not finished:
 			time.sleep(0.5)
 			job = self.client.userimportjob.get(jobid)
-			if job['status'] == 'Started':
+			if job.status == 'Started':
 				progress.current = 75.0
-			finished = job['status'] in ('Finished', 'Aborted')
-		if job['result']['status'] != 'SUCCESS':
+			finished = job.status in ('Finished', 'Aborted')
+		if job.result.status != 'SUCCESS':
 			message = _('The tests were not successful. Please consider reading the logfiles for further information.')
-			if job['result']['traceback']:
-				message = '%s\n%s' % (message, job['result']['traceback'])
+			if job.result.traceback:
+				message = '%s\n%s' % (message, job.result.traceback)
 			raise UMC_Error(message)
-		return {'summary': job['result']['result']}
+		return {'summary': job.result.result}
 
 	def __thread_error_handling(self, thread, result, progress):
 		# caution! if an exception happens in this function the module process will die!
@@ -165,13 +165,13 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@simple_response
 	def jobs(self):
 		return [{
-			'id': job['id'],
-			'school': job['school'],  # FIXME: contains URL
-			'creator': job['principal'],
-			'user_type': job['source_uid'],
-			'date': job['date_created'],  # FIXME: locale aware format
-			'status': self._parse_status(job['status']),
-		} for job in self.client.userimportjob.list() if not job['dryrun']]
+			'id': job.id,
+			'school': job.school.displayName,
+			'creator': job.principal,
+			'user_type': job.source_uid,
+			'date': job.date_created.strftime("%A, %d. %B %Y %I:%M"),  # FIXME: locale aware format
+			'status': self._parse_status(job.status),
+		} for job in self.client.userimportjob.list() if not job.dryrun]
 
 	def _parse_status(self, status):
 		return {
