@@ -35,12 +35,16 @@ Django Views
 from __future__ import unicode_literals
 import urlparse
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, School, JOB_STARTED
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+from django_filters import CharFilter, MultipleChoiceFilter
+from rest_framework.filters import OrderingFilter
+from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, School, JOB_CHOICES, JOB_STARTED
 from ucsschool.http_api.import_api.serializers import (
 	UserImportJobSerializer,
 	LogFileSerializer,
@@ -52,6 +56,19 @@ from ucsschool.http_api.import_api.import_logging import logger
 
 
 # TODO: use django-guardian to filter object access?
+
+
+class UserImportJobFilter(FilterSet):
+	principal = CharFilter(method='principal_filter')
+	status = MultipleChoiceFilter(choices=JOB_CHOICES)
+
+	class Meta:
+		model = UserImportJob
+		fields = ['id', 'dryrun', 'principal', 'school', 'source_uid', 'status']
+
+	@staticmethod
+	def principal_filter(queryset, name, value):
+		return queryset.filter(principal__username=value)
 
 
 class UserImportJobViewSet(
@@ -70,8 +87,11 @@ Manage Import jobs.
 * `school` must be an absolute URI from `/{version}/schools/`
 * `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`
 	"""
-	queryset = UserImportJob.objects.order_by('-pk')
+	queryset = UserImportJob.objects.all()
 	serializer_class = UserImportJobSerializer
+	filter_backends = (DjangoFilterBackend, OrderingFilter)
+	filter_class = UserImportJobFilter
+	ordering_fields = ('id', 'school', 'source_uid', 'status', 'principal', 'dryrun', 'date_created')
 
 	def perform_create(self, serializer):
 		# store user when saving object
@@ -205,6 +225,9 @@ Read-only list of Schools (OUs).
 	"""
 	queryset = School.objects.order_by('name')
 	serializer_class = SchoolSerializer
+	filter_backends = (DjangoFilterBackend, OrderingFilter)
+	filter_fields = ('name', 'displayName')
+	ordering_fields = ('name', 'displayName')
 
 	def retrieve(self, request, *args, **kwargs):
 		instance = self.get_object()

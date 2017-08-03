@@ -58,9 +58,9 @@ class ProxyModelFilterMixin(object):
 
 @admin.register(UserImportJob)
 class UserImportJobAdmin(UserQueryFilterMixin, admin.ModelAdmin):
-	list_display = ('id', 'school', 'status', 'principal', 'task_id')
+	list_display = ('id', 'school', 'status', 'principal', 'dryrun', 'task_id')
 	search_fields = ('id', 'school__name', 'source_uid', 'status', 'principal__username')
-	list_filter = ('school__name', 'status', 'principal')
+	list_filter = ('school__name', 'status', 'principal', 'dryrun')
 
 # for m in (School, Logfile, SummaryFile, PasswordsFile, TaskMeta):
 

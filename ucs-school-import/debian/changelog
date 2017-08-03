@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-21) unstable; urgency=low
+
+  * Bug #45024: add support for paging, filtering and ordering
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 03 Aug 2017 16:02:55 +0200
+
 ucs-school-import (15.0.0-20) unstable; urgency=low
 
   * Bug #45022: adapt create() to API change

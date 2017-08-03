@@ -83,6 +83,7 @@ INSTALLED_APPS = (
 	'django_pam',
 	'rest_framework',
 	'djcelery',
+	'django_filters',
 	'ucsschool.http_api.import_api',
 )
 
@@ -169,6 +170,8 @@ REST_FRAMEWORK = {
 		'rest_framework.permissions.IsAuthenticated',
 	],
 	'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+	'PAGE_SIZE': 100,
 	'UPLOADED_FILES_USE_URL': False,
 }
 

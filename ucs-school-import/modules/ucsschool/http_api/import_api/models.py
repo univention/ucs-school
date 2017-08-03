@@ -290,7 +290,7 @@ class UserImportJob(models.Model):
 	input_file_type = models.CharField(max_length=10, default=INPUT_FILE_CSV, choices=INPUT_FILE_CHOICES)
 
 	class Meta:
-		ordering = ('-pk',)
+		ordering = ('pk',)
 
 	def __unicode__(self):
 		return 'UserImportJob {} | {} ({})'.format(self.pk, self.school, self.status)
