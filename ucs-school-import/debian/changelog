@@ -1,6 +1,12 @@
 ucs-school-import (15.0.0-21) unstable; urgency=low
 
   * Bug #45024: add support for paging, filtering and ordering
+  * Bug #45022: add support for parameters (paging, filtering, ordering)
+  * fix userimportjob.create() result
+  * escape path argument
+  * check if resource URLs returned at API root match request-URL
+  * use ordering and limit in latest() to fetch one 1 resource
+  * <resource>.list() now returns an iterator that transparently handles paging
 
  -- Daniel Troeder <troeder@univention.de>  Thu, 03 Aug 2017 16:02:55 +0200
 

@@ -36,13 +36,13 @@ from __future__ import absolute_import, unicode_literals
 import copy
 import os.path
 try:
-	from urlparse import urljoin
+	from urlparse import urljoin, urlparse, parse_qs
+	from urllib import quote as url_quote
 except ImportError:
 	# Python 3
-	from urllib.parse import urljoin
+	from urllib.parse import urljoin, quote as url_quote, urlparse, parse_qs
 import logging
 import inspect
-import collections
 import dateutil.parser
 
 import requests
@@ -116,6 +116,13 @@ class ConnectionError(ApiError):
 	pass
 
 
+class IllegalURLError(ApiError):
+	"""
+	URLs returned from API root do not meet expectation.
+	"""
+	pass
+
+
 class _ResourceClientMetaClass(type):
 	def __new__(cls, clsname, bases, attrs):
 		kls = super(_ResourceClientMetaClass, cls).__new__(cls, clsname, bases, attrs)
@@ -128,6 +135,33 @@ class _ResourceRepresentationMetaClass(type):
 		kls = super(_ResourceRepresentationMetaClass, cls).__new__(cls, clsname, bases, attrs)
 		register_resource_representation_class(kls.resource_name, kls)
 		return kls
+
+
+class ResourceRepresentationIterator:
+	def __init__(self, resource_client, paginated_resource_list):
+		self._resource_client = resource_client
+		self._paginated_resource_list = paginated_resource_list
+		self.index = 0
+
+	def __iter__(self):
+		return self
+
+	def next(self):
+		try:
+			resource = self._paginated_resource_list['results'][self.index]
+		except IndexError:
+			if self._paginated_resource_list['next'] is None:
+				raise StopIteration
+			parse_result = urlparse(self._paginated_resource_list['next'])
+			url = parse_result._replace(query=None).geturl()
+			params = parse_qs(parse_result.query)
+			self._paginated_resource_list = self._resource_client._resource_from_url(url, **params)
+			self.index = 0
+			resource = self._paginated_resource_list['results'][self.index]
+		self.index += 1
+		return ResourceRepresentation.get_repr(self._resource_client, resource)
+
+	__next__ = next  # py3
 
 
 class ResourceRepresentation(object):
@@ -251,6 +285,9 @@ class Client(object):
 	def resource_urls(self):
 		if not self._resource_urls:
 			self._resource_urls = self.call_api('get', '.')
+			for resource, url in self._resource_urls.items():
+				if not url.startswith(self.base_url):
+					raise IllegalURLError('URL {!r} for resource {!r} from API root does not start with {!r}.'.format(url, resource, self.base_url))
 		return self._resource_urls
 
 	@classmethod
@@ -325,19 +362,19 @@ class Client(object):
 		def _to_python(self, resource):
 			if resource is None:
 				return None
-			elif isinstance(resource, collections.Iterable) and not isinstance(resource, collections.Mapping):
-				return [self._to_python(r) for r in resource]
+			elif all(key in resource for key in ('count', 'next', 'previous', 'results')):
+				return ResourceRepresentationIterator(self, resource)
 			return ResourceRepresentation.get_repr(self, resource)
 
-		def _resource_from_url(self, url):
-			return self.client.call_api('get', url)
+		def _resource_from_url(self, url, **params):
+			return self.client.call_api('get', url, params=params)
 
-		def _get_resource(self, pk):
-			url = urljoin(self.resource_url, str(pk))
-			return self._resource_from_url(url)
+		def _get_resource(self, pk, **params):
+			url = urljoin(self.resource_url, url_quote(str(pk)))
+			return self._resource_from_url(url, **params)
 
-		def _list_resource(self):
-			return self._resource_from_url(self.resource_url)
+		def _list_resource(self, **params):
+			return self._resource_from_url(self.resource_url, **params)
 
 		def get(self, pk):
 			"""
@@ -356,21 +393,23 @@ class Client(object):
 
 			:return: Resource object
 			"""
-			# TODO: use filtering and sorting
-			res = self.list()
-			try:
-				return res[0]
-			except IndexError:
-				raise ObjectNotFound('Empty resource list.')
+			for ioj in self.list(
+				ordering='-{}'.format(self.pk_name),
+				limit='1'
+			):
+				return ioj
+			raise ObjectNotFound('No {!r} resources exist.'.format(self.resource_name))
 
-		def list(self):
+		def list(self, **params):
 			"""
 			List all Resource this user has access to.
 
-			:return: list of dicts
+			:param params: dict: parameters to pass to request. Example:
+			{'status': ['Aborted', 'Finished'], 'ordering': 'id,-dryrun'}
+
+			:return: iterator: Resource objects
 			"""
-			# TODO: support filtering, sorting and paging
-			return self._to_python(self._list_resource())
+			return self._to_python(self._list_resource(**params))
 
 	class _School(_ResourceClient):
 		__metaclass__ = _ResourceClientMetaClass
@@ -419,7 +458,7 @@ class Client(object):
 			mime_type = self._get_mime_type(file_data)
 			file_obj.seek(os.SEEK_SET)
 			files = {'input_file': (os.path.basename(filename), file_obj, mime_type)}
-			return self.client.call_api('post', self.resource_url, data=data, files=files)
+			return self._to_python(self.client.call_api('post', self.resource_url, data=data, files=files))
 
 		@staticmethod
 		def _get_mime_type(data):
