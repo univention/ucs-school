@@ -107,11 +107,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		progress.job = None
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
-			importjob = self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=True)
+			jobid = self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=True).id
 		except (ConnectionError, ServerError, ObjectNotFound):
 			raise
-
-		jobid = importjob['id']
 		progress.progress(True, _('Dry run.'))
 		progress.current = 50.0
 
