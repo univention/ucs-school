@@ -113,18 +113,21 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		progress.progress(True, _('Dry run.'))
 		progress.current = 50.0
 
+		SLEEP_TIME = 0.3
+		TIMEOUT_AFTER = 120 / SLEEP_TIME  # two minutes
 		i = 0
 		finished = False
 		while not finished:
-			time.sleep(0.5)
+			time.sleep(SLEEP_TIME)
 			job = self.client.userimportjob.get(jobid)
 			if job.status == 'Started':
 				progress.current = 75.0
 			finished = job.status in ('Finished', 'Aborted')
 			i += 1
-			if i > 120:  # 1 minute
+			if i > TIMEOUT_AFTER:
 				raise UMC_Error(_('The dry-run timed out.'))
 
+		progress.current = 99.0
 		if job.result.status != 'SUCCESS':
 			message = _('The tests were not successful. Please consider reading the logfiles for further information.')
 			if job.result.traceback:
@@ -157,10 +160,15 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		usertype = request.options['usertype']
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
-			self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=False)
+			job = self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=False)
 		except (ConnectionError, ServerError, ObjectNotFound):
 			raise
 		os.remove(import_file)
+		return {
+			'id': job.id,
+			'school': job.school.displayName,
+			'user_type': self._parse_user_role(job.user_role)
+		}
 
 	@require_password
 	@simple_response
@@ -178,19 +186,27 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			'id': job.id,
 			'school': job.school.displayName,
 			'creator': job.principal,
-			'user_type': job.source_uid,
+			'user_type': self._parse_user_role(job.user_role),
 			'date': job.date_created.strftime("%A, %d. %B %Y %I:%M"),  # FIXME: locale aware format
 			'status': self._parse_status(job.status),
-		} for job in self.client.userimportjob.list() if not job.dryrun]
+		} for job in self.client.userimportjob.list(limit=20, dryrun=False, ordering='date_created', status=['Aborted', 'Finished'])]
 
 	def _parse_status(self, status):
 		return {
-			'New': _('new'),
-			'Scheduled': _('scheduled'),
-			'Started': _('started'),
-			'Finished': _('finished'),
-			'Aborted': _('aborted'),
+			'New': _('New'),
+			'Scheduled': _('Scheduled'),
+			'Started': _('Started'),
+			'Finished': _('Successful'),
+			'Aborted': _('Aborted'),
 		}.get(status, status)
+
+	def _parse_user_role(self, role):
+		return {
+			'staff': _('Staff'),
+			'student': _('Student'),
+			'teacher': _('Teacher'),
+			'teacher_and_staff': _('Teacher and Staff'),
+		}.get(role, role)
 
 	@allow_get_request
 	@sanitize(job=StringSanitizer(required=True))

@@ -34,6 +34,8 @@ define([
 	"dojo/_base/array",
 	"dojo/on",
 	"dojo/topic",
+	"dojo/promise/all",
+	"dojo/Deferred",
 	"dojox/html/entities",
 	"umc/dialog",
 	"umc/store",
@@ -50,7 +52,7 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/HiddenInput",
 	"umc/i18n!umc/modules/schoolimport"
-], function(declare, lang, array, on, topic, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
+], function(declare, lang, array, on, topic, all, Deferred, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
 
 	var ImportWizard = declare("umc.modules.schoolimport.ImportWizard", [Wizard], {
 
@@ -58,6 +60,12 @@ define([
 
 		postMixInProperties: function() {
 			this.pages = this.getPages();
+			this.initialQuery = new Deferred();
+			this.initialQuery.then(lang.hitch(this, function() {
+				if (!this.getPage('overview')._grid.getAllItems().length) {
+					this._next('overview');
+				}
+			}));
 			this._progressBar = new ProgressBar();
 			this.inherited(arguments);
 		},
@@ -67,7 +75,7 @@ define([
 				name: 'overview',
 				headerText: _('All finished imports.'),
 				headerTextRegion: 'main',
-				helpText: _('The list shows all current running imports.... You can download ...'),
+				helpText: _('The list shows all completed imports.... You can download password and summary... Reload... '),
 				helpTextRegion: 'main'
 			},{
 				name: 'start',
@@ -124,7 +132,8 @@ define([
 			},{
 				name: 'import-started',
 				headerText: _('The import was started successfully.'),
-				helpText: _('.....'),
+				helpTextRegion: 'main',
+				helpTextAllowHTML: false,
 			},{
 				name: 'error',  // FIXME: implement
 				headerText: _('An error occurred.'),
@@ -170,7 +179,8 @@ define([
 				nextPage = 'overview';
 			}
 			if (nextPage === 'import-started') {
-				return this.standbyDuring(tools.umcpCommand('schoolimport/import/start', this.getUploaderParams())).then(lang.hitch(this, function() {
+				return this.standbyDuring(tools.umcpCommand('schoolimport/import/start', this.getUploaderParams())).then(lang.hitch(this, function(response) {
+					this.getPage(nextPage).set('helpText', _('A new import of %(role)s users at school %(school)s has been started. The import has the ID %(id)s.', {'id': response.result.id, 'role': response.result.user_type, 'school': response.result.school}));
 					return nextPage;
 				}), lang.hitch(this, function() {
 					return 'error';
@@ -187,6 +197,9 @@ define([
 			array.forEach(buttons, lang.hitch(this, function(button) {
 				if (pageName === 'overview' && button.name === 'next') {
 					button.label = _('Start a new import');
+				}
+				if (pageName === 'dry-run-overview' && button.name === 'next') {
+					button.label = _('Start import');
 				}
 				if (pageName === 'import-started' && button.name === 'next') {
 					button.label = _('View finished imports');
@@ -232,7 +245,29 @@ define([
 
 			var grid = new Grid({
 				moduleStore: store('id', 'schoolimport/jobs', this.moduleFlavor),
+				actions: [{
+					name: 'reload',
+					label: _('Reload'),
+					isContextAction: false,
+					callback: function() { grid.filter({query: ''}); }
+				}, {
+					name: 'start',
+					label: _('Start a new import'),
+					isContextAction: false,
+					callback: lang.hitch(this, function() {
+						this._next('overview');
+					})
+				}],
 				columns: [{
+					name: 'id',
+					label: _('Job ID')
+				}, {
+					name: 'date',
+					label: _('Started at'),
+					formatter: function(value) {
+						return value; // FIXME:
+					}
+				}, {
 					name: 'school',
 					label: _('School')
 				}, {
@@ -241,9 +276,6 @@ define([
 				}, {
 					name: 'user_type',
 					label: _('User type')
-				}, {
-					name: 'date',
-					label: _('Started at')
 				}, {
 					name: 'status',
 					label: _('Status')
@@ -267,6 +299,11 @@ define([
 			});
 
 			grid.filter({query: ''});
+			grid.on('filterDone', lang.hitch(this, function() {
+				if (!this.initialQuery.isFulfilled()) {
+					this.initialQuery.resolve();
+				}
+			}));
 
 			parentWidget.addChild(grid);
 			parentWidget._grid = grid;
@@ -274,24 +311,26 @@ define([
 
 		ready: function() {
 			// FIXME: https://forge.univention.org/bugzilla/show_bug.cgi?id=45061
-			return this.getPage('start')._form.ready();
+			return all(array.map(array.filter(this._pages, function(page) { return page._form; }), function(page) {
+				return page._form.ready();
+			}));
 		}
 	});
 
 	return declare("umc.modules.schoolimport", [Module], {
 		unique: true,
+		standbyOpacity: 1,
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
 			this._wizard = new ImportWizard({ 'class': 'umcCard' });
+			this.standbyDuring(this._wizard.ready().then(lang.hitch(this, function() { return this._wizard.initialQuery; })));
 		},
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			this.addChild(this._wizard);
-
-			this.standbyDuring(this._wizard.ready());
 
 			this._wizard.on('finished', lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);
