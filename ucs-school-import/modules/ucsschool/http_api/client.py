@@ -231,7 +231,7 @@ class ResourceRepresentation(object):
 
 		@property
 		def school(self):
-			return self._resource_client.client.school.get(self._resource['school'])
+			return ResourceRepresentation.SchoolResource(self._resource_client, self._resource_client._resource_from_url(self._resource['school']))
 
 		@property
 		def summary_file(self):
