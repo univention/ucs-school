@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-24) unstable; urgency=low
+
+  * Bug #45024: remove bashism
+
+ -- Daniel Troeder <troeder@univention.de>  Sat, 05 Aug 2017 15:05:02 +0200
+
 ucs-school-import (15.0.0-23) unstable; urgency=low
 
   * Bug #45024: add support for school/role restrictions

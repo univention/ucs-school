@@ -131,9 +131,9 @@ echo "Migrating DB schema..."
 python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput || die
 if echo 'import sys; from django.contrib.auth.models import User; sys.exit(int(not User.objects.filter(username="Administrator", is_superuser=True).exists()))' | python /usr/share/pyshared/ucsschool/http_api/manage.py shell --no-color --plain;
 then
-    echo -e "\nSuper user exists."
+    printf "\nSuper user exists.\n"
 else
-    echo -e "\nCreating super user..."
+    printf "\nCreating super user...\n"
     python /usr/share/pyshared/ucsschool/http_api/manage.py createsuperuser --username Administrator --email "root@$hostname.$domainname" --no-color --noinput
 fi
 echo "Seeding DB with School entries..."

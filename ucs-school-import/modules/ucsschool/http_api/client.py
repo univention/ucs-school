@@ -294,7 +294,7 @@ class Client(object):
 
 	def __init__(self, name, password, server=None, version=1, log_level=logging.INFO, ssl_verify=True, *args, **kwargs):
 		"""
-		UCS@School HTTP API client.
+		UCS@school HTTP API client.
 
 		:param name:
 		:param password:
