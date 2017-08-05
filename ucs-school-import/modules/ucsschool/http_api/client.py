@@ -172,7 +172,16 @@ class ResourceRepresentation(object):
 		def __init__(self, resource_client, resource):
 			self._resource_client = resource_client
 			self._resource = resource
+			self._cache = {}
+			self._set_attrs(self._resource)
 
+		def __repr__(self):
+			return '{}({})'.format(
+				self.__class__.__name__,
+				getattr(self, self._resource_client.pk_name)
+			)
+
+		def _set_attrs(self, resource):
 			for k, v in resource.items():
 				if k == 'url':
 					continue
@@ -183,13 +192,10 @@ class ResourceRepresentation(object):
 						val = v
 					setattr(self, k, val)
 
-		def __repr__(self):
-			return '{}({}, {}={!r})'.format(
-				self.__class__.__name__,
-				self._resource_client.resource_name,
-				self._resource_client.pk_name,
-				getattr(self, self._resource_client.pk_name)
-			)
+		def update(self):
+			self._cache = {}
+			self._resource = self._resource_client._resource_from_url(self._resource['url'])
+			self._set_attrs(self._resource)
 
 	class SchoolResource(_ResourceReprBase):
 		__metaclass__ = _ResourceRepresentationMetaClass
@@ -197,7 +203,12 @@ class ResourceRepresentation(object):
 
 		@property
 		def user_imports(self):
-			return self._resource_client.client.userimportjob.list()  # TODO: filter(school=self.name)
+			"""
+			UserImportJobs that ran for this school.
+
+			:return: iterator: UserImportJobResource objects
+			"""
+			return self._resource_client.client.userimportjob.list()
 
 	class ResultResource(_ResourceReprBase):
 		resource_name = 'result'
@@ -215,6 +226,16 @@ class ResourceRepresentation(object):
 			'date_created': lambda x: dateutil.parser.parse(x)
 		}
 
+		def __repr__(self):
+			return '{}({}, {}, {}, {}, {})'.format(
+				self.__class__.__name__,
+				getattr(self, self._resource_client.pk_name),
+				self._cached_school,  # this will create a request (the first time) to get the schools name
+				self.user_role,
+				self.principal,
+				self.status
+			)
+
 		@property
 		def log_file(self):
 			try:
@@ -231,7 +252,12 @@ class ResourceRepresentation(object):
 
 		@property
 		def school(self):
-			return ResourceRepresentation.SchoolResource(self._resource_client, self._resource_client._resource_from_url(self._resource['school']))
+			school_r = ResourceRepresentation.SchoolResource(
+				self._resource_client,
+				self._resource_client._resource_from_url(self._resource['school'])
+			)
+			self._cache['school_name'] = school_r.name
+			return school_r
 
 		@property
 		def summary_file(self):
@@ -242,7 +268,20 @@ class ResourceRepresentation(object):
 
 		@property
 		def result(self):
-			return ResourceRepresentation.ResultResource(self._resource_client, self._resource['result'])
+			if self._resource['result']:
+				return ResourceRepresentation.ResultResource(self._resource_client, self._resource['result'])
+			else:
+				return None
+
+		@property
+		def _cached_school(self):
+			if not 'school_name' in self._cache:
+				try:
+					self._cache['school_name'] = self.school.name
+				except ApiError as exc:
+					print('Error retrieving school name of UserImportJobResource: {}'.format(exc))
+					return 'school name n/a'
+			return self._cache['school_name']
 
 	@classmethod
 	def get_repr(cls, resource_client, resource):

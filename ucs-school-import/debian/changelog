@@ -6,6 +6,8 @@ ucs-school-import (15.0.0-23) unstable; urgency=low
   * remove per job configuration file support
   * reduce models
   * handle existing super administrator in join script
+  * Bug #45022: add update() method to fetch new data from API
+  * enhance repr output
 
  -- Daniel Troeder <troeder@univention.de>  Sat, 05 Aug 2017 14:47:36 +0200
 
