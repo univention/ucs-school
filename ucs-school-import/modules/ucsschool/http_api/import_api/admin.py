@@ -35,7 +35,7 @@ Django Admin
 from __future__ import unicode_literals
 from django.contrib import admin
 from djcelery.models import TaskMeta
-from ucsschool.http_api.import_api.models import School, UserImportJob, Logfile, SummaryFile, PasswordsFile
+from ucsschool.http_api.import_api.models import Logfile, PasswordsFile, School, SummaryFile, UserImportJob
 from ucsschool.http_api.import_api.import_logging import logger
 
 
@@ -43,6 +43,8 @@ from ucsschool.http_api.import_api.import_logging import logger
 
 
 class UserQueryFilterMixin(object):
+	ordering = ('-id',)
+
 	def get_queryset(self, request):
 		qs = super(UserQueryFilterMixin, self).get_queryset(request)
 		if request.user.is_superuser:
@@ -58,11 +60,10 @@ class ProxyModelFilterMixin(object):
 
 @admin.register(UserImportJob)
 class UserImportJobAdmin(UserQueryFilterMixin, admin.ModelAdmin):
-	list_display = ('id', 'school', 'status', 'principal', 'dryrun', 'task_id')
-	search_fields = ('id', 'school__name', 'source_uid', 'status', 'principal__username')
-	list_filter = ('school__name', 'status', 'principal', 'dryrun')
-
-# for m in (School, Logfile, SummaryFile, PasswordsFile, TaskMeta):
+	list_display = ('id', 'school', 'status', 'principal', 'dryrun', 'user_role')
+	search_fields = ('id', 'school__name', 'source_uid', 'status', 'principal__username', 'user_role')
+	list_filter = ('school__name', 'status', 'principal', 'dryrun', 'user_role')
+	ordering = ('-id',)
 
 
 @admin.register(Logfile)
@@ -82,6 +83,8 @@ class SummaryFileAdmin(ProxyModelFilterMixin, admin.ModelAdmin):
 
 @admin.register(TaskMeta)
 class TaskMetaAdmin(UserQueryFilterMixin, admin.ModelAdmin):
+	ordering = ('-id',)
+
 	def get_queryset(self, request):
 		qs = super(TaskMetaAdmin, self).get_queryset(request)
 		if request.user.is_superuser:

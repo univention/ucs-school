@@ -34,18 +34,22 @@ Django Views
 
 from __future__ import unicode_literals
 import urlparse
+from ldap.filter import filter_format
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework.permissions import BasePermission, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import BaseFilterBackend, OrderingFilter
+from ucsschool.importer.utils.ldap_connection import get_machine_connection
 from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, School, JOB_CHOICES, JOB_STARTED
 from ucsschool.http_api.import_api.serializers import (
+	UserImportJobCreationValidator,
 	UserImportJobSerializer,
 	LogFileSerializer,
 	PasswordFileSerializer,
@@ -55,20 +59,62 @@ from ucsschool.http_api.import_api.serializers import (
 from ucsschool.http_api.import_api.import_logging import logger
 
 
-# TODO: use django-guardian to filter object access?
-
-
 class UserImportJobFilter(FilterSet):
 	principal = CharFilter(method='principal_filter')
 	status = MultipleChoiceFilter(choices=JOB_CHOICES)
 
 	class Meta:
 		model = UserImportJob
-		fields = ['id', 'dryrun', 'principal', 'school', 'source_uid', 'status']
+		fields = ['id', 'dryrun', 'principal', 'school', 'source_uid', 'status', 'user_role']
 
 	@staticmethod
 	def principal_filter(queryset, name, value):
 		return queryset.filter(principal__username=value)
+
+
+class UserImportJobFilterBackend(BaseFilterBackend):
+	lo, po = get_machine_connection()
+
+	@classmethod
+	def _build_query(cls, username):
+		filter_s = filter_format('(&(objectClass=ucsschoolGroup)(ucsschoolImportType=*)(ucsschoolImportSchool=*)(memberUid=%s))', (username,))
+		attrs = (str('ucsschoolImportType'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
+		ldap_result = cls.lo.search(filter_s, attr=attrs)
+		print('ldap_result={!r}'.format(ldap_result))
+		query = None
+		for _dn, result_dict in ldap_result:
+			q = Q(
+				school__name__in=result_dict['ucsschoolImportSchool'],
+				user_role__in=result_dict['ucsschoolImportType']
+			)  # AND
+			try:
+				query |= q  # OR
+			except TypeError:
+				query = q   # query was None
+		return query
+
+	def filter_queryset(self, request, queryset, view):
+		return queryset.filter(self._build_query(request.user.username))
+
+
+class UserImportJobViewPermission(BasePermission):
+	# not needed: restrict who can use the view
+	#
+	# def has_permission(self, request, view):
+	# 	# view is a UserImportJobViewSet object
+	# 	return True
+
+	def has_object_permission(self, request, view, obj):
+		# we use this to check GET of resource list and object
+		# obj is a UserImportJob object
+		res = UserImportJobCreationValidator.is_user_school_role_combination_allowed(
+			username=request.user.username,
+			school=obj.school.name,
+			role=obj.user_role
+		)
+		if not res:
+			logger.error('Not allowed: username={!r} school={!r} role={!r}', request.user.username, obj.school.name, obj.user_role)
+		return res
 
 
 class UserImportJobViewSet(
@@ -89,8 +135,16 @@ Manage Import jobs.
 	"""
 	queryset = UserImportJob.objects.all()
 	serializer_class = UserImportJobSerializer
-	filter_backends = (DjangoFilterBackend, OrderingFilter)
-	filter_class = UserImportJobFilter
+	filter_backends = (
+		UserImportJobFilterBackend,  # used to filter the queryset for allowed school-user_role-combinations
+		DjangoFilterBackend,         # used to filter view by attribute
+		OrderingFilter,              # used for ordering
+	)
+	filter_class = UserImportJobFilter  # filter principal by 'username' (DjangoFilterBackend works automatically only on pk)
+	permission_classes = (
+		IsAuthenticated,              # user must be authenticated to use this view
+		UserImportJobViewPermission,  # apply per view and per-object permission checks
+	)
 	ordering_fields = ('id', 'school', 'source_uid', 'status', 'principal', 'dryrun', 'date_created')
 
 	def perform_create(self, serializer):
@@ -99,7 +153,6 @@ Manage Import jobs.
 
 	@staticmethod
 	def _get_subresource_urls(instance_url):
-		# instance_url = request.build_absolute_uri()
 		return {
 			'log_file': urlparse.urljoin(instance_url, 'logfile/'),
 			'password_file': urlparse.urljoin(instance_url, 'passwords/'),

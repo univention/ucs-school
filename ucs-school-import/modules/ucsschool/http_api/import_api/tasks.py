@@ -61,7 +61,7 @@ def run_import_job(task, importjob_id):
 	except ObjectDoesNotExist as exc:
 		logger.exception(str(exc))
 		raise
-	timeout = 60
+	timeout = 10
 	while importjob.status != JOB_SCHEDULED:
 		# possible race condition: we write JOB_STARTED into DB before client
 		# (UserImportJobSerializer) writes JOB_SCHEDULED into DB
