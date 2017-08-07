@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-28) unstable; urgency=medium
+
+  * Bug #45044: fix FTBFS
+
+ -- Florian Best <best@univention.de>  Mon, 07 Aug 2017 18:01:19 +0200
+
 ucs-school-import (15.0.0-27) unstable; urgency=medium
 
   * Bug #45044: Transform joinscript into bash

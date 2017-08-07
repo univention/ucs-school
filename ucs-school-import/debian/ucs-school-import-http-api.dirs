@@ -2,3 +2,4 @@ var/lib/ucs-school-import-http-api/static
 var/log/univention/ucs-school-import
 var/spool/ucs-school-import/jobs
 var/spool/ucs-school-import/media/uploads
+usr/share/ucs-school-import/hooks/ou_create_post.d
