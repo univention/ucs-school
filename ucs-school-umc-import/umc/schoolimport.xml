@@ -9,7 +9,7 @@
 	</categories>
 
 	<command name="schoolimport/schools" function="schools"/>
-	<command name="schoolimport/usertypes" function="user_types"/>
+	<command name="schoolimport/userroles" function="userroles"/>
 	<command name="schoolimport/upload-file" function="upload_file"/>
 	<command name="schoolimport/dry-run/start" function="dry_run"/>
 	<command name="schoolimport/dry-run/progress" function="poll_dry_run"/>

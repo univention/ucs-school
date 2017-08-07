@@ -73,14 +73,14 @@ define([
 		getPages: function() {
 			return [{
 				name: 'overview',
-				headerText: _('All finished imports.'),
+				headerText: _('Overview User Imports'),
 				headerTextRegion: 'main',
-				helpText: _('The list shows all completed imports.... You can download password and summary... Reload... '),
+				helpText: _('List of running and completed user imports. For every completed user import a summary is provided with every change that was made as well as a list of passwords for newly created user accounts.'),
 				helpTextRegion: 'main'
 			},{
 				name: 'start',
-				headerText: _('Perform new import'),
-				helpText: _('Please select the school and a user type for the import ...'),
+				headerText: _('Import user accounts'),
+				helpText: _('Please select the school and the role of user for the import.'),
 				widgets: [{
 					type: ComboBox,
 					name: 'school',
@@ -91,25 +91,25 @@ define([
 					dynamicValues: 'schoolimport/schools'
 				},{
 					type: ComboBox,
-					name: 'usertype',
-					label: _('User type'),
-					description: _('Select the user type.'),
+					name: 'userrole',
+					label: _('User role'),
+					description: _('Select the user role.'),
 					autoHide: true,
 					required: true,
-					dynamicValues: 'schoolimport/usertypes'
+					dynamicValues: 'schoolimport/userroles'
 				}]
 			},{
 				name: 'select-file',
-				headerText: _('Select import database.'),
-				helpText: _('Select CSV file ... '),
+				headerText: _('Upload data'),
+				helpText: _('Please select and upload the data export from the School Information System.'),
 				widgets: [{
 					type: Uploader,
 					name: 'file',
-					label: _('Upload file'),
-					labelPosition: 'right',
+					label: _('Please select a file. This will start a validation proccess of the data.'),
+					buttonLabel: _('Select file'),
 					command: 'schoolimport/upload-file',
 					onUploadStarted: lang.hitch(this, function() {
-						this._progressBar.reset();
+						this._progressBar.reset(_('Please wait until the examination of the data is complete.'));
 						this.standby(true, this._progressBar);
 					}),
 					onUploaded: lang.hitch(this, 'startDryRun'),
@@ -122,8 +122,8 @@ define([
 				}]
 			},{
 				name: 'dry-run-overview',
-				headerText: _('Overview about the import changes'),
-				helpText: _('The following changes will be applied to the domain when continuing the import.'),
+				headerText: _('Data examination completed'),
+				helpText: _('The examination of the uploaded data completed successfully. Following, you see the output of the data import interfrace. Press "Start Import" to proceed with the actual user import.'),
 				widgets: [{
 					name: 'summary',
 					type: Text,
@@ -137,7 +137,8 @@ define([
 			},{
 				name: 'error',  // FIXME: implement
 				headerText: _('An error occurred.'),
-				helpText: _('error')
+				helpText: _('Please notify the system administrator about this error via email.'),
+				helpTextAllowHTML: true
 			},/*{
 				name: '',
 				headerText: '',
@@ -148,7 +149,7 @@ define([
 
 		getUploaderParams: function() {
 			return {
-				usertype: this.getWidget('start', 'usertype').get('value'),
+				userrole: this.getWidget('start', 'userrole').get('value'),
 				school: this.getWidget('start', 'school').get('value'),
 				filename: this.getWidget('select-file', 'filename').get('value') || undefined
 			};
@@ -156,11 +157,14 @@ define([
 
 		startDryRun: function(response) {
 			this.getWidget('select-file', 'filename').set('value', response.result.filename);
-			tools.umcpProgressCommand(this._progressBar, 'schoolimport/dry-run/start', this.getUploaderParams()).then(lang.hitch(this, function(result) {
+			tools.umcpProgressCommand(this._progressBar, 'schoolimport/dry-run/start', this.getUploaderParams(), {display400: function() {}}).then(lang.hitch(this, function(result) {
 				this.getWidget('dry-run-overview', 'summary').set('content', entities.encode(result.summary));
 				this.standby(false);
 				this._next('select-file');
-			}), lang.hitch(this, function() {
+			}), lang.hitch(this, function(error) {
+				console.log(error);
+				var msg = _('Please notify the system administrator about this error via email.');
+				this.getPage('error').set('helpText', msg);
 				this.standby(false);
 				this.switchPage('error');
 			}));
@@ -180,7 +184,7 @@ define([
 			}
 			if (nextPage === 'import-started') {
 				return this.standbyDuring(tools.umcpCommand('schoolimport/import/start', this.getUploaderParams())).then(lang.hitch(this, function(response) {
-					this.getPage(nextPage).set('helpText', _('A new import of %(role)s users at school %(school)s has been started. The import has the ID %(id)s.', {'id': response.result.id, 'role': response.result.user_type, 'school': response.result.school}));
+					this.getPage(nextPage).set('helpText', _('A new import of %(role)s users at school %(school)s has been started. The import has the ID %(id)s.', {'id': response.result.id, 'role': response.result.userrole, 'school': response.result.school}));
 					return nextPage;
 				}), lang.hitch(this, function() {
 					return 'error';
@@ -206,6 +210,9 @@ define([
 				}
 			}));
 			return array.filter(buttons, function(button) {
+				if (pageName === 'error' && button.name === 'finish') {
+					return false;
+				}
 				if (pageName === 'select-file' && button.name === 'finish') {
 					return false;
 				}
@@ -244,6 +251,7 @@ define([
 			}
 
 			var grid = new Grid({
+				gridOptions: { selectionMode: 'none' },
 				moduleStore: store('id', 'schoolimport/jobs', this.moduleFlavor),
 				actions: [{
 					name: 'reload',
@@ -260,7 +268,7 @@ define([
 				}],
 				columns: [{
 					name: 'id',
-					label: _('Job ID')
+					label: _('Job Id')
 				}, {
 					name: 'date',
 					label: _('Started at'),
@@ -272,27 +280,27 @@ define([
 					label: _('School')
 				}, {
 					name: 'creator',
-					label: _('Creator')
+					label: _('Started by')
 				}, {
-					name: 'user_type',
-					label: _('User type')
+					name: 'userrole',
+					label: _('User role')
 				}, {
 					name: 'status',
 					label: _('Status')
 				}, {
-					name: 'download-summary',
-					label: _('Download summary'),
+					name: 'download-passwords',
+					label: _('Passwords'),
 					formatter: function(value, item) {
 						return new Text({
-							content: _('<a href="/univention/command/schoolimport/job/summary.csv?job=%s" target="_blank">Download summary</>', encodeURIComponent(item.id))
+							content: _('<a href="/univention/command/schoolimport/job/passwords.csv?job=%s" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-passwords.svg"> Passwords</>', encodeURIComponent(item.id))
 						});
 					}
 				}, {
-					name: 'download-passwords',
-					label: _('Download passwords'),
+					name: 'download-summary',
+					label: _('Summary'),
 					formatter: function(value, item) {
 						return new Text({
-							content: _('<a href="/univention/command/schoolimport/job/passwords.csv?job=%s" target="_blank">Download passwords</>', encodeURIComponent(item.id))
+							content: _('<a href="/univention/command/schoolimport/job/summary.csv?job=%s" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-download.svg"> Summary</>', encodeURIComponent(item.id))
 						});
 					}
 				}]

@@ -74,11 +74,11 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@require_password
 	@simple_response
-	def user_types(self):
-		user_types = [dict(id=id, label=label) for id, label in univention.admin.syntax.ucsschoolTypes.choices]
-		if not user_types:
+	def userroles(self):
+		userroles = [dict(id=id, label=label) for id, label in univention.admin.syntax.ucsschoolTypes.choices]
+		if not userroles:
 			raise UMC_Error(_('No permissions for running an import for any user role.'))
-		return user_types
+		return userroles
 
 	@require_password
 	@file_upload
@@ -90,24 +90,24 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@sanitize(
 		filename=StringSanitizer(required=True),
-		usertype=StringSanitizer(required=True),
+		userrole=StringSanitizer(required=True),
 		school=StringSanitizer(required=True),
 	)
 	@require_password
 	@simple_response
-	def dry_run(self, filename, usertype, school):
+	def dry_run(self, filename, userrole, school):
 		progress = self.new_progress(total=100)
-		thread = notifier.threads.Simple('dry run', notifier.Callback(self._dry_run, filename, usertype, school, progress), notifier.Callback(self.__thread_error_handling, progress))
+		thread = notifier.threads.Simple('dry run', notifier.Callback(self._dry_run, filename, userrole, school, progress), notifier.Callback(self.__thread_error_handling, progress))
 		thread.run()
 		return dict(progress.poll(), id=progress.id)
 
-	def _dry_run(self, filename, usertype, school, progress):
+	def _dry_run(self, filename, userrole, school, progress):
 		progress.progress(True, _('Validating import.'))
 		progress.current = 25.0
 		progress.job = None
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
-			jobid = self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=True).id
+			jobid = self.client.userimportjob.create(filename=import_file, school=school, user_role=userrole, dryrun=True).id
 		except (ConnectionError, ServerError, ObjectNotFound):
 			raise
 		progress.progress(True, _('Dry run.'))
@@ -146,7 +146,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@sanitize(
 		filename=StringSanitizer(required=True),
-		usertype=StringSanitizer(required=True),
+		userrole=StringSanitizer(required=True),
 		school=StringSanitizer(required=True),
 	)
 	@require_password
@@ -157,17 +157,17 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	def _start_import(self, request):
 		school = request.options['school']
 		filename = request.options['filename']
-		usertype = request.options['usertype']
+		userrole = request.options['userrole']
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
-			job = self.client.userimportjob.create(filename=import_file, source_uid=usertype, school=school, user_role=usertype, dryrun=False)
+			job = self.client.userimportjob.create(filename=import_file, school=school, user_role=userrole, dryrun=False)
 		except (ConnectionError, ServerError, ObjectNotFound):
 			raise
 		os.remove(import_file)
 		return {
 			'id': job.id,
 			'school': job.school.displayName,
-			'user_type': self._parse_user_role(job.user_role)
+			'userrole': self._parse_user_role(job.user_role)
 		}
 
 	@require_password
@@ -186,7 +186,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			'id': job.id,
 			'school': job.school.displayName,
 			'creator': job.principal,
-			'user_type': self._parse_user_role(job.user_role),
+			'userrole': self._parse_user_role(job.user_role),
 			'date': job.date_created.strftime("%A, %d. %B %Y %I:%M"),  # FIXME: locale aware format
 			'status': self._parse_status(job.status),
 		} for job in self.client.userimportjob.list(limit=20, dryrun=False, ordering='date_created', status=['Aborted', 'Finished'])]
