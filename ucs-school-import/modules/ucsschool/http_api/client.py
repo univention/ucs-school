@@ -465,36 +465,38 @@ class Client(object):
 		resource_name = 'imports/users'
 		pk_name = 'id'
 
-		def create(self, filename, source_uid, school, user_role=None, dryrun=True, file_obj=None):
+		def create(self, filename, source_uid=None, school=None, user_role=None, dryrun=True, file_obj=None):
 			"""
 			Create a UserImportJob.
 
 			:param filename: str: path to a CSV file, or just a filename and read from 'file_obj'
-			:param source_uid: str: unique sourceUID of school management software database
-			:param school: str: name of a School
+			:param source_uid: str: optional unique sourceUID of school management software database
+			:param school: str: optional name of a School
 			:param user_role: str: optional role of user, one of staff, student, teacher, teacher_and_staff
 			:param dryrun: bool: False to start a real import
 			:param file_obj: optional file like object to read CSV data from, instead of opening 'filename'
 			:return: dict: the created UserImportJob resource
 			"""
 			assert isinstance(filename, basestring)
-			assert isinstance(source_uid, basestring)
-			assert isinstance(school, basestring)
+			assert (isinstance(source_uid, basestring) or source_uid is None)
+			assert (isinstance(school, basestring) or school is None)
 			assert (isinstance(user_role, basestring) or user_role is None)
 			assert isinstance(dryrun, bool)
 			assert (isinstance(file_obj, file) or file_obj is None)
 
-			try:
-				school_obj = self.client.school.get(school)
-			except ObjectNotFound:
-				raise ObjectNotFound('School {!r} is unknown.'.format(school))
-
 			data = {
-				'source_uid': source_uid,
 				'dryrun': dryrun,
-				'school': school_obj._resource['url'],
-				'user_role': user_role,
 			}
+			if school:
+				try:
+					school_obj = self.client.school.get(school)
+				except ObjectNotFound:
+					raise ObjectNotFound('School {!r} is unknown.'.format(school))
+				data['school'] = school_obj._resource['url']
+			if source_uid:
+				data['source_uid'] = source_uid
+			if user_role:
+				data['user_role'] = user_role
 			filename = filename or 'noname'
 			if not file_obj:
 				file_obj = open(filename, 'rb')
