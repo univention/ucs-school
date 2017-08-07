@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: \n"
+"POT-Creation-Date: 2017-08-07 18:50+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,3 +12,64 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: umc/python/schoolimport/__init__.py:200
+msgid "Aborted"
+msgstr "Abgebrochen"
+
+#: umc/python/schoolimport/__init__.py:113
+msgid "Dry run."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:196
+msgid "New"
+msgstr "Neu"
+
+#: umc/python/schoolimport/__init__.py:72
+msgid "No permissions for running an import for any school."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:80
+msgid "No permissions for running an import for any user role."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:197
+msgid "Scheduled"
+msgstr "Geplant"
+
+#: umc/python/schoolimport/__init__.py:205
+msgid "Staff"
+msgstr "Mitarbeiter"
+
+#: umc/python/schoolimport/__init__.py:198
+msgid "Started"
+msgstr "Gestartet"
+
+#: umc/python/schoolimport/__init__.py:206
+msgid "Student"
+msgstr "Schüler"
+
+#: umc/python/schoolimport/__init__.py:199
+msgid "Successful"
+msgstr "Erfolgreich"
+
+#: umc/python/schoolimport/__init__.py:207
+msgid "Teacher"
+msgstr "Lehrer"
+
+#: umc/python/schoolimport/__init__.py:208
+msgid "Teacher and Staff"
+msgstr "Lehrer und Mitarbeiter"
+
+#: umc/python/schoolimport/__init__.py:128
+msgid "The dry-run timed out."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:132
+msgid ""
+"The tests were not successful. Please consider reading the logfiles for "
+"further information."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:105
+msgid "Validating import."
+msgstr ""

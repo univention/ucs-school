@@ -200,7 +200,7 @@ define([
 			var buttons = this.inherited(arguments);
 			array.forEach(buttons, lang.hitch(this, function(button) {
 				if (pageName === 'overview' && button.name === 'next') {
-					button.label = _('Start a new import');
+					button.label = _('Start new user import');
 				}
 				if (pageName === 'dry-run-overview' && button.name === 'next') {
 					button.label = _('Start import');
@@ -260,7 +260,7 @@ define([
 					callback: function() { grid.filter({query: ''}); }
 				}, {
 					name: 'start',
-					label: _('Start a new import'),
+					label: _('Start new user import'),
 					isContextAction: false,
 					callback: lang.hitch(this, function() {
 						this._next('overview');
@@ -292,7 +292,7 @@ define([
 					label: _('Passwords'),
 					formatter: function(value, item) {
 						return new Text({
-							content: _('<a href="/univention/command/schoolimport/job/passwords.csv?job=%s" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-passwords.svg"> Passwords</>', encodeURIComponent(item.id))
+							content: lang.replace('<a href="/univention/command/schoolimport/job/passwords.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-passwords.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Passwords')})
 						});
 					}
 				}, {
@@ -300,7 +300,7 @@ define([
 					label: _('Summary'),
 					formatter: function(value, item) {
 						return new Text({
-							content: _('<a href="/univention/command/schoolimport/job/summary.csv?job=%s" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-download.svg"> Summary</>', encodeURIComponent(item.id))
+							content: lang.replace('<a href="/univention/command/schoolimport/job/summary.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-download.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Summary')})
 						});
 					}
 				}]
