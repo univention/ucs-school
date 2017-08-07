@@ -37,9 +37,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('dryrun', models.BooleanField(default=True)),
-                ('source_uid', models.CharField(max_length=255)),
+                ('source_uid', models.CharField(max_length=255, blank=True)),
                 ('status', models.CharField(default='New', max_length=10, choices=[('New', 'New'), ('Scheduled', 'Scheduled'), ('Started', 'Started'), ('Aborted', 'Aborted'), ('Finished', 'Finished')])),
-                ('user_role', models.CharField(max_length=20, choices=[('staff', 'staff'), ('student', 'student'), ('teacher', 'teacher'), ('teacher_and_staff', 'teacher_and_staff')])),
+                ('user_role', models.CharField(blank=True, max_length=20, choices=[('staff', 'staff'), ('student', 'student'), ('teacher', 'teacher'), ('teacher_and_staff', 'teacher_and_staff')])),
                 ('task_id', models.CharField(max_length=40, blank=True)),
                 ('progress', models.TextField(blank=True)),
                 ('basedir', models.CharField(max_length=255)),
@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('input_file', models.FileField(upload_to='uploads/%Y-%m-%d/')),
                 ('principal', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('result', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, blank=True, to='djcelery.TaskMeta')),
-                ('school', models.ForeignKey(to='import_api.School')),
+                ('school', models.ForeignKey(to='import_api.School', blank=True)),
             ],
             options={
                 'ordering': ('pk',),

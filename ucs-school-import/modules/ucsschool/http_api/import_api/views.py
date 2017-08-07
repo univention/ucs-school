@@ -41,11 +41,12 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from rest_framework.decorators import detail_route
+from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from rest_framework.permissions import BasePermission, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
-from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from ucsschool.importer.utils.ldap_connection import get_machine_connection
 from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, School, JOB_CHOICES, JOB_STARTED
 from ucsschool.http_api.import_api.serializers import (
@@ -323,8 +324,22 @@ Read-only list of Schools (OUs).
 			return uivs.list(request, *args, **kwargs)
 		elif request.method == 'POST':
 			school_serializer = self.get_serializer(instance=instance, context={'request': request})
+			this_school_url = school_serializer.data['url']
 			data = request.data.copy()
-			data['school'] = school_serializer.data['url']
+			if data.get('school') and data['school'] != this_school_url:
+				abs_url = request.build_absolute_uri()
+				logger.error(
+					'User tried to import into %r, while POSTing to URL %r.',
+					data['school'],
+					abs_url
+				)
+				raise ParseError(
+					'Import into school "{}" not allowed from "{}".'.format(
+						data['school'],
+						abs_url
+					)
+				)
+			data['school'] = this_school_url
 			uij_serializer = UserImportJobSerializer(data=data, context={'request': request})
 			uij_serializer.is_valid(raise_exception=True)
 			uivs.perform_create(uij_serializer)

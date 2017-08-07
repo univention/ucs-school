@@ -41,7 +41,7 @@ from ldap.filter import filter_format
 from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import ParseError, PermissionDenied
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from ucsschool.importer.utils.ldap_connection import get_machine_connection
 from ucsschool.http_api.import_api.models import Logfile, PasswordsFile, SummaryFile, TextArtifact, UserImportJob, School, JOB_NEW, JOB_SCHEDULED
@@ -89,6 +89,10 @@ class UserImportJobCreationValidator(object):
 		self.request = request
 
 	def __call__(self, data):
+		if not data.get('school'):
+			raise ParseError('Either a school must be submitted or the request be run at "<school-URL>/imports/users".')
+		if not data.get('user_role'):
+			raise ParseError('NotYetImplemented: Import jobs can currently only be run for one user role at a time.')
 		if not self.is_user_school_role_combination_allowed(
 			username=self.request.user.username,
 			school=data['school'].name,
@@ -119,8 +123,6 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 	result = TaskResultSerializer(read_only=True)
 	principal = UsernameField(read_only=True)
 
-	# TODO: allow not setting school from below OU
-
 	class Meta:
 		model = UserImportJob
 		fields = ('id', 'url', 'date_created', 'dryrun', 'input_file', 'principal', 'progress', 'result', 'school', 'source_uid', 'status', 'user_role', 'log_file', 'password_file', 'summary_file')
@@ -144,6 +146,8 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		validated_data['progress'] = json.dumps({})
 		validated_data['log_file'] = None
 		validated_data['basedir'] = ''
+		if not validated_data.get('source_uid'):
+			validated_data['source_uid'] = '{}-{}'.format(validated_data['school'].name, validated_data['user_role']).lower()
 		instance = super(UserImportJobSerializer, self).create(validated_data)
 		instance.basedir = os.path.join(
 			settings.UCSSCHOOL_IMPORT['import_jobs_basedir'],

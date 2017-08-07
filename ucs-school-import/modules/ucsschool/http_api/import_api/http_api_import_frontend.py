@@ -140,15 +140,16 @@ class HttpApiImportFrontend(UserImportCommandLine):
 				else:
 					raise
 		num += 1
-		# TODO: OU specific conf file
-		ou_config_file = '/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json'
-		dir_, filename_ = os.path.split(ou_config_file)
-		numbered_ou_config_file = os.path.join(self.basedir, '{}_{}'.format(num, filename_))
-		shutil.copy2(ou_config_file, numbered_ou_config_file)
-		conf_files_job.append(numbered_ou_config_file)
-		self.logger.info('Copied %r to %r.', ou_config_file, numbered_ou_config_file)
-		# TODO: consistency check: is sourceUID in configfile == sourceUID in parameters?
-		# TODO: or remove sourceUID from parameters?
+		# use OU specific configuration file
+		ou_config_filename = '{}.json'.format(self.import_job.school.name).lower()
+		ou_config_source_path = os.path.join('/var/lib/ucs-school-import/configs', ou_config_filename)
+		if os.path.exists(ou_config_source_path):
+			numbered_ou_config_file = os.path.join(self.basedir, '{}_{}'.format(num, ou_config_filename))
+			shutil.copy2(ou_config_source_path, numbered_ou_config_file)
+			conf_files_job.append(numbered_ou_config_file)
+			self.logger.info('Copied %r to %r.', ou_config_source_path, numbered_ou_config_file)
+		else:
+			self.logger.warn('No school specific configuration found (%r).', ou_config_source_path)
 		return conf_files_job
 
 	def update_job_state(self, done=0, total=0):

@@ -84,6 +84,7 @@ class School(models.Model):
 		:param ou_str: name of School object to update, all will be updated if None
 		:return: None
 		"""
+		names = list()
 		for dn, ou in cls._get_ous_from_ldap(ou_str):
 			name = ou['ou'][0]
 			display_name = ou['displayName'][0]
@@ -94,7 +95,9 @@ class School(models.Model):
 			if not created and obj.displayName != display_name:
 				obj.displayName = display_name
 				obj.save()
-		# TODO: remove non-existent Schools
+			names.append(name)
+		if not ou_str:
+			cls.objects.exclude(name__in=names).delete()
 
 
 class TextArtifact(models.Model):
@@ -140,10 +143,10 @@ class SummaryFile(TextArtifact):
 class UserImportJob(models.Model):
 	dryrun = models.BooleanField(default=True)
 	principal = models.ForeignKey(User)
-	school = models.ForeignKey(School)
-	source_uid = models.CharField(max_length=255)
+	school = models.ForeignKey(School, blank=True)
+	source_uid = models.CharField(max_length=255, blank=True)
 	status = models.CharField(max_length=10, default=JOB_NEW, choices=JOB_CHOICES)
-	user_role = models.CharField(max_length=20, choices=USER_ROLES_CHOICES)
+	user_role = models.CharField(max_length=20, choices=USER_ROLES_CHOICES, blank=True)
 
 	task_id = models.CharField(max_length=40, blank=True)
 	result = models.OneToOneField(TaskMeta, on_delete=models.SET_NULL, null=True, blank=True)
