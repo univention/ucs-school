@@ -75,7 +75,7 @@ then
     echo "Using exiting secret for HTTP API service."
 else
     echo "Creating secret for HTTP API service."
-    DJANGO_SECRET_PW="$(makepasswd --chars=50 )"
+    DJANGO_SECRET_PW="$(makepasswd --chars=50)"
     write_secret "$DJANGO_SECRET_FILE" "$DJANGO_SECRET_PW" || die
 fi
 
@@ -147,6 +147,23 @@ for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql gunico
 do
     deb-systemd-invoke enable "$SERVICE.service"
     deb-systemd-invoke start "$SERVICE.service"
+done
+
+python -c 'from ucsschool.lib.models import School; import univention.admin.uldap; lo, po = univention.admin.uldap.getMachineConnection(); print "%s\x00" % "\x00".join(school.name for school in School.get_all(lo, "", respect_local_oulist=False))' | while read -d $'\0' school; do
+	district=''
+	if is_ucr_true "ucsschool/ldap/district/enable" ; then
+		district=",ou=${school:0:2}"
+	fi
+	udm groups/group create "$@" --ignore_exists \
+		--position "cn=groups,ou=$school${district},$ldap_base" \
+		--set name="$school-import-all" \
+		--set description="Default group for UCS@school user imports" \
+		--append-option "ucsschoolGroup" \
+		--set ucsschoolImportSchool="$school" \
+		--append ucsschoolImportRole=student \
+		--append ucsschoolImportRole=staff \
+		--append ucsschoolImportRole=teacher_and_staff \
+		--append ucsschoolImportRole=teacher || die
 done
 
 joinscript_save_current_version

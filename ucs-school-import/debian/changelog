@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-26) unstable; urgency=medium
+
+  * Bug #45044: create UCS@school import groups automatically at school
+  	creation
+
+ -- Florian Best <best@univention.de>  Mon, 07 Aug 2017 17:42:23 +0200
+
 ucs-school-import (15.0.0-25) unstable; urgency=low
 
   * Bug #45024: make school, source_uid and user_role optional in DB
