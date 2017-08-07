@@ -78,15 +78,15 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 
 	@classmethod
 	def _build_query(cls, username):
-		filter_s = filter_format('(&(objectClass=ucsschoolGroup)(ucsschoolImportType=*)(ucsschoolImportSchool=*)(memberUid=%s))', (username,))
-		attrs = (str('ucsschoolImportType'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
+		filter_s = filter_format('(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))', (username,))
+		attrs = (str('ucsschoolImportRole'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
 		ldap_result = cls.lo.search(filter_s, attr=attrs)
 		print('ldap_result={!r}'.format(ldap_result))
 		query = None
 		for _dn, result_dict in ldap_result:
 			q = Q(
 				school__name__in=result_dict['ucsschoolImportSchool'],
-				user_role__in=result_dict['ucsschoolImportType']
+				user_role__in=result_dict['ucsschoolImportRole']
 			)  # AND
 			try:
 				query |= q  # OR

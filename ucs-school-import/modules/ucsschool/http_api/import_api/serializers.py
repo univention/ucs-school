@@ -107,7 +107,7 @@ class UserImportJobCreationValidator(object):
 	@classmethod
 	def is_user_school_role_combination_allowed(cls, username, school, role):
 		res = cls.lo.searchDn(filter_format(
-			'(&(objectClass=ucsschoolGroup)(ucsschoolImportType=%s)(ucsschoolImportSchool=%s)(memberUid=%s))',
+			'(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=%s)(ucsschoolImportSchool=%s)(memberUid=%s))',
 			(role, school, username))
 		)
 		if not res:
