@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-31) unstable; urgency=medium
+
+  * Bug #45026: move to other join script
+
+ -- Florian Best <best@univention.de>  Mon, 07 Aug 2017 18:27:25 +0200
+
 ucs-school-import (15.0.0-30) unstable; urgency=low
 
   * Bug #45024: check text atrifact access permission
