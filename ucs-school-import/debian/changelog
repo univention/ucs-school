@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-27) unstable; urgency=medium
+
+  * Bug #45044: Transform joinscript into bash
+
+ -- Florian Best <best@univention.de>  Mon, 07 Aug 2017 17:57:28 +0200
+
 ucs-school-import (15.0.0-26) unstable; urgency=medium
 
   * Bug #45044: create UCS@school import groups automatically at school
