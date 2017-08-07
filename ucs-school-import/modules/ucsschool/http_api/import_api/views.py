@@ -75,13 +75,13 @@ class UserImportJobFilter(FilterSet):
 
 class UserImportJobFilterBackend(BaseFilterBackend):
 	lo, po = get_machine_connection()
+	filter_s = '(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
+	filter_attrs = (str('ucsschoolImportRole'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
 
 	@classmethod
 	def _build_query(cls, username):
-		filter_s = filter_format('(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))', (username,))
-		attrs = (str('ucsschoolImportRole'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
-		ldap_result = cls.lo.search(filter_s, attr=attrs)
-		print('ldap_result={!r}'.format(ldap_result))
+		filter_s = filter_format(cls.filter_s, (username,))
+		ldap_result = cls.lo.search(filter_s, attr=cls.filter_attrs)
 		query = None
 		for _dn, result_dict in ldap_result:
 			q = Q(
@@ -95,7 +95,33 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 		return query
 
 	def filter_queryset(self, request, queryset, view):
-		return queryset.filter(self._build_query(request.user.username))
+		query = self._build_query(request.user.username)
+		if not query:
+			logger.warn('User %r has no permissions at all.', request.user)
+			return queryset.none()
+		return queryset.filter(query)
+
+
+class TextArtifactViewPermission(BasePermission):
+	def has_object_permission(self, request, view, obj):
+		# we use this to check GET of resource list and object
+		# obj is a TextArtifact object (LogFile, PasswordsFile, SummaryFile)
+		if not getattr(obj, 'userimportjob'):
+			return False
+		res = UserImportJobCreationValidator.is_user_school_role_combination_allowed(
+			username=request.user.username,
+			school=obj.userimportjob.school.name,
+			role=obj.userimportjob.user_role
+		)
+		if not res:
+			logger.warn(
+				'Access forbidden for %r to %r (school=%r role=%r).',
+				request.user.username,
+				obj,
+				obj.userimportjob.school.name,
+				obj.userimportjob.user_role
+			)
+		return res
 
 
 class UserImportJobViewPermission(BasePermission):
@@ -114,7 +140,13 @@ class UserImportJobViewPermission(BasePermission):
 			role=obj.user_role
 		)
 		if not res:
-			logger.error('Not allowed: username={!r} school={!r} role={!r}', request.user.username, obj.school.name, obj.user_role)
+			logger.warn(
+				'Access forbidden for %r to %r (school=%r role=%r).',
+				request.user.username,
+				obj,
+				obj.school.name,
+				obj.user_role
+			)
 		return res
 
 
@@ -231,9 +263,25 @@ Manage Import jobs.
 
 
 class SubResourceMixin(object):
+	#
+	# It is not really necessary to check access permissions, because LogFileViewSet,
+	# PasswordsViewSet and SummaryViewSet are used in detail_routes only. The query
+	# filter of UserImportJobViewSet removes the forbidden UserImportJobs anyway. BUT
+	# if the views were used somehow not from beneath UserImportJobViewSet, it would be
+	# necessary. So better safe than sorry.
+	#
+	permission_classes = (
+		IsAuthenticated,             # user must be authenticated to use this view
+		TextArtifactViewPermission,  # apply per view and per-object permission checks
+	)
+
 	def retrieve(self, request, *args, **kwargs):
 		model = self.get_serializer_class().Meta.model
 		instance = get_object_or_404(model, userimportjob__pk=kwargs.get('pk', 0))
+		# running has_object_permission() here manually, because DRF doesn't seem to do it
+		# probably because used from urls.py directly as_view()
+		if not TextArtifactViewPermission().has_object_permission(request, self, instance):
+			self.permission_denied(request)
 		serializer = self.get_serializer(instance)
 		# fix URL: /imports/users/{summary-pk}/summary -> /imports/users/{import-pk}/summary
 		data = serializer.data

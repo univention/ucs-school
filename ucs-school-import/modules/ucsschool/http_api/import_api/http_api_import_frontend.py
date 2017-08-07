@@ -92,7 +92,6 @@ class HttpApiImportFrontend(UserImportCommandLine):
 		super(HttpApiImportFrontend, self).__init__()
 
 	def parse_cmdline(self):
-		# TODO: support '--no-delete' ?
 		self.args = ArgParseFake(
 			conffile=None,  # see self.configuration_files
 			dry_run=self.import_job.dryrun,

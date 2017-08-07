@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-30) unstable; urgency=low
+
+  * Bug #45024: check text atrifact access permission
+  * load text artifact content in admin view
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 07 Aug 2017 18:09:32 +0200
+
 ucs-school-import (15.0.0-29) unstable; urgency=medium
 
   * Bug #45044: fix FTBFS

@@ -34,12 +34,11 @@ Django Admin
 
 from __future__ import unicode_literals
 from django.contrib import admin
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from djcelery.models import TaskMeta
 from ucsschool.http_api.import_api.models import Logfile, PasswordsFile, School, SummaryFile, UserImportJob
 from ucsschool.http_api.import_api.import_logging import logger
-
-
-# TODO: load file data r/o for Logfile, SummaryFile, PasswordsFile in admin view
 
 
 class UserQueryFilterMixin(object):
@@ -53,9 +52,23 @@ class UserQueryFilterMixin(object):
 
 
 class ProxyModelFilterMixin(object):
+	readonly_fields = ('text_loaded',)
+
 	def get_queryset(self, request):
 		qs = super(ProxyModelFilterMixin, self).get_queryset(request)
 		return qs.filter(userimportjob__isnull=False)
+
+	def text_loaded(self, instance):
+		return format_html(
+			'{}{}{}',
+			mark_safe('<textarea class="vLargeTextField" name="text_loaded" cols="40" rows="30" readonly>'),
+			instance.get_text(),
+			mark_safe('</textarea>')
+		)
+
+	text_loaded.short_description = "Text loaded from disk"
+	text_loaded.allow_tags = True
+
 
 
 @admin.register(UserImportJob)
