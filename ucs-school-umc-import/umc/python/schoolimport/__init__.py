@@ -136,7 +136,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			finished = job.status in ('Finished', 'Aborted')
 
 			if isinstance(job.result.result, dict):
-				progress.progress(True, job.result.result.get('stage'))
+				progress.progress(True, job.result.result.get('description'))
 				progress.current = float(job.result.result.get('percentage', 75.0))
 			elif job.status == 'Started':
 				progress.current = 75.0
@@ -148,7 +148,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				message = '%s\n%s' % (message, job.result.traceback)
 			raise UMC_Error(message, result=result)
 
-		return {'summary': job.result.result}
+		return {'summary': job.result.result and job.result.result.get('description')}
 
 	def __thread_error_handling(self, thread, result, progress):
 		# caution! if an exception happens in this function the module process will die!
