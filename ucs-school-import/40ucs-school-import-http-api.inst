@@ -205,6 +205,7 @@ do
     deb-systemd-invoke start "$SERVICE.service"
 done
 
+pkill -f univention-cli-server  # make sure the extended attributes are initialized
 python -c 'from ucsschool.lib.models import School; import univention.admin.uldap; lo, po = univention.admin.uldap.getMachineConnection(); print "%s\x00" % "\x00".join(school.name for school in School.get_all(lo, "", respect_local_oulist=False))' | while read -d $'\0' school; do
 	district=''
 	if is_ucr_true "ucsschool/ldap/district/enable" ; then
