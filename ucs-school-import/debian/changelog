@@ -1,3 +1,11 @@
+ucs-school-import (15.0.0-33) unstable; urgency=low
+
+  * Bug #45024: UserImportJob.result.result is always dict
+  * result has percentage in str and int
+  * remove duplicate status attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 08 Aug 2017 16:06:06 +0200
+
 ucs-school-import (15.0.0-32) unstable; urgency=low
 
   * Bug #45024: add progress update support

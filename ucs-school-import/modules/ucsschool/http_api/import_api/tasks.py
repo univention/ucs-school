@@ -76,8 +76,7 @@ def run_import_job(task, importjob_id):
 	importjob.password_file = PasswordsFile.objects.create(path=runner.password_file)
 	importjob.summary_file = SummaryFile.objects.create(path=runner.summary_file)
 	importjob.status = JOB_STARTED
-	runner.update_job_state(stage='', done=0, total=0)
-	runner.update_job_state('1/4 initializing', 0, 0)
+	runner.update_job_state(description='Initializing: 0%.')
 	try:
 		task_result = TaskMeta.objects.get(task_id=importjob.task_id)
 		importjob.result = task_result
@@ -100,7 +99,10 @@ def import_users(self, importjob_id):
 	logger.info('Starting UserImportJob %d (%r).', importjob_id, self)
 	run_import_job(self, importjob_id)
 	logger.info('Finished UserImportJob %d.', importjob_id)
-	return 'UserImportJob #{} ended successfully.'.format(importjob_id)
+	return HttpApiImportFrontend.make_job_state(
+		description='UserImportJob #{} ended successfully.'.format(importjob_id),
+		percentage=100
+	)
 
 
 @shared_task(bind=True)
@@ -108,27 +110,7 @@ def dry_run(self, importjob_id):
 	logger.info('Starting dry run %d (%r).', importjob_id, self)
 	run_import_job(self, importjob_id)
 	logger.info('Finished dry run %d.', importjob_id)
-	return 'Dry run of UserImportJob #{} ended successfully.'.format(importjob_id)
-
-
-@task_postrun.connect
-def taskresult_save_callback(sender=None, headers=None, body=None, **kwargs):
-	"""
-	Update progress on UserImportJob and remove additional task logger handler.
-
-	:param sender: celery task instance
-	:param headers: None
-	:param body: None
-	:param kwargs: dict:
-	:return: None
-	"""
-	try:
-		ij = UserImportJob.objects.get(task_id=kwargs['task_id'])
-		ij.update_progress()
-		task_handler_name = 'import job {}'.format(ij.pk)
-		for handler in logger.handlers[:]:
-			if handler.name == task_handler_name:
-				logger.removeHandler(handler)
-				logger.info('Removed logging handler for UserImportJob %r.', ij.pk)
-	except ObjectDoesNotExist:
-		logger.error('Could not find an UserImportJob for TaskResult %r.', kwargs['task_id'])
+	return HttpApiImportFrontend.make_job_state(
+		description='UserImportJob #{} (dryrun) ended successfully.'.format(importjob_id),
+		percentage=100
+	)

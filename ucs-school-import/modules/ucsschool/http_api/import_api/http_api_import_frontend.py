@@ -151,23 +151,33 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			self.logger.warn('No school specific configuration found (%r).', ou_config_source_path)
 		return conf_files_job
 
-	def update_job_state(self, stage='', done=0, total=0):
+	@staticmethod
+	def make_job_state(description, percentage=0, done=0, total=0, celery_task_state=CELERY_STATES_STARTED, **kwargs):
+		kwargs.update(dict(
+			description=description,
+			percentage=percentage,
+			done=done,
+			total=total,
+		))
+		return kwargs
+
+	def update_job_state(self, description, percentage=0, done=0, total=0, celery_task_state=CELERY_STATES_STARTED, **kwargs):
 		"""
 		Update import job task state.
 
-		:param stage: str: stage of import process
-		:param done: int: number of user currently being imported
-		:param total: int: total users to import
+		:param description: str
+		:param percentage: int
+		:param done: int
+		:param total: int
+		:param celery_task_state: one of the states from celery.states
+		:param kwargs: dict: will be saved into job result.meta together with other arguments
 		:return: None
 		"""
+		state = self.make_job_state(description, percentage, done, total, **kwargs)
 		try:
 			self.task.update_state(
 				state=CELERY_STATES_STARTED,
-				meta=dict(
-					stage=stage,
-					done=done,
-					total=total,
-				)
+				meta=state
 			)
 		except Exception as exc:
-			self.task_logger.exception('*** Exception in update_job_state(stage=%r done=%r total=%r): %s', stage, done, total, exc)
+			self.task_logger.exception('Exception in update_job_state() state=%r: %r', state, exc)

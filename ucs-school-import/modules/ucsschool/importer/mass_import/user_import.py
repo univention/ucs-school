@@ -101,13 +101,19 @@ class UserImport(object):
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
 		total = len(imported_users)
-		self.progress_report('4/4 creating / modifying users', usernum, total)
 		while imported_users:
 			imported_user = imported_users.pop(0)
 			usernum += 1
+			percentage = 10 + 90 * usernum / total  # 10% - 100%
+			self.progress_report(
+				description='Creating and modifying users: {}%.'.format(percentage),
+				percentage=percentage,
+				done=usernum,
+				total=total,
+				errors=len(self.errors)
+			)
 			if imported_user.action == "D":
 				continue
-			self.progress_report('4/4 creating / modifying users', usernum, total)
 			try:
 				self.logger.debug("Creating / modifying user %d/%d %s...", usernum, total, imported_user)
 				user = self.determine_add_modify_action(imported_user)
@@ -252,9 +258,15 @@ class UserImport(object):
 		"""
 		self.logger.info("------ Deleting %d users... ------", len(users))
 		a_user = self.factory.make_import_user([])
-		self.progress_report('3/4 deleting users', 0, len(users))
 		for num, ucs_id_not_in_import in enumerate(users, start=1):
-			self.progress_report('3/4 deleting users', num, len(users))
+			percentage = 10 * num / len(users)  # 0% - 10%
+			self.progress_report(
+				description='Deleting users: {}.'.format(percentage),
+				percentage=percentage,
+				done=num,
+				total=len(users),
+				errors=len(self.errors)
+			)
 			try:
 				user = a_user.get_by_import_id(self.connection, ucs_id_not_in_import[0], ucs_id_not_in_import[1])
 				user.action = "D"  # mark for logging/csv-output purposes
@@ -403,7 +415,7 @@ class UserImport(object):
 		if -1 < self.config["tolerate_errors"] < len(self.errors):
 			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
-	def progress_report(self, stage, done, total):
+	def progress_report(self, description, percentage=0, done=0, total=0, **kwargs):
 		if 'progress_notification_function' not in self.config:
 			return
-		self.config['progress_notification_function'](stage, done, total)
+		self.config['progress_notification_function'](description, percentage, done, total, **kwargs)

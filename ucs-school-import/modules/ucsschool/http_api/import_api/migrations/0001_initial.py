@@ -41,7 +41,6 @@ class Migration(migrations.Migration):
                 ('status', models.CharField(default='New', max_length=10, choices=[('New', 'New'), ('Scheduled', 'Scheduled'), ('Started', 'Started'), ('Aborted', 'Aborted'), ('Finished', 'Finished')])),
                 ('user_role', models.CharField(blank=True, max_length=20, choices=[('staff', 'staff'), ('student', 'student'), ('teacher', 'teacher'), ('teacher_and_staff', 'teacher_and_staff')])),
                 ('task_id', models.CharField(max_length=40, blank=True)),
-                ('progress', models.TextField(blank=True)),
                 ('basedir', models.CharField(max_length=255)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('input_file', models.FileField(upload_to='uploads/%Y-%m-%d/')),

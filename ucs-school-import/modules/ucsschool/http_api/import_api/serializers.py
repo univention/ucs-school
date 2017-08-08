@@ -125,8 +125,8 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 
 	class Meta:
 		model = UserImportJob
-		fields = ('id', 'url', 'date_created', 'dryrun', 'input_file', 'principal', 'progress', 'result', 'school', 'source_uid', 'status', 'user_role', 'log_file', 'password_file', 'summary_file')
-		read_only_fields = ('id', 'created', 'status', 'result', 'principal', 'progress')
+		fields = ('id', 'url', 'date_created', 'dryrun', 'input_file', 'principal', 'result', 'school', 'source_uid', 'status', 'user_role', 'log_file', 'password_file', 'summary_file')
+		read_only_fields = ('id', 'created', 'status', 'result', 'principal')
 
 	def get_validators(self):
 		validators = super(UserImportJobSerializer, self).get_validators()
@@ -143,7 +143,6 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		validated_data['task_id'] = ''
 		validated_data['status'] = JOB_NEW
 		validated_data['result'] = None
-		validated_data['progress'] = json.dumps({})
 		validated_data['log_file'] = None
 		validated_data['basedir'] = ''
 		if not validated_data.get('source_uid'):

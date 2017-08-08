@@ -153,7 +153,6 @@ class UserImportJob(models.Model):
 	log_file = models.OneToOneField(Logfile, on_delete=models.SET_NULL, null=True, blank=True)
 	password_file = models.OneToOneField(PasswordsFile, on_delete=models.SET_NULL, null=True, blank=True)
 	summary_file = models.OneToOneField(SummaryFile, on_delete=models.SET_NULL, null=True, blank=True)
-	progress = models.TextField(blank=True)  # pgsql >= 9.4 -> JsonField(blank=True)
 	basedir = models.CharField(max_length=255)
 	date_created = models.DateTimeField(auto_now_add=True)
 	input_file = models.FileField(upload_to='uploads/%Y-%m-%d/')
@@ -163,26 +162,3 @@ class UserImportJob(models.Model):
 
 	def __unicode__(self):
 		return 'UserImportJob {} | {} ({})'.format(self.pk, self.school, self.status)
-
-	def update_progress(self):
-		# find TaskResult
-		if self.task_id and not self.result:
-			try:
-				task = TaskMeta.objects.get(task_id=self.task_id)
-				self.result = task
-				logger.info('Associated TaskResult %r with UserImportJob %r.', self.task_id, self.pk)
-			except ObjectDoesNotExist:
-				logger.error('Could not find a TaskResult for task_id %r in UserImportJob %r.', self.task_id, self.pk)
-
-		if not self.result:
-			return
-
-		# update progress
-		if isinstance(self.result.result, basestring):
-			# if JsonField: self.progress = json.loads(self.result.result)
-			self.progress = self.result.result
-		else:
-			# if JsonField: self.progress = self.result.result
-			self.progress = json.dumps(self.result.result)
-
-		self.save(update_fields=('result', 'progress'))

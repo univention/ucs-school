@@ -194,9 +194,6 @@ Manage Import jobs.
 
 	def retrieve(self, request, *args, **kwargs):
 		instance = self.get_object()
-		# update progress if job is active
-		if instance.status == JOB_STARTED:
-			instance.update_progress()
 		serializer = self.get_serializer(instance)
 		data = serializer.data
 		# inject /imports/users/{pk}/(logfile|passwords|summary) URLs
@@ -214,10 +211,6 @@ Manage Import jobs.
 			queryset = queryset.filter(school=school)
 		except KeyError:
 			pass
-
-		# update progress of running jobs
-		for ij in queryset.filter(status=JOB_STARTED):
-			ij.update_progress()
 
 		page = self.paginate_queryset(queryset)
 		if page is not None:

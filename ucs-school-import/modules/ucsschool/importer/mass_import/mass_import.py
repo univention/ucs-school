@@ -93,11 +93,11 @@ class MassImport(object):
 	def import_users(self):
 		self.logger.info("------ Importing users... ------")
 		user_import = self.factory.make_user_importer(self.dry_run)
-		user_import.progress_report('2/4 analyzing data', 0, 0)
+		user_import.progress_report(description='Analyzing data: 1%.', percentage=1)
 		imported_users = user_import.read_input()
 		users_to_delete = user_import.detect_users_to_delete()
-		user_import.delete_users(users_to_delete)
-		user_import.create_and_modify_users(imported_users)
+		user_import.delete_users(users_to_delete)  # 0% - 10%
+		user_import.create_and_modify_users(imported_users)  # 90% - 100%
 		self.errors.extend(user_import.errors)
 		user_import.log_stats()
 		if self.config["output"]["new_user_passwords"]:
