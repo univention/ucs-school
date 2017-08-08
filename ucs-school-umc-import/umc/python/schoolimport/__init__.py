@@ -39,6 +39,7 @@ import time
 import notifier.threads
 
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize, allow_get_request
 from univention.management.console.modules.sanitizers import StringSanitizer
@@ -46,7 +47,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 import univention.admin.syntax
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
-from ucsschool.http_api.client import Client, ConnectionError, ObjectNotFound, ServerError
+from ucsschool.http_api.client import Client, ConnectionError, PermissionError
 
 from univention.lib.i18n import Translation
 
@@ -102,37 +103,50 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		return dict(progress.poll(), id=progress.id)
 
 	def _dry_run(self, filename, userrole, school, progress):
-		progress.progress(True, _('Validating import.'))
+		progress.progress(True, _('Please wait until the examination of the data is complete.'))
 		progress.current = 25.0
 		progress.job = None
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
 			jobid = self.client.userimportjob.create(filename=import_file, school=school, user_role=userrole, dryrun=True).id
-		except (ConnectionError, ServerError, ObjectNotFound):
-			raise
-		progress.progress(True, _('Dry run.'))
+		except ConnectionError as exc:
+			MODULE.error('ConnectionError during dry-run: %s' % (exc,))
+			raise UMC_Error(_('The connection to the import server could not be established.'))
+		except PermissionError:
+			raise UMC_Error(_('The permissions to perform a user import are not sufficient enough.'))
+		progress.progress(True, _('Examining data...'))
 		progress.current = 50.0
 
-		SLEEP_TIME = 0.3
-		TIMEOUT_AFTER = 120 / SLEEP_TIME  # two minutes
+		result = {'id': jobid}
+
+		SLEEP_TIME = 0.2
+		TIMEOUT_AFTER = int(ucr.get('ucsschool/import/dry-run/timeout', 120)) / SLEEP_TIME  # default: two minutes (as seconds)
 		i = 0
 		finished = False
 		while not finished:
-			time.sleep(SLEEP_TIME)
-			job = self.client.userimportjob.get(jobid)
-			if job.status == 'Started':
-				progress.current = 75.0
-			finished = job.status in ('Finished', 'Aborted')
 			i += 1
 			if i > TIMEOUT_AFTER:
-				raise UMC_Error(_('The dry-run timed out.'))
+				raise UMC_Error(_('A time out occurred during examining the data.'), result=result)
+			time.sleep(SLEEP_TIME)
+
+			try:
+				job = self.client.userimportjob.get(jobid)
+			except ConnectionError:
+				continue
+			finished = job.status in ('Finished', 'Aborted')
+
+			if isinstance(job.result.result, dict):
+				progress.progress(True, job.result.result.get('stage'))
+				progress.current = float(job.result.result.get('percentage', 75.0))
+			elif job.status == 'Started':
+				progress.current = 75.0
 
 		progress.current = 99.0
 		if job.result.status != 'SUCCESS':
-			message = _('The tests were not successful. Please consider reading the logfiles for further information.')
+			message = _('The examination of the data failed.')
 			if job.result.traceback:
 				message = '%s\n%s' % (message, job.result.traceback)
-			raise UMC_Error(message)
+			raise UMC_Error(message, result=result)
 
 		return {'summary': job.result.result}
 
@@ -161,8 +175,12 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
 		try:
 			job = self.client.userimportjob.create(filename=import_file, school=school, user_role=userrole, dryrun=False)
-		except (ConnectionError, ServerError, ObjectNotFound):
-			raise
+		except ConnectionError as exc:
+			MODULE.error('ConnectionError during import: %s' % (exc,))
+			raise UMC_Error(_('The connection to the import server could not be established.'))
+		except PermissionError:
+			raise UMC_Error(_('The permissions to perform a user import are not sufficient enough.'))
+
 		os.remove(import_file)
 		return {
 			'id': job.id,
@@ -187,7 +205,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			'school': job.school.displayName,
 			'creator': job.principal,
 			'userrole': self._parse_user_role(job.user_role),
-			'date': job.date_created.strftime("%A, %d. %B %Y %I:%M"),  # FIXME: locale aware format
+			'date': job.date_created.strftime('%Y/%m/%d %H:%M:%S'),
 			'status': self._parse_status(job.status),
 		} for job in self.client.userimportjob.list(limit=20, dryrun=False, ordering='date_created')]
 

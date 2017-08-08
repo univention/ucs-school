@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojo/date/locale",
 	"dojo/on",
 	"dojo/topic",
 	"dojo/promise/all",
@@ -52,18 +53,22 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/HiddenInput",
 	"umc/i18n!umc/modules/schoolimport"
-], function(declare, lang, array, on, topic, all, Deferred, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
+], function(declare, lang, array, locale, on, topic, all, Deferred, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
 
 	var ImportWizard = declare("umc.modules.schoolimport.ImportWizard", [Wizard], {
 
 		autoValidate: true,
+		errorMailAddress: null,
 
 		postMixInProperties: function() {
 			this.pages = this.getPages();
+			tools.ucr(['ucsschool/import/error/mail-address']).then(lang.hitch(this, function(vars) {
+				this.errorMailAddress = vars['ucsschool/import/error/mail-address'];
+			}));
 			this.initialQuery = new Deferred();
 			this.initialQuery.then(lang.hitch(this, function() {
 				if (!this.getPage('overview')._grid.getAllItems().length) {
-					this._next('overview');
+					this._next('overview');  // FIXME: the start page has a back button then
 				}
 			}));
 			this._progressBar = new ProgressBar();
@@ -135,16 +140,13 @@ define([
 				helpTextRegion: 'main',
 				helpTextAllowHTML: false,
 			},{
-				name: 'error',  // FIXME: implement
+				name: 'error',
 				headerText: _('An error occurred.'),
+				//headerTextRegion: 'main',
 				helpText: _('Please notify the system administrator about this error via email.'),
+				helpTextRegion: 'main',
 				helpTextAllowHTML: true
-			},/*{
-				name: '',
-				headerText: '',
-				helpText: '',
-				widgets: []
-			}*/];
+			}];
 		},
 
 		getUploaderParams: function() {
@@ -157,17 +159,30 @@ define([
 
 		startDryRun: function(response) {
 			this.getWidget('select-file', 'filename').set('value', response.result.filename);
-			tools.umcpProgressCommand(this._progressBar, 'schoolimport/dry-run/start', this.getUploaderParams(), {display400: function() {}}).then(lang.hitch(this, function(result) {
-				this.getWidget('dry-run-overview', 'summary').set('content', entities.encode(result.summary));
+			this.umcpProgressCommand(this._progressBar, 'schoolimport/dry-run/start', this.getUploaderParams(), {display400: function() {}}).then(lang.hitch(this, function(result) {
+				this.getWidget('dry-run-overview', 'summary').set('content', lang.replace('<pre>{0}</pre>', [entities.encode(result.summary)]));
 				this.standby(false);
 				this._next('select-file');
 			}), lang.hitch(this, function(error) {
-				console.log(error);
-				var msg = _('Please notify the system administrator about this error via email.');
-				this.getPage('error').set('helpText', msg);
+				this.getPage('error').set('helpText', this.getErrorMessage(error));
 				this.standby(false);
 				this.switchPage('error');
 			}));
+		},
+
+		getErrorMessage: function(error) {
+			var id = (error.result && error.result.id) ? error.result.id : '';
+			var msg = lang.replace('<pre>{0}</pre>', [entities.encode(error.message + ' ' + (error.traceback || '') + ' ')]);
+			msg += _('Please notify the system administrator about this error via email.');
+			if (this.errorMailAddress) {
+				msg += ' ' + _('Click %s to draft an email with all the required information.', lang.replace('<a target="_blank" href="mailto:{email}?Subject={subject}&body={body}">{text}</a>', {
+					email: this.errorMailAddress,
+					subject: encodeURIComponent(_('User import: Error in job %s', id)),
+					body: encodeURIComponent('Please examine the reason for this error: %s', error.message + (error.traceback || '')),
+					text: _('here')
+				}));
+			}
+			return msg;
 		},
 
 		isPageVisible: function(pageName) {
@@ -186,7 +201,8 @@ define([
 				return this.standbyDuring(tools.umcpCommand('schoolimport/import/start', this.getUploaderParams())).then(lang.hitch(this, function(response) {
 					this.getPage(nextPage).set('helpText', _('A new import of %(role)s users at school %(school)s has been started. The import has the ID %(id)s.', {'id': response.result.id, 'role': response.result.userrole, 'school': response.result.school}));
 					return nextPage;
-				}), lang.hitch(this, function() {
+				}), lang.hitch(this, function(error) {
+					this.getPage('error').set('helpText', this.getErrorMessage(error));
 					return 'error';
 				}));
 			}
@@ -268,12 +284,12 @@ define([
 				}],
 				columns: [{
 					name: 'id',
-					label: _('Job Id')
+					label: _('Job ID')
 				}, {
 					name: 'date',
 					label: _('Started at'),
 					formatter: function(value) {
-						return value; // FIXME:
+						return locale.format(locale.parse(value, {datePattern: 'yyyy/MM/dd', timePattern: 'HH:mm:ss'}));
 					}
 				}, {
 					name: 'school',
@@ -315,6 +331,76 @@ define([
 
 			parentWidget.addChild(grid);
 			parentWidget._grid = grid;
+		},
+
+		umcpProgressCommand: function(
+			/*Object*/ progressBar,
+			/*String*/ commandStr,
+			/*Object?*/ dataObj,
+			/*Object?*/ errorHandler,
+			/*String?*/ flavor,
+			/*Object?*/ longPollingOptions) {
+
+			// summary:
+			//		Sends an initial request and expects a "../progress" function
+			// returns:
+			//		A deferred object.
+			var deferred = new Deferred();
+			tools.umcpCommand(commandStr, dataObj, errorHandler, flavor, longPollingOptions).then(
+				lang.hitch(this, function(data) {
+					var progressID = data.result.id;
+					var title = data.result.title;
+					progressBar.setInfo(title);
+					var allData = [];
+					var splitIdx = commandStr.lastIndexOf('/');
+					var progressCmd = commandStr.slice(0, splitIdx) + '/progress';
+					this.umcpProgressSubCommand({
+						progressCmd: progressCmd,
+						progressID: progressID,
+						flavor: flavor,
+						errorHandler: errorHandler
+					}).then(function() {
+						deferred.resolve(allData);
+					}, function(error) {
+						deferred.reject(error);
+					}, function(result) {
+						allData = allData.concat(result.intermediate);
+						if (result.percentage === 'Infinity') { // FIXME: JSON cannot handle Infinity
+							result.percentage = Infinity;
+						}
+						progressBar.setInfo(result.title, result.message, result.percentage);
+						deferred.progress(result);
+						if ('result' in result) {
+							deferred.resolve(result.result);
+						}
+					});
+				}),
+				function(error) {
+					deferred.reject(tools.parseError(error));
+				}
+			);
+			return deferred;
+		},
+
+		umcpProgressSubCommand: function(props) {
+			var deferred = props.deferred;
+			if (deferred === undefined) {
+				deferred = new Deferred();
+			}
+			tools.umcpCommand(props.progressCmd, {'progress_id' : props.progressID}, props.errorHandler, props.flavor).then(
+				lang.hitch(this, function(data) {
+					deferred.progress(data.result);
+					if (data.result.finished) {
+						deferred.resolve();
+					} else {
+						setTimeout(lang.hitch(this, 'umcpProgressSubCommand', lang.mixin({}, props, {deferred: deferred}), 200));
+					}
+				}),
+				function(error) {
+					deferred.reject(tools.parseError(error));
+				}
+			);
+			return deferred;
 		},
 
 		ready: function() {
