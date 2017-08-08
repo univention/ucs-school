@@ -333,6 +333,8 @@ define([
 			parentWidget._grid = grid;
 		},
 
+		/* copied functions due to https://forge.univention.org/bugzilla/show_bug.cgi?id=45162 */
+
 		umcpProgressCommand: function(
 			/*Object*/ progressBar,
 			/*String*/ commandStr,
