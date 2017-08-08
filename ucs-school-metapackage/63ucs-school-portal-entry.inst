@@ -102,7 +102,7 @@ univention-directory-manager settings/portal_entry $OPERATION --ignore_exists "$
 	--set favorite="" || die
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then
-	univention-directory-manager settings/portal_entry modify "$@" --dn "cn=teacherconsole,cn=portal,cn=univention,$ldap_base" --set icon="$(base64 /usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/scalable/ucsschool.svg)"
+	univention-directory-manager settings/portal_entry modify "$@" --dn "cn=teacherconsole,cn=portal,cn=univention,$ldap_base" --set icon="$(base64 /usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/scalable/ucsschool.svg)" || die
 fi
 
 joinscript_save_current_version
