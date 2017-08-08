@@ -101,11 +101,13 @@ class UserImport(object):
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
 		total = len(imported_users)
+		self.progress_report('4/4 creating / modifying users', usernum, total)
 		while imported_users:
 			imported_user = imported_users.pop(0)
 			usernum += 1
 			if imported_user.action == "D":
 				continue
+			self.progress_report('4/4 creating / modifying users', usernum, total)
 			try:
 				self.logger.debug("Creating / modifying user %d/%d %s...", usernum, total, imported_user)
 				user = self.determine_add_modify_action(imported_user)
@@ -250,7 +252,9 @@ class UserImport(object):
 		"""
 		self.logger.info("------ Deleting %d users... ------", len(users))
 		a_user = self.factory.make_import_user([])
+		self.progress_report('3/4 deleting users', 0, len(users))
 		for num, ucs_id_not_in_import in enumerate(users, start=1):
+			self.progress_report('3/4 deleting users', num, len(users))
 			try:
 				user = a_user.get_by_import_id(self.connection, ucs_id_not_in_import[0], ucs_id_not_in_import[1])
 				user.action = "D"  # mark for logging/csv-output purposes
@@ -398,3 +402,8 @@ class UserImport(object):
 		self.errors.append(err)
 		if -1 < self.config["tolerate_errors"] < len(self.errors):
 			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
+
+	def progress_report(self, stage, done, total):
+		if 'progress_notification_function' not in self.config:
+			return
+		self.config['progress_notification_function'](stage, done, total)

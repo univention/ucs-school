@@ -155,10 +155,10 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 			str(instance.pk))
 		instance.save(update_fields=('basedir',))
 		if instance.dryrun:
-			logger.info('Starting dry-run for ImportJob with ID %r.', instance.pk)
+			logger.info('Scheduling dry-run for ImportJob with ID %r.', instance.pk)
 			result = dry_run.delay(instance.pk)
 		else:
-			logger.info('Starting real ImportJob with ID %r.', instance.pk)
+			logger.info('Scheduling real ImportJob with ID %r.', instance.pk)
 			result = import_users.delay(instance.pk)
 		instance.task_id = result.task_id
 		instance.status = JOB_SCHEDULED

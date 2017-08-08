@@ -45,6 +45,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from celery.signals import task_postrun
 from django.core.exceptions import ObjectDoesNotExist
+from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
 from ucsschool.http_api.import_api.http_api_import_frontend import HttpApiImportFrontend
@@ -75,7 +76,15 @@ def run_import_job(task, importjob_id):
 	importjob.password_file = PasswordsFile.objects.create(path=runner.password_file)
 	importjob.summary_file = SummaryFile.objects.create(path=runner.summary_file)
 	importjob.status = JOB_STARTED
-	importjob.save(update_fields=('log_file', 'password_file', 'summary_file', 'status'))
+	runner.update_job_state(stage='', done=0, total=0)
+	runner.update_job_state('1/4 initializing', 0, 0)
+	try:
+		task_result = TaskMeta.objects.get(task_id=importjob.task_id)
+		importjob.result = task_result
+	except ObjectDoesNotExist:
+		logger.error('Cannot find TaskMeta object after running update_job_state() for import job {!r}.'.format(importjob))
+
+	importjob.save(update_fields=('log_file', 'password_file', 'result', 'status', 'summary_file'))
 
 	res = runner.main()
 

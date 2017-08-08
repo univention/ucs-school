@@ -93,6 +93,7 @@ class MassImport(object):
 	def import_users(self):
 		self.logger.info("------ Importing users... ------")
 		user_import = self.factory.make_user_importer(self.dry_run)
+		user_import.progress_report('2/4 analyzing data', 0, 0)
 		imported_users = user_import.read_input()
 		users_to_delete = user_import.detect_users_to_delete()
 		user_import.delete_users(users_to_delete)

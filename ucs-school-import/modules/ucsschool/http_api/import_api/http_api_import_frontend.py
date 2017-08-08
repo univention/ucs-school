@@ -103,8 +103,8 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			verbose=True)
 		self.args.settings = {
 			'dry_run': self.import_job.dryrun,
-			'hooks_dir_legacy': self.hook_dir,    # TODO: adapt import framework to support hook dirs
-			'hooks_dir_pyhook': self.pyhook_dir,  # TODO: adapt import framework to support hook dirs
+			'hooks_dir_legacy': self.hook_dir,
+			'hooks_dir_pyhook': self.pyhook_dir,
 			'input': {'filename': self.data_path},
 			'logfile': self.logfile_path,
 			'output': {
@@ -113,7 +113,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			},
 			'school': self.import_job.school.name,
 			'sourceUID': self.import_job.source_uid,
-			'update_function': self.update_job_state,
+			'progress_notification_function': self.update_job_state,
 			'user_role': self.import_job.user_role,
 			'verbose': True,
 		}
@@ -151,20 +151,23 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			self.logger.warn('No school specific configuration found (%r).', ou_config_source_path)
 		return conf_files_job
 
-	def update_job_state(self, done=0, total=0):
+	def update_job_state(self, stage='', done=0, total=0):
 		"""
 		Update import job task state.
 
+		:param stage: str: stage of import process
 		:param done: int: number of user currently being imported
 		:param total: int: total users to import
 		:return: None
 		"""
-		# TODO: adapt import framework to support this
-		self.logger.warn('*** update_job_state()')
-		self.task.update_state(meta=dict(
-			state=CELERY_STATES_STARTED,
-			progress=dict(
-				done=done,
-				total=total
+		try:
+			self.task.update_state(
+				state=CELERY_STATES_STARTED,
+				meta=dict(
+					stage=stage,
+					done=done,
+					total=total,
+				)
 			)
-		))
+		except Exception as exc:
+			self.task_logger.exception('*** Exception in update_job_state(stage=%r done=%r total=%r): %s', stage, done, total, exc)

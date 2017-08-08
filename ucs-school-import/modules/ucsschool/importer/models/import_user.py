@@ -51,9 +51,6 @@ from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 
-PLUGINS_BASE_PATH = "/usr/share/ucs-school-import/pyhooks"
-
-
 class ImportUser(User):
 	"""
 	Representation of a user read from a file. Abstract class, please use one
@@ -81,6 +78,7 @@ class ImportUser(User):
 	username_handler = None
 	reader = None
 	logger = None
+	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
 	_pyhook_cache = None
 	# non-Attribute attributes (not in self._attributes) that can also be used
 	# as arguments for object creation and will be exported by to_dict():
@@ -132,7 +130,8 @@ class ImportUser(User):
 		:return: int: return code of lib hooks
 		"""
 		if self._pyhook_cache is None:
-			pyloader = PyHooksLoader(PLUGINS_BASE_PATH, UserPyHook, self.logger)
+			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
+			pyloader = PyHooksLoader(path, UserPyHook, self.logger)
 			self.__class__._pyhook_cache = pyloader.get_hook_objects(self._lo)
 		if hook_time == "post" and self.action in ["A", "M"]:
 			# update self from LDAP
@@ -153,6 +152,10 @@ class ImportUser(User):
 		finally:
 			self.in_hook = False
 
+		try:
+			self.hook_path = self.config['hooks_dir_legacy']
+		except KeyError:
+			pass
 		return super(ImportUser, self).call_hooks(hook_time, func_name)
 
 	def create(self, lo, validate=True):

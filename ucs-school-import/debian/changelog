@@ -1,3 +1,11 @@
+ucs-school-import (15.0.0-32) unstable; urgency=low
+
+  * Bug #45024: add progress update support
+  * add support for changing path of pyhooks
+  * use localized Administrator account
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 08 Aug 2017 07:25:15 +0200
+
 ucs-school-import (15.0.0-31) unstable; urgency=medium
 
   * Bug #45026: move to other join script
