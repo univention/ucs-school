@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-4) unstable; urgency=low
+
+  * Bug #45024: add support for changing path of hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 08 Aug 2017 07:34:05 +0200
+
 ucs-school-lib (10.0.2-3) unstable; urgency=low
 
   * Bug #44225: move PyHook code to ucsschool.lib

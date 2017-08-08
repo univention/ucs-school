@@ -52,9 +52,6 @@ from ucsschool.lib.models.meta import UCSSchoolHelperMetaClass
 from ucsschool.lib.models.attributes import CommonName, SchoolAttribute, ValidationError
 from ucsschool.lib.models.utils import ucr, _, logger
 
-HOOK_SEP_CHAR = '\t'
-HOOK_PATH = '/usr/share/ucs-school-import/hooks/'
-
 
 class NoObject(noObject):
 	pass
@@ -189,6 +186,9 @@ class UCSSchoolHelperAbstractClass(object):
 	_search_base_cache = {}
 	_initialized_udm_modules = []
 	_empty_hook_paths = set()
+
+	hook_sep_char = '\t'
+	hook_path = '/usr/share/ucs-school-import/hooks/'
 
 	name = CommonName(_('Name'), aka=['Name'])
 	school = SchoolAttribute(_('School'), aka=['School'])
@@ -355,7 +355,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	def call_hooks(self, hook_time, func_name):
 		'''Calls run-parts in
-		os.path.join(HOOK_PATH, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
+		os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
 		if self.build_hook_line(hook_time, func_name) returns a non-empty string
 
 		Usage in lib itself:
@@ -366,7 +366,7 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		# verify path
 		hook_path = self._meta.hook_path
-		path = os.path.join(HOOK_PATH, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
+		path = os.path.join(self.hook_path, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
 		if path in self._empty_hook_paths:
 			return None
 		if not os.path.isdir(path) or not os.listdir(path):
@@ -926,4 +926,4 @@ class UCSSchoolHelperAbstractClass(object):
 			if arg is True:
 				val = 1
 			attrs.append(str(val))
-		return HOOK_SEP_CHAR.join(attrs)
+		return self.hook_sep_char.join(attrs)
