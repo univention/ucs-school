@@ -81,7 +81,13 @@ define([
 				headerText: _('Overview User Imports'),
 				headerTextRegion: 'main',
 				helpText: _('List of running and completed user imports. For every completed user import a summary is provided with every change that was made as well as a list of passwords for newly created user accounts.'),
-				helpTextRegion: 'main'
+				helpTextRegion: 'main',
+				widgets: [{
+					name: 'job-started',
+					type: Text,
+					visible: false,
+					content: ''
+				}]
 			},{
 				name: 'start',
 				headerText: _('Import user accounts'),
@@ -198,8 +204,14 @@ define([
 				nextPage = 'overview';
 			}
 			if (nextPage === 'import-started') {
+				nextPage = 'overview';
 				return this.standbyDuring(tools.umcpCommand('schoolimport/import/start', this.getUploaderParams())).then(lang.hitch(this, function(response) {
-					this.getPage(nextPage).set('helpText', _('A new import of %(role)s users at school %(school)s has been started. The import has the ID %(id)s.', {'id': response.result.id, 'role': response.result.userrole, 'school': response.result.school}));
+					this.getWidget(nextPage, 'job-started').set('visible', true);
+					this.getWidget(nextPage, 'job-started').set('content', entities.encode(_('A new import of %(role)s users at school %(school)s has been started. The import has the ID %(id)s.', {
+						'id': response.result.id,
+						'role': response.result.userrole,
+						'school': response.result.school
+					})));
 					return nextPage;
 				}), lang.hitch(this, function(error) {
 					this.getPage('error').set('helpText', this.getErrorMessage(error));
@@ -207,6 +219,7 @@ define([
 				}));
 			}
 			if (nextPage === 'overview') {
+				this.getWidget(nextPage, 'job-started').set('visible', false);
 				this.buildImportsGrid(this.getPage(nextPage));
 			}
 			return nextPage;
