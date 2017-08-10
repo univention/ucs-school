@@ -45,7 +45,7 @@ feedback@univention.de
 	</bookinfo>
 
 	<chapter id="setup-manual">
-		<title>Verwendung des Dokuments</title>
+		<title>Verwendung dieses Dokuments</title>
 		<para>
 			&ucsUAS; bietet die ideale Lösung, um eine zentral verwaltbare
 			IT-Infrastruktur mit einem einheitlichen Identity-Management
@@ -64,13 +64,22 @@ feedback@univention.de
 			erfolgreichen Einsatz von &ucsUAS; gewonnen hat.
 		</para>
 		<para>
-			Falls Sie den Aufbau einer komplett neuen Umgebung mit &ucsUAS;
-			planen, sollten Sie die einzelnen Kapitel dieses Dokuments
-			idealerweise nacheinander lesen und die Anleitungen daraus Schritt
-			für Schritt umsetzen. Wenn Sie bereits eine &ucsUAS; Umgebung
-			betreiben, können Sie die betreffenden Kapitel auch separat lesen,
-			um Ausbau- und Verbesserungsmöglichkeiten für Ihre Umgebung zu
-			identifizieren.
+			Mit diesem Dokument möchten wir Ihnen einen kurzen Überblick über vier typische IT-Szenarien für Bundesländer, Schulträger und Schulen geben:
+				<itemizedlist mark="bullet">
+					<listitem><para>Bildungsclouds</para></listitem>
+					<listitem><para>Zentrales Schul-WLAN</para></listitem>
+					<listitem><para>Zentral verwaltete Schul-IT-Infrastruktur</para></listitem>
+					<listitem><para>Schul-IT-Infrastruktur ohne dezentrale Schulserver</para></listitem>
+				</itemizedlist>
+		</para>
+		<para>
+			Außerdem finden Sie einige Tipps, welche Punkte
+			nach unserer Erfahrung Schlüsselfaktoren für
+			eine erfolgreiche Projektabwicklung, Rollout
+			und Betrieb einer Infrastruktur in Schulen
+			darstellen. Und wir haben eine Checkliste mit
+			wichtigen Fragen zusammengestellt, mit denen Sie
+			sich vor dem Projektbeginn beschäftigen sollten.
 		</para>
 		<para>
 			Für den Einstieg in das Dokument sind <xref linkend="scenarios" />
@@ -80,7 +89,8 @@ feedback@univention.de
 			&ucsUAS; erleichtert.  Die Checklisten verweisen darüberhinaus auf
 			die weiterführenden technischen Themen in diesem Dokument, die
 			erprobte Lösungen aus der Praxis aufzeigen.
-
+		</para>
+		<para>
 			Die Kapitel <link linkend="scenarios">2</link> und <link
 				linkend="setup-checklist">3</link> geben einen Überblick zu
 			üblichen Einsatzszenarien von &ucsUAS; (Bildungscloud, Zentrales
@@ -297,10 +307,9 @@ feedback@univention.de
 	<chapter id="setup-checklist">
 		<title>Checklisten: organisatorisch und technisch</title>
 		<para>
-			Im Folgenden sind die Fragen, die Sie vor der Einführung von
-			&ucsUAS; beantworten sollten, in Form von Checklisten beschrieben.
-			Sie finden außerdem Verweise auf weiterführenden technische
-			Beschreibungen, die später in diesem Dokument thematisiert werden.
+			Im Folgenden haben wir einige Fragen
+			zusammengestellt, über die Sie sich direkt am
+			Anfang der Projektplanung Gedanken machen sollten.
 		</para>
 		<section id="setup-manual_organisation">
 			<title>Organisation</title>
@@ -309,12 +318,12 @@ feedback@univention.de
 					<listitem><para>Welches Szenario soll umgesetzt werden?  Siehe <xref linkend="scenarios" />.</para></listitem>
 					<listitem><para>Wer ist Betreiber der Gesamtinfrastruktur?</para></listitem>
 					<listitem><para>Verfügt der Betreiber über das erforderliche Wissen?  Siehe <xref linkend="preparations_workshop" />.</para></listitem>
-					<listitem><para>Wie werden Schulen über die Einführung von &ucsUAS; informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
+					<listitem><para>Wie werden Schulen über die Einführung der neuen IT-Infrastruktur informiert?  Siehe <xref linkend="preparations_info" />.</para></listitem>
 					<listitem><para>Wer baut in den Schulen Server, Rechner und Drucker auf und tauscht diese im Fehlerfall aus?</para></listitem>
 					<listitem><para>In welcher Reihenfolge erfolgt der Rollout an den Schulen (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="preparations_school-selection" />.</para></listitem>
 					<listitem><para>In welchem zeitlichen Rahmen soll der Rollout der Pilot-Installation und später der Gesamtinfrastruktur erfolgen?</para></listitem>
 					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, zum Beispiel Passwörter zurücksetzen?</para></listitem>
-					<listitem><para>Wie werden Schulen mit &ucsUAS; vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
+					<listitem><para>Wie werden Schulen mit den neuen Lösungen w.z.B. &ucsUAS; vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
 					<listitem><para>Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
 					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter, um dies zu messen?</para></listitem>
 					<listitem><para>Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen erfasst und von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
@@ -326,19 +335,19 @@ feedback@univention.de
 			<title>Zentral bereitgestellte IT-Angebote</title>
 			<para>
 				<itemizedlist mark="whitesquare">
-					<listitem><para>Wo werden die zentralen &ucsUAS;-Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
+					<listitem><para>Wo werden die zentralen Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
 					<listitem><para>Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
 					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, zum Beispiel Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
 					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
 							<itemizedlist mark="whitesquare">
-								<listitem><para>Installation UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
-								<listitem><para>Basiskonfiguration: <xref linkend="base-configuration" /></para></listitem>
-								<listitem><para>Import von Benutzer-, Rechner- und Netzdaten: <xref linkend="import" /></para></listitem>
+								<listitem><para>Installation der UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
+								<listitem><para>Welche Basiskonfigurationen sollen vorgenommen werden? Siehe <xref linkend="base-configuration" /></para></listitem>
+								<listitem><para>Wie erfolgt der Import von Benutzer-, Rechner- und Netzdaten: <xref linkend="import" /></para></listitem>
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
 					<listitem>
-						<para>Welche über &ucsUAS; hinausgehenden Angebote und Einstellungen sollen angeboten werden?  <!-- Siehe <xref linkend="additional-services" />. -->
+						<para>Welche über die Basis IT-Infrastruktur hinausgehenden Angebote und Einstellungen sollen angeboten werden?  <!-- Siehe <xref linkend="additional-services" />. -->
 						</para>
 							<itemizedlist mark="whitesquare">
 								<listitem><para>Wie werden die über das Internet zugänglichen zentralen Angebote vor unerwünschtem Zugriff geschützt?</para></listitem>
@@ -355,7 +364,7 @@ feedback@univention.de
 					<listitem><para>Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?</para></listitem>
 					<listitem><para>Setzt die Schule bereits eine Schulserver-Lösung ein?</para>
 						<itemizedlist mark="whitesquare">
-							<listitem><para>Welche Funktionen sind der Schule wichtig und wie können sie durch &ucsUAS; abgelöst werden (nicht in allen Szenarien notwendig)?</para></listitem>
+							<listitem><para>Welche Funktionen sind der Schule wichtig?</para></listitem>
 						</itemizedlist>
 					</listitem>
 					<listitem><para>Wie schnell und stabil ist der Internetzugang der Schule?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_internet" />.</para></listitem>
@@ -415,8 +424,8 @@ feedback@univention.de
 			<title>Informationsveranstaltung für die Schulen</title>
 			<para>
 				Ziel der Informationsveranstaltung ist es, die Lehrkräfte in den
-				Schulen mit in den Prozess der Einführung von &ucsUAS; zu
-				integrieren.  Die bereits installierte Demo-Schule kann dazu
+				Schulen mit in den Prozess der Einführung der neuen IT-Infrastruktur zu
+				involvieren.  Eine bereits installierte Demo-Schule kann dazu
 				dienen, das System initial zu präsentieren.  Es hat sich in
 				vielen Projekten gezeigt, dass solche
 				Informationsveranstaltungen auch nach dem Rollout regelmäßig
@@ -427,7 +436,7 @@ feedback@univention.de
 		<section id="preparations_school-selection">
 			<title>Planung des Rollout</title>
 			<para>
-				Ziel ist es, den Rollout von &ucsUAS; mit erfolgreichen Projekten
+				Ziel ist es, den Rollout der IT-Infrastruktur mit erfolgreichen Projekten
 				zu beginnen.  Dafür gilt es, die am besten geeigneten Schulen zu
 				identifizieren und diese als erste auszustatten.  In vielen
 				Projekten haben wir die Erfahrung gemacht, dass Schulen, die die
@@ -448,8 +457,10 @@ feedback@univention.de
 			<title>Schulung der Lehrkräfte</title>
 			<para>
 				Die Lehrkräfte sollten im Umgang mit den Rechnern und den
-				pädagogischen Funktionen in &ucsUAS; geschult werden. Auch dazu
-				sollten wiederkehrende Termine angeboten werden.
+				pädagogischen Funktionen der in der
+				Schule genutzten Anwendungen geschult
+				werden. Auch dazu sollten wiederkehrende
+				Termine angeboten werden.
 			</para>
 		</section>
 	</chapter>
