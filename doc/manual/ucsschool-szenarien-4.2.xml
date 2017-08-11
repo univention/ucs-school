@@ -47,14 +47,14 @@ feedback@univention.de
 	<chapter id="setup-manual">
 		<title>Verwendung dieses Dokuments</title>
 		<para>
-			&ucsUAS; bietet die ideale Lösung, um eine zentral verwaltbare
+			&ucsUAS; bietet die ideale Lösung, um eine zentral verwaltete
 			IT-Infrastruktur mit einem einheitlichen Identity-Management
 			aufzubauen. Weitere IT-Dienste können integriert und anschließend
 			zentral über das UCS Management verwaltet und schulübergreifend für
 			den Zugriff über unterschiedlichste Geräte  zur Verfügung gestellt
 			werden. Damit  werden Schulträger und Ministerien in die Lage
 			versetzt,  aktuelle Anforderungen aus Medienentwicklungsplänen und
-			von Schulen kosteneffizient und sicher zu erfüllen.
+			von Schulen eneffizient und sicher zu erfüllen.
 		</para>
 		<para>
 			Mit diesem Whitepaper möchten wir Ihnen eine Anleitung an die Hand
@@ -67,9 +67,9 @@ feedback@univention.de
 			Mit diesem Dokument möchten wir Ihnen einen kurzen Überblick über vier typische IT-Szenarien für Bundesländer, Schulträger und Schulen geben:
 				<itemizedlist mark="bullet">
 					<listitem><para>Bildungsclouds</para></listitem>
-					<listitem><para>Zentrales Schul-WLAN</para></listitem>
-					<listitem><para>Zentral verwaltete Schul-IT-Infrastruktur</para></listitem>
-					<listitem><para>Schul-IT-Infrastruktur ohne dezentrale Schulserver</para></listitem>
+					<listitem><para>Zentrales schulisches WLAN</para></listitem>
+					<listitem><para>Zentral verwaltete schulische IT-Infrastruktur</para></listitem>
+					<listitem><para>Schulische IT-Infrastruktur ohne dezentrale Schulserver</para></listitem>
 				</itemizedlist>
 		</para>
 		<para>
@@ -94,7 +94,7 @@ feedback@univention.de
 			Die Kapitel <link linkend="scenarios">2</link> und <link
 				linkend="setup-checklist">3</link> geben einen Überblick zu
 			üblichen Einsatzszenarien von &ucsUAS; (Bildungscloud, Zentrales
-			Schul-WLAN, zentrales Management, Schul-IT ohne Schulserver) und
+			schulisches WLAN, zentrales Management, schulische IT-Infrastruktur ohne Schulserver) und
 			bieten Checklisten mit Fragen, anhand derer Sie einfach überprüfen
 			können, ob Sie bereits die notwendigen Voraussetzungen für  die
 			Einführung von &ucsUAS; erfüllen oder ob Sie in bestimmten
@@ -196,7 +196,7 @@ feedback@univention.de
 			</figure>
 		</section>
 		<section id="scenario-2">
-			<title>Szenario 2: Zentrales Schul-WLAN</title>
+			<title>Szenario 2: Zentrales schulisches WLAN</title>
 			<para>
 				Dieses Szenario ermöglicht es Schulträgern, den Zugang zum WLAN
 				in ihren Schulen zentral zu steuern und den Zugang nur bekannten
@@ -233,7 +233,7 @@ feedback@univention.de
 			</figure>
 		</section>
 		<section id="scenario-3">
-			<title>Szenario 3: Zentral verwaltete Schul-IT-Infrastruktur</title>
+			<title>Szenario 3: Zentral verwaltete schulische IT-Infrastruktur</title>
 			<para>
 				Dieses Szenario ermöglicht es Schulträgern, die gesamte
 				IT-Infrastruktur ihrer Schulen zentral zu verwalten und
@@ -256,19 +256,19 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-3">
-				<title>Zentral verwaltete Schul-IT-Infrastruktur mit
+				<title>Zentral verwaltete schulische IT-Infrastruktur mit
 					Schulservern an den Schulen</title>
 				<mediaobject>
 					<imageobject>
 						<imagedata align="center" fileref="illustrations42/3_zentrale_wlan_schulserver.png" scale="56" />
 					</imageobject>
-					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur mit
+					<textobject><phrase>Zentral verwaltete schulische IT-Infrastruktur mit
 					Schulservern an den Schulen</phrase></textobject>
 				</mediaobject>
 			</figure>
 		</section>
 		<section id="scenario-4">
-			<title>Szenario 4: Schul-IT-Infrastruktur ohne dezentrale
+			<title>Szenario 4: Schulische IT-Infrastruktur ohne dezentrale
 				Schulserver</title>
 			<para>
 				Dieses Szenario ermöglicht es Schulträgern, die gesamte
@@ -292,13 +292,13 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 			<figure id="fig-scenario-4">
-				<title>Zentral verwaltete Schul-IT-Infrastruktur
+				<title>Zentral verwaltete schulische IT-Infrastruktur
 					ohne dezentrale Schulserver</title>
 				<mediaobject>
 					<imageobject>
 						<imagedata align="center" fileref="illustrations42/4_zentrale_wlan_schulserver_rz.png" scale="56" />
 					</imageobject>
-					<textobject><phrase>Zentral verwaltete Schul-IT-Infrastruktur
+					<textobject><phrase>Zentral verwaltete schulische IT-Infrastruktur
 					ohne dezentrale Schulserver</phrase></textobject>
 				</mediaobject>
 			</figure>
@@ -753,7 +753,7 @@ feedback@univention.de
 					ist.
 				</para>
 				<para>
-					Wird vom &ucsUAS;-Betreiber (z.B. Stadt, Landkreis oder Bundesland) bereits eine DNS-Domäne verwendet
+					Wird vom Betreiber (z.B. Stadt, Landkreis oder Bundesland) bereits eine DNS-Domäne verwendet
 					(z.B. <systemitem class="domainname">example.com</systemitem>), empfehlen wir,
 					als Domänennamen für &ucsUAS; eine Subdomäne zu verwenden:
 				</para>
@@ -806,7 +806,7 @@ feedback@univention.de
 											gewählt werden. Die Endung ist
 											offiziell für mDNS (Multicast DNS)
 											vorgesehen und führt bei einer Verwendung
-											zu Problemen mit MacOS, Windows und
+											zu Problemen mit macOS, Windows und
 											Linux-Betriebssystemen.
 										</para>
 									</listitem>
@@ -816,7 +816,7 @@ feedback@univention.de
 						<listitem>
 							<para>
 								Dem Domänennamen für &ucsUAS; werden die Namen der Rechner und Server vorangestellt,
-								um für diese Systeme einen vollqualifizierten DNS-Namen (FQDN) zu bilden. Zum Beispiel
+								um für diese Systeme einen voll qualifizierten DNS-Namen (FQDN) zu bilden. Zum Beispiel
 								ist der Rechner	<systemitem	class="domainname">ucsma-01</systemitem> somit unter dem FQDN
 								<systemitem	class="domainname">ucsma-01.schulen.example.com</systemitem> zu erreichen.
 							</para>
@@ -1079,8 +1079,8 @@ feedback@univention.de
 							erfolgen, zum Beispiel ein Network Attached Storage
 							(NAS).</para></listitem>
 					<listitem><para>Die Datensicherung sollte überwacht werden,
-							zum Beispiel durch ein Monitoring-Plugin, das bei
-							Misserfolg warnt.</para></listitem>
+							zum Beispiel durch ein Plugin im Monitoring-Dienst,
+							das bei Misserfolg warnt.</para></listitem>
 					<listitem><para>Die Wiederherstellung sollte in regelmäßigen
 							Abständen getestet werden.</para></listitem>
 				</itemizedlist>
@@ -1601,7 +1601,7 @@ feedback@univention.de
 							alle verfügbaren Updates installiert wurden.</para></listitem>
 					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
 							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
-							aufgrund von übermäßig viele Benutzerdaten die Systempartition nicht vollläuft.</para></listitem>
+							aufgrund von übermäßig viele Benutzerdaten die Systempartition nicht voll läuft.</para></listitem>
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
 							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als DNS-Server sind die IP-Adressen des
@@ -1636,7 +1636,7 @@ feedback@univention.de
 							<emphasis>Domänenbeitritt</emphasis> geprüft
 							werden.</para></listitem>
 				</itemizedlist>
-				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS;-Einrichtungsassistent finden sich auch im
+				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS; Einrichtungsassistent finden sich auch im
 				<ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.2.html#school:installation:slave">&ucsUAS;
 				Handbuch für Administratoren</ulink>.
 			</para>
@@ -1889,7 +1889,7 @@ feedback@univention.de
 							<row>
 								<entry><envar>munin/node/allowedhosts</envar></entry>
 								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20/32]</literal></entry>
-								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Munin</systemitem>, auf die <systemitem class="service">Munin Nodes</systemitem> der übrigen Systeme (Achtung CIDR-Schreibweise!).</entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Munin</systemitem>, auf die <systemitem class="service">Munin Nodes</systemitem> der übrigen Systeme (Achtung CIDR Notation!).</entry>
 							</row>
 							<row>
 								<entry><envar>ucsschool/helpdesk/recipient</envar></entry>
@@ -2043,7 +2043,7 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Export der Tabelle ins CSV-Format mit Tabulator als
-							Feldtrenner und ohne Texttrenner.
+							Trennzeichen für Felder und ohne Trennzeichen für Texte.
 						</para>
 						<para>
 							<figure id="fig-import-schools-save-as">
@@ -2080,7 +2080,7 @@ feedback@univention.de
 						<para>
 							Um die CSV-Datei weiterverarbeiten zu können, muss
 							sie im Unix-Format vorliegen.  Sollte sie auf unter
-							Windows oder MacOS gespeichert worden sein, so muss
+							Windows oder macOS gespeichert worden sein, so muss
 							sie konvertiert werden.  Dazu ist auf dem &ucsMaster;
 							der folgende Befehl auf die Datei anzuwenden:
 							<programlisting>
@@ -2235,7 +2235,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
 				Der Import von Rechnern ist insbesondere notwendig, um die
 				Rechner in den Schulen mit der richtigen MAC-Adresse in &ucsUAS;
 				zu hinterlegen, so dass diese über DHCP konfiguriert und in den
-				UCS@school-UMC-Modulen verwendet werden können.  Weitere Dienste, wie
+				&ucsUAS; UMC-Modulen verwendet werden können.  Weitere Dienste, wie
 				Softwareverteilungslösungen verwenden diese Informationen
 				ebenfalls weiter.
 			</para>
