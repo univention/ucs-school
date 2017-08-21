@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.2-2) unstable; urgency=medium
+
+  * Bug #45344: fix removing school classes; regression from svn r79380.
+
+ -- Florian Best <best@univention.de>  Fri, 08 Sep 2017 12:25:20 +0200
+
 ucs-school-umc-wizards (8.0.2-1) unstable; urgency=low
 
   * Bug #44641: add workaround for using admin connections for UMC

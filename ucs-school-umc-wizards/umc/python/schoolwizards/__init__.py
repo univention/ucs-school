@@ -300,8 +300,13 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ldap_user_write = ldap_admin_write
 
 		ret = []
-		for i, obj in enumerate(iter_objects_in_request(request, ldap_user_write, True)):
-			school = request.options[i]['object']['remove_from_school']
+		for obj_props in request.options:
+			obj_props = obj_props['object']
+			try:
+				obj = User.from_dn(obj_props['$dn$'], None, ldap_user_write)
+			except noObject:
+				raise UMC_Error(_('The %s %r does not exists or might have been removed in the meanwhile.') % (getattr(User, 'type_name', None) or User.__name__, User.get_name_from_dn(obj_props['$dn$'])))
+			school = obj_props['remove_from_school']
 			success = obj.remove_from_school(school, ldap_user_write)
 			# obj.old_dn is None when the ucsschool lib has deleted the user after the last school was removed from it
 			if success and obj.old_dn is not None:
