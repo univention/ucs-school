@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (9.0.5-4) unstable; urgency=medium
+
+  * Bug #45018: fix removing school classes; regression from svn r79380.
+
+ -- Florian Best <best@univention.de>  Mon, 21 Aug 2017 17:25:20 +0200
+
 ucs-school-umc-wizards (9.0.5-3) unstable; urgency=medium
 
   * Bug #42756: changed sortRepresentation to sortFormatter
