@@ -73,7 +73,21 @@ DISALLOWED_SAMBA_ACCOUNT_FLAGS = frozenset((SAMBA_ACCOUNT_FLAG_DISABLED, SAMBA_A
 
 
 def getNTPasswordHash(username, stationId):
-	'stationId may be None if it was not supplied to the program'
+	'''
+	stationId may be None if it was not supplied to the program
+	username may contain the direct username (e.g. 'anton123') or
+	a hostname (e.g. 'win-02$') or
+	a kerberos principal without realm (e.g. 'host/win-02.example.com'):
+	'''
+
+	if username.startswith('host/'):
+		# seems to be a kerberos principal
+		username = username.split('/', 1)[1]
+		if '.' in username:
+			username = username.split('.', 1)[0]
+		if '$' not in username:
+			username += '$'
+
 	groups = userToGroup.get(username)
 	if groups is None:
 		return None
