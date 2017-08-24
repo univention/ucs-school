@@ -1,5 +1,6 @@
 ucs-school-radius-802.1x (6.0.1-1) unstable; urgency=low
 
+  * Bug #44916: support different types of stationIds
   * Bug #44603: add handling of kerberos principals
   * Bug #43421: added new UCR variables
     freeradius/conf/auth-type/ttls/copy_request_to_tunnel and
