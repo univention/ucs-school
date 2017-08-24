@@ -100,15 +100,15 @@ def getNTPasswordHash(username, stationId):
 	if groups is None:
 		debug('getNTPasswordHash: user not found in any relevant group - access denied')
 		return None
-	matchingGroups = [[group]+list(groupInfo[group]) for group in groups if group in groupInfo]
+	matchingGroups = [[group] + list(groupInfo[group]) for group in groups if group in groupInfo]
 	if not matchingGroups:
 		debug('getNTPasswordHash: user not found in any WLAN enabled group - access denied')
 		debug('getNTPasswordHash: user groups=%r' % (groups,))
 		debug('getNTPasswordHash: WLAN enabled groups=%r' % (groupInfo.keys(),))
 		return None
-	(_, maxPriority, _, ) = max(matchingGroups)
+	maxPriority = max(matchingGroups, key=lambda x: x[1])
 	debug('getNTPasswordHash: maxPrio=%r' % (maxPriority,))
-	if True not in [wlanEnabled for (grpname, priority, wlanEnabled, ) in matchingGroups if priority == maxPriority]:
+	if not any(True for (grpname, priority, wlanEnabled, ) in matchingGroups if priority == maxPriority and wlanEnabled):
 		debug('getNTPasswordHash: WLAN is not enabled in group with highest priority - access denied (maxPriority=%r)' % (maxPriority))
 		grpstatus = ['%s(prio=%s, wlan=%s)' % (grpname, priority, wlanEnabled) for (grpname, priority, wlanEnabled) in matchingGroups]
 		debug('getNTPasswordHash: %s' % (' '.join(grpstatus),))
@@ -134,8 +134,7 @@ def main():
 	parser.add_option('--challenge', dest='Challenge')
 	parser.add_option('--nt-response', dest='Response')
 	parser.add_option('--station-id', dest='stationId')
-	parser.add_option('--debug-stderr', dest='debug_stderr', action='store_true', default=False)
-	parser.add_option('--debug-fn', dest='debug_fn')
+	parser.add_option('--logfile', dest='logfile')
 	(options, args, ) = parser.parse_args()
 	if not options.requestNtKey:
 		print 'Missing required parameter --request-nt-key!'
@@ -149,10 +148,8 @@ def main():
 	if not options.Response:
 		print 'Missing required parameter --nt-response!'
 		return 1
-	if options.debug_stderr:
-		log_target = sys.stderr
-	if options.debug_fn:
-		log_target = open(options.debug_fn, 'a')
+	if options.logfile:
+		log_target = open(options.logfile, 'a')
 	debug('main: username = %r' % (options.Username,))
 	if not options.stationId:
 		stationId = None
