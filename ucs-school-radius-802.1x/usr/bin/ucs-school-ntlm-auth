@@ -33,6 +33,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import optparse
+import os
 import sys
 import time
 import univention.admin.filter
@@ -86,26 +87,31 @@ def getNTPasswordHash(username, stationId):
 	a hostname (e.g. 'win-02$') or
 	a kerberos principal without realm (e.g. 'host/win-02.example.com'):
 	'''
-	debug('getNTPasswordHash: username=%r  stationId=%r' % (username, stationId))
+	debug('getNTPasswordHash: username=%r  stationId=%r' % (username, stationId.encode('hex')))
 	if username.startswith('host/'):
 		# seems to be a kerberos principal
 		username = username.split('/', 1)[1]
 		if '.' in username:
 			username = username.split('.', 1)[0]
 		username += '$'
-	debug('getNTPasswordHash: username2=%r  stationId=%r' % (username, stationId))
+	debug('getNTPasswordHash: username2=%r  stationId=%r' % (username, stationId.encode('hex')))
 
 	groups = userToGroup.get(username)
 	if groups is None:
-		debug('getNTPasswordHash: user not found in any group - access denied')
+		debug('getNTPasswordHash: user not found in any relevant group - access denied')
 		return None
-	groups = [groupInfo[group] for group in groups if group in groupInfo]
-	if not groups:
+	matchingGroups = [[group]+list(groupInfo[group]) for group in groups if group in groupInfo]
+	if not matchingGroups:
 		debug('getNTPasswordHash: user not found in any WLAN enabled group - access denied')
+		debug('getNTPasswordHash: user groups=%r' % (groups,))
+		debug('getNTPasswordHash: WLAN enabled groups=%r' % (groupInfo.keys(),))
 		return None
-	(maxPriority, _, ) = max(groups)
-	if True not in [wlanEnabled for (priority, wlanEnabled, ) in groups if priority == maxPriority]:
+	(_, maxPriority, _, ) = max(matchingGroups)
+	debug('getNTPasswordHash: maxPrio=%r' % (maxPriority,))
+	if True not in [wlanEnabled for (grpname, priority, wlanEnabled, ) in matchingGroups if priority == maxPriority]:
 		debug('getNTPasswordHash: WLAN is not enabled in group with highest priority - access denied (maxPriority=%r)' % (maxPriority))
+		grpstatus = ['%s(prio=%s, wlan=%s)' % (grpname, priority, wlanEnabled) for (grpname, priority, wlanEnabled) in matchingGroups]
+		debug('getNTPasswordHash: %s' % (' '.join(grpstatus),))
 		return None
 	# user is authorized to use the W-LAN, retrieve NT-password-hash from LDAP and return it
 	result = ldapConnection.search(filter=str(univention.admin.filter.expression('uid', username)), attr=['sambaNTPassword', 'sambaAcctFlags'])
