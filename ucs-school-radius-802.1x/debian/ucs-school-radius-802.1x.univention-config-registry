@@ -30,6 +30,8 @@ Variables: freeradius/conf/private/key/secret/file
 Variables: freeradius/conf/private/key/file
 Variables: freeradius/conf/certificate/file
 Variables: freeradius/conf/ca/file
+Variables: freeradius/conf/auth-type/ttls/copy_request_to_tunnel
+Variables: freeradius/conf/auth-type/peap/copy_request_to_tunnel
 
 Type: file
 File: etc/freeradius/modules/ldap

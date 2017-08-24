@@ -1,3 +1,11 @@
+ucs-school-radius-802.1x (6.0.1-1) unstable; urgency=low
+
+  * Bug #43421: added new UCR variables
+    freeradius/conf/auth-type/ttls/copy_request_to_tunnel and
+    freeradius/conf/auth-type/peap/copy_request_to_tunnel
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 24 Aug 2017 17:59:49 +0200
+
 ucs-school-radius-802.1x (6.0.0-2) unstable; urgency=low
 
   * Bug #44901: fixed syntax error in postrm script
