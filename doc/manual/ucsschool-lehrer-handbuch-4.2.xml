@@ -18,8 +18,8 @@
     </subtitle>
     <legalnotice>
       <literallayout>
-Version 4.2 v1
-Stand: 04. April 2017
+Version 4.2 v2
+Stand: 29. August 2017
       </literallayout>
 
       <literallayout lang="">
@@ -825,6 +825,7 @@ feedback@univention.de
 		  Die nachfolgende Beschreibung gibt einen Überblick über das manuelle Einsammeln der
 		  Dokumente eines bestehenden Verteilungsprojekts. Es wird durch einen Klick auf
 		  <guimenu>einsammeln</guimenu> in der Liste der Materialverteilungsliste gestartet.
+		  Durch mehrfaches Einsammeln kann beispielsweise der Arbeitsfortschritt festgehalten werden.
 		</para>
 		<para>
 		  <figure id="verteilungsprojekt-einsammeln">
@@ -839,7 +840,8 @@ feedback@univention.de
 		  unterhalb des persönlichen Heimatverzeichnisses des Lehrkraft. Für jedes Verteilungsprojekt wird ein
 		  eigenes Verzeichnis angelegt, das den Namen des Verteilungsprojektes trägt. Unterhalb dieses
 		  Verzeichnisses wird für jeden Schüler ein Verzeichnis angelegt, das die eingesammelten Dateien des
-		  Schülers enthält, so dass eine nachträgliche Zuordnung leicht möglich ist.
+		  Schülers enthält, so dass eine nachträgliche Zuordnung leicht möglich ist. Werden die Ergebnisse mehrfach
+		  eingesammelt, wird für jeden Einsammelvorgang und Schüler jeweils ein eigenes Verzeichnis angelegt.
 		</para>
 	  </section>
 	  </section>
