@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-radius-802.1x
-fix: 6.0.0-2A~4.2.0.201706291610
+fix: 6.0.1-1A~4.2.0.201708242117
 desc: |
  * New UCR variables have been added to enable/disable the option <literal>copy_request_to_tunnel</literal> for TTLS or PEAP.
    The variable names are <envar>freeradius/conf/auth-type/ttls/copy_request_to_tunnel</envar> and
