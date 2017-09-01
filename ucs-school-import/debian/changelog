@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-34) unstable; urgency=low
+
+  * Bug #45024: fixed dependencies
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 01 Sep 2017 17:42:03 +0200
+
 ucs-school-import (15.0.0-33) unstable; urgency=low
 
   * Bug #45024: UserImportJob.result.result is always dict

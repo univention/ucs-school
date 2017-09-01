@@ -66,7 +66,8 @@ Depends: ${misc:Depends},
  python-django-pam (>=1.2.0-1),
  python-pampy (>=1.8.2-1),
 Recommends: ucs-school-umc-import
-Conflicts: python3-celery
+Conflicts: python3-celery,
+ python-django-filters (<<1.0.0),
 Description: UCS@school: RESTful API for importing users
  This package provides a service for importing users using a RESTful HTTP API.
  .
