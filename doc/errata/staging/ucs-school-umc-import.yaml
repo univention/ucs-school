@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-import
+fix: 0.0.0-6A~4.2.0.201708101224
+desc: |
+ * A beta version of a new UCS@school import module has been implemented (Bug #45023).
+bug: [45023]
