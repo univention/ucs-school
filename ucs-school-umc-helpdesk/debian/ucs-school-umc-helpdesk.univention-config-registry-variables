@@ -1,5 +1,0 @@
-[ucsschool/helpdesk/recipient]
-Description[de]=Mail-Empfänger der vom UMC-Modul "Helpdesk" gesendeten Helpdesk-Anfragen
-Description[en]=Recipient of mails that are sent by the UMC module "Contacting helpdesk"
-Type=str
-Categories=ucsschool-base

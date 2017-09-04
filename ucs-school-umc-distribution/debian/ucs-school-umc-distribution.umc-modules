@@ -1,6 +1,0 @@
-Module: distribution
-Python: umc/python
-Definition: umc/distribution.xml
-Category: umc/categories/distribution.xml
-Javascript: umc/js
-Icons: umc/icons

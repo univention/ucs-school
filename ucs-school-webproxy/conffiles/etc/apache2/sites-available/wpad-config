@@ -1,3 +1,0 @@
-# add MIME types for WPAD configuration files
-AddType application/x-ns-proxy-autoconfig wpad.dat
-AddType application/x-ns-proxy-autoconfig proxy.pac

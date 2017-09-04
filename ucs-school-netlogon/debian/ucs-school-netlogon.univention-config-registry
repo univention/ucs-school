@@ -1,5 +1,0 @@
-Type: module
-Module: ucs-school-netlogon.py
-Variables: ucsschool/netlogon/.*
-Variables: ucsschool/import/set/netlogon/script/path
-Variables: kerberos/realm

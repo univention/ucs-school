@@ -1,3 +1,0 @@
-clients.conf.example etc/freeradius/
-setupCA.sh usr/lib/univention-freeradius/
-usr/

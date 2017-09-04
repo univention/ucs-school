@@ -1,5 +1,0 @@
-[ucsschool/csvimport/username/generation/firstname_lastname]
-Description[de]=Falls auf true gesetzt, wird der automatisch generierte Benutzername im CSV-Modul das Format "firstname.$lastname" haben.
-Description[en]=If true the automatically generated username in the CSV import module will have the format "$firstname.$lastname".
-Type=bool
-Categories=ucsschool-base
