@@ -1,3 +1,0 @@
-#!/bin/sh
-#
-run-parts --arg="$1" /etc/nut/notify.d

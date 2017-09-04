@@ -1,3 +1,0 @@
-#!/bin/bash
-
-grep "root" /var/lib/dpkg/statoverride | while read user group mode file; do dpkg-statoverride --remove $file; dpkg-statoverride --add "#0" $group $mode $file; done

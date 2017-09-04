@@ -1,6 +1,0 @@
-etc/squid
-var/www
-var/lib/sfb-squid-squidguard
-etc/logcollector.d
-usr/lib/univention-install
-usr/lib/univention-directory-listener/system

@@ -1,6 +1,0 @@
-Type: multifile
-Multifile: etc/samba/smb.conf
-
-Type: subfile
-Multifile: etc/samba/smb.conf
-Subfile: etc/samba/smb.conf.d/99univention-sfb-samba-netlogon-share
