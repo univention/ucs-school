@@ -1,5 +1,10 @@
-ucs-test-ucsschool (3.0.17-62) unstable; urgency=low
+ucs-test-ucsschool (3.0.17-63) unstable; urgency=low
 
+  * Bug #44993: fix logging (merged from 4.2)
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 08 Sep 2017 09:12:12 +0200
+
+ucs-test-ucsschool (3.0.17-62) unstable; urgency=low
   * Bug #44588: add support for multiple schools to test User
   * check removal of single, primary and secondary schools from User
   * adapt to schoolwizards/users/remove API change
