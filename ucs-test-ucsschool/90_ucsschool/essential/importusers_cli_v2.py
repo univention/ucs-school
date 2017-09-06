@@ -12,9 +12,13 @@ import os
 import subprocess
 import time
 import re
+import pprint
 import traceback
 from collections import Mapping
+from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars
+from univention.admin.uldap import getAdminConnection
+from univention.admin.uexceptions import noObject, ldapError
 from apt.cache import Cache as AptCache
 from essential.importusers import Person
 import univention.testing.ucr
@@ -179,9 +183,9 @@ class CLI_Import_v2_Tester(object):
 		self.ou_C = Bunch(name='CC{}'.format(uts.random_string(length=random.randint(1, 9))))
 		self.ucr.load()
 		try:
-			maildomain = self.ucr["mail/hosteddomains"].split()[0]
+			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
 		except (AttributeError, IndexError):
-			maildomain = self.ucr["domainname"]
+			self.maildomain = self.ucr["domainname"]
 		self.default_config = ConfigDict({
 			"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
 			"classes": {},
@@ -199,7 +203,7 @@ class CLI_Import_v2_Tester(object):
 					"Beschreibung": "description",
 				}
 			},
-			"maildomain": maildomain,
+			"maildomain": self.maildomain,
 			"scheme": {
 				"email": "<firstname>[0].<lastname>@<maildomain>",
 				"recordUID": "<firstname>;<lastname>;<email>",
@@ -423,6 +427,39 @@ class CLI_Import_v2_Tester(object):
 			handler.name = handler_name
 			logger.addHandler(handler)
 		return logger
+
+
+class UniqueObjectTester(CLI_Import_v2_Tester):
+	def __init__(self):
+		super(UniqueObjectTester, self).__init__()
+		self.unique_basenames_to_remove = list()
+
+	def cleanup(self):
+		lo, po = getAdminConnection()
+		self.log.info("Removing new unique-usernames,cn=ucsschool entries...")
+		for username in self.unique_basenames_to_remove:
+			dn = "cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(escape_dn_chars(username), lo.base)
+			self.log.debug("Removing %r", dn)
+			try:
+				lo.delete(dn)
+			except noObject:
+				pass
+			except ldapError as exc:
+				self.log.error("DN %r -> %s", dn, exc)
+		super(UniqueObjectTester, self).cleanup()
+
+	def check_unique_obj(self, obj_name, prefix, next_num):
+		""" check if history object exists"""
+		self.log.info('Checking for %s object...', obj_name)
+		dn = 'cn={},cn={},cn=ucsschool,cn=univention,{}'.format(prefix, obj_name, self.lo.base)
+		attrs = {
+			'objectClass': ['ucsschoolUsername'],
+			'ucsschoolUsernameNextNumber': [next_num],
+			'cn': [prefix],
+		}
+		utils.verify_ldap_object(dn, expected_attr=attrs, strict=True, should_exist=True)
+		self.log.debug('%s object %r:\n%s', obj_name, dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(dn)))
+		self.log.info('%s object has been found and is correct.', obj_name)
 
 
 class ColorFormatter(logging.Formatter):
