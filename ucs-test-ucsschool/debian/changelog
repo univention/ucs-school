@@ -1,6 +1,8 @@
 ucs-test-ucsschool (3.0.17-63) unstable; urgency=low
 
   * Bug #44993: fix logging (merged from 4.2)
+  * refactor common unique object code
+  * add test for unique email addresses
 
  -- Daniel Troeder <troeder@univention.de>  Fri, 08 Sep 2017 09:12:12 +0200
 
