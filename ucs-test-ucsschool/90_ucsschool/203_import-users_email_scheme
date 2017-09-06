@@ -1,12 +1,12 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Test creation of usernames from a special username scheme (Bug #41243, #41244)
+## desc: Test creation of email addresses from a special email scheme (Bug #44993)
 ## tags: [apptest,ucsschool,skip_in_multiserver,ucsschool_import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [41243, 41244]
+## bugs: [44993]
 
 import copy
 from ldap.filter import escape_filter_chars
@@ -18,19 +18,18 @@ from essential.importusers import Person
 
 
 class Test(UniqueObjectTester):
-
 	def __init__(self):
 		super(Test, self).__init__()
 		self.ou_B = None
 		self.ou_C = None
 
-	def test(self):  # formerly test_create_with_username_scheme()
+	def test(self):
 		"""
-		Test creation of usernames from a special username scheme (Bug #41243, #41244).
+		Test creation of email addresses from a special scheme (Bug #44993).
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
-				self.log.info('*** Importing a new single user with role %r, username scheme %r and recordUID 1. time', role, scheme)
+				self.log.info('*** Importing a new single user with role %r, email scheme %r and recordUID 1. time', role, scheme)
 
 				source_uid = 'sourceUID-%s' % (uts.random_string(),)
 				record_uid = uts.random_name()
@@ -40,10 +39,10 @@ class Test(UniqueObjectTester):
 				config.update_entry('csv:mapping:DBID', 'record_uid')
 				config.update_entry('scheme:recordUID', '<record_uid>')
 				config.update_entry('user_role', role)
-				config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[{}]".format(scheme))
+				config.update_entry('scheme:email', "<:umlauts><firstname>[0].<lastname>[{}]@{}".format(scheme, self.maildomain))
 
 				person = Person(self.ou_A.name, role)
-				person.update(record_uid=record_uid, source_uid=source_uid, username=None)
+				person.update(record_uid=record_uid, source_uid=source_uid, username=None, mail=None)
 				fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 				config.update_entry('input:filename', fn_csv)
 				fn_config = self.create_config_json(config=config)
@@ -55,21 +54,17 @@ class Test(UniqueObjectTester):
 
 				# update dn+username of person and verify LDAP attributes
 				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-				person.update(dn=new_users[0])
+				email_prefix = '{}.{}'.format(person.firstname[0], person.lastname)
+				self.log.info("Calculated email_prefix is %r.", email_prefix)
+				self.unique_basenames_to_remove.append(email_prefix)
+				ext = '1' if scheme == 'ALWAYSCOUNTER' else ''
+				person.update(dn=new_users[0], mail='{}{}@{}'.format(email_prefix, ext, self.maildomain))
 				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
 
 				# check for new users in LDAP
 				self.check_new_and_removed_users(1, 0)
 				person.verify()
-
-				username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
-				self.log.info("Calculated username_prefix is %r.", username_prefix)
-				self.unique_basenames_to_remove.append(username_prefix)
-				if person.username != "{}{}".format(username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""):
-					self.fail('username %r is not expected string "%s%s"' % (person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else ""))
-				self.log.info('Username %r is expected with string "%s%s"', person.username, username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")
-
-				self.check_unique_obj('unique-usernames', username_prefix, '2')
+				self.check_unique_obj('unique-email', email_prefix, '2')
 
 				for ext in [2, 3]:
 					self.log.info('*** Deleting user with role %r and username and recordUID %d. time', role, ext - 1)
@@ -84,7 +79,7 @@ class Test(UniqueObjectTester):
 					person.verify()
 
 					self.log.info('*** Importing same user with role %r with same username and recordUID %d. time', role, ext)
-					person.update(username=None, mode='A')
+					person.update(mode='A', username=None, mail=None)
 					fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 					config.update_entry('input:filename', fn_csv)
 					fn_config = self.create_config_json(config=config)
@@ -92,15 +87,11 @@ class Test(UniqueObjectTester):
 					self.run_import(['-c', fn_config, '-i', fn_csv])
 					utils.wait_for_replication()
 					new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-					person.update(dn=new_users[0])
+					person.update(dn=new_users[0], mail='{}{}@{}'.format(email_prefix, ext, self.maildomain))  # record_uid=record_uid, source_uid=source_uid
 					wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
 					self.check_new_and_removed_users(1, 0)
-
 					person.verify()
-					if person.username != "{}{}".format(username_prefix, ext):
-						self.fail('username %r is not expected string "%s%d"' % (person.username, username_prefix, ext))
-					self.log.info('Username %r is expected with string "%s%d', person.username, username_prefix, ext)
-					self.check_unique_obj('unique-usernames', username_prefix, str(ext + 1))
+					self.check_unique_obj('unique-email', email_prefix, str(ext + 1))
 
 
 def main():

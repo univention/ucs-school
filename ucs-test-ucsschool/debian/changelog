@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-26) unstable; urgency=low
+
+  * Bug #44993: fix logging
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Sep 2017 10:16:41 +0200
+
 ucs-test-ucsschool (4.0.4-25) unstable; urgency=low
 
   * Bug #44993: fix tests

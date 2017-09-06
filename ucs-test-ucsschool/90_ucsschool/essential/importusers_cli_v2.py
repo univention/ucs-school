@@ -165,9 +165,8 @@ class CLI_Import_v2_Tester(object):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
 
 	def __init__(self):
-		logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
-		self.log = ColoredLogger('main')
+		self.log = self._get_logger()
 		self.lo = None
 		self.ldap_status = None
 		self.hook_fn_set = set()
@@ -408,25 +407,40 @@ class CLI_Import_v2_Tester(object):
 				res = self.wait_for_drs_replication_of_membership(group_dn=group_dn, member_uid=member_uid, is_member=is_member, try_resync=False, **kwargs)
 		return res
 
+	@staticmethod
+	def _get_logger():
+		logger = logging.getLogger('ucs-test-ucsschool')
+		logger.setLevel(logging.DEBUG)
+		handler_name = 'ucs-test-ucsschool'
+		if handler_name not in [h.name for h in logger.handlers]:
+			formatter = ColorFormatter(
+				fmt='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s',
+				datefmt='%Y-%m-%d %H:%M:%S'
+			)
+			handler = logging.StreamHandler(stream=sys.stdout)
+			handler.setFormatter(formatter)
+			handler.setLevel(logging.DEBUG)
+			handler.name = handler_name
+			logger.addHandler(handler)
+		return logger
 
-class ColoredLogger(object):
+
+class ColorFormatter(logging.Formatter):
 	# BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE
 	_colors = {
-		'critical': 'RED',
-		'debug': 'WHITE',
-		'error': 'RED',
-		'exception': 'RED',
-		'info': 'YELLOW',
-		'warning': 'CYAN',
+		'CRITICAL': 'RED',
+		'DEBUG': 'WHITE',
+		'ERROR': 'RED',
+		'EXCEPTION': 'RED',
+		'FATAL': 'RED',
+		'INFO': 'YELLOW',
+		'NOTSET': 'WHITE',
+		'WARN': 'CYAN',
+		'WARNING': 'CYAN',
 	}
 
-	def __init__(self, name):
-		logging.basicConfig(
-			stream=sys.stdout,
-			level=logging.DEBUG,
-			format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s',
-			datefmt='%Y-%m-%d %H:%M:%S')
-		self.logger = logging.getLogger(name)
+	def __init__(self, fmt=None, datefmt=None):
+		super(ColorFormatter, self).__init__(fmt, datefmt)
 
 		self.utext = univention.testing.format.text.Text()
 		self.colorize = False
@@ -441,30 +455,14 @@ class ColoredLogger(object):
 					self.utext.term = univention.testing.format.text._Term(fd)
 					self.colorize = True
 
-	def _colorize(self, msg, color):
+	def format(self, record):
+		msg = super(ColorFormatter, self).format(record)
+
 		if self.colorize:
-			return '{}{}{}'.format(getattr(self.utext.term, self._colors[color]), msg, self.utext.term.NORMAL)
+			return '{}{}{}'.format(
+				getattr(self.utext.term, self._colors[record.levelname]),
+				msg,
+				self.utext.term.NORMAL
+			)
 		else:
 			return msg
-
-	def critical(self, msg, *args, **kwargs):
-		self.logger.critical(self._colorize(msg, self._colors['critical']), *args, **kwargs)
-
-	fatal = critical
-
-	def debug(self, msg, *args, **kwargs):
-		self.logger.debug(self._colorize(msg, 'debug'), *args, **kwargs)
-
-	def error(self, msg, *args, **kwargs):
-		self.logger.error(self._colorize(msg, 'error'), *args, **kwargs)
-
-	def exception(self, msg, *args, **kwargs):
-		self.logger.exception(self._colorize(msg, 'exception'), *args, **kwargs)
-
-	def info(self, msg, *args, **kwargs):
-		self.logger.info(self._colorize(msg, 'info'), *args, **kwargs)
-
-	def warning(self, msg, *args, **kwargs):
-		self.logger.warning(self._colorize(msg, 'warning'), *args, **kwargs)
-
-	warn = warning
