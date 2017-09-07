@@ -84,6 +84,14 @@ class ImportUser(User):
 	# as arguments for object creation and will be exported by to_dict():
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
+	user_role_to_oc = {
+		"": "ucsschoolType",
+		None: "ucsschoolType",
+		"staff": "ucsschoolStaff",
+		"student": "ucsschoolStudent",
+		"teacher": "ucsschoolTeacher",
+		"teacher_and_staff": "ucsschoolTeacher",
+	}
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -178,10 +186,12 @@ class ImportUser(User):
 		:param superordinate: str: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
 		"""
-		filter_s = filter_format("(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))", (source_uid, record_uid))
+		oc = cls.user_role_to_oc[cls.config["user_role"]]
+		filter_s = filter_format("(&(objectClass=%s)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))", (oc, source_uid, record_uid))
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
 		if not obj:
-			raise noObject("No user with source_uid={0} and record_uid={1} found.".format(source_uid, record_uid))
+			raise noObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
+				cls.config.get("user_role", "user"), source_uid, record_uid))
 		return cls.from_udm_obj(obj, None, connection)
 
 	def deactivate(self):
