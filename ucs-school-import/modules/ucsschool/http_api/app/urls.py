@@ -48,11 +48,8 @@ urlpatterns = [
 	# url(r'^docs/', include_docs_urls(title='UCS@school import API'))
 	url(r'^admin/', admin.site.urls),
 	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/logfiles/', views.LogFileViewSet.as_view({'get': 'retrieve'}), name='logfile-detail'),
+	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/logfile/', views.LogFileViewSet.as_view({'get': 'retrieve'}), name='logfile-detail'),
 	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/passwords/', views.PasswordsViewSet.as_view({'get': 'retrieve'}), name='passwordsfile-detail'),
 	url(r'^(?P<version>(v1))/imports/users/(?P<pk>\d+)/summary/', views.SummaryViewSet.as_view({'get': 'retrieve'}), name='summaryfile-detail'),
 	url(r'^(?P<version>(v1))/', include(router.urls)),
 ]
-
-
-
