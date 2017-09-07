@@ -1,12 +1,46 @@
-Paket ucs-school-import Kurzdoku
+# HTTP-API
 
-Ziel:
+# Installation
+
+*TODO*
+
+## Test data
+
+To create test data run:
+
+	/usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
+	--httpapi \
+	--teachers 10 \
+	--classes 3 \
+	--create-email-addresses \
+	--verbose \
+	SchuleEinz
+
+It will create a file with a name similar to   `test_users_2017-09-07_16:09:46.csv`.
+
+That file can be used as input data for the HTTP-API or on the command line with:
+
+	/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+	--conffile /usr/share/ucs-school-import/configs/user_import_http-api.json \
+	--user_role student \
+	--school SchuleEinz \
+	--infile test_users_2017-09-07_16:09:46.csv \
+	--sourceUID SchuleEinz-student \
+	--verbose
+
+
+# nachfolgend evtl. veraltete Infos
+
+**TODO: überprüfe Aktualität**
+---
+
+# Ziel:
 
 Die in diesem Paket enthaltenen Skripte dienen der spezifischen Administration
-einer UCS@school-Domäne, genauer dem import von Bentzern (Schüler/Lehrer),
+einer UCS@school-Domäne, genauer dem import von Benutzern (Schüler/Lehrer),
 Netzwerken und Rechnern.
 
-Skripte:
+# Skripte:
 
 Alle Skripte liegen unter /usr/share/ucs-school-import/scripts. Ausgangspunkt ist das Skript 
 "ucs-school-import", alle anderen Skripte sind nur symbolische links auf diese Datei.
@@ -15,18 +49,17 @@ Alle Skripte legen automatisch eine Schule (also deren ou-Baum im LDAP) an, soba
 ein Element in dieser Schule angelegt werden soll (entspricht der Funktionalität von
 create_ou).
 
-
- - Schule anlegen:
+## Schule anlegen:
 Um eine Schule anzulegen kann das Skript "create_ou" aufgerufen werden, als Option 
 wird dabei die Schulnummer übergeben (z.B. "create_ou 308"). Das sollte besonders
 _vor_ der Installation eines Schulservers erfolgen, ansonsten wird dieser an falscher
 Stelle im LDAP angelegt.
 
- - Benutzer importieren:
+## Benutzer importieren:
 Das Importieren von neuen oder geänderten Benutzern erfolgt durch den Aufruf des 
 Skriptes "ucs-school-import" oder "import_user" mit dem Dateinamen als Option.
 
- - Netzwerk importieren:
+## Netzwerk importieren:
 Netzwerke können in einer Datei zeilenweise einer Schule zugeordnet werden, Trennzeichen
 ist ein Semikolon:
 
@@ -42,7 +75,7 @@ Der Import erfolgt dann durch import_networks mit dem Dateinamen als Option.
 Per Default wird ein Bereich von IPs .10 bis .250 für die freie vergabe (siehe unten) 
 voreingestellt. 
 
- - Computer importieren
+## Computer importieren
 Computer werden in einer Datei zeilenweise mit Tab als Trennzeichen definiert und über 
 import_computer mit dem Dateinamen als Option angelegt. Format der Datei ist:
 

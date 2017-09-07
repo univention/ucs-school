@@ -1,3 +1,12 @@
+ucs-school-import (15.0.0-38) unstable; urgency=low
+
+  * Bug #45024: configuration example for HTTP-API
+  * CSV reader example for HTTP-API
+  * enhance test data creation script to allow creation of above format
+  * add developer documentation
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 07 Sep 2017 16:24:34 +0200
+
 ucs-school-import (15.0.0-37) unstable; urgency=low
 
   * Bug #45044: restrict user import to configured user role

@@ -63,3 +63,25 @@ class TestUserCsvExporter(ResultExporter):
 		for k, v in user.items():
 			user[k] = v.encode("utf-8")
 		return user
+
+
+class HttpApiTestUserCsvExporter(TestUserCsvExporter):
+	field_names = ("Schule", "Vorname", "Nachname", "Klassen", "Beschreibung", "Telefon")
+
+	def serialize(self, user):
+		if user["Klassen"]:
+			if len(user["Klassen"]) > 1:
+				raise Exception('Not more than one OU allowed in HTTP API CSV.')
+			sc = ""
+			for school, classes in user["Klassen"].items():
+				sc = ",".join([sc, ",".join(classes)])
+			user["Klassen"] = sc.strip(",")
+		else:
+			user["Klassen"] = ""
+		print('user[Schulen]=%r' % (user["Schulen"],))
+		user["Schule"] = user["Schulen"][0]
+		del user["Schulen"]
+		del user["Benutzertyp"]
+		for k, v in user.items():
+			user[k] = v.encode("utf-8")
+		return user
