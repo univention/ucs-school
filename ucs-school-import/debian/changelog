@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-35) unstable; urgency=low
+
+  * Bug #45024: fix logfile URL
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 07 Sep 2017 09:59:22 +0200
+
 ucs-school-import (15.0.0-34) unstable; urgency=low
 
   * Bug #45024: fixed dependencies
