@@ -38,7 +38,6 @@ import sys
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
 from ucsschool.importer.exceptions import InitialisationError, UnkownRole
-from ucsschool.importer.configuration import Configuration
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
@@ -130,7 +129,7 @@ class CsvReader(BaseReader):
 		elif mapping_value == "__action":
 			import_user.action = csv_value
 			return True
-		elif mapping_value == "school_class" and isinstance(import_user, Staff):
+		elif mapping_value == "school_classes" and isinstance(import_user, Staff):
 			# ignore column
 			return True
 		return False
