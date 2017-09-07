@@ -146,6 +146,7 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		validated_data['log_file'] = None
 		validated_data['basedir'] = ''
 		if not validated_data.get('source_uid'):
+			# TODO: can we really allow source_uid to be set by the user? Will this not undermine security?
 			validated_data['source_uid'] = '{}-{}'.format(validated_data['school'].name, validated_data['user_role']).lower()
 		instance = super(UserImportJobSerializer, self).create(validated_data)
 		instance.basedir = os.path.join(
