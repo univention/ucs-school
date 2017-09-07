@@ -3,11 +3,12 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.0-37A~4.2.0.201709071259
+fix: 15.0.0-38A~4.2.0.201709071657
 desc: |
  * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #44838).
  * A Python client library to use the experimental RESTful API was created (Bug #45022).
  * An experimental RESTful API for starting import jobs can now be installed (Bug #45019 #45024).
  * The handling of scheme:email options during import of user has been improved: the COUNTER variables may now be used (Bug #44993).
  * The configured user role is taken into account when search for users (Bug #45044).
-bug: [44838, 45019, 45022, 45024, 44993, 45044]
+ * Configuration and code for reading and writing CSV data compatible with the HTTP-API was added (Bug #45342).
+bug: [44838, 45019, 45022, 45024, 44993, 45044, 45342]
