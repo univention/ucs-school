@@ -1,0 +1,25 @@
+{
+	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
+	"input": {
+		"type": "csv"
+	},
+	"csv": {
+		"mapping": {
+			"Schule": "school",
+			"Vorname": "firstname",
+			"Nachname": "lastname",
+			"Klassen": "school_classes",
+			"Beschreibung": "description",
+			"Telefon": "phone",
+			"EMail": "mailPrimaryAddress"
+		}
+	},
+	"scheme": {
+		"email": "<firstname>.<lastname>@<maildomain>",
+		"recordUID": "<firstname>.<lastname>",
+		"username": {
+		    "default": "<:umlauts><firstname>.<lastname><:lower>[COUNTER2]"
+		}
+	},
+	"verbose": false
+}

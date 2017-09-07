@@ -39,13 +39,14 @@ import subprocess
 
 from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
-from ucsschool.importer.writer.test_user_csv_exporter import TestUserCsvExporter
+from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvExporter, TestUserCsvExporter
 
 
 def parse_cmdline():
 	defaults = dict(
 		csvfile="test_users_%Y-%m-%d_%H:%M:%S.csv",
 		nostart=False,
+		httpapi=False,
 		staff=0,
 		students=0,
 		teachers=0,
@@ -58,6 +59,7 @@ def parse_cmdline():
 	)
 	parser = ArgumentParser(description="UCS@school import test users tool", epilog="When using --create-email-addresses either an email domain must be created in the corresponding " "UMC-module or must be configured on the command line with --set maildomain=...")
 	parser.add_argument("-c", "--csvfile", dest="csvfile", help="File to write to [default: %(default)s].")
+	parser.add_argument("--httpapi", action="store_true", help="Create CSV suitable for importing via HTTP-API, implies -n and uses only first OU [default: %(default)s].")
 	parser.add_argument("-n", "--nostart", action="store_true", help="Disable automatic start of import script [default: %(default)s].")
 	parser.add_argument("--staff", dest="staff", type=int, help="Number of staff to create [default: %(default)s].")
 	parser.add_argument("--students", dest="students", type=int, help="Number of students to create [default: %(default)s].")
@@ -80,6 +82,9 @@ def parse_cmdline():
 	if args.students + args.teachers + args.staffteachers > 0 and args.classes == 0:
 		parser.error("Please supply number of classes to create.")
 	args.csvfile = datetime.datetime.now().strftime(args.csvfile)
+	if args.httpapi:
+		args.OU = [args.OU[0]]
+		args.nostart = True
 	args.schools = min(args.schools, len(args.OU))
 	if args.verbose:
 		make_stdout_verbose()
@@ -92,8 +97,11 @@ def main():
 	logger.info("------ Creating user information... ------")
 	test_user_creator = TestUserCreator(args.OU, staff=args.staff, students=args.students, teachers=args.teachers, staffteachers=args.staffteachers, classes=args.classes, inclasses=args.inclasses, schools=args.schools, email=args.email)
 	test_user_creator.make_classes()
-	test_user_exporter = TestUserCsvExporter(email=args.email)
 	logger.info("------ Writing user information to CSV file '%s'... ------", args.csvfile)
+	if args.httpapi:
+		test_user_exporter = HttpApiTestUserCsvExporter(email=args.email)
+	else:
+		test_user_exporter = TestUserCsvExporter(email=args.email)
 	test_user_exporter.dump(test_user_creator.make_users(), args.csvfile)
 	if args.nostart:
 		logger.info("------ Done. CSV file: '%s'. ------", args.csvfile)
