@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-36) unstable; urgency=low
+
+  * Bug #45294: move empty directory to debian/<packagename>.dirs
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 07 Sep 2017 10:48:52 +0200
+
 ucs-school-import (15.0.0-35) unstable; urgency=low
 
   * Bug #45024: fix logfile URL
