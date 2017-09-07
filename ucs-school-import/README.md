@@ -28,6 +28,7 @@ That file can be used as input data for the HTTP-API or on the command line with
 	--sourceUID SchuleEinz-student \
 	--verbose
 
+To use the produced CSV with the HTTP-API service, the configuration file must be used. Copy `/usr/share/ucs-school-import/configs/user_import_http-api.json` to `/var/lib/ucs-school-import/configs/user_import.json` or to `/var/lib/ucs-school-import/configs/SchuleEinz.json`.
 
 # nachfolgend evtl. veraltete Infos
 
