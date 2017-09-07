@@ -98,16 +98,18 @@ class LegacyImportUser(ImportUser):
 		:param superordinate: str: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
 		"""
+		oc = cls.user_role_to_oc[cls.config["user_role"]]
 		filter_s = filter_format(
-			"(&(objectClass=ucsschoolType)"
+			"(&(objectClass=%s)"
 			"(|"
 			"(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))"
 			"(&(!(ucsschoolSourceUID=*))(!(ucsschoolRecordUID=*))(uid=%s))"
 			"))",
-			(source_uid, record_uid, username))
+			(oc, source_uid, record_uid, username))
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
 		if not obj:
-			raise noObject("No user with source_uid={0}, record_uid={1} or username={2} found.".format(source_uid, record_uid, username))
+			raise noObject("No {} with source_uid={!r} and record_uid={!r} or username={!r} found.".format(
+				cls.config.get("user_role", "user"), source_uid, record_uid, username))
 		return cls.from_udm_obj(obj, None, connection)
 
 	@classmethod

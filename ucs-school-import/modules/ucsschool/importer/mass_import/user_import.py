@@ -229,7 +229,8 @@ class UserImport(object):
 
 		source_uid = self.config["sourceUID"]
 		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
-		filter_s = filter_format("(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))", (source_uid, ))
+		oc = self.factory.make_import_user([]).user_role_to_oc[self.config["user_role"]]
+		filter_s = filter_format("(&(objectClass=%s)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))", (oc, source_uid))
 
 		id2imported_user = dict()  # for fast access later
 		for iu in self.imported_users:
