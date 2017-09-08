@@ -169,7 +169,7 @@ def network(base=baseDN):
 			if dnx.count('cn=networks'):
 				_base = ','.join(dnx[dnx.index('cn=networks') + 1:])
 
-			for subnet in get_objects('dhcp/subnet', base=_base, superordinate=n['dhcpEntryZone']):
+			for subnet in get_objects('dhcp/subnet', base=_base):
 				subnet.open()
 				brd_ip = ipaddr.IPv4Address(subnet['broadcastaddress'])
 				if brd_ip not in net_ip:
