@@ -56,7 +56,7 @@ def initialize():
 	pass
 
 
-def prerun():
+def update_local_school_list():   # previous name: prerun()
 	global all_local_schools, lo
 	listener.setuid(0)
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: prerun')
@@ -72,6 +72,8 @@ def prerun():
 
 
 def handler(dn, new, old):
+	update_local_school_list()
+
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, 'pupilgroups: dn: %s' % dn)
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
