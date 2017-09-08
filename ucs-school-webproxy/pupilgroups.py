@@ -56,9 +56,10 @@ def initialize():
 	pass
 
 
-def prerun():
+def update_local_school_list():   # previous name: prerun()
 	global all_local_schools, lo
 	listener.setuid(0)
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: prerun')
 	try:
 		lo, po = univention.admin.uldap.getMachineConnection(ldap_master=False)
 		all_local_schools = [school.dn for school in School.get_all(lo)]
@@ -66,16 +67,20 @@ def prerun():
 		all_local_schools = None
 		return
 	finally:
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: all_local_schools=%r' % (all_local_schools,))
 		listener.unsetuid()
 
 
 def handler(dn, new, old):
+	update_local_school_list()
+
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, 'pupilgroups: dn: %s' % dn)
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
 	if all_local_schools is None:
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'pupilgroups: Could not detect local schools')
 	elif not any(dn.lower().endswith(',cn=groups,%s' % school.lower()) for school in all_local_schools):
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: dn: %s does not belong to local schools %r' % (dn, all_local_schools))
 		return  # the object doesn't belong to this school
 
 	changes = {}
