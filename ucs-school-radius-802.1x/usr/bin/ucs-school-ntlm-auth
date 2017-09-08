@@ -108,8 +108,8 @@ def getNTPasswordHash(username, stationId):
 		return None
 	maxPriority = max(matchingGroups, key=lambda x: x[1])
 	debug('getNTPasswordHash: maxPrio=%r' % (maxPriority,))
-	if not any(True for (grpname, priority, wlanEnabled, ) in matchingGroups if priority == maxPriority and wlanEnabled):
-		debug('getNTPasswordHash: WLAN is not enabled in group with highest priority - access denied (maxPriority=%r)' % (maxPriority))
+	if not any(True for (grpname, priority, wlanEnabled, ) in matchingGroups if priority == maxPriority[1] and wlanEnabled):
+		debug('getNTPasswordHash: WLAN is not enabled in group with highest priority - access denied (maxPriority=%r)' % (maxPriority,))
 		grpstatus = ['%s(prio=%s, wlan=%s)' % (grpname, priority, wlanEnabled) for (grpname, priority, wlanEnabled) in matchingGroups]
 		debug('getNTPasswordHash: %s' % (' '.join(grpstatus),))
 		return None
