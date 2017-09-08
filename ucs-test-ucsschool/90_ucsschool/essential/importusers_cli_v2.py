@@ -12,7 +12,12 @@ import os
 import subprocess
 import time
 import re
+import pprint
 import traceback
+from ldap.dn import escape_dn_chars
+from univention.admin.uldap import getAdminConnection
+from univention.admin.uexceptions import noObject, ldapError
+from collections import Mapping
 from apt.cache import Cache as AptCache
 from essential.importusers import Person
 import univention.testing.ucr
@@ -56,7 +61,10 @@ class ConfigDict(dict):
 		items = key.split(':')
 		while items:
 			if len(items) == 1:
-				mydict[items[0]] = value
+				if items[0] in mydict and isinstance(mydict[items[0]], Mapping):
+					mydict[items[0]].update(value)
+				else:
+					mydict[items[0]] = value
 			else:
 				mydict = mydict.setdefault(items[0], {})
 			del items[0]
@@ -159,9 +167,8 @@ class CLI_Import_v2_Tester(object):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
 
 	def __init__(self):
-		logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
-		self.log = ColoredLogger('main')
+		self.log = self._get_logger()
 		self.lo = None
 		self.ldap_status = None
 		self.hook_fn_set = set()
@@ -172,9 +179,9 @@ class CLI_Import_v2_Tester(object):
 		self.ou_C = Bunch()  # set to None if not needed
 		self.ucr.load()
 		try:
-			maildomain = self.ucr["mail/hosteddomains"].split()[0]
+			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
 		except (AttributeError, IndexError):
-			maildomain = self.ucr["domainname"]
+			self.maildomain = self.ucr["domainname"]
 		self.default_config = ConfigDict({
 			"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
 			"classes": {},
@@ -192,7 +199,7 @@ class CLI_Import_v2_Tester(object):
 					"Beschreibung": "description",
 				}
 			},
-			"maildomain": maildomain,
+			"maildomain": self.maildomain,
 			"scheme": {
 				"email": "<firstname>[0].<lastname>@<maildomain>",
 				"recordUID": "<firstname>;<lastname>;<email>",
@@ -233,6 +240,7 @@ class CLI_Import_v2_Tester(object):
 				config.update_entry(config_option, value)
 		with open(fn, 'w') as fd:
 			json.dump(config, fd)
+			self.log.info('Config: %r' % config)
 
 		return fn
 
@@ -255,7 +263,7 @@ class CLI_Import_v2_Tester(object):
 
 		header_row = header2properties.keys()
 		random.shuffle(header_row)
-		self.log.debug('Header row = %r', header_row)
+		self.log.info('Header row = %r', header_row)
 
 		fn = fn_csv if fn_csv else tempfile.mkstemp(prefix='users.', dir=self.tmpdir)[1]
 		writer = csv.DictWriter(
@@ -268,7 +276,7 @@ class CLI_Import_v2_Tester(object):
 		writer.writeheader()
 		for person in person_list:
 			person_dict = person.map_to_dict(properties2headers)
-			self.log.debug('Person data = %r', person_dict)
+			self.log.info('Person data = %r', person_dict)
 			writer.writerow(person_dict)
 		return fn
 
@@ -361,25 +369,73 @@ class CLI_Import_v2_Tester(object):
 	def test(self):
 		raise NotImplemented()
 
+	@staticmethod
+	def _get_logger():
+		logger = logging.getLogger('ucs-test-ucsschool')
+		logger.setLevel(logging.DEBUG)
+		handler_name = 'ucs-test-ucsschool'
+		if handler_name not in [h.name for h in logger.handlers]:
+			formatter = ColorFormatter(
+				fmt='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s',
+				datefmt='%Y-%m-%d %H:%M:%S'
+			)
+			handler = logging.StreamHandler(stream=sys.stdout)
+			handler.setFormatter(formatter)
+			handler.setLevel(logging.DEBUG)
+			handler.name = handler_name
+			logger.addHandler(handler)
+		return logger
 
-class ColoredLogger(object):
+
+class UniqueObjectTester(CLI_Import_v2_Tester):
+	def __init__(self):
+		super(UniqueObjectTester, self).__init__()
+		self.unique_basenames_to_remove = list()
+
+	def cleanup(self):
+		lo, po = getAdminConnection()
+		self.log.info("Removing new unique-usernames,cn=ucsschool entries...")
+		for username in self.unique_basenames_to_remove:
+			dn = "cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(escape_dn_chars(username), lo.base)
+			self.log.debug("Removing %r", dn)
+			try:
+				lo.delete(dn)
+			except noObject:
+				pass
+			except ldapError as exc:
+				self.log.error("DN %r -> %s", dn, exc)
+		super(UniqueObjectTester, self).cleanup()
+
+	def check_unique_obj(self, obj_name, prefix, next_num):
+		""" check if history object exists"""
+		self.log.info('Checking for %s object...', obj_name)
+		dn = 'cn={},cn={},cn=ucsschool,cn=univention,{}'.format(prefix, obj_name, self.lo.base)
+		attrs = {
+			'objectClass': ['ucsschoolUsername'],
+			'ucsschoolUsernameNextNumber': [next_num],
+			'cn': [prefix],
+		}
+		utils.verify_ldap_object(dn, expected_attr=attrs, strict=True, should_exist=True)
+		self.log.debug('%s object %r:\n%s', obj_name, dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(dn)))
+		self.log.info('%s object has been found and is correct.', obj_name)
+
+
+class ColorFormatter(logging.Formatter):
 	# BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE
 	_colors = {
-		'critical': 'RED',
-		'debug': 'WHITE',
-		'error': 'RED',
-		'exception': 'RED',
-		'info': 'YELLOW',
-		'warning': 'CYAN',
+		'CRITICAL': 'RED',
+		'DEBUG': 'WHITE',
+		'ERROR': 'RED',
+		'EXCEPTION': 'RED',
+		'FATAL': 'RED',
+		'INFO': 'YELLOW',
+		'NOTSET': 'WHITE',
+		'WARN': 'CYAN',
+		'WARNING': 'CYAN',
 	}
 
-	def __init__(self, name):
-		logging.basicConfig(
-			stream=sys.stdout,
-			level=logging.DEBUG,
-			format='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s',
-			datefmt='%Y-%m-%d %H:%M:%S')
-		self.logger = logging.getLogger(name)
+	def __init__(self, fmt=None, datefmt=None):
+		super(ColorFormatter, self).__init__(fmt, datefmt)
 
 		self.utext = univention.testing.format.text.Text()
 		self.colorize = False
@@ -394,30 +450,14 @@ class ColoredLogger(object):
 					self.utext.term = univention.testing.format.text._Term(fd)
 					self.colorize = True
 
-	def _colorize(self, msg, color):
+	def format(self, record):
+		msg = super(ColorFormatter, self).format(record)
+
 		if self.colorize:
-			return '{}{}{}'.format(getattr(self.utext.term, self._colors[color]), msg, self.utext.term.NORMAL)
+			return '{}{}{}'.format(
+				getattr(self.utext.term, self._colors[record.levelname]),
+				msg,
+				self.utext.term.NORMAL
+			)
 		else:
 			return msg
-
-	def critical(self, msg, *args, **kwargs):
-		self.logger.critical(self._colorize(msg, self._colors['critical']), *args, **kwargs)
-
-	fatal = critical
-
-	def debug(self, msg, *args, **kwargs):
-		self.logger.debug(self._colorize(msg, 'debug'), *args, **kwargs)
-
-	def error(self, msg, *args, **kwargs):
-		self.logger.error(self._colorize(msg, 'error'), *args, **kwargs)
-
-	def exception(self, msg, *args, **kwargs):
-		self.logger.exception(self._colorize(msg, 'exception'), *args, **kwargs)
-
-	def info(self, msg, *args, **kwargs):
-		self.logger.info(self._colorize(msg, 'info'), *args, **kwargs)
-
-	def warning(self, msg, *args, **kwargs):
-		self.logger.warning(self._colorize(msg, 'warning'), *args, **kwargs)
-
-	warn = warning

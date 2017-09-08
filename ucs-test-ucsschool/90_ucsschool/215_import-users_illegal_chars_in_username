@@ -11,40 +11,22 @@
 import copy
 import string
 import random
-from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
-from univention.admin.uldap import getAdminConnection
-from univention.admin.uexceptions import noObject, ldapError
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.importer.exceptions import FormatError
 from essential.importusers import Person
-from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers_cli_v2 import UniqueObjectTester
 
 
-class Test(CLI_Import_v2_Tester):
+class Test(UniqueObjectTester):
 
 	def __init__(self):
 		super(Test, self).__init__()
 		self.ou_B = None
 		self.ou_C = None
-		self.unique_basenames_to_remove = list()
-
-	def cleanup(self):
-		lo, po = getAdminConnection()
-		self.log.info("Removing new unique-usernames,cn=ucsschool entries...")
-		for username in self.unique_basenames_to_remove:
-			dn = "cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(escape_dn_chars(username), lo.base)
-			self.log.debug("Removing %r", dn)
-			try:
-				lo.delete(dn)
-			except noObject:
-				pass
-			except ldapError as exc:
-				self.log.error("DN %r -> %s", dn, exc)
-		super(Test, self).cleanup()
 
 	def test(self):  # formally test_create_with_illegal_chars_in_username()
 		"""

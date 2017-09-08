@@ -1,5 +1,24 @@
-ucs-test-ucsschool (3.0.17-62) unstable; urgency=low
+ucs-test-ucsschool (3.0.17-65) unstable; urgency=medium
 
+  * Bug #44993: fix tests
+
+ -- Florian Best <best@univention.de>  Wed, 19 Jul 2017 10:15:24 +0200
+
+ucs-test-ucsschool (3.0.17-64) unstable; urgency=low
+
+  * Bug #44993: adapt test to API change
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 Jul 2017 09:56:15 +0200
+
+ucs-test-ucsschool (3.0.17-63) unstable; urgency=low
+
+  * Bug #44993: fix logging (merged from 4.2)
+  * refactor common unique object code
+  * add test for unique email addresses
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 08 Sep 2017 09:12:12 +0200
+
+ucs-test-ucsschool (3.0.17-62) unstable; urgency=low
   * Bug #44588: add support for multiple schools to test User
   * check removal of single, primary and secondary schools from User
   * adapt to schoolwizards/users/remove API change
