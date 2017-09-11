@@ -2,7 +2,31 @@
 
 # Installation
 
-*TODO*
+## Prerelease
+
+	ucr set repository/online/server=http://updates-test.software-univention.de/ \
+	repository/app_center/server=appcenter-test.software-univention.de \
+	appcenter/index/verify=no \
+	update/secure_apt=no \
+	repository/online/unmaintained=yes
+
+	univention-upgrade --ignoreterm --ignoressh
+
+	univention-install univention-appcenter-dev
+	univention-app dev-use-test-appcenter
+
+	univention-install ucs-school-import-http-api
+
+	# should also install "ucs-school-umc-import" as it's in "recommends"
+
+	# update to latest version
+	wget -r -np -A "ucs-school-import*.deb,ucs-school-umc-import*.deb" "http://192.168.0.10/build2/ucs_4.2-0-ucs-school-4.2/all/"
+	dpkg -i 192.168.0.10/build2/ucs_4.2-0-ucs-school-4.2/all/ucs-school-*.deb
+	systemctl restart celery-worker-ucsschool-import.service
+	systemctl restart gunicorn.service
+	systemctl restart univention-management-console-server.service
+
+$BROWSER: https://10.200.3.90/api/v1/ --> exists? ok :)
 
 ## Test data
 
@@ -16,7 +40,7 @@ To create test data run:
 	--verbose \
 	SchuleEinz
 
-It will create a file with a name similar to   `test_users_2017-09-07_16:09:46.csv`.
+It will create a file with a name similar to   `test_users_2017-09-07_16:09:46.csv`. You can configure a filename with `--csvfile`.
 
 That file can be used as input data for the HTTP-API or on the command line with:
 
@@ -28,7 +52,67 @@ That file can be used as input data for the HTTP-API or on the command line with
 	--sourceUID SchuleEinz-student \
 	--verbose
 
-To use the produced CSV with the HTTP-API service, the configuration file must be used. Copy `/usr/share/ucs-school-import/configs/user_import_http-api.json` to `/var/lib/ucs-school-import/configs/user_import.json` or to `/var/lib/ucs-school-import/configs/SchuleEinz.json`.
+## Configuration
+
+To use the produced CSV with the HTTP-API service, the configuration file must be used:
+
+	cp /usr/share/ucs-school-import/configs/user_import_http-api.json /var/lib/ucs-school-import/configs/user_import.json
+	# or to /var/lib/ucs-school-import/configs/<OU>.json
+
+## Use UMC module for import
+
+* $BROWSER: login as 'Administrator'
+* open 'schoolimport' module
+	* → "The permissions to perform a user import are not sufficient enough."
+
+### create a UMC policy
+
+	eval $(ucr shell)
+	OU=<your ou>
+	udm policies/umc create \
+	--set name=umc-schoolimport-all \
+	--append allow=cn=schoolimport-all,cn=operations,cn=UMC,cn=univention,$ldap_base
+	udm groups/group modify \
+	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
+	--policy-reference cn=umc-schoolimport-all,cn=UMC,cn=policies,$ldap_base
+
+### add user to group with required permissions on school and user role:
+
+	# create school staff user 'uid=astaff' in UMC school wizard...
+
+	udm groups/group modify \
+	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
+	--append users=uid=astaff,cn=mitarbeiter,cn=users,ou=$OU,$ldap_base
+
+### workaround group missing option "ucsschoolGroup"
+
+Until http://forge.univention.org/bugzilla/show_bug.cgi?id=45023#c8 is fixed:
+
+	udm groups/group modify \
+	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
+	--append-option ucsschoolGroup \
+	--append ucsschoolImportSchool=$OU \
+	--append ucsschoolImportRole=staff \
+	--append ucsschoolImportRole=student \
+	--append ucsschoolImportRole=teacher \
+	--append ucsschoolImportRole=teacher_and_staff
+
+## success
+
+$BROWSER
+* login as 'astaff'
+* open 'schoolimport' module
+	* $OU + "Staff"
+	* → UserImportJob #1 (dryrun) ended successfully.
+	* Press "Start Import"
+		* Overview User Imports
+		* → "A new import of Staff users at school $OU has been started. The import has the ID 2."
+		* Liste leer...
+			* Switch to german language and all is fine :)
+			* → reopen #45023
+		* Very nice!
+
+
 
 # nachfolgend evtl. veraltete Infos
 
