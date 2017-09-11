@@ -1,3 +1,11 @@
+ucs-school-lib (10.0.2-5) unstable; urgency=medium
+
+  * Bug #43089: fix smbstatus parse regex
+  * move test data out of python module
+  * reenable test mode
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 11 Sep 2017 18:24:50 +0200
+
 ucs-school-lib (10.0.2-4) unstable; urgency=low
 
   * Bug #45024: add support for changing path of hooks
