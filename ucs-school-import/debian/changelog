@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-39) unstable; urgency=medium
+
+  * Bug #45044: Restrict the list of schools the HTTP-API shows, to those the
+    logged in user has permissions to start imports on.
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 11 Sep 2017 11:55:32 +0200
+
 ucs-school-import (15.0.0-38) unstable; urgency=low
 
   * Bug #45024: configuration example for HTTP-API

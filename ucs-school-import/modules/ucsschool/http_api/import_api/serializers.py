@@ -34,7 +34,6 @@ Model/HTTP-API Serializers
 
 from __future__ import unicode_literals
 import os
-import json
 import datetime
 import collections
 from ldap.filter import filter_format
@@ -106,10 +105,16 @@ class UserImportJobCreationValidator(object):
 
 	@classmethod
 	def is_user_school_role_combination_allowed(cls, username, school, role):
-		res = cls.lo.searchDn(filter_format(
-			'(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=%s)(ucsschoolImportSchool=%s)(memberUid=%s))',
-			(role, school, username))
-		)
+		if role == '*':
+			res = cls.lo.searchDn(filter_format(
+				'(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=%s)(memberUid=%s))',
+				(school, username))
+			)
+		else:
+			res = cls.lo.searchDn(filter_format(
+				'(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=%s)(ucsschoolImportSchool=%s)(memberUid=%s))',
+				(role, school, username))
+			)
 		if not res:
 			logger.error('Not allowed: username={!r} school={!r} role={!r}', username, school, role)
 		return bool(res)

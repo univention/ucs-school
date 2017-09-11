@@ -61,6 +61,10 @@ from ucsschool.http_api.import_api.import_logging import logger
 
 
 class UserImportJobFilter(FilterSet):
+	"""
+	Used to filter the principal field by 'username' (DjangoFilterBackend
+	works automatically only on pk).
+	"""
 	principal = CharFilter(method='principal_filter')
 	status = MultipleChoiceFilter(choices=JOB_CHOICES)
 
@@ -73,7 +77,41 @@ class UserImportJobFilter(FilterSet):
 		return queryset.filter(principal__username=value)
 
 
+class SchoolFilterBackend(BaseFilterBackend):
+	"""
+	Used to list only Schools the user has any permissions on.
+	"""
+	lo, po = get_machine_connection()
+	filter_s = '(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
+	filter_attrs = (str('ucsschoolImportSchool'),)  # unicode_literals + python-ldap = TypeError
+
+	@classmethod
+	def _build_query(cls, username):
+		filter_s = filter_format(cls.filter_s, (username,))
+		ldap_result = cls.lo.search(filter_s, attr=cls.filter_attrs)
+		query = None
+		for _dn, result_dict in ldap_result:
+			q = Q(
+				name__in=result_dict['ucsschoolImportSchool']
+			)  # AND
+			try:
+				query |= q  # OR
+			except TypeError:
+				query = q   # query was None
+		return query
+
+	def filter_queryset(self, request, queryset, view):
+		query = self._build_query(request.user.username)
+		if not query:
+			logger.warn('User %r has no permissions at all.', request.user)
+			return queryset.none()
+		return queryset.filter(query)
+
+
 class UserImportJobFilterBackend(BaseFilterBackend):
+	"""
+	Used to list only ImportJobs the user has any permissions on.
+	"""
 	lo, po = get_machine_connection()
 	filter_s = '(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
 	filter_attrs = (str('ucsschoolImportRole'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
@@ -102,9 +140,32 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 		return queryset.filter(query)
 
 
-class TextArtifactViewPermission(BasePermission):
+class SchoolViewPermission(BasePermission):
+	"""
+	Used to read only School objects the user has any permissions on.
+	"""
 	def has_object_permission(self, request, view, obj):
-		# we use this to check GET of resource list and object
+		# obj is a School object
+		res = UserImportJobCreationValidator.is_user_school_role_combination_allowed(
+			username=request.user.username,
+			school=obj.name,
+			role='*'
+		)
+		if not res:
+			logger.warn(
+				'Access forbidden for %r to school %r.',
+				request.user.username,
+				obj.name
+			)
+		return res
+
+
+class TextArtifactViewPermission(BasePermission):
+	"""
+	Used to read only TextArtifact objects (LogFile, PasswordsFile,
+	SummaryFile) the user has any permissions on.
+	"""
+	def has_object_permission(self, request, view, obj):
 		# obj is a TextArtifact object (LogFile, PasswordsFile, SummaryFile)
 		if not getattr(obj, 'userimportjob'):
 			return False
@@ -125,6 +186,10 @@ class TextArtifactViewPermission(BasePermission):
 
 
 class UserImportJobViewPermission(BasePermission):
+	"""
+	Used to read only UserImport objects the user has any permissions on.
+	"""
+
 	# not needed: restrict who can use the view
 	#
 	# def has_permission(self, request, view):
@@ -320,9 +385,10 @@ Read-only list of Schools (OUs).
 	"""
 	queryset = School.objects.order_by('name')
 	serializer_class = SchoolSerializer
-	filter_backends = (DjangoFilterBackend, OrderingFilter)
+	filter_backends = (SchoolFilterBackend, DjangoFilterBackend, OrderingFilter)
 	filter_fields = ('name', 'displayName')
 	ordering_fields = ('name', 'displayName')
+	permission_classes = (IsAuthenticated, SchoolViewPermission)
 
 	def retrieve(self, request, *args, **kwargs):
 		instance = self.get_object()
