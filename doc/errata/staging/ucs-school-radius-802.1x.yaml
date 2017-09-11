@@ -12,5 +12,5 @@ desc: |
  * A syntax error in the script <filename>ucs-school-802.1x.postrm</filename> has been fixed (Bug #44901).
  * Support different notations of station ids (e.g. 11:22:33:44:55:66 or 1122.3344.5566 or 11-22-33-44-55-66) in
    radius helper <filename>ucs-school-ntlm-auth</filename> (Bug #44917).
- * Some basic logging mechanism has been added for debugging purposes for radius helper <filename>ucs-school-ntlm-auth</filename> (Bug #44919)
+ * A basic logging mechanism has been added for debugging purposes to the radius helper <filename>ucs-school-ntlm-auth</filename> (Bug #44919)
 bug: [44920, 44955, 44901, 44917, 44919]
