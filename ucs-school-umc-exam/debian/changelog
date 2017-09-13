@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-13) unstable; urgency=low
+
+  * Bug #43978: add option to remove computers from exam group
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Sep 2017 18:07:36 +0200
+
 ucs-school-umc-exam (7.0.4-12) unstable; urgency=low
 
   * Bug #44225: fix KeyError if no hook is installed
