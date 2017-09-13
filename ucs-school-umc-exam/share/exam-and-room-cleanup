@@ -39,6 +39,7 @@ import univention.config_registry
 import univention.uldap
 import univention.admin.uldap
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from ucsschool.lib.models import School
 from univention.lib.umc import Client, ConnectionError, HTTPError
 from univention.admin.uexceptions import noObject
 from ldap.filter import escape_filter_chars
@@ -151,6 +152,37 @@ class ExamCleanupHelper(object):
 		except Exception:
 			ud.debug(ud.MAIN, ud.ERROR, 'Removing remaining exam user failed with traceback:\n%s' % (traceback.format_exc(), ))
 
+	@staticmethod
+	def get_udm_group(group_dn, lo, po):
+		univention.admin.modules.update()
+		groupmod = univention.admin.modules.get("groups/group")
+		univention.admin.modules.init(lo, po, groupmod)
+		group = groupmod.object(None, lo, po, group_dn)
+		group.open()
+		return group
+
+	def remove_exam_computers(self):
+		if self.ucr.get('server/role') not in ('domaincontroller_master', 'domaincontroller_backup',):
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping remove_exam_computers: system/role does not match')
+			return
+		if self.options.skip_exam_computer_removal:
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping removal of exam computers as requested')
+			return
+
+		try:
+			lo, po = univention.admin.uldap.getAdminConnection()
+			for school in School.get_all(lo):
+				search_base = SchoolSearchBase([school.name], dn=school.dn)
+				exam_group_dn = search_base.examGroup
+				exam_group = self.get_udm_group(exam_group_dn, lo, po)
+				if exam_group['hosts']:
+					ud.debug(ud.MAIN, ud.PROCESS, 'Removing computers from exam group %r: %r' % (
+						exam_group['name'], exam_group['hosts']))
+					exam_group['hosts'] = []
+					exam_group.modify()
+		except:
+			ud.debug(ud.MAIN, ud.ERROR, 'Removing remaining exam computers failed with traceback:\n%s' % (traceback.format_exc(),))
+
 	def remove_ucr_debris(self):
 		if self.options.skip_remove_ucr_debris:
 			ud.debug(ud.MAIN, ud.INFO, 'Skipping UCR cleanup as requested')
@@ -222,6 +254,7 @@ class ExamCleanupHelper(object):
 	def cleanup(self):
 		self.stop_running_exams()
 		self.remove_exam_user()
+		self.remove_exam_computers()
 		self.remove_ucr_debris()
 		self.remove_exam_file_debris()
 		self.remove_room_debris()
@@ -241,6 +274,9 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
 	parser.add_option(
 		'--skip-exam-user-removal', dest='skip_exam_user_removal', default=False, action='store_true',
 		help='do not remove all existing exam users (only on DC master / DC backup)'
+	)
+	parser.add_option('--skip-exam-computer-removal', dest='skip_exam_computer_removal', default=False, action='store_true',
+		help='do not remove all existing exam computers (only on DC master / DC backup)'
 	)
 	parser.add_option(
 		'--skip-ucr-cleanup', dest='skip_remove_ucr_debris', default=False, action='store_true',
