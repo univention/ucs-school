@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-14) unstable; urgency=low
+
+  * Bug #45294: move empty directory to debian/<packagename>.dirs
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Sep 2017 18:23:25 +0200
+
 ucs-school-umc-exam (7.0.4-13) unstable; urgency=low
 
   * Bug #43978: add option to remove computers from exam group
