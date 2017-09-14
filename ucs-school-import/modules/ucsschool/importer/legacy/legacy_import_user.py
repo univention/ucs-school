@@ -38,6 +38,7 @@ from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
 	ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.exceptions import UnkownAction
+from ucsschool.importer.factory import Factory
 
 
 class LegacyImportUser(ImportUser):
@@ -98,14 +99,15 @@ class LegacyImportUser(ImportUser):
 		:param superordinate: str: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
 		"""
-		oc = cls.user_role_to_oc[cls.config["user_role"]]
+		ocs = cls.get_oc_for_user_role()
+		oc_filter = filter_format("(objectClass=%s)" * len(ocs), ocs)
 		filter_s = filter_format(
-			"(&(objectClass=%s)"
+			"(&{ocs}"
 			"(|"
 			"(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))"
 			"(&(!(ucsschoolSourceUID=*))(!(ucsschoolRecordUID=*))(uid=%s))"
-			"))",
-			(oc, source_uid, record_uid, username))
+			"))".format(ocs=oc_filter),
+			(source_uid, record_uid, username))
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
 		if not obj:
 			raise noObject("No {} with source_uid={!r} and record_uid={!r} or username={!r} found.".format(
