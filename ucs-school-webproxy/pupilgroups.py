@@ -48,7 +48,6 @@ filter = "(objectClass=univentionGroup)"
 attributes = ['memberUid']
 
 all_local_schools = None
-lo = None
 keyPattern = 'proxy/filter/usergroup/%s'
 
 
@@ -56,10 +55,14 @@ def initialize():
 	pass
 
 
-def update_local_school_list():   # previous name: prerun()
-	global all_local_schools, lo
+def prerun():
+	update_local_school_list()
+
+
+def update_local_school_list():
+	global all_local_schools
 	listener.setuid(0)
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: prerun')
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: update_local_school_list()')
 	try:
 		lo, po = univention.admin.uldap.getMachineConnection(ldap_master=False)
 		all_local_schools = [school.dn for school in School.get_all(lo)]
@@ -67,12 +70,19 @@ def update_local_school_list():   # previous name: prerun()
 		all_local_schools = None
 		return
 	finally:
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: all_local_schools=%r' % (all_local_schools,))
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, 'pupilgroups: all_local_schools=%r' % (all_local_schools,))
 		listener.unsetuid()
 
 
+def is_special_ucsschool_group(dn):
+	# (DC|Member)-Edukativnetz
+	# OU${OU}-(DC|Member)-Edukativnetz
+	return dn.endswith('-Edukativnetz,cn=ucsschool,cn=groups,%s' % (listener.configRegistry.get('ldap/base'),))
+
+
 def handler(dn, new, old):
-	update_local_school_list()
+	if is_special_ucsschool_group(dn):
+		update_local_school_list()
 
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, 'pupilgroups: dn: %s' % dn)
 	configRegistry = univention.config_registry.ConfigRegistry()
@@ -95,8 +105,3 @@ def handler(dn, new, old):
 		ucr_update(configRegistry, changes)
 	finally:
 		listener.unsetuid()
-
-
-def postrun():
-	global lo
-	lo = None  # close LDAP connection
