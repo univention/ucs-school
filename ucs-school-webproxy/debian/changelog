@@ -1,3 +1,10 @@
+ucs-school-webproxy (12.0.5-1) unstable; urgency=low
+
+  * Bug #45353: A racing condition in the caching mechanism for handling
+    proxy groups has been fixed
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 14 Sep 2017 12:19:41 +0200
+
 ucs-school-webproxy (12.0.4-3) unstable; urgency=low
 
   * Bug #31728: create symlink wpad.dat -> proxy.pac
