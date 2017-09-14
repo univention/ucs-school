@@ -3,8 +3,9 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-lib
-fix: 10.0.2-5A~4.2.0.201709111855
+fix:
 desc: |
  * Support was added for changing the base path when searching for hooks (Bug #45024).
  * The exam mode finishes more reliable (Bug #43089).
-bug: [43089, 45024]
+ * LADP object classes for User objects are made available for permission checks during imports (Bug #45044).
+bug: [43089, 45024, 45044]
