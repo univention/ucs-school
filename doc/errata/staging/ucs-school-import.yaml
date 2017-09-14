@@ -3,7 +3,7 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.0-39A~4.2.0.201709111200
+fix: 15.0.0-41A~4.2.0.201709141722
 desc: |
  * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #44838).
  * A Python client library to use the experimental RESTful API was created (Bug #45022).
