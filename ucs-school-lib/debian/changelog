@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-6) unstable; urgency=low
+
+  * Bug #45044: make ObjectClasses of User classes accessable
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 14 Sep 2017 16:07:18 +0200
+
 ucs-school-lib (10.0.2-5) unstable; urgency=medium
 
   * Bug #43089: fix smbstatus parse regex

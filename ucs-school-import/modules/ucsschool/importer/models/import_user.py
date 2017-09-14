@@ -84,14 +84,6 @@ class ImportUser(User):
 	# as arguments for object creation and will be exported by to_dict():
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
-	user_role_to_oc = {
-		"": "ucsschoolType",
-		None: "ucsschoolType",
-		"staff": "ucsschoolStaff",
-		"student": "ucsschoolStudent",
-		"teacher": "ucsschoolTeacher",
-		"teacher_and_staff": "ucsschoolTeacher",
-	}
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -176,6 +168,27 @@ class ImportUser(User):
 			return super(ImportUser, self).create(lo, validate)
 
 	@classmethod
+	def get_oc_for_user_role(cls):
+		cls.logger.debug('***** cls.config["user_role"]=%r', cls.config["user_role"])
+		if not cls.factory:
+			cls.factory = Factory()
+		# convert cmdline / config name to ucsschool.lib role(s)
+		if not cls.config["user_role"]:
+			roles = ()
+		elif cls.config["user_role"] == 'student':
+			roles = (role_pupil,)
+		elif cls.config["user_role"] == 'teacher_and_staff':
+			roles = (role_teacher, role_staff)
+		else:
+			roles = (cls.config["user_role"],)
+		cls.logger.debug('***** roles=%r', roles)
+		a_user = cls.factory.make_import_user(roles)
+		cls.logger.debug('***** a_user=%r', a_user)
+		ocs = a_user.default_options or ("ucsschoolType",)
+		cls.logger.debug('***** ocs=%r', ocs)
+		return ocs
+
+	@classmethod
 	def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
 		"""
 		Retrieve an ImportUser.
@@ -186,8 +199,12 @@ class ImportUser(User):
 		:param superordinate: str: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
 		"""
-		oc = cls.user_role_to_oc[cls.config["user_role"]]
-		filter_s = filter_format("(&(objectClass=%s)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))", (oc, source_uid, record_uid))
+		ocs = cls.get_oc_for_user_role()
+		oc_filter = filter_format("(objectClass=%s)" * len(ocs), ocs)
+		filter_s = filter_format(
+			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))".format(oc_filter),
+			(source_uid, record_uid)
+		)
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
 		if not obj:
 			raise noObject("No {} with source_uid={!r} and record_uid={!r} found.".format(

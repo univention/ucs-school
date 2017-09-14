@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-40) unstable; urgency=low
+
+  * Bug #45044: use now accessible ObjectClasses instead of hard coded ones
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 14 Sep 2017 16:11:00 +0200
+
 ucs-school-import (15.0.0-39) unstable; urgency=medium
 
   * Bug #45044: Restrict the list of schools the HTTP-API shows, to those the

@@ -69,6 +69,7 @@ class User(UCSSchoolHelperAbstractClass):
 	# _samba_home_path_cache is invalidated in School.invalidate_cache()
 
 	roles = []
+	default_options = ()
 
 	def __init__(self, *args, **kwargs):
 		super(User, self).__init__(*args, **kwargs)
@@ -357,8 +358,16 @@ class User(UCSSchoolHelperAbstractClass):
 			if option not in udm_obj.options:
 				udm_obj.options.append(option)
 
-	def get_default_options(self):
-		return []
+	@classmethod
+	def get_default_options(cls):
+		options = set()
+		for kls in cls.__bases__:  # u-s-import uses multiple inheritance, we have to cover all parents
+			try:
+				options.update(kls.get_default_options())
+			except AttributeError:
+				pass
+		options.update(cls.default_options)
+		return options
 
 	def get_specific_groups(self, lo):
 		groups = self.get_domain_users_groups()
@@ -559,9 +568,7 @@ class Student(User):
 	type_name = _('Student')
 	type_filter = '(&(objectClass=ucsschoolStudent)(!(objectClass=ucsschoolExam)))'
 	roles = [role_pupil]
-
-	def get_default_options(self):
-		return super(Student, self).get_default_options() + ['ucsschoolStudent']
+	default_options = ('ucsschoolStudent',)
 
 	def do_school_change(self, udm_obj, lo, old_school):
 		try:
@@ -592,9 +599,7 @@ class Teacher(User):
 	type_name = _('Teacher')
 	type_filter = '(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff)))'
 	roles = [role_teacher]
-
-	def get_default_options(self):
-		return super(Teacher, self).get_default_options() + ['ucsschoolTeacher']
+	default_options = ('ucsschoolTeacher',)
 
 	@classmethod
 	def get_container(cls, school):
@@ -611,9 +616,7 @@ class Staff(User):
 	type_name = _('Staff')
 	roles = [role_staff]
 	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff)))'
-
-	def get_default_options(self):
-		return super(Staff, self).get_default_options() + ['ucsschoolStaff']
+	default_options = ('ucsschoolStaff',)
 
 	@classmethod
 	def get_container(cls, school):
@@ -652,9 +655,7 @@ class TeachersAndStaff(Teacher):
 	type_name = _('Teacher and Staff')
 	type_filter = '(&(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))'
 	roles = [role_teacher, role_staff]
-
-	def get_default_options(self):
-		return super(TeachersAndStaff, self).get_default_options() + ['ucsschoolStaff']
+	default_options = ('ucsschoolStaff',)
 
 	@classmethod
 	def get_container(cls, school):
@@ -669,9 +670,7 @@ class TeachersAndStaff(Teacher):
 class ExamStudent(Student):
 	type_name = _('Exam student')
 	type_filter = '(&(objectClass=ucsschoolStudent)(objectClass=ucsschoolExam))'
-
-	def get_default_options(self):
-		return super(ExamStudent, self).get_default_options() + ['ucsschoolExam']
+	default_options = ('ucsschoolExam',)
 
 	@classmethod
 	def get_container(cls, school):
