@@ -1,3 +1,6 @@
 [submodule "italc-windows/italc.git"]
 	path = italc-windows/italc.git
 	url = ../italc
+[submodule "italc/italc"]
+	path = italc/italc
+	url = ../italc
