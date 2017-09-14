@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-@%@UCRWARNING=# @%@
 """
 Django settings for the UCS@school import HTTP API.
 """
@@ -148,8 +147,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = ['django_pam.auth.backends.PAMBackend'] + list(global_settings.AUTHENTICATION_BACKENDS)
 
+TIME_ZONE = ucr.get('ucsschool/import/http_api/TIME_ZONE')
+if not TIME_ZONE:
+	with open('/etc/timezone', 'rb') as fp:
+		TIME_ZONE = fp.read().strip()
+	if not re.match(r'\w+/\w+', TIME_ZONE):
+		TIME_ZONE = 'Europe/Berlin'
+
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = ucr.get('ucsschool/import/http_api/TIME_ZONE', 'Europe/Berlin')
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

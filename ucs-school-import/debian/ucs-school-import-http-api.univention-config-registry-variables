@@ -1,0 +1,17 @@
+[ucsschool/import/http_api/django_debug]
+Description[de]=Aktiviert Debug-Ausgaben bei Fehlern durch die Web-Applikation. Nicht im Produktivbetrieb einschalten, da es ein Sicherheitsrisiko darstellt! Standard: aus.
+Description[en]=Activates web application debug output when errors occur. This is a security risk - do not switch this on in a production environment! Default: off.
+Type=bool
+Categories=ucsschool-base
+
+[ucsschool/import/http_api/ALLOWED_HOSTS]
+Description[de]=Kommaseparierte Liste vom IPs und Hostnamen denen es erlaubt ist, sich zum Webapplikationsserver zu verbinden. Wenn nicht gesetzt, wird nur der Server selbst erlaubt. Standard: nicht gesetzt.
+Description[en]=Comma separated list of IPs and hostnames that are allowed to connect to the web application server. If not set only the server itself is allowed. Default: unset.
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/import/http_api/TIME_ZONE]
+Description[de]=Zeitzone des Servers. Wenn nicht gesetzt, wird der Wert aus /etc/timezone verwendet. Standard: nicht gesetzt.
+Description[en]=Time zone of the server. If not set the value in /etc/timezone will be used. Default: unset.
+Type=str
+Categories=ucsschool-base
