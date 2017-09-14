@@ -48,7 +48,6 @@ filter = "(objectClass=univentionGroup)"
 attributes = ['memberUid']
 
 all_local_schools = None
-lo = None
 keyPattern = 'proxy/filter/usergroup/%s'
 
 
@@ -61,7 +60,7 @@ def prerun():
 
 
 def update_local_school_list():
-	global all_local_schools, lo
+	global all_local_schools
 	listener.setuid(0)
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: update_local_school_list()')
 	try:
@@ -79,6 +78,7 @@ def is_special_ucsschool_group(dn):
 	# (DC|Member)-Edukativnetz
 	# OU${OU}-(DC|Member)-Edukativnetz
 	return dn.endswith('-Edukativnetz,cn=ucsschool,cn=groups,%s' % (listener.configRegistry.get('ldap/base'),))
+
 
 def handler(dn, new, old):
 	if is_special_ucsschool_group(dn):
@@ -105,8 +105,3 @@ def handler(dn, new, old):
 		ucr_update(configRegistry, changes)
 	finally:
 		listener.unsetuid()
-
-
-def postrun():
-	global lo
-	lo = None  # close LDAP connection
