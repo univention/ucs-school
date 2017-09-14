@@ -169,7 +169,6 @@ class ImportUser(User):
 
 	@classmethod
 	def get_oc_for_user_role(cls):
-		cls.logger.debug('***** cls.config["user_role"]=%r', cls.config["user_role"])
 		if not cls.factory:
 			cls.factory = Factory()
 		# convert cmdline / config name to ucsschool.lib role(s)
@@ -181,11 +180,8 @@ class ImportUser(User):
 			roles = (role_teacher, role_staff)
 		else:
 			roles = (cls.config["user_role"],)
-		cls.logger.debug('***** roles=%r', roles)
 		a_user = cls.factory.make_import_user(roles)
-		cls.logger.debug('***** a_user=%r', a_user)
 		ocs = a_user.default_options or ("ucsschoolType",)
-		cls.logger.debug('***** ocs=%r', ocs)
 		return ocs
 
 	@classmethod
