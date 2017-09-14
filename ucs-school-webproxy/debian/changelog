@@ -1,3 +1,10 @@
+ucs-school-webproxy (13.0.1-1) unstable; urgency=low
+
+  * Bug #45352: a racing condition in the caching mechanism for handling
+    proxy groups has been fixed
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 14 Sep 2017 12:22:18 +0200
+
 ucs-school-webproxy (13.0.0-4) unstable; urgency=low
 
   * Bug #40442: set dhcpd/authoritative=yes only for fresh installations
