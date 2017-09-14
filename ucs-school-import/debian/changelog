@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-42) unstable; urgency=low
+
+  * Bug #45044: remove debug output
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 14 Sep 2017 17:39:01 +0200
+
 ucs-school-import (15.0.0-41) unstable; urgency=low
 
   * Bug #45024: don't manage settings file with UCR
