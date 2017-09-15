@@ -6,6 +6,6 @@ src: ucs-school-lib
 fix: 10.0.2-6A~4.2.0.201709141720
 desc: |
  * Support was added for changing the base path when searching for hooks (Bug #45024).
- * The exam mode finishes more reliable (Bug #43089).
+ * In some cases after stopping the exam mode, shares on the school server weren't accessible anymore. This bug has been fixed (Bug #43089).
  * LADP object classes for User objects are made available for permission checks during imports (Bug #45044).
 bug: [43089, 45024, 45044]
