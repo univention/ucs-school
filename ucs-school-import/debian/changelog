@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-43) unstable; urgency=low
+
+  * Bug #42144: allow hooks to modify dictionary used for formatting user
+    attributes
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 15 Sep 2017 16:39:25 +0200
+
 ucs-school-import (15.0.0-42) unstable; urgency=low
 
   * Bug #45044: remove debug output

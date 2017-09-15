@@ -49,6 +49,7 @@ from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirth
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
+from ucsschool.importer.utils.format_pyhook import FormatPyHook
 
 
 class ImportUser(User):
@@ -80,6 +81,7 @@ class ImportUser(User):
 	logger = None
 	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
 	_pyhook_cache = None
+	_format_pyhook_cache = None
 	# non-Attribute attributes (not in self._attributes) that can also be used
 	# as arguments for object creation and will be exported by to_dict():
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
@@ -157,6 +159,24 @@ class ImportUser(User):
 		except KeyError:
 			pass
 		return super(ImportUser, self).call_hooks(hook_time, func_name)
+
+	def call_format_hook(self, prop_name, fields):
+		if self._format_pyhook_cache is None:
+			# load hooks
+			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
+			pyloader = PyHooksLoader(path, FormatPyHook, self.logger)
+			self.__class__._format_pyhook_cache = pyloader.get_hook_objects()
+
+		res = fields
+		for func in self._format_pyhook_cache.get('patch_fields_{}'.format(self.role_sting), []):
+			if prop_name not in func.im_class.properties:
+				# ignore properties not in Hook.properties
+				continue
+			self.logger.info(
+				"Running patch_fields_%s hook %s for property name %r for user %s...",
+				self.role_sting, func, prop_name, self)
+			res = func(prop_name, res)
+		return res
 
 	def create(self, lo, validate=True):
 		self._lo = lo
@@ -436,7 +456,8 @@ class ImportUser(User):
 			return
 		try:
 			self.email = self.udm_properties.pop("mailPrimaryAddress")
-			return
+			if self.email:
+				return
 		except KeyError:
 			pass
 
@@ -725,7 +746,7 @@ class ImportUser(User):
 		- from self.udm_properties
 		- from kwargs
 
-		:param prop_name: str: name of property (for error logging)
+		:param prop_name: str: name of property to be formatted
 		:param scheme: str: scheme to use
 		:param kwargs: dict: additional data to use for formatting
 		:return: str: formatted string
@@ -739,6 +760,7 @@ class ImportUser(User):
 		if "username" not in all_fields:
 			all_fields["username"] = all_fields["name"]
 		all_fields.update(kwargs)
+		all_fields = self.call_format_hook(prop_name, all_fields)
 
 		res = self.prop._replace(scheme, all_fields)
 		if not res:
