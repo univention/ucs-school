@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (14.0.3-5) unstable; urgency=medium
+
+  * Bug #43704: display also the printjobs of the logged in teacher
+
+ -- Florian Best <best@univention.de>  Mon, 18 Sep 2017 11:33:31 +0200
+
 ucs-school-umc-printermoderation (14.0.3-4) unstable; urgency=medium
 
   * Bug #44335: changed sortRepresentation to sortFormatter
