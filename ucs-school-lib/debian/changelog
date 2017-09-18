@@ -1,6 +1,6 @@
 ucs-school-lib (9.0.33-5) unstable; urgency=medium
 
-  * Bug #43089: fix smbstatus parse regex
+  * Bug #45403: fix smbstatus parse regex
   * move test data out of python module
   * reenable test mode
 
