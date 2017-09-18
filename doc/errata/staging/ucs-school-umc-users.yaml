@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-users
+fix: 
+desc: |
+ * An traceback is prevented in the UMC module if the user has no permissions to reset another users password (Bug #45255).
+bug: [45255]
