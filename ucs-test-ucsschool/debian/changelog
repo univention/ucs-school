@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.17-66) unstable; urgency=low
+
+  * Bug #45403: move 103_ucsschool_smbstatus_parser from 00_checks to
+   99_ucsschool
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 18 Sep 2017 12:03:53 +0200
+
 ucs-test-ucsschool (3.0.17-65) unstable; urgency=medium
 
   * Bug #44993: fix tests
