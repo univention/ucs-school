@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-lib
-fix:
+fix: 9.0.33-5.282.201709181206
 desc: |
  * In some cases after stopping the exam mode, shares on the school server weren't accessible anymore. This bug has been fixed (Bug #45403).
 bug: [45403]
