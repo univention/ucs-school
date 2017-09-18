@@ -47,7 +47,7 @@ from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
-from ucsschool.lib.models import School
+from ucsschool.lib.models import School, User
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_errors
@@ -139,6 +139,11 @@ class Instance(SchoolBaseModule):
 		if klass in (None, 'None'):
 			klass = None
 		students = self._users(ldap_user_read, request.options['school'], group=klass, user_type='student', pattern=request.options.get('pattern', ''))
+
+		try:
+			students.append(User.from_dn(self.user_dn, None, ldap_user_read).get_udm_object(ldap_user_read))
+		except udm_errors.noObject:
+			MODULE.warn('Could not get user object of teacher %r. Is it a UCS@school user?' % (self.user_dn,))
 
 		printjoblist = []
 
