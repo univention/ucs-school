@@ -1,3 +1,9 @@
+ucs-school-umc-users (13.0.0-3) unstable; urgency=medium
+
+  * Bug #45255: fix UnboundLocalError in case of permission problems
+
+ -- Florian Best <best@univention.de>  Mon, 18 Sep 2017 11:44:25 +0200
+
 ucs-school-umc-users (13.0.0-2) unstable; urgency=medium
 
   * Bug #36789: adapt search form to new UMC design

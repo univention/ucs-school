@@ -84,7 +84,7 @@ class Instance(SchoolBaseModule):
 	)
 	@LDAP_Connection(USER_WRITE)
 	def password_reset(self, request, ldap_user_write=None):
-		'''Reset the password of the user'''  # TODO: instead of error-indicating strings we should raise UMC_Error
+		'''Reset the password of the user'''  # FIXME: instead of error-indicating strings we should raise UMC_Error
 		userdn = request.options['userDN']
 		pwdChangeNextLogin = request.options['nextLogin']
 		newPassword = request.options['newPassword']
@@ -108,12 +108,12 @@ class Instance(SchoolBaseModule):
 			ur['pwdChangeNextLogin'] = '1' if pwdChangeNextLogin else '0'
 			dn = ur.modify()
 			return True
-		except udm_exceptions.permissionDenied as e:
-			MODULE.process('dn=%r' % ur.dn)
-			MODULE.process('exception=%s' % str(e.__class__))
+		except udm_exceptions.permissionDenied as exc:
+			MODULE.process('dn=%r' % (userdn,))
+			MODULE.process('exception=%s' % (type(exc),))
 			return _('permission denied')
-		except udm_exceptions.base as e:
-			MODULE.process('dn=%r' % ur.dn)
-			MODULE.process('exception=%s' % str(e.__class__))
-			MODULE.process('exception=%s' % str(e.message))
-			return '%s' % (get_exception_msg(e))
+		except udm_exceptions.base as exc:
+			MODULE.process('dn=%r' % (userdn,))
+			MODULE.process('exception=%s' % (type(exc),))
+			MODULE.process('exception=%s' % (exc.message,))
+			return '%s' % (get_exception_msg(exc))
