@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-printermoderation
+fix: 14.0.3-5A~4.2.0.201709181136
+desc: |
+ * The  print jobs of the logged in teacher are now also shown in the printermoderation UMC module.
+bug: [43704]
