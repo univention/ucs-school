@@ -191,18 +191,15 @@ STD_S4_SRV_RECORDS = {
 def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None):
 	global filter
 	_visible_samba4_school_dcs = []
-	try:
-		res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
-		for (record_dn, obj) in res:
-			# select only school branches and exclude a modrdn 'r' phase DN which still exists
-			if SchoolSearchBase.getOU(record_dn) and record_dn != excludeDN:
-				if 'associatedDomain' in obj:
-					domainname = obj['associatedDomain'][0]
-				else:
-					domainname = _local_domainname
-				_visible_samba4_school_dcs.append('.'.join((obj['cn'][0], domainname)))
-	except udm_errors.ldapError, e:
-		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
+	res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
+	for (record_dn, obj) in res:
+		# select only school branches and exclude a modrdn 'r' phase DN which still exists
+		if SchoolSearchBase.getOU(record_dn) and record_dn != excludeDN:
+			if 'associatedDomain' in obj:
+				domainname = obj['associatedDomain'][0]
+			else:
+				domainname = _local_domainname
+			_visible_samba4_school_dcs.append('.'.join((obj['cn'][0], domainname)))
 
 	return _visible_samba4_school_dcs
 
@@ -214,7 +211,11 @@ def update_ucr_overrides(excludeDN=None):
 	global _s4_connector_restart
 	global _relativeDomainName_trigger_set
 
-	server_fqdn_list = visible_samba4_school_dcs(excludeDN=excludeDN)
+	try:
+		server_fqdn_list = visible_samba4_school_dcs(excludeDN=excludeDN)
+	except udm_errors.ldapError as exc:
+		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, exc))
+		return
 	server_fqdn_list.sort()
 
 	ucr = univention.config_registry.ConfigRegistry()
