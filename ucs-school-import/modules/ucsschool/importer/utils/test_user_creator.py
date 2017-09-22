@@ -154,7 +154,7 @@ class TestUserCreator(object):
 					user["Klassen"] = {}
 				elif kind == "student":
 					# students are in 1 class
-					user["Klassen"] = dict([(school, self._get_class_name(school)) for school in user["Schulen"]])
+					user["Klassen"] = dict([(school, [self._get_class_name(school)]) for school in user["Schulen"]])
 				else:
 					# [staff]teachers can be in multiple classes
 					user["Klassen"] = dict([(school, [self._get_class_name(school) for _x in range(self.num_inclasses)]) for school in user["Schulen"]])

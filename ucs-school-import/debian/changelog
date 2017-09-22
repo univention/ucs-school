@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-44) unstable; urgency=low
+
+  * Bug #45436: fix test user creation for students
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 22 Sep 2017 11:49:27 +0200
+
 ucs-school-import (15.0.0-43) unstable; urgency=low
 
   * Bug #42144: allow hooks to modify dictionary used for formatting user
