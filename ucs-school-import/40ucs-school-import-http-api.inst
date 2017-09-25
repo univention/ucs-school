@@ -48,10 +48,10 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set objectClass=ucsschoolImportGroup \
 	--set default=0 \
 	--set editable=1 \
-	--set shortDescription="UCS@school Group" \
-	--set longDescription="Specifies that this group is a UCS@school group" \
-	--set translationShortDescription='"de_DE" "UCS@school Gruppe"' \
-	--set translationLongDescription='"de_DE" "Spezifiziert, dass diese Gruppe eine UCS@school-Gruppe ist"' || die
+	--set shortDescription="UCS@school Import Permissions" \
+	--set longDescription="Makes the permissions for UCS@school imports configurable for users of this group." \
+	--set translationShortDescription='"de_DE" "UCS@school Import-Berechtigungen"' \
+	--set translationLongDescription='"de_DE" "Macht die UCS@school Import-Berechtigungen für Benutzer dieser Gruppe konfigurierbar."' || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -60,9 +60,9 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolImportGroup" \
 	--set tabName="UCS@school" \
 	--set tabPosition=1 \
-	--set groupName="Import" \
+	--set groupName="Import Permissions" \
 	--set groupPosition="2" \
-	--set translationGroupName='"de_DE" "Import"' \
+	--set translationGroupName='"de_DE" "Import-Berechtigungen"' \
 	--set shortDescription="Allowed schools for UCS@school Import" \
 	--set longDescription="Users of this group are allowed to do UCS@school import for the selected schools." \
 	--set translationShortDescription='"de_DE" "Erlaubte Schulen für den UCS@school Import"' \
@@ -82,9 +82,9 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolImportGroup" \
 	--set tabName="UCS@school" \
 	--set tabPosition=3 \
-	--set groupName="Import" \
+	--set groupName="Import Permissions" \
 	--set groupPosition="2" \
-	--set translationGroupName='"de_DE" "Import"' \
+	--set translationGroupName='"de_DE" "Import-Berechtigungen"' \
 	--set shortDescription="Allowed roles for UCS@school Import" \
 	--set longDescription="Users of this group are allowed to do UCS@school import for the selected user roles." \
 	--set translationShortDescription='"de_DE" "Erlaubte Rollen für den UCS@school Import"' \
