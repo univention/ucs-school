@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-45) unstable; urgency=medium
+
+  * Bug #45026: change names/description of import group object class
+
+ -- Florian Best <best@univention.de>  Mon, 25 Sep 2017 13:55:40 +0200
+
 ucs-school-import (15.0.0-44) unstable; urgency=low
 
   * Bug #45436: fix test user creation for students
