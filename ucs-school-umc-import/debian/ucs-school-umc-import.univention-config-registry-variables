@@ -1,0 +1,5 @@
+[ucsschool/import/error/mail-address]
+Description[de]=Diese E-Mail Adresse wird dem Benutzer angezeigt, wenn Fehler während des Imports passieren.
+Description[en]=This e-mail address is displayed to the user when an error during the import happens.
+Type=str
+Categories=ucsschool-base
