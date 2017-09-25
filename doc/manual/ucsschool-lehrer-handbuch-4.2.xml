@@ -18,8 +18,8 @@
     </subtitle>
     <legalnotice>
       <literallayout>
-Version 4.2 v2
-Stand: 29. August 2017
+Version 4.2 v14
+Stand: 25. September 2017
       </literallayout>
 
       <literallayout lang="">
@@ -654,8 +654,8 @@ feedback@univention.de
 	  <section id="lehrerdoku:druckermod">
 		<title>Drucker moderieren</title>
 		<para>
-		  Mit dieser Funktion können Ausdrucke der Schüler geprüft werden. Die anstehenden
-		  Druckaufträge können vom Lehrer betrachtet und entweder verworfen oder an den Drucker weitergereicht
+		  Mit dieser Funktion können Druckaufträge der Schüler bzw. eigene Druckaufträge vor dem eigentlichen Ausdruck geprüft werden. Die anstehenden
+		  Druckaufträge können vom Lehrer (als PDF-Datei) betrachtet und entweder verworfen oder an den Drucker weitergeleitet
 		  werden. Dadurch können unnötige oder fehlerhafte Ausdrucke vermieden werden.
 		</para>
 		<para>
@@ -676,7 +676,9 @@ feedback@univention.de
 			  <simpara>
 				Es erscheint eine Liste mit anstehenden Druckaufträge. Die Liste der Schüler kann
 				eingeschränkt werden, indem über den Menüpunkt <guimenu>Klasse oder Arbeitsgruppe</guimenu> eine
-				Klasse oder AG ausgewählt wird. Es werden dann nur die Schüler dieser Klasse dargestellt.
+				Klasse oder AG ausgewählt wird. Es werden dann nur Druckaufträge der Schüler dieser Klasse sowie
+				die eigenen Druckaufträge dargestellt, sofern man selbst Mitglied der ausgewählten Klasse bzw.
+				Arbeitsgruppe ist.
 			  </simpara>
 			</listitem>
 			<listitem>
@@ -696,7 +698,7 @@ feedback@univention.de
 				Mit <guimenu>Betrachten</guimenu> kann der Druckauftrag angezeigt werden. Wenn alles
 				in Ordnung ist, kann der Ausdruck mit <guimenu>Drucken</guimenu> an den tatsächlichen Drucker
 				weitergeleitet werden. In dem folgenden Dialog kann dann ein Drucker ausgewählt werden. Alternativ
-				kann der Druckauftrag mit <guimenu>Löschen</guimenu> entfernt werden.
+				kann der Druckauftrag mit <guimenu>Löschen</guimenu> aus der Warteschlange entfernt werden.
 			  </simpara>
 			</listitem>
 		  </itemizedlist>

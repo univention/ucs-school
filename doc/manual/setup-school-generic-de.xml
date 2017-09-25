@@ -18,19 +18,17 @@
             Möglichkeit, Druckaufträge zu moderieren. Dafür werden die Druckaufträge zunächst über einen
             speziellen PDF-Drucker (Druckerfreigabe <systemitem class="resource">PDFDrucker</systemitem>) auf dem
             Schüler-/Lehrerrechner gedruckt und anschließend durch den Lehrer im UMC-Modul <emphasis>Drucker
-            moderieren
-        </emphasis> betrachtet, verworfen oder für den Druck freigegeben.
+            moderieren</emphasis> betrachtet, verworfen oder für den Druck freigegeben.
         </para>
         <para>
-            In &ucsUAS; gibt es vielfältige Möglichkeiten die Druckmoderation zu konfigurieren und
+            In &ucsUAS; gibt es vielfältige Möglichkeiten, die Druckmoderation zu konfigurieren und
             einzusetzen. Nachfolgend wird die Einrichtung eines einzelnen Szenarios beschrieben, welches leicht
             an die Bedürfnisse der eigenen Schulumgebung angepasst werden kann. In dem beschriebenen Szenario
             wird der Zugriff auf die physikalischen Drucker für alle Schüler gesperrt.
         </para>
         <para>
             Für die Druckmoderation ist es erforderlich, dass zunächst wie in
-            <xref
-                    linkend="school:setup:cli:printers"/>
+            <xref linkend="school:setup:cli:printers"/>
             beschrieben, Druckfreigaben für die zu verwendenden, physikalisch
             existierenden Drucker angelegt werden.
         </para>
@@ -40,10 +38,8 @@
             erlaubt bzw. gesperrt werden. Um den Schülern den Zugriff auf die physikalischen Drucker zu
             verbieten, muss an den Druckerfreigaben für diese Drucker der Zugriff durch Benutzer der
             OU-spezifischen Gruppe
-            <systemitem class="groupname">schueler-
-                <replaceable>OU</replaceable>
-            </systemitem>
-            > (z.B. <systemitem class="groupname">schueler-gsmitte</systemitem>)
+            <systemitem class="groupname">schueler-<replaceable>OU</replaceable></systemitem>
+			(z.B. <systemitem class="groupname">schueler-gsmitte</systemitem>)
             verboten werden. Für den PDF-Drucker <systemitem class="resource">PDFDrucker</systemitem> sollten keine
             Einschränkungen
             gemacht werden.
@@ -53,11 +49,15 @@
             <systemitem class="resource">PDFDrucker</systemitem>
             zu senden. Im UMC-Modul
             <emphasis>Drucker moderieren</emphasis>
-            können die Druckaufträge anschließend durch den Lehrer aufgelistet und betrachtet werden. Dafür ist
+            können die Druckaufträge anschließend durch den Lehrer aufgelistet und in Form einer PDF-Datei betrachtet werden. Dafür ist
             ein geeignetes Programm zur Anzeige von PDF-Dateien auf den Lehrerrechnern erforderlich. Die
             Druckaufträge können dann durch den Lehrer an einen beliebigen physikalischen Drucker der Schule
             weitergeleitet oder auch verworfen werden.
         </para>
+		<para>
+			Lehrer können in dem UMC-Modul grundsätzlich nur die Druckaufträge der Schüler oder ihre eigenen Druckaufträge betrachten.
+			Druckaufträge von anderen Lehrern werden von dem UMC-Modul nicht angezeigt.
+		</para>
         <para>
             Um Ausnahmen von dieser strikte Regelung zu ermöglichen, kann der Lehrer im UMC-Modul
             <emphasis>Computerraum</emphasis>
