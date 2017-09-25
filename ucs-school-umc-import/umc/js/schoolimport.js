@@ -302,7 +302,7 @@ define([
 					name: 'date',
 					label: _('Started at'),
 					formatter: function(value) {
-						return locale.format(locale.parse(value, {datePattern: 'yyyy/MM/dd', timePattern: 'HH:mm:ss'}));
+						return locale.format(locale.parse(value, {datePattern: 'yyyy/MM/dd', timePattern: 'HH:mm:ss', locale: 'de-DE'}));
 					}
 				}, {
 					name: 'school',

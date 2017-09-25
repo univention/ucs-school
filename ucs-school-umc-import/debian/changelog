@@ -1,5 +1,6 @@
 ucs-school-umc-import (0.0.0-7) unstable; urgency=medium
 
+  * Bug #45023: fix locale parsing
   * Bug #45023: add UCR variable description
 
  -- Florian Best <best@univention.de>  Mon, 25 Sep 2017 14:37:01 +0200
