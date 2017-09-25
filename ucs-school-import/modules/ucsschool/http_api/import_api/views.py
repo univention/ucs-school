@@ -82,7 +82,7 @@ class SchoolFilterBackend(BaseFilterBackend):
 	Used to list only Schools the user has any permissions on.
 	"""
 	lo, po = get_machine_connection()
-	filter_s = '(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
+	filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
 	filter_attrs = (str('ucsschoolImportSchool'),)  # unicode_literals + python-ldap = TypeError
 
 	@classmethod
@@ -113,7 +113,7 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 	Used to list only ImportJobs the user has any permissions on.
 	"""
 	lo, po = get_machine_connection()
-	filter_s = '(&(objectClass=ucsschoolGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
+	filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
 	filter_attrs = (str('ucsschoolImportRole'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
 
 	@classmethod

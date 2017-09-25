@@ -84,13 +84,13 @@ To use the produced CSV with the HTTP-API service, the configuration file must b
 	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
 	--append users=uid=astaff,cn=mitarbeiter,cn=users,ou=$OU,$ldap_base
 
-### workaround group missing option "ucsschoolGroup"
+### workaround group missing option "ucsschoolImportGroup"
 
 Until http://forge.univention.org/bugzilla/show_bug.cgi?id=45023#c8 is fixed:
 
 	udm groups/group modify \
 	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
-	--append-option ucsschoolGroup \
+	--append-option ucsschoolImportGroup \
 	--append ucsschoolImportSchool=$OU \
 	--append ucsschoolImportRole=staff \
 	--append ucsschoolImportRole=student \

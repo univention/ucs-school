@@ -43,9 +43,9 @@ eval "$(ucr shell)"
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolGroup" \
+	--set name="ucsschoolImportGroup" \
 	--set module=groups/group \
-	--set objectClass=ucsschoolGroup \
+	--set objectClass=ucsschoolImportGroup \
 	--set default=0 \
 	--set editable=1 \
 	--set shortDescription="UCS@school Group" \
@@ -57,7 +57,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolSchool-ImportSchool" \
 	--append module=groups/group \
-	--append options="ucsschoolGroup" \
+	--append options="ucsschoolImportGroup" \
 	--set tabName="UCS@school" \
 	--set tabPosition=1 \
 	--set groupName="Import" \
@@ -68,7 +68,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set translationShortDescription='"de_DE" "Erlaubte Schulen für den UCS@school Import"' \
 	--set translationLongDescription='"de_DE" "Benutzer dieser Gruppe dürfen UCS@school imports für die gewählten Schulen ausführen."' \
 	--set CLIName="ucsschoolImportSchool" \
-	--set objectClass=ucsschoolGroup \
+	--set objectClass=ucsschoolImportGroup \
 	--set ldapMapping=ucsschoolImportSchool \
 	--set syntax=ucsschoolSchools \
 	--set mayChange=1 \
@@ -79,7 +79,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolSchool-ImportRole" \
 	--append module=groups/group \
-	--append options="ucsschoolGroup" \
+	--append options="ucsschoolImportGroup" \
 	--set tabName="UCS@school" \
 	--set tabPosition=3 \
 	--set groupName="Import" \
@@ -90,7 +90,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set translationShortDescription='"de_DE" "Erlaubte Rollen für den UCS@school Import"' \
 	--set translationLongDescription='"de_DE" "Benutzer dieser Gruppe dürfen UCS@school imports für die gewählten Benutzerrollen ausführen."' \
 	--set CLIName="ucsschoolImportRole" \
-	--set objectClass=ucsschoolGroup \
+	--set objectClass=ucsschoolImportGroup \
 	--set ldapMapping=ucsschoolImportRole \
 	--set syntax=ucsschoolTypes \
 	--set mayChange=1 \
@@ -215,7 +215,7 @@ python -c 'from ucsschool.lib.models import School; import univention.admin.ulda
 		--position "cn=groups,ou=$school${district},$ldap_base" \
 		--set name="$school-import-all" \
 		--set description="Default group for UCS@school user imports" \
-		--append-option "ucsschoolGroup" \
+		--append-option "ucsschoolImportGroup" \
 		--set ucsschoolImportSchool="$school" \
 		--append ucsschoolImportRole=student \
 		--append ucsschoolImportRole=staff \

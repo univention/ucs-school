@@ -72,8 +72,8 @@ objectclass ( univentionSchool:53.7 NAME 'ucsschoolAdministratorGroup'
         DESC 'auxiliary class for UCS@school admin groups'
         SUP ucsschoolType AUXILIARY )
 
-objectclass ( univentionSchool:53.8 NAME 'ucsschoolGroup'
-        DESC 'auxiliary class for UCS@school groups'
+objectclass ( univentionSchool:53.8 NAME 'ucsschoolImportGroup'
+        DESC 'auxiliary class for groups with UCS@school import permissions'
         SUP ucsschoolType AUXILIARY
         MAY ( ucsschoolImportSchool $ ucsschoolImportRole ) )
 

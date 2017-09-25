@@ -52,7 +52,7 @@ udm groups/group create "$@" \
 	--position "cn=groups,ou=$ou${district},$ldap_base" \
 	--set name="$ou-import-all" \
 	--set description="Default group for UCS@school user imports" \
-	--append-option "ucsschoolGroup" \
+	--append-option "ucsschoolImportGroup" \
 	--set ucsschoolImportSchool="$ou" \
 	--append ucsschoolImportRole=student \
 	--append ucsschoolImportRole=staff \
