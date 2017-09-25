@@ -37,6 +37,8 @@ if [ "$1" = "configure" ]; then
 	[ -e "$uinst" ] && rm "$uinst"
 fi
 
+univention-config-registry set ucsschool/import/generate/import/group?true
+
 . /usr/share/univention-lib/base.sh
 call_joinscript 40ucs-school-import-http-api.inst
 

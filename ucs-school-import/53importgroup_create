@@ -43,15 +43,18 @@ if ! is_ucr_true "ucsschool/import/generate/import/group"; then
 	exit 0
 fi
 
-ou="$(awk -F '\t' '{print $1}' "$1" | tr '[:upper:]' '[:lower:]')"
+ou="$(awk -F '\t' '{print $1}' "$1")"
 if is_ucr_true "ucsschool/ldap/district/enable" ; then
 	district=",ou=${ou:0:2}"
 fi
 
-udm groups/group create "$@" \
+udm groups/group create \
 	--position "cn=groups,ou=$ou${district},$ldap_base" \
 	--set name="$ou-import-all" \
-	--set description="Default group for UCS@school user imports" \
+	--set description="Default group for UCS@school user imports" || exit 1
+
+udm groups/group modify \
+	--dn "$ou-import-all,cn=groups,ou=$ou${district},$ldap_base"
 	--append-option "ucsschoolImportGroup" \
 	--set ucsschoolImportSchool="$ou" \
 	--append ucsschoolImportRole=student \

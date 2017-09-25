@@ -214,7 +214,10 @@ python -c 'from ucsschool.lib.models import School; import univention.admin.ulda
 	udm groups/group create "$@" --ignore_exists \
 		--position "cn=groups,ou=$school${district},$ldap_base" \
 		--set name="$school-import-all" \
-		--set description="Default group for UCS@school user imports" \
+		--set description="Default group for UCS@school user imports" || die
+
+	udm groups/group modify "$@" \
+		--dn "cn=$school-import-all,cn=groups,ou=$school${district},$ldap_base"
 		--append-option "ucsschoolImportGroup" \
 		--set ucsschoolImportSchool="$school" \
 		--append ucsschoolImportRole=student \
