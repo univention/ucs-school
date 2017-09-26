@@ -3,7 +3,7 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.0-43A~4.2.0.201709151643
+fix: 15.0.0-44A~4.2.0.201709221150
 desc: |
  * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #44838).
  * A Python client library to use the experimental RESTful API was created (Bug #45022).
@@ -12,4 +12,5 @@ desc: |
  * The configured user role is taken into account when search for users (Bug #45044).
  * Configuration and code for reading and writing CSV data compatible with the HTTP-API was added (Bug #45342).
  * It is now possible to modify the attributes that are used for formatting user properties from a schema by creating hooks. An example is provided in /usr/share/doc/ucs-school-import/format_hook_example.py (Bug #42144).
-bug: [42144, 44838, 45019, 45022, 45024, 44993, 45044, 45342]
+ * The class generation of the test user creation script was fixed (Bug #45436).
+bug: [42144, 44838, 45019, 45022, 45024, 44993, 45044, 45342, 45436]
