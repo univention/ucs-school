@@ -3,7 +3,7 @@ release: "4.1"
 version: [4]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-webproxy
-fix: 
+fix: 12.0.5-1.126.201709141312
 desc: |
- * A racing condition in the caching mechanism for handling proxy groups has been fixed (Bug #45353).
+ * A race condition in the caching mechanism for handling proxy groups has been fixed (Bug #45353).
 bug: [45353]
