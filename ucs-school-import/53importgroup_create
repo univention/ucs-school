@@ -51,7 +51,8 @@ fi
 udm groups/group create \
 	--position "cn=groups,ou=$ou${district},$ldap_base" \
 	--set name="$ou-import-all" \
-	--set description="Default group for UCS@school user imports" || exit 1
+	--set description="Default group for UCS@school user imports" \
+	--policy-reference "cn=schoolimport-all,cn=UMC,cn=policies,$ldap_base" || exit $?
 
 udm groups/group modify \
 	--dn "$ou-import-all,cn=groups,ou=$ou${district},$ldap_base"
@@ -60,6 +61,6 @@ udm groups/group modify \
 	--append ucsschoolImportRole=student \
 	--append ucsschoolImportRole=staff \
 	--append ucsschoolImportRole=teacher_and_staff \
-	--append ucsschoolImportRole=teacher || exit 1
+	--append ucsschoolImportRole=teacher || exit $?
 
 exit 0

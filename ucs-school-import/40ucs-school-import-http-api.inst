@@ -205,19 +205,25 @@ do
     deb-systemd-invoke start "$SERVICE.service"
 done
 
+univention-directory-manager policies/umc create "$@" --ignore_exists \
+	--position "cn=UMC,cn=policies,$ldap_base" \
+	--set name="schoolimport-all" \
+	--append allow="cn=schoolimport-all,cn=operations,cn=UMC,cn=univention,$ldap_base" || die
+
 pkill -f univention-cli-server  # make sure the extended attributes are initialized
 python -c 'from ucsschool.lib.models import School; import univention.admin.uldap; lo, po = univention.admin.uldap.getMachineConnection(); print "%s\x00" % "\x00".join(school.name for school in School.get_all(lo, "", respect_local_oulist=False))' | while read -d $'\0' school; do
 	district=''
 	if is_ucr_true "ucsschool/ldap/district/enable" ; then
 		district=",ou=${school:0:2}"
 	fi
-	udm groups/group create "$@" --ignore_exists \
+	univention-directory-manager groups/group create "$@" --ignore_exists \
 		--position "cn=groups,ou=$school${district},$ldap_base" \
 		--set name="$school-import-all" \
-		--set description="Default group for UCS@school user imports" || die
+		--set description="Default group for UCS@school user imports" \
+		--policy-reference "cn=schoolimport-all,cn=UMC,cn=policies,$ldap_base" || die
 
-	udm groups/group modify "$@" \
-		--dn "cn=$school-import-all,cn=groups,ou=$school${district},$ldap_base"
+	univention-directory-manager groups/group modify "$@" \
+		--dn "cn=$school-import-all,cn=groups,ou=$school${district},$ldap_base" \
 		--append-option "ucsschoolImportGroup" \
 		--set ucsschoolImportSchool="$school" \
 		--append ucsschoolImportRole=student \

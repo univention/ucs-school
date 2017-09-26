@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-46) unstable; urgency=medium
+
+  * Bug #45023: create UMC policy with permissions to schoolimport module for
+  	the import groups
+
+ -- Florian Best <best@univention.de>  Tue, 26 Sep 2017 19:42:37 +0200
+
 ucs-school-import (15.0.0-45) unstable; urgency=medium
 
   * Bug #45026: change names/description of import group object class
