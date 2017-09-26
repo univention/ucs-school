@@ -6,19 +6,22 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [41344]
+## bugs: [41344, 42913]
 
 import copy
 import time
 import random
 import datetime
 from ldap.filter import escape_filter_chars
+from ucsschool.lib.models import User
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+import univention.admin.uldap
+from univention.admin.uexceptions import authFail
 from univention.testing.decorators import SetTimeout
+from univention.testing.ucs_samba import wait_for_drs_replication
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
-from univention.testing.ucs_samba import wait_for_drs_replication
 
 
 # this test fails every now and then for teachers when checking shadowExpire in (2/3)
@@ -89,10 +92,11 @@ class Test(CLI_Import_v2_Tester):
 			person = Person(self.ou_A.name, role)
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 			record_uid = 'recordUID-%s' % (uts.random_string(),)
-			person.update(record_uid=record_uid, source_uid=source_uid)
+			person.update(record_uid=record_uid, source_uid=source_uid, password=uts.random_string(20))
 			config = copy.deepcopy(self.default_config)
 			config.update_entry('csv:mapping:Benutzername', 'username')
 			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('csv:mapping:password', 'password')
 			config.update_entry('scheme:recordUID', '<record_uid>')
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('user_role', role)
@@ -107,6 +111,13 @@ class Test(CLI_Import_v2_Tester):
 			wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
 			self.check_new_and_removed_users(1, 0)  # check for new users in LDAP
 			person.verify()  # verify LDAP attributes
+
+			# Bug #42913: check if LDAP bind is possible
+			try:
+				univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+				self.log.info('OK: user can bind to LDAP server.')
+			except authFail:
+				self.fail('User could not bind to LDAP server with binddn={!r} bindpw={!r}'.format(person.dn, person.password))
 
 			self.log.info('*** (2/3) Removing a single user with role %r', role)
 			person.set_inactive()  # mark person as disabled
@@ -131,6 +142,20 @@ class Test(CLI_Import_v2_Tester):
 					'sambaAcctFlags': ['[UD         ]']},
 				strict=False,
 				should_exist=True)
+
+			# Bug #42913: check if LDAP bind is still possible
+			try:
+				univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+				udm_user = User.from_dn(person.dn, None, self.lo).get_udm_object(self.lo)
+				self.log.error('disabled: %r', udm_user.get('disabled'))
+				self.log.error('locked: %r', udm_user.get('locked'))
+				self.log.error('userexpiry: %r', udm_user.get('userexpiry'))
+				# Bug #24185: Konto-Deaktivierung wird beim Setzen des Konto-Ablaufdatum falsch gesetzt
+				self.log.error('Deactivated user can still bind to LDAP server.')
+				self.log.error('Continuing despite error (Bug #24185)...')
+				# self.fail('Deactivated user can still bind to LDAP server.')
+			except authFail:
+				self.log.info('OK: user cannot bind to LDAP server anymore.')
 
 			self.log.info('*** (2/3) Reactivating previously "deleted" user with role %r', role)
 			person.set_active()

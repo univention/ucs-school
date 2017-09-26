@@ -378,7 +378,7 @@ class UserImport(object):
 				# not a dry_run, but user is already disabled and has an expiration date
 				success = True
 		else:
-			raise UnknownDeleteSetting("Don't know what to do with user_deletion=%r and expiration=%r.".format(
+			raise UnknownDeleteSetting("Don't know what to do with user_deletion={!r} and expiration={!r}.".format(
 				self.config["user_deletion"]["delete"], self.config["user_deletion"]["expiration"]),
 				entry_count=user.entry_count, import_user=user)
 		user.invalidate_all_caches()
