@@ -1,3 +1,9 @@
+ucs-school-umc-import (0.0.0-8) unstable; urgency=medium
+
+  * Bug #45023: fix error messages in mail templates
+
+ -- Florian Best <best@univention.de>  Tue, 26 Sep 2017 19:32:46 +0200
+
 ucs-school-umc-import (0.0.0-7) unstable; urgency=medium
 
   * Bug #45023: fix locale parsing

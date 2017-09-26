@@ -184,7 +184,7 @@ define([
 				msg += ' ' + _('Click %s to draft an email with all the required information.', lang.replace('<a target="_blank" href="mailto:{email}?Subject={subject}&body={body}">{text}</a>', {
 					email: this.errorMailAddress,
 					subject: encodeURIComponent(_('User import: Error in job %s', id)),
-					body: encodeURIComponent('Please examine the reason for this error: %s', error.message + (error.traceback || '')),
+					body: encodeURIComponent(_('Please examine the reason for this error: %s', error.message + (error.traceback || ''))),
 					text: _('here')
 				}));
 			}

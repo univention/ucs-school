@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-08-09 19:20+0200\n"
+"POT-Creation-Date: 2017-09-26 19:29+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -61,6 +61,11 @@ msgstr "Übersicht Benutzerimporte"
 #: umc/js/schoolimport.js:321 umc/js/schoolimport.js:324
 msgid "Passwords"
 msgstr "Passwörter"
+
+#: umc/js/schoolimport.js:187
+#, javascript-format
+msgid "Please examine the reason for this error: %s"
+msgstr "Bitte untersuchen Sie den Grund für den Fehler: %s"
 
 #: umc/js/schoolimport.js:152 umc/js/schoolimport.js:182
 msgid "Please notify the system administrator about this error via email."
