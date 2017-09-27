@@ -24,7 +24,7 @@
 	Die Proxykonfiguration wird in der Grundeinstellung durch DHCP, mittels WPAD Option<footnote><para>Wikipedia WPAD: <ulink url="https://de.wikipedia.org/wiki/Web_Proxy_Autodiscovery_Protocol"/></para></footnote> verteilt.
   </para>
   <para>
-	Soll dies abgeschaltet werden, so muss die Option an dem betreffenden DHCP-Objekt entfernt werden. Die kann entweder in der UMC im Modul DHCP am Objekt auf dem Reiter "Erweiterte Einstellungen" unter "Low-level DHCP configuration" geschehen oder an der Kommandozeile. Um die richtige DN und Option zu finden, können zu erst alle DHCP Obkete aufgelistet werden:
+	Soll dies abgeschaltet werden, so muss die Option an dem betreffenden DHCP-Objekt entfernt werden. Die kann entweder in der UMC im Modul DHCP am Objekt auf dem Reiter <guimenu>Erweiterte Einstellungen</guimenu> unter <guimenu>Low-level DHCP configuration</guimenu> geschehen oder an der Kommandozeile. Um die richtige DN und Option zu finden, können zu erst alle DHCP Objekte aufgelistet werden:
 	<programlisting>
 udm dhcp/service list
 	</programlisting>
@@ -32,7 +32,7 @@ udm dhcp/service list
 	<programlisting>
 udm dhcp/service modify --dn DN --remove option='wpad "http://FQDN/proxy.pac"'
 	</programlisting>
-	Außerdem muss eine UCR Veriable entfernt und anschließend der DHCP-Server neu gestartet werden:
+	Außerdem muss eine UCR Variable entfernt und anschließend der DHCP-Server neu gestartet werden:
 	<programlisting>
 ucr unset dhcpd/options/wpad/252
 /etc/init.d/univention-dhcp restart
