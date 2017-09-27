@@ -1,3 +1,10 @@
+ucs-school-import (14.0.16-48) unstable; urgency=medium
+
+  * Bug #45463: Create (or move) existing DHCP server for administrative DC
+  	Slaves when creating a school
+
+ -- Florian Best <best@univention.de>  Wed, 27 Sep 2017 16:48:47 +0200
+
 ucs-school-import (14.0.16-47) unstable; urgency=low
 
   * Bug #44993: add support for COUNTER variables in email address schemes
