@@ -496,7 +496,7 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 	return None
 
 
-def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None, displayName=None):
+def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None, displayName=None, dcNameAdministrative=None):
 	global problem_hints
 
 	for verified_ou in verified_ous:
@@ -619,7 +619,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			# use found dn
 			ShareFileServer = objects[0]
 
-		r = lo.modify(dn, [
+		lo.modify(dn, [
 			('objectClass', '', 'ucsschoolOrganizationalUnit'),
 			('ucsschoolClassShareFileServer', '', ShareFileServer),  # set file server for class shares
 			('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
@@ -630,7 +630,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			print "WARNING: sharefileserver ignored because OU already exists!"
 			print "WARNING: please modify school OU via UDM or UMC"
 		if displayName is not None:
-			r = lo.modify(ou_base, [('displayName', lo.get(ou_base, ['displayName']).get('displayName', []), [displayName])])
+			lo.modify(ou_base, [('displayName', lo.get(ou_base, ['displayName']).get('displayName', []), [displayName])])
 
 	keys = container.keys()
 	keys.sort()
@@ -794,112 +794,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 				pass
 			print "need to create server: %s" % object.dn
 
-		# create dhcp-service if not existant
-		objects = univention.admin.modules.lookup(
-			dhcp_service_module, co, lo, scope='sub', superordinate=superordinate,
-			base=baseDN, filter=univention.admin.filter.expression('cn', schoolNr.lower()))
-		service_exists = 0
-		if objects:
-			service = "cn=%s,cn=dhcp,%s" % (schoolNr, getDN(schoolNr))
-			for object in objects:
-				if object.dn.lower() == service.lower():
-					service_exists = 1
-					dhcp_service_object = object
-					break
-		if not service_exists:
-			position.setDn("cn=dhcp,%s" % (getDN(schoolNr), ))
-			object = dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
-			object.open()
-			object["service"] = schoolNr.lower()
-			object['option'] = ['wpad "http://%s.%s/proxy.pac"' % (dccn, domainname)]
-			try:
-				create_object(object)
-			except:
-				pass
-			dhcp_service_object = object
-			print "need to create dhcp service: %s" % object.dn
-
-		# create dhcp-server if not exsistant
-		objects = lo.searchDn(filter='(&(objectClass=dhcpServer)(cn=%s))' % dccn, base=baseDN)
-		if objects:
-			# move existing dhcp server object to OU
-			newDHCPServerDN = "cn=%s,cn=%s,cn=dhcp,%s" % (dccn, schoolNr.lower(), getDN(schoolNr))
-			if len(objects) > 1:
-				print 'WARNING: more than one dhcp-server object found! Moving only one!'
-			obj = univention.admin.objects.get(dhcp_server_module, co, lo, position='', dn=objects[0])
-			obj.open()
-			dhcpServerContainer = ','.join(objects[0].split(',')[1:])
-
-			# only move if
-			# - in multiserver environments OR
-			# - desired dhcp server DN matches with UCR config
-			if not(configRegistry.is_true('ucsschool/singlemaster', False)) or (newDHCPServerDN.endswith(',%s' % dhcpd_ldap_base)):
-				if obj.dn.lower() != newDHCPServerDN.lower():
-					attr_server = obj["server"]
-					print "need to remove dhcp server: %s" % obj.dn
-					try:
-						obj.remove()
-					except:
-						print "Failed to remove dhcp server: %s" % (obj.dn, )
-						problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
-					position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
-					print "need to create dhcp server: %s" % (position.getDn(), )
-					object = dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
-					object.open()
-					object["server"] = attr_server
-					try:
-						create_object(object)
-					except:
-						print "Failed to create dhcp server: %s" % (position.getDn(), )
-						problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
-			# 
-			# copy subnets #
-			# 
-			# find local interfaces
-			interfaces = []
-			for interface_name in set([key.split('/')[1] for key in configRegistry.keys() if key.startswith('interfaces/eth')]):
-				try:
-					address = ipaddr.IPv4Network('%s/%s' % (
-						configRegistry['interfaces/%s/address' % interface_name],
-						configRegistry['interfaces/%s/netmask' % interface_name],
-					))
-					interfaces.append(address)
-				except ValueError, error:
-					print "Skipping invalid interface %s:\n%s" % (interface_name, error, )
-			objects = lo.searchDn(filter='(objectClass=univentionDhcpSubnet)', base=dhcpServerContainer)
-			for objectDN in objects:
-				object = univention.admin.objects.get(dhcp_subnet_module, co, lo, position='', dn=objectDN)
-				object.open()
-				subnet = ipaddr.IPv4Network('%s/%s' % (object['subnet'], object['subnetmask'], ))
-				if subnet in interfaces:  # subnet matches any local subnet
-					position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
-					if lo.searchDn(filter='(&(objectClass=univentionDhcpSubnet)(cn=%s))' % object['subnet'], base=position.getDn()):
-						print "do not need to copy dhcp subnet %s: %s (target already exists)" % (subnet, object.dn, )
-					else:
-						print "need to copy dhcp subnet %s: %s" % (subnet, object.dn, )
-						newobject = dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_service_object)
-						newobject.open()
-						for key in object.keys():
-							value = object[key]
-							newobject[key] = value
-						try:
-							create_object(newobject)
-						except:
-							print "Failed to copy dhcp subnet %s to %s" % (object.dn, position.getDn(), )
-							problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
-				else:
-					print "Skipping non-local subnet %s" % subnet
-		else:
-			# create fresh dhcp server object
-			position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
-			object = dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
-			object.open()
-			object["server"] = dccn
-			print "need to create dhcp server: %s" % object.dn
-			try:
-				create_object(object)
-			except:
-				pass
+		move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base)
 
 	if schoolNr not in verified_ous:
 		verified_ous.append(schoolNr)
@@ -964,6 +859,120 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		# for OUs the temporary file contains the LDAP DN
 		hooks.post('ou', 'A', dn=ou_base, line=myline)
 
+	if dcNameAdministrative:
+		create_dc(co, lo, baseDN, schoolNr, dcNameAdministrative, TYPE_DC_ADMINISTRATIVE)
+		move_dhcp_server(schoolNr, dcNameAdministrative, dhcpd_ldap_base)
+
+
+def move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base):
+	global problem_hints
+	# create dhcp-service if not existant
+	objects = univention.admin.modules.lookup(
+		dhcp_service_module, co, lo, scope='sub', superordinate=superordinate,
+		base=baseDN, filter=univention.admin.filter.expression('cn', schoolNr.lower()))
+	service_exists = 0
+	if objects:
+		service = "cn=%s,cn=dhcp,%s" % (schoolNr, getDN(schoolNr))
+		for object in objects:
+			if object.dn.lower() == service.lower():
+				service_exists = 1
+				dhcp_service_object = object
+				break
+	if not service_exists:
+		position.setDn("cn=dhcp,%s" % (getDN(schoolNr), ))
+		object = dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
+		object.open()
+		object["service"] = schoolNr.lower()
+		object['option'] = ['wpad "http://%s.%s/proxy.pac"' % (dccn, domainname)]
+		try:
+			create_object(object)
+		except:
+			pass
+		dhcp_service_object = object
+		print "need to create dhcp service: %s" % object.dn
+
+	# create dhcp-server if not exsistant
+	objects = lo.searchDn(filter='(&(objectClass=dhcpServer)(cn=%s))' % dccn, base=baseDN)
+	if objects:
+		# move existing dhcp server object to OU
+		newDHCPServerDN = "cn=%s,cn=%s,cn=dhcp,%s" % (dccn, schoolNr.lower(), getDN(schoolNr))
+		if len(objects) > 1:
+			print 'WARNING: more than one dhcp-server object found! Moving only one!'
+		obj = univention.admin.objects.get(dhcp_server_module, co, lo, position='', dn=objects[0])
+		obj.open()
+		dhcpServerContainer = ','.join(objects[0].split(',')[1:])
+
+		# only move if
+		# - in multiserver environments OR
+		# - desired dhcp server DN matches with UCR config
+		if not(configRegistry.is_true('ucsschool/singlemaster', False)) or (newDHCPServerDN.endswith(',%s' % dhcpd_ldap_base)):
+			if obj.dn.lower() != newDHCPServerDN.lower():
+				attr_server = obj["server"]
+				print "need to remove dhcp server: %s" % obj.dn
+				try:
+					obj.remove()
+				except:
+					print "Failed to remove dhcp server: %s" % (obj.dn, )
+					problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+				position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
+				print "need to create dhcp server: %s" % (position.getDn(), )
+				object = dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
+				object.open()
+				object["server"] = attr_server
+				try:
+					create_object(object)
+				except:
+					print "Failed to create dhcp server: %s" % (position.getDn(), )
+					problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+		#
+		# copy subnets #
+		#
+		# find local interfaces
+		interfaces = []
+		for interface_name in set([key.split('/')[1] for key in configRegistry.keys() if key.startswith('interfaces/eth')]):
+			try:
+				address = ipaddr.IPv4Network('%s/%s' % (
+					configRegistry['interfaces/%s/address' % interface_name],
+					configRegistry['interfaces/%s/netmask' % interface_name],
+				))
+				interfaces.append(address)
+			except ValueError, error:
+				print "Skipping invalid interface %s:\n%s" % (interface_name, error, )
+		objects = lo.searchDn(filter='(objectClass=univentionDhcpSubnet)', base=dhcpServerContainer)
+		for objectDN in objects:
+			object = univention.admin.objects.get(dhcp_subnet_module, co, lo, position='', dn=objectDN)
+			object.open()
+			subnet = ipaddr.IPv4Network('%s/%s' % (object['subnet'], object['subnetmask'], ))
+			if subnet in interfaces:  # subnet matches any local subnet
+				position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
+				if lo.searchDn(filter='(&(objectClass=univentionDhcpSubnet)(cn=%s))' % object['subnet'], base=position.getDn()):
+					print "do not need to copy dhcp subnet %s: %s (target already exists)" % (subnet, object.dn, )
+				else:
+					print "need to copy dhcp subnet %s: %s" % (subnet, object.dn, )
+					newobject = dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_service_object)
+					newobject.open()
+					for key in object.keys():
+						value = object[key]
+						newobject[key] = value
+					try:
+						create_object(newobject)
+					except:
+						print "Failed to copy dhcp subnet %s to %s" % (object.dn, position.getDn(), )
+						problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+			else:
+				print "Skipping non-local subnet %s" % subnet
+	else:
+		# create fresh dhcp server object
+		position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
+		object = dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
+		object.open()
+		object["server"] = dccn
+		print "need to create dhcp server: %s" % object.dn
+		try:
+			create_object(object)
+		except:
+			pass
+
 
 def move_object(o, newdn):
 	if o.dn == newdn:
@@ -988,7 +997,7 @@ def move_object(o, newdn):
 
 def modify_object(o):
 	try:
-		dn = o.modify()
+		o.modify()
 		print 'modifed object:', o.dn
 	except:
 		print "ERROR while modifying object %s" % o.dn
@@ -1910,8 +1919,6 @@ def import_networks(router_only=False):
 	print "infile is  : " + infile
 	inf = open(infile, 'r')
 
-	problem_hints = ""
-
 	with stopped_notifier():
 		for line in inf:
 
@@ -2127,7 +2134,7 @@ def set_policy_for_dhcp_subnet(network, schoolNr, policy_module, policy_dn, cn, 
 			if o.dn == subnet:
 				dhcp_subnet_object = o
 	if not dhcp_subnet_object:
-		print "ERROR: Unable to set policy for dhcp subnet because it does not exist: %s" % subnet
+		print "ERROR: Unable to set policy for dhcp subnet because it does not exist: %s" % (subnet,)
 		return (False, dn)
 
 	objects = univention.admin.modules.lookup(
@@ -2239,7 +2246,6 @@ def import_computer():
 	print "infile is  : " + infile
 	inf = open(infile, 'r')
 
-	problem_hints = ""
 	linecnt = 0
 
 	with stopped_notifier():
@@ -2291,7 +2297,6 @@ def import_computer():
 			hooks.pre('computer', 'A', line=line)
 
 			success = True
-			dn = None
 			if '/' not in IP:
 				ip = ipaddr.IPv4Network('%s/%s' % (IP, default_prefixlen, ))
 				print 'WARNING: no netmask specified for ip address %s using %s' % (ip.ip, ip.netmask)
@@ -2374,8 +2379,6 @@ def import_group():
 
 	print "infile is  : " + infile
 	inf = open(infile, 'r')
-
-	problem_hints = ""
 
 	with stopped_notifier():
 		for line in inf:
@@ -2538,7 +2541,6 @@ def activate_groupmembers():
 	# [0|1]         optional: deactivate | activate
 	# [0|1]         optional: keep passwords | set random passwords
 
-	chgrp = 1
 	chpasswd = 0
 	status = None
 
@@ -3259,9 +3261,7 @@ Arguments:
 			options.displayName = ouname
 
 		with stopped_notifier():
-			verify_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducational, ShareFileServer=options.ShareFileServer, displayName=options.displayName)
-			if dcNameAdministrative:
-				create_dc(co, lo, baseDN, ouname, dcNameAdministrative, TYPE_DC_ADMINISTRATIVE)
+			verify_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducational, ShareFileServer=options.ShareFileServer, displayName=options.displayName, dcNameAdministrative=dcNameAdministrative)
 		sys.exit(0)
 	parser.print_help()
 	sys.exit(1)
