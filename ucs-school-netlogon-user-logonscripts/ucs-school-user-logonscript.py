@@ -89,6 +89,7 @@ def relevant_change(old, new, attr_list):
 	"""
 	return any(set(old.get(attr, [])) != set(new.get(attr, [])) for attr in attr_list)
 
+
 def handle_share(dn, new, old, lo, user_queue):
 	"""
 	Handles changes of share objects by triggering group changes for the relevant groups.
@@ -98,6 +99,7 @@ def handle_share(dn, new, old, lo, user_queue):
 			Log.warn('handle_share: no gidNumber specified')
 			return
 		filter_s = filter_format('(gidNumber=%s)', (gidNumber,))
+		Log.info('handle_share: looking for %s' % (filter_s,))
 		try:
 			grplist = groups_group_module.lookup(None, lo, filter_s=filter_s)
 			# use only first group of search result (should be only one)
@@ -105,6 +107,7 @@ def handle_share(dn, new, old, lo, user_queue):
 		except (univention.admin.uexceptions.noObject, IndexError):
 			Log.info('handle_share: cannot find group with %s - may have already been deleted' % (filter_s,))
 			return
+		Log.info('handle_share: trigger group change for %s' % (grp.dn,))
 		handle_group(grp.dn, grp.oldattr, {}, lo, user_queue)
 
 	if not old and new:
@@ -133,16 +136,21 @@ def handle_group(dn, new, old, lo, user_queue):
 	"""
 	old_members = set(old.get('uniqueMember', []))
 	new_members = set(new.get('uniqueMember', []))
+	Log.info('handle_group: dn: %s' % (dn,))
+	Log.info('handle_group: difference: %r' % (old_members.symmetric_difference(new_members),))
 	# get set of users that are NOT IN BOTH user sets (==> the difference between both sets)
 	for user_dn in old_members.symmetric_difference(new_members):
 		user_queue.add(user_dn)
+
 
 def handle_user(dn, new, old, lo, user_queue):
 	"""
 	Handles user changes by adding the DN of the user object to the user queue.
 	"""
+	Log.info('handle_user: add %s' % (dn,))
 	username = new.get('uid', old.get('uid', [None]))[0]
 	user_queue.add(dn, username)
+
 
 def handler(dn, new, old):
 	attrs = new if new else old
