@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-47) unstable; urgency=medium
+
+  * Bug #42687: Create (or move) existing DHCP server for administrative
+    DC Slaves when creating a school
+
+ -- Florian Best <best@univention.de>  Wed, 27 Sep 2017 16:36:57 +0200
+
 ucs-school-import (15.0.0-46) unstable; urgency=medium
 
   * Bug #45023: create UMC policy with permissions to schoolimport module for
