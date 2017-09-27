@@ -118,7 +118,9 @@ class School(UCSSchoolHelperAbstractClass):
 				container = Container(name=name, school=self.name)
 				setattr(container, path, '1')
 				container.position = base_dn
-				last_dn = container.create(lo, False)
+				last_dn = container.dn
+				if not container.exists(lo):
+					last_dn = container.create(lo, False)
 			return last_dn
 
 		last_dn = self.dn
@@ -374,6 +376,9 @@ class School(UCSSchoolHelperAbstractClass):
 				return False
 			if self.dc_name_administrative:
 				self.create_dc_slave(lo, self.dc_name_administrative, administrative=True)
+				dhcp_service = self.get_dhcp_service(self.dc_name_administrative)
+				dhcp_service.create(lo)
+				dhcp_service.add_server(self.dc_name_administrative, lo)
 		finally:
 			logger.debug('Resetting share file servers from None to %r and %r', saved_home_share_file_server, saved_class_share_file_server)
 			self.class_share_file_server = saved_class_share_file_server
