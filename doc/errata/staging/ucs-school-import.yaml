@@ -7,4 +7,5 @@ fix: 14.0.16-47.338.201709081035
 desc: |
  * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #42465).
  * The handling of scheme:email options during import of user has been improved: the COUNTER variables may now be used (Bug #42130).
-bug: [42465, 42130]
+ * When creating a school the DHCP server objects for the administrative DC Slave are now also created or moved into the DHCP service of the school in a multiserver environment (Bug #45463).
+bug: [42465, 42130, 45463]
