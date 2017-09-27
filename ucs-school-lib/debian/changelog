@@ -1,6 +1,6 @@
 ucs-school-lib (10.0.2-7) unstable; urgency=medium
 
-  * Create (or move) existing DHCP server for administrative DC Slaves when
+  * Bug #42687: Create (or move) existing DHCP server for administrative DC Slaves when
   	creating a school
 
  -- Florian Best <best@univention.de>  Wed, 27 Sep 2017 16:22:55 +0200
