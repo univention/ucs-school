@@ -40,12 +40,12 @@ from ldap.filter import filter_format
 from univention.admin.uexceptions import noObject, noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
+from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
@@ -86,6 +86,7 @@ class ImportUser(User):
 	# as arguments for object creation and will be exported by to_dict():
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
+	_all_school_names = None
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -178,8 +179,24 @@ class ImportUser(User):
 			res = func(prop_name, res)
 		return res
 
+	def check_schools(self, lo):
+		"""
+		Verify that the "school" and "schools" attributes are correct.
+		Check is case sensitive (Bug #42456).
+
+		:param lo: LDAP connection object
+		:return: None or raises UnkownSchoolName
+		"""
+		# cannot be done in run_checks, because it needs LDAP access
+		schools = set(self.schools)
+		schools.add(self.school)
+		for school in schools:
+			if school not in self.get_all_school_names(self._lo):
+				raise UnkownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
+
 	def create(self, lo, validate=True):
 		self._lo = lo
+		self.check_schools(lo)
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running create() from within a hook.")
@@ -275,6 +292,12 @@ class ImportUser(User):
 					"UDM property '{}' could not be set: {}".format(property_, exc),
 					entry_count=self.entry_count,
 					import_user=self)
+
+	@classmethod
+	def get_all_school_names(cls, lo):
+		if not cls._all_school_names:
+			cls._all_school_names = [s.name for s in School.get_all(lo)]
+		return cls._all_school_names
 
 	def has_expired(self, connection):
 		"""
@@ -584,6 +607,7 @@ class ImportUser(User):
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
 		self._lo = lo
+		self.check_schools(lo)
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running modify() from within a hook.")
@@ -601,6 +625,7 @@ class ImportUser(User):
 
 	def move(self, lo, udm_obj=None, force=False):
 		self._lo = lo
+		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
 
 	@classmethod
