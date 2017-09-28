@@ -174,6 +174,10 @@ class UnkownRole(UcsSchoolImportError):
 	pass
 
 
+class UnkownSchoolName(UcsSchoolImportError):
+	pass
+
+
 class UniqueIdError(UcsSchoolImportError):
 	pass
 
