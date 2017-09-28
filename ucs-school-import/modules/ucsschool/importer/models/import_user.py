@@ -193,8 +193,6 @@ class ImportUser(User):
 		for school in schools:
 			if school not in self.get_all_school_names(self._lo):
 				raise UnkownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
-			else:
-				self.logger.info('**** School %r is OK.', school)
 
 	def create(self, lo, validate=True):
 		self._lo = lo
