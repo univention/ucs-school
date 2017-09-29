@@ -363,10 +363,10 @@ class Instance(SchoolBaseModule):
 				univention.admin.modules.init(ldap_admin_write, ldap_position, self._udm_modules['groups/group'])
 			module_groups_group = self._udm_modules['groups/group']
 
-			for group_dn, users in groups.items():
-				grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group_dn)
-				MODULE.info('Adding users %r to group %r...' % (users['uids'], group_dn))
-				grpobj.fast_member_add(users['dns'], users['uids'])
+		for group_dn, users in groups.items():
+			grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group_dn)
+			MODULE.info('Adding users %r to group %r...' % (users['uids'], group_dn))
+			grpobj.fast_member_add(users['dns'], users['uids'])
 
 		self.finished(request.id, None)
 
