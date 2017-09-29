@@ -1,3 +1,10 @@
+ucs-school-import (15.0.0-49) unstable; urgency=medium
+
+  * ucs-school-join-secondary-samba4: Check if School DC has S4 SlavePDC
+    service (Bug #43311)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 29 Sep 2017 15:28:55 +0200
+
 ucs-school-import (15.0.0-48) unstable; urgency=low
 
   * Bug #42456: check school/ou name case sensitively before

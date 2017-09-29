@@ -179,12 +179,12 @@ fi
 
 echo -n "Search school server binddn : "
 target_server_udm_output=$(univention-ssh "$ROOTPWD" "root@${target_school_dc_ip}" \
-	/usr/sbin/udm "computers/$target_school_dc_server_role" list --filter "\'(&(service=UCS@school)(service=S4 Connector)(ip=$target_school_dc_ip))\'")
+	/usr/sbin/udm "computers/$target_school_dc_server_role" list --filter "\'(&(service=UCS@school)(service=S4 SlavePDC)(service=S4 Connector)(ip=$target_school_dc_ip))\'")
 target_school_dc_hostdn=$(echo "$target_server_udm_output" | sed -n 's/^DN: //p')
 target_school_dc_name=$(echo "$target_server_udm_output" | sed -n 's/^ *name: //p')
 if [ -z "$target_school_dc_hostdn" ]; then
 	echo -e "\033[60Gfailed"
-	echo "Could not verify that $target_school_dc_ip is a UCS@school DC running the S4 Connector service"
+	echo "Could not verify that $target_school_dc_ip is a UCS@school DC running the S4 Connector and SlavePDC service"
 	exit 1
 else
 	echo -e "\033[60Gdone"
