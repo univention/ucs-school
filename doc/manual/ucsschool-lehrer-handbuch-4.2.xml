@@ -19,7 +19,7 @@
     <legalnotice>
       <literallayout>
 Version 4.2 v14
-Stand: 25. September 2017
+Stand: 29. September 2017
       </literallayout>
 
       <literallayout lang="">
@@ -502,7 +502,8 @@ feedback@univention.de
 			</listitem>
 		  </orderedlist>
 		  <para>
-			Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu> werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt.
+			  Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu> werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt.
+			  Dies kann je nach Serverauslastung, Geschwindigkeit der Verbindung zum Server und Anzahl der Schüler und Rechner im Raum einige Minuten dauern.
 		  </para>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:neustart">
