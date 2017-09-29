@@ -17,6 +17,12 @@ Description[en]=Default group name for the exam mode (in Python string syntax, d
 Type=str
 Categories=ucsschool-base
 
+[ucsschool/exam/group/ldap/blacklist/regex]
+Description[de]=Regulärer Ausdruck für Gruppen-DNs, die nicht für die Prüfungsbenutzer übernommen werden sollen (Vorgabe: keine)
+Description[en]=Regular expression for group dn, that are stripped from exam users (Default: none)
+Type=str
+Categories=ucsschool-base
+
 [ucsschool/exam/user/ldap/blacklist]
 Description[de]=Pipe-separierte (|) Blacklist mit Attributnamen, die nicht für die Prüfungsbenutzer übernommen werden (Vorgabe: 'mail|mailPrimaryAddress|mailAlternativeAddress|ucsschoolSourceUID|ucsschoolRecordUID')
 Description[en]=Pipe-separated (|) blacklist of attribute names, that are stripped from exam users (Default: 'mail|mailPrimaryAddress|mailAlternativeAddress|ucsschoolSourceUID|ucsschoolRecordUID')

@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-15) unstable; urgency=low
+
+  * Bug #45473: port feature ucsschool/exam/group/ldap/blacklist/regex to 4.2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 29 Sep 2017 14:01:08 +0200
+
 ucs-school-umc-exam (7.0.4-14) unstable; urgency=low
 
   * Bug #45294: move empty directory to debian/<packagename>.dirs
