@@ -10,4 +10,5 @@ desc: |
    an exam, the exam mode copies all group memberships from the students to the corresponding exam users. For performance and
    security reasons, it's now possible to blacklist groups from being taken over to exam users by defining a regular expression
    for group DNs (UCR variable <env>ucsschool/exam/group/ldap/blacklist/regex</env>) (Bug #45473).
-bug: [43978,45473]
+ * The timeout for starting new exams has been raised from 5 minutes to 30 minutes (Bug #45980).
+bug: [43978,43980,45473]
