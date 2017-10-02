@@ -1,0 +1,91 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Import deactived user
+## tags: [apptest,ucsschool,skip_in_multiserver,ucsschool_import]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [42913]
+
+
+import copy
+from ldap.filter import escape_filter_chars
+import univention.testing.strings as uts
+import univention.admin.uldap
+from univention.admin.uexceptions import authFail
+from ucsschool.lib.models import User
+from univention.testing.ucs_samba import wait_for_drs_replication
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+
+	def __init__(self):
+		super(Test, self).__init__()
+		self.ou_B = None
+		self.ou_C = None
+
+	def test(self):
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new, deactivated single user with role %r', role)
+
+			person = Person(self.ou_A.name, role)
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			person.update(record_uid=record_uid, source_uid=source_uid, password=uts.random_string(20))
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('csv:mapping:password', 'password')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+			config.update_entry("activate_new_users:default", False)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(values=config)
+
+
+			# person = Person(self.ou_A.name, role)
+			# fn_csv = self.create_csv_file(person_list=[person])
+			# source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			# record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
+			# config = {
+			# 	'sourceUID': source_uid,
+			# 	'csv:mapping:password': 'password',
+			# 	'input:filename': fn_csv,
+			# 	'user_role': role,
+			# 	'activate_new_users:default': False,
+			# }
+			# fn_config = self.create_config_json(values=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config])
+			wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
+			person.set_inactive()
+			self.check_new_and_removed_users(1, 0)
+			person.verify()
+
+			udm_user = User.from_dn(person.dn, None, self.lo).get_udm_object(self.lo)
+			self.log.info('disabled: %r', udm_user.get('disabled'))
+			self.log.info('locked: %r', udm_user.get('locked'))
+			self.log.info('userexpiry: %r', udm_user.get('userexpiry'))
+
+			try:
+				univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+				self.fail('Deactivated user can bind to LDAP server.')
+			except authFail:
+				self.log.info('OK: deactivated user cannot bind to LDAP server.')
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
