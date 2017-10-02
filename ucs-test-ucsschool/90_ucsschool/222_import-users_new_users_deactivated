@@ -47,19 +47,6 @@ class Test(CLI_Import_v2_Tester):
 			config.update_entry('input:filename', fn_csv)
 			fn_config = self.create_config_json(values=config)
 
-
-			# person = Person(self.ou_A.name, role)
-			# fn_csv = self.create_csv_file(person_list=[person])
-			# source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			# record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
-			# config = {
-			# 	'sourceUID': source_uid,
-			# 	'csv:mapping:password': 'password',
-			# 	'input:filename': fn_csv,
-			# 	'user_role': role,
-			# 	'activate_new_users:default': False,
-			# }
-			# fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
 			self.run_import(['-c', fn_config])
 			wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
