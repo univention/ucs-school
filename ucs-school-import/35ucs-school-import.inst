@@ -61,6 +61,7 @@ ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolOU.py || die
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolAdminGroup.py || die
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
+ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
@@ -247,6 +248,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolStaff" \
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
+	--set tabPosition=7 \
 	--set shortDescription="External database identifier" \
 	--set longDescription="Identifier of external database from which the user was imported." \
 	--set translationShortDescription='"de_DE" "Externe Datenbank ID"' \
@@ -269,6 +271,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolStaff" \
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
+	--set tabPosition=8 \
 	--set shortDescription="External database primary key." \
 	--set longDescription="Primary key of the external database from which the user was imported." \
 	--set translationShortDescription='"de_DE" "Primärer Schlüssel in externer Datenbank"' \
@@ -280,6 +283,30 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set mayChange="1" \
 	--set multivalue="0" \
 	--set disableUDMWeb=1 || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolPurgeTimestamp" \
+	--append module="users/user" \
+	--append module=settings/usertemplate \
+	--append options="ucsschoolStudent" \
+	--append options="ucsschoolTeacher" \
+	--append options="ucsschoolStaff" \
+	--append options="ucsschoolAdministrator" \
+	--set tabName="UCS@school" \
+	--set tabPosition=5 \
+	--set shortDescription="Scheduled deletion date" \
+	--set longDescription="On the date specified here, this user is irrevocably deleted from the directory service." \
+	--set translationShortDescription='"de_DE" "Geplantes Löschdatum"' \
+	--set translationLongDescription='"de_DE" "An dem hier angegebenen Datum wird dieser Benutzer unwiderruflich aus dem LDAP-Verzeichnis gelöscht."' \
+	--set CLIName="ucsschoolPurgeTimestamp" \
+	--set objectClass="ucsschoolType" \
+	--set ldapMapping="ucsschoolPurgeTimestamp" \
+	--set syntax="iso8601Date" \
+	--set mayChange="1" \
+	--set multivalue="0" \
+	--set hook=UcsschoolPurgeTimestamp \
+	--set disableUDMWeb=0 || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
