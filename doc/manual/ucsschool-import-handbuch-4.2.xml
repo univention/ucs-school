@@ -611,6 +611,30 @@ python -m json.tool &lt; my_config.json
 							<row>
 								<entry align="right">Standard (<classname>object</classname>): <literal>{}</literal></entry>
 							</row>
+<!-- deletion_grace_period -->
+							<row>
+								<entry morerows="1" id="configuration:json_format:userimport:deletion_grace_period"><varname>deletion_grace_period</varname></entry>
+								<entry>Dieses Objekt enthält Einstellungen zum Löschen von Benutzern.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>object</classname>): <literal>{"deactivation": .., "deletion": ..}</literal></entry>
+							</row>
+<!-- deletion_grace_period:deactivation -->
+							<row>
+								<entry morerows="1" id="configuration:json_format:userimport:deletion_grace_period:deactivation"><varname>deletion_grace_period: \ deactivation</varname></entry>
+								<entry>Definiert in wie vielen Tagen ein Benutzer, der nicht mehr in den Eingabedaten enthalten ist, deaktiviert (nicht gelöscht) werden soll. Wenn <literal>0</literal> gesetzt ist, wird das betroffene &ucsUAS;-Benutzerkonto sofort deaktiviert. Wenn <link linkend="configuration:json_format:userimport:deletion_grace_period:deletion"><literal>deletion_grace_period:deletion</literal></link> auf eine kleinere oder die gleiche Zahl gesetzt ist, wird gelöscht statt zu deaktivieren.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>int</classname>): <literal>0</literal></entry>
+							</row>
+<!-- deletion_grace_period:deletion -->
+							<row>
+								<entry morerows="1" id="configuration:json_format:userimport:deletion_grace_period:deletion"><varname>deletion_grace_period: \ deletion</varname></entry>
+								<entry>Definiert die Anzahl der Tage die nach dem Import vergehen sollen, bevor der Benutzer gelöscht (nicht deaktiviert) wird. Bei <literal>0</literal> wird er sofort gelöscht. Bei größeren Zahlen wird das &ucsUDM;-Attribut <property>purge_timestamp</property> gesetzt. Ein Cron Job löscht den Benutzer an dem Tag.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>int</classname>): <literal>0</literal></entry>
+							</row>
 <!-- scheme -->
 							<row>
 								<entry morerows="1"><varname>scheme</varname></entry>
@@ -756,26 +780,10 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 <!-- user_deletion -->
 							<row>
 								<entry morerows="1"><varname>user_deletion</varname></entry>
-								<entry>Dieses Objekt enthält Einstellungen zum Löschen von Benutzern.</entry>
+								<entry>Veraltet. Bitte <link linkend="configuration:json_format:userimport:deletion_grace_period"><literal>deletion_grace_period</literal></link> verwenden.</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>object</classname>): <literal>{"delete": .., "expiration": ..}</literal></entry>
-							</row>
-<!-- user_deletion:delete -->
-							<row>
-								<entry morerows="1" id="configuration:json_format:userimport:user_deletion:delete"><varname>user_deletion: delete</varname></entry>
-								<entry>Definiert, ob ein zu löschender Benutzer, der nicht mehr in den Eingabedaten enthalten ist, tatsächlich gelöscht werden soll. Wenn <literal>false</literal> gesetzt ist, wird das betroffene &ucsUAS;-Benutzerkonto nur deaktiviert.</entry>
-							</row>
-							<row>
-								<entry align="right">Standard (<classname>bool</classname>): <literal>true</literal></entry>
-							</row>
-<!-- user_deletion:expiration -->
-							<row>
-								<entry morerows="1"><varname>user_deletion: expiration</varname></entry>
-								<entry>Definiert die Anzahl der Tage, bevor ein Benutzer gelöscht oder deaktiviert wird. Bei <literal>0</literal> wird er sofort gelöscht oder deaktiviert (je nach Einstellung von <link linkend="configuration:json_format:userimport:user_deletion:delete"><literal>user_deletion:delete</literal></link>), bei größeren Zahlen wird das Ablaufdatum des Zugangs entsprechend gesetzt.</entry>
-							</row>
-							<row>
-								<entry align="right">Standard (<classname>int</classname>): <literal>0</literal></entry>
+								<entry align="right">Standard (<classname>object</classname>): nicht gesetzt</entry>
 							</row>
 <!-- user_role -->
 							<row>
@@ -1045,30 +1053,29 @@ udm users/user
 		<section id="configuration:deleting_users">
 		<title>Benutzer löschen</title>
 			<para>
-				Für das Löschen von Benutzern kann eine von drei Varianten konfiguriert werden:
+				Für das Löschen von Benutzern kann in zwei Varianten konfiguriert werden:
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							Das Benutzerkonto wird sofort gelöscht.
-							Dies entspricht dem Löschen eines Kontos im <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:general"><citetitle>&ucsUMC;-Modul <guimenu>Benutzer</guimenu></citetitle></ulink>.
-							Diese Variante wird ausgewählt durch die Konfiguration <literal>user_deletion:delete=true</literal>, <literal>user_deletion:expiration=0</literal>.
+							Das Benutzerkonto wird sofort oder später gelöscht, nicht deaktiviert.
+						</simpara>
+						<simpara>
+							Dies entspricht dem Löschen eines Kontos im &ucsUMC;-Modul <guimenu>Benutzer</guimenu> (siehe <biblioref linkend="ucs-handbuch"/>), zum definierten Zeitpunkt.
+						</simpara>
+						<simpara>
+						Diese Variante wird ausgewählt durch das Setzen von <varname>deletion_grace_period:deletion</varname> auf einen Wert kleiner oder gleich dem von <varname>deletion_grace_period:deactivation</varname>. Ist der Wert von <literal>deletion_grace_period:deletion=0</literal>, wird sofort (während des Imports) gelöscht. Ist der Wert größer als <literal>0</literal>, wird ein Verfallsdatum im &ucsUDM;-Attribut <property>purge_timestamp</property> gespeichert. Der Benutzer wird erst an diesem Tag durch einen Cron Job gelöscht.
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							Das Benutzerkonto wird nicht gelöscht, sondern deaktiviert und mit einem Verfallsdatum versehen.
-							Dies entspricht dem Deaktivieren und Setzen eines Kontoablaufdatum im &ucsUMC;-Modul <guimenu>Benutzer</guimenu>.
-							Der Benutzer kann später endgültig gelöscht werden.
-							Sollte der Benutzer kurze Zeit später erneut "angelegt" werden, wird das alte Benutzerkonto reaktiviert.
-							Diese Variante wird ausgewählt durch die Konfiguration <literal>user_deletion:delete=false</literal>, <literal>user_deletion:expiration=3</literal> (das Konto wird sofort deaktiviert, verfällt aber erst in drei Tagen).
+							Das Benutzerkonto wird erst deaktiviert und später gelöscht.
 						</simpara>
-					</listitem>
-					<listitem>
 						<simpara>
-							Das Benutzerkonto wird weder gelöscht noch deaktiviert, erhält aber ein Kontoablaufdatum.
-							Dies entspricht dem Setzen eines Kontoablaufdatum im &ucsUMC;-Modul <guimenu>Benutzer</guimenu>.
-							Der Benutzer kann dann noch für eine Karenzzeit auf seine Daten zugreifen.
-							Diese Variante wird ausgewählt durch die Konfiguration <literal>user_deletion:delete=true</literal>, <literal>user_deletion:expiration=7</literal> (das Konto bleibt für eine Woche aktiv).
+							Dies entspricht dem Deaktivieren oder Setzen eines Kontoablaufdatums im &ucsUMC;-Modul <guimenu>Benutzer</guimenu> und späteren Löschens in selbigem.
+							Der Benutzer wird zuerst deaktiviert (kann sich nicht mehr einloggen), aber erst zu dem gesetzten Datum gelöscht. Bis zum finalen Löschen kann das Benutzerkonto noch reaktiviert werden, sollte es durch einen Import wieder "angelegt" werden.
+						</simpara>
+						<simpara>
+							Diese Variante wird ausgewählt durch das Setzen von <varname>deletion_grace_period:deletion</varname> auf einen Wert größer dem von <varname>deletion_grace_period:deactivation</varname>. Ist der Wert von <literal>deletion_grace_period:deactivation=0</literal>, wird der Account sofort (während des Imports) deaktiviert. Ist der Wert größer als <literal>0</literal>, wird ein Verfallsdatum im &ucsUDM;-Attribut <property>user_expiry</property> gespeichert. Der Benutzer kann sich ab diesem Tag nicht mehr anmelden. Der Wert von <varname>deletion_grace_period:deletion</varname> wird wie in der ersten Variante beschrieben im &ucsUDM;-Attribut <property>purge_timestamp</property> gespeichert und die Löschung später durch einen Cron Job durchgeführt.
 						</simpara>
 					</listitem>
 				</itemizedlist>

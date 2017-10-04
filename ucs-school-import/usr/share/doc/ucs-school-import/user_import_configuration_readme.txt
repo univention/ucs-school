@@ -56,6 +56,13 @@ After that follow
 		              be written to the underlying UDM object.
 	}
 },
+"deletion_grace_period" {
+		"deactivation": int: deactivate instead of delete a user in that much days, immediately if 0. Will be ignored if
+		                     deletion_grace_period:deletion is 0.
+		"deletion":     int: delete a user in that much days. If 0, a user will be deleted immediately, else its
+		                     property "purge_timestamp" will be set to that much days in the future. A cron job will
+		                     delete the user on that day.
+}
 "scheme" [1]: {
 	"email": str: schema of email address, variables may be used as described in manual-4.2:users:templates
 	"recordUID": str [1]: schema of RecordUID, variables may be used as described in manual-4.2:users:templates
@@ -82,8 +89,5 @@ After that follow
 "school": str: name (abbreviation) of school this import is for, if not available from input
 "sourceUID": str [1]: UID of source database
 "tolerate_errors": int [1]: number of non-fatal errors to tolerate before aborting, -1 means unlimited
-"user_deletion": {
-	"delete":	bool: if a user scheduled to be deleted, should actually be deleted (false -> it will be deactivated)
-	"expiration": int: number of days before the account will be deleted or deactivated
-},
+"user_deletion": DEPRECATED - use deletion_grace_period instead,
 "user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)
