@@ -15,6 +15,10 @@
 	"activate_new_users": {
 		"default": true
 	},
+	"deletion_grace_period": {
+		"deactivation": 0,
+		"deletion": 0
+	},
 	"scheme": {
 		"email": "<firstname>[0].<lastname>@<maildomain>",
 		"recordUID": "<email>",
@@ -34,9 +38,5 @@
 	"school": null,
 	"sourceUID": null,
 	"tolerate_errors": 0,
-	"user_deletion": {
-		"delete": true,
-		"expiration": 0
-	},
 	"user_role": null
 }
