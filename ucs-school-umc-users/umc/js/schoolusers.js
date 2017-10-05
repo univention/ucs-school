@@ -39,7 +39,6 @@ define([
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Module",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
@@ -52,7 +51,7 @@ define([
 	"umc/widgets/ProgressInfo",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/schoolusers"
-], function(declare, lang, array, locale, Deferred, Dialog, entities, dialog, tools, Module, ExpandingTitlePane,
+], function(declare, lang, array, locale, Deferred, Dialog, entities, dialog, tools, Module,
             Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 
 	return declare("umc.modules.schoolusers", [ Module ], {
@@ -87,7 +86,6 @@ define([
 			this.standbyOpacity = 1;
 			this.standby( true );
 
-			// render all GUI elements for the search formular and the grid
 			this._searchPage = new Page({
 				fullWidth: true,
 				headerText: this.description,
@@ -95,10 +93,6 @@ define([
 			});
 
 			this.addChild(this._searchPage);
-
-			//
-			// data grid
-			//
 
 			// define grid actions
 			var actions = [ {
@@ -264,28 +258,28 @@ define([
 				deferred.resolve();
 				this.standby( true, this._progressInfo );
 
-				array.forEach( items, function( item, i ) {
-					deferred = deferred.then( lang.hitch( this, function() {
+				array.forEach(items, function(item, i) {
+					deferred = deferred.then(lang.hitch(this, function() {
 						this._progressInfo.update( i, _( 'User: ' ) + item.name );
-						return this.umcpCommand( 'schoolusers/password/reset', {
+						return this.umcpCommand('schoolusers/password/reset', {
 							userDN: item.id,
 							newPassword: password,
 							nextLogin: nextLogin
-						} ).then( function( response ) {
-							if ( typeof  response.result  === "string" ) {
-								errors.push( { name: item.name, message: response.result } );
+						}, {
+							display400: function(error) {
+								errors.push({ name: item.name, message: error.message });
 							}
-						} );
-					} ) );
-				}, this );
+						}).then(undefined, function(error) {
+							return tools.parseError(error).status === 400;  // continue with the next user if an error occurred
+						});
+					}));
+				}, this);
 
 				// finish the progress bar and add error handler
-				deferred = deferred.then( finished_func, finished_func );
+				deferred = deferred.then(finished_func, finished_func);
 			} );
 
-			var userType = (this.moduleFlavor === 'student' ?
-			                _('students') :
-			                _('teachers'));
+			var userType = (this.moduleFlavor === 'student' ?  _('students') : _('teachers'));
 			form = new Form({
 				style: 'max-width: 500px;',
 				widgets: [ {
