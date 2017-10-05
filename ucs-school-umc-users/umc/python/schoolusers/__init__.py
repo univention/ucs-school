@@ -31,16 +31,16 @@
 # <http://www.gnu.org/licenses/>.
 
 from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, BooleanSanitizer
 
-import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
-import univention.admin.objects as udm_objects
 
 from univention.lib.i18n import Translation
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, USER_WRITE, SchoolSanitizer
+from ucsschool.lib.models import User
 
 
 _ = Translation('ucs-school-umc-schoolusers').translate
@@ -84,36 +84,25 @@ class Instance(SchoolBaseModule):
 	)
 	@LDAP_Connection(USER_WRITE)
 	def password_reset(self, request, ldap_user_write=None):
-		'''Reset the password of the user'''  # FIXME: instead of error-indicating strings we should raise UMC_Error
+		'''Reset the password of the user'''
 		userdn = request.options['userDN']
 		pwdChangeNextLogin = request.options['nextLogin']
 		newPassword = request.options['newPassword']
-		self.finished(request.id, self._reset_password(ldap_user_write, userdn, newPassword, pwdChangeNextLogin))
 
-	def _reset_password(self, lo, userdn, newPassword, pwdChangeNextLogin=True):
 		try:
-			user_module = udm_modules.get('users/user')
-			ur = udm_objects.get(user_module, None, lo, None, userdn)
-			ur.open()
-			ur['password'] = newPassword
-			ur['overridePWHistory'] = '1'
-			dn = ur.modify()
-
-			ur.open()
-			ur['locked'] = 'none'
-			dn = ur.modify()
-
-			ur = udm_objects.get(user_module, None, lo, None, dn)
-			ur.open()
-			ur['pwdChangeNextLogin'] = '1' if pwdChangeNextLogin else '0'
-			dn = ur.modify()
-			return True
+			user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
+			user['password'] = newPassword
+			user['overridePWHistory'] = '1'
+			user['locked'] = 'none'
+			user['pwdChangeNextLogin'] = '1' if pwdChangeNextLogin else '0'
+			user.modify()
+			self.finished(request.id, True)
 		except udm_exceptions.permissionDenied as exc:
 			MODULE.process('dn=%r' % (userdn,))
 			MODULE.process('exception=%s' % (type(exc),))
-			return _('permission denied')
+			raise UMC_Error(_('permission denied'))
 		except udm_exceptions.base as exc:
 			MODULE.process('dn=%r' % (userdn,))
 			MODULE.process('exception=%s' % (type(exc),))
 			MODULE.process('exception=%s' % (exc.message,))
-			return '%s' % (get_exception_msg(exc))
+			raise UMC_Error('%s' % (get_exception_msg(exc)))

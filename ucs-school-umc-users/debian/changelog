@@ -1,3 +1,11 @@
+ucs-school-umc-users (13.0.0-4) unstable; urgency=medium
+
+  * Bug #45468: use school models so that an UDM initialized UDM module is
+  	ensured. Set properties in one modify call. Move error handling into the
+  	backend.
+
+ -- Florian Best <best@univention.de>  Thu, 05 Oct 2017 15:34:27 +0200
+
 ucs-school-umc-users (13.0.0-3) unstable; urgency=medium
 
   * Bug #45255: fix UnboundLocalError in case of permission problems
