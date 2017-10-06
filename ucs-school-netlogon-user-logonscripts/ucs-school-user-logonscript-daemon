@@ -100,11 +100,19 @@ class QueueHandler():
 		self.ucr = ConfigRegistry()
 		self.ucr.load()
 
-		val = self.ucr.get('ucsschool/userlogon/daemon/debug/level', '2').strip()
-		if val.isdigit():
+		val = self.ucr.get('ucsschool/userlogon/daemon/debug/level', '3').strip()
+		try:
 			if int(val) >= 4:
 				Log.set_debug_level(logging.DEBUG)
-		else:
+			elif int(val) >= 3:
+				Log.set_debug_level(logging.INFO)
+			elif int(val) >= 2:
+				Log.set_debug_level(logging.WARNING)
+			elif int(val) >= 0:
+				Log.set_debug_level(logging.ERROR)
+			else:
+				raise ValueError()
+		except ValueError:
 			Log.error('invalid value in UCR variable ucsschool/userlogon/daemon/debug/level (%r)', val)
 
 		self.lo = univention.uldap.getMachineConnection(ldap_master=False)
