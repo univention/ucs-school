@@ -153,3 +153,27 @@ Description[de]=Ziel für den UMC-Link.
 Description[en]=Destination for the UMC-Link.
 Type=str
 Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/daemon/debug/level]
+Description[de]=Definiert die Menge an Debug-Informationen, die in die Datei /var/log/univention/ucs-school-user-logonscript-daemon.log geschrieben werden. Mögliche Werte sind 0 bis 4. Ist die Variable nicht gesetzt, wird "3" verwendet.
+Description[en]=Specifies the amount of debug information to be written to /var/log/univention/ucs-school-user-logonscript-daemon.log. Possible values are 0-4. If the variable is unset, '3' applies.
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/daemon/check-interval]
+Description[de]=Definiert die Wartezeit in Sekunden zwischen der Prüfung von ausstehenden Jobs für den Daemon zum Generieren von Netlogon-Scripten (Standard: 180)
+Description[en]=Defines the sleep interval in seconds between checks of pending tasks for the netlogon script generator daemon (default: 180)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/daemon/check-interval-minimum]
+Description[de]=Definiert die minimale Wartezeit in Sekunden zwischen zwei Prüfungen von ausstehenden Jobs für den Daemon zum Generieren von Netlogon-Scripten (Standard: 7)
+Description[en]=Defines the minimal sleep interval in seconds between two checks of pending tasks for the netlogon script generator daemon (default: 7)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/daemon/error-delay]
+Description[de]=Definiert die Wartezeit in Sekunden, die nach einem Fehler während der Netlogon-Skript-Generierung abgewartet wird (Standard: 5)
+Description[en]=Defines the delay in seconds after an error occurred during netlogon script generation (default: 5)
+Type=str
+Categories=ucsschool-netlogon
