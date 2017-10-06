@@ -140,7 +140,8 @@ def handle_group(dn, new, old, lo, user_queue):
 	Log.info('handle_group: difference: %r' % (old_members.symmetric_difference(new_members),))
 	# get set of users that are NOT IN BOTH user sets (==> the difference between both sets)
 	for user_dn in old_members.symmetric_difference(new_members):
-		user_queue.add(user_dn)
+		if user_dn.startswith('uid='):  # user_dn may contain DNs of computer or group objects (computers in groups resp. groups in groups)
+			user_queue.add(user_dn)
 
 
 def handle_user(dn, new, old, lo, user_queue):
