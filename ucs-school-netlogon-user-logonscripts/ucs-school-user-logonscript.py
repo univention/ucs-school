@@ -30,6 +30,7 @@
 __package__ = ''  # workaround for PEP 366
 
 import os
+import signal
 import shutil
 import listener
 import univention.debug
@@ -170,7 +171,20 @@ def handler(dn, new, old):
 		else:
 			Log.error('handler: unknown object type: dn: %r\nold=%s\nnew=%s' % (dn, old, new))
 
-		# TODO trigger daemon ==> signal USR1 senden, falls in Warteschleife, Wartezeit auf 5 Sekunden verkuerzen, sonst weitermachen
+		pid = None
+		try:
+			if os.path.isfile(FN_PID):
+				content = open(FN_PID, 'r').read().strip()
+				try:
+					pid = int(content)
+				except ValueError:
+					Log.error('%s does not contain a valid PID (%r)' % (FN_PID, content))
+		except (IOError, OSError) as exc:
+			Log.error('failed to open and read %s: %s' % (FN_PID, exc))
+
+		if pid is not None:
+			# inform daemon about pending changes
+			os.kill(pid, signal.SIGUSR1)
 	finally:
 		listener.unsetuid()
 
