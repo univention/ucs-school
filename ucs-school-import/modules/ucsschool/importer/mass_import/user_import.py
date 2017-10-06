@@ -38,7 +38,7 @@ import datetime
 from ldap.filter import filter_format
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, ToManyErrors, UnkownAction, UnknownDeleteSetting, UserValidationError
+from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, ToManyErrors, UnkownAction, UserValidationError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
@@ -193,12 +193,9 @@ class UserImport(object):
 			if user.school != imported_user.school:
 				user = self.school_move(imported_user, user)
 			user.update(imported_user)
-			if user.disabled != "none" or user.has_expiry(self.connection):
-				self.logger.info("Found deactivated user %r, reactivating.", user)
-				if self.dry_run:
-					self.logger.info("Dry run - not reactivating.")
-				else:
-					user.reactivate()
+			if user.disabled != "none" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
+				self.logger.info("Found user %r that was previously deactivated or has a purge_timestamp, reactivating.", user)
+				user.reactivate()
 			user.action = "M"
 		except noObject:
 			imported_user.prepare_all(new_user=True)
@@ -332,57 +329,114 @@ class UserImport(object):
 		:param user: ImportUser
 		:return bool: whether the deletion worked
 		"""
-		if self.config["user_deletion"]["delete"] and not self.config["user_deletion"]["expiration"]:
-			# delete user right now
-			self.logger.info("Deleting user %s...", user)
-			if self.dry_run:
-				self.logger.info("Dry run - not removing the user.")
-				success = True
+		deactivation_grace = max(0, int(self.config.get('deletion_grace_period', {}).get('deactivation', 0)))
+		deletion_grace = max(0, int(self.config.get('deletion_grace_period', {}).get('deletion', 0)))
+		modified = False
+		success = None
+
+		if deletion_grace <= deactivation_grace:
+			# just delete, ignore deactivation setting
+			if deletion_grace == 0:
+				# delete user right now
+				success = self.delete_user_now(user)
 			else:
-				success = user.remove(self.connection)
-		elif self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
-			# set expiration date, don't delete, don't deactivate
-			if user.has_expiry(self.connection):
-				self.logger.info("User %s has already an expiration date set, not changing it.", user)
-			else:
-				expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
-				expiry_str = expiry.strftime("%Y-%m-%d")
-				self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-				user.expire(expiry_str)
-				if self.dry_run:
-					self.logger.info("Dry run - not expiring the user.")
-				else:
-					user.modify(lo=self.connection)
-			success = True
-		elif not self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
-			# don't delete but deactivate with an expiration data
-			modified = False
-			if user.has_expiry(self.connection):
-				self.logger.info("User %s has already an expiration date set, not changing it.", user)
-			else:
-				expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
-				expiry_str = expiry.strftime("%Y-%m-%d")
-				self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-				user.expire(expiry_str)
-				modified = True
-			if not user.disabled == "all":
-				self.logger.info("Deactivating user %s...", user)
-				user.deactivate()
-				modified = True
-			if self.dry_run:
-				self.logger.info("Dry run - not expiring and not deactivating the user.")
-				success = True
-			elif modified:
-				success = user.modify(lo=self.connection)
-			else:
-				# not a dry_run, but user is already disabled and has an expiration date
-				success = True
+				# delete user later
+				modified |= self.set_deletion_grace(user, deletion_grace)
 		else:
-			raise UnknownDeleteSetting("Don't know what to do with user_deletion={!r} and expiration={!r}.".format(
-				self.config["user_deletion"]["delete"], self.config["user_deletion"]["expiration"]),
-				entry_count=user.entry_count, import_user=user)
+			# deactivate first, delete later
+			if deactivation_grace == 0:
+				# deactivate user right now
+				modified |= self.deactivate_user_now(user)
+			else:
+				# deactivate user later
+				modified |= self.set_deactivation_grace(user, deactivation_grace)
+
+			# delete user later
+			modified |= self.set_deletion_grace(user, deletion_grace)
+
+		if success is not None:
+			# immediate deletion
+			pass
+		elif self.dry_run:
+			self.logger.info('Dry run - not expiring, deactivating or setting the purge timestamp.')
+			success = True
+		elif modified:
+			success = user.modify(lo=self.connection)
+		else:
+			# not a dry_run, but user was not modified, because
+			# disabled / expiration date / purge timestamp were already set
+			success = True
+
 		user.invalidate_all_caches()
 		return success
+
+	def deactivate_user_now(self, user):
+		"""
+		Deactivate the user. Does not run user.modify().
+
+		:param user: ImportUser object
+		:return: bool: whether any changes were made to the object and
+		user.modify() is required
+		"""
+		if user.disabled == 'all':
+			self.logger.info('User %s is already disabled.', user)
+			return False
+		else:
+			self.logger.info('Deactivating user %s...', user)
+			user.deactivate()
+			return True
+
+	def delete_user_now(self, user):
+		"""
+		Truly delete the user.
+
+		:param user: ImportUser object
+		:return: bool: return value from the ucsschool.lib.model remove() call
+		"""
+		self.logger.info('Deleting user %s...', user)
+		if self.dry_run:
+			self.logger.info('Dry run - not removing the user.')
+			return True
+		else:
+			return user.remove(self.connection)
+
+	def set_deactivation_grace(self, user, grace):
+		"""
+		Sets the account expiration date (UDM attribute "userexpiry") on the
+		user object. Does not run user.modify().
+
+		:param user: ImportUser object
+		:return: bool: whether any changes were made to the object and
+		user.modify() is required
+		"""
+		if user.has_expiry(self.connection):
+			self.logger.info('User %s has already an expiration date set, not changing it.', user)
+			return False
+		else:
+			expiry = datetime.datetime.now() + datetime.timedelta(days=grace)
+			expiry_str = expiry.strftime('%Y-%m-%d')
+			self.logger.info('Setting account expiration date of %s to %s...', user, expiry_str)
+			user.expire(expiry_str)
+			return True
+
+	def set_deletion_grace(self, user, grace):
+		"""
+		Sets the account deletion timestamp (UDM attribute "purge_timestamp")
+		on the user object. Does not run user.modify().
+
+		:param user: ImportUser object
+		:return: bool: whether any changes were made to the object and
+		user.modify() is required
+		"""
+		if user.has_purge_timestamp(self.connection):
+			self.logger.info('User %s has already a deleting grace date set, not changing it.', user)
+			return False
+		else:
+			purge_ts = datetime.datetime.now() + datetime.timedelta(days=grace)
+			purge_ts_str = purge_ts.strftime('%Y-%m-%d')
+			self.logger.info('Setting deleting grace date of %s to %r...', user, purge_ts_str)
+			user.set_purge_timestamp(purge_ts_str)
+			return True
 
 	def log_stats(self):
 		"""
