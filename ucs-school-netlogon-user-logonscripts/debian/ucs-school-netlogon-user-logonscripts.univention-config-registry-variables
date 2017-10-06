@@ -119,8 +119,8 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/shares/validservers]
-Description[de]=Definiert von welchen Servern Freigaben eingebunden werden (default: nicht gesetzt, mögliche Werte: leer [nur Freigaben vom lokalen Rechner], Komma separierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
-Description[en]=Defines the valid servers for network shares (default: not defined, possible values: empty [only shares from the local host], Comma-separated list of servers [shares from these servers], * [all shares]
+Description[de]=Definiert, von welchen Servern Freigaben eingebunden werden (default: nicht gesetzt, mögliche Werte: leer [nur Freigaben vom lokalen Rechner], kommaseparierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
+Description[en]=Defines the valid servers for network shares (default: not defined, possible values: empty [only shares from the local host], comma-separated list of hostnames [shares from these servers], * [all shares]
 Type=str
 Categories=ucsschool-netlogon
 
