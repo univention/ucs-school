@@ -39,8 +39,7 @@ class Test(CLI_Import_v2_Tester):
 			config.update_entry('scheme:recordUID', '<record_uid>')
 			config.update_entry('csv:mapping:Benutzername', 'username')
 			config.update_entry('csv:mapping:recordUID', 'record_uid')
-			config.update_entry("user_deletion:delete", True)
-			config.update_entry("user_deletion:expiration", 0)
+			config.update_entry("deletion_grace_period:deletion", 0)
 
 			self.log.info('*** Importing a new single user with role %r and email address %r...', role, email)
 			person = Person(self.ou_A.name, role)
