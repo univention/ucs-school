@@ -100,10 +100,18 @@ class QueueHandler():
 		self.ucr = ConfigRegistry()
 		self.ucr.load()
 
-		val = self.ucr.get('ucsschool/userlogon/daemon/debug/level', '2').strip()
+		val = self.ucr.get('ucsschool/userlogon/daemon/debug/level', '3').strip()
 		if val.isdigit():
 			if int(val) >= 4:
 				Log.set_debug_level(logging.DEBUG)
+			elif int(val) >= 3:
+				Log.set_debug_level(logging.INFO)
+			elif int(val) >= 2:
+				Log.set_debug_level(logging.WARNING)
+			elif int(val) >= 1:
+				Log.set_debug_level(logging.ERROR)
+			else:
+				Log.error('invalid value in UCR variable ucsschool/userlogon/daemon/debug/level (%r)', val)
 		else:
 			Log.error('invalid value in UCR variable ucsschool/userlogon/daemon/debug/level (%r)', val)
 
