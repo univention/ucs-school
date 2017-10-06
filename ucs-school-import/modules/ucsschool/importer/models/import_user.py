@@ -112,6 +112,7 @@ class ImportUser(User):
 			self.__class__.username_max_length = 20 - len(self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
 		self._lo = None
 		self._userexpiry = None
+		self._purge_ts = None
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -276,6 +277,8 @@ class ImportUser(User):
 		super(ImportUser, self)._alter_udm_obj(udm_obj)
 		if self._userexpiry is not None:
 			udm_obj["userexpiry"] = self._userexpiry
+		if self._purge_ts is not None:
+			udm_obj["ucsschoolPurgeTimestamp"] = self._purge_ts
 
 		for property_, value in (self.udm_properties or {}).items():
 			try:
@@ -296,6 +299,17 @@ class ImportUser(User):
 		if not cls._all_school_names:
 			cls._all_school_names = [s.name for s in School.get_all(lo)]
 		return cls._all_school_names
+
+	def has_purge_timestamp(self, connection):
+		"""
+		Check if the user account has a purge timestamp set (regardless if it is
+		in the future or past).
+
+		:param connection: uldap connection object
+		:return: bool: whether the user account has a purge timestamp set
+		"""
+		user_udm = self.get_udm_object(connection)
+		return bool(user_udm["ucsschoolPurgeTimestamp"])
 
 	def has_expired(self, connection):
 		"""
@@ -659,11 +673,13 @@ class ImportUser(User):
 
 	def reactivate(self):
 		"""
-		Reactivate a deactivated user account and reset the account expiry
-		setting. Run this only on existing users fetched from LDAP.
+		Reactivate a deactivated user account, reset the account expiry
+		setting and purge timestamp. Run this only on existing users fetched
+		from LDAP.
 		"""
 		self.expire("")
 		self.disabled = "none"
+		self.set_purge_timestamp("")
 
 	def remove(self, lo):
 		self._lo = lo
@@ -717,6 +733,9 @@ class ImportUser(User):
 				datetime.datetime.strptime(self.birthday, "%Y-%m-%d")
 			except ValueError as exc:
 				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry_count=self.entry_count, import_user=self)
+
+	def set_purge_timestamp(self, ts):
+		self._purge_ts = ts
 
 	@property
 	def role_sting(self):

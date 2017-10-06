@@ -158,10 +158,6 @@ class UnkownAction(UcsSchoolImportError):
 	pass
 
 
-class UnknownDeleteSetting(UcsSchoolImportError):
-	pass
-
-
 class UnkownDisabledSetting(UcsSchoolImportError):
 	pass
 
