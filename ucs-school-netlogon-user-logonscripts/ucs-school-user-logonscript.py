@@ -28,17 +28,30 @@
 # <http://www.gnu.org/licenses/>.
 
 __package__ = ''  # workaround for PEP 366
+
+import os
+import shutil
 import listener
 import univention.debug
-import univention.uldap
-import os
+import univention.admin.modules
+from ldap.filter import filter_format
+from univention.admin.uldap import getMachineConnection
+from ucsschool.netlogon.lib import get_netlogon_path_list, SqliteQueue
 
+univention.admin.modules.update()
+users_user_module = univention.admin.modules.get("users/user")
+groups_group_module = univention.admin.modules.get("groups/group")
+shares_share_module = univention.admin.modules.get("shares/share")
+subfilter_users = str(users_user_module.lookup_filter())
+subfilter_groups = str(groups_group_module.lookup_filter())
+subfilter_shares = str(shares_share_module.lookup_filter())
 
 name = 'ucs-school-user-logonscript'
 description = 'Create user-specific netlogon-scripts'
-filter = '(|(&(objectClass=posixAccount)(objectClass=organizationalPerson)(!(uid=*$)))(objectClass=posixGroup)(objectClass=univentionShare))'
+filter = '(|%s%s%s)' % (subfilter_users, subfilter_groups, subfilter_shares)
 attributes = []
 
+FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
 
 
 class Log(object):
@@ -59,32 +72,126 @@ class Log(object):
 		cls.emit(univention.debug.INFO, msg)
 
 	@classmethod
+	def process(cls, msg):
+		cls.emit(univention.debug.PROCESS, msg)
+
+	@classmethod
 	def warn(cls, msg):
 		cls.emit(univention.debug.WARN, msg)
 
 
+def relevant_change(old, new, attr_list):
+	"""
+	Returns True, if any attribute specified in attr_list differs between old and new, otherwise False.
+	old:  attribute dictionary
+	new:  attribute dictionary
+	attr_list:  list of attribute names (case sensitive!)
+	"""
+	return any(set(old.get(attr, [])) != set(new.get(attr, [])) for attr in attr_list)
+
+def handle_share(dn, new, old, lo, user_queue):
+	"""
+	Handles changes of share objects by triggering group changes for the relevant groups.
+	"""
+	def add_group_change_to_queue(gidNumber):
+		if not gidNumber:
+			Log.warn('handle_share: no gidNumber specified')
+			return
+		filter_s = filter_format('(gidNumber=%s)', (gidNumber,))
+		try:
+			grplist = groups_group_module.lookup(None, lo, filter_s=filter_s)
+			# use only first group of search result (should be only one)
+			grp = grplist[0]
+		except (univention.admin.uexceptions.noObject, IndexError):
+			Log.info('handle_share: cannot find group with %s - may have already been deleted' % (filter_s,))
+			return
+		handle_group(grp.dn, grp.oldattr, {}, lo, user_queue)
+
+	if not old and new:
+		# update all members of new group
+		add_group_change_to_queue(new.get('univentionShareGid', [None])[0])
+	elif old and not new:
+		# update all members of old group
+		add_group_change_to_queue(old.get('univentionShareGid', [None])[0])
+	if old and new:
+		attr_list = (
+			'univentionShareSambaName',
+			'univentionShareHost',
+			'univentionShareGid',
+		)
+		if not relevant_change(old, new, attr_list):
+			Log.info('handle_share: no relevant attribute change')
+			return
+		# update all members of old and new group
+		add_group_change_to_queue(old.get('univentionShareGid', [None])[0])
+		add_group_change_to_queue(new.get('univentionShareGid', [None])[0])
 
 
-	else:
+def handle_group(dn, new, old, lo, user_queue):
+	"""
+	Handles group changes by adding relevant user object DNs to the user queue.
+	"""
+	old_members = set(old.get('uniqueMember', []))
+	new_members = set(new.get('uniqueMember', []))
+	# get set of users that are NOT IN BOTH user sets (==> the difference between both sets)
+	for user_dn in old_members.symmetric_difference(new_members):
+		user_queue.add(user_dn)
 
+def handle_user(dn, new, old, lo, user_queue):
+	"""
+	Handles user changes by adding the DN of the user object to the user queue.
+	"""
+	username = new.get('uid', old.get('uid', [None]))[0]
+	user_queue.add(dn, username)
 
+def handler(dn, new, old):
+	attrs = new if new else old
 
-
-def initialize():
-	for path in UserLogonScriptListener.template_paths.values():
-		if not os.path.exists(path):
-			raise Exception('Missing template file {!r}.'.format(path))
-
-
-def clean():
-	Log.warn('Deleting all netlogon scripts in {!r}...'.format(UserLogonScriptListener.get_script_path()))
 	listener.setuid(0)
 	try:
-		for path in UserLogonScriptListener.get_script_path():
-			if os.path.exists(path):
-				for f in os.listdir(path):
-					if f.lower().endswith('.vbs'):
-						os.unlink(os.path.join(path, f))
+		lo = getMachineConnection()[0]
+		user_queue = SqliteQueue(logger=Log)
+
+		# identify object
+		if users_user_module.identify(dn, attrs):
+			handle_user(dn, new, old, lo, user_queue)
+		elif groups_group_module.identify(dn, attrs):
+			handle_group(dn, new, old, lo, user_queue)
+		elif shares_share_module.identify(dn, attrs):
+			handle_share(dn, new, old, lo, user_queue)
+		else:
+			Log.error('handler: unknown object type: dn: %r\nold=%s\nnew=%s' % (dn, old, new))
+
+		# TODO trigger daemon ==> signal USR1 senden, falls in Warteschleife, Wartezeit auf 5 Sekunden verkuerzen, sonst weitermachen
 	finally:
 		listener.unsetuid()
 
+
+def initialize():
+	listener.setuid(0)
+	try:
+		for path in get_netlogon_path_list():
+			if not os.path.exists(path):
+				os.makedirs(path)
+
+			# copy the umc icon to the netlogon share, maybe there is a better way? ...
+			if not os.path.isfile(os.path.join(path, "univention-management-console.ico")):
+				shutil.copy('/usr/share/ucs-school-netlogon-user-logonscripts/univention-management-console.ico', path)
+	finally:
+		listener.unsetuid()
+
+
+def clean():
+	Log.warn('Deleting all *.vbs scripts in {!r}...'.format(get_netlogon_path_list()))
+	listener.setuid(0)
+	try:
+		for path in get_netlogon_path_list():
+			if os.path.isdir(path):
+				for filename in os.listdir(path):
+					filepath = os.path.join(path, filename)
+					if os.path.isfile(filepath) and filename.lower().endswith('.vbs'):
+						os.unlink(filepath)
+			else:
+				Log.info('{!r} does not exist or is no directory!' % (path,))
+	finally:
+		listener.unsetuid()
