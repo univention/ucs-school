@@ -2,7 +2,10 @@ Source: ucs-school-netlogon-user-logonscripts
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>> 7.0), univention-config-dev, ucslint
+Build-Depends: debhelper (>> 7.0),
+ univention-config-dev,
+ ucslint,
+ dh-systemd
 Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon-user-logonscripts
