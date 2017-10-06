@@ -148,6 +148,15 @@ def handle_user(dn, new, old, lo, user_queue):
 	Handles user changes by adding the DN of the user object to the user queue.
 	"""
 	Log.info('handle_user: add %s' % (dn,))
+	if old and new:
+		attr_list = (
+			'uid',
+			'gidNumber',
+			'homeDirectory',
+		)
+		if not relevant_change(old, new, attr_list):
+			Log.debug('no relevant attribute has changed - skipping user object')
+			return
 	username = new.get('uid', old.get('uid', [None]))[0]
 	user_queue.add(dn, username)
 
