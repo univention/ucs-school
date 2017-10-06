@@ -1,0 +1,21 @@
+@%@UCRWARNING=# @%@
+
+@!@
+try:
+	import univention.lib.ucrLogrotate
+except ImportError:
+	pass
+else:
+	name = "ucs-school-user-logonscript-daemon"
+	settings = univention.lib.ucrLogrotate.getLogrotateConfig(name, configRegistry)
+
+	print "/var/log/univention/%s.log {" % name
+	for setting in settings.keys():
+		print "\t%s" % settings[setting]
+
+	# Add additional entry to trigger a daemon restart for reloading of logfiles
+	print '\tlastaction'
+	print '\t\tsystemctl try-restart ucs-school-netlogon-user-logonscripts.service'
+	print '\tendscript'
+	print "}"
+@!@
