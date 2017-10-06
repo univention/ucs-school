@@ -1,0 +1,226 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@school
+"""
+Tool to delete users whose deletion grace time (purge_timestamp) has passed.
+"""
+# Copyright 2017 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import sys
+import time
+import pprint
+import logging
+import os.path
+import datetime
+from argparse import ArgumentParser
+from ldap.filter import filter_format
+
+from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
+from ucsschool.importer.factory import setup_factory
+from ucsschool.importer.utils.logging import make_stdout_verbose
+from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.lib.pyhooks import PyHooksLoader
+from ucsschool.lib.models.utils import UniStreamHandler
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+
+
+a_user = None
+
+
+def parse_cmdline():
+	defaults = dict(
+		dry_run=False,
+		logfile=None,
+		verbose=False
+	)
+	parser = ArgumentParser(
+		description='UCS@school expired user purge tool: delete users whose deletion grace time '
+		'(purge_timestamp) has passed.')
+	parser.add_argument(
+		'-c',
+		'--conffile',
+		help='Configuration file to use (see /usr/share/doc/ucs-school-import for an explanation on configuration '
+		'file stacking).')
+	parser.add_argument(
+		'-l',
+		'--logfile',
+		help='Write to additional logfile (always verbose).')
+	parser.add_argument(
+		'-n',
+		'--dry-run',
+		dest='dry_run',
+		action='store_true',
+		help="Dry run - don't actually commit changes to LDAP [default: %(default)s].")
+	parser.add_argument(
+		'-q',
+		'--quiet',
+		action='store_true',
+		help='Disable output on the console except errors [default: %(default)s].')
+	parser.add_argument(
+		'-v',
+		'--verbose',
+		action='store_true',
+		help='Enable debugging output on the console (overwrites setting from configuration files) [default: %(default)s].')
+	parser.set_defaults(**defaults)
+
+	args = parser.parse_args()
+	if args.quiet and args.verbose:
+		parser.error('Options "quiet" and "verbose" are mutually exclusive.')
+	if args.quiet:
+		monkey_patch_logging()
+	if args.verbose:
+		make_stdout_verbose()
+	return args
+
+
+def roles_from_ocs(ocs):
+	class FakeUdmCls(object):
+		""""Fake UDM user object class for use with User.get_class_for_udm_obj()"""
+		def __init__(self, ocs):
+			self.oldattr = {'objectClass': ocs}
+
+	kls = a_user.get_class_for_udm_obj(FakeUdmCls(ocs), None)
+	return kls.roles
+
+
+def purge_timestamp2date(purge_timestamp):
+	return datetime.datetime.strptime(purge_timestamp, '%Y%m%d%H%M%SZ')
+
+
+def shadow_expire2date(shadow_expire):
+	t_struct = time.localtime(int(shadow_expire) * 3600 * 24 - 1)
+	return datetime.date(t_struct.tm_year, t_struct.tm_mon, t_struct.tm_mday)
+
+
+def monkey_patch_logging():
+	def callHandlers(self, record):
+		from logging import raiseExceptions
+
+		c = self
+		found = 0
+		while c:
+			for hdlr in c.handlers:
+				found = found + 1
+				# patch is here:
+				if (
+					record.levelno >= logging.ERROR or
+					record.levelno >= hdlr.level and not isinstance(hdlr, UniStreamHandler)
+				):
+					hdlr.handle(record)
+			if not c.propagate:
+				c = None  # break out
+			else:
+				c = c.parent
+		if (found == 0) and raiseExceptions and not self.manager.emittedNoHandlerWarning:
+			sys.stderr.write("No handlers could be found for logger \"%s\"\n" % self.name)
+			self.manager.emittedNoHandlerWarning = 1
+
+	logging.Logger.callHandlers = callHandlers
+
+
+def main():
+	global a_user
+
+	# this closely follows ucsschool.importer.frontend.cmdline.CommandLine.main()
+	uic = UserImportCommandLine()
+	uic.args = parse_cmdline()
+	# overwrite 'verbose' setting from configuration files
+	uic.args.settings = {
+		'verbose': uic.args.verbose,
+	}
+	# early logging configured by cmdline
+	uic.setup_logging(uic.args.verbose, uic.args.logfile)
+	logger = uic.logger
+
+	logger.info('------ UCS@school import tool starting ------')
+	if uic.args.conffile:
+		uic.configuration_files.append(uic.args.conffile)
+	else:
+		# prevent InitialisationError
+		uic.args.settings['sourceUID'] = 'PurgeExpiredUsers'
+	config = uic.setup_config()
+	# logging configured by config file
+	uic.setup_logging(config['verbose'], config['logfile'])
+
+	logger.info('------ UCS@school import tool configured ------')
+	logger.debug('Configuration is:\n%s', pprint.pformat(config))
+	factory = setup_factory(config['factory'])
+	lo, po = get_admin_connection()
+
+	# use factory.make_import_user() to get the user class from the import configuration
+	# (ImportUser, LegacyImportUser, CustomerImportUser ...)
+	a_user = factory.make_import_user([])
+
+	# let the import system initialize pyhooks now, so
+	# 1. in a dry run the user has a chance to see when would happen
+	# 2. in a real run, it won't initialize it again for each user
+	if a_user._pyhook_cache is None:
+		path = config.get('hooks_dir_pyhook', a_user.pyhooks_base_path)
+		pyloader = PyHooksLoader(path, UserPyHook, logger)
+		a_user.__class__._pyhook_cache = pyloader.get_hook_objects(lo)
+	# find lib hook paths and pre-fill _empty_hook_paths cache for the same reasons as above
+	hook_path = a_user._meta.hook_path
+	for func_name, hook_time in (('remove', 'pre'), ('remove', 'post')):
+		path = os.path.join(a_user.hook_path, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
+		if os.path.isdir(path) and os.listdir(path):
+			logger.info('Hooks in %s will be executed.', path)
+		else:
+			logger.info('No hooks found or empty: %s', path)
+			a_user.__class__._empty_hook_paths.add(path)
+	logger.info('------')
+
+	today_s = datetime.datetime.today().strftime('%Y%m%d%H%M%SZ')
+	filter_s = filter_format('(&(objectClass=ucsschoolType)(ucsschoolPurgeTimestamp<=%s))', (today_s,))
+	expired_accounts = lo.search(filter_s, attr=['ucsschoolPurgeTimestamp', 'shadowExpire', 'objectClass'])
+
+	logger.info('Found %d expired accounts.', len(expired_accounts))
+	for dn, attr in expired_accounts:
+		logger.debug(
+			'dn=%r purge_timestamp=%r shadowExpire=%r',
+			dn,
+			purge_timestamp2date(attr['ucsschoolPurgeTimestamp'][0]).strftime('%Y-%m-%d'),
+			shadow_expire2date(attr['shadowExpire'][0]).strftime('%Y-%m-%d') if attr.get('shadowExpire') else None
+		)
+
+	for dn, attr in expired_accounts:
+		logger.info('%sDeleting %r...', '(Dry run) ' if uic.args.dry_run else '', dn)
+
+		# get correct class to prevent ucsschool.lib warning 'UDM object <dn> is not .., but actually ..'
+		roles = roles_from_ocs(attr['objectClass'])
+		user_obj = factory.make_import_user(roles)
+		user = user_obj.from_dn(dn, None, lo)
+
+		if not uic.args.dry_run:
+			user.remove(lo)
+
+	logger.info('Finished.')
+
+
+if __name__ == '__main__':
+	sys.exit(main())
