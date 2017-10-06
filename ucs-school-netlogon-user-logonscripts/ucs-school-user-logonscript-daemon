@@ -1,3 +1,6 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
 # Univention UCS@school
 #
 # Copyright 2007-2017 Univention GmbH
@@ -27,11 +30,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-__package__ = ''  # workaround for PEP 366
-import listener
 import univention.debug
 import univention.uldap
 
+import sys
 import os
 import pwd
 import re
@@ -39,269 +41,201 @@ import time
 import copy
 import shutil
 import ldap
+import optparse
+import logging
+import signal
 import traceback
+import stat
+from univention.config_registry import ConfigRegistry
 from ldap.filter import filter_format
-
-
-name = 'ucs-school-user-logonscript'
-description = 'Create user-specific netlogon-scripts'
-filter = '(|(&(objectClass=posixAccount)(objectClass=organizationalPerson)(!(uid=*$)))(objectClass=posixGroup)(objectClass=univentionShare))'
-attributes = []
-
-
-# create netlogon scripts for samba3 and samba4
+from ucsschool.netlogon.lib import SqliteQueue
 
 
 class Log(object):
-	@classmethod
-	def debug(cls, msg):
-		cls.emit(univention.debug.ALL, msg)
-
-	@staticmethod
-	def emit(level, msg):
-		univention.debug.debug(univention.debug.LISTENER, level, '{}: {}'.format(name, msg))
+	logger = None
 
 	@classmethod
-	def error(cls, msg):
-		cls.emit(univention.debug.ERROR, msg)
+	def setup(cls):
+		if cls.logger is None:
+			logging.basicConfig(filename='/var/log/univention/ucs-school-user-logonscript-daemon.log', level=logging.INFO, format='%(asctime)s [%(levelname)s]  %(message)s')
+			cls.logger = logging.getLogger("main")
+			cls.logger.info('INIT')
 
 	@classmethod
-	def info(cls, msg):
-		cls.emit(univention.debug.INFO, msg)
+	def set_debug_level(cls, level):
+		"""
+		Set debug log level (e.g. to logging.DEBUG)
+		"""
+		cls.setup()
+		cls.logger.setLevel(level)
 
 	@classmethod
-	def warn(cls, msg):
-		cls.emit(univention.debug.WARN, msg)
+	def debug(cls, *args):
+		cls.setup()
+		cls.logger.debug(*args)
+
+	@classmethod
+	def error(cls, *args):
+		cls.setup()
+		cls.logger.error(*args)
+
+	@classmethod
+	def info(cls, *args):
+		cls.setup()
+		cls.logger.info(*args)
+
+	@classmethod
+	def warn(cls, *args):
+		cls.setup()
+		cls.logger.warn(*args)
 
 
-class LDAPConnection(object):
-	lo = None
+class QueueHandler():
+	SLEEP_INTERVAL_ON_EMPTY_QUEUE = 180
+	SLEEP_INTERVAL_MINIMUM = 7
+	DELAY_ON_ERROR = 5
+	FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
 
-	@staticmethod
-	def connect():
-		listener.setuid(0)
-		try:
-			return univention.uldap.getMachineConnection(ldap_master=False)
-		finally:
-			listener.unsetuid()
+	def __init__(self):
+		self.ucr = ConfigRegistry()
+		self.ucr.load()
 
-	def __enter__(self):
-		if self.lo is not None:
-			return self.lo
+		val = self.ucr.get('ucsschool/userlogon/daemon/debug/level', '2').strip()
+		if val.isdigit():
+			if int(val) >= 4:
+				Log.set_debug_level(logging.DEBUG)
+		else:
+			Log.error('invalid value in UCR variable ucsschool/userlogon/daemon/debug/level (%r)', val)
 
-		connect_count = 0
-		while connect_count < 31:
-			try:
-				LDAPConnection.lo = self.connect()
-				return LDAPConnection.lo
-			except ldap.LDAPError as ex:
-				Log.warn('%s: failed to connect to LDAP server' % (ex[0]['desc'],))
-				connect_count += 1
-				if isinstance(ex, ldap.INVALID_CREDENTIALS):
-					# this case may happen on rejoin during listener init; to shorten module init time, simply raise an exception
-					Log.error('%s: giving up creating a new LDAP connection' % (ex[0]['desc'],))
-					raise
-				# in all other cases wait up to 300 seconds
-				if connect_count >= 30:
-					Log.error('%s: failed to connect to LDAP server' % (ex[0]['desc'],))
-					raise
-				else:
-					Log.warn('unable to connect to LDAP server (%s), retrying in 10 seconds' % (ex[0]['desc'],))
-					time.sleep(10)
+		self.lo = univention.uldap.getMachineConnection(ldap_master=False)
+		self.setup_config()
+		self.user_queue = SqliteQueue(logger=Log)
+		self.shutdown_requested = False
+		self.wait_until = None
 
-	def __exit__(self, exc_type, exc_value, etraceback):
-		if exc_type is None:
-			return
-		if isinstance(exc_value, ldap.LDAPError):
-			LDAPConnection.lo = None
-		Log.error('error=%r' % (exc_value,))
-		Log.error(''.join(traceback.format_exception(exc_type, exc_value, etraceback)))
+		for path in self.template_paths.values():
+			if not os.path.exists(path):
+				Log.error('missing template file %r.', path)
+				sys.exit(1)
 
-
-class UserLogonScriptListener(object):
-	hostname = listener.configRegistry['hostname']
-	domainname = listener.configRegistry['domainname']
-
-	desktop_folder_path = listener.configRegistry.get('ucsschool/userlogon/shares_folder_parent_path')
-	if desktop_folder_path:
-		desktop_folder_path = desktop_folder_path.strip('"').rstrip('\\')
-		desktop_folder_path = 'oShellScript.ExpandEnvironmentStrings("{}")'.format(desktop_folder_path)
-	else:
-		desktop_folder_path = 'objFolderItem.Path'
-	desktop_folder_name = listener.configRegistry.get('ucsschool/userlogon/shares_foldername', 'Eigene Shares')
-	desktop_folder_name_macos = listener.configRegistry.get('ucsschool/userlogon/mac/foldername', desktop_folder_name)
-	desktop_folder_icon = listener.configRegistry.get('ucsschool/userlogon/shares_folder_icon')  # '%SystemRoot%\system32\imageres.dll,143'
-	my_files_link_name = listener.configRegistry.get('ucsschool/userlogon/my_files_link_name', 'Meine Dateien')
-	my_files_link_icon = listener.configRegistry.get('ucsschool/userlogon/my_files_link_icon')  # '%SystemRoot%\system32\imageres.dll,207'
-	other_links_icon = listener.configRegistry.get('ucsschool/userlogon/other_links_icon')  # '%SystemRoot%\system32\imageres.dll,193'
-	myshares_name = listener.configRegistry.get('ucsschool/userlogon/myshares/name', 'Eigene Dateien')
-	mypictures_name = listener.configRegistry.get('ucsschool/userlogon/mypictures/name', 'Eigene Bilder')
-	create_drive_mappings = listener.configRegistry.is_true('ucsschool/userlogon/create_drive_mappings', True)
-	create_myfiles_link = listener.configRegistry.is_true('ucsschool/userlogon/create_myfiles_link', True)
-	create_personal_files_mapping = listener.configRegistry.is_true('ucsschool/userlogon/myshares/enabled', False)
-	create_shortcuts = listener.configRegistry.is_true('ucsschool/userlogon/create_shortcuts', True)
-	create_teacher_umc_link = listener.configRegistry.is_true('ucsschool/userlogon/create_teacher_umc_link', True)
-
-	strTeacher = listener.configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-	strStaff = listener.configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-	ldapbase = listener.configRegistry.get('ldap/base', '')
-	umcLink = listener.configRegistry.get(
-		'ucsschool/userlogon/umclink/link',
-		'http://%s.%s/univention/management/' % (hostname, domainname))
-	reTeacher = re.compile(listener.configRegistry.get(
-		'ucsschool/userlogon/umclink/re',
-		'^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (
-			re.escape(strTeacher), re.escape(strStaff), re.escape(ldapbase))))
-	filterTeacher = listener.configRegistry.get(
-		'ucsschool/userlogon/umclink/filter',
-		'(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
-	template_paths = dict(
-		main='/usr/share/ucs-school-netlogon-user-logonscripts/net-logon-script.vbs',
-		mac_script='/usr/share/ucs-school-netlogon-user-logonscripts/mac_script',
-	)
-	_disabled_share_links = dict()
-	_template_cache = dict()
-	_script_path = list()
-
-	def __init__(self, dn, new, old):
-		self.dn = dn
-		self.new = new
-		self.old = old
-		self.global_links = self.get_global_links()
 
 	@staticmethod
 	def _mkdir(path):
-		listener.setuid(0)
-		try:
-			if not os.path.isdir(path):
-				os.makedirs(path)
+		if not os.path.isdir(path):
+			os.makedirs(path)
+		# copy the umc icon to the netlogon share, maybe there is a better way? ...
+		if not os.path.isfile(os.path.join(path, "univention-management-console.ico")):
+			shutil.copy("/usr/share/ucs-school-netlogon-user-logonscripts/univention-management-console.ico", path)
 
-			# copy the umc icon to the netlogon share, maybe there is a better way? ...
-			if not os.path.isfile(os.path.join(path, "univention-management-console.ico")):
-				shutil.copy("/usr/share/ucs-school-netlogon-user-logonscripts/univention-management-console.ico", path)
-		finally:
-			listener.unsetuid()
-
-	@classmethod
-	def get_disabled_share_links(cls):
-		if not cls._disabled_share_links:
-			for k, v in listener.configRegistry.items():
+	def get_disabled_share_links(self):
+		if not self._disabled_share_links:
+			for k, v in self.ucr.items():
 				if k.startswith('ucsschool/userlogon/disabled_share_links/'):
 					server = k.rpartition('/')[-1]
 					shares = [l.strip().rstrip('/') for l in v.split(',')]
-					cls._disabled_share_links[server] = shares
-		return cls._disabled_share_links
+					self._disabled_share_links[server] = shares
+		return self._disabled_share_links
 
-	@classmethod
-	def get_script_path(cls):
-		if not cls._script_path:
-			ucsschool_netlogon_path = listener.configRegistry.get('ucsschool/userlogon/netlogon/path', '').strip().rstrip('/')
-			samba_netlogon_path = listener.configRegistry.get('samba/share/netlogon/path', '').strip().rstrip('/')
-			cls._script_path = list()
+	def get_script_path(self):
+		if not self._script_path:
+			ucsschool_netlogon_path = self.ucr.get('ucsschool/userlogon/netlogon/path', '').strip().rstrip('/')
+			samba_netlogon_path = self.ucr.get('samba/share/netlogon/path', '').strip().rstrip('/')
+			self._script_path = []
 			if ucsschool_netlogon_path:
-				cls._script_path.append(ucsschool_netlogon_path)
+				self._script_path.append(ucsschool_netlogon_path)
 			elif samba_netlogon_path:
-				cls._script_path.append(samba_netlogon_path)
+				self._script_path.append(samba_netlogon_path)
 			else:
-				cls._script_path.append("/var/lib/samba/netlogon/user")
-				cls._script_path.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
+				self._script_path.append("/var/lib/samba/netlogon/user")
+				self._script_path.append("/var/lib/samba/sysvol/%s/scripts/user" % self.ucr.get('kerberos/realm', '').lower())
 
-			for path in cls._script_path:
-				cls._mkdir(path)
-		return cls._script_path
+			for path in self._script_path:
+				self._mkdir(path)
+		return self._script_path
 
-	@staticmethod
-	def get_global_links():
+	def get_global_links(self):
 		# search in configRegistry for shares which are common for all users
 		global_links = dict()
-		Log.info("search for global links")
-		share_keys = [x.strip() for x in listener.configRegistry.get('ucsschool/userlogon/commonshares', '').split(',') if x.strip()]
-		with LDAPConnection() as lo:
-			for key in share_keys:
-				# check if share exists
-				try:
-					if not lo.search(
-							scope="sub",
-							filter=filter_format(
-								'(&(objectClass=univentionShareSamba)(|(cn=%s)(univentionShareSambaName=%s)))',
-								(key, key)),
-							attr=['cn']):
-						continue
-				except:
+		Log.debug("search for global links")
+		share_keys = [x.strip() for x in self.ucr.get('ucsschool/userlogon/commonshares', '').split(',') if x.strip()]
+		for key in share_keys:
+			# check if share exists
+			Log.debug("search global links for %s" % key)
+			try:
+				if not self.lo.search(
+					scope="sub",
+					filter=filter_format(
+						'(&(objectClass=univentionShareSamba)(|(cn=%s)(univentionShareSambaName=%s)))',
+						(key, key)),
+					attr=['cn']):
 					continue
-				Log.info("search global links for %s" % key)
-				server = listener.configRegistry.get('ucsschool/userlogon/commonshares/server/%s' % key)
-				letter = listener.configRegistry.get('ucsschool/userlogon/commonshares/letter/%s' % key, '').replace(':', '')
-				if server:
-					global_links[key] = {'server': server}
-					if letter:
-						global_links[key]['letter'] = letter
+			except ldap.LDAPError as exc:
+				Log.error('LDAP search for global links failed: key=%r: %s', key, exc)
+				raise
+			server = self.ucr.get('ucsschool/userlogon/commonshares/server/%s' % key)
+			letter = self.ucr.get('ucsschool/userlogon/commonshares/letter/%s' % key, '').replace(':', '')
+			if server:
+				global_links[key] = {'server': server}
+				if letter:
+					global_links[key]['letter'] = letter
 		Log.info("got global links %s" % global_links)
 		return global_links
 
-	@classmethod
-	def get_home_path(cls):
+	def get_home_path(self):
 		res = ''
-		if listener.configRegistry.get('samba/homedirletter'):
-			res = "{}:\{}".format(listener.configRegistry['samba/homedirletter'], cls.myshares_name)
-		if listener.configRegistry.get('ucsschool/userlogon/mysharespath'):
-			res = listener.configRegistry['ucsschool/userlogon/mysharespath']
+		if self.ucr.get('samba/homedirletter'):
+			res = '{}:\\{}'.format(self.ucr['samba/homedirletter'], self.myshares_name)
+		if self.ucr.get('ucsschool/userlogon/mysharespath'):
+			res = self.ucr['ucsschool/userlogon/mysharespath']
 		return res
 
-	@classmethod
-	def generate_mac_script(cls, uid, name, host):
-		return cls.get_logon_template(cls.template_paths['mac_script']).format(uid=uid, host=host, name=name)
+	def generate_mac_script(self, uid, name, host):
+		return self.get_logon_template(self.template_paths['mac_script']).format(uid=uid, host=host, name=name)
 
-	@classmethod
-	def write_mac_link_scripts(cls, uid, homepath, links):
-		listener.setuid(0)
-		try:
-			if not (os.path.exists(homepath) and not os.path.isdir(homepath)):  # may be /dev/null
-				# check existence of home
-				uidnumber = 0
-				gidnumber = 0
+	def write_mac_link_scripts(self, uid, homepath, links):
+		if not (os.path.exists(homepath) and not os.path.isdir(homepath)):  # may be /dev/null
+			# check existence of home
+			uidnumber = 0
+			gidnumber = 0
+			try:
+				uidnumber = pwd.getpwnam(uid)[2]
+				gidnumber = pwd.getpwnam(uid)[3]
+			except Exception as exc:
+				Log.warn('unable to get uidNumber and gidNumber of user %r: %s', uid, exc)
+
+			if not os.path.exists(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)):
+				if not os.path.exists(homepath):
+					os.mkdir(homepath, 0o700)
+					os.chown(homepath, uidnumber, gidnumber)
+
+				for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)]:
+					if not os.path.exists(path):
+						os.mkdir(path)
+						os.chown(path, uidnumber, gidnumber)
+
+			# remove old scripts
+			for filename in os.listdir(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)):
 				try:
-					uidnumber = pwd.getpwnam(uid)[2]
-					gidnumber = pwd.getpwnam(uid)[3]
+					if os.path.isdir(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename)):
+						shutil.rmtree(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename))
+					else:
+						os.remove(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename))
 				except:
-					pass
+					Log.error("failed to remove %s" % filename)
+					raise
 
-				if not os.path.exists(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos)):
-					if not os.path.exists(homepath):
-						os.mkdir(homepath, 0o700)
-						os.chown(homepath, uidnumber, gidnumber)
+			for filename in links:
+				macscriptpath = os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, "%s.app" % filename)
+				os.mkdir(macscriptpath)
+				os.chown(macscriptpath, uidnumber, gidnumber)
+				macscriptfile = os.path.join(macscriptpath, filename)
+				fp = open(macscriptfile, 'w')
+				fp.write(self.generate_mac_script(uid, filename, links[filename]))
+				fp.close()
+				os.chmod(macscriptfile, 0o700)
+				os.chown(macscriptfile, uidnumber, gidnumber)
 
-					for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos)]:
-						if not os.path.exists(path):
-							os.mkdir(path)
-							os.chown(path, uidnumber, gidnumber)
-
-				# remove old scripts
-				for filename in os.listdir(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos)):
-					try:
-						if os.path.isdir(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, filename)):
-							shutil.rmtree(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, filename))
-						else:
-							os.remove(os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, filename))
-					except:
-						Log.error("failed to remove %s" % filename)
-						raise
-
-				for filename in links:
-					macscriptpath = os.path.join(homepath, "Desktop", cls.desktop_folder_name_macos, "%s.app" % filename)
-					os.mkdir(macscriptpath)
-					os.chown(macscriptpath, uidnumber, gidnumber)
-					macscriptfile = os.path.join(macscriptpath, filename)
-					fp = open(macscriptfile, 'w')
-					fp.write(cls.generate_mac_script(uid, filename, links[filename]))
-					fp.close()
-					os.chmod(macscriptfile, 0o700)
-					os.chown(macscriptfile, uidnumber, gidnumber)
-		finally:
-			listener.unsetuid()
-
-	@classmethod
-	def get_logon_template(cls, path, format_dict=None, no_icons=None):
+	def get_logon_template(self, path, format_dict=None, no_icons=None):
 		"""
 		Fetch a VBS/mac template and apply text replacements.
 
@@ -315,7 +249,7 @@ class UserLogonScriptListener(object):
 		link).
 		:return: str: template text
 		"""
-		if path not in cls._template_cache:
+		if path not in self._template_cache:
 			# read file into list of strings
 			with open(path, 'rb') as fp:
 				tmp = fp.readlines()
@@ -336,12 +270,11 @@ class UserLogonScriptListener(object):
 			if format_dict:
 				assert isinstance(format_dict, dict)
 				tmp = tmp.format(**format_dict)
-			cls._template_cache[path] = tmp
+			self._template_cache[path] = tmp
 		# return a copy, so string in cache will not be modified
-		return copy.copy(cls._template_cache[path])
+		return copy.copy(self._template_cache[path])
 
-	@classmethod
-	def generate_drive_mappings_snippet(cls, mappings):
+	def generate_drive_mappings_snippet(self, mappings):
 		res = ''
 		lettersinuse = {}
 		for key in mappings.keys():
@@ -350,9 +283,9 @@ class UserLogonScriptListener(object):
 					if lettersinuse[mappings[key]['letter']] == mappings[key]['server']:
 						continue
 					Log.warn(
-						'{name}: the assigned letter {letter!r} for share \\{server}\{key} is already in use by '
+						'{name}: the assigned letter {letter!r} for share \\\\{server}\\{key} is already in use by '
 						'server "{lettersinuse!r}"'.format(
-							name=name,
+							name='ucs-school-user-logonscripts-daemon',
 							letter=mappings[key]['letter'],
 							server=mappings[key]['server'],
 							key=key,
@@ -362,34 +295,32 @@ class UserLogonScriptListener(object):
 					lettersinuse[mappings[key]['letter']] = mappings[key]['server']
 		return res
 
-	@classmethod
-	def generate_header_and_functions_snippet(cls):
+	def generate_header_and_functions_snippet(self):
 		str_replacements = dict(
-			desktop_folder_icon=cls.desktop_folder_icon,
-			desktop_folder_name=cls.desktop_folder_name.translate(None, '\/:*?"<>|'),
-			desktop_folder_path=cls.desktop_folder_path,
-			domainname=cls.domainname,
-			hostname=cls.hostname,
-			my_files_link_icon=cls.my_files_link_icon,
-			my_files_link_name=cls.my_files_link_name,
-			mypictures_name=cls.mypictures_name,
-			myshares_name=cls.myshares_name,
-			other_links_icon=cls.other_links_icon,
-			umc_link=cls.umcLink,
+			desktop_folder_icon=self.desktop_folder_icon,
+			desktop_folder_name=self.desktop_folder_name.translate(None, r'\/:*?"<>|'),
+			desktop_folder_path=self.desktop_folder_path,
+			domainname=self.domainname,
+			hostname=self.hostname,
+			my_files_link_icon=self.my_files_link_icon,
+			my_files_link_name=self.my_files_link_name,
+			mypictures_name=self.mypictures_name,
+			myshares_name=self.myshares_name,
+			other_links_icon=self.other_links_icon,
+			umc_link=self.umcLink,
 		)
 		no_icons = list()
-		if not cls.desktop_folder_icon:
+		if not self.desktop_folder_icon:
 			no_icons.append('desktop_folder_icon')
-		if not cls.my_files_link_icon:
+		if not self.my_files_link_icon:
 			no_icons.append('my_files_link_icon')
-		if not cls.other_links_icon:
+		if not self.other_links_icon:
 			no_icons.append('other_links_icon')
-		return cls.get_logon_template(cls.template_paths['main'], str_replacements, no_icons)
+		return self.get_logon_template(self.template_paths['main'], str_replacements, no_icons)
 
-	@classmethod
-	def generate_shares_shortcuts_snippet(cls, links):
+	def generate_shares_shortcuts_snippet(self, links):
 		res = ''
-		disabled_share_links = cls.get_disabled_share_links()
+		disabled_share_links = self.get_disabled_share_links()
 		for share, server in links.items():
 			disabled_server_links = disabled_share_links.get(server, [])
 			if 'all' in disabled_server_links or any(re.match(disabled_link, share) for disabled_link in disabled_server_links):
@@ -397,21 +328,16 @@ class UserLogonScriptListener(object):
 			res += 'CreateShareShortcut "{}","{}"\n'.format(server, share)
 		return res
 
-	@classmethod
-	def generate_teacher_umc_link_snippet(cls, dn):
-		with LDAPConnection() as lo:
-			try:
-				is_teacher = bool(lo.search(base=dn, scope='base', filter=cls.filterTeacher)[0])
-			except (ldap.NO_SUCH_OBJECT, IndexError):
-				is_teacher = False
-			if not is_teacher:
-				is_teacher = cls.reTeacher.match(dn)  # old format before migration
+	def generate_teacher_umc_link_snippet(self, dn):
+		try:
+			is_teacher = bool(self.lo.search(base=dn, scope='base', filter=self.filterTeacher)[0])
+		except (ldap.NO_SUCH_OBJECT, IndexError):
+			is_teacher = False
 		if is_teacher:
 			return 'CreateTeacherUmcLink\n'
 		return ''
 
-	@classmethod
-	def generate_windows_link_script(cls, links, mappings, dn):
+	def generate_windows_link_script(self, links, mappings, dn):
 		"""
 		Create windows user netlogon script.
 
@@ -421,263 +347,319 @@ class UserLogonScriptListener(object):
 		:return: str: a VBS script
 		"""
 		# create constants and functions
-		script = cls.generate_header_and_functions_snippet()
+		script = self.generate_header_and_functions_snippet()
 
 		# create shortcuts to shares
-		if cls.create_shortcuts:
+		if self.create_shortcuts:
 			# create folder
 			script += 'CreateLinkFolder\n'
 
 			# create custom folder icon
-			if cls.desktop_folder_icon:
+			if self.desktop_folder_icon:
 				script += 'CreateDesktopIcon\n'
 
 			# create My Files link
-			if cls.create_myfiles_link:
+			if self.create_myfiles_link:
 				script += 'CreateLinkToMyFiles\n'
 
 			# create shortcuts to shares
 			# disable individually using ucsschool/userlogon/disabled_share_links/*
-			script += cls.generate_shares_shortcuts_snippet(links)
+			script += self.generate_shares_shortcuts_snippet(links)
 
 		# create shortcut to umc for teachers
-		if cls.create_teacher_umc_link:
-			script += cls.generate_teacher_umc_link_snippet(dn)
+		if self.create_teacher_umc_link:
+			script += self.generate_teacher_umc_link_snippet(dn)
 
 		# map personal files from c:\users\<uid> to \\server\<uid>
-		home_path = cls.get_home_path()
-		if cls.create_personal_files_mapping and home_path:
+		home_path = self.get_home_path()
+		if self.create_personal_files_mapping and home_path:
 			script += 'SetMyShares "%s"\n' % home_path
 
 		# create drive mappings
-		if cls.create_drive_mappings:
-			script += cls.generate_drive_mappings_snippet(mappings)
+		if self.create_drive_mappings:
+			script += self.generate_drive_mappings_snippet(mappings)
 
 		return script
 
-	def write_windows_link_skripts(self, uid, links, mappings):
+	def write_windows_link_skripts(self, dn, uid, links, mappings):
 		for path in self.get_script_path():
-			script = self.generate_windows_link_script(links, mappings, self.dn).replace('\n', '\r\n')
-			listener.setuid(0)
-			try:
-				filepath = os.path.join(path, '{}.vbs'.format(uid))
-				with open(filepath, 'w') as fp:
-					fp.write(script)
-				os.chmod(filepath, 0o755)
-			finally:
-				listener.unsetuid()
+			script = self.generate_windows_link_script(links, mappings, dn).replace('\n', '\r\n')
+			filepath = os.path.join(path, '{}.vbs'.format(uid))
+			with open(filepath, 'w') as fp:
+				fp.write(script)
+			os.chmod(filepath, 0o755)
 
-	def group_change(self, new, old):
+	def get_group_memberships(self, dn):
 		"""
-		Please explain what this should do!
-		'new' may be a dict from an ldap search
-		'old' may not be a dict but None
-
-		# TODO: fix arguments and branch on real booleans
-
-		:param new: self.group_change(group, None)  # called from share_change()
-		:param old: may be set to None in share_change()
+		Returns a frozenset of gidNumbers the specified user is member of.
 		"""
-		Log.info('sync by group')
-		if new:
-			members = self.new.get('uniqueMember', ())
-			if old and 'uniqueMember' in old:
-				members = frozenset(members) ^ frozenset(old['uniqueMember'])
-		elif self.old:
-			members = old.get('uniqueMember', ())
-		else:
-			return
-		for self.dn in members:
-			if self.dn[:2].lower() != 'cn':  # don't sync computer-accounts
-				self.user_change('search', {})
-
-	def share_change(self):
-		Log.info('sync by share')
-		if self.new:
-			use = self.new
-		elif self.old:
-			use = self.old
-		else:
-			return
-
 		try:
-			with LDAPConnection() as lo:
-				res = lo.search(
-					scope="sub",
-					filter=filter_format('(&(objectClass=posixGroup)(gidNumber=%s))', (use['univentionShareGid'][0],)))
-				if len(res) > 0:
-					dn = res[0][0]
-					group = res[0][1]
-					self.group_change(group, None)
-		except ldap.LDAPError as msg:
-			Log.error("ldap search for group object with gidNumber=%r failed in share_change(%s) (%s)" % (
-				use['univentionShareGid'][0], self.dn, msg))
+			res = self.lo.search(
+				scope="sub",
+				filter=filter_format("(&(objectClass=posixGroup)(uniqueMember=%s))", (dn,)),
+				attr=["gidNumber"])
+		except ldap.LDAPError as exc:
+			Log.error("LDAP search for %s failed in get_group_memberships(): %s", dn, exc)
 			raise
+		return frozenset([attributes['gidNumber'][0] for (_, attributes,) in res])
 
-	@staticmethod
-	def user_gids(dn):
+	def get_shares_with_specific_gidNumber(self, gid):
 		try:
-			with LDAPConnection() as lo:
-				res = lo.search(
-					scope="sub",
-					filter=filter_format("(&(objectClass=posixGroup)(uniqueMember=%s))", (dn,)),
-					attr=["gidNumber"])
-				return frozenset([attributes['gidNumber'][0] for (dn_, attributes,) in res])
-		except ldap.LDAPError as msg:
-			Log.error("ldap search for %s failed in user_gids() (%s)" % (dn, msg))
-		return frozenset()
-
-	@staticmethod
-	def gid_shares(gid):
-		try:
-			with LDAPConnection() as lo:
-				return lo.search(
-					scope="sub",
-					filter=filter_format('(&(objectClass=univentionShareSamba)(univentionShareGid=%s))', (gid,)),
-					attr=['cn', 'univentionShareHost', 'univentionShareSambaName'])
+			return self.lo.search(
+				scope="sub",
+				filter=filter_format('(&(objectClass=univentionShareSamba)(univentionShareGid=%s))', (gid,)),
+				attr=['cn', 'univentionShareHost', 'univentionShareSambaName'])
 		except ldap.LDAPError as msg:
 			Log.warn('LDAP-search failed for shares with gid %s: %r' % (gid, msg))
-			return ()
+			raise
 
-	def user_change(self, new, old):
+	def handle_user_change(self, dn, unchecked_uid):
 		"""
-		Please explain what this should do!
-		'new' may not be a dict but a string
-
-		# TODO: fix arguments and branch on real booleans
-
-		:param new: if new == 'search':  # called from group_change()
-		:param old: may be set to {} in group_change()
+		(Re)Create a vbs logonscript for the user specified by the given user DN.
 		"""
-		Log.info('sync by user')
-		with LDAPConnection() as lo:
-			if new:
-				try:
-					if new['uid'][0][-1] == "$":  # machine account
-						return
-				except:
-					pass
-				ldapbase = listener.configRegistry['ldap/base']
-				membershipIDs = set()
+		Log.debug('fetching data for %s', dn)
+		new = self.lo.get(dn)
+		if not new:
+			Log.info('user %s (%s) does not exist anymore in LDAP', unchecked_uid, dn)
+			for path in self.get_script_path():
+				vbs_path = os.path.join(path, '{}.vbs'.format(unchecked_uid))
+				if os.path.exists(vbs_path):
+					Log.info('deleting netlogon script {}...'.format(vbs_path))
+					os.remove(vbs_path)
+			return
 
-				if new == 'search':  # called from group_change
+		uid = new.get('uid', ['$'])[0]
+		if (uid[-1] == '$' or 'univentionHost' in new.get('objectClass', [])):
+			# if uid ends with '$', it is a machine account
+			Log.debug('%s is a computer object - skipping queue item', dn)
+			return
+		if 'univentionGroup' in new.get('objectClass', []):
+			Log.debug('%s is a group object - skipping queue item', dn)
+			return
+
+		Log.info('updating logon script for %s', dn)
+
+		membershipIDs = set()  # set of gidNumbers of groups the user is member of
+		membershipIDs.add(new.get('gidNumber')[0])
+
+		# update of membershipIDs: add all gidNumbers of groups, the user is member of
+		membershipIDs.update(self.get_group_memberships(dn))
+		Log.debug('user is member of following groups: %s', membershipIDs)
+
+		# mappings: { SHARE_NAME: { 'letter': DRIVE_LETTER, 'server': SERVER_NAME }, ... }
+		mappings = {}
+		# regular expression to filter out only class shares
+		RE_classes = re.compile('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),(?:ou=[^,]+,)?%s$' % re.escape(self.ldapbase))
+		links = {}
+		# the UCR variables defines a list of hostnames that are valid share server names;
+		# shares of "unknown" servers, that are not part of this list, are ignored
+		validservers = frozenset(self.ucr.get(
+			'ucsschool/userlogon/shares/validservers',
+			self.hostname
+		).split(','))
+
+		# get global links: it's possible to define shares that have to be connected to every user
+		for name in self.global_links.keys():
+			if self.global_links[name].get("server"):
+				links[name] = self.global_links[name]["server"]
+				if self.global_links[name].get("letter"):
+					mappings[name] = {
+						'server': self.global_links[name]["server"],
+						'letter': self.global_links[name]["letter"],
+					}
+
+		classShareLetter = self.ucr.get('ucsschool/userlogon/classshareletter', 'K').replace(':', '').strip()
+		for ID in membershipIDs:
+			for share in self.get_shares_with_specific_gidNumber(ID):
+				# linkname is identical to the sharename
+				linkname = share[1]['cn'][0]
+				if 'univentionShareSambaName' in share[1]:
+					linkname = share[1]['univentionShareSambaName'][0]
+
+				# ignore link if already in global links
+				if links.get(linkname):
+					continue
+
+				# hostname_ is either an IP or an FQDN
+				hostname_ = share[1]['univentionShareHost'][0]
+				if hostname_.strip('0123456789.'):  # no IP-Address
+					hostname_ = hostname_.split('.', 1)[0]  # use only hostname not FQDN
+
+				# save link and mapping
+				if hostname_ in validservers or '*' in validservers:
+					links[linkname] = hostname_
+					classmatches = RE_classes.match(share[0])
+					if classmatches and len(classmatches.groups()) == 2:
+						mappings[linkname] = {'server': hostname_, 'letter': classShareLetter}
+
+		Log.debug("user links %s", links)
+
+		# create logon script for Windows systems
+		self.write_windows_link_skripts(dn, uid, links, mappings)
+
+		# create logon script for OSX systems
+		if self.ucr.is_true("ucsschool/userlogon/mac"):
+			self.write_mac_link_scripts(uid, new.get('homeDirectory', ['NO-HOMEDIRECTORY-SET'])[0], links)
+
+	def setup_signal_handling(self):
+		# register handler for signal USR1
+		signal.signal(signal.SIGUSR1, self.signal_usr1)
+		signal.siginterrupt(signal.SIGUSR1, False)
+		signal.signal(signal.SIGTERM, self.signal_term)
+		signal.siginterrupt(signal.SIGTERM, False)
+		with open(self.FN_PID, 'w') as fd:
+			fd.write(str(os.getpid()))
+		os.chown(self.FN_PID, 0, 0)
+		os.chmod(self.FN_PID, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+
+	def teardown_signal_handling(self):
+		'''
+		Removes PID file, if it still exists.
+		'''
+		if os.path.isfile(self.FN_PID):
+			os.remove(self.FN_PID)
+
+	def signal_term(self, signal_number, frame):
+		'''
+		shut down gracefully
+		'''
+		Log.warn('signal received - shutting down gracefully')
+		self.shutdown_requested = True
+
+	def signal_usr1(self, signal_number, frame):
+		'''
+		If signal USR1 is received, the remaining waiting time self.wait_util is reduced
+		to time.time()+self.SLEEP_INTERVAL_MINIMUM if more than SLEEP_INTERVAL_MINIMUM
+		seconds are left to wait.
+		'''
+		minimum_wait_until = time.time() + self.SLEEP_INTERVAL_MINIMUM
+		if self.wait_until > minimum_wait_until:
+			Log.info('signal received - reduced wait time by %.1f seconds', self.wait_until - minimum_wait_until)
+			self.wait_until = minimum_wait_until
+
+	def setup_config(self):
+		self.hostname = self.ucr['hostname']
+		self.domainname = self.ucr['domainname']
+		self.ldapbase = self.ucr['ldap/base']
+
+		self.global_links = self.get_global_links()
+		self.desktop_folder_path = self.ucr.get('ucsschool/userlogon/shares_folder_parent_path')
+		if self.desktop_folder_path:
+			self.desktop_folder_path = self.desktop_folder_path.strip('"').rstrip('\\')
+			self.desktop_folder_path = 'oShellScript.ExpandEnvironmentStrings("{}")'.format(self.desktop_folder_path)
+		else:
+			self.desktop_folder_path = 'objFolderItem.Path'
+		self.desktop_folder_name = self.ucr.get('ucsschool/userlogon/shares_foldername', 'Eigene Shares')
+		self.desktop_folder_name_macos = self.ucr.get('ucsschool/userlogon/mac/foldername', self.desktop_folder_name)
+		self.desktop_folder_icon = self.ucr.get('ucsschool/userlogon/shares_folder_icon')  # '%SystemRoot%\system32\imageres.dll,143'
+		self.my_files_link_name = self.ucr.get('ucsschool/userlogon/my_files_link_name', 'Meine Dateien')
+		self.my_files_link_icon = self.ucr.get('ucsschool/userlogon/my_files_link_icon')  # '%SystemRoot%\system32\imageres.dll,207'
+		self.other_links_icon = self.ucr.get('ucsschool/userlogon/other_links_icon')  # '%SystemRoot%\system32\imageres.dll,193'
+		self.myshares_name = self.ucr.get('ucsschool/userlogon/myshares/name', 'Eigene Dateien')
+		self.mypictures_name = self.ucr.get('ucsschool/userlogon/mypictures/name', 'Eigene Bilder')
+		self.create_drive_mappings = self.ucr.is_true('ucsschool/userlogon/create_drive_mappings', True)
+		self.create_myfiles_link = self.ucr.is_true('ucsschool/userlogon/create_myfiles_link', True)
+		self.create_personal_files_mapping = self.ucr.is_true('ucsschool/userlogon/myshares/enabled', False)
+		self.create_shortcuts = self.ucr.is_true('ucsschool/userlogon/create_shortcuts', True)
+		self.create_teacher_umc_link = self.ucr.is_true('ucsschool/userlogon/create_teacher_umc_link', True)
+
+		self.strTeacher = self.ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+		self.strStaff = self.ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
+		self.umcLink = self.ucr.get(
+			'ucsschool/userlogon/umclink/link',
+			'http://%s.%s/univention/management/' % (self.hostname, self.domainname))
+		self.reTeacher = re.compile(self.ucr.get(
+			'ucsschool/userlogon/umclink/re',
+			'^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (
+				re.escape(self.strTeacher), re.escape(self.strStaff), re.escape(self.ldapbase))))
+		self.filterTeacher = self.ucr.get(
+			'ucsschool/userlogon/umclink/filter',
+			'(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
+		self.template_paths = dict(
+			main='/usr/share/ucs-school-netlogon-user-logonscripts/net-logon-script.vbs',
+			mac_script='/usr/share/ucs-school-netlogon-user-logonscripts/mac_script',
+		)
+
+		value = self.ucr.get('ucsschool/userlogon/daemon/check-interval', '').strip()
+		if value:
+			try:
+				self.SLEEP_INTERVAL_ON_EMPTY_QUEUE = int(value)
+			except ValueError:
+				Log.error('UCR variable ucsschool/userlogon/daemon/check-interval contains an invalid value (%r). Using default of %s seconds.', value, self.SLEEP_INTERVAL_ON_EMPTY_QUEUE)
+		Log.debug('SLEEP_INTERVAL_ON_EMPTY_QUEUE = %s', self.SLEEP_INTERVAL_ON_EMPTY_QUEUE)
+
+		value = self.ucr.get('ucsschool/userlogon/daemon/error-delay', '').strip()
+		if value:
+			try:
+				self.DELAY_ON_ERROR = int(value)
+			except ValueError:
+				Log.error('UCR variable ucsschool/userlogon/daemon/error-delay contains an invalid value (%r). Using default of %s seconds.', value, self.DELAY_ON_ERROR)
+		Log.debug('DELAY_ON_ERROR = %s', self.DELAY_ON_ERROR)
+
+		value = self.ucr.get('ucsschool/userlogon/daemon/check-interval-minimum', '').strip()
+		if value:
+			try:
+				self.SLEEP_INTERVAL_MINIMUM = int(value)
+			except ValueError:
+				Log.error('UCR variable ucsschool/userlogon/daemon/check-interval-minimum contains an invalid value (%r). Using default of %s seconds.', value, self.SLEEP_INTERVAL_MINIMUM)
+		Log.debug('SLEEP_INTERVAL_MINIMUM = %s', self.SLEEP_INTERVAL_MINIMUM)
+
+		self._disabled_share_links = dict()
+		self._template_cache = dict()
+		self._script_path = list()
+
+	def run(self):
+		"""
+		Iterate over all queue items. Each queue item is removed and in case of an
+		error readded at the bottom of the queue. If the queue is empty, the loop
+		will wait some time until the next queue check is performed.
+		"""
+		try:
+			self.setup_signal_handling()  # register signal USR1 and create PID file
+
+			while not self.shutdown_requested:
+				empty_run = True
+				user_dn, username = self.user_queue.query_next_user()
+				if user_dn is not None:
+					empty_run = False
+					Log.debug('found %s in queue', user_dn)
+					# queue is not empty
 					try:
-						Log.info('got to search %s' % (self.dn,))
-						res = lo.search(base=self.dn, scope="base", filter='objectClass=posixAccount')
-						if len(res) > 0:
-							new = res[0][1]
-							# get groups we are member of:
-							membershipIDs.add(new['gidNumber'][0])
-					except ldap.NO_SUCH_OBJECT:
-						Log.info('user_change(): user %r not found' % (self.dn,))
-						return
-					except Exception:
-						Log.error('LDAP-search failed for user %s in user_change()' % (self.dn,))
-						raise
-				else:
-					membershipIDs.add(new['gidNumber'][0])
+						self.user_queue.remove(user_dn)  # remove user from queue
+						self.handle_user_change(user_dn, username)
+					except (SystemExit, KeyboardInterrupt):
+						self.user_queue.add(user_dn, username)  # handling may be incomplete, readd user dn to queue
+						self.shutdown_requested = True
+					except Exception as exc:
+						self.user_queue.add(user_dn, username)  # handling failed, readd user dn to queue
+						Log.error('An error occured while processing "%s": %r', user_dn, exc)
+						Log.debug('EXCEPTION:\n%s', traceback.format_exc())
+						time.sleep(self.DELAY_ON_ERROR)
 
-				if old and new.get('uid') == old.get('uid') and new.get('gidNumber') == old.get('gidNumber') and new.get('homeDirectory') == old.get('homeDirectory'):
-					return  # skip unused attributes
+				if self.user_queue.query_next_user()[0] is None and not self.shutdown_requested:
+					if not empty_run:
+						Log.info('all items processed... sleeping...')
+					else:
+						Log.debug('queue is empty... sleeping...')
+					# no more DNs in queue, wait some time for next check
+					self.wait_until = time.time() + self.SLEEP_INTERVAL_ON_EMPTY_QUEUE
+					while not self.shutdown_requested and time.time() < self.wait_until:
+						time.sleep(1)
+					Log.debug('just woke up...')
+		finally:
+			self.teardown_signal_handling()  # remove PID file
+		if self.shutdown_requested:
+			Log.info('Shutdown as requested')
 
-				# Gruppen suchen mit uniqueMember=dn
-				# shares suchen mit GID wie Gruppe
-				Log.info('handle user %s' % (self.dn,))
-				membershipIDs.update(self.user_gids(self.dn))
+def main():
+	parser = optparse.OptionParser()
+	parser.add_option("-d", "--debug", dest="debug", default=False, action="store_true", help="show debug output")
+	(options, args) = parser.parse_args()
 
-				Log.info('groups are %s' % (membershipIDs,))
+	if options.debug:
+		Log.set_debug_level(logging.DEBUG)
+	handler = QueueHandler()
+	handler.run()
 
-				mappings = {}
-				classre = re.compile('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),(?:ou=[^,]+,)?%s$' % re.escape(ldapbase))
-				links = {}
-				validservers = frozenset(listener.configRegistry.get(
-					'ucsschool/userlogon/shares/validservers',
-					self.hostname
-				).split(','))
-
-				# get global links
-				for name in self.global_links.keys():
-					if self.global_links[name].get("server"):
-						links[name] = self.global_links[name]["server"]
-						if self.global_links[name].get("letter"):
-							mappings[name] = {
-								'server': self.global_links[name]["server"],
-								'letter': self.global_links[name]["letter"],
-							}
-
-				classShareLetter = listener.configRegistry.get('ucsschool/userlogon/classshareletter', 'K').replace(':', '')
-				for ID in membershipIDs:
-					for share in self.gid_shares(ID):
-						# linkname is identical to the sharename
-						linkname = share[1]['cn'][0]
-						if 'univentionShareSambaName' in share[1]:
-							linkname = share[1]['univentionShareSambaName'][0]
-
-						# ignore link if already in global links
-						if links.get(linkname):
-							continue
-
-						# hostname_ is either an IP or an FQDN
-						hostname_ = share[1]['univentionShareHost'][0]
-						if hostname_.strip('012456789.'):  # no IP-Address
-							hostname_ = hostname_.split('.', 1)[0]
-
-						# save link and mapping
-						if hostname_ in validservers or '*' in validservers:
-							links[linkname] = hostname_
-							classmatches = classre.match(share[0])
-							if classmatches and len(classmatches.groups()) == 2:
-								mappings[linkname] = {'server': hostname_, 'letter': classShareLetter}
-
-				Log.info("links %s" % (links,))
-
-				self.write_windows_link_skripts(new['uid'][0], links, mappings)
-				if listener.configRegistry.is_true("ucsschool/userlogon/mac"):
-					self.write_mac_link_scripts(new['uid'][0], new['homeDirectory'][0], links)
-
-			elif old and 'posixAccount' in old['objectClass'] and not new:
-				listener.setuid(0)
-				try:
-					for path in self.get_script_path():
-						vbs_path = os.path.join(path, '{}.vbs'.format(old['uid'][0]))
-						if os.path.exists(vbs_path):
-							Log.warn('Deleting netlogon script {}...'.format(vbs_path))
-							os.remove(vbs_path)
-				finally:
-					listener.unsetuid()
-
-
-def handler(dn, new, old):
-	object_class = new.get('objectClass', []) or old.get('objectClass', [])
-	script_handler = UserLogonScriptListener(dn, new, old)
-	if 'posixAccount' in object_class:
-		script_handler.user_change(new, old)
-	elif 'univentionShare' in object_class:
-		script_handler.share_change()
-	elif 'posixGroup' in object_class:
-		script_handler.group_change(new, old)
-	else:
-		raise RuntimeError('Unknown object. objectClass={!r}\n\nold={!r}\n\nnew={!r}'.format(object_class, old, new))
-
-
-def initialize():
-	for path in UserLogonScriptListener.template_paths.values():
-		if not os.path.exists(path):
-			raise Exception('Missing template file {!r}.'.format(path))
-
-
-def clean():
-	Log.warn('Deleting all netlogon scripts in {!r}...'.format(UserLogonScriptListener.get_script_path()))
-	listener.setuid(0)
-	try:
-		for path in UserLogonScriptListener.get_script_path():
-			if os.path.exists(path):
-				for f in os.listdir(path):
-					if f.lower().endswith('.vbs'):
-						os.unlink(os.path.join(path, f))
-	finally:
-		listener.unsetuid()
-
-
-def postrun():
-	LDAPConnection.lo = None
+if __name__ == '__main__':
+	main()

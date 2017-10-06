@@ -1,0 +1,11 @@
+[Unit]
+Description=UCS@school netlogon script daemon
+After=slapd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/share/ucs-school-netlogon-user-logonscripts/ucs-school-user-logonscript-daemon
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target
