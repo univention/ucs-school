@@ -119,6 +119,10 @@ class SqliteQueue(object):
 		Adds a user DN to user queue if not already existant. If the user DN
 		already exists in queue, the queue item remains unchanged.
 		"""
+		if type(userdn) == str:
+			userdn = userdn.decode('utf-8')
+		if type(username) == str:
+			username = username.decode('utf-8')
 		if username is not None:
 			self.cursor.execute('insert or replace into user_queue (id, userdn, username) VALUES ((select id from user_queue where userdn = ?), ?, ?)', (userdn, userdn, username))
 		else:
@@ -131,6 +135,8 @@ class SqliteQueue(object):
 		"""
 		Removes a specific user DN from queue.
 		"""
+		if type(userdn) == str:
+			userdn = userdn.decode('utf-8')
 		self.cursor.execute('DELETE FROM user_queue WHERE userdn=?', (userdn,))
 		self.db.commit()
 		self.logger.debug('removed entry: userdn=%r' % (userdn,))
@@ -144,8 +150,8 @@ class SqliteQueue(object):
 		self.cursor.execute(query)
 		row = self.cursor.fetchone()
 		if row is not None:
-			userdn = row[0]
-			username = row[1]
+			userdn = row[0].encode('utf-8')
+			username = row[1].encode('utf-8')
 			self.logger.debug('next entry: userdn=%r' % (userdn,))
 			return (userdn, username)
 		return (None, None)
