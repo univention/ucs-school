@@ -126,7 +126,6 @@ class QueueHandler():
 				Log.error('missing template file %r.', path)
 				sys.exit(1)
 
-
 	@staticmethod
 	def _mkdir(path):
 		if not os.path.isdir(path):
@@ -661,6 +660,7 @@ class QueueHandler():
 		if self.shutdown_requested:
 			Log.info('Shutdown as requested')
 
+
 def main():
 	parser = optparse.OptionParser()
 	parser.add_option("-d", "--debug", dest="debug", default=False, action="store_true", help="show debug output")
@@ -670,6 +670,7 @@ def main():
 		Log.set_debug_level(logging.DEBUG)
 	handler = QueueHandler()
 	handler.run()
+
 
 if __name__ == '__main__':
 	main()
