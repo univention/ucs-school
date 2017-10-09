@@ -36,7 +36,7 @@ import univention.debug
 import univention.admin.modules
 from ldap.filter import filter_format
 from univention.admin.uldap import getMachineConnection
-from ucsschool.netlogon.lib import get_netlogon_path_list, SqliteQueue
+from ucsschool.netlogon import get_netlogon_path_list, SqliteQueue
 
 univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")
@@ -141,7 +141,8 @@ def handle_group(dn, new, old, lo, user_queue):
 	# get set of users that are NOT IN BOTH user sets (==> the difference between both sets)
 	for user_dn in old_members.symmetric_difference(new_members):
 		if user_dn.startswith('uid='):  # user_dn may contain DNs of computer or group objects (computers in groups resp. groups in groups)
-			user_queue.add(user_dn)
+			user_queue.add(user_dn, db_commit=False)
+	user_queue.commit()
 
 
 def handle_user(dn, new, old, lo, user_queue):
