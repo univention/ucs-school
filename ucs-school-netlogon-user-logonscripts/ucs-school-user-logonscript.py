@@ -36,7 +36,7 @@ import univention.debug
 import univention.admin.modules
 from ldap.filter import filter_format
 from univention.admin.uldap import getMachineConnection
-from ucsschool.netlogon.lib import get_netlogon_path_list, SqliteQueue
+from ucsschool.netlogon import get_netlogon_path_list, SqliteQueue
 
 univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")
