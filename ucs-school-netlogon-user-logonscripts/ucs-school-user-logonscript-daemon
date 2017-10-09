@@ -237,11 +237,10 @@ class QueueHandler():
 				os.mkdir(macscriptpath)
 				os.chown(macscriptpath, uidnumber, gidnumber)
 				macscriptfile = os.path.join(macscriptpath, filename)
-				fp = open(macscriptfile, 'w')
-				fp.write(self.generate_mac_script(uid, filename, links[filename]))
-				fp.close()
-				os.chmod(macscriptfile, 0o700)
-				os.chown(macscriptfile, uidnumber, gidnumber)
+				with open(macscriptfile, 'w') as fp:
+					fp.write(self.generate_mac_script(uid, filename, links[filename]))
+					os.chmod(macscriptfile, 0o700)
+					os.chown(macscriptfile, uidnumber, gidnumber)
 
 	def get_logon_template(self, path, format_dict=None, no_icons=None):
 		"""
