@@ -201,46 +201,49 @@ class QueueHandler():
 		return self.get_logon_template(self.template_paths['mac_script']).format(uid=uid, host=host, name=name)
 
 	def write_mac_link_scripts(self, uid, homepath, links):
-		if not (os.path.exists(homepath) and not os.path.isdir(homepath)):  # may be /dev/null
-			# check existence of home
-			uidnumber = 0
-			gidnumber = 0
+		if os.path.exists(homepath) and not os.path.isdir(homepath):  # may be /dev/null
+			Log.error('write_mac_link_scripts: could not create script - %r is no directory', homepath)
+			return
+
+		# check existence of home
+		uidnumber = 0
+		gidnumber = 0
+		try:
+			uidnumber = pwd.getpwnam(uid)[2]
+			gidnumber = pwd.getpwnam(uid)[3]
+		except Exception as exc:
+			Log.warn('unable to get uidNumber and gidNumber of user %r: %s', uid, exc)
+
+		if not os.path.exists(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)):
+			if not os.path.exists(homepath):
+				os.mkdir(homepath, 0o700)
+				os.chown(homepath, uidnumber, gidnumber)
+
+			for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)]:
+				if not os.path.exists(path):
+					os.mkdir(path)
+					os.chown(path, uidnumber, gidnumber)
+
+		# remove old scripts
+		for filename in os.listdir(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)):
 			try:
-				uidnumber = pwd.getpwnam(uid)[2]
-				gidnumber = pwd.getpwnam(uid)[3]
-			except Exception as exc:
-				Log.warn('unable to get uidNumber and gidNumber of user %r: %s', uid, exc)
+				if os.path.isdir(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename)):
+					shutil.rmtree(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename))
+				else:
+					os.remove(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename))
+			except:
+				Log.error("failed to remove %s" % filename)
+				raise
 
-			if not os.path.exists(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)):
-				if not os.path.exists(homepath):
-					os.mkdir(homepath, 0o700)
-					os.chown(homepath, uidnumber, gidnumber)
-
-				for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)]:
-					if not os.path.exists(path):
-						os.mkdir(path)
-						os.chown(path, uidnumber, gidnumber)
-
-			# remove old scripts
-			for filename in os.listdir(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)):
-				try:
-					if os.path.isdir(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename)):
-						shutil.rmtree(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename))
-					else:
-						os.remove(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename))
-				except:
-					Log.error("failed to remove %s" % filename)
-					raise
-
-			for filename in links:
-				macscriptpath = os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, "%s.app" % filename)
-				os.mkdir(macscriptpath)
-				os.chown(macscriptpath, uidnumber, gidnumber)
-				macscriptfile = os.path.join(macscriptpath, filename)
-				with open(macscriptfile, 'w') as fp:
-					fp.write(self.generate_mac_script(uid, filename, links[filename]))
-					os.chmod(macscriptfile, 0o700)
-					os.chown(macscriptfile, uidnumber, gidnumber)
+		for filename in links:
+			macscriptpath = os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, "%s.app" % filename)
+			os.mkdir(macscriptpath)
+			os.chown(macscriptpath, uidnumber, gidnumber)
+			macscriptfile = os.path.join(macscriptpath, filename)
+			with open(macscriptfile, 'w') as fp:
+				fp.write(self.generate_mac_script(uid, filename, links[filename]))
+				os.chmod(macscriptfile, 0o700)
+				os.chown(macscriptfile, uidnumber, gidnumber)
 
 	def get_logon_template(self, path, format_dict=None, no_icons=None):
 		"""
