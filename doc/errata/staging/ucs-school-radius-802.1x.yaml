@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.1"
+version: [4]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-radius-802.1x
+fix: 
+desc: |
+ * A traceback has been fixed that may happened if ucs-school-ntlm-auth is called without stationId (Bug #45490).
+bug: [45490]
