@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-3) unstable; urgency=low
+
+  * Bug #45301: fix icon index in Windows 10
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 09 Oct 2017 17:21:31 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.2-2) unstable; urgency=low
 
   * Bug #42997: added performance optimization for group objects

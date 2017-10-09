@@ -311,11 +311,11 @@ class QueueHandler():
 			desktop_folder_path=self.desktop_folder_path,
 			domainname=self.domainname,
 			hostname=self.hostname,
-			my_files_link_icon=self.my_files_link_icon,
+			my_files_link_icon=self.fix_win10_icon_index(self.my_files_link_icon),
 			my_files_link_name=self.my_files_link_name,
 			mypictures_name=self.mypictures_name,
 			myshares_name=self.myshares_name,
-			other_links_icon=self.other_links_icon,
+			other_links_icon=self.fix_win10_icon_index(self.other_links_icon),
 			umc_link=self.umcLink,
 		)
 		no_icons = list()
@@ -545,6 +545,19 @@ class QueueHandler():
 		if self.wait_until > minimum_wait_until:
 			Log.info('signal received - reduced wait time by %.1f seconds', self.wait_until - minimum_wait_until)
 			self.wait_until = minimum_wait_until
+
+	@staticmethod
+	def fix_win10_icon_index(icon_path):
+		"""
+		If `icon_path` ends in an icon index, add VBS code to handle Win10
+		index displacement.
+		"""
+		path, _, index = icon_path.rpartition(',')
+		try:
+			index = int(index)
+		except ValueError:
+			return icon_path
+		return '"{}," & Win10FixIconIndex({})'.format(path, index)
 
 	def setup_config(self):
 		self.hostname = self.ucr['hostname']

@@ -12,6 +12,19 @@ Set objFolderItem = objFolder.Self
 strDesktopFolderPath = {desktop_folder_path}
 FolderPath = strDesktopFolderPath + "\" + FolderName
 
+For Each objOS in GetObject("winmgmts:").InstancesOf("Win32_OperatingSystem")
+	WindowsVersion = objOS.Version
+Next
+WindowsVersion = CInt(split(WindowsVersion, ".")(0))
+
+Function Win10FixIconIndex(num)
+	If WindowsVersion >= 10 Then
+		Win10FixIconIndex = num + 1
+	Else
+		Win10FixIconIndex = num
+	End if
+End function
+
 Function CreateLinkFolder()
 	' Delete Folder
 	Set objFSO = CreateObject("Scripting.FileSystemObject")
@@ -33,7 +46,7 @@ Function CreateLinkToMyFiles()
 	sLinkFile = FolderPath + "\{my_files_link_name}.LNK"
 	Set oLink = oWS.CreateShortcut(sLinkFile)
 	oLink.TargetPath = homepath
-	oLink.IconLocation = "{my_files_link_icon}"
+	oLink.IconLocation = {my_files_link_icon}
 	oLink.Save
 end function
 
@@ -123,7 +136,7 @@ Function CreateShareShortcut(strServer, strShare)
 	sLinkFile = FolderPath + "\" + strShare + ".LNK"
 	Set oLink = oWS.CreateShortcut(sLinkFile)
 	oLink.TargetPath = "\\" + strServer + "\" + strShare
-	oLink.IconLocation = "{other_links_icon}"
+	oLink.IconLocation = {other_links_icon}
 	oLink.Save
 end function
 
