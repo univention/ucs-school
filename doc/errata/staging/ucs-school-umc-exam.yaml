@@ -3,7 +3,7 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-exam
-fix: 7.0.4-14A~4.2.0.201709131826
+fix:
 desc: |
  * The script <command>exam-and-room-cleanup</command> will now also remove computers accounts from the exam group (Bug #43978).
  * In some &ucsUAS; environments students are member of a large number of groups. By default, if these students take part of

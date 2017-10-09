@@ -1,3 +1,10 @@
+ucs-school-umc-exam (7.0.4-17) unstable; urgency=low
+
+  * Bug #43978: initialize udm module only once
+  * style fixes
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 09 Oct 2017 10:05:08 +0200
+
 ucs-school-umc-exam (7.0.4-16) unstable; urgency=low
 
   * Bug #43980: the timeout for starting new exams has been raised from 5
