@@ -108,6 +108,12 @@ class SqliteQueue(object):
 		self.cursor.execute('DELETE FROM user_queue')
 		self.db.commit()
 
+	def commit(self):
+		"""
+		Commit outstanding changes to DB.
+		"""
+		self.db.commit()
+
 	def add(self, userdn, username=None, db_commit=True):  # type: (str, Optional[bool]) -> None
 		"""
 		Adds a user DN to user queue if not already existant. If the user DN
