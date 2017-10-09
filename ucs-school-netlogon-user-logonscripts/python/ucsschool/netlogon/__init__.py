@@ -98,14 +98,14 @@ class SqliteQueue(object):
 		self.cursor = self.db.cursor()
 
 		# create table if missing
-		self.cursor.execute('CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)')
+		self.cursor.execute(u'CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)')
 
 		# save all changes to database
 		self.db.commit()
 
 	def __clear_database(self):
 		# drop all rows of table
-		self.cursor.execute('DELETE FROM user_queue')
+		self.cursor.execute(u'DELETE FROM user_queue')
 		self.db.commit()
 
 	def commit(self):
@@ -118,11 +118,16 @@ class SqliteQueue(object):
 		"""
 		Adds a user DN to user queue if not already existant. If the user DN
 		already exists in queue, the queue item remains unchanged.
+		userdn and username have to be UTF-8 encoded strings or unicode strings.
 		"""
+		if isinstance(userdn, str):
+			userdn = userdn.decode('utf-8')
+		if isinstance(username, str):
+			username = username.decode('utf-8')
 		if username is not None:
-			self.cursor.execute('insert or replace into user_queue (id, userdn, username) VALUES ((select id from user_queue where userdn = ?), ?, ?)', (userdn, userdn, username))
+			self.cursor.execute(u'insert or replace into user_queue (id, userdn, username) VALUES ((select id from user_queue where userdn = ?), ?, ?)', (userdn, userdn, username))
 		else:
-			self.cursor.execute('insert or replace into user_queue (id, userdn, username) VALUES ((select id from user_queue where userdn = ?), ?, (select username from user_queue where userdn = ?))', (userdn, userdn, userdn))
+			self.cursor.execute(u'insert or replace into user_queue (id, userdn, username) VALUES ((select id from user_queue where userdn = ?), ?, (select username from user_queue where userdn = ?))', (userdn, userdn, userdn))
 		if db_commit:
 			self.db.commit()
 		self.logger.debug('added/updated entry: userdn=%r  username=%s' % (userdn, username))
@@ -130,22 +135,25 @@ class SqliteQueue(object):
 	def remove(self, userdn):  # type: (str) -> None
 		"""
 		Removes a specific user DN from queue.
+		userdn has to be an UTF-8 encoded string or unicode string.
 		"""
-		self.cursor.execute('DELETE FROM user_queue WHERE userdn=?', (userdn,))
+		if isinstance(userdn, str):
+			userdn = userdn.decode('utf-8')
+		self.cursor.execute(u'DELETE FROM user_queue WHERE userdn=?', (userdn,))
 		self.db.commit()
 		self.logger.debug('removed entry: userdn=%r' % (userdn,))
 
 	def query_next_user(self):  # type: None -> [str]
 		"""
-		Returns next user dn and username of user_queue
+		Returns next user dn and username of user_queue as UTF-8 encoded strings.
 		"""
-		query = 'SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1'
+		query = u'SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1'
 		self.logger.debug('starting sqlite query: %r' % (query,))
 		self.cursor.execute(query)
 		row = self.cursor.fetchone()
 		if row is not None:
-			userdn = row[0]
-			username = row[1]
+			userdn = row[0].encode('utf-8')
+			username = row[1].encode('utf-8')
 			self.logger.debug('next entry: userdn=%r' % (userdn,))
 			return (userdn, username)
 		return (None, None)
