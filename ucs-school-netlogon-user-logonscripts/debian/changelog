@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-1) unstable; urgency=low
+
+  * Bug #42997: handle netlogon changes asynchronosly via a separate daemon
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 06 Oct 2017 17:10:33 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.1-6) unstable; urgency=low
 
   * Bug #43729: merge from 4.1r2, original changelog entries follow:

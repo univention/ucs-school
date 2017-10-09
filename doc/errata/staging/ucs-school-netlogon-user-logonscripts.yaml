@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-netlogon-user-logonscripts
+fix: 
+desc: |
+ * The generation of netlogon scripts for Windows users has been separated into a new daemon that
+   is triggered via the Univention Directory Listener. This way, the LDAP replication should not
+   be slowed down any longer by lots of LDAP changes relevant for netlogon script generation (Bug #42997).
+bug: [42997]
