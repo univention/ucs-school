@@ -1,3 +1,10 @@
+ucs-test-ucsschool (4.0.4-31.1) unstable; urgency=low
+
+  * Bug #44993: adapt test to import permission fix
+  * set timeout to default
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Oct 2017 12:51:58 +0200
+
 ucs-test-ucsschool (4.0.4-31) unstable; urgency=medium
 
   * Bug #45468: adapt test to changes

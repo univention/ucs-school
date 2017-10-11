@@ -25,7 +25,6 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Bug #41847: import users with an empty class name
 		"""
-		first_user = True
 		config = copy.deepcopy(self.default_config)
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
 		config.update_entry('sourceUID', source_uid)
@@ -45,15 +44,8 @@ class Test(CLI_Import_v2_Tester):
 
 			# start import
 			self.run_import(['-c', fn_config, '-i', fn_csv])
-
-			# check for new users in LDAP
-			if first_user:
-				users_removed = 0
-				first_user = False
-			else:
-				users_removed = 1
-			self.check_new_and_removed_users(1, users_removed)
-
+			self.check_new_and_removed_users(1, 0)
+		self.log.info('OK, all users could be imported with an empty CSV class column.')
 
 def main():
 	tester = Test()
