@@ -3,10 +3,11 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-lib
-fix: 10.0.2-6A~4.2.0.201709141720
+fix:
 desc: |
  * Support was added for changing the base path when searching for hooks (Bug #45024).
  * In some cases after stopping the exam mode, shares on the school server weren't accessible anymore. This bug has been fixed (Bug #43089).
  * LADP object classes for User objects are made available for permission checks during imports (Bug #45044).
  * When creating a school the DHCP server objects for the administrative DC Slave are now also created or moved into the DHCP service of the school in a multiserver environment (Bug #42687).
-bug: [43089, 45024, 45044, 42687]
+ * An error in an LDAP filter was fixed (Bug #45504).
+bug: [43089, 45024, 45044, 42687, 45504]

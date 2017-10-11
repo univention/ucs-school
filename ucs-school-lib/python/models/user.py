@@ -615,7 +615,7 @@ class Staff(User):
 	school_classes = None
 	type_name = _('Staff')
 	roles = [role_staff]
-	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff)))'
+	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff))'
 	default_options = ('ucsschoolStaff',)
 
 	@classmethod
