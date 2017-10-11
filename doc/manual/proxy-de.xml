@@ -24,7 +24,7 @@
 	Die Proxykonfiguration wird in der Grundeinstellung durch DHCP über die WPAD-Option<footnote><para>Wikipedia WPAD: <ulink url="https://de.wikipedia.org/wiki/Web_Proxy_Autodiscovery_Protocol"/></para></footnote> verteilt.
   </para>
   <para>
-	  Soll die WPAD-Option abgeschaltet werden, so muss die Option an dem betreffenden DHCP-Service-Objekt entfernt werden. Dies kann entweder im UMCModul <guimenu>DHCP</guimenu> am betreffenden DHCP-Service-Objekt auf dem Reiter <guimenu>Erweiterte Einstellungen</guimenu> unter <guimenu>Low-level DHCP configuration</guimenu> oder an der Kommandozeile geschehen. Das DHCP-Service-Objekt trägt in der Standardkonfiguration den Namen des Schulkürzels und sollte daher in der UMC leicht identifizierbar sein. Um die richtige DN und Option auf der Kommandozeile zu finden, können zuerst alle DHCP-Service-Objekte aufgelistet werden. Die nachfolgenden Befehle sollten als Benutzer root auf dem &ucsMaster; ausgeführt werden:
+	  Soll die WPAD-Option abgeschaltet werden, so muss die Option an dem betreffenden DHCP-Service-Objekt entfernt werden. Dies kann entweder im UMC-Modul <guimenu>DHCP</guimenu> am betreffenden DHCP-Service-Objekt auf dem Reiter <guimenu>Erweiterte Einstellungen</guimenu> unter <guimenu>Low-level DHCP configuration</guimenu> oder an der Kommandozeile geschehen. Das DHCP-Service-Objekt trägt in der Standardkonfiguration den Namen des Schulkürzels und sollte daher in der UMC leicht identifizierbar sein. Um die richtige DN und Option auf der Kommandozeile zu finden, können zuerst alle DHCP-Service-Objekte aufgelistet werden. Die nachfolgenden Befehle sollten als Benutzer root auf dem &ucsMaster; ausgeführt werden:
 	<programlisting>
 udm dhcp/service list
 	</programlisting>
@@ -44,7 +44,8 @@ DN: cn=school123,cn=dhcp,ou=school123,dc=example,dc=com
 DN: cn=example.com,cn=dhcp,dc=example,dc=com
   service: example.com
 
-root@master:~# udm dhcp/service modify --dn cn=school123,cn=dhcp,ou=school123,dc=example,dc=com --remove option='wpad "http://slave123.example.com/proxy.pac"'
+root@master:~# udm dhcp/service modify --dn cn=school123,cn=dhcp,ou=school123,dc=example,dc=com \
+> --remove option='wpad "http://slave123.example.com/proxy.pac"'
 Object modified: cn=school123,cn=dhcp,ou=school123,dc=example,dc=com
 root@master:~#
 	</programlisting>
@@ -62,7 +63,7 @@ ucr search --verbose ^proxy/pac/exclude/
 	</programlisting>
   </para>
   <para>
-	Die Verteilung der Proxykonfiguration mittels DHCP WPAD Option wird
+	Die Verteilung der Proxykonfiguration mittels DHCP-WPAD-Option wird
 	jedoch nicht von allen Browsern unterstützt. Die Konfiguration kann alternativ über eine
 	Proxy-Autokonfigurationsdatei (PAC-Datei) automatisiert werden. In PAC-Dateien sind die relevanten
 	Konfigurationsparameter zusammengestellt. Die PAC-Datei eines Schulservers steht unter der folgenden URL bereit:
