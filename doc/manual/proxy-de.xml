@@ -21,10 +21,10 @@
 	Der Proxyserver muss zwingend auf dem jeweiligen Schulserver betrieben werden.
   </para>
   <para>
-	Die Proxykonfiguration wird in der Grundeinstellung durch DHCP, mittels WPAD Option<footnote><para>Wikipedia WPAD: <ulink url="https://de.wikipedia.org/wiki/Web_Proxy_Autodiscovery_Protocol"/></para></footnote> verteilt.
+	Die Proxykonfiguration wird in der Grundeinstellung durch DHCP über die WPAD-Option<footnote><para>Wikipedia WPAD: <ulink url="https://de.wikipedia.org/wiki/Web_Proxy_Autodiscovery_Protocol"/></para></footnote> verteilt.
   </para>
   <para>
-	Soll dies abgeschaltet werden, so muss die Option an dem betreffenden DHCP-Objekt entfernt werden. Die kann entweder in der UMC im Modul DHCP am Objekt auf dem Reiter <guimenu>Erweiterte Einstellungen</guimenu> unter <guimenu>Low-level DHCP configuration</guimenu> geschehen oder an der Kommandozeile. Um die richtige DN und Option zu finden, können zu erst alle DHCP Objekte aufgelistet werden:
+	  Soll die WPAD-Option abgeschaltet werden, so muss die Option an dem betreffenden DHCP-Service-Objekt entfernt werden. Dies kann entweder im UMCModul <guimenu>DHCP</guimenu> am betreffenden DHCP-Service-Objekt auf dem Reiter <guimenu>Erweiterte Einstellungen</guimenu> unter <guimenu>Low-level DHCP configuration</guimenu> oder an der Kommandozeile geschehen. Das DHCP-Service-Objekt trägt in der Standardkonfiguration den Namen des Schulkürzels und sollte daher in der UMC leicht identifizierbar sein. Um die richtige DN und Option auf der Kommandozeile zu finden, können zuerst alle DHCP-Service-Objekte aufgelistet werden. Die nachfolgenden Befehle sollten als Benutzer root auf dem &ucsMaster; ausgeführt werden:
 	<programlisting>
 udm dhcp/service list
 	</programlisting>
@@ -32,7 +32,24 @@ udm dhcp/service list
 	<programlisting>
 udm dhcp/service modify --dn DN --remove option='wpad "http://FQDN/proxy.pac"'
 	</programlisting>
-	Außerdem muss eine UCR Variable entfernt und anschließend der DHCP-Server neu gestartet werden:
+
+	Beispiel:
+	<programlisting>
+root@master:~# udm dhcp/service list
+
+DN: cn=school123,cn=dhcp,ou=school123,dc=example,dc=com
+  option: wpad "http://slave123.example.com/proxy.pac"
+  service: school123
+
+DN: cn=example.com,cn=dhcp,dc=example,dc=com
+  service: example.com
+
+root@master:~# udm dhcp/service modify --dn cn=school123,cn=dhcp,ou=school123,dc=example,dc=com --remove option='wpad "http://slave123.example.com/proxy.pac"'
+Object modified: cn=school123,cn=dhcp,ou=school123,dc=example,dc=com
+root@master:~#
+	</programlisting>
+
+	Auf dem UCS-System, auf dem der betroffene DHCP-Server läuft (in Single-Server-Umgebungen ist dies der &ucsMaster; in Multi-Server-Umgebungen i.d.R. ein konkreter Schulserver), muss anschießend eine UCR-Variable entfernt und der DHCP-Server neu gestartet werden:
 	<programlisting>
 ucr unset dhcpd/options/wpad/252
 /etc/init.d/univention-dhcp restart
