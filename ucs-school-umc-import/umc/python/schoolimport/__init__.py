@@ -73,6 +73,11 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@require_password
 	@simple_response
+	def ping(self):
+		return True
+
+	@require_password
+	@simple_response
 	def schools(self):
 		schools = [dict(id=school.name, label=school.displayName) for school in self.client.school.list()]
 		if not schools:

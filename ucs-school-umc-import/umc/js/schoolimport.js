@@ -432,13 +432,12 @@ define([
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
+			// make sure a SAML authenticatied session is prevented. Make only one request before multiple requests are done otherwise the require-password-dialog is broken
+			this.standbyDuring(this.umcpCommand('schoolimport/ping')).then(lang.hitch(this, 'initWizard'));
+		},
+		initWizard: function() {
 			this._wizard = new ImportWizard({ 'class': 'umcCard' });
 			this.standbyDuring(this._wizard.ready().then(lang.hitch(this, function() { return this._wizard.initialQuery; })));
-		},
-
-		buildRendering: function() {
-			this.inherited(arguments);
-
 			this.addChild(this._wizard);
 
 			this._wizard.on('finished', lang.hitch(this, function() {

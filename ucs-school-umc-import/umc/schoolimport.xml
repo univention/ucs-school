@@ -18,5 +18,6 @@
 	<command name="schoolimport/job/passwords.csv" function="get_password"/>
 	<command name="schoolimport/job/summary.csv" function="get_summary"/>
 	<command name="schoolimport/jobs/query" function="jobs"/>
+	<command name="schoolimport/ping" function="ping"/>
   </module>
 </umc>
