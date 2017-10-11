@@ -229,9 +229,9 @@ class UserImport(object):
 
 		source_uid = self.config["sourceUID"]
 		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
-		ocs = self.factory.make_import_user([]).get_oc_for_user_role()
-		oc_filter = filter_format("(objectClass=%s)" * len(ocs), ocs)
+		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
 		filter_s = filter_format("(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))".format(oc_filter), (source_uid,))
+		self.logger.debug('Searching with filter=%r', filter_s)
 
 		id2imported_user = dict()  # for fast access later
 		for iu in self.imported_users:

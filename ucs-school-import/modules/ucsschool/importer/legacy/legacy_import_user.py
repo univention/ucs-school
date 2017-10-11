@@ -99,8 +99,7 @@ class LegacyImportUser(ImportUser):
 		:param superordinate: str: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
 		"""
-		ocs = cls.get_oc_for_user_role()
-		oc_filter = filter_format("(objectClass=%s)" * len(ocs), ocs)
+		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
 			"(&{ocs}"
 			"(|"
