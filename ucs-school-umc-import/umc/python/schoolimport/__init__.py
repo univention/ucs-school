@@ -63,6 +63,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	def init(self):
 		self._progress_objs = {}
+		self.require_password()
 		try:
 			self.client = Client(self.username, self.password, log_level=Client.LOG_RESPONSE)
 		except ObjectNotFound:
