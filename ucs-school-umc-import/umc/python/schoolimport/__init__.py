@@ -240,12 +240,14 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@allow_get_request
 	@sanitize(job=StringSanitizer(required=True))
+	@require_password
 	def get_password(self, request):
 		response = self.client.userimportjob.get(request.options['job']).password_file
 		self.finished(request.id, response, mimetype='text/csv')
 
 	@allow_get_request
 	@sanitize(job=StringSanitizer(required=True))
+	@require_password
 	def get_summary(self, request):
 		response = self.client.userimportjob.get(request.options['job']).summary_file
 		self.finished(request.id, response, mimetype='text/csv')
