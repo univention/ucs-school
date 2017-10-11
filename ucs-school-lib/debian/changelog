@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.33-7) unstable; urgency=low
+
+  * Bug #45503: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Oct 2017 11:17:45 +0200
+
 ucs-school-lib (9.0.33-6) unstable; urgency=medium
 
   * Bug #45463: Create (or move) existing DHCP server for administrative
