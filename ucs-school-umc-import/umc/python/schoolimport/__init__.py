@@ -212,7 +212,13 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			'userrole': self._parse_user_role(job.user_role),
 			'date': job.date_created.strftime('%Y/%m/%d %H:%M:%S'),
 			'status': self._parse_status(job.status),
-		} for job in self.client.userimportjob.list(limit=20, dryrun=False, ordering='date_created')]
+		} for job in self._jobs()]
+
+	def _jobs(self):
+		try:
+			return self.client.userimportjob.list(limit=20, dryrun=False, ordering='date_created')
+		except ServerError as exc:
+			raise UMC_Error(_('The UCS@school Import API HTTP server is not reachable: %s') % (exc,), status=500)
 
 	def _parse_status(self, status):
 		return {
