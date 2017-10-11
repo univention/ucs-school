@@ -1,3 +1,9 @@
+ucs-school-umc-import (0.0.0-9) unstable; urgency=medium
+
+  * Bug #45023: handle HTTP 404 error if the API server is not installed
+
+ -- Florian Best <best@univention.de>  Wed, 11 Oct 2017 12:53:09 +0200
+
 ucs-school-umc-import (0.0.0-8) unstable; urgency=medium
 
   * Bug #45023: fix error messages in mail templates

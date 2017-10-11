@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-08-08 15:38+0200\n"
+"POT-Creation-Date: 2017-10-11 12:48+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,72 +12,80 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolimport/__init__.py:129
+#: umc/python/schoolimport/__init__.py:132
 msgid "A time out occurred during examining the data."
 msgstr "Die maximale Zeit für die Datenüberprüfung wurde überschritten."
 
-#: umc/python/schoolimport/__init__.py:218
+#: umc/python/schoolimport/__init__.py:221
 msgid "Aborted"
 msgstr "Abgebrochen"
 
-#: umc/python/schoolimport/__init__.py:117
+#: umc/python/schoolimport/__init__.py:120
 msgid "Examining data..."
 msgstr "Prüfung der Daten..."
 
-#: umc/python/schoolimport/__init__.py:214
+#: umc/python/schoolimport/__init__.py:217
 msgid "New"
 msgstr "Neu"
 
-#: umc/python/schoolimport/__init__.py:73
+#: umc/python/schoolimport/__init__.py:76
 msgid "No permissions for running an import for any school."
 msgstr "Keine Berechtigung zum Starten eines Imports an einer Schule."
 
-#: umc/python/schoolimport/__init__.py:81
+#: umc/python/schoolimport/__init__.py:84
 msgid "No permissions for running an import for any user role."
 msgstr "Keine Berechtigung zum Starten eines Imports für eine Benutzerrolle."
 
-#: umc/python/schoolimport/__init__.py:106
+#: umc/python/schoolimport/__init__.py:109
 msgid "Please wait until the examination of the data is complete."
 msgstr "Bitte warten Sie bis die Prüfung der Daten abschlossen ist."
 
-#: umc/python/schoolimport/__init__.py:215
+#: umc/python/schoolimport/__init__.py:218
 msgid "Scheduled"
 msgstr "Geplant"
 
-#: umc/python/schoolimport/__init__.py:223
+#: umc/python/schoolimport/__init__.py:226
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: umc/python/schoolimport/__init__.py:216
+#: umc/python/schoolimport/__init__.py:219
 msgid "Started"
 msgstr "Gestartet"
 
-#: umc/python/schoolimport/__init__.py:224
+#: umc/python/schoolimport/__init__.py:227
 msgid "Student"
 msgstr "Schüler"
 
-#: umc/python/schoolimport/__init__.py:217
+#: umc/python/schoolimport/__init__.py:220
 msgid "Successful"
 msgstr "Erfolgreich"
 
-#: umc/python/schoolimport/__init__.py:225
+#: umc/python/schoolimport/__init__.py:228
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: umc/python/schoolimport/__init__.py:226
+#: umc/python/schoolimport/__init__.py:229
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: umc/python/schoolimport/__init__.py:114
-#: umc/python/schoolimport/__init__.py:180
+#: umc/python/schoolimport/__init__.py:69
+msgid ""
+"The UCS@school import API HTTP server could not be reached. It seems it is "
+"misconfigured, not installed or a proxy/firewall is blocking it."
+msgstr "Der UCS@school Import API HTTP Server konnte nicht erreicht werden. Es scheint, dass dieser fehlkonfiguriert, nicht installiert ist oder er durch eine Proxy/Firewall blockiert wird."
+
+#: umc/python/schoolimport/__init__.py:117
+#: umc/python/schoolimport/__init__.py:183
 msgid "The connection to the import server could not be established."
 msgstr "Die Verbindung zum Importserver konnte nicht hergestellt werden."
 
-#: umc/python/schoolimport/__init__.py:146
+#: umc/python/schoolimport/__init__.py:149
 msgid "The examination of the data failed."
 msgstr "Die Prüfung der Daten ist fehlgeschlagen."
 
-#: umc/python/schoolimport/__init__.py:116
-#: umc/python/schoolimport/__init__.py:182
+#: umc/python/schoolimport/__init__.py:119
+#: umc/python/schoolimport/__init__.py:185
 msgid "The permissions to perform a user import are not sufficient enough."
-msgstr "Die Berechtigung um einen Benutzerimport zu starten sind nicht ausreichend genug."
+msgstr ""
+"Die Berechtigung um einen Benutzerimport zu starten sind nicht ausreichend "
+"genug."
