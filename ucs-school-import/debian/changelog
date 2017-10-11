@@ -1,3 +1,9 @@
+ucs-school-import (15.0.0-50) unstable; urgency=low
+
+  * fix ldap filter for import permissions (Bug #45044)
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Oct 2017 11:06:20 +0200
+
 ucs-school-import (15.0.0-49) unstable; urgency=medium
 
   * ucs-school-join-secondary-samba4: Check if School DC has S4 SlavePDC

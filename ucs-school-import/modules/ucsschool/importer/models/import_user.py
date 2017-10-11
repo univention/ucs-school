@@ -205,7 +205,7 @@ class ImportUser(User):
 			return super(ImportUser, self).create(lo, validate)
 
 	@classmethod
-	def get_oc_for_user_role(cls):
+	def get_ldap_filter_for_user_role(cls):
 		if not cls.factory:
 			cls.factory = Factory()
 		# convert cmdline / config name to ucsschool.lib role(s)
@@ -218,8 +218,7 @@ class ImportUser(User):
 		else:
 			roles = (cls.config["user_role"],)
 		a_user = cls.factory.make_import_user(roles)
-		ocs = a_user.default_options or ("ucsschoolType",)
-		return ocs
+		return a_user.type_filter
 
 	@classmethod
 	def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
@@ -232,8 +231,7 @@ class ImportUser(User):
 		:param superordinate: str: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
 		"""
-		ocs = cls.get_oc_for_user_role()
-		oc_filter = filter_format("(objectClass=%s)" * len(ocs), ocs)
+		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
 			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))".format(oc_filter),
 			(source_uid, record_uid)
