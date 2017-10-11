@@ -47,7 +47,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 import univention.admin.syntax
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
-from ucsschool.http_api.client import Client, ConnectionError, PermissionError, ObjectNotFound
+from ucsschool.http_api.client import Client, ConnectionError, PermissionError, ObjectNotFound, ServerError
 
 from univention.lib.i18n import Translation
 
@@ -67,6 +67,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			self.client = Client(self.username, self.password, log_level=Client.LOG_RESPONSE)
 		except ObjectNotFound:
 			raise UMC_Error(_('The UCS@school import API HTTP server could not be reached. It seems it is misconfigured, not installed or a proxy/firewall is blocking it.'), status=503)
+		except ServerError as exc:
+			raise UMC_Error(_('The UCS@school Import API HTTP server is not reachable: %s') % (exc,), status=500)
 
 	@require_password
 	@simple_response
