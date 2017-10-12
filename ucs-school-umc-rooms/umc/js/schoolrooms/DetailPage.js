@@ -43,27 +43,15 @@ define([
 ], function(declare, lang, array, tools, Page, Form, TextBox, ComboBox, MultiObjectSelect, StandbyMixin, _) {
 
 	return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
-		// reference to the module's store object
 		moduleStore: null,
 
-		// internal reference to the formular containing all form widgets of an UDM object
 		_form: null,
 
 		postMixInProperties: function() {
-			// is called after all inherited properties/methods have been mixed
-			// into the object (originates from dijit._Widget)
-
-			// it is important to call the parent's postMixInProperties() method
 			this.inherited(arguments);
 
-			// Set the opacity for the standby animation to 100% in order to mask
-			// GUI changes when the module is opened. Call this.standby(true|false)
-			// to enabled/disable the animation.
-			this.standbyOpacity = 1;
-
-			// set the page header
-			this.headerText = _('');
-			this.helpText = _('');
+			this.headerText = '';
+			this.helpText = '';
 
 			// configure buttons for the header of the detail page, overwriting
 			// the close button
@@ -83,23 +71,12 @@ define([
 		},
 
 		buildRendering: function() {
-			// is called after all DOM nodes have been setup
-			// (originates from dijit._Widget)
-
-			// it is important to call the parent's postMixInProperties() method
 			this.inherited(arguments);
 
-			this.renderDetailPage();
-		},
-
-		renderDetailPage: function() {
-			// render the form containing all detail information that may be edited
-
-			// specify all widgets
 			var widgets = [{
 				type: ComboBox,
 				name: 'school',
-				label: _( 'School' ),
+				label: _('School'),
 				staticValues: []
 			}, {
 				type: TextBox,
@@ -167,9 +144,9 @@ define([
 			// an element gets added to the center region
 			this.addChild(this._form);
 
-			this._form.getWidget( 'computers' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
-				_dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
-			} ) );
+			this._form.getWidget('computers').on('ShowDialog', lang.hitch(this, function(_dialog) {
+				_dialog._form.getWidget('school').setInitialValue(this._form.getWidget('school').get('value'), true);
+			}));
 
 			// hook to onSubmit event of the form
 			this._form.on('submit', lang.hitch(this, '_save'));
@@ -197,43 +174,32 @@ define([
 				}));
 			}
 
+			this.standbyDuring(deferred);
 			deferred.then(lang.hitch(this, function() {
 				this.onClose();
 			}));
 		},
 
 		load: function(id) {
-			// during loading show the standby animation
-			this.standby(true);
-
-			// load the object into the form... the load method returns a
-			// Deferred object in order to handel asynchronity
-			this._form.load(id).then(lang.hitch(this, function() {
-				// done, switch of the standby animation
-				this.standby(false);
-			}), lang.hitch(this, function() {
-				// error handler: switch of the standby animation
-				// error messages will be displayed automatically
-				this.standby(false);
-			}));
+			this.standbyDuring(this._form.load(id));
 		},
 
 		onClose: function(dn, objectType) {
-			// event stub 
+			// event stub
 		},
 
-		disable: function( field, disable ) {
-			this._form.getWidget( field ).set( 'disabled', disable );
+		disable: function(field, disable) {
+			this._form.getWidget(field).set('disabled', disable);
 		},
 
-		_setSchoolAttr: function( school ) {
-			this._form.getWidget( 'school' ).set( 'value', school );
+		_setSchoolAttr: function(school) {
+			this._form.getWidget('school').set('value', school);
 		},
 
-		_setSchoolsAttr: function( schools ) {
-			var school = this._form.getWidget( 'school' );
-			school.set( 'staticValues', schools );
-			school.set( 'visible', schools.length > 1 );
+		_setSchoolsAttr: function(schools) {
+			var school = this._form.getWidget('school');
+			school.set('staticValues', schools);
+			school.set('visible', schools.length > 1);
 		}
 
 	});
