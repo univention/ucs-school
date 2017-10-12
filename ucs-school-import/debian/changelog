@@ -1,3 +1,10 @@
+ucs-school-import (15.0.1-1) unstable; urgency=low
+
+  * Bug #42688: automatically set domain_name for dhcp_dns policies
+    assigned to school ou's DHCP container
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Oct 2017 17:23:50 +0200
+
 ucs-school-import (15.0.0-50) unstable; urgency=low
 
   * fix ldap filter for import permissions (Bug #45044)
