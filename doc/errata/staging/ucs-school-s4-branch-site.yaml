@@ -5,5 +5,5 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-s4-branch-site
 fix: 4.0.0-2.15.201709201605
 desc: |
- * UCR variables for the DNS mapping configuration are not anymore overwritten when an error during the LDAP connection happens in the listener module, e.g. during changing the server password (Bug #43510).
+ * UCR variables for the DNS mapping configuration are no longer overwritten or reset if an error during the LDAP connection happens in the Univention Directory Listener module, e.g. while changing the server password (Bug #43510).
 bug: [43510]
