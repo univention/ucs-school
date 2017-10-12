@@ -60,16 +60,20 @@
 		  fehlerfreien Betrieb zu gewährleisten.
 		</para>
 	    <para>
-		  Windows-Clients, die ihre DNS-Einstellungen über DHCP beziehen, erhalten in der
+		  Windows-Clients des Edukativnetzes, die ihre DNS-Einstellungen über DHCP beziehen, erhalten in der
 		  Standardeinstellung automatisch die IP-Adresse des Schul-DCs als DNS-Server zugewiesen. Dafür wird
 		  beim Joinen eines Schulservers automatisch am unter dem Schul-OU-Objekt liegenden DHCP-Container
 		  eine DHCP-DNS-Richtlinie verknüpft. Das automatische Verknüpfen dieser Richtlinie kann über das
-		  Setzen einer UCR-Variable auf dem Schulserver (bzw. dem Domänencontroller Master bei
-		  Single-Server-Umgebungen) deaktiviert werden. Die folgende Variable muss vor der Installation von
+		  Setzen einer UCR-Variable auf dem Domänencontroller Master <emphasis>und</emphasis> dem Schulserver
+		  deaktiviert werden. Die folgende Variable muss vor der Installation von
 		  &ucsUAS; oder dem Update des Systems gesetzt werden:
 		  <programlisting language="sh">
 ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
 		  </programlisting>
+		  Dies lässt sich am besten über eine UCR-Richtlinie für die gesamte UCS@school-Domäne erledigen.
+		  Ist die Variable versehentlicherweise nicht gesetzt, werden automatisch fehlende DHCP-DNS-Richtlinien
+		  wieder angelegt und mit den entsprechenden DHCP-Container der Schul-OU-Objekte verknüpft. Dies kann
+		  gerade in Verwaltungsnetzen zu Fehlfunktionen führen (siehe auch <xref linkend="structure:edunet-vs-adminnet"/>).
 	    </para>
 	  </caution>
 	  <para>

@@ -217,7 +217,8 @@
 		  <para>
 			Voraussetzung für diese Unterteilung ist eine physikalische Trennung der beiden
 			Netzwerksegmente. D.h. das edukative Netz und das Verwaltungsnetz können nicht gleichzeitig im
-			gleichen Netzwerksegment verwendet werden.
+			gleichen Netzwerksegment verwendet werden. Ergänzend dazu müssen auch die Hinweise zu
+			DHCP-DNS-Richtlinien in <xref linkend="school:installation:slave" /> beachtet werden.
 		  </para>
 		</caution>
 	</section>
