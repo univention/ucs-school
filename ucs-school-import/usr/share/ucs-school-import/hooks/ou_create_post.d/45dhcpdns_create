@@ -60,7 +60,8 @@ for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" "(&(objectClass=ucssch
 		if [ "$server_role" = "domaincontroller_master" ] ; then
 			udm policies/dhcp_dns modify \
 				--dn "cn=dhcp-dns-$ouname,cn=policies,$oudn" \
-				--set domain_name_servers="$(get_default_ip_address)"
+				--set domain_name_servers="$(get_default_ip_address)" \
+				--set domain_name="$domainname"
 		fi
 	fi
 
