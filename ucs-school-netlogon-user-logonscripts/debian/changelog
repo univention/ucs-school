@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-5) unstable; urgency=low
+
+  * Bug #42997: fix utf-8 problems with SqliteQueue
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 12 Oct 2017 23:15:42 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.2-4) unstable; urgency=low
 
   * Bug #42997: fix utf-8 problems with SqliteQueue
