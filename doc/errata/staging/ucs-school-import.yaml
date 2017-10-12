@@ -3,7 +3,7 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.0-50A~4.2.0.201710111122
+fix:
 desc: |
  * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #44838).
  * A Python client library to use the experimental RESTful API was created (Bug #45022).
@@ -16,4 +16,5 @@ desc: |
  * When creating a school the DHCP server objects for the administrative DC Slave are now also created or moved into the DHCP service of the school in a multiserver environment (Bug #42687).
  * The school name is now checked case sensitively before importing a user (Bug #42456).
  * The tool ucs-school-join-secondary-samba4 checks now if the School DC has the S4 SlavePDC service set (Bug #43311).
-bug: [42144, 42456, 44838, 45019, 45022, 45024, 44993, 45044, 45342, 45436, 42687, 43311]
+ * By default, the DHCP-DNS policy <emphasis>dhcp-dns-$OUNAME</emphasis> now also sets the domain name (Bug #42688).
+bug: [42144, 42456, 44838, 45019, 45022, 45024, 44993, 45044, 45342, 45436, 42687, 43311, 42688]

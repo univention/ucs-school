@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [2]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-metapackage
+fix: 
+desc: |
+ * By default, the DHCP-DNS policy <emphasis>dhcp-dns-$OUNAME</emphasis> now also sets the domain name (Bug #42688).
+bug: [42688]
