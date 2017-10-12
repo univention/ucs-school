@@ -1,3 +1,10 @@
+ucs-school-metapackage (10.0.3-1) unstable; urgency=low
+
+  * Bug #42688: automatically set domain_name for dhcp_dns policies
+    assigned to school ou's DHCP container
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Oct 2017 17:27:24 +0200
+
 ucs-school-metapackage (10.0.2-7) unstable; urgency=medium
 
   * Bug #44667: error handling
