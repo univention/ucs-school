@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-lib
-fix:10.0.2-8A~4.2.0.201710111119
+fix: 10.0.2-8A~4.2.0.201710111119
 desc: |
  * Support was added for changing the base path when searching for hooks (Bug #45024).
  * In some cases after stopping the exam mode, shares on the school server weren't accessible anymore. This bug has been fixed (Bug #43089).
