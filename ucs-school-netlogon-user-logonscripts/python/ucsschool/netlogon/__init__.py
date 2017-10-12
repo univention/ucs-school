@@ -27,10 +27,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import univention.config_registry
 import sqlite3
 import os
 import stat
+import univention.config_registry
 
 
 FN_NETLOGON_USER_QUEUE = '/var/spool/ucs-school-netlogon-user-logonscripts/user_queue.sqlite'
@@ -152,8 +152,12 @@ class SqliteQueue(object):
 		self.cursor.execute(query)
 		row = self.cursor.fetchone()
 		if row is not None:
-			userdn = row[0].encode('utf-8')
-			username = row[1].encode('utf-8')
+			userdn = row[0]
+			if userdn is not None:
+				userdn = userdn.encode('utf-8')
+			username = row[1]
+			if username is not None:
+				username = username.encode('utf-8')
 			self.logger.debug('next entry: userdn=%r' % (userdn,))
 			return (userdn, username)
 		return (None, None)
