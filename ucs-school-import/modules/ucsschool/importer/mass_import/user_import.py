@@ -421,7 +421,7 @@ class UserImport(object):
 
 	def set_deletion_grace(self, user, grace):
 		"""
-		Sets the account deletion timestamp (UDM attribute "purge_timestamp")
+		Sets the account deletion timestamp (UDM attribute "ucsschoolPurgeTimestamp")
 		on the user object. Does not run user.modify().
 
 		:param user: ImportUser object

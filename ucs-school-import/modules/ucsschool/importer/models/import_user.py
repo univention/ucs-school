@@ -278,7 +278,7 @@ class ImportUser(User):
 		if self._userexpiry is not None:
 			udm_obj["userexpiry"] = self._userexpiry
 		if self._purge_ts is not None:
-			udm_obj["purge_timestamp"] = self._purge_ts
+			udm_obj["ucsschoolPurgeTimestamp"] = self._purge_ts
 
 		for property_, value in (self.udm_properties or {}).items():
 			try:
@@ -309,7 +309,7 @@ class ImportUser(User):
 		:return: bool: whether the user account has a purge timestamp set
 		"""
 		user_udm = self.get_udm_object(connection)
-		return bool(user_udm["purge_timestamp"])
+		return bool(user_udm["ucsschoolPurgeTimestamp"])
 
 	def has_expired(self, connection):
 		"""
