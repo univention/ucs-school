@@ -194,7 +194,7 @@ class UserImport(object):
 				user = self.school_move(imported_user, user)
 			user.update(imported_user)
 			if user.disabled != "none" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
-				self.logger.info("Found user %r that was previously deactivated or has a purge_timestamp, reactivating.", user)
+				self.logger.info("Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is non-empty), reactivating user.", user)
 				user.reactivate()
 			user.action = "M"
 		except noObject:
@@ -410,7 +410,7 @@ class UserImport(object):
 		user.modify() is required
 		"""
 		if user.has_expiry(self.connection):
-			self.logger.info('User %s has already an expiration date set, not changing it.', user)
+			self.logger.info('An expiration date is already set for user %s. The entry remains unchanged.', user)
 			return False
 		else:
 			expiry = datetime.datetime.now() + datetime.timedelta(days=grace)
@@ -429,7 +429,7 @@ class UserImport(object):
 		user.modify() is required
 		"""
 		if user.has_purge_timestamp(self.connection):
-			self.logger.info('User %s has already a deleting grace date set, not changing it.', user)
+			self.logger.info('User %s is already scheduled for deletion. The entry remains unchanged.', user)
 			return False
 		else:
 			purge_ts = datetime.datetime.now() + datetime.timedelta(days=grace)
