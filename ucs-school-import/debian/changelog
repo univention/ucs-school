@@ -1,3 +1,9 @@
+ucs-school-import (15.0.1-2) unstable; urgency=low
+
+  * Bug #45045: handle empty job.result on early error
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 13 Oct 2017 13:44:08 +0200
+
 ucs-school-import (15.0.1-1) unstable; urgency=low
 
   * Bug #42688: automatically set domain_name for dhcp_dns policies
