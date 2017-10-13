@@ -519,7 +519,7 @@ python -m json.tool &lt; my_config.json
 								<entry>Voller Python-Pfad zu einer Klasse die von <classname>DefaultUserImportFactory</classname> abgeleitet ist. Wenn gesetzt, wird sie an ihrer Stelle verwendet (siehe <xref linkend="extending:subclassing:replacing_factory_class"/>).</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>string</classname>): <literal>"ucsschool.importer.default_user_import_factory.DefaultUserImportFactory"</literal></entry>
+								<entry align="right">Standard (<classname>string</classname>): <literal>"ucsschool.importer.default_user_import_factory. DefaultUserImportFactory"</literal></entry>
 							</row>
 <!-- input -->
 							<row>
