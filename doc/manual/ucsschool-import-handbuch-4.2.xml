@@ -18,8 +18,8 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.2 v1
-				Stand: 04. April 2017
+				Version 4.2 v4
+				Stand: 11. October 2017
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
@@ -41,19 +41,24 @@
 		</legalnotice>
 	</bookinfo>
 
+	<chapter id="audience">
+		<title>Zielgruppe</title>
+		<para>
+			Dieses Handbuch richtet sich an Administratoren und Programmierer. Die Import Software ist im Auslieferungszustand stark konfigurierbar, kann aber zusätzlich programmatisch erweitertert werden. In diesem Handbuch werden der Ablauf eines Importvorganges, Konfigurationsoptionen und Programmierschnittstellen beschrieben.
+		</para>
+	</chapter>
+
 	<chapter id="introduction">
 		<title>Einführung</title>
 		<para>
-			Wie bereits im &ucsUAS;-Handbuch für Administratoren beschrieben wurde, bringt &ucsUAS;
-			für viele regelmäßig wiederkehrende Verwaltungsaufgaben entsprechende Werkzeuge und Schnittstellen
-			mit.  Die Übernahme von Benutzerdaten aus der Schulverwaltung ist eine dieser wiederkehrenden
-			Aufgaben, die über die neue Importschnittstelle für Benutzer automatisiert erledigt werden können.
+			&ucsUAS; bringt
+			für viele regelmäßig wiederkehrende Verwaltungsaufgaben Werkzeuge und Schnittstellen
+			mit. Die Übernahme von Benutzerdaten aus der Schulverwaltung ist eine dieser wiederkehrenden
+			Aufgaben, die über die neue Importschnittstelle für Benutzer automatisiert erledigt werden kann.
 		</para>
 		<para>
-			Die Schnittstelle ermöglicht es Benutzerdaten aus einer Datei auszulesen, die Daten zu
-			normieren, automatisch eindeutige Benutzernamen zu generieren und notwendige Änderungen
-			(Hinzufügen/Modifizieren/Löschen) automatisch zu erkennen. Sie wurde so konzipiert, dass sie
-			sich automatisch mit dem Datenbestand eines vorhandenen Benutzerverzeichnisses abgleichen kann.
+			Der &ucsUAS; Import ermöglicht es Benutzerdaten aus einer Datei auszulesen, die Daten zu normieren, automatisch eindeutige Benutzernamen und E-Mail-Adressen zu generieren und notwendige Änderungen (Hinzufügen/Modifizieren/Löschen) automatisch zu erkennen.
+			Er wurde so konzipiert, dass die Konten einer UCS Domäne automatisch mit dem Datenbestand eines vorhandenen Benutzerverzeichnisses abgegleichen werden können.
 		</para>
 		<para>
 			Die Importschnittstelle ist darauf ausgelegt, mit möglichst geringem Aufwand an die
@@ -64,7 +69,7 @@
 		</para>
 		<para>
 			Über eigene Python-Plugins kann die Schnittstelle erheblich erweitert werden. Dies
-			umfasst sowohl die Unterstützung für zusätzliche Dateiformat als auch die Implementierung von
+			umfasst sowohl die Unterstützung für zusätzliche Dateiformate als auch die Implementierung von
 			zusätzlichen Automatismen, die während des Imports greifen.
 		</para>
 		<para>
@@ -122,7 +127,7 @@
 				</listitem>
 				<listitem>
 					<simpara>
-						Je nach Konfiguration werden die Werte des Eingabedatensatzes nach dem Einlesen automatisch geprüft, modifiziert und/oder erweitert. Darunter fällt z.B. auch die automatische Zuweisung eines eindeutigen Benutzernamens oder die Generierung einer Mail-Adresse.
+						Je nach Konfiguration werden die Werte des Eingabedatensatzes nach dem Einlesen automatisch geprüft, modifiziert und/oder erweitert. Darunter fällt z.B. auch die automatische Zuweisung eines eindeutigen Benutzernamens oder die Generierung einer E-Mail-Adresse.
 					</simpara>
 				</listitem>
 				<listitem>
@@ -158,7 +163,7 @@
 		<section id="procedure:fileformat">
 			<title>Datenformate</title>
 			<para>
-			  Die Importsoftware kann gegenwärtig Daten nur aus CSV-Dateien<footnote><para>Wikipedia CSV: <ulink url="https://de.wikipedia.org/wiki/CSV_(Dateiformat)"/></para></footnote> einlesen. Wie eine Unterstützung für weitere Dateiformate (z.B. JSON, XML etc.) hinzugefügt werden kann, kann dem <xref linkend="extending"/> entnommen werden.
+				Die Importsoftware kann gegenwärtig Daten nur aus <ulink url="https://de.wikipedia.org/wiki/CSV_(Dateiformat)"><citetitle>CSV-Dateien</citetitle></ulink> einlesen. Wie eine Unterstützung für weitere Dateiformate (z.B. JSON, XML etc.) hinzugefügt werden kann, kann dem <xref linkend="extending"/> entnommen werden.
 			</para>
 		</section>
 		<section id="procedure:assignment">
@@ -203,13 +208,67 @@
 					</listitem>
 				</itemizedlist>
 			</para>
+			<caution>
+				<para>
+					Wird vom früheren Import Skript zum Neuen migriert muss beachtet werden, dass je nachdem welche Version zuvor benutzt wurde, an den Benutzerobjekten entweder <emphasis>keine</emphasis> <property>sourceUID</property> gespeichert wurde, oder der Wert <literal>LegacyDB</literal>.
+				</para>
+			</caution>
+			<para>
+				Beispiele:
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Die Schulen eines Schulträgers verwenden voneinander unabhängige Verwaltungssoftware. Die Software exportiert für jede Schule separate CSV-Tabellen für den Import. Es wird je eine Datei für Schüler, Lehrer und Mitarbeiter erzeugt.
+							Für den Import der CSV-Dateien wird pro Schule und Benutzerrolle eine separate Konfiguration mit individueller <property>sourceUID</property> benötigt.
+							Sind die Konfigurationen hinreichend ähnlich, können die gleichen Konfigurationsdateien verwendet werden und die sich unterschiedenden Optionen an der Kommandozeile gesetzt werden. Sollten sich nur <property>sourceUID</property> und Benutzerrolle unterschieden, so würde der Import mit den entsprechenden Optionen z.B. so aufgerufen:
+							<programlisting>
+ # /usr/share/ucs-school-import/scripts/ucs-school-user-import \
+    --conffile &lt;gemeinsame Konfigurationsdatei&gt; \
+    --sourceUID &lt;Schulname&gt;-&lt;Benutzerrolle&gt; \
+    --user_role &lt;Benutzerrolle&gt; \
+    --infile &lt;CSV-Datei&gt;
+							</programlisting>
+							Durch die Verwendung von <replaceable>Schulname-Benutzerrolle</replaceable> (z.B. <literal>GSMitte-student</literal>) als <property>sourceUID</property> wird ein eindeutiger Bezeicher pro Schule und Benutzerrolle sicher gestellt.
+						</simpara>
+						<simpara>
+							Ab &ucsUAS; Version 4.2 v4 wird nur eine <property>sourceUID</property> pro Schule benötigt (<replaceable>-&lt;Benutzerrolle&gt;</replaceable> kann weggelassen werden), sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
+						</simpara>
+						<simpara>
+							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten <emphasis>nicht</emphasis> möglich, weil dafür eine gemeinsame  <property>sourceUID</property> der beteiligten Schulen benötigt wird.
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert für jede Benutzerrolle eine CSV-Datei. In diesen Dateien sind alle Benuter aller Schulen (von der jeweiligen Rolle) enthalten.
+							Für den Import der CSV-Dateien wird nur pro Benutzerrolle eine separate Konfiguration mit individueller <property>sourceUID</property> benötigt, bzw. die gleiche Konfigurationsdatei und an der Kommandozeile wird gesetzt: <literal>--sourceUID &lt;Benutzerrolle&gt;</literal>.
+						</simpara>
+						<simpara>
+							Ab &ucsUAS; Version 4.2 v4 wird keine separate <property>sourceUID</property> mehr pro Benutzerrolle benötigt. Es reicht dann eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> für alle Importvorgänge, sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
+						</simpara>
+						<simpara>
+							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil Benutzer mit der gleichen Rolle an allen Schulen die gleiche <property>sourceUID</property> haben.
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert alle Benutzer in eine CSV-Datei. In dieser Datei sind Benuter aller Rollen und aller Schulen enthalten. In der CSV-Datei gibt es eine Spalte in der steht welche Rolle der jeweilige Benutzer hat.
+							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> benötigt. Um die Benutzerrolle auszulesen muss die Klasse zum Einlesen von CSV-Dateien abgeleitet und erweitert werden: <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname>. Ein Code-Beispiel findet sich in der Klasse <classname>ucsschool.importer.reader.test_csv_reader.TestCsvReader</classname>, zu welcher die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename> gehört.
+						</simpara>
+						<simpara>
+							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil alle Benutzer die gleiche <property>sourceUID</property> haben.
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+			</para>
 		</section>
 	</chapter>
 
 	<chapter id="configuration">
 	<title>Konfiguration</title>
 		<para>
-			Die Konfiguration des Imports wird über Dateien im JSON-Format<footnote><para>Wikipedia JSON: <ulink url="https://de.wikipedia.org/wiki/JavaScript_Object_Notation"/></para></footnote> und Kommandozeilenparameter gesteuert.
+			Die Konfiguration des Imports wird über Dateien im <ulink url="https://de.wikipedia.org/wiki/JavaScript_Object_Notation"><citetitle>JSON-Format</citetitle></ulink> und Kommandozeilenparameter gesteuert.
 			Alle Kommandozeilenparameter können als Variablen in den Konfigurationsdateien verwendet werden, so dass ein Ausführen der Importsoftware ohne Kommandozeilenparameter möglich ist.
 			Es ist aber auch möglich, über Kommandozeilenparameter sämtliche Variablen, die in Konfigurationsdateien stehen, zu überschreiben.
 		</para>
@@ -358,11 +417,9 @@ optional arguments:
 			<title>JSON-Konfigurationsformat</title>
 			<para>
 				Das JSON-Format erlaubt Daten in verschachtelten Strukturen zu speichern, und ist sowohl von Computern als auch Menschen zuverlässig zu lesen und zu schreiben.
-				Nach dem Editieren einer JSON-Datei kann ihre syntaktische Korrektheit mit Hilfe einer Webseite zur JSON Validierung (z.B. <uri>http://zaach.github.com/jsonlint/</uri>) oder eines Kommandozeilenprogramms überprüft werden:
+				Nach dem Editieren einer JSON-Datei kann ihre syntaktische Korrektheit mit Hilfe einer Webseite zur JSON Validierung oder eines Kommandozeilenprogramms überprüft werden:
 				<programlisting>
-univention-install libjson-xs-perl
-
-cat my_config.json | json_xs
+python -m json.tool &lt; my_config.json
 				</programlisting>
 			</para>
 			<para>
@@ -375,16 +432,16 @@ cat my_config.json | json_xs
 			</para>
 			<note>
 				<simpara>
-					Eine Kurzreferenz aller Konfigurationsschlüssel findet sich auf dem DC Master im Verzeichnis <filename class="directory">/usr/share/doc/ucs-school-import/</filename>.
+					Eine Kurzreferenz aller Konfigurationsschlüssel findet sich auf dem Domänencontroller Master im Verzeichnis <filename class="directory">/usr/share/doc/ucs-school-import/</filename>.
 				</simpara>
 			</note>
 			<section id="configuration:json_format:global">
 				<title>Globale Konfiguration</title>
 				<caution>
 					<simpara>
-						In den folgenden Tabellen kommt es layoutbedingt zu Freizeichen und Umbrüchen in Variablen- und Schlüsselnamen.
+						In den folgenden Tabellen kommt es layoutbedingt zu Leerzeichen und Umbrüchen in Variablen- und Schlüsselnamen.
 						 Diese müssen in den Konfigurationsdateien bzw. an der Kommandozeile entfernt werden.
-						<emphasis>Keines</emphasis> der Schlüsselwörter enthält ein Freizeichen oder einen Schrägstrich.
+						<emphasis>Keines</emphasis> der Schlüsselwörter enthält ein Leerzeichen oder einen Schrägstrich.
 					</simpara>
 				</caution>
 				<table id="table:global_configuration">
@@ -533,7 +590,7 @@ cat my_config.json | json_xs
 <!-- csv:incell-delimiter -->
 							<row>
 								<entry morerows="1"><varname>csv:incell- \ delimiter</varname></entry>
-								<entry>Dieses Objekt enthält Informationen darüber, welches Zeichen <emphasis>innerhalb</emphasis> einer Zelle zwei Daten trennt und kann Z.B. bei der Angabe von mehreren Telefonnummern verwendet werden. Es kann ein Standard (<literal>default</literal>) und  pro &ucsUDM;-Attribut eine Konfiguration (mit dem Namen des Schlüssels in <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>) definiert werden.</entry>
+								<entry>Dieses Objekt enthält Informationen darüber, welches Zeichen <emphasis>innerhalb</emphasis> einer Zelle zwei Daten trennt und kann z.B. bei der Angabe von mehreren Telefonnummern verwendet werden. Es kann ein Standard (<literal>default</literal>) und  pro &ucsUDM;-Attribut eine Konfiguration (mit dem Namen des Schlüssels in <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>) definiert werden.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>object</classname>): <literal>{"default": ..}</literal></entry>
@@ -557,7 +614,7 @@ cat my_config.json | json_xs
 <!-- scheme -->
 							<row>
 								<entry morerows="1"><varname>scheme</varname></entry>
-								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den UCS-Benutzervorlagen (siehe <biblioref linkend="ucs-handbuch"/>) verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>recordUID</property> und <property>username</property> können Konfigurationen für beliebige &ucsUDM;-Attribute hinterlegt werden.</simpara></entry>
+								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>recordUID</property> und <property>username</property> können Konfigurationen für beliebige &ucsUDM;-Attribute hinterlegt werden. <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> werden <emphasis>nur</emphasis> in <varname>scheme:email</varname> und <varname>scheme:username</varname> verarbeitet.</simpara></entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>object</classname>): <literal>{"email": .., "recordUID": .., "username": {..}}</literal></entry>
@@ -565,7 +622,7 @@ cat my_config.json | json_xs
 <!-- scheme:email -->
 							<row>
 								<entry morerows="1"><varname>scheme:email</varname></entry>
-								<entry>Schema aus dem die Email-Adresse erzeugt werden soll. Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames"/>).</entry>
+								<entry>Schema aus dem die Email-Adresse erzeugt werden soll. Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames_and_email"/>).</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): <literal>"&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;"</literal></entry>
@@ -581,7 +638,7 @@ cat my_config.json | json_xs
 <!-- scheme:username -->
 							<row>
 								<entry morerows="1"><varname>scheme: \ username</varname></entry>
-								<entry>Enthält Informationen über die Erzeugung von Benutzernamen. Standardmäßig enthält das Objekt nur die Schlüssel <literal>allow_rename</literal> und <literal>default</literal>. Weitere Schlüssel (<literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal>, <literal>teacher_and_staff</literal>) sind möglich (siehe <xref linkend="configuration:default_key"/>). Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames"/>).</entry>
+								<entry>Enthält Informationen über die Erzeugung von Benutzernamen. Standardmäßig enthält das Objekt nur die Schlüssel <literal>allow_rename</literal> und <literal>default</literal>. Weitere Schlüssel (<literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal>, <literal>teacher_and_staff</literal>) sind möglich (siehe <xref linkend="configuration:default_key"/>). Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames_and_email"/>).</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>object</classname>): <literal>{"allow_rename": .., "default": ..}</literal></entry>
@@ -597,7 +654,7 @@ cat my_config.json | json_xs
 <!-- scheme:username:default -->
 							<row>
 								<entry morerows="1"><varname>scheme: \ username: \ default</varname></entry>
-								<entry>Schema aus dem der Benutzername erzeugt werden soll, wenn kein Schema für speziell für diesen Benutzertyp existiert.</entry>
+								<entry>Schema aus dem der Benutzername erzeugt werden soll, wenn kein Schema speziell für diesen Benutzertyp existiert.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): <literal>"&lt;:umlauts&gt;&lt;firstname&gt;[0].&lt;lastname&gt;[COUNTER2]"</literal></entry>
@@ -631,7 +688,7 @@ cat my_config.json | json_xs
 								<entry morerows="1"><literallayout><varname>no_delete</varname>
 <option>-m</option>
 <option>--no-delete</option></literallayout></entry>
-								<entry>Wenn auf <literal>true</literal> gesetzt, werden keine Benutzer gelöscht, oder nur solche für die es in den Eingabedaten <emphasis>explizit</emphasis> vermerkt ist. Dies kann genutzt werden, um eine Änderung an &ucsUAS;-Benutzern vorzunehmen, ohne einen vollständigen Soll-Zustand zu übergeben.</entry>
+								<entry>Wenn auf <literal>true</literal> gesetzt, werden keine Benutzer gelöscht, oder nur solche für die es in den Eingabedaten <emphasis>explizit</emphasis> vermerkt ist. Dies kann genutzt werden, um eine Änderung an &ucsUAS;-Benutzern vorzunehmen, ohne einen vollständigen Soll-Zustand zu übergeben oder um neue Benutzer hinzuzufügen..</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>bool</classname>): <literal>false</literal></entry>
@@ -647,7 +704,7 @@ cat my_config.json | json_xs
 <!-- output:new_user_passwords -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:output:new_user_passwords"><varname>output:new_ \ user_passwords</varname></entry>
-								<entry>Diese Variable definiert den Pfad zur CSV-Datei, in die die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <foreignphrase>Python-Format-String</foreignphrase><footnote><para><foreignphrase>Python Format-String</foreignphrase> Dokumentation: <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"/></para></footnote> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
+								<entry>Diese Variable definiert den Pfad zur CSV-Datei, in die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"><citetitle>Python-Format-String</citetitle></ulink> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
@@ -737,14 +794,14 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 		</section>
 
 		<section id="configuration:default_key">
-			<title>"default" Schlüssel</title>
+			<title>"default"-Schlüssel</title>
 			<para>
 				Einige Einstellungen erlauben das Setzen von verschiedenen Werten, je nach Rolle des Benutzers, der gerade importiert wird.
 				In einem solchen Fall gibt es immer den Schlüssel <literal>default</literal>, der automatisch verwendet wird, wenn es keinen Schlüssel in der Konfiguration für die betroffene Benutzerrolle gibt.
 				Erlaubte Werte für die Benutzerrollen-Schlüssel sind <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> und <literal>teacher_and_staff</literal>.
 			</para>
 			<para>
-				Es müssen nicht alle zwangsläufig Schlüssel für alle Benutzerrollen angegeben werden.
+				Es müssen nicht zwangsläufig Schlüssel für alle Benutzerrollen angegeben werden.
 				Gilt für eine Einstellung z.B. das gleiche für Mitarbeiter und Lehrer und weicht nur der Wert für die Schüler-Benutzerrolle ab, so reicht es aus, <literal>default</literal> und <literal>student</literal> zu konfigurieren. In den Fällen <literal>staff</literal>, <literal>teacher</literal> und <literal>teacher_and_staff</literal> wird in Abwesenheit einer spezifischen Konfiguration automatisch auf <literal>default</literal> zurückgefallen:
 				<programlisting>
 {
@@ -778,12 +835,12 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 			</para>
 			<para>
 				Als erstes fällt auf, dass ein Schüler an zwei Schulen gleichzeitig eingeschrieben ist.
-				Schulübergreifende Benutzerkonten wurden mit &ucsUAS; 4.1R2 eingeführt<footnote><para>UCS@school 4.1 R2 v1 Release Notes: <ulink url="https://docs.software-univention.de/release-notes-ucsschool-4.1R2v1-de.html"/></para></footnote> und werden von der Importsoftware unterstützt.
+				Schulübergreifende Benutzerkonten wurden mit &ucsUAS; 4.1R2 eingeführt (siehe <ulink url="https://docs.software-univention.de/release-notes-ucsschool-4.1R2v1-de.html"><citetitle>UCS@school 4.1 R2 v1 Release Notes</citetitle></ulink>) und werden von der Importsoftware unterstützt.
 				Entsprechend sind die Namen der Klassen so kodiert, dass sie eindeutig einer Schule zugeordnet werden können.
 				Anton geht also in die Klasse <literal>1A</literal> der Schule <literal>Schule1</literal> und in die Klasse <literal>2B</literal> der Schule <literal>Schule2</literal>.
 			</para>
 			<para>
-				Die Namen der Schulen bzw. Klassen sind ohne Freizeichen und durch Komma getrennt, aufgelistet.
+				Die Namen der Schulen bzw. Klassen sind ohne Leerzeichen und durch Komma getrennt, aufgelistet.
 				Als Trennzeichen innerhalb einer CSV-Zelle wird das Komma verwendet, da dies implizit aus der Standardeinstellung <link linkend="configuration:json_format:userimport:csv:incell-delimiter:default"><literal>csv:incell-delimiter:default=","</literal></link> aus <filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename> übernommen wurde.
 			</para>
 			<para>
@@ -882,8 +939,8 @@ udm users/user
 				</para>
 			</note>
 			<para>
-				Bei der obigen, langen Ausgabe, handelt sich um die Beschreibung eines <link linkend="extending:import_user_class"><classname>ImportUser</classname></link> Objektes.
-				Dieses zu kennen wird wichtig für der Programmierung von Hooks (siehe <xref linkend="extending:hooks"/>), mit denen vor und nach dem Anlegen, Ändern oder Löschen von Benutzern noch Aktionen ausgeführt werden können.
+				Bei der obigen, langen Ausgabe handelt es sich um die Beschreibung eines <link linkend="extending:import_user_class"><classname>ImportUser</classname></link> Objektes.
+				Dieses zu kennen wird wichtig für die Programmierung von Hooks (siehe <xref linkend="extending:hooks"/>), mit denen vor und nach dem Anlegen, Ändern oder Löschen von Benutzern noch Aktionen ausgeführt werden können.
 			</para>
 			<para>
 				Es existieren zwei "Sonderwerte" die in der Konfiguration der Zuordnung (<link linkend="configuration:json_format:userimport:csv:mapping"><varname>mapping</varname></link>) verwendet werden können: <literal>__action</literal> und <literal>__ignore</literal>:
@@ -898,12 +955,12 @@ udm users/user
 					</listitem>
 					<listitem>
 						<simpara>
-							<literal>__ignore</literal>: Der Inhalt dieser Spalte wird ignoriert.
+							<literal>__ignore</literal>: Der Inhalt dieser Spalte wird ignoriert. Die kann z.B. verwendet werden, wenn die CSV-Datei leerer Spalten, oder solche mit nicht zu importierenden Daten, enthält.
 						</simpara>
 					</listitem>
 				</itemizedlist>
-				Weitere, eigene Interpretationen von Eingabewerten können in einer abgeleiteten Klasse (siehe <xref linkend="extending:subclassing"/>) von <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname> in der Methode <methodname>handle_input()</methodname> erzeugt werden.
-				Als Beispiel kann <methodname>handle_input()</methodname> in <classname>ucsschool.importer.legacy.legacy_csv_reader.LegacyCsvReader</classname> dienen, welches für ein überholtes Tool den Sonderwert <literal>__activate</literal> (neue Benutzer de/aktivieren) hinzufügt.
+				Weitere, eigene Interpretationen von Eingabewerten können in einer von <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname> abgeleiteten Klasse (siehe <xref linkend="extending:subclassing"/>) in der Methode <methodname>handle_input()</methodname> erzeugt werden.
+				Als Beispiel kann <methodname>handle_input()</methodname> in <classname>ucsschool.importer.legacy.legacy_csv_reader.LegacyCsvReader</classname> dienen, welches für den Import des alten CSV-Dateiformats den Sonderwert <literal>__activate</literal> (neue Benutzer de/aktivieren) hinzufügt.
 			</para>
 			<para>
 				Um Unterstützung für den Import von anderen Dateiformaten als CSV (JSON, XML etc) hinzuzufügen, kann von <classname>ucsschool.importer.reader.base_reader.BaseReader</classname> abgeleitet werden (siehe <xref linkend="extending:subclassing"/>).
@@ -913,12 +970,12 @@ udm users/user
 		<section id="configuration:scheme_formatting">
 			<title>Formatierungsschema</title>
 			<para>
-				Es kann wünschenswert &ndash; oder wie im Fall von Benutzername und E-Mail-Adresse notwendig &ndash; sein Attribute aus den Werten anderer Attribute zu erzeugen.
-				Zum Beispiel speichern und exportieren Schulverwaltungssoftware häufig keine Benutzernamen und E-Mail-Adressen die zur eingesetzten Infrastruktur passen.
+				Es kann wünschenswert &ndash; oder wie im Fall von Benutzername und E-Mail-Adresse notwendig &ndash; sein, Attribute aus den Werten anderer Attribute zu erzeugen.
+				Zum Beispiel speichern und exportieren Schulverwaltungssoftwares häufig keine Benutzernamen und E-Mail-Adressen, die zur eingesetzten Infrastruktur passen.
 			</para>
 			<para>
 				Aus diesem Grund unterstützt die Importsoftware die Erzeugung von Attributen mit Hilfe von konfigurierbaren Schemata.
-				Das Format ist das gleiche wie das bei den Benutzervorlagen eingesetzte (siehe <biblioref linkend="ucs-handbuch"/>).
+				Das Format ist das gleiche wie das bei den <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> eingesetzte.
 				Es existieren dedizierte Konfigurationsschlüssel für die Attribute <property>email</property>, <property>recordUID</property> und <property>username</property>.
 				Darüber hinaus können Schemata für beliebige &ucsUDM; Attribute (mit dem Namen des Attributs als Schlüssel) hinterlegt werden.
 			</para>
@@ -936,10 +993,10 @@ udm users/user
 			</para>
 		</section>
 
-		<section id="configuration:unique_usernames">
+		<section id="configuration:unique_usernames_and_email">
 			<title>Einmalige Benutzernamen und Email-Adressen</title>
 			<para>
-				Benutzername und Email-Adressen müssen in der gesamten Domäne, nicht nur an einer Schule, einmalig sein. Darüber hinaus kann es die Anforderung geben, dass Benutzernamen und Email-Adressen auch "historisch einmalig" sind, sich also niemals wiederholen.
+				Benutzernamen und Email-Adressen müssen in der gesamten Domäne, nicht nur an einer Schule, einmalig sein. Darüber hinaus kann es die Anforderung geben, dass Benutzernamen und Email-Adressen auch "historisch einmalig" sind, also auch dann nicht wiederverwendet werden, wenn die vorherigen Konten bereits lange gelöscht sind.
 			</para>
 			<para>
 				Aus diesem Grund können zur Erzeugung von Benutzernamen und Email-Adressen, über die üblichen Variablen in Formatierungsschema (siehe <xref linkend="configuration:scheme_formatting"/>) hinaus, spezielle Zählervariablen verwendet werden.
@@ -976,9 +1033,12 @@ udm users/user
 	"maildomain": "dom.ain",
 }
 				</programlisting>
+				Die <literal>[0]</literal> im Beispiel bedeutet, dass nur das erste Zeichen des davorstehenden Attributes genommen wird. Es ist auch möglich Bereiche anzugeben. Weitere Informationen dazu finden sich im Kapitel <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>Benutzervorlagen</citetitle></ulink> des UCS Handbuchs.
 			</para>
 			<para>
-				Um neue Zählervariablen hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.utils.username_handler.UsernameHandler</classname> abgeleitet und die Methode <methodname>counter_variable_to_function()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>). Um Zählervariablen für Email-Adressen hinzuzufügen muss von der Klasse <classname>ucsschool.importer.utils.username_handler.EmailHandler</classname> abgeleitet werden.
+				Um neue Zählervariablen hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.utils.username_handler.UsernameHandler</classname> abgeleitet und die Methode <methodname>counter_variable_to_function()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>).
+				Um diese neuen Zählervariablen auch für Email-Adressen zu verwenden, muss <classname>ucsschool.importer.utils.username_handler.EmailHandler</classname> von der neuen, abgeleiteten <classname>UsernameHandler</classname> Klasse <emphasis>sowie</emphasis> von <classname>ucsschool.importer.utils.username_handler.EmailHandler</classname> abgeleitet werden.
+				Um Zählervariablen <emphasis>nur</emphasis> für Email-Adressen hinzuzufügen muss nur von der Klasse <classname>ucsschool.importer.utils.username_handler.EmailHandler</classname> abgeleitet, und oben beschriebene Methoden überschrieben werden.
 			</para>
 		</section>
 
@@ -990,7 +1050,7 @@ udm users/user
 					<listitem>
 						<simpara>
 							Das Benutzerkonto wird sofort gelöscht.
-							Dies entspricht dem Löschen eines Kontos im &ucsUMC;-Modul <guimenu>Benutzer</guimenu> (siehe <biblioref linkend="ucs-handbuch"/>).
+							Dies entspricht dem Löschen eines Kontos im <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:general"><citetitle>&ucsUMC;-Modul <guimenu>Benutzer</guimenu></citetitle></ulink>.
 							Diese Variante wird ausgewählt durch die Konfiguration <literal>user_deletion:delete=true</literal>, <literal>user_deletion:expiration=0</literal>.
 						</simpara>
 					</listitem>
@@ -998,7 +1058,7 @@ udm users/user
 						<simpara>
 							Das Benutzerkonto wird nicht gelöscht, sondern deaktiviert und mit einem Verfallsdatum versehen.
 							Dies entspricht dem Deaktivieren und Setzen eines Kontoablaufdatum im &ucsUMC;-Modul <guimenu>Benutzer</guimenu>.
-							Der Benutzer kann später final gelöscht werden.
+							Der Benutzer kann später endgültig gelöscht werden.
 							Sollte der Benutzer kurze Zeit später erneut "angelegt" werden, wird das alte Benutzerkonto reaktiviert.
 							Diese Variante wird ausgewählt durch die Konfiguration <literal>user_deletion:delete=false</literal>, <literal>user_deletion:expiration=3</literal> (das Konto wird sofort deaktiviert, verfällt aber erst in drei Tagen).
 						</simpara>
@@ -1017,6 +1077,197 @@ udm users/user
 				Um eine der Löschvarianten zu ändern oder neue hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.mass_import.user_import.UserImport</classname> abgeleitet und die Methode <methodname>do_delete()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>).
 			</para>
 		</section>
+	</chapter>
+
+		<chapter id="school_change">
+	<title>Schulwechsel</title>
+		<para>
+			Bei einem Schulwechsel verlässt ein Schüler oder Lehrer seine ursprüngliche Schule A und wird an einer anderen Schule B aufgenommen.
+			Hierbei sind drei Szenarien denkbar:
+			<itemizedlist>
+				<listitem>
+					<simpara>
+						Schule A und Schule B werden vom gleichen Quellverzeichnis abgedeckt und gemeinsam verwaltet.
+						D.h. die für den Benutzer hinterlegte Schule ändert sich in einem Schritt von Schule A auf Schule B.
+						Die Importsoftware kann das Benutzerobjekt verschieben, ohne dass sich Daten wie Benutzername, User-ID, Telefonnummer oder Passwort ändern.
+					</simpara>
+				</listitem>
+				<listitem>
+					<para>
+						Schule A und Schule B werden vom gleichen Quellverzeichnis abgedeckt, die beiden Schulverwaltungen pflegen die Daten ihrer Schüler oder Lehrer jedoch unabhängig voneinander.
+						Der Schulwechsel findet also in zwei Schritten statt.
+						Es können zwei Szenarien auftreten:
+						<itemizedlist>
+							<listitem>
+								<simpara>
+									Der Benutzer wird an Schule A entfernt und erst später an Schule B neu aufgenommen.
+									Wurde das Benutzerkonto gelöscht und nicht deaktiviert, verliert der Benutzer alle Benutzerdaten und erhält ein komplett neues Benutzerkonto inkl. Benutzernamen, User-ID, Passwort etc.
+								</simpara>
+							</listitem>
+							<listitem>
+								<simpara>
+									Der Benutzer wird an Schule B aufgenommen, bevor er an Schule A entfernt wird.
+									Das Benutzerkonto wird kurzfristig an zwei Schulen repliziert, die Daten bleiben während der gesamten Zeit (auch nach Entfernen von Schule A) erhalten.
+								</simpara>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+				<listitem>
+					<simpara>
+						Schule A und Schule B werden von unterschiedlichen Quellverzeichnissen abgedeckt.
+						Der Benutzer wird in Schule A entfernt und vorher oder später in Schule B neu angelegt.
+						Der Benutzer erhält dann einen neuen Benutzernamen, User-ID, Passwort etc.
+						Das Übernehmen des Benutzerkontos ist nicht ohne weiteres möglich.
+					</simpara>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</chapter>
+
+	<chapter id="school_year_change">
+	<title>Schuljahreswechsel</title>
+		<para>
+			Der Schuljahreswechsel erfolgt in drei Schritten:
+			<orderedlist>
+				<listitem>
+					<simpara>
+						In der Schulverwaltungssoftware findet der Schuljahreswechsel statt.
+						Anschließend wird ein Export der Benutzer aus der Schulverwaltungssoftware gemacht.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						Die Klassen der Schüler die die Schule verlassen, werden im &ucsUMC;-Modul <guimenu>Klassen</guimenu> gelöscht.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						Durchführung des Imports der zuvor Exportierten Daten.
+					</simpara>
+				</listitem>
+			</orderedlist>
+		</para>
+	</chapter>
+
+	<chapter id="ou_spanning_account">
+	<title>Schulübergreifende Benutzerkonten</title>
+		<para>
+			Seit &ucsUAS; 4.1 R2 werden schulübergreifende Benutzerkonten unterstützt.
+			Ein Benutzerobjekt existiert im LDAP-Verzeichnis nur einmal: an seiner primären Schule (Attribut <property>school</property>).
+			An weitere, festgelegte Schulen (Attribut <property>schools</property>) wird nur ein Ausschnitt des LDAP-Verzeichnisses seiner primären Schule repliziert: sein Benutzerobjekt und die Standardgruppen.
+			Verlässt der Benutzer die Schule (durch Entfernen aus dem Attribut <property>schools</property>), so wird sein Benutzerobjekt dort gelöscht und nicht mehr dorthin repliziert.
+			Bei der Verwendung von schulübergreifenden Benutzerkonten gilt es einige Dinge zu beachten.
+		</para>
+		<para>
+		</para>
+		<para>
+			Der Klassenarbeitsmodus und die Materialverteilung arbeiten grundsätzlich so, dass sie auf dem Schulserver an dem sie veranlasst wurden, die hochgeladenen Dateien in die Heimatverzeichnisse der betroffenen Benutzer kopieren. Befindet sich ein Heimatverzeichnis nicht auf dem Server, scheitert dies.
+		</para>
+		<para>
+			Windows-Clients verwenden das LDAP-Attribut <property>homeDirectory</property> (LDAP-Attribut <property>sambaHomePath</property> bzw. &ucsUDM;-Attribut <property>sambahome</property>) um beim Einloggen das Netzwerklaufwerk mit den Dokumenten des Benutzers einzubinden.
+			Wenn die primäre Schule eines Benutzers eine andere ist, als die, an der er gerade eine Klassenarbeit schreiben soll, so existiert sein Heimatverzeichnis dort unter Umständen nicht.
+		</para>
+		<para>
+			Es existieren drei Varianten des Umgangs mit der &ucsUDM;-Attribut <property>sambahome</property>, mit folgenden Vor- und Nachteilen:
+			<orderedlist>
+				<listitem>
+					<para>
+                        <property>sambahome</property> wird regulär durch das Import-Skript gesetzt und nicht manuell verändert.
+						<property>sambahome</property> ist dann immer ein Verzeichnis auf dem Schulserver der primären Schule des jeweiligen Benutzers.
+						<itemizedlist>
+							<listitem>
+								<simpara>
+									pro: Es existiert genau ein Heimatverzeichnis auf einem Server für alle Clients der Domäne (egal an welcher Schule).
+								</simpara>
+							</listitem>
+							<listitem>
+								<simpara>
+									contra: Klassenarbeitsmodus und Materialverteilung funktionieren nicht an anderen Schulen als der primären. Beim regulären Arbeiten gibt es ein hohes Datenaufkommen zwischen den Schulen.
+								</simpara>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<property>sambahome</property> wird durch das Import-Skript für alle auf einen (per &ucsUCR;) festgesetzten, zentralen, Server gesetzt.
+						<itemizedlist>
+							<listitem>
+								<simpara>
+									pro: wie bei 1.
+								</simpara>
+							</listitem>
+							<listitem>
+								<simpara>
+									contra: wie bei 1.
+								</simpara>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<property>sambahome</property> wird durch das Import-Skript auf einen Server mit einem Alias-Namen gesetzt.
+						Je nach dem an welcher Schule sich der Benutzer befindet, bekommt er vom DNS-Server eine andere IP-Adresse für den gleichen Servernamen geliefert.
+						<itemizedlist>
+							<listitem>
+								<simpara>
+									pro: Klassenarbeitsmodus und Materialverteilung funktionieren, an der jeweiligen Schule an der sie stattfinden, für alle Benutzer - egal ob es ihre primäre Schule ist oder nicht.
+									Kein Datenverkehr zwischen Schulen.
+								</simpara>
+							</listitem>
+							<listitem>
+								<simpara>
+									contra: Es wird an jeder Schule eines Benutzers ein eigenes Heimatverzeichnis für ihn angelegt.
+									Einmaliger Installationsaufwand: An jeder Schule müssen ein paar &ucsUCR;-Variablen eingestellt werden.
+								</simpara>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+			</orderedlist>
+		</para>
+		<para>
+			Es folgt eine Anleitung zur Einrichtung der dritten Variante.
+		</para>
+		<section id="ou_spanning_account:sambahome">
+			<title>Schulspezifisches sambahome</title>
+			<para>
+				Die folgenden Befehle müssen, mit angepassten Hostnamen und IP-Adressen, auf jedem Schulserver ausgeführt werden:
+				<programlisting>
+# UCR Variablen verfügbar machen
+eval "$(ucr shell)"
+
+# Name (Alias) des Servers auf dem das Heimatverzeichnis liegt
+ucr set ucsschool/import/set/sambahome=schoolserver
+
+# DNS-Eintrag schoolserver.$domainname -> IP-Adresse des *jeweiligen* Schulservers
+ucr set "connector/s4/mapping/dns/host_record/schoolserver.$domainname/static/ipv4"=172.16.3.12
+
+# DNS-Eintrag aktivieren
+invoke-rc.d univention-s4-connector restart
+				</programlisting>
+			</para>
+			<para>
+				Folgendes muss auf dem DC Master ausgeführt werden:
+				<programlisting>
+# Name (Alias) des Servers auf dem das Heimatverzeichnis liegt (wird vom Import ausgewertet)
+ucr set ucsschool/import/set/sambahome=schoolserver
+
+# DNS Forward-Eintrag einrichten (school.local durch korrekte Domäne ersetzen,
+# IP-Adresse eines zentralen Server, z.B. des DC Master, verwenden)
+udm dns/host_record create \
+    --superordinate "zoneName=school.local,cn=dns,$ldap_base" \
+    --set name=schoolserver \
+    --set a=172.16.1.1
+				</programlisting>
+			</para>
+			<para>
+				Der Befehl <command>host schoolserver</command> sollte nun auf allen Schulservern die IP-Adresse des jeweiligen Schulservers liefern.
+				Mit <command>nslookup schoolserver</command> können die gleiche DNS-Anfrage komfortabel an verschiedene DNS-Server geschickt werden.
+			</para>
+		  </section>
 	</chapter>
 
 	<chapter id="extending">
@@ -1144,7 +1395,7 @@ udm users/user
 							<row>
 								<entry><varname>dn</varname></entry>
 								<entry>string</entry>
-								<entry>DN des Benutzers im LDAP, wenn er jetzt gespeichert würde.</entry>
+								<entry>DN des Benutzer-Objekts im LDAP, wenn es jetzt gespeichert werden würde.</entry>
 							</row>
 							<row>
 								<entry><varname>entry_count</varname></entry>
@@ -1172,12 +1423,12 @@ udm users/user
 		<section id="extending:hooks">
 			<title>Hooks</title>
 			<para>
-				Hooks (engl. Haken) sind Stellen im Programmcode an die zusätzlicher Code "gehängt" werden kann.
+				<ulink url="https://de.wikipedia.org/wiki/Hook_(Informatik)"><citetitle>Hooks</citetitle></ulink> sind Stellen im Programmcode, an die zusätzlicher Code "gehängt" werden kann.
 				Für den Benutzerimport sind acht Stellen vorgesehen: jeweils vor und nach dem Anlegen, Ändern, Löschen oder Verschieben von Benutzern.
 			</para>
 			<para>
 				Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.importer.utils.user_pyhook.UserPyHook</classname> ableitet.
-				In der Klasse können Methoden <methodname>pre_create()</methodname>, <methodname>post_create()</methodname> etc definiert werden, welche zum jeweiligen Zeitpunkt ausgeführt werden.
+				In der Klasse können Methoden <methodname>pre_create()</methodname>, <methodname>post_create()</methodname>, etc. definiert werden, welche zum jeweiligen Zeitpunkt ausgeführt werden.
 				Der Name der Datei mit der eigenen Klasse muss auf <filename>.py</filename> enden und im Verzeichnis <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> abgespeichert werden.
 			</para>
 			<note>
@@ -1257,10 +1508,10 @@ class MyHook(UserPyHook):
 			</para>
 			<para>
 				In der Funktion wird außerdem mit <methodname>self.logger.info()</methodname> ein Text zu Protokoll gegeben.
-				Es handelt sich bei <property>self.logger</property> um eine Instanz eines Python <classname>logging</classname> Objekts<footnote><para>Python Dokumentation: <ulink url="https://docs.python.org/2/library/logging.html"/></para></footnote>.
+				Es handelt sich bei <property>self.logger</property> um eine Instanz eines <ulink url="https://docs.python.org/2/library/logging.html"><citetitle>Python <classname>logging</classname></citetitle></ulink> Objekts.
 			</para>
 			<para>
-				In <methodname>pre_remove()</methodname> wird das Heimatverzeichnisses des Benutzers benötigt.
+				In <methodname>pre_remove()</methodname> wird das Heimatverzeichnis des Benutzers benötigt.
 				Da dies nicht eines der direkt am Objekt stehenden Daten ist (siehe <xref linkend="extending:import_user_class"/>), muss zuerst das gesamte Benutzerobjekt aus dem LDAP geladen werden.
 				Dies tut <methodname>user.get_udm_object()</methodname>, welches als Argument ein LDAP-Verbindungsobjekt erwartet.
 				Dieses ist im <wordasword>Hook-Objekt</wordasword> an <property>self.lo</property> gespeichert.
@@ -1270,7 +1521,7 @@ class MyHook(UserPyHook):
 					Falls das Benutzerobjekt in einem <foreignphrase>post-Hook</foreignphrase> geändert werden soll, so ist es möglich <methodname>user.modify_without_hooks()</methodname> auszuführen, aber generell sollte ein erneutes Modifizieren <emphasis>nach</emphasis> dem Speichern vermieden werden.
 				</para>
 				<para>
-					Die Methoden <methodname>create()</methodname>, <methodname>modify()</methodname> und <methodname>remove()</methodname> sollten in Hooks nie ausgeführt werden, da dies zu einer Rekursion führen kann.
+					Die Methoden <methodname>create()</methodname>, <methodname>modify()</methodname> und <methodname>remove()</methodname> des Benutzerobjekts sollten von Hook-Methoden nicht ausgeführt werden, da dies zu einer Rekursion führen kann.
 				</para>
 			</caution>
 		  </section>
@@ -1304,12 +1555,12 @@ class MyUsernameHandler(UsernameHandler):
         return new_number_str
 			</programlisting>
 			<para>
-				In <methodname>counter_variable_to_function()</methodname> wird den existierenden beiden Variablen eine weitere hinzugefügt, und auf die neue Funktion verwiesen.
-				<methodname>always_counter_with_zeros()</methodname> verwendet <methodname>always_counter()</methodname> zur Erzeugung der nächsten freien Zahl, schreibt diese aber dann so um, dass sie immer vier Stellen lang ist (vorne wird mit Nullen aufgefüllt).
+				In <methodname>counter_variable_to_function()</methodname> wird den existierenden beiden Variablen eine weitere hinzugefügt und auf die neue Funktion verwiesen.
+				<methodname>always_counter_with_zeros()</methodname> verwendet <methodname>always_counter()</methodname> zur Erzeugung der nächsten freien Zahl, schreibt diese aber dann so um, dass sie immer vier Stellen lang ist (der Anfang wird mit Nullen aufgefüllt).
 			</para>
 			<para>
 				Wird die Klasse unter <filename class="directory">/usr/local/lib/python2.7/dist-packages/usernames_with_zeros.py</filename> abgespeichert, so kann sie unter Python als <classname>usernames_with_zeros.MyUsernameHandler</classname> verwendet werden.
-				Evtl. muss zuvor das Verzeichnis angelegt werden:
+				Zuvor muss das Verzeichnis angelegt werden:
 				<programlisting>
 mkdir -p /usr/local/lib/python2.7/dist-packages
 				</programlisting>
@@ -1336,17 +1587,16 @@ Anton0003
 				</programlisting>
 			</para>
 			<para>
-				Es gibt jetzt zwar eine neue Klasse mit der neuen Funktionalität.
-				Aber wie wird die Importsoftware nun dazu gebracht die neue Klasse zu verwenden?
+				Es gibt jetzt eine neue Klasse mit der neuen Funktionalität.
+				Die Importsoftware muss nun noch dazu gebracht werden, diese neue, ihr nicht bekannte Klasse zu verwenden.
 			</para>
 
 			<section id="extending:subclassing:abstract_factory">
 				<title>Abstract Factory</title>
 				<para>
-					Für dieses immer wiederkehrende Problem gibt es verschiedene Entwurfsmuster<footnote><para>Wikipedia Entwurfsmuster: <ulink url="https://de.wikipedia.org/wiki/Entwurfsmuster"/></para></footnote>.
-					Für die Importsoftware wurde sich für das der <foreignphrase>Abstract Factory</foreignphrase><footnote><para>Wikipedia Abstrakte Fabrik: <ulink url="https://de.wikipedia.org/wiki/Abstrakte_Fabrik"/></para></footnote> entschieden.
+					Die Architektur der Importsoftware ist als <ulink url="https://de.wikipedia.org/wiki/Abstrakte_Fabrik"><citetitle>Abstrakte Fabrik (Abstract Factory)</citetitle></ulink> implementiert.
 					In ihr wird die Erzeugung von Objekten zentralisiert.
-					Sie zeichnet sich u.a. dadurch aus, dass sie erlaubt das Auszutauschen mehrerer Komponenten einer Software konsistent zu halten.
+					Sie zeichnet sich u.a. dadurch aus, dass sie erlaubt das Austauschen mehrerer Komponenten einer Software konsistent zu halten.
 					Im Fall der Importsoftware ist die <foreignphrase>abstract factory</foreignphrase> jedoch nicht Abstrakt, alle Methoden wurden implementiert.
 				</para>
 				<para>
@@ -1408,7 +1658,7 @@ class MyUserImportFactory(DefaultUserImportFactory):
 					</programlisting>
 				</para>
 				<para>
-					Wird diese Datei nun als <filename>/usr/local/lib/python2.7/dist-packages/my_userimport_factory.py</filename> abgespeichert, so kann sie in der Konfiguration zur Verwendung als <property>factory</property> for die Importsoftware folgendermaßen aktiviert werden:
+					Wird diese Datei nun als <filename>/usr/local/lib/python2.7/dist-packages/my_userimport_factory.py</filename> abgespeichert, so kann sie in der Konfiguration zur Verwendung als <property>factory</property> für die Importsoftware folgendermaßen aktiviert werden:
 					<programlisting>
 {
     "factory": "my_userimport_factory.MyUserImportFactory"
@@ -1421,199 +1671,4 @@ class MyUserImportFactory(DefaultUserImportFactory):
 			  </section>
 		  </section>
 	</chapter>
-
-	<chapter id="school_change">
-	<title>Schulwechsel</title>
-		<para>
-			Bei einem Schulwechsel verlässt ein Schüler oder Lehrer seine ursprüngliche Schule A und wird an einer anderen Schule B aufgenommen.
-			Hierbei sind drei Szenarien denkbar:
-			<itemizedlist>
-				<listitem>
-					<simpara>
-						Schule A und Schule B werden vom gleichen Quellverzeichnis abgedeckt und gemeinsam verwaltet.
-						D.h. die für den Benutzer hinterlegte Schule ändert sich in einem Schritt von Schule A auf Schule B.
-						Die Importsoftware kann das Benutzerobjekt verschieben, ohne dass sich Daten wie Benutzername, User-ID, Telefonnummer oder Passwort ändern.
-					</simpara>
-				</listitem>
-				<listitem>
-					<para>
-						Schule A und Schule B werden vom gleichen Quellverzeichnis abgedeckt, die beiden Schulverwaltungen pflegen die Daten ihrer Schüler oder Lehrer jedoch unabhängig voneinander.
-						Der Schulwechsel findet also in zwei Schritten statt.
-						Es können zwei Szenarien auftreten:
-						<itemizedlist>
-							<listitem>
-								<simpara>
-									Der Benutzer wird an Schule A entfernt und erst später an Schule B neu aufgenommen.
-									Wurde das Benutzerkonto gelöscht und nicht deaktiviert, verliert der Benutzer alle Benutzerdaten und erhält ein komplett neues Benutzerkonto inkl. Benutzernamen, User-ID, Passwort etc.
-								</simpara>
-							</listitem>
-							<listitem>
-								<simpara>
-									Der Benutzer wird an Schule B aufgenommen, bevor er an Schule A entfernt wird.
-									Das Benutzerkonto wird kurzfristig an zwei Schulen repliziert, die Daten bleiben während der gesamten Zeit (auch nach Entfernen von Schule A) erhalten.
-								</simpara>
-							</listitem>
-						</itemizedlist>
-					</para>
-				</listitem>
-				<listitem>
-					<simpara>
-						Schule A und Schule B werden von unterschiedlichen Quellverzeichnissen abgedeckt.
-						Der Benutzer wird in Schule A entfernt und vorher oder später in Schule B neu angelegt.
-						Der Benutzer erhält dann einen neuen Benutzernamen, User-ID, Passwort etc.
-						Das Übernehmen des Benutzerkontos ist nicht ohne weiteres möglich.
-					</simpara>
-				</listitem>
-			</itemizedlist>
-		</para>
-	</chapter>
-
-	<chapter id="school_year_change">
-	<title>Schuljahreswechsel</title>
-		<para>
-			Der Schuljahreswechsel erfolgt in drei Schritten:
-			<orderedlist>
-				<listitem>
-					<simpara>
-						In der Schulverwaltungssoftware findet der Schuljahreswechsel statt.
-						Anschließend wird ein Export der Benutzer aus der Schulverwaltungssoftware gemacht.
-					</simpara>
-				</listitem>
-				<listitem>
-					<simpara>
-						Die Klassen der Schüler die die Schule verlassen, werden im &ucsUMC;-Modul <guimenu>Klassen</guimenu> gelöscht.
-					</simpara>
-				</listitem>
-				<listitem>
-					<simpara>
-						Durchführung des Imports der zuvor Exportierten Daten.
-					</simpara>
-				</listitem>
-			</orderedlist>
-		</para>
-	</chapter>
-
-	<chapter id="ou_spanning_account">
-	<title>Schulübergreifende Benutzerkonten</title>
-		<para>
-			Seit &ucsUAS; 4.1 R2 werden schulübergreifende Benutzerkonten unterstützt.
-			Ein Benutzerobjekt existiert im LDAP-Verzeichnis nur einmal: an seiner primären Schule (Attribut <property>school</property>).
-			An weitere, festgelegte Schulen (Attribut <property>schools</property>) wird nur ein Ausschnitt des LDAP-Verzeichnisses seiner primären Schule repliziert: sein Benutzerobjekt und die Standardgruppen.
-			Verlässt der Benutzer die Schule (durch Entfernen aus dem Attribut <property>schools</property>), so wird sein Benutzerobjekt dort gelöscht und nicht mehr dorthin repliziert.
-			Bei der Verwendung von schulübergreifenden Benutzerkonten gilt es einige Dinge zu beachten.
-		</para>
-		<para>
-		</para>
-		<para>
-			Der Klassenarbeitsmodus und die Materialverteilung arbeiten grundsätzlich so, dass sie auf dem Schulserver an dem sie veranlasst wurden, die hochgeladenen Dateien in die Heimatverzeichnisse der betroffenen Benutzer kopieren. Befindet sich ein Heimatverzeichnis nicht auf dem Server, scheitert dies.
-		</para>
-		<para>
-			Windows-Clients verwenden das LDAP-Attribut <property>homeDirectory</property> (LDAP-Attribut <property>sambaHomePath</property> bzw. &ucsUDM;-Eigenschaft <property>sambahome</property>) um beim Einloggen das Netzwerklaufwerk mit den Dokumenten des Benutzers einzubinden.
-			Wenn die primäre Schule eines Benutzers eine andere ist, als die, an der er gerade eine Klassenarbeit schreiben soll, so existiert sein Heimatverzeichnis dort unter Umständen nicht.
-		</para>
-		<para>
-			Es existieren drei Varianten des Umgangs mit der &ucsUDM;-Eigenschaft <property>sambahome</property>, mit folgenden Vor- und Nachteilen:
-			<orderedlist>
-				<listitem>
-					<para>
-                        <property>sambahome</property> wird regulär durch das Import-Skript gesetzt und nicht manuell verändert.
-						<property>sambahome</property> ist dann immer ein Verzeichnis auf dem Schulserver der primären Schule des jeweiligen Benutzers.
-						<itemizedlist>
-							<listitem>
-								<simpara>
-									pro: Es existiert genau ein Heimatverzeichnis auf einem Server für alle Clients der Domäne (egal an welcher Schule).
-								</simpara>
-							</listitem>
-							<listitem>
-								<simpara>
-									contra: Klassenarbeitsmodus und Materialverteilung funktionieren nicht an anderen Schulen als der primären. Beim regulären Arbeiten gibt es ein hohes Datenaufkommen zwischen den Schulen.
-								</simpara>
-							</listitem>
-						</itemizedlist>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<property>sambahome</property> wird durch das Import-Skript für alle auf einen (per &ucsUCR;) festgesetzten, zentralen, Server gesetzt.
-						<itemizedlist>
-							<listitem>
-								<simpara>
-									pro: wie bei 1.
-								</simpara>
-							</listitem>
-							<listitem>
-								<simpara>
-									contra: wie bei 1.
-								</simpara>
-							</listitem>
-						</itemizedlist>
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<property>sambahome</property> wird durch das Import-Skript auf einen Server mit einem Alias-Namen gesetzt.
-						Je nach dem an welcher Schule sich der Benutzer befindet, bekommt er vom DNS-Server eine andere IP-Adresse für den gleichen Servernamen geliefert.
-						<itemizedlist>
-							<listitem>
-								<simpara>
-									pro: Klassenarbeitsmodus und Materialverteilung funktionieren, an der jeweiligen Schule an der sie stattfinden, für alle Benutzer - egal ob es ihre primäre Schule ist oder nicht.
-									Kein Datenverkehr zwischen Schulen.
-								</simpara>
-							</listitem>
-							<listitem>
-								<simpara>
-									contra: Es wird an jeder Schule eines Benutzers ein eigenes Heimatverzeichnis für ihn angelegt.
-									Einmaliger Installationsaufwand: An jeder Schule müssen ein paar &ucsUCR;-Variablen eingestellt werden.
-								</simpara>
-							</listitem>
-						</itemizedlist>
-					</para>
-				</listitem>
-			</orderedlist>
-		</para>
-		<para>
-			Es folgt eine Anleitung zur Einrichtung der dritten Variante.
-		</para>
-		<section id="ou_spanning_account:sambahome">
-			<title>Schulspezifisches sambahome</title>
-			<para>
-				Die folgenden Befehle müssen, mit angepassten Hostnamen und IP-Adressen, auf jedem Schulserver ausgeführt werden:
-				<programlisting>
-# UCR Variablen verfügbar machen
-eval "$(ucr shell)"
-
-# Name (Alias) des Servers auf dem das Heimatverzeichnis liegt
-ucr set ucsschool/import/set/sambahome=schoolserver
-
-# DNS-Eintrag schoolserver.$domainname -> IP-Adresse des *jeweiligen* Schulservers
-ucr set "connector/s4/mapping/dns/host_record/schoolserver.$domainname/static/ipv4"=172.16.3.12
-
-# DNS-Eintrag aktivieren
-invoke-rc.d univention-s4-connector restart
-				</programlisting>
-			</para>
-			<para>
-				Folgendes muss auf dem DC Master ausgeführt werden:
-				<programlisting>
-# Name (Alias) des Servers auf dem das Heimatverzeichnis liegt (wird vom Import ausgewertet)
-ucr set ucsschool/import/set/sambahome=schoolserver
-
-# DNS Forward-Eintrag einrichten (school.local durch korrekte Domäne ersetzen,
-# IP-Adresse eines zentralen Server, z.B. des DC Master, verwenden)
-udm dns/host_record create \
-    --superordinate "zoneName=school.local,cn=dns,$ldap_base" \
-    --set name=schoolserver \
-    --set a=172.16.1.1
-				</programlisting>
-			</para>
-			<para>
-				Der Befehl <command>host schoolserver</command> sollte nun auf allen Schulservern die IP-Adresse des jeweiligen Schulservers liefern.
-				Mit <command>nslookup schoolserver</command> können die gleiche DNS-Anfrage komfortabel an verschiedene DNS-Server geschickt werden.
-			</para>
-		  </section>
-	</chapter>
-
-	<bibliography id="bibliography">
-		<bibliomixed id="ucs-handbuch"/>
-	</bibliography>
 </book>
