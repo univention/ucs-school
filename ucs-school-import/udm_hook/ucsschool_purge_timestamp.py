@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 #
-# UCS@school purge_timestamp hook
+# UCS@school purge timestamp hook
 #
 # Copyright (C) 2017 Univention GmbH
 #
@@ -37,22 +37,22 @@ class PurgeTimestamp(simpleHook):
 	udm_date_format = '%Y-%m-%d'
 
 	def hook_open(self, module):
-		old_purge_ts = module.get('purge_timestamp')
+		old_purge_ts = module.get('ucsschoolPurgeTimestamp')
 		if old_purge_ts:
-			module['purge_timestamp'] = self.ldap2udm(old_purge_ts)
+			module['ucsschoolPurgeTimestamp'] = self.ldap2udm(old_purge_ts)
 			module.save()
 
 	def hook_ldap_addlist(self, module, al=None):
 		if al is None:
 			al = []
-		if module.info.get('purge_timestamp'):
+		if module.info.get('ucsschoolPurgeTimestamp'):
 			al = self.convert_ts_in_list(al)
 		return al
 
 	def hook_ldap_modlist(self, module, ml=None):
 		if ml is None:
 			ml = []
-		if module.hasChanged('purge_timestamp'):
+		if module.hasChanged('ucsschoolPurgeTimestamp'):
 			ml = self.convert_ts_in_list(ml)
 		return ml
 

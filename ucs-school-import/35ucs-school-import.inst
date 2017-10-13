@@ -284,7 +284,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="purge_timestamp" \
+	--set name="ucsschoolPurgeTimestamp" \
 	--append module="users/user" \
 	--append module=settings/usertemplate \
 	--append options="ucsschoolStudent" \
