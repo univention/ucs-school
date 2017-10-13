@@ -146,7 +146,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				continue
 			finished = job.status in ('Finished', 'Aborted')
 
-			if isinstance(job.result.result, dict):
+			if job.result and isinstance(job.result.result, dict):
 				progress.progress(True, job.result.result.get('description'))
 				progress.current = float(job.result.result.get('percentage', 75.0))
 			elif job.status == 'Started':
