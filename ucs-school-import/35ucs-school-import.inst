@@ -292,11 +292,11 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolStaff" \
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
-	--set shortDescription="Date on which to delete a previously deactivated user." \
-	--set longDescription="Date on which a previously deactivated user should irrevocably be deleted from the user database." \
-	--set translationShortDescription='"de_DE" "Datum an dem ein zuvor deaktivierter Benutzer gelöscht werden soll."' \
-	--set translationLongDescription='"de_DE" "Datum an dem ein zuvor deaktivierter Benutzer unwiderruflich aus der Benutzerdatenbank gelöscht werden soll."' \
-	--set CLIName="purge_timestamp" \
+	--set shortDescription="Scheduled deletion date" \
+	--set longDescription="On the date specified here, this user is irrevocably deleted from the directory service." \
+	--set translationShortDescription='"de_DE" "Geplantes Löschdatum"' \
+	--set translationLongDescription='"de_DE" "An dem hier angegebenen Datum wird dieser Benutzer unwiderruflich aus dem LDAP-Verzeichnis gelöscht."' \
+	--set CLIName="ucsschoolPurgeTimestamp" \
 	--set objectClass="ucsschoolType" \
 	--set ldapMapping="ucsschoolPurgeTimestamp" \
 	--set syntax="iso8601Date" \
