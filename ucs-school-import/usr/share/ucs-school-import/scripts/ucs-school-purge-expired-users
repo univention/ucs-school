@@ -3,7 +3,7 @@
 #
 # Univention UCS@school
 """
-Tool to delete users whose deletion grace time (purge_timestamp) has passed.
+Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has passed.
 """
 # Copyright 2017 Univention GmbH
 #
@@ -60,8 +60,7 @@ def parse_cmdline():
 		verbose=False
 	)
 	parser = ArgumentParser(
-		description='UCS@school expired user purge tool: delete users whose deletion grace time '
-		'(purge_timestamp) has passed.')
+		description='UCS@school delete tool for expired user accounts (ucsschoolPurgeTimestamp)')
 	parser.add_argument(
 		'-c',
 		'--conffile',
@@ -202,7 +201,7 @@ def main():
 	logger.info('Found %d expired accounts.', len(expired_accounts))
 	for dn, attr in expired_accounts:
 		logger.debug(
-			'dn=%r purge_timestamp=%r shadowExpire=%r',
+			'dn=%r ucsschoolPurgeTimestamp=%r shadowExpire=%r',
 			dn,
 			purge_timestamp2date(attr['ucsschoolPurgeTimestamp'][0]).strftime('%Y-%m-%d'),
 			shadow_expire2date(attr['shadowExpire'][0]).strftime('%Y-%m-%d') if attr.get('shadowExpire') else None
