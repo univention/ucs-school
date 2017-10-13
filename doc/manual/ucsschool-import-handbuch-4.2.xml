@@ -19,7 +19,7 @@
 		<legalnotice>
 			<literallayout>
 				Version 4.2 v4
-				Stand: 11. October 2017
+				Stand: 11. Oktober 2017
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
@@ -44,7 +44,7 @@
 	<chapter id="audience">
 		<title>Zielgruppe</title>
 		<para>
-			Dieses Handbuch richtet sich an Administratoren und Programmierer. Die Import Software ist im Auslieferungszustand stark konfigurierbar, kann aber zusätzlich programmatisch erweitertert werden. In diesem Handbuch werden der Ablauf eines Importvorganges, Konfigurationsoptionen und Programmierschnittstellen beschrieben.
+			Dieses Handbuch richtet sich an Administratoren und Programmierer. Die Import Software ist im Auslieferungszustand stark konfigurierbar, kann aber zusätzlich programmatisch erweitert werden. In diesem Handbuch werden der Ablauf eines Importvorganges, Konfigurationsoptionen und Programmierschnittstellen beschrieben.
 		</para>
 	</chapter>
 
@@ -58,7 +58,7 @@
 		</para>
 		<para>
 			Der &ucsUAS; Import ermöglicht es Benutzerdaten aus einer Datei auszulesen, die Daten zu normieren, automatisch eindeutige Benutzernamen und E-Mail-Adressen zu generieren und notwendige Änderungen (Hinzufügen/Modifizieren/Löschen) automatisch zu erkennen.
-			Er wurde so konzipiert, dass die Konten einer UCS Domäne automatisch mit dem Datenbestand eines vorhandenen Benutzerverzeichnisses abgegleichen werden können.
+			Er wurde so konzipiert, dass die Konten einer UCS Domäne automatisch mit dem Datenbestand eines vorhandenen Benutzerverzeichnisses abgeglichen werden können.
 		</para>
 		<para>
 			Die Importschnittstelle ist darauf ausgelegt, mit möglichst geringem Aufwand an die
@@ -218,9 +218,9 @@
 				<itemizedlist>
 					<listitem>
 						<para>
-							Die Schulen eines Schulträgers verwenden voneinander unabhängige Verwaltungssoftware. Die Software exportiert für jede Schule separate CSV-Tabellen für den Import. Es wird je eine Datei für Schüler, Lehrer und Mitarbeiter erzeugt.
+							Die Schulen eines Schulträgers verwenden voneinander unabhängige Verwaltungssoftware. Die Software exportiert für jede Schule separate CSV-Dateien für den Import. Es wird je eine Datei für Schüler, Lehrer und Mitarbeiter erzeugt.
 							Für den Import der CSV-Dateien wird pro Schule und Benutzerrolle eine separate Konfiguration mit individueller <property>sourceUID</property> benötigt.
-							Sind die Konfigurationen hinreichend ähnlich, können die gleichen Konfigurationsdateien verwendet werden und die sich unterschiedenden Optionen an der Kommandozeile gesetzt werden. Sollten sich nur <property>sourceUID</property> und Benutzerrolle unterschieden, so würde der Import mit den entsprechenden Optionen z.B. so aufgerufen:
+							Sind die Konfigurationen hinreichend ähnlich, können die gleichen Konfigurationsdateien verwendet werden und die sie unterscheidenden Optionen an der Kommandozeile gesetzt werden. Sollten sich nur <property>sourceUID</property> und Benutzerrolle unterschieden, so würde der Import mit den entsprechenden Optionen z.B. so aufgerufen:
 							<programlisting>
  # /usr/share/ucs-school-import/scripts/ucs-school-user-import \
     --conffile &lt;gemeinsame Konfigurationsdatei&gt; \
@@ -228,7 +228,7 @@
     --user_role &lt;Benutzerrolle&gt; \
     --infile &lt;CSV-Datei&gt;
 							</programlisting>
-							Durch die Verwendung von <replaceable>Schulname-Benutzerrolle</replaceable> (z.B. <literal>GSMitte-student</literal>) als <property>sourceUID</property> wird ein eindeutiger Bezeicher pro Schule und Benutzerrolle sicher gestellt.
+							Durch die Verwendung von <replaceable>Schulname-Benutzerrolle</replaceable> (z.B. <literal>GSMitte-student</literal>) als <property>sourceUID</property> wird ein eindeutiger Bezeichner pro Schule und Benutzerrolle sicher gestellt.
 						</para>
 						<simpara>
 							Ab &ucsUAS; Version 4.2 v4 wird nur eine <property>sourceUID</property> pro Schule benötigt (<replaceable>-&lt;Benutzerrolle&gt;</replaceable> kann weggelassen werden), sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
@@ -239,7 +239,7 @@
 					</listitem>
 					<listitem>
 						<simpara>
-							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert für jede Benutzerrolle eine CSV-Datei. In diesen Dateien sind alle Benuter aller Schulen (von der jeweiligen Rolle) enthalten.
+							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert für jede Benutzerrolle eine CSV-Datei. In diesen Dateien sind alle Benutzer aller Schulen (von der jeweiligen Rolle) enthalten.
 							Für den Import der CSV-Dateien wird nur pro Benutzerrolle eine separate Konfiguration mit individueller <property>sourceUID</property> benötigt, bzw. die gleiche Konfigurationsdatei und an der Kommandozeile wird gesetzt: <literal>--sourceUID &lt;Benutzerrolle&gt;</literal>.
 						</simpara>
 						<simpara>
@@ -251,7 +251,7 @@
 					</listitem>
 					<listitem>
 						<simpara>
-							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert alle Benutzer in eine CSV-Datei. In dieser Datei sind Benuter aller Rollen und aller Schulen enthalten. In der CSV-Datei gibt es eine Spalte in der steht welche Rolle der jeweilige Benutzer hat.
+							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert alle Benutzer in eine CSV-Datei. In dieser Datei sind Benutzer aller Rollen und aller Schulen enthalten. In der CSV-Datei gibt es eine Spalte in der steht welche Rolle der jeweilige Benutzer hat.
 							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> benötigt. Um die Benutzerrolle auszulesen muss die Klasse zum Einlesen von CSV-Dateien abgeleitet und erweitert werden: <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname>. Ein Code-Beispiel findet sich in der Klasse <classname>ucsschool.importer.reader.test_csv_reader.TestCsvReader</classname>, zu welcher die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename> gehört.
 						</simpara>
 						<simpara>
@@ -678,7 +678,7 @@ python -m json.tool &lt; my_config.json
 <!-- mandatory_attributes -->
 							<row>
 								<entry morerows="1"><varname>mandatory_ \ attributes</varname></entry>
-								<entry>Liste mit &ucsUDM;-Attributnamen, die während des Imports aus den Eingabedaten oder indirekt über ein Schema gesetzt werden müssen.</entry>
+								<entry>Liste mit &ucsUDM; Attributnamen, die während des Imports aus den Eingabedaten oder indirekt über ein Schema gesetzt werden müssen.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>list</classname>): <literal>["firstname", "lastname", "name", "school"]</literal></entry>
@@ -704,7 +704,7 @@ python -m json.tool &lt; my_config.json
 <!-- output:new_user_passwords -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:output:new_user_passwords"><varname>output:new_ \ user_passwords</varname></entry>
-								<entry>Diese Variable definiert den Pfad zur CSV-Datei, in die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"><citetitle>Python-Format-String</citetitle></ulink> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
+								<entry>Diese Variable definiert den Pfad zur CSV-Datei, in die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"><citetitle><foreignphrase>Python-Format-String</foreignphrase></citetitle></ulink> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
@@ -1033,7 +1033,7 @@ udm users/user
 	"maildomain": "dom.ain",
 }
 				</programlisting>
-				Die <literal>[0]</literal> im Beispiel bedeutet, dass nur das erste Zeichen des davorstehenden Attributes genommen wird. Es ist auch möglich Bereiche anzugeben. Weitere Informationen dazu finden sich im Kapitel <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>Benutzervorlagen</citetitle></ulink> des UCS Handbuchs.
+				Die <literal>[0]</literal> im Beispiel bedeutet, dass nur das erste Zeichen des davor stehenden Attributes genommen wird. Es ist auch möglich Bereiche anzugeben. Weitere Informationen dazu finden sich im Kapitel <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>Benutzervorlagen</citetitle></ulink> des UCS Handbuchs.
 			</para>
 			<para>
 				Um neue Zählervariablen hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.utils.username_handler.UsernameHandler</classname> abgeleitet und die Methode <methodname>counter_variable_to_function()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>).
@@ -1232,7 +1232,7 @@ udm users/user
 			Es folgt eine Anleitung zur Einrichtung der dritten Variante.
 		</para>
 		<section id="ou_spanning_account:sambahome">
-			<title>Schulspezifisches sambahome</title>
+			<title>Schulspezifisches <property>sambahome</property></title>
 			<para>
 				Die folgenden Befehle müssen, mit angepassten Hostnamen und IP-Adressen, auf jedem Schulserver ausgeführt werden:
 				<programlisting>
@@ -1527,7 +1527,7 @@ class MyHook(UserPyHook):
 		  </section>
 
 		<section id="extending:subclassing">
-			<title>Subclassing</title>
+			<title><foreignphrase>Subclassing</foreignphrase></title>
 			<para>
 				Hooks erlauben das Ausführen von neuem Code zu bestimmten Zeitpunkten.
 				Sie erlauben aber nicht bestehenden Code zu verändern.
@@ -1592,9 +1592,9 @@ Anton0003
 			</para>
 
 			<section id="extending:subclassing:abstract_factory">
-				<title>Abstract Factory</title>
+				<title><foreignphrase>Abstract Factory</foreignphrase></title>
 				<para>
-					Die Architektur der Importsoftware ist als <ulink url="https://de.wikipedia.org/wiki/Abstrakte_Fabrik"><citetitle>Abstrakte Fabrik (Abstract Factory)</citetitle></ulink> implementiert.
+					Die Architektur der Importsoftware ist als <ulink url="https://de.wikipedia.org/wiki/Abstrakte_Fabrik"><citetitle>Abstrakte Fabrik (<foreignphrase>Abstract Factory</foreignphrase>)</citetitle></ulink> implementiert.
 					In ihr wird die Erzeugung von Objekten zentralisiert.
 					Sie zeichnet sich u.a. dadurch aus, dass sie erlaubt das Austauschen mehrerer Komponenten einer Software konsistent zu halten.
 					Im Fall der Importsoftware ist die <foreignphrase>abstract factory</foreignphrase> jedoch nicht Abstrakt, alle Methoden wurden implementiert.

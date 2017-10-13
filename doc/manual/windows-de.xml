@@ -71,7 +71,7 @@
 ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
 		  </programlisting>
 		  Dies lässt sich am besten über eine UCR-Richtlinie für die gesamte UCS@school-Domäne erledigen.
-		  Ist die Variable versehentlicherweise nicht gesetzt, werden automatisch fehlende DHCP-DNS-Richtlinien
+		  Wurde die Variable versehentlich nicht gesetzt, werden automatisch fehlende DHCP-DNS-Richtlinien
 		  wieder angelegt und mit den entsprechenden DHCP-Container der Schul-OU-Objekte verknüpft. Dies kann
 		  gerade in Verwaltungsnetzen zu Fehlfunktionen führen (siehe auch <xref linkend="structure:edunet-vs-adminnet"/>).
 	    </para>
