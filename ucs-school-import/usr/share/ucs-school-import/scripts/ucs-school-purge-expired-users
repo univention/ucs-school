@@ -113,8 +113,7 @@ def purge_timestamp2date(purge_timestamp):
 
 
 def shadow_expire2date(shadow_expire):
-	t_struct = time.localtime(int(shadow_expire) * 3600 * 24 - 1)
-	return datetime.date(t_struct.tm_year, t_struct.tm_mon, t_struct.tm_mday)
+	return datetime.datetime.utcfromtimestamp(int(shadow_expire) * 3600 * 24).date()
 
 
 def monkey_patch_logging():
