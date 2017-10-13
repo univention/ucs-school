@@ -622,7 +622,7 @@ python -m json.tool &lt; my_config.json
 <!-- deletion_grace_period:deactivation -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:deletion_grace_period:deactivation"><varname>deletion_grace_period: \ deactivation</varname></entry>
-								<entry>Definiert in wie vielen Tagen ein Benutzer, der nicht mehr in den Eingabedaten enthalten ist, deaktiviert (nicht gelöscht) werden soll. Wenn <literal>0</literal> gesetzt ist, wird das betroffene &ucsUAS;-Benutzerkonto sofort deaktiviert. Wenn <link linkend="configuration:json_format:userimport:deletion_grace_period:deletion"><literal>deletion_grace_period:deletion</literal></link> auf eine kleinere oder die gleiche Zahl gesetzt ist, wird gelöscht statt zu deaktivieren.</entry>
+								<entry>Definiert in wie vielen Tagen ein Benutzer, der nicht mehr in den Eingabedaten enthalten ist, deaktiviert (nicht gelöscht) werden soll. Wenn <literal>0</literal> gesetzt ist, wird das betroffene &ucsUAS;-Benutzerkonto sofort deaktiviert. Wenn <link linkend="configuration:json_format:userimport:deletion_grace_period:deletion"><literal>deletion_grace_period:deletion</literal></link> auf einen kleineren oder den gleichen Wert gesetzt ist, wird das Benutzerobjekt gelöscht statt deaktiviert.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>0</literal></entry>
@@ -630,7 +630,7 @@ python -m json.tool &lt; my_config.json
 <!-- deletion_grace_period:deletion -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:deletion_grace_period:deletion"><varname>deletion_grace_period: \ deletion</varname></entry>
-								<entry>Definiert die Anzahl der Tage die nach dem Import vergehen sollen, bevor der Benutzer gelöscht (nicht deaktiviert) wird. Bei <literal>0</literal> wird er sofort gelöscht. Bei größeren Zahlen wird das &ucsUDM;-Attribut <property>ucsschoolPurgeTimestamp</property> gesetzt. Ein Cron Job löscht den Benutzer an dem Tag.</entry>
+								<entry>Definiert die Anzahl der Tage, die nach dem Import vergehen sollen, bevor der Benutzer gelöscht aus dem Verzeichnisdienst wird. Bei einem Wert von <literal>0</literal> wird der Benutzer sofort gelöscht. Bei größeren Zahlen wird das geplante Löschdatum im &ucsUDM;-Attribut <property>ucsschoolPurgeTimestamp</property> gesetzt. Ein Cron Job löscht automatisch Benutzer, deren geplanter Löschzeitpunkt erreicht ist.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>0</literal></entry>
