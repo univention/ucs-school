@@ -217,7 +217,7 @@
 				Beispiele:
 				<itemizedlist>
 					<listitem>
-						<simpara>
+						<para>
 							Die Schulen eines Schulträgers verwenden voneinander unabhängige Verwaltungssoftware. Die Software exportiert für jede Schule separate CSV-Tabellen für den Import. Es wird je eine Datei für Schüler, Lehrer und Mitarbeiter erzeugt.
 							Für den Import der CSV-Dateien wird pro Schule und Benutzerrolle eine separate Konfiguration mit individueller <property>sourceUID</property> benötigt.
 							Sind die Konfigurationen hinreichend ähnlich, können die gleichen Konfigurationsdateien verwendet werden und die sich unterschiedenden Optionen an der Kommandozeile gesetzt werden. Sollten sich nur <property>sourceUID</property> und Benutzerrolle unterschieden, so würde der Import mit den entsprechenden Optionen z.B. so aufgerufen:
@@ -229,7 +229,7 @@
     --infile &lt;CSV-Datei&gt;
 							</programlisting>
 							Durch die Verwendung von <replaceable>Schulname-Benutzerrolle</replaceable> (z.B. <literal>GSMitte-student</literal>) als <property>sourceUID</property> wird ein eindeutiger Bezeicher pro Schule und Benutzerrolle sicher gestellt.
-						</simpara>
+						</para>
 						<simpara>
 							Ab &ucsUAS; Version 4.2 v4 wird nur eine <property>sourceUID</property> pro Schule benötigt (<replaceable>-&lt;Benutzerrolle&gt;</replaceable> kann weggelassen werden), sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
 						</simpara>
