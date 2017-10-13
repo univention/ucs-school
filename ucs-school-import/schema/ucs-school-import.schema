@@ -43,7 +43,7 @@ attributetype ( univentionSchool:53.8.2
         SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-attributetype ( univentionSchool:53.8.3
+attributetype ( univentionSchool:53.9
         NAME 'ucsschoolPurgeTimestamp'
 		DESC 'Specifies the point in time after which the object is deleted automatically'
         EQUALITY generalizedTimeMatch
