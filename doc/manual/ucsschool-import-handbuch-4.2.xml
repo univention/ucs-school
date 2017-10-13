@@ -630,7 +630,7 @@ python -m json.tool &lt; my_config.json
 <!-- deletion_grace_period:deletion -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:deletion_grace_period:deletion"><varname>deletion_grace_period: \ deletion</varname></entry>
-								<entry>Definiert die Anzahl der Tage die nach dem Import vergehen sollen, bevor der Benutzer gelöscht (nicht deaktiviert) wird. Bei <literal>0</literal> wird er sofort gelöscht. Bei größeren Zahlen wird das &ucsUDM;-Attribut <property>purge_timestamp</property> gesetzt. Ein Cron Job löscht den Benutzer an dem Tag.</entry>
+								<entry>Definiert die Anzahl der Tage die nach dem Import vergehen sollen, bevor der Benutzer gelöscht (nicht deaktiviert) wird. Bei <literal>0</literal> wird er sofort gelöscht. Bei größeren Zahlen wird das &ucsUDM;-Attribut <property>ucsschoolPurgeTimestamp</property> gesetzt. Ein Cron Job löscht den Benutzer an dem Tag.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>0</literal></entry>
@@ -1063,7 +1063,7 @@ udm users/user
 							Dies entspricht dem Löschen eines Kontos im &ucsUMC;-Modul <guimenu>Benutzer</guimenu> (siehe <biblioref linkend="ucs-handbuch"/>), zum definierten Zeitpunkt.
 						</simpara>
 						<simpara>
-						Diese Variante wird ausgewählt durch das Setzen von <varname>deletion_grace_period:deletion</varname> auf einen Wert kleiner oder gleich dem von <varname>deletion_grace_period:deactivation</varname>. Ist der Wert von <literal>deletion_grace_period:deletion=0</literal>, wird sofort (während des Imports) gelöscht. Ist der Wert größer als <literal>0</literal>, wird ein Verfallsdatum im &ucsUDM;-Attribut <property>purge_timestamp</property> gespeichert. Der Benutzer wird erst an diesem Tag durch einen Cron Job gelöscht.
+						Diese Variante wird ausgewählt durch das Setzen von <varname>deletion_grace_period:deletion</varname> auf einen Wert kleiner oder gleich dem von <varname>deletion_grace_period:deactivation</varname>. Ist der Wert von <literal>deletion_grace_period:deletion=0</literal>, wird sofort (während des Imports) gelöscht. Ist der Wert größer als <literal>0</literal>, wird ein Verfallsdatum im &ucsUDM;-Attribut <property>ucsschoolPurgeTimestamp</property> gespeichert. Der Benutzer wird erst an diesem Tag durch einen Cron Job gelöscht.
 						</simpara>
 					</listitem>
 					<listitem>
@@ -1075,7 +1075,7 @@ udm users/user
 							Der Benutzer wird zuerst deaktiviert (kann sich nicht mehr einloggen), aber erst zu dem gesetzten Datum gelöscht. Bis zum finalen Löschen kann das Benutzerkonto noch reaktiviert werden, sollte es durch einen Import wieder "angelegt" werden.
 						</simpara>
 						<simpara>
-							Diese Variante wird ausgewählt durch das Setzen von <varname>deletion_grace_period:deletion</varname> auf einen Wert größer dem von <varname>deletion_grace_period:deactivation</varname>. Ist der Wert von <literal>deletion_grace_period:deactivation=0</literal>, wird der Account sofort (während des Imports) deaktiviert. Ist der Wert größer als <literal>0</literal>, wird ein Verfallsdatum im &ucsUDM;-Attribut <property>user_expiry</property> gespeichert. Der Benutzer kann sich ab diesem Tag nicht mehr anmelden. Der Wert von <varname>deletion_grace_period:deletion</varname> wird wie in der ersten Variante beschrieben im &ucsUDM;-Attribut <property>purge_timestamp</property> gespeichert und die Löschung später durch einen Cron Job durchgeführt.
+							Diese Variante wird ausgewählt durch das Setzen von <varname>deletion_grace_period:deletion</varname> auf einen Wert größer dem von <varname>deletion_grace_period:deactivation</varname>. Ist der Wert von <literal>deletion_grace_period:deactivation=0</literal>, wird der Account sofort (während des Imports) deaktiviert. Ist der Wert größer als <literal>0</literal>, wird ein Verfallsdatum im &ucsUDM;-Attribut <property>user_expiry</property> gespeichert. Der Benutzer kann sich ab diesem Tag nicht mehr anmelden. Der Wert von <varname>deletion_grace_period:deletion</varname> wird wie in der ersten Variante beschrieben im &ucsUDM;-Attribut <property>ucsschoolPurgeTimestamp</property> gespeichert und die Löschung später durch einen Cron Job durchgeführt.
 						</simpara>
 					</listitem>
 				</itemizedlist>
