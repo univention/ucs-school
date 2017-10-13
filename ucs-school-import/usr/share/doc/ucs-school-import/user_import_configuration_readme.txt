@@ -57,11 +57,12 @@ After that follow
 	}
 },
 "deletion_grace_period" {
-		"deactivation": int: deactivate instead of delete a user in that much days, immediately if 0. Will be ignored if
-		                     deletion_grace_period:deletion is 0.
-		"deletion":     int: delete a user in that much days. If 0, a user will be deleted immediately, else its
-		                     property "purge_timestamp" will be set to that much days in the future. A cron job will
-		                     delete the user on that day.
+        "deactivation": int: number of days until the user account is deactivated. If set to 0, the account is deactivated
+                             immediately. This option will be ignored if deletion_grace_period:deletion is set to 0. The
+                             default value is 0.
+        "deletion":     int: number of days until the user account is deleted. If set to 0, the user is deleted immediately,
+                             otherwise the property "ucsschoolPurgeTimestamp" is set to the future delete date.
+                             A cron job will delete the user account on that date.
 }
 "scheme" [1]: {
 	"email": str: schema of email address, variables may be used as described in manual-4.2:users:templates
