@@ -32,7 +32,7 @@ import datetime
 from univention.admin.hook import simpleHook
 
 
-class PurgeTimestamp(simpleHook):
+class UcsschoolPurgeTimestamp(simpleHook):
 	ldap_date_format = '%Y%m%d%H%M%SZ'
 	udm_date_format = '%Y-%m-%d'
 

@@ -302,7 +302,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set syntax="iso8601Date" \
 	--set mayChange="1" \
 	--set multivalue="0" \
-	--set hook=PurgeTimestamp \
+	--set hook=UcsschoolPurgeTimestamp \
 	--set disableUDMWeb=0 || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
