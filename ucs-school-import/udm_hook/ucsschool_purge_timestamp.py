@@ -36,7 +36,7 @@ from univention.admin.hook import simpleHook
 class UcsschoolPurgeTimestamp(simpleHook):
 	ldap_date_format = '%Y%m%d%H%M%SZ'
 	udm_date_format = '%Y-%m-%d'
-	udm_date_format_pattern = re.compile('%d%d%d%d-%d%d-%d%d')
+	udm_date_format_pattern = re.compile('\d\d\d\d-\d\d-\d\d')
 
 	def hook_open(self, module):
 		old_purge_ts = module.get('ucsschoolPurgeTimestamp')
