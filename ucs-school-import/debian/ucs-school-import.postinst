@@ -48,9 +48,7 @@ univention-config-registry set \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes \
 	ucsschool/import/generate/mail/domain?yes \
-	cron/ucs-school-purge-expired-users/command?'/usr/share/ucs-school-import/scripts/ucs-school-purge-expired-users --quiet --logfile /var/log/univention/ucs-school-purge-expired-users.log' \
-	cron/ucs-school-purge-expired-users/description?'Delete UCS@school user accounts scheduled for deletion.' \
-	cron/ucs-school-purge-expired-users/time='50 4 * * *' || die
+	ucsschool/import/purge-expired-users/cron='50 4 * * *' || die
 
 eval "$(univention-config-registry shell)"
 
