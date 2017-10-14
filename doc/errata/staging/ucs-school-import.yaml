@@ -17,4 +17,9 @@ desc: |
  * The school name is now checked case sensitively before importing a user (Bug #42456).
  * The tool ucs-school-join-secondary-samba4 checks now if the School DC has the S4 SlavePDC service set (Bug #43311).
  * By default, the DHCP-DNS policy <emphasis>dhcp-dns-$OUNAME</emphasis> now also sets the domain name (Bug #42688).
-bug: [42144, 42456, 44838, 45019, 45022, 45024, 44993, 45044, 45342, 45436, 42687, 43311, 42688]
+ * The deletion behavior of <command>ucs-school-user-import</command> has been improved. It is now possible to define grace periods, after which
+   the users who are scheduled to delete are automatically deactivated or deleted. If the <literal>user_deletion::delete</literal> or
+   <literal>user_deletion::expiration</literal> options have been used, the import configuration must be adapted, otherwise the import will
+   terminate with a configuration error. The new options are <literal>deletion_grace_period::deactivation</literal> and
+   <literal>deletion_grace_period::deletion</literal> (Bug #45467).
+bug: [42144, 42456, 44838, 45019, 45022, 45024, 44993, 45044, 45342, 45436, 42687, 43311, 42688, 45467]
