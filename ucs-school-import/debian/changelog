@@ -1,3 +1,9 @@
+ucs-school-import (15.0.2-1) unstable; urgency=low
+
+  * Bug #45467: overhauled deletion behaviour of ucs-school-user-import
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sat, 14 Oct 2017 23:05:31 +0200
+
 ucs-school-import (15.0.1-2) unstable; urgency=low
 
   * Bug #45045: handle empty job.result on early error
