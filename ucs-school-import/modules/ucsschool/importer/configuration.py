@@ -46,6 +46,8 @@ def setup_configuration(conffiles, **kwargs):
 		raise InitialisationError("No sourceUID was specified.")
 	if not config["input"].get("type"):
 		raise InitialisationError("No input:type was specified.")
+	if "user_deletion" in config:
+		raise InitialisationError("The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'.")
 	return config
 
 

@@ -14,6 +14,7 @@ import time
 import re
 import pprint
 import traceback
+import datetime
 from collections import Mapping
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars
@@ -167,6 +168,8 @@ class MyHook(UserPyHook):
 
 class CLI_Import_v2_Tester(object):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	ldap_date_format = '%Y%m%d%H%M%SZ'
+	udm_date_format = '%Y-%m-%d'
 
 	def __init__(self):
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
@@ -313,6 +316,22 @@ class CLI_Import_v2_Tester(object):
 			raise ValueError
 
 	@classmethod
+	def pugre_timestamp_ldap2udm(cls, ldap_val):
+		"""Convert '20090101000000Z' to '2009-01-01'. Ignores timezones."""
+		if not ldap_val:
+			return ''
+		ldap_date = datetime.datetime.strptime(ldap_val, cls.ldap_date_format)
+		return ldap_date.strftime(cls.udm_date_format)
+
+	@classmethod
+	def pugre_timestamp_udm2ldap(cls, udm_val):
+		"""Convert '2009-01-01' to '20090101000000Z'. Ignores timezones."""
+		if not udm_val:
+			return ''
+		udm_date = datetime.datetime.strptime(udm_val, cls.udm_date_format)
+		return udm_date.strftime(cls.ldap_date_format)
+
+	@classmethod
 	def udm_formula_for_shadowExpire(cls, userexpirydate):
 		# copied from 61_udm-users/26_password_expire_date
 		# Note: this is a timezone dependend value
@@ -365,6 +384,7 @@ class CLI_Import_v2_Tester(object):
 							ou.name, ou.dn = schoolenv.create_ou(ou_name=ou.name, name_edudc=self.ucr.get('hostname'))
 							self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
 
+					self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
 					self.test()
 					self.log.info('Test was successful.\n\n')
 		finally:

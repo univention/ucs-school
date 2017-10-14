@@ -141,3 +141,15 @@ Description[de]=Falls auf true gesetzt, hängt beim Erstellen einer Schule die U
 Description[en]=If true attaches the default-umc-users UMC policy to the group "Domain Users $ou" when creating a school.
 Type=bool
 Categories=ucsschool-base
+
+[ucsschool/import/purge-expired-users/cron]
+Description[de]=Definiert das Prüfintervall für das Löschen von UCS@school-Benutzer, deren geplantes Löschdatum überschritten ist. Die Konfigiuration erfolgt in Cron-Syntax, siehe auch 'man 5 crontab'. Ist die Variable nicht gesetzt, werden keine Benutzer gelöscht. Der Standardwert ist '50 4 * * *'.
+Description[en]=Defines the check interval for deleting UCS@school users whose scheduled deletion date is exceeded. The configuration is done in Cron syntax, see 'man 5 crontab'. If the variable is unset, the check is disabled. Default is '50 4 * * *'.
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/import/purge-expired-users/options]
+Description[de]=Definiert Parameter für das Programm ucs-school-purge-expired-users. Ist die Variable ungesetzt, wird '--quiet --logfile /var/log/univention/ucs-school-purge-expired-users/ucs-school-purge-expired-users.log' verwendet.
+Description[en]=Defines parameters for the ucs-school-purge-expired-users program. If the variable is unset, '--quiet --logfile /var/log/univention/ucs-school-purge-expired-users/ucs-school-purge-expired-users.log' is used.
+Type=str
+Categories=ucsschool-base

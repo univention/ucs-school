@@ -1,0 +1,4 @@
+Type: file
+File: etc/cron.d/ucs-school-import
+Variables: ucsschool/import/purge-expired-users/cron
+Variables: ucsschool/import/purge-expired-users/options

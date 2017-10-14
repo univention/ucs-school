@@ -1,4 +1,5 @@
 usr/share/ucs-school-import/scripts
+var/log/univention/ucs-school-purge-expired-users
 var/lib/ucs-school-import
 var/lib/ucs-school-import/configs
 usr/lib/univention-install

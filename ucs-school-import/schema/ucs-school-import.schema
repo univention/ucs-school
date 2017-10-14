@@ -43,10 +43,18 @@ attributetype ( univentionSchool:53.8.2
         SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( univentionSchool:53.9
+        NAME 'ucsschoolPurgeTimestamp'
+		DESC 'Specifies the point in time after which the object is deleted automatically'
+        EQUALITY generalizedTimeMatch
+        ORDERING generalizedTimeOrderingMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
+        SINGLE-VALUE )
+
 objectclass ( univentionSchool:53 NAME 'ucsschoolType'
        DESC 'Role of user or object in UCS@school context'
        ABSTRACT
-       MAY ( ucsschoolSchool $ ucsschoolSourceUID $ ucsschoolRecordUID ) )
+       MAY ( ucsschoolSchool $ ucsschoolSourceUID $ ucsschoolRecordUID $ ucsschoolPurgeTimestamp ) )
 
 objectclass ( univentionSchool:53.1 NAME 'ucsschoolTeacher'
         DESC 'auxiliary class for teachers'

@@ -70,8 +70,8 @@ class LegacyUserImport(UserImport):
 		if imported_user.action == "A":
 			try:
 				user = imported_user.get_by_import_id_or_username(self.connection, imported_user.source_uid, imported_user.record_uid, imported_user.name)
-				if user.disabled != "none" or user.has_expiry(self.connection):
-					self.logger.info("Found deactivated user %r, reactivating.", user)
+				if user.disabled != "none" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
+					self.logger.info("Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is non-empty), reactivating user.", user)
 					imported_user.old_user = user
 					imported_user.prepare_all(new_user=False)
 					# make school move first, reactivate freshly fetched user
@@ -98,8 +98,8 @@ class LegacyUserImport(UserImport):
 				imported_user.prepare_all(new_user=False)
 				if user.school != imported_user.school:
 					user = self.school_move(imported_user, user)
-				if user.disabled != "none" or user.has_expiry(self.connection):
-					self.logger.info("Found deactivated user %r, reactivating.", user)
+				if user.disabled != "none" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
+					self.logger.info("Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is non-empty), reactivating user.", user)
 					if self.dry_run:
 						self.logger.info("Dry run - not reactivating.")
 					else:

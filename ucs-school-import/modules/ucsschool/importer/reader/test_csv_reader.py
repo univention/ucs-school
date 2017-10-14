@@ -42,7 +42,8 @@ class TestCsvReader(CsvReader):
 		"student": [role_pupil],
 		"staff": [role_staff],
 		"teacher": [role_teacher],
-		"staffteacher": [role_teacher, role_staff]
+		"staffteacher": [role_teacher, role_staff],
+		"teacher_and_staff": [role_teacher, role_staff],
 	}
 
 	def __init__(self):
