@@ -1,0 +1,8 @@
+@%@UCRWARNING=# @%@
+
+# if enabled, this job deletes all UCS@school user accounts that are past its scheduled date for deletion.
+@!@
+timestamp = configRegistry.get('ucsschool/import/purge-expired-users/cron', '# 50 4 * * *')
+options = configRegistry.get('ucsschool/import/purge-expired-users/options', '--quiet --logfile /var/log/univention/ucs-school-purge-expired-users.log')
+print '%s root /usr/share/ucs-school-import/scripts/ucs-school-purge-expired-users %s' % (timestamp, options)
+@!@
