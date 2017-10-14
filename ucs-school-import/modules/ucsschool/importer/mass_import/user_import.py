@@ -409,8 +409,11 @@ class UserImport(object):
 		:return: bool: whether any changes were made to the object and
 		user.modify() is required
 		"""
-		if user.has_expiry(self.connection):
-			self.logger.info('An expiration date is already set for user %s. The entry remains unchanged.', user)
+		if user.disabled == 'all':
+			self.logger.info('User %s is already disabled. No account expiration date is set.', user)
+			return False
+		elif user.has_expiry(self.connection):
+			self.logger.info('An account expiration date is already set for user %s. The entry remains unchanged.', user)
 			return False
 		else:
 			expiry = datetime.datetime.now() + datetime.timedelta(days=grace)
@@ -434,7 +437,7 @@ class UserImport(object):
 		else:
 			purge_ts = datetime.datetime.now() + datetime.timedelta(days=grace)
 			purge_ts_str = purge_ts.strftime('%Y-%m-%d')
-			self.logger.info('Setting deleting grace date of %s to %r...', user, purge_ts_str)
+			self.logger.info('Setting deletion grace date of %s to %r...', user, purge_ts_str)
 			user.set_purge_timestamp(purge_ts_str)
 			return True
 
