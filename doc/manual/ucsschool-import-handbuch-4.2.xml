@@ -1678,4 +1678,8 @@ class MyUserImportFactory(DefaultUserImportFactory):
 			  </section>
 		  </section>
 	</chapter>
+
+	<bibliography id="bibliography">
+		<bibliomixed id="ucs-handbuch"/>
+	</bibliography>
 </book>
