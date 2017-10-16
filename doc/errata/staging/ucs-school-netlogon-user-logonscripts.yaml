@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-netlogon-user-logonscripts
-fix: 13.0.2-3A~4.2.0.201710091738
+fix: 13.0.2-6A~4.2.0.201710160933
 desc: |
  * The generation of netlogon scripts for Windows users has been separated into a new daemon that
    is triggered via the Univention Directory Listener. This way, the LDAP replication should not
@@ -11,5 +11,6 @@ desc: |
  * The shortcuts to the users shares showed the wrong icons in Windows 10. This has been fixed. It is suggested,
    that the netlogon scripts are being recreated on each school server by calling the command
    <command>univention-directory-listener-ctrl resync ucs-school-user-logonscript</command> as user root.
-   Otherwise the existing netlogon scripts still show the wrong icons (Bug #45301).
+   Otherwise the existing netlogon scripts still show the wrong icons. To deactivate the adjustment of the icon
+   index of the file imageres.dll, set the UCRV ucsschool/userlogon/fix-win10-icon-offset to "false" (Bug #45301).
 bug: [42997, 45301]
