@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-7) unstable; urgency=low
+
+  * Bug #45301: fix whitespace, ignore case of path
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 16 Oct 2017 09:38:54 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.2-6) unstable; urgency=low
 
   * Bug #45301: make raising the icon index in win10 optional (adds

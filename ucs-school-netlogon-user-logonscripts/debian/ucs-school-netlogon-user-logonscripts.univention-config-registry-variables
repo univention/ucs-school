@@ -179,7 +179,7 @@ Type=int
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/fix-win10-icon-offset]
-Description[de]= Wird dieser Wert auf "true" gesetzt, wird bei der Verwendung von imageres.dll auf Windows 10-Systemen automatisch eine Index-Anpassung von 1 vorgenommen. (Standard: true)
+Description[de]=Wird dieser Wert auf "true" gesetzt, wird bei der Verwendung von imageres.dll auf Windows 10-Systemen automatisch eine Index-Anpassung von 1 vorgenommen. (Standard: true)
 Description[en]=If this value is set to "true", an index adjustment of 1 is automatically made when the file imageres.dll is used on Windows 10 systems. (default: true)
 Type=bool
 Categories=ucsschool-netlogon
