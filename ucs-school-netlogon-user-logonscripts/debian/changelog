@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-10) unstable; urgency=low
+
+  * Bug #45301: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 16 Oct 2017 12:54:42 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.2-9) unstable; urgency=low
 
   * Bug #45301: fix typo
