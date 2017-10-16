@@ -551,16 +551,20 @@ class QueueHandler():
 		"""
 		If `icon_path` ends in an icon index, add VBS code to handle Win10
 		index displacement.
+
+		Attention: This will add quotation marks around the path. The VBS
+		template must not add them too.
 		"""
+		unmodified_icon_path = '"{}"'.format(icon_path)
 		if not self.fix_win10_icon_offset:
-			return icon_path
+			return unmodified_icon_path
 		path, _, index = icon_path.rpartition(',')
 		try:
 			index = int(index)
 		except ValueError:
-			return icon_path
+			return unmodified_icon_path
 		if not path.lower().endswith('/imageres.dll'):
-			return icon_path
+			return unmodified_icon_path
 		return '"{}," & Win10FixIconIndex({})'.format(path, index)
 
 	def setup_config(self):
