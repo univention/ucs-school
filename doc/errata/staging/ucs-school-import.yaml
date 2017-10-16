@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-47.338.201709081035
+fix: 14.0.16-48.339.201709271654
 desc: |
  * When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (Bug #42465).
  * The handling of scheme:email options during import of user has been improved: the COUNTER variables may now be used (Bug #42130).
