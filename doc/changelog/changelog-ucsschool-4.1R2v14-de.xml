@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 R2 v14 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.1 R2 v13 nach 4.1 R2 v14</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.1 R2 v14
+Stand: 16. October 2017
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2017
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 R2 v13 nach 4.1 R2 v14.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><simpara>In some cases after stopping the exam mode, shares on the school server weren't accessible anymore. This bug has been fixed (<u:bug>45403</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>When creating a school the DHCP server objects for the administrative DC Slave are now also created or moved into the DHCP service of the school in a multiserver environment (<u:bug>45463</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>An error in an LDAP filter was fixed (<u:bug>45503</u:bug>)</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-s4-branch-site" lang="en">
+				<title>Source package ucs-school-s4-branch-site</title>
+				<itemizedlist>
+					<listitem><simpara>UCR variables for the DNS mapping configuration are no longer overwritten or reset if an error during the LDAP connection happens in the Univention Directory Listener module, e.g. while changing the server password (<u:bug>43510</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-radius-8021x" lang="en">
+				<title>Source package ucs-school-radius-802.1x</title>
+				<itemizedlist>
+					<listitem><simpara>A traceback has been fixed that may happened if ucs-school-ntlm-auth is called without stationId (<u:bug>45490</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-webproxy" lang="en">
+				<title>Source package ucs-school-webproxy</title>
+				<itemizedlist>
+					<listitem><simpara>A race condition in the caching mechanism for handling proxy groups has been fixed (<u:bug>45353</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><simpara>When run with the <option>--dry-run</option> option, the raised counter is not stored anymore in LDAP (<u:bug>42465</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>The handling of scheme:email options during import of user has been improved: the COUNTER variables may now be used (<u:bug>42130</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>When creating a school the DHCP server objects for the administrative DC Slave are now also created or moved into the DHCP service of the school in a multiserver environment (<u:bug>45463</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
