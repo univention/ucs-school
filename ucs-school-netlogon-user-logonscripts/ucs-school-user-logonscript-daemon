@@ -563,7 +563,7 @@ class QueueHandler():
 			index = int(index)
 		except ValueError:
 			return unmodified_icon_path
-		if not path.lower().endswith('/imageres.dll'):
+		if not path.lower().endswith('\imageres.dll'):
 			return unmodified_icon_path
 		return '"{}," & Win10FixIconIndex({})'.format(path, index)
 
