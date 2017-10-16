@@ -55,7 +55,7 @@ udm groups/group create \
 	--policy-reference "cn=schoolimport-all,cn=UMC,cn=policies,$ldap_base" || exit $?
 
 udm groups/group modify \
-	--dn "$ou-import-all,cn=groups,ou=$ou${district},$ldap_base"
+	--dn "cn=$ou-import-all,cn=groups,ou=$ou${district},$ldap_base"
 	--append-option "ucsschoolImportGroup" \
 	--set ucsschoolImportSchool="$ou" \
 	--append ucsschoolImportRole=student \
