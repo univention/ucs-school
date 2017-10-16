@@ -1,3 +1,9 @@
+ucs-school-import (15.0.2-3) unstable; urgency=medium
+
+  * Bug #45023: fix typo
+
+ -- Florian Best <best@univention.de>  Mon, 16 Oct 2017 12:57:09 +0200
+
 ucs-school-import (15.0.2-2) unstable; urgency=medium
 
   * Bug #45023: fix typo
