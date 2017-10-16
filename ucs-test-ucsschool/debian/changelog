@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-34) unstable; urgency=medium
+
+  * Bug #45468: fix 23password_reset
+
+ -- Florian Best <best@univention.de>  Mon, 16 Oct 2017 15:34:44 +0200
+
 ucs-test-ucsschool (4.0.4-33) unstable; urgency=low
 
   * Bug #45467: adaptions for new deletion behavior of ucs-school-user-import
