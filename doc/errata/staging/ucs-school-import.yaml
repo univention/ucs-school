@@ -9,4 +9,5 @@ desc: |
  * The configured user role is taken into account when searching for users (Bug #45044).
  * Configuration and code for reading and writing CSV data compatible with the HTTP-API was added (Bug #45342).
  * The class generation of the test user creation script was fixed (Bug #45436).
-bug: [45019, 45024, 45044, 45342, 45436]
+ * An error when importing users without email address was fixed (Bug #45550).
+bug: [45019, 45024, 45044, 45342, 45436, 45550]
