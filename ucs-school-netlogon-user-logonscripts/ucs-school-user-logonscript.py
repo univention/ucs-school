@@ -32,6 +32,7 @@ import os
 import signal
 import shutil
 import listener
+import subprocess
 import univention.debug
 import univention.admin.modules
 from ldap.filter import filter_format
@@ -213,10 +214,20 @@ def initialize():
 		listener.unsetuid()
 
 
+def run_daemon(cmd):
+	cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	cmd_out, cmd_err = cmd_proc.communicate()
+	cmd_exit = cmd_proc.wait()
+	if cmd_exit:
+		Log.error('Command {!r} returned status={!r} stdout={!r} stderr={!r}'.format(cmd, cmd_exit, cmd_out, cmd_err))
+
+
 def clean():
-	Log.warn('Deleting all *.vbs scripts in {!r}...'.format(get_netlogon_path_list()))
 	listener.setuid(0)
 	try:
+		Log.warn('Stopping logon script generator daemon...')
+		run_daemon(['systemctl', 'stop', 'ucs-school-netlogon-user-logonscripts.service'])
+		Log.warn('Deleting all *.vbs scripts in {!r}...'.format(get_netlogon_path_list()))
 		for path in get_netlogon_path_list():
 			if os.path.isdir(path):
 				for filename in os.listdir(path):
@@ -225,5 +236,9 @@ def clean():
 						os.unlink(filepath)
 			else:
 				Log.info('{!r} does not exist or is no directory!'.format(path))
+		Log.warn('Purging SQLite DB...')
+		SqliteQueue(logger=Log).truncate_database()
+		Log.warn('Starting logon script generator daemon...')
+		run_daemon(['systemctl', 'start', 'ucs-school-netlogon-user-logonscripts.service'])
 	finally:
 		listener.unsetuid()

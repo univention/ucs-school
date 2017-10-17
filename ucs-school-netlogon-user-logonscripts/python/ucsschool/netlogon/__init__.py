@@ -50,8 +50,10 @@ def get_netlogon_path_list():
 		else:
 			result.append("/var/lib/samba/netlogon/user")
 			result.append("/var/lib/samba/sysvol/%s/scripts/user" % (ucr.get('kerberos/realm', '').lower(),))
-
+		get_netlogon_path_list.script_path = result
 	return get_netlogon_path_list.script_path
+
+
 get_netlogon_path_list.script_path = []
 
 
@@ -103,9 +105,12 @@ class SqliteQueue(object):
 		# save all changes to database
 		self.db.commit()
 
-	def __clear_database(self):
-		# drop all rows of table
+	def truncate_database(self):
+		# SQLITE does not have a TRUNCATE TABLE command, but DELETE FROM
+		# without WHERE is optimized to delete the entire table without
+		# iterating over its rows.
 		self.cursor.execute(u'DELETE FROM user_queue')
+		self.cursor.execute(u'VACUUM')
 		self.db.commit()
 
 	def commit(self):
@@ -143,7 +148,7 @@ class SqliteQueue(object):
 		self.db.commit()
 		self.logger.debug('removed entry: userdn=%r' % (userdn,))
 
-	def query_next_user(self):  # type: None -> [str]
+	def query_next_user(self):  # type: (None) -> [str]
 		"""
 		Returns next user dn and username of user_queue as UTF-8 encoded strings.
 		"""

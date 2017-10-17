@@ -1,3 +1,12 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-11) unstable; urgency=low
+
+  * Bug #45544: completely reset state when doing a module resync
+  * restart netlogon daemon when resyncing listener module
+  * fix empty list in get_netlogon_path_list()
+  * truncate SQLite DB
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 17 Oct 2017 15:45:46 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.2-10) unstable; urgency=low
 
   * Bug #45301: fix typo
