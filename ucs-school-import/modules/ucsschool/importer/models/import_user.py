@@ -45,7 +45,11 @@ from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
+from ucsschool.importer.exceptions import (
+	BadPassword, EmptyFormatResultError, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail,
+	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
+	UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
+)
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
@@ -507,11 +511,17 @@ class ImportUser(User):
 						entry_count=self.entry_count,
 						import_user=self)
 				else:
-					return
+					self.email = ''
 		self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
 		if not self.unique_email_handler:
 			self.__class__.unique_email_handler = self.factory.make_unique_email_handler(dry_run=self.config['dry_run'])
-		self.email = self.unique_email_handler.format_name(self.email)
+		try:
+			self.email = self.unique_email_handler.format_name(self.email)
+		except EmptyFormatResultError:
+			if 'email' in self.config['mandatory_attributes'] or 'mailPrimaryAttribute' in self.config['mandatory_attributes']:
+				raise
+			else:
+				self.email = ''
 
 	def make_password(self):
 		"""
@@ -611,7 +621,7 @@ class ImportUser(User):
 
 		self.name = self.format_from_scheme("username", self.username_scheme)
 		if not self.name:
-			raise FormatError("No username was created from scheme '{}'.".format(
+			raise EmptyFormatResultError("No username was created from scheme '{}'.".format(
 				self.username_scheme), self.username_scheme, self.to_dict())
 		if not self.username_handler:
 			self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length, self.config['dry_run'])

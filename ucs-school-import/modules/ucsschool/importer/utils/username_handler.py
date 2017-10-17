@@ -37,7 +37,7 @@ import string
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject, objectExists
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
-from ucsschool.importer.exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
+from ucsschool.importer.exceptions import BadValueStored, EmptyFormatResultError, FormatError, NoValueStored, NameKeyExists
 from ucsschool.importer.utils.logging import get_logger
 
 
@@ -363,7 +363,7 @@ class UsernameHandler(object):
 
 		username = username.strip('.')
 		if not username:
-			raise FormatError("No {} in {!r}.".format(self.attribute_name, name), name, name)
+			raise EmptyFormatResultError("No {} in {!r}.".format(self.attribute_name, name), name, name)
 		return username
 
 	def format_username(self, name):

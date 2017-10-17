@@ -70,6 +70,10 @@ class FormatError(UcsSchoolImportError):
 		self.data = data
 
 
+class EmptyFormatResultError(FormatError):
+	pass
+
+
 class InitialisationError(UcsSchoolImportFatalError):
 	pass
 

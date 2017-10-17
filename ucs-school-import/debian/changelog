@@ -1,3 +1,10 @@
+ucs-school-import (15.0.2-4) unstable; urgency=low
+
+  * Bug #45550: ImportUser.make_email() now honors
+    config[mandatory_attributes] again
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 17 Oct 2017 10:30:51 +0200
+
 ucs-school-import (15.0.2-3) unstable; urgency=medium
 
   * Bug #45023: fix typo
