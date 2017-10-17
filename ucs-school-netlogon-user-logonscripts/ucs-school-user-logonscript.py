@@ -217,9 +217,8 @@ def initialize():
 def run_daemon(cmd):
 	cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	cmd_out, cmd_err = cmd_proc.communicate()
-	cmd_exit = cmd_proc.wait()
-	if cmd_exit:
-		Log.error('Command {!r} returned status={!r} stdout={!r} stderr={!r}'.format(cmd, cmd_exit, cmd_out, cmd_err))
+	if cmd_proc.returncode:
+		Log.error('Command {!r} returned with exit code {!r}. stdout={!r} stderr={!r}'.format(cmd, cmd_proc.returncode, cmd_out, cmd_err))
 
 
 def clean():
