@@ -3,7 +3,7 @@ release: "4.2"
 version: [4]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-netlogon-user-logonscripts
-fix: 13.0.2-11A~4.2.0.201710171550
+fix: 13.0.2-12A~4.2.0.201710171627
 desc: |
  * When running a resync to recreate all netlogon scripts, the listener module now restarts the netlogon script generation daemon (Bug #45544).
 bug: [45544]
