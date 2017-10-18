@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.16-49.340.201710171258
+fix: 14.0.16-50.341.201710181600
 desc: |
  * An error when importing users without email address was fixed (Bug #45553).
 bug: [45553]
