@@ -1,3 +1,9 @@
+ucs-school-import (15.0.2-6) unstable; urgency=low
+
+  * Bug #45550: adapt test to API change
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 18 Oct 2017 16:14:19 +0200
+
 ucs-school-import (15.0.2-5) unstable; urgency=low
 
   * Bug #45550: revert typo from 6f8415ed
