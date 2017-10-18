@@ -27,9 +27,9 @@ from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLin
 
 class Test(CLI_Import_v2_Tester):
 	def __init__(self):
+		super(Test, self).__init__()
 		self.ou_B = None
 		self.ou_C = None
-		super(Test, self).__init__()
 
 	def run_purge_script(self):
 		cmd = ['/usr/share/ucs-school-import/scripts/ucs-school-purge-expired-users', '-v']
