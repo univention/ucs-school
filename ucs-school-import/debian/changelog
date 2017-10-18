@@ -1,3 +1,9 @@
+ucs-school-import (15.0.2-5) unstable; urgency=low
+
+  * Bug #45550: revert typo from 6f8415ed
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 18 Oct 2017 15:17:41 +0200
+
 ucs-school-import (15.0.2-4) unstable; urgency=low
 
   * Bug #45550: ImportUser.make_email() now honors

@@ -511,7 +511,7 @@ class ImportUser(User):
 						entry_count=self.entry_count,
 						import_user=self)
 				else:
-					self.email = ''
+					return
 		self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
 		if not self.unique_email_handler:
 			self.__class__.unique_email_handler = self.factory.make_unique_email_handler(dry_run=self.config['dry_run'])
