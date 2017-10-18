@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [2]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-import
+fix: 15.0.2-6A~4.2.0.201710181619
+desc: |
+ * A regression introduced with UCS@school 4.2v4 has been fixed: if the CSV file passed to <command>import_user</command> contained no mail adresses for users, a traceback was displayed (Bug #45550).
+bug: [45550]
