@@ -3,7 +3,7 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 
+fix: 15.0.2-5A~4.2.0.201710181519
 desc: |
  * An experimental RESTful API for starting import jobs can now be installed (Bug #45019 #45024).
  * The configured user role is taken into account when searching for users (Bug #45044).
