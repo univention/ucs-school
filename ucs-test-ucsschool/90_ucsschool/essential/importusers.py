@@ -84,6 +84,7 @@ class Person(object):
 		self.mode = 'A'
 		self.active = True
 		self.password = None
+		self.birthday = None
 		self.school_base = self.make_school_base()
 		self.dn = self.make_dn()
 		self.append_random_groups()
@@ -183,6 +184,7 @@ class Person(object):
 			value_map.get('__action', '__EMPTY__'): self.mode,
 			value_map.get('__type', '__EMPTY__'): self.role,
 			value_map.get('password', '__EMPTY__'): self.password,
+			value_map.get('birthday', '__EMPTY__'): self.birthday,
 		}
 		if '__EMPTY__' in result.keys():
 			del result['__EMPTY__']
@@ -269,6 +271,8 @@ class Person(object):
 			attr['ucsschoolSchool'] = self.schools
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
+		if self.birthday:
+			attr['univentionBirthday'] = [self.birthday]
 
 		if not self.is_staff():
 			if configRegistry.get('ucsschool/import/set/netlogon/script/path'):
@@ -442,6 +446,7 @@ class ImportFile:
 				'email': user.mail,
 				'password': user.password,
 				'disabled': 'none' if user.is_active() else 'all',
+				'birthday': user.birthday,
 			}
 			return kwargs
 

@@ -1,0 +1,51 @@
+import datetime
+from ucsschool.importer.utils.format_pyhook import FormatPyHook
+
+
+class FormatTestPyHook(FormatPyHook):
+	priority = {
+		'patch_fields_staff': 10,
+		'patch_fields_student': 10,
+		'patch_fields_teacher': 10,
+		'patch_fields_teacher_and_staff': 10,
+	}
+	properties = ('birthday', 'email')
+
+	@staticmethod
+	def patch_birthday(fields):
+		fields['birthday'] = datetime.datetime.strptime(fields['birthday'], '%Y.%b.%d').strftime('%Y-%m-%d')
+
+	@classmethod
+	def patch_email(cls, fields):
+		fields['firstname'] = cls.my_translate(fields['firstname'], 'aeiou')
+		fields['lastname'] = cls.my_translate(fields['lastname'], 'aeiou')
+
+	@classmethod
+	def my_translate(cls, s, del_chars):
+		if isinstance(s, unicode):
+			translate_table = dict((ord(x), None) for x in del_chars)
+			return s.translate(translate_table)
+		else:
+			return s.translate(None, del_chars)
+
+	def patch_fields_staff(self, property_name, fields):
+		if property_name == 'birthday':
+			self.patch_birthday(fields)
+		return fields
+
+	def patch_fields_student(self, property_name, fields):
+		if property_name == 'birthday':
+			self.patch_birthday(fields)
+		if property_name == 'email':
+			self.patch_email(fields)
+		return fields
+
+	def patch_fields_teacher(self, property_name, fields):
+		if property_name == 'email':
+			self.patch_email(fields)
+		return fields
+
+	def patch_fields_teacher_and_staff(self, property_name, fields):
+		if property_name == 'email':
+			self.patch_email(fields)
+		return fields
