@@ -1,4 +1,4 @@
-ucs-school-import (14.0.16-40) unstable; urgency=low
+ucs-school-import (14.0.16-50) unstable; urgency=low
 
   * Bug #45553: revert typo from 0c26711e
 
