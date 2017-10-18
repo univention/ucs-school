@@ -1,3 +1,9 @@
+ucs-school-import (14.0.16-51) unstable; urgency=low
+
+  * Bug #45553: adapt test to API change
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 18 Oct 2017 16:17:25 +0200
+
 ucs-school-import (14.0.16-50) unstable; urgency=low
 
   * Bug #45553: revert typo from 0c26711e

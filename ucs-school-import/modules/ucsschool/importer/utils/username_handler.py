@@ -206,7 +206,7 @@ class UsernameHandler(object):
 	>>> UsernameHandler(20).format_username('.')   # doctest: +IGNORE_EXCEPTION_DETAIL
 	Traceback (most recent call last):
 	...
-	FormatError:
+	EmptyFormatResultError:
 	>>> UsernameHandler(20).format_username('.Max.Mustermann.')
 	'Max.Mustermann'
 	>>> UsernameHandler(4).format_username('Max.Mustermann')
