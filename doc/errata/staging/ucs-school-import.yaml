@@ -5,5 +5,5 @@ scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
 fix: 14.0.16-51.342.201710181618
 desc: |
- * An error when importing users without email address was fixed (Bug #45553).
+ * A regression introduced with UCS@school 4.1 R2 v14 has been fixed: if the CSV file passed to <command>import_user</command> contained no mail adresses for users, a traceback was displayed (Bug #45553).
 bug: [45553]
