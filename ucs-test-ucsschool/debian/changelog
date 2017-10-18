@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-35) unstable; urgency=low
+
+  * Bug #45558: create a mail domain if none was configured
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 18 Oct 2017 10:03:48 +0200
+
 ucs-test-ucsschool (4.0.4-34) unstable; urgency=medium
 
   * Bug #45468: fix 23password_reset

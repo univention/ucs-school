@@ -374,19 +374,26 @@ class CLI_Import_v2_Tester(object):
 
 	def run(self):
 		try:
-			with univention.testing.udm.UCSTestUDM() as udm:
+			with univention.testing.udm.UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
 				self.udm = udm
-				with utu.UCSTestSchool() as schoolenv:
-					self.lo = schoolenv.open_ldap_connection(admin=True)
-					self.log.info('Creating OUs...')
-					for ou in [self.ou_A, self.ou_B, self.ou_C]:
-						if ou is not None:
-							ou.name, ou.dn = schoolenv.create_ou(ou_name=ou.name, name_edudc=self.ucr.get('hostname'))
-							self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
+				if self.maildomain not in self.ucr.get('mail/hosteddomains'):
+					self.logger.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
+					udm.create_object(
+						'mail/domain',
+						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
+						name=self.maildomain
+					)
 
-					self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
-					self.test()
-					self.log.info('Test was successful.\n\n')
+				self.lo = schoolenv.open_ldap_connection(admin=True)
+				self.log.info('Creating OUs...')
+				for ou in [self.ou_A, self.ou_B, self.ou_C]:
+					if ou is not None:
+						ou.name, ou.dn = schoolenv.create_ou(ou_name=ou.name, name_edudc=self.ucr.get('hostname'))
+						self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
+
+				self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
+				self.test()
+				self.log.info('Test was successful.\n\n')
 		finally:
 			self.cleanup()
 
