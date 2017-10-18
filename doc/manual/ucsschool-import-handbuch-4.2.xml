@@ -338,7 +338,7 @@
 			</orderedlist>
 		</para>
 		<para>
-			Die resultierende Konfiguration, die sich aus eingelesenen Konfigurationsdateien sowie verwendete Kommandozeilenparameter zusammenstellt, wird am Anfang jedes Importlaufes angezeigt und in alle Protokolldateien geschrieben. Um eine Konfiguration zu testen, kann ein Probelauf mit <option>--dry-run</option> gestartet (und jederzeit gefahrlos abgebrochen) werden. Der Parameter simuliert einen Import, ohne dass Änderungen am &ucsUAS;-Benutzern vorgenommen werden.
+			Die resultierende Konfiguration, die sich aus eingelesenen Konfigurationsdateien sowie verwendete Kommandozeilenparameter zusammenstellt, wird am Anfang jedes Importlaufes angezeigt und in alle Protokolldateien geschrieben. Um eine Konfiguration zu testen, kann ein Probelauf mit <option>--dry-run</option> gestartet (und jederzeit gefahrlos abgebrochen) werden. Der Parameter simuliert einen Import, ohne dass Änderungen an &ucsUAS;-Benutzern vorgenommen werden.
 		</para>
 
 		<section id="configuration:cmdline_parameters">
@@ -387,7 +387,7 @@ optional arguments:
             Enable debugging output on the console [default: False].
 			</programlisting>
 			<para>
-				Nahezu alle Kommandozeilenparameter können auch in den Konfigurationsdateien angegeben werden. Um Variablen aus Konfigurationsdateien an der Kommandozeile zu setzen, kann <option>--set</option> verwendet werden. Geschachtelte Konfigurationsvariablen können mit dem Doppelpunkt angegeben werden.
+				Nahezu alle Kommandozeilenparameter können auch in den Konfigurationsdateien angegeben werden. Um Variablen aus Konfigurationsdateien an der Kommandozeile zu setzen, kann <option>--set</option> verwendet werden. Verschachtelte Konfigurationsvariablen können mit dem Doppelpunkt angegeben werden.
 			</para>
 			<para>
 				Um z.B. "2" als die Anzahl der Kopfzeilen in einer CSV-Datei anzugeben, kann entweder in einer  Konfigurationsdatei stehen:
@@ -1053,7 +1053,7 @@ udm users/user
 		<section id="configuration:deleting_users">
 		<title>Benutzer löschen</title>
 			<para>
-				Für das Löschen von Benutzern kann in zwei Varianten konfiguriert werden:
+				Das Löschen von Benutzern kann in zwei Varianten konfiguriert werden:
 				<itemizedlist>
 					<listitem>
 						<simpara>
@@ -1253,7 +1253,7 @@ ucr set ucsschool/import/set/sambahome=schoolserver
 ucr set "connector/s4/mapping/dns/host_record/schoolserver.$domainname/static/ipv4"=172.16.3.12
 
 # DNS-Eintrag aktivieren
-invoke-rc.d univention-s4-connector restart
+systemctl restart univention-s4-connector.service
 				</programlisting>
 			</para>
 			<para>
