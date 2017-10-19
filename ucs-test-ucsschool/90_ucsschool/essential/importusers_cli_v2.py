@@ -376,7 +376,7 @@ class CLI_Import_v2_Tester(object):
 		try:
 			with univention.testing.udm.UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
 				self.udm = udm
-				if self.maildomain not in self.ucr.get('mail/hosteddomains'):
+				if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
 					self.logger.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
 					udm.create_object(
 						'mail/domain',

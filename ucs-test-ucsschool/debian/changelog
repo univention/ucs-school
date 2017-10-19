@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-37) unstable; urgency=low
+
+  * Bug #45524: fix TypeError
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 19 Oct 2017 18:16:14 +0200
+
 ucs-test-ucsschool (4.0.4-36) unstable; urgency=low
 
   * Bug #45524: add test for FormatPyHook
