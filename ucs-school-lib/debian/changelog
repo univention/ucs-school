@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-9) unstable; urgency=low
+
+  * Bug #44627: add tool to modify UCR list values
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 20 Oct 2017 09:10:15 +0200
+
 ucs-school-lib (10.0.2-8) unstable; urgency=low
 
   * Bug #45504: fix typo
