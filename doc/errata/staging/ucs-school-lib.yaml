@@ -7,4 +7,5 @@ fix:
 desc: |
  * An internal improvement of the &ucsUAS; library: support was added for changing the base path when searching for hooks (Bug #45024).
  * An internal improvement of the &ucsUAS; library: LDAP object classes for user objects are made available for permission checks during imports (Bug #45044).
-bug: [45024, 45044]
+ * A tool for modifying UCR list values was added (Bug #44627).
+bug: [45024, 45044, 44627]

@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-selfservice-support
+fix: 
+desc: |
+ * This package provides a configuration to better integrate the self-service app and in a UCS@school domain. It automatically sets the whitelist for user groups for all school. This package should be installed on the DC master and DC backups only (Bug #44627).
+bug: [44627]
