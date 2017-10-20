@@ -1,0 +1,6 @@
+ucs-school-selfservice-support (1.0.0-1) unstable; urgency=low
+
+  * Bug #44627: add join script and ou post-create hook to add "Domain Users
+    $SCHOOL" to the UCRV umc/self-service/passwordreset/whitelist/groups
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 May 2017 13:24:21 +0200

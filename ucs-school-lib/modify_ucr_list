@@ -1,0 +1,76 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Add or remove an item to/from a UCRV list
+#
+# Copyright (C) 2017 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import sys
+import argparse
+import univention.config_registry
+
+
+def parse_cmdline():
+	parser = argparse.ArgumentParser(
+		description='Add or remove an item to/from a UCRV list.',
+		epilog='Non-existent UCRVs will be created.'
+	)
+	parser.add_argument("UCRV", help='UCR variable name.')
+	parser.add_argument("action", help='Either "add" or "remove".')
+	parser.add_argument("delimiter", help='Delimiter to place between items of the list (e.g. " " or ",").')
+	parser.add_argument('value', help='Item to add to or remove from the value list.')
+	args = parser.parse_args()
+
+	if args.action not in ('add', 'remove'):
+		parser.error('"action" must be either "add" or "remove".')
+	return args
+
+
+def main():
+	args = parse_cmdline()
+	ucr = univention.config_registry.ConfigRegistry()
+	ucr.load()
+
+	if args.action == 'remove' and args.UCRV not in ucr.keys():
+		return 0
+	cur_val = ucr.get(args.UCRV, '')
+	cur_val_list = [v for v in cur_val.split(args.delimiter) if v]
+	if args.action == 'add':
+		if args.value not in cur_val_list:
+			cur_val_list.append(args.value)
+	elif args.action == 'remove':
+		try:
+			cur_val_list.remove(args.value)
+		except ValueError:
+			return 0
+	univention.config_registry.handler_set(['{}={}'.format(args.UCRV, args.delimiter.join(cur_val_list))])
+	return 0
+
+
+if __name__ == '__main__':
+	sys.exit(main())

@@ -1,0 +1,24 @@
+Source: ucs-school-selfservice-support
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 7), ucslint
+Standards-Version: 3.8.2
+
+Package: ucs-school-selfservice-support
+Architecture: all
+Depends: univention-join,
+ shell-univention-lib,
+ shell-ucs-school (>= 10.0.2-9),
+ ucs-school-import,
+ ${misc:Depends}
+Description: Package for running the self-service app in a UCS@school domain
+ This package provides scripts for running the self-service app in a
+ UCS@school domain. It should be installed on the DC master and DC backups
+ only.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/

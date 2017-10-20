@@ -1,0 +1,3 @@
+67ucs-school-selfservice-support.inst usr/lib/univention-install/
+33ucs-school-selfservice-support.uinst usr/lib/univention-uninstall/
+usr/
