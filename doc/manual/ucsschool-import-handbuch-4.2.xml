@@ -19,7 +19,7 @@
 		<legalnotice>
 			<literallayout>
 				Version 4.2 v4
-				Stand: 11. Oktober 2017
+				Stand: 23. Oktober 2017
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
@@ -999,6 +999,9 @@ udm users/user
 }
 				</programlisting>
 			</para>
+			<para>
+				Sollen Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden (z.B. nur der erste Teil eines Doppelnames für eine E-Mail-Adresse), so kann dies mit Hilfe von <wordasword>Format-Hooks</wordasword> geschehen. Ihre Erstellung und Verwendung wird in  <link linkend="extending:hooks:formathooks"/> beschrieben.
+			</para>
 		</section>
 
 		<section id="configuration:unique_usernames_and_email">
@@ -1431,7 +1434,7 @@ udm dns/host_record create \
 			<title>Hooks</title>
 			<para>
 				<ulink url="https://de.wikipedia.org/wiki/Hook_(Informatik)"><citetitle>Hooks</citetitle></ulink> sind Stellen im Programmcode, an die zusätzlicher Code "gehängt" werden kann.
-				Für den Benutzerimport sind acht Stellen vorgesehen: jeweils vor und nach dem Anlegen, Ändern, Löschen oder Verschieben von Benutzern.
+				Für den Benutzerimport sind acht Stellen vorgesehen: jeweils vor und nach dem Anlegen, Ändern, Löschen oder Verschieben von Benutzern. Zusätzlich gibt es <wordasword>Format-Hooks</wordasword> die vor dem Erstellen eines Attributes aus anderen Attributen (siehe <link linkend="configuration:scheme_formatting"/>) ausgeführt werden. Diese werden weiter unter in <link linkend="extending:hooks:formathooks"/> separat behandelt.
 			</para>
 			<para>
 				Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.importer.utils.user_pyhook.UserPyHook</classname> ableitet.
@@ -1531,7 +1534,37 @@ class MyHook(UserPyHook):
 					Die Methoden <methodname>create()</methodname>, <methodname>modify()</methodname> und <methodname>remove()</methodname> des Benutzerobjekts sollten von Hook-Methoden nicht ausgeführt werden, da dies zu einer Rekursion führen kann.
 				</para>
 			</caution>
-		  </section>
+
+			<section id="extending:hooks:formathooks">
+				<title><wordasword>Format-Hooks</wordasword></title>
+				<para>
+					<wordasword>Format-Hooks</wordasword> erlauben es Attribute, nur für den Zeitraum ihrer Verwendung als Daten eines Formatierungsschemas, zu modifizieren.
+					Der häufigste Anwendungsfall ist die Kürzung von Vor- und Nachnamen während der Erzeugung von E-Mail-Adressen und Benutzernamen.
+				</para>
+				<para>
+					Die eckigen Klammern in Formatierungsschema erlauben es zwar die Länge von Attributen statisch einzuschränken, aber sie erlauben z.B. kein Trennen an bestimmten Zeichen.
+					Ein Beispiel für einen <wordasword>Format-Hook</wordasword> bei der Erzeugung der Attribute <property>username</property> und <property>email</property>, die Attribute <property>firstname</property> und <property>lastname</property> an Freizeichen und Bindestrichen trennt, ist in <filename>/usr/share/doc/ucs-school-import/format_hook_example.py</filename> zu finden.
+				</para>
+				<para>
+					Ein <wordasword>Format-Hook</wordasword> ist eine Klasse, die von <classname>ucsschool.importer.utils.format_pyhook import.FormatPyHook</classname> abgeleitet ist. Der Name der Datei mit der eigenen Klasse muss, wie bei den regulären <classname>PyHooks</classname> auf .py enden und im Verzeichnis /usr/share/ucs-school-import/pyhooks abgespeichert werden.
+				</para>
+				<para>
+					<wordasword>Format-Hooks</wordasword> haben die Methoden <methodname>patch_fields_staff()</methodname>, <methodname>patch_fields_student()</methodname>, <methodname>patch_fields_teacher()</methodname> und <methodname>patch_fields_teacher_and_staff()</methodname> von der immer nur die jenige ausgerufen wird, die zu der Rolle des zu erzeugenden / bearbeitenden Benutzers passt. <property>priority</property> hat die gleiche Funktion wie bei den regulären <classname>PyHooks</classname>. Das Klassenattribut <property>properties</property> enthält eine Liste von Attributnamen. Der <wordasword>Format-Hook</wordasword> wird nur für diese Attribute ausgeführt werden. Das Beispiel würde nur bei der Erzeugung von <property>username</property> und <property>email</property> ausgeführt und bei <property>birthday</property>, <property>firstname</property>, <property>school_classes</property> etc nicht. Hier können auch &ucsUDM;-Attribute aus <property>udm_properties</property> aufgeführt werden. Aus Gründen der Performance ist es wichtig hier nur die Attribute aufzuführen, die tatsächlich geändert werden sollen.
+				</para>
+				<para>
+					Den Methoden werden die Argumente <property>property_name</property> und <property>fields</property> übergeben. <property>property_name</property> enthält den Namen des Benutzerattributs das gerade erzeugt werden soll und <property>fields</property> ist ein <wordasword>dictionary</wordasword>, welches alle Attribute und Werte des Benutzerobjekts zu diesem Zeitpunkt enthält, aus denen besagtes Attribut berechnet werden soll. Durch das Ändern von Werten in <property>fields</property> wird Einfluss genommen auf das Ergebnis des darauf folgenden Formatvorganges.
+				</para>
+				<para>
+					Im Beispiel werden bei <foreignphrase>staff</foreignphrase> und <foreignphrase>teacher</foreignphrase> Benutzern die Vor- und Nachnamen getrennt, wenn das <property>username</property> Attribut erzeugt wird, und bei <foreignphrase>student</foreignphrase> und <foreignphrase>teacher_and_staff</foreignphrase> bei der Erzeugung von <property>email</property>.
+				</para>
+				<para>
+					Stünde in der Konfiguration z.B. <literal>csv:mapping:email=&lt;firstname&gt;&lt;lastname&gt;@&lt;maildomain&gt;</literal> so würde bei der Erzeugung des <property>email</property> Attributs eines <foreignphrase>students</foreignphrase> ein Vorname "Hans-Otto" gekürzt zu "Hans". Mit einem Nachnamen "Mayer" und einer Domäne <wordasword>univention.de</wordasword> würde daraus die E-Mail-Adresse <wordasword>hans.mayer@univention.de</wordasword> erzeugt.
+				</para>
+				<para>
+					Die Modifikationen eines <wordasword>Format-Hooks</wordasword> sind nur während der Erzeugung <emphasis>eines</emphasis> Attributs gültig. Sie haben weder direkte Auswirkung auf das Benutzerobjekt noch auf die Erzeugung anderer Attribute. Existieren mehrere <wordasword>Format-Hooks</wordasword> für das <emphasis>gleiche</emphasis> Attribut, so werden sie nacheinander ausgeführt und das von einem <wordasword>Format-Hook</wordasword> modifizierte <property>fields</property> <wordasword>dictionary</wordasword> dem nächsten <wordasword>Format-Hook</wordasword> übergeben.
+				</para>
+			</section>
+		</section>
 
 		<section id="extending:subclassing">
 			<title><foreignphrase>Subclassing</foreignphrase></title>
