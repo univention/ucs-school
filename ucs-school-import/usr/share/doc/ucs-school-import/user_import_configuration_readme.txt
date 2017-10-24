@@ -56,7 +56,7 @@ After that follow
 		              be written to the underlying UDM object.
 	}
 },
-"deletion_grace_period": {
+"deletion_grace_period" {
         "deactivation": int: number of days until the user account is deactivated. If set to 0, the account is deactivated
                              immediately. This option will be ignored if deletion_grace_period:deletion is set to 0. The
                              default value is 0.
@@ -68,6 +68,8 @@ After that follow
 	"email": str: schema of email address, variables may be used as described in manual-4.2:users:templates
 	"recordUID": str [1]: schema of RecordUID, variables may be used as described in manual-4.2:users:templates
 	"username" [1]: {
+		"allow_rename":      bool: whether changing usernames should be allowed (currently not supported,
+		                           in the future may only work if scheme->recordUID does not contain the username)
 		"default":           str [2]: schema of username, variables may be used
 		"student":           str [3]:                     as described in manual-4.2:users:templates
 		"staff":             str [3]:                     plus [COUNTER2] which is replaced by numbers
@@ -90,17 +92,3 @@ After that follow
 "tolerate_errors": int [1]: number of non-fatal errors to tolerate before aborting, -1 means unlimited
 "user_deletion": DEPRECATED - use deletion_grace_period instead,
 "user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)
-"username": {
-	"length": {
-		"default":           int [2]:	maximum length of a username. If scheme:username contains a COUNTER variable
-										it will be reduced by 3 for counter digits. For students it will be further
-										reduced by 5 (length of "exam-" prefix). Default: 20.
-		"student":           int [3]: 	see "default".
-		"staff":             int [3]: 	see "default".
-		"teacher":           int [3]: 	see "default".
-		"teacher_and_staff": int [3]: 	see "default".
-	},
-	"no_exam_users": bool: 	do not reduce the max. username length for students, because the exam module will *never*
-							be used. Any user account with a username length above 15 will *not* be able to use the
-							exam module and log into windows! Default: false.
-}

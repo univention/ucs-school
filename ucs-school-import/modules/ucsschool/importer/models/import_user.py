@@ -42,11 +42,11 @@ from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
-from ucsschool.lib.models.utils import create_passwd, ucr
+from ucsschool.lib.models.utils import create_passwd
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import (
-	BadPassword, EmptyFormatResultError, InvalidBirthday, InvalidClassName, InvalidEmail,
+	BadPassword, EmptyFormatResultError, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail,
 	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
 	UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
 )
@@ -75,7 +75,7 @@ class ImportUser(User):
 	record_uid = RecordUID("RecordUID")
 
 	config = None
-	default_username_max_length = 20
+	username_max_length = 15
 	_unique_ids = defaultdict(set)
 	factory = None
 	ucr = None
@@ -113,10 +113,7 @@ class ImportUser(User):
 			self.__class__.config = Configuration()
 			self.__class__.reader = self.factory.make_reader()
 			self.__class__.logger = get_logger()
-			try:
-				self.__class__.default_username_max_length = self.config['username']['length']['default']
-			except KeyError:
-				pass
+			self.__class__.username_max_length = 20 - len(self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
 		self._lo = None
 		self._userexpiry = None
 		self._purge_ts = None
@@ -886,21 +883,13 @@ class ImportUser(User):
 				continue
 			setattr(self, k, v)
 
-	@property
-	def username_max_length(self):
-		try:
-			res = self.config['username']['length'][self.role_sting]
-		except KeyError:
-			res = self.default_username_max_length
-		return res
-
 
 class ImportStaff(ImportUser, Staff):
 	pass
 
 
 class ImportStudent(ImportUser, Student):
-	default_username_max_length = 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+	pass
 
 
 class ImportTeacher(ImportUser, Teacher):
