@@ -1,0 +1,154 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: test diffent username lengths
+## tags: [apptest,ucsschool,skip_in_multiserver,ucsschool_import]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [45577]
+
+import copy
+import random
+from ldap.filter import filter_format
+import univention.testing.strings as uts
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		super(Test, self).__init__()
+		self.ou_B = None
+		self.ou_C = None
+
+	def test(self):
+		"""
+		Bug #45577: allow import with usernames longer than 15 characters
+		"""
+		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		config = copy.deepcopy(self.default_config)
+		config.update_entry('csv:mapping:Benutzername', 'username')
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('scheme:username:default', '<:umlauts><firstname:lower><lastname:lower>'),
+		config.update_entry('scheme:recordUID', '<record_uid>')
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+
+		self.log.info('1/2 Importing a user from each role...')
+		person_list = list()
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			person = Person(self.ou_A.name, role)
+			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			person.update(
+				record_uid=record_uid,
+				source_uid=source_uid,
+				firstname=uts.random_username(),
+				lastname=uts.random_username(),
+				username='',
+				mail=None,
+			)
+			person_list.append(person)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		self.check_new_and_removed_users(4, 0)
+
+		filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
+		for person in person_list:
+			filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
+			res = self.lo.search(filter=filter_s)
+			if len(res) != 1:
+				self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
+			dn = res[0][0]
+			username = res[0][1]['uid'][0]
+			self.log.debug('role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
+			if person.role == 'student':
+				exp_len = 15
+			else:
+				exp_len = 20
+
+			if len(username) != exp_len:
+				self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
+			else:
+				self.log.info('OK: Username %r of %r has expected length {!r}.', username, person.role, exp_len)
+
+		self.log.info('*** OK 1/2: All %r users were created correctly.', len(person_list))
+
+		username_lengths = {
+			'student': random.randint(10, 40),
+			'teacher': random.randint(10, 40),
+			'staff': random.randint(10, 40),
+			'teacher_and_staff': random.randint(10, 40),
+		}
+		del username_lengths[random.choice(username_lengths.keys())]
+		del username_lengths[random.choice(username_lengths.keys())]
+		username_lengths['default'] = random.randint(20, 40)
+		self.log.info('username_lengths=%r', username_lengths)
+		for k, v in username_lengths.items():
+			config.update_entry('username:length:{}'.format(k), v)
+		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('input:filename', fn_csv)
+
+		self.log.info('2/2 Importing a user from each role...')
+		person_list = list()
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			person = Person(self.ou_A.name, role)
+			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			person.update(
+				record_uid=record_uid,
+				source_uid=source_uid,
+				firstname=uts.random_username(20),
+				lastname=uts.random_username(20),
+				username='',
+				mail=None,
+			)
+			person_list.append(person)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		self.check_new_and_removed_users(4, 0)
+
+		filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
+		for person in person_list:
+			filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
+			res = self.lo.search(filter=filter_s)
+			if len(res) != 1:
+				self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
+			dn = res[0][0]
+			username = res[0][1]['uid'][0]
+			self.log.debug('role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
+			try:
+				exp_len = username_lengths[person.role]
+			except KeyError:
+				if person.role == 'student':
+					# set in /u/s/u/configs/user_import_defaults.json
+					exp_len = 15
+				else:
+					exp_len = username_lengths['default']
+
+			if len(username) != exp_len:
+				self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
+			else:
+				self.log.info('OK: Username %r of %r has expected length {!r}.', username, person.role, exp_len)
+
+		self.log.info('*** OK 2/2: All %r users were created correctly.', len(person_list))
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
