@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-39) unstable; urgency=low
+
+  * Bug #45467: create users from three OUs, prevent AttributeError
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 25 Oct 2017 09:07:50 +0200
+
 ucs-test-ucsschool (4.0.4-38) unstable; urgency=low
 
   * Bug #45524: fix AttributeError
