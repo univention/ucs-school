@@ -1491,6 +1491,14 @@ feedback@univention.de
 						Software-Komponenten ausgewählt werden. Weitere Komponenten können nach der
 						Installation, dem Domain-Join und der Installation von
 						<package>&ucsUAS;</package> über das Univention App Center hinzugefügt werden.
+						<caution>
+							TODO - lösch mich: Das werden wir vermutlich nicht verhindern können.
+							Wenn der Installer das anbietet, dann wird es Kunden geben, die das auch
+							auswählen. Auf Nicht-Master-Systemen kann man dann ja den Join unterbinden.
+							Auf neuen Master-Systemen könnten wir ein vorinstalliertes Samba bei der Installation
+							von UCS@school neu aus OpenLDAP provisionieren um einen sauberen Ausgangszustand
+							zu haben.
+						</caution>
 					</para>
 				</listitem>
 				<listitem>
@@ -1560,6 +1568,13 @@ feedback@univention.de
 							konfiguriert. Ich nehme an, das bei einem Setup ohne Samba auf dem Master
 							dann einfach nichts synchronisiert wird. Wenn auf dem Master dann Samba
 							installiert ist, kann die GPO Verwaltung NUR noch über den Master erfolgen.
+							<caution>
+								Innerhalb der "Zentrale" müssen alle Samba/AD DCs das sysvol untereinander
+								bidirektional synchronisieren, weil man effektiv nicht genau wissen kann, auf
+								welchen DC ein Windows-Client zugreift, beschrieben als Punkt 2 und 3 hier:
+								https://forge.univention.org/bugzilla/show_bug.cgi?id=42529
+								(Doku: [MS-DFSC] section 3.2.1.1, Samba Quellen: dfs_server/dfs_server_ad.c)
+							</caution>
 						</para>
 						<para>
 							TODO - lösch mich: Vielleicht sollten wir per default auf dem Master keine
@@ -1837,6 +1852,9 @@ feedback@univention.de
 			</para>
 			<para>
 				TODO: Brauchen wir das?
+				<caution>
+					TODO - lösch mich: Technisch muss der Schul-&ucsMember;
+					den Schul-Slave als ldap/server verwenden und nicht den Master.
 			</para>
 		</section>
 	</chapter>
