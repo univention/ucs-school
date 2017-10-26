@@ -1665,9 +1665,10 @@ feedback@univention.de
 								TODO - lösch mich: Wizard muss angepasst werden. Ein Schulserver
 								ist eine Slave unterhalb einer Schul-OU. Der Install-Wizard joint
 								den Slave an die richtige Stelle. Weitere Schulserver können
-								installiert werden, wobei univention-samba4 dann erkenn muss, das es
+								installiert werden, wobei univention-samba4 dann erkennen muss, das es
 								bereits einen S4-Connector an der Schule gibt und daher in die Schul-
 								Domäne joint anstatt eine neue Schul-Domäne zu erzeugen.
+								GPO können nicht über Schuls-Server verwaltet werden.
 							</para>
 					</listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
@@ -1728,6 +1729,7 @@ feedback@univention.de
 								Ein zentraler Server ist ein Slave in der Zentrale.
 								Die Samba-Konfiguration ist wie auf dem Schul-Master und das
 								System kann in die Samba-Domäne des Masters joinen.
+								Bidirektionale Synchronisation des Sysvol mit dem Master.
 							</para>
 					</listitem>
 					<listitem><para>Nach Abschluss des Einrichtungsassistent ist über das
