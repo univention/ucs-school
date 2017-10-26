@@ -1485,6 +1485,21 @@ feedback@univention.de
 						<filename class="directory">/home</filename> erfolgen.
 					</para>
 				</listitem>
+				<listitem>
+					<para>
+						Es dürfen bei der Installation von UCS System zunächst keine weiteren
+						Software-Komponenten ausgewählt werden. Weitere Komponenten können nach der
+						Installation, dem Domain-Join und der Installation von
+						<package>&ucsUAS;</package> über das Univention App Center hinzugefügt werden.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Der erste Schritt nach der Installation eines UCS System und dem Join in die
+						Domäne ist die Installation von <package>&ucsUAS;</package> und das Ausführen
+						des <emphasis>&ucsUAS; Einrichtungsassistent</emphasis>.
+					</para>
+				</listitem>
 			</itemizedlist>
 		</para>
 		<section id="installation_master">
@@ -1506,18 +1521,6 @@ feedback@univention.de
 					<listitem><para>Nach der Eingabe des Domänennamen wird automatisch
 					eine LDAP-Basis vorgeschlagen. Diese sollte nur in Ausnahmefällen
 					geändert werden.</para></listitem>
-					<listitem>
-						<para><emphasis>für Szenario <link
-									linkend="scenario-3">3</link> und <link
-									linkend="scenario-4">4</link></emphasis></para>
-						<para>
-							Um Gruppenrichtlinien für alle Schulen über eine zentrale Stelle
-							verwalten zu können, ist die Software-Komponente <package>Active Directory kompatibler
-							Domänen-Controller</package> bei der Installation auszuwählen. Sollen in der &ucsUAS;-Domäne
-							mehr als 50.000 Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention in Verbindung,
-							um Möglichkeiten zur Performanceoptimierung zu besprechen.
-						</para>
-					</listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.</para></listitem>
@@ -1538,7 +1541,34 @@ feedback@univention.de
 							kann in der &ucsUMC; in der Kategorie
 							<emphasis>Domäne</emphasis> mit dem Modul
 							<emphasis>Domänenbeitritt</emphasis> geprüft
-							werden.</para></listitem>
+							werden.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>für Szenario <link
+									linkend="scenario-3">3</link> und <link
+									linkend="scenario-4">4</link></emphasis></para>
+						<para>
+							Um Gruppenrichtlinien für alle Schulen über eine zentrale Stelle
+							verwalten zu können, kann über das Univention App Center die App
+							<package>Active Directory kompatibler Domänen-Controller</package>
+							installiert werden. Sollen in der &ucsUAS;-Domäne mehr als 50.000
+							Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention
+							in Verbindung, um Möglichkeiten zur Performanceoptimierung zu besprechen.
+						</para>
+						<para>
+							TODO - lösch mich: SysvolSync ist per default unidirektional auf den Master
+							konfiguriert. Ich nehme an, das bei einem Setup ohne Samba auf dem Master
+							dann einfach nichts synchronisiert wird. Wenn auf dem Master dann Samba
+							installiert ist, kann die GPO Verwaltung NUR noch über den Master erfolgen.
+						</para>
+						<para>
+							TODO - lösch mich: Vielleicht sollten wir per default auf dem Master keine
+							School-User mehr synchronisieren. Damit wird das Samba-Performance Problem
+							entschärft. GPO Verwaltung ist mit kleinen Einschränkungen weiterhin möglich.
+							Wenn jemand doch alle Benutzer in Samba auf dem Master haben will, kann
+							das per UCR aktiviert werden.
+						</para>
+					</listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -1628,7 +1658,18 @@ feedback@univention.de
 							<emphasis>Schuladministration</emphasis> der
 							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
 							zu starten und der Assistent bis zum
-							Ende auszuführen.</para></listitem>
+							Ende auszuführen wobei als Rolle <emphasis>Schulserver</emphasis>
+							auszuwählen ist.
+							</para>
+							<para>
+								TODO - lösch mich: Wizard muss angepasst werden. Ein Schulserver
+								ist eine Slave unterhalb einer Schul-OU. Der Install-Wizard joint
+								den Slave an die richtige Stelle. Weitere Schulserver können
+								installiert werden, wobei univention-samba4 dann erkenn muss, das es
+								bereits einen S4-Connector an der Schule gibt und daher in die Schul-
+								Domäne joint anstatt eine neue Schul-Domäne zu erzeugen.
+							</para>
+					</listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1670,12 +1711,29 @@ feedback@univention.de
 							aktualisieren.  Anschließend ist der Domänenbeitritt
 							zu starten.</para></listitem>
 					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die App
+							<package>&ucsUAS;</package> zu
+							installieren.</para></listitem>
+					<listitem><para>Im Anschluss an die Installation der
+							<package>&ucsUAS;</package> App ist in der &ucsUMC;
+							in der Kategorie
+							<emphasis>Schuladministration</emphasis> der
+							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							zu starten und der Assistent bis zum
+							Ende auszuführen wobei als Rolle <emphasis>zentraler Server</emphasis>
+							auszuwählen ist.
+							</para>
+							<para>
+								TODO - lösch mich: Wizard muss angepasst werden.
+								Ein zentraler Server ist ein Slave in der Zentrale.
+								Die Samba-Konfiguration ist wie auf dem Schul-Master und das
+								System kann in die Samba-Domäne des Masters joinen.
+							</para>
+					</listitem>
+					<listitem><para>Nach Abschluss des Einrichtungsassistent ist über das
 							Univention App Center die gewünschte App, zum
 							Beispiel <package>RADIUS</package>, zu
 							installieren.</para></listitem>
-					<listitem><para>Die App <package>&ucsUAS;</package> darf
-							<emphasis role="strong">nicht</emphasis> installiert
-							werden!</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1713,7 +1771,28 @@ feedback@univention.de
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
 							zu starten.</para></listitem>
+
 					<listitem><para>Nach Abschluss der Installation ist über das
+							Univention App Center die App
+							<package>&ucsUAS;</package> zu
+							installieren.</para></listitem>
+					<listitem><para>Im Anschluss an die Installation der
+							<package>&ucsUAS;</package> App ist in der &ucsUMC;
+							in der Kategorie
+							<emphasis>Schuladministration</emphasis> der
+							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							zu starten und der Assistent bis zum
+							Ende auszuführen wobei als Rolle <emphasis>zentraler Memberserver</emphasis>
+							auszuwählen ist.
+							</para>
+							<para>
+								TODO - lösch mich: Wizard muss angepasst werden.
+								Ein Member in der Zentrale.
+								Bzgl. Samba kann dieser Rechner einen Member des Master in der Zentrale sein.
+							</para>
+					</listitem>
+
+					<listitem><para>Nach Abschluss des Einrichtungsassistent ist über das
 							Univention App Center die App
 							<systemitem class="service">Icinga</systemitem>, zu
 							installieren.</para></listitem>
@@ -1723,9 +1802,6 @@ feedback@univention.de
 							Informationen sind in <xref
 								linkend="concepts_monitoring" /> zu
 							finden.</para></listitem>
-					<listitem><para>Die App <package>&ucsUAS;</package> darf
-							<emphasis role="strong">nicht</emphasis> installiert
-							werden!</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1750,6 +1826,15 @@ feedback@univention.de
 							<command>munin-node</command> neu gestartet
 							werden.</para></listitem>
 				</itemizedlist>
+			</para>
+		</section>
+		<section id="installation_school_member">
+			<title>Installation eines Schul-&ucsMember;</title>
+			<para>
+				<emphasis>für Szenario 3</emphasis>
+			</para>
+			<para>
+				TODO: Brauchen wir das?
 			</para>
 		</section>
 	</chapter>
