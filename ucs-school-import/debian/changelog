@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-1) unstable; urgency=medium
+
+  * Bug #34727: the import scripts do not create missing OUs
+    automatically anymore
+
+ -- Florian Best <best@univention.de>  Wed, 01 Nov 2017 20:43:13 +0100
+
 ucs-school-import (15.0.2-6) unstable; urgency=low
 
   * Bug #45550: adapt test to API change

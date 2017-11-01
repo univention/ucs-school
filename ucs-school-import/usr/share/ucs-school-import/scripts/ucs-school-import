@@ -496,7 +496,13 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 	return None
 
 
-def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None, displayName=None, dcNameAdministrative=None):
+def verify_school_ou(schoolNr, co, lo, baseDN):
+	from ucsschool.lib.models import School
+	if not School(name=schoolNr).get_udm_object(lo):
+		raise SystemExit('ERROR: The specified school %r does not exist.' % (schoolNr,))
+
+
+def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None, displayName=None, dcNameAdministrative=None):
 	global problem_hints
 
 	for verified_ou in verified_ous:
@@ -3263,7 +3269,7 @@ Arguments:
 			options.displayName = ouname
 
 		with stopped_notifier():
-			verify_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducational, ShareFileServer=options.ShareFileServer, displayName=options.displayName, dcNameAdministrative=dcNameAdministrative)
+			create_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducational, ShareFileServer=options.ShareFileServer, displayName=options.displayName, dcNameAdministrative=dcNameAdministrative)
 		sys.exit(0)
 	parser.print_help()
 	sys.exit(1)
