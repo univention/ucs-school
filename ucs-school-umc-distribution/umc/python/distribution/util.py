@@ -582,7 +582,7 @@ class Project(_Dict):
 		# collect data from all recipients
 		for recipient in self.getRecipients():
 			if self.sender.dn == recipient.dn:
-				# Bug #45572: don't collect teachers own directory
+				# Bug #45645: don't collect teachers own directory
 				continue
 			# guess a proper directory name (in case with " versionX" suffix)
 			dirVersion = 1
