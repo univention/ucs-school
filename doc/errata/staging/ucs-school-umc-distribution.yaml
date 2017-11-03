@@ -1,9 +1,9 @@
 product: ucsschool
-release: "4.2"
-version: [2]
-scope: ucs_4.2-0-ucs-school-4.2
+release: "4.1"
+version: [3]
+scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-distribution
-fix: 15.0.1-3A~4.2.0.201711031346
+fix: 
 desc: |
- * When collecting distributed materials, the teachers own files are not collected anymore (Bug #45572).
-bug: [45572]
+ * When collecting distributed materials, the teachers own files are not collected anymore (Bug #45645).
+bug: [45645]
