@@ -1936,6 +1936,7 @@ def import_networks(router_only=False):
 			parsed = line.strip('\r\n').split(sepchar)
 
 			schoolNr = parsed[0]
+			verify_school_ou(schoolNr, None, lo, baseDN)
 			# the network MUST include the netmask
 			network = parsed[1]  # netmask new
 			# the broadcast address is generated automatically by the
@@ -2480,6 +2481,7 @@ def import_printer():
 				spoolHost = '%s.%s' % (spoolHost, configRegistry['domainname'])
 			printerName = parsed[3]
 			printerUri = parsed[4]
+			verify_school_ou(schoolNr, None, lo, baseDN)
 
 			def parseString(parsed, idx, default=None):
 				res = default
@@ -2686,6 +2688,7 @@ def export_computer():
 	ou = args[0]
 	outfile = args[1]
 
+	verify_school_ou(ou, None, lo, baseDN)
 	# outfile = os.path.basename(actgrp+'.csv')
 	print "outfile is : " + outfile
 	if os.path.exists(outfile):
@@ -2746,6 +2749,8 @@ def set_ou_sharefileserver():
 		sys.exit(1)
 	else:
 		ShareFileServer = objects[0]
+
+	verify_school_ou(ouname, None, lo, baseDN)
 
 	with stopped_notifier():
 		r = lo.get(getDN(ouname), ['objectClass'])
@@ -3297,6 +3302,8 @@ elif sys.argv[0].endswith("create_dc"):
 		parser.print_help()
 		sys.exit(1)
 
+	verify_school_ou(options.ou_name, None, lo, baseDN)
+
 	if not is_valid_hostname(options.dc_name):
 		print 'ERROR: invalid domaincontroller name given'
 		print
@@ -3335,6 +3342,8 @@ within an OU LDAP subtree to the given OU.'''
 		print
 		parser.print_help()
 		sys.exit(1)
+
+	verify_school_ou(options.ou, None, lo, baseDN)
 
 	if not is_valid_hostname(options.dcname):
 		print 'ERROR: invalid domaincontroller name given'

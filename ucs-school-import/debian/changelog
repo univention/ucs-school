@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-2) unstable; urgency=medium
+
+  * Bug #34727: make sure all import scripts are explicit affected
+
+ -- Florian Best <best@univention.de>  Tue, 07 Nov 2017 12:14:55 +0100
+
 ucs-school-import (15.0.3-1) unstable; urgency=medium
 
   * Bug #34727: the import scripts do not create missing OUs
