@@ -92,7 +92,7 @@
 					<para>
 						Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt werden.
 						<figure id="choose_csv_file">
-							<title>Hichladen der CSV-Datei</title>
+							<title>Hochladen der CSV-Datei</title>
 							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_upload_csv.png"/>
 						</figure>
 					</para>
@@ -146,7 +146,7 @@
 			</programlisting>
 		</para>
 		<para>
-			Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei /usr/share/ucs-school-import/configs/user_import_http-api.json sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
+			Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
 			<programlisting>
 # cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
   /var/lib/ucs-school-import/configs/user_import.json
@@ -164,7 +164,7 @@
 			Sollen zusätzlich zu den automatisch erzeugten Gruppen neue angelegt werden, so muss an diesen zum einen die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert, und zum anderen die UMC-Richtlinie <literal>cn=schoolimport-all,cn=UMC,cn=policies,<replaceable>$LDAP_BASE</replaceable></literal> zugewiesen werden.
 		</para>
 		<para>
-			Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logfiles, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
+			Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
 		</para>
 	</chapter>
 </book>
