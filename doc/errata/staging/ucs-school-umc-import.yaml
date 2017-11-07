@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-import
+fix: 
+desc: |
+ * Integrated UCR (Bug #45664).
+bug: [45664]
