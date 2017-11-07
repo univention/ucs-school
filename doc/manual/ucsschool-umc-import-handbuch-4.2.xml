@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="ucsschool-4.2-umc-import">
+	<bookinfo>
+		<title>
+			&ucsUAS;
+		</title>
+		<subtitle>
+			Handbuch grafischer Benutzer-Import
+		</subtitle>
+		<legalnotice>
+			<literallayout>
+				Version 4.2 v6
+				Stand: 06. November 2017
+			</literallayout>
+			<literallayout lang="">
+				Alle Rechte vorbehalten./ All rights reserved.
+				(c) 2017
+				Univention GmbH
+				Mary-Somerville-Straße 1
+				28359 Bremen
+				Deutschland
+				feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="audience">
+		<title>Zielgruppe</title>
+		<para>
+			Dieses Handbuch richtet sich an Mitarbeiter die den grafischen Import von Benutzern durchführen und ab <xref linkend="installation"/> an Administratoren die ihn installieren.
+		</para>
+	</chapter>
+
+	<chapter id="introduction">
+		<title>Einführung</title>
+		<para>
+			&ucsUAS; bringt seit der Version 4.2 v6 ein UMC-Modul mit, dass es ermöglicht sicher und komfortabel Benutzerdaten aus CSV-Dateien zu importieren. Ein flexibles Sicherheitskonzept ermöglicht es Benutzer zu bestimmen, die Importe durchführen und deren Ergebnisse einsehen dürfen.
+		</para>
+		<para>
+			Technisch basiert das UMC-Modul auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration ist nicht Teil dieses Dokuments.
+		</para>
+	</chapter>
+
+	<chapter id="procedure">
+		<title>Ablauf des Importvorgangs</title>
+		<para>
+			Das UMC-Modul leitet den Anwender durch den Import in mehreren Schritten:
+			<figure id="process">
+				<title>Schritte eines Importvorganges</title>
+				<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_process.png"/>
+			</figure>
+		</para>
+		<para>
+			Ein Import wird gestartet durch Klicken auf "Neuen Benutzerimport durchführen" in der Übersichtsseite. <footnote><simpara>Wenn noch nie ein Import durchgeführt wurde, startet das UMC-Modul, statt mit der Übersicht, direkt mit einem Import.</simpara></footnote>
+			<note>
+				Sollte sich der Anwender per SAML (<foreignphrase>Single Sign-On</foreignphrase>) angemeldet haben, erscheint ein Fenster, dass (u.U. mehrfach) zur Eingabe des Passwortes auffordert.
+			</note>
+			<figure id="overview1">
+					<title>Übersichtsseite</title>
+					<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/doc/manual/illustrations42/import_ui_overview1.png"/>
+			</figure>
+			<orderedlist>
+				<listitem>
+					Zuerst muss der Typ der zu importierenden Benutzer ausgewählt werden.
+					<figure id="choose_user_type">
+						<title>Auswahl des Benutzertyps</title>
+						<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_choose_user_type.png"/>
+					</figure>
+				</listitem>
+				<listitem>
+					Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt werden.
+					<figure id="choose_csv_file">
+						<title>Hichladen der CSV-Datei</title>
+						<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_upload_csv.png"/>
+					</figure>
+				</listitem>
+				<listitem>
+					Nun wird eine Simulation des Imports durchgeführt. Das Benutzerverzeichnis wird dabei nicht verändert.
+				</listitem>
+				<listitem>
+					<itemizedlist>
+						<listitem>
+							War die Simulation erfolgreich kann nun der tatsächlich Import gestartet werden.
+							<figure id="start_import">
+								<title>Simulation war erfolgreich</title>
+								<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_start_import.png"/>
+							</figure>
+						</listitem>
+						<listitem>
+							Traten während der Simulation Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
+							<figure id="sim_had_error">
+								<title>Simulation hatte Fehler</title>
+								<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_simulation_error.png"/>
+							</figure>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+				<listitem>
+					Nach dem Start des Imports kehrt das UMC-Modul zur Übersichtsseite zurück. Wenn der neue Import-Job noch nicht angezeigt wird, kann die Liste mit dem "Aktualisieren" Knopf neu geladen werden.
+					<figure id="overview2">
+						<title>Übersichtsseite mit gestartetem Import</title>
+						<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_overview2.png"/>
+					</figure>
+				</listitem>
+			</orderedlist>
+		</para>
+	</chapter>
+
+	<chapter id="installation">
+		<title>Installation und Konfiguration</title>
+		<para>
+			Die Installation muss auf dem DC Master stattfinden:
+			<programlisting>
+# univention-install ucs-school-umc-import
+			</programlisting>
+		</para>
+		<para>
+			Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei /usr/share/ucs-school-import/configs/user_import_http-api.json sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
+			<programlisting>
+# cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
+  /var/lib/ucs-school-import/configs/user_import.json
+			</programlisting>
+		</para>
+		<para>
+			Das Sicherheitskonzept ermöglicht es Benutzern Rechte zu erteilen, um Importe nur an bestimmten Schulen und nur für bestimmte Benutzertypen durchführen, sowie die Ergebnisse dieser Import-Jobs einzusehen.
+			Während der Installation wurde für jede Schule eine Gruppe <systemitem class="groupname"><replaceable>$OU</replaceable>-import-all</systemitem> erstellt. An diesen Gruppen wurde die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert. In der UMC können für diese Gruppen auf der Karteikarte <guimenu>UCS@school</guimenu> <literal>Import-Berechtigungen</literal> festgelegt werden.
+		</para>
+		<para>
+			Eine <literal>Import-Berechtigung</literal> setzt sich zusammen aus einer Liste von Schulen (standardmäßig nur die Schule für die die Gruppe erzeugt wurde) und einer Liste von Benutzertypen (Rollen).
+			Alle Benutzer die Mitglieder dieser Gruppe sind können Imports für die aufgelisteten Benutzertypen and den aufgelisteten Schulen durchführen. Verschachtelte Gruppen werden nicht unterstützt.
+		</para>
+		<para>
+			Sollen zusätzlich zu den automatisch erzeugten Gruppen neue angelegt werden, so muss an diesen zum einen die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert, und zum anderen die UMC-Richtlinie <literal>cn=schoolimport-all,cn=UMC,cn=policies,<replaceable>$LDAP_BASE</replaceable></literal> zugewiesen werden.
+		</para>
+		<para>
+			Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logfiles, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
+		</para>
+	</chapter>
+</book>
