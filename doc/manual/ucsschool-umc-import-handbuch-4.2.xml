@@ -70,7 +70,9 @@
 		<para>
 			Ein Import wird gestartet durch Klicken auf "Neuen Benutzerimport durchführen" in der Übersichtsseite. <footnote><simpara>Wenn noch nie ein Import durchgeführt wurde, startet das UMC-Modul, statt mit der Übersicht, direkt mit einem Import.</simpara></footnote>
 			<note>
-				Sollte sich der Anwender per SAML (<foreignphrase>Single Sign-On</foreignphrase>) angemeldet haben, erscheint ein Fenster, dass (u.U. mehrfach) zur Eingabe des Passwortes auffordert.
+				<simpara>
+					Sollte sich der Anwender per SAML (<foreignphrase>Single Sign-On</foreignphrase>) angemeldet haben, erscheint ein Fenster, dass (u.U. mehrfach) zur Eingabe des Passwortes auffordert.
+				</simpara>
 			</note>
 			<figure id="overview1">
 					<title>Übersichtsseite</title>
@@ -78,46 +80,58 @@
 			</figure>
 			<orderedlist>
 				<listitem>
-					Zuerst muss der Typ der zu importierenden Benutzer ausgewählt werden.
-					<figure id="choose_user_type">
-						<title>Auswahl des Benutzertyps</title>
-						<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_choose_user_type.png"/>
-					</figure>
+					<para>
+						Zuerst muss der Typ der zu importierenden Benutzer ausgewählt werden.
+						<figure id="choose_user_type">
+							<title>Auswahl des Benutzertyps</title>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_choose_user_type.png"/>
+						</figure>
+					</para>
 				</listitem>
 				<listitem>
-					Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt werden.
-					<figure id="choose_csv_file">
-						<title>Hichladen der CSV-Datei</title>
-						<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_upload_csv.png"/>
-					</figure>
+					<para>
+						Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt werden.
+						<figure id="choose_csv_file">
+							<title>Hichladen der CSV-Datei</title>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_upload_csv.png"/>
+						</figure>
+					</para>
 				</listitem>
 				<listitem>
-					Nun wird eine Simulation des Imports durchgeführt. Das Benutzerverzeichnis wird dabei nicht verändert.
+					<simpara>
+						Nun wird eine Simulation des Imports durchgeführt. Das Benutzerverzeichnis wird dabei nicht verändert.
+					</simpara>
 				</listitem>
 				<listitem>
 					<itemizedlist>
 						<listitem>
-							War die Simulation erfolgreich kann nun der tatsächlich Import gestartet werden.
-							<figure id="start_import">
-								<title>Simulation war erfolgreich</title>
-								<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_start_import.png"/>
-							</figure>
+							<para>
+								War die Simulation erfolgreich kann nun der tatsächlich Import gestartet werden.
+								<figure id="start_import">
+									<title>Simulation war erfolgreich</title>
+									<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_start_import.png"/>
+								</figure>
+							</para>
 						</listitem>
 						<listitem>
-							Traten während der Simulation Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
-							<figure id="sim_had_error">
-								<title>Simulation hatte Fehler</title>
-								<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_simulation_error.png"/>
-							</figure>
+							<para>
+								Traten während der Simulation Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
+								<figure id="sim_had_error">
+									<title>Simulation hatte Fehler</title>
+									<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_simulation_error.png"/>
+								</figure>
+							</para>
 						</listitem>
 					</itemizedlist>
 				</listitem>
 				<listitem>
-					Nach dem Start des Imports kehrt das UMC-Modul zur Übersichtsseite zurück. Wenn der neue Import-Job noch nicht angezeigt wird, kann die Liste mit dem "Aktualisieren" Knopf neu geladen werden.
-					<figure id="overview2">
-						<title>Übersichtsseite mit gestartetem Import</title>
-						<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_overview2.png"/>
-					</figure>
+					<para>
+						Nach dem Start des Imports kehrt das UMC-Modul zur Übersichtsseite zurück. Wenn der neue Import-Job noch nicht angezeigt wird, kann die Liste mit dem "Aktualisieren" Knopf neu geladen werden.
+						<figure id="overview2">
+							<title>Übersichtsseite mit gestartetem Import</title>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_overview2.png"/>
+						</figure>
+					</para>
 				</listitem>
 			</orderedlist>
 		</para>
