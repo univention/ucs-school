@@ -143,7 +143,9 @@
 			Die Installation muss auf dem DC Master stattfinden:
 			<programlisting>
 # univention-install ucs-school-umc-import
+# ucr set ucsschool/import/error/mail-address=admin@schule.de
 			</programlisting>
+			Das Setzen der &ucsUCR;-Variablen <envar>ucsschool/import/error/mail-address</envar> ist wichtig, damit Anwender bei Fehlern in der UMC, durch Klicken auf den oben beschriebenen Link, eine E-Mail an den Administrator schicken können.
 		</para>
 		<para>
 			Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
