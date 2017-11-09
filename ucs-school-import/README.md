@@ -4,12 +4,6 @@
 
 ## Prerelease
 
-	ucr set repository/online/server=http://updates-test.software-univention.de/ \
-	repository/app_center/server=appcenter-test.software-univention.de \
-	appcenter/index/verify=no \
-	update/secure_apt=no \
-	repository/online/unmaintained=yes
-
 	univention-upgrade --ignoreterm --ignoressh
 
 	univention-install univention-appcenter-dev
@@ -18,13 +12,6 @@
 	univention-install ucs-school-import-http-api
 
 	# should also install "ucs-school-umc-import" as it's in "recommends"
-
-	# update to latest version
-	wget -r -np -A "ucs-school-import*.deb,ucs-school-umc-import*.deb" "http://192.168.0.10/build2/ucs_4.2-0-ucs-school-4.2/all/"
-	dpkg -i 192.168.0.10/build2/ucs_4.2-0-ucs-school-4.2/all/ucs-school-*.deb
-	systemctl restart celery-worker-ucsschool-import.service
-	systemctl restart gunicorn.service
-	systemctl restart univention-management-console-server.service
 
 $BROWSER: https://10.200.3.90/api/v1/ --> exists? ok :)
 
