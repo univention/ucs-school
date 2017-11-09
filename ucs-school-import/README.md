@@ -67,22 +67,23 @@ To use the produced CSV with the HTTP-API service, the configuration file must b
 
 ### create a UMC policy
 
-	eval $(ucr shell)
+	eval "$(ucr shell)"
 	OU=<your ou>
 	udm policies/umc create \
 	--set name=umc-schoolimport-all \
-	--append allow=cn=schoolimport-all,cn=operations,cn=UMC,cn=univention,$ldap_base
+	--position "cn=UMC,cn=policies,$ldap_base" \
+	--append allow="cn=schoolimport-all,cn=operations,cn=UMC,cn=univention,$ldap_base"
 	udm groups/group modify \
-	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
-	--policy-reference cn=umc-schoolimport-all,cn=UMC,cn=policies,$ldap_base
+	--dn "cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base" \
+	--policy-reference "cn=umc-schoolimport-all,cn=UMC,cn=policies,$ldap_base"
 
 ### add user to group with required permissions on school and user role:
 
 	# create school staff user 'uid=astaff' in UMC school wizard...
 
 	udm groups/group modify \
-	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
-	--append users=uid=astaff,cn=mitarbeiter,cn=users,ou=$OU,$ldap_base
+	--dn cn="$OU-import-all,cn=groups,ou=$OU,$ldap_base" \
+	--append users="uid=astaff,cn=mitarbeiter,cn=users,ou=$OU,$ldap_base"
 
 ### workaround group missing option "ucsschoolImportGroup"
 
@@ -148,11 +149,11 @@ Skriptes "ucs-school-import" oder "import_user" mit dem Dateinamen als Option.
 Netzwerke können in einer Datei zeilenweise einer Schule zugeordnet werden, Trennzeichen
 ist ein Semikolon:
 
-<Schul-Nr>;<Netzwerk>
+    <Schul-Nr>;<Netzwerk>
 
 z.B.:
 
-308;10.101.69.0
+    308;10.101.69.0
 
 Das Netzwerk wird mit Maske 255.255.255.0 angelegt, dementsprechend sollte der Eintrag auf
 ".0" enden. Mittels dieser Netzwerke werden entpsrechende DNS und DHCP-Zonen voreingestellt.
@@ -164,11 +165,11 @@ voreingestellt.
 Computer werden in einer Datei zeilenweise mit Tab als Trennzeichen definiert und über 
 import_computer mit dem Dateinamen als Option angelegt. Format der Datei ist:
 
-<computertyp>;<computername>;<MAC>;<Schul-Nr>;<IP oder Netzwerk>
+    <computertyp>;<computername>;<MAC>;<Schul-Nr>;<IP oder Netzwerk>
 
 z.B.:
 
-windows;winrechner;00:11:22:33:44:56;10;10.0.101.0
+    windows;winrechner;00:11:22:33:44:56;10;10.0.101.0
 
 Wird der Rechner einem bereits angelegtem Netzwerk zugeordnet (IP endet auf .0), wird die 
 IP automatisch vergeben, der Computer bekommt einen DHCP und einen DNS-Eintrag.
