@@ -187,12 +187,12 @@
 				Das Format der CSV-Datei ist anpassbar. Generell gilt aber folgendes:
 				<itemizedlist>
 					<listitem>
-						<simpara>
+						<para>
 							Die erste Zeile führt die Bezeicher der Spalten auf. Zum Beipiel:
 							<programlisting>
 "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 							</programlisting>
-						</simpara>
+						</para>
 						<simpara>
 							Daten in Spalten sind in doppelten Anführungszeichen eingeschlossen.
 						</simpara>
@@ -204,7 +204,7 @@
 						</simpara>
 						<simpara>
 							Mehrere Klassennamen werden durch Komma, ohne Freizeichen, getrennt aufgezählt (z.B. <literal>1a,2b,3c</literal>).
-							Klassennamen dürfen, aber brauchen nicht, den Namen der Schule (mit einem Bindestrich verbunden) vorangestellt haben (z.B. <literal>Scholl-1a,Scholl-2b,Scholl-3c</literal>). Wird der Name der Schule vorangestellt, <emph>muss</emph> dies der gleiche Wert sein wie in der Spalte für die Schule.
+							Klassennamen dürfen, aber brauchen nicht, den Namen der Schule (mit einem Bindestrich verbunden) vorangestellt haben (z.B. <literal>Scholl-1a,Scholl-2b,Scholl-3c</literal>). Wird der Name der Schule vorangestellt, <emphasis>muss</emphasis> dies der gleiche Wert sein wie in der Spalte für die Schule.
 						</simpara>
 					</listitem>
 				</itemizedlist>
