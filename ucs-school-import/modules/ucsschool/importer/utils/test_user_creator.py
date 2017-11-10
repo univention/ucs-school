@@ -153,7 +153,7 @@ class TestUserCreator(object):
 					Telefon="+{:>02}-{:>03}-{}".format(random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999))
 				)
 				if self.email:
-					user["EMail"] = ImportUser.normalize("{}m.{}m@{}".format(given_name, family_name, self.mail_domain))
+					user["EMail"] = ImportUser.normalize("{}m.{}m@{}".format(given_name, family_name, self.mail_domain)).lower()
 				if kind != "student" and random.choice((True, False)):
 					# 50% chance for non-students to be in multiple schools
 					user["Schulen"] = sorted(random.sample(self.ous, self.num_schools))
