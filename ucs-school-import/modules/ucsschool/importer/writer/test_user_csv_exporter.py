@@ -40,7 +40,7 @@ class TestUserCsvExporter(ResultExporter):
 	field_names = ("Schulen", "Benutzertyp", "Vorname", "Nachname", "Klassen", "Beschreibung", "Telefon")
 
 	def __init__(self, email=False, *args, **kwargs):
-		if not email:
+		if email:
 			self.field_names += ("EMail", )
 		super(TestUserCsvExporter, self).__init__(*args, **kwargs)
 

@@ -37,6 +37,8 @@ import json
 import random
 import string
 
+from ucsschool.lib.models.utils import ucr
+from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.logging import get_logger
 
 TEST_DATA_FILE = "/usr/share/doc/ucs-school-import/test_data.json.gz"
@@ -62,6 +64,7 @@ class TestUserCreator(object):
 		self.class_names = list()
 		self.class_name_generators = dict()
 		self.test_data = self.get_test_data(TEST_DATA_FILE)
+		self.mail_domain = self._get_maildomain()
 
 	@staticmethod
 	def get_test_data(filename):
@@ -122,9 +125,14 @@ class TestUserCreator(object):
 			gen = self.class_name_generators[school] = self._class_name_gen(school)
 		return next(gen)
 
+	@staticmethod
+	def _get_maildomain():
+		try:
+			return ucr["mail/hosteddomains"].split()[0]
+		except (AttributeError, IndexError):
+			return ucr["domainname"]
+
 	def make_users(self):
-		given_name = self._get_new_given_name()
-		family_name = self._get_new_family_name()
 		jobs = ((self.num_staff, "staff"), (self.num_students, "student"), (self.num_teachers, "teacher"), (self.num_staffteachers, "staffteacher"))
 		total_users_num = sum([job[0] for job in jobs])
 		total_users_count = 0
@@ -133,17 +141,19 @@ class TestUserCreator(object):
 			if num == 0:
 				continue
 			for user_num in xrange(num):
+				given_name = next(self._get_new_given_name())
+				family_name = next(self._get_new_family_name())
 				user = dict(
 					Schulen=None,
 					Benutzertyp=kind,
-					Vorname=next(given_name),
-					Nachname=next(family_name),
+					Vorname=given_name,
+					Nachname=family_name,
 					Klassen=None,
 					Beschreibung="A {}.".format(kind),
 					Telefon="+{:>02}-{:>03}-{}".format(random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999))
 				)
-				if not self.email:
-					user["EMail"] = ""
+				if self.email:
+					user["EMail"] = ImportUser.normalize("{}m.{}m@{}".format(given_name, family_name, self.mail_domain))
 				if kind != "student" and random.choice((True, False)):
 					# 50% chance for non-students to be in multiple schools
 					user["Schulen"] = sorted(random.sample(self.ous, self.num_schools))

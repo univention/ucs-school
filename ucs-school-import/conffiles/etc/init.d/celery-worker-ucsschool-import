@@ -18,20 +18,9 @@ set +e
 # Required-Stop:     $network $local_fs $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: celery task worker daemon for ox-user-migration
-# Description:       Controls a celery task worker daemon instance for ox-user-migration
+# Short-Description: celery task worker daemon for ucsschool-import
+# Description:       Controls a celery task worker daemon instance for ucsschool-import
 ### END INIT INFO
-#
-#
-# To implement separate init scripts, copy this script and give it a different
-# name:
-# I.e., if my new application, "little-worker" needs an init, I
-# should just use:
-#
-#   cp /etc/init.d/celeryd /etc/init.d/little-worker
-#
-# You can then configure this by manipulating /etc/default/little-worker.
-#
 
 . /lib/lsb/init-functions
 

@@ -1,12 +1,4 @@
 @%@UCRWARNING=# @%@
-# Edit the options in this file to match your projects environment.
-# See http://ask.github.com/celery/cookbook/daemonizing.html for the complete
-# documentation on the options.
-
-# WARNING: This script is only designed to run the worker(s) for a single
-# project. If you need to start workers for multiple projects you should
-# consider using supervisor.
-# Examples can be found in /usr/share/doc/python-celery/supervisord/
 
 # Change this to true when done to enable the init.d script.
 # Default: false
