@@ -44,7 +44,7 @@
 	<chapter id="audience">
 		<title>Zielgruppe</title>
 		<para>
-			Dieses Handbuch richtet sich an Mitarbeiter die den grafischen Import von Benutzern durchführen und ab <xref linkend="installation"/> an Administratoren die ihn installieren.
+			Dieses Handbuch richtet sich an Mitarbeiter die den grafischen Import von Benutzern durchführen und ab <xref linkend="install_conf_format"/> an Administratoren die ihn installieren.
 		</para>
 	</chapter>
 
@@ -64,7 +64,7 @@
 			Das UMC-Modul leitet den Anwender durch den Import in mehreren Schritten:
 			<figure id="process">
 				<title>Schritte eines Importvorganges</title>
-				<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_process.png"/>
+				<graphic scalefit="0" align="center" fileref="illustrations42/import_ui_process.png"/>
 			</figure>
 		</para>
 		<para>
@@ -137,36 +137,100 @@
 		</para>
 	</chapter>
 
-	<chapter id="installation">
-		<title>Installation und Konfiguration</title>
-		<para>
-			Die Installation muss auf dem DC Master stattfinden:
-			<programlisting>
+	<chapter id="install_conf_format">
+		<title>Installation, Konfiguration und Dateiformat</title>
+		<section id="installation">
+			<title>Installation</title>
+			<para>
+				Die Installation muss auf dem DC Master stattfinden:
+				<programlisting>
 # univention-install ucs-school-umc-import
+				</programlisting>
+			</para>
+		</section>
+
+		<section id="configuration">
+			<title>Konfiguration</title>
+			<para>
+				Das Setzen der &ucsUCR;-Variablen <envar>ucsschool/import/error/mail-address</envar> ist wichtig, damit Anwender bei Fehlern in der UMC, durch Klicken auf den oben beschriebenen Link, eine E-Mail an den Administrator schicken können.
+				<programlisting>
 # ucr set ucsschool/import/error/mail-address=admin@schule.de
-			</programlisting>
-			Das Setzen der &ucsUCR;-Variablen <envar>ucsschool/import/error/mail-address</envar> ist wichtig, damit Anwender bei Fehlern in der UMC, durch Klicken auf den oben beschriebenen Link, eine E-Mail an den Administrator schicken können.
-		</para>
-		<para>
-			Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
-			<programlisting>
-# cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
-  /var/lib/ucs-school-import/configs/user_import.json
-			</programlisting>
-		</para>
-		<para>
-			Das Sicherheitskonzept ermöglicht es Benutzern Rechte zu erteilen, um Importe nur an bestimmten Schulen und nur für bestimmte Benutzertypen durchführen, sowie die Ergebnisse dieser Import-Jobs einzusehen.
-			Während der Installation wurde für jede Schule eine Gruppe <systemitem class="groupname"><replaceable>$OU</replaceable>-import-all</systemitem> erstellt. An diesen Gruppen wurde die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert. In der UMC können für diese Gruppen auf der Karteikarte <guimenu>UCS@school</guimenu> <literal>Import-Berechtigungen</literal> festgelegt werden.
-		</para>
-		<para>
-			Eine <literal>Import-Berechtigung</literal> setzt sich zusammen aus einer Liste von Schulen (standardmäßig nur die Schule für die die Gruppe erzeugt wurde) und einer Liste von Benutzertypen (Rollen).
-			Alle Benutzer die Mitglieder dieser Gruppe sind können Imports für die aufgelisteten Benutzertypen and den aufgelisteten Schulen durchführen. Verschachtelte Gruppen werden nicht unterstützt.
-		</para>
-		<para>
-			Sollen zusätzlich zu den automatisch erzeugten Gruppen neue angelegt werden, so muss an diesen zum einen die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert, und zum anderen die UMC-Richtlinie <literal>cn=schoolimport-all,cn=UMC,cn=policies,<replaceable>$LDAP_BASE</replaceable></literal> zugewiesen werden.
-		</para>
-		<para>
-			Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
-		</para>
+				</programlisting>
+			</para>
+			<para>
+				Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
+				Die Konfiguration wird aktiviert, indem sie an die richtige Position kopiert wird:
+				<programlisting>
+	# cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
+	  /var/lib/ucs-school-import/configs/user_import.json
+				</programlisting>
+			</para>
+			<para>
+				Das Sicherheitskonzept ermöglicht es Benutzern Rechte zu erteilen, um Importe nur an bestimmten Schulen und nur für bestimmte Benutzertypen durchführen, sowie die Ergebnisse dieser Import-Jobs einzusehen.
+				Während der Installation wurde für jede Schule eine Gruppe <systemitem class="groupname"><replaceable>$OU</replaceable>-import-all</systemitem> erstellt. An diesen Gruppen wurde die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert. In der UMC können für diese Gruppen auf der Karteikarte <guimenu>UCS@school</guimenu> <literal>Import-Berechtigungen</literal> festgelegt werden.
+			</para>
+			<para>
+				Eine <literal>Import-Berechtigung</literal> setzt sich zusammen aus einer Liste von Schulen (standardmäßig nur die Schule für die die Gruppe erzeugt wurde) und einer Liste von Benutzertypen (Rollen).
+				Alle Benutzer die Mitglieder dieser Gruppe sind können Imports für die aufgelisteten Benutzertypen and den aufgelisteten Schulen durchführen. Verschachtelte Gruppen werden nicht unterstützt.
+			</para>
+			<para>
+				Sollen zusätzlich zu den automatisch erzeugten Gruppen neue angelegt werden, so muss an diesen zum einen die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert, und zum anderen die UMC-Richtlinie <literal>cn=schoolimport-all,cn=UMC,cn=policies,<replaceable>$LDAP_BASE</replaceable></literal> zugewiesen werden.
+			</para>
+			<para>
+				Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
+			</para>
+		</section>
+
+		<section id="file_format">
+			<title>Datenformat</title>
+			<para>
+				Das Format der CSV-Datei ist anpassbar. Generell gilt aber folgendes:
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Die erste Zeile führt die Bezeicher der Spalten auf. Zum Beipiel:
+							<programlisting>
+"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
+							</programlisting>
+						</simpara>
+						<simpara>
+							Daten in Spalten sind in doppelten Anführungszeichen eingeschlossen.
+						</simpara>
+						<simpara>
+							Die Spalten sind durch Komma voneinander getrennt.
+						</simpara>
+						<simpara>
+							Es muss jeweils eine Spalte für die primäre Schule eines Benutzers, seinen Vor- und Nachnamen geben.
+						</simpara>
+						<simpara>
+							Mehrere Klassennamen werden durch Komma, ohne Freizeichen, getrennt aufgezählt (z.B. <literal>1a,2b,3c</literal>).
+							Klassennamen dürfen, aber brauchen nicht, den Namen der Schule (mit einem Bindestrich verbunden) vorangestellt haben (z.B. <literal>Scholl-1a,Scholl-2b,Scholl-3c</literal>). Wird der Name der Schule vorangestellt, <emph>muss</emph> dies der gleiche Wert sein wie in der Spalte für die Schule.
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Beispieldaten für Testläufe können mit Hilfe eines Skripts erzeugt werden:
+				<programlisting>
+	# /usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
+	  --httpapi \      # Format passend zu user_import_http-api.json erzeugen
+	  --students 20 \  # Anzahl Benutzer, alternativ: --staff --teachers --staffteachers
+	  --classes 2 \                   # Anzahl zu erzeugender Klassen
+	  --create-email-addresses \      # E-Mail-Adressen erzeugen
+	  SchuleEins                      # Schule (OU) in die importiert werden soll
+				</programlisting>
+				Dies erzeugte Datei heißt <literal>test_users_<replaceable>$DATUM_$UHRZEIT</replaceable>.csv</literal> und passt zur Konfiguration in <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename>.
+			</para>
+			<para>
+				Eine solche Datei sieht z.B. so aus:
+				<programlisting>
+"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
+"SchuleEins","Jeanne","Oberbockstruck","1a","A student.","+24-165-622645","jeannem.oberbockstruck@example.de"
+"SchuleEins","Jehanne","Obergöker","1b","A student.","+16-456-810331","jehannem.mobergoeker@example.de"
+"SchuleEins","Çetin","Schrage","1a","A student.","+93-982-722661","cetinm.schrage@example.de"
+"SchuleEins","Zwenna","Schomaker","1b","A student.","+39-504-246300","zwennam.schomakerm@example.de"
+				</programlisting>
+			</para>
+		</section>
 	</chapter>
 </book>
