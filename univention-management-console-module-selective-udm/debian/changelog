@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (6.0.0-2) unstable; urgency=medium
+
+  * Bug #45708: add information if object already exists
+
+ -- Florian Best <best@univention.de>  Tue, 14 Nov 2017 14:27:25 +0100
+
 univention-management-console-module-selective-udm (6.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2

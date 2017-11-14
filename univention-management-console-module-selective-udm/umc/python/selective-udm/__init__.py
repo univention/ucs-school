@@ -40,6 +40,7 @@ import univention.admin.config
 import univention.admin.modules
 import univention.admin.objects
 import univention.admin.uldap
+import univention.admin.uexceptions
 import univention.admin.handlers.users.user
 import univention.admin.handlers.computers.windows
 
@@ -121,5 +122,10 @@ class Instance(SchoolBaseModule):
 			computer['password'] = password
 
 		computer['description'] = request.options.get('description')
-		computer_dn = computer.create()
-		self.finished(request.id, {'dn': computer_dn})
+		try:
+			computer_dn = computer.create()
+			already_exists = False
+		except univention.admin.uexceptions.objectExists as exc:
+			already_exists = True
+			computer_dn = exc.args[0]
+		self.finished(request.id, {'dn': computer_dn, 'already_exists': already_exists})
