@@ -5,5 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-users
 fix: 
 desc: |
- * The value for the checkbox to force a password change on the next login may now be defined via UCR (Bug #45468).
-bug: [45468]
+ * The value for the checkbox to force a password change on the next login may now be defined via UCR (Bug #42004).
+bug: [42004]
