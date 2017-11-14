@@ -3,3 +3,15 @@ Description[de]=Deaktiviert die automatische Suche beim öffnen des Modul "Passw
 Description[en]=Deactivates the automatic search when opening the module "Passwords (students/teacher)".
 Type=bool
 Categories=management-umc
+
+[ucsschool/passwordreset/password-change-on-next-login]
+Description[de]=Definiert, ob die Checkbox, die einen Passwortwechel bei der nächsten Anmeldung erzwingt, standardmäßig eingeschaltet ist.
+Description[en]=Defines if the checkbox which requires a password change on next login is checked by default.
+Type=bool
+Categories=management-umc
+
+[ucsschool/passwordreset/force-password-change-on-next-login]
+Description[de]=Definiert, ob der Checkboxwert aus ucsschool/passwordreset/password-change-on-next-login in der Weboberfläche geändert werden kann.
+Description[en]=Defines if the checkbox value from ucsschool/passwordreset/password-change-on-next-login can be changed in the web interface.
+Type=bool
+Categories=management-umc

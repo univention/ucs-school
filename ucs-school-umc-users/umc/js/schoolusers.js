@@ -55,22 +55,9 @@ define([
             Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 
 	return declare("umc.modules.schoolusers", [ Module ], {
-		// summary:
-		//		Template module to ease the UMC module development.
-		// description:
-		//		This module is a template module in order to aid the development of
-		//		new modules for Univention Management Console.
-
-		// the property field that acts as unique identifier for the object
 		idProperty: 'id',
-
-		// internal reference to the grid
 		_grid: null,
-
-		// internal reference to the search page
 		_searchPage: null,
-
-		// internal reference to the detail page for editing an object
 		_progressInfo: null,
 
 		uninitialize: function() {
@@ -82,9 +69,8 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			// activate standby mode
 			this.standbyOpacity = 1;
-			this.standby( true );
+			this.standby(true);
 
 			this._searchPage = new Page({
 				fullWidth: true,
@@ -94,17 +80,15 @@ define([
 
 			this.addChild(this._searchPage);
 
-			// define grid actions
-			var actions = [ {
+			var actions = [{
 				name: 'reset',
-				label: _( 'Reset password' ),
-				description: _( 'Resets password of user.' ),
+				label: _('Reset password'),
+				description: _('Resets password of user.'),
 				isStandardAction: true,
 				isMultiAction: true,
-				callback: lang.hitch( this, '_resetPasswords' )
+				callback: lang.hitch(this, '_resetPasswords')
 			}];
 
-			// define the grid columns
 			var columns = [{
 				name: 'name',
 				label: _('Name'),
@@ -113,57 +97,46 @@ define([
 				name: 'passwordexpiry',
 				label: _('Password expiration date'),
 				width: '40%',
-				'formatter': function( key ) {
-					if ( key ) {
-						var date = locale.parse( key, { datePattern : 'yyyy-MM-dd', selector: 'date' } );
-						if ( date ) {
-							return locale.format( date, { selector: 'date' } );
+				'formatter': function(key) {
+					if (key) {
+						var date = locale.parse(key, { datePattern : 'yyyy-MM-dd', selector: 'date' });
+						if (date) {
+							return locale.format(date, { selector: 'date' });
 						}
 					}
 					return '-';
 				}
 			}];
 
-			// generate the data grid
 			this._grid = new Grid({
 				actions: actions,
 				columns: columns,
 				moduleStore: this.moduleStore
 			});
 
-			// add the grid to the title pane
 			this._searchPage.addChild(this._grid);
 
-
-			//
-			// search form
-			//
-
-			// add remaining elements of the search form
-			var deferred = new Deferred();
 			var widgets = [{
 				type: ComboBox,
 				name: 'school',
 				description: _('Select the school.'),
-				label: _( 'School' ),
+				label: _('School'),
 				autoHide: true,
 				size: 'TwoThirds',
-				umcpCommand: lang.hitch( this, 'umcpCommand' ),
+				required: true,
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				dynamicValues: 'schoolusers/schools'
 			}, {
 				type: ComboBox,
 				name: 'class',
 				description: _('Select a class or workgroup.'),
-				label: _( 'Class or workgroup' ),
+				label: _('Class or workgroup'),
 				staticValues: [
-					{ 'id' : 'None', 'label' : _( 'All classes and workgroups' ) }
+					{ 'id' : 'None', 'label' : _('All classes and workgroups') }
 				],
 				dynamicValues: 'schoolusers/groups',
-				umcpCommand: lang.hitch( this, 'umcpCommand' ),
-				depends: 'school',
-				onValuesLoaded: function() {
-					deferred.resolve();
-				}
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				depends: 'school'
 			}, {
 				type: SearchBox,
 				name: 'pattern',
@@ -177,44 +150,36 @@ define([
 				})
 			}];
 
-			// the layout is an 2D array that defines the organization of the form elements...
-			// here we arrange the form elements in one row and add the 'submit' button
 			var layout = [
 				[ 'school', 'class', 'pattern' ]
 			];
 
-			// generate the search form
 			this._searchForm = new SearchForm({
-				// property that defines the widget's position in a dijit.layout.BorderContainer
 				region: 'top',
 				hideSubmitButton: true,
 				widgets: widgets,
 				layout: layout,
 				onSearch: lang.hitch(this, function(values) {
-					// call the grid's filter function
 					this._grid.filter(values);
-				}),
-				onValuesInitialized: lang.hitch( this, function() {
-					// deactivate standby mode
-					this.standby( false );
-					// transparent standby mode
-					this.standbyOpacity = 0.75;
-				} )
+				})
 			});
+			this.standbyDuring(this._searchForm.ready()).then(lang.hitch(this, function() {
+				this.standbyOpacity = 0.75;
+			}));
 
-			// add search form to the title pane
 			this._searchPage.addChild(this._searchForm);
 
-			// setup a progress bar with some info text
-			this._progressInfo = new ProgressInfo( {
+			this._progressInfo = new ProgressInfo({
 				style: 'min-width: 400px'
-			} );
+			});
 
 			this._searchPage.startup();
 
-			tools.ucr(['ucsschool/passwordreset/autosearch']).then(lang.hitch(this, function(ucr) {
+			tools.ucr(['ucsschool/passwordreset/autosearch', 'ucsschool/passwordreset/password-change-on-next-login', 'ucsschool/passwordreset/force-password-change-on-next-login']).then(lang.hitch(this, function(ucr) {
+				this.changeOnNextLogin = tools.isTrue(ucr['ucsschool/passwordreset/password-change-on-next-login'] || true);
+				this.changeOnNextLoginDisabled = tools.isTrue(ucr['ucsschool/passwordreset/force-password-change-on-next-login'] || false);
 				if (tools.isTrue(ucr['ucsschool/passwordreset/autosearch'] || true)) {
-					deferred.then(lang.hitch(this, function() {
+					this._searchForm.ready().then(lang.hitch(this, function() {
 						this._grid.filter(this._searchForm.get('value'));
 					}));
 				}
@@ -233,34 +198,34 @@ define([
 			var errors = [];
 			var finished_func = lang.hitch( this, function() {
 				this.moduleStore.onChange();
-				this._progressInfo.update( ids.length, _( 'Finished' ) );
-				this.standby( false );
-				if ( errors.length ) {
-					var message = _( 'Failed to reset the password for the following users:' ) + '<br><ul>';
+				this._progressInfo.update(ids.length, _('Finished'));
+				this.standby(false);
+				if (errors.length) {
+					var message = _('Failed to reset the password for the following users:') + '<br><ul>';
 					var _content = new ContainerWidget( {
 						scrollable: true,
 						style: 'max-height: 500px'
-					} );
-					array.forEach( errors, function( item ) {
+					});
+					array.forEach(errors, function(item) {
 						message += '<li>' + entities.encode(item.name) + '<br>' + entities.encode(item.message) + '</li>';
-					} );
+					});
 					message += '</ul>';
-					_content.addChild( new Text( { content: message } ) );
-					dialog.alert( _content );
+					_content.addChild(new Text({ content: message }));
+					dialog.alert(_content);
 				}
-			} );
+			});
 
-			var _set_passwords = lang.hitch( this, function( password, nextLogin ) {
+			var _set_passwords = lang.hitch(this, function(password, nextLogin) {
 				var deferred = new Deferred();
 
-				this._progressInfo.set( 'maximum', ids.length );
-				this._progressInfo.updateTitle( _( 'Setting passwords' ) );
+				this._progressInfo.set('maximum', ids.length);
+				this._progressInfo.updateTitle(_('Setting passwords'));
 				deferred.resolve();
-				this.standby( true, this._progressInfo );
+				this.standby(true, this._progressInfo);
 
 				array.forEach(items, function(item, i) {
 					deferred = deferred.then(lang.hitch(this, function() {
-						this._progressInfo.update( i, _( 'User: ' ) + item.name );
+						this._progressInfo.update(i, _('User: ') + item.name);
 						return this.umcpCommand('schoolusers/password/reset', {
 							userDN: item.id,
 							newPassword: password,
@@ -277,51 +242,52 @@ define([
 
 				// finish the progress bar and add error handler
 				deferred = deferred.then(finished_func, finished_func);
-			} );
+			});
 
 			var userType = (this.moduleFlavor === 'student' ?  _('students') : _('teachers'));
 			form = new Form({
 				style: 'max-width: 500px;',
-				widgets: [ {
+				widgets: [{
 					type: Text,
 					name: 'info',
 					// i18n: 0: number of selected users; 1 and 2: "students" / "teachers"
-					content: '<p>' + lang.replace( _( 'Clicking the <i>Reset</i> button will set the password for all {0} selected {1} to the given password. For security reasons the {2} should be forced to change the password on the next login.' ), [ items.length, userType, userType ] ) + '</p>'
+					content: '<p>' + lang.replace(_('Clicking the <i>Reset</i> button will set the password for all {0} selected {1} to the given password. For security reasons the {2} should be forced to change the password on the next login.'), [items.length, userType, userType]) + '</p>'
 				},{
 					type: CheckBox,
 					name: 'changeOnNextLogin',
-					value: true,
-					label: _( 'user has to change password on next login' )
+					value: this.changeOnNextLogin,
+					disabled: this.changeOnNextLoginDisabled,
+					label: _('User has to change password on next login')
 				}, {
 					name: 'newPassword',
 					type: TextBox,
 					required: true,
-					label: _( 'New password' )
-				} ],
-				buttons: [ {
+					label: _('New password')
+				}],
+				buttons: [{
 					name: 'submit',
-					label: _( 'Reset' ),
+					label: _('Reset'),
 					style: 'float: right;',
 					callback: lang.hitch( this, function() {
-						var nextLoginWidget = form.getWidget( 'changeOnNextLogin' );
-						var passwordWidget = form.getWidget( 'newPassword' );
+						var nextLoginWidget = form.getWidget('changeOnNextLogin');
+						var passwordWidget = form.getWidget('newPassword');
 
-						if ( ! form.validate() ) {
+						if (!form.validate()) {
 							passwordWidget.focus();
 							return;
 						}
 
-						var password = passwordWidget.get( 'value' );
-						var nextLogin = nextLoginWidget.get( 'value' );
+						var password = passwordWidget.get('value');
+						var nextLogin = nextLoginWidget.get('value');
 						_cleanup();
-						_set_passwords( password, nextLogin );
+						_set_passwords(password, nextLogin);
 					} )
 				}, {
 					name: 'cancel',
 					label: _('Cancel'),
 					callback: _cleanup
 				}],
-				layout: [ 'info', 'changeOnNextLogin', 'newPassword' ]
+				layout: ['info', 'changeOnNextLogin', 'newPassword']
 			});
 
 			_dialog = new Dialog( {
