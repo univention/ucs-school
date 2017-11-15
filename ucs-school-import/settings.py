@@ -169,6 +169,9 @@ SECURE_SSL_REDIRECT = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_SECONDS = 0
+if ucr.is_true('apache2/hsts'):
+	SECURE_HSTS_SECONDS = int(ucr.get('apache2/hsts/max-age', '10886400'))
+	SECURE_HSTS_INCLUDE_SUBDOMAINS = bool(ucr.is_true('apache2/hsts/includeSubDomains'))
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
