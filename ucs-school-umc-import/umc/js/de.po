@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-09-26 19:29+0200\n"
+"POT-Creation-Date: 2017-11-15 11:48+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -19,6 +19,10 @@ msgid ""
 msgstr ""
 "Ein neuer Benutzerimport für %(role)s an der Schule %(school)s wurde "
 "gestartet. Der Import hat die ID %(id)s."
+
+#: umc/js/schoolimport.js:325
+msgid "Aborted"
+msgstr "Abgebrochen"
 
 #: umc/js/schoolimport.js:150
 msgid "An error occurred."
@@ -54,11 +58,15 @@ msgstr ""
 "durchgeführten Änderungen zum Herunterladen bereitgestellt, sowie eine Liste "
 "mit Passwörtern für die neu angelegte Benutzerkonten."
 
+#: umc/js/schoolimport.js:321
+msgid "New"
+msgstr "Neu"
+
 #: umc/js/schoolimport.js:81
 msgid "Overview User Imports"
 msgstr "Übersicht Benutzerimporte"
 
-#: umc/js/schoolimport.js:321 umc/js/schoolimport.js:324
+#: umc/js/schoolimport.js:330 umc/js/schoolimport.js:336
 msgid "Passwords"
 msgstr "Passwörter"
 
@@ -98,6 +106,10 @@ msgstr "Bitte warten Sie bis die Prüfung der Daten abschlossen ist."
 msgid "Reload"
 msgstr "Aktualisieren"
 
+#: umc/js/schoolimport.js:322
+msgid "Scheduled"
+msgstr "Geplant"
+
 #: umc/js/schoolimport.js:98 umc/js/schoolimport.js:309
 msgid "School"
 msgstr "Schule"
@@ -122,6 +134,10 @@ msgstr "Import starten"
 msgid "Start new user import"
 msgstr "Neuen Benutzerimport durchführen"
 
+#: umc/js/schoolimport.js:323
+msgid "Started"
+msgstr "Gestartet"
+
 #: umc/js/schoolimport.js:303
 msgid "Started at"
 msgstr "Gestartet am"
@@ -134,7 +150,11 @@ msgstr "Durchgeführt von"
 msgid "Status"
 msgstr "Status"
 
-#: umc/js/schoolimport.js:329 umc/js/schoolimport.js:332
+#: umc/js/schoolimport.js:324
+msgid "Successful"
+msgstr "Erfolgreich"
+
+#: umc/js/schoolimport.js:341 umc/js/schoolimport.js:347
 msgid "Summary"
 msgstr "Zusammenfassung"
 

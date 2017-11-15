@@ -1,3 +1,9 @@
+ucs-school-umc-import (0.0.0-12) unstable; urgency=medium
+
+  * Bug #45659: don't show download buttons if no download is available
+
+ -- Florian Best <best@univention.de>  Wed, 15 Nov 2017 11:46:42 +0100
+
 ucs-school-umc-import (0.0.0-11) unstable; urgency=medium
 
   * Bug #45664: fix missing UCR integration

@@ -228,11 +228,11 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	def _parse_status(self, status):
 		return {
-			'New': _('New'),
-			'Scheduled': _('Scheduled'),
-			'Started': _('Started'),
-			'Finished': _('Successful'),
-			'Aborted': _('Aborted'),
+			'New': 'new',
+			'Scheduled': 'scheduled',
+			'Started': 'started',
+			'Finished': 'finished',
+			'Aborted': 'aborted',
 		}.get(status, status)
 
 	def _parse_user_role(self, role):

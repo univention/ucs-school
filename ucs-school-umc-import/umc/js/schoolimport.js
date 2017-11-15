@@ -315,11 +315,23 @@ define([
 					label: _('User role')
 				}, {
 					name: 'status',
-					label: _('Status')
+					label: _('Status'),
+					formatter: function(value) {
+						return {
+							'new': _('New'),
+							'scheduled': _('Scheduled'),
+							'started': _('Started'),
+							'finished': _('Successful'),
+							'aborted': _('Aborted'),
+						}[value];
+					}
 				}, {
 					name: 'download-passwords',
 					label: _('Passwords'),
 					formatter: function(value, item) {
+						if (~array.indexOf(['new', 'scheduled', 'started'], item.status)) {
+							return;
+						}
 						return new Text({
 							content: lang.replace('<a href="/univention/command/schoolimport/job/passwords.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-passwords.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Passwords')})
 						});
@@ -328,6 +340,9 @@ define([
 					name: 'download-summary',
 					label: _('Summary'),
 					formatter: function(value, item) {
+						if (~array.indexOf(['new', 'scheduled', 'started'], item.status)) {
+							return;
+						}
 						return new Text({
 							content: lang.replace('<a href="/univention/command/schoolimport/job/summary.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-download.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Summary')})
 						});
