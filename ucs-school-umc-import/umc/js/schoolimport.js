@@ -107,7 +107,8 @@ define([
 					description: _('Select the user role.'),
 					autoHide: true,
 					required: true,
-					dynamicValues: 'schoolimport/userroles'
+					dynamicValues: 'schoolimport/userroles',
+					depends: ['school']
 				}]
 			},{
 				name: 'select-file',

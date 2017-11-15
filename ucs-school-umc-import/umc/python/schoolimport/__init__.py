@@ -42,7 +42,6 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize, allow_get_request
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.modules.mixins import ProgressMixin
-import univention.admin.syntax
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
 from ucsschool.http_api.client import Client, ConnectionError, PermissionError, ObjectNotFound, ServerError
@@ -80,8 +79,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@require_password
 	@simple_response
-	def userroles(self):
-		userroles = [dict(id=id, label=label) for id, label in univention.admin.syntax.ucsschoolTypes.choices]
+	def userroles(self, school):
+		userroles = [dict(id=role.name, label=role.displayName) for role in self.client.roles.list(school)]
 		if not userroles:
 			raise UMC_Error(_('No permissions for running an import for any user role.'))
 		return userroles
