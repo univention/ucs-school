@@ -210,6 +210,10 @@ class ResourceRepresentation(object):
 			"""
 			return self._resource_client.client.userimportjob.list()
 
+#	class RolesResource(_ResourceReprBase):
+#		__metaclass__ = _ResourceRepresentationMetaClass
+#		resource_name = 'roles'
+
 	class ResultResource(_ResourceReprBase):
 		resource_name = 'result'
 		_attribute_repr = {
@@ -275,7 +279,7 @@ class ResourceRepresentation(object):
 
 		@property
 		def _cached_school(self):
-			if not 'school_name' in self._cache:
+			if 'school_name' not in self._cache:
 				try:
 					self._cache['school_name'] = self.school.name
 				except ApiError as exc:
@@ -459,6 +463,17 @@ class Client(object):
 		__metaclass__ = _ResourceClientMetaClass
 		resource_name = 'schools'
 		pk_name = 'name'
+
+#	class _Roles(_ResourceClient):
+#		__metaclass__ = _ResourceClientMetaClass
+#		resource_name = 'roles'
+#		pk_name = 'name'
+
+	class _Roles(object):
+		def list(self, school):
+			import univention.admin.syntax
+			return [type(b'Role', (object,), {'name': id_, 'displayName': label}) for id_, label in univention.admin.syntax.ucsschoolTypes.choices]
+	roles = _Roles()
 
 	class _UserImportJob(_ResourceClient):
 		__metaclass__ = _ResourceClientMetaClass

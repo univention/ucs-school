@@ -1,5 +1,6 @@
 ucs-school-import (15.0.3-4) unstable; urgency=medium
 
+  * Bug #45717: add dummy backend implementation
   * Bug #45713: improve HTTP security
 
  -- Florian Best <best@univention.de>  Wed, 15 Nov 2017 13:42:47 +0100
