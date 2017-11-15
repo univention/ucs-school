@@ -8,4 +8,5 @@ desc: |
  * Integrated UCR (Bug #45664).
  * Don't show download buttons for jobs where no download is possible (Bug #45659).
  * Don't rename the original filename (Bug #45662).
-bug: [45664, 45659, 45662]
+ * After starting an import it is shown in the grid (Bug #45660).
+bug: [45664, 45659, 45662, 45660]

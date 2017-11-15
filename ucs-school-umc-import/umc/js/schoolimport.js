@@ -212,6 +212,7 @@ define([
 						'role': response.result.userrole,
 						'school': response.result.school
 					})));
+					this.buildImportsGrid(this.getPage(nextPage));
 					return nextPage;
 				}), lang.hitch(this, function(error) {
 					this.getPage('error').set('helpText', this.getErrorMessage(error));
@@ -330,7 +331,7 @@ define([
 					label: _('Passwords'),
 					formatter: function(value, item) {
 						if (~array.indexOf(['new', 'scheduled', 'started'], item.status)) {
-							return;
+							return '';
 						}
 						return new Text({
 							content: lang.replace('<a href="/univention/command/schoolimport/job/passwords.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-passwords.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Passwords')})
@@ -341,7 +342,7 @@ define([
 					label: _('Summary'),
 					formatter: function(value, item) {
 						if (~array.indexOf(['new', 'scheduled', 'started'], item.status)) {
-							return;
+							return '';
 						}
 						return new Text({
 							content: lang.replace('<a href="/univention/command/schoolimport/job/summary.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-download.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Summary')})
