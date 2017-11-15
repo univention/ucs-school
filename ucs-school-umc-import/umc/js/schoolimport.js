@@ -331,7 +331,7 @@ define([
 					name: 'download-passwords',
 					label: _('Passwords'),
 					formatter: function(value, item) {
-						if (~array.indexOf(['new', 'scheduled', 'started'], item.status)) {
+						if (~array.indexOf(['new', 'scheduled', 'started', 'aborted'], item.status)) {
 							return '';
 						}
 						return new Text({
@@ -342,7 +342,7 @@ define([
 					name: 'download-summary',
 					label: _('Summary'),
 					formatter: function(value, item) {
-						if (~array.indexOf(['new', 'scheduled', 'started'], item.status)) {
+						if (~array.indexOf(['new', 'scheduled', 'started', 'aborted'], item.status)) {
 							return '';
 						}
 						return new Text({
