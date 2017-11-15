@@ -31,9 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
-import string
 import shutil
-import random
 import time
 
 import notifier.threads
@@ -53,10 +51,6 @@ from univention.lib.i18n import Translation
 
 _ = Translation('ucs-school-umc-import').translate
 CACHE_IMPORT_FILES = '/var/cache/ucs-school-umc-import/'
-
-
-def random_string():
-	return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(15))
 
 
 class Instance(SchoolBaseModule, ProgressMixin):
@@ -96,7 +90,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@file_upload
 	def upload_file(self, request):
 		filename = request.options[0]['tmpfile']
-		destination = os.path.join(CACHE_IMPORT_FILES, random_string())
+		destination = os.path.join(CACHE_IMPORT_FILES, '%d-%s' % (time.time(), os.path.basename(request.options[0]['filename'])))
 		shutil.move(filename, destination)
 		self.finished(request.id, {'filename': os.path.basename(destination)})
 

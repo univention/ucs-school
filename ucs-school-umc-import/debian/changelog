@@ -1,3 +1,9 @@
+ucs-school-umc-import (0.0.0-13) unstable; urgency=medium
+
+  * Bug #45662: Don't rename the original filename
+
+ -- Florian Best <best@univention.de>  Wed, 15 Nov 2017 12:06:02 +0100
+
 ucs-school-umc-import (0.0.0-12) unstable; urgency=medium
 
   * Bug #45659: don't show download buttons if no download is available

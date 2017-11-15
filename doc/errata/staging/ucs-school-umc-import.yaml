@@ -7,4 +7,5 @@ fix:
 desc: |
  * Integrated UCR (Bug #45664).
  * Don't show download buttons for jobs where no download is possible (Bug #45659).
-bug: [45664, 45659]
+ * Don't rename the original filename (Bug #45662).
+bug: [45664, 45659, 45662]
