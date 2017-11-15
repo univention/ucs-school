@@ -55,7 +55,7 @@ POSTGRES_USER = 'importhttpapi'
 POSTGRES_DB = 'importhttpapi'
 POSTGRES_HOST = 'localhost'
 POSTGRES_PORT = '5432'
-RABBITMQ_VHOST="importhttpapi"
+RABBITMQ_VHOST = "importhttpapi"
 
 
 with open(os.path.join(CONF_DIR, 'django_key.secret'), 'rb') as fp:
@@ -166,8 +166,13 @@ MEDIA_URL = '/{}/'.format(ucr.get('ucsschool/import/http_api/URL_path/media', 'u
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_HSTS_SECONDS = 0
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+X_FRAME_OPTIONS = 'DENY'
 
 # Django REST settings
 REST_FRAMEWORK = {
@@ -192,10 +197,10 @@ CELERY_EVENT_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ENABLE_UTC = True
-CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 CELERY_TASK_RESULT_EXPIRES = 0
 CELERY_ROUTES = {
-	'ucsschool.http_api.import_api.tasks.dry_run': {'queue':  'dryrun'},
+	'ucsschool.http_api.import_api.tasks.dry_run': {'queue': 'dryrun'},
 	'ucsschool.http_api.import_api.tasks.import_users': {'queue': 'import'},
 }
 CELERY_TRACK_STARTED = True
