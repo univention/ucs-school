@@ -16,8 +16,8 @@ https://forge.univention.org/bugzilla/show_bug.cgi?id=
 Please describe the changes with a few sentences.
 
 * **What kind of change does this PR introduce?** (Bugfix, feature, documentation update, cleanup, security issue, performance enhancement)
-* **How can we reproduce the issue?** (Which environment? Is there a test case? Which commands needs to be executed? Which UMC modules are involed?)
-* **To which UCS version does the issue apply?**
+* **How can we reproduce the issue?** (Which environment? Is there a test case? Which commands need to be executed? Which UMC modules are involed?)
+* **To which UCS and UCS@school version does the issue apply?**
 * **Please list relevant screenshots, error messages, logs or tracebacks** (If not already in the bugzilla)
 * **Are there any breaking or API changes?** (if so, please describe them)
 * **Are there changes in the documentation necessary?**
