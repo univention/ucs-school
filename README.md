@@ -9,7 +9,7 @@ applications in schools.
 UCS@school requires Univention Corporate Server (UCS). In order to run UCS@school:
 
 1. [Download](https://www.univention.com/downloads/ucs-download/) either an ISO image or a virtual machine image of UCS and setup UCS.
-1. Login to the UCS management system and open the App Center and install the [UCS@school app](https://www.univention.de/produkte/univention-app-center/app-katalog/ucsschool/).
+2. Login to the UCS management system and open the App Center and install the [UCS@school app](https://www.univention.de/produkte/univention-app-center/app-katalog/ucsschool/).
 
 ## Documentation and Support
 
