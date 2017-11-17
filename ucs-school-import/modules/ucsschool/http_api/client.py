@@ -44,10 +44,14 @@ except ImportError:
 import logging
 import inspect
 import dateutil.parser
+from collections import namedtuple
+from ldap.filter import filter_format
 
 import requests
 import magic
+import univention.admin.syntax
 from univention.config_registry import ConfigRegistry
+from ucsschool.importer.utils.ldap_connection import get_machine_connection
 
 
 ucr = ConfigRegistry()
@@ -464,16 +468,23 @@ class Client(object):
 		resource_name = 'schools'
 		pk_name = 'name'
 
-#	class _Roles(_ResourceClient):
-#		__metaclass__ = _ResourceClientMetaClass
-#		resource_name = 'roles'
-#		pk_name = 'name'
-
 	class _Roles(object):
+		__metaclass__ = _ResourceClientMetaClass
+
+		def __init__(self, client):
+			self.client = client
+
 		def list(self, school):
-			import univention.admin.syntax
-			return [type(b'Role', (object,), {'name': id_, 'displayName': label}) for id_, label in univention.admin.syntax.ucsschoolTypes.choices]
-	roles = _Roles()
+			Role = namedtuple('Role', ['name', 'displayName'])
+			lo, po = get_machine_connection()
+			filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=%s)(memberUid=%s))'
+			filter_attrs = (str('ucsschoolImportSchool'), str('ucsschoolImportRole'),)  # unicode_literals + python-ldap = TypeError
+			filter_s = filter_format(filter_s, (school, self.client.username))
+			ldap_result = lo.search(filter_s, attr=filter_attrs)
+			res = set()
+			for dn, info in ldap_result:
+				res.update(info['ucsschoolImportRole'])
+			return [Role(id_, label) for id_, label in univention.admin.syntax.ucsschoolTypes.choices if id_ in res]
 
 	class _UserImportJob(_ResourceClient):
 		__metaclass__ = _ResourceClientMetaClass

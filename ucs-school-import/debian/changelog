@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-6) unstable; urgency=low
+
+  * Bug #45717: dynamic role selection backend implementation
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 17 Nov 2017 15:48:23 +0100
+
 ucs-school-import (15.0.3-5) unstable; urgency=medium
 
   * Bug #45713: add HSTS
