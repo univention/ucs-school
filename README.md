@@ -2,7 +2,7 @@
 
 Welcome to the git mirror of the Open Source product UCS@school.
 [UCS@school](https://www.univention.com/products/ucsschool/) is the innovative solution for identity and IT infrastructure management and the operation of
-enterprise applications in schools.
+applications in schools.
 
 ## Download
 
