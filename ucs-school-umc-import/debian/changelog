@@ -1,3 +1,9 @@
+ucs-school-umc-import (0.0.1-17) unstable; urgency=medium
+
+  * Bug #45717: don't hide role selection if only one role is possible
+
+ -- Florian Best <best@univention.de>  Fri, 17 Nov 2017 16:06:06 +0100
+
 ucs-school-umc-import (0.0.1-16) unstable; urgency=medium
 
   * Bug #45659: also for aborted

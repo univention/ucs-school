@@ -105,7 +105,6 @@ define([
 					name: 'userrole',
 					label: _('User role'),
 					description: _('Select the user role.'),
-					autoHide: true,
 					required: true,
 					dynamicValues: 'schoolimport/userroles',
 					depends: ['school']
