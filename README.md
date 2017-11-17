@@ -6,7 +6,10 @@ applications in schools.
 
 ## Download
 
-ISO and virtual machine images of UCS@school are [available for download](https://www.univention.de/produkte/univention-app-center/app-katalog/ucsschool/).
+UCS@school requires Univention Corporate Server (UCS). In order to run UCS@school:
+
+1. [Download](https://www.univention.com/downloads/ucs-download/) either an ISO image or a virtual machine image of UCS and setup UCS.
+1. Login to the UCS management system and open the App Center and install the [UCS@school app](https://www.univention.de/produkte/univention-app-center/app-katalog/ucsschool/).
 
 ## Documentation and Support
 
@@ -15,7 +18,8 @@ The UCS@school documentation, including a Quickstart guide, can be found at [doc
 Another helpful resource is the [Univention Wiki](http://wiki.univention.de/index.php?title=Main_Page).
 
 If you need direct help, the forum [Univention
-Help](https://help.univention.com) provides a very good community support. For commercial support, please have a look at the [support
+Help](https://help.univention.com) provides a very good community support. For
+commercial support, please have a look at the [support
 offerings](http://www.univention.com/download-and-support/support/commercial-support/).
 
 ## Contributing
