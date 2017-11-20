@@ -216,15 +216,13 @@ CELERYD_MAX_TASKS_PER_CHILD = 1
 
 # import settings
 UCSSCHOOL_IMPORT = {
-	'conf_store': os.path.join(IMPORT_USER_DATA_DIR, 'configs'),
-	'hook_store': os.path.join(IMPORT_USER_DATA_DIR, 'hooks'),
 	'logging': {
 		'api_datefmt': '%Y-%m-%d %H:%M:%S',
 		'api_format': '%(asctime)s %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d  %(message)s',
 		'api_level': logging.DEBUG if DEBUG else logging.INFO,
 		'api_logfile': os.path.join(LOG_DIR, 'http_api.log'),
 	},
-	'import_jobs_basedir': os.path.join(SPOOL_DIR, 'jobs'),
+	'import_jobs_basedir': os.path.join(IMPORT_USER_DATA_DIR, 'jobs'),
 	'new_user_passwords_filename': 'new_user_passwords.csv',
 	'user_import_summary_filename': 'user_import_summary.csv',
 }

@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-7) unstable; urgency=low
+
+  * Bug #45024: move import job directory to /var/lib
+
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 20 Nov 2017 15:01:55 +0100
+
 ucs-school-import (15.0.3-6) unstable; urgency=low
 
   * Bug #45717: dynamic role selection backend implementation
