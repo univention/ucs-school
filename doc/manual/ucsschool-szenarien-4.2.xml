@@ -1503,9 +1503,9 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Der erste Schritt nach der Installation eines UCS System und dem Join in die
+						Der erste Schritt nach der Installation eines UCS Systems und dem Join in die
 						Domäne ist die Installation von <package>&ucsUAS;</package> und das Ausführen
-						des <emphasis>&ucsUAS; Einrichtungsassistent</emphasis>.
+						des <emphasis>&ucsUAS; Einrichtungsassistenten</emphasis>.
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -1560,8 +1560,9 @@ feedback@univention.de
 							verwalten zu können, kann über das Univention App Center die App
 							<package>Active Directory kompatibler Domänen-Controller</package>
 							installiert werden. Sollen in der &ucsUAS;-Domäne mehr als 50.000
-							Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention
-							in Verbindung, um Möglichkeiten zur Performanceoptimierung zu besprechen.
+							Benutzer verwaltet werden, so sind Performanceoptimierung notwendig.
+							Um diese abzustimmen, setzen Sie sich bitte vorab mit Univention
+							in Verbindung.
 						</para>
 						<para>
 							TODO - lösch mich: SysvolSync ist per default unidirektional auf den Master
@@ -1855,6 +1856,7 @@ feedback@univention.de
 				<caution>
 					TODO - lösch mich: Technisch muss der Schul-&ucsMember;
 					den Schul-Slave als ldap/server verwenden und nicht den Master.
+				</caution>
 			</para>
 		</section>
 	</chapter>
