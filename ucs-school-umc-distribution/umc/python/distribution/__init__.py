@@ -181,7 +181,7 @@ class Instance(SchoolBaseModule):
 		try:
 			user = User.from_dn(self.user_dn, None, ldap_user_read)
 			obj = user.get_udm_object(ldap_user_read)
-			return util.User(obj.info, dn=obj.dn, roles=user.roles)
+			return util.User(obj.info, dn=obj.dn)
 		except udm_exceptions.base as exc:
 			raise UMC_Error(_('Failed to load user information: %s') % exc)
 

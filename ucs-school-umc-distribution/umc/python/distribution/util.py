@@ -167,7 +167,7 @@ class User(_Dict):
 
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(self, TYPE_USER, unixhome='', username='', uidNumber='', gidNumber='', firstname='', lastname='', dn='', roles=[])
+		_Dict.__init__(self, TYPE_USER, unixhome='', username='', uidNumber='', gidNumber='', firstname='', lastname='', dn='')
 
 		# update specified entries
 		if len(args):
@@ -199,7 +199,7 @@ def openRecipients(entryDN, ldap_connection):
 		except udm_exceptions.noObject as exc:
 			MODULE.error('%s is neither a group nor a user: %s' % (entryDN, exc))
 			return  # neither a user nor a group. probably object doesn't exists
-		return User(user.get_udm_object(ldap_connection).info, dn=user.dn, roles=user.roles)
+		return User(user.get_udm_object(ldap_connection).info, dn=user.dn)
 	else:
 		if not group_.self_is_workgroup() and not group_.self_is_class():
 			MODULE.error('%s is not a school class or workgroup but %r' % (group_.dn, type(group_).__name__))
@@ -222,7 +222,7 @@ def openRecipients(entryDN, ldap_connection):
 				# only add students and exam students
 				MODULE.info('ignoring non student %r' % (userdn,))
 
-			group.members.append(User(user.get_udm_object(ldap_connection).info, dn=user.dn, roles=user.roles))
+			group.members.append(User(user.get_udm_object(ldap_connection).info, dn=user.dn))
 		return group
 
 
