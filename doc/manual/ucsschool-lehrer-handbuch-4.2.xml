@@ -845,7 +845,6 @@ feedback@univention.de
 		  Verzeichnisses wird für jeden Schüler ein Verzeichnis angelegt, das die eingesammelten Dateien des
 		  Schülers enthält, so dass eine nachträgliche Zuordnung leicht möglich ist. Werden die Ergebnisse mehrfach
 		  eingesammelt, wird für jeden Einsammelvorgang und Schüler jeweils ein eigenes Verzeichnis angelegt.
-		  Dateien von Lehrkräften werden nicht eingesammelt.
 		</para>
 	  </section>
 	  </section>
