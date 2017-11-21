@@ -55,6 +55,7 @@ _ = Translation('ucs-school-umc-distribution').translate
 DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
 DISTRIBUTION_DATA_PATH = ucr.get('ucsschool/datadistribution/cache', '/var/lib/ucs-school-umc-distribution')
 POSTFIX_DATADIR_SENDER = ucr.get('ucsschool/datadistribution/datadir/sender', 'Unterrichtsmaterial')
+POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = ucr.get('ucsschool/datadistribution/datadir/sender/project/suffix', '-Ergebnisse')
 POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
 
 TYPE_USER = 'USER'
@@ -264,7 +265,11 @@ class Project(_Dict):
 	def sender_projectdir(self):
 		'''The absolute path of the project directory in the senders home.'''
 		if self.sender and self.sender.homedir:
-			return os.path.join(self.sender.homedir, POSTFIX_DATADIR_SENDER, self.name)
+			return os.path.join(
+				self.sender.homedir,
+				POSTFIX_DATADIR_SENDER,
+				'%s%s' % (self.name, POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX)
+			)
 		return None
 
 	@property
