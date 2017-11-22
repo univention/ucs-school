@@ -3,7 +3,7 @@ release: "4.1"
 version: [3]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-distribution
-fix:
+fix: 14.0.2-6.91.201711221148
 desc: |
  * When collecting distributed materials, files are now stored into a directory <literal>Unterrichtsmaterial-Ergebnisse</literal>. The prefix for the name of that directory can be modified with the UCR variable <envar>ucsschool/datadistribution/datadir/sender/project/suffix</envar> (Bug #45645).
 bug: [45645]
