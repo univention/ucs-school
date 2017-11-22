@@ -1,9 +1,3 @@
-ucs-school-umc-distribution (14.0.2-5) unstable; urgency=low
-
-  * Bug #45645: store and compare school roles instead of DNs
-
- -- Daniel Troeder <troeder@univention.de>  Wed, 08 Nov 2017 12:19:29 +0100
-
 ucs-school-umc-distribution (14.0.2-4) unstable; urgency=low
 
   * Bug #45645: don't collect teachers own data
