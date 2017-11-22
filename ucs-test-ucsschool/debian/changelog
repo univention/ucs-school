@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-40) unstable; urgency=medium
+
+  * Bug #34727: adjust test scripts
+
+ -- Florian Best <best@univention.de>  Wed, 22 Nov 2017 14:29:02 +0100
+
 ucs-test-ucsschool (4.0.4-39) unstable; urgency=low
 
   * Bug #45467: create users from three OUs, prevent AttributeError

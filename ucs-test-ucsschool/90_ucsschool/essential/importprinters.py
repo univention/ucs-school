@@ -8,8 +8,9 @@ import tempfile
 import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
+import univention.testing.ucsschool as utu
 
-from essential.importou import remove_ou, create_ou_cli, get_school_base
+from essential.importou import create_ou_cli, get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -241,7 +242,8 @@ def create_and_verify_printers(use_cli_api=True, use_python_api=False, nr_printe
 
 	print printer_import
 
-	try:
+	with utu.UCSTestSchool() as schoolenv:
+		schoolenv.create_ou(printer_import.school, name_edudc=schoolenv._ucr.get('hostname'))
 		print '********** Create printers'
 		import_file.run_import(str(printer_import))
 		printer_import.verify()
@@ -255,9 +257,6 @@ def create_and_verify_printers(use_cli_api=True, use_python_api=False, nr_printe
 		printer_import.delete()
 		import_file.run_import(str(printer_import))
 		printer_import.verify()
-
-	finally:
-		remove_ou(printer_import.school)
 
 
 def import_printers_basics(use_cli_api=True, use_python_api=False):

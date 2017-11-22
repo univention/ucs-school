@@ -9,6 +9,7 @@ import tempfile
 import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
+import univention.testing.ucsschool as utu
 # from ucsschool.lib.models import SchoolComputer as SchoolComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
@@ -17,7 +18,7 @@ from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
 
-from essential.importou import remove_ou, get_school_base
+from essential.importou import get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -419,13 +420,11 @@ def create_and_verify_computers(use_cli_api=True, use_python_api=False, nr_windo
 
 	print computer_import
 
-	try:
+	with utu.UCSTestSchool() as schoolenv:
+		schoolenv.create_ou(computer_import.school, name_edudc=schoolenv._ucr.get('hostname'))
 		print '********** Create computers'
 		import_file.run_import(computer_import)
 		computer_import.verify()
-
-	finally:
-		remove_ou(computer_import.school)
 
 
 def import_computers_basics(use_cli_api=True, use_python_api=False, nr_memberserver=4):

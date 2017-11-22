@@ -10,8 +10,9 @@ import tempfile
 import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
+import univention.testing.ucsschool as utu
 
-from essential.importou import remove_ou, get_school_base
+from essential.importou import get_school_base
 from essential.importcomputers import random_ip
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
@@ -287,7 +288,8 @@ def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networ
 
 	print network_import
 
-	try:
+	with utu.UCSTestSchool() as schoolenv:
+		schoolenv.create_ou(network_import.school, name_edudc=schoolenv._ucr.get('hostname'))
 		print '********** Create networks'
 		import_file.run_import(str(network_import))
 		network_import.verify()
@@ -298,9 +300,6 @@ def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networ
 		network_import.modify()
 		import_file.run_import(str(network_import))
 		network_import.verify()
-
-	finally:
-		remove_ou(network_import.school)
 
 
 def import_networks_basics(use_cli_api=True, use_python_api=False):

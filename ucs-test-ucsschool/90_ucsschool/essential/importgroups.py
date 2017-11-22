@@ -8,11 +8,12 @@ import tempfile
 import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
+import univention.testing.ucsschool as utu
 from ucsschool.lib.models import SchoolClass as GroupLib
 from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
 
-from essential.importou import remove_ou, get_school_base
+from essential.importou import get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -257,7 +258,8 @@ def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5
 
 	print group_import
 
-	try:
+	with utu.UCSTestSchool() as schoolenv:
+		schoolenv.create_ou(group_import.school, name_edudc=schoolenv._ucr.get('hostname'))
 		print '********** Create groups'
 		import_file.run_import(group_import)
 		group_import.verify()
@@ -271,9 +273,6 @@ def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5
 		group_import.delete()
 		import_file.run_import(group_import)
 		group_import.verify()
-
-	finally:
-		remove_ou(group_import.school)
 
 
 def import_groups_basics(use_cli_api=True, use_python_api=False):
