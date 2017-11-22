@@ -1,4 +1,4 @@
-ucs-school-umc-distribution (15.0.1-3) unstable; urgency=low
+ucs-school-umc-distribution (15.0.1-5) unstable; urgency=low
 
   * Bug #45572: separate project distribution and collection directories
 
