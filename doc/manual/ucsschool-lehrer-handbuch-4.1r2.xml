@@ -835,8 +835,15 @@ feedback@univention.de
 		<para>
 		  Die eingesammelten Dateien werden im Heimatverzeichnis der Lehrkraft abgelegt, die das
 		  Verteilungsprojekt erstellt hat. Dies erfolgt unabhängig davon, welche Lehrkraft das Einsammeln der
-		  Dateien auslöst! Die Dateien befinden sich im Verzeichnis <emphasis>Unterrichtsmaterial</emphasis>
-		  unterhalb des persönlichen Heimatverzeichnisses des Lehrkraft. Für jedes Verteilungsprojekt wird ein
+		  Dateien auslöst! Die Dateien befinden sich im Verzeichnis <literal>Unterrichtsmaterial-Ergebnisse</literal>
+		  unterhalb des persönlichen Heimatverzeichnisses des Lehrkraft.
+		  <footnote>
+			  Der Name des Verzeichnisses für die eingesammelten Ergebnisse setzt sich zusammen aus der
+			  &ucsUCR;-Variablen für die Verteilung von Material <envar>ucsschool/datadistribution/datadir/sender</envar>
+			  (Standard: <literal>Unterrichtsmaterial</literal>) und einem Suffix in der &ucsUCR;-Variablen
+			  <envar>ucsschool/datadistribution/datadir/sender/project/suffix</envar> (Standard: <literal>-Ergebnisse</literal>).
+		  </footnote>
+		  Für jedes Verteilungsprojekt wird ein
 		  eigenes Verzeichnis angelegt, das den Namen des Verteilungsprojektes trägt. Unterhalb dieses
 		  Verzeichnisses wird für jeden Schüler ein Verzeichnis angelegt, das die eingesammelten Dateien des
 		  Schülers enthält, so dass eine nachträgliche Zuordnung leicht möglich ist.
