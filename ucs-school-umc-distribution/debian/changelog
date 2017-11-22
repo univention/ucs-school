@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (14.0.2-6) unstable; urgency=low
+
+  * Bug #45645: separate directories for distribution and collection
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 22 Nov 2017 11:41:45 +0100
+
 ucs-school-umc-distribution (14.0.2-3) unstable; urgency=low
 
   * Bug #41252: use symbol from python lib instead of number
