@@ -842,10 +842,12 @@ feedback@univention.de
 		  Dateien auslöst! Die Dateien befinden sich im Verzeichnis <literal>Unterrichtsmaterial-Ergebnisse</literal>
 		  unterhalb des persönlichen Heimatverzeichnisses des Lehrkraft.
 		  <footnote>
-			  Der Name des Verzeichnisses für die eingesammelten Ergebnisse setzt sich zusammen aus der
-			  &ucsUCR;-Variablen für die Verteilung von Material <envar>ucsschool/datadistribution/datadir/sender</envar>
-			  (Standard: <literal>Unterrichtsmaterial</literal>) und einem Suffix in der &ucsUCR;-Variablen
-			  <envar>ucsschool/datadistribution/datadir/sender/project/suffix</envar> (Standard: <literal>-Ergebnisse</literal>).
+			  <simpara>
+				  Der Name des Verzeichnisses für die eingesammelten Ergebnisse setzt sich zusammen aus der
+				  &ucsUCR;-Variablen für die Verteilung von Material <envar>ucsschool/datadistribution/datadir/sender</envar>
+				  (Standard: <literal>Unterrichtsmaterial</literal>) und einem Suffix in der &ucsUCR;-Variablen
+				  <envar>ucsschool/datadistribution/datadir/sender/project/suffix</envar> (Standard: <literal>-Ergebnisse</literal>).
+			  </simpara>
 		  </footnote>
 		  Für jedes Verteilungsprojekt wird ein
 		  eigenes Verzeichnis angelegt, das den Namen des Verteilungsprojektes trägt. Unterhalb dieses
