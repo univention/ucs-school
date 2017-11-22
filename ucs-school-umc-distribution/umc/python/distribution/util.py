@@ -581,9 +581,6 @@ class Project(_Dict):
 
 		# collect data from all recipients
 		for recipient in self.getRecipients():
-			if 'teacher' in recipient.roles:
-				# Bug #45645: don't collect teachers own directory
-				continue
 			# guess a proper directory name (in case with " versionX" suffix)
 			dirVersion = 1
 			targetdir = os.path.join(self.sender_projectdir, recipient.username)
