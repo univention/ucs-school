@@ -1,3 +1,11 @@
+ucs-school-import (15.0.3-9) unstable; urgency=low
+
+  * Bug #45679: attributes listed in UCRV
+    ucsschool/import/generate/user/attributes/no-overwrite will not be
+    overwritten
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Nov 2017 16:07:08 +0100
+
 ucs-school-import (15.0.3-8) unstable; urgency=low
 
   * Bug #45577: make maximum username length configurable

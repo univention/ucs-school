@@ -76,6 +76,8 @@ class ImportUser(User):
 
 	config = None
 	default_username_max_length = 20
+	attribute_udm_names = None
+	no_overwrite_attributes = None
 	_unique_ids = defaultdict(set)
 	factory = None
 	ucr = None
@@ -117,6 +119,11 @@ class ImportUser(User):
 				self.__class__.default_username_max_length = self.config['username']['max_length']['default']
 			except KeyError:
 				pass
+			self.__class__.attribute_udm_names = dict((attr.udm_name, name) for name, attr in self._attributes.items() if attr.udm_name)
+			self.__class__.no_overwrite_attributes = self.ucr.get(
+				"ucsschool/import/generate/user/attributes/no-overwrite",
+				"homeShare homeSharePath mailHomeServer mailPrimaryAddress password profilepath sambahome uidNumber unixhome username"
+			).split()
 		self._lo = None
 		self._userexpiry = None
 		self._purge_ts = None
@@ -289,17 +296,32 @@ class ImportUser(User):
 
 		for property_, value in (self.udm_properties or {}).items():
 			try:
+				if property_ in self.no_overwrite_attributes and udm_obj[property_]:
+					# don't overwrite attributes in ucsschool/import/generate/user/attributes/no-overwrite
+					continue
 				udm_obj[property_] = value
 			except (KeyError, noProperty) as exc:
-				raise UnknownProperty("UDM property '{}' could not be set: {}".format(property_, exc), entry_count=self.entry_count, import_user=self)
-			except (valueError, valueInvalidSyntax) as exc:
-				raise UDMValueError("UDM property '{}' could not be set: {}".format(property_, exc), entry_count=self.entry_count, import_user=self)
-			except Exception as exc:
-				self.logger.error("Unexpected exception caught: UDM property '{}' could not be set for user '{}' in import line {}: exception: {!s}\n{}".format(property_, self.name, self.entry_count, exc, traceback.format_exc()))
-				raise UDMError(
+				raise UnknownProperty(
 					"UDM property '{}' could not be set: {}".format(property_, exc),
 					entry_count=self.entry_count,
-					import_user=self)
+					import_user=self
+				)
+			except (valueError, valueInvalidSyntax) as exc:
+				raise UDMValueError(
+					"UDM property '{}' could not be set: {}".format(property_, exc),
+					entry_count=self.entry_count,
+					import_user=self
+				)
+			except Exception as exc:
+				self.logger.error(
+					"Unexpected exception caught: UDM property %r could not be set for user %r in import line %r: exception: %s\n%s",
+					property_, self.name, self.entry_count, exc, traceback.format_exc()
+				)
+				raise UDMError(
+					"UDM property {!r} could not be set: {}".format(property_, exc),
+					entry_count=self.entry_count,
+					import_user=self
+				)
 
 	@classmethod
 	def get_all_school_names(cls, lo):
@@ -378,7 +400,8 @@ class ImportUser(User):
 	def prepare_udm_properties(self):
 		"""
 		Create self.udm_properties from schemes configured in config["scheme"].
-		Existing entries will be overwritten!
+		Existing entries will be overwritten unless listed in UCRV
+		ucsschool/import/generate/user/attributes/no-overwrite.
 
 		* Attributes (email, record_uid, [user]name etc.) are ignored, as they are
 		processed separately in make_*.
@@ -854,8 +877,7 @@ class ImportUser(User):
 		if not self.udm_properties:
 			return
 
-		forbidden_attributes = set(x.udm_name for x in self._attributes.values() if x.udm_name)
-		bad_props = set(self.udm_properties.keys()).intersection(forbidden_attributes)
+		bad_props = set(self.udm_properties.keys()).intersection(self.attribute_udm_names)
 		if bad_props:
 			raise NotSupportedError(
 				"UDM properties '{}' must be set as attributes of the {} object (not in udm_properties).".format(
