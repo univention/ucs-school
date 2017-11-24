@@ -211,7 +211,6 @@ class CLI_Import_v2_Tester(object):
 				"email": "<firstname>[0].<lastname>@<maildomain>",
 				"recordUID": "<firstname>;<lastname>;<email>",
 				"username": {
-					"allow_rename": False,
 					"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
 				},
 			},

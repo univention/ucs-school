@@ -23,7 +23,6 @@
 		"email": "<firstname>[0].<lastname>@<maildomain>",
 		"recordUID": "<email>",
 		"username": {
-			"allow_rename": false,
 			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]"
 		}
 	},
@@ -38,5 +37,12 @@
 	"school": null,
 	"sourceUID": null,
 	"tolerate_errors": 0,
-	"user_role": null
+	"user_role": null,
+	"username": {
+		"max_length": {
+			"default": 20,
+			"student": 15
+		},
+	"no_exam_users": false
+	}
 }
