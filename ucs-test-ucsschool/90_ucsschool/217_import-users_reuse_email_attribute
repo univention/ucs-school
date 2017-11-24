@@ -37,7 +37,7 @@ class Test(CLI_Import_v2_Tester):
 			config.update_entry('user_role', role)
 			config.update_entry('scheme:email', '<email>')
 			config.update_entry('scheme:recordUID', '<record_uid>')
-			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:Benutzername', 'name')
 			config.update_entry('csv:mapping:recordUID', 'record_uid')
 			config.update_entry("deletion_grace_period:deletion", 0)
 

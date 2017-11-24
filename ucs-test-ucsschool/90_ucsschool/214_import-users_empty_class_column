@@ -32,7 +32,7 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		base_config = copy.deepcopy(self.default_config)
 		base_config.update_entry('scheme:recordUID', '<record_uid>')
-		base_config.update_entry('csv:mapping:Benutzername', 'username')
+		base_config.update_entry('csv:mapping:Benutzername', 'name')
 		base_config.update_entry('csv:mapping:recordUID', 'record_uid')
 
 		def new_config(role):

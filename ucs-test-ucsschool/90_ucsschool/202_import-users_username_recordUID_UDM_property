@@ -43,7 +43,7 @@ class Test(CLI_Import_v2_Tester):
 
 				config = copy.deepcopy(self.default_config)
 				config.update_entry('sourceUID', source_uid)
-				config.update_entry('csv:mapping:Benutzername', 'username')
+				config.update_entry('csv:mapping:Benutzername', 'name')
 				config.update_entry('csv:mapping:DBID', 'record_uid')
 				config.update_entry('user_role', role)
 

@@ -47,7 +47,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** Creating a student, teacher, staff and teacher_and_staff in each OU...')
 		source_uid = 'sourceUID-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('csv:mapping:Benutzername', 'username')
+		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__type')
 		config.update_entry('scheme:recordUID', '<record_uid>')
