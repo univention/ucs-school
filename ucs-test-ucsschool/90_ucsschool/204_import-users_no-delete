@@ -30,7 +30,7 @@ class Test(CLI_Import_v2_Tester):
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 			config = copy.deepcopy(self.default_config)
-			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:Benutzername', 'name')
 			config.update_entry('scheme:recordUID', '<username>')
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('user_role', role)

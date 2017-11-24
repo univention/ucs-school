@@ -36,7 +36,7 @@ class Test(CLI_Import_v2_Tester):
 			config = copy.deepcopy(self.default_config)
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('csv:incell-delimiter:default', ';')
-			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:Benutzername', 'name')
 			config.update_entry('csv:mapping:recordUID', 'record_uid')
 			config.update_entry('csv:mapping:birthday', 'birthday')
 			config.update_entry('scheme:recordUID', '<username>')

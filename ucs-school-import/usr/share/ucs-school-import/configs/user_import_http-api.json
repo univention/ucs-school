@@ -11,7 +11,7 @@
 			"Klassen": "school_classes",
 			"Beschreibung": "description",
 			"Telefon": "phone",
-			"EMail": "mailPrimaryAddress"
+			"EMail": "email"
 		}
 	},
 	"scheme": {
