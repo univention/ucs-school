@@ -662,23 +662,15 @@ python -m json.tool &lt; my_config.json
 <!-- scheme:username -->
 							<row>
 								<entry morerows="1"><varname>scheme: \ username</varname></entry>
-								<entry>Enthält Informationen über die Erzeugung von Benutzernamen. Standardmäßig enthält das Objekt nur die Schlüssel <literal>allow_rename</literal> und <literal>default</literal>. Weitere Schlüssel (<literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal>, <literal>teacher_and_staff</literal>) sind möglich (siehe <xref linkend="configuration:default_key"/>). Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames_and_email"/>).</entry>
+								<entry>Enthält Informationen über die Erzeugung von Benutzernamen. Standardmäßig enthält das Objekt nur den Schlüssel <literal>default</literal>. Weitere Schlüssel (<literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal>, <literal>teacher_and_staff</literal>) sind möglich (siehe <xref linkend="configuration:default_key"/>). Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames_and_email"/>).</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>object</classname>): <literal>{"allow_rename": .., "default": ..}</literal></entry>
-							</row>
-<!-- scheme:username:allow_rename -->
-							<row>
-								<entry morerows="1"><varname>scheme: \ username: \ allow_rename</varname></entry>
-								<entry>Definiert, ob das Ändern von Benutzernamen erlaubt sein soll. Diese Variable ist z.Z. ohne Funktion.</entry>
-							</row>
-							<row>
-								<entry align="right">Standard (<classname>boolean</classname>): <literal>false</literal></entry>
+								<entry align="right">Standard (<classname>object</classname>): <literal>{"default": ..}</literal></entry>
 							</row>
 <!-- scheme:username:default -->
 							<row>
 								<entry morerows="1"><varname>scheme: \ username: \ default</varname></entry>
-								<entry>Schema aus dem der Benutzername erzeugt werden soll, wenn kein Schema speziell für diesen Benutzertyp existiert.</entry>
+								<entry>Schema aus dem der Benutzername erzeugt werden soll, wenn kein Schema speziell für diesen Benutzertyp (<literal>scheme:username:teacher</literal> etc) existiert .</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): <literal>"&lt;:umlauts&gt;&lt;firstname&gt;[0].&lt;lastname&gt;[COUNTER2]"</literal></entry>
@@ -794,6 +786,40 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
+							</row>
+<!-- username -->
+							<row>
+								<entry morerows="1"><varname>username</varname></entry>
+								<entry>Enthält Informationen über die Erzeugung von Benutzernamen.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>object</classname>): <literal>{"max_length": {..}, "no_exam_users": ..}</literal></entry>
+							</row>
+<!-- username:max_length -->
+							<row>
+								<entry morerows="1"><varname>username: \ max_length</varname></entry>
+								<entry>Enthält Informationen über die Länge von Benutzernamen.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>object</classname>): <literal>{"default": .., "student": ..}</literal></entry>
+							</row>
+<!-- username:max_length:default -->
+							<row>
+								<entry morerows="1"><varname>username: \ max_length: \ default</varname></entry>
+								<entry>Länge eines Benutzernamens, wenn keine Konfiguration speziell für diesen Benutzertyp (<literal>username:max_length:staff</literal> etc) existiert.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>int</classname>): <literal>20</literal>, für <literal>student</literal>: <literal>15</literal></entry>
+							</row>
+<!-- username:no_exam_users -->
+							<row>
+								<entry morerows="1"><varname>username: \ no_exam_users</varname></entry>
+								<entry>Die maximale Länge des Benutzernamens von Schülern nicht um die Länge des Klassenarbeitsmodus-Präfixes (Standard <literal>"exam-"</literal>: 5) verkürzen.
+									Diese Option darf nur eingeschaltet werden, wenn sicher ist, dass der Klassenarbeitsmodus <emphasis>nicht</emphasis> verwendet wird.
+									Schüler mit einem Benutzernamen der länger als 15 Zeichen ist, werden sich bei der Verwendung des Klassenarbeitsmodus nicht einloggen können!</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>bool</classname>): <literal>false</literal></entry>
 							</row>
 						</tbody>
 					</tgroup>

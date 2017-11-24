@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-8) unstable; urgency=low
+
+  * Bug #45577: make maximum username length configurable
+  * remove not implemented scheme:username:allow_rename
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 23 Nov 2017 10:06:00 +0100
+
 ucs-school-import (15.0.3-7) unstable; urgency=low
 
   * Bug #45024: move import job directory to /var/lib
