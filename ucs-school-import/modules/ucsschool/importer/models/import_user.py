@@ -561,7 +561,7 @@ class ImportUser(User):
 		Create ucsschoolRecordUID (recordUID) (if not already set).
 		"""
 		if not self.record_uid:
-			self.record_uid = self.format_from_scheme("recordUID", self.config["scheme"]["recordUID"])
+			self.record_uid = filter_format('%s', (self.format_from_scheme("recordUID", self.config["scheme"]["recordUID"])),)
 
 	def make_sourceUID(self):
 		"""
@@ -572,7 +572,7 @@ class ImportUser(User):
 				raise NotSupportedError("Source_uid '{}' differs to configured source_uid '{}'.".format(
 					self.source_uid, self.config["sourceUID"]))
 		else:
-			self.source_uid = self.config["sourceUID"]
+			self.source_uid = filter_format('%s', (self.config["sourceUID"],))
 
 	def make_school(self):
 		"""
