@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-10) unstable; urgency=low
+
+  * Bug #45577: handle no_exam_users switch
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 28 Nov 2017 15:29:06 +0100
+
 ucs-school-import (15.0.3-9) unstable; urgency=low
 
   * Bug #45679: attributes listed in UCRV

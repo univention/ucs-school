@@ -809,7 +809,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 								<entry>Länge eines Benutzernamens, wenn keine Konfiguration speziell für diesen Benutzertyp (<literal>username:max_length:staff</literal> etc) existiert.</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>int</classname>): <literal>20</literal>, für <literal>student</literal>: <literal>15</literal></entry>
+								<entry align="right">Standard (<classname>int</classname>): <literal>20</literal></entry>
 							</row>
 <!-- username:no_exam_users -->
 							<row>

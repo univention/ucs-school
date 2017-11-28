@@ -652,6 +652,9 @@ class ImportUser(User):
 		if not self.username_handler:
 			self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length, self.config['dry_run'])
 		self.name = self.username_handler.format_name(self.name)
+		if not self.name:
+			raise EmptyFormatResultError("Username handler transformed {!r} to empty username.".format(
+				self.name), self.username_scheme, self.to_dict())
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
 		self._lo = lo
@@ -914,7 +917,7 @@ class ImportUser(User):
 			res = self.config['username']['max_length'][self.role_sting]
 		except KeyError:
 			res = self.default_username_max_length
-		return res
+		return max(0, res)
 
 
 class ImportStaff(ImportUser, Staff):
@@ -922,7 +925,14 @@ class ImportStaff(ImportUser, Staff):
 
 
 class ImportStudent(ImportUser, Student):
-	default_username_max_length = 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+	_user_prefix_len = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+
+	@property
+	def username_max_length(self):
+		res = super(ImportStudent, self).username_max_length
+		if not self.config['username'].get('no_exam_users', False):
+			res -= self._user_prefix_len
+		return max(0, res)
 
 
 class ImportTeacher(ImportUser, Teacher):

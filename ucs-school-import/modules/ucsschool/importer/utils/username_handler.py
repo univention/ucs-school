@@ -338,7 +338,7 @@ class UsernameHandler(object):
 		match = self.replacement_variable_pattern.search(name)
 		if match:
 			func = self.counter_variable_to_function[match.group().upper()]
-			cut_pos = max_length - PATTERN_FUNC_MAXLENGTH
+			cut_pos = max(0, max_length - PATTERN_FUNC_MAXLENGTH)
 
 			# it's not allowed to have two [COUNTER] patterns
 			if len(self.replacement_variable_pattern.findall(name)) >= 2:
@@ -362,8 +362,6 @@ class UsernameHandler(object):
 			self.logger.warn("%s %r too long, shortened to %r.", self.attribute_name, name, username)
 
 		username = username.strip('.')
-		if not username:
-			raise EmptyFormatResultError("No {} in {!r}.".format(self.attribute_name, name), name, name)
 		return username
 
 	def format_username(self, name):

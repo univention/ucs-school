@@ -40,9 +40,8 @@
 	"user_role": null,
 	"username": {
 		"max_length": {
-			"default": 20,
-			"student": 15
+			"default": 20
 		},
-	"no_exam_users": false
+		"no_exam_users": false
 	}
 }
