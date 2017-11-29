@@ -1,3 +1,9 @@
+ucs-school-umc-users (13.0.0-6) unstable; urgency=medium
+
+  * Bug #42004: adjust UCR variable description
+
+ -- Florian Best <best@univention.de>  Wed, 29 Nov 2017 15:09:36 +0100
+
 ucs-school-umc-users (13.0.0-5) unstable; urgency=medium
 
   * Bug #42004: make checkbox which forces password change on next login configurable

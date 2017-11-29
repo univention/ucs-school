@@ -11,7 +11,7 @@ Type=bool
 Categories=management-umc
 
 [ucsschool/passwordreset/force-password-change-on-next-login]
-Description[de]=Definiert, ob der Checkboxwert aus ucsschool/passwordreset/password-change-on-next-login in der Weboberfläche geändert werden kann.
-Description[en]=Defines if the checkbox value from ucsschool/passwordreset/password-change-on-next-login can be changed in the web interface.
+Description[de]=Wenn eingeschaltet, wird das Ändern des Checkboxwertes aus ucsschool/passwordreset/password-change-on-next-login durch Benutzer verhindert.
+Description[en]=If enabled, prevents users from changing the checkbox value set in ucsschool/passwordreset/password-change-on-next-login.
 Type=bool
 Categories=management-umc
