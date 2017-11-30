@@ -423,7 +423,7 @@ class QueueHandler():
 			Log.warn('LDAP-search failed for shares with gid %s: %r' % (gid, msg))
 			raise
 
-	def handle_user_change(self, dn, unchecked_uid):
+	def handle_user_change(self, dn, unchecked_uid):  # type: (str, str) -> None
 		"""
 		(Re)Create a vbs logonscript for the user specified by the given user DN.
 		"""
