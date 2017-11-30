@@ -114,9 +114,13 @@ class SqliteQueue(object):
 		if not os.path.exists(self.filename):
 			self.logger.warn('database does not exist - creating new one (filename=%r)' % (self.filename,))
 
-		# create table if missing
 		with Cursor(self.logger, self.filename) as cursor:
+			# create table if missing
 			cursor.execute(u'CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)')
+
+			# create index if missing
+			cursor.execute(u'CREATE INDEX IF NOT EXISTS idx_userdn ON user_queue (userdn)')
+
 
 	def truncate_database(self):  # type: () -> None
 		# SQLITE does not have a TRUNCATE TABLE command, but DELETE FROM
