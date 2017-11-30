@@ -246,7 +246,9 @@ class UserImport(object):
 
 		# Find all users that exist in UCS but not in input.
 		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
-		ucs_user_ids = set([(lu[1]["ucsschoolSourceUID"][0], lu[1]["ucsschoolRecordUID"][0]) for lu in ucs_ldap_users])
+		ucs_user_ids = set(
+			[(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8')) for lu in ucs_ldap_users]
+		)
 
 		users_to_delete = list(ucs_user_ids - imported_user_ids)
 		self.logger.debug("users_to_delete=%r", users_to_delete)

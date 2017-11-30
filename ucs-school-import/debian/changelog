@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-11) unstable; urgency=low
+
+  * Bug #45626: strings must have same encoding in set comparision
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 30 Nov 2017 09:45:07 +0100
+
 ucs-school-import (15.0.3-10) unstable; urgency=low
 
   * Bug #45577: handle no_exam_users switch
