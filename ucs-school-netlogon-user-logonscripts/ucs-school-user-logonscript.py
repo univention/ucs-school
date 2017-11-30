@@ -50,7 +50,7 @@ subfilter_shares = str(shares_share_module.lookup_filter())
 name = 'ucs-school-user-logonscript'
 description = 'Create user-specific netlogon-scripts'
 filter = '(|%s%s%s)' % (subfilter_users, subfilter_groups, subfilter_shares)
-attributes = []
+attributes = []  # type: List[str]
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
 
@@ -131,7 +131,7 @@ def handle_share(dn, new, old, lo, user_queue):
 		add_group_change_to_queue(new.get('univentionShareGid', [None])[0])
 
 
-def handle_group(dn, new, old, lo, user_queue):
+def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], Any, SqliteQueue) -> None
 	"""
 	Handles group changes by adding relevant user object DNs to the user queue.
 	"""
