@@ -429,7 +429,7 @@ invoke-rc.d univention-management-console-server restart
 	<section id="school:installation:selfservice">
 	  <title>Integration mit Self-Service App</title>
 	  <para>
-		  Um die <foreignphrase>Self-Service App</foreignphrase> in einer &ucsUAS;-Umgebung einzusetzen, wird empfohlen das Paket <package>ucs-school-selfservice-support</package> auf dem DC Master und den DC Backups zu installieren. Dies sorgt automatisch dafür, dass den Benutzern aller Schulen die in den Gruppen <systemitem class="groupname">Domain Users <replaceable>OUNAME</replaceable></systemitem> sind, die Benutzung des <foreignphrase>Self-Service</foreignphrase> Moduls erlaubt wird. Es wird automatisch die UCR-Variable <literal>umc/self-service/passwordreset/whitelist/groups</literal> aktuell gehalten.
+		  Um die <foreignphrase>Self-Service App</foreignphrase> in einer &ucsUAS;-Umgebung einzusetzen, wird empfohlen das Paket <package>ucs-school-selfservice-support</package> auf dem &ucsMaster; und den &ucsBackup; zu installieren. Dies sorgt automatisch dafür, dass den Benutzern aller Schulen die in den Gruppen <systemitem class="groupname">Domain Users <replaceable>OUNAME</replaceable></systemitem> sind, die Benutzung des <foreignphrase>Self-Service</foreignphrase> Moduls erlaubt wird. Es wird automatisch die UCR-Variable <envar>umc/self-service/passwordreset/whitelist/groups</envar> aktuell gehalten.
 	  </para>
 	  <para>
 		Die Installation wird folgendermaßen durchgeführt:
