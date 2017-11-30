@@ -138,6 +138,20 @@ def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str
 	old_members = set(old.get('uniqueMember', []))
 	new_members = set(new.get('uniqueMember', []))
 	Log.info('handle_group: dn: %s' % (dn,))
+	newGidNumber = new.get('gidNumber', [''])[0]
+	if new and newGidNumber:
+		# performance optimization:
+		# the group members only have to be processed if there is at least one share object
+		# that is using this group.
+		filter_s = filter_format('(univentionShareGid=%s)', (newGidNumber,))
+		try:
+			share_list = shares_share_module.lookup(None, lo, filter_s=filter_s)
+			found = bool(share_list)
+		except (univention.admin.uexceptions.noObject, IndexError):
+			found = False
+		if not found:
+			Log.info('handle_group: cannot find share that uses gid=%s - skipping group' % (newGidNumber,))
+			return
 	Log.info('handle_group: difference: %r' % (old_members.symmetric_difference(new_members),))
 	# get set of users that are NOT IN BOTH user sets (==> the difference between both sets)
 	# "uid=" to filter out computer or group objects (computers in groups resp. groups in groups)
