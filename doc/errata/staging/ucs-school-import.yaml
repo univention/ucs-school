@@ -3,7 +3,7 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-11A~4.2.0.201711300950
+fix: 15.0.3-12A~4.2.0.201712010804
 desc: |
  * An experimental RESTful API for starting import jobs can now be installed (Bug #45019 #45024).
  * The configured user role is taken into account when searching for users (Bug #45044).
@@ -12,7 +12,7 @@ desc: |
  * The import scripts for creating computers, networks, printers or groups do not create schools anymore. Previously if the CSV data contained a school which did not exists a broken OU structure was created (Bug #34727).
  * Add a method in the HTTP-API which returns the permitted roles for school where a user can start an import (Bug #45717).
  * Various security concerns of the HTTP-API have been eliminated (Bug #45713).
- * The maximum length of a username can now be configured for imports. The configuration key username:max_length:ROLE can be set to change the default of 20. The configuration key username:no_exam_users cn be used to turn off, the length reduction of 5 characters for students (Bug #45577).
+ * The maximum length of a username can now be configured for imports. The configuration key username:max_length:ROLE can be set to change the default of 20. Please note that 20 is the maximum username length that is allowed for Windows accounts. The configuration key username:exam_users can be used to turn the length reduction of 5 characters for students off. Students with usernames longer than 15 characters will not be able to use the exam mode (Bug #45577).
  * The new UCR variable ucsschool/import/generate/user/attributes/no-overwrite is a whitespace separated list of LDAP attributes that the user import will not overwrite when their values are non-empty. This fixes a bug which made generated email adresses change on every import (Bug #45679).
  * Non-ASCII characters in sourceUID and recordUID are now handled correctly (Bug #45626).
 bug: [45019, 45024, 45044, 45342, 45436, 34727, 45717, 45713, 45577, 45679, 45626]
