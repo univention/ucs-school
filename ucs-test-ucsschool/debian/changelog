@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-43) unstable; urgency=low
+
+  * Bug #45577: test username:exam_users switch
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Dec 2017 08:28:51 +0100
+
 ucs-test-ucsschool (4.0.4-42) unstable; urgency=low
 
   * Bug #45679: add test to check no-overwrite attributes
