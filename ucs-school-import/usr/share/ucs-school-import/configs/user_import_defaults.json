@@ -42,6 +42,6 @@
 		"max_length": {
 			"default": 20
 		},
-		"no_exam_users": false
+		"exam_users": true
 	}
 }

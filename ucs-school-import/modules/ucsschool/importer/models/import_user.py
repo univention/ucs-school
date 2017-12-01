@@ -930,7 +930,7 @@ class ImportStudent(ImportUser, Student):
 	@property
 	def username_max_length(self):
 		res = super(ImportStudent, self).username_max_length
-		if not self.config['username'].get('no_exam_users', False):
+		if self.config['username'].get('exam_users', True):
 			res -= self._user_prefix_len
 		return max(0, res)
 

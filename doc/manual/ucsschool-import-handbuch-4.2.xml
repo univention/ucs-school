@@ -811,15 +811,15 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>20</literal></entry>
 							</row>
-<!-- username:no_exam_users -->
+<!-- username:exam_users -->
 							<row>
-								<entry morerows="1"><varname>username: \ no_exam_users</varname></entry>
-								<entry>Die maximale Länge des Benutzernamens von Schülern nicht um die Länge des Klassenarbeitsmodus-Präfixes (Standard <literal>"exam-"</literal>: 5) verkürzen.
-									Diese Option darf nur eingeschaltet werden, wenn sicher ist, dass der Klassenarbeitsmodus <emphasis>nicht</emphasis> verwendet wird.
+								<entry morerows="1"><varname>username: \ exam_users</varname></entry>
+								<entry>Die maximale Länge des Benutzernamens von Schülern wird um die Länge des Klassenarbeitsmodus-Präfixes (Standard <literal>"exam-"</literal>: 5) verkürzt.
+									Diese Option darf nur ausgeschaltet werden, wenn sicher ist, dass der Klassenarbeitsmodus <emphasis>nicht</emphasis> verwendet wird.
 									Schüler mit einem Benutzernamen der länger als 15 Zeichen ist, werden sich bei der Verwendung des Klassenarbeitsmodus nicht einloggen können!</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>bool</classname>): <literal>false</literal></entry>
+								<entry align="right">Standard (<classname>bool</classname>): <literal>true</literal></entry>
 							</row>
 						</tbody>
 					</tgroup>

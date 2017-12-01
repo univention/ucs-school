@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-12) unstable; urgency=low
+
+  * Bug #45577: remove double negation in configuration
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Dec 2017 08:00:25 +0100
+
 ucs-school-import (15.0.3-11) unstable; urgency=low
 
   * Bug #45626: strings must have same encoding in set comparision
