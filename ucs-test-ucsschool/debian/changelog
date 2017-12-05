@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-44) unstable; urgency=low
+
+  * Bug #45577: adapt test
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 Dec 2017 15:31:21 +0100
+
 ucs-test-ucsschool (4.0.4-43) unstable; urgency=low
 
   * Bug #45577: test username:exam_users switch
