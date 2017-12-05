@@ -34,6 +34,7 @@ Configuration classes.
 
 import json
 
+from ucsschool.lib.models.utils import ucr
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
 
@@ -48,6 +49,16 @@ def setup_configuration(conffiles, **kwargs):
 		raise InitialisationError("No input:type was specified.")
 	if "user_deletion" in config:
 		raise InitialisationError("The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'.")
+	try:
+		student_username_max_length = max(0, config["username"]["max_length"]["student"])
+	except KeyError:
+		student_username_max_length = max(0, config["username"]["max_length"].get("default", 20))
+	exam_user_prefix_length = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+	if config["username"].get("exam_users", True) and student_username_max_length > 20 - exam_user_prefix_length:
+		raise InitialisationError(
+			"Student usernames must not be longer than {} characters when the exam mode is used "
+			"(username:exam_users=true).".format(20 - exam_user_prefix_length)
+		)
 	return config
 
 

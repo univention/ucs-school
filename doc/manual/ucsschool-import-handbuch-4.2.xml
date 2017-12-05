@@ -793,7 +793,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 								<entry>Enthält Informationen über die Erzeugung von Benutzernamen.</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>object</classname>): <literal>{"max_length": {..}, "no_exam_users": ..}</literal></entry>
+								<entry align="right">Standard (<classname>object</classname>): <literal>{"max_length": {..}, "exam_users": ..}</literal></entry>
 							</row>
 <!-- username:max_length -->
 							<row>

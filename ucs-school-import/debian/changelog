@@ -1,3 +1,11 @@
+ucs-school-import (15.0.3-13) unstable; urgency=low
+
+  * Bug #45577: check configuration for exam_users and username length of
+    students
+  * remove special handling of students username length
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 Dec 2017 14:50:34 +0100
+
 ucs-school-import (15.0.3-12) unstable; urgency=low
 
   * Bug #45577: remove double negation in configuration

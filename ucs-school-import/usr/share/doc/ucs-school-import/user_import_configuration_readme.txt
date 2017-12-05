@@ -94,13 +94,14 @@ After that follow
 	"max_length": {
 		"default":           int [2]:	maximum length of a username. If scheme:username contains a COUNTER variable
 										it will be reduced by 3 for counter digits. For students it will be further
-										reduced by 5 (length of "exam-" prefix). Default: 20.
+										reduced by 5 (length of "exam-" prefix). Accounts with usernames longer than 20
+										will not be able to log into windows. Default: 20.
 		"student":           int [3]: 	see "default".
 		"staff":             int [3]: 	see "default".
 		"teacher":           int [3]: 	see "default".
 		"teacher_and_staff": int [3]: 	see "default".
 	},
-	"no_exam_users": bool: 	do not reduce the max. username length for students, because the exam module will *never*
-							be used. Any user account with a username length above 15 will *not* be able to use the
-							exam module and log into windows! Default: false.
+	"exam_users": bool: 	limit the max. username length for students to 15. Disable this only if the exam module will
+							*never* be used. Any user account with a username length above 15 will *not* be able to
+							log into windows while using the exam module! Default: true.
 }

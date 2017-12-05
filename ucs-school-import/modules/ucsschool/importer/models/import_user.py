@@ -116,7 +116,7 @@ class ImportUser(User):
 			self.__class__.reader = self.factory.make_reader()
 			self.__class__.logger = get_logger()
 			try:
-				self.__class__.default_username_max_length = self.config['username']['max_length']['default']
+				self.__class__.default_username_max_length = max(0, self.config['username']['max_length']['default'])
 			except KeyError:
 				pass
 			self.__class__.attribute_udm_names = dict((attr.udm_name, name) for name, attr in self._attributes.items() if attr.udm_name)
@@ -914,7 +914,7 @@ class ImportUser(User):
 	@property
 	def username_max_length(self):
 		try:
-			res = self.config['username']['max_length'][self.role_sting]
+			res = max(0, self.config['username']['max_length'][self.role_sting])
 		except KeyError:
 			res = self.default_username_max_length
 		return max(0, res)
@@ -925,14 +925,7 @@ class ImportStaff(ImportUser, Staff):
 
 
 class ImportStudent(ImportUser, Student):
-	_user_prefix_len = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
-
-	@property
-	def username_max_length(self):
-		res = super(ImportStudent, self).username_max_length
-		if self.config['username'].get('exam_users', True):
-			res -= self._user_prefix_len
-		return max(0, res)
+	pass
 
 
 class ImportTeacher(ImportUser, Teacher):
