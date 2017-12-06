@@ -43,23 +43,38 @@ def setup_configuration(conffiles, **kwargs):
 	config = Configuration(conffiles)
 	config.update(kwargs)
 	config.close()
+	check_configuration(config)
+	return config
+
+
+def check_configuration(config):
 	if not config.get("sourceUID"):
 		raise InitialisationError("No sourceUID was specified.")
 	if not config["input"].get("type"):
 		raise InitialisationError("No input:type was specified.")
 	if "user_deletion" in config:
 		raise InitialisationError("The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'.")
-	try:
-		student_username_max_length = max(0, config["username"]["max_length"]["student"])
-	except KeyError:
-		student_username_max_length = max(0, config["username"]["max_length"].get("default", 20))
+	for role in ('default', 'staff',  'student', 'teacher', 'teacher_and_staff'):
+		try:
+			username_max_length = config["username"]["max_length"][role]
+		except KeyError:
+			continue
+		if username_max_length < 4:
+			raise InitialisationError(
+				"Configuration value of username:max_length:{} must be higher than 3.".format(role)
+			)
+	student_username_max_length = config["username"]["max_length"].get("student", 15)
 	exam_user_prefix_length = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
-	if config["username"].get("exam_users", True) and student_username_max_length > 20 - exam_user_prefix_length:
+	if student_username_max_length > 20 - exam_user_prefix_length:
 		raise InitialisationError(
-			"Student usernames must not be longer than {} characters when the exam mode is used "
-			"(username:exam_users=true).".format(20 - exam_user_prefix_length)
+			"Configuration value of username:max_length:student must be {} or less.".format(20 - exam_user_prefix_length)
 		)
-	return config
+	for role in ('default', 'staff', 'teacher', 'teacher_and_staff'):
+		username_max_length = config["username"]["max_length"].get(role, 20)
+		if username_max_length > 20:
+			raise InitialisationError(
+				"Configuration value of username:max_length:{} must be 20 or less.".format(role)
+			)
 
 
 class ConfigurationFile(object):

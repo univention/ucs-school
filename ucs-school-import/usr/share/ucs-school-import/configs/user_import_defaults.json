@@ -42,7 +42,6 @@
 		"max_length": {
 			"default": 20,
 			"student": 15
-		},
-		"exam_users": true
+		}
 	}
 }

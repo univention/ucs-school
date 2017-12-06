@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-14) unstable; urgency=low
+
+  * Bug #45577: username length hard limit is 20, for students 15
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Dec 2017 18:38:10 +0100
+
 ucs-school-import (15.0.3-13) unstable; urgency=low
 
   * Bug #45577: check configuration for exam_users and username length of

@@ -75,7 +75,7 @@ class ImportUser(User):
 	record_uid = RecordUID("RecordUID")
 
 	config = None
-	default_username_max_length = 20
+	default_username_max_length = 20  # may be lowered in __init__()
 	attribute_udm_names = None
 	no_overwrite_attributes = None
 	_unique_ids = defaultdict(set)
@@ -116,7 +116,7 @@ class ImportUser(User):
 			self.__class__.reader = self.factory.make_reader()
 			self.__class__.logger = get_logger()
 			try:
-				self.__class__.default_username_max_length = max(0, self.config['username']['max_length']['default'])
+				self.__class__.default_username_max_length = self._default_username_max_length
 			except KeyError:
 				pass
 			self.__class__.attribute_udm_names = dict((attr.udm_name, name) for name, attr in self._attributes.items() if attr.udm_name)
@@ -912,9 +912,16 @@ class ImportUser(User):
 			setattr(self, k, v)
 
 	@property
+	def _default_username_max_length(self):
+		try:
+			return self.config['username']['max_length']['default']
+		except KeyError:
+			return 20
+
+	@property
 	def username_max_length(self):
 		try:
-			res = max(0, self.config['username']['max_length'][self.role_sting])
+			res = self.config['username']['max_length'][self.role_sting]
 		except KeyError:
 			res = self.default_username_max_length
 		return max(0, res)
@@ -925,7 +932,11 @@ class ImportStaff(ImportUser, Staff):
 
 
 class ImportStudent(ImportUser, Student):
-	pass
+	default_username_max_length = 15  # may be lowered in __init__()
+
+	@property
+	def _default_username_max_length(self):
+		return 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
 
 
 class ImportTeacher(ImportUser, Teacher):
