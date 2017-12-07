@@ -63,8 +63,8 @@ def check_configuration(config):
 			raise InitialisationError(
 				"Configuration value of username:max_length:{} must be higher than 3.".format(role)
 			)
-	student_username_max_length = config["username"]["max_length"].get("student", 15)
 	exam_user_prefix_length = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+	student_username_max_length = config["username"]["max_length"].get("student", 20 - exam_user_prefix_length)
 	if student_username_max_length > 20 - exam_user_prefix_length:
 		raise InitialisationError(
 			"Configuration value of username:max_length:student must be {} or less.".format(20 - exam_user_prefix_length)

@@ -115,10 +115,7 @@ class ImportUser(User):
 			self.__class__.config = Configuration()
 			self.__class__.reader = self.factory.make_reader()
 			self.__class__.logger = get_logger()
-			try:
-				self.__class__.default_username_max_length = self._default_username_max_length
-			except KeyError:
-				pass
+			self.__class__.default_username_max_length = self._default_username_max_length
 			self.__class__.attribute_udm_names = dict((attr.udm_name, name) for name, attr in self._attributes.items() if attr.udm_name)
 			self.__class__.no_overwrite_attributes = self.ucr.get(
 				"ucsschool/import/generate/user/attributes/no-overwrite",
