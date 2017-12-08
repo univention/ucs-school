@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-16) unstable; urgency=low
+
+  * Bug #45679: updated UCR variable description
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 08 Dec 2017 23:12:11 +0100
+
 ucs-school-import (15.0.3-15) unstable; urgency=low
 
   * Bug #45577: remove unnecessary try-except, don't hard code default for
