@@ -920,7 +920,7 @@ class ImportUser(User):
 		try:
 			res = self.config['username']['max_length'][self.role_sting]
 		except KeyError:
-			res = self.default_username_max_length
+			res = self._default_username_max_length
 		return max(0, res)
 
 
