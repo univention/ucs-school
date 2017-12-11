@@ -22,7 +22,6 @@ class Test(CLI_Import_v2_Tester):
 		self.ou_B = None
 		self.ou_C = None
 		self.usernames = list()
-		self.exam_prefix_ori = self.ucr['ucsschool/ldap/default/userprefix/exam']
 
 	def test(self):
 		"""
