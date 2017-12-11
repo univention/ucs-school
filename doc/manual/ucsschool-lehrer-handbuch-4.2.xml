@@ -839,13 +839,11 @@ feedback@univention.de
 		<para>
 		  Die eingesammelten Dateien werden im Heimatverzeichnis der Lehrkraft abgelegt, die das
 		  Verteilungsprojekt erstellt hat. Dies erfolgt unabhängig davon, welche Lehrkraft das Einsammeln der
-		  Dateien auslöst! Die Dateien befinden sich im Verzeichnis <literal>Unterrichtsmaterial-Ergebnisse</literal>
-		  unterhalb des persönlichen Heimatverzeichnisses der Lehrkraft.
-		  Für jedes Verteilungsprojekt wird ein
-		  eigenes Verzeichnis angelegt, das den Namen des Verteilungsprojektes trägt. Unterhalb dieses
-		  Verzeichnisses wird für jeden Schüler ein Verzeichnis angelegt, das die eingesammelten Dateien des
-		  Schülers enthält, so dass eine nachträgliche Zuordnung leicht möglich ist. Werden die Ergebnisse mehrfach
-		  eingesammelt, wird für jeden Einsammelvorgang und Schüler jeweils ein eigenes Verzeichnis angelegt.
+		  Dateien auslöst! Die Dateien befinden sich im Verzeichnis <literal>Unterrichtsmaterial/<replaceable>Projektname-Ergebnisse</replaceable></literal>
+		  unterhalb des persönlichen Heimatverzeichnisses der Lehrkraft. Unterhalb dieses
+		  Verzeichnisses wird für jeden Schüler und Lehrer ein Verzeichnis angelegt, das die eingesammelten Dateien
+		  enthält, so dass eine nachträgliche Zuordnung leicht möglich ist. Werden die Ergebnisse mehrfach
+		  eingesammelt, wird für jeden Einsammelvorgang und Schüler und Lehrer jeweils ein eigenes Verzeichnis angelegt.
 		</para>
 	  </section>
 	  </section>
