@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-import
-fix: 
+fix: 0.0.1-17A~4.2.0.201711171607
 desc: |
  * Integrated UCR (Bug #45664).
  * Don't show download buttons for jobs where no download is possible (Bug #45659).

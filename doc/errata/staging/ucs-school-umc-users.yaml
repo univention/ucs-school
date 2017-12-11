@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-users
-fix: 
+fix: 13.0.0-6A~4.2.0.201711291510
 desc: |
  * The value for the checkbox to force a password change on the next login may now be defined via UCR (Bug #42004).
 bug: [42004]
