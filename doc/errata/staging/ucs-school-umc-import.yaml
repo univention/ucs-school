@@ -5,9 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-import
 fix: 0.0.1-17A~4.2.0.201711171607
 desc: |
- * Integrated UCR (Bug #45664).
- * Don't show download buttons for jobs where no download is possible (Bug #45659).
- * Don't rename the original filename (Bug #45662).
- * After starting an import it is shown in the grid (Bug #45660).
- * Show roles depending on permissions (Bug #45717).
+ * A new experimental UMC module has been implemented that uses the experimental HTTP-API for importing users in UCS@school (Bug #45664, #45659, #45662, #45660, #45717).
 bug: [45664, 45659, 45662, 45660, 45717]
