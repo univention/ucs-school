@@ -505,14 +505,17 @@ html5
 		path = ''
 		self.ucr.load()
 		roleshare = self.ucr.get('ucsschool/import/roleshare')
+		sender_dir_name = self.ucr.get('ucsschool/datadistribution/datadir/sender', 'Unterrichtsmaterial')
+		project_dir_suffix = self.ucr.get('ucsschool/datadistribution/datadir/sender/project/suffix', '-Ergebnisse')
+		recipient_dir_name = self.ucr.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
 		if purpose == 'distribute':
 			if roleshare == 'no' or roleshare is False:
-				path = '/home/{0}/Unterrichtsmaterial/{1}/'.format(user, self.name)
+				path = '/home/{0}/{1}/{2}/'.format(user, recipient_dir_name, self.name)
 			else:
-				path = '/home/{0}/schueler/{1}/Unterrichtsmaterial/{2}'.format(self.school, user, self.name)
+				path = '/home/{0}/schueler/{1}/{2}/{3}'.format(self.school, user, recipient_dir_name, self.name)
 		elif purpose == 'collect':
 			if roleshare == 'no' or roleshare is False:
-				path = '/home/{0}/Unterrichtsmaterial/{1}/{2}/'.format(self.sender, self.name, user)
+				path = '/home/{0}/{1}/{2}{3}/{4}/'.format(self.sender, sender_dir_suffix, self.name, project_dir_name, user)
 			else:
-				path = '/home/{0}/lehrer/{1}/Unterrichtsmaterial/{2}/{3}'.format(self.school, self.sender, self.name, user)
+				path = '/home/{0}/lehrer/{1}/{2}/{3}{4}/{5}'.format(self.school, self.sender, sender_dir_name, self.name, project_dir_suffix, user)
 		return path
