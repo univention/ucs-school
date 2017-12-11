@@ -1,0 +1,118 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: test diffent username lengths
+## tags: [apptest,ucsschool,skip_in_multiserver,ucsschool_import]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [45577]
+
+import copy
+import univention.testing.strings as uts
+import univention.config_registry
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from ucsschool.importer.configuration import check_configuration
+from ucsschool.importer.utils.shell import ImportStudent, ImportTeacher
+
+
+class Test(CLI_Import_v2_Tester):
+	def __init__(self):
+		super(Test, self).__init__()
+		self.ou_B = None
+		self.ou_C = None
+		self.usernames = list()
+		self.exam_prefix_ori = self.ucr['ucsschool/ldap/default/userprefix/exam']
+
+	def test(self):
+		"""
+		Bug #45577: allow import with usernames longer than 15 characters
+		"""
+		self.log.info('*** checking installed configuration')
+		assert ImportStudent.default_username_max_length == 15
+		assert ImportTeacher.default_username_max_length == 20
+		assert ImportStudent().default_username_max_length == 15
+		assert ImportTeacher().default_username_max_length == 20
+		assert ImportStudent().username_max_length == 15
+		assert ImportTeacher().username_max_length == 20
+
+		config = copy.deepcopy(ImportStudent().config)
+		config['dry_run'] = True
+		config['scheme'] = {'username': {'default': '<:umlauts><firstname>[0].<lastname><:lower>[ALWAYSCOUNTER]'}}
+		config['username'] = {'max_length': {'default': 20, 'student': 15}}
+		check_configuration(config)
+		self.log.info('*** OK: default configuration: %r', config)
+		cursor = 0
+
+		for exam_prefix_length in range(3, 10):
+			exam_prefix = '{}-'.format(uts.random_username(exam_prefix_length - 1))
+			self.log.info('*** exam_prefix_length=%r exam_prefix=%r', exam_prefix_length, exam_prefix)
+			assert exam_prefix_length == len(exam_prefix)
+			univention.config_registry.handler_set(['ucsschool/ldap/default/userprefix/exam={}'.format(exam_prefix)])
+			max_length_default_range = [None]
+			max_length_default_range.extend(range(5, 21))
+			for max_length_default in max_length_default_range:
+				max_length_student_range = [None]
+				max_length_student_range.extend(range(5, 16))
+				for max_length_student in max_length_student_range:
+					if max_length_default:
+						config['username']['max_length']['default'] = max_length_default
+					if max_length_student:
+						config['username']['max_length']['student'] = max_length_student
+					self.log.debug('***   config["username"]["max_length"]=%r', config['username']['max_length'])
+					check_configuration(config)
+					ImportStudent.config = config
+					ImportStudent.default_username_max_length = ImportStudent._default_username_max_length
+					ImportTeacher.config = config
+					ImportTeacher.default_username_max_length = ImportTeacher._default_username_max_length
+					for firstname_length in range(3, 21):
+						firstname = uts.random_username(firstname_length)
+						assert len(firstname) == firstname_length
+						# self.log.debug('***   firstname_length=%r firstname=%r', firstname_length, firstname)
+						for lastname_length in range(3, 21):
+							lastname = uts.random_username(lastname_length)
+							assert len(lastname) == lastname_length
+							student = ImportStudent(name='name', school='school', firstname=firstname, lastname=lastname)
+							student.name = ''
+							student.config = config
+							student.make_username()
+							# self.log.debug(
+							# 	'***   lastname_length=%r lastname=%r student.name=%r len(student.name)=%r',
+							# 	lastname_length, lastname, student.name, len(student.name)
+							# )
+							self.usernames.append(student.name)
+							if len(student.name) > 15:
+								self.fail('Username {!r} of student has length {}.'.format(student.name, len(student.name)))
+							firstname = uts.random_username(firstname_length)
+							assert len(firstname) == firstname_length
+							lastname = uts.random_username(lastname_length)
+							assert len(lastname) == lastname_length
+							# self.log.debug('***   firstname_length=%r firstname=%r', firstname_length, firstname)
+							teacher = ImportTeacher(name='name', school='school', firstname=firstname, lastname=lastname)
+							teacher.name = ''
+							teacher.config = config
+							teacher.make_username()
+							# self.log.debug(
+							# 	'***   lastname_length=%r lastname=%r teacher.name=%r len(teacher.name)=%r',
+							# 	lastname_length, lastname, teacher.name, len(teacher.name)
+							# )
+							self.usernames.append(teacher.name)
+							if len(teacher.name) > 20:
+								self.fail('Username {!r} of teacher has length {}.'.format(teacher.name, len(teacher.name)))
+			self.log.info('*** Tested %d usernames for exam_prefix_length %d...', len(self.usernames) - cursor, exam_prefix_length)
+			cursor = len(self.usernames)
+		self.log.info('*** No errors.')
+		self.log.info('*** Tested a total of %d usernames.', len(self.usernames))
+		self.log.info('*** There were %d duplicates.', len(self.usernames) - len(set(self.usernames)))
+
+
+def main():
+	tester = Test()
+	try:
+		tester.run()
+	finally:
+		tester.cleanup()
+
+
+if __name__ == '__main__':
+	main()
