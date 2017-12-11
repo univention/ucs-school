@@ -2,6 +2,7 @@ ucs-school-import (15.0.3-17) unstable; urgency=low
 
   * Bug #45626: remove "<:umlauts>" from default configuration to lower the
     chance of recordUID collisions
+  * Bug #45577: honor default username length
 
  -- Daniel Troeder <troeder@univention.de>  Mon, 11 Dec 2017 11:21:14 +0100
 

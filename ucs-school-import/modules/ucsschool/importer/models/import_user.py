@@ -933,7 +933,8 @@ class ImportStudent(ImportUser, Student):
 
 	@property
 	def _default_username_max_length(self):
-		return 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+		res = super(ImportStudent, self)._default_username_max_length
+		return min(res, 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")))
 
 
 class ImportTeacher(ImportUser, Teacher):
