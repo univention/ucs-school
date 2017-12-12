@@ -173,7 +173,7 @@ class Person(object):
 		result = {
 			value_map.get('firstname', '__EMPTY__'): self.firstname,
 			value_map.get('lastname', '__EMPTY__'): self.lastname,
-			value_map.get('username', '__EMPTY__'): self.username,
+			value_map.get('name', '__EMPTY__'): self.username,
 			value_map.get('schools', '__EMPTY__'): ','.join(self.schools),
 			value_map.get('role', '__EMPTY__'): self.role,
 			value_map.get('record_uid', '__EMPTY__'): self.record_uid,
