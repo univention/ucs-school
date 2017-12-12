@@ -63,6 +63,22 @@ class PostHookFailed(Exception):
 	pass
 
 
+def create_mail_domain(ucr, udm):
+	if not ucr.get('mail/hosteddomains'):
+		try:
+			maildomain = ucr["mail/hosteddomains"].split()[0]
+		except (AttributeError, IndexError):
+			maildomain = ucr["domainname"]
+
+		print("\n\n*** Creating mail domain %r...\n", maildomain)
+
+		udm.create_object(
+			'mail/domain',
+			position='cn=domain,cn=mail,{}'.format(ucr['ldap/base']),
+			name=maildomain
+		)
+
+
 def remove_ou(ou_name):
 	schoolenv = UCSTestSchool()
 	# the reload is necessary, otherwise the UCR variables are not up-to-date
@@ -532,6 +548,7 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
 def import_ou_basics(use_cli_api=True, use_python_api=False):
 	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
 		with univention.testing.udm.UCSTestUDM() as udm:
+			create_mail_domain(ucr, udm)
 			for dc_administrative in [None, 'generate']:
 				for dc in [None, 'generate']:
 					for singlemaster in [True, False]:
@@ -578,6 +595,7 @@ def import_ou_basics(use_cli_api=True, use_python_api=False):
 def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
 		with univention.testing.udm.UCSTestUDM() as udm:
+			create_mail_domain(ucr, udm)
 			dc_name = uts.random_name()
 
 			dhcp_service_name = uts.random_name()
@@ -646,7 +664,8 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
 	"""
 	Creates 3 OUs in a row
 	"""
-	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+	with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:
+		create_mail_domain(ucr, udm)
 		for singlemaster in [True, False]:
 			for district_enable in [False, True]:
 				cleanup_ou_list = []

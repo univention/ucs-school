@@ -55,6 +55,11 @@ class CLI_Legacy_Import_Tester(object):
 		self.log = logging.getLogger('main')
 		self.ucr.load()
 		self.ou_A = Bunch()
+		self.lo = None
+		try:
+			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
+		except (AttributeError, IndexError):
+			self.maildomain = self.ucr["domainname"]
 
 	def create_user_data(self, ou, is_teacher, is_staff, user_data=None):
 		data = {
@@ -141,9 +146,16 @@ class CLI_Legacy_Import_Tester(object):
 
 	def run(self):
 		try:
-			with utu.UCSTestSchool() as schoolenv:
+			with utu.UCSTestSchool() as schoolenv, univention.testing.udm.UCSTestUDM() as udm:
 				self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
 				self.lo = schoolenv.open_ldap_connection(admin=True)
+				if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
+					self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
+					udm.create_object(
+						'mail/domain',
+						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
+						name=self.maildomain
+					)
 
 				self.test_import_users_with_empty_class()
 				self.test_no_name_normalization()
