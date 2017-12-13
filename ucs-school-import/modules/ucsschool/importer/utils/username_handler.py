@@ -37,7 +37,7 @@ import string
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject, objectExists
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
-from ucsschool.importer.exceptions import BadValueStored, EmptyFormatResultError, FormatError, NoValueStored, NameKeyExists
+from ucsschool.importer.exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
 from ucsschool.importer.utils.logging import get_logger
 
 
@@ -203,10 +203,8 @@ class UsernameHandler(object):
 	Traceback (most recent call last):
 	...
 	FormatError:
-	>>> UsernameHandler(20).format_username('.')   # doctest: +IGNORE_EXCEPTION_DETAIL
-	Traceback (most recent call last):
-	...
-	EmptyFormatResultError:
+	>>> UsernameHandler(20).format_username('.')
+	''
 	>>> UsernameHandler(20).format_username('.Max.Mustermann.')
 	'Max.Mustermann'
 	>>> UsernameHandler(4).format_username('Max.Mustermann')
@@ -248,14 +246,10 @@ class UsernameHandler(object):
 	'bbbb1c'
 	>>> UsernameHandler(8).format_username('bbbb[ALWAYSCOUNTER]ccccdddd')
 	'bbbb2c'
-	>>> INVALID = ['..[ALWAYSCOUNTER]..', '[ALWAYSCOUNTER]', ]
-	>>> for invalid in INVALID:
-	...  try:
-	...   UsernameHandler(20).format_username(invalid)
-	...  except ucsschool.importer.exceptions.FormatError:
-	...   pass
-	...  else:
-	...   raise AssertionError(invalid)
+	>>> UsernameHandler(20).format_username('..[ALWAYSCOUNTER]..')
+	''
+	>>> UsernameHandler(20).format_username('[ALWAYSCOUNTER]')
+	''
 	>>> UsernameHandler(20).format_username('[FOObar]')
 	'FOObar'
 	"""

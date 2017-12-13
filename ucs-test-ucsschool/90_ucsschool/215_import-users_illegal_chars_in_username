@@ -84,7 +84,11 @@ class Test(UniqueObjectTester):
 			self.check_new_and_removed_users(len(persons), 0)
 			# check usernames
 			for person, lastname in names.items():
-				person.update(username=remove_bad_chars("{}1".format(lastname[:12])))
+				if person.role == 'student':
+					username_length_length = 15
+				else:
+					username_length_length = 20
+				person.update(username=remove_bad_chars("{}1".format(lastname[:username_length_length - 3])))
 				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
 				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))  # wait for creation before deletion
 
@@ -114,7 +118,11 @@ class Test(UniqueObjectTester):
 			self.run_import(['-c', fn_config, '-i', fn_csv])
 			utils.wait_for_replication()
 			for person, lastname in names.items():
-				person.update(username=remove_bad_chars("2{}".format(lastname[:12])))
+				if person.role == 'student':
+					username_length_length = 15
+				else:
+					username_length_length = 20
+				person.update(username=remove_bad_chars("2{}".format(lastname[:username_length_length - 3])))
 				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
 
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (1/5)')
@@ -123,12 +131,12 @@ class Test(UniqueObjectTester):
 		usernames = {
 			".abc.def.": "abc.def",
 			"...abc...def...": "abc...def",
-			"": None,
-			"..[ALWAYSCOUNTER]..": None,
-			"[ALWAYSCOUNTER]": None,
+			"": "",
+			"..[ALWAYSCOUNTER]..": "",
+			"[ALWAYSCOUNTER]": "",
 			"[FOObar]": "FOObar",
 			"{}.[COUNTER2]".format(name12): name12,
-			".": None,
+			".": "",
 			'M'*14 + '.' + 'A': 'M' * 14,
 		}
 		for input_name, expected in usernames.items():

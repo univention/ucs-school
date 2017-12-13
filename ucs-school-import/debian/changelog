@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-19) unstable; urgency=low
+
+  * Bug #45577: adapt doctest to changes
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Dec 2017 14:28:39 +0100
+
 ucs-school-import (15.0.3-18) unstable; urgency=low
 
   * Bug #45577: fix typo
