@@ -14,6 +14,7 @@ import sys
 import subprocess
 import tempfile
 import random
+import time
 
 import univention.testing.ucr
 import univention.testing.strings as uts
@@ -154,8 +155,16 @@ class CLI_Legacy_Import_Tester(object):
 					udm.create_object(
 						'mail/domain',
 						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
-						name=self.maildomain
+						name=self.maildomain,
+						wait_for_replication=True,
+						check_for_drs_replication=True
 					)
+				timeout = 30
+				while not self.ucr.get('mail/hosteddomains', ''):
+					timeout -= 1
+					if timeout < 1:
+						utils.fail('UCRV mail/hosteddomains empty 300s after creating mail/domain.')
+					time.sleep(10)
 
 				self.test_import_users_with_empty_class()
 				self.test_no_name_normalization()

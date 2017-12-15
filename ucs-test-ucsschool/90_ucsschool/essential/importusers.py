@@ -323,7 +323,7 @@ class Person(object):
 		return server + '\\%USERNAME%\\windows-profiles\\default'
 
 	def verify(self):
-		print 'verify person: %s' % self.username
+		print('verify %s: %s' % (self.role, self.username))
 		utils.wait_for_replication()
 		# reload UCR
 		configRegistry.load()

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-50) unstable; urgency=low
+
+  * Bug #45250: wait longer for UCR to be updated
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 15 Dec 2017 13:30:23 +0100
+
 ucs-test-ucsschool (4.0.4-49) unstable; urgency=low
 
   * Bug #45577: adapt tests to changes
