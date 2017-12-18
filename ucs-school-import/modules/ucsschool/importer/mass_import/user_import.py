@@ -189,11 +189,6 @@ class UserImport(object):
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
 			imported_user.old_user = user
-			# copy data from LDAP user to new user for attributes in ucsschool/import/generate/user/attributes/no-overwrite
-			no_overwrite_attributes = set(set(imported_user.no_overwrite_attributes)).intersection(imported_user.attribute_udm_names.keys())
-			for attr in no_overwrite_attributes:
-				lib_attr = imported_user.attribute_udm_names[attr]
-				setattr(imported_user, lib_attr, getattr(user, lib_attr))
 			imported_user.prepare_all(new_user=False)
 			if user.school != imported_user.school:
 				user = self.school_move(imported_user, user)
