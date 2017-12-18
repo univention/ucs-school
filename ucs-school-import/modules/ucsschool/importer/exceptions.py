@@ -90,6 +90,14 @@ class InvalidEmail(UcsSchoolImportError):
 	pass
 
 
+class InvalidSchoolClasses(UcsSchoolImportError):
+	pass
+
+
+class InvalidSchools(UcsSchoolImportError):
+	pass
+
+
 class LookupError(UcsSchoolImportError):
 	pass
 

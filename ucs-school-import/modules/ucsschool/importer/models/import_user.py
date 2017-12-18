@@ -46,7 +46,8 @@ from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import (
-	BadPassword, EmptyFormatResultError, InvalidBirthday, InvalidClassName, InvalidEmail,
+	BadPassword, EmptyFormatResultError,
+	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
 	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
 	UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
 )
@@ -118,8 +119,8 @@ class ImportUser(User):
 			self.__class__.default_username_max_length = self._default_username_max_length
 			self.__class__.attribute_udm_names = dict((attr.udm_name, name) for name, attr in self._attributes.items() if attr.udm_name)
 			self.__class__.no_overwrite_attributes = self.ucr.get(
-				"ucsschool/import/generate/user/attributes/no-overwrite",
-				"homeShare homeSharePath mailHomeServer mailPrimaryAddress password profilepath sambahome uidNumber unixhome username"
+				"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
+				"mailPrimaryAddress uid"
 			).split()
 		self._lo = None
 		self._userexpiry = None
@@ -293,9 +294,6 @@ class ImportUser(User):
 
 		for property_, value in (self.udm_properties or {}).items():
 			try:
-				if property_ in self.no_overwrite_attributes and udm_obj[property_]:
-					# don't overwrite attributes in ucsschool/import/generate/user/attributes/no-overwrite
-					continue
 				udm_obj[property_] = value
 			except (KeyError, noProperty) as exc:
 				raise UnknownProperty(
@@ -398,7 +396,7 @@ class ImportUser(User):
 		"""
 		Create self.udm_properties from schemes configured in config["scheme"].
 		Existing entries will be overwritten unless listed in UCRV
-		ucsschool/import/generate/user/attributes/no-overwrite.
+		ucsschool/import/generate/user/attributes/no-overwrite-by-schema.
 
 		* Attributes (email, record_uid, [user]name etc.) are ignored, as they are
 		processed separately in make_*.
@@ -407,6 +405,7 @@ class ImportUser(User):
 		"""
 		ignore_keys = self.to_dict().keys()
 		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "username"])  # these are used in make_*
+		ignore_keys.extend(self.no_overwrite_attributes)
 		for k, v in self.config["scheme"].items():
 			if k in ignore_keys:
 				continue
@@ -425,8 +424,13 @@ class ImportUser(User):
 		"""
 		Set User.birthday attribute.
 		"""
-		if "birthday" in self.config["scheme"]:
+		if self.birthday:
+			pass
+		elif self._schema_write_check("birthday", "birthday", "univentionBirthday"):
 			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])
+		elif self.old_user:
+			self.birthday = self.old_user.birthday
+		return self.birthday
 
 	def make_classes(self):
 		"""
@@ -464,13 +468,16 @@ class ImportUser(User):
 			self.school_classes = dict()
 		else:
 			raise RuntimeError("Unknown data in attribute 'school_classes': '{}'".format(self.school_classes))
+		if not self.school_classes and self.old_user and self.old_user.school_classes:
+			self.school_classes = self.old_user.school_classes
+		return self.school_classes
 
 	def make_disabled(self):
 		"""
 		Set User.disabled attribute.
 		"""
 		if self.disabled is not None:
-			return
+			return self.disabled
 
 		try:
 			activate = self.config["activate_new_users"][self.role_sting]
@@ -484,6 +491,7 @@ class ImportUser(User):
 					self.entry_count,
 					import_user=self)
 		self.disabled = "none" if activate else "all"
+		return self.disabled
 
 	def make_firstname(self):
 		"""
@@ -491,10 +499,11 @@ class ImportUser(User):
 		"""
 		if self.firstname:
 			self.firstname = self.normalize(self.firstname)
-		elif "firstname" in self.config["scheme"]:
+		elif self._schema_write_check("firstname", "firstname", "givenName"):
 			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
-		else:
-			self.firstname = ""
+		elif self.old_user:
+			self.firstname = self.old_user.firstname
+		return self.firstname or ""
 
 	def make_lastname(self):
 		"""
@@ -502,10 +511,11 @@ class ImportUser(User):
 		"""
 		if self.lastname:
 			self.lastname = self.normalize(self.lastname)
-		elif "lastname" in self.config["scheme"]:
+		elif self._schema_write_check("lastname", "lastname", "sn"):
 			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
-		else:
-			self.lastname = ""
+		elif self.old_user:
+			self.lastname = self.old_user.lastname
+		return self.lastname or ""
 
 	def make_email(self):
 		"""
@@ -515,36 +525,33 @@ class ImportUser(User):
 		email address, its make_* function should have run before this!
 		"""
 		if self.email:
-			return
-		try:
-			self.email = self.udm_properties.pop("mailPrimaryAddress")
-			if self.email:
-				return
-		except KeyError:
 			pass
-
-		maildomain = self.config.get("maildomain")
-		if not maildomain:
+		elif self.udm_properties.get("mailPrimaryAddress"):
+			self.email = self.udm_properties.pop("mailPrimaryAddress")
+		elif self._schema_write_check("email", "email", "mailPrimaryAddress"):
+			maildomain = self.config.get("maildomain")
+			if not maildomain:
+				try:
+					maildomain = self.ucr["mail/hosteddomains"].split()[0]
+				except (AttributeError, IndexError):
+					if "email" in self.config["mandatory_attributes"] or "mailPrimaryAttribute" in self.config["mandatory_attributes"]:
+						raise MissingMailDomain(
+							"Could not retrieve mail domain from configuration nor from UCRV mail/hosteddomains.",
+							entry_count=self.entry_count,
+							import_user=self)
+					else:
+						return self.email
+			self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
+			if not self.unique_email_handler:
+				self.__class__.unique_email_handler = self.factory.make_unique_email_handler(dry_run=self.config['dry_run'])
 			try:
-				maildomain = self.ucr["mail/hosteddomains"].split()[0]
-			except (AttributeError, IndexError):
-				if "email" in self.config["mandatory_attributes"] or "mailPrimaryAttribute" in self.config["mandatory_attributes"]:
-					raise MissingMailDomain(
-						"Could not retrieve mail domain from configuration nor from UCRV mail/hosteddomains.",
-						entry_count=self.entry_count,
-						import_user=self)
-				else:
-					return
-		self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
-		if not self.unique_email_handler:
-			self.__class__.unique_email_handler = self.factory.make_unique_email_handler(dry_run=self.config['dry_run'])
-		try:
-			self.email = self.unique_email_handler.format_name(self.email)
-		except EmptyFormatResultError:
-			if 'email' in self.config['mandatory_attributes'] or 'mailPrimaryAttribute' in self.config['mandatory_attributes']:
-				raise
-			else:
-				self.email = ''
+				self.email = self.unique_email_handler.format_name(self.email)
+			except EmptyFormatResultError:
+				if 'email' in self.config['mandatory_attributes'] or 'mailPrimaryAttribute' in self.config['mandatory_attributes']:
+					raise
+		elif self.old_user:
+			self.email = self.old_user.email
+		return self.email or ""
 
 	def make_password(self):
 		"""
@@ -552,13 +559,19 @@ class ImportUser(User):
 		"""
 		if not self.password:
 			self.password = create_passwd(self.config["password_length"])
+		return self.password
 
 	def make_recordUID(self):
 		"""
 		Create ucsschoolRecordUID (recordUID) (if not already set).
 		"""
-		if not self.record_uid:
+		if self.record_uid:
+			pass
+		elif self._schema_write_check("recordUID", "record_uid", "ucsschoolRecordUID"):
 			self.record_uid = self.format_from_scheme("recordUID", self.config["scheme"]["recordUID"])
+		elif self.old_user:
+			self.record_uid = self.old_user.record_uid
+		return self.record_uid or ""
 
 	def make_sourceUID(self):
 		"""
@@ -570,6 +583,7 @@ class ImportUser(User):
 					self.source_uid, self.config["sourceUID"]))
 		else:
 			self.source_uid = self.config["sourceUID"]
+		return self.source_uid or ""
 
 	def make_school(self):
 		"""
@@ -594,6 +608,7 @@ class ImportUser(User):
 				"the input data.",
 				entry_count=self.entry_count,
 				import_user=self)
+		return self.school
 
 	def make_schools(self):
 		"""
@@ -623,6 +638,7 @@ class ImportUser(User):
 				self.schools = [self.school]
 			else:
 				self.school = sorted(self.schools)[0]
+		return self.schools
 
 	def make_username(self):
 		"""
@@ -631,27 +647,23 @@ class ImportUser(User):
 		per name.
 		"""
 		if self.name:
-			return
-		try:
+			return self.name
+		elif self.udm_properties.get("username"):
 			self.name = self.udm_properties.pop("username")
-			if self.name:
-				return
-		except KeyError:
-			pass
-		if self.old_user:
+		elif self._schema_write_check("username", "name", "uid"):
+			self.name = self.format_from_scheme("username", self.username_scheme)
+			if not self.name:
+				raise EmptyFormatResultError("No username was created from scheme '{}'.".format(
+					self.username_scheme), self.username_scheme, self.to_dict())
+			if not self.username_handler:
+				self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length, self.config['dry_run'])
+			self.name = self.username_handler.format_name(self.name)
+			if not self.name:
+				raise EmptyFormatResultError("Username handler transformed {!r} to empty username.".format(
+					self.name), self.username_scheme, self.to_dict())
+		elif self.old_user:
 			self.name = self.old_user.name
-			return
-
-		self.name = self.format_from_scheme("username", self.username_scheme)
-		if not self.name:
-			raise EmptyFormatResultError("No username was created from scheme '{}'.".format(
-				self.username_scheme), self.username_scheme, self.to_dict())
-		if not self.username_handler:
-			self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length, self.config['dry_run'])
-		self.name = self.username_handler.format_name(self.name)
-		if not self.name:
-			raise EmptyFormatResultError("Username handler transformed {!r} to empty username.".format(
-				self.name), self.username_scheme, self.to_dict())
+		return self.name or ""
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
 		self._lo = lo
@@ -769,6 +781,13 @@ class ImportUser(User):
 				datetime.datetime.strptime(self.birthday, "%Y-%m-%d")
 			except ValueError as exc:
 				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry_count=self.entry_count, import_user=self)
+
+		if not isinstance(self.school_classes, dict):
+			raise InvalidSchoolClasses("School_classes must be a dict.", entry_count=self.entry_count, import_user=self)
+
+		if not isinstance(self.schools, list):
+			raise InvalidSchools("Schools must be a list.", entry_count=self.entry_count, import_user=self)
+
 
 	def set_purge_timestamp(self, ts):
 		self._purge_ts = ts
@@ -889,6 +908,12 @@ class ImportUser(User):
 				"UDM property 'e-mail' is used for storing contact information. The users mailbox address is stored in "
 				"the 'email' attribute of the {} object (not in udm_properties).".format(self.__class__.__name__))
 
+	def _schema_write_check(self, scheme_attr, ucsschool_attr, ldap_attr):
+		return (
+				scheme_attr in self.config["scheme"] and
+				(not getattr(self.old_user, ucsschool_attr, None) or ldap_attr not in self.no_overwrite_attributes)
+		)
+
 	def to_dict(self):
 		res = super(ImportUser, self).to_dict()
 		for attr in self._additional_props:
@@ -904,7 +929,7 @@ class ImportUser(User):
 		:param other: ImportUser: data source
 		"""
 		for k, v in other.to_dict().items():
-			if (k == "name" or k in self._additional_props) and not v:
+			if k in self._additional_props and not v:
 				continue
 			setattr(self, k, v)
 

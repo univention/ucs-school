@@ -88,9 +88,9 @@ Description[en]=Create UCR policy for DHCP searchbase during ou creation? (defau
 Type=str
 Categories=ucsschool-base
 
-[ucsschool/import/generate/user/attributes/no-overwrite]
-Description[de]=Freizeichengetrennte Liste von LDAP-Attributen, deren Werte der Benutzerimport nicht überschreiben soll, wenn sie im LDAP bereits gesetzt sind. Standardwert, wenn UCR-Variable nicht gesetzt ist: "homeShare homeSharePath mailHomeServer mailPrimaryAddress password profilepath sambahome uidNumber unixhome username"
-Description[en]=Whitespace separated list of LDAP attributes that the user import should not overwrite if their values are non-empty in LDAP. Default value if UCR variable is unset: "homeShare homeSharePath mailHomeServer mailPrimaryAddress password profilepath sambahome uidNumber unixhome username"
+[ucsschool/import/generate/user/attributes/no-overwrite-by-schema]
+Description[de]=Freizeichengetrennte Liste von LDAP-Attributen, deren Werte der Benutzerimport nicht überschreiben soll, wenn sie im LDAP bereits gesetzt sind, jedoch in den Input-Daten (CSV) fehlen und ein Schema für sie existiert. Standardwert, wenn UCR-Variable nicht gesetzt ist: "mailPrimaryAddress username"
+Description[en]=Whitespace separated list of LDAP attributes that the user import should not overwrite if their values are non-empty in LDAP, empty in the input data (CSV) and a schema for them exists. Default value if UCR variable is unset: "mailPrimaryAddress username"
 Type=str
 Categories=ucsschool-base
 
