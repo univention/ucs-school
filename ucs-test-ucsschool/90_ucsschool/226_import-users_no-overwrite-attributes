@@ -37,7 +37,7 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
 		self.log.info('*** 1/5 Importing a user from each role with default UCR config...')
-		univention.config_registry.handler_unset(['ucsschool/import/generate/user/attributes/no-overwrite'])
+		univention.config_registry.handler_unset(['ucsschool/import/generate/user/attributes/no-overwrite-by-schema'])
 
 		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
@@ -65,8 +65,13 @@ class Test(CLI_Import_v2_Tester):
 			res = self.lo.search(filter=filter_s)
 			if len(res) != 1:
 				self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
-			dn = res[0][0]
-			email = res[0][1]['mailPrimaryAddress'][0]
+			try:
+				dn = res[0][0]
+				attrs = res[0][1]
+				email = attrs['mailPrimaryAddress'][0]
+			except KeyError as exc:
+				self.log.exception('Error searching for user: %s res=%r', exc, res)
+				raise
 			local, domain = email.rsplit('@')
 			if not local.endswith('1'):
 				self.fail('Email address should end in "1" ([ALWAYSCOUNTER] in scheme:email), but is {!r}.'.format(email))
@@ -85,10 +90,10 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 		self.log.info('*** OK 2/5: All %r users username and email were NOT modified.', len(person_list))
 
-		self.log.info('*** 3/5 removing "mailPrimaryAddress" from UCRV and importing same CVS...')
+		self.log.info('*** 3/5 removing "mailPrimaryAddress" from UCRV and importing same CSV...')
 
 		# remove "mailPrimaryAddress" from UCRV
-		univention.config_registry.handler_set(['ucsschool/import/generate/user/attributes/no-overwrite="homeShare homeSharePath mailHomeServer password profilepath sambahome uidNumber unixhome username"'])
+		univention.config_registry.handler_set(['ucsschool/import/generate/user/attributes/no-overwrite-by-schema=uid'])
 		self.save_ldap_status()
 		self.run_import(['-c', fn_config])
 		self.check_new_and_removed_users(0, 0)
@@ -98,7 +103,7 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 		self.log.info('*** OK 3/5: All %r users email WERE modified.', len(person_list))
 
-		self.log.info('*** 4/5 removing "mailPrimaryAddress" from UCRV and importing same CVS...')
+		self.log.info('*** 4/5 still no "mailPrimaryAddress" in UCRV and importing same CSV again...')
 
 		self.save_ldap_status()
 		self.run_import(['-c', fn_config])
@@ -109,10 +114,10 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 		self.log.info('*** OK 4/5: All %r users email were modified again.', len(person_list))
 
-		self.log.info('*** 5/5 adding "mailPrimaryAddress" from UCRV and importing same CVS...')
+		self.log.info('*** 5/5 adding "mailPrimaryAddress" to UCRV and importing same CSV...')
 
 		# add "mailPrimaryAddress" from UCRV
-		univention.config_registry.handler_set(['ucsschool/import/generate/user/attributes/no-overwrite="homeShare homeSharePath mailHomeServer mailPrimaryAddress password profilepath sambahome uidNumber unixhome username"'])
+		univention.config_registry.handler_set(['ucsschool/import/generate/user/attributes/no-overwrite-by-schema=mailPrimaryAddress uid'])
 		self.save_ldap_status()
 		self.run_import(['-c', fn_config])
 		self.check_new_and_removed_users(0, 0)
