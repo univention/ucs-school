@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-20) unstable; urgency=low
+
+  * Bug #45679: prevent overwriting of attribute values by schema with new
+    UCRV ucsschool/import/generate/user/attributes/no-overwrite-by-schema
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 18 Dec 2017 12:34:08 +0100
+
 ucs-school-import (15.0.3-19) unstable; urgency=low
 
   * Bug #45577: adapt doctest to changes

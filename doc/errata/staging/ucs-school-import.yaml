@@ -3,7 +3,7 @@ release: "4.2"
 version: [2]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-19A~4.2.0.201712131432
+fix:
 desc: |
  * An experimental HTTP API for starting import jobs can now be installed (<u:bug>45844</u:bug> <u:bug>45024</u:bug>).
  * The configured user role is taken into account when searching for users (<u:bug>45044</u:bug>).
@@ -13,6 +13,6 @@ desc: |
  * Add a method in the HTTP-API which returns the permitted roles for school where a user can start an import (<u:bug>45717</u:bug>).
  * Various security concerns of the new HTTP-API have been eliminated (<u:bug>45713</u:bug>).
  * The maximum length of a username for teachers and staff is now 20. The student's username may not be longer than 15 characters to support the use of the exam mode and ensure a working windows login (<u:bug>45577</u:bug>).
- * The new UCR variable <envar>ucsschool/import/generate/user/attributes/no-overwrite</envar> is a whitespace separated list of LDAP attributes that the user import will not overwrite when their values are non-empty. This fixes a <u:bug>which made generated email adresses change on every import (<u:bug>45679</u:bug>).
+ * The new UCR variable <envar>ucsschool/import/generate/user/attributes/no-overwrite-by-schema</envar> is a whitespace separated list of LDAP attributes that the user import will not overwrite with values generated from a schema, when a value already exists in LDAP. This fixes a bug which made generated email adresses change on every import (<u:bug>45679</u:bug>).
  * Non-ASCII characters in <property>sourceUID</property> and <property>recordUID</property> are now handled correctly (<u:bug>45626</u:bug>).
 bug: [45844, 45024, 45044, 45342, 45436, 34727, 45717, 45713, 45577, 45679, 45626]

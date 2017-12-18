@@ -99,8 +99,7 @@ feedback@univention.de
 
 					<listitem><simpara>The maximum length of a username for teachers and staff is now 20. The student's username may not be longer than 15 characters to support the use of the exam mode and ensure a working windows login (<u:bug>45577</u:bug>).</simpara></listitem>
 
-					<listitem><simpara>The new UCR variable <envar>ucsschool/import/generate/user/attributes/no-overwrite</envar> is a whitespace separated list of LDAP attributes that the user import will not overwrite when their values are non-empty. This fixes a bug which made generated email adresses change on every import (<u:bug>45679</u:bug>).</simpara></listitem>
-
+					<listitem><simpara>The new UCR variable <envar>ucsschool/import/generate/user/attributes/no-overwrite-by-schema</envar> is a whitespace separated list of LDAP attributes that the user import will not overwrite with values generated from a schema, when a value already exists in LDAP. This fixes a bug which made generated email adresses change on every import (<u:bug>45679</u:bug>).</simpara></listitem>
 					<listitem><simpara>Non-ASCII characters in <property>sourceUID</property> and <property>recordUID</property> are now handled correctly (<u:bug>45626</u:bug>).</simpara></listitem>
 
 				</itemizedlist>
