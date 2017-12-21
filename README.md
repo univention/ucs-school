@@ -1,8 +1,13 @@
 # UCS@school
 
 Welcome to the git mirror of UCS@school.
-[UCS@school](https://www.univention.com/products/ucsschool/) is the innovative solution for identity and IT infrastructure management and the operation of
-applications in schools.
+[UCS@school](https://www.univention.com/products/ucsschool/) is a
+comprehensive solution to provide access to infrastructure and
+applications in schools as well as a complete toolset to operate them.
+It can be used in an individual school but it is best suited for school
+districts or school authorities centrally managing infrastructure for
+tens or hundreds of schools. It is used by a number of larger school
+authorities in Germany.
 
 ## Download
 
