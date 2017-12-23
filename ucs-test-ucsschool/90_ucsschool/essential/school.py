@@ -66,9 +66,6 @@ def create_dc_slave(udm, school=None):
 			ip=ip,
 			name=name,
 			options=[
-				"samba=True",
-				"kerberos=True",
-				"posix=True",
 				"nagios=False",
 			]
 		)

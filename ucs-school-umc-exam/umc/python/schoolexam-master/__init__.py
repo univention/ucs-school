@@ -213,32 +213,30 @@ class Instance(SchoolBaseModule):
 		# because it currently cannot be convinced to preserve the password. So we do it manually:
 		try:
 			# Allocate new uidNumber
-			if 'posix' in user_orig.options:
-				uidNum = univention.admin.allocators.request(ldap_admin_write, ldap_position, 'uidNumber')
-				alloc.append(('uidNumber', uidNum))
+			uidNum = univention.admin.allocators.request(ldap_admin_write, ldap_position, 'uidNumber')
+			alloc.append(('uidNumber', uidNum))
 
 			# Allocate new sambaSID
-			if 'samba' in user_orig.options:
-				# code copied from users.user.object.__generate_user_sid:
-				userSid = None
-				if user_orig.s4connector_present:
-					# In this case Samba 4 must create the SID, the s4 connector will sync the
-					# new sambaSID back from Samba 4.
-					userSid = 'S-1-4-%s' % uidNum
-				else:
+			# code copied from users.user.object.__generate_user_sid:
+			userSid = None
+			if user_orig.s4connector_present:
+				# In this case Samba 4 must create the SID, the s4 connector will sync the
+				# new sambaSID back from Samba 4.
+				userSid = 'S-1-4-%s' % uidNum
+			else:
+				try:
+					userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, uidNum)
+				except:
+					pass
+			if not userSid or userSid == 'None':
+				num = uidNum
+				while not userSid or userSid == 'None':
+					num = str(int(num) + 1)
 					try:
-						userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, uidNum)
-					except:
-						pass
-				if not userSid or userSid == 'None':
-					num = uidNum
-					while not userSid or userSid == 'None':
+						userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, num)
+					except univention.admin.uexceptions.noLock:
 						num = str(int(num) + 1)
-						try:
-							userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, num)
-						except univention.admin.uexceptions.noLock:
-							num = str(int(num) + 1)
-					alloc.append(('sid', userSid))
+				alloc.append(('sid', userSid))
 
 			# Determine description attribute for exam_user
 			exam_user_description = request.options.get('description')
@@ -321,10 +319,8 @@ class Instance(SchoolBaseModule):
 
 		# finally confirm allocated IDs
 		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
-		if 'samba' in user_orig.options:
-			univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'sid', userSid)
-		if 'posix' in user_orig.options:
-			univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uidNumber', uidNum)
+		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'sid', userSid)
+		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uidNumber', uidNum)
 
 		self.finished(request.id, dict(
 			success=True,
@@ -355,12 +351,11 @@ class Instance(SchoolBaseModule):
 				raise
 
 			udm_ori_student = ori_student.get_udm_object(ldap_admin_write)
-			if 'posix' in udm_ori_student.options:  # why only if posix?
-				groups[udm_ori_student['primaryGroup']].setdefault('dns', set()).add(exam_student.dn)
-				groups[udm_ori_student['primaryGroup']].setdefault('uids', set()).add(exam_student['username'])
-				for grp in udm_ori_student.info.get('groups', []):
-					groups[grp].setdefault('dns', set()).add(exam_student.dn)
-					groups[grp].setdefault('uids', set()).add(exam_student['username'])
+			groups[udm_ori_student['primaryGroup']].setdefault('dns', set()).add(exam_student.dn)
+			groups[udm_ori_student['primaryGroup']].setdefault('uids', set()).add(exam_student['username'])
+			for grp in udm_ori_student.info.get('groups', []):
+				groups[grp].setdefault('dns', set()).add(exam_student.dn)
+				groups[grp].setdefault('uids', set()).add(exam_student['username'])
 
 			groups[exam_group.dn].setdefault('dns', set()).add(exam_student.dn)
 			groups[exam_group.dn].setdefault('uids', set()).add(exam_student['username'])
