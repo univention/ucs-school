@@ -43,10 +43,10 @@
 		}
 	},
 	"scheme": {
-		"email": "<email>",
+		"email": "<firstname>[0].<lastname>@<maildomain>",
 		"recordUID": "<name>",
 		"username": {
-			"default": "<name>[COUNTER2]"
+			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]"
 		}
 	},
 	"no_delete": false,
