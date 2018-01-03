@@ -13,7 +13,7 @@ class FormatTestPyHook(FormatPyHook):
 
 	@staticmethod
 	def patch_birthday(fields):
-		fields['birthday'] = datetime.datetime.strptime(fields['birthday'], '%Y.%b.%d').strftime('%Y-%m-%d')
+		fields['firstname'] = datetime.datetime.strptime(fields['firstname'], '%Y.%b.%d').strftime('%Y-%m-%d')
 
 	@classmethod
 	def patch_email(cls, fields):

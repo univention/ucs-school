@@ -52,9 +52,8 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__type')
-		config.update_entry('csv:mapping:birthday', 'birthday')
 		# required to make ImportUser.make_birthday() run format_from_scheme():
-		config.update_entry('scheme:birthday', '<birthday>')
+		config.update_entry('scheme:birthday', '<firstname>')
 		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain>'),
 		config.update_entry('scheme:recordUID', '<record_uid>')
 		config.update_entry('sourceUID', source_uid)
@@ -69,14 +68,13 @@ class Test(CLI_Import_v2_Tester):
 			person.update(
 				record_uid=record_uid,
 				source_uid=source_uid,
-				firstname=uts.random_username(),
+				firstname='{}-{:02}-{:02}'.format(random.randint(1900, 2016), random.randint(1, 12), random.randint(1, 27)),
 				lastname=uts.random_username(),
-				mail=None,
-				birthday='{}-{:02}-{:02}'.format(random.randint(1900, 2016), random.randint(1, 12), random.randint(1, 27)),
+				mail=None
 			)
 			if person.role in ('staff', 'student'):
-				person._bday = person.birthday
-				person.update(birthday=datetime.datetime.strptime(person.birthday, '%Y-%m-%d').strftime('%Y.%b.%d'))
+				person._bday = person.firstname
+				person.update(firstname=datetime.datetime.strptime(person.firstname, '%Y-%m-%d').strftime('%Y.%b.%d'))
 			person_list.append(person)
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
@@ -87,8 +85,6 @@ class Test(CLI_Import_v2_Tester):
 		self.check_new_and_removed_users(4, 0)
 
 		for person in person_list:
-			if person.role in ('staff', 'student'):
-				person.update(birthday=person._bday)
 			email_local = '{}.{}'.format(person.firstname, person.lastname).lower()
 			if person.role in ('student', 'teacher', 'teacher_and_staff'):
 				email_local = email_local.translate(None, 'aeiou')
