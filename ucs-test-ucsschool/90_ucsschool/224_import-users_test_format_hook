@@ -85,9 +85,11 @@ class Test(CLI_Import_v2_Tester):
 		self.check_new_and_removed_users(4, 0)
 
 		for person in person_list:
-			email_local = '{}.{}'.format(person.firstname, person.lastname).lower()
 			if person.role in ('student', 'teacher', 'teacher_and_staff'):
-				email_local = email_local.translate(None, 'aeiou')
+				lastname = person.lastname.translate(None, 'aeiou')
+			else:
+				lastname = person.lastname
+			email_local = '{}.{}'.format(person.firstname, lastname).lower()
 			person.update(mail='{}@{}'.format(email_local, self.maildomain))
 			person.verify()
 		self.log.info('*** OK: All %r users were created correctly.', len(person_list))

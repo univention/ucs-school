@@ -17,7 +17,6 @@ class FormatTestPyHook(FormatPyHook):
 
 	@classmethod
 	def patch_email(cls, fields):
-		fields['firstname'] = cls.my_translate(fields['firstname'], 'aeiou')
 		fields['lastname'] = cls.my_translate(fields['lastname'], 'aeiou')
 
 	@classmethod
