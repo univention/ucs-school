@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-22) unstable; urgency=low
+
+  * Bug #45972: legacy import requires the username in the input and should
+    produce an empty email address when the input email field is empty
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 08 Jan 2018 13:30:59 +0100
+
 ucs-school-import (15.0.3-21) unstable; urgency=low
 
   * Bug #45972: fix self reference in schemes of legacy import

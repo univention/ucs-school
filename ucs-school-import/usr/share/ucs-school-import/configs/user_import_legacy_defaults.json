@@ -43,11 +43,7 @@
 		}
 	},
 	"scheme": {
-		"email": "<firstname>[0].<lastname>@<maildomain>",
-		"recordUID": "<name>",
-		"username": {
-			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]"
-		}
+		"recordUID": "<name>"
 	},
 	"no_delete": false,
 	"password_length": 8,
