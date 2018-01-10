@@ -2,18 +2,24 @@
 
 # Installation
 
-## Prerelease
-
-	univention-upgrade --ignoreterm --ignoressh
-
-	univention-install univention-appcenter-dev
-	univention-app dev-use-test-appcenter
+## Backend (on DC master)
 
 	univention-install ucs-school-import-http-api
 
-	# should also install "ucs-school-umc-import" as it's in "recommends"
+$BROWSER: `https://<dc_master>/api/v1/` → exists? ok :)
 
-$BROWSER: https://10.200.3.90/api/v1/ --> exists? ok :)
+## UMC Frontend
+
+	univention-install ucs-school-umc-import  # (not ucs-school-umc-csv-import)
+
+## Configuration
+
+To use the produced CSV with the HTTP-API service, the configuration file must be used:
+
+	cp /usr/share/ucs-school-import/configs/user_import_http-api.json /var/lib/ucs-school-import/configs/user_import.json
+	# or to /var/lib/ucs-school-import/configs/<OU>.json
+
+if you already have `/var/lib/ucs-school-import/configs/user_import.json`, it must be adapted to provide a `school` field.
 
 ## Test data
 
@@ -25,7 +31,7 @@ To create test data run:
 	--classes 3 \
 	--create-email-addresses \
 	--verbose \
-	SchuleEinz
+	<existing OU>
 
 It will create a file with a name similar to   `test_users_2017-09-07_16:09:46.csv`. You can configure a filename with `--csvfile`.
 
@@ -33,73 +39,40 @@ That file can be used as input data for the HTTP-API or on the command line with
 
 	/usr/share/ucs-school-import/scripts/ucs-school-user-import \
 	--conffile /usr/share/ucs-school-import/configs/user_import_http-api.json \
-	--user_role student \
-	--school SchuleEinz \
+	--user_role <role> \
+	--school <OU> \
 	--infile test_users_2017-09-07_16:09:46.csv \
-	--sourceUID SchuleEinz-student \
+	--sourceUID <OU>-<role> \
 	--verbose
-
-## Configuration
-
-To use the produced CSV with the HTTP-API service, the configuration file must be used:
-
-	cp /usr/share/ucs-school-import/configs/user_import_http-api.json /var/lib/ucs-school-import/configs/user_import.json
-	# or to /var/lib/ucs-school-import/configs/<OU>.json
 
 ## Use UMC module for import
 
-* $BROWSER: login as 'Administrator'
+* login as 'Administrator' with $BROWSER
 * open 'schoolimport' module
 	* → "The permissions to perform a user import are not sufficient enough."
 
-### create a UMC policy
-
-	eval "$(ucr shell)"
-	OU=<your ou>
-	udm policies/umc create \
-	--set name=umc-schoolimport-all \
-	--position "cn=UMC,cn=policies,$ldap_base" \
-	--append allow="cn=schoolimport-all,cn=operations,cn=UMC,cn=univention,$ldap_base"
-	udm groups/group modify \
-	--dn "cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base" \
-	--policy-reference "cn=umc-schoolimport-all,cn=UMC,cn=policies,$ldap_base"
-
 ### add user to group with required permissions on school and user role:
 
-	# create school staff user 'uid=astaff' in UMC school wizard...
+Add user "astaff" to group `<OU>-import-all`.
 
 	udm groups/group modify \
 	--dn cn="$OU-import-all,cn=groups,ou=$OU,$ldap_base" \
 	--append users="uid=astaff,cn=mitarbeiter,cn=users,ou=$OU,$ldap_base"
 
-### workaround group missing option "ucsschoolImportGroup"
-
-Until http://forge.univention.org/bugzilla/show_bug.cgi?id=45023#c8 is fixed:
-
-	udm groups/group modify \
-	--dn cn=$OU-import-all,cn=groups,ou=$OU,$ldap_base \
-	--append-option ucsschoolImportGroup \
-	--append ucsschoolImportSchool=$OU \
-	--append ucsschoolImportRole=staff \
-	--append ucsschoolImportRole=student \
-	--append ucsschoolImportRole=teacher \
-	--append ucsschoolImportRole=teacher_and_staff
-
 ## success
 
-$BROWSER
-* login as 'astaff'
+* login as 'astaff' with $BROWSER
 * open 'schoolimport' module
-	* $OU + "Staff"
+	* <OU> + "Staff"
 	* → UserImportJob #1 (dryrun) ended successfully.
 	* Press "Start Import"
 		* Overview User Imports
 		* → "A new import of Staff users at school $OU has been started. The import has the ID 2."
-		* Liste leer...
-			* Switch to german language and all is fine :)
-			* → reopen #45023
 		* Very nice!
 
+## error / logfile / summary / new-users-passwords
+
+All input and output of an import job (incl the logfiles) are located in `/var/lib/ucs-school-import/jobs/<year>/<job id>/`.
 
 
 # nachfolgend evtl. veraltete Infos
