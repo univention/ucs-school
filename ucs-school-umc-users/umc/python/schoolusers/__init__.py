@@ -94,6 +94,8 @@ class Instance(SchoolBaseModule):
 			user['password'] = newPassword
 			user['overridePWHistory'] = '1'
 			user['locked'] = 'none'
+			user.modify()
+			user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
 			user['pwdChangeNextLogin'] = '1' if pwdChangeNextLogin else '0'
 			user.modify()
 			self.finished(request.id, True)
