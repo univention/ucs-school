@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-import
+fix: 15.0.3-23A~4.2.0.201801121315
+desc: |
+ * The global user import configuration (<filename>user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address (Bug #45972).
+bug: [45972]
