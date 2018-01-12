@@ -1585,7 +1585,7 @@ eval "$(ucr shell)"
 # Name (Alias) des Servers auf dem das Heimatverzeichnis liegt
 ucr set ucsschool/import/set/sambahome=schoolserver
 
-# DNS-Eintrag schoolserver.$domainname -> IP des *jeweiligen* Schulservers
+# DNS-Eintrag schoolserver.$domainname -> IP-Adresse des *jeweiligen* Schulservers
 ucr set "connector/s4/mapping/dns/host_record/schoolserver.$domainname/static/ipv4"=172.16.3.12
 
 # DNS-Eintrag aktivieren
@@ -1595,8 +1595,11 @@ invoke-rc.d univention-s4-connector restart
 			<para>
 				Folgendes muss auf dem DC Master ausgeführt werden:
 				<programlisting>
+# Name (Alias) des Servers auf dem das Heimatverzeichnis liegt (wird vom Import ausgewertet)
+ucr set ucsschool/import/set/sambahome=schoolserver
+
 # DNS Forward-Eintrag einrichten (school.local durch korrekte Domäne ersetzen,
-# IP eines zentralen Server, z.B. des DC Master, verwenden)
+# IP-Adresse eines zentralen Server, z.B. des DC Master, verwenden)
 udm dns/host_record create \
     --superordinate "zoneName=school.local,cn=dns,$ldap_base" \
     --set name=schoolserver \
@@ -1604,7 +1607,7 @@ udm dns/host_record create \
 				</programlisting>
 			</para>
 			<para>
-				Der Befehl <command>host schoolserver</command> sollte nun auf allen Schulservern die IP des jeweiligen Schulservers liefern.
+				Der Befehl <command>host schoolserver</command> sollte nun auf allen Schulservern die IP-Adresse des jeweiligen Schulservers liefern.
 				Mit <command>nslookup schoolserver</command> können die gleiche DNS-Anfrage komfortabel an verschiedene DNS-Server geschickt werden.
 			</para>
 		  </section>
