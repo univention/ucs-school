@@ -62,7 +62,7 @@ feedback@univention.de
 						<section id="changelog:ucsschool:python-twisted" lang="en">
 				<title>python-twisted</title>
 				<itemizedlist>
-					<listitem><simpara>A regression of UCS@school 4.2 v6 has been fixed in conjunction with opsi. If you have problems with opsi after the installation/update of UCS@school, please have a look at https://help.univention.com/t/7705 (<u:bug>45998</u:bug>)</simpara></listitem>
+					<listitem><simpara>A regression of UCS@school 4.2 v6 has been fixed in conjunction with opsi. If you have problems with opsi after the installation/update of UCS@school, please have a look at <ulink url="https://help.univention.com/t/7705"/> (<u:bug>45998</u:bug>)</simpara></listitem>
 
 				</itemizedlist>
 			</section>
