@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-23) unstable; urgency=low
+
+  * Bug #45972: do not set any scheme in global defaults
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Jan 2018 13:08:07 +0100
+
 ucs-school-import (15.0.3-22) unstable; urgency=low
 
   * Bug #45972: legacy import requires the username in the input and should
