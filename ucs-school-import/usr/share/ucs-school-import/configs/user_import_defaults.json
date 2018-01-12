@@ -3,7 +3,7 @@
 	"classes": {},
 	"input": {
 		"type": "csv",
-		"filename": "/var/lib/ucs-school-import/new-format-userimport.csv"
+		"filename": ""
 	},
 	"csv": {
 		"header_lines": 1,
@@ -19,13 +19,7 @@
 		"deactivation": 0,
 		"deletion": 0
 	},
-	"scheme": {
-		"email": "<firstname>[0].<lastname>@<maildomain>",
-		"recordUID": "<email>",
-		"username": {
-			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]"
-		}
-	},
+	"scheme": {},
 	"maildomain": null,
 	"mandatory_attributes": ["firstname", "lastname", "name", "school"],
 	"no_delete": false,
