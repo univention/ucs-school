@@ -1,3 +1,9 @@
+italc-windows (5.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:01 +0100
+
 italc-windows (4.0.0-2) unstable; urgency=low
 
   * Bug #43833: fix join script for servers responsible for multiple OUs

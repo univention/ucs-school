@@ -1,3 +1,9 @@
+ucs-school-ox-support (2.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:47 +0100
+
 ucs-school-ox-support (1.0.0-1) unstable; urgency=low
 
   * Bug #44225: add exam user pre-create hook

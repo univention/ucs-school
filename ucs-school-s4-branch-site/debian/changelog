@@ -1,3 +1,9 @@
+ucs-school-s4-branch-site (6.0.0-1) unstable; urgency=medium
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-s4-branch-site (5.0.0-2) unstable; urgency=medium
 
   * Bug #43510: fix error handling in listener module

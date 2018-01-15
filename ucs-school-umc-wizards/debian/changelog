@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (10.0.0-1) unstable; urgency=medium
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-umc-wizards (9.0.5-4) unstable; urgency=medium
 
   * Bug #45018: fix removing school classes; regression from svn r79380.

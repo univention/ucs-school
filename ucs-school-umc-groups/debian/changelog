@@ -1,3 +1,9 @@
+ucs-school-umc-groups (8.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-umc-groups (7.0.0-5) unstable; urgency=low
 
   * Bug #44350: fix removing to many users (patch by fbest)

@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (14.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-umc-helpdesk (13.0.0-4) unstable; urgency=low
 
   * Bug #43931: workaround DEBHELPER order by calling join script a second

@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (5.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-ucc-integration (4.0.0-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2

@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (14.0.0-1) unstable; urgency=medium
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-umc-internetrules (13.0.1-1) unstable; urgency=medium
 
   * Bug #36789: remove duplicated header texts

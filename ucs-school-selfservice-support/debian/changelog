@@ -1,3 +1,9 @@
+ucs-school-selfservice-support (2.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-selfservice-support (1.0.0-1) unstable; urgency=low
 
   * Bug #44627: add join script and ou post-create hook to add "Domain Users

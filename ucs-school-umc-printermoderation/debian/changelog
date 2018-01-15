@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (15.0.0-1) unstable; urgency=medium
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-umc-printermoderation (14.0.3-5) unstable; urgency=medium
 
   * Bug #43704: display also the printjobs of the logged in teacher

@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:47 +0100
+
 ucs-school-metapackage (10.0.3-1) unstable; urgency=low
 
   * Bug #42688: automatically set domain_name for dhcp_dns policies

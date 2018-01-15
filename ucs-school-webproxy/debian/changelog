@@ -1,3 +1,9 @@
+ucs-school-webproxy (14.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-webproxy (13.0.1-1) unstable; urgency=low
 
   * Bug #45352: a racing condition in the caching mechanism for handling

@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (14.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:47 +0100
+
 ucs-school-netlogon-user-logonscripts (13.0.2-12) unstable; urgency=low
 
   * Bug #45544: remove unnecessary wait() (and prevent potential deadlock in

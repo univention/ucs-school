@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (5.0.0-1) unstable; urgency=low
+
+  * bumped version
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
+
 ucs-school-umc-csv-import (4.0.9-1) unstable; urgency=low
 
   * Bug #44641: add workaround for using admin connections for UMC
