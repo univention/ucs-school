@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-umc-wizards
-fix: 9.0.5-4A~4.2.0.201708211728
-desc: |
- * A traceback in the UCS@school class wizard has been fixed. It is now possible again to remove school classes (Bug #45018).
-bug: [45018]

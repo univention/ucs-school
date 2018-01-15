@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-info
-fix: 7.0.1-1A~4.2.0.201709081319
-desc: |
- * The CLI tool <command>ucs-school-info</command> does not crash anymore when displaying network information (Bug #45229).
-bug: [45229]

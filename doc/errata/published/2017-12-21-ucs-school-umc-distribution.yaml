@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [2]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-umc-distribution
-fix: 15.0.1-5A~4.2.0.201711221151
-desc: |
- * When collecting distributed materials, files are now stored into a directory <literal>Unterrichtsmaterial/<replaceable>project name</replaceable>-Ergebnisse</literal>. The suffix for the name of that directory can be modified with the UCR variable <envar>ucsschool/datadistribution/datadir/sender/project/suffix</envar> (default "-Ergebnisse") (Bug #45572).
-bug: [45572]

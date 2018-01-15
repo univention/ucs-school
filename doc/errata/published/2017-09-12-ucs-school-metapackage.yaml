@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-metapackage
-fix: 10.0.2-7A~4.2.0.201708081255
-desc: |
- * The UCS@school portal entry icon is now a scalable SVG image (Bug #44667).
-bug: [44667]

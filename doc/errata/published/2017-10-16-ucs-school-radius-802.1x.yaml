@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-radius-802.1x
-fix: 6.0.1-3A~4.2.0.201710092131
-desc: |
- * A traceback has been fixed that may happened if <command>ucs-school-ntlm-auth</command> is called without <option>--stationId</option> option (Bug #45482).
-bug: [45482]

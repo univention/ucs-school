@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-import
-fix: 
-desc: |
- * A traceback in <command>import_networks</command> has been fixed (Bug #44313).
-bug: [44313]

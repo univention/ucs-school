@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-umc-rooms
-fix: 14.0.0-4A~4.2.0.201710121735
-desc: |
- * A standby animation is now shown while the UMC module is creating or modifying school rooms (Bug #45512).
-bug: [45512]

@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [3]
-scope: ucs_4.2-0-ucs-school-4.2
-src: python-twisted
-fix:
-desc: |
- * A regression of UCS@school 4.2 v6 has been fixed in conjunction with opsi. If you have problems with opsi after the installation/update of UCS@school, please have a look at https://help.univention.com/t/7705 (Bug #45998)
-bug: [45998]

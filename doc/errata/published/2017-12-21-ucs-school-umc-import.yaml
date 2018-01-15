@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: ucs-school-umc-import
-fix: 0.0.1-17A~4.2.0.201711171607
-desc: |
- * A new experimental UMC module has been implemented that uses the experimental HTTP-API for importing users in UCS@school (Bug #45664, #45659, #45662, #45660, #45717).
-bug: [45664, 45659, 45662, 45660, 45717]
