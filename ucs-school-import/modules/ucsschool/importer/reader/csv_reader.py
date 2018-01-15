@@ -4,7 +4,7 @@
 """
 CSV reader for CSV files using the new import format.
 """
-# Copyright 2016-2017 Univention GmbH
+# Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
 #

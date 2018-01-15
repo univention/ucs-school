@@ -4,7 +4,7 @@
 """
 CSV reader for CSV files created for HTTP-API import.
 """
-# Copyright 2017 Univention GmbH
+# Copyright 2017-2018 Univention GmbH
 #
 # http://www.univention.de/
 #

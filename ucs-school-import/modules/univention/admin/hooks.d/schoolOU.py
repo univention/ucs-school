@@ -2,7 +2,7 @@
 #
 # UCS@school OU hook
 #
-# Copyright (C) 2014-2017 Univention GmbH
+# Copyright (C) 2014-2018 Univention GmbH
 #
 # http://www.univention.de/
 #
