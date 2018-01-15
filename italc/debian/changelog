@@ -1,3 +1,9 @@
+italc (4:2.0.2-1) unstable; urgency=low
+
+  * Bug #45988: version bump for UCS@school 4.3
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:20:05 +0100
+
 italc (3:2.0.2-1) unstable; urgency=low
 
   * Bug #43570: version bump for UCS@school 4.2
