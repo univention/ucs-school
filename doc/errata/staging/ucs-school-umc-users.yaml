@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [0]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-umc-users
+fix: 
+desc: |
+ * The UDM flag <emphasis>pwdChangeNextLogin</emphasis> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login (Bug #46012).
+bug: []
