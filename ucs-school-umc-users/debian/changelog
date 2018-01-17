@@ -1,3 +1,10 @@
+ucs-school-umc-users (13.0.0-7) unstable; urgency=low
+
+  * Bug #46012: make sure that pwdChangeNextLogin is set to 1 if requested
+    (reinserting workaround for bug #46067)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 17 Jan 2018 16:19:27 +0100
+
 ucs-school-umc-users (13.0.0-6) unstable; urgency=medium
 
   * Bug #42004: adjust UCR variable description
