@@ -1,3 +1,5 @@
+[![Code Health](https://landscape.io/github/univention/ucs-school/4.3/landscape.svg?style=flat)](https://landscape.io/github/univention/ucs-school/4.3)
+
 # UCS@school
 
 Welcome to the git mirror of UCS@school.
