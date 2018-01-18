@@ -52,8 +52,9 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__type')
-		# required to make ImportUser.make_birthday() run format_from_scheme():
-		config.update_entry('scheme:birthday', '<firstname>')
+		# No csv:mapping:birthday, so the birthday attribute is empty. This
+		# will in ImportUser.make_birthday() trigger format_from_scheme().
+		config.update_entry('scheme:birthday', '<firstname>')  # create birthday attribute from firstname value
 		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain>'),
 		config.update_entry('scheme:recordUID', '<record_uid>')
 		config.update_entry('sourceUID', source_uid)
@@ -68,12 +69,16 @@ class Test(CLI_Import_v2_Tester):
 			person.update(
 				record_uid=record_uid,
 				source_uid=source_uid,
+				# write date in correct format (%Y-%m-%d) into firstname
 				firstname='{}-{:02}-{:02}'.format(random.randint(1900, 2016), random.randint(1, 12), random.randint(1, 27)),
 				lastname=uts.random_username(),
-				mail=None
+				mail=None  # emtpy, so that it will be generated from scheme
 			)
 			if person.role in ('staff', 'student'):
 				person._bday = person.firstname
+				# Rewrite date in _wrong_ format (e.g. 17.8.2000 -> 17.aug.2000).
+				# If a format hook does not fix this value, the import will
+				# fail, because UDM will reject it as invalid date.
 				person.update(firstname=datetime.datetime.strptime(person.firstname, '%Y-%m-%d').strftime('%Y.%b.%d'))
 			person_list.append(person)
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
@@ -85,10 +90,15 @@ class Test(CLI_Import_v2_Tester):
 		self.check_new_and_removed_users(4, 0)
 
 		for person in person_list:
+			# The format hook for generaing the email attribute should have
+			# removed all vowels from the lastname of these three roles.
 			if person.role in ('student', 'teacher', 'teacher_and_staff'):
 				lastname = person.lastname.translate(None, 'aeiou')
 			else:
+				# staffs lastname was not modified
 				lastname = person.lastname
+			# email will be generated as configured above in scheme:email, but
+			# with the modified lastname
 			email_local = '{}.{}'.format(person.firstname, lastname).lower()
 			person.update(mail='{}@{}'.format(email_local, self.maildomain))
 			person.verify()
