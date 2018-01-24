@@ -179,11 +179,11 @@ class CLI_Import_v2_Tester(object):
 		self.hook_fn_set = set()
 		self.errors = list()
 		self.udm = None
-		self.ou_A = Bunch(name='AA{}'.format(uts.random_string(length=random.randint(1, 9))))
+		self.ou_A = Bunch(name=None)
 		# set ou_B to None if a second OU is not needed
-		self.ou_B = Bunch(name='BB{}'.format(uts.random_string(length=random.randint(1, 9))))
+		self.ou_B = Bunch(name=None)
 		# set ou_C to None if a third OU is not needed
-		self.ou_C = Bunch(name='CC{}'.format(uts.random_string(length=random.randint(1, 9))))
+		self.ou_C = Bunch(name=None)
 		self.ucr.load()
 		try:
 			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
@@ -388,10 +388,12 @@ class CLI_Import_v2_Tester(object):
 
 				self.lo = schoolenv.open_ldap_connection(admin=True)
 				self.log.info('Creating OUs...')
-				for ou in [self.ou_A, self.ou_B, self.ou_C]:
-					if ou is not None:
-						ou.name, ou.dn = schoolenv.create_ou(ou_name=ou.name, name_edudc=self.ucr.get('hostname'))
-						self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
+				ous = [ou for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None]
+				res = schoolenv.create_multiple_ous(len(ous), name_edudc=self.ucr.get('hostname'))
+				for num, (name, dn) in enumerate(res):
+					ou = ous[num]
+					ou.name, ou.dn = name, dn
+					self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
 
 				self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
 				self.test()

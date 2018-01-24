@@ -21,8 +21,8 @@ def main():
 		import univention.testing.ucsschool as utu
 		with utu.UCSTestSchool() as schoolenv:
 
-			school1, oudn = schoolenv.create_ou()
-			school2, oudn2 = schoolenv.create_ou(use_cli=True)
+			school1, oudn = schoolenv.create_ou(use_cache=False)
+			school2, oudn2 = schoolenv.create_ou(use_cli=True, use_cache=False)
 
 			utils.wait_for_replication_and_postrun()
 

@@ -160,9 +160,7 @@ def main(ldap_machine_read=None):
 
 	all_available_servers = []
 	with testing_ucsschool.UCSTestSchool() as schoolenv:
-		ou_A_name, ou_A_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-		ou_B_name, ou_B_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-		ou_C_name, ou_C_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+		(ou_A_name, ou_A_dn), (ou_B_name, ou_B_dn), (ou_C_name, ou_C_dn) = schoolenv.create_multiple_ous(3, name_edudc=ucr.get('hostname'))
 		for school_id in map(School.get_name_from_dn, [ou_A_dn, ou_B_dn, ou_C_dn]):
 			available_servers = prepare_fileservers(school_id)
 			if available_servers:

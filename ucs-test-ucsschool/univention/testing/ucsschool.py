@@ -36,6 +36,7 @@ API for testing UCS@school and cleaning up after performed tests
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
+import json
 import ldap
 import random
 import tempfile
@@ -61,6 +62,9 @@ add_stream_logger_to_schoollib()
 random.seed()
 
 
+TEST_OU_CACHE_FILE = '/var/lib/ucs-test/ucsschool-test-ous.json'
+
+
 class SchoolError(Exception):
 	pass
 
@@ -77,6 +81,7 @@ class UCSTestSchool(object):
 	_lo = utils.get_ldap_connection()
 	_ucr = univention.testing.ucr.UCSTestConfigRegistry()
 	_ucr.load()
+	_test_ous = dict()  # type: Dict[str, List[Tuple[str]]]
 
 	LDAP_BASE = _ucr['ldap/base']
 
@@ -211,7 +216,17 @@ class UCSTestSchool(object):
 		if wait_for_replication:
 			utils.wait_for_replication()
 
-	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None, use_cli=False, wait_for_replication=True):
+	def check_name_edudc(self, name_edudc):
+		if isinstance(name_edudc, str):
+			if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.', 1)[0].lower():
+				print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc to None'
+				name_edudc = None
+			elif any([name_edudc.lower() == backup.split('.', 1)[0].lower() for backup in self._ucr.get('ldap/backup', '').split(' ')]):
+				print '*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc to None'
+				name_edudc = None
+		return name_edudc
+
+	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None, use_cli=False, wait_for_replication=True, use_cache=True):
 		"""
 		Creates a new OU with random or specified name. The function may also set a specified
 		displayName. If "displayName" is None, a random displayName will be set. If "displayName"
@@ -221,6 +236,9 @@ class UCSTestSchool(object):
 		class share file server and the home share file server will be set.
 		If use_cli is set to True, the old CLI interface is used. Otherwise the UCS@school python
 		library is used.
+		If use_cache is True (default) and an OU was created in a previous test with the same arguments,
+		it will be reused. -> If ou_name and displayName are None, instead of creating new random names,
+		the existing test-OU will be returned.
 		PLEASE NOTE: if name_edudc is set to the hostname of the master or backup, name_edudc will be unset automatically,
 			because it's not allowed to specify the hostname of the master or any backup in any situation!
 
@@ -228,26 +246,28 @@ class UCSTestSchool(object):
 			ou_name: name of the created OU
 			ou_dn:   DN of the created OU object
 		"""
+		# it is not allowed to set the master as name_edudc ==> resetting name_edudc
+		name_edudc = self.check_name_edudc(name_edudc)
+		if use_cache and not self._test_ous:
+			self.load_test_ous()
+		cache_key = (ou_name, name_edudc, name_admindc, displayName, name_share_file_server, use_cli)
+		if use_cache and self._test_ous.get(cache_key):
+			res = random.choice(self._test_ous[cache_key])
+			print('*** Found {} OUs in cache for arguments {!r}, using {!r}.'.format(len(self._test_ous[cache_key]), cache_key, res))
+			return res
+
 		# create random display name for OU
 		charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
 		if displayName is None:
 			displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
-
-		# it is not allowed to set the master as name_edudc ==> resetting name_edudc
-		if isinstance(name_edudc, str):
-			if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.', 1)[0].lower():
-				print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc'
-				name_edudc = None
-			elif any([name_edudc.lower() == backup.split('.', 1)[0].lower() for backup in self._ucr.get('ldap/backup', '').split(' ')]):
-				print '*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc'
-				name_edudc = None
 
 		# create random OU name
 		if not ou_name:
 			ou_name = uts.random_string(length=random.randint(3, 12))
 
 		# remember OU name for cleanup
-		self._cleanup_ou_names.add(ou_name)
+		if not use_cache:
+			self._cleanup_ou_names.add(ou_name)
 
 		if not use_cli:
 			kwargs = {
@@ -288,7 +308,40 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 
 		ou_dn = 'ou=%s,%s' % (ou_name, self.LDAP_BASE)
+		if use_cache:
+			print('*** Storing OU {!r} in cache with key {!r}.'.format(ou_name, cache_key))
+			self._test_ous.setdefault(cache_key, []).append((ou_name, ou_dn))
+			self.store_test_ous()
 		return ou_name, ou_dn
+
+	def create_multiple_ous(self, num, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None, use_cli=False, wait_for_replication=True, use_cache=True):
+		"""
+		Create `num` OUs with each the same arguments and a random ou_name,
+		without either effectively dodging the OU-cache or each time getting
+		the same OU (with use_cache=True). All arguments except `num` plus a
+		random name for the ou (argument "ou_name") will be passed to
+		create_ou().
+
+		:param num: int - number or OUs to create
+		:return: list - list of tuples returned by create_ou()
+		"""
+		if not use_cache:
+			return [self.create_ou(None, name_edudc, name_admindc, displayName, name_share_file_server, use_cli, wait_for_replication, use_cache) for _ in range(num)]
+
+		if not self._test_ous:
+			self.load_test_ous()
+		name_edudc = self.check_name_edudc(name_edudc)
+		cache_key = (None, name_edudc, name_admindc, displayName, name_share_file_server, use_cli)
+		while len(self._test_ous.setdefault(cache_key, [])) < num:
+			ou_name, ou_dn = self.create_ou(None, name_edudc, name_admindc, displayName, name_share_file_server, use_cli, wait_for_replication, False)
+			print('*** Storing OU {!r} in cache with key {!r}.'.format(ou_name, cache_key))
+			self._test_ous.setdefault(cache_key, []).append((ou_name, ou_dn))
+			self._cleanup_ou_names.remove(ou_name)
+			self.store_test_ous()
+		random.shuffle(self._test_ous[cache_key])
+		res = self._test_ous[cache_key][:num]
+		print('*** Found {} OUs in cache for arguments {!r}, using {!r}.'.format(len(self._test_ous[cache_key]), cache_key, res))
+		return res
 
 	def get_district(self, ou_name):
 		try:
@@ -587,6 +640,33 @@ class UCSTestSchool(object):
 
 	def create_school_dc_slave(self):
 		pass
+
+	@classmethod
+	def load_test_ous(cls):
+		cls._test_ous = dict()
+		try:
+			with open(TEST_OU_CACHE_FILE, 'rb') as fp:
+				loaded = json.load(fp)
+		except IOError as exc:
+			print('*** Warning: reading {!r}: {}'.format(TEST_OU_CACHE_FILE, exc))
+			return
+		keys = loaded.pop('keys')
+		values = loaded.pop('values')
+		for k, v in values.items():
+			cls._test_ous[tuple(keys[k])] = [tuple(x) for x in v]  # json doesn't know tuples
+
+	@classmethod
+	def store_test_ous(cls):
+		with open(TEST_OU_CACHE_FILE, 'wb') as fp:
+			# json needs strings as keys, must split data
+			res = {'keys': dict(), 'values': dict()}
+			for num, (k, v) in enumerate(cls._test_ous.items()):
+				res['keys'][num] = k
+				res['values'][num] = v
+			try:
+				json.dump(res, fp)
+			except IOError as exc:
+				print('*** Error writing to {!r}: {}'.format(TEST_OU_CACHE_FILE, exc))
 
 
 if __name__ == '__main__':
