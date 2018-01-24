@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-55) unstable; urgency=low
+
+  * Bug #46017: cache test OUs to reduce test runtime
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 24 Jan 2018 17:57:59 +0100
+
 ucs-test-ucsschool (4.0.4-54) unstable; urgency=low
 
   * Bug #45972: test importing users with empty email scheme
