@@ -33,8 +33,8 @@ class Test(CLI_Import_v2_Tester):
 				with utu.UCSTestSchool() as schoolenv:
 					self.lo = schoolenv.open_ldap_connection()
 					self.schoolenv = schoolenv
-					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
-					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou()
+					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'), use_cache=False)
+					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(use_cache=False)
 					self.log.info(
 						'*** This host is responsible for OU %r, but not for OU %r.',
 						self.ou_A.name,

@@ -40,8 +40,7 @@ def cleanup():
 def main():
 	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
 		with utu.UCSTestSchool() as schoolenv:
-			ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			ou_name2, ou_dn2 = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			(ou_name, ou_dn), (ou_name2, ou_dn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get('hostname'))
 			lo = schoolenv.open_ldap_connection(admin=True)
 			for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
 				username = uts.random_username()

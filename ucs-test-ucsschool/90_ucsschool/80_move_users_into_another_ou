@@ -25,8 +25,7 @@ def main():
 		# make sure that nonedu containers are created
 		univention.config_registry.handler_set(['ucsschool/ldap/noneducational/create/objects=yes'])
 
-		a, a_dn = env.create_ou(name_edudc=ucr.get('hostname'))
-		b, b_dn = env.create_ou(name_edudc=ucr.get('hostname'))
+		(a, a_dn), (b, b_dn) = env.create_multiple_ous(2, name_edudc=ucr.get('hostname'))
 
 		# TODO: add exam user
 		# TODO: change school and uid at once!

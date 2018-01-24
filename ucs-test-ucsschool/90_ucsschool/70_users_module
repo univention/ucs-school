@@ -69,7 +69,7 @@ def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
-			ou, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			(ou, oudn), (ou2, oudn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get('hostname'))
 			class_01 = Klasse(school=ou)
 			class_01.create()
 			class_02 = Klasse(school=ou)
@@ -80,7 +80,6 @@ def main():
 			print('\n>>>> Testing module with users in 1 OU ({}).\n'.format(ou))
 			test(student_classes, teacher_classes, [ou], ucr, ou)
 
-			ou2, oudn2 = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			class_03 = Klasse(school=ou2)
 			class_03.create()
 			student_classes = {ou: ['%s-%s' % (ou, class_01.name)], ou2: ['%s-%s' % (ou2, class_03.name)]}

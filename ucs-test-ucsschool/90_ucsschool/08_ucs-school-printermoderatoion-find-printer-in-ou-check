@@ -64,9 +64,7 @@ def main():
 			connection.authenticate(admin, passwd)
 
 			# create more than one OU
-			schoolName1, _ = schoolenv.create_ou(name_edudc=host)
-			schoolName2, _ = schoolenv.create_ou(name_edudc=host)
-			schoolName3, _ = schoolenv.create_ou(name_edudc=host)
+			(schoolName1, _), (schoolName2, _), (schoolName3, _) = schoolenv.create_multiple_ous(3, name_edudc=host)
 
 			# add new printer
 			doPrinter('A', newPrinterName, schoolName1, host, domainname)
