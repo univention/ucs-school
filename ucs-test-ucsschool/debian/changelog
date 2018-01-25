@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.0-0) unstable; urgency=low
+
+  * Bug #45988: bumped version
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 25 Jan 2018 17:57:36 +0100
+
 ucs-test-ucsschool (4.0.4-55) unstable; urgency=low
 
   * Bug #46000: squid3 has been renamed to squid
