@@ -75,15 +75,15 @@ def log(message):
 	stdout.flush()
 
 
-def reload_squid3():
-	log('Reloading %r now' % (reload_squid3.name, ))
-	reload_squid3.last = monotonic_time()
-	call(('/etc/init.d/squid3', 'reload', ))
+def reload_squid():
+	log('Reloading %r now' % (reload_squid.name, ))
+	reload_squid.last = monotonic_time()
+	call(('/etc/init.d/squid', 'reload', ))
 
 
-reload_squid3.name = 'squid3'
-reload_squid3.delay = 15.0
-reload_squid3.last = float('-inf')
+reload_squid.name = 'squid'
+reload_squid.delay = 15.0
+reload_squid.last = float('-inf')
 
 QUEUE = {}  # reloader → when-to-reload
 
@@ -106,8 +106,8 @@ def process_queue():
 
 def handle(message):
 	message = tuple(message.split(' '))
-	if message == ('reload', 'squid3', ):
-		queue(reload_squid3)
+	if message == ('reload', 'squid', ):
+		queue(reload_squid)
 	else:
 		log("Command not implemented %r!" % (message, ))
 

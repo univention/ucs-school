@@ -73,8 +73,8 @@ case "$1" in
 			sleep 2
 		fi
 
-		if [ -x /etc/init.d/squid3 ]; then
-			/etc/init.d/squid3 restart
+		if [ -x /etc/init.d/squid ]; then
+			/etc/init.d/squid restart
 		fi
 
 		a2ensite wpad.conf
