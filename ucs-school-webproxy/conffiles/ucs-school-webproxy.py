@@ -134,7 +134,7 @@ def signalReloadProcess():
 	try:
 		s = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 		s.settimeout(0)
-		s.sendto('reload squid3', RELOAD_SOCKET_PATH)
+		s.sendto('reload squid', RELOAD_SOCKET_PATH)
 		print "Delayed reload triggered"
 		return True
 	except socket.error:
@@ -142,7 +142,7 @@ def signalReloadProcess():
 
 
 def reloadSquidDirectly():
-	subprocess.call(('/etc/init.d/squid3', 'reload', ))
+	subprocess.call(('/etc/init.d/squid', 'reload', ))
 
 
 def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
