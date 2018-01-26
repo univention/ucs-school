@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.0-1) unstable; urgency=low
+
+  * Bug #46017: cache test OUs to reduce test runtime
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 26 Jan 2018 13:49:21 +0100
+
 ucs-test-ucsschool (5.0.0-0) unstable; urgency=low
 
   * Bug #45988: bumped version
