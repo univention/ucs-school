@@ -245,10 +245,10 @@ exit 0
 
 class NetworkImport:
 
-	def __init__(self, nr_networks=5):
+	def __init__(self, ou_name, nr_networks=5):
 		assert (nr_networks > 3)
 
-		self.school = uts.random_name()
+		self.school = ou_name
 
 		self.networks = []
 		for i in range(0, nr_networks):
@@ -282,14 +282,14 @@ class NetworkImport:
 def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networks=5):
 	assert(use_cli_api != use_python_api)
 
-	print '********** Generate school data'
-	network_import = NetworkImport(nr_networks=nr_networks)
-	import_file = ImportFile(use_cli_api, use_python_api)
-
-	print network_import
-
 	with utu.UCSTestSchool() as schoolenv:
-		schoolenv.create_ou(network_import.school, name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+
+		print '********** Generate school data'
+		network_import = NetworkImport(ou_name, nr_networks=nr_networks)
+		print(network_import)
+		import_file = ImportFile(use_cli_api, use_python_api)
+
 		print '********** Create networks'
 		import_file.run_import(str(network_import))
 		network_import.verify()

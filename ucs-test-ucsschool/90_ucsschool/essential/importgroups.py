@@ -217,10 +217,10 @@ exit 0
 
 class GroupImport:
 
-	def __init__(self, nr_groups=20):
+	def __init__(self, ou_name, nr_groups=20):
 		assert (nr_groups > 3)
 
-		self.school = uts.random_name()
+		self.school = ou_name
 
 		self.groups = []
 		for i in range(0, nr_groups):
@@ -252,14 +252,14 @@ class GroupImport:
 def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5):
 	assert(use_cli_api != use_python_api)
 
-	print '********** Generate school data'
-	group_import = GroupImport(nr_groups=nr_groups)
-	import_file = ImportFile(use_cli_api, use_python_api)
-
-	print group_import
-
 	with utu.UCSTestSchool() as schoolenv:
-		schoolenv.create_ou(group_import.school, name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+
+		print '********** Generate school data'
+		group_import = GroupImport(ou_name, nr_groups=nr_groups)
+		print(group_import)
+		import_file = ImportFile(use_cli_api, use_python_api)
+
 		print '********** Create groups'
 		import_file.run_import(group_import)
 		group_import.verify()

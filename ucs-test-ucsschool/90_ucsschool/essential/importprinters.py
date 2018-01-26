@@ -10,7 +10,7 @@ import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 
-from essential.importou import create_ou_cli, get_school_base
+from essential.importou import get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -86,7 +86,7 @@ class Printer:
 		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
 
 
-class ImportFile():
+class ImportFile:
 
 	def __init__(self, use_cli_api, use_python_api):
 		self.use_cli_api = use_cli_api
@@ -130,7 +130,7 @@ class ImportFile():
 		raise NotImplementedError
 
 
-class PrinterHooks():
+class PrinterHooks:
 
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
@@ -195,13 +195,12 @@ exit 0
 		os.remove(self.post_hook_result)
 
 
-class PrinterImport():
+class PrinterImport:
 
-	def __init__(self, nr_printers=20):
+	def __init__(self, ou_name, nr_printers=20):
 		assert (nr_printers > 3)
 
-		self.school = uts.random_name()
-		create_ou_cli(self.school)
+		self.school = ou_name
 
 		self.printers = []
 		for i in range(0, nr_printers):
@@ -236,14 +235,14 @@ class PrinterImport():
 def create_and_verify_printers(use_cli_api=True, use_python_api=False, nr_printers=5):
 	assert(use_cli_api != use_python_api)
 
-	print '********** Generate school data'
-	printer_import = PrinterImport(nr_printers=nr_printers)
-	import_file = ImportFile(use_cli_api, use_python_api)
-
-	print printer_import
-
 	with utu.UCSTestSchool() as schoolenv:
-		schoolenv.create_ou(printer_import.school, name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+
+		print '********** Generate school data'
+		printer_import = PrinterImport(ou_name, nr_printers=nr_printers)
+		print(printer_import)
+		import_file = ImportFile(use_cli_api, use_python_api)
+
 		print '********** Create printers'
 		import_file.run_import(str(printer_import))
 		printer_import.verify()
