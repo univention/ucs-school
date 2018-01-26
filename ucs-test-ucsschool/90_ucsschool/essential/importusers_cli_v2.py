@@ -221,6 +221,7 @@ class CLI_Import_v2_Tester(object):
 				os.remove(hook_fn)
 			except (IOError, OSError):
 				self.log.warning('Failed to remove %r' % (hook_fn,))
+		self.udm.cleanup()
 
 	def create_config_json(self, values=None, config=None):
 		"""
@@ -364,14 +365,11 @@ class CLI_Import_v2_Tester(object):
 
 	def run(self):
 		try:
-			with univention.testing.ucr.UCSTestConfigRegistry() as ucr, \
-					univention.testing.udm.UCSTestUDM() as udm, \
-					utu.UCSTestSchool() as schoolenv:
-				self.ucr = ucr
-				self.udm = udm
+			with utu.UCSTestSchool() as schoolenv:
+				self.udm = schoolenv.udm
 				if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
 					self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
-					udm.create_object(
+					self.udm.create_object(
 						'mail/domain',
 						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
 						name=self.maildomain
