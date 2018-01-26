@@ -83,7 +83,6 @@ class Bunch(object):
 
 
 class UCSTestSchool(object):
-	_lo = utils.get_ldap_connection()
 	_ucr = univention.testing.ucr.UCSTestConfigRegistry()
 	_ucr.load()
 	_test_ous = dict()  # type: Dict[str, List[Tuple[str]]]
@@ -102,6 +101,7 @@ class UCSTestSchool(object):
 
 	def __init__(self):
 		self._cleanup_ou_names = set()
+		self.lo = self.open_ldap_connection()
 
 	def __enter__(self):
 		return self
@@ -151,7 +151,7 @@ class UCSTestSchool(object):
 			Return None on success or error message.
 		"""
 		try:
-			dn = self._lo.searchDn(base=dn)[0]
+			dn = self.lo.searchDn(base=dn)[0]
 		except (ldap.NO_SUCH_OBJECT, IndexError):
 			if raise_exceptions:
 				raise
@@ -172,7 +172,7 @@ class UCSTestSchool(object):
 			Return None on success or error message.
 		"""
 		try:
-			dn = self._lo.searchDn(base=userdn)[0]
+			dn = self.lo.searchDn(base=userdn)[0]
 		except (ldap.NO_SUCH_OBJECT, IndexError):
 			if raise_exceptions:
 				raise
@@ -289,10 +289,9 @@ class UCSTestSchool(object):
 
 			print ''
 			print '*** Creating new OU %r' % (ou_name,)
-			lo = self.open_ldap_connection()
 			School.invalidate_all_caches()
-			School.init_udm_module(lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
-			result = School(**kwargs).create(lo)
+			School.init_udm_module(self.lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+			result = School(**kwargs).create(self.lo)
 			print '*** Result of School(...).create(): %r' % (result,)
 			print '\n\n'
 		else:
@@ -470,9 +469,8 @@ class UCSTestSchool(object):
 				"school_classes": dict(school_classes)
 			}
 			print '*** Creating new user %r with %r.' % (username, kwargs)
-			lo = self.open_ldap_connection()
 			User.invalidate_all_caches()
-			User.init_udm_module(lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+			User.init_udm_module(self.lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			cls = Student
 			if is_teacher and is_staff:
 				cls = TeachersAndStaff
@@ -480,7 +478,7 @@ class UCSTestSchool(object):
 				cls = Teacher
 			elif not is_teacher and is_staff:
 				cls = Staff
-			result = cls(**kwargs).create(lo)
+			result = cls(**kwargs).create(self.lo)
 			print '*** Result of %s(...).create(): %r' % (cls.__name__, result,)
 
 		if wait_for_replication:
@@ -555,10 +553,9 @@ class UCSTestSchool(object):
 			'users': users or [],
 		}
 		print('*** Creating new school class "{}" with {}...'.format(class_name, kwargs))
-		lo = self.open_ldap_connection()
 		SchoolClass.invalidate_all_caches()
-		SchoolClass.init_udm_module(lo)
-		result = SchoolClass(**kwargs).create(lo)
+		SchoolClass.init_udm_module(self.lo)
+		result = SchoolClass(**kwargs).create(self.lo)
 		print('*** Result of SchoolClass(...).create(): {}'.format(result))
 
 		if wait_for_replication:
@@ -584,10 +581,9 @@ class UCSTestSchool(object):
 			'users': users or [],
 		}
 		print('*** Creating new WorkGroup "{}" with {}...'.format(workgroup_name, kwargs))
-		lo = self.open_ldap_connection()
 		WorkGroup.invalidate_all_caches()
-		WorkGroup.init_udm_module(lo)
-		result = WorkGroup(**kwargs).create(lo)
+		WorkGroup.init_udm_module(self.lo)
+		result = WorkGroup(**kwargs).create(self.lo)
 		print('*** Result of WorkGroup(...).create(): {}'.format(result))
 
 		if wait_for_replication:
@@ -623,9 +619,8 @@ class UCSTestSchool(object):
 			'hosts': host_members,
 		}
 		print '*** Creating new room %r' % (name,)
-		lo = self.open_ldap_connection()
 		obj = ComputerRoom(**kwargs)
-		result = obj.create(lo)
+		result = obj.create(self.lo)
 		print '*** Result of ComputerRoom(...).create(): %r' % (result,)
 		if wait_for_replication:
 			utils.wait_for_replication()
