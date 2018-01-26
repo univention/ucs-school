@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.1-1) unstable; urgency=medium
+
+  * Bug #46174: user options don't exists anymore
+
+ -- Florian Best <best@univention.de>  Fri, 26 Jan 2018 15:06:19 +0100
+
 ucs-test-ucsschool (5.0.0-1) unstable; urgency=low
 
   * Bug #46017: cache test OUs to reduce test runtime

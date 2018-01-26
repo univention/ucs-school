@@ -33,7 +33,7 @@ def main():
 			for kls, bad_options in blacklisted_option_combinations.items():
 				for bad_option in bad_options:
 					try:
-						udm.create_user(options=["person", "posix", kls, bad_option])
+						udm.create_user(options=[kls, bad_option])
 						utils.fail("Created {} with {}.".format(kls, bad_option))
 					except UCSTestUDM_CreateUDMObjectFailed as exc:
 						print("OK: caught expected exception: %s" % exc)
