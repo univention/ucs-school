@@ -37,7 +37,7 @@ def main():
 			# Using ucs-school-lib
 			def process_school(school, dc_name, should_fail=True):
 				try:
-					ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name)
+					ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name, use_cache=False)
 					if should_fail:
 						print 'Creating a school(%s) with dc_name=%s was expected to fail)' % (school, dc_name)
 					else:
