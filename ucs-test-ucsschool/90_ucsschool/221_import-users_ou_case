@@ -15,10 +15,6 @@ from essential.importusers import Person
 
 
 class Test(CLI_Import_v2_Tester):
-
-	def __init__(self):
-		super(Test, self).__init__()
-
 	def test(self):
 		for ori_ou in (self.ou_A, self.ou_B, self.ou_C):
 			role = random.choice(('student', 'teacher', 'staff', 'teacher_and_staff'))
@@ -67,13 +63,5 @@ class Test(CLI_Import_v2_Tester):
 				self.log.info('*** OK - import stopped.')
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()

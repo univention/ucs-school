@@ -17,11 +17,8 @@ from univention.testing.ucs_samba import wait_for_drs_replication
 
 
 class Test(CLI_Import_v2_Tester):
-
-	def __init__(self):
-		super(Test, self).__init__()
-		self.ou_B = None
-		self.ou_C = None
+	ou_B = None
+	ou_C = None
 
 	def test(self):  # formally test_reuse_email_attribute()
 		"""
@@ -69,13 +66,5 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()

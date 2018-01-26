@@ -20,11 +20,8 @@ from essential.importusers import Person
 
 
 class Test(CLI_Import_v2_Tester):
-
-	def __init__(self):
-		super(Test, self).__init__()
-		self.ou_B = None
-		self.ou_C = None
+	ou_B = None
+	ou_C = None
 
 	def test(self):  # formally test_bad_config()
 		"""
@@ -57,13 +54,5 @@ class Test(CLI_Import_v2_Tester):
 			self.fail("Error message not found in logfile.")
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()
