@@ -77,6 +77,11 @@ class SchoolLDAPError(SchoolError):
 	pass
 
 
+class Bunch(object):
+	def __init__(self, **kwds):
+		self.__dict__.update(kwds)
+
+
 class UCSTestSchool(object):
 	_lo = utils.get_ldap_connection()
 	_ucr = univention.testing.ucr.UCSTestConfigRegistry()
@@ -667,6 +672,18 @@ class UCSTestSchool(object):
 				json.dump(res, fp)
 			except IOError as exc:
 				print('*** Error writing to {!r}: {}'.format(TEST_OU_CACHE_FILE, exc))
+
+	@staticmethod
+	def get_ldap_status(lo, base=''):
+		return set(lo.searchDn(base=base))
+
+	@staticmethod
+	def diff_ldap_status(lo, old_ldap_status, base=''):
+		new_ldap_status = set(lo.searchDn(base=base))
+		new_objects = new_ldap_status - old_ldap_status
+		removed_objects = old_ldap_status - new_ldap_status
+		return Bunch(new=new_objects, removed=removed_objects)
+
 
 
 if __name__ == '__main__':
