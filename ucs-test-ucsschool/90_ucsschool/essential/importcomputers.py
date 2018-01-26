@@ -347,12 +347,12 @@ exit 0
 
 class ComputerImport:
 
-	def __init__(self, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
+	def __init__(self, ou_name, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
 		assert (nr_windows > 2)
 		assert (nr_macos > 2)
 		assert (nr_ipmanagedclient > 2)
 
-		self.school = uts.random_name()
+		self.school = ou_name
 
 		self.windows = []
 		for i in range(0, nr_windows):
@@ -414,14 +414,14 @@ class ComputerImport:
 def create_and_verify_computers(use_cli_api=True, use_python_api=False, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
 	assert(use_cli_api != use_python_api)
 
-	print '********** Generate school data'
-	computer_import = ComputerImport(nr_windows=nr_windows, nr_memberserver=nr_memberserver, nr_macos=nr_macos, nr_ipmanagedclient=nr_ipmanagedclient)
-	import_file = ImportFile(use_cli_api, use_python_api)
-
-	print computer_import
-
 	with utu.UCSTestSchool() as schoolenv:
-		schoolenv.create_ou(computer_import.school, name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+
+		print '********** Generate school data'
+		computer_import = ComputerImport(ou_name, nr_windows=nr_windows, nr_memberserver=nr_memberserver, nr_macos=nr_macos, nr_ipmanagedclient=nr_ipmanagedclient)
+		print(computer_import)
+		import_file = ImportFile(use_cli_api, use_python_api)
+
 		print '********** Create computers'
 		import_file.run_import(computer_import)
 		computer_import.verify()
