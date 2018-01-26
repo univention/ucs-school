@@ -103,6 +103,7 @@ class UCSTestSchool(object):
 	def __init__(self):
 		self._cleanup_ou_names = set()
 		self.lo = self.open_ldap_connection()
+		self.udm = udm_test.UCSTestUDM()
 
 	def __enter__(self):
 		return self
@@ -194,6 +195,7 @@ class UCSTestSchool(object):
 		""" Cleanup all objects created by the UCS@school test environment """
 		for ou_name in self._cleanup_ou_names:
 			self.cleanup_ou(ou_name, wait_for_replication=False)
+		self.udm.cleanup()
 		if wait_for_replication:
 			utils.wait_for_replication()
 
@@ -512,8 +514,7 @@ class UCSTestSchool(object):
 			'disabled': not(is_active),
 			'options': ['samba', 'ucsschoolAdministrator', 'kerberos', 'posix', 'mail'],
 		}
-		udm = udm_test.UCSTestUDM()
-		dn, school_admin = udm.create_user(position=position, groups=groups, **kwargs)
+		dn, school_admin = self.udm.create_user(position=position, groups=groups, **kwargs)
 		if wait_for_replication:
 			utils.wait_for_replication()
 		return school_admin, dn
@@ -521,7 +522,6 @@ class UCSTestSchool(object):
 	def create_domain_admin(self, ou_name, username=None, password='univention'):
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
-		udm = udm_test.UCSTestUDM()
 		if username is None:
 			username = uts.random_username()
 		kwargs = {
@@ -529,19 +529,18 @@ class UCSTestSchool(object):
 			'username': username,
 			'password': password,
 		}
-		dn, domain_admin = udm.create_user(position=position, groups=groups, **kwargs)
+		dn, domain_admin = self.udm.create_user(position=position, groups=groups, **kwargs)
 		return domain_admin, dn
 
 	def create_global_user(self, username=None, password='univention'):
 		position = 'cn=users,%s' % (self.LDAP_BASE,)
-		udm = udm_test.UCSTestUDM()
 		if username is None:
 			username = uts.random_username()
 		kwargs = {
 			'username': username,
 			'password': password,
 		}
-		dn, global_user = udm.create_user(position=position, **kwargs)
+		dn, global_user = self.udm.create_user(position=position, **kwargs)
 		return global_user, dn
 
 	def create_school_class(self, ou_name, class_name=None, description=None, users=None, wait_for_replication=True):
@@ -682,7 +681,6 @@ class UCSTestSchool(object):
 		new_objects = new_ldap_status - old_ldap_status
 		removed_objects = old_ldap_status - new_ldap_status
 		return Bunch(new=new_objects, removed=removed_objects)
-
 
 
 if __name__ == '__main__':
