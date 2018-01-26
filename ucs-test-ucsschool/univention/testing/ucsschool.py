@@ -36,6 +36,7 @@ API for testing UCS@school and cleaning up after performed tests
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
+import os
 import json
 import ldap
 import random
@@ -90,9 +91,9 @@ class UCSTestSchool(object):
 	LDAP_BASE = _ucr['ldap/base']
 
 	PATH_CMD_BASE = '/usr/share/ucs-school-import/scripts'
-	PATH_CMD_CREATE_OU = PATH_CMD_BASE + '/create_ou'
+	PATH_CMD_CREATE_OU = os.path.join(PATH_CMD_BASE, 'create_ou')
+	PATH_CMD_IMPORT_USER = os.path.join(PATH_CMD_BASE, 'import_user')
 
-	PATH_CMD_IMPORT_USER = PATH_CMD_BASE + '/import_user'
 	CN_STUDENT = _ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
 	CN_TEACHERS = _ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 	CN_TEACHERS_STAFF = _ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
@@ -115,21 +116,23 @@ class UCSTestSchool(object):
 			print ''.join(traceback.format_exception(exc_type, exc_value, etraceback))
 			raise
 
-	def open_ldap_connection(self, binddn=None, bindpw=None, ldap_server=None, admin=False, machine=False):
-		'''Opens a new LDAP connection using the given user LDAP DN and
+	@classmethod
+	def open_ldap_connection(cls, binddn=None, bindpw=None, ldap_server=None, admin=False, machine=False):
+		"""
+		Opens a new LDAP connection using the given user LDAP DN and
 		password. The connection is established to the given server or
 		(if None is given) to the server defined by the UCR variable
 		ldap/server/name is used.
 		If admin is set to True, a connection is setup by getAdminConnection().
 		If machine is set to True, a connection to the master is setup by getMachoneConnection().
-		'''
-
+		"""
 		assert not (admin and machine)
+		assert not (binddn or bindpw), 'Arguments "binddn" and "bindpw" are ignored and UCSTestDomainAdminCredentials() used.'
 
 		account = utils.UCSTestDomainAdminCredentials()
 		if not ldap_server:
-			ldap_server = self._ucr.get('ldap/master')
-		port = int(self._ucr.get('ldap/server/port', 7389))
+			ldap_server = cls._ucr.get('ldap/master')
+		port = int(cls._ucr.get('ldap/server/port', 7389))
 
 		try:
 			if admin:
@@ -137,7 +140,7 @@ class UCSTestSchool(object):
 			elif machine:
 				lo = udm_uldap.getMachineConnection(ldap_master=True)[0]
 			else:
-				lo = udm_uldap.access(host=ldap_server, port=port, base=self._ucr.get('ldap/base'), binddn=account.binddn, bindpw=account.bindpw, start_tls=2)
+				lo = udm_uldap.access(host=ldap_server, port=port, base=cls._ucr.get('ldap/base'), binddn=account.binddn, bindpw=account.bindpw, start_tls=2)
 		except udm_errors.noObject:
 			raise
 		except LDAPError as exc:
@@ -198,7 +201,7 @@ class UCSTestSchool(object):
 		""" Removes the given school ou and all its corresponding objects like groups """
 
 		print ''
-		print '*** Purging OU %s and related objects' % ou_name
+		print '*** Purging OU %r and related objects' % (ou_name,)
 		# remove OU specific groups
 		for grpdn in (
 			'cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
@@ -221,12 +224,13 @@ class UCSTestSchool(object):
 		if wait_for_replication:
 			utils.wait_for_replication()
 
-	def check_name_edudc(self, name_edudc):
+	@classmethod
+	def check_name_edudc(cls, name_edudc):
 		if isinstance(name_edudc, str):
-			if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.', 1)[0].lower():
+			if name_edudc.lower() == cls._ucr.get('ldap/master', '').split('.', 1)[0].lower():
 				print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc to None'
 				name_edudc = None
-			elif any([name_edudc.lower() == backup.split('.', 1)[0].lower() for backup in self._ucr.get('ldap/backup', '').split(' ')]):
+			elif any([name_edudc.lower() == backup.split('.', 1)[0].lower() for backup in cls._ucr.get('ldap/backup', '').split(' ')]):
 				print '*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc to None'
 				name_edudc = None
 		return name_edudc

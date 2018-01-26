@@ -384,8 +384,6 @@ class CLI_Import_v2_Tester(object):
 				for num, (name, dn) in enumerate(res):
 					ou = ous[num]
 					ou.name, ou.dn = name, dn
-					self.log.info('Created OU %r (%r)...', ou.name, ou.dn)
-
 				self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
 				self.test()
 				self.log.info('Test was successful.\n\n')
