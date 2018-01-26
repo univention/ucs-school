@@ -7,7 +7,6 @@
 ## bugs: [41749]
 
 
-import univention.testing.udm
 import univention.testing.ucsschool as utu
 import univention.testing.strings as uts
 import univention.testing.utils as utils
@@ -20,28 +19,21 @@ class Test(CLI_Import_v2_Tester):
 	ou_B = None
 	ou_C = None
 
-	def run(self):
-		try:
-			with univention.testing.udm.UCSTestUDM() as udm:
-				self.udm = udm
-				with utu.UCSTestSchool() as schoolenv:
-					self.lo = schoolenv.open_ldap_connection()
-					self.schoolenv = schoolenv
-					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'), use_cache=False)
-					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(use_cache=False)
-					self.log.info(
-						'*** This host is responsible for OU %r, but not for OU %r.',
-						self.ou_A.name,
-						self.ou_B.name)
-					all_local_schools = [school.dn for school in School.get_all(self.lo)]
-					self.log.info('*** This hosts school OUs: %r\n\n', all_local_schools)
-					if self.ou_B.name in all_local_schools:
-						utils.fail('Found OU %r in local schools.' % self.ou_B.name)
-
-					self.test()
-					self.log.info('Test was successful.\n\n\n')
-		finally:
-			self.cleanup()
+	def create_ous(self, schoolenv):
+		self.log.info('Creating OUs...')
+		self.ou_A = utu.Bunch(name=None, dn=None)
+		self.ou_B = utu.Bunch(name=None, dn=None)
+		self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
+		# not using the cache, as it could return the same OU on singlemaster systems
+		self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(use_cache=False)
+		self.log.info(
+			'*** This host is responsible for OU %r, but not for OU %r.',
+			self.ou_A.name,
+			self.ou_B.name)
+		all_local_schools = [school.dn for school in School.get_all(self.lo)]
+		self.log.info('*** This hosts school OUs: %r\n\n', all_local_schools)
+		if self.ou_B.name in all_local_schools:
+			utils.fail('Found OU %r in local schools.' % self.ou_B.name)
 
 	def test(self):
 		class_A_dn, class_A_name = self.udm.create_group(

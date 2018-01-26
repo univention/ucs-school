@@ -165,18 +165,19 @@ class CLI_Import_v2_Tester(object):
 	ucr.load()
 	ldap_date_format = '%Y%m%d%H%M%SZ'
 	udm_date_format = '%Y-%m-%d'
-	ou_A = utu.Bunch(name=None, dn=None)
+	ou_A = utu.Bunch(name=None, dn=None)  # will be initializes in create_ous()
 	ou_B = utu.Bunch(name=None, dn=None)  # set ou_B to None if a second OU is not needed
 	ou_C = utu.Bunch(name=None, dn=None)  # set ou_C to None if a third OU is not needed
 
 	def __init__(self):
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
 		self.log = self._get_logger()
-		self.lo = None
+		self.lo = None  # will be initializes in run()
 		self.ldap_status = None
 		self.hook_fn_set = set()
 		self.errors = list()
-		self.udm = None
+		self.schoolenv = None  # will be initializes in run()
+		self.udm = None  # will be initializes in run()
 		try:
 			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
 		except (AttributeError, IndexError):
@@ -364,9 +365,19 @@ class CLI_Import_v2_Tester(object):
 		self.log.info('Installed package versions:\n{}'.format('\n'.join(pck_s)))
 		utils.fail(msg, returncode)
 
+	def create_ous(self, schoolenv):
+		self.log.info('Creating OUs...')
+		ous = [ou for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None]
+		res = schoolenv.create_multiple_ous(len(ous), name_edudc=self.ucr.get('hostname'))
+		for num, (name, dn) in enumerate(res):
+			ou = ous[num]
+			ou.name, ou.dn = name, dn
+		self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
+
 	def run(self):
 		try:
 			with utu.UCSTestSchool() as schoolenv:
+				self.schoolenv = schoolenv
 				self.udm = schoolenv.udm
 				if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
 					self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
@@ -377,13 +388,7 @@ class CLI_Import_v2_Tester(object):
 					)
 
 				self.lo = schoolenv.open_ldap_connection(admin=True)
-				self.log.info('Creating OUs...')
-				ous = [ou for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None]
-				res = schoolenv.create_multiple_ous(len(ous), name_edudc=self.ucr.get('hostname'))
-				for num, (name, dn) in enumerate(res):
-					ou = ous[num]
-					ou.name, ou.dn = name, dn
-				self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
+				self.create_ous(schoolenv)
 				self.test()
 				self.log.info('Test was successful.\n\n')
 		finally:
