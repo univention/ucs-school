@@ -54,6 +54,7 @@ import univention.testing.udm as udm_test
 
 import univention.admin.uldap as udm_uldap
 import univention.admin.uexceptions as udm_errors
+from univention.admin.uexceptions import noObject
 
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
@@ -102,6 +103,7 @@ class UCSTestSchool(object):
 
 	def __init__(self):
 		self._cleanup_ou_names = set()
+		self._ldap_objects_in_test_ous = dict()  # type: Dict[str, Set[str]]
 		self.lo = self.open_ldap_connection()
 		self.udm = udm_test.UCSTestUDM()
 
@@ -193,11 +195,33 @@ class UCSTestSchool(object):
 
 	def cleanup(self, wait_for_replication=True):
 		""" Cleanup all objects created by the UCS@school test environment """
+		print('Performing UCSTestSchool cleanup...')
 		for ou_name in self._cleanup_ou_names:
 			self.cleanup_ou(ou_name, wait_for_replication=False)
+
+		if self._ldap_objects_in_test_ous:
+			# create_ou() was used with use_cache=True
+			for k, v in self._ldap_objects_in_test_ous.items():
+				res = self.diff_ldap_status(self.lo, v, k)
+				for dn in res.new:
+					filter_s, base = dn.split(',', 1)
+					objs = self.lo.search(filter_s, base=base, attr=['univentionObjectType'])
+					if objs:
+						univention_object_type = objs[0][1].get('univentionObjectType')
+						if univention_object_type:
+							self.udm._cleanup.setdefault(univention_object_type[0], []).append(dn)
+						else:
+							print('*** Removing LDAP object without "univentionObjectType" directly (not using UDM): {!r}'.format(dn))
+							try:
+								self.lo.delete(dn)
+							except noObject as exc:
+								print('*** {}'.format(exc))
+
 		self.udm.cleanup()
+
 		if wait_for_replication:
 			utils.wait_for_replication()
+		print('UCSTestSchool cleanup done')
 
 	def cleanup_ou(self, ou_name, wait_for_replication=True):
 		""" Removes the given school ou and all its corresponding objects like groups """
@@ -223,6 +247,13 @@ class UCSTestSchool(object):
 			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
 		self._remove_udm_object('container/ou', oudn)
 		print '*** Purging OU %s and related objects (%s): done\n\n' % (ou_name, oudn)
+
+		for ou_list in self._test_ous.values():
+			try:
+				ou_list.remove((ou_name, oudn))
+			except ValueError:
+				pass
+
 		if wait_for_replication:
 			utils.wait_for_replication()
 
@@ -265,6 +296,7 @@ class UCSTestSchool(object):
 		if use_cache and self._test_ous.get(cache_key):
 			res = random.choice(self._test_ous[cache_key])
 			print('*** Found {} OUs in cache for arguments {!r}, using {!r}.'.format(len(self._test_ous[cache_key]), cache_key, res))
+			self._ldap_objects_in_test_ous.setdefault(res[1], set()).update(self.get_ldap_status(self.lo, res[1]))
 			return res
 
 		# create random display name for OU
@@ -321,6 +353,7 @@ class UCSTestSchool(object):
 		if use_cache:
 			print('*** Storing OU {!r} in cache with key {!r}.'.format(ou_name, cache_key))
 			self._test_ous.setdefault(cache_key, []).append((ou_name, ou_dn))
+			self._ldap_objects_in_test_ous.setdefault(ou_dn, set()).update(self.get_ldap_status(self.lo, ou_dn))
 			self.store_test_ous()
 		return ou_name, ou_dn
 
@@ -346,11 +379,13 @@ class UCSTestSchool(object):
 			ou_name, ou_dn = self.create_ou(None, name_edudc, name_admindc, displayName, name_share_file_server, use_cli, wait_for_replication, False)
 			print('*** Storing OU {!r} in cache with key {!r}.'.format(ou_name, cache_key))
 			self._test_ous.setdefault(cache_key, []).append((ou_name, ou_dn))
-			self._cleanup_ou_names.remove(ou_name)
 			self.store_test_ous()
+			self._cleanup_ou_names.remove(ou_name)
 		random.shuffle(self._test_ous[cache_key])
 		res = self._test_ous[cache_key][:num]
-		print('*** Found {} OUs in cache for arguments {!r}, using {!r}.'.format(len(self._test_ous[cache_key]), cache_key, res))
+		for ou_name, ou_dn in res:
+			self._ldap_objects_in_test_ous.setdefault(ou_dn, set()).update(self.get_ldap_status(self.lo, ou_dn))
+		print('*** Chose {}/{} OUs from cache for arguments {!r}: {!r}.'.format(len(res), len(self._test_ous[cache_key]), cache_key, res))
 		return res
 
 	def get_district(self, ou_name):
@@ -643,6 +678,17 @@ class UCSTestSchool(object):
 
 	def create_school_dc_slave(self):
 		pass
+
+	def delete_test_ous(self):
+		if not self._test_ous:
+			self.load_test_ous()
+		print('self._test_ous={!r}'.format(self._test_ous))
+		all_test_ous = []
+		for test_ous in self._test_ous.values():
+			all_test_ous.extend([ou_name for ou_name, on_dn in test_ous])
+		for ou_name in all_test_ous:
+			self.cleanup_ou(ou_name)
+		self.store_test_ous()
 
 	@classmethod
 	def load_test_ous(cls):
