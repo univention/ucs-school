@@ -162,6 +162,7 @@ class MyHook(UserPyHook):
 
 class CLI_Import_v2_Tester(object):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	ucr.load()
 	ldap_date_format = '%Y%m%d%H%M%SZ'
 	udm_date_format = '%Y-%m-%d'
 
@@ -178,7 +179,6 @@ class CLI_Import_v2_Tester(object):
 		self.ou_B = utu.Bunch(name=None)
 		# set ou_C to None if a third OU is not needed
 		self.ou_C = utu.Bunch(name=None)
-		self.ucr.load()
 		try:
 			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
 		except (AttributeError, IndexError):
@@ -214,6 +214,7 @@ class CLI_Import_v2_Tester(object):
 		})
 
 	def cleanup(self):
+		self.log.info('Performing CLI_Import_v2_Tester cleanup...')
 		self.log.info('Purging %r', self.tmpdir)
 		shutil.rmtree(self.tmpdir, ignore_errors=True)
 		for hook_fn in self.hook_fn_set:
@@ -222,6 +223,8 @@ class CLI_Import_v2_Tester(object):
 			except (IOError, OSError):
 				self.log.warning('Failed to remove %r' % (hook_fn,))
 		self.udm.cleanup()
+		self.ucr.revert_to_original_registry()
+		self.log.info('CLI_Import_v2_Tester cleanup done')
 
 	def create_config_json(self, values=None, config=None):
 		"""
