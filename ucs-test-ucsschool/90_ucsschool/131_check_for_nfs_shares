@@ -13,11 +13,10 @@ from ucsschool.lib.models import School, Share
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
-		lo = schoolenv.open_ldap_connection()
 		nfs_shares = list()
-		for school in School.get_all(lo):
-			for share in Share.get_all(lo, school.name):
-				share_udm = share.get_udm_object(lo)
+		for school in School.get_all(schoolenv.lo):
+			for share in Share.get_all(schoolenv.lo, school.name):
+				share_udm = share.get_udm_object(schoolenv.lo)
 				if "nfs" in share_udm.options:
 					if share.name in ["Marktplatz", "iTALC-Installation"]:
 						print("*** Ignoring //{}/{} (Bug #42514)".format(school.name, share.name))

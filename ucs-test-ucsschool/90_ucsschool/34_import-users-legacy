@@ -147,12 +147,12 @@ class CLI_Legacy_Import_Tester(object):
 
 	def run(self):
 		try:
-			with utu.UCSTestSchool() as schoolenv, univention.testing.udm.UCSTestUDM() as udm:
+			with utu.UCSTestSchool() as schoolenv:
 				self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
 				self.lo = schoolenv.open_ldap_connection(admin=True)
 				if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
 					self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
-					udm.create_object(
+					schoolenv.udm.create_object(
 						'mail/domain',
 						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
 						name=self.maildomain,

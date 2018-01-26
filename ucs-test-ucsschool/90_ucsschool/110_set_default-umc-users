@@ -6,7 +6,6 @@
 ## packages: []
 
 from univention.config_registry import handler_set
-from univention.uldap import getMachineConnection
 import ldap
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
@@ -14,14 +13,13 @@ import univention.testing.utils as utils
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
-		lo = getMachineConnection()
 		handler_set(['ucsschool/import/attach/policy/default-umc-users=no'])
 		# UCR variables are loaded for ucsschool at the import stage
 		# That's why the import should be after setting the ucr variable
 		import univention.testing.ucsschool as utu
 		with utu.UCSTestSchool() as schoolenv:
-			school1, oudn = schoolenv.create_ou(use_cache=False)
-			school2, oudn2 = schoolenv.create_ou(use_cli=True, use_cache=False)
+			school1, oudn = schoolenv.create_ou()
+			school2, oudn2 = schoolenv.create_ou(use_cli=True)
 
 			utils.wait_for_replication_and_postrun()
 
@@ -30,7 +28,7 @@ def main():
 					print 'Checking school %s' % school
 					expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get('ldap/base'),)
 					base = "cn=Domain Users %s,cn=groups,%s" % (school.lower(), schoolenv.get_ou_base_dn(school))
-					found_attr = lo.search(base=base, scope='base', attr=['univentionPolicyReference'])[0][1]['univentionPolicyReference']
+					found_attr = schoolenv.lo.search(base=base, scope='base', attr=['univentionPolicyReference'])[0][1]['univentionPolicyReference']
 					if expected_attr in found_attr:
 						utils.fail('Incorrect attributes found: %r\nexpected: %r' % (
 							found_attr, expected_attr))
