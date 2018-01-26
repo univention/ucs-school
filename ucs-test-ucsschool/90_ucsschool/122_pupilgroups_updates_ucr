@@ -16,11 +16,9 @@ from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 
 
 class Test(CLI_Import_v2_Tester):
-	def __init__(self):
-		self.ou_A = None
-		self.ou_B = None
-		self.ou_C = None
-		super(Test, self).__init__()
+	ou_A = None
+	ou_B = None
+	ou_C = None
 
 	def run(self):
 		try:
@@ -82,13 +80,5 @@ class Test(CLI_Import_v2_Tester):
 			utils.fail('Username %r in UCRV %r.' % (user_b_name, ucr_B))
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()

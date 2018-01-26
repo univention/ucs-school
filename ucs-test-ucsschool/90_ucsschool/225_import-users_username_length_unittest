@@ -17,10 +17,11 @@ from ucsschool.importer.utils.shell import ImportStudent, ImportTeacher
 
 
 class Test(CLI_Import_v2_Tester):
+	ou_B = None
+	ou_C = None
+
 	def __init__(self):
 		super(Test, self).__init__()
-		self.ou_B = None
-		self.ou_C = None
 		self.usernames = list()
 
 	def test(self):
@@ -105,13 +106,5 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** There were %d duplicates.', len(self.usernames) - len(set(self.usernames)))
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()

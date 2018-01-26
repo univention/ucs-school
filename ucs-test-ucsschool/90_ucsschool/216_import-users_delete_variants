@@ -30,11 +30,8 @@ utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 1200)
 
 
 class Test(CLI_Import_v2_Tester):
-
-	def __init__(self):
-		super(Test, self).__init__()
-		self.ou_B = None
-		self.ou_C = None
+	ou_B = None
+	ou_C = None
 
 	def test(self):  # formally test_delete_variants()
 		"""
@@ -231,13 +228,5 @@ class Test(CLI_Import_v2_Tester):
 				should_exist=True)
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()

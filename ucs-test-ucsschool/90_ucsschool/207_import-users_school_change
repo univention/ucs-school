@@ -33,10 +33,7 @@ class PersonWithSchool(Person):
 
 
 class Test(CLI_Import_v2_Tester):
-
-	def __init__(self):
-		super(Test, self).__init__()
-		self.ou_C = None
+	ou_C = None
 
 	def test(self):  # formally test_school_change()
 		"""
@@ -211,13 +208,5 @@ class Test(CLI_Import_v2_Tester):
 			self.log.info('*** OK: Users group membership is as expected.')
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()

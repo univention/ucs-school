@@ -165,6 +165,9 @@ class CLI_Import_v2_Tester(object):
 	ucr.load()
 	ldap_date_format = '%Y%m%d%H%M%SZ'
 	udm_date_format = '%Y-%m-%d'
+	ou_A = utu.Bunch(name=None, dn=None)
+	ou_B = utu.Bunch(name=None, dn=None)  # set ou_B to None if a second OU is not needed
+	ou_C = utu.Bunch(name=None, dn=None)  # set ou_C to None if a third OU is not needed
 
 	def __init__(self):
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
@@ -174,11 +177,6 @@ class CLI_Import_v2_Tester(object):
 		self.hook_fn_set = set()
 		self.errors = list()
 		self.udm = None
-		self.ou_A = utu.Bunch(name=None)
-		# set ou_B to None if a second OU is not needed
-		self.ou_B = utu.Bunch(name=None)
-		# set ou_C to None if a third OU is not needed
-		self.ou_C = utu.Bunch(name=None)
 		try:
 			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
 		except (AttributeError, IndexError):

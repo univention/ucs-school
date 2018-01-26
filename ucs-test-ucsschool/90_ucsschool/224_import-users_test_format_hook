@@ -26,10 +26,11 @@ TESTHOOKTARGET = '/usr/share/ucs-school-import/pyhooks/testformathook.py'
 
 
 class Test(CLI_Import_v2_Tester):
+	ou_B = None
+	ou_C = None
+
 	def __init__(self):
 		super(Test, self).__init__()
-		self.ou_B = None
-		self.ou_C = None
 		self.log.info('*** Copying %r to %r...', TESTHOOKSOURCE, TESTHOOKTARGET)
 		shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 		sys.path.append('/usr/share/ucs-school-import/pyhooks/')
@@ -105,13 +106,5 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** OK: All %r users were created correctly.', len(person_list))
 
 
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
-
-
 if __name__ == '__main__':
-	main()
+	Test().run()
