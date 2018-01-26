@@ -24,7 +24,7 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			admindc = Bunch(name=uts.random_name())
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'), name_admindc=admindc.name)
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'), name_admindc=admindc.name, use_cache=False)
 			staff, staff_dn = schoolenv.create_user(school, is_staff=True)
 			teastaff, teastaff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
 			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
