@@ -1,3 +1,10 @@
+ucs-school-umc-exam (8.0.1-1) unstable; urgency=medium
+
+  * Bug #46174: UDM users/user does not have posix/samba/kerberos options
+  	anymore
+
+ -- Florian Best <best@univention.de>  Fri, 26 Jan 2018 15:09:02 +0100
+
 ucs-school-umc-exam (8.0.0-1) unstable; urgency=low
 
   * bumped version
