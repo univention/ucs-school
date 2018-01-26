@@ -1,0 +1,15 @@
+#!/usr/share/ucs-test/runner python
+## desc: remove cached test OUs
+## tags: [apptest,ucsschool]
+## exposure: dangerous
+
+import univention.testing.ucsschool as utu
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		schoolenv.delete_test_ous()
+
+
+if __name__ == '__main__':
+	main()
