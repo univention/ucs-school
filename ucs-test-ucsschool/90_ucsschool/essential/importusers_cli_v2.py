@@ -31,12 +31,6 @@ import univention.testing.format.text
 from univention.testing.ucs_samba import wait_for_drs_replication
 
 
-class Bunch(object):
-
-	def __init__(self, **kwds):
-		self.__dict__.update(kwds)
-
-
 class ImportException(Exception):
 	pass
 
@@ -179,11 +173,11 @@ class CLI_Import_v2_Tester(object):
 		self.hook_fn_set = set()
 		self.errors = list()
 		self.udm = None
-		self.ou_A = Bunch(name=None)
+		self.ou_A = utu.Bunch(name=None)
 		# set ou_B to None if a second OU is not needed
-		self.ou_B = Bunch(name=None)
+		self.ou_B = utu.Bunch(name=None)
 		# set ou_C to None if a third OU is not needed
-		self.ou_C = Bunch(name=None)
+		self.ou_C = utu.Bunch(name=None)
 		self.ucr.load()
 		try:
 			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
@@ -288,18 +282,15 @@ class CLI_Import_v2_Tester(object):
 
 	def save_ldap_status(self):
 		self.log.debug('Saving LDAP status...')
-		self.ldap_status = set(self.lo.searchDn())
+		self.ldap_status = utu.UCSTestSchool.get_ldap_status(self.lo)
 		self.log.debug('LDAP status saved.')
 
 	def diff_ldap_status(self):
-		self.log.debug('Reading LDAP status for check differences...')
-		new_ldap_status = set(self.lo.searchDn())
-		new_objects = new_ldap_status - self.ldap_status
-		removed_objects = self.ldap_status - new_ldap_status
-		self.log.debug('LDAP status diffed.')
-		self.log.debug('New objects: %r', new_objects)
-		self.log.debug('Removed objects: %r', removed_objects)
-		return Bunch(new=new_objects, removed=removed_objects)
+		print('Reading LDAP status to check differences...')
+		res = utu.UCSTestSchool.diff_ldap_status(self.lo, self.ldap_status)
+		print('New objects: {!r}'.format(res.new))
+		print('Removed objects: {!r}'.format(res.removed))
+		return res
 
 	@classmethod
 	def syntax_date2_dateformat(cls, userexpirydate):
