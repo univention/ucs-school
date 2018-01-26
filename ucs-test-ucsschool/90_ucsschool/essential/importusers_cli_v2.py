@@ -457,13 +457,14 @@ class UniqueObjectTester(CLI_Import_v2_Tester):
 		self.unique_basenames_to_remove = list()
 
 	def cleanup(self):
-		lo, po = getAdminConnection()
 		self.log.info("Removing new unique-usernames,cn=ucsschool entries...")
+		if not self.lo:
+			self.lo = utu.UCSTestSchool.open_ldap_connection(admin=True)
 		for username in self.unique_basenames_to_remove:
-			dn = "cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(escape_dn_chars(username), lo.base)
+			dn = "cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(escape_dn_chars(username), self.lo.base)
 			self.log.debug("Removing %r", dn)
 			try:
-				lo.delete(dn)
+				self.lo.delete(dn)
 			except noObject:
 				pass
 			except ldapError as exc:
