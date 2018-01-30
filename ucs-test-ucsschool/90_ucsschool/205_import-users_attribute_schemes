@@ -29,54 +29,54 @@ class Test(CLI_Import_v2_Tester):
         - employeeNumber is filled with a string consisting of first and last name and description
         - mailPrimaryAddress is also built from those attributes
 		"""
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config = copy.deepcopy(self.default_config)
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('csv:mapping:employeeNumber', 'employeeNumber')
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('scheme:email', "<:umlauts><firstname:lower>[0:3].<lastname:lower>[2:5]@example.com")
+		config.update_entry('scheme:employeeNumber', "The user's name is <firstname:upper> <lastname> <description>")
+		config.update_entry('user_role', None)
+		config.update_entry(
+			'scheme:username:default',
+			'<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[ALWAYSCOUNTER]'
+			)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+
+		self.log.info('*** Importing new single user of each role from templates...')
+		person_list = []
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Importing a new single user with role %r from templates', role)
-
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			record_uid = uts.random_name()
-
-			config = copy.deepcopy(self.default_config)
-			config.update_entry('sourceUID', source_uid)
-			config.update_entry('csv:mapping:employeeNumber', 'employeeNumber')
-			config.update_entry('csv:mapping:DBID', 'record_uid')
-			config.update_entry('scheme:recordUID', '<record_uid>')
-			config.update_entry('user_role', role)
-			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[ALWAYSCOUNTER]")
-			config.update_entry('scheme:email', "<:umlauts><firstname:lower>[0:3].<lastname:lower>[2:5]@example.com")
-			config.update_entry('scheme:employeeNumber', "The user's name is <firstname:upper> <lastname> <description>")
-
 			person = Person(self.ou_A.name, role)
-			person.update(record_uid=record_uid, source_uid=source_uid, username=None, mail=None, description=uts.random_name())
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			fn_config = self.create_config_json(config=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+			person.update(record_uid=uts.random_name(), source_uid=source_uid, username=None, mail=None, description=uts.random_name())
+			person_list.append(person)
 
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.check_new_and_removed_users(4, 0)
 
-			# check for new users in LDAP
-			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-			if len(new_users) != 1:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
-				self.fail('Stopping here')
-
-			# update dn+username of person and verify LDAP attributes
+		self.log.info('Testing mailPrimaryAddress and description...')
+		for person in person_list:
+			person.update_from_ldap(self.lo, ['dn', 'username'])
 			mail = '%s.%s@example.com' % (person.firstname[0:3].lower(), person.lastname[2:5].lower())
-			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid, mail=mail)
+			person.update(mail=mail)
 			person.verify()
 
 			username_prefix = 'user%s.%s' % (person.firstname[0:2], person.lastname[0:2])
 			if person.username != "{}1".format(username_prefix):
 				self.fail('username %r is not expected string %r' % (person.username, "{}1".format(username_prefix)))
-			self.log.info('Username %r is not expected string %r', person.username, "{}1".format(username_prefix))
-
-			self.log.info('Testing mailPrimaryAddress and description...')
+			self.log.info('Username %r is expected string %r', person.username, "{}1".format(username_prefix))
 			values = {
 				'employeeNumber': ["The user's name is %s %s %s" % (person.firstname.upper(), person.lastname, person.description)],
 			}
+			self.log.debug(
+				'User object %r:\n%s',
+				person.dn,
+				pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn))
+			)
 			utils.verify_ldap_object(person.dn, expected_attr=values, strict=True, should_exist=True)
-			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
 
 
 if __name__ == '__main__':

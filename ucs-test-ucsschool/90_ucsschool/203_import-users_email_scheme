@@ -9,7 +9,7 @@
 ## bugs: [44993]
 
 import copy
-from ldap.filter import escape_filter_chars
+from ldap.filter import filter_format
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -27,80 +27,81 @@ class Test(UniqueObjectTester):
 		"""
 		Test creation of email addresses from a special scheme (Bug #44993).
 		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
-				self.log.info('*** Importing a new single user with role %r, email scheme %r and recordUID 1. time', role, scheme)
+		config = copy.deepcopy(self.default_config)
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
-				source_uid = 'sourceUID-%s' % (uts.random_string(),)
-				record_uid = uts.random_name()
-
-				config = copy.deepcopy(self.default_config)
-				config.update_entry('sourceUID', source_uid)
-				config.update_entry('csv:mapping:DBID', 'record_uid')
-				config.update_entry('scheme:recordUID', '<record_uid>')
-				config.update_entry('user_role', role)
-				config.update_entry('scheme:email', "<:umlauts><firstname>[0].<lastname>[{}]@{}".format(scheme, self.maildomain))
-
+		for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry(
+				'scheme:email',
+				'<:umlauts><firstname>[0].<lastname>[{}]@{}'.format(scheme, self.maildomain)
+			)
+			self.log.info('*** Importing a user of each role and email scheme %r - 1. time', scheme)
+			person_list = []
+			for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 				person = Person(self.ou_A.name, role)
-				person.update(record_uid=record_uid, source_uid=source_uid, username=None, mail=None)
-				fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+				person.update(record_uid=uts.random_name(), source_uid=source_uid, username=None, mail=None)
+				person.email_prefix = None
+				person_list.append(person)
+
+			fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+			config.update_entry('input:filename', fn_csv)
+			fn_config = self.create_config_json(config=config)
+			self.save_ldap_status()
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+			self.check_new_and_removed_users(4, 0)
+
+			for person in person_list:
+				self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
+				person.update_from_ldap(self.lo, ['dn', 'username', 'mail'])
+				wait_for_drs_replication(filter_format('cn=%s', (person.username,)))
+				person.verify()
+
+				self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
+				person.email_prefix = '{}.{}'.format(person.firstname[0], person.lastname)
+				self.log.info("Calculated person.email_prefix is %r.", person.email_prefix)
+				self.unique_basenames_to_remove.append(person.email_prefix)
+				ext = '1' if scheme == 'ALWAYSCOUNTER' else ''
+				person.update(mail='{}{}@{}'.format(person.email_prefix, ext, self.maildomain))
+				self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
+				person.verify()
+				self.check_unique_obj('unique-email', person.email_prefix, '2')
+
+			for ext in [2, 3]:
+				self.log.info('*** Deleting users - %d. time', ext - 1)
+				fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
 				config.update_entry('input:filename', fn_csv)
 				fn_config = self.create_config_json(config=config)
-				# save ldap state for later comparison
 				self.save_ldap_status()
-
-				# start import
 				self.run_import(['-c', fn_config, '-i', fn_csv])
-
-				# update dn+username of person and verify LDAP attributes
-				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-				email_prefix = '{}.{}'.format(person.firstname[0], person.lastname)
-				self.log.info("Calculated email_prefix is %r.", email_prefix)
-				self.unique_basenames_to_remove.append(email_prefix)
-				ext = '1' if scheme == 'ALWAYSCOUNTER' else ''
-				person.update(dn=new_users[0], mail='{}{}@{}'.format(email_prefix, ext, self.maildomain))
-				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
-
-				# check for new users in LDAP
-				self.check_new_and_removed_users(1, 0)
-				person.verify()
-				self.check_unique_obj('unique-email', email_prefix, '2')
-
-				for ext in [2, 3]:
-					self.log.info('*** Deleting user with role %r and username and recordUID %d. time', role, ext - 1)
-					fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
-					config.update_entry('input:filename', fn_csv)
-					fn_config = self.create_config_json(config=config)
-					self.save_ldap_status()
-					self.run_import(['-c', fn_config, '-i', fn_csv])
-					utils.wait_for_replication()
+				utils.wait_for_replication()
+				self.check_new_and_removed_users(0, 4)
+				for person in person_list:
 					person.set_mode_to_delete()
-					self.check_new_and_removed_users(0, 1)
 					person.verify()
 
-					self.log.info('*** Importing same user with role %r with same username and recordUID %d. time', role, ext)
+				self.log.info('*** Importing same users - %d. time', ext)
+				for person in person_list:
 					person.update(mode='A', username=None, mail=None)
-					fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-					config.update_entry('input:filename', fn_csv)
-					fn_config = self.create_config_json(config=config)
-					self.save_ldap_status()
-					self.run_import(['-c', fn_config, '-i', fn_csv])
-					utils.wait_for_replication()
-					new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-					person.update(dn=new_users[0], mail='{}{}@{}'.format(email_prefix, ext, self.maildomain))  # record_uid=record_uid, source_uid=source_uid
-					wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
-					self.check_new_and_removed_users(1, 0)
+				fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+				config.update_entry('input:filename', fn_csv)
+				fn_config = self.create_config_json(config=config)
+				self.save_ldap_status()
+				self.run_import(['-c', fn_config, '-i', fn_csv])
+				utils.wait_for_replication()
+				self.check_new_and_removed_users(4, 0)
+				for person in person_list:
+					person.update_from_ldap(self.lo, ['dn', 'username'])
+					person.update(mail='{}{}@{}'.format(person.email_prefix, ext, self.maildomain))
+					self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
+					wait_for_drs_replication(filter_format('cn=%s', (person.username,)))
 					person.verify()
-					self.check_unique_obj('unique-email', email_prefix, str(ext + 1))
-
-
-def main():
-	tester = Test()
-	try:
-		tester.run()
-	finally:
-		tester.cleanup()
+					self.check_unique_obj('unique-email', person.email_prefix, str(ext + 1))
 
 
 if __name__ == '__main__':
-	main()
+	Test().run()

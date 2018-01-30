@@ -8,7 +8,8 @@
 ##   - ucs-school-import
 ## bugs: []
 
-
+from copy import deepcopy
+from ldap.filter import filter_format
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
@@ -25,68 +26,89 @@ class Test(CLI_Import_v2_Tester):
 			modify user with role <role> → changing group memberships
 			remove user with role <role>
 		"""
+		self.log.info('*** Import a new user of each role...')
+
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config = deepcopy(self.default_config)
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+
+		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Importing a new single user with role %r', role)
-
 			person = Person(self.ou_A.name, role)
-			fn_csv = self.create_csv_file(person_list=[person])
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
-			config = {
-				'sourceUID': source_uid,
-				'input:filename': fn_csv,
-				'user_role': role,
-			}
-			fn_config = self.create_config_json(values=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+			person.update(
+				record_uid='recordUID-{}'.format(uts.random_string()),
+				source_uid=source_uid
+			)
+			person_list.append(person)
 
-			# start import
-			self.run_import(['-c', fn_config])
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		self.check_new_and_removed_users(4, 0)
 
-			# check for new users in LDAP
-			self.check_new_and_removed_users(1, 0)
-
-			# update dn+username of person and verify LDAP attributes
-			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
+		filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
+		for person in person_list:
+			filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
+			res = self.lo.search(filter=filter_s)
+			if len(res) != 1:
+				self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
+			try:
+				dn = res[0][0]
+				attrs = res[0][1]
+			except KeyError as exc:
+				self.log.exception('Error searching for user: %s res=%r', exc, res)
+				raise
+			username = attrs['uid'][0]
+			email = attrs['mailPrimaryAddress'][0]
+			self.log.debug('role=%r username=%r email=%r dn=%r', person.role, username, email, dn)
+			person.update(dn=dn, username=username, mail=email)
 			person.verify()
 
-			self.log.info('*** Modifying a single user with role %r', role)
+		self.log.info('*** Modify each user...')
 
-			if role == 'student':
+		for person in person_list:
+			if person.role == 'student':
 				person.school_classes = {}
-			if role in ('student', 'teacher', 'teacher_and_staff'):
+			if person.role != 'staff':
 				person.append_random_class()
 
-			self.create_csv_file(person_list=[person], fn_csv=fn_csv)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+		self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'], fn_csv=fn_csv)
+		# save ldap state for later comparison
+		self.save_ldap_status()
 
-			# start import
-			self.run_import(['-c', fn_config])
+		# start import
+		self.run_import(['-c', fn_config])
 
-			# check for new users in LDAP
-			self.check_new_and_removed_users(0, 0)
+		# check for new users in LDAP
+		self.check_new_and_removed_users(0, 0)
 
-			# verify LDAP attributes
+		# verify LDAP attributes
+		for person in person_list:
 			person.verify()
 
-			self.log.info('*** Remove a single user with role %r', role)
+		self.log.info('*** Remove all users...')
 
-			# mark person as removed
+		# mark as removed
+		for person in person_list:
 			person.set_mode_to_delete()
-			self.create_csv_file(person_list=[], fn_csv=fn_csv)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+		self.create_csv_file(person_list=[], mapping=config['csv']['mapping'], fn_csv=fn_csv)
+		# save ldap state for later comparison
+		self.save_ldap_status()
 
-			# start import
-			self.run_import(['-c', fn_config])
+		# start import
+		self.run_import(['-c', fn_config])
 
-			# check for new users in LDAP
-			self.check_new_and_removed_users(0, 1)
+		# check for new users in LDAP
+		self.check_new_and_removed_users(0, 4)
 
-			# verify LDAP attributes
+		# verify LDAP attributes
+		for person in person_list:
 			person.verify()
 
 

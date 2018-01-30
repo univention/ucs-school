@@ -25,23 +25,23 @@ class Test(CLI_Import_v2_Tester):
 		config = copy.deepcopy(self.default_config)
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
 		config.update_entry('sourceUID', source_uid)
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
+		self.log.info('*** Importing a new user of each role role and empty class name.')
+		person_list = []
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Importing a new single user with role %r and empty class name.', role)
-
-			config.update_entry('user_role', role)
-
 			person = Person(self.ou_A.name, role)
 			person.update(school_classes={})
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+			person_list.append(person)
 
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])
-			self.check_new_and_removed_users(1, 0)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.check_new_and_removed_users(4, 0)
 		self.log.info('OK, all users could be imported with an empty CSV class column.')
 
 

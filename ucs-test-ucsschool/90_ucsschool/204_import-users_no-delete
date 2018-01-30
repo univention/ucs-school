@@ -22,57 +22,56 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Bug #41775, #41350: check if the --no-delete option works as expected
 		"""
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config = copy.deepcopy(self.default_config)
+		config.update_entry('csv:mapping:Benutzername', 'name')
+		config.update_entry('scheme:recordUID', '<username>')
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+
+		person_list_a = []
+		person_list_b = []
+		self.log.info('*** Add/modify without delete...')
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Add/modify without delete with role %r', role)
+			person_list_a.append(Person(self.ou_A.name, role))
+			person_list_b.append(Person(self.ou_A.name, role))
 
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			config = copy.deepcopy(self.default_config)
-			config.update_entry('csv:mapping:Benutzername', 'name')
-			config.update_entry('scheme:recordUID', '<username>')
-			config.update_entry('sourceUID', source_uid)
-			config.update_entry('user_role', role)
-			personA = Person(self.ou_A.name, role)
-			personB = Person(self.ou_A.name, role)
+		self.log.info('Adding users A: %r', [person.username for person in person_list_a])
+		fn_csv = self.create_csv_file(person_list=person_list_a, mapping=config['csv']['mapping'])
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+		self.check_new_and_removed_users(4, 0)
+		for person in person_list_a:
+			person.verify()
 
-			self.log.info('Adding user A %r with role %r', personA.username, role)
-			fn_csv = self.create_csv_file(person_list=[personA], mapping=config['csv']['mapping'])
-			fn_config = self.create_config_json(values=config)
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+		self.log.info('Adding users B: %r', [person.username for person in person_list_b])
+		fn_csv = self.create_csv_file(person_list=person_list_b, mapping=config['csv']['mapping'])
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+		self.check_new_and_removed_users(4, 0)
+		for person in person_list_a:
+			person.verify()
+		for person in person_list_b:
+			person.verify()
 
-			userlist = self.lo.searchDn('uid=%s' % (personA.username,))
-			if len(userlist) != 1:
-				self.log.error('Invalid number of users for personA! Found new objects: %r', userlist)
-				self.fail('Stopping here')
-			personA.verify()
-
-			self.log.info('Adding user B %r with role %r', personB.username, role)
-			fn_csv = self.create_csv_file(person_list=[personB], mapping=config['csv']['mapping'])
-			fn_config = self.create_config_json(values=config)
-			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
-
-			for username in (personA.username, personB.username):
-				userlist = self.lo.searchDn('uid=%s' % (username,))
-				if len(userlist) != 1:
-					self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
-					self.fail('Stopping here')
-			personA.verify()
-			personB.verify()
-
-			self.log.info('Modifying user A %r with role %r', personA.username, role)
-			personA.lastname = uts.random_name()
-			config.update_entry('no_delete', 'True')
-			fn_csv = self.create_csv_file(person_list=[personA], mapping=config['csv']['mapping'])
-			fn_config = self.create_config_json(values=config)
-			self.run_import(['-c', fn_config, '-i', fn_csv])  # '--no-delete'  is not specified on purpose -> using config option "no_delete"
-
-			for username in (personA.username, personB.username):
-				userlist = self.lo.searchDn('uid=%s' % (username,))
-				if len(userlist) != 1:
-					self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
-					self.fail('Stopping here')
-			personA.verify()
-			personB.verify()
+		self.log.info('Modifying users A: %r', [person.username for person in person_list_a])
+		for person in person_list_a:
+			person.lastname = uts.random_name()
+		config.update_entry('no_delete', 'True')
+		fn_csv = self.create_csv_file(person_list=person_list_a, mapping=config['csv']['mapping'])
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		# '--no-delete'  is not specified on purpose -> using config option "no_delete"
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.check_new_and_removed_users(0, 0)
+		for person in person_list_a:
+			person.verify()
+		for person in person_list_b:
+			person.verify()
 
 
 if __name__ == '__main__':
