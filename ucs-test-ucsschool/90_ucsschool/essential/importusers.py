@@ -6,6 +6,7 @@ import smbpasswd
 import string
 import subprocess
 import tempfile
+from ldap.filter import filter_format
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.utils as utils
@@ -349,6 +350,51 @@ class Person(object):
 			utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
 
 		print 'person OK: %s' % self.username
+
+	def update_from_ldap(self, lo, attrs, source_uid=None, record_uid=None):
+		# type: (univention.admin.uldap.access, List[str], Optional[str], Optional[str]) -> None
+		"""
+		Fetch attributes listed in `attrs` and set them on self.
+
+		source_uid and record_uid must either be set on self or given.
+		"""
+		assert source_uid or self.source_uid
+		assert record_uid or self.record_uid
+		for attr in attrs:
+			assert hasattr(self, attr)
+
+		ldap2person = {
+			'dn': 'dn',
+			'mail': 'mailPrimaryAddress',
+			'username': 'uid',
+		}
+
+		filter_s = filter_format(
+			'(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))',
+			(source_uid or self.source_uid, record_uid or self.record_uid)
+		)
+		res = lo.search(filter=filter_s)
+		if len(res) != 1:
+			raise RuntimeError(
+				'Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res)))
+			)
+		try:
+			dn = res[0][0]
+			attrs_from_ldap = res[0][1]
+		except KeyError as exc:
+			raise KeyError('Error searching for user: {} res={!r}'.format(exc, res))
+		kwargs = {}
+		for attr in attrs:
+			if attr == 'dn':
+				value = dn
+			else:
+				try:
+					key = ldap2person[attr]
+				except KeyError:
+					raise NotImplementedError('Mapping for {!r} not yet implemented.'.format(attr))
+				value = attrs_from_ldap[key][0]
+			kwargs[attr] = value
+		self.update(**kwargs)
 
 
 class Student(Person):
