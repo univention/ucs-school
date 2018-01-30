@@ -9,6 +9,7 @@
 ## bugs: [41350, 41775]
 
 import copy
+import random
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
@@ -27,73 +28,58 @@ class Test(CLI_Import_v2_Tester):
 		config = copy.deepcopy(self.default_config)
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
 		config.update_entry('sourceUID', source_uid)
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+		roles = ('student', 'teacher', 'staff', 'teacher_and_staff')
 
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Testing "--no-delete" option for role %r.', role)
+		self.log.info('*** Testing "--no-delete" option...')
+		person_list = [Person(self.ou_A.name, role) for role in roles]
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.log.info('*** Importing a user')
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.check_new_and_removed_users(4, 0)
 
-			config.update_entry('user_role', role)
+		self.log.info('*** Importing new user, NOT deleting previous users (running with "--no-delete")')
+		person_list = [Person(self.ou_A.name, role) for role in roles]
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+		self.check_new_and_removed_users(4, 0)
 
-			person = Person(self.ou_A.name, role)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+		self.log.info('*** Importing users, deleting previous users (running without "--no-delete")')
+		person_list = [Person(self.ou_A.name, role) for role in roles]
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.check_new_and_removed_users(4, 8)
 
-			# start import
-			self.log.info('*** Importing a user')
-			self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.log.info('*** Importing users, deleting previous users')
+		person_list = [Person(self.ou_A.name, role) for role in roles]
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.check_new_and_removed_users(4, 4)
 
-			# check for new users in LDAP
-			self.check_new_and_removed_users(1, 0)
+		self.log.info('*** Importing same users and running with "--no-delete"')
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
+		self.check_new_and_removed_users(0, 0)
 
-			self.log.info('*** Importing a user, NOT deleting previous user (running with "--no-delete")')
-			person = Person(self.ou_A.name, role)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
-
-			# check for new users in LDAP
-			self.check_new_and_removed_users(1, 0)
-
-			self.log.info('*** Importing a user, deleting previous two users (running without "--no-delete")')
-			person = Person(self.ou_A.name, role)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config, '-i', fn_csv])
-
-			# check for new users in LDAP
-			self.check_new_and_removed_users(1, 2)
-
-			self.log.info('*** Importing a user, deleting previous user')
-			person = Person(self.ou_A.name, role)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config, '-i', fn_csv])
-
-			# check for new users in LDAP
-			self.check_new_and_removed_users(1, 1)
-
-			self.log.info('*** Importing same user and running with "--no-delete"')
+		self.log.info('*** Importing same users with action="D" and running with "--no-delete"')
+		for person in person_list:
 			person.set_mode_to_delete()
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
-
-			# check for new users in LDAP
-			self.check_new_and_removed_users(0, 0)
-
-			self.log.info('*** Importing same user with action="D" and running with "--no-delete"')
-			person.set_mode_to_delete()
-			config_d = copy.deepcopy(config)
-			config_d.update_entry('csv:mapping:Aktion', '__action')
-			fn_config_d = self.create_config_json(config=config_d)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config_d['csv']['mapping'])
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config_d, '-i', fn_csv, '--no-delete'])
-
-			# check for new users in LDAP
-			self.check_new_and_removed_users(0, 1)
+		config_d = copy.deepcopy(config)
+		config_d.update_entry('csv:mapping:Aktion', '__action')
+		fn_config_d = self.create_config_json(config=config_d)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config_d['csv']['mapping'])
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config_d, '-i', fn_csv, '--no-delete'])
+		self.check_new_and_removed_users(0, 4)
 
 
 if __name__ == '__main__':

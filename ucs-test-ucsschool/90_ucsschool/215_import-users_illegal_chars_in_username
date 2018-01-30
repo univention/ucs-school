@@ -11,7 +11,7 @@
 import copy
 import string
 import random
-from ldap.filter import escape_filter_chars
+from ldap.filter import filter_format
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -28,102 +28,101 @@ class Test(UniqueObjectTester):
 		self.ou_B = None
 		self.ou_C = None
 
+	def remove_bad_chars(self, name):
+		allowed_chars = string.ascii_letters + string.digits + "."
+		bad_chars = ''.join(set(name).difference(set(allowed_chars)))
+		if bad_chars:
+			self.log.warn("Removing disallowed characters %r from username %r.", ''.join(sorted(bad_chars)), name)
+		if name.startswith(".") or name.endswith("."):
+			self.log.warn("Removing disallowed dot from start and end of username %r.", name)
+			name = name.strip(".")
+		return name.translate(None, bad_chars)
+
 	def test(self):  # formally test_create_with_illegal_chars_in_username()
 		"""
 		Bug #42313: remove illegal characters from username
 		* "Username must only contain numbers, letters and dots, and may not be 'admin'!"
 		* but no dot at beginning
 		"""
-		def remove_bad_chars(name):
-			allowed_chars = string.ascii_letters + string.digits + "."
-			bad_chars = ''.join(set(name).difference(set(allowed_chars)))
-			if bad_chars:
-				self.log.warn("Removing disallowed characters %r from username %r.", ''.join(sorted(bad_chars)), name)
-			if name.startswith(".") or name.endswith("."):
-				self.log.warn("Removing disallowed dot from start and end of username %r.", name)
-				name = name.strip(".")
-			return name.translate(None, bad_chars)
+		config = copy.deepcopy(self.default_config)
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('scheme:username:default', "<lastname>[ALWAYSCOUNTER]")
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
+		persons = list()
+		names = dict()
+		lastnames = []
 		for role in ('student', 'teacher', 'teacher_and_staff'):
 			random_puncts = list(string.punctuation)
 			random.shuffle(random_puncts)
-			lastnames = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in random_puncts[:4]]
-			lastnames.append(".{}".format(uts.random_username()))
-			lastnames.append(".{}.{}.".format(uts.random_username(4), uts.random_username(4)))
-			lastnames.append("{}[{}]{}".format(uts.random_username(3), uts.random_username(3), uts.random_username(3)))
-			lastnames.append(uts.random_username(40))
-			self.unique_basenames_to_remove.extend(lastnames)
-			self.log.info('*** Importing new users with role %r and the following lastnames:\n%r', role, lastnames)
+			lastnames_role = ["{}{}{}".format(uts.random_username(5), x, uts.random_username(5)) for x in random_puncts[:4]]
+			lastnames_role.append(".{}".format(uts.random_username()))
+			lastnames_role.append(".{}.{}.".format(uts.random_username(4), uts.random_username(4)))
+			lastnames_role.append("{}[{}]{}".format(uts.random_username(3), uts.random_username(3), uts.random_username(3)))
+			lastnames_role.append(uts.random_username(40))
+			self.unique_basenames_to_remove.extend(lastnames_role)
+			self.log.info('*** Importing new users with role %r and the following lastnames:\n%r', role, lastnames_role)
 
-			config = copy.deepcopy(self.default_config)
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			config.update_entry('sourceUID', source_uid)
-			config.update_entry('scheme:recordUID', '<record_uid>')
-			config.update_entry('user_role', role)
-			config.update_entry('csv:mapping:recordUID', 'record_uid')
-			config.update_entry('scheme:username:default', "<lastname>[ALWAYSCOUNTER]")
-
-			persons = list()
-			names = dict()
-			for lastname in lastnames:
+			for lastname in lastnames_role:
 				record_uid = uts.random_name()
 				person = Person(self.ou_A.name, role)
 				person.update(record_uid=record_uid, source_uid=source_uid, lastname=lastname)
 				persons.append(person)
 				names[person] = lastname
-			fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
+			lastnames.extend(lastnames_role)
 
-			# save ldap state for later comparison
-			self.save_ldap_status()
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])
-			utils.wait_for_replication()
-			# check for new users in LDAP
-			self.check_new_and_removed_users(len(persons), 0)
-			# check usernames
-			for person, lastname in names.items():
-				if person.role == 'student':
-					username_length_length = 15
-				else:
-					username_length_length = 20
-				person.update(username=remove_bad_chars("{}1".format(lastname[:username_length_length - 3])))
-				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
-				wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))  # wait for creation before deletion
+		fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		utils.wait_for_replication()
+		self.check_new_and_removed_users(len(persons), 0)
 
-			# delete users
-			self.log.info('*** Deleting users with role %r and the following lastnames:\n%r', role, lastnames)
-			fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config, '-i', fn_csv])
-			utils.wait_for_replication()
+		# check usernames
+		for person, lastname in names.items():
+			if person.role == 'student':
+				username_length_length = 15
+			else:
+				username_length_length = 20
+			person.update(username=self.remove_bad_chars("{}1".format(lastname[:username_length_length - 3])))
+			utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
+			wait_for_drs_replication(filter_format('cn=%s', (person.username,)))  # wait for creation before deletion
 
-			# recreate users, but move position of COUNTER variable
-			self.log.info(
-				'*** Importing users with role %r and the same lastnames, but move position of COUNTER variable:\n%r',
-				role,
-				lastnames)
-			config.update_entry('scheme:username:default', "[ALWAYSCOUNTER]<lastname>")
-			for person in persons:
-				# Prevent 'The email address is already taken by another user. Please change the email address.'
-				# because of slow s4 replication. Username is the same, so it doesn't change what's tested.
-				person.mail = '{}{}'.format(uts.random_username(4), person.mail)
-			fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config, '-i', fn_csv])
-			utils.wait_for_replication()
-			for person, lastname in names.items():
-				if person.role == 'student':
-					username_length_length = 15
-				else:
-					username_length_length = 20
-				person.update(username=remove_bad_chars("2{}".format(lastname[:username_length_length - 3])))
-				utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
+		# delete users
+		self.log.info('*** Deleting all users...')
+		fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		utils.wait_for_replication()
+		self.check_new_and_removed_users(0, len(persons))
+
+		# recreate users, but move position of COUNTER variable
+		self.log.info('*** Importing users with the same lastnames, but move position of COUNTER variable...')
+		config.update_entry('scheme:username:default', "[ALWAYSCOUNTER]<lastname>")
+		for person in persons:
+			# Prevent 'The email address is already taken by another user. Please change the email address.'
+			# because of slow s4 replication. Username is the same, so it doesn't change what's tested.
+			person.mail = '{}{}'.format(uts.random_username(4), person.mail)
+		fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		utils.wait_for_replication()
+		for person, lastname in names.items():
+			if person.role == 'student':
+				username_length_length = 15
+			else:
+				username_length_length = 20
+			person.update(username=self.remove_bad_chars("2{}".format(lastname[:username_length_length - 3])))
+			utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
 
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (1/5)')
 		unh = UsernameHandler(15)  # 20 - len("exam-")
