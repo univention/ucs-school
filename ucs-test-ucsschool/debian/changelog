@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2) unstable; urgency=low
+
+  * reduce import jobs by 1/4th (batch 1)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 30 Jan 2018 16:09:19 +0100
+
 ucs-test-ucsschool (5.0.1-1) unstable; urgency=medium
 
   * Bug #46174: user options don't exists anymore
