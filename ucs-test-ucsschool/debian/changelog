@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-57) unstable; urgency=low
+
+  * Bug #46016: reduce import jobs by 1/4th (batch 1)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 30 Jan 2018 16:07:41 +0100
+
 ucs-test-ucsschool (4.0.4-56) unstable; urgency=low
 
   * Bug #46017: cache test OUs to reduce test runtime
