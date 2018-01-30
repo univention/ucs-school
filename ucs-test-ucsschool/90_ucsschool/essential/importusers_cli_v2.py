@@ -17,8 +17,7 @@ import traceback
 import datetime
 from collections import Mapping
 from ldap.dn import escape_dn_chars
-from ldap.filter import escape_filter_chars
-from univention.admin.uldap import getAdminConnection
+from ldap.filter import escape_filter_chars, filter_format
 from univention.admin.uexceptions import noObject, ldapError
 from apt.cache import Cache as AptCache
 from essential.importusers import Person
@@ -148,7 +147,7 @@ class MyHook(UserPyHook):
 
 	def cleanup(self):
 		shutil.rmtree(self.tmpdir, ignore_errors=True)
-		for fn in self.cleanup_files:
+		for fn in list(self.cleanup_files):
 			try:
 				os.remove(fn)
 			except (IOError, OSError):
@@ -158,6 +157,7 @@ class MyHook(UserPyHook):
 					os.remove('%sc' % (fn,))  # also remove .pyc files
 				except (IOError, OSError):
 					pass
+			self.cleanup_files.remove(fn)
 
 
 class CLI_Import_v2_Tester(object):
@@ -415,9 +415,9 @@ class CLI_Import_v2_Tester(object):
 		except KeyError:
 			user_filter = ''
 		if is_member:
-			member_filter = '(memberOf={})'.format(escape_filter_chars(group_dn))
+			member_filter = filter_format('(memberOf=%s)', (group_dn,))
 		else:
-			member_filter = '(!(memberOf={}))'.format(escape_filter_chars(group_dn))
+			member_filter = filter_format('(!(memberOf=%s))', (group_dn,))
 		kwargs['ldap_filter'] = '(&(cn={}){}{})'.format(
 			escape_filter_chars(member_uid),
 			member_filter,
