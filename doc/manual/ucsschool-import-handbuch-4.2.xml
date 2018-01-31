@@ -927,7 +927,7 @@ school='schule1', dn='uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dt
 record_uid:bea@schule.local) attributes={'$dn$': 'uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dtr',
 'display_name': 'Bea Schmidt', <property>'record_uid'</property>: u'bea@schule.local', 'firstname': 'Bea',
 'lastname': 'Schmidt', 'type_name': 'Student', 'school': 'schule1', <property>'name'</property>: 'B.Schmidt',
-'disabled': 'none', 'email': u'bea@schule.local', 'birthday': None, 'type': 'importStudent', 'schools': ['schule1'],
+'disabled': '0', 'email': u'bea@schule.local', 'birthday': None, 'type': 'importStudent', 'schools': ['schule1'],
 'password': 'xxxxxxxxxx', 'source_uid': u'NewDB', <property>'school_classes'</property>: {'schule1': ['schule1-2B'],
 'schule2': ['schule2-1A']}, 'objectType': 'users/user'} <property>udm_properties</property>={u<property>'phone'</property>: [u'0421-1234567890'],
 'overridePWHistory': '1', 'overridePWLength': '1'}...
