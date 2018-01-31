@@ -139,7 +139,7 @@ class User(Person):
 			'type_name': self.type_name(),
 			'school': self.school,
 			'schools': set(self.schools),
-			'disabled': 'none',
+			'disabled': '0',
 			'birthday': None,
 			'password': None,
 			'type': self.typ,

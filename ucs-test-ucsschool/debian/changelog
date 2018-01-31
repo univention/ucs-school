@@ -1,4 +1,10 @@
-ucs-test-ucsschool (5.0.2) unstable; urgency=low
+ucs-test-ucsschool (5.0.2-2) unstable; urgency=medium
+
+  * Bug #46175: adapt test cases to API change
+
+ -- Florian Best <best@univention.de>  Wed, 31 Jan 2018 13:44:20 +0100
+
+ucs-test-ucsschool (5.0.2-1) unstable; urgency=low
 
   * reduce import jobs by 1/4th (batch 1)
 
