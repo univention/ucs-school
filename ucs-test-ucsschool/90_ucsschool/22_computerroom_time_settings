@@ -4,7 +4,7 @@
 ## versions:
 ##  4.0-0: skip
 ##  4.1-0: fixed
-## tags: [apptest, ucsschool]
+## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 ## bugs: [40655]

@@ -2,7 +2,7 @@
 ## desc: squidguard - check dbtemp option and position of BDB backing files
 ## roles: [domaincontroller_master,domaincontroller_backup,domaincontroller_slave]
 ## bugs: [40541]
-## tags: [apptest,ucsschool]
+## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [squidguard]
 ## versions:

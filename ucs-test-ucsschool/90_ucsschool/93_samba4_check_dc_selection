@@ -6,7 +6,7 @@
 ## - domaincontroller_backup
 ## - domaincontroller_slave
 ## packages: [univention-samba4]
-## tags: [apptest, ucsschool]
+## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: careful
 ## versions:
 ##  4.0-0: skip

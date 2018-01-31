@@ -2,7 +2,7 @@
 ## desc: Test if GPOs filtered for a native Windows Server work in exam mode
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam, ucs-windows-tools]
-## tags: [apptest, ucsschool, windows_gpo_test, native_win_client]
+## tags: [apptest,ucsschool, windows_gpo_test, native_win_client,ucsschool_base1]
 ## bugs: [37568,41571]
 ## roles:
 ## - domaincontroller_master

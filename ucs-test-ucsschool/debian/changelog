@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-3) unstable; urgency=low
+
+  * Bug #45990: add ucsschool_base1 tag if missing
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 31 Jan 2018 17:09:51 +0100
+
 ucs-test-ucsschool (5.0.2-2) unstable; urgency=medium
 
   * Bug #46175: adapt test cases to API change

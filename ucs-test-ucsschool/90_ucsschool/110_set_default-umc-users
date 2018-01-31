@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: set default umc users
 ## roles: [domaincontroller_master]
-## tags: [apptest]
+## tags: [apptest,ucsschool_base1]
 ## exposure: dangerous
 ## packages: []
 

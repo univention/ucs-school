@@ -2,7 +2,7 @@
 # coding=utf-8
 ## desc: Dump access to all available objects and compare with rulse of 4.1R2v9
 ## roles: [domaincontroller_master]
-## tags: [ucsschool]
+## tags: [ucsschool,ucsschool_base1]
 ## timeout: 3600
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]

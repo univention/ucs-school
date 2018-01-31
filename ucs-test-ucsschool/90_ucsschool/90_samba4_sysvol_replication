@@ -3,7 +3,7 @@
 ## bugs: [34225]
 ## roles: [domaincontroller_slave, domaincontroller_backup]
 ## packages: [univention-samba4]
-## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 
 from sys import exit

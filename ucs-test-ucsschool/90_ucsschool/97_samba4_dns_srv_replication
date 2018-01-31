@@ -5,7 +5,7 @@
 ## - domaincontroller_master
 ## - domaincontroller_slave
 ## packages: [univention-s4-connector, univention-samba4]
-## tags: [apptest, ucsschool]
+## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## versions:
 ##  3.2-5: skip

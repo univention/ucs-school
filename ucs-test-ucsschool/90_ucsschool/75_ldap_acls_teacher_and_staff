@@ -2,7 +2,7 @@
 # coding=utf-8
 ## desc: Check if teacherStaff users have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]
-## tags: [apptest]
+## tags: [apptest,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 

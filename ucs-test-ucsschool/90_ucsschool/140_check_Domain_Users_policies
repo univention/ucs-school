@@ -5,7 +5,7 @@
 ## roles:
 ##  - domaincontroller_master
 ##  - domaincontroller_slave
-## tags: [apptest, ucsschool]
+## tags: [apptest,ucsschool,ucsschool_base1]
 
 import univention.testing.utils as utils
 from univention.testing.ucr import UCSTestConfigRegistry

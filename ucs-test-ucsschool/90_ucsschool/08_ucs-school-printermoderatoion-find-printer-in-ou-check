@@ -5,7 +5,7 @@
 ##  - domaincontroller_backup
 ##  - domaincontroller_slave
 ##  - memberserver
-## tags: [SKIP-UCSSCHOOL, apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL, apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-printermoderation]
 
