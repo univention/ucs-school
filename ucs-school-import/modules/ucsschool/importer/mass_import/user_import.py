@@ -193,7 +193,7 @@ class UserImport(object):
 			if user.school != imported_user.school:
 				user = self.school_move(imported_user, user)
 			user.update(imported_user)
-			if user.disabled != "none" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
+			if user.disabled != "0" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
 				self.logger.info(
 					"Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is "
 					"non-empty), reactivating user.",
@@ -384,7 +384,7 @@ class UserImport(object):
 		:return: bool: whether any changes were made to the object and
 		user.modify() is required
 		"""
-		if user.disabled == 'all':
+		if user.disabled == '1':
 			self.logger.info('User %s is already disabled.', user)
 			return False
 		else:
@@ -415,7 +415,7 @@ class UserImport(object):
 		:return: bool: whether any changes were made to the object and
 		user.modify() is required
 		"""
-		if user.disabled == 'all':
+		if user.disabled == '1':
 			self.logger.info('User %s is already disabled. No account expiration date is set.', user)
 			return False
 		elif user.has_expiry(self.connection):
