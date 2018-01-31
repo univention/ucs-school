@@ -491,7 +491,7 @@ class ImportFile:
 				'school_classes': user.school_classes,
 				'email': user.mail,
 				'password': user.password,
-				'disabled': 'none' if user.is_active() else 'all',
+				'disabled': '0' if user.is_active() else '1',
 				'birthday': user.birthday,
 			}
 			return kwargs

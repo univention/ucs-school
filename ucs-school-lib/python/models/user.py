@@ -235,7 +235,7 @@ class User(UCSSchoolHelperAbstractClass):
 		udm_obj['overridePWHistory'] = '1'
 		udm_obj['overridePWLength'] = '1'
 		if self.disabled is None:
-			udm_obj['disabled'] = 'none'
+			udm_obj['disabled'] = '0'
 		if 'mailbox' in udm_obj:
 			udm_obj['mailbox'] = '/var/spool/%s/' % self.name
 		samba_home = self.get_samba_home_path(lo)
@@ -489,7 +489,7 @@ class User(UCSSchoolHelperAbstractClass):
 		return group
 
 	def is_active(self):
-		return self.disabled != 'all'
+		return self.disabled != '1'
 
 	def build_hook_line(self, hook_time, func_name):
 		code = self._map_func_name_to_code(func_name)

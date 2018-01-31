@@ -119,7 +119,7 @@ class UserImportCsvResultExporter(ResultExporter):
 			lastname=user.lastname,
 			birthday=user.birthday,
 			email=user.email,
-			disabled="0" if user.disabled == "none" else "1",
+			disabled="0" if user.disabled == "0" else "1",
 			classes=user.school_classes_as_str,
 			source_uid=user.source_uid,
 			record_uid=user.record_uid,

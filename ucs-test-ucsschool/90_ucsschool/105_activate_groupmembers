@@ -64,11 +64,11 @@ def check_auth(username, passwd, should_pass=True):
 def is_active(username):
 	cmd = ['udm', 'users/user', 'list', '--filter', 'uid=%s' % username]
 	out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-	found = re.search(r"disabled:\s(\w+)", out)
+	found = re.search(r"disabled:\s(\d+)", out)
 	if found:
 		found = found.group(1)
 		print 'disabled = ', found
-		return found == 'none'
+		return found == '0'
 
 
 def checK_status(username, should_pass):

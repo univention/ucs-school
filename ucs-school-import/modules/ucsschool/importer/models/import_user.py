@@ -259,7 +259,7 @@ class ImportUser(User):
 		"""
 		Deactivate user account. Caller must run modify().
 		"""
-		self.disabled = "all"
+		self.disabled = "1"
 
 	def expire(self, expiry):
 		"""
@@ -490,7 +490,7 @@ class ImportUser(User):
 						self.role_sting),
 					self.entry_count,
 					import_user=self)
-		self.disabled = "none" if activate else "all"
+		self.disabled = "0" if activate else "1"
 		return self.disabled
 
 	def make_firstname(self):
@@ -726,7 +726,7 @@ class ImportUser(User):
 		from LDAP.
 		"""
 		self.expire("")
-		self.disabled = "none"
+		self.disabled = "0"
 		self.set_purge_timestamp("")
 
 	def remove(self, lo):

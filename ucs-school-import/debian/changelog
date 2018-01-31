@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-1) unstable; urgency=medium
+
+  * Bug #46175: adapt to API change of "disabled" property
+
+ -- Florian Best <best@univention.de>  Wed, 31 Jan 2018 13:45:40 +0100
+
 ucs-school-import (16.0.0-1) unstable; urgency=low
 
   * bumped version

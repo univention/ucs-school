@@ -103,9 +103,9 @@ def user(base=baseDN):
 			_o2.append(u['firstname'])
 		if _o2:
 			_options.append('name: %s' % ', '.join(_o2))
-		if u['disabled'] != 'none':
+		if u['disabled'] != '0':
 			_options.append('disabled=%s' % u["disabled"])
-		if u['locked'] != 'none':
+		if u['locked'] != '0':
 			_options.append('locked=%s' % u["locked"])
 		if u["passwordexpiry"]:
 			_options.append('password expires: %s' % u["passwordexpiry"])

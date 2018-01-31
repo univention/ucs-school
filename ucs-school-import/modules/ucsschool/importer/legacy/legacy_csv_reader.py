@@ -47,9 +47,9 @@ class LegacyCsvReader(CsvReader):
 			return True
 		elif mapping_value == "__activate":
 			if csv_value == "0":
-				import_user.disabled = "all"
+				import_user.disabled = "1"
 			else:
-				import_user.disabled = "none"
+				import_user.disabled = "0"
 			return True
 		return super(LegacyCsvReader, self).handle_input(mapping_key, mapping_value, csv_value, import_user)
 

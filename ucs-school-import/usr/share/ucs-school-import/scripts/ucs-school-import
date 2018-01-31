@@ -1351,9 +1351,9 @@ def modify_user(person, module, co, lo):
 		object['mailPrimaryAddress'] = person.mail
 		verifyMailDomain(person.mail)
 	if person.isActive == "1":
-		object["disabled"] = "none"
+		object["disabled"] = "0"
 	else:
-		object["disabled"] = "all"
+		object["disabled"] = "1"
 
 	remove_groups = []
 	for group in object['groups']:
@@ -1528,9 +1528,9 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		object['mailPrimaryAddress'] = person.mail
 		verifyMailDomain(person.mail)
 	if person.isActive == "1":
-		object["disabled"] = "none"
+		object["disabled"] = "0"
 	else:
-		object["disabled"] = "all"
+		object["disabled"] = "1"
 
 	# Bug #34179: do not set sambaHomePath for staff users
 	if set(person.getRole()) != set([role_staff]):
@@ -2597,9 +2597,9 @@ def activate_groupmembers():
 
 	# inverted logic
 	if status == 0:
-		disabled = "all"
+		disabled = "1"
 	else:
-		disabled = "none"
+		disabled = "0"
 
 	with stopped_notifier():
 		# outfile = os.path.basename(actgrp+'.csv')
