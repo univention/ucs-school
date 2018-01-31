@@ -1,3 +1,9 @@
+ucs-school-umc-users (14.0.1-1) unstable; urgency=medium
+
+  * Bug #46175: locked=none → locked=1
+
+ -- Florian Best <best@univention.de>  Wed, 31 Jan 2018 19:14:26 +0100
+
 ucs-school-umc-users (14.0.0-2) unstable; urgency=low
 
   * Bug #46012: make sure that pwdChangeNextLogin is set to 1 if requested

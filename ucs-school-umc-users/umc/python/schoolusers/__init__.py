@@ -93,7 +93,7 @@ class Instance(SchoolBaseModule):
 			user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
 			user['password'] = newPassword
 			user['overridePWHistory'] = '1'
-			user['locked'] = 'none'
+			user['locked'] = '0'
 			# workaround bug #46067 (start)
 			user.modify()
 			user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
