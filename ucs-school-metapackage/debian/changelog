@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.1-1) unstable; urgency=medium
+
+  * Bug #46118: Remove support for Samba/NT DCs
+
+ -- Arvid Requate <requate@univention.de>  Mon, 05 Feb 2018 15:42:34 +0100
+
 ucs-school-metapackage (11.0.0-1) unstable; urgency=low
 
   * bumped version
