@@ -215,7 +215,7 @@
 		  importiert werden soll.
 		  <figure id="csvimport:userrole">
 			<title>CSV-Import: Auswahl der Benutzerrolle</title>
-			<graphic scalefit="1" width="97%" align="center" fileref="illustrations42/csvimport_1_userrole.png"/>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations43/csvimport_1_userrole.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -241,7 +241,7 @@
 		  Benutzerrolle durch die Benutzer der CSV-Datei</guimenu> zu aktivieren.
 		  <figure id="csvimport:upload">
 			<title>CSV-Import: Upload der CSV-Datei</title>
-			<graphic scalefit="1" width="97%" align="center" fileref="illustrations42/csvimport_2_upload.png"/>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations43/csvimport_2_upload.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -272,7 +272,7 @@
 		</para>
 		<figure id="csvimport:assignment">
 		  <title>CSV-Import: Zuordnung der Benutzerattribute</title>
-		  <graphic scalefit="1" width="97%" align="center" fileref="illustrations42/csvimport_3_assignment.png"/>
+		  <graphic scalefit="1" width="97%" align="center" fileref="illustrations43/csvimport_3_assignment.png"/>
 		</figure>
 		<para>
 		  Auf der letzten Seite des Assistenten werden zur Prüfung alle vorgesehenen
@@ -319,7 +319,7 @@
 		  beschränkt werden.
 		  <figure id="csvimport:check">
 			<title>CSV-Import: Überprüfung der bevorstehenden Änderungen</title>
-			<graphic scalefit="1" width="97%" align="center" fileref="illustrations42/csvimport_4_check.png"/>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations43/csvimport_4_check.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -342,7 +342,7 @@
 		  Fortschritt.
 		  <figure id="csvimport:summary">
 			<title>CSV-Import: Abschließende Zusammenfassung</title>
-			<graphic scalefit="1" width="37%" align="center" fileref="illustrations42/csvimport_5_summary.png"/>
+			<graphic scalefit="1" width="37%" align="center" fileref="illustrations43/csvimport_5_summary.png"/>
 		  </figure>
 		</para>
 		<para>

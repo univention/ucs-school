@@ -154,7 +154,7 @@
 		<para>
 			<figure id="procedure_import">
 				<title>Ablauf eines Benutzerimports</title>
-				<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ablauf.png"/>
+				<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ablauf.png"/>
 			</figure>
 			Für die Analyse von Problemen wird während des gesamten Imports ein Protokoll über alle technischen Vorgänge in Logdateien mit unterschiedlichen Detailtiefen geführt.
 			Wenn nicht anders konfiguriert, sind das die Dateien <filename>/var/log/univention/ucs-school-import.log</filename> und <filename>/var/log/univention/ucs-school-import.info</filename>.

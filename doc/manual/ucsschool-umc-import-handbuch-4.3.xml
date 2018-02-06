@@ -64,7 +64,7 @@
 			Das UMC-Modul leitet den Anwender durch den Import in mehreren Schritten:
 			<figure id="process">
 				<title>Schritte eines Importvorganges</title>
-				<graphic scalefit="0" align="center" fileref="illustrations42/import_ui_process.png"/>
+				<graphic scalefit="0" align="center" fileref="illustrations43/import_ui_process.png"/>
 			</figure>
 		</para>
 		<para>
@@ -76,7 +76,7 @@
 			</note>
 			<figure id="overview1">
 					<title>Übersichtsseite</title>
-					<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_overview1.png"/>
+					<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_overview1.png"/>
 			</figure>
 			<orderedlist>
 				<listitem>
@@ -84,7 +84,7 @@
 						Zuerst muss der Typ der zu importierenden Benutzer ausgewählt werden.
 						<figure id="choose_user_type">
 							<title>Auswahl des Benutzertyps</title>
-							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_choose_user_type.png"/>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_choose_user_type.png"/>
 						</figure>
 					</para>
 				</listitem>
@@ -93,7 +93,7 @@
 						Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt werden.
 						<figure id="choose_csv_file">
 							<title>Hochladen der CSV-Datei</title>
-							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_upload_csv.png"/>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_upload_csv.png"/>
 						</figure>
 					</para>
 				</listitem>
@@ -109,7 +109,7 @@
 								War die Simulation erfolgreich kann nun der tatsächlich Import gestartet werden.
 								<figure id="start_import">
 									<title>Simulation war erfolgreich</title>
-									<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_start_import.png"/>
+									<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_start_import.png"/>
 								</figure>
 							</para>
 						</listitem>
@@ -118,7 +118,7 @@
 								Traten während der Simulation Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
 								<figure id="sim_had_error">
 									<title>Simulation hatte Fehler</title>
-									<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_simulation_error.png"/>
+									<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_simulation_error.png"/>
 								</figure>
 							</para>
 						</listitem>
@@ -129,7 +129,7 @@
 						Nach dem Start des Imports kehrt das UMC-Modul zur Übersichtsseite zurück. Wenn der neue Import-Job noch nicht angezeigt wird, kann die Liste mit dem "Aktualisieren" Knopf neu geladen werden.
 						<figure id="overview2">
 							<title>Übersichtsseite mit gestartetem Import</title>
-							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_overview2.png"/>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_overview2.png"/>
 						</figure>
 					</para>
 				</listitem>

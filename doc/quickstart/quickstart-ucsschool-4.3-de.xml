@@ -133,7 +133,7 @@ feedback@univention.de
 
   <figure id="install-via-appcenter">
     <title>Installation der &ucsUAS;-Erweiterung über Univention App Center</title>
-	<graphic scalefit="1" width="80%" align="center" fileref="illustrations42/appcenter-de.png"/>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations43/appcenter-de.png"/>
   </figure>
 
   <para>
@@ -212,7 +212,7 @@ feedback@univention.de
 
   <figure id="student-management">
 	<title>Anlegen eines Schülers</title>
-	<graphic scalefit="1" width="80%" align="center" fileref="illustrations42/student-modify-de.png"/>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations43/student-modify-de.png"/>
   </figure>
 
   <para>
@@ -250,7 +250,7 @@ feedback@univention.de
 
   <figure id="ucsschool-module">
 	<title>Modulübersicht &ucsUAS; 4.2</title>
-	<graphic scalefit="1" width="80%" align="center" fileref="illustrations42/module_overview_Administrator_admin.png"/>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations43/module_overview_Administrator_admin.png"/>
   </figure>
 
   <para>
@@ -368,7 +368,7 @@ feedback@univention.de
 
   <figure id="join-win7">
 	<title>Basisinformationen über den Computer</title>
-	<graphic scalefit="1" width="80%" align="center" fileref="illustrations42/join-win7-de.png"/>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations43/join-win7-de.png"/>
   </figure>
 
   <para>
