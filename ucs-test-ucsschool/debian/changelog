@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-4) unstable; urgency=low
+
+  * Bug #45990: fix 05_check_ucs_version
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 31 Jan 2018 17:31:34 +0100
+
 ucs-test-ucsschool (5.0.2-3) unstable; urgency=low
 
   * Bug #45990: add ucsschool_base1 tag if missing
