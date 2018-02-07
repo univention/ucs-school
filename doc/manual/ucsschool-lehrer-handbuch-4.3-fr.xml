@@ -8,16 +8,16 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="fr" id="ucsschool-4.0r2-teacher">
+<book lang="fr" id="ucsschool-4.3-teacher">
   <bookinfo>
     <title>&ucsUAS;</title>
     <subtitle>Manuel pour les enseignants </subtitle>
     <legalnotice>
-      <literallayout>Version 4.2 v1
-En date du : 04 avril 2017
+      <literallayout>Version 4.3 v1
+En date du : 07 février 2018
       </literallayout>
       <literallayout lang="">All rights reserved./ Tous droits réservés.
-(c) 2002-2017
+(c) 2002-2018
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen

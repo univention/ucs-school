@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.2-umc-import">
+<book lang="de" id="ucsschool-4.3-umc-import">
 	<bookinfo>
 		<title>
 			&ucsUAS;
@@ -18,12 +18,12 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.2 v6
-				Stand: 06. November 2017
+				Version 4.3 v1
+				Stand: 7. Februar 2018
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
-				(c) 2017
+				(c) 2017-2018
 				Univention GmbH
 				Mary-Somerville-Straße 1
 				28359 Bremen
@@ -54,7 +54,7 @@
 			&ucsUAS; bringt seit der Version 4.2 v6 ein UMC-Modul mit, dass es ermöglicht sicher und komfortabel Benutzerdaten aus CSV-Dateien zu importieren. Ein flexibles Sicherheitskonzept ermöglicht es Benutzer zu bestimmen, die Importe durchführen und deren Ergebnisse einsehen dürfen.
 		</para>
 		<para>
-			Technisch basiert das UMC-Modul auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration ist nicht Teil dieses Dokuments.
+			Technisch basiert das UMC-Modul auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.3.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration ist nicht Teil dieses Dokuments.
 		</para>
 	</chapter>
 
@@ -158,7 +158,7 @@
 				</programlisting>
 			</para>
 			<para>
-				Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
+				Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.3.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
 				Die Konfiguration wird aktiviert, indem sie an die richtige Position kopiert wird:
 				<programlisting>
 	# cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
