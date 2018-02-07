@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.2-import">
+<book lang="de" id="ucsschool-4.3-import">
 	<bookinfo>
 		<title>
 			&ucsUAS;
@@ -18,12 +18,12 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.2 v4
-				Stand: 23. Oktober 2017
+				Version 4.3 v1
+				Stand: 7. Februar 2018
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
-				(c) 2017
+				(c) 2018
 				Univention GmbH
 				Mary-Somerville-Straße 1
 				28359 Bremen
@@ -154,7 +154,7 @@
 		<para>
 			<figure id="procedure_import">
 				<title>Ablauf eines Benutzerimports</title>
-				<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ablauf.png"/>
+				<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ablauf.png"/>
 			</figure>
 			Für die Analyse von Problemen wird während des gesamten Imports ein Protokoll über alle technischen Vorgänge in Logdateien mit unterschiedlichen Detailtiefen geführt.
 			Wenn nicht anders konfiguriert, sind das die Dateien <filename>/var/log/univention/ucs-school-import.log</filename> und <filename>/var/log/univention/ucs-school-import.info</filename>.
@@ -638,7 +638,7 @@ python -m json.tool &lt; my_config.json
 <!-- scheme -->
 							<row>
 								<entry morerows="1"><varname>scheme</varname></entry>
-								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>recordUID</property> und <property>username</property> können Konfigurationen für beliebige &ucsUDM;-Attribute hinterlegt werden. <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> werden <emphasis>nur</emphasis> in <varname>scheme:email</varname> und <varname>scheme:username</varname> verarbeitet.</simpara></entry>
+								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den <ulink url="http://docs.software-univention.de/handbuch-4.3.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>recordUID</property> und <property>username</property> können Konfigurationen für beliebige &ucsUDM;-Attribute hinterlegt werden. <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> werden <emphasis>nur</emphasis> in <varname>scheme:email</varname> und <varname>scheme:username</varname> verarbeitet.</simpara></entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>object</classname>): <literal>{"email": .., "recordUID": .., "username": {..}}</literal></entry>
@@ -999,7 +999,7 @@ udm users/user
 			</para>
 			<para>
 				Aus diesem Grund unterstützt die Importsoftware die Erzeugung von Attributen mit Hilfe von konfigurierbaren Schemata.
-				Das Format ist das gleiche wie das bei den <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> eingesetzte.
+				Das Format ist das gleiche wie das bei den <ulink url="http://docs.software-univention.de/handbuch-4.3.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> eingesetzte.
 				Es existieren dedizierte Konfigurationsschlüssel für die Attribute <property>email</property>, <property>recordUID</property> und <property>username</property>.
 				Darüber hinaus können Schemata für beliebige &ucsUDM; Attribute (mit dem Namen des Attributs als Schlüssel) hinterlegt werden.
 			</para>
@@ -1060,7 +1060,7 @@ udm users/user
 	"maildomain": "dom.ain",
 }
 				</programlisting>
-				Die <literal>[0]</literal> im Beispiel bedeutet, dass nur das erste Zeichen des davor stehenden Attributes genommen wird. Es ist auch möglich Bereiche anzugeben. Weitere Informationen dazu finden sich im Kapitel <ulink url="http://docs.software-univention.de/handbuch-4.2.html#users:templates"><citetitle>Benutzervorlagen</citetitle></ulink> des UCS Handbuchs.
+				Die <literal>[0]</literal> im Beispiel bedeutet, dass nur das erste Zeichen des davor stehenden Attributes genommen wird. Es ist auch möglich Bereiche anzugeben. Weitere Informationen dazu finden sich im Kapitel <ulink url="http://docs.software-univention.de/handbuch-4.3.html#users:templates"><citetitle>Benutzervorlagen</citetitle></ulink> des UCS Handbuchs.
 			</para>
 			<para>
 				Um neue Zählervariablen hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.utils.username_handler.UsernameHandler</classname> abgeleitet und die Methode <methodname>counter_variable_to_function()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>).

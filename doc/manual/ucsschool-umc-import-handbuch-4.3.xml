@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.2-umc-import">
+<book lang="de" id="ucsschool-4.3-umc-import">
 	<bookinfo>
 		<title>
 			&ucsUAS;
@@ -18,12 +18,12 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.2 v6
-				Stand: 06. November 2017
+				Version 4.3 v1
+				Stand: 7. Februar 2018
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
-				(c) 2017
+				(c) 2017-2018
 				Univention GmbH
 				Mary-Somerville-Straße 1
 				28359 Bremen
@@ -54,7 +54,7 @@
 			&ucsUAS; bringt seit der Version 4.2 v6 ein UMC-Modul mit, dass es ermöglicht sicher und komfortabel Benutzerdaten aus CSV-Dateien zu importieren. Ein flexibles Sicherheitskonzept ermöglicht es Benutzer zu bestimmen, die Importe durchführen und deren Ergebnisse einsehen dürfen.
 		</para>
 		<para>
-			Technisch basiert das UMC-Modul auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration ist nicht Teil dieses Dokuments.
+			Technisch basiert das UMC-Modul auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.3.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration ist nicht Teil dieses Dokuments.
 		</para>
 	</chapter>
 
@@ -64,7 +64,7 @@
 			Das UMC-Modul leitet den Anwender durch den Import in mehreren Schritten:
 			<figure id="process">
 				<title>Schritte eines Importvorganges</title>
-				<graphic scalefit="0" align="center" fileref="illustrations42/import_ui_process.png"/>
+				<graphic scalefit="0" align="center" fileref="illustrations43/import_ui_process.png"/>
 			</figure>
 		</para>
 		<para>
@@ -76,7 +76,7 @@
 			</note>
 			<figure id="overview1">
 					<title>Übersichtsseite</title>
-					<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/doc/manual/illustrations42/import_ui_overview1.png"/>
+					<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_overview1.png"/>
 			</figure>
 			<orderedlist>
 				<listitem>
@@ -84,7 +84,7 @@
 						Zuerst muss der Typ der zu importierenden Benutzer ausgewählt werden.
 						<figure id="choose_user_type">
 							<title>Auswahl des Benutzertyps</title>
-							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_choose_user_type.png"/>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_choose_user_type.png"/>
 						</figure>
 					</para>
 				</listitem>
@@ -93,7 +93,7 @@
 						Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt werden.
 						<figure id="choose_csv_file">
 							<title>Hochladen der CSV-Datei</title>
-							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_upload_csv.png"/>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_upload_csv.png"/>
 						</figure>
 					</para>
 				</listitem>
@@ -109,7 +109,7 @@
 								War die Simulation erfolgreich kann nun der tatsächlich Import gestartet werden.
 								<figure id="start_import">
 									<title>Simulation war erfolgreich</title>
-									<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_start_import.png"/>
+									<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_start_import.png"/>
 								</figure>
 							</para>
 						</listitem>
@@ -118,7 +118,7 @@
 								Traten während der Simulation Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
 								<figure id="sim_had_error">
 									<title>Simulation hatte Fehler</title>
-									<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_simulation_error.png"/>
+									<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_simulation_error.png"/>
 								</figure>
 							</para>
 						</listitem>
@@ -129,7 +129,7 @@
 						Nach dem Start des Imports kehrt das UMC-Modul zur Übersichtsseite zurück. Wenn der neue Import-Job noch nicht angezeigt wird, kann die Liste mit dem "Aktualisieren" Knopf neu geladen werden.
 						<figure id="overview2">
 							<title>Übersichtsseite mit gestartetem Import</title>
-							<graphic scalefit="1" width="95%" align="center" fileref="illustrations42/import_ui_overview2.png"/>
+							<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_overview2.png"/>
 						</figure>
 					</para>
 				</listitem>
@@ -158,7 +158,7 @@
 				</programlisting>
 			</para>
 			<para>
-				Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.2.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
+				Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.3.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
 				Die Konfiguration wird aktiviert, indem sie an die richtige Position kopiert wird:
 				<programlisting>
 	# cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
