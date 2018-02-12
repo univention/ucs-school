@@ -11,6 +11,7 @@
 import copy
 import string
 import random
+import time
 from ldap.filter import filter_format
 import univention.testing.strings as uts
 import univention.testing.utils as utils
@@ -101,7 +102,18 @@ class Test(UniqueObjectTester):
 		self.save_ldap_status()
 		self.run_import(['-c', fn_config, '-i', fn_csv])
 		utils.wait_for_replication()
-		self.check_new_and_removed_users(0, len(persons))
+		timeout = 5
+		while True:
+			try:
+				self.check_new_and_removed_users(0, len(persons))
+				break
+			except SystemExit:
+				if timeout > 0:
+					self.log.error('Failed, sleeping 30s...')
+					time.sleep(30)
+					timeout -= 1
+				else:
+					raise
 
 		# recreate users, but move position of COUNTER variable
 		self.log.info('*** Importing users with the same lastnames, but move position of COUNTER variable...')
