@@ -53,7 +53,6 @@ import univention.testing.strings as uts
 import univention.testing.udm as udm_test
 
 import univention.admin.uldap as udm_uldap
-import univention.admin.uexceptions as udm_errors
 from univention.admin.uexceptions import noObject
 
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
@@ -144,7 +143,7 @@ class UCSTestSchool(object):
 				lo = udm_uldap.getMachineConnection(ldap_master=True)[0]
 			else:
 				lo = udm_uldap.access(host=ldap_server, port=port, base=cls._ucr.get('ldap/base'), binddn=account.binddn, bindpw=account.bindpw, start_tls=2)
-		except udm_errors.noObject:
+		except noObject:
 			raise
 		except LDAPError as exc:
 			raise SchoolLDAPError('Opening LDAP connection failed: %s' % (exc,))
@@ -158,7 +157,7 @@ class UCSTestSchool(object):
 		"""
 		try:
 			dn = self.lo.searchDn(base=dn)[0]
-		except (ldap.NO_SUCH_OBJECT, IndexError):
+		except (ldap.NO_SUCH_OBJECT, IndexError, noObject):
 			if raise_exceptions:
 				raise
 			return 'missing object'
@@ -702,7 +701,9 @@ class UCSTestSchool(object):
 		keys = loaded.pop('keys')
 		values = loaded.pop('values')
 		for k, v in values.items():
-			cls._test_ous[tuple(keys[k])] = [tuple(x) for x in v]  # json doesn't know tuples
+			# convert lists to tuples
+			# convert unicode to str
+			cls._test_ous[tuple(keys[k])] = [tuple(map(str, x)) for x in v]
 
 	@classmethod
 	def store_test_ous(cls):
