@@ -150,21 +150,22 @@ class CLI_Legacy_Import_Tester(object):
 			with utu.UCSTestSchool() as schoolenv:
 				self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
 				self.lo = schoolenv.open_ldap_connection(admin=True)
-				if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
+				if self.maildomain not in self.ucr.get('mail/hosteddomains', '').split():
 					self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
 					schoolenv.udm.create_object(
 						'mail/domain',
 						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
 						name=self.maildomain,
-						wait_for_replication=True,
-						check_for_drs_replication=True
+						wait_for_replication=True
 					)
+				self.ucr.load()
 				timeout = 30
 				while not self.ucr.get('mail/hosteddomains', ''):
 					timeout -= 1
 					if timeout < 1:
 						utils.fail('UCRV mail/hosteddomains empty 300s after creating mail/domain.')
 					time.sleep(10)
+					self.ucr.load()
 
 				self.test_import_users_with_empty_class()
 				self.test_no_name_normalization()
