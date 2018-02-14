@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-59) unstable; urgency=low
+
+  * Bug #46016: reduce import jobs by 3/4th (batch 2)
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 14 Feb 2018 13:51:39 +0100
+
 ucs-test-ucsschool (4.0.4-58) unstable; urgency=low
 
   * Bug #46016: fix regressions in various tests
@@ -6,7 +12,7 @@ ucs-test-ucsschool (4.0.4-58) unstable; urgency=low
 
 ucs-test-ucsschool (4.0.4-57) unstable; urgency=low
 
-  * Bug #46016: reduce import jobs by 1/4th (batch 1)
+  * Bug #46016: reduce import jobs by 3/4th (batch 1)
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 30 Jan 2018 16:07:41 +0100
 
