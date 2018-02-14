@@ -9,7 +9,8 @@
 ## bugs: [41544]
 
 import copy
-from ldap.filter import escape_filter_chars
+import random
+from ldap.filter import filter_format
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
@@ -25,44 +26,58 @@ class Test(CLI_Import_v2_Tester):
 		Bug #41544: test if it is possible to reuse an email address (-> if
 		users are removed before they are added)
 		"""
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config = copy.deepcopy(self.default_config)
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('scheme:email', '<email>')
+		config.update_entry('scheme:recordUID', '<record_uid>')
+		config.update_entry('csv:mapping:Benutzername', 'name')
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+		config.update_entry("deletion_grace_period:deletion", 0)
+		person_list = []
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			email = "{}@{}".format(uts.random_name(), self.ucr.get('domainname'))
-
-			config = copy.deepcopy(self.default_config)
-			config.update_entry('sourceUID', source_uid)
-			config.update_entry('user_role', role)
-			config.update_entry('scheme:email', '<email>')
-			config.update_entry('scheme:recordUID', '<record_uid>')
-			config.update_entry('csv:mapping:Benutzername', 'name')
-			config.update_entry('csv:mapping:recordUID', 'record_uid')
-			config.update_entry("deletion_grace_period:deletion", 0)
-
-			self.log.info('*** Importing a new single user with role %r and email address %r...', role, email)
 			person = Person(self.ou_A.name, role)
 			record_uid = uts.random_name()
-			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config])
-			wait_for_drs_replication('cn={}'.format(escape_filter_chars(person.username)))
-			self.check_new_and_removed_users(1, 0)
+			person.update(
+				record_uid=record_uid,
+				source_uid=source_uid,
+				mail="{}@{}".format(uts.random_name(), self.maildomain)
+			)
+			person_list.append(person)
+		email_list = [p.mail for p in person_list]
+
+		self.log.info('*** Importing users with email addresses %r...', email_list)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		wait_for_drs_replication(filter_format('cn=%s', (person_list[-1].username,)))
+		self.check_new_and_removed_users(4, 0)
+		for person in person_list:
 			person.verify()
 
-			self.log.info(
-				'*** Importing a new single user (and thus deleting previously imported user) with role %r and same '
-				'email address %r ...', role, email)
+		random.shuffle(email_list)
+		self.log.info(
+			'*** Importing new users (and thus deleting previously imported users) with same '
+			'email addresses %r ...', email_list)
+		person_list = []
+		for num, role in enumerate(('student', 'teacher', 'staff', 'teacher_and_staff')):
 			person = Person(self.ou_A.name, role)
 			record_uid = uts.random_name()
-			person.update(record_uid=record_uid, source_uid=source_uid, mail=email)
-			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config])
-			self.check_new_and_removed_users(1, 1)
+			person.update(record_uid=record_uid, source_uid=source_uid, mail=email_list[num])
+			person_list.append(person)
+
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		self.check_new_and_removed_users(4, 4)
+		for person in person_list:
 			person.verify()
 
 
