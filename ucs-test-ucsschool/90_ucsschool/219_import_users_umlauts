@@ -8,7 +8,8 @@
 ##   - ucs-school-import
 ## bugs: [44370]
 
-
+import copy
+import random
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
@@ -25,36 +26,61 @@ class Test(CLI_Import_v2_Tester):
 			modify user with role <role> → changing group memberships
 			remove user with role <role>
 		"""
-		for role in ('student',):
-			self.log.info('*** Importing a new single user with role %r', role)
+		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		config = copy.deepcopy(self.default_config)
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('scheme:username:default', '<:umlauts><firstname>[0].<lastname><:lower>')
+		config.update_entry('csv:mapping:Benutzername', 'name')
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
-			person = Person(self.ou_A.name, role)
-			person.update(username='', firstname=u'Ýlang', lastname=u'Müstèrmánn')
-			fn_csv = self.create_csv_file(person_list=[person])
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			config = {
-				'sourceUID': source_uid,
-				'input:filename': fn_csv,
-				'user_role': role,
-				"scheme": {
-					"username": {
-						"default": "<:umlauts><firstname>[0].<lastname><:lower>",
-					}
-				}
+		roles = ('student', 'teacher', 'staff', 'teacher_and_staff')
+		names = [
+			{
+				'firstname': u'Ýlang',
+				'lastname': u'Müstèrmánn',
+				'expected': {'username': 'y.muestermann', 'firstname': 'Ylang', 'lastname': 'Muestermann'},
+			},
+			{
+				'firstname': u'Öle',
+				'lastname': u'Mästèrmànn',
+				'expected': {'username': 'o.maestermann', 'firstname': 'Oele', 'lastname': 'Maestermann'}
+			},
+			{
+				'firstname': u'Nînä',
+				'lastname': u'Müstèrfräú',
+				'expected': {'username': 'n.muesterfraeu', 'firstname': 'Ninae', 'lastname': 'Muesterfraeu'}
+			},
+			{
+				'firstname': u'Ǹanâ',
+				'lastname': u'Mästérfrâü',
+				'expected': {'username': 'n.maesterfraue', 'firstname': 'Nana', 'lastname': 'Maesterfraue'}
 			}
-			fn_config = self.create_config_json(values=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+		]
+		random.shuffle(names)
+		person_list = []
+		for role, name in zip(roles, names):
+			person = Person(self.ou_A.name, role)
+			person.update(username='', firstname=name['firstname'], lastname=name['lastname'])
+			person._expected_names = name['expected']
+			person_list.append(person)
 
-			# start import
-			self.run_import(['-c', fn_config])
-
+		self.log.info('*** Importing users: %r', zip(roles, names))
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		self.check_new_and_removed_users(4, 0)
+		for person in person_list:
 			person.update(
-				username='y.muestermann',
+				username=person._expected_names['username'],
 				record_uid='%s;%s;%s' % (str(person.firstname), str(person.lastname), person.mail),
 				source_uid=source_uid,
-				firstname='Ylang',
-				lastname='Muestermann',
+				firstname=person._expected_names['firstname'],
+				lastname=person._expected_names['lastname'],
 			)
 			person.verify()
 
