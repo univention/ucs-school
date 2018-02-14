@@ -134,7 +134,7 @@ def add_module_logger_to_schoollib():
 	return _module_handler
 
 
-def create_passwd(length=8, dn=None, specials='@#$%&*-_+=:,.;?/()'):
+def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
 	if dn:
 		# get dn pw policy
 		if not _pw_length_cache.get(dn):
@@ -155,18 +155,37 @@ def create_passwd(length=8, dn=None, specials='@#$%&*-_+=:,.;?/()'):
 				pass
 		length = _pw_length_cache.get(ou, length)
 
-	if not specials:
-		specials = ''
 	pw = list()
+	specials_allowed = length / 5  # 20% specials in a password is enough
+	specials = list(specials) if specials else []
+	lowercase = list(string.lowercase)
+	for char in ('i', 'l', 'o'):
+		# remove chars that are easy to mistake for one another
+		lowercase.remove(char)
+	uppercase = list(string.uppercase)
+	for char in ('I', 'L', 'O'):
+		uppercase.remove(char)
+	digits = list(string.digits)
+	for char in ('0', '1'):
+		digits.remove(char)
 	if length >= 4:
-		pw.append(choice(string.lowercase))
-		pw.append(choice(string.uppercase))
-		pw.append(choice(string.digits))
+		# one char from each class (MS requirement)
+		pw.append(choice(lowercase))
+		pw.append(choice(uppercase))
+		pw.append(choice(digits))
 		if specials:
 			pw.append(choice(specials))
+			specials_allowed -= 1
 		length -= len(pw)
-	pw.extend(choice(string.ascii_letters + string.digits + specials) for x in range(length))
+	for _x in range(length):
+		char = choice(lowercase + uppercase + digits + (specials if specials_allowed else []))
+		if char in specials:
+			specials_allowed -= 1
+		pw.append(char)
 	shuffle(pw)
+	# start with a letter
+	while not pw[0] in string.ascii_letters:
+		shuffle(pw)
 	return ''.join(pw)
 
 
