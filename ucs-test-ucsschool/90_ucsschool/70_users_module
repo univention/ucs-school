@@ -7,6 +7,7 @@
 ## packages: [ucs-school-umc-wizards]
 
 from copy import deepcopy
+from ldap.filter import filter_format
 from essential.klasse import Klasse
 from essential.user import User
 import univention.testing.strings as uts
@@ -14,6 +15,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 from univention.testing.decorators import SetTimeout
+from univention.testing.ucs_samba import wait_for_drs_replication
 
 # this test fails every now and then, lets see if more waiting helps
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
@@ -57,10 +59,12 @@ def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None
 			'lastname': 'last_name%d' % num,
 		}
 		user.edit(new_attrs)
+		wait_for_drs_replication(filter_format('cn=%s', (user.username,)))
 		user.check_get(expected_attrs=new_attrs)
 
 		user.verify()
 		user.remove(remove_from_school)
+		utils.wait_for_replication()
 		user.verify()
 
 	return users
@@ -91,9 +95,11 @@ def main():
 
 			for user in users:
 				print(user.username, user.role, user.school, user.schools)
+				wait_for_drs_replication(filter_format('cn=%s', (user.username,)))
 				user.get()
 				user.verify()
 				user.remove()
+				utils.wait_for_replication()
 				user.verify()
 
 			print('\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).'.format(ou, ou2))
@@ -101,10 +107,13 @@ def main():
 			users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou2)
 
 			for user in users:
+				wait_for_drs_replication(filter_format('cn=%s', (user.username,)))
 				user.get()
 				user.verify()
 				user.remove()
+				utils.wait_for_replication()
 				user.verify()
+
 
 if __name__ == '__main__':
 	main()
