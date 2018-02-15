@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-webproxy
+fix: 
+desc: |
+ * The proxy reload service init script was fixed to depend on <package>univention-runit</package> and given time to more reliably recognize the service process state (Bug #46290)
+bug: [46290]
