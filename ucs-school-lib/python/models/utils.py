@@ -135,6 +135,8 @@ def add_module_logger_to_schoollib():
 
 
 def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
+	assert length > 0
+
 	if dn:
 		# get dn pw policy
 		if not _pw_length_cache.get(dn):
@@ -168,24 +170,31 @@ def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
 	digits = list(string.digits)
 	for char in ('0', '1'):
 		digits.remove(char)
-	if length >= 4:
-		# one char from each class (MS requirement)
+
+	# password will start with a letter (prepended at end of function)
+	length -= 1
+
+	# one symbol from each character class, MS requirement:
+	# https://technet.microsoft.com/en-us/library/cc786468(v=ws.10).aspx
+	if length >= 3:
 		pw.append(choice(lowercase))
 		pw.append(choice(uppercase))
 		pw.append(choice(digits))
-		if specials:
-			pw.append(choice(specials))
-			specials_allowed -= 1
-		length -= len(pw)
+		length -= 3
+	if specials and length:
+		pw.append(choice(specials))
+		specials_allowed -= 1
+		length -= 1
+
+	# fill up with random chars (but not more than 20% specials)
 	for _x in range(length):
 		char = choice(lowercase + uppercase + digits + (specials if specials_allowed else []))
 		if char in specials:
 			specials_allowed -= 1
 		pw.append(char)
+
 	shuffle(pw)
-	# start with a letter
-	while not pw[0] in string.ascii_letters:
-		shuffle(pw)
+	pw = [choice(lowercase + uppercase)] + pw  # start with a letter
 	return ''.join(pw)
 
 
