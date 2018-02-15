@@ -32,8 +32,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          univention-reload-service
-# Required-Start:    $local_fs $remote_fs $network $syslog
-# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Required-Start:    $local_fs $remote_fs $network $syslog univention-runit
+# Required-Stop:     $local_fs $remote_fs $network $syslog univention-runit
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Univention Reload Service
@@ -49,12 +49,12 @@ fi
 case "$1" in
 	start)
 		log_action_msg "Starting univention-reload-service"
-		sv up univention-reload-service
+		sv start univention-reload-service
 		log_action_end_msg 0
 		;;
 	stop)
 		log_action_msg "Stopping univention-reload-service"
-		sv down univention-reload-service
+		sv stop univention-reload-service
 		log_action_end_msg 0
 		;;
 	restart|force-reload)
