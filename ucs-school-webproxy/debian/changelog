@@ -1,3 +1,9 @@
+ucs-school-webproxy (14.0.0-3) unstable; urgency=low
+
+  * Bug #46290: give runsv time to recognize process state
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 15 Feb 2018 08:59:35 +0100
+
 ucs-school-webproxy (14.0.0-2) unstable; urgency=low
 
   * Bug #46000: squid3 has been renamed to squid
