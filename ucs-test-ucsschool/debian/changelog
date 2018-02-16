@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-60) unstable; urgency=low
+
+  * Bug #45640: add test for password generation
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Feb 2018 10:46:30 +0100
+
 ucs-test-ucsschool (4.0.4-59) unstable; urgency=low
 
   * Bug #46016: reduce import jobs by 3/4th (batch 2)
