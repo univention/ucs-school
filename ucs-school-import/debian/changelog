@@ -1,3 +1,12 @@
+ucs-school-import (15.0.3-24) unstable; urgency=low
+
+  * Bug #46317: run checks after pre_* hooks
+  * store users DN for unique attributes, so the same object can be checked
+    mutliple times, e.g. move(); modify()
+  * allow to remove an email address
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Feb 2018 17:15:04 +0100
+
 ucs-school-import (15.0.3-23) unstable; urgency=low
 
   * Bug #45972: do not set any scheme in global defaults
