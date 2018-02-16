@@ -529,7 +529,7 @@ class ImportUser(User):
 		If any of the other attributes is used in the format scheme of the
 		email address, its make_* function should have run before this!
 		"""
-		if self.email:
+		if self.email is not None:  # allow to remove an email address with self.email == ''
 			pass
 		elif self.udm_properties.get("mailPrimaryAddress"):
 			self.email = self.udm_properties.pop("mailPrimaryAddress")
