@@ -217,6 +217,10 @@ class ImportUser(User):
 		else:
 			return super(ImportUser, self).create(lo, validate)
 
+	def create_without_hooks(self, lo, validate):
+		self.run_checks(check_username=True)
+		return super(ImportUser, self).create_without_hooks(lo, validate)
+
 	@classmethod
 	def get_ldap_filter_for_user_role(cls):
 		if not cls.factory:
@@ -368,8 +372,7 @@ class ImportUser(User):
 		"""
 		self.prepare_uids()
 		self.prepare_udm_properties()
-		self.prepare_attributes(new_user)
-		self.run_checks(check_username=new_user)
+		self.prepare_attributes()
 
 	def prepare_attributes(self, new_user=False):
 		"""
@@ -681,12 +684,17 @@ class ImportUser(User):
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
 			udm_obj = self.get_udm_object(lo)
 			self.school_classes = self.get_school_classes(udm_obj, self)
+		self.run_checks(check_username=False)
 		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
 		self._lo = lo
 		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
+
+	def move_without_hooks(self, lo, udm_obj, force=False):
+		self.run_checks(check_username=False)
+		return super(ImportUser, self).move_without_hooks(lo, udm_obj, force)
 
 	@classmethod
 	def normalize(cls, s):
