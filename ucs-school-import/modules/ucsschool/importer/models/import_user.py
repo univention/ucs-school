@@ -79,7 +79,7 @@ class ImportUser(User):
 	default_username_max_length = 20  # may be lowered in __init__()
 	attribute_udm_names = None
 	no_overwrite_attributes = None
-	_unique_ids = defaultdict(set)
+	_unique_ids = defaultdict(dict)
 	factory = None
 	ucr = None
 	unique_email_handler = None
@@ -744,20 +744,26 @@ class ImportUser(User):
 		except (AttributeError, KeyError) as exc:
 			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc), self.config["mandatory_attributes"], entry_count=self.entry_count, import_user=self)
 
-		if self.record_uid in self._unique_ids["recordUID"]:
-			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid), entry_count=self.entry_count, import_user=self)
-		self._unique_ids["recordUID"].add(self.record_uid)
+		if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:
+			raise UniqueIdError('RecordUID {!r} has already been used in this import by {!r}.'.format(
+				self.record_uid, self._unique_ids["recordUID"][self.record_uid]), entry_count=self.entry_count, import_user=self
+			)
+		self._unique_ids["recordUID"][self.record_uid] = self.dn
 
 		if check_username:
 			if not self.name:
 				raise NoUsername("No username was created.", entry_count=self.entry_count, import_user=self)
 
 			if len(self.name) > self.username_max_length:
-				raise UsernameToLong("Username '{}' is longer than allowed.".format(self.name), entry_count=self.entry_count, import_user=self)
+				raise UsernameToLong("Username '{}' is longer than allowed.".format(
+					self.name), entry_count=self.entry_count, import_user=self
+				)
 
-			if self.name in self._unique_ids["name"]:
-				raise UniqueIdError("Username '{}' has already been used in this import.".format(self.name), entry_count=self.entry_count, import_user=self)
-			self._unique_ids["name"].add(self.name)
+			if self._unique_ids["name"].get(self.name, self.dn) != self.dn:
+				raise UniqueIdError('Username {!r} has already been used in this import by {!r}.'.format(
+					self.name, self._unique_ids["recordUID"][self.name]), entry_count=self.entry_count, import_user=self
+				)
+			self._unique_ids["name"][self.name] = self.dn
 
 			if len(self.password) < self.config["password_length"]:
 				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
@@ -772,9 +778,11 @@ class ImportUser(User):
 			if not re.match(email_pattern, self.email):
 				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry_count=self.entry_count, import_user=self)
 
-			if self.email in self._unique_ids["email"]:
-				raise UniqueIdError("Email address '{}' has already been used in this import.".format(self.email), entry_count=self.entry_count, import_user=self)
-			self._unique_ids["email"].add(self.email)
+			if self._unique_ids["email"].get(self.email, self.dn) != self.dn:
+				raise UniqueIdError('Email address {!r} has already been used in this import by {!r}.'.format(
+					self.email, self._unique_ids["email"][self.email]), entry_count=self.entry_count, import_user=self
+				)
+			self._unique_ids["email"][self.email] = self.dn
 
 		if self.birthday:
 			try:
