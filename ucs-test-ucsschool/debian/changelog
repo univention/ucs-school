@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-8) unstable; urgency=low
+
+  * Bug #46317: handle unset properties
+  * remove email CSV column to enable scheme generation
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Feb 2018 17:44:26 +0100
+
 ucs-test-ucsschool (5.0.2-7) unstable; urgency=low
 
   * Bug #45640: add test for password generation
