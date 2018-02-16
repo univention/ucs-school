@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-12) unstable; urgency=low
+
+  * Bug #45640: fix special chars count for length=3
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 16 Feb 2018 10:44:46 +0100
+
 ucs-school-lib (10.0.2-11) unstable; urgency=low
 
   * Bug #45640: safer handling of passwords with less than 4 chars

@@ -181,7 +181,7 @@ def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
 		pw.append(choice(uppercase))
 		pw.append(choice(digits))
 		length -= 3
-	if specials and length:
+	if specials and length and specials_allowed:
 		pw.append(choice(specials))
 		specials_allowed -= 1
 		length -= 1
