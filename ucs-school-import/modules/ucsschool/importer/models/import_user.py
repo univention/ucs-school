@@ -368,7 +368,8 @@ class ImportUser(User):
 		Necessary preparation to modify a user in UCS.
 		Runs all make_* functions.
 
-		:param new_user: bool: if username and password should be created
+		:param new_user: bool: if a password should be created
+		:return: None
 		"""
 		self.prepare_uids()
 		self.prepare_udm_properties()
@@ -377,8 +378,9 @@ class ImportUser(User):
 	def prepare_attributes(self, new_user=False):
 		"""
 		Run make_* functions for all Attributes of ucsschool.lib.models.user.User.
-		:param new_user:
-		:return:
+
+		:param new_user: bool: if a password should be created
+		:return: None
 		"""
 		self.make_firstname()
 		self.make_lastname()
@@ -552,7 +554,7 @@ class ImportUser(User):
 			except EmptyFormatResultError:
 				if 'email' in self.config['mandatory_attributes'] or 'mailPrimaryAttribute' in self.config['mandatory_attributes']:
 					raise
-		elif self.old_user:
+		elif self.old_user:  # allow to retain existing old email address with self.email == None
 			self.email = self.old_user.email
 		return self.email or ""
 
@@ -803,7 +805,6 @@ class ImportUser(User):
 
 		if not isinstance(self.schools, list):
 			raise InvalidSchools("Schools must be a list.", entry_count=self.entry_count, import_user=self)
-
 
 	def set_purge_timestamp(self, ts):
 		self._purge_ts = ts
