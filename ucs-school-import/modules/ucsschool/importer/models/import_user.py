@@ -373,7 +373,7 @@ class ImportUser(User):
 		"""
 		self.prepare_uids()
 		self.prepare_udm_properties()
-		self.prepare_attributes()
+		self.prepare_attributes(new_user)
 
 	def prepare_attributes(self, new_user=False):
 		"""
