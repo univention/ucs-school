@@ -43,6 +43,7 @@ class Test(CLI_Import_v2_Tester):
 			'<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[ALWAYSCOUNTER]'
 			)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+		del config['csv']['mapping']['E-Mail']
 
 		self.log.info('*** Importing new single user of each role from templates...')
 		person_list = []

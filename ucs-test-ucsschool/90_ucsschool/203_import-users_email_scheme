@@ -32,6 +32,7 @@ class Test(UniqueObjectTester):
 		config.update_entry('csv:mapping:role', '__type')
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+		del config['csv']['mapping']['E-Mail']
 
 		for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
@@ -56,18 +57,17 @@ class Test(UniqueObjectTester):
 			self.check_new_and_removed_users(4, 0)
 
 			for person in person_list:
-				self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
 				person.update_from_ldap(self.lo, ['dn', 'username', 'mail'])
+				self.log.debug('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
 				wait_for_drs_replication(filter_format('cn=%s', (person.username,)))
 				person.verify()
 
-				self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
 				person.email_prefix = '{}.{}'.format(person.firstname[0], person.lastname)
 				self.log.info("Calculated person.email_prefix is %r.", person.email_prefix)
 				self.unique_basenames_to_remove.append(person.email_prefix)
 				ext = '1' if scheme == 'ALWAYSCOUNTER' else ''
 				person.update(mail='{}{}@{}'.format(person.email_prefix, ext, self.maildomain))
-				self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
+				self.log.debug('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
 				person.verify()
 				self.check_unique_obj('unique-email', person.email_prefix, '2')
 
@@ -97,7 +97,7 @@ class Test(UniqueObjectTester):
 				for person in person_list:
 					person.update_from_ldap(self.lo, ['dn', 'username'])
 					person.update(mail='{}{}@{}'.format(person.email_prefix, ext, self.maildomain))
-					self.log.warn('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
+					self.log.debug('person.dn=%r person.username=%r person.mail=%r', person.dn, person.username, person.mail)
 					wait_for_drs_replication(filter_format('cn=%s', (person.username,)))
 					person.verify()
 					self.check_unique_obj('unique-email', person.email_prefix, str(ext + 1))

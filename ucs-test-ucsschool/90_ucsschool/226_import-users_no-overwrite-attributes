@@ -32,6 +32,7 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+		del config['csv']['mapping']['E-Mail']
 
 		self.log.info('*** 1/5 Importing a user from each role with default UCR config...')
 		univention.config_registry.handler_unset(['ucsschool/import/generate/user/attributes/no-overwrite-by-schema'])
