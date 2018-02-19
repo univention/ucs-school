@@ -90,7 +90,16 @@ feedback@univention.de
 			<section id="changelog:ucsschool:ucs-school-import" lang="en">
 				<title>Source package ucs-school-import</title>
 				<itemizedlist>
-					<listitem><para>The global user import configuration (<filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address. If your configuration was using the default email or username scheme, then it must now be recreated in <filename>/var/lib/ucs-school-import/configs/user_import.json</filename>. If the input CSV does not supply an email address or username and no scheme is given, new users will not have an email address (or fail to be created without a username) (<u:bug>45972</u:bug>). The original configuration was: <programlisting> "scheme": { 		"email": "&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;", 		"recordUID": "&lt;email&gt;", 		"username": { 			"default": "&lt;:umlauts&gt;&lt;firstname&gt;[0].&lt;lastname&gt;&lt;:lower&gt;[COUNTER2]" 		} 	} </programlisting></para></listitem>
+					<listitem><para>The global user import configuration (<filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address. If your configuration was using the default email or username scheme, then it must now be recreated in <filename>/var/lib/ucs-school-import/configs/user_import.json</filename>. If the input CSV does not supply an email address or username and no scheme is given, new users will not have an email address (or fail to be created without a username) (<u:bug>45972</u:bug>). The original configuration was:
+						<programlisting>
+"scheme": {
+	"email": "&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;",
+	"recordUID": "&lt;email&gt;",
+	"username": {
+		"default": "&lt;:umlauts&gt;&lt;firstname&gt;[0].&lt;lastname&gt;&lt;:lower&gt;[COUNTER2]"
+		}
+	}
+						</programlisting></para></listitem>
 
 					<listitem><para>The user import now allows to remove email addresses. To do so, a CSV column must be mapped to the email property and the fields entry must be empty. An email address will only be generated from a scheme, when no CSV column for email addresses exist (<u:bug>46317</u:bug>).</para></listitem>
 
