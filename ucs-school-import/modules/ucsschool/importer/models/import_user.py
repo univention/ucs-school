@@ -695,8 +695,17 @@ class ImportUser(User):
 		return super(ImportUser, self).move(lo, udm_obj, force)
 
 	def move_without_hooks(self, lo, udm_obj, force=False):
-		self.run_checks(check_username=False)
-		return super(ImportUser, self).move_without_hooks(lo, udm_obj, force)
+		old_dn = self.old_dn
+		res = super(ImportUser, self).move_without_hooks(lo, udm_obj, force)
+		if res:
+			# rewrite self._unique_ids, replacing old DN with new DN
+			for category, entries in self._unique_ids.items():
+				for value, dn in entries.items():
+					if dn == old_dn:
+						self._unique_ids[category][value] = self.dn
+
+			self.run_checks(check_username=False)
+		return res
 
 	@classmethod
 	def normalize(cls, s):
