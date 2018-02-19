@@ -386,8 +386,8 @@ class CLI_Import_v2_Tester(object):
 						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
 						name=self.maildomain
 					)
-
-				self.lo = schoolenv.open_ldap_connection(admin=True)
+				has_admin_credentials = self.ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup')
+				self.lo = schoolenv.open_ldap_connection(admin=has_admin_credentials)
 				self.create_ous(schoolenv)
 				self.test()
 				self.log.info('Test was successful.\n\n')
