@@ -1,3 +1,9 @@
+ucs-school-webproxy (13.0.1-4) unstable; urgency=low
+
+  * Bug #46290: copyright
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 19 Feb 2018 14:33:43 +0100
+
 ucs-school-webproxy (13.0.1-3) unstable; urgency=low
 
   * Bug #46290: raise timeout to 30s
