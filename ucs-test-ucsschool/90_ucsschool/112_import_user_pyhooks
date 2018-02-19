@@ -50,12 +50,14 @@ def main():
 					name=username,
 					firstname=uts.random_name(),
 					lastname=uts.random_name(),
-					school_classes=dict()
+					school_classes=dict(),
+					record_uid=uts.random_name(),
 				)
-
 				logger.info('*** Creating %r in %r...', kls.__name__, ou_name)
 				kwargs["birthday"] = PRE_ACTION_BIRTHDAYS["pre_create"]
-				kls(**kwargs).create(lo)
+				user = kls(**kwargs)
+				user.prepare_all(True)
+				user.create(lo)
 				user = kls.get_all(lo, ou_name, "uid={}".format(username))[0]
 				if user.birthday != BIRTHDAYS["post_create"]:
 					utils.fail("Birthday should have been %r." % BIRTHDAYS["post_create"])

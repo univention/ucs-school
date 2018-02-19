@@ -28,14 +28,28 @@ def main():
 				#
 				# check if UDM syntax checks are applied
 				#
-				user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
+				user = kls(
+					name=uts.random_username(),
+					school=ou_name,
+					firstname=uts.random_name(),
+					lastname=uts.random_name(),
+					record_uid=uts.random_name()
+				)
 				user.udm_properties['organisation'] = uts.random_name(65)
+				user.prepare_all(True)
 				try:
 					user.create(lo)
 					utils.fail('UDMValueError should have been raised in create() (tried to store 65 chars in string64).')
 				except UDMValueError as exc:
 					logger.info('*** Caught expected UDMValueError exception: %s', exc)
-				user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
+				user = kls(
+					name=uts.random_username(),
+					school=ou_name,
+					firstname=uts.random_name(),
+					lastname=uts.random_name(),
+					record_uid=uts.random_name()
+				)
+				user.prepare_all(True)
 				user.create(lo)
 				utils.verify_ldap_object(user.dn, expected_attr={'uid': [user.name]}, strict=False, should_exist=True)
 				user.udm_properties['organisation'] = uts.random_name(65)
@@ -53,14 +67,28 @@ def main():
 					'school', 'ucsschoolRecordUID', 'ucsschoolSourceUID', 'username'
 				]  # ImportUser._attributes
 				for prop in mapped_props:
-					user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
+					user = kls(
+						name=uts.random_username(),
+						school=ou_name,
+						firstname=uts.random_name(),
+						lastname=uts.random_name(),
+						record_uid=uts.random_name()
+					)
 					user.udm_properties[prop] = uts.random_name()
+					user.prepare_all(True)
 					try:
 						user.create(lo)
 						utils.fail('NotSupportedError should have been raised in create() when storing "{}" from udm_properties.'.format(prop))
 					except NotSupportedError as exc:
 						logger.info('*** Caught expected NotSupportedError exception: %s', exc)
-					user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
+					user = kls(
+						name=uts.random_username(),
+						school=ou_name,
+						firstname=uts.random_name(),
+						lastname=uts.random_name(),
+						record_uid=uts.random_name()
+					)
+					user.prepare_all(True)
 					user.create(lo)
 					utils.verify_ldap_object(user.dn, expected_attr={'uid': [user.name]}, strict=False, should_exist=True)
 					user.udm_properties[prop] = uts.random_name()
