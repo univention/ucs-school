@@ -1,3 +1,9 @@
+ucs-school-webproxy (14.0.0-4) unstable; urgency=low
+
+  * Bug #46290: raise timeout to 30s
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 19 Feb 2018 14:31:10 +0100
+
 ucs-school-webproxy (14.0.0-3) unstable; urgency=low
 
   * Bug #46290: give runsv time to recognize process state
