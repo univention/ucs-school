@@ -1,6 +1,6 @@
 ucs-school-umc-installer (6.0.0-1) unstable; urgency=medium
 
-  * bumped version
+  * Bug #45988: bumped version
 
  -- Daniel Troeder <troeder@univention.de>  Mon, 15 Jan 2018 13:17:48 +0100
 
