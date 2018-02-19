@@ -49,17 +49,17 @@ fi
 case "$1" in
 	start)
 		log_action_msg "Starting univention-reload-service"
-		sv start univention-reload-service
+		sv -w 30 start univention-reload-service
 		log_action_end_msg 0
 		;;
 	stop)
 		log_action_msg "Stopping univention-reload-service"
-		sv stop univention-reload-service
+		sv -w 30 stop univention-reload-service
 		log_action_end_msg 0
 		;;
 	restart|force-reload)
 		log_action_msg "Restarting univention-reload-service"
-		sv restart univention-reload-service
+		sv -w 30 restart univention-reload-service
 		log_action_end_msg 0
 		;;
 	*)
