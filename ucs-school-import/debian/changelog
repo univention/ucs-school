@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-25) unstable; urgency=low
+
+  * Bug #45640: rewrite self._unique_ids after school move
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 19 Feb 2018 14:07:47 +0100
+
 ucs-school-import (15.0.3-24) unstable; urgency=low
 
   * Bug #46317: run checks after pre_* hooks
