@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.2-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.2 v8 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.2 v7 nach 4.2 v8</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.2 v8
+Stand: 19. February 2018
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2017
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.2 v7 nach 4.2 v8.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><simpara>Automatically generated passwords are now better readable (<u:bug>45640</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-webproxy" lang="en">
+				<title>Source package ucs-school-webproxy</title>
+				<itemizedlist>
+					<listitem><simpara>The proxy reload service init script was fixed to depend on <package>univention-runit</package> and given time to more reliably recognize the service process state (<u:bug>46290</u:bug>)</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-umc-users" lang="en">
+				<title>Source package ucs-school-umc-users</title>
+				<itemizedlist>
+					<listitem><simpara>The UDM flag <emphasis>pwdChangeNextLogin</emphasis> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login (<u:bug>46012</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:univention-management-console-module-selective-udm" lang="en">
+				<title>Source package univention-management-console-module-selective-udm</title>
+				<itemizedlist>
+					<listitem><simpara>The error return codes when joining computers have been improved (<u:bug>45708</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><simpara>The global user import configuration (<filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address. If your configuration was using the default email or username scheme, then it must now be recreated in <filename>/var/lib/ucs-school-import/configs/user_import.json</filename>. If the input CSV does not supply an email address or username and no scheme is given, new users will not have an email address (or fail to be created without a username) (<u:bug>45972</u:bug>). The original configuration was: <programlisting language="sh"> "scheme": { 		"email": "<firstname>[0].<lastname>@<maildomain>", 		"recordUID": "<email>", 		"username": { 			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]" 		} 	} </programlisting></simpara></listitem>
+
+					<listitem><simpara>The user import now allows to remove email addresses. To do so, a CSV column must be mapped to the email property and the fields entry must be empty. An email address will only be generated from a scheme, when no CSV column for email addresses exist (<u:bug>46317</u:bug>).</simpara></listitem>
+
+					<listitem><simpara>Syntax and consistency checks are now done after running the pre_create / pre_modify / pre_move hooks (<u:bug>46317</u:bug>).</simpara></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
