@@ -62,39 +62,41 @@ feedback@univention.de
 						<section id="changelog:ucsschool:ucs-school-lib" lang="en">
 				<title>Source package ucs-school-lib</title>
 				<itemizedlist>
-					<listitem><simpara>Automatically generated passwords are now better readable (<u:bug>45640</u:bug>).</simpara></listitem>
+					<listitem><para>Automatically generated passwords are now better readable (<u:bug>45640</u:bug>).</para></listitem>
 
 				</itemizedlist>
 			</section>
 			<section id="changelog:ucsschool:ucs-school-webproxy" lang="en">
 				<title>Source package ucs-school-webproxy</title>
 				<itemizedlist>
-					<listitem><simpara>The proxy reload service init script was fixed to depend on <package>univention-runit</package> and given time to more reliably recognize the service process state (<u:bug>46290</u:bug>)</simpara></listitem>
+					<listitem><para>The proxy reload service init script was fixed to depend on <package>univention-runit</package> and given time to more reliably recognize the service process state (<u:bug>46290</u:bug>)</para></listitem>
 
 				</itemizedlist>
 			</section>
 			<section id="changelog:ucsschool:ucs-school-umc-users" lang="en">
 				<title>Source package ucs-school-umc-users</title>
 				<itemizedlist>
-					<listitem><simpara>The UDM flag <emphasis>pwdChangeNextLogin</emphasis> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login (<u:bug>46012</u:bug>).</simpara></listitem>
+					<listitem><para>The UDM flag <emphasis>pwdChangeNextLogin</emphasis> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login (<u:bug>46012</u:bug>).</para></listitem>
 
 				</itemizedlist>
 			</section>
 			<section id="changelog:ucsschool:univention-management-console-module-selective-udm" lang="en">
 				<title>Source package univention-management-console-module-selective-udm</title>
 				<itemizedlist>
-					<listitem><simpara>The error return codes when joining computers have been improved (<u:bug>45708</u:bug>).</simpara></listitem>
+					<listitem><para>The error return codes when joining computers have been improved (<u:bug>45708</u:bug>).</para></listitem>
 
 				</itemizedlist>
 			</section>
 			<section id="changelog:ucsschool:ucs-school-import" lang="en">
 				<title>Source package ucs-school-import</title>
 				<itemizedlist>
-					<listitem><simpara>The global user import configuration (<filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address. If your configuration was using the default email or username scheme, then it must now be recreated in <filename>/var/lib/ucs-school-import/configs/user_import.json</filename>. If the input CSV does not supply an email address or username and no scheme is given, new users will not have an email address (or fail to be created without a username) (<u:bug>45972</u:bug>). The original configuration was: <programlisting language="sh"> <![CDATA[ "scheme": { 		"email": "<firstname>[0].<lastname>@<maildomain>", 		"recordUID": "<email>", 		"username": { 			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]" 		} 	} ]]> </programlisting></simpara></listitem>
+					<listitem><para>The global user import configuration (<filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address. If your configuration was using the default email or username scheme, then it must now be recreated in <filename>/var/lib/ucs-school-import/configs/user_import.json</filename>. If the input CSV does not supply an email address or username and no scheme is given, new users will not have an email address (or fail to be created without a username) (<u:bug>45972</u:bug>). The original configuration was: <programlisting language="sh"> <![CDATA[ "scheme": { 		"email": "<firstname>[0].<lastname>@<maildomain>", 		"recordUID": "<email>", 		"username": { 			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]" 		} 	} ]]> </programlisting></para></listitem>
 
-					<listitem><simpara>The user import now allows to remove email addresses. To do so, a CSV column must be mapped to the email property and the fields entry must be empty. An email address will only be generated from a scheme, when no CSV column for email addresses exist (<u:bug>46317</u:bug>).</simpara></listitem>
+					<listitem><para>The user import now allows to remove email addresses. To do so, a CSV column must be mapped to the email property and the fields entry must be empty. An email address will only be generated from a scheme, when no CSV column for email addresses exist (<u:bug>46317</u:bug>).</para></listitem>
 
-					<listitem><simpara>Syntax and consistency checks are now done after running the pre_create / pre_modify / pre_move hooks (<u:bug>46317</u:bug>).</simpara></listitem>
+					<listitem><para>Syntax and consistency checks are now done after running the pre_create / pre_modify / pre_move hooks (<u:bug>46317</u:bug>).</para></listitem>
+
+					<listitem><para>Generated passwords of newly created users are now better readable (<u:bug>45640</u:bug>).</para></listitem>
 
 				</itemizedlist>
 			</section>
