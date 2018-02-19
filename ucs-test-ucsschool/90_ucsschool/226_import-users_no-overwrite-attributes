@@ -23,7 +23,6 @@ class Test(CLI_Import_v2_Tester):
 	def test(self):
 		source_uid = 'sourceUID-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
-		del config['csv']['mapping']['E-Mail']
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__type')
