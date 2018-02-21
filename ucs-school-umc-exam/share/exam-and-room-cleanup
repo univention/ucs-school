@@ -230,6 +230,10 @@ class ExamCleanupHelper(object):
 			ud.debug(ud.MAIN, ud.INFO, 'Skipping cleanup of exam metadata/data files as requested')
 			return
 
+		if not os.path.isdir(self.DIR_EXAMS):
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping cleanup of exam metadata/data files as {!r} does not exist.'.format(self.DIR_EXAMS))
+			return
+
 		for entry in os.listdir(self.DIR_EXAMS):
 			fn = os.path.join(self.DIR_EXAMS, entry)
 			ud.debug(ud.MAIN, ud.PROCESS, 'Removing %r' % (fn,))
@@ -247,6 +251,10 @@ class ExamCleanupHelper(object):
 	def remove_room_debris(self):
 		if self.options.skip_remove_room_debris:
 			ud.debug(ud.MAIN, ud.INFO, 'Skipping cleanup of room metadata files as requested')
+			return
+
+		if not os.path.isdir(self.DIR_ROOMS):
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping cleanup of room metadata files as {!r} does not exist.'.format(self.DIR_ROOMS))
 			return
 
 		for entry in os.listdir(self.DIR_ROOMS):
