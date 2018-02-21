@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [3]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-exams
+fix: 7.0.4-18A~4.2.0.201802211220
+desc: |
+ * The exam-and-room-cleanup script now uses the FQDN to verify the SSL certificate, when connecting to the UMC server. It also safely handles missing diretories (Bug #46360).
+bug: [46360]
