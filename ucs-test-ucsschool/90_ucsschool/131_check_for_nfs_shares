@@ -26,7 +26,7 @@ def main():
 		if nfs_shares:
 			utils.fail("Found NFS shares:\n* {}".format("\n* ".join(["school: %r share: %r" % nfs_share for nfs_share in nfs_shares])))
 		else:
-			print("*** No shares found in schools {}.".format(", ".join(s.name for s in School.get_all(lo))))
+			print("*** No shares found in schools {}.".format(", ".join(s.name for s in School.get_all(schoolenv.lo))))
 
 
 if __name__ == '__main__':
