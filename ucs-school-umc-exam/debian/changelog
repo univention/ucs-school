@@ -1,3 +1,10 @@
+ucs-school-umc-exam (7.0.4-18) unstable; urgency=low
+
+  * Bug #46360: use FQDN to connect to UMC server
+  * handle non-existing directories
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 21 Feb 2018 12:19:27 +0100
+
 ucs-school-umc-exam (7.0.4-17) unstable; urgency=low
 
   * Bug #43978: initialize udm module only once
