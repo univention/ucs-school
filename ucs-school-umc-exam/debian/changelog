@@ -1,3 +1,10 @@
+ucs-school-umc-exam (8.0.1-2) unstable; urgency=low
+
+  * Bug #46360: use FQDN to connect to UMC server
+  * handle non-existing directories
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 21 Feb 2018 12:21:16 +0100
+
 ucs-school-umc-exam (8.0.1-1) unstable; urgency=medium
 
   * Bug #46174: UDM users/user does not have posix/samba/kerberos options
