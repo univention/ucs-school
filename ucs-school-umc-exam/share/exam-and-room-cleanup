@@ -56,7 +56,7 @@ class ExamCleanupHelper(object):
 		self.options = options
 		self.ucr = univention.config_registry.ConfigRegistry()
 		self.ucr.load()
-		self.hostname = self.ucr.get('hostname')
+		self.hostname = '{}.{}'.format(self.ucr['hostname'], self.ucr['domainname'])
 		self.umcp = self.get_UMCP_connection()
 		self.lo, self.po = self.get_LDAP_connection()
 		self.exam_prefix = self.ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
