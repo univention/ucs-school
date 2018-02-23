@@ -49,7 +49,7 @@ class LegacyUserImport(UserImport):
 		for user in self.imported_users:
 			if user.action == "D":
 				try:
-					users_to_delete.append((user.source_uid, user.record_uid))
+					users_to_delete.append((user.source_uid, user.record_uid, user.input_data))
 				except noObject:
 					msg = "User to delete not found in LDAP: {}.".format(user)
 					self.logger.error(msg)
