@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-13) unstable; urgency=low
+
+  * Bug #46389: increase timeout of 23_password_reset
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 23 Feb 2018 22:08:33 +0100
+
 ucs-test-ucsschool (5.0.2-12) unstable; urgency=low
 
   * Bug #44310: fix ucsschool test
