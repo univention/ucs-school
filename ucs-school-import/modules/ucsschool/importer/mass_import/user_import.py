@@ -4,7 +4,7 @@
 """
 Default mass import class.
 """
-# Copyright 2016-2017 Univention GmbH
+# Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -211,7 +211,7 @@ class UserImport(object):
 		"""
 		Find difference between source database and UCS user database.
 
-		:return list of tuples: [(source_uid, record_uid), ..]
+		:return list of tuples: [(source_uid, record_uid, input_data), ..]
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
 		users_to_delete = list()
@@ -221,7 +221,7 @@ class UserImport(object):
 			for user in self.imported_users:
 				if user.action == "D":
 					try:
-						users_to_delete.append((user.source_uid, user.record_uid))
+						users_to_delete.append((user.source_uid, user.record_uid, user.input_data))
 					except noObject:
 						msg = "User to delete not found in LDAP: {}.".format(user)
 						self.logger.error(msg)
@@ -245,7 +245,8 @@ class UserImport(object):
 			[(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8')) for lu in ucs_ldap_users]
 		)
 
-		users_to_delete = list(ucs_user_ids - imported_user_ids)
+		users_to_delete = ucs_user_ids - imported_user_ids
+		users_to_delete = [(u[0], u[1], []) for u in users_to_delete]
 		self.logger.debug("users_to_delete=%r", users_to_delete)
 		return users_to_delete
 
@@ -258,12 +259,12 @@ class UserImport(object):
 		object in error.import_user).
 		* To add or change a deletion strategy overwrite do_delete().
 
-		:param users: list of tuples: [(source_uid, record_uid), ..]
+		:param users: list of tuples: [(source_uid, record_uid, input_data), ..]
 		:return: tuple: (self.errors, self.deleted_users)
 		"""
 		self.logger.info("------ Deleting %d users... ------", len(users))
 		a_user = self.factory.make_import_user([])
-		for num, ucs_id_not_in_import in enumerate(users, start=1):
+		for num, (source_uid, record_uid, input_data) in enumerate(users, start=1):
 			percentage = 10 * num / len(users)  # 0% - 10%
 			self.progress_report(
 				description='Deleting users: {}.'.format(percentage),
@@ -273,12 +274,13 @@ class UserImport(object):
 				errors=len(self.errors)
 			)
 			try:
-				user = a_user.get_by_import_id(self.connection, ucs_id_not_in_import[0], ucs_id_not_in_import[1])
+				user = a_user.get_by_import_id(self.connection, source_uid, record_uid)
 				user.action = "D"  # mark for logging/csv-output purposes
+				user.input_data = input_data  # most likely empty list (except in legacy import)
 			except noObject as exc:
 				self.logger.error(
-					"Cannot delete non existing user with source_uid=%r, record_uid=%r: %s",
-					ucs_id_not_in_import[0], ucs_id_not_in_import[1], exc)
+					"Cannot delete non existing user with source_uid=%r, record_uid=%r input_data=%r: %s",
+					source_uid, record_uid, input_data, exc)
 				continue
 			try:
 				success = self.do_delete(user)
