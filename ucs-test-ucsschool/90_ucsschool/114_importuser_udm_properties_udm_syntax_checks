@@ -42,6 +42,7 @@ def main():
 					record_uid=uts.random_name()
 				)
 				user.udm_properties['organisation'] = uts.random_name(65)
+				user.prepare_all(True)
 				try:
 					user.create(lo)
 					utils.fail('UDMValueError should have been raised in create() (tried to store 65 chars in string64).')
@@ -54,6 +55,7 @@ def main():
 					lastname=uts.random_name(),
 					record_uid=uts.random_name()
 				)
+				user.prepare_all(True)
 				user.create(lo)
 				utils.verify_ldap_object(user.dn, expected_attr={'uid': [user.name]}, strict=False, should_exist=True)
 				user.udm_properties['organisation'] = uts.random_name(65)
@@ -79,6 +81,7 @@ def main():
 						record_uid=uts.random_name()
 					)
 					user.udm_properties[prop] = random_value(prop)
+					user.prepare_all(True)
 					try:
 						user.create(lo)
 						utils.fail('NotSupportedError should have been raised in create() when storing "{}" from udm_properties.'.format(prop))
@@ -91,6 +94,7 @@ def main():
 						lastname=uts.random_name(),
 						record_uid=uts.random_name()
 					)
+					user.prepare_all(True)
 					user.create(lo)
 					utils.verify_ldap_object(user.dn, expected_attr={'uid': [user.name]}, strict=False, should_exist=True)
 					user.udm_properties[prop] = random_value(prop)
