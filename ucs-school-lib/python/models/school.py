@@ -398,7 +398,7 @@ class School(UCSSchoolHelperAbstractClass):
 		return success
 
 	def _alter_udm_obj(self, udm_obj):
-		udm_obj.options = ['UCSschool-School-OU']
+		udm_obj.options.append('UCSschool-School-OU')
 		return super(School, self)._alter_udm_obj(udm_obj)
 
 	@classmethod
