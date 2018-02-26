@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-13) unstable; urgency=low
+
+  * Bug #46194: append instead of replace school-OU option
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Feb 2018 15:04:08 +0100
+
 ucs-school-lib (10.0.2-12) unstable; urgency=low
 
   * Bug #45640: fix special chars count for length=3
