@@ -3,7 +3,8 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-lib
-fix: 10.0.2-12A~4.2.0.201802161047
+fix: 10.0.2-13A~4.2.0.201802261510
 desc: |
  * Automatically generated passwords are now better readable (Bug #45640).
-bug: [45640]
+ * A potential bug when creating new school OUs has been fixed (Bug #46194).
+bug: [45640, 46194]
