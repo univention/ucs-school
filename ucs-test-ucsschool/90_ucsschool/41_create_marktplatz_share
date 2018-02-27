@@ -22,7 +22,7 @@ def main():
 				handler_set(['ucsschool/import/generate/share/marktplatz=%s' % (variable,)])
 
 			print '### Creating school. Expecting Marktplatz to exists = %r' % (should_exist,)
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'), use_cache=False)
 			utils.wait_for_replication()
 			utils.verify_ldap_object('cn=Marktplatz,cn=shares,%s' % (oudn,), strict=True, should_exist=should_exist)
 
