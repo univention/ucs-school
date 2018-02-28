@@ -39,6 +39,9 @@ feedback@univention.de
 
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
+		<para>
+			FIXME
+		</para>
 	</chapter>
 
 	<chapter id="relnotes:prepare">
@@ -104,6 +107,9 @@ feedback@univention.de
 		</itemizedlist>
 		<section id="relnote:post:netlogon">
 			<title>Änderungen in den Netlogon-Skripten</title>
+			<para>
+				FIXME
+			</para>
 		</section>
 	</chapter>
 
@@ -143,7 +149,9 @@ feedback@univention.de
 		</para>
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
-
+			<para>
+				FIXME
+			</para>
 		</section>
 	</chapter>
 </book>
