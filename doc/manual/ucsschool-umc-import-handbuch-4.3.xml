@@ -188,7 +188,7 @@
 				<itemizedlist>
 					<listitem>
 						<para>
-							Die erste Zeile führt die Bezeicher der Spalten auf. Zum Beipiel:
+							Die erste Zeile führt die Bezeichner der Spalten auf. Zum Beispiel:
 							<programlisting>
 "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 							</programlisting>
