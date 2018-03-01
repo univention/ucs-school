@@ -1,6 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: remove cached test OUs
 ## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## exposure: dangerous
 
 import univention.testing.ucsschool as utu
