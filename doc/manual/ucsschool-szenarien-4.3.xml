@@ -1953,8 +1953,8 @@ feedback@univention.de
 								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beispiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
 							</row>
 							<row>
-								<entry><envar>timeserver2</envar></entry>
-								<entry><literal>[FQDN oder IP-Adresse des zweiten externen Zeitservers]</literal></entry>
+								<entry><envar>timeserver3</envar></entry>
+								<entry><literal>[FQDN oder IP-Adresse des dritten externen Zeitservers]</literal></entry>
 								<entry> Zeitserver von dem die gesamte Domäne ihre Uhrzeit bezieht.  Beispiele: <systemitem class="fqdomainname">ptbtime1.ptb.de</systemitem> oder <systemitem class="fqdomainname">0.europe.pool.ntp.org</systemitem>.</entry>
 							</row>
 						</tbody>
