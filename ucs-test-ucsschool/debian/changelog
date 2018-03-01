@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-15) unstable; urgency=low
+
+  * Bug #44310: fix tests
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 01 Mar 2018 09:50:49 +0100
+
 ucs-test-ucsschool (5.0.2-14) unstable; urgency=low
 
   * Bug #46017: do not use OU cache in 41_create_marktplatz_share
