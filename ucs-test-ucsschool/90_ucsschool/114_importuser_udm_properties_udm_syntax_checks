@@ -34,6 +34,8 @@ def main():
 				#
 				# check if UDM syntax checks are applied
 				#
+				# 1. len(udm_properties['organisation']) > 64 and create()
+				#
 				user = kls(
 					name=uts.random_username(),
 					school=ou_name,
@@ -48,6 +50,8 @@ def main():
 					utils.fail('UDMValueError should have been raised in create() (tried to store 65 chars in string64).')
 				except UDMValueError as exc:
 					logger.info('*** OK: Caught expected UDMValueError exception: %s', exc)
+
+				# 2. len(udm_properties['organisation']) > 64 and modify()
 				user = kls(
 					name=uts.random_username(),
 					school=ou_name,
@@ -68,6 +72,8 @@ def main():
 				# check if attributes mapped by the ucsschool.lib are prevented
 				# from being read from udm_properties
 				#
+				# 1. create()
+				#
 				mapped_props = [
 					'birthday', 'disabled', 'firstname', 'lastname', 'mailPrimaryAddress', 'password',
 					'school', 'ucsschoolRecordUID', 'ucsschoolSourceUID', 'username'
@@ -87,6 +93,8 @@ def main():
 						utils.fail('NotSupportedError should have been raised in create() when storing "{}" from udm_properties.'.format(prop))
 					except NotSupportedError as exc:
 						logger.info('*** OK: Caught expected NotSupportedError exception: %s', exc)
+
+					# 2. modify()
 					user = kls(
 						name=uts.random_username(),
 						school=ou_name,
