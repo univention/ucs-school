@@ -15,8 +15,8 @@ desc: |
     		}
     	}
     </programlisting>
- * The user import now allows to remove email addresses. To do so, a CSV column must be mapped to the email property and the fields entry must be empty. An email address will only be generated from a scheme, when no CSV column for email addresses exist (Bug #46317).
- * Syntax and consistency checks are now done after running the pre_create / pre_modify / pre_move hooks (Bug #46317).
+ * Within the CLI import the handling of email addresses has been altered: the user import now allows the removal email addresses. To do so, within the import configuration (json file) a CSV column must be mapped to the <literal>email</literal> property. To remove the mail address, in the CSV file the fields entry of the <literal>email</literl> column must be empty. Please note that an email address will only be generated from a configured scheme, when no CSV column for email addresses exist in the CSV file or no column is mapped (Bug #46317).
+ * The internal handling of python hooks for the import process has been improved: syntax and consistency checks are now done after running the <literal>pre_create</literal> / <literal>pre_modify</literal> / <literal>pre_move</literal> hooks (Bug #46317).
  * Generated passwords of newly created users are now better readable (Bug #45640).
  * An internal improvement has been made to give python hooks more flexibility: if available, the responsible line of the CSV file is now attached to an ImportUser object that is about to be deleted (Bug #46384).
 bug: [45972, 46317, 45640, 46384]
