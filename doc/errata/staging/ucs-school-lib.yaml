@@ -5,6 +5,9 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-lib
 fix: 10.0.2-13A~4.2.0.201802261510
 desc: |
- * Automatically generated passwords are now better readable (Bug #45640).
+ * Password for new users are now better readable.
+   They do not contain characters that are difficult to distinguish (like 'I' and 'l' or 'O' and '0') anymore.
+   The number of special characters has been limited to below 20% of the password length and passwords always start with a letter.
+   The Microsoft requirement that passwords contain characters from at least three character classes is met (Bug #45640).
  * A potential bug when creating new school OUs has been fixed (Bug #46194).
 bug: [45640, 46194]
