@@ -1,3 +1,9 @@
+ucs-school-umc-installer (5.0.2-2) unstable; urgency=low
+
+  * Bug #46469: revert 'use "apt-get update" instead of package_manager.update()'
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sat, 03 Mar 2018 14:39:40 +0100
+
 ucs-school-umc-installer (5.0.2-1) unstable; urgency=low
 
   * Bug #46469: use "apt-get update" instead of package_manager.update()
