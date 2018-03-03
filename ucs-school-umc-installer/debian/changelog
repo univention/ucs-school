@@ -1,3 +1,9 @@
+ucs-school-umc-installer (6.0.0-2) unstable; urgency=low
+
+  * Bug #46469: use "apt-get update" instead of package_manager.update()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sat, 03 Mar 2018 14:38:30 +0100
+
 ucs-school-umc-installer (6.0.0-1) unstable; urgency=medium
 
   * Bug #45988: bumped version
