@@ -587,11 +587,7 @@ class Instance(Base):
 			MODULE.process('Starting package installation')
 			with _self.package_manager.locked(reset_status=True, set_finished=True):
 				with _self.package_manager.no_umc_restart(exclude_apache=True):
-					_self.package_manager.progress_state.info('Updating package cache')
-					proc = subprocess.Popen(['/usr/bin/apt-get', 'update'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-					stdout, stderr = proc.communicate()
-					MODULE.info('Output of apt-get update:\nSTDOUT:\n%s\n\nSTDERR:\n%s\n' % (stdout, stderr))
-					_self.package_manager.progress_state.info('Package cache update completed')
+					_self.package_manager.update()
 					if not _self.package_manager.install(*packages):
 						raise SchoolInstallerError(_('Failed to install packages.'))
 
