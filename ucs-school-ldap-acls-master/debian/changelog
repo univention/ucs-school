@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (16.0.1-1) unstable; urgency=low
+
+  * Bug #46453: add dependency to ucs-school-import to fix LDAP ACL/schema
+    issues
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 04 Mar 2018 21:11:29 +0100
+
 ucs-school-ldap-acls-master (16.0.0-1) unstable; urgency=low
 
   * Bug #45988: bumped version
