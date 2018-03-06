@@ -66,7 +66,15 @@ print '\t\trequire_strong = %s' % configRegistry.get('freeradius/conf/auth-type/
 	# the "best" user name for the request.
 	#
 #	ntlm_auth = "/path/to/ntlm_auth --request-nt-key --username=%{%{Stripped-User-Name}:-%{%{User-Name}:-None}} --challenge=%{%{mschap:Challenge}:-00} --nt-response=%{%{mschap:NT-Response}:-00}"
-	ntlm_auth = "/usr/bin/univention-radius-ntlm-auth-suidwrapper --request-nt-key --username=%{%{Stripped-User-Name}:-%{%{User-Name}:-None}} --challenge=%{%{mschap:Challenge}:-00} --nt-response=%{%{mschap:NT-Response}:-00} --station-id=%{outer.request:Calling-Station-Id}"
+@!@
+import pipes
+helper_cmd = '/usr/bin/ucs-school-ntlm-auth-suidwrapper --request-nt-key --username=%{%{Stripped-User-Name}:-%{%{User-Name}:-None}} --challenge=%{%{mschap:Challenge}:-00} --nt-response=%{%{mschap:NT-Response}:-00} --station-id=%{outer.request:Calling-Station-Id}'
+logfile = configRegistry.get('freeradius/conf/auth-type/mschap/authhelper-logfile', None)
+if logfile:
+	helper_cmd += ' --logfile=%s' % (pipes.quote(logfile),)
+print '\tntlm_auth = "%s"' % (helper_cmd,)
+@!@
+
 
 	# The default is to wait 10 seconds for ntlm_auth to
 	# complete.  This is a long time, and if it's taking that
