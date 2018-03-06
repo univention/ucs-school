@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (7.0.0-2) unstable; urgency=medium
+
+  * Bug #46428: adjust settings for freeradius 3
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 06 Mar 2018 11:35:14 +0100
+
 ucs-school-radius-802.1x (7.0.0-1) unstable; urgency=low
 
   * Bug #45988: bumped version
