@@ -599,8 +599,6 @@ else:
 auth_type = configRegistry.get('freeradius/conf/auth-type/mschap', 'FALSE')
 if auth_type and 'TRUE' == auth_type.upper() or 'YES' == auth_type.upper():
 	print '\t\t#ttls {'
-elif configRegistry.is_false('freeradius/conf/auth-type/ttls', False):
-	print '\t\t#ttls {'
 else:
 	print '\t\tttls {'
 @!@
@@ -638,7 +636,10 @@ else:
 		#
 		#  allowed values: {no, yes}
 		#
-		copy_request_to_tunnel = no
+@!@
+value = configRegistry.is_true('freeradius/conf/auth-type/ttls/copy_request_to_tunnel', False)
+print '\t\t\tcopy_request_to_tunnel = %s' % ({True: 'yes', False: 'no'}[value],)
+@!@#
 
 		#
 		#  As of version 3.0.5, this configuration item
@@ -695,8 +696,6 @@ else:
 @!@
 auth_type = configRegistry.get('freeradius/conf/auth-type/mschap', 'FALSE')
 if auth_type and 'TRUE' == auth_type.upper() or 'YES' == auth_type.upper():
-	print '\t\t#}'
-elif configRegistry.is_false('freeradius/conf/auth-type/ttls', False):
 	print '\t\t#}'
 else:
 	print '\t\t}'
@@ -782,7 +781,10 @@ else:
 		#  The PEAP module also has these configuration
 		#  items, which are the same as for TTLS.
 		#
-		copy_request_to_tunnel = no
+@!@
+value = configRegistry.is_true('freeradius/conf/auth-type/peap/copy_request_to_tunnel', False)
+print '\t\t\tcopy_request_to_tunnel = %s' % ({True: 'yes', False: 'no'}[value],)
+@!@
 
 		#
 		#  As of version 3.0.5, this configuration item
