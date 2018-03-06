@@ -1,3 +1,10 @@
+ucs-school-metapackage (11.0.1-2) unstable; urgency=medium
+
+  * Bug #46265: add Console Logon to connector/s4/mapping/group/ignorelist
+    during update
+
+ -- Felix Botner <botner@univention.de>  Tue, 06 Mar 2018 10:59:41 +0100
+
 ucs-school-metapackage (11.0.1-1) unstable; urgency=medium
 
   * Bug #46265: add Console Logon to connector/s4/mapping/group/ignorelist
