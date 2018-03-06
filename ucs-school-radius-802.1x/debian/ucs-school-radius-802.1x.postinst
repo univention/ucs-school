@@ -37,6 +37,7 @@ case "$1" in
     configure)
 		eval "$(univention-config-registry shell)"
 
+		mkdir -p /etc/univention/ssl
 		cp /etc/univention/ssl/$(hostname)/private.key /etc/freeradius/ssl/private.key
 		cp /etc/univention/ssl/$(hostname)/cert.pem /etc/freeradius/ssl/cert.pem
 		chgrp freerad /etc/freeradius/ssl/private.key
@@ -66,8 +67,9 @@ case "$1" in
 
 		[ -x "/etc/init.d/univention-firewall" ] && invoke-rc.d univention-firewall restart
 
-		openssl gendh -out /etc/freeradius/ssl/dh 1024
-		/etc/init.d/freeradius restart
+		openssl dhparam -out /etc/freeradius/ssl/dh 1024
+		deb-systemd-helper enable freeradius
+		systemctl restart freeradius
 
 		;;
 

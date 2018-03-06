@@ -31,13 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-test "$1" = "remove" && rm -f /etc/freeradius/radiusd.conf && dpkg-divert --rename --quiet --divert /etc/freeradius/radiusd.conf.debian --remove /etc/freeradius/radiusd.conf || true
-test "$1" = "remove" && rm -f /etc/freeradius/eap.conf && dpkg-divert --rename --quiet --divert /etc/freeradius/eap.conf.debian --remove /etc/freeradius/eap.conf || true
-test "$1" = "remove" && rm -f /etc/freeradius/modules/ldap && dpkg-divert --rename --quiet --divert /etc/freeradius/ldap.debian --remove /etc/freeradius/modules/ldap || true
-test "$1" = "remove" && rm -f /etc/freeradius/modules/mschap && dpkg-divert --rename --quiet --divert /etc/freeradius/mschap.debian --remove /etc/freeradius/modules/mschap || true
-test "$1" = "remove" && rm -f /etc/freeradius/sites-available/default && dpkg-divert --rename --quiet --divert /etc/freeradius/sites-available/default.debian --remove /etc/freeradius/sites-available/default || true
-test "$1" = "remove" && rm -f /etc/freeradius/sites-available/inner-tunnel && dpkg-divert --rename --quiet --divert /etc/freeradius/sites-available/inner-tunnel.debian --remove /etc/freeradius/sites-available/inner-tunnel || true
-test "$1" = "remove" && rm -f /etc/freeradius/ldap.attrmap && dpkg-divert --rename --quiet --divert /etc/freeradius/ldap.attrmap.debian --remove /etc/freeradius/ldap.attrmap || true
+#DEBHELPER#
 
 case "$1" in
 	remove|purge)
