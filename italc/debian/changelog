@@ -1,3 +1,9 @@
+italc (3:2.0.2-3) unstable; urgency=low
+
+  * Bug #46390: switch iTALC from openssl 0.9.8 to 1.1.0
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 Mar 2018 12:10:22 +0100
+
 italc (3:2.0.2-2) unstable; urgency=low
 
   * Bug #45988: version bump for UCS@school 4.3
