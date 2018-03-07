@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-17) unstable; urgency=low
+
+  * Bug #46536: 105_activate_groupmembers: wait for replication
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 Mar 2018 22:23:49 +0100
+
 ucs-test-ucsschool (5.0.2-16) unstable; urgency=low
 
   * Bug #46389: 23_password_reset: do not wait for staff users on edu slave
