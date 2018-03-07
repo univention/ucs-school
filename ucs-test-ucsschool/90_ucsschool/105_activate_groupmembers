@@ -100,9 +100,7 @@ def main():
 			account = utils.UCSTestDomainAdminCredentials()
 			passwd = account.bindpw
 			group.create()
-			possible_cases = itertools.product(['0', '1'], ['0', '1'])
-			for i in xrange(4):
-				change_passwd, newStatus = possible_cases.next()
+			for change_passwd, newStatus in itertools.product(['0', '1'], ['0', '1']):
 				should_pass = (newStatus == '1')
 
 				print 'Test case = active: %s, change_passwd: %s' % (newStatus, change_passwd)
