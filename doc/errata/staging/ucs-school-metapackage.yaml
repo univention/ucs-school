@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-metapackage
+fix: 11.0.1-2A~4.3.0.201803061101
+desc: |
+ * The S4-Connector configuration has been adapted to UCS 4.3-0 (Bug #46265)
+bug: [46265]
