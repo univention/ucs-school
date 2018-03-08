@@ -172,11 +172,9 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TextArtifactSerializer(serializers.HyperlinkedModelSerializer):
-	userimportjob = serializers.HyperlinkedRelatedField(read_only=True, view_name='userimportjob-detail')
-
 	class Meta:
 		model = TextArtifact
-		fields = ('url', 'text', 'userimportjob')
+		fields = ('url', 'text')
 		# exclude = ()
 		read_only_fields = ('text',)  # not really necessary, as the view is a ReadOnlyModelViewSet
 
@@ -189,18 +187,30 @@ class TextArtifactSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class LogFileSerializer(TextArtifactSerializer):
+	userimportjob_log_file = serializers.HyperlinkedRelatedField(read_only=True, view_name='userimportjob-detail')
+
 	class Meta(TextArtifactSerializer.Meta):
 		model = Logfile
+		userimportjob_related_name = 'userimportjob_log_file'
+		fields = ('url', 'text', userimportjob_related_name)
 
 
 class PasswordFileSerializer(TextArtifactSerializer):
+	userimportjob_password_file = serializers.HyperlinkedRelatedField(read_only=True, view_name='userimportjob-detail')
+
 	class Meta(TextArtifactSerializer.Meta):
 		model = PasswordsFile
+		userimportjob_related_name = 'userimportjob_password_file'
+		fields = ('url', 'text', userimportjob_related_name)
 
 
 class SummarySerializer(TextArtifactSerializer):
+	userimportjob_summary_file = serializers.HyperlinkedRelatedField(read_only=True, view_name='userimportjob-detail')
+
 	class Meta(TextArtifactSerializer.Meta):
 		model = SummaryFile
+		userimportjob_related_name = 'userimportjob_summary_file'
+		fields = ('url', 'text', userimportjob_related_name)
 
 
 class SchoolSerializer(serializers.HyperlinkedModelSerializer):
