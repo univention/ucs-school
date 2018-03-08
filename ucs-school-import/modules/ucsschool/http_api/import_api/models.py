@@ -109,7 +109,7 @@ class TextArtifact(models.Model):
 
 	def __unicode__(self):
 		try:
-			pk = '#{}'.format(self.userimportjob.pk)
+			pk = '#{}'.format(self.get_userimportjob().pk)
 		except (AttributeError, ObjectDoesNotExist):
 			pk = 'n/a'
 		return '{} #{} of importjob {}'.format(self.__class__.__name__, self.pk, pk)
@@ -124,18 +124,30 @@ class TextArtifact(models.Model):
 				return ''
 		return self.text
 
+	def get_userimportjob(self):
+		return self.userimportjob
+
 
 class Logfile(TextArtifact):
+	def get_userimportjob(self):
+		return self.userimportjob_log_file
+
 	class Meta:
 		proxy = True
 
 
 class PasswordsFile(TextArtifact):
+	def get_userimportjob(self):
+		return self.userimportjob_password_file
+
 	class Meta:
 		proxy = True
 
 
 class SummaryFile(TextArtifact):
+	def get_userimportjob(self):
+		return self.userimportjob_summary_file
+
 	class Meta:
 		proxy = True
 
@@ -150,9 +162,9 @@ class UserImportJob(models.Model):
 
 	task_id = models.CharField(max_length=40, blank=True)
 	result = models.OneToOneField(TaskMeta, on_delete=models.SET_NULL, null=True, blank=True)
-	log_file = models.OneToOneField(Logfile, on_delete=models.SET_NULL, null=True, blank=True)
-	password_file = models.OneToOneField(PasswordsFile, on_delete=models.SET_NULL, null=True, blank=True)
-	summary_file = models.OneToOneField(SummaryFile, on_delete=models.SET_NULL, null=True, blank=True)
+	log_file = models.OneToOneField(Logfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='userimportjob_log_file')
+	password_file = models.OneToOneField(PasswordsFile, on_delete=models.SET_NULL, null=True, blank=True, related_name='userimportjob_password_file')
+	summary_file = models.OneToOneField(SummaryFile, on_delete=models.SET_NULL, null=True, blank=True, related_name='userimportjob_summary_file')
 	basedir = models.CharField(max_length=255)
 	date_created = models.DateTimeField(auto_now_add=True)
 	input_file = models.FileField(upload_to='uploads/%Y-%m-%d/')

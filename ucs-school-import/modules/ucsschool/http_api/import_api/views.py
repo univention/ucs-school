@@ -36,7 +36,7 @@ from __future__ import unicode_literals
 import urlparse
 from ldap.filter import filter_format
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets
@@ -48,7 +48,7 @@ from rest_framework.permissions import BasePermission, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
 from ucsschool.importer.utils.ldap_connection import get_machine_connection
-from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, School, JOB_CHOICES, JOB_STARTED
+from ucsschool.http_api.import_api.models import UserImportJob, School, TextArtifact, JOB_CHOICES
 from ucsschool.http_api.import_api.serializers import (
 	UserImportJobCreationValidator,
 	UserImportJobSerializer,
@@ -167,20 +167,25 @@ class TextArtifactViewPermission(BasePermission):
 	"""
 	def has_object_permission(self, request, view, obj):
 		# obj is a TextArtifact object (LogFile, PasswordsFile, SummaryFile)
-		if not getattr(obj, 'userimportjob'):
+		userimportjob_related_name = getattr(view, 'userimportjob_related_name')
+		if not userimportjob_related_name:
+			raise RuntimeError('View has no/empty userimportjob_related_name attribute.')
+
+		if not getattr(obj, userimportjob_related_name):
 			return False
+		userimportjob = getattr(obj, userimportjob_related_name)
 		res = UserImportJobCreationValidator.is_user_school_role_combination_allowed(
 			username=request.user.username,
-			school=obj.userimportjob.school.name,
-			role=obj.userimportjob.user_role
+			school=userimportjob.school.name,
+			role=userimportjob.user_role
 		)
 		if not res:
 			logger.warn(
 				'Access forbidden for %r to %r (school=%r role=%r).',
 				request.user.username,
 				obj,
-				obj.userimportjob.school.name,
-				obj.userimportjob.user_role
+				userimportjob.school.name,
+				userimportjob.user_role
 			)
 		return res
 
@@ -332,10 +337,26 @@ class SubResourceMixin(object):
 		IsAuthenticated,             # user must be authenticated to use this view
 		TextArtifactViewPermission,  # apply per view and per-object permission checks
 	)
+	serializer_class = TextArtifact
+
+	def _get_model(self):
+		return self.get_serializer_class().Meta.model
+
+	@property
+	def userimportjob_related_name(self):
+		return self.get_serializer_class().Meta.userimportjob_related_name
+
+	def get_queryset(self):
+		# must filter(), because all() would list all TextArtifact objects, not
+		# just those of type LogFile/PasswordFile/SummaryFile
+		return self._get_model().objects.filter(**{'{}__isnull'.format(self.userimportjob_related_name): False})
 
 	def retrieve(self, request, *args, **kwargs):
-		model = self.get_serializer_class().Meta.model
-		instance = get_object_or_404(model, userimportjob__pk=kwargs.get('pk', 0))
+		model = self._get_model()
+		try:
+			instance = self.get_queryset().get(**{'{}__pk'.format(self.userimportjob_related_name): kwargs.get('pk', 0)})
+		except model.DoesNotExist:
+			raise Http404('No {} matches the given query.'.format(model._meta.object_name))
 		# running has_object_permission() here manually, because DRF doesn't seem to do it
 		# probably because used from urls.py directly as_view()
 		if not TextArtifactViewPermission().has_object_permission(request, self, instance):
@@ -353,7 +374,6 @@ Log file of import job.
 
 * Only GET is allowed.
 	"""
-	queryset = Logfile.objects.filter(userimportjob__isnull=False)  # all() would list all TextArtifact objects
 	serializer_class = LogFileSerializer
 
 
@@ -363,7 +383,6 @@ New users password file of import job.
 
 * Only GET is allowed.
 	"""
-	queryset = PasswordsFile.objects.filter(userimportjob__isnull=False)
 	serializer_class = PasswordFileSerializer
 
 
@@ -373,7 +392,6 @@ Summary file of import job.
 
 * Only GET is allowed.
 	"""
-	queryset = SummaryFile.objects.filter(userimportjob__isnull=False)
 	serializer_class = SummarySerializer
 
 
