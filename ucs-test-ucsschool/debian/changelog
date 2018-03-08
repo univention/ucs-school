@@ -1,6 +1,13 @@
+ucs-test-ucsschool (5.0.2-20) unstable; urgency=low
+
+  * Bug #45990: move 30_* tests to own test environment
+  * Bug #46552: increase timeout for 207_*
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 Mar 2018 15:16:44 +0100
+
 ucs-test-ucsschool (5.0.2-19) unstable; urgency=low
 
-  * Bug #45640: fix ucs-test tags (HEAD -> 4.3)
+  * Bug #45640: fix ucs-test tags
   * Bug #43169: reenabling 72_radius_*
   * Bug #38006: reenable test 103_ucsschool_smbstatus_parser
 
