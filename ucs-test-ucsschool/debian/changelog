@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-18) unstable; urgency=low
+
+  * Bug #46549: 12_roleshare_student fails due to wrong exitcode
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 Mar 2018 14:07:03 +0100
+
 ucs-test-ucsschool (5.0.2-17) unstable; urgency=low
 
   * Bug #46536: 105_activate_groupmembers: wait for replication
