@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-68) unstable; urgency=low
+
+  * Bug #46536: 105_activate_groupmembers: wait for replication
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 Mar 2018 14:14:15 +0100
+
 ucs-test-ucsschool (4.0.4-67) unstable; urgency=low
 
   * Bug #44310: fix tests
