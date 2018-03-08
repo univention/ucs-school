@@ -599,6 +599,8 @@ else:
 auth_type = configRegistry.get('freeradius/conf/auth-type/mschap', 'FALSE')
 if auth_type and 'TRUE' == auth_type.upper() or 'YES' == auth_type.upper():
 	print '\t\t#ttls {'
+elif configRegistry.is_false('freeradius/conf/auth-type/ttls', False):
+	print '\t\t#ttls {'
 else:
 	print '\t\tttls {'
 @!@
@@ -696,6 +698,8 @@ print '\t\t\tcopy_request_to_tunnel = %s' % ({True: 'yes', False: 'no'}[value],)
 @!@
 auth_type = configRegistry.get('freeradius/conf/auth-type/mschap', 'FALSE')
 if auth_type and 'TRUE' == auth_type.upper() or 'YES' == auth_type.upper():
+	print '\t\t#}'
+elif configRegistry.is_false('freeradius/conf/auth-type/ttls', False):
 	print '\t\t#}'
 else:
 	print '\t\t}'

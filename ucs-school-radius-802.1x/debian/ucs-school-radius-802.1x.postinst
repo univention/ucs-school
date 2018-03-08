@@ -40,10 +40,11 @@ case "$1" in
 		mkdir -p /etc/univention/ssl
 		cp /etc/univention/ssl/$(hostname)/private.key /etc/freeradius/ssl/private.key
 		cp /etc/univention/ssl/$(hostname)/cert.pem /etc/freeradius/ssl/cert.pem
+		openssl dhparam -out /etc/freeradius/ssl/dh 1024
 		chgrp freerad /etc/freeradius/ssl/private.key
 		chgrp freerad /etc/freeradius/ssl/cert.pem
 		chmod 440 /etc/freeradius/ssl/private.key
-		chmod 440 /etc/freeradius/ssl/cert.pem
+		chmod 440 /etc/freeradius/ssl/cert.pem /etc/freeradius/ssl/dh
 
 		univention-config-registry set \
 			security/packetfilter/package/ucs-school-radius-802.1x/udp/1812/all=ACCEPT \
@@ -67,8 +68,7 @@ case "$1" in
 
 		[ -x "/etc/init.d/univention-firewall" ] && invoke-rc.d univention-firewall restart
 
-		openssl dhparam -out /etc/freeradius/ssl/dh 1024
-		deb-systemd-helper enable freeradius
+		deb-systemd-helper enable freeradius.service
 		systemctl restart freeradius
 
 		;;

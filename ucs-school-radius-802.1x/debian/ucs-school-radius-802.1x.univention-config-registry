@@ -11,6 +11,7 @@ Variables: freeradius/conf/log/strippednames
 Variables: freeradius/conf/log/auth
 Variables: freeradius/conf/log/auth/badpass
 Variables: freeradius/conf/log/auth/goodpass
+Variables: freeradius/conf/max_requests
 Variables: freeradius/conf/servers/start
 Variables: freeradius/conf/servers/max
 Variables: freeradius/conf/servers/spare/min
@@ -24,6 +25,7 @@ User: root
 Group: freerad
 Mode: 640
 Variables: freeradius/conf/auth-type/mschap
+Variables: freeradius/conf/auth-type/ttls
 Variables: ldap/server/name
 Variables: ldap/base
 Variables: freeradius/conf/private/key/secret/file
@@ -64,6 +66,8 @@ Variables: freeradius/conf/auth-type/mschap
 Variables: freeradius/conf/auth-type/mschap/.*
 Variables: freeradius/conf/realm
 Variables: freeradius/conf/users
+Variables: freeradius/conf/port
+Variables: freeradius/conf/accountingport
 
 Type: file
 File: etc/freeradius/3.0/sites-available/inner-tunnel
