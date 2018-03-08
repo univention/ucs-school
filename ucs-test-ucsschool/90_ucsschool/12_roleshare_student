@@ -58,7 +58,13 @@ def run_cmd(cmd, shell=False, print_output=True):
 		print "Failed to run: %r" % cmd
 		raise
 	if print_output:
+		print '---[stdout+stderr]---'
 		print out
+		print '---[cut]---'
+	print 'Exitcode: %s' % (p1.returncode,)
+	if p1.returncode == 0 and 'NT_STATUS_' in out:
+		print 'WARNING: NT_STATUS_* found --> raising exitcode to 127'
+		return 127
 	return p1.returncode
 
 
