@@ -7,6 +7,7 @@
 ## packages:
 ##   - ucs-school-import
 ## bugs: [41609, 41910]
+## timeout: 7200
 
 import copy
 import pprint
