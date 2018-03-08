@@ -1,3 +1,11 @@
+ucs-test-ucsschool (5.0.2-19) unstable; urgency=low
+
+  * Bug #45640: fix ucs-test tags (HEAD -> 4.3)
+  * Bug #43169: reenabling 72_radius_*
+  * Bug #38006: reenable test 103_ucsschool_smbstatus_parser
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 Mar 2018 14:59:57 +0100
+
 ucs-test-ucsschool (5.0.2-18) unstable; urgency=low
 
   * Bug #46549: 12_roleshare_student fails due to wrong exitcode
