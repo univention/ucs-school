@@ -87,7 +87,7 @@ class School(models.Model):
 		names = list()
 		for dn, ou in cls._get_ous_from_ldap(ou_str):
 			name = ou['ou'][0]
-			display_name = ou['displayName'][0]
+			display_name = ou.get('displayName', [name])[0]
 			obj, created = cls.objects.get_or_create(
 				name=name,
 				defaults={'displayName': display_name},
