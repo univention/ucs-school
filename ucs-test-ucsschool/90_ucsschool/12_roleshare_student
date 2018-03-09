@@ -62,8 +62,8 @@ def run_cmd(cmd, shell=False, print_output=True):
 		print out
 		print '---[cut]---'
 	print 'Exitcode: %s' % (p1.returncode,)
-	if p1.returncode == 0 and 'NT_STATUS_' in out:
-		print 'WARNING: NT_STATUS_* found --> raising exitcode to 127'
+	if p1.returncode == 0 and any([line.startswith('NT_STATUS_') for line in out.splitlines()]):
+		print 'WARNING: "\\nNT_STATUS_" found in output --> raising exitcode to 127'
 		return 127
 	return p1.returncode
 
