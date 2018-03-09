@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-7) unstable; urgency=low
+
+  * Bug #46533: add DB migrations
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 09 Mar 2018 11:07:33 +0100
+
 ucs-school-import (16.0.1-6) unstable; urgency=low
 
   * Bug #46532: create systemd service unit for gunicorn
