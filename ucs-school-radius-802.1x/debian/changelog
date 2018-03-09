@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (7.0.0-6) unstable; urgency=medium
+
+  *  Bug #46428: readd debian/ucs-school-radius-802.1x.dirs
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 Mar 2018 13:50:33 +0200
+
 ucs-school-radius-802.1x (7.0.0-5) unstable; urgency=medium
 
   *  Bug #46428: fix ssl path in postinst
