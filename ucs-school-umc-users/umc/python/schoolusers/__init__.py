@@ -93,7 +93,7 @@ class Instance(SchoolBaseModule):
 			user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
 			user['password'] = newPassword
 			user['overridePWHistory'] = '1'
-			user['locked'] = '0'
+			user['locked'] = '0'   # Bug #46175: reset locked state, do not set disabled=0 since this would enable the whole user account
 			# workaround bug #46067 (start)
 			user.modify()
 			user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
