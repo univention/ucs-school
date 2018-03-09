@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-21) unstable; urgency=low
+
+  * Bug #46549: 12_roleshare_student fails due to wrong exitcode
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 Mar 2018 12:12:47 +0100
+
 ucs-test-ucsschool (5.0.2-20) unstable; urgency=low
 
   * Bug #45990: move 30_* tests to own test environment
