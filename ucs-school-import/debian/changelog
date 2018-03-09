@@ -1,6 +1,9 @@
 ucs-school-import (16.0.1-7) unstable; urgency=low
 
   * Bug #46533: add DB migrations
+  * workaround displayName not set when ou==displayName
+  * depend on current postgres version
+  * manage.py now supports a "-c" argument to run Python code from cmdline
 
  -- Daniel Troeder <troeder@univention.de>  Fri, 09 Mar 2018 11:07:33 +0100
 
