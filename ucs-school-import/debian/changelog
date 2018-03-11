@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-8) unstable; urgency=low
+
+  * Bug #46532: fix restart of gunincorn service in postinst
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 11 Mar 2018 21:10:33 +0100
+
 ucs-school-import (16.0.1-7) unstable; urgency=low
 
   * Bug #46533: add DB migrations
