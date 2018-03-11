@@ -43,7 +43,7 @@ univention-config-registry set ucsschool/import/generate/import/group?true
 call_joinscript 40ucs-school-import-http-api.inst
 
 systemctl daemon-reload
-for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql gunicorn apache2;
+for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql ucs-school-import-http-api apache2;
 do
     deb-systemd-invoke restart "$SERVICE.service"
 done
