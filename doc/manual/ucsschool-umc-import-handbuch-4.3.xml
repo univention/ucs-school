@@ -19,7 +19,7 @@
 		<legalnotice>
 			<literallayout>
 				Version 4.3 v1
-				Stand: 7. Februar 2018
+				Stand: 14. März 2018
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
@@ -44,7 +44,7 @@
 	<chapter id="audience">
 		<title>Zielgruppe</title>
 		<para>
-			Dieses Handbuch richtet sich an Mitarbeiter die den grafischen Import von Benutzern durchführen und ab <xref linkend="install_conf_format"/> an Administratoren die ihn installieren.
+			Dieses Handbuch richtet sich an Mitarbeiter, die den grafischen Import von Benutzern durchführen, und ab <xref linkend="install_conf_format"/> an Administratoren, die ihn installieren.
 		</para>
 	</chapter>
 
