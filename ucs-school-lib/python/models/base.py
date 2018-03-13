@@ -740,7 +740,7 @@ class UCSSchoolHelperAbstractClass(object):
 			udm_obj.open()
 			try:
 				ret.append(cls.from_udm_obj(udm_obj, school, lo))
-			except UnknownModel:
+			except NoObject:
 				continue
 		return ret
 
