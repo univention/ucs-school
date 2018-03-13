@@ -3,7 +3,7 @@ MAIN := release-notes-ucsschool-4.3v1-de
 STYLESHEET := univention_extdocs
 OPTIONS += --stringparam ulink.show 0
 
-COMMON_DIR := ../../../doc-common/docbook
+COMMON_DIR ?= ../../../doc-common/docbook
 include $(COMMON_DIR)/Makefile
 
 OPTIONS += --stringparam front.cover "$(CURDIR)/page-background-title-page-ucsschool.jpg"

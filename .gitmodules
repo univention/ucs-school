@@ -4,3 +4,7 @@
 [submodule "italc/italc"]
 	path = italc/italc
 	url = ../italc
+[submodule "doc/doc-common"]
+	path = doc/doc-common
+	url = ../doc-common
+	branch = master
