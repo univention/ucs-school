@@ -208,7 +208,7 @@ Checking ldap_schema ...                          OK
 			<title>UCS@school installer</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UMC module <guimenu>UCS@school-Installer</guimenu> has been adapted to UCS 4.3 internally (<u:bug>46469</u:bug>).
+					The UMC module <guimenu>UCS@school-Installer</guimenu> has been internally adapted to UCS 4.3 (<u:bug>46469</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -285,7 +285,7 @@ Checking ldap_schema ...                          OK
 			<title>Proxy squid</title>
 			<itemizedlist>
 				<listitem><simpara>
-					With the change to Squid in version 3 the configuration of the proxy has been moved to the directory <filename>/etc/squid/</filename>. The configuration and all UCS@school applications have been adapted accordingly. If manual adjustments have been made to the squid configuration, a test environment should be used to check whether new adjustments are necessary with the update (<u:bug>46000</u:bug>).
+					With the change to <application>Squid</application> in version 3 the configuration of the proxy has been moved to the directory <filename>/etc/squid/</filename>. The configuration and all UCS@school applications have been adapted accordingly. If manual adjustments have been made to the squid configuration, a test environment should be used to check whether new adjustments are necessary with the update (<u:bug>46000</u:bug>).
 				</simpara></listitem>
 				<listitem><simpara>
 					The service <systemitem class="service">univention-reload-service</systemitem> was not started reliably on slow systems. This problem has now been fixed (<u:bug>46290</u:bug>).
@@ -304,7 +304,7 @@ Checking ldap_schema ...                          OK
 			<title>Password reset for students/teachers</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UDM flag <property>pwdChangeNextLogin</property> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login. This problem has been fixed (Bug #46012).
+					The UDM flag <property>pwdChangeNextLogin</property> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login. This problem has been fixed (<u:bug>46012</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
