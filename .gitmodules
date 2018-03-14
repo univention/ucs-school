@@ -1,9 +1,11 @@
 [submodule "italc-windows/italc.git"]
 	path = italc-windows/italc.git
 	url = ../italc
+	branch = ucsschool-windows
 [submodule "italc/italc"]
 	path = italc/italc
 	url = ../italc
+	branch = ucsschool-master
 [submodule "doc/doc-common"]
 	path = doc/doc-common
 	url = ../doc-common
