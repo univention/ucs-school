@@ -40,7 +40,7 @@ feedback@univention.de
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
 		<para>
-			UCS@school 4.3 steht jetzt auch für das dritte Minor-Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
+			UCS@school 4.3 steht jetzt auch für das dritte Minor Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
 			umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 4.3
 			eingeflossen sind. Die wichtigsten Änderungen im Überblick:
 			<itemizedlist>
@@ -208,7 +208,7 @@ Checking ldap_schema ...                          OK
 			<title>UCS@school installer</title>
 			<itemizedlist>
 				<listitem><simpara>
-					Das UMC-Modul <guimenu>UCS@school-Installer</guimenu> wurde intern an UCS 4.3 angepasst (<u:bug>46469</u:bug>).
+					The UMC module <guimenu>UCS@school-Installer</guimenu> has been adapted to UCS 4.3 internally (<u:bug>46469</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -217,7 +217,7 @@ Checking ldap_schema ...                          OK
 			<itemizedlist>
 				<listitem><simpara>
 					In rare cases it could happen that the LDAP ACLs and LDAP schemas for UCS@school were installed and activated in the wrong order.
-					As a result, only some of the ACLs were active and caused diffuse problems. This problem only affected new installations of multiserver environments (<u:bug>46453</u:bug>).
+					As a result, only some of the ACLs were active and caused diffuse problems. This problem only affected new installations of multi-server environments (<u:bug>46453</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -225,8 +225,8 @@ Checking ldap_schema ...                          OK
 			<title>RADIUS</title>
 			<itemizedlist>
 				<listitem><simpara>
-					With UCS 4.3 freeradius has been updated to version 3. This was accompanied by a revision of the freeradius configuration. If manual adjustments have been made to the
-					freeradius configuration, a test environment should be used to check whether new adjustments are necessary with the update (<u:bug>46428</u:bug>).
+					With UCS 4.3 FreeRADIUS has been updated to version 3. This was accompanied by a revision of the FreeRADIUS configuration. If manual adjustments have been made to the
+					FreeRADIUS configuration, a test environment should be used to check whether new adjustments are necessary with the update (<u:bug>46428</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -256,7 +256,7 @@ Checking ldap_schema ...                          OK
 				</simpara></listitem>
 				<listitem><simpara>
 					Within the CLI import the handling of email addresses has been altered: the user import now allows the removal email addresses. To do so, within the import configuration
-					(json file) a CSV column must be mapped to the <literal>email</literal> property. To remove the mail address, in the CSV file the fields entry of the <literal>email</literal>
+					(JSON file) a CSV column must be mapped to the <literal>email</literal> property. To remove the mail address, in the CSV file the fields entry of the <literal>email</literal>
 					column must be empty. Please note that an email address will only be generated from a configured scheme, when no CSV column for email addresses exist in the CSV file or no
 					column is mapped (<u:bug>46317</u:bug>).
 				</simpara></listitem>
@@ -274,10 +274,10 @@ Checking ldap_schema ...                          OK
 			<title>HTTP import API</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The init.d script for gunicorn has been removed in Debian Stretch. UCS@school 4.3 now comes with its own systemd service definition (<u:bug>46532</u:bug>).
+					The <filename>init.d</filename> script for <package>gunicorn</package> has been removed in Debian Stretch. UCS@school 4.3 now comes with its own <application>systemd</application> service definition (<u:bug>46532</u:bug>).
 				</simpara></listitem>
 				<listitem><simpara>
-					Version 1.10 of Django is shipped with UCS 4.3. The HTTP Import API has been adapted accordingly (<u:bug>46533</u:bug>).
+					Version 1.10 of <application>Django</application> is shipped with UCS 4.3. The HTTP Import API has been adapted accordingly (<u:bug>46533</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -288,7 +288,7 @@ Checking ldap_schema ...                          OK
 					With the change to Squid in version 3 the configuration of the proxy has been moved to the directory <filename>/etc/squid/</filename>. The configuration and all UCS@school applications have been adapted accordingly. If manual adjustments have been made to the squid configuration, a test environment should be used to check whether new adjustments are necessary with the update (<u:bug>46000</u:bug>).
 				</simpara></listitem>
 				<listitem><simpara>
-					The service univention-reload-service was not started reliably on slow systems. This problem has now been fixed (<u:bug>46290</u:bug>).
+					The service <systemitem class="service">univention-reload-service</systemitem> was not started reliably on slow systems. This problem has now been fixed (<u:bug>46290</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -304,7 +304,7 @@ Checking ldap_schema ...                          OK
 			<title>Password reset for students/teachers</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UDM flag <emphasis>pwdChangeNextLogin</emphasis> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login. This problem has been fixed (Bug #46012).
+					The UDM flag <property>pwdChangeNextLogin</property> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login. This problem has been fixed (Bug #46012).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
