@@ -110,7 +110,7 @@ feedback@univention.de
 
 	  <para>
 		Für das Update sollte eine Anmeldung auf der lokalen Konsole des Systems mit dem Benutzer
-		<systemitem class=username">root</systemitem> durchgeführt und das Update dort gestartet werden. Alternativ
+		<systemitem class="username">root</systemitem> durchgeführt und das Update dort gestartet werden. Alternativ
 		kann das Update über die &ucsUMC; durchgeführt werden.
 	  </para>
 
