@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-22) unstable; urgency=low
+
+  * Bug #40727: wait in 74_radius_internetrules_priority for LDAP and S4 replication
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 20 Mar 2018 12:48:06 +0100
+
 ucs-test-ucsschool (5.0.2-21) unstable; urgency=low
 
   * Bug #46549: 12_roleshare_student fails due to wrong exitcode

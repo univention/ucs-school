@@ -53,6 +53,9 @@ def main():
 			for (rule, group) in zip(rules, groups):
 				rule.assign(school, group.name, 'workgroup')
 
+			utils.wait_for_replication_and_postrun()
+			ucs_samba.wait_for_s4connector()
+
 			radius_secret = 'testing123'  # parameter set in  /etc/freeradius/clients.conf
 			password = 'univention'
 			allow_radius_access = [True, False, False]
