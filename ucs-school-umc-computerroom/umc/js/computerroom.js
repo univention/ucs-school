@@ -34,6 +34,8 @@ define([
 	"dojo/_base/array",
 	"dojo/io-query",
 	"dojo/aspect",
+	"dojo/on",
+	"dojo/topic",
 	"dojo/dom",
 	"dojo/dom-class",
 	"dojo/Deferred",
@@ -59,7 +61,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
+], function(declare, lang, array, ioQuery, aspect, on, topic, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
             Dialog, Tooltip, styles, entities, dialog, tools, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -1088,6 +1090,14 @@ define([
 				okButton.set('disabled', false);
 			});
 
+			// Check if there are any rooms to choose from. If not switch to computer room administration or just close module (via dialog)
+			on.once(form, "ValuesInitialized", lang.hitch(this, function() {
+				if (!form.getWidget("room").getAllItems().length) {
+					_cleanup();
+					this.displayNoRoomsDialog();
+				}
+			}));
+
 			_dialog = new Dialog({
 				title: _('Select computer room'),
 				content: form,
@@ -1096,6 +1106,61 @@ define([
 			});
 			_dialog.show();
 			okButton.set('disabled', true);
+		},
+
+		displayNoRoomsDialog: function() {
+			_cleanup = function() {
+				if (_dialog) {
+					_dialog.hide().always(function() {
+						_dialog.destroyRecursive();
+						_dialog = null;
+					});
+				}
+				if (form) {
+					form.destroyRecursive();
+					form = null;
+				}
+			}
+			_openModuleSchoolrooms = lang.hitch(this, function() {
+				topic.publish('/umc/modules/open', "schoolrooms");  // Privileges still have to be checked!
+				_closeModuleComputerroom();
+			})
+			_closeModuleComputerroom = lang.hitch(this, function() {
+				_cleanup();
+				topic.publish('/umc/tabs/close', this);
+			})
+			var widgets = [
+				{
+					type: Text,
+					name: 'message',
+					content: "There are no computer rooms available!",
+					'class': 'umcSize-One'
+				}
+			]
+			var buttons = [
+			{
+				name: 'cancel',
+				label: "CANCEL (CLOSE MODULE)",
+				callback: _closeModuleComputerroom
+			},
+			{
+				name: 'administrate-rooms',
+				label: "ADMINISTRATE ROOMS",
+				callback: _openModuleSchoolrooms
+			}
+			];
+			form = new Form({
+				widgets: widgets,
+				layout: ['message'],
+				buttons: buttons
+			});
+			_dialog = new Dialog({
+				title: "NO ROOMS AVAILABLE",
+				content: form,
+				'class': 'umcPopup',
+				style: 'max-width: 400px;'
+			});
+			_dialog.show();
 		},
 
 		displayRoomTakeoverDialog: function(room) {
