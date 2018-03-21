@@ -1,0 +1,20 @@
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+
+
+class InputDataTestHook(UserPyHook):
+	priority = {
+		"pre_remove": 100,
+		"post_remove": 100,
+	}
+
+	def pre_remove(self, user):
+		self.logger.info("*** Running pre_remove hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		if not user.input_data:
+			raise Exception('Empty user.input_data.')
+
+	def post_remove(self, user):
+		self.logger.info("*** Running post_remove hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		if not user.input_data:
+			raise Exception('Empty user.input_data.')
