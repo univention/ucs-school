@@ -1,3 +1,10 @@
+ucs-school-umc-exam (8.0.1-4) unstable; urgency=low
+
+  * Bug #46719: add UCR variable to disable the automatic removal of the
+    home directories of exam users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 21 Mar 2018 16:53:53 +0100
+
 ucs-school-umc-exam (8.0.1-3) unstable; urgency=low
 
   * Bug #46710: fix problematic MIME filenames during upload
