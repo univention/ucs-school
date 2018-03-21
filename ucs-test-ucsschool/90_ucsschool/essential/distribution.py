@@ -126,7 +126,7 @@ class Distribution(object):
 				files.append(os.path.relpath(os.path.join(root, f), path))
 		return files
 
-	def genData(self, file_name, content_type, boundary, flavor):
+	def genData(self, file_name, content_type, boundary, flavor, override_file_name=None):
 		"""Generates data in the form to be sent via http POST request.\n
 		:param file_name: file name to be uploaded
 		:type file_name: str
@@ -137,6 +137,7 @@ class Distribution(object):
 		:param flavor: flavor of the acting user
 		:type flavor: str
 		"""
+		mime_file_name = override_file_name or os.path.basename(file_name)
 		with open(file_name, 'r') as f:
 			data = r"""--{0}
 Content-Disposition: form-data; name="uploadedfile"; filename="{1}"
@@ -156,10 +157,10 @@ Content-Disposition: form-data; name="uploadType"
 
 html5
 --{0}--
-""".format(boundary, file_name, content_type, f.read(), flavor)
+""".format(boundary, mime_file_name, content_type, f.read(), flavor)
 		return data.replace("\n", "\r\n")
 
-	def uploadFile(self, file_name, content_type):
+	def uploadFile(self, file_name, content_type=None, override_file_name=None):
 		"""Uploads a file via http POST request.\n
 		:param file_name: file name to be uploaded
 		:type file_name: str
@@ -167,8 +168,9 @@ html5
 		:type content_type: str ('text/plain',..)
 		"""
 		print 'Uploading a file'
+		content_type = content_type or 'application/octet-stream'
 		boundary = '---------------------------103454444410473823401882756'
-		data = self.genData(file_name, content_type, boundary, self.flavor)
+		data = self.genData(file_name, content_type, boundary, self.flavor, override_file_name=override_file_name)
 		header_content = {'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)}
 		self.client.request('POST', 'upload/distribution/upload', data, headers=header_content).result
 
