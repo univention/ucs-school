@@ -114,8 +114,13 @@ class Instance(SchoolBaseModule):
 				filename.decode('UTF-8')
 			except UnicodeDecodeError:
 				filename = file['filename'].encode('UTF-8')  # Bug #37716 was fixed
-		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
 		# the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+		# Bug 46709/46710: start
+		if '\\' in filename:  # filename seems to be a URN / windows path
+			MODULE.info('Filename seems to contain Windows path name or URN - fixing filename')
+			filename = filename.rsplit('\\', 1)[-1] or filename.replace('\\', '_').lstrip('_')
+		# Bug 46709/46710: end
+		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
 		return filename
 
 	@sanitize(
