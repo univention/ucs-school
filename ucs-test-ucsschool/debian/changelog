@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-70) unstable; urgency=medium
+
+  * Bug #46439: add test for input_data in pyhooks in legacy inport
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 21 Mar 2018 17:12:10 +0100
+
 ucs-test-ucsschool (4.0.4-69) unstable; urgency=low
 
   * Bug #46549: 12_roleshare_student fails due to wrong exitcode
