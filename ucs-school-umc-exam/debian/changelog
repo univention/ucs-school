@@ -1,3 +1,9 @@
+ucs-school-umc-exam (8.0.1-3) unstable; urgency=low
+
+  * Bug #46710: fix problematic MIME filenames during upload
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 21 Mar 2018 11:46:27 +0100
+
 ucs-school-umc-exam (8.0.1-2) unstable; urgency=low
 
   * Bug #46360: use FQDN to connect to UMC server
