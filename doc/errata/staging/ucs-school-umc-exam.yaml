@@ -8,4 +8,9 @@ desc: |
  * When uploading files with Internet Explorer, the files were not always correctly saved in the local
    file system by the UMC module "Exam Mode" and were therefore not distributed to the users. This error
    has now been corrected. (Bug #46710).
-bug: [46710]
+ * The new UCR variable <envar>ucsschool/exam/user/homedir/autoremove</envar> has been added to control
+   whether the exam users' home directories are automatically deleted after the exam mode has ended.
+   By default (<literal>yes</literal>), the directories are removed after collecting the exam results (Bug #46719).
+ * The new UCR variable <envar>ucsschool/exam/user/homedir/autoremove</envar> has been added that specifies
+   if the home directories of exam users shall be purged if exams are finished.
+bug: [46710,46719]
