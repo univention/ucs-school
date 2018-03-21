@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (16.0.2-1) unstable; urgency=medium
+
+  * Bug #46725: Allow read access to GPO list for all DC-Slaves
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 21 Mar 2018 15:10:29 +0100
+
 ucs-school-ldap-acls-master (16.0.1-1) unstable; urgency=low
 
   * Bug #46453: add dependency to ucs-school-import to fix LDAP ACL/schema
