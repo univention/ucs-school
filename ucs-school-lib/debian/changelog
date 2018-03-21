@@ -1,3 +1,10 @@
+ucs-school-lib (11.0.1-6) unstable; urgency=low
+
+  * Bug #46130: do not prevent listing of all users if one malformed object
+    exists
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 13 Mar 2018 09:26:16 +0100
+
 ucs-school-lib (11.0.1-5) unstable; urgency=low
 
   * Bug #46194: append instead of replace school-OU option
