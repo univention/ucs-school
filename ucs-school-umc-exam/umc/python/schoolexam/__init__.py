@@ -490,8 +490,9 @@ class Instance(SchoolBaseModule):
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
 						if iuser.username not in parallelUsers:
-							# remove first the home directory
-							shutil.rmtree(iuser.unixhome, ignore_errors=True)
+							# remove first the home directory, if enabled
+							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', True):
+								shutil.rmtree(iuser.unixhome, ignore_errors=True)
 
 							# remove LDAP user entry
 							client.umc_command('schoolexam-master/remove-exam-user', dict(

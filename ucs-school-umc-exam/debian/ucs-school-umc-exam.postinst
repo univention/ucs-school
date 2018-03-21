@@ -34,6 +34,7 @@
 
 eval "$(univention-config-registry shell)"
 
-ucr set ucsschool/exam/default/checkbox/distribution?true
+ucr set ucsschool/exam/default/checkbox/distribution?true \
+	ucsschool/exam/user/homedir/autoremove?yes
 
 exit 0
