@@ -51,3 +51,9 @@ Description[en]=Specifies additional options for the script exam-and-room-cleanu
 Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup (standardmäßig keine zusätzlichen Optionen)
 Type=string
 Categories=ucsschool-exam
+
+[ucsschool/exam/user/homedir/autoremove]
+Description[en]=Defines whether the home directory of the check users should also be deleted when the check users are deleted automatically (Default: yes)
+Description[de]=Definiert, ob beim automatischen Löschen der Prüfungsbenutzer auch deren Heimatverzeichnis gelöscht werden soll (Standard: yes)
+Type=bool
+Categories=ucsschool-exam

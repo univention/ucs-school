@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.3"
+version: [0]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-umc-distribution
+fix: 
+desc: |
+ * When uploading files with Internet Explorer, the files were not always correctly saved in the local
+   file system by the UMC module "Distribution" and were therefore not distributed to the users. This error
+   has now been corrected. (Bug #46710).
+bug: [46710]
