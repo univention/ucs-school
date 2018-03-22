@@ -268,7 +268,7 @@ class CLI_Import_v2_Tester(object):
 		random.shuffle(header_row)
 		self.log.info('Header row = %r', header_row)
 
-		fn = fn_csv if fn_csv else tempfile.mkstemp(prefix='users.', dir=self.tmpdir)[1]
+		fn = fn_csv or tempfile.mkstemp(prefix='users.', dir=self.tmpdir)[1]
 		writer = csv.DictWriter(
 			open(fn, 'w'),
 			header_row,

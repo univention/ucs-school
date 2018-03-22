@@ -37,11 +37,12 @@ class Test(CLI_Import_v2_Tester):
 
 	def cleanup(self):
 		for ext in ['', 'c', 'o']:
+			path = '{}{}'.format(TESTHOOKTARGET, ext)
 			try:
-				os.remove('{}{}'.format(TESTHOOKTARGET, ext))
-				self.log.info('*** Deleted %s%s.', TESTHOOKTARGET, ext)
+				os.remove(path)
+				self.log.info('*** Deleted %s.', path)
 			except OSError:
-				self.log.warn('*** Could not delete %s%s.', TESTHOOKTARGET, ext)
+				self.log.warn('*** Could not delete %s.', path)
 		super(Test, self).cleanup()
 
 	def test(self):
@@ -57,7 +58,6 @@ class Test(CLI_Import_v2_Tester):
 		# will in ImportUser.make_birthday() trigger format_from_scheme().
 		config.update_entry('scheme:birthday', '<firstname>')  # create birthday attribute from firstname value
 		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain>'),
-		config.update_entry('scheme:recordUID', '<record_uid>')
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
