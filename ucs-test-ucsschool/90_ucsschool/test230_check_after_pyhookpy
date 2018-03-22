@@ -1,0 +1,11 @@
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+
+
+class PreHookTestHook(UserPyHook):
+	priority = {
+		"pre_%ACTION%": 100,
+	}
+
+	def pre_%ACTION%(self, user):
+		self.logger.info("*** Running a pre_%ACTION% hook for %s.", user)
+		%CODE%
