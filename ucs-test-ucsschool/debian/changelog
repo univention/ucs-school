@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-24) unstable; urgency=low
+
+  * Bug #46710: added 18_distribute_filename_problems and
+    101_exam_mode_filename_problems
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 22 Mar 2018 11:38:34 +0100
+
 ucs-test-ucsschool (5.0.2-23) unstable; urgency=medium
 
   * Bug #46439: add test for input_data in pyhooks in legacy inport
