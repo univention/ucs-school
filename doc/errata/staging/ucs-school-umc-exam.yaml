@@ -3,7 +3,7 @@ release: "4.2"
 version: [3]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-exam
-fix: 7.0.4-18A~4.2.0.201802211220
+fix: 7.0.4-20A~4.2.0.201803221254
 desc: |
  * The exam-and-room-cleanup script now uses the FQDN for the UMC server connection to avoid certificate verification errors. It also safely handles missing directories (Bug #46360).
  * When uploading files with Internet Explorer, the files were not always correctly saved in the local
