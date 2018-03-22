@@ -193,36 +193,24 @@ class Person(object):
 
 	def __str__(self):
 		delimiter = '\t'
-		line = self.mode
-		line += delimiter
-		line += self.username
-		line += delimiter
-		line += self.lastname
-		line += delimiter
-		line += self.firstname
-		line += delimiter
-		line += self.school
-		line += delimiter
-		line += ','.join([x for school_, classes in self.school_classes.iteritems() for x in classes])
-		line += delimiter
-		line += ''
-		line += delimiter
-		line += self.mail
-		line += delimiter
-		if self.is_teacher() or self.is_teacher_staff():
-			line += '1'
-		else:
-			line += '0'
-		line += delimiter
-		line += '1' if self.is_active() else '0'
-		line += delimiter
-		if self.is_staff() or self.is_teacher_staff():
-			line += '1'
-		else:
-			line += '0'
+		return delimiter.join(self.get_csv_line())
+
+	def get_csv_line(self):
+		line = [
+			self.mode,
+			self.username,
+			self.lastname,
+			self.firstname,
+			self.school,
+			','.join([x for school_, classes in self.school_classes.iteritems() for x in classes]),
+			'',
+			self.mail,
+			str(int(self.is_teacher() or self.is_teacher_staff())),
+			str(int(self.is_active())),
+			str(int(self.is_staff() or self.is_teacher_staff())),
+		]
 		if self.password:
-			line += delimiter
-			line += self.password
+			line.append(self.password)
 		return line
 
 	def append_random_class(self, schools=None):
