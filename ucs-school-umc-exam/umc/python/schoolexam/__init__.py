@@ -124,8 +124,13 @@ class Instance(SchoolBaseModule):
 				filename.decode('UTF-8')
 			except UnicodeDecodeError:
 				filename = file['filename'].encode('UTF-8')  # Bug #37716 was fixed
-		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
 		# the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+		# Bug 46709/46710: start
+		if '\\' in filename:  # filename seems to be a UNC / windows path
+			MODULE.info('Filename seems to contain Windows path name or UNC - fixing filename')
+			filename = filename.rsplit('\\', 1)[-1] or filename.replace('\\', '_').lstrip('_')
+		# Bug 46709/46710: end
+		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
 		return filename
 
 	@simple_response
@@ -485,8 +490,9 @@ class Instance(SchoolBaseModule):
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
 						if iuser.username not in parallelUsers:
-							# remove first the home directory
-							shutil.rmtree(iuser.unixhome, ignore_errors=True)
+							# remove first the home directory, if enabled
+							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', True):
+								shutil.rmtree(iuser.unixhome, ignore_errors=True)
 
 							# remove LDAP user entry
 							client.umc_command('schoolexam-master/remove-exam-user', dict(
