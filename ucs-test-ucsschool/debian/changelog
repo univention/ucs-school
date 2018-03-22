@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-25) unstable; urgency=medium
+
+  * Bug #46462: add tests for CSV email field behavior and checks after
+    pre-hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 22 Mar 2018 16:57:48 +0100
+
 ucs-test-ucsschool (5.0.2-24) unstable; urgency=low
 
   * Bug #46710: added 18_distribute_filename_problems and
