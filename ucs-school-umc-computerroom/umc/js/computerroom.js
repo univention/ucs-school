@@ -1109,58 +1109,31 @@ define([
 		},
 
 		displayNoRoomsDialog: function() {
-			_cleanup = function() {
-				if (_dialog) {
-					_dialog.hide().always(function() {
-						_dialog.destroyRecursive();
-						_dialog = null;
-					});
-				}
-				if (form) {
-					form.destroyRecursive();
-					form = null;
-				}
-			}
 			_openModuleSchoolrooms = lang.hitch(this, function() {
 				topic.publish('/umc/modules/open', "schoolrooms");  // Privileges still have to be checked!
 				_closeModuleComputerroom();
 			})
 			_closeModuleComputerroom = lang.hitch(this, function() {
-				_cleanup();
 				topic.publish('/umc/tabs/close', this);
 			})
-			var widgets = [
+			txt = _('Do you want to create a computer room now or just close the computerroom module?');
+			title = _('There are no computer rooms available');
+			dialog.confirm(txt, [
 				{
-					type: Text,
-					name: 'message',
-					content: "There are no computer rooms available!",
-					'class': 'umcSize-One'
+					name: 'close',
+					label: _('Close Computerroom module')
+				},
+				{
+					name: 'create',
+					label: _('Administrate computer rooms')
 				}
-			]
-			var buttons = [
-			{
-				name: 'cancel',
-				label: "CANCEL (CLOSE MODULE)",
-				callback: _closeModuleComputerroom
-			},
-			{
-				name: 'administrate-rooms',
-				label: "ADMINISTRATE ROOMS",
-				callback: _openModuleSchoolrooms
-			}
-			];
-			form = new Form({
-				widgets: widgets,
-				layout: ['message'],
-				buttons: buttons
-			});
-			_dialog = new Dialog({
-				title: "NO ROOMS AVAILABLE",
-				content: form,
-				'class': 'umcPopup',
-				style: 'max-width: 400px;'
-			});
-			_dialog.show();
+			], title).then(lang.hitch(this, function(response) {
+				if (response === 'close') {
+					_closeModuleComputerroom();
+				} else if (response === 'create') {
+					_openModuleSchoolrooms();
+				}
+			}));
 		},
 
 		displayRoomTakeoverDialog: function(room) {
