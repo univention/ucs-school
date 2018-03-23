@@ -58,28 +58,12 @@ object_type_to_object_classes = {
 class UcsschoolObjectType(simpleHook):
 	type = "UcsschoolObjectType"
 
-	def hook_ldap_addlist(self, obj, al=None):
+	def hook_ldap_addlist(self, module, al=None):
 		if al is None:
 			al = []
-		if obj.info.get('ucsschoolObjectType') and not 'objectClass' in [a[0] for a in al]:
-			al, _ml = self.add_object_class(obj, al, None)
-		return al
-
-	def hook_ldap_modlist(self, obj, ml=[]):
-		if obj.info.get('ucsschoolObjectType') and obj.info.get('ucsschoolObjectType') != obj.oldinfo.get('ucsschoolObjectType'):
-			_al, ml = self.add_object_class(obj, None, ml)
-		return ml
-
-	def add_object_class(self, obj, al, ml):
-		oc_add_list = None
-		if al:
+		if al and module.info.get('ucsschoolObjectType'):
 			for attr, add_val in [it for it in al if it[0] == 'objectClass' and len(it) == 2]:
-				oc_add_list = add_val
-		elif ml:
-			for attr, old_val, new_val in [it for it in ml if it[0] == 'objectClass' and len(it) == 3]:
-				oc_add_list = new_val
-		if oc_add_list:
-			for oc in object_type_to_object_classes[obj.info['ucsschoolObjectType']]:
-				if oc not in oc_add_list:
-					oc_add_list.append(oc)
-		return al, ml
+				for oc in object_type_to_object_classes[module.info['ucsschoolObjectType']]:
+					if oc not in add_val:
+						add_val.append(oc)
+		return al
