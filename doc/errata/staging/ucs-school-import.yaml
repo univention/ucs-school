@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-import
+fix: 16.0.1-10A~4.3.0.201803231427
+desc: |
+ * User property verification checks are executed in dry-run again (Bug #46572).
+bug: [46130]
