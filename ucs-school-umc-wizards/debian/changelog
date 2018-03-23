@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (10.0.1-1) unstable; urgency=medium
+
+  * Bug #46596: reenable first use dialogs by using correct grid event
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 23 Mar 2018 14:55:21 +0100
+
 ucs-school-umc-wizards (10.0.0-1) unstable; urgency=medium
 
   * Bug #45988: bumped version
