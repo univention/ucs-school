@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-21) unstable; urgency=low
+
+  * Bug #46719: fix UCR variable description
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 23 Mar 2018 10:31:28 +0100
+
 ucs-school-umc-exam (7.0.4-20) unstable; urgency=low
 
   * Bug #46719: add UCR variable to disable the automatic removal of the
