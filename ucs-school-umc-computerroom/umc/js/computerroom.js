@@ -1091,7 +1091,7 @@ define([
 			});
 
 			// Check if there are any rooms to choose from. If not switch to computer room administration or just close module (via dialog)
-			on.once(form, "ValuesInitialized", lang.hitch(this, function() {
+			on.once(form, "valuesInitialized", lang.hitch(this, function() {
 				if (!form.getWidget("room").getAllItems().length) {
 					_cleanup();
 					this.displayNoRoomsDialog();
@@ -1109,15 +1109,15 @@ define([
 		},
 
 		displayNoRoomsDialog: function() {
-			_openModuleSchoolrooms = lang.hitch(this, function() {
+			var openModuleSchoolrooms = lang.hitch(this, function() {
 				topic.publish('/umc/modules/open', "schoolrooms");  // Privileges still have to be checked!
-				_closeModuleComputerroom();
-			})
-			_closeModuleComputerroom = lang.hitch(this, function() {
+				closeModuleComputerroom();
+			});
+			var closeModuleComputerroom = lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);
-			})
-			txt = _('Do you want to create a computer room now or just close the computerroom module?');
-			title = _('There are no computer rooms available');
+			});
+			var txt = _('Do you want to create a computer room now or just close the computerroom module?');
+			var title = _('There are no computer rooms available');
 			dialog.confirm(txt, [
 				{
 					name: 'close',
@@ -1129,9 +1129,9 @@ define([
 				}
 			], title).then(lang.hitch(this, function(response) {
 				if (response === 'close') {
-					_closeModuleComputerroom();
+					closeModuleComputerroom();
 				} else if (response === 'create') {
-					_openModuleSchoolrooms();
+					openModuleSchoolrooms();
 				}
 			}));
 		},
