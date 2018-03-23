@@ -16,22 +16,6 @@ from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
 
 
-class BirthdayPerson(Person):
-
-	def __init__(self, school, role):
-		Person.__init__(self, school, role)
-		self.birthday = time.strftime('%Y-%m-%d')
-
-	def map_to_dict(self, value_map):
-		result = Person.map_to_dict(self, value_map)
-		result[value_map.get('birthday', '__EMPTY__')] = self.birthday
-		return result
-
-	def expected_attributes(self):
-		result = Person.expected_attributes(self)
-		result['birthday'] = [self.birthday]
-
-
 class Test(CLI_Import_v2_Tester):
 	ou_B = None
 	ou_C = None
@@ -44,21 +28,19 @@ class Test(CLI_Import_v2_Tester):
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('sourceUID', source_uid)
-		config.update_entry('csv:incell-delimiter:default', ';')
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:birthday', 'birthday')
 		config.update_entry('csv:mapping:role', '__type')
-		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
-		self.log.info('*** Importing a new users of each role with multivalue attributes...')
+		self.log.info('*** Importing a new users of each role with ISO birthday...')
 		person_list = []
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			# create person with ISO birthday (today)
-			person = BirthdayPerson(self.ou_A.name, role)
-			person.update(record_uid=person.username, source_uid=source_uid)
+			person = Person(self.ou_A.name, role)
+			person.update(record_uid=person.username, source_uid=source_uid, birthday=time.strftime('%Y-%m-%d'))
 			person_list.append(person)
 
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
