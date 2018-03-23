@@ -3,7 +3,7 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-wizards 
-fix: 
+fix: 10.0.1-1A~4.3.0.201803231614
 desc: |
  * Reenables the first objects creation dialogs for user/classes/computer wizards (Bug #46596) 
 bug: [46596]
