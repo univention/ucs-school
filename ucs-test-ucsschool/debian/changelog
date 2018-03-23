@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-74) unstable; urgency=medium
+
+  * Bug #46572: add test to verify checks are executed in dry-run
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 23 Mar 2018 14:22:46 +0100
+
 ucs-test-ucsschool (4.0.4-73) unstable; urgency=low
 
   * Bug #46710: fix c'n'p error in 101_exam_mode_filename_problems
