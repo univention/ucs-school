@@ -35,7 +35,7 @@ def main():
 			project.uploadFile(fd.name, 'application/octet-stream', override_file_name=override_file_name)
 
 			found = False
-			dirlist = [name for name in os.listdir('/tmp') if name.startswith('ucsschool-distribution-upload-') and os.path.isdir(os.path.join('/tmp', name))]
+			dirlist = [name for name in os.listdir('/tmp') if name.startswith('ucsschool-exam-upload-') and os.path.isdir(os.path.join('/tmp', name))]
 			for dirname in dirlist:
 				dirname = os.path.join('/tmp', dirname)
 				for filename in os.listdir(dirname):
