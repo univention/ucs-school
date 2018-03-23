@@ -384,7 +384,8 @@ class CLI_Import_v2_Tester(object):
 					self.udm.create_object(
 						'mail/domain',
 						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
-						name=self.maildomain
+						name=self.maildomain,
+						ignore_exists=True
 					)
 				has_admin_credentials = self.ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup')
 				self.lo = schoolenv.open_ldap_connection(admin=has_admin_credentials)
