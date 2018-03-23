@@ -53,7 +53,7 @@ Type=string
 Categories=ucsschool-exam
 
 [ucsschool/exam/user/homedir/autoremove]
-Description[en]=Defines whether the home directory of the check users should also be deleted when the check users are deleted automatically (Default: yes)
+Description[en]=Defines whether the home directory of the exam users should also be deleted when the exam users are deleted automatically (Default: yes)
 Description[de]=Definiert, ob beim automatischen Löschen der Prüfungsbenutzer auch deren Heimatverzeichnis gelöscht werden soll (Standard: yes)
 Type=bool
 Categories=ucsschool-exam
