@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-75) unstable; urgency=medium
+
+  * Bug #46572: handle existing mail/domain
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 23 Mar 2018 14:29:36 +0100
+
 ucs-test-ucsschool (4.0.4-74) unstable; urgency=medium
 
   * Bug #46572: add test to verify checks are executed in dry-run
