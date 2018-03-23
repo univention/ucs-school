@@ -192,19 +192,36 @@ class ImportUser(User):
 			res = func(prop_name, res)
 		return res
 
-	def check_schools(self, lo):
+	def change_school(self, school, lo):
+		self.check_schools(lo, additional_schools=[school])
+		self.run_checks(check_username=False)
+		old_dn = self.old_dn
+		res = super(ImportUser, self).change_school(school, lo)
+		if res:
+			# rewrite self._unique_ids, replacing old DN with new DN
+			for category, entries in self._unique_ids.items():
+				for value, dn in entries.items():
+					if dn == old_dn:
+						self._unique_ids[category][value] = self.dn
+		return res
+
+	def check_schools(self, lo, additional_schools=None):
 		"""
 		Verify that the "school" and "schools" attributes are correct.
 		Check is case sensitive (Bug #42456).
 
 		:param lo: LDAP connection object
+		:param additional_schools: list of school name to check additionally to
+		the one in self.schools
 		:return: None or raises UnkownSchoolName
 		"""
 		# cannot be done in run_checks, because it needs LDAP access
 		schools = set(self.schools)
 		schools.add(self.school)
+		if additional_schools:
+			schools.update(additional_schools)
 		for school in schools:
-			if school not in self.get_all_school_names(self._lo):
+			if school not in self.get_all_school_names(lo):
 				raise UnkownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
 	def create(self, lo, validate=True):
@@ -681,31 +698,18 @@ class ImportUser(User):
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		self.run_checks(check_username=False)
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
 			udm_obj = self.get_udm_object(lo)
 			self.school_classes = self.get_school_classes(udm_obj, self)
-		self.run_checks(check_username=False)
 		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
 		self._lo = lo
 		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
-
-	def move_without_hooks(self, lo, udm_obj, force=False):
-		old_dn = self.old_dn
-		res = super(ImportUser, self).move_without_hooks(lo, udm_obj, force)
-		if res:
-			# rewrite self._unique_ids, replacing old DN with new DN
-			for category, entries in self._unique_ids.items():
-				for value, dn in entries.items():
-					if dn == old_dn:
-						self._unique_ids[category][value] = self.dn
-
-			self.run_checks(check_username=False)
-		return res
 
 	@classmethod
 	def normalize(cls, s):

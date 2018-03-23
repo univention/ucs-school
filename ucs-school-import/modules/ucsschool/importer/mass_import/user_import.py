@@ -138,6 +138,7 @@ class UserImport(object):
 						store = self.added_users[cls_name]
 						if self.dry_run:
 							self.logger.info("Dry run: would create %s now.", user)
+							user.run_checks(check_username=True)
 							success = True
 						else:
 							success = user.create(lo=self.connection)
@@ -146,6 +147,8 @@ class UserImport(object):
 						store = self.modified_users[cls_name]
 						if self.dry_run:
 							self.logger.info("Dry run: would modify %s now.", user)
+							user.check_schools(lo=self.connection)
+							user.run_checks(check_username=False)
 							success = True
 						else:
 							success = user.modify(lo=self.connection)
@@ -319,7 +322,9 @@ class UserImport(object):
 		hooks (ucsschool lib calls executables anyway).
 		"""
 		if self.dry_run:
-			self.logger.info("Dry run - not doing the school move.")
+			self.logger.info("Dry run: would move %s now from %r to %r.", user, user.school, imported_user.school)
+			user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
+			user.run_checks(check_username=False)
 			res = True
 		else:
 			res = user.change_school(imported_user.school, self.connection)
@@ -367,6 +372,8 @@ class UserImport(object):
 			pass
 		elif self.dry_run:
 			self.logger.info('Dry run - not expiring, deactivating or setting the purge timestamp.')
+			user.check_schools(lo=self.connection)
+			user.run_checks(check_username=False)
 			success = True
 		elif modified:
 			success = user.modify(lo=self.connection)
