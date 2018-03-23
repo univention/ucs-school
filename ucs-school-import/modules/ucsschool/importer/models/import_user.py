@@ -788,7 +788,7 @@ class ImportUser(User):
 				)
 			self._unique_ids["name"][self.name] = self.dn
 
-			if len(self.password) < self.config["password_length"]:
+			if len(self.password or '') < self.config["password_length"]:
 				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
 
 		if self.email:
@@ -810,8 +810,12 @@ class ImportUser(User):
 		if self.birthday:
 			try:
 				datetime.datetime.strptime(self.birthday, "%Y-%m-%d")
-			except ValueError as exc:
-				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry_count=self.entry_count, import_user=self)
+			except (TypeError, ValueError) as exc:
+				raise InvalidBirthday(
+					"Birthday has invalid format: {!r} error: {}.".format(self.birthday, exc),
+					entry_count=self.entry_count,
+					import_user=self
+				)
 
 		if not isinstance(self.school_classes, dict):
 			raise InvalidSchoolClasses("School_classes must be a dict.", entry_count=self.entry_count, import_user=self)
