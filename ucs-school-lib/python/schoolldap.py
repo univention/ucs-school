@@ -62,6 +62,22 @@ __bind_callback = None
 _ = Translation('python-ucs-school').translate
 
 
+# ucsschool.lib class _meta.object_type (ucsschoolObjectType) -> objectClass
+object_type_to_object_classes = {
+	'administrator_group': ('ucsschoolAdministratorGroup',),  # if 'ucsschoolAdministratorGroup' in module.options / OCs
+	'administrator_user': ('ucsschoolAdministrator',),  # if 'ucsschoolAdministrator' in module.options / OCs
+	'class_share': ('ucsschoolClassShare',),
+	'computer_room': ('ucsschoolComputerRoom',),
+	'exam_student': ('ucsschoolExam',),
+	'school_class': ('ucsschoolSchoolClass',),
+	'staff': ('ucsschoolStaff',),
+	'student': ('ucsschoolStudent',),
+	'teacher': ('ucsschoolTeacher',),
+	'teacher_and_staff': ('ucsschoolTeacher', 'ucsschoolStaff'),
+	'work_group': ('ucsschoolWorkGroup',)
+}
+
+
 def set_bind_function(bind_callback):
 	global __bind_callback
 	__bind_callback = bind_callback
