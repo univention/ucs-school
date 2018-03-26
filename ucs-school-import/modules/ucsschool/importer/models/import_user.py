@@ -984,7 +984,8 @@ class ImportUser(User):
 
 
 class ImportStaff(ImportUser, Staff):
-	pass
+	class Meta(Staff.Meta):
+		pass
 
 
 class ImportStudent(ImportUser, Student):
@@ -995,10 +996,15 @@ class ImportStudent(ImportUser, Student):
 		res = super(ImportStudent, self)._default_username_max_length
 		return min(res, 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")))
 
+	class Meta(Student.Meta):
+		pass
+
 
 class ImportTeacher(ImportUser, Teacher):
-	pass
+	class Meta(Teacher.Meta):
+		pass
 
 
 class ImportTeachersAndStaff(ImportUser, TeachersAndStaff):
-	pass
+	class Meta(TeachersAndStaff.Meta):
+		pass

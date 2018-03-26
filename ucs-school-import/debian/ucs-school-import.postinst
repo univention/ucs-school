@@ -48,7 +48,9 @@ univention-config-registry set \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes \
 	ucsschool/import/generate/mail/domain?yes \
-	ucsschool/import/purge-expired-users/cron='50 4 * * *' || die
+	ucsschool/import/purge-expired-users/cron='50 4 * * *' \
+	listener/module/ucsschool_admin_object_type/deactivate?yes \
+	|| die
 
 eval "$(univention-config-registry shell)"
 
@@ -115,6 +117,10 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 10.0.8 ; then
 	if [ "$ucsschool_ldap_default_dcs" = "edukativ verwaltung" ] ; then
 		ucr set ucsschool/ldap/default/dcs="edukativ"
 	fi
+fi
+
+if ucr_is_true listener/module/ucsschool_admin_object_type/deactivate; then
+	deb-systemd-invoke restart univention-directory-listener
 fi
 
 exit 0
