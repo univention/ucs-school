@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-7) unstable; urgency=low
+
+  * Bug #45379: mark administrator group, add object_type to OC mapping
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Mar 2018 12:59:29 +0200
+
 ucs-school-lib (11.0.1-6) unstable; urgency=low
 
   * Bug #46130: do not prevent listing of all users if one malformed object
