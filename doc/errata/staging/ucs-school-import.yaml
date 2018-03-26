@@ -3,7 +3,8 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.1-10A~4.3.0.201803231427
+fix: 16.0.1-11A~4.3.0.201803261306
 desc: |
  * User property verification checks are executed in dry-run again (Bug #46572).
-bug: [46130]
+ * New UCS@school objects are now marked with a unique object class and attribute. A script can be used to mark all existing objects: <filename>/usr/share/ucs-school-import/scripts/migrate_ucsschool_object_types</filename>. After running the script for all existing objects and schools, a listener module must be activated: "ucr set listener/module/ucsschool_admin_object_type/deactivate=no; service univention-directory-listener restart" (Bug #45379).
+bug: [46130, 45379]
