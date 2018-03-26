@@ -41,8 +41,16 @@ def check_backup(cn):
 def check_ldap(school, old_name, new_name):
 	utils.verify_ldap_object(class_dn(old_name, school), should_exist=False)
 	utils.verify_ldap_object(share_dn(old_name, school), should_exist=False)
-	utils.verify_ldap_object(class_dn(new_name, school), should_exist=True)
-	utils.verify_ldap_object(share_dn(new_name, school), should_exist=True)
+	utils.verify_ldap_object(
+		class_dn(new_name, school),
+		expected_attr={'ucsschoolObjectType': ['school_class']},
+		should_exist=True,
+	)
+	utils.verify_ldap_object(
+		share_dn(new_name, school),
+		expected_attr={'ucsschoolObjectType': ['class_share']},
+		should_exist=True,
+	)
 
 
 def share_dn(class_name, school):

@@ -4,3 +4,4 @@ modules/ucsschool/__init__.py                               usr/share/pyshared/u
 modules/ucsschool/importer                                  usr/share/pyshared/ucsschool/
 modules/univention/admin/hooks.d/*.py                       usr/share/ucs-school-import/hooks.d/
 35ucs-school-import.inst                                    usr/lib/univention-install/
+listener/*.py												usr/lib/univention-directory-listener/system/

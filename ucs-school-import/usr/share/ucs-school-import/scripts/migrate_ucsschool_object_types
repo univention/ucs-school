@@ -1,0 +1,204 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Copyright 2018 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import sys
+import argparse
+import logging
+from logging.handlers import RotatingFileHandler
+
+import ldap
+from ldap.filter import filter_format
+import univention.admin.uldap
+from univention.config_registry import ConfigRegistry
+from ucsschool.lib.models import BasicGroup, ClassShare, ComputerRoom, School, SchoolClass, User, WorkGroup
+
+
+LOG_FILE = '/var/log/univention/ucsschool-object-type-migration.log'
+LOG_DEBUG_FMT = '%(asctime)s %(levelname)-5s %(funcName)s:%(lineno)d  %(message)s'
+LOG_INFO_FMT = '%(message)s'
+LOG_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+ucr = ConfigRegistry()
+ucr.load()
+
+if ucr['server/role'] != 'domaincontroller_master':
+	print('This script can only be executed on the Domaincontroller Master.')
+	sys.exit(2)
+
+lo, po = univention.admin.uldap.getAdminConnection()
+
+logger = logging.getLogger('UcsSchoolObjectTypeMigration')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+handler.setLevel(logging.INFO)
+handler.setFormatter(logging.Formatter(datefmt=LOG_DATETIME_FORMAT))
+logger.addHandler(handler)
+handler = RotatingFileHandler(LOG_FILE)
+handler.setLevel(logging.DEBUG)
+handler.setFormatter(logging.Formatter(LOG_DEBUG_FMT, LOG_DATETIME_FORMAT))
+logger.addHandler(handler)
+
+
+class UcsSchoolObjectTypeMigration(object):
+
+	def __init__(self):
+		self.exceptions = []
+		self.modifications = False
+		self.search_classes = []
+		self.schools = []
+		argp = argparse.ArgumentParser(
+			description='Set ucsschoolObjectType property on UCS@school objects (users, work groups, school classes, '
+						'computer rooms, class shares).',
+			epilog='Logfile: {}'.format(LOG_FILE)
+		)
+		argp.add_argument(
+			'--modify',
+			action='store_true',
+			help='Enable writing of modifications to LDAP. If unset, the default is to make a dry run.'
+		)
+		argp.add_argument(
+			'--schools',
+			help='Comma separated list of OUs whose objects should be modified. If unset all OUs will be modified.'
+		)
+		argp.add_argument(
+			'--all-objects',
+			action='store_true',
+			help='Modify all UCS@school objects.'
+		)
+		argp.add_argument(
+			'--admin-group',
+			action='store_true',
+			help='Modify UCS@school admin group objects.'
+		)
+		argp.add_argument(
+			'--class-shares',
+			action='store_true',
+			help='Modify UCS@school class share objects.'
+		)
+		argp.add_argument(
+			'--computer-rooms',
+			action='store_true',
+			help='Modify UCS@school computer room objects.'
+		)
+		argp.add_argument(
+			'--school-classes',
+			action='store_true',
+			help='Modify UCS@school school class objects.'
+		)
+		argp.add_argument(
+			'--users',
+			action='store_true',
+			help='Modify UCS@school user objects.'
+		)
+		argp.add_argument(
+			'--work-groups',
+			action='store_true',
+			help='Modify UCS@school work group objects.'
+		)
+		self.args = argp.parse_args()
+
+		all_schools = sorted([s.name for s in School.get_all(lo)])
+		if self.args.schools:
+			schools = sorted([s.strip() for s in self.args.schools.split(',') if s.strip()])
+			for school in schools:
+				if school not in all_schools:
+					print('ERROR: School {!r} does not exist.'.format(school))
+					print('Known schools: {}.'.format(', '.join(all_schools)))
+					sys.exit(2)
+			self.schools = schools
+		else:
+			self.schools = all_schools
+		logger.info('Searching in school(s): {}.'.format(', '.join(self.schools)))
+
+		self.search_admin_group = self.args.admin_group or self.args.all_objects
+		if self.args.class_shares or self.args.all_objects:
+			self.search_classes.append(ClassShare)
+		if self.args.computer_rooms or self.args.all_objects:
+			self.search_classes.append(ComputerRoom)
+		if self.args.school_classes or self.args.all_objects:
+			self.search_classes.append(SchoolClass)
+		if self.args.users or self.args.all_objects:
+			self.search_classes.append(User)
+		if self.args.work_groups or self.args.all_objects:
+			self.search_classes.append(WorkGroup)
+
+		if not (self.search_admin_group or self.search_classes):
+			print('ERROR: At least one object type must be enabled.\n')
+			argp.print_help()
+			sys.exit(2)
+		logger.info('Modifying objects of type(s): {}{}.'.format(
+			'admin group, ' if self.search_admin_group else '',
+			', '.join([cls.__name__ for cls in self.search_classes]))
+		)
+
+	def migrate(self):
+		if self.args.modify:
+			logger.info('Running in write mode.')
+		else:
+			logger.info('Running in dry-run mode.')
+
+		logger.info('---------------------------------------------------------------')
+		for school in self.schools:
+			if self.search_admin_group:
+				object_types = ('administrator_group',)
+				for obj in BasicGroup.get_all(lo, None, filter_format(
+						'(&(!(ucsschoolObjectType=*))(objectClass=ucsschoolAdministratorGroup)(ucsschoolSchool=%s))',
+						(school,)
+				)):
+					self.set_ldap_attr('admin group', object_types, obj.dn)
+
+			for cls in self.search_classes:
+				logger.info('Looking in school {} for objects of type {}...'.format(school, cls.__name__))
+				objs = cls.get_all(lo, school, '(!(ucsschoolObjectType=*))')
+				for obj in objs:
+					object_types = [obj._meta.object_type]
+					if cls == User and 'ucsschoolAdministrator' in obj.get_udm_object(lo).options:
+						object_types.insert(0, 'administrator_user')
+					self.set_ldap_attr(cls.__name__, object_types, obj.dn)
+			logger.info('---------------------------------------------------------------')
+
+	def set_ldap_attr(self, obj_name, object_types, dn):
+		logger.info(
+			'%s %r for %s %r...',
+			'Setting' if self.args.modify else 'Would be setting',
+			', '.join(object_types),
+			obj_name,
+			dn
+		)
+		if self.args.modify:
+			try:
+				lo.modify(dn, [('ucsschoolObjectType', [], object_types)])
+			except ldap.LDAPError as exc:
+				logger.error('Failed setting %r for %s %r: %s', ', '.join(object_types), obj_name, dn, exc)
+
+
+if __name__ == '__main__':
+	um = UcsSchoolObjectTypeMigration()
+	um.migrate()

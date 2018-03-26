@@ -37,7 +37,7 @@ class EditFail(Exception):
 
 class Klasse(object):
 
-	"""Contains the needed functuality for classes in an already created OU,
+	"""Contains the needed functionality for classes in an already created OU,
 	By default they are randomly formed except the OU, should be provided\n
 	:param school: name of the ou
 	:type school: str
@@ -125,6 +125,12 @@ class Klasse(object):
 			self.school, self.name, UCSTestSchool().get_ou_base_dn(self.school)
 		)
 
+	@property
+	def share_dn(self):
+		return 'cn=%s-%s,cn=klassen,cn=shares,%s' % (
+			self.school, self.name, UCSTestSchool().get_ou_base_dn(self.school)
+		)
+
 	def get(self):
 		"""Get class"""
 		flavor = 'schoolwizards/classes'
@@ -190,3 +196,16 @@ class Klasse(object):
 
 	def check_existence(self, should_exist):
 		utils.verify_ldap_object(self.dn(), should_exist=should_exist)
+
+	def verify(self):
+		# TODO: check all attributes
+		utils.verify_ldap_object(
+			self.dn(),
+			expected_attr={'ucsschoolObjectType': ['school_class']},
+			should_exist=True,
+		)
+		utils.verify_ldap_object(
+			self.share_dn,
+			expected_attr={'ucsschoolObjectType': ['class_share']},
+			should_exist=True,
+		)

@@ -1,3 +1,10 @@
+ucs-school-import (16.0.1-11) unstable; urgency=low
+
+  * Bug #45379: mark ImportUser objects, update legacy import script, finish
+    udm hook, add listener, add migration script
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Mar 2018 12:46:04 +0200
+
 ucs-school-import (16.0.1-10) unstable; urgency=medium
 
   * Bug #46572: do checks in dry-run, run them after pre-hooks and before
