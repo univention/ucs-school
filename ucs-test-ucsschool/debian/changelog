@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-29) unstable; urgency=low
+
+  * Bug #45379: verify setting of ucsschoolObjectType attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Mar 2018 13:01:16 +0200
+
 ucs-test-ucsschool (5.0.2-28) unstable; urgency=medium
 
   * Bug #46572: handle existing mail/domain
