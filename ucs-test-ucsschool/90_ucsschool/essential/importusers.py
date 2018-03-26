@@ -248,6 +248,7 @@ class Person(object):
 			shadowExpire=[] if self.is_active() else ['1'],
 			sn=[self.lastname],
 			uid=[self.username],
+			ucsschoolObjectType=[self.object_type],
 		)
 
 		if self.source_uid:
@@ -310,6 +311,15 @@ class Person(object):
 			server = '%LOGONSERVER%'
 
 		return server + '\\%USERNAME%\\windows-profiles\\default'
+
+	@property
+	def object_type(self):
+		return {
+			'student': StudentLib._meta.object_type,
+			'teacher': TeacherLib._meta.object_type,
+			'staff': StaffLib._meta.object_type,
+			'teacher_staff': TeachersAndStaffLib._meta.object_type,
+		}[self.role]
 
 	def verify(self):
 		print('verify %s: %s' % (self.role, self.username))

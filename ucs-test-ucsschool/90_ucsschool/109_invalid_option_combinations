@@ -52,7 +52,10 @@ def main():
 						print("*** Creating {} and trying to add option {}...".format(kls.type_name, bad_option))
 						user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
 						user.create(lo)
-						utils.verify_ldap_object(user.dn, expected_attr={"uid": [user.name]}, strict=False, should_exist=True)
+						utils.verify_ldap_object(user.dn, expected_attr={
+							"uid": [user.name],
+							"ucsschoolObjectType": [kls._meta.object_type],
+						}, strict=False, should_exist=True)
 						udm_user = user.get_udm_object(lo)
 						udm_user.options.append(bad_option)
 						try:

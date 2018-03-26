@@ -76,8 +76,10 @@ def main():
 			(ou, oudn), (ou2, oudn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get('hostname'))
 			class_01 = Klasse(school=ou)
 			class_01.create()
+			class_01.verify()
 			class_02 = Klasse(school=ou)
 			class_02.create()
+			class_02.verify()
 			student_classes = {ou: ['%s-%s' % (ou, class_01.name)]}
 			teacher_classes = {ou: ['%s-%s' % (ou, class_01.name), '%s-%s' % (ou, class_02.name)]}
 
@@ -86,6 +88,7 @@ def main():
 
 			class_03 = Klasse(school=ou2)
 			class_03.create()
+			class_03.verify()
 			student_classes = {ou: ['%s-%s' % (ou, class_01.name)], ou2: ['%s-%s' % (ou2, class_03.name)]}
 			teacher_classes = {ou: ['%s-%s' % (ou, class_01.name), '%s-%s' % (ou, class_02.name)], ou2: ['%s-%s' % (ou2, class_03.name)]}
 

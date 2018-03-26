@@ -1,0 +1,150 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Test object ucsschoolObjectType migration script
+## tags: [apptest,ucsschool,ucsschool_import1]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [45379]
+
+import random
+import subprocess
+from collections import OrderedDict
+from ucsschool.lib.models import (
+	ClassShare, ComputerRoom, SchoolClass, WorkGroup,
+	ExamStudent, Student, Staff, Teacher, TeachersAndStaff
+)
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+
+
+class Test(CLI_Import_v2_Tester):
+	ou_A = None
+	ou_B = None
+	ou_C = None
+
+	# must create SchoolClass before ClassShare
+	class2dn = OrderedDict((
+		(SchoolClass, ''),
+		(ClassShare, ''),
+		(ComputerRoom, ''),
+		(WorkGroup, ''),
+		(ExamStudent, ''),
+		(Student, ''),
+		(Staff, ''),
+		(Teacher, ''),
+		(TeachersAndStaff, ''),
+	))
+
+	def test(self):
+		ou_name, ou_dn = self.schoolenv.create_ou(use_cache=False)
+		school_class = None
+
+		ouadmins_group_dn = 'cn=admins-{},cn=ouadmins,cn=groups,{}'.format(ou_name, self.ucr['ldap/base'])
+		self.log.info('Removing ucsschoolObjectType from %r...', ouadmins_group_dn)
+		self.lo.modify(
+			ouadmins_group_dn,
+			[('ucsschoolObjectType', ['administrator_group'], [])]
+		)
+
+		for cls in self.class2dn.keys():
+			self.log.info('Creating %s, verifying existing ucsschoolObjectType and removing it...', cls.__name__)
+			# collect creation kwargs
+			kwargs = {'name': uts.random_username(), 'school': ou_name}
+			if cls is ClassShare:
+				assert school_class is not None
+				kwargs['school_group'] = school_class
+			elif cls in (ExamStudent, Student, Staff, Teacher, TeachersAndStaff):
+				kwargs.update({'firstname': uts.random_username(), 'lastname': uts.random_username()})
+			# create school object (or use ClassShare auto created by SchoolClass)
+			if cls is ClassShare:
+				dn = cls(name=school_class.name, school=ou_name).dn
+				obj = cls.from_dn(dn, ou_name, self.lo)
+			else:
+				obj = cls(**kwargs)
+			# store SchoolClass for use by ClassShare
+			if cls is SchoolClass:
+				school_class = obj
+			obj.create(self.lo)
+			self.class2dn[cls] = obj.dn
+			utils.verify_ldap_object(
+				obj.dn,
+				expected_attr={'ucsschoolObjectType': [cls._meta.object_type]},
+			)
+			self.lo.modify(
+				obj.dn,
+				[('ucsschoolObjectType', [cls._meta.object_type], [])]
+			)
+			utils.verify_ldap_object(
+				obj.dn,
+				expected_attr={'ucsschoolObjectType': []},
+			)
+		# school admin
+		admin_cls = random.choice((Staff, Teacher, TeachersAndStaff))
+		self.log.info(
+			'Creating %s, making it school admin, verifying existing ucsschoolObjectType and removing it...',
+			admin_cls.__name__
+		)
+		kwargs = {'name': uts.random_username(), 'school': ou_name}
+		kwargs.update({'firstname': uts.random_username(), 'lastname': uts.random_username()})
+		admin_user = admin_cls(**kwargs)
+		admin_user.create(self.lo)
+		utils.verify_ldap_object(
+			admin_user.dn,
+			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type]},
+		)
+		admin_user = admin_user.from_dn(admin_user.dn, ou_name, self.lo)
+		udm_admin_user = admin_user.get_udm_object(self.lo)
+		udm_admin_user.options.append('ucsschoolAdministrator')
+		udm_admin_user.modify(self.lo)
+		utils.wait_for_replication()
+		utils.verify_ldap_object(
+			admin_user.dn,
+			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type, 'administrator_user']},
+		)
+		self.lo.modify(
+			admin_user.dn,
+			[('ucsschoolObjectType', [admin_cls._meta.object_type, 'administrator_user'], [])]
+		)
+		utils.verify_ldap_object(
+			admin_user.dn,
+			expected_attr={'ucsschoolObjectType': []},
+		)
+
+		self.log.info('Migrating objects in OU %s...', ou_name)
+		cmd = [
+			'/sync/ucs-school-import/usr/share/ucs-school-import/scripts/migrate_ucsschool_object_types',
+			'--all-objects',
+			'--schools',
+			ou_name,
+			'--modify'
+		]
+		self.log.debug('cmd: %r', cmd)
+		retcode = subprocess.call(cmd)
+		if retcode:
+			utils.fail('Script migrate_ucsschool_object_types had exist code {!r}.'.format(retcode))
+		self.log.info('retcode=%r', retcode)
+
+		# verify
+		for cls, dn in self.class2dn.items():
+			self.log.info('Verifying %s...', cls.__name__)
+			utils.verify_ldap_object(
+				dn,
+				expected_attr={'ucsschoolObjectType': [cls._meta.object_type]},
+			)
+		self.log.info('Verifying admin group...')
+		utils.verify_ldap_object(
+			ouadmins_group_dn,
+			expected_attr={'ucsschoolObjectType': ['administrator_group']},
+		)
+		self.log.info('Verifying admin user (%s)...', admin_user.__class__.__name__)
+		utils.verify_ldap_object(
+			admin_user.dn,
+			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type, 'administrator_user']},
+		)
+
+
+if __name__ == '__main__':
+	Test().run()
