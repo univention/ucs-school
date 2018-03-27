@@ -1,0 +1,112 @@
+#!/usr/share/ucs-test/runner python
+## desc: Test the Samba4 GPO link replication between DC-Slaves.
+## bugs: [45992]
+## roles: [domaincontroller_slave]
+## packages: [univention-samba4]
+## tags: [apptest,ucsschool,ucsschool_base1]
+## exposure: dangerous
+
+import sys
+from subprocess import check_output, check_call
+from re import search
+
+import univention.testing.ucsschool as utu
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+
+
+class GPO(object):
+
+	def __init__(self, dn_school):
+		self.dn_school = dn_school
+		self.ucr = ucr_test.UCSTestConfigRegistry()
+		self.ucr.load()
+		self.account = utils.UCSTestDomainAdminCredentials()
+		self.display_name = "TEST_91c_samba4_gpo_link_replication"
+		self._create_gpo()
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_val, exc_tb):
+		check_call([
+			'samba-tool',
+			'gpo',
+			'del',
+			self.gpo_reference,
+			'--username={}'.format(self.account.username),
+			'--password={}'.format(self.account.bindpw),
+		])
+
+	def _create_gpo(self):
+		stdout = check_output([
+			'samba-tool',
+			'gpo',
+			'create',
+			self.display_name,
+			'--username={}'.format(self.account.username),
+			'--password={}'.format(self.account.bindpw),
+		])
+		stdout = stdout.rstrip()
+		print "\nSamba-tool produced the following output:", stdout
+
+		try:
+			# extracting the GPO reference from the stdout:
+			self.gpo_reference = '{' + search('{(.+?)}', stdout).group(1) + '}'
+		except AttributeError as exc:
+			utils.fail("Could not find the GPO reference in the STDOUT '%s' of the 'samba-tool', error: '%s'" % (stdout, exc))
+		utils.wait_for_replication_and_postrun()
+
+	def set_gpo_link_from_master(self):
+		check_call([
+			'univention-ssh',
+			'/etc/machine.secret',
+			'{}$@{}'.format(self.ucr.get('hostname'), self.ucr.get('ldap/master')),
+			'samba-tool',
+			'gpo',
+			'setlink',
+			self.dn_school,
+			self.gpo_reference,
+			'--username={}'.format(self.account.username),
+			'--password={}'.format(self.account.bindpw),
+		])
+		utils.wait_for_replication_and_postrun()
+
+	def set_gpo_link_from_slave(self):
+		# It should not be possible to set GPO links for other OUs
+		check_call([
+			'samba-tool',
+			'gpo',
+			'setlink',
+			self.dn_school,
+			self.gpo_reference,
+			'--username={}'.format(self.account.username),
+			'--password={}'.format(self.account.bindpw),
+		])
+		utils.wait_for_replication_and_postrun()
+
+
+def is_gpo_link_replicated(gpo_reference, oudn):
+	stdout = check_output([
+		'univention-ldapsearch',
+		oudn.split(',', 1)[0],
+	])
+	print(stdout)
+	return gpo_reference.lower() in stdout.lower()
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		schoolName, oudn = schoolenv.create_ou(use_cache=False)
+		utils.wait_for_replication_and_postrun()
+		with GPO(oudn) as gpo:
+			gpo.set_gpo_link_from_slave()
+			if is_gpo_link_replicated(gpo.gpo_reference, oudn):
+				utils.fail("An OU can set GPO links for another OU")
+			gpo.set_gpo_link_from_master()
+			if not is_gpo_link_replicated(gpo.gpo_reference, oudn):
+				utils.fail("An OU can not read GPO links from another OU")
+
+
+if __name__ == '__main__':
+	sys.exit(main())
