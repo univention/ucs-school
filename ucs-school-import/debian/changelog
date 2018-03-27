@@ -1,6 +1,12 @@
+ucs-school-import (15.0.3-28) unstable; urgency=medium
+
+  * Bug #46571: do not run checks from within hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 27 Mar 2018 16:30:53 +0200
+
 ucs-school-import (15.0.3-27) unstable; urgency=medium
 
-  * Bug #46572: do checks in dry-run, run them after pre-hooks and before
+  * Bug #46571: do checks in dry-run, run them after pre-hooks and before
     changes to the underlying UDM object
 
  -- Daniel Troeder <troeder@univention.de>  Fri, 23 Mar 2018 14:22:15 +0100
