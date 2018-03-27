@@ -311,6 +311,16 @@ class Person(object):
 
 		return server + '\\%USERNAME%\\windows-profiles\\default'
 
+	@property
+	def object_type(self):
+		return {
+			'student': StudentLib.Meta.object_type,
+			'teacher': TeacherLib.Meta.object_type,
+			'staff': StaffLib.Meta.object_type,
+			'teacher_staff': TeachersAndStaffLib.Meta.object_type,
+			'teacher_and_staff': TeachersAndStaffLib.Meta.object_type,
+		}[self.role]
+
 	def verify(self):
 		print('verify %s: %s' % (self.role, self.username))
 		utils.wait_for_replication()
