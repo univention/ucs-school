@@ -698,7 +698,8 @@ class ImportUser(User):
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		self.run_checks(check_username=False)
+		if not self.in_hook:  # uniqueness checks fail when called from within a post_move hook
+			self.run_checks(check_username=False)
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
