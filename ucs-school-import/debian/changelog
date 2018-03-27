@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-12) unstable; urgency=medium
+
+  * Bug #46572: do not run checks from within hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 27 Mar 2018 16:23:19 +0200
+
 ucs-school-import (16.0.1-11) unstable; urgency=low
 
   * Bug #45379: mark ImportUser objects, update legacy import script, finish
