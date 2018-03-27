@@ -315,10 +315,11 @@ class Person(object):
 	@property
 	def object_type(self):
 		return {
-			'student': StudentLib._meta.object_type,
-			'teacher': TeacherLib._meta.object_type,
-			'staff': StaffLib._meta.object_type,
-			'teacher_staff': TeachersAndStaffLib._meta.object_type,
+			'student': StudentLib.Meta.object_type,
+			'teacher': TeacherLib.Meta.object_type,
+			'staff': StaffLib.Meta.object_type,
+			'teacher_staff': TeachersAndStaffLib.Meta.object_type,
+			'teacher_and_staff': TeachersAndStaffLib.Meta.object_type,
 		}[self.role]
 
 	def verify(self):
