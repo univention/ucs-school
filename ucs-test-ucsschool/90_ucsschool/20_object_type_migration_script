@@ -15,6 +15,8 @@ from ucsschool.lib.models import (
 	ClassShare, ComputerRoom, SchoolClass, WorkGroup,
 	ExamStudent, Student, Staff, Teacher, TeachersAndStaff
 )
+from ucsschool.lib import object_type_to_object_classes
+from univention.testing.ucsschool import has_object_classes, has_not_object_classes
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
@@ -43,10 +45,20 @@ class Test(CLI_Import_v2_Tester):
 		school_class = None
 
 		ouadmins_group_dn = 'cn=admins-{},cn=ouadmins,cn=groups,{}'.format(ou_name, self.ucr['ldap/base'])
+		object_type = 'administrator_group'
 		self.log.info('Removing ucsschoolObjectType from %r...', ouadmins_group_dn)
+		utils.verify_ldap_object(
+			ouadmins_group_dn,
+			expected_attr={'ucsschoolObjectType': [object_type]},
+		)
+		has_object_classes(self.lo, ouadmins_group_dn, object_type_to_object_classes[object_type], True)
 		self.lo.modify(
 			ouadmins_group_dn,
 			[('ucsschoolObjectType', ['administrator_group'], [])]
+		)
+		utils.verify_ldap_object(
+			ouadmins_group_dn,
+			expected_attr={'ucsschoolObjectType': []},
 		)
 
 		for cls in self.class2dn.keys():
@@ -73,6 +85,7 @@ class Test(CLI_Import_v2_Tester):
 				obj.dn,
 				expected_attr={'ucsschoolObjectType': [cls._meta.object_type]},
 			)
+			has_object_classes(self.lo, obj.dn, object_type_to_object_classes[cls._meta.object_type], True)
 			self.lo.modify(
 				obj.dn,
 				[('ucsschoolObjectType', [cls._meta.object_type], [])]
@@ -95,6 +108,7 @@ class Test(CLI_Import_v2_Tester):
 			admin_user.dn,
 			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type]},
 		)
+		has_object_classes(self.lo, admin_user.dn, object_type_to_object_classes[admin_cls._meta.object_type], True)
 		admin_user = admin_user.from_dn(admin_user.dn, ou_name, self.lo)
 		udm_admin_user = admin_user.get_udm_object(self.lo)
 		udm_admin_user.options.append('ucsschoolAdministrator')
@@ -103,6 +117,13 @@ class Test(CLI_Import_v2_Tester):
 		utils.verify_ldap_object(
 			admin_user.dn,
 			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type, 'administrator_user']},
+		)
+		has_object_classes(
+			self.lo,
+			admin_user.dn,
+			list(object_type_to_object_classes[admin_cls._meta.object_type]) +
+			list(object_type_to_object_classes[admin_user._meta.object_type]),
+			True
 		)
 		self.lo.modify(
 			admin_user.dn,
@@ -134,16 +155,19 @@ class Test(CLI_Import_v2_Tester):
 				dn,
 				expected_attr={'ucsschoolObjectType': [cls._meta.object_type]},
 			)
+			has_object_classes(self.lo, dn, object_type_to_object_classes[cls._meta.object_type], True)
 		self.log.info('Verifying admin group...')
 		utils.verify_ldap_object(
 			ouadmins_group_dn,
 			expected_attr={'ucsschoolObjectType': ['administrator_group']},
 		)
+		has_object_classes(self.lo, ouadmins_group_dn, object_type_to_object_classes['administrator_group'], True)
 		self.log.info('Verifying admin user (%s)...', admin_user.__class__.__name__)
 		utils.verify_ldap_object(
 			admin_user.dn,
 			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type, 'administrator_user']},
 		)
+		has_object_classes(self.lo, admin_user.dn, object_type_to_object_classes['administrator_user'], True)
 
 
 if __name__ == '__main__':

@@ -16,14 +16,16 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.testing.ucsschool import has_object_classes
+from ucsschool.lib import object_type_to_object_classes
 
 BACKUP_PATH = '/home/backup/groups'
+lo = getMachineConnection()
 
 
 def ldap_info(cn):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		basedn = ucr.get('ldap/base')
-		lo = getMachineConnection()
 		gidNumber = lo.search(filter="cn=%s" % cn, base=basedn)[0][1].get('gidNumber')
 		memberUid = lo.search(filter="cn=%s" % cn, base=basedn)[0][1].get('memberUid')
 		univentionShareGid = lo.search(filter="cn=%s" % cn, base=basedn)[1][1].get('univentionShareGid')
@@ -46,11 +48,13 @@ def check_ldap(school, old_name, new_name):
 		expected_attr={'ucsschoolObjectType': ['school_class']},
 		should_exist=True,
 	)
+	has_object_classes(lo, class_dn(new_name, school), object_type_to_object_classes['school_class'], True)
 	utils.verify_ldap_object(
 		share_dn(new_name, school),
 		expected_attr={'ucsschoolObjectType': ['class_share']},
 		should_exist=True,
 	)
+	has_object_classes(lo, share_dn(new_name, school), object_type_to_object_classes['class_share'], True)
 
 
 def share_dn(class_name, school):

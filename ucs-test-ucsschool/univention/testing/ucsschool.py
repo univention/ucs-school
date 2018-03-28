@@ -55,6 +55,7 @@ import univention.testing.udm as udm_test
 import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
 
+from ucsschool.lib import object_type_to_object_classes
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.models.group import ComputerRoom
@@ -539,6 +540,7 @@ class UCSTestSchool(object):
 			strict=False,
 			should_exist=True,
 		)
+		has_object_classes(self.lo, user_dn, object_type_to_object_classes[object_type], True)
 		return username, user_dn
 
 	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None, mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
@@ -760,6 +762,44 @@ class UCSTestSchool(object):
 		new_objects = new_ldap_status - old_ldap_status
 		removed_objects = old_ldap_status - new_ldap_status
 		return Bunch(new=new_objects, removed=removed_objects)
+
+
+def has_object_classes(lo, dn, ocs, raise_exception=False):
+	"""
+	Check whether LDAP object has objectClasses.
+
+	:param lo: LDAP connection object
+	:param dn: str - DN of object to check
+	:param ocs: list - list of objectClasses that should exist
+	:param raise_exceptions: bool - whether to raise an exception is an OC is missing
+	:return: bool
+	"""
+	ocs_in_ldap = lo.get(dn, ('objectClass',))['objectClass']
+	if not all(oc in ocs_in_ldap for oc in ocs):
+		if raise_exception:
+			utils.fail('Missing objectClass: found: {!r}, expected: {!r}.'.format(ocs_in_ldap, ocs))
+		else:
+			return False
+	return True
+
+
+def has_not_object_classes(lo, dn, ocs, raise_exception=False):
+	"""
+	Check whether LDAP object misses objectClasses.
+
+	:param lo: LDAP connection object
+	:param dn: str - DN of object to check
+	:param ocs: list - list of objectClasses that should NOT exist
+	:param raise_exceptions: bool - whether to raise an exception is an OC exists
+	:return: bool
+	"""
+	ocs_in_ldap = lo.get(dn, ('objectClass',))['objectClass']
+	if any(oc in ocs_in_ldap for oc in ocs):
+		if raise_exception:
+			utils.fail('Unexpected objectClass: found: {!r}, expected to NOT exists: {!r}.'.format(ocs_in_ldap, ocs))
+		else:
+			return False
+	return True
 
 
 if __name__ == '__main__':

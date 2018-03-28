@@ -9,7 +9,8 @@ import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap as uu
 from univention.lib.umc import HTTPError
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool import UCSTestSchool, has_object_classes
+from ucsschool.lib import object_type_to_object_classes
 from univention.testing.umc import Client
 
 
@@ -195,6 +196,8 @@ class Workgroup(object):
 			'description': [self.description],
 			'ucsschoolObjectType': ['work_group'],
 		})
+		lo = uu.getMachineConnection()
+		has_object_classes(lo, self.dn(), object_type_to_object_classes['work_group'], True)
 
 	def verify_exists(self, group_should_exist, share_should_exist):
 		"""check for group and file share objects existance in ldap"""
