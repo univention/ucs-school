@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (7.0.0-7) unstable; urgency=low
+
+  * Bug #46531: use local LDAP server
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 28 Mar 2018 16:13:10 +0200
+
 ucs-school-radius-802.1x (7.0.0-6) unstable; urgency=medium
 
   *  Bug #46428: readd debian/ucs-school-radius-802.1x.dirs

@@ -177,6 +177,6 @@ def main():
 
 
 if __name__ == "__main__":
-	ldapConnection = univention.uldap.getMachineConnection()
+	ldapConnection = univention.uldap.getMachineConnection(ldap_master=False)
 	loadInfo()
 	sys.exit(main())
