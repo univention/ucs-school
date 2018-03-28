@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: test recursive dependency solver for formatting ImportUser properties
+## desc: test recursion detection in dependency solver for formatting ImportUser properties
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
@@ -35,11 +35,11 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('scheme:birthday', '<source_uid>')
 		config.update_entry('scheme:recordUID', '<email>.<name>[0:4]'),
 		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain><:strip>'),
-		config.update_entry('scheme:username:default', '<firstname:lower>.<birthday>'),
-		config.update_entry('scheme:firstname', 'fn-<lastname>[1:6]'),
-		config.update_entry('scheme:street', '<:lower><firstname>-<lastname>'),
+		config.update_entry('scheme:username:default', '<firstname:lower>.<phone>'),
+		config.update_entry('scheme:firstname', 'fn-<email>[1:6]'),  # recursion!
+		config.update_entry('scheme:street', '<:lower><firstname>-<roomNumber>'),
 		config.update_entry('scheme:phone', '<birthday>'),
-		config.update_entry('scheme:roomNumber', '<street>-<email>[0:5]'),
+		config.update_entry('scheme:roomNumber', '<street>-<email>[0:5]'),  # recursion!
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
@@ -69,9 +69,9 @@ class Test(CLI_Import_v2_Tester):
 			birthday = source_uid
 			email = '{}@{}'.format('{}.{}'.format(firstname, person.lastname).lower(), self.maildomain)
 			name_length = username_max_length.get(person.role, username_max_length['default'])
-			name = '{}.{}'.format(firstname.lower(), birthday).replace('-', '')[:name_length]
+			name = firstname.lower().replace('-', '')[:name_length]
 			record_uid = '{}.{}'.format(email, name[:4])
-			person.street = '{}-{}'.format(firstname, person.lastname)
+			person.street = '{}-'.format(firstname)
 			person.phone = birthday
 			person.room = '{}-{}'.format(person.street, email[:5])
 			person.update(
