@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-29) unstable; urgency=low
+
+  * Bug #46754: add recursive dependency solver for formatting ImportUser
+    properties
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 28 Mar 2018 15:31:56 +0200
+
 ucs-school-import (15.0.3-28) unstable; urgency=medium
 
   * Bug #46571: do not run checks from within hook
