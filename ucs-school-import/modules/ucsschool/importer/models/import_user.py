@@ -94,6 +94,20 @@ class ImportUser(User):
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
 	_all_school_names = None
+	_prop_regex = re.compile(r'<(.*?)(:.*?)*>')
+	_prop_providers = {
+		'birthday': 'make_birthday',
+		'firstname': 'make_firstname',
+		'lastname': 'make_lastname',
+		'email': 'make_email',
+		'record_uid': 'make_recordUID',
+		'recordUID': 'make_recordUID',
+		'source_uid': 'make_sourceUID',
+		'sourceUID': 'make_sourceUID',
+		'school': 'make_school',
+		'username': 'make_username',
+		'name': 'make_username',
+	}
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -125,6 +139,7 @@ class ImportUser(User):
 		self._lo = None
 		self._userexpiry = None
 		self._purge_ts = None
+		self._used_methods = defaultdict(list)  # recursion prevention
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -273,7 +288,7 @@ class ImportUser(User):
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
 		if not obj:
 			raise noObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
-				cls.config.get("user_role", "user"), source_uid, record_uid))
+				cls.config.get("user_role", "user") or "User", source_uid, record_uid))
 		return cls.from_udm_obj(obj, None, connection)
 
 	def deactivate(self):
@@ -426,7 +441,7 @@ class ImportUser(User):
 		section "scheme" for details on the configuration.
 		"""
 		ignore_keys = self.to_dict().keys()
-		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "username"])  # these are used in make_*
+		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "sourceUID", "username"])  # these are used in make_*
 		ignore_keys.extend(self.no_overwrite_attributes)
 		for k, v in self.config["scheme"].items():
 			if k in ignore_keys:
@@ -866,6 +881,48 @@ class ImportUser(User):
 		# force transcription of german umlauts
 		return "<:umlauts>{}".format(scheme)
 
+	def solve_format_dependencies(self, prop_to_format, scheme, **kwargs):
+		"""
+		Call make_*() methods required to create values for <properties> used
+		in scheme.
+
+		:param prop_to_format: str - name of property for which the `scheme` is
+		:param scheme: str - scheme used to format `prop_to_format`
+		:param kwargs: dict: additional data to use for formatting
+		:return: None
+		"""
+		no_brackets = scheme
+		props_used_in_scheme = [x[0] for x in self._prop_regex.findall(no_brackets) if x[0]]
+		for prop_used_in_scheme in props_used_in_scheme:
+			if (hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
+				prop_used_in_scheme in self.udm_properties and self.udm_properties[prop_used_in_scheme] or
+				prop_used_in_scheme in kwargs or
+				prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))):
+				# property exists and has value
+				continue
+			if prop_used_in_scheme not in self._prop_providers and prop_used_in_scheme not in self.udm_properties:
+				# nothing we can do
+				self.logger.error(
+					'Cannot find dependency %r for formatting of property %r with scheme %r.',
+					prop_used_in_scheme,
+					prop_to_format,
+					scheme,
+				)
+				continue
+
+			try:
+				method_name = self._prop_providers[prop_used_in_scheme]
+			except KeyError:
+				method_name = "prepare_udm_properties"
+			if method_name in self._used_methods[prop_to_format]:
+				# already ran make_<method_name>() for his formatting job
+				self.logger.warn("Recursion detected when resolving formatting dependencies for %r.", prop_to_format)
+				self.logger.debug("Tried running %s(), although it has already run for %r.", method_name, prop_to_format)
+				continue
+			self._used_methods[prop_to_format].append(method_name)
+			res = getattr(self, method_name)()
+		self._used_methods.pop(prop_to_format, None)
+
 	def format_from_scheme(self, prop_name, scheme, **kwargs):
 		"""
 		Format property with scheme for current import_user.
@@ -883,6 +940,7 @@ class ImportUser(User):
 		:param kwargs: dict: additional data to use for formatting
 		:return: str: formatted string
 		"""
+		self.solve_format_dependencies(prop_name, scheme, **kwargs)
 		if self.input_data:
 			all_fields = self.reader.get_data_mapping(self.input_data)
 		else:
