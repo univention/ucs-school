@@ -1,0 +1,97 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: test recursive dependency solver for formatting ImportUser properties
+## tags: [apptest,ucsschool,ucsschool_import1]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [46754]
+
+import copy
+import random
+from ldap.filter import escape_filter_chars
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_drs_replication
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers import Person
+
+
+username_max_length = {'default': 20, 'student': 15}
+
+
+class Test(CLI_Import_v2_Tester):
+	ou_B = None
+	ou_C = None
+
+	def test(self):
+		source_uid = '{}-{:02}-{:02}'.format(random.randint(1900, 2016), random.randint(1, 12), random.randint(1, 27))
+		config = copy.deepcopy(self.default_config)
+		del config['csv']['mapping']
+		config.update_entry('csv:mapping:Nach', 'lastname')
+		config.update_entry('csv:mapping:OUs', 'schools')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('scheme:birthday', '<source_uid>')
+		config.update_entry('scheme:recordUID', '<email>.<name>[0:4]'),
+		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain><:strip>'),
+		config.update_entry('scheme:username:default', '<firstname:lower>.<birthday>'),
+		config.update_entry('scheme:firstname', 'fn-<lastname>[1:6]'),
+		config.update_entry('scheme:street', '<:lower><firstname>-<lastname>'),
+		config.update_entry('scheme:phone', '<birthday>'),
+		config.update_entry('scheme:roomNumber', '<street>-<email>[0:5]'),
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+
+		self.log.info('Importing a user from each role...')
+		person_list = list()
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			person = Person(self.ou_A.name, role)
+			person.update(
+				source_uid=source_uid,
+				lastname=uts.random_username(),
+				birthday=None,  # emtpy, so that it will be generated from scheme
+				record_uid=None,
+				mail=None,
+				name=None,
+				firstname=None,
+				school_classes={},  # no mapping for auto generated classes
+			)
+			person_list.append(person)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		for person in person_list:
+			firstname = 'fn-{}'.format(person.lastname[1:6])
+			birthday = source_uid
+			email = '{}@{}'.format('{}.{}'.format(firstname, person.lastname).lower(), self.maildomain)
+			name_length = username_max_length.get(person.role, username_max_length['default'])
+			name = '{}.{}'.format(firstname.lower(), birthday).replace('-', '')[:name_length]
+			record_uid = '{}.{}'.format(email, name[:4])
+			person.street = '{}-{}'.format(firstname, person.lastname)
+			person.phone = birthday
+			person.room = '{}-{}'.format(person.street, email[:5])
+			person.update(
+				firstname=firstname,
+				birthday=birthday,
+				mail=email,
+				username=name,
+				record_uid=record_uid,
+			)
+		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
+		self.check_new_and_removed_users(4, 0)
+		for person in person_list:
+			person.verify()
+			utils.verify_ldap_object(person.dn, {
+				'street': [person.street],
+				'telephoneNumber': [person.phone],
+				'roomNumber': [person.room],
+			})
+		self.log.info('*** OK: All %r users were created correctly.', len(person_list))
+
+
+if __name__ == '__main__':
+	Test().run()
