@@ -6,4 +6,4 @@ src: ucs-school-radius-802.1x
 fix: 7.0.0-7A~4.3.0.201803281616
 desc: |
  * The authentication backend now connects to the local LDAP server (usually a dc slave) instead of the dc master (Bug #46531).
-bug: []
+bug: [46531]
