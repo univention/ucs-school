@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-35) unstable; urgency=medium
+
+  * Bug #46572: modify classes in school change
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 04 Apr 2018 13:09:37 +0200
+
 ucs-test-ucsschool (5.0.2-34) unstable; urgency=low
 
   * Bug #42137: add tests for format dependency solver
