@@ -61,81 +61,102 @@ class SqliteQueueException(Exception):
 	pass
 
 
+class Cursor(object):
+	"""Open DB, execute command, close DB."""
+
+	def __init__(self, filename):  # type: (str) -> None
+		self._db = None
+		self._cursor = None
+		self.filename = filename
+
+	def __enter__(self):  # type: () -> Cursor
+		self._db = sqlite3.connect(self.filename, timeout=30)  # type: sqlite3.Connection
+		os.chown(self.filename, 0, 0)
+		os.chmod(self.filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+		self._cursor = self._db.cursor()  # type: sqlite3.Cursor
+		return self
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		self._db.commit()
+		self._db.close()
+		self._cursor = None
+		self._db = None
+
+	def execute(self, query, params=None):  # type: (str, str) -> sqlite3.Cursor
+		if params:
+			return self._cursor.execute(query, params)
+		else:
+			return self._cursor.execute(query)
+
+	def fetchone(self):  # type: () -> None
+		return self._cursor.fetchone()
+
+
 class SqliteQueue(object):
 	"""
 	Holds items (user DNs) in a FIFO queue.
 	"""
 	IDX_DB_DN = 0
 
-	def __init__(self, logger, filename=None):
+	def __init__(self, logger, filename=None):  # type: (Any, Optional[str]) -> None
 		self.filename = filename if filename is not None else FN_NETLOGON_USER_QUEUE
 		self.logger = logger
-		self.db = None
-		self.cursor = None
 		self.setup_database()
 
-	def setup_database(self):
-		# close open db handle
-		if self.db:
-			try:
-				self.db.close()
-			except sqlite3.Error:
-				pass
-			self.cursor = None
-			self.db = None
+	def setup_database(self):  # type: () -> None
+		"""Open DB connection, optionally create it, create cursor."""
 
 		# create directory if missing
 		if not os.path.exists(os.path.dirname(self.filename)):
 			self.logger.error('directory %r does not exist' % (os.path.dirname(self.filename),))
 			raise SqliteQueueException('Cannot open database - directory %r does not exist' % (os.path.dirname(self.filename),))
 
-		# open connection
 		if not os.path.exists(self.filename):
 			self.logger.warn('database does not exist - creating new one (filename=%r)' % (self.filename,))
-		self.db = sqlite3.connect(self.filename)
-		os.chown(self.filename, 0, 0)
-		os.chmod(self.filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
-		self.logger.debug('opened %r successfully' % (self.filename,))
-
-		self.cursor = self.db.cursor()
 
 		# create table if missing
-		self.cursor.execute(u'CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)')
+		with Cursor(self.logger, self.filename) as cursor:
+			cursor.execute(u'CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)')
 
-		# save all changes to database
-		self.db.commit()
-
-	def truncate_database(self):
+	def truncate_database(self):  # type: () -> None
 		# SQLITE does not have a TRUNCATE TABLE command, but DELETE FROM
 		# without WHERE is optimized to delete the entire table without
 		# iterating over its rows.
-		self.cursor.execute(u'DELETE FROM user_queue')
-		self.cursor.execute(u'VACUUM')
-		self.db.commit()
+		with Cursor(self.logger, self.filename) as cursor:
+			cursor.execute(u'DELETE FROM user_queue')
+			cursor.execute(u'VACUUM')
 
-	def commit(self):
-		"""
-		Commit outstanding changes to DB.
-		"""
-		self.db.commit()
-
-	def add(self, userdn, username=None, db_commit=True):  # type: (str, Optional[bool]) -> None
+	def add(self, users):  # type: (List[Tuple[str, str]]) -> None
 		"""
 		Adds a user DN to user queue if not already existant. If the user DN
 		already exists in queue, the queue item remains unchanged.
 		userdn and username have to be UTF-8 encoded strings or unicode strings.
+
+		:param users - list of 2-tuples: (userdn, username)
 		"""
-		if isinstance(userdn, str):
-			userdn = userdn.decode('utf-8')
-		if isinstance(username, str):
-			username = username.decode('utf-8')
-		if username is not None:
-			self.cursor.execute(u'insert or replace into user_queue (id, userdn, username) VALUES ((select id from user_queue where userdn = ?), ?, ?)', (userdn, userdn, username))
-		else:
-			self.cursor.execute(u'insert or replace into user_queue (id, userdn, username) VALUES ((select id from user_queue where userdn = ?), ?, (select username from user_queue where userdn = ?))', (userdn, userdn, userdn))
-		if db_commit:
-			self.db.commit()
-		self.logger.debug('added/updated entry: userdn=%r  username=%s' % (userdn, username))
+		with Cursor(self.logger, self.filename) as cursor:
+			for userdn, username in users:
+				if isinstance(userdn, str):
+					userdn = userdn.decode('utf-8')
+				if isinstance(username, str):
+					username = username.decode('utf-8')
+				if username is not None:
+					cursor.execute(
+						u'insert or replace into user_queue (id, userdn, username) VALUES '
+						u'((select id from user_queue where userdn = ?), ?, ?)',
+						(userdn, userdn, username)
+					)
+				else:
+					cursor.execute(
+						u'insert or replace into user_queue (id, userdn, username) VALUES '
+						u'((select id from user_queue where userdn = ?), ?, '
+						u'(select username from user_queue where userdn = ?))',
+						(userdn, userdn, userdn)
+					)
+		self.logger.debug('added/updated entries: {}'.format(', '.join([
+			'username={!r}'.format(username) if username else 'userdn={!r}'.format(userdn)
+			for userdn, username in users
+		])))
 
 	def remove(self, userdn):  # type: (str) -> None
 		"""
@@ -144,8 +165,8 @@ class SqliteQueue(object):
 		"""
 		if isinstance(userdn, str):
 			userdn = userdn.decode('utf-8')
-		self.cursor.execute(u'DELETE FROM user_queue WHERE userdn=?', (userdn,))
-		self.db.commit()
+		with Cursor(self.logger, self.filename) as cursor:
+			cursor.execute(u'DELETE FROM user_queue WHERE userdn=?', (userdn,))
 		self.logger.debug('removed entry: userdn=%r' % (userdn,))
 
 	def query_next_user(self):  # type: (None) -> [str]
@@ -154,8 +175,9 @@ class SqliteQueue(object):
 		"""
 		query = u'SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1'
 		self.logger.debug('starting sqlite query: %r' % (query,))
-		self.cursor.execute(query)
-		row = self.cursor.fetchone()
+		with Cursor(self.logger, self.filename) as cursor:
+			cursor.execute(query)
+			row = cursor.fetchone()
 		if row is not None:
 			userdn = row[0]
 			if userdn is not None:
@@ -164,5 +186,5 @@ class SqliteQueue(object):
 			if username is not None:
 				username = username.encode('utf-8')
 			self.logger.debug('next entry: userdn=%r' % (userdn,))
-			return (userdn, username)
-		return (None, None)
+			return userdn, username
+		return None, None
