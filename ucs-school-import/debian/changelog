@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-30) unstable; urgency=medium
+
+  * Bug #46571: change DN in uniqueness store also in dry-run
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 04 Apr 2018 13:12:33 +0200
+
 ucs-school-import (15.0.3-29) unstable; urgency=low
 
   * Bug #46754: add recursive dependency solver for formatting ImportUser
