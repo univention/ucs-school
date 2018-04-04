@@ -17,9 +17,6 @@ from essential.importusers import Person
 
 
 class Test(CLI_Import_v2_Tester):
-	ou_B = None
-	ou_C = None
-
 	def test(self):
 		source_uid_success = 'sourceUID-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
@@ -155,16 +152,16 @@ class Test(CLI_Import_v2_Tester):
 			person.update(birthday=person.old_birthday)
 			person.verify()
 
-		fake_ou = uts.random_username()
 		self.log.info(
 			'*** 4.1 Importing (move %r -> %r) of existing users of each role with birthday in bad format.',
-			self.ou_A.name, fake_ou
+			self.ou_A.name, self.ou_B.name
 		)
 		self.log.info('*** 4.1 should fail for non-dry-run..')
 		config.update_entry('dry_run', False)
 		for person in person_list_success:
 			person.old_birthday = person.birthday
-			person.update(school=fake_ou, birthday='18160402')
+			person.old_school = person.school
+			person.update(school=self.ou_B.name, birthday='18160402')
 
 		fn_csv = self.create_csv_file(person_list=person_list_success, mapping=config['csv']['mapping'])
 		fn_config = self.create_config_json(config=config)
@@ -174,20 +171,25 @@ class Test(CLI_Import_v2_Tester):
 		except ImportException:
 			self.log.info('OK: import failed.')
 
+		# Import aborted after 1st person, others didn't change school.
+		for person in person_list_success[1:]:
+			person.update(school=person.old_school)
+
 		for person in person_list_success:
-			person.update(school=self.ou_A.name, birthday=person.old_birthday)
+			person.update(birthday=person.old_birthday, school_classes={})  # As the import aborts, school classes may
+			# not have been created in the new school, but old ones may have been removed already. So lets ignore them.
 			person.verify()
 
-		fake_ou = uts.random_username()
 		self.log.info(
-			'*** 4.2 Importing (move %r -> %r) of existing users of each role with birthday in bad format.',
-			self.ou_A.name, fake_ou
+			'*** 4.2 Importing (move %r/%r -> %r) of existing users of each role with birthday in bad format.',
+			self.ou_A.name, self.ou_B.name, self.ou_C.name
 		)
 		self.log.info('*** 4.2 should fail for dry-run..')
 		config.update_entry('dry_run', True)
 		for person in person_list_success:
 			person.old_birthday = person.birthday
-			person.update(school=fake_ou, birthday='19010203')
+			person.old_school = person.school
+			person.update(school=self.ou_C.name, birthday='19010203')
 
 		fn_csv = self.create_csv_file(person_list=person_list_success, mapping=config['csv']['mapping'])
 		fn_config = self.create_config_json(config=config)
@@ -198,7 +200,7 @@ class Test(CLI_Import_v2_Tester):
 			self.log.info('OK: import failed.')
 
 		for person in person_list_success:
-			person.update(school=self.ou_A.name, birthday=person.old_birthday)
+			person.update(school=person.old_school, birthday=person.old_birthday)
 			person.verify()
 
 
