@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-netlogon-user-logonscripts
+fix: 13.0.2-13A~4.2.0.201804041750
+desc: |
+ * A database locking error is now avoided (Bug #46778).
+bug: [46778]
