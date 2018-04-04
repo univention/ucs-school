@@ -658,10 +658,10 @@ class QueueHandler():
 						self.user_queue.remove(user_dn)  # remove user from queue
 						self.handle_user_change(user_dn, username)
 					except (SystemExit, KeyboardInterrupt):
-						self.user_queue.add(user_dn, username)  # handling may be incomplete, readd user dn to queue
+						self.user_queue.add([(user_dn, username)])  # handling may be incomplete, readd user dn to queue
 						self.shutdown_requested = True
 					except Exception as exc:
-						self.user_queue.add(user_dn, username)  # handling failed, readd user dn to queue
+						self.user_queue.add([(user_dn, username)])  # handling failed, readd user dn to queue
 						Log.error('An error occured while processing "%s": %r', user_dn, exc)
 						Log.debug('EXCEPTION:\n%s', traceback.format_exc())
 						time.sleep(self.DELAY_ON_ERROR)
