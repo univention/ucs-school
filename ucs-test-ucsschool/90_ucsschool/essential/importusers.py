@@ -145,6 +145,7 @@ class Person(object):
 		return self.active
 
 	def _set_school(self, school):
+		old_school = self.school
 		self.school = school
 		if len(self.schools) == 1:
 			self.schools = [self.school]
@@ -152,6 +153,8 @@ class Person(object):
 			self.schools.append(self.school)
 		self.school_base = self.make_school_base()
 		self.dn = self.make_dn()
+		if old_school not in self.schools and old_school in self.school_classes:
+			self.move_school_classes(old_school, self.school)
 
 	def update(self, **kwargs):
 		for key in kwargs:
@@ -171,6 +174,16 @@ class Person(object):
 				setattr(self, key, kwargs[key])
 			else:
 				print 'ERROR: cannot update Person(): unknown option %r=%r' % (key, kwargs[key])
+
+	def move_school_classes(self, old_school, new_school):
+		assert new_school in self.schools
+
+		for school, classes in self.school_classes.items():
+			if school == old_school:
+				new_classes = [cls.replace('{}-'.format(old_school), '{}-'.format(new_school)) for cls in classes]
+				self.school_classes[new_school] = new_classes
+
+		self.school_classes.pop(old_school, None)
 
 	def map_to_dict(self, value_map):
 		result = {
