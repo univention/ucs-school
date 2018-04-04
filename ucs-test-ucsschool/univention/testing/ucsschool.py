@@ -55,7 +55,24 @@ import univention.testing.udm as udm_test
 import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib import object_type_to_object_classes
+try:
+	from ucsschool.lib import object_type_to_object_classes
+except ImportError:
+	# fallback in case ucsschool.lib is a little bit older
+	object_type_to_object_classes = {
+		'administrator_group': [],
+		'administrator_user': [],
+		'class_share': [],
+		'computer_room': [],
+		'exam_student': [],
+		'school_class': [],
+		'staff': [],
+		'student': [],
+		'teacher': [],
+		'teacher_and_staff': [],
+		'work_group': [],
+	}
+
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.models.group import ComputerRoom
