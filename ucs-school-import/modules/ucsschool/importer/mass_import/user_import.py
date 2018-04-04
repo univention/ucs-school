@@ -325,6 +325,7 @@ class UserImport(object):
 			self.logger.info("Dry run: would move %s now from %r to %r.", user, user.school, imported_user.school)
 			user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
 			user.run_checks(check_username=False)
+			user._unique_ids_replace_dn(user.dn, imported_user.dn)
 			res = True
 		else:
 			res = user.change_school(imported_user.school, self.connection)

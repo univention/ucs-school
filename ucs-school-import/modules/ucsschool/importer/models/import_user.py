@@ -214,11 +214,16 @@ class ImportUser(User):
 		res = super(ImportUser, self).change_school(school, lo)
 		if res:
 			# rewrite self._unique_ids, replacing old DN with new DN
-			for category, entries in self._unique_ids.items():
-				for value, dn in entries.items():
-					if dn == old_dn:
-						self._unique_ids[category][value] = self.dn
+			self._unique_ids_replace_dn(old_dn, self.dn)
 		return res
+
+	@classmethod
+	def _unique_ids_replace_dn(cls, old_dn, new_dn):
+		"""Change a DN in unique_ids store."""
+		for category, entries in cls._unique_ids.items():
+			for value, dn in entries.items():
+				if dn == old_dn:
+					cls._unique_ids[category][value] = new_dn
 
 	def check_schools(self, lo, additional_schools=None):
 		"""
