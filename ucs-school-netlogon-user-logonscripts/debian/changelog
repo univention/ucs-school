@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-13) unstable; urgency=low
+
+  * Bug #46778: prevent locked DB by closing it after every use
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 04 Apr 2018 17:49:45 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.2-12) unstable; urgency=low
 
   * Bug #45544: remove unnecessary wait() (and prevent potential deadlock in
