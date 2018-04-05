@@ -119,7 +119,7 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 10.0.8 ; then
 	fi
 fi
 
-if ucr_is_true listener/module/ucsschool_admin_object_type/deactivate; then
+if is_ucr_true listener/module/ucsschool_admin_object_type/deactivate; then
 	deb-systemd-invoke restart univention-directory-listener
 fi
 
