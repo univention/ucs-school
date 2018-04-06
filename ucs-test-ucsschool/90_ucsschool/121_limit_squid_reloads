@@ -52,8 +52,9 @@ def main():
 			reloads = re.findall(RELOAD_PATTERN, log.read())
 		print("*** reloads:\n{}\n***".format("\n".join(reloads)))
 		reload_count = len(reloads)
-		if reload_count != 3:
-			utils.fail("Wrong number of reloads ({}) were triggered.".format(reload_count))
+		expected_counts = (2,3)
+		if reload_count not in expected_counts:
+			utils.fail("Wrong number of reloads ({}) were triggered (expected counts: {}".format(reload_count, ' or '.join([str(x) for x in expected_counts])))
 		print("*** OK: Squid was reloaded {} times.".format(reload_count))
 
 
