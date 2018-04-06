@@ -1,3 +1,12 @@
+ucs-school-import (16.0.1-16) unstable; urgency=low
+
+  * Bug #45379: handle options change in hook
+  * handle hook import error in case it was distributed via LDAP, but the
+    ucsschool.lib has not been updated yet
+  * remove listener as options change is now handled by hook
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 06 Apr 2018 09:35:36 +0200
+
 ucs-school-import (16.0.1-15) unstable; urgency=medium
 
   * Bug #45379: fix typo
