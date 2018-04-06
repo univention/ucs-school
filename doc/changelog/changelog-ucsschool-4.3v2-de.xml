@@ -78,7 +78,7 @@ feedback@univention.de
 			<section id="changelog:ucsschool:ucs-school-radius-8021x" lang="en">
 				<title>Source package ucs-school-radius-802.1x</title>
 				<itemizedlist>
-					<listitem><para>authentication backend now connects to the local LDAP server (usually a UCS slave domaincontroller) instead of the master domaincontroller (<u:bug>46531</u:bug>).</para></listitem>
+					<listitem><para>The authentication backend now connects to the local LDAP server (usually a UCS slave domaincontroller) instead of the master domaincontroller (<u:bug>46531</u:bug>).</para></listitem>
 
 				</itemizedlist>
 			</section>
