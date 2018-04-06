@@ -46,7 +46,7 @@ from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import (
-	BadPassword, EmptyFormatResultError,
+	BadPassword, EmptyFormatResultError, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
 	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
 	UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
@@ -907,13 +907,11 @@ class ImportUser(User):
 				continue
 			if prop_used_in_scheme not in self._prop_providers and prop_used_in_scheme not in self.udm_properties:
 				# nothing we can do
-				self.logger.error(
-					'Cannot find dependency %r for formatting of property %r with scheme %r.',
-					prop_used_in_scheme,
-					prop_to_format,
-					scheme,
+				raise InitialisationError(
+					'Cannot find data provider for dependency {!r} for formatting of property {!r} with scheme '
+					'{!r}.'.format(prop_used_in_scheme, prop_to_format, scheme),
+					entry_count=self.entry_count, import_user=self
 				)
-				continue
 
 			try:
 				method_name = self._prop_providers[prop_used_in_scheme]
@@ -921,9 +919,11 @@ class ImportUser(User):
 				method_name = "prepare_udm_properties"
 			if method_name in self._used_methods[prop_to_format]:
 				# already ran make_<method_name>() for his formatting job
-				self.logger.warn("Recursion detected when resolving formatting dependencies for %r.", prop_to_format)
-				self.logger.debug("Tried running %s(), although it has already run for %r.", method_name, prop_to_format)
-				continue
+				self.logger.error("Tried running %s(), although it has already run for %r.", method_name, prop_to_format)
+				raise InitialisationError(
+					'Recursion detected when resolving formatting dependencies for {!r}.'.format(prop_to_format),
+					entry_count=self.entry_count, import_user=self
+				)
 			self._used_methods[prop_to_format].append(method_name)
 			res = getattr(self, method_name)()
 		self._used_methods.pop(prop_to_format, None)
