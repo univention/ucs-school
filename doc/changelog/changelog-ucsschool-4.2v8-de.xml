@@ -84,6 +84,13 @@ feedback@univention.de
 
 				</itemizedlist>
 			</section>
+			<section id="changelog:ucsschool:univention-management-console-module-selective-udm" lang="en">
+				<title>Source package univention-management-console-module-selective-udm</title>
+				<itemizedlist>
+					<listitem><para>The error return codes when joining computers have been improved (<u:bug>45708</u:bug>).</para></listitem>
+
+				</itemizedlist>
+			</section>
 			<section id="changelog:ucsschool:ucs-school-radius-8021x" lang="en">
 				<title>Source package ucs-school-radius-802.1x</title>
 				<itemizedlist>
