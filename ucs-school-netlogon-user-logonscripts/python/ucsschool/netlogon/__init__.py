@@ -30,15 +30,20 @@
 import sqlite3
 import os
 import stat
+import time
+from collections import OrderedDict
 import univention.config_registry
 
 
+ucr = univention.config_registry.ConfigRegistry()
+ucr.load()
+
 FN_NETLOGON_USER_QUEUE = '/var/spool/ucs-school-netlogon-user-logonscripts/user_queue.sqlite'
+time_me = ucr.is_true('ucsschool/userlogon/benchmark')
 
 
 def get_netlogon_path_list():
 	if not get_netlogon_path_list.script_path:
-		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		result = []
 		ucsschool_netlogon_path = ucr.get('ucsschool/userlogon/netlogon/path', '').strip().rstrip('/')
@@ -115,14 +120,14 @@ class SqliteQueue(object):
 			self.logger.warn('database does not exist - creating new one (filename=%r)' % (self.filename,))
 
 		# create table if missing
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			cursor.execute(u'CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)')
 
 	def truncate_database(self):  # type: () -> None
 		# SQLITE does not have a TRUNCATE TABLE command, but DELETE FROM
 		# without WHERE is optimized to delete the entire table without
 		# iterating over its rows.
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			cursor.execute(u'DELETE FROM user_queue')
 			cursor.execute(u'VACUUM')
 
@@ -134,7 +139,7 @@ class SqliteQueue(object):
 
 		:param users - list of 2-tuples: (userdn, username)
 		"""
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			for userdn, username in users:
 				if isinstance(userdn, str):
 					userdn = userdn.decode('utf-8')
@@ -165,7 +170,7 @@ class SqliteQueue(object):
 		"""
 		if isinstance(userdn, str):
 			userdn = userdn.decode('utf-8')
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			cursor.execute(u'DELETE FROM user_queue WHERE userdn=?', (userdn,))
 		self.logger.debug('removed entry: userdn=%r' % (userdn,))
 
@@ -175,7 +180,7 @@ class SqliteQueue(object):
 		"""
 		query = u'SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1'
 		self.logger.debug('starting sqlite query: %r' % (query,))
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			cursor.execute(query)
 			row = cursor.fetchone()
 		if row is not None:
@@ -188,3 +193,42 @@ class SqliteQueue(object):
 			self.logger.debug('next entry: userdn=%r' % (userdn,))
 			return userdn, username
 		return None, None
+
+
+class Timer(object):
+	def __init__(self):
+		self.timer_one = OrderedDict()
+		self.timer_total = OrderedDict()
+		self.timer_last = 0.0
+
+	def add_timing(self, name):
+		if time_me:
+			now = time.time()
+			if not self.timer_last:
+				self.timer_last = now
+			time_diff = now - self.timer_last
+			self.timer_last = now
+			self.timer_one[name] = time_diff
+			try:
+				self.timer_total[name] += time_diff
+			except KeyError:
+				self.timer_total[name] = time_diff
+
+	def reset_timer(self):
+		self.timer_one.clear()
+		self.timer_last = 0.0
+
+	def sprint_timer_one(self):
+		return self._sprint_timer(self.timer_one)
+
+	def sprint_timer_total(self):
+		return self._sprint_timer(self.timer_total)
+
+	@staticmethod
+	def _sprint_timer(timer):
+		res = []
+		key_len = max(len(k) for k in timer.keys())
+		template = '{:_<%d}: {:f}' % (key_len,)
+		for name, time_diff in timer.items():
+			res.append(template.format(name, time_diff))
+		return res

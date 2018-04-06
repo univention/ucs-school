@@ -37,7 +37,7 @@ import univention.debug
 import univention.admin.modules
 from ldap.filter import filter_format
 from univention.admin.uldap import getMachineConnection
-from ucsschool.netlogon import get_netlogon_path_list, SqliteQueue
+from ucsschool.netlogon import get_netlogon_path_list, SqliteQueue, Timer
 
 univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")
@@ -53,6 +53,7 @@ filter = '(|%s%s%s)' % (subfilter_users, subfilter_groups, subfilter_shares)
 attributes = []
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
+time_me = listener.configRegistry.is_true('ucsschool/userlogon/benchmark')
 
 
 class Log(object):
@@ -81,6 +82,9 @@ class Log(object):
 		cls.emit(univention.debug.WARN, msg)
 
 
+timer = Timer()
+
+
 def relevant_change(old, new, attr_list):
 	"""
 	Returns True, if any attribute specified in attr_list differs between old and new, otherwise False.
@@ -95,9 +99,14 @@ def handle_share(dn, new, old, lo, user_queue):
 	"""
 	Handles changes of share objects by triggering group changes for the relevant groups.
 	"""
+	timer.add_timing('handle_share start')
+
 	def add_group_change_to_queue(gidNumber):
+		timer.add_timing('add_group_change_to_queue start')
+
 		if not gidNumber:
 			Log.warn('handle_share: no gidNumber specified')
+			timer.add_timing('add_group_change_to_queue end')
 			return
 		filter_s = filter_format('(gidNumber=%s)', (gidNumber,))
 		Log.info('handle_share: looking for %s' % (filter_s,))
@@ -107,9 +116,11 @@ def handle_share(dn, new, old, lo, user_queue):
 			grp = grplist[0]
 		except (univention.admin.uexceptions.noObject, IndexError):
 			Log.info('handle_share: cannot find group with %s - may have already been deleted' % (filter_s,))
+			timer.add_timing('add_group_change_to_queue end')
 			return
 		Log.info('handle_share: trigger group change for %s' % (grp.dn,))
 		handle_group(grp.dn, grp.oldattr, {}, lo, user_queue)
+		timer.add_timing('add_group_change_to_queue end')
 
 	if not old and new:
 		# update all members of new group
@@ -125,16 +136,19 @@ def handle_share(dn, new, old, lo, user_queue):
 		)
 		if not relevant_change(old, new, attr_list):
 			Log.info('handle_share: no relevant attribute change')
+			timer.add_timing('handle_share end')
 			return
 		# update all members of old and new group
 		add_group_change_to_queue(old.get('univentionShareGid', [None])[0])
 		add_group_change_to_queue(new.get('univentionShareGid', [None])[0])
+	timer.add_timing('handle_share end')
 
 
 def handle_group(dn, new, old, lo, user_queue):
 	"""
 	Handles group changes by adding relevant user object DNs to the user queue.
 	"""
+	timer.add_timing('handle_group start')
 	old_members = set(old.get('uniqueMember', []))
 	new_members = set(new.get('uniqueMember', []))
 	Log.info('handle_group: dn: %s' % (dn,))
@@ -142,12 +156,14 @@ def handle_group(dn, new, old, lo, user_queue):
 	# get set of users that are NOT IN BOTH user sets (==> the difference between both sets)
 	# "uid=" to filter out computer or group objects (computers in groups resp. groups in groups)
 	user_queue.add([(user_dn, None) for user_dn in old_members.symmetric_difference(new_members) if user_dn.startswith('uid=')])
+	timer.add_timing('handle_group end')
 
 
 def handle_user(dn, new, old, lo, user_queue):
 	"""
 	Handles user changes by adding the DN of the user object to the user queue.
 	"""
+	timer.add_timing('handle_user start')
 	Log.info('handle_user: add %s' % (dn,))
 	if old and new:
 		attr_list = (
@@ -160,15 +176,21 @@ def handle_user(dn, new, old, lo, user_queue):
 			return
 	username = new.get('uid', old.get('uid', [None]))[0]
 	user_queue.add([(dn, username)])
+	timer.add_timing('handle_user end')
 
 
 def handler(dn, new, old):
+	timer.reset_timer()
+	timer.add_timing('handler start')
+
 	attrs = new if new else old
 
 	listener.setuid(0)
 	try:
 		lo = getMachineConnection()[0]
 		user_queue = SqliteQueue(logger=Log)
+
+		timer.add_timing('handler init')
 
 		# identify object
 		if users_user_module.identify(dn, attrs):
@@ -196,6 +218,10 @@ def handler(dn, new, old):
 			os.kill(pid, signal.SIGUSR1)
 	finally:
 		listener.unsetuid()
+
+	timer.add_timing('handler done')
+	if time_me:
+		Log.process('Timer one:\n{!s}'.format('\n'.join(timer.sprint_timer_one())))
 
 
 def initialize():
@@ -239,3 +265,8 @@ def clean():
 		run_daemon(['systemctl', 'start', 'ucs-school-netlogon-user-logonscripts.service'])
 	finally:
 		listener.unsetuid()
+
+
+def postrun():
+	if time_me:
+		Log.process('Timer total:\n{!s}'.format('\n'.join(timer.sprint_timer_total())))
