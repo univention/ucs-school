@@ -63,6 +63,8 @@ _ = Translation('python-ucs-school').translate
 
 
 # ucsschool.lib class _meta.object_type (ucsschoolObjectType) -> objectClass
+#
+# please update dict at top of UDM hook ucs_school_type.py if this dict is updated
 object_type_to_object_classes = {
 	'administrator_group': ('ucsschoolAdministratorGroup',),  # if 'ucsschoolAdministratorGroup' in module.options / OCs
 	'administrator_user': ('ucsschoolAdministrator',),  # if 'ucsschoolAdministrator' in module.options / OCs
