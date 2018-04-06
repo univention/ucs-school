@@ -1,3 +1,10 @@
+ucs-test-ucsschool (4.0.4-81) unstable; urgency=low
+
+  * Bug #46754: test no user is created or deleted in case of dependency
+    recursion
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 06 Apr 2018 15:44:24 +0200
+
 ucs-test-ucsschool (4.0.4-80) unstable; urgency=low
 
   * Bug #46771: fixed correct number of squid reloads
