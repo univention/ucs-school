@@ -14,7 +14,7 @@ from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
-from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
 from essential.importusers import Person
 
 
@@ -27,6 +27,29 @@ class Test(CLI_Import_v2_Tester):
 
 	def test(self):
 		source_uid = '{}-{:02}-{:02}'.format(random.randint(1900, 2016), random.randint(1, 12), random.randint(1, 27))
+		config = copy.deepcopy(self.default_config)
+		config.update_entry('sourceUID', source_uid)
+		config.update_entry('csv:mapping:Benutzername', 'name')
+		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('user_role', None)
+		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
+
+		self.log.info('*** 1 Importing (create) a new user of each role.')
+		person_list_success = []
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			person = Person(self.ou_A.name, role)
+			person.update(record_uid=person.username, source_uid=source_uid)
+			person_list_success.append(person)
+		fn_csv = self.create_csv_file(person_list=person_list_success, mapping=config['csv']['mapping'])
+		fn_config = self.create_config_json(config=config)
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		for person in person_list_success:
+			person.verify()
+		self.log.info('OK: import succeeded.')
+
+		self.log.info('*** 2 Importing a user from each role with same SourceUID but a recursion in scheme...')
+
 		config = copy.deepcopy(self.default_config)
 		del config['csv']['mapping']
 		config.update_entry('csv:mapping:Nach', 'lastname')
@@ -44,7 +67,6 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
-		self.log.info('Importing a user from each role...')
 		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			person = Person(self.ou_A.name, role)
@@ -54,7 +76,7 @@ class Test(CLI_Import_v2_Tester):
 				birthday=None,  # emtpy, so that it will be generated from scheme
 				record_uid=None,
 				mail=None,
-				name=None,
+				username=None,
 				firstname=None,
 				school_classes={},  # no mapping for auto generated classes
 			)
@@ -62,35 +84,25 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.save_ldap_status()
-		self.run_import(['-c', fn_config])
+		try:
+			self.run_import(['-c', fn_config])
+			self.fail('Import did not fail.')
+		except ImportException:
+			self.log.info('*** OK: import failed.')
+
+		# import must fail before creating or deleting any users
 		for person in person_list:
-			firstname = 'fn-{}'.format(person.lastname[1:6])
-			birthday = source_uid
-			email = '{}@{}'.format('{}.{}'.format(firstname, person.lastname).lower(), self.maildomain)
-			name_length = username_max_length.get(person.role, username_max_length['default'])
-			name = firstname.lower().replace('-', '')[:name_length]
-			record_uid = '{}.{}'.format(email, name[:4])
-			person.street = '{}-'.format(firstname)
-			person.phone = birthday
-			person.room = '{}-{}'.format(person.street, email[:5])
-			person.update(
-				firstname=firstname,
-				birthday=birthday,
-				mail=email,
-				username=name,
-				record_uid=record_uid,
+			utils.verify_ldap_object(
+				person.dn,
+				strict=False,
+				should_exist=False
 			)
-		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
-		self.check_new_and_removed_users(4, 0)
-		for person in person_list:
-			person.verify()
-			utils.verify_ldap_object(person.dn, {
-				'street': [person.street],
-				'telephoneNumber': [person.phone],
-				'roomNumber': [person.room],
-			})
-		self.log.info('*** OK: All %r users were created correctly.', len(person_list))
+		for person in person_list_success:
+			utils.verify_ldap_object(
+				person.dn,
+				strict=False,
+				should_exist=True
+			)
 
 
 if __name__ == '__main__':
