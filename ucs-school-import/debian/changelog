@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-17) unstable; urgency=low
+
+  * Bug #42137: raise exception instead of log warning
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 06 Apr 2018 15:37:26 +0200
+
 ucs-school-import (16.0.1-16) unstable; urgency=low
 
   * Bug #45379: handle options change in hook
