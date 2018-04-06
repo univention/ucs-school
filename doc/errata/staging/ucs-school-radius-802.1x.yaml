@@ -5,5 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-radius-802.1x
 fix: 6.0.1-4A~4.2.0.201803281617
 desc: |
- * The authentication backend now connects to the local LDAP server (usually a dc slave) instead of the dc master (Bug #46756).
+ * The authentication backend now connects to the local LDAP server (usually a UCS slave domaincontroller) instead of the master domaincontroller (Bug #46756).
 bug: [46756]

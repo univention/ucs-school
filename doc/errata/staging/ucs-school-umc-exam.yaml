@@ -7,7 +7,7 @@ fix: 7.0.4-21A~4.2.0.201803231033
 desc: |
  * The exam-and-room-cleanup script now uses the FQDN for the UMC server connection to avoid certificate verification errors. It also safely handles missing directories (Bug #46360).
  * When uploading files with Internet Explorer, the files were not always correctly saved in the local
-   file system by the UMC module "Exam Mode" and were therefore not distributed to the users. This error
+   file system by the UMC module <guimenu>Start exam</guimenu> and were therefore not distributed to the users. This error
    has now been corrected. (Bug #46709).
  * The new UCR variable <envar>ucsschool/exam/user/homedir/autoremove</envar> has been added to control
    whether the exam users' home directories are automatically deleted after the exam mode has ended.
