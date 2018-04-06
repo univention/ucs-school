@@ -6,7 +6,7 @@ src: ucs-school-umc-exam
 fix: 8.0.1-5A~4.3.0.201803231039
 desc: |
  * When uploading files with Internet Explorer, the files were not always correctly saved in the local
-   file system by the UMC module "Exam Mode" and were therefore not distributed to the users. This error
+   file system by the UMC module <guimenu>Start Exam</guimenu> and were therefore not distributed to the users. This error
    has now been corrected. (Bug #46710).
  * The new UCR variable <envar>ucsschool/exam/user/homedir/autoremove</envar> has been added to control
    whether the exam users' home directories are automatically deleted after the exam mode has ended.
