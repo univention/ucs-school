@@ -1,3 +1,11 @@
+ucs-school-import (16.0.1-18) unstable; urgency=low
+
+  * Bug #46799: store cmdline user import summary and passwords in separate
+    folders
+  * enable password CSV file generation by default
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 09 Apr 2018 16:56:32 +0200
+
 ucs-school-import (16.0.1-17) unstable; urgency=low
 
   * Bug #42137: raise exception instead of log warning
