@@ -54,6 +54,7 @@ attributes = []
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
 time_me = listener.configRegistry.is_true('ucsschool/userlogon/benchmark')
+lo = None
 
 
 class Log(object):
@@ -180,17 +181,22 @@ def handle_user(dn, new, old, lo, user_queue):
 
 
 def handler(dn, new, old):
+	global lo
+
 	timer.reset_timer()
 	timer.add_timing('handler start')
 
 	attrs = new if new else old
 
+	timer.add_timing('handler init 0')
 	listener.setuid(0)
 	try:
-		lo = getMachineConnection()[0]
+		timer.add_timing('handler init 1')
+		if not lo:
+			lo = getMachineConnection()[0]
+		timer.add_timing('handler init 2')
 		user_queue = SqliteQueue(logger=Log)
-
-		timer.add_timing('handler init')
+		timer.add_timing('handler init 3')
 
 		# identify object
 		if users_user_module.identify(dn, attrs):
@@ -267,6 +273,25 @@ def clean():
 		listener.unsetuid()
 
 
+def prerun():
+	global lo
+	timer.add_timing('prerun start')
+	if not lo:
+		listener.setuid(0)
+		try:
+			lo = getMachineConnection()[0]
+		finally:
+			listener.unsetuid()
+	timer.add_timing('prerun end')
+
+
 def postrun():
+	global lo
+	timer.add_timing('postrun start')
+	if lo:
+		lo.unbind()
+		lo = None
+	timer.add_timing('postrun end')
+
 	if time_me:
 		Log.process('Timer total:\n{!s}'.format('\n'.join(timer.sprint_timer_total())))
