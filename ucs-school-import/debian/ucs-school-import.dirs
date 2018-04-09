@@ -2,6 +2,8 @@ usr/share/ucs-school-import/scripts
 var/log/univention/ucs-school-purge-expired-users
 var/lib/ucs-school-import
 var/lib/ucs-school-import/configs
+var/lib/ucs-school-import/passwords
+var/lib/ucs-school-import/summary
 usr/lib/univention-install
 usr/share/ucs-school-import/configs
 usr/share/ucs-school-import/hooks/user_create_pre.d

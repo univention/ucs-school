@@ -1,8 +1,10 @@
-#!/usr/bin/make -f
+# -*- coding: utf-8 -*-
 #
-# UCS@school import
-#
-# Copyright 2007-2018 Univention GmbH
+# Univention UCS@school
+"""
+Diverse helper functions.
+"""
+# Copyright 2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,32 +31,33 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-PO_FILES := $(shell find udm_hook -name '*.po')
-MO_FILES := $(PO_FILES:%.po=%.mo)
+import os
+import os.path
+import pwd
+import grp
 
-%.mo:	%.po
-	msgfmt --check -o $@ $<
 
-override_dh_auto_build: $(MO_FILES)
-	dh_auto_build
+def mkdir_p(dir_name, user, group, mode):
+	"""
+	Recursively create directories (like "mkdir -p").
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
+	:param str dir_name: path to create
+	:param str user: username of owner of new directories
+	:param str group: group name for ownership of new directories
+	:param octal mode: permission bits to set for new directories
+	:returns: None
+	:rtype: None
+	"""
+	if not dir_name:
+		return
 
-override_dh_fixperms:
-	dh_fixperms
-	chmod 700 debian/ucs-school-import/var/lib/ucs-school-import/passwords
-	chmod 700 debian/ucs-school-import/var/lib/ucs-school-import/summary
+	uid = pwd.getpwnam(user).pw_uid
+	gid = grp.getgrnam(group).gr_gid
+	parent = os.path.dirname(dir_name)
 
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-import.conffiles
-	rm -f debian/ucs-school-import-schema.conffiles
+	if not os.path.exists(parent):
+		mkdir_p(parent, user, group, mode)
 
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
-
-%:
-	dh $@ --with python_support --with systemd
+	if not os.path.exists(dir_name):
+		os.mkdir(dir_name, mode)
+		os.chown(dir_name, uid, gid)

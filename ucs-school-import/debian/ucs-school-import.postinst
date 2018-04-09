@@ -118,4 +118,8 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 10.0.8 ; then
 	fi
 fi
 
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 16.0.1-18 ; then
+	mv /var/lib/ucs-school-import/user_import_summary_*.csv /var/lib/ucs-school-import/summary >/dev/null 2>&1
+fi
+
 exit 0
