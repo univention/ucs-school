@@ -358,7 +358,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set ldapMapping="ucsschoolObjectType" \
 	--set syntax="string" \
 	--set mayChange="0" \
-	--set multivalue="0" \
+	--set multivalue="1" \
 	--set hook=UcsschoolObjectType \
 	--set disableUDMWeb=1 || die
 
@@ -376,7 +376,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set ldapMapping="ucsschoolObjectType" \
 	--set syntax="string" \
 	--set mayChange="0" \
-	--set multivalue="0" \
+	--set multivalue="1" \
 	--set hook=UcsschoolObjectType \
 	--set disableUDMWeb=1 || die
 
@@ -394,7 +394,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set ldapMapping="ucsschoolObjectType" \
 	--set syntax="string" \
 	--set mayChange="0" \
-	--set multivalue="0" \
+	--set multivalue="1" \
 	--set hook=UcsschoolObjectType \
 	--set disableUDMWeb=1 || die
 
