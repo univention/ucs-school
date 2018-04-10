@@ -1,3 +1,11 @@
+ucs-school-import (16.0.1-20) unstable; urgency=low
+
+  * Bug #45379: ucsschoolObjectType is a UDM multi-value property
+  * change object type for TeachersAndStaff from teacher_and_staff to
+    ['staff', 'teacher']
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 10 Apr 2018 17:24:15 +0200
+
 ucs-school-import (16.0.1-19) unstable; urgency=low
 
   * Bug #45379: ucsschoolObjectType is a multivalue property

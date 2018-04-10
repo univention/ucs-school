@@ -1,3 +1,11 @@
+ucs-school-lib (11.0.1-8) unstable; urgency=low
+
+  * Bug #45379: ucsschoolObjectType is a UDM multi-value property
+  * change object type for TeachersAndStaff from teacher_and_staff to
+    ['staff', 'teacher']
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 10 Apr 2018 17:24:46 +0200
+
 ucs-school-lib (11.0.1-7) unstable; urgency=low
 
   * Bug #45379: mark administrator group, add object_type to OC mapping
