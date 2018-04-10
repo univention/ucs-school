@@ -492,13 +492,13 @@ class UCSTestSchool(object):
 					utils.fail('import_user failed with exitcode %s' % retval)
 
 			if is_staff and is_teacher:
-				object_type = 'teacher_and_staff'
+				object_type = ['teacher_and_staff']
 			elif is_staff and not is_teacher:
-				object_type = 'staff'
+				object_type = ['staff']
 			elif not is_staff and is_teacher:
-				object_type = 'teacher'
+				object_type = ['teacher']
 			else:
-				object_type = 'student'
+				object_type = ['student']
 
 			if password is not None:
 				self._set_password(user_dn, password)
@@ -536,11 +536,12 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 		utils.verify_ldap_object(
 			user_dn,
-			expected_attr={'ucsschoolObjectType': [object_type]},
+			expected_attr={'ucsschoolObjectType': object_type},
 			strict=False,
 			should_exist=True,
 		)
-		has_object_classes(self.lo, user_dn, object_type_to_object_classes[object_type], True)
+		for ot in object_type:
+			has_object_classes(self.lo, user_dn, object_type_to_object_classes[ot], True)
 		return username, user_dn
 
 	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None, mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
@@ -617,7 +618,7 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 		utils.verify_ldap_object(
 			grp_dn,
-			expected_attr={'ucsschoolObjectType': [SchoolClass._meta.object_type]},
+			expected_attr={'ucsschoolObjectType': SchoolClass._meta.object_type},
 			strict=False,
 			should_exist=True,
 		)
@@ -650,7 +651,7 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 		utils.verify_ldap_object(
 			grp_dn,
-			expected_attr={'ucsschoolObjectType': [WorkGroup._meta.object_type]},
+			expected_attr={'ucsschoolObjectType': WorkGroup._meta.object_type},
 			strict=False,
 			should_exist=True,
 		)
@@ -691,7 +692,7 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 		utils.verify_ldap_object(
 			obj.dn,
-			expected_attr={'ucsschoolObjectType': [ComputerRoom._meta.object_type]},
+			expected_attr={'ucsschoolObjectType': ComputerRoom._meta.object_type},
 			strict=False,
 			should_exist=True,
 		)
