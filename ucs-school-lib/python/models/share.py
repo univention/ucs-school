@@ -143,4 +143,4 @@ class ClassShare(Share):
 			return '/home/groups/klassen/%s' % self.name
 
 	class Meta(Share.Meta):
-		object_type = 'class_share'
+		object_type = ['class_share']

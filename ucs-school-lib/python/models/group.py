@@ -240,7 +240,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 		return cls
 
 	class Meta(Group.Meta):
-		object_type = 'school_class'
+		object_type = ['school_class']
 
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
@@ -260,7 +260,7 @@ class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 		return cls
 
 	class Meta(SchoolClass.Meta):
-		object_type = 'work_group'
+		object_type = ['work_group']
 
 
 class ComputerRoom(Group, _MayHaveSchoolPrefix):
@@ -285,4 +285,4 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
 				continue
 
 	class Meta(Group.Meta):
-		object_type = 'computer_room'
+		object_type = ['computer_room']

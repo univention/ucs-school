@@ -595,7 +595,7 @@ class Student(User):
 		return groups
 
 	class Meta(User.Meta):
-		object_type = 'student'
+		object_type = ['student']
 
 
 class Teacher(User):
@@ -614,7 +614,7 @@ class Teacher(User):
 		return groups
 
 	class Meta(User.Meta):
-		object_type = 'teacher'
+		object_type = ['teacher']
 
 
 class Staff(User):
@@ -657,7 +657,7 @@ class Staff(User):
 		return groups
 
 	class Meta(User.Meta):
-		object_type = 'staff'
+		object_type = ['staff']
 
 
 class TeachersAndStaff(Teacher):
@@ -676,7 +676,7 @@ class TeachersAndStaff(Teacher):
 		return groups
 
 	class Meta(Teacher.Meta):
-		object_type = 'teacher_and_staff'
+		object_type = ['teacher_and_staff']
 
 
 class ExamStudent(Student):
@@ -695,4 +695,4 @@ class ExamStudent(Student):
 		return cls.from_dn(dn, school, lo)
 
 	class Meta(Student.Meta):
-		object_type = 'exam_student'
+		object_type = ['exam_student']
