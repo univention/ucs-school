@@ -178,7 +178,7 @@ class UcsSchoolObjectTypeMigration(object):
 				logger.info('Looking in school {} for objects of type {}...'.format(school, cls.__name__))
 				objs = cls.get_all(lo, school, '(!(ucsschoolObjectType=*))')
 				for obj in objs:
-					object_types = [obj._meta.object_type]
+					object_types = obj._meta.object_type
 					if cls == User and 'ucsschoolAdministrator' in obj.get_udm_object(lo).options:
 						object_types.insert(0, 'administrator_user')
 					self.set_ldap_attr(cls.__name__, object_types, obj.dn)
