@@ -676,7 +676,7 @@ class TeachersAndStaff(Teacher):
 		return groups
 
 	class Meta(Teacher.Meta):
-		object_type = ['teacher_and_staff']
+		object_type = ['staff', 'teacher']
 
 
 class ExamStudent(Student):
