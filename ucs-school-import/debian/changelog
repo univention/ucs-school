@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-35) unstable; urgency=low
+
+  * Bug #46754: query UDM for LDAP mapping without using LDAP and don't cache
+    result
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Apr 2018 19:21:37 +0200
+
 ucs-school-import (15.0.3-34) unstable; urgency=low
 
   * Bug #46800: don't change default for 'new_user_passwords' setting
