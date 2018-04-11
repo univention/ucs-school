@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-33) unstable; urgency=low
+
+  * Bug #46754: handle dependency resolution for UDM properties
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Apr 2018 13:05:32 +0200
+
 ucs-school-import (15.0.3-32) unstable; urgency=low
 
   * Bug #46800: store cmdline user import summary and passwords in separate

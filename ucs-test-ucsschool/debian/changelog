@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-82) unstable; urgency=low
+
+  * Bug #46754: test formatting dependencies with and without UDM properties
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Apr 2018 13:05:11 +0200
+
 ucs-test-ucsschool (4.0.4-81) unstable; urgency=low
 
   * Bug #46754: test no user is created or deleted in case of dependency
