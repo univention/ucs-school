@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-21) unstable; urgency=low
+
+  * Bug #42137: handle dependency resolution for UDM properties
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Apr 2018 13:03:18 +0200
+
 ucs-school-import (16.0.1-20) unstable; urgency=low
 
   * Bug #45379: ucsschoolObjectType is a UDM multi-value property
