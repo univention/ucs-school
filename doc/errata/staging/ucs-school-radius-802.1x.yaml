@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [0]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-radius-802.1x
+fix: 
+desc: |
+ * An internal comparison was case sensitive and prevented the authentication of the host against the UCS@school radius server (Bug #46806).
+bug: [46806]
