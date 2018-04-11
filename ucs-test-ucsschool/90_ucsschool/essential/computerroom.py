@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 from essential.importcomputers import Windows, MacOS, IPManagedClient, random_mac, random_ip
 from essential.internetrule import InternetRule
