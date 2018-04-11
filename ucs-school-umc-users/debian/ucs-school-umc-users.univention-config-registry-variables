@@ -15,3 +15,9 @@ Description[de]=Wenn eingeschaltet, wird das Ändern des Checkboxwertes aus ucss
 Description[en]=If enabled, prevents users from changing the checkbox value set in ucsschool/passwordreset/password-change-on-next-login.
 Type=bool
 Categories=management-umc
+
+[ucsschool/passwordreset/autosearch_on_change]
+Description[de]=Definiert ob bei jeder Änderung der Schule oder Klasse die Liste der Nutzer automatisch neu geladen werden soll.
+Description[en]=Defines if the list of users should be reloaded automatically after a change in the school or class selection.
+Type=bool
+Categories=management-umc
