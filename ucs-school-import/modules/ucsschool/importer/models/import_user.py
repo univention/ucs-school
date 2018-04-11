@@ -34,7 +34,7 @@ Representation of a user read from a file.
 import traceback
 import re
 import datetime
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 
 from univention.admin.uexceptions import noObject, noProperty, valueError, valueInvalidSyntax
@@ -55,6 +55,11 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
+from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
+
+
+FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
 
 
 class ImportUser(User):
@@ -448,10 +453,8 @@ class ImportUser(User):
 		ignore_keys = self.to_dict().keys()
 		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "sourceUID", "username"])  # these are used in make_*
 		ignore_keys.extend(self.no_overwrite_attributes)
-		for k, v in self.config["scheme"].items():
-			if k in ignore_keys:
-				continue
-			self.udm_properties[k] = self.format_from_scheme(k, v)
+		for prop in [k for k in self.config["scheme"].keys() if k not in ignore_keys]:
+			self.make_udm_property(prop)
 
 	def prepare_uids(self):
 		"""
@@ -682,6 +685,30 @@ class ImportUser(User):
 				self.school = sorted(self.schools)[0]
 		return self.schools
 
+	def make_udm_property(self, property_name):
+		"""
+		Create property `property_name` if not already set in
+		self.udm_properties["username"] or create it from scheme.
+
+		:param str property_name: name of UDM property
+		:returns value read from CSV or calculated from scheme or None
+		:rtype str or None
+		"""
+		try:
+			return self.udm_properties[property_name]
+		except KeyError:
+			pass
+
+		if not self._lo:
+			self._lo, _po = get_admin_connection()
+		ldap_attr = get_ldap_mapping_for_udm_property(property_name, self._meta.udm_module, self._lo)
+		if self._schema_write_check(property_name, property_name, ldap_attr):
+			self.udm_properties[property_name] = self.format_from_scheme(
+				property_name,
+				self.config["scheme"][property_name]
+			)
+		return self.udm_properties.get(property_name)
+
 	def make_username(self):
 		"""
 		Create username if not already set in self.name or self.udm_properties["username"].
@@ -900,12 +927,16 @@ class ImportUser(User):
 		props_used_in_scheme = [x[0] for x in self._prop_regex.findall(no_brackets) if x[0]]
 		for prop_used_in_scheme in props_used_in_scheme:
 			if (hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
-				prop_used_in_scheme in self.udm_properties and self.udm_properties[prop_used_in_scheme] or
+				self.udm_properties.get(prop_used_in_scheme) or
 				prop_used_in_scheme in kwargs or
 				prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))):
 				# property exists and has value
 				continue
-			if prop_used_in_scheme not in self._prop_providers and prop_used_in_scheme not in self.udm_properties:
+			if (
+				prop_used_in_scheme not in self._prop_providers and
+				prop_used_in_scheme not in self.udm_properties and
+				prop_used_in_scheme not in self.config['scheme']
+			):
 				# nothing we can do
 				raise InitialisationError(
 					'Cannot find data provider for dependency {!r} for formatting of property {!r} with scheme '
@@ -914,18 +945,24 @@ class ImportUser(User):
 				)
 
 			try:
-				method_name = self._prop_providers[prop_used_in_scheme]
+				method_sig = FunctionSignature(self._prop_providers[prop_used_in_scheme], (), {})
 			except KeyError:
-				method_name = "prepare_udm_properties"
-			if method_name in self._used_methods[prop_to_format]:
+				method_sig = FunctionSignature("make_udm_property", (prop_used_in_scheme,), {})
+			if method_sig in self._used_methods[prop_to_format]:
 				# already ran make_<method_name>() for his formatting job
-				self.logger.error("Tried running %s(), although it has already run for %r.", method_name, prop_to_format)
+				self.logger.error(
+					"Tried running %s(%r, %r), although it has already run for %r.",
+					method_sig.name,
+					method_sig.args,
+					method_sig.kwargs,
+					prop_to_format
+				)
 				raise InitialisationError(
 					'Recursion detected when resolving formatting dependencies for {!r}.'.format(prop_to_format),
 					entry_count=self.entry_count, import_user=self
 				)
-			self._used_methods[prop_to_format].append(method_name)
-			res = getattr(self, method_name)()
+			self._used_methods[prop_to_format].append(method_sig)
+			getattr(self, method_sig.name)(*method_sig.args, **method_sig.kwargs)
 		self._used_methods.pop(prop_to_format, None)
 
 	def format_from_scheme(self, prop_name, scheme, **kwargs):
