@@ -699,9 +699,7 @@ class ImportUser(User):
 		except KeyError:
 			pass
 
-		if not self._lo:
-			self._lo, _po = get_admin_connection()
-		ldap_attr = get_ldap_mapping_for_udm_property(property_name, self._meta.udm_module, self._lo)
+		ldap_attr = get_ldap_mapping_for_udm_property(property_name, self._meta.udm_module)
 		if self._schema_write_check(property_name, property_name, ldap_attr):
 			self.udm_properties[property_name] = self.format_from_scheme(
 				property_name,
