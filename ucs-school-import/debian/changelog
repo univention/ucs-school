@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-22) unstable; urgency=low
+
+  * Bug #46799: don't change default for 'new_user_passwords' setting
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Apr 2018 16:40:01 +0200
+
 ucs-school-import (16.0.1-21) unstable; urgency=low
 
   * Bug #42137: handle dependency resolution for UDM properties
