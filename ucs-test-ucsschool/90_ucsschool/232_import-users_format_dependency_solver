@@ -32,14 +32,18 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('csv:mapping:Nach', 'lastname')
 		config.update_entry('csv:mapping:OUs', 'schools')
 		config.update_entry('csv:mapping:role', '__type')
-		config.update_entry('scheme:birthday', '<source_uid>')
-		config.update_entry('scheme:recordUID', '<email>.<name>[0:4]'),
-		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain><:strip>'),
-		config.update_entry('scheme:username:default', '<firstname:lower>.<birthday>'),
-		config.update_entry('scheme:firstname', 'fn-<lastname>[1:6]'),
-		config.update_entry('scheme:street', '<:lower><firstname>-<lastname>'),
-		config.update_entry('scheme:phone', '<birthday>'),
-		config.update_entry('scheme:roomNumber', '<street>-<email>[0:5]'),
+		config.update_entry('scheme:birthday', '<source_uid>')  # lib attr that depends on lib attr
+		config.update_entry('scheme:recordUID', '<email>.<city>[0:4]'),  # lib attr that depends on UDM prop & lib attr
+		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain><:strip>'),  # lib attr that
+		# depends on lib attr and kwargs (maildomain)
+		config.update_entry('scheme:username:default', '<firstname:lower>.<birthday>'),  # lib attr that depends on lib
+		# attrs
+		config.update_entry('scheme:firstname', 'fn-<lastname>[1:6]'),  # lib attr that depends on lib attr
+		config.update_entry('scheme:street', '<:lower><firstname>-<lastname>'),  # not a dependency of other prop, but
+		# should be set on user obj anyway
+		config.update_entry('scheme:phone', '<birthday>'),  # UDM prop that depends on lib attr
+		config.update_entry('scheme:roomNumber', '<phone>-<email>[0:5]'),  # UDM prop that depends on other UDM prop
+		config.update_entry('scheme:city', '<birthday>'),  # UDM prop that depends on lib attr
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
@@ -70,10 +74,11 @@ class Test(CLI_Import_v2_Tester):
 			email = '{}@{}'.format('{}.{}'.format(firstname, person.lastname).lower(), self.maildomain)
 			name_length = username_max_length.get(person.role, username_max_length['default'])
 			name = '{}.{}'.format(firstname.lower(), birthday).replace('-', '')[:name_length]
-			record_uid = '{}.{}'.format(email, name[:4])
+			person.city = birthday
+			record_uid = '{}.{}'.format(email, person.city[:4])
 			person.street = '{}-{}'.format(firstname, person.lastname)
 			person.phone = birthday
-			person.room = '{}-{}'.format(person.street, email[:5])
+			person.room = '{}-{}'.format(person.phone, email[:5])
 			person.update(
 				firstname=firstname,
 				birthday=birthday,
@@ -89,6 +94,7 @@ class Test(CLI_Import_v2_Tester):
 				'street': [person.street],
 				'telephoneNumber': [person.phone],
 				'roomNumber': [person.room],
+				'l': [person.city],
 			})
 		self.log.info('*** OK: All %r users were created correctly.', len(person_list))
 
