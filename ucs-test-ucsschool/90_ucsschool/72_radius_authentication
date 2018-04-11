@@ -6,12 +6,33 @@
 ## exposure: dangerous
 ## packages: [ucs-school-radius-802.1x]
 
+import random
+from ldap.filter import filter_format
 from essential.internetrule import InternetRule
 from essential.radius import test_peap_auth
 from essential.workgroup import Workgroup
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_drs_replication
+
+
+def random_case(txt):  # type: (str) -> str
+	'''
+	Try up to 1000 times to randomize given string by using upper/lowercase variants of its characters.
+	'''
+	assert txt, 'Given string should not be empty!'
+	result = []
+	for i in xrange(1000):
+		for c in txt:
+			if random.randint(0, 1):
+				result.append(c.upper())
+			else:
+				result.append(c.lower())
+		if ''.join(result) != txt:
+			break
+		result = []
+	return ''.join(result)
 
 
 def main():
@@ -40,10 +61,25 @@ def main():
 			rule2.assign(school, group2.name, 'workgroup')
 
 			utils.wait_for_replication_and_postrun()
+			print 'Wait until users are replicated into S4...'
+			for name in [tea, tea2, stu, stu2]:
+				wait_for_drs_replication(filter_format('cn=%s', (name,)))
 
 			radius_secret = 'testing123'  # parameter set in  /etc/freeradius/clients.conf
 			password = 'univention'
-			test_couples = [(tea, True), (stu, True), (tea2, False), (stu2, False)]
+
+			test_couples = []
+			def add_test_couples(username, expected_success):
+				test_couples.extend([
+					(username, expected_success),  # original case
+					(username.lower(), expected_success),  # all lowercase
+					(username.upper(), expected_success),  # all uppercase
+					(random_case(username), expected_success)  # all random case
+				])
+			add_test_couples(tea, True)
+			add_test_couples(stu, True)
+			add_test_couples(tea2, False)
+			add_test_couples(stu2, False)
 
 			# Testing loop
 			for username, should_succeed in test_couples:
