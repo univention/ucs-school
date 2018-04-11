@@ -35,6 +35,10 @@ import os
 import os.path
 import pwd
 import grp
+import univention.admin.modules
+
+
+__udm_prop_to_ldap_attr_cache = {}
 
 
 def mkdir_p(dir_name, user, group, mode):
@@ -61,3 +65,19 @@ def mkdir_p(dir_name, user, group, mode):
 	if not os.path.exists(dir_name):
 		os.mkdir(dir_name, mode)
 		os.chown(dir_name, uid, gid)
+
+
+def get_ldap_mapping_for_udm_property(udm_prop, udm_type, lo):
+	"""
+	Get the name of the LDAP attribute, a UDM property is mapped to.
+
+	:param str udm_prop: name of UDM property
+	:param str udm_type: name of UDM module (e.g. 'users/user')
+	:param univention.admin.uldap.access lo: LDAP object
+	:returns: name of LDAP attribute or empty str if no mapping was found
+	:rtype str
+	"""
+	if (udm_prop, udm_type) not in __udm_prop_to_ldap_attr_cache:
+		udm_obj = univention.admin.modules.get(udm_type).object(None, lo, None)
+		__udm_prop_to_ldap_attr_cache[(udm_prop, udm_type)] = udm_obj.mapping.mapName(udm_prop)
+	return __udm_prop_to_ldap_attr_cache[(udm_prop, udm_type)]
