@@ -723,7 +723,7 @@ python -m json.tool &lt; my_config.json
 								<entry>Diese Variable definiert den Pfad zur CSV-Datei, in die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"><citetitle><foreignphrase>Python-Format-String</foreignphrase></citetitle></ulink> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>string</classname>): <literal>"/var/lib/ucs-school-import/passwords/%Y/%m/new_user_passwords_%Y-%m-%d_%H:%M:%S.csv"</literal></entry>
+								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
 							</row>
 <!-- output:user_import_summary -->
 							<row>

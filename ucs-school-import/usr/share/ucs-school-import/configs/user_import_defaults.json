@@ -24,7 +24,7 @@
 	"mandatory_attributes": ["firstname", "lastname", "name", "school"],
 	"no_delete": false,
 	"output": {
-		"new_user_passwords": "/var/lib/ucs-school-import/passwords/%Y/%m/new_user_passwords_%Y-%m-%d_%H:%M:%S.csv",
+		"new_user_passwords": null,
 		"user_import_summary": "/var/lib/ucs-school-import/summary/%Y/%m/user_import_summary_%Y-%m-%d_%H:%M:%S.csv"
 	},
 	"password_length": 15,
