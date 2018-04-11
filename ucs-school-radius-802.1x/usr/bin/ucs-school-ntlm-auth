@@ -41,7 +41,7 @@ import univention.config_registry
 import univention.pyMsChapV2 as pyMsChapV2
 import univention.uldap
 
-userToGroup = {}  # { "user": ["group1", "group2", ], }
+userToGroup = {}  # { "user_lowercase": ["group1", "group2", ], }
 groupInfo = {}  # { "group1": (23, True, ), }
 log_target = None
 
@@ -59,9 +59,7 @@ def loadInfo():
 			group = key[len('proxy/filter/usergroup/'):]
 			users = configRegistry[key].split(',')
 			for user in users:
-				if user not in userToGroup:
-					userToGroup[user] = []
-				userToGroup[user].append(group)
+				userToGroup.setdefault(user.lower(), []).append(group)
 		elif key.startswith('proxy/filter/groupdefault/'):
 			group = key[len('proxy/filter/groupdefault/'):]
 			rule = configRegistry[key]
@@ -96,7 +94,7 @@ def getNTPasswordHash(username, stationId):
 		username += '$'
 	debug('getNTPasswordHash: username2=%r  stationId=%r' % (username, stationId.encode('hex')))
 
-	groups = userToGroup.get(username)
+	groups = userToGroup.get(username.lower())
 	if groups is None:
 		debug('getNTPasswordHash: user not found in any relevant group - access denied')
 		return None
