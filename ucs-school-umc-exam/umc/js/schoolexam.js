@@ -141,6 +141,11 @@ define([
 					label: _('Computer room'),
 					description: _('Choose the computer room in which the exam will take place'),
 					depends: 'school',
+					onValuesLoaded: function() {
+						if (this._initialValue == null) { // ensures no default room was set
+							this.set('value', null);
+						}
+					},
 					dynamicValues: 'computerroom/rooms',
 					onChange: lang.hitch(this, function(value) {
 						if (!value) {
