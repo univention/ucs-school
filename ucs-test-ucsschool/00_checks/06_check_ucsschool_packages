@@ -1,0 +1,16 @@
+#!/usr/share/ucs-test/runner bash 
+## desc: print list of installed UCS@school packages
+## exposure: safe
+## tags:
+## - apptest
+## - ucsschool
+
+RETVAL=0
+
+. "$TESTLIBPATH/base.sh" || exit 137
+
+eval "$(ucr shell)"
+
+COLUMNS=240 dpkg -l \*ucs-school\* \*ucsschool\*
+
+exit $RETVAL
