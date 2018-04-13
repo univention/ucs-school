@@ -43,13 +43,10 @@ univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")
 groups_group_module = univention.admin.modules.get("groups/group")
 shares_share_module = univention.admin.modules.get("shares/share")
-subfilter_users = str(users_user_module.lookup_filter())
-subfilter_groups = str(groups_group_module.lookup_filter())
-subfilter_shares = str(shares_share_module.lookup_filter())
 
 name = 'ucs-school-user-logonscript'
 description = 'Create user-specific netlogon-scripts'
-filter = '(|%s%s%s)' % (subfilter_users, subfilter_groups, subfilter_shares)
+filter = '(|(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))(objectClass=univentionGroup)(objectClass=univentionShare))'
 attributes = []  # type: List[str]
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
