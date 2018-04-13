@@ -31,11 +31,11 @@ from __future__ import absolute_import
 import os
 import signal
 import shutil
-import listener
 import subprocess
+from ldap.filter import filter_format
+import listener
 import univention.debug
 import univention.admin.modules
-from ldap.filter import filter_format
 from univention.admin.uldap import getMachineConnection
 from ucsschool.netlogon import get_netlogon_path_list, SqliteQueue
 
