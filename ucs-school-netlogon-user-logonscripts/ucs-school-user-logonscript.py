@@ -54,31 +54,31 @@ FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
 
 class Log(object):
 	@classmethod
-	def debug(cls, msg):
+	def debug(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.ALL, msg)
 
 	@staticmethod
-	def emit(level, msg):
+	def emit(level, msg):  # type: (str) -> None
 		univention.debug.debug(univention.debug.LISTENER, level, '{}: {}'.format(name, msg))
 
 	@classmethod
-	def error(cls, msg):
+	def error(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.ERROR, msg)
 
 	@classmethod
-	def info(cls, msg):
+	def info(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.INFO, msg)
 
 	@classmethod
-	def process(cls, msg):
+	def process(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.PROCESS, msg)
 
 	@classmethod
-	def warn(cls, msg):
+	def warn(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.WARN, msg)
 
 
-def relevant_change(old, new, attr_list):
+def relevant_change(old, new, attr_list):  # type: (Dict[str,List[str]], Dict[str,List[str]], List[str]) -> bool
 	"""
 	Returns True, if any attribute specified in attr_list differs between old and new, otherwise False.
 	old:  attribute dictionary
@@ -88,11 +88,11 @@ def relevant_change(old, new, attr_list):
 	return any(set(old.get(attr, [])) != set(new.get(attr, [])) for attr in attr_list)
 
 
-def handle_share(dn, new, old, lo, user_queue):
+def handle_share(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
 	"""
 	Handles changes of share objects by triggering group changes for the relevant groups.
 	"""
-	def add_group_change_to_queue(gidNumber):
+	def add_group_change_to_queue(gidNumber):  # type: (Optional[str]) -> None
 		if not gidNumber:
 			Log.warn('handle_share: no gidNumber specified')
 			return
@@ -115,11 +115,11 @@ def handle_share(dn, new, old, lo, user_queue):
 		# update all members of old group
 		add_group_change_to_queue(old.get('univentionShareGid', [None])[0])
 	if old and new:
-		attr_list = (
+		attr_list = [
 			'univentionShareSambaName',
 			'univentionShareHost',
 			'univentionShareGid',
-		)
+		]
 		if not relevant_change(old, new, attr_list):
 			Log.info('handle_share: no relevant attribute change')
 			return
@@ -128,7 +128,7 @@ def handle_share(dn, new, old, lo, user_queue):
 		add_group_change_to_queue(new.get('univentionShareGid', [None])[0])
 
 
-def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], Any, SqliteQueue) -> None
+def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
 	"""
 	Handles group changes by adding relevant user object DNs to the user queue.
 	"""
@@ -155,17 +155,17 @@ def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str
 	user_queue.add([(user_dn, None) for user_dn in old_members.symmetric_difference(new_members) if user_dn.startswith('uid=')])
 
 
-def handle_user(dn, new, old, lo, user_queue):
+def handle_user(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
 	"""
 	Handles user changes by adding the DN of the user object to the user queue.
 	"""
 	Log.info('handle_user: add %s' % (dn,))
 	if old and new:
-		attr_list = (
+		attr_list = [
 			'uid',
 			'gidNumber',
 			'homeDirectory',
-		)
+		]
 		if not relevant_change(old, new, attr_list):
 			Log.debug('no relevant attribute has changed - skipping user object')
 			return
@@ -173,7 +173,7 @@ def handle_user(dn, new, old, lo, user_queue):
 	user_queue.add([(dn, username)])
 
 
-def handler(dn, new, old):
+def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str]]) -> None
 	attrs = new if new else old
 
 	listener.setuid(0)
@@ -209,7 +209,7 @@ def handler(dn, new, old):
 		listener.unsetuid()
 
 
-def initialize():
+def initialize():  # type: () -> None
 	listener.setuid(0)
 	try:
 		for path in get_netlogon_path_list():
@@ -223,14 +223,14 @@ def initialize():
 		listener.unsetuid()
 
 
-def run_daemon(cmd):
+def run_daemon(cmd):  # type: (List[str]) -> None
 	cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	cmd_out, cmd_err = cmd_proc.communicate()
 	if cmd_proc.returncode:
 		Log.error('Command {!r} returned with exit code {!r}. stdout={!r} stderr={!r}'.format(cmd, cmd_proc.returncode, cmd_out, cmd_err))
 
 
-def clean():
+def clean():  # type: () -> None
 	listener.setuid(0)
 	try:
 		Log.warn('Stopping logon script generator daemon...')
