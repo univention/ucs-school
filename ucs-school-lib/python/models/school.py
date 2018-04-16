@@ -157,7 +157,6 @@ class School(UCSSchoolHelperAbstractClass):
 		# cn=ouadmins
 		admin_group_container = 'cn=ouadmins,cn=groups,%s' % ucr.get('ldap/base')
 		group = BasicGroup.cache(self.group_name('admins', 'admins-'), container=admin_group_container)
-		group._meta.object_type = 'administrator_group'
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)
 		try:

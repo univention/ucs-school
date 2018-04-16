@@ -178,6 +178,9 @@ class BasicGroup(Group):
 	def get_container(cls, school=None):
 		return ucr.get('ldap/base')
 
+	class Meta(Group.Meta):
+		object_type = 'administrator_group'  # used for ucsschoolAdministratorGroup, maybe call just "BasicGroup"?
+
 
 class SchoolGroup(Group, _MayHaveSchoolSuffix):
 	pass
