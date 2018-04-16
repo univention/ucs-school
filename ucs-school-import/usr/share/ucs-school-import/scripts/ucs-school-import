@@ -649,19 +649,19 @@ def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	# create groups if not existant
 	grp_ouadmins = "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower(), baseDN)
 	groups = [
-		(grp_ouadmins, grp_policy_admins, True),
-		("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)), grp_policy_pupils, False),
-		("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)), grp_policy_teachers, False),
+		(grp_ouadmins, grp_policy_admins),
+		("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)), grp_policy_pupils),
+		("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)), grp_policy_teachers),
 	]
 
 	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
-		groups.append(("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)), grp_policy_staff, False))
+		groups.append(("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)), grp_policy_staff), )
 	if configRegistry.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 		domain_users_school = "cn=Domain Users %s,cn=groups,%s" % (schoolNr.lower(), getDN(schoolNr))
-		groups.append((domain_users_school, "cn=default-umc-users,cn=UMC,cn=policies,%s" % (baseDN,), False))
+		groups.append((domain_users_school, "cn=default-umc-users,cn=UMC,cn=policies,%s" % (baseDN,)))
 
-	for group, grppolicy, is_admin_group in groups:
-		verify_group(group, co, lo, superordinate, baseDN, is_admin_group=is_admin_group)
+	for group, grppolicy in groups:
+		verify_group(group, co, lo, superordinate, baseDN)
 		if grppolicy and grppolicy.lower() != 'none':
 			verify_policy(group, schoolNr, [grppolicy])
 
@@ -1212,7 +1212,6 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object["owner"] = "0"
 		object["group"] = gid
 		object["directorymode"] = "0770"
-		object["ucsschoolObjectType"] = "class_share"
 		if configRegistry.is_false('ucsschool/default/share/nfs', True):
 			try:
 				object.options.remove('nfs')  # deactivate NFS
@@ -1227,7 +1226,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		verified_group_shares.append((schoolNr, classNr.lower()))
 
 
-def verify_group(position_dn, co, lo, superordinate, base, is_school_class=False, is_admin_group=False):
+def verify_group(position_dn, co, lo, superordinate, base):
 	# look if group exists, else create it
 
 	if position_dn in verified_groups:
@@ -1262,22 +1261,13 @@ def verify_group(position_dn, co, lo, superordinate, base, is_school_class=False
 				break
 
 	if not group_exists:
-		if is_admin_group:
-			create_what = 'admin group'
-		elif is_school_class:
-			create_what = 'school class'
-		else:
-			create_what = 'group'
-		print("need to create {} {}".format(create_what, position_dn))
+		print "need to create group %s" % position_dn
 		position = univention.admin.uldap.position(base)
 		position.setDn(position_dn[string.find(position_dn, ",") + 1:])
 		object = group_module.object(co, lo, position, superordinate=superordinate)
 		object.open()
 		object["name"] = position_dn[3:string.find(position_dn, ",")]
-		if is_school_class:
-			object["ucsschoolObjectType"] = "school_class"
-		elif is_admin_group:
-			object["ucsschoolObjectType"] = "administrator_group"
+
 		try:
 			create_object(object)
 		except:
@@ -2431,7 +2421,7 @@ def import_group():
 				# verify_group_share(schoolNr, ClassID, co, lo, superordinate, baseDN)
 
 				# elif action == 'M':  # M)odify group
-				verify_group(group_dn, co, lo, superordinate, baseDN, is_school_class=True)
+				verify_group(group_dn, co, lo, superordinate, baseDN)
 				object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn)
 				object.open()
 				oldDescrpt = object['description']

@@ -33,7 +33,26 @@ UDM hook to add a specific ucsschoolObject object class to each object
 # <http://www.gnu.org/licenses/>.
 
 from univention.admin.hook import simpleHook
-import ucsschool.lib.schoolldap
+
+
+# this should be in ucsschool.lib.schoolldap, but I'm having trouble importing it
+object_type_to_object_classes = {
+	'administrator_group': ('ucsschoolAdministratorGroup',),  # only if 'ucsschoolAdministratorGroup' in module.options
+	'administrator_user': ('ucsschoolAdministrator',),
+	'class_share': ('ucsschoolClassShare',),
+	'computer_room': ('ucsschoolComputerRoom',),
+	'exam_student': ('ucsschoolExam',),
+	'school_class': ('ucsschoolSchoolClass',),
+	'staff': ('ucsschoolStaff',),
+	'student': ('ucsschoolStudent',),
+	'teacher': ('ucsschoolTeacher',),
+	'teacher_and_staff': ('ucsschoolTeacher', 'ucsschoolStaff'),
+	'work_group': ('ucsschoolWorkGroup',)
+}
+
+
+# TODO: need a listener module for administrator_group/ucsschoolAdministratorGroup,
+# because the udm-hook doesn't react to changes of options
 
 
 class UcsschoolObjectType(simpleHook):
@@ -44,7 +63,7 @@ class UcsschoolObjectType(simpleHook):
 			al = []
 		if al and module.info.get('ucsschoolObjectType'):
 			for attr, add_val in [it for it in al if it[0] == 'objectClass' and len(it) == 2]:
-				for oc in ucsschool.lib.schoolldap.object_type_to_object_classes[module.info['ucsschoolObjectType']]:
+				for oc in object_type_to_object_classes[module.info['ucsschoolObjectType']]:
 					if oc not in add_val:
 						add_val.append(oc)
 		return al

@@ -132,20 +132,16 @@ class LegacyImportUser(ImportUser):
 
 
 class LegacyImportStudent(LegacyImportUser, ImportStudent):
-	class Meta(ImportStudent.Meta):
-		pass
+	pass
 
 
 class LegacyImportStaff(LegacyImportUser, ImportStaff):
-	class Meta(ImportStaff.Meta):
-		pass
+	pass
 
 
 class LegacyImportTeacher(LegacyImportUser, ImportTeacher):
-	class Meta(ImportTeacher.Meta):
-		pass
+	pass
 
 
 class LegacyImportTeachersAndStaff(LegacyImportUser, ImportTeachersAndStaff):
-	class Meta(ImportTeachersAndStaff.Meta):
-		pass
+	pass
