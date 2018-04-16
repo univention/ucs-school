@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-16) unstable; urgency=low
+
+  * Bug #45379: remove (revert) all code from this bug (object type)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 16 Apr 2018 12:28:49 +0200
+
 ucs-school-import (16.0.1-15) unstable; urgency=medium
 
   * Bug #45379: fix typo

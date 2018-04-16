@@ -1,65 +1,8 @@
-ucs-test-ucsschool (5.0.2-42) unstable; urgency=low
-
-  * Bug #46771: list installed UCS@school packages in 00_checks
-
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 12 Apr 2018 22:04:06 +0200
-
-ucs-test-ucsschool (5.0.2-41) unstable; urgency=low
-
-  * Bug #46806: check if radius authentication also works with camel case usernames/hostnames
-
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Apr 2018 13:41:55 +0200
-
-ucs-test-ucsschool (5.0.2-40) unstable; urgency=low
-
-  * Bug #42137: test formatting dependencies with and without UDM properties
-
- -- Daniel Troeder <troeder@univention.de>  Wed, 11 Apr 2018 13:03:28 +0200
-
-ucs-test-ucsschool (5.0.2-39) unstable; urgency=low
-
-  * Bug #45379: ucsschoolObjectType is a UDM multi-value property
-  * change object type for TeachersAndStaff from teacher_and_staff to
-    ['staff', 'teacher']
-
- -- Daniel Troeder <troeder@univention.de>  Tue, 10 Apr 2018 17:24:59 +0200
-
-ucs-test-ucsschool (5.0.2-38) unstable; urgency=low
-
-  * Bug #46771: revert fallback
-
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 05 Apr 2018 16:30:07 +0200
-
-ucs-test-ucsschool (5.0.2-37) unstable; urgency=low
-
-  * Bug #42137: test no user is created or deleted in case of dependency
-    recursion
-
- -- Daniel Troeder <troeder@univention.de>  Fri, 06 Apr 2018 15:37:10 +0200
-
-ucs-test-ucsschool (5.0.2-36) unstable; urgency=low
-
-  * Bug #46771: add fallback if installed ucsschool.lib is 4.3v1
-
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 04 Apr 2018 22:40:20 +0200
-
-ucs-test-ucsschool (5.0.2-35) unstable; urgency=medium
-
-  * Bug #46572: modify classes in school change
-
- -- Daniel Troeder <troeder@univention.de>  Wed, 04 Apr 2018 13:09:37 +0200
-
-ucs-test-ucsschool (5.0.2-34) unstable; urgency=low
-
-  * Bug #42137: add tests for format dependency solver
-
- -- Daniel Troeder <troeder@univention.de>  Wed, 28 Mar 2018 15:24:12 +0200
-
 ucs-test-ucsschool (5.0.2-33) unstable; urgency=low
 
-  * Bug #45379: fix typo
+  * Bug #45379: remove (revert) all code from this bug (object type)
 
- -- Daniel Troeder <troeder@univention.de>  Wed, 28 Mar 2018 15:16:56 +0200
+ -- Daniel Troeder <troeder@univention.de>  Mon, 16 Apr 2018 12:27:55 +0200
 
 ucs-test-ucsschool (5.0.2-32) unstable; urgency=low
 

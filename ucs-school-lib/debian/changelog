@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-9) unstable; urgency=low
+
+  * Bug #45379: remove (revert) all code from this bug (object type)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 16 Apr 2018 12:29:10 +0200
+
 ucs-school-lib (11.0.1-8) unstable; urgency=low
 
   * Bug #45379: ucsschoolObjectType is a UDM multi-value property
