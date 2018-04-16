@@ -9,11 +9,9 @@ import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
-from ucsschool.lib import object_type_to_object_classes
 from ucsschool.lib.models import SchoolClass as GroupLib
 from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
-from univention.uldap import getMachineConnection
 
 from essential.importou import get_school_base
 
@@ -81,8 +79,6 @@ class Group:
 
 		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
 		utils.verify_ldap_object(self.share_dn, expected_attr={'ucsschoolObjectType': ['class_share']}, should_exist=True)
-		lo = getMachineConnection()
-		utu.has_object_classes(lo, self.share_dn, object_type_to_object_classes['class_share'], True)
 
 
 class ImportFile:

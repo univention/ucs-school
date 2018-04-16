@@ -124,7 +124,6 @@ class Test(CLI_Import_v2_Tester):
 			)
 			wg = Workgroup(self.ou_A.name, ucr=self.ucr, members=[person.dn])
 			wg.create()
-			wg.verify_ldap_attributes()
 			self.log_person_infos(person)
 			self.wait_for_drs_replication_of_membership(wg.dn(), person.username, base=self.ou_A.dn)
 			self.verify_exact_schoolgroup_membership(person)

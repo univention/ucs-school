@@ -4,13 +4,11 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from univention.uldap import getMachineConnection
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
-from univention.testing.ucsschool import UCSTestSchool, has_object_classes
-from ucsschool.lib import object_type_to_object_classes
+from univention.testing.ucsschool import UCSTestSchool
 
 
 class GetFail(Exception):
@@ -206,11 +204,8 @@ class Klasse(object):
 			expected_attr={'ucsschoolObjectType': ['school_class']},
 			should_exist=True,
 		)
-		lo = getMachineConnection()
-		has_object_classes(lo, self.dn(), object_type_to_object_classes['school_class'], True)
 		utils.verify_ldap_object(
 			self.share_dn,
 			expected_attr={'ucsschoolObjectType': ['class_share']},
 			should_exist=True,
 		)
-		has_object_classes(lo, self.share_dn, object_type_to_object_classes['class_share'], True)

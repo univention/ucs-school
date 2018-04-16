@@ -12,7 +12,6 @@ import univention.testing.ucr
 import univention.testing.utils as utils
 import univention.testing.udm as udm_test
 from univention.testing.decorators import SetTimeout
-from univention.testing.ucsschool import has_object_classes
 import univention.uldap
 import univention.config_registry
 from ucsschool.lib.models import Student as StudentLib
@@ -346,10 +345,7 @@ class Person(object):
 			utils.verify_ldap_object(self.dn, should_exist=False)
 			return
 
-		exp_attrs = self.expected_attributes()
-		utils.verify_ldap_object(self.dn, expected_attr=exp_attrs, strict=True, should_exist=True)
-		lo = univention.uldap.getMachineConnection()
-		has_object_classes(lo, self.dn, exp_attrs['ucsschoolObjectType'], True)
+		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), strict=True, should_exist=True)
 
 		default_group_dn = 'cn=Domain Users %s,cn=groups,%s' % (self.school, self.school_base)
 		utils.verify_ldap_object(default_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)

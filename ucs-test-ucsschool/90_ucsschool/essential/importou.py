@@ -9,8 +9,7 @@ import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.udm
 import univention.testing.ucr
-from univention.testing.ucsschool import UCSTestSchool, has_object_classes
-from ucsschool.lib import object_type_to_object_classes
+from univention.testing.ucsschool import UCSTestSchool
 
 import univention.uldap
 import univention.admin.uldap
@@ -410,7 +409,6 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	grp_policy_staff = ucr.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % base_dn)
 
 	utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins],'ucsschoolObjectType': ['administrator_group']}, should_exist=True)
-	has_object_classes(lo, "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), object_type_to_object_classes['administrator_group'], True)
 	utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=must_exist)
 	utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_teachers]}, should_exist=must_exist)
 
