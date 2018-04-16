@@ -71,11 +71,8 @@ class UcsschoolObjectType(simpleHook):
 		if al is None:
 			al = []
 		if al and obj.info.get('ucsschoolObjectType'):
-			ocs = []
-			for ot in obj.info['ucsschoolObjectType']:
-				ocs.extend(object_type_to_object_classes[ot])
 			for attr, add_val in [it for it in al if it[0] == 'objectClass' and len(it) == 2]:
-				for oc in ocs:
+				for oc in object_type_to_object_classes[obj.info['ucsschoolObjectType']]:
 					if oc not in add_val:
 						add_val.append(oc)
 		return al

@@ -1212,7 +1212,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object["owner"] = "0"
 		object["group"] = gid
 		object["directorymode"] = "0770"
-		object["ucsschoolObjectType"] = ["class_share"]
+		object["ucsschoolObjectType"] = "class_share"
 		if configRegistry.is_false('ucsschool/default/share/nfs', True):
 			try:
 				object.options.remove('nfs')  # deactivate NFS
@@ -1275,9 +1275,9 @@ def verify_group(position_dn, co, lo, superordinate, base, is_school_class=False
 		object.open()
 		object["name"] = position_dn[3:string.find(position_dn, ",")]
 		if is_school_class:
-			object["ucsschoolObjectType"] = ["school_class"]
+			object["ucsschoolObjectType"] = "school_class"
 		elif is_admin_group:
-			object["ucsschoolObjectType"] = ["administrator_group"]
+			object["ucsschoolObjectType"] = "administrator_group"
 		try:
 			create_object(object)
 		except:
