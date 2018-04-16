@@ -1,4 +1,4 @@
-ucs-school-import (16.0.1-16) unstable; urgency=low
+ucs-school-import (16.0.1-24) unstable; urgency=low
 
   * Bug #45379: remove (revert) all code from this bug (object type)
 
