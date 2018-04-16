@@ -192,8 +192,7 @@ class Workgroup(object):
 
 		utils.verify_ldap_object(self.dn(), expected_attr={
 			'memberUid': members,
-			'description': [self.description],
-			'ucsschoolObjectType': ['work_group'],
+			'description': [self.description]
 		})
 
 	def verify_exists(self, group_should_exist, share_should_exist):

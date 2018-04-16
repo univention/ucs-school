@@ -66,7 +66,6 @@ class Group:
 		attr = {}
 		attr['cn'] = [self.name]
 		attr['description'] = [self.description]
-		attr['ucsschoolObjectType'] = ['school_class']
 		return attr
 
 	def verify(self):
@@ -78,7 +77,7 @@ class Group:
 			return
 
 		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
-		utils.verify_ldap_object(self.share_dn, expected_attr={'ucsschoolObjectType': ['class_share']}, should_exist=True)
+		utils.verify_ldap_object(self.share_dn, should_exist=True)
 
 
 class ImportFile:
