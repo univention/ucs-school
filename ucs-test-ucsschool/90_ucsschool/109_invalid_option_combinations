@@ -56,10 +56,9 @@ def main():
 						user.create(lo)
 						utils.verify_ldap_object(user.dn, expected_attr={
 							"uid": [user.name],
-							"ucsschoolObjectType": kls._meta.object_type,
+							"ucsschoolObjectType": [kls._meta.object_type],
 						}, strict=False, should_exist=True)
-						for ot in kls._meta.object_type:
-							has_object_classes(lo, user.dn, object_type_to_object_classes[ot], True)
+						has_object_classes(lo, user.dn, object_type_to_object_classes[kls._meta.object_type], True)
 						udm_user = user.get_udm_object(lo)
 						udm_user.options.append(bad_option)
 						try:

@@ -263,7 +263,7 @@ class Person(object):
 			shadowExpire=[] if self.is_active() else ['1'],
 			sn=[self.lastname],
 			uid=[self.username],
-			ucsschoolObjectType=self.object_type,
+			ucsschoolObjectType=[self.object_type],
 		)
 
 		if self.source_uid:
@@ -350,8 +350,7 @@ class Person(object):
 		exp_attrs = self.expected_attributes()
 		utils.verify_ldap_object(self.dn, expected_attr=exp_attrs, strict=True, should_exist=True)
 		lo = univention.uldap.getMachineConnection()
-		for ot in exp_attrs['ucsschoolObjectType']:
-			has_object_classes(lo, self.dn, object_type_to_object_classes[ot], True)
+		has_object_classes(lo, self.dn, object_type_to_object_classes[exp_attrs['ucsschoolObjectType'][0]], True)
 
 		default_group_dn = 'cn=Domain Users %s,cn=groups,%s' % (self.school, self.school_base)
 		utils.verify_ldap_object(default_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)

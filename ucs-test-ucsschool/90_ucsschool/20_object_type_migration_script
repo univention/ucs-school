@@ -45,14 +45,13 @@ class Test(CLI_Import_v2_Tester):
 		school_class = None
 
 		ouadmins_group_dn = 'cn=admins-{},cn=ouadmins,cn=groups,{}'.format(ou_name, self.ucr['ldap/base'])
-		object_type = ['administrator_group']
+		object_type = 'administrator_group'
 		self.log.info('Removing ucsschoolObjectType from %r...', ouadmins_group_dn)
 		utils.verify_ldap_object(
 			ouadmins_group_dn,
-			expected_attr={'ucsschoolObjectType': object_type},
+			expected_attr={'ucsschoolObjectType': [object_type]},
 		)
-		for ot in object_type:
-			has_object_classes(self.lo, ouadmins_group_dn, object_type_to_object_classes[ot], True)
+		has_object_classes(self.lo, ouadmins_group_dn, object_type_to_object_classes[object_type], True)
 		self.lo.modify(
 			ouadmins_group_dn,
 			[('ucsschoolObjectType', ['administrator_group'], [])]
@@ -84,13 +83,12 @@ class Test(CLI_Import_v2_Tester):
 			self.class2dn[cls] = obj.dn
 			utils.verify_ldap_object(
 				obj.dn,
-				expected_attr={'ucsschoolObjectType': cls._meta.object_type},
+				expected_attr={'ucsschoolObjectType': [cls._meta.object_type]},
 			)
-			for ot in cls._meta.object_type:
-				has_object_classes(self.lo, obj.dn, object_type_to_object_classes[ot], True)
+			has_object_classes(self.lo, obj.dn, object_type_to_object_classes[cls._meta.object_type], True)
 			self.lo.modify(
 				obj.dn,
-				[('ucsschoolObjectType', cls._meta.object_type, [])]
+				[('ucsschoolObjectType', [cls._meta.object_type], [])]
 			)
 			utils.verify_ldap_object(
 				obj.dn,
@@ -108,10 +106,9 @@ class Test(CLI_Import_v2_Tester):
 		admin_user.create(self.lo)
 		utils.verify_ldap_object(
 			admin_user.dn,
-			expected_attr={'ucsschoolObjectType': admin_cls._meta.object_type},
+			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type]},
 		)
-		for ot in admin_cls._meta.object_type:
-			has_object_classes(self.lo, admin_user.dn, object_type_to_object_classes[ot], True)
+		has_object_classes(self.lo, admin_user.dn, object_type_to_object_classes[admin_cls._meta.object_type], True)
 		admin_user = admin_user.from_dn(admin_user.dn, ou_name, self.lo)
 		udm_admin_user = admin_user.get_udm_object(self.lo)
 		udm_admin_user.options.append('ucsschoolAdministrator')
@@ -119,17 +116,18 @@ class Test(CLI_Import_v2_Tester):
 		utils.wait_for_replication()
 		utils.verify_ldap_object(
 			admin_user.dn,
-			expected_attr={'ucsschoolObjectType': admin_cls._meta.object_type + ['administrator_user']},
+			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type, 'administrator_user']},
 		)
-		ocs = []
-		for ot in admin_cls._meta.object_type:
-			ocs.extend(object_type_to_object_classes[ot])
-		for ot in admin_user._meta.object_type:
-			ocs.extend(object_type_to_object_classes[ot])
-		has_object_classes(self.lo, admin_user.dn, ocs, True)
+		has_object_classes(
+			self.lo,
+			admin_user.dn,
+			list(object_type_to_object_classes[admin_cls._meta.object_type]) +
+			list(object_type_to_object_classes[admin_user._meta.object_type]),
+			True
+		)
 		self.lo.modify(
 			admin_user.dn,
-			[('ucsschoolObjectType', admin_cls._meta.object_type + ['administrator_user'], [])]
+			[('ucsschoolObjectType', [admin_cls._meta.object_type, 'administrator_user'], [])]
 		)
 		utils.verify_ldap_object(
 			admin_user.dn,
@@ -155,10 +153,9 @@ class Test(CLI_Import_v2_Tester):
 			self.log.info('Verifying %s...', cls.__name__)
 			utils.verify_ldap_object(
 				dn,
-				expected_attr={'ucsschoolObjectType': cls._meta.object_type},
+				expected_attr={'ucsschoolObjectType': [cls._meta.object_type]},
 			)
-			for ot in cls._meta.object_type:
-				has_object_classes(self.lo, dn, object_type_to_object_classes[ot], True)
+			has_object_classes(self.lo, dn, object_type_to_object_classes[cls._meta.object_type], True)
 		self.log.info('Verifying admin group...')
 		utils.verify_ldap_object(
 			ouadmins_group_dn,
@@ -168,7 +165,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('Verifying admin user (%s)...', admin_user.__class__.__name__)
 		utils.verify_ldap_object(
 			admin_user.dn,
-			expected_attr={'ucsschoolObjectType': admin_cls._meta.object_type + ['administrator_user']},
+			expected_attr={'ucsschoolObjectType': [admin_cls._meta.object_type, 'administrator_user']},
 		)
 		has_object_classes(self.lo, admin_user.dn, object_type_to_object_classes['administrator_user'], True)
 
