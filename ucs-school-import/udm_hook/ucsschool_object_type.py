@@ -49,6 +49,7 @@ except ImportError:
 		'staff': ('ucsschoolStaff',),
 		'student': ('ucsschoolStudent',),
 		'teacher': ('ucsschoolTeacher',),
+		'teacher_and_staff': ('ucsschoolTeacher', 'ucsschoolStaff'),
 		'work_group': ('ucsschoolWorkGroup',)
 	}
 

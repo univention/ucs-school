@@ -492,7 +492,7 @@ class UCSTestSchool(object):
 					utils.fail('import_user failed with exitcode %s' % retval)
 
 			if is_staff and is_teacher:
-				object_type = ['staff', 'teacher']
+				object_type = ['teacher_and_staff']
 			elif is_staff and not is_teacher:
 				object_type = ['staff']
 			elif not is_staff and is_teacher:
