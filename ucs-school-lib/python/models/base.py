@@ -466,10 +466,6 @@ class UCSSchoolHelperAbstractClass(object):
 			udm_obj['used_in_ucs_school'] = '1'
 			super(MyModel, self).do_create(udm_obj, lo)
 		'''
-		if self._meta.object_type:
-			udm_obj['ucsschoolObjectType'] = self._meta.object_type
-		else:
-			logger.error('Creating object %r without an object_type.', self)
 		self._alter_udm_obj(udm_obj)
 		udm_obj.create()
 

@@ -42,7 +42,6 @@ class UCSSchoolHelperOptions(object):
 	def __init__(self, klass, meta=None):
 		self.set_from_meta_object(meta, 'udm_module', None)
 		self.set_from_meta_object(meta, 'udm_filter', '')
-		self.set_from_meta_object(meta, 'object_type', None)
 		self.set_from_meta_object(meta, 'name_is_unique', False)
 		self.set_from_meta_object(meta, 'allow_school_change', False)
 		udm_module_short = None

@@ -51,23 +51,9 @@ attributetype ( univentionSchool:53.9
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
         SINGLE-VALUE )
 
-attributetype ( univentionSchool:55.0
-        NAME 'ucsschoolObjectType'
-        DESC 'type of ucsschool object'
-        EQUALITY caseExactMatch
-        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-objectclass ( univentionSchool:55
-        NAME 'ucsschoolObject'
-        DESC 'type of object in UCS@school context'
-        ABSTRACT
-        SUP top
-        MAY ( ucsschoolObjectType ) )
-
 objectclass ( univentionSchool:53 NAME 'ucsschoolType'
        DESC 'Role of user or object in UCS@school context'
        ABSTRACT
-       SUP ucsschoolObject
        MAY ( ucsschoolSchool $ ucsschoolSourceUID $ ucsschoolRecordUID $ ucsschoolPurgeTimestamp ) )
 
 objectclass ( univentionSchool:53.1 NAME 'ucsschoolTeacher'
@@ -115,7 +101,6 @@ attributetype ( univentionSchool:5202 NAME 'ucsschoolHomeShareFileServer'
 
 objectclass ( univentionSchool:52 NAME 'ucsschoolOrganizationalUnit'
         DESC 'auxiliary class for class shares'
-        SUP ucsschoolObject
         AUXILIARY
         MAY ( ucsschoolClassShareFileServer $ ucsschoolHomeShareFileServer $ displayName ) )
 
@@ -160,27 +145,3 @@ objectclass ( univentionSchool:54
 	DESC 'Saves the last used postfix for the username.'
 	MUST ( cn )
 	MAY ( ucsschoolUsernameNextNumber ) )
-
-objectclass ( univentionSchool:55.1
-	NAME 'ucsschoolSchoolClass'
-	DESC 'auxiliary class for school classes'
-	SUP ucsschoolObject
-	AUXILIARY )
-
-objectclass ( univentionSchool:55.2
-	NAME 'ucsschoolWorkGroup'
-	DESC 'auxiliary class for work groups'
-	SUP ucsschoolObject
-	AUXILIARY )
-
-objectclass ( univentionSchool:55.3
-	NAME 'ucsschoolComputerRoom'
-	DESC 'auxiliary class for computer rooms'
-	SUP ucsschoolObject
-	AUXILIARY )
-
-objectclass ( univentionSchool:55.4
-	NAME 'ucsschoolClassShare'
-	DESC 'auxiliary class for class shares'
-	SUP ucsschoolObject
-	AUXILIARY )

@@ -178,9 +178,6 @@ class BasicGroup(Group):
 	def get_container(cls, school=None):
 		return ucr.get('ldap/base')
 
-	class Meta(Group.Meta):
-		object_type = 'administrator_group'  # used for ucsschoolAdministratorGroup, maybe call just "BasicGroup"?
-
 
 class SchoolGroup(Group, _MayHaveSchoolSuffix):
 	pass
@@ -242,11 +239,9 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 			return  # is a workgroup
 		return cls
 
-	class Meta(Group.Meta):
-		object_type = 'school_class'
-
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
+
 	ShareClass = Share
 
 	@classmethod
@@ -261,9 +256,6 @@ class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 		if not cls.is_school_workgroup(school, udm_obj.dn):
 			return
 		return cls
-
-	class Meta(SchoolClass.Meta):
-		object_type = 'work_group'
 
 
 class ComputerRoom(Group, _MayHaveSchoolPrefix):
@@ -286,6 +278,3 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
 				yield SchoolComputer.from_dn(host, self.school, ldap_connection)
 			except noObject:
 				continue
-
-	class Meta(Group.Meta):
-		object_type = 'computer_room'

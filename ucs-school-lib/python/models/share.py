@@ -141,6 +141,3 @@ class ClassShare(Share):
 			return '/home/%s/groups/klassen/%s' % (self.school_group.school, self.name)
 		else:
 			return '/home/groups/klassen/%s' % self.name
-
-	class Meta(Share.Meta):
-		object_type = 'class_share'

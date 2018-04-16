@@ -594,9 +594,6 @@ class Student(User):
 		groups.extend(self.get_students_groups())
 		return groups
 
-	class Meta(User.Meta):
-		object_type = 'student'
-
 
 class Teacher(User):
 	type_name = _('Teacher')
@@ -612,9 +609,6 @@ class Teacher(User):
 		groups = super(Teacher, self).get_specific_groups(lo)
 		groups.extend(self.get_teachers_groups())
 		return groups
-
-	class Meta(User.Meta):
-		object_type = 'teacher'
 
 
 class Staff(User):
@@ -656,9 +650,6 @@ class Staff(User):
 		groups.extend(self.get_staff_groups())
 		return groups
 
-	class Meta(User.Meta):
-		object_type = 'staff'
-
 
 class TeachersAndStaff(Teacher):
 	type_name = _('Teacher and Staff')
@@ -675,9 +666,6 @@ class TeachersAndStaff(Teacher):
 		groups.extend(self.get_staff_groups())
 		return groups
 
-	class Meta(Teacher.Meta):
-		object_type = 'teacher_and_staff'
-
 
 class ExamStudent(Student):
 	type_name = _('Exam student')
@@ -693,6 +681,3 @@ class ExamStudent(Student):
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], cls.get_container(school))
 		return cls.from_dn(dn, school, lo)
-
-	class Meta(Student.Meta):
-		object_type = 'exam_student'
