@@ -47,8 +47,9 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		"""
 		Creates a reader for legacy CSV files.
 
-		:param kwarg: list: passed to the reader constructor
-		:return:
+		:param kwarg: passed to the reader constructor
+		:return: a BaseReader object
+		:type: LegacyCsvReader
 		"""
 		kwargs.update(dict(
 			filename=self.config["input"]["filename"],
@@ -59,10 +60,11 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		"""
 		Creates a LegacyImportUser of specific type.
 
-		:param cur_user_roles: list: [ucsschool.lib.roles, ..]
-		:param arg: list: passed to constructor of created class
-		:param kwarg: dict: passed to constructor of created class
-		:return: LegacyImportUser: object of LegacyImportUser subclass
+		:param list cur_user_roles: [ucsschool.lib.roles, ..]
+		:param list arg: passed to constructor of created class
+		:param dict kwarg: passed to constructor of created class
+		:return: object of LegacyImportUser subclass
+		:type: LegacyImportUser
 		"""
 		if not cur_user_roles:
 			return LegacyImportUser(*arg, **kwargs)
@@ -80,9 +82,10 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		"""
 		Creates a ResultExporter object that can dump passwords to disk.
 
-		:param arg: list: passed to constructor of created class
-		:param kwarg: dict: passed to constructor of created class
-		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
+		:param list arg: passed to constructor of created class
+		:param dict kwarg: passed to constructor of created class
+		:return: ResultExporter object
+		:type: LegacyNewUserPasswordCsvExporter
 		"""
 		return LegacyNewUserPasswordCsvExporter(*arg, **kwargs)
 
@@ -90,7 +93,8 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		"""
 		Creates a user importer.
 
-		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: UserImport object
+		:type: LegacyUserImport
 		"""
 		return LegacyUserImport(dry_run=dry_run)

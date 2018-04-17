@@ -115,6 +115,14 @@ class ImportUser(User):
 	}
 
 	def __init__(self, name=None, school=None, **kwargs):
+		"""
+		Create ImportUser object (neither saved nor loaded from LDAP yet).
+		The `dn` attribute is calculated.
+
+		:param str name: username
+		:param str school: OU
+		:param kwargs: attributes to set on user object
+		"""
 		self.action = None            # "A", "D" or "M"
 		self.entry_count = 0          # line/node number of input data
 		self.udm_properties = dict()  # UDM properties from input, that are not stored in Attributes
@@ -154,6 +162,11 @@ class ImportUser(User):
 		IMPLEMENTME if the Reader class in use does not put a list with the
 		original input text in self.input_data. return _build_hook_line() with
 		a list as argument.
+
+		:param str hook_time: `pre` or `post`
+		:param str func_name: `create`, `modify`, `move` or `remove`
+		:return: return code of lib hooks
+		:rtype: int
 		"""
 		return self._build_hook_line(*self.input_data)
 
@@ -161,9 +174,10 @@ class ImportUser(User):
 		"""
 		Runs PyHooks, then ucs-school-libs fork hooks.
 
-		:param hook_time: str: "pre" or "post"
-		:param func_name: str: "create", "modify", "move" or "remove"
-		:return: int: return code of lib hooks
+		:param str hook_time: `pre` or `post`
+		:param str func_name: `create`, `modify`, `move` or `remove`
+		:return: return code of lib hooks
+		:rtype: int
 		"""
 		if self._pyhook_cache is None:
 			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
@@ -195,6 +209,15 @@ class ImportUser(User):
 		return super(ImportUser, self).call_hooks(hook_time, func_name)
 
 	def call_format_hook(self, prop_name, fields):
+		"""
+		Run format hooks.
+
+		:param str prop_name: the property for format
+		:param dict fields: dictionary to manipulate in hook, will be used
+		later to format the property
+		:return: manipulated dictionary
+		:rtype: dict
+		"""
 		if self._format_pyhook_cache is None:
 			# load hooks
 			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
@@ -213,6 +236,14 @@ class ImportUser(User):
 		return res
 
 	def change_school(self, school, lo):
+		"""
+		Change primary school of user.
+
+		:param str school: new OU
+		:param univention.admin.uldap.access connection lo: LDAP connection object
+		:return: whether the school change succeeded
+		:rtype: bool
+		"""
 		self.check_schools(lo, additional_schools=[school])
 		self.run_checks(check_username=False)
 		old_dn = self.old_dn
@@ -235,10 +266,13 @@ class ImportUser(User):
 		Verify that the "school" and "schools" attributes are correct.
 		Check is case sensitive (Bug #42456).
 
-		:param lo: LDAP connection object
+		:param univention.admin.uldap.access connection lo: LDAP connection object
 		:param additional_schools: list of school name to check additionally to
 		the one in self.schools
-		:return: None or raises UnkownSchoolName
+		:type additional_schools: list(str)
+		:return: None
+		:rtype: None
+		:raises UnkownSchoolName
 		"""
 		# cannot be done in run_checks, because it needs LDAP access
 		schools = set(self.schools)
@@ -250,6 +284,14 @@ class ImportUser(User):
 				raise UnkownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
 	def create(self, lo, validate=True):
+		"""
+		Create user object.
+
+		:param univention.admin.uldap.access connection lo: LDAP connection object
+		:param bool validate: if the users attributes should be checked by UDM
+		:return: whether the object created succeeded
+		:rtype: bool
+		"""
 		self._lo = lo
 		self.check_schools(lo)
 		if self.in_hook:
@@ -284,11 +326,13 @@ class ImportUser(User):
 		"""
 		Retrieve an ImportUser.
 
-		:param connection: uldap object
-		:param source_uid: str: source DB identifier
-		:param record_uid: str: source record identifier
-		:param superordinate: str: superordinate
+		:param univention.admin.uldap.access connection: uldap object
+		:param str source_uid: source DB identifier
+		:param str record_uid: source record identifier
+		:param str superordinate: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
+		:rtype: ImportUser
+		:raises noObject
 		"""
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
@@ -311,12 +355,19 @@ class ImportUser(User):
 		"""
 		Set the account expiration date. Caller must run modify().
 
-		:param expiry: str: expire date "%Y-%m-%d" or ""
+		:param str expiry: expire date "%Y-%m-%d" or ""
 		"""
 		self._userexpiry = expiry
 
 	@classmethod
 	def from_dict(cls, a_dict):
+		"""
+		Create user object from a dictionary created by `to_dict()`.
+
+		:param dict a_dict: dictionary created by `to_dict()`
+		:return: ImportUser instance
+		:rtype: ImportUser
+		"""
 		assert isinstance(a_dict, dict)
 		user_dict = a_dict.copy()
 		for attr in ("$dn$", "objectType", "type", "type_name"):
@@ -375,8 +426,9 @@ class ImportUser(User):
 		Check if the user account has a purge timestamp set (regardless if it is
 		in the future or past).
 
-		:param connection: uldap connection object
-		:return: bool: whether the user account has a purge timestamp set
+		:param univention.admin.uldap.access connection: uldap connection object
+		:return: whether the user account has a purge timestamp set
+		:rtype: bool
 		"""
 		user_udm = self.get_udm_object(connection)
 		return bool(user_udm["ucsschoolPurgeTimestamp"])
@@ -385,8 +437,9 @@ class ImportUser(User):
 		"""
 		Check if the user account has expired.
 
-		:param connection: uldap connection object
-		:return: bool: whether the user account has expired
+		:param univention.admin.uldap.access connection: uldap connection object
+		:return: whether the user account has expired
+		:rtype: bool
 		"""
 		user_udm = self.get_udm_object(connection)
 		if not user_udm["userexpiry"]:
@@ -399,8 +452,9 @@ class ImportUser(User):
 		Check if the user account has an expiry date set (regardless if it is
 		in the future or past).
 
-		:param connection: uldap connection object
-		:return: bool: whether the user account has an expiry date set
+		:param univention.admin.uldap.access connection: uldap connection object
+		:return: whether the user account has an expiry date set
+		:rtype: bool
 		"""
 		user_udm = self.get_udm_object(connection)
 		return bool(user_udm["userexpiry"])
@@ -410,7 +464,7 @@ class ImportUser(User):
 		Necessary preparation to modify a user in UCS.
 		Runs all make_* functions.
 
-		:param new_user: bool: if a password should be created
+		:param bool new_user: if a password should be created
 		:return: None
 		"""
 		self.prepare_uids()
@@ -421,7 +475,7 @@ class ImportUser(User):
 		"""
 		Run make_* functions for all Attributes of ucsschool.lib.models.user.User.
 
-		:param new_user: bool: if a password should be created
+		:param bool new_user: if a password should be created
 		:return: None
 		"""
 		self.make_firstname()
@@ -762,8 +816,9 @@ class ImportUser(User):
 		"""
 		Normalize string (german umlauts etc)
 
-		:param s: str
-		:return: str: normalized s
+		:param str s: str to normalize
+		:return: normalized `s`
+		:rtype: str
 		"""
 		if isinstance(s, basestring):
 			s = cls.prop._replace("<:umlauts>{}".format(s), {})
@@ -771,7 +826,7 @@ class ImportUser(User):
 
 	def normalize_udm_properties(self):
 		"""
-		Normalize data in self.udm_properties.
+		Normalize data in `self.udm_properties`.
 		"""
 		def normalize_recursive(item):
 			if isinstance(item, dict):
@@ -806,7 +861,7 @@ class ImportUser(User):
 		"""
 		Run some self-tests.
 
-		:param check_username: bool: if username and password checks should run
+		:param bool check_username: if username and password checks should run
 		"""
 		try:
 			[self.udm_properties.get(ma) or getattr(self, ma) for ma in self.config["mandatory_attributes"]]
@@ -877,7 +932,8 @@ class ImportUser(User):
 		"""
 		Mapping from self.roles to string used in configuration.
 
-		:return: str: one of staff, student, teacher, teacher_and_staff
+		:return: one of `staff`, `student`, `teacher`, `teacher_and_staff`
+		:rtype: str
 		"""
 		if role_pupil in self.roles:
 			return "student"
@@ -891,6 +947,12 @@ class ImportUser(User):
 
 	@property
 	def school_classes_as_str(self):
+		"""
+		Create a string representation of the `school_classes` attribute.
+
+		:return: string representation of `school_classes` attribute
+		:rtype: str
+		"""
 		return ','.join(','.join(sc) for sc in self.school_classes.values())
 
 	@property
@@ -898,7 +960,8 @@ class ImportUser(User):
 		"""
 		Fetch scheme for username for role.
 
-		:return: str: scheme for the role from configuration
+		:return: scheme for the role from configuration
+		:rtype: str
 		"""
 		try:
 			scheme = unicode(self.config["scheme"]["username"][self.role_sting])
@@ -916,9 +979,9 @@ class ImportUser(User):
 		Call make_*() methods required to create values for <properties> used
 		in scheme.
 
-		:param prop_to_format: str - name of property for which the `scheme` is
-		:param scheme: str - scheme used to format `prop_to_format`
-		:param kwargs: dict: additional data to use for formatting
+		:param str prop_to_format: name of property for which the `scheme` is
+		:param str scheme: scheme used to format `prop_to_format`
+		:param dict kwargs: additional data to use for formatting
 		:return: None
 		"""
 		no_brackets = scheme
@@ -975,10 +1038,11 @@ class ImportUser(User):
 		- from self.udm_properties
 		- from kwargs
 
-		:param prop_name: str: name of property to be formatted
-		:param scheme: str: scheme to use
-		:param kwargs: dict: additional data to use for formatting
-		:return: str: formatted string
+		:param str prop_name: name of property to be formatted
+		:param str scheme: scheme to use
+		:param dict kwargs: additional data to use for formatting
+		:return: formatted string
+		:rtype: str
 		"""
 		self.solve_format_dependencies(prop_name, scheme, **kwargs)
 		if self.input_data:
@@ -1059,7 +1123,8 @@ class ImportUser(User):
 
 		IMPLEMENTME if you subclass and add attributes that are not
 		ucsschool.lib.models.attributes.
-		:param other: ImportUser: data source
+
+		:param ImportUser other: data source
 		"""
 		for k, v in other.to_dict().items():
 			if k in self._additional_props and not v:

@@ -63,9 +63,9 @@ class LegacyUserImport(UserImport):
 		ImportUser from LDAP.
 		Run modify preparations here, like school-move etc.
 
-		:param imported_user: ImportUser from input
-		:return: ImportUser: ImportUser with action set and possibly fetched
-		from LDAP
+		:param ImportUser imported_user: ImportUser from input
+		:return: ImportUser with action set and possibly fetched from LDAP
+		:rtype: ImportUser
 		"""
 		if imported_user.action == "A":
 			try:

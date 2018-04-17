@@ -165,12 +165,12 @@ class HttpApiImportFrontend(UserImportCommandLine):
 		"""
 		Update import job task state.
 
-		:param description: str
-		:param percentage: int
-		:param done: int
-		:param total: int
-		:param celery_task_state: one of the states from celery.states
-		:param kwargs: dict: will be saved into job result.meta together with other arguments
+		:param str description: the description
+		:param int percentage: progress
+		:param int done: if it was done
+		:param int total: number of objects
+		:param celery.states celery_task_state: one of the states from celery.states
+		:param dict kwargs: will be saved into job result.meta together with other arguments
 		:return: None
 		"""
 		state = self.make_job_state(description, percentage, done, total, **kwargs)

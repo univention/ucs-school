@@ -50,17 +50,17 @@ class ResultExporter(object):
 		"""
 		Create a CSV file writer.
 
-		:param arg: list
-		:param kwargs: dict
+		:param list arg: arguments for implementing class
+		:param dict kwargs: arguments for implementing class
 		"""
 
 	def dump(self, import_handler, filename):
 		"""
 		Create file about added/modified/deleted objects and errors.
 
-		:param import_handler: object that contains data to dump from an
+		:param UserImport import_handler: object that contains data to dump from an
 		import job (for example UserImport)
-		:param filename: str: filename to write data to
+		:param str filename: filename to write data to
 		"""
 		mkdir_p(os.path.dirname(filename), 'root', 'root', 0o700)
 		writer = self.get_writer()
@@ -95,7 +95,8 @@ class ResultExporter(object):
 
 		:param import_handler: object that contains data to dump from an
 		import job
-		:return: iterator: both import objects and UcsSchoolImportError objects
+		:return: iterator for both import objects and UcsSchoolImportError objects
+		:rtype Iterator
 		"""
 		raise NotImplementedError()
 

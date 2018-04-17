@@ -49,7 +49,7 @@ class UserImport(object):
 
 	def __init__(self, dry_run=True):
 		"""
-		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:param bool dry_run: set to False to actually commit changes to LDAP
 		"""
 		self.dry_run = dry_run
 		self.errors = list()
@@ -69,7 +69,8 @@ class UserImport(object):
 		* UcsSchoolImportErrors are stored in in self.errors (with input entry
 		number in error.entry_count).
 
-		:return: list: ImportUsers found in input
+		:return: ImportUsers found in input
+		:rtype: list(ImportUser)
 		"""
 		num = 1
 		self.logger.info("------ Starting to read users from input data... ------")
@@ -95,8 +96,9 @@ class UserImport(object):
 		* UcsSchoolImportErrors are stored in self.errors (with failed ImportUser
 		object in error.import_user).
 
-		:param imported_users: list: ImportUser objects
-		:return tuple: (self.errors, self.added_users, self.modified_users)
+		:param list imported_users: ImportUser objects
+		:return (self.errors, self.added_users, self.modified_users)
+		:type: tuple
 		"""
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
@@ -185,9 +187,9 @@ class UserImport(object):
 		ImportUser from LDAP.
 		Run modify preparations here, like school-move etc.
 
-		:param imported_user: ImportUser from input
-		:return: ImportUser: ImportUser with action set and possibly fetched
-		from LDAP
+		:param ImportUser imported_user: ImportUser from input
+		:return: ImportUser with action set and possibly fetched from LDAP
+		:type: ImportUser
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
@@ -215,6 +217,7 @@ class UserImport(object):
 		Find difference between source database and UCS user database.
 
 		:return list of tuples: [(source_uid, record_uid, input_data), ..]
+		:rtype: list(tuple(str, str, list(str)))
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
 		users_to_delete = list()
@@ -262,8 +265,9 @@ class UserImport(object):
 		object in error.import_user).
 		* To add or change a deletion strategy overwrite do_delete().
 
-		:param users: list of tuples: [(source_uid, record_uid, input_data), ..]
-		:return: tuple: (self.errors, self.deleted_users)
+		:param list users: list of tuples: [(source_uid, record_uid, input_data), ..]
+		:return: (self.errors, self.deleted_users)
+		:rtype: tuple
 		"""
 		self.logger.info("------ Deleting %d users... ------", len(users))
 		a_user = self.factory.make_import_user([])
@@ -308,9 +312,10 @@ class UserImport(object):
 		"""
 		Change users primary school.
 
-		:param imported_user: User from input with target school
-		:param user: existing User with old school
-		:return: ImportUser: user in new position, freshly fetched from LDAP
+		:param ImportUser imported_user: User from input with target school
+		:param ImportUser user: existing User with old school
+		:return: user in new position, freshly fetched from LDAP
+		:rtype: ImportUser
 		"""
 		self.logger.info("Moving %s from school %r to %r...", user, user.school, imported_user.school)
 		user = self.do_school_move(imported_user, user)
@@ -340,8 +345,9 @@ class UserImport(object):
 		Delete or deactivate a user.
 		IMPLEMENTME to add or change a deletion variant.
 
-		:param user: ImportUser
-		:return bool: whether the deletion worked
+		:param ImportUser user: user to be deleted
+		:return whether the deletion worked
+		:rtype: bool
 		"""
 		deactivation_grace = max(0, int(self.config.get('deletion_grace_period', {}).get('deactivation', 0)))
 		deletion_grace = max(0, int(self.config.get('deletion_grace_period', {}).get('deletion', 0)))
@@ -390,9 +396,9 @@ class UserImport(object):
 		"""
 		Deactivate the user. Does not run user.modify().
 
-		:param user: ImportUser object
-		:return: bool: whether any changes were made to the object and
-		user.modify() is required
+		:param ImportUser user: user to deactivate when modidy() is run
+		:return: whether any changes were made to the object and user.modify() is required
+		:rtype: bool
 		"""
 		if user.disabled == 'all':
 			self.logger.info('User %s is already disabled.', user)
@@ -406,8 +412,9 @@ class UserImport(object):
 		"""
 		Truly delete the user.
 
-		:param user: ImportUser object
-		:return: bool: return value from the ucsschool.lib.model remove() call
+		:param ImportUser user: object to delete
+		:return: return value from the ucsschool.lib.model remove() call
+		:rtype: bool
 		"""
 		self.logger.info('Deleting user %s...', user)
 		if self.dry_run:
@@ -421,9 +428,10 @@ class UserImport(object):
 		Sets the account expiration date (UDM attribute "userexpiry") on the
 		user object. Does not run user.modify().
 
-		:param user: ImportUser object
-		:return: bool: whether any changes were made to the object and
+		:param ImportUser user: object to delete
+		:return: whether any changes were made to the object and
 		user.modify() is required
+		:rtype: bool
 		"""
 		if user.disabled == 'all':
 			self.logger.info('User %s is already disabled. No account expiration date is set.', user)
@@ -443,9 +451,10 @@ class UserImport(object):
 		Sets the account deletion timestamp (UDM attribute "ucsschoolPurgeTimestamp")
 		on the user object. Does not run user.modify().
 
-		:param user: ImportUser object
-		:return: bool: whether any changes were made to the object and
+		:param ImportUser user: user to schedule the deletion for
+		:return: whether any changes were made to the object and
 		user.modify() is required
+		:rtype: bool
 		"""
 		if user.has_purge_timestamp(self.connection):
 			self.logger.info('User %s is already scheduled for deletion. The entry remains unchanged.', user)

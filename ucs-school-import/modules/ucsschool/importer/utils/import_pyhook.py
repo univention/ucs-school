@@ -38,7 +38,7 @@ from ucsschool.importer.utils.logging import get_logger
 class ImportPyHook(PyHook):
 	def __init__(self, lo, *args, **kwargs):
 		"""
-		:param lo: LDAP object
+		:param univention.admin.uldap.access lo: LDAP object
 		"""
 		super(ImportPyHook, self).__init__(*args, **kwargs)
 		self.lo = lo  # LDAP object

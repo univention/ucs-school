@@ -48,7 +48,8 @@ class LegacyUserImportCommandLine(UserImportCommandLine):
 		"""
 		Add legacy user import specific configuration files.
 
-		:return: list: list of filenames
+		:return: list of filenames
+		:type: list(str)
 		"""
 		res = super(LegacyUserImportCommandLine, self).configuration_files
 		res.append("/usr/share/ucs-school-import/configs/user_import_legacy_defaults.json")

@@ -41,8 +41,8 @@ class BaseWriter(object):
 		"""
 		Create a writer.
 
-		:param arg: list
-		:param kwargs: dict
+		:param tuple arg: arguments for implementing class
+		:param dict kwargs: arguments for implementing class
 		"""
 
 	def open(self, filename, mode="wb"):
@@ -51,8 +51,8 @@ class BaseWriter(object):
 		context manager.
 		IMPLEMENTME with the method appropriate for the output type.
 
-		:param filename: str: filename to write data to
-		:param mode: str: passed to used open() method
+		:param str filename: filename to write data to
+		:param str mode: passed to used open() method
 		:return: a context manager
 		"""
 		raise NotImplementedError()

@@ -136,8 +136,9 @@ class DefaultUserImportFactory(object):
 		"""
 		Creates an input data reader.
 
-		:param kwarg: list: passed to the reader constructor
-		:return:
+		:param dict kwarg: passed to the reader constructor
+		:return: a reader object
+		:rtype: BaseReader
 		"""
 		if self.config["input"]["type"] == "csv":
 			kwargs.update(dict(
@@ -151,11 +152,12 @@ class DefaultUserImportFactory(object):
 		"""
 		Creates a ImportUser [of specific type], depending on its roles.
 
-		:param cur_user_roles: list: [ucsschool.lib.roles, ..]
-		:param arg: list: passed to constructor of created class
-		:param kwarg: dict: passed to constructor of created class
-		:return: ImportUser: object of ImportUser subclass or ImportUser if
-		cur_user_roles was empty
+		:param cur_user_roles: [ucsschool.lib.roles, ..]
+		:type cur_user_roles: list(str)
+		:param tuple arg: passed to constructor of created class
+		:param dict kwarg: passed to constructor of created class
+		:return: object of ImportUser subclass or ImportUser if cur_user_roles was empty
+		:rtype: ImportUser
 		"""
 		if not cur_user_roles:
 			return ImportUser(*arg, **kwargs)
@@ -173,8 +175,9 @@ class DefaultUserImportFactory(object):
 		"""
 		Creates a MassImport object.
 
-		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: MassImport object
+		:rtype: MassImport
 		"""
 		return MassImport(dry_run=dry_run)
 
@@ -182,9 +185,10 @@ class DefaultUserImportFactory(object):
 		"""
 		Creates a ResultExporter object that can dump passwords to disk.
 
-		:param arg: list: passed to constructor of created class
-		:param kwarg: dict: passed to constructor of created class
-		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
+		:param tuple arg: passed to constructor of created class
+		:param dict kwarg: passed to constructor of created class
+		:return: ResultExporter object
+		:rtype: NewUserPasswordCsvExporter
 		"""
 		return NewUserPasswordCsvExporter(*arg, **kwargs)
 
@@ -192,9 +196,10 @@ class DefaultUserImportFactory(object):
 		"""
 		Creates a ResultExporter object.
 
-		:param arg: list: passed to constructor of created class
-		:param kwarg: dict: passed to constructor of created class
-		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
+		:param tuple arg: passed to constructor of created class
+		:param dict kwarg: passed to constructor of created class
+		:return: ResultExporter object
+		:rtype: UserImportCsvResultExporter
 		"""
 		return UserImportCsvResultExporter(*arg, **kwargs)
 
@@ -202,8 +207,9 @@ class DefaultUserImportFactory(object):
 		"""
 		Creates a user importer.
 
-		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: UserImport object
+		:rtype: UserImport
 		"""
 		return UserImport(dry_run=dry_run)
 
@@ -212,6 +218,7 @@ class DefaultUserImportFactory(object):
 		Get a initialized UCR instance.
 
 		:return: ConfigRegistry object
+		:rtype: univention.config_registry.ConfigRegistry
 		"""
 		return ucr
 
@@ -219,10 +226,11 @@ class DefaultUserImportFactory(object):
 		"""
 		Get a EmailHandler instance.
 
-		:param max_length: int: created email adresses must not be longer
+		:param int max_length: created email adresses must not be longer
 		than this
-		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: EmailHandler object
+		:rtype: EmailHandler
 		"""
 		return EmailHandler(max_length, dry_run)
 
@@ -230,10 +238,10 @@ class DefaultUserImportFactory(object):
 		"""
 		Get a UsernameHandler instance.
 
-		:param max_length: int: created usernames must not be longer
-		than this
-		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:param int max_length: created usernames must not be longer than this
+		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: UsernameHandler object
+		:rtype UsernameHandler
 		"""
 		return UsernameHandler(max_length, dry_run)
 
@@ -241,8 +249,9 @@ class DefaultUserImportFactory(object):
 		"""
 		Creates a user writer object.
 
-		:param arg: list: passed to constructor of created class
-		:param kwarg: dict: passed to constructor of created class
+		:param tuple arg: passed to constructor of created class
+		:param dict kwarg: passed to constructor of created class
 		:return: ucsschool.importer.writer.BaseWriter object
+		:rtype: CsvWriter
 		"""
 		return CsvWriter(*arg, **kwargs)

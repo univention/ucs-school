@@ -48,7 +48,7 @@ class MassImport(object):
 
 	def __init__(self, dry_run=True):
 		"""
-		:param dry_run: bool: set to False to actually commit changes to LDAP
+		:param bool dry_run: set to False to actually commit changes to LDAP
 		"""
 		self.dry_run = dry_run
 		self.config = Configuration()

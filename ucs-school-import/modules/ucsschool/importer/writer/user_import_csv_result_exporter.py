@@ -46,8 +46,8 @@ class UserImportCsvResultExporter(ResultExporter):
 
 	def __init__(self, *arg, **kwargs):
 		"""
-		:param arg: list: ignored
-		:param kwargs: dict: ignored
+		:param tuple arg: ignored
+		:param dict kwargs: ignored
 		"""
 		super(UserImportCsvResultExporter, self).__init__(*arg, **kwargs)
 		self.factory = Factory()
@@ -58,8 +58,9 @@ class UserImportCsvResultExporter(ResultExporter):
 		Iterator over all ImportUsers and errors of the user import.
 		First errors, then added, modified and deleted users.
 
-		:param user_import: UserImport object used for the import
-		:return: iterator: both ImportUsers and UcsSchoolImportError objects
+		:param UserImport user_import: UserImport object used for the import
+		:return: iterator over both ImportUsers and UcsSchoolImportError objects
+		:rtype: Iterator(ImportUsers or UcsSchoolImportError)
 		"""
 		def exc_count(exc):
 			if exc.import_user:
@@ -89,8 +90,9 @@ class UserImportCsvResultExporter(ResultExporter):
 		Make a dict of attr_name->strings from an import object.
 
 		:param obj: object to serialize
-		:return: dict: attr_name->strings that will be used to write the
+		:return: mapping attr_name->strings that will be used to write the
 		output file
+		:rtype: dict
 		"""
 		is_error = False
 		if isinstance(obj, ImportUser):
