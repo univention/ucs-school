@@ -47,10 +47,18 @@ import univention.admin.modules
 
 
 class CsvReader(BaseReader):
+	"""
+	Reads CSV files and turns lines to ImportUser objects.
+	"""
 	_attrib_names = dict()  # cache for Attribute names
 	encoding = "utf-8"
 
 	def __init__(self, filename, header_lines=0, **kwargs):
+		"""
+		:param str filename: Path to file with user data.
+		:param int header_lines: Number of lines before the actual data starts.
+		:param dict kwargs: optional parameters for use in derived classes
+		"""
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
 		self.fieldnames = None
 		usersmod = univention.admin.modules.get("users/user")
@@ -61,8 +69,9 @@ class CsvReader(BaseReader):
 		"""
 		Overwrite me to force a certain CSV dialect.
 
-		:param fp: open file to read from
-		:return: csv.dialect
+		:param file fp: open file to read from
+		:return: CSV dialect
+		:rtype: csv.Dialect
 		"""
 		delimiter = self.config.get("csv", {}).get("delimiter")
 		if delimiter:
@@ -76,9 +85,10 @@ class CsvReader(BaseReader):
 		Generate dicts from a CSV file.
 
 		:param args: ignored
-		:param kwargs: dict: if it has a dict "csv_reader_args", that will be
-		used as additional arguments for the DictReader constructor.
-		:return: iter(dict)
+		:param dict kwargs: if it has a dict `csv_reader_args`, that will be
+		used as additional arguments for the :py:class:`DictReader` constructor.
+		:return: iterator over list of dicts
+		:rtype: Iterator
 		"""
 		with open(self.filename, "rb") as fp:
 			try:
@@ -113,16 +123,18 @@ class CsvReader(BaseReader):
 
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""
-		This is a hook into map().
+		This is a hook into :py:meth:`map`.
+
 		IMPLEMENT ME if you wish to handle certain columns from the CSV file
 		yourself.
 
-		:param mapping_key: str: the key in config["csv"]["mapping"]
-		:param mapping_value: str: the value in config["csv"]["mapping"]
-		:param csv_value: str: the associated value from the CSV line
-		:param import_user: ImportUser: the object to modify
-		:return: bool: True if the field was handles here. It will be ignored
+		:param str mapping_key: the key in config["csv"]["mapping"]
+		:param str mapping_value: the value in config["csv"]["mapping"]
+		:param str csv_value: the associated value from the CSV line
+		:param ImportUser import_user: the object to modify
+		:return: True if the field was handles here. It will be ignored
 		in map(). False if map() should handle the field.
+		:rtype: bool
 		"""
 		if mapping_value == "__ignore":
 			return True
@@ -140,8 +152,9 @@ class CsvReader(BaseReader):
 		by cmdline.
 		Detect the ucsschool.lib.roles from the input data.
 
-		:param input_data: dict user from read()
-		:return: list: [ucsschool.lib.roles, ..]
+		:param dict input_data: dict user from read()
+		:return: list of roles [ucsschool.lib.roles, ..]
+		:rtype: list(str)
 		"""
 		try:
 			return {
@@ -158,9 +171,11 @@ class CsvReader(BaseReader):
 		Creates a ImportUser object from a users dict. Data will not be
 		modified, just copied.
 
-		:param input_data: dict: user from read()
-		:param cur_user_roles: list: [ucsschool.lib.roles, ..]
-		:return: ImportUser
+		:param dict input_data: user from read()
+		:param cur_user_roles: [ucsschool.lib.roles, ..]
+		:type cur_user_roles: list(str)
+		:return: ImportUser instance
+		:rtype: ImportUser
 		"""
 		import_user = self.factory.make_import_user(cur_user_roles)
 		attrib_names = self._get_attrib_name(import_user)
@@ -195,10 +210,12 @@ class CsvReader(BaseReader):
 		"""
 		Create a mapping from the configured input mapping to the actual
 		input data.
-		Used by ImportUser.format_from_scheme().
+		Used by `ImportUser.format_from_scheme()`.
 
-		:param input_data: "raw" input data as stored in ImportUser.input_data
-		:return: dict: key->input_data-value mapping
+		:param input_data: "raw" input data as stored in `ImportUser.input_data`
+		:type input_data: list(str)
+		:return: key->input_data-value mapping
+		:rtype: dict
 		"""
 		if not self.fieldnames:
 			self.read().next()
@@ -216,8 +233,9 @@ class CsvReader(BaseReader):
 		"""
 		Cached retrieval of names of Attributes of an ImportUser.
 
-		:param import_user: an ImportUser object
-		:return: list: names of Attributes
+		:param ImportUser import_user: an ImportUser object
+		:return: names of Attributes
+		:rtype: list
 		"""
 		cls_name = import_user.__class__.__name__
 		if cls_name not in cls._attrib_names:

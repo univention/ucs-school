@@ -115,8 +115,8 @@ class ParseUserImportCmdline(object):
 		"""
 		Parse the command line.
 
-		:return: argparse.Namespace: the object with the parsed arguments
-		assigned to attributes
+		:return: the object with the parsed arguments assigned to attributes
+		:rtype: argparse.Namespace
 		"""
 		self.args = self.parser.parse_args()
 

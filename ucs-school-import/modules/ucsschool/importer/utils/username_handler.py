@@ -46,9 +46,10 @@ class NameCounterStorageBackend(object):
 		"""
 		Store a value for a new name.
 
-		:param name: str
-		:param value: int
-		:return: None | NameKeyExists
+		:param str name: name
+		:param int value: value to store
+		:return: None
+		:raises NameKeyExists: if a value is already stored to such a `name`
 		"""
 		raise NotImplementedError()
 
@@ -56,10 +57,11 @@ class NameCounterStorageBackend(object):
 		"""
 		Store a value for an existing name.
 
-		:param name: str
-		:param old_value: int
-		:param new_value: int
-		:return: None | NoValueStored
+		:param str name: name
+		:param int old_value: old value
+		:param int new_value: new value
+		:return: None
+		:raises NameKeyExists: if no value is stored by that `name`
 		"""
 		raise NotImplementedError()
 
@@ -67,8 +69,10 @@ class NameCounterStorageBackend(object):
 		"""
 		Retrieve a value for a name.
 
-		:param name: str
-		:return: int | NoValueStored | BadValueStored
+		:param str name: name to retrieve
+		:return: int
+		:raises NoValueStored: if no value is stored by that `name`
+		:raises BadValueStored: if the value has a bad format
 		"""
 		raise NotImplementedError()
 
@@ -76,7 +80,7 @@ class NameCounterStorageBackend(object):
 		"""
 		Remove a name from storage.
 
-		:param name: str
+		:param str name: name
 		:return: None
 		"""
 		raise NotImplementedError()
@@ -176,7 +180,7 @@ class MemoryStorageBackend(NameCounterStorageBackend):
 		This will remove the key only from memory. It may still be stored in
 		the LDAP backend.
 
-		:param name: str
+		:param str name: name
 		:return: None
 		"""
 		try:
@@ -259,9 +263,9 @@ class UsernameHandler(object):
 
 	def __init__(self, max_length, dry_run=True):
 		"""
-		:param max_length: int: created usernames will be no longer
+		:param int max_length: created usernames will be no longer
 		than this
-		:param dry_run: bool: if False use LDAP to store already-used usernames
+		:param bool dry_run: if False use LDAP to store already-used usernames
 		if True store for one run only in memory
 		"""
 		self.max_length = max_length
@@ -277,6 +281,7 @@ class UsernameHandler(object):
 	def get_storage_backend(self):
 		"""
 		:return: NameCounterStorageBackend instance
+		:rtype NameCounterStorageBackend
 		"""
 		if self.dry_run:
 			return MemoryStorageBackend(attribute_storage_name=self.attribute_storage_name)
@@ -289,8 +294,9 @@ class UsernameHandler(object):
 		* Name must only contain numbers, letters and dots, and may not be 'admin'!
 		* Name must not start or end in a dot.
 
-		:param name: str: name to check
-		:return: str: copy of input, possibly modified
+		:param str name: name to check
+		:return: copy of input, possibly modified
+		:rtype: str
 		"""
 		if not self.allowed_chars:
 			return name
@@ -319,9 +325,10 @@ class UsernameHandler(object):
 		* Subclass->override counter_variable_to_function() and the called methods to support
 		other schemes than [ALWAYSCOUNTER] and [COUNTER2] or change their meaning.
 
-		:param name: str: username/email, possibly a template
-		:param max_length: int overwrite max length specified at object instanciation time
-		:return: str: unique name
+		:param str name: username/email, possibly a template
+		:param int max_length: overwrite max length specified at object instanciation time
+		:return: unique name
+		:rtype: str
 		"""
 		assert isinstance(name, basestring)
 		PATTERN_FUNC_MAXLENGTH = 3  # maximum a counter function can produce is len('999')
@@ -373,7 +380,8 @@ class UsernameHandler(object):
 		Variables have to start with '[', end with ']' and must be all
 		upper case.
 
-		:return: dict: variable name -> function
+		:return: mapping: variable name -> function
+		:rtype: dict
 		"""
 		return {
 			"[ALWAYSCOUNTER]": self.always_counter,
@@ -384,8 +392,9 @@ class UsernameHandler(object):
 		"""
 		[ALWAYSCOUNTER]
 
-		:param name_base: str: the name without [ALWAYSCOUNTER]
-		:return: str: number to append to name
+		:param str name_base: the name without [ALWAYSCOUNTER]
+		:return: number to append to name
+		:rtype: str
 		"""
 		return self.get_and_raise(name_base, "1")
 
@@ -393,8 +402,9 @@ class UsernameHandler(object):
 		"""
 		[COUNTER2]
 
-		:param name_base: str: the name without [COUNTER2]
-		:return: str: number to append to name
+		:param str name_base: the name without [COUNTER2]
+		:return: number to append to name
+		:rtype: str
 		"""
 		return self.get_and_raise(name_base, "")
 
@@ -403,9 +413,10 @@ class UsernameHandler(object):
 		Returns the current counter value or initial_value if unset and stores
 		it raised by 1.
 
-		:param name_base: str
-		:param initial_value: str
-		:return str
+		:param str name_base: name without []
+		:param str initial_value: lowest value
+		:return current counter value
+		:rtype: str
 		"""
 		try:
 			num = self.storage_backend.retrieve(name_base)
@@ -428,8 +439,8 @@ class EmailHandler(UsernameHandler):
 
 	def __init__(self, max_length=254, dry_run=True):
 		"""
-		:param max_length: int maximum length of email address
-		:param dry_run: bool: if False use LDAP to store already-used email addresses
+		:param int max_length maximum length of email address
+		:param bool dry_run: if False use LDAP to store already-used email addresses
 		if True store for one run only in memory
 		"""
 		super(EmailHandler, self).__init__(max_length, dry_run)

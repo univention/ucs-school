@@ -71,7 +71,7 @@ class UserPyHook(ImportPyHook):
 		create during an import job
 		* set priority["pre_create"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 
@@ -85,7 +85,7 @@ class UserPyHook(ImportPyHook):
 		user.modify_without_hooks().
 		* set priority["post_create"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 
@@ -96,7 +96,7 @@ class UserPyHook(ImportPyHook):
 		* "user" will be a ImportUser, loaded from LDAP.
 		* set priority["pre_modify"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 
@@ -110,7 +110,7 @@ class UserPyHook(ImportPyHook):
 		user.modify_without_hooks().
 		* set priority["post_modify"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 
@@ -121,7 +121,7 @@ class UserPyHook(ImportPyHook):
 		* "user" will be an ImportUser, loaded from LDAP.
 		* set priority["pre_move"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 
@@ -135,7 +135,7 @@ class UserPyHook(ImportPyHook):
 		user.modify_without_hooks().
 		* set priority["post_move"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 
@@ -146,7 +146,7 @@ class UserPyHook(ImportPyHook):
 		* "user" will be an ImportUser, loaded from LDAP.
 		* set priority["pre_remove"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 
@@ -161,6 +161,6 @@ class UserPyHook(ImportPyHook):
 		* If the user was removed, do not modify() it.
 		* set priority["post_remove"] to an int, to enable this method
 
-		:param user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""

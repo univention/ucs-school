@@ -81,7 +81,8 @@ class CommandLine(object):
 		res.append("/your/config.json")
 		return res
 
-		:return: list: list of filenames
+		:return: list of filenames
+		:rtype: list(str)
 		"""
 		return [
 			"/usr/share/ucs-school-import/configs/global_defaults.json",

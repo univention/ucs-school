@@ -92,12 +92,14 @@ class LegacyImportUser(ImportUser):
 		Will find it using either source_uid and record_uid or if unset
 		with the username.
 
-		:param connection: uldap object
-		:param source_uid: str: source DB identifier
-		:param record_uid: str: source record identifier
-		:param username: str: username
-		:param superordinate: str: superordinate
+		:param univention.admin.uldap.access connection: uldap object
+		:param str source_uid: source DB identifier
+		:param str record_uid: source record identifier
+		:param str username: username
+		:param str superordinate: superordinate
 		:return: object of ImportUser subclass from LDAP or raises noObject
+		:rtype: ImportUser
+		:raises noObject
 		"""
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
@@ -117,6 +119,9 @@ class LegacyImportUser(ImportUser):
 	def get_class_for_udm_obj(cls, udm_obj, school):
 		"""
 		IMPLEMENTME if you subclass!
+
+		:param univention.admin.handlers.simpleLdap udm_obj: UDM user instance
+		:param str school: name of OU
 		"""
 		klass = super(LegacyImportUser, cls).get_class_for_udm_obj(udm_obj, school)
 		if issubclass(klass, TeachersAndStaff):

@@ -41,8 +41,9 @@ def setup_factory(factory_cls_name):
 	"""
 	Create import factory.
 
-	:param factory_cls_name: str: full dotted name of class
+	:param str factory_cls_name: full dotted name of class
 	:return: Factory object
+	:rtype Factory
 	"""
 	fac_class = load_class(factory_cls_name)
 	factory = Factory(fac_class())
@@ -55,6 +56,7 @@ def load_class(dotted_class_name):
 
 	:param dotted_class_name: str: full dotted name of class
 	:return: class
+	:rtype: type
 	"""
 	module_path, _, class_name = dotted_class_name.rpartition(".")
 	module = importlib.import_module(module_path)

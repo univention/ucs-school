@@ -128,6 +128,7 @@ class IllegalURLError(ApiError):
 
 
 class _ResourceClientMetaClass(type):
+	"""Meta class for resource client classes. Registers them."""
 	def __new__(cls, clsname, bases, attrs):
 		kls = super(_ResourceClientMetaClass, cls).__new__(cls, clsname, bases, attrs)
 		register_resource_client_class(kls)
@@ -135,6 +136,7 @@ class _ResourceClientMetaClass(type):
 
 
 class _ResourceRepresentationMetaClass(type):
+	"""Meta class for resource representation classes. Registers them."""
 	def __new__(cls, clsname, bases, attrs):
 		kls = super(_ResourceRepresentationMetaClass, cls).__new__(cls, clsname, bases, attrs)
 		register_resource_representation_class(kls.resource_name, kls)
@@ -142,6 +144,7 @@ class _ResourceRepresentationMetaClass(type):
 
 
 class ResourceRepresentationIterator:
+	"""Iterator for paginated query results."""
 	def __init__(self, resource_client, paginated_resource_list):
 		self._resource_client = resource_client
 		self._paginated_resource_list = paginated_resource_list
@@ -169,7 +172,25 @@ class ResourceRepresentationIterator:
 
 
 class ResourceRepresentation(object):
+	"""
+	Python representations of HTTP-API resources.
+
+	To add resources to the Python API create inner classes that
+	1. subclass  _ResourceReprBase
+	2. use as meta class _ResourceRepresentationMetaClass
+	3. set a class attribute `resource_name` that matches the resource path
+	in the HTTP-API
+
+	The meta class will register the resource representation class and make it
+	available through Client objects.
+
+	client = Client(<username>, <password>, [log level])
+	client.school.list()           # <-- from SchoolResource
+	client.userimportjob.create()  # <-- from UserImportJobResource
+	"""
+
 	class _ResourceReprBase(object):
+		"""Base class of resource representation classes."""
 		resource_name = ''
 		_attribute_repr = {}
 
@@ -304,11 +325,13 @@ class Client(object):
 		"""
 		UCS@school HTTP API client.
 
-		:param name:
-		:param password:
-		:param server:
-		:param version:
-		:param log_level: int: logging.{INFO,DEBUG,..} or Client.LOG_REQUEST>Client.LOG_RESPONSE to log API requests & responses
+		:param str name: username for connecting to HTTP-API
+		:param str password: password to use for connecting to HTTP-API
+		:param str server: FQDN of server running the HTTP-API
+		:param str version: HTTP-API version, omit to use latest version
+		:param int log_level: log level, use `logging.{INFO,DEBUG,..}` or
+			`Client.LOG_REQUEST` to log API requests, `Client.LOG_RESPONSE` to
+			log both requests and responses
 		"""
 		self.username = name
 		self.password = password
@@ -427,8 +450,9 @@ class Client(object):
 			"""
 			Read Resource.
 
-			:param pk: str: primary key (name, id, ..)
+			:param str pk: primary key (name, id, ..)
 			:return: Resource object
+			:rtype: _ResourceReprBase
 			"""
 			assert (isinstance(pk, basestring) or isinstance(pk, int))
 
@@ -441,7 +465,9 @@ class Client(object):
 			All arguments will be passed as parameters to the request. Example:
 			latest(dryrun=True)
 
+			:param params: arguments to pass as parameters to the request
 			:return: Resource object
+			:rtype: ResourceRepresentation
 			"""
 			list_kwargs = dict(
 				ordering='-{}'.format(self.pk_name),
@@ -459,7 +485,9 @@ class Client(object):
 			All arguments will be passed as parameters to the request. Example:
 			list(status=['Aborted', 'Finished'], dryrun=False, ordering='id', limit=1)
 
-			:return: iterator: Resource objects
+			:param params: arguments to pass as parameters to the request
+			:return: list of Resource objects
+			:rtype: ResourceRepresentationIterator
 			"""
 			return self._to_python(self._list_resource(**params))
 
@@ -475,6 +503,14 @@ class Client(object):
 			self.client = client
 
 		def list(self, school):
+			"""
+			Get roles the connected user has import permissions for on `school`.
+
+
+			:param str school: the school to get the permissions for
+			:return: list of `Role` objects: [namedtuple('name', 'displayName'), ..]
+			:type: list(Role)
+			"""
 			Role = namedtuple('Role', ['name', 'displayName'])
 			lo, po = get_machine_connection()
 			filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=%s)(memberUid=%s))'
@@ -495,13 +531,14 @@ class Client(object):
 			"""
 			Create a UserImportJob.
 
-			:param filename: str: path to a CSV file, or just a filename and read from 'file_obj'
-			:param source_uid: str: optional unique sourceUID of school management software database
-			:param school: str: optional name of a School
-			:param user_role: str: optional role of user, one of staff, student, teacher, teacher_and_staff
-			:param dryrun: bool: False to start a real import
-			:param file_obj: optional file like object to read CSV data from, instead of opening 'filename'
-			:return: dict: the created UserImportJob resource
+			:param str filename: path to a CSV file, or just a filename and read from 'file_obj'
+			:param str source_uid: optional unique sourceUID of school management software database
+			:param str school: optional name of a School
+			:param str user_role: optional role of user, one of staff, student, teacher, teacher_and_staff
+			:param bool dryrun: False to start a real import
+			:param file file_obj: optional file like object to read CSV data from, instead of opening 'filename'
+			:return: the created UserImportJob resource
+			:type: _ResourceReprBase
 			"""
 			assert isinstance(filename, basestring)
 			assert (isinstance(source_uid, basestring) or source_uid is None)

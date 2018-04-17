@@ -57,8 +57,9 @@ class LegacyCsvReader(CsvReader):
 		"""
 		Detect the ucsschool.lib.roles from the input data.
 
-		:param input_data: dict user from read()
-		:return: list: [ucsschool.lib.roles, ..]
+		:param dict input_data: dict user from read()
+		:return: [ucsschool.lib.roles, ..]
+		:type: list(str)
 		"""
 		try:
 			return super(LegacyCsvReader, self).get_roles(input_data)

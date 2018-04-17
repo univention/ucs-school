@@ -50,8 +50,9 @@ class MyUserImport(UserImport):
 		Delete or deactivate a user.
 		IMPLEMENTME to add or change a deletion variant.
 
-		:param user: ImportUser
-		:return bool: whether the deletion worked
+		:param ImportUser user: user object
+		:return whether the deletion worked
+		:rtype: bool
 		"""
 		if user.birthday == datetime.datetime.now().strftime("%Y-%m-%d"):
 			self.logger.info("Not deleting user %s on its birthday!", user)

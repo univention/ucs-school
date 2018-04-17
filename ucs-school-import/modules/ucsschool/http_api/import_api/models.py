@@ -81,7 +81,7 @@ class School(models.Model):
 		"""
 		Update one or all School objects from OUs in LDAP.
 
-		:param ou_str: name of School object to update, all will be updated if None
+		:param str ou_str: name of School object to update, all will be updated if None
 		:return: None
 		"""
 		names = list()

@@ -63,10 +63,11 @@ class FormatPyHook(PyHook):
 		Run code before formatting an property using a schema in
 		format_from_scheme().
 
-		:param property_name: str: Name of property_name that will be formatted
-		:param fields: dict: dictionary with the users attributes and
+		:param str property_name: Name of property_name that will be formatted
+		:param dict fields: dictionary with the users attributes and
 		udm_properties
-		:return: dict: fields dictionary that be used by format_from_scheme()
+		:return: fields dictionary that be used by format_from_scheme()
+		:rtype: dict
 		"""
 		return fields
 
@@ -75,10 +76,11 @@ class FormatPyHook(PyHook):
 		Run code before formatting an property using a schema in
 		format_from_scheme().
 
-		:param property_name: str: Name of property_name that will be formatted
-		:param fields: dict: dictionary with the users attributes and
+		:param str property_name: Name of property_name that will be formatted
+		:param dict fields: dictionary with the users attributes and
 		udm_properties
-		:return: dict: fields dictionary that be used by format_from_scheme()
+		:return: fields dictionary that be used by format_from_scheme()
+		:rtype: dict
 		"""
 		return fields
 
@@ -87,10 +89,11 @@ class FormatPyHook(PyHook):
 		Run code before formatting an property using a schema in
 		format_from_scheme().
 
-		:param property_name: str: Name of property_name that will be formatted
-		:param fields: dict: dictionary with the users attributes and
+		:param str property_name: Name of property_name that will be formatted
+		:param dict fields: dictionary with the users attributes and
 		udm_properties
-		:return: dict: fields dictionary that be used by format_from_scheme()
+		:return: fields dictionary that be used by format_from_scheme()
+		:rtype: dict
 		"""
 		return fields
 
@@ -99,9 +102,10 @@ class FormatPyHook(PyHook):
 		Run code before formatting a property using a schema in
 		format_from_scheme().
 
-		:param property_name: str: Name of property_name that will be formatted
-		:param fields: dict: dictionary with the users attributes and
+		:param str property_name: Name of property_name that will be formatted
+		:param dict fields: dictionary with the users attributes and
 		udm_properties
-		:return: dict: fields dictionary that be used by format_from_scheme()
+		:return: fields dictionary that be used by format_from_scheme()
+		:rtype: dict
 		"""
 		return fields

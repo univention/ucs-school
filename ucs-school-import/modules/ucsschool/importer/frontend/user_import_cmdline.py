@@ -42,7 +42,8 @@ class UserImportCommandLine(CommandLine):
 		"""
 		Add new user import specific configuration files.
 
-		:return: list: list of filenames
+		:return: list of filenames
+		:type: list(str)
 		"""
 		res = super(UserImportCommandLine, self).configuration_files
 		res.append("/usr/share/ucs-school-import/configs/user_import_defaults.json")

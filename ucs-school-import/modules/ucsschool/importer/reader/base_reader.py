@@ -46,9 +46,9 @@ class BaseReader(object):
 
 	def __init__(self, filename, header_lines=0, **kwargs):
 		"""
-		:param filename: str: Path to file with user data.
-		:param header_lines: int: Number of lines before the actual data starts.
-		:param kwargs: dict: optional parameters for use in derived classes
+		:param str filename: Path to file with user data.
+		:param int header_lines: Number of lines before the actual data starts.
+		:param dict kwargs: optional parameters for use in derived classes
 		"""
 		self.config = Configuration()
 		self.logger = get_logger()
@@ -68,6 +68,7 @@ class BaseReader(object):
 		Generates ImportUsers from input data.
 
 		:return: ImportUser
+		:rtype: ImportUser
 		"""
 		input_dict = self.import_users.next()
 		self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
@@ -83,8 +84,9 @@ class BaseReader(object):
 		IMPLEMENT ME
 		Detect the ucsschool.lib.roles from the input data.
 
-		:param input_data: dict user from read()
-		:return: list: [ucsschool.lib.roles, ..]
+		:param dict input_data: dict user from read()
+		:return: [ucsschool.lib.roles, ..]
+		:rtype: list(str)
 		"""
 		raise NotImplementedError()
 
@@ -94,9 +96,11 @@ class BaseReader(object):
 		Creates a ImportUser object from a users dict (self.cur_entry). Data
 		will not be	modified, just copied.
 
-		:param input_data: dict: user from read()
-		:param cur_user_roles: list: [ucsschool.lib.roles, ..]
+		:param dict input_data: user from read()
+		:param cur_user_roles: [ucsschool.lib.roles, ..]
+		:type cur_user_roles: list(str)
 		:return: ImportUser
+		:rtype: ImportUser
 		"""
 		raise NotImplementedError()
 
@@ -106,9 +110,10 @@ class BaseReader(object):
 		Generator that returns dicts of read users
 		Sets self.entry_count and self.input_data on each read.
 
-		:param args: list
-		:param kwargs: dict
+		:param tuple args: arguments for implemented reader
+		:param dict kwargs: arguments for implemented reader
 		:return: iter([user, ...])
+		:rtype: Iterator
 		"""
 		raise NotImplementedError()
 
@@ -121,6 +126,8 @@ class BaseReader(object):
 		Used by ImportUser.format_from_scheme().
 
 		:param input_data: raw input data as stored in ImportUser.input_data
-		:return: dict: key->input_data-value mapping
+		:type input_data: list(str)
+		:return: key->input_data-value mapping
+		:rtype: dict
 		"""
 		return {}
