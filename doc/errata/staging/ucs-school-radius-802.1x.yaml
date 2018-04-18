@@ -5,5 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-radius-802.1x
 fix: 6.0.1-5A~4.2.0.201804111403
 desc: |
- * An internal comparison was case sensitive and prevented the authentication of the host against the UCS@school radius server (Bug #45684).
+ * The radius server identity is not case sensitive anymore. This fixes problems with Windows clients that send their identity in upper case while the computers identity is stored in lower case on the UCS@school radius server (Bug #45684).
 bug: [45684]
