@@ -59,7 +59,7 @@ class LegacyCsvReader(CsvReader):
 
 		:param dict input_data: dict user from read()
 		:return: [ucsschool.lib.roles, ..]
-		:type: list(str)
+		:rtype: list(str)
 		"""
 		try:
 			return super(LegacyCsvReader, self).get_roles(input_data)

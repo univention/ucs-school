@@ -49,7 +49,7 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 
 		:param kwarg: passed to the reader constructor
 		:return: a BaseReader object
-		:type: LegacyCsvReader
+		:rtype: LegacyCsvReader
 		"""
 		kwargs.update(dict(
 			filename=self.config["input"]["filename"],
@@ -64,7 +64,7 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		:param list arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
 		:return: object of LegacyImportUser subclass
-		:type: LegacyImportUser
+		:rtype: LegacyImportUser
 		"""
 		if not cur_user_roles:
 			return LegacyImportUser(*arg, **kwargs)
@@ -85,7 +85,7 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		:param list arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
 		:return: ResultExporter object
-		:type: LegacyNewUserPasswordCsvExporter
+		:rtype: LegacyNewUserPasswordCsvExporter
 		"""
 		return LegacyNewUserPasswordCsvExporter(*arg, **kwargs)
 
@@ -95,6 +95,6 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 
 		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: UserImport object
-		:type: LegacyUserImport
+		:rtype: LegacyUserImport
 		"""
 		return LegacyUserImport(dry_run=dry_run)
