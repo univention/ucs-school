@@ -45,7 +45,7 @@ class Test(CLI_Import_v2_Tester):
 				source_uid=source_uid,
 				firstname=uts.random_username(),
 				lastname=uts.random_username(),
-				username='',
+				username=None,
 				mail=None,
 			)
 			person_list.append(person)

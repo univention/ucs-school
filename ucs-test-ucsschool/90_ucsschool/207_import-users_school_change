@@ -46,7 +46,6 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:school', 'school')
 		config.update_entry('csv:mapping:role', '__type')
-		config.update_entry('scheme:recordUID', '<username>')
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
