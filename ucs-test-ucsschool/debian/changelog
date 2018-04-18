@@ -1,3 +1,10 @@
+ucs-test-ucsschool (4.0.4-85) unstable; urgency=low
+
+  * Bug #46754: create, format and depend on not-ucsschool-lib-mapped extended
+    attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 18 Apr 2018 11:40:21 +0200
+
 ucs-test-ucsschool (4.0.4-84) unstable; urgency=low
 
   * Bug #42137: fix test
