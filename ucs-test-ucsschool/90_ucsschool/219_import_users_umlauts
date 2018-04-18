@@ -63,7 +63,7 @@ class Test(CLI_Import_v2_Tester):
 		person_list = []
 		for role, name in zip(roles, names):
 			person = Person(self.ou_A.name, role)
-			person.update(username='', firstname=name['firstname'], lastname=name['lastname'])
+			person.update(username=None, firstname=name['firstname'], lastname=name['lastname'])
 			person._expected_names = name['expected']
 			person_list.append(person)
 

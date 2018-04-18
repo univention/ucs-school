@@ -30,7 +30,6 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__type')
 		config.update_entry('scheme:username:default', '<:umlauts><firstname:lower><lastname:lower>'),
-		config.update_entry('scheme:recordUID', '<record_uid>')
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
@@ -47,8 +46,8 @@ class Test(CLI_Import_v2_Tester):
 				source_uid=source_uid,
 				firstname=uts.random_username(),
 				lastname=uts.random_username(),
-				username='',
-				mail=None,
+				username=None,  # let the import generate the attributes value
+				mail=None,  # let the import generate the attributes value
 			)
 			person_list.append(person)
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
@@ -106,7 +105,7 @@ class Test(CLI_Import_v2_Tester):
 				source_uid=source_uid,
 				firstname=uts.random_username(20),
 				lastname=uts.random_username(20),
-				username='',
+				username=None,
 				mail=None,
 			)
 			person_list.append(person)
