@@ -231,7 +231,8 @@ class ResourceRepresentation(object):
 			"""
 			UserImportJobs that ran for this school.
 
-			:return: iterator: UserImportJobResource objects
+			:return: UserImportJobResource objects
+			:rtype: ResourceRepresentationIterator
 			"""
 			return self._resource_client.client.userimportjob.list()
 
@@ -384,6 +385,19 @@ class Client(object):
 		return logger
 
 	def call_api(self, method, url_end, data=None, files=None, params=None, **kwargs):
+		"""
+		Call HTTP-API.
+
+		:param str method: `get`, `post` etc
+		:param str url_end: URL path after base URL (https://<server>/api/<version>/<url_end>)
+		:param dict data: payload
+		:param dict files: {'<key>': (<filename>, <open file>, <mime type>)}
+		:param dict params: URL parameters
+		:param dict kwargs: additional arguments to pass to request
+		:return: server response
+		:rtype: dict
+		:raises: ApiError
+		"""
 		if not url_end.endswith('/'):
 			url_end += '/'
 		url = urljoin(self.base_url, url_end)
@@ -509,7 +523,7 @@ class Client(object):
 
 			:param str school: the school to get the permissions for
 			:return: list of `Role` objects: [namedtuple('name', 'displayName'), ..]
-			:type: list(Role)
+			:rtype: list(Role)
 			"""
 			Role = namedtuple('Role', ['name', 'displayName'])
 			lo, po = get_machine_connection()
@@ -538,7 +552,7 @@ class Client(object):
 			:param bool dryrun: False to start a real import
 			:param file file_obj: optional file like object to read CSV data from, instead of opening 'filename'
 			:return: the created UserImportJob resource
-			:type: _ResourceReprBase
+			:rtype: _ResourceReprBase
 			"""
 			assert isinstance(filename, basestring)
 			assert (isinstance(source_uid, basestring) or source_uid is None)

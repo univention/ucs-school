@@ -99,7 +99,7 @@ class UserImport(object):
 
 		:param list imported_users: ImportUser objects
 		:return (self.errors, self.added_users, self.modified_users)
-		:type: tuple
+		:rtype: tuple
 		"""
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
@@ -190,7 +190,7 @@ class UserImport(object):
 
 		:param ImportUser imported_user: ImportUser from input
 		:return: ImportUser with action set and possibly fetched from LDAP
-		:type: ImportUser
+		:rtype: ImportUser
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
