@@ -25,7 +25,6 @@ class Test(CLI_Import_v2_Tester):
 		Bug #41645: a username scheme with <:lower> and [COUNTER2]
 		"""
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('csv:mapping:employeeNumber', 'employeeNumber')
 		config.update_entry('csv:mapping:DBID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__type')
 		config.update_entry('scheme:email', "<:umlauts><firstname:lower>.<lastname:lower>@example.com")
