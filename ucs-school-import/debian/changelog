@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-36) unstable; urgency=medium
+
+  * Bug #46839: Add translation for ucsschoolTypes syntax choices
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 20 Apr 2018 15:48:05 +0200
+
 ucs-school-import (15.0.3-35) unstable; urgency=low
 
   * Bug #46754: query UDM for LDAP mapping without using LDAP and don't cache
