@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (13.0.2-14) unstable; urgency=low
+
+  * Bug #45802: improve processing speed of listener module
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 20 Apr 2018 16:31:51 +0200
+
 ucs-school-netlogon-user-logonscripts (13.0.2-13) unstable; urgency=low
 
   * Bug #46778: prevent locked DB by closing it after every use
