@@ -1,9 +1,9 @@
 product: ucsschool
 release: "4.2"
-version: [1]
+version: [3]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-netlogon-user-logonscripts
-fix: 
+fix: 13.0.2-14A~4.2.0.201804201639
 desc: |
  * A database locking error is now avoided (Bug #46778).
  * The processing speed of the listener module <filename>ucs-school-user-logonscripts.py</filename> has been improved (Bug #45802).
