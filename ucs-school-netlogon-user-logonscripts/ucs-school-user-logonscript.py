@@ -28,14 +28,15 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
+import ldap
 import os
 import signal
 import shutil
-import listener
 import subprocess
+from ldap.filter import filter_format
+import listener
 import univention.debug
 import univention.admin.modules
-from ldap.filter import filter_format
 from univention.admin.uldap import getMachineConnection
 from ucsschool.netlogon import get_netlogon_path_list, SqliteQueue
 
@@ -43,45 +44,43 @@ univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")
 groups_group_module = univention.admin.modules.get("groups/group")
 shares_share_module = univention.admin.modules.get("shares/share")
-subfilter_users = str(users_user_module.lookup_filter())
-subfilter_groups = str(groups_group_module.lookup_filter())
-subfilter_shares = str(shares_share_module.lookup_filter())
 
 name = 'ucs-school-user-logonscript'
 description = 'Create user-specific netlogon-scripts'
-filter = '(|%s%s%s)' % (subfilter_users, subfilter_groups, subfilter_shares)
-attributes = []
+filter = '(|(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))(objectClass=univentionGroup)(objectClass=univentionShare))'
+attributes = []  # type: List[str]
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
+lo = None  # type: Optional[univention.admin.uldap.Access]
 
 
 class Log(object):
 	@classmethod
-	def debug(cls, msg):
+	def debug(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.ALL, msg)
 
 	@staticmethod
-	def emit(level, msg):
+	def emit(level, msg):  # type: (str) -> None
 		univention.debug.debug(univention.debug.LISTENER, level, '{}: {}'.format(name, msg))
 
 	@classmethod
-	def error(cls, msg):
+	def error(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.ERROR, msg)
 
 	@classmethod
-	def info(cls, msg):
+	def info(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.INFO, msg)
 
 	@classmethod
-	def process(cls, msg):
+	def process(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.PROCESS, msg)
 
 	@classmethod
-	def warn(cls, msg):
+	def warn(cls, msg):  # type: (str) -> None
 		cls.emit(univention.debug.WARN, msg)
 
 
-def relevant_change(old, new, attr_list):
+def relevant_change(old, new, attr_list):  # type: (Dict[str,List[str]], Dict[str,List[str]], List[str]) -> bool
 	"""
 	Returns True, if any attribute specified in attr_list differs between old and new, otherwise False.
 	old:  attribute dictionary
@@ -91,11 +90,11 @@ def relevant_change(old, new, attr_list):
 	return any(set(old.get(attr, [])) != set(new.get(attr, [])) for attr in attr_list)
 
 
-def handle_share(dn, new, old, lo, user_queue):
+def handle_share(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
 	"""
 	Handles changes of share objects by triggering group changes for the relevant groups.
 	"""
-	def add_group_change_to_queue(gidNumber):
+	def add_group_change_to_queue(gidNumber):  # type: (Optional[str]) -> None
 		if not gidNumber:
 			Log.warn('handle_share: no gidNumber specified')
 			return
@@ -118,11 +117,11 @@ def handle_share(dn, new, old, lo, user_queue):
 		# update all members of old group
 		add_group_change_to_queue(old.get('univentionShareGid', [None])[0])
 	if old and new:
-		attr_list = (
+		attr_list = [
 			'univentionShareSambaName',
 			'univentionShareHost',
 			'univentionShareGid',
-		)
+		]
 		if not relevant_change(old, new, attr_list):
 			Log.info('handle_share: no relevant attribute change')
 			return
@@ -131,30 +130,44 @@ def handle_share(dn, new, old, lo, user_queue):
 		add_group_change_to_queue(new.get('univentionShareGid', [None])[0])
 
 
-def handle_group(dn, new, old, lo, user_queue):
+def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
 	"""
 	Handles group changes by adding relevant user object DNs to the user queue.
 	"""
 	old_members = set(old.get('uniqueMember', []))
 	new_members = set(new.get('uniqueMember', []))
 	Log.info('handle_group: dn: %s' % (dn,))
+	newGidNumber = new.get('gidNumber', [''])[0]
+	if new and newGidNumber:
+		# performance optimization:
+		# the group members only have to be processed if there is at least one share object
+		# that is using this group.
+		filter_s = filter_format('(univentionShareGid=%s)', (newGidNumber,))
+		try:
+			share_list = shares_share_module.lookup(None, lo, filter_s=filter_s)
+			found = bool(share_list)
+		except (univention.admin.uexceptions.noObject, IndexError):
+			found = False
+		if not found:
+			Log.info('handle_group: cannot find share that uses gid=%s - skipping group' % (newGidNumber,))
+			return
 	Log.info('handle_group: difference: %r' % (old_members.symmetric_difference(new_members),))
 	# get set of users that are NOT IN BOTH user sets (==> the difference between both sets)
 	# "uid=" to filter out computer or group objects (computers in groups resp. groups in groups)
 	user_queue.add([(user_dn, None) for user_dn in old_members.symmetric_difference(new_members) if user_dn.startswith('uid=')])
 
 
-def handle_user(dn, new, old, lo, user_queue):
+def handle_user(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
 	"""
 	Handles user changes by adding the DN of the user object to the user queue.
 	"""
 	Log.info('handle_user: add %s' % (dn,))
 	if old and new:
-		attr_list = (
+		attr_list = [
 			'uid',
 			'gidNumber',
 			'homeDirectory',
-		)
+		]
 		if not relevant_change(old, new, attr_list):
 			Log.debug('no relevant attribute has changed - skipping user object')
 			return
@@ -162,12 +175,15 @@ def handle_user(dn, new, old, lo, user_queue):
 	user_queue.add([(dn, username)])
 
 
-def handler(dn, new, old):
+def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str]]) -> None
+	global lo
 	attrs = new if new else old
 
 	listener.setuid(0)
 	try:
-		lo = getMachineConnection()[0]
+		if lo is None:
+			# establish connection to local LDAP server
+			lo = getMachineConnection(ldap_master=False)[0]
 		user_queue = SqliteQueue(logger=Log)
 
 		# identify object
@@ -194,11 +210,25 @@ def handler(dn, new, old):
 		if pid is not None:
 			# inform daemon about pending changes
 			os.kill(pid, signal.SIGUSR1)
+	except (univention.admin.uexceptions.ldapError, ldap.LDAPError):
+		# if a LDAP error occured, invalidate the LDAP connection (just in case the connection is broken)
+		if lo:
+			lo.unbind()
+			lo = None
+		raise
 	finally:
 		listener.unsetuid()
 
 
-def initialize():
+def postrun():  # type: () -> None
+	# invalidate/close LDAP connection after 15seconds of idle time
+	global lo
+	if lo:
+		lo.unbind()
+		lo = None
+
+
+def initialize():  # type: () -> None
 	listener.setuid(0)
 	try:
 		for path in get_netlogon_path_list():
@@ -212,14 +242,14 @@ def initialize():
 		listener.unsetuid()
 
 
-def run_daemon(cmd):
+def run_daemon(cmd):  # type: (List[str]) -> None
 	cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	cmd_out, cmd_err = cmd_proc.communicate()
 	if cmd_proc.returncode:
 		Log.error('Command {!r} returned with exit code {!r}. stdout={!r} stderr={!r}'.format(cmd, cmd_proc.returncode, cmd_out, cmd_err))
 
 
-def clean():
+def clean():  # type: () -> None
 	listener.setuid(0)
 	try:
 		Log.warn('Stopping logon script generator daemon...')

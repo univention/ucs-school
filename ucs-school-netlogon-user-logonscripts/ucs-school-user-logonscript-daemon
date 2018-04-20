@@ -423,7 +423,7 @@ class QueueHandler():
 			Log.warn('LDAP-search failed for shares with gid %s: %r' % (gid, msg))
 			raise
 
-	def handle_user_change(self, dn, unchecked_uid):
+	def handle_user_change(self, dn, unchecked_uid):  # type: (str, str) -> None
 		"""
 		(Re)Create a vbs logonscript for the user specified by the given user DN.
 		"""
@@ -447,10 +447,14 @@ class QueueHandler():
 			Log.debug('%s is a group object - skipping queue item', dn)
 			return
 
-		Log.info('updating logon script for %s', dn)
-
 		membershipIDs = set()  # set of gidNumbers of groups the user is member of
-		membershipIDs.add(new.get('gidNumber')[0])
+		newGidNumber = new.get('gidNumber', [''])[0]
+		if not newGidNumber:
+			Log.debug('User %r has no gidNumber set - skipping queue item' % (uid,))
+			return
+		membershipIDs.add(newGidNumber)
+
+		Log.info('updating logon script for %s', dn)
 
 		# update of membershipIDs: add all gidNumbers of groups, the user is member of
 		membershipIDs.update(self.get_group_memberships(dn))
