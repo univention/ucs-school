@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-37) unstable; urgency=low
+
+  * Bug #46857: fixed off by one error
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 20 Apr 2018 16:39:16 +0200
+
 ucs-school-import (15.0.3-36) unstable; urgency=medium
 
   * Bug #46839: Add translation for ucsschoolTypes syntax choices
