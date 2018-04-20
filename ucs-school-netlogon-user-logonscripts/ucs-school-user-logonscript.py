@@ -182,7 +182,8 @@ def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str
 	listener.setuid(0)
 	try:
 		if lo is None:
-			lo = getMachineConnection()[0]
+			# establish connection to local LDAP server
+			lo = getMachineConnection(ldap_master=False)[0]
 		user_queue = SqliteQueue(logger=Log)
 
 		# identify object
