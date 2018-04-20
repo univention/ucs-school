@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-36A~4.2.0.201804201558
+fix: 
 desc: |
  * The global user import configuration (<filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address. If your configuration was using the default email or username scheme, then it must now be recreated in <filename>/var/lib/ucs-school-import/configs/user_import.json</filename>. If the input CSV does not supply an email address or username and no scheme is given, new users will not have an email address (or fail to be created without a username) (Bug #45972). The original configuration was:
     <programlisting>
@@ -23,4 +23,5 @@ desc: |
  * A dependency solver was introduced, that will sort the order of autogeneration of attributes from schemes so that they can depend on each other (Bug #46754)
  * The command line user import now stores the summary CSV files in separate folders for year and month (<filename class="directory">/var/lib/ucs-school-import/summary/YEAR/MONTH</filename>) (Bug #46800).
  * German translation improved (Bug #46840)
-bug: [45972, 46317, 45640, 46384, 46571, 46754, 46800, 46840]
+ * A traceback in the test tool <filename>ucs-school-testuser-import</filename> has been fixed (Bug #46857).
+bug: [45972, 46317, 45640, 46384, 46571, 46754, 46800, 46840, 46857]
