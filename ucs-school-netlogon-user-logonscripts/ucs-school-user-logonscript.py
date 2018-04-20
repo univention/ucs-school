@@ -52,6 +52,48 @@ attributes = []  # type: List[str]
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
 lo = None  # type: Optional[univention.admin.uldap.Access]
+timer = Timer()
+
+import time
+from collections import OrderedDict
+
+
+class Timer(object):
+	def __init__(self):  # type: () -> None
+		self.timer_one = OrderedDict()  # type: OrderedDict
+		self.timer_total = OrderedDict()  # type: OrderedDict
+		self.timer_last = 0.0
+
+	def add_timing(self, name):  # type: (str) -> None
+		now = time.time()
+		if not self.timer_last:
+			self.timer_last = now
+		time_diff = now - self.timer_last
+		self.timer_last = now
+		self.timer_one[name] = time_diff
+		try:
+			self.timer_total[name] += time_diff
+		except KeyError:
+			self.timer_total[name] = time_diff
+
+	def reset_timer(self):  # type: () -> None
+		self.timer_one.clear()
+		self.timer_last = 0.0
+
+	def sprint_timer_one(self):  # type: () -> list
+		return self._sprint_timer(self.timer_one)
+
+	def sprint_timer_total(self):  # type: () -> list
+		return self._sprint_timer(self.timer_total)
+
+	@staticmethod
+	def _sprint_timer(timer):  # type: (OrderedDict) -> list
+		res = []
+		key_len = max(len(k) for k in timer.keys())
+		template = '{:_<%d}: {:f}' % (key_len,)
+		for name, time_diff in timer.items():
+			res.append(template.format(name, time_diff))
+		return res
 
 
 class Log(object):
@@ -178,12 +220,16 @@ def handle_user(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]
 def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str]]) -> None
 	global lo
 	attrs = new if new else old
+	timer.reset_timer()
+	timer.add_timing('handler start')
 
 	listener.setuid(0)
 	try:
 		if lo is None:
 			lo = getMachineConnection()[0]
+		timer.add_timing('lo ready')
 		user_queue = SqliteQueue(logger=Log)
+		timer.add_timing('db ready')
 
 		# identify object
 		if users_user_module.identify(dn, attrs):
@@ -195,6 +241,7 @@ def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str
 		else:
 			Log.error('handler: unknown object type: dn: %r\nold=%s\nnew=%s' % (dn, old, new))
 
+		timer.add_timing('handlers called')
 		pid = None
 		try:
 			if os.path.isfile(FN_PID):
@@ -216,11 +263,15 @@ def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str
 		raise
 	finally:
 		listener.unsetuid()
+	timer.add_timing('handler end')
+
+
 def postrun():  # type: () -> None
 	global lo
 	if lo:
 		lo.unbind()
 		lo = None
+	Log.process('Timer total:\n{!s}'.format('\n'.join(timer.sprint_timer_total())))
 
 
 def initialize():  # type: () -> None
