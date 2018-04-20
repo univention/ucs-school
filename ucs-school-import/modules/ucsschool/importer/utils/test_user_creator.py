@@ -84,7 +84,7 @@ class TestUserCreator(object):
 	def _get_new_given_name(self):
 		give_modifier = ""
 		given_len = len(self.test_data["given"])
-		given_cursor = random.randint(0, given_len)
+		given_cursor = random.randint(0, given_len - 1)
 		while True:
 			yield u"{}{}".format(self.test_data["given"][given_cursor], give_modifier)
 			given_cursor += 1
@@ -99,7 +99,7 @@ class TestUserCreator(object):
 	def _get_new_family_name(self):
 		family_modifier = ""
 		family_len = len(self.test_data["family"])
-		family_cursor = random.randint(0, family_len)
+		family_cursor = random.randint(0, family_len - 1)
 		while True:
 			yield u"{}{}".format(self.test_data["family"][family_cursor], family_modifier)
 			family_cursor += 1
