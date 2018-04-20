@@ -1,3 +1,9 @@
+ucs-school-import (16.0.1-26) unstable; urgency=medium
+
+  * Bug #46839: Add translation for ucsschoolTypes syntax choices
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 20 Apr 2018 15:47:01 +0200
+
 ucs-school-import (16.0.1-25) unstable; urgency=low
 
   * Bug #45021: improve source code documentation (WIP)
