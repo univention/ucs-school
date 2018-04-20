@@ -1,4 +1,9 @@
 from univention.admin.syntax import UDM_Objects, UDM_Attribute, select
+import univention.admin.localization
+
+translation = univention.admin.localization.translation("univention-admin-syntax-ucsschool_import")
+# The underscore function is already in use at this point -> use a different name
+_local = translation.translate
 
 
 class UCSSchool_Server_DN(UDM_Objects):
@@ -17,8 +22,8 @@ class ucsschoolSchools(UDM_Attribute):
 
 class ucsschoolTypes(select):
 	choices = [
-		('student', _('Student')),
-		('teacher', _('Teacher')),
-		('staff', _('Staff')),
-		('teacher_and_staff', _('Teacher and Staff')),
+		('student', _local('Student')),
+		('teacher', _local('Teacher')),
+		('staff', _local('Staff')),
+		('teacher_and_staff', _local('Teacher and Staff')),
 	]
