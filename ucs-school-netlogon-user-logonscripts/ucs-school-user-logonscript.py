@@ -28,6 +28,7 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
+import ldap
 import os
 import signal
 import shutil
@@ -50,6 +51,7 @@ filter = '(|(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))(objectClass=unive
 attributes = []  # type: List[str]
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
+lo = None  # type: Optional[univention.admin.uldap.Access]
 
 
 class Log(object):
@@ -174,11 +176,13 @@ def handle_user(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]
 
 
 def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str]]) -> None
+	global lo
 	attrs = new if new else old
 
 	listener.setuid(0)
 	try:
-		lo = getMachineConnection()[0]
+		if lo is None:
+			lo = getMachineConnection()[0]
 		user_queue = SqliteQueue(logger=Log)
 
 		# identify object
@@ -205,8 +209,22 @@ def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str
 		if pid is not None:
 			# inform daemon about pending changes
 			os.kill(pid, signal.SIGUSR1)
+	except (univention.admin.uexceptions.ldapError, ldap.LDAPError):
+		# if a LDAP error occured, invalidate the LDAP connection (just in case the connection is broken)
+		if lo:
+			lo.unbind()
+			lo = None
+		raise
 	finally:
 		listener.unsetuid()
+
+
+def postrun():  # type: () -> None
+	# invalidate/close LDAP connection after 15seconds of idle time
+	global lo
+	if lo:
+		lo.unbind()
+		lo = None
 
 
 def initialize():  # type: () -> None
