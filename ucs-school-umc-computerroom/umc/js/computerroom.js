@@ -34,6 +34,8 @@ define([
 	"dojo/_base/array",
 	"dojo/io-query",
 	"dojo/aspect",
+	"dojo/on",
+	"dojo/topic",
 	"dojo/dom",
 	"dojo/dom-class",
 	"dojo/Deferred",
@@ -45,6 +47,7 @@ define([
 	"dijit/Tooltip",
 	"dojox/html/styles",
 	"dojox/html/entities",
+	"umc/app",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Grid",
@@ -59,8 +62,8 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, ioQuery, aspect, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
-            Dialog, Tooltip, styles, entities, dialog, tools, Grid, Button, Module, Page, Form,
+], function(declare, lang, array, ioQuery, aspect, on, topic, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
+            Dialog, Tooltip, styles, entities, UMCApp, dialog, tools, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
@@ -1088,6 +1091,14 @@ define([
 				okButton.set('disabled', false);
 			});
 
+			// Check if there are any rooms to choose from. If not switch to computer room administration or just close module (via dialog)
+			on.once(form, "valuesInitialized", lang.hitch(this, function() {
+				if (!form.getWidget("room").getAllItems().length) {
+					_cleanup();
+					this.displayNoRoomsDialog();
+				}
+			}));
+
 			_dialog = new Dialog({
 				title: _('Select computer room'),
 				content: form,
@@ -1096,6 +1107,32 @@ define([
 			});
 			_dialog.show();
 			okButton.set('disabled', true);
+		},
+
+		displayNoRoomsDialog: function() {
+			var moduleAccess = UMCApp.getModule("schoolrooms");
+			var openModuleSchoolrooms = lang.hitch(this, function() {
+				topic.publish('/umc/modules/open', "schoolrooms");  // Privileges still have to be checked!
+				closeModuleComputerroom();
+			});
+			var closeModuleComputerroom = lang.hitch(this, function() {
+				topic.publish('/umc/tabs/close', this);
+			});
+			var txt = moduleAccess ?
+				_('Do you want to create a computer room now or close the module?') :
+				_('Please contact your system administrator for the creation of computer rooms.');
+			var title = _('There are no computer rooms available');
+			var options = [{name: 'close', label: _('Close module'), default: true}];
+			if (moduleAccess) {
+				options.push({name: 'create', label: _('Manage computer rooms')});
+			}
+			dialog.confirm(txt, options, title).then(lang.hitch(this, function(response) {
+				if (response === 'close') {
+					closeModuleComputerroom();
+				} else if (response === 'create') {
+					openModuleSchoolrooms();
+				}
+			}));
 		},
 
 		displayRoomTakeoverDialog: function(room) {

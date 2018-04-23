@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (10.0.1-1) unstable; urgency=medium
+
+  * Bug #43080: Show dialog if no computer room is available
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 23 Apr 2018 13:55:30 +0100
+
 ucs-school-umc-computerroom (10.0.0-1) unstable; urgency=medium
 
   * Bug #45988: bumped version
