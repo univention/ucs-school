@@ -1119,12 +1119,12 @@ define([
 				topic.publish('/umc/tabs/close', this);
 			});
 			var txt = moduleAccess ?
-				_('Do you want to create a computer room now or just close the computerroom module?') :
+				_('Do you want to create a computer room now or close the module?') :
 				_('Please contact your system administrator for the creation of computer rooms.');
 			var title = _('There are no computer rooms available');
-			var options = [{name: 'close', label: _('Close Computerroom module')}];
+			var options = [{name: 'close', label: _('Close module')}];
 			if (moduleAccess) {
-				options.push({name: 'create', label: _('Administrate computer rooms')});
+				options.push({name: 'create', label: _('Manage computer rooms')});
 			}
 			dialog.confirm(txt, options, title).then(lang.hitch(this, function(response) {
 				if (response === 'close') {
