@@ -51,7 +51,7 @@ filter = '(|(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))(objectClass=unive
 attributes = []  # type: List[str]
 
 FN_PID = '/var/run/ucs-school-user-logonscript-daemon.pid'
-lo = None  # type: Optional[univention.admin.uldap.Access]
+lo = None  # type: Optional[univention.admin.uldap.access]
 
 
 class Log(object):
@@ -90,7 +90,8 @@ def relevant_change(old, new, attr_list):  # type: (Dict[str,List[str]], Dict[st
 	return any(set(old.get(attr, [])) != set(new.get(attr, [])) for attr in attr_list)
 
 
-def handle_share(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
+def handle_share(dn, new, old, lo, user_queue):
+	# type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
 	"""
 	Handles changes of share objects by triggering group changes for the relevant groups.
 	"""
@@ -130,7 +131,8 @@ def handle_share(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str
 		add_group_change_to_queue(new.get('univentionShareGid', [None])[0])
 
 
-def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
+def handle_group(dn, new, old, lo, user_queue):
+	# type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
 	"""
 	Handles group changes by adding relevant user object DNs to the user queue.
 	"""
@@ -157,7 +159,8 @@ def handle_group(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str
 	user_queue.add([(user_dn, None) for user_dn in old_members.symmetric_difference(new_members) if user_dn.startswith('uid=')])
 
 
-def handle_user(dn, new, old, lo, user_queue):  # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.Access, SqliteQueue) -> None
+def handle_user(dn, new, old, lo, user_queue):
+	# type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
 	"""
 	Handles user changes by adding the DN of the user object to the user queue.
 	"""
