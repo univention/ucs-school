@@ -47,6 +47,7 @@ define([
 	"dijit/Tooltip",
 	"dojox/html/styles",
 	"dojox/html/entities",
+	"umc/app",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Grid",
@@ -62,7 +63,7 @@ define([
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, ioQuery, aspect, on, topic, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
-            Dialog, Tooltip, styles, entities, dialog, tools, Grid, Button, Module, Page, Form,
+            Dialog, Tooltip, styles, entities, UMCApp, dialog, tools, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
@@ -1109,6 +1110,7 @@ define([
 		},
 
 		displayNoRoomsDialog: function() {
+			var moduleAccess = UMCApp.getModule("schoolrooms");
 			var openModuleSchoolrooms = lang.hitch(this, function() {
 				topic.publish('/umc/modules/open', "schoolrooms");  // Privileges still have to be checked!
 				closeModuleComputerroom();
@@ -1116,18 +1118,15 @@ define([
 			var closeModuleComputerroom = lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);
 			});
-			var txt = _('Do you want to create a computer room now or just close the computerroom module?');
+			var txt = moduleAccess ?
+				_('Do you want to create a computer room now or just close the computerroom module?') :
+				_('Please contact your system administrator for the creation of computer rooms.');
 			var title = _('There are no computer rooms available');
-			dialog.confirm(txt, [
-				{
-					name: 'close',
-					label: _('Close Computerroom module')
-				},
-				{
-					name: 'create',
-					label: _('Administrate computer rooms')
-				}
-			], title).then(lang.hitch(this, function(response) {
+			var options = [{name: 'close', label: _('Close Computerroom module')}];
+			if (moduleAccess) {
+				options.push({name: 'create', label: _('Administrate computer rooms')});
+			}
+			dialog.confirm(txt, options, title).then(lang.hitch(this, function(response) {
 				if (response === 'close') {
 					closeModuleComputerroom();
 				} else if (response === 'create') {
