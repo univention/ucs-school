@@ -114,7 +114,7 @@ class SqliteQueue(object):
 		if not os.path.exists(self.filename):
 			self.logger.warn('database does not exist - creating new one (filename=%r)' % (self.filename,))
 
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			# create table if missing
 			cursor.execute(u'CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)')
 
@@ -126,7 +126,7 @@ class SqliteQueue(object):
 		# SQLITE does not have a TRUNCATE TABLE command, but DELETE FROM
 		# without WHERE is optimized to delete the entire table without
 		# iterating over its rows.
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			cursor.execute(u'DELETE FROM user_queue')
 			cursor.execute(u'VACUUM')
 
@@ -138,7 +138,7 @@ class SqliteQueue(object):
 
 		:param users - list of 2-tuples: (userdn, username)
 		"""
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			for userdn, username in users:
 				if isinstance(userdn, str):
 					userdn = userdn.decode('utf-8')
@@ -169,7 +169,7 @@ class SqliteQueue(object):
 		"""
 		if isinstance(userdn, str):
 			userdn = userdn.decode('utf-8')
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			cursor.execute(u'DELETE FROM user_queue WHERE userdn=?', (userdn,))
 		self.logger.debug('removed entry: userdn=%r' % (userdn,))
 
@@ -179,7 +179,7 @@ class SqliteQueue(object):
 		"""
 		query = u'SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1'
 		self.logger.debug('starting sqlite query: %r' % (query,))
-		with Cursor(self.logger, self.filename) as cursor:
+		with Cursor(self.filename) as cursor:
 			cursor.execute(query)
 			row = cursor.fetchone()
 		if row is not None:
