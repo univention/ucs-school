@@ -222,9 +222,9 @@ define([
 					if (!this.schools.length) {
 						return;
 					}
-					var handler = aspect.before(this._grid._grid, '_onFetchComplete', lang.hitch(this, function(items) {
+					var handler = aspect.before(this._grid, 'onFilterDone', lang.hitch(this, function(success) {
 						handler.remove();
-						if (items.length === 0) {
+						if (this._grid.getAllItems().length === 0) {
 							var title = _('No %(objectNamePlural)s found', {objectNamePlural: this.objectNamePlural});
 							var txt = _('No %(objectNamePlural)s were found.', {objectNamePlural: this.objectNamePlural});
 							txt += ' ' + _('Would you like to create %(firstObject)s now?', {firstObject: this.firstObject});
