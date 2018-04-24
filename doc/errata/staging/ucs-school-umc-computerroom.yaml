@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-computerroom
-fix: 
+fix: 9.0.9-1A~4.2.0.201804240940
 desc: |
  * Instead of showing an empty list of computer rooms there is now a dialog asking if the user wants to create one if authorized to do so. (Bug #46872)
 bug: [46872]
