@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (9.0.9-1) unstable; urgency=medium
+
+  * Bug #46872: Show dialog if no computer room is available
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 24 Apr 2018 09:36:30 +0100
+
 ucs-school-umc-computerroom (9.0.8-1) unstable; urgency=medium
 
   * Bug #37840: fix syntax error
