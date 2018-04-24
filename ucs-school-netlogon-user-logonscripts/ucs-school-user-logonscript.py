@@ -82,10 +82,13 @@ class Log(object):
 
 def relevant_change(old, new, attr_list):  # type: (Dict[str,List[str]], Dict[str,List[str]], List[str]) -> bool
 	"""
-	Returns True, if any attribute specified in attr_list differs between old and new, otherwise False.
-	old:  attribute dictionary
-	new:  attribute dictionary
-	attr_list:  list of attribute names (case sensitive!)
+	Check for differences between old and new.
+
+	:param dict old: attribute dictionary
+	:param dict new:  attribute dictionary
+	:param list attr_list:  list of attribute names (case sensitive!)
+	:return: True, if any attribute specified in attr_list differs between old and new, otherwise False.
+	:rtype: bool
 	"""
 	return any(set(old.get(attr, [])) != set(new.get(attr, [])) for attr in attr_list)
 
@@ -95,7 +98,7 @@ def handle_share(dn, new, old, lo, user_queue):
 	"""
 	Handles changes of share objects by triggering group changes for the relevant groups.
 	"""
-	def add_group_change_to_queue(gidNumber):  # type: (Optional[str]) -> None
+	def add_group_change_to_queue(gidNumber):  # type: (str) -> None
 		if not gidNumber:
 			Log.warn('handle_share: no gidNumber specified')
 			return
