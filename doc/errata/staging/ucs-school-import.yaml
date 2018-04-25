@@ -1,13 +1,14 @@
 product: ucsschool
 release: "4.3"
-version: [1]
+version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.1-26A~4.3.0.201804201554
+fix: 
 desc: |
  * User property verification checks are executed in dry-run again (Bug #46572).
  * User property verification checks are executed in dry-run again (Bug #46572).
  * A dependency solver was introduced, that will sort the order of autogeneration of attributes from schemes so that they can depend on each other (Bug #42137).
  * The command line user import now stores the summary CSV files in separate folders for year and month (<filename class="directory">/var/lib/ucs-school-import/summary/YEAR/MONTH</filename>) (Bug #46799).
  * German translation improved (Bug #46839)
-bug: [46130, 46572, 42137, 46799, 46839]
+ * A traceback in the test tool <filename>ucs-school-testuser-import</filename> has been fixed (Bug #46861).
+bug: [46130, 46572, 42137, 46799, 46839, 46861]
