@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: 
+fix: 
+desc: |
+ * Set room combobox to null so users have to choose a room before proceeding in the exam wizard.
+bug: [46883]
