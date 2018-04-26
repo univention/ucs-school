@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (10.0.2-1) unstable; urgency=medium
+
+  * Bug #35076: Remove free printing option from computer room settings
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 26 Apr 2018 13:41:43 +0100
+
 ucs-school-umc-computerroom (10.0.1-1) unstable; urgency=medium
 
   * Bug #43080: Show dialog if no computer room is available
