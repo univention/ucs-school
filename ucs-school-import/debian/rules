@@ -32,10 +32,19 @@
 PO_FILES := $(shell find udm_hook syntax -name '*.po')
 MO_FILES := $(PO_FILES:%.po=%.mo)
 
+APIDOCSRC_FILES := $(shell find usr/share/doc/ucs-school-import-http-api/source/ -name '*.rst' -o -name '*.png')
+PYMODULESRC_FILES := $(shell find modules/ -name '*.py')
+
 %.mo:	%.po
 	msgfmt --check -o $@ $<
 
-override_dh_auto_build: $(MO_FILES)
+pymoduledoc: $(PYMODULESRC_FILES)
+	sphinx-apidoc --force --private --no-toc -o usr/share/doc/ucs-school-import-http-api/source/python/ modules/
+
+apidoc:	$(APIDOCSRC_FILES) pymoduledoc
+	make -C usr/share/doc/ucs-school-import-http-api/ html
+
+override_dh_auto_build: $(MO_FILES) apidoc
 	dh_auto_build
 
 override_dh_auto_install:
@@ -51,6 +60,8 @@ override_dh_auto_clean:
 	dh_auto_clean
 	rm -f debian/ucs-school-import.conffiles
 	rm -f debian/ucs-school-import-schema.conffiles
+	make -C usr/share/doc/ucs-school-import-http-api/ clean
+	rm -f usr/share/doc/ucs-school-import-http-api/source/python/*
 
 override_dh_auto_test:
 	dh_auto_test

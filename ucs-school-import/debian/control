@@ -2,7 +2,7 @@ Source: ucs-school-import
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>> 3.0.0), univention-config-dev, ucslint
+Build-Depends: debhelper (>> 3.0.0), univention-config-dev, ucslint, python-sphinx, make, python2.7-doc
 Standards-Version: 3.8.2
 XS-Python-Version: 2.7
 
@@ -61,7 +61,7 @@ Depends: ${misc:Depends},
  python-django-celery (>=3.1.16-1),
  python-django-filter (>=1.0.1-1),
  gunicorn (>=19.0-1),
- univention-postgresql-9.4,
+ univention-postgresql,
  python-psycopg2 (>=2.5.4),
  python-django-pam (>=1.2.0-1),
  python-pampy (>=1.8.2-1),
@@ -98,6 +98,18 @@ Architecture: all
 Depends: ${misc:Depends}
 Description: UCS@school: Common files for UCS@school API client and server
  This package provides common files of the RESTful HTTP API client and server.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: ucs-school-import-http-api-doc
+Architecture: all
+Description: UCS@school: HTTP API documentation
+ This package provides HTML documentation of the HTTP API client and server
+ installation, configuration und usage.
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing
