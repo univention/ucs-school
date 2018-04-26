@@ -109,7 +109,7 @@
 			<itemizedlist>
 				<listitem>
 					<simpara>
-					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <userinput>meineschule-PC Raum</userinput>. Ist die Variable nicht gesetzt, wird standardmäßig der alphabetisch erste Raum ausgewählt.
+					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <userinput>meineschule-PC Raum</userinput>. Ist die Variable nicht gesetzt, wird kein Raum vorausgewählt.
 					</simpara>
 				</listitem>
 				<listitem>
