@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-87) unstable; urgency=low
+
+  * Bug #45992: improved test script 91c_samba4_gpo_link_replication
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 26 Apr 2018 16:06:15 +0200
+
 ucs-test-ucsschool (4.0.4-86) unstable; urgency=low
 
   * Bug #46771: don't create both mapping and scheme
