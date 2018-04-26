@@ -104,8 +104,7 @@ define([
 				label: _('Print mode'),
 				staticValues: [
 					{ id: 'default', label: _('Default (global settings)') },
-					{ id: 'none', label: _('Printing deactivated') },
-					{ id: 'all', label: _('Free printing') }
+					{ id: 'none', label: _('Printing deactivated') }
 				]
 			}, {
 				type: TimeBox,

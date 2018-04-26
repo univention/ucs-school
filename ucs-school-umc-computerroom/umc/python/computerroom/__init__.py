@@ -641,7 +641,7 @@ class Instance(SchoolBaseModule):
 		_updateRoomInfo(self._italc.roomDN, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
 
 	@sanitize(
-		printMode=ChoicesSanitizer(['none', 'all', 'default'], required=True),
+		printMode=ChoicesSanitizer(['none', 'default'], required=True),
 		internetRule=StringSanitizer(required=True),
 		shareMode=ChoicesSanitizer(['home', 'all'], required=True),
 		period=PeriodSanitizer(default='00:00', required=False),
@@ -693,7 +693,7 @@ class Instance(SchoolBaseModule):
 		hosts = self._italc.ipAddresses(students_only=True)
 
 		# print mode
-		if printMode in ('none', 'all'):
+		if printMode in ('none',):
 			vextract.append('samba/printmode/hosts/%s' % printMode)
 			vappend[vextract[-1]] = hosts
 			vextract.append('cups/printmode/hosts/%s' % printMode)
