@@ -3,7 +3,7 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-exam
-fix: 
+fix: 8.0.2-1A~4.3.0.201804261249
 desc: |
  * Set room combobox to null so users have to choose a room before proceeding in the exam wizard.
 bug: [45730]
