@@ -22,7 +22,7 @@ class GPO(object):
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		self.account = utils.UCSTestDomainAdminCredentials()
-		self.display_name = "TEST_91c_samba4_gpo_link_replication"
+		self.display_name = "UCSTEST_91c_samba4_gpo_link_replication"
 		self._create_gpo()
 
 	def __enter__(self):
@@ -57,22 +57,18 @@ class GPO(object):
 			utils.fail("Could not find the GPO reference in the STDOUT '%s' of the 'samba-tool', error: '%s'" % (stdout, exc))
 		utils.wait_for_replication_and_postrun()
 
-	def set_gpo_link_from_master(self):
+	def set_gpo_link_on_slave_via_s4connector(self):
 		check_call([
-			'univention-ssh',
-			'/etc/machine.secret',
-			'{}$@{}'.format(self.ucr.get('hostname'), self.ucr.get('ldap/master')),
-			'samba-tool',
-			'gpo',
-			'setlink',
-			self.dn_school,
-			self.gpo_reference,
-			'--username={}'.format(self.account.username),
-			'--password={}'.format(self.account.bindpw),
+			'/usr/share/univention-s4-connector/msgpo.py',
+			'--write2ucs',
+			'--binddn',
+			self.account.binddn,
+			'--bindpwd',
+			self.account.bindpw,
 		])
 		utils.wait_for_replication_and_postrun()
 
-	def set_gpo_link_from_slave(self):
+	def set_gpo_link_on_slave_via_sambatool(self):
 		# It should not be possible to set GPO links for other OUs
 		check_call([
 			'samba-tool',
@@ -86,7 +82,7 @@ class GPO(object):
 		utils.wait_for_replication_and_postrun()
 
 
-def is_gpo_link_replicated(gpo_reference, oudn):
+def check_local_LDAP_for_GPO_link(gpo_reference, oudn):
 	stdout = check_output([
 		'univention-ldapsearch',
 		oudn.split(',', 1)[0],
@@ -97,15 +93,22 @@ def is_gpo_link_replicated(gpo_reference, oudn):
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
+		# create new OU the current DC slave is NOT resposible for
 		schoolName, oudn = schoolenv.create_ou(use_cache=False)
 		utils.wait_for_replication_and_postrun()
+		# create a new GPO
 		with GPO(oudn) as gpo:
-			gpo.set_gpo_link_from_slave()
-			if is_gpo_link_replicated(gpo.gpo_reference, oudn):
-				utils.fail("An OU can set GPO links for another OU")
-			gpo.set_gpo_link_from_master()
-			if not is_gpo_link_replicated(gpo.gpo_reference, oudn):
-				utils.fail("An OU can not read GPO links from another OU")
+			# connect the GPO to the new OU (oudn) via samba-tool in local S4
+			# due to LDAP ACLs, the local S4 connector should not be able to
+			# replicate the gPOlink to the UCS master.
+			gpo.set_gpo_link_on_slave_via_sambatool()
+			if check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn):
+				# the local LDAP contains the GPO link at oudn but should not
+				utils.fail("A school DC can set GPO links for another OU")
+			gpo.set_gpo_link_on_slave_via_s4connector()
+			if not check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn):
+				# the local LDAP should contains the GPO link at oudn
+				utils.fail("A school DC cannot read GPO links from other OUs")
 
 
 if __name__ == '__main__':
