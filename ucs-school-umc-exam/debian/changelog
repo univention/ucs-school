@@ -1,3 +1,9 @@
+ucs-school-umc-exam (7.0.4-22) unstable; urgency=low
+
+  * Bug #46883: Set initial room selection to null so users have to choose a room
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 26 Apr 2018 13:07:21 +0100
+
 ucs-school-umc-exam (7.0.4-21) unstable; urgency=low
 
   * Bug #46719: fix UCR variable description
