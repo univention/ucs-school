@@ -6,4 +6,5 @@ src: ucs-school-umc-computerroom
 fix: 10.0.1-1A~4.3.0.201804231404
 desc: |
  * Instead of showing an empty list of computer rooms there is now a dialog asking if the user wants to create one if authorized to do so. (Bug #43080)
-bug: [43080]
+ * Remove free printing option from computer room settings due to (Bug #35076)
+bug: [43080, 35076]
