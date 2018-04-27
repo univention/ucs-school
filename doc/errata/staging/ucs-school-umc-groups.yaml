@@ -3,7 +3,7 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-groups
-fix: 
+fix: 8.0.0-2A~4.3.0.201804271048
 desc: |
  * Overhaul ucr variable descriptions as statet in comment #14 of (Bug #45601)
 bug: [45601]
