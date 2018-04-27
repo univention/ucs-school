@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [0]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-umc-groups
+fix: 
+desc: |
+ * Overhaul ucr variable descriptions as statet in comment #14 of (Bug #45601)
+bug: [45601]
