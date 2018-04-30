@@ -1,6 +1,6 @@
 [ucsschool/passwordreset/autosearch]
-Description[de]=Deaktiviert die automatische Suche beim öffnen des Modul "Passwörter (Schüler/Lehrer)".
-Description[en]=Deactivates the automatic search when opening the module "Passwords (students/teacher)".
+Description[de]=De-/aktiviert die automatische Suche beim öffnen des Modul "Passwörter (Schüler/Lehrer)".
+Description[en]=De-/activates the automatic search when opening the module "Passwords (students/teacher)".
 Type=bool
 Categories=management-umc
 
@@ -13,5 +13,11 @@ Categories=management-umc
 [ucsschool/passwordreset/force-password-change-on-next-login]
 Description[de]=Wenn eingeschaltet, wird das Ändern des Checkboxwertes aus ucsschool/passwordreset/password-change-on-next-login durch Benutzer verhindert.
 Description[en]=If enabled, prevents users from changing the checkbox value set in ucsschool/passwordreset/password-change-on-next-login.
+Type=bool
+Categories=management-umc
+
+[ucsschool/passwordreset/autosearch_on_change]
+Description[de]=Definiert ob bei jeder Änderung der Schule oder Klasse die Liste der Nutzer automatisch neu geladen werden soll.
+Description[en]=Defines if the list of users should be reloaded automatically after a change in the school or class selection.
 Type=bool
 Categories=management-umc

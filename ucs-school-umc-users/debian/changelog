@@ -1,3 +1,9 @@
+ucs-school-umc-users (13.0.1-1) unstable; urgency=low
+
+  * Bug #46905: Add ucr variable autosearch_on_change to enable user list reload after changing class or school
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 30 Apr 2018 08:46:20 +0100
+
 ucs-school-umc-users (13.0.0-7) unstable; urgency=low
 
   * Bug #46012: make sure that pwdChangeNextLogin is set to 1 if requested

@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojo/on",
 	"dojo/date/locale",
 	"dojo/Deferred",
 	"dijit/Dialog",
@@ -51,7 +52,7 @@ define([
 	"umc/widgets/ProgressInfo",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/schoolusers"
-], function(declare, lang, array, locale, Deferred, Dialog, entities, dialog, tools, Module,
+], function(declare, lang, array, on, locale, Deferred, Dialog, entities, dialog, tools, Module,
             Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 
 	return declare("umc.modules.schoolusers", [ Module ], {
@@ -59,6 +60,7 @@ define([
 		_grid: null,
 		_searchPage: null,
 		_progressInfo: null,
+		_initialChangeDone: false,
 
 		uninitialize: function() {
 			this.inherited(arguments);
@@ -163,6 +165,39 @@ define([
 					this._grid.filter(values);
 				})
 			});
+
+			tools.ucr(['ucsschool/passwordreset/autosearch', 'ucsschool/passwordreset/autosearch_on_change']).then(lang.hitch(this, function(ucr) {
+				this._searchForm.ready().then(lang.hitch(this, function() {
+					var _school = this._searchForm.getWidget('school');
+					var _class = this._searchForm.getWidget('class');
+
+					on(_school, 'change', lang.hitch(this, function() {
+						var classBeforeChange = _class.get('value');
+						on.once(_class, 'valuesLoaded', lang.hitch(this, function() {
+							_class.set('value', 'None');
+							_class._saveInitialValue();
+							if (classBeforeChange === 'None' && tools.isTrue(ucr['ucsschool/passwordreset/autosearch_on_change'] || true)) {
+								this._searchForm.submit();
+							}
+						}));
+					}));
+
+					on(_class, 'change', lang.hitch(this, function() {
+						if (!this._initialChangeDone) {
+							if (tools.isTrue(ucr['ucsschool/passwordreset/autosearch'] || true)) {
+								this._searchForm.submit();
+							}
+							this._initialChangeDone = true;
+							return;
+						}
+
+						if (tools.isTrue(ucr['ucsschool/passwordreset/autosearch_on_change'] || true)) {
+							this._searchForm.submit();
+						}
+					}));
+				}));
+			}));
+
 			this.standbyDuring(this._searchForm.ready()).then(lang.hitch(this, function() {
 				this.standbyOpacity = 0.75;
 			}));
@@ -175,14 +210,9 @@ define([
 
 			this._searchPage.startup();
 
-			tools.ucr(['ucsschool/passwordreset/autosearch', 'ucsschool/passwordreset/password-change-on-next-login', 'ucsschool/passwordreset/force-password-change-on-next-login']).then(lang.hitch(this, function(ucr) {
+			tools.ucr(['ucsschool/passwordreset/password-change-on-next-login', 'ucsschool/passwordreset/force-password-change-on-next-login']).then(lang.hitch(this, function(ucr) {
 				this.changeOnNextLogin = tools.isTrue(ucr['ucsschool/passwordreset/password-change-on-next-login'] || true);
 				this.changeOnNextLoginDisabled = tools.isTrue(ucr['ucsschool/passwordreset/force-password-change-on-next-login'] || false);
-				if (tools.isTrue(ucr['ucsschool/passwordreset/autosearch'] || true)) {
-					this._searchForm.ready().then(lang.hitch(this, function() {
-						this._grid.filter(this._searchForm.get('value'));
-					}));
-				}
 			}));
 		},
 
