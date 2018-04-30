@@ -1,3 +1,9 @@
+ucs-school-umc-groups (7.0.0-6) unstable; urgency=low
+
+  * Bug #46905: Overhaul for ucr variable descriptions
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 30 Apr 2018 08:43:10 +0200
+
 ucs-school-umc-groups (7.0.0-5) unstable; urgency=low
 
   * Bug #44350: fix removing to many users (patch by fbest)
