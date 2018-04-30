@@ -3,7 +3,7 @@ release: "4.2"
 version: [3]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-users
-fix: 
+fix: 13.0.1-1A~4.2.0.201804300851
 desc: |
  * The UDM flag <emphasis>pwdChangeNextLogin</emphasis> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login (Bug #46012).
  * Add ucr variable autosearch_on_change to control reload of user lists when switching school or class (Bug #46905)
