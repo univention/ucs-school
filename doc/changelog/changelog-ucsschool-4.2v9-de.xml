@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.2-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.2 v9 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.2 v8 nach 4.2 v9</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.2 v9
+Stand: 02. May 2018
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2017
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.2 v8 nach 4.2 v9.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+						<section id="changelog:ucsschool:ucs-school-umc-wizards" lang="en">
+				<title>Source package ucs-school-umc-wizards</title>
+				<itemizedlist>
+					<listitem><para>The wizards for users, classes and computers now offer object creation again if no object exists yet (<u:bug>46826</u:bug>)</para></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-radius-8021x" lang="en">
+				<title>Source package ucs-school-radius-802.1x</title>
+				<itemizedlist>
+					<listitem><para>The radius server identity is not case sensitive anymore. This fixes problems with Windows clients that send their identity in upper case while the computers identity is stored in lower case on the UCS@school radius server (<u:bug>45684</u:bug>).</para></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-netlogon-user-logonscripts" lang="en">
+				<title>Source package ucs-school-netlogon-user-logonscripts</title>
+				<itemizedlist>
+					<listitem><para>A database locking error is now avoided (<u:bug>46778</u:bug>).</para></listitem>
+
+					<listitem><para>The processing speed of the listener module <filename>ucs-school-user-logonscripts.py</filename> has been improved (<u:bug>45802</u:bug>).</para></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-import" lang="en">
+				<title>Source package ucs-school-import</title>
+				<itemizedlist>
+					<listitem><para>The global user import configuration (<filename>/usr/share/ucs-school-import/configs/user_import_defaults.json</filename>) does not contain any scheme anymore. Its existence was preventing the creation of users without email address. If your configuration was using the default email or username scheme, then it must now be recreated in <filename>/var/lib/ucs-school-import/configs/user_import.json</filename>. If the input CSV does not supply an email address or username and no scheme is given, new users will not have an email address (or fail to be created without a username) (<u:bug>45972</u:bug>). The original configuration was:
+<programlisting>
+"scheme": {
+  "email": "&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;",
+  "recordUID": "&lt;email&gt;",
+  "username": {
+    "default": "&lt;:umlauts&gt;&lt;firstname&gt;[0].&lt;lastname&gt;&lt;:lower&gt;[COUNTER2]"
+  }
+}
+</programlisting></para></listitem>
+
+					<listitem><para>Within the CLI import the handling of email addresses has been altered: the user import now allows the removal of email addresses. To do so, within the import configuration (json file) a CSV column must be mapped to the <literal>email</literal> property. To remove the mail address, in the CSV file the fields entry of the <literal>email</literal> column must be empty. Please note that an email address will only be generated from a configured scheme, when no CSV column for email addresses exist in the CSV file or no column is mapped (<u:bug>46317</u:bug>).</para></listitem>
+
+					<listitem><para>The internal handling of python hooks for the import process has been improved: syntax and consistency checks are now done after running the <literal>pre_create</literal> / <literal>pre_modify</literal> / <literal>pre_move</literal> hooks (<u:bug>46317</u:bug>).</para></listitem>
+
+					<listitem><para>Generated passwords of newly created users are now better readable. E.g. similar looking characters are now avoided (<u:bug>45640</u:bug>).</para></listitem>
+
+					<listitem><para>An internal improvement has been made to give python hooks more flexibility: if available, the responsible line of the CSV file is now attached to an ImportUser object that is about to be deleted (<u:bug>46384</u:bug>).</para></listitem>
+
+					<listitem><para>User property verification checks are executed in dry-run again (<u:bug>46571</u:bug>).</para></listitem>
+
+					<listitem><para>A dependency solver was introduced, that will sort the order of autogeneration of attributes from schemes so that they can depend on each other (<u:bug>46754</u:bug>)</para></listitem>
+
+					<listitem><para>The command line user import now stores the summary CSV files in separate folders for year and month (<filename class="directory">/var/lib/ucs-school-import/summary/YEAR/MONTH</filename>) (<u:bug>46800</u:bug>).</para></listitem>
+
+					<listitem><para>German translation improved (<u:bug>46840</u:bug>)</para></listitem>
+
+					<listitem><para>A traceback in the test tool <filename>ucs-school-testuser-import</filename> has been fixed (<u:bug>46857</u:bug>).</para></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-lib" lang="en">
+				<title>Source package ucs-school-lib</title>
+				<itemizedlist>
+					<listitem><para>Passwords for new users are now better readable. They do not contain characters that are difficult to distinguish (like 'I' and 'l' or 'O' and '0') anymore. The number of special characters has been limited to below 20% of the password length and passwords always start with a letter. The Microsoft requirement that passwords contain characters from at least three character classes is met (<u:bug>45640</u:bug>).</para></listitem>
+
+					<listitem><para>A potential bug when creating new school OUs has been fixed (<u:bug>46194</u:bug>).</para></listitem>
+
+					<listitem><para>The listing of user objects is not prevented anymore, if a malformed object exists (<u:bug>46130</u:bug>).</para></listitem>
+
+				</itemizedlist>
+			</section>
+			<section id="changelog:ucsschool:ucs-school-ldap-acls-master" lang="en">
+				<title>Source package ucs-school-ldap-acls-master</title>
+				<itemizedlist>
+					<listitem><para>A DC-Slave can now read which GPOs are applied at other schools. This is needed to apply the right GPOs for users which can login at multiple schools (<u:bug>45992</u:bug>).</para></listitem>
+
+				</itemizedlist>
+			</section>
+
+		</section>
+	</chapter>
+</book>
