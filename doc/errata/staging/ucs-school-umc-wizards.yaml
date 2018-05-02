@@ -5,5 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-wizards
 fix: 9.0.6-1A~4.2.0.201804230816
 desc: |
- * Offer object creation if non exists for user/classes/computer school modules (Bug #46826)
+ * The wizards for users, classes and computers now offer object creation again if no object exists yet (Bug #46826)
 bug: [46826]
