@@ -8,4 +8,3 @@ desc: |
  * A database locking error is now avoided (Bug #46696).
  * The processing speed of the listener module <filename>ucs-school-user-logonscripts.py</filename> has been improved (Bug #46860, Bug #45802).
 bug: [46778,46860]
-

@@ -5,5 +5,5 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-lib
 fix: 11.0.1-9A~4.3.0.201804161232
 desc: |
- * The listing of user objects is not prevented anymore, if a malformed object exists (Bug #46130).
+ * The listing of user objects is not prevented anymore, if a malformed object exists in LDAP (Bug #46130).
 bug: [46130]
