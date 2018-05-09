@@ -5,5 +5,5 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-users
 fix: 14.0.2-1A~4.3.0.201804271047
 desc: |
- * Add ucr variable autosearch_on_change to control reload of user lists when switching school or class (Bug #45601)
+ * Add UCR variable ucsschool/passwordreset/autosearch_on_change to control reload of user lists when switching school or class (Bug #45601)
 bug: [45601]
