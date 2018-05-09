@@ -33,6 +33,10 @@
 #DEBHELPER#
 
 univention-config-registry set ucsschool/passwordreset/autosearch?yes
-univention-config-registry set ucsschool/passwordreset/autosearch_on_change?yes
+
+if is_ucr_false ucsschool/passwordreset/autosearch; 
+    then univention-config-registry set ucsschool/passwordreset/autosearch_on_change?no;
+    else univention-config-registry set ucsschool/passwordreset/autosearch_on_change?yes;
+fi
 
 exit 0
