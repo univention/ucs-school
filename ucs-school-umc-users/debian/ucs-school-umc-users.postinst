@@ -32,6 +32,8 @@
 
 #DEBHELPER#
 
+. /usr/share/univention-lib/ucr.sh
+
 univention-config-registry set ucsschool/passwordreset/autosearch?yes
 
 if is_ucr_false ucsschool/passwordreset/autosearch; 
