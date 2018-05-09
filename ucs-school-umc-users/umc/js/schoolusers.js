@@ -97,16 +97,21 @@ define([
 				width: '60%'
 			}, {
 				name: 'passwordexpiry',
-				label: _('Password expiration date'),
+				label: _('Password change required in'),
 				width: '40%',
 				'formatter': function(key) {
-					if (key) {
-						var date = locale.parse(key, { datePattern : 'yyyy-MM-dd', selector: 'date' });
-						if (date) {
-							return locale.format(date, { selector: 'date' });
-						}
+					days = Number(key)
+					if (days == -1) {
+						return "never";
+					} else if (days == 0) {
+						return "now";
+					} else if (days == NaN) { // This should never happen!
+						return "NaN";
+					} else if (days == 1) {
+						return `${days} day`;
+					} else {
+						return `${days} days`;
 					}
-					return '-';
 				}
 			}];
 
