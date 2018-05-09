@@ -1,3 +1,9 @@
+ucs-school-umc-users (13.0.1-3) unstable; urgency=low
+
+  * Bug #46905: Include missing script in postinst
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 09 May 2018 09:07:12 +0100
+
 ucs-school-umc-users (13.0.1-2) unstable; urgency=low
 
   * Bug #46905: Update postinst script
