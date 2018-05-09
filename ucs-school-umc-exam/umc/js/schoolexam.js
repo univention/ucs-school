@@ -280,7 +280,7 @@ define([
 					description: _( 'Defines restriction for the share access' ),
 					staticValues: [{
 						id: 'home',
-						label : _('Restrict access to home directory')
+						label : _('Exam files only')
 					}, {
 						id: 'all',
 						label : _('Allow access to all shares')

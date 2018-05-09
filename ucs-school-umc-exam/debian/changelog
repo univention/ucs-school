@@ -1,3 +1,9 @@
+ucs-school-umc-exam (8.0.2-2) unstable; urgency=low
+
+  * Bug #43037: Change label for file share restriction
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 09 May 2018 13:28:09 +0100
+
 ucs-school-umc-exam (8.0.2-1) unstable; urgency=low
 
   * Bug #45730: Set initial room selection to null so users have to choose a room

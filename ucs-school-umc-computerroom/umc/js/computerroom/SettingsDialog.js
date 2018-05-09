@@ -94,7 +94,7 @@ define([
 				label: _('Share access'),
 				description: _('Defines restriction for the share access'),
 				staticValues: [
-					{ id: 'home', label: _('Home directory only') },
+					{ id: 'home', label: '' }, // Will be set in update
 					{ id: 'all', label: _('Default (no restrictions)') }
 				]
 			}, {
@@ -163,6 +163,11 @@ define([
 		},
 
 		update: function() {
+			// resetting the static values of the shareMode ComboBox to display label changes due to this.exam
+			this._form.getWidget('shareMode').set('staticValues', [
+				{ id: 'home', label: this.exam ? _('Exam files only') : _('Only own home directory') },
+				{ id: 'all', label: _('Default (no restrictions)') }
+			]);
 			// load settings and update form
 			return this.umcpCommand('computerroom/settings/get').then(lang.hitch(this, function(response) {
 				tools.forIn(response.result, function(key, value) {
