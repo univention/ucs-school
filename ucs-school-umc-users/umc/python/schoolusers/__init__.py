@@ -30,6 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from time import time, strptime
+from calendar import timegm
+
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
@@ -73,7 +76,7 @@ class Instance(SchoolBaseModule):
 		result = [{
 			'id': usr.dn,
 			'name': Display.user(usr),
-			'passwordexpiry': usr.get('passwordexpiry', '')
+			'passwordexpiry': self.passwordexpiry_to_days(usr.get('passwordexpiry', ''))
 		} for usr in self._users(ldap_user_read, request.options['school'], group=klass, user_type=request.flavor, pattern=request.options.get('pattern', ''))]
 		self.finished(request.id, result)
 
@@ -110,3 +113,22 @@ class Instance(SchoolBaseModule):
 			MODULE.process('exception=%s' % (type(exc),))
 			MODULE.process('exception=%s' % (exc.message,))
 			raise UMC_Error('%s' % (get_exception_msg(exc)))
+
+	def passwordexpiry_to_days(self, timestr):
+		"""
+		Calculates the number of days from now to the password expiration date
+
+		:param timestr: The string representation of the expiration date, e.g. 2018-05-30 or None
+		:type timestr: str
+		:return: -1 if no expiration day is set, 0 if already expired, >0 otherwise
+		:rtype: int
+		"""
+
+		if timestr == '' or timestr is None:
+			return -1
+		current_timestamp = time()
+		expires_timestamp = timegm(strptime(timestr, "%Y-%m-%d"))
+		time_difference = expires_timestamp - current_timestamp
+		if time_difference <= 0:
+			return 0
+		return int(round(time_difference / 86400))
