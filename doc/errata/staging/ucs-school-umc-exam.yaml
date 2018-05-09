@@ -6,4 +6,5 @@ src: ucs-school-umc-exam
 fix: 8.0.2-1A~4.3.0.201804261249
 desc: |
  * Set room combobox to null so users have to choose a room before proceeding in the exam wizard.
-bug: [45730]
+ * Rename file share restriction options in exam wizard (Bug #43037)
+bug: [45730, 43037]
