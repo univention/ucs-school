@@ -1,3 +1,9 @@
+ucs-school-umc-users (13.0.1-2) unstable; urgency=low
+
+  * Bug #46905: Update postinst script
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 09 May 2018 08:52:31 +0100
+
 ucs-school-umc-users (13.0.1-1) unstable; urgency=low
 
   * Bug #46905: Add ucr variable autosearch_on_change to enable user list reload after changing class or school
