@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-88) unstable; urgency=low
+
+  * Bug #43169: reenable 72_radius*authentication
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 14 May 2018 10:01:46 +0200
+
 ucs-test-ucsschool (4.0.4-87) unstable; urgency=low
 
   * Bug #45992: improved test script 91c_samba4_gpo_link_replication
