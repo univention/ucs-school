@@ -58,8 +58,7 @@ class ResultExporter(object):
 		"""
 		Create file about added/modified/deleted objects and errors.
 
-		:param UserImport import_handler: object that contains data to dump from an
-		import job (for example UserImport)
+		:param UserImport import_handler: object that contains data to dump from an import job (for example UserImport)
 		:param str filename: filename to write data to
 		"""
 		mkdir_p(os.path.dirname(filename), 'root', 'root', 0o700)
@@ -93,10 +92,9 @@ class ResultExporter(object):
 		IMPLEMENTME to change the order of objects and errors in the generated
 		output.
 
-		:param import_handler: object that contains data to dump from an
-		import job
+		:param import_handler: object that contains data to dump from an import job
 		:return: iterator for both import objects and UcsSchoolImportError objects
-		:rtype Iterator
+		:rtype: Iterator
 		"""
 		raise NotImplementedError()
 
@@ -105,7 +103,8 @@ class ResultExporter(object):
 		Object that will write the data to disk/network in the desired format.
 		IMPLEMENTME
 
-		:return: an object that knows how to write data
+		:return: an object of a BaseWriter subclass
+		:rtype: BaseWriter
 		"""
 		raise NotImplementedError()
 
@@ -116,7 +115,7 @@ class ResultExporter(object):
 		the iterator from get_iter().
 
 		:param obj: object to serialize
-		:return: dict: attr_name->strings that will be used to write the
-		output file
+		:return: attr_name->strings that will be used to write the output file
+		:rtype: dict
 		"""
 		raise NotImplementedError()

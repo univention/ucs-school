@@ -90,8 +90,7 @@ class UserImportCsvResultExporter(ResultExporter):
 		Make a dict of attr_name->strings from an import object.
 
 		:param obj: object to serialize
-		:return: mapping attr_name->strings that will be used to write the
-		output file
+		:return: mapping attr_name->strings that will be used to write the output file
 		:rtype: dict
 		"""
 		is_error = False

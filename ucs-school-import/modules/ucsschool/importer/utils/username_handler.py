@@ -281,7 +281,7 @@ class UsernameHandler(object):
 	def get_storage_backend(self):
 		"""
 		:return: NameCounterStorageBackend instance
-		:rtype NameCounterStorageBackend
+		:rtype: NameCounterStorageBackend
 		"""
 		if self.dry_run:
 			return MemoryStorageBackend(attribute_storage_name=self.attribute_storage_name)
@@ -415,7 +415,7 @@ class UsernameHandler(object):
 
 		:param str name_base: name without []
 		:param str initial_value: lowest value
-		:return current counter value
+		:return: current counter value
 		:rtype: str
 		"""
 		try:

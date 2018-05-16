@@ -46,8 +46,7 @@ class CsvWriter(BaseWriter):
 
 		:param field_names: names of the columns
 		:type field_names: list(str)
-		:param csv.Dialect dialect: If unset will try to detect
-		dialect of input file or fall back to "excel".
+		:param csv.Dialect dialect: If unset will try to detect dialect of input file or fall back to "excel".
 		"""
 		super(CsvWriter, self).__init__()
 		self.field_names = field_names
@@ -65,9 +64,9 @@ class CsvWriter(BaseWriter):
 		Open the output file.
 
 		:param str filename: filename to write data to
-		:param str mode: passed to used open() method
+		:param str mode: passed to builtin :py:func:`open()` method
 		:return: DictWriter instance
-		:rtype DictWriter
+		:rtype: csv.DictWriter
 		"""
 		with open(filename, mode) as fd:
 			os.fchmod(fd.fileno(), S_IRUSR | S_IWUSR)

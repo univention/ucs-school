@@ -213,8 +213,7 @@ class ImportUser(User):
 		Run format hooks.
 
 		:param str prop_name: the property for format
-		:param dict fields: dictionary to manipulate in hook, will be used
-		later to format the property
+		:param dict fields: dictionary to manipulate in hook, will be used later to format the property
 		:return: manipulated dictionary
 		:rtype: dict
 		"""
@@ -267,12 +266,11 @@ class ImportUser(User):
 		Check is case sensitive (Bug #42456).
 
 		:param univention.admin.uldap.access connection lo: LDAP connection object
-		:param additional_schools: list of school name to check additionally to
-		the one in self.schools
+		:param additional_schools: list of school name to check additionally to the one in self.schools
 		:type additional_schools: list(str)
 		:return: None
 		:rtype: None
-		:raises UnkownSchoolName
+		:raises UnkownSchoolName: if a school is not known
 		"""
 		# cannot be done in run_checks, because it needs LDAP access
 		schools = set(self.schools)
@@ -330,9 +328,9 @@ class ImportUser(User):
 		:param str source_uid: source DB identifier
 		:param str record_uid: source record identifier
 		:param str superordinate: superordinate
-		:return: object of ImportUser subclass from LDAP or raises noObject
+		:return: object of :py:class:`ImportUser` subclass loaded from LDAP or raises noObject
 		:rtype: ImportUser
-		:raises noObject
+		:raises noObject: if no user was found
 		"""
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
@@ -499,10 +497,8 @@ class ImportUser(User):
 		Existing entries will be overwritten unless listed in UCRV
 		ucsschool/import/generate/user/attributes/no-overwrite-by-schema.
 
-		* Attributes (email, record_uid, [user]name etc.) are ignored, as they are
-		processed separately in make_*.
-		* See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz
-		section "scheme" for details on the configuration.
+		* Attributes (email, record_uid, [user]name etc.) are ignored, as they are processed separately in make_*.
+		* See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz section "scheme" for details on the configuration.
 		"""
 		ignore_keys = self.to_dict().keys()
 		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "sourceUID", "username"])  # these are used in make_*
@@ -537,8 +533,7 @@ class ImportUser(User):
 
 		* This should run after make_school().
 		* If attribute already exists as a dict, it is not changed.
-		* Attribute is only written if it is set to a string like
-		'school1-cls2,school3-cls4'.
+		* Attribute is only written if it is set to a string like 'school1-cls2,school3-cls4'.
 		"""
 		if isinstance(self, Staff):
 			self.school_classes = dict()
@@ -689,6 +684,7 @@ class ImportUser(User):
 		Create 'school' attribute - the position of the object in LDAP (if not already set).
 
 		Order of detection:
+
 		* already set (object creation or reading from input)
 		* from configuration (file or cmdline)
 		* first (alphanum-sorted) school in attribute schools
@@ -715,8 +711,7 @@ class ImportUser(User):
 		If possible, this should run after make_school()
 
 		* If empty, it is set to self.school.
-		* If it is a string like 'school1,school2,school3' the attribute is
-		created from it.
+		* If it is a string like 'school1,school2,school3' the attribute is created from it.
 		"""
 		if self.schools and isinstance(self.schools, list):
 			pass
@@ -742,11 +737,11 @@ class ImportUser(User):
 	def make_udm_property(self, property_name):
 		"""
 		Create property `property_name` if not already set in
-		self.udm_properties["username"] or create it from scheme.
+		`self.udm_properties["username"]` or create it from scheme.
 
 		:param str property_name: name of UDM property
-		:returns value read from CSV or calculated from scheme or None
-		:rtype str or None
+		:return: value read from CSV or calculated from scheme or None
+		:rtype: str or None
 		"""
 		try:
 			return self.udm_properties[property_name]

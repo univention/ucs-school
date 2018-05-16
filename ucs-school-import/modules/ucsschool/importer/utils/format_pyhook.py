@@ -36,15 +36,17 @@ from ucsschool.importer.utils.logging import get_logger
 
 
 class FormatPyHook(PyHook):
-	#
-	# The base class' __init__() provides a logger instance:
-	#
-	# self.logger      # Python logging instance
-	#
+	"""
+	Format hook base class
 
-	# If multiple hook classes are found, hook functions with higher
-	# priority numbers run before those with lower priorities. None disables
-	# a function.
+	The base class' :py:meth:`__init__()` provides a logger instance:
+
+	self.logger      # Python logging instance
+
+	If multiple hook classes are found, hook functions with higher
+	priority numbers run before those with lower priorities. None disables
+	a function.
+	"""
 	priority = {
 		'patch_fields_staff': None,
 		'patch_fields_student': None,
@@ -64,8 +66,7 @@ class FormatPyHook(PyHook):
 		format_from_scheme().
 
 		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and
-		udm_properties
+		:param dict fields: dictionary with the users attributes and udm_properties
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""
@@ -77,8 +78,7 @@ class FormatPyHook(PyHook):
 		format_from_scheme().
 
 		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and
-		udm_properties
+		:param dict fields: dictionary with the users attributes and udm_properties
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""
@@ -90,8 +90,7 @@ class FormatPyHook(PyHook):
 		format_from_scheme().
 
 		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and
-		udm_properties
+		:param dict fields: dictionary with the users attributes and udm_properties
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""
@@ -103,8 +102,7 @@ class FormatPyHook(PyHook):
 		format_from_scheme().
 
 		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and
-		udm_properties
+		:param dict fields: dictionary with the users attributes and udm_properties
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""

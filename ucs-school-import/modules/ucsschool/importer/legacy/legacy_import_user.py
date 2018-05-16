@@ -97,9 +97,9 @@ class LegacyImportUser(ImportUser):
 		:param str record_uid: source record identifier
 		:param str username: username
 		:param str superordinate: superordinate
-		:return: object of ImportUser subclass from LDAP or raises noObject
+		:return: object of :py:class:`ImportUser` subclass loaded from LDAP or raises noObject
 		:rtype: ImportUser
-		:raises noObject
+		:raises noObject: if no user object was found
 		"""
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(

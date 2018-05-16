@@ -43,7 +43,7 @@ def setup_factory(factory_cls_name):
 
 	:param str factory_cls_name: full dotted name of class
 	:return: Factory object
-	:rtype Factory
+	:rtype: Factory
 	"""
 	fac_class = load_class(factory_cls_name)
 	factory = Factory(fac_class())

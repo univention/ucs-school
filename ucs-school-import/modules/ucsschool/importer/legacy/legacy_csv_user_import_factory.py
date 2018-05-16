@@ -60,8 +60,8 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		"""
 		Creates a LegacyImportUser of specific type.
 
-		:param list cur_user_roles: [ucsschool.lib.roles, ..]
-		:param list arg: passed to constructor of created class
+		:param func:`list` cur_user_roles: [ucsschool.lib.roles, ..]
+		:param func:`list` arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
 		:return: object of LegacyImportUser subclass
 		:rtype: LegacyImportUser
@@ -82,7 +82,7 @@ class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 		"""
 		Creates a ResultExporter object that can dump passwords to disk.
 
-		:param list arg: passed to constructor of created class
+		:param func:`list` arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
 		:return: ResultExporter object
 		:rtype: LegacyNewUserPasswordCsvExporter
