@@ -129,7 +129,10 @@ class CsvReader(BaseReader):
 			for row in reader:
 				self.entry_count = reader.line_num
 				self.input_data = reader.row
-				yield {unicode(key, 'utf-8'): unicode(value or "", 'utf-8') for key, value in row.iteritems()}
+				yield {
+					unicode(key, 'utf-8').strip(): unicode(value or "", 'utf-8').strip()
+					for key, value in row.iteritems()
+				}
 
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""

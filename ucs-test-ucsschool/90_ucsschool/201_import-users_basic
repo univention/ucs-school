@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: []
+## bugs: [46970]
 
 from copy import deepcopy
 from ldap.filter import filter_format
@@ -44,6 +44,10 @@ class Test(CLI_Import_v2_Tester):
 			)
 			person_list.append(person)
 
+		# Bug #46970: test stripping whitespace
+		person.firstname = '{} '.format(person.firstname)
+		person.lastname = ' {}'.format(person.lastname)
+
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
@@ -67,6 +71,7 @@ class Test(CLI_Import_v2_Tester):
 			email = attrs['mailPrimaryAddress'][0]
 			self.log.debug('role=%r username=%r email=%r dn=%r', person.role, username, email, dn)
 			person.update(dn=dn, username=username, mail=email)
+			person.update(firstname=person.firstname.strip(), lastname=person.lastname.strip())
 			person.verify()
 
 		self.log.info('*** Modify each user...')
