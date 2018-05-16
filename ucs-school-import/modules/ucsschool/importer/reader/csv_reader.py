@@ -85,8 +85,7 @@ class CsvReader(BaseReader):
 		Generate dicts from a CSV file.
 
 		:param args: ignored
-		:param dict kwargs: if it has a dict `csv_reader_args`, that will be
-		used as additional arguments for the :py:class:`DictReader` constructor.
+		:param dict kwargs: if it has a dict `csv_reader_args`, that will be used as additional arguments for the :py:class:`DictReader` constructor.
 		:return: iterator over list of dicts
 		:rtype: Iterator
 		"""
@@ -132,8 +131,7 @@ class CsvReader(BaseReader):
 		:param str mapping_value: the value in config["csv"]["mapping"]
 		:param str csv_value: the associated value from the CSV line
 		:param ImportUser import_user: the object to modify
-		:return: True if the field was handles here. It will be ignored
-		in map(). False if map() should handle the field.
+		:return: True if the field was handles here. It will be ignored in map(). False if map() should handle the field.
 		:rtype: bool
 		"""
 		if mapping_value == "__ignore":
@@ -235,7 +233,7 @@ class CsvReader(BaseReader):
 
 		:param ImportUser import_user: an ImportUser object
 		:return: names of Attributes
-		:rtype: list
+		:rtype: :func:`list`
 		"""
 		cls_name = import_user.__class__.__name__
 		if cls_name not in cls._attrib_names:

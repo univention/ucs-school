@@ -53,7 +53,7 @@ class DefaultUserImportFactory(object):
 	"""
 	Default implementation of the Abstract Factory.
 
-	Subclass this and store the fully dotted class name in config["factory"]
+	Subclass this and store the fully dotted class name in `config["factory"]`
 	to make the importer code use your classes.
 	"""
 
@@ -67,14 +67,10 @@ class DefaultUserImportFactory(object):
 		Overwrite the methods in this class with constructors or methods from
 		the configuration file.
 
-		* Configuration keys in the configuration "classes" dict are the names
-		of the methods here without the prepended 'make_'.
-		* It will be checked if the configured classes are really subclasses as
-		described in the documentation
-		(/usr/share/doc/ucs-school-import/user_import_configuration_readme.txt).
+		* Configuration keys in the configuration "classes" dict are the names of the methods here without the prepended `make\_`.
+		* It will be checked if the configured classes are really subclasses as described in the documentation (/usr/share/doc/ucs-school-import/user_import_configuration_readme.txt).
 		* Please update the documentation if classes/methods are added.
-		* Take care to honor the signature of the methods, this cannot be
-		checked.
+		* Take care to honor the signature of the methods, this cannot be checked.
 		"""
 		classes = {
 			"reader": "ucsschool.importer.reader.base_reader.BaseReader",
@@ -156,7 +152,7 @@ class DefaultUserImportFactory(object):
 		:type cur_user_roles: list(str)
 		:param tuple arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
-		:return: object of ImportUser subclass or ImportUser if cur_user_roles was empty
+		:return: object of :py:class:`ImportUser` subclass or :py:class:`ImportUser` if `cur_user_roles` was empty
 		:rtype: ImportUser
 		"""
 		if not cur_user_roles:
@@ -176,7 +172,7 @@ class DefaultUserImportFactory(object):
 		Creates a MassImport object.
 
 		:param bool dry_run: set to False to actually commit changes to LDAP
-		:return: MassImport object
+		:return: a :py:class:`MassImport` object
 		:rtype: MassImport
 		"""
 		return MassImport(dry_run=dry_run)
@@ -187,7 +183,7 @@ class DefaultUserImportFactory(object):
 
 		:param tuple arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
-		:return: ResultExporter object
+		:return: a :py:class:`ResultExporter` object
 		:rtype: NewUserPasswordCsvExporter
 		"""
 		return NewUserPasswordCsvExporter(*arg, **kwargs)
@@ -198,7 +194,7 @@ class DefaultUserImportFactory(object):
 
 		:param tuple arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
-		:return: ResultExporter object
+		:return: a :py:class:`ResultExporter` object
 		:rtype: UserImportCsvResultExporter
 		"""
 		return UserImportCsvResultExporter(*arg, **kwargs)
@@ -208,7 +204,7 @@ class DefaultUserImportFactory(object):
 		Creates a user importer.
 
 		:param bool dry_run: set to False to actually commit changes to LDAP
-		:return: UserImport object
+		:return: a :py:class:`UserImport` object
 		:rtype: UserImport
 		"""
 		return UserImport(dry_run=dry_run)
@@ -226,10 +222,9 @@ class DefaultUserImportFactory(object):
 		"""
 		Get a EmailHandler instance.
 
-		:param int max_length: created email adresses must not be longer
-		than this
+		:param int max_length: created email adresses must not be longer than this
 		:param bool dry_run: set to False to actually commit changes to LDAP
-		:return: EmailHandler object
+		:return: an :py:class:`EmailHandler` object
 		:rtype: EmailHandler
 		"""
 		return EmailHandler(max_length, dry_run)
@@ -240,8 +235,8 @@ class DefaultUserImportFactory(object):
 
 		:param int max_length: created usernames must not be longer than this
 		:param bool dry_run: set to False to actually commit changes to LDAP
-		:return: UsernameHandler object
-		:rtype UsernameHandler
+		:return: a :py:class:`UsernameHandler` object
+		:rtype: UsernameHandler
 		"""
 		return UsernameHandler(max_length, dry_run)
 
@@ -251,7 +246,7 @@ class DefaultUserImportFactory(object):
 
 		:param tuple arg: passed to constructor of created class
 		:param dict kwarg: passed to constructor of created class
-		:return: ucsschool.importer.writer.BaseWriter object
+		:return: a :py:class:`ucsschool.importer.writer.BaseWriter` object
 		:rtype: CsvWriter
 		"""
 		return CsvWriter(*arg, **kwargs)

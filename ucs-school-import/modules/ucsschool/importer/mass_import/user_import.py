@@ -66,8 +66,8 @@ class UserImport(object):
 	def read_input(self):
 		"""
 		Read users from input data.
-		* UcsSchoolImportErrors are stored in in self.errors (with input entry
-		number in error.entry_count).
+
+		* :py:class:`UcsSchoolImportErrors` are stored in in `self.errors` (with input entry number in `error.entry_count`).
 
 		:return: ImportUsers found in input
 		:rtype: list(ImportUser)
@@ -91,14 +91,14 @@ class UserImport(object):
 	def create_and_modify_users(self, imported_users=None):
 		"""
 		Create and modify users.
-		* self.added_users and self.modified_users will hold objects of created/
-		modified ImportUsers.
-		* UcsSchoolImportErrors are stored in self.errors (with failed ImportUser
-		object in error.import_user).
 
-		:param list imported_users: ImportUser objects
-		:return (self.errors, self.added_users, self.modified_users)
-		:rtype: tuple
+		* `self.added_users` and `self.modified_users` will hold created / modified :py:class:`ImportUser` objects.
+		* :py:class:`UcsSchoolImportErrors` are stored in `self.errors` (with failed :py:class:`ImportUser` objects in `error.import_user`).
+
+		:param imported_users: ImportUser objects
+		:type imported_users: :func:`list`
+		:return: (self.errors, self.added_users, self.modified_users)
+		:rtype: tuple(list, list, list)
 		"""
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
@@ -182,9 +182,10 @@ class UserImport(object):
 
 	def determine_add_modify_action(self, imported_user):
 		"""
-		Determine what to do with the ImportUser. Should set attribute "action"
-		to either "A" or "M". If set to "M" the returned user must be a opened
-		ImportUser from LDAP.
+		Determine what to do with the ImportUser. Should set attribute `action`
+		to either `A` or `M`. If set to `M` the returned user must be a opened
+		:py:class:`ImportUser` from LDAP.
+
 		Run modify preparations here, like school-move etc.
 
 		:param ImportUser imported_user: ImportUser from input
@@ -259,13 +260,14 @@ class UserImport(object):
 	def delete_users(self, users=None):
 		"""
 		Delete users.
-		* detect_users_to_delete() should have run before this.
-		* self.deleted_users will hold objects of deleted ImportUsers.
-		* UcsSchoolImportErrors are stored in self.errors (with failed ImportUser
-		object in error.import_user).
-		* To add or change a deletion strategy overwrite do_delete().
 
-		:param list users: list of tuples: [(source_uid, record_uid, input_data), ..]
+		* :py:meth:`detect_users_to_delete()` should have run before this.
+		* `self.deleted_users` will hold objects of deleted :py:class:`ImportUser`.
+		* :py:class:`UcsSchoolImportErrors` are stored in `self.errors` (with failed :py:class:`ImportUser` object in `error.import_user`).
+		* To add or change a deletion strategy overwrite :py:meth:`do_delete()`.
+
+		:param users: :func:`list` of tuples: [(source_uid, record_uid, input_data), ..]
+		:type users: :func:`list`
 		:return: (self.errors, self.deleted_users)
 		:rtype: tuple
 		"""
@@ -323,7 +325,7 @@ class UserImport(object):
 
 	def do_school_move(self, imported_user, user):
 		"""
-		Change users primary school - school_move() without calling Python
+		Change users primary school - :py:meth:`school_move()` without calling Python
 		hooks (ucsschool lib calls executables anyway).
 		"""
 		if self.dry_run:
@@ -343,10 +345,11 @@ class UserImport(object):
 	def do_delete(self, user):
 		"""
 		Delete or deactivate a user.
+
 		IMPLEMENTME to add or change a deletion variant.
 
 		:param ImportUser user: user to be deleted
-		:return whether the deletion worked
+		:return: whether the deletion worked
 		:rtype: bool
 		"""
 		deactivation_grace = max(0, int(self.config.get('deletion_grace_period', {}).get('deactivation', 0)))
@@ -396,8 +399,8 @@ class UserImport(object):
 		"""
 		Deactivate the user. Does not run user.modify().
 
-		:param ImportUser user: user to deactivate when modidy() is run
-		:return: whether any changes were made to the object and user.modify() is required
+		:param ImportUser user: user to deactivate when :py:meth:`modidy()` is run
+		:return: whether any changes were made to the object and :py:meth:`user.modify()` is required
 		:rtype: bool
 		"""
 		if user.disabled == '1':
@@ -425,12 +428,11 @@ class UserImport(object):
 
 	def set_deactivation_grace(self, user, grace):
 		"""
-		Sets the account expiration date (UDM attribute "userexpiry") on the
-		user object. Does not run user.modify().
+		Sets the account expiration date (UDM attribute `userexpiry`) on the
+		user object. Does not run :py:meth:`user.modify()`.
 
 		:param ImportUser user: object to delete
-		:return: whether any changes were made to the object and
-		user.modify() is required
+		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
 		if user.disabled == '1':
@@ -448,12 +450,11 @@ class UserImport(object):
 
 	def set_deletion_grace(self, user, grace):
 		"""
-		Sets the account deletion timestamp (UDM attribute "ucsschoolPurgeTimestamp")
-		on the user object. Does not run user.modify().
+		Sets the account deletion timestamp (UDM attribute `ucsschoolPurgeTimestamp`)
+		on the user object. Does not run :py:meth:`user.modify()`.
 
 		:param ImportUser user: user to schedule the deletion for
-		:return: whether any changes were made to the object and
-		user.modify() is required
+		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
 		if user.has_purge_timestamp(self.connection):

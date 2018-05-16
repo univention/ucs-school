@@ -33,22 +33,22 @@ Base class for all Python based User hooks.
 
 from ucsschool.importer.utils.import_pyhook import ImportPyHook
 
-#
-# An example is provided in /usr/share/doc/ucs-school-import/hook_example.py
-#
-
 
 class UserPyHook(ImportPyHook):
-	#
-	# The base class' __init__() provides the following attributes:
-	#
-	# self.lo          # LDAP object
-	# self.logger      # Python logging instance
-	#
+	"""
+	Base class for Python based import hooks.
 
-	# If multiple hook classes are found, hook functions with higher
-	# priority numbers run before those with lower priorities. None disables
-	# a function.
+	An example is provided in /usr/share/doc/ucs-school-import/hook_example.py
+
+	The base class' :py:meth:`__init__()` provides the following attributes:
+
+	* self.lo          # LDAP object
+	* self.logger      # Python logging instance
+
+	If multiple hook classes are found, hook functions with higher
+	priority numbers run before those with lower priorities. None disables
+	a function.
+	"""
 	priority = {
 		"pre_create": None,
 		"post_create": None,
@@ -65,11 +65,9 @@ class UserPyHook(ImportPyHook):
 		Run code before creating a user.
 
 		* The user does not exist in LDAP, yet.
-		* user.dn is the future DN of the user, if username and school does
-		not change.
-		* user.input_data contains the (csv) input data, if the user was
-		create during an import job
-		* set priority["pre_create"] to an int, to enable this method
+		* `user.dn` is the future DN of the user, if username and school does not change.
+		* `user.input_data` contains the (csv) input data, if the user was create during an import job
+		* set `priority["pre_create"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
@@ -80,10 +78,9 @@ class UserPyHook(ImportPyHook):
 		Run code after creating a user.
 
 		* The hook is only executed if adding the user succeeded.
-		* "user" will be an ImportUser, loaded from LDAP.
-		* Do not run user.modify(), it will create a recursion. Please use
-		user.modify_without_hooks().
-		* set priority["post_create"] to an int, to enable this method
+		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+		* Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
+		* set `priority["post_create"]` to an int, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
@@ -93,10 +90,10 @@ class UserPyHook(ImportPyHook):
 		"""
 		Run code before modifying a user.
 
-		* "user" will be a ImportUser, loaded from LDAP.
-		* set priority["pre_modify"] to an int, to enable this method
+		* `user` will be a :py:class:`ImportUser`, loaded from LDAP.
+		* set `priority["pre_modify"]` to an int, to enable this method
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
+		:param ImportUser user: User (or a subclass of it, eg. :py:class:`ImportUser`)
 		:return: None
 		"""
 
@@ -105,10 +102,9 @@ class UserPyHook(ImportPyHook):
 		Run code after modifying a user.
 
 		* The hook is only executed if modifying the user succeeded.
-		* "user" will be an ImportUser, loaded from LDAP.
-		* Do not run user.modify(), it will create a recursion. Please use
-		user.modify_without_hooks().
-		* set priority["post_modify"] to an int, to enable this method
+		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+		* Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
+		* set `priority["post_modify"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
@@ -118,8 +114,8 @@ class UserPyHook(ImportPyHook):
 		"""
 		Run code before changing a users primary school (position).
 
-		* "user" will be an ImportUser, loaded from LDAP.
-		* set priority["pre_move"] to an int, to enable this method
+		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+		* set `priority["pre_move"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
@@ -130,10 +126,9 @@ class UserPyHook(ImportPyHook):
 		Run code after changing a users primary school (position).
 
 		* The hook is only executed if moving the user succeeded.
-		* "user" will be an ImportUser, loaded from LDAP.
-		* Do not run user.modify(), it will create a recursion. Please use
-		user.modify_without_hooks().
-		* set priority["post_move"] to an int, to enable this method
+		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+		* Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
+		* set `priority["post_move"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
@@ -143,8 +138,8 @@ class UserPyHook(ImportPyHook):
 		"""
 		Run code before deleting a user.
 
-		* "user" will be an ImportUser, loaded from LDAP.
-		* set priority["pre_remove"] to an int, to enable this method
+		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+		* set `priority["pre_remove"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
@@ -155,11 +150,10 @@ class UserPyHook(ImportPyHook):
 		Run code after deleting a user.
 
 		* The hook is only executed if the deleting the user succeeded.
-		* "user" will be an ImportUser, loaded from LDAP.
-		* If running in an import job, the user may not have been removed,
-		but merely deactivated. Search using user.dn to find out.
-		* If the user was removed, do not modify() it.
-		* set priority["post_remove"] to an int, to enable this method
+		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+		* If running in an import job, the user may not have been removed, but merely deactivated. Search using user.dn to find out.
+		* If the user was removed, do not try to :py:meth:`modify()` it.
+		* set `priority["post_remove"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
 		:return: None
