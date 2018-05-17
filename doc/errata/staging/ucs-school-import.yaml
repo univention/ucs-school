@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [0]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-import
+fix: 16.0.1-28A~4.3.0.201805171636
+desc: |
+ * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47027).
+bug: [47027]
