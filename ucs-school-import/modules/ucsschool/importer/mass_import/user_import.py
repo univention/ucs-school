@@ -193,7 +193,7 @@ class UserImport(object):
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
-			imported_user.old_user = user
+			imported_user.old_user = user.__class__(**user.to_dict())  # make a copy
 			imported_user.prepare_all(new_user=False)
 			if user.school != imported_user.school:
 				user = self.school_move(imported_user, user)
