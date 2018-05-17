@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-49) unstable; urgency=low
+
+  * Bug #47031: wait after UMC restart in 18_automatic_distribute_materials_check
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 17 May 2018 18:02:45 +0200
+
 ucs-test-ucsschool (5.0.2-48) unstable; urgency=low
 
   * Bug #37983: disable 16_s4_slave_automatic_srv_record
