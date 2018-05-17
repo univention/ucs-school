@@ -80,6 +80,7 @@ def main():
 	finally:
 		call(['invoke-rc.d', 'univention-management-console-web-server', 'restart'])
 		call(['invoke-rc.d', 'univention-management-console-server', 'restart'])
+		time.sleep(5)  # wait some time for UMC web server and UMC server to be ready before the next test is called
 
 
 if __name__ == '__main__':
