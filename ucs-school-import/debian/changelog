@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-38) unstable; urgency=low
+
+  * Bug #47028: fix old_user attributes being overwritten
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 17 May 2018 16:35:41 +0200
+
 ucs-school-import (15.0.3-37) unstable; urgency=low
 
   * Bug #46857: fixed off by one error
