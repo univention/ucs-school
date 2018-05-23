@@ -3,7 +3,8 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-groups
-fix: 8.0.0-2A~4.3.0.201804271048
+fix: 8.0.0-3A~4.3.0.201805232217
 desc: |
  * Overhaul ucr variable descriptions as statet in comment #14 of (Bug #45601)
-bug: [45601]
+ * Fix SyntaxError on systems that have Python 2.6 installed (Bug #44846).
+bug: [45601, 44846]
