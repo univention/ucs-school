@@ -1,3 +1,9 @@
+ucs-school-umc-groups (8.0.0-3) unstable; urgency=low
+
+  * Bug #44846: fix SyntaxError for systems that have Python 2.6 installed
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 23 May 2018 22:15:07 +0200
+
 ucs-school-umc-groups (8.0.0-2) unstable; urgency=low
 
   * Bug #45601: Overhaul for ucr variable descriptions
