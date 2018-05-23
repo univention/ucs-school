@@ -318,6 +318,7 @@ class QueueHandler():
 			myshares_name=self.myshares_name,
 			other_links_icon=self.fix_win10_icon_index(self.other_links_icon),
 			umc_link=self.umcLink,
+			portal_link=self.portalLink,
 		)
 		no_icons = list()
 		if not self.desktop_folder_icon:
@@ -346,6 +347,9 @@ class QueueHandler():
 		if is_teacher:
 			return 'CreateTeacherUmcLink\n'
 		return ''
+
+	def generate_ucs_portal_link_snippet(self, dn):
+		return 'CreateUcsPortalLink\n'
 
 	def generate_windows_link_script(self, links, mappings, dn):
 		"""
@@ -379,6 +383,10 @@ class QueueHandler():
 		# create shortcut to umc for teachers
 		if self.create_teacher_umc_link:
 			script += self.generate_teacher_umc_link_snippet(dn)
+
+		# create shortcut to umc for teachers
+		if self.create_ucs_portal_link:
+			script += self.generate_ucs_portal_link_snippet(dn)
 
 		# map personal files from c:\users\<uid> to \\server\<uid>
 		home_path = self.get_home_path()
@@ -596,12 +604,16 @@ class QueueHandler():
 		self.create_personal_files_mapping = self.ucr.is_true('ucsschool/userlogon/myshares/enabled', False)
 		self.create_shortcuts = self.ucr.is_true('ucsschool/userlogon/create_shortcuts', True)
 		self.create_teacher_umc_link = self.ucr.is_true('ucsschool/userlogon/create_teacher_umc_link', True)
+		self.create_ucs_portal_link = self.ucr.is_true('ucsschool/userlogon/create_ucs_portal_link', True)
 
 		self.strTeacher = self.ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 		self.strStaff = self.ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 		self.umcLink = self.ucr.get(
 			'ucsschool/userlogon/umclink/link',
 			'http://%s.%s/univention/management/' % (self.hostname, self.domainname))
+		self.portalLink = self.ucr.get(
+			'ucsschool/userlogon/portallink/link',
+			'https://%s.%s/' % (self.hostname, self.domainname))
 		self.reTeacher = re.compile(self.ucr.get(
 			'ucsschool/userlogon/umclink/re',
 			'^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (
