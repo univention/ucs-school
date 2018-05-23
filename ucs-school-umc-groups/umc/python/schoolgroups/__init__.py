@@ -125,6 +125,7 @@ class Instance(SchoolBaseModule):
 
 	@staticmethod
 	def _filter_members(request, group, users, ldap_user_read=None):
+		"""Filter out group members that should no be shown in current module flavor."""
 		members = []
 		for member_dn in users:
 			try:
@@ -132,7 +133,7 @@ class Instance(SchoolBaseModule):
 			except udm_exceptions.noObject:
 				MODULE.process('Could not open (foreign) user %r: no permissions/does not exists/not a user' % (member_dn,))
 				continue
-			if not user.schools or not set(user.schools) & {group.school}:
+			if not user.schools or not set(user.schools).intersection(set([group.school])):
 				continue
 			if request.flavor == 'class' and not user.is_teacher(ldap_user_read):
 				continue  # only display teachers
