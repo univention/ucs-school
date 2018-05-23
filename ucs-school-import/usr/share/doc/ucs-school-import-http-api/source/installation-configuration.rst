@@ -22,7 +22,7 @@ UMC frontend installation
 -------------------------
 
 Conceptually the UMC module can be installed on all UCS roles.
-But in its current implementation it *must* be installed on the DC master too::
+But in its current implementation it *must* be installed on the DC master::
 
 	$ univention-install ucs-school-umc-import  # (not ucs-school-umc-csv-import)
 
