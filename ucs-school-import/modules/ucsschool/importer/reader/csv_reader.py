@@ -37,11 +37,10 @@ import sys
 
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
-from ucsschool.importer.exceptions import InitialisationError, UnkownRole
+from ucsschool.importer.exceptions import InitialisationError, NoRole, UnkownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
-from ucsschool.importer.exceptions import UnknownProperty
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 import univention.admin.modules
 
@@ -51,6 +50,17 @@ class CsvReader(BaseReader):
 	Reads CSV files and turns lines to ImportUser objects.
 	"""
 	_attrib_names = dict()  # cache for Attribute names
+	_role_method = None  # method to get users role
+	_csv_roles_mapping = {
+		"student": [role_pupil],
+		"staff": [role_staff],
+		"teacher": [role_teacher],
+		"staffteacher": [role_teacher, role_staff],
+		"teacher_and_staff": [role_teacher, role_staff],
+	}  # known values for "__role" column
+	_csv_roles_key = None  # column name in the mapping configuration
+	_csv_roles_value = "__role"  # mapping value, so column will be used as role
+
 	encoding = "utf-8"
 
 	def __init__(self, filename, header_lines=0, **kwargs):
@@ -141,6 +151,9 @@ class CsvReader(BaseReader):
 		elif mapping_value == "__action":
 			import_user.action = csv_value
 			return True
+		elif mapping_value == self._csv_roles_value:
+			self._role_method = self.get_roles_from_csv
+			return True
 		elif mapping_value == "school_classes" and isinstance(import_user, Staff):
 			# ignore column
 			return True
@@ -148,14 +161,31 @@ class CsvReader(BaseReader):
 
 	def get_roles(self, input_data):
 		"""
-		IMPLEMENT ME if the user role is not set in the configuration file or
-		by cmdline.
-		Detect the ucsschool.lib.roles from the input data.
+		Detect the ucsschool.lib.roles from the input data or configuration.
+
+		IMPLEMENT ME if the user role is not set in the configuration (file or
+		by cmdline) or in the CSV mapped by `__role`.
+
+		`__role` can be something else, if configured in
+		:py:attr:`_csv_roles_key`.
 
 		:param dict input_data: dict user from read()
 		:return: list of roles [ucsschool.lib.roles, ..]
 		:rtype: list(str)
 		"""
+		if self._role_method:
+			return self._role_method(input_data)
+
+		# try to get roles from CSV, if not found, use configuration / cmdline
+		try:
+			roles = self.get_roles_from_csv(input_data)
+			self._role_method = self.get_roles_from_csv
+		except NoRole:
+			roles = self.get_roles_from_configuration(input_data)
+			self._role_method = self.get_roles_from_configuration
+		return roles
+
+	def get_roles_from_configuration(self, input_data):
 		try:
 			return {
 				"student": [role_pupil],
@@ -164,7 +194,29 @@ class CsvReader(BaseReader):
 				"teacher_and_staff": [role_teacher, role_staff]
 			}[self.config["user_role"]]
 		except KeyError:
-			raise UnkownRole("No role in configuration.", entry_count=self.entry_count)
+			raise NoRole("No role in configuration.", entry_count=self.entry_count)
+
+	def get_roles_from_csv(self, input_data):
+		if not self._csv_roles_key:
+			# find column for role in mapping
+			for k, v in self.config["csv"]["mapping"].items():
+				if v == self._csv_roles_value:
+					self._csv_roles_key = k
+					break
+			else:
+				raise NoRole(
+					'No {!r} column found in mapping configuration.'.format(self._csv_roles_key),
+					entry_count=self.entry_count
+				)
+		role_str = input_data[self._csv_roles_key]
+		try:
+			roles = self._csv_roles_mapping[role_str]
+		except KeyError:
+			raise UnkownRole(
+				'Unknown role {!r} found in {!r} column.'.format(role_str, self._csv_roles_key),
+				entry_count=self.entry_count
+			)
+		return roles
 
 	def map(self, input_data, cur_user_roles):
 		"""

@@ -129,6 +129,10 @@ class NameKeyExists(UcsSchoolImportFatalError):
 	pass
 
 
+class NoRole(UcsSchoolImportError):
+	pass
+
+
 class NotSupportedError(UcsSchoolImportError):
 	pass
 
