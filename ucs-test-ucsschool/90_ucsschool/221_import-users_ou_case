@@ -9,6 +9,7 @@
 ## bugs: [42456]
 
 import random
+import string
 import univention.testing.strings as uts
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
 from essential.importusers import Person
@@ -17,8 +18,13 @@ from essential.importusers import Person
 class Test(CLI_Import_v2_Tester):
 	def test(self):
 		for ori_ou in (self.ou_A, self.ou_B, self.ou_C):
+			while not any(c in string.letters for c in ori_ou.name):
+				# test won't work: only digits -> upper case == lower case
+				self.log.warn('OU does not contain any letters, creating new one.')
+				ori_ou.name, ori_ou.dn = self.schoolenv.create_ou(name_edudc=self.ucr.get('hostname'), use_cache=False)
+
 			role = random.choice(('student', 'teacher', 'staff', 'teacher_and_staff'))
-			self.log.info('*** Importing a new single user with role %r and ori_ou=%r', role, ori_ou)
+			self.log.info('*** Importing a new single user with role %r and ori_ou=(%r, %r)', role, ori_ou.name, ori_ou.dn)
 
 			person = Person(ori_ou.name, role)
 			fn_csv = self.create_csv_file(person_list=[person])

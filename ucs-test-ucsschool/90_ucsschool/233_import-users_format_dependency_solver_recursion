@@ -29,9 +29,8 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
 		self.log.info('*** 1 Importing (create) a new user of each role.')
 		person_list_success = []
@@ -52,7 +51,7 @@ class Test(CLI_Import_v2_Tester):
 		del config['csv']['mapping']
 		config.update_entry('csv:mapping:Nach', 'lastname')
 		config.update_entry('csv:mapping:OUs', 'schools')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('scheme:birthday', '<source_uid>')
 		config.update_entry('scheme:recordUID', '<email>.<name>[0:4]'),
 		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain><:strip>'),
@@ -63,7 +62,6 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('scheme:roomNumber', '<street>-<email>[0:5]'),  # recursion!
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
 		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):

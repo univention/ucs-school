@@ -25,12 +25,11 @@ class Test(CLI_Import_v2_Tester):
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('scheme:email', '<:umlauts><firstname:lower>.<lastname:lower>[ALWAYSCOUNTER]@<maildomain>'),
 		config.update_entry('scheme:username:default', '<:umlauts><firstname:lower><lastname:lower>'),
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 		del config['csv']['mapping']['E-Mail']
 
 		self.log.info('*** 1/5 Importing a user from each role with default UCR config...')

@@ -32,9 +32,8 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('scheme:username:default', '<:umlauts><firstname>[0].<lastname><:lower>')
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
 		roles = ('student', 'teacher', 'staff', 'teacher_and_staff')
 		names = [

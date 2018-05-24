@@ -25,9 +25,8 @@ class Test(CLI_Import_v2_Tester):
 		config = copy.deepcopy(self.default_config)
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
 		config.update_entry('sourceUID', source_uid)
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
 		self.log.info('*** Importing a new user of each role role and empty class name.')
 		person_list = []

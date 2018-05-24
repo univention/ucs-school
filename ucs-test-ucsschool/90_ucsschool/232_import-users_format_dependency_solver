@@ -63,7 +63,7 @@ class Test(CLI_Import_v2_Tester):
 		del config['csv']['mapping']
 		config.update_entry('csv:mapping:Nach', 'lastname')
 		config.update_entry('csv:mapping:OUs', 'schools')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('scheme:birthday', '<source_uid>')  # lib attr that depends on lib attr
 		config.update_entry('scheme:recordUID', '<email>.<city>[0:4]'),  # lib attr that depends on UDM prop & lib attr
 		config.update_entry('scheme:email', '<{}>@<maildomain><:strip>'.format(ext_attr_name)),  # lib attr that
@@ -78,7 +78,6 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('scheme:{}'.format(ext_attr_name), "<firstname:lower>.<lastname:lower>")  # not-lib-mapped extended attr that depends on lib attrs
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
 		self.log.info('Importing a user from each role...')
 		person_list = list()
