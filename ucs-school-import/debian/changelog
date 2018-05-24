@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-39) unstable; urgency=low
+
+  * Bug #47073: move handling of special mapping value for user role to
+    regular CsvReader
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 24 May 2018 20:05:37 +0200
+
 ucs-school-import (15.0.3-38) unstable; urgency=low
 
   * Bug #47028: fix old_user attributes being overwritten
