@@ -164,7 +164,7 @@ Function CreateUcsPortalLink()
 		oUrlLink.TargetPath = "{portal_link}"
 		oUrlLink.Save
 		set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)
-		objFile.WriteLine("IconFile=\\{hostname}.{domainname}\netlogon\user\univention-management-console.ico")
+		Objfile.WriteLine("IconFile=\\{hostname}.{domainname}\netlogon\user\univention-portal.ico")
 		objFile.WriteLine("IconIndex=0")
 		objFile.Close
 	End If

@@ -134,6 +134,8 @@ class QueueHandler():
 		# copy the umc icon to the netlogon share, maybe there is a better way? ...
 		if not os.path.isfile(os.path.join(path, "univention-management-console.ico")):
 			shutil.copy("/usr/share/ucs-school-netlogon-user-logonscripts/univention-management-console.ico", path)
+		if not os.path.isfile(os.path.join(path, "univention-portal.ico")):
+			shutil.copy("/usr/share/ucs-school-netlogon-user-logonscripts/univention-portal.ico", path)
 
 	def get_disabled_share_links(self):
 		if not self._disabled_share_links:
