@@ -1,15 +1,8 @@
 {
-	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
-	"classes": {
-		"reader": "ucsschool.importer.reader.test_csv_reader.TestCsvReader"
-	},
-	"input": {
-		"type": "csv"
-	},
 	"csv": {
 		"mapping": {
 			"Schulen": "schools",
-			"Benutzertyp": "__type",
+			"Benutzertyp": "__role",
 			"Vorname": "firstname",
 			"Nachname": "lastname",
 			"Klassen": "school_classes",

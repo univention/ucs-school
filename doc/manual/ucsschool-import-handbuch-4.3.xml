@@ -252,7 +252,7 @@
 					<listitem>
 						<simpara>
 							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert alle Benutzer in eine CSV-Datei. In dieser Datei sind Benutzer aller Rollen und aller Schulen enthalten. In der CSV-Datei gibt es eine Spalte in der steht welche Rolle der jeweilige Benutzer hat.
-							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> benötigt. Um die Benutzerrolle auszulesen muss die Klasse zum Einlesen von CSV-Dateien abgeleitet und erweitert werden: <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname>. Ein Code-Beispiel findet sich in der Klasse <classname>ucsschool.importer.reader.test_csv_reader.TestCsvReader</classname>, zu welcher die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename> gehört.
+							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> benötigt. Um die Benutzerrolle auszulesen, wird der entsprechenden Spalte der <link linkend="configuration:mapping:specials">Sonderwert</link> <literal>__role</literal> zugeordnet (siehe als Beipiel die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename>).
 						</simpara>
 						<simpara>
 							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil alle Benutzer die gleiche <property>sourceUID</property> haben.
@@ -966,29 +966,42 @@ udm users/user
 				Bei der obigen, langen Ausgabe handelt es sich um die Beschreibung eines <link linkend="extending:import_user_class"><classname>ImportUser</classname></link> Objektes.
 				Dieses zu kennen wird wichtig für die Programmierung von Hooks (siehe <xref linkend="extending:hooks"/>), mit denen vor und nach dem Anlegen, Ändern oder Löschen von Benutzern noch Aktionen ausgeführt werden können.
 			</para>
-			<para>
-				Es existieren zwei "Sonderwerte" die in der Konfiguration der Zuordnung (<link linkend="configuration:json_format:userimport:csv:mapping"><varname>mapping</varname></link>) verwendet werden können: <literal>__action</literal> und <literal>__ignore</literal>:
-				<itemizedlist>
-					<listitem>
-						<simpara>
-							<literal>__action</literal>: Steht in einer CSV-Spalte immer die auf einen eingelesenen Benutzer anzuwendende Aktion als Buchstabe kodiert, so wird die Import-Software keine eigene Entscheidung darüber fällen, sondern dieser Anweisung folgen.
-						</simpara>
-						<simpara>
-							Anlegen (<foreignphrase>add</foreignphrase>): <option>A</option>, Ändern (<foreignphrase>modify</foreignphrase>): <option>M</option> oder Löschen (<foreignphrase>delete</foreignphrase>): <option>D</option>.
-						</simpara>
-					</listitem>
-					<listitem>
-						<simpara>
-							<literal>__ignore</literal>: Der Inhalt dieser Spalte wird ignoriert. Die kann z.B. verwendet werden, wenn die CSV-Datei leerer Spalten, oder solche mit nicht zu importierenden Daten, enthält.
-						</simpara>
-					</listitem>
-				</itemizedlist>
-				Weitere, eigene Interpretationen von Eingabewerten können in einer von <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname> abgeleiteten Klasse (siehe <xref linkend="extending:subclassing"/>) in der Methode <methodname>handle_input()</methodname> erzeugt werden.
-				Als Beispiel kann <methodname>handle_input()</methodname> in <classname>ucsschool.importer.legacy.legacy_csv_reader.LegacyCsvReader</classname> dienen, welches für den Import des alten CSV-Dateiformats den Sonderwert <literal>__activate</literal> (neue Benutzer de/aktivieren) hinzufügt.
-			</para>
-			<para>
-				Um Unterstützung für den Import von anderen Dateiformaten als CSV (JSON, XML etc) hinzuzufügen, kann von <classname>ucsschool.importer.reader.base_reader.BaseReader</classname> abgeleitet werden (siehe <xref linkend="extending:subclassing"/>).
-			</para>
+			<section id="configuration:mapping:specials">
+				<title>Sonderwerte</title>
+				<para>
+					Es existieren "Sonderwerte", die in der Konfiguration der Zuordnung (<link linkend="configuration:json_format:userimport:csv:mapping"><varname>mapping</varname></link>) verwendet werden können:
+					<itemizedlist>
+						<listitem>
+							<simpara>
+								<literal>__action</literal>: Steht in einer CSV-Spalte immer die auf einen eingelesenen Benutzer anzuwendende Aktion als Buchstabe kodiert, so wird die Import-Software keine eigene Entscheidung darüber fällen, sondern dieser Anweisung folgen.
+							</simpara>
+							<simpara>
+								Anlegen (<foreignphrase>add</foreignphrase>): <option>A</option>, Ändern (<foreignphrase>modify</foreignphrase>): <option>M</option> oder Löschen (<foreignphrase>delete</foreignphrase>): <option>D</option>.
+							</simpara>
+						</listitem>
+						<listitem>
+							<simpara>
+								<literal>__ignore</literal>: Der Inhalt dieser Spalte wird ignoriert. Die kann z.B. verwendet werden, wenn die CSV-Datei leerer Spalten, oder solche mit nicht zu importierenden Daten, enthält.
+							</simpara>
+						</listitem>
+						<listitem>
+							<simpara>
+								<literal>__role</literal>: Der Inhalt dieser Spalte wird verwendet um die Rolle des Benutzers zu bestimmen. Gültige Werte sind <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> und <literal>teacher_and_staff</literal>.
+							</simpara>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</section>
+			<section id="configuration:mapping:extending">
+				<title>Eigene Erweiterungen hinzufügen</title>
+				<para>
+					Weitere, eigene Interpretationen von Eingabewerten können in einer von <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname> abgeleiteten Klasse (siehe <xref linkend="extending:subclassing"/>) in der Methode <methodname>handle_input()</methodname> erzeugt werden.
+					Als Beispiel kann <methodname>handle_input()</methodname> in <classname>ucsschool.importer.legacy.legacy_csv_reader.LegacyCsvReader</classname> dienen, welches für den Import des alten CSV-Dateiformats den Sonderwert <literal>__activate</literal> (neue Benutzer de/aktivieren) hinzufügt.
+				</para>
+				<para>
+					Um Unterstützung für den Import von anderen Dateiformaten als CSV (JSON, XML etc) hinzuzufügen, kann von <classname>ucsschool.importer.reader.base_reader.BaseReader</classname> abgeleitet werden (siehe <xref linkend="extending:subclassing"/>).
+				</para>
+			</section>
 		</section>
 
 		<section id="configuration:scheme_formatting">

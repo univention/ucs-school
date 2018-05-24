@@ -31,20 +31,18 @@ CSV reader for CSV files created by TestUserCsvExporter.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.reader.csv_reader import CsvReader
-from ucsschool.importer.exceptions import UnkownRole
 
 
 class TestCsvReader(CsvReader):
-	roles_mapping = {
-		"student": [role_pupil],
-		"staff": [role_staff],
-		"teacher": [role_teacher],
-		"staffteacher": [role_teacher, role_staff],
-		"teacher_and_staff": [role_teacher, role_staff],
-	}
+	"""
+	This class has been deprecated. Please use "CsvReader" instead. It now
+	also handles a "__role" column (replace "__type" in the mapping
+	configuration with "__role").
+	"""
+	_role_method = CsvReader.get_roles_from_csv
+	_csv_roles_value = '__type'
 
 	def __init__(self):
 		# __init__() cannot have arguments, as it has replaced
@@ -55,28 +53,7 @@ class TestCsvReader(CsvReader):
 		filename = self.config["input"]["filename"]
 		header_lines = self.config["csv"]["header_lines"]
 		super(TestCsvReader, self).__init__(filename, header_lines)
-
-	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
-		"""
-		Handle user type.
-		"""
-		if mapping_value == "__type":
-			return True
-		return super(TestCsvReader, self).handle_input(mapping_key, mapping_value, csv_value, import_user)
-
-	def get_roles(self, input_data):
-		"""
-		Get role from CSV.
-		"""
-		try:
-			return super(TestCsvReader, self).get_roles(input_data)
-		except UnkownRole:
-			pass
-
-		roles = list()
-		for k, v in self.config["csv"]["mapping"].items():
-			if v == "__type":
-				role_str = input_data[k]
-				roles = self.roles_mapping[role_str]
-				break
-		return roles
+		self.logger.warn(
+			'The "TestCsvReader" class has been deprecated. Please use "CsvReader" and use "__role" instead of "__type"'
+			' in the mapping configuration.'
+		)
