@@ -33,7 +33,7 @@ class Test(CLI_Import_v2_Tester):
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('scheme:email', "<:umlauts><firstname:lower>[0:3].<lastname:lower>[2:5]@example.com")
 		config.update_entry('scheme:employeeNumber', "The user's name is <firstname:upper> <lastname> <description>")
 		config.update_entry('user_role', None)
@@ -41,7 +41,6 @@ class Test(CLI_Import_v2_Tester):
 			'scheme:username:default',
 			'<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[ALWAYSCOUNTER]'
 			)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 		del config['csv']['mapping']['E-Mail']
 
 		self.log.info('*** Importing new single user of each role from templates...')

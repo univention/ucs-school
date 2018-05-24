@@ -26,11 +26,10 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:DBID', 'record_uid')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('scheme:email', "<:umlauts><firstname:lower>.<lastname:lower>@example.com")
 		config.update_entry('scheme:employeeNumber', "The user's name is <firstname:upper> <lastname> <description>")
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 		del config['csv']['mapping']['E-Mail']
 
 		for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:

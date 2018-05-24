@@ -31,10 +31,9 @@ class Test(CLI_Import_v2_Tester):
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
 		config = deepcopy(self.default_config)
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
-		config.update_entry('csv:mapping:role', '__type')
+		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
-		config.update_entry('classes:reader', 'ucsschool.importer.reader.test_csv_reader.TestCsvReader')
 
 		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
