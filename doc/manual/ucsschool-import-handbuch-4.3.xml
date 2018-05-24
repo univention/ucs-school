@@ -252,7 +252,7 @@
 					<listitem>
 						<simpara>
 							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert alle Benutzer in eine CSV-Datei. In dieser Datei sind Benutzer aller Rollen und aller Schulen enthalten. In der CSV-Datei gibt es eine Spalte in der steht welche Rolle der jeweilige Benutzer hat.
-							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> benötigt. Um die Benutzerrolle auszulesen, wird der entsprechenden Spalte der <link linkend="configuration:mapping:specials">Sonderwert</link> <literal>__role</literal> zugeordnet (siehe als Beipiel die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename>).
+							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> benötigt. Um die Benutzerrolle auszulesen, wird der entsprechenden Spalte der <link linkend="configuration:mapping:specials">Sonderwert</link> <literal>__role</literal> zugeordnet (siehe als Beispiel die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename>).
 						</simpara>
 						<simpara>
 							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil alle Benutzer die gleiche <property>sourceUID</property> haben.
