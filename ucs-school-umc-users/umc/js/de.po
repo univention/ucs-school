@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-users\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-11-14 13:37+0100\n"
+"POT-Creation-Date: 2018-05-25 12:18+0200\n"
 "PO-Revision-Date: 2012-03-01 18:15+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,20 +12,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolusers.js:135
+#: umc/js/schoolusers.js:111
+#, python-format
+msgid "%s day"
+msgstr "%s Tag"
+
+#: umc/js/schoolusers.js:113
+#, python-format
+msgid "%s days"
+msgstr "%s Tage"
+
+#: umc/js/schoolusers.js:142
 msgid "All classes and workgroups"
 msgstr "Alle Klassen und Arbeitsgruppen"
 
-#: umc/js/schoolusers.js:287
+#: umc/js/schoolusers.js:322
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolusers.js:133
+#: umc/js/schoolusers.js:140
 msgid "Class or workgroup"
 msgstr "Klasse oder Arbeitsgruppe"
 
-#. i18n: 0: number of selected users; 1 and 2: "students" / "teachers"
-#: umc/js/schoolusers.js:254
+#: umc/js/schoolusers.js:289
+#, python-brace-format
 msgid ""
 "Clicking the <i>Reset</i> button will set the password for all {0} selected "
 "{1} to the given password. For security reasons the {2} should be forced to "
@@ -36,64 +46,72 @@ msgstr ""
 "sollten die {2} zur Änderung des Passworts bei der nächsten Anmeldung "
 "aufgefordert werden."
 
-#: umc/js/schoolusers.js:204
+#: umc/js/schoolusers.js:239
 msgid "Failed to reset the password for the following users:"
 msgstr ""
 "Das Zurücksetzen des Passworts ist für die folgenden Benutzer fehlgeschlagen"
 
-#: umc/js/schoolusers.js:201
+#: umc/js/schoolusers.js:236
 msgid "Finished"
 msgstr "Fertiggestellt"
 
-#: umc/js/schoolusers.js:94 umc/js/schoolusers.js:146
+#: umc/js/schoolusers.js:96 umc/js/schoolusers.js:153
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/schoolusers.js:265
+#: umc/js/schoolusers.js:105
+msgid "Never"
+msgstr "Niemals"
+
+#: umc/js/schoolusers.js:300
 msgid "New password"
 msgstr "Neues Passwort"
 
-#: umc/js/schoolusers.js:98
-msgid "Password expiration date"
-msgstr "Passwortablaufdatum"
+#: umc/js/schoolusers.js:107
+msgid "Now"
+msgstr "Jetzt"
 
-#: umc/js/schoolusers.js:269
+#: umc/js/schoolusers.js:100
+msgid "Password change required in"
+msgstr "Änderung des Passwortes erforderlich in"
+
+#: umc/js/schoolusers.js:304
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: umc/js/schoolusers.js:85
+#: umc/js/schoolusers.js:87
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
-#: umc/js/schoolusers.js:294
+#: umc/js/schoolusers.js:329
 msgid "Reset passwords"
 msgstr "Passwörter zurücksetzen"
 
-#: umc/js/schoolusers.js:86
+#: umc/js/schoolusers.js:88
 msgid "Resets password of user."
 msgstr "Setzt Passwörter von Benutzern zurück"
 
-#: umc/js/schoolusers.js:123
+#: umc/js/schoolusers.js:130
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolusers.js:147
+#: umc/js/schoolusers.js:154
 msgid "Search..."
 msgstr "Suche..."
 
-#: umc/js/schoolusers.js:132
+#: umc/js/schoolusers.js:139
 msgid "Select a class or workgroup."
 msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
 
-#: umc/js/schoolusers.js:122
+#: umc/js/schoolusers.js:129
 msgid "Select the school."
 msgstr "Auswahl der Schule."
 
-#: umc/js/schoolusers.js:222
+#: umc/js/schoolusers.js:257
 msgid "Setting passwords"
 msgstr "Passwort setzen"
 
-#: umc/js/schoolusers.js:145
+#: umc/js/schoolusers.js:152
 msgid ""
 "Specifies the substring pattern which is searched for in the first name, "
 "surname and username"
@@ -101,21 +119,24 @@ msgstr ""
 "Definiert die Zeichenkette, die im Vorname, Nachname und Benutzernamen "
 "gesucht wird"
 
-#: umc/js/schoolusers.js:260
+#: umc/js/schoolusers.js:295
 msgid "User has to change password on next login"
 msgstr "Benutzer muss das Passwort bei der nächsten Anmeldung ändern"
 
-#: umc/js/schoolusers.js:228
+#: umc/js/schoolusers.js:263
 msgid "User: "
 msgstr "Benutzer: "
 
-#: umc/js/schoolusers.js:247
+#: umc/js/schoolusers.js:282
 msgid "students"
 msgstr "Schüler"
 
-#: umc/js/schoolusers.js:247
+#: umc/js/schoolusers.js:282
 msgid "teachers"
 msgstr "Lehrer"
+
+#~ msgid "Password expiration date"
+#~ msgstr "Passwortablaufdatum"
 
 #~ msgid "Search results"
 #~ msgstr "Suchergebnisse"

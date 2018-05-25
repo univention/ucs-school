@@ -102,15 +102,15 @@ define([
 				'formatter': function(key) {
 					days = Number(key)
 					if (days == -1) {
-						return "never";
+						return _('Never');
 					} else if (days == 0) {
-						return "now";
+						return _('Now');
 					} else if (days == NaN) { // This should never happen!
 						return "NaN";
 					} else if (days == 1) {
-						return `${days} day`;
+						return _('%s day', days);
 					} else {
-						return `${days} days`;
+						return _('%s days', days);
 					}
 				}
 			}];
