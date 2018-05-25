@@ -3,7 +3,7 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-webproxy
-fix: 
+fix: 14.0.0-5A~4.3.0.201805251118
 desc: |
  * WLAN authentification for the internet rule "Unbeschränkt" has been enabled by default.
 bug: [44243]
