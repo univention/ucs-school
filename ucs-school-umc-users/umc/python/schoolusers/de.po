@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-11-14 13:37+0100\n"
+"POT-Creation-Date: 2018-05-25 12:18+0200\n"
 "PO-Revision-Date: 2012-03-15 11:18+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: umc/python/schoolusers/__init__.py:103
+#: umc/python/schoolusers/__init__.py:111
 msgid "permission denied"
 msgstr "Zugriff verweigert"
 
