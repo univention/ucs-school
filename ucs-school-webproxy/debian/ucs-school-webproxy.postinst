@@ -83,6 +83,7 @@ case "$1" in
 		univention-config-registry set \
 			'proxy/filter/setting/Kein Internet/filtertype?whitelist-block' \
 			'proxy/filter/setting/Unbeschränkt/filtertype?blacklist-pass' \
+			'proxy/filter/setting/Unbeschränkt/wlan?true' \
 			'proxy/filter/global/blacklists/forced?no' \
 			'dhcpd/options/wpad/252=text'
 
