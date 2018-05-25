@@ -32,6 +32,7 @@
 
 from time import time, strptime
 from calendar import timegm
+from math import ceil
 
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
@@ -116,7 +117,11 @@ class Instance(SchoolBaseModule):
 
 	def passwordexpiry_to_days(self, timestr):
 		"""
-		Calculates the number of days from now to the password expiration date
+		Calculates the number of days from now to the password expiration date.
+
+		The result is always rounded up to the full day.
+		The time function used here are all based on Epoch(UTC). Since we are not interested in a specific
+		date and only in a time difference the actual timezone is neglectable.
 
 		:param timestr: The string representation of the expiration date, e.g. 2018-05-30 or None
 		:type timestr: str
@@ -124,11 +129,12 @@ class Instance(SchoolBaseModule):
 		:rtype: int
 		"""
 
-		if timestr == '' or timestr is None:
+		if not timestr:
 			return -1
 		current_timestamp = time()
 		expires_timestamp = timegm(strptime(timestr, "%Y-%m-%d"))
 		time_difference = expires_timestamp - current_timestamp
 		if time_difference <= 0:
 			return 0
-		return int(round(time_difference / 86400))
+		return int(ceil(time_difference / 86400))   # Bug #42212: User.passwordexpiry max resolution is day.
+		# So we always round up towards the day the password will be expired
