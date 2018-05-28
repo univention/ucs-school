@@ -905,6 +905,12 @@ class UCSSchoolHelperAbstractClass(object):
 				ret[name] = getattr(self, name)
 		return ret
 
+	def __deepcopy__(self, memo):
+		id_self = id(self)
+		if not memo.get(id_self):
+			memo[id_self] = self.__class__(**self.to_dict())
+		return memo[id_self]
+
 	def _map_func_name_to_code(self, func_name):
 		if func_name == 'create':
 			return 'A'
