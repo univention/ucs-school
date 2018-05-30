@@ -59,15 +59,16 @@ define([
 	return declare("umc.modules.schoollists", [ Module ], {
 		idProperty: 'id',
 		_searchPage: null,
+
 		openDownload: function(result) {
-			var blob = new Blob([result.result.csv], {type: 'text/csv'});
+			var utf_bom = "\uFEFF";
+			var blob = new Blob([utf_bom + result.result.csv], {type: 'text/csv'});
 			var url = URL.createObjectURL(blob);
 			if (window.navigator && window.navigator.msSaveOrOpenBlob) {
 				// IE doesn't open objectURLs directly
 				window.navigator.msSaveOrOpenBlob(blob, result.result.filename);
 				return;
 			}
-
 			var link = document.createElement('a');
 			link.style = "display: none";
 			document.body.appendChild(link);
@@ -84,8 +85,7 @@ define([
 
 			this._searchPage = new Page({
 				fullWidth: true,
-				headerText: this.description,
-				helpText: ''
+				helpText: _("This module lets you export class and workgroup lists. The lists are in the csv format. If you have problems opening the exported file, ensure the encoding is set to UTF-8 and the field seperator is set to \",\".<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>")
 			});
 
 			this.addChild(this._searchPage);
@@ -116,7 +116,8 @@ define([
 				type: Button,
 				name: 'csv',
 				description: _('Download a list of group members'),
-				label: 'CSV',
+				label: _('Export'),
+				style: "margin: 0;",
 				onClick: lang.hitch(this, function() {
 					if (this._searchForm.validate()) {
 						this._searchForm.submit();
@@ -127,7 +128,7 @@ define([
 			}];
 
 			var layout = [
-				[ 'school', 'group', 'csv' ]
+				['school', 'group', 'csv']
 			];
 
 			this._searchForm = new SearchForm({

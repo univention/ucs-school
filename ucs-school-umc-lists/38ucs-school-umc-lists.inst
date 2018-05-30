@@ -41,7 +41,7 @@ VERSION=1
 joinscript_init
 
 umc_init
-umc_operation_create "schoollists-all" "CSV Listen" "" "schoollists/*"
+umc_operation_create "schoollists-all" "Class Lists" "" "schoollists/*"
 
 # create empty UMC access policies
 ucs_school_policies_create

@@ -12,8 +12,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "CSV Lists"
-msgstr "CSV Listen"
+msgid "Class Lists"
+msgstr "Klassenlisten"
 
-msgid "Generate CSV lists for classes and workgroups"
-msgstr "Generieren von CSV Listen für Klassen und Arbeitgruppen"
+msgid "Generate lists for classes and workgroups"
+msgstr "Generieren von Listen für Klassen und Arbeitgruppen"
