@@ -5,5 +5,10 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-netlogon-user-logonscripts
 fix: 
 desc: |
- * From now on, newly generated netlogon script also create a desktop link that refers to the Univention Portal of the local maschine. The link to the Univention Portal may be altered via UCR variable <envar>ucsschool/userlogon/portallink/link</envar> (Bug #46922)
+ * From now on, newly generated netlogon script also create a desktop link that refers to the Univention Portal of
+   the local maschine. The link to the Univention Portal may be altered via UCR variable
+   <envar>ucsschool/userlogon/portallink/link</envar> (unset by default). Please note that a user's netlogon script
+   is only automatically updated when their group memberships change. To update the netlogon scripts of all users,
+   the command <command>univention-directory-listener-ctrl resync ucs-school-user-logonscript</command> must be
+   executed (Bug #46922).
 bug: [46922]
