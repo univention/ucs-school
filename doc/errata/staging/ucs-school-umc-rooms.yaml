@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-rooms
+fix: 
+desc: |
+ * Offer creation of a room if the fetched list of rooms for the selected school is empty.
+bug: [46872]
