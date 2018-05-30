@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (10.0.2-3) unstable; urgency=medium
+
+  * Bug #43080: Only show noRoomsDialog if user has only one school
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 30 May 2018 09:14:11 +0100
+
 ucs-school-umc-computerroom (10.0.2-2) unstable; urgency=medium
 
   * Bug #43037: Change label for file share restriction depending on exam mode
