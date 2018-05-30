@@ -41,11 +41,7 @@ import time
 import json
 import tempfile
 
-from ucsschool.lib.models import role_pupil, role_teacher, role_staff
-from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.exceptions import UnkownRole
-from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
 from ucsschool.importer.writer.user_import_csv_result_exporter import UserImportCsvResultExporter
@@ -55,50 +51,6 @@ from ucsschool.importer.writer.base_writer import BaseWriter
 
 
 logger = get_logger()
-
-
-class TypeCsvReader(CsvReader):
-	"""
-	Read user roles from CSV files.
-	"""
-	roles_mapping = {
-		"student": [role_pupil],
-		"staff": [role_staff],
-		"teacher": [role_teacher],
-		"staffteacher": [role_teacher, role_staff]
-	}
-
-	def __init__(self):
-		self.config = Configuration()
-		filename = self.config["input"]["filename"]
-		header_lines = self.config["csv"]["header_lines"]
-		super(TypeCsvReader, self).__init__(filename, header_lines)
-
-	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
-		"""
-		Handle user type.
-		"""
-		if mapping_value == "__type":
-			return True
-		return super(TypeCsvReader, self).handle_input(mapping_key, mapping_value, csv_value, import_user)
-
-	def get_roles(self, input_data):
-		"""
-		Get role from CSV.
-		"""
-		self.logger.info("*** TypeCsvReader.get_roles()")
-		try:
-			return super(TypeCsvReader, self).get_roles(input_data)
-		except UnkownRole:
-			pass
-
-		roles = list()
-		for k, v in self.config["csv"]["mapping"].items():
-			if v == "__type":
-				role_str = input_data[k]
-				roles = self.roles_mapping[role_str]
-				break
-		return roles
 
 
 class NullImport(MassImport):
