@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/aspect",
 	"umc/dialog",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
@@ -41,7 +42,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolrooms/DetailPage",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, dialog, ExpandingTitlePane, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
+], function(declare, lang, aspect, dialog, ExpandingTitlePane, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	return declare("umc.modules.schoolrooms", [ Module ], {
 
@@ -49,6 +50,7 @@ define([
 		_grid: null,
 		_searchPage: null,
 		_detailPage: null,
+		_startWithCreation: null, // If set the room creation dialog will be triggered automatically
 
 		buildRendering: function() {
 			this.inherited(arguments);
@@ -152,6 +154,9 @@ define([
 				if (values.school) {
 					this._grid.filter(values);
 				}
+				if (this._startWithCreation) {
+					this._addObject();
+				}
 			}));
 
 			this._searchPage.addChild(this._searchForm);
@@ -166,6 +171,30 @@ define([
 
 			this._detailPage.on('close', lang.hitch(this, function() {
 				this.selectChild(this._searchPage);
+			}));
+
+			this._searchForm.ready().then(lang.hitch(this, function() {
+				var handler = aspect.before(this._grid, 'onFilterDone', lang.hitch(this, function(success) {
+					//handler.remove();
+					if (this._grid.getAllItems().length === 0 && !this._startWithCreation) {
+						var title = _('No rooms found');
+						var txt = _('No rooms were found.');
+						txt += ' ' + _('Would you like to create a room now?');
+						dialog.confirm(txt, [{
+							name: 'cancel',
+							label: _('Cancel')
+						}, {
+							name: 'add',
+							'default': true,
+							label: _('Create')
+						}], title).then(lang.hitch(this, function(response) {
+							if (response === 'add') {
+								this._addObject()
+							}
+						}));
+					}
+					return arguments;
+				}));
 			}));
 		},
 

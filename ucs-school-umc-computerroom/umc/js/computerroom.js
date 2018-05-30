@@ -1093,7 +1093,9 @@ define([
 
 			// Check if there are any rooms to choose from. If not switch to computer room administration or just close module (via dialog)
 			on.once(form, "valuesInitialized", lang.hitch(this, function() {
-				if (!form.getWidget("room").getAllItems().length) {
+				var schools = form.getWidget('school').getAllItems();
+				var rooms = form.getWidget("room").getAllItems();
+				if (schools.length === 1 && ! rooms.length) {  // Only check for no rooms if you can only choose one school
 					_cleanup();
 					this.displayNoRoomsDialog();
 				}
@@ -1112,7 +1114,7 @@ define([
 		displayNoRoomsDialog: function() {
 			var moduleAccess = UMCApp.getModule("schoolrooms");
 			var openModuleSchoolrooms = lang.hitch(this, function() {
-				topic.publish('/umc/modules/open', "schoolrooms");  // Privileges still have to be checked!
+				topic.publish('/umc/modules/open', "schoolrooms", '', {_startWithCreation: true});
 				closeModuleComputerroom();
 			});
 			var closeModuleComputerroom = lang.hitch(this, function() {
