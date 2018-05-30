@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (14.0.1-1) unstable; urgency=medium
+
+  * Bug #46872: Offer object creation if list empty or flag set
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 30 May 2018 09:49:38 +0200
+
 ucs-school-umc-rooms (14.0.0-4) unstable; urgency=medium
 
   * Bug #45512: add standby animation during object modification

@@ -305,7 +305,8 @@ msgstr "Benutzerdefnierte Einstellungen für den Computerraum"
 #: umc/js/computerroom.js:1123
 msgid ""
 "Please contact your system administrator for the creation of computer rooms."
-msgstr "Please contact your system administrator for the creation of computer rooms."
+msgstr ""
+"Bitte kontaktieren Sie ihren Systemadministrator für das Anlegen von Computerräumen."
 
 #: umc/js/computerroom.js:903
 msgid "Please wait while all exam documents are being collected."
