@@ -1,0 +1,198 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Test if old_user is a copy of user in pyhooks
+## tags: [apptest,ucsschool,ucsschool_base1]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [47027]
+import os
+import os.path
+import sys
+import random
+import string
+import shutil
+import subprocess
+import tempfile
+
+import univention.testing.ucr
+import univention.testing.ucsschool as utu
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+
+from ucsschool.importer.utils.logging import get_logger
+
+TESTHOOKTARGET = '/usr/share/ucs-school-import/pyhooks/test234_modify_user_data_in_pyhooks.py'
+
+logger = get_logger()
+logger.info('*** Copying hook to %r...', TESTHOOKTARGET)
+
+with open(TESTHOOKTARGET, 'w') as fd:
+	fd.write('''
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+import time
+
+
+class InputDataTestHook(UserPyHook):
+	priority = {
+		"pre_modify": 100,
+		"pre_create": 100,
+		"post_modify": 100,
+		"post_create": 100,
+	}
+
+	def pre_create(self, user):
+		self.logger.info("*** Running pre_create hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+
+	def post_create(self, user):
+		self.logger.info("*** Running post_create hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		user.lastname = 'foo%s' % (time.time(),)
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+
+	def pre_modify(self, user):
+		self.logger.info("*** Running pre_modify hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		user.lastname = 'foo%s' % (time.time(),)
+		user.school_classes[user.schools[0]] = ['class%s' % time.time()]
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+		self.logger.info("*** user.school_classes=%r", user.school_classes)
+		self.logger.info("*** user.old_user.school_classes=%r", user.old_user.school_classes if user.old_user else '<NONE>')
+		assert user.lastname != user.old_user.lastname, "user and user.old_user are same objects"
+		assert user.school_classes != user.old_user.school_classes, "user and user.old_user are same objects"
+
+	def post_modify(self, user):
+		self.logger.info("*** Running post_modify hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		user.lastname = 'foo%s' % (time.time(),)
+		user.school_classes[user.schools[0]] = ['class%s' % time.time()]
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+		self.logger.info("*** user.school_classes=%r", user.school_classes)
+		self.logger.info("*** user.old_user.school_classes=%r", user.old_user.school_classes if user.old_user else '<NONE>')
+		assert user.lastname != user.old_user.lastname, "user and user.old_user are same objects"
+		assert user.school_classes != user.old_user.school_classes, "user and user.old_user are same objects"
+''')
+
+
+def cleanup():
+	for ext in ['', 'c', 'o']:
+		try:
+			os.remove('{}{}'.format(TESTHOOKTARGET, ext))
+			logger.info('*** Deleted %s%s...', TESTHOOKTARGET, ext)
+		except OSError:
+			logger.warn('*** Could not delete %s%s.', TESTHOOKTARGET, ext)
+
+
+def main():
+	with univention.testing.ucr.UCSTestConfigRegistry() as ucr, utu.UCSTestSchool() as schoolenv:
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+		usernames = [uts.random_username(), uts.random_username()]
+		users = [dict(
+					mode='A',
+					username=username,
+					lastname=uts.random_username(),
+					firstname=uts.random_username(),
+					ou=ou_name,
+					scool_class='{}{}'.format(uts.random_int(1, 13), random.choice(string.ascii_lowercase)),
+					maildomain=ucr['domainname'],
+				) for username in usernames
+		]
+		line = '{mode}	{username}	{lastname}	{firstname}	{ou}	{ou}-{scool_class}		{username}m@{maildomain}	0	1	0'
+		print('*** Creating users {!r}...'.format(usernames))
+
+		with tempfile.NamedTemporaryFile() as csv_file:
+			for user in users:
+				csv_file.write('{}\n'.format(line.format(**user)))
+			csv_file.flush()
+
+			cmd = ['/usr/share/ucs-school-import/scripts/import_user', csv_file.name]
+			sys.stdout.flush()
+			sys.stderr.flush()
+			exitcode = subprocess.call(cmd)
+			if exitcode:
+				utils.fail('Import failed with exit code {!r}'.format(exitcode))
+			else:
+				print('Import process exited with exit code {!r}'.format(exitcode))
+
+		print('*** Deleting users {!r}...'.format(usernames))
+
+		with tempfile.NamedTemporaryFile() as csv_file:
+			for user in users:
+				user['mode'] = 'M'
+				csv_file.write(line.format(**user))
+			csv_file.flush()
+
+			cmd = ['/usr/share/ucs-school-import/scripts/import_user', csv_file.name]
+			sys.stdout.flush()
+			sys.stderr.flush()
+			exitcode = subprocess.call(cmd)
+			if exitcode:
+				utils.fail('Import failed with exit code %r' % (exitcode,))
+			else:
+				print('Import process exited with exit code {!r}'.format(exitcode))
+
+		print('*** Trying non-legacy import - 1st to create users, 2nd to modify them.')
+
+		with tempfile.NamedTemporaryFile() as csvfile:
+			cmd = [
+				'/usr/share/ucs-school-import/scripts/ucs-school-testuser-import',
+				'-v',
+				'-n',
+				'--csvfile', csvfile.name,
+				'--create-email-addresses',
+				'--classes', '1',
+				'--students', '2',
+				ou_name
+			]
+			sys.stdout.flush()
+			sys.stderr.flush()
+			exitcode = subprocess.call(cmd)
+
+			cmd = [
+				'/usr/share/ucs-school-import/scripts/ucs-school-user-import',
+				'-i', csvfile.name,
+				'-s', ou_name,
+				'--sourceUID', 'TEST234',
+				'-c', '/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json',
+			]
+			sys.stdout.flush()
+			sys.stderr.flush()
+			exitcode = subprocess.call(cmd)
+			print('*** Ignoring result of 1st import (exit code {!r})'.format(exitcode))
+
+			print('*** Trying non-legacy import 2nd time - must fail.')
+
+			cmd = [
+				'/usr/share/ucs-school-import/scripts/ucs-school-user-import',
+				'-i', csvfile.name,
+				'-s', ou_name,
+				'--sourceUID', 'TEST234',
+				'-c', '/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json',
+			]
+			sys.stdout.flush()
+			sys.stderr.flush()
+			exitcode = subprocess.call(cmd)
+			if exitcode:
+				utils.fail('Import failed with exit code %r' % (exitcode,))
+			else:
+				print('Import process exited with exit code {!r}'.format(exitcode))
+
+		logger.info('*** OK: Test was successful.\n\n\n')
+
+
+if __name__ == '__main__':
+	try:
+		main()
+	finally:
+		cleanup()
