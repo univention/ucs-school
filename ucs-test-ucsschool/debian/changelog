@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-91) unstable; urgency=low
+
+  * Bug #47028: add 234_modify_user_data_in_pyhooks
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 31 May 2018 18:08:11 +0200
+
 ucs-test-ucsschool (4.0.4-90) unstable; urgency=medium
 
   * Bug #47073: factory test doesn't need special CsvReader anymore
