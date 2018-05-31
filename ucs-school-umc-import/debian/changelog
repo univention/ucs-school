@@ -1,3 +1,9 @@
+ucs-school-umc-import (1.0.1-1) unstable; urgency=medium
+
+  * Bug #46795: Add back to overview button to dry-run-overview and error page
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 31 May 2018 08:25:35 +0100
+
 ucs-school-umc-import (1.0.0-1) unstable; urgency=medium
 
   * Bug #45988: bumped version
