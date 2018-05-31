@@ -235,8 +235,14 @@ define([
 				if (pageName === 'dry-run-overview' && button.name === 'next') {
 					button.label = _('Start import');
 				}
+				if (pageName === 'dry-run-overview' && button.name === 'previous') {
+					button.label = _('Back to overview');
+				}
 				if (pageName === 'import-started' && button.name === 'next') {
 					button.label = _('View finished imports');
+				}
+				if (pageName === 'error' && button.name === 'previous') {
+					button.label = _('Back to overview');
 				}
 			}));
 			return array.filter(buttons, function(button) {
@@ -261,8 +267,15 @@ define([
 		},
 
 		hasPrevious: function(pageName) {
-			if (~array.indexOf(['import-started', 'dry-run-overview', 'error'], pageName)) {
+			if (~array.indexOf(['import-started'], pageName)) {
 				return false;
+			}
+			return this.inherited(arguments);
+		},
+
+		previous: function(pageName) {
+			if (~array.indexOf(['dry-run-overview', 'error'], pageName)) {
+				return 'overview';
 			}
 			return this.inherited(arguments);
 		},
