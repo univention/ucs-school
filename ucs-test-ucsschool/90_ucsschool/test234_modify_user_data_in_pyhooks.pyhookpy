@@ -1,0 +1,51 @@
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+import time
+
+
+class InputDataTestHook(UserPyHook):
+	priority = {
+		"pre_modify": 100,
+		"pre_create": 100,
+		"post_modify": 100,
+		"post_create": 100,
+	}
+
+	def pre_create(self, user):
+		self.logger.info("*** Running pre_create hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+
+	def post_create(self, user):
+		self.logger.info("*** Running post_create hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+
+	def pre_modify(self, user):
+		self.logger.info("*** Running pre_modify hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		user.lastname = 'foo%s' % (time.time(),)
+		user.school_classes[user.schools[0]] = ['class%s' % time.time()]
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+		self.logger.info("*** user.school_classes=%r", user.school_classes)
+		self.logger.info("*** user.old_user.school_classes=%r", user.old_user.school_classes if user.old_user else '<NONE>')
+		assert user.lastname != user.old_user.lastname, "user and user.old_user are same objects"
+		assert user.school_classes != user.old_user.school_classes, "user and user.old_user are same objects"
+
+	def post_modify(self, user):
+		self.logger.info("*** Running post_modify hook for %s.", user)
+		self.logger.info("*** user.input_data=%r", user.input_data)
+		self.logger.info("*** user.old_user=%r", user.old_user)
+		user.lastname = 'foo%s' % (time.time(),)
+		user.school_classes[user.schools[0]] = ['class%s' % time.time()]
+		self.logger.info("*** user.lastname=%r", user.lastname)
+		self.logger.info("*** user.old_user.lastname=%r", user.old_user.lastname if user.old_user else '<NONE>')
+		self.logger.info("*** user.school_classes=%r", user.school_classes)
+		self.logger.info("*** user.old_user.school_classes=%r", user.old_user.school_classes if user.old_user else '<NONE>')
+		assert user.lastname != user.old_user.lastname, "user and user.old_user are same objects"
+		assert user.school_classes != user.old_user.school_classes, "user and user.old_user are same objects"
