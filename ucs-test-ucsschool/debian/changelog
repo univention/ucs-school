@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-92) unstable; urgency=low
+
+  * Bug #47027: updated 234_modify_user_data_in_pyhooks
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 01 Jun 2018 22:41:26 +0200
+
 ucs-test-ucsschool (5.0.2-52) unstable; urgency=low
 
   * Bug #47027: added 234_modify_user_data_in_pyhooks
