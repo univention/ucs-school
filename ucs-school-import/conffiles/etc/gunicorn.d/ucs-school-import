@@ -19,3 +19,11 @@ bind = '127.0.0.1:{}'.format(_ucr.get('ucsschool/import/http_api/wsgi_server_por
 workers = max(2, min(4, cpu_count()))
 timeout = 60
 reload = _ucr.is_true('ucsschool/import/http_api/django_debug')
+loglevel = _ucr.get('ucsschool/import/http_api/wsgi_server_loglevel', 'debug')
+capture_output = _ucr.get('ucsschool/import/http_api/wsgi_server_capture_output', 'True')
+accesslog = _ucr.get(
+	'ucsschool/import/http_api/wsgi_server_accesslog',
+	'/var/log/univention/ucs-school-import/gunicorn_access.log')
+errorlog = _ucr.get(
+	'ucsschool/import/http_api/wsgi_server_errorlog',
+	'/var/log/univention/ucs-school-import/gunicorn_error.log')
