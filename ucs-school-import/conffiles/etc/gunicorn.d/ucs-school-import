@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 @%@UCRWARNING=# @%@
 
+#
+# http://docs.gunicorn.org/en/19.6.0/settings.html
+#
+
+from multiprocessing import cpu_count
 from univention.config_registry import ConfigRegistry
-ucr = ConfigRegistry()
-ucr.load()
-port = ucr.get('ucsschool/import/http_api/wsgi_server_port', '8000')
+
+_ucr = ConfigRegistry()
+_ucr.load()
 
 CONFIG = {
     'mode': 'wsgi',
@@ -12,12 +17,12 @@ CONFIG = {
     'user': 'root',
     'group': 'root',
     'args': [
-        '--bind=127.0.0.1:{}'.format(port),
-        '--workers=4',
+        '--bind=127.0.0.1:{}'.format(_ucr.get('ucsschool/import/http_api/wsgi_server_port', '9898')),
+        '--workers={}'.format(max(2, min(4, cpu_count()))),
         '--timeout=60',
         'ucsschool.http_api.app.wsgi:application',
     ],
 }
 
-if ucr.is_true('ucsschool/import/http_api/django_debug'):
+if _ucr.is_true('ucsschool/import/http_api/django_debug'):
     CONFIG['args'].insert(-1, '--reload')
