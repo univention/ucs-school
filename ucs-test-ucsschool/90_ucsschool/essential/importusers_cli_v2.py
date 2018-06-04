@@ -160,128 +160,30 @@ class MyHook(UserPyHook):
 			self.cleanup_files.remove(fn)
 
 
-class CLI_Import_v2_Tester(object):
-	ucr = univention.testing.ucr.UCSTestConfigRegistry()
-	ucr.load()
-	ldap_date_format = '%Y%m%d%H%M%SZ'
-	udm_date_format = '%Y-%m-%d'
+class ImportTestbase(object):
 	ou_A = utu.Bunch(name=None, dn=None)  # will be initializes in create_ous()
 	ou_B = utu.Bunch(name=None, dn=None)  # set ou_B to None if a second OU is not needed
 	ou_C = utu.Bunch(name=None, dn=None)  # set ou_C to None if a third OU is not needed
+	use_ou_cache = True  # if True: use cached OUs, if false create fresh OUs
 
 	def __init__(self):
-		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
+		self.ucr = univention.testing.ucr.UCSTestConfigRegistry()
+		self.ucr.load()
 		self.log = self._get_logger()
 		self.lo = None  # will be initializes in run()
 		self.ldap_status = None
-		self.hook_fn_set = set()
-		self.errors = list()
 		self.schoolenv = None  # will be initializes in run()
 		self.udm = None  # will be initializes in run()
 		try:
 			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
 		except (AttributeError, IndexError):
 			self.maildomain = self.ucr["domainname"]
-		self.default_config = ConfigDict({
-			"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
-			"classes": {},
-			"input": {
-				"type": "csv",
-				"filename": "import.csv"
-			},
-			"csv": {
-				"mapping": {
-					"OUs": "schools",
-					"Vor": "firstname",
-					"Nach": "lastname",
-					"Gruppen": "school_classes",
-					"E-Mail": "email",
-					"Beschreibung": "description",
-				}
-			},
-			"maildomain": self.maildomain,
-			"scheme": {
-				"email": "<firstname>[0].<lastname>@<maildomain>",
-				"recordUID": "<firstname>;<lastname>;<email>",
-				"username": {
-					"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
-				},
-			},
-			"sourceUID": "sourceDB",
-			"user_role": "student",
-			"tolerate_errors": 0,
-		})
 
 	def cleanup(self):
-		self.log.info('Performing CLI_Import_v2_Tester cleanup...')
-		self.log.info('Purging %r', self.tmpdir)
-		shutil.rmtree(self.tmpdir, ignore_errors=True)
-		for hook_fn in self.hook_fn_set:
-			try:
-				os.remove(hook_fn)
-			except (IOError, OSError):
-				self.log.warning('Failed to remove %r' % (hook_fn,))
+		self.log.info('Performing ImportTestbase cleanup...')
 		self.udm.cleanup()
 		self.ucr.revert_to_original_registry()
-		self.log.info('CLI_Import_v2_Tester cleanup done')
-
-	def create_config_json(self, values=None, config=None):
-		"""
-		Creates a config file for "ucs-school-user-import".
-		Default values may be overridden via a dict called values.
-		>>> values = {'user_role': 'teacher', 'input:type': 'csv' }
-		>>> create_config_json(values=values)
-		'/tmp/config.dkgfcsdz'
-		>>> create_config_json(values=values, config=DEFAULT_CONFIG)
-		'/tmp/config.dkgfcsdz'
-		"""
-		fn = tempfile.mkstemp(prefix='config.', dir=self.tmpdir)[1]
-		if not config:
-			config = copy.deepcopy(self.default_config)
-		if values:
-			for config_option, value in values.iteritems():
-				config.update_entry(config_option, value)
-		with open(fn, 'w') as fd:
-			json.dump(config, fd)
-			self.log.info('Config: %r' % config)
-
-		return fn
-
-	def create_csv_file(self, person_list, mapping=None, fn_csv=None):
-		"""
-		Create CSV file for given persons
-		>>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')])
-		'/tmp/import.sldfhgsg.csv'
-		>>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], fn_csv='/tmp/import.foo.csv')
-		'/tmp/import.foo.csv'
-		>>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], headers={'firstname': 'Vorname', ...})
-		'/tmp/import.cetjdfgj.csv'
-		"""
-		if mapping:
-			header2properties = mapping
-		else:
-			header2properties = self.default_config['csv']['mapping']
-
-		properties2headers = {v: k for k, v in header2properties.iteritems()}
-
-		header_row = header2properties.keys()
-		random.shuffle(header_row)
-		self.log.info('Header row = %r', header_row)
-
-		fn = fn_csv or tempfile.mkstemp(prefix='users.', dir=self.tmpdir)[1]
-		writer = csv.DictWriter(
-			open(fn, 'w'),
-			header_row,
-			restval='',
-			delimiter=',',
-			quotechar='"',
-			quoting=csv.QUOTE_ALL)
-		writer.writeheader()
-		for person in person_list:
-			person_dict = person.map_to_dict(properties2headers)
-			self.log.info('Person data = %r', person_dict)
-			writer.writerow(person_dict)
-		return fn
+		self.log.info('ImportTestbase cleanup done')
 
 	def save_ldap_status(self):
 		self.log.debug('Saving LDAP status...')
@@ -331,18 +233,6 @@ class CLI_Import_v2_Tester(object):
 		dateformat = cls.syntax_date2_dateformat(userexpirydate)
 		return str(long(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
 
-	def run_import(self, args, fail_on_error=True):
-		cmd = ['/usr/share/ucs-school-import/scripts/ucs-school-user-import'] + args
-		self.log.info('Starting import: %r', cmd)
-		sys.stdout.flush()
-		sys.stderr.flush()
-		exitcode = subprocess.call(cmd)
-		self.log.info('Import process exited with exit code %r', exitcode)
-		if fail_on_error and exitcode:
-			self.log.error('As requested raising an exception due to non-zero exit code')
-			raise ImportException('Non-zero exit code %r' % (exitcode,))
-		return exitcode
-
 	def check_new_and_removed_users(self, exp_new, exp_removed):
 		ldap_diff = self.diff_ldap_status()
 		new_users = [x for x in ldap_diff.new if x.startswith('uid=')]
@@ -368,7 +258,7 @@ class CLI_Import_v2_Tester(object):
 	def create_ous(self, schoolenv):
 		self.log.info('Creating OUs...')
 		ous = [ou for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None]
-		res = schoolenv.create_multiple_ous(len(ous), name_edudc=self.ucr.get('hostname'))
+		res = schoolenv.create_multiple_ous(len(ous), name_edudc=self.ucr.get('hostname'), use_cache=self.use_ou_cache)
 		for num, (name, dn) in enumerate(res):
 			ou = ous[num]
 			ou.name, ou.dn = name, dn
@@ -452,6 +342,127 @@ class CLI_Import_v2_Tester(object):
 			handler.name = handler_name
 			logger.addHandler(handler)
 		return logger
+
+
+class CLI_Import_v2_Tester(ImportTestbase):
+	ldap_date_format = '%Y%m%d%H%M%SZ'
+	udm_date_format = '%Y-%m-%d'
+
+	def __init__(self):
+		super(CLI_Import_v2_Tester, self).__init__()
+		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
+		self.hook_fn_set = set()
+		self.default_config = ConfigDict({
+			"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
+			"classes": {},
+			"input": {
+				"type": "csv",
+				"filename": "import.csv"
+			},
+			"csv": {
+				"mapping": {
+					"OUs": "schools",
+					"Vor": "firstname",
+					"Nach": "lastname",
+					"Gruppen": "school_classes",
+					"E-Mail": "email",
+					"Beschreibung": "description",
+				}
+			},
+			"maildomain": self.maildomain,
+			"scheme": {
+				"email": "<firstname>[0].<lastname>@<maildomain>",
+				"recordUID": "<firstname>;<lastname>;<email>",
+				"username": {
+					"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
+				},
+			},
+			"sourceUID": "sourceDB",
+			"user_role": "student",
+			"tolerate_errors": 0,
+		})
+
+	def cleanup(self):
+		self.log.info('Performing CLI_Import_v2_Tester cleanup...')
+		self.log.info('Purging %r', self.tmpdir)
+		shutil.rmtree(self.tmpdir, ignore_errors=True)
+		for hook_fn in self.hook_fn_set:
+			try:
+				os.remove(hook_fn)
+			except (IOError, OSError):
+				self.log.warning('Failed to remove %r' % (hook_fn,))
+		super(CLI_Import_v2_Tester, self).cleanup()
+		self.log.info('CLI_Import_v2_Tester cleanup done')
+
+	def create_config_json(self, values=None, config=None):
+		"""
+		Creates a config file for "ucs-school-user-import".
+		Default values may be overridden via a dict called values.
+		>>> values = {'user_role': 'teacher', 'input:type': 'csv' }
+		>>> create_config_json(values=values)
+		'/tmp/config.dkgfcsdz'
+		>>> create_config_json(values=values, config=DEFAULT_CONFIG)
+		'/tmp/config.dkgfcsdz'
+		"""
+		fn = tempfile.mkstemp(prefix='config.', dir=self.tmpdir)[1]
+		if not config:
+			config = copy.deepcopy(self.default_config)
+		if values:
+			for config_option, value in values.iteritems():
+				config.update_entry(config_option, value)
+		with open(fn, 'w') as fd:
+			json.dump(config, fd)
+			self.log.info('Config: %r' % config)
+
+		return fn
+
+	def create_csv_file(self, person_list, mapping=None, fn_csv=None):
+		"""
+		Create CSV file for given persons
+		>>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')])
+		'/tmp/import.sldfhgsg.csv'
+		>>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], fn_csv='/tmp/import.foo.csv')
+		'/tmp/import.foo.csv'
+		>>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], headers={'firstname': 'Vorname', ...})
+		'/tmp/import.cetjdfgj.csv'
+		"""
+		if mapping:
+			header2properties = mapping
+		else:
+			header2properties = self.default_config['csv']['mapping']
+
+		properties2headers = {v: k for k, v in header2properties.iteritems()}
+
+		header_row = header2properties.keys()
+		random.shuffle(header_row)
+		self.log.info('Header row = %r', header_row)
+
+		fn = fn_csv or tempfile.mkstemp(prefix='users.', dir=self.tmpdir)[1]
+		writer = csv.DictWriter(
+			open(fn, 'w'),
+			header_row,
+			restval='',
+			delimiter=',',
+			quotechar='"',
+			quoting=csv.QUOTE_ALL)
+		writer.writeheader()
+		for person in person_list:
+			person_dict = person.map_to_dict(properties2headers)
+			self.log.info('Person data = %r', person_dict)
+			writer.writerow(person_dict)
+		return fn
+
+	def run_import(self, args, fail_on_error=True):
+		cmd = ['/usr/share/ucs-school-import/scripts/ucs-school-user-import'] + args
+		self.log.info('Starting import: %r', cmd)
+		sys.stdout.flush()
+		sys.stderr.flush()
+		exitcode = subprocess.call(cmd)
+		self.log.info('Import process exited with exit code %r', exitcode)
+		if fail_on_error and exitcode:
+			self.log.error('As requested raising an exception due to non-zero exit code')
+			raise ImportException('Non-zero exit code %r' % (exitcode,))
+		return exitcode
 
 
 class UniqueObjectTester(CLI_Import_v2_Tester):
