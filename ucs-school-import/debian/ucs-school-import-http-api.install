@@ -3,6 +3,7 @@
 modules/ucsschool/http_api/manage.py            usr/share/pyshared/ucsschool/http_api/
 modules/ucsschool/http_api/app                  usr/share/pyshared/ucsschool/http_api/
 modules/ucsschool/http_api/import_api           usr/share/pyshared/ucsschool/http_api/
+modules/ucsschool/http_api/de.mo                usr/share/locale/de/LC_MESSAGES/
 usr/share/ucs-school-import-http-api            usr/share/
 53importgroup_create                            usr/share/ucs-school-import/hooks/ou_create_post.d/
 settings.py                                     etc/ucsschool-import/

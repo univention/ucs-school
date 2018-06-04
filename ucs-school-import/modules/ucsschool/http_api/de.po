@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ucs-school-import-http-api\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2018-06-01 09:15+0200\n"
+"PO-Revision-Date: 2018-06-01 09:15+0200\n"
+"Last-Translator: Univention GmbH <packages@univention.de>\n"
+"Language-Team: Univention GmbH <packages@univention.de>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: modules/ucsschool/http_api/import_api/models.py:67
+msgid "staff"
+msgstr "Mitarbeiterinnen und Mitarbeiter"
+
+#: modules/ucsschool/http_api/import_api/models.py:68
+msgid "student"
+msgstr "Studierende"
+
+#: modules/ucsschool/http_api/import_api/models.py:69
+msgid "teacher"
+msgstr "Lehrkräfte"
+
+#: modules/ucsschool/http_api/import_api/models.py:70
+msgid "teacher_and_staff"
+msgstr "Lehrkräfte und Mitarbeiter*innen"
