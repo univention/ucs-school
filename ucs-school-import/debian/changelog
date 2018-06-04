@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-44) unstable; urgency=low
+
+  * Bug #47134: fix gunicorn configuration file for 4.2
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 17:39:03 +0200
+
 ucs-school-import (15.0.3-43) unstable; urgency=low
 
   * Bug #47134: gunicorn listens on port 9898 by default
