@@ -5,7 +5,7 @@
 """
 Class to export test user data from TestUserCreator to CSV.
 """
-# Copyright 2016-2017 Univention GmbH
+# Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
 #
