@@ -45,6 +45,7 @@ call_joinscript 40ucs-school-import-http-api.inst
 systemctl daemon-reload
 for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql ucs-school-import-http-api apache2;
 do
+	echo "Restarting $SERVICE..."
     deb-systemd-invoke restart "$SERVICE.service"
 done
 
