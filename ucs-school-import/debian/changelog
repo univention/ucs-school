@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-3) unstable; urgency=low
+
+  * Bug #46830: make gunicorn log level configurable
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 17:46:59 +0200
+
 ucs-school-import (16.0.2-2) unstable; urgency=low
 
   * Bug #47134: gunicorn listens on port 9898 by default
