@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-umc-import
+fix: 0.0.1-18A~4.2.0.201806041122
+desc: |
+ * Available roles are now retrieved through a HTTP-API resource (Bug #46832).
+bug: [46832]

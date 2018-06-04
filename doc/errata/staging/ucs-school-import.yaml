@@ -3,10 +3,11 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-41A~4.2.0.201806041112
+fix: 15.0.3-42A~4.2.0.201806041120
 desc: |
  * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47028).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #47073).
  * Leading and trailing whitespace in CSV cells is now removed. Access to the unmodified data (including the whitespace is still possible through the <literal>input_data</literal> attribute of <classname>ImportUser</classname> objects (Bug #47092).
  * Increase Celery worker startup verbosity, adapt HTTP-API import code to handle newer Django versions (Bug #47118).
-bug: [47028, 47073, 47092, 47118]
+ * When using the HTTP-API based CSV import, the roles of the connected user can now be retrieved through a HTTP-API resource (Bug #46832).
+bug: [47028, 47073, 47092, 47118, 46832]
