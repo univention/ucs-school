@@ -1,0 +1,17 @@
+[Unit]
+Description=gunicorn-ucsschool-import
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+User=root
+Group=root
+Restart=always
+ExecStart=/usr/bin/gunicorn --config /etc/gunicorn.d/ucs-school-import ucsschool.http_api.app.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+WorkingDirectory=/var/spool/ucs-school-import/
+#Environment=PYTHONPATH='/path/to/mysite'
+PrivateTmp=true

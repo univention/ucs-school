@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-43) unstable; urgency=low
+
+  * Bug #47134: gunicorn listens on port 9898 by default
+  * fix configuration file is never used
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 17:26:16 +0200
+
 ucs-school-import (15.0.3-42) unstable; urgency=low
 
   * Bug #46832: add Roles resource to HTTP-API, allowing to retrieve the
