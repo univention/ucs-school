@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-15) unstable; urgency=low
+
+  * Bug #46970: add deepcopy operation support to ucsschool.lib.models objects
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 09:13:22 +0200
+
 ucs-school-lib (10.0.2-14) unstable; urgency=low
 
   * Bug #46130: do not prevent listing of all users if one malformed object

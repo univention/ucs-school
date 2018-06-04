@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-40) unstable; urgency=low
+
+  * Bug #46970: strip leading/trailing whitespace from CSV input
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 09:12:51 +0200
+
 ucs-school-import (15.0.3-39) unstable; urgency=low
 
   * Bug #47073: move handling of special mapping value for user role to
