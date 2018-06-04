@@ -12,14 +12,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "firstname"
-msgstr "vorname"
+msgid "Firstname"
+msgstr "Vorname"
 
-msgid "lastname"
-msgstr "nachname"
+msgid "Lastname"
+msgstr "Nachname"
 
-msgid "class"
-msgstr "klasse"
+msgid "Class"
+msgstr "Klasse"
 
-msgid "username"
-msgstr "benutzername"
+msgid "Username"
+msgstr "Benutzername"

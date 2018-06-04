@@ -85,7 +85,7 @@ define([
 
 			this._searchPage = new Page({
 				fullWidth: true,
-				helpText: _("This module lets you export class and workgroup lists. The lists are in the csv format. If you have problems opening the exported file, ensure the encoding is set to UTF-8 and the field seperator is set to \",\".<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>")
+				helpText: _("This module lets you export class and workgroup lists. The lists are in the csv format. If you have problems opening the exported file, ensure the encoding is set to UTF-8 and the field seperator is set to use commas (\",\").<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>")
 			});
 
 			this.addChild(this._searchPage);

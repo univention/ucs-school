@@ -56,7 +56,7 @@ class Instance(SchoolBaseModule):
 		school = request.options['school']
 		group = request.options['group']
 		csvfile = StringIO.StringIO()
-		fieldnames = [_('firstname'), _('lastname'), _('class'), _('username')]
+		fieldnames = [_('Firstname'), _('Lastname'), _('Class'), _('Username')]
 		writer = csv.writer(csvfile)
 		writer.writerow(fieldnames)
 		for student in self.students(ldap_user_read, school, group):
