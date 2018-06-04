@@ -83,8 +83,6 @@ class UsernameField(serializers.CharField):
 
 
 class UserImportJobCreationValidator(object):
-	lo, po = get_machine_connection()
-
 	def __init__(self, request):
 		self.request = request
 
@@ -106,6 +104,7 @@ class UserImportJobCreationValidator(object):
 
 	@classmethod
 	def is_user_school_role_combination_allowed(cls, username, school, role):
+		lo, po = get_machine_connection()
 		if role == '*':
 			res = cls.lo.searchDn(filter_format(
 				'(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=%s)(memberUid=%s))',

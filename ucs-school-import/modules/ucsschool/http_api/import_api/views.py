@@ -115,12 +115,12 @@ class SchoolFilterBackend(BaseFilterBackend):
 	"""
 	Used to list only Schools the user has any permissions on.
 	"""
-	lo, po = get_machine_connection()
 	filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
 	filter_attrs = (str('ucsschoolImportSchool'),)  # unicode_literals + python-ldap = TypeError
 
 	@classmethod
 	def _build_query(cls, username):
+		lo, po = get_machine_connection()
 		filter_s = filter_format(cls.filter_s, (username,))
 		ldap_result = cls.lo.search(filter_s, attr=cls.filter_attrs)
 		query = None
@@ -146,14 +146,14 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 	"""
 	Used to list only ImportJobs the user has any permissions on.
 	"""
-	lo, po = get_machine_connection()
 	filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))'
 	filter_attrs = (str('ucsschoolImportRole'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
 
 	@classmethod
 	def _build_query(cls, username):
+		lo, po = get_machine_connection()
 		filter_s = filter_format(cls.filter_s, (username,))
-		ldap_result = cls.lo.search(filter_s, attr=cls.filter_attrs)
+		ldap_result = lo.search(filter_s, attr=cls.filter_attrs)
 		query = None
 		for _dn, result_dict in ldap_result:
 			q = Q(
