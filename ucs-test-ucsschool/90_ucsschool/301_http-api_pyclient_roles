@@ -1,0 +1,80 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Check roles through the python client
+## tags: [apptest,ucsschool,ucsschool_import1]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import-http-api
+##   - ucs-school-import-http-api-client
+## bugs: [45749]
+
+import pprint
+import random
+from ldap.filter import filter_format
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from ucsschool.http_api.client import Client
+from essential.importusers_cli_v2 import ImportTestbase
+
+
+class Test(ImportTestbase):
+	def test(self):
+		user_creation_fn = [self.schoolenv.create_staff, self.schoolenv.create_teacher, self.schoolenv.create_teacher_and_staff]
+		ous = [self.ou_A, self.ou_B, self.ou_C]
+		roles = ['staff', 'student', 'teacher', 'teacher_and_staff']
+		password = uts.random_string()
+		random.shuffle(user_creation_fn)
+		random.shuffle(ous)
+		random.shuffle(roles)
+
+		self.log.info('*** Created user...')
+		username, user_dn = user_creation_fn[0](ous[0].name, password=password)
+
+		self.log.info('*** Modifying import-permission groups...')
+		role_combinations = [{roles[0], roles[1]}, {roles[1], roles[2]}, {roles[2]}]
+
+		groups = {}
+		for ou in ous:
+			roles = role_combinations.pop()
+			group_dn, group_name = self.udm.create_group(
+				position='cn=groups,{}'.format(ou.dn),
+				options=['posix', 'samba', 'ucsschoolImportGroup'],
+				append={
+					'users': [user_dn],
+					'ucsschoolImportRole': roles,
+					'ucsschoolImportSchool': [ou.name],
+				}
+			)
+			groups[ou] = {'dn': group_dn, 'roles': roles}
+
+		# add 3rd OU to 2nd group
+		self.udm.modify_object(
+			'groups/group',
+			dn=groups[ous[1]]['dn'],
+			append={'ucsschoolImportSchool': [ous[2].name]}
+		)
+		# so that the roles of the 2nd group are also valid for the 3rd OU
+		groups[ous[2]]['roles'].update(groups[ous[1]]['roles'])
+
+		for dn, obj in self.lo.search(filter_format(
+				'(&(objectClass=ucsschoolImportGroup)(memberUid=%s))', (username,)
+		)):
+			self.log.info('%s: %s', dn, pprint.pformat(obj))
+
+		self.log.info('*** Checking roles via Python-API...')
+		client = Client(username, password, log_level=Client.LOG_RESPONSE)
+		for ou in ous:
+			expected_roles = groups[ou]['roles']
+			roles_from_api = client.school.get(ou.name).roles
+			received_roles = set(r.name for r in roles_from_api)
+			self.log.info('Expected roles: %r', expected_roles)
+			self.log.info('Received roles: %r', received_roles)
+			if expected_roles == received_roles:
+				self.log.info('OK.')
+			else:
+				utils.fail('expected roles != found roles.')
+
+
+if __name__ == '__main__':
+	Test().run()
