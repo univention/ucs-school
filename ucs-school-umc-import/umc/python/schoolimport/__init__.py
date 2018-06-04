@@ -80,7 +80,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@require_password
 	@simple_response
 	def userroles(self, school):
-		userroles = [dict(id=role.name, label=role.displayName) for role in self.client.roles.list(school)]
+		if not school:
+			return []
+		userroles = [dict(id=role.name, label=role.displayName) for role in self.client.school.get(school).roles]
 		if not userroles:
 			raise UMC_Error(_('No permissions for running an import for any user role.'))
 		return userroles
