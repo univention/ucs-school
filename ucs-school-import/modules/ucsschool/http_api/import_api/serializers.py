@@ -105,16 +105,21 @@ class UserImportJobCreationValidator(object):
 	@classmethod
 	def is_user_school_role_combination_allowed(cls, username, school, role):
 		lo, po = get_machine_connection()
-		if role == '*':
-			res = cls.lo.searchDn(filter_format(
-				'(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=%s)(memberUid=%s))',
-				(school, username))
-			)
-		else:
-			res = cls.lo.searchDn(filter_format(
-				'(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=%s)(ucsschoolImportSchool=%s)(memberUid=%s))',
-				(role, school, username))
-			)
+
+		# filter_format() will escape '*' as argument
+		filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole={role})(ucsschoolImportSchool={school})(memberUid=%s))'.format(
+			role='*' if role == '*' else '%s',
+			school='*' if school == '*' else '%s',
+		)
+		args = []
+		if role != '*':
+			args.append(role)
+		if school != '*':
+			args.append(school)
+		args.append(username)
+		args = tuple(args)
+
+		res = lo.searchDn(filter_format(filter_s, args))
 		if not res:
 			logger.error('Not allowed: username={!r} school={!r} role={!r}', username, school, role)
 		return bool(res)
