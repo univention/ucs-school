@@ -3,7 +3,8 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-import
-fix: 1.0.1-1A~4.3.0.201805311111
+fix: 1.0.1-2A~4.3.0.201806040953
 desc: |
  * Added buttons to the dry run overview and error pages to return to the modules overview page (Bug #46795).
-bug: [46795]
+ * Available roles are now retrieved through a HTTP-API resource (Bug #45749).
+bug: [46795, 45749]
