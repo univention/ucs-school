@@ -48,12 +48,13 @@ from rest_framework.permissions import BasePermission, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
 from ucsschool.importer.utils.ldap_connection import get_machine_connection
-from ucsschool.http_api.import_api.models import UserImportJob, School, TextArtifact, JOB_CHOICES
+from ucsschool.http_api.import_api.models import JOB_CHOICES, Role,School, TextArtifact, UserImportJob
 from ucsschool.http_api.import_api.serializers import (
 	UserImportJobCreationValidator,
 	UserImportJobSerializer,
 	LogFileSerializer,
 	PasswordFileSerializer,
+	RoleSerializer,
 	SummarySerializer,
 	SchoolSerializer,
 )
@@ -75,6 +76,39 @@ class UserImportJobFilter(FilterSet):
 	@staticmethod
 	def principal_filter(queryset, name, value):
 		return queryset.filter(principal__username=value)
+
+
+class RoleFilterBackend(BaseFilterBackend):
+	"""
+	Used to list only Roles the user has any permissions on.
+	"""
+	filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool={})(memberUid=%s))'
+	filter_attrs = (str('ucsschoolImportRole'), str('ucsschoolImportSchool'))  # unicode_literals + python-ldap = TypeError
+
+	@classmethod
+	def _build_query(cls, username, school):
+		lo, po = get_machine_connection()
+		if school == '*':
+			# prevent filter_format() from escaping '*'
+			filter_s = filter_format(cls.filter_s.format('*'), (username,))
+		else:
+			filter_s = filter_format(cls.filter_s.format('%s'), (school, username))
+		ldap_result = lo.search(filter_s, attr=cls.filter_attrs)
+		role_names = []
+		for _dn, result_dict in ldap_result:
+			role_names.extend(result_dict['ucsschoolImportRole'])
+		return Q(name__in=role_names)
+
+	def filter_queryset(self, request, queryset, view):
+		try:
+			school = view._school
+		except AttributeError:
+			school = '*'
+		query = self._build_query(request.user.username, school)
+		if not query:
+			logger.warn('User %r has no permissions at all.', request.user)
+			return queryset.none()
+		return queryset.filter(query)
 
 
 class SchoolFilterBackend(BaseFilterBackend):
@@ -138,6 +172,26 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 			logger.warn('User %r has no permissions at all.', request.user)
 			return queryset.none()
 		return queryset.filter(query)
+
+
+class RoleViewPermission(BasePermission):
+	"""
+	Used to read only Role objects the user has any permissions on.
+	"""
+	def has_object_permission(self, request, view, obj):
+		# obj is a Role object
+		res = UserImportJobCreationValidator.is_user_school_role_combination_allowed(
+			username=request.user.username,
+			school='*',
+			role=obj.name
+		)
+		if not res:
+			logger.warn(
+				'Access forbidden for %r to role %r.',
+				request.user.username,
+				obj.name
+			)
+		return res
 
 
 class SchoolViewPermission(BasePermission):
@@ -395,11 +449,42 @@ Summary file of import job.
 	serializer_class = SummarySerializer
 
 
+class RoleViewSet(viewsets.ReadOnlyModelViewSet):
+	"""
+Read-only list of Roles.
+	"""
+	queryset = Role.objects.all()
+	serializer_class = RoleSerializer
+	filter_backends = (RoleFilterBackend, DjangoFilterBackend, OrderingFilter)
+	filter_fields = ('name', 'displayName')
+	ordering_fields = ('name', 'displayName')
+	permission_classes = (IsAuthenticated, RoleViewPermission)
+
+	def retrieve(self, request, *args, **kwargs):
+		logger.info('*** request.__dict__=%r args=%r kwargs=r', request.__dict__, args, kwargs)
+		Role.update_from_ldap()
+		try:
+			self._school = kwargs.pop('school')
+		except KeyError:
+			pass
+		return super(RoleViewSet, self).retrieve(request, *args, **kwargs)
+
+	def list(self, request, *args, **kwargs):
+		logger.info('*** request.__dict__=%r args=%r kwargs=r', request.__dict__, args, kwargs)
+		Role.update_from_ldap()
+		try:
+			self._school = kwargs.pop('school')
+		except KeyError:
+			pass
+		return super(RoleViewSet, self).list(request, *args, **kwargs)
+
+
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
 	"""
 Read-only list of Schools (OUs).
 
-`user_imports` provides navigation to start an import for the respective school.
+* `roles` provides navigation to a list of roles the connected user has permissions on the respective school.
+* `user_imports` provides navigation to start an import for the respective school.
 	"""
 	queryset = School.objects.order_by('name')
 	serializer_class = SchoolSerializer
@@ -412,8 +497,9 @@ Read-only list of Schools (OUs).
 		instance = self.get_object()
 		# update entry from LDAP
 		instance.update_from_ldap(instance.pk)
-		# inject /schools/{ou}/imports/users URL
+		# inject /schools/{ou}/roles & /schools/{ou}/imports/users URLs
 		instance_url = request.build_absolute_uri()
+		instance.roles = urlparse.urljoin(instance_url, 'roles')
 		instance.user_imports = urlparse.urljoin(instance_url, 'imports/users')
 		serializer = self.get_serializer(instance)
 		return Response(serializer.data)
@@ -433,6 +519,7 @@ Read-only list of Schools (OUs).
 		serializer = self.get_serializer(queryset, many=True)
 		data = serializer.data
 		for d in data:
+			d['roles'] = urlparse.urljoin(d['url'], 'roles')
 			d['user_imports'] = urlparse.urljoin(d['url'], 'imports/users')
 		return Response(data)
 
@@ -470,3 +557,16 @@ Read-only list of Schools (OUs).
 			uivs.perform_create(uij_serializer)
 			headers = uivs.get_success_headers(uij_serializer.data)
 			return Response(uij_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+	@detail_route()
+	def roles(self, request, *args, **kwargs):
+		"""
+		schools/{ou}/roles/
+
+		Roles the connecting user has at this school.
+		"""
+		instance = self.get_object()
+		rvs = RoleViewSet(request=request, **kwargs)
+		rvs.initial(request=request, *args, **kwargs)
+		kwargs['school'] = instance.name
+		return rvs.list(request, *args, **kwargs)

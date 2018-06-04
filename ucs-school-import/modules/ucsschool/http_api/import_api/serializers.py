@@ -43,7 +43,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ParseError, PermissionDenied
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from ucsschool.importer.utils.ldap_connection import get_machine_connection
-from ucsschool.http_api.import_api.models import Logfile, PasswordsFile, SummaryFile, TextArtifact, UserImportJob, School, JOB_NEW, JOB_SCHEDULED
+from ucsschool.http_api.import_api.models import (
+	JOB_NEW, JOB_SCHEDULED, Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob)
 from ucsschool.http_api.import_api.import_logging import logger
 from ucsschool.http_api.import_api.tasks import dry_run, import_users
 
@@ -213,10 +214,18 @@ class SummarySerializer(TextArtifactSerializer):
 		fields = ('url', 'text', userimportjob_related_name)
 
 
+class RoleSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Role
+		fields = ('name', 'displayName', 'url')
+		read_only_fields = ('name', 'displayName')
+
+
 class SchoolSerializer(serializers.HyperlinkedModelSerializer):
+	roles = serializers.URLField(read_only=True)
 	user_imports = serializers.URLField(read_only=True)
 
 	class Meta:
 		model = School
-		fields = ('name', 'displayName', 'url', 'user_imports')
-		read_only_fields = ('name', 'displayName', 'user_imports')
+		fields = ('name', 'displayName', 'url', 'roles', 'user_imports')
+		read_only_fields = ('name', 'displayName', 'roles', 'user_imports')
