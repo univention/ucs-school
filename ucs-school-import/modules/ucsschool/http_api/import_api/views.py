@@ -33,7 +33,10 @@ Django Views
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
-import urlparse
+try:
+	from urllib2 import urlparse
+except ImportError:
+	from urllib import parse as urlparse  # Python3
 from ldap.filter import filter_format
 from django.db.models import Q
 from django.http import Http404
@@ -122,17 +125,11 @@ class SchoolFilterBackend(BaseFilterBackend):
 	def _build_query(cls, username):
 		lo, po = get_machine_connection()
 		filter_s = filter_format(cls.filter_s, (username,))
-		ldap_result = cls.lo.search(filter_s, attr=cls.filter_attrs)
-		query = None
+		ldap_result = lo.search(filter_s, attr=cls.filter_attrs)
+		school_names = []
 		for _dn, result_dict in ldap_result:
-			q = Q(
-				name__in=result_dict['ucsschoolImportSchool']
-			)  # AND
-			try:
-				query |= q  # OR
-			except TypeError:
-				query = q   # query was None
-		return query
+			school_names.extend(result_dict['ucsschoolImportSchool'])
+		return Q(name__in=school_names)
 
 	def filter_queryset(self, request, queryset, view):
 		query = self._build_query(request.user.username)
@@ -486,7 +483,7 @@ Read-only list of Schools (OUs).
 * `roles` provides navigation to a list of roles the connected user has permissions on the respective school.
 * `user_imports` provides navigation to start an import for the respective school.
 	"""
-	queryset = School.objects.order_by('name')
+	queryset = School.objects.all()
 	serializer_class = SchoolSerializer
 	filter_backends = (SchoolFilterBackend, DjangoFilterBackend, OrderingFilter)
 	filter_fields = ('name', 'displayName')
