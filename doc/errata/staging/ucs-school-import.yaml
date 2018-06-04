@@ -3,8 +3,9 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.1-29A~4.3.0.201805241959
+fix: 16.0.1-30A~4.3.0.201806040904
 desc: |
  * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47027).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #42416).
+ * Leading and trailing whitespace in CSV cells is now removed. Access to the unmodified data (including the whitespace is still possible through the <literal>input_data</literal> attribute of <classname>ImportUser</classname> objects.
 bug: [47027, 42416]
