@@ -1,3 +1,9 @@
+ucs-school-umc-import (1.0.1-2) unstable; urgency=medium
+
+  * Bug #45749: add support for Role resource
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 09:47:36 +0200
+
 ucs-school-umc-import (1.0.1-1) unstable; urgency=medium
 
   * Bug #46795: Add back to overview button to dry-run-overview and error page
