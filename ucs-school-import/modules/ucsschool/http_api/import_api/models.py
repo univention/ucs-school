@@ -33,13 +33,13 @@ Database / Resource models
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
-import json
 import codecs
 from ldap.filter import escape_filter_chars
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_machine_connection
 from ucsschool.http_api.import_api.import_logging import logger
 
@@ -58,6 +58,165 @@ USER_TEACHER = 'teacher'
 USER_TEACHER_AND_STAFF = 'teacher_and_staff'
 USER_ROLES = (USER_STAFF, USER_STUDENT, USER_TEACHER, USER_TEACHER_AND_STAFF)
 USER_ROLES_CHOICES = zip([u.lower().replace(' ', '_') for u in USER_ROLES], USER_ROLES)
+
+translation = univention.admin.localization.translation('ucs-school-import-http-api')
+_ = translation.translate
+
+USER_ROLE_TRANS = {
+	USER_STAFF: _('staff'),
+	USER_STUDENT: _('student'),
+	USER_TEACHER: _('teacher'),
+	USER_TEACHER_AND_STAFF: _('teacher_and_staff'),
+}
+
+
+class Role(models.Model):
+	name = models.CharField(max_length=255, primary_key=True)
+	displayName = models.CharField(max_length=255, blank=True)
+
+	def __unicode__(self):
+		return self.name
+
+	@classmethod
+	def update_from_ldap(cls):
+		"""
+		Update Role objects from LDAP. Currently static values are used and no
+		LDAP query is done. This might change in the future.
+
+		:return: None
+		"""
+		names = list()
+		for role in USER_ROLES:
+			name = role
+			display_name = _(USER_ROLE_TRANS[role])
+			obj, created = cls.objects.get_or_create(
+				name=name,
+				defaults={'displayName': display_name},
+			)
+			if not created and obj.displayName != display_name:
+				obj.displayName = display_name
+				obj.save()
+			names.append(name)
+		# delete unknown roles
+		cls.objects.exclude(name__in=names).delete()
+
+	class Meta:
+		ordering = ('name',)
+
+
+#
+# AccessRule and Context are currently neither used, not tested. We fetch the
+# required information in the FilterBackend and Permission classes (views.py)
+# directly from LDAP. This is here to show how a permission representation
+# (compatible with the above Role class) could be modeled in Django.
+#
+# To use this, install the code, and create and activate the required
+# migrations with:
+# /usr/share/pyshared/ucsschool/http_api/manage.py makemigrations
+# /usr/share/pyshared/ucsschool/http_api/manage.py migrate
+#
+
+# from django.contrib.auth import get_user_model
+# from django.contrib.contenttypes.fields import GenericForeignKey
+# from django.contrib.contenttypes.models import ContentType
+
+# CONTEXT_TYPE_SCHOOL = 'school'
+
+# class Context(models.Model):
+# 	type = models.CharField(max_length=255, primary_key=True)
+#
+# 	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+# 	object_id = models.CharField(max_length=255)
+# 	content_object = GenericForeignKey('content_type', 'object_id')
+#
+# 	def __unicode__(self):
+# 		return 'Context(type={!r}, content_object={})'.format(self.type, self.content_object)
+#
+# 	@classmethod
+# 	def update_school_contexts(cls):
+# 		School.update_from_ldap()
+# 		existing_school_objs = School.objects.all()
+# 		ct_school = ContentType.objects.get(app_label='import_api', model='school')
+# 		for context in list(cls.objects.filter(type=CONTEXT_TYPE_SCHOOL, content_type=ct_school)):
+# 			if context.content_object not in existing_school_objs:
+# 				context.delete()
+# 		existing_school_objs_in_contexts = cls.objects.filter(type=CONTEXT_TYPE_SCHOOL).values('content_object')
+# 		for school_obj in set(existing_school_objs) - set(existing_school_objs_in_contexts):
+# 			cls.objects.create(type=CONTEXT_TYPE_SCHOOL, content_object=school_obj)
+
+
+# class AccessRule(models.Model):
+# 	access = models.BooleanField(default=True)
+# 	contexts = models.ManyToManyField(Context)
+# 	roles = models.ManyToManyField(Role)
+# 	users = models.ManyToManyField(settings.AUTH_USER_MODEL)
+#
+# 	import_group_name = models.CharField(max_length=255)
+#
+# 	def __unicode__(self):
+# 		return 'AccessRule(context={!r}, roles={}, access={!r} import_group={!r})'.format(
+# 			self.context,
+# 			[r.name for r in self.roles.all()],
+# 			self.access,
+# 			self.import_group_name
+# 		)
+#
+# 	@classmethod
+# 	def update_from_ldap(cls):
+# 		"""
+# 		Update AccessRule objects from LDAP (reading ucsschoolImportGroup
+# 		groups).
+#
+# 		:return: None
+# 		"""
+# 		names = []
+# 		lo, po = get_machine_connection()
+# 		for dn, import_group in lo.search('(objectClass=ucsschoolImportGroup)'):
+# 			name = import_group['cn'][0]
+# 			try:
+# 				obj, _created = cls.objects.get_or_create(import_group_name=name)
+# 			except cls.DoesNotExist:
+# 				obj = cls.objects.create(import_group_name=name)
+# 			users = cls._get_users(import_group['memberUid'])
+# 			roles = cls._get_roles(import_group['ucsschoolImportRole'])
+# 			contexts = cls._get_school_contexts(import_group['ucsschoolImportSchool'])
+# 			if obj.users != users or obj.roles != roles or obj.contexts != contexts:
+# 				obj.users = users
+# 				obj.roles = roles
+# 				obj.contexts = contexts
+# 				obj.save()
+# 			names.append(name)
+# 		cls.objects.exclude(import_group_name__in=names).delete()
+#
+# 	@classmethod
+# 	def _get_users(cls, users):
+# 		UserModel = get_user_model()
+# 		username_list_filter = '{}__in'.format(UserModel.USERNAME_FIELD)
+#
+# 		existing_users = UserModel._default_manager.filter(**{username_list_filter: users})
+# 		existing_user_names = existing_users.values_list('username', flat=True)
+# 		for username in set(users) - set(existing_user_names):
+# 			UserModel._default_manager.create_user(username)
+# 		return UserModel._default_manager.filter(**{username_list_filter: users})
+#
+# 	@classmethod
+# 	def _get_roles(cls, roles):
+# 		Role.update_from_ldap()
+# 		existing_roles = Role.objects.filter(name__in=roles)
+# 		missing_roles = set(roles) - set(r.name for r in existing_roles)
+# 		if missing_roles:
+# 			raise RuntimeError('Cannot get unknown role(s): {!r}.'.format(missing_roles))
+# 		return existing_roles
+#
+# 	@classmethod
+# 	def _get_school_contexts(cls, schools):
+# 		Context.update_school_contexts()  # will also update Schools
+# 		existing_schools = School.objects.filter(name__in=schools)
+# 		missing_schools = set(schools) - set(s.name for s in existing_schools)
+# 		if missing_schools:
+# 			raise RuntimeError('Cannot get context for unknown school(s): {!r}.'.format(missing_schools))
+# 		ct_school = ContentType.objects.get(app_label='import_api', model='school')
+# 		return Context.objects.filter(type=CONTEXT_TYPE_SCHOOL, content_type=ct_school, object_id__in=schools)
 
 
 class School(models.Model):
@@ -85,7 +244,10 @@ class School(models.Model):
 		:return: None
 		"""
 		names = list()
-		for dn, ou in cls._get_ous_from_ldap(ou_str):
+		res = cls._get_ous_from_ldap(ou_str)
+		if ou_str and not res:
+			raise RuntimeError('Unknown school {!r}.'.format(ou_str))
+		for dn, ou in res:
 			name = ou['ou'][0]
 			display_name = ou.get('displayName', [name])[0]
 			obj, created = cls.objects.get_or_create(
@@ -97,7 +259,11 @@ class School(models.Model):
 				obj.save()
 			names.append(name)
 		if not ou_str:
+			# delete OUs not in LDAP (anymore)
 			cls.objects.exclude(name__in=names).delete()
+
+	class Meta:
+		ordering = ('name',)
 
 
 class TextArtifact(models.Model):
@@ -154,11 +320,12 @@ class SummaryFile(TextArtifact):
 
 class UserImportJob(models.Model):
 	dryrun = models.BooleanField(default=True)
-	principal = models.ForeignKey(User)
+	principal = models.ForeignKey(settings.AUTH_USER_MODEL)
 	school = models.ForeignKey(School, blank=True)
 	source_uid = models.CharField(max_length=255, blank=True)
 	status = models.CharField(max_length=10, default=JOB_NEW, choices=JOB_CHOICES)
 	user_role = models.CharField(max_length=20, choices=USER_ROLES_CHOICES, blank=True)
+	# TODO: user_role = models.ForeignKey(Role, blank=True)
 
 	task_id = models.CharField(max_length=40, blank=True)
 	result = models.OneToOneField(TaskMeta, on_delete=models.SET_NULL, null=True, blank=True)
