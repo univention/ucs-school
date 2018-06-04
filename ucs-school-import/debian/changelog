@@ -1,3 +1,10 @@
+ucs-school-import (16.0.2-1) unstable; urgency=medium
+
+  * Bug #45749: add Roles resource to HTTP-API, allowing to retrieve the
+    available roles of a user
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 09:44:38 +0200
+
 ucs-school-import (16.0.1-30) unstable; urgency=low
 
   * Bug #46970: strip leading/trailing whitespace from CSV input
