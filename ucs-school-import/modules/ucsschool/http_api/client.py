@@ -44,14 +44,10 @@ except ImportError:
 import logging
 import inspect
 import dateutil.parser
-from collections import namedtuple
-from ldap.filter import filter_format
 
 import requests
 import magic
-import univention.admin.syntax
 from univention.config_registry import ConfigRegistry
-from ucsschool.importer.utils.ldap_connection import get_machine_connection
 
 
 ucr = ConfigRegistry()
@@ -227,6 +223,17 @@ class ResourceRepresentation(object):
 		resource_name = 'schools'
 
 		@property
+		def roles(self):
+			"""
+			Roles the connected user has in this school.
+
+			:return: RoleResource objects
+			:rtype: ResourceRepresentationIterator
+			"""
+			url = urljoin(self._resource['url'], 'roles')
+			return self._resource_client.client.roles.list(resource_url=url)
+
+		@property
 		def user_imports(self):
 			"""
 			UserImportJobs that ran for this school.
@@ -234,11 +241,11 @@ class ResourceRepresentation(object):
 			:return: UserImportJobResource objects
 			:rtype: ResourceRepresentationIterator
 			"""
-			return self._resource_client.client.userimportjob.list()
+			return self._resource_client.client.userimportjob.list(school=self.name)
 
-#	class RolesResource(_ResourceReprBase):
-#		__metaclass__ = _ResourceRepresentationMetaClass
-#		resource_name = 'roles'
+	class RoleResource(_ResourceReprBase):
+		__metaclass__ = _ResourceRepresentationMetaClass
+		resource_name = 'roles'
 
 	class ResultResource(_ResourceReprBase):
 		resource_name = 'result'
@@ -409,6 +416,8 @@ class Client(object):
 			auth=(self.username, self.password),
 			headers={'Accept': 'application/json'},
 			**kwargs)
+		# TODO: add language to request for translated displayNames. something like:
+		# request_kwargs['headers']['Accept-Language'] ='de_DE'
 		if not self.ssl_verify:
 			request_kwargs['verify'] = False
 		log_request_kwargs = copy.deepcopy(request_kwargs)
@@ -458,7 +467,8 @@ class Client(object):
 			return self._resource_from_url(url, **params)
 
 		def _list_resource(self, **params):
-			return self._resource_from_url(self.resource_url, **params)
+			resource_url = params.pop('resource_url', self.resource_url)
+			return self._resource_from_url(resource_url, **params)
 
 		def get(self, pk):
 			"""
@@ -510,31 +520,10 @@ class Client(object):
 		resource_name = 'schools'
 		pk_name = 'name'
 
-	class _Roles(object):
+	class _Roles(_ResourceClient):
 		__metaclass__ = _ResourceClientMetaClass
-
-		def __init__(self, client):
-			self.client = client
-
-		def list(self, school):
-			"""
-			Get roles the connected user has import permissions for on `school`.
-
-
-			:param str school: the school to get the permissions for
-			:return: list of `Role` objects: [namedtuple('name', 'displayName'), ..]
-			:rtype: list(Role)
-			"""
-			Role = namedtuple('Role', ['name', 'displayName'])
-			lo, po = get_machine_connection()
-			filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=%s)(memberUid=%s))'
-			filter_attrs = (str('ucsschoolImportSchool'), str('ucsschoolImportRole'),)  # unicode_literals + python-ldap = TypeError
-			filter_s = filter_format(filter_s, (school, self.client.username))
-			ldap_result = lo.search(filter_s, attr=filter_attrs)
-			res = set()
-			for dn, info in ldap_result:
-				res.update(info['ucsschoolImportRole'])
-			return [Role(id_, label) for id_, label in univention.admin.syntax.ucsschoolTypes.choices if id_ in res]
+		resource_name = 'roles'
+		pk_name = 'name'
 
 	class _UserImportJob(_ResourceClient):
 		__metaclass__ = _ResourceClientMetaClass
