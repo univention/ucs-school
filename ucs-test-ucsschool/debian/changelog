@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-94) unstable; urgency=low
+
+  * Bug #46832: add test for HTTP-API Python client
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 11:19:00 +0200
+
 ucs-test-ucsschool (4.0.4-93) unstable; urgency=low
 
   * Bug #46970: test if leading/trailing whitespace is removed

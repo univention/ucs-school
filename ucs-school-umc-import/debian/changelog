@@ -1,3 +1,9 @@
+ucs-school-umc-import (0.0.1-18) unstable; urgency=low
+
+  * Bug #46832: add support for Role resource
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 11:19:17 +0200
+
 ucs-school-umc-import (0.0.1-17) unstable; urgency=medium
 
   * Bug #45717: don't hide role selection if only one role is possible
