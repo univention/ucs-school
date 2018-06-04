@@ -1,10 +1,10 @@
-ucs-test-ucsschool (4.0.4-93) unstable; urgency=low
+ucs-test-ucsschool (5.0.2-54) unstable; urgency=low
 
   * Bug #46970: test if leading/trailing whitespace is removed
 
  -- Daniel Troeder <troeder@univention.de>  Mon, 04 Jun 2018 08:59:03 +0200
 
-ucs-test-ucsschool (4.0.4-92) unstable; urgency=low
+ucs-test-ucsschool (5.0.2-53) unstable; urgency=low
 
   * Bug #47027: updated 234_modify_user_data_in_pyhooks
 
