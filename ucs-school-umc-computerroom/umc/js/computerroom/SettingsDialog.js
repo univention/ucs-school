@@ -93,10 +93,7 @@ define([
 				sizeClass: 'One',
 				label: _('Share access'),
 				description: _('Defines restriction for the share access'),
-				staticValues: [
-					{ id: 'home', label: '' }, // Will be set in update
-					{ id: 'all', label: _('Default (no restrictions)') }
-				]
+				staticValues: [] // Will be set in update
 			}, {
 				type: ComboBox,
 				name: 'printMode',
