@@ -7,6 +7,6 @@ fix: 10.0.2-4A~4.3.0.201806050852
 desc: |
  * Instead of showing an empty list of computer rooms there is now a dialog asking if the user wants to create one if authorized to do so. (Bug #43080)
  * Remove free printing option from computer room settings due to (Bug #35076)
- * Rename file share restriction options in settings dialog depending on if selected room is in exam mode (Bug #43037)
+ * Rename file share restriction options in settings dialog depending on whether the selected room is in exam mode. (Bug #43037)
  * If no rooms are present show the dialog asking to create one only if only one school can be chosen. (Bug #43080) 
 bug: [43080, 35076, 43037]
