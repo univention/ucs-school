@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (10.0.2-4) unstable; urgency=medium
+
+  * Bug #43037: Change staticValues definition to empty array
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 05 Jun 2018 08:48:42 +0100
+
 ucs-school-umc-computerroom (10.0.2-3) unstable; urgency=medium
 
   * Bug #43080: Only show noRoomsDialog if user has only one school
