@@ -268,7 +268,7 @@ msgstr "MAC-Adresse"
 
 #: umc/js/computerroom.js:1127
 msgid "Manage computer rooms"
-msgstr "Computerraum auswählen"
+msgstr "Computerräume verwalten"
 
 #: umc/js/computerroom.js:631
 msgid "Monitoring is activated"

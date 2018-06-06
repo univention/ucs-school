@@ -1084,12 +1084,16 @@ define([
 			});
 			okButton = form.getButton('submit');
 
-			// enable button when values are loaded
-			var signal = null;
-			signal = form.on('ValuesInitialized', function() {
-				signal.remove();
-				okButton.set('disabled', false);
-			});
+			// dis-/enables submit button depending on room Combobox (setting required on room Combobox did not have desired effect)
+			form.getWidget('room').on('Change', lang.hitch(this, function() {
+				var submitButton = form.getButton('submit');
+				room = form.getWidget('room').get('value');
+				if (room) {
+					submitButton.set('disabled', false);
+				} else {
+					submitButton.set('disabled', true);
+				}
+			}));
 
 			// Check if there are any rooms to choose from. If not switch to computer room administration or just close module (via dialog)
 			on.once(form, "valuesInitialized", lang.hitch(this, function() {
