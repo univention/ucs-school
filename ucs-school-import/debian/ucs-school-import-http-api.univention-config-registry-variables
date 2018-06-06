@@ -15,3 +15,15 @@ Description[de]=Zeitzone des Servers. Wenn nicht gesetzt, wird der Wert aus /etc
 Description[en]=Time zone of the server. If not set the value in /etc/timezone will be used. Default: unset.
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/import/http_api/wsgi_server_loglevel]
+Description[de]=Ausgaben dieses Schweregrades und höher werden ins errorlog geschrieben. Gültige Werte: "debug", "info", "warning", "error", "critical". Standard ist "debug".
+Description[en]=Output of this severity and higher will be written to the errorlog. Valid values are: "debug", "info", "warning", "error", "critical". Defaults to "debug".
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/import/http_api/wsgi_server_accesslog]
+Description[de]=Die Datei in die HTTP-Zugriffe und Fehler geloggt werden. Standard ist "/var/log/univention/ucs-school-import/gunicorn_access.log".
+Description[en]=The file to log HTTP-access and errors to. Defaults to "/var/log/univention/ucs-school-import/gunicorn_access.log".
+Type=str
+Categories=ucsschool-base

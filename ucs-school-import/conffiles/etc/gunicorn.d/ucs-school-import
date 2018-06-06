@@ -2,7 +2,7 @@
 @%@UCRWARNING=# @%@
 
 #
-# http://docs.gunicorn.org/en/19.6.0/settings.html
+# man gunicorn_django
 #
 
 from multiprocessing import cpu_count

@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-46) unstable; urgency=low
+
+  * Bug #46831: add UCRV descriptions
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Jun 2018 12:09:02 +0200
+
 ucs-school-import (15.0.3-45) unstable; urgency=low
 
   * Bug #46831: make gunicorn log level configurable
