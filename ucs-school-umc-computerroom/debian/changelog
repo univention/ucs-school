@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (10.0.2-5) unstable; urgency=medium
+
+  * Bug #43080: Disable submit button if no room is selected (comment #12)
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 06 Jun 2018 09:01:10 +0100
+
 ucs-school-umc-computerroom (10.0.2-4) unstable; urgency=medium
 
   * Bug #43037: Change staticValues definition to empty array
