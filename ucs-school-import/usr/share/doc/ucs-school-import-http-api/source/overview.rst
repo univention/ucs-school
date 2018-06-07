@@ -51,6 +51,24 @@ To be more precise, let's take a look at the topology picture and go from client
 #. When it's time for a task to run, it will fetch the :py:class:`UserImport` object using its database ID, and pass a function to the import framework as :py:const:`settings.progress_notification_function`. During the import, the function will be called to update the :py:attr:`result.result` attribute of its associated :py:class:`UserImport` object. The Django ORM will store that in the database. Thus, if a client continually retrieves the ``user_import`` resource, it will see the progress of the import job. The UMC import module uses this to update the progress bar.
 
 
+CSV data
+--------
+
+The format of the CSV file can be configured in the same way it is done for the command line import (see `command line import manual (only german) <http://docs.software-univention.de/ucsschool-import-handbuch-4.3.html>`_).
+
+To create an example CSV file, that works with the default configuration file for HTTP-API-imports ``user_import_http-api.json``, run ``/usr/share/ucs-school-import/scripts/ucs-school-testuser-import`` with the ``--httpapi`` argument.
+
+The contents of the file should look similar to this::
+
+   "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
+   "SchuleEins","Cia","Rothenbühler","1a","A student.","+46-728-963204","ciam.rothenbuehlerm@uni.dtr"
+   "SchuleEins","Sergia","Groppel","1b","A student.","+80-043-223750","sergiam.groppelm@uni.dtr"
+   [..]
+
+
+.. important::
+
+    The column with the class names (``Klassen``) must *not* include the school name. The school name will automatically be prepended to it.
 
 
 .. rubric:: Footnotes
