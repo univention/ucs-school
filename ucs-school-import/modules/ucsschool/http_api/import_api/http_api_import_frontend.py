@@ -42,6 +42,7 @@ from celery.states import STARTED as CELERY_STATES_STARTED
 from ucsschool.importer.factory import load_class
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.exceptions import InitialisationError
+from ucsschool.http_api.import_api.utils import get_wsgi_uid_gid
 
 
 class ArgParseFake(object):
@@ -72,6 +73,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 		self.summary_file = os.path.join(self.basedir, settings.UCSSCHOOL_IMPORT['user_import_summary_filename'])
 		self.task_logger.info('Logging for import job %r will go to %r.', self.import_job.pk, self.logfile_path)
 		self.data_path = os.path.join(self.basedir, os.path.basename(self.import_job.input_file.name))
+		self.wsgi_uid, self.wsgi_gid = get_wsgi_uid_gid()
 		data_source_path = os.path.join(settings.MEDIA_ROOT, self.import_job.input_file.name)
 
 		try:
@@ -122,6 +124,15 @@ class HttpApiImportFrontend(UserImportCommandLine):
 		}
 		self.task_logger.info('HttpApiImportFrontend: Set up import job with args:\n%s', pprint.pformat(self.args.__dict__))
 		return self.args
+
+	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None):
+		return super(HttpApiImportFrontend, self).setup_logging(
+			stdout=stdout,
+			filename=filename,
+			uid=self.wsgi_uid,
+			gid=self.wsgi_gid,
+			mode=stat.S_IRUSR | stat.S_IWUSR
+		)
 
 	@property
 	def configuration_files(self):

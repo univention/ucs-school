@@ -58,11 +58,11 @@ class CommandLine(object):
 		self.args = parser.parse_cmdline()
 		return self.args
 
-	def setup_logging(self, stdout=False, files=None):
+	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None):
 		if stdout:
 			make_stdout_verbose()
-		if files:
-			add_file_handler(files)
+		if filename:
+			add_file_handler(filename, uid, gid, mode)
 		# make ucsschool.lib use our logging
 		move_our_handlers_to_lib_logger()
 

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 #
-# central place to get logger for import
-#
-# Copyright 2016-2018 Univention GmbH
+# Univention UCS@school
+"""
+Diverse helper functions.
+"""
+# Copyright 2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,30 +31,27 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os
-from ucsschool.lib.models.utils import get_logger as get_lib_logger, logger as lib_logger
+import pwd
+import grp
 
 
-def get_logger():
-	return get_lib_logger("import")
+def get_wsgi_user_group():
+	"""
+	Get the username and group name of the WSGI process in which the HTTP-API
+	runs.
+
+	:return: tuple with username and group name
+	:rtype tuple(str, str)
+	"""
+	return 'uas-import', 'uas-import'
 
 
-def make_stdout_verbose():
-	return get_lib_logger("import", "DEBUG")
+def get_wsgi_uid_gid():
+	"""
+	Get the UID and GID of the WSGI process in which the HTTP-API runs.
 
-
-def add_file_handler(filename, uid=None, gid=None, mode=None):
-	if filename.endswith(".log"):
-		info_filename = "{}.info".format(filename[:-4])
-	else:
-		info_filename = "{}.info".format(filename)
-	handler_kwargs = {'fuid': uid, 'fgid': gid, 'fmode': mode}
-	get_lib_logger("import", "DEBUG", filename, handler_kwargs=handler_kwargs)
-	return get_lib_logger("import", "INFO", target=info_filename, handler_kwargs=handler_kwargs)
-
-
-def move_our_handlers_to_lib_logger():
-	import_logger = get_logger()
-	for handler in import_logger.handlers:
-		lib_logger.addHandler(handler)
-		import_logger.removeHandler(handler)
+	:return: tuple with UID and GID
+	:rtype: tuple(int, int)
+	"""
+	user_name, group_name = get_wsgi_user_group()
+	return pwd.getpwnam(user_name).pw_uid, grp.getgrnam(group_name).gr_gid
