@@ -30,6 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
 from random import choice, shuffle
 import string
 import sys
@@ -82,11 +83,26 @@ logger.setLevel(logging.DEBUG)
 
 
 class UniFileHandler(TimedRotatingFileHandler):
-	pass
+	def __init__(self, filename, when='h', interval=1, backupCount=0, encoding=None, delay=False, utc=False, fuid=None, fgid=None, fmode=None):
+		self._fuid = fuid or os.geteuid()
+		self._fgid = fgid or os.getegid()
+		self._fmode = fmode or 0o600
+		super(UniFileHandler, self).__init__(filename, when, interval, backupCount, encoding, delay, utc)
+
+	def _open(self):
+		stream = super(UniFileHandler, self)._open()
+		file_stat = os.fstat(stream.fileno())
+		if file_stat.st_uid != self._fuid or file_stat.st_gid != self._fgid:
+			os.fchown(stream.fileno(), self._fuid, self._fgid)
+		if file_stat.st_mode != self._fmode:
+			os.fchmod(stream.fileno(), self._fmode)
+		return stream
 
 
 class UniStreamHandler(logging.StreamHandler):
-	pass
+	def __init__(self, stream=None, fuid=None, fgid=None, fmode=None):
+		# ignore fuid, fgid, fmode
+		super(UniStreamHandler, self).__init__(stream)
 
 
 class ModuleHandler(logging.Handler):
