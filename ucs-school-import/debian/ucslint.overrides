@@ -1,4 +1,5 @@
 0009-5:  usr/share/ucs-school-import/scripts/ucs-school-import
 0011-11: debian/control
 0010-2:  conffiles/etc/init.d/celery-worker-ucsschool-import
+0004-16: conffiles/etc/ucsschool-import/ldap.secret
 0010-2:  modules/ucsschool/http_api/manage.py
