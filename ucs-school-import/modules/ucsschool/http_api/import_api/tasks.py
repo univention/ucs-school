@@ -43,7 +43,6 @@ import time
 import logging
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from celery.signals import task_postrun
 from django.core.exceptions import ObjectDoesNotExist
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from ucsschool.importer.exceptions import InitialisationError
@@ -85,7 +84,9 @@ def run_import_job(task, importjob_id):
 
 	importjob.save(update_fields=('log_file', 'password_file', 'result', 'status', 'summary_file'))
 
+	runner.logger.info('-- Starting import framework main procedure. --')
 	res = runner.main()
+	runner.logger.info('-- Finished import framework main procedure. --')
 
 	importjob = UserImportJob.objects.get(pk=importjob_id)
 	importjob.status = JOB_ABORTED if res else JOB_FINISHED
