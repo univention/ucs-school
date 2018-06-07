@@ -186,7 +186,7 @@ define([
 						}, {
 							name: 'add',
 							'default': true,
-							label: _('Create')
+							label: _('Add room')
 						}], title).then(lang.hitch(this, function(response) {
 							if (response === 'add') {
 								this._addObject()
