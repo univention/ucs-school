@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (15.0.1-2) unstable; urgency=medium
+
+  * Bug #43080: Fix missing translations
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 30 May 2018 09:23:55 +0100
+
 ucs-school-umc-rooms (15.0.1-1) unstable; urgency=medium
 
   * Bug #43080: Offer object creation if list empty or flag set
