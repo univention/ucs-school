@@ -34,6 +34,7 @@ UCS@school import frontent class
 
 from __future__ import unicode_literals
 import os
+import stat
 import errno
 import shutil
 import pprint
@@ -77,7 +78,12 @@ class HttpApiImportFrontend(UserImportCommandLine):
 		data_source_path = os.path.join(settings.MEDIA_ROOT, self.import_job.input_file.name)
 
 		try:
-			os.makedirs(self.basedir, 0755)
+			os.makedirs(
+				self.basedir,
+				stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXOTH
+			)  # 751: higher directories may be owned by root, but will be traversable
+			os.chown(self.basedir, self.wsgi_uid, self.wsgi_gid)
+			os.chmod(self.basedir, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)  # secure mode for our directory
 		except os.error as exc:
 			raise InitialisationError('Cannot create directory {!r} for import job {!r}: {}'.format(
 				self.basedir, self.import_job.pk, str(exc)))
@@ -95,6 +101,13 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			self.pyhook_dir,
 			ignore=shutil.ignore_patterns('*.py?')
 		)
+
+		# set owner of password and summary files, so the WSGI user will be able to read them later
+		for path in (self.password_file, self.summary_file):
+			with open(path, 'ab') as fp:
+				os.fchown(fp.fileno(), self.wsgi_uid, self.wsgi_gid)
+				os.fchmod(fp.fileno(), stat.S_IRUSR | stat.S_IWUSR)
+
 		super(HttpApiImportFrontend, self).__init__()
 
 	def parse_cmdline(self):

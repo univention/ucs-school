@@ -115,7 +115,7 @@ write_secret () {
 	mkdir -p "$(dirname $filename)"
 	touch "$filename"
 	chmod 0600 "$filename"
-	chown root:root "$filename"
+	chown uas-import:uas-import "$filename"
 	if [ -n "$secret" ];
 	then
 	    echo "$secret" >"$filename"
