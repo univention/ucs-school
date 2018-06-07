@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (9.0.9-3) unstable; urgency=medium
+
+  * Bug #46872: Disable submit button if no room is selected
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 07 Jun 2018 08:49:45 +0100
+
 ucs-school-umc-computerroom (9.0.9-2) unstable; urgency=medium
 
   * Bug #46872: Only show noRoomsDialog if user has only one school
