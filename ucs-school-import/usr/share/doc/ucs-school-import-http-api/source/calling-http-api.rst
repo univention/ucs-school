@@ -18,7 +18,7 @@ The resources in the UCS\@school import HTTP-API can be found on the APIs root U
         "schools": "https://$HOST/api/v1/schools/"
     }
 
-.. admonition:: Do not hard code URLs, follow provided links.
+.. important::
 
     Do not hard code those URLs into a client application.
     Always use the URLs found at the APIs root (you may cache them), to access the resources.
@@ -91,7 +91,7 @@ A sub-resource ``user_imports`` is now visible.
 When following its URL, a collection of user import resources can be retrieved.
 Those are the import jobs that have been run on ``$OU``.
 
-.. admonition:: Do not calculate URLs, follow provided links.
+.. important::
 
     Do not calculate URLs of resources.
     Always follow the links provided by the collection.
