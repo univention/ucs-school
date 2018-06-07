@@ -53,8 +53,10 @@ override_dh_auto_install:
 
 override_dh_fixperms:
 	dh_fixperms
-	chmod 700 debian/ucs-school-import/var/lib/ucs-school-import/passwords
-	chmod 700 debian/ucs-school-import/var/lib/ucs-school-import/summary
+	chmod 750 debian/ucs-school-import/var/lib/ucs-school-import/passwords
+	chmod 750 debian/ucs-school-import/var/lib/ucs-school-import/summary
+	chmod 750 debian/ucs-school-import-http-api/var/lib/ucs-school-import/jobs
+	chmod 750 debian/ucs-school-import-http-api/var/spool/ucs-school-import/media/uploads
 
 override_dh_auto_clean:
 	dh_auto_clean

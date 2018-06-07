@@ -31,6 +31,7 @@ Base class for result exporters.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import stat
 import os.path
 from ucsschool.importer.utils.utils import mkdir_p
 
@@ -61,7 +62,7 @@ class ResultExporter(object):
 		:param UserImport import_handler: object that contains data to dump from an import job (for example UserImport)
 		:param str filename: filename to write data to
 		"""
-		mkdir_p(os.path.dirname(filename), 'root', 'root', 0o700)
+		mkdir_p(os.path.dirname(filename), 'root', 'root', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 		writer = self.get_writer()
 		with writer.open(filename):
 			writer.write_header(self.get_header())
