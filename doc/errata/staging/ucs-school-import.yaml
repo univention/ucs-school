@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-46A~4.2.0.201806061209
+fix: 15.0.3-47A~4.2.0.201806071443
 desc: |
  * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47028).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #47073).
@@ -12,4 +12,5 @@ desc: |
  * When using the HTTP-API based CSV import, the roles of the connected user can now be retrieved through a HTTP-API resource (Bug #46832).
  * The WSGI server Gunicorn now runs on port 9898 by default. This can be changed using the UCR variable ucsschool/import/http_api/wsgi_server_port (Bug #47134).
  * The loglevel of the WSGI server Gunicorn is now configurable through the UCR variable ucsschool/import/http_api/wsgi_server_loglevel (Bug #46831).
-bug: [47028, 47073, 47092, 47118, 46832, 47134, 46831]
+ * The HTTP-API import now always prepends the school name to class names read from a CSV file (Bug #47157).
+bug: [47028, 47073, 47092, 47118, 46832, 47134, 46831, 47157]
