@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-48) unstable; urgency=low
+
+  * Bug #45020: enhance HTTP-API documentation
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 07 Jun 2018 21:44:22 +0200
+
 ucs-school-import (15.0.3-47) unstable; urgency=low
 
   * Bug #47157: HTTP-API must always prepend school name to class names
