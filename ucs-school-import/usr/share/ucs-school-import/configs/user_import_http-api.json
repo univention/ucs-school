@@ -1,5 +1,8 @@
 {
 	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
+	"classes": {
+		"reader": "ucsschool.importer.reader.http_api_csv_reader.HttpApiCsvReader"
+	},
 	"input": {
 		"type": "csv"
 	},
