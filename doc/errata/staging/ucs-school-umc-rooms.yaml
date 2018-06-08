@@ -5,5 +5,5 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-rooms
 fix: 15.0.1-2A~4.3.0.201806070831
 desc: |
- * Offer creation of a room if the fetched list of rooms for the selected school is empty.
+ * Offer creation of a room if the fetched list of rooms for the selected school is empty. (Bug #43080)
 bug: [43080]
