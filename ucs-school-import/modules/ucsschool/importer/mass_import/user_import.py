@@ -509,9 +509,14 @@ class UserImport(object):
 		self.logger.info("------ End of user import statistics ------")
 		return '\n'.join(lines)
 
-	def _add_error(self, err):
-		self.errors.append(err)
-		if -1 < self.config["tolerate_errors"] < len(self.errors):
+	def _add_error(self, exc):  # type: (UcsSchoolImportError) -> None
+		"""
+		Append given exception to list of errors.
+		:param UcsSchoolImportError exc: an Exception raised during import
+		:raises TooManyErrors: if the number of countable exceptions exceeds the number of tolerable errors
+		"""
+		self.errors.append(exc)
+		if -1 < self.config["tolerate_errors"] < len([x for x in self.errors if x.is_countable]):
 			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
 	def progress_report(self, description, percentage=0, done=0, total=0, **kwargs):

@@ -34,6 +34,9 @@ All exceptions raise by code in ucsschool.importer.
 
 class UcsSchoolImportError(Exception):
 	is_fatal = False
+	# If is_countable is set to False, the exception is displayed to
+	# the user, but is not included in the evaluation of tolerate_errors.
+	is_countable = True
 
 	def __init__(self, *args, **kwargs):
 		self.entry_count = kwargs.pop("entry_count", 0)
@@ -44,6 +47,10 @@ class UcsSchoolImportError(Exception):
 
 class UcsSchoolImportFatalError(UcsSchoolImportError):
 	is_fatal = True
+
+
+class UcsSchoolImportSkipImportRecord(UcsSchoolImportError):
+	is_countable = False
 
 
 class BadPassword(UcsSchoolImportError):
