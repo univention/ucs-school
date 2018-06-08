@@ -17,9 +17,9 @@ Depends: ${misc:Depends},
  ucs-school-umc-common,
  python-ucs-school,
  shell-ucs-school,
-Description: UMC module to generate csv lists
- This package provides a Univention Management Console module that allows to
- administrate school rooms and their associated computers.
+Description: UMC module to generate CSV lists
+ This package provides a Univention Management Console module that allows
+ to export user lists for class groups or working groups.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
