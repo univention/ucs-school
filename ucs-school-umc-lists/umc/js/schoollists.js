@@ -99,7 +99,7 @@ define([
 				size: 'TwoThirds',
 				required: true,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
-				dynamicValues: 'schoollists/schools',
+				dynamicValues: 'schoollists/schools'
 			}, {
 				type: ComboBox,
 				name: 'group',
@@ -111,7 +111,7 @@ define([
 				depends: 'school',
 				onValuesLoaded: function() {
 					this.set('value', null);
-				},
+				}
 			}, {
 				type: Button,
 				name: 'csv',
@@ -124,7 +124,7 @@ define([
 					} else {
 						dialog.alert(_('Please select a class or workgroup.'));
 					}
-				}),
+				})
 			}];
 
 			var layout = [
@@ -139,7 +139,7 @@ define([
 				onSearch: lang.hitch(this, function(values) {
 					this.umcpCommand('schoollists/csvlist', {
 						school: values.school,
-						group: values.group,
+						group: values.group
 					}).then(lang.hitch(this, 'openDownload'));
 				})
 			});
