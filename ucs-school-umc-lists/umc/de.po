@@ -16,4 +16,4 @@ msgid "Class Lists"
 msgstr "Klassenlisten"
 
 msgid "Generate lists for classes and workgroups"
-msgstr "Generieren von Listen für Klassen und Arbeitgruppen"
+msgstr "Generieren von Listen für Klassen und Arbeitsgruppen"
