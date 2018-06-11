@@ -3,13 +3,14 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-49A~4.2.0.201806111413
+fix: 15.0.3-50A~4.2.0.201806111825
 desc: |
  * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47028).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #47073).
  * Leading and trailing whitespace in CSV cells is now removed. Access to the unmodified data (including the whitespace is still possible through the <literal>input_data</literal> attribute of <classname>ImportUser</classname> objects (Bug #47092).
  * Increase Celery worker startup verbosity, adapt HTTP-API import code to handle newer Django versions (Bug #47118).
  * When using the HTTP-API based CSV import, the roles of the connected user can now be retrieved through a HTTP-API resource (Bug #46832).
+ * A ou_post_create hook has been added, that creates the corresponding Django School object (Bug #46832).
  * The WSGI server Gunicorn now runs on port 9898 by default. This can be changed using the UCR variable ucsschool/import/http_api/wsgi_server_port (Bug #47134).
  * The loglevel of the WSGI server Gunicorn is now configurable through the UCR variable ucsschool/import/http_api/wsgi_server_loglevel (Bug #46831).
  * The HTTP-API import now always prepends the school name to class names read from a CSV file (Bug #47157).
