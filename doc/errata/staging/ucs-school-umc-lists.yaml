@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [0]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-umc-lists
+fix: 1.0.0-4A~4.3.0.201806111034
+desc: |
+ * Add a new module to the education tab for exporting class and workgroup lists. The lists are exported in the CSV format. The new module is activated for administrators and teachers (Bug #47017).
+bug: [47017]
