@@ -1,3 +1,11 @@
+ucs-school-import (15.0.3-50) unstable; urgency=low
+
+  * Bug #46832: add ou_post_create hook that creates the corresponding Django
+    School object
+
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 11 Jun 2018 18:24:25 +0200
+
 ucs-school-import (15.0.3-49) unstable; urgency=low
 
   * Bug #47157: force use of HttpApiCsvReader
