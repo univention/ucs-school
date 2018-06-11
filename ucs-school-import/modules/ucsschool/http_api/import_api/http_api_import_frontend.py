@@ -39,6 +39,7 @@ import shutil
 import pprint
 from django.conf import settings
 from celery.states import STARTED as CELERY_STATES_STARTED
+from ucsschool.importer.factory import load_class
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.exceptions import InitialisationError
 
@@ -55,6 +56,9 @@ class HttpApiImportFrontend(UserImportCommandLine):
 	"""
 	# TODO: replace this with a class with an interface appropriate for remote API calls.
 	# Especially we have to (not) catch the exceptions here, so they end up in the TaskResult.
+
+	http_api_specific_config = 'user_import_http-api.json'
+	reader_class = 'ucsschool.importer.reader.http_api_csv_reader.HttpApiCsvReader'
 
 	def __init__(self, import_job, task, logger):
 		self.import_job = import_job
@@ -102,7 +106,6 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			user_role=self.import_job.user_role,
 			verbose=True)
 		self.args.settings = {
-			'classes': {'reader': 'ucsschool.importer.reader.http_api_csv_reader.HttpApiCsvReader'},
 			'dry_run': self.import_job.dryrun,
 			'hooks_dir_legacy': self.hook_dir,
 			'hooks_dir_pyhook': self.pyhook_dir,
@@ -116,14 +119,21 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			'sourceUID': self.import_job.source_uid,
 			'progress_notification_function': self.update_job_state,
 			'user_role': self.import_job.user_role,
-			'verbose': True,
 		}
 		self.task_logger.info('HttpApiImportFrontend: Set up import job with args:\n%s', pprint.pformat(self.args.__dict__))
 		return self.args
 
 	@property
 	def configuration_files(self):
+		"""
+		User import configuration files.
+
+		:return: list of filenames
+		:rtype: list(str)
+		"""
 		conf_files = super(HttpApiImportFrontend, self).configuration_files
+		conf_files.append(os.path.join('/usr/share/ucs-school-import/configs', self.http_api_specific_config))
+		conf_files.append(os.path.join('/var/lib/ucs-school-import/configs', self.http_api_specific_config))
 		conf_files_job = list()
 		# prefix all file names, so they never clash
 		num = 0
@@ -149,7 +159,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			conf_files_job.append(numbered_ou_config_file)
 			self.logger.info('Copied %r to %r.', ou_config_source_path, numbered_ou_config_file)
 		else:
-			self.logger.warn('No school specific configuration found (%r).', ou_config_source_path)
+			self.logger.info('No school specific configuration found (%r).', ou_config_source_path)
 		return conf_files_job
 
 	@staticmethod
@@ -161,6 +171,23 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			total=total,
 		))
 		return kwargs
+
+	def setup_config(self):
+		# Bug #47156: check that the used CSV reader is HttpApiCsvReader or a subclass
+		error_msg = (
+			'The CSV reader class for the HTTP-API import must be {!r} (or derived from it).'.format(self.reader_class))
+		config = super(HttpApiImportFrontend, self).setup_config()
+		try:
+			reader_class_name = config['classes']['reader']
+		except KeyError:
+			raise InitialisationError(error_msg)
+
+		if reader_class_name != self.reader_class:
+			config_reader_class = load_class(reader_class_name)
+			http_reader_class = load_class(self.reader_class)
+			if not issubclass(config_reader_class, http_reader_class):
+				raise InitialisationError(error_msg)
+		return config
 
 	def update_job_state(self, description, percentage=0, done=0, total=0, celery_task_state=CELERY_STATES_STARTED, **kwargs):
 		"""
