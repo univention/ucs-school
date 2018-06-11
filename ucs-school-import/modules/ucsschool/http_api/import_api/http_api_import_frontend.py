@@ -102,6 +102,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			user_role=self.import_job.user_role,
 			verbose=True)
 		self.args.settings = {
+			'classes': {'reader': 'ucsschool.importer.reader.http_api_csv_reader.HttpApiCsvReader'},
 			'dry_run': self.import_job.dryrun,
 			'hooks_dir_legacy': self.hook_dir,
 			'hooks_dir_pyhook': self.pyhook_dir,
