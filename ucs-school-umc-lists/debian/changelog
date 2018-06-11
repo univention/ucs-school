@@ -1,6 +1,12 @@
+ucs-school-umc-lists (1.0.0-4) unstable; urgency=medium
+
+  * Bug #47017: Multiple small text fixes; remove trailing js commas
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 11 Jun 2018 10:28:26 +0200
+
 ucs-school-umc-lists (1.0.0-3) unstable; urgency=medium
 
-  * Bug #47017: User uppercase in csv header; Helptext modifications
+  * Bug #47017: Use uppercase in csv header; Helptext modifications
 
  -- Jürn Brodersen <brodersen@univention.de>  Mon, 04 Jun 2018 13:09:47 +0200
 
