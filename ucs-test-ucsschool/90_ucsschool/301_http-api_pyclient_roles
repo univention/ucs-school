@@ -13,38 +13,34 @@ import pprint
 import random
 from ldap.filter import filter_format
 import univention.testing.strings as uts
-import univention.testing.utils as utils
 from ucsschool.http_api.client import Client
-from essential.importusers_cli_v2 import ImportTestbase
+from essential.importusers_http import HttpApiImportTester
 
 
-class Test(ImportTestbase):
+class Test(HttpApiImportTester):
 	def test(self):
 		user_creation_fn = [self.schoolenv.create_staff, self.schoolenv.create_teacher, self.schoolenv.create_teacher_and_staff]
 		ous = [self.ou_A, self.ou_B, self.ou_C]
-		roles = ['staff', 'student', 'teacher', 'teacher_and_staff']
 		password = uts.random_string()
 		random.shuffle(user_creation_fn)
 		random.shuffle(ous)
-		random.shuffle(roles)
+		all_roles = list(self.all_roles)
+		random.shuffle(all_roles)
 
-		self.log.info('*** Created user...')
+		self.log.info('*** Creating user...')
 		username, user_dn = user_creation_fn[0](ous[0].name, password=password)
 
 		self.log.info('*** Modifying import-permission groups...')
-		role_combinations = [{roles[0], roles[1]}, {roles[1], roles[2]}, {roles[2]}]
+		role_combinations = [{all_roles[0], all_roles[1]}, {all_roles[1], all_roles[2]}, {all_roles[2]}]
 
 		groups = {}
 		for ou in ous:
 			roles = role_combinations.pop()
-			group_dn, group_name = self.udm.create_group(
-				position='cn=groups,{}'.format(ou.dn),
-				options=['posix', 'samba', 'ucsschoolImportGroup'],
-				append={
-					'users': [user_dn],
-					'ucsschoolImportRole': roles,
-					'ucsschoolImportSchool': [ou.name],
-				}
+			group_dn, group_name = self.create_import_security_group(
+				ou_dn=ou.dn,
+				allowed_ou_names=[ou.name],
+				roles=roles,
+				user_dns=[user_dn]
 			)
 			groups[ou] = {'dn': group_dn, 'roles': roles}
 
@@ -62,8 +58,18 @@ class Test(ImportTestbase):
 		)):
 			self.log.info('%s: %s', dn, pprint.pformat(obj))
 
-		self.log.info('*** Checking roles via Python-API...')
 		client = Client(username, password, log_level=Client.LOG_RESPONSE)
+
+		self.log.info('*** Checking schools via Python-API...')
+		schools = client.school.list()
+		expected_schools = set(ou.name for ou in ous)
+		received_schools = set(s.name for s in schools)
+		self.log.info('Expected schools: %r', expected_schools)
+		self.log.info('Received schools: %r', received_schools)
+		if expected_schools != received_schools:
+			self.fail('expected schools != found schools.')
+
+		self.log.info('*** Checking roles via Python-API...')
 		for ou in ous:
 			expected_roles = groups[ou]['roles']
 			roles_from_api = client.school.get(ou.name).roles
@@ -73,7 +79,7 @@ class Test(ImportTestbase):
 			if expected_roles == received_roles:
 				self.log.info('OK.')
 			else:
-				utils.fail('expected roles != found roles.')
+				self.fail('expected roles != found roles.')
 
 
 if __name__ == '__main__':
