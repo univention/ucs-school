@@ -29,6 +29,11 @@ import univention.testing.utils as utils
 import univention.testing.format.text
 from univention.testing.ucs_samba import wait_for_drs_replication
 
+try:
+	from typing import Dict, List, Optional, Tuple
+except ImportError:
+	pass
+
 
 class ImportException(Exception):
 	pass
@@ -165,6 +170,7 @@ class ImportTestbase(object):
 	ou_B = utu.Bunch(name=None, dn=None)  # set ou_B to None if a second OU is not needed
 	ou_C = utu.Bunch(name=None, dn=None)  # set ou_C to None if a third OU is not needed
 	use_ou_cache = True  # if True: use cached OUs, if false create fresh OUs
+	all_roles = ('staff', 'student', 'teacher', 'teacher_and_staff')
 
 	def __init__(self):
 		self.ucr = univention.testing.ucr.UCSTestConfigRegistry()
