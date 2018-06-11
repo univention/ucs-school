@@ -257,6 +257,18 @@ class ResourceRepresentation(object):
 			return '{}(status={!r})'.format(self.__class__.__name__, self.status)
 
 	class UserImportJobResource(_ResourceReprBase):
+		"""
+		Representation of an import job resource.
+
+		`job = client.userimportjob.get(job_id)`
+
+		* job.status
+		* job.result
+		* job.log_file
+		* job.password_file
+		* job.school
+		* job.summary_file
+		"""
 		__metaclass__ = _ResourceRepresentationMetaClass
 		resource_name = 'imports/users'
 		_attribute_repr = {
@@ -326,6 +338,15 @@ class ResourceRepresentation(object):
 
 
 class Client(object):
+	"""
+	HTTP-API import client.
+
+	client = Client(username, password)
+	my_schools = client.school.list()
+	my_roles_at_school1 = client.school.get('school1').roles
+	job_id = client.userimportjob.create()
+	client.userimportjob.get(job_id)
+	"""
 	LOG_REQUEST = 5
 	LOG_RESPONSE = 4
 

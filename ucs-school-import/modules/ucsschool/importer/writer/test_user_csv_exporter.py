@@ -78,7 +78,6 @@ class HttpApiTestUserCsvExporter(TestUserCsvExporter):
 			user["Klassen"] = sc.strip(",")
 		else:
 			user["Klassen"] = ""
-		print('user[Schulen]=%r' % (user["Schulen"],))
 		user["Schule"] = user["Schulen"][0]
 		del user["Schulen"]
 		del user["Benutzertyp"]
