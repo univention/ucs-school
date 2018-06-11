@@ -37,10 +37,13 @@ Files read and written during import job (CSV, hooks, logfile, summary, new-user
 All input and output of an import job (incl the logfiles) are located in ``/var/lib/ucs-school-import/jobs/<year>/<job id>/``.
 Such a directory will for example include the following files and subdirectories:
 
-* ``0_global_defaults.json``: Configuration files used in import job. Copied from ``/usr/share/ucs-school-import/configs/``.
-* ``1_global.json``: Configuration files used in import job. Copied from ``/usr/share/ucs-school-import/configs/``.
-* ``2_user_import_defaults.json``: Configuration files used in import job. Copied from ``/usr/share/ucs-school-import/configs/``.
-* ``3_user_import.json``: Configuration files used in import job. Copied from ``/var/lib/ucs-school-import/configs/``.
+* ``0_global_defaults.json``: Global configuration file used in import job. Copied from ``/usr/share/ucs-school-import/configs/``.
+* ``1_global.json``: Custom configuration file used in import job. Copied from ``/var/lib/ucs-school-import/configs/``.
+* ``2_user_import_defaults.json``: Default configuration file used in import job. Copied from ``/usr/share/ucs-school-import/configs/``.
+* ``3_user_import.json``: Custom configuration file used in import job. Copied from ``/var/lib/ucs-school-import/configs/``.
+* ``4_user_import_http-api.json`` : Default configuration file used in import job. Copied from ``/usr/share/ucs-school-import/configs/``.
+* ``5_user_import_http-api.json`` : Custom configuration file used in import job. Copied from ``/var/lib/ucs-school-import/configs/``.
+* ``6_gsmitte.json`` : Custom configuration file for OU ``gsmitte`` used in import job. Copied from ``/var/lib/ucs-school-import/configs/``.
 * ``1528356738-10_teachers.csv``: Previously uploaded CSV input file.
 * ``hooks/``: Shell hooks directory copied from ``/usr/share/ucs-school-import/hooks``.
 * ``new_user_passwords.csv``: Passwords of new users created in import job, downloadable through HTTP-API and UMC module.
