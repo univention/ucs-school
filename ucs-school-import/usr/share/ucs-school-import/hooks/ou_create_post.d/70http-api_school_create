@@ -1,0 +1,16 @@
+#!/usr/bin/python2.7
+
+import sys, os, django
+from univention.admin.uldap import explodeDn
+
+ou = explodeDn(sys.argv[2], 1)[0]
+
+# setup Django
+sys.path.append('/usr/share/pyshared/ucsschool/http_api/')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
+django.setup()
+
+# create Django School object
+from ucsschool.http_api.import_api.models import School
+School.update_from_ldap(ou)
+
