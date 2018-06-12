@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-52) unstable; urgency=low
+
+  * Bug #47157: fix double .json, strip whitespace from class names, remove
+    test class
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 12 Jun 2018 12:03:08 +0200
+
 ucs-school-import (15.0.3-51) unstable; urgency=low
 
   * Bug #47181: create custom django-admin commands
