@@ -185,7 +185,7 @@ echo "Collecting static files..."
 python /usr/share/pyshared/ucsschool/http_api/manage.py collectstatic --no-color --noinput --link || die
 echo "Migrating DB schema..."
 python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput || die
-if python /usr/share/pyshared/ucsschool/http_api/manage.py shell --no-color --plain -c  "import sys; from django.contrib.auth.models import User; sys.exit(int(not User.objects.filter(username=\"$ADMINISTRATOR_UID\", is_superuser=True).exists()))";
+if python /usr/share/pyshared/ucsschool/http_api/manage.py superuserexists "$ADMINISTRATOR_UID";
 then
     printf "\nSuper user exists.\n"
 else
@@ -193,7 +193,7 @@ else
     python /usr/share/pyshared/ucsschool/http_api/manage.py createsuperuser --username "$ADMINISTRATOR_UID" --email "root@$hostname.$domainname" --no-color --noinput
 fi
 echo "Seeding DB with School entries..."
-python /usr/share/pyshared/ucsschool/http_api/manage.py shell --no-color --plain -c 'from ucsschool.http_api.import_api.models import School; School.update_from_ldap()'
+python /usr/share/pyshared/ucsschool/http_api/manage.py updateschools --all
 
 a2enmod proxy_http
 a2ensite ucs-school-import-http-api.conf
