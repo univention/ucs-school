@@ -55,7 +55,7 @@ class HttpApiCsvReader(CsvReader):
 		if mapping_value == 'school_classes':
 			if not isinstance(import_user, Staff):  # ignore column if user is staff
 				import_user.school_classes = {
-					self.config['school']: ['{}-{}'.format(self.config['school'], sc) for sc in csv_value.split(',') if sc]
+					self.config['school']: ['{}-{}'.format(self.config['school'], sc.strip()) for sc in csv_value.split(',') if sc.strip()]
 				}
 			return True
 		return super(HttpApiCsvReader, self).handle_input(mapping_key, mapping_value, csv_value, import_user)
