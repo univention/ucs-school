@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-51) unstable; urgency=low
+
+  * Bug #47181: create custom django-admin commands
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 12 Jun 2018 11:20:23 +0200
+
 ucs-school-import (15.0.3-50) unstable; urgency=low
 
   * Bug #46832: add ou_post_create hook that creates the corresponding Django
