@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-50A~4.2.0.201806111825
+fix: 15.0.3-51A~4.2.0.201806121121
 desc: |
  * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47028).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #47073).
@@ -14,5 +14,6 @@ desc: |
  * The WSGI server Gunicorn now runs on port 9898 by default. This can be changed using the UCR variable ucsschool/import/http_api/wsgi_server_port (Bug #47134).
  * The loglevel of the WSGI server Gunicorn is now configurable through the UCR variable ucsschool/import/http_api/wsgi_server_loglevel (Bug #46831).
  * The HTTP-API import now always prepends the school name to class names read from a CSV file (Bug #47157).
- * The HTTP-API now uses a default and a custom configuration file <file>user_import_http-api.json</file> located in the same directories as the other configuration files (Bug #471567.
-bug: [47028, 47073, 47092, 47118, 46832, 47134, 46831, 47157]
+ * The HTTP-API now uses a default and a custom configuration file <file>user_import_http-api.json</file> located in the same directories as the other configuration files (Bug #471567).
+ * Custom django-admin commands were added to make the join script more reliable (Bug #47181).
+bug: [47028, 47073, 47092, 47118, 46832, 47134, 46831, 47157, 47181]
