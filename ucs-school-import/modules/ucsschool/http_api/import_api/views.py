@@ -51,7 +51,7 @@ from rest_framework.permissions import BasePermission, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
 from ucsschool.importer.utils.ldap_connection import get_machine_connection
-from ucsschool.http_api.import_api.models import JOB_CHOICES, Role,School, TextArtifact, UserImportJob
+from ucsschool.http_api.import_api.models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
 from ucsschool.http_api.import_api.serializers import (
 	UserImportJobCreationValidator,
 	UserImportJobSerializer,
