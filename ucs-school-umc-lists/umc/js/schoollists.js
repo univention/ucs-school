@@ -143,8 +143,9 @@ define([
 					}).then(lang.hitch(this, 'openDownload'));
 				})
 			});
-
-			this._searchPage.addChild(this._searchForm);
+			var container = new ContainerWidget();
+			container.addChild(this._searchForm);
+			this._searchPage.addChild(container);
 			this._searchForm.ready().then(lang.hitch(this, 'standby', false));
 
 		}

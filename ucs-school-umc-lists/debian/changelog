@@ -1,3 +1,9 @@
+ucs-school-umc-lists (1.0.0-5) unstable; urgency=medium
+
+  * Bug #47017: Show the help text on the right side for widescreen displays
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 13 Jun 2018 12:38:57 +0200
+
 ucs-school-umc-lists (1.0.0-4) unstable; urgency=medium
 
   * Bug #47017: Multiple small text fixes; remove trailing js commas
