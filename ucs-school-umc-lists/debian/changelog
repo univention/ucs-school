@@ -1,3 +1,9 @@
+ucs-school-umc-lists (1.0.0-6) unstable; urgency=medium
+
+  * Bug #47017: remove fullWidth attribute from help text
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 13 Jun 2018 12:47:35 +0200
+
 ucs-school-umc-lists (1.0.0-5) unstable; urgency=medium
 
   * Bug #47017: Show the help text on the right side for widescreen displays
