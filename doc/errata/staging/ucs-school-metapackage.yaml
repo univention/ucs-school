@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [0]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-metapackage
+fix: 11.0.1-3A~4.3.0.201806131337
+desc: |
+ * The new module "Classlists" has been added to the recommended packages (Bug #47017).
+bug: [47017]
