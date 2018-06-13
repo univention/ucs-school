@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.1-3) unstable; urgency=medium
+
+  * Bug #47017: Add package ucs-school-umc-lists to recommends
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 13 Jun 2018 13:22:36 +0200
+
 ucs-school-metapackage (11.0.1-2) unstable; urgency=medium
 
   * Bug #46265: add Console Logon to connector/s4/mapping/group/ignorelist
