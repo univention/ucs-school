@@ -386,6 +386,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
 			"sourceUID": "sourceDB",
 			"user_role": "student",
 			"tolerate_errors": 0,
+			"verbose": True,
 		})
 
 	def cleanup(self):
