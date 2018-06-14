@@ -113,6 +113,6 @@ def dry_run(self, importjob_id):
 	summary_str = run_import_job(self, importjob_id)
 	logger.info('Finished dry run %d.', importjob_id)
 	return HttpApiImportFrontend.make_job_state(
-		description='UserImportJob #{} (dryrun) ended successfully.\n\n{}'.format(importjob_id, summary_str),
+		description='UserImportJob #{} (dry run) ended successfully.\n\n{}'.format(importjob_id, summary_str),
 		percentage=100
 	)

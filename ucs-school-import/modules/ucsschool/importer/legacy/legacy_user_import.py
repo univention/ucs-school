@@ -79,7 +79,7 @@ class LegacyUserImport(UserImport):
 					if user.school != imported_user.school:
 						user = self.school_move(imported_user, user)
 					if self.dry_run:
-						self.logger.info("Dry run - not reactivating.")
+						self.logger.info("Dry-run: not reactivating.")
 					else:
 						user.reactivate()
 					user.update(imported_user)
@@ -102,7 +102,7 @@ class LegacyUserImport(UserImport):
 				if user.disabled != "none" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
 					self.logger.info("Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is non-empty), reactivating user.", user)
 					if self.dry_run:
-						self.logger.info("Dry run - not reactivating.")
+						self.logger.info("Dry-run: not reactivating.")
 					else:
 						user.reactivate()
 				user.update(imported_user)

@@ -89,7 +89,7 @@ class ParseUserImportCmdline(object):
 			"--dry-run",
 			dest="dry_run",
 			action="store_true",
-			help="Dry run - don't actually commit changes to LDAP (shortcut for --set dry_run=...) [default: %(default)s].")
+			help="Dry-run: don't actually commit changes to LDAP (shortcut for --set dry_run=...) [default: %(default)s].")
 		self.parser.add_argument(
 			"--sourceUID",
 			help="The ID of the source database (shortcut for --set sourceUID=...) [mandatory either here or in the "
