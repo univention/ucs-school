@@ -48,6 +48,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		('printermoderation', None),
 		('schoolgroups', 'workgroup-admin'),
 		('schoolusers', 'student'),
+		('schoollists', None),
 	]
 	# Schuladmin sollte auf dem DC Master
 	dc_schooladmin = defaultList + [('schoolusers', 'student'), ('schoolusers', 'teacher'), ('schoolrooms', None), ('schoolgroups', 'workgroup-admin'), ('schoolgroups', 'class'), ('schoolgroups', 'teacher'), ]
@@ -67,6 +68,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		('internetrules', 'admin'),
 		('internetrules', 'assign'),
 		('lessontimes', None),
+		('schoollists', None),
 	]
 	# Domanenadministrator auf dem DC Master
 	dc_domainadmin = defaultList + [

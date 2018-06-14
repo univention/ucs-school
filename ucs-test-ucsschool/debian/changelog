@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-58) unstable; urgency=medium
+
+  * Bug #47017: add new module to test
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 14 Jun 2018 16:09:21 +0200
+
 ucs-test-ucsschool (5.0.2-57) unstable; urgency=medium
 
   * Bug #40727: reuse umc connection to save memory
