@@ -193,7 +193,8 @@ class ImportUser(User):
 				load_pyhook_only_if_supports_dry_run if self.config['dry_run'] else None
 			)
 			self.__class__._pyhook_cache = pyhooks_loader.get_hook_objects(lo=self.lo, dry_run=self.config['dry_run'])
-			# update self from LDAP
+		if hook_time == "post" and self.action in ["A", "M"] and not (self.config['dry_run'] and self.action == "A"):
+			# update self from LDAP if object exists (after A and M), except after a dry-run create
 			user = self.get_by_import_id(self.lo, self.source_uid, self.record_uid)
 			user_udm = user.get_udm_object(self.lo)
 			# copy only those UDM properties from LDAP that were originally
