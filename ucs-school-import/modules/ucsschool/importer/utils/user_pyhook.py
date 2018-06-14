@@ -42,12 +42,13 @@ class UserPyHook(ImportPyHook):
 
 	The base class' :py:meth:`__init__()` provides the following attributes:
 
-	* self.lo          # LDAP object
+	* self.lo          # LDAP connection object (2)
 	* self.logger      # Python logging instance
 
 	If multiple hook classes are found, hook functions with higher
 	priority numbers run before those with lower priorities. None disables
 	a function.
+	(2) cn=admin connection in a real run, machine connection during a dry-run.
 	"""
 	priority = {
 		"pre_create": None,
