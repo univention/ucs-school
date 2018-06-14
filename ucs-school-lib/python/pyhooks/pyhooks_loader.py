@@ -46,18 +46,28 @@ class PyHooksLoader(object):
 	Use get_hook_classes() if you want to initialize them yourself.
 	"""
 
-	def __init__(self, base_dir, base_class, logger):
+	def __init__(self, base_dir, base_class, logger, filter_func=None):
 		"""
-		:param base_dir: str: path to a directory containing Python files
-		:param base_class: type: only subclasses of this class will be imported
-		:param logger: Python logging instance to use for loader logging (hint:
-		if you wish to pass a logging instance to a hook, add it to the
-		arguments list of get_hook_objects() and receive it in the hooks
-		__init__ method)
+
+		Hint: if you wish to pass a logging instance to a hook, add it to the
+		arguments list of :py:meth:`get_hook_objects()` and receive it in the
+		hooks :py:meth:`__init__()` method.
+
+		If `filter_func` is a callable, it will be passed each class that is
+		considered for loading and it can decide if it should be loaded or not.
+		Thus its signature is `(type) -> bool`.
+
+		:param str base_dir: path to a directory containing Python files
+		:param type base_class: only subclasses of this class will be imported
+		:param logging.Logger logger: Python logging instance to use for loader logging
+		:param Callable filter_func: function that takes a class and returns a bool
 		"""
 		self.base_dir = base_dir
 		self.base_class = base_class
 		self.logger = logger
+		if filter_func:
+			assert callable(filter_func), "'filter_func' must be a callable, got {!r}.".format(filter_func)
+		self._filter_func = filter_func
 		self._hook_classes = None
 		self._pyhook_obj_cache = None
 
@@ -77,17 +87,25 @@ class PyHooksLoader(object):
 		Search hook files in filesystem and load classes.
 		No objects are initialized, no sorting is done.
 
-		:return: list: PyHook subclasses
+		:return: list of PyHook subclasses
+		:rtype: list[type]
 		"""
 		if self._hook_classes is None:
-			self.logger.info("Searching for hooks in: %s...", self.base_dir)
+			self.logger.info("Searching for hooks of type %r in: %s...", self.base_class.__name__, self.base_dir)
 			self._hook_classes = list()
+			if self._filter_func:
+				filter_func = self._filter_func
+			else:
+				filter_func = lambda x: True
 			for filename in listdir(self.base_dir):
 				if filename.endswith(".py") and os.path.isfile(os.path.join(self.base_dir, filename)):
 					info = imp.find_module(filename[:-3], [self.base_dir])
 					a_class = self._load_hook_class(filename[:-3], info, self.base_class)
 					if a_class:
-						self._hook_classes.append(a_class)
+						if filter_func(a_class):
+							self._hook_classes.append(a_class)
+						else:
+							self.logger.info("Hook class %r filtered out by %s().", a_class.__name__, filter_func.func_name)
 			self.logger.info("Found hook classes: %s", ", ".join(c.__name__ for c in self._hook_classes))
 		return self._hook_classes
 
@@ -95,10 +113,10 @@ class PyHooksLoader(object):
 		"""
 		Get hook classes, initialize objects and sort by method and priority.
 
-		:param args: list: arguments to pass to __init__ of hooks
-		:param kwargs: dict: arguments to pass to __init__ of hooks
-		:return: dict of lists: initialized hook objects, sorted by method
-		and method-priority
+		:param tuple args: arguments to pass to __init__ of hooks
+		:param  dict kwargs: arguments to pass to __init__ of hooks
+		:return: initialized hook objects, sorted by method and method-priority
+		:rtype: Dict[List[ucsschool.lib.pyhooks.PyHook]]
 		"""
 		if self._pyhook_obj_cache is None:
 			pyhook_objs = [pyhook_cls(*args, **kwargs) for pyhook_cls in self.get_hook_classes()]
