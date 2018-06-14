@@ -64,7 +64,7 @@ Add user "astaff" to group `<OU>-import-all`.
 * login as 'astaff' with $BROWSER
 * open 'schoolimport' module
 	* <OU> + "Staff"
-	* → UserImportJob #1 (dryrun) ended successfully.
+	* → UserImportJob #1 (dry-run) ended successfully.
 	* Press "Start Import"
 		* Overview User Imports
 		* → "A new import of Staff users at school $OU has been started. The import has the ID 2."

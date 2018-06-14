@@ -107,10 +107,10 @@ def import_users(self, importjob_id):
 
 @shared_task(bind=True)
 def dry_run(self, importjob_id):
-	logger.info('Starting dry run %d (%r).', importjob_id, self)
+	logger.info('Starting dry-run %d (%r).', importjob_id, self)
 	run_import_job(self, importjob_id)
-	logger.info('Finished dry run %d.', importjob_id)
+	logger.info('Finished dry-run %d.', importjob_id)
 	return HttpApiImportFrontend.make_job_state(
-		description='UserImportJob #{} (dryrun) ended successfully.'.format(importjob_id),
+		description='UserImportJob #{} (dry-run) ended successfully.'.format(importjob_id),
 		percentage=100
 	)
