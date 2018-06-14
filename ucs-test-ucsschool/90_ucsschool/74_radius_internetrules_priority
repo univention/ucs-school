@@ -12,12 +12,14 @@ from essential.workgroup import Workgroup
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 from univention.testing import utils, ucs_samba
+from univention.testing.umc import Client
 
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			umc_connection = Client.get_test_connection()
 
 			groups = []
 			users = []
@@ -26,7 +28,7 @@ def main():
 			rules_attrs = [(False, 2), (True, 6), (True, 1), (False, 9), (True, 0), (False, 4), (True, 5), (False, 10)]
 
 			for (wlan, priority) in rules_attrs:
-				rule = InternetRule(wlan=wlan, priority=priority)
+				rule = InternetRule(wlan=wlan, priority=priority, connection=umc_connection)
 				rule.define()
 				rules.append(rule)
 
@@ -35,7 +37,7 @@ def main():
 				stu, stu_dn = schoolenv.create_user(school)
 				users.append([tea, stu])
 				for j in xrange(2):
-					group = Workgroup(school, members=[tea_dn, stu_dn])
+					group = Workgroup(school, members=[tea_dn, stu_dn], connection=umc_connection)
 					group.create()
 					groups.append(group)
 
@@ -43,7 +45,7 @@ def main():
 			stu, stu_dn = schoolenv.create_user(school)
 			users.append([tea, stu])
 			for j in xrange(4):
-				group = Workgroup(school, members=[tea_dn, stu_dn])
+				group = Workgroup(school, members=[tea_dn, stu_dn], connection=umc_connection)
 				group.create()
 				groups.append(group)
 
