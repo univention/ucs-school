@@ -55,7 +55,7 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
 from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
@@ -130,6 +130,8 @@ class ImportUser(User):
 		self.old_user = None          # user in LDAP, when modifying
 		self.in_hook = False          # if a hook is currently running
 
+		self._lo = None
+
 		for attr in self._additional_props:
 			try:
 				val = kwargs.pop(attr)
@@ -149,10 +151,10 @@ class ImportUser(User):
 				"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
 				"mailPrimaryAddress uid"
 			).split()
-		self._lo = None
 		self._userexpiry = None
 		self._purge_ts = None
 		self._used_methods = defaultdict(list)  # recursion prevention
+		self.lo = kwargs.pop('lo', None)
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -185,8 +187,8 @@ class ImportUser(User):
 			self.__class__._pyhook_cache = pyloader.get_hook_objects(self._lo)
 		if hook_time == "post" and self.action in ["A", "M"]:
 			# update self from LDAP
-			user = self.get_by_import_id(self._lo, self.source_uid, self.record_uid)
-			user_udm = user.get_udm_object(self._lo)
+			user = self.get_by_import_id(self.lo, self.source_uid, self.record_uid)
+			user_udm = user.get_udm_object(self.lo)
 			# copy only those UDM properties from LDAP that were originally
 			# set in self.udm_properties
 			for k in self.udm_properties.keys():
@@ -290,7 +292,7 @@ class ImportUser(User):
 		:return: whether the object created succeeded
 		:rtype: bool
 		"""
-		self._lo = lo
+		self.lo = lo
 		self.check_schools(lo)
 		if self.in_hook:
 			# prevent recursion
@@ -456,6 +458,25 @@ class ImportUser(User):
 		"""
 		user_udm = self.get_udm_object(connection)
 		return bool(user_udm["userexpiry"])
+
+	@property
+	def lo(self):
+		"""
+		LDAP connection object
+
+		cn=admin connection in a real run, machine connection during a dry-run.
+		"""
+		if not self._lo:
+			self._lo, po = get_machine_connection() if self.config['dry_run'] else get_admin_connection()
+		cn_admin_dn = 'cn=admin,{}'.format(self.ucr['ldap/base'])
+		assert not (self.config['dry_run'] and self._lo.binddn == cn_admin_dn)
+		return self._lo
+
+	@lo.setter
+	def lo(self, value):
+		cn_admin_dn = 'cn=admin,{}'.format(self.ucr['ldap/base'])
+		assert not (self.config['dry_run'] and value == cn_admin_dn)
+		self._lo = value
 
 	def prepare_all(self, new_user=False):
 		"""
@@ -781,8 +802,8 @@ class ImportUser(User):
 			self.name = self.old_user.name
 		return self.name or ""
 
-	def modify(self, lo, validate=True, move_if_necessary=None):
-		self._lo = lo
+	def modify(self, lo, validate=True, move_if_necessary=None, scheduled_for_deletion=False):
+		self.lo = lo
 		self.check_schools(lo)
 		if self.in_hook:
 			# prevent recursion
@@ -802,7 +823,7 @@ class ImportUser(User):
 		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
-		self._lo = lo
+		self.lo = lo
 		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
 
@@ -849,7 +870,7 @@ class ImportUser(User):
 		self.set_purge_timestamp("")
 
 	def remove(self, lo):
-		self._lo = lo
+		self.lo = lo
 		return super(ImportUser, self).remove(lo)
 
 	def run_checks(self, check_username=False):
