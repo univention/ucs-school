@@ -208,7 +208,9 @@ class ImportUser(User):
 		meth_name = "{}_{}".format(hook_time, func_name)
 		try:
 			for func in self._pyhook_cache.get(meth_name, []):
-				self.logger.info("Running %s hook %s for %s...", meth_name, func, self)
+				self.logger.debug(
+					"Running %s hook %s.%s for %s...",
+					meth_name, func.im_class.__name__, func.im_func.func_name, self)
 				func(self)
 		finally:
 			self.in_hook = False
@@ -242,7 +244,7 @@ class ImportUser(User):
 			if prop_name not in func.im_class.properties:
 				# ignore properties not in Hook.properties
 				continue
-			self.logger.info(
+			self.logger.debug(
 				"Running patch_fields_%s hook %s for property name %r for user %s...",
 				self.role_sting, func, prop_name, self)
 			res = func(prop_name, res)
