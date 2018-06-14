@@ -16,34 +16,35 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.umc import Client
 
 # this test fails every now and then, lets see if more waiting helps
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
 
 
-def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None):
+def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None, connection=None):
 	print('\n>>>> Creating 4 users...\n')
 	users = []
 
-	user = User(school=schools[0], role='student', school_classes=deepcopy(student_classes), schools=schools)
+	user = User(school=schools[0], role='student', school_classes=deepcopy(student_classes), schools=schools, connection=connection)
 	user.create()
 	user.verify()
 	user.check_get()
 	users.append(user)
 
-	user = User(school=schools[0], role='teacher', school_classes=deepcopy(teacher_classes), schools=schools)
+	user = User(school=schools[0], role='teacher', school_classes=deepcopy(teacher_classes), schools=schools, connection=connection)
 	user.create()
 	user.verify()
 	user.check_get()
 	users.append(user)
 
-	user = User(school=schools[0], role='staff', school_classes={}, schools=schools)
+	user = User(school=schools[0], role='staff', school_classes={}, schools=schools, connection=connection)
 	user.create()
 	user.verify()
 	user.check_get()
 	users.append(user)
 
-	user = User(school=schools[0], role='teacher_staff', school_classes=deepcopy(teacher_classes), schools=schools)
+	user = User(school=schools[0], role='teacher_staff', school_classes=deepcopy(teacher_classes), schools=schools, connection=connection)
 	user.create()
 	user.verify()
 	user.check_get()
@@ -73,25 +74,26 @@ def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
+			umc_connection = Client.get_test_connection(ucr.get('ldap/master'))
 			(ou, oudn), (ou2, oudn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get('hostname'))
-			class_01 = Klasse(school=ou)
+			class_01 = Klasse(school=ou, connection=umc_connection)
 			class_01.create()
-			class_02 = Klasse(school=ou)
+			class_02 = Klasse(school=ou, connection=umc_connection)
 			class_02.create()
 			student_classes = {ou: ['%s-%s' % (ou, class_01.name)]}
 			teacher_classes = {ou: ['%s-%s' % (ou, class_01.name), '%s-%s' % (ou, class_02.name)]}
 
 			print('\n>>>> Testing module with users in 1 OU ({}).\n'.format(ou))
-			test(student_classes, teacher_classes, [ou], ucr, ou)
+			test(student_classes, teacher_classes, [ou], ucr, ou, connection=umc_connection)
 
-			class_03 = Klasse(school=ou2)
+			class_03 = Klasse(school=ou2, connection=umc_connection)
 			class_03.create()
 			student_classes = {ou: ['%s-%s' % (ou, class_01.name)], ou2: ['%s-%s' % (ou2, class_03.name)]}
 			teacher_classes = {ou: ['%s-%s' % (ou, class_01.name), '%s-%s' % (ou, class_02.name)], ou2: ['%s-%s' % (ou2, class_03.name)]}
 
 			print('\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).'.format(ou, ou2))
 			print('>>>> Removing user from primary OU first.\n')
-			users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou)
+			users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou, connection=umc_connection)
 
 			for user in users:
 				print(user.username, user.role, user.school, user.schools)
@@ -104,7 +106,7 @@ def main():
 
 			print('\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).'.format(ou, ou2))
 			print('>>>> Removing user from secondary OU first.\n')
-			users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou2)
+			users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou2, connection=umc_connection)
 
 			for user in users:
 				wait_for_drs_replication(filter_format('cn=%s', (user.username,)))

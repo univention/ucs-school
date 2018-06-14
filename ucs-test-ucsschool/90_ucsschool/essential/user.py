@@ -45,7 +45,7 @@ class User(Person):
 	:type school_classes: dict
 	"""
 
-	def __init__(self, school, role, school_classes, mode='A', username=None, firstname=None, lastname=None, password=None, mail=None, schools=None):
+	def __init__(self, school, role, school_classes, mode='A', username=None, firstname=None, lastname=None, password=None, mail=None, schools=None, connection=None):
 		super(User, self).__init__(school, role)
 
 		if username:
@@ -66,13 +66,13 @@ class User(Person):
 		utils.wait_for_replication()
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
-		host = self.ucr.get('ldap/master')
-		self.client = Client(host)
+		if connection:
+			self.client = connection
+		else:
+			self.client = Client.get_test_connection(self.ucr.get('ldap/master'))
 		account = utils.UCSTestDomainAdminCredentials()
-		admin = account.username
 		passwd = account.bindpw
 		self.password = password if password else passwd
-		self.client.authenticate(admin, passwd)
 
 	def append_random_groups(self):
 		pass
