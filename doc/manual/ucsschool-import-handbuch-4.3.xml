@@ -1495,9 +1495,11 @@ import shutil
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 class MyHook(UserPyHook):
+    supports_dry_run = True  # Hook Klasse wird auch während eines
+                             # dry-runs ausgeführt
     priority = {
         "pre_create": 1,
-        "post_create": None,
+        "post_create": None,  # Funktion ist deaktiviert
         "pre_remove": 1
     }
 
@@ -1511,7 +1513,7 @@ class MyHook(UserPyHook):
                                                       Glückwunsch"
 
     def post_create(self, user):
-        # Diese Function ist deaktiviert.
+        # Diese Funktion ist deaktiviert.
         self.logger.info("Running a post_create hook for %s.", user)
 
     def pre_remove(self, user):
@@ -1519,11 +1521,20 @@ class MyHook(UserPyHook):
         self.logger.info("Backing up home directory of %s.", user)
         user_udm = user.get_udm_object(self.lo)
         homedir = user_udm["unixhome"]
-        shutil.copy2(homedir, "/var/backup/{}".format(user.name))
+        target = "/var/backup/{}".format(user.name)
+        if self.dry_run:
+            self.logger.info("Dry-run: would copy %r to %r.", homedir, target)
+        else:
+            shutil.copy2(homedir, target)
 				</programlisting>
 			</para>
 			<para>
 				<itemizedlist>
+					<listitem>
+						<simpara>
+							Da die Klassenvariable <code>supports_dry_run = True</code> gesetzt ist, wird der Hook auch während eines <option>dry-run</option> ausgeführt.
+						</simpara>
+					</listitem>
 					<listitem>
 						<simpara>
 							In <methodname>pre_create()</methodname> wird bei einem neuen Benutzer ein Gruß am Benutzerobjekt gespeichert, wenn er Geburtstag hat.
@@ -1536,7 +1547,7 @@ class MyHook(UserPyHook):
 					</listitem>
 					<listitem>
 						<simpara>
-							In <methodname>pre_remove()</methodname> wird ein Backup des Heimatverzeichnisses des Benutzers gemacht, bevor er gelöscht wird.
+							In <methodname>pre_remove()</methodname> wird, wenn nicht während eines <option>dry-run</option> ausgeführt, ein Backup des Heimatverzeichnisses des Benutzers gemacht, bevor er gelöscht wird.
 						</simpara>
 					</listitem>
 				</itemizedlist>
