@@ -213,11 +213,14 @@ class ImportUser(User):
 		finally:
 			self.in_hook = False
 
-		try:
-			self.hook_path = self.config['hooks_dir_legacy']
-		except KeyError:
-			pass
-		return super(ImportUser, self).call_hooks(hook_time, func_name)
+		if self.config['dry_run']:
+			return None
+		else:
+			try:
+				self.hook_path = self.config['hooks_dir_legacy']
+			except KeyError:
+				pass
+			return super(ImportUser, self).call_hooks(hook_time, func_name)
 
 	def call_format_hook(self, prop_name, fields):
 		"""
