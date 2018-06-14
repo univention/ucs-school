@@ -98,21 +98,6 @@ class Workgroup(object):
 			utils.fail('Unable to add workgroup (%r)' % (param,))
 		return requestResult
 
-	def createList(self, count):
-		"""create list of random workgroups returns list of groups objects\n
-		:param count: number of wanted workgroups
-		:type count: int
-		:returns: [workgroup_object]
-		"""
-		print 'Creating groupList'
-		groupList = []
-		for i in xrange(count):
-			g = self.__class__(self.school)
-			g._create()
-			groupList.append(g)
-		utils.wait_for_replication()
-		return groupList
-
 	def remove(self, options=None):
 		"""Removing a Workgroup from ldap"""
 		print 'Removing group %s from ldap' % (self.name)

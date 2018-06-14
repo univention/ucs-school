@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-61) unstable; urgency=medium
+
+  * Bug #42658: reuse umc connection to save memory (2)
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 14 Jun 2018 20:53:59 +0200
+
 ucs-test-ucsschool (5.0.2-60) unstable; urgency=medium
 
   * Bug #42658: reuse umc connection to save memory

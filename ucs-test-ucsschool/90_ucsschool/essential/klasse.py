@@ -86,22 +86,6 @@ class Klasse(object):
 		if not reqResult[0]:
 			raise CreateFail('Unable to create class (%r)' % (param,))
 
-	# create list of random classes returns list of class objects
-	def createList(self, count):
-		"""Create a list of classes inside the specific ou
-		with random names and description\n
-		:param count: number of wanted classes
-		:type count: int
-		:returns: [klasse_object]
-		"""
-		print 'Creating classesList'
-		cList = []
-		for i in xrange(count):
-			c = self.__class__(self.school, self.client, ucr=self.ucr)
-			c.create()
-			cList.append(c)
-		return cList
-
 	def query(self):
 		"""get the list of existing classes in the school"""
 		flavor = 'schoolwizards/classes'

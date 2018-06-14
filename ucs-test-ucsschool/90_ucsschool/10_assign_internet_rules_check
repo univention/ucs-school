@@ -13,6 +13,7 @@ import random
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.testing.umc import Client
 
 
 # Assign internetrules to groups randomly
@@ -33,25 +34,30 @@ def assignRulesToGroupsRandomly(groupList, ruleList, school, groupType):
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
+			umc_connection = Client.get_test_connection()
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 
-			# Instantiate InternetRule instance
-			ruleIns = InternetRule(ucr=ucr)
-
 			# define many random internet rules
-			newRules = ruleIns.defineList(8)
-
-			# test get the created rules via umc
-			for rule in newRules:
+			newRules = []
+			for _ in xrange(8):
+				rule = InternetRule(ucr=ucr, connection=umc_connection)
+				rule.define()
 				rule.get(should_exist=True)
+				newRules.append(rule)
+			utils.wait_for_replication()
 
 			# Create random workgroups
-			groupIns = Workgroup(school, ucr=ucr)
-			newWorkgroups = groupIns.createList(2)
-			assignedGroups = [(group.name, None) for group in newWorkgroups]
+			newWorkgroups = []
+			for _ in xrange(2):
+				group = Workgroup(school, ucr=ucr, connection=umc_connection)
+				group.create()
+				newWorkgroups.append(group)
+			utils.wait_for_replication()
+
+			assignedGroups = [(g.name, None) for g in newWorkgroups]
 
 			# Instantiate Check instance
-			check1 = Check(school, assignedGroups, ucr=ucr)
+			check1 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
 
 			# check the assigned internet rules UMCP
 			check1.checkRules()
@@ -67,7 +73,7 @@ def main():
 				'workgroup')
 
 			# Instantiate another Check instance
-			check2 = Check(school, assignedGroups, ucr=ucr)
+			check2 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
 
 			# check the assigned internet rules UMCP
 			check2.checkRules()
@@ -83,7 +89,7 @@ def main():
 				'workgroup')
 
 			# Instantiate another Check instance
-			check3 = Check(school, assignedGroups, ucr=ucr)
+			check3 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
 
 			# check the assigned internet rules UMCP
 			check3.checkRules()
@@ -104,11 +110,16 @@ def main():
 			check1.checkUcr()
 
 			# Create random classs
-			cIns = Klasse(school, ucr=ucr)
-			newclasses = cIns.createList(2)
+			newclasses = []
+			for _ in xrange(2):
+				klasse = Klasse(school, ucr=ucr, connection=umc_connection)
+				klasse.create()
+				newclasses.append(klasse)
+			utils.wait_for_replication()
+
 			assignedClasses = [(c.name, None) for c in newclasses]
 
-			check1 = Check(school, assignedClasses, ucr=ucr)
+			check1 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
 
 			# check the assigned internet rules UMCP
 			check1.checkRules()
@@ -123,7 +134,7 @@ def main():
 				school,
 				'class')
 
-			check2 = Check(school, assignedClasses, ucr=ucr)
+			check2 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
 
 			# check the assigned internet rules UMCP
 			check2.checkRules()
@@ -137,7 +148,7 @@ def main():
 				rules,
 				school,
 				'class')
-			check3 = Check(school, assignedClasses, ucr=ucr)
+			check3 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
 
 			# check the assigned internet rules UMCP
 			check3.checkRules()

@@ -208,21 +208,6 @@ class InternetRule(object):
 		else:
 			return (groupName, self.name)
 
-	# define multi rules and return list of rules Objects
-	def defineList(self, count):
-		"""Define list of random internet rules\n
-		:param count: number of wanted rules
-		:type count: int
-		:returns: list of rule objects
-		"""
-		print 'Defining ruleList'
-		ruleList = []
-		for i in xrange(count):
-			rule = self.__class__(self.client)
-			rule.define()
-			ruleList.append(rule)
-		return ruleList
-
 	# returns a list of all the existing internet rules via UMCP
 	def allRules(self):
 		"""Get all defined rules via UMCP\n
