@@ -43,7 +43,7 @@ from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, D
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
 
 
 class UserImport(object):
@@ -60,7 +60,7 @@ class UserImport(object):
 		self.deleted_users = defaultdict(list)  # like added_users
 		self.config = Configuration()
 		self.logger = get_logger()
-		self.connection, self.position = get_admin_connection()
+		self.connection, self.position = get_machine_connection() if dry_run else get_admin_connection()
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()
 
