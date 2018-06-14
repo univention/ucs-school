@@ -336,7 +336,7 @@ class Room(object):
 		# generate all the possible combinations for (rule, printmode, sharemode)
 		white_page = 'univention.de'
 		rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
-		printmodes = ['default', 'all', 'none']
+		printmodes = ['default', 'none']
 		sharemodes = ['all', 'home']
 		settings = itertools.product(rules, printmodes, sharemodes)
 		t = 120
@@ -390,9 +390,6 @@ class Room(object):
 		elif printMode == 'default':
 			self.check_smb_print(ip_address, printer, user, 0)
 			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
-		elif printMode == 'all':
-			self.check_smb_print(ip_address, printer, user, 0)
-			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
 		else:
 			utils.fail('printMode invalid value = (%s)' % printMode)
 
@@ -413,7 +410,7 @@ class Room(object):
 			# generate all the possible combinations for (rule, printmode, sharemode)
 			white_page = 'univention.de'
 			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
-			printmodes = ['default', 'all', 'none']
+			printmodes = ['default', 'none']
 			sharemodes = ['all', 'home']
 			settings = itertools.product(rules, printmodes, sharemodes)
 			settings_len = len(printmodes) * len(sharemodes) * len(rules)
@@ -481,7 +478,7 @@ class Room(object):
 			# generate all the possible combinations for (rule, printmode, sharemode)
 			white_page = 'univention.de'
 			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
-			printmodes = ['default', 'all', 'none']
+			printmodes = ['default', 'none']
 			sharemodes = ['all', 'home']
 			settings = itertools.product(rules, printmodes, sharemodes)
 			settings_len = len(printmodes) * len(sharemodes) * len(rules)
@@ -542,7 +539,7 @@ class Room(object):
 			# generate all the possible combinations for (rule, printmode, sharemode)
 			white_page = 'univention.de'
 			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
-			printmodes = ['default', 'all', 'none']
+			printmodes = ['default', 'none']
 			sharemodes = ['all', 'home']
 			settings = itertools.product(rules, printmodes, sharemodes)
 			t = 120
