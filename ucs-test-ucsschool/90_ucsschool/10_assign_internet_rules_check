@@ -35,6 +35,10 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			umc_connection = Client.get_test_connection()
+			if ucr.get('server/role') == 'domaincontroller_master':
+				umc_connection_master = umc_connection
+			else:
+				umc_connection_master = Client.get_test_connection(ucr.get('ldap/master'))
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 
 			# define many random internet rules
@@ -112,7 +116,7 @@ def main():
 			# Create random classs
 			newclasses = []
 			for _ in xrange(2):
-				klasse = Klasse(school, ucr=ucr, connection=umc_connection)
+				klasse = Klasse(school, ucr=ucr, connection=umc_connection_master)
 				klasse.create()
 				newclasses.append(klasse)
 			utils.wait_for_replication()

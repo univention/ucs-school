@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-63) unstable; urgency=medium
+
+  * Bug #42658: use master umc connection (10_assign_internet_rules_check)
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 15 Jun 2018 11:10:05 +0200
+
 ucs-test-ucsschool (5.0.2-62) unstable; urgency=medium
 
   * Bug #35076: Remove print mode 'all' from test (2)
