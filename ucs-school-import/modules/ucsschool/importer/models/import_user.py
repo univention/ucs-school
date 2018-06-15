@@ -324,6 +324,8 @@ class ImportUser(User):
 	def get_ldap_filter_for_user_role(cls):
 		if not cls.factory:
 			cls.factory = Factory()
+		if not cls.config:
+			cls.config = Configuration()
 		# convert cmdline / config name to ucsschool.lib role(s)
 		if not cls.config["user_role"]:
 			roles = ()
