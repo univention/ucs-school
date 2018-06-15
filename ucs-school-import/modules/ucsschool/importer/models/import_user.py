@@ -37,10 +37,11 @@ import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 
-from univention.admin.uexceptions import noObject, noProperty, valueError, valueInvalidSyntax
+from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_student
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
@@ -344,9 +345,9 @@ class ImportUser(User):
 		:param str source_uid: source DB identifier
 		:param str record_uid: source record identifier
 		:param str superordinate: superordinate
-		:return: object of :py:class:`ImportUser` subclass loaded from LDAP or raises noObject
+		:return: object of :py:class:`ImportUser` subclass loaded from LDAP or raises NoObject
 		:rtype: ImportUser
-		:raises noObject: if no user was found
+		:raises ucsschool.lib.models.base.NoObject: if no user was found
 		"""
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(

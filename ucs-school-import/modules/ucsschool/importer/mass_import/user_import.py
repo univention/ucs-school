@@ -37,7 +37,7 @@ from collections import defaultdict
 import datetime
 
 from ldap.filter import filter_format
-from univention.admin.uexceptions import noObject
+from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction, UserValidationError
 from ucsschool.importer.factory import Factory
@@ -200,7 +200,7 @@ class UserImport(object):
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
-		except noObject:
+		except NoObject:
 			# no user with source_uid + record_uid found -> create
 			imported_user.prepare_all(new_user=True)
 			user = imported_user
@@ -286,7 +286,7 @@ class UserImport(object):
 				user = a_user.get_by_import_id(self.connection, source_uid, record_uid)
 				user.action = "D"  # mark for logging/csv-output purposes
 				user.input_data = input_data  # most likely empty list (except in legacy import)
-			except noObject as exc:
+			except NoObject as exc:
 				self.logger.error(
 					"Cannot delete non existing user with source_uid=%r, record_uid=%r input_data=%r: %s",
 					source_uid, record_uid, input_data, exc)
