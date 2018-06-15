@@ -105,10 +105,6 @@ class InvalidSchools(UcsSchoolImportError):
 	pass
 
 
-class LookupError(UcsSchoolImportError):
-	pass
-
-
 class MissingMandatoryAttribute(UcsSchoolImportError):
 
 	def __init__(self, msg, mandatory_attributes, *args, **kwargs):
