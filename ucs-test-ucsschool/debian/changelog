@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-62) unstable; urgency=medium
+
+  * Bug #35076: Remove print mode 'all' from test (2)
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 15 Jun 2018 10:13:26 +0200
+
 ucs-test-ucsschool (5.0.2-61) unstable; urgency=medium
 
   * Bug #42658: reuse umc connection to save memory (2)

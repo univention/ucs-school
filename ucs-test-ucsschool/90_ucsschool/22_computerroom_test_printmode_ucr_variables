@@ -93,17 +93,16 @@ def main():
 					for setting in settings:
 						if setting.printmode == 'none' and setting.ip not in ucr.get('samba/printmode/hosts/none', ''):
 							raise NotOk()
-						elif setting.printmode == 'all' and setting.ip not in ucr.get('samba/printmode/hosts/all', ''):
-							raise NotOk()
 						elif setting.printmode == 'default' and (setting.ip in ucr.get('samba/printmode/hosts/all', '') or setting.ip in ucr.get('samba/printmode/hosts/none', '')):
 							raise NotOk()
 					print '---OK---'
 				except NotOk:
-					did_fail = True
 					print '---FAIL---'
+					return False
+				return True
 
 			# test with 2 rooms
-			printmodes = ['default', 'all', 'none']
+			printmodes = ['default', 'none']
 			settingslist = [settings1, settings2]
 			for settings1.printmode in printmodes:
 				set_room_printmode(settings1)
@@ -111,7 +110,7 @@ def main():
 					print '---------------------------------------------'
 					set_room_printmode(settings2)
 					print 'Printmodes: %r' % ([x.printmode for x in settingslist],)
-					ucr_check_both_values(settingslist)
+					did_fail = not ucr_check_both_values(settingslist)
 
 			# test with 3 rooms
 			settingslist = [settings1, settings2, settings3]
@@ -123,7 +122,7 @@ def main():
 						print '---------------------------------------------'
 						set_room_printmode(settings3)
 						print 'Printmodes: %r' % ([x.printmode for x in settingslist],)
-						ucr_check_both_values(settingslist)
+						did_fail = not ucr_check_both_values(settingslist)
 
 			if did_fail:
 				utils.fail('At least one combination failed!')
