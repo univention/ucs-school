@@ -7,6 +7,8 @@
 ## packages: [ucs-school-umc-wizards]
 
 from copy import deepcopy
+import subprocess
+import time
 from ldap.filter import filter_format
 from essential.klasse import Klasse
 from essential.user import User
@@ -20,6 +22,17 @@ from univention.testing.umc import Client
 
 # this test fails every now and then, lets see if more waiting helps
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
+# Maybe this is a memory problem
+# Force closing of all umc modules by restarting the umc server
+print("System load pre:")
+print(subprocess.check_output(['free', '-mh']))
+print(subprocess.check_output(['uptime']))
+subprocess.check_call(['systemctl', 'restart', 'univention-management-console-server'])
+print("Waiting for umc server restart...")
+time.sleep(20)
+print("System load post:")
+print(subprocess.check_output(['free', '-mh']))
+print(subprocess.check_output(['uptime']))
 
 
 def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None, connection=None):
