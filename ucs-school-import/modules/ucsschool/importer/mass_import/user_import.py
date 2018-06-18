@@ -143,7 +143,7 @@ class UserImport(object):
 						err = CreationError
 						store = self.added_users[cls_name]
 						if self.dry_run:
-							user.run_checks(check_username=True)
+							user.validate(self.connection, validate_unlikely_changes=True, check_username=True)
 							user.call_hooks('pre', 'create')
 							self.logger.info("Dry-run: skipping user.create() for %s.", user)
 							success = True
@@ -154,8 +154,7 @@ class UserImport(object):
 						err = ModificationError
 						store = self.modified_users[cls_name]
 						if self.dry_run:
-							user.check_schools(lo=self.connection)
-							user.run_checks(check_username=False)
+							user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 							user.call_hooks('pre', 'modify')
 							self.logger.info("Dry-run: skipping user.modify() for %s.", user)
 							success = True
@@ -334,7 +333,7 @@ class UserImport(object):
 		"""
 		if self.dry_run:
 			user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
-			user.run_checks(check_username=False)
+			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 			user.call_hooks('pre', 'move')
 			self.logger.info("Dry-run: would move %s from %r to %r.", user, user.school, imported_user.school)
 			user._unique_ids_replace_dn(user.dn, imported_user.dn)
@@ -389,8 +388,7 @@ class UserImport(object):
 		elif self.dry_run:
 			user.call_hooks('pre', 'remove')
 			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
-			user.check_schools(lo=self.connection)
-			user.run_checks(check_username=False)
+			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 			success = True
 			user.call_hooks('post', 'remove')
 		elif modified:

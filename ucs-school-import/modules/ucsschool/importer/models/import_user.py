@@ -100,6 +100,7 @@ class ImportUser(User):
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
 	_all_school_names = None
+	_all_usernames = None
 	_prop_regex = re.compile(r'<(.*?)(:.*?)*>')
 	_prop_providers = {
 		'birthday': 'make_birthday',
@@ -261,7 +262,7 @@ class ImportUser(User):
 		:rtype: bool
 		"""
 		self.check_schools(lo, additional_schools=[school])
-		self.run_checks(check_username=False)
+		self.validate(lo, validate_unlikely_changes=True, check_username=False)
 		old_dn = self.old_dn
 		res = super(ImportUser, self).change_school(school, lo)
 		if res:
@@ -289,7 +290,6 @@ class ImportUser(User):
 		:rtype: None
 		:raises UnknownSchoolName: if a school is not known
 		"""
-		# cannot be done in run_checks, because it needs LDAP access
 		schools = set(self.schools)
 		schools.add(self.school)
 		if additional_schools:
@@ -308,17 +308,12 @@ class ImportUser(User):
 		:rtype: bool
 		"""
 		self.lo = lo
-		self.check_schools(lo)
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running create() from within a hook.")
 			return self.create_without_hooks(lo, validate)
 		else:
 			return super(ImportUser, self).create(lo, validate)
-
-	def create_without_hooks(self, lo, validate):
-		self.run_checks(check_username=True)
-		return super(ImportUser, self).create_without_hooks(lo, validate)
 
 	@classmethod
 	def get_ldap_filter_for_user_role(cls):
@@ -845,7 +840,6 @@ class ImportUser(User):
 
 	def modify(self, lo, validate=True, move_if_necessary=None, scheduled_for_deletion=False):
 		self.lo = lo
-		self.check_schools(lo)
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running modify() from within a hook.")
@@ -861,8 +855,6 @@ class ImportUser(User):
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		if not self.in_hook:  # uniqueness checks fail when called from within a post_move hook
-			self.run_checks(check_username=False)
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
@@ -921,22 +913,43 @@ class ImportUser(User):
 		self.lo = lo
 		return super(ImportUser, self).remove(lo)
 
-	def run_checks(self, check_username=False):
+	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
 		"""
-		Run some self-tests.
+		Run self-tests.
 
+		:param lo: LDAP connection object
+		:param bool validate_unlikely_changes: whether to create messages in self.warnings for changes to certain attributes
 		:param bool check_username: if username and password checks should run
 		"""
+		super(ImportUser, self).validate(lo, validate_unlikely_changes)
+
 		try:
 			[self.udm_properties.get(ma) or getattr(self, ma) for ma in self.config["mandatory_attributes"]]
 		except (AttributeError, KeyError) as exc:
 			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc), self.config["mandatory_attributes"], entry_count=self.entry_count, import_user=self)
 
-		if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:
-			raise UniqueIdError('RecordUID {!r} has already been used in this import by {!r}.'.format(
-				self.record_uid, self._unique_ids["recordUID"][self.record_uid]), entry_count=self.entry_count, import_user=self
-			)
-		self._unique_ids["recordUID"][self.record_uid] = self.dn
+		if not self.in_hook:  # uniqueness checks fail when called from within a post_move hook
+			if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:
+				raise UniqueIdError('RecordUID {!r} has already been used in this import by {!r}.'.format(
+					self.record_uid, self._unique_ids["recordUID"][self.record_uid]), entry_count=self.entry_count, import_user=self
+				)
+			self._unique_ids["recordUID"][self.record_uid] = self.dn
+
+			if check_username:
+				if self._unique_ids["name"].get(self.name, self.dn) != self.dn:
+					raise UniqueIdError('Username {!r} has already been used in this import by {!r}.'.format(
+						self.name, self._unique_ids["recordUID"][self.name]), entry_count=self.entry_count,
+						import_user=self
+					)
+				self._unique_ids["name"][self.name] = self.dn
+
+			if self.email:
+				if self._unique_ids["email"].get(self.email, self.dn) != self.dn:
+					raise UniqueIdError('Email address {!r} has already been used in this import by {!r}.'.format(
+						self.email, self._unique_ids["email"][self.email]), entry_count=self.entry_count,
+						import_user=self
+					)
+				self._unique_ids["email"][self.email] = self.dn
 
 		if check_username:
 			if not self.name:
@@ -946,12 +959,6 @@ class ImportUser(User):
 				raise UsernameToLong("Username '{}' is longer than allowed.".format(
 					self.name), entry_count=self.entry_count, import_user=self
 				)
-
-			if self._unique_ids["name"].get(self.name, self.dn) != self.dn:
-				raise UniqueIdError('Username {!r} has already been used in this import by {!r}.'.format(
-					self.name, self._unique_ids["recordUID"][self.name]), entry_count=self.entry_count, import_user=self
-				)
-			self._unique_ids["name"][self.name] = self.dn
 
 			if len(self.password or '') < self.config["password_length"]:
 				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
@@ -965,12 +972,6 @@ class ImportUser(User):
 			email_pattern = r"[^@]+@.+\..+"
 			if not re.match(email_pattern, self.email):
 				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry_count=self.entry_count, import_user=self)
-
-			if self._unique_ids["email"].get(self.email, self.dn) != self.dn:
-				raise UniqueIdError('Email address {!r} has already been used in this import by {!r}.'.format(
-					self.email, self._unique_ids["email"][self.email]), entry_count=self.entry_count, import_user=self
-				)
-			self._unique_ids["email"][self.email] = self.dn
 
 		if self.birthday:
 			try:
@@ -993,6 +994,7 @@ class ImportUser(User):
 				if sc.startswith('{0}-{0}-'.format(school)):
 					self.logger.warn("Validation warning: Name of school_class starts with name of school: %r", sc)
 
+		self.check_schools(lo)
 
 		if not self._all_usernames:
 			# fetch usernames of all users only once per import job
