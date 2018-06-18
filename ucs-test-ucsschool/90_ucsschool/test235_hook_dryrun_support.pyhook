@@ -1,0 +1,52 @@
+import os.path
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+
+
+LOG_PATH = '/tmp/test235_%CLASSNAME%'
+
+
+class %CLASSNAME%(UserPyHook):
+	%DRYRUNSUPPORT%
+
+	priority = {
+		"pre_create": 1,
+		"post_create": 1,
+		"pre_modify": 1,
+		"post_modify": 1,
+		"pre_move": 1,
+		"post_move": 1,
+		"pre_remove": 1,
+		"post_remove": 1
+	}
+
+	def get_path(self, action):
+		return os.path.join(LOG_PATH, 'dryrun' if self.dry_run else 'real', action)
+
+	def log_action(self, action, *args):
+		with open(self.get_path(action), 'a') as fp:
+			fp.write('{}\n'.format(' '.join(args)))
+		self.logger.debug('+++++ wrote to %r: %r', self.get_path(action), ' '.join(args))
+
+	def pre_create(self, user):
+		self.log_action('pre_create', user.name)
+
+	def post_create(self, user):
+		self.log_action('post_create', user.name)
+
+	def pre_modify(self, user):
+		self.log_action('pre_modify', user.name)
+
+	def post_modify(self, user):
+		self.log_action('post_modify', user.name)
+
+	def pre_move(self, user):
+		self.log_action('pre_move', user.name)
+
+	def post_move(self, user):
+		self.log_action('post_move', user.name)
+
+	def pre_remove(self, user):
+		self.log_action('pre_remove', user.name)
+
+	def post_remove(self, user):
+		self.log_action('post_remove', user.name)
