@@ -32,7 +32,7 @@ Create LDAP connections for import.
 # <http://www.gnu.org/licenses/>.
 
 from univention.admin import uldap
-from ucsschool.importer.exceptions import UcsSchoolImportFatalError
+from ucsschool.importer.exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
 _admin_connection = None
 _admin_position = None
@@ -40,9 +40,12 @@ _machine_connection = None
 _machine_position = None
 _unprivileged_connection = None
 _unprivileged_position = None
+_read_only_admin_connection = None
+_read_only_admin_position = None
 
 
 def get_admin_connection():
+	"""Read-write cn=admin connection."""
 	global _admin_connection, _admin_position
 	if not _admin_connection or not _admin_position:
 		try:
@@ -53,6 +56,7 @@ def get_admin_connection():
 
 
 def get_machine_connection():
+	"""Read-write machine connection."""
 	global _machine_connection, _machine_position
 	if not _machine_connection or not _machine_position:
 		_machine_connection, _machine_position = uldap.getMachineConnection()
@@ -60,6 +64,7 @@ def get_machine_connection():
 
 
 def get_unprivileged_connection():
+	"""Unprivileged read-write connection."""
 	global _unprivileged_connection, _unprivileged_position
 	if not _unprivileged_connection or not _unprivileged_position:
 		with open('/etc/ucsschool-import/ldap_unprivileged.secret') as fp:
@@ -68,3 +73,40 @@ def get_unprivileged_connection():
 		_unprivileged_connection = uldap.access(base=base, binddn=dn, bindpw=pw)
 		_unprivileged_position = uldap.position(_unprivileged_connection.base)
 	return _unprivileged_connection, _unprivileged_position
+
+
+class ReadOnlyAccess(uldap.access):
+	"""
+	LDAP access class that prevents LDAP write access.
+
+	Must be a descendant of uldap.access, or UDM will raise a TypeError.
+	"""
+	def __init__(self, *args, **kwargs):
+		self._real_lo, self._real_po = get_admin_connection()
+		self._real_lo.allow_modify = 1
+
+	def __getattr__(self, item):
+		if item in ('add', 'modify', 'rename', 'delete'):
+			raise LDAPWriteAccessDenied()
+		return getattr(self._real_lo, item)
+
+	def add(self, *args, **kwargs):
+		raise LDAPWriteAccessDenied()
+
+	def modify(self, *args, **kwargs):
+		raise LDAPWriteAccessDenied()
+
+	def rename(self, *args, **kwargs):
+		raise LDAPWriteAccessDenied()
+
+	def delete(self, *args, **kwargs):
+		raise LDAPWriteAccessDenied()
+
+
+def get_readonly_connection():
+	"""Read-only cn=admin connection."""
+	global _read_only_admin_connection, _read_only_admin_position
+	if not _read_only_admin_connection or not _read_only_admin_position:
+		lo_rw = ReadOnlyAccess()
+		_read_only_admin_connection, _read_only_admin_position = lo_rw, lo_rw._real_po
+	return _read_only_admin_connection, _read_only_admin_position
