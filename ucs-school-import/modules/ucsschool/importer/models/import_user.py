@@ -41,7 +41,7 @@ from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyn
 from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_student
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
-from ucsschool.lib.models.base import NoObject
+from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
@@ -357,10 +357,18 @@ class ImportUser(User):
 			(source_uid, record_uid)
 		)
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
-		if not obj:
-			raise noObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
-				cls.config.get("user_role", "user") or "User", source_uid, record_uid))
-		return cls.from_udm_obj(obj, None, connection)
+		if obj:
+			return cls.from_udm_obj(obj, None, connection)
+		else:
+			dns = connection.searchDn(filter_format(
+					"(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
+					(source_uid, record_uid)
+			))
+			if dns:
+				raise WrongObjectType(dns[0], cls)
+			else:
+				raise NoObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
+					cls.config.get("user_role", "user") or "User", source_uid, record_uid))
 
 	def deactivate(self):
 		"""

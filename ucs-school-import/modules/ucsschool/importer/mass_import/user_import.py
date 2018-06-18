@@ -37,9 +37,11 @@ from collections import defaultdict
 import datetime
 
 from ldap.filter import filter_format
-from ucsschool.lib.models.base import NoObject
+from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction, UserValidationError
+from ucsschool.importer.exceptions import (
+	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction,
+	UserValidationError, WrongUserType)
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
@@ -200,6 +202,8 @@ class UserImport(object):
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
+		except WrongObjectType as exc:
+			raise WrongUserType, WrongUserType(str(exc), entry_count=imported_user.entry_count, import_user=imported_user), sys.exc_info()[2]
 		except NoObject:
 			# no user with source_uid + record_uid found -> create
 			imported_user.prepare_all(new_user=True)
