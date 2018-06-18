@@ -56,7 +56,7 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
@@ -483,12 +483,11 @@ class ImportUser(User):
 		"""
 		LDAP connection object
 
-		cn=admin connection in a real run, machine connection during a dry-run.
+		Read-write cn=admin connection in a real run, read-only cn=admin
+		connection during a dry-run.
 		"""
 		if not self._lo:
-			self._lo, po = get_machine_connection() if self.config['dry_run'] else get_admin_connection()
-		cn_admin_dn = 'cn=admin,{}'.format(self.ucr['ldap/base'])
-		assert not (self.config['dry_run'] and self._lo.binddn == cn_admin_dn)
+			self._lo, po = get_readonly_connection() if self.config['dry_run'] else get_admin_connection()
 		return self._lo
 
 	@lo.setter
