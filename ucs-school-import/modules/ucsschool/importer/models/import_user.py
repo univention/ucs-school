@@ -966,6 +966,22 @@ class ImportUser(User):
 		if not isinstance(self.schools, list):
 			raise InvalidSchools("Schools must be a list.", entry_count=self.entry_count, import_user=self)
 
+
+		if not self._all_usernames:
+			# fetch usernames of all users only once per import job
+			# its faster to filter out computer names in Python that in LDAP
+			# (and we have to loop over the query result anyway)
+			self.__class__._all_usernames = dict(
+				(attr['uid'][0], dn)
+				for dn, attr in lo.search('objectClass=posixAccount', attr=['uid'])
+				if not attr['uid'][0].endswith('$')
+			)
+		if check_username and self.name in self._all_usernames and self._all_usernames[self.name] != self.dn:
+			self.add_error(
+				'name',
+				'Username {!r} is already in use by {!r}.'.format(self.name, self._all_usernames[self.name])
+			)
+
 	def set_purge_timestamp(self, ts):
 		self._purge_ts = ts
 
