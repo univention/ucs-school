@@ -50,7 +50,7 @@ from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from rest_framework.permissions import BasePermission, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
-from ucsschool.importer.utils.ldap_connection import get_machine_connection
+from ucsschool.importer.utils.ldap_connection import get_readonly_connection
 from ucsschool.http_api.import_api.models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
 from ucsschool.http_api.import_api.serializers import (
 	UserImportJobCreationValidator,
@@ -90,7 +90,7 @@ class RoleFilterBackend(BaseFilterBackend):
 
 	@classmethod
 	def _build_query(cls, username, school):
-		lo, po = get_machine_connection()
+		lo, po = get_readonly_connection()
 		if school == '*':
 			# prevent filter_format() from escaping '*'
 			filter_s = filter_format(cls.filter_s.format('*'), (username,))
@@ -123,7 +123,7 @@ class SchoolFilterBackend(BaseFilterBackend):
 
 	@classmethod
 	def _build_query(cls, username):
-		lo, po = get_machine_connection()
+		lo, po = get_readonly_connection()
 		filter_s = filter_format(cls.filter_s, (username,))
 		ldap_result = lo.search(filter_s, attr=cls.filter_attrs)
 		school_names = []
@@ -148,7 +148,7 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 
 	@classmethod
 	def _build_query(cls, username):
-		lo, po = get_machine_connection()
+		lo, po = get_readonly_connection()
 		filter_s = filter_format(cls.filter_s, (username,))
 		ldap_result = lo.search(filter_s, attr=cls.filter_attrs)
 		query = None

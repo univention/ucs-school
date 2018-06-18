@@ -43,8 +43,8 @@ class ImportPyHook(PyHook):
 	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
 	with `supports_dry_run == True` should to not modify LDAP objects.
 
-	:py:attr:`self.lo` is a cn=admin connection in a real run, machine
-	connection during a dry-run.
+	:py:attr:`self.lo` is a read-write cn=admin connection in a real run,
+	read-only cn=admin connection during a dry-run.
 	"""
 	supports_dry_run = False  # if True hook will be executed during a dry-run
 
