@@ -562,6 +562,8 @@ class ImportUser(User):
 			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])
 		elif self.old_user:
 			self.birthday = self.old_user.birthday
+		elif self.birthday == '':
+			self.birthday = None
 		return self.birthday
 
 	def make_classes(self):
