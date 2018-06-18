@@ -973,6 +973,11 @@ class ImportUser(User):
 		if not isinstance(self.schools, list):
 			raise InvalidSchools("Schools must be a list.", entry_count=self.entry_count, import_user=self)
 
+		for school, school_classes in self.school_classes.items():
+			for sc in school_classes:
+				if sc.startswith('{0}-{0}-'.format(school)):
+					self.logger.warn("Validation warning: Name of school_class starts with name of school: %r", sc)
+
 
 		if not self._all_usernames:
 			# fetch usernames of all users only once per import job
