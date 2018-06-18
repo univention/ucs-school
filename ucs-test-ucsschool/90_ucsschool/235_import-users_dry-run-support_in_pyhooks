@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [45715]
+## bugs: [46837]
 
 import os
 import os.path
