@@ -31,7 +31,6 @@ Create LDAP connections for import.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import json
 from univention.admin import uldap
 from ucsschool.importer.exceptions import UcsSchoolImportFatalError
 
@@ -39,6 +38,8 @@ _admin_connection = None
 _admin_position = None
 _machine_connection = None
 _machine_position = None
+_unprivileged_connection = None
+_unprivileged_position = None
 
 
 def get_admin_connection():
@@ -54,8 +55,16 @@ def get_admin_connection():
 def get_machine_connection():
 	global _machine_connection, _machine_position
 	if not _machine_connection or not _machine_position:
-		with open('/etc/ucsschool-import/ldap.secret') as fp:
-			access_kwargs = json.load(fp)
-		_machine_connection = uldap.access(**access_kwargs)
-		_machine_position = uldap.position(_machine_connection.base)
+		_machine_connection, _machine_position = uldap.getMachineConnection()
 	return _machine_connection, _machine_position
+
+
+def get_unprivileged_connection():
+	global _unprivileged_connection, _unprivileged_position
+	if not _unprivileged_connection or not _unprivileged_position:
+		with open('/etc/ucsschool-import/ldap.secret') as fp:
+			dn_pw = fp.read()
+		dn, base, pw = dn_pw.strip().split(':')
+		_unprivileged_connection = uldap.access(base=base, binddn=dn, bindpw=pw)
+		_unprivileged_position = uldap.position(_unprivileged_connection.base)
+	return _unprivileged_connection, _unprivileged_position

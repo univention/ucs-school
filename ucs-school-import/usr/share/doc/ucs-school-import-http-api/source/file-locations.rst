@@ -20,7 +20,7 @@ Gunicorn
 The Gunicorn configuration file is ``/etc/gunicorn.d/ucs-school-import``.
 As it is generated from a UCR template do not edit it directly, but only by setting relevant UCR variables ``ucsschool/import/http_api//wsgi_server_*`` (see `Gunicorn configuration reference <http://docs.gunicorn.org/en/19.6.0/settings.html>`_).
 
-The code running in Gunicorn requires read-only LDAP-access. For that it uses a host connection. The credentials are read from ``/etc/ucsschool-import/ldap.secret``.
+The code running in Gunicorn requires read-only LDAP-access. For that it uses an unprivileged simple authentication account. The credentials are read from ``/etc/ucsschool-import/ldap.secret``.
 
 RabbitMQ
 ~~~~~~~~
