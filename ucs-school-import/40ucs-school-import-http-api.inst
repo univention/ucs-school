@@ -129,7 +129,7 @@ write_secret () {
     fi
 }
 
-if [ -e "LDAP_SECRET_FILE" ];
+if [ -e "$LDAP_SECRET_FILE" ];
 then
     echo "Using exiting LDAP secret for HTTP API service."
     LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
