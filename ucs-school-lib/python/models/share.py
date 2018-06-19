@@ -57,7 +57,7 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_obj['writeable'] = '1'
 		udm_obj['sambaWriteable'] = '1'
 		udm_obj['sambaBrowseable'] = '1'
-		udm_obj['sambaForceGroup'] = '+%s' % self.name
+		udm_obj['sambaForceGroup'] = '%s' % self.name
 		udm_obj['sambaCreateMode'] = '0770'
 		udm_obj['sambaDirectoryMode'] = '0770'
 		udm_obj['owner'] = '0'
@@ -85,8 +85,8 @@ class Share(UCSSchoolHelperAbstractClass):
 			udm_obj['path'] = os.path.join(head, tail)
 			if udm_obj['sambaName'] == old_name:
 				udm_obj['sambaName'] = self.name
-			if udm_obj['sambaForceGroup'] == '+%s' % old_name:
-				udm_obj['sambaForceGroup'] = '+%s' % self.name
+			if udm_obj['sambaForceGroup'] == '+%s' % old_name or udm_obj['sambaForceGroup'] == '%s' % old_name:
+				udm_obj['sambaForceGroup'] = '%s' % self.name
 		return super(Share, self).do_modify(udm_obj, lo)
 
 	def get_server_fqdn(self, lo):
