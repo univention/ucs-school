@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-12) unstable; urgency=low
+
+  * Bug #45164: run gunicorm as unprivileged user
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 19 Jun 2018 13:43:56 +0200
+
 ucs-school-import (16.0.2-11) unstable; urgency=low
 
   * Bug #47156: fix double .json, strip whitespace from class names, remove

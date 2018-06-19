@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-12) unstable; urgency=low
+
+  * Bug #45164: support setting permissions for logfiles
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 19 Jun 2018 13:44:26 +0200
+
 ucs-school-lib (11.0.1-11) unstable; urgency=low
 
   * Bug #45447: remove + from SambaForceGroup option in shares
