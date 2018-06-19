@@ -36,7 +36,7 @@ import string
 
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject, objectExists
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
 from ucsschool.importer.exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
 from ucsschool.importer.utils.logging import get_logger
 
@@ -158,7 +158,7 @@ class LdapStorageBackend(NameCounterStorageBackend):
 class MemoryStorageBackend(NameCounterStorageBackend):
 	def __init__(self, attribute_storage_name):
 		self._mem_store = dict()
-		lo, po = get_machine_connection()
+		lo, po = get_unprivileged_connection()
 		self.ldap_backend = LdapStorageBackend(attribute_storage_name, lo, po)
 
 	def create(self, name, value):

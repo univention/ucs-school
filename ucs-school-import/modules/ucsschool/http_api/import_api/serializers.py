@@ -42,7 +42,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError, PermissionDenied
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
-from ucsschool.importer.utils.ldap_connection import get_machine_connection
+from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 from ucsschool.http_api.import_api.models import (
 	JOB_NEW, JOB_SCHEDULED, Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob)
 from ucsschool.http_api.import_api.import_logging import logger
@@ -104,7 +104,7 @@ class UserImportJobCreationValidator(object):
 
 	@classmethod
 	def is_user_school_role_combination_allowed(cls, username, school, role):
-		lo, po = get_machine_connection()
+		lo, po = get_unprivileged_connection()
 
 		# filter_format() will escape '*' as argument
 		filter_s = '(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole={role})(ucsschoolImportSchool={school})(memberUid=%s))'.format(
