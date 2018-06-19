@@ -142,18 +142,14 @@ fi
 if [ -z "$(univention-ldapsearch -LLL uid=$LDAP_USER_NAME dn)" ];
 then
 	echo "Creating unprivileged LDAP user..."
-    udm users/user create "$@" \
+    udm users/ldap create "$@" \
     	--set username="$LDAP_USER_NAME" \
     	--position "$LDAP_USER_POSITION" \
     	--set password="$LDAP_SECRET_PW" \
-    	--set firstname="UCS School Import Service" \
-    	--set lastname="LDAP Account" \
-    	--set description="Account used by import HTTP API to authenticate against LDAP directory"  \
-    	--set objectFlag="hidden" \
-    	--option ldap_pwd || die
+    	--set description="Account used by import HTTP API to authenticate against LDAP directory"  || die
 else
 	echo "Setting password on existing LDAP user..."
-	udm users/user modify "$@" \
+	udm users/ldap modify "$@" \
 		--dn "$LDAP_USER_DN" \
 		--set password="$LDAP_SECRET_PW" \
 		--set overridePWHistory=1
