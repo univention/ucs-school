@@ -1,3 +1,9 @@
+ucs-school-lib (10.0.2-16) unstable; urgency=low
+
+  * Bug #46829: support setting permissions for logfiles
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 19 Jun 2018 11:27:28 +0200
+
 ucs-school-lib (10.0.2-15) unstable; urgency=low
 
   * Bug #46970: add deepcopy operation support to ucsschool.lib.models objects
