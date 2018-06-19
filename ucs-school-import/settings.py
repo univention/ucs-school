@@ -35,6 +35,7 @@ Django settings for the UCS@school import HTTP API.
 from __future__ import unicode_literals
 import os
 import re
+import stat
 import logging
 from univention.config_registry import ConfigRegistry
 from django.conf import global_settings
@@ -164,6 +165,8 @@ STATIC_ROOT = os.path.join(VAR_LIB_DIR, 'static')
 STATIC_URL = '/{}/'.format(ucr.get('ucsschool/import/http_api/URL_path/static', 'ucsschool-static').strip().strip('/'))
 MEDIA_ROOT = os.path.join(SPOOL_DIR, 'media')  # uploads go here
 MEDIA_URL = '/{}/'.format(ucr.get('ucsschool/import/http_api/URL_path/media', 'ucsschool-media').strip().strip('/'))
+FILE_UPLOAD_PERMISSIONS = stat.S_IRUSR | stat.S_IWUSR
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True

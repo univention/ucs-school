@@ -2,9 +2,9 @@
 #
 # Univention UCS@school
 """
-Create LDAP connections for import.
+Diverse helper functions.
 """
-# Copyright 2016-2018 Univention GmbH
+# Copyright 2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,31 +31,27 @@ Create LDAP connections for import.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import json
-from univention.admin import uldap
-from ucsschool.importer.exceptions import UcsSchoolImportFatalError
-
-_admin_connection = None
-_admin_position = None
-_machine_connection = None
-_machine_position = None
+import pwd
+import grp
 
 
-def get_admin_connection():
-	global _admin_connection, _admin_position
-	if not _admin_connection or not _admin_position:
-		try:
-			_admin_connection, _admin_position = uldap.getAdminConnection()
-		except IOError:
-			raise UcsSchoolImportFatalError("This script must be executed on a DC Master.")
-	return _admin_connection, _admin_position
+def get_wsgi_user_group():
+	"""
+	Get the username and group name of the WSGI process in which the HTTP-API
+	runs.
+
+	:return: tuple with username and group name
+	:rtype tuple(str, str)
+	"""
+	return 'uas-import', 'uas-import'
 
 
-def get_machine_connection():
-	global _machine_connection, _machine_position
-	if not _machine_connection or not _machine_position:
-		with open('/etc/ucsschool-import/ldap.secret') as fp:
-			access_kwargs = json.load(fp)
-		_machine_connection = uldap.access(**access_kwargs)
-		_machine_position = uldap.position(_machine_connection.base)
-	return _machine_connection, _machine_position
+def get_wsgi_uid_gid():
+	"""
+	Get the UID and GID of the WSGI process in which the HTTP-API runs.
+
+	:return: tuple with UID and GID
+	:rtype: tuple(int, int)
+	"""
+	user_name, group_name = get_wsgi_user_group()
+	return pwd.getpwnam(user_name).pw_uid, grp.getgrnam(group_name).gr_gid

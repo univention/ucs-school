@@ -13,8 +13,8 @@ _ucr.load()
 
 mode = 'wsgi'
 working_dir = '/var/spool/ucs-school-import/'
-user = 'root'
-group = 'root'
+user = 'uas-import'
+group = 'uas-import'
 bind = '127.0.0.1:{}'.format(_ucr.get('ucsschool/import/http_api/wsgi_server_port', '9898'))
 workers = max(2, min(4, cpu_count()))
 timeout = 60

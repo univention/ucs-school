@@ -29,6 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
 from ucsschool.lib.models.utils import get_logger as get_lib_logger, logger as lib_logger
 
 
@@ -40,13 +41,14 @@ def make_stdout_verbose():
 	return get_lib_logger("import", "DEBUG")
 
 
-def add_file_handler(filename):
+def add_file_handler(filename, uid=None, gid=None, mode=None):
 	if filename.endswith(".log"):
 		info_filename = "{}.info".format(filename[:-4])
 	else:
 		info_filename = "{}.info".format(filename)
-	get_lib_logger("import", "DEBUG", filename)
-	return get_lib_logger("import", "INFO", info_filename)
+	handler_kwargs = {'fuid': uid, 'fgid': gid, 'fmode': mode}
+	get_lib_logger("import", "DEBUG", filename, handler_kwargs=handler_kwargs)
+	return get_lib_logger("import", "INFO", target=info_filename, handler_kwargs=handler_kwargs)
 
 
 def move_our_handlers_to_lib_logger():

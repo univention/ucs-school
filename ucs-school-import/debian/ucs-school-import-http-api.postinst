@@ -42,6 +42,31 @@ univention-config-registry set ucsschool/import/generate/import/group?true
 . /usr/share/univention-lib/base.sh
 call_joinscript 40ucs-school-import-http-api.inst
 
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 16.0.2-5 ; then
+	chown -c uas-import:uas-import \
+		/etc/ucsschool-import/django_key.secret \
+		/etc/ucsschool-import/postgres.secret \
+		/etc/ucsschool-import/rabbitmq.secret \
+		/var/log/univention/ucs-school-import/ \
+		/var/log/univention/ucs-school-import/gunicorn_*.log \
+		/var/log/univention/ucs-school-import/http_api.log \
+		/var/spool/ucs-school-import/media/uploads/
+	chmod -c o= \
+		/etc/ucsschool-import/django_key.secret \
+		/etc/ucsschool-import/postgres.secret \
+		/etc/ucsschool-import/rabbitmq.secret \
+		/var/log/univention/ucs-school-import/ \
+		/var/log/univention/ucs-school-import/gunicorn_*.log \
+		/var/log/univention/ucs-school-import/http_api.log \
+		/var/spool/ucs-school-import/media/uploads/
+
+	find /var/lib/ucs-school-import/jobs/ -maxdepth 2 -type d -exec chown -c uas-import:uas-import "{}" + -exec chmod -c 0750 "{}" +
+
+	for FILE in ucs-school-import.log ucs-school-import.info new_user_passwords.csv user_import_summary.csv; do
+		find /var/lib/ucs-school-import/jobs/ -name "$FILE" -exec chown -c uas-import:uas-import "{}" + -exec chmod -c 0600 "{}" +
+	done
+fi
+
 systemctl daemon-reload
 for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql ucs-school-import-http-api apache2;
 do
