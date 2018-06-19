@@ -6,4 +6,6 @@ src: ucs-school-lib
 fix: 11.0.1-10A~4.3.0.201806040903
 desc: |
  * Internal enhancement: Support for the deepcopy operation was added to all ucsschool.lib objects (Bug #46970).
-bug: [46970]
+ * Removing '+' from the SambaForceGroup in shares. Old shares will retain the '+' unless renamed or manually edited.
+   Further details about the '+'-option can be found in the official samba documentation.
+bug: [46970, 45447]
