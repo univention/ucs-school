@@ -115,7 +115,7 @@ write_secret () {
 	mkdir -p "$(dirname $filename)"
 	touch "$filename"
 	chmod 0600 "$filename"
-	chown root:root "$filename"
+	chown uas-import:uas-import "$filename"
 	if [ -n "$secret" ];
 	then
 	    echo "$secret" >"$filename"
@@ -125,6 +125,7 @@ write_secret () {
     fi
 }
 
+ucr commit /etc/ucsschool-import/ldap.secret
 
 if [ -e "$DJANGO_SECRET_FILE" ];
 then
@@ -198,6 +199,7 @@ python /usr/share/pyshared/ucsschool/http_api/manage.py updateschools --all
 a2enmod proxy_http
 a2ensite ucs-school-import-http-api.conf
 
+echo "Enabling and starting services..."
 systemctl daemon-reload
 for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql gunicorn apache2;
 do
