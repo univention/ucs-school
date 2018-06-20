@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-13) unstable; urgency=low
+
+  * Bug #45164: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 20 Jun 2018 10:19:01 +0200
+
 ucs-school-import (16.0.2-12) unstable; urgency=low
 
   * Bug #45164: run gunicorm as unprivileged user
