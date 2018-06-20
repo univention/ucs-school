@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-65) unstable; urgency=medium
+
+  * Bug #47208: fix 70_users_module
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 20 Jun 2018 21:14:14 +0200
+
 ucs-test-ucsschool (5.0.2-64) unstable; urgency=medium
 
   * Bug #42658: debug problems with 70_users_module

@@ -7,8 +7,6 @@
 ## packages: [ucs-school-umc-wizards]
 
 from copy import deepcopy
-import subprocess
-import time
 from ldap.filter import filter_format
 from essential.klasse import Klasse
 from essential.user import User
@@ -22,17 +20,6 @@ from univention.testing.umc import Client
 
 # this test fails every now and then, lets see if more waiting helps
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
-# Maybe this is a memory problem
-# Force closing of all umc modules by restarting the umc server
-print("System load pre:")
-print(subprocess.check_output(['free', '-mh']))
-print(subprocess.check_output(['uptime']))
-subprocess.check_call(['systemctl', 'restart', 'univention-management-console-server'])
-print("Waiting for umc server restart...")
-time.sleep(20)
-print("System load post:")
-print(subprocess.check_output(['free', '-mh']))
-print(subprocess.check_output(['uptime']))
 
 
 def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None, connection=None):
@@ -75,9 +62,17 @@ def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None
 		user.edit(new_attrs)
 		wait_for_drs_replication(filter_format('cn=%s', (user.username,)))
 		user.check_get(expected_attrs=new_attrs)
-
 		user.verify()
+		school_classes = deepcopy(user.school_classes)
+		try:
+			school_classes.pop(remove_from_school)
+		except KeyError:
+			pass
 		user.remove(remove_from_school)
+		# importusers expects that the class groups are moved as well as the user during a school change
+		# schoolwizard does not do that -> reset the school classes that got modified during the school move
+		# see bug #47208
+		user.school_classes = school_classes
 		utils.wait_for_replication()
 		user.verify()
 
