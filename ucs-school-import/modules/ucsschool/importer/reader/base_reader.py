@@ -35,6 +35,7 @@ Base class of all input readers.
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.factory import Factory
+from ucsschool.importer.utils.ldap_connection import get_admin_connection
 
 
 class BaseReader(object):
@@ -52,6 +53,7 @@ class BaseReader(object):
 		"""
 		self.config = Configuration()
 		self.logger = get_logger()
+		self.lo, self.position = get_admin_connection()
 		self.filename = filename
 		self.header_lines = header_lines
 		self.import_users = self.read()
