@@ -35,7 +35,14 @@ Base class of all input readers.
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.factory import Factory
+from ucsschool.importer.utils.post_read_pyhook import PostReadPyHook
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.lib.pyhooks import PyHooksLoader
+
+try:
+	from typing import Dict, List, Int
+except ImportError:
+	pass
 
 
 class BaseReader(object):
@@ -44,6 +51,9 @@ class BaseReader(object):
 
 	Subclasses must override get_roles(), map() and read().
 	"""
+
+	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
+	_post_read_pyhook_cache = None
 
 	def __init__(self, filename, header_lines=0, **kwargs):
 		"""
@@ -74,12 +84,35 @@ class BaseReader(object):
 		"""
 		input_dict = self.import_users.next()
 		self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
+		self.call_post_read_hook(self.entry_count, self.input_data, input_dict)
+
 		cur_user_roles = self.get_roles(input_dict)
 		cur_import_user = self.map(input_dict, cur_user_roles)
 		cur_import_user.entry_count = self.entry_count
 		cur_import_user.input_data = self.input_data
 		cur_import_user.prepare_uids()
 		return cur_import_user
+
+	def call_post_read_hook(self, entry_count, input_data, input_dict):
+		# type: (int, List[str], Dict[str, str]) -> None
+		"""
+		Run code after an entry has been read and saved in
+		input_data and input_dict. This hook may alter input_data
+		and input_dict to modify the input data.
+
+		:param int entry_count: index of the data entry (e.g. line of the CSV file)
+		:param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The input_data may be changed.
+		:param dict[str, str] input_dict: input data mapped to column names. The input_dict may be changed.
+		"""
+		if self._post_read_pyhook_cache is None:
+			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
+			pyloader = PyHooksLoader(path, PostReadPyHook, self.logger)
+			self._post_read_pyhook_cache = pyloader.get_hook_objects(self.lo)
+
+		func_name = 'entry_read'
+		for func in self._post_read_pyhook_cache.get(func_name, []):
+			self.logger.info("Running %s hook %s for entry %s...", func_name, func, entry_count)
+			func(entry_count, input_data, input_dict)
 
 	def get_roles(self, input_data):
 		"""
