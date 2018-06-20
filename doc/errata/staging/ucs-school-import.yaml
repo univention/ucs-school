@@ -15,5 +15,5 @@ desc: |
  * The HTTP-API import now always prepends the school name to class names read from a CSV file (Bug #47156).
  * The HTTP-API now uses a default and a custom configuration file <file>user_import_http-api.json</file> located in the same directories as the other configuration files (Bug #47156).
  * Custom django-admin commands were added to make the join script more reliable (Bug #45163).
- * The WSGI server Gunicorn now runs as a unprivileged user (Bug #45164).
+ * The WSGI server Gunicorn now runs as an unprivileged user (Bug #45164).
 bug: [47027, 42416, 46970, 45749, 47135, 46830, 47156, 45163, 45164]
