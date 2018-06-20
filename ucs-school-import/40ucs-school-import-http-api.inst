@@ -131,7 +131,7 @@ write_secret () {
 
 if [ -e "$LDAP_SECRET_FILE" ];
 then
-    echo "Using exiting LDAP secret for HTTP API service."
+    echo "Using existing LDAP secret for HTTP API service."
     LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
 else
     echo "Creating LDAP secret for HTTP API service."
@@ -161,7 +161,7 @@ fi
 
 if [ -e "$DJANGO_SECRET_FILE" ];
 then
-    echo "Using exiting secret for Django service."
+    echo "Using existing secret for Django service."
 else
     echo "Creating secret for Django service."
     DJANGO_SECRET_PW="$(makepasswd --chars=50)"
@@ -170,7 +170,7 @@ fi
 
 if [ -e "$RABBITMQ_SECRET_FILE" ];
 then
-    echo "Using exiting password for RabbitMQ."
+    echo "Using existing password for RabbitMQ."
     RABBITMQ_PW="$(cat "$RABBITMQ_SECRET_FILE" | cut -d : -f 2)"
 else
     echo "Creating new password for RabbitMQ."
@@ -180,7 +180,7 @@ fi
 
 if rabbitmqctl list_users | grep -q "$RABBITMQ_USER";
 then
-    echo "Using exiting RabbitMQ user and vhost."
+    echo "Using existing RabbitMQ user and vhost."
 else
     echo "Creating new RabbitMQ user and vhost."
     rabbitmq_add_vhost "$RABBITMQ_USER" "$RABBITMQ_PW" "$RABBITMQ_VHOST" || die
@@ -188,7 +188,7 @@ fi
 
 if [ -e "$POSTGRES_SECRET_FILE" ];
 then
-    echo "Using exiting password for PostgreSQL."
+    echo "Using existing password for PostgreSQL."
     POSTGRES_PW="$(cat "$POSTGRES_SECRET_FILE")"
 else
     echo "Creating new password for PostgreSQL."
@@ -198,7 +198,7 @@ fi
 
 if echo "\du $POSTGRES_USER" | su - postgres -c psql | grep -q "$POSTGRES_USER";
 then
-    echo "Setting password on exiting PostgreSQL user."
+    echo "Setting password on existing PostgreSQL user."
 else
     echo "Creating new PostgreSQL user."
     su - postgres -c "echo \"CREATE ROLE $POSTGRES_USER WITH LOGIN;\" | psql" || die
@@ -207,7 +207,7 @@ su - postgres -c "echo \"ALTER ROLE $POSTGRES_USER WITH ENCRYPTED PASSWORD '$POS
 
 if echo '\list' | su - postgres -c psql | grep -q "$POSTGRES_DB";
 then
-    echo "Using exiting PostgreSQL database."
+    echo "Using existing PostgreSQL database."
 else
     echo "Creating new PostgreSQL database."
     su - postgres -c "createdb -E UTF8 -O $POSTGRES_USER -T template0 $POSTGRES_DB" || die

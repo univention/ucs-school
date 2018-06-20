@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-55) unstable; urgency=low
+
+  * Bug #46829: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 20 Jun 2018 10:19:57 +0200
+
 ucs-school-import (15.0.3-54) unstable; urgency=low
 
   * Bug #46829: fix typo
