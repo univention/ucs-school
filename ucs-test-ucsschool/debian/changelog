@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-98) unstable; urgency=medium
+
+  * Bug #47208: fix 70_users_module
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 03 Jul 2018 18:08:02 +0200
+
 ucs-test-ucsschool (4.0.4-97) unstable; urgency=medium
 
   * Bug #47299: wait after UMC restart in 18_automatic_distribute_materials_check
