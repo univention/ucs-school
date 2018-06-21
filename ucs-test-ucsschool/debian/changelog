@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-96) unstable; urgency=medium
+
+  * Bug #40727: Fix bug in essential/internetrule.py
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 21 Jun 2018 13:05:21 +0200
+
 ucs-test-ucsschool (4.0.4-95) unstable; urgency=low
 
   * Bug #47157: add HTTP-API test class

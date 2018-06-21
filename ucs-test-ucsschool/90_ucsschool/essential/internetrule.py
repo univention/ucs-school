@@ -33,7 +33,7 @@ class InternetRule(object):
 	:type domains: [str]
 	:param wlan: if the internet rule supports wlan
 	:type wlan: bool
-	:param priority: priority of the internet rule [1,10]
+	:param priority: priority of the internet rule [0,10]
 	:type priority: [int]
 	"""
 
@@ -50,7 +50,7 @@ class InternetRule(object):
 			self.wlan = wlan
 		else:
 			self.wlan = random.choice([True, False])
-		self.priority = priority if priority else random.randint(1, 10)
+		self.priority = priority if priority is not None else random.randint(0, 10)
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
 		if connection:
 			self.client = connection
@@ -102,13 +102,13 @@ class InternetRule(object):
 		:param new_wlan:
 		:type new_wlan: bool
 		:param new_priority:
-		:type new_priority: int [1,10]
+		:type new_priority: int [0,10]
 		"""
 		new_name = new_name if new_name else self.name
 		new_type = new_type if new_type else self.typ
 		new_domains = new_domains if new_domains else self.domains
 		new_wlan = new_wlan if new_wlan else self.wlan
-		new_priority = new_priority if new_priority else self.priority
+		new_priority = new_priority if new_priority is not None else self.priority
 
 		param = [{
 			'object': {
