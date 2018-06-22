@@ -653,7 +653,7 @@ feedback@univention.de
 
 
 	  <section id="lehrerdoku:lists">
-		<title>Schülerlisten erstellen</title>
+		<title>Klassenlisten erstellen</title>
 		<para>
 		  Das Modul <guimenu>Klassenlisten</guimenu> ermöglicht es, Klassen- und Arbeitsgruppenlisten
 		  zu exportieren. Die Listen werden im CSV-Format ausgegeben. Die Datei ist UTF-8-kodiert und
