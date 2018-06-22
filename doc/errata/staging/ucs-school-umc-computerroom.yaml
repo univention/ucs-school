@@ -6,6 +6,6 @@ src: ucs-school-umc-computerroom
 fix: 10.0.2-5A~4.3.0.201806060904
 desc: |
  * Instead of showing an empty list of computer rooms there is now a dialog asking if the user wants to create one. The dialog is only shown if the user is authorized to create a room and the module manages only a single school. (Bug #43080)
- * Remove free printing option from computer room settings due to (Bug #35076)
+ * Remove free printing option from computer room settings. Samba does no longer support the required feature to provide this option in UCS@school (Bug #35076).
  * Rename file share restriction options in settings dialog depending on whether the selected room is in exam mode. (Bug #43037)
 bug: [43080, 35076, 43037]
