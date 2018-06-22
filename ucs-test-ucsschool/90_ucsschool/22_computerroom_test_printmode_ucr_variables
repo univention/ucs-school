@@ -110,7 +110,8 @@ def main():
 					print '---------------------------------------------'
 					set_room_printmode(settings2)
 					print 'Printmodes: %r' % ([x.printmode for x in settingslist],)
-					did_fail = not ucr_check_both_values(settingslist)
+					if not ucr_check_both_values(settingslist):
+						did_fail = True
 
 			# test with 3 rooms
 			settingslist = [settings1, settings2, settings3]
@@ -122,7 +123,8 @@ def main():
 						print '---------------------------------------------'
 						set_room_printmode(settings3)
 						print 'Printmodes: %r' % ([x.printmode for x in settingslist],)
-						did_fail = not ucr_check_both_values(settingslist)
+						if not ucr_check_both_values(settingslist):
+							did_fail = True
 
 			if did_fail:
 				utils.fail('At least one combination failed!')

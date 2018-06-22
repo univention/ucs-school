@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-67) unstable; urgency=low
+
+  * Bug #35076: fix logic error in 22_computerroom_two_rooms_settings_interference
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 22 Jun 2018 15:44:54 +0200
+
 ucs-test-ucsschool (5.0.2-66) unstable; urgency=medium
 
   * Bug #40727: Fix bug in essential/internetrule.py
