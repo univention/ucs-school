@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=3
+VERSION=2
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -102,15 +102,11 @@ CONF_DIR="/etc/ucsschool-import"
 DJANGO_SECRET_FILE="$CONF_DIR/django_key.secret"
 RABBITMQ_SECRET_FILE="$CONF_DIR/rabbitmq.secret"
 POSTGRES_SECRET_FILE="$CONF_DIR/postgres.secret"
-LDAP_SECRET_FILE="$CONF_DIR/ldap.secret"
 
 RABBITMQ_USER="importhttpapi"
 RABBITMQ_VHOST="importhttpapi"
 POSTGRES_USER="importhttpapi"
 POSTGRES_DB="importhttpapi"
-LDAP_USER_NAME="importhttpapi"
-LDAP_USER_POSITION="cn=users,$ldap_base"
-LDAP_USER_DN="uid=$LDAP_USER_NAME,$LDAP_USER_POSITION"
 
 ADMINISTRATOR_UID="$(custom_username "Administrator")"
 
@@ -128,36 +124,6 @@ write_secret () {
         return 1
     fi
 }
-
-if [ -e "$LDAP_SECRET_FILE" ];
-then
-    echo "Using existing LDAP secret for HTTP API service."
-    LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
-else
-    echo "Creating LDAP secret for HTTP API service."
-    LDAP_SECRET_PW="$(makepasswd --chars=50)"
-    write_secret "$LDAP_SECRET_FILE" "$LDAP_USER_DN:$ldap_base:$LDAP_SECRET_PW" || die
-fi
-
-if [ -z "$(univention-ldapsearch -LLL uid=$LDAP_USER_NAME dn)" ];
-then
-	echo "Creating unprivileged LDAP user..."
-    udm users/user create "$@" \
-    	--set username="$LDAP_USER_NAME" \
-    	--position "$LDAP_USER_POSITION" \
-    	--set password="$LDAP_SECRET_PW" \
-    	--set firstname="UCS School Import Service" \
-    	--set lastname="LDAP Account" \
-    	--set description="Account used by import HTTP API to authenticate against LDAP directory"  \
-    	--set objectFlag="hidden" \
-    	--option ldap_pwd || die
-else
-	echo "Setting password on existing LDAP user..."
-	udm users/user modify "$@" \
-		--dn "$LDAP_USER_DN" \
-		--set password="$LDAP_SECRET_PW" \
-		--set overridePWHistory=1
-fi
 
 if [ -e "$DJANGO_SECRET_FILE" ];
 then

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # UCS@school
 #  join script
@@ -30,13 +30,65 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=15
+VERSION=16
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
 joinscript_init
 
 eval "$(ucr shell)"
+
+CONF_DIR="/etc/ucsschool-import"
+
+LDAP_SECRET_FILE="$CONF_DIR/ldap.secret"
+LDAP_USER_NAME="importhttpapi"
+LDAP_USER_POSITION="cn=users,$ldap_base"
+LDAP_USER_DN="uid=$LDAP_USER_NAME,$LDAP_USER_POSITION"
+
+write_secret () {
+	local filename="$1" secret="${2:-}"
+	mkdir -p "$(dirname $filename)"
+	touch "$filename"
+	chmod 0600 "$filename"
+	chown uas-import:uas-import "$filename"
+	if [ -n "$secret" ];
+	then
+	    echo "$secret" >"$filename"
+	else
+        echo "ERROR: refusing to write empty string to $filename"
+        return 1
+    fi
+}
+
+if [ -e "$LDAP_SECRET_FILE" ];
+then
+    echo "Using existing LDAP secret for HTTP API service."
+    LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
+else
+    echo "Creating LDAP secret for HTTP API service."
+    LDAP_SECRET_PW="$(makepasswd --chars=50)"
+    write_secret "$LDAP_SECRET_FILE" "$LDAP_USER_DN:$ldap_base:$LDAP_SECRET_PW" || die
+fi
+
+if [ -z "$(univention-ldapsearch -LLL uid=$LDAP_USER_NAME dn)" ];
+then
+	echo "Creating unprivileged LDAP user..."
+    udm users/user create "$@" \
+    	--set username="$LDAP_USER_NAME" \
+    	--position "$LDAP_USER_POSITION" \
+    	--set password="$LDAP_SECRET_PW" \
+    	--set firstname="UCS School Import Service" \
+    	--set lastname="LDAP Account" \
+    	--set description="Account used by import HTTP API to authenticate against LDAP directory"  \
+    	--set objectFlag="hidden" \
+    	--option ldap_pwd || die
+else
+	echo "Setting password on existing LDAP user..."
+	udm users/user modify "$@" \
+		--dn "$LDAP_USER_DN" \
+		--set password="$LDAP_SECRET_PW" \
+		--set overridePWHistory=1
+fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	# create policy container if missing

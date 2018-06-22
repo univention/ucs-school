@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# UCS@school HTTP import API
+# UCS@school import
 #  preinst file for the debian package
 #
 # Copyright 2018 Univention GmbH
