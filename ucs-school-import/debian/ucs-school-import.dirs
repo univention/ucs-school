@@ -1,9 +1,9 @@
-usr/share/ucs-school-import/scripts
-var/log/univention/ucs-school-purge-expired-users
 var/lib/ucs-school-import
 var/lib/ucs-school-import/configs
 var/lib/ucs-school-import/passwords
 var/lib/ucs-school-import/summary
+var/log/univention/ucs-school-purge-expired-users
+var/spool/ucs-school-import
 usr/lib/univention-install
 usr/share/ucs-school-import/configs
 usr/share/ucs-school-import/hooks/user_create_pre.d
@@ -35,3 +35,4 @@ usr/share/ucs-school-import/hooks/network_create_post.d
 usr/share/ucs-school-import/hooks/router_create_post.d
 usr/share/ucs-school-import/hooks/ou_create_post.d
 usr/share/ucs-school-import/pyhooks
+usr/share/ucs-school-import/scripts
