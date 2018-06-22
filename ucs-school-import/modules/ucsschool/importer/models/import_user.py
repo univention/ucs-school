@@ -837,19 +837,12 @@ class ImportUser(User):
 			self.name = self.old_user.name
 		return self.name or ""
 
-	def modify(self, lo, validate=True, move_if_necessary=None, scheduled_for_deletion=False):
+	def modify(self, lo, validate=True, move_if_necessary=None):
 		self.lo = lo
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running modify() from within a hook.")
 			return self.modify_without_hooks(lo, validate, move_if_necessary)
-		elif scheduled_for_deletion:
-			# run remove hooks instead of modify hooks
-			self.call_hooks('pre', 'remove')
-			success = self.modify_without_hooks(lo, validate, move_if_necessary)
-			if success:
-				self.call_hooks('post', 'remove')
-			return success
 		else:
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
