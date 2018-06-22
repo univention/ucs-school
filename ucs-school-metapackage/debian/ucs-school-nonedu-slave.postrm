@@ -2,7 +2,7 @@
 #
 # UCS@school
 #
-# Copyright 2014-2018 Univention GmbH
+# Copyright 2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,19 +29,14 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-. /usr/share/univention-lib/base.sh
-
 #DEBHELPER#
 
-if [ "$1" = "remove" ]
-then
-	call_unjoinscript 17ucs-school-portal-entry.uinst
-
+if [ remove = "$1" ] ; then
 	# remove join scripts diversions for univention-ldb-modules
 	# this should be safe to remove in new (> 4.3) ucs release.
 	prefix="/usr/lib/univention-install"
 	for iFile in $prefix/96univention-samba4slavepdc.inst $prefix/98univention-samba4slavepdc-dns.inst; do
-		dpkg-divert --package ucs-school-slave --rename --remove --divert "$iFile.debian" "$iFile" || true
+		dpkg-divert --package ucs-school-noneduslave --rename --remove --divert "$iFile".debian "$iFile" || true
 	done
 fi
 
