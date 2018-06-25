@@ -36,7 +36,9 @@ import datetime
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
+from ucsschool.importer.utils.result_pyhook import ResultPyHook
 from ucsschool.lib.models.utils import stopped_notifier
+from ucsschool.lib.pyhooks import PyHooksLoader
 
 
 class MassImport(object):
@@ -45,6 +47,9 @@ class MassImport(object):
 
 	Currently only implemented for users.
 	"""
+
+	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
+	_result_pyhook_cache = None
 
 	def __init__(self, dry_run=True):
 		"""
@@ -108,4 +113,19 @@ class MassImport(object):
 			uis = datetime.datetime.now().strftime(self.config["output"]["user_import_summary"])
 			self.logger.info("------ Writing user import summary to %s... ------", uis)
 			self.result_exporter.dump(user_import, uis)
+		self.call_result_hook('user_result', user_import)
 		self.logger.info("------ Importing users done. ------")
+
+	def call_result_hook(self, func_name, importer):
+		"""
+		Run code after the import has been completed.
+		"""
+
+		if self._result_pyhook_cache is None:
+			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
+			pyloader = PyHooksLoader(path, ResultPyHook, self.logger)
+			self._result_pyhook_cache = pyloader.get_hook_objects()
+
+		for func in self._result_pyhook_cache.get(func_name, []):
+			self.logger.info("Running %s hook %s ...", func_name, func)
+			func(importer)
