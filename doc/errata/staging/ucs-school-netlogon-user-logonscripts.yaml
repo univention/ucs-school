@@ -3,7 +3,7 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-netlogon-user-logonscripts
-fix: 
+fix: 14.0.1-2A~4.3.0.201805241106
 desc: |
  * From now on, newly generated netlogon script also create a desktop link that refers to the Univention Portal of
    the local maschine. The link to the Univention Portal may be altered via UCR variable
