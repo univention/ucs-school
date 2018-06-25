@@ -523,3 +523,16 @@ class UserImport(object):
 		if 'progress_notification_function' not in self.config:
 			return
 		self.config['progress_notification_function'](description, percentage, done, total, **kwargs)
+
+	def get_result_data(self):
+		return UserImportData(self)
+
+
+class UserImportData(object):
+	def __init__(self, user_import):  # type: (UserImport) -> None
+		self.config = user_import.config
+		self.dry_run = user_import.dry_run
+		self.errors = user_import.errors
+		self.added_users = user_import.added_users
+		self.modified_users = user_import.modified_users
+		self.deleted_users = user_import.deleted_users
