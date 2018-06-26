@@ -1,5 +1,5 @@
 #!/usr/bin/python2.7
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 #
 # UCS@school lib
 #  module: UCS@school specific roles
@@ -31,8 +31,41 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-role_pupil = 'pupil'
+role_pupil = 'pupil'  # attention: there is also "role_student"
 role_teacher = 'teacher'
 role_staff = 'staff'
 
 supported_roles = (role_pupil, role_teacher, role_staff)  # note: pupil SHOULD come first here for checks
+
+role_computer_room = 'computer_room'
+role_dc_backup = 'dc_backup'
+role_dc_master = 'dc_master'
+role_dc_slave = 'dc_slave'
+role_dc_slave_admin = 'dc_slave_admin'
+role_dc_slave_edu = 'dc_slave_edu'
+role_dc_slave_edu_secondary = 'dc_slave_edu_secondary'
+role_exam_user = 'exam_user'
+role_memberserver = 'memberserver'
+role_memberserver_admin = 'memberserver_admin'
+role_memberserver_edu = 'memberserver_edu'
+role_school = 'school'
+role_school_admin = 'school_admin'
+role_school_admin_group = 'school_admin_group'
+role_school_class = 'school_class'
+role_school_class_share = 'school_class_share'
+role_single_master = 'single_master'
+role_student = 'student'  # attention: there is also "role_pupil"
+role_workgroup = 'workgroup'
+role_workgroup_share = 'workgroup_share'
+
+all_roles = (
+	role_pupil, role_teacher, role_staff, role_computer_room, role_dc_backup, role_dc_master, role_dc_slave,
+	role_dc_slave_admin, role_dc_slave_edu, role_dc_slave_edu_secondary, role_exam_user, role_memberserver,
+	role_memberserver_admin, role_memberserver_edu, role_school, role_school_admin, role_school_admin_group,
+	role_school_class, role_school_class_share, role_single_master, role_student, role_workgroup, role_workgroup_share,
+)
+
+
+def create_ucsschool_role_string(role, school):
+	assert role in all_roles, 'Unknown role {!r}.'.format(role)
+	return '{}:school:{}'.format(role, school)

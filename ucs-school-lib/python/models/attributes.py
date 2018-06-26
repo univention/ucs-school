@@ -40,6 +40,7 @@ from univention.admin.syntax import (
 	netmask, UDM_Objects, string)
 from univention.admin.uexceptions import valueError
 
+from ucsschool.lib.roles import all_roles
 from ucsschool.lib.models.utils import ucr, _
 
 
@@ -313,4 +314,29 @@ class RecordUID(Attribute):
 class SourceUID(Attribute):
 	udm_name = 'ucsschoolSourceUID'
 	syntax = string
+	extended = True
+
+
+class RolesSyntax(string):
+	regex = re.compile(r'^(?P<role>.+):(?P<context_type>.+):(?P<context>.+)$')
+
+	@classmethod
+	def parse(cls, text):
+		if not text:
+			return text
+		reg = cls.regex.match(text)
+		if not reg:
+			raise ValueError(_('Role has bad format'))
+		if reg.groupdict()['context_type'] != 'school':
+			raise ValueError(_('Unknown context type'))
+		if reg.groupdict()['role'] not in all_roles:
+			raise ValueError(_('Unknown role'))
+		return super(RolesSyntax, cls).parse(text)
+
+
+class Roles(Attribute):
+	udm_name = 'ucsschoolRole'
+	value_type = list
+	value_default = list
+	syntax = RolesSyntax
 	extended = True
