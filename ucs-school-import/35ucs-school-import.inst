@@ -40,7 +40,7 @@ eval "$(ucr shell)"
 
 CONF_DIR="/etc/ucsschool-import"
 
-LDAP_SECRET_FILE="$CONF_DIR/ldap.secret"
+LDAP_SECRET_FILE="$CONF_DIR/ldap_unprivileged.secret"
 LDAP_USER_NAME="importhttpapi"
 LDAP_USER_POSITION="cn=users,$ldap_base"
 LDAP_USER_DN="uid=$LDAP_USER_NAME,$LDAP_USER_POSITION"

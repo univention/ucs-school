@@ -62,7 +62,7 @@ def get_machine_connection():
 def get_unprivileged_connection():
 	global _unprivileged_connection, _unprivileged_position
 	if not _unprivileged_connection or not _unprivileged_position:
-		with open('/etc/ucsschool-import/ldap.secret') as fp:
+		with open('/etc/ucsschool-import/ldap_unprivileged.secret') as fp:
 			dn_pw = fp.read()
 		dn, base, pw = dn_pw.strip().split(':')
 		_unprivileged_connection = uldap.access(base=base, binddn=dn, bindpw=pw)
