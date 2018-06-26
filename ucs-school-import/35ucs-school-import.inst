@@ -117,6 +117,8 @@ univention-directory-manager container/cn create "$@" --ignore_exists \
 	--set name="UCSschool" \
 	--set description="Attributes for UCS@school configuration" || die
 
+#### container/ou ####
+
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="UCSschool-School-OU" \
@@ -194,6 +196,29 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set valueRequired=1 \
 	--set ldapMapping=displayName \
 	--set multivalue=0 || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolRoleOU" \
+	--append module="container/ou" \
+	--set options="UCSschool-School-OU" \
+	--set tabName="UCS@school" \
+	--set tabPosition=5 \
+	--set groupName="General" \
+	--set groupPosition="2" \
+	--set shortDescription="Role of UCS@school object." \
+	--set longDescription="Role of UCS@school object." \
+	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set CLIName="ucsschoolRole" \
+	--set objectClass="ucsschoolOrganizationalUnit" \
+	--set ldapMapping="ucsschoolRole" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="1" \
+	--set disableUDMWeb=1 || die
+
+#### users/user & settings/usertemplate ####
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -356,6 +381,31 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set hook=UcsschoolPurgeTimestamp \
 	--set disableUDMWeb=0 || die
 
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolRoleUsers" \
+	--append module="users/user" \
+	--append module=settings/usertemplate \
+	--append options="ucsschoolStudent" \
+	--append options="ucsschoolTeacher" \
+	--append options="ucsschoolStaff" \
+	--append options="ucsschoolAdministrator" \
+	--set tabName="UCS@school" \
+	--set tabPosition=6 \
+	--set shortDescription="Role of UCS@school object." \
+	--set longDescription="Role of UCS@school object." \
+	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set CLIName="ucsschoolRole" \
+	--set objectClass="ucsschoolType" \
+	--set ldapMapping="ucsschoolRole" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="1" \
+	--set disableUDMWeb=1 || die
+
+#### groups/group ####
+
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolAdministratorGroup" \
@@ -390,6 +440,64 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set mayChange=1 \
 	--set deleteObjectClass=1 \
 	--set multivalue=1 || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolRoleGroups" \
+	--append module="groups/group" \
+	--set tabName="UCS@school" \
+	--set shortDescription="Role of UCS@school object." \
+	--set longDescription="Role of UCS@school object." \
+	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set CLIName="ucsschoolRole" \
+	--set objectClass="ucsschoolGroup" \
+	--set ldapMapping="ucsschoolRole" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="1" \
+	--set disableUDMWeb=1 || die
+
+#### computers/* #####
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolRoleComputers" \
+	--append module="computers/domaincontroller_backup" \
+	--append module="computers/domaincontroller_master" \
+	--append module="computers/domaincontroller_slave" \
+	--append module="computers/memberserver" \
+	--set tabName="UCS@school" \
+	--set shortDescription="Role of UCS@school object." \
+	--set longDescription="Role of UCS@school object." \
+	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set CLIName="ucsschoolRole" \
+	--set objectClass="ucsschoolServer" \
+	--set ldapMapping="ucsschoolRole" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="1" \
+	--set disableUDMWeb=1 || die
+
+#### shares/share ####
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolRoleShares" \
+	--append module="shares/share" \
+	--set tabName="UCS@school" \
+	--set shortDescription="Role of UCS@school object." \
+	--set longDescription="Role of UCS@school object." \
+	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set CLIName="ucsschoolRole" \
+	--set objectClass="ucsschoolShare" \
+	--set ldapMapping="ucsschoolRole" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="1" \
+	--set disableUDMWeb=1 || die
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
 	# append UCSschool-School-OU option to Home/ClassShareServer
