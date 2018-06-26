@@ -98,6 +98,11 @@ class CsvReader(BaseReader):
 		:rtype: Iterator
 		"""
 		with open(self.filename, "rb") as fp:
+			# auto detect utf-8 with BOM
+			data = fp.read(4)
+			if data.startswith(codecs.BOM_UTF8):
+				self.encoding = "utf-8-sig"
+			fp.seek(0)
 			try:
 				dialect = self.get_dialect(fp)
 			except CsvError as exc:
