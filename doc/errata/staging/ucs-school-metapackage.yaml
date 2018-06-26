@@ -3,8 +3,7 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-metapackage
-fix: 11.0.1-4A~4.3.0.201806221140
+fix: 11.0.1-5A~4.3.0.201806261308
 desc: |
  * The new module "Classlists" has been added to the recommended packages (Bug #47017).
- * Move ucsschool specific join scripts into ucs-schol-metapackage to avoid join errors on non school slave systems (Bug #47226).
-bug: [47017, 47226]
+bug: [47017]
