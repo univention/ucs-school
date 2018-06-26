@@ -35,10 +35,11 @@ import os.path
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
 
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roles import role_exam_user, role_pupil, role_teacher, role_staff, role_student
 from ucsschool.lib.models.utils import create_passwd
-from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
+from ucsschool.lib.models.attributes import (
+	Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools, Roles)
+from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup, SchoolGroup
 from ucsschool.lib.models.computer import AnyComputer
@@ -50,7 +51,7 @@ from univention.admin.filter import conjunction, parse
 import univention.admin.modules as udm_modules
 
 
-class User(UCSSchoolHelperAbstractClass):
+class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	name = Username(_('Username'), aka=['Username', 'Benutzername'])
 	schools = Schools(_('Schools'))
 	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
@@ -60,6 +61,7 @@ class User(UCSSchoolHelperAbstractClass):
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
 	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
 	school_classes = SchoolClassesAttribute(_('Class'), aka=['Class', 'Klasse'])
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	type_name = None
 	type_filter = '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent))'
@@ -68,7 +70,7 @@ class User(UCSSchoolHelperAbstractClass):
 	_samba_home_path_cache = {}
 	# _samba_home_path_cache is invalidated in School.invalidate_cache()
 
-	roles = []
+	roles = []  # read this through get_roles() to allow subclasses to do some magic
 	default_options = ()
 
 	def __init__(self, *args, **kwargs):
@@ -594,6 +596,11 @@ class Student(User):
 		groups.extend(self.get_students_groups())
 		return groups
 
+	@classmethod
+	def get_roles(cls):
+		"""replace 'pupil' with 'student'"""
+		return [role_student if role == role_pupil else role for role in cls.roles]
+
 
 class Teacher(User):
 	type_name = _('Teacher')
@@ -681,3 +688,7 @@ class ExamStudent(Student):
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], cls.get_container(school))
 		return cls.from_dn(dn, school, lo)
+
+	def get_roles(cls):
+		"""replace 'pupil' with 'exam_user'"""
+		return [role_exam_user]

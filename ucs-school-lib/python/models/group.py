@@ -34,12 +34,13 @@ from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName, Hosts, Users
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName, Hosts, Users, Roles
+from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.misc import OU, Container
-from ucsschool.lib.models.share import Share, ClassShare
+from ucsschool.lib.models.share import ClassShare, WorkGroupShare
 from ucsschool.lib.models.policy import UMCPolicy
 from ucsschool.lib.models.utils import ucr, _, logger
+from ucsschool.lib.roles import role_computer_room, role_school_class, role_workgroup
 
 
 class _MayHaveSchoolPrefix(object):
@@ -183,9 +184,12 @@ class SchoolGroup(Group, _MayHaveSchoolSuffix):
 	pass
 
 
-class SchoolClass(Group, _MayHaveSchoolPrefix):
+class SchoolClass(RoleSupportMixin, Group, _MayHaveSchoolPrefix):
 	name = SchoolClassName(_('Name'))
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
+	roles = [role_school_class]
+	_school_in_name_prefix = True
 	ShareClass = ClassShare
 
 	def create_without_hooks(self, lo, validate):
@@ -241,8 +245,8 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
-
-	ShareClass = Share
+	roles = [role_workgroup]
+	ShareClass = WorkGroupShare
 
 	@classmethod
 	def get_container(cls, school):
@@ -258,9 +262,12 @@ class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 		return cls
 
 
-class ComputerRoom(Group, _MayHaveSchoolPrefix):
+class ComputerRoom(RoleSupportMixin, Group, _MayHaveSchoolPrefix):
 	hosts = Hosts(_('Hosts'))
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+
 	users = None
+	roles = [role_computer_room]
 
 	def to_dict(self):
 		ret = super(ComputerRoom, self).to_dict()
@@ -278,3 +285,7 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
 				yield SchoolComputer.from_dn(host, self.school, ldap_connection)
 			except noObject:
 				continue
+
+	def get_schools_from_udm_obj(self, udm_obj):
+		# fixme: no idea how to find out old school
+		return self.school
