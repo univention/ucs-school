@@ -1,5 +1,3 @@
 00ucs-school-app-version-check.inst usr/lib/univention-install/
 62ucs-school-nonedu-slave.inst usr/lib/univention-install/
-96univention-samba4slavepdc.inst usr/lib/univention-install/
-98univention-samba4slavepdc-dns.inst usr/lib/univention-install/
 app_version.py usr/share/ucs-school-metapackage/scripts

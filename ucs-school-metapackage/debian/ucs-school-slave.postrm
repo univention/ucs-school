@@ -36,13 +36,6 @@
 if [ "$1" = "remove" ]
 then
 	call_unjoinscript 17ucs-school-portal-entry.uinst
-
-	# remove join scripts diversions for univention-ldb-modules
-	# this should be safe to remove in new (> 4.3) ucs release.
-	prefix="/usr/lib/univention-install"
-	for iFile in $prefix/96univention-samba4slavepdc.inst $prefix/98univention-samba4slavepdc-dns.inst; do
-		dpkg-divert --package ucs-school-slave --rename --remove --divert "$iFile.debian" "$iFile" || true
-	done
 fi
 
 exit 0
