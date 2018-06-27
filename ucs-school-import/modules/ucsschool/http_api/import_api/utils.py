@@ -41,7 +41,7 @@ def get_wsgi_user_group():
 	runs.
 
 	:return: tuple with username and group name
-	:rtype tuple(str, str)
+	:rtype: tuple(str, str)
 	"""
 	return 'uas-import', 'uas-import'
 

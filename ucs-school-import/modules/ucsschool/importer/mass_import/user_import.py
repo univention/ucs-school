@@ -218,7 +218,7 @@ class UserImport(object):
 		"""
 		Find difference between source database and UCS user database.
 
-		:return list of tuples: [(source_uid, record_uid, input_data), ..]
+		:return: list of tuples: [(source_uid, record_uid, input_data), ..]
 		:rtype: list(tuple(str, str, list(str)))
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
