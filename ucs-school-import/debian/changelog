@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-16) unstable; urgency=low
+
+  * Bug #45749: fix hook belonging to wrong package
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 27 Jun 2018 11:00:51 +0200
+
 ucs-school-import (16.0.2-15) unstable; urgency=low
 
   * Bug #46829: rename LDAP secret file to prevent confusion
