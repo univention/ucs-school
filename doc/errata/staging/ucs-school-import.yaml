@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-57A~4.2.0.201806261021
+fix: 15.0.3-58A~4.2.0.201806271106
 desc: |
  * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47028).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #47073).
