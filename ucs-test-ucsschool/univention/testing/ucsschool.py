@@ -55,6 +55,9 @@ import univention.testing.udm as udm_test
 import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
 
+from ucsschool.lib.roles import (
+	create_ucsschool_role_string, role_computer_room, role_school_admin, role_school_class, role_student, role_staff,
+	role_teacher, role_workgroup)
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.models.group import ComputerRoom
@@ -488,7 +491,16 @@ class UCSTestSchool(object):
 				print '*** Calling following command: %r' % cmd
 				retval = subprocess.call(cmd)
 				if retval:
-					utils.fail('create_ou failed with exitcode %s' % retval)
+					utils.fail('import_user failed with exitcode %s' % retval)
+
+			if is_staff and is_teacher:
+				roles = [role_staff, role_teacher]
+			elif is_staff and not is_teacher:
+				roles = [role_staff]
+			elif not is_staff and is_teacher:
+				roles = [role_teacher]
+			else:
+				roles = [role_student]
 
 			if password is not None:
 				self._set_password(user_dn, password)
@@ -518,12 +530,13 @@ class UCSTestSchool(object):
 				cls = Teacher
 			elif not is_teacher and is_staff:
 				cls = Staff
+			roles = cls.get_roles()
 			result = cls(**kwargs).create(self.lo)
 			print '*** Result of %s(...).create(): %r' % (cls.__name__, result,)
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-
+		utils.verify_ldap_object(user_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in roles]}, strict=False, should_exist=True)
 		return username, user_dn
 
 	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None, mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
@@ -546,7 +559,8 @@ class UCSTestSchool(object):
 			'email': mailaddress,
 			'password': password,
 			'disabled': not(is_active),
-			'options': ['samba', 'ucsschoolAdministrator', 'kerberos', 'posix', 'mail'],
+			'options': ['ucsschoolAdministrator'],
+			'ucsschool_role': [role_school_admin],
 		}
 		dn, school_admin = self.udm.create_user(position=position, groups=groups, **kwargs)
 		if wait_for_replication:
@@ -597,7 +611,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-
+		utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_school_class, ou_name)}, strict=False, should_exist=True)
 		return class_name, grp_dn
 
 	def create_workgroup(self, ou_name, workgroup_name=None, description=None, users=None, wait_for_replication=True):
@@ -625,7 +639,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-
+		utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_workgroup, ou_name)}, strict=False, should_exist=True)
 		return workgroup_name, grp_dn
 
 	def create_computerroom(self, ou_name, name=None, description=None, host_members=None, wait_for_replication=True):
@@ -661,6 +675,7 @@ class UCSTestSchool(object):
 		print '*** Result of ComputerRoom(...).create(): %r' % (result,)
 		if wait_for_replication:
 			utils.wait_for_replication()
+		utils.verify_ldap_object(obj.dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_computer_room, ou_name)}, strict=False, should_exist=True)
 		return name, result
 
 	def create_windows(self):

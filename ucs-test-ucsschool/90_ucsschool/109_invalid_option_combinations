@@ -15,7 +15,9 @@ import univention.testing.utils as utils
 import univention.testing.udm as udm_test
 from univention.admin.uexceptions import invalidOptions
 from univention.testing.udm import UCSTestUDM_CreateUDMObjectFailed
+from ucsschool.lib.roles import create_ucsschool_role_string
 from ucsschool.lib.models import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
+
 
 blacklisted_option_combinations = {
 	"ucsschoolAdministrator": {"ucsschoolExam", "ucsschoolStudent"},
@@ -52,7 +54,12 @@ def main():
 						print("*** Creating {} and trying to add option {}...".format(kls.type_name, bad_option))
 						user = kls(name=uts.random_username(), school=ou_name, firstname=uts.random_name(), lastname=uts.random_name())
 						user.create(lo)
-						utils.verify_ldap_object(user.dn, expected_attr={"uid": [user.name]}, strict=False, should_exist=True)
+						utils.verify_ldap_object(
+							user.dn,
+							expected_attr={"uid": [user.name], 'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in user.get_roles()]},
+							strict=False,
+							should_exist=True
+						)
 						udm_user = user.get_udm_object(lo)
 						udm_user.options.append(bad_option)
 						try:

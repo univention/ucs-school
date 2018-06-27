@@ -19,6 +19,7 @@ from ucsschool.lib.models import Teacher as TeacherLib
 from ucsschool.lib.models import Staff as StaffLib
 from ucsschool.lib.models import TeachersAndStaff as TeachersAndStaffLib
 from ucsschool.lib.models import School as SchoolLib
+from ucsschool.lib.roles import role_student, role_teacher, role_staff, create_ucsschool_role_string
 import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, create_ou_cli, get_school_base
@@ -261,6 +262,7 @@ class Person(object):
 			shadowExpire=[] if self.is_active() else ['1'],
 			sn=[self.lastname],
 			uid=[self.username],
+			ucsschoolRole=self.roles
 		)
 
 		if self.source_uid:
@@ -323,6 +325,20 @@ class Person(object):
 			server = '%LOGONSERVER%'
 
 		return server + '\\%USERNAME%\\windows-profiles\\default'
+
+	@property
+	def roles(self):
+		roles = {
+			'student': [role_student],
+			'teacher': [role_teacher],
+			'staff': [role_staff],
+			'teacher_staff': [role_teacher, role_staff],
+			'teacher_and_staff': [role_teacher, role_staff],
+		}[self.role]
+		res = []
+		for role in roles:
+			res.extend([create_ucsschool_role_string(role, school) for school in self.schools])
+		return res
 
 	def verify(self):
 		print('verify %s: %s' % (self.role, self.username))

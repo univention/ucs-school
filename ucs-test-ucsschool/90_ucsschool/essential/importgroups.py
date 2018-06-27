@@ -12,6 +12,7 @@ import univention.testing.ucsschool as utu
 from ucsschool.lib.models import SchoolClass as GroupLib
 from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
+from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
 
 from essential.importou import get_school_base
 
@@ -66,6 +67,7 @@ class Group:
 		attr = {}
 		attr['cn'] = [self.name]
 		attr['description'] = [self.description]
+		attr['ucsschoolRole'] = create_ucsschool_role_string(role_school_class, self.school)
 		return attr
 
 	def verify(self):
@@ -77,7 +79,7 @@ class Group:
 			return
 
 		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
-		utils.verify_ldap_object(self.share_dn, should_exist=True)
+		utils.verify_ldap_object(self.share_dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_school_class_share, self.school)}, should_exist=True)
 
 
 class ImportFile:

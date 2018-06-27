@@ -25,9 +25,15 @@ class FailCmd(Exception):
 
 def run_commands(cmdlist, argdict):
 	"""
-	Start all commands in cmdlist and replace formatstrings with arguments in argdict.\n
-	run_commands([['/bin/echo', '%(msg)s'], ['/bin/echo', 'World']], {'msg': 'Hello'})\n
-	:return tuple: (output message, error message)
+	Start all commands in cmdlist and replace formatstrings with arguments in argdict.
+
+	>>> run_commands([['/bin/echo', '%(msg)s'], ['/bin/echo', 'World']], {'msg': 'Hello'})
+	[('Hello\n', ''), ('World\n', '')]
+
+	:param list cmdlist: list of commands to start
+	:param dict argdict: formatstrings for commands in `cmdlist`
+	:return: tuple: (output message, error message)
+	:rtype: tuple[str, str]
 	"""
 	result_list = []
 	for cmd in cmdlist:
@@ -41,9 +47,10 @@ def run_commands(cmdlist, argdict):
 
 
 def create_group_in_container(container_dn):
-	"""Create random group in a specific container:\n
-	:param container_dn: container dn to create the group in
-	:type container_dn: ldap object dn
+	"""
+	Create random group in a specific container:
+
+	:param str container_dn: container dn to create the group in
 	"""
 	cmd = [
 		'udm', 'groups/group', 'create',
@@ -59,9 +66,10 @@ def create_group_in_container(container_dn):
 
 
 def create_dc_slave_in_container(container_dn):
-	"""Create random computer in a specific container:\n
-	:param container_dn: container dn to create the group in
-	:type container_dn: ldap object dn
+	"""
+	Create random computer in a specific container:
+
+	:param str container_dn: container dn to create the group in
 	"""
 	cmd = [
 		'udm', 'computers/domaincontroller_slave', 'create',
@@ -78,9 +86,10 @@ def create_dc_slave_in_container(container_dn):
 
 
 def create_user_in_container(container_dn):
-	"""Create random user in a specific container:\n
-	:param container_dn: container dn to create the user in
-	:type container_dn: ldap object dn
+	"""
+	Create random user in a specific container:
+
+	:param str container_dn: container dn to create the user in
 	"""
 	cmd = [
 		'udm', 'users/user', 'create',
@@ -102,20 +111,18 @@ def create_user_in_container(container_dn):
 
 
 class Acl(object):
+	"""
+	Acl class
 
-	"""Acl class\n
-	contains the basic functuality to test acls for the common container in ucsschool\n
-	may change with time.\n
+	contains the basic functuality to test acls for the common container in
+	ucsschool may change with time.
 	"""
 
 	def __init__(self, school, auth_dn, access_allowance):
-		"""__init__():\n
-		:param school: school name
-		:type school: string
-		:param auth_dn: dn of the authentication actor
-		:type auth_dn: ldap object dn
-		:param access_allowance: the expected access result
-		:type access_allowance: str: 'ALLOWED' or 'DENIED'
+		"""
+		:param str school: school name
+		:param str auth_dn: dn of the authentication actor
+		:param str access_allowance: the expected access result - `ALLOWED` or `DENIED`
 		"""
 		self.school = school
 		self.auth_dn = auth_dn
@@ -124,13 +131,13 @@ class Acl(object):
 		self.ucr.load()
 
 	def assert_acl(self, target_dn, access, attrs, access_allowance=None):
-		"""Test ACL rule:\n
-		:param target_dn: Target dn to test access to
-		:type target_dn: ldap object dn
-		:param attrs: names of the attributes to test acl against
-		:type attrs: list of str
-		:param access: type of access
-		:type access: str='read' 'write' or 'none'
+		"""
+		Test ACL rule:
+
+		:param str target_dn: Target dn to test access to
+		:param  attrs: names of the attributes to test acl against
+		:type attrs: list[str]
+		:param str access: type of access - `read`, `write` or `none`
 		"""
 		access_allowance = access_allowance if access_allowance else self.access_allowance
 		print '\n * Targetdn = %s\n * Authdn = %s\n * Access = %s\n * Access allowance = %s\n' % (target_dn, self.auth_dn, access, access_allowance)
