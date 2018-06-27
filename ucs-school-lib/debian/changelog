@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-13) unstable; urgency=low
+
+  * Bug #45447: Revert - remove + from SambaForceGroup option in shares
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 27 Jun 2018 10:05:34 +0200
+
 ucs-school-lib (11.0.1-12) unstable; urgency=low
 
   * Bug #45164: support setting permissions for logfiles
