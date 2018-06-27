@@ -51,7 +51,7 @@ class MyUserImport(UserImport):
 		IMPLEMENTME to add or change a deletion variant.
 
 		:param ImportUser user: user object
-		:return whether the deletion worked
+		:return: whether the deletion worked
 		:rtype: bool
 		"""
 		if user.birthday == datetime.datetime.now().strftime("%Y-%m-%d"):
