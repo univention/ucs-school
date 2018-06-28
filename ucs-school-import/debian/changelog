@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-60) unstable; urgency=low
+
+  * Bug #47073: prevent running forbidden configuration combination
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 28 Jun 2018 10:21:51 +0200
+
 ucs-school-import (15.0.3-59) unstable; urgency=low
 
   * Bug #47237: restart Gunicorn when machine account password changes
