@@ -123,9 +123,11 @@ class ParseUserImportCmdline(object):
 		if (
 			hasattr(self.args, "user_role") and
 			self.args.user_role and
-			self.args.user_role not in ["student", "staff", "teacher", "teacher_and_staff"]
+			self.args.user_role not in ["none", "student", "staff", "teacher", "teacher_and_staff"]
 		):
-			self.parser.error("Invalid user role. Must be one of student, staff, teacher, teacher_and_staff.")
+			self.parser.error("Invalid user role. Must be one of none, student, staff, teacher, teacher_and_staff.")
+		if hasattr(self.args, "user_role") and self.args.user_role == "none":
+			self.args.user_role = None
 
 		settings = dict()
 		if hasattr(self.args, "infile") and self.args.infile:

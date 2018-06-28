@@ -381,7 +381,7 @@ optional arguments:
             school (shortcut for --set school=...) [default: None].
   -u USER_ROLE, --user_role USER_ROLE
             Set this, if the source data contains users with only one
-            role &lt;student|staff|teacher|teacher_and_staff&gt;
+            role &lt;none|student|staff|teacher|teacher_and_staff&gt;
             (shortcut for --set user_role=...) [default: None].
   -v, --verbose
             Enable debugging output on the console [default: False].
@@ -981,12 +981,12 @@ udm users/user
 						</listitem>
 						<listitem>
 							<simpara>
-								<literal>__ignore</literal>: Der Inhalt dieser Spalte wird ignoriert. Die kann z.B. verwendet werden, wenn die CSV-Datei leerer Spalten, oder solche mit nicht zu importierenden Daten, enthält.
+								<literal>__ignore</literal>: Der Inhalt dieser Spalte wird ignoriert. Sie kann z.B. verwendet werden, wenn die CSV-Datei leere Spalten, oder solche mit nicht zu importierenden Daten, enthält.
 							</simpara>
 						</listitem>
 						<listitem>
 							<simpara>
-								<literal>__role</literal>: Der Inhalt dieser Spalte wird verwendet um die Rolle des Benutzers zu bestimmen. Gültige Werte sind <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> und <literal>teacher_and_staff</literal>.
+								<literal>__role</literal>: Der Inhalt dieser Spalte wird verwendet um die Rolle des Benutzers zu bestimmen. Gültige Werte sind <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> und <literal>teacher_and_staff</literal>. Wenn die Rolle der zu importierenden Benutzer in einer Spalte angegeben wird, darf die Option <option>user_role</option> nicht (oder nur auf <literal>null</literal>) gesetzt werden.
 							</simpara>
 						</listitem>
 					</itemizedlist>

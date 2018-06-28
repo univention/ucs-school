@@ -75,6 +75,8 @@ def check_configuration(config):
 			raise InitialisationError(
 				"Configuration value of username:max_length:{} must be 20 or less.".format(role)
 			)
+	if config['user_role'] and '__role' in config['csv']['mapping'].values():
+		raise InitialisationError("Using 'user_role' setting and '__role' mapping at the same time is not allowed.")
 
 
 class ConfigurationFile(object):
