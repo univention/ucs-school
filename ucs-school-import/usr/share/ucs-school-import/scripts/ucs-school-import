@@ -632,6 +632,7 @@ def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			('ucsschoolClassShareFileServer', '', ShareFileServer),  # set file server for class shares
 			('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
 			('displayName', '', displayName),                       # set display name for UCS@school
+			('ucsschoolRole', '', [create_ucsschool_role_string("school", schoolNr)]),
 		])
 	else:
 		if ShareFileServer is not None:
@@ -1099,7 +1100,6 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 		object.open()
 		name = position_dn[3:string.find(position_dn, ",")]
 		object["name"] = name
-		object["ucsschoolRole"] = [create_ucsschool_role_string("school", name)]
 
 		if position_dn[:2] == "cn" and path and not name == "users":  # is path container
 			object[path] = codecs.latin_1_encode("1")[0]
