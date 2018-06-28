@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-17) unstable; urgency=low
+
+  * Bug #47236: restart Gunicorn when machine account password changes
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 28 Jun 2018 08:58:27 +0200
+
 ucs-school-import (16.0.2-16) unstable; urgency=low
 
   * Bug #45749: fix hook belonging to wrong package

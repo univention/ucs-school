@@ -1,5 +1,6 @@
 usr/share/doc/ucs-school-import                             usr/share/doc/
 usr/share/ucs-school-import                                 usr/share/
+usr/lib/univention-server/server_password_change.d/gunicorn_ucs-school-import usr/lib/univention-server/server_password_change.d/
 modules/ucsschool/__init__.py                               usr/share/pyshared/ucsschool/
 modules/ucsschool/importer                                  usr/share/pyshared/ucsschool/
 modules/univention/admin/hooks.d/*.py                       usr/share/ucs-school-import/hooks.d/
