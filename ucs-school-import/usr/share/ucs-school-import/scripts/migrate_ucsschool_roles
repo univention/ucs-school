@@ -227,7 +227,7 @@ class UcsSchoolRolesMigration(object):
 				objs = cls.get_all(lo, school)
 				for obj in objs:
 					roles = [
-						create_ucsschool_role_string(role, skool) for role in obj.get_roles()
+						create_ucsschool_role_string(role, skool) for role in obj.default_roles
 						for skool in getattr(obj, 'schools', [obj.school])
 					]
 					if cls == User and obj.is_administrator(lo):

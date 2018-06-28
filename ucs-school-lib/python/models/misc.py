@@ -80,7 +80,7 @@ class ContainerBase(UCSSchoolHelperAbstractClass):
 
 class OU(RoleSupportMixin, ContainerBase):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
-	roles = [role_school]
+	default_roles = [role_school]
 	_school_in_name = True
 
 	def get_schools(self):

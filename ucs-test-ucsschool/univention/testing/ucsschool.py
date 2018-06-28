@@ -530,7 +530,7 @@ class UCSTestSchool(object):
 				cls = Teacher
 			elif not is_teacher and is_staff:
 				cls = Staff
-			roles = cls.get_roles()
+			roles = cls.default_roles
 			result = cls(**kwargs).create(self.lo)
 			print '*** Result of %s(...).create(): %r' % (cls.__name__, result,)
 

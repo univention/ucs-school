@@ -77,8 +77,8 @@ import univention.admin.config
 import univention.config_registry
 import univention.lib.policy_result
 from ucsschool.lib.roles import (
-	create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_school_class, role_school_class_share,
-	role_school_admin_group, role_dc_slave_admin, role_dc_slave_edu)
+	create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_student, role_school_class,
+	role_school_class_share, role_school_admin_group, role_dc_slave_admin, role_dc_slave_edu)
 from ucsschool.lib.roleshares import roleshare_home_subdir
 from ucsschool.lib.models.utils import stopped_notifier, add_stream_logger_to_schoollib
 from ucsschool.lib.models.utils import create_passwd
@@ -1562,6 +1562,8 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	object["ucsschoolRole"] = []
 	for role in (role_pupil, role_staff, role_teacher):
 		if role in roles:
+			if role == role_pupil:
+				role = role_student
 			object["ucsschoolRole"].append(create_ucsschool_role_string(role, person.sNr))
 
 	try:

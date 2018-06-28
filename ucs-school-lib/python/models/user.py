@@ -70,7 +70,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	_samba_home_path_cache = {}
 	# _samba_home_path_cache is invalidated in School.invalidate_cache()
 
-	roles = []  # read this through get_roles() to allow subclasses to do some magic
+	roles = []
+	default_roles = []
 	default_options = ()
 
 	def __init__(self, *args, **kwargs):
@@ -571,6 +572,7 @@ class Student(User):
 	type_filter = '(&(objectClass=ucsschoolStudent)(!(objectClass=ucsschoolExam)))'
 	roles = [role_pupil]
 	default_options = ('ucsschoolStudent',)
+	default_roles = [role_student]
 
 	def do_school_change(self, udm_obj, lo, old_school):
 		try:
@@ -596,16 +598,12 @@ class Student(User):
 		groups.extend(self.get_students_groups())
 		return groups
 
-	@classmethod
-	def get_roles(cls):
-		"""replace 'pupil' with 'student'"""
-		return [role_student if role == role_pupil else role for role in cls.roles]
-
 
 class Teacher(User):
 	type_name = _('Teacher')
 	type_filter = '(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff)))'
 	roles = [role_teacher]
+	default_roles = [role_teacher]
 	default_options = ('ucsschoolTeacher',)
 
 	@classmethod
@@ -622,6 +620,7 @@ class Staff(User):
 	school_classes = None
 	type_name = _('Staff')
 	roles = [role_staff]
+	default_roles = [role_staff]
 	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff))'
 	default_options = ('ucsschoolStaff',)
 
@@ -662,6 +661,7 @@ class TeachersAndStaff(Teacher):
 	type_name = _('Teacher and Staff')
 	type_filter = '(&(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))'
 	roles = [role_teacher, role_staff]
+	default_roles = [role_teacher, role_staff]
 	default_options = ('ucsschoolStaff',)
 
 	@classmethod
@@ -677,6 +677,7 @@ class TeachersAndStaff(Teacher):
 class ExamStudent(Student):
 	type_name = _('Exam student')
 	type_filter = '(&(objectClass=ucsschoolStudent)(objectClass=ucsschoolExam))'
+	default_roles = [role_exam_user]
 	default_options = ('ucsschoolExam',)
 
 	@classmethod
@@ -688,7 +689,3 @@ class ExamStudent(Student):
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], cls.get_container(school))
 		return cls.from_dn(dn, school, lo)
-
-	def get_roles(cls):
-		"""replace 'pupil' with 'exam_user'"""
-		return [role_exam_user]

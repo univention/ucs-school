@@ -133,13 +133,13 @@ class Share(UCSSchoolHelperAbstractClass):
 
 class WorkGroupShare(RoleSupportMixin, Share):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
-	roles = [role_workgroup_share]
+	default_roles = [role_workgroup_share]
 	_school_in_name_prefix = True
 
 
 class ClassShare(RoleSupportMixin, Share):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
-	roles = [role_school_class_share]
+	default_roles = [role_school_class_share]
 	_school_in_name_prefix = True
 
 	@classmethod

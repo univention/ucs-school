@@ -60,7 +60,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	administrative_servers = Attribute(_('Administrative servers'), unlikely_to_change=True)
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
-	roles = [role_school]
+	default_roles = [role_school]
 	_school_in_name = True
 
 	def __init__(self, name=None, school=None, **kwargs):

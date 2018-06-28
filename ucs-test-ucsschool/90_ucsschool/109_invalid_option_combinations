@@ -56,7 +56,7 @@ def main():
 						user.create(lo)
 						utils.verify_ldap_object(
 							user.dn,
-							expected_attr={"uid": [user.name], 'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in user.get_roles()]},
+							expected_attr={"uid": [user.name], 'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in user.default_roles]},
 							strict=False,
 							should_exist=True
 						)

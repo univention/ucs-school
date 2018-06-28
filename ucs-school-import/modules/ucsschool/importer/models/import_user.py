@@ -741,7 +741,7 @@ class ImportUser(User):
 		if not self.schools:
 				self.make_schools()
 		self.ucsschool_roles = [
-			create_ucsschool_role_string(role, school) for role in self.get_roles()
+			create_ucsschool_role_string(role, school) for role in self.default_roles
 			for school in self.schools
 		]
 		return self.ucsschool_roles
@@ -937,16 +937,15 @@ class ImportUser(User):
 	@property
 	def role_sting(self):
 		"""
-		Mapping from self.roles (self.get_roles()) to string used in configuration.
+		Mapping from self.roles to string used in configuration.
 
 		:return: one of `staff`, `student`, `teacher`, `teacher_and_staff`
 		:rtype: str
 		"""
-		roles = self.get_roles()
-		if role_pupil in self.get_roles() or role_student in roles:
+		if role_pupil in self.roles:
 			return "student"
-		elif role_teacher in roles:
-			if role_staff in roles:
+		elif role_teacher in self.roles:
+			if role_staff in self.roles:
 				return "teacher_and_staff"
 			else:
 				return "teacher"

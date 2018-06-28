@@ -188,7 +188,7 @@ class SchoolClass(RoleSupportMixin, Group, _MayHaveSchoolPrefix):
 	name = SchoolClassName(_('Name'))
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
-	roles = [role_school_class]
+	default_roles = [role_school_class]
 	_school_in_name_prefix = True
 	ShareClass = ClassShare
 
@@ -245,7 +245,7 @@ class SchoolClass(RoleSupportMixin, Group, _MayHaveSchoolPrefix):
 
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
-	roles = [role_workgroup]
+	default_roles = [role_workgroup]
 	ShareClass = WorkGroupShare
 
 	@classmethod
@@ -267,7 +267,7 @@ class ComputerRoom(RoleSupportMixin, Group, _MayHaveSchoolPrefix):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	users = None
-	roles = [role_computer_room]
+	default_roles = [role_computer_room]
 
 	def to_dict(self):
 		ret = super(ComputerRoom, self).to_dict()

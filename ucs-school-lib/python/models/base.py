@@ -966,13 +966,9 @@ class RoleSupportMixin(object):
 
 	`ucsschool_roles = Roles(_('Roles'), aka=['Roles'])`
 	"""
-	roles = []
+	default_roles = []
 	_school_in_name = False
 	_school_in_name_prefix = False
-
-	@classmethod
-	def get_roles(cls):
-		return cls.roles
 
 	def get_schools(self):
 		return getattr(self, 'schools', [self.school])
@@ -1006,20 +1002,20 @@ class RoleSupportMixin(object):
 		self.ucsschool_roles = ['{role}:{context_type}:{context}'.format(**role) for role in roles]
 
 	def do_move_roles(self, lo, old_school, new_school):
-		if self.get_roles():
+		if self.default_roles:
 			# remove all roles of old school
 			roles = [role for role in self.roles_as_dicts if role['context'] != old_school]
 			# only add role(s) if object has no roles in new school
 			if all(role['context'] != new_school for role in roles):
 				# add only role(s) of current Python class in new school
-				roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.get_roles()])
+				roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
 			self.roles_as_dicts = roles
 
 	def validate_roles(self, lo):
 		# for now different roles in different schools are not supported
 		schools = self.get_schools()
 		for role in self.roles_as_dicts:
-			if self.get_roles() and role['role'] not in self.get_roles():
+			if self.default_roles and role['role'] not in self.default_roles:
 				self.add_error(
 					'ucsschool_roles',
 					_('Role {!r} is not supported for this object.').format(role['role'])
@@ -1031,20 +1027,22 @@ class RoleSupportMixin(object):
 				)
 
 	def create_without_hooks_roles(self, lo):
-		roles = self.get_roles()
-		if roles and not self.ucsschool_roles:
+		if self.default_roles and not self.ucsschool_roles:
 			schools = self.get_schools()
-			self.ucsschool_roles = [create_ucsschool_role_string(role, school) for role in roles for school in schools]
+			self.ucsschool_roles = [
+				create_ucsschool_role_string(role, school)
+				for role in self.default_roles
+				for school in schools
+			]
 
 	def modify_without_hooks_roles(self, lo):
 		udm_obj = self.get_udm_object(lo)
 		old_school = set(self.get_schools_from_udm_obj(udm_obj))
-		roles = self.get_roles()
-		if 'school' in old_school and roles:
+		if 'school' in old_school and self.default_roles:
 			# add role(s) if new/additional school and object has no role(s) there yet
 			schools = self.get_schools()
 			new_schools = set(schools) - old_school
-			if new_schools and roles:
+			if new_schools and self.default_roles:
 				roles = self.roles_as_dicts
 				for new_school in new_schools:
 					# only add role(s) if object has no roles in new school
