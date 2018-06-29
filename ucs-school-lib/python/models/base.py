@@ -213,7 +213,6 @@ class UCSSchoolHelperAbstractClass(object):
 		key = [cls.__name__] + [(k, kwargs[k]) for k in sorted(kwargs)]
 		key = tuple(key)
 		if key not in cls._cache:
-			logger.debug('Initializing %r', key)
 			obj = cls(**kwargs)
 			cls._cache[key] = obj
 		return cls._cache[key]
@@ -234,7 +233,6 @@ class UCSSchoolHelperAbstractClass(object):
 	def invalidate_cache(cls):
 		for key in cls._cache.keys():
 			if key[0] == cls.__name__:
-				logger.debug('Invalidating %r', key)
 				cls._cache.pop(key)
 
 	@classmethod
