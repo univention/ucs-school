@@ -31,6 +31,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+
+class UnknownRole(Exception):
+	pass
+
+
 role_pupil = 'pupil'  # attention: there is also "role_student"
 role_teacher = 'teacher'
 role_staff = 'staff'
@@ -67,5 +72,6 @@ all_roles = (
 
 
 def create_ucsschool_role_string(role, school):
-	assert role in all_roles, 'Unknown role {!r}.'.format(role)
+	if role not in all_roles:
+		raise UnknownRole('Unknown role {!r}.'.format(role))
 	return '{}:school:{}'.format(role, school)
