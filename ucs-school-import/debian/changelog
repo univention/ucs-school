@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-61) unstable; urgency=low
+
+  * Bug #47237: add missing executable flag to machine account change script
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 29 Jun 2018 13:17:01 +0200
+
 ucs-school-import (15.0.3-60) unstable; urgency=low
 
   * Bug #47073: prevent running forbidden configuration combination
