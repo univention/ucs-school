@@ -514,7 +514,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 		try:
 			old_attrs = deepcopy(udm_obj.info)
-			self.modify_without_hooks_roles(lo)
+			self.modify_without_hooks_roles(udm_obj)
 			self.do_modify(udm_obj, lo)
 			# get it fresh from the database
 			self.set_dn(self.dn)
@@ -533,7 +533,7 @@ class UCSSchoolHelperAbstractClass(object):
 		finally:
 			self.invalidate_cache()
 
-	def modify_without_hooks_roles(self, lo):
+	def modify_without_hooks_roles(self, udm_obj):
 		pass
 
 	def do_modify(self, udm_obj, lo):
@@ -582,9 +582,9 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj.move(self.dn, ignore_license=1)
 		if self.supports_school() and old_school and old_school != new_school:
 			self.do_school_change(udm_obj, lo, old_school)
-			self.do_move_roles(lo, old_school, new_school)
+			self.do_move_roles(udm_obj, lo, old_school, new_school)
 
-	def do_move_roles(self, lo, old_school, new_school):
+	def do_move_roles(self, udm_obj, lo, old_school, new_school):
 		pass
 
 	def change_school(self, school, lo):
@@ -988,6 +988,7 @@ class RoleSupportMixin(object):
 
 	@property
 	def roles_as_dicts(self):  # type: () -> List[Dict[str, str]]
+		"""Get :py:attr:`self.ucsschool_roles` as a dict."""
 		res = []
 		for role in self.ucsschool_roles:
 			m = Roles.syntax.regex.match(role)
@@ -997,17 +998,25 @@ class RoleSupportMixin(object):
 
 	@roles_as_dicts.setter
 	def roles_as_dicts(self, roles):  # type: (Iterable[Dict[str, str]]) -> None
+		"""
+		Take dict from :py:attr:`roles_as_dicts` and write to
+		:py:attr:`self.ucsschool_roles`.
+		"""
 		self.ucsschool_roles = ['{role}:{context_type}:{context}'.format(**role) for role in roles]
 
-	def do_move_roles(self, lo, old_school, new_school):
-		if self.default_roles:
-			# remove all roles of old school
-			roles = [role for role in self.roles_as_dicts if role['context'] != old_school]
-			# only add role(s) if object has no roles in new school
-			if all(role['context'] != new_school for role in roles):
-				# add only role(s) of current Python class in new school
-				roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
-			self.roles_as_dicts = roles
+	def do_move_roles(self, udm_obj, lo, old_school, new_school):
+		old_roles = list(self.ucsschool_roles)
+		# remove all roles of old school
+		roles = [role for role in self.roles_as_dicts if role['context'] != old_school]
+		# only add role(s) if object has no roles in new school
+		if all(role['context'] != new_school for role in roles):
+			# add only role(s) of current Python class in new school
+			roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
+		self.roles_as_dicts = roles
+		if old_roles != self.ucsschool_roles:
+			self.logger.info('Updating roles: %r -> %r...', old_roles, self.ucsschool_roles)
+			# cannot use do_modify() here, as it would delete the old object
+			lo.modify(self.dn, [('ucsschoolRole', old_roles, self.ucsschool_roles)])
 
 	def validate_roles(self, lo):
 		# for now different roles in different schools are not supported
@@ -1033,18 +1042,19 @@ class RoleSupportMixin(object):
 				for school in schools
 			]
 
-	def modify_without_hooks_roles(self, lo):
-		udm_obj = self.get_udm_object(lo)
-		old_school = set(self.get_schools_from_udm_obj(udm_obj))
-		if 'school' in old_school and self.default_roles:
-			# add role(s) if new/additional school and object has no role(s) there yet
-			schools = self.get_schools()
-			new_schools = set(schools) - old_school
-			if new_schools and self.default_roles:
-				roles = self.roles_as_dicts
-				for new_school in new_schools:
-					# only add role(s) if object has no roles in new school
-					if all(role['context'] != new_school for role in roles):
-						# add only role(s) of current Python class in new school
-						roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in roles])
-				self.roles_as_dicts = roles
+	def modify_without_hooks_roles(self, udm_obj):
+		"""
+		Add role(s) to object, if it got new/additional school(s), and object
+		has no role(s) in them yet.
+		"""
+		old_schools = set(self.get_schools_from_udm_obj(udm_obj))
+		cur_schools = self.get_schools()
+		new_schools = set(cur_schools) - old_schools
+		if new_schools:
+			roles = self.roles_as_dicts
+			for new_school in new_schools:
+				# only add role(s) if object has no roles in new school
+				if all(role['context'] != new_school for role in roles):
+					# add only role(s) of current Python class in new school
+					roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
+			self.roles_as_dicts = roles
