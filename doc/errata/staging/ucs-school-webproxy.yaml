@@ -6,4 +6,5 @@ src: ucs-school-webproxy
 fix: 14.0.0-5A~4.3.0.201805251118
 desc: |
  * WLAN authentification for the internet rule "Unbeschränkt" has been enabled by default.
+   Please note that this change affects only new installations of UCS@school (Bug #44243).
 bug: [44243]
