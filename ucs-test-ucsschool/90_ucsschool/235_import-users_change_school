@@ -16,6 +16,8 @@ from essential.importusers import Person
 
 class Test(CLI_Import_v2_Tester):
 	def test(self):
+		if not self.ucr.is_true('ucsschool/feature/roles'):
+			self.log.warn('\n\n\n######### SKIPPING TEST, as UCRV ucsschool/feature/roles is not True ##########\n\n\n')
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')

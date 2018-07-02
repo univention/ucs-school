@@ -627,13 +627,15 @@ def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			# use found dn
 			ShareFileServer = objects[0]
 
-		lo.modify(dn, [
+		ml = [
 			('objectClass', '', 'ucsschoolOrganizationalUnit'),
 			('ucsschoolClassShareFileServer', '', ShareFileServer),  # set file server for class shares
 			('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
 			('displayName', '', displayName),                       # set display name for UCS@school
-			('ucsschoolRole', '', [create_ucsschool_role_string("school", schoolNr)]),
-		])
+		]
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			ml.append(('ucsschoolRole', '', [create_ucsschool_role_string("school", schoolNr)]))
+		lo.modify(dn, ml)
 	else:
 		if ShareFileServer is not None:
 			print "WARNING: sharefileserver ignored because OU already exists!"
@@ -1216,7 +1218,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object["owner"] = "0"
 		object["group"] = gid
 		object["directorymode"] = "0770"
-		object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class_share, schoolNr)]
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class_share, schoolNr)]
 		if configRegistry.is_false('ucsschool/default/share/nfs', True):
 			try:
 				object.options.remove('nfs')  # deactivate NFS
@@ -1278,10 +1281,11 @@ def verify_group(position_dn, co, lo, superordinate, base, schoolNr, is_school_c
 		object = group_module.object(co, lo, position, superordinate=superordinate)
 		object.open()
 		object["name"] = position_dn[3:string.find(position_dn, ",")]
-		if is_school_class:
-			object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class, schoolNr)]
-		elif is_admin_group:
-			object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_admin_group, schoolNr)]
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			if is_school_class:
+				object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class, schoolNr)]
+			elif is_admin_group:
+				object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_admin_group, schoolNr)]
 		try:
 			create_object(object)
 		except:
@@ -1559,12 +1563,13 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		if profilePath:
 			object["profilepath"] = profilePath
 
-	object["ucsschoolRole"] = []
-	for role in (role_pupil, role_staff, role_teacher):
-		if role in roles:
-			if role == role_pupil:
-				role = role_student
-			object["ucsschoolRole"].append(create_ucsschool_role_string(role, person.sNr))
+	if configRegistry.is_true('ucsschool/feature/roles'):
+		object["ucsschoolRole"] = []
+		for role in (role_pupil, role_staff, role_teacher):
+			if role in roles:
+				if role == role_pupil:
+					role = role_student
+				object["ucsschoolRole"].append(create_ucsschool_role_string(role, person.sNr))
 
 	try:
 		try:
@@ -3127,11 +3132,12 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		slave_object['unixhome'] = '/dev/null'
 		slave_object['shell'] = '/bin/bash'
 		slave_object['primaryGroup'] = 'cn=DC Slave Hosts,cn=groups,%s' % (baseDN,)
-		if dc_type == TYPE_DC_ADMINISTRATIVE:
-			roles = [create_ucsschool_role_string(role_dc_slave_admin, ou_name)]
-		else:
-			roles = [create_ucsschool_role_string(role_dc_slave_edu, ou_name)]
-		slave_object['ucsschoolRole'] = roles
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			if dc_type == TYPE_DC_ADMINISTRATIVE:
+				roles = [create_ucsschool_role_string(role_dc_slave_admin, ou_name)]
+			else:
+				roles = [create_ucsschool_role_string(role_dc_slave_edu, ou_name)]
+			slave_object['ucsschoolRole'] = roles
 		for grpdn in group_dn_list:
 			if grpdn not in slave_object["groups"]:
 				slave_object["groups"].append(grpdn)

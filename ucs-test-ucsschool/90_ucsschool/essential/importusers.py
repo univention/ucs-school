@@ -262,8 +262,9 @@ class Person(object):
 			shadowExpire=[] if self.is_active() else ['1'],
 			sn=[self.lastname],
 			uid=[self.username],
-			ucsschoolRole=self.roles
 		)
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			attr['ucsschoolRole'] = self.roles
 
 		if self.source_uid:
 			attr['ucsschoolSourceUID'] = [self.source_uid]
