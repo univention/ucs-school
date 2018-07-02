@@ -226,6 +226,9 @@ class UcsSchoolRolesMigration(object):
 				logger.info('- Looking in school {} for objects of type {}...'.format(school, cls.__name__))
 				objs = cls.get_all(lo, school)
 				for obj in objs:
+					if cls == User and oc not in lo.get(obj.dn)['objectClass']:
+						logger.warn('    WARN: Ignoring %r, because not a correct school user object.', obj.dn)
+						continue
 					roles = [
 						create_ucsschool_role_string(role, skool) for role in obj.default_roles
 						for skool in getattr(obj, 'schools', [obj.school])
