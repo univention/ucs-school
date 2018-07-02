@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-19) unstable; urgency=low
+
+  * Bug #45164: chown/chmod path of previous uploads
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 02 Jul 2018 14:15:27 +0200
+
 ucs-school-import (16.0.2-18) unstable; urgency=low
 
   * Bug #42416: prevent running forbidden configuration combination

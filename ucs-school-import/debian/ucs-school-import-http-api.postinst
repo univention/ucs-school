@@ -50,7 +50,8 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 16.0.2-12 ; then
 		/var/log/univention/ucs-school-import/ \
 		/var/log/univention/ucs-school-import/gunicorn_*.log \
 		/var/log/univention/ucs-school-import/http_api.log \
-		/var/spool/ucs-school-import/media/uploads/
+		/var/spool/ucs-school-import/media/uploads/ \
+		/var/spool/ucs-school-import/media/uploads/*
 	chmod -c o= \
 		/etc/ucsschool-import/django_key.secret \
 		/etc/ucsschool-import/postgres.secret \
@@ -58,7 +59,8 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 16.0.2-12 ; then
 		/var/log/univention/ucs-school-import/ \
 		/var/log/univention/ucs-school-import/gunicorn_*.log \
 		/var/log/univention/ucs-school-import/http_api.log \
-		/var/spool/ucs-school-import/media/uploads/
+		/var/spool/ucs-school-import/media/uploads/ \
+		/var/spool/ucs-school-import/media/uploads/*
 
 	find /var/lib/ucs-school-import/jobs/ -maxdepth 2 -type d -exec chown -c uas-import:uas-import "{}" + -exec chmod -c 0750 "{}" +
 
