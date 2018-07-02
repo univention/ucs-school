@@ -1,3 +1,9 @@
+ucs-school-umc-users (14.0.2-5) unstable; urgency=low
+
+  * Bug #42212: Small wording changes
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 02 Jul 2018 12:42:10 +0200
+
 ucs-school-umc-users (14.0.2-4) unstable; urgency=medium
 
   * Bug #42212: Change password expiration representation to prevent user confusion

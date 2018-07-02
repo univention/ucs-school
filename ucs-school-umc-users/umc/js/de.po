@@ -14,13 +14,13 @@ msgstr ""
 
 #: umc/js/schoolusers.js:111
 #, python-format
-msgid "%s day"
-msgstr "%s Tag"
+msgid "in %s day"
+msgstr "in %s Tag"
 
 #: umc/js/schoolusers.js:113
 #, python-format
-msgid "%s days"
-msgstr "%s Tage"
+msgid "in %s days"
+msgstr "in %s Tagen"
 
 #: umc/js/schoolusers.js:142
 msgid "All classes and workgroups"
@@ -60,20 +60,20 @@ msgid "Name"
 msgstr "Name"
 
 #: umc/js/schoolusers.js:105
-msgid "Never"
-msgstr "Niemals"
+msgid "never"
+msgstr "niemals"
 
 #: umc/js/schoolusers.js:300
 msgid "New password"
 msgstr "Neues Passwort"
 
 #: umc/js/schoolusers.js:107
-msgid "Now"
-msgstr "Jetzt"
+msgid "now"
+msgstr "jetzt"
 
 #: umc/js/schoolusers.js:100
-msgid "Password change required in"
-msgstr "Änderung des Passwortes erforderlich in"
+msgid "Password change required"
+msgstr "Änderung des Passwortes erforderlich"
 
 #: umc/js/schoolusers.js:304
 msgid "Reset"
