@@ -353,7 +353,7 @@ class UcsSchoolRolesMigration(object):
 		:param str obj_name: type of object (for printing a message)
 		:param list roles: list of strings of the form `x:y:z`
 		:param str dn: DN of object to change
-		:param str oc: objectClass the is required for ucsschoolRole attribute
+		:param str oc: objectClass that holds the ucsschoolRole attribute for this LDAP object
 		:return: None
 		"""
 		assert isinstance(obj_name, string_types)
