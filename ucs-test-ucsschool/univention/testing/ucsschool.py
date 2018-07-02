@@ -611,7 +611,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-		utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_school_class, ou_name)}, strict=False, should_exist=True)
+		utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_school_class, ou_name)]}, strict=False, should_exist=True)
 		return class_name, grp_dn
 
 	def create_workgroup(self, ou_name, workgroup_name=None, description=None, users=None, wait_for_replication=True):
@@ -639,7 +639,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-		utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_workgroup, ou_name)}, strict=False, should_exist=True)
+		utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_workgroup, ou_name)]}, strict=False, should_exist=True)
 		return workgroup_name, grp_dn
 
 	def create_computerroom(self, ou_name, name=None, description=None, host_members=None, wait_for_replication=True):
@@ -675,7 +675,7 @@ class UCSTestSchool(object):
 		print '*** Result of ComputerRoom(...).create(): %r' % (result,)
 		if wait_for_replication:
 			utils.wait_for_replication()
-		utils.verify_ldap_object(obj.dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_computer_room, ou_name)}, strict=False, should_exist=True)
+		utils.verify_ldap_object(obj.dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_computer_room, ou_name)]}, strict=False, should_exist=True)
 		return name, result
 
 	def create_windows(self):

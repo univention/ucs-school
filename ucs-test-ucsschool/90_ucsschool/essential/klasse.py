@@ -186,11 +186,11 @@ class Klasse(object):
 		# TODO: check all attributes
 		utils.verify_ldap_object(
 			self.dn(),
-			expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_school_class, self.school)},
+			expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_school_class, self.school)]},
 			should_exist=True,
 		)
 		utils.verify_ldap_object(
 			self.share_dn,
-			expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_school_class_share, self.school)},
+			expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_school_class_share, self.school)]},
 			should_exist=True,
 		)

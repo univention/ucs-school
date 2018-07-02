@@ -3128,9 +3128,9 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		slave_object['shell'] = '/bin/bash'
 		slave_object['primaryGroup'] = 'cn=DC Slave Hosts,cn=groups,%s' % (baseDN,)
 		if dc_type == TYPE_DC_ADMINISTRATIVE:
-			roles = create_ucsschool_role_string(role_dc_slave_admin, ou_name)
+			roles = [create_ucsschool_role_string(role_dc_slave_admin, ou_name)]
 		else:
-			roles = create_ucsschool_role_string(role_dc_slave_edu, ou_name)
+			roles = [create_ucsschool_role_string(role_dc_slave_edu, ou_name)]
 		slave_object['ucsschoolRole'] = roles
 		for grpdn in group_dn_list:
 			if grpdn not in slave_object["groups"]:

@@ -67,7 +67,7 @@ class Group:
 		attr = {}
 		attr['cn'] = [self.name]
 		attr['description'] = [self.description]
-		attr['ucsschoolRole'] = create_ucsschool_role_string(role_school_class, self.school)
+		attr['ucsschoolRole'] = [create_ucsschool_role_string(role_school_class, self.school)]
 		return attr
 
 	def verify(self):
@@ -79,7 +79,7 @@ class Group:
 			return
 
 		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
-		utils.verify_ldap_object(self.share_dn, expected_attr={'ucsschoolRole': create_ucsschool_role_string(role_school_class_share, self.school)}, should_exist=True)
+		utils.verify_ldap_object(self.share_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_school_class_share, self.school)]}, should_exist=True)
 
 
 class ImportFile:

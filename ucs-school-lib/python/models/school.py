@@ -271,7 +271,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	def add_host_to_dc_group(self, lo):
 		logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r', self.name, self.dc_name)
 		if self.dc_name:
-			roles = create_ucsschool_role_string(role_dc_slave_edu, self.name)
+			roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
 			dc = SchoolDCSlave(name=self.dc_name, school=self.name, ucsschool_roles=roles)
 			dc.create(lo)
 			dc_udm_obj = dc.get_udm_object(lo)
@@ -297,7 +297,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
 		logger.debug('DC shall become member of %r', groups)
 
-		roles = create_ucsschool_role_string(role_dc_slave_admin if administrative else role_dc_slave_edu, self.name)
+		roles = [create_ucsschool_role_string(role_dc_slave_admin if administrative else role_dc_slave_edu, self.name)]
 		dc = SchoolDCSlave(name=name, school=self.name, groups=groups, ucsschool_roles=roles)
 		if dc.exists(lo):
 			logger.info('%r exists. Setting groups, do not move to %r!', dc, self)
