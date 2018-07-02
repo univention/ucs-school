@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-62) unstable; urgency=low
+
+  * Bug #46829: chown/chmod path of previous uploads
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 02 Jul 2018 14:18:50 +0200
+
 ucs-school-import (15.0.3-61) unstable; urgency=low
 
   * Bug #47237: add missing executable flag to machine account change script
