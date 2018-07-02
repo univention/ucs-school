@@ -234,7 +234,11 @@ class UcsSchoolRolesMigration(object):
 						for skool in getattr(obj, 'schools', [obj.school])
 					]
 					if cls == User and obj.is_administrator(lo):
-						roles.extend(create_ucsschool_role_string(role_school_admin, school))
+						# user is school admin only for OUs in which she is in group admins-$OU
+						schools = []
+						for dn, attr in lo.search(filter_format('(&(cn=admins-*)(uniqueMember=%s))', (obj.dn,))):
+							schools.extend(attr['ucsschoolSchool'])
+						roles.extend([create_ucsschool_role_string(role_school_admin, skool) for skool in schools])
 					self.set_ldap_attr(cls.__name__, roles, obj.dn, oc)
 
 		if self.search_servers_central:
