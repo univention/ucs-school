@@ -349,6 +349,7 @@ class UcsSchoolRolesMigration(object):
 		logger.info('---------------------------------------------------------------')
 		logger.info('Finished.')
 		logger.info('Considered LDAP objects: %(objects)d modifications: %(modifications)d errors: %(errors)d', self.stats)
+		logger.info('Logfile: %s', LOG_FILE)
 
 	def set_ldap_attr(self, obj_name, roles, dn, oc):
 		"""
