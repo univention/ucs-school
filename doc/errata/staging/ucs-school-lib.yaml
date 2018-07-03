@@ -3,8 +3,9 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-lib
-fix: 11.0.1-13A~4.3.0.201806271007
+fix: 11.0.1-14A~4.3.0.201807031048
 desc: |
  * Internal enhancement: Support for the deepcopy operation was added to all ucsschool.lib objects (Bug #46970).
  * Internal enhancement: Support for setting the owner of a logfile was added (Bug #45164).
-bug: [46970, 45164]
+ * Internal enhancement: Support for creating a role attribute was added (Bug #45379).
+bug: [46970, 45164, 45379]

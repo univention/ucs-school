@@ -3,7 +3,7 @@ release: "4.3"
 version: [0]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.2-19A~4.3.0.201807021417
+fix: 16.0.2-20A~4.3.0.201807031050
 desc: |
  * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47027).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #42416).
@@ -17,4 +17,5 @@ desc: |
  * Custom django-admin commands were added to make the join script more reliable (Bug #45163).
  * The WSGI server Gunicorn now runs as an unprivileged user (Bug #45164).
  * The WSGI server Gunicorn is now restarted when the machine account is changed (Bug #47236).
-bug: [47027, 42416, 46970, 45749, 47135, 46830, 47156, 45163, 45164, 47236]
+ * Support for adding a role attribute to UCS@school objects was added (Bug 45379).
+bug: [47027, 42416, 46970, 45749, 47135, 46830, 47156, 45163, 45164, 47236, 45379]
