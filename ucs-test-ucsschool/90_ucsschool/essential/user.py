@@ -146,7 +146,10 @@ class User(Person):
 			'email': self.mail,
 			'objectType': 'users/user',
 			'school_classes': {},
+			'ucsschool_roles': [],
 		}
+		if self.ucr.is_true('ucsschool/feature/roles'):
+			info['ucsschool_roles'] = self.roles
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
 			info.update({'school_classes': self.school_classes})
 
