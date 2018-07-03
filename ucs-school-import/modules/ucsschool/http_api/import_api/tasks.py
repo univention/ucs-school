@@ -92,16 +92,17 @@ def run_import_job(task, importjob_id):
 	importjob.status = JOB_ABORTED if res else JOB_FINISHED
 	importjob.save(update_fields=('status',))
 	if res:
-		raise Exception('Import job exited with {}.'.format(res))
+		raise Exception('Import job #{} exited with {}.'.format(importjob_id, res))
+	return runner.user_import_summary_str
 
 
 @shared_task(bind=True)
 def import_users(self, importjob_id):
 	logger.info('Starting UserImportJob %d (%r).', importjob_id, self)
-	run_import_job(self, importjob_id)
+	summary_str = run_import_job(self, importjob_id)
 	logger.info('Finished UserImportJob %d.', importjob_id)
 	return HttpApiImportFrontend.make_job_state(
-		description='UserImportJob #{} ended successfully.'.format(importjob_id),
+		description='UserImportJob #{} ended successfully.\n\n{}'.format(importjob_id, summary_str),
 		percentage=100
 	)
 
@@ -109,9 +110,9 @@ def import_users(self, importjob_id):
 @shared_task(bind=True)
 def dry_run(self, importjob_id):
 	logger.info('Starting dry run %d (%r).', importjob_id, self)
-	run_import_job(self, importjob_id)
+	summary_str = run_import_job(self, importjob_id)
 	logger.info('Finished dry run %d.', importjob_id)
 	return HttpApiImportFrontend.make_job_state(
-		description='UserImportJob #{} (dryrun) ended successfully.'.format(importjob_id),
+		description='UserImportJob #{} (dryrun) ended successfully.\n\n{}'.format(importjob_id, summary_str),
 		percentage=100
 	)
