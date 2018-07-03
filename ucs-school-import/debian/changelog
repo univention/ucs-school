@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-21) unstable; urgency=low
+
+  * Bug #45379: check that the UCRV is set, before starting a migration
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 03 Jul 2018 11:34:19 +0200
+
 ucs-school-import (16.0.2-20) unstable; urgency=low
 
   * Bug #45379: add support for role attribute

@@ -198,6 +198,10 @@ class UcsSchoolRolesMigration(object):
 			', school servers' if self.search_servers_school or self.args.all_objects else '',
 		)
 
+		if not ucr.is_true('ucsschool/feature/roles'):
+			print('ERROR: UCR variable ucsschool/feature/roles must enabled before a migration can be started.')
+			sys.exit(2)
+
 	def migrate(self):
 		if self.args.modify:
 			logger.info('Running in write mode.')
