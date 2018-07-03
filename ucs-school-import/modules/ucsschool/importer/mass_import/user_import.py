@@ -195,23 +195,30 @@ class UserImport(object):
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
-			imported_user.old_user = copy.deepcopy(user)
-			imported_user.prepare_all(new_user=False)
-			if user.school != imported_user.school:
-				user = self.school_move(imported_user, user)
-			user.update(imported_user)
-			if user.disabled != "0" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
-				self.logger.info(
-					"Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is "
-					"non-empty), reactivating user.",
-					user
-				)
-				user.reactivate()
-			user.action = "M"
 		except noObject:
+			# no user with source_uid + record_uid found -> create
 			imported_user.prepare_all(new_user=True)
 			user = imported_user
 			user.action = "A"
+			return user
+		# user with source_uid + record_uid found -> modify
+		imported_user.old_user = copy.deepcopy(user)
+		imported_user.prepare_all(new_user=False)
+		if user.school != imported_user.school:
+			self.logger.info(
+				'User will change school. Previous school: %r, new school: %r.',
+				user.school, imported_user.school
+			)
+			user = self.school_move(imported_user, user)
+		user.update(imported_user)
+		if user.disabled != "0" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
+			self.logger.info(
+				"Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is "
+				"non-empty), reactivating user.",
+				user
+			)
+			user.reactivate()
+		user.action = "M"
 		return user
 
 	def detect_users_to_delete(self):

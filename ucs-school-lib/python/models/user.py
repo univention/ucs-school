@@ -35,10 +35,11 @@ import os.path
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
 
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roles import role_exam_user, role_pupil, role_teacher, role_staff, role_student
 from ucsschool.lib.models.utils import create_passwd
-from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
+from ucsschool.lib.models.attributes import (
+	Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools, Roles)
+from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup, SchoolGroup
 from ucsschool.lib.models.computer import AnyComputer
@@ -50,7 +51,7 @@ from univention.admin.filter import conjunction, parse
 import univention.admin.modules as udm_modules
 
 
-class User(UCSSchoolHelperAbstractClass):
+class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	name = Username(_('Username'), aka=['Username', 'Benutzername'])
 	schools = Schools(_('Schools'))
 	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
@@ -60,6 +61,7 @@ class User(UCSSchoolHelperAbstractClass):
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
 	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
 	school_classes = SchoolClassesAttribute(_('Class'), aka=['Class', 'Klasse'])
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	type_name = None
 	type_filter = '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent))'
@@ -69,6 +71,7 @@ class User(UCSSchoolHelperAbstractClass):
 	# _samba_home_path_cache is invalidated in School.invalidate_cache()
 
 	roles = []
+	default_roles = []
 	default_options = ()
 
 	def __init__(self, *args, **kwargs):
@@ -569,6 +572,7 @@ class Student(User):
 	type_filter = '(&(objectClass=ucsschoolStudent)(!(objectClass=ucsschoolExam)))'
 	roles = [role_pupil]
 	default_options = ('ucsschoolStudent',)
+	default_roles = [role_student]
 
 	def do_school_change(self, udm_obj, lo, old_school):
 		try:
@@ -599,6 +603,7 @@ class Teacher(User):
 	type_name = _('Teacher')
 	type_filter = '(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff)))'
 	roles = [role_teacher]
+	default_roles = [role_teacher]
 	default_options = ('ucsschoolTeacher',)
 
 	@classmethod
@@ -615,6 +620,7 @@ class Staff(User):
 	school_classes = None
 	type_name = _('Staff')
 	roles = [role_staff]
+	default_roles = [role_staff]
 	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff))'
 	default_options = ('ucsschoolStaff',)
 
@@ -655,6 +661,7 @@ class TeachersAndStaff(Teacher):
 	type_name = _('Teacher and Staff')
 	type_filter = '(&(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))'
 	roles = [role_teacher, role_staff]
+	default_roles = [role_teacher, role_staff]
 	default_options = ('ucsschoolStaff',)
 
 	@classmethod
@@ -670,6 +677,7 @@ class TeachersAndStaff(Teacher):
 class ExamStudent(Student):
 	type_name = _('Exam student')
 	type_filter = '(&(objectClass=ucsschoolStudent)(objectClass=ucsschoolExam))'
+	default_roles = [role_exam_user]
 	default_options = ('ucsschoolExam',)
 
 	@classmethod

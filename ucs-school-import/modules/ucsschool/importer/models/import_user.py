@@ -39,7 +39,7 @@ from ldap.filter import filter_format
 
 from univention.admin.uexceptions import noObject, noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_student
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd, ucr
@@ -55,7 +55,6 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
@@ -110,8 +109,9 @@ class ImportUser(User):
 		'source_uid': 'make_sourceUID',
 		'sourceUID': 'make_sourceUID',
 		'school': 'make_school',
-		'username': 'make_username',
 		'name': 'make_username',
+		'username': 'make_username',
+		'ucsschool_roles': 'make_ucsschool_roles',
 	}
 
 	def __init__(self, name=None, school=None, **kwargs):
@@ -480,6 +480,7 @@ class ImportUser(User):
 		self.make_lastname()
 		self.make_school()
 		self.make_schools()
+		self.make_ucsschool_roles()
 		self.make_username()
 		if new_user:
 			self.make_password()
@@ -733,6 +734,17 @@ class ImportUser(User):
 			else:
 				self.school = sorted(self.schools)[0]
 		return self.schools
+
+	def make_ucsschool_roles(self):
+		if self.ucsschool_roles:
+			return self.ucsschool_roles
+		if not self.schools:
+				self.make_schools()
+		self.ucsschool_roles = [
+			create_ucsschool_role_string(role, school) for role in self.default_roles
+			for school in self.schools
+		]
+		return self.ucsschool_roles
 
 	def make_udm_property(self, property_name):
 		"""

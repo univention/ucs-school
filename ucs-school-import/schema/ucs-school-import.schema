@@ -51,10 +51,16 @@ attributetype ( univentionSchool:53.9
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
         SINGLE-VALUE )
 
+attributetype ( univentionSchool:5101
+        NAME 'ucsschoolRole'
+        DESC 'Role of UCS@school object in given context'
+        EQUALITY caseIgnoreMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( univentionSchool:53 NAME 'ucsschoolType'
        DESC 'Role of user or object in UCS@school context'
        ABSTRACT
-       MAY ( ucsschoolSchool $ ucsschoolSourceUID $ ucsschoolRecordUID $ ucsschoolPurgeTimestamp ) )
+       MAY ( ucsschoolSchool $ ucsschoolSourceUID $ ucsschoolRecordUID $ ucsschoolPurgeTimestamp $ ucsschoolRole ) )
 
 objectclass ( univentionSchool:53.1 NAME 'ucsschoolTeacher'
         DESC 'auxiliary class for teachers'
@@ -100,9 +106,9 @@ attributetype ( univentionSchool:5202 NAME 'ucsschoolHomeShareFileServer'
 # SUP organizationalUnit
 
 objectclass ( univentionSchool:52 NAME 'ucsschoolOrganizationalUnit'
-        DESC 'auxiliary class for class shares'
+        DESC 'auxiliary class for UCS@school OUs'
         AUXILIARY
-        MAY ( ucsschoolClassShareFileServer $ ucsschoolHomeShareFileServer $ displayName ) )
+        MAY ( ucsschoolClassShareFileServer $ ucsschoolHomeShareFileServer $ displayName $ ucsschoolRole ) )
 
 # obsolete!
 attributetype ( 1.3.6.1.4.1.10176.99999.2.5001
@@ -118,14 +124,6 @@ objectclass ( 1.3.6.1.4.1.10176.99999.2.50 NAME 'univentionAbordnung'
         DESC 'dn of the master object (Abordnung)'
         SUP top AUXILIARY
         MAY ( univentionAbordnungMasterDn ) )
-
-# obsolete!
-attributetype ( univentionSchool:5101
-        NAME 'ucsschoolRole'
-        DESC 'Role of user in UCS@school context (e.g. teacher, administration)'
-        EQUALITY caseIgnoreMatch
-        SUBSTR caseIgnoreSubstringsMatch
-        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 # obsolete!
 objectclass ( univentionSchool:51 NAME 'univentionUcsSchoolUser'
@@ -145,3 +143,21 @@ objectclass ( univentionSchool:54
 	DESC 'Saves the last used postfix for the username.'
 	MUST ( cn )
 	MAY ( ucsschoolUsernameNextNumber ) )
+
+objectclass ( univentionSchool:55.1
+	NAME 'ucsschoolGroup'
+	DESC 'auxiliary class for UCS@school groups (school classes, work groups, computer rooms)'
+	AUXILIARY
+	MAY ( ucsschoolRole ) )
+
+objectclass ( univentionSchool:55.2
+	NAME 'ucsschoolShare'
+	DESC 'auxiliary class for UCS@school shares (class and workgroup shares)'
+	AUXILIARY
+	MAY ( ucsschoolRole ) )
+
+objectclass ( univentionSchool:55.3
+	NAME 'ucsschoolServer'
+	DESC 'auxiliary class for UCS@school domain controller and member computer objects (not Class/HomeShareFileServer)'
+	AUXILIARY
+	MAY ( ucsschoolRole ) )

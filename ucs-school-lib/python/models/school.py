@@ -36,9 +36,10 @@ from ldap.dn import escape_dn_chars
 
 from univention.config_registry import handler_set
 from univention.admin.uexceptions import noObject
-
-from ucsschool.lib.models.attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+from ucsschool.lib.roles import (
+	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu, role_school, role_school_admin_group)
+from ucsschool.lib.models.attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName, Roles
+from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import BasicGroup, Group
 from ucsschool.lib.models.dhcp import DHCPService
 from ucsschool.lib.models.policy import DHCPDNSPolicy
@@ -47,7 +48,7 @@ from ucsschool.lib.models.computer import AnyComputer, SchoolDCSlave, SchoolDC
 from ucsschool.lib.models.utils import flatten, ucr, _, logger
 
 
-class School(UCSSchoolHelperAbstractClass):
+class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	name = SchoolName(_('School name'))
 	dc_name = DCName(_('DC Name'))
 	dc_name_administrative = DCName(_('DC Name administrative server'))
@@ -57,6 +58,10 @@ class School(UCSSchoolHelperAbstractClass):
 	school = None
 	educational_servers = Attribute(_('Educational servers'), unlikely_to_change=True)
 	administrative_servers = Attribute(_('Administrative servers'), unlikely_to_change=True)
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+
+	default_roles = [role_school]
+	_school_in_name = True
 
 	def __init__(self, name=None, school=None, **kwargs):
 		super(School, self).__init__(name=name, **kwargs)
@@ -157,6 +162,8 @@ class School(UCSSchoolHelperAbstractClass):
 		# cn=ouadmins
 		admin_group_container = 'cn=ouadmins,cn=groups,%s' % ucr.get('ldap/base')
 		group = BasicGroup.cache(self.group_name('admins', 'admins-'), container=admin_group_container)
+		if ucr.is_true('ucsschool/feature/roles'):
+			group.roles = [role_school_admin_group]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)
 		try:
@@ -265,7 +272,11 @@ class School(UCSSchoolHelperAbstractClass):
 	def add_host_to_dc_group(self, lo):
 		logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r', self.name, self.dc_name)
 		if self.dc_name:
-			dc = SchoolDCSlave(name=self.dc_name, school=self.name)
+			if ucr.is_true('ucsschool/feature/roles'):
+				roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
+				dc = SchoolDCSlave(name=self.dc_name, school=self.name, ucsschool_roles=roles)
+			else:
+				dc = SchoolDCSlave(name=self.dc_name, school=self.name)
 			dc.create(lo)
 			dc_udm_obj = dc.get_udm_object(lo)
 			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
@@ -290,7 +301,11 @@ class School(UCSSchoolHelperAbstractClass):
 			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
 		logger.debug('DC shall become member of %r', groups)
 
-		dc = SchoolDCSlave(name=name, school=self.name, groups=groups)
+		if ucr.is_true('ucsschool/feature/roles'):
+			roles = [create_ucsschool_role_string(role_dc_slave_admin if administrative else role_dc_slave_edu, self.name)]
+			dc = SchoolDCSlave(name=name, school=self.name, groups=groups, ucsschool_roles=roles)
+		else:
+			dc = SchoolDCSlave(name=name, school=self.name, groups=groups)
 		if dc.exists(lo):
 			logger.info('%r exists. Setting groups, do not move to %r!', dc, self)
 			# call dc.move() if really necessary to move
@@ -396,6 +411,9 @@ class School(UCSSchoolHelperAbstractClass):
 			policy.attach(self, lo)
 
 		return success
+
+	def get_schools(self):
+		return [self.name]
 
 	def _alter_udm_obj(self, udm_obj):
 		udm_obj.options.append('UCSschool-School-OU')

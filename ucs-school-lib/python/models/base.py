@@ -49,8 +49,14 @@ from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 
 from ucsschool.lib.schoolldap import SchoolSearchBase, LDAP_Connection
 from ucsschool.lib.models.meta import UCSSchoolHelperMetaClass
-from ucsschool.lib.models.attributes import CommonName, SchoolAttribute, ValidationError
+from ucsschool.lib.models.attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from ucsschool.lib.models.utils import ucr, _, logger
+from ucsschool.lib.roles import create_ucsschool_role_string
+
+try:
+	from typing import Iterable, Dict, List
+except ImportError:
+	pass
 
 
 class NoObject(noObject):
@@ -207,7 +213,6 @@ class UCSSchoolHelperAbstractClass(object):
 		key = [cls.__name__] + [(k, kwargs[k]) for k in sorted(kwargs)]
 		key = tuple(key)
 		if key not in cls._cache:
-			logger.debug('Initializing %r', key)
 			obj = cls(**kwargs)
 			cls._cache[key] = obj
 		return cls._cache[key]
@@ -228,7 +233,6 @@ class UCSSchoolHelperAbstractClass(object):
 	def invalidate_cache(cls):
 		for key in cls._cache.keys():
 			if key[0] == cls.__name__:
-				logger.debug('Invalidating %r', key)
 				cls._cache.pop(key)
 
 	@classmethod
@@ -315,6 +319,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if self.supports_school() and self.school:
 			if not School.cache(self.school).exists(lo):
 				self.add_error('school', _('The school "%s" does not exist. Please choose an existing one or create it.') % self.school)
+		self.validate_roles(lo)
 		if validate_unlikely_changes:
 			if self.exists(lo):
 				udm_obj = self.get_udm_object(lo)
@@ -330,6 +335,9 @@ class UCSSchoolHelperAbstractClass(object):
 							if new_value and old_value:
 								if new_value != old_value:
 									self.add_warning(name, _('The value changed from %(old)s. This seems unlikely.') % {'old': old_value})
+
+	def validate_roles(self, lo):
+		pass
 
 	def add_warning(self, attribute, warning_message):
 		warnings = self.warnings.setdefault(attribute, [])
@@ -434,6 +442,8 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		logger.info('Creating %r', self)
 
+		self.create_without_hooks_roles(lo)
+
 		if validate:
 			self.validate(lo)
 			if self.errors:
@@ -458,6 +468,9 @@ class UCSSchoolHelperAbstractClass(object):
 			return True
 		finally:
 			self.invalidate_cache()
+
+	def create_without_hooks_roles(self, lo):
+		pass
 
 	def do_create(self, udm_obj, lo):
 		'''Actual udm_obj manipulation. Override this if
@@ -501,6 +514,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 		try:
 			old_attrs = deepcopy(udm_obj.info)
+			self.modify_without_hooks_roles(udm_obj)
 			self.do_modify(udm_obj, lo)
 			# get it fresh from the database
 			self.set_dn(self.dn)
@@ -518,6 +532,9 @@ class UCSSchoolHelperAbstractClass(object):
 			return True
 		finally:
 			self.invalidate_cache()
+
+	def modify_without_hooks_roles(self, udm_obj):
+		pass
 
 	def do_modify(self, udm_obj, lo):
 		'''Actual udm_obj manipulation. Override this if
@@ -565,6 +582,10 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj.move(self.dn, ignore_license=1)
 		if self.supports_school() and old_school and old_school != new_school:
 			self.do_school_change(udm_obj, lo, old_school)
+			self.do_move_roles(udm_obj, lo, old_school, new_school)
+
+	def do_move_roles(self, udm_obj, lo, old_school, new_school):
+		pass
 
 	def change_school(self, school, lo):
 		if self.school in self.schools:
@@ -933,3 +954,115 @@ class UCSSchoolHelperAbstractClass(object):
 				val = 1
 			attrs.append(str(val))
 		return self.hook_sep_char.join(attrs)
+
+
+class RoleSupportMixin(object):
+	"""
+	Methods required when using the ucsschool_roles / ucsschoolRoles attribute.
+
+	Inherit from this class and add this to your class:
+
+	`ucsschool_roles = Roles(_('Roles'), aka=['Roles'])`
+	"""
+	default_roles = []
+	_school_in_name = False
+	_school_in_name_prefix = False
+
+	def get_schools(self):
+		return getattr(self, 'schools', [self.school])
+
+	def get_schools_from_udm_obj(self, udm_obj):
+		if self._school_in_name:
+			return [udm_obj.info['name']]
+		elif self._school_in_name_prefix:
+			try:
+				return [udm_obj.info['name'].split('-', 1)[0]]
+			except KeyError:
+				return []
+		else:
+			try:
+				return udm_obj.info['school']
+			except KeyError as exc:
+				logger.exception('KeyError in RoleSupportMixin.get_schools_from_udm_obj(%r): %s', udm_obj, exc)
+				raise
+
+	@property
+	def roles_as_dicts(self):  # type: () -> List[Dict[str, str]]
+		"""Get :py:attr:`self.ucsschool_roles` as a dict."""
+		res = []
+		for role in self.ucsschool_roles:
+			m = Roles.syntax.regex.match(role)
+			if m:
+				res.append(m.groupdict())
+		return res
+
+	@roles_as_dicts.setter
+	def roles_as_dicts(self, roles):  # type: (Iterable[Dict[str, str]]) -> None
+		"""
+		Take dict from :py:attr:`roles_as_dicts` and write to
+		:py:attr:`self.ucsschool_roles`.
+		"""
+		self.ucsschool_roles = ['{role}:{context_type}:{context}'.format(**role) for role in roles]
+
+	def do_move_roles(self, udm_obj, lo, old_school, new_school):
+		if not ucr.is_true('ucsschool/feature/roles'):
+			return
+		old_roles = list(self.ucsschool_roles)
+		# remove all roles of old school
+		roles = [role for role in self.roles_as_dicts if role['context'] != old_school]
+		# only add role(s) if object has no roles in new school
+		if all(role['context'] != new_school for role in roles):
+			# add only role(s) of current Python class in new school
+			roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
+		self.roles_as_dicts = roles
+		if old_roles != self.ucsschool_roles:
+			self.logger.info('Updating roles: %r -> %r...', old_roles, self.ucsschool_roles)
+			# cannot use do_modify() here, as it would delete the old object
+			lo.modify(self.dn, [('ucsschoolRole', old_roles, self.ucsschool_roles)])
+
+	def validate_roles(self, lo):
+		if not ucr.is_true('ucsschool/feature/roles'):
+			return
+		# for now different roles in different schools are not supported
+		schools = self.get_schools()
+		for role in self.roles_as_dicts:
+			if self.default_roles and role['role'] not in self.default_roles:
+				self.add_error(
+					'ucsschool_roles',
+					_('Role {!r} is not supported for this object.').format(role['role'])
+				)
+			if role['context'] not in schools:
+				self.add_error(
+					'ucsschool_roles',
+					_('Context {!r} is not supported for this object. Object is not in that school.').format(role['context'])
+				)
+
+	def create_without_hooks_roles(self, lo):
+		if not ucr.is_true('ucsschool/feature/roles'):
+			return
+		if self.default_roles and not self.ucsschool_roles:
+			schools = self.get_schools()
+			self.ucsschool_roles = [
+				create_ucsschool_role_string(role, school)
+				for role in self.default_roles
+				for school in schools
+			]
+
+	def modify_without_hooks_roles(self, udm_obj):
+		"""
+		Add role(s) to object, if it got new/additional school(s), and object
+		has no role(s) in them yet.
+		"""
+		if not ucr.is_true('ucsschool/feature/roles'):
+			return
+		old_schools = set(self.get_schools_from_udm_obj(udm_obj))
+		cur_schools = self.get_schools()
+		new_schools = set(cur_schools) - old_schools
+		if new_schools:
+			roles = self.roles_as_dicts
+			for new_school in new_schools:
+				# only add role(s) if object has no roles in new school
+				if all(role['context'] != new_school for role in roles):
+					# add only role(s) of current Python class in new school
+					roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
+			self.roles_as_dicts = roles

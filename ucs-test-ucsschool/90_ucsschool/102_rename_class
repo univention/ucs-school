@@ -16,6 +16,8 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
+
 
 BACKUP_PATH = '/home/backup/groups'
 
@@ -41,8 +43,13 @@ def check_backup(cn):
 def check_ldap(school, old_name, new_name):
 	utils.verify_ldap_object(class_dn(old_name, school), should_exist=False)
 	utils.verify_ldap_object(share_dn(old_name, school), should_exist=False)
-	utils.verify_ldap_object(class_dn(new_name, school), should_exist=True)
-	utils.verify_ldap_object(share_dn(new_name, school), should_exist=True)
+	with ucr_test.UCSTestConfigRegistry() as ucr:
+		if ucr.is_true('ucsschool/feature/roles'):
+			utils.verify_ldap_object(class_dn(new_name, school), expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_school_class,school)]}, should_exist=True)
+			utils.verify_ldap_object(share_dn(new_name, school), expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_school_class_share, school)]}, should_exist=True)
+		else:
+			utils.verify_ldap_object(class_dn(new_name, school), should_exist=True)
+			utils.verify_ldap_object(share_dn(new_name, school), should_exist=True)
 
 
 def share_dn(class_name, school):

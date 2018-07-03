@@ -76,7 +76,9 @@ import univention.admin.objects
 import univention.admin.config
 import univention.config_registry
 import univention.lib.policy_result
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roles import (
+	create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_student, role_school_class,
+	role_school_class_share, role_school_admin_group, role_dc_slave_admin, role_dc_slave_edu)
 from ucsschool.lib.roleshares import roleshare_home_subdir
 from ucsschool.lib.models.utils import stopped_notifier, add_stream_logger_to_schoollib
 from ucsschool.lib.models.utils import create_passwd
@@ -566,7 +568,7 @@ def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	else:
 		groups = groups_education + groups_educationOU
 	for group in groups:
-		verify_group(group, co, lo, superordinate, baseDN)
+		verify_group(group, co, lo, superordinate, baseDN, schoolNr)
 
 	# add already existing dc (slave) to global dc groups
 	# for proper ldap replication
@@ -625,12 +627,15 @@ def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			# use found dn
 			ShareFileServer = objects[0]
 
-		lo.modify(dn, [
+		ml = [
 			('objectClass', '', 'ucsschoolOrganizationalUnit'),
 			('ucsschoolClassShareFileServer', '', ShareFileServer),  # set file server for class shares
 			('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
 			('displayName', '', displayName),                       # set display name for UCS@school
-		])
+		]
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			ml.append(('ucsschoolRole', '', [create_ucsschool_role_string("school", schoolNr)]))
+		lo.modify(dn, ml)
 	else:
 		if ShareFileServer is not None:
 			print "WARNING: sharefileserver ignored because OU already exists!"
@@ -649,19 +654,19 @@ def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	# create groups if not existant
 	grp_ouadmins = "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower(), baseDN)
 	groups = [
-		(grp_ouadmins, grp_policy_admins),
-		("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)), grp_policy_pupils),
-		("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)), grp_policy_teachers),
+		(grp_ouadmins, grp_policy_admins, True),
+		("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)), grp_policy_pupils, False),
+		("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)), grp_policy_teachers, False),
 	]
 
 	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
-		groups.append(("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)), grp_policy_staff), )
+		groups.append(("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)), grp_policy_staff, False))
 	if configRegistry.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 		domain_users_school = "cn=Domain Users %s,cn=groups,%s" % (schoolNr.lower(), getDN(schoolNr))
-		groups.append((domain_users_school, "cn=default-umc-users,cn=UMC,cn=policies,%s" % (baseDN,)))
+		groups.append((domain_users_school, "cn=default-umc-users,cn=UMC,cn=policies,%s" % (baseDN,), False))
 
-	for group, grppolicy in groups:
-		verify_group(group, co, lo, superordinate, baseDN)
+	for group, grppolicy, is_admin_group in groups:
+		verify_group(group, co, lo, superordinate, baseDN, schoolNr, is_admin_group=is_admin_group)
 		if grppolicy and grppolicy.lower() != 'none':
 			verify_policy(group, schoolNr, [grppolicy])
 
@@ -1095,7 +1100,8 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 		position.setDn(position_dn[string.find(position_dn, ",") + 1:])
 		object = module.object(co, lo, position, superordinate=superordinate)
 		object.open()
-		object["name"] = position_dn[3:string.find(position_dn, ",")]
+		name = position_dn[3:string.find(position_dn, ",")]
+		object["name"] = name
 
 		if position_dn[:2] == "cn" and path and not name == "users":  # is path container
 			object[path] = codecs.latin_1_encode("1")[0]
@@ -1212,6 +1218,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object["owner"] = "0"
 		object["group"] = gid
 		object["directorymode"] = "0770"
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class_share, schoolNr)]
 		if configRegistry.is_false('ucsschool/default/share/nfs', True):
 			try:
 				object.options.remove('nfs')  # deactivate NFS
@@ -1226,7 +1234,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		verified_group_shares.append((schoolNr, classNr.lower()))
 
 
-def verify_group(position_dn, co, lo, superordinate, base):
+def verify_group(position_dn, co, lo, superordinate, base, schoolNr, is_school_class=False, is_admin_group=False):
 	# look if group exists, else create it
 
 	if position_dn in verified_groups:
@@ -1261,13 +1269,23 @@ def verify_group(position_dn, co, lo, superordinate, base):
 				break
 
 	if not group_exists:
-		print "need to create group %s" % position_dn
+		if is_admin_group:
+			create_what = 'admin group'
+		elif is_school_class:
+			create_what = 'school class'
+		else:
+			create_what = 'group'
+		print("need to create {} {}".format(create_what, position_dn))
 		position = univention.admin.uldap.position(base)
 		position.setDn(position_dn[string.find(position_dn, ",") + 1:])
 		object = group_module.object(co, lo, position, superordinate=superordinate)
 		object.open()
 		object["name"] = position_dn[3:string.find(position_dn, ",")]
-
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			if is_school_class:
+				object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class, schoolNr)]
+			elif is_admin_group:
+				object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_admin_group, schoolNr)]
 		try:
 			create_object(object)
 		except:
@@ -1381,7 +1399,7 @@ def modify_user(person, module, co, lo):
 	for group in default_groups:
 		if group not in object["groups"]:
 			object["groups"].append(group)
-			verify_group(group, co, lo, superordinate, baseDN)
+			verify_group(group, co, lo, superordinate, baseDN, person.sNr)
 			print "need to add group %s" % group
 
 	# print "user is in groups: %s" % object['groups']
@@ -1500,7 +1518,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 
 	groups = person.default_groups()
 	for group in groups:
-		verify_group(group, co, lo, superordinate, baseDN)
+		verify_group(group, co, lo, superordinate, baseDN, person.sNr)
 	for cnr in person.cNr:
 		verify_group_share(person.sNr, cnr, co, lo, superordinate, baseDN)
 
@@ -1533,7 +1551,8 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		object["disabled"] = "1"
 
 	# Bug #34179: do not set sambaHomePath for staff users
-	if set(person.getRole()) != set([role_staff]):
+	roles = person.getRole()
+	if set(roles) != set([role_staff]):
 		if UCRV_netlogon_script_path is not None:
 			object["scriptpath"] = UCRV_netlogon_script_path
 		if calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"]) is not None:
@@ -1543,6 +1562,14 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))
 		if profilePath:
 			object["profilepath"] = profilePath
+
+	if configRegistry.is_true('ucsschool/feature/roles'):
+		object["ucsschoolRole"] = []
+		for role in (role_pupil, role_staff, role_teacher):
+			if role in roles:
+				if role == role_pupil:
+					role = role_student
+				object["ucsschoolRole"].append(create_ucsschool_role_string(role, person.sNr))
 
 	try:
 		try:
@@ -2413,15 +2440,15 @@ def import_group():
 			dn = None
 
 			if action in ['A', 'M']:  # Add/Modify group
-				# verify_group(group_dn, co, lo, superordinate, baseDN)
+				# verify_group(group_dn, co, lo, superordinate, baseDN, schoolNr)
 				# object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn)
 				# object.open()
 				# object['description']=Descrpt
 				# object.modify()
-				# verify_group_share(schoolNr, ClassID, co, lo, superordinate, baseDN)
+				# verify_group_share(schoolNr, ClassID, co, lo, superordinate, baseDN, schoolNr)
 
 				# elif action == 'M':  # M)odify group
-				verify_group(group_dn, co, lo, superordinate, baseDN)
+				verify_group(group_dn, co, lo, superordinate, baseDN, schoolNr, is_school_class=True)
 				object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn)
 				object.open()
 				oldDescrpt = object['description']
@@ -3066,7 +3093,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		],
 	}[dc_type]
 	for grpdn in group_dn_list:
-		verify_group(grpdn, co, lo, superordinate, baseDN)
+		verify_group(grpdn, co, lo, superordinate, baseDN, ou_name)
 
 	host_objects = univention.admin.modules.lookup(
 		computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
@@ -3105,6 +3132,12 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		slave_object['unixhome'] = '/dev/null'
 		slave_object['shell'] = '/bin/bash'
 		slave_object['primaryGroup'] = 'cn=DC Slave Hosts,cn=groups,%s' % (baseDN,)
+		if configRegistry.is_true('ucsschool/feature/roles'):
+			if dc_type == TYPE_DC_ADMINISTRATIVE:
+				roles = [create_ucsschool_role_string(role_dc_slave_admin, ou_name)]
+			else:
+				roles = [create_ucsschool_role_string(role_dc_slave_edu, ou_name)]
+			slave_object['ucsschoolRole'] = roles
 		for grpdn in group_dn_list:
 			if grpdn not in slave_object["groups"]:
 				slave_object["groups"].append(grpdn)

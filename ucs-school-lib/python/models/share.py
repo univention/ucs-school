@@ -32,9 +32,10 @@
 
 import os.path
 
-from ucsschool.lib.models.attributes import ShareName, SchoolClassAttribute
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+from ucsschool.lib.models.attributes import Roles, ShareName, SchoolClassAttribute
+from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.utils import ucr, _, logger
+from ucsschool.lib.roles import role_school_class_share, role_workgroup_share
 
 
 class Share(UCSSchoolHelperAbstractClass):
@@ -130,7 +131,16 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_module = 'shares/share'
 
 
-class ClassShare(Share):
+class WorkGroupShare(RoleSupportMixin, Share):
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	default_roles = [role_workgroup_share]
+	_school_in_name_prefix = True
+
+
+class ClassShare(RoleSupportMixin, Share):
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	default_roles = [role_school_class_share]
+	_school_in_name_prefix = True
 
 	@classmethod
 	def get_container(cls, school):

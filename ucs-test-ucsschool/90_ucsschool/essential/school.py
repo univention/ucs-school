@@ -13,6 +13,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap
+from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
 
 
 class GetFail(Exception):
@@ -292,7 +293,6 @@ class School(object):
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_pupils, ou_base), expected_attr={'cn': [cn_pupils]}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_teachers, ou_base), expected_attr={'cn': [cn_teachers]}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=must_exist)
-		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=must_exist)
 
 		utils.verify_ldap_object('cn=computers,%s' % ou_base, expected_attr={'cn': ['computers']}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=server,cn=computers,%s' % ou_base, expected_attr={'cn': ['server']}, should_exist=must_exist)
@@ -347,7 +347,10 @@ class School(object):
 		grp_policy_admins = ucr.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=UMC,cn=policies,%s' % base_dn)
 		grp_policy_staff = ucr.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % base_dn)
 
-		utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins]}, should_exist=True)
+		if ucr.is_true('ucsschool/feature/roles'):
+			utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins], 'ucsschoolRole': [create_ucsschool_role_string(role_school_admin_group, ou)]}, should_exist=True)
+		else:
+			utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins]}, should_exist=True)
 		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=must_exist)
 		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_teachers]}, should_exist=must_exist)
 

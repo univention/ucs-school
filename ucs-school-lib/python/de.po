@@ -208,6 +208,24 @@ msgstr "Pfad für Richtlinien"
 msgid "Printer path"
 msgstr "Pfad für Drucker"
 
+#: python/models/base.py:324
+#, python-format
+msgid "Role {!r} is not supported for this object."
+msgstr "Rolle {!r} wird für dieses Objekt nicht unterstützt."
+
+#: python/models/base.py:331
+#, python-format
+msgid "Context {!r} is not supported for this object. Object is not in that school."
+msgstr "Kontext {!r} wird für dieses Objekt nicht unterstützt. Objekt ist nicht an dieser Schule."
+
+#: python/models/attributes.py:329
+msgid "Role has bad format"
+msgstr "Rolle hat falsches Format"
+
+#: python/models/base.py:195
+msgid "Roles"
+msgstr "Rollen"
+
 #: python/models/base.py:194
 msgid "School"
 msgstr "Schule"
@@ -337,6 +355,14 @@ msgstr "Im Subnetz sind keine weiteren Adressen mehr frei!"
 #: python/models/computer.py:336
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
+
+#: python/models/attributes.py:331
+msgid "Unknown context type"
+msgstr "Unbekannter Kontexttyp"
+
+#: python/models/attributes.py:333
+msgid "Unknown role"
+msgstr "Unbekannte Rolle"
 
 #: python/models/misc.py:85
 msgid "User path"

@@ -35,8 +35,8 @@ from ldap.filter import escape_filter_chars
 
 from univention.admin.uexceptions import nextFreeIp
 
-from ucsschool.lib.models.attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, MultipleObjectsError
+from ucsschool.lib.models.attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
+from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass, MultipleObjectsError
 
 from ucsschool.lib.models.dhcp import DHCPServer, AnyDHCPService
 from ucsschool.lib.models.network import Network
@@ -76,8 +76,9 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 		return cls
 
 
-class SchoolDCSlave(SchoolDC):
+class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 	groups = Groups(_('Groups'))
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	def do_create(self, udm_obj, lo):
 		udm_obj['unixhome'] = '/dev/null'
