@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-15) unstable; urgency=medium
+
+  * Bug #45379: Make ucsschool role attribute internal if not activated
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 03 Jul 2018 22:28:18 +0200
+
 ucs-school-lib (11.0.1-14) unstable; urgency=low
 
   * Bug #45379: add support for role attribute

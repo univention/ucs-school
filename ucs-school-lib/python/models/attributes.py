@@ -340,3 +340,8 @@ class Roles(Attribute):
 	value_default = list
 	syntax = RolesSyntax
 	extended = True
+
+	def __init__(self, *args, **kwargs):
+		super(Roles, self).__init__(*args, **kwargs)
+		if not ucr.is_true('ucsschool/feature/roles'):
+			self.internal = True
