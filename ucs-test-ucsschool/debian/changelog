@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-68) unstable; urgency=low
+
+  * Bug #45379: add tests for role attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 03 Jul 2018 10:47:43 +0200
+
 ucs-test-ucsschool (5.0.2-67) unstable; urgency=low
 
   * Bug #35076: fix logic error in 22_computerroom_two_rooms_settings_interference

@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-20) unstable; urgency=low
+
+  * Bug #45379: add support for role attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 03 Jul 2018 10:46:49 +0200
+
 ucs-school-import (16.0.2-19) unstable; urgency=low
 
   * Bug #45164: chown/chmod path of previous uploads
