@@ -61,7 +61,7 @@ feedback@univention.de
 			<title>Veränderungen im Updateprozess</title>
 			<para>
 				In der Vergangenheit wurden Updates für UCS@school immer als ein neues App-Update im Univention App Center bereitgestellt.
-				Beginnend mit UCS@school 4.2 v10 bzw. UCS@school 4.2 v4 wird dieser Prozess verschlankt. Kleinere Updates und Fehlerbereinigungen
+				Beginnend mit UCS@school 4.2 v10 bzw. UCS@school 4.3 v4 wird dieser Prozess verschlankt. Kleinere Updates und Fehlerbereinigungen
 				(Errata für UCS@school), die keine Interaktion mit dem Administrator erforderlich machen, werden in Zukunft im Repository der
 				bereits veröffentlichten App-Version von UCS@school herausgegeben. Die Changelog-Dokumente, die wir mit jeder UCS@school-App-Version
 				herausgeben, werden	dann entsprechend um einen neuen Abschnitt erweitert, aus dem ersichtlich wird, zu welchem Zeitpunkt welche
