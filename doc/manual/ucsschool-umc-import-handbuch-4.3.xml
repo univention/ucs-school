@@ -219,7 +219,7 @@
 	  --create-email-addresses \      # E-Mail-Adressen erzeugen
 	  SchuleEins                      # Schule (OU) in die importiert werden soll
 				</programlisting>
-				Dies erzeugte Datei heißt <literal>test_users_<replaceable>$DATUM_$UHRZEIT</replaceable>.csv</literal> und passt zur Konfiguration in <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename>.
+				Die erzeugte Datei heißt <literal>test_users_<replaceable>$DATUM_$UHRZEIT</replaceable>.csv</literal> und passt zur Konfiguration in <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json</filename>.
 			</para>
 			<para>
 				Eine solche Datei sieht z.B. so aus:
@@ -232,5 +232,23 @@
 				</programlisting>
 			</para>
 		</section>
+	</chapter>
+
+	<chapter id="testing_cmdline">
+		<title>Test an der Kommandozeile</title>
+		<para>
+			Das Testen einer Konfiguration, insbesondere bei Änderungen am <wordasword>Spalten-Mapping</wordasword>, ist u.U. an der Kommandozeile schneller als in der UMC.
+			Bei Verwendung der richtigen Kommandozeilenparameter wird <emphasis>beinahe</emphasis> der gleiche Importvorgang ausgeführt, wie wenn er vom UMC-Modul gestartet würde.
+		</para>
+		<para>
+			Das Skript, das Beispieldaten erzeugt, druckt am Ende die benötigten Kommandozeilenparameter exakt aus.
+			Hier ein Beispiel:
+			<programlisting>
+--school 'SchuleEins' --user_role 'ROLE' --sourceUID 'schuleeins-ROLE' \
+--conffile '/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json' \
+--infile 'test_users_2018-07-04_12:31:46.csv'
+			</programlisting>
+			'ROLE' muss mit <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> oder <literal>teacher_and_staff</literal> ersetzt werden, und <literal>SchuleEins</literal> mit der entsprechenden <replaceable>OU</replaceable> (in <literal>'schuleeins-ROLE'</literal> in Kleinbuchstaben).
+		</para>
 	</chapter>
 </book>
