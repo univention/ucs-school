@@ -5,5 +5,6 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-metapackage
 fix: 11.0.1-5A~4.3.0.201806261308
 desc: |
- * The new module "Classlists" has been added to the recommended packages (Bug #47017).
+ * The new module <literal>Classlists</literal> has been added to the list of recommended
+   packages and is automatically installed with UCS@school (Bug #47017).
 bug: [47017]

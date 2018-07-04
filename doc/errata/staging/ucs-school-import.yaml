@@ -5,15 +5,15 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
 fix: 16.0.2-22A~4.3.0.201807040843
 desc: |
- * When modifying an existing user, the attribute of the old user object in "ImportUser.old_user" were incorrectly updated. This has been fixed (Bug #47027).
+ * When modifying an existing user, the attribute of the old user object in <literal>ImportUser.old_user</literal> were incorrectly updated. This has been fixed (Bug #47027).
  * New user role assignment can now be handled by the regular CSV reader class. This allows the use of the special mapping value <literal>__role</literal>. Allowed values in the CSV column are <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> and <literal>teacher_and_staff</literal> (Bug #42416).
  * Leading and trailing whitespace in CSV cells is now removed. Access to the unmodified data (including the whitespace is still possible through the <literal>input_data</literal> attribute of <classname>ImportUser</classname> objects (Bug #46970).
  * When using the HTTP-API based CSV import, the roles of the connected user can now be retrieved through a HTTP-API resource (Bug #45749).
  * A ou_post_create hook has been added, that creates the corresponding Django School object (Bug #45749).
- * The WSGI server Gunicorn now runs on port 9898 by default. This can be changed using the UCR variable ucsschool/import/http_api/wsgi_server_port (Bug #47135).
- * The loglevel of the WSGI server Gunicorn is now configurable through the UCR variable ucsschool/import/http_api/wsgi_server_loglevel (Bug #46830).
+ * The WSGI server Gunicorn now runs on port 9898 by default. This can be changed using the UCR variable <envar>ucsschool/import/http_api/wsgi_server_port</envar> (Bug #47135).
+ * The loglevel of the WSGI server Gunicorn is now configurable through the UCR variable <envar>ucsschool/import/http_api/wsgi_server_loglevel</envar> (Bug #46830).
  * The HTTP-API import now always prepends the school name to class names read from a CSV file (Bug #47156).
- * The HTTP-API now uses a default and a custom configuration file <file>user_import_http-api.json</file> located in the same directories as the other configuration files (Bug #47156).
+ * The HTTP-API now uses a default and a custom configuration file <filename>user_import_http-api.json</filename> located in the same directories as the other configuration files (Bug #47156).
  * Custom django-admin commands were added to make the join script more reliable (Bug #45163).
  * The WSGI server Gunicorn now runs as an unprivileged user (Bug #45164).
  * The WSGI server Gunicorn is now restarted when the machine account is changed (Bug #47236).

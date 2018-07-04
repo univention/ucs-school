@@ -6,5 +6,5 @@ src: ucs-school-umc-users
 fix: 14.0.2-5A~4.3.0.201807021259
 desc: |
  * Add UCR variable <envar>ucsschool/passwordreset/autosearch_on_change</envar> to control reload of user lists when switching schools or classes (Bug #45601).
- * The representation of the password expiration column within the password reset modules has been enhance to improve user experience (Bug #42212).
+ * The representation of the password expiration column within the password reset modules has been enhanced to improve user experience (Bug #42212).
 bug: [45601, 42212]
