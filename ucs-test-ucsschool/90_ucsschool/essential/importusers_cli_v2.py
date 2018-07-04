@@ -305,6 +305,9 @@ class ImportTestbase(object):
 		:param kwargs: dict: will be passed to wait_for_drs_replication() with a modified 'ldap_filter'
 		:return: None | <ldb result>
 		"""
+		if not utils.package_installed('univention-samba4'):
+			self.log.info('wait_for_drs_replication_of_membership(): skip, univention-samba4 not installed.')
+			return
 		try:
 			user_filter = kwargs['ldap_filter']
 			if user_filter and not user_filter.startswith('('):
