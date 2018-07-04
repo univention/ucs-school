@@ -5,5 +5,6 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-import
 fix: 0.0.1-19A~4.2.0.201806210919
 desc: |
- * Available roles are now retrieved through a HTTP-API resource (Bug #46832).
+ * The user roles drop-down item displayed a static list of user roles that also contained unavailable roles.
+   The drop-down item now dynamically obtains a list of available user roles from the server (Bug #46832).
 bug: [46832]

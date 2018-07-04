@@ -11,10 +11,10 @@ desc: |
  * Increase Celery worker startup verbosity, adapt HTTP-API import code to handle newer Django versions (Bug #47118).
  * When using the HTTP-API based CSV import, the roles of the connected user can now be retrieved through a HTTP-API resource (Bug #46832).
  * A ou_post_create hook has been added, that creates the corresponding Django School object (Bug #46832).
- * The WSGI server Gunicorn now runs on port 9898 by default. This can be changed using the UCR variable ucsschool/import/http_api/wsgi_server_port (Bug #47134).
- * The loglevel of the WSGI server Gunicorn is now configurable through the UCR variable ucsschool/import/http_api/wsgi_server_loglevel (Bug #46831).
+ * The WSGI server Gunicorn now runs on port 9898 by default. This can be changed using the UCR variable <envar>ucsschool/import/http_api/wsgi_server_port</envar> (Bug #47134).
+ * The loglevel of the WSGI server Gunicorn is now configurable through the UCR variable <envar>ucsschool/import/http_api/wsgi_server_loglevel</envar> (Bug #46831).
  * The HTTP-API import now always prepends the school name to class names read from a CSV file (Bug #47157).
- * The HTTP-API now uses a default and a custom configuration file <file>user_import_http-api.json</file> located in the same directories as the other configuration files (Bug #471567).
+ * The HTTP-API now uses a default and a custom configuration file <filename>user_import_http-api.json</filename> located in the same directories as the other configuration files (Bug #471567).
  * Custom django-admin commands were added to make the join script more reliable (Bug #47181).
  * The WSGI server Gunicorn now runs as an unprivileged user (Bug #46829).
  * The WSGI server Gunicorn is now restarted when the machine account is changed (Bug #47237).

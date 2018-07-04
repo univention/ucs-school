@@ -5,5 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-groups
 fix: 7.0.0-6A~4.2.0.201804300850
 desc: |
- * Overhaul ucr variable descriptions as statet in comment #14 of (Bug #46905)
+ * The UCR variable descriptions regarding autosearch have been revised (Bug #46905).
 bug: [46905]

@@ -5,5 +5,5 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-umc-computerroom
 fix: 9.0.9-3A~4.2.0.201806070855
 desc: |
- * Instead of showing an empty list of computer rooms there is now a dialog asking if the user wants to create one. The dialog is only shown if the user is authorized to create a room and the module manages only a single school. (Bug #46872)
+ * Instead of showing an empty list of computer rooms there is now a dialog asking if the user wants to create one. The dialog is only shown if the user is authorized to create a room and the module manages only a single school (Bug #46872).
 bug: [46872]
