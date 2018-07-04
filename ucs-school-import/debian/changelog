@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-22) unstable; urgency=low
+
+  * Bug #45379: bump join script version
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 04 Jul 2018 08:40:22 +0200
+
 ucs-school-import (16.0.2-21) unstable; urgency=low
 
   * Bug #45379: check that the UCRV is set, before starting a migration
