@@ -39,7 +39,7 @@ import datetime
 from ldap.filter import filter_format
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, ToManyErrors, UnkownAction, UserValidationError
+from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction, UserValidationError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
@@ -130,7 +130,7 @@ class UserImport(object):
 						"M": "Modifying"
 					}[user.action]
 				except KeyError:
-					raise UnkownAction("{}  (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
+					raise UnknownAction("{}  (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
 						user, user.source_uid, user.record_uid, user.action), entry_count=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
@@ -517,7 +517,7 @@ class UserImport(object):
 		"""
 		self.errors.append(exc)
 		if -1 < self.config["tolerate_errors"] < len([x for x in self.errors if x.is_countable]):
-			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
+			raise TooManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
 	def progress_report(self, description, percentage=0, done=0, total=0, **kwargs):
 		if 'progress_notification_function' not in self.config:

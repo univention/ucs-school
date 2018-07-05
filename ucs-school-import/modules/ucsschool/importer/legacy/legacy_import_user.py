@@ -37,7 +37,7 @@ from univention.admin.uexceptions import noObject
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
 	ImportTeachersAndStaff, ImportUser
-from ucsschool.importer.exceptions import UnkownAction
+from ucsschool.importer.exceptions import UnknownAction
 from ucsschool.importer.factory import Factory
 
 
@@ -83,7 +83,7 @@ class LegacyImportUser(ImportUser):
 		super(LegacyImportUser, self).run_checks()
 
 		if self.action and self.action not in ["A", "D", "M"]:
-			raise UnkownAction("Unknown action '{}'.".format(self.action))
+			raise UnknownAction("Unknown action '{}'.".format(self.action))
 
 	@classmethod
 	def get_by_import_id_or_username(cls, connection, source_uid, record_uid, username, superordinate=None):

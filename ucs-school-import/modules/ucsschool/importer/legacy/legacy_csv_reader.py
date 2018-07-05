@@ -32,7 +32,7 @@ CSV reader for CSV files using the legacy import format.
 # <http://www.gnu.org/licenses/>.
 
 from ucsschool.importer.reader.csv_reader import CsvReader
-from ucsschool.importer.exceptions import NoRole, UnkownRole
+from ucsschool.importer.exceptions import NoRole, UnknownRole
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
@@ -63,7 +63,7 @@ class LegacyCsvReader(CsvReader):
 		"""
 		try:
 			return super(LegacyCsvReader, self).get_roles(input_data)
-		except (NoRole, UnkownRole):
+		except (NoRole, UnknownRole):
 			pass
 
 		roles = list()
