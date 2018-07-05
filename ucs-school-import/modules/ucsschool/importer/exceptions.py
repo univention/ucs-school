@@ -158,11 +158,12 @@ class ReadOnlyConfiguration(UcsSchoolImportFatalError):
 		super(ReadOnlyConfiguration, self).__init__("Changing the configuration is not allowed.", *args, **kwargs)
 
 
-class ToManyErrors(UcsSchoolImportFatalError):
+class TooManyErrors(UcsSchoolImportFatalError):
 
 	def __init__(self, msg, errors, *args, **kwargs):
-		super(ToManyErrors, self).__init__(msg, *args, **kwargs)
+		super(TooManyErrors, self).__init__(msg, *args, **kwargs)
 		self.errors = errors
+ToManyErrors = TooManyErrors
 
 
 class UDMError(UcsSchoolImportError):
@@ -173,24 +174,28 @@ class UDMValueError(UDMError):
 	pass
 
 
-class UnkownAction(UcsSchoolImportError):
+class UnknownAction(UcsSchoolImportError):
 	pass
+UnkownAction = UnknownAction
 
 
-class UnkownDisabledSetting(UcsSchoolImportError):
+class UnknownDisabledSetting(UcsSchoolImportError):
 	pass
+UnkownDisabledSetting = UnknownDisabledSetting
 
 
 class UnknownProperty(UcsSchoolImportError):
 	pass
 
 
-class UnkownRole(UcsSchoolImportError):
+class UnknownRole(UcsSchoolImportError):
 	pass
+UnkownRole = UnknownRole
 
 
-class UnkownSchoolName(UcsSchoolImportError):
+class UnknownSchoolName(UcsSchoolImportError):
 	pass
+UnkownSchoolName = UnknownSchoolName
 
 
 class UniqueIdError(UcsSchoolImportError):

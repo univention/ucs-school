@@ -38,7 +38,7 @@ import sys
 
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
-from ucsschool.importer.exceptions import InitialisationError, NoRole, UnkownRole, UnknownProperty
+from ucsschool.importer.exceptions import InitialisationError, NoRole, UnknownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
@@ -218,7 +218,7 @@ class CsvReader(BaseReader):
 		try:
 			roles = self._csv_roles_mapping[role_str]
 		except KeyError:
-			raise UnkownRole(
+			raise UnknownRole(
 				'Unknown role {!r} found in {!r} column.'.format(role_str, self._csv_roles_key),
 				entry_count=self.entry_count
 			)

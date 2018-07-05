@@ -38,7 +38,7 @@ from univention.admin.uexceptions import noObject
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
 	ImportTeachersAndStaff, ImportUser
-from ucsschool.importer.exceptions import UnkownAction
+from ucsschool.importer.exceptions import UnknownAction
 from ucsschool.importer.factory import Factory
 
 
@@ -82,7 +82,7 @@ class LegacyImportUser(ImportUser):
 		Action must already be configured in CSV.
 		"""
 		if self.action and self.action not in ["A", "D", "M"]:
-			raise UnkownAction("Unknown action '{}'.".format(self.action))
+			raise UnknownAction("Unknown action '{}'.".format(self.action))
 		super(LegacyImportUser, self).validate(lo, validate_unlikely_changes, check_username)
 
 	def _check_username_uniqueness(self):  # type: () -> None

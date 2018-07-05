@@ -42,7 +42,7 @@ from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose, ad
 from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
-from ucsschool.importer.exceptions import InitialisationError, ToManyErrors, UcsSchoolImportFatalError
+from ucsschool.importer.exceptions import InitialisationError, TooManyErrors, UcsSchoolImportFatalError
 
 
 class CommandLine(object):
@@ -122,7 +122,7 @@ class CommandLine(object):
 			if self.errors:
 				# at least one non-fatal error
 				return 2
-		except ToManyErrors as tme:
+		except TooManyErrors as tme:
 			self.logger.error("%s Exiting. Errors:", tme)
 			for error in tme.errors:
 				self.logger.error("%d: %s", error.entry_count, error)
