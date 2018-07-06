@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-import
+fix: 15.0.3-63A~4.2.0.201807061125
+desc: |
+ * The UMC import module now shows a summary after a sucessfull dry-run (Bug #46838)
+bug: [46838]
