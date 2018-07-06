@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-63) unstable; urgency=low
+
+  * Bug #46712: display summary after dry-run in UMC import module
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 06 Jul 2018 11:24:51 +0200
+
 ucs-school-import (15.0.3-62) unstable; urgency=low
 
   * Bug #46829: chown/chmod path of previous uploads
