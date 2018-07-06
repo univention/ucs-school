@@ -52,6 +52,7 @@ class CommandLine(object):
 		self.config = None
 		self.factory = None
 		self.errors = list()
+		self.user_import_summary_str = ''
 
 	def parse_cmdline(self):
 		parser = ParseUserImportCmdline()
@@ -95,6 +96,7 @@ class CommandLine(object):
 		self.logger.info("------ Starting mass import... ------")
 		importer.mass_import()
 		self.errors = importer.errors
+		self.user_import_summary_str = importer.user_import_stats_str
 		self.logger.info("------ Mass import finished. ------")
 
 	def main(self):

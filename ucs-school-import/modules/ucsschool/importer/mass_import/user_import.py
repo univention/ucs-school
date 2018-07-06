@@ -63,6 +63,7 @@ class UserImport(object):
 		self.connection, self.position = get_admin_connection()
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()
+		self.imported_users_len = 0
 
 	def read_input(self):
 		"""
@@ -103,22 +104,22 @@ class UserImport(object):
 		"""
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
-		total = len(imported_users)
+		self.imported_users_len = len(imported_users)
 		while imported_users:
 			imported_user = imported_users.pop(0)
 			usernum += 1
-			percentage = 10 + 90 * usernum / total  # 10% - 100%
+			percentage = 10 + 90 * usernum / self.imported_users_len  # 10% - 100%
 			self.progress_report(
 				description='Creating and modifying users: {}%.'.format(percentage),
 				percentage=percentage,
 				done=usernum,
-				total=total,
+				total=self.imported_users_len,
 				errors=len(self.errors)
 			)
 			if imported_user.action == "D":
 				continue
 			try:
-				self.logger.debug("Creating / modifying user %d/%d %s...", usernum, total, imported_user)
+				self.logger.debug("Creating / modifying user %d/%d %s...", usernum, self.imported_users_len, imported_user)
 				user = self.determine_add_modify_action(imported_user)
 				cls_name = user.__class__.__name__
 
@@ -162,7 +163,7 @@ class UserImport(object):
 					raise UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
 
 				if success:
-					self.logger.info("Success %s %d/%d %s (source_uid:%s record_uid: %s).", action_str.lower(), usernum, total, user, user.source_uid, user.record_uid)
+					self.logger.info("Success %s %d/%d %s (source_uid:%s record_uid: %s).", action_str.lower(), usernum, self.imported_users_len, user, user.source_uid, user.record_uid)
 					user.password = password
 					store.append(user.to_dict())
 				else:
@@ -480,28 +481,33 @@ class UserImport(object):
 		Log statistics about read, created, modified and deleted users.
 		"""
 		self.logger.info("------ User import statistics ------")
-		self.logger.info("Read users from input data: %d", len(self.imported_users))
+		lines = ["Read users from input data: {}".format(self.imported_users_len)]
 		cls_names = self.added_users.keys()
 		cls_names.extend(self.modified_users.keys())
 		cls_names.extend(self.deleted_users.keys())
 		cls_names = set(cls_names)
 		columns = 4
 		for cls_name in sorted(cls_names):
-			self.logger.info("Created %s: %d", cls_name, len(self.added_users.get(cls_name, [])))
+			lines.append("Created {}: {}".format(cls_name, len(self.added_users.get(cls_name, []))))
 			for i in range(0, len(self.added_users[cls_name]), columns):
-				self.logger.info("  %s", [iu["name"] for iu in self.added_users[cls_name][i:i+columns]])
-			self.logger.info("Modified %s: %d", cls_name, len(self.modified_users.get(cls_name, [])))
+				lines.append("  {}".format([iu["name"] for iu in self.added_users[cls_name][i:i+columns]]))
+			lines.append("Modified {}: {}".format(cls_name, len(self.modified_users.get(cls_name, []))))
 			for i in range(0, len(self.modified_users[cls_name]), columns):
-				self.logger.info("  %s", [iu["name"] for iu in self.modified_users[cls_name][i:i+columns]])
-			self.logger.info("Deleted %s: %d", cls_name, len(self.deleted_users.get(cls_name, [])))
+				lines.append("  {}".format([iu["name"] for iu in self.modified_users[cls_name][i:i+columns]]))
+			lines.append("Deleted {}: {}".format(cls_name, len(self.deleted_users.get(cls_name, []))))
 			for i in range(0, len(self.deleted_users[cls_name]), columns):
-				self.logger.info("  %s", [iu["name"] for iu in self.deleted_users[cls_name][i:i+columns]])
-		self.logger.info("Errors: %d", len(self.errors))
+				lines.append("  {}".format([iu["name"] for iu in self.deleted_users[cls_name][i:i+columns]]))
+		lines.append("Errors: {}".format(len(self.errors)))
 		if self.errors:
-			self.logger.info("Entry #: Error description")
+			lines.append("Entry #: Error description")
 		for error in self.errors:
-			self.logger.info("  %d: %s: %s", error.entry_count, error.import_user.name if error.import_user else "NoName", error)
+			lines.append(
+				"  {}: {}: {}".format(
+					error.entry_count, error.import_user.name if error.import_user else "NoName", error))
+		for line in lines:
+			self.logger.info(line)
 		self.logger.info("------ End of user import statistics ------")
+		return '\n'.join(lines)
 
 	def _add_error(self, err):
 		self.errors.append(err)
