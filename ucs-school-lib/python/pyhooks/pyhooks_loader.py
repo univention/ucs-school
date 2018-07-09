@@ -80,7 +80,7 @@ class PyHooksLoader(object):
 		:return: list: PyHook subclasses
 		"""
 		if self._hook_classes is None:
-			self.logger.info("Searching for hooks in: %s...", self.base_dir)
+			self.logger.info("Searching for %s hooks in %s ...", self.base_class.__name__, self.base_dir)
 			self._hook_classes = list()
 			for filename in listdir(self.base_dir):
 				if filename.endswith(".py") and os.path.isfile(os.path.join(self.base_dir, filename)):
