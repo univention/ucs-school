@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.1-6) unstable; urgency=medium
+
+  * Bug #47332: restart s4-connector to activate new config
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 11 Jul 2018 16:17:44 +0200
+
 ucs-school-metapackage (11.0.1-5) unstable; urgency=medium
 
   * Bug #47226: revert

@@ -158,6 +158,8 @@ fi
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 ucs_addServiceToLocalhost 'UCS@school Education' "$@"
 
+systemctl try-restart univention-s4-connector.service || true
+
 joinscript_save_current_version
 
 exit 0
