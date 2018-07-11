@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-70) unstable; urgency=medium
+
+  * Bug #44310: 207_import-users_school_change fix search base
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 11 Jul 2018 21:07:59 +0200
+
 ucs-test-ucsschool (5.0.2-69) unstable; urgency=low
 
   * Bug #44310: skip wait_for_drs_replication_of_membership if no S4 is installed
