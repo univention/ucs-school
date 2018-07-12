@@ -37,11 +37,10 @@ import sys
 
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
-from ucsschool.importer.exceptions import InitialisationError, NoRole, UnkownRole, UnknownProperty
+from ucsschool.importer.exceptions import InitialisationError, NoRole, UnknownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
 import univention.admin.modules
 
 
@@ -72,8 +71,7 @@ class CsvReader(BaseReader):
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
 		self.fieldnames = None
 		usersmod = univention.admin.modules.get("users/user")
-		lo, position = get_admin_connection()
-		univention.admin.modules.init(lo, position, usersmod)
+		univention.admin.modules.init(self.lo, self.position, usersmod)
 
 	def get_dialect(self, fp):
 		"""
@@ -100,6 +98,11 @@ class CsvReader(BaseReader):
 		:rtype: Iterator
 		"""
 		with open(self.filename, "rb") as fp:
+			# auto detect utf-8 with BOM
+			data = fp.read(4)
+			if data.startswith(codecs.BOM_UTF8):
+				self.encoding = "utf-8-sig"
+			fp.seek(0)
 			try:
 				dialect = self.get_dialect(fp)
 			except CsvError as exc:
@@ -213,7 +216,7 @@ class CsvReader(BaseReader):
 		try:
 			roles = self._csv_roles_mapping[role_str]
 		except KeyError:
-			raise UnkownRole(
+			raise UnknownRole(
 				'Unknown role {!r} found in {!r} column.'.format(role_str, self._csv_roles_key),
 				entry_count=self.entry_count
 			)

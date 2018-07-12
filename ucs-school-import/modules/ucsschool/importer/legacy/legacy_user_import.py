@@ -34,7 +34,7 @@ Legacy mass import class.
 import copy
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.mass_import.user_import import UserImport
-from ucsschool.importer.exceptions import CreationError, DeletionError, UnkownAction
+from ucsschool.importer.exceptions import CreationError, DeletionError, UnknownAction
 
 
 class LegacyUserImport(UserImport):
@@ -113,7 +113,7 @@ class LegacyUserImport(UserImport):
 		elif imported_user.action == "D":
 			user = imported_user
 		else:
-			raise UnkownAction("{} (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
+			raise UnknownAction("{} (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
 				imported_user, imported_user.source_uid, imported_user.record_uid, imported_user.action),
 				entry_count=imported_user.entry_count, import_user=imported_user)
 		return user

@@ -2,9 +2,9 @@
 #
 # Univention UCS@school
 """
-Base class for all Python based import hooks.
+Base class for all Python based Post-Read-Pyhooks.
 """
-# Copyright 2017-2018 Univention GmbH
+# Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,19 +31,35 @@ Base class for all Python based import hooks.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.pyhooks import PyHook
-from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.import_pyhook import ImportPyHook
 
 
-class ImportPyHook(PyHook):
-	def __init__(self, lo=None, *args, **kwargs):
+class PostReadPyHook(ImportPyHook):
+	"""
+	Hook that is called directly after data has been read from CSV/...
+
+	The base class' :py:meth:`__init__()` provides the following attributes:
+
+	* self.lo          # LDAP object
+	* self.logger      # Python logging instance
+
+	If multiple hook classes are found, hook functions with higher
+	priority numbers run before those with lower priorities. None disables
+	a function.
+	"""
+	priority = {
+		'entry_read': None,
+	}
+
+	def entry_read(self, entry_count, input_data, input_dict):
 		"""
-		:param univention.admin.uldap.access lo: optional LDAP object
+		Run code after an entry has been read and saved in
+		input_data and input_dict. This hook may alter input_data
+		and input_dict to modify the input data.
+
+		:param int entry_count: index of the data entry (e.g. line of the CSV file)
+		:param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The input_data may be changed.
+		:param dict[str, str] input_dict: input data mapped to column names. The input_dict may be changed.
+		:return: None
 		"""
-		super(ImportPyHook, self).__init__(*args, **kwargs)
-		if lo is None:
-			self.lo = get_admin_connection()[0]
-		else:
-			self.lo = lo  # reuse LDAP object
-		self.logger = get_logger()  # Python logging instance
+		return None

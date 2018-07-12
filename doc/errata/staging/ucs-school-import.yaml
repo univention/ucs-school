@@ -6,4 +6,10 @@ src: ucs-school-import
 fix: 16.0.2-23A~4.3.0.201807061122
 desc: |
  * The UMC import module now shows a summary after a sucessfull dry-run (Bug #46712).
-bug: [46712]
+ * Internal change: a new exception type has been introduced, to skip single import users on non-fatal errors (Bug #47162).
+ * Internal change: a new PyHook <literal>PostReadPyHook</literal> has been introduced, which is executed after reading each individual data record and can also change it (Bug #47221).
+ * Internal change: a new PyHook <literal>ResultPyHook</literal> has been introduced, which is executed after the import has finished (Bug #47302).
+ * It is now possible to deactivate the normalization for first name and last name. The boolean config options <literal>normalization:firstname</literal> and <literal>normalization:lastname</literal> have been added (Bug #47304).
+ * The CSV import via ucs-school-user-import is now able to handle UTF-8 files with byte order mark (UTF-8 BOM) correctly. In the past the BOM was interpreted as user data (Bug #47305).
+ * Internal change: several typos in class names have been fixed (Bug #47311).
+bug: [46712,47162,47221,47302,47304,47305,47311]

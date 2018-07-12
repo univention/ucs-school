@@ -1,3 +1,15 @@
+ucs-school-import (16.0.2-24) unstable; urgency=low
+
+  * Bug #47162: add new exception (type)
+  * Bug #47221: add new post read hook
+  * Bug #47302: add new result hook
+  * Bug #47304: add possibility to deactivate normalization for firstname
+    and lastname
+  * Bug #47305: automatically detect and handle UTF-8 Byte Order Mark
+  * Bug #47311: fix several typos in class names
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 05 Jul 2018 14:20:26 +0200
+
 ucs-school-import (16.0.2-23) unstable; urgency=low
 
   * Bug #46712: display summary after dry-run in UMC import module

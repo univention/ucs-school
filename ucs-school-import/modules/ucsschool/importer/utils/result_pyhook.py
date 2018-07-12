@@ -2,9 +2,9 @@
 #
 # Univention UCS@school
 """
-Base class for all Python based import hooks.
+Base class for all Python based Result-Pyhooks.
 """
-# Copyright 2017-2018 Univention GmbH
+# Copyright 2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,19 +31,33 @@ Base class for all Python based import hooks.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.pyhooks import PyHook
-from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.import_pyhook import ImportPyHook
 
 
-class ImportPyHook(PyHook):
-	def __init__(self, lo=None, *args, **kwargs):
+class ResultPyHook(ImportPyHook):
+	"""
+	Hook that is called after import has finished.
+
+	* self.lo          # LDAP object
+	* self.logger      # Python logging instance
+
+	If multiple hook classes are found, hook functions with higher
+	priority numbers run before those with lower priorities. None disables
+	a function.
+	"""
+	priority = {
+		'user_result': None,
+	}
+
+	def __init__(self, *args, **kwargs):
+		super(ResultPyHook, self).__init__(*args, **kwargs)
+
+	def user_result(self, user_import_data):
 		"""
-		:param univention.admin.uldap.access lo: optional LDAP object
+		Run code after user import has finished. The importer object is passed
+		to this hook, so result summaries etc are possible.
+
+		:param UserImportData user_import_data: relevant data from the UserImport class
+		:return: None
 		"""
-		super(ImportPyHook, self).__init__(*args, **kwargs)
-		if lo is None:
-			self.lo = get_admin_connection()[0]
-		else:
-			self.lo = lo  # reuse LDAP object
-		self.logger = get_logger()  # Python logging instance
+		return None

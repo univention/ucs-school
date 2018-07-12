@@ -49,7 +49,7 @@ from ucsschool.importer.exceptions import (
 	BadPassword, EmptyFormatResultError, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
 	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
-	UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
+	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong
 )
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
@@ -270,7 +270,7 @@ class ImportUser(User):
 		:type additional_schools: list(str)
 		:return: None
 		:rtype: None
-		:raises UnkownSchoolName: if a school is not known
+		:raises UnknownSchoolName: if a school is not known
 		"""
 		# cannot be done in run_checks, because it needs LDAP access
 		schools = set(self.schools)
@@ -279,7 +279,7 @@ class ImportUser(User):
 			schools.update(additional_schools)
 		for school in schools:
 			if school not in self.get_all_school_names(lo):
-				raise UnkownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
+				raise UnknownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
 	def create(self, lo, validate=True):
 		"""
@@ -580,7 +580,7 @@ class ImportUser(User):
 			try:
 				activate = self.config["activate_new_users"]["default"]
 			except KeyError:
-				raise UnkownDisabledSetting(
+				raise UnknownDisabledSetting(
 					"Cannot find 'disabled' ('activate_new_users') setting for role '{}' or 'default'.".format(
 						self.role_sting),
 					self.entry_count,
@@ -593,7 +593,8 @@ class ImportUser(User):
 		Normalize given name if set from import data or create from scheme.
 		"""
 		if self.firstname:
-			self.firstname = self.normalize(self.firstname)
+			if self.config.get('normalize', {}).get('firstname', True):
+				self.firstname = self.normalize(self.firstname)
 		elif self._schema_write_check("firstname", "firstname", "givenName"):
 			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
 		elif self.old_user:
@@ -605,7 +606,8 @@ class ImportUser(User):
 		Normalize family name if set from import data or create from scheme.
 		"""
 		if self.lastname:
-			self.lastname = self.normalize(self.lastname)
+			if self.config.get('normalize', {}).get('lastname', True):
+				self.lastname = self.normalize(self.lastname)
 		elif self._schema_write_check("lastname", "lastname", "sn"):
 			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
 		elif self.old_user:

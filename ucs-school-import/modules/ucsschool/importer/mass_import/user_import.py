@@ -39,7 +39,7 @@ import datetime
 from ldap.filter import filter_format
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, ToManyErrors, UnkownAction, UserValidationError
+from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction, UserValidationError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
@@ -130,7 +130,7 @@ class UserImport(object):
 						"M": "Modifying"
 					}[user.action]
 				except KeyError:
-					raise UnkownAction("{}  (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
+					raise UnknownAction("{}  (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
 						user, user.source_uid, user.record_uid, user.action), entry_count=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
@@ -509,12 +509,30 @@ class UserImport(object):
 		self.logger.info("------ End of user import statistics ------")
 		return '\n'.join(lines)
 
-	def _add_error(self, err):
-		self.errors.append(err)
-		if -1 < self.config["tolerate_errors"] < len(self.errors):
-			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
+	def _add_error(self, exc):  # type: (UcsSchoolImportError) -> None
+		"""
+		Append given exception to list of errors.
+		:param UcsSchoolImportError exc: an Exception raised during import
+		:raises TooManyErrors: if the number of countable exceptions exceeds the number of tolerable errors
+		"""
+		self.errors.append(exc)
+		if -1 < self.config["tolerate_errors"] < len([x for x in self.errors if x.is_countable]):
+			raise TooManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
 	def progress_report(self, description, percentage=0, done=0, total=0, **kwargs):
 		if 'progress_notification_function' not in self.config:
 			return
 		self.config['progress_notification_function'](description, percentage, done, total, **kwargs)
+
+	def get_result_data(self):
+		return UserImportData(self)
+
+
+class UserImportData(object):
+	def __init__(self, user_import):  # type: (UserImport) -> None
+		self.config = user_import.config
+		self.dry_run = user_import.dry_run
+		self.errors = user_import.errors
+		self.added_users = user_import.added_users
+		self.modified_users = user_import.modified_users
+		self.deleted_users = user_import.deleted_users

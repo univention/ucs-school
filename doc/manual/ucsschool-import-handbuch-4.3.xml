@@ -635,6 +635,22 @@ python -m json.tool &lt; my_config.json
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>0</literal></entry>
 							</row>
+<!-- normalize::firstname -->
+							<row>
+								<entry morerows="1" id="configuration:json_format:userimport:normalize:firstname"><varname>normalize: \ firstname</varname></entry>
+								<entry>Definiert, ob der in der CSV-Datei angegebene Wert für den Vornamen (i.d.R. UTF-8-kodiert) auf die Kodierung ASCII normalisiert wird. Umlaute und Sonderzeichen werden dabei ersetzt ("ä" wird zu "ae") oder entfernt.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>bool</classname>): <literal>true</literal></entry>
+							</row>
+<!-- normalize::lastname -->
+							<row>
+								<entry morerows="1" id="configuration:json_format:userimport:normalize:lastname"><varname>normalize: \ lastname</varname></entry>
+								<entry>Definiert, ob der in der CSV-Datei angegebene Wert für den Nachnamen (i.d.R. UTF-8-kodiert) auf die Kodierung ASCII normalisiert wird. Umlaute und Sonderzeichen werden dabei ersetzt ("ä" wird zu "ae") oder entfernt.</entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>bool</classname>): <literal>true</literal></entry>
+							</row>
 <!-- scheme -->
 							<row>
 								<entry morerows="1"><varname>scheme</varname></entry>
