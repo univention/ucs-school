@@ -12,7 +12,7 @@
 		}
 	},
 	"scheme": {
-		"email": "<firstname>.<lastname>@<maildomain>",
+		"email": "<:umlauts><firstname>.<lastname>@<maildomain>",
 		"recordUID": "<firstname>.<lastname>",
 		"username": {
 		    "default": "<:umlauts><firstname>.<lastname><:lower>[COUNTER2]"

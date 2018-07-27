@@ -1,3 +1,10 @@
+ucs-school-import (16.0.2-25) unstable; urgency=low
+
+  * Bug #47304: normalize firstname and lastname before creating email address
+    with test configuration
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 27 Jul 2018 15:40:57 +0200
+
 ucs-school-import (16.0.2-24) unstable; urgency=low
 
   * Bug #47162: add new exception (type)
