@@ -1,0 +1,16 @@
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+from ucsschool.importer.exceptions import UcsSchoolImportSkipImportRecord
+
+
+class SkipUserHook(UserPyHook):
+	priority = {
+		"pre_create": 1,
+	}
+
+	def pre_create(self, user):
+		self.logger.info("Running a pre_create hook for %s.", user)
+		if user.firstname.lower().startswith('m'):
+			raise UcsSchoolImportSkipImportRecord(
+				'Skipping user {!r} with firstname starting with "m"'.format(user.firstname),
+				import_user=user
+			)
