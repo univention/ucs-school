@@ -59,7 +59,8 @@ class PostReadPyHook(ImportPyHook):
 
 		:param int entry_count: index of the data entry (e.g. line of the CSV file)
 		:param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The input_data may be changed.
-		:param dict[str, str] input_dict: input data mapped to column names. The input_dict may be changed.
+		:param input_dict: input data mapped to column names. The input_dict may be changed.
+		:type input_dict: dict[str, str]
 		:return: None
 		"""
 		return None
