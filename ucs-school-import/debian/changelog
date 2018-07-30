@@ -1,3 +1,11 @@
+ucs-school-import (16.0.2-28) unstable; urgency=low
+
+  * Bug #47277: add a JSON configuration file for using the
+    ucs-school-testuser-import script to test a HTTP-API-import and hints how
+    to use it
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 Jul 2018 15:11:11 +0200
+
 ucs-school-import (16.0.2-27) unstable; urgency=low
 
   * Bug #47413: cleanup: remove unreachable code
