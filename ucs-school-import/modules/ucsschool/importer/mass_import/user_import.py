@@ -241,17 +241,13 @@ class UserImport(object):
 		filter_s = filter_format("(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))".format(oc_filter), (source_uid,))
 		self.logger.debug('Searching with filter=%r', filter_s)
 
-		id2imported_user = dict()  # for fast access later
-		for iu in self.imported_users:
-			id2imported_user[(iu.source_uid, iu.record_uid)] = iu
-		imported_user_ids = set(id2imported_user.keys())
-
 		# Find all users that exist in UCS but not in input.
 		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
 		ucs_user_ids = set(
 			[(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8')) for lu in ucs_ldap_users]
 		)
 
+		imported_user_ids = set((iu.source_uid, iu.record_uid) for iu in self.imported_users)
 		users_to_delete = ucs_user_ids - imported_user_ids
 		users_to_delete = [(u[0], u[1], []) for u in users_to_delete]
 		self.logger.debug("users_to_delete=%r", users_to_delete)

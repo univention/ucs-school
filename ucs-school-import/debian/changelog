@@ -1,4 +1,4 @@
-ucs-school-import (16.0.2-26) unstable; urgency=low
+ucs-school-import (16.0.2-27) unstable; urgency=low
 
   * Bug #47413: cleanup: remove unreachable code
 
