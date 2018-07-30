@@ -1045,7 +1045,7 @@ udm users/user
 				</programlisting>
 			</para>
 			<para>
-				Sollen Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden (z.B. nur der erste Teil eines Doppelnamens für eine E-Mail-Adresse), so kann dies mit Hilfe von <wordasword>Format-Hooks</wordasword> geschehen. Ihre Erstellung und Verwendung wird in  <link linkend="extending:hooks:formathooks"/> beschrieben.
+				Sollen Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden (z.B. nur der erste Teil eines Doppelnamens für eine E-Mail-Adresse), so kann dies mit Hilfe von <wordasword>Format-Hooks</wordasword> geschehen. Ihre Erstellung und Verwendung wird in  <xref linkend="extending:hooks:formathooks"/> beschrieben.
 			</para>
 		</section>
 
@@ -1479,7 +1479,7 @@ udm dns/host_record create \
 			<title>Hooks</title>
 			<para>
 				<ulink url="https://de.wikipedia.org/wiki/Hook_(Informatik)"><citetitle>Hooks</citetitle></ulink> sind Stellen im Programmcode, an die zusätzlicher Code "gehängt" werden kann.
-				Für den Benutzerimport sind acht Stellen vorgesehen: jeweils vor und nach dem Anlegen, Ändern, Löschen oder Verschieben von Benutzern. Zusätzlich gibt es <wordasword>Format-Hooks</wordasword> die vor dem Erstellen eines Attributes aus anderen Attributen (siehe <link linkend="configuration:scheme_formatting"/>) ausgeführt werden. Diese werden weiter unter in <link linkend="extending:hooks:formathooks"/> separat behandelt.
+				Für den Benutzerimport sind acht Stellen vorgesehen: jeweils vor und nach dem Anlegen, Ändern, Löschen oder Verschieben von Benutzern. Zusätzlich gibt es <wordasword>Format-Hooks</wordasword> die vor dem Erstellen eines Attributes aus anderen Attributen (siehe <xref linkend="configuration:scheme_formatting"/>) ausgeführt werden. Diese werden weiter unten in <xref linkend="extending:hooks:formathooks"/> separat behandelt.
 			</para>
 			<para>
 				Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.importer.utils.user_pyhook.UserPyHook</classname> ableitet.
@@ -1511,9 +1511,11 @@ import shutil
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 class MyHook(UserPyHook):
+    supports_dry_run = True  # Hook Klasse wird auch während eines
+                             # dry-runs ausgeführt
     priority = {
         "pre_create": 1,
-        "post_create": None,
+        "post_create": None,  # Funktion ist deaktiviert
         "pre_remove": 1
     }
 
@@ -1527,7 +1529,7 @@ class MyHook(UserPyHook):
                                                       Glückwunsch"
 
     def post_create(self, user):
-        # Diese Function ist deaktiviert.
+        # Diese Funktion ist deaktiviert.
         self.logger.info("Running a post_create hook for %s.", user)
 
     def pre_remove(self, user):
@@ -1535,11 +1537,20 @@ class MyHook(UserPyHook):
         self.logger.info("Backing up home directory of %s.", user)
         user_udm = user.get_udm_object(self.lo)
         homedir = user_udm["unixhome"]
-        shutil.copy2(homedir, "/var/backup/{}".format(user.name))
+        target = "/var/backup/{}".format(user.name)
+        if self.dry_run:
+            self.logger.info("Dry-run: would copy %r to %r.", homedir, target)
+        else:
+            shutil.copy2(homedir, target)
 				</programlisting>
 			</para>
 			<para>
 				<itemizedlist>
+					<listitem>
+						<simpara>
+							Da die Klassenvariable <code>supports_dry_run = True</code> gesetzt ist, wird der Hook auch während eines <option>dry-run</option> ausgeführt.
+						</simpara>
+					</listitem>
 					<listitem>
 						<simpara>
 							In <methodname>pre_create()</methodname> wird bei einem neuen Benutzer ein Gruß am Benutzerobjekt gespeichert, wenn er Geburtstag hat.
@@ -1552,7 +1563,7 @@ class MyHook(UserPyHook):
 					</listitem>
 					<listitem>
 						<simpara>
-							In <methodname>pre_remove()</methodname> wird ein Backup des Heimatverzeichnisses des Benutzers gemacht, bevor er gelöscht wird.
+							In <methodname>pre_remove()</methodname> wird, wenn nicht während eines <option>dry-run</option> ausgeführt, ein Backup des Heimatverzeichnisses des Benutzers gemacht, bevor er gelöscht wird.
 						</simpara>
 					</listitem>
 				</itemizedlist>

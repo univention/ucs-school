@@ -37,13 +37,15 @@ from collections import defaultdict
 import datetime
 
 from ldap.filter import filter_format
-from univention.admin.uexceptions import noObject
+from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction, UserValidationError
+from ucsschool.importer.exceptions import (
+	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction,
+	UserValidationError, WrongUserType)
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
 
 class UserImport(object):
@@ -60,7 +62,7 @@ class UserImport(object):
 		self.deleted_users = defaultdict(list)  # like added_users
 		self.config = Configuration()
 		self.logger = get_logger()
-		self.connection, self.position = get_admin_connection()
+		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()
 		self.imported_users_len = 0
@@ -141,19 +143,22 @@ class UserImport(object):
 						err = CreationError
 						store = self.added_users[cls_name]
 						if self.dry_run:
-							self.logger.info("Dry run: would create %s now.", user)
-							user.run_checks(check_username=True)
+							user.validate(self.connection, validate_unlikely_changes=True, check_username=True)
+							user.call_hooks('pre', 'create')
+							self.logger.info("Dry-run: skipping user.create() for %s.", user)
 							success = True
+							user.call_hooks('post', 'create')
 						else:
 							success = user.create(lo=self.connection)
 					elif user.action == "M":
 						err = ModificationError
 						store = self.modified_users[cls_name]
 						if self.dry_run:
-							self.logger.info("Dry run: would modify %s now.", user)
-							user.check_schools(lo=self.connection)
-							user.run_checks(check_username=False)
+							user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+							user.call_hooks('pre', 'modify')
+							self.logger.info("Dry-run: skipping user.modify() for %s.", user)
 							success = True
+							user.call_hooks('post', 'modify')
 						else:
 							success = user.modify(lo=self.connection)
 					else:
@@ -196,7 +201,9 @@ class UserImport(object):
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
-		except noObject:
+		except WrongObjectType as exc:
+			raise WrongUserType, WrongUserType(str(exc), entry_count=imported_user.entry_count, import_user=imported_user), sys.exc_info()[2]
+		except NoObject:
 			# no user with source_uid + record_uid found -> create
 			imported_user.prepare_all(new_user=True)
 			user = imported_user
@@ -282,7 +289,7 @@ class UserImport(object):
 				user = a_user.get_by_import_id(self.connection, source_uid, record_uid)
 				user.action = "D"  # mark for logging/csv-output purposes
 				user.input_data = input_data  # most likely empty list (except in legacy import)
-			except noObject as exc:
+			except NoObject as exc:
 				self.logger.error(
 					"Cannot delete non existing user with source_uid=%r, record_uid=%r input_data=%r: %s",
 					source_uid, record_uid, input_data, exc)
@@ -325,11 +332,13 @@ class UserImport(object):
 		hooks (ucsschool lib calls executables anyway).
 		"""
 		if self.dry_run:
-			self.logger.info("Dry run: would move %s now from %r to %r.", user, user.school, imported_user.school)
 			user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
-			user.run_checks(check_username=False)
+			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+			user.call_hooks('pre', 'move')
+			self.logger.info("Dry-run: would move %s from %r to %r.", user, user.school, imported_user.school)
 			user._unique_ids_replace_dn(user.dn, imported_user.dn)
 			res = True
+			user.call_hooks('post', 'move')
 		else:
 			res = user.change_school(imported_user.school, self.connection)
 		if not res:
@@ -374,13 +383,14 @@ class UserImport(object):
 			modified |= self.set_deletion_grace(user, deletion_grace)
 
 		if success is not None:
-			# immediate deletion
+			# immediate deletion already happened above
 			pass
 		elif self.dry_run:
-			self.logger.info('Dry run - not expiring, deactivating or setting the purge timestamp.')
-			user.check_schools(lo=self.connection)
-			user.run_checks(check_username=False)
+			user.call_hooks('pre', 'remove')
+			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
+			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 			success = True
+			user.call_hooks('post', 'remove')
 		elif modified:
 			success = user.modify(lo=self.connection)
 		else:
@@ -417,7 +427,9 @@ class UserImport(object):
 		"""
 		self.logger.info('Deleting user %s...', user)
 		if self.dry_run:
-			self.logger.info('Dry run - not removing the user.')
+			user.call_hooks('pre', 'remove')
+			self.logger.info('Dry-run: not removing user %s.', user)
+			user.call_hooks('post', 'remove')
 			return True
 		else:
 			return user.remove(self.connection)

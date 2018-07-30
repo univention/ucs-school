@@ -76,14 +76,13 @@ class LegacyImportUser(ImportUser):
 		self.old_name = self.name  # for LegacyNewUserPasswordCsvExporter.serialize()
 		self.name = self.name.lower()
 
-	def run_checks(self, check_username=False):
+	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
 		"""
 		Action must already be configured in CSV.
 		"""
-		super(LegacyImportUser, self).run_checks()
-
 		if self.action and self.action not in ["A", "D", "M"]:
 			raise UnknownAction("Unknown action '{}'.".format(self.action))
+		super(LegacyImportUser, self).validate(lo, validate_unlikely_changes, check_username)
 
 	@classmethod
 	def get_by_import_id_or_username(cls, connection, source_uid, record_uid, username, superordinate=None):

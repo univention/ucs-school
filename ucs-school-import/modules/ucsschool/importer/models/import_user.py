@@ -37,10 +37,11 @@ import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 
-from univention.admin.uexceptions import noObject, noProperty, valueError, valueInvalidSyntax
+from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_student
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
@@ -55,6 +56,7 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
@@ -98,6 +100,7 @@ class ImportUser(User):
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
 	_all_school_names = None
+	_all_usernames = None
 	_prop_regex = re.compile(r'<(.*?)(:.*?)*>')
 	_prop_providers = {
 		'birthday': 'make_birthday',
@@ -130,6 +133,8 @@ class ImportUser(User):
 		self.old_user = None          # user in LDAP, when modifying
 		self.in_hook = False          # if a hook is currently running
 
+		self._lo = None
+
 		for attr in self._additional_props:
 			try:
 				val = kwargs.pop(attr)
@@ -149,10 +154,10 @@ class ImportUser(User):
 				"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
 				"mailPrimaryAddress uid"
 			).split()
-		self._lo = None
 		self._userexpiry = None
 		self._purge_ts = None
 		self._used_methods = defaultdict(list)  # recursion prevention
+		self.lo = kwargs.pop('lo', None)
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -177,16 +182,24 @@ class ImportUser(User):
 		:param str hook_time: `pre` or `post`
 		:param str func_name: `create`, `modify`, `move` or `remove`
 		:return: return code of lib hooks
-		:rtype: int
+		:rtype: bool: result of a legacy hook or None if no legacy hook ran
 		"""
+		def load_pyhook_only_if_supports_dry_run(klass):
+			return bool(getattr(klass, 'supports_dry_run', False))
+
 		if self._pyhook_cache is None:
 			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
-			pyloader = PyHooksLoader(path, UserPyHook, self.logger)
-			self.__class__._pyhook_cache = pyloader.get_hook_objects(self._lo)
-		if hook_time == "post" and self.action in ["A", "M"]:
-			# update self from LDAP
-			user = self.get_by_import_id(self._lo, self.source_uid, self.record_uid)
-			user_udm = user.get_udm_object(self._lo)
+			pyhooks_loader = PyHooksLoader(
+				path,
+				UserPyHook,
+				self.logger,
+				load_pyhook_only_if_supports_dry_run if self.config['dry_run'] else None
+			)
+			self.__class__._pyhook_cache = pyhooks_loader.get_hook_objects(lo=self.lo, dry_run=self.config['dry_run'])
+		if hook_time == "post" and self.action in ["A", "M"] and not (self.config['dry_run'] and self.action == "A"):
+			# update self from LDAP if object exists (after A and M), except after a dry-run create
+			user = self.get_by_import_id(self.lo, self.source_uid, self.record_uid)
+			user_udm = user.get_udm_object(self.lo)
 			# copy only those UDM properties from LDAP that were originally
 			# set in self.udm_properties
 			for k in self.udm_properties.keys():
@@ -197,16 +210,21 @@ class ImportUser(User):
 		meth_name = "{}_{}".format(hook_time, func_name)
 		try:
 			for func in self._pyhook_cache.get(meth_name, []):
-				self.logger.info("Running %s hook %s for %s...", meth_name, func, self)
+				self.logger.debug(
+					"Running %s hook %s.%s for %s...",
+					meth_name, func.im_class.__name__, func.im_func.func_name, self)
 				func(self)
 		finally:
 			self.in_hook = False
 
-		try:
-			self.hook_path = self.config['hooks_dir_legacy']
-		except KeyError:
-			pass
-		return super(ImportUser, self).call_hooks(hook_time, func_name)
+		if self.config['dry_run']:
+			return None
+		else:
+			try:
+				self.hook_path = self.config['hooks_dir_legacy']
+			except KeyError:
+				pass
+			return super(ImportUser, self).call_hooks(hook_time, func_name)
 
 	def call_format_hook(self, prop_name, fields):
 		"""
@@ -228,7 +246,7 @@ class ImportUser(User):
 			if prop_name not in func.im_class.properties:
 				# ignore properties not in Hook.properties
 				continue
-			self.logger.info(
+			self.logger.debug(
 				"Running patch_fields_%s hook %s for property name %r for user %s...",
 				self.role_sting, func, prop_name, self)
 			res = func(prop_name, res)
@@ -244,7 +262,7 @@ class ImportUser(User):
 		:rtype: bool
 		"""
 		self.check_schools(lo, additional_schools=[school])
-		self.run_checks(check_username=False)
+		self.validate(lo, validate_unlikely_changes=True, check_username=False)
 		old_dn = self.old_dn
 		res = super(ImportUser, self).change_school(school, lo)
 		if res:
@@ -272,7 +290,6 @@ class ImportUser(User):
 		:rtype: None
 		:raises UnknownSchoolName: if a school is not known
 		"""
-		# cannot be done in run_checks, because it needs LDAP access
 		schools = set(self.schools)
 		schools.add(self.school)
 		if additional_schools:
@@ -290,8 +307,7 @@ class ImportUser(User):
 		:return: whether the object created succeeded
 		:rtype: bool
 		"""
-		self._lo = lo
-		self.check_schools(lo)
+		self.lo = lo
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running create() from within a hook.")
@@ -299,14 +315,12 @@ class ImportUser(User):
 		else:
 			return super(ImportUser, self).create(lo, validate)
 
-	def create_without_hooks(self, lo, validate):
-		self.run_checks(check_username=True)
-		return super(ImportUser, self).create_without_hooks(lo, validate)
-
 	@classmethod
 	def get_ldap_filter_for_user_role(cls):
 		if not cls.factory:
 			cls.factory = Factory()
+		if not cls.config:
+			cls.config = Configuration()
 		# convert cmdline / config name to ucsschool.lib role(s)
 		if not cls.config["user_role"]:
 			roles = ()
@@ -328,9 +342,9 @@ class ImportUser(User):
 		:param str source_uid: source DB identifier
 		:param str record_uid: source record identifier
 		:param str superordinate: superordinate
-		:return: object of :py:class:`ImportUser` subclass loaded from LDAP or raises noObject
+		:return: object of :py:class:`ImportUser` subclass loaded from LDAP or raises NoObject
 		:rtype: ImportUser
-		:raises noObject: if no user was found
+		:raises ucsschool.lib.models.base.NoObject: if no user was found
 		"""
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
@@ -338,10 +352,18 @@ class ImportUser(User):
 			(source_uid, record_uid)
 		)
 		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
-		if not obj:
-			raise noObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
-				cls.config.get("user_role", "user") or "User", source_uid, record_uid))
-		return cls.from_udm_obj(obj, None, connection)
+		if obj:
+			return cls.from_udm_obj(obj, None, connection)
+		else:
+			dns = connection.searchDn(filter_format(
+					"(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
+					(source_uid, record_uid)
+			))
+			if dns:
+				raise WrongObjectType(dns[0], cls)
+			else:
+				raise NoObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
+					cls.config.get("user_role", "user") or "User", source_uid, record_uid))
 
 	def deactivate(self):
 		"""
@@ -457,6 +479,24 @@ class ImportUser(User):
 		user_udm = self.get_udm_object(connection)
 		return bool(user_udm["userexpiry"])
 
+	@property
+	def lo(self):
+		"""
+		LDAP connection object
+
+		Read-write cn=admin connection in a real run, read-only cn=admin
+		connection during a dry-run.
+		"""
+		if not self._lo:
+			self._lo, po = get_readonly_connection() if self.config['dry_run'] else get_admin_connection()
+		return self._lo
+
+	@lo.setter
+	def lo(self, value):
+		cn_admin_dn = 'cn=admin,{}'.format(self.ucr['ldap/base'])
+		assert not (self.config['dry_run'] and value == cn_admin_dn)
+		self._lo = value
+
 	def prepare_all(self, new_user=False):
 		"""
 		Necessary preparation to modify a user in UCS.
@@ -526,6 +566,8 @@ class ImportUser(User):
 			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])
 		elif self.old_user:
 			self.birthday = self.old_user.birthday
+		elif self.birthday == '':
+			self.birthday = None
 		return self.birthday
 
 	def make_classes(self):
@@ -796,8 +838,7 @@ class ImportUser(User):
 		return self.name or ""
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
-		self._lo = lo
-		self.check_schools(lo)
+		self.lo = lo
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running modify() from within a hook.")
@@ -806,8 +847,6 @@ class ImportUser(User):
 			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		if not self.in_hook:  # uniqueness checks fail when called from within a post_move hook
-			self.run_checks(check_username=False)
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
@@ -816,7 +855,7 @@ class ImportUser(User):
 		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
-		self._lo = lo
+		self.lo = lo
 		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
 
@@ -863,25 +902,46 @@ class ImportUser(User):
 		self.set_purge_timestamp("")
 
 	def remove(self, lo):
-		self._lo = lo
+		self.lo = lo
 		return super(ImportUser, self).remove(lo)
 
-	def run_checks(self, check_username=False):
+	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
 		"""
-		Run some self-tests.
+		Run self-tests.
 
+		:param lo: LDAP connection object
+		:param bool validate_unlikely_changes: whether to create messages in self.warnings for changes to certain attributes
 		:param bool check_username: if username and password checks should run
 		"""
+		super(ImportUser, self).validate(lo, validate_unlikely_changes)
+
 		try:
 			[self.udm_properties.get(ma) or getattr(self, ma) for ma in self.config["mandatory_attributes"]]
 		except (AttributeError, KeyError) as exc:
 			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc), self.config["mandatory_attributes"], entry_count=self.entry_count, import_user=self)
 
-		if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:
-			raise UniqueIdError('RecordUID {!r} has already been used in this import by {!r}.'.format(
-				self.record_uid, self._unique_ids["recordUID"][self.record_uid]), entry_count=self.entry_count, import_user=self
-			)
-		self._unique_ids["recordUID"][self.record_uid] = self.dn
+		if not self.in_hook:  # uniqueness checks fail when called from within a post_move hook
+			if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:
+				raise UniqueIdError('RecordUID {!r} has already been used in this import by {!r}.'.format(
+					self.record_uid, self._unique_ids["recordUID"][self.record_uid]), entry_count=self.entry_count, import_user=self
+				)
+			self._unique_ids["recordUID"][self.record_uid] = self.dn
+
+			if check_username:
+				if self._unique_ids["name"].get(self.name, self.dn) != self.dn:
+					raise UniqueIdError('Username {!r} has already been used in this import by {!r}.'.format(
+						self.name, self._unique_ids["recordUID"][self.name]), entry_count=self.entry_count,
+						import_user=self
+					)
+				self._unique_ids["name"][self.name] = self.dn
+
+			if self.email:
+				if self._unique_ids["email"].get(self.email, self.dn) != self.dn:
+					raise UniqueIdError('Email address {!r} has already been used in this import by {!r}.'.format(
+						self.email, self._unique_ids["email"][self.email]), entry_count=self.entry_count,
+						import_user=self
+					)
+				self._unique_ids["email"][self.email] = self.dn
 
 		if check_username:
 			if not self.name:
@@ -891,12 +951,6 @@ class ImportUser(User):
 				raise UsernameToLong("Username '{}' is longer than allowed.".format(
 					self.name), entry_count=self.entry_count, import_user=self
 				)
-
-			if self._unique_ids["name"].get(self.name, self.dn) != self.dn:
-				raise UniqueIdError('Username {!r} has already been used in this import by {!r}.'.format(
-					self.name, self._unique_ids["recordUID"][self.name]), entry_count=self.entry_count, import_user=self
-				)
-			self._unique_ids["name"][self.name] = self.dn
 
 			if len(self.password or '') < self.config["password_length"]:
 				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
@@ -910,12 +964,6 @@ class ImportUser(User):
 			email_pattern = r"[^@]+@.+\..+"
 			if not re.match(email_pattern, self.email):
 				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry_count=self.entry_count, import_user=self)
-
-			if self._unique_ids["email"].get(self.email, self.dn) != self.dn:
-				raise UniqueIdError('Email address {!r} has already been used in this import by {!r}.'.format(
-					self.email, self._unique_ids["email"][self.email]), entry_count=self.entry_count, import_user=self
-				)
-			self._unique_ids["email"][self.email] = self.dn
 
 		if self.birthday:
 			try:
@@ -932,6 +980,28 @@ class ImportUser(User):
 
 		if not isinstance(self.schools, list):
 			raise InvalidSchools("Schools must be a list.", entry_count=self.entry_count, import_user=self)
+
+		for school, school_classes in self.school_classes.items():
+			for sc in school_classes:
+				if sc.startswith('{0}-{0}-'.format(school)):
+					self.logger.warn("Validation warning: Name of school_class starts with name of school: %r", sc)
+
+		self.check_schools(lo)
+
+		if not self._all_usernames:
+			# fetch usernames of all users only once per import job
+			# its faster to filter out computer names in Python that in LDAP
+			# (and we have to loop over the query result anyway)
+			self.__class__._all_usernames = dict(
+				(attr['uid'][0], dn)
+				for dn, attr in lo.search('objectClass=posixAccount', attr=['uid'])
+				if not attr['uid'][0].endswith('$')
+			)
+		if check_username and self.name in self._all_usernames and self._all_usernames[self.name] != self.dn:
+			self.add_error(
+				'name',
+				'Username {!r} is already in use by {!r}.'.format(self.name, self._all_usernames[self.name])
+			)
 
 	def set_purge_timestamp(self, ts):
 		self._purge_ts = ts
