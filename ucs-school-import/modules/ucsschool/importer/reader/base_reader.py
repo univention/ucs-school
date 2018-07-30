@@ -36,7 +36,7 @@ from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.utils.post_read_pyhook import PostReadPyHook
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ucsschool.lib.pyhooks import PyHooksLoader
 
 try:
@@ -63,7 +63,7 @@ class BaseReader(object):
 		"""
 		self.config = Configuration()
 		self.logger = get_logger()
-		self.lo, self.position = get_admin_connection()
+		self.lo, self.position = get_readonly_connection() if self.config['dry_run'] else get_admin_connection()
 		self.filename = filename
 		self.header_lines = header_lines
 		self.import_users = self.read()

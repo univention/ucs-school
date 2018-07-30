@@ -33,7 +33,7 @@ Base class for all Python based import hooks.
 
 from ucsschool.lib.pyhooks import PyHook
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_machine_connection
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
 
 class ImportPyHook(PyHook):
@@ -57,7 +57,7 @@ class ImportPyHook(PyHook):
 		super(ImportPyHook, self).__init__(*args, **kwargs)
 		self.dry_run = dry_run  # True if executed during a dry-run
 		if lo is None:
-			self.lo = get_machine_connection()[0] if self.dry_run else get_admin_connection()[0]
+			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]
 		else:
 			self.lo = lo  # reuse LDAP object
 		self.logger = get_logger()  # Python logging instance
