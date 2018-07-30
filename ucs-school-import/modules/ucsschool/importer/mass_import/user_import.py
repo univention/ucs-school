@@ -230,19 +230,10 @@ class UserImport(object):
 		:rtype: list(tuple(str, str, list(str)))
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
-		users_to_delete = list()
 
 		if self.config["no_delete"]:
 			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------", self.config["no_delete"])
-			for user in self.imported_users:
-				if user.action == "D":
-					try:
-						users_to_delete.append((user.source_uid, user.record_uid, user.input_data))
-					except noObject:
-						msg = "User to delete not found in LDAP: {}.".format(user)
-						self.logger.error(msg)
-						self._add_error(DeletionError(msg, entry_count=user.entry_count, import_user=user))
-			return users_to_delete
+			return [(user.source_uid, user.record_uid, user.input_data) for user in self.imported_users if user.action == 'D']
 
 		source_uid = self.config["sourceUID"]
 		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]

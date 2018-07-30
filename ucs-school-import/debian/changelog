@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-26) unstable; urgency=low
+
+  * Bug #47413: cleanup: remove unreachable code
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 Jul 2018 14:19:54 +0200
+
 ucs-school-import (16.0.2-25) unstable; urgency=low
 
   * Bug #47304: normalize firstname and lastname before creating email address
