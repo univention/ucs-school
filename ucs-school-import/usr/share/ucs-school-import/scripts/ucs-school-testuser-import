@@ -34,12 +34,19 @@ Tool to create lots of test users.
 
 import datetime
 import sys
+import os.path
 from argparse import ArgumentParser, REMAINDER
 import subprocess
 
 from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvExporter, TestUserCsvExporter
+
+
+CONF_FILE_CMDLINE = "/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json"
+CONF_FILE_HTTP = "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json"
+CONF_FILE_TARGET_DIR = "/var/lib/ucs-school-import/configs"
+CONF_FILE_TARGET_VAR = os.path.join(CONF_FILE_TARGET_DIR, "user_import.json")
 
 
 def parse_cmdline():
@@ -91,6 +98,25 @@ def parse_cmdline():
 	return args
 
 
+def log_conf_hint(args, logger):
+	conf_file = CONF_FILE_HTTP if args.httpapi else CONF_FILE_CMDLINE
+	logger.info("Configuration hint:")
+	logger.info("Use the configuration file %r or one derived from it.", conf_file)
+	if args.httpapi:
+		logger.info(
+			"When using the graphical UMC module, the file must be copied to %r or '%s.json'.",
+			CONF_FILE_TARGET_VAR, os.path.join(CONF_FILE_TARGET_DIR, args.OU[0].lower()))
+		logger.info("To test with the command line import ('ucs-school-user-import'), use the following arguments:")
+		logger.info(
+			"--school %r --user_role 'ROLE' --sourceUID '%s-ROLE' --conffile %r --infile %r",
+			args.OU[0], args.OU[0].lower(), conf_file, args.csvfile)
+		logger.info("Replace 'ROLE' with 'student', 'staff', 'teacher' or 'teacher_and_staff'.")
+	else:
+		logger.info(
+			"Either use the '--conffile' command line argument to 'ucs-school-user-import' or copy the file to %r.",
+			CONF_FILE_TARGET_VAR)
+
+
 def main():
 	logger = get_logger()
 	args = parse_cmdline()
@@ -105,10 +131,11 @@ def main():
 	test_user_exporter.dump(test_user_creator.make_users(), args.csvfile)
 	if args.nostart:
 		logger.info("------ Done. CSV file: '%s'. ------", args.csvfile)
+		log_conf_hint(args, logger)
 		return
 	else:
 		logger.info("------ Starting import of CSV file: '%s'... ------", args.csvfile)
-		cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-c", "/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json", "-i", args.csvfile]
+		cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-c", CONF_FILE_CMDLINE, "-i", args.csvfile]
 		cmd.extend(args.ImportArguments)
 		logger.info("Running: %s", " ".join(cmd))
 		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)

@@ -32,17 +32,19 @@ The contents of the file should look similar to this::
     [..]
 
 
-A CSV file created by ``ucs-school-user-import`` with the ``--httpapi`` argument is designed to work with the configuration file ``user_import_http-api.json``.
+A CSV file created by ``ucs-school-user-import`` with the ``--httpapi`` argument is designed to work with the configuration file ``ucs-school-testuser-http-import.json``.
  
 As such, the CSV file can be imported on the command line with::
 
     $ /usr/share/ucs-school-import/scripts/ucs-school-user-import \
-        --conffile /usr/share/ucs-school-import/configs/user_import_http-api.json \
+        --conffile /usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json \
         --user_role $ROLE \
         --school $OU \
         --infile test-http-import.csv \
         --sourceUID "$OU-$ROLE" \
         --verbose
+
+The ``$OU`` in ``--sourceUID "$OU-$ROLE"`` should be lowercase, to make the import job as *similar* as possible to how it would be started by the UMC module (there will still be minor differences).
 
 Delete users
 ------------
