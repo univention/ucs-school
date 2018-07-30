@@ -1,3 +1,15 @@
+ucs-school-import (16.0.2-29) unstable; urgency=low
+
+  * Bug #45715: check common UDM/ucsschool.lib.models exceptions in dry run
+  * implement validate() (instead of run_checks())
+  * detect role change
+  * use ucsschool.lib exception instead of uldap exception
+  * add support for a dry-run mode in pyhooks
+  * don't reload user from LDAP after a dry-run create
+  * Bug #47203: add read-only cn=admin connection
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 Jul 2018 17:19:59 +0200
+
 ucs-school-import (16.0.2-28) unstable; urgency=low
 
   * Bug #47277: add a JSON configuration file for using the
