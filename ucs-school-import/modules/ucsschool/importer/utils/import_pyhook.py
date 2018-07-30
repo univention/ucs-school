@@ -33,6 +33,7 @@ Base class for all Python based import hooks.
 
 from ucsschool.lib.pyhooks import PyHook
 from ucsschool.importer.utils.logging import get_logger
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
 
 class ImportPyHook(PyHook):
@@ -48,12 +49,15 @@ class ImportPyHook(PyHook):
 	"""
 	supports_dry_run = False  # if True hook will be executed during a dry-run
 
-	def __init__(self, lo, dry_run=False, *args, **kwargs):
+	def __init__(self, lo=None, dry_run=False, *args, **kwargs):
 		"""
-		:param univention.admin.uldap.access lo: LDAP connection object
+		:param univention.admin.uldap.access lo: optional LDAP connection object
 		:param bool dry_run: whether hook is executed during a dry-run
 		"""
 		super(ImportPyHook, self).__init__(*args, **kwargs)
-		self.lo = lo  # LDAP object
 		self.dry_run = dry_run  # True if executed during a dry-run
+		if lo is None:
+			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]
+		else:
+			self.lo = lo  # reuse LDAP object
 		self.logger = get_logger()  # Python logging instance
