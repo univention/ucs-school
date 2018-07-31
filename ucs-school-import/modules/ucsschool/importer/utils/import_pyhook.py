@@ -36,10 +36,24 @@ from ucsschool.importer.utils.logging import get_logger
 
 
 class ImportPyHook(PyHook):
-	def __init__(self, lo, *args, **kwargs):
+	"""
+	Base class for Python based import hooks.
+
+	Hooks are only executed during dry-runs, if the class attribute
+	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
+	with `supports_dry_run == True` should to not modify LDAP objects.
+
+	:py:attr:`self.lo` is a read-write cn=admin connection in a real run,
+	read-only cn=admin connection during a dry-run.
+	"""
+	supports_dry_run = False  # if True hook will be executed during a dry-run
+
+	def __init__(self, lo, dry_run=False, *args, **kwargs):
 		"""
-		:param univention.admin.uldap.access lo: LDAP object
+		:param univention.admin.uldap.access lo: LDAP connection object
+		:param bool dry_run: whether hook is executed during a dry-run
 		"""
 		super(ImportPyHook, self).__init__(*args, **kwargs)
 		self.lo = lo  # LDAP object
+		self.dry_run = dry_run  # True if executed during a dry-run
 		self.logger = get_logger()  # Python logging instance

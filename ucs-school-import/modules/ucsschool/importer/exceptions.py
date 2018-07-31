@@ -98,8 +98,10 @@ class InvalidSchools(UcsSchoolImportError):
 	pass
 
 
-class LookupError(UcsSchoolImportError):
-	pass
+class LDAPWriteAccessDenied(UcsSchoolImportFatalError):
+	def __init__(self, msg=None, *args, **kwargs):
+		msg = msg or 'Tried to write using a read only connection (during a dry-run?).'
+		super(LDAPWriteAccessDenied, self).__init__(msg, *args, **kwargs)
 
 
 class MissingMandatoryAttribute(UcsSchoolImportError):
@@ -213,3 +215,9 @@ class UserValidationError(UcsSchoolImportError):
 	def __init__(self, msg, validation_error, *args, **kwargs):
 		super(UserValidationError, self).__init__(msg, *args, **kwargs)
 		self.validation_error = validation_error
+
+
+class WrongUserType(UcsSchoolImportError):
+	"""Wraps ucsschool.lib.models.base.WrongObjectType"""
+	def __init__(self, msg, *args, **kwargs):
+		super(WrongUserType, self).__init__(msg, *args, **kwargs)
