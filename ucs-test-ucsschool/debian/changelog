@@ -1,3 +1,9 @@
+ucs-test-ucsschool (4.0.4-99) unstable; urgency=low
+
+  * Bug #46837: add test for dry run support in pyhooks
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 31 Jul 2018 08:27:02 +0200
+
 ucs-test-ucsschool (4.0.4-98) unstable; urgency=medium
 
   * Bug #47208: fix 70_users_module
