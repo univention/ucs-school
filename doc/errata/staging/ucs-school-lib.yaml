@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-lib
+fix: 
+desc: |
+ * Check for existing computer objects in school creation process before attempting to blindly create one (Bug #47408).
+bug: [47408]
