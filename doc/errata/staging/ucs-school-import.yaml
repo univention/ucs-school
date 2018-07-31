@@ -3,7 +3,8 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-63A~4.2.0.201807061125
+fix: 15.0.3-64A~4.2.0.201807310830
 desc: |
- * The UMC import module now shows a summary after a sucessfull dry-run (Bug #46838)
-bug: [46838]
+ * The import now checks the most common errors in dry-runs (Bug #46837).
+ * In dry run, a read-only cn=admin LDAP connection is used (Bug #47204).
+bug: [46837, 47204]

@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.2"
+version: [1]
+scope: ucs_4.2-0-ucs-school-4.2
+src: ucs-school-lib
+fix: 10.0.2-17A~4.2.0.201807310828
+desc: |
+ * Internal enhancements to the PyHooks loader (Bug #45715)
+bug: [45715]
