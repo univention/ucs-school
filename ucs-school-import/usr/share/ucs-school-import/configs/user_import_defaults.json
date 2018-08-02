@@ -1,6 +1,7 @@
 {
 	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
 	"classes": {},
+	"configuration_checks": ["defaults"],
 	"input": {
 		"type": "csv",
 		"filename": ""

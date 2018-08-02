@@ -48,38 +48,6 @@ def setup_configuration(conffiles, **kwargs):
 	return config
 
 
-def check_configuration(config):
-	if not config.get("sourceUID"):
-		raise InitialisationError("No sourceUID was specified.")
-	if not config["input"].get("type"):
-		raise InitialisationError("No input:type was specified.")
-	if "user_deletion" in config:
-		raise InitialisationError("The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'.")
-	for role in ('default', 'staff',  'student', 'teacher', 'teacher_and_staff'):
-		try:
-			username_max_length = config["username"]["max_length"][role]
-		except KeyError:
-			continue
-		if username_max_length < 4:
-			raise InitialisationError(
-				"Configuration value of username:max_length:{} must be higher than 3.".format(role)
-			)
-	exam_user_prefix_length = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
-	student_username_max_length = config["username"]["max_length"].get("student", 20 - exam_user_prefix_length)
-	if student_username_max_length > 20 - exam_user_prefix_length:
-		raise InitialisationError(
-			"Configuration value of username:max_length:student must be {} or less.".format(20 - exam_user_prefix_length)
-		)
-	for role in ('default', 'staff', 'teacher', 'teacher_and_staff'):
-		username_max_length = config["username"]["max_length"].get(role, 20)
-		if username_max_length > 20:
-			raise InitialisationError(
-				"Configuration value of username:max_length:{} must be 20 or less.".format(role)
-			)
-	if config['user_role'] and '__role' in config['csv']['mapping'].values():
-		raise InitialisationError("Using 'user_role' setting and '__role' mapping at the same time is not allowed.")
-
-
 class ConfigurationFile(object):
 
 	def __init__(self, filename):
