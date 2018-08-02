@@ -40,7 +40,7 @@ from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_r
 from ucsschool.lib.pyhooks import PyHooksLoader
 
 try:
-	from typing import Dict, List, Int
+	from typing import Dict, List
 except ImportError:
 	pass
 

@@ -29,7 +29,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os
 from ucsschool.lib.models.utils import get_logger as get_lib_logger, logger as lib_logger
 
 
