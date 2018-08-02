@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Default mass import class.
-"""
+#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +29,10 @@ Default mass import class.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Default user import class.
+"""
+
 import sys
 import copy
 from collections import defaultdict
@@ -47,8 +49,24 @@ from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
+try:
+	from typing import Optional, Union
+	from ucsschool.importer.models.import_user import ImportUser
+except ImportError:
+	pass
+
 
 class UserImport(object):
+	"""
+	Currently used by MassImport like this:
+
+	1. read_input()
+	2. detect_users_to_delete()
+	3. delete_users()
+	4. create_and_modify_users()
+	5. log_stats()
+	6. get_result_data()
+	"""
 
 	def __init__(self, dry_run=True):
 		"""

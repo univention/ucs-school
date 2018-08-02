@@ -897,6 +897,7 @@ class ImportUser(User):
 		setting and purge timestamp. Run this only on existing users fetched
 		from LDAP.
 		"""
+		self.logger.info('Reactivating %s...', self)
 		self.expire("")
 		self.disabled = "0"
 		self.set_purge_timestamp("")
