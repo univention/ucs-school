@@ -187,7 +187,40 @@ class UserImport(object):
 		self.logger.info("------ Created %d users, modified %d users. ------", num_added_users, num_modified_users)
 		return self.errors, self.added_users, self.modified_users
 
-	def determine_add_modify_action(self, imported_user):
+	def find_importuser_in_ldap(self, import_user):  # type: (ImportUser) -> ImportUser
+		"""
+		Fetch fresh :py:class:`ImportUser` object from LDAP.
+
+		:param ImportUser import_user: ImportUser object to use as reference for search
+		:return: fresh ImportUser object
+		:rtype: ImportUser
+		:raises NoObject: if ImportUser cannot be found
+		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
+		"""
+		try:
+			return import_user.get_by_import_id(self.connection, import_user.source_uid, import_user.record_uid)
+		except WrongObjectType as exc:
+			raise WrongUserType, WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user), sys.exc_info()[2]
+
+	def prepare_imported_user(self, imported_user, old_user):  # type: (ImportUser, Optional[ImportUser]) -> ImportUser
+		"""
+		Prepare attributes of ``imported_user`` object. Optionally save existing
+		user (``old_user``) object reference in ``imported_user.old_user``.
+		Sets ``imported_user.action`` according to ``is_new_user``.
+
+		:param ImportUser imported_user: object to prepare attributes of
+		:param old_user: imported_user equivalent already existing in LDAP or None
+		:type old_user: ImportUser or None
+		:return: ImportUser object with attributes prepared
+		:rtype: ImportUser
+		"""
+		if old_user:
+			imported_user.old_user = copy.deepcopy(old_user)
+		imported_user.prepare_all(new_user=not old_user)
+		imported_user.action = 'M' if old_user else 'A'
+		return imported_user
+
+	def determine_add_modify_action(self, imported_user):  # type: (ImportUser) -> ImportUser
 		"""
 		Determine what to do with the ImportUser. Should set attribute `action`
 		to either `A` or `M`. If set to `M` the returned user must be a opened
@@ -198,20 +231,16 @@ class UserImport(object):
 		:param ImportUser imported_user: ImportUser from input
 		:return: ImportUser with action set and possibly fetched from LDAP
 		:rtype: ImportUser
+		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
 		"""
 		try:
-			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
-		except WrongObjectType as exc:
-			raise WrongUserType, WrongUserType(str(exc), entry_count=imported_user.entry_count, import_user=imported_user), sys.exc_info()[2]
+			user = self.find_importuser_in_ldap(imported_user)
 		except NoObject:
-			# no user with source_uid + record_uid found -> create
-			imported_user.prepare_all(new_user=True)
-			user = imported_user
-			user.action = "A"
-			return user
-		# user with source_uid + record_uid found -> modify
-		imported_user.old_user = copy.deepcopy(user)
-		imported_user.prepare_all(new_user=False)
+			# no user found -> create
+			return self.prepare_imported_user(imported_user, None)
+
+		# user found -> modify
+		imported_user = self.prepare_imported_user(imported_user, user)
 		if user.school != imported_user.school:
 			self.logger.info(
 				'User will change school. Previous school: %r, new school: %r.',
@@ -226,7 +255,6 @@ class UserImport(object):
 				user
 			)
 			user.reactivate()
-		user.action = "M"
 		return user
 
 	def get_existing_users_search_filter(self):
