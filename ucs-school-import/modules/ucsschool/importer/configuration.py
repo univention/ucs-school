@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Configuration classes.
-"""
+#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,19 +29,22 @@ Configuration classes.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Configuration classes.
+"""
 
 import json
 
-from ucsschool.lib.models.utils import ucr
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
+from ucsschool.importer.utils.configuration_checks import run_configuration_checks
 
 
 def setup_configuration(conffiles, **kwargs):
 	config = Configuration(conffiles)
 	config.update(kwargs)
 	config.close()
-	check_configuration(config)
+	run_configuration_checks(config)
 	return config
 
 
