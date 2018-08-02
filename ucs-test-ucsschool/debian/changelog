@@ -1,3 +1,11 @@
+ucs-test-ucsschool (5.0.2-75) unstable; urgency=low
+
+  * Bug #47447: add ucs-test for single source database, partial import user
+    import scenario
+  * Bug #47448: add ucs-test for custom configuration check interface
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 02 Aug 2018 16:54:58 +0200
+
 ucs-test-ucsschool (5.0.2-74) unstable; urgency=low
 
   * Bug #45715: add test for dry run support in pyhooks
