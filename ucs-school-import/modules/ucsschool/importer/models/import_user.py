@@ -1066,10 +1066,12 @@ class ImportUser(User):
 		no_brackets = scheme
 		props_used_in_scheme = [x[0] for x in self._prop_regex.findall(no_brackets) if x[0]]
 		for prop_used_in_scheme in props_used_in_scheme:
-			if (hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
-				self.udm_properties.get(prop_used_in_scheme) or
-				prop_used_in_scheme in kwargs or
-				prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))):
+			if (
+					hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
+					self.udm_properties.get(prop_used_in_scheme) or
+					prop_used_in_scheme in kwargs or
+					prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))
+			):
 				# property exists and has value
 				continue
 			if (
