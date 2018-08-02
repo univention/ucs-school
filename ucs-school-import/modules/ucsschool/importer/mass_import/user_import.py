@@ -229,6 +229,38 @@ class UserImport(object):
 		user.action = "M"
 		return user
 
+	def get_existing_users_search_filter(self):
+		"""
+		Create LDAP filter with which to find existing users.
+
+		In the case of the default UserImport, we look at:
+		`user.source_uid == config[sourceUID]`
+
+		:return: LDAP filter
+		:rtype: str
+		"""
+		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
+		return filter_format(
+			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))".format(oc_filter),
+			(self.config["sourceUID"],)
+		)
+
+	def get_ids_of_existing_users(self):
+		"""
+		Get IDs of existing users.
+
+		:return: list of tuples: [(source_uid, record_uid), ..]
+		:rtype: list(tuple(str, str))
+		"""
+		attr = ['ucsschoolSourceUID', 'ucsschoolRecordUID']
+		filter_s = self.get_existing_users_search_filter()
+		self.logger.debug('Searching with filter=%r', filter_s)
+		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
+		return [
+			(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8'))
+			for lu in ucs_ldap_users
+		]
+
 	def detect_users_to_delete(self):
 		"""
 		Find difference between source database and UCS user database.
@@ -242,18 +274,7 @@ class UserImport(object):
 			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------", self.config["no_delete"])
 			return [(user.source_uid, user.record_uid, user.input_data) for user in self.imported_users if user.action == 'D']
 
-		source_uid = self.config["sourceUID"]
-		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
-		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
-		filter_s = filter_format("(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))".format(oc_filter), (source_uid,))
-		self.logger.debug('Searching with filter=%r', filter_s)
-
-		# Find all users that exist in UCS but not in input.
-		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
-		ucs_user_ids = set(
-			[(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8')) for lu in ucs_ldap_users]
-		)
-
+		ucs_user_ids = set(self.get_ids_of_existing_users())
 		imported_user_ids = set((iu.source_uid, iu.record_uid) for iu in self.imported_users)
 		users_to_delete = ucs_user_ids - imported_user_ids
 		users_to_delete = [(u[0], u[1], []) for u in users_to_delete]
