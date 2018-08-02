@@ -1,0 +1,11 @@
+{
+	"classes": {
+		"user_importer": "ucsschool.importer.mass_import.sisopi_user_import.SingleSourcePartialUserImport"
+	},
+	"configuration_checks": ["defaults", "sisopi"],
+	"deletion_grace_period": {
+		"deactivation": 0,
+		"deletion": 90
+	},
+	"limbo_ou": "limbo"
+}
