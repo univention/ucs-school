@@ -169,6 +169,8 @@ class TooManyErrors(UcsSchoolImportFatalError):
 	def __init__(self, msg, errors, *args, **kwargs):
 		super(TooManyErrors, self).__init__(msg, *args, **kwargs)
 		self.errors = errors
+
+
 ToManyErrors = TooManyErrors
 
 
@@ -182,11 +184,15 @@ class UDMValueError(UDMError):
 
 class UnknownAction(UcsSchoolImportError):
 	pass
+
+
 UnkownAction = UnknownAction
 
 
 class UnknownDisabledSetting(UcsSchoolImportError):
 	pass
+
+
 UnkownDisabledSetting = UnknownDisabledSetting
 
 
@@ -196,11 +202,15 @@ class UnknownProperty(UcsSchoolImportError):
 
 class UnknownRole(UcsSchoolImportError):
 	pass
+
+
 UnkownRole = UnknownRole
 
 
 class UnknownSchoolName(UcsSchoolImportError):
 	pass
+
+
 UnkownSchoolName = UnknownSchoolName
 
 

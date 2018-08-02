@@ -45,7 +45,6 @@ class LegacyUserImport(UserImport):
 		and is already stored in user.action.
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
-		a_user = self.factory.make_import_user([])
 		users_to_delete = list()
 		for user in self.imported_users:
 			if user.action == "D":

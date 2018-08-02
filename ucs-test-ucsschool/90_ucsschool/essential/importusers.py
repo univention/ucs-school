@@ -414,6 +414,14 @@ class Person(object):
 			kwargs[attr] = value
 		self.update(**kwargs)
 
+	def set_random_birthday(self):
+		self.update(birthday="19{}-0{}-{}{}".format(
+			2 * uts.random_int(),
+			uts.random_int(1, 9),
+			uts.random_int(0, 2),
+			uts.random_int(1)
+		))
+
 
 class Student(Person):
 

@@ -1,3 +1,11 @@
+ucs-school-import (16.0.2-30) unstable; urgency=low
+
+  * Bug #47447: implement single source database, partial import user import
+    scenario
+  * Bug #47448: create interface for custom configuration checks
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 02 Aug 2018 16:54:13 +0200
+
 ucs-school-import (16.0.2-29) unstable; urgency=low
 
   * Bug #45715: check common UDM/ucsschool.lib.models exceptions in dry run

@@ -317,8 +317,7 @@ from _csv import reader
 
 class DictReader(object):
 
-	def __init__(self, f, fieldnames=None, restkey=None, restval=None,
-	             dialect="excel", *args, **kwds):
+	def __init__(self, f, fieldnames=None, restkey=None, restval=None, dialect="excel", *args, **kwds):
 		self._fieldnames = fieldnames   # list of keys for the dict
 		self.restkey = restkey          # key to catch long rows
 		self.restval = restval          # default value for short rows
@@ -346,7 +345,7 @@ class DictReader(object):
 
 	def next(self):
 		if self.line_num == 0:
-		    # Used only for its side effect.
+			# Used only for its side effect.
 			self.fieldnames
 		self.row = self.reader.next()
 		self.line_num = self.reader.line_num

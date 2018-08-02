@@ -39,7 +39,7 @@ from ldap.filter import filter_format
 
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
-from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff, role_student
+from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
@@ -897,6 +897,7 @@ class ImportUser(User):
 		setting and purge timestamp. Run this only on existing users fetched
 		from LDAP.
 		"""
+		self.logger.info('Reactivating %s...', self)
 		self.expire("")
 		self.disabled = "0"
 		self.set_purge_timestamp("")
@@ -1066,10 +1067,12 @@ class ImportUser(User):
 		no_brackets = scheme
 		props_used_in_scheme = [x[0] for x in self._prop_regex.findall(no_brackets) if x[0]]
 		for prop_used_in_scheme in props_used_in_scheme:
-			if (hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
-				self.udm_properties.get(prop_used_in_scheme) or
-				prop_used_in_scheme in kwargs or
-				prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))):
+			if (
+					hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
+					self.udm_properties.get(prop_used_in_scheme) or
+					prop_used_in_scheme in kwargs or
+					prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))
+			):
 				# property exists and has value
 				continue
 			if (

@@ -38,7 +38,6 @@ from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
 	ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.exceptions import UnknownAction
-from ucsschool.importer.factory import Factory
 
 
 class LegacyImportUser(ImportUser):

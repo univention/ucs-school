@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Default mass import class.
-"""
+#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +29,10 @@ Default mass import class.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Default user import class.
+"""
+
 import sys
 import copy
 from collections import defaultdict
@@ -47,8 +49,24 @@ from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
+try:
+	from typing import Optional, Union
+	from ucsschool.importer.models.import_user import ImportUser
+except ImportError:
+	pass
+
 
 class UserImport(object):
+	"""
+	Currently used by MassImport like this:
+
+	1. read_input()
+	2. detect_users_to_delete()
+	3. delete_users()
+	4. create_and_modify_users()
+	5. log_stats()
+	6. get_result_data()
+	"""
 
 	def __init__(self, dry_run=True):
 		"""
@@ -187,7 +205,40 @@ class UserImport(object):
 		self.logger.info("------ Created %d users, modified %d users. ------", num_added_users, num_modified_users)
 		return self.errors, self.added_users, self.modified_users
 
-	def determine_add_modify_action(self, imported_user):
+	def find_importuser_in_ldap(self, import_user):  # type: (ImportUser) -> ImportUser
+		"""
+		Fetch fresh :py:class:`ImportUser` object from LDAP.
+
+		:param ImportUser import_user: ImportUser object to use as reference for search
+		:return: fresh ImportUser object
+		:rtype: ImportUser
+		:raises NoObject: if ImportUser cannot be found
+		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
+		"""
+		try:
+			return import_user.get_by_import_id(self.connection, import_user.source_uid, import_user.record_uid)
+		except WrongObjectType as exc:
+			raise WrongUserType, WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user), sys.exc_info()[2]
+
+	def prepare_imported_user(self, imported_user, old_user):  # type: (ImportUser, Optional[ImportUser]) -> ImportUser
+		"""
+		Prepare attributes of ``imported_user`` object. Optionally save existing
+		user (``old_user``) object reference in ``imported_user.old_user``.
+		Sets ``imported_user.action`` according to ``is_new_user``.
+
+		:param ImportUser imported_user: object to prepare attributes of
+		:param old_user: imported_user equivalent already existing in LDAP or None
+		:type old_user: ImportUser or None
+		:return: ImportUser object with attributes prepared
+		:rtype: ImportUser
+		"""
+		if old_user:
+			imported_user.old_user = copy.deepcopy(old_user)
+		imported_user.prepare_all(new_user=not old_user)
+		imported_user.action = 'M' if old_user else 'A'
+		return imported_user
+
+	def determine_add_modify_action(self, imported_user):  # type: (ImportUser) -> ImportUser
 		"""
 		Determine what to do with the ImportUser. Should set attribute `action`
 		to either `A` or `M`. If set to `M` the returned user must be a opened
@@ -198,20 +249,16 @@ class UserImport(object):
 		:param ImportUser imported_user: ImportUser from input
 		:return: ImportUser with action set and possibly fetched from LDAP
 		:rtype: ImportUser
+		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
 		"""
 		try:
-			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
-		except WrongObjectType as exc:
-			raise WrongUserType, WrongUserType(str(exc), entry_count=imported_user.entry_count, import_user=imported_user), sys.exc_info()[2]
+			user = self.find_importuser_in_ldap(imported_user)
 		except NoObject:
-			# no user with source_uid + record_uid found -> create
-			imported_user.prepare_all(new_user=True)
-			user = imported_user
-			user.action = "A"
-			return user
-		# user with source_uid + record_uid found -> modify
-		imported_user.old_user = copy.deepcopy(user)
-		imported_user.prepare_all(new_user=False)
+			# no user found -> create
+			return self.prepare_imported_user(imported_user, None)
+
+		# user found -> modify
+		imported_user = self.prepare_imported_user(imported_user, user)
 		if user.school != imported_user.school:
 			self.logger.info(
 				'User will change school. Previous school: %r, new school: %r.',
@@ -226,8 +273,39 @@ class UserImport(object):
 				user
 			)
 			user.reactivate()
-		user.action = "M"
 		return user
+
+	def get_existing_users_search_filter(self):
+		"""
+		Create LDAP filter with which to find existing users.
+
+		In the case of the default UserImport, we look at:
+		`user.source_uid == config[sourceUID]`
+
+		:return: LDAP filter
+		:rtype: str
+		"""
+		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
+		return filter_format(
+			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))".format(oc_filter),
+			(self.config["sourceUID"],)
+		)
+
+	def get_ids_of_existing_users(self):
+		"""
+		Get IDs of existing users.
+
+		:return: list of tuples: [(source_uid, record_uid), ..]
+		:rtype: list(tuple(str, str))
+		"""
+		attr = ['ucsschoolSourceUID', 'ucsschoolRecordUID']
+		filter_s = self.get_existing_users_search_filter()
+		self.logger.debug('Searching with filter=%r', filter_s)
+		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
+		return [
+			(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8'))
+			for lu in ucs_ldap_users
+		]
 
 	def detect_users_to_delete(self):
 		"""
@@ -242,18 +320,7 @@ class UserImport(object):
 			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------", self.config["no_delete"])
 			return [(user.source_uid, user.record_uid, user.input_data) for user in self.imported_users if user.action == 'D']
 
-		source_uid = self.config["sourceUID"]
-		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
-		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
-		filter_s = filter_format("(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))".format(oc_filter), (source_uid,))
-		self.logger.debug('Searching with filter=%r', filter_s)
-
-		# Find all users that exist in UCS but not in input.
-		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
-		ucs_user_ids = set(
-			[(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8')) for lu in ucs_ldap_users]
-		)
-
+		ucs_user_ids = set(self.get_ids_of_existing_users())
 		imported_user_ids = set((iu.source_uid, iu.record_uid) for iu in self.imported_users)
 		users_to_delete = ucs_user_ids - imported_user_ids
 		users_to_delete = [(u[0], u[1], []) for u in users_to_delete]
