@@ -1342,6 +1342,7 @@ udm dns/host_record create \
 						</simpara>
 					</listitem>
 				</itemizedlist>
+			Setzt eine Erweiterung eine bestimmte Konfiguration voraus, können zusätzliche Prüfungen, zur Ausführung vor dem Start des Importvorganes, registriert werden.
 		</para>
 
 		<section id="extending:import_user_class">
@@ -1766,6 +1767,35 @@ class MyUserImportFactory(DefaultUserImportFactory):
 				</para>
 			  </section>
 		  </section>
+
+		<section id="extending:conf_checks">
+			<title><foreignphrase>Prüfung der Konfiguration</foreignphrase></title>
+			<para>
+				Nach dem Einlesen der Konfigurationsdateien, vor dem Start des Importvorgangs, laufen Tests, die die Korrektheit und Konsistenz der Konfiguration prüfen.
+				Der Code für die Tests wird aus Python-Modulen im Verzeichnis <filename class="directory">/usr/share/ucs-school-import/checks/</filename> geladen.
+				Damit ein Modul aus diesem Verzeichnis ausgeführt wird, muss sein Name (ohne <filename>.py</filename>) in der JSON-Konfigurationsdatei in der Liste unter dem Schlüssel <option>configuration_checks</option> vorkommen:
+					<programlisting>
+{
+    "configuration_checks": ["defaults", "mychecks"]
+}
+					</programlisting>
+				Das Modul <filename>defaults</filename> führt die Standardprüfungen durch. Es sollte normalerweise mit in der Liste sein.
+			</para>
+			<para>
+				Um eigene Prüfungen hinzuzufügen, muss eine Klasse geschrieben werden, die von <classname>ucsschool.importer.utils.configuration_checks.ConfigurationChecks</classname> ableitet.
+				Alle Methoden deren Name mit <methodname>test_</methodname> anfangen, werden in alphanumerischer Reihenfolge ausgeführt.
+				Beipiel (zu speichern in <filename>/usr/share/ucs-school-import/checks/mychecks.py</filename>):
+				<programlisting>
+from ucsschool.importer.exceptions import InitialisationError
+from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
+
+class MyConfigurationChecks(ConfigurationChecks):
+	def test_nonzero_deactivation_grace(self):
+		if self.config.get('deletion_grace_period', {}).get('deactivation', 0) == 0:
+			raise InitialisationError('Value of "deletion_grace_period:deactivation" must not be zero.')
+				</programlisting>
+			</para>
+		</section>
 	</chapter>
 
 	<bibliography id="bibliography">

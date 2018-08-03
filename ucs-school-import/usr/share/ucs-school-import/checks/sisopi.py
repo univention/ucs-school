@@ -29,10 +29,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """
-Default configuration checks.
-
-See docstring of module ucsschool.importer.utils.configuration_checks on how to
-add your own checks.
+Configuration checks for SingleSourcePartialImport scenario.
 """
 
 from ucsschool.lib.models import School

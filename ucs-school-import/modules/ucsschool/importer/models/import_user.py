@@ -414,23 +414,23 @@ class ImportUser(User):
 				udm_obj[property_] = value
 			except (KeyError, noProperty) as exc:
 				raise UnknownProperty(
-					"UDM property '{}' could not be set: {}".format(property_, exc),
+					"UDM property '{}' could not be set. {}: {}".format(property_, exc.__class__.__name__, exc),
 					entry_count=self.entry_count,
 					import_user=self
 				)
 			except (valueError, valueInvalidSyntax) as exc:
 				raise UDMValueError(
-					"UDM property '{}' could not be set: {}".format(property_, exc),
+					"UDM property '{}' could not be set. {}: {}".format(property_, exc.__class__.__name__, exc),
 					entry_count=self.entry_count,
 					import_user=self
 				)
 			except Exception as exc:
-				self.logger.error(
-					"Unexpected exception caught: UDM property %r could not be set for user %r in import line %r: exception: %s\n%s",
-					property_, self.name, self.entry_count, exc, traceback.format_exc()
+				self.logger.exception(
+					"Unexpected exception caught: UDM property %r could not be set for user %r in import line %r: %s.",
+					property_, self.name, self.entry_count, exc
 				)
 				raise UDMError(
-					"UDM property {!r} could not be set: {}".format(property_, exc),
+					"UDM property {!r} could not be set. {}: {}".format(property_, exc.__class__.__name__, exc),
 					entry_count=self.entry_count,
 					import_user=self
 				)

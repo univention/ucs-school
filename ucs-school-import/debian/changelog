@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-31) unstable; urgency=low
+
+  * Bug #47448: add documentation, improve exception messages, fix minor bugs
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 03 Aug 2018 09:06:54 +0200
+
 ucs-school-import (16.0.2-30) unstable; urgency=low
 
   * Bug #47447: implement single source database, partial import user import
