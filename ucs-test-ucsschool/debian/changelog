@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-77) unstable; urgency=low
+
+  * Bug #47450: add test then when importing into an additional school with
+    alphanum lower name the user is not moved
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 03 Aug 2018 12:27:05 +0200
+
 ucs-test-ucsschool (5.0.2-76) unstable; urgency=low
 
   * Bug #47448: move test to ucsschool_import1
