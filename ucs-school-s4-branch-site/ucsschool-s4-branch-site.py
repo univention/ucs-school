@@ -84,7 +84,6 @@ def load_hooks():
 
 
 def run_hooks(fname, *args):
-	global _hooks
 	for hook in _hooks:
 		if hasattr(hook, fname):
 			try:
@@ -107,7 +106,6 @@ _hooks = []
 
 @LDAP_Connection(MACHINE_READ)
 def on_load(ldap_machine_read=None, ldap_position=None):
-	global _ldap_hostdn
 	global _hooks
 	_hooks = load_hooks()
 
@@ -189,7 +187,6 @@ STD_S4_SRV_RECORDS = {
 
 @LDAP_Connection(MACHINE_READ)
 def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None):
-	global filter
 	_visible_samba4_school_dcs = []
 	res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
 	for (record_dn, obj) in res:
@@ -205,11 +202,7 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
 
 
 def update_ucr_overrides(excludeDN=None):
-	global STD_S4_SRV_RECORDS
-	global _record_type
-	global _local_domainname
 	global _s4_connector_restart
-	global _relativeDomainName_trigger_set
 
 	try:
 		server_fqdn_list = visible_samba4_school_dcs(excludeDN=excludeDN)
@@ -300,10 +293,6 @@ def update_ucr_overrides(excludeDN=None):
 
 @LDAP_Connection(MACHINE_READ)
 def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None):
-	global _record_type
-	global _local_domainname
-	global _relativeDomainName_trigger_set
-
 	for relativeDomainName in list(_relativeDomainName_trigger_set):
 		# trigger S4 Connector
 		ldap_filter = '(&(univentionObjectType=dns/%s)(zoneName=%s)(relativeDomainName=%s))' % (_record_type, _local_domainname, relativeDomainName)
@@ -370,7 +359,6 @@ def handler(dn, new, old, command):
 
 def postrun():
 	global _s4_connector_restart
-	global _relativeDomainName_trigger_set
 
 	if not listener.configRegistry.is_true('connector/s4/autostart', True):
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, '%s: S4 Connector restart skipped, disabled via connector/s4/autostart.' % (name,))

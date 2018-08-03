@@ -36,7 +36,6 @@ import univention.admin.modules as udm_modules
 
 from ucsschool.lib.models.attributes import ContainerPath
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-
 from ucsschool.lib.models.utils import ucr, _, logger
 
 

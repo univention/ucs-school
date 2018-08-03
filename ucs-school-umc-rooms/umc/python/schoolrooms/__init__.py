@@ -32,7 +32,7 @@
 # <http://www.gnu.org/licenses/>.
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules.sanitizers import StringSanitizer, StringSanitizer as DNSanitizer, DictSanitizer, ListSanitizer
+from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, DictSanitizer, ListSanitizer
 from univention.management.console.modules.decorators import sanitize
 
 import univention.admin.uexceptions as udm_exceptions

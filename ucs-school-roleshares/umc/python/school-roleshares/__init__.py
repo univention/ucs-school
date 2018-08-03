@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
-#  UCS@school Role share management wizzard
+#  UCS@school Role share management wizard
 #
 # Copyright 2014-2019 Univention GmbH
 #
@@ -58,23 +58,22 @@ class Instance(SchoolBaseModule):
 		self.udm_module_name = 'shares/share'
 
 	@simple_response
-	def query(self):
-		"""Searches for role shares
-		requests.options = {}
-		  'pattern' -- pattern to match
+	def query(self, pattern=''):
 		"""
-		MODULE.info('%s.query: options: %s' % (self.module_name, request.options,))
-		pattern = request.options.get('pattern', '').lower()
+		Searches for role shares
+
+		:param pattern: pattern to match
+		"""
+		MODULE.info('%s.query: pattern: %r' % (self.module_name, pattern,))
+		pattern = pattern.lower()
 		return self.get_shares(pattern)
 
 	@simple_response
-	def modify(self):
-		"""Modify role shares
-		requests.options = {}
-		"""
-		MODULE.info('%s.modify: options: %s' % (self.module_name, request.options,))
-		sharename = request.options.get('name', '').lower()
-		accessmode = request.options.get('access', '').lower()
+	def modify(self, name='', access=''):
+		"""Modify role shares"""
+		MODULE.info('%s.modify: name: %r access: %r' % (self.module_name, name, access))
+		sharename = name.lower()
+		accessmode = access.lower()
 		self.modify_share(sharename, accessmode)
 
 	def valid_role_from_roleshare_name(self, inputstring):

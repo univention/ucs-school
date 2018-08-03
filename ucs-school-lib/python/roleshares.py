@@ -188,7 +188,7 @@ def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=N
 	all_visible_schools = [x.name for x in schools]
 	for school_ou in school_list:
 		if school_ou not in all_visible_schools:
-			print 'School not found: %s' (school_ou,)
+			print('School not found: {}'.format(school_ou))
 
 	for school in schools:
 		if school_list and school.name not in school_list:

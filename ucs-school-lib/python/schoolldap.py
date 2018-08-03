@@ -33,11 +33,10 @@
 import univention.config_registry
 import univention.uldap
 import univention.admin.config
-import univention.admin.modules
+import univention.admin.modules as udm_modules
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject
 
-import univention.admin.modules as udm_modules
 from univention.management.console.protocol.message import Message
 
 from univention.lib.i18n import Translation

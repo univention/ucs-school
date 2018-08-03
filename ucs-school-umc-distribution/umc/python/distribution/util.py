@@ -470,7 +470,6 @@ class Project(_Dict):
 						os.chown(startdir, owner, group)
 
 		except (OSError, IOError) as exc:
-			import traceback
 			MODULE.error(traceback.format_exc())
 			MODULE.error('failed to create/chown %r: %s' % (projectdir, exc))
 		finally:

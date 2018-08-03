@@ -93,8 +93,7 @@ class SchoolImport(object):
 				tmpfile.close()
 		return None, None
 
-	def import_user(self, username, lastname, firstname, school, class_,
-	                mail_primary_address, teacher, staff, password):
+	def import_user(self, username, lastname, firstname, school, class_, mail_primary_address, teacher, staff, password):
 		"""Imports a new user
 		"""
 		entry = ['A', username, lastname, firstname, school, class_, '',

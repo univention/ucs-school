@@ -75,7 +75,6 @@ def wait4state(computer, signal, value):
 
 def when_connected(computer, options):
 	print 'SIGNAL connected'
-	global italcManager
 
 	if not italcManager[options.computer].connected:
 		print 'NOT connected'
