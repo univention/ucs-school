@@ -260,11 +260,18 @@ class UserImport(object):
 		# user found -> modify
 		imported_user = self.prepare_imported_user(imported_user, user)
 		if user.school != imported_user.school:
-			self.logger.info(
-				'User will change school. Previous school: %r, new school: %r.',
-				user.school, imported_user.school
-			)
-			user = self.school_move(imported_user, user)
+			if user.school in imported_user.schools:
+				self.logger.info(
+					"Preventing school move of %r by changing value of 'school' attribute from %r to previous value %r.",
+					imported_user.name, imported_user.school, user.school
+				)
+				imported_user.school = user.school
+			else:
+				self.logger.info(
+					'User will change school. Previous school: %r, new school: %r.',
+					user.school, imported_user.school
+				)
+				user = self.school_move(imported_user, user)
 		user.update(imported_user)
 		if user.disabled != "0" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
 			self.logger.info(
