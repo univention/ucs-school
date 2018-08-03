@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-76) unstable; urgency=low
+
+  * Bug #47448: move test to ucsschool_import1
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 03 Aug 2018 09:22:28 +0200
+
 ucs-test-ucsschool (5.0.2-75) unstable; urgency=low
 
   * Bug #47447: add ucs-test for single source database, partial import user
