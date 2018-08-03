@@ -292,7 +292,7 @@ class ImportTestbase(object):
 			self.cleanup()
 
 	def test(self):
-		raise NotImplemented()
+		raise NotImplementedError()
 
 	def wait_for_drs_replication_of_membership(self, group_dn, member_uid, is_member=True, try_resync=True, **kwargs):
 		"""
