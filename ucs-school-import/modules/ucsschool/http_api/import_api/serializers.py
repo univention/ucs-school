@@ -121,7 +121,7 @@ class UserImportJobCreationValidator(object):
 
 		res = lo.searchDn(filter_format(filter_s, args))
 		if not res:
-			logger.error('Not allowed: username={!r} school={!r} role={!r}', username, school, role)
+			logger.error('Not allowed: username: %r school: %r role: %r', username, school, role)
 		return bool(res)
 
 

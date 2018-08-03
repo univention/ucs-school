@@ -458,7 +458,6 @@ Read-only list of Roles.
 	permission_classes = (IsAuthenticated, RoleViewPermission)
 
 	def retrieve(self, request, *args, **kwargs):
-		logger.info('*** request.__dict__=%r args=%r kwargs=r', request.__dict__, args, kwargs)
 		Role.update_from_ldap()
 		try:
 			self._school = kwargs.pop('school')
@@ -467,7 +466,6 @@ Read-only list of Roles.
 		return super(RoleViewSet, self).retrieve(request, *args, **kwargs)
 
 	def list(self, request, *args, **kwargs):
-		logger.info('*** request.__dict__=%r args=%r kwargs=r', request.__dict__, args, kwargs)
 		Role.update_from_ldap()
 		try:
 			self._school = kwargs.pop('school')

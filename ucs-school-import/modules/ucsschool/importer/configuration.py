@@ -98,11 +98,11 @@ class ReadOnlyDict(dict):
 			self._recursive_typed_update(self, F)
 
 	@staticmethod
-	def __closed(self, *args, **kwargs):
+	def __closed(*args, **kwargs):
 		raise ReadOnlyConfiguration()
 
 	def close(self):
-		self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed
+		self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed  # noqa
 
 
 class Configuration(object):
