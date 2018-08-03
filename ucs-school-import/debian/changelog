@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-33) unstable; urgency=low
+
+  * Bug #47450: deduplicate schools attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 03 Aug 2018 12:39:49 +0200
+
 ucs-school-import (16.0.2-32) unstable; urgency=low
 
   * Bug #47450: don't move user when importing into additional school with

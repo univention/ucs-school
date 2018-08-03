@@ -759,14 +759,14 @@ class ImportUser(User):
 		* If it is a string like 'school1,school2,school3' the attribute is created from it.
 		"""
 		if self.schools and isinstance(self.schools, list):
-			pass
+			self.schools = list(set(self.schools))
 		elif not self.schools:
 			if not self.school:
 				self.make_school()
 			self.schools = [self.school]
 		elif isinstance(self.schools, basestring):
 			self.schools = self.schools.strip(",").split(",")
-			self.schools = sorted([self.normalize(s.strip()) for s in self.schools])
+			self.schools = sorted(set(self.normalize(s.strip()) for s in self.schools))
 		else:
 			raise RuntimeError("Unknown data in attribute 'schools': '{}'".format(self.schools))
 
