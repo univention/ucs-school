@@ -2,6 +2,8 @@ ucs-test-ucsschool (5.0.2-79) unstable; urgency=low
 
   * Bug #47451: test if ucsschool_role attribute is unset when feature is
     deactivated
+  * test that attributes are empty if properties are unset
+  * cache LDAP and UCR access
 
  -- Daniel Troeder <troeder@univention.de>  Mon, 06 Aug 2018 10:27:40 +0200
 

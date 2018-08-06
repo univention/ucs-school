@@ -57,8 +57,20 @@ grp_prefix_staff = configRegistry.get('ucsschool/ldap/default/groupprefix/staff'
 
 samba_logon_script = configRegistry.get('ucsschool/import/set/netlogon/script/path')
 homedrive = configRegistry.get('ucsschool/import/set/homedrive')
+sambahome = configRegistry.get('ucsschool/import/set/sambahome')
+is_singlemaster = configRegistry.is_true('ucsschool/singlemaster', False)
+serverprofile_path = configRegistry.get('ucsschool/import/set/serverprofile/path')
+
+if sambahome:
+	print('UCR variable ucsschool/import/set/sambahome is set')
+if is_singlemaster:
+	print('UCR variable ucsschool/singlemaster is set')
+if serverprofile_path:
+	print('UCR variable ucsschool/import/set/serverprofile/path is set')
+
 
 class Person(object):
+	_samba_info = {}
 
 	def __init__(self, school, role):
 		self.firstname = uts.random_name()
@@ -253,6 +265,8 @@ class Person(object):
 		return self.role in ('teacher_staff', 'teacher_and_staff')
 
 	def expected_attributes(self):
+		samba_home_path_server = self.get_samba_home_path_server()
+		profile_path_server = self.get_profile_path_server()
 		attr = dict(
 			departmentNumber=[self.school],
 			givenName=[self.firstname],
@@ -272,50 +286,48 @@ class Person(object):
 			univentionBirthday=[self.birthday] if self.birthday else [],
 			sambaLogonScript=[samba_logon_script] if samba_logon_script and not self.is_staff() else [],
 			sambaHomeDrive=[homedrive] if homedrive and not self.is_staff() else [],
+			sambaHomePath=[] if self.is_staff() or not samba_home_path_server else ['\\\\{}\\{}'.format(samba_home_path_server, self.username)],
+			sambaProfilePath=[] if self.is_staff() or not profile_path_server else [profile_path_server],
 		)
 
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
-		if not self.is_staff():
-			samba_home_path_server = self.get_samba_home_path_server()
-			if samba_home_path_server:
-				attr['sambaHomePath'] = ['\\\\%s\\%s' % (samba_home_path_server, self.username)]
-
-			profile_path_server = self.get_profile_path_server()
-			if profile_path_server:
-				attr['sambaProfilePath'] = [profile_path_server]
-		else:
-			attr['sambaHomePath'] = []
-			attr['sambaProfilePath'] = []
 
 		return attr
 
-	def get_samba_home_path_server(self):
-		if configRegistry.get('ucsschool/import/set/sambahome'):
-			print 'get_samba_home_path_server: UCR variable ucsschool/import/set/sambahome is set'
-			return configRegistry.get('ucsschool/import/set/sambahome')
-		if configRegistry.is_true('ucsschool/singlemaster', False):
-			print 'get_samba_home_path_server: Singlemaster'
-			return configRegistry.get('hostname')
+	def _add_to_samba_info_school_base_cache(self, school_base):
+		self._samba_info[school_base] = {}
 		lo = univention.uldap.getMachineConnection()
-		result = lo.search(base=self.school_base, scope=ldap.SCOPE_BASE, attr=['ucsschoolHomeShareFileServer'])
-		if result:
-			share_file_server_dn = result[0][1].get('ucsschoolHomeShareFileServer')[0]
-			return ldap.explode_rdn(share_file_server_dn, notypes=1)[0]
-		return None
+		query_result = lo.search(base=school_base, scope=ldap.SCOPE_BASE, attr=['ucsschoolHomeShareFileServer'])
+		if query_result:
+			share_file_server_dn = query_result[0][1].get('ucsschoolHomeShareFileServer')[0]
+			res = ldap.explode_rdn(share_file_server_dn, notypes=1)[0]
+		else:
+			res = None
+		self._samba_info[school_base]['ucsschoolHomeShareFileServer'] = res
 
-	def get_profile_path_server(self):
-		if configRegistry.get('ucsschool/import/set/serverprofile/path'):
-			print 'get_profile_path_server: UCR variable ucsschool/import/set/serverprofile/path is set'
-			return configRegistry.get('ucsschool/import/set/serverprofile/path')
-		lo = univention.uldap.getMachineConnection()
-		result = lo.search(base=self.school_base, filter='univentionService=Windows Profile Server', attr=['cn'])
-		if result:
-			server = '\\\\%s' % result[0][1].get('cn')[0]
+		query_result = lo.search(base=self.school_base, filter='univentionService=Windows Profile Server', attr=['cn'])
+		if query_result:
+			server = '\\\\%s' % query_result[0][1].get('cn')[0]
 		else:
 			server = '%LOGONSERVER%'
+		self._samba_info[school_base]['WindowsProfileServer'] = '{}\\%USERNAME%\\windows-profiles\\default'.format(server)
 
-		return server + '\\%USERNAME%\\windows-profiles\\default'
+	def get_samba_home_path_server(self):
+		if sambahome:
+			return sambahome
+		if is_singlemaster:
+			return configRegistry.get('hostname')
+		if self.school_base not in self._samba_info:
+			self._add_to_samba_info_school_base_cache(self.school_base)
+		return self._samba_info[self.school_base]['ucsschoolHomeShareFileServer']
+
+	def get_profile_path_server(self):
+		if serverprofile_path:
+			return serverprofile_path
+		if self.school_base not in self._samba_info:
+			self._add_to_samba_info_school_base_cache(self.school_base)
+		return self._samba_info[self.school_base]['WindowsProfileServer']
 
 	@property
 	def roles(self):
