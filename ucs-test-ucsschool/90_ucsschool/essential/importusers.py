@@ -55,6 +55,8 @@ grp_prefix_teachers = configRegistry.get('ucsschool/ldap/default/groupprefix/tea
 grp_prefix_admins = configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
 grp_prefix_staff = configRegistry.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 
+samba_logon_script = configRegistry.get('ucsschool/import/set/netlogon/script/path')
+homedrive = configRegistry.get('ucsschool/import/set/homedrive')
 
 class Person(object):
 
@@ -268,16 +270,13 @@ class Person(object):
 			description=[self.description] if self.description else [],
 			ucsschoolSchool=[] if self.legacy else self.schools,
 			univentionBirthday=[self.birthday] if self.birthday else [],
+			sambaLogonScript=[samba_logon_script] if samba_logon_script and not self.is_staff() else [],
+			sambaHomeDrive=[homedrive] if homedrive and not self.is_staff() else [],
 		)
 
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
 		if not self.is_staff():
-			if configRegistry.get('ucsschool/import/set/netlogon/script/path'):
-				attr['sambaLogonScript'] = [configRegistry.get('ucsschool/import/set/netlogon/script/path')]
-			if configRegistry.get('ucsschool/import/set/homedrive'):
-				attr['sambaHomeDrive'] = [configRegistry.get('ucsschool/import/set/homedrive')]
-
 			samba_home_path_server = self.get_samba_home_path_server()
 			if samba_home_path_server:
 				attr['sambaHomePath'] = ['\\\\%s\\%s' % (samba_home_path_server, self.username)]
@@ -286,8 +285,6 @@ class Person(object):
 			if profile_path_server:
 				attr['sambaProfilePath'] = [profile_path_server]
 		else:
-			attr['sambaLogonScript'] = []
-			attr['sambaHomeDrive'] = []
 			attr['sambaHomePath'] = []
 			attr['sambaProfilePath'] = []
 
