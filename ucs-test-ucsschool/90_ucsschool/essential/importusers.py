@@ -263,21 +263,15 @@ class Person(object):
 			sn=[self.lastname],
 			uid=[self.username],
 			ucsschoolRole=self.roles if configRegistry.is_true('ucsschool/feature/roles') else [],
+			ucsschoolSourceUID=[self.source_uid] if self.source_uid else [],
+			ucsschoolRecordUID=[self.record_uid] if self.record_uid else [],
+			description=[self.description] if self.description else [],
+			ucsschoolSchool=[] if self.legacy else self.schools,
+			univentionBirthday=[self.birthday] if self.birthday else [],
 		)
 
-		if self.source_uid:
-			attr['ucsschoolSourceUID'] = [self.source_uid]
-		if self.record_uid:
-			attr['ucsschoolRecordUID'] = [self.record_uid]
-		if self.description:
-			attr['description'] = [self.description]
-		if not self.legacy:
-			attr['ucsschoolSchool'] = self.schools
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
-		if self.birthday:
-			attr['univentionBirthday'] = [self.birthday]
-
 		if not self.is_staff():
 			if configRegistry.get('ucsschool/import/set/netlogon/script/path'):
 				attr['sambaLogonScript'] = [configRegistry.get('ucsschool/import/set/netlogon/script/path')]
