@@ -12,7 +12,7 @@ import copy
 import univention.testing.strings as uts
 import univention.config_registry
 from essential.importusers_cli_v2 import CLI_Import_v2_Tester
-from ucsschool.importer.configuration import check_configuration
+from ucsschool.importer.utils.configuration_checks import run_configuration_checks
 from ucsschool.importer.utils.shell import ImportStudent, ImportTeacher
 
 
@@ -40,7 +40,7 @@ class Test(CLI_Import_v2_Tester):
 		config['dry_run'] = True
 		config['scheme'] = {'username': {'default': '<:umlauts><firstname>[0].<lastname><:lower>[ALWAYSCOUNTER]'}}
 		config['username'] = {'max_length': {'default': 20, 'student': 15}}
-		check_configuration(config)
+		run_configuration_checks(config)
 		self.log.info('*** OK: default configuration: %r', config)
 		cursor = 0
 
@@ -60,7 +60,7 @@ class Test(CLI_Import_v2_Tester):
 					if max_length_student:
 						config['username']['max_length']['student'] = max_length_student
 					self.log.debug('***   config["username"]["max_length"]=%r', config['username']['max_length'])
-					check_configuration(config)
+					run_configuration_checks(config)
 					ImportStudent.config = config
 					ImportStudent.default_username_max_length = ImportStudent._default_username_max_length
 					ImportTeacher.config = config

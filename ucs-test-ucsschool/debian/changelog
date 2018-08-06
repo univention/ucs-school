@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-78) unstable; urgency=low
+
+  * Bug #47448: fix import error in 225_import-users_username_length_unittest
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Aug 2018 09:22:33 +0200
+
 ucs-test-ucsschool (5.0.2-77) unstable; urgency=low
 
   * Bug #47450: add test then when importing into an additional school with
