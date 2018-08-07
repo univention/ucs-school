@@ -5,7 +5,7 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
 fix: 16.0.2-33A~4.3.0.201808031240
 desc: |
- * The UMC import module now shows a summary after a sucessfull dry-run (Bug #46712).
+ * The UMC import module now shows a summary after a successful dry-run (Bug #46712).
  * Internal change: a new exception type has been introduced, to skip single import users on non-fatal errors (Bug #47162).
  * Internal change: a new PyHook <literal>PostReadPyHook</literal> has been introduced, which is executed after reading each individual data record and can also change it (Bug #47221).
  * Internal change: a new PyHook <literal>ResultPyHook</literal> has been introduced, which is executed after the import has finished (Bug #47302).
