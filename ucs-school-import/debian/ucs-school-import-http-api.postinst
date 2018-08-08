@@ -42,7 +42,7 @@ univention-config-registry set ucsschool/import/generate/import/group?true
 . /usr/share/univention-lib/base.sh
 call_joinscript 40ucs-school-import-http-api.inst
 
-if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 15.0.3-53 ; then
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt 15.0.3-53 ; then
 	chown -c uas-import:uas-import \
 		/etc/ucsschool-import/django_key.secret \
 		/etc/ucsschool-import/postgres.secret \
