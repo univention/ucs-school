@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-35) unstable; urgency=low
+
+  * Bug #47514: set file permissions on initial installation
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 08 Aug 2018 14:44:07 +0200
+
 ucs-school-import (16.0.2-34) unstable; urgency=low
 
   * Bug #47451: don't fill ucsschool_role attribute if feature is deactivated
