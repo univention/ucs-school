@@ -3,9 +3,10 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-64A~4.2.0.201807310830
+fix: 15.0.3-65A~4.2.0.201808081421
 desc: |
  * The import now checks the most common errors in dry-runs (Bug #46837).
  * The UMC import module now shows a summary after a successful dry-run (Bug #46838).
  * In dry run, a read-only cn=admin LDAP connection is used (Bug #47204).
-bug: [46837, 46838, 47204]
+* File permissions are set correctly now on initial installations of the HTTP-API import (Bug #47472).
+bug: [46837, 46838, 47204, 47472]
