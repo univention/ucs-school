@@ -34,8 +34,12 @@ class Test(CLI_Import_v2_Tester):
 		person_list_b = []
 		self.log.info('*** Add/modify without delete...')
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			person_list_a.append(Person(self.ou_A.name, role))
-			person_list_b.append(Person(self.ou_A.name, role))
+			person = Person(self.ou_A.name, role)
+			person.update(record_uid=person.username, source_uid=source_uid)
+			person_list_a.append(person)
+			person = Person(self.ou_A.name, role)
+			person.update(record_uid=person.username, source_uid=source_uid)
+			person_list_b.append(person)
 
 		self.log.info('Adding users A: %r', [person.username for person in person_list_a])
 		fn_csv = self.create_csv_file(person_list=person_list_a, mapping=config['csv']['mapping'])

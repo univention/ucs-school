@@ -57,16 +57,6 @@ grp_prefix_staff = configRegistry.get('ucsschool/ldap/default/groupprefix/staff'
 
 samba_logon_script = configRegistry.get('ucsschool/import/set/netlogon/script/path')
 homedrive = configRegistry.get('ucsschool/import/set/homedrive')
-sambahome = configRegistry.get('ucsschool/import/set/sambahome')
-is_singlemaster = configRegistry.is_true('ucsschool/singlemaster', False)
-serverprofile_path = configRegistry.get('ucsschool/import/set/serverprofile/path')
-
-if sambahome:
-	print('UCR variable ucsschool/import/set/sambahome is set')
-if is_singlemaster:
-	print('UCR variable ucsschool/singlemaster is set')
-if serverprofile_path:
-	print('UCR variable ucsschool/import/set/serverprofile/path is set')
 
 
 class Person(object):
@@ -279,8 +269,8 @@ class Person(object):
 			sn=[self.lastname],
 			uid=[self.username],
 			ucsschoolRole=self.roles if configRegistry.is_true('ucsschool/feature/roles') else [],
-			ucsschoolSourceUID=[self.source_uid] if self.source_uid else [],
-			ucsschoolRecordUID=[self.record_uid] if self.record_uid else [],
+			ucsschoolSourceUID=[self.source_uid] if self.source_uid else ['LegacyDB'] if self.legacy else [],
+			ucsschoolRecordUID=[self.record_uid] if self.record_uid else [self.username] if self.legacy else [],
 			description=[self.description] if self.description else [],
 			ucsschoolSchool=[] if self.legacy else self.schools,
 			univentionBirthday=[self.birthday] if self.birthday else [],
@@ -314,16 +304,22 @@ class Person(object):
 		self._samba_info[school_base]['WindowsProfileServer'] = '{}\\%USERNAME%\\windows-profiles\\default'.format(server)
 
 	def get_samba_home_path_server(self):
+		sambahome = configRegistry.get('ucsschool/import/set/sambahome')
 		if sambahome:
+			print('UCR variable ucsschool/import/set/sambahome is set')
 			return sambahome
+		is_singlemaster = configRegistry.is_true('ucsschool/singlemaster', False)
 		if is_singlemaster:
+			print('UCR variable ucsschool/singlemaster is set')
 			return configRegistry.get('hostname')
 		if self.school_base not in self._samba_info:
 			self._add_to_samba_info_school_base_cache(self.school_base)
 		return self._samba_info[self.school_base]['ucsschoolHomeShareFileServer']
 
 	def get_profile_path_server(self):
+		serverprofile_path = configRegistry.get('ucsschool/import/set/serverprofile/path')
 		if serverprofile_path:
+			print('UCR variable ucsschool/import/set/serverprofile/path is set')
 			return serverprofile_path
 		if self.school_base not in self._samba_info:
 			self._add_to_samba_info_school_base_cache(self.school_base)

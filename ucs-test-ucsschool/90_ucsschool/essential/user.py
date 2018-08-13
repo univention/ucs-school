@@ -45,7 +45,7 @@ class User(Person):
 	:type school_classes: dict
 	"""
 
-	def __init__(self, school, role, school_classes, mode='A', username=None, firstname=None, lastname=None, password=None, mail=None, schools=None, connection=None):
+	def __init__(self, school, role, school_classes, mode='A', username=None, firstname=None, lastname=None, password=None, mail=None, schools=None, connection=None, birthday=None):
 		super(User, self).__init__(school, role)
 
 		if username:
@@ -62,6 +62,7 @@ class User(Person):
 		self.schools = schools or [self.school]
 		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
 		self.mode = mode
+		self.birthday = birthday
 
 		utils.wait_for_replication()
 		self.ucr = ucr_test.UCSTestConfigRegistry()
