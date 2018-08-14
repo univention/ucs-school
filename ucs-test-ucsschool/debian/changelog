@@ -1,4 +1,4 @@
-ucs-test-ucsschool (5.0.2-80) unstable; urgency=low
+ucs-test-ucsschool (5.0.2-81) unstable; urgency=low
 
   * Bug #47451: adapt tests to changed expected_attributes()
 

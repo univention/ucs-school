@@ -67,6 +67,7 @@ class Person(object):
 		self.lastname = uts.random_name()
 		self.username = uts.random_name()
 		self.legacy = False
+		self.legacy_v2 = False
 		self.school = school
 		self.schools = [school]
 		self.role = role
@@ -269,8 +270,8 @@ class Person(object):
 			sn=[self.lastname],
 			uid=[self.username],
 			ucsschoolRole=self.roles if configRegistry.is_true('ucsschool/feature/roles') else [],
-			ucsschoolSourceUID=[self.source_uid] if self.source_uid else ['LegacyDB'] if self.legacy else [],
-			ucsschoolRecordUID=[self.record_uid] if self.record_uid else [self.username] if self.legacy else [],
+			ucsschoolSourceUID=[self.source_uid] if self.source_uid else ['LegacyDB'] if self.legacy_v2 else [],
+			ucsschoolRecordUID=[self.record_uid] if self.record_uid else [self.username] if self.legacy_v2 else [],
 			description=[self.description] if self.description else [],
 			ucsschoolSchool=[] if self.legacy else self.schools,
 			univentionBirthday=[self.birthday] if self.birthday else [],
@@ -417,7 +418,7 @@ class Person(object):
 			2 * uts.random_int(),
 			uts.random_int(1, 9),
 			uts.random_int(0, 2),
-			uts.random_int(1)
+			uts.random_int(1, 8)
 		))
 
 
@@ -741,6 +742,10 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=
 	import_file = ImportFile(use_cli_api, use_python_api)
 
 	print user_import
+
+	if use_cli_api:
+		for user in user_import.students + user_import.staff + user_import.teachers + user_import.teacher_staff:
+			user.legacy_v2 = True
 
 	print '********** Create users'
 	import_file.run_import(user_import)

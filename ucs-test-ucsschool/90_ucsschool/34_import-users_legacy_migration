@@ -65,11 +65,9 @@ def main():
 			print("*\n*** Doing new-legacy import...\n*")
 			for user in all_users:
 				user.set_mode_to_modify()
-				user.update(legacy=False)
+				user.update(legacy=False, legacy_v2=True, record_uid=user.username, source_uid="LegacyDB")
 			import_file = ImportFile(True, False)
 			import_file.run_import(user_import)
-			for user in all_users:
-				user.update(record_uid=user.username, source_uid="LegacyDB")
 			user_import.verify()
 
 	print("*\n*** Test was successful.\n*")

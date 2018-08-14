@@ -195,14 +195,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** 3/8 Importing a user from each role (modify), with dry-run...')
 		config.update_entry('dry_run', True)
 		for person in person_list:
-			person.update(
-				birthday='19{}-0{}-{}{}'.format(
-					2 * uts.random_int(),
-					uts.random_int(1, 9),
-					uts.random_int(0, 2),
-					uts.random_int(1)
-				)
-			)
+			person.set_random_birthday()
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
