@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-82) unstable; urgency=low
+
+  * Bug #47451: fix test
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Aug 2018 08:41:21 +0200
+
 ucs-test-ucsschool (5.0.2-81) unstable; urgency=low
 
   * Bug #47451: adapt tests to changed expected_attributes()
