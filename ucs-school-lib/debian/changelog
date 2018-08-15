@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-18) unstable; urgency=low
+
+  * Bug #44314: do not log passwords
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Aug 2018 17:12:48 +0200
+
 ucs-school-lib (11.0.1-17) unstable; urgency=low
 
   * Bug #45715: support filtering in PyHooksLoader

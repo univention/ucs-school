@@ -35,10 +35,12 @@ from random import choice, shuffle
 import string
 import sys
 import logging
+import collections
 from logging.handlers import MemoryHandler, TimedRotatingFileHandler
 from contextlib import contextmanager
 import subprocess
 
+from six import string_types
 from psutil import process_iter, NoSuchProcess
 
 from univention.lib.policy_result import policy_result
@@ -90,6 +92,7 @@ class UniFileHandler(TimedRotatingFileHandler):
 		super(UniFileHandler, self).__init__(filename, when, interval, backupCount, encoding, delay, utc)
 
 	def _open(self):
+		"""set file permissions on log file"""
 		stream = super(UniFileHandler, self)._open()
 		file_stat = os.fstat(stream.fileno())
 		if file_stat.st_uid != self._fuid or file_stat.st_gid != self._fgid:
@@ -98,14 +101,29 @@ class UniFileHandler(TimedRotatingFileHandler):
 			os.fchmod(stream.fileno(), self._fmode)
 		return stream
 
+	def emit(self, record):
+		"""remove password from from dicts in args"""
+		for arg in record.args:
+			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
+				arg['password'] = '*' * len(arg['password'])
+		super(UniFileHandler, self).emit(record)
+
 
 class UniStreamHandler(logging.StreamHandler):
 	def __init__(self, stream=None, fuid=None, fgid=None, fmode=None):
 		# ignore fuid, fgid, fmode
 		super(UniStreamHandler, self).__init__(stream)
 
+	def emit(self, record):
+		"""remove password from from dicts in args"""
+		for arg in record.args:
+			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
+				arg['password'] = '*' * len(arg['password'])
+		super(UniStreamHandler, self).emit(record)
+
 
 class ModuleHandler(logging.Handler):
+	"""Adapter: use Python logging but emit through univention debug"""
 	LOGGING_TO_UDEBUG = dict(
 		CRITICAL=ud.ERROR,
 		ERROR=ud.ERROR,
@@ -121,6 +139,10 @@ class ModuleHandler(logging.Handler):
 		super(ModuleHandler, self).__init__(level)
 
 	def emit(self, record):
+		"""log to univention debug, remove password from dicts in args"""
+		for arg in record.args:
+			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
+				arg['password'] = '*' * len(arg['password'])
 		msg = self.format(record)
 		if isinstance(msg, unicode):
 			msg = msg.encode("utf-8")
