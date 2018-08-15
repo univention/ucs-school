@@ -295,7 +295,6 @@ class School(object):
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_pupils, ou_base), expected_attr={'cn': [cn_pupils]}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_teachers, ou_base), expected_attr={'cn': [cn_teachers]}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=must_exist)
-		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=must_exist)
 
 		utils.verify_ldap_object('cn=computers,%s' % ou_base, expected_attr={'cn': ['computers']}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=server,cn=computers,%s' % ou_base, expected_attr={'cn': ['server']}, should_exist=must_exist)

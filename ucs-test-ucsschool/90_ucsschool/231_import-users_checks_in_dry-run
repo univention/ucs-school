@@ -33,13 +33,8 @@ class Test(CLI_Import_v2_Tester):
 		person_list_success = []
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			person = Person(self.ou_A.name, role)
-			birthday = "19{}-0{}-{}{}".format(
-				2 * uts.random_int(),
-				uts.random_int(1, 9),
-				uts.random_int(0, 2),
-				uts.random_int(1)
-			)
-			person.update(record_uid=person.username, source_uid=source_uid_success, birthday=birthday)
+			person.set_random_birthday()
+			person.update(record_uid=person.username, source_uid=source_uid_success)
 			person_list_success.append(person)
 
 		fn_csv = self.create_csv_file(person_list=person_list_success, mapping=config['csv']['mapping'])

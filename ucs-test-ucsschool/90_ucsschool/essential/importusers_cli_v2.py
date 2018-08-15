@@ -27,7 +27,7 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 import univention.testing.format.text
-from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucs_samba import DRSReplicationFailed, wait_for_drs_replication
 
 try:
 	from typing import Dict, List, Optional, Tuple
@@ -292,7 +292,7 @@ class ImportTestbase(object):
 			self.cleanup()
 
 	def test(self):
-		raise NotImplemented()
+		raise NotImplementedError()
 
 	def wait_for_drs_replication_of_membership(self, group_dn, member_uid, is_member=True, try_resync=True, **kwargs):
 		"""
@@ -305,6 +305,9 @@ class ImportTestbase(object):
 		:param kwargs: dict: will be passed to wait_for_drs_replication() with a modified 'ldap_filter'
 		:return: None | <ldb result>
 		"""
+		if not utils.package_installed('univention-samba4'):
+			self.log.info('wait_for_drs_replication_of_membership(): skip, univention-samba4 not installed.')
+			return
 		try:
 			user_filter = kwargs['ldap_filter']
 			if user_filter and not user_filter.startswith('('):
@@ -320,7 +323,11 @@ class ImportTestbase(object):
 			member_filter,
 			user_filter
 		)
-		res = wait_for_drs_replication(**kwargs)
+		try:
+			res = wait_for_drs_replication(**kwargs)
+		except DRSReplicationFailed as exc:
+			self.log.error('DRSReplicationFailed: %s', exc)
+			res = None
 		if not res:
 			self.log.warn('No result from wait_for_drs_replication().')
 			if try_resync:

@@ -37,7 +37,7 @@ class EditFail(Exception):
 
 class Klasse(object):
 
-	"""Contains the needed functuality for classes in an already created OU,
+	"""Contains the needed functionality for classes in an already created OU,
 	By default they are randomly formed except the OU, should be provided\n
 	:param school: name of the ou
 	:type school: str
@@ -122,6 +122,12 @@ class Klasse(object):
 
 	def dn(self):
 		return 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s' % (
+			self.school, self.name, UCSTestSchool().get_ou_base_dn(self.school)
+		)
+
+	@property
+	def share_dn(self):
+		return 'cn=%s-%s,cn=klassen,cn=shares,%s' % (
 			self.school, self.name, UCSTestSchool().get_ou_base_dn(self.school)
 		)
 

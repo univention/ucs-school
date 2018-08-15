@@ -183,7 +183,7 @@ class Workgroup(object):
 
 	def verify_ldap_attributes(self):
 		"""checking group attributes in ldap"""
-		print 'Checking the attributes for group %s in ldap' % (self.name)
+		print 'Checking the attributes for group %s in ldap' % (self.name,)
 		members = []
 		if self.members:
 			for member in self.members:
@@ -197,7 +197,7 @@ class Workgroup(object):
 
 	def verify_exists(self, group_should_exist, share_should_exist):
 		"""check for group and file share objects existance in ldap"""
-		print 'Checking if group %s and its share object exist in ldap' % (self.name)
+		print 'Checking if group %s and its share object exist in ldap' % (self.name,)
 		groupdn = self.dn()
 		utils.verify_ldap_object(groupdn, should_exist=group_should_exist)
 		ucsschool = UCSTestSchool()

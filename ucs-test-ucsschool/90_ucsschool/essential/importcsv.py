@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 import univention.testing.ucr as ucr_test
 from univention.testing.umc import Client
 import univention.testing.strings as uts
@@ -273,6 +274,20 @@ def update_persons(school, persons_list, users):
 			return 'A'
 		elif action == 'modify':
 			return 'M'
+
+	def str2isodate(text):  # type: (str) -> str
+		try:
+			the_date = datetime.datetime.strptime(text, "%Y-%m-%d")
+			return '{:%Y-%m-%d}'.format(the_date)
+		except (TypeError, ValueError):
+			pass
+		try:
+			the_date = datetime.datetime.strptime(text, "%d.%m.%Y")
+			return '{:%Y-%m-%d}'.format(the_date)
+		except (TypeError, ValueError):
+			pass
+		raise ValueError('Unknown date format: {!r}.'.format(text))
+
 	users = [x for y in users for x in y]
 	for user in users:
 		person = User(
@@ -285,6 +300,7 @@ def update_persons(school, persons_list, users):
 			lastname=user['lastname'],
 			password=user['password'],
 			mail=user.get('email'),
+			birthday=str2isodate(user.get('birthday'))
 		)
 		person_old_version = [x for x in persons_list if x.username == person.username]
 		if person_old_version:

@@ -48,7 +48,6 @@ from collections import defaultdict
 
 import univention.testing.utils as utils
 import univention.testing.ucr
-import univention.testing.udm as utu
 import univention.testing.strings as uts
 import univention.testing.udm as udm_test
 
@@ -163,7 +162,7 @@ class UCSTestSchool(object):
 			return 'missing object'
 
 		msg = None
-		cmd = [utu.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, module, 'remove', '--dn', dn]
+		cmd = [udm_test.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, module, 'remove', '--dn', dn]
 		print '*** Calling following command: %r' % cmd
 		retval = subprocess.call(cmd)
 		if retval:
@@ -184,7 +183,7 @@ class UCSTestSchool(object):
 			return 'missing object'
 
 		msg = None
-		cmd = [utu.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, 'users/user', 'modify', '--dn', dn, '--set', 'password=%s' % password]
+		cmd = [udm_test.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, 'users/user', 'modify', '--dn', dn, '--set', 'password=%s' % password]
 		print '*** Calling following command: %r' % cmd
 		retval = subprocess.call(cmd)
 		if retval:
@@ -488,7 +487,7 @@ class UCSTestSchool(object):
 				print '*** Calling following command: %r' % cmd
 				retval = subprocess.call(cmd)
 				if retval:
-					utils.fail('create_ou failed with exitcode %s' % retval)
+					utils.fail('import_user failed with exitcode %s' % retval)
 
 			if password is not None:
 				self._set_password(user_dn, password)
