@@ -105,7 +105,7 @@ class UniFileHandler(TimedRotatingFileHandler):
 		"""remove password from from dicts in args"""
 		for arg in record.args:
 			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
-				arg['password'] = '*' * len(arg['password'])
+				arg['password'] = '*' * 8
 		super(UniFileHandler, self).emit(record)
 
 
@@ -118,7 +118,7 @@ class UniStreamHandler(logging.StreamHandler):
 		"""remove password from from dicts in args"""
 		for arg in record.args:
 			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
-				arg['password'] = '*' * len(arg['password'])
+				arg['password'] = '*' * 8
 		super(UniStreamHandler, self).emit(record)
 
 
@@ -142,7 +142,7 @@ class ModuleHandler(logging.Handler):
 		"""log to univention debug, remove password from dicts in args"""
 		for arg in record.args:
 			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
-				arg['password'] = '*' * len(arg['password'])
+				arg['password'] = '*' * 8
 		msg = self.format(record)
 		if isinstance(msg, unicode):
 			msg = msg.encode("utf-8")
