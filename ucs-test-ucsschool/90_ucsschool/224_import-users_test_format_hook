@@ -102,6 +102,10 @@ class Test(CLI_Import_v2_Tester):
 			# with the modified lastname
 			email_local = '{}.{}'.format(person.firstname, lastname).lower()
 			person.update(mail='{}@{}'.format(email_local, self.maildomain))
+			if person.role in ('staff', 'student'):
+				person.update(birthday=person._bday)
+			else:
+				person.update(birthday=person.firstname)
 			person.verify()
 		self.log.info('*** OK: All %r users were created correctly.', len(person_list))
 
