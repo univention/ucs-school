@@ -27,7 +27,7 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 import univention.testing.format.text
-from univention.testing.ucs_samba import DRSReplicationFailed, wait_for_drs_replication
+from univention.testing.ucs_samba import wait_for_drs_replication
 
 try:
 	from typing import Dict, List, Optional, Tuple
@@ -323,11 +323,7 @@ class ImportTestbase(object):
 			member_filter,
 			user_filter
 		)
-		try:
-			res = wait_for_drs_replication(**kwargs)
-		except DRSReplicationFailed as exc:
-			self.log.error('DRSReplicationFailed: %s', exc)
-			res = None
+		res = wait_for_drs_replication(**kwargs)
 		if not res:
 			self.log.warn('No result from wait_for_drs_replication().')
 			if try_resync:
