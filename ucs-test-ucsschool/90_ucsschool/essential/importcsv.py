@@ -300,7 +300,7 @@ def update_persons(school, persons_list, users):
 			lastname=user['lastname'],
 			password=user['password'],
 			mail=user.get('email'),
-			birthday=str2isodate(user.get('birthday'))
+			birthday=str2isodate(user['birthday']) if user.get('birthday') else None
 		)
 		person_old_version = [x for x in persons_list if x.username == person.username]
 		if person_old_version:
