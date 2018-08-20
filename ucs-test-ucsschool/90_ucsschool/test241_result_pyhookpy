@@ -1,0 +1,26 @@
+from ucsschool.importer.utils.result_pyhook import ResultPyHook
+
+
+RESULTFILE = '/tmp/test241result.txt'
+
+
+class Test241ResultHook(ResultPyHook):
+	priority = {
+		"user_result": 1,
+	}
+
+	def user_result(self, user_import_data):
+		with open(RESULTFILE, 'wb') as fp:
+			fp.write('errors={}\n'.format(len(user_import_data.errors)))
+			fp.write('added_staff={}\n'.format(len(user_import_data.added_users.get('ImportStaff', []))))
+			fp.write('added_student={}\n'.format(len(user_import_data.added_users.get('ImportStudent', []))))
+			fp.write('added_teacher={}\n'.format(len(user_import_data.added_users.get('ImportTeacher', []))))
+			fp.write('added_teacher_and_staff={}\n'.format(len(user_import_data.added_users.get('ImportTeachersAndStaff', []))))
+			fp.write('modified_staff={}\n'.format(len(user_import_data.modified_users.get('ImportStaff', []))))
+			fp.write('modified_student={}\n'.format(len(user_import_data.modified_users.get('ImportStudent', []))))
+			fp.write('modified_teacher={}\n'.format(len(user_import_data.modified_users.get('ImportTeacher', []))))
+			fp.write('modified_teacher_and_staff={}\n'.format(len(user_import_data.modified_users.get('ImportTeachersAndStaff', []))))
+			fp.write('deleted_staff={}\n'.format(len(user_import_data.deleted_users.get('ImportStaff', []))))
+			fp.write('deleted_student={}\n'.format(len(user_import_data.deleted_users.get('ImportStudent', []))))
+			fp.write('deleted_teacher={}\n'.format(len(user_import_data.deleted_users.get('ImportTeacher', []))))
+			fp.write('deleted_teacher_and_staff={}\n'.format(len(user_import_data.deleted_users.get('ImportTeachersAndStaff', []))))
