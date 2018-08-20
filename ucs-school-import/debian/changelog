@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-38) unstable; urgency=low
+
+  * Bug #47302: add example result hook
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 20 Aug 2018 17:53:46 +0200
+
 ucs-school-import (16.0.2-37) unstable; urgency=low
 
   * Bug #47302: remove empty function, add type hints
