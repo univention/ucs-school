@@ -182,6 +182,10 @@ fi
 python /usr/share/pyshared/ucsschool/http_api/manage.py check --no-color --deploy || die
 echo "Collecting static files..."
 python /usr/share/pyshared/ucsschool/http_api/manage.py collectstatic --no-color --noinput --link || die
+if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
+	echo "Handling django-celerys upgrade (faking DB schema migration)..."
+	python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput --fake-initial djcelery
+fi
 echo "Migrating DB schema..."
 python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput || die
 if python /usr/share/pyshared/ucsschool/http_api/manage.py superuserexists "$ADMINISTRATOR_UID";
