@@ -50,7 +50,7 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
 try:
-	from typing import Optional, Union
+	from typing import Any, Dict, List, Optional, Tuple, Union
 	from ucsschool.importer.models.import_user import ImportUser
 except ImportError:
 	pass
@@ -75,9 +75,9 @@ class UserImport(object):
 		self.dry_run = dry_run
 		self.errors = list()
 		self.imported_users = list()
-		self.added_users = defaultdict(list)  # dict of lists of dicts: {ImportStudent: [ImportStudent.to_dict(), ..], ..}
-		self.modified_users = defaultdict(list)  # like added_users
-		self.deleted_users = defaultdict(list)  # like added_users
+		self.added_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
+		self.modified_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
+		self.deleted_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
 		self.config = Configuration()
 		self.logger = get_logger()
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
@@ -85,7 +85,7 @@ class UserImport(object):
 		self.reader = self.factory.make_reader()
 		self.imported_users_len = 0
 
-	def read_input(self):
+	def read_input(self):  # type () -> List[ImportUser]
 		"""
 		Read users from input data.
 
@@ -111,6 +111,7 @@ class UserImport(object):
 		return self.imported_users
 
 	def create_and_modify_users(self, imported_users=None):
+		# type (Optional[List[ImportUser]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]], List[Dict[str, Any]]]
 		"""
 		Create and modify users.
 
@@ -120,7 +121,7 @@ class UserImport(object):
 		:param imported_users: ImportUser objects
 		:type imported_users: :func:`list`
 		:return: (self.errors, self.added_users, self.modified_users)
-		:rtype: tuple(list, list, list)
+		:rtype: tuple(list[UcsSchoolImportError], list[dict], list[dict])
 		"""
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
@@ -220,7 +221,8 @@ class UserImport(object):
 		except WrongObjectType as exc:
 			raise WrongUserType, WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user), sys.exc_info()[2]
 
-	def prepare_imported_user(self, imported_user, old_user):  # type: (ImportUser, Optional[ImportUser]) -> ImportUser
+	def prepare_imported_user(self, imported_user, old_user):
+		# type: (ImportUser, Optional[ImportUser]) -> ImportUser
 		"""
 		Prepare attributes of ``imported_user`` object. Optionally save existing
 		user (``old_user``) object reference in ``imported_user.old_user``.
@@ -282,7 +284,7 @@ class UserImport(object):
 			user.reactivate()
 		return user
 
-	def get_existing_users_search_filter(self):
+	def get_existing_users_search_filter(self):  # type () -> str
 		"""
 		Create LDAP filter with which to find existing users.
 
@@ -298,7 +300,7 @@ class UserImport(object):
 			(self.config["sourceUID"],)
 		)
 
-	def get_ids_of_existing_users(self):
+	def get_ids_of_existing_users(self):  # type () -> List[Tuple[str, str]]
 		"""
 		Get IDs of existing users.
 
@@ -314,7 +316,7 @@ class UserImport(object):
 			for lu in ucs_ldap_users
 		]
 
-	def detect_users_to_delete(self):
+	def detect_users_to_delete(self):  # type () -> List[Tuple[str, str, List[str]]]
 		"""
 		Find difference between source database and UCS user database.
 
@@ -335,6 +337,7 @@ class UserImport(object):
 		return users_to_delete
 
 	def delete_users(self, users=None):
+		# type (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]]]
 		"""
 		Delete users.
 
@@ -387,7 +390,7 @@ class UserImport(object):
 		self.logger.info("------ Deleted %d users. ------", sum(map(len, self.deleted_users.values())))
 		return self.errors, self.deleted_users
 
-	def school_move(self, imported_user, user):
+	def school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
 		"""
 		Change users primary school.
 
@@ -400,10 +403,15 @@ class UserImport(object):
 		user = self.do_school_move(imported_user, user)
 		return user
 
-	def do_school_move(self, imported_user, user):
+	def do_school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
 		"""
 		Change users primary school - :py:meth:`school_move()` without calling Python
 		hooks (ucsschool lib calls executables anyway).
+
+		:param ImportUser imported_user: User from input with target school
+		:param ImportUser user: existing User with old school
+		:return: user in new position, freshly fetched from LDAP
+		:rtype: ImportUser
 		"""
 		if self.dry_run:
 			user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
@@ -421,7 +429,7 @@ class UserImport(object):
 		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
 		return user
 
-	def do_delete(self, user):
+	def do_delete(self, user):  # type: (ImportUser) -> bool
 		"""
 		Delete or deactivate a user.
 
@@ -475,7 +483,7 @@ class UserImport(object):
 		user.invalidate_all_caches()
 		return success
 
-	def deactivate_user_now(self, user):
+	def deactivate_user_now(self, user):  # type: (ImportUser) -> bool
 		"""
 		Deactivate the user. Does not run user.modify().
 
@@ -491,7 +499,7 @@ class UserImport(object):
 			user.deactivate()
 			return True
 
-	def delete_user_now(self, user):
+	def delete_user_now(self, user):  # type: (ImportUser) -> bool
 		"""
 		Truly delete the user.
 
@@ -508,12 +516,13 @@ class UserImport(object):
 		else:
 			return user.remove(self.connection)
 
-	def set_deactivation_grace(self, user, grace):
+	def set_deactivation_grace(self, user, grace):  # type: (ImportUser, int) -> bool
 		"""
 		Sets the account expiration date (UDM attribute `userexpiry`) on the
 		user object. Does not run :py:meth:`user.modify()`.
 
 		:param ImportUser user: object to delete
+		:param int grace: days until deactivation
 		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
@@ -530,12 +539,13 @@ class UserImport(object):
 			user.expire(expiry_str)
 			return True
 
-	def set_deletion_grace(self, user, grace):
+	def set_deletion_grace(self, user, grace):  # type: (ImportUser, int) -> bool
 		"""
 		Sets the account deletion timestamp (UDM attribute `ucsschoolPurgeTimestamp`)
 		on the user object. Does not run :py:meth:`user.modify()`.
 
 		:param ImportUser user: user to schedule the deletion for
+		:param int grace: days until deletion
 		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
@@ -549,7 +559,7 @@ class UserImport(object):
 			user.set_purge_timestamp(purge_ts_str)
 			return True
 
-	def log_stats(self):
+	def log_stats(self):  # type: () -> str
 		"""
 		Log statistics about read, created, modified and deleted users.
 		"""
@@ -597,7 +607,7 @@ class UserImport(object):
 			return
 		self.config['progress_notification_function'](description, percentage, done, total, **kwargs)
 
-	def get_result_data(self):
+	def get_result_data(self):  # type: () -> UserImportData
 		return UserImportData(self)
 
 

@@ -50,9 +50,11 @@ class ResultPyHook(ImportPyHook):
 	}
 
 	def user_result(self, user_import_data):
+		# type: (ucsschool.importer.mass_import.user_import.UserImportData) -> None
 		"""
-		Run code after user import has finished. The importer object is passed
-		to this hook, so result summaries etc are possible.
+		Run code after user import has finished. Relevant data from the
+		UserImport class is passed to this hook, so result summaries etc are
+		possible.
 
 		:param UserImportData user_import_data: relevant data from the UserImport class
 		:return: None
