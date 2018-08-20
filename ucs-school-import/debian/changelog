@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-37) unstable; urgency=low
+
+  * Bug #47302: remove empty function, add type hints
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 20 Aug 2018 17:00:58 +0200
+
 ucs-school-import (16.0.2-36) unstable; urgency=low
 
   * Bug #47333: handle django-celerys upgrade
