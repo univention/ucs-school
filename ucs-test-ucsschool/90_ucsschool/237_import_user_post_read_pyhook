@@ -11,22 +11,21 @@
 import os
 import os.path
 import copy
-import random
 import shutil
 
 from ldap.filter import escape_filter_chars
 import univention.testing.strings as uts
-import univention.testing.utils as utils
-from essential.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
+from essential.importusers_cli_v2 import CLI_Import_v2_Tester
 from essential.importusers import Person
 from univention.testing.ucs_samba import wait_for_drs_replication
 
 
-TESTHOOKSOURCE = os.path.join(os.path.dirname(__file__), 'test237_post_read_pyhook.py')
+TESTHOOKSOURCE = os.path.join(os.path.dirname(__file__), 'test237_post_read_pyhookpy')
 TESTHOOKTARGET = '/usr/share/ucs-school-import/pyhooks/test237_post_read_pyhook.py'
 
 
 class Test(CLI_Import_v2_Tester):
+	ou_B = None
 	ou_C = None
 
 	def pyhook_cleanup(self):
@@ -71,6 +70,7 @@ class Test(CLI_Import_v2_Tester):
 		for person in person_list:
 			person.update(firstname=person.lastname, lastname=person.firstname)
 			person.verify()
+
 
 if __name__ == '__main__':
 	Test().run()
