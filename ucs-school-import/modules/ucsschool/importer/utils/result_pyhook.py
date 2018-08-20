@@ -49,9 +49,6 @@ class ResultPyHook(ImportPyHook):
 		'user_result': None,
 	}
 
-	def __init__(self, *args, **kwargs):
-		super(ResultPyHook, self).__init__(*args, **kwargs)
-
 	def user_result(self, user_import_data):
 		"""
 		Run code after user import has finished. The importer object is passed
