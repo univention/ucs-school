@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.2-38A~4.3.0.201808201754
+fix: 16.0.2-39A~4.3.0.201808281200
 desc: |
  * The UMC import module now shows a summary after a successful dry-run (Bug #46712).
  * Internal change: a new exception type has been introduced, to skip single import users on non-fatal errors (Bug #47162).
@@ -22,4 +22,5 @@ desc: |
  * Don't create roles in import when feature is deactivated (Bug #47451).
  * File permissions are set correctly now on initial installations of the HTTP-API import (Bug #47514).
  * Handle changed database migrations for django-celery, when upgrading from 4.2 to 4.3 (Bug #47333).
-bug: [46712,47162,47221,47302,47304,47305,47311,47413,47277,45715,47203,47447,47448,47450,47451,47514,47333]
+ * Use a different account for authentication on each DC backup (Bug #47683).
+bug: [46712,47162,47221,47302,47304,47305,47311,47413,47277,45715,47203,47447,47448,47450,47451,47514,47333,47683]
