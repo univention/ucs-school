@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-66) unstable; urgency=low
+
+  * Bug #47682: create different user on each DC backup
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 28 Aug 2018 11:59:35 +0200
+
 ucs-school-import (15.0.3-65) unstable; urgency=low
 
   * Bug #47472: set file permissions on initial installation
