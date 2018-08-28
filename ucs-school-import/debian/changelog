@@ -1,4 +1,4 @@
-ucs-school-import (15.0.3-66) unstable; urgency=low
+ucs-school-import (15.0.3-67) unstable; urgency=low
 
   * Bug #47682: create different user on each DC backup
 

@@ -66,7 +66,7 @@ write_secret () {
 }
 
 # create new password if none exists or as fix for Bug #47683
-if [ -e "$LDAP_SECRET_FILE" ] && [ $JS_LAST_EXECUTED_VERSION -gt 17 ];
+if [ -e "$LDAP_SECRET_FILE" ] && [ $JS_LAST_EXECUTED_VERSION -gt 16 ];
 then
     echo "Using existing password for unprivileged LDAP user $LDAP_USER_NAME."
     LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
