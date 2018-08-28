@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=17
+VERSION=18
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -41,7 +41,12 @@ eval "$(ucr shell)"
 CONF_DIR="/etc/ucsschool-import"
 
 LDAP_SECRET_FILE="$CONF_DIR/ldap_unprivileged.secret"
-LDAP_USER_NAME="importhttpapi"
+if [ $server_role = domaincontroller_master ]; then
+	LDAP_USER_NAME="importhttpapi"
+else
+	# DC backup
+	LDAP_USER_NAME="importhttpapi-$hostname"
+fi
 LDAP_USER_POSITION="cn=users,$ldap_base"
 LDAP_USER_DN="uid=$LDAP_USER_NAME,$LDAP_USER_POSITION"
 
@@ -60,26 +65,27 @@ write_secret () {
     fi
 }
 
-if [ -e "$LDAP_SECRET_FILE" ];
+# create new password if none exists or as fix for Bug #47683
+if [ -e "$LDAP_SECRET_FILE" ] && [ $JS_LAST_EXECUTED_VERSION -gt 17 ];
 then
-    echo "Using existing password for unprivileged LDAP user."
+    echo "Using existing password for unprivileged LDAP user $LDAP_USER_NAME."
     LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
 else
-    echo "Creating password for unprivileged LDAP user."
+    echo "Creating password for unprivileged LDAP user $LDAP_USER_NAME."
     LDAP_SECRET_PW="$(makepasswd --chars=50)"
     write_secret "$LDAP_SECRET_FILE" "$LDAP_USER_DN:$ldap_base:$LDAP_SECRET_PW" || die
 fi
 
 if [ -z "$(univention-ldapsearch -LLL uid=$LDAP_USER_NAME dn)" ];
 then
-	echo "Creating unprivileged LDAP user..."
+	echo "Creating unprivileged LDAP user $LDAP_USER_NAME..."
     udm users/ldap create "$@" \
     	--set username="$LDAP_USER_NAME" \
     	--position "$LDAP_USER_POSITION" \
     	--set password="$LDAP_SECRET_PW" \
     	--set description="Unprivileged account used by UCS@school import to authenticate against LDAP directory."  || die
 else
-	echo "Setting password on existing LDAP user..."
+	echo "Setting password on existing LDAP user $LDAP_USER_NAME..."
 	udm users/ldap modify "$@" \
 		--dn "$LDAP_USER_DN" \
 		--set password="$LDAP_SECRET_PW" \
