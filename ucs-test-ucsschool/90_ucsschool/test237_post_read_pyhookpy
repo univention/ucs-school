@@ -7,6 +7,8 @@ class SwitchGivenNameCnHook(PostReadPyHook):
 		"entry_read": 1,
 	}
 
+	my_custom_class_variable = 0
+
 	def entry_read(self, entry_count, input_data, input_dict):
 		"""
 		Run code after an entry has been read and saved in
@@ -32,4 +34,25 @@ class SwitchGivenNameCnHook(PostReadPyHook):
 		input_dict['Vor'] = lastname
 		input_dict['Nach'] = firstname
 
+		self.my_custom_class_variable += 1
+
 		self.logger.debug('Result: entry_count=%r input_data=%r input_dict=%r', entry_count, input_data, input_dict)
+
+	def all_entries_read(self, imported_users, errors):
+		"""
+		Run code after all entries have been read. ImportUser objects for all
+		lines are passed to the hook. Also errors are passed. Please note that
+		the "entry_read" hook method may skip one or several input records, so
+		they may be missing in imported_users.
+		errors contains a list of catched errors/exceptions.
+
+		:param list[ImportUser] imported_users: list of ImportUser objects created from the input records
+		:param list[Exception] errors: list of exceptions that are caught during processing the input records
+		:return: None
+		"""
+		self.logger.info('Number of imported users is %s', len(imported_users))
+		self.logger.info('Number of errors is %s', len(errors))
+		for i, user in enumerate(imported_users):
+			user.birthday = '2018-08-27'
+
+		assert self.my_custom_class_variable != 0, "cannot store data as class variables of PostReadPyHook"

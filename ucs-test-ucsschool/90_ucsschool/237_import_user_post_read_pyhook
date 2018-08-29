@@ -68,7 +68,7 @@ class Test(CLI_Import_v2_Tester):
 		self.run_import(['-c', fn_config])
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
-			person.update(firstname=person.lastname, lastname=person.firstname)
+			person.update(firstname=person.lastname, lastname=person.firstname, birthday='2018-08-27')
 			person.verify()
 
 
