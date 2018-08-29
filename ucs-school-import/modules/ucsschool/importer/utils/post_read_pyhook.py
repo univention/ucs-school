@@ -49,6 +49,7 @@ class PostReadPyHook(ImportPyHook):
 	"""
 	priority = {
 		'entry_read': None,
+		'all_entries_read': None,
 	}
 
 	def entry_read(self, entry_count, input_data, input_dict):
@@ -63,6 +64,20 @@ class PostReadPyHook(ImportPyHook):
 		:param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The input_data may be changed.
 		:param input_dict: input data mapped to column names. The input_dict may be changed.
 		:type input_dict: dict[str, str]
+		:return: None
+		"""
+		return None
+
+	def all_entries_read(self, imported_users, errors):
+		"""
+		Run code after all entries have been read. ImportUser objects for all
+		lines are passed to the hook. Also errors are passed. Please note that
+		the "entry_read" hook method may skip one or several input records, so
+		they may be missing in imported_users.
+		errors contains a list of catched errors/exceptions.
+
+		:param list[ImportUser] imported_users: list of ImportUser objects created from the input records
+		:param list[Exception] errors: list of exceptions that are caught during processing the input records
 		:return: None
 		"""
 		return None
