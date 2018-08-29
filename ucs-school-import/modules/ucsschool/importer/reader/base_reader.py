@@ -32,6 +32,7 @@ Base class of all input readers.
 # <http://www.gnu.org/licenses/>.
 
 
+from ucsschool.importer.exceptions import UcsSchoolImportSkipImportRecord
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.factory import Factory
@@ -82,9 +83,14 @@ class BaseReader(object):
 		:return: ImportUser
 		:rtype: ImportUser
 		"""
-		input_dict = self.import_users.next()
-		self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
-		self.call_post_read_hook(self.entry_count, self.input_data, input_dict)
+		while True:
+			input_dict = self.import_users.next()
+			self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
+			try:
+				self.call_post_read_hook(self.entry_count, self.input_data, input_dict)
+				break
+			except UcsSchoolImportSkipImportRecord as exc:
+				self.logger.info("Skipping input line %d as requested by PostReadPyHook: %s", self.entry_count, exc)
 
 		cur_user_roles = self.get_roles(input_dict)
 		cur_import_user = self.map(input_dict, cur_user_roles)
