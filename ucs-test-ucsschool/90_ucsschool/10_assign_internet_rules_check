@@ -5,8 +5,7 @@
 ## exposure: careful
 ## packages:  [ucs-school-umc-internetrules]
 
-from essential.check import Check
-from essential.internetrule import InternetRule
+from essential.internetrule import InternetRule, Check
 from essential.klasse import Klasse
 from essential.workgroup import Workgroup
 import random

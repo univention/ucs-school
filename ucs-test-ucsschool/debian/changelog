@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-85) unstable; urgency=medium
+
+  * Bug #47386: fix 10_assign_internet_rules_check and move check.py into
+    internetrules.py because the check is internetrules specific.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 29 Aug 2018 14:45:57 +0200
+
 ucs-test-ucsschool (5.0.2-84) unstable; urgency=low
 
   * Bug #47302: add test for ResultPyHook
