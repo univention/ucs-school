@@ -46,6 +46,9 @@ class PyHooksLoader(object):
 	Use get_hook_classes() if you want to initialize them yourself.
 	"""
 
+	# Dict[base_class_name, List[Class]]
+	_hook_classes = {}  # type: Dict[str, List[type]]
+
 	def __init__(self, base_dir, base_class, logger, filter_func=None):
 		"""
 
@@ -64,11 +67,11 @@ class PyHooksLoader(object):
 		"""
 		self.base_dir = base_dir
 		self.base_class = base_class
+		self.base_class_name = base_class.__name__
 		self.logger = logger
 		if filter_func:
 			assert callable(filter_func), "'filter_func' must be a callable, got {!r}.".format(filter_func)
 		self._filter_func = filter_func
-		self._hook_classes = None
 		self._pyhook_obj_cache = None
 
 	def drop_cache(self):
@@ -80,7 +83,8 @@ class PyHooksLoader(object):
 		:return: None
 		"""
 		self._pyhook_obj_cache = None
-		self._hook_classes = None
+		if self.base_class_name in self._hook_classes:
+			del self._hook_classes[self.base_class_name]
 
 	def get_hook_classes(self):
 		"""
@@ -90,9 +94,9 @@ class PyHooksLoader(object):
 		:return: list of PyHook subclasses
 		:rtype: list[type]
 		"""
-		if self._hook_classes is None:
-			self.logger.info("Searching for hooks of type %r in: %s...", self.base_class.__name__, self.base_dir)
-			self._hook_classes = list()
+		if self._hook_classes.get(self.base_class_name) is None:
+			self.logger.info("Searching for hooks of type %r in: %s...", self.base_class_name, self.base_dir)
+			self._hook_classes[self.base_class_name] = list()
 			if self._filter_func:
 				filter_func = self._filter_func
 			else:
@@ -103,11 +107,11 @@ class PyHooksLoader(object):
 					a_class = self._load_hook_class(filename[:-3], info, self.base_class)
 					if a_class:
 						if filter_func(a_class):
-							self._hook_classes.append(a_class)
+							self._hook_classes[self.base_class_name].append(a_class)
 						else:
 							self.logger.info("Hook class %r filtered out by %s().", a_class.__name__, filter_func.func_name)
-			self.logger.info("Found hook classes: %s", ", ".join(c.__name__ for c in self._hook_classes))
-		return self._hook_classes
+			self.logger.info("Found hook classes: %s", ", ".join(c.__name__ for c in self._hook_classes[self.base_class_name]))
+		return self._hook_classes[self.base_class_name]
 
 	def get_hook_objects(self, *args, **kwargs):
 		"""

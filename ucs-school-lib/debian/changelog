@@ -1,8 +1,20 @@
+ucs-school-lib (11.0.1-20) unstable; urgency=low
+
+  * Bug #47221: add class cache in PyHookLoader
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 29 Aug 2018 15:26:39 +0200
+
 ucs-school-lib (11.0.1-19) unstable; urgency=low
 
   * Bug #44314: do not log passwords
 
  -- Daniel Troeder <troeder@univention.de>  Wed, 15 Aug 2018 17:12:48 +0200
+
+ucs-school-lib (11.0.1-18) unstable; urgency=low
+
+  * Bug #47221: add class cache in PyHookLoader
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 29 Aug 2018 15:26:39 +0200
 
 ucs-school-lib (11.0.1-17) unstable; urgency=low
 
