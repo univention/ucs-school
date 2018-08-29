@@ -351,7 +351,7 @@ class Instance(SchoolBaseModule):
 		result = [{
 			'name': i.get_relative_name() if hasattr(i, 'get_relative_name') else name.sub('', i.name),
 			'$dn$': i.dn,
-			'rule': internet_rules.get(i.name, 'default') or _('-- Default (unrestricted) --')
+			'rule': internet_rules.get(i.name, 'default') or '$default$'
 		} for i in groups]
 		result.sort(cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x['name'])
 

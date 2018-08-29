@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-l10n-fr
+fix: 
+desc: |
+ * Update translation (Bug #47386).
+bug: [47386]

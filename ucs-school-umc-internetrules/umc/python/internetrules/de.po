@@ -12,10 +12,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/internetrules/__init__.py:367
-msgid "-- Default (unrestricted) --"
-msgstr "-- Voreinstellungen (Unbeschränkt) --"
-
 #: umc/python/internetrules/__init__.py:221
 #, python-format
 msgid "A rule with the same name does already exist: %s"

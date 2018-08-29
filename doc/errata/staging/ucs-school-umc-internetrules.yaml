@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-umc-internetrules
+fix: 
+desc: |
+ * Changed description in case no rule is set to distinguish that better from the default rule (Bug #47386).
+bug: [47386]

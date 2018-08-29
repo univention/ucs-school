@@ -1,3 +1,10 @@
+ucs-school-umc-internetrules (14.0.0-2) unstable; urgency=medium
+
+  * Bug #47386: Changed description in case no rule is set to distinguish
+    that better from the default rule.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 29 Aug 2018 12:08:46 +0200
+
 ucs-school-umc-internetrules (14.0.0-1) unstable; urgency=medium
 
   * Bug #45988: bumped version

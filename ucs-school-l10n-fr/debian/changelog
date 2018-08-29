@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (3.0.0-2) unstable; urgency=medium
+
+  * Bug #47386: update translation
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 29 Aug 2018 12:27:26 +0200
+
 ucs-school-l10n-fr (3.0.0-1) unstable; urgency=medium
 
   * Bug #45988: bumped version

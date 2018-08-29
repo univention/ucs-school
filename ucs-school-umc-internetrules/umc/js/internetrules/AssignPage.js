@@ -93,7 +93,13 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 			}, {
 				name: 'rule',
 				label: _('Associated rule'),
-				width: '50%'
+				width: '50%',
+				formatter: function(ruleName) {
+					if (ruleName === '$default$') {
+						return  _('-- None (unrestricted/no WLAN) --');
+					}
+					return ruleName;
+				}
 			}];
 
 			// generate the data grid
@@ -185,7 +191,7 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 				label: _('Internet rule'),
 				staticValues: [{
 					id: '$default$',
-					label: _('-- Default (unrestricted) --')
+					label: _('-- None (unrestricted/no WLAN) --')
 				}],
 				dynamicValues: function() {
 					// query rules mapped to id-label dicts

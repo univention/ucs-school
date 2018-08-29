@@ -5,16 +5,16 @@ msgstr ""
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2017-03-28 11:16+0200\n"
 "PO-Revision-Date: \n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Last-Translator: Univention <packages@univention.de>\n"
+"Language-Team: German <packages@univention.de>\n"
+"Language: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: umc/js/internetrules/AssignPage.js:189
-msgid "-- Default (unrestricted) --"
-msgstr "-- Voreinstellungen (Unbeschränkt) --"
+msgid "-- None (unrestricted/no WLAN) --"
+msgstr "-- Keine (Unbeschränkt/kein WLAN) --"
 
 #: umc/js/internetrules/DetailPage.js:119
 msgid "0 (low)"

@@ -49,9 +49,9 @@ class Check(object):
 				'pattern': groupName
 			}
 			if ruleName is None:
-				ruleName = ['-- Default (unrestricted) --', '-- Voreinstellungen (Unbeschränkt) --']
+				ruleName = '$default$'
 			result = self.client.umc_command('internetrules/groups/query', param).result[0]['rule']
-			if result not in ruleName:
+			if result != ruleName:
 				utils.fail(
 					'Assigned rule (%r) to workgroup (%r) doesn\'t match' %
 					(ruleName, groupName))

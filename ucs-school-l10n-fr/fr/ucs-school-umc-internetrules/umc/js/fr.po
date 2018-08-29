@@ -17,8 +17,8 @@ msgstr ""
 "X-Generator: Lokalize 2.0\n"
 
 #: umc/js/internetrules/AssignPage.js:188
-msgid "-- Default (unrestricted) --"
-msgstr "-- Par défaut (sans restriction) --"
+msgid "-- None (unrestricted/no WLAN) --"
+msgstr "-- Aucun (sans restriction/sans WLAN) --"
 
 #: umc/js/internetrules/DetailPage.js:116
 msgid "0 (low)"
