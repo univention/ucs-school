@@ -5,6 +5,6 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-lib
 fix: 11.0.1-19A~4.3.0.201808161056
 desc: |
- * Internal enhancements to the PyHooks loader (Bug #45715).
+ * Internal enhancements to the PyHooks loader (Bug #45715, #47221).
  * Do not log passwords anymore (Bug #44314).
-bug: [45715, 44314]
+bug: [44314,45715,47221]
