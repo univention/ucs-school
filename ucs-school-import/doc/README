@@ -1,0 +1,5 @@
+Generate sequence diagrams via plantuml (http://plantuml.com).
+
+plantuml is licensed under GPL3.
+
+Simply call "make" in this directory, to update the png/svg files.
