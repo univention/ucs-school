@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Configuration classes.
-"""
+#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,10 +29,12 @@ Configuration classes.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Configuration classes.
+"""
 
 import json
-
-from ucsschool.lib.models.utils import ucr
+from six import string_types
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
 
@@ -118,7 +118,7 @@ class ReadOnlyDict(dict):
 					a[k] = v
 				else:
 					t = type(v)
-					if isinstance(t, basestring) and a.get(k):
+					if isinstance(t, string_types) and a.get(k):
 						t = type(a[k])
 					a[k] = t(v)
 		return a
@@ -129,11 +129,11 @@ class ReadOnlyDict(dict):
 			self._recursive_typed_update(self, F)
 
 	@staticmethod
-	def __closed(self, *args, **kwargs):
+	def __closed(*args, **kwargs):
 		raise ReadOnlyConfiguration()
 
 	def close(self):
-		self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed
+		self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed  # noqa
 
 
 class Configuration(object):
