@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-68) unstable; urgency=low
+
+  * Bug #47447: fix username uniqueness test
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 31 Aug 2018 16:44:09 +0200
+
 ucs-school-import (15.0.3-67) unstable; urgency=low
 
   * Bug #47682: create different user on each DC backup
@@ -18,7 +24,7 @@ ucs-school-import (15.0.3-64) unstable; urgency=low
   * use ucsschool.lib exception instead of uldap exception
   * add support for a dry-run mode in pyhooks
   * don't reload user from LDAP after a dry-run create
-  * Bug #47204: add read-only cn=admin connection 
+  * Bug #47204: add read-only cn=admin connection
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 31 Jul 2018 08:26:11 +0200
 
