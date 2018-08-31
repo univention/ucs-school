@@ -62,6 +62,7 @@ from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
 FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
+UsernameUniquenessTuple = namedtuple('UsernameUniquenessTuple', ['record_uid', 'source_uid', 'dn'])
 
 
 class ImportUser(User):
@@ -271,8 +272,9 @@ class ImportUser(User):
 		old_dn = self.old_dn
 		res = super(ImportUser, self).change_school(school, lo)
 		if res:
-			# rewrite self._unique_ids, replacing old DN with new DN
+			# rewrite _unique_ids and _all_usernames, replacing old DN with new DN
 			self._unique_ids_replace_dn(old_dn, self.dn)
+			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
 		return res
 
 	@classmethod
@@ -316,9 +318,11 @@ class ImportUser(User):
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running create() from within a hook.")
-			return self.create_without_hooks(lo, validate)
+			res = self.create_without_hooks(lo, validate)
 		else:
-			return super(ImportUser, self).create(lo, validate)
+			res = super(ImportUser, self).create(lo, validate)
+		self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
+		return res
 
 	@classmethod
 	def get_ldap_filter_for_user_role(cls):
@@ -848,9 +852,13 @@ class ImportUser(User):
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running modify() from within a hook.")
-			return self.modify_without_hooks(lo, validate, move_if_necessary)
+			res = self.modify_without_hooks(lo, validate, move_if_necessary)
 		else:
-			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
+			res = super(ImportUser, self).modify(lo, validate, move_if_necessary)
+		if self.old_user and self.old_user.name != self.name:
+			del self._all_usernames[self.old_user.name]
+			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
+		return res
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		if not self.school_classes:
@@ -914,11 +922,36 @@ class ImportUser(User):
 
 	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
 		"""
-		Run self-tests.
+		Runs self-tests in the following order:
+
+		* check existence of mandatory_attributes
+		* check uniqueness of record_uid in this import job
+		* check uniqueness of username in this import job
+		* check uniqueness of email (mailPrimaryAddress) in this import job
+		* check that username is not empty
+		* check maximum username length
+		* check minimum password_length
+		* check email has valid format
+		* check birthday has valid format
+		* check school_classes is a dict
+		* check schools is a list
+		* check format of entries in school_classes
+		* check existence of schools in school and schools
+		* check that a username is not already in use by another user
 
 		:param lo: LDAP connection object
 		:param bool validate_unlikely_changes: whether to create messages in self.warnings for changes to certain attributes
 		:param bool check_username: if username and password checks should run
+		:return None
+		:raises MissingMandatoryAttribute
+		:raises UniqueIdError
+		:raises NoUsername
+		:raises UsernameToLong
+		:raises BadPassword
+		:raises InvalidEmail
+		:raises InvalidBirthday
+		:raises InvalidSchoolClasses
+		:raises InvalidSchools
 		"""
 		super(ImportUser, self).validate(lo, validate_unlikely_changes)
 
@@ -1000,15 +1033,24 @@ class ImportUser(User):
 			# its faster to filter out computer names in Python that in LDAP
 			# (and we have to loop over the query result anyway)
 			self.__class__._all_usernames = dict(
-				(attr['uid'][0], dn)
-				for dn, attr in lo.search('objectClass=posixAccount', attr=['uid'])
+				(
+					attr['uid'][0],
+					UsernameUniquenessTuple(
+						attr.get('ucsschoolRecordUID', [None])[0],
+						attr.get('ucsschoolSourceUID', [None])[0],
+						dn
+					)
+				)
+				for dn, attr in lo.search(
+					'objectClass=posixAccount',
+					attr=['uid', 'ucsschoolRecordUID', 'ucsschoolSourceUID']
+				)
 				if not attr['uid'][0].endswith('$')
 			)
-		if check_username and self.name in self._all_usernames and self._all_usernames[self.name] != self.dn:
-			self.add_error(
-				'name',
-				'Username {!r} is already in use by {!r}.'.format(self.name, self._all_usernames[self.name])
-			)
+		un = self._all_usernames.get(self.name)
+		if un and (un.record_uid != self.record_uid or un.source_uid != self.source_uid):
+			raise UniqueIdError('Username {!r} is already in use by {!r} (source_uid: {!r}, record_uid: {!r}).'.format(
+				self.name, un.dn, un.source_uid, un.record_uid))
 
 	def set_purge_timestamp(self, ts):
 		self._purge_ts = ts
