@@ -38,6 +38,9 @@ from ucsschool.importer.exceptions import LDAPWriteAccessDenied, UcsSchoolImport
 
 try:
 	from typing import Tuple
+	LoType = univention.admin.uldap.access
+	PoType = univention.admin.uldap.position
+	UdmObjectType = univention.admin.handlers.simpleLdap
 except ImportError:
 	pass
 
@@ -51,7 +54,7 @@ _read_only_admin_connection = None
 _read_only_admin_position = None
 
 
-def get_admin_connection():  # type () -> (Tuple[univention.admin.uldap.access, univention.admin.uldap.position])
+def get_admin_connection():  # type () -> (Tuple[LoType, PoType])
 	"""
 	Read-write cn=admin connection.
 
@@ -66,7 +69,7 @@ def get_admin_connection():  # type () -> (Tuple[univention.admin.uldap.access, 
 	return _admin_connection, _admin_position
 
 
-def get_machine_connection():  # type () -> (Tuple[univention.admin.uldap.access, univention.admin.uldap.position])
+def get_machine_connection():  # type () -> (Tuple[LoType, PoType])
 	"""
 	Read-write machine connection.
 
@@ -78,7 +81,7 @@ def get_machine_connection():  # type () -> (Tuple[univention.admin.uldap.access
 	return _machine_connection, _machine_position
 
 
-def get_unprivileged_connection():  # type () -> (Tuple[univention.admin.uldap.access, univention.admin.uldap.position])
+def get_unprivileged_connection():  # type () -> (Tuple[LoType, PoType])
 	"""
 	Unprivileged read-write connection.
 
@@ -123,7 +126,7 @@ class ReadOnlyAccess(uldap.access):
 		raise LDAPWriteAccessDenied()
 
 
-def get_readonly_connection():  # type () -> (Tuple[univention.admin.uldap.access, univention.admin.uldap.position])
+def get_readonly_connection():  # type () -> (Tuple[LoType, PoType])
 	"""
 	Read-only cn=admin connection.
 

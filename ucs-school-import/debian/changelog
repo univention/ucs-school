@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-41) unstable; urgency=low
+
+  * Bug #47447: fix username uniqueness test
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 31 Aug 2018 16:44:09 +0200
+
 ucs-school-import (16.0.2-40) unstable; urgency=low
 
   * Bug #47221: add new PostReadPyHook method all_entries_read()

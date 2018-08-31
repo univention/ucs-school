@@ -61,6 +61,13 @@ from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_r
 from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
+try:
+	from typing import Any, AnyStr, Dict, Iterable, List, Optional, Union
+	from ucsschool.importer.utils.ldap_connection import LoType, UdmObjectType
+except ImportError:
+	pass
+
+
 FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
 UsernameUniquenessTuple = namedtuple('UsernameUniquenessTuple', ['record_uid', 'source_uid', 'dn'])
 
@@ -119,7 +126,7 @@ class ImportUser(User):
 		'ucsschool_roles': 'make_ucsschool_roles',
 	}
 
-	def __init__(self, name=None, school=None, **kwargs):
+	def __init__(self, name=None, school=None, **kwargs):  # type: (AnyStr, AnyStr, **AnyStr) -> None
 		"""
 		Create ImportUser object (neither saved nor loaded from LDAP yet).
 		The `dn` attribute is calculated.
@@ -162,7 +169,7 @@ class ImportUser(User):
 		self.lo = kwargs.pop('lo', None)
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
-	def build_hook_line(self, hook_time, func_name):
+	def build_hook_line(self, hook_time, func_name):  # type: (AnyStr, AnyStr) -> int
 		"""
 		Recreate original input data for hook creation.
 
@@ -177,7 +184,7 @@ class ImportUser(User):
 		"""
 		return self._build_hook_line(*self.input_data)
 
-	def call_hooks(self, hook_time, func_name):
+	def call_hooks(self, hook_time, func_name):  # type: (AnyStr, AnyStr) -> bool
 		"""
 		Runs PyHooks, then ucs-school-libs fork hooks.
 
@@ -220,7 +227,7 @@ class ImportUser(User):
 			self.in_hook = False
 
 		if self.config['dry_run']:
-			return None
+			return True
 		else:
 			try:
 				self.hook_path = self.config['hooks_dir_legacy']
@@ -228,7 +235,7 @@ class ImportUser(User):
 				pass
 			return super(ImportUser, self).call_hooks(hook_time, func_name)
 
-	def call_format_hook(self, prop_name, fields):
+	def call_format_hook(self, prop_name, fields):  # type: (AnyStr, Dict[AnyStr, Any]) -> Dict[AnyStr, Any]
 		"""
 		Run format hooks.
 
@@ -254,7 +261,7 @@ class ImportUser(User):
 			res = func(prop_name, res)
 		return res
 
-	def change_school(self, school, lo):
+	def change_school(self, school, lo):  # type: (AnyStr, LoType) -> bool
 		"""
 		Change primary school of user.
 
@@ -278,14 +285,14 @@ class ImportUser(User):
 		return res
 
 	@classmethod
-	def _unique_ids_replace_dn(cls, old_dn, new_dn):
+	def _unique_ids_replace_dn(cls, old_dn, new_dn):  # type: (AnyStr, AnyStr) -> None
 		"""Change a DN in unique_ids store."""
 		for category, entries in cls._unique_ids.items():
 			for value, dn in entries.items():
 				if dn == old_dn:
 					cls._unique_ids[category][value] = new_dn
 
-	def check_schools(self, lo, additional_schools=None):
+	def check_schools(self, lo, additional_schools=None):  # type: (LoType, Optional[Iterable[AnyStr]]) -> None
 		"""
 		Verify that the "school" and "schools" attributes are correct.
 		Check is case sensitive (Bug #42456).
@@ -305,7 +312,7 @@ class ImportUser(User):
 			if school not in self.get_all_school_names(lo):
 				raise UnknownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
-	def create(self, lo, validate=True):
+	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
 		"""
 		Create user object.
 
@@ -325,7 +332,7 @@ class ImportUser(User):
 		return res
 
 	@classmethod
-	def get_ldap_filter_for_user_role(cls):
+	def get_ldap_filter_for_user_role(cls):  # type: () -> AnyStr
 		if not cls.factory:
 			cls.factory = Factory()
 		if not cls.config:
@@ -344,6 +351,7 @@ class ImportUser(User):
 
 	@classmethod
 	def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
+		# type: (LoType, AnyStr, AnyStr, Optional[AnyStr]) -> ImportUser
 		"""
 		Retrieve an ImportUser.
 
@@ -374,13 +382,13 @@ class ImportUser(User):
 				raise NoObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
 					cls.config.get("user_role", "user") or "User", source_uid, record_uid))
 
-	def deactivate(self):
+	def deactivate(self):  # type: () -> None
 		"""
 		Deactivate user account. Caller must run modify().
 		"""
 		self.disabled = "1"
 
-	def expire(self, expiry):
+	def expire(self, expiry):  # type: () -> None
 		"""
 		Set the account expiration date. Caller must run modify().
 
@@ -389,7 +397,7 @@ class ImportUser(User):
 		self._userexpiry = expiry
 
 	@classmethod
-	def from_dict(cls, a_dict):
+	def from_dict(cls, a_dict):  # type: (Dict[AnyStr, Any]) -> ImportUser
 		"""
 		Create user object from a dictionary created by `to_dict()`.
 
@@ -410,7 +418,7 @@ class ImportUser(User):
 			cls.factory = Factory()
 		return cls.factory.make_import_user(roles, **user_dict)
 
-	def _alter_udm_obj(self, udm_obj):
+	def _alter_udm_obj(self, udm_obj):  # type: (UdmObjectType) -> None
 		self._prevent_mapped_attributes_in_udm_properties()
 		super(ImportUser, self)._alter_udm_obj(udm_obj)
 		if self._userexpiry is not None:
@@ -445,12 +453,12 @@ class ImportUser(User):
 				)
 
 	@classmethod
-	def get_all_school_names(cls, lo):
+	def get_all_school_names(cls, lo):  # type: (LoType) -> Iterable[AnyStr]
 		if not cls._all_school_names:
 			cls._all_school_names = [s.name for s in School.get_all(lo)]
 		return cls._all_school_names
 
-	def has_purge_timestamp(self, connection):
+	def has_purge_timestamp(self, connection):  # type: (LoType) -> bool
 		"""
 		Check if the user account has a purge timestamp set (regardless if it is
 		in the future or past).
@@ -462,7 +470,7 @@ class ImportUser(User):
 		user_udm = self.get_udm_object(connection)
 		return bool(user_udm["ucsschoolPurgeTimestamp"])
 
-	def has_expired(self, connection):
+	def has_expired(self, connection):  # type: (LoType) -> bool
 		"""
 		Check if the user account has expired.
 
@@ -476,7 +484,7 @@ class ImportUser(User):
 		expiry = datetime.datetime.strptime(user_udm["userexpiry"], "%Y-%m-%d")
 		return datetime.datetime.now() > expiry
 
-	def has_expiry(self, connection):
+	def has_expiry(self, connection):  # type: (LoType) -> bool
 		"""
 		Check if the user account has an expiry date set (regardless if it is
 		in the future or past).
@@ -489,7 +497,7 @@ class ImportUser(User):
 		return bool(user_udm["userexpiry"])
 
 	@property
-	def lo(self):
+	def lo(self):  # type: () -> LoType
 		"""
 		LDAP connection object
 
@@ -501,12 +509,12 @@ class ImportUser(User):
 		return self._lo
 
 	@lo.setter
-	def lo(self, value):
+	def lo(self, value):  # type: (LoType) -> None
 		cn_admin_dn = 'cn=admin,{}'.format(self.ucr['ldap/base'])
-		assert not (self.config['dry_run'] and value == cn_admin_dn)
+		assert not (self.config['dry_run'] and value == cn_admin_dn)  # TODO: 1. compare with lo.lo.binddn, 2. don't use assert, raise an exception
 		self._lo = value
 
-	def prepare_all(self, new_user=False):
+	def prepare_all(self, new_user=False):  # type: (Optional[bool]) -> None
 		"""
 		Necessary preparation to modify a user in UCS.
 		Runs all make_* functions.
@@ -518,7 +526,7 @@ class ImportUser(User):
 		self.prepare_udm_properties()
 		self.prepare_attributes(new_user)
 
-	def prepare_attributes(self, new_user=False):
+	def prepare_attributes(self, new_user=False):  # type: (Optional[bool]) -> None
 		"""
 		Run make_* functions for all Attributes of ucsschool.lib.models.user.User.
 
@@ -542,7 +550,7 @@ class ImportUser(User):
 		self.make_disabled()
 		self.make_email()
 
-	def prepare_udm_properties(self):
+	def prepare_udm_properties(self):  # type: () -> None
 		"""
 		Create self.udm_properties from schemes configured in config["scheme"].
 		Existing entries will be overwritten unless listed in UCRV
@@ -557,7 +565,7 @@ class ImportUser(User):
 		for prop in [k for k in self.config["scheme"].keys() if k not in ignore_keys]:
 			self.make_udm_property(prop)
 
-	def prepare_uids(self):
+	def prepare_uids(self):  # type: () -> None
 		"""
 		Necessary preparation to detect if user exists in UCS.
 		Runs make_* functions for record_uid and source_uid Attributes of
@@ -566,7 +574,7 @@ class ImportUser(User):
 		self.make_recordUID()
 		self.make_sourceUID()
 
-	def make_birthday(self):
+	def make_birthday(self):  # type: () -> AnyStr
 		"""
 		Set User.birthday attribute.
 		"""
@@ -580,7 +588,7 @@ class ImportUser(User):
 			self.birthday = None
 		return self.birthday
 
-	def make_classes(self):
+	def make_classes(self):  # type: () -> Dict[AnyStr, Dict[AnyStr, List[AnyStr]]]
 		"""
 		Create school classes.
 
@@ -619,7 +627,7 @@ class ImportUser(User):
 			self.school_classes = self.old_user.school_classes
 		return self.school_classes
 
-	def make_disabled(self):
+	def make_disabled(self):  # type: () -> AnyStr
 		"""
 		Set User.disabled attribute.
 		"""
@@ -640,7 +648,7 @@ class ImportUser(User):
 		self.disabled = "0" if activate else "1"
 		return self.disabled
 
-	def make_firstname(self):
+	def make_firstname(self):  # type: () -> AnyStr
 		"""
 		Normalize given name if set from import data or create from scheme.
 		"""
@@ -653,7 +661,7 @@ class ImportUser(User):
 			self.firstname = self.old_user.firstname
 		return self.firstname or ""
 
-	def make_lastname(self):
+	def make_lastname(self):  # type: () -> AnyStr
 		"""
 		Normalize family name if set from import data or create from scheme.
 		"""
@@ -666,7 +674,7 @@ class ImportUser(User):
 			self.lastname = self.old_user.lastname
 		return self.lastname or ""
 
-	def make_email(self):
+	def make_email(self):  # type: () -> AnyStr
 		"""
 		Create email from scheme (if not already set).
 
@@ -702,7 +710,7 @@ class ImportUser(User):
 			self.email = self.old_user.email
 		return self.email or ""
 
-	def make_password(self):
+	def make_password(self):  # type: () -> AnyStr
 		"""
 		Create random password (if not already set).
 		"""
@@ -710,7 +718,7 @@ class ImportUser(User):
 			self.password = create_passwd(self.config["password_length"])
 		return self.password
 
-	def make_recordUID(self):
+	def make_recordUID(self):  # type: () -> AnyStr
 		"""
 		Create ucsschoolRecordUID (recordUID) (if not already set).
 		"""
@@ -722,7 +730,7 @@ class ImportUser(User):
 			self.record_uid = self.old_user.record_uid
 		return self.record_uid or ""
 
-	def make_sourceUID(self):
+	def make_sourceUID(self):  # type: () -> AnyStr
 		"""
 		Set the ucsschoolSourceUID (sourceUID) (if not already set).
 		"""
@@ -734,7 +742,7 @@ class ImportUser(User):
 			self.source_uid = self.config["sourceUID"]
 		return self.source_uid or ""
 
-	def make_school(self):
+	def make_school(self):  # type: () -> AnyStr
 		"""
 		Create 'school' attribute - the position of the object in LDAP (if not already set).
 
@@ -760,7 +768,7 @@ class ImportUser(User):
 				import_user=self)
 		return self.school
 
-	def make_schools(self):
+	def make_schools(self):  # type: () -> List[AnyStr]
 		"""
 		Create list of schools this user is in.
 		If possible, this should run after make_school()
@@ -789,7 +797,7 @@ class ImportUser(User):
 				self.school = sorted(self.schools)[0]
 		return self.schools
 
-	def make_ucsschool_roles(self):
+	def make_ucsschool_roles(self):  # type: () -> List[AnyStr]
 		if self.ucsschool_roles:
 			return self.ucsschool_roles
 		if not self.schools:
@@ -800,7 +808,7 @@ class ImportUser(User):
 		]
 		return self.ucsschool_roles
 
-	def make_udm_property(self, property_name):
+	def make_udm_property(self, property_name):  # type: (AnyStr) -> Union[AnyStr, None]
 		"""
 		Create property `property_name` if not already set in
 		`self.udm_properties["username"]` or create it from scheme.
@@ -822,7 +830,7 @@ class ImportUser(User):
 			)
 		return self.udm_properties.get(property_name)
 
-	def make_username(self):
+	def make_username(self):  # type: () -> AnyStr
 		"""
 		Create username if not already set in self.name or self.udm_properties["username"].
 		[ALWAYSCOUNTER] and [COUNTER2] are supported, but only one may be used
@@ -848,6 +856,7 @@ class ImportUser(User):
 		return self.name or ""
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
+		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		self.lo = lo
 		if self.in_hook:
 			# prevent recursion
@@ -861,6 +870,7 @@ class ImportUser(User):
 		return res
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
@@ -869,12 +879,13 @@ class ImportUser(User):
 		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
+		# type: (LoType, Optional[UdmObjectType], Optional[bool]) -> bool
 		self.lo = lo
 		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
 
 	@classmethod
-	def normalize(cls, s):
+	def normalize(cls, s):  # type: (AnyStr) -> AnyStr
 		"""
 		Normalize string (german umlauts etc)
 
@@ -886,7 +897,7 @@ class ImportUser(User):
 			s = cls.prop._replace("<:umlauts>{}".format(s), {})
 		return s
 
-	def normalize_udm_properties(self):
+	def normalize_udm_properties(self):  # type: () -> None
 		"""
 		Normalize data in `self.udm_properties`.
 		"""
@@ -905,7 +916,7 @@ class ImportUser(User):
 		for k, v in self.udm_properties.items():
 			self.udm_properties[k] = normalize_recursive(v)
 
-	def reactivate(self):
+	def reactivate(self):  # type: () -> None
 		"""
 		Reactivate a deactivated user account, reset the account expiry
 		setting and purge timestamp. Run this only on existing users fetched
@@ -916,11 +927,12 @@ class ImportUser(User):
 		self.disabled = "0"
 		self.set_purge_timestamp("")
 
-	def remove(self, lo):
+	def remove(self, lo):  # type: (LoType) -> bool
 		self.lo = lo
 		return super(ImportUser, self).remove(lo)
 
 	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
+		# type: (LoType, Optional[bool], Optional[bool]) -> None
 		"""
 		Runs self-tests in the following order:
 
@@ -1052,11 +1064,11 @@ class ImportUser(User):
 			raise UniqueIdError('Username {!r} is already in use by {!r} (source_uid: {!r}, record_uid: {!r}).'.format(
 				self.name, un.dn, un.source_uid, un.record_uid))
 
-	def set_purge_timestamp(self, ts):
+	def set_purge_timestamp(self, ts):  # type: (AnyStr) -> None
 		self._purge_ts = ts
 
 	@property
-	def role_sting(self):
+	def role_sting(self):  # type: () -> AnyStr
 		"""
 		Mapping from self.roles to string used in configuration.
 
@@ -1074,7 +1086,7 @@ class ImportUser(User):
 			return "staff"
 
 	@property
-	def school_classes_as_str(self):
+	def school_classes_as_str(self):  # type: () -> AnyStr
 		"""
 		Create a string representation of the `school_classes` attribute.
 
@@ -1084,7 +1096,7 @@ class ImportUser(User):
 		return ','.join(','.join(sc) for sc in self.school_classes.values())
 
 	@property
-	def username_scheme(self):
+	def username_scheme(self):  # type: () -> AnyStr
 		"""
 		Fetch scheme for username for role.
 
@@ -1102,7 +1114,7 @@ class ImportUser(User):
 		# force transcription of german umlauts
 		return "<:umlauts>{}".format(scheme)
 
-	def solve_format_dependencies(self, prop_to_format, scheme, **kwargs):
+	def solve_format_dependencies(self, prop_to_format, scheme, **kwargs):  # type: (AnyStr, AnyStr, **AnyStr) -> None
 		"""
 		Call make_*() methods required to create values for <properties> used
 		in scheme.
@@ -1156,7 +1168,7 @@ class ImportUser(User):
 			getattr(self, method_sig.name)(*method_sig.args, **method_sig.kwargs)
 		self._used_methods.pop(prop_to_format, None)
 
-	def format_from_scheme(self, prop_name, scheme, **kwargs):
+	def format_from_scheme(self, prop_name, scheme, **kwargs):  # type: (AnyStr, AnyStr, **AnyStr) -> AnyStr
 		"""
 		Format property with scheme for current import_user.
 		* Uses the replacement code from users:templates.
@@ -1193,7 +1205,7 @@ class ImportUser(User):
 		return res
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
+	def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObjectType, AnyStr) -> Union[None, ImportUser]
 		"""
 		IMPLEMENTME if you subclass!
 		"""
@@ -1209,12 +1221,13 @@ class ImportUser(User):
 		else:
 			return None
 
+	def get_school_class_objs(self):  # type: () -> List[School]
 		if isinstance(self.school_classes, string_types):
 			# school_classes was set from input data
 			self.make_classes()
 		return super(ImportUser, self).get_school_class_objs()
 
-	def _prevent_mapped_attributes_in_udm_properties(self):
+	def _prevent_mapped_attributes_in_udm_properties(self):  # type: () -> None
 		"""
 		Make sure users do not store values for ucsschool.lib mapped Attributes
 		in udm_properties.
@@ -1234,19 +1247,19 @@ class ImportUser(User):
 				"UDM property 'e-mail' is used for storing contact information. The users mailbox address is stored in "
 				"the 'email' attribute of the {} object (not in udm_properties).".format(self.__class__.__name__))
 
-	def _schema_write_check(self, scheme_attr, ucsschool_attr, ldap_attr):
+	def _schema_write_check(self, scheme_attr, ucsschool_attr, ldap_attr):  # type: (AnyStr, AnyStr, AnyStr) -> bool
 		return (
 				scheme_attr in self.config["scheme"] and
 				(not getattr(self.old_user, ucsschool_attr, None) or ldap_attr not in self.no_overwrite_attributes)
 		)
 
-	def to_dict(self):
+	def to_dict(self):  # type: () -> Dict[AnyStr, Any]
 		res = super(ImportUser, self).to_dict()
 		for attr in self._additional_props:
 			res[attr] = getattr(self, attr)
 		return res
 
-	def update(self, other):
+	def update(self, other):  # type: (ImportUser) -> None
 		"""
 		Copy attributes of other ImportUser into this one.
 
@@ -1261,14 +1274,14 @@ class ImportUser(User):
 			setattr(self, k, v)
 
 	@property
-	def _default_username_max_length(self):
+	def _default_username_max_length(self):  # type: () -> int
 		try:
 			return self.config['username']['max_length']['default']
 		except KeyError:
 			return 20
 
 	@property
-	def username_max_length(self):
+	def username_max_length(self):  # type: () -> int
 		try:
 			res = self.config['username']['max_length'][self.role_sting]
 		except KeyError:
@@ -1284,7 +1297,7 @@ class ImportStudent(ImportUser, Student):
 	default_username_max_length = 15  # may be lowered in __init__()
 
 	@property
-	def _default_username_max_length(self):
+	def _default_username_max_length(self):  # type: () -> int
 		res = super(ImportStudent, self)._default_username_max_length
 		return min(res, 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")))
 
