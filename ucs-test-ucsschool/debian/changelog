@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-87) unstable; urgency=low
+
+  * Bug #45715: add test for "username not in use"
+  * move univention.testing modules into "modules" subfolder
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 31 Aug 2018 16:12:04 +0200
+
 ucs-test-ucsschool (5.0.2-86) unstable; urgency=low
 
   * Bug #47221: update test due to API extensions in PostReadPyHook
