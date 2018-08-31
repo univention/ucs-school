@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-88) unstable; urgency=low
+
+  * Bug #45715: handle ImportError while ucs-test from 4.3-1errata is not in
+    4.3-2
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 31 Aug 2018 16:59:36 +0200
+
 ucs-test-ucsschool (5.0.2-87) unstable; urgency=low
 
   * Bug #45715: add test for "username not in use"

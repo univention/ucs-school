@@ -27,7 +27,12 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 import univention.testing.format.text
-from univention.testing.ucs_samba import DRSReplicationFailed, wait_for_drs_replication
+from univention.testing.ucs_samba import wait_for_drs_replication
+try:
+	from univention.testing.ucs_samba import DRSReplicationFailed
+except ImportError:
+	DRSReplicationFailed = Exception
+
 
 try:
 	from typing import Dict, List, Optional, Set, Tuple
