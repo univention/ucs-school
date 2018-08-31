@@ -31,7 +31,6 @@ Representation of a user read from a file.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import traceback
 import re
 import datetime
 from collections import defaultdict, namedtuple
@@ -42,7 +41,7 @@ from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
-from ucsschool.lib.models.attributes import RecordUID, SourceUID
+from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
 from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
@@ -50,7 +49,8 @@ from ucsschool.importer.exceptions import (
 	BadPassword, EmptyFormatResultError, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
 	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
-	UDMError, UDMValueError, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UnkownSchoolName, UsernameToLong
+	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
+	UserValidationError
 )
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
@@ -112,8 +112,8 @@ class ImportUser(User):
 		'source_uid': 'make_sourceUID',
 		'sourceUID': 'make_sourceUID',
 		'school': 'make_school',
-		'username': 'make_username',
 		'name': 'make_username',
+		'username': 'make_username',
 	}
 
 	def __init__(self, name=None, school=None, **kwargs):
@@ -262,6 +262,10 @@ class ImportUser(User):
 		"""
 		self.check_schools(lo, additional_schools=[school])
 		self.validate(lo, validate_unlikely_changes=True, check_username=False)
+		if self.errors:
+			raise UserValidationError(
+				'ValidationError when moving {} from {!r} to {!r}.'.format(self, self.school, school),
+				validation_error=ValidationError(self.errors.copy()))
 		old_dn = self.old_dn
 		res = super(ImportUser, self).change_school(school, lo)
 		if res:
@@ -287,7 +291,7 @@ class ImportUser(User):
 		:type additional_schools: list(str)
 		:return: None
 		:rtype: None
-		:raises UnkownSchoolName: if a school is not known
+		:raises UnknownSchoolName: if a school is not known
 		"""
 		schools = set(self.schools)
 		schools.add(self.school)
@@ -295,7 +299,7 @@ class ImportUser(User):
 			schools.update(additional_schools)
 		for school in schools:
 			if school not in self.get_all_school_names(lo):
-				raise UnkownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
+				raise UnknownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
 	def create(self, lo, validate=True):
 		"""
@@ -413,23 +417,23 @@ class ImportUser(User):
 				udm_obj[property_] = value
 			except (KeyError, noProperty) as exc:
 				raise UnknownProperty(
-					"UDM property '{}' could not be set: {}".format(property_, exc),
+					"UDM property '{}' could not be set. {}: {}".format(property_, exc.__class__.__name__, exc),
 					entry_count=self.entry_count,
 					import_user=self
 				)
 			except (valueError, valueInvalidSyntax) as exc:
 				raise UDMValueError(
-					"UDM property '{}' could not be set: {}".format(property_, exc),
+					"UDM property '{}' could not be set. {}: {}".format(property_, exc.__class__.__name__, exc),
 					entry_count=self.entry_count,
 					import_user=self
 				)
 			except Exception as exc:
-				self.logger.error(
-					"Unexpected exception caught: UDM property %r could not be set for user %r in import line %r: exception: %s\n%s",
-					property_, self.name, self.entry_count, exc, traceback.format_exc()
+				self.logger.exception(
+					"Unexpected exception caught: UDM property %r could not be set for user %r in import line %r: %s.",
+					property_, self.name, self.entry_count, exc
 				)
 				raise UDMError(
-					"UDM property {!r} could not be set: {}".format(property_, exc),
+					"UDM property {!r} could not be set. {}: {}".format(property_, exc.__class__.__name__, exc),
 					entry_count=self.entry_count,
 					import_user=self
 				)
@@ -620,7 +624,7 @@ class ImportUser(User):
 			try:
 				activate = self.config["activate_new_users"]["default"]
 			except KeyError:
-				raise UnkownDisabledSetting(
+				raise UnknownDisabledSetting(
 					"Cannot find 'disabled' ('activate_new_users') setting for role '{}' or 'default'.".format(
 						self.role_sting),
 					self.entry_count,
@@ -633,7 +637,8 @@ class ImportUser(User):
 		Normalize given name if set from import data or create from scheme.
 		"""
 		if self.firstname:
-			self.firstname = self.normalize(self.firstname)
+			if self.config.get('normalize', {}).get('firstname', True):
+				self.firstname = self.normalize(self.firstname)
 		elif self._schema_write_check("firstname", "firstname", "givenName"):
 			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
 		elif self.old_user:
@@ -645,7 +650,8 @@ class ImportUser(User):
 		Normalize family name if set from import data or create from scheme.
 		"""
 		if self.lastname:
-			self.lastname = self.normalize(self.lastname)
+			if self.config.get('normalize', {}).get('lastname', True):
+				self.lastname = self.normalize(self.lastname)
 		elif self._schema_write_check("lastname", "lastname", "sn"):
 			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
 		elif self.old_user:
@@ -755,14 +761,14 @@ class ImportUser(User):
 		* If it is a string like 'school1,school2,school3' the attribute is created from it.
 		"""
 		if self.schools and isinstance(self.schools, list):
-			pass
+			self.schools = list(set(self.schools))
 		elif not self.schools:
 			if not self.school:
 				self.make_school()
 			self.schools = [self.school]
 		elif isinstance(self.schools, basestring):
 			self.schools = self.schools.strip(",").split(",")
-			self.schools = sorted([self.normalize(s.strip()) for s in self.schools])
+			self.schools = sorted(set(self.normalize(s.strip()) for s in self.schools))
 		else:
 			raise RuntimeError("Unknown data in attribute 'schools': '{}'".format(self.schools))
 
@@ -822,7 +828,7 @@ class ImportUser(User):
 			self.name = self.old_user.name
 		return self.name or ""
 
-	def modify(self, lo, validate=True, move_if_necessary=None, scheduled_for_deletion=False):
+	def modify(self, lo, validate=True, move_if_necessary=None):
 		self.lo = lo
 		if self.in_hook:
 			# prevent recursion
@@ -882,6 +888,7 @@ class ImportUser(User):
 		setting and purge timestamp. Run this only on existing users fetched
 		from LDAP.
 		"""
+		self.logger.info('Reactivating %s...', self)
 		self.expire("")
 		self.disabled = "none"
 		self.set_purge_timestamp("")
@@ -1051,10 +1058,12 @@ class ImportUser(User):
 		no_brackets = scheme
 		props_used_in_scheme = [x[0] for x in self._prop_regex.findall(no_brackets) if x[0]]
 		for prop_used_in_scheme in props_used_in_scheme:
-			if (hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
-				self.udm_properties.get(prop_used_in_scheme) or
-				prop_used_in_scheme in kwargs or
-				prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))):
+			if (
+					hasattr(self, prop_used_in_scheme) and getattr(self, prop_used_in_scheme) or
+					self.udm_properties.get(prop_used_in_scheme) or
+					prop_used_in_scheme in kwargs or
+					prop_used_in_scheme == "username" and (self.name or self.udm_properties.get("username"))
+			):
 				# property exists and has value
 				continue
 			if (
