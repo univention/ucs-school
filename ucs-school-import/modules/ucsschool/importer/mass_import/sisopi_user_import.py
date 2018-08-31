@@ -36,7 +36,8 @@ Single source database, partial import user import class.
 import copy
 
 from ldap.filter import filter_format
-from ucsschool.importer.exceptions import InvalidSchools
+from ucsschool.lib.models.attributes import ValidationError
+from ucsschool.importer.exceptions import InvalidSchools, UserValidationError
 from ucsschool.importer.mass_import.user_import import UserImport
 
 try:
@@ -198,6 +199,10 @@ class SingleSourcePartialUserImport(UserImport):
 			user.call_hooks('pre', 'remove')
 			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
 			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+			if self.errors:
+				raise UserValidationError(
+					'ValidationError when deleting {}.'.format(user),
+					validation_error=ValidationError(user.errors.copy()))
 			success = True
 			user.call_hooks('post', 'remove')
 		elif modified:

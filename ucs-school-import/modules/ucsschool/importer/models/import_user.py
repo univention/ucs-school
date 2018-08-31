@@ -31,7 +31,6 @@ Representation of a user read from a file.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import traceback
 import re
 import datetime
 from collections import defaultdict, namedtuple
@@ -42,7 +41,7 @@ from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
-from ucsschool.lib.models.attributes import RecordUID, SourceUID
+from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
 from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
@@ -50,7 +49,8 @@ from ucsschool.importer.exceptions import (
 	BadPassword, EmptyFormatResultError, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
 	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
-	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong
+	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
+	UserValidationError
 )
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.lib.pyhooks import PyHooksLoader
@@ -263,6 +263,10 @@ class ImportUser(User):
 		"""
 		self.check_schools(lo, additional_schools=[school])
 		self.validate(lo, validate_unlikely_changes=True, check_username=False)
+		if self.errors:
+			raise UserValidationError(
+				'ValidationError when moving {} from {!r} to {!r}.'.format(self, self.school, school),
+				validation_error=ValidationError(self.errors.copy()))
 		old_dn = self.old_dn
 		res = super(ImportUser, self).change_school(school, lo)
 		if res:
