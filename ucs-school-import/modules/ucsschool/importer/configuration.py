@@ -34,7 +34,7 @@ Configuration classes.
 """
 
 import json
-
+from six import string_types
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.configuration_checks import run_configuration_checks
@@ -87,7 +87,7 @@ class ReadOnlyDict(dict):
 					a[k] = v
 				else:
 					t = type(v)
-					if isinstance(t, basestring) and a.get(k):
+					if isinstance(t, string_types) and a.get(k):
 						t = type(a[k])
 					a[k] = t(v)
 		return a

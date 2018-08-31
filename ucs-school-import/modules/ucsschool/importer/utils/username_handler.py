@@ -33,7 +33,7 @@ Create historically unique usernames/email addresses.
 
 import re
 import string
-
+from six import string_types
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject, objectExists
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
@@ -330,7 +330,7 @@ class UsernameHandler(object):
 		:return: unique name
 		:rtype: str
 		"""
-		assert isinstance(name, basestring)
+		assert isinstance(name, string_types)
 		PATTERN_FUNC_MAXLENGTH = 3  # maximum a counter function can produce is len('999')
 		username = name
 		if not max_length:

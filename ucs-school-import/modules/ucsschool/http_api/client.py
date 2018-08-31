@@ -44,6 +44,7 @@ except ImportError:
 import logging
 import inspect
 import dateutil.parser
+from six import string_types
 
 import requests
 import magic
@@ -499,7 +500,7 @@ class Client(object):
 			:return: Resource object
 			:rtype: _ResourceReprBase
 			"""
-			assert (isinstance(pk, basestring) or isinstance(pk, int))
+			assert (isinstance(pk, string_types) or isinstance(pk, int))
 
 			return self._to_python(self._get_resource(pk))
 
@@ -564,10 +565,10 @@ class Client(object):
 			:return: the created UserImportJob resource
 			:rtype: _ResourceReprBase
 			"""
-			assert isinstance(filename, basestring)
-			assert (isinstance(source_uid, basestring) or source_uid is None)
-			assert (isinstance(school, basestring) or school is None)
-			assert (isinstance(user_role, basestring) or user_role is None)
+			assert isinstance(filename, string_types)
+			assert (isinstance(source_uid, string_types) or source_uid is None)
+			assert (isinstance(school, string_types) or school is None)
+			assert (isinstance(user_role, string_types) or user_role is None)
 			assert isinstance(dryrun, bool)
 			assert (isinstance(file_obj, file) or file_obj is None)
 

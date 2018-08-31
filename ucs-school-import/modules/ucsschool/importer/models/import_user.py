@@ -35,6 +35,7 @@ import re
 import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
+from six import string_types
 
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
@@ -587,7 +588,7 @@ class ImportUser(User):
 			self.school_classes = dict()
 		elif isinstance(self.school_classes, dict):
 			pass
-		elif isinstance(self.school_classes, basestring):
+		elif isinstance(self.school_classes, string_types):
 			res = defaultdict(list)
 			self.school_classes = self.school_classes.strip(" \n\r\t,")
 			for a_class in [klass.strip() for klass in self.school_classes.split(",") if klass.strip()]:
@@ -745,7 +746,7 @@ class ImportUser(User):
 			self.school = self.config["school"]
 		elif self.schools and isinstance(self.schools, list):
 			self.school = self.normalize(sorted(self.schools)[0])
-		elif self.schools and isinstance(self.schools, basestring):
+		elif self.schools and isinstance(self.schools, string_types):
 			self.make_schools()  # this will recurse back, but schools will be a list then
 		else:
 			raise MissingSchoolName(
@@ -769,7 +770,7 @@ class ImportUser(User):
 			if not self.school:
 				self.make_school()
 			self.schools = [self.school]
-		elif isinstance(self.schools, basestring):
+		elif isinstance(self.schools, string_types):
 			self.schools = self.schools.strip(",").split(",")
 			self.schools = sorted(set(self.normalize(s.strip()) for s in self.schools))
 		else:
@@ -873,7 +874,7 @@ class ImportUser(User):
 		:return: normalized `s`
 		:rtype: str
 		"""
-		if isinstance(s, basestring):
+		if isinstance(s, string_types):
 			s = cls.prop._replace("<:umlauts>{}".format(s), {})
 		return s
 
@@ -1166,8 +1167,7 @@ class ImportUser(User):
 		else:
 			return None
 
-	def get_school_class_objs(self):
-		if isinstance(self.school_classes, basestring):
+		if isinstance(self.school_classes, string_types):
 			# school_classes was set from input data
 			self.make_classes()
 		return super(ImportUser, self).get_school_class_objs()
