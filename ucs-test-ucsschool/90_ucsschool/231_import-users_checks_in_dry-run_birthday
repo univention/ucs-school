@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Verify that checks are executed in dry-run
+## desc: Verify that checks of birthday format are executed in dry-run
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous

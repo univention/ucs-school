@@ -30,7 +30,7 @@ import univention.testing.format.text
 from univention.testing.ucs_samba import wait_for_drs_replication
 
 try:
-	from typing import Dict, List, Optional, Tuple
+	from typing import Dict, List, Optional, Set, Tuple
 except ImportError:
 	pass
 
@@ -175,13 +175,13 @@ class ImportTestbase(object):
 	def __init__(self):
 		self.ucr = univention.testing.ucr.UCSTestConfigRegistry()
 		self.ucr.load()
-		self.log = self._get_logger()
-		self.lo = None  # will be initializes in run()
-		self.ldap_status = None
-		self.schoolenv = None  # will be initializes in run()
-		self.udm = None  # will be initializes in run()
+		self.log = self._get_logger()  # type: logging.Logger
+		self.lo = None  # will be initialized in run()
+		self.ldap_status = None  # type: Set[str]
+		self.schoolenv = None  # type: univention.testing.ucsschool.UCSTestSchool  # will be initialized in run()
+		self.udm = None  # type: univention.testing.udm.UCSTestUDM  # will be initialized in run()
 		try:
-			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
+			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]  # type: str
 		except (AttributeError, IndexError):
 			self.maildomain = self.ucr["domainname"]
 

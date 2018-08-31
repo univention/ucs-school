@@ -1,3 +1,10 @@
+ucs-test-ucsschool (4.0.4-103) unstable; urgency=low
+
+  * Bug #46837: add test for "username not in use"
+  * move univention.testing modules into "modules" subfolder
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 31 Aug 2018 16:12:04 +0200
+
 ucs-test-ucsschool (4.0.4-102) unstable; urgency=low
 
   * Bug #47451: fix tests
