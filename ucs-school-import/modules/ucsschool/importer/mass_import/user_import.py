@@ -90,7 +90,7 @@ class UserImport(object):
 		self.reader = self.factory.make_reader()
 		self.imported_users_len = 0
 
-	def read_input(self):  # type () -> List[ImportUser]
+	def read_input(self):  # type: () -> List[ImportUser]
 		"""
 		Read users from input data.
 
@@ -139,7 +139,7 @@ class UserImport(object):
 			func(imported_users, errors)
 
 	def create_and_modify_users(self, imported_users=None):
-		# type (Optional[List[ImportUser]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]], List[Dict[str, Any]]]
+		# type: (Optional[List[ImportUser]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]], List[Dict[str, Any]]]
 		"""
 		Create and modify users.
 
@@ -316,7 +316,7 @@ class UserImport(object):
 			user.reactivate()
 		return user
 
-	def get_existing_users_search_filter(self):  # type () -> str
+	def get_existing_users_search_filter(self):  # type: () -> str
 		"""
 		Create LDAP filter with which to find existing users.
 
@@ -332,7 +332,7 @@ class UserImport(object):
 			(self.config["sourceUID"],)
 		)
 
-	def get_ids_of_existing_users(self):  # type () -> List[Tuple[str, str]]
+	def get_ids_of_existing_users(self):  # type: () -> List[Tuple[str, str]]
 		"""
 		Get IDs of existing users.
 
@@ -348,7 +348,7 @@ class UserImport(object):
 			for lu in ucs_ldap_users
 		]
 
-	def detect_users_to_delete(self):  # type () -> List[Tuple[str, str, List[str]]]
+	def detect_users_to_delete(self):  # type: () -> List[Tuple[str, str, List[str]]]
 		"""
 		Find difference between source database and UCS user database.
 
@@ -369,7 +369,7 @@ class UserImport(object):
 		return users_to_delete
 
 	def delete_users(self, users=None):
-		# type (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]]]
+		# type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]]]
 		"""
 		Delete users.
 
