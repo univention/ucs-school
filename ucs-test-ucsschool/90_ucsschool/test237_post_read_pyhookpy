@@ -5,6 +5,7 @@ from ucsschool.importer.utils.post_read_pyhook import PostReadPyHook
 class SwitchGivenNameCnHook(PostReadPyHook):
 	priority = {
 		"entry_read": 1,
+		"all_entries_read": 1,
 	}
 
 	my_custom_class_variable = 0
