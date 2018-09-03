@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Default mass import class.
-"""
+#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +29,10 @@ Default mass import class.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Default user import class.
+"""
+
 import sys
 import copy
 from collections import defaultdict
@@ -40,15 +42,31 @@ from ldap.filter import filter_format
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.importer.exceptions import (
-	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, ToManyErrors, UnkownAction,
+	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction,
 	UserValidationError, WrongUserType)
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
+try:
+	from typing import Any, Dict, List, Optional, Tuple, Union
+	from ucsschool.importer.models.import_user import ImportUser
+except ImportError:
+	pass
+
 
 class UserImport(object):
+	"""
+	Currently used by MassImport like this:
+
+	1. read_input()
+	2. detect_users_to_delete()
+	3. delete_users()
+	4. create_and_modify_users()
+	5. log_stats()
+	6. get_result_data()
+	"""
 
 	def __init__(self, dry_run=True):
 		"""
@@ -57,9 +75,9 @@ class UserImport(object):
 		self.dry_run = dry_run
 		self.errors = list()
 		self.imported_users = list()
-		self.added_users = defaultdict(list)  # dict of lists of dicts: {ImportStudent: [ImportStudent.to_dict(), ..], ..}
-		self.modified_users = defaultdict(list)  # like added_users
-		self.deleted_users = defaultdict(list)  # like added_users
+		self.added_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
+		self.modified_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
+		self.deleted_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
 		self.config = Configuration()
 		self.logger = get_logger()
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
@@ -67,7 +85,7 @@ class UserImport(object):
 		self.reader = self.factory.make_reader()
 		self.imported_users_len = 0
 
-	def read_input(self):
+	def read_input(self):  # type: () -> List[ImportUser]
 		"""
 		Read users from input data.
 
@@ -93,6 +111,7 @@ class UserImport(object):
 		return self.imported_users
 
 	def create_and_modify_users(self, imported_users=None):
+		# type: (Optional[List[ImportUser]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]], List[Dict[str, Any]]]
 		"""
 		Create and modify users.
 
@@ -102,7 +121,7 @@ class UserImport(object):
 		:param imported_users: ImportUser objects
 		:type imported_users: :func:`list`
 		:return: (self.errors, self.added_users, self.modified_users)
-		:rtype: tuple(list, list, list)
+		:rtype: tuple(list[UcsSchoolImportError], list[dict], list[dict])
 		"""
 		self.logger.info("------ Creating / modifying users... ------")
 		usernum = 0
@@ -132,7 +151,7 @@ class UserImport(object):
 						"M": "Modifying"
 					}[user.action]
 				except KeyError:
-					raise UnkownAction("{}  (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
+					raise UnknownAction("{}  (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
 						user, user.source_uid, user.record_uid, user.action), entry_count=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
@@ -191,7 +210,7 @@ class UserImport(object):
 		self.logger.info("------ Created %d users, modified %d users. ------", num_added_users, num_modified_users)
 		return self.errors, self.added_users, self.modified_users
 
-	def determine_add_modify_action(self, imported_user):
+	def determine_add_modify_action(self, imported_user):  # type: (ImportUser) -> ImportUser
 		"""
 		Determine what to do with the ImportUser. Should set attribute `action`
 		to either `A` or `M`. If set to `M` the returned user must be a opened
@@ -202,6 +221,7 @@ class UserImport(object):
 		:param ImportUser imported_user: ImportUser from input
 		:return: ImportUser with action set and possibly fetched from LDAP
 		:rtype: ImportUser
+		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
 		"""
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
@@ -226,7 +246,7 @@ class UserImport(object):
 			user.action = "A"
 		return user
 
-	def detect_users_to_delete(self):
+	def detect_users_to_delete(self):  # type: () -> List[Tuple[str, str, List[str]]]
 		"""
 		Find difference between source database and UCS user database.
 
@@ -270,6 +290,7 @@ class UserImport(object):
 		return users_to_delete
 
 	def delete_users(self, users=None):
+		# type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]]]
 		"""
 		Delete users.
 
@@ -322,7 +343,7 @@ class UserImport(object):
 		self.logger.info("------ Deleted %d users. ------", sum(map(len, self.deleted_users.values())))
 		return self.errors, self.deleted_users
 
-	def school_move(self, imported_user, user):
+	def school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
 		"""
 		Change users primary school.
 
@@ -335,10 +356,15 @@ class UserImport(object):
 		user = self.do_school_move(imported_user, user)
 		return user
 
-	def do_school_move(self, imported_user, user):
+	def do_school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
 		"""
 		Change users primary school - :py:meth:`school_move()` without calling Python
 		hooks (ucsschool lib calls executables anyway).
+
+		:param ImportUser imported_user: User from input with target school
+		:param ImportUser user: existing User with old school
+		:return: user in new position, freshly fetched from LDAP
+		:rtype: ImportUser
 		"""
 		if self.dry_run:
 			user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
@@ -361,7 +387,7 @@ class UserImport(object):
 		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
 		return user
 
-	def do_delete(self, user):
+	def do_delete(self, user):  # type: (ImportUser) -> bool
 		"""
 		Delete or deactivate a user.
 
@@ -419,7 +445,7 @@ class UserImport(object):
 		user.invalidate_all_caches()
 		return success
 
-	def deactivate_user_now(self, user):
+	def deactivate_user_now(self, user):  # type: (ImportUser) -> bool
 		"""
 		Deactivate the user. Does not run user.modify().
 
@@ -435,7 +461,7 @@ class UserImport(object):
 			user.deactivate()
 			return True
 
-	def delete_user_now(self, user):
+	def delete_user_now(self, user):  # type: (ImportUser) -> bool
 		"""
 		Truly delete the user.
 
@@ -452,12 +478,13 @@ class UserImport(object):
 		else:
 			return user.remove(self.connection)
 
-	def set_deactivation_grace(self, user, grace):
+	def set_deactivation_grace(self, user, grace):  # type: (ImportUser, int) -> bool
 		"""
 		Sets the account expiration date (UDM attribute `userexpiry`) on the
 		user object. Does not run :py:meth:`user.modify()`.
 
 		:param ImportUser user: object to delete
+		:param int grace: days until deactivation
 		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
@@ -474,12 +501,13 @@ class UserImport(object):
 			user.expire(expiry_str)
 			return True
 
-	def set_deletion_grace(self, user, grace):
+	def set_deletion_grace(self, user, grace):  # type: (ImportUser, int) -> bool
 		"""
 		Sets the account deletion timestamp (UDM attribute `ucsschoolPurgeTimestamp`)
 		on the user object. Does not run :py:meth:`user.modify()`.
 
 		:param ImportUser user: user to schedule the deletion for
+		:param int grace: days until deletion
 		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
@@ -493,7 +521,7 @@ class UserImport(object):
 			user.set_purge_timestamp(purge_ts_str)
 			return True
 
-	def log_stats(self):
+	def log_stats(self):  # type: () -> str
 		"""
 		Log statistics about read, created, modified and deleted users.
 		"""
@@ -526,10 +554,15 @@ class UserImport(object):
 		self.logger.info("------ End of user import statistics ------")
 		return '\n'.join(lines)
 
-	def _add_error(self, err):
-		self.errors.append(err)
-		if -1 < self.config["tolerate_errors"] < len(self.errors):
-			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
+	def _add_error(self, exc):  # type: (UcsSchoolImportError) -> None
+		"""
+		Append given exception to list of errors.
+		:param UcsSchoolImportError exc: an Exception raised during import
+		:raises TooManyErrors: if the number of countable exceptions exceeds the number of tolerable errors
+		"""
+		self.errors.append(exc)
+		if -1 < self.config["tolerate_errors"] < len([x for x in self.errors if x.is_countable]):
+			raise TooManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
 	def progress_report(self, description, percentage=0, done=0, total=0, **kwargs):
 		if 'progress_notification_function' not in self.config:
