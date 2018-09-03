@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Base class for all Python based Post-Read-Pyhooks.
-"""
+#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +28,10 @@ Base class for all Python based Post-Read-Pyhooks.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Base class for all Python based Post-Read-Pyhooks.
+"""
 
 from ucsschool.importer.utils.import_pyhook import ImportPyHook
 
@@ -65,6 +67,7 @@ class PostReadPyHook(ImportPyHook):
 		:param input_dict: input data mapped to column names. The input_dict may be changed.
 		:type input_dict: dict[str, str]
 		:return: None
+		:raises UcsSchoolImportSkipImportRecord: if an entry (e.g. a CSV line) should be skipped
 		"""
 		return None
 

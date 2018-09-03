@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Test UcsSchoolImportSkipImportRecord by raising it in a PyHook
+## desc: Test PostReadPyHook functionality
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
@@ -53,7 +53,8 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('Creating PyHook %r...', TESTHOOKTARGET)
 		shutil.copy(TESTHOOKSOURCE, TESTHOOKTARGET)
 
-		self.log.info('*** Importing a user from each role, pyhook will switch firstname and lastname...')
+		self.log.info('*** Importing a user from each role, PostReadPyHook will:')
+		self.log.info('*** a) switch firstname and lastname b) add a birthday c) raise & test a class level variable...')
 		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			person = Person(self.ou_A.name, role)
