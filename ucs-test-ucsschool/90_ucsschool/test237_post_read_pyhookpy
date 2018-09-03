@@ -35,7 +35,7 @@ class SwitchGivenNameCnHook(PostReadPyHook):
 		input_dict['Vor'] = lastname
 		input_dict['Nach'] = firstname
 
-		self.my_custom_class_variable += 1
+		self.__class__.my_custom_class_variable += 1
 
 		self.logger.debug('Result: entry_count=%r input_data=%r input_dict=%r', entry_count, input_data, input_dict)
 
