@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
+import copy
 from random import choice, shuffle
 import string
 import sys
@@ -84,6 +85,16 @@ logger = logging.getLogger("ucsschool")
 logger.setLevel(logging.DEBUG)
 
 
+def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
+	for index, arg in enumerate(record.args):
+		if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
+			# don't change original record arguments as it would change the objects being logged
+			args = copy.deepcopy(record.args)
+			args[index]['password'] = '*' * 8
+			record.args = args
+	return record
+
+
 class UniFileHandler(TimedRotatingFileHandler):
 	def __init__(self, filename, when='h', interval=1, backupCount=0, encoding=None, delay=False, utc=False, fuid=None, fgid=None, fmode=None):
 		self._fuid = fuid or os.geteuid()
@@ -103,9 +114,7 @@ class UniFileHandler(TimedRotatingFileHandler):
 
 	def emit(self, record):
 		"""remove password from from dicts in args"""
-		for arg in record.args:
-			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
-				arg['password'] = '*' * 8
+		_remove_password_from_log_record(record)
 		super(UniFileHandler, self).emit(record)
 
 
@@ -116,9 +125,7 @@ class UniStreamHandler(logging.StreamHandler):
 
 	def emit(self, record):
 		"""remove password from from dicts in args"""
-		for arg in record.args:
-			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
-				arg['password'] = '*' * 8
+		_remove_password_from_log_record(record)
 		super(UniStreamHandler, self).emit(record)
 
 
@@ -140,9 +147,7 @@ class ModuleHandler(logging.Handler):
 
 	def emit(self, record):
 		"""log to univention debug, remove password from dicts in args"""
-		for arg in record.args:
-			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
-				arg['password'] = '*' * 8
+		_remove_password_from_log_record(record)
 		msg = self.format(record)
 		if isinstance(msg, unicode):
 			msg = msg.encode("utf-8")
