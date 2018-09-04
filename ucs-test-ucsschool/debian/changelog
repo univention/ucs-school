@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-91) unstable; urgency=low
+
+  * Bug #47450: add additional password hash check
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 04 Sep 2018 14:21:26 +0200
+
 ucs-test-ucsschool (5.0.2-90) unstable; urgency=low
 
   * Bug #47221: fix test
