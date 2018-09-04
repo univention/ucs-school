@@ -471,7 +471,12 @@ class CLI_Import_v2_Tester(ImportTestbase):
 			writer.writerow(person_dict)
 		return fn
 
-	def run_import(self, args, fail_on_error=True):
+	def run_import(self, args, fail_on_error=True, fail_on_preexisting_config=True):
+		if fail_on_preexisting_config is True:
+			user_config_path = '/var/lib/ucs-school-import/configs/user_import.json'
+			with open(user_config_path, 'r') as user_config:
+				if len(json.load(user_config)) != 0:
+					raise ImportException('The config under "%s" seems to be non-empty. That often causes problems for tests. Please replace it with an empty config: "{}".' % (user_config_path,))
 		cmd = ['/usr/share/ucs-school-import/scripts/ucs-school-user-import'] + args
 		self.log.info('Starting import: %r', cmd)
 		sys.stdout.flush()
