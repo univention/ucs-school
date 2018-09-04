@@ -49,6 +49,11 @@ from univention.lib.i18n import Translation
 from univention.config_registry import ConfigRegistry
 import univention.debug as ud
 
+try:
+	from typing import Any, AnyStr, Dict, List, Optional, Tuple
+except ImportError:
+	pass
+
 
 # "global" translation for ucsschool.lib.models
 _ = Translation('python-ucs-school').translate
@@ -96,7 +101,20 @@ def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> lo
 
 
 class UniFileHandler(TimedRotatingFileHandler):
-	def __init__(self, filename, when='h', interval=1, backupCount=0, encoding=None, delay=False, utc=False, fuid=None, fgid=None, fmode=None):
+	def __init__(
+			self,
+			filename,  # type: AnyStr
+			when='h',  # type: Optional[AnyStr]
+			interval=1,  # type: Optional[int]
+			backupCount=0,  # type: Optional[int]
+			encoding=None,  # type: Optional[AnyStr]
+			delay=False,  # type: Optional[bool]
+			utc=False,  # type: Optional[bool]
+			fuid=None,  # type: Optional[int]
+			fgid=None,  # type: Optional[int]
+			fmode=None  # type: Optional[int]
+	):
+		# type: (...) -> None
 		self._fuid = fuid or os.geteuid()
 		self._fgid = fgid or os.getegid()
 		self._fmode = fmode or 0o600
@@ -119,7 +137,14 @@ class UniFileHandler(TimedRotatingFileHandler):
 
 
 class UniStreamHandler(logging.StreamHandler):
-	def __init__(self, stream=None, fuid=None, fgid=None, fmode=None):
+	def __init__(
+			self,
+			stream=None,  # type: file
+			fuid=None,  # type: Optional[int]
+			fgid=None,  # type: Optional[int]
+			fmode=None  # type: Optional[int]
+	):
+		# type: (...) -> None
 		# ignore fuid, fgid, fmode
 		super(UniStreamHandler, self).__init__(stream)
 
@@ -142,6 +167,7 @@ class ModuleHandler(logging.Handler):
 	)
 
 	def __init__(self, level=logging.NOTSET, udebug_facility=ud.LISTENER):
+		# type: (Optional[int], Optional[int]) -> None
 		self._udebug_facility = udebug_facility
 		super(ModuleHandler, self).__init__(level)
 
@@ -156,16 +182,18 @@ class ModuleHandler(logging.Handler):
 
 
 def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=None, name=None):
-	"""Outputs all log messages of the models code to a stream (default: "stderr")
-	>>> from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
-	>>> add_module_logger_to_schoollib()
-	>>> # or:
-	>>> add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
+	# type: (Optional[AnyStr], Optional[file], Optional[AnyStr], Optional[AnyStr]) -> logging.Logger
+	"""Outputs all log messages of the models code to a stream (default: "stderr")::
+
+		from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+		add_module_logger_to_schoollib()
+		# or:
+		add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
 	"""
 	return get_logger(name, level, stream, formatter_kwargs={"fmt": log_format, "datefmt": None})
 
 
-def add_module_logger_to_schoollib():
+def add_module_logger_to_schoollib():  # type: () -> logging.Handler
 	global _module_handler
 	if _module_handler is None:
 		module_handler = ModuleHandler(udebug_facility=ud.MODULE)
@@ -178,6 +206,7 @@ def add_module_logger_to_schoollib():
 
 
 def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
+	# type: (Optional[int], Optional[AnyStr], Optional[AnyStr]) -> AnyStr
 	assert length > 0
 
 	if dn:
@@ -241,7 +270,7 @@ def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
 	return ''.join(pw)
 
 
-def flatten(list_of_lists):
+def flatten(list_of_lists):  # type: (List[List[Any]]) -> List[Any]
 	# return [item for sublist in list_of_lists for item in sublist]
 	# => does not work well for strings in list
 	ret = []
@@ -253,7 +282,14 @@ def flatten(list_of_lists):
 	return ret
 
 
-def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, formatter_kwargs=None):
+def get_logger(
+		name,  # type: AnyStr
+		level="INFO",  # type: Optional[AnyStr]
+		target=sys.stdout,  # type: Optional[file]
+		handler_kwargs=None,  # type: Optional[Dict[AnyStr, Any]]
+		formatter_kwargs=None  # type: Optional[Dict[AnyStr, Any]]
+):
+	# type: (...) -> logging.Logger
 	"""
 	Get a logger object below the ucsschool root logger.
 
@@ -341,7 +377,7 @@ def get_logger(name, level="INFO", target=sys.stdout, handler_kwargs=None, forma
 
 
 @contextmanager
-def stopped_notifier(strict=True):
+def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 	'''Stops univention-directory-notifier while in a block
 	Starts it in the end
 	Service if stopped/started by /etc/init.d

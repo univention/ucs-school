@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-21) unstable; urgency=low
+
+  * Bug #44314: don't modify object being logged
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 04 Sep 2018 15:11:13 +0200
+
 ucs-school-lib (11.0.1-20) unstable; urgency=low
 
   * Bug #47221: add class cache in PyHookLoader
