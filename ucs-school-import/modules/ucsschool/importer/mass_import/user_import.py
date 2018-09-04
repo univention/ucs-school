@@ -50,8 +50,10 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 
 try:
-	from typing import Any, Dict, List, Optional, Tuple, Union
+	from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
 	from ucsschool.importer.models.import_user import ImportUser
+	from ucsschool.importer.configuration import ReadOnlyDict
+	from ucsschool.importer.exceptions import UcsSchoolImportError
 except ImportError:
 	pass
 
@@ -73,12 +75,12 @@ class UserImport(object):
 		:param bool dry_run: set to False to actually commit changes to LDAP
 		"""
 		self.dry_run = dry_run
-		self.errors = list()
-		self.imported_users = list()
-		self.added_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
-		self.modified_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
-		self.deleted_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
-		self.config = Configuration()
+		self.errors = list()  # type: List[UcsSchoolImportError]
+		self.imported_users = list()  # type: List[ImportUser]
+		self.added_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
+		self.modified_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
+		self.deleted_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
+		self.config = Configuration()  # type: ReadOnlyDict
 		self.logger = get_logger()
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
 		self.factory = Factory()
@@ -111,7 +113,7 @@ class UserImport(object):
 		return self.imported_users
 
 	def create_and_modify_users(self, imported_users=None):
-		# type: (Optional[List[ImportUser]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]], List[Dict[str, Any]]]
+		# type: (List[ImportUser]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]
 		"""
 		Create and modify users.
 
@@ -159,8 +161,8 @@ class UserImport(object):
 				password = user.password  # save password of new user for later export (NewUserPasswordCsvExporter)
 				try:
 					if user.action == "A":
-						err = CreationError
-						store = self.added_users[cls_name]
+						err = CreationError  # type: Union[Type[CreationError], Type[ModificationError]]
+						store = self.added_users[cls_name]  # type: List[Dict[str, Any]]
 						if self.dry_run:
 							user.validate(self.connection, validate_unlikely_changes=True, check_username=True)
 							if self.errors:
@@ -290,7 +292,7 @@ class UserImport(object):
 		return users_to_delete
 
 	def delete_users(self, users=None):
-		# type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]]]
+		# type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]]]
 		"""
 		Delete users.
 

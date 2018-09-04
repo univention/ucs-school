@@ -35,9 +35,14 @@ Singleton to the factory currently in use.
 import importlib
 
 from ucsschool.importer.exceptions import InitialisationError
+try:
+	from typing import Optional, Type
+	from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
+except ImportError:
+	pass
 
 
-def setup_factory(factory_cls_name):
+def setup_factory(factory_cls_name):  # type: (str) -> DefaultUserImportFactory
 	"""
 	Create import factory.
 
@@ -46,11 +51,11 @@ def setup_factory(factory_cls_name):
 	:rtype: Factory
 	"""
 	fac_class = load_class(factory_cls_name)
-	factory = Factory(fac_class())
+	factory = Factory(fac_class())  # type: DefaultUserImportFactory
 	return factory
 
 
-def load_class(dotted_class_name):
+def load_class(dotted_class_name):  # type: (str) -> type
 	"""
 	Load class from its full dotted name.
 
@@ -69,14 +74,15 @@ class Factory(object):
 	"""
 	class __SingleFac:
 
-		def __init__(self, factory):
+		def __init__(self, factory):  # type: (Optional[DefaultUserImportFactory]) -> None
 			if not factory:
 				raise InitialisationError("Concrete factory not yet configured.")
 			self.factory = factory
 
-	_instance = None
+	_instance = None  # type: __SingleFac
 
 	def __new__(cls, factory=None):
+		# type: (Type[Factory], Optional[DefaultUserImportFactory]) -> DefaultUserImportFactory
 		if not cls._instance:
 			cls._instance = cls.__SingleFac(factory)
 		return cls._instance.factory

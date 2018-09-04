@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# central place to get logger for import
-#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -29,19 +27,28 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os
+"""
+Central place to get logger for import.
+"""
+
 from ucsschool.lib.models.utils import get_logger as get_lib_logger, logger as lib_logger
 
+try:
+	from typing import Optional
+except ImportError:
+	pass
 
-def get_logger():
+
+def get_logger():  # type: () -> logging.Logger
 	return get_lib_logger("import")
 
 
-def make_stdout_verbose():
+def make_stdout_verbose():  # type: () -> logging.Logger
 	return get_lib_logger("import", "DEBUG")
 
 
 def add_file_handler(filename, uid=None, gid=None, mode=None):
+	# type: (str, Optional[int], Optional[int], Optional[int]) -> logging.Logger
 	if filename.endswith(".log"):
 		info_filename = "{}.info".format(filename[:-4])
 	else:
@@ -51,7 +58,7 @@ def add_file_handler(filename, uid=None, gid=None, mode=None):
 	return get_lib_logger("import", "INFO", target=info_filename, handler_kwargs=handler_kwargs)
 
 
-def move_our_handlers_to_lib_logger():
+def move_our_handlers_to_lib_logger():  # type: () -> None
 	import_logger = get_logger()
 	for handler in import_logger.handlers:
 		lib_logger.addHandler(handler)

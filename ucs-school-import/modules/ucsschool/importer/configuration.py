@@ -37,6 +37,10 @@ import json
 from six import string_types
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
+try:
+	from typing import List
+except ImportError:
+	pass
 
 
 def setup_configuration(conffiles, **kwargs):
@@ -141,7 +145,7 @@ class Configuration(object):
 	Singleton to the global configuration object.
 	"""
 	class __SingleConf:
-		conffiles = list()
+		conffiles = list()  # type: List[str]
 
 		def __init__(self, filenames):
 			if not filenames:
