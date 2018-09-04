@@ -52,10 +52,8 @@ class SingleSourcePartialImportConfigurationChecks(ConfigurationChecks):
 	def test_deactivation_grace(self):
 		deactivation_grace = max(0, int(self.config.get('deletion_grace_period', {}).get('deactivation', 0)))
 		if deactivation_grace != 0:
-			self.logger.warn(
-				'Unusual value for deletion_grace_period:deactivation = %d. Expected 0.',
-				deactivation_grace
-			)
+			raise InitialisationError(
+				'Value for deletion_grace_period:deactivation is {!r}, must be 0.'.format(deactivation_grace))
 
 	def test_deletion_grace(self):
 		deletion_grace = max(0, int(self.config.get('deletion_grace_period', {}).get('deletion', 0)))
