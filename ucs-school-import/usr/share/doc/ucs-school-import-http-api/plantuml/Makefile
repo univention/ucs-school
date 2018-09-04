@@ -12,3 +12,6 @@ all: $(foreach i,$(INPUT),$(foreach f,$(FORMATS), $(addsuffix .$f,$(basename $i)
 
 %.svg: %.md
 	java -jar plantuml.jar -nbthread auto -failfast2 -tsvg $<
+
+clean:
+	rm -f *.png *.svg

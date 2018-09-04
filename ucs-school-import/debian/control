@@ -2,7 +2,14 @@ Source: ucs-school-import
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>> 10), univention-config-dev, ucslint, python-sphinx, python-sphinx-rtd-theme, make, python2.7-doc
+Build-Depends: debhelper (>> 10),
+ univention-config-dev,
+ ucslint,
+ python-sphinx,
+ python-sphinx-rtd-theme,
+ make,
+ python2.7-doc,
+ default-jre
 Standards-Version: 3.8.2
 XS-Python-Version: 2.7
 

@@ -1,3 +1,12 @@
+ucs-school-import (16.0.2-42) unstable; urgency=low
+
+  * Bug #47447: make deletion_grace_period::deactivation == 0 a configuration
+    error
+  * add section about SiSoPi to internal documentation
+  * add section about hooks with sequence diagram to internal documentation
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 04 Sep 2018 12:54:51 +0200
+
 ucs-school-import (16.0.2-41) unstable; urgency=low
 
   * Bug #47447: fix username uniqueness test

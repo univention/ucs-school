@@ -3,3 +3,4 @@
 0010-2:  conffiles/etc/init.d/celery-worker-ucsschool-import
 0004-16: conffiles/etc/ucsschool-import/ldap.secret
 0010-2:  modules/ucsschool/http_api/manage.py
+0010-2:  usr/share/doc/ucs-school-import-http-api/plantuml/Makefile

@@ -14,6 +14,7 @@ Contents:
    calling-http-api
    umc-module
    file-locations
+   hooks
    sisopi
    python-api-reference
 
