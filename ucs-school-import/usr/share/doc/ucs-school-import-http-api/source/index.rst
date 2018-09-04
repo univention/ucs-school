@@ -14,6 +14,7 @@ Contents:
    calling-http-api
    umc-module
    file-locations
+   sisopi
    python-api-reference
 
 Indices and tables
