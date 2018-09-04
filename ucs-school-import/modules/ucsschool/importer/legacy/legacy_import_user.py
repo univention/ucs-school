@@ -84,6 +84,19 @@ class LegacyImportUser(ImportUser):
 			raise UnkownAction("Unknown action '{}'.".format(self.action))
 		super(LegacyImportUser, self).validate(lo, validate_unlikely_changes, check_username)
 
+	def _check_username_uniqueness(self):  # type: () -> None
+		"""
+		Check that :py:attr:`self.name` is not already in use by another user.
+
+		:raises UniqueIdError: if username is already taken by another user
+		"""
+		uut = self._all_usernames.get(self.name)
+		if uut and uut.dn != self.dn:
+			self.add_error(
+				'name',
+				'Username {!r} is already in use by {!r}.'.format(self.name, self._all_usernames[self.name])
+			)
+
 	@classmethod
 	def get_by_import_id_or_username(cls, connection, source_uid, record_uid, username, superordinate=None):
 		"""

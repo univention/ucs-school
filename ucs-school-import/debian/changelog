@@ -1,3 +1,10 @@
+ucs-school-import (15.0.3-69) unstable; urgency=low
+
+  * Bug #46837: new-legacy import must handle users from old-legacy import
+    that don't have record_uid and source_uid
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 04 Sep 2018 15:53:21 +0200
+
 ucs-school-import (15.0.3-68) unstable; urgency=low
 
   * Bug #47447: fix username uniqueness test
