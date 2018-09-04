@@ -27,8 +27,9 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('sourceUID', source_uid)
 		config.update_entry('user_role', None)
 
-		first_ou = sorted((self.ou_A.name, self.ou_B.name))[1]
-		second_ou = sorted((self.ou_A.name, self.ou_B.name))[0]
+		# second_ou has "smaller" name
+		# first_ou has "larger" name
+		second_ou, first_ou = sorted((self.ou_A.name, self.ou_B.name))
 		self.log.info('*** first_ou=%r second_ou=%r', first_ou, second_ou)
 
 		self.log.info('*** Importing a new user of each role into OU %r...', first_ou)
