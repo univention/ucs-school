@@ -50,14 +50,18 @@ from six import string_types
 import requests
 import magic
 from univention.config_registry import ConfigRegistry
+try:
+	from typing import Any, AnyStr, Callable, Dict, List, Union
+except ImportError:
+	pass
 
 
 ucr = ConfigRegistry()
 ucr.load()
 MIME_TYPE = magic.open(magic.MAGIC_MIME_TYPE)
 MIME_TYPE.load()
-__resource_client_class_registry = list()
-__resource_representation_class_registry = dict()
+__resource_client_class_registry = list()  # type: List[Client._ResourceClient]
+__resource_representation_class_registry = dict()  # type: Dict[str, ResourceRepresentation._ResourceReprBase]
 
 
 def register_resource_client_class(cls):
@@ -190,7 +194,7 @@ class ResourceRepresentation(object):
 	class _ResourceReprBase(object):
 		"""Base class of resource representation classes."""
 		resource_name = ''
-		_attribute_repr = {}
+		_attribute_repr = {}  # type: Dict[unicode, Callable[[unicode], Any]]
 
 		def __init__(self, resource_client, resource):
 			self._resource_client = resource_client

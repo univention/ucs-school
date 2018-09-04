@@ -39,9 +39,6 @@ import grp
 import univention.admin.modules
 
 
-__udm_prop_to_ldap_attr_cache = {}
-
-
 def mkdir_p(dir_name, user, group, mode):
 	"""
 	Recursively create directories (like "mkdir -p").

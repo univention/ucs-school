@@ -58,7 +58,7 @@ def add_file_handler(filename, uid=None, gid=None, mode=None):
 	return get_lib_logger("import", "INFO", target=info_filename, handler_kwargs=handler_kwargs)
 
 
-def move_our_handlers_to_lib_logger():  # type: () -> ()
+def move_our_handlers_to_lib_logger():  # type: () -> None
 	import_logger = get_logger()
 	for handler in import_logger.handlers:
 		lib_logger.addHandler(handler)

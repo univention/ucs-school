@@ -48,6 +48,10 @@ from ucsschool.http_api.import_api.models import (
 	JOB_NEW, JOB_SCHEDULED, Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob)
 from ucsschool.http_api.import_api.import_logging import logger
 from ucsschool.http_api.import_api.tasks import dry_run, import_users
+try:
+	from typing import Tuple
+except ImportError:
+	pass
 
 
 class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
@@ -180,7 +184,7 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 class TextArtifactSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = TextArtifact
-		fields = ('url', 'text')
+		fields = ('url', 'text')  # type: Tuple
 		# exclude = ()
 		read_only_fields = ('text',)  # not really necessary, as the view is a ReadOnlyModelViewSet
 

@@ -33,6 +33,11 @@ Base class for all Python based Result-Pyhooks.
 """
 
 from ucsschool.importer.utils.import_pyhook import ImportPyHook
+try:
+	import typing
+	from ucsschool.importer.mass_import.user_import import UserImportData
+except ImportError:
+	pass
 
 
 class ResultPyHook(ImportPyHook):
@@ -50,8 +55,7 @@ class ResultPyHook(ImportPyHook):
 		'user_result': None,
 	}
 
-	def user_result(self, user_import_data):
-		# type: (ucsschool.importer.mass_import.user_import.UserImportData) -> None
+	def user_result(self, user_import_data):  # type: (UserImportData) -> None
 		"""
 		Run code after user import has finished. Relevant data from the
 		UserImport class is passed to this hook, so result summaries etc are

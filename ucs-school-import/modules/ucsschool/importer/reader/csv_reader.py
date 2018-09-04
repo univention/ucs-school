@@ -43,14 +43,18 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
+try:
+	from typing import Callable, Dict, Iterable
+except ImportError:
+	pass
 
 
 class CsvReader(BaseReader):
 	"""
 	Reads CSV files and turns lines to ImportUser objects.
 	"""
-	_attrib_names = dict()  # cache for Attribute names
-	_role_method = None  # method to get users role
+	_attrib_names = dict()  # type: Dict[str, Iterable[str]]  # cache for Attribute names
+	_role_method = None  # type: Callable  # method to get users role
 	_csv_roles_mapping = {
 		"student": [role_pupil],
 		"staff": [role_staff],
@@ -58,7 +62,7 @@ class CsvReader(BaseReader):
 		"staffteacher": [role_teacher, role_staff],
 		"teacher_and_staff": [role_teacher, role_staff],
 	}  # known values for "__role" column
-	_csv_roles_key = None  # column name in the mapping configuration
+	_csv_roles_key = None  # type: str  # column name in the mapping configuration
 	_csv_roles_value = "__role"  # mapping value, so column will be used as role
 
 	encoding = "utf-8"

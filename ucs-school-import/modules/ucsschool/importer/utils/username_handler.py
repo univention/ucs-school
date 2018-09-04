@@ -434,7 +434,7 @@ class EmailHandler(UsernameHandler):
 	* Maximum length of an email address is 254 characters.
 	* Applies counters [ALWAYSCOUNTER/COUNTER2] to local part (left of @) only.
 	"""
-	allowed_chars = None  # almost everything is allowed in email addresses (with complicated restrictions)
+	allowed_chars = None  # type: str  # almost everything is allowed in email addresses (with complicated restrictions)
 	attribute_name = 'email'
 	attribute_storage_name = 'email'
 

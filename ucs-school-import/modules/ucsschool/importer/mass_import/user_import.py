@@ -52,8 +52,10 @@ from ucsschool.importer.utils.post_read_pyhook import PostReadPyHook
 from ucsschool.lib.pyhooks import PyHooksLoader
 
 try:
-	from typing import Any, Dict, List, Optional, Tuple, Union
+	from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
 	from ucsschool.importer.models.import_user import ImportUser
+	from ucsschool.importer.configuration import ReadOnlyDict
+	from ucsschool.importer.exceptions import UcsSchoolImportError
 except ImportError:
 	pass
 
@@ -78,12 +80,12 @@ class UserImport(object):
 		:param bool dry_run: set to False to actually commit changes to LDAP
 		"""
 		self.dry_run = dry_run
-		self.errors = list()
-		self.imported_users = list()
-		self.added_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
-		self.modified_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
-		self.deleted_users = defaultdict(list)  # type: Dict[List[Dict[str, Any]]]
-		self.config = Configuration()
+		self.errors = list()  # type: List[UcsSchoolImportError]
+		self.imported_users = list()  # type: List[ImportUser]
+		self.added_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
+		self.modified_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
+		self.deleted_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
+		self.config = Configuration()  # type: ReadOnlyDict
 		self.logger = get_logger()
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
 		self.factory = Factory()
@@ -138,8 +140,8 @@ class UserImport(object):
 			self.logger.info("Running %s hook %s all entries...", func_name, func)
 			func(imported_users, errors)
 
-	def create_and_modify_users(self, imported_users=None):
-		# type: (Optional[List[ImportUser]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]], List[Dict[str, Any]]]
+	def create_and_modify_users(self, imported_users):
+		# type: (List[ImportUser]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]
 		"""
 		Create and modify users.
 
@@ -187,8 +189,8 @@ class UserImport(object):
 				password = user.password  # save password of new user for later export (NewUserPasswordCsvExporter)
 				try:
 					if user.action == "A":
-						err = CreationError
-						store = self.added_users[cls_name]
+						err = CreationError  # type: Union[Type[CreationError], Type[ModificationError]]
+						store = self.added_users[cls_name]  # type: List[Dict[str, Any]]
 						if self.dry_run:
 							user.validate(self.connection, validate_unlikely_changes=True, check_username=True)
 							if self.errors:
@@ -369,7 +371,7 @@ class UserImport(object):
 		return users_to_delete
 
 	def delete_users(self, users=None):
-		# type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], List[Dict[str, Any]]]
+		# type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]]]
 		"""
 		Delete users.
 
@@ -654,9 +656,9 @@ class UserImport(object):
 
 class UserImportData(object):
 	def __init__(self, user_import):  # type: (UserImport) -> None
-		self.config = user_import.config
-		self.dry_run = user_import.dry_run
-		self.errors = user_import.errors
-		self.added_users = user_import.added_users
-		self.modified_users = user_import.modified_users
-		self.deleted_users = user_import.deleted_users
+		self.config = user_import.config  # type: ReadOnlyDict
+		self.dry_run = user_import.dry_run  # type: bool
+		self.errors = user_import.errors  # type: List[UcsSchoolImportError]
+		self.added_users = user_import.added_users  # type: Dict[str, List[Dict[str, Any]]]
+		self.modified_users = user_import.modified_users  # type: Dict[str, List[Dict[str, Any]]]
+		self.deleted_users = user_import.deleted_users  # type: Dict[str, List[Dict[str, Any]]]
