@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-UCS@school import frontent class
-"""
 #
 # Univention UCS@school
 #
@@ -31,6 +28,10 @@ UCS@school import frontent class
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+UCS@school import frontent class
+"""
 
 from __future__ import unicode_literals
 import os

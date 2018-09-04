@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Celery tasks
-"""
 #
 # Univention UCS@school
 #
@@ -31,6 +28,10 @@ Celery tasks
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Celery tasks
+"""
 
 #
 # To monitor the celery queue run in an ncurses terminal UI:

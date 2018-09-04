@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-UCS@school UDM-hook to prevent invalid combinations of user options
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +28,10 @@ UCS@school UDM-hook to prevent invalid combinations of user options
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+UCS@school UDM-hook to prevent invalid combinations of user options
+"""
 
 from univention.admin.hook import simpleHook
 import univention.admin.modules

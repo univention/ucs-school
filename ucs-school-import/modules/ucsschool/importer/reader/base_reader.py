@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Base class of all input readers.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +28,9 @@ Base class of all input readers.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Base class of all input readers.
+"""
 
 from ucsschool.importer.exceptions import UcsSchoolImportSkipImportRecord
 from ucsschool.importer.configuration import Configuration

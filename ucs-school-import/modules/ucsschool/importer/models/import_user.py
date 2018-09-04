@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Representation of a user read from a file.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +27,10 @@ Representation of a user read from a file.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Representation of a user read from a file.
+"""
 
 import re
 import datetime

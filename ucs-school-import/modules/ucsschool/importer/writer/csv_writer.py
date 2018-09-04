@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Write the result of a user import job to a CSV file.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +27,10 @@ Write the result of a user import job to a CSV file.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Write the result of a user import job to a CSV file.
+"""
 
 from csv import DictWriter, excel, QUOTE_ALL
 import os

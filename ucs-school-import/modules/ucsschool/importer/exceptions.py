@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-All exceptions raise by code in ucsschool.importer.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +27,10 @@ All exceptions raise by code in ucsschool.importer.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+All exceptions raised by code in ucsschool.importer.
+"""
 
 
 class UcsSchoolImportError(Exception):

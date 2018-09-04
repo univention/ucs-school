@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Class to create lots of test users.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +28,10 @@ Class to create lots of test users.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Class to create lots of test users.
+"""
 
 import gzip
 import json

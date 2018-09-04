@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# central place to get logger for import
-#
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -28,6 +26,10 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Central place to get logger for import.
+"""
 
 from ucsschool.lib.models.utils import get_logger as get_lib_logger, logger as lib_logger
 
