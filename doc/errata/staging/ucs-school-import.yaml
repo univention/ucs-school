@@ -18,7 +18,7 @@ desc: |
  * In dry run, a read-only cn=admin LDAP connection is used (Bug #47203).
  * Code and configuration for a scenario with a single source database with global record UIDs and partial user import files was implemented (Bug #47447).
  * An interface for adding custom configuration checks has been added (Bug #47448).
- * A user is not moved to another school, when that school is imported to be an additional school for the user and the schools name is alphanumerically sorted earlier that the school the user is already a member of (Bug #47450).
+ * A user is not moved to another school if this school is imported as an additional school for the user and the name of the new school is sorted alphanumerically earlier than the school of which the user is already a member (Bug #47450).
  * Don't create roles in import when feature is deactivated (Bug #47451).
  * File permissions are set correctly now on initial installations of the HTTP-API import (Bug #47514).
  * Handle changed database migrations for django-celery, when upgrading from 4.2 to 4.3 (Bug #47333).
