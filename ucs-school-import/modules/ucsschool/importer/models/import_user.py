@@ -1060,10 +1060,18 @@ class ImportUser(User):
 				)
 				if not attr['uid'][0].endswith('$')
 			)
-		un = self._all_usernames.get(self.name)
-		if un and (un.record_uid != self.record_uid or un.source_uid != self.source_uid):
+		self._check_username_uniqueness()
+
+	def _check_username_uniqueness(self):  # type: () -> None
+		"""
+		Check that :py:attr:`self.name` is not already in use by another user.
+
+		:raises UniqueIdError: if username is already taken by another user
+		"""
+		uut = self._all_usernames.get(self.name)
+		if uut and (uut.record_uid != self.record_uid or uut.source_uid != self.source_uid):
 			raise UniqueIdError('Username {!r} is already in use by {!r} (source_uid: {!r}, record_uid: {!r}).'.format(
-				self.name, un.dn, un.source_uid, un.record_uid))
+				self.name, uut.dn, uut.source_uid, uut.record_uid))
 
 	def set_purge_timestamp(self, ts):  # type: (AnyStr) -> None
 		self._purge_ts = ts
