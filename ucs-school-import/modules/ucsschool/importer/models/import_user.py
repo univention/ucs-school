@@ -85,14 +85,10 @@ class ImportUser(User):
 	of its subclasses ImportStaff etc.
 
 	An import profile and a factory must have been loaded, before the class
-	can be used:
+	can be used. A convenience module does this::
 
-	from ucsschool.importer.configuration import Configuration
-	from ucsschool.importer.factory import Factory, load_class
-	config = Configuration("/usr/share/ucs-school-import/config_default.json")
-	fac_class = load_class(config["factory"])
-	factory = Factory(fac_class())
-	user = factory.make_import_user(roles)
+		from ucsschool.importer.utils.shell import *
+		user = factory.make_import_user(roles)
 	"""
 	source_uid = SourceUID("SourceUID")
 	record_uid = RecordUID("RecordUID")

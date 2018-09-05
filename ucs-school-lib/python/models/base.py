@@ -96,76 +96,92 @@ class MultipleObjectsError(Exception):
 
 
 class UCSSchoolHelperAbstractClass(object):
-	'''
+	"""
 	Base class of all UCS@school models.
 	Hides UDM.
 
-	Attributes used for a class are defined like this:
+	Attributes used for a class are defined like this::
 
-	class MyModel(UCSSchoolHelperAbstractClass):
-		my_attribute = Attribute('Label', required=True, udm_name='myAttr')
+		class MyModel(UCSSchoolHelperAbstractClass):
+			my_attribute = Attribute('Label', required=True, udm_name='myAttr')
 
-	From there on my_attribute=value may be passed to __init__,
-	my_model.my_attribute can be accessed and the value will be saved
-	as obj['myAttr'] in UDM when saving this instance.
-	If an attribute of a base class is not wanted, it can be overridden:
+	From there on ``my_attribute=value`` may be passed to :py:meth:``__init__()``,
+	``my_model.my_attribute`` can be accessed and the value will be saved
+	as ``obj['myAttr']`` in UDM when saving this instance.
+	If an attribute of a base class is not wanted, it can be overridden::
 
-	class MyModel(UCSSchoolHelperAbstractClass):
-		school = None
+		class MyModel(UCSSchoolHelperAbstractClass):
+			school = None
 
-	Meta information about the class are defined like this:
-	class MyModel(UCSSchoolHelperAbstractClass):
-		class Meta:
-			udm_module = 'my/model'
+	Meta information about the class are defined like this::
 
-	The meta information is then accessible in cls._meta
+		class MyModel(UCSSchoolHelperAbstractClass):
+			class Meta:
+				udm_module = 'my/model'
+
+	The meta information is then accessible in ``cls._meta``.
 
 	Important functions:
-		__init__(**kwargs):
+
+		:py:meth:``__init__(**kwargs)``:
 			kwargs should be the defined attributes
-		create(lo)
+
+		:py:meth:``create(lo)``
 			lo is an LDAP connection, specifically univention.admin.access.
 			creates a new object. Returns False is the object already exists.
 			And True after the creation
-		modify(lo)
+
+		:py:meth:``modify(lo)``
 			modifies an existing object. Returns False if the object does not
 			exist and True after the modification (regardless whether something
 			actually changed or not)
-		remove(lo)
+
+		:py:meth:``remove(lo)``
 			deletes the object. Returns False if the object does not exist and True
 			after the deletion.
-		get_all(lo, school, filter_str, easy_filter=False)
+
+		:py:meth:``get_all(lo, school, filter_str, easy_filter=False)``
 			classmethod; retrieves all objects found for this school. filter can be a string
 			that is used to narrow down a search. Each property of the class' udm_module
 			that is include_in_default_search is queried for that string.
-			Example:
-			User.get_all(lo, 'school', filter_str='name', easy_filter=True)
-			will search in cn=users,ou=school,$base
-			for users/user UDM objects with |(username=*name*)(firstname=*name*)(...) and return
+			Example::
+
+				User.get_all(lo, 'school', filter_str='name', easy_filter=True)
+
+			will search in ``cn=users,ou=school,$base``
+			for users/user UDM objects with ``|(username=*name*)(firstname=*name*)(...)`` and return
 			User objects (not UDM objects)
-			With easy_filter=False (default) it will use this very filter_str
-		get_container(school)
+			With ``easy_filter=False`` (default) it will use this very ``filter_str``
+
+		:py:meth:``get_container(school)``
 			a classmethod that points to the container where new instances are created
 			and existing ones are searched.
-		dn
+
+		:py:meth:``dn``
 			property, current distinguishable name of the instance. Calculated on the fly, it
 			changes if instance.name or instance.school changes.
-			instance.old_dn will be set to the original dn when the instance was created
-		get_udm_object(lo)
-			searches UDM for an entry that corresponds to self. Normally uses the old_dn or dn.
-			If cls._meta.name_is_unique then any object with self.name will match
-		exists(lo)
+			``instance.old_dn`` will be set to the original dn when the instance was created
+
+		:py:meth:``get_udm_object(lo)``
+			searches UDM for an entry that corresponds to ``self``. Normally uses the old_dn or dn.
+			If ``cls._meta.name_is_unique`` then any object with ``self.name`` will match
+
+		:py:meth:``exists(lo)``
 			whether this object can be found in UDM.
-		from_udm_obj(udm_obj, school, lo)
-			classmethod; maps the info of udm_obj into a new instance (and sets school)
-		from_dn(dn, school, lo)
-			finds dn in LDAP and uses from_udm_obj
-		get_first_udm_obj(lo, filter_str)
-			returns the first found object of type cls._meta.udm_module that matches an
-			arbitrary filter_str
+
+		:py:meth:``from_udm_obj(udm_obj, school, lo)``
+			classmethod; maps the info of ``udm_obj`` into a new instance (and sets ``school``)
+
+		:py:meth:``from_dn(dn, school, lo)``
+			finds dn in LDAP and uses ``from_udm_obj``
+
+		:py:meth:``get_first_udm_obj(lo, filter_str)``
+			returns the first found object of type ``cls._meta.udm_module`` that matches an
+			arbitrary ``filter_str``
 
 	More features:
-	* Validation:
+
+	Validation:
 		There are some auto checks built in: Attributes of the model that have a
 		UDM syntax attached are validated against this syntax. Attributes that are
 		required must be present.
@@ -173,19 +189,22 @@ class UCSSchoolHelperAbstractClass(object):
 		already exists with other values.
 		If the Meta information states that name_is_unique, the complete LDAP is searched
 		for the instance's name before continuing.
-		validate() can be further customized.
-	* Hooks:
-		Before create, modify, move and remove, hooks are called if build_hook_line()
+		:py:meth:``validate()`` can be further customized.
+
+	Hooks:
+		Before :py:meth:``create``, :py:meth:``modify``, :py:meth:``move`` and :py:meth:``remove``,
+		hooks are called if :py:meth:``build_hook_line()``
 		returns something. If the operation was successful, another set of hooks
 		are called.
-		All scripts in
-		/usr/share/ucs-school-import/hooks/%(module)s_{create|modify|move|remove}_{pre|post}.d/
+
+		``/usr/share/ucs-school-import/hooks/%(module)s_{create|modify|move|remove}_{pre|post}.d/``
 		are called with the name of a temporary file containing the hook_line via run-parts.
-		%(module)s is 'ucc' for cls._meta.udm_module == 'computers/ucc' by default and
-		can be explicitely set with
-		class Meta:
-			hook_path = 'computer'
-	'''
+		``%(module)s`` is ``'ucc'`` for ``cls._meta.udm_module == 'computers/ucc'`` by default and
+		can be explicitely set with::
+
+			class Meta:
+				hook_path = 'computer'
+	"""
 	__metaclass__ = UCSSchoolHelperMetaClass
 	_cache = {}
 

@@ -183,7 +183,8 @@ class ModuleHandler(logging.Handler):
 
 def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=None, name=None):
 	# type: (Optional[AnyStr], Optional[file], Optional[AnyStr], Optional[AnyStr]) -> logging.Logger
-	"""Outputs all log messages of the models code to a stream (default: "stderr")::
+	"""
+	Outputs all log messages of the models code to a stream (default: "stderr")::
 
 		from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 		add_module_logger_to_schoollib()
@@ -294,29 +295,29 @@ def get_logger(
 	Get a logger object below the ucsschool root logger.
 
 	* The logger will use UniStreamHandler(StreamHandler) for streams
-	(sys.stdout etc) and UniFileHandler(TimedRotatingFileHandler) for files if
-	not configured differently through handler_kwargs[cls].
+	  (sys.stdout etc) and UniFileHandler(TimedRotatingFileHandler) for files if
+	  not configured differently through handler_kwargs[cls].
 	* A call with the same name will return the same logging object.
 	* There is only one handler per name-target combination.
 	* If name and target are the same, and only the log level changes, it will
-	return the logging object with the same handlers and change both the log
-	level of the respective handler and of the logger object to be the lowest
-	of the previous and the new level.
+	  return the logging object with the same handlers and change both the log
+	  level of the respective handler and of the logger object to be the lowest
+	  of the previous and the new level.
 	* Complete output customization is possible, setting kwargs for the
-	constructors of the handler and formatter.
+	  constructors of the handler and formatter.
 	* Using custom handler and formatter classes is possible by configuring
-	the 'cls' key of handler_kwargs and formatter_kwargs.
+	  the 'cls' key of handler_kwargs and formatter_kwargs.
 
 	:param name: str: will be appended to "ucsschool." as name of the logger
 	:param level: str: loglevel (DEBUG, INFO etc)
 	:param target: stream (open file) or a str (file path)
 	:param handler_kwargs: dict: will be passed to the handlers constructor.
-	It cannot be used to modify a handler, as it is only used at creation time.
-	If it has a key 'cls' it will be used as handler instead of UniFileHandler
-	or UniStreamHandler. It should be a subclass of one of those!
+		It cannot be used to modify a handler, as it is only used at creation time.
+		If it has a key 'cls' it will be used as handler instead of UniFileHandler
+		or UniStreamHandler. It should be a subclass of one of those!
 	:param formatter_kwargs: dict: will be passed to the formatters constructor,
-	if it has a key 'cls' it will be used to create a formatter instead of
-	logging.Formatter.
+		if it has a key 'cls' it will be used to create a formatter instead of
+		logging.Formatter.
 	:return: a python logging object
 	"""
 	if not name:
@@ -378,14 +379,20 @@ def get_logger(
 
 @contextmanager
 def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
-	'''Stops univention-directory-notifier while in a block
-	Starts it in the end
-	Service if stopped/started by /etc/init.d
-	Raises RuntimeError if stopping failed and strict=True
-	Will not start if ucr get notifier/autostart=no -- but stop!
-	>>> with stopped_notifier():
-	>>> 	...
-	'''
+	"""
+	Stops univention-directory-notifier while in a block and starts it in the
+	end. Service if stopped/started by /etc/init.d.
+
+	Will not start if ``ucr get notifier/autostart=no`` -- but *will* stop!
+
+	::
+
+		with stopped_notifier():
+			...
+
+	:param bool strict: raise RuntimeError if stopping fails
+	:raises RuntimeError: if stopping failed and ``strict=True``
+	"""
 	service_name = 'univention-directory-notifier'
 
 	def _run(args):
