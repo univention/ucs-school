@@ -18,8 +18,16 @@
 #
 import os
 import subprocess
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import sys
+debian_packet_path = os.path.abspath('.')
+for _ in range(5):
+    debian_packet_path = os.path.dirname(debian_packet_path)
+fake_module_path = os.path.join(debian_packet_path, 'usr/share/doc/ucs-school-import-http-api/build/modules')
+sys.path.insert(0, fake_module_path)
+os.environ['UCSSCHOOL-SPHINX-DOC-BUILD-PATH'] = debian_packet_path
+os.environ['DJANGO_SETTINGS_MODULE'] = 'ucsschool.http_api.app.settings'
+import django
+django.setup()
 
 # -- General configuration ------------------------------------------------
 
@@ -64,12 +72,8 @@ author = u'ucsschool-maintainers@univention.de'
 
 
 def get_deb_version():
-    path = os.path.abspath('.')
-    for _ in range(5):
-        path = os.path.dirname(path)
-    os.chdir(path)
     cmd = ['dpkg-parsechangelog', '-S', 'version']
-    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()
+    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=debian_packet_path).communicate()
     return out.strip()
 
 

@@ -32,10 +32,13 @@
 PO_FILES := $(shell find udm_hook syntax modules -name '*.po')
 MO_FILES := $(PO_FILES:%.po=%.mo)
 
+PACKAGE_DIR := $(shell pwd)
 APIDOC_BASE_DIR := usr/share/doc/ucs-school-import-http-api
 APIDOCSRC_DIR := $(APIDOC_BASE_DIR)/source
+APIDOC_FAKE_MODULE_DIR := $(APIDOC_BASE_DIR)/build/modules
 PLANTUML_DIR := $(APIDOC_BASE_DIR)/plantuml
 APIDOCSRC_FILES := $(shell find $(APIDOCSRC_DIR) -name '*.rst' -o -name '*.png')
+APIDOC_EXCLUDE_FILES := $(APIDOC_FAKE_MODULE_DIR)/ucsschool/importer/utils/shell.py $(APIDOC_FAKE_MODULE_DIR)/ucsschool/http_api/app/settings.py $(APIDOC_FAKE_MODULE_DIR)/ucsschool/http_api/import_api/migrations/*
 PYMODULESRC_FILES := $(shell find modules/ -name '*.py')
 
 %.mo:	%.po
@@ -46,7 +49,10 @@ plantuml:
 	cp -v $(PLANTUML_DIR)/*.png $(PLANTUML_DIR)/*.svg $(APIDOCSRC_DIR)
 
 pymoduledoc: $(PYMODULESRC_FILES)
-	sphinx-apidoc --force --private --no-toc -o $(APIDOCSRC_DIR)/python/ modules/
+	mkdir -p $(APIDOC_FAKE_MODULE_DIR)/ucsschool/
+	ln -sf /usr/share/pyshared/ucsschool/* $(APIDOC_FAKE_MODULE_DIR)/ucsschool/
+	ln -sf $(PACKAGE_DIR)/modules/ucsschool/* $(APIDOC_FAKE_MODULE_DIR)/ucsschool/
+	sphinx-apidoc --force --private --no-toc --follow-links -o $(APIDOCSRC_DIR)/python/ $(APIDOC_FAKE_MODULE_DIR) $(APIDOC_EXCLUDE_FILES)
 
 apidoc:	$(APIDOCSRC_FILES) plantuml pymoduledoc
 	make -C$(APIDOC_BASE_DIR) html
@@ -72,6 +78,7 @@ override_dh_auto_clean:
 	make -C $(APIDOC_BASE_DIR) clean
 	make -C $(PLANTUML_DIR) clean
 	rm -f $(APIDOCSRC_DIR)/python/*
+	rm -f $(APIDOC_FAKE_MODULE_DIR)
 
 override_dh_auto_test:
 	dh_auto_test

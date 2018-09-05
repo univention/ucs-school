@@ -34,8 +34,36 @@ Django settings file that gets its content from
 /etc/ucsschool-import/settings.py
 """
 
+import os
 import imp
 
-info = imp.find_module('settings', ['/etc/ucsschool-import'])
-res = imp.load_module('settings', *info)
-globals().update(dict((k, v) for k, v in res.__dict__.items() if k == k.upper()))
+
+if os.environ.get('UCSSCHOOL-SPHINX-DOC-BUILD-PATH'):
+	django_settings = {
+		'SECRET_KEY': 'abc',
+		'INSTALLED_APPS': (
+			'django.contrib.admin',
+			'django.contrib.auth',
+			'django.contrib.contenttypes',
+			'django.contrib.sessions',
+			'django.contrib.messages',
+			'django.contrib.staticfiles',
+			'rest_framework',
+			'djcelery',
+			'django_filters',
+			'ucsschool.http_api.import_api',
+		),
+		'UCSSCHOOL_IMPORT': {
+			'logging': {
+				'api_datefmt': '%Y-%m-%d %H:%M:%S',
+				'api_format': '%(asctime)s %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d  %(message)s',
+				'api_level': 10,
+				'api_logfile': 'http_api.log',
+			}
+		},
+	}
+else:
+	info = imp.find_module('settings', ['/etc/ucsschool-import'])
+	res = imp.load_module('settings', *info)
+	django_settings = dict((k, v) for k, v in res.__dict__.items() if k == k.upper())
+globals().update(django_settings)
