@@ -48,7 +48,7 @@ Module to ease interactive use of import system.
 """
 
 import json
-import os
+import os.path
 import pprint
 
 from ucsschool.importer.configuration import setup_configuration as _setup_configuration
@@ -76,17 +76,9 @@ except IOError as exc:
 	pass
 
 _ui = _UserImportCommandLine()
-
-if os.environ.get('UCSSCHOOL-SPHINX-DOC-BUILD-PATH'):
-	config_path = os.path.join(os.environ['UCSSCHOOL-SPHINX-DOC-BUILD-PATH'], 'usr/share/ucs-school-import/configs/')
-	_config_files = [
-		os.path.join(config_path, 'global_defaults.json'),
-		os.path.join(config_path, 'user_import_defaults.json')
-	]
-else:
-	_config_files = _ui.configuration_files
-	if os.path.exists(os.path.expanduser("~/.import_shell_config")):
-		_config_files.append(os.path.expanduser("~/.import_shell_config"))
+_config_files = _ui.configuration_files
+if os.path.exists(os.path.expanduser("~/.import_shell_config")):
+	_config_files.append(os.path.expanduser("~/.import_shell_config"))
 
 config = _setup_configuration(_config_files, **_config_args)
 _ui.setup_logging(config["verbose"], config["logfile"])
