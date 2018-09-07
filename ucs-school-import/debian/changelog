@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-46) unstable; urgency=low
+
+  * Bug #47447: fix diagramm build via plantuml
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 07 Sep 2018 16:10:11 +0200
+
 ucs-school-import (16.0.2-45) unstable; urgency=low
 
   * Bug #47447: update UCR variable description

@@ -8,10 +8,10 @@ INPUT := import-pyhooks.md
 all: $(foreach i,$(INPUT),$(foreach f,$(FORMATS), $(addsuffix .$f,$(basename $i))))
 
 %.png: %.md
-	java -jar plantuml.jar -nbthread auto -failfast2 -tpng $<
+	DISPLAY= java -jar plantuml.jar -nbthread auto -failfast2 -tpng $<
 
 %.svg: %.md
-	java -jar plantuml.jar -nbthread auto -failfast2 -tsvg $<
+	DISPLAY= java -jar plantuml.jar -nbthread auto -failfast2 -tsvg $<
 
 clean:
 	rm -f *.png *.svg
