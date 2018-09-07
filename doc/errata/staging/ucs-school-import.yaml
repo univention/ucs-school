@@ -5,9 +5,9 @@ scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
 fix: 15.0.3-67A~4.2.0.201808281206
 desc: |
- * The import now checks the most common errors in dry-runs (Bug #46837).
+ * The import now also checks the most common errors in dry-runs (Bug #46837).
  * The UMC import module now shows a summary after a successful dry-run (Bug #46838).
  * In dry run, a read-only cn=admin LDAP connection is used (Bug #47204).
- * File permissions are set correctly now on initial installations of the HTTP-API import (Bug #47472).
- * Use a different account for authentication on each DC backup (Bug #47682).
+ * File permissions are now set correctly on initial installations of the HTTP-API import (Bug #47472).
+ * The HTTP API used a single user (<literal>importhttpapi</literal>) on all systems where the HTTP API is installed. This led to some authentication problems. Therefore, a different account for authentication is now created on each DC backup (Bug #47682).
 bug: [46837, 46838, 47204, 47472, 47682]
