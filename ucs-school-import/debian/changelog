@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-45) unstable; urgency=low
+
+  * Bug #47447: update UCR variable description
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 07 Sep 2018 15:59:39 +0200
+
 ucs-school-import (16.0.2-44) unstable; urgency=low
 
   * Bug #47447: don't change source_uid in HTTP-API import in SiSoPi scenario
