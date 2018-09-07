@@ -258,6 +258,10 @@ class UCSSchoolHelperAbstractClass(object):
 	def supports_school(cls):
 		return 'school' in cls._attributes
 
+	@classmethod
+	def supports_schools(cls):
+		return 'schools' in cls._attributes
+
 	def __init__(self, name=None, school=None, **kwargs):
 		'''Initializes a new instance with kwargs.
 		Not every kwarg is accepted, though: The name
@@ -833,6 +837,8 @@ class UCSSchoolHelperAbstractClass(object):
 			return klass.from_udm_obj(udm_obj, school, lo)
 		udm_obj.open()
 		attrs = {'school': cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
+		if cls.supports_schools():
+			attrs['schools'] = udm_obj['school']
 		for name, attr in cls._attributes.iteritems():
 			if attr.udm_name:
 				udm_value = udm_obj[attr.udm_name]
