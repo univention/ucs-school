@@ -6,6 +6,6 @@ src: ucs-school-lib
 fix: 11.0.1-22A~4.3.0.201809071546
 desc: |
  * Internal enhancements to the PyHooks loader (Bug #45715, #47221).
- * Do not log passwords anymore (Bug #44314).
+ * Do not write passwords to logfiles anymore (Bug #44314).
  * Internal enhancement to a user object creation method (Bug #47447).
 bug: [44314,45715,47221,47447]

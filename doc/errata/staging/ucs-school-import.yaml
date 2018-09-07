@@ -13,14 +13,14 @@ desc: |
  * The CSV import via ucs-school-user-import is now able to handle UTF-8 files with byte order mark (UTF-8 BOM) correctly. In the past the BOM was interpreted as user data (Bug #47305).
  * Internal change: several typos in class names have been fixed (Bug #47311).
  * Internal cleanup: removed unreachable code (Bug #47413).
- * A JSON configuration file for using the ucs-school-testuser-import script to test a HTTP-API-import and hints how to use it were added (Bug #47277).
- * The import now checks the most common errors in dry-runs (Bug #45715).
+ * Added a JSON configuration file for using the ucs-school-testuser-import script to test an HTTP-API import and notes on how to use (Bug #47277).
+ * The import now also checks the most common errors in dry-runs (Bug #45715).
  * In dry run, a read-only cn=admin LDAP connection is used (Bug #47203).
  * Code and configuration for a scenario with a single source database with global record UIDs and partial user import files was implemented (Bug #47447).
  * An interface for adding custom configuration checks has been added (Bug #47448).
  * A user is not moved to another school if this school is imported as an additional school for the user and the name of the new school is sorted alphanumerically earlier than the school of which the user is already a member (Bug #47450).
- * Don't create roles in import when feature is deactivated (Bug #47451).
- * File permissions are set correctly now on initial installations of the HTTP-API import (Bug #47514).
+ * UCS@school roles attributes are no longer created during import if this feature is deactivated (Bug #47451).
+ * File permissions are set correctly now on initial installation of the HTTP-API import (Bug #47514).
  * Handle changed database migrations for django-celery, when upgrading from 4.2 to 4.3 (Bug #47333).
- * Use a different account for authentication on each DC backup (Bug #47683).
+ * The HTTP API used a single user (<literal>importhttpapi</literal>) on all systems where the HTTP API is installed. This led to some authentication problems. Therefore, a different account for authentication is now created on each DC backup (Bug #47683).
 bug: [46712,47162,47221,47302,47304,47305,47311,47413,47277,45715,47203,47447,47448,47450,47451,47514,47333,47683]

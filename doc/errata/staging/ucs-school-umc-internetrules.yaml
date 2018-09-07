@@ -5,5 +5,5 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-internetrules
 fix: 14.0.0-2A~4.3.0.201808291312
 desc: |
- * Changed description in case no rule is set to distinguish that better from the default rule (Bug #47386).
+ * Changed item description within a drop down field if no rule is set to better distinguish it from the default rule (Bug #47386).
 bug: [47386]
