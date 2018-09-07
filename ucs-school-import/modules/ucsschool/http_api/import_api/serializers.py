@@ -43,6 +43,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError, PermissionDenied
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+from ucsschool.lib.models.utils import ucr
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 from ucsschool.http_api.import_api.models import (
 	JOB_NEW, JOB_SCHEDULED, Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob)
@@ -123,7 +124,6 @@ class UserImportJobCreationValidator(object):
 			args.append(school)
 		args.append(username)
 		args = tuple(args)
-
 		res = lo.searchDn(filter_format(filter_s, args))
 		if not res:
 			logger.error('Not allowed: username: %r school: %r role: %r', username, school, role)
@@ -160,9 +160,11 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		validated_data['result'] = None
 		validated_data['log_file'] = None
 		validated_data['basedir'] = ''
-		if not validated_data.get('source_uid'):
-			# TODO: can we really allow source_uid to be set by the user? Will this not undermine security?
+		if ucr.is_true('ucsschool/import/http_api/set_source_uid', True):
 			validated_data['source_uid'] = '{}-{}'.format(validated_data['school'].name, validated_data['user_role']).lower()
+			logger.info('Settings source_uid to %r.', validated_data['source_uid'])
+		else:
+			logger.info('Keeping source_uid from configuration.')
 		instance = super(UserImportJobSerializer, self).create(validated_data)
 		instance.basedir = os.path.join(
 			settings.UCSSCHOOL_IMPORT['import_jobs_basedir'],

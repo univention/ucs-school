@@ -41,3 +41,8 @@ You may wish to adapt the ``deletion_grace_period`` settings:
 * ``deletion_grace_period:deletion`` *should* be (a lot) higher than ``0``. It should be the maximum time in days that the imports of two schools may be apart. It is the time a user can exist in *limbo*, before going to the great beyond.
 
 You may wish to adapt the name of the ``limbo_ou``.
+
+Set the UCR variable ``ucsschool/import/http_api/set_source_uid`` to ``no`` and restart Gunicorn::
+
+	ucr set ucsschool/import/http_api/set_source_uid=no
+	service ucs-school-import-http-api restart

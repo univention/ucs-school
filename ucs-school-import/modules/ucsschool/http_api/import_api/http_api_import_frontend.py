@@ -118,9 +118,10 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			infile=self.data_path,
 			logfile=self.logfile_path,
 			school=self.import_job.school.name,
-			sourceUID=self.import_job.source_uid,
 			user_role=self.import_job.user_role,
 			verbose=True)
+		if self.import_job.source_uid:
+			self.args.sourceUID = self.import_job.source_uid
 		self.args.settings = {
 			'dry_run': self.import_job.dryrun,
 			'hooks_dir_legacy': self.hook_dir,
@@ -132,10 +133,11 @@ class HttpApiImportFrontend(UserImportCommandLine):
 				'user_import_summary': self.summary_file,
 			},
 			'school': self.import_job.school.name,
-			'sourceUID': self.import_job.source_uid,
 			'progress_notification_function': self.update_job_state,
 			'user_role': self.import_job.user_role,
 		}
+		if self.import_job.source_uid:
+			self.args.settings['sourceUID'] = self.import_job.source_uid
 		self.task_logger.info('HttpApiImportFrontend: Set up import job with args:\n%s', pprint.pformat(self.args.__dict__))
 		return self.args
 

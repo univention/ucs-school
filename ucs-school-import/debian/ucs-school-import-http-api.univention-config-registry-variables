@@ -1,3 +1,9 @@
+[ucsschool/import/http_api/set_source_uid]
+Description[de]=Überschrebt den Wert von sourceUID bei einem Import via UMC oder HTTP-API mit "<OU>-<Rolle>". Nur im Falle einer Datenbasis mit global eindeutigen Benutzer-IDs und verteilen Importen ändern! Standard wenn nicht gesetzt: an.
+Description[en]=Overwrite the value of sourceUID when importing via UMC or HTTP-API with "<OU>-<role>". Only change this in case of a single source database with globally unique user IDs and distributed imports! Default if unset: on.
+Type=bool
+Categories=ucsschool-base
+
 [ucsschool/import/http_api/django_debug]
 Description[de]=Aktiviert Debug-Ausgaben bei Fehlern durch die Web-Applikation. Nicht im Produktivbetrieb einschalten, da es ein Sicherheitsrisiko darstellt! Standard: aus.
 Description[en]=Activates web application debug output when errors occur. This is a security risk - do not switch this on in a production environment! Default: off.

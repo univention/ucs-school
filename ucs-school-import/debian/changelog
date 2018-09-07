@@ -1,3 +1,10 @@
+ucs-school-import (16.0.2-44) unstable; urgency=low
+
+  * Bug #47447: don't change source_uid in HTTP-API import in SiSoPi scenario
+  * make source_uid field in UserImportJob resource read-only
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 07 Sep 2018 15:43:43 +0200
+
 ucs-school-import (16.0.2-43) unstable; urgency=low
 
   * Bug #45715: new-legacy import must handle users from old-legacy import
