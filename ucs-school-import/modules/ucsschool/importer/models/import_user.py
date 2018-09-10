@@ -657,8 +657,7 @@ class ImportUser(User):
 		Normalize given name if set from import data or create from scheme.
 		"""
 		if self.firstname:
-			if self.config.get('normalize', {}).get('firstname', True):
-				self.firstname = self.normalize(self.firstname)  # type: str
+			self.firstname = self.normalize(self.firstname)  # type: str
 		elif self._schema_write_check("firstname", "firstname", "givenName"):
 			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
 		elif self.old_user:
@@ -670,8 +669,7 @@ class ImportUser(User):
 		Normalize family name if set from import data or create from scheme.
 		"""
 		if self.lastname:
-			if self.config.get('normalize', {}).get('lastname', True):
-				self.lastname = self.normalize(self.lastname)  # type: str
+			self.lastname = self.normalize(self.lastname)  # type: str
 		elif self._schema_write_check("lastname", "lastname", "sn"):
 			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
 		elif self.old_user:

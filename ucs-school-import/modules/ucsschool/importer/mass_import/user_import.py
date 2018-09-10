@@ -563,7 +563,7 @@ class UserImport(object):
 		:raises TooManyErrors: if the number of countable exceptions exceeds the number of tolerable errors
 		"""
 		self.errors.append(exc)
-		if -1 < self.config["tolerate_errors"] < len([x for x in self.errors if x.is_countable]):
+		if -1 < self.config["tolerate_errors"] < len(self.errors):
 			raise TooManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
 	def progress_report(self, description, percentage=0, done=0, total=0, **kwargs):
