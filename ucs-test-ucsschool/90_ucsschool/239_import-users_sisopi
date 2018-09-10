@@ -26,6 +26,15 @@ class Test(CLI_Import_v2_Tester):
 		person.verify()
 		schools = self.lo.get(person.dn, attr=['ucsschoolSchool'])['ucsschoolSchool']
 		self.log.info('User is in ou=%r and has schools=%r.', person.school, schools)
+		if person.school == self.limbo_ou_name:
+			if schools != [self.limbo_ou_name]:
+				self.fail('Primary school is limbo_ou ({!r}) but "schools" attribute is {!r}.'.format(
+					self.limbo_ou_name, schools))
+			group_dns = self.lo.searchDn('(&(objectClass=univentionGroup)(uniqueMember={}))'.format(person.dn))
+			self.log.debug('Groups of user: %r', group_dns)
+			if not all(dn.endswith(self.limbo_ou_dn) for dn in group_dns):
+				self.fail('User is in limbo_ou, but has group from other OUs.')
+
 
 	def test(self):
 		source_uid = 'sourceUID-%s' % (uts.random_string(),)
@@ -42,11 +51,11 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('deletion_grace_period:deletion', 90)
 		del config['csv']['mapping']['OUs']
 
-		limbo_ou_name, limbo_ou_dn = self.schoolenv.create_ou(name_edudc=self.ucr.get('hostname'), use_cache=False)
-		config.update_entry('limbo_ou', limbo_ou_name)
-		self.log.info('*** Created limbo OU %r.', limbo_ou_name)
+		self.limbo_ou_name, self.limbo_ou_dn = self.schoolenv.create_ou(name_edudc=self.ucr.get('hostname'), use_cache=False)
+		config.update_entry('limbo_ou', self.limbo_ou_name)
+		self.log.info('*** Created limbo OU %r.', self.limbo_ou_name)
 
-		for num, role in enumerate(('staff', 'student', 'teacher', 'teacher_and_staff')):
+		for num, role in enumerate(('staff', 'student', 'teacher', 'teacher_and_staff'), start=1):
 			config.update_entry('user_role', role)
 
 			self.log.info('*** (%d/4) - 1. Importing (create) %r in school %r...', num, role, self.ou_A.name)
@@ -94,7 +103,7 @@ class Test(CLI_Import_v2_Tester):
 
 			self.log.info('***  (%d/4) - 8. Deleting (move) %r in (last) school %r...', num, role, self.ou_C.name)
 			config.update_entry('school', self.ou_C.name)
-			person.update(school=limbo_ou_name, schools=[limbo_ou_name])
+			person.update(school=self.limbo_ou_name, schools=[self.limbo_ou_name])
 			person.set_inactive()
 			self._import_and_verify(config, person, delete=True)
 			self.log.info('OK: deletion (C -> limbo) succeeded.')
@@ -109,7 +118,7 @@ class Test(CLI_Import_v2_Tester):
 
 			self.log.info('***  (%d/4) - 10. Deleting (move) %r in (last) school %r...', num, role, self.ou_B.name)
 			config.update_entry('school', self.ou_B.name)
-			person.update(school=limbo_ou_name, schools=[limbo_ou_name], school_classes={})
+			person.update(school=self.limbo_ou_name, schools=[self.limbo_ou_name], school_classes={})
 			person.set_inactive()
 			self._import_and_verify(config, person, delete=True)
 			self.log.info('OK: deletion (B -> limbo) succeeded.')

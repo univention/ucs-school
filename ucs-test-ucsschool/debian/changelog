@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-93) unstable; urgency=low
+
+  * Bug #47447: verify that user in limbo_ou has no groups in other schools
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Sep 2018 14:35:45 +0200
+
 ucs-test-ucsschool (5.0.2-92) unstable; urgency=medium
 
   * Bug #44314: fix import in test  242_import-users_test_password_hashes

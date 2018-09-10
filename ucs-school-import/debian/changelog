@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-47) unstable; urgency=low
+
+  * Bug #47447: remove user from school classes when moving to limbo_ou
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Sep 2018 12:44:12 +0200
+
 ucs-school-import (16.0.2-46) unstable; urgency=low
 
   * Bug #47447: fix diagramm build via plantuml

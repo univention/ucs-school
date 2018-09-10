@@ -191,6 +191,7 @@ class SingleSourcePartialUserImport(UserImport):
 			imported_user = copy.deepcopy(user)
 			imported_user.school = self.limbo_ou
 			imported_user.schools = [self.limbo_ou]
+			imported_user.school_classes = {}
 			user = self.school_move(imported_user, user)
 			user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
 			modified |= self.deactivate_user_now(user)
