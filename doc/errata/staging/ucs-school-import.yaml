@@ -3,7 +3,7 @@ release: "4.2"
 version: [1]
 scope: ucs_4.2-0-ucs-school-4.2
 src: ucs-school-import
-fix: 15.0.3-67A~4.2.0.201808281206
+fix: 15.0.3-69A~4.2.0.201809101353
 desc: |
  * The import now also checks the most common errors in dry-runs (Bug #46837).
  * The UMC import module now shows a summary after a successful dry-run (Bug #46838).
