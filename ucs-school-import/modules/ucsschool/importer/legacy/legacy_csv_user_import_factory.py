@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Factory implementation for import using CSV in legacy format.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +28,9 @@ Factory implementation for import using CSV in legacy format.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Factory implementation for import using CSV in legacy format.
+"""
 
 from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
 from ucsschool.importer.legacy.legacy_csv_reader import LegacyCsvReader

@@ -115,6 +115,7 @@ class UserPyHook(ImportPyHook):
 		* The hook is only executed if modifying the user succeeded.
 		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
 		* Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
+		* If running in an import job, the user may not have been removed, but merely deactivated. If `user.udm_properties["ucsschoolPurgeTimestamp"]` is set, the user is marked for removal.
 		* set `priority["post_modify"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
@@ -162,8 +163,7 @@ class UserPyHook(ImportPyHook):
 
 		* The hook is only executed if the deleting the user succeeded.
 		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-		* If running in an import job, the user may not have been removed, but merely deactivated. Search using user.dn to find out.
-		* If the user was removed, do not try to :py:meth:`modify()` it.
+		* The user was removed, do not try to :py:meth:`modify()` it.
 		* set `priority["post_remove"]` to an `int`, to enable this method
 
 		:param ImportUser user: User (or a subclass of it, eg. ImportUser)

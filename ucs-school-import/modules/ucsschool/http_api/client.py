@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-HTTP API Client
-"""
 #
 # Univention UCS@school
 #
@@ -31,6 +28,10 @@ HTTP API Client
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+HTTP API Client
+"""
 
 from __future__ import absolute_import, unicode_literals
 import copy

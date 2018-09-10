@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-CSV reader for CSV files using the legacy import format.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +27,10 @@ CSV reader for CSV files using the legacy import format.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+CSV reader for CSV files using the legacy import format.
+"""
 
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.exceptions import NoRole, UnkownRole

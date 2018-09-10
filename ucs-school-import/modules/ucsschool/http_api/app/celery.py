@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Django settings for the UCS@school import HTTP API.
-"""
 #
 # Univention UCS@school
 #
@@ -31,6 +28,10 @@ Django settings for the UCS@school import HTTP API.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Django settings for the UCS@school import HTTP API.
+"""
 
 from __future__ import absolute_import, unicode_literals
 import os

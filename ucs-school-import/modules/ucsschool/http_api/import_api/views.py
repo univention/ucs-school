@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Django Views
-"""
 #
 # Univention UCS@school
 #
@@ -31,6 +28,10 @@ Django Views
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Django Views
+"""
 
 from __future__ import unicode_literals
 try:

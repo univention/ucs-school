@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Class to export test user data from TestUserCreator to CSV.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +28,10 @@ Class to export test user data from TestUserCreator to CSV.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Class to export test user data from TestUserCreator to CSV.
+"""
 
 from ucsschool.importer.writer.csv_writer import CsvWriter
 from ucsschool.importer.writer.result_exporter import ResultExporter

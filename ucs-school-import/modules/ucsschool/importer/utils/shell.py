@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Module to ease interactive use of import system.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -45,6 +42,10 @@ Module to ease interactive use of import system.
 #   (ln -s /var/lib/ucs-school-import/configs/example.json ~/.import_shell_config)
 # * store command line arguments in a JSON file in ~/.import_shell_args
 #
+
+"""
+Module to ease interactive use of import system.
+"""
 
 import json
 import os.path

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Diverse helper functions.
-"""
 # Copyright 2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +27,10 @@ Diverse helper functions.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Diverse helper functions.
+"""
 
 import os
 import os.path

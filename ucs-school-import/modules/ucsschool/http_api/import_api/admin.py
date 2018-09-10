@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Django Admin
-"""
 #
 # Univention UCS@school
 #
@@ -31,6 +28,10 @@ Django Admin
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Django Admin
+"""
 
 from __future__ import unicode_literals
 from django.contrib import admin

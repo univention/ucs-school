@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-CSV reader for CSV files created for HTTP-API import.
-"""
 # Copyright 2017-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +27,10 @@ CSV reader for CSV files created for HTTP-API import.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+CSV reader for CSV files created for HTTP-API import.
+"""
 
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.reader.csv_reader import CsvReader

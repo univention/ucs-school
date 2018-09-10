@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-UCS@school legacy import tool cmdline frontend.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +28,10 @@ UCS@school legacy import tool cmdline frontend.
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+UCS@school legacy import tool cmdline frontend.
+"""
 
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.legacy.legacy_user_import_parse_cmdline import LegacyUserImportParseUserImportCmdline
