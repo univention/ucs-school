@@ -1,3 +1,9 @@
+ucs-school-import (15.0.3-70) unstable; urgency=low
+
+  * Bug #46837: add missing import
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 10 Sep 2018 17:16:14 +0200
+
 ucs-school-import (15.0.3-69) unstable; urgency=low
 
   * Bug #46837: new-legacy import must handle users from old-legacy import

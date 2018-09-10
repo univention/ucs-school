@@ -35,6 +35,7 @@ Configuration classes.
 
 import json
 from six import string_types
+from ucsschool.lib.models.utils import ucr
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
 try:
