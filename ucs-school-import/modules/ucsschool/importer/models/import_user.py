@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Representation of a user read from a file.
-"""
 # Copyright 2016-2018 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,10 +28,15 @@ Representation of a user read from a file.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Representation of a user read from a file.
+"""
+
 import re
 import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
+from six import string_types
 
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
@@ -60,7 +62,21 @@ from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_r
 from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
+try:
+	from typing import Any, Callable, Dict, Iterable, List, Optional, Type, Union
+	import logging
+	from ucsschool.importer.configuration import ReadOnlyDict
+	from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
+	from ucsschool.importer.utils.username_handler import UsernameHandler
+	from ucsschool.importer.reader.base_reader import BaseReader
+	from ucsschool.importer.utils.ldap_connection import LoType, UdmObjectType
+	from univention.config_registry import ConfigRegistry
+except ImportError:
+	pass
+
+
 FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
+UsernameUniquenessTuple = namedtuple('UsernameUniquenessTuple', ['record_uid', 'source_uid', 'dn'])
 
 
 class ImportUser(User):
@@ -81,26 +97,26 @@ class ImportUser(User):
 	source_uid = SourceUID("SourceUID")
 	record_uid = RecordUID("RecordUID")
 
-	config = None
+	config = None  # type: ReadOnlyDict
 	default_username_max_length = 20  # may be lowered in __init__()
-	attribute_udm_names = None
-	no_overwrite_attributes = None
-	_unique_ids = defaultdict(dict)
-	factory = None
-	ucr = None
-	unique_email_handler = None
-	username_handler = None
-	reader = None
-	logger = None
+	attribute_udm_names = None  # type: Dict[str, str]
+	no_overwrite_attributes = None  # type: List[str]
+	_unique_ids = defaultdict(dict)  # type: Dict[str, Dict[str, str]]
+	factory = None  # type: DefaultUserImportFactory
+	ucr = None  # type: ConfigRegistry
+	unique_email_handler = None  # type: UsernameHandler
+	username_handler = None  # type: UsernameHandler
+	reader = None  # type: BaseReader
+	logger = None  # type: logging.Logger
 	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
-	_pyhook_cache = None
-	_format_pyhook_cache = None
+	_pyhook_cache = None  # type: Dict[str, List[Callable]]
+	_format_pyhook_cache = None  # type: Dict[str, List[Callable]]
 	# non-Attribute attributes (not in self._attributes) that can also be used
 	# as arguments for object creation and will be exported by to_dict():
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
-	_all_school_names = None
-	_all_usernames = None
+	_all_school_names = None  # type: List[str]
+	_all_usernames = None  # type: Dict[str, UsernameUniquenessTuple]
 	_prop_regex = re.compile(r'<(.*?)(:.*?)*>')
 	_prop_providers = {
 		'birthday': 'make_birthday',
@@ -116,7 +132,7 @@ class ImportUser(User):
 		'username': 'make_username',
 	}
 
-	def __init__(self, name=None, school=None, **kwargs):
+	def __init__(self, name=None, school=None, **kwargs):  # type: (str, str, **str) -> None
 		"""
 		Create ImportUser object (neither saved nor loaded from LDAP yet).
 		The `dn` attribute is calculated.
@@ -125,14 +141,14 @@ class ImportUser(User):
 		:param str school: OU
 		:param kwargs: attributes to set on user object
 		"""
-		self.action = None            # "A", "D" or "M"
-		self.entry_count = 0          # line/node number of input data
-		self.udm_properties = dict()  # UDM properties from input, that are not stored in Attributes
-		self.input_data = list()      # raw input data created by SomeReader.read()
-		self.old_user = None          # user in LDAP, when modifying
-		self.in_hook = False          # if a hook is currently running
+		self.action = None  # type: str                     # "A", "D" or "M"
+		self.entry_count = 0                                # line/node number of input data
+		self.udm_properties = dict()  # type: Dict[str, Any]  # UDM properties from input, that are not storedin Attributes
+		self.input_data = list()  # type: List[str]         # raw input data created by SomeReader.read()
+		self.old_user = None  # type: Optional[ImportUser]  # user in LDAP, when modifying
+		self.in_hook = False                                # if a hook is currently running
 
-		self._lo = None
+		self._lo = None  # type: LoType
 
 		for attr in self._additional_props:
 			try:
@@ -153,13 +169,13 @@ class ImportUser(User):
 				"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
 				"mailPrimaryAddress uid"
 			).split()
-		self._userexpiry = None
-		self._purge_ts = None
-		self._used_methods = defaultdict(list)  # recursion prevention
-		self.lo = kwargs.pop('lo', None)
+		self._userexpiry = None  # type: str
+		self._purge_ts = None  # type: str
+		self._used_methods = defaultdict(list)  # type: Dict[str, List[FunctionSignature]]  # recursion prevention
+		self.lo = kwargs.pop('lo', None)  # type: LoType
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
-	def build_hook_line(self, hook_time, func_name):
+	def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> int
 		"""
 		Recreate original input data for hook creation.
 
@@ -174,7 +190,7 @@ class ImportUser(User):
 		"""
 		return self._build_hook_line(*self.input_data)
 
-	def call_hooks(self, hook_time, func_name):
+	def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
 		"""
 		Runs PyHooks, then ucs-school-libs fork hooks.
 
@@ -217,7 +233,7 @@ class ImportUser(User):
 			self.in_hook = False
 
 		if self.config['dry_run']:
-			return None
+			return True
 		else:
 			try:
 				self.hook_path = self.config['hooks_dir_legacy']
@@ -225,7 +241,7 @@ class ImportUser(User):
 				pass
 			return super(ImportUser, self).call_hooks(hook_time, func_name)
 
-	def call_format_hook(self, prop_name, fields):
+	def call_format_hook(self, prop_name, fields):  # type: (str, Dict[str, Any]) -> Dict[str, Any]
 		"""
 		Run format hooks.
 
@@ -251,7 +267,7 @@ class ImportUser(User):
 			res = func(prop_name, res)
 		return res
 
-	def change_school(self, school, lo):
+	def change_school(self, school, lo):  # type: (str, LoType) -> bool
 		"""
 		Change primary school of user.
 
@@ -269,19 +285,20 @@ class ImportUser(User):
 		old_dn = self.old_dn
 		res = super(ImportUser, self).change_school(school, lo)
 		if res:
-			# rewrite self._unique_ids, replacing old DN with new DN
+			# rewrite _unique_ids and _all_usernames, replacing old DN with new DN
 			self._unique_ids_replace_dn(old_dn, self.dn)
+			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
 		return res
 
 	@classmethod
-	def _unique_ids_replace_dn(cls, old_dn, new_dn):
+	def _unique_ids_replace_dn(cls, old_dn, new_dn):  # type: (str, str) -> None
 		"""Change a DN in unique_ids store."""
 		for category, entries in cls._unique_ids.items():
 			for value, dn in entries.items():
 				if dn == old_dn:
 					cls._unique_ids[category][value] = new_dn
 
-	def check_schools(self, lo, additional_schools=None):
+	def check_schools(self, lo, additional_schools=None):  # type: (LoType, Optional[Iterable[str]]) -> None
 		"""
 		Verify that the "school" and "schools" attributes are correct.
 		Check is case sensitive (Bug #42456).
@@ -301,7 +318,7 @@ class ImportUser(User):
 			if school not in self.get_all_school_names(lo):
 				raise UnknownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
-	def create(self, lo, validate=True):
+	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
 		"""
 		Create user object.
 
@@ -314,19 +331,21 @@ class ImportUser(User):
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running create() from within a hook.")
-			return self.create_without_hooks(lo, validate)
+			res = self.create_without_hooks(lo, validate)
 		else:
-			return super(ImportUser, self).create(lo, validate)
+			res = super(ImportUser, self).create(lo, validate)
+		self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
+		return res
 
 	@classmethod
-	def get_ldap_filter_for_user_role(cls):
+	def get_ldap_filter_for_user_role(cls):  # type: () -> str
 		if not cls.factory:
 			cls.factory = Factory()
 		if not cls.config:
 			cls.config = Configuration()
 		# convert cmdline / config name to ucsschool.lib role(s)
 		if not cls.config["user_role"]:
-			roles = ()
+			roles = ()  # type: Iterable[str]
 		elif cls.config["user_role"] == 'student':
 			roles = (role_pupil,)
 		elif cls.config["user_role"] == 'teacher_and_staff':
@@ -338,6 +357,7 @@ class ImportUser(User):
 
 	@classmethod
 	def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
+		# type: (LoType, str, str, Optional[str]) -> ImportUser
 		"""
 		Retrieve an ImportUser.
 
@@ -368,13 +388,13 @@ class ImportUser(User):
 				raise NoObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
 					cls.config.get("user_role", "user") or "User", source_uid, record_uid))
 
-	def deactivate(self):
+	def deactivate(self):  # type: () -> None
 		"""
 		Deactivate user account. Caller must run modify().
 		"""
 		self.disabled = "all"
 
-	def expire(self, expiry):
+	def expire(self, expiry):  # type: (str) -> None
 		"""
 		Set the account expiration date. Caller must run modify().
 
@@ -383,7 +403,7 @@ class ImportUser(User):
 		self._userexpiry = expiry
 
 	@classmethod
-	def from_dict(cls, a_dict):
+	def from_dict(cls, a_dict):  # type: (Dict[str, Any]) -> ImportUser
 		"""
 		Create user object from a dictionary created by `to_dict()`.
 
@@ -404,7 +424,7 @@ class ImportUser(User):
 			cls.factory = Factory()
 		return cls.factory.make_import_user(roles, **user_dict)
 
-	def _alter_udm_obj(self, udm_obj):
+	def _alter_udm_obj(self, udm_obj):  # type: (UdmObjectType) -> None
 		self._prevent_mapped_attributes_in_udm_properties()
 		super(ImportUser, self)._alter_udm_obj(udm_obj)
 		if self._userexpiry is not None:
@@ -439,12 +459,12 @@ class ImportUser(User):
 				)
 
 	@classmethod
-	def get_all_school_names(cls, lo):
+	def get_all_school_names(cls, lo):  # type: (LoType) -> Iterable[str]
 		if not cls._all_school_names:
 			cls._all_school_names = [s.name for s in School.get_all(lo)]
 		return cls._all_school_names
 
-	def has_purge_timestamp(self, connection):
+	def has_purge_timestamp(self, connection):  # type: (LoType) -> bool
 		"""
 		Check if the user account has a purge timestamp set (regardless if it is
 		in the future or past).
@@ -456,7 +476,7 @@ class ImportUser(User):
 		user_udm = self.get_udm_object(connection)
 		return bool(user_udm["ucsschoolPurgeTimestamp"])
 
-	def has_expired(self, connection):
+	def has_expired(self, connection):  # type: (LoType) -> bool
 		"""
 		Check if the user account has expired.
 
@@ -470,7 +490,7 @@ class ImportUser(User):
 		expiry = datetime.datetime.strptime(user_udm["userexpiry"], "%Y-%m-%d")
 		return datetime.datetime.now() > expiry
 
-	def has_expiry(self, connection):
+	def has_expiry(self, connection):  # type: (LoType) -> bool
 		"""
 		Check if the user account has an expiry date set (regardless if it is
 		in the future or past).
@@ -483,7 +503,7 @@ class ImportUser(User):
 		return bool(user_udm["userexpiry"])
 
 	@property
-	def lo(self):
+	def lo(self):  # type: () -> LoType
 		"""
 		LDAP connection object
 
@@ -495,12 +515,12 @@ class ImportUser(User):
 		return self._lo
 
 	@lo.setter
-	def lo(self, value):
+	def lo(self, value):  # type: (LoType) -> None
 		cn_admin_dn = 'cn=admin,{}'.format(self.ucr['ldap/base'])
-		assert not (self.config['dry_run'] and value == cn_admin_dn)
+		assert not (self.config['dry_run'] and value == cn_admin_dn)  # TODO: 1. compare with lo.lo.binddn, 2. don't use assert, raise an exception
 		self._lo = value
 
-	def prepare_all(self, new_user=False):
+	def prepare_all(self, new_user=False):  # type: (Optional[bool]) -> None
 		"""
 		Necessary preparation to modify a user in UCS.
 		Runs all make_* functions.
@@ -512,7 +532,7 @@ class ImportUser(User):
 		self.prepare_udm_properties()
 		self.prepare_attributes(new_user)
 
-	def prepare_attributes(self, new_user=False):
+	def prepare_attributes(self, new_user=False):  # type: (Optional[bool]) -> None
 		"""
 		Run make_* functions for all Attributes of ucsschool.lib.models.user.User.
 
@@ -534,7 +554,7 @@ class ImportUser(User):
 		self.make_disabled()
 		self.make_email()
 
-	def prepare_udm_properties(self):
+	def prepare_udm_properties(self):  # type: () -> None
 		"""
 		Create self.udm_properties from schemes configured in config["scheme"].
 		Existing entries will be overwritten unless listed in UCRV
@@ -549,7 +569,7 @@ class ImportUser(User):
 		for prop in [k for k in self.config["scheme"].keys() if k not in ignore_keys]:
 			self.make_udm_property(prop)
 
-	def prepare_uids(self):
+	def prepare_uids(self):  # type: () -> None
 		"""
 		Necessary preparation to detect if user exists in UCS.
 		Runs make_* functions for record_uid and source_uid Attributes of
@@ -558,21 +578,21 @@ class ImportUser(User):
 		self.make_recordUID()
 		self.make_sourceUID()
 
-	def make_birthday(self):
+	def make_birthday(self):  # type: () -> Union[str, None]
 		"""
 		Set User.birthday attribute.
 		"""
 		if self.birthday:
 			pass
 		elif self._schema_write_check("birthday", "birthday", "univentionBirthday"):
-			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])
+			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])  # type: str
 		elif self.old_user:
 			self.birthday = self.old_user.birthday
 		elif self.birthday == '':
 			self.birthday = None
 		return self.birthday
 
-	def make_classes(self):
+	def make_classes(self):  # type: () -> Dict[str, Dict[str, List[str]]]
 		"""
 		Create school classes.
 
@@ -581,10 +601,10 @@ class ImportUser(User):
 		* Attribute is only written if it is set to a string like 'school1-cls2,school3-cls4'.
 		"""
 		if isinstance(self, Staff):
-			self.school_classes = dict()
+			self.school_classes = dict()  # type: Dict[str, Dict[str, List[str]]]
 		elif isinstance(self.school_classes, dict):
 			pass
-		elif isinstance(self.school_classes, basestring):
+		elif isinstance(self.school_classes, string_types):
 			res = defaultdict(list)
 			self.school_classes = self.school_classes.strip(" \n\r\t,")
 			for a_class in [klass.strip() for klass in self.school_classes.split(",") if klass.strip()]:
@@ -611,7 +631,7 @@ class ImportUser(User):
 			self.school_classes = self.old_user.school_classes
 		return self.school_classes
 
-	def make_disabled(self):
+	def make_disabled(self):  # type: () -> str
 		"""
 		Set User.disabled attribute.
 		"""
@@ -632,33 +652,33 @@ class ImportUser(User):
 		self.disabled = "none" if activate else "all"
 		return self.disabled
 
-	def make_firstname(self):
+	def make_firstname(self):  # type: () -> str
 		"""
 		Normalize given name if set from import data or create from scheme.
 		"""
 		if self.firstname:
 			if self.config.get('normalize', {}).get('firstname', True):
-				self.firstname = self.normalize(self.firstname)
+				self.firstname = self.normalize(self.firstname)  # type: str
 		elif self._schema_write_check("firstname", "firstname", "givenName"):
 			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
 		elif self.old_user:
 			self.firstname = self.old_user.firstname
 		return self.firstname or ""
 
-	def make_lastname(self):
+	def make_lastname(self):  # type: () -> str
 		"""
 		Normalize family name if set from import data or create from scheme.
 		"""
 		if self.lastname:
 			if self.config.get('normalize', {}).get('lastname', True):
-				self.lastname = self.normalize(self.lastname)
+				self.lastname = self.normalize(self.lastname)  # type: str
 		elif self._schema_write_check("lastname", "lastname", "sn"):
 			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
 		elif self.old_user:
 			self.lastname = self.old_user.lastname
 		return self.lastname or ""
 
-	def make_email(self):
+	def make_email(self):  # type: () -> str
 		"""
 		Create email from scheme (if not already set).
 
@@ -668,7 +688,7 @@ class ImportUser(User):
 		if self.email is not None:  # allow to remove an email address with self.email == ''
 			pass
 		elif self.udm_properties.get("mailPrimaryAddress"):
-			self.email = self.udm_properties.pop("mailPrimaryAddress")
+			self.email = self.udm_properties.pop("mailPrimaryAddress")  # type: str
 		elif self._schema_write_check("email", "email", "mailPrimaryAddress"):
 			maildomain = self.config.get("maildomain")
 			if not maildomain:
@@ -694,27 +714,27 @@ class ImportUser(User):
 			self.email = self.old_user.email
 		return self.email or ""
 
-	def make_password(self):
+	def make_password(self):  # type: () -> str
 		"""
 		Create random password (if not already set).
 		"""
 		if not self.password:
-			self.password = create_passwd(self.config["password_length"])
+			self.password = create_passwd(self.config["password_length"])  # type: str
 		return self.password
 
-	def make_recordUID(self):
+	def make_recordUID(self):  # type: () -> str
 		"""
 		Create ucsschoolRecordUID (recordUID) (if not already set).
 		"""
 		if self.record_uid:
 			pass
 		elif self._schema_write_check("recordUID", "record_uid", "ucsschoolRecordUID"):
-			self.record_uid = self.format_from_scheme("recordUID", self.config["scheme"]["recordUID"])
+			self.record_uid = self.format_from_scheme("recordUID", self.config["scheme"]["recordUID"])  # type: str
 		elif self.old_user:
 			self.record_uid = self.old_user.record_uid
 		return self.record_uid or ""
 
-	def make_sourceUID(self):
+	def make_sourceUID(self):  # type: () -> str
 		"""
 		Set the ucsschoolSourceUID (sourceUID) (if not already set).
 		"""
@@ -723,10 +743,10 @@ class ImportUser(User):
 				raise NotSupportedError("Source_uid '{}' differs to configured source_uid '{}'.".format(
 					self.source_uid, self.config["sourceUID"]))
 		else:
-			self.source_uid = self.config["sourceUID"]
+			self.source_uid = self.config["sourceUID"]  # type: str
 		return self.source_uid or ""
 
-	def make_school(self):
+	def make_school(self):  # type: () -> str
 		"""
 		Create 'school' attribute - the position of the object in LDAP (if not already set).
 
@@ -737,12 +757,12 @@ class ImportUser(User):
 		* first (alphanum-sorted) school in attribute schools
 		"""
 		if self.school:
-			self.school = self.normalize(self.school)
+			self.school = self.normalize(self.school)  # type: str
 		elif self.config.get("school"):
 			self.school = self.config["school"]
 		elif self.schools and isinstance(self.schools, list):
 			self.school = self.normalize(sorted(self.schools)[0])
-		elif self.schools and isinstance(self.schools, basestring):
+		elif self.schools and isinstance(self.schools, string_types):
 			self.make_schools()  # this will recurse back, but schools will be a list then
 		else:
 			raise MissingSchoolName(
@@ -752,7 +772,7 @@ class ImportUser(User):
 				import_user=self)
 		return self.school
 
-	def make_schools(self):
+	def make_schools(self):  # type: () -> List[str]
 		"""
 		Create list of schools this user is in.
 		If possible, this should run after make_school()
@@ -761,12 +781,12 @@ class ImportUser(User):
 		* If it is a string like 'school1,school2,school3' the attribute is created from it.
 		"""
 		if self.schools and isinstance(self.schools, list):
-			self.schools = list(set(self.schools))
+			self.schools = list(set(self.schools))  # type: List[str]
 		elif not self.schools:
 			if not self.school:
 				self.make_school()
 			self.schools = [self.school]
-		elif isinstance(self.schools, basestring):
+		elif isinstance(self.schools, string_types):
 			self.schools = self.schools.strip(",").split(",")
 			self.schools = sorted(set(self.normalize(s.strip()) for s in self.schools))
 		else:
@@ -781,7 +801,7 @@ class ImportUser(User):
 				self.school = sorted(self.schools)[0]
 		return self.schools
 
-	def make_udm_property(self, property_name):
+	def make_udm_property(self, property_name):  # type: (str) -> Union[str, None]
 		"""
 		Create property `property_name` if not already set in
 		`self.udm_properties["username"]` or create it from scheme.
@@ -803,7 +823,7 @@ class ImportUser(User):
 			)
 		return self.udm_properties.get(property_name)
 
-	def make_username(self):
+	def make_username(self):  # type: () -> str
 		"""
 		Create username if not already set in self.name or self.udm_properties["username"].
 		[ALWAYSCOUNTER] and [COUNTER2] are supported, but only one may be used
@@ -812,7 +832,7 @@ class ImportUser(User):
 		if self.name:
 			return self.name
 		elif self.udm_properties.get("username"):
-			self.name = self.udm_properties.pop("username")
+			self.name = self.udm_properties.pop("username")  # type: str
 		elif self._schema_write_check("username", "name", "uid"):
 			self.name = self.format_from_scheme("username", self.username_scheme)
 			if not self.name:
@@ -825,19 +845,25 @@ class ImportUser(User):
 				raise EmptyFormatResultError("Username handler transformed {!r} to empty username.".format(
 					self.name), self.username_scheme, self.to_dict())
 		elif self.old_user:
-			self.name = self.old_user.name
+			self.name = self.old_user.name  # type: str
 		return self.name or ""
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
+		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		self.lo = lo
 		if self.in_hook:
 			# prevent recursion
 			self.logger.warn("Running modify() from within a hook.")
-			return self.modify_without_hooks(lo, validate, move_if_necessary)
+			res = self.modify_without_hooks(lo, validate, move_if_necessary)
 		else:
-			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
+			res = super(ImportUser, self).modify(lo, validate, move_if_necessary)
+		if self.old_user and self.old_user.name != self.name:
+			del self._all_usernames[self.old_user.name]
+			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
+		return res
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		if not self.school_classes:
 			# empty classes input means: don't change existing classes (Bug #42288)
 			self.logger.debug("No school_classes are set, not modifying existing ones.")
@@ -846,12 +872,13 @@ class ImportUser(User):
 		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
+		# type: (LoType, Optional[UdmObjectType], Optional[bool]) -> bool
 		self.lo = lo
 		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
 
 	@classmethod
-	def normalize(cls, s):
+	def normalize(cls, s):  # type: (str) -> str
 		"""
 		Normalize string (german umlauts etc)
 
@@ -859,11 +886,11 @@ class ImportUser(User):
 		:return: normalized `s`
 		:rtype: str
 		"""
-		if isinstance(s, basestring):
+		if isinstance(s, string_types):
 			s = cls.prop._replace("<:umlauts>{}".format(s), {})
 		return s
 
-	def normalize_udm_properties(self):
+	def normalize_udm_properties(self):  # type: () -> None
 		"""
 		Normalize data in `self.udm_properties`.
 		"""
@@ -882,7 +909,7 @@ class ImportUser(User):
 		for k, v in self.udm_properties.items():
 			self.udm_properties[k] = normalize_recursive(v)
 
-	def reactivate(self):
+	def reactivate(self):  # type: () -> None
 		"""
 		Reactivate a deactivated user account, reset the account expiry
 		setting and purge timestamp. Run this only on existing users fetched
@@ -893,17 +920,43 @@ class ImportUser(User):
 		self.disabled = "none"
 		self.set_purge_timestamp("")
 
-	def remove(self, lo):
+	def remove(self, lo):  # type: (LoType) -> bool
 		self.lo = lo
 		return super(ImportUser, self).remove(lo)
 
 	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
+		# type: (LoType, Optional[bool], Optional[bool]) -> None
 		"""
-		Run self-tests.
+		Runs self-tests in the following order:
+
+		* check existence of mandatory_attributes
+		* check uniqueness of record_uid in this import job
+		* check uniqueness of username in this import job
+		* check uniqueness of email (mailPrimaryAddress) in this import job
+		* check that username is not empty
+		* check maximum username length
+		* check minimum password_length
+		* check email has valid format
+		* check birthday has valid format
+		* check school_classes is a dict
+		* check schools is a list
+		* check format of entries in school_classes
+		* check existence of schools in school and schools
+		* check that a username is not already in use by another user
 
 		:param lo: LDAP connection object
 		:param bool validate_unlikely_changes: whether to create messages in self.warnings for changes to certain attributes
 		:param bool check_username: if username and password checks should run
+		:return: None
+		:raises MissingMandatoryAttribute: ...
+		:raises UniqueIdError: ...
+		:raises NoUsername: ...
+		:raises UsernameToLong: ...
+		:raises BadPassword: ...
+		:raises InvalidEmail: ...
+		:raises InvalidBirthday: ...
+		:raises InvalidSchoolClasses: ...
+		:raises InvalidSchools: ...
 		"""
 		super(ImportUser, self).validate(lo, validate_unlikely_changes)
 
@@ -985,21 +1038,38 @@ class ImportUser(User):
 			# its faster to filter out computer names in Python that in LDAP
 			# (and we have to loop over the query result anyway)
 			self.__class__._all_usernames = dict(
-				(attr['uid'][0], dn)
-				for dn, attr in lo.search('objectClass=posixAccount', attr=['uid'])
+				(
+					attr['uid'][0],
+					UsernameUniquenessTuple(
+						attr.get('ucsschoolRecordUID', [None])[0],
+						attr.get('ucsschoolSourceUID', [None])[0],
+						dn
+					)
+				)
+				for dn, attr in lo.search(
+					'objectClass=posixAccount',
+					attr=['uid', 'ucsschoolRecordUID', 'ucsschoolSourceUID']
+				)
 				if not attr['uid'][0].endswith('$')
 			)
-		if check_username and self.name in self._all_usernames and self._all_usernames[self.name] != self.dn:
-			self.add_error(
-				'name',
-				'Username {!r} is already in use by {!r}.'.format(self.name, self._all_usernames[self.name])
-			)
+		self._check_username_uniqueness()
 
-	def set_purge_timestamp(self, ts):
+	def _check_username_uniqueness(self):  # type: () -> None
+		"""
+		Check that :py:attr:`self.name` is not already in use by another user.
+
+		:raises UniqueIdError: if username is already taken by another user
+		"""
+		uut = self._all_usernames.get(self.name)
+		if uut and (uut.record_uid != self.record_uid or uut.source_uid != self.source_uid):
+			raise UniqueIdError('Username {!r} is already in use by {!r} (source_uid: {!r}, record_uid: {!r}).'.format(
+				self.name, uut.dn, uut.source_uid, uut.record_uid))
+
+	def set_purge_timestamp(self, ts):  # type: (str) -> None
 		self._purge_ts = ts
 
 	@property
-	def role_sting(self):
+	def role_sting(self):  # type: () -> str
 		"""
 		Mapping from self.roles to string used in configuration.
 
@@ -1017,7 +1087,7 @@ class ImportUser(User):
 			return "staff"
 
 	@property
-	def school_classes_as_str(self):
+	def school_classes_as_str(self):  # type: () -> str
 		"""
 		Create a string representation of the `school_classes` attribute.
 
@@ -1027,7 +1097,7 @@ class ImportUser(User):
 		return ','.join(','.join(sc) for sc in self.school_classes.values())
 
 	@property
-	def username_scheme(self):
+	def username_scheme(self):  # type: () -> str
 		"""
 		Fetch scheme for username for role.
 
@@ -1045,7 +1115,7 @@ class ImportUser(User):
 		# force transcription of german umlauts
 		return "<:umlauts>{}".format(scheme)
 
-	def solve_format_dependencies(self, prop_to_format, scheme, **kwargs):
+	def solve_format_dependencies(self, prop_to_format, scheme, **kwargs):  # type: (str, str, **str) -> None
 		"""
 		Call make_*() methods required to create values for <properties> used
 		in scheme.
@@ -1099,7 +1169,7 @@ class ImportUser(User):
 			getattr(self, method_sig.name)(*method_sig.args, **method_sig.kwargs)
 		self._used_methods.pop(prop_to_format, None)
 
-	def format_from_scheme(self, prop_name, scheme, **kwargs):
+	def format_from_scheme(self, prop_name, scheme, **kwargs):  # type: (str, str, **str) -> str
 		"""
 		Format property with scheme for current import_user.
 		* Uses the replacement code from users:templates.
@@ -1136,7 +1206,7 @@ class ImportUser(User):
 		return res
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
+	def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObjectType, str) -> Union[None, Type[ImportUser]]
 		"""
 		IMPLEMENTME if you subclass!
 		"""
@@ -1152,13 +1222,13 @@ class ImportUser(User):
 		else:
 			return None
 
-	def get_school_class_objs(self):
-		if isinstance(self.school_classes, basestring):
+	def get_school_class_objs(self):  # type: () -> List[School]
+		if isinstance(self.school_classes, string_types):
 			# school_classes was set from input data
 			self.make_classes()
 		return super(ImportUser, self).get_school_class_objs()
 
-	def _prevent_mapped_attributes_in_udm_properties(self):
+	def _prevent_mapped_attributes_in_udm_properties(self):  # type: () -> None
 		"""
 		Make sure users do not store values for ucsschool.lib mapped Attributes
 		in udm_properties.
@@ -1178,19 +1248,19 @@ class ImportUser(User):
 				"UDM property 'e-mail' is used for storing contact information. The users mailbox address is stored in "
 				"the 'email' attribute of the {} object (not in udm_properties).".format(self.__class__.__name__))
 
-	def _schema_write_check(self, scheme_attr, ucsschool_attr, ldap_attr):
+	def _schema_write_check(self, scheme_attr, ucsschool_attr, ldap_attr):  # type: (str, str, str) -> bool
 		return (
 				scheme_attr in self.config["scheme"] and
 				(not getattr(self.old_user, ucsschool_attr, None) or ldap_attr not in self.no_overwrite_attributes)
 		)
 
-	def to_dict(self):
+	def to_dict(self):  # type: () -> Dict[str, Any]
 		res = super(ImportUser, self).to_dict()
 		for attr in self._additional_props:
 			res[attr] = getattr(self, attr)
 		return res
 
-	def update(self, other):
+	def update(self, other):  # type: (ImportUser) -> None
 		"""
 		Copy attributes of other ImportUser into this one.
 
@@ -1205,14 +1275,14 @@ class ImportUser(User):
 			setattr(self, k, v)
 
 	@property
-	def _default_username_max_length(self):
+	def _default_username_max_length(self):  # type: () -> int
 		try:
 			return self.config['username']['max_length']['default']
 		except KeyError:
 			return 20
 
 	@property
-	def username_max_length(self):
+	def username_max_length(self):  # type: () -> int
 		try:
 			res = self.config['username']['max_length'][self.role_sting]
 		except KeyError:
@@ -1228,7 +1298,7 @@ class ImportStudent(ImportUser, Student):
 	default_username_max_length = 15  # may be lowered in __init__()
 
 	@property
-	def _default_username_max_length(self):
+	def _default_username_max_length(self):  # type: () -> int
 		res = super(ImportStudent, self)._default_username_max_length
 		return min(res, 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")))
 
