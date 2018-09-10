@@ -738,6 +738,10 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=
 
 	print user_import
 
+	if use_cli_api:
+		for user in user_import.students + user_import.staff + user_import.teachers + user_import.teacher_staff:
+			user.legacy_v2 = True
+
 	print '********** Create users'
 	import_file.run_import(user_import)
 	utils.wait_for_replication()
