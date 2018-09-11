@@ -19,7 +19,6 @@ from collections import Mapping
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 from univention.admin.uexceptions import noObject, ldapError
-from apt.cache import Cache as AptCache
 from essential.importusers import Person
 import univention.testing.ucr
 import univention.testing.udm
@@ -259,11 +258,7 @@ class ImportTestbase(object):
 		"""
 		Print package versions, traceback and error message.
 		"""
-		apt_cache = AptCache()
 		self.log.error('\n%s\n%s%s', '=' * 79, ''.join(traceback.format_stack()), '=' * 79)
-
-		pck_s = ['{:<40} {}'.format(pck, apt_cache[pck].installed.version if apt_cache[pck].is_installed else 'Not installed') for pck in sorted([pck for pck in apt_cache.keys() if 'school' in pck])]
-		self.log.info('Installed package versions:\n{}'.format('\n'.join(pck_s)))
 		utils.fail(msg, returncode)
 
 	def create_ous(self, schoolenv):
