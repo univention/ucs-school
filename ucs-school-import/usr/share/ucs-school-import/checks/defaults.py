@@ -41,6 +41,11 @@ from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
 
 
 class DefaultConfigurationChecks(ConfigurationChecks):
+	def test_minimal_mandatory_attributes(self):
+		for attr in ("firstname", "lastname", "name", "record_uid", "school", "source_uid"):
+			if attr not in self.config.get("mandatory_attributes", []):
+				raise InitialisationError("Configured list of 'mandatory_attributes' must include {!r}.".format(attr))
+
 	def test_source_uid(self):
 		if not self.config.get("sourceUID"):
 			raise InitialisationError("No sourceUID was specified.")
