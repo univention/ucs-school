@@ -1,0 +1,113 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Test validation of "mandatory_attributes" property
+## tags: [apptest,ucsschool,ucsschool_base1]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+## bugs: [47691]
+
+import random
+import univention.testing.ucr
+import univention.testing.ucsschool as utu
+import univention.testing.strings as uts
+import univention.testing.utils as utils
+from ucsschool.importer.exceptions import EmptyMandatoryAttribute, MissingMandatoryAttribute
+from ucsschool.importer.utils.shell import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, logger, config
+
+
+def main():
+	if not isinstance(config, dict) or not isinstance(config["verbose"], bool):
+		utils.fail("Import configuration has not been not setup.")
+	additional_attr = random.choice(('description', 'organisation', 'employeeType', 'roomNumber', 'city'))
+	config['mandatory_attributes'].append(additional_attr)
+	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+		with utu.UCSTestSchool() as schoolenv:
+			ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr['hostname'])
+			lo = schoolenv.open_ldap_connection(admin=True)
+			for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+				logger.info('*** Positive test (additional_attr %r is set) -> no fail expected', additional_attr)
+				user = kls(
+					name=uts.random_username(),
+					school=ou_name,
+					firstname=uts.random_name(),
+					lastname=uts.random_name(),
+					record_uid=uts.random_name(),
+				)
+				user.udm_properties[additional_attr] = uts.random_name()
+				user.prepare_all(True)
+				logger.info('Going to create: %r attr: %r', user, user.to_dict())
+				user.create(lo)
+				logger.info('OK: user was created.')
+
+				logger.info('*** Additional_attr %r does not exist -> MissingMandatoryAttribute expected', additional_attr)
+				user = kls(
+					name=uts.random_username(),
+					school=ou_name,
+					firstname=uts.random_name(),
+					lastname=uts.random_name(),
+					record_uid=uts.random_name(),
+				)
+				user.prepare_all(True)
+				logger.info('Going to create: %r attr: %r', user, user.to_dict())
+				try:
+					user.create(lo)
+				except MissingMandatoryAttribute as exc:
+					logger.info('OK: MissingMandatoryAttribute was raised: %r', exc)
+				else:
+					user = kls.from_dn(user.dn, user.school, lo)
+					utils.fail(
+						'MissingMandatoryAttribute was not raised (but {!r} was not created).\nCreated user: {!r} '
+						'attr: {!r}'.format(additional_attr, user, user.to_dict()))
+
+				logger.info('*** "firstname" is empty -> EmptyMandatoryAttribute expected')
+				config['mandatory_attributes'].remove(additional_attr)
+				user = kls(
+					name=uts.random_username(),
+					school=ou_name,
+					firstname=uts.random_name(),
+					lastname=uts.random_name(),
+					record_uid=uts.random_name(),
+				)
+				user.prepare_all(True)
+				user.firstname = ''
+				logger.info('Going to create: %r attr: %r', user, user.to_dict())
+				try:
+					user.create(lo)
+				except EmptyMandatoryAttribute as exc:
+					logger.info('OK: EmptyMandatoryAttribute was raised: %r', exc)
+				else:
+					user = kls.from_dn(user.dn, user.school, lo)
+					utils.fail(
+						'EmptyMandatoryAttribute was not raised (but firstname was empty).\nCreated user: {!r} '
+						'attr: {!r}'.format(user, user.to_dict()))
+
+				config['mandatory_attributes'].append(additional_attr)
+				for empty in (None, ''):
+					logger.info(
+						'*** Additional_attr %r is empty (%r) -> EmptyMandatoryAttribute expected', additional_attr, empty)
+					user = kls(
+						name=uts.random_username(),
+						school=ou_name,
+						firstname=uts.random_name(),
+						lastname=uts.random_name(),
+						record_uid=uts.random_name(),
+					)
+					user.udm_properties[additional_attr] = empty
+					user.prepare_all(True)
+					logger.info('Going to create: %r attr: %r', user, user.to_dict())
+					try:
+						user.create(lo)
+					except EmptyMandatoryAttribute as exc:
+						logger.info('OK: EmptyMandatoryAttribute was raised: %r', exc)
+					else:
+						user = kls.from_dn(user.dn, user.school, lo)
+						utils.fail(
+							'EmptyMandatoryAttribute was not raised (but firstname was empty).\nCreated user: {!r} '
+							'attr: {!r}'.format(user, user.to_dict()))
+			logger.info("Test was successful.\n\n\n")
+
+
+if __name__ == '__main__':
+	main()

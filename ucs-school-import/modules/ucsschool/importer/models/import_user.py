@@ -48,7 +48,7 @@ from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import (
-	BadPassword, EmptyFormatResultError, InitialisationError,
+	BadPassword, EmptyFormatResultError, EmptyMandatoryAttribute, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
 	MissingUid, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsernameAtAll,
 	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
@@ -974,10 +974,25 @@ class ImportUser(User):
 		"""
 		super(ImportUser, self).validate(lo, validate_unlikely_changes)
 
-		try:
-			[self.udm_properties.get(ma) or getattr(self, ma) for ma in self.config["mandatory_attributes"]]
-		except (AttributeError, KeyError) as exc:
-			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc), self.config["mandatory_attributes"], entry_count=self.entry_count, import_user=self)
+		_ma = None
+		mandatory_attributes = {}
+		for _ma in self.config["mandatory_attributes"]:
+			try:
+				mandatory_attributes[_ma] = self.udm_properties[_ma]
+				continue
+			except KeyError:
+				pass
+			try:
+				mandatory_attributes[_ma] = getattr(self, _ma)
+			except AttributeError:
+				raise MissingMandatoryAttribute(
+					"Mandatory attribute {!r} does not exist.".format(_ma),
+					self.config["mandatory_attributes"],
+					entry_count=self.entry_count, import_user=self
+				)
+		for k, v in mandatory_attributes.iteritems():
+			if v in ('', None):
+				raise EmptyMandatoryAttribute("Mandatory attribute {!r} has empty value.".format(k), attr_name=k)
 
 		if not self.in_hook:  # uniqueness checks fail when called from within a post_move hook
 			if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:

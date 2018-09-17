@@ -86,6 +86,13 @@ class EmptyFormatResultError(FormatError):
 	pass
 
 
+class EmptyMandatoryAttribute(UcsSchoolImportError):
+
+	def __init__(self, msg, attr_name, *args, **kwargs):
+		super(EmptyMandatoryAttribute, self).__init__(msg, *args, **kwargs)
+		self.attr_name = attr_name
+
+
 class InitialisationError(UcsSchoolImportFatalError):
 	pass
 
