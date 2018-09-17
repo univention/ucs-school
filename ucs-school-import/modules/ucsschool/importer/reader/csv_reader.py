@@ -40,7 +40,7 @@ import magic
 
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
-from ucsschool.importer.exceptions import InitialisationError, NoRole, UnknownRole, UnknownProperty
+from ucsschool.importer.exceptions import ConfigurationError, InitialisationError, NoRole, UnknownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
@@ -149,6 +149,10 @@ class CsvReader(BaseReader):
 			fpu = UTF8Recoder(fp, self.encoding)
 			reader = DictReader(fpu, **csv_reader_args)
 			self.fieldnames = reader.fieldnames
+			missing_columns = [key for key in self.config['csv']['mapping'].keys() if key not in self.fieldnames]
+			if missing_columns:
+				raise ConfigurationError('Columns configured in csv:mapping missing: {}.'.format(
+					', '.join(missing_columns)))
 			for row in reader:
 				self.entry_count = reader.line_num
 				self.input_data = reader.row

@@ -62,6 +62,10 @@ class BadValueStored(UcsSchoolImportFatalError):
 	pass
 
 
+class ConfigurationError(UcsSchoolImportFatalError):
+	pass
+
+
 class CreationError(UcsSchoolImportError):
 	pass
 
