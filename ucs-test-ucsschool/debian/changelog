@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-94) unstable; urgency=medium
+
+  * Bug #47751: check that user_import config is empty
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 17 Sep 2018 12:47:00 +0200
+
 ucs-test-ucsschool (5.0.2-93) unstable; urgency=low
 
   * Bug #47447: verify that user in limbo_ou has no groups in other schools
