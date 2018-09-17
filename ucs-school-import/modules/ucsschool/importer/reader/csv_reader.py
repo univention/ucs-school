@@ -36,9 +36,11 @@ from csv import reader as csv_reader, Sniffer, Error as CsvError
 import codecs
 import sys
 
+import magic
+
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
-from ucsschool.importer.exceptions import InitialisationError, NoRole, UnknownRole, UnknownProperty
+from ucsschool.importer.exceptions import ConfigurationError, InitialisationError, NoRole, UnknownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
@@ -74,9 +76,29 @@ class CsvReader(BaseReader):
 		:param dict kwargs: optional parameters for use in derived classes
 		"""
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
+		self.encoding = self.get_encoding(filename)
+		self.logger.debug('Reading %r with encoding %r.', filename, self.encoding)
 		self.fieldnames = None
 		usersmod = univention.admin.modules.get("users/user")
 		univention.admin.modules.init(self.lo, self.position, usersmod)
+
+	@staticmethod
+	def get_encoding(filename):  # type: (str) -> str
+		"""Handle both magic libraries."""
+		if hasattr(magic, 'from_file'):
+			encoding = magic.Magic(mime_encoding=True).from_file(filename)
+		elif hasattr(magic, 'detect_from_filename'):
+			encoding = magic.detect_from_filename(filename).encoding
+		else:
+			raise RuntimeError('Unknown version or type of "magic" library.')
+		if encoding == 'utf-8':
+			with open(filename, 'rb') as fp:
+				# auto detect utf-8 with BOM
+				data = fp.read(4)
+				if data.startswith(codecs.BOM_UTF8):
+					encoding = 'utf-8-sig'
+		return encoding
+
 
 	def get_dialect(self, fp):
 		"""
@@ -103,11 +125,6 @@ class CsvReader(BaseReader):
 		:rtype: Iterator
 		"""
 		with open(self.filename, "rb") as fp:
-			# auto detect utf-8 with BOM
-			data = fp.read(4)
-			if data.startswith(codecs.BOM_UTF8):
-				self.encoding = "utf-8-sig"
-			fp.seek(0)
 			try:
 				dialect = self.get_dialect(fp)
 			except CsvError as exc:
@@ -133,6 +150,10 @@ class CsvReader(BaseReader):
 			fpu = UTF8Recoder(fp, self.encoding)
 			reader = DictReader(fpu, **csv_reader_args)
 			self.fieldnames = reader.fieldnames
+			missing_columns = [key for key in self.config['csv']['mapping'].keys() if key not in self.fieldnames]
+			if missing_columns:
+				raise ConfigurationError('Columns configured in csv:mapping missing: {}.'.format(
+					', '.join(missing_columns)))
 			for row in reader:
 				self.entry_count = reader.line_num
 				self.input_data = reader.row
