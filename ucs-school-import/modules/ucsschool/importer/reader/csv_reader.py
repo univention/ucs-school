@@ -86,9 +86,9 @@ class CsvReader(BaseReader):
 	def get_encoding(filename):  # type: (str) -> str
 		"""Handle both magic libraries."""
 		if hasattr(magic, 'from_file'):
-			encoding = magic.Magic(mime_encoding=True).from_file(filename)
+			encoding = magic.Magic(mime_encoding=True).from_buffer(open(filename, 'rb').read())
 		elif hasattr(magic, 'detect_from_filename'):
-			encoding = magic.detect_from_filename(filename).encoding
+			encoding = magic.detect_from_content(open(filename, 'rb').read()).encoding
 		else:
 			raise RuntimeError('Unknown version or type of "magic" library.')
 		if encoding == 'utf-8':
