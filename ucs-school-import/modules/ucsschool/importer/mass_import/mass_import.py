@@ -34,6 +34,7 @@ Default mass import class.
 
 import datetime
 
+from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
@@ -100,11 +101,17 @@ class MassImport(object):
 	def import_users(self):
 		self.logger.info("------ Importing users... ------")
 		user_import = self.factory.make_user_importer(self.dry_run)
-		user_import.progress_report(description='Analyzing data: 1%.', percentage=1)
-		imported_users = user_import.read_input()
-		users_to_delete = user_import.detect_users_to_delete()
-		user_import.delete_users(users_to_delete)  # 0% - 10%
-		user_import.create_and_modify_users(imported_users)  # 90% - 100%
+		exc = None
+		try:
+			user_import.progress_report(description='Analyzing data: 1%.', percentage=1)
+			imported_users = user_import.read_input()
+			users_to_delete = user_import.detect_users_to_delete()
+			user_import.delete_users(users_to_delete)  # 0% - 10%
+			user_import.create_and_modify_users(imported_users)  # 90% - 100%
+		except UcsSchoolImportError as exc:
+			self.errors.append(exc)
+		except Exception as exc:
+			pass
 		self.errors.extend(user_import.errors)
 		self.user_import_stats_str = user_import.log_stats()
 		if self.config["output"]["new_user_passwords"]:
@@ -118,6 +125,8 @@ class MassImport(object):
 		result_data = user_import.get_result_data()
 		self.call_result_hook('user_result', result_data)
 		self.logger.info("------ Importing users done. ------")
+		if exc:
+			raise exc
 
 	def call_result_hook(self, func_name, importer):
 		"""
