@@ -95,16 +95,13 @@ class CommandLine(object):
 		importer = self.factory.make_mass_importer(self.config["dry_run"])
 
 		self.logger.info("------ Starting mass import... ------")
-		importer.mass_import()
-		self.errors = importer.errors
-		self.user_import_summary_str = importer.user_import_stats_str
-		self.logger.info("------ Mass import finished. ------")
-
-	def main(self):
 		try:
-			self.parse_cmdline()
-			# early logging configured by cmdline
-			self.setup_logging(self.args.verbose, self.args.logfile)
+			importer.mass_import()
+		finally:
+			self.errors = importer.errors
+			self.user_import_summary_str = importer.user_import_stats_str
+			self.logger.info("------ Mass import finished. ------")
+
 
 			self.logger.info("------ UCS@school import tool starting ------")
 
