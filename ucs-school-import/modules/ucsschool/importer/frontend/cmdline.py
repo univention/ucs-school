@@ -102,19 +102,32 @@ class CommandLine(object):
 			self.user_import_summary_str = importer.user_import_stats_str
 			self.logger.info("------ Mass import finished. ------")
 
+	def prepare_import(self):
+		self.parse_cmdline()
+		# early logging configured by cmdline
+		self.setup_logging(self.args.verbose, self.args.logfile)
 
-			self.logger.info("------ UCS@school import tool starting ------")
+		self.logger.info("------ UCS@school import tool starting ------")
 
-			self.setup_config()
-			# logging configured by config file
-			self.setup_logging(self.config["verbose"], self.config["logfile"])
+		self.setup_config()
+		# logging configured by config file
+		self.setup_logging(self.config["verbose"], self.config["logfile"])
 
-			self.logger.info("------ UCS@school import tool configured ------")
-			self.logger.info("Used configuration files: %s.", self.config.conffiles)
-			self.logger.info("Using command line arguments: %r", self.args.settings)
-			self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
+		self.logger.info("------ UCS@school import tool configured ------")
+		self.logger.info("Used configuration files: %s.", self.config.conffiles)
+		self.logger.info("Using command line arguments: %r", self.args.settings)
+		self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
 
-			self.factory = setup_factory(self.config["factory"])
+		self.factory = setup_factory(self.config["factory"])
+
+	def main(self):
+		try:
+			self.prepare_import()
+		except InitialisationError as exc:
+			msg = "InitialisationError: {}".format(exc)
+			self.logger.exception(msg)
+			return 1
+		try:
 			self.do_import()
 			if self.errors:
 				# at least one non-fatal error
