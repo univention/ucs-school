@@ -149,10 +149,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				progress.current = 75.0
 
 		progress.current = 99.0
-		if job.result.status != 'SUCCESS':
+		if job.status != JOB_FINISHED:
 			message = _('The examination of the data failed.')
-			if job.result.traceback:
-				message = '%s\n%s' % (message, job.result.traceback)
+			message = '%s\n%s' % (message, job.result.result['description'])
 			raise UMC_Error(message, result=result)
 
 		return {'summary': job.result.result and job.result.result.get('description')}
