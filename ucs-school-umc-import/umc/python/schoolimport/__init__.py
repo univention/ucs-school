@@ -44,6 +44,7 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.modules.mixins import ProgressMixin
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
+from ucsschool.http_api.import_api.constants import JOB_ABORTED, JOB_FINISHED
 from ucsschool.http_api.client import Client, ConnectionError, PermissionError, ObjectNotFound, ServerError
 
 from univention.lib.i18n import Translation
@@ -139,7 +140,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				job = self.client.userimportjob.get(jobid)
 			except ConnectionError:
 				continue
-			finished = job.status in ('Finished', 'Aborted')
+			finished = job.status in (JOB_FINISHED, JOB_ABORTED)
 
 			if job.result and isinstance(job.result.result, dict):
 				progress.progress(True, job.result.result.get('description'))
