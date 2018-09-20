@@ -129,31 +129,11 @@ class CommandLine(object):
 			return 1
 		try:
 			self.do_import()
+
 			if self.errors:
 				# at least one non-fatal error
+				msg = 'Import finished normally but with errors.'
+				self.logger.warn(msg)
 				return 2
-		except TooManyErrors as tme:
-			self.logger.error("%s Exiting. Errors:", tme)
-			for error in tme.errors:
-				self.logger.error("%d: %s", error.entry_count, error)
-			self._fatal()
-			return 1
-		except InitialisationError as exc:
-			print("InitialisationError: {}".format(exc))
-			self.logger.exception("InitialisationError: %r", exc)
-			return 1
-		except UcsSchoolImportFatalError as exc:
-			self.logger.exception("Fatal error:  %s.", exc)
-			self._fatal()
-			return 1
 		except Exception as exc:
-			# This should not happen - it's probably a bug.
-			self.logger.exception("Outer Exception catcher: %r", exc)
-			self._fatal()
 			return 1
-
-	def _fatal(self):
-		if not any(map(lambda x: isinstance(x, StreamHandler), self.logger.handlers)):
-			# verbose=False, but show on terminal anyway
-			exc_type, exc_value, exc_traceback = sys.exc_info()
-			traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stderr)
