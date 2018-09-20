@@ -106,7 +106,10 @@ class SingleSourcePartialUserImport(UserImport):
 			raise InvalidSchools(
 				'In the SingleSourcePartialImport scenario it is not allowed to import into any other school that the '
 				'one configured ({!r}). Found school={!r} schools={!r}.'.format(
-					self.config['school'], imported_user.school, imported_user.schools)
+					self.config['school'], imported_user.school, imported_user.schools),
+				entry_count=imported_user.entry_count,
+				input=imported_user.input_data,
+				import_user=imported_user
 			)
 
 		if old_user:
