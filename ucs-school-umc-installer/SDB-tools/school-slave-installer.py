@@ -36,6 +36,7 @@ import sys
 import socket
 import time
 import traceback
+import re
 from optparse import OptionParser
 from ldap.filter import filter_format
 import univention.admin.uldap
@@ -44,6 +45,10 @@ import univention.lib.umc
 from univention.config_registry import ConfigRegistry
 ucr = ConfigRegistry()
 ucr.load()
+
+def is_valid_ou_name(name):
+	""" check if given OU name is valid """
+	return bool(re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', name))
 
 def configure_ucsschool(options):  # type: (Any) -> None
 	connection = univention.lib.umc.Client(
@@ -230,6 +235,9 @@ def main():  # type: () -> None
 		if not options.ou:
 			parser.error('Please specify a school OU (-o)!')
 
+		if not is_valid_ou_name(options.ou):
+			print '%r is not a valid OU name!' % (options.ou,)
+
 	else:
 		if not options.username:
 			print 'Please enter the username of a user who is able to join UCS@school systems.'
@@ -238,8 +246,13 @@ def main():  # type: () -> None
 			print 'Please enter the password for user "%s".' % (options.username,)
 			options.password = getpass.getpass('Password: ')
 		if not options.ou:
-			print 'Please enter the school name (school OU name) this system shall be responsible for.'
-			options.ou = raw_input('OU: ')
+			while True:
+				print 'Please enter the school name (school OU name) this system shall be responsible for.'
+				options.ou = raw_input('OU: ')
+				if not is_valid_ou_name(options.ou):
+					print 'This is not a valid OU name!'
+				else:
+					break
 
 		# test credentials
 		try:
