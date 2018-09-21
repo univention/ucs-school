@@ -289,6 +289,12 @@ def main():  # type: () -> None
 				sys.exit(7)
 			print 'The OU "%s" will be created during installation.' % (options.ou,)
 
+	print
+	print 'During package installation and configuration, a detailed log'
+	print 'is written to the following files:'
+	print '- /var/log/univention/ucsschool-slave-installer.log'
+	print '- /var/log/univention/management-console-module-schoolinstaller.log'
+	print
 	install_app(options)
 	configure_ucsschool(options)
 
