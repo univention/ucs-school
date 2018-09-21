@@ -148,9 +148,8 @@ def install_app(options):  # type: (Any) -> None
 		stderr=subprocess.PIPE)
 	stdout, stderr = proc.communicate()
 	if proc.returncode:
-		print >>sys.stderr, 'ERROR: univention-app returned with exitcode %r\nSTDOUT:\n%s\nSTDERR:\n%s' % (
-			proc.returncode, stdout, stderr)
-		sys.exit(1)
+		fatal(1, 'ERROR: univention-app returned with exitcode %r\nSTDOUT:\n%s\nSTDERR:\n%s' % (
+			proc.returncode, stdout, stderr))
 	app_data = json.loads(stdout)
 	fd.write('OUTPUT: %r\n' % (app_data,))
 	installed_apps = [x.split('=', 1)[0] for x in app_data.get('installed', [])]
@@ -180,6 +179,13 @@ def install_app(options):  # type: (Any) -> None
 		print 'UCS@school app successfully installed.'
 		fd.write('UCS@school app successfully installed.\n')
 		fd.flush()
+
+
+def fatal(exitcode, msg):
+	with open('/var/log/univention/ucsschool-slave-installer.log', 'a') as fd:
+		print >>sys.stderr, msg
+		print >>fd, msg
+	sys.exit(exitcode)
 
 
 def main():  # type: () -> None
@@ -267,19 +273,16 @@ def main():  # type: () -> None
 				binddn=binddn,
 				bindpw=options.password)
 		except IndexError:
-			print >>sys.stderr, "ERROR: user %s does not exist" % (options.username, )
-			sys.exit(4)
+			fatal(4, "ERROR: user %s does not exist" % (options.username, ))
 		except univention.admin.uexceptions.authFail:
-			print >>sys.stderr, 'ERROR: username or password is incorrect'
-			sys.exit(5)
+			fatal(5, 'ERROR: username or password is incorrect')
 
 		filter_s = filter_format('(ou=%s)', (options.ou,))
 		ou_results = lo.search(filter=filter_s, base=ucr.get('ldap/base'), scope='one')
 		if ou_results:
 			ou_attrs = ou_results[0][1]
 			if 'ucsschoolOrganizationalUnit' not in ou_attrs.get('objectClass'):
-				print >>sys.stderr, 'ERROR: the given OU exists, but is no UCS@school OU'
-				sys.exit(6)
+				fatal(6, 'ERROR: the given OU exists, but is no UCS@school OU')
 		else:
 			answer = ''
 			while answer.lower().strip() not in ('y', 'n'):
