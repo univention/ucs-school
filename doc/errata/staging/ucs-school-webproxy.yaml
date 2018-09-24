@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-webproxy
+fix: 14.0.0-6A~4.3.0.201809241341
+desc: |
+ * An error has been fixed, that prevented the exclusion of domains from being proxied (Bug #47645).
+bug: [47645]
