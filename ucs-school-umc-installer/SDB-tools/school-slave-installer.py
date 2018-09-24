@@ -37,6 +37,7 @@ import socket
 import time
 import traceback
 import re
+import os
 from optparse import OptionParser
 from ldap.filter import filter_format
 import univention.admin.uldap
@@ -203,6 +204,9 @@ def main():  # type: () -> None
 		'-p', '--password', dest='password',
 		help='password', metavar='PASSWORD')
 	parser.add_option(
+		'-f', '--passwordfile', dest='password_fn',
+		help='path to file that contains the password', metavar='FILENAME')
+	parser.add_option(
 		'-o', '--ou', dest='ou',
 		help='ou name of the school', metavar='OU')
 	parser.add_option(
@@ -231,9 +235,15 @@ def main():  # type: () -> None
 	if ucr['server/role'] != 'domaincontroller_slave':
 		parser.error('This script may only be called on UCS system with the role "domaincontroller_slave"!')
 
+	if options.password_fn:
+		if not os.path.isfile(options.password_fn):
+			parser.error('%r does not exist or is no file!' % (options.password_fn,))
+		with open(options.password_fn, 'r') as fd:
+			options.password = fd.read().strip('\r\n')
+
 	if options.noninteractive:
 		if not options.username or not options.password:
-			parser.error('Please specify username (-u) and password (-p)!')
+			parser.error('Please specify username (-u) and password (-p or -f)!')
 
 		if not options.ou:
 			parser.error('Please specify a school OU (-o)!')
