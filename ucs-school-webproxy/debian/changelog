@@ -1,3 +1,9 @@
+ucs-school-webproxy (14.0.0-6) unstable; urgency=low
+
+  * Bug #47645: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 24 Sep 2018 13:40:30 +0200
+
 ucs-school-webproxy (14.0.0-5) unstable; urgency=low
 
   * Bug #44243: enable WLAN authentication for Unbeschränkt by default

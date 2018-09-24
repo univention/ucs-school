@@ -29,7 +29,7 @@ if configRegistry.is_true('proxy/pac/exclude/networks/enabled', False):
 
 if configRegistry.is_true('proxy/pac/exclude/domains/enabled', False):
 	print '        // If the requested dns domain name matches, send "DIRECT" (no proxy is used) or use parent proxy:'
-	for dnsdomain in configRegistry.get('proxy/pac/exclude/domains/domainnames', '').split(" "):
+	for dnsdomain in configRegistry.get('proxy/pac/exclude/domains/dnsnames', '').split(" "):
 		print '        if (dnsDomainIs(host, %s)) {' % (json.dumps(dnsdomain), )
 		print_parent_proxy_or_direct('proxy/pac/exclude/domains/parentproxy/enabled')
 		print '        }'
