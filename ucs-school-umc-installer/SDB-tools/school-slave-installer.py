@@ -61,7 +61,7 @@ def configure_ucsschool(options):  # type: (Any) -> None
 		'setup': options.setup,
 		'username': options.username,
 		'password': options.password,
-		'master': options.master,
+		'master': ucr.get('ldap/master'),
 		'samba': options.samba,
 		'schoolOU': options.ou,
 	}
@@ -195,7 +195,7 @@ def main():  # type: () -> None
 		action='store_true', help='Do not ask for missing config options but simply fail')
 	parser.add_option(
 		'-H', '--host', dest='hostname', default=None,
-		help='host to connect to', metavar='HOST')
+		help='host to connect to (default is the local system)', metavar='HOST')
 	parser.add_option(
 		'-u', '--user', dest='username',
 		help='username', metavar='UID', default=None)
@@ -205,9 +205,6 @@ def main():  # type: () -> None
 	parser.add_option(
 		'-o', '--ou', dest='ou',
 		help='ou name of the school', metavar='OU')
-	parser.add_option(
-		'-m', '--master-host', dest='master', default=ucr['ldap/master'],
-		help='on a slave the master host needs to be specified', metavar='HOST')
 	parser.add_option(
 		'-d', '--debug', dest='debug', default=False,
 		action='store_true', help='show some debug output')
@@ -242,7 +239,7 @@ def main():  # type: () -> None
 			parser.error('Please specify a school OU (-o)!')
 
 		if not is_valid_ou_name(options.ou):
-			print '%r is not a valid OU name!' % (options.ou,)
+			parser.error('%r is not a valid OU name!' % (options.ou,))
 
 	else:
 		if not options.username:
@@ -260,23 +257,24 @@ def main():  # type: () -> None
 				else:
 					break
 
-		# test credentials
-		try:
-			lo = univention.admin.uldap.getMachineConnection()[0]
-			filter_s = filter_format('(uid=%s)', (options.username,))
-			binddn = lo.search(filter=filter_s)[0][0]
-			print 'Connecting as %s to LDAP...' % (binddn, )
-			lo = univention.admin.uldap.access(
-				host=options.master,
-				port=int(ucr.get('ldap/master/port', '7389')),
-				base=ucr.get('ldap/base'),
-				binddn=binddn,
-				bindpw=options.password)
-		except IndexError:
-			fatal(4, "ERROR: user %s does not exist" % (options.username, ))
-		except univention.admin.uexceptions.authFail:
-			fatal(5, 'ERROR: username or password is incorrect')
+	# test credentials
+	try:
+		lo = univention.admin.uldap.getMachineConnection()[0]
+		filter_s = filter_format('(uid=%s)', (options.username,))
+		binddn = lo.search(filter=filter_s)[0][0]
+		print 'Connecting as %s to LDAP...' % (binddn, )
+		lo = univention.admin.uldap.access(
+			host=ucr.get('ldap/master'),
+			port=int(ucr.get('ldap/master/port', '7389')),
+			base=ucr.get('ldap/base'),
+			binddn=binddn,
+			bindpw=options.password)
+	except IndexError:
+		fatal(4, "ERROR: user %s does not exist" % (options.username, ))
+	except univention.admin.uexceptions.authFail:
+		fatal(5, 'ERROR: username or password is incorrect')
 
+	if not options.noninteractive:
 		filter_s = filter_format('(ou=%s)', (options.ou,))
 		ou_results = lo.search(filter=filter_s, base=ucr.get('ldap/base'), scope='one')
 		if ou_results:
