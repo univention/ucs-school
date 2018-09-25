@@ -1,3 +1,11 @@
+ucs-school-import (16.0.2-49) unstable; urgency=low
+
+  * Bug #47681: provide better error message for missing mandatory columns
+  * add record_uid and source_uid to mandatory_attributes
+  * check that CSV columns configured in csv:mapping exist in the CSV file
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 25 Sep 2018 11:47:45 +0200
+
 ucs-school-import (16.0.2-48) unstable; urgency=low
 
   * Bug #47677: convert ISO 8859-1 (and others) encoded CSV files
