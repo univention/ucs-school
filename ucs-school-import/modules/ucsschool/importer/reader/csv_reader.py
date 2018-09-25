@@ -36,6 +36,8 @@ from csv import reader as csv_reader, Sniffer, Error as CsvError
 import codecs
 import sys
 
+import magic
+
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
 from ucsschool.importer.exceptions import InitialisationError, NoRole, UnknownRole, UnknownProperty
@@ -74,9 +76,28 @@ class CsvReader(BaseReader):
 		:param dict kwargs: optional parameters for use in derived classes
 		"""
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
+		self.encoding = self.get_encoding(filename)
+		self.logger.debug('Reading %r with encoding %r.', filename, self.encoding)
 		self.fieldnames = None
 		usersmod = univention.admin.modules.get("users/user")
 		univention.admin.modules.init(self.lo, self.position, usersmod)
+
+	@staticmethod
+	def get_encoding(filename):  # type: (str) -> str
+		"""Handle both magic libraries."""
+		with open(filename, 'rb') as fp:
+			txt = fp.read()
+		if hasattr(magic, 'from_file'):
+			encoding = magic.Magic(mime_encoding=True).from_buffer(txt)
+		elif hasattr(magic, 'detect_from_filename'):
+			encoding = magic.detect_from_content(txt).encoding
+		else:
+			raise RuntimeError('Unknown version or type of "magic" library.')
+		# auto detect utf-8 with BOM
+		if encoding == 'utf-8' and txt.startswith(codecs.BOM_UTF8):
+			encoding = 'utf-8-sig'
+		return encoding
+
 
 	def get_dialect(self, fp):
 		"""
@@ -103,11 +124,6 @@ class CsvReader(BaseReader):
 		:rtype: Iterator
 		"""
 		with open(self.filename, "rb") as fp:
-			# auto detect utf-8 with BOM
-			data = fp.read(4)
-			if data.startswith(codecs.BOM_UTF8):
-				self.encoding = "utf-8-sig"
-			fp.seek(0)
 			try:
 				dialect = self.get_dialect(fp)
 			except CsvError as exc:

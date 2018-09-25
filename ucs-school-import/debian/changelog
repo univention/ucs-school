@@ -1,3 +1,10 @@
+ucs-school-import (16.0.2-48) unstable; urgency=low
+
+  * Bug #47677: convert ISO 8859-1 (and others) encoded CSV files
+    automatically to UTF-8
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 25 Sep 2018 11:45:32 +0200
+
 ucs-school-import (16.0.2-47) unstable; urgency=low
 
   * Bug #47447: remove user from school classes when moving to limbo_ou
