@@ -3,8 +3,9 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.2-49A~4.3.0.201809251151
+fix: 16.0.2-50A~4.3.0.201809251546
 desc: |
+ * Even when the import abots, statistics are now still written to the terminal, passwords and summary CSV files are written to disk (Bug #45673).
  * CSV files encoded in <literal>ISO 8859-1</literal> (and others) are now automatically convert to <literal>UTF-8</literal> (Bug #47677).
-* Better error messages are now provided for missing mandatory columns. <literal>record_uid</literal and <literal>source_uid</literal> are now always part of <literal>mandatory_attributes</literal>. It is now verified that the CSV columns configured in <literal>csv:mapping</literal> exist in the CSV file (Bug #47681).
-bug: [47677, 47681]
+ * Better error messages are now provided for missing mandatory columns. <literal>record_uid</literal and <literal>source_uid</literal> are now always part of <literal>mandatory_attributes</literal>. It is now verified that the CSV columns configured in <literal>csv:mapping</literal> exist in the CSV file (Bug #47681).
+bug: [45673, 47677, 47681]
