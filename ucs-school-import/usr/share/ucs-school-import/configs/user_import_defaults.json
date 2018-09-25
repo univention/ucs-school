@@ -22,7 +22,7 @@
 	},
 	"scheme": {},
 	"maildomain": null,
-	"mandatory_attributes": ["firstname", "lastname", "name", "school"],
+	"mandatory_attributes": ["firstname", "lastname", "name", "record_uid", "school", "source_uid"],
 	"no_delete": false,
 	"output": {
 		"new_user_passwords": null,

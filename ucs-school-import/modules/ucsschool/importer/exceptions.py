@@ -62,6 +62,10 @@ class BadValueStored(UcsSchoolImportFatalError):
 	pass
 
 
+class ConfigurationError(UcsSchoolImportFatalError):
+	pass
+
+
 class CreationError(UcsSchoolImportError):
 	pass
 
@@ -127,6 +131,10 @@ class MissingSchoolName(UcsSchoolImportError):
 	pass
 
 
+class MissingUid(UcsSchoolImportError):
+	pass
+
+
 class ModificationError(UcsSchoolImportError):
 	pass
 
@@ -147,8 +155,7 @@ class NotSupportedError(UcsSchoolImportError):
 	pass
 
 
-class NoUsername(UcsSchoolImportError):
-	pass
+NoUsername = MissingUid
 
 
 class NoUsernameAtAll(UcsSchoolImportFatalError):

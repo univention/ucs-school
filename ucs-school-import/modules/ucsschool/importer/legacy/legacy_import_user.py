@@ -38,7 +38,7 @@ from univention.admin.uexceptions import noObject
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
 	ImportTeachersAndStaff, ImportUser
-from ucsschool.importer.exceptions import UnknownAction
+from ucsschool.importer.exceptions import MissingUid, UnknownAction
 
 
 class LegacyImportUser(ImportUser):
@@ -113,6 +113,11 @@ class LegacyImportUser(ImportUser):
 		:rtype: ImportUser
 		:raises noObject: if no user object was found
 		"""
+		if not (source_uid and record_uid) and not username:
+			raise MissingUid(
+				'Username or SourceUID and RecordUID are not set (username={!r} source_uid={!r}'
+				'record_uid={!r}).'.format(username, source_uid, record_uid))
+
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
 			"(&{ocs}"

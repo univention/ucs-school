@@ -50,7 +50,7 @@ from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import (
 	BadPassword, EmptyFormatResultError, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
-	MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll,
+	MissingUid, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsernameAtAll,
 	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
 	UserValidationError
 )
@@ -366,6 +366,10 @@ class ImportUser(User):
 		:rtype: ImportUser
 		:raises ucsschool.lib.models.base.NoObject: if no user was found
 		"""
+		if not source_uid or not record_uid:
+			raise MissingUid('SourceUID or RecordUID are not set (source_uid={!r} record_uid={!r}).'.format(
+				source_uid, record_uid))
+
 		oc_filter = cls.get_ldap_filter_for_user_role()
 		filter_s = filter_format(
 			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))".format(oc_filter),
@@ -1000,7 +1004,7 @@ class ImportUser(User):
 
 		if check_username:
 			if not self.name:
-				raise NoUsername("No username was created.", entry_count=self.entry_count, import_user=self)
+				raise MissingUid("No username was created.", entry_count=self.entry_count, import_user=self)
 
 			if len(self.name) > self.username_max_length:
 				raise UsernameToLong("Username '{}' is longer than allowed.".format(
