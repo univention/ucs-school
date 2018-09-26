@@ -37,7 +37,7 @@ import univention.config_registry
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.models import Group, School
-from ucsschool.lib.school_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE, MACHINE_READ
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE, MACHINE_READ
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
 from univention.admincli.admin import _2utf8
