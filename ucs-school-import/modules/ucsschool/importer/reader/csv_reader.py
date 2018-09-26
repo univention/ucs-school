@@ -123,11 +123,7 @@ class CsvReader(BaseReader):
 		:rtype: csv.Dialect
 		"""
 		delimiter = self.config.get("csv", {}).get("delimiter")
-		if delimiter:
-			delimiters = [delimiter]
-		else:
-			delimiters = None
-		return Sniffer().sniff(fp.readline(), delimiters=delimiters)
+		return Sniffer().sniff(fp.readline(), delimiters=delimiter)
 
 	def read(self, *args, **kwargs):
 		"""
