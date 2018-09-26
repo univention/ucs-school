@@ -36,6 +36,7 @@ from csv import reader as csv_reader, Sniffer, Error as CsvError
 import codecs
 import sys
 
+from six import string_types
 import magic
 
 from ucsschool.importer.contrib.csv import DictReader
@@ -76,17 +77,31 @@ class CsvReader(BaseReader):
 		:param dict kwargs: optional parameters for use in derived classes
 		"""
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
-		self.encoding = self.get_encoding(filename)
-		self.logger.debug('Reading %r with encoding %r.', filename, self.encoding)
 		self.fieldnames = None
 		usersmod = univention.admin.modules.get("users/user")
 		univention.admin.modules.init(self.lo, self.position, usersmod)
 
 	@staticmethod
-	def get_encoding(filename):  # type: (str) -> str
-		"""Handle both magic libraries."""
-		with open(filename, 'rb') as fp:
-			txt = fp.read()
+	def get_encoding(filename_or_file):  # type: (Union[str, BinaryIO]) -> str
+		"""
+		Get encoding of file ``filename_or_file``.
+
+		Handles both magic libraries.
+
+		:param filename_or_file: filename or open file
+		:type filename_or_file: str or file
+		:return: encoding of filename_or_file
+		:rtype: str
+		"""
+		if isinstance(filename_or_file, string_types):
+			with open(filename_or_file, 'rb') as fp:
+				txt = fp.read()
+		elif isinstance(filename_or_file, file):
+			old_pos = filename_or_file.tell()
+			txt = filename_or_file.read()
+			filename_or_file.seek(old_pos)
+		else:
+			raise ValueError('Argument "filename_or_file" has unknown type {!r}.'.format(type(filename_or_file)))
 		if hasattr(magic, 'from_file'):
 			encoding = magic.Magic(mime_encoding=True).from_buffer(txt)
 		elif hasattr(magic, 'detect_from_filename'):
@@ -129,6 +144,8 @@ class CsvReader(BaseReader):
 			except CsvError as exc:
 				raise InitialisationError, InitialisationError("Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(exc)), sys.exc_info()[2]
 			fp.seek(0)
+			encoding = self.get_encoding(fp)
+			self.logger.debug('Reading %r with encoding %r.', self.filename, encoding)
 			if self.header_lines == 1:
 				# let DictReader figure it out itself
 				header = None
@@ -139,14 +156,14 @@ class CsvReader(BaseReader):
 				start = fp.tell()
 				# no header names, detect number of rows
 
-				fpu = UTF8Recoder(fp, self.encoding)
-				reader = csv_reader(fpu, dialect=dialect)
-				line = reader.next()
+				fpu = UTF8Recoder(fp, encoding)
+				_reader = csv_reader(fpu, dialect=dialect)
+				line = _reader.next()
 				fp.seek(start)
 				header = map(str, range(len(line)))
 			csv_reader_args = dict(fieldnames=header, dialect=dialect)
 			csv_reader_args.update(kwargs.get("csv_reader_args", {}))
-			fpu = UTF8Recoder(fp, self.encoding)
+			fpu = UTF8Recoder(fp, encoding)
 			reader = DictReader(fpu, **csv_reader_args)
 			self.fieldnames = reader.fieldnames
 			missing_columns = [key for key in self.config['csv']['mapping'].keys() if key not in self.fieldnames]
