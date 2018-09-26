@@ -47,7 +47,9 @@ from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
 try:
-	from typing import Callable, Dict, Iterable
+	from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
+	from csv import Dialect
+	from ucsschool.importer.models.import_user import ImportUser
 except ImportError:
 	pass
 
@@ -70,14 +72,14 @@ class CsvReader(BaseReader):
 
 	encoding = "utf-8"
 
-	def __init__(self, filename, header_lines=0, **kwargs):
+	def __init__(self, filename, header_lines=0, **kwargs):  # type: (str, Optional[int], **Any) -> None
 		"""
 		:param str filename: Path to file with user data.
 		:param int header_lines: Number of lines before the actual data starts.
 		:param dict kwargs: optional parameters for use in derived classes
 		"""
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
-		self.fieldnames = None
+		self.fieldnames = None  # type: Iterable[str]
 		usersmod = univention.admin.modules.get("users/user")
 		univention.admin.modules.init(self.lo, self.position, usersmod)
 
@@ -113,8 +115,7 @@ class CsvReader(BaseReader):
 			encoding = 'utf-8-sig'
 		return encoding
 
-
-	def get_dialect(self, fp):
+	def get_dialect(self, fp):  # type: (BinaryIO) -> Dialect
 		"""
 		Overwrite me to force a certain CSV dialect.
 
@@ -125,7 +126,7 @@ class CsvReader(BaseReader):
 		delimiter = self.config.get("csv", {}).get("delimiter")
 		return Sniffer().sniff(fp.readline(), delimiters=delimiter)
 
-	def read(self, *args, **kwargs):
+	def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[unicode, unicode]]
 		"""
 		Generate dicts from a CSV file.
 
@@ -174,7 +175,14 @@ class CsvReader(BaseReader):
 					for key, value in row.iteritems()
 				}
 
-	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
+	def handle_input(
+			self,
+			mapping_key,  # type: str
+			mapping_value,  # type: str
+			csv_value,  # type: str
+			import_user  # type: ImportUser
+	):
+		# type: (...) -> bool
 		"""
 		This is a hook into :py:meth:`map`.
 
@@ -194,14 +202,14 @@ class CsvReader(BaseReader):
 			import_user.action = csv_value
 			return True
 		elif mapping_value == self._csv_roles_value:
-			self._role_method = self.get_roles_from_csv
+			self._role_method = self.get_roles_from_csv  # type: Callable
 			return True
 		elif mapping_value == "school_classes" and isinstance(import_user, Staff):
 			# ignore column
 			return True
 		return False
 
-	def get_roles(self, input_data):
+	def get_roles(self, input_data):  # type: (Dict[str, Any]) -> Iterable[str]
 		"""
 		Detect the ucsschool.lib.roles from the input data or configuration.
 
@@ -238,7 +246,7 @@ class CsvReader(BaseReader):
 		except KeyError:
 			raise NoRole("No role in configuration.", entry_count=self.entry_count)
 
-	def get_roles_from_csv(self, input_data):
+	def get_roles_from_csv(self, input_data):  # type: (Dict[str, Any]) -> Iterable[str]
 		if not self._csv_roles_key:
 			# find column for role in mapping
 			for k, v in self.config["csv"]["mapping"].items():
@@ -260,7 +268,7 @@ class CsvReader(BaseReader):
 			)
 		return roles
 
-	def map(self, input_data, cur_user_roles):
+	def map(self, input_data, cur_user_roles):  # type: (List[str], Iterable[str]) -> ImportUser
 		"""
 		Creates a ImportUser object from a users dict. Data will not be
 		modified, just copied.
@@ -300,7 +308,7 @@ class CsvReader(BaseReader):
 		self.logger.debug("%s attributes=%r udm_properties=%r action=%r", import_user, import_user.to_dict(), import_user.udm_properties, import_user.action)
 		return import_user
 
-	def get_data_mapping(self, input_data):
+	def get_data_mapping(self, input_data):  # type: (Iterable[str]) -> Dict[str, Any]
 		"""
 		Create a mapping from the configured input mapping to the actual
 		input data.
@@ -323,7 +331,7 @@ class CsvReader(BaseReader):
 		return res
 
 	@classmethod
-	def _get_attrib_name(cls, import_user):
+	def _get_attrib_name(cls, import_user):  # type: (ImportUser) -> Iterable[str]
 		"""
 		Cached retrieval of names of Attributes of an ImportUser.
 
@@ -343,11 +351,11 @@ class UTF8Recoder(object):
 	Blatantly copied from docs.python.org/2/library/csv.html
 	"""
 
-	def __init__(self, f, encoding):
+	def __init__(self, f, encoding):  # type: (BinaryIO, str) -> None
 		self.reader = codecs.getreader(encoding)(f)
 
-	def __iter__(self):
+	def __iter__(self):  # type: () -> UTF8Recoder
 		return self
 
-	def next(self):
+	def next(self):  # type: () -> str
 		return self.reader.next().encode("utf-8")
