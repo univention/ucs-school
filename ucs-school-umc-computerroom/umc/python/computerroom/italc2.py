@@ -44,7 +44,7 @@ from univention.management.console.config import ucr
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.school_umc_base import LDAP_Connection
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.models import User, ComputerRoom, MultipleObjectsError
 
 import notifier

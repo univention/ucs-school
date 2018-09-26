@@ -44,7 +44,8 @@ import univention.admin.uexceptions as udm_exceptions
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, Display, USER_WRITE, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_WRITE
+from ucsschool.lib.school_umc_base import SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.models import User
 
 

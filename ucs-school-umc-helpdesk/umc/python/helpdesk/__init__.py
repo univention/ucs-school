@@ -39,7 +39,8 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.lib.i18n import Translation
 from univention.admin.handlers.users.user import object as User
 
-from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.models import School
 
 import traceback

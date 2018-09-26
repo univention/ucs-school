@@ -47,7 +47,7 @@ import imp
 s4_connector_listener_path = '/usr/lib/univention-directory-listener/system/s4-connector.py'
 s4_connector_listener = imp.load_source('s4_connector', s4_connector_listener_path)
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from ucsschool.lib.school_umc_base import LDAP_Connection, MACHINE_READ
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, MACHINE_READ
 import traceback
 import subprocess
 
