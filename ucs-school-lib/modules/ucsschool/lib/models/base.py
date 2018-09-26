@@ -214,7 +214,7 @@ class UCSSchoolHelperAbstractClass(object):
 	"""
 	__metaclass__ = UCSSchoolHelperMetaClass
 	_cache = {}  # type: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel]
-
+	_machine_connection = None
 	_search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
 	_initialized_udm_modules = []  # type: List[str]
 	_empty_hook_paths = set()  # type: Set[str]
@@ -297,10 +297,12 @@ class UCSSchoolHelperAbstractClass(object):
 		self.errors = {}  # type: Dict[str, List[str]]
 		self.warnings = {}  # type: Dict[str, List[str]]
 
-	@staticmethod
-	def get_machine_connection():
-		"""get a ldap connection to the DC Master using this host's credentials"""
-		return uldap.getMachineConnection()[0]
+	@classmethod
+	def get_machine_connection(cls):
+		"""get a cached ldap connection to the DC Master using this host's credentials"""
+		if not cls._machine_connection:
+			cls._machine_connection = uldap.getMachineConnection()[0]
+		return cls._machine_connection
 
 	@property
 	def position(self):
