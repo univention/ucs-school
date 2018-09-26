@@ -59,7 +59,8 @@ from univention.lib.umc import Client, ConnectionError, HTTPError
 from univention.lib.misc import custom_groupname
 
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, SchoolSanitizer, Display
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer, Display
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, Group, User

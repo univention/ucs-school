@@ -48,7 +48,8 @@ from univention.management.console.modules.distribution import util
 
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, Display
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from ucsschool.lib.school_umc_base import SchoolBaseModule, Display
 from ucsschool.lib.models.user import User
 
 _ = Translation('ucs-school-umc-distribution').translate

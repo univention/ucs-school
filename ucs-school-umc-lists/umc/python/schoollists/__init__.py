@@ -39,7 +39,8 @@ from univention.lib.i18n import Translation
 from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 from univention.management.console.modules.decorators import sanitize
 
-from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.models.user import User
 
 _ = Translation('ucs-school-umc-lists').translate

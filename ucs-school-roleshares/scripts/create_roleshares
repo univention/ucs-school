@@ -33,7 +33,7 @@
 
 import sys
 from six.moves import input
-from ucsschool.lib.school_umc_base import set_credentials, LDAP_Connection, MACHINE_READ
+from ucsschool.lib.school_umc_ldap_connection import set_credentials, LDAP_Connection, MACHINE_READ
 from ucsschool.lib.roleshares import create_roleshares
 import univention.config_registry
 from univention.admincli.admin import _2utf8

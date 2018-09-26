@@ -48,7 +48,8 @@ from univention.management.console.log import MODULE
 from univention.management.console.base import UMC_Error
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.modules.decorators import sanitize
-from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, ADMIN_WRITE, USER_READ
+from ucsschool.lib.school_umc_base import SchoolBaseModule
 
 from univention.management.console.config import ucr
 
