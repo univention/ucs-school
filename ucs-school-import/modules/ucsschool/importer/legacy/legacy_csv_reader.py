@@ -76,3 +76,19 @@ class LegacyCsvReader(CsvReader):
 		if not roles:
 			roles.append(role_pupil)
 		return roles
+
+	def _get_missing_columns(self):
+		"""
+		Find fieldnames that were configured in the csv:mapping but are
+		missing in the input data.
+
+		In the legacy import ``password`` is not *officially* supported, but
+		the original import script did support it if present, so we must it
+		here too.
+
+		:return: list(str)
+		"""
+		return [
+			key for key, value in self.config['csv']['mapping'].items()
+			if key not in self.fieldnames and value not in ('__ignore', 'password')
+		]

@@ -163,7 +163,7 @@ class CsvReader(BaseReader):
 			fpu = UTF8Recoder(fp, encoding)
 			reader = DictReader(fpu, **csv_reader_args)
 			self.fieldnames = reader.fieldnames
-			missing_columns = [key for key in self.config['csv']['mapping'].keys() if key not in self.fieldnames]
+			missing_columns = self._get_missing_columns()
 			if missing_columns:
 				raise ConfigurationError('Columns configured in csv:mapping missing: {}.'.format(
 					', '.join(missing_columns)))
@@ -344,6 +344,17 @@ class CsvReader(BaseReader):
 			cls._attrib_names[cls_name] = import_user.to_dict().keys()
 		return cls._attrib_names[cls_name]
 
+	def _get_missing_columns(self):
+		"""
+		Find fieldnames that were configured in the csv:mapping but are
+		missing in the input data.
+
+		:return: list(str)
+		"""
+		return [
+			key for key, value in self.config['csv']['mapping'].items()
+			if key not in self.fieldnames and value != '__ignore'
+		]
 
 class UTF8Recoder(object):
 	"""

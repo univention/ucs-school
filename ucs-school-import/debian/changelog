@@ -1,3 +1,10 @@
+ucs-school-import (16.0.2-52) unstable; urgency=low
+
+  * Bug #47681: continue supporting optional, undocumented 'password' column
+    in the legacy import
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 28 Sep 2018 13:56:37 +0200
+
 ucs-school-import (16.0.2-51) unstable; urgency=low
 
   * Bug #47677: handle CsvReader initialization without filename
