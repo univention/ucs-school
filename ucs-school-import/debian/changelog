@@ -1,3 +1,11 @@
+ucs-school-import (16.0.2-54) unstable; urgency=low
+
+  * Bug #47681: always create email column, create empty email addresses when
+    --create-email-addresses is not used
+  * improve help text for testing HTTP-API CSV import from the command line
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 01 Oct 2018 11:19:17 +0200
+
 ucs-school-import (16.0.2-53) unstable; urgency=low
 
   * Bug #47691: check properties in config['mandatory_attributes'] exist and
