@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.2-96) unstable; urgency=low
+
+  * Bug #47691: check properties in config['mandatory_attributes'] exist and
+    are non-empty
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 01 Oct 2018 09:50:28 +0200
+
 ucs-test-ucsschool (5.0.2-95) unstable; urgency=low
 
   * Bug #47681: missing columns are an error now
