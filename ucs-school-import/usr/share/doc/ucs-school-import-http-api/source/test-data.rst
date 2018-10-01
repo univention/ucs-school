@@ -46,6 +46,8 @@ As such, the CSV file can be imported on the command line with::
 
 The ``$OU`` in ``--sourceUID "$OU-$ROLE"`` should be lowercase, to make the import job as *similar* as possible to how it would be started by the UMC module (there will still be minor differences).
 
+The ``ucs-school-testuser-import`` script will print a help message at the end, with the above instructions that can be copied and pasted to immediately start an import from the command line.
+
 Delete users
 ------------
 
