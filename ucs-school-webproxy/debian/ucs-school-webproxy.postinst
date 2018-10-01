@@ -37,7 +37,7 @@ eval "$(univention-config-registry shell)"
 
 case "$1" in
     configure)
-		/etc/init.d/univention-directory-listener crestart
+		deb-systemd-invoke restart univention-directory-listener
 
 		# set correct permissions
 		dpkg-statoverride --update --force --add root proxy 2770 /var/lib/ucs-school-webproxy/ || true
@@ -78,26 +78,26 @@ case "$1" in
 		touch /var/lib/ucs-school-webproxy/whitelisted-url || true
 		touch /var/lib/ucs-school-webproxy/blacklisted-domain || true
 		touch /var/lib/ucs-school-webproxy/blacklisted-url || true
-		chown root:proxy /var/lib/ucs-school-webproxy/*listed-* || true
+		chown -c root:proxy /var/lib/ucs-school-webproxy/*listed-* || true
 		/usr/bin/squidGuard -C all < /dev/null || true
-		chmod ug+rw /var/lib/ucs-school-webproxy/*listed-* || true
+		chmod -c ug+rw /var/lib/ucs-school-webproxy/*listed-* || true
 
 		if [ -x /etc/init.d/samba ]; then
-			/etc/init.d/samba reload
+			deb-systemd-invoke reload smbd
 			sleep 2
 		fi
 
 		if [ -x /etc/init.d/winbind ]; then
-			/etc/init.d/winbind restart
+			deb-systemd-invoke restart winbind
 			sleep 2
 		fi
 
 		if [ -x /etc/init.d/squid ]; then
-			/etc/init.d/squid restart
+			deb-systemd-invoke restart squid
 		fi
 
 		a2ensite wpad.conf
-		invoke-rc.d apache2 reload
+		deb-systemd-invoke reload apache2
 
 		univention-config-registry set \
 			'proxy/filter/setting/Kein Internet/filtertype?whitelist-block' \
@@ -118,7 +118,7 @@ case "$1" in
 			ucr set squid/forwardedfor=on
 		fi
 
-		invoke-rc.d univention-dhcp restart || true
+		deb-systemd-invoke restart univention-dhcp || true
 		;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
