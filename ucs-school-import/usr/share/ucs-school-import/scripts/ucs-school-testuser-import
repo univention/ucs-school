@@ -100,17 +100,23 @@ def parse_cmdline():
 
 def log_conf_hint(args, logger):
 	conf_file = CONF_FILE_HTTP if args.httpapi else CONF_FILE_CMDLINE
+	logger.info("")
 	logger.info("Configuration hint:")
+	logger.info("===================")
 	logger.info("Use the configuration file %r or one derived from it.", conf_file)
 	if args.httpapi:
 		logger.info(
-			"When using the graphical UMC module, the file must be copied to %r or '%s.json'.",
+			"When using the graphical UMC module, the configuration file must be copied to %r or '%s.json'.",
 			CONF_FILE_TARGET_VAR, os.path.join(CONF_FILE_TARGET_DIR, args.OU[0].lower()))
-		logger.info("To test with the command line import ('ucs-school-user-import'), use the following arguments:")
+		logger.info("")
+		logger.info("To import the CSV using the command line, run the following command:")
 		logger.info(
-			"--school %r --user_role 'ROLE' --sourceUID '%s-ROLE' --conffile %r --infile %r",
-			args.OU[0], args.OU[0].lower(), conf_file, args.csvfile)
-		logger.info("Replace 'ROLE' with 'student', 'staff', 'teacher' or 'teacher_and_staff'.")
+			"%s --school %r --user_role student --sourceUID '%s-student' --conffile %r --infile %r",
+			os.path.join(os.path.dirname(__file__), 'ucs-school-user-import'), args.OU[0], args.OU[0].lower(),
+			conf_file, args.csvfile)
+		logger.info(
+			"Replace 'student' in both '--user_role' and '--sourceUID' with one of 'student', 'staff', 'teacher' or "
+			"'teacher_and_staff'.")
 	else:
 		logger.info(
 			"Either use the '--conffile' command line argument to 'ucs-school-user-import' or copy the file to %r.",
