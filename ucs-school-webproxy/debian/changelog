@@ -1,3 +1,10 @@
+ucs-school-webproxy (14.0.0-7) unstable; urgency=low
+
+  * Bug #47645: migrate proxy/pac/exclude/domains/domainnames to
+    proxy/pac/exclude/domains/dnsnames
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 01 Oct 2018 16:16:09 +0200
+
 ucs-school-webproxy (14.0.0-6) unstable; urgency=low
 
   * Bug #47645: fix typo

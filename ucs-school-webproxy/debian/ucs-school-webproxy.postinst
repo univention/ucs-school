@@ -54,6 +54,25 @@ case "$1" in
 			fi
 		fi
 
+		# Bug #47645: migrate proxy/pac/exclude/domains/domainnames to ../dnsnames
+		if dpkg --compare-versions "$2" lt 14.0.0-7
+		then
+			ucrv_domainnames="$(ucr get proxy/pac/exclude/domains/domainnames)"
+			ucrv_dnsnames="$(ucr get proxy/pac/exclude/domains/dnsnames)"
+			if [ -z "$ucrv_dnsnames" ] && [ -n "$ucrv_domainnames" ]
+			then
+				echo "Migrating proxy/pac/exclude/domains/domainnames to proxy/pac/exclude/domains/dnsnames."
+				ucr set proxy/pac/exclude/domains/dnsnames="$ucrv_domainnames"
+				ucr unset proxy/pac/exclude/domains/domainnames
+			elif [ -n "$ucrv_dnsnames" ] && [ -n "$ucrv_domainnames" ]
+			then
+				echo "Both UCR variables proxy/pac/exclude/domains/domainnames and"
+				echo "proxy/pac/exclude/domains/dnsnames are set, but only"
+				echo "proxy/pac/exclude/domains/dnsnames is supported."
+				echo "Please migrate your settings and unset proxy/pac/exclude/domains/domainnames."
+			fi
+		fi
+
 		# init squidguard db
 		touch /var/lib/ucs-school-webproxy/whitelisted-domain || true
 		touch /var/lib/ucs-school-webproxy/whitelisted-url || true
