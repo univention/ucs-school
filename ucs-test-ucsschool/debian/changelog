@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-97) unstable; urgency=low
+
+  * Bug #47691: fix test not setting source_uid
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 02 Oct 2018 10:02:25 +0200
+
 ucs-test-ucsschool (5.0.2-96) unstable; urgency=low
 
   * Bug #47691: check properties in config['mandatory_attributes'] exist and

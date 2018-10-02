@@ -41,7 +41,8 @@ def main():
 					school=ou_name,
 					firstname=uts.random_name(),
 					lastname=uts.random_name(),
-					record_uid=uts.random_name()
+					record_uid=uts.random_name(),
+					source_uid='TestDB',
 				)
 				user.udm_properties['organisation'] = uts.random_name(65)
 				user.prepare_all(True)
@@ -57,7 +58,8 @@ def main():
 					school=ou_name,
 					firstname=uts.random_name(),
 					lastname=uts.random_name(),
-					record_uid=uts.random_name()
+					record_uid=uts.random_name(),
+					source_uid='TestDB',
 				)
 				user.prepare_all(True)
 				user.create(lo)
@@ -86,6 +88,7 @@ def main():
 						firstname=uts.random_name(),
 						lastname=uts.random_name(),
 						record_uid=uts.random_name(),
+						source_uid='TestDB',
 						password=uts.random_string(config['password_length']),
 					)
 					user.udm_properties[prop] = random_value(prop)
@@ -102,6 +105,7 @@ def main():
 						firstname=uts.random_name(),
 						lastname=uts.random_name(),
 						record_uid=uts.random_name(),
+						source_uid='TestDB',
 						password=uts.random_string(config['password_length']),
 					)
 					user.create(lo)
