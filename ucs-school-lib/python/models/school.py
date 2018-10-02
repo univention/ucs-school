@@ -34,6 +34,9 @@ import ldap
 from ldap.filter import escape_filter_chars
 from ldap.dn import escape_dn_chars
 
+import univention.admin.objects
+import univention.admin.modules
+
 from univention.config_registry import handler_set
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.roles import (
@@ -272,13 +275,34 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	def add_host_to_dc_group(self, lo):
 		logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r', self.name, self.dc_name)
 		if self.dc_name:
-			if ucr.is_true('ucsschool/feature/roles'):
-				roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
-				dc = SchoolDCSlave(name=self.dc_name, school=self.name, ucsschool_roles=roles)
+			dc_name_l = self.dc_name.lower()
+			dc_udm_obj = None
+			mb_dcs = lo.search('(&(objectClass=univentionDomainController)(cn={})(|(univentionServerRole=backup)(univentionServerRole=master)))'.format(dc_name_l))
+			if len(mb_dcs):
+				return # We do not modify the groups of master or backup servers
+			po = univention.admin.uldap.position(lo.base) # Sadly we need this here to access non school specific computers. TODO: Use Daniels simple API if merged into product
+			univention.admin.modules.update()
+			mod = univention.admin.modules.get('computers/domaincontroller_slave')
+			if not mod.initialized:
+				univention.admin.modules.init(lo, po, mod)
+			slave_dcs = lo.search('(&(objectClass=univentionDomainController)(cn={})(univentionServerRole=slave))'.format(dc_name_l))
+			if len(slave_dcs):
+				dn, attr = slave_dcs[0]
+				dc_udm_obj = univention.admin.objects.get(mod, None, lo, po, dn)
+				dc_udm_obj.open()
+			if not dc_udm_obj:
+				if ucr.is_true('ucsschool/feature/roles'):
+					roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
+					dc = SchoolDCSlave(name=self.dc_name, school=self.name, ucsschool_roles=roles)
+				else:
+					dc = SchoolDCSlave(name=self.dc_name, school=self.name)
+				dc.create(lo)
+				dc_udm_obj = dc.get_udm_object(lo)
 			else:
-				dc = SchoolDCSlave(name=self.dc_name, school=self.name)
-			dc.create(lo)
-			dc_udm_obj = dc.get_udm_object(lo)
+				dc = SchoolDCSlave.from_udm_obj(SchoolDCSlave.get_first_udm_obj(lo, 'cn={}'.format(self.dc_name)), self.name, lo)
+				if ucr.is_true('ucsschool/feature/roles') and dc:
+					dc['ucsschool_roles'] = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
+					dc.modify()
 			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
 			for grp in groups:
 				if grp not in dc_udm_obj['groups']:
