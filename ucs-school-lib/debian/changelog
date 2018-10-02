@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-23) unstable; urgency=low
+
+  * Bug #47408: Check if a computer object with given uid is already present
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Oct 2018 09:31:02 +0200
+
 ucs-school-lib (11.0.1-22) unstable; urgency=low
 
   * Bug #47447: set 'schools' property when creating User from UDM object
