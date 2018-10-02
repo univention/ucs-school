@@ -710,10 +710,10 @@ python -m json.tool &lt; my_config.json
 <!-- mandatory_attributes -->
 							<row>
 								<entry morerows="1"><varname>mandatory_ \ attributes</varname></entry>
-								<entry>Liste mit &ucsUDM; Attributnamen, die während des Imports aus den Eingabedaten oder indirekt über ein Schema gesetzt werden müssen.</entry>
+								<entry>Liste von &ucsUDM; Attributen, die an jedem Benutzer gesetzt sein müssen.</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>list</classname>): <literal>["firstname", "lastname", "name", "school"]</literal></entry>
+								<entry align="right">Standard (<classname>list</classname>): <literal>["firstname", "lastname", "name", "record_uid", "school", "source_uid"]</literal></entry>
 							</row>
 <!-- no_delete -->
 							<row>
