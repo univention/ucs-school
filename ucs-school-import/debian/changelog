@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-56) unstable; urgency=low
+
+  * Bug #47861: catch invalid group name
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 02 Oct 2018 16:46:33 +0200
+
 ucs-school-import (16.0.2-55) unstable; urgency=low
 
   * Bug #47885: automatically add missing properties to mandatory_attributes

@@ -40,6 +40,7 @@ from six import string_types
 
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
+from univention.admin.syntax import gid as gid_syntax
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
@@ -1059,6 +1060,11 @@ class ImportUser(User):
 			for sc in school_classes:
 				if sc.startswith('{0}-{0}-'.format(school)):
 					self.logger.warn("Validation warning: Name of school_class starts with name of school: %r", sc)
+				for school_class in school_classes:
+					if not gid_syntax.regex.match(school_class):
+						raise InvalidSchoolClasses(
+							"Invalid school class name: {!r}".format(school_class),
+							entry_count=self.entry_count, import_user=self)
 
 		self.check_schools(lo)
 
