@@ -42,9 +42,12 @@ from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
 
 class DefaultConfigurationChecks(ConfigurationChecks):
 	def test_minimal_mandatory_attributes(self):
-		for attr in ("firstname", "lastname", "name", "record_uid", "school", "source_uid"):
-			if attr not in self.config.get("mandatory_attributes", []):
-				raise InitialisationError("Configured list of 'mandatory_attributes' must include {!r}.".format(attr))
+		try:
+			mandatory_attributes = self.config["mandatory_attributes"]
+		except KeyError:
+			raise InitialisationError("Configuration key 'mandatory_attributes' must exist.")
+		if not isinstance(mandatory_attributes, list):
+			raise InitialisationError("Configuration value of 'mandatory_attributes' must be a list.")
 
 	def test_source_uid(self):
 		if not self.config.get("sourceUID"):

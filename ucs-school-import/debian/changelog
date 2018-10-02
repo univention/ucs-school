@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-55) unstable; urgency=low
+
+  * Bug #47885: automatically add missing properties to mandatory_attributes
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 02 Oct 2018 11:02:49 +0200
+
 ucs-school-import (16.0.2-54) unstable; urgency=low
 
   * Bug #47681: always create email column, create empty email addresses when

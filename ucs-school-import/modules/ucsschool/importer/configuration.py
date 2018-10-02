@@ -47,6 +47,7 @@ except ImportError:
 def setup_configuration(conffiles, **kwargs):
 	config = Configuration(conffiles)
 	config.update(kwargs)
+	config.post_read(get_logger())
 	config.close()
 	run_configuration_checks(config)
 	return config
@@ -104,6 +105,23 @@ class ReadOnlyDict(dict):
 	@staticmethod
 	def __closed(*args, **kwargs):
 		raise ReadOnlyConfiguration()
+
+	def post_read(self, logger):
+		try:
+			mandatory_attributes = self["mandatory_attributes"]
+			assert isinstance(mandatory_attributes, list)
+		except (AssertionError, KeyError):
+			# will be checked in /usr/share/ucs-school-import/checks/defaults::test_minimal_mandatory_attributes()
+			pass
+		else:
+			missing_mandatory_attributes = [
+				attr for attr in ("firstname", "lastname", "name", "record_uid", "school", "source_uid")
+				if attr not in mandatory_attributes
+			]
+			if missing_mandatory_attributes:
+				logger.info("Adding %r to 'mandatory_attributes'.", missing_mandatory_attributes)
+				mandatory_attributes.extend(missing_mandatory_attributes)
+			mandatory_attributes.sort()
 
 	def close(self):
 		self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed  # noqa
