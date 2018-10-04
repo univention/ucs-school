@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.2-56A~4.3.0.201810021648
+fix: 16.0.2-57A~4.3.0.201810041231
 desc: |
  * Even when the import abots, statistics are now still written to the terminal, passwords and summary CSV files are written to disk (Bug #45673).
  * CSV files encoded in <literal>ISO 8859-1</literal> (and others) are now automatically convert to <literal>UTF-8</literal> (Bug #47677).
