@@ -489,7 +489,65 @@ class SchoolBaseModule(Base):
 			for cls in classes:
 				_users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
 				users.extend(user.get_udm_object(ldap_connection) for user in _users)
+		return users
 
+	def _users_ldap(self, ldap_connection, school, group=None, user_type=None, pattern='', attr=None):
+		"""
+		Returns a list of LDAP query result tuples (dn, attr) of all users
+		given  `pattern`, `school` (search base) and `group`.
+		"""
+		import ucsschool.lib.models
+		if not user_type:
+			classes = [ucsschool.lib.models.User]
+		elif user_type.lower() in ('teachers', 'teacher'):
+			classes = [ucsschool.lib.models.Teacher, ucsschool.lib.models.TeachersAndStaff]
+		elif user_type.lower() in ('student', 'students', 'pupil', 'pupils'):
+			classes = [ucsschool.lib.models.Student]
+		else:
+			raise TypeError('user_type %r unknown.' % (user_type,))
+
+		attr = attr or []
+		users = []
+		user_module = udm_modules.get('users/user')
+
+		if group not in (None, 'None'):
+			# The following code block prevents a massive performance loss if the group
+			# contains far less users than all available users. The else-block opens
+			# all available users ==> high LDAP load! (Bug #42167)
+
+			user_dns = ldap_connection.get(group).get('uniqueMember', [])
+			for userdn in set(user_dns):
+				search_filter_list = [LDAP_Filter.forSchool(school)]
+				if pattern:
+					search_filter_list.append(LDAP_Filter.forUsers(pattern))
+				for cls in classes:
+					search_filter_list.append(cls.type_filter)
+					# concatenate LDAP filters
+					search_filter = unicode(user_module.lookup_filter(
+						conjunction(
+							'&',
+							[parse(subfilter) for subfilter in search_filter_list]
+						)))
+					ldap_objs = ldap_connection.search(search_filter, base=userdn, attr=attr)
+					if len(ldap_objs) == 1:
+						users.append(ldap_objs[0])
+					# else:
+						# either: 'Possible group inconsistency detected: %r contains member %r but member was not
+						#         found in LDAP' % (group, userdn))
+						# or: DN does not belong to teacher/student (WrongModel)
+						# in both cases: ignore user
+		else:
+			for cls in classes:
+				filter_s = unicode(user_module.lookup_filter(
+					conjunction(
+						'&',
+						[
+							parse(LDAP_Filter.forSchool(school)),
+							parse(LDAP_Filter.forUsers(pattern)),
+							parse(cls.type_filter),
+						]
+					)))
+				users.extend(ldap_connection.search(filter=filter_s, attr=attr))
 		return users
 
 
@@ -549,3 +607,11 @@ class Display:
 			fullname += ', %(firstname)s' % udm_object
 
 		return fullname + ' (%(username)s)' % udm_object
+
+	@staticmethod
+	def user_ldap(ldap_object):
+		fullname = ldap_object.get('sn', [''])[0]
+		if ldap_object.get('givenName', [''])[0]:
+			fullname += ', %s' % ldap_object['givenName'][0]
+
+		return fullname + ' (%s)' % ldap_object['uid'][0]

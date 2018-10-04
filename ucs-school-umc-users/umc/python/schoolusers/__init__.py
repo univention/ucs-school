@@ -39,6 +39,7 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, BooleanSanitizer
 
+from univention.admin.handlers.users.user import unmapPasswordExpiry
 import univention.admin.uexceptions as udm_exceptions
 
 from univention.lib.i18n import Translation
@@ -74,11 +75,20 @@ class Instance(SchoolBaseModule):
 		klass = request.options.get('class')
 		if klass in (None, 'None'):
 			klass = None
-		result = [{
-			'id': usr.dn,
-			'name': Display.user(usr),
-			'passwordexpiry': self.passwordexpiry_to_days(usr.get('passwordexpiry', ''))
-		} for usr in self._users(ldap_user_read, request.options['school'], group=klass, user_type=request.flavor, pattern=request.options.get('pattern', ''))]
+		result = [
+			{
+				'id': dn,
+				'name': Display.user_ldap(attr),
+				'passwordexpiry': self.passwordexpiry_to_days(unmapPasswordExpiry(attr))
+			}
+			for dn, attr in self._users_ldap(
+				ldap_user_read,
+				request.options['school'],
+				group=klass,
+				user_type=request.flavor,
+				pattern=request.options.get('pattern', ''),
+				attr=['givenName', 'sn', 'shadowLastChange', 'shadowMax', 'uid'])
+		]
 		self.finished(request.id, result)
 
 	@sanitize(
