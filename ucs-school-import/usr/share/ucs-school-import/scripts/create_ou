@@ -1,0 +1,147 @@
+#!/usr/bin/python2.7 -OO
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@school
+#
+# Copyright 2007-2018 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+
+import optparse
+import sys
+import re
+import csv
+
+from ucsschool.lib.models.school import School
+import univention.config_registry
+from univention.admin.uexceptions import uidAlreadyUsed
+from univention.admin.uldap import getAdminConnection
+
+def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master):
+	'''
+	Raises ValueError, uidAlreadyUsed
+	'''
+	if not edu_name and is_single_master:
+		edu_name = hostname
+	elif not edu_name and not is_single_master:
+		edu_name = 'dc{}-01'.format(ou_name)
+
+	if display_name is None:
+		display_name = ou_name
+
+	new_school = School(name=ou_name, dc_name=edu_name, dc_name_administrative=admin_name, class_share_file_server=share_name, home_share_file_server=share_name, display_name=display_name)
+	new_school.validate()
+	if len(new_school.warnings) > 0:
+		print('The following fields reported warnings during validation:\n')
+		for key, value in new_school.warnings.items():
+			print('{}: {}\n'.format(key, value))
+	if len(new_school.errors) > 0:
+		error_str = 'The following fields reported errors during validation:\n'
+		for key, value in new_school.errors.items():
+			error_str += '{}: {}\n'.format(key, value)
+		raise ValueError(error_str)
+
+	# TODO: Reevaluate this validation after CNAME changes are implemented
+	if share_name is not None:
+		objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn={}))'.format(share_name), base=baseDN)
+		if not objects:
+			raise ValueError('Cannot find share server object with given name {} for {}'.format(share_name, ou_name))
+	new_school.create(lo)
+
+def main():
+	usage = '''
+	%prog [options] <ou_name> [<educational_dc_name> [<administrative_dc_name>]]
+	create school container for UCS@school
+
+	Arguments:
+	<ou_name>		        name of ou that shall be created or verified
+	<educational_dc_name>	hostname of the educational DC for specified OU
+							(if dc_name is not specified "dc<ou_name>-01" will be
+						used as the default for the domaincontroller name)
+	<administrative_dc_name>    hostname of the administrative DC for the specified OU'''
+	parser = optparse.OptionParser(usage=usage)
+	parser.add_option(
+		'--sharefileserver', action='store', type='string',
+		dest='ShareFileServer', default=None,
+		help="hostname of the fileserver within given OU that is used for class shares and user home shares")
+	parser.add_option(
+		'--displayName', action='store', type='string',
+		dest='displayName', default=None,
+		help='Descriptive name of the school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")')
+	parser.add_option(
+		'--infile', action='store', type='string',
+		dest='infile', default=None,
+		help='CSV file for mass import of ou\'s. Format is ou_name,display_name,edu_name,admin_name,share_name. If given parameters are overwritten.')
+
+	(options, args, ) = parser.parse_args()
+	ou_tuples = list() # (ou_name,display_name,edu_name,admin_name,share_name)
+	if options.infile:
+		try:
+			with open(options.infile, 'r') as fd:
+				reader = csv.reader(fd, delimiter=',')
+				for row in reader:
+					if len(row) != 5:
+						print ('WARNING: Malformed row for {} will be ignored!'.format(row[0]))
+					ou_tuples.append(tuple([e if e != '' else None for e in row]))
+		except IOError as e:
+			print('ERROR: The given file could not be parsed:')
+			print(e)
+			sys.exit()
+	elif len(args) > 0:
+		ou_name = args[0]
+		dc_name_educational = args[1] if len(args) > 1 else None
+		dc_name_administrative = args[2] if len(args) > 2 else None
+		ou_tuples.append((ou_name, options.displayName, dc_name_educational, dc_name_administrative, options.ShareFileServer))
+	else:
+		parser.print_help()
+		sys.exit(1)
+	if len(ou_tuples) == 0:
+		parser.print_help()
+		sys.exit(1)
+
+	config_registry = univention.config_registry.ConfigRegistry()
+	config_registry.load()
+
+	baseDN = config_registry['ldap/base']
+	is_single_master = config_registry.is_true('ucsschool/singlemaster', False)
+	hostname = config_registry.get('hostname')
+
+	lo, pos = getAdminConnection()
+
+	for ou_name, display_name, edu_name, admin_name, share_name in ou_tuples:
+		try:
+			create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master)
+		except ValueError as e:
+			print(e)
+		except uidAlreadyUsed as e:
+			print(e)
+		finally:
+			print('Skip OU and proceed with next one.')
+	sys.exit(0)
+
+if __name__ == '__main__':
+	main()
