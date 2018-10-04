@@ -10,4 +10,5 @@ desc: |
  * Better error messages are now provided for missing mandatory columns. <literal>record_uid</literal and <literal>source_uid</literal> are now always part of <literal>mandatory_attributes</literal>. It is now verified that the CSV columns configured in <literal>csv:mapping</literal> exist in the CSV file (Bug #47681).
  * It is now checked, that the properties listed in the configuration of <literal>mandatory_attributes</literal> exist and are non-empty (Bug #47691).
  * Invalid school class names are now caught in dry-run (Bug #47861).
-bug: [45673, 47677, 47681, 47691, 47861]
+ * Replace the old create_ou script with one using the ucsschool.lib (Bug #46765).
+bug: [45673, 47677, 47681, 47691, 47861, 46765]
