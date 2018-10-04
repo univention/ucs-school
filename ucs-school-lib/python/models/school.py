@@ -70,6 +70,12 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		super(School, self).__init__(name=name, **kwargs)
 		self.display_name = self.display_name or self.name
 
+	def validate(self, lo, validate_unlikely_changes=False):
+		super(School, self).validate(lo, validate_unlikely_changes)
+		if self.dc_name == self.dc_name_administrative:
+			self.add_error('dc_name', _('Hostname of educational DC and administrative DC must not be equal'))
+			self.add_error('dc_name_administrative', _('Hostname of educational DC and administrative DC must not be equal'))
+
 	def build_hook_line(self, hook_time, func_name):
 		if func_name == 'create':
 			return self._build_hook_line(self.name, self.get_dc_name(or_fallback=False))
