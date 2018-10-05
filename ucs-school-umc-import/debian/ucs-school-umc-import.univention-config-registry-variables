@@ -3,3 +3,15 @@ Description[de]=Diese E-Mail Adresse wird dem Benutzer angezeigt, wenn Fehler w�
 Description[en]=This e-mail address is displayed to the user when an error happens during the import.
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/import/http_api/client/server]
+Description[de]=Die Adresse des HTTP-API Servers. Dies muss mit den Angaben im SSL-Zertifikat übereinstmmen, oder eine Verbindung wird abgelehnt werden (außer ucsschool/import/http_api/client/ssl_verify=false). Standard: der FQDN des Servers.
+Description[en]=The address of the HTTP-API server. It must match the names in the SSL certificate or a connection will be rejected (unless ucsschool/import/http_api/client/ssl_verify=false). Default: the servers FQDN.
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/import/http_api/client/ssl_verify]
+Description[de]=Aktiviert das Überprüfen des SSL-Zertifikats des Servers mit Hilfe der installierten CAs. Das Deaktivieren ermöglicht unentdeckte Man-in-the-middle-Angriffe! Standard: true.
+Description[en]=Activate the verification of the servers SSL certificate using the installed CAs. Deactivating this allows undetected man-in-the-middle attacks. Default: true.
+Type=bool
+Categories=ucsschool-base
