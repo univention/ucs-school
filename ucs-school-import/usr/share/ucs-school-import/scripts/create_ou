@@ -54,7 +54,7 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 		display_name = ou_name
 
 	new_school = School(name=ou_name, dc_name=edu_name, dc_name_administrative=admin_name, class_share_file_server=share_name, home_share_file_server=share_name, display_name=display_name)
-	new_school.validate()
+	new_school.validate(lo)
 	if len(new_school.warnings) > 0:
 		print('The following fields reported warnings during validation:\n')
 		for key, value in new_school.warnings.items():
