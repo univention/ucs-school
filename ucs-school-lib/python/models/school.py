@@ -72,7 +72,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def validate(self, lo, validate_unlikely_changes=False):
 		super(School, self).validate(lo, validate_unlikely_changes)
-		if self.dc_name == self.dc_name_administrative:
+		if self.dc_name and self.dc_name == self.dc_name_administrative:
 			self.add_error('dc_name', _('Hostname of educational DC and administrative DC must not be equal'))
 			self.add_error('dc_name_administrative', _('Hostname of educational DC and administrative DC must not be equal'))
 
