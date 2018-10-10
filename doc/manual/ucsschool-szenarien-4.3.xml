@@ -188,7 +188,7 @@ feedback@univention.de
 					IT-Angeboten</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations43/1_zentrale.png" scale="56" />
+						<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations43/1_zentrale.png" />
 					</imageobject>
 					<textobject><phrase>Zentrales Identity-Management mit integrierten
 					IT-Angeboten</phrase></textobject>
@@ -224,7 +224,7 @@ feedback@univention.de
 					IT-Angebote für Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations43/2_zentrale_wlan.png" scale="56" />
+						<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations43/2_zentrale_wlan.png" />
 					</imageobject>
 					<textobject><phrase>Zentrales Identity-Management, WLAN und
 							weitere IT-Angebote für
@@ -260,7 +260,7 @@ feedback@univention.de
 					Schulservern an den Schulen</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations43/3_zentrale_wlan_schulserver.png" scale="56" />
+						<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations43/3_zentrale_wlan_schulserver.png" />
 					</imageobject>
 					<textobject><phrase>Zentral verwaltete schulische IT-Infrastruktur mit
 					Schulservern an den Schulen</phrase></textobject>
@@ -296,7 +296,7 @@ feedback@univention.de
 					ohne dezentrale Schulserver</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="center" fileref="illustrations43/4_zentrale_wlan_schulserver_rz.png" scale="56" />
+						<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations43/4_zentrale_wlan_schulserver_rz.png"  />
 					</imageobject>
 					<textobject><phrase>Zentral verwaltete schulische IT-Infrastruktur
 					ohne dezentrale Schulserver</phrase></textobject>
@@ -2033,7 +2033,7 @@ feedback@univention.de
 								<title>Tabelle: Schulen</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata align="center" fileref="illustrations43/1_schulen_import.png" scale="60" />
+										<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations43/1_schulen_import.png" />
 									</imageobject>
 									<textobject><phrase>Tabelle: Schulen</phrase></textobject>
 								</mediaobject>
@@ -2050,7 +2050,7 @@ feedback@univention.de
 								<title>Kopie speichern als CSV-Datei</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata align="center" fileref="illustrations43/2_schulen_save_as.png" scale="60" />
+										<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations43/2_schulen_save_as.png" />
 									</imageobject>
 									<textobject><phrase>Kopie speichern als CSV-Datei</phrase></textobject>
 								</mediaobject>
@@ -2061,7 +2061,7 @@ feedback@univention.de
 								<title>Export Parameter</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata align="center" fileref="illustrations43/3_schulen_csv-parameters.png" scale="60" />
+										<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations43/3_schulen_csv-parameters.png" />
 									</imageobject>
 									<textobject><phrase>Export Parameter</phrase></textobject>
 								</mediaobject>
