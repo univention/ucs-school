@@ -37,45 +37,53 @@
 		<para>
 		  Nach der erfolgreichen UCS-Installation muss die &ucsUAS; App installiert werden. Jedes UCS System bietet
 		  ein Web-basiertes Konfigurationsinterface an, Univention Management Console, kurz UMC. Dies ist via Webbrowser
-		  erreichbar, dazu kann einfach der Name des Servers oder die IP-Adresse des Servers eingegeben werden. Es erscheint
-		  eine Kachel mit der Bezeichnung System- und Domäneneinstellungen. Nach einem Klick auf die Kachel wird eine
-		  Loginmaske angezeigt. Dort erfolgt die Anmeldung mit dem Benutzer Administrator und dem während der UCS-Installation
-		  vergebenen Passwort für den Benutzer <systemitem class="username">root</systemitem>.
+		  erreichbar, dazu kann einfach der Name oder die IP-Adresse des Servers in die Adresszeile des Webbrowsers
+		  eingegeben werden. Es erscheint eine Kachel mit der Bezeichnung System- und Domäneneinstellungen. Nach einem Klick
+		  auf die Kachel wird eine Anmeldemaske angezeigt. Dort erfolgt die Anmeldung mit dem Benutzer Administrator und dem
+		  während der UCS-Installation vergebenen Passwort für den Benutzer <systemitem class="username">root</systemitem>.
 		</para>
 		<para>
 		  Nun kann die Kachel <guimenu>App Center</guimenu> geöffnet und dort die Applikation <emphasis>&ucsUAS;</emphasis>
-		  installiert werden. Dazu ist den Anweisungen zu folgen, bspw. kann eine Lizenzaktivierung notwendig sein. Details
+		  installiert werden. Für die Installation ist den Anweisungen zu folgen, bspw. kann eine Lizenzaktivierung notwendig sein. Details
 		  dazu sind im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> zu finden.
 		  <figure id="install-via-appcenter">
 		    <title>Installation von &ucsUAS; über das Univention App Center</title>
-		    <graphic scalefit="1" width="97%" align="center" fileref="illustrations43/appcenter_ucsschool.png"/>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/appcenter_ucsschool.png"/>
 		  </figure>
 		</para>
 		<para>
-		  Nach Abschluss der Installation über das App Center erfolgt die Konfiguration von &ucsUAS;. Dies erfolgt über den
-		  &ucsUAS; Konfigurationsassistenten. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu> erreichbar.
-		  <figure id="install-via-appcenter">
-		    <title>Installation von &ucsUAS; über das Univention App Center</title>
-		    <graphic scalefit="1" width="97%" align="center" fileref="illustrations43/install-umc-wizard.png"/>
+		  Nach dem Abschluss der Installation über das App Center erfolgt die Konfiguration von &ucsUAS;. Dies wird mit dem
+		  &ucsUAS; Konfigurationsassistenten durchgeführt. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu> erreichbar.
+		  <figure id="install-umc-wizard">
+		    <title>Starten des &ucsUAS;-Konfigurationsassistenten</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/install-umc-wizard.png"/>
 		  </figure>
 		</para>
 		<para>
-		  Auf der ersten Seite fragt der Konfigurationsassistent nach dem Installationszenario. Hier ist die
+		  Auf der ersten Seite fragt der Konfigurationsassistent nach dem Installationsszenario. Hier ist die
 		  <guimenu>Single-Server-Umgebung</guimenu> auszuwählen.
+		  <figure id="install-umc-wizard-single-server">
+		    <title>Single-Server-Umgebung</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/installation-single-server.png"/>
+		  </figure>
 		</para>
 		<para>
 		  Auf der zweiten Seite muss der Name der Schule und das Schulkürzel eingegeben werden. Der Name der Schule kann
-		  dabei Leerzeichen und Sonderzeichen enthalten. Innerhalb von &ucsUAS; wird dieser Name immer wieder angezeigt. (TODO: Änderbar?)
+		  dabei Leerzeichen und Sonderzeichen enthalten. Innerhalb von &ucsUAS; wird dieser Name immer wieder angezeigt.
 		  Sobald der Name der Schule eingetragen ist und in das Feld für das Schulkürzel geklickt wird, wird ein Wert
 		  für das Schulkürzel vorgeschlagen. Dieser Wert kann entsprechend angepasst werden. Das Schulkürzel darf nur aus
 		  Buchstaben, Zahlen und Unterstrichen bestehen. Das Schulkürzel wird im Verzeichnisdienst als Name für die
 		  Organisationseinheiten (OU) verwendet (siehe auch <xref linkend="structure"/>), zusätzlich wird das Schulkürzel
 		  als Grundlage für Gruppen-, Freigabe- und Rechnernamen verwendet. Das Schulkürzel kann nach der initialen
 		  Konfiguration von &ucsUAS; nicht mehr modifiziert werden.
+		  <figure id="install-umc-wizard-single-schoolname">
+		    <title>Eingabe der Schuldaten</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/installation-singleserver-schoolname.png"/>
+		  </figure>
 		</para>
 		<para>
 		  Nach der abschließenden Bestätigung startet die Konfiguration von &ucsUAS;. Dabei werden diverse Pakete installiert
-		  und konfiguriert. Die Dauer schwankt je nach Internetgeschwindikeit und Serverausstattung.
+		  und konfiguriert. Die Dauer schwankt je nach Internetgeschwindigkeit und Serverausstattung.
 		</para>
 		<para>
 		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems
@@ -90,33 +98,51 @@
 	  <section id="installation:multi:master">
 		<title>Installation des DC Master</title>
 		<para>
-		  Bei der UCS-Installation muss die Systemrolle <emphasis>&ucsMaster;</emphasis> ausgewählt werden. Nach der
-		  UCS-Installation kann in &ucsUMC; das Modul <guimenu>App Center</guimenu> geöffnet und dort die
-		  Applikation <emphasis>&ucsUAS;</emphasis> nachinstalliert werden. Nach Abschluss der Installation
-		  wird in &ucsUMC; ein neues Modul angezeigt, mit welchem die wizardgesteuerte Konfiguration von
-		  &ucsUAS; durchgeführt wird:
-		</para>
-		  <itemizedlist>
-			<listitem>
-				<simpara>
-			  Das Konfigurationsmodul fragt auf dem DC Master zunächst nach der Art
-			  der &ucsUAS;-Umgebung, die installiert werden soll. Hier ist der Eintrag
-			  <emphasis>Multi-Server-Umgebung</emphasis> auszuwählen.
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
-			  Weitere Konfigurationsoptionen werden in einer Multi-Server-Umgebung auf dem DC Master nicht benötigt.
-				</simpara>
-			</listitem>
-		  </itemizedlist>
-		<para>
-		  Während der Konfiguration werden benötigte Softwarepakete automatisch aus dem Univention App Center heruntergeladen und installiert.
-		  Somit sind nach der Konfiguration alle für die Datenpflege benötigten Pakete
-		  auf dem DC Master zugreifbar.
+		  Zunächst muss ein UCS System mit der Systemrolle <emphasis>&ucsMaster;</emphasis> installiert werden. Die
+		  Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Sofern der &ucsMaster;
+		  als Active Directory-kompatibler Domänencontroller genutzt werden soll, so kann die Software bereits
+		  während der UCS-Installation ausgewählt werden.
 		</para>
 		<para>
-		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems abgeschlossen werden.
+		  Nach der erfolgreichen UCS-Installation muss die &ucsUAS; App installiert werden. Jedes UCS System bietet
+		  ein Web-basiertes Konfigurationsinterface an, Univention Management Console, kurz UMC. Dies ist via Webbrowser
+		  erreichbar, dazu kann einfach der Name oder die IP-Adresse des Servers in die Adresszeile des Webbrowsers
+		  eingegeben werden. Es erscheint eine Kachel mit der Bezeichnung System- und Domäneneinstellungen. Nach einem Klick
+		  auf die Kachel wird eine Anmeldemaske angezeigt. Dort erfolgt die Anmeldung mit dem Benutzer Administrator und dem
+		  während der UCS-Installation vergebenen Passwort für den Benutzer <systemitem class="username">root</systemitem>.
+		</para>
+		<para>
+		  Nun kann die Kachel <guimenu>App Center</guimenu> geöffnet und dort die Applikation <emphasis>&ucsUAS;</emphasis>
+		  installiert werden. Für die Installation ist den Anweisungen zu folgen, bspw. kann eine Lizenzaktivierung notwendig sein. Details
+		  dazu sind im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> zu finden.
+		  <figure id="install-via-appcenter-master">
+		    <title>Installation von &ucsUAS; über das Univention App Center</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/appcenter_ucsschool.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach dem Abschluss der Installation über das App Center erfolgt die Konfiguration von &ucsUAS;. Dies wird mit dem
+		  &ucsUAS;-Konfigurationsassistenten durchgeführt. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu> erreichbar.
+		  <figure id="install-umc-wizard-master">
+		    <title>Starten des &ucsUAS;-Konfigurationsassistenten</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/install-umc-wizard.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Auf der ersten Seite fragt der Konfigurationsassistent nach dem Installationsszenario. Hier ist die
+		  <guimenu>Multi-Server-Umgebung</guimenu> auszuwählen.
+		  <figure id="install-umc-wizard-multi-server">
+		    <title>Multi-Server-Umgebung</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/installation-multi-server.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach der abschließenden Bestätigung startet die Konfiguration von &ucsUAS;. Dabei werden diverse Pakete installiert
+		  und konfiguriert. Die Dauer schwankt je nach Internetgeschwindigkeit und Serverausstattung.
+		</para>
+		<para>
+		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems
+		  abgeschlossen werden.
 		</para>
 	  </section>
 
@@ -129,86 +155,100 @@
 		<para>
 		  Ein DC Backup dient als Fallback-System des DC Master. Sollte dieser ausfallen, kann ein DC Backup
 		  die Rolle des DC Master dauerhaft übernehmen. Der Einsatz eines DC Backup ist optional. Kommt ein
-		  DC Backup zum Einsatz, wird empfohlen, dort ebenfalls &ucsUAS; zu installieren.
+		  oder mehrere DC Backups zum Einsatz, wird empfohlen, dort ebenfalls &ucsUAS; zu installieren.
 		</para>
 		<para>
-		  Die Installation von &ucsUAS; auf einem DC Backup erfolgt analog zur in <xref
-		  linkend="school:installation:master2"/> beschriebenen Installation des DC Master.
+		  Die Installation von &ucsUAS; auf DC Backups erfolgt analog zur in <xref
+		  linkend="school:installation:master2"/> beschriebenen Installation des DC Master. Auch dort wird zunächst
+		  die &ucsUAS; App installiert und anschließend muss der &ucsUAS;-Konfigurationsassistent durchlaufen
+		  werden. Der Konfigurationsassistent erkennt dabei, dass &ucsUAS; bereits auf dem DC Master installiert wurde
+		  und es sind keine weiteren Einstellungen vorzunehmen.
+		</para>
+		<para>
+		  Nach der abschließenden Bestätigung startet die Konfiguration von &ucsUAS;. Dabei werden diverse Pakete installiert
+		  und konfiguriert. Die Dauer schwankt je nach Internetgeschwindigkeit und Serverausstattung.
+		</para>
+		<para>
+		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems
+		  abgeschlossen werden.
 		</para>
 	  </section>
 
 	  <section id="school:installation:slave">
 		<title>Installation eines Schulservers</title>
 		<para>
+		  Der edukative Schulserver, im folgenden Schulserver genannt, liefert die Anmeldedienste für Schüler
+		  und Lehrer an einer Schule. Zusätzlich bietet der Schulserver die Funktionen für den IT-gestützten Unterricht.
 		  An jedem Schul-Standort muss ein Schulserver installiert werden.
 		</para>
 		<para>
-		  Bei der UCS-Installation muss die Systemrolle <emphasis>&ucsSlave;</emphasis> (kurz DC
-		  Slave) ausgewählt werden. Nach der UCS-Installation kann in &ucsUMC; das Modul <guimenu>App
-		  Center</guimenu> geöffnet und dort die Applikation <emphasis>&ucsUAS;</emphasis> nachinstalliert
-		  werden. Nach Abschluss der Installation wird in &ucsUMC; ein neues Modul angezeigt, mit welchem
-		  die wizardgesteuerte Konfiguration von &ucsUAS; auf dem DC Slave durchgeführt wird:
+		  Zunächst muss ein UCS System mit der Systemrolle <emphasis>&ucsSlave;</emphasis> installiert werden. Die
+		  Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Es ist empfohlen während
+		  der Installation keine zusätzliche Software auszuwählen.
 		</para>
-		<itemizedlist>
-		  <listitem>
-			<simpara>
-			  Das Konfigurationsmodul kann auf einem DC Slave nur dann
-			  erfolgreich durchlaufen werden, wenn die Konfiguration des DC Masters bereits über das dort
-			  installierte Konfigurationsmodul abgeschlossen wurde.
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  Nach der Konfiguration über das Konfigurationsmodul tritt der DC Slave automatisch der Domäne erneut bei.
-			  Im zweiten Schritt werden die für den erneuten Beitritt notwendigen Anmeldedaten
-			  (Benutzername, Passwort) abgefragt. Hier kann der Benutzer <systemitem class="username">Administrator</systemitem> oder
-			  ein Mitglied der Gruppe <systemitem class="groupname">Domain Admins</systemitem> angegeben werden. Der vollqualifizierte
-			  Rechnername (FQDN) des DC Masters wird üblicherweise automatisch ermittelt und vorausgefüllt. Sollte
-			  dies nicht möglich sein, muss der vollständige Rechnername inkl. DNS-Domäne angegeben werden,
-			  z.B. <systemitem class="fqdomainname">master.example.com</systemitem>.
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  &ucsUAS; benötigt für die Bereitstellung von Datei- und Drucker-Freigaben den
-			  Samba-Dienst. Seit Version 4.2 v1 wird nur noch <emphasis>Samba 4</emphasis> unterstützt.
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  Die Daten eines Schulservers werden im Verzeichnisdienst in Organisationseinheiten
-			  (OU) gespeichert (siehe auch <xref linkend="structure"/>). Daher wird im Konfigurationsassistenten
-			  nach dem Namen der Schule gefragt. Dieser ist ein frei wählbarer Bezeichner (wie
-			  z.B. <emphasis>Gymnasium Mitte</emphasis>), der primär in den UMC-Modulen verwendet wird. Das
-			  ebenfalls abgefragte Schulkürzel entspricht dem eigentlichen Namen der Organisationseinheit, welche
-			  vom UMC-Modul im Zuge der Konfiguration automatisch angelegt wird. Das Schulkürzel sollte
-			  ausschließlich aus Buchstaben, Ziffern oder dem Bindestrich bestehen, da es unter anderem die
-			  Grundlage für Gruppen-, Freigabe- und Rechnernamen bildet. Häufig kommen hier Schulnummern wie
-			  <emphasis>340</emphasis> oder zusammengesetzte Kürzel wie <wordasword>g123m</wordasword> oder
-			  <wordasword>gymmitte</wordasword> zum Einsatz.  Nach der Eingabe des Schulnamens wird automatisch ein
-			  Vorschlag für ein Schulkürzel gemacht, welcher jedoch manuell angepasst werden kann.
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  Nach der Angabe des Schulnamens ist die Art des Schulservers anzugeben. Es kann
-			  zwischen einem Schulserver für das Edukativnetz (<guimenu>Edukativer Schulserver</guimenu>) und
-			  einem Schulserver für das Verwaltungsnetz (<guimenu>Verwaltungsserver</guimenu>) gewählt werden.
-			  Die Funktionen für den IT-gestützten Unterricht werden dabei nur von den Schulservern im
-			  Edukativnetz bereitgestellt.
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  Sollte an einem Schulstandort der Schulserver des Verwaltungsnetzes vor dem
-			  edukativen Schulserver konfiguriert werden, fragt der Konfigurationsassistent zusätzlich den Namen
-			  des zukünftigen edukativen Schulservers ab. Sollte der hier angegebene Name des Schulservers nicht
-			  korrekt sein, muss vor dem Import von Benutzern der Freigabeserver für die
-			  Benutzer-Heimatverzeichnisse korrigiert werden (siehe auch <xref
-			  linkend="school:setup:umc:schools:modify"/>).
-			</simpara>
-		  </listitem>
-		</itemizedlist>
+		<para>
+		  Nach der erfolgreichen UCS-Installation muss die &ucsUAS; App installiert werden. Jedes UCS System bietet
+		  ein Web-basiertes Konfigurationsinterface an, Univention Management Console, kurz UMC. Dies ist via Webbrowser
+		  erreichbar, dazu kann einfach der Name oder die IP-Adresse des Servers in die Adresszeile des Webbrowsers
+		  eingegeben werden. Es erscheint eine Kachel mit der Bezeichnung Systemeinstellungen. Nach einem Klick
+		  auf die Kachel wird eine Anmeldemaske angezeigt. Dort erfolgt die Anmeldung mit dem Benutzer Administrator und dem
+		  während der UCS-Installation vergebenen Passwort für den Benutzer <systemitem class="username">root</systemitem>.
+		</para>
+		<para>
+		  Nun kann die Kachel <guimenu>App Center</guimenu> geöffnet und dort die Applikation <emphasis>&ucsUAS;</emphasis>
+		  installiert werden. Dazu ist den Anweisungen zu folgen. Details dazu sind im UCS-Handbuch<biblioref linkend="ucs-handbuch"/>
+		  zu finden.
+		  <figure id="install-via-appcenter-slave">
+		    <title>Installation von &ucsUAS; über das Univention App Center</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/appcenter_ucsschool.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach dem Abschluss der Installation über das App Center erfolgt die Konfiguration von &ucsUAS; auf dem Schulserver. Dies
+		  erfolgt über den &ucsUAS;-Konfigurationsassistenten. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu>
+		  erreichbar.
+		  <figure id="install-umc-wizard-slave">
+		    <title>Starten des &ucsUAS;-Konfigurationsassistenten</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/install-umc-wizard.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Auf der ersten Seite fragt der Konfigurationsassistent nach einem Domänenbenutzernamen, dem Domänenpasswort des Benutzers
+		  und dem vollständigen Domänennamen des &ucsMaster;. Als Domänenbenutzer wird standardmäßig Administrator vorgeschlagen, alternativ
+		  kann ein anderer Benutzer angegeben werden, der das Recht zum Domänenbeitritt besitzt. Der Name des &ucsMaster; wird automatisch
+		  ermittelt und muss in der Regel nicht angepasst werden.
+		</para>
+		<para>
+		  Auf der zweiten Seite muss der Name der Schule und das Schulkürzel eingegeben werden. Der Name der Schule kann
+		  dabei Leerzeichen und Sonderzeichen enthalten. Innerhalb von &ucsUAS; wird dieser Name immer wieder angezeigt.
+		  Sobald der Name der Schule eingetragen ist und in das Feld für das Schulkürzel geklickt wird, wird ein Wert
+		  für das Schulkürzel vorgeschlagen. Dieser Wert kann entsprechend angepasst werden. Das Schulkürzel darf nur aus
+		  Buchstaben, Zahlen und Unterstrichen bestehen. Das Schulkürzel wird im Verzeichnisdienst als Name für die
+		  Organisationseinheiten (OU) verwendet (siehe auch <xref linkend="structure"/>), zusätzlich wird das Schulkürzel
+		  als Grundlage für Gruppen-, Freigabe- und Rechnernamen verwendet. Das Schulkürzel kann nach der initialen
+		  Konfiguration von &ucsUAS; nicht mehr modifiziert werden.
+		  <figure id="install-umc-wizard-multi-schoolname">
+		    <title>Eingabe der Schuldaten</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/installation-schoolslave-schoolname.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach der Angabe des Schulnamens ist die Art des Schulservers anzugeben. Hier ist der <guimenu>Edukativer Schulserver</guimenu>
+		  auszuwählen.
+		  <figure id="install-umc-wizard-multi-schoolslave-edu">
+		    <title>Edukativer Schulserver</title>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations43/installation-schoolslave-edu.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach der abschließenden Bestätigung startet die Konfiguration von &ucsUAS;. Dabei werden diverse Pakete installiert
+		  und konfiguriert. Die Dauer schwankt je nach Internetgeschwindigkeit und Serverausstattung.
+		</para>
+		<para>
+		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems
+		  abgeschlossen werden.  Im Anschluss kann die weitere Konfiguration der Schule vorgenommen werden,
+		  siehe <xref linkend="school:setup:umc"/> und <xref linkend="school:setup:cli"/>.
+		</para>
 		<caution>
 			<para>
 				Bei der nachträglichen Installation eines Schulservers kann der Fall eintreten, dass
@@ -234,41 +274,42 @@
 				</itemizedlist>
 			</para>
 		</caution>
-		<caution>
-		  <para>
-			Für den Verwaltungsserver muss ein vom edukativen Netz physikalisch getrenntes
-			Netzwerksegment sowie ein eigenes IP-Subnetz verwendet wird, um Konflikte mit dem Schulserver des
-			Edukativnetzes zu vermeiden (siehe auch <xref linkend="structure:edunet-vs-adminnet"/>).
-		  </para>
-		  <para>
-			  Bei der Verwendung des Verwaltungsnetzes muss vor dem Anlegen der ersten Schule
-			  bzw. vor der Installation des ersten Schulservers bzw. Verwaltungsservers darauf geachtet werden,
-			  dass auf allen &ucsUAS;-Systemen die UCR-Variable
-			  <envar>ucsschool/import/generate/policy/dhcp/dns/set_per_ou</envar> auf den Wert
-			  <literal>false</literal> gesetzt wird. Dies lässt sich am besten über eine UCR-Richtlinie für die
-			  gesamte UCS@school-Domäne erledigen. IP-Subnetze sowie DNS-Server müssen über das Importskript
-			  <command>import_networks</command> (siehe in <xref linkend="school:schoolcreate:network:import" />)
-			  importiert bzw. gesetzt werden, um einen fehlerfreien Betrieb zu gewährleisten.
-		  </para>
-		</caution>
+	  </section>
+	  <section id="school:installation:slave-administrative">
+		<title>Installation eines Verwaltungsservers (optional)</title>
 		<para>
-		  Während der Konfiguration werden benötigte Softwarepakete automatisch aus dem Univention App Center installiert
-		  und ein erneuter Domänenbeitritt durchgeführt. Somit sind nach der Konfiguration
-		  alle für die Steuerung von &ucsUAS; benötigten Pakete auf dem DC Slave zugreifbar.
+		  Der Verwaltungsserver bietet den Anmeldedienste für Mitarbeiter in der Verwaltung. Es ist nicht zwingend erforderlich,
+		  dass an jeder Schule ein Verwaltungsserver installiert wird.
 		</para>
 		<para>
-		  Wurde während der Installation des DC Slaves ein DHCP-Server installiert, verschiebt der
-		  &ucsUAS;-Konfigurationsassistent das DHCP-Server-Objekt des DC Slaves (zu finden unter
-		  <command>cn=dhcp,<replaceable>LDAPBASIS</replaceable></command>) automatisch in den entsprechenden
-		  DHCP-Container der OU
-		  (<command>cn=dhcp,ou=<replaceable>OUNAME</replaceable>,<replaceable>LDAPBASIS</replaceable></command>).
-		  Dies ist für die korrekte Funktion des DHCP-Servers notwendig, da jeder Schulserver eine
-		  individuelle LDAP-Suchbasis verwendet.
+		  Für den Verwaltungsserver muss ein vom edukativen Netz physikalisch getrenntes
+		  Netzwerksegment sowie ein eigenes IP-Subnetz verwendet werden, um Konflikte mit dem Schulserver des
+		  Edukativnetzes zu vermeiden (siehe auch <xref linkend="structure:edunet-vs-adminnet"/>).
 		</para>
 		<para>
-		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems abgeschlossen werden.
+		  Die Installation eines Verwaltungsserver erfolgt analog zur in <xref linkend="school:installation:slave"/>
+		  beschriebenen Installation des Schulservers. Auch dort wird zunächst die &ucsUAS; App installiert und anschließend muss
+		  der &ucsUAS;-Konfigurationsassistent durchlaufen werden. Lediglich bei der Auswahl der Art des Schulservers
+		  muss <guimenu>Verwaltungsserver</guimenu> gewählt werden.
+		</para>
+		<para>
+		  Sollte an einem Schulstandort der Verwaltungsserver vor dem edukativen Schulserver konfiguriert werden, fragt
+		  der Konfigurationsassistent zusätzlich den Namen des zukünftigen Schulservers ab. Sollte der hier angegebene Name des
+		  Schulservers nicht korrekt sein, muss vor dem Import von Benutzern der Freigabeserver für die Benutzer-Heimatverzeichnisse
+		  korrigiert werden (siehe auch <xref linkend="school:setup:umc:schools:modify"/>).
+		</para>
+		<para>
+		  Bei der Verwendung des Verwaltungsnetzes muss vor dem Anlegen der ersten Schule
+		  bzw. vor der Installation des ersten Schulservers bzw. Verwaltungsservers darauf geachtet werden,
+		  dass auf allen &ucsUAS;-Systemen die UCR-Variable
+		  <envar>ucsschool/import/generate/policy/dhcp/dns/set_per_ou</envar> auf den Wert
+		  <literal>false</literal> gesetzt wird. Dies lässt sich am besten über eine UCR-Richtlinie für die
+		  gesamte UCS@school-Domäne erledigen. IP-Subnetze sowie DNS-Server müssen über das Importskript
+		  <command>import_networks</command> (siehe in <xref linkend="school:schoolcreate:network:import" />)
+		  importiert bzw. gesetzt werden, um einen fehlerfreien Betrieb zu gewährleisten.
 		</para>
 	  </section>
+
 	  <section id="school:installation:slave-cli">
 		<title>Manuelle Installation eines Schulservers auf der Kommandozeile</title>
 		<para>
