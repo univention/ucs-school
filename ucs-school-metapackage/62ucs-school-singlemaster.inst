@@ -60,7 +60,7 @@ append_ucr_policy_to_base() {
 		--dn "$ldap_base" | sed -n 's/^\s*univentionPolicyReference: //p')
 
 	while read policy_dn; do
-		ldif=$(univention-ldapsearch -xLLL -b "$policy_dn" -s base \
+		ldif=$(univention-ldapsearch -LLL -b "$policy_dn" -s base \
 			"(objectClass=univentionPolicyRegistry)" \
 			univentionRegistry \
 			| ldapsearch-wrapper
@@ -131,7 +131,7 @@ if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 	IFS="
 "
 	# determine list of available OUs
-	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+	for oudn in $(univention-ldapsearch -LLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
 		ouname="$(echo "$oudn" | sed -nre 's/ou=([^,]*),(ou=|dc=).*/\1/p')"
 		if [ -z "$ouname" ] ; then
 			echo "Cannot determine OU name - using fallback 'server'"
