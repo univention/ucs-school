@@ -49,6 +49,13 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	test -x /etc/init.d/samba && /etc/init.d/samba status >/dev/null && /etc/init.d/samba restart
 fi
 
+if [ $JS_LAST_EXECUTED_VERSION = 0 ]; then
+	if [ -e /usr/share/univention-samba4/lib/all.sh ]; then
+		. /usr/share/univention-samba4/lib/all.sh
+		samba4_ldb_sam_module_prepend || true
+	fi
+fi
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 ucs_addServiceToLocalhost 'UCS@school Central' "$@"
 
