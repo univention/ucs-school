@@ -8,6 +8,7 @@ Standards-Version: 3.8.2
 Package: ucs-school-master
 Architecture: all
 Conflicts: ucs-school-singlemaster
+Pre-Depends: univention-config
 Depends: univention-ldap-server (>= 8.0.77-4),
  univention-ldap-acl-master (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
@@ -53,7 +54,6 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
  univention-samba4 (>= 1.0.138-11) | univention-samba (>= 6.0.27-1),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
- libunivention-ldb-modules | univention-samba (>= 6.0.27-1),
  ucs-school-s4-branch-site | univention-samba,
  ucs-school-netlogon-user-logonscripts,
  ucs-school-old-homedirs,
@@ -110,7 +110,6 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  ucs-school-old-sharedirs,
  ucs-school-info,
  ucs-school-umc-installer,
- libunivention-ldb-modules | univention-samba,
  univention-s4-connector (>= 6.0.128-24) | univention-samba,
  univention-management-console (>= 4.0.231-1),
  univention-management-console-frontend (>= 1.0.320-1),
@@ -158,7 +157,6 @@ Depends: univention-config,
  python-ucs-school (>= 5.0.3-17),
  univention-samba4 (>= 1.0.138-11) | univention-samba (>= 6.0.27-1),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
- libunivention-ldb-modules | univention-samba (>= 6.0.27-1),
  ucs-school-s4-branch-site | univention-samba
 Description: UCS@school meta package for non-educational Slave servers
  .
@@ -172,7 +170,6 @@ Architecture: all
 Depends: univention-config,
  shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-17),
- libunivention-ldb-modules | univention-samba (>= 6.0.27-1),
 Description: UCS@school meta package for central Slave servers
  .
  This package is part of Univention Corporate Server (UCS),
@@ -182,10 +179,10 @@ Description: UCS@school meta package for central Slave servers
 
 Package: ucs-school-backup
 Architecture: all
+Pre-Depends: univention-config
 Depends: univention-config,
  shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-17),
- libunivention-ldb-modules | univention-samba (>= 6.0.27-1),
 Description: UCS@school meta package for Backup servers
  .
  This package is part of Univention Corporate Server (UCS),
