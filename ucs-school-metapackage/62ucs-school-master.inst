@@ -176,6 +176,8 @@ if [ $JS_LAST_EXECUTED_VERSION = 0 ]; then
 	fi
 fi
 
+ucs_registerLDAPExtension "$@" --data /usr/share/ucs-school-metapackage/ucsschool-join-hook.py --data_type="pre-joinscript"
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 systemctl try-restart univention-s4-connector.service || true
