@@ -126,6 +126,8 @@ fi
 
 call_joinscript 00ucs-school-app-version-check.inst
 call_joinscript 62ucs-school-nonedu-slave.inst
+call_joinscript 96ucs-school-samba-slavepdc.inst
+call_joinscript 98ucs-school-samba-slavepdc-dns.inst
 
 #DEBHELPER#
 
