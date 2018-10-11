@@ -1,6 +1,6 @@
 ucs-school-metapackage (11.0.1-7) unstable; urgency=medium
 
-  * Bug #99999: Add role packages
+  * Bug #47957: Add role packages
 
  -- Jürn Brodersen <brodersen@univention.de>  Wed, 10 Oct 2018 17:14:23 +0200
 

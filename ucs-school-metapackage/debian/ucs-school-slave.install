@@ -2,6 +2,8 @@
 00ucs-school-slave-check-ou.inst usr/lib/univention-install/
 62ucs-school-slave.inst usr/lib/univention-install/
 63ucs-school-portal-entry.inst usr/lib/univention-install/
+96ucs-school-samba4slavepdc.inst usr/lib/univention-install/
+98ucs-school-samba4slavepdc-dns.inst usr/lib/univention-install/
 ucsschool.png usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/50x50
 ucsschool.svg usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/scalable
 app_version.py usr/share/ucs-school-metapackage/scripts
