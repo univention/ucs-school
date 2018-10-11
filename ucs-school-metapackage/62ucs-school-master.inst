@@ -167,6 +167,13 @@ if [ $JS_LAST_EXECUTED_VERSION = 1 ]; then
 	append_ucr_policy_to_base ucsschool/import/roleshare no "$@"
 fi
 
+if [ $JS_LAST_EXECUTED_VERSION = 0 ]; then
+	if [ -e /usr/share/univention-samba4/lib/all.sh ]; then
+		. /usr/share/univention-samba4/lib/all.sh
+		samba4_ldb_sam_module_prepend || true
+	fi
+fi
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 systemctl try-restart univention-s4-connector.service || true
