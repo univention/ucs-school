@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # UCS@school
 #  join script
@@ -62,7 +62,7 @@ append_ucr_policy_to_base() {
 		--dn "$ldap_base" | sed -n 's/^\s*univentionPolicyReference: //p')
 
 	while read policy_dn; do
-		ldif=$(univention-ldapsearch -xLLL -b "$policy_dn" -s base \
+		ldif=$(univention-ldapsearch -LLL -b "$policy_dn" -s base \
 			"(objectClass=univentionPolicyRegistry)" \
 			univentionRegistry \
 			| ldapsearch-wrapper
