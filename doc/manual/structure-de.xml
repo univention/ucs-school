@@ -86,7 +86,7 @@
 			Für die Pflege der Benutzerkonten stehen mehrere Möglichkeiten zur
 			Verfügung. Die Bearbeitung von Benutzerkonten kann über die &ucsUMC; erfolgen.
 			Darüber hinaus bringt &ucsUAS; flexible Importskripte mit. Sie lesen
-			Tabulator-getrennte Importdateien ein, die üblicherweise aus
+			Tabulator-getrennte Importdateien oder CSV-Dateien ein, die üblicherweise aus
 			vorhandenen Schulverwaltungssystemen extrahiert werden können und so
 			einen automatisierten Abgleich ermöglichen.
 		</para>
@@ -96,7 +96,7 @@
 		<title>Aufteilung von &ucsUAS;</title>
 		<para>
 		  Für den Betrieb von &ucsUAS; an einer einzelnen Schule reicht ein Serversystem aus
-		  (dieses wird dann in der UCS-Systemrolle &ucsMaster; installiert). Ein solches Szenario wird
+		  (dieses wird dann in der UCS-Systemrolle <emphasis>&ucsMaster;</emphasis> installiert). Ein solches Szenario wird
 		  nachfolgend auch als Single-Server-Umgebung bezeichnet.
 		</para>
 		<para>
@@ -109,7 +109,7 @@
 		<caution>
 		  <para>
 			&ucsUAS; unterstützt derzeit nur einen Schulserver pro Standort. Darüber hinaus können
-			weitere UCS-Systeme mit Samba 4 installiert und an den Schul-Standorten betrieben
+			UCS-Systeme mit der Rolle <emphasis>Memberserver</emphasis> installiert und an den Schul-Standorten betrieben
 			werden. Diese zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit
 			&ucsUAS;-Funktionalitäten eingesetzt werden; z.B. wird das Sperren von Dateifreigaben über die
 			&ucsUAS;-UMC-Module auf den zusätzlichen UCS-Systemen nicht unterstützt. Zusätzlich müssen die
@@ -137,7 +137,7 @@
 				übertragen.
 			</para>
 			<para>
-				Seit &ucsUAS; 4.1 R2 werden schulübergreifenden Benutzerkonten unterstützt.
+				In &ucsUAS; werden schulübergreifenden Benutzerkonten unterstützt.
 				Ein Benutzerobjekt existiert im LDAP-Verzeichnis nur einmal an seiner primären Schule.
 				An die weiteren Schulen wird nur ein Ausschnitt des LDAP-Verzeichnisses dieser Schule
 				repliziert: sein Benutzerobjekt und die Standardgruppen.
@@ -153,8 +153,8 @@
 				der LDAP-Basis angelegt. 
 			</para>
 			<para>
-			  Seit &ucsUAS; 3.2 R2 wird zwischen dem Namen einer Schule und dem Schulkürzel
-			  (OU-Namen) unterschieden.  Der Name einer Schule kann frei gewählt werden und wird primär in den
+			  &ucsUAS; unterscheidet in seinem Verzeichnisdienst zwischen dem Namen einer Schule und dem Schulkürzel
+			  (OU-Namen).  Der Name einer Schule kann frei gewählt werden und wird primär in den
 			  UMC-Modulen angezeigt (in anderem Kontexten wird dieser Wert häufig auch als Anzeigename
 			  bezeichnet).  Der eigentliche Name der Organisationseinheit (OU) wird nachfolgend auch als
 			  Schulkürzel bezeichnet.  Das Schulkürzel sollte ausschließlich aus Buchstaben, Ziffern oder dem
@@ -215,10 +215,10 @@
 		</note>
 		<caution>
 		  <para>
-			Voraussetzung für diese Unterteilung ist eine physikalische Trennung der beiden
-			Netzwerksegmente. D.h. das edukative Netz und das Verwaltungsnetz können nicht gleichzeitig im
-			gleichen Netzwerksegment verwendet werden. Ergänzend dazu müssen auch die Hinweise zu
-			DHCP-DNS-Richtlinien in <xref linkend="school:installation:slave" /> beachtet werden.
+			  UCS@school setzt für die Unterteilung in Edukativ- und Verwaltungsnetz eine physikalische Trennung
+			  der beiden Netzwerksegmente voraus. D.h. das edukative Netz und das Verwaltungsnetz können nicht
+			  gleichzeitig im gleichen Netzwerksegment verwendet werden. Ergänzend dazu müssen auch die Hinweise zu
+			  DHCP-DNS-Richtlinien in <xref linkend="school:installation:slave" /> beachtet werden.
 		  </para>
 		</caution>
 	</section>
