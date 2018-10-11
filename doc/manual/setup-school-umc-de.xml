@@ -27,7 +27,7 @@
 		  <guimenu>Schulen</guimenu> erfolgen, welches sich in der Modulgruppe
 			<emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das
 			Suchen nach, sowie das Anlegen, Bearbeiten und Löschen von Schulen in der
-			&ucsUAS;-Umgebung.
+			&ucsUAS;-Umgebung. Bevor ein Schulserver ausgerollt werden kann muss die dazugehörige Schule angelegt sein.
 		</para>
 		<section id="school:setup:umc:schools:create">
 		  <title>Anlegen von Schulen</title>
