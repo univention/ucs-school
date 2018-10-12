@@ -8,14 +8,17 @@ import sys
 import os
 import json
 from collections import namedtuple
+from ldap.filter import filter_format
 import univention.uldap
 from univention.config_registry import ConfigRegistry
-from ldap.filter import filter_format
 from univention.lib.package_manager import PackageManager
 
 log = logging.getLogger(__name__)
 ucr = ConfigRegistry()
 ucr.load()
+
+StdoutStderr = namedtuple('StdoutStderr', 'stdout stderr')
+SchoolMembership = namedtuple('school_membership', 'is_edu_school_member is_admin_school_member')
 
 def get_lo(options):
 	log.info('Connecting to LDAP as %r ...', options.binddn)
@@ -32,7 +35,7 @@ def get_lo(options):
 	return lo
 
 
-def get_school_membership(options):
+def get_school_membership(options):  # type: (Any) -> SchoolMembership
 	filter_s = filter_format('(&(cn=univentionGroup)(uniqueMember=%s))', (ucr.get('ldap/hostdn'),))
 	grp_dn_list = options.lo.searchDn(filter=filter_s)
 	is_edu_school_member = False
@@ -68,7 +71,7 @@ def get_school_membership(options):
 			if grp_dn.endswith(suffix):
 				log.debug('host is in group %s', grp_dn)
 				is_admin_school_member = True
-	return namedtuple('school_membership', 'is_edu_school_member is_admin_school_member')(is_edu_school_member, is_admin_school_member)
+	return SchoolMembership(is_edu_school_member, is_admin_school_member)
 
 
 def determine_role_packages(options):
@@ -89,7 +92,8 @@ def determine_role_packages(options):
 	log.warn('System role %r not found!', options.server_role)
 	return []
 
-def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]], Optional[bool]) -> Tuple[str, str]
+
+def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]], Optional[bool]) -> StdoutStderr
 	if on_master:
 		assert isinstance(cmd, str)
 		cmd = ['univention-ssh', '/etc/machine.secret', '{}$@{}'.format(ucr.get('hostname'), options.master_fqdn), cmd]
@@ -100,7 +104,7 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 	if proc.returncode:
 		log.error('%s returned with exitcode %s:\n%s\n%s', ' '.join(cmd), proc.returncode, stderr, stdout)
 		sys.exit(1)
-	return namedtuple('stdout_stderr', 'stdout stderr')(stdout, stderr)
+	return StdoutStderr(stdout, stderr)
 
 def pre_joinscript_hook(options):
 	package_manager = PackageManager(lock=False, always_noninteractive=True)
