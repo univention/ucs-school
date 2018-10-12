@@ -396,9 +396,20 @@ _update_container ()
 
 _demote_slavepdc_in_central_s4 ()
 {
-    local master_s4=$(udm computers/domaincontroller_master list "$@" --filter univentionService='Samba 4'| sed -ne 's/^ *fqdn: //p')
-    local backup_s4=$(udm computers/domaincontroller_backup list "$@" --filter univentionService='Samba 4'| sed -ne 's/^ *fqdn: //p')
-    if [ -n "$master_s4" -o -n "$backup_s4" ]; then
+	## Description:
+	## Demote a Samba/AD DC Slave that exists in the UCS master Samba/AD
+	##
+	## This situation arises when a DC Slave has been installed with
+	## plain UCS Samba/AD before the UCS@school installtion wizzard moves
+	## it's machine account to the School-OU and re-joins it as Slave PDC.
+	## When the change set for Bug #47942 has been released this code
+	## can be removed from here. Also, "samba-tool domain demote" offers
+	## an option --remove-other-dead-server which probably could be used
+	## instead of this code.
+
+	local master_s4=$(udm computers/domaincontroller_master list "$@" --filter univentionService='Samba 4'| sed -ne 's/^ *fqdn: //p')
+	local backup_s4=$(udm computers/domaincontroller_backup list "$@" --filter univentionService='Samba 4'| sed -ne 's/^ *fqdn: //p')
+	if [ -n "$master_s4" -o -n "$backup_s4" ]; then
 		extract_binddn_bindpwd_bindpwdfile_dcaccount_from_args "$@"
 		assert_dcaccount_and_bindpwd
         for server in $master_s4 $backup_s4; do
