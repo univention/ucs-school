@@ -126,10 +126,10 @@ def pre_joinscript_hook(options):
 		app_string = 'ucsschool'
 		if master_version == local_version:
 			result = call_cmd(options, 'univention-app info --as-json', on_master=True)
-			# {"compat": "4.3-1 errata0", "upgradable": [], "ucs": "4.3-1 errata0", "installed": ["ucsschool=4.3 v5"]}
-			master_status = json.loads(result.stdout)
+			master_app_info = json.loads(result.stdout)
+			# master_app_info:  {"compat": "4.3-1 errata0", "upgradable": [], "ucs": "4.3-1 errata0", "installed": ["ucsschool=4.3 v5"]}
 
-			for app_entry in remote_status.get('installed', []):
+			for app_entry in master_app_info.get('installed', []):
 				app_name, app_version = app_entry.split('=', 1)
 				if app_name == 'ucsschool':
 					app_string = '%s=%s' % (app_string, app_version)
