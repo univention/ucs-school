@@ -174,7 +174,7 @@ if [ $JS_LAST_EXECUTED_VERSION = 0 ]; then
 	fi
 fi
 
-ucs_registerLDAPExtension "$@" --code /usr/share/ucs-school-metapackage/ucsschool-join-hook.py --code_type="pre-joinscript"
+ucs_registerLDAPExtension "$@" --data /usr/share/ucs-school-metapackage/ucsschool-join-hook.py --data_type="pre-joinscript"
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
