@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-98) unstable; urgency=low
+
+  * Bug #47622: fix test tags
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Oct 2018 10:15:17 +0200
+
 ucs-test-ucsschool (5.0.2-97) unstable; urgency=low
 
   * Bug #47691: fix test not setting source_uid

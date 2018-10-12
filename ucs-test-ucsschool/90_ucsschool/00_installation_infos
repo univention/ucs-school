@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Print UCS@school installation information
-## tags: [apptest, ucsschool, windows_gpo_test, native_win_client, ucsschool_base1, ucsschool_import1, ucsschool_import2, ucsschool_import3, ucsschool_import4]
+## tags: [apptest, ucsschool]
 ## exposure: safe
 ## packages:
 ##   - ucs-school-import
