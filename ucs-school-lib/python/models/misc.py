@@ -34,9 +34,9 @@ from univention.admin.uexceptions import objectExists
 import univention.admin.uldap as udm_uldap
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.roles import create_ucsschool_role_string, role_school
-from ucsschool.lib.models.attributes import ContainerPath, Roles
-from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from ucsschool.lib.models.attributes import ContainerPath
+from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+
 from ucsschool.lib.models.utils import ucr, _, logger
 
 
@@ -51,7 +51,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 		udm_module = 'mail/domain'
 
 
-class ContainerBase(UCSSchoolHelperAbstractClass):
+class OU(UCSSchoolHelperAbstractClass):
 
 	def create(self, lo, validate=True):
 		logger.info('Creating %r', self)
@@ -77,20 +77,11 @@ class ContainerBase(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):
 		return cls.get_search_base(school).schoolDN
 
-
-class OU(RoleSupportMixin, ContainerBase):
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
-	default_roles = [role_school]
-	_school_in_name = True
-
-	def get_schools(self):
-		return [self.name]
-
 	class Meta:
 		udm_module = 'container/ou'
 
 
-class Container(ContainerBase):
+class Container(OU):
 	user_path = ContainerPath(_('User path'), udm_name='userPath')
 	computer_path = ContainerPath(_('Computer path'), udm_name='computerPath')
 	network_path = ContainerPath(_('Network path'), udm_name='networkPath')
