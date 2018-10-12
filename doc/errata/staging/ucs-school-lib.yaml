@@ -3,8 +3,9 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-lib
-fix: 11.0.1-24A~4.3.0.201810041234
+fix: 11.0.1-26A~4.3.0.201810121233
 desc: |
  * Check for existing computer objects in school creation process before attempting to blindly create one (Bug #47408).
  * Extend School validation to check for distinct hostnames for educational and administrative dcs (Bug #46765).
-bug: [47408, 46765]
+ * Prevent writing of role attribute when deactivated via UCR (Bug #47967).
+bug: [47408, 46765, 47967]
