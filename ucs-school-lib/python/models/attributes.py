@@ -55,13 +55,14 @@ class Attribute(object):
 	value_type = None
 	value_default = None
 
-	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False):
+	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False, map_to_udm=True):
 		self.label = label
 		self.aka = aka or []  # also_known_as
 		self.required = required
 		self.unlikely_to_change = unlikely_to_change
 		self.internal = internal
 		self.udm_name = udm_name or self.udm_name
+		self.map_to_udm = map_to_udm
 
 	def _validate_syntax(self, values, syntax=None):
 		if syntax is None:
@@ -345,3 +346,4 @@ class Roles(Attribute):
 		super(Roles, self).__init__(*args, **kwargs)
 		if not ucr.is_true('ucsschool/feature/roles'):
 			self.internal = True
+			self.map_to_udm = False

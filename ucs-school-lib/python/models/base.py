@@ -443,7 +443,7 @@ class UCSSchoolHelperAbstractClass(object):
 		for name, attr in self._attributes.iteritems():
 			if attr.udm_name:
 				value = getattr(self, name)
-				if value is not None:
+				if value is not None and attr.map_to_udm:
 					udm_obj[attr.udm_name] = value
 
 	def create(self, lo, validate=True):

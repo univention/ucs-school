@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.1-26) unstable; urgency=low
+
+  * Bug #45379: prevent writing of role attribute when deactivated
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Oct 2018 12:30:28 +0200
+
 ucs-school-lib (11.0.1-25) unstable; urgency=low
 
   * Bug #46765: Fix potential problem in School validation
