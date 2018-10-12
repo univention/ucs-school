@@ -109,6 +109,10 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 def pre_joinscript_hook(options):
 	package_manager = PackageManager(lock=False, always_noninteractive=True)
 
+	# do not do anything, if we are running within a docker container
+	if ucr.get('docker/container/uuid'):
+		return
+
 	# check if UCS@school app is installed/configured/included,
 	# if not, then install the same version used by domaincontroller_master
 	result = call_cmd(options, ['univention-app', 'info', '--as-json'], on_master=False)
