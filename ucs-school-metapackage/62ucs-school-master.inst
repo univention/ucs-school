@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # UCS@school
 #  join script
@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=3
+VERSION=4
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -60,7 +60,7 @@ append_ucr_policy_to_base() {
 		--dn "$ldap_base" | sed -n 's/^\s*univentionPolicyReference: //p')
 
 	while read policy_dn; do
-		ldif=$(univention-ldapsearch -xLLL -b "$policy_dn" -s base \
+		ldif=$(univention-ldapsearch -LLL -b "$policy_dn" -s base \
 			"(objectClass=univentionPolicyRegistry)" \
 			univentionRegistry \
 			| ldapsearch-wrapper
@@ -166,6 +166,15 @@ append_ucr_policy_to_base directory/manager/samba3/legacy yes "$@"
 if [ $JS_LAST_EXECUTED_VERSION = 1 ]; then
 	append_ucr_policy_to_base ucsschool/import/roleshare no "$@"
 fi
+
+if [ $JS_LAST_EXECUTED_VERSION = 0 ]; then
+	if [ -e /usr/share/univention-samba4/lib/all.sh ]; then
+		. /usr/share/univention-samba4/lib/all.sh
+		samba4_ldb_sam_module_prepend || true
+	fi
+fi
+
+ucs_registerLDAPExtension "$@" --code /usr/share/ucs-school-metapackage/ucsschool-join-hook.py --code_type="pre-joinscript"
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 

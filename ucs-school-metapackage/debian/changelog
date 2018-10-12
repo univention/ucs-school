@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.1-7) unstable; urgency=medium
+
+  * Bug #47957: Add role packages
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 10 Oct 2018 17:14:23 +0200
+
 ucs-school-metapackage (11.0.1-6) unstable; urgency=medium
 
   * Bug #47332: restart s4-connector to activate new config

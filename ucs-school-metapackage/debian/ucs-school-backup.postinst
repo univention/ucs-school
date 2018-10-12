@@ -2,7 +2,7 @@
 #
 # UCS@school
 #
-# Copyright 2009-2018 Univention GmbH
+# Copyright 2010-2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -32,72 +32,83 @@
 . /usr/share/univention-lib/all.sh
 
 univention-config-registry set \
-	dhcpd/options/wpad/252?text \
 	directory/manager/samba3/legacy?yes \
 	connector/s4/mapping/sid_to_ucs?no \
 	connector/s4/mapping/sid_to_s4?yes \
 	connector/s4/mapping/group/syncmode?write \
-	connector/s4/allow/secondary?true \
-	samba4/service/drepl?false \
-	samba4/provision/secondary=yes \
-	dns/register/srv_records/kerberos?false \
-	dns/register/srv_records/ldap?false \
+	listener/shares/rename?yes \
 	samba4/join/dnsupdate?true \
 	samba4/sysvol/sync/setfacl/AU?false \
+	samba4/sysvol/sync/cron?"*/5 * * * *" \
 	connector/s4/mapping/wmifilter?yes \
 	connector/s4/mapping/msprintconnectionpolicy?yes \
 	connector/s4/mapping/gpo/ntsd?yes \
 	connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Replicators,Printer-Admins,System Operators,Enterprise Domain Controllers,Remote Interactive Logon,SChannel Authentication,Digest Authentication,Terminal Server User,NTLM Authentication,Other Organization,This Organization,Anonymous Logon,Network Service,Creator Group,Creator Owner,Local Service,Owner Rights,Interactive,Restricted,Network,Service,Dialup,System,Batch,Proxy,IUSR,Self,Console Logon" \
-	dns/nameserver/registration/forward_zone?no \
-	dns/nameserver/registration/reverse_zone?no
+	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true
 
-if [ "$1" = "configure" ] ; then
-	if [ -z "$2" ] ; then
-		### Defaults for new installations of non-edu Slave PDCs
-		:
-		# prevent sysvol-sync of netlogon scripts
-		if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
-			univention-config-registry set \
-				samba/share/netlogon/path=/var/lib/samba/netlogon \
-				ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
+if [ "$1" = "configure" -a -n "$2" ]; then
+	if dpkg --compare-versions "$2" lt 5.0.2-1 ; then
+		eval "$(ucr shell)"
+
+		if [ -n "$domainname" ]; then
+			ucr unset connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_gc._tcp.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.gc._msdcs.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location \
+					connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location
 		fi
-	else
-		### Settings for updates of non-edu Slave PDCs
-		:
+	fi
 
-		if dpkg --compare-versions "$2" lt 7.0.0-2 && is_ucr_true connector/s4/mapping/gpo && is_ucr_true connector/s4/mapping/gpo/ntsd; then
+	if dpkg --compare-versions "$2" lt 6.0.7-26 ; then
+		## for ucs-school-import and ucs-school-umc-groups
+		univention-config-registry set \
+			ucsschool/import/roleshare=no \
+			update/reboot/required=yes
+	fi
+
+	if dpkg --compare-versions "$2" lt 7.0.0-2 && is_ucr_true connector/s4/mapping/gpo && is_ucr_true connector/s4/mapping/gpo/ntsd; then
+		if [ -x /etc/init.d/univention-s4-connector ]; then
+			invoke-rc.d univention-s4-connector restart
+		fi
+		## Write the GPO Security Descriptors from Samba 4 to UCS
+		if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
+			/usr/share/univention-s4-connector/resync_object_from_s4.py \
+				--filter "(objectClass=groupPolicyContainer)"
+		fi
+	fi
+
+	## resync msprintconnection objects during update
+	if dpkg --compare-versions "$2" lt 8.0.1-6 && is_ucr_true connector/s4/mapping/msprintconnectionpolicy; then
+		if [ -e /var/univention-join/joined ] && is_ucr_true connector/s4/autostart; then
 			if [ -x /etc/init.d/univention-s4-connector ]; then
-				invoke-rc.d univention-s4-connector restart
-			fi
-			## Write the GPO Security Descriptors from Samba 4 to UCS
-			if is_ucr_true 'connector/s4/allow/secondary'; then # Slave PDC
-				# First sync from UCS to S4 to avoid surprises for already upgraded Slave PDCs
-				if [ -x /usr/share/univention-s4-connector/resync_object_from_ucs.py ]; then
-					/usr/share/univention-s4-connector/resync_object_from_ucs.py \
-						--filter "(&(objectClass=msGPOContainer)(msNTSecurityDescriptor=*))"
-				fi
-			fi
-			if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
-				/usr/share/univention-s4-connector/resync_object_from_s4.py \
-					--filter "(objectClass=groupPolicyContainer)"
-			fi
-		fi
-
-		## resync msprintconnection objects during update
-		if dpkg --compare-versions "$2" lt 8.0.1-6 && is_ucr_true connector/s4/mapping/msprintconnectionpolicy; then
-			if [ -e /var/univention-join/joined ] && is_ucr_true connector/s4/autostart; then
-				if [ -x /etc/init.d/univention-s4-connector ]; then
-					invoke-rc.d univention-s4-connector crestart
-				fi
-				# First sync from UCS to S4 to avoid surprises for already upgraded Slave PDCs
-				if [ -x /usr/share/univention-s4-connector/resync_object_from_ucs.py ]; then
-					/usr/share/univention-s4-connector/resync_object_from_ucs.py --filter '(objectClass=msPrintConnectionPolicy)'
-				fi
+				invoke-rc.d univention-s4-connector crestart
 				if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
 					/usr/share/univention-s4-connector/resync_object_from_s4.py --filter '(objectClass=msPrint-ConnectionPolicy)'
 				fi
 			fi
 		fi
+	fi
+fi
+
+if [ "$1" = configure -a -z "$2" ]; then
+	# fresh installation
+	# prevent sysvol-sync of netlogon scripts
+	if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
+		univention-config-registry set \
+			samba/share/netlogon/path=/var/lib/samba/netlogon \
+			ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	fi
 fi
 
@@ -124,10 +135,11 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.1-2; then
 	[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
 fi
 
+/etc/init.d/univention-directory-listener crestart
+
 call_joinscript 00ucs-school-app-version-check.inst
-call_joinscript 62ucs-school-nonedu-slave.inst
-call_joinscript 96ucs-school-samba-slavepdc.inst
-call_joinscript 98ucs-school-samba-slavepdc-dns.inst
+call_joinscript 62ucs-school-master.inst
+call_joinscript 63ucs-school-portal-entry.inst
 
 #DEBHELPER#
 
