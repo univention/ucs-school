@@ -43,15 +43,9 @@ from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.mod
 import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 from ucsschool.http_api.import_api.import_logging import logger
-
-
-JOB_NEW = 'New'
-JOB_SCHEDULED = 'Scheduled'
-JOB_STARTED = 'Started'
-JOB_ABORTED = 'Aborted'
-JOB_FINISHED = 'Finished'
-JOB_STATES = (JOB_NEW, JOB_SCHEDULED, JOB_STARTED, JOB_ABORTED, JOB_FINISHED)
-JOB_CHOICES = zip(JOB_STATES, JOB_STATES)
+from ucsschool.http_api.import_api.constants import (
+	JOB_ABORTED, JOB_CHOICES, JOB_FINISHED, JOB_NEW, JOB_SCHEDULED, JOB_STARTED, JOB_STATES
+)
 
 USER_STAFF = 'staff'
 USER_STUDENT = 'student'

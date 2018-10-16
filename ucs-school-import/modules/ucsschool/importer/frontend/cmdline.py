@@ -95,55 +95,45 @@ class CommandLine(object):
 		importer = self.factory.make_mass_importer(self.config["dry_run"])
 
 		self.logger.info("------ Starting mass import... ------")
-		importer.mass_import()
-		self.errors = importer.errors
-		self.user_import_summary_str = importer.user_import_stats_str
-		self.logger.info("------ Mass import finished. ------")
+		try:
+			importer.mass_import()
+		finally:
+			self.errors = importer.errors
+			self.user_import_summary_str = importer.user_import_stats_str
+			self.logger.info("------ Mass import finished. ------")
+
+	def prepare_import(self):
+		self.parse_cmdline()
+		# early logging configured by cmdline
+		self.setup_logging(self.args.verbose, self.args.logfile)
+
+		self.logger.info("------ UCS@school import tool starting ------")
+
+		self.setup_config()
+		# logging configured by config file
+		self.setup_logging(self.config["verbose"], self.config["logfile"])
+
+		self.logger.info("------ UCS@school import tool configured ------")
+		self.logger.info("Used configuration files: %s.", self.config.conffiles)
+		self.logger.info("Using command line arguments: %r", self.args.settings)
+		self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
+
+		self.factory = setup_factory(self.config["factory"])
 
 	def main(self):
 		try:
-			self.parse_cmdline()
-			# early logging configured by cmdline
-			self.setup_logging(self.args.verbose, self.args.logfile)
-
-			self.logger.info("------ UCS@school import tool starting ------")
-
-			self.setup_config()
-			# logging configured by config file
-			self.setup_logging(self.config["verbose"], self.config["logfile"])
-
-			self.logger.info("------ UCS@school import tool configured ------")
-			self.logger.info("Used configuration files: %s.", self.config.conffiles)
-			self.logger.info("Using command line arguments: %r", self.args.settings)
-			self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
-
-			self.factory = setup_factory(self.config["factory"])
+			self.prepare_import()
+		except InitialisationError as exc:
+			msg = "InitialisationError: {}".format(exc)
+			self.logger.exception(msg)
+			return 1
+		try:
 			self.do_import()
+
 			if self.errors:
 				# at least one non-fatal error
+				msg = 'Import finished normally but with errors.'
+				self.logger.warn(msg)
 				return 2
-		except TooManyErrors as tme:
-			self.logger.error("%s Exiting. Errors:", tme)
-			for error in tme.errors:
-				self.logger.error("%d: %s", error.entry_count, error)
-			self._fatal()
-			return 1
-		except InitialisationError as exc:
-			print("InitialisationError: {}".format(exc))
-			self.logger.exception("InitialisationError: %r", exc)
-			return 1
-		except UcsSchoolImportFatalError as exc:
-			self.logger.exception("Fatal error:  %s.", exc)
-			self._fatal()
-			return 1
 		except Exception as exc:
-			# This should not happen - it's probably a bug.
-			self.logger.exception("Outer Exception catcher: %r", exc)
-			self._fatal()
 			return 1
-
-	def _fatal(self):
-		if not any(map(lambda x: isinstance(x, StreamHandler), self.logger.handlers)):
-			# verbose=False, but show on terminal anyway
-			exc_type, exc_value, exc_traceback = sys.exc_info()
-			traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stderr)

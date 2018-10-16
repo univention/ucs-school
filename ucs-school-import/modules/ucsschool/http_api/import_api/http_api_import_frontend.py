@@ -30,7 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """
-UCS@school import frontent class
+UCS@school import frontend class
 """
 
 from __future__ import unicode_literals

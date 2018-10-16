@@ -46,8 +46,9 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.exceptions import ObjectDoesNotExist
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
-from ucsschool.importer.exceptions import InitialisationError
-from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile, JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
+from ucsschool.importer.exceptions import InitialisationError, UcsSchoolImportError, UcsSchoolImportFatalError
+from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile
+from ucsschool.http_api.import_api.constants import JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
 from ucsschool.http_api.import_api.http_api_import_frontend import HttpApiImportFrontend
 
 
@@ -85,25 +86,41 @@ def run_import_job(task, importjob_id):
 
 	importjob.save(update_fields=('log_file', 'password_file', 'result', 'status', 'summary_file'))
 
-	runner.logger.info('-- Starting import framework main procedure. --')
-	res = runner.main()
-	runner.logger.info('-- Finished import framework main procedure. --')
+	logger.info('-- Preparing import job... --')
+	success = False
+	try:
+		runner.prepare_import()
+	except Exception as exc:
+		logger.exception('An error occurred while preparing the import job: {}'.format(exc))
+	else:
+		# from here on we can log with the import logger
+		runner.logger.info('-- Starting import job... --')
+		try:
+			runner.do_import()
+			success = True
+		except UcsSchoolImportError as exc:
+			runner.errors.append(exc)
+		except Exception as exc:
+			runner.errors.append(UcsSchoolImportFatalError('An unknown error terminated the import job: {}'.format(exc)))
+		runner.logger.info('-- Finished import. --')
 
 	importjob = UserImportJob.objects.get(pk=importjob_id)
-	importjob.status = JOB_ABORTED if res else JOB_FINISHED
+	importjob.status = JOB_FINISHED if success else JOB_ABORTED
 	importjob.save(update_fields=('status',))
-	if res:
-		raise Exception('Import job #{} exited with {}.'.format(importjob_id, res))
-	return runner.user_import_summary_str
+	return success, runner.user_import_summary_str
 
 
 @shared_task(bind=True)
 def import_users(self, importjob_id):
 	logger.info('Starting UserImportJob %d (%r).', importjob_id, self)
-	summary_str = run_import_job(self, importjob_id)
+	success, summary_str = run_import_job(self, importjob_id)
 	logger.info('Finished UserImportJob %d.', importjob_id)
 	return HttpApiImportFrontend.make_job_state(
-		description='UserImportJob #{} ended successfully.\n\n{}'.format(importjob_id, summary_str),
+		description='UserImportJob #{} ended {}.\n\n{}'.format(
+			importjob_id,
+			'successfully' if success else 'with error',
+			summary_str
+		),
 		percentage=100
 	)
 
@@ -111,9 +128,13 @@ def import_users(self, importjob_id):
 @shared_task(bind=True)
 def dry_run(self, importjob_id):
 	logger.info('Starting dry run %d (%r).', importjob_id, self)
-	summary_str = run_import_job(self, importjob_id)
+	success, summary_str = run_import_job(self, importjob_id)
 	logger.info('Finished dry run %d.', importjob_id)
 	return HttpApiImportFrontend.make_job_state(
-		description='UserImportJob #{} (dry run) ended successfully.\n\n{}'.format(importjob_id, summary_str),
+		description='UserImportJob #{} (dry run) ended {}.\n\n{}'.format(
+			importjob_id,
+			'successfully' if success else 'with error',
+			summary_str
+		),
 		percentage=100
 	)

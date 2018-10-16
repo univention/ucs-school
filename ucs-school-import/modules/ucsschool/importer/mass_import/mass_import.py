@@ -34,7 +34,7 @@ Default mass import class.
 
 import datetime
 
-from ucsschool.importer.exceptions import UcsSchoolImportError
+from ucsschool.importer.exceptions import UcsSchoolImportError, UcsSchoolImportFatalError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
@@ -109,9 +109,12 @@ class MassImport(object):
 			user_import.delete_users(users_to_delete)  # 0% - 10%
 			user_import.create_and_modify_users(imported_users)  # 90% - 100%
 		except UcsSchoolImportError as exc:
-			self.errors.append(exc)
+			user_import.errors.append(exc)
+			self.logger.exception(exc)
 		except Exception as exc:
-			pass
+			user_import.errors.append(UcsSchoolImportFatalError(
+				'An unknown error terminated the import job: {}'.format(exc)))
+			self.logger.exception(exc)
 		self.errors.extend(user_import.errors)
 		self.user_import_stats_str = user_import.log_stats()
 		if self.config["output"]["new_user_passwords"]:

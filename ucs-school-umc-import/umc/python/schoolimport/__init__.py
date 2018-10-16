@@ -44,6 +44,7 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.modules.mixins import ProgressMixin
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
+from ucsschool.http_api.import_api.constants import JOB_ABORTED, JOB_FINISHED
 from ucsschool.http_api.client import Client, ConnectionError, PermissionError, ObjectNotFound, ServerError
 
 from univention.lib.i18n import Translation
@@ -139,7 +140,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				job = self.client.userimportjob.get(jobid)
 			except ConnectionError:
 				continue
-			finished = job.status in ('Finished', 'Aborted')
+			finished = job.status in (JOB_FINISHED, JOB_ABORTED)
 
 			if job.result and isinstance(job.result.result, dict):
 				progress.progress(True, job.result.result.get('description'))
@@ -148,10 +149,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				progress.current = 75.0
 
 		progress.current = 99.0
-		if job.result.status != 'SUCCESS':
+		if job.status != JOB_FINISHED:
 			message = _('The examination of the data failed.')
-			if job.result.traceback:
-				message = '%s\n%s' % (message, job.result.traceback)
+			message = '%s\n%s' % (message, job.result.result['description'])
 			raise UMC_Error(message, result=result)
 
 		return {'summary': job.result.result and job.result.result.get('description')}

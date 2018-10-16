@@ -625,11 +625,19 @@ class UserImport(object):
 				lines.append("  {}".format([iu["name"] for iu in self.deleted_users[cls_name][i:i+columns]]))
 		lines.append("Errors: {}".format(len(self.errors)))
 		if self.errors:
-			lines.append("Entry #: Error description")
-		for error in self.errors:
-			lines.append(
-				"  {}: {}: {}".format(
-					error.entry_count, error.import_user.name if error.import_user else "NoName", error))
+			username_width = max(
+				len(error.import_user.name if error.import_user and error.import_user.name else "<No name>")
+				for error in self.errors[:10]
+			)
+			error_header = ("Entry | {: ^%d} | Error description" % (username_width,)).format('User')
+			lines.append(error_header)
+			lines.append('-' * len(error_header))
+			for error in self.errors:
+				lines.append(
+					("{: >5} | {: >%d} | {}" % (username_width,)).format(
+						error.entry_count,
+						error.import_user.name if error.import_user and error.import_user.name else "<No name>",
+						error))
 		for line in lines:
 			self.logger.info(line)
 		self.logger.info("------ End of user import statistics ------")
