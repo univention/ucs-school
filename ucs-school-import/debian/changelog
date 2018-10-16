@@ -1,3 +1,16 @@
+ucs-school-import (16.0.2-59) unstable; urgency=low
+
+  * Bug #45165: collect errors and summary even when an exception happens
+  * improve format of error list in textual summary
+  * add error to correct list
+  * errors and tracebacks are now logged where they happen
+  * use splitted preperation and running of import -> no more process exit,
+    catch all excpetions and adapt state and message accordingly
+  * move job states into separate module to avoid Django initialization when
+    they are required
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 16 Oct 2018 12:11:23 +0200
+
 ucs-school-import (16.0.2-58) unstable; urgency=low
 
   * Bug #46765: fix broken function call in create_ou script
