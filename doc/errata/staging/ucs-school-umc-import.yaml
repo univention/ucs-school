@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-import
-fix: 
+fix: 1.0.1-3A~4.3.0.201810161222
 desc: |
  * The UMC User Import module now shows useful error messages (Bug #45165).
 bug: [45165]
