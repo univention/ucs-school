@@ -37,7 +37,8 @@ eval "$(univention-config-registry shell)"
 
 case "$1" in
     configure)
-		deb-systemd-invoke restart univention-directory-listener
+		echo "Restarting univention-directory-listener if running"
+		deb-systemd-invoke try-restart univention-directory-listener
 
 		# set correct permissions
 		dpkg-statoverride --update --force --add root proxy 2770 /var/lib/ucs-school-webproxy/ || true
@@ -82,21 +83,25 @@ case "$1" in
 		/usr/bin/squidGuard -C all < /dev/null || true
 		chmod -c ug+rw /var/lib/ucs-school-webproxy/*listed-* || true
 
-		if [ -x /etc/init.d/samba ]; then
+		if systemctl is-active smbd > /dev/null; then
+			echo "Restarting samba"
 			deb-systemd-invoke reload smbd
 			sleep 2
 		fi
 
-		if [ -x /etc/init.d/winbind ]; then
+		if systemctl is-active winbind > /dev/null; then
+			echo "Restarting winbind"
 			deb-systemd-invoke restart winbind
 			sleep 2
 		fi
 
-		if [ -x /etc/init.d/squid ]; then
+		if systemctl is-active squid > /dev/null; then
+			echo "Restarting squid"
 			deb-systemd-invoke restart squid
 		fi
 
 		a2ensite wpad.conf
+		echo "Reloading apache"
 		deb-systemd-invoke reload apache2
 
 		univention-config-registry set \
@@ -118,6 +123,7 @@ case "$1" in
 			ucr set squid/forwardedfor=on
 		fi
 
+		echo "Restarting univention-dhcp"
 		deb-systemd-invoke restart univention-dhcp || true
 		;;
 
