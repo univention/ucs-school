@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-webproxy
-fix: 14.0.0-7A~4.3.0.201810011622
+fix: 14.0.0-8A~4.3.0.201810170934
 desc: |
  * The UCR variable <literal>proxy/pac/exclude/domains/domainnames</literal> is not supported anymore. The UCR variable <literal>proxy/pac/exclude/domains/dnsnames</literal> must be used instead. An automatic migration will be tried. If both variables exist, the migration must be done manually (Bug #47645).
 bug: [47645]
