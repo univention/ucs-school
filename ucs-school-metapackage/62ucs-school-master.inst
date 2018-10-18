@@ -142,7 +142,9 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	fi
 
 	if [ -n "$domainname" ]; then
-		ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"ignore" \
+		ucr set \
+				samba4/ldb/sam/module/prepend="univention_samaccountname_ldap_check" \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location?"ignore" \
