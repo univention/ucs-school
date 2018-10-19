@@ -1411,7 +1411,7 @@ udm dns/host_record create \
 							<row>
 								<entry><varname>school_classes</varname></entry>
 								<entry>string / object</entry>
-								<entry><simpara>Klassen in denen der Benutzer ist.</simpara><simpara>Als String im Format <literal>schule1-1A,schule1-2B,schule2-1A</literal> oder als Python <wordasword>dictionary</wordasword>: <literal>{"schule1": ["1A", "2B"], "schule2": ["1A"]}</literal>.</simpara><simpara>Es können Klassen aus mehreren Schulen aufgelistet werden; diese Schulen müssen alle in <link linkend="extending:import_user_class:importuser:schools"><varname>schools</varname></link> auftauchen. Wenn <varname>school_classes</varname> leer ist, werden bestehende Klassen nicht verändert.</simpara></entry>
+								<entry><simpara>Klassen in denen der Benutzer ist.</simpara><simpara>Als String im Format <literal>schule1-1A,schule1-2B,schule2-1A</literal> oder als Python <wordasword>dictionary</wordasword>: <literal>{"schule1": ["1A", "2B"], "schule2": ["1A"]}</literal>.</simpara><simpara>Es können Klassen aus mehreren Schulen aufgelistet werden; diese Schulen müssen alle in <link linkend="extending:import_user_class:importuser:schools"><varname>schools</varname></link> auftauchen. Falls die Klassenzuordnung nicht per Import stattfinden soll, weil z.B. die Klassenzuordnungen der Lehrkräfte über die UMC-Module <guimenu>Klassen zuordnen</guimenu> bzw. <guimenu>Lehrer zuordnen</guimenu> stattfinden sollen, kann der Wert für <varname>school_classes</varname> leer gelassen werden. Ist dieser leer, werden bestehende Klassenzuordnungen während des Imports nicht verändert.</simpara></entry>
 							</row>
 							<row>
 								<entry><varname>source_uid</varname></entry>
