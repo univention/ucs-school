@@ -31,7 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import ldap
-from ldap.filter import escape_filter_chars
+from ldap.filter import escape_filter_chars, filter_format
 from ldap.dn import escape_dn_chars
 
 import univention.admin.objects
@@ -75,6 +75,21 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		if self.dc_name and self.dc_name == self.dc_name_administrative:
 			self.add_error('dc_name', _('Hostname of educational DC and administrative DC must not be equal'))
 			self.add_error('dc_name_administrative', _('Hostname of educational DC and administrative DC must not be equal'))
+		if self.dc_name:
+			ldap_filter_str = ''
+			if ucr.is_true('ucsschool/singlemaster'):
+				ldap_filter_str = filter_format(
+					'(&(objectClass=univentionDomainController)(cn=%s)(univentionServerRole=backup))',
+					[self.dc_name.lower()])
+			else:
+				ldap_filter_str = filter_format(
+					'(&(objectClass=univentionDomainController)(cn=%s)(|(univentionServerRole=backup)(univentionServerRole=master)))',
+					[self.dc_name.lower()])
+			dcs = lo.search(ldap_filter_str)
+			if len(dcs) and ucr.is_true('ucsschool/singlemaster'):
+				self.add_error('dc_name', 'The educational DC for the school must not be a backup server')
+			elif len(dcs):
+				self.add_error('dc_name', 'The educational DC for the school must not be a backup or master server')
 
 	def build_hook_line(self, hook_time, func_name):
 		if func_name == 'create':
@@ -283,9 +298,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		if self.dc_name:
 			dc_name_l = self.dc_name.lower()
 			dc_udm_obj = None
-			mb_dcs = lo.search('(&(objectClass=univentionDomainController)(cn={})(|(univentionServerRole=backup)(univentionServerRole=master)))'.format(dc_name_l))
+			mb_dcs = lo.search(filter_format('(&(objectClass=univentionDomainController)(cn=%s)(|(univentionServerRole=backup)(univentionServerRole=master)))', [self.dc_name.lower()]))
 			if len(mb_dcs):
-				return # We do not modify the groups of master or backup servers
+				return # We do not modify the groups of master or backup servers.
+				# Should be validated, but stays here as well in case validation was deactivated
 			po = univention.admin.uldap.position(lo.base) # Sadly we need this here to access non school specific computers. TODO: Use Daniels simple API if merged into product
 			univention.admin.modules.update()
 			mod = univention.admin.modules.get('computers/domaincontroller_slave')
