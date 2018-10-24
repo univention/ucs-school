@@ -1,0 +1,89 @@
+@charset "UTF-8";
+
+body {
+	min-height: 100%;
+	background: url(/univention/js/dijit/themes/umc/images/background-tile.png) repeat;
+}
+
+p {
+	text-align: left;
+	font-family: 'Roboto', sans-serif;
+	font-size: 24px;
+}
+
+h1 {
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+	font-size: 36px;
+	margin-bottom: 10%
+}
+
+h3 {
+	text-align: left;
+	font-family: 'Roboto', sans-serif;
+	font-size: 28px;
+}
+
+.rContainer {
+	display: flex;
+	flex-direction: row;
+}
+
+.cContainer {
+	display: flex;
+	flex-direction: column;
+	flex-basis: 50%;
+}
+
+.border {
+	align-self: auto;
+	flex-basis: 25%
+}
+
+ /* Style the tab */
+ .tab {
+	overflow: hidden;
+	align-self: center;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab a {
+	background-color: inherit;
+	text-decoration: none;
+	color: black;
+	font-family: 'Roboto', sans-serif;
+	font-size: 16px;
+	float: left;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab a:hover {
+	color: black;
+}
+
+/* Create an active/current tablink class */
+.tab a.active {
+	text-decoration: underline;
+	color: black;
+}
+
+/* Style the tab content */
+.tabcontent {
+	display: none;
+	padding: 6px 12px;
+	animation: fadeEffect 1s; /* Fading effect takes 1 second */
+}
+
+#de {
+	display: block;
+}
+
+/* Go from zero to full opacity */
+@keyframes fadeEffect {
+	from {opacity: 0;}
+	to {opacity: 1;}
+}
