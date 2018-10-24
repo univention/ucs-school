@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=3
+VERSION=4
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -159,6 +159,11 @@ ucs_addServiceToLocalhost 'UCS@school' "$@"
 ucs_addServiceToLocalhost 'UCS@school Education' "$@"
 
 systemctl try-restart univention-s4-connector.service || true
+
+if is_ucr_true "ucsschool/join/create_demo"; then
+	univention-config-registry set ucsschool/join/demo_password?`dd if=/dev/urandom bs=1 count=8 2>/dev/null | base64 -w 0`
+	python /usr/share/ucs-school-metapackage/scripts/create_demoportal.py
+fi
 
 joinscript_save_current_version
 

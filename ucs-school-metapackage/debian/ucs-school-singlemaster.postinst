@@ -111,6 +111,7 @@ if [ "$1" = configure -a -z "$2" ]; then
 			samba/share/netlogon/path=/var/lib/samba/netlogon \
 			ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	fi
+	univention-config-registry set ucsschool/join/create_demo?yes
 fi
 
 if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 11.0.1-1; then
