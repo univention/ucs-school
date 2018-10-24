@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-metapackage
+fix:
+desc: |
+ * Create a demo school with demo portal on newly installed UCS@school systems. (Bug #47807)
+bug: [47807]
