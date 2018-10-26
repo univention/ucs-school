@@ -1,0 +1,10 @@
+		<section id="changelog:csv-export-discontinued">
+			<title>Abkündigung des UMC-Moduls "CSV-Import"</title>
+			<important>
+				<para>
+					Beginnend mit UCS@school 4.4v1 wird das UMC-Modul <guimenu>CSV-Import</guimenu> nicht mehr ein Bestandteil von UCS@school sein.
+					Wir empfehlen, die eigenen Importprozesse zu prüfen und das UMC-Modul "Benutzerimport" als Nachfolger in Betracht zu ziehen.
+					Falls eine graphischer Import über die UMC nicht benötigt wird, kann alternativ auch ein Import über die CLI-Import-Schnittstelle stattfinden.
+				</para>
+			</important>
+		</section>
