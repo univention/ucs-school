@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-netlogon-user-logonscripts
+fix: 14.0.1-3A~4.3.0.201810291809
+desc: |
+ * Add server password change script to restart ucs-school-user-logonscript-daemon.
+bug: [47895]
