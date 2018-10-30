@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7 -OO
+#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
-# Copyright 2007-2018 Univention GmbH
+# Copyright 2018 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -33,13 +33,13 @@
 
 import optparse
 import sys
-import re
 import csv
 
 from ucsschool.lib.models.school import School
 import univention.config_registry
 from univention.admin.uexceptions import uidAlreadyUsed
 from univention.admin.uldap import getAdminConnection
+
 
 def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master):
 	'''
@@ -70,7 +70,10 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 		objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn={}))'.format(share_name), base=baseDN)
 		if not objects:
 			raise ValueError('Cannot find share server object with given name {} for {}'.format(share_name, ou_name))
+	if new_school.exists(lo):
+		print('OU already exists')
 	new_school.create(lo)
+
 
 def main():
 	usage = '''
@@ -98,7 +101,7 @@ def main():
 		help='CSV file for mass import of ou\'s. Format is ou_name,display_name,edu_name,admin_name,share_name. If given parameters are overwritten.')
 
 	(options, args, ) = parser.parse_args()
-	ou_tuples = list() # (ou_name,display_name,edu_name,admin_name,share_name)
+	ou_tuples = list()  # (ou_name,display_name,edu_name,admin_name,share_name)
 	if options.infile:
 		try:
 			with open(options.infile, 'r') as fd:
@@ -133,15 +136,16 @@ def main():
 	lo, pos = getAdminConnection()
 
 	for ou_name, display_name, edu_name, admin_name, share_name in ou_tuples:
+		print('Create OU: {}'.format(ou_name))
 		try:
 			create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master)
-		except ValueError as e:
+		except (ValueError, uidAlreadyUsed) as e:
 			print(e)
-		except uidAlreadyUsed as e:
-			print(e)
-		finally:
-			print('Skip OU and proceed with next one.')
+			print('Skip OU: {}'.format(ou_name))
+		else:
+			print('Created OU: {}'.format(ou_name))
 	sys.exit(0)
+
 
 if __name__ == '__main__':
 	main()

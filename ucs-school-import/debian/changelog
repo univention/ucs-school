@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-60) unstable; urgency=medium
+
+  * Bug #46765: Don't print OU was skipped if it wasn't in create_ou script
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 30 Oct 2018 10:43:20 +0100
+
 ucs-school-import (16.0.2-59) unstable; urgency=low
 
   * Bug #45165: collect errors and summary even when an exception happens
