@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-99) unstable; urgency=low
+
+  * Bug #47966: add 400_ucsschool_lib_info
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 05 Nov 2018 14:20:08 +0100
+
 ucs-test-ucsschool (5.0.2-98) unstable; urgency=low
 
   * Bug #47622: fix test tags
