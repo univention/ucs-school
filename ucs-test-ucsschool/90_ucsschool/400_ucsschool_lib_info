@@ -1,0 +1,73 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Test python module ucsschool.lib.info
+## tags: [apptest,ucsschool,ucsschool_base1]
+## exposure: dangerous
+## packages:
+##   - python-ucs-school
+## bugs: [47966]
+
+import univention.testing.udm
+import univention.testing.ucr as ucr_test
+import univention.testing.strings as uts
+import univention.testing.ucsschool as utu
+import ucsschool.lib.info as uli
+
+
+def main():
+	with univention.testing.udm.UCSTestUDM() as udm:
+		with utu.UCSTestSchool() as schoolenv:
+			with ucr_test.UCSTestConfigRegistry() as ucr:
+				name_edudc = uts.random_string()
+				name_admindc = uts.random_string()
+				name_centraldc = uts.random_string()
+				name_backup = uts.random_string()
+				name_centralmemberserver = uts.random_string()
+
+				# create central dc slave, edu school slave and admin school slave
+				dn_centraldc = udm.create_object(
+					'computers/domaincontroller_slave',
+					position='cn=dc,cn=computers,{}'.format(ucr.get('ldap/base')),
+					name=name_centraldc
+				)
+				school, oudn = schoolenv.create_ou(
+					name_edudc=name_edudc,
+					name_admindc=name_admindc,
+					use_cache=False)
+				# create dc backup and memberserver
+				dn_memberserver = udm.create_object(
+					'computers/memberserver',
+					position='cn=computers,{}'.format(ucr.get('ldap/base')),
+					name=name_centralmemberserver
+				)
+				dn_backup = udm.create_object(
+					'computers/domaincontroller_backup',
+					position='cn=dc,cn=computers,{}'.format(ucr.get('ldap/base')),
+					name=name_backup
+				)
+
+				# get DNs of school slaves
+				lo = schoolenv.open_ldap_connection()
+				dn_edudc = lo.searchDn(filter='(&(univentionObjectType=computers/domaincontroller_slave)(cn={}))'.format(name_edudc), base=oudn)[0]
+				dn_admindc = lo.searchDn(filter='(&(univentionObjectType=computers/domaincontroller_slave)(cn={}))'.format(name_admindc), base=oudn)[0]
+				dn_master = lo.searchDn(filter='(univentionObjectType=computers/domaincontroller_master)')[0]
+
+				# check is_school_slave()
+				assert uli.is_school_slave(lo, dn_edudc), "{} should be a school slave".format(dn_edudc)
+				assert uli.is_school_slave(lo, dn_admindc), "{} should be a school slave".format(dn_admindc)
+				assert not(uli.is_school_slave(lo, dn_centraldc)), "{} should NOT be a school slave".format(dn_centraldc)
+
+				assert not(uli.is_central_computer(lo, dn_edudc)), "{} should NOT be a central slave".format(dn_edudc)
+				assert not(uli.is_central_computer(lo, dn_admindc)), "{} should NOT be a central slave".format(dn_admindc)
+				assert uli.is_central_computer(lo, dn_centraldc), "{} should be a central slave".format(dn_centraldc)
+				assert uli.is_central_computer(lo, dn_memberserver), "{} should be a central memberserver".format(dn_memberserver)
+				assert uli.is_central_computer(lo, dn_backup), "{} should be a central backup".format(dn_backup)
+				assert uli.is_central_computer(lo, dn_master), "{} should be a central master".format(dn_master)
+
+				assert uli.get_school_membership_type(lo, dn_edudc) == (True, False), "get_school_membership_type() returned unexpected result for edu dc"
+				assert uli.get_school_membership_type(lo, dn_admindc) == (False, True), "get_school_membership_type() returned unexpected result for admin dc"
+				assert uli.get_school_membership_type(lo, dn_centraldc) == (False, False), "get_school_membership_type() returned unexpected result for central dc"
+
+
+if __name__ == '__main__':
+	main()
