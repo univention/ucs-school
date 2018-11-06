@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.2-100) unstable; urgency=low
+
+  * Bug #47966: test exception if no slave DN has been passed to is_school_slave()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 06 Nov 2018 10:51:28 +0100
+
 ucs-test-ucsschool (5.0.2-99) unstable; urgency=low
 
   * Bug #47966: add 400_ucsschool_lib_info
