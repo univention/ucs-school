@@ -3,10 +3,10 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-lib
-fix: 11.0.1-27A~4.3.0.201810240853
+fix: 11.0.1-28A~4.3.0.201811051422
 desc: |
  * Check for existing computer objects in school creation process and use it if possible (Bug #47408).
  * Extend School validation for hostnames of educational and administrative dcs (Bug #46765).
  * Prevent writing of role attribute when deactivated via UCR (Bug #47967).
- * Add simple interface to check school membership of computers (Bug #47966).
+ * Add simple python interface to check school membership of computers (Bug #47966).
 bug: [47408, 46765, 47966, 47967]
