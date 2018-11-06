@@ -12,7 +12,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import ucsschool.lib.info as uli
-
+import pytest
 
 def main():
 	with univention.testing.udm.UCSTestUDM() as udm:
@@ -56,6 +56,8 @@ def main():
 				assert uli.is_school_slave(lo, dn_edudc), "{} should be a school slave".format(dn_edudc)
 				assert uli.is_school_slave(lo, dn_admindc), "{} should be a school slave".format(dn_admindc)
 				assert not(uli.is_school_slave(lo, dn_centraldc)), "{} should NOT be a school slave".format(dn_centraldc)
+				with pytest.raises(ValueError, match='Given computer DN does not refer to a computers/domaincontroller_slave object'):  # match will be evaluated as of pytest 3.1+
+					uli.is_school_slave(lo, dn_backup)
 
 				assert not(uli.is_central_computer(lo, dn_edudc)), "{} should NOT be a central slave".format(dn_edudc)
 				assert not(uli.is_central_computer(lo, dn_admindc)), "{} should NOT be a central slave".format(dn_admindc)
