@@ -110,7 +110,7 @@ def is_central_computer(lo, dn):  # type: (univention.uldap.Access, str) -> bool
 	return True
 
 
-def is_school_slave(lo, dn):
+def is_school_slave(lo, dn):  # type: (univention.uldap.Access, str) -> bool
 	"""
 	Checks if the given domaincontroller_slave object (specified by `dn`) is a school slave.
 
