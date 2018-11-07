@@ -25,7 +25,8 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  shell-univention-lib (>= 1.0.51-3),
  shell-ucs-school (>= 5.0.38),
  univention-samba4-sysvol-sync,
- univention-config
+ univention-config,
+ makepasswd
 Recommends:
  ucs-school-umc-csv-import,
  ucs-school-umc-groups,
@@ -120,7 +121,8 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  shell-univention-lib (>= 1.0.51-3),
  shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-17),
- ucs-school-netlogon
+ ucs-school-netlogon,
+ makepasswd
 Recommends:
  ucs-school-branding,
  ucs-school-ucc-integration,

@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.2-2) unstable; urgency=medium
+
+  * Bug #47807: Shrink background picture and improve demo portal installation
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 07 Nov 2018 10:13:24 +0200
+
 ucs-school-metapackage (11.0.2-1) unstable; urgency=medium
 
   * Bug #47807: Add demo school and portal on fresh installations

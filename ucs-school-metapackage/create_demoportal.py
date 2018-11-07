@@ -62,26 +62,25 @@ SCHOOL = ('DEMOSCHOOL', 'Demo School')
 
 # (name, en, de)
 CATEGORIES = [
-	('ucsschool_demo_communication', 'Communication', 'Kommunikation'),
-	('ucsschool_demo_collaboration', 'Collaboration', 'Kollaboration'),
+	('ucsschool_demo_collaboration_communication', 'Collaboration & Communication', 'Kollaboration & Kommunikation'),
 	('ucsschool_demo_creativity', 'Creativity', 'Kreativität'),
 	('ucsschool_demo_admin', 'Administration', 'Verwaltung')
 	]
 
 # (name, name_en, name_de, descr_en, descr_de, link, icon, group)
 ENTRIES = [
-	('ucsschool_demo_mail', 'Mail', 'Mail', '', '', '/univention/ucsschool/demo_tiles.html', 'mail', 'everyone'),
-	('ucsschool_demo_chat', 'Chat', 'Chat', '', '', '/univention/ucsschool/demo_tiles.html', 'chat', 'everyone'),
-	('ucsschool_demo_calendar', 'Calendar', 'Kalender', '', '', '/univention/ucsschool/demo_tiles.html', 'calendar', 'everyone'),
-	('ucsschool_demo_bookResources', 'Book Resources', 'Ressourcen buchen', '', '', '/univention/ucsschool/demo_tiles.html', 'bookResources', 'teacher'),
-	('ucsschool_demo_subPlan', 'Subsitution Plan', 'Vertretungsplan', '', '', '/univention/ucsschool/demo_tiles.html', 'subPlan', 'everyone'),
-	('ucsschool_demo_eduFunctions', 'Educational Functions', 'Pädagogische Funktionen', '', '', '/univention/management/#category=ucs-school-class', 'eduFunctions', 'teacher'),
-	('ucsschool_demo_home', 'My files', 'Eigene Dateien', '', '', '/univention/ucsschool/demo_tiles.html', 'home', 'everyone'),
-	('ucsschool_demo_share', 'File Share', 'Tauschverzeichnis', '', '', '/univention/ucsschool/demo_tiles.html', 'share', 'everyone'),
-	('ucsschool_demo_workOnline', 'Work Online', 'Online Abeiten', '', '', '/univention/ucsschool/demo_tiles.html', 'workOnline', 'everyone'),
-	('ucsschool_demo_pwReset', 'Reset Passwords', 'Passwörter zurücksetzen', '', '', '/univention/management/#category=ucs-school-admin', 'pwReset_1', 'schooladmin'),
-	('ucsschool_demo_users', 'User Management', 'Benutzerverwaltung', '', '', '/univention/management/#module=schoolwizards:schoolwizards/users:0:', 'contacts', 'schooladmin'),
-	('ucsschool_demo_admin', 'Administration', 'Administration', '', '', '/univention/management/', 'admin', 'domainadmin')
+	('ucsschool_demo_mail', 'Mail', 'Mail', 'Mail', 'Mail', '/univention/ucsschool/demo_tiles.html', 'mail', 'everyone'),
+	('ucsschool_demo_chat', 'Chat', 'Chat', 'Chat', 'Chat', '/univention/ucsschool/demo_tiles.html', 'chat', 'everyone'),
+	('ucsschool_demo_calendar', 'Calendar', 'Kalender', 'Calendar', 'Kalender', '/univention/ucsschool/demo_tiles.html', 'calendar', 'everyone'),
+	('ucsschool_demo_bookResources', 'Book Resources', 'Ressourcen buchen', 'Book Resources', 'Ressourcen buchen', '/univention/ucsschool/demo_tiles.html', 'bookResources', 'teacher'),
+	('ucsschool_demo_subPlan', 'Subsitution Plan', 'Vertretungsplan', 'Subsitution Plan', 'Vertretungsplan', '/univention/ucsschool/demo_tiles.html', 'subPlan', 'everyone'),
+	('ucsschool_demo_eduFunctions', 'Educational Functions', 'Pädagogische Funktionen', 'Educational Functions', 'Pädagogische Funktionen', '/univention/management/#category=ucs-school-class', 'eduFunctions', 'teacher'),
+	('ucsschool_demo_home', 'My files', 'Eigene Dateien', 'My files', 'Eigene Dateien', '/univention/ucsschool/demo_tiles.html', 'home', 'everyone'),
+	('ucsschool_demo_share', 'File Share', 'Tauschverzeichnis', 'File Share', 'Tauschverzeichnis', '/univention/ucsschool/demo_tiles.html', 'share', 'everyone'),
+	('ucsschool_demo_workOnline', 'Work Online', 'Online Abeiten', 'Work Online', 'Online Abeiten', '/univention/ucsschool/demo_tiles.html', 'workOnline', 'everyone'),
+	('ucsschool_demo_pwReset', 'Reset own Password', 'Eigenes Passwort zurücksetzen', 'Reset own Password', 'Eigenes Passwort zurücksetzen', '/univention/ucsschool/demo_tiles.html', 'pwReset_1', 'everyone'),
+	('ucsschool_demo_users', 'User Management', 'Benutzerverwaltung', 'User Management', 'Benutzerverwaltung', '/univention/management/#module=schoolwizards:schoolwizards/users:0:', 'contacts', 'schooladmin'),
+	('ucsschool_demo_admin', 'Administration', 'Administration', 'Administration', 'Administration', '/univention/management/', 'admin', 'domainadmin')
 ]
 
 def create_school():
@@ -163,16 +162,11 @@ def create_portal():
 	portal_obj['portalComputers'] = hostdn
 	portal_content = [
 		[
-			'cn=ucsschool_demo_collaboration,{}'.format(pos_category.getDn()),
+			'cn=ucsschool_demo_collaboration_communication,{}'.format(pos_category.getDn()),
 			[
 				'cn=ucsschool_demo_mail,{}'.format(pos_portal.getDn()),
 				'cn=ucsschool_demo_chat,{}'.format(pos_portal.getDn()),
-				'cn=ucsschool_demo_calendar,{}'.format(pos_portal.getDn())
-			]
-		],
-		[
-			'cn=ucsschool_demo_communication,{}'.format(pos_category.getDn()),
-			[
+				'cn=ucsschool_demo_calendar,{}'.format(pos_portal.getDn()),
 				'cn=ucsschool_demo_bookResources,{}'.format(pos_portal.getDn()),
 				'cn=ucsschool_demo_subPlan,{}'.format(pos_portal.getDn()),
 				'cn=ucsschool_demo_eduFunctions,{}'.format(pos_portal.getDn())
@@ -196,7 +190,7 @@ def create_portal():
 		]
 	]
 	portal_obj['content'] = json.dumps(portal_content)
-	with open('/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/background.png', 'r') as fd:
+	with open('/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/background.jpg', 'r') as fd:
 		content = fd.read()
 		portal_obj['background'] = base64.b64encode(content)
 	to_create.append(portal_obj)
