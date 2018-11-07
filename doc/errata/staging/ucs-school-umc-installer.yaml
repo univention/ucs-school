@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-umc-installer
+fix: 6.0.0-4A~4.3.0.201811071054
+desc: |
+ * Add information text about the new demo school to the installer (Bug #47807).
+bug: [47807]
