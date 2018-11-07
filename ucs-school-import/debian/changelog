@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-61) unstable; urgency=medium
+
+  * Bug #46765: Return with exit code != 0 if at least one ou creation fails
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 07 Nov 2018 09:29:44 +0100
+
 ucs-school-import (16.0.2-60) unstable; urgency=medium
 
   * Bug #46765: Don't print OU was skipped if it wasn't in create_ou script
