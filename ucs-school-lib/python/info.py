@@ -41,15 +41,15 @@ ucr.load()
 
 MembershipFlags = namedtuple('MembershipFlags', ['is_edu_school_member', 'is_admin_school_member'])
 
-def get_school_membership_type(lo, dn):  # type: (univention.uldap.Access, str) -> MembershipFlags
+def get_school_membership_type(lo, dn):  # type: (univention.uldap.access, str) -> MembershipFlags
 	"""
 	Returns a named tuple, that states if the given computer object specified by `dn` is an educational
 	school slave/memberserver or administrative slave/memberserver.
 
-	:param univention.uldap.Access lo: the LDAP connection
+	:param univention.uldap.access lo: the LDAP connection
 	:param str dn: DN of the computer object
-	:return a named tuple that contains flags for educational and administrative membership
-	:rtype namedtuple(is_edu_school_member, is_admin_school_member)
+	:return: a named tuple that contains flags for educational and administrative membership
+	:rtype: namedtuple(is_edu_school_member, is_admin_school_member)
 	"""
 	filter_s = filter_format('(&(objectClass=univentionGroup)(uniqueMember=%s))', (dn,))
 	grp_dn_list = lo.searchDn(filter=filter_s)
@@ -85,14 +85,14 @@ def get_school_membership_type(lo, dn):  # type: (univention.uldap.Access, str) 
 	return MembershipFlags(is_edu_school_member, is_admin_school_member)
 
 
-def is_central_computer(lo, dn):  # type: (univention.uldap.Access, str) -> bool
+def is_central_computer(lo, dn):  # type: (univention.uldap.access, str) -> bool
 	"""
 	Checks if the given computer object specified by `dn` is a central system or located at a specific school.
 
-	:param univention.uldap.Access lo: the LDAP connection
+	:param univention.uldap.access lo: the LDAP connection
 	:param str dn: DN of the computer object
-	:return is the computer a central system?
-	:rtype bool
+	:return: is the computer a central system?
+	:rtype: bool
 	"""
 	attrs = lo.get(dn, ['univentionObjectType'])
 	object_type = attrs.get('univentionObjectType')[0]
@@ -101,23 +101,21 @@ def is_central_computer(lo, dn):  # type: (univention.uldap.Access, str) -> bool
 			'computers/domaincontroller_backup',
 	):
 		return True
-	if object_type == 'computers/domaincontroller_slave':
-		membership = get_school_membership_type(lo, dn)
-		return not(membership.is_edu_school_member or membership.is_admin_school_member)
-	if object_type == 'computers/memberserver':
+	if object_type in ('computers/domaincontroller_slave', 'computers/memberserver'):
 		membership = get_school_membership_type(lo, dn)
 		return not(membership.is_edu_school_member or membership.is_admin_school_member)
 	return True
 
 
-def is_school_slave(lo, dn):  # type: (univention.uldap.Access, str) -> bool
+def is_school_slave(lo, dn):  # type: (univention.uldap.access, str) -> bool
 	"""
 	Checks if the given domaincontroller_slave object (specified by `dn`) is a school slave.
 
-	:param univention.uldap.Access lo: the LDAP connection
+	:param univention.uldap.access lo: the LDAP connection
 	:param str dn: DN of the computer object
-	:return is the computer a school slave?
-	:rtype bool
+	:return: is the computer a school slave?
+	:rtype: bool
+	:raises ValueError: computer DN does not refer to a computers/domaincontroller_slave object
 	"""
 	attrs = lo.get(dn, ['univentionObjectType'])
 	object_type = attrs.get('univentionObjectType')[0]
