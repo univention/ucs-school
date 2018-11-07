@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-08 13:04+0100\n"
+"POT-Creation-Date: 2018-11-07 10:31+0100\n"
 "PO-Revision-Date: 2017-03-08 13:06+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolinstaller/__init__.py:651
+#: umc/python/schoolinstaller/__init__.py:655
 #, python-format
 msgid "An unexpected error occurred during installation: %s"
 msgstr "Ein unerwarteter Fehler trat während der Installation auf: %s"
@@ -30,11 +30,11 @@ msgstr ""
 msgid "Could not connect to the DC Master %s: %s"
 msgstr "Konnte nicht mit dem DC Master %s verbinden: %s"
 
-#: umc/python/schoolinstaller/__init__.py:597
+#: umc/python/schoolinstaller/__init__.py:601
 msgid "Creation of LDAP school structure"
 msgstr "Erstellen der LDAP-Schul-Struktur"
 
-#: umc/python/schoolinstaller/__init__.py:624
+#: umc/python/schoolinstaller/__init__.py:628
 msgid "Domain join"
 msgstr "Domänenbeitritt"
 
@@ -43,11 +43,11 @@ msgstr "Domänenbeitritt"
 msgid "Executing join script %s"
 msgstr "Ausführung des Join-Skriptes %s"
 
-#: umc/python/schoolinstaller/__init__.py:629
+#: umc/python/schoolinstaller/__init__.py:633
 msgid "Executing join scripts..."
 msgstr "Ausführung der Join-Skripte..."
 
-#: umc/python/schoolinstaller/__init__.py:592
+#: umc/python/schoolinstaller/__init__.py:596
 msgid "Failed to install packages."
 msgstr "Konnte keine Pakete installieren."
 
@@ -97,7 +97,7 @@ msgstr ""
 "Bitte installieren Sie UCS@school auf dem Domänencontroller-Master-System. "
 "Die Installation kann nicht fortgesetzt werden."
 
-#: umc/python/schoolinstaller/__init__.py:626
+#: umc/python/schoolinstaller/__init__.py:630
 msgid "Preparing domain join..."
 msgstr "Vorbereiten des Domänenbeitritts..."
 
@@ -162,7 +162,7 @@ msgstr ""
 "Domänencontroller-Backup-System konfiguriert werden. Bitte wählen Sie die "
 "dem Master-System entsprechende Konfiguration für dieses System aus."
 
-#: umc/python/schoolinstaller/__init__.py:609
+#: umc/python/schoolinstaller/__init__.py:613
 msgid ""
 "The UCS@school software packages have been installed, however, a school OU "
 "could not be created and consequently a re-join of the system has not been "
@@ -214,9 +214,12 @@ msgstr "Die angegebene Schul-OU ist ungültig."
 msgid ""
 "This UCS domain uses Samba 3 which is no longer supported by UCS@school. "
 "Please update all domain systems to samba 4 to be able to continue."
-msgstr "Diese UCS-Domäne verwendet Samba 3, welches von UCS@school nicht mehr unterstützt wird. Um fortzusetzen, muss die UCS-Domäne auf Samba 4 aktualisiert werden."
+msgstr ""
+"Diese UCS-Domäne verwendet Samba 3, welches von UCS@school nicht mehr "
+"unterstützt wird. Um fortzusetzen, muss die UCS-Domäne auf Samba 4 "
+"aktualisiert werden."
 
-#: umc/python/schoolinstaller/__init__.py:621
+#: umc/python/schoolinstaller/__init__.py:625
 msgid ""
 "Validating the LDAP school OU structure failed. It seems that the current "
 "slave system has already been assigned to a different school or that the "
@@ -226,7 +229,7 @@ msgstr ""
 "dass das aktuelle Slave-System bereits einer anderen Schule zugeordnet ist, "
 "oder dass der angegebene Schul-OU-Name bereits in Verwendung ist."
 
-#: umc/python/schoolinstaller/__init__.py:641
+#: umc/python/schoolinstaller/__init__.py:645
 msgid "finished..."
 msgstr "beendet..."
 

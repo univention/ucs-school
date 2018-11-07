@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-12-07 19:02+0100\n"
+"POT-Creation-Date: 2018-11-07 10:31+0100\n"
 "PO-Revision-Date: 2017-03-08 17:42+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,13 +12,25 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolinstaller.js:435 umc/js/schoolinstaller.js:450
+#: umc/js/schoolinstaller.js:433 umc/js/schoolinstaller.js:448
 msgid ""
 "\" is still in use. Otherwise the corresponding host object has to be "
 "deleted first."
 msgstr ""
 "\" weiterhin in Benutzung ist. Falls nicht, muss das entsprechende "
 "Rechnerobjekt zuvor gelöscht werden."
+
+#: umc/js/schoolinstaller.js:70
+msgid ""
+"<p>During the installation of UCS@school a demo school including some users "
+"and a portal will be configured for testing purposes. If you do not wish "
+"that, please set the UCR variable <emp>ucsschool/join/create_demo</emp> to "
+"<emp>no</emp> prior to the installation.</p>"
+msgstr ""
+"<p>Während der Installation von UCS@school wird zu Testzwecken eine Demoschule inklusive einiger Nutzer "
+"und einem Portal vorkonfiguriert. Zur Deaktivierung dieser Funktion setzen Sie bitte die "
+"UCR Variable <emp>ucsschool/join/create_demo</emp> auf <emph>no</emph>, bevor Sie mit "
+"der Installation fortfahren.</p>"
 
 #: umc/js/schoolinstaller.js:100
 msgid ""
@@ -77,6 +89,14 @@ msgstr ""
 "Fällen ist die Konfiguration des Domänencontroller Slave als edukativer "
 "Schulserver sinnvoll.</p>"
 
+#: umc/js/schoolinstaller.js:109
+msgid ""
+"<p>The local server role is slave domain controller, for which only a multi "
+"server environment can be configured.</p>"
+msgstr ""
+"<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann nur "
+"für eine Multi-Server-Umgebung konfiguriert werden.</p>"
+
 #: umc/js/schoolinstaller.js:70
 msgid ""
 "<p>This wizard guides you step by step through the installation of "
@@ -97,7 +117,7 @@ msgstr ""
 msgid "Administrative server"
 msgstr "Verwaltungsserver"
 
-#: umc/js/schoolinstaller.js:504
+#: umc/js/schoolinstaller.js:502
 msgid ""
 "All necessary information for the installation of UCS@school on this system "
 "has been collected. Please confirm now to continue with the installation "
@@ -116,15 +136,11 @@ msgstr ""
 "Ein Fehler trat während der Installation von UCS@school auf. Die folgenden "
 "Informationen werden genauere Hinweise zu den aufgetretenen Problem geben."
 
-#: umc/js/schoolinstaller.js:506
+#: umc/js/schoolinstaller.js:504
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolinstaller.js:280
-msgid "Close"
-msgstr "Schließen"
-
-#: umc/js/schoolinstaller.js:305
+#: umc/js/schoolinstaller.js:303
 msgid "Could not find the DNS entry for the domain controller master."
 msgstr "Konnte keinen DNS-Eintrag für dem Domänencontroller Master finden."
 
@@ -151,7 +167,7 @@ msgstr ""
 msgid "Educational server"
 msgstr "Edukativer Schulserver"
 
-#: umc/js/schoolinstaller.js:439 umc/js/schoolinstaller.js:454
+#: umc/js/schoolinstaller.js:437 umc/js/schoolinstaller.js:452
 msgid "Error"
 msgstr "Fehler"
 
@@ -185,7 +201,7 @@ msgstr ""
 "Namen der Schul-OU ein, die während des Installationsvorgangs erzeugt werden "
 "soll."
 
-#: umc/js/schoolinstaller.js:557
+#: umc/js/schoolinstaller.js:555
 msgid ""
 "In order to complete the installation of UCS@school, a restart of the UMC "
 "server components is necessary."
@@ -193,7 +209,7 @@ msgstr ""
 "Um die Installation von UCS@school abzuschließen, ist ein Neustart der UMC-"
 "Server-Komponenten notwendig."
 
-#: umc/js/schoolinstaller.js:376
+#: umc/js/schoolinstaller.js:374
 msgid ""
 "In order to install UCS@school on a backup domain controller, the system "
 "needs to be joined first."
@@ -209,11 +225,11 @@ msgstr ""
 "Bitte geben Sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um "
 "dieses System als Domänencontroller Slave für UCS@school zu konfigurieren."
 
-#: umc/js/schoolinstaller.js:510
+#: umc/js/schoolinstaller.js:277 umc/js/schoolinstaller.js:508
 msgid "Install"
 msgstr "Installieren"
 
-#: umc/js/schoolinstaller.js:306
+#: umc/js/schoolinstaller.js:304
 msgid "Make sure the DNS server is up and running or check the DNS settings."
 msgstr ""
 "Bitte stellen Sie sicher, dass die DNS-Server erreichbar sind oder "
@@ -243,8 +259,8 @@ msgstr ""
 msgid "Name of the school"
 msgstr "Name der Schule"
 
-#: umc/js/schoolinstaller.js:248
-#, javascript-format
+#: umc/js/schoolinstaller.js:247
+#, python-format
 msgid "New school classes can be created with the %s."
 msgstr "Neue Schulklassen können mit dem %s erstellt werden."
 
@@ -258,7 +274,7 @@ msgstr ""
 "hat nur Zugang zu den Daten unterhalb seiner eigenen Schul-OU, auf Daten "
 "anderer Schulen kann nicht zugegriffen werden."
 
-#: umc/js/schoolinstaller.js:437 umc/js/schoolinstaller.js:452
+#: umc/js/schoolinstaller.js:435 umc/js/schoolinstaller.js:450
 msgid "Ok"
 msgstr "OK"
 
@@ -270,7 +286,7 @@ msgstr "Bitte wählen Sie ein Installationsszenario aus:"
 msgid "Please choose the server type for this domain controller slave:"
 msgstr "Bitte wählen Sie den gewünschten Servertyp für dieses System aus:"
 
-#: umc/js/schoolinstaller.js:279
+#: umc/js/schoolinstaller.js:278
 msgid "Retry"
 msgstr "Wiederholen"
 
@@ -282,33 +298,37 @@ msgstr "Schulkürzel"
 msgid "Single server environment"
 msgstr "Single-Server-Umgebung"
 
-#: umc/js/schoolinstaller.js:517
+#: umc/js/schoolinstaller.js:515
 msgid "Starting the configuration process..."
 msgstr "Beginne den Konfigurationsprozess..."
 
-#: umc/js/schoolinstaller.js:251
-#, javascript-format
+#: umc/js/schoolinstaller.js:250
+#, python-format
 msgid ""
 "Teachers and students can be added to the UCS@school domain with the %s."
 msgstr ""
 "Lehrer und Schüler können mit dem %s in der UCS@school-Domäne neu angelegt "
 "werden."
 
-#: umc/js/schoolinstaller.js:254
-#, javascript-format
+#: umc/js/schoolinstaller.js:253
+#, python-format
 msgid "Teachers can be assigned to classes with the %s."
 msgstr "Lehrer können mit dem %s Klassen zugeordnet werden."
 
-#: umc/js/schoolinstaller.js:307
-#, javascript-format
+#: umc/js/schoolinstaller.js:305
+#, python-format
 msgid "The DNS settings can be adjusted in the %s."
 msgstr "Die DNS-Einstellungen können im %s angepasst werden."
 
 #: umc/js/schoolinstaller.js:127
 msgid ""
-"The UCS@school configuration wizard detected all necessary information to install "
-"UCS@school on this DC Backup. Click <i>next</i> to start the installation."
-msgstr "Der UCS@school-Konfigurationsassistent hat alle benötigten Informationen erkannt, um UCS@school auf diesem DC Backup zu installieren. Klicken Sie auf <i>Weiter</i> um die Installation zu starten."
+"The UCS@school configuration wizard detected all necessary information to "
+"install UCS@school on this DC Backup. Click <i>next</i> to start the "
+"installation."
+msgstr ""
+"Der UCS@school-Konfigurationsassistent hat alle benötigten Informationen "
+"erkannt, um UCS@school auf diesem DC Backup zu installieren. Klicken Sie auf "
+"<i>Weiter</i> um die Installation zu starten."
 
 #: umc/js/schoolinstaller.js:164
 msgid "The given value will be shown as school's name within UCS@school."
@@ -333,7 +353,7 @@ msgstr ""
 msgid "The installation of UCS@school has been finished successfully."
 msgstr "Die Installation von UCS@school wurde erfolgreich abgeschlossen."
 
-#: umc/js/schoolinstaller.js:246
+#: umc/js/schoolinstaller.js:245
 msgid ""
 "There are several modules that assist in further configuring the UCS@school "
 "domain:"
@@ -341,7 +361,7 @@ msgstr ""
 "Es gibt verschiedene Module, die bei der weiteren Konfiguration der "
 "UCS@school-Domäne behilflich sind:"
 
-#: umc/js/schoolinstaller.js:297
+#: umc/js/schoolinstaller.js:295
 msgid ""
 "This wizard guides you step by step through the installation of an "
 "UCS@school slave domain controller. Before continuing please make sure that "
@@ -381,7 +401,7 @@ msgstr "UCS@school - Schul-OU-Konfiguration"
 msgid "UCS@school - server setup"
 msgstr "UCS@school - Server-Konfiguration"
 
-#: umc/js/schoolinstaller.js:370
+#: umc/js/schoolinstaller.js:368
 msgid ""
 "UCS@school can only be installed on the system roles master domain "
 "controller, backup domain controller, or slave domain controller."
@@ -390,14 +410,10 @@ msgstr ""
 "Domänencontroller Backup oder Domänencontroller Slave installiert werden."
 
 #: umc/js/schoolinstaller.js:232
-msgid "UCS@school configuration wizard"
-msgstr "UCS@school-Konfigurationsassistent"
-
-#: umc/js/schoolinstaller.js:233
 msgid "UCS@school has already been configured on this system."
 msgstr "UCS@school wurde bereits auf diesem System eingerichtet."
 
-#: umc/js/schoolinstaller.js:450
+#: umc/js/schoolinstaller.js:448
 msgid ""
 "UCS@school supports only one administrative server per school. Please check "
 "if the administrative server \""
@@ -405,7 +421,7 @@ msgstr ""
 "UCS@school unterstützt nur einen Verwaltungsserver pro Schule. Bitte prüfen "
 "Sie, ob der Verwaltungsserver \""
 
-#: umc/js/schoolinstaller.js:435
+#: umc/js/schoolinstaller.js:433
 msgid ""
 "UCS@school supports only one educational server per school. Please check if "
 "the educational server \""
@@ -413,18 +429,17 @@ msgstr ""
 "UCS@school unterstützt nur einen edukativen Schulserver pro Schule. Bitte "
 "prüfen Sie, ob der Schulserver \""
 
-#: umc/js/schoolinstaller.js:304
+#: umc/js/schoolinstaller.js:302
 msgid "Warning:"
 msgstr "Warnung:"
 
-#: umc/js/schoolinstaller.js:257
-#, javascript-format
+#: umc/js/schoolinstaller.js:256
+#, python-format
 msgid "Workgroups can be created and managed with the %s."
 msgstr "Arbeitsgruppen können mit dem %s erstellt und verwaltet werden."
 
-#~ msgid ""
-#~ "<p>The local server role is slave domain controller, for which only a "
-#~ "multi server environment can be configured.</p>"
-#~ msgstr ""
-#~ "<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann "
-#~ "nur für eine Multi-Server-Umgebung konfiguriert werden.</p>"
+#~ msgid "Close"
+#~ msgstr "Schließen"
+
+#~ msgid "UCS@school configuration wizard"
+#~ msgstr "UCS@school-Konfigurationsassistent"
