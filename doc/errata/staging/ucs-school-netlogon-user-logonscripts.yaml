@@ -6,4 +6,5 @@ src: ucs-school-netlogon-user-logonscripts
 fix: 14.0.1-3A~4.3.0.201810291809
 desc: |
  * Add server password change script to restart ucs-school-user-logonscript-daemon (Bug #47805).
-bug: [47805]
+ * Always create link shortcuts in netlogon script (Bug #47937).
+bug: [47805, 47937]

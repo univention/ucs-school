@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (14.0.1-4) unstable; urgency=medium
+
+  * Bug #47937: Always create link shortcuts
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 08 Nov 2018 12:04:22 +0100
+
 ucs-school-netlogon-user-logonscripts (14.0.1-3) unstable; urgency=medium
 
   * Bug #47805: Add server password change script to restart daemon
