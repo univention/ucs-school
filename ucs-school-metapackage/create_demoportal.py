@@ -29,7 +29,6 @@
 # <http://www.gnu.org/licenses/>.
 
 from univention.management.console.ldap import get_admin_connection
-from univention.admin.uexceptions import objectExists
 from univention.admin.uldap import position
 from ucsschool.lib.models import School, Student, Teacher, Staff, SchoolClass
 from univention.config_registry import ConfigRegistry
@@ -48,12 +47,12 @@ module_portal_c = modules.get('settings/portal_category')
 module_portal_e = modules.get('settings/portal_entry')
 module_groups = modules.get('groups/group')
 module_users = modules.get('users/user')
-# TODO: Remove after init is fixed in Bug #47818
-module_comp = modules.get('computers/domaincontroller_master')
-if not module_comp.initialized:
-	modules.init(lo, pos, module_comp)
 
-hostname = ucr.get('hostname')
+is_single_master = ucr.is_true('ucsschool/singlemaster', False)
+if is_single_master:
+	hostname_demoschool = ucr.get('hostname')
+else:
+	hostname_demoschool = "DEMOSCHOOL"
 hostdn = ucr.get('ldap/hostdn')
 demo_password = ucr.get('ucsschool/join/demo_password', 'demoschool')
 
@@ -93,7 +92,7 @@ def create_school():
 			break
 	if not school_exists:
 		try:
-			subprocess.check_call(['python', '/usr/share/ucs-school-import/scripts/create_ou', '--displayName={}'.format(SCHOOL[1]), SCHOOL[0], hostname])
+			subprocess.check_call(['python', '/usr/share/ucs-school-import/scripts/create_ou', '--displayName={}'.format(SCHOOL[1]), SCHOOL[0], hostname_demoschool])
 		except subprocess.CalledProcessError as e:
 			print('The following error occured while creating the Demo School object: \n')
 			print(e)

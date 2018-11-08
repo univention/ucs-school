@@ -161,7 +161,7 @@ ucs_addServiceToLocalhost 'UCS@school Education' "$@"
 systemctl try-restart univention-s4-connector.service || true
 
 if is_ucr_true "ucsschool/join/create_demo"; then
-	univention-config-registry set ucsschool/join/demo_password?`makepasswd --chars 8`
+	univention-config-registry set ucsschool/join/demo_password?"$(makepasswd --chars 16)"
 	python /usr/share/ucs-school-metapackage/scripts/create_demoportal.py
 	univention-config-registry set ucsschool/join/create_demo=no
 fi

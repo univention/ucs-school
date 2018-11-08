@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.2-4) unstable; urgency=medium
+
+  * Bug #47807: Fix multiserver demo portal installation
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 08 Nov 2018 14:50:53 +0100
+
 ucs-school-metapackage (11.0.2-3) unstable; urgency=medium
 
   * Bug #47807: Create demo class and add student to it
