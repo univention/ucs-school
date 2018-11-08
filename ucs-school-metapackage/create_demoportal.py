@@ -97,7 +97,7 @@ def create_school():
 			print('The following error occured while creating the Demo School object: \n')
 			print(e)
 			sys.exit(1)
-	kls = SchoolClass(name='Democlass', school=SCHOOL[0])
+	kls = SchoolClass(name='{}-Democlass'.format(SCHOOL[0]), school=SCHOOL[0])
 	kls.create(lo)
 	student = Student(firstname='Demo', lastname='Student', name='demo_student', password=demo_password, school=SCHOOL[0])
 	student.school_classes[SCHOOL[0]] = ['Democlass']

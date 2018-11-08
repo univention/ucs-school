@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.2-5) unstable; urgency=medium
+
+  * Bug #47807: Fix school class creation
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 08 Nov 2018 15:56:19 +0100
+
 ucs-school-metapackage (11.0.2-4) unstable; urgency=medium
 
   * Bug #47807: Fix multiserver demo portal installation
