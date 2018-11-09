@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-radius-802.1x
-fix: 7.0.1-1A~4.3.0.201811061419
+fix: 7.0.1-2A~4.3.0.201811091632
 desc: |
  * A user's description attribute is now no longer modified in LDAP if the <literal>ldap</literal> module has been activated in freeradius (Bug #47347).
  * The key expansion for DES encryption in pyMsChapV2.py has been fixed. This bug prevented the RADIUS authentication for some users depending on their password (Bug #48128).
