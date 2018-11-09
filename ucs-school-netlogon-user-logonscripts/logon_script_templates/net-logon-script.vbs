@@ -130,6 +130,22 @@ Function CreateDesktopIcon()
 	objFile.Attributes = objFile.Attributes OR SYSTEM
 end function
 
+Function CheckPattern(strFilePath, strPattern)
+	' Checks if specified pattern occurs in one of the text files lines
+	Set objFSO = CreateObject("Scripting.FileSystemObject")
+	Set objRegEx = CreateObject("VBScript.RegExp")
+	objRegEx.Pattern = strPattern
+	set objFile = objFSO.OpenTextFile(strLinkPath, 1, True)
+	Do Until objFile.AtEndOfStream
+		strSearchString = objFile.ReadLine
+		Set colMatches = objRegEx.Execute(strSearchString)
+		If colMatches.Count > 0 Then
+			CheckPattern = True
+		End If
+	Loop
+	CheckPattern = False
+end function
+
 Function CreateShareShortcut(strServer, strShare)
 	' Create shortcut to \\strServer\strShare
 	Set oWS = WScript.CreateObject("WScript.Shell")
@@ -147,10 +163,12 @@ Function CreateTeacherUmcLink()
 	Set oUrlLink = WshShell.CreateShortcut(strLinkPath)
 	oUrlLink.TargetPath = "{umc_link}"
 	oUrlLink.Save
-	set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)
-	objFile.WriteLine("IconFile=\\{hostname}.{domainname}\netlogon\user\univention-management-console.ico")
-	objFile.WriteLine("IconIndex=0")
-	objFile.Close
+	If NOT(CheckPattern(strLinkPath, "^IconFile")) Then
+		set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)
+		objFile.WriteLine("IconFile=\\{hostname}.{domainname}\netlogon\user\univention-management-console.ico")
+		objFile.WriteLine("IconIndex=0")
+		objFile.Close
+	End If
 end function
 
 Function CreateUcsPortalLink()
@@ -160,8 +178,10 @@ Function CreateUcsPortalLink()
 	Set oUrlLink = WshShell.CreateShortcut(strLinkPath)
 	oUrlLink.TargetPath = "{portal_link}"
 	oUrlLink.Save
-	set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)
-	Objfile.WriteLine("IconFile=\\{hostname}.{domainname}\netlogon\user\univention-portal.ico")
-	objFile.WriteLine("IconIndex=0")
-	objFile.Close
+	If NOT(CheckPattern(strLinkPath, "^IconFile")) Then
+		set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)
+		Objfile.WriteLine("IconFile=\\{hostname}.{domainname}\netlogon\user\univention-portal.ico")
+		objFile.WriteLine("IconIndex=0")
+		objFile.Close
+	End If
 end function

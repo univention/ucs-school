@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (14.0.1-5) unstable; urgency=medium
+
+  * Bug #47937: Prevent link file from growing
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 09 Nov 2018 09:47:06 +0100
+
 ucs-school-netlogon-user-logonscripts (14.0.1-4) unstable; urgency=medium
 
   * Bug #47937: Always create link shortcuts
