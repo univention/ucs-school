@@ -16,7 +16,7 @@
 		<legalnotice>
 			<literallayout>
 Version @%@APP_VERSION@%@
-Stand: @%@CURRENT_DATE_dBY@%@
+Stand: @%@CURRENT_DATE_dmY@%@
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
@@ -71,7 +71,7 @@ feedback@univention.de
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
-			@%@CHANGELOG@%@
+<!-- CHANGELOG-NEW-SECTION -->
 		</section>
 	</chapter>
 </book>
