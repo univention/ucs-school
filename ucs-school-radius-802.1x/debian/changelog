@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (7.0.1-2) unstable; urgency=low
+
+  * Bug #48128: fixed key expansion for des encryption in pyMsChapV2.py
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 06 Nov 2018 14:15:50 +0100
+
 ucs-school-radius-802.1x (7.0.1-1) unstable; urgency=low
 
   * Bug #47347: do not modify user's attribute "description" upon login/logout
