@@ -144,7 +144,21 @@ feedback@univention.de
 
 				</itemizedlist>
 			</section>
+				<section id="changelog:ucsschool:2018-11-09" lang="en">
+					<title>Released on 2018-11-09:</title>
+					<!-- START ucs-school-webproxy 14.0.0-8A~4.3.0.201810170934 -->
+					<para>
+						Source package <emphasis>ucs-school-webproxy</emphasis> in version <emphasis>14.0.0-8A~4.3.0.201810170934</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UCR variable <literal>proxy/pac/exclude/domains/domainnames</literal> is not supported anymore. The UCR variable <literal>proxy/pac/exclude/domains/dnsnames</literal> must be used instead. An automatic migration will be tried. If both variables exist, the migration must be done manually (<u:bug>47645</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-webproxy 14.0.0-8A~4.3.0.201810170934 -->
+<!-- CHANGELOG:2018-11-09:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 		</section>
 	</chapter>
 </book>
