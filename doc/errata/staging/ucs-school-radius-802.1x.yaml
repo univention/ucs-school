@@ -7,3 +7,5 @@ fix: 7.0.1-1A~4.3.0.201811061419
 desc: |
  * A user's description attribute is now no longer modified if the <literal>ldap</literal> module has been activated (Bug #47347).
 bug: [47347]
+ * The key expansion for DES encryption in pyMsChapV2.py has been fixed. This bug prevented the RADIUS authentication for some users depending on their password (Bug #48128).
+bug: [47347, 48128]
