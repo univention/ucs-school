@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (14.0.1-6) unstable; urgency=medium
+
+  * Bug #47937: Fix CheckPattern
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 12 Nov 2018 16:57:36 +0100
+
 ucs-school-netlogon-user-logonscripts (14.0.1-5) unstable; urgency=medium
 
   * Bug #47937: Prevent link file from growing

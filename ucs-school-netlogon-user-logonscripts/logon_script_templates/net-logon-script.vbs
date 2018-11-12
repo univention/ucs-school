@@ -130,7 +130,7 @@ Function CreateDesktopIcon()
 	objFile.Attributes = objFile.Attributes OR SYSTEM
 end function
 
-Function CheckPattern(strFilePath, strPattern)
+Function CheckPattern(strLinkPath, strPattern)
 	' Checks if specified pattern occurs in one of the text files lines
 	Set objFSO = CreateObject("Scripting.FileSystemObject")
 	Set objRegEx = CreateObject("VBScript.RegExp")
@@ -141,6 +141,7 @@ Function CheckPattern(strFilePath, strPattern)
 		Set colMatches = objRegEx.Execute(strSearchString)
 		If colMatches.Count > 0 Then
 			CheckPattern = True
+			Exit Function
 		End If
 	Loop
 	CheckPattern = False
