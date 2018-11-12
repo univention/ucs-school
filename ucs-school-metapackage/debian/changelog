@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.2-6) unstable; urgency=medium
+
+  * Bug #47807: Move password to /etc/demoschool.secret
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 12 Nov 2018 13:27:33 +0100
+
 ucs-school-metapackage (11.0.2-5) unstable; urgency=medium
 
   * Bug #47807: Fix school class creation
