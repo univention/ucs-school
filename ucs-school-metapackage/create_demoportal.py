@@ -34,9 +34,12 @@ from ucsschool.lib.models import School, Student, Teacher, Staff, SchoolClass
 from univention.config_registry import ConfigRegistry
 import univention.admin.modules as modules
 import sys
+import os
 import subprocess
 import base64
 import json
+import string
+import random
 
 ucr = ConfigRegistry()
 ucr.load()
@@ -54,7 +57,13 @@ if is_single_master:
 else:
 	hostname_demoschool = "DEMOSCHOOL"
 hostdn = ucr.get('ldap/hostdn')
-demo_password = ucr.get('ucsschool/join/demo_password', 'demoschool')
+demo_password = ''.join(random.choice(string.ascii_uppercase) for _ in range(16))
+if os.path.isfile('/etc/demoschool.secret'):
+	with open('/etc/demoschool.secret', 'r') as fd:
+		demo_password = fd.read().rstrip('\n')
+else:
+	with open('/etc/demoschool.secret', 'w') as fd:
+		fd.write(demo_password)
 
 # (name, displayName)
 SCHOOL = ('DEMOSCHOOL', 'Demo School')
@@ -79,7 +88,7 @@ ENTRIES = [
 	('ucsschool_demo_workOnline', 'Work Online', 'Online Abeiten', 'Work Online', 'Online Abeiten', '/univention/ucsschool/demo_tiles.html', 'workOnline', 'everyone'),
 	('ucsschool_demo_pwReset', 'Reset own Password', 'Eigenes Passwort zurücksetzen', 'Reset own Password', 'Eigenes Passwort zurücksetzen', '/univention/ucsschool/demo_tiles.html', 'pwReset_1', 'everyone'),
 	('ucsschool_demo_users', 'User Management', 'Benutzerverwaltung', 'User Management', 'Benutzerverwaltung', '/univention/management/#module=schoolwizards:schoolwizards/users:0:', 'contacts', 'schooladmin'),
-	('ucsschool_demo_admin', 'Administration', 'Administration', 'Administration', 'Administration', '/univention/management/', 'admin', 'domainadmin')
+	('ucsschool_demo_admin', 'Administration', 'Administration', 'Administration', 'Administration', '/univention/management/', 'admin', 'everyone')
 ]
 
 def create_school():
