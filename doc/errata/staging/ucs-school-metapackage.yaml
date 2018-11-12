@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-metapackage
-fix: 11.0.2-5A~4.3.0.201811081559
+fix: 11.0.2-6A~4.3.0.201811121328
 desc: |
  * Create a demo school with demo portal on newly installed UCS@school systems. (Bug #47807)
 bug: [47807]
