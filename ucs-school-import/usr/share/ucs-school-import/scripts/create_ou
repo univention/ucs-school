@@ -39,6 +39,10 @@ from ucsschool.lib.models.school import School
 import univention.config_registry
 from univention.admin.uexceptions import uidAlreadyUsed
 from univention.admin.uldap import getAdminConnection
+from ldap.filter import filter_format
+
+config_registry = univention.config_registry.ConfigRegistry()
+config_registry.load()
 
 
 def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master):
@@ -53,7 +57,27 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 	if display_name is None:
 		display_name = ou_name
 
-	new_school = School(name=ou_name, dc_name=edu_name, dc_name_administrative=admin_name, class_share_file_server=share_name, home_share_file_server=share_name, display_name=display_name)
+	new_school = School(name=ou_name, dc_name=edu_name, dc_name_administrative=admin_name,
+						display_name=display_name)
+
+	# TODO: Reevaluate this validation after CNAME changes are implemented
+	share_dn = ''
+	if share_name is None:
+		share_name = edu_name
+	objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn={}))'.format(share_name), base=baseDN)
+	if not objects:
+		if share_name == 'dc{}-01'.format(ou_name) or (edu_name and share_name == edu_name):
+			share_dn = filter_format('cn=%s,cn=dc,cn=server,cn=computers,%s', [share_name, new_school.dn])
+		else:
+			print('WARNING: share file server name "{}" not found! Using "{}" as share file server.'.format(
+				share_name, config_registry.get('hostname')))
+			share_dn = config_registry.get('ldap/hostdn')
+	else:
+		share_dn = objects[0]
+
+	new_school.class_share_file_server = share_dn
+	new_school.home_share_file_server = share_dn
+
 	new_school.validate(lo)
 	if len(new_school.warnings) > 0:
 		print('The following fields reported warnings during validation:\n')
@@ -64,12 +88,6 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 		for key, value in new_school.errors.items():
 			error_str += '{}: {}\n'.format(key, value)
 		raise ValueError(error_str)
-
-	# TODO: Reevaluate this validation after CNAME changes are implemented
-	if share_name is not None:
-		objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn={}))'.format(share_name), base=baseDN)
-		if not objects:
-			raise ValueError('Cannot find share server object with given name {} for {}'.format(share_name, ou_name))
 	if new_school.exists(lo):
 		print('OU already exists')
 	new_school.create(lo)
@@ -100,7 +118,7 @@ def main():
 		dest='infile', default=None,
 		help='CSV file for mass import of ou\'s. Format is ou_name,display_name,edu_name,admin_name,share_name. If given parameters are overwritten.')
 
-	(options, args, ) = parser.parse_args()
+	(options, args,) = parser.parse_args()
 	ou_tuples = list()  # (ou_name,display_name,edu_name,admin_name,share_name)
 	if options.infile:
 		try:
@@ -118,7 +136,8 @@ def main():
 		ou_name = args[0]
 		dc_name_educational = args[1] if len(args) > 1 else None
 		dc_name_administrative = args[2] if len(args) > 2 else None
-		ou_tuples.append((ou_name, options.displayName, dc_name_educational, dc_name_administrative, options.ShareFileServer))
+		ou_tuples.append(
+			(ou_name, options.displayName, dc_name_educational, dc_name_administrative, options.ShareFileServer))
 	else:
 		parser.print_help()
 		sys.exit(1)
@@ -126,13 +145,9 @@ def main():
 		parser.print_help()
 		sys.exit(1)
 
-	config_registry = univention.config_registry.ConfigRegistry()
-	config_registry.load()
-
 	baseDN = config_registry['ldap/base']
 	is_single_master = config_registry.is_true('ucsschool/singlemaster', False)
 	hostname = config_registry.get('hostname')
-
 	lo, pos = getAdminConnection()
 	exit_value = 0
 
