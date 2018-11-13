@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-63) unstable; urgency=medium
+
+  * Bug #46765: temporarily include shell script hooks in create_ou script
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 13 Nov 2018 14:08:12 +0100
+
 ucs-school-import (16.0.2-62) unstable; urgency=medium
 
   * Bug #46765: Fix bug with sharefileserver name

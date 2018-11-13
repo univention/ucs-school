@@ -35,6 +35,11 @@ import optparse
 import sys
 import csv
 
+# TODO: REMOVE WITH Bug #48141
+import os
+import subprocess
+import tempfile
+
 from ucsschool.lib.models.school import School
 import univention.config_registry
 from univention.admin.uexceptions import uidAlreadyUsed
@@ -44,11 +49,77 @@ from ldap.filter import filter_format
 config_registry = univention.config_registry.ConfigRegistry()
 config_registry.load()
 
+# TODO: REMOVE WITH Bug #48141
+class Hooks(object):
+	OBJECTS = ('user', 'group', 'printer', 'computer', 'network', 'router', 'ou')
+	OPERATIONS = {'A': 'create', 'M': 'modify', 'D': 'remove'}
+
+	PATH = '/usr/share/ucs-school-import/hooks/'
+
+	def _create_temp_file(self, line):
+		tmpfile = tempfile.NamedTemporaryFile()
+		tmpfile.write(line)
+		tmpfile.flush()
+		return tmpfile
+
+	def __run(self, phase, module, action, **kwargs):
+		# verify phase
+		if action not in Hooks.OPERATIONS:
+			return False
+
+		# verify path
+		path = os.path.join(Hooks.PATH, '%s_%s_%s.d' % (module, Hooks.OPERATIONS[action], phase))
+		if not os.path.isdir(path) or not os.listdir(path):
+			return False
+
+		# create temporary file with data
+		if 'line' in kwargs:
+			kwargs['line'] = kwargs['line'].strip() + "\n"
+			tmpfile = self._create_temp_file(kwargs.get('line'))
+
+		# invoke hook scripts
+		# <script> <temporary file> [<ldap dn>]
+		command = ['run-parts', path]
+		if 'line' in kwargs:
+			command.extend(('--arg', tmpfile.name))
+		if 'dn' in kwargs:
+			command.extend(('--arg', kwargs['dn']))
+
+		sys.stdout.flush()
+		sys.stderr.flush()
+		ret_code = subprocess.call(command)
+
+		# close temporary file (also deletes the file)
+		if 'line' in kwargs:
+			tmpfile.close()
+
+		return ret_code == 0
+
+	def pre(self, module, action, **kwargs):
+		return self.__run('pre', module, action, **kwargs)
+
+	def post(self, module, action, **kwargs):
+		return self.__run('post', module, action, **kwargs)
+
+
+# TODO: REMOVE WITH Bug #48141
+hooks = Hooks()
 
 def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master):
 	'''
 	Raises ValueError, uidAlreadyUsed
 	'''
+
+
+	# TODO: REMOVE WITH Bug #48141
+	# invoke pre hooks
+	if edu_name:
+		dccn = edu_name
+	else:
+		dccn = ''
+	myline = '%s\t%s' % (ou_name, dccn)
+	hooks.pre('ou', 'A', line=myline)
+
 	if not edu_name and is_single_master:
 		edu_name = hostname
 	elif not edu_name and not is_single_master:
@@ -88,9 +159,13 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 		for key, value in new_school.errors.items():
 			error_str += '{}: {}\n'.format(key, value)
 		raise ValueError(error_str)
+	new_school.create(lo)
 	if new_school.exists(lo):
 		print('OU already exists')
-	new_school.create(lo)
+		# TODO: REMOVE WITH Bug #48141
+		# invoke post hooks
+		# for OUs the temporary file contains the LDAP DN
+		hooks.post('ou', 'A', dn=new_school.dn, line=myline)
 
 
 def main():
