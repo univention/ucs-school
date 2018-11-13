@@ -25,6 +25,16 @@
 	Multi-Server-Umgebung wird unterstützt und in <xref linkend="school:installation:migration-single2multi"/> genauer beschrieben.
   </para>
 
+  <para>
+    In beiden Varianten wird standardmäßig bei einer Neuinstallation von &ucsUAS; eine Demonstrationsschule inklusive Testnutzern und
+    einem Portal konfiguriert. Das Passwort für die angelegten Nutzer <emphasis>demo_student</emphasis>,
+    <emphasis>demo_teacher</emphasis> und <emphasis>demo_admin</emphasis> befindet sich in der Datei
+    <filename>/etc/demoschool.secret</filename>. Soll das Anlegen einer solchen Demonstrationsumgebung verhindert
+    werden, muss die UCR Variable <envar>ucsschool/join/create_demo</envar> auf <emp>no</emp> gesetzt werden,
+    bevor der Assistent ausgeführt wird. Dies ist mit dem Befeh <command>ucr set ucsschool/join/create_demo=no</command>
+    möglich.
+  </para>
+
   <section id="installation:single">
 	  <title>Installation einer Single-Server-Umgebung</title>
 	  <section id="installation:single:master">
