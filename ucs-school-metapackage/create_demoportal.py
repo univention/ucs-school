@@ -64,6 +64,7 @@ if os.path.isfile('/etc/demoschool.secret'):
 else:
 	with open('/etc/demoschool.secret', 'w') as fd:
 		fd.write(demo_password)
+	os.chmod('/etc/demoschool.secret', 0640)
 
 # (name, displayName)
 SCHOOL = ('DEMOSCHOOL', 'Demo School')

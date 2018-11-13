@@ -1,3 +1,9 @@
+ucs-school-metapackage (11.0.2-7) unstable; urgency=medium
+
+  * Bug #47807: Fix file permission for /etc/demoschool.secret
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 13 Nov 2018 09:37:12 +0100
+
 ucs-school-metapackage (11.0.2-6) unstable; urgency=medium
 
   * Bug #47807: Move password to /etc/demoschool.secret

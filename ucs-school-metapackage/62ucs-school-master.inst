@@ -173,6 +173,7 @@ systemctl try-restart univention-s4-connector.service || true
 
 if is_ucr_true "ucsschool/join/create_demo"; then
 	makepasswd --chars 16 > /etc/demoschool.secret
+	chmod 640 /etc/demoschool.secret
 	python /usr/share/ucs-school-metapackage/scripts/create_demoportal.py
 	univention-config-registry set ucsschool/join/create_demo=no
 fi
