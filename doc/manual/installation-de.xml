@@ -30,7 +30,7 @@
     einem Portal konfiguriert. Das Passwort für die angelegten Nutzer <emphasis>demo_student</emphasis>,
     <emphasis>demo_teacher</emphasis> und <emphasis>demo_admin</emphasis> befindet sich in der Datei
     <filename>/etc/demoschool.secret</filename>. Soll das Anlegen einer solchen Demonstrationsumgebung verhindert
-    werden, muss die UCR Variable <envar>ucsschool/join/create_demo</envar> auf <emp>no</emp> gesetzt werden,
+    werden, muss die UCR Variable <envar>ucsschool/join/create_demo</envar> auf <emphasis>no</emphasis> gesetzt werden,
     bevor der Assistent ausgeführt wird. Dies ist mit dem Befeh <command>ucr set ucsschool/join/create_demo=no</command>
     möglich.
   </para>
