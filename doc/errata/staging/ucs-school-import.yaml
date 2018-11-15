@@ -5,11 +5,11 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
 fix: 16.0.2-63A~4.3.0.201811131411
 desc: |
- * Even when the import abots, statistics are now still written to the terminal, passwords and summary CSV files are written to disk (Bug #45673).
+ * Even when the import aborts, statistics are now still written to the terminal, passwords and summary CSV files are written to disk (Bug #45673).
  * CSV files encoded in <literal>ISO 8859-1</literal> (and others) are now automatically convert to <literal>UTF-8</literal> (Bug #47677).
- * Better error messages are now provided for missing mandatory columns. <literal>record_uid</literal and <literal>source_uid</literal> are now always part of <literal>mandatory_attributes</literal>. It is now verified that the CSV columns configured in <literal>csv:mapping</literal> exist in the CSV file (Bug #47681).
+ * Better error messages are now provided for missing mandatory columns. <literal>record_uid</literal> and <literal>source_uid</literal> are now always part of <literal>mandatory_attributes</literal>. It is now verified that the CSV columns configured in <literal>csv:mapping</literal> exist in the CSV file (Bug #47681).
  * It is now checked, that the properties listed in the configuration of <literal>mandatory_attributes</literal> exist and are non-empty (Bug #47691).
- * Invalid school class names are now caught in dry-run (Bug #47861).
- * Replace the old create_ou script with one using the ucsschool.lib (Bug #46765).
- * The UMC User Import module now shows useful error messages (Bug #45165).
+ * Invalid school class names are now caught in dry-run and reported to the customer (Bug #47861).
+ * The script <command>create_ou</command> has been replaced with a newer version that is based on the UCS@school python library ucsschool.lib (Bug #46765).
+ * Until now, the UMC module "User Import" only displayed a generic and very technical error message when errors occurred. The processing of errors during import has been improved so that errors that occurred can now be distinguished more accurately, are displayed better and contain more comprehensible text (Bug #45165).
 bug: [45673, 47677, 47681, 47691, 47861, 46765, 45165]

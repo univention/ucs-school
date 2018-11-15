@@ -5,5 +5,8 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-metapackage
 fix: 11.0.2-7A~4.3.0.201811130939
 desc: |
- * Create a demo school with demo portal on newly installed UCS@school systems. (Bug #47807)
+ * When UCS@school is first installed, a demo school with a demo portal is now automatically created. On existing
+   UCS@school environments that are now being updated, the demo school will not be created. To prevent the demo school
+   from being created automatically, the UCR variable <envar>ucsschool/join/create_demo</envar> must be set to <literal>no</literal>
+   before installation (Bug #47807).
 bug: [47807]
