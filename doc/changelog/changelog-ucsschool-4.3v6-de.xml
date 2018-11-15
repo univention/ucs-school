@@ -69,6 +69,20 @@ feedback@univention.de
 			</para>
 		</section>
 
+		<section id="changelog:discontinuation">
+ 			<title>Abkündigung des UMC-Moduls "CSV-Import"</title>
+ 			<important>
+ 				<para>
+					Beginnend mit UCS@school 4.4 wird das UMC-Modul <guimenu>CSV-Import</guimenu> nicht mehr ein Bestandteil von UCS@school sein. Deshalb sollte
+					vor der Aktualisierung auf UCS@school 4.4 eine alternative Lösung für den Import verwendet werden.
+					Seit UCS@school 4.2 v6 wird das UMC-Modul <guimenu>Benutzerimport</guimenu> mit UCS@school ausgeliefert. Wir empfehlen die eigenen Importprozesse
+					zu prüfen und an das neue UMC-Modul anzupassen. Das UMC-Modul <guimenu>Benutzerimport</guimenu> beinhaltet alle wichtigen Funktionen
+					aus dem <guimenu>CSV_Import</guimenu> und darüber hinaus noch viele weitere Features. Weitere Informationen dazu sind im UCS@school Handbuch
+					(<ulink url="http://docs.software-univention.de/ucsschool-umc-import-handbuch-4.3.html"/>) zu finden.
+ 				</para>
+ 			</important>
+ 		</section>
+
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
 				<section id="changelog:ucsschool:2018-11-15" lang="en">
