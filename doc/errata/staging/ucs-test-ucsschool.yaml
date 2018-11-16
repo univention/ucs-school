@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-test-ucsschool
+fix:
+desc: |
+ * Add selenium tests to ucs-test ucsschool (Bug #47978).
+bug: [47978]

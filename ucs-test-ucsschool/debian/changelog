@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.3-1) unstable; urgency=low
+
+  * Bug #47978: Add selenium tests
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 16 Nov 2018 10:04:07 +0100
+
 ucs-test-ucsschool (5.0.2-100) unstable; urgency=low
 
   * Bug #47966: test exception if no slave DN has been passed to is_school_slave()
