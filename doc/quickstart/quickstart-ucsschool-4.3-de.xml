@@ -74,12 +74,7 @@ feedback@univention.de
   </para>
 
   <para>
-    UCS steht als 32 und 64 Bit-Variante zur Verfügung. Für die Installation auf aktueller Hardware
-    wird die Verwendung eines 64 Bit-Systems (amd64) empfohlen. Die Software steht kostenlos in unserem
-    Download-Bereich (<ulink url="https://www.univention.de/download/ucs-download/"/>) zur Verfügung.
-  </para>
-
-  <para>
+    UCS steht als 64 Bit-Variante (amd64) kostenlos in unserem Download-Bereich (<ulink url="https://www.univention.de/download/ucs-download/"/>) zur Verfügung.
     Alternativ kann UCS auch in der Amazon EC2 Cloud installiert <biblioref linkend="ec2-quickstart"/> und
     für &ucsUAS; verwendet werden. Des Weiteren kann für die Installation von &ucsUAS; auch das VMware-Image
     für UCS verwendet <biblioref linkend="ucs-vm-images"/> und darin die Erweiterung
