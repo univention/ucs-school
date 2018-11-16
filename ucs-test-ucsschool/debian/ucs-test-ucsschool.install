@@ -1,4 +1,4 @@
 90_ucsschool usr/share/ucs-test/
 modules/univention/testing usr/share/pyshared/univention
 00_checks usr/share/ucs-test/
-
+91_ucsschool-selenium usr/share/ucs-test

@@ -1,0 +1,80 @@
+#!/usr/share/ucs-test/runner /usr/share/ucs-test/selenium
+# -*- coding: utf-8 -*-
+## desc: Test the creation and assigning of internet rules
+## roles: [domaincontroller_master]
+## tags: [apptest,ucsschool,ucsschool_selenium]
+## exposure: dangerous
+## packages:
+##   - ucs-school-master | ucs-school-singlemaster
+
+import univention.testing.ucsschool as utu
+from univention.testing import selenium
+from univention.testing.ucr import UCSTestConfigRegistry
+from univention.admin import localization
+
+import sys
+import random
+import string
+
+translator = localization.translation('ucs-test-selenium')
+_ = translator.translate
+
+
+class UMCTester(object):
+
+	def __init__(self, *args, **kwargs):
+		self.selenium = None # type: selenium.UMCSeleniumTest
+		super(UMCTester, self).__init__(*args, **kwargs)
+
+	def create_internet_rule(self, name, type, priority, urls, submit=True):
+		self.selenium.click_text('Add rule')
+		self.selenium.wait_for_text(_('Rule properties'), timeout=10)
+		self.selenium.enter_input('name', name)
+		self.selenium.enter_input_combobox('type', type)
+		index = 0
+		for url in urls:
+			self.selenium.enter_input('__domains-{}-0'.format(str(index)), url)
+			self.selenium.click_button('New entry')
+			index += 1
+		self.selenium.enter_input_combobox('priority', priority)
+		if submit:
+			self.selenium.click_button('Save')
+			self.selenium.wait_for_text(name)
+
+	def test_umc(self):
+		with utu.UCSTestSchool() as schoolenv:
+			ucr = UCSTestConfigRegistry()
+			schoolname, schooldn = schoolenv.create_ou()
+			rulename_blacklist = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
+
+			# Reset password for user
+			self.selenium.do_login()
+			self.selenium.open_module(_('Define internet rules'))
+			self.selenium.wait_for_text(_('Unbeschränkt'))
+			self.create_internet_rule(rulename_blacklist, 'blacklist', 9, ['example.com', 'example2.com'])
+			ucr.load()
+			priority = ucr.get('proxy/filter/setting/{}/priority'.format(rulename_blacklist))
+			list_type = ucr.get('proxy/filter/setting/{}/filtertype'.format(rulename_blacklist))
+			d1 = ucr.get('proxy/filter/setting/{}/domain/blacklisted/1'.format(rulename_blacklist))
+			d2 = ucr.get('proxy/filter/setting/{}/domain/blacklisted/2'.format(rulename_blacklist))
+			assert list_type == 'blacklist-pass', 'List type is {}, not blacklist-pass as expected'.format(list_type)
+			assert priority == '9', 'Priority is {}, not 9 as expected'.format(priority)
+			assert d1 == 'example.com', 'Domain entry 1 is n{}, not example.com as expected'.format(d1)
+			assert d1 == 'example.com', 'Domain entry 1 is n{}, not example.com as expected'.format(d2)
+			self.create_internet_rule(rulename_blacklist, 'blacklist', 9, [], submit=False)
+			self.selenium.click_button('Save')
+			self.selenium.wait_for_text(_('Notification'))
+			self.selenium.click_button('Ok')
+			self.selenium.click_button('Back to overview')
+			self.selenium.click_checkbox_of_grid_entry(rulename_blacklist)
+			self.selenium.click_button('Delete')
+			self.selenium.click_button('Remove rule')
+
+
+
+if __name__ == '__main__':
+	with selenium.UMCSeleniumTest() as s:
+		umc_tester = UMCTester()
+		umc_tester.selenium = s
+
+		umc_tester.test_umc()
