@@ -18,8 +18,8 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.3 v1
-				Stand: 14. März 2018
+				Version 4.3 v6
+				Stand: 16. November 2018
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
@@ -44,34 +44,34 @@
 	<chapter id="audience">
 		<title>Zielgruppe</title>
 		<para>
-			Dieses Handbuch richtet sich an Mitarbeiter, die den grafischen Import von Benutzern durchführen, und ab <xref linkend="install_conf_format"/> an Administratoren, die ihn installieren.
+			Dieses Handbuch richtet sich an Mitarbeiter, die den grafischen Import von Benutzern durchführen, und ab <xref linkend="install_conf_format"/> an Administratoren, die ihn installieren und konfigurieren.
 		</para>
 	</chapter>
 
 	<chapter id="introduction">
 		<title>Einführung</title>
 		<para>
-			&ucsUAS; bringt seit der Version 4.2 v6 ein UMC-Modul mit, dass es ermöglicht sicher und komfortabel Benutzerdaten aus CSV-Dateien zu importieren. Ein flexibles Sicherheitskonzept ermöglicht es Benutzer zu bestimmen, die Importe durchführen und deren Ergebnisse einsehen dürfen.
+			&ucsUAS; bringt seit der Version 4.2 v6 ein UMC-Modul mit, das es ermöglicht, sicher und komfortabel Benutzerdaten aus CSV-Dateien zu importieren. Über ein flexibles Sicherheitskonzept kann einzelnen Benutzern oder ganzen Gruppen die Berechtigung gegeben werden, Importe für bestimmte Schulen durchführen und deren Ergebnisse einsehen zu können.
 		</para>
 		<para>
-			Technisch basiert das UMC-Modul auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.3.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration ist nicht Teil dieses Dokuments.
+			Technisch basiert das UMC-Modul <guimenu>Benutzerimport</guimenu> auf Komponenten der Software, die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.3.html"><citetitle>UCS@school-Handbuch zur CLI-Import-Schnittstelle</citetitle></ulink> beschrieben sind. Die Konfiguration dieser Komponenten ist nicht Teil dieses Dokuments.
 		</para>
 	</chapter>
 
 	<chapter id="procedure">
 		<title>Ablauf des Importvorgangs</title>
 		<para>
-			Das UMC-Modul leitet den Anwender durch den Import in mehreren Schritten:
+			Das UMC-Modul leitet den Anwender in mehreren Schritten durch den Import:
 			<figure id="process">
 				<title>Schritte eines Importvorganges</title>
 				<graphic scalefit="0" align="center" fileref="illustrations43/import_ui_process.png"/>
 			</figure>
 		</para>
 		<para>
-			Ein Import wird gestartet durch Klicken auf "Neuen Benutzerimport durchführen" in der Übersichtsseite. <footnote><simpara>Wenn noch nie ein Import durchgeführt wurde, startet das UMC-Modul, statt mit der Übersicht, direkt mit einem Import.</simpara></footnote>
+			Ein neuer Import kann in der Übersichtsseite durch Klicken auf "Neuen Benutzerimport durchführen" gestartet werden. Wenn noch nie ein Import durchgeführt wurde, startet das UMC-Modul direkt mit den erstem Schritt für einen neuen Import. In allen anderen Fällen wird zunächst die Übersicht angezeigt.
 			<note>
 				<simpara>
-					Sollte sich der Anwender per SAML (<foreignphrase>Single Sign-On</foreignphrase>) angemeldet haben, erscheint ein Fenster, dass (u.U. mehrfach) zur Eingabe des Passwortes auffordert.
+					Sollte sich der Anwender per SAML (<foreignphrase>Single Sign-On</foreignphrase>) angemeldet haben, erscheint ein Fenster, das (u.U. mehrfach) zur Eingabe des eigenen Benutzerpasswortes auffordert.
 				</simpara>
 			</note>
 			<figure id="overview1">
@@ -99,14 +99,17 @@
 				</listitem>
 				<listitem>
 					<simpara>
-						Nun wird eine Simulation des Imports durchgeführt. Das Benutzerverzeichnis wird dabei nicht verändert.
+						Nun werden die Daten geprüft und es wird ein Test-Import durchgeführt, um mögliche Fehler vorab zu erkennen. Das Benutzerverzeichnis wird dabei nicht verändert.
 					</simpara>
 				</listitem>
 				<listitem>
+					<para>
+						Je nach Menge der zu importierenden Daten, kann der Test-Import einige Zeit beanspruchen.
+					</para>
 					<itemizedlist>
 						<listitem>
 							<para>
-								War die Simulation erfolgreich kann nun der tatsächlich Import gestartet werden.
+								War die Simulation erfolgreich, kann nun der tatsächlich Import gestartet werden.
 								<figure id="start_import">
 									<title>Simulation war erfolgreich</title>
 									<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_start_import.png"/>
@@ -115,7 +118,7 @@
 						</listitem>
 						<listitem>
 							<para>
-								Traten während der Simulation Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
+								Traten während des Test-Imports Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
 								<figure id="sim_had_error">
 									<title>Simulation hatte Fehler</title>
 									<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_simulation_error.png"/>
@@ -126,7 +129,7 @@
 				</listitem>
 				<listitem>
 					<para>
-						Nach dem Start des Imports kehrt das UMC-Modul zur Übersichtsseite zurück. Wenn der neue Import-Job noch nicht angezeigt wird, kann die Liste mit dem "Aktualisieren" Knopf neu geladen werden.
+						Nach dem Start des Imports kehrt das UMC-Modul zur Übersichtsseite zurück. Wenn der neue Import-Job noch nicht angezeigt wird, kann die Liste mit der Schaltfläche "Aktualisieren" neu geladen werden.
 						<figure id="overview2">
 							<title>Übersichtsseite mit gestartetem Import</title>
 							<graphic scalefit="1" width="95%" align="center" fileref="illustrations43/import_ui_overview2.png"/>
@@ -142,7 +145,7 @@
 		<section id="installation">
 			<title>Installation</title>
 			<para>
-				Die Installation muss auf dem DC Master stattfinden:
+				Die Installation muss auf dem &ucsMaster; stattfinden:
 				<programlisting>
 # univention-install ucs-school-umc-import
 				</programlisting>
@@ -152,9 +155,9 @@
 		<section id="configuration">
 			<title>Konfiguration</title>
 			<para>
-				Das Setzen der &ucsUCR;-Variablen <envar>ucsschool/import/error/mail-address</envar> ist wichtig, damit Anwender bei Fehlern in der UMC, durch Klicken auf den oben beschriebenen Link, eine E-Mail an den Administrator schicken können.
+				Das Setzen der &ucsUCR;-Variablen <envar>ucsschool/import/error/mail-address</envar> ist wichtig, damit Anwender beim Auftreten eines Fehlers, eine E-Mail an den Administrator schicken können, indem sie auf den oben beschriebenen Link klicken.
 				<programlisting>
-# ucr set ucsschool/import/error/mail-address=admin@schule.de
+# ucr set ucsschool/import/error/mail-address=admin@ihre-schule.de
 				</programlisting>
 			</para>
 			<para>
@@ -193,19 +196,27 @@
 "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 							</programlisting>
 						</para>
-						<simpara>
+					</listitem>
+					<listitem>
+						<para>
 							Daten in Spalten sind in doppelten Anführungszeichen eingeschlossen.
-						</simpara>
-						<simpara>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
 							Die Spalten sind durch Komma voneinander getrennt.
-						</simpara>
-						<simpara>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
 							Es muss jeweils eine Spalte für die primäre Schule eines Benutzers, seinen Vor- und Nachnamen geben.
-						</simpara>
-						<simpara>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
 							Mehrere Klassennamen werden durch Komma, ohne Freizeichen, getrennt aufgezählt (z.B. <literal>1a,2b,3c</literal>).
 							Klassennamen dürfen, aber brauchen nicht, den Namen der Schule (mit einem Bindestrich verbunden) vorangestellt haben (z.B. <literal>Scholl-1a,Scholl-2b,Scholl-3c</literal>). Wird der Name der Schule vorangestellt, <emphasis>muss</emphasis> dies der gleiche Wert sein wie in der Spalte für die Schule.
-						</simpara>
+						</para>
 					</listitem>
 				</itemizedlist>
 			</para>
