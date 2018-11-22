@@ -17,6 +17,7 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 def replace_ucr_variables(template):
 	variable_token = re.compile('@[$]@')
 	replacements = {
+		'STAFF2EDU': '# ' if configRegistry.is_true('ucsschool/ldap/replicate_staff_to_edu', False) else '',
 		'DISTRICT': 'ou=[^,]+,' if configRegistry.is_true('ucsschool/ldap/district/enable', False) else '',
 		'PUPILS': configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler'),
 		'TEACHERS': configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer'),
@@ -194,15 +195,16 @@ access to filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeache
 	by * +0 break
 
 # domaincontroller slaves and memberservers of educational group are not allowed to replicate staff users
-access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by * +0 break
+# the following 2 ACLs may be deactivated via the UCR variable "ucsschool/ldap/replicate_staff_to_edu"
+@$@STAFF2EDU@$@access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
+@$@STAFF2EDU@$@	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+@$@STAFF2EDU@$@	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+@$@STAFF2EDU@$@	by * +0 break
 
-access to filter="(&(objectClass=ucsschoolStaff)(!(objectClass=ucsschoolTeacher))(!(objectClass=ucsschoolAdministrator)))"
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by * +0 break
+@$@STAFF2EDU@$@access to filter="(&(objectClass=ucsschoolStaff)(!(objectClass=ucsschoolTeacher))(!(objectClass=ucsschoolAdministrator)))"
+@$@STAFF2EDU@$@	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+@$@STAFF2EDU@$@	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+@$@STAFF2EDU@$@	by * +0 break
 
 # FIXME: this rule allows to read all passwords underneath of all OU's instead of only the password belonging to the OU; explain why or fix it
 # TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory'
