@@ -551,8 +551,8 @@ class UCSTestSchool(object):
 		if mailaddress is None:
 			mailaddress = ''
 		kwargs = {
-			'school': ou_name,
-			'schools': schools,
+			'school': schools or ou_name,  # use all schools or fall back to single ou_name
+#		   	'schools': schools,   # property not available via UDM
 			'username': username,
 			'firstname': firstname,
 			'lastname': lastname,

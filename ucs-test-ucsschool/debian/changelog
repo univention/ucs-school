@@ -1,3 +1,16 @@
+ucs-test-ucsschool (5.0.3-3) unstable; urgency=low
+
+  * Bug #48068: fix wrong logic in
+    univention.testing.ucsschool.create_school_admin() regarding school membership.
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 22 Nov 2018 22:54:13 +0100
+
+ucs-test-ucsschool (5.0.3-2) unstable; urgency=low
+
+  * Bug #47625: add 24_password_reset_acl
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 22 Nov 2018 13:09:33 +0100
+
 ucs-test-ucsschool (5.0.3-1) unstable; urgency=low
 
   * Bug #47978: Add selenium tests
