@@ -245,6 +245,17 @@ access to dn.regex="^uid=([^,]+),cn=@$@EXAM@$@,ou=([^,]+),@$@DISTRICT@$@@%@ldap/
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
 	by * +0 break
 
+# Students dürfen PWHashes von anderen Usern der gleichen Schule nicht lesen
+access to attrs=krb5Key,sambaLMPassword,sambaNTPassword,userPassword,pwhistory
+	by set="this/ucsschoolSchool & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolStudent%29%29])/ucsschoolSchool" none
+	by * +0 break
+
+# Schuluser dürfen andere Schuluser auslesen, sofern sie zur eigenen Schule gehören
+access to dn.regex="^(.+,)?ou=[^,]+,@%@ldap/base@%@$$"
+	by set="this/ucsschoolSchool & user/ucsschoolSchool" read break
+	by * +0 break
+
+
 # Schul-Slave-Server duerfen nur Eintraege ihrer OU lesen und schreiben (Passwortaenderungen etc.)
 # Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
