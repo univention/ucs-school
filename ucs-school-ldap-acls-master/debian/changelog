@@ -1,5 +1,9 @@
 ucs-school-ldap-acls-master (16.0.3-1) unstable; urgency=low
 
+  * Bug #48068: added UCR variable ucsschool/ldap/replicate_staff_to_edu
+    that reconfigures the LDAP ACLs to enable staff users to be replicated
+    to educational slaves/memberservers. There is no change in behaviour
+    by default.
   * Bug #47625:
     - students may no longer read password attributes from other users
       (but all other attributes)
