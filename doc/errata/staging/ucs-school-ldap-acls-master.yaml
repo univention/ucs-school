@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.3"
+version: [2]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-ldap-acls-master
+fix: 
+desc: |
+ * Insufficient LDAP permissions and an typo within the LDAP ACLs prevented teachers from resetting student
+   passwords if the student is located underneath another school OU. This problem has been fixed (Bug #47625).
+bug: [47625]
