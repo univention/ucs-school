@@ -1,3 +1,13 @@
+ucs-school-ldap-acls-master (16.0.3-1) unstable; urgency=low
+
+  * Bug #47625:
+    - students may no longer read password attributes from other users
+      (but all other attributes)
+    - give users read permissions to other OU's user/group containers
+    - fix wrong LDAP filter in ACL
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 09 Aug 2018 15:13:28 +0200
+
 ucs-school-ldap-acls-master (16.0.2-1) unstable; urgency=medium
 
   * Bug #46725: Allow read access to GPO list for all DC-Slaves
