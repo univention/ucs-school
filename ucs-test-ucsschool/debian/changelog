@@ -1,4 +1,4 @@
-ucs-test-ucsschool (5.0.3-3) unstable; urgency=low
+ucs-test-ucsschool (5.0.3-4) unstable; urgency=low
 
   * Bug #47978: fix 01_password_reset
 
