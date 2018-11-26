@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-metapackage
+fix: 11.0.2-8A~4.3.0.201811261200
+desc: |
+ * Fix a typo in the new demonstration portal (Bug #48186).
+bug: [48186]
