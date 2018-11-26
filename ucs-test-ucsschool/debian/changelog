@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.3-5) unstable; urgency=low
+
+  * Bug #47625: shortened edu slave name in 24_password_reset_acl
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 26 Nov 2018 10:38:08 +0100
+
 ucs-test-ucsschool (5.0.3-4) unstable; urgency=low
 
   * Bug #47978: fix 01_password_reset
