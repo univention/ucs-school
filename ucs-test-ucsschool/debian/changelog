@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.3-6) unstable; urgency=low
+
+  * Bug #47625: 24_password_reset_acl do not try to modify krb5key
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 27 Nov 2018 09:30:44 +0100
+
 ucs-test-ucsschool (5.0.3-5) unstable; urgency=low
 
   * Bug #47625: shortened edu slave name in 24_password_reset_acl
