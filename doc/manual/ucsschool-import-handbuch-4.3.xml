@@ -662,7 +662,7 @@ python -m json.tool &lt; my_config.json
 <!-- scheme:email -->
 							<row>
 								<entry morerows="1"><varname>scheme:email</varname></entry>
-								<entry>Schema aus dem die Email-Adresse erzeugt werden soll. Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames_and_email"/>).</entry>
+								<entry>Schema, aus dem die Email-Adresse erzeugt werden soll. Zusätzlich zu den in <xref linkend="configuration:scheme_formatting"/> beschriebenen Ersetzungen kommen noch zwei weitere hinzu: <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> (siehe <xref linkend="configuration:unique_usernames_and_email"/>). Für die Verwendung des <varname>email</varname>-Schemas ist es erforderlich, dass <varname>maildomain</varname> oder die UCR-Variable <envar>mail/hosteddomains</envar> gesetzt ist. Anderenfalls wird keine Mailadresse generiert.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): <literal>"&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;"</literal></entry>
@@ -702,7 +702,7 @@ python -m json.tool &lt; my_config.json
 <!-- maildomain -->
 							<row>
 								<entry morerows="1"><varname>maildomain</varname></entry>
-								<entry>Der Wert dieser Variable wird beim Formatieren mit einem Schema in die Variable <varname>&lt;maildomain&gt;</varname> eingesetzt. Wenn nicht gesetzt, wird versucht <varname>&lt;maildomain&gt;</varname> durch Daten aus dem System zu füllen.</entry>
+								<entry>Der Wert dieser Variable wird beim Formatieren mit einem Schema in die Variable <varname>&lt;maildomain&gt;</varname> eingesetzt. Wenn nicht gesetzt, wird versucht <varname>&lt;maildomain&gt;</varname> durch Daten aus dem System zu füllen. Dafür wird die UCR-Variable <envar>mail/hosteddomains</envar> herangezogen. Sind <varname>maildomain</varname> und <envar>mail/hosteddomains</envar> nicht gesetzt, werden keine Mailadressen automatisch generiert.</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
