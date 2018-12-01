@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.3-7) unstable; urgency=low
+
+  * Bug #47625: 24_password_reset_acl: print slapd.conf to stderr for
+    further debugging
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sat, 01 Dec 2018 20:27:26 +0100
+
 ucs-test-ucsschool (5.0.3-6) unstable; urgency=low
 
   * Bug #47625: 24_password_reset_acl do not try to modify krb5key
