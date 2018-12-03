@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.3-8) unstable; urgency=low
+
+  * Bug #47625: 24_password_reset_acl: flush after output
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 03 Dec 2018 10:21:29 +0100
+
 ucs-test-ucsschool (5.0.3-7) unstable; urgency=low
 
   * Bug #47625: 24_password_reset_acl: print slapd.conf to stderr for
