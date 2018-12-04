@@ -817,8 +817,8 @@ feedback@univention.de
 							<para>
 								Dem Domänennamen für &ucsUAS; werden die Namen der Rechner und Server vorangestellt,
 								um für diese Systeme einen voll qualifizierten DNS-Namen (FQDN) zu bilden. Zum Beispiel
-								ist der Rechner	<systemitem	class="domainname">ucsma-01</systemitem> somit unter dem FQDN
-								<systemitem	class="domainname">ucsma-01.schulen.example.com</systemitem> zu erreichen.
+								ist der Rechner	<systemitem	class="domainname">ucszen01</systemitem> somit unter dem FQDN
+								<systemitem	class="domainname">ucszen01.schulen.example.com</systemitem> zu erreichen.
 							</para>
 						</listitem>
 					</itemizedlist>
@@ -848,13 +848,14 @@ feedback@univention.de
 				<para>
 					Zentrale Server:
 					<itemizedlist>
-						<listitem><para>Schema: <systemitem class="systemname">[Rollenbezeichnung]-[Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiele:
+						<listitem><para>Schema: <systemitem class="systemname">[System][Standort][Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiel: System UCS, Standort Zentral, erstes System: ucszen01</para></listitem>
+						<listitem><para>Weitere Beispiele:
 								<itemizedlist>
-									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucsma-01</systemitem></para></listitem>
-									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucsba-02</systemitem>, <systemitem class="systemname">ucsba-03</systemitem></para></listitem>
-									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucssl-04</systemitem></para></listitem>
-									<listitem><para>&ucsMember;: <systemitem class="systemname">ucsme-05</systemitem></para></listitem>
+									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucszen01</systemitem></para></listitem>
+									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucszen02</systemitem>, <systemitem class="systemname">ucszen03</systemitem></para></listitem>
+									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucszen04</systemitem></para></listitem>
+									<listitem><para>&ucsMember;: <systemitem class="systemname">ucszen05</systemitem></para></listitem>
 								</itemizedlist>
 							</para>
 						</listitem>
@@ -1786,7 +1787,7 @@ feedback@univention.de
 							&ucsMaster; umgeleitet werden sollen, ist die
 							&ucsUCR;-Variable <envar>mail/alias/root</envar> auf
 							den Wert
-							<literal>root@ucsma-01.schulen.example.com</literal>
+							<literal>root@ucszen01.schulen.example.com</literal>
 							zu stellen.  <literal>schulen.example.com</literal>
 							muss durch den tatsächlichen Domänennamen ersetzt
 							werden.
