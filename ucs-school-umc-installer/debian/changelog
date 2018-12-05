@@ -1,3 +1,9 @@
+ucs-school-umc-installer (6.0.0-5) unstable; urgency=low
+
+  * Bug #47640: Improved user guidance
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 05 Dec 2018 08:18:32 +0100
+
 ucs-school-umc-installer (6.0.0-4) unstable; urgency=low
 
   * Bug #47807: Fix missing python version in script
@@ -255,7 +261,7 @@ ucs-school-umc-installer (2.0.13-1) unstable; urgency=low
 ucs-school-umc-installer (2.0.12-1) unstable; urgency=low
 
   * Bug #34823: the installer now checks after page "server_type" if
-    another slave of same type exists in OU 
+    another slave of same type exists in OU
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 13 May 2014 17:21:52 +0200
 

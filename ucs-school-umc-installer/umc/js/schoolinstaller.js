@@ -499,7 +499,7 @@ define([
 			}
 
 			// request installation
-			var next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
+			var next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. It is recommended to wait with any other activity on the system until the installation has been completed. Please confirm now to continue with the installation process.') + '</div>', [{
 				name: 'cancel',
 				label: _('Cancel'),
 				'default': true
@@ -562,7 +562,7 @@ define([
 			// button anyways
 			return false;
 		},
-		
+
 		getFooterButtons: function(pageName) {
 			var buttons = this.inherited(arguments);
 			if (pageName === 'alreadyInstalled') {

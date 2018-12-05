@@ -21,7 +21,12 @@
 	Im folgenden werden zwei Installationsvarianten beschrieben:
 	die Installation als Single-Server-Umgebung und die Installation als
 	Multi-Server-Umgebung mit einem Domänencontroller Master und mindestens einem
-	Schulserver. Die nachträgliche Umwandlung einer Single-Server-Umgebung in eine
+	Schulserver. In beiden Fällen wird empfohlen während des Installationsprozesses von &ucsUAS; keine weiteren Aktionen
+	in der UMC oder auf der Kommandozeile auszuführen. Sollten Sie das Browserfenster während des Installationsprozesses von
+	&ucsUAS; schließen, läuft die Installation selbst dennoch auf dem System weiter. Um den Status der Installation dann
+	noch zu überprüfen, können Sie das Log in <filename>/var/log/univention/management-console-module-schoolinstaller.log</filename>
+	konsultieren.
+	Die nachträgliche Umwandlung einer Single-Server-Umgebung in eine
 	Multi-Server-Umgebung wird unterstützt und in <xref linkend="school:installation:migration-single2multi"/> genauer beschrieben.
   </para>
 
@@ -333,7 +338,7 @@
 		<para>
 			Auf dem DC Master muss zunächst über die &ucsUMC; die installierte Version von &ucsUAS; ermittelt werden. Alternativ kann dies auch auf der Kommandozeile über den Befehl <command>univention-app info</command> erfolgen.
 			<programlisting language="sh">
-master# univention-app info 
+master# univention-app info
 UCS: 4.1-3 errata282
 App Center compatibility: 4
 Installed: cups=1.5.3 samba4=4.3 squid=3.1 ucsschool=4.1 R2 v5
