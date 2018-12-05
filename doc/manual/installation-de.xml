@@ -22,7 +22,7 @@
 	die Installation als Single-Server-Umgebung und die Installation als
 	Multi-Server-Umgebung mit einem Domänencontroller Master und mindestens einem
 	Schulserver. In beiden Fällen wird empfohlen während des Installationsprozesses von &ucsUAS; keine weiteren Aktionen
-	in der UMC oder auf der Kommandozeile auszuführen. Sollten Sie das Browserfenster während des Installationsprozesses von
+	in der UMC oder auf der Kommandozeile auszuführen. Sollten Sie das Fenster im Browser während des Installationsprozesses von
 	&ucsUAS; schließen, läuft die Installation selbst dennoch auf dem System weiter. Um den Status der Installation dann
 	noch zu überprüfen, können Sie das Log in <filename>/var/log/univention/management-console-module-schoolinstaller.log</filename>
 	konsultieren.
