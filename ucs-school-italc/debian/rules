@@ -33,5 +33,9 @@
 override_dh_auto_test:
 	ucslint
 
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -f Makefile *.cpp *.h *.sbf *.o *.so *.exp
+
 %:
 	dh $@ --with python_support
