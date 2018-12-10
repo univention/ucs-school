@@ -6,7 +6,8 @@ src: ucs-school-ldap-acls-master
 fix: 
 desc: |
  * Insufficient LDAP permissions and an typo within the LDAP ACLs prevented teachers from resetting student
-   passwords if the student is located underneath another school OU. This problem has been fixed (Bug #47625).
+   passwords if the student is located underneath another school OU. The problem also occurred when a school
+   administrator tried to reset a teacher password. Both problems have been fixed (Bug #47625).
  * Added new beta feature to enable educational school slaves to replicate also UCS@school staff user objects.
    This feature can be activated via the UCR variable <envar>ucsschool/ldap/replicate_staff_to_edu</envar>.
    Please activate this feature only if you know all side effects and necessary steps (Bug #48068).
