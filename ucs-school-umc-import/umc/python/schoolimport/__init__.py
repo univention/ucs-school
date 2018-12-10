@@ -211,7 +211,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			'school': job.school.displayName,
 			'creator': job.principal,
 			'userrole': self._parse_user_role(job.user_role),
-			'date': job.date_created.strftime('%Y/%m/%d %H:%M:%S'),
+			'date': job.date_created.isoformat(),
 			'status': self._parse_status(job.status),
 		} for job in self._jobs()]
 
