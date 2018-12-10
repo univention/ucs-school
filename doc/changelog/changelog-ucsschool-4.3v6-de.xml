@@ -183,7 +183,39 @@ feedback@univention.de
 					<!-- END ucs-school-webproxy 14.0.0-8A~4.3.0.201810170934 -->
 <!-- CHANGELOG:2018-11-15:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2018-12-10" lang="en">
+					<title>Released on 2018-12-10:</title>
+					<!-- START ucs-school-metapackage 11.0.2-8A~4.3.0.201811261200 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>11.0.2-8A~4.3.0.201811261200</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fix a typo in the new demonstration portal (<u:bug>48186</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 11.0.2-8A~4.3.0.201811261200 -->
+					<!-- START ucs-school-umc-import 1.0.1-4A~4.3.0.201812101048 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-import</emphasis> in version <emphasis>1.0.1-4A~4.3.0.201812101048</emphasis>:
+						<itemizedlist>
+							<listitem><para>Due to the upgrade from dojo to a newer version the job overview in the User Import UMC module did not display any jobs. This error was fixed (<u:bug>48303</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-import 1.0.1-4A~4.3.0.201812101048 -->
+					<!-- START ucs-school-umc-installer 6.0.0-5A~4.3.0.201812050855 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-installer</emphasis> in version <emphasis>6.0.0-5A~4.3.0.201812050855</emphasis>:
+						<itemizedlist>
+							<listitem><para>The user guidance during the installation of UCS@school was improved (<u:bug>47640</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-installer 6.0.0-5A~4.3.0.201812050855 -->
+<!-- CHANGELOG:2018-12-10:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
