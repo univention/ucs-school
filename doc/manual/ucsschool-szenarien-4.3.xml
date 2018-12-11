@@ -1875,12 +1875,22 @@ feedback@univention.de
 							<row>
 								<entry><envar>ucsschool/wizards/autosearch</envar></entry>
 								<entry><literal>false</literal></entry>
-								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen der &ucsUAS;-Module.  Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen der &ucsUAS;-Module. Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/passwordreset/autosearch</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen des &ucsUAS;-Moduls zum Zurücksetzen von Passwörtern. Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/passwordreset/autosearch_on_change</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten im &ucsUAS;-Modul zum Zurücksetzen von Passwörtern nachdem der Suchfilter geändert wurde. Dies vereinheitlich das Verhalten der &ucsUAS;-Module, kann bei Bedarf aber auch auf dem Standardwert belassen bzw. nicht angepasst werden.</entry>
 							</row>
 							<row>
 								<entry><envar>samba4/sysvol/sync/from_downstream</envar></entry>
 								<entry><literal>false</literal></entry>
-								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS; Schulservern.  Dies beugt Problemen mit der Replikation vor.</entry>
+								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS; Schulservern. Dies beugt Problemen mit der Replikation vor.</entry>
 							</row>
 							<row>
 								<entry><envar>nagios/client/allowedhosts</envar></entry>
