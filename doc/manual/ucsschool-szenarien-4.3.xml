@@ -849,7 +849,7 @@ feedback@univention.de
 					Zentrale Server:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="systemname">[System][Standort][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiel: System UCS, Standort Zentral, erstes System: ucszen01</para></listitem>
+						<listitem><para>Beispiel: System UCS, Standort Zentral, erstes System: <systemitem class="systemname">ucszen01</systemitem></para></listitem>
 						<listitem><para>Weitere Beispiele:
 								<itemizedlist>
 									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucszen01</systemitem></para></listitem>
