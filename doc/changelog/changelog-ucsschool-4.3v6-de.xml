@@ -214,7 +214,32 @@ feedback@univention.de
 					<!-- END ucs-school-umc-installer 6.0.0-5A~4.3.0.201812050855 -->
 <!-- CHANGELOG:2018-12-10:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2018-12-12" lang="en">
+					<title>Released on 2018-12-12:</title>
+					<!-- START ucs-school-ldap-acls-master 16.0.3-1A~4.3.0.201811222349 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>16.0.3-1A~4.3.0.201811222349</emphasis>:
+						<itemizedlist>
+							<listitem><para>Insufficient LDAP permissions and an typo within the LDAP ACLs prevented teachers from resetting student passwords if the student is located underneath another school OU. The problem also occurred when a school administrator tried to reset a teacher password. Both problems have been fixed (<u:bug>47625</u:bug>).</para></listitem>
+
+							<listitem><para>Added new beta feature to enable educational school slaves to replicate also UCS@school staff user objects. This feature can be activated via the UCR variable <envar>ucsschool/ldap/replicate_staff_to_edu</envar>. Please activate this feature only if you know all side effects and necessary steps (<u:bug>48068</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 16.0.3-1A~4.3.0.201811222349 -->
+					<!-- START ucs-school-lib 11.0.1-29A~4.3.0.201812121014 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>11.0.1-29A~4.3.0.201812121014</emphasis>:
+						<itemizedlist>
+							<listitem><para>After changes to the school lib it was no longer possible to create schools with DC's for which a computer object already existed. This Bug was fixed (<u:bug>48245</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 11.0.1-29A~4.3.0.201812121014 -->
+<!-- CHANGELOG:2018-12-12:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 		</section>
