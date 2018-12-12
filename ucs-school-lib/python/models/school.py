@@ -323,8 +323,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			else:
 				dc = SchoolDCSlave.from_udm_obj(SchoolDCSlave.get_first_udm_obj(lo, 'cn={}'.format(self.dc_name)), self.name, lo)
 				if ucr.is_true('ucsschool/feature/roles') and dc:
-					dc['ucsschool_roles'] = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
-					dc.modify()
+					dc.ucsschool_roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
+					dc.modify(lo)
 			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
 			for grp in groups:
 				if grp not in dc_udm_obj['groups']:

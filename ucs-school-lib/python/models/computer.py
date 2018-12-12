@@ -93,6 +93,10 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 					udm_obj['groups'].append(group)
 		return super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
+	def get_schools_from_udm_obj(self, udm_obj):
+		# fixme: no idea how to find out old school
+		return self.school
+
 	def move_without_hooks(self, lo, udm_obj=None, force=False):
 		try:
 			if udm_obj is None:
