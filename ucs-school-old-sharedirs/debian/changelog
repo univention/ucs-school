@@ -1,3 +1,9 @@
+ucs-school-old-sharedirs (14.0.0-0) unstable; urgency=low
+
+  * bump version for UCS@school 4.4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 14 Dec 2018 22:14:32 +0200
+
 ucs-school-old-sharedirs (13.0.0-1) unstable; urgency=low
 
   * Bug #45988: bumped version

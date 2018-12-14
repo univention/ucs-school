@@ -1,3 +1,9 @@
+ucs-school-import (17.0.0-0) unstable; urgency=medium
+
+  * bump version for UCS@school 4.4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 14 Dec 2018 22:14:32 +0200
+
 ucs-school-import (16.0.2-63) unstable; urgency=medium
 
   * Bug #46765: temporarily include shell script hooks in create_ou script

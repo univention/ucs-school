@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-0) unstable; urgency=low
+
+  * bump version for UCS@school 4.4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 14 Dec 2018 22:14:32 +0200
+
 ucs-test-ucsschool (5.0.3-8) unstable; urgency=low
 
   * Bug #47625: 24_password_reset_acl: flush after output

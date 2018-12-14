@@ -1,3 +1,9 @@
+ucs-school-umc-lists (2.0.0-0) unstable; urgency=medium
+
+  * bump version for UCS@school 4.4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 14 Dec 2018 22:14:32 +0200
+
 ucs-school-umc-lists (1.0.0-6) unstable; urgency=medium
 
   * Bug #47017: remove fullWidth attribute from help text

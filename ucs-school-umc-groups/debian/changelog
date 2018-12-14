@@ -1,3 +1,9 @@
+ucs-school-umc-groups (9.0.0-0) unstable; urgency=low
+
+  * bump version for UCS@school 4.4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 14 Dec 2018 22:14:32 +0200
+
 ucs-school-umc-groups (8.0.0-3) unstable; urgency=low
 
   * Bug #44846: fix SyntaxError for systems that have Python 2.6 installed

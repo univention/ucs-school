@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-0) unstable; urgency=medium
+
+  * bump version for UCS@school 4.4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 14 Dec 2018 22:14:32 +0200
+
 ucs-school-umc-computerroom (10.0.2-5) unstable; urgency=medium
 
   * Bug #43080: Disable submit button if no room is selected (comment #12)

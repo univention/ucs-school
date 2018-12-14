@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (15.0.0-0) unstable; urgency=medium
+
+  * bump version for UCS@school 4.4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 14 Dec 2018 22:14:32 +0200
+
 ucs-school-netlogon-user-logonscripts (14.0.1-6) unstable; urgency=medium
 
   * Bug #47937: Fix CheckPattern
