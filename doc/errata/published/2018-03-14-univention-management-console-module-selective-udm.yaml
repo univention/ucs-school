@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.2"
-version: [1]
-scope: ucs_4.2-0-ucs-school-4.2
-src: univention-management-console-module-selective-udm
-fix: 
-desc: |
- * The error return codes when joining computers have been improved (Bug #45708).
-bug: [45708]

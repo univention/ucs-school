@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.3"
-version: [0]
-scope: ucs_4.3-0-ucs-school-4.3
-src: ucs-school-radius-802.1x
-fix: 7.0.0-8A~4.3.0.201804111426
-desc: |
- * The radius server identity is not case sensitive anymore. This fixes problems with Windows clients that send their identity in upper case while the computers identity is stored in lower case on the UCS@school radius server (Bug #45684).
-bug: [46806]

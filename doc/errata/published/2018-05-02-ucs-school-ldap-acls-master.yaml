@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.3"
-version: [1]
-scope: ucs_4.3-0-ucs-school-4.3
-src: ucs-school-ldap-acls-master
-fix: 16.0.2-1A~4.3.0.201803221038
-desc: |
- * A DC-Slave can now read which GPOs are applied at other schools. This is needed to apply the right GPOs for users which can login at multiple schools (Bug #46725).
-bug: [46725]

@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.3"
-version: [1]
-scope: ucs_4.3-0-ucs-school-4.3
-src: ucs-school-umc-installer
-fix: 6.0.0-5A~4.3.0.201812050855
-desc: |
- * The user guidance during the installation of UCS@school was improved (Bug #47640).
-bug: [47640]

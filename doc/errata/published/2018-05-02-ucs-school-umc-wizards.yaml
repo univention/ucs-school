@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.3"
-version: [0]
-scope: ucs_4.3-0-ucs-school-4.3
-src: ucs-school-umc-wizards 
-fix: 10.0.1-1A~4.3.0.201803231614
-desc: |
- * Offer object creation if non exists for user/classes/computer school modules (Bug #46596)
-bug: [46596]

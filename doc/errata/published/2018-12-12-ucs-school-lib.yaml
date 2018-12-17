@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.3"
-version: [1]
-scope: ucs_4.3-0-ucs-school-4.3
-src: ucs-school-lib
-fix: 11.0.1-29A~4.3.0.201812121014
-desc: |
- * After changes to the school lib it was no longer possible to create schools with DC's for which a computer object already existed. This Bug was fixed (Bug #48245).
-bug: [48245]

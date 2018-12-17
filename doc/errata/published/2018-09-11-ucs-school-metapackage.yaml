@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.3"
-version: [1]
-scope: ucs_4.3-0-ucs-school-4.3
-src: ucs-school-metapackage
-fix: 11.0.1-6A~4.3.0.201807111623
-desc: |
- * Restart the S4 connector to enable configuration changes in join scripts (Bug #47332).
-bug: [47332]

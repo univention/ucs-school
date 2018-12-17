@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.3"
-version: [1]
-scope: ucs_4.3-0-ucs-school-4.3
-src: ucs-school-umc-import
-fix: 1.0.1-4A~4.3.0.201812101048
-desc: |
- * Due to the upgrade from dojo to a newer version the job overview in the User Import UMC module did not display any jobs. This error was fixed (Bug #48303).
-bug: [48303]
