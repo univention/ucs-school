@@ -8,18 +8,18 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="quickstart-ucsschool-de-4.3">
+<book lang="de" id="quickstart-ucsschool-de-4.4">
 <bookinfo>
   <title>&ucsUAS;</title>
   <subtitle>Quickstart Guide für &ucsUAS;</subtitle>
     <legalnotice>
       <literallayout>
-Version 4.3 v1
-Stand: 14. März 2018
+Version 4.4 v1
+Stand: 12. März 2019
       </literallayout>
       <literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2018
+(c) 2002-2019
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -256,7 +256,7 @@ feedback@univention.de
   </para>
 
   <figure id="ucsschool-module">
-	<title>Modulübersicht &ucsUAS; 4.3</title>
+	<title>Modulübersicht &ucsUAS; 4.4</title>
 	<graphic scalefit="1" width="80%" align="center" fileref="illustrations43/module_overview_Administrator_admin.png"/>
   </figure>
 
@@ -485,7 +485,7 @@ feedback@univention.de
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>&ucsUAS; in einer Multi-Server-Umgebung installieren</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.3.html#school:installation:master2"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:installation:master2"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucs-vm-images">
     <publishername>Univention GmbH</publishername>
@@ -497,43 +497,43 @@ feedback@univention.de
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>App Center</title>
-    <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=UCS@school_4.3_Quickstart#Installation_von_UCS.40school_in_einer_Multi-Server-Umgebung"/></releaseinfo>
+    <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=UCS@school_4.4_Quickstart#Installation_von_UCS.40school_in_einer_Multi-Server-Umgebung"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-teacher">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>&ucsUAS; - Handbuch für Lehrkräfte und Schuladministratoren</title>
-    <releaseinfo><ulink url="https://docs.univention.de/ucsschool-lehrer-handbuch-4.3.html"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.univention.de/ucsschool-lehrer-handbuch-4.4.html"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-admin">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>&ucsUAS; - Handbuch für Administratoren</title>
-    <releaseinfo><ulink url="http://docs.software-univention.de/ucsschool-handbuch-4.3.html"/></releaseinfo>
+    <releaseinfo><ulink url="http://docs.software-univention.de/ucsschool-handbuch-4.4.html"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucs-computer-management">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>Rechnerverwaltung</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.3.html#computers:general"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.4.html#computers:general"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-computer-import">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>Import von Rechnerkonten für Windows-PCs</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.3.html#school:schoolcreate:computers"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:schoolcreate:computers"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucs-computer-windows">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>Konfiguration und Management von Windows-Desktops</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.3.html#windows:samba4:desktopmanagement"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.4.html#windows:samba4:desktopmanagement"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-italk">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>iTALC-Installation auf Windows-Clients</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.3.html#school:windows:italc"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:windows:italc"/></releaseinfo>
   </biblioentry>
 
   <bibliomixed id="ec2-quickstart"/>
