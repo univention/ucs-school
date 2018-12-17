@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.3-admin">
+<book lang="de" id="ucsschool-4.4-admin">
   <bookinfo>
     <title>
       &ucsUAS;
@@ -18,13 +18,13 @@
     </subtitle>
     <legalnotice>
       <literallayout>
-Version 4.3 v1
-Stand: 14. März 2018
+Version 4.4 v1
+Stand: 12. März 2019
       </literallayout>
 
       <literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2018
+(c) 2002-2019
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
