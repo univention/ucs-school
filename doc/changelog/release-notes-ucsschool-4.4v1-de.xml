@@ -6,19 +6,19 @@
 	%extensions;
 	%entities;
 ]>
-<book lang="de" id="releasenotes-4.3-de">
+<book lang="de" id="releasenotes-4.4-de">
 
 	<bookinfo>
- 		<title>UCS@school 4.3 v1 Release Notes</title>
-		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.3 v1</subtitle>
+ 		<title>UCS@school 4.4 v1 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.4 v1</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.3 v1
-Stand: 14. März 2018
+Version 4.4 v1
+Stand: 12. März 2019
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2018
+(c) 2002-2019
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -40,42 +40,12 @@ feedback@univention.de
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
 		<para>
-			UCS@school 4.3 steht jetzt auch für das dritte Minor Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
-			umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 4.3
+			UCS@school 4.4 steht jetzt auch für das dritte Minor Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
+			umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 4.4
 			eingeflossen sind. Die wichtigsten Änderungen im Überblick:
 			<itemizedlist>
 				<listitem><para>
-					UCS 4.3 basiert auf Debian GNU/Linux 9 (<wordasword>Stretch</wordasword>). Mehr als 20.000 Quellpakete wurden aktualisiert und
-					zum Teil an die Bedürfnisse der Nutzer von UCS angepasst. Als Linux-Kernel wird nun der unveränderte Kernel von Debian GNU/Linux
-					verwendet. Das erhöht die Kompatibilität zu Hard- und Softwaresystemen, die für Debian zertifiziert sind.
-				</para></listitem>
-				<listitem><para>
-					Über die mit UCS 4.2 eingeführten Portalseiten erhalten Nutzer von überall einfachen Zugriff auf relevante Anwendungen.
-					Mit UCS 4.3 können Administratoren diese Portale in einem Visual Composer Modus und via Drag and Drop einfach aufbauen und verwalten.
-					Je nach Berechtigung, Abteilung, Niederlassung oder Schule können den Nutzern oder Gruppen unterschiedliche Inhalte angezeigt werden.
-				</para></listitem>
-				<listitem><para>
-					Mit UCS 4.3 ist die SAML-Authentifizierung mit der Kerberos-Anmeldung verknüpft. An Windows oder Linux (Ubuntu) angemeldete
-					Nutzer können ohne eine erneute Authentifizierung auf Web-Applikationen zugreifen, die SAML unterstützen.
-				</para></listitem>
-				<listitem><para>
-					Die unterschiedlichen Kontooptionen für Benutzer wurden vereinheitlicht. So gibt es mit UCS 4.3 drei unterschiedliche Kontotypen:
-					<itemizedlist>
-						<listitem><para>
-							Normale, vollwertige Konten, diese haben sämtliche Eigenschaften.
-						</para></listitem>
-						<listitem><para>
-							Einfache Authentisierungskonten, diese können sich lediglich mit dem LDAP-Server verbinden, haben aber keine Möglichkeit sich auch anderweitig anzumelden.
-						</para></listitem>
-						<listitem><para>
-							Adressbucheinträge für die Pflege von Kontaktinformationen.
-						</para></listitem>
-					</itemizedlist>
-				</para></listitem>
-				<listitem><para>
-					Samba wurde auf Version 4.7 aktualisiert. In der neuen Samba-Version sind wichtige Verbesserungen im Bereich des Active Directory Domänencontroller
-					vorhanden. So wird durch die Multi-Process-Implementierung des Samba-LDAP-Servers eine deutliche Performanceverbesserung eintreten. Zusätzlich kommt
-					die Replikation von Gruppenmitgliedschaften nun mit deutlich weniger Ressourcen aus.
+					FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME
 				</para></listitem>
 			</itemizedlist>
 		</para>
@@ -124,15 +94,15 @@ feedback@univention.de
 	  </para>
 
 		<para>
-			Mit UCS 4.3 bietet Univention ein Skript an, mit dem Probleme, die das Update des UCS Systems verhindern würden, schon vor dem Update erkannt werden können.
+			Mit UCS 4.4 bietet Univention wieder ein Skript an, mit dem Probleme, die das Update des UCS Systems verhindern würden, schon vor dem Update erkannt werden können.
 			Diese Skript kann vor dem Update manuell auf das System geladen und ausgeführt werden:
 			<screen><![CDATA[
 # download
--> curl -OOs http://updates.software-univention.de/download/univention-update-checks/pre-update-checks-4.3{,.gpg}
+-> curl -OOs http://updates.software-univention.de/download/univention-update-checks/pre-update-checks-4.4{,.gpg}
 
 # run script
--> gpgv --keyring /usr/share/keyrings/univention-archive-key-ucs-4x.gpg pre-update-checks-4.3.gpg \
-        pre-update-checks-4.3 && bash pre-update-checks-4.3
+-> gpgv --keyring /usr/share/keyrings/univention-archive-key-ucs-4x.gpg pre-update-checks-4.4.gpg \
+        pre-update-checks-4.4 && bash pre-update-checks-4.4
 
 gpgv: Unterschrift vom Mi 07 Mär 2018 13:36:51 CET mittels RSA-Schlüssel ID 6B8BFD3C
 gpgv: Korrekte Unterschrift von "Univention Corporate Server 4.x <packages@univention.de>"
@@ -180,6 +150,11 @@ Checking ldap_schema ...                          OK
 			</para>
 			<itemizedlist>
 				<listitem>
+					<para>
+						FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME
+					</para>
+				</listitem>
+				<listitem>
 					<para>Chrome ab Version 37</para>
 				</listitem>
 				<listitem>
@@ -201,7 +176,7 @@ Checking ldap_schema ...                          OK
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-		  gepflegt. Aufgeführt sind die Änderungen zwischen den &ucsUAS;-Versionen 4.2 v7 und 4.3 v1. Die
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den &ucsUAS;-Versionen 4.3 v7 und 4.4 v1. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="https://docs.software-univention.de/"/>.
 		</para>
@@ -209,7 +184,7 @@ Checking ldap_schema ...                          OK
 			<title>UCS@school installer</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UMC module <guimenu>UCS@school-Installer</guimenu> has been internally adapted to UCS 4.3 (<u:bug>46469</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -217,8 +192,7 @@ Checking ldap_schema ...                          OK
 			<title>LDAP</title>
 			<itemizedlist>
 				<listitem><simpara>
-					In rare cases it could happen that the LDAP ACLs and LDAP schemas for UCS@school were installed and activated in the wrong order.
-					As a result, only some of the ACLs were active and caused diffuse problems. This problem only affected new installations of multi-server environments (<u:bug>46453</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -226,8 +200,7 @@ Checking ldap_schema ...                          OK
 			<title>RADIUS</title>
 			<itemizedlist>
 				<listitem><simpara>
-					With UCS 4.3 FreeRADIUS has been updated to version 3. This was accompanied by a revision of the FreeRADIUS configuration. If manual adjustments have been made to the
-					FreeRADIUS configuration, a test environment should be used to check whether new adjustments are necessary with the update (<u:bug>46428</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -235,7 +208,7 @@ Checking ldap_schema ...                          OK
 			<title>iTALC</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The update to UCS@school 4.3 does not require an update of iTALC on Windows clients. However, the iTALC library of the school server has been adapted to the new UCS 4.3 libraries (<u:bug>46390</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -243,7 +216,7 @@ Checking ldap_schema ...                          OK
 			<title>UCS@school python library</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UCS@school Python library has been adapted to internal UDM changes of UCS 4.3 (<u:bug>46194</u:bug>, <u:bug>46175</u:bug>, <u:bug>46174</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -251,23 +224,7 @@ Checking ldap_schema ...                          OK
 			<title>Import</title>
 			<itemizedlist>
 				<listitem><simpara>
-					Automatically generated password for new users are now better readable. They do not contain characters that are difficult to distinguish (like 'I' and 'l' or 'O' and '0') anymore.
-					The number of special characters has been limited to below 20% of the password length and passwords always start with a letter.
-					The Microsoft requirement that passwords contain characters from at least three character classes is met (<u:bug>45640</u:bug>).
-				</simpara></listitem>
-				<listitem><simpara>
-					Within the CLI import the handling of email addresses has been altered: the user import now allows the removal email addresses. To do so, within the import configuration
-					(JSON file) a CSV column must be mapped to the <literal>email</literal> property. To remove the mail address, in the CSV file the fields entry of the <literal>email</literal>
-					column must be empty. Please note that an email address will only be generated from a configured scheme, when no CSV column for email addresses exist in the CSV file or no
-					column is mapped (<u:bug>46317</u:bug>).
-				</simpara></listitem>
-				<listitem><simpara>
-					The internal handling of python hooks for the import process has been improved: syntax and consistency checks are now done after running the
-					<literal>pre_create</literal> / <literal>pre_modify</literal> / <literal>pre_move</literal> hooks (<u:bug>46317</u:bug>).
-				</simpara></listitem>
-				<listitem><simpara>
-					When available, the responsible line from the CSV file is now attached to an ImportUser object that is to be deleted. Therefore the information from the CSV file are also
-					available in python import hooks (<u:bug>46384</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -275,10 +232,7 @@ Checking ldap_schema ...                          OK
 			<title>HTTP import API</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The <filename>init.d</filename> script for <package>gunicorn</package> has been removed in Debian Stretch. UCS@school 4.3 now comes with its own <application>systemd</application> service definition (<u:bug>46532</u:bug>).
-				</simpara></listitem>
-				<listitem><simpara>
-					Version 1.10 of <application>Django</application> is shipped with UCS 4.3. The HTTP Import API has been adapted accordingly (<u:bug>46533</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -286,10 +240,7 @@ Checking ldap_schema ...                          OK
 			<title>Proxy squid</title>
 			<itemizedlist>
 				<listitem><simpara>
-					With the change to <application>Squid</application> in version 3 the configuration of the proxy has been moved to the directory <filename>/etc/squid/</filename>. The configuration and all UCS@school applications have been adapted accordingly. If manual adjustments have been made to the squid configuration, a test environment should be used to check whether new adjustments are necessary with the update (<u:bug>46000</u:bug>).
-				</simpara></listitem>
-				<listitem><simpara>
-					The service <systemitem class="service">univention-reload-service</systemitem> was not started reliably on slow systems. This problem has now been fixed (<u:bug>46290</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -297,7 +248,7 @@ Checking ldap_schema ...                          OK
 			<title>Samba</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The Active Directory builtin account <package>Console Logon</package> is created now in OpenLDAP too. The S4 connector configuration of UCS@school has been adapted accordingly (<u:bug>46265</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -305,7 +256,7 @@ Checking ldap_schema ...                          OK
 			<title>Password reset for students/teachers</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UDM flag <property>pwdChangeNextLogin</property> toggled each time when the user's password has been reset with activated checkbox that should have forced the user to change the password on next login. This problem has been fixed (<u:bug>46012</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -313,7 +264,7 @@ Checking ldap_schema ...                          OK
 			<title>Exam mode</title>
 			<itemizedlist>
 				<listitem><simpara>
-					An error in connection setup has been fixed, which caused the <command>exam-and-room-cleanup</command> script to terminate with a certificate error message (<u:bug>46360</u:bug>).
+					FIX ME FIX ME FIX ME
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
