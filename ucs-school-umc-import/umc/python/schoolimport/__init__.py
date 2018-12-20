@@ -58,8 +58,16 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	def init(self):
 		self._progress_objs = {}
 		self.require_password()
+		server = ucr.get('ucsschool/import/http_api/client/server') or '{}.{}'.format(ucr['hostname'], ucr['domainname'])
+		ssl_verify = ucr.is_true('ucsschool/import/http_api/client/ssl_verify', True)
 		try:
-			self.client = Client(self.username, self.password, log_level=Client.LOG_RESPONSE)
+			self.client = Client(
+				name=self.username,
+				password=self.password,
+				server=server,
+				log_level=Client.LOG_RESPONSE,
+				ssl_verify=ssl_verify,
+			)
 		except ObjectNotFound:
 			raise UMC_Error(_('The UCS@school import API HTTP server could not be reached. It seems it is misconfigured, not installed or a proxy/firewall is blocking it.'), status=503)
 		except ServerError as exc:
