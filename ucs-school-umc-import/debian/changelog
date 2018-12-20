@@ -1,3 +1,10 @@
+ucs-school-umc-import (1.0.1-5) unstable; urgency=low
+
+  * Bug #47911: add ucsschool/import/http_api/client/server and
+    ucsschool/import/http_api/client/ssl_verify
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 20 Dec 2018 13:39:46 +0100
+
 ucs-school-umc-import (1.0.1-4) unstable; urgency=low
 
   * Bug #48303: Fix broken date format since dojo upgrade
