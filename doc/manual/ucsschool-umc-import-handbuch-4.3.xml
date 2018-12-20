@@ -147,7 +147,7 @@
 			<para>
 				Die Installation muss auf dem &ucsMaster; stattfinden:
 				<programlisting>
-# univention-install ucs-school-umc-import
+# univention-install ucs-school-umc-import ucs-school-import-http-api
 				</programlisting>
 			</para>
 		</section>
@@ -177,7 +177,7 @@
 				Alle Benutzer die Mitglieder dieser Gruppe sind können Imports für die aufgelisteten Benutzertypen and den aufgelisteten Schulen durchführen. Verschachtelte Gruppen werden nicht unterstützt.
 			</para>
 			<para>
-				Sollen zusätzlich zu den automatisch erzeugten Gruppen neue angelegt werden, so muss an diesen zum einen die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert, und zum anderen die UMC-Richtlinie <literal>cn=schoolimport-all,cn=UMC,cn=policies,<replaceable>$LDAP_BASE</replaceable></literal> zugewiesen werden.
+				Sollen zusätzlich zu den automatisch erzeugten Gruppen neue angelegt werden, so muss an diesen zum einen die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert, und zum anderen die UMC-Richtlinie <literal>cn=default-umc-all,cn=UMC,cn=policies,<replaceable>$LDAP_BASE</replaceable></literal> zugewiesen werden.
 			</para>
 			<para>
 				Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
