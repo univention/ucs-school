@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-umc-users
+fix: 
+desc: |
+ * In environments with several hundred users in an OU, opening the UMC module "Passwords (students)" could take an extremely long time,
+   making the module almost unusable. The responsible LDAP search has now been identified and replaced by a more powerful variant in
+   order to considerably reduce loading times (Bug #47885).
+bug: [47885]

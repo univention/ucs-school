@@ -6,4 +6,5 @@ src: ucs-school-lib
 fix: 12.0.1-0A~4.4.0.201901081302
 desc: |
  * Solves a problem in the ucsschool lib that returned the wrong shares when fetching all WorkGroupShares (Bug #48428).
-bug: [48428]
+ * The UCS@school library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (Bug #47885).
+bug: [48428, 47885]
