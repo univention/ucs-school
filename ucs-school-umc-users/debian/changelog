@@ -1,3 +1,10 @@
+ucs-school-umc-users (14.0.3-1) unstable; urgency=low
+
+  * Bug #47885: use faster method _user_ldap() from schoolldap.py to query
+    users and their password expiration time
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 20 Dec 2018 22:27:18 +0100
+
 ucs-school-umc-users (14.0.2-5) unstable; urgency=low
 
   * Bug #42212: Small wording changes
