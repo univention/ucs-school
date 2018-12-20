@@ -1,3 +1,10 @@
+ucs-school-lib (11.0.2-1) unstable; urgency=low
+
+  * Bug #47885: add _users_ldap() in schoolldap.py as a faster variant to
+    query all users with certain criteria
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 20 Dec 2018 22:23:36 +0100
+
 ucs-school-lib (11.0.1-29) unstable; urgency=low
 
   * Bug #48245: Fix bug in school model for existing DC Slaves
