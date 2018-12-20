@@ -6,7 +6,7 @@ src: ucs-school-umc-import
 fix: 1.0.1-5A~4.3.0.201812201355
 desc: |
  * If external SSL certificates (from e.g. let's encrypt) are used on the domaincontroller master and master's FQDN
-   differs from the FQDNs within the SSL certificate, the UMC module "Benutzerimport" throwed a traceback. The new
+   differs from the FQDNs within the SSL certificate, the UMC module "Benutzerimport" threw a traceback. The new
    UCR variables <envar>ucsschool/import/http_api/client/server</envar> and <envar>ucsschool/import/http_api/client/ssl_verify</envar>
    now allow to specify the correct FQDN used in the SSL certificates resp. to disable SSL checks at all (the latter one is NOT recommended!) (Bug #47911).
 bug: [47911]
