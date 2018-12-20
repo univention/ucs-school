@@ -1,3 +1,10 @@
+ucs-school-umc-import (2.0.0-3) unstable; urgency=low
+
+  * Bug #47911: add ucsschool/import/http_api/client/server and
+    ucsschool/import/http_api/client/ssl_verify
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 07 Jun 2019 14:19:21 +0200
+
 ucs-school-umc-import (2.0.0-2) unstable; urgency=medium
 
   * Bug #49609: Version bump
