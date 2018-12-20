@@ -182,6 +182,15 @@
 			<para>
 				Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
 			</para>
+			<note>
+				<para>
+					Sollte auf dem &ucsMaster; ein SSL-Zertifikat mit abweichenden FQDNs verwendet werden, wird beim Öffnen des UMC-Moduls <guimenu>Benutzerimport</guimenu> eine Fehlermeldung auftauchen, da
+					der lokale Rechnername nicht mit den Rechnernamen im SSL-Zertifikat übereinstimmt. In diesem Fall muss die UCR-Variable <envar>ucsschool/import/http_api/client/server</envar> entsprechend
+					auf den/einen Rechnernamen (FQDN) des SSL-Zertifikats gesetzt werden. Zusätzlich sollte die UCR-Variable <envar>ucsschool/import/http_api/ALLOWED_HOSTS</envar> den lokalen FQDN sowie den
+					im SSL-Zertifikat verwendeten FQDN enthalten. Nach dem Setzen der beiden UCR-Variablen müssen einige Dienste neu gestartet werden: <command>service ucs-school-import-http-api restart</command>
+					und <command>service celery-worker-ucsschool-import restart</command>.
+				</para>
+			</note>
 		</section>
 
 		<section id="file_format">
