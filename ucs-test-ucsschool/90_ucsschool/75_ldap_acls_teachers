@@ -7,11 +7,11 @@
 ## packages: [ucs-school-ldap-acls-master]
 
 from ldap.filter import filter_format
-from essential.acl import Acl
-from essential.computerroom import Computers
-from essential.schoolroom import ComputerRoom
+from univention.testing.ucsschool.acl import Acl
+from univention.testing.ucsschool.computerroom import Computers
+from univention.testing.ucsschool.schoolroom import ComputerRoom
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 
 
 def main():

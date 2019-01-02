@@ -16,7 +16,7 @@ import imp
 ucshacklib = imp.load_source('ucshacklib', '/usr/share/ucs-test/10_ldap/90_acl_access_to_uidNumber0')
 
 import univention.admin.uldap
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.udm import UCSTestUDM
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.utils import get_ldap_connection

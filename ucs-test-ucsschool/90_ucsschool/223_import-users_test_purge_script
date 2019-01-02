@@ -18,8 +18,8 @@ from ucsschool.importer.models.import_user import ImportUser
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
-from essential.importusers_cli_v2 import CLI_Import_v2_Tester
-from essential.importusers import Person
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
+from univention.testing.ucsschool.importusers import Person
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine

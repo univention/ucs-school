@@ -14,7 +14,7 @@ import ldap
 from sys import exit
 from time import sleep
 
-from essential.test_samba4 import TestSamba4
+from univention.testing.ucsschool.test_samba4 import TestSamba4
 
 import univention.testing.utils as utils
 from univention.uldap import getMachineConnection

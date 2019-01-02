@@ -14,7 +14,7 @@ from ldap.filter import escape_filter_chars
 from univention.testing.codes import TestCodes
 import univention.testing.utils as utils
 import univention.testing.ucr as testing_ucr
-import univention.testing.ucsschool as testing_ucsschool
+import univention.testing.ucsschool.ucs_test_school as testing_ucsschool
 from univention.admin.uldap import explodeDn
 from ucsschool.lib.schoolldap import LDAP_Connection, set_credentials, MACHINE_READ
 from ucsschool.lib.models import School

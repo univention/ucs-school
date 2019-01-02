@@ -6,10 +6,10 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
-from essential.computerroom import Room, Computers
+from univention.testing.ucsschool.computerroom import Room, Computers
 from univention.testing.network import NetworkRedirector
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.umc import Client
 
 

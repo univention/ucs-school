@@ -11,7 +11,7 @@
 import copy
 import univention.testing.strings as uts
 import univention.config_registry
-from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 from ucsschool.importer.utils.configuration_checks import run_configuration_checks
 from ucsschool.importer.utils.shell import ImportStudent, ImportTeacher
 

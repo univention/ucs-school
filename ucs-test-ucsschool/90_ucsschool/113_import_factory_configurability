@@ -19,7 +19,7 @@ import tempfile
 import subprocess
 
 from univention.testing.ucr import UCSTestConfigRegistry
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.udm import UCSTestUDM
 import univention.testing.strings as uts
 import univention.testing.utils as utils

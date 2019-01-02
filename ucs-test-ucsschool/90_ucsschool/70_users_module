@@ -8,11 +8,11 @@
 
 from copy import deepcopy
 from ldap.filter import filter_format
-from essential.klasse import Klasse
-from essential.user import User
+from univention.testing.ucsschool.klasse import Klasse
+from univention.testing.ucsschool.user import User
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication

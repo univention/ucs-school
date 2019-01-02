@@ -21,7 +21,7 @@ import univention.admin.uldap
 import univention.testing.ucr as ucr_test
 import univention.testing.udm
 import univention.testing.strings as uts
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 
 # OUTPUT of "slapacl -d0 -D cn=admin,dc=nstx,dc=local -b uid=Administrator,cn=users,dc=nstx,dc=local 2>&1"
 # ==> PLEASE NOTE THAT BINARY VALUES (LIKE "KRB5KEY") MAY CONTAIN LINEBREAKS THAT MAKE PARSING HARDER!

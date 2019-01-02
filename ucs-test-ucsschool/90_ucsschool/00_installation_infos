@@ -9,7 +9,7 @@
 import os
 import sys
 from apt.cache import Cache as AptCache
-from essential.importusers_cli_v2 import ImportTestbase
+from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 itb = ImportTestbase()
 apt_cache = AptCache()

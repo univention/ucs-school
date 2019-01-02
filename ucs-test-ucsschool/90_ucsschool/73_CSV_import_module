@@ -6,10 +6,10 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-csv-import]
 
-from essential.importcsv import update_persons, verify_persons, transform_usernames
-from essential.importcsv import stu_tea_file, staff_file, check_import_users
+from univention.testing.ucsschool.importcsv import update_persons, verify_persons, transform_usernames
+from univention.testing.ucsschool.importcsv import stu_tea_file, staff_file, check_import_users
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 
 
 def main():

@@ -8,12 +8,12 @@
 
 import random
 from ldap.filter import filter_format
-from essential.internetrule import InternetRule
-from essential.workgroup import Workgroup
-from essential.computerroom import Computers, set_windows_pc_password
-from essential.radius import test_peap_auth
+from univention.testing.ucsschool.internetrule import InternetRule
+from univention.testing.ucsschool.workgroup import Workgroup
+from univention.testing.ucsschool.computerroom import Computers, set_windows_pc_password
+from univention.testing.ucsschool.radius import test_peap_auth
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 
