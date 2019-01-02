@@ -1,3 +1,10 @@
+ucs-test-ucsschool (5.0.4-1) unstable; urgency=low
+
+  * Bug #48398: move modules in the 90_ucsschool/essential/ directory into the
+    Python path
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 02 Jan 2019 12:57:59 +0100
+
 ucs-test-ucsschool (5.0.3-8) unstable; urgency=low
 
   * Bug #47625: 24_password_reset_acl: flush after output
