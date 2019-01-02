@@ -1,4 +1,4 @@
-from essential.computerroom import run_commands
+from univention.testing.ucsschool.computerroom import run_commands
 import tempfile
 
 

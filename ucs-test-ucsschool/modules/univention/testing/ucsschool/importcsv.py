@@ -7,7 +7,7 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 import tempfile
 from pprint import pprint
-from essential.user import User
+from univention.testing.ucsschool.user import User
 from univention.lib.umc import HTTPError
 
 

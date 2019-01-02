@@ -4,11 +4,11 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from essential.importcomputers import random_ip
-from essential.importou import DCNotFound, DCMembership, DhcpdLDAPBase, TYPE_DC_ADMINISTRATIVE
-from essential.importou import get_ou_base, verify_dc, get_school_ou_from_dn, TYPE_DC_EDUCATIONAL
+from univention.testing.ucsschool.importcomputers import random_ip
+from univention.testing.ucsschool.importou import DCNotFound, DCMembership, DhcpdLDAPBase, TYPE_DC_ADMINISTRATIVE
+from univention.testing.ucsschool.importou import get_ou_base, verify_dc, get_school_ou_from_dn, TYPE_DC_EDUCATIONAL
 from univention.testing.umc import Client
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils

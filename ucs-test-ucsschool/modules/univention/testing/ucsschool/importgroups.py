@@ -8,13 +8,13 @@ import tempfile
 import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.ucsschool.importou import get_school_base
 from ucsschool.lib.models import SchoolClass as GroupLib
 from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
 
-from essential.importou import get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 

@@ -11,7 +11,7 @@ import copy
 import subprocess
 from univention.uldap import getMachineConnection
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.strings as uts
 
 

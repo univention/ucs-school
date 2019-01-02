@@ -9,7 +9,7 @@ import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.udm
 import univention.testing.ucr
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 import univention.uldap
 import univention.admin.uldap

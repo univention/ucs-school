@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from essential.importcomputers import Windows, MacOS, IPManagedClient, random_mac, random_ip
-from essential.internetrule import InternetRule
-from essential.simplecurl import SimpleCurl
-from essential.workgroup import Workgroup
+from univention.testing.ucsschool.importcomputers import Windows, MacOS, IPManagedClient, random_mac, random_ip
+from univention.testing.ucsschool.internetrule import InternetRule
+from univention.testing.ucsschool.simplecurl import SimpleCurl
+from univention.testing.ucsschool.workgroup import Workgroup
 from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
@@ -19,7 +19,7 @@ import time
 import univention.lib.atjobs as ula
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_s4connector
 

@@ -2,7 +2,7 @@
 
 import time
 import univention.testing.utils as utils
-from essential.importusers_cli_v2 import ImportTestbase
+from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 try:
 	from typing import Optional, Tuple
