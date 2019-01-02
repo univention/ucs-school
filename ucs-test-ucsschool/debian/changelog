@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-1) unstable; urgency=low
+
+  * Bug #48398: move modules in the 90_ucsschool/essential/ directory into the
+    Python path
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 02 Jan 2019 12:57:59 +0100
+
 ucs-test-ucsschool (6.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4
