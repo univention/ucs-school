@@ -6,11 +6,11 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
-from essential.computerroom import UmcComputer
-from essential.importcomputers import random_ip, random_mac
+from univention.testing.ucsschool.computerroom import UmcComputer
+from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 import time
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 
 
 def main():

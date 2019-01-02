@@ -11,8 +11,8 @@
 import copy
 import pprint
 import univention.testing.strings as uts
-from essential.importusers_cli_v2 import CLI_Import_v2_Tester
-from essential.importusers import Person
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
+from univention.testing.ucsschool.importusers import Person
 
 
 class MultiPerson(Person):

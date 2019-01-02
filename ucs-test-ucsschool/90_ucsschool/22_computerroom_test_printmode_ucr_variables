@@ -7,13 +7,13 @@
 ## packages: [ucs-school-umc-computerroom]
 
 
-from essential.computerroom import Room, Computers, add_printer
+from univention.testing.ucsschool.computerroom import Room, Computers, add_printer
 from univention.testing.umc import Client
 import datetime
 from univention.testing import utils
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 
 
 def main():

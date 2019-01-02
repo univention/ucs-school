@@ -16,7 +16,7 @@ def main():
 		handler_set(['ucsschool/import/attach/policy/default-umc-users=no'])
 		# UCR variables are loaded for ucsschool at the import stage
 		# That's why the import should be after setting the ucr variable
-		import univention.testing.ucsschool as utu
+		import univention.testing.ucsschool.ucs_test_school as utu
 		with utu.UCSTestSchool() as schoolenv:
 			for cli in (True, False):
 				school, oudn = schoolenv.create_ou(use_cli=cli, use_cache=False)

@@ -8,14 +8,14 @@
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
-from essential.computerroom import Room, Computers
-from essential.exam import Exam, get_s4_rejected, wait_replications_check_rejected_uniqueMember
-from essential.internetrule import InternetRule
+from univention.testing.ucsschool.computerroom import Room, Computers
+from univention.testing.ucsschool.exam import Exam, get_s4_rejected, wait_replications_check_rejected_uniqueMember
+from univention.testing.ucsschool.internetrule import InternetRule
 import os
 import random
 import tempfile
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.strings as uts
 from ucsschool.lib.models import Student

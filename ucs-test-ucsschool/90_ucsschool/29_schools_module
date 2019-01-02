@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
-from essential.school import School, create_dc_slave
+from univention.testing.ucsschool.school import School, create_dc_slave
 import univention.testing.udm as udm_test
 import time
 

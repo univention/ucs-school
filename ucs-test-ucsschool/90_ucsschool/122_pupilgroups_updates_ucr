@@ -7,11 +7,11 @@
 ## bugs: [41749]
 
 
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from ucsschool.lib.models import School, SchoolClass
-from essential.importusers_cli_v2 import CLI_Import_v2_Tester
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
 
 class Test(CLI_Import_v2_Tester):

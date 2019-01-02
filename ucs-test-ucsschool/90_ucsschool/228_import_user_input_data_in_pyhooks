@@ -17,7 +17,7 @@ import subprocess
 import tempfile
 
 import univention.testing.ucr
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 

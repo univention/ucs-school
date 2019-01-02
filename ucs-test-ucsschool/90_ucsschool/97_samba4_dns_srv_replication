@@ -22,7 +22,7 @@ try:
 except ImportError:
 	from StringIO import StringIO
 
-from essential.test_samba4 import TestSamba4
+from univention.testing.ucsschool.test_samba4 import TestSamba4
 import univention.testing.utils as utils
 from samba.provision.sambadns import SRVRecord
 from samba.dcerpc import dnsp

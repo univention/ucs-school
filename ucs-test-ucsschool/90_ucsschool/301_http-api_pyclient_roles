@@ -14,7 +14,7 @@ import random
 from ldap.filter import filter_format
 import univention.testing.strings as uts
 from ucsschool.http_api.client import Client
-from essential.importusers_http import HttpApiImportTester
+from univention.testing.ucsschool.importusers_http import HttpApiImportTester
 
 
 class Test(HttpApiImportTester):

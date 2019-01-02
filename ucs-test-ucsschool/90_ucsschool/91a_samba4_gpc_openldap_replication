@@ -15,7 +15,7 @@ import univention.admin.uexceptions
 from univention.admin.uldap import getMachineConnection
 
 import ucsschool.lib.models
-from essential.test_samba4 import TestSamba4
+from univention.testing.ucsschool.test_samba4 import TestSamba4
 
 import univention.testing.utils as utils
 from univention.testing.strings import random_username

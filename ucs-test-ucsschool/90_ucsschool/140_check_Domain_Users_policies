@@ -9,7 +9,7 @@
 
 import univention.testing.utils as utils
 from univention.testing.ucr import UCSTestConfigRegistry
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 def main():
 	lo = utils.get_ldap_connection()

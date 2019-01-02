@@ -8,12 +8,12 @@
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 
-from essential.acl import run_commands
-from essential.computerroom import Computers
-from essential.schoolroom import ComputerRoom
+from univention.testing.ucsschool.acl import run_commands
+from univention.testing.ucsschool.computerroom import Computers
+from univention.testing.ucsschool.schoolroom import ComputerRoom
 from univention.uldap import getMachineConnection
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 
 
 class FailAcl(Exception):

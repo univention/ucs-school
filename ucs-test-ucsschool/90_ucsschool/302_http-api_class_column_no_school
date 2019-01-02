@@ -21,7 +21,7 @@ from ucsschool.http_api.client import Client
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvExporter
-from essential.importusers_http import HttpApiImportTester
+from univention.testing.ucsschool.importusers_http import HttpApiImportTester
 
 try:
 	from typing import List
