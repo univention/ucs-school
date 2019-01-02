@@ -8,7 +8,7 @@ import univention.testing.utils as utils
 from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
 from univention.lib.umc import BadRequest
-from essential.importusers import Person
+from univention.testing.ucsschool.importusers import Person
 
 
 class GetFail(Exception):

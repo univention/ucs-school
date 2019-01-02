@@ -8,7 +8,7 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
 
 

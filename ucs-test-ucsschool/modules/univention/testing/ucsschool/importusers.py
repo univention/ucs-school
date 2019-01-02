@@ -22,7 +22,7 @@ from ucsschool.lib.models import School as SchoolLib
 from ucsschool.lib.roles import role_student, role_teacher, role_staff, create_ucsschool_role_string
 import ucsschool.lib.models.utils
 
-from essential.importou import remove_ou, create_ou_cli, get_school_base
+from univention.testing.ucsschool.importou import remove_ou, create_ou_cli, get_school_base
 from univention.testing.ucs_samba import wait_for_s4connector
 
 

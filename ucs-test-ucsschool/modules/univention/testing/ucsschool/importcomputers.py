@@ -9,7 +9,8 @@ import tempfile
 import univention.config_registry
 import univention.testing.utils as utils
 import univention.testing.strings as uts
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.ucsschool.importou import get_school_base
 # from ucsschool.lib.models import SchoolComputer as SchoolComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
@@ -18,7 +19,6 @@ from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import School as SchoolLib
 import ucsschool.lib.models.utils
 
-from essential.importou import get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 

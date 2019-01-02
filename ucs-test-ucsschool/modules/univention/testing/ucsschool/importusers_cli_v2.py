@@ -19,11 +19,11 @@ from collections import Mapping
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 from univention.admin.uexceptions import noObject, ldapError
-from essential.importusers import Person
+from univention.testing.ucsschool.importusers import Person
 import univention.testing.ucr
 import univention.testing.udm
 import univention.testing.strings as uts
-import univention.testing.ucsschool as utu
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 import univention.testing.format.text
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -192,6 +192,7 @@ class ImportTestbase(object):
 	def cleanup(self):
 		self.log.info('Performing ImportTestbase cleanup...')
 		self.udm.cleanup()
+		self.log.info('Reverting UCR...')
 		self.ucr.revert_to_original_registry()
 		self.log.info('ImportTestbase cleanup done')
 
@@ -270,21 +271,24 @@ class ImportTestbase(object):
 			ou.name, ou.dn = name, dn
 		self.log.info('Created OUs: %r.', [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None])
 
+	def setup_testenv(self, schoolenv):
+		self.schoolenv = schoolenv
+		self.udm = schoolenv.udm
+		if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
+			self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
+			self.udm.create_object(
+				'mail/domain',
+				position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
+				name=self.maildomain,
+				ignore_exists=True
+			)
+		has_admin_credentials = self.ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup')
+		self.lo = schoolenv.open_ldap_connection(admin=has_admin_credentials)
+
 	def run(self):
 		try:
 			with utu.UCSTestSchool() as schoolenv:
-				self.schoolenv = schoolenv
-				self.udm = schoolenv.udm
-				if self.maildomain not in self.ucr.get('mail/hosteddomains', ''):
-					self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
-					self.udm.create_object(
-						'mail/domain',
-						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
-						name=self.maildomain,
-						ignore_exists=True
-					)
-				has_admin_credentials = self.ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup')
-				self.lo = schoolenv.open_ldap_connection(admin=has_admin_credentials)
+				self.setup_testenv(schoolenv)
 				self.create_ous(schoolenv)
 				self.test()
 				self.log.info('Test was successful.\n\n')
