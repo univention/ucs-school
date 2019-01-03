@@ -107,7 +107,7 @@ class FactoryConfTest(object):
 			"--sourceUID",
 			"sourceUID-{}".format(uts.random_string()),
 			"--set",
-			"classes:mass_importer=univention.testing.ucsschool_import_factory_test_classes.NullImport"])
+			"classes:mass_importer=univention.testing.ucsschool.import_factory_test_classes.NullImport"])
 		self.check_new_and_removed_users(0, 0)
 		self.logger.info("\n\n*** OK: No users imported.\n\n")
 
@@ -122,7 +122,7 @@ class FactoryConfTest(object):
 			"--sourceUID",
 			"sourceUID-{}".format(uts.random_string()),
 			"--set",
-			"classes:password_exporter=univention.testing.ucsschool_import_factory_test_classes.UniventionPasswordExporter",
+			"classes:password_exporter=univention.testing.ucsschool.import_factory_test_classes.UniventionPasswordExporter",
 			"output:new_user_passwords={}".format(outfile.name)])
 		self.check_new_and_removed_users(8, 0)
 		outfile.seek(0)
@@ -149,7 +149,7 @@ class FactoryConfTest(object):
 			"--sourceUID",
 			"sourceUID-{}".format(uts.random_string()),
 			"--set",
-			"classes:result_exporter=univention.testing.ucsschool_import_factory_test_classes.AnonymizeResultExporter",
+			"classes:result_exporter=univention.testing.ucsschool.import_factory_test_classes.AnonymizeResultExporter",
 			"output:user_import_summary={}".format(outfile.name)])
 		self.check_new_and_removed_users(8, 0)
 		outfile.seek(0)
@@ -207,7 +207,7 @@ class FactoryConfTest(object):
 			"--sourceUID",
 			source_uid,
 			"--set",
-			"classes:user_importer=univention.testing.ucsschool_import_factory_test_classes.BirthdayUserImport",
+			"classes:user_importer=univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport",
 			"csv:mapping:Geburtstag=birthday"])
 		self.check_new_and_removed_users(8, 0)
 
@@ -227,7 +227,7 @@ class FactoryConfTest(object):
 			"--sourceUID",
 			source_uid,
 			"--set",
-			"classes:user_importer=univention.testing.ucsschool_import_factory_test_classes.BirthdayUserImport"])
+			"classes:user_importer=univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport"])
 		self.check_new_and_removed_users(0, len(random_birthday_users))
 		try:
 			os.remove(csvfile_name)
@@ -246,7 +246,7 @@ class FactoryConfTest(object):
 			"--sourceUID",
 			"sourceUID-{}".format(uts.random_string()),
 			"--set",
-			"classes:username_handler=univention.testing.ucsschool_import_factory_test_classes.FooUsernameHandler",
+			"classes:username_handler=univention.testing.ucsschool.import_factory_test_classes.FooUsernameHandler",
 			"output:user_import_summary={}".format(outfile.name),
 			"scheme:username:default=<:umlauts><firstname>.<lastname><:lower>[FOO]"])
 		self.check_new_and_removed_users(8, 0)
@@ -268,7 +268,7 @@ class FactoryConfTest(object):
 			"--sourceUID",
 			"sourceUID-{}".format(uts.random_string()),
 			"--set",
-			"classes:user_writer=univention.testing.ucsschool_import_factory_test_classes.JsonWriter",
+			"classes:user_writer=univention.testing.ucsschool.import_factory_test_classes.JsonWriter",
 			"output:user_import_summary={}".format(outfile.name)])
 		self.check_new_and_removed_users(8, 0)
 		outfile.seek(0)

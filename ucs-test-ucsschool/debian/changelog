@@ -1,4 +1,4 @@
-ucs-test-ucsschool (6.0.0-1) unstable; urgency=low
+ucs-test-ucsschool (6.0.0-2) unstable; urgency=low
 
   * Bug #48398: move modules in the 90_ucsschool/essential/ directory into the
     Python path
