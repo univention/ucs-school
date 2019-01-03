@@ -1,3 +1,12 @@
+ucs-school-import (17.0.0-1) unstable; urgency=low
+
+  * Bug #48423: lazy initialization
+  * allow disabling selected tests, for now only uniqueness
+  * allow unprivileged users to run code
+  * refactor create_ou code to make it usable without the cmdline interface
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 03 Jan 2019 17:28:03 +0100
+
 ucs-school-import (17.0.0-0) unstable; urgency=medium
 
   * bump version for UCS@school 4.4
