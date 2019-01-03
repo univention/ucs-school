@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-import
+fix: 16.0.2-64A~4.3.0.201901031732
+desc: |
+ * The UCS@school import frameworks ImportUser class has been made more accessable to 3rd party software (Bug #48423).
+bug: [48423]
