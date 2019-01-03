@@ -1,3 +1,12 @@
+ucs-school-import (16.0.2-64) unstable; urgency=low
+
+  * Bug #48423: lazy initialization
+  * allow disabling selected tests, for now only uniqueness
+  * allow unprivileged users to run code
+  * refactor create_ou code to make it usable without the cmdline interface
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 03 Jan 2019 17:28:03 +0100
+
 ucs-school-import (16.0.2-63) unstable; urgency=medium
 
   * Bug #46765: temporarily include shell script hooks in create_ou script
