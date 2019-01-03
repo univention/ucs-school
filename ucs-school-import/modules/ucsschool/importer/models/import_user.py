@@ -37,7 +37,7 @@ import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 from six import string_types
-
+import lazy_object_proxy
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
@@ -94,17 +94,19 @@ class ImportUser(User):
 	source_uid = SourceUID("SourceUID")
 	record_uid = RecordUID("RecordUID")
 
-	config = None  # type: ReadOnlyDict
+	config = lazy_object_proxy.Proxy(lambda: Configuration())  # type: ReadOnlyDict
 	default_username_max_length = 20  # may be lowered in __init__()
-	attribute_udm_names = None  # type: Dict[str, str]
-	no_overwrite_attributes = None  # type: List[str]
+	no_overwrite_attributes = lazy_object_proxy.Proxy(lambda: ucr.get(
+		"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
+		"mailPrimaryAddress uid"
+	).split())  # type: List[str]
 	_unique_ids = defaultdict(dict)  # type: Dict[str, Dict[str, str]]
-	factory = None  # type: DefaultUserImportFactory
-	ucr = None  # type: ConfigRegistry
+	factory = lazy_object_proxy.Proxy(lambda: Factory())  # type: DefaultUserImportFactory
+	ucr = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_ucr())  # type: ConfigRegistry
 	unique_email_handler = None  # type: UsernameHandler
 	username_handler = None  # type: UsernameHandler
-	reader = None  # type: BaseReader
-	logger = None  # type: logging.Logger
+	reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())  # type: BaseReader
+	logger = lazy_object_proxy.Proxy(get_logger)  # type: logging.Logger
 	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
 	_pyhook_cache = None  # type: Dict[str, List[Callable]]
 	_format_pyhook_cache = None  # type: Dict[str, List[Callable]]
@@ -113,7 +115,8 @@ class ImportUser(User):
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
 	prop = uadmin_property("_replace")
 	_all_school_names = None  # type: List[str]
-	_all_usernames = None  # type: Dict[str, UsernameUniquenessTuple]
+	_all_usernames = {}  # type: Dict[str, UsernameUniquenessTuple]
+	_attribute_udm_names = None  # type: Dict[str, str]
 	_prop_regex = re.compile(r'<(.*?)(:.*?)*>')
 	_prop_providers = {
 		'birthday': 'make_birthday',
@@ -155,18 +158,13 @@ class ImportUser(User):
 			except KeyError:
 				pass
 
-		if not self.factory:
-			self.__class__.factory = Factory()
-			self.__class__.ucr = self.factory.make_ucr()
-			self.__class__.config = Configuration()
-			self.__class__.reader = self.factory.make_reader()
-			self.__class__.logger = get_logger()
-			self.__class__.default_username_max_length = self._default_username_max_length
-			self.__class__.attribute_udm_names = dict((attr.udm_name, name) for name, attr in self._attributes.items() if attr.udm_name)
-			self.__class__.no_overwrite_attributes = self.ucr.get(
-				"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
-				"mailPrimaryAddress uid"
-			).split()
+		if not self.username_handler:
+			cls = self.__class__
+			cls.username_handler = lazy_object_proxy.Proxy(
+				lambda: self.factory.make_username_handler(self.username_max_length, self.config['dry_run']))
+			cls.unique_email_handler = lazy_object_proxy.Proxy(
+				lambda: self.factory.make_unique_email_handler(dry_run=self.config['dry_run']))
+			cls.default_username_max_length = self._default_username_max_length
 		self._userexpiry = None  # type: str
 		self._purge_ts = None  # type: str
 		self._used_methods = defaultdict(list)  # type: Dict[str, List[FunctionSignature]]  # recursion prevention
@@ -707,8 +705,6 @@ class ImportUser(User):
 					else:
 						return self.email
 			self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
-			if not self.unique_email_handler:
-				self.__class__.unique_email_handler = self.factory.make_unique_email_handler(dry_run=self.config['dry_run'])
 			try:
 				self.email = self.unique_email_handler.format_name(self.email)
 			except EmptyFormatResultError:
@@ -853,8 +849,6 @@ class ImportUser(User):
 			if not self.name:
 				raise EmptyFormatResultError("No username was created from scheme '{}'.".format(
 					self.username_scheme), self.username_scheme, self.to_dict())
-			if not self.username_handler:
-				self.__class__.username_handler = self.factory.make_username_handler(self.username_max_length, self.config['dry_run'])
 			self.name = self.username_handler.format_name(self.name)
 			if not self.name:
 				raise EmptyFormatResultError("Username handler transformed {!r} to empty username.".format(
@@ -1263,6 +1257,16 @@ class ImportUser(User):
 			self.make_classes()
 		return super(ImportUser, self).get_school_class_objs()
 
+	@classmethod
+	def attribute_udm_names(cls):
+		if not cls._attribute_udm_names:
+			cls._attribute_udm_names = dict(
+				(attr.udm_name, name)
+				for name, attr in cls._attributes.items()
+				if attr.udm_name
+			)
+		return cls._attribute_udm_names
+
 	def _prevent_mapped_attributes_in_udm_properties(self):  # type: () -> None
 		"""
 		Make sure users do not store values for ucsschool.lib mapped Attributes
@@ -1271,7 +1275,7 @@ class ImportUser(User):
 		if not self.udm_properties:
 			return
 
-		bad_props = set(self.udm_properties.keys()).intersection(self.attribute_udm_names)
+		bad_props = set(self.udm_properties.keys()).intersection(self.attribute_udm_names())
 		if bad_props:
 			raise NotSupportedError(
 				"UDM properties '{}' must be set as attributes of the {} object (not in udm_properties).".format(

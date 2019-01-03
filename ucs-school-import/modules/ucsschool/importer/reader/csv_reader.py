@@ -49,7 +49,6 @@ import univention.admin.modules
 try:
 	from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
 	from csv import Dialect
-	from ucsschool.importer.models.import_user import ImportUser
 except ImportError:
 	pass
 
