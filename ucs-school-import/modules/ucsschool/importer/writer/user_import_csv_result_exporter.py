@@ -33,7 +33,6 @@ Write the result of a user import job to a CSV file.
 """
 
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.writer.result_exporter import ResultExporter
 from ucsschool.lib.roles import role_pupil
@@ -94,6 +93,7 @@ class UserImportCsvResultExporter(ResultExporter):
 		:return: mapping attr_name->strings that will be used to write the output file
 		:rtype: dict
 		"""
+		from ucsschool.importer.models.import_user import ImportUser
 		is_error = False
 		if isinstance(obj, ImportUser):
 			user = obj
