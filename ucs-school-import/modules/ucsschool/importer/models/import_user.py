@@ -78,6 +78,7 @@ except ImportError:
 
 FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
 UsernameUniquenessTuple = namedtuple('UsernameUniquenessTuple', ['record_uid', 'source_uid', 'dn'])
+UNIQUENESS = 'uniqueness'
 
 
 class ImportUser(User):
@@ -280,10 +281,10 @@ class ImportUser(User):
 				validation_error=ValidationError(self.errors.copy()))
 		old_dn = self.old_dn
 		res = super(ImportUser, self).change_school(school, lo)
-		if res:
-			# rewrite _unique_ids and _all_usernames, replacing old DN with new DN
-			self._unique_ids_replace_dn(old_dn, self.dn)
-			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
+		if res and UNIQUENESS not in self.config.get('skip_tests', []):
+				# rewrite _unique_ids and _all_usernames, replacing old DN with new DN
+				self._unique_ids_replace_dn(old_dn, self.dn)
+				self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
 		return res
 
 	@classmethod
@@ -330,7 +331,8 @@ class ImportUser(User):
 			res = self.create_without_hooks(lo, validate)
 		else:
 			res = super(ImportUser, self).create(lo, validate)
-		self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
+		if UNIQUENESS not in self.config.get('skip_tests', []):
+			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
 		return res
 
 	@classmethod
@@ -814,8 +816,8 @@ class ImportUser(User):
 
 	def make_udm_property(self, property_name):  # type: (str) -> Union[str, None]
 		"""
-		Create property `property_name` if not already set in
-		`self.udm_properties["username"]` or create it from scheme.
+		Create :py:attr:`self.udm_properties[property_name]` from scheme if
+		not already existent.
 
 		:param str property_name: name of UDM property
 		:return: value read from CSV or calculated from scheme or None
@@ -866,7 +868,7 @@ class ImportUser(User):
 			res = self.modify_without_hooks(lo, validate, move_if_necessary)
 		else:
 			res = super(ImportUser, self).modify(lo, validate, move_if_necessary)
-		if self.old_user and self.old_user.name != self.name:
+		if self.old_user and self.old_user.name != self.name and UNIQUENESS not in self.config.get('skip_tests', []):
 			del self._all_usernames[self.old_user.name]
 			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
 		return res
@@ -967,6 +969,21 @@ class ImportUser(User):
 		:raises InvalidSchoolClasses: ...
 		:raises InvalidSchools: ...
 		"""
+		skip_tests = self.config.get('skip_tests', [])
+
+		# check `name` 1st: it must be set, or `dn` will be empty, leading to AttributeError in `User.validate()`
+		if check_username:
+			if not self.name:
+				raise MissingUid("No username was created.", entry_count=self.entry_count, import_user=self)
+
+			if len(self.name) > self.username_max_length:
+				raise UsernameToLong("Username '{}' is longer than allowed.".format(
+					self.name), entry_count=self.entry_count, import_user=self
+				)
+
+			if len(self.password or '') < self.config["password_length"]:
+				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
+
 		super(ImportUser, self).validate(lo, validate_unlikely_changes)
 
 		_ma = None
@@ -989,7 +1006,8 @@ class ImportUser(User):
 			if v in ('', None):
 				raise EmptyMandatoryAttribute("Mandatory attribute {!r} has empty value.".format(k), attr_name=k)
 
-		if not self.in_hook:  # uniqueness checks fail when called from within a post_move hook
+		# don't run uniqueness checks from within a post_move hook
+		if not self.in_hook and UNIQUENESS not in skip_tests:
 			if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:
 				raise UniqueIdError('RecordUID {!r} has already been used in this import by {!r}.'.format(
 					self.record_uid, self._unique_ids["recordUID"][self.record_uid]), entry_count=self.entry_count, import_user=self
@@ -1011,18 +1029,6 @@ class ImportUser(User):
 						import_user=self
 					)
 				self._unique_ids["email"][self.email] = self.dn
-
-		if check_username:
-			if not self.name:
-				raise MissingUid("No username was created.", entry_count=self.entry_count, import_user=self)
-
-			if len(self.name) > self.username_max_length:
-				raise UsernameToLong("Username '{}' is longer than allowed.".format(
-					self.name), entry_count=self.entry_count, import_user=self
-				)
-
-			if len(self.password or '') < self.config["password_length"]:
-				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
 
 		if self.email:
 			# email_pattern:
@@ -1062,26 +1068,27 @@ class ImportUser(User):
 
 		self.check_schools(lo)
 
-		if not self._all_usernames:
-			# fetch usernames of all users only once per import job
-			# its faster to filter out computer names in Python that in LDAP
-			# (and we have to loop over the query result anyway)
-			self.__class__._all_usernames = dict(
-				(
-					attr['uid'][0],
-					UsernameUniquenessTuple(
-						attr.get('ucsschoolRecordUID', [None])[0],
-						attr.get('ucsschoolSourceUID', [None])[0],
-						dn
+		if UNIQUENESS not in skip_tests:
+			if not self._all_usernames:
+				# fetch usernames of all users only once per import job
+				# its faster to filter out computer names in Python than in LDAP
+				# (and we have to loop over the query result anyway)
+				self.__class__._all_usernames = dict(
+					(
+						attr['uid'][0],
+						UsernameUniquenessTuple(
+							attr.get('ucsschoolRecordUID', [None])[0],
+							attr.get('ucsschoolSourceUID', [None])[0],
+							dn
+						)
 					)
+					for dn, attr in lo.search(
+						'objectClass=posixAccount',
+						attr=['uid', 'ucsschoolRecordUID', 'ucsschoolSourceUID']
+					)
+					if not attr['uid'][0].endswith('$')
 				)
-				for dn, attr in lo.search(
-					'objectClass=posixAccount',
-					attr=['uid', 'ucsschoolRecordUID', 'ucsschoolSourceUID']
-				)
-				if not attr['uid'][0].endswith('$')
-			)
-		self._check_username_uniqueness()
+			self._check_username_uniqueness()
 
 	def _check_username_uniqueness(self):  # type: () -> None
 		"""
