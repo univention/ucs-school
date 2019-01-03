@@ -64,7 +64,8 @@ import inspect
 from operator import itemgetter
 from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.ldap_connection import get_readonly_connection
+from ucsschool.importer.exceptions import UcsSchoolImportFatalError
+from ucsschool.importer.utils.ldap_connection import get_readonly_connection, get_unprivileged_connection
 
 try:
 	from typing import List, Type
@@ -91,7 +92,10 @@ class ConfigurationChecks(object):
 	"""
 	def __init__(self, config):  # type: (ReadOnlyDict) -> None
 		self.config = config
-		self.lo, po = get_readonly_connection()
+		try:
+			self.lo, po = get_readonly_connection()
+		except UcsSchoolImportFatalError:
+			self.lo, po = get_unprivileged_connection()
 		self.logger = get_logger()
 
 

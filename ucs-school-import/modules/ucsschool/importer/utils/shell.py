@@ -55,7 +55,11 @@ from ucsschool.importer.configuration import setup_configuration as _setup_confi
 from ucsschool.importer.factory import setup_factory as _setup_factory
 from ucsschool.importer.utils.logging import get_logger as _get_logger
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
-from ucsschool.importer.utils.ldap_connection import get_admin_connection as _get_admin_connection
+from ucsschool.importer.utils.ldap_connection import (
+	get_admin_connection as _get_admin_connection,
+	get_machine_connection as _get_machine_connection,
+	get_unprivileged_connection as _get_unprivileged_connection)
+from ucsschool.importer.exceptions import UcsSchoolImportFatalError
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
 
 
@@ -84,7 +88,13 @@ config = _setup_configuration(_config_files, **_config_args)
 _ui.setup_logging(config["verbose"], config["logfile"])
 factory = _setup_factory(config["factory"])
 logger = _get_logger()
-lo, _po = _get_admin_connection()
+try:
+	lo, _po = _get_admin_connection()
+except UcsSchoolImportFatalError:
+	try:
+		lo, _po = _get_machine_connection()
+	except UcsSchoolImportFatalError:
+		lo, _po = _get_unprivileged_connection()
 
 logger.info("------ UCS@school import tool configured ------")
 logger.info("Used configuration files: %s.", config.conffiles)
