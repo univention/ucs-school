@@ -40,7 +40,7 @@ import traceback
 
 from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose, add_file_handler, move_our_handlers_to_lib_logger
 from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
-from ucsschool.importer.configuration import setup_configuration
+from ucsschool.importer.configuration import Configuration, setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.exceptions import InitialisationError, TooManyErrors, UcsSchoolImportFatalError
 
@@ -72,7 +72,19 @@ class CommandLine(object):
 		configs = self.configuration_files
 		if self.args.conffile and self.args.conffile not in configs:
 			configs.append(self.args.conffile)
-		self.config = setup_configuration(configs, **self.args.settings)
+		try:
+			self.config = setup_configuration(configs, **self.args.settings)
+		except InitialisationError as exc:
+			self.logger.exception('Error setting up or checking the configuration: %s', exc)
+			self.logger.error("Used configuration files: %s.", configs)
+			self.logger.error("Using command line arguments: %r", self.args.settings)
+			try:
+				# if it was a config check error, the config singleton already exists
+				config = Configuration()
+				self.logger.error("Configuration is:\n%s", pprint.pformat(config))
+			except InitialisationError:
+				pass
+			raise
 		return self.config
 
 	@property

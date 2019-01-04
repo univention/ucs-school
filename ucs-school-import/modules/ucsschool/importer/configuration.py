@@ -49,6 +49,7 @@ def setup_configuration(conffiles, **kwargs):
 	config.update(kwargs)
 	config.post_read(get_logger())
 	config.close()
+	get_logger().info("Finished reading configuration, starting checks...")
 	run_configuration_checks(config)
 	return config
 

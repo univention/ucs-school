@@ -27,6 +27,6 @@ for filename in os.listdir('/etc/apt/sources.list.d/'):
 
 itb.log.info('=' * 79)
 
-itb.log.info('UCRV starting with "ucsschool":\n%s', '\n'.join('{!r}: {!r}'.format(k, itb.ucr[k]) for k in sorted(itb.ucr.keys())))
+itb.log.info('UCR:\n%s', '\n'.join('{!r}: {!r}'.format(k, itb.ucr[k]) for k in sorted(itb.ucr.keys())))
 
 sys.exit(0)

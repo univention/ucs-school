@@ -88,7 +88,8 @@ class ConfigurationChecks(object):
 	instance in :py:attr:`self.logger`.
 
 	All methods with names starting with ``test_`` will be executed in
-	alphanumerical order.
+	alphanumerical order. Failing tests should raise a
+	py:exception:`ucsschool.importer.exceptions.InitialisationError` exception.
 	"""
 	def __init__(self, config):  # type: (ReadOnlyDict) -> None
 		self.config = config
