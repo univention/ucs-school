@@ -64,7 +64,7 @@ from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 
 try:
-	from typing import Any, Callable, Dict, Iterable, List, Optional, Type, Union
+	from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
 	import logging
 	from ucsschool.importer.configuration import ReadOnlyDict
 	from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
@@ -104,13 +104,13 @@ class ImportUser(User):
 	_unique_ids = defaultdict(dict)  # type: Dict[str, Dict[str, str]]
 	factory = lazy_object_proxy.Proxy(lambda: Factory())  # type: DefaultUserImportFactory
 	ucr = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_ucr())  # type: ConfigRegistry
-	unique_email_handler = None  # type: UsernameHandler
-	username_handler = None  # type: UsernameHandler
 	reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())  # type: BaseReader
 	logger = lazy_object_proxy.Proxy(get_logger)  # type: logging.Logger
 	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
 	_pyhook_cache = None  # type: Dict[str, List[Callable]]
 	_format_pyhook_cache = None  # type: Dict[str, List[Callable]]
+	_username_handler_cache = {}  # type: Dict[Tuple[int, bool], UsernameHandler]
+	_unique_email_handler_cache = {}  # type: Dict[bool, UsernameHandler]
 	# non-Attribute attributes (not in self._attributes) that can also be used
 	# as arguments for object creation and will be exported by to_dict():
 	_additional_props = ("action", "entry_count", "udm_properties", "input_data", "old_user", "in_hook", "roles")
@@ -159,13 +159,7 @@ class ImportUser(User):
 			except KeyError:
 				pass
 
-		if not self.username_handler:
-			cls = self.__class__
-			cls.username_handler = lazy_object_proxy.Proxy(
-				lambda: self.factory.make_username_handler(self.username_max_length, self.config['dry_run']))
-			cls.unique_email_handler = lazy_object_proxy.Proxy(
-				lambda: self.factory.make_unique_email_handler(dry_run=self.config['dry_run']))
-			cls.default_username_max_length = self._default_username_max_length
+		self.__class__.default_username_max_length = self._default_username_max_length
 		self._userexpiry = None  # type: str
 		self._purge_ts = None  # type: str
 		self._used_methods = defaultdict(list)  # type: Dict[str, List[FunctionSignature]]  # recursion prevention
@@ -1131,6 +1125,21 @@ class ImportUser(User):
 		:rtype: str
 		"""
 		return ','.join(','.join(sc) for sc in self.school_classes.values())
+
+	@property
+	def unique_email_handler(self):  # type: () -> UsernameHandler
+		key = self.config['dry_run']
+		if key not in self._unique_email_handler_cache:
+			self._unique_email_handler_cache[key] = self.factory.make_unique_email_handler(dry_run=self.config['dry_run'])
+		return self._unique_email_handler_cache[key]
+
+	@property
+	def username_handler(self):  # type: () -> UsernameHandler
+		key = (self.username_max_length, self.config['dry_run'])
+		if key not in self._username_handler_cache:
+			self._username_handler_cache[key] = self.factory.make_username_handler(
+				self.username_max_length, self.config['dry_run'])
+		return self._username_handler_cache[key]
 
 	@property
 	def username_scheme(self):  # type: () -> str
