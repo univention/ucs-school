@@ -1,3 +1,11 @@
+ucs-school-import (17.0.0-2) unstable; urgency=low
+
+  * Bug #48423: improve configuration error reporting
+  * fix one UsernameHandler being shared by all ImportUser subclasses
+  * fix hooks being loaded for each ImportUser subclass
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 04 Jan 2019 15:09:58 +0100
+
 ucs-school-import (17.0.0-1) unstable; urgency=low
 
   * Bug #48423: lazy initialization
