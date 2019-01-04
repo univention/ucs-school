@@ -107,8 +107,8 @@ class ImportUser(User):
 	reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())  # type: BaseReader
 	logger = lazy_object_proxy.Proxy(get_logger)  # type: logging.Logger
 	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
-	_pyhook_cache = None  # type: Dict[str, List[Callable]]
-	_format_pyhook_cache = None  # type: Dict[str, List[Callable]]
+	_pyhook_cache = {}  # type: Dict[str, List[Callable]]
+	_format_pyhook_cache = {}  # type: Dict[str, List[Callable]]
 	_username_handler_cache = {}  # type: Dict[Tuple[int, bool], UsernameHandler]
 	_unique_email_handler_cache = {}  # type: Dict[bool, UsernameHandler]
 	# non-Attribute attributes (not in self._attributes) that can also be used
@@ -193,7 +193,7 @@ class ImportUser(User):
 		def load_pyhook_only_if_supports_dry_run(klass):
 			return bool(getattr(klass, 'supports_dry_run', False))
 
-		if self._pyhook_cache is None:
+		if not self._pyhook_cache:
 			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
 			pyhooks_loader = PyHooksLoader(
 				path,
@@ -201,7 +201,10 @@ class ImportUser(User):
 				self.logger,
 				load_pyhook_only_if_supports_dry_run if self.config['dry_run'] else None
 			)
-			self.__class__._pyhook_cache = pyhooks_loader.get_hook_objects(lo=self.lo, dry_run=self.config['dry_run'])
+			self._pyhook_cache.update(pyhooks_loader.get_hook_objects(lo=self.lo, dry_run=self.config['dry_run']))
+			if not self._pyhook_cache:
+				# prevent searching for non-existent hooks next time call_hooks() is called
+				self._pyhook_cache['_loaded'] = [lambda: True]
 		if hook_time == "post" and self.action in ["A", "M"] and not (self.config['dry_run'] and self.action == "A"):
 			# update self from LDAP if object exists (after A and M), except after a dry-run create
 			user = self.get_by_import_id(self.lo, self.source_uid, self.record_uid)
@@ -241,11 +244,14 @@ class ImportUser(User):
 		:return: manipulated dictionary
 		:rtype: dict
 		"""
-		if self._format_pyhook_cache is None:
+		if not self._format_pyhook_cache:
 			# load hooks
 			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
 			pyloader = PyHooksLoader(path, FormatPyHook, self.logger)
-			self.__class__._format_pyhook_cache = pyloader.get_hook_objects()
+			self._format_pyhook_cache.update(pyloader.get_hook_objects())
+			if not self._format_pyhook_cache:
+				# prevent searching for non-existent hooks next time call_format_hook() is called
+				self._format_pyhook_cache['_loaded'] = [lambda x, y: True]
 
 		res = fields
 		for func in self._format_pyhook_cache.get('patch_fields_{}'.format(self.role_sting), []):
