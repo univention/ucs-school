@@ -37,6 +37,9 @@ from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractC
 from ucsschool.lib.models.utils import ucr, _, logger
 from ucsschool.lib.roles import role_school_class_share, role_workgroup_share
 
+from univention.udm import UDM
+from ldap.filter import filter_format
+
 
 class Share(UCSSchoolHelperAbstractClass):
 	name = ShareName(_('Name'))
@@ -135,6 +138,23 @@ class WorkGroupShare(RoleSupportMixin, Share):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_workgroup_share]
 	_school_in_name_prefix = True
+	_module_manager = UDM.admin().version(1)
+
+	'''
+	This method was overwritten to identify WorkGroupShares and distinct them from other shares of the school.
+	If at some point a lookup is implemented that uses the role attribute which is reliable this code can be removed.
+	Bug #48428
+	'''
+	@classmethod
+	def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+		shares = super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
+		filtered_shares = []
+		search_base = cls.get_search_base(school)
+		for share in shares:
+			groups = cls._module_manager.get('groups/group').search(filter_format('name=%s', [share.name]), base=search_base.groups)
+			if any((search_base.isWorkgroup(g.dn) for g in groups)):
+				filtered_shares.append(share)
+		return filtered_shares
 
 
 class ClassShare(RoleSupportMixin, Share):
