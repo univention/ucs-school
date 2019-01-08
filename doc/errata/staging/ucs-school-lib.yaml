@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix:
+fix: 12.0.1-0A~4.4.0.201901081302
 desc: |
  * Solves a problem in the ucsschool lib that returned the wrong shares when fetching all WorkGroupShares (Bug #48428).
 bug: [48428]
