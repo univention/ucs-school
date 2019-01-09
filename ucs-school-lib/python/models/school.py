@@ -40,7 +40,8 @@ import univention.admin.modules
 from univention.config_registry import handler_set
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.roles import (
-	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu, role_school, role_school_admin_group)
+	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu, role_school, role_school_admin_group,
+	role_school_teacher_group, role_school_staff_group, role_school_student_group, role_school_domain_group)
 from ucsschool.lib.models.attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName, Roles
 from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import BasicGroup, Group
@@ -203,23 +204,31 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		# cn=schueler
 		group = Group.cache(self.group_name('pupils', 'schueler-'), self.name)
+		if ucr.is_true('ucsschool/feature/roles'):
+			group.roles = [role_school_student_group]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('pupils'), lo)
 
 		# cn=lehrer
 		group = Group.cache(self.group_name('teachers', 'lehrer-'), self.name)
+		if ucr.is_true('ucsschool/feature/roles'):
+			group.roles = [role_school_teacher_group]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('teachers'), lo)
 
 		# cn=mitarbeiter
 		if self.shall_create_administrative_objects():
 			group = Group.cache(self.group_name('staff', 'mitarbeiter-'), self.name)
+			if ucr.is_true('ucsschool/feature/roles'):
+				group.roles = [role_school_staff_group]
 			group.create(lo)
 			group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
 
 		if ucr.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 			# cn=Domain Users %s
 			group = Group.cache("Domain Users %s" % (self.name,), self.name)
+			if ucr.is_true('ucsschool/feature/roles'):
+				group.roles = [role_school_domain_group]
 			group.create(lo)
 			group.add_umc_policy("cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get('ldap/base'),), lo)
 

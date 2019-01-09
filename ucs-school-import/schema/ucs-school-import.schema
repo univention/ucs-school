@@ -161,3 +161,9 @@ objectclass ( univentionSchool:55.3
 	DESC 'auxiliary class for UCS@school domain controller and member computer objects (not Class/HomeShareFileServer)'
 	AUXILIARY
 	MAY ( ucsschoolRole ) )
+
+objectclass ( univentionSchool:55.4
+	NAME 'ucsschoolComputer'
+	DESC 'auxiliary class for UCS@school client computer objects'
+	AUXILIARY
+	MAY ( ucsschoolRole ) )

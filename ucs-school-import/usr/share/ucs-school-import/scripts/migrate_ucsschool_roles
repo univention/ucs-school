@@ -46,11 +46,13 @@ import univention.admin.uldap
 from univention.config_registry import ConfigRegistry
 from univention.admin.uexceptions import ldapError
 from ucsschool.lib.models import (
-	AnyComputer, BasicGroup, ClassShare, ComputerRoom, School, SchoolClass, SchoolDCSlave, User, WorkGroup)
+	AnyComputer, BasicGroup, ClassShare, WorkGroupShare, ComputerRoom, School, SchoolClass, SchoolDCSlave, User,
+	WorkGroup, SchoolGroup, MacComputer, WindowsComputer, IPComputer)
 from ucsschool.lib.roles import (
 	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu, role_dc_slave_edu_secondary,
 	role_dc_master, role_memberserver, role_dc_backup, role_memberserver_admin, role_memberserver_edu, role_dc_slave,
-	role_single_master, role_school, role_school_admin, role_school_admin_group)
+	role_single_master, role_school, role_school_admin, role_school_admin_group, role_school_domain_group,
+	role_school_teacher_group, role_school_student_group, role_school_staff_group)
 
 LOG_FILE = '/var/log/univention/ucsschool-roles-migration.log'
 LOG_DEBUG_FMT = '%(asctime)s %(levelname)-5s %(funcName)s:%(lineno)d  %(message)s'
@@ -112,14 +114,19 @@ class UcsSchoolRolesMigration(object):
 			help='Modify all UCS@school objects.'
 		)
 		argp.add_argument(
-			'--admin-group',
+			'--school-groups',
 			action='store_true',
-			help='Modify UCS@school admin group objects.'
+			help='Modify UCS@school specific group objects.'
 		)
 		argp.add_argument(
 			'--class-shares',
 			action='store_true',
 			help='Modify UCS@school class share objects.'
+		)
+		argp.add_argument(
+			'--work-group-shares',
+			action='store_true',
+			help='Modify UCS@school work group share objects.'
 		)
 		argp.add_argument(
 			'--computer-rooms',
@@ -140,6 +147,12 @@ class UcsSchoolRolesMigration(object):
 			'--servers-school',
 			action='store_true',
 			help='Modify UCS@school school server objects (DC slave admin & edu, memberserver).'
+		)
+
+		argp.add_argument(
+			'--computers-school',
+			action='store_true',
+			help='Modify UCS@school school client computer objects (Win, IP managed and Mac OS computers).'
 		)
 
 		argp.add_argument(
@@ -172,11 +185,17 @@ class UcsSchoolRolesMigration(object):
 		logger.info('Log file: %r', LOG_FILE)
 		logger.info('Searching in school(s): {}.'.format(', '.join(self.schools)))
 
-		self.search_admin_group = self.args.admin_group or self.args.all_objects
+		self.search_school_groups = self.args.school_groups or self.args.all_objects
 		self.search_servers_central = self.args.servers_central or self.args.all_objects
 		self.search_servers_school = self.args.servers_school or self.args.all_objects
+		if self.args.computers_school or self.args.all_objects:
+			self.search_classes.append((WindowsComputer, 'ucsschoolComputer'))
+			self.search_classes.append((MacComputer, 'ucsschoolComputer'))
+			self.search_classes.append((IPComputer, 'ucsschoolComputer'))
 		if self.args.class_shares or self.args.all_objects:
 			self.search_classes.append((ClassShare, 'ucsschoolShare'))
+		if self.args.work_group_shares or self.args.all_objects:
+			self.search_classes.append((WorkGroupShare, 'ucsschoolShare'))
 		if self.args.computer_rooms or self.args.all_objects:
 			self.search_classes.append((ComputerRoom, 'ucsschoolGroup'))
 		if self.args.school_classes or self.args.all_objects:
@@ -186,13 +205,13 @@ class UcsSchoolRolesMigration(object):
 		if self.args.work_groups or self.args.all_objects:
 			self.search_classes.append((WorkGroup, 'ucsschoolGroup'))
 
-		if not (self.search_admin_group or self.search_classes or self.args.servers_central or self.args.servers_school):
+		if not (self.search_school_groups or self.search_classes or self.args.servers_central or self.args.servers_school):
 			print('ERROR: At least one object type must be enabled.\n')
 			argp.print_help()
 			sys.exit(2)
 		logger.info(
 			'Modifying objects of type(s): school%s%s%s%s.',
-			', admin group, ' if self.search_admin_group else '',
+			', school groups, ' if self.search_school_groups else '',
 			', '.join([cls.__name__ for cls, oc in self.search_classes]),
 			', central servers' if self.search_servers_central or self.args.all_objects else '',
 			', school servers' if self.search_servers_school or self.args.all_objects else '',
@@ -218,13 +237,21 @@ class UcsSchoolRolesMigration(object):
 				'ucsschoolOrganizationalUnit'
 			)
 
-			if self.search_admin_group:
-				roles = [create_ucsschool_role_string(role_school_admin_group, school)]
+			if self.search_school_groups:
+				domain_roles = [create_ucsschool_role_string(role_school_domain_group, school)]
+				for group in SchoolGroup.lookup(lo, school, filter_format('name=Domain Users %s', [school])):
+					self.set_ldap_attr('school groups', domain_roles, group.dn, 'ucsschoolGroup')
+				admin_roles = [create_ucsschool_role_string(role_school_admin_group, school)]
 				for obj in BasicGroup.get_all(lo, None, filter_format(
 						'(&(objectClass=ucsschoolAdministratorGroup)(ucsschoolSchool=%s))',
 						(school,)
 				)):
-					self.set_ldap_attr('admin group', roles, obj.dn, 'ucsschoolAdministratorGroup')
+					self.set_ldap_attr('school groups', admin_roles, obj.dn, 'ucsschoolAdministratorGroup')
+				for g_type, role in (('mitarbeiter', role_school_staff_group), ('schueler', role_school_student_group),
+									('lehrer', role_school_teacher_group)):
+					for group in SchoolGroup.lookup(lo, school, filter_format('name=%s-%s', [g_type, school])):
+						roles = [create_ucsschool_role_string(role, school)]
+						self.set_ldap_attr('school groups', roles, group.dn, 'ucsschoolGroup')
 
 			for cls, oc in self.search_classes:
 				logger.info('- Looking in school {} for objects of type {}...'.format(school, cls.__name__))
