@@ -766,8 +766,6 @@ class UCSSchoolHelperAbstractClass(object):
 		If filter_str is given, all udm properties with include_in_default_search are
 		queried for that string (so that it should be the value)
 		'''
-		print('UCSSchoolHelperAbstractClass.get_all() school={!r} filter_str={!r} easy_filter={!r} superordinate={!r}'.format(
-			school, filter_str, easy_filter, superordinate))
 		cls.init_udm_module(lo)
 		complete_filter = cls._meta.udm_filter
 		if easy_filter:
@@ -779,19 +777,15 @@ class UCSSchoolHelperAbstractClass(object):
 				complete_filter = conjunction('&', [complete_filter, filter_from_filter_str])
 			else:
 				complete_filter = filter_from_filter_str
-		print('UCSSchoolHelperAbstractClass.get_all() 1 complete_filter={!r}'.format(complete_filter))
 		complete_filter = str(complete_filter)
-		print('UCSSchoolHelperAbstractClass.get_all() 2 complete_filter={!r}'.format(complete_filter))
 		logger.debug('Getting all %s of %s with filter %r', cls.__name__, school, complete_filter)
 		ret = []
 		for udm_obj in cls.lookup(lo, school, complete_filter, superordinate=superordinate):
 			udm_obj.open()
-			print('UCSSchoolHelperAbstractClass.get_all() udm_obj={!r} udm_obj.dn={!r}'.format(udm_obj, udm_obj.dn))
 			try:
 				ret.append(cls.from_udm_obj(udm_obj, school, lo))
 			except NoObject:
 				continue
-		print('UCSSchoolHelperAbstractClass.get_all() ret={!r}'.format(ret))
 		return ret
 
 	@classmethod
