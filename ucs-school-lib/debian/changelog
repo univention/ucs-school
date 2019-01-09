@@ -1,3 +1,9 @@
+ucs-school-lib (12.0.1-2) unstable; urgency=low
+
+  * Bug #48429: fix get_all() for School objects
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 09 Jan 2019 17:11:55 +0100
+
 ucs-school-lib (12.0.1-1) unstable; urgency=low
 
   * Bug #47885: add _users_ldap() in schoolldap.py as a faster variant to

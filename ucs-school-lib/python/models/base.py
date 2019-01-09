@@ -768,10 +768,14 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		cls.init_udm_module(lo)
 		complete_filter = cls._meta.udm_filter
+		if complete_filter and not complete_filter.startswith('('):
+			complete_filter = '({})'.format(complete_filter)
 		if easy_filter:
 			filter_from_filter_str = cls.build_easy_filter(filter_str)
 		else:
 			filter_from_filter_str = filter_str
+			if filter_from_filter_str and not filter_from_filter_str.startswith('('):
+				filter_from_filter_str = '({})'.format(filter_from_filter_str)
 		if filter_from_filter_str:
 			if complete_filter:
 				complete_filter = conjunction('&', [complete_filter, filter_from_filter_str])
