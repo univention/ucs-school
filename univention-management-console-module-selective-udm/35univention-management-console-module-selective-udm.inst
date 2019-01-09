@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+## joinscript api: bindpwdfile
+
 VERSION=2
 
 . /usr/share/univention-join/joinscripthelper.lib
@@ -61,5 +63,3 @@ fi
 joinscript_save_current_version
 
 exit 0
-
-
