@@ -3,7 +3,7 @@
 #
 # UCS@school python lib: models
 #
-# Copyright 2014-2018 Univention GmbH
+# Copyright 2014-2019 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -502,8 +502,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def get_all(cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True):
+		print('School.get_all() filter_str={!r} easy_filter={!r} respect_local_oulist={!r}'.format(filter_str, easy_filter, respect_local_oulist))
 		schools = super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
+		print('School.get_all() schools={!r}'.format(schools))
 		oulist = ucr.get('ucsschool/local/oulist')
+		print('School.get_all() oulist={!r}'.format(oulist))
 		if oulist and respect_local_oulist:
 			logger.debug('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			ous = [x.strip() for x in oulist.split(',')]

@@ -4,7 +4,7 @@
 # UCS@school lib
 #  module: UCS@school simple query interface
 #
-# Copyright 2018 Univention GmbH
+# Copyright 2018-2019 Univention GmbH
 #
 # http://www.univention.de/
 #

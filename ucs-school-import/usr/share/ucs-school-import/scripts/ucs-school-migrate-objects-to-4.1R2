@@ -6,7 +6,7 @@
 Convert old UCS@school LDAP user and group objects to new LDAP
 structures of UCS@school 4.1 R2.
 """
-# Copyright 2016-2018 Univention GmbH
+# Copyright 2016-2019 Univention GmbH
 #
 # http://www.univention.de/
 #

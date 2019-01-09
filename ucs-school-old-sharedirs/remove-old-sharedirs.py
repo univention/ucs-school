@@ -2,7 +2,7 @@
 # Univention UCS@School
 #  listener module
 #
-# Copyright 2007-2018 Univention GmbH
+# Copyright 2007-2019 Univention GmbH
 #
 # http://www.univention.de/
 #
