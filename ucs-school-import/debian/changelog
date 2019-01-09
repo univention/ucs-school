@@ -1,3 +1,10 @@
+ucs-school-import (17.0.0-3) unstable; urgency=low
+
+  * Bug #48423: ou post-create hook can handle running in other Django app
+    process
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 09 Jan 2019 13:58:19 +0100
+
 ucs-school-import (17.0.0-2) unstable; urgency=low
 
   * Bug #48423: improve configuration error reporting
