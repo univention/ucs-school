@@ -49,6 +49,9 @@ role_dc_slave = 'dc_slave'
 role_dc_slave_admin = 'dc_slave_admin'
 role_dc_slave_edu = 'dc_slave_edu'
 role_dc_slave_edu_secondary = 'dc_slave_edu_secondary'
+role_win_computer = 'win_compuer'
+role_mac_computer = 'mac_computer'
+role_ip_computer = 'ip_computer'
 role_exam_user = 'exam_user'
 role_memberserver = 'memberserver'
 role_memberserver_admin = 'memberserver_admin'
@@ -56,6 +59,10 @@ role_memberserver_edu = 'memberserver_edu'
 role_school = 'school'
 role_school_admin = 'school_admin'
 role_school_admin_group = 'school_admin_group'
+role_school_domain_group = 'school_domain_group'
+role_school_teacher_group = 'school_teacher_group'
+role_school_staff_group = 'school_staff_group'
+role_school_student_group = 'school_student_group'
 role_school_class = 'school_class'
 role_school_class_share = 'school_class_share'
 role_single_master = 'single_master'
@@ -68,6 +75,8 @@ all_roles = (
 	role_dc_slave_admin, role_dc_slave_edu, role_dc_slave_edu_secondary, role_exam_user, role_memberserver,
 	role_memberserver_admin, role_memberserver_edu, role_school, role_school_admin, role_school_admin_group,
 	role_school_class, role_school_class_share, role_single_master, role_student, role_workgroup, role_workgroup_share,
+	role_school_domain_group, role_school_teacher_group, role_school_staff_group, role_school_student_group,
+	role_ip_computer, role_win_computer, role_mac_computer
 )
 
 

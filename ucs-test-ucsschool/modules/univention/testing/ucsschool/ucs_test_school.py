@@ -535,7 +535,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-		if self._ucr.is_true('ucsschool/feature/roles'):
+		if self._ucr.is_true('ucsschool/feature/roles', default=True):
 			utils.verify_ldap_object(user_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in roles]}, strict=False, should_exist=True)
 		return username, user_dn
 
@@ -561,7 +561,7 @@ class UCSTestSchool(object):
 			'disabled': not(is_active),
 			'options': ['ucsschoolAdministrator'],
 		}
-		if self._ucr.is_true('ucsschool/feature/roles'):
+		if self._ucr.is_true('ucsschool/feature/roles', default=True):
 			kwargs['ucsschool_role'] = [role_school_admin]
 		dn, school_admin = self.udm.create_user(position=position, groups=groups, **kwargs)
 		if wait_for_replication:
@@ -612,7 +612,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-		if self._ucr.is_true('ucsschool/feature/roles'):
+		if self._ucr.is_true('ucsschool/feature/roles', default=True):
 			utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_school_class, ou_name)]}, strict=False, should_exist=True)
 		return class_name, grp_dn
 
@@ -641,7 +641,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-		if self._ucr.is_true('ucsschool/feature/roles'):
+		if self._ucr.is_true('ucsschool/feature/roles', default=True):
 			utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_workgroup, ou_name)]}, strict=False, should_exist=True)
 		return workgroup_name, grp_dn
 
@@ -678,7 +678,7 @@ class UCSTestSchool(object):
 		print '*** Result of ComputerRoom(...).create(): %r' % (result,)
 		if wait_for_replication:
 			utils.wait_for_replication()
-		if self._ucr.is_true('ucsschool/feature/roles'):
+		if self._ucr.is_true('ucsschool/feature/roles', default=True):
 			utils.verify_ldap_object(obj.dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_computer_room, ou_name)]}, strict=False, should_exist=True)
 		return name, result
 

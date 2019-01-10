@@ -8,5 +8,6 @@ desc: |
  * Solves a problem in the ucsschool lib that returned the wrong shares when fetching all WorkGroupShares (Bug #48428).
  * The UCS@school library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (Bug #47885).
  * An error when filtering in a search for schools was fixed (Bug #48429).
+ * Activate the role feature by default (Bug #48226).
 
-bug: [48428, 47885, 48429]
+bug: [48428, 47885, 48429, 48226]

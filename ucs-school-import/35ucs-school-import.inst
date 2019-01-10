@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=18
+VERSION=19
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -488,6 +488,26 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set multivalue="1" \
 	--set disableUDMWeb=1 || die
 
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolRoleClientComputers" \
+	--append module="computers/linux" \
+	--append module="computers/macos" \
+	--append module="computers/windows" \
+	--append module="computers/ipmanagedclient" \
+	--set tabName="UCS@school" \
+	--set shortDescription="Role of UCS@school object." \
+	--set longDescription="Role of UCS@school object." \
+	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+	--set CLIName="ucsschoolRole" \
+	--set objectClass="ucsschoolComputer" \
+	--set ldapMapping="ucsschoolRole" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="1" \
+	--set disableUDMWeb=1 || die
+
 #### shares/share ####
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
@@ -506,6 +526,12 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set mayChange="1" \
 	--set multivalue="1" \
 	--set disableUDMWeb=1 || die
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 19 ] && [ $server_role = domaincontroller_master ]; then
+	if ! is_ucr_true ucsschool/feature/roles/skip_migration; then
+		./usr/share/ucs-school-import/scripts/migrate_ucsschool_roles --modify --all-objects || die
+	fi
+fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
 	# append UCSschool-School-OU option to Home/ClassShareServer

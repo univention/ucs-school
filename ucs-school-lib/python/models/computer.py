@@ -38,6 +38,8 @@ from univention.admin.uexceptions import nextFreeIp
 from ucsschool.lib.models.attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
 from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass, MultipleObjectsError
 
+from ucsschool.lib.roles import role_ip_computer, role_mac_computer, role_win_computer
+
 from ucsschool.lib.models.dhcp import DHCPServer, AnyDHCPService
 from ucsschool.lib.models.network import Network
 from ucsschool.lib.models.group import BasicGroup
@@ -313,24 +315,30 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		name_is_unique = True
 
 
-class WindowsComputer(SchoolComputer):
+class WindowsComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Windows system')
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	default_roles = [role_win_computer]
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/windows'
 		hook_path = 'computer'
 
 
-class MacComputer(SchoolComputer):
+class MacComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Mac OS X')
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	default_roles = [role_mac_computer]
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/macos'
 		hook_path = 'computer'
 
 
-class IPComputer(SchoolComputer):
+class IPComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Device with IP address')
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	default_roles = [role_ip_computer]
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/ipmanagedclient'

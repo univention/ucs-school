@@ -179,7 +179,7 @@ class Workgroup(object):
 			'memberUid': members,
 			'description': [self.description],
 		}
-		if self.ucr.is_true('ucsschool/feature/roles'):
+		if self.ucr.is_true('ucsschool/feature/roles', default=True):
 			expected_attr['ucsschoolRole'] = [create_ucsschool_role_string(role_workgroup, self.school)]
 		utils.verify_ldap_object(self.dn(), expected_attr=expected_attr)
 

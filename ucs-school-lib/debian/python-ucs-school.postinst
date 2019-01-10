@@ -38,4 +38,6 @@ fi
 
 ucr set ucsschool/default/share/nfs?false
 
+update-python-modules -f
+
 exit 0

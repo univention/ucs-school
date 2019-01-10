@@ -1,3 +1,9 @@
+ucs-school-import (17.0.1-0) unstable; urgency=low
+
+  * Bug #48226: Activate role feature by default and run migration script
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 10 Jan 2019 11:54:02 +0100
+
 ucs-school-import (17.0.0-3) unstable; urgency=low
 
   * Bug #48423: ou post-create hook can handle running in other Django app

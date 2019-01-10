@@ -183,7 +183,7 @@ class Klasse(object):
 		utils.verify_ldap_object(self.dn(), should_exist=should_exist)
 
 	def verify(self):
-		if not self.ucr.is_true('ucsschool/feature/roles'):
+		if not self.ucr.is_true('ucsschool/feature/roles', default=True):
 			return
 		# TODO: check all attributes
 		utils.verify_ldap_object(
