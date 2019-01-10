@@ -119,6 +119,14 @@ Checking ldap_schema ...                          OK
 ...
 			]]></screen>
 		</para>
+		<para>
+			Während dieses Updates wird ein Migrationsskript ausgeführt, welches allen unterstützten &ucsUAS; Objekten
+			Rollen hinzufügt und das Feature wird standardmäßig aktiviert. Von dieser Version an wird die Verwendung des Rollenfeatures deutlich empfohlen, da diese
+			Rollenattribute zukünftig zur Identifikation von Objekten im LDAP vorrausgesetzt werden.
+			Wenn Sie diese automatische Migration unterdrücken wollen, um sie zu einem späteren Zeitpunkt manuell durchzuführen,
+			muss die UCR Variable <envar>ucsschool/feature/roles/skip_migration</envar> vor dem Update auf den Wert <emphasis>yes</emphasis>
+			gesetzt werden.
+		</para>
 	</chapter>
 
 	<chapter id="relnotes:post">

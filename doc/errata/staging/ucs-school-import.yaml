@@ -6,4 +6,5 @@ src: ucs-school-import
 fix:
 desc: |
  * The UCS@school import frameworks ImportUser class has been made more accessable to 3rd party software (Bug #48423).
-bug: [48423]
+ * Activate the role feature by default (Bug #48226).
+bug: [48423, 48226]
