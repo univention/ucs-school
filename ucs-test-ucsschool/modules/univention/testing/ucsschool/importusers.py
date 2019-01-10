@@ -269,7 +269,7 @@ class Person(object):
 			shadowExpire=[] if self.is_active() else ['1'],
 			sn=[self.lastname],
 			uid=[self.username],
-			ucsschoolRole=self.roles if configRegistry.is_true('ucsschool/feature/roles', default=True) else [],
+			ucsschoolRole=self.roles,
 			ucsschoolSourceUID=[self.source_uid] if self.source_uid else ['LegacyDB'] if self.legacy_v2 else [],
 			ucsschoolRecordUID=[self.record_uid] if self.record_uid else [self.username] if self.legacy_v2 else [],
 			description=[self.description] if self.description else [],

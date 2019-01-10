@@ -1034,8 +1034,6 @@ class RoleSupportMixin(object):
 		self.ucsschool_roles = ['{role}:{context_type}:{context}'.format(**role) for role in roles]
 
 	def do_move_roles(self, udm_obj, lo, old_school, new_school):
-		if not ucr.is_true('ucsschool/feature/roles', default=True):
-			return
 		old_roles = list(self.ucsschool_roles)
 		# remove all roles of old school
 		roles = [role for role in self.roles_as_dicts if role['context'] != old_school]
@@ -1050,8 +1048,6 @@ class RoleSupportMixin(object):
 			lo.modify(self.dn, [('ucsschoolRole', old_roles, self.ucsschool_roles)])
 
 	def validate_roles(self, lo):
-		if not ucr.is_true('ucsschool/feature/roles', default=True):
-			return
 		# for now different roles in different schools are not supported
 		schools = self.get_schools()
 		for role in self.roles_as_dicts:
@@ -1067,8 +1063,6 @@ class RoleSupportMixin(object):
 				)
 
 	def create_without_hooks_roles(self, lo):
-		if not ucr.is_true('ucsschool/feature/roles', default=True):
-			return
 		if self.default_roles and not self.ucsschool_roles:
 			schools = self.get_schools()
 			self.ucsschool_roles = [
@@ -1082,8 +1076,6 @@ class RoleSupportMixin(object):
 		Add role(s) to object, if it got new/additional school(s), and object
 		has no role(s) in them yet.
 		"""
-		if not ucr.is_true('ucsschool/feature/roles', default=True):
-			return
 		old_schools = set(self.get_schools_from_udm_obj(udm_obj))
 		cur_schools = self.get_schools()
 		new_schools = set(cur_schools) - old_schools

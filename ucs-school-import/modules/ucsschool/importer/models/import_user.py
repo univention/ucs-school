@@ -545,8 +545,7 @@ class ImportUser(User):
 		self.make_lastname()
 		self.make_school()
 		self.make_schools()
-		if self.ucr.is_true('ucsschool/feature/roles', default=True):
-			self.make_ucsschool_roles()
+		self.make_ucsschool_roles()
 		self.make_username()
 		if new_user:
 			self.make_password()

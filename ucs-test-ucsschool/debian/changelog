@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-4) unstable; urgency=low
+
+  * Bug #48226: Remove UCRV ucsschool/feature/roles
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 10 Jan 2019 12:49:31 +0100
+
 ucs-test-ucsschool (6.0.0-3) unstable; urgency=low
 
   * Bug #48226: Activate role feature by default

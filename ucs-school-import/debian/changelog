@@ -1,3 +1,9 @@
+ucs-school-import (17.0.1-1) unstable; urgency=low
+
+  * Bug #48226: Completely remove possibility to deactivate role feature
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 10 Jan 2019 12:48:45 +0100
+
 ucs-school-import (17.0.1-0) unstable; urgency=low
 
   * Bug #48226: Activate role feature by default and run migration script
@@ -2232,7 +2238,7 @@ ucs-school-import (10.0.17-2) unstable; urgency=medium
 ucs-school-import (10.0.17-1) unstable; urgency=low
 
   * Bug #31407: fixed district mode related bug in ucs-school-join-secondary-samba4
-  * Bug #31407: removed duplicate broken code and imported ucs-school-lib/base.sh 
+  * Bug #31407: removed duplicate broken code and imported ucs-school-lib/base.sh
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 16 May 2014 16:56:50 +0200
 
@@ -2573,7 +2579,7 @@ ucs-school-import (9.0.6-2) unstable; urgency=low
 
 ucs-school-import (9.0.6-1) unstable; urgency=low
 
-  * check given sharefileserver names in create_ou for validity 
+  * check given sharefileserver names in create_ou for validity
     (Bug #27549)
   * fixed description of ucsschool/import/set/sambahome (Bug #27549)
 
@@ -2638,7 +2644,7 @@ ucs-school-import (8.0.58-1) unstable; urgency=low
 
 ucs-school-import (8.0.57-1) unstable; urgency=low
 
-  * added verifyMailDomain in create/modify_user (Bug #27892)  
+  * added verifyMailDomain in create/modify_user (Bug #27892)
 
  -- Felix Botner <botner@univention.de>  Thu, 26 Jul 2012 09:39:03 +0200
 
@@ -2770,7 +2776,7 @@ ucs-school-import (8.0.41-4) unstable; urgency=low
 
 ucs-school-import (8.0.41-3) unstable; urgency=low
 
-  * exit(1) if import_user outfile exists (Bug #15180) 
+  * exit(1) if import_user outfile exists (Bug #15180)
 
  -- Felix Botner <botner@univention.de>  Thu, 15 Mar 2012 14:50:47 +0100
 
@@ -2788,7 +2794,7 @@ ucs-school-import (8.0.41-1) unstable; urgency=low
 
 ucs-school-import (8.0.40-2) unstable; urgency=low
 
-  * added description for .../dns/clearou (Bug #15099) 
+  * added description for .../dns/clearou (Bug #15099)
 
  -- Felix Botner <botner@univention.de>  Wed, 15 Feb 2012 16:19:18 +0100
 
@@ -2801,8 +2807,8 @@ ucs-school-import (8.0.40-1) unstable; urgency=low
 
 ucs-school-import (8.0.39-1) unstable; urgency=low
 
-  * add only (already existing) slave dc's to global dc groups 
-    (Bug #20229)  
+  * add only (already existing) slave dc's to global dc groups
+    (Bug #20229)
 
  -- Felix Botner <botner@univention.de>  Tue, 14 Feb 2012 13:34:34 +0100
 
@@ -2828,13 +2834,13 @@ ucs-school-import (8.0.37-1) unstable; urgency=low
 
 ucs-school-import (8.0.36-1) unstable; urgency=low
 
-  * fixed password charlist (Bug #25844) 
+  * fixed password charlist (Bug #25844)
 
  -- Felix Botner <botner@univention.de>  Thu, 09 Feb 2012 13:27:08 +0100
 
 ucs-school-import (8.0.35-1) unstable; urgency=low
 
-  * added rename_class (Bug #20645) 
+  * added rename_class (Bug #20645)
 
  -- Felix Botner <botner@univention.de>  Thu, 09 Feb 2012 13:09:48 +0100
 
@@ -2846,7 +2852,7 @@ ucs-school-import (8.0.34-1) unstable; urgency=low
 
 ucs-school-import (8.0.33-1) unstable; urgency=low
 
-  * fixed argument handling in activate_groupmembers() (Bug #24544) 
+  * fixed argument handling in activate_groupmembers() (Bug #24544)
 
  -- Felix Botner <botner@univention.de>  Fri, 03 Feb 2012 08:30:35 +0100
 
@@ -2884,13 +2890,13 @@ ucs-school-import (8.0.28-1) unstable; urgency=low
 
 ucs-school-import (8.0.27-1) unstable; urgency=low
 
-  * better help messages for ucs school import tools (Bug #15657) 
+  * better help messages for ucs school import tools (Bug #15657)
 
  -- Felix Botner <botner@univention.de>  Wed, 01 Feb 2012 11:35:52 +0100
 
 ucs-school-import (8.0.26-1) unstable; urgency=low
 
-  * ignore user if mailPrimaryAddress is already used (Bug #19252) 
+  * ignore user if mailPrimaryAddress is already used (Bug #19252)
 
  -- Felix Botner <botner@univention.de>  Fri, 27 Jan 2012 14:13:47 +0100
 
@@ -2909,20 +2915,20 @@ ucs-school-import (8.0.24-1) unstable; urgency=low
 
 ucs-school-import (8.0.23-1) unstable; urgency=low
 
-  * create user password according to password length policy 
+  * create user password according to password length policy
     (Bug #25844)
 
  -- Felix Botner <botner@univention.de>  Tue, 24 Jan 2012 13:51:25 +0100
 
 ucs-school-import (8.0.22-1) unstable; urgency=low
 
-  * fixed ou hooks (Bug #25883) 
+  * fixed ou hooks (Bug #25883)
 
  -- Felix Botner <botner@univention.de>  Tue, 24 Jan 2012 10:08:08 +0100
 
 ucs-school-import (8.0.21-1) unstable; urgency=low
 
-  * alway append newline to hook line (Bug #20200) 
+  * alway append newline to hook line (Bug #20200)
 
  -- Felix Botner <botner@univention.de>  Mon, 23 Jan 2012 12:01:01 +0100
 
@@ -2936,13 +2942,13 @@ ucs-school-import (8.0.20-1) unstable; urgency=low
 ucs-school-import (8.0.19-1) unstable; urgency=low
 
   * removed ucsschool/ldap/default/memberservers
-  * new optional parameter for computer import (Bug #20151) 
+  * new optional parameter for computer import (Bug #20151)
 
  -- Felix Botner <botner@univention.de>  Mon, 23 Jan 2012 09:48:40 +0100
 
 ucs-school-import (8.0.18-1) unstable; urgency=low
 
-  * add new var ucsschool/ldap/default/memberservers (Bug #20151) 
+  * add new var ucsschool/ldap/default/memberservers (Bug #20151)
 
  -- Felix Botner <botner@univention.de>  Fri, 20 Jan 2012 16:48:04 +0100
 
@@ -2984,7 +2990,7 @@ ucs-school-import (8.0.12-1) unstable; urgency=low
 
 ucs-school-import (8.0.11-1) unstable; urgency=low
 
-  * verify container and ou's case-insensitive (Bug #20081) 
+  * verify container and ou's case-insensitive (Bug #20081)
 
  -- Felix Botner <botner@univention.de>  Fri, 20 Jan 2012 11:08:26 +0100
 
@@ -3002,7 +3008,7 @@ ucs-school-import (8.0.9-1) unstable; urgency=low
 
 ucs-school-import (8.0.8-1) unstable; urgency=low
 
-  * ignore white space lines in ucs-school-import (Bug #17207) 
+  * ignore white space lines in ucs-school-import (Bug #17207)
 
  -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 16:05:23 +0100
 
@@ -3036,7 +3042,7 @@ ucs-school-import (8.0.4-1) unstable; urgency=low
 
 ucs-school-import (8.0.3-1) unstable; urgency=low
 
-  * added -h/--help for UCS@school import tools (Bug #15657) 
+  * added -h/--help for UCS@school import tools (Bug #15657)
 
  -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 12:01:19 +0100
 
@@ -3135,7 +3141,7 @@ ucs-school-import (6.0.18-1) unstable; urgency=low
 ucs-school-import (6.0.17-1) unstable; urgency=low
 
   * added missing "Categories" entries (Bug #18532)
-  * added new UCR category 
+  * added new UCR category
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 21 Sep 2010 12:21:37 +0200
 
@@ -3150,7 +3156,7 @@ ucs-school-import (6.0.16-1) unstable; urgency=low
 
 ucs-school-import (6.0.15-1) unstable; urgency=low
 
-  * create extended attribute "ucsschool-user-role" upon installation 
+  * create extended attribute "ucsschool-user-role" upon installation
   * set "ucsschool-user-role" when importing new user (Bug #19204)
 
  -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Sep 2010 09:51:21 +0200
@@ -3308,9 +3314,9 @@ ucs-school-import (4.0.9-1) unstable; urgency=low
 
 ucs-school-import (4.0.8-1) unstable; urgency=low
 
-  * move dhcp server object to specified ou if object already exists 
+  * move dhcp server object to specified ou if object already exists
   	(Bug: #15344)
-  * fixed wrong superordinate while creating userlogon share  
+  * fixed wrong superordinate while creating userlogon share
 
  -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 11:20:54 +0200
 
@@ -3755,7 +3761,7 @@ ucs-school-import (2.0.0-12) unstable; urgency=low
 
 ucs-school-import (2.0.0-11) unstable; urgency=low
 
-  * random default passwords for new account (A) (Ticket: #2008092210000151) 
+  * random default passwords for new account (A) (Ticket: #2008092210000151)
 
  -- Felix Botner <fbotner@visdalen.knut.univention.de>  Fri, 26 Sep 2008 16:37:01 +0200
 
@@ -3767,13 +3773,13 @@ ucs-school-import (2.0.0-10) unstable; urgency=low
 
 ucs-school-import (2.0.0-9) unstable; urgency=low
 
-  * random default passwords for new account (A) (Bug: #2008092210000151) 
+  * random default passwords for new account (A) (Bug: #2008092210000151)
 
  -- Felix Botner <fbotner@visdalen.knut.univention.de>  Fri, 26 Sep 2008 10:27:24 +0200
 
 ucs-school-import (2.0.0-8) unstable; urgency=low
 
-  * fixed build dependency problems (Bug: #2008092210000151) 
+  * fixed build dependency problems (Bug: #2008092210000151)
 
  -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 25 Sep 2008 14:55:13 +0200
 
@@ -3793,13 +3799,13 @@ ucs-school-import (2.0.0-5) unstable; urgency=low
 
   * ticket 2008092210000151
   * create user: if mailPrimaryAddress already exists, a account
-    without mailPrimaryAddress but with LDAP attribute 
-    "univentionAbordnung = the dn of the object with the mailPrimaryAddress" 
+    without mailPrimaryAddress but with LDAP attribute
+    "univentionAbordnung = the dn of the object with the mailPrimaryAddress"
     will be created
-  * remove user: delete user, check if there are any account with 
-    "univentionAbordnung=my dn" give one of them the mailPrimaryAddress 
+  * remove user: delete user, check if there are any account with
+    "univentionAbordnung=my dn" give one of them the mailPrimaryAddress
     and change "univentionAbordnung" in the rest
-    
+
 
  -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 25 Sep 2008 13:32:57 +0200
 
@@ -3960,7 +3966,7 @@ ucs-school-import (1.1.0) unstable; urgency=low
 
 ucs-school-import (1.0.5) unstable; urgency=low
 
-  * create default-shares for userlogon-scripts 
+  * create default-shares for userlogon-scripts
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Wed, 30 Nov 2005 11:24:34 +0100
 
@@ -4005,7 +4011,7 @@ ucs-school-import (1.0.1-2) unstable; urgency=low
 
 ucs-school-import (1.0.1-1) unstable; urgency=low
 
-  * Set default password for users and set change-Flag, get hostname/domainname from baseconfig, code cleanup 
+  * Set default password for users and set change-Flag, get hostname/domainname from baseconfig, code cleanup
 
  -- Ingo Steuwer <steuwer@univention.de>  Wed, 14 Jul 2004 08:42:54 +0200
 
