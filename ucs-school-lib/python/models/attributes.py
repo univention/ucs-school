@@ -344,6 +344,6 @@ class Roles(Attribute):
 
 	def __init__(self, *args, **kwargs):
 		super(Roles, self).__init__(*args, **kwargs)
-		if not ucr.is_true('ucsschool/feature/roles'):
+		if not ucr.is_true('ucsschool/feature/roles', default=True):
 			self.internal = True
 			self.map_to_udm = False

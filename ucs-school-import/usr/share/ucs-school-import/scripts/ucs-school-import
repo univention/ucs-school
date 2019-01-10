@@ -633,7 +633,7 @@ def create_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
 			('displayName', '', displayName),                       # set display name for UCS@school
 		]
-		if configRegistry.is_true('ucsschool/feature/roles'):
+		if configRegistry.is_true('ucsschool/feature/roles', default=True):
 			ml.append(('ucsschoolRole', '', [create_ucsschool_role_string("school", schoolNr)]))
 		lo.modify(dn, ml)
 	else:
@@ -1218,7 +1218,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object["owner"] = "0"
 		object["group"] = gid
 		object["directorymode"] = "0770"
-		if configRegistry.is_true('ucsschool/feature/roles'):
+		if configRegistry.is_true('ucsschool/feature/roles', default=True):
 			object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class_share, schoolNr)]
 		if configRegistry.is_false('ucsschool/default/share/nfs', True):
 			try:
@@ -1281,7 +1281,7 @@ def verify_group(position_dn, co, lo, superordinate, base, schoolNr, is_school_c
 		object = group_module.object(co, lo, position, superordinate=superordinate)
 		object.open()
 		object["name"] = position_dn[3:string.find(position_dn, ",")]
-		if configRegistry.is_true('ucsschool/feature/roles'):
+		if configRegistry.is_true('ucsschool/feature/roles', default=True):
 			if is_school_class:
 				object["ucsschoolRole"] = [create_ucsschool_role_string(role_school_class, schoolNr)]
 			elif is_admin_group:
@@ -1563,7 +1563,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		if profilePath:
 			object["profilepath"] = profilePath
 
-	if configRegistry.is_true('ucsschool/feature/roles'):
+	if configRegistry.is_true('ucsschool/feature/roles', default=True):
 		object["ucsschoolRole"] = []
 		for role in (role_pupil, role_staff, role_teacher):
 			if role in roles:
@@ -3132,7 +3132,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		slave_object['unixhome'] = '/dev/null'
 		slave_object['shell'] = '/bin/bash'
 		slave_object['primaryGroup'] = 'cn=DC Slave Hosts,cn=groups,%s' % (baseDN,)
-		if configRegistry.is_true('ucsschool/feature/roles'):
+		if configRegistry.is_true('ucsschool/feature/roles', default=True):
 			if dc_type == TYPE_DC_ADMINISTRATIVE:
 				roles = [create_ucsschool_role_string(role_dc_slave_admin, ou_name)]
 			else:
