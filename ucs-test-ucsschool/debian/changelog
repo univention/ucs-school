@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-3) unstable; urgency=low
+
+  * Bug #48226: Activate role feature by default
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 10 Jan 2019 12:04:45 +0100
+
 ucs-test-ucsschool (6.0.0-2) unstable; urgency=low
 
   * Bug #48398: move modules in the 90_ucsschool/essential/ directory into the
