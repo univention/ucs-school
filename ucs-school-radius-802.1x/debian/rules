@@ -35,14 +35,6 @@ override_dh_auto_install:
 	dh_auto_install
 	univention-install-config-registry
 
-override_dh_fixperms:
-	dh_fixperms
-	chmod u+s debian/ucs-school-radius-802.1x/usr/bin/ucs-school-ntlm-auth-suidwrapper
-
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-radius-802.1x.conffiles
-
 override_dh_auto_test:
 	dh_auto_test
 	ucslint
