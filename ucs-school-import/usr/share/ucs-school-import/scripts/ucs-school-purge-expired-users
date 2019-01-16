@@ -161,7 +161,7 @@ def main():
 		uic.configuration_files.append(uic.args.conffile)
 	else:
 		# prevent InitialisationError
-		uic.args.settings['sourceUID'] = 'PurgeExpiredUsers'
+		uic.args.settings['source_uid'] = 'PurgeExpiredUsers'
 	config = uic.setup_config()
 	# logging configured by config file
 	uic.setup_logging(config['verbose'], config['logfile'])

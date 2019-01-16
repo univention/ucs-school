@@ -71,7 +71,7 @@ assert ImportUser
 
 _config_args = {
 	"dry_run": False,
-	"sourceUID": "TestDB",
+	"source_uid": "TestDB",
 	"verbose": True
 }
 try:

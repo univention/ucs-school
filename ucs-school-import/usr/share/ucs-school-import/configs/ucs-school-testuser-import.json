@@ -12,12 +12,12 @@
 		}
 	},
 	"scheme": {
-		"recordUID": "<firstname>.<lastname>",
+		"record_uid": "<firstname>.<lastname>",
 		"username": {
 		    "default": "<:umlauts><firstname>.<lastname><:lower>[COUNTER2]"
 		}
 	},
-	"sourceUID": "TESTID",
+	"source_uid": "TESTID",
 	"verbose": false,
 	"normalize": {
 		"firstname": false,

@@ -1,6 +1,6 @@
 [ucsschool/import/http_api/set_source_uid]
-Description[de]=Diese UCR-Variable steuert, ob der Wert von sourceUID aus den JSON-Konfigurationsdateien bei einem Import via UMC oder HTTP-API mit "<OU>-<Rolle>" überschrieben wird. Nur im Falle einer Datenbasis mit global eindeutigen Benutzer-IDs und verteilten Importen ändern! Standard, wenn nicht gesetzt: yes
-Description[en]=This UCR variable controls whether the value of sourceUID from the JSON configuration file is overwritten with "<OU>-<Rolle>" when importing via UMC or HTTP API. Only change this value in case of a database with globally unique user IDs and distributed imports!  Default if unset: yes
+Description[de]=Diese UCR-Variable steuert, ob der Wert von source_uid aus den JSON-Konfigurationsdateien bei einem Import via UMC oder HTTP-API mit "<OU>-<Rolle>" überschrieben wird. Nur im Falle einer Datenbasis mit global eindeutigen Benutzer-IDs und verteilten Importen ändern! Standard, wenn nicht gesetzt: yes
+Description[en]=This UCR variable controls whether the value of source_uid from the JSON configuration file is overwritten with "<OU>-<Rolle>" when importing via UMC or HTTP API. Only change this value in case of a database with globally unique user IDs and distributed imports!  Default if unset: yes
 Type=bool
 Categories=ucsschool-base
 

@@ -30,7 +30,7 @@
 	},
 	"password_length": 15,
 	"school": null,
-	"sourceUID": null,
+	"source_uid": null,
 	"tolerate_errors": 0,
 	"user_role": null,
 	"username": {

@@ -50,8 +50,8 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 			raise InitialisationError("Configuration value of 'mandatory_attributes' must be a list.")
 
 	def test_source_uid(self):
-		if not self.config.get("sourceUID"):
-			raise InitialisationError("No sourceUID was specified.")
+		if not self.config.get("source_uid"):
+			raise InitialisationError("No source_uid was specified.")
 
 	def test_input_type(self):
 		if not self.config["input"].get("type"):

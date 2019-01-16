@@ -42,7 +42,7 @@ That file can be used as input data for the HTTP-API or on the command line with
 	--user_role <role> \
 	--school <OU> \
 	--infile test_users_2017-09-07_16:09:46.csv \
-	--sourceUID <OU>-<role> \
+	--source_uid <OU>-<role> \
 	--verbose
 
 ## Use UMC module for import

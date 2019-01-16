@@ -41,10 +41,10 @@ As such, the CSV file can be imported on the command line with::
         --user_role $ROLE \
         --school $OU \
         --infile test-http-import.csv \
-        --sourceUID "$OU-$ROLE" \
+        --source_uid "$OU-$ROLE" \
         --verbose
 
-The ``$OU`` in ``--sourceUID "$OU-$ROLE"`` should be lowercase, to make the import job as *similar* as possible to how it would be started by the UMC module (there will still be minor differences).
+The ``$OU`` in ``--source_uid "$OU-$ROLE"`` should be lowercase, to make the import job as *similar* as possible to how it would be started by the UMC module (there will still be minor differences).
 
 The ``ucs-school-testuser-import`` script will print a help message at the end, with the above instructions that can be copied and pasted to immediately start an import from the command line.
 
@@ -55,7 +55,7 @@ To delete the users imported with the previous command, create a CSV file with j
 
     $ head -1 test-http-import.csv > delete-all-users.csv
 
-When running the import, make sure to specify the ``sourceUID`` correctly. The following will delete all students of ``SchuleEins`` that were imported using the HTTP-API configuration file::
+When running the import, make sure to specify the ``source_uid`` correctly. The following will delete all students of ``SchuleEins`` that were imported using the HTTP-API configuration file::
 
     $ OU=SchuleEins
     $ ROLE=student
@@ -64,7 +64,7 @@ When running the import, make sure to specify the ``sourceUID`` correctly. The f
         --user_role $ROLE \
         --school $OU \
         --infile delete-all-users.csv \
-        --sourceUID "$OU-$ROLE" \
+        --source_uid "$OU-$ROLE" \
         --verbose
  
  

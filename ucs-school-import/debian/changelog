@@ -1,3 +1,9 @@
+ucs-school-import (17.1.0-1) unstable; urgency=low
+
+  * Bug #48478: rename recordUID to record_uid and sourceUID to source_uid
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 16 Jan 2019 11:36:06 +0100
+
 ucs-school-import (17.0.1-2) unstable; urgency=low
 
   * Bug #47351: change default of normalization:firstname and

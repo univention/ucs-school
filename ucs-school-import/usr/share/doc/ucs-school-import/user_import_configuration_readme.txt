@@ -66,7 +66,7 @@ After that follow
 }
 "scheme" [1]: {
 	"email": str: schema of email address, variables may be used as described in manual-4.2:users:templates
-	"recordUID": str [1]: schema of RecordUID, variables may be used as described in manual-4.2:users:templates
+	"record_uid": str [1]: schema of record_uid, variables may be used as described in manual-4.2:users:templates
 	"username" [1]: {
 		"default":           str [2]: schema of username, variables may be used
 		"student":           str [3]:                     as described in manual-4.2:users:templates
@@ -86,7 +86,7 @@ After that follow
 },
 "password_length": int [1]: length of the random password generated for new users
 "school": str: name (abbreviation) of school this import is for, if not available from input
-"sourceUID": str [1]: UID of source database
+"source_uid": str [1]: UID of source database
 "tolerate_errors": int [1]: number of non-fatal errors to tolerate before aborting, -1 means unlimited
 "user_deletion": DEPRECATED - use deletion_grace_period instead,
 "user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)

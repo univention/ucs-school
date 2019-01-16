@@ -124,10 +124,8 @@ class ImportUser(User):
 		'firstname': 'make_firstname',
 		'lastname': 'make_lastname',
 		'email': 'make_email',
-		'record_uid': 'make_recordUID',
-		'recordUID': 'make_recordUID',
-		'source_uid': 'make_sourceUID',
-		'sourceUID': 'make_sourceUID',
+		'record_uid': 'make_record_uid',
+		'source_uid': 'make_source_uid',
 		'school': 'make_school',
 		'name': 'make_username',
 		'username': 'make_username',
@@ -369,7 +367,7 @@ class ImportUser(User):
 		:raises ucsschool.lib.models.base.NoObject: if no user was found
 		"""
 		if not source_uid or not record_uid:
-			raise MissingUid('SourceUID or RecordUID are not set (source_uid={!r} record_uid={!r}).'.format(
+			raise MissingUid('source_uid or record_uid are not set (source_uid={!r} record_uid={!r}).'.format(
 				source_uid, record_uid))
 
 		oc_filter = cls.get_ldap_filter_for_user_role()
@@ -568,7 +566,7 @@ class ImportUser(User):
 		* See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz section "scheme" for details on the configuration.
 		"""
 		ignore_keys = self.to_dict().keys()
-		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "sourceUID", "username"])  # these are used in make_*
+		ignore_keys.extend(["mailPrimaryAddress", "record_uid", "source_uid", "username"])  # these are used in make_*
 		ignore_keys.extend(self.no_overwrite_attributes)
 		for prop in [k for k in self.config["scheme"].keys() if k not in ignore_keys]:
 			self.make_udm_property(prop)
@@ -579,8 +577,8 @@ class ImportUser(User):
 		Runs make_* functions for record_uid and source_uid Attributes of
 		ImportUser.
 		"""
-		self.make_recordUID()
-		self.make_sourceUID()
+		self.make_record_uid()
+		self.make_source_uid()
 
 	def make_birthday(self):  # type: () -> Union[str, None]
 		"""
@@ -724,28 +722,28 @@ class ImportUser(User):
 			self.password = create_passwd(self.config["password_length"])  # type: str
 		return self.password
 
-	def make_recordUID(self):  # type: () -> str
+	def make_record_uid(self):  # type: () -> str
 		"""
-		Create ucsschoolRecordUID (recordUID) (if not already set).
+		Create ucsschoolRecordUID (record_uid) (if not already set).
 		"""
 		if self.record_uid:
 			pass
-		elif self._schema_write_check("recordUID", "record_uid", "ucsschoolRecordUID"):
-			self.record_uid = self.format_from_scheme("recordUID", self.config["scheme"]["recordUID"])  # type: str
+		elif self._schema_write_check("record_uid", "record_uid", "ucsschoolRecordUID"):
+			self.record_uid = self.format_from_scheme("record_uid", self.config["scheme"]["record_uid"])  # type: str
 		elif self.old_user:
 			self.record_uid = self.old_user.record_uid
 		return self.record_uid or ""
 
-	def make_sourceUID(self):  # type: () -> str
+	def make_source_uid(self):  # type: () -> str
 		"""
-		Set the ucsschoolSourceUID (sourceUID) (if not already set).
+		Set the ucsschoolSourceUID (source_uid) (if not already set).
 		"""
 		if self.source_uid:
-			if self.source_uid != self.config["sourceUID"]:
+			if self.source_uid != self.config["source_uid"]:
 				raise NotSupportedError("Source_uid '{}' differs to configured source_uid '{}'.".format(
-					self.source_uid, self.config["sourceUID"]))
+					self.source_uid, self.config["source_uid"]))
 		else:
-			self.source_uid = self.config["sourceUID"]  # type: str
+			self.source_uid = self.config["source_uid"]  # type: str
 		return self.source_uid or ""
 
 	def make_school(self):  # type: () -> str
@@ -1008,16 +1006,16 @@ class ImportUser(User):
 
 		# don't run uniqueness checks from within a post_move hook
 		if not self.in_hook and UNIQUENESS not in skip_tests:
-			if self._unique_ids["recordUID"].get(self.record_uid, self.dn) != self.dn:
-				raise UniqueIdError('RecordUID {!r} has already been used in this import by {!r}.'.format(
-					self.record_uid, self._unique_ids["recordUID"][self.record_uid]), entry_count=self.entry_count, import_user=self
+			if self._unique_ids["record_uid"].get(self.record_uid, self.dn) != self.dn:
+				raise UniqueIdError('record_uid {!r} has already been used in this import by {!r}.'.format(
+					self.record_uid, self._unique_ids["record_uid"][self.record_uid]), entry_count=self.entry_count, import_user=self
 				)
-			self._unique_ids["recordUID"][self.record_uid] = self.dn
+			self._unique_ids["record_uid"][self.record_uid] = self.dn
 
 			if check_username:
 				if self._unique_ids["name"].get(self.name, self.dn) != self.dn:
 					raise UniqueIdError('Username {!r} has already been used in this import by {!r}.'.format(
-						self.name, self._unique_ids["recordUID"][self.name]), entry_count=self.entry_count,
+						self.name, self._unique_ids["record_uid"][self.name]), entry_count=self.entry_count,
 						import_user=self
 					)
 				self._unique_ids["name"][self.name] = self.dn

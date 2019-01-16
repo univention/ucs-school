@@ -111,11 +111,11 @@ def log_conf_hint(args, logger):
 		logger.info("")
 		logger.info("To import the CSV using the command line, run the following command:")
 		logger.info(
-			"%s --school %r --user_role student --sourceUID '%s-student' --conffile %r --infile %r",
+			"%s --school %r --user_role student --source_uid '%s-student' --conffile %r --infile %r",
 			os.path.join(os.path.dirname(__file__), 'ucs-school-user-import'), args.OU[0], args.OU[0].lower(),
 			conf_file, args.csvfile)
 		logger.info(
-			"Replace 'student' in both '--user_role' and '--sourceUID' with one of 'student', 'staff', 'teacher' or "
+			"Replace 'student' in both '--user_role' and '--source_uid' with one of 'student', 'staff', 'teacher' or "
 			"'teacher_and_staff'.")
 	else:
 		logger.info(

@@ -562,7 +562,7 @@ class Client(object):
 			Create a UserImportJob.
 
 			:param str filename: path to a CSV file, or just a filename and read from 'file_obj'
-			:param str source_uid: optional unique sourceUID of school management software database
+			:param str source_uid: optional unique ID of school management software database
 			:param str school: optional name of a School
 			:param str user_role: optional role of user, one of staff, student, teacher, teacher_and_staff
 			:param bool dryrun: False to start a real import

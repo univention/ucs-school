@@ -323,7 +323,7 @@ class UserImport(object):
 		Create LDAP filter with which to find existing users.
 
 		In the case of the default UserImport, we look at:
-		`user.source_uid == config[sourceUID]`
+		`user.source_uid == config[source_uid]`
 
 		:return: LDAP filter
 		:rtype: str
@@ -331,7 +331,7 @@ class UserImport(object):
 		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
 		return filter_format(
 			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))".format(oc_filter),
-			(self.config["sourceUID"],)
+			(self.config["source_uid"],)
 		)
 
 	def get_ids_of_existing_users(self):  # type: () -> List[Tuple[str, str]]

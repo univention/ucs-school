@@ -43,11 +43,11 @@
 		}
 	},
 	"scheme": {
-		"recordUID": "<name>"
+		"record_uid": "<name>"
 	},
 	"no_delete": false,
 	"password_length": 8,
-	"sourceUID": "LegacyDB",
+	"source_uid": "LegacyDB",
 	"tolerate_errors": -1,
 	"normalize": {
 		"firstname": false,

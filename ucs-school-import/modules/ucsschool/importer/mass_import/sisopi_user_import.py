@@ -147,7 +147,7 @@ class SingleSourcePartialUserImport(UserImport):
 
 		In the case of SingleSourcePartialImport, we look at::
 
-			user.source_uid == config[sourceUID] && config[school] in user.schools
+			user.source_uid == config[source_uid] && config[school] in user.schools
 
 		:return: LDAP filter
 		:rtype: str
@@ -155,7 +155,7 @@ class SingleSourcePartialUserImport(UserImport):
 		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
 		return filter_format(
 			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*)(ucsschoolSchool=%s))".format(oc_filter),
-			(self.config["sourceUID"], self.config['school'])
+			(self.config["source_uid"], self.config['school'])
 		)
 
 	def do_delete(self, user):
