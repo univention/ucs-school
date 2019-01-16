@@ -3,9 +3,10 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.1-2
+fix: 17.1.0-1A~4.4.0.201901161139
 desc: |
  * The UCS@school import frameworks ImportUser class has been made more accessable to 3rd party software (Bug #48423).
  * Activate the role feature by default (Bug #48226).
  * Change default of normalization:firstname and normalization:lastname to false (Bug #47351).
-bug: [48423, 48226, 47351]
+ * To be more consistent with other variable names, recordUID and sourceUID have been renamed to record_uid and source_uid (Bug #48478)
+bug: [48423, 48226, 47351, 48478]
