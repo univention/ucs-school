@@ -32,10 +32,9 @@
 # <http://www.gnu.org/licenses/>.
 
 import sys
+from six.moves import input
 from ucsschool.lib.schoolldap import set_credentials, LDAP_Connection, MACHINE_READ
 from ucsschool.lib.roleshares import create_roleshares
-import univention.debug as ud
-from univention.management.console.log import _debug_loglevel
 import univention.config_registry
 from univention.admincli.admin import _2utf8
 import univention.admin.modules as udm_modules
@@ -64,34 +63,44 @@ if __name__ == '__main__':
 	parser.add_option('--school', dest='schools', action='append', help='select school')
 	parser.add_option('--binddn', dest='binddn', help='udm binddn')
 	parser.add_option('--bindpwd', dest='bindpwd', help='udm bindpwd')
+	parser.add_option('--bindpwdfile', dest='bindpwdfile', help='udm bindpwdfile')
 	(opts, args) = parser.parse_args()
 
 	if not opts.roleshares:
-		print 'Required option missing: --create'
+		print('Required option missing: --create')
 		sys.exit(2)
 
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()
 
-	if not opts.binddn:
-		if ucr['server/role'] == 'domaincontroller_master':
-			try:
-				opts.bindpwd = open('/etc/ldap.secret', 'r').read()
-				opts.binddn = "cn=admin,%s" % (ucr.get('ldap/base'),)
-				print 'Using cn=admin account'
-			except IOError, ex:
-				print 'Cannot read /etc/ldap.secret: %s' % (ex,)
-				sys.exit(1)
+	if opts.binddn and opts.bindpwd:
+		binddn = opts.binddn
+		password = opts.bindpwd
+	elif opts.binddn and opts.bindpwdfile:
+		binddn = opts.binddn
+		with open(opts.bindpwdfile, 'r') as fp:
+			password = fp.read()
+	elif ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup'):
+		try:
+			with open('/etc/ldap.secret', 'r') as fp:
+				password = fp.read()
+			binddn = "cn=admin,{}".format(ucr['ldap/base'])
+			print('Using cn=admin account')
+		except IOError as exc:
+			print('Cannot read /etc/ldap.secret: {}'.format(exc))
+			sys.exit(1)
+	else:
+		username = input("Administrator name: ")
+		if opts.bindpwd:
+			password = opts.bindpwd
 		else:
-			username = raw_input("Administrator name: ")
-			if not opts.bindpwd:
-				opts.bindpwd = raw_input("Password: ")
+			password = input("Password: ")
 
-			opts.binddn = dn_from_username(username, ucr)
-			if not opts.binddn:
-				print 'User not found'
-				sys.exit(1)
+		binddn = dn_from_username(username, ucr)
+		if not binddn:
+			print('User not found')
+			sys.exit(1)
 
-	set_credentials(opts.binddn, opts.bindpwd)  # for @LDAP_Connection(USER_*)
+	set_credentials(binddn, password)  # for @LDAP_Connection(USER_*)
 
 	create_roleshares(opts.roleshares, opts.schools, ucr)

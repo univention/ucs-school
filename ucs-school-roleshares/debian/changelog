@@ -1,3 +1,9 @@
+ucs-school-roleshares (6.0.0-2) unstable; urgency=low
+
+  * Bug 47076: support bindpwdfile join script argument
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 16 Jan 2019 09:03:51 +0100
+
 ucs-school-roleshares (6.0.0-1) unstable; urgency=low
 
   * Bug #45988: bumped version
