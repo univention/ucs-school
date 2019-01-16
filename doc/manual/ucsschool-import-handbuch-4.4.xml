@@ -169,25 +169,25 @@
 		<section id="procedure:assignment">
 			<title>Zuordnung von Benutzern des Quellverzeichnisses zu &ucsUAS;-Benutzern</title>
 			<para>
-			  Das Tool <command>ucs-school-user-import</command> unterstützt den Import von Benutzerdaten aus mehreren Quellverzeichnissen. Um jeden &ucsUAS;-Benutzer einem Benutzer in einer Quelldatenbank eindeutig zuordnen zu können, werden am UCS@school-Benutzerobjekt zwei zusätzliche Attribute gespeichert: <property>sourceUID</property> und <property>recordUID</property>.
+			  Das Tool <command>ucs-school-user-import</command> unterstützt den Import von Benutzerdaten aus mehreren Quellverzeichnissen. Um jeden &ucsUAS;-Benutzer einem Benutzer in einer Quelldatenbank eindeutig zuordnen zu können, werden am UCS@school-Benutzerobjekt zwei zusätzliche Attribute gespeichert: <property>source_uid</property> und <property>record_uid</property>.
 			</para>
 			<para>
-				Die <property>sourceUID</property> ist ein eindeutiger Bezeichner für die Quelldatenbank von der ein Benutzer importiert wurde. Der Bezeichner kann frei gewählt werden und muss für jede Quelldatenbank eindeutig sein. Er ist während des Imports auf der Kommandozeile bzw. in der Konfigurationsdatei für jede Quelldatenbank explizit mit anzugeben.
+				Die <property>source_uid</property> ist ein eindeutiger Bezeichner für die Quelldatenbank von der ein Benutzer importiert wurde. Der Bezeichner kann frei gewählt werden und muss für jede Quelldatenbank eindeutig sein. Er ist während des Imports auf der Kommandozeile bzw. in der Konfigurationsdatei für jede Quelldatenbank explizit mit anzugeben.
 			</para>
 			<para>
-				Die <property>recordUID</property> ist ein eindeutiger Bezeichner für den Benutzer in der Quelldatenbank. Als Bezeichner kann z.B. auf vorhandene Attribute innerhalb der Quelldatenbank, wie z.B. eine Schüler- oder Mitarbeiternummer, zurückgegriffen werden. Sollte kein eindeutig identifizierendes Attribut in der Quelldatenbank vorhanden sein, kann auch durch die Konkatenation von mehreren Attributen der Quelldatenbank ein ein eindeutiger Bezeichner generiert werden.
+				Die <property>record_uid</property> ist ein eindeutiger Bezeichner für den Benutzer in der Quelldatenbank. Als Bezeichner kann z.B. auf vorhandene Attribute innerhalb der Quelldatenbank, wie z.B. eine Schüler- oder Mitarbeiternummer, zurückgegriffen werden. Sollte kein eindeutig identifizierendes Attribut in der Quelldatenbank vorhanden sein, kann auch durch die Konkatenation von mehreren Attributen der Quelldatenbank ein ein eindeutiger Bezeichner generiert werden.
 			</para>
 			<para>
 				Durch die Kombination dieser beiden Bezeichner kann ein &ucsUAS;-Benutzer genau einem Benutzer in einem bestimmten Quellverzeichnis zugeordnet werden.
 			</para>
 			<caution>
 				<para>
-					<property>sourceUID</property> und <property>recordUID</property> müssen eindeutig und unveränderlich sein, sonst werden &ucsUAS;-Benutzer beim Abgleich mit den Eingabedaten nicht gefunden und ggf. gelöscht bzw. es werden die falschen &ucsUAS;-Benutzerobjekte modifiziert.
+					<property>source_uid</property> und <property>record_uid</property> müssen eindeutig und unveränderlich sein, sonst werden &ucsUAS;-Benutzer beim Abgleich mit den Eingabedaten nicht gefunden und ggf. gelöscht bzw. es werden die falschen &ucsUAS;-Benutzerobjekte modifiziert.
 				</para>
 			</caution>
 
 			<para>
-				Mit Hilfe der beiden Bezeichner <property>sourceUID</property> und <property>recordUID</property> wird versucht, jeden Eingabedatensatz genau einem &ucsUAS;-Benutzer zuzuordnen:
+				Mit Hilfe der beiden Bezeichner <property>source_uid</property> und <property>record_uid</property> wird versucht, jeden Eingabedatensatz genau einem &ucsUAS;-Benutzer zuzuordnen:
 				<itemizedlist>
 					<listitem>
 						<simpara>
@@ -210,7 +210,7 @@
 			</para>
 			<caution>
 				<para>
-					Wird vom früheren Import Skript zum Neuen migriert muss beachtet werden, dass je nachdem welche Version zuvor benutzt wurde, an den Benutzerobjekten entweder <emphasis>keine</emphasis> <property>sourceUID</property> gespeichert wurde, oder der Wert <literal>LegacyDB</literal>.
+					Wird vom früheren Import Skript zum Neuen migriert muss beachtet werden, dass je nachdem welche Version zuvor benutzt wurde, an den Benutzerobjekten entweder <emphasis>keine</emphasis> <property>source_uid</property> gespeichert wurde, oder der Wert <literal>LegacyDB</literal>.
 				</para>
 			</caution>
 			<para>
@@ -219,43 +219,43 @@
 					<listitem>
 						<para>
 							Die Schulen eines Schulträgers verwenden voneinander unabhängige Verwaltungssoftware. Die Software exportiert für jede Schule separate CSV-Dateien für den Import. Es wird je eine Datei für Schüler, Lehrer und Mitarbeiter erzeugt.
-							Für den Import der CSV-Dateien wird pro Schule und Benutzerrolle eine separate Konfiguration mit individueller <property>sourceUID</property> benötigt.
-							Sind die Konfigurationen hinreichend ähnlich, können die gleichen Konfigurationsdateien verwendet werden und die sie unterscheidenden Optionen an der Kommandozeile gesetzt werden. Sollten sich nur <property>sourceUID</property> und Benutzerrolle unterschieden, so würde der Import mit den entsprechenden Optionen z.B. so aufgerufen:
+							Für den Import der CSV-Dateien wird pro Schule und Benutzerrolle eine separate Konfiguration mit individueller <property>source_uid</property> benötigt.
+							Sind die Konfigurationen hinreichend ähnlich, können die gleichen Konfigurationsdateien verwendet werden und die sie unterscheidenden Optionen an der Kommandozeile gesetzt werden. Sollten sich nur <property>source_uid</property> und Benutzerrolle unterschieden, so würde der Import mit den entsprechenden Optionen z.B. so aufgerufen:
 							<programlisting>
  # /usr/share/ucs-school-import/scripts/ucs-school-user-import \
     --conffile &lt;gemeinsame Konfigurationsdatei&gt; \
-    --sourceUID &lt;Schulname&gt;-&lt;Benutzerrolle&gt; \
+    --source_uid &lt;Schulname&gt;-&lt;Benutzerrolle&gt; \
     --user_role &lt;Benutzerrolle&gt; \
     --infile &lt;CSV-Datei&gt;
 							</programlisting>
-							Durch die Verwendung von <replaceable>Schulname-Benutzerrolle</replaceable> (z.B. <literal>GSMitte-student</literal>) als <property>sourceUID</property> wird ein eindeutiger Bezeichner pro Schule und Benutzerrolle sicher gestellt.
+							Durch die Verwendung von <replaceable>Schulname-Benutzerrolle</replaceable> (z.B. <literal>GSMitte-student</literal>) als <property>source_uid</property> wird ein eindeutiger Bezeichner pro Schule und Benutzerrolle sicher gestellt.
 						</para>
 						<simpara>
-							Ab &ucsUAS; Version 4.2 v4 wird nur eine <property>sourceUID</property> pro Schule benötigt (<replaceable>-&lt;Benutzerrolle&gt;</replaceable> kann weggelassen werden), sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
+							Ab &ucsUAS; Version 4.2 v4 wird nur eine <property>source_uid</property> pro Schule benötigt (<replaceable>-&lt;Benutzerrolle&gt;</replaceable> kann weggelassen werden), sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
 						</simpara>
 						<simpara>
-							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten <emphasis>nicht</emphasis> möglich, weil dafür eine gemeinsame  <property>sourceUID</property> der beteiligten Schulen benötigt wird.
+							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten <emphasis>nicht</emphasis> möglich, weil dafür eine gemeinsame  <property>source_uid</property> der beteiligten Schulen benötigt wird.
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
 							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert für jede Benutzerrolle eine CSV-Datei. In diesen Dateien sind alle Benutzer aller Schulen (von der jeweiligen Rolle) enthalten.
-							Für den Import der CSV-Dateien wird nur pro Benutzerrolle eine separate Konfiguration mit individueller <property>sourceUID</property> benötigt, bzw. die gleiche Konfigurationsdatei und an der Kommandozeile wird gesetzt: <literal>--sourceUID &lt;Benutzerrolle&gt;</literal>.
+							Für den Import der CSV-Dateien wird nur pro Benutzerrolle eine separate Konfiguration mit individueller <property>source_uid</property> benötigt, bzw. die gleiche Konfigurationsdatei und an der Kommandozeile wird gesetzt: <literal>--source_uid &lt;Benutzerrolle&gt;</literal>.
 						</simpara>
 						<simpara>
-							Ab &ucsUAS; Version 4.2 v4 wird keine separate <property>sourceUID</property> mehr pro Benutzerrolle benötigt. Es reicht dann eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> für alle Importvorgänge, sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
+							Ab &ucsUAS; Version 4.2 v4 wird keine separate <property>source_uid</property> mehr pro Benutzerrolle benötigt. Es reicht dann eine Konfigurationsdatei mit einer darin eingespeicherten <property>source_uid</property> für alle Importvorgänge, sofern mit <option>--user_role</option> die Benutzerrolle angegeben wird.
 						</simpara>
 						<simpara>
-							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil Benutzer mit der gleichen Rolle an allen Schulen die gleiche <property>sourceUID</property> haben.
+							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil Benutzer mit der gleichen Rolle an allen Schulen die gleiche <property>source_uid</property> haben.
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
 							Ein Schulträger verwendet eine Software für die Verwaltung aller seiner Schulen. Die Software exportiert alle Benutzer in eine CSV-Datei. In dieser Datei sind Benutzer aller Rollen und aller Schulen enthalten. In der CSV-Datei gibt es eine Spalte in der steht welche Rolle der jeweilige Benutzer hat.
-							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>sourceUID</property> benötigt. Um die Benutzerrolle auszulesen, wird der entsprechenden Spalte der <link linkend="configuration:mapping:specials">Sonderwert</link> <literal>__role</literal> zugeordnet (siehe als Beispiel die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename>).
+							Für den Import der CSV-Dateien wird nur eine Konfigurationsdatei mit einer darin eingespeicherten <property>source_uid</property> benötigt. Um die Benutzerrolle auszulesen, wird der entsprechenden Spalte der <link linkend="configuration:mapping:specials">Sonderwert</link> <literal>__role</literal> zugeordnet (siehe als Beispiel die Konfigurationsdatei <filename>/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json</filename>).
 						</simpara>
 						<simpara>
-							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil alle Benutzer die gleiche <property>sourceUID</property> haben.
+							In diesem Szenario ist die Verwendung schulübergreifender Benutzerkonten möglich, weil alle Benutzer die gleiche <property>source_uid</property> haben.
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -332,7 +332,7 @@
 				</listitem>
 				<listitem>
 					<simpara>
-						Pro Quellverzeichnis sollte eine Konfigurationsdatei unterhalb von <filename class="directory">/var/lib/ucs-school-import/configs/</filename> abgelegt werden, welche schließlich an der Kommandozeile mit <option>-c</option> angegeben wird. Diese Datei enthält Konfigurationseinstellungen, die auf die Spezifika der jeweiligen Schule bzw. Schulverwaltungssoftware einzugehen, und die jeweilige <property>sourceUID</property> passend zum Quellverzeichnis.
+						Pro Quellverzeichnis sollte eine Konfigurationsdatei unterhalb von <filename class="directory">/var/lib/ucs-school-import/configs/</filename> abgelegt werden, welche schließlich an der Kommandozeile mit <option>-c</option> angegeben wird. Diese Datei enthält Konfigurationseinstellungen, die auf die Spezifika der jeweiligen Schule bzw. Schulverwaltungssoftware einzugehen, und die jeweilige <property>source_uid</property> passend zum Quellverzeichnis.
 					</simpara>
 				</listitem>
 			</orderedlist>
@@ -348,7 +348,7 @@
 usage: ucs-school-user-import [-h] [-c CONFFILE] [-i INFILE]
                 [-l LOGFILE] [-m] [-n] [-s SCHOOL]
                 [--set [KEY=VALUE [KEY=VALUE ...]]]
-                [--sourceUID sourceUID] [-u USER_ROLE] [-v]
+                [--source_uid source_uid] [-u USER_ROLE] [-v]
 optional arguments:
   -h, --help            show this help message and exit
   -c CONFFILE, --conffile CONFFILE
@@ -371,9 +371,9 @@ optional arguments:
   -n, --dry-run
             Dry run - don't actually commit changes to LDAP (shortcut
             for --set dry_run=...) [default: False].
-  --sourceUID sourceUID
+  --source_uid source_uid
             The ID of the source database (shortcut for
-            --set sourceUID=...) [mandatory either here or in the
+            --set source_uid=...) [mandatory either here or in the
             configuration file].
   -s SCHOOL, --school SCHOOL
             Name of school. Set only, if the source data does not
@@ -654,10 +654,10 @@ python -m json.tool &lt; my_config.json
 <!-- scheme -->
 							<row>
 								<entry morerows="1"><varname>scheme</varname></entry>
-								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den <ulink url="http://docs.software-univention.de/handbuch-4.4.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>recordUID</property> und <property>username</property> können Konfigurationen für beliebige &ucsUDM;-Attribute hinterlegt werden. <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> werden <emphasis>nur</emphasis> in <varname>scheme:email</varname> und <varname>scheme:username</varname> verarbeitet.</simpara></entry>
+								<entry><simpara>Enthält Informationen über die Erzeugung von Werten aus anderen Werten und Regeln.</simpara><simpara>Es können Ersetzungen wie in den <ulink url="http://docs.software-univention.de/handbuch-4.4.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> verwendet werden sowie alle Schlüssel aus <link linkend="configuration:json_format:userimport:csv:mapping"><literal>csv:mapping</literal></link>. Neben Formatvorlagen für <property>email</property>, <property>record_uid</property> und <property>username</property> können Konfigurationen für beliebige &ucsUDM;-Attribute hinterlegt werden. <literal>[ALWAYSCOUNTER]</literal> und <literal>[COUNTER2]</literal> werden <emphasis>nur</emphasis> in <varname>scheme:email</varname> und <varname>scheme:username</varname> verarbeitet.</simpara></entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>object</classname>): <literal>{"email": .., "recordUID": .., "username": {..}}</literal></entry>
+								<entry align="right">Standard (<classname>object</classname>): <literal>{"email": .., "record_uid": .., "username": {..}}</literal></entry>
 							</row>
 <!-- scheme:email -->
 							<row>
@@ -667,9 +667,9 @@ python -m json.tool &lt; my_config.json
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): <literal>"&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;"</literal></entry>
 							</row>
-<!-- scheme:recordUID -->
+<!-- scheme:record_uid -->
 							<row>
-								<entry morerows="1"><varname>scheme: \ recordUID</varname></entry>
+								<entry morerows="1"><varname>scheme: \ record_uid</varname></entry>
 								<entry>Schema aus dem die eindeutige ID des Benutzers in der Quelldatenbank (Schulverwaltungssoftware) erzeugt werden soll.</entry>
 							</row>
 							<row>
@@ -767,10 +767,10 @@ python -m json.tool &lt; my_config.json
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
 							</row>
-<!-- >sourceUID -->
+<!-- >source_uid -->
 							<row>
-								<entry morerows="1"><literallayout><varname>sourceUID</varname>
-<option>--sourceUID</option></literallayout></entry>
+								<entry morerows="1"><literallayout><varname>source_uid</varname>
+<option>--source_uid</option></literallayout></entry>
 								<entry>Eindeutige und unveränderliche Kennzeichnung der Datenquelle.
 Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile gesetzt werden.</entry>
 							</row>
@@ -959,7 +959,7 @@ record_uid:bea@schule.local) attributes={'$dn$': 'uid=B.Schmidt,cn=schueler,cn=u
 					</listitem>
 					<listitem>
 						<simpara>
-							<property>name</property> und <property>record_uid</property> sind aus den konfigurierten Schemata <varname>scheme:username</varname> und <varname>scheme:recordUID</varname> erzeugt worden.
+							<property>name</property> und <property>record_uid</property> sind aus den konfigurierten Schemata <varname>scheme:username</varname> und <varname>scheme:record_uid</varname> erzeugt worden.
 						</simpara>
 					</listitem>
 					<listitem>
@@ -1029,7 +1029,7 @@ udm users/user
 			<para>
 				Aus diesem Grund unterstützt die Importsoftware die Erzeugung von Attributen mit Hilfe von konfigurierbaren Schemata.
 				Das Format ist das gleiche wie das bei den <ulink url="http://docs.software-univention.de/handbuch-4.4.html#users:templates"><citetitle>UCS-Benutzervorlagen</citetitle></ulink> eingesetzte.
-				Es existieren dedizierte Konfigurationsschlüssel für die Attribute <property>email</property>, <property>recordUID</property> und <property>username</property>.
+				Es existieren dedizierte Konfigurationsschlüssel für die Attribute <property>email</property>, <property>record_uid</property> und <property>username</property>.
 				Darüber hinaus können Schemata für beliebige &ucsUDM; Attribute (mit dem Namen des Attributs als Schlüssel) hinterlegt werden.
 			</para>
 			<para>
@@ -1038,7 +1038,7 @@ udm users/user
 {
     "scheme": {
         "email": "&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;",
-        "recordUID": "&lt;email&gt;",
+        "record_uid": "&lt;email&gt;",
         "phone": "+49-&lt;phone&gt;[1:]"
     }
 }

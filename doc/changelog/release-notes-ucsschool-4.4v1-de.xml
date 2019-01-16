@@ -235,6 +235,12 @@ Checking ldap_schema ...                          OK
 					The default of the settings <varname>normalization:firstname</varname> and <varname>normalization:lastname</varname> has been changed from <literal>true</literal> to <literal>false</literal>. As a consequence the displayName (if not set explicitly) will also not be normalized and will thus contain umlauts etc.
 					<note>If the <varname>record_uid</varname> is calculated using a schema from <varname>firstname</varname> or <varname>lastname</varname>, then it might change now! Prepend <literal>&lt;:umlauts&gt;</literal> to the schemas in <literal>scheme:username</literal> to prevent this.</note>
 				</para></listitem>
+				<listitem><para>
+					To be more consistent with other variable names, the configuration key <varname>scheme:recordUID</varname> has been renamed to <varname>scheme:record_uid</varname>. The method <methodname>ImportUser.make_recordUID()</methodname> has also been renamed to <methodname>ImportUser.make_record_uid()</methodname>.
+				</para></listitem>
+				<listitem><para>
+					To be more consistent with other variable names, the configuration key <varname>sourceUID</varname> and its associated command line argument <option>--sourceUID</option> have been renamed to <varname>source_uid</varname> and <option>--source_uid</option> respectively. The method <methodname>ImportUser.make_sourceUID()</methodname> has also been renamed to <methodname>ImportUser.make_source_uid()</methodname>.
+				</para></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:httpapi" lang="en">

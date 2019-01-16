@@ -255,7 +255,7 @@
 			Das Skript, das Beispieldaten erzeugt, druckt am Ende die benötigten Kommandozeilenparameter exakt aus.
 			Hier ein Beispiel:
 			<programlisting>
---school 'SchuleEins' --user_role 'ROLE' --sourceUID 'schuleeins-ROLE' \
+--school 'SchuleEins' --user_role 'ROLE' --source_uid 'schuleeins-ROLE' \
 --conffile '/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json' \
 --infile 'test_users_2018-07-04_12:31:46.csv'
 			</programlisting>
