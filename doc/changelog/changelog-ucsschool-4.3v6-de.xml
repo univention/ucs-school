@@ -251,7 +251,32 @@ feedback@univention.de
 					<!-- END ucs-school-umc-import 1.0.1-5A~4.3.0.201812201355 -->
 <!-- CHANGELOG:2018-12-21:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-01-16" lang="en">
+					<title>Released on 2019-01-16:</title>
+					<!-- START ucs-school-lib 11.0.2-2A~4.3.0.201901091714 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>11.0.2-2A~4.3.0.201901091714</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UCS@school library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (<u:bug>47885</u:bug>).</para></listitem>
+
+							<listitem><para>An internal filter error while searching for schools was fixed (<u:bug>48429</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 11.0.2-2A~4.3.0.201901091714 -->
+					<!-- START ucs-school-umc-users 14.0.3-1A~4.3.0.201812202240 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-users</emphasis> in version <emphasis>14.0.3-1A~4.3.0.201812202240</emphasis>:
+						<itemizedlist>
+							<listitem><para>In environments with several hundred users in one OU, opening the UMC module "Passwords (students)" could take an extremely long time, making the module almost unusable. The responsible LDAP search has now been identified and replaced by a more powerful variant in order to considerably reduce loading times (<u:bug>47885</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-users 14.0.3-1A~4.3.0.201812202240 -->
+<!-- CHANGELOG:2019-01-16:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
