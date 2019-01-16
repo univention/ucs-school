@@ -37,11 +37,11 @@ class Test(CLI_Import_v2_Tester):
 
 
 	def test(self):
-		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('csv:mapping:birthday', 'birthday')
 		config.update_entry(
 			'classes:user_importer',
@@ -61,7 +61,7 @@ class Test(CLI_Import_v2_Tester):
 			self.log.info('*** (%d/4) - 1. Importing (create) %r in school %r...', num, role, self.ou_A.name)
 			config.update_entry('school', self.ou_A.name)
 			person = Person(self.ou_A.name, role)
-			person.update(record_uid='recordUID-{}'.format(uts.random_string()), source_uid=source_uid)
+			person.update(record_uid='record_uid-{}'.format(uts.random_string()), source_uid=source_uid)
 			self._import_and_verify(config, person)
 			self.log.info('OK: create (A) succeeded.')
 

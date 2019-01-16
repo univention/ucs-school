@@ -109,7 +109,7 @@ def main():
 				'/usr/share/ucs-school-import/scripts/ucs-school-user-import',
 				'-i', csvfile.name,
 				'-s', ou_name,
-				'--sourceUID', 'TEST234',
+				'--source_uid', 'TEST234',
 				'-c', '/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json',
 			]
 			sys.stdout.flush()
@@ -123,7 +123,7 @@ def main():
 				'/usr/share/ucs-school-import/scripts/ucs-school-user-import',
 				'-i', csvfile.name,
 				'-s', ou_name,
-				'--sourceUID', 'TEST234',
+				'--source_uid', 'TEST234',
 				'-c', '/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json',
 			]
 			sys.stdout.flush()

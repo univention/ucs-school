@@ -26,9 +26,9 @@ class Test(CLI_Import_v2_Tester):
 	def test(self):
 		source_uid = '{}-{:02}-{:02}'.format(random.randint(1900, 2016), random.randint(1, 12), random.randint(1, 27))
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
 
@@ -45,7 +45,7 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 		self.log.info('OK: import succeeded.')
 
-		self.log.info('*** 2 Importing a user from each role with same SourceUID but a recursion in scheme...')
+		self.log.info('*** 2 Importing a user from each role with same source_uid but a recursion in scheme...')
 
 		config = copy.deepcopy(self.default_config)
 		del config['csv']['mapping']
@@ -53,14 +53,14 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('csv:mapping:OUs', 'schools')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('scheme:birthday', '<source_uid>')
-		config.update_entry('scheme:recordUID', '<email>.<name>[0:4]'),
+		config.update_entry('scheme:record_uid', '<email>.<name>[0:4]'),
 		config.update_entry('scheme:email', '<firstname:lower>.<lastname:lower>@<maildomain><:strip>'),
 		config.update_entry('scheme:username:default', '<firstname:lower>.<phone>'),
 		config.update_entry('scheme:firstname', 'fn-<email>[1:6]'),  # recursion!
 		config.update_entry('scheme:street', '<:lower><firstname>-<roomNumber>'),
 		config.update_entry('scheme:phone', '<birthday>'),
 		config.update_entry('scheme:roomNumber', '<street>-<email>[0:5]'),  # recursion!
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 
 		person_list = list()

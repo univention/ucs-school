@@ -41,16 +41,16 @@ class Test(CLI_Import_v2_Tester):
 		Test creation of multi-value fields (Bug #41471).
         - mailAlternativeAddress is filled with multiple strings
 		"""
-		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
 
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('csv:incell-delimiter:default', ';')
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:mailAlternativeAddress', 'mailAlternativeAddress')
 		config.update_entry('csv:mapping:role', '__role')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 
 		self.log.info('*** Importing a new user of each role role with multivalue attributes...')

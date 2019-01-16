@@ -26,12 +26,12 @@ class Test(CLI_Import_v2_Tester):
 		Bug #41544: test if it is possible to reuse an email address (-> if
 		users are removed before they are added)
 		"""
-		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('scheme:email', '<email>')
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
 		config.update_entry("deletion_grace_period:deletion", 0)

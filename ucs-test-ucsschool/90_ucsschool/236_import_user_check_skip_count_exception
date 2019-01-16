@@ -42,12 +42,12 @@ class Test(CLI_Import_v2_Tester):
 		super(Test, self).cleanup()
 
 	def test(self):
-		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		source_uid = 'source_uid-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry('tolerate_errors', 0)
 
@@ -59,7 +59,7 @@ class Test(CLI_Import_v2_Tester):
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			person = Person(self.ou_A.name, role)
 			person.update(
-				record_uid='recordUID-{}'.format(uts.random_string()),
+				record_uid='record_uid-{}'.format(uts.random_string()),
 				source_uid=source_uid,
 			)
 			person_list.append(person)

@@ -27,9 +27,9 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Bug #42373: check that errors in configuration files are written to a logfile
 		"""
-		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		person = Person(self.ou_A.name, "student")
 		fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)

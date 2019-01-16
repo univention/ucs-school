@@ -18,11 +18,11 @@ from univention.testing.ucsschool.importusers import Person
 
 class Test(CLI_Import_v2_Tester):
 	def test(self):
-		source_uid_success = 'sourceUID-%s' % (uts.random_string(),)
+		source_uid_success = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('sourceUID', source_uid_success)
+		config.update_entry('source_uid', source_uid_success)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:birthday', 'birthday')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
@@ -46,8 +46,8 @@ class Test(CLI_Import_v2_Tester):
 
 		self.log.info('*** 1.2 Importing (create) a new user of each role with birthday in correct format.')
 		self.log.info('*** 1.2 should not fail for dry-run..')
-		source_uid = 'sourceUID-%s' % (uts.random_string(),)
-		config.update_entry('sourceUID', source_uid)
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('dry_run', True)
 		person_list = []
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
@@ -110,7 +110,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** 3.1 Importing (modify) of existing users of each role with birthday in bad format.')
 		self.log.info('*** 3.1 should fail for non-dry-run..')
 		config.update_entry('dry_run', False)
-		config.update_entry('sourceUID', source_uid_success)
+		config.update_entry('source_uid', source_uid_success)
 		for person in person_list_success:
 			person.old_birthday = person.birthday
 			person.update(birthday='19870606')

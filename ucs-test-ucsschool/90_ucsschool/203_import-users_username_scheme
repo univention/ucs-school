@@ -29,13 +29,13 @@ class Test(UniqueObjectTester):
 		Test creation of usernames from a special username scheme (Bug #41243, #41244).
 		"""
 		config = copy.deepcopy(self.default_config)
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
 
 		for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			config.update_entry('sourceUID', source_uid)
+			source_uid = 'source_uid-%s' % (uts.random_string(),)
+			config.update_entry('source_uid', source_uid)
 			config.update_entry(
 				'scheme:username:default',
 				'<:umlauts>user-<firstname>[0:2].<lastname>[0:2]-[{}]'.format(scheme)

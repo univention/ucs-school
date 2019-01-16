@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-5) unstable; urgency=low
+
+  * Bug #48478: adapt tests to rename of recordUID to record_uid and sourceUID
+    to source_uid
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 16 Jan 2019 11:37:17 +0100
+
 ucs-test-ucsschool (6.0.0-4) unstable; urgency=low
 
   * Bug #48226: Remove UCRV ucsschool/feature/roles

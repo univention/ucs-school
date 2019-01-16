@@ -104,8 +104,8 @@ class FactoryConfTest(object):
 		self.run_import([
 			"-c", CONFIG,
 			"-i", csvfile.name,
-			"--sourceUID",
-			"sourceUID-{}".format(uts.random_string()),
+			"--source_uid",
+			"source_uid-{}".format(uts.random_string()),
 			"--set",
 			"classes:mass_importer=univention.testing.ucsschool.import_factory_test_classes.NullImport"])
 		self.check_new_and_removed_users(0, 0)
@@ -119,8 +119,8 @@ class FactoryConfTest(object):
 		self.run_import([
 			"-c", CONFIG,
 			"-i", csvfile.name,
-			"--sourceUID",
-			"sourceUID-{}".format(uts.random_string()),
+			"--source_uid",
+			"source_uid-{}".format(uts.random_string()),
 			"--set",
 			"classes:password_exporter=univention.testing.ucsschool.import_factory_test_classes.UniventionPasswordExporter",
 			"output:new_user_passwords={}".format(outfile.name)])
@@ -146,8 +146,8 @@ class FactoryConfTest(object):
 		self.run_import([
 			"-c", CONFIG,
 			"-i", csvfile.name,
-			"--sourceUID",
-			"sourceUID-{}".format(uts.random_string()),
+			"--source_uid",
+			"source_uid-{}".format(uts.random_string()),
 			"--set",
 			"classes:result_exporter=univention.testing.ucsschool.import_factory_test_classes.AnonymizeResultExporter",
 			"output:user_import_summary={}".format(outfile.name)])
@@ -200,11 +200,11 @@ class FactoryConfTest(object):
 		test_user_exporter_with_birthday.field_names = field_names
 		test_user_exporter_with_birthday.dump(users, csvfile.name)
 		self.save_ldap_status()
-		source_uid = "sourceUID-{}".format(uts.random_string())
+		source_uid = "source_uid-{}".format(uts.random_string())
 		self.run_import([
 			"-c", CONFIG,
 			"-i", csvfile.name,
-			"--sourceUID",
+			"--source_uid",
 			source_uid,
 			"--set",
 			"classes:user_importer=univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport",
@@ -224,7 +224,7 @@ class FactoryConfTest(object):
 		self.run_import([
 			"-c", CONFIG,
 			"-i", csvfile_name,
-			"--sourceUID",
+			"--source_uid",
 			source_uid,
 			"--set",
 			"classes:user_importer=univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport"])
@@ -243,8 +243,8 @@ class FactoryConfTest(object):
 		self.run_import([
 			"-c", CONFIG,
 			"-i", csvfile.name,
-			"--sourceUID",
-			"sourceUID-{}".format(uts.random_string()),
+			"--source_uid",
+			"source_uid-{}".format(uts.random_string()),
 			"--set",
 			"classes:username_handler=univention.testing.ucsschool.import_factory_test_classes.FooUsernameHandler",
 			"output:user_import_summary={}".format(outfile.name),
@@ -265,8 +265,8 @@ class FactoryConfTest(object):
 		self.run_import([
 			"-c", CONFIG,
 			"-i", csvfile.name,
-			"--sourceUID",
-			"sourceUID-{}".format(uts.random_string()),
+			"--source_uid",
+			"source_uid-{}".format(uts.random_string()),
 			"--set",
 			"classes:user_writer=univention.testing.ucsschool.import_factory_test_classes.JsonWriter",
 			"output:user_import_summary={}".format(outfile.name)])

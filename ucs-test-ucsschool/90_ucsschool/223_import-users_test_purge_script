@@ -42,12 +42,12 @@ class Test(CLI_Import_v2_Tester):
 		This uses the case "2/3: delete later, deactivate now" from 216_import-users_delete_variants.
 		"""
 		self.log.info('*** Creating a student, teacher, staff and teacher_and_staff in each OU...')
-		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		source_uid = 'source_uid-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 		config.update_entry("deletion_grace_period:deactivation", 0)
 		config.update_entry("deletion_grace_period:deletion", random.randint(1, 20))
@@ -56,7 +56,7 @@ class Test(CLI_Import_v2_Tester):
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			for ou in (self.ou_A, self.ou_B, self.ou_C):
 				person = Person(ou.name, role)
-				record_uid = 'recordUID-%s' % (uts.random_string(),)
+				record_uid = 'record_uid-%s' % (uts.random_string(),)
 				person.update(record_uid=record_uid, source_uid=source_uid)
 				person_list.append(person)
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
@@ -74,7 +74,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** Setting up import framework...')
 		import_config_args = {
 			"dry_run": False,
-			"sourceUID": "TestDB",
+			"source_uid": "TestDB",
 			"verbose": True
 		}
 		ui = UserImportCommandLine()

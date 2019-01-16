@@ -61,9 +61,9 @@ class Test(CLI_Import_v2_Tester):
 			name="{}-{}".format(self.ou_B.name, uts.random_groupname()))
 
 		config = deepcopy(self.default_config)
-		source_uid = 'sourceUID-%s' % (uts.random_string(),)
-		config.update_entry('sourceUID', source_uid)
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
+		config.update_entry('source_uid', source_uid)
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
 

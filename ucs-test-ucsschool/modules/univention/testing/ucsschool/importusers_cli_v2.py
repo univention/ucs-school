@@ -389,12 +389,12 @@ class CLI_Import_v2_Tester(ImportTestbase):
 			"maildomain": self.maildomain,
 			"scheme": {
 				"email": "<firstname>[0].<lastname>@<maildomain>",
-				"recordUID": "<firstname>;<lastname>;<email>",
+				"record_uid": "<firstname>;<lastname>;<email>",
 				"username": {
 					"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
 				},
 			},
-			"sourceUID": "sourceDB",
+			"source_uid": "sourceDB",
 			"user_role": "student",
 			"tolerate_errors": 0,
 			"verbose": True,

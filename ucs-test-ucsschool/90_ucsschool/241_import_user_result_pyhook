@@ -50,12 +50,12 @@ class Test(CLI_Import_v2_Tester):
 		super(Test, self).cleanup()
 
 	def test(self):
-		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		source_uid = 'source_uid-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 
 		roles = ('staff', 'student', 'teacher', 'teacher_and_staff')
@@ -71,7 +71,7 @@ class Test(CLI_Import_v2_Tester):
 			for _ in range(num):
 				person = Person(self.ou_A.name, role)
 				person.update(
-					record_uid='recordUID-{}'.format(uts.random_string()),
+					record_uid='record_uid-{}'.format(uts.random_string()),
 					source_uid=source_uid,
 				)
 				person_list1.append(person)
@@ -84,7 +84,7 @@ class Test(CLI_Import_v2_Tester):
 			for _ in range(num):
 				person = Person(self.ou_A.name, role)
 				person.update(
-					record_uid='recordUID-{}'.format(uts.random_string()),
+					record_uid='record_uid-{}'.format(uts.random_string()),
 					source_uid=source_uid,
 				)
 				person_list2.append(person)

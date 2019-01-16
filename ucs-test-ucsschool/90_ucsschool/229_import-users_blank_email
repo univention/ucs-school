@@ -43,15 +43,15 @@ class Test(CLI_Import_v2_Tester):
 			person.verify()
 
 	def test(self):
-		self.source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		self.source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
 		# default_config contains: ("csv:mapping:E-Mail": "email")
 		# and also: ("scheme:email", "<firstname>[0].<lastname>@<maildomain>")
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
-		config.update_entry('sourceUID', self.source_uid)
+		config.update_entry('source_uid', self.source_uid)
 
 		self.log.info(
 			'*** 1.1.1 scheme and mapping and column filled, NEW users'

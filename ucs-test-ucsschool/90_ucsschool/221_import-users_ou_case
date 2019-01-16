@@ -28,10 +28,10 @@ class Test(CLI_Import_v2_Tester):
 
 			person = Person(ori_ou.name, role)
 			fn_csv = self.create_csv_file(person_list=[person])
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			source_uid = 'source_uid-%s' % (uts.random_string(),)
 			record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
 			config = {
-				'sourceUID': source_uid,
+				'source_uid': source_uid,
 				'input:filename': fn_csv,
 				'user_role': role,
 			}
@@ -55,9 +55,9 @@ class Test(CLI_Import_v2_Tester):
 
 			person = Person(ou, role)
 			fn_csv = self.create_csv_file(person_list=[person])
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			source_uid = 'source_uid-%s' % (uts.random_string(),)
 			config = {
-				'sourceUID': source_uid,
+				'source_uid': source_uid,
 				'input:filename': fn_csv,
 				'user_role': role,
 			}

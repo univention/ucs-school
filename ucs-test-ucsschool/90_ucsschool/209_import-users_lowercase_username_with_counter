@@ -33,8 +33,8 @@ class Test(CLI_Import_v2_Tester):
 		del config['csv']['mapping']['E-Mail']
 
 		for scheme in ["ALWAYSCOUNTER", "COUNTER2"]:
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			config.update_entry('sourceUID', source_uid)
+			source_uid = 'source_uid-%s' % (uts.random_string(),)
+			config.update_entry('source_uid', source_uid)
 			config.update_entry(
 				'scheme:username:default',
 				'<:lower><:umlauts><firstname>[0:6].<lastname>[0:3]a[{}]'.format(scheme)

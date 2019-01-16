@@ -22,11 +22,11 @@ class Test(CLI_Import_v2_Tester):
 		"""
 		Bug #41775, #41350: check if the --no-delete option works as expected
 		"""
-		source_uid = 'sourceUID-%s' % (uts.random_string(),)
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('scheme:recordUID', '<username>')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('scheme:record_uid', '<username>')
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
 

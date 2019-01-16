@@ -22,12 +22,12 @@ class Test(UniqueObjectTester):
 		self.ou_C = None
 
 	def test(self):
-		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		source_uid = 'source_uid-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
-		config.update_entry('csv:mapping:recordUID', 'record_uid')
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 		del config['csv']['mapping']['E-Mail']
 		del config['scheme']['email']
@@ -37,7 +37,7 @@ class Test(UniqueObjectTester):
 		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			person = Person(self.ou_A.name, role)
-			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			record_uid = 'record_uid-%s' % (uts.random_string(),)
 			person.update(
 				record_uid=record_uid,
 				source_uid=source_uid,
@@ -57,13 +57,13 @@ class Test(UniqueObjectTester):
 		self.log.info('*** OK 1/4 All %r users were created correctly.', len(person_list))
 		self.log.info('*** 2/4 Importing a user of each role with email in input and without email in scheme...')
 
-		source_uid = 'sourceUID-{}'.format(uts.random_string())
-		config.update_entry('sourceUID', source_uid)
+		source_uid = 'source_uid-{}'.format(uts.random_string())
+		config.update_entry('source_uid', source_uid)
 		config['csv']['mapping']['E-Mail'] = self.default_config['csv']['mapping']['E-Mail']
 		person_list = list()
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
 			person = Person(self.ou_A.name, role)
-			record_uid = 'recordUID-%s' % (uts.random_string(),)
+			record_uid = 'record_uid-%s' % (uts.random_string(),)
 			person.update(
 				record_uid=record_uid,
 				source_uid=source_uid,
