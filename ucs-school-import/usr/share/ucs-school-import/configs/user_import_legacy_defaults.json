@@ -48,5 +48,9 @@
 	"no_delete": false,
 	"password_length": 8,
 	"sourceUID": "LegacyDB",
-	"tolerate_errors": -1
+	"tolerate_errors": -1,
+	"normalize": {
+		"firstname": false,
+		"lastname": false
+	}
 }

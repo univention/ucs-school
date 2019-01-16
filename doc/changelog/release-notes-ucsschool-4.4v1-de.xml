@@ -232,7 +232,7 @@ Checking ldap_schema ...                          OK
 			<title>Import</title>
 			<itemizedlist>
 				<listitem><simpara>
-					FIX ME FIX ME FIX ME
+					The default of the settings <varname>normalization:firstname</varname> and <varname>normalization:lastname</varname> has been changed from <literal>true</literal> to <literal>false</literal>. As a consequence the displayName (if not set explicitly) will also not be normalized and will thus contain umlauts etc.
 				</simpara></listitem>
 			</itemizedlist>
 		</section>

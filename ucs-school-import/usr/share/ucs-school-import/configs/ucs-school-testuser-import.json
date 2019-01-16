@@ -18,5 +18,9 @@
 		}
 	},
 	"sourceUID": "TESTID",
-	"verbose": false
+	"verbose": false,
+	"normalize": {
+		"firstname": false,
+		"lastname": false
+	}
 }

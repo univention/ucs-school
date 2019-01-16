@@ -213,7 +213,8 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set tabName="UCS@school" \
 	--set tabPosition=5 \
 	--set groupName="General" \
-	--set groupPosition="2" \
+	--set groupPosition="1" \
+	--set translationGroupName='"de_DE" "Allgemein"' \
 	--set shortDescription="Role of UCS@school object." \
 	--set longDescription="Role of UCS@school object." \
 	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
@@ -330,6 +331,9 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
 	--set tabPosition=7 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--set translationGroupName='"de_DE" "Allgemein"' \
 	--set shortDescription="External database identifier" \
 	--set longDescription="Identifier of external database from which the user was imported." \
 	--set translationShortDescription='"de_DE" "Externe Datenbank ID"' \
@@ -353,6 +357,9 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
 	--set tabPosition=8 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--set translationGroupName='"de_DE" "Allgemein"' \
 	--set shortDescription="External database primary key." \
 	--set longDescription="Primary key of the external database from which the user was imported." \
 	--set translationShortDescription='"de_DE" "Primärer Schlüssel in externer Datenbank"' \
@@ -376,6 +383,9 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
 	--set tabPosition=5 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--set translationGroupName='"de_DE" "Allgemein"' \
 	--set shortDescription="Scheduled deletion date" \
 	--set longDescription="On the date specified here, this user is irrevocably deleted from the directory service." \
 	--set translationShortDescription='"de_DE" "Geplantes Löschdatum"' \
@@ -400,6 +410,9 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
 	--set tabPosition=6 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--set translationGroupName='"de_DE" "Allgemein"' \
 	--set shortDescription="Role of UCS@school object." \
 	--set longDescription="Role of UCS@school object." \
 	--set translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \

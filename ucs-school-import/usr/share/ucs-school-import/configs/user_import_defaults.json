@@ -40,7 +40,7 @@
 		}
 	},
 	"normalize": {
-		"firstname": true,
-		"lastname": true
+		"firstname": false,
+		"lastname": false
 	}
 }

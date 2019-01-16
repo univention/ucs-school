@@ -641,7 +641,7 @@ python -m json.tool &lt; my_config.json
 								<entry>Definiert, ob der in der CSV-Datei angegebene Wert für den Vornamen (i.d.R. UTF-8-kodiert) auf die Kodierung ASCII normalisiert wird. Umlaute und Sonderzeichen werden dabei ersetzt ("ä" wird zu "ae") oder entfernt.</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>bool</classname>): <literal>true</literal></entry>
+								<entry align="right">Standard (<classname>bool</classname>): <literal>false</literal></entry>
 							</row>
 <!-- normalize::lastname -->
 							<row>
@@ -649,7 +649,7 @@ python -m json.tool &lt; my_config.json
 								<entry>Definiert, ob der in der CSV-Datei angegebene Wert für den Nachnamen (i.d.R. UTF-8-kodiert) auf die Kodierung ASCII normalisiert wird. Umlaute und Sonderzeichen werden dabei ersetzt ("ä" wird zu "ae") oder entfernt.</entry>
 							</row>
 							<row>
-								<entry align="right">Standard (<classname>bool</classname>): <literal>true</literal></entry>
+								<entry align="right">Standard (<classname>bool</classname>): <literal>false</literal></entry>
 							</row>
 <!-- scheme -->
 							<row>

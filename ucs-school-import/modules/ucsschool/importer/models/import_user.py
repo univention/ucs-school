@@ -159,6 +159,7 @@ class ImportUser(User):
 			except KeyError:
 				pass
 
+		# doing this only once would be enough, but a conditional isn't more efficient than the assignment
 		self.__class__.default_username_max_length = self._default_username_max_length
 		self._userexpiry = None  # type: str
 		self._purge_ts = None  # type: str
@@ -660,7 +661,7 @@ class ImportUser(User):
 		Normalize given name if set from import data or create from scheme.
 		"""
 		if self.firstname:
-			if self.config.get('normalize', {}).get('firstname', True):
+			if self.config.get('normalize', {}).get('firstname', False):
 				self.firstname = self.normalize(self.firstname)  # type: str
 		elif self._schema_write_check("firstname", "firstname", "givenName"):
 			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
@@ -673,7 +674,7 @@ class ImportUser(User):
 		Normalize family name if set from import data or create from scheme.
 		"""
 		if self.lastname:
-			if self.config.get('normalize', {}).get('lastname', True):
+			if self.config.get('normalize', {}).get('lastname', False):
 				self.lastname = self.normalize(self.lastname)  # type: str
 		elif self._schema_write_check("lastname", "lastname", "sn"):
 			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
