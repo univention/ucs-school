@@ -1,3 +1,9 @@
+ucs-school-lib (12.0.1-5) unstable; urgency=low
+
+  * Bug #48428: Fix wrong usage of UDM in share.py
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 16 Jan 2019 13:11:09 +0100
+
 ucs-school-lib (12.0.1-4) unstable; urgency=low
 
   * Bug #48226: Completely remove possibility to deactivate role feature

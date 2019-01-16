@@ -138,7 +138,6 @@ class WorkGroupShare(RoleSupportMixin, Share):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_workgroup_share]
 	_school_in_name_prefix = True
-	_module_manager = UDM.admin().version(1)
 
 	'''
 	This method was overwritten to identify WorkGroupShares and distinct them from other shares of the school.
@@ -151,7 +150,7 @@ class WorkGroupShare(RoleSupportMixin, Share):
 		filtered_shares = []
 		search_base = cls.get_search_base(school)
 		for share in shares:
-			groups = cls._module_manager.get('groups/group').search(filter_format('name=%s', [share.name]), base=search_base.groups)
+			groups = UDM(lo).version(1).get('groups/group').search(filter_format('name=%s', [share.name]), base=search_base.groups)
 			if any((search_base.isWorkgroup(g.dn) for g in groups)):
 				filtered_shares.append(share)
 		return filtered_shares
