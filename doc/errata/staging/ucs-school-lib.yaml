@@ -6,5 +6,5 @@ src: ucs-school-lib
 fix: 11.0.2-2A~4.3.0.201901091714
 desc: |
  * The UCS@school library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (Bug #47885).
- * An error when filtering in a search for schools was fixed (Bug #48429).
+ * An internal filter error while searching for schools was fixed (Bug #48429).
 bug: [47885, 48429]
