@@ -3,11 +3,11 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.0.1-5A~4.4.0.201901161312
+fix: 12.1.0-1A~4.4.0.201901171117
 desc: |
  * Solves a problem in the ucsschool lib that returned the wrong shares when fetching all WorkGroupShares (Bug #48428).
  * The UCS@school library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (Bug #47885).
  * An error when filtering in a search for schools was fixed (Bug #48429).
  * Activate the role feature by default (Bug #48226).
-
-bug: [48428, 47885, 48429, 48226]
+ * A users school_classes are now removed, if the school_classes attribute is empty (Bug #48045).
+bug: [48428, 47885, 48429, 48226, 48045]
