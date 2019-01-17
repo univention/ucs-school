@@ -31,6 +31,8 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
+from collections import Mapping
+from six import iteritems
 
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
@@ -273,31 +275,26 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				logger.error('Error removing %r from school %r.', self, removed_school)
 				return False
 
+		# remove SchoolClasses the user is not part of anymore
+		# ignore all others (global groups, $OU-groups and workgroups)
 		mandatory_groups = self.groups_used(lo)
-		for group_dn in udm_obj['groups'][:]:
-			logger.debug('Checking group %s for removal', group_dn)
-			if group_dn not in mandatory_groups:
-				logger.debug('Group not mandatory! Part of a school?')
-				try:
-					school_class = SchoolClass.from_dn(group_dn, None, lo)
-				except noObject:
-					logger.debug('No. Leaving it alone...')
-					continue
-				logger.debug('Yes, part of %s!', school_class.school)
-				if school_class.school not in self.school_classes:
-					continue  # if the key isn't set we don't change anything to the groups. to remove the groups it has to be an empty list
-				classes = self.school_classes[school_class.school]
-				remove = school_class.name not in classes and school_class.get_relative_name() not in classes
-				if remove:
-					logger.debug('Removing it!')
-					udm_obj['groups'].remove(group_dn)
-				else:
-					logger.debug('Leaving it alone: Part of own school and either non-school class or new school classes were not defined at all')
-		for group_dn in mandatory_groups:
-			logger.debug('Checking group %s for adding', group_dn)
-			if group_dn not in udm_obj['groups']:
-				logger.debug('Group is not yet part of the user. Adding...')
-				udm_obj['groups'].append(group_dn)
+		for group_dn in [dn for dn in udm_obj['groups'] if dn not in mandatory_groups]:
+			try:
+				school_class = SchoolClass.from_dn(group_dn, None, lo)
+			except noObject:
+				continue
+			classes = self.school_classes.get(school_class.school, [])
+			if school_class.name not in classes and school_class.get_relative_name() not in classes:
+				logger.debug('Removing %r from SchoolClass %r.', self, group_dn)
+				udm_obj['groups'].remove(group_dn)
+
+		# make sure user is in all mandatory groups and school classes
+		current_groups = set(map(str.lower, udm_obj['groups']))
+		groups_to_add = filter(lambda dn: dn.lower() not in current_groups, mandatory_groups)
+		# [dn for dn in mandatory_groups if dn.lower() not in current_groups]
+		if groups_to_add:
+			logger.debug('Adding %r to groups %r.', self, groups_to_add)
+			udm_obj['groups'].extend(groups_to_add)
 		return super(User, self).do_modify(udm_obj, lo)
 
 	def do_school_change(self, udm_obj, lo, old_school):
@@ -406,6 +403,15 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			# mail_domain = self.get_mail_domain(lo)
 			# if not mail_domain.exists(lo) and not self.shall_create_mail_domain():
 			# 	self.add_error('email', _('The mail domain is unknown. Please change the email address or create the mail domain "%s" using the Univention Directory Manager.') % mail_domain.name)
+
+		if not isinstance(self.school_classes, Mapping):
+			self.add_error('school_classes', _(
+				"Type of 'school_classes' is {type!r}, but must be dictionary.").format(type=type(self.school_classes)))
+
+		# verify user is (or will be) in all schools of its school_classes
+		for school, classes in iteritems(self.school_classes):
+			if school.lower() not in map(str.lower, self.schools):
+				self.add_error('school_classes', _("School {school!r} in 'school_classes' is missing in the users 'schools' attribute.").format(school=school))
 
 	def remove_from_school(self, school, lo):
 		if not self.exists(lo):
@@ -533,7 +539,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def get_school_class_objs(self):
 		ret = []
-		for school, classes in self.school_classes.iteritems():
+		for school, classes in iteritems(self.school_classes):
 			for school_class in classes:
 				ret.append(SchoolClass.cache(school_class, school))
 		return ret

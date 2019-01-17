@@ -34,6 +34,7 @@ import os.path
 from copy import deepcopy
 import tempfile
 import subprocess
+from six import iteritems
 
 import ldap
 from ldap import explode_dn
@@ -330,7 +331,7 @@ class UCSSchoolHelperAbstractClass(object):
 		from ucsschool.lib.models.school import School
 		self.errors.clear()
 		self.warnings.clear()
-		for name, attr in self._attributes.iteritems():
+		for name, attr in iteritems(self._attributes):
 			value = getattr(self, name)
 			try:
 				attr.validate(value)
@@ -351,7 +352,7 @@ class UCSSchoolHelperAbstractClass(object):
 				except (UnknownModel, WrongModel):
 					pass
 				else:
-					for name, attr in self._attributes.iteritems():
+					for name, attr in iteritems(self._attributes):
 						if attr.unlikely_to_change:
 							new_value = getattr(self, name)
 							old_value = getattr(original_self, name)
@@ -440,7 +441,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return None
 
 	def _alter_udm_obj(self, udm_obj):
-		for name, attr in self._attributes.iteritems():
+		for name, attr in iteritems(self._attributes):
 			if attr.udm_name:
 				value = getattr(self, name)
 				if value is not None and attr.map_to_udm:
@@ -672,7 +673,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	def get_error_msg(self):
 		error_msg = ''
-		for key, errors in self.errors.iteritems():
+		for key, errors in iteritems(self.errors):
 			label = self.find_field_label_from_name(key)
 			error_str = ''
 			for error in errors:
@@ -804,7 +805,7 @@ class UCSSchoolHelperAbstractClass(object):
 	def _attrs_for_easy_filter(cls):
 		ret = []
 		module = udm_modules.get(cls._meta.udm_module)
-		for key, prop in module.property_descriptions.iteritems():
+		for key, prop in iteritems(module.property_descriptions):
 			if prop.include_in_default_search:
 				ret.append(key)
 		return ret
@@ -828,7 +829,7 @@ class UCSSchoolHelperAbstractClass(object):
 		cls.init_udm_module(lo)
 		klass = cls.get_class_for_udm_obj(udm_obj, school)
 		if klass is None:
-			logger.warning('UDM object %s does not correspond to a class in UCS school lib!', udm_obj.dn)
+			logger.warning('UDM object %r does not correspond to a Python class in the UCS school lib.', udm_obj.dn)
 			raise UnknownModel(udm_obj.dn, cls)
 		if klass is not cls:
 			logger.info('UDM object %s is not %s, but actually %s', udm_obj.dn, cls.__name__, klass.__name__)
@@ -843,7 +844,7 @@ class UCSSchoolHelperAbstractClass(object):
 		attrs = {'school': cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
 		if cls.supports_schools():
 			attrs['schools'] = udm_obj['school']
-		for name, attr in cls._attributes.iteritems():
+		for name, attr in iteritems(cls._attributes):
 			if attr.udm_name:
 				udm_value = udm_obj[attr.udm_name]
 				if udm_value == '':
@@ -950,7 +951,7 @@ class UCSSchoolHelperAbstractClass(object):
 		By default the attributes are present as well as the dn and
 		the udm_module.'''
 		ret = {'$dn$': self.dn, 'objectType': self._meta.udm_module}
-		for name, attr in self._attributes.iteritems():
+		for name, attr in iteritems(self._attributes):
 			if not attr.internal:
 				ret[name] = getattr(self, name)
 		return ret
