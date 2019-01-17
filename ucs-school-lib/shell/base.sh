@@ -138,14 +138,14 @@ $2"
 	done
 
 	res=""
-	for oudn in $(univention-ldapsearch $ldap_server $ldap_port -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+	for oudn in $(univention-ldapsearch $ldap_server $ldap_port -LLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
 		ouname="$(school_ou "$oudn")"
 		if is_ucr_true ucsschool/singlemaster; then
 			search_str="(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))"
 		else
 			search_str="(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=${ldap_hostdn}))"
 		fi
-		if univention-ldapsearch $ldap_server $ldap_port -xLLL "$search_str" dn | grep -q "^dn: "; then
+		if univention-ldapsearch $ldap_server $ldap_port -LLL "$search_str" dn | grep -q "^dn: "; then
 			res="$res
 $oudn"
 		fi
