@@ -1,3 +1,9 @@
+ucs-school-import (16.0.2-67) unstable; urgency=low
+
+  * Bug #48478: allow forward compatible use of record_uid and source_uid
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 17 Jan 2019 17:38:43 +0100
+
 ucs-school-import (16.0.2-66) unstable; urgency=low
 
   * Bug #48423: ou post-create hook can handle running in other Django app

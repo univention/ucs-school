@@ -736,6 +736,8 @@ class ImportUser(User):
 			self.record_uid = self.old_user.record_uid
 		return self.record_uid or ""
 
+	make_record_uid = make_recordUID
+
 	def make_sourceUID(self):  # type: () -> str
 		"""
 		Set the ucsschoolSourceUID (sourceUID) (if not already set).
@@ -747,6 +749,8 @@ class ImportUser(User):
 		else:
 			self.source_uid = self.config["sourceUID"]  # type: str
 		return self.source_uid or ""
+
+	make_source_uid = make_sourceUID
 
 	def make_school(self):  # type: () -> str
 		"""

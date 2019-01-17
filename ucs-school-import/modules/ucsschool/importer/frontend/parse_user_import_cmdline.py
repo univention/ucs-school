@@ -53,6 +53,7 @@ class ParseUserImportCmdline(object):
 			no_delete=False,
 			school=None,
 			sourceUID=None,
+			source_uid=None,
 			user_role=None,
 			verbose=False
 		)
@@ -94,6 +95,10 @@ class ParseUserImportCmdline(object):
 		self.parser.add_argument(
 			"--sourceUID",
 			help="The ID of the source database (shortcut for --set sourceUID=...) [mandatory either here or in the "
+			"configuration file].")
+		self.parser.add_argument(
+			"--source_uid",
+			help="The ID of the source database (shortcut for --set source_uid=...) [mandatory either here or in the "
 			"configuration file].")
 		self.parser.add_argument(
 			"-s",

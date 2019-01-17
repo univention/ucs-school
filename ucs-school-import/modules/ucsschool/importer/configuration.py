@@ -124,6 +124,23 @@ class ReadOnlyDict(dict):
 				mandatory_attributes.extend(missing_mandatory_attributes)
 			mandatory_attributes.sort()
 
+		# Bug #48478: rename recordUID to record_uid and sourceUID to source_uid
+		# forward compatibility, this will disappear in 4.4
+		if (
+				self.get('scheme', {}).get('record_uid') and
+				self.get('scheme', {}).get('recordUID') and
+				self['scheme']['record_uid'] != self['scheme']['recordUID']
+		):
+			raise InitialisationError(
+				'Both configuration keys used, but not equal: "scheme:recordUID" and "scheme:record_uid".')
+		if self.get('source_uid') and self.get('sourceUID') and self['source_uid'] != self['sourceUID']:
+			raise InitialisationError(
+				'Both configuration keys used, but not equal: "sourceUID" and "source_uid".')
+		if self.get('scheme', {}).get('record_uid') and not self.get('scheme', {}).get('recordUID'):
+			self['scheme']['recordUID'] = self['scheme']['record_uid']
+		if self.get('source_uid') and not self.get('sourceUID'):
+			self['sourceUID'] = self['source_uid']
+
 	def close(self):
 		self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed  # noqa
 

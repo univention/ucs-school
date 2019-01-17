@@ -1,0 +1,56 @@
+		<section id="changelog:deprecation-warning">
+			<title>Ankündigung von Änderungen mit UCS@school 4.4</title>
+			<important>
+				<para>
+					Mit UCS@school 4.4v1 werden sich einige Einstellung, Namen von Konfigurationsvariablen und Funktionen ändern.
+					Um den Übergang zu 4.4 zu erleichtern, sind einige bereits in UCS@school 4.3v7 verwendbar.
+				</para>
+			</important>
+			<section>
+				<title>Änderund des Standardwerts von <varname>normalization:firstname</varname> und <varname>normalization:lastname</varname></title>
+				<para>
+					Beginnend mit UCS@school 4.4v1 wird der Standard für die Einstellungen von <varname>normalization:firstname</varname> und <varname>normalization:lastname</varname> von <literal>true</literal> auf <literal>false</literal> geändert.
+					Umlaute werden also nicht mehr aus Vor- und Nachnamen entfernt.
+					Wenn nicht explizit mit dem CSV übergeben, wird <literal>displayName</literal> aus Vor- und Nachname errechnet, und enthält dann ebenfalls Umlaute.
+				</para>
+				<para>
+					Falls die <varname>record_uid</varname> mittels <varname>scheme:recordUID</varname> aus dem Namen errechnet wird, könnte sie sich dadurch ändern.
+					Das würde dazu führen, dass die User nicht mehr im LDAP gefunden und neu angelegt würden.
+					Wenn <literal>&lt;:umlauts&gt;</literal> dem Benutzernamen-Schema in <literal>scheme:username</literal> vorangestellt wird, kann diese Änderung meist verhindert werden.
+					Wir raten dringend dazu dies zu testen und wenn sich dennoch Unterschiede ergeben, <varname>normalization:firstname</varname> und <varname>normalization:lastname</varname> auf <literal>true</literal> zu setzen.
+				</para>
+			</section>
+			<section>
+				<title>Umbenennung <varname>recordUID</varname> zu <varname>record_uid</varname></title>
+				<para>
+					Aus Konsistenzgründen wird der Konfigurationsschlüssel <varname>scheme:recordUID</varname> zu <varname>scheme:record_uid</varname> umbenannt.
+					Des weiteren wird die Python Methode <methodname>ImportUser.make_recordUID()</methodname> zu <methodname>ImportUser.make_record_uid()</methodname> umbenannt.
+					Die neuen Konfigurationsschlüssel- und Methodennamen können jetzt schon (in UCS@school 4.3v7) verwendet werden.
+				</para>
+			</section>
+			<section>
+				<title>Umbenennung <varname>sourceUID</varname> zu <varname>source_uid</varname></title>
+				<para>
+					Aus Konsistenzgründen wird der Konfigurationsschlüssel <varname>scheme:sourceUID</varname> zu <varname>source_uid</varname> umbenannt.
+					Das dazugehörige Kommandozeilenargument <option>--sourceUID</option> wird in <option>--source_uid</option> umbenannt.
+					Des weiteren wird die Python Methode <methodname>ImportUser.make_sourceUID()</methodname> zu <methodname>ImportUser.make_source_uid()</methodname> umbenannt.
+					Die neuen Konfigurationsschlüssel-, Argument- und Methodennamen können jetzt schon (in UCS@school 4.3v7) verwendet werden.
+				</para>
+			</section>
+			<section>
+				<title>Verhaltensänderung bei leerer <varname>school_classes</varname> Spalte</title>
+				<para>
+					Mit UCS@school 4.4v1 wird sich das Verhalten den Imports bei leerer <varname>school_classes</varname> Spalte ändern.
+					Bisher ist es so, dass wenn bei einem Benutzer das Feld für die Zuordnung zu Klassen leer übergeben wird, <emph>keine Änderung</emph> vorgenommen, und die alte Klassenzugehörigkeit erhalten wird.
+					Dies wurde in dem Fall verwendet, bei dem die Klassenzuordnung nicht per Import festgelegt werden soll, sondern über die UMC-Module <guimenu>Klassen zuordnen</guimenu> bzw. <guimenu>Lehrer zuordnen</guimenu>.
+				</para>
+				<para>
+					Das neue Verhalten ist so, dass wenn das CSV-Feld für die <varname>school_classes</varname> leer ist, die Klassenzugehörigkeit des Benutzers entsprechend geändert wird: er wird aus allen Klassen entfernt.
+					Soll das alte Verhalten beibehalten werden, kann der neue Konfigurationsschlüssel <varname>school_classes_keep_if_empty</varname> auf <literal>true</literal> gesetzt werden (Standard ist <literal>false</literal>).
+				</para>
+				<para>
+					Das neue Verhalten kann <emph>nicht</emph> in UCS@school 4.3v7 eingeschaltet werden.
+					Wenn bereits bekannt ist, dass das alte Verhalten in Zukunft beibehalten werden soll, so kann die Konfiguration (ohne Auswirkungen in UCS@school 4.3) um <literal>{.., "school_classes_keep_if_empty": true}</literal> ergänzt werden.
+				</para>
+			</section>
+		</section>
