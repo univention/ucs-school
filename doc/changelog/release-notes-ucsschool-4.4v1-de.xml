@@ -241,6 +241,11 @@ Checking ldap_schema ...                          OK
 				<listitem><para>
 					To be more consistent with other variable names, the configuration key <varname>sourceUID</varname> and its associated command line argument <option>--sourceUID</option> have been renamed to <varname>source_uid</varname> and <option>--source_uid</option> respectively. The method <methodname>ImportUser.make_sourceUID()</methodname> has also been renamed to <methodname>ImportUser.make_source_uid()</methodname>.
 				</para></listitem>
+				<listitem><para>
+					The <varname>school_classes</varname> user attribute (the class assignment) is now emptied, if the class field in a row of a CSV file is empty.
+					Before, the <varname>school_classes</varname> user attribute was actively restored in the case that a modification had completely emptied it.
+					To return to the previous behavior add the key <varname>school_classes_keep_if_empty</varname> to the import configuration with a value of <literal>true</literal>.
+				</para></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:httpapi" lang="en">
