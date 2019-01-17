@@ -1,3 +1,10 @@
+ucs-school-import (17.2.0-1) unstable; urgency=low
+
+  * Bug #48045: remove classes if none are set in the infile / school_classes
+    attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 17 Jan 2019 11:07:46 +0100
+
 ucs-school-import (17.1.0-1) unstable; urgency=low
 
   * Bug #48478: rename recordUID to record_uid and sourceUID to source_uid

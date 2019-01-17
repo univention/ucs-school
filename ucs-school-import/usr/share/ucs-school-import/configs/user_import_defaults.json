@@ -42,5 +42,6 @@
 	"normalize": {
 		"firstname": false,
 		"lastname": false
-	}
+	},
+	"school_classes_keep_if_empty": false
 }

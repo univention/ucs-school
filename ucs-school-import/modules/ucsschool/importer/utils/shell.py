@@ -61,7 +61,7 @@ from ucsschool.importer.utils.ldap_connection import (
 	get_unprivileged_connection as _get_unprivileged_connection)
 from ucsschool.importer.exceptions import UcsSchoolImportFatalError
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
-
+from ucsschool.lib.models import *  # noqa
 
 assert ImportStaff
 assert ImportStudent

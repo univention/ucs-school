@@ -36,7 +36,7 @@ import re
 import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
-from six import string_types
+from six import iteritems, string_types
 import lazy_object_proxy
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
@@ -628,8 +628,17 @@ class ImportUser(User):
 		elif self.school_classes is None:
 			self.school_classes = dict()
 		else:
-			raise RuntimeError("Unknown data in attribute 'school_classes': '{}'".format(self.school_classes))
-		if not self.school_classes and self.old_user and self.old_user.school_classes:
+			raise RuntimeError("Unknown data in attribute 'school_classes': {!r}".format(self.school_classes))
+		if (
+				not self.school_classes and
+				self.old_user and
+				self.old_user.school_classes and
+				self.config.get('school_classes_keep_if_empty', False)
+		):
+			self.logger.info(
+				'Reverting school_classes of %r to %r, because school_classes_keep_if_empty=%r and new school_classes=%r.',
+				self, self.old_user.school_classes, self.config.get('school_classes_keep_if_empty', False),
+				self.school_classes)
 			self.school_classes = self.old_user.school_classes
 		return self.school_classes
 
@@ -873,11 +882,14 @@ class ImportUser(User):
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		# type: (LoType, Optional[bool], Optional[bool]) -> bool
-		if not self.school_classes:
+		if not self.school_classes and self.config.get('school_classes_keep_if_empty', False):
 			# empty classes input means: don't change existing classes (Bug #42288)
-			self.logger.debug("No school_classes are set, not modifying existing ones.")
 			udm_obj = self.get_udm_object(lo)
-			self.school_classes = self.get_school_classes(udm_obj, self)
+			school_classes = self.get_school_classes(udm_obj, self)
+			self.logger.info(
+				'Reverting school_classes of %r to %r, because school_classes_keep_if_empty=%r and new school_classes=%r.',
+				self, school_classes, self.config.get('school_classes_keep_if_empty', False), self.school_classes)
+			self.school_classes = school_classes
 		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
@@ -1000,7 +1012,7 @@ class ImportUser(User):
 					self.config["mandatory_attributes"],
 					entry_count=self.entry_count, import_user=self
 				)
-		for k, v in mandatory_attributes.iteritems():
+		for k, v in iteritems(mandatory_attributes):
 			if v in ('', None):
 				raise EmptyMandatoryAttribute("Mandatory attribute {!r} has empty value.".format(k), attr_name=k)
 
