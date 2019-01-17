@@ -96,11 +96,19 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** (1/4) Modifying users: setting CSV-input to have no classes.')
 		for person in person_list:
 			person.update(school_classes={})
+		self.log.info('*** (1.1/4) school_classes_keep_if_empty=True -> still have classes')
+		config.update_entry('school_classes_keep_if_empty', True)
 		self.import_check_changes(config, person_list, class_list, 0, 0)
-		self.log.info('Test case 1/4 was successful.\n\n\n')
+		self.log.info('Test case 1.1/4 was successful.\n\n\n')
 
-		self.log.info('*** Test case 2/4: has 2 classes -> import w 1 class   -> has 1 class')
-		self.log.info('*** (2-1/4) Importing new users of all roles and two classes from 1 OU.')
+		self.log.info('*** (1.2/4) school_classes_keep_if_empty=False -> have no classes')
+		config.update_entry('school_classes_keep_if_empty', False)
+		class_list_empty = [(dn, []) for dn, persons in class_list]
+		self.import_check_changes(config, person_list, class_list_empty, 0, 0)
+		self.log.info('Test case 1.2/4 was successful.\n\n\n')
+
+		self.log.info('*** Test case 2/4: has 2 classes -> import w 1 class -> has 1 class')
+		self.log.info('*** (2.1/4) Importing new users of all roles and two classes from 1 OU.')
 		config, source_uid = self.new_config()
 		person_list = []
 		class_list = []
@@ -110,7 +118,7 @@ class Test(CLI_Import_v2_Tester):
 			class_list.extend([(cls1_dn, [person.dn]), (cls2_dn, [person.dn])])
 		self.import_check_changes(config, person_list, class_list, 3, 0)
 
-		self.log.info('*** (2-2/4) Modifying users: setting CSV-input to have 1 class.')
+		self.log.info('*** (2.2/4) Modifying users: setting CSV-input to have 1 class.')
 		# remove 2nd class
 		class_list = []
 		for person in person_list:
@@ -141,7 +149,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('Test case 3/4 was successful.\n\n\n')
 
 		self.log.info('*** Test case 4/4: has 2 classes from 2 OUs -> import w/o classes -> has 2 classes from 2 OUs.')
-		self.log.info('*** (4-1/4) Importing new users and 1 class from each of 2 OUs.')
+		self.log.info('*** (4.1/4) Importing new users and 1 class from each of 2 OUs.')
 		config, source_uid = self.new_config()
 		person_list = []
 		class_list = []
@@ -151,11 +159,22 @@ class Test(CLI_Import_v2_Tester):
 			class_list.extend([(cls1_dn, [person.dn]), (cls2_dn, [person.dn])])
 		self.import_check_changes(config, person_list, class_list, 3, 0)
 
-		self.log.info('*** (4-2/4) Modifying users: setting CSV-input to have no classes.')
+		self.log.info('*** (4.2/4) Modifying users: setting CSV-input to have no classes.')
+		self.log.info('*** Test case 4.2.1/4: has 2 classes from 2 OUs -> import w/o classes & school_classes_keep_if_empty=True -> has 2 classes from 2 OUs.')
 		for person in person_list:
 			person.update(school_classes={})
+		config.update_entry('school_classes_keep_if_empty', True)
 		self.import_check_changes(config, person_list, class_list, 0, 0)
-		self.log.info('Test case 4/4 was successful.\n\n\n')
+		self.log.info('Test case 4.2.1/4 was successful.\n\n\n')
+
+		self.log.info('*** Test case 4.2.2/4: has 2 classes from 2 OUs -> import w/o classes & school_classes_keep_if_empty=False -> has 0 classes.')
+		for person in person_list:
+			person.update(school_classes={})
+		config.update_entry('school_classes_keep_if_empty', False)
+		class_list_empty = [(dn, []) for dn, persons in class_list]
+		self.import_check_changes(config, person_list, class_list_empty, 0, 0)
+		self.log.info('*** Test case 4.2.2/4 was successful.')
+		self.log.info('*** Test case 4/4 was successful.\n')
 
 
 if __name__ == '__main__':

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-6) unstable; urgency=low
+
+  * Bug #48045: test new behavior of classes removal if none are set in the
+    infile
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 17 Jan 2019 11:08:57 +0100
+
 ucs-test-ucsschool (6.0.0-5) unstable; urgency=low
 
   * Bug #48478: adapt tests to rename of recordUID to record_uid and sourceUID
