@@ -1,3 +1,9 @@
+ucs-school-import (17.2.0-2) unstable; urgency=medium
+
+  * Bug #48246: Add substring search for ucsschoolRole
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 17 Jan 2019 17:14:52 +0100
+
 ucs-school-import (17.2.0-1) unstable; urgency=low
 
   * Bug #48045: remove classes if none are set in the infile / school_classes

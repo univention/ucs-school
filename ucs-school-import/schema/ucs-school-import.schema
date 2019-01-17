@@ -55,6 +55,7 @@ attributetype ( univentionSchool:5101
         NAME 'ucsschoolRole'
         DESC 'Role of UCS@school object in given context'
         EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( univentionSchool:53 NAME 'ucsschoolType'
