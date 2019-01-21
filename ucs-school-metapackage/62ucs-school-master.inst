@@ -110,19 +110,20 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 5 ] ; then
 		   [ -e /var/univention-join/joined ] &&
 		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
 		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'"
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'" &&
 		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRole'"
 	then
 		echo "Updating LDAP indices..."
 		unset stop_and_start_slapd
 		pidof slapd >/dev/null 2>/dev/null && stop_and_start_slapd=yes
-		[ -n "$stop_and_start_slapd" ] && invoke-rc.d slapd stop
+		[ -n "$stop_and_start_slapd" ] && service slapd stop
 		/usr/share/univention-ldap/ldap_setup_index \
 			--verbose \
 			--add-eq ucsschoolSchool --add-eq ucsschoolSourceUID --add-eq ucsschoolRecordUID --add-eq ucsschoolRole \
 			--add-pres ucsschoolSchool --add-pres ucsschoolSourceUID --add-pres ucsschoolRecordUID --add-pres ucsschoolRole \
 			--add-sub ucsschoolRecordUID --add-sub ucsschoolRole || die
-		[ -n "$stop_and_start_slapd" ] && invoke-rc.d slapd start
+		[ -n "$stop_and_start_slapd" ] && service slapd start
+		echo "Finished updating LDAP indices."
 	else
 		echo "ERROR: cannot update LDAP indices (ldap server not running?) - stopping here"
 		exit 1
