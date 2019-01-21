@@ -1,3 +1,9 @@
+ucs-school-import (17.2.0-3) unstable; urgency=medium
+
+  * Bug #48226: Fix script call in join script
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 21 Jan 2019 10:25:11 +0100
+
 ucs-school-import (17.2.0-2) unstable; urgency=medium
 
   * Bug #48246: Add substring search for ucsschoolRole

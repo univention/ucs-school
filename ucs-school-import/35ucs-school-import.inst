@@ -542,7 +542,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 19 ] && [ $server_role = domaincontroller_master ]; then
 	if ! is_ucr_true ucsschool/feature/roles/skip_migration; then
-		./usr/share/ucs-school-import/scripts/migrate_ucsschool_roles --modify --all-objects || die
+		python /usr/share/ucs-school-import/scripts/migrate_ucsschool_roles --modify --all-objects || die
 	fi
 fi
 
