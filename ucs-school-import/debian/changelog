@@ -1,23 +1,23 @@
-ucs-school-import (17.2.0-3) unstable; urgency=medium
+ucs-school-import (17.0.2-3) unstable; urgency=medium
 
   * Bug #48226: Fix script call in join script
 
  -- Ole Schwiegert <schwiegert@univention.de>  Mon, 21 Jan 2019 10:25:11 +0100
 
-ucs-school-import (17.2.0-2) unstable; urgency=medium
+ucs-school-import (17.0.2-2) unstable; urgency=medium
 
   * Bug #48246: Add substring search for ucsschoolRole
 
  -- Jürn Brodersen <brodersen@univention.de>  Thu, 17 Jan 2019 17:14:52 +0100
 
-ucs-school-import (17.2.0-1) unstable; urgency=low
+ucs-school-import (17.0.2-1b) unstable; urgency=low
 
   * Bug #48045: remove classes if none are set in the infile / school_classes
     attribute
 
  -- Daniel Troeder <troeder@univention.de>  Thu, 17 Jan 2019 11:07:46 +0100
 
-ucs-school-import (17.1.0-1) unstable; urgency=low
+ucs-school-import (17.0.2-1) unstable; urgency=low
 
   * Bug #48478: rename recordUID to record_uid and sourceUID to source_uid
 
