@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 
+fix: 17.0.3-1A~4.4.0.201901241145
 desc: |
  * The UCS@school import frameworks ImportUser class has been made more accessable to 3rd party software (Bug #48423).
  * Activate the role feature by default (Bug #48226).
