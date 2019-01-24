@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-2) unstable; urgency=low
+
+  * Bug #45538: revert changes of last changelog entry
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 24 Jan 2019 11:44:18 +0100
+
 ucs-school-import (16.0.3-1) unstable; urgency=low
 
   * Bug #45538: fix OID clash in LDAP schema
