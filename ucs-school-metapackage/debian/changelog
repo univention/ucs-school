@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-5) unstable; urgency=medium
+
+  * Bug #48540: Fix typo in demo portal
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 29 Jan 2019 08:51:22 +0100
+
 ucs-school-metapackage (12.0.0-4) unstable; urgency=medium
 
   * Bug #48384: Fix schema check for ldap indices
