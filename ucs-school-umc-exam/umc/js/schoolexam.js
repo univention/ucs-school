@@ -58,6 +58,7 @@ define([
 			TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
+	    name = name.trim();
 		array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
 			name = name.replace(ichar, '_');
 		});
