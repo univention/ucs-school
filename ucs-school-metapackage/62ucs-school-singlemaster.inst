@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=5
+VERSION=6
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -89,14 +89,14 @@ append_ucr_policy_to_base() {
 	if [ -n "$target_ucr_policy_dn" ]; then
 		univention-directory-manager policies/registry modify "$@" \
 			--dn "$target_ucr_policy_dn" \
-			--append registry="$key $value" 
+			--append registry="$key $value"
 	else
 		policy_name="ucsschool-ucr-settings"
 		ucr_policy_base="cn=config-registry,cn=policies,$ldap_base"
 		univention-directory-manager policies/registry create --ignore_exists "$@" \
 			--position "$ucr_policy_base" \
 			--set name="$policy_name" \
-			--set registry="$key $value" 
+			--set registry="$key $value"
 
 		univention-directory-manager container/dc modify "$@" \
 			--dn "$ldap_base" \
@@ -169,6 +169,22 @@ if is_ucr_true "ucsschool/join/create_demo"; then
 	chmod 640 /etc/demoschool.secret
 	python /usr/share/ucs-school-metapackage/scripts/create_demoportal.py
 	univention-config-registry set ucsschool/join/create_demo=no
+fi
+
+# Fixes a typo in existing DEMOSCHOOL portals
+if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
+	python2 - << END
+from univention.udm import UDM # "$@" comment necessary to satisfy ucslint.
+pm = UDM.admin().version(1).get('settings/portal')
+portals = list(pm.search('name=ucsschool_demo_portal'))
+if len(portals) == 1:
+	portal = portals[0]
+	if 'de_DE' in portal.props.displayName:
+		portal.props.displayName['de_DE'] = portal.props.displayName['de_DE'].replace('UCS@School', 'UCS@school')
+	if 'en_US' in portal.props.displayName:
+		portal.props.displayName['en_US'] = portal.props.displayName['en_US'].replace('UCS@School', 'UCS@school')
+	portal.save()
+END
 fi
 
 joinscript_save_current_version

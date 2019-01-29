@@ -169,7 +169,7 @@ def create_portal():
 	portal_obj = module_portal.object(None, lo, pos_portal)
 	portal_obj.open()
 	portal_obj['name'] = 'ucsschool_demo_portal'
-	portal_obj['displayName'] = [('en_US', 'UCS@School Demo Portal'), ('de_DE', 'UCS@School Demo Portal')]
+	portal_obj['displayName'] = [('en_US', 'UCS@school Demo Portal'), ('de_DE', 'UCS@school Demo Portal')]
 	portal_obj['showApps'] = 'FALSE'
 	portal_obj['portalComputers'] = hostdn
 	portal_content = [
