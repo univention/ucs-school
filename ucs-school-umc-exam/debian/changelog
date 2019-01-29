@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.0-1) unstable; urgency=low
+
+  * Bug #48509: The exam name is now trimmed for the folder name
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 29 Jan 2019 09:48:04 +0200
+
 ucs-school-umc-exam (9.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4
@@ -918,7 +924,7 @@ ucs-school-umc-exam (0.1.17-1) unstable; urgency=low
 
 ucs-school-umc-exam (0.1.16-1) unstable; urgency=low
 
-  * Bug #31158: read max upload size from UCR variable umc/server/upload/max 
+  * Bug #31158: read max upload size from UCR variable umc/server/upload/max
 
  -- Alexander Kläser <klaeser@univention.de>  Wed, 08 May 2013 15:54:09 +0200
 
