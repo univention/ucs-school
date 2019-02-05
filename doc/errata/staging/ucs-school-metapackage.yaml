@@ -7,4 +7,5 @@ fix: 12.0.0-4A~4.4.0.201901211128
 desc: |
  * Dummy Entry for samba simplification. Needs to be amended!
  * Add LDAP indices for ucsschoolRole (Bug #48384).
-bug: [47957, 48384]
+ * Fix typo on demo portal (Bug #48540).
+bug: [47957, 48384, 48540]
