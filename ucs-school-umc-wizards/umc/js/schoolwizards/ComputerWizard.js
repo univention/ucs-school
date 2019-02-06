@@ -32,14 +32,17 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/Deferred",
 	"umc/tools",
 	"umc/widgets/TextBox",
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/HiddenInput",
+	"dojox/html/entities",
+	"umc/dialog",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, tools, TextBox, Text, ComboBox, HiddenInput, Wizard, _) {
+], function(declare, lang, Deferred, tools, TextBox, Text, ComboBox, HiddenInput, entities, dialog, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.ComputerWizard", [Wizard], {
 		description: _('Create a new computer'),
@@ -103,6 +106,37 @@ define([
 				iwidget.reset();
 			});
 			this.inherited(arguments);
+		},
+
+		_createObject: function(ignore_warning, chained_d) {
+			var deferred = chained_d || new Deferred();
+			var values = this.getValues();
+			values['ignore_warning'] = ignore_warning || false;
+			this.standbyDuring(this.store.add(values)).then(lang.hitch(this,
+				function(response) {
+					if (response.result.error) {
+						dialog.alert(entities.encode(response.result.error));
+						deferred.resolve(false);
+					} else if (response.result.warning) {
+						dialog.confirm(entities.encode(response.result.warning), [
+							{label: _('Create')},
+							{label: _('Cancel')}
+						]).then(lang.hitch(this, function(choice) {
+							if (choice === 0) {
+								this._createObject(true, deferred)
+							} else {
+								deferred.resolve(false);
+							}
+						}));
+					} else {
+						deferred.resolve(true);
+					}
+				}),
+				function() {
+					deferred.resolve(false);
+				}
+			);
+			return deferred;
 		},
 
 		addNote: function() {
