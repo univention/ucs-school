@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-1) unstable; urgency=medium
+
+  * Bug #48099: Respect validation warning in computer wizard
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 07 Feb 2019 12:00:12 +0200
+
 ucs-school-umc-wizards (11.0.0-0) unstable; urgency=medium
 
   * bump version for UCS@school 4.4

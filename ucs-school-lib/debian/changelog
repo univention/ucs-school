@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-2) unstable; urgency=low
+
+  * Bug #48099: Extend validation for computer object
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 07 Feb 2019 11:59:43 +0100
+
 ucs-school-lib (12.1.0-1) unstable; urgency=low
 
   * Bug #48045: remove users classes if none are set in school_classes
