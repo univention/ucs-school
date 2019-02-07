@@ -266,7 +266,10 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			networks = [(network[1]['cn'][0],
 						IPv4Network(network[1]['univentionNetwork'][0] + '/' + network[1]['univentionNetmask'][0])) for
 						network in lo.search('(univentionObjectType=networks/network)')]
+			is_singlemaster = ucr.get('ucsschool/singlemaster', False)
 			for network in networks:
+				if is_singlemaster and network[0] == 'default' and own_network_ip4 == network[1]: # Bug #48099: jump conflict with default network in singleserver environment
+					continue
 				if own_network_ip4.overlaps(network[1]):
 					self.add_error('subnet_mask', _('The newly created network would overlap with the existing network {}').format(network[0]))
 
