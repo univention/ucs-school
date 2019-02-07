@@ -672,17 +672,23 @@ class UCSSchoolHelperAbstractClass(object):
 				return attr.label
 
 	def get_error_msg(self):
-		error_msg = ''
-		for key, errors in iteritems(self.errors):
+		return self.create_validation_msg(iteritems(self.errors))
+
+	def get_warning_msg(self):
+		return self.create_validation_msg(iteritems(self.warnings))
+
+	def create_validation_msg(self, items):
+		validation_msg = ''
+		for key, msg in items:
 			label = self.find_field_label_from_name(key)
-			error_str = ''
-			for error in errors:
-				error_str += error
+			msg_str = ''
+			for error in msg:
+				msg_str += error
 				if not (error.endswith('!') or error.endswith('.')):
-					error_str += '.'
-				error_str += ' '
-			error_msg += '%s: %s' % (label, error_str)
-		return error_msg[:-1]
+					msg_str += '.'
+				msg_str += ' '
+			validation_msg += '%s: %s' % (label, msg_str)
+		return validation_msg[:-1]
 
 	def get_udm_object(self, lo):
 		'''Returns the UDM object that corresponds to self.

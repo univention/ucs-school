@@ -259,6 +259,20 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			name, mac_address = escape_filter_chars(self.name), escape_filter_chars(self.mac_address)
 			if AnyComputer.get_first_udm_obj(lo, '&(!(cn=%s))(mac=%s)' % (name, mac_address)):
 				self.add_error('mac_address', _('The mac address is already taken by another computer. Please change the mac address.'))
+		own_network = self.get_network()
+		own_network_ip4 = self.get_ipv4_network()
+		if own_network and not own_network.exists(lo):
+			self.add_warning('subnet_mask', _('The specified IP and subnet mask will cause the creation of a new network during the creation of the computer object.'))
+			networks = [(network[1]['cn'][0],
+						IPv4Network(network[1]['univentionNetwork'][0] + '/' + network[1]['univentionNetmask'][0])) for
+						network in lo.search('(univentionObjectType=networks/network)')]
+			is_singlemaster = ucr.get('ucsschool/singlemaster', False)
+			for network in networks:
+				if is_singlemaster and network[0] == 'default' and own_network_ip4 == network[1]: # Bug #48099: jump conflict with default network in singleserver environment
+					continue
+				if own_network_ip4.overlaps(network[1]):
+					self.add_error('subnet_mask', _('The newly created network would overlap with the existing network {}').format(network[0]))
+
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
