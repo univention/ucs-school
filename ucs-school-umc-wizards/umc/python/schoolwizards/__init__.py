@@ -330,7 +330,39 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	get_computer = _get_obj
 	modify_computer = _modify_obj
-	create_computer = _create_obj
+	@response
+	@LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
+	def create_computer(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
+		# Bug #44641: workaround with security implications!
+		if ucr.is_true('ucsschool/wizards/schoolwizards/workaround/admin-connection'):
+			ldap_user_write = ldap_admin_write
+
+		for option in request.options:
+			MODULE.process(option)
+		ignore_warnings = [option.get('object', {}).get('ignore_warning', False) for option in request.options]
+		ignore_warnings.reverse()
+		ret = {}
+		objs = list(iter_objects_in_request(request, ldap_user_write))
+		for obj in objs:
+			ignore_warning = ignore_warnings.pop()
+			obj.validate(ldap_user_read)
+			if obj.errors:
+				ret['error'] = obj.get_error_msg()
+				MODULE.process('Validation error: {}'.format(ret['error']))
+				continue
+			elif obj.warnings and not ignore_warning:
+				ret['warning'] = obj.get_warning_msg()
+				MODULE.process('Validation warning: {}'.format(ret['warning']))
+				continue
+			try:
+				if obj.create(ldap_user_write, validate=False):
+					ret = True
+				else:
+					ret['error'] = _('"%s" already exists!') % obj.name
+			except uldapBaseException as exc:
+				ret['error'] = get_exception_msg(exc)
+				MODULE.process('Creation failed {}'.format(ret['error']))
+		return [{'result': ret}]
 	delete_computer = _delete_obj
 
 	@sanitize(
