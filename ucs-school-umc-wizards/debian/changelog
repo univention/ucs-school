@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (10.0.1-2) unstable; urgency=medium
+
+  * Bug #48099: Respect validation warning in computer wizard
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 07 Feb 2019 09:53:14 +0100
+
 ucs-school-umc-wizards (10.0.1-1) unstable; urgency=medium
 
   * Bug #46596: reenable first use dialogs by using correct grid event
