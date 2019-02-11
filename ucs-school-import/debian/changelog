@@ -1,3 +1,9 @@
+ucs-school-import (17.0.4-1) unstable; urgency=medium
+
+  * Bug #48534: do not add dns-hostname to ignore list
+
+ -- Felix Botner <botner@univention.de>  Mon, 11 Feb 2019 15:42:05 +0100
+
 ucs-school-import (17.0.3-1) unstable; urgency=low
 
   * Bug #45538: fix OID clash in LDAP schema

@@ -320,7 +320,7 @@ ucr set \
 
 ucr unset nameserver2 nameserver3
 
-## In case this script is run a second time, e.g. to rejoin, we have to re-enable local account creation to re-create the dns-$hostname account
+## In case this script is run a second time, e.g. to rejoin, we have to re-enable local account creation
 ucr set --forced samba4/ldb/sam/module/prepend=''	## This shadows the value above, will be unset later to let the usual value re-surface.
 
 stop_udm_cli_server	## to make it pick up the modified directory/manager/samba3/legacy
@@ -346,22 +346,6 @@ if [ -r /var/lib/samba/private/sam.ldb ]; then
 		old_rIDPreviousAllocationPool=$(sed -n 's/^rIDPreviousAllocationPool: //p' <<<"$test_output")
 		old_rIDNextRID=$(sed -n 's/^rIDNextRID: //p' <<<"$test_output")
 	fi
-fi
-
-## append dns-$hostname to connector/s4/mapping/user/ignorelist on remote host
-test_output=$(univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
-	/usr/sbin/ucr get connector/s4/mapping/user/ignorelist)
-ignored_users=( $(sed -e 's/,/ /g' <<<"$test_output") )
-found=''
-for str in "${ignored_users[@]}"; do
-	if [ "$str" = "dns-$hostname" ]; then
-		found=1
-		break
-	fi
-done
-if [ -z "$found" ]; then
-	univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
-		/usr/sbin/ucr set connector/s4/mapping/user/ignorelist="$test_output,dns-$hostname"
 fi
 
 ########### core join start
