@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-7) unstable; urgency=low
+
+  * Bug #48099: adjust ucs-test script to new UMC module behaviour
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 11 Feb 2019 22:22:40 +0100
+
 ucs-test-ucsschool (6.0.0-6) unstable; urgency=low
 
   * Bug #48045: test new behavior of classes removal if none are set in the
