@@ -289,7 +289,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				udm_obj['groups'].remove(group_dn)
 
 		# make sure user is in all mandatory groups and school classes
-		current_groups = set(map(str.lower, udm_obj['groups']))
+		current_groups = set(grp_dn.lower() for grp_dn in udm_obj['groups'])
 		groups_to_add = filter(lambda dn: dn.lower() not in current_groups, mandatory_groups)
 		# [dn for dn in mandatory_groups if dn.lower() not in current_groups]
 		if groups_to_add:
@@ -410,7 +410,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		# verify user is (or will be) in all schools of its school_classes
 		for school, classes in iteritems(self.school_classes):
-			if school.lower() not in map(str.lower, self.schools):
+			if school.lower() not in (s.lower() for s in self.schools):
 				self.add_error('school_classes', _("School {school!r} in 'school_classes' is missing in the users 'schools' attribute.").format(school=school))
 
 	def remove_from_school(self, school, lo):

@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-3) unstable; urgency=low
+
+  * Bug #48045: use lower() of both str and unicode
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 11 Feb 2019 15:45:56 +0100
+
 ucs-school-lib (12.1.0-2) unstable; urgency=low
 
   * Bug #48099: Extend validation for computer object
