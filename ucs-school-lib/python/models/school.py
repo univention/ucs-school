@@ -187,7 +187,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		# cn=ouadmins
 		admin_group_container = 'cn=ouadmins,cn=groups,%s' % ucr.get('ldap/base')
 		group = BasicGroup.cache(self.group_name('admins', 'admins-'), container=admin_group_container)
-		group.roles = [role_school_admin_group]
+		group.ucsschool_roles = [create_ucsschool_role_string(role_school_admin_group, self.name)]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)
 		try:
@@ -203,27 +203,27 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		# cn=schueler
 		group = Group.cache(self.group_name('pupils', 'schueler-'), self.name)
-		group.roles = [role_school_student_group]
+		group.ucsschool_roles = [create_ucsschool_role_string(role_school_student_group, self.name)]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('pupils'), lo)
 
 		# cn=lehrer
 		group = Group.cache(self.group_name('teachers', 'lehrer-'), self.name)
-		group.roles = [role_school_teacher_group]
+		group.ucsschool_roles = [create_ucsschool_role_string(role_school_teacher_group, self.name)]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('teachers'), lo)
 
 		# cn=mitarbeiter
 		if self.shall_create_administrative_objects():
 			group = Group.cache(self.group_name('staff', 'mitarbeiter-'), self.name)
-			group.roles = [role_school_staff_group]
+			group.ucsschool_roles = [create_ucsschool_role_string(role_school_staff_group, self.name)]
 			group.create(lo)
 			group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
 
 		if ucr.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 			# cn=Domain Users %s
 			group = Group.cache("Domain Users %s" % (self.name,), self.name)
-			group.roles = [role_school_domain_group]
+			group.ucsschool_roles = [create_ucsschool_role_string(role_school_domain_group, self.name)]
 			group.create(lo)
 			group.add_umc_policy("cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get('ldap/base'),), lo)
 
@@ -304,9 +304,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			dc_udm_obj = None
 			mb_dcs = lo.search(filter_format('(&(objectClass=univentionDomainController)(cn=%s)(|(univentionServerRole=backup)(univentionServerRole=master)))', [self.dc_name.lower()]))
 			if len(mb_dcs):
-				return # We do not modify the groups of master or backup servers.
+				return  # We do not modify the groups of master or backup servers.
 				# Should be validated, but stays here as well in case validation was deactivated
-			po = univention.admin.uldap.position(lo.base) # Sadly we need this here to access non school specific computers. TODO: Use Daniels simple API if merged into product
+			po = univention.admin.uldap.position(lo.base)  # Sadly we need this here to access non school specific computers. TODO: Use Daniels simple API if merged into product
 			univention.admin.modules.update()
 			mod = univention.admin.modules.get('computers/domaincontroller_slave')
 			if not mod.initialized:

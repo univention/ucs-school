@@ -72,10 +72,11 @@ class _MayHaveSchoolSuffix(object):
 		return self.name
 
 
-class Group(UCSSchoolHelperAbstractClass):
+class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	name = GroupName(_('Name'))
 	description = Description(_('Description'))
 	users = Users(_('Users'))
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	@classmethod
 	def get_container(cls, school):
@@ -184,9 +185,8 @@ class SchoolGroup(Group, _MayHaveSchoolSuffix):
 	pass
 
 
-class SchoolClass(RoleSupportMixin, Group, _MayHaveSchoolPrefix):
+class SchoolClass(Group, _MayHaveSchoolPrefix):
 	name = SchoolClassName(_('Name'))
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	default_roles = [role_school_class]
 	_school_in_name_prefix = True
@@ -262,9 +262,8 @@ class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 		return cls
 
 
-class ComputerRoom(RoleSupportMixin, Group, _MayHaveSchoolPrefix):
+class ComputerRoom(Group, _MayHaveSchoolPrefix):
 	hosts = Hosts(_('Hosts'))
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	users = None
 	default_roles = [role_computer_room]
