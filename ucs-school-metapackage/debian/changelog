@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-7) unstable; urgency=medium
+
+  * Bug #48534: do not add dns-hostname to ignore list
+
+ -- Felix Botner <botner@univention.de>  Mon, 11 Feb 2019 15:43:49 +0100
+
 ucs-school-metapackage (12.0.0-6) unstable; urgency=medium
 
   * Bug #47955: credentials for create_spn_account

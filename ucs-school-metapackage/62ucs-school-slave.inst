@@ -178,7 +178,6 @@ ignore_user ()
 	fi
 }
 
-ignore_user "dns-$hostname"
 ignore_user "krbtgt"
 ignore_user "Guest"
 
