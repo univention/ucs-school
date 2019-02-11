@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-5) unstable; urgency=medium
+
+  * Bug #48647: fix roles for admin group
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 11 Feb 2019 18:55:47 +0100
+
 ucs-school-lib (12.1.0-4) unstable; urgency=medium
 
   * Bug #48647: Enable roles for groups and fix group roles for new schools

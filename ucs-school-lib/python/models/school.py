@@ -186,7 +186,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		# cn=ouadmins
 		admin_group_container = 'cn=ouadmins,cn=groups,%s' % ucr.get('ldap/base')
-		group = BasicGroup.cache(self.group_name('admins', 'admins-'), container=admin_group_container)
+		group = BasicGroup.cache(self.group_name('admins', 'admins-'), self.name, container=admin_group_container)
 		group.ucsschool_roles = [create_ucsschool_role_string(role_school_admin_group, self.name)]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)

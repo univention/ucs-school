@@ -72,7 +72,7 @@ class _MayHaveSchoolSuffix(object):
 		return self.name
 
 
-class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
+class Group(UCSSchoolHelperAbstractClass, RoleSupportMixin):
 	name = GroupName(_('Name'))
 	description = Description(_('Description'))
 	users = Users(_('Users'))
