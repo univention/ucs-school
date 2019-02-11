@@ -21,6 +21,24 @@ import subprocess
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+try:
+    # initialize import framework in case it's installed
+    if not os.path.exists('/var/lib/ucs-school-import/configs/user_import.json'):
+        with open('/var/lib/ucs-school-import/configs/user_import.json', 'w') as fp:
+            fp.write('{}')
+
+    import ucsschool.importer.utils.shell
+except ImportError:
+    pass
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
+try:
+    import django
+    from django.conf import settings
+    django.setup()
+except ImportError:
+    pass
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
