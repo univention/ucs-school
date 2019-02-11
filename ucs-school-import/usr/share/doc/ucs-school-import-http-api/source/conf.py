@@ -23,7 +23,10 @@ import subprocess
 
 try:
     # initialize import framework in case it's installed
-    if not os.path.exists('/var/lib/ucs-school-import/configs/user_import.json'):
+    if (
+            os.path.exists('/var/lib/ucs-school-import/configs') and
+            not os.path.exists('/var/lib/ucs-school-import/configs/user_import.json')
+    ):
         with open('/var/lib/ucs-school-import/configs/user_import.json', 'w') as fp:
             fp.write('{}')
 
