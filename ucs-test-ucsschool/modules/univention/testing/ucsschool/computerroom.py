@@ -795,10 +795,10 @@ class UmcComputer(object):
 		print 'Creating Computer %s' % (self.name,)
 		print 'param = %s' % (param,)
 		reqResult = self.client.umc_command('schoolwizards/computers/add', param, flavor).result
-		if reqResult[0] == should_succeed:
+		if should_succeed and reqResult[0]['result']:
 			utils.wait_for_replication()
-		elif should_succeed in reqResult[0]['result']['message']:
-			print 'Expected creation fail for computer (%r)\nReturn Message: %r' % (self.name, reqResult[0]['result']['message'])
+		elif not should_succeed and reqResult[0]['result'].get('error'):
+			print 'Expected creation failed for computer (%r)\nReturn Message: %r' % (self.name, reqResult[0]['result']['error'])
 		else:
 			raise CreateFail('Unable to create computer (%r)\nRequest Result: %r' % (param, reqResult))
 

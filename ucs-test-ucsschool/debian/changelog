@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-3) unstable; urgency=low
+
+  * Bug #48099: adjust ucs-test script to new UMC module behaviour
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 11 Feb 2019 22:22:40 +0100
+
 ucs-test-ucsschool (5.0.4-2) unstable; urgency=low
 
   * Bug #48398: move modules in the 90_ucsschool/essential/ directory into the
