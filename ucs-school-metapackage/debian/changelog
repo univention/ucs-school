@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-10) unstable; urgency=medium
+
+  * Bug #48063: break/conflict and replace ucs-school-umc-csv-import
+
+ -- Florian Best <best@univention.de>  Tue, 12 Feb 2019 11:14:45 +0100
+
 ucs-school-metapackage (12.0.0-9) unstable; urgency=medium
 
   * Bug #48063: remove ucs-school-umc-csv-import from recommended packages

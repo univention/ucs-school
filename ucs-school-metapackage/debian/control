@@ -7,7 +7,10 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-master
 Architecture: all
-Conflicts: ucs-school-singlemaster
+Conflicts: ucs-school-singlemaster,
+ ucs-school-umc-csv-import
+Breaks: ucs-school-umc-csv-import,
+Replaces: ucs-school-umc-csv-import
 Pre-Depends: univention-config
 Depends: univention-ldap-server (>= 8.0.77-4),
  univention-ldap-acl-master (>= 8.0.77-4),
@@ -97,7 +100,10 @@ Description: UCS@school meta package for UCS DC Slave System
 
 Package: ucs-school-singlemaster
 Architecture: all
-Conflicts: ucs-school-master
+Conflicts: ucs-school-master,
+ ucs-school-umc-csv-import
+Replaces: ucs-school-umc-csv-import
+Breaks: ucs-school-umc-csv-import,
 Pre-Depends: univention-config
 Depends: univention-ldap-server (>= 8.0.77-4),
  univention-ldap-acl-master (>= 8.0.77-4),
