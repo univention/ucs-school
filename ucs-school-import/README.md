@@ -10,7 +10,7 @@ $BROWSER: `https://<dc_master>/api/v1/` → exists? ok :)
 
 ## UMC Frontend
 
-	univention-install ucs-school-umc-import  # (not ucs-school-umc-csv-import)
+	univention-install ucs-school-umc-import
 
 ## Configuration
 

@@ -76,7 +76,6 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		('udm', 'groups/group'),
 		('udm', 'computers/computer'),
 		('schoolwizards', 'schoolwizards/schools'),
-		('schoolcsvimport', None),
 		('schoolusers', 'student'),
 		('schoolusers', 'teacher'),
 		('schoolrooms', None),

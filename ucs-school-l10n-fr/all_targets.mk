@@ -35,9 +35,6 @@ ALL_TARGETS = $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-helpdesk
 	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-computerroom.mo \
 	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/computerroom.json \
 	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/computerroom.mo \
-	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-csv-import.mo \
-	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/schoolcsvimport.json \
-	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolcsvimport.mo \
 	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-printermoderation.mo \
 	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/printermoderation.json \
 	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/printermoderation.mo \
@@ -85,9 +82,6 @@ $(DESTDIR)/usr/share/univention-management-console/i18n/fr/distribution.mo: fr/u
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-computerroom.mo: fr/ucs-school-umc-computerroom/umc/python/computerroom/fr.po
 $(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/computerroom.json: fr/ucs-school-umc-computerroom/umc/js/fr.po
 $(DESTDIR)/usr/share/univention-management-console/i18n/fr/computerroom.mo: fr/ucs-school-umc-computerroom/umc/fr.po
-$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-csv-import.mo: fr/ucs-school-umc-csv-import/umc/python/schoolcsvimport/fr.po
-$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/schoolcsvimport.json: fr/ucs-school-umc-csv-import/umc/js/fr.po
-$(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolcsvimport.mo: fr/ucs-school-umc-csv-import/umc/fr.po
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-printermoderation.mo: fr/ucs-school-umc-printermoderation/umc/python/printermoderation/fr.po
 $(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/printermoderation.json: fr/ucs-school-umc-printermoderation/umc/js/fr.po
 $(DESTDIR)/usr/share/univention-management-console/i18n/fr/printermoderation.mo: fr/ucs-school-umc-printermoderation/umc/fr.po

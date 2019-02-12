@@ -24,26 +24,7 @@ UMC frontend installation
 Conceptually the UMC module can be installed on all UCS roles.
 But in its current implementation it *must* be installed on the DC master::
 
-	$ univention-install ucs-school-umc-import  # (not ucs-school-umc-csv-import)
-
-Legacy CSV import UMC module deinstallation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The legacy UMC import module ``ucs-school-umc-csv-import`` can be uninstalled, to prevent confusion::
-
-	$ univention-remove ucs-school-umc-csv-import
-
-Alternatively it can be disables in the UMC policy::
-
-	$ udm policies/umc modify \
-	    --dn cn=default-umc-all,cn=UMC,cn=policies,$ldap_base \
-	    --remove allow=cn=schoolcsvimport-all,cn=operations,cn=UMC,cn=univention,$ldap_base
-
-To find all policies that include the UMC operation run::
-
-	$ udm policies/umc list \
-	    --filter allow=cn=schoolcsvimport-all,cn=operations,cn=UMC,cn=univention,$ldap_base
-
+	$ univention-install ucs-school-umc-import
 
 Configuration
 -------------
