@@ -232,7 +232,7 @@ Checking ldap_schema ...                          OK
 			<title>CSV-Import</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UMC module <package>CSV-Import</package> has been removed (<u:bug>48063</u:bug>)..
+					The UMC module <package>CSV-Import</package> has been removed (<u:bug>48063</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
