@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [44370]
+## bugs: [44370, 47304, 48650, 47351]
 
 import copy
 import random
@@ -34,32 +34,30 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
 		config.update_entry('user_role', None)
+		config.update_entry('normalize:firstname', True)
+		config.update_entry('normalize:lastname', True)
 
 		roles = ('student', 'teacher', 'staff', 'teacher_and_staff')
 		names = [
 			{
 				'firstname': u'Ýlang',
 				'lastname': u'Müstèrmánn',
-				'expected': {'username': 'y.muestermann', 'firstname': 'Ýlang', 'lastname': 'Müstèrmánn'},
-				'expected_normalized': {'username': 'y.muestermann', 'firstname': 'Ylang', 'lastname': 'Muestermann'},
+				'expected': {'username': 'y.muestermann', 'firstname': 'Ylang', 'lastname': 'Muestermann'},
 			},
 			{
 				'firstname': u'Öle',
 				'lastname': u'Mästèrmànn',
-				'expected': {'username': 'oe.maestermann', 'firstname': 'Öle', 'lastname': 'Mästèrmànn'},
-				'expected_normalized': {'username': 'o.maestermann', 'firstname': 'Oele', 'lastname': 'Maestermann'},
+				'expected': {'username': 'o.maestermann', 'firstname': 'Oele', 'lastname': 'Maestermann'},
 			},
 			{
 				'firstname': u'Nînä',
 				'lastname': u'Müstèrfräú',
-				'expected': {'username': 'n.muesterfraeu', 'firstname': 'Nînä', 'lastname': 'Müstèrfräú'},
-				'expected_normalized': {'username': 'n.muesterfraeu', 'firstname': 'Ninae', 'lastname': 'Muesterfraeu'},
+				'expected': {'username': 'n.muesterfraeu', 'firstname': 'Ninae', 'lastname': 'Muesterfraeu'},
 			},
 			{
 				'firstname': u'Ǹanâ',
 				'lastname': u'Mästérfrâü',
-				'expected': {'username': 'n.maesterfraue', 'firstname': 'Ǹanâ', 'lastname': 'Mästérfrâü'},
-				'expected_normalized': {'username': 'n.maesterfraue', 'firstname': 'Nana', 'lastname': 'Maesterfraue'},
+				'expected': {'username': 'n.maesterfraue', 'firstname': 'Nana', 'lastname': 'Maesterfraue'},
 			}
 		]
 		random.shuffle(names)
@@ -68,10 +66,10 @@ class Test(CLI_Import_v2_Tester):
 			person = Person(self.ou_A.name, role)
 			person.update(username=None, firstname=name['firstname'], lastname=name['lastname'])
 			person._expected_names = name['expected']
-			person._expected_names_normalized = name['expected_normalized']
+			person._expected_names_normalized = name['expected']
 			person_list.append(person)
 
-		self.log.info('*** Importing users (normalize=False): %r', zip(roles, names))
+		self.log.info('*** Importing users (normalize=True): %r', zip(roles, names))
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(config=config)
@@ -85,33 +83,6 @@ class Test(CLI_Import_v2_Tester):
 				source_uid=source_uid,
 				firstname=person._expected_names['firstname'],
 				lastname=person._expected_names['lastname'],
-			)
-			person.verify()
-
-		self.log.info('*** Deleting users...')
-		fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
-		config.update_entry('input:filename', fn_csv)
-		fn_config = self.create_config_json(config=config)
-		self.save_ldap_status()
-		self.run_import(['-c', fn_config])
-		self.check_new_and_removed_users(0, 4)
-
-		self.log.info('*** Importing users (normalize=True): %r', zip(roles, names))
-		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
-		config.update_entry('input:filename', fn_csv)
-		config.update_entry('normalization:firstname', True)
-		config.update_entry('normalization:lastname', True)
-		fn_config = self.create_config_json(config=config)
-		self.save_ldap_status()
-		self.run_import(['-c', fn_config])
-		self.check_new_and_removed_users(4, 0)
-		for person in person_list:
-			person.update(
-				username=person._expected_names_normalized['username'],
-				record_uid='%s;%s;%s' % (str(person.firstname), str(person.lastname), person.mail),
-				source_uid=source_uid,
-				firstname=person._expected_names_normalized['firstname'],
-				lastname=person._expected_names_normalized['lastname'],
 			)
 			person.verify()
 

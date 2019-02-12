@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [44370]
+## bugs: [44370, 47304, 48650, 47351]
 
 import copy
 import random
@@ -40,22 +40,22 @@ class Test(CLI_Import_v2_Tester):
 			{
 				'firstname': u'Ýlang',
 				'lastname': u'Müstèrmánn',
-				'expected': {'username': 'y.muestermann', 'firstname': 'Ylang', 'lastname': 'Muestermann'},
+				'expected': {'username': 'y.muestermann', 'firstname': 'Ýlang', 'lastname': 'Müstèrmánn'},
 			},
 			{
 				'firstname': u'Öle',
 				'lastname': u'Mästèrmànn',
-				'expected': {'username': 'o.maestermann', 'firstname': 'Oele', 'lastname': 'Maestermann'}
+				'expected': {'username': 'oe.maestermann', 'firstname': 'Öle', 'lastname': 'Mästèrmànn'},
 			},
 			{
 				'firstname': u'Nînä',
 				'lastname': u'Müstèrfräú',
-				'expected': {'username': 'n.muesterfraeu', 'firstname': 'Ninae', 'lastname': 'Muesterfraeu'}
+				'expected': {'username': 'n.muesterfraeu', 'firstname': 'Nînä', 'lastname': 'Müstèrfräú'},
 			},
 			{
 				'firstname': u'Ǹanâ',
 				'lastname': u'Mästérfrâü',
-				'expected': {'username': 'n.maesterfraue', 'firstname': 'Nana', 'lastname': 'Maesterfraue'}
+				'expected': {'username': 'n.maesterfraue', 'firstname': 'Ǹanâ', 'lastname': 'Mästérfrâü'},
 			}
 		]
 		random.shuffle(names)
@@ -66,7 +66,7 @@ class Test(CLI_Import_v2_Tester):
 			person._expected_names = name['expected']
 			person_list.append(person)
 
-		self.log.info('*** Importing users: %r', zip(roles, names))
+		self.log.info('*** Importing users (normalize=False): %r', zip(roles, names))
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(config=config)
