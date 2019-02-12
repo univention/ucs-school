@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-9) unstable; urgency=low
+
+  * Bug #48651: fix UCS version check
+  * Bug #48650: adapt normalization test
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 12 Feb 2019 13:50:46 +0100
+
 ucs-test-ucsschool (6.0.0-8) unstable; urgency=medium
 
   * Bug #48063: remove ucs-school-umc-csv-import tests
