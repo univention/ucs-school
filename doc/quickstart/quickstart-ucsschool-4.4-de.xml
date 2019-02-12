@@ -231,11 +231,6 @@ feedback@univention.de
     auch Rechnerkonten und Drucker importieren.
   </para>
 
-  <para>
-    Die Pflege der Benutzer kann alternativ auch über das Modul <emphasis>CSV-Import</emphasis> erfolgen, über
-    das Benutzerlisten in Form von CSV-Dateien in &ucsUAS; importiert werden können.
-  </para>
-  
 </chapter>
 
 <chapter id="quickstart:module">

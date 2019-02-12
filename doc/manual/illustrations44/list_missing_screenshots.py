@@ -29,6 +29,7 @@ class Screenshot(object):
 		self.req_langs = req_langs
 		self.desc = desc
 
+
 needed_screenshots = [
 	#Screenshot(".. todo", [Lang.DE, Lang.FR], desc="Bildschirmpräsentation starten"),
 	#Screenshot(".. todo", [Lang.DE, Lang.FR], desc="Klassenarbeit starten"),
@@ -43,11 +44,6 @@ needed_screenshots = [
 	Screenshot("computerroom_3_start_presentation", [Lang.DE, Lang.FR], desc="Start des Präsentationsmodus bestätigen"),
 	Screenshot("computerrooms_1_overview", [Lang.DE, Lang.FR], desc="Computerraum verwalten"),
 	Screenshot("computerrooms_2_add_computers", [Lang.DE, Lang.FR], desc="Computerraum Computer hinzufügen"),
-	Screenshot("csvimport_1_userrole", [Lang.DE, Lang.FR], desc="CSV Import Auswahl Benutzerrolle"),
-	Screenshot("csvimport_2_upload", [Lang.DE, Lang.FR], desc="CSV Import Upload"),
-	Screenshot("csvimport_3_assignment", [Lang.DE, Lang.FR, Lang.EN], desc="CSV Import Spaltenauswahl/-zuweisung"),
-	Screenshot("csvimport_4_check", [Lang.DE, Lang.FR], desc="CSV Import Fehlerprüfung"),
-	Screenshot("csvimport_5_summary", [Lang.DE, Lang.FR], desc="CSV Import Zusammenfassung vor Import"),
 	Screenshot("distribution_projects_1", [Lang.DE, Lang.FR], desc="Projekübersicht"),
 	Screenshot("distribution_projects_2", [Lang.DE, Lang.FR, Lang.EN], desc="Projektdetails ansehen"),
 	Screenshot("distribution_projects_3", [], desc="Projekt austeilen"),
