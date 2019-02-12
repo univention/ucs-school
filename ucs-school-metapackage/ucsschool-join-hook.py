@@ -139,6 +139,7 @@ def pre_joinscript_hook(options):
 
 	# do not do anything, if we are running within a docker container
 	if ucr.get('docker/container/uuid'):
+		log.info('This is a docker container... stopping here')
 		return
 
 	# check if UCS@school app is installed/configured/included,
@@ -194,7 +195,7 @@ def main():
 	parser = optparse.OptionParser()
 	parser.add_option('--server-role', dest='server_role', default=None, action='store', help='server role of this system')
 	parser.add_option('--master', dest='master_fqdn', action='store', default=None, help='FQDN of the UCS master domaincontroller')
-	parser.add_option('--binddn', dest='binddn', action='binddn', default=None, help='LDAP binddn')
+	parser.add_option('--binddn', dest='binddn', action='store', default=None, help='LDAP binddn')
 	parser.add_option('--bindpwdfile', dest='bindpwdfile', action='store', default=None, help='path to password file')
 	parser.add_option('--type', dest='hook_type', action='store', default=None, help='join hook type (currently only "pre-joinscript" supported)')
 	parser.add_option('-v', '--verbose', action='count', default=2, help='Increase verbosity')
