@@ -7,7 +7,7 @@ fix: 17.0.3-1A~4.4.0.201901241145
 desc: |
  * The UCS@school import frameworks ImportUser class has been made more accessable to 3rd party software (Bug #48423).
  * Activate the role feature by default (Bug #48226).
- * Change default of normalization:firstname and normalization:lastname to false (Bug #47351).
+ * Change default of normalize:firstname and normalize:lastname to false (Bug #47351).
  * To be more consistent with other variable names, recordUID and sourceUID have been renamed to record_uid and source_uid (Bug #48478)
  * A users school_classes are now removed, if its entry in the school_classes column is empty (Bug #48045).
  * Activate substring search for ucs@school roles (Bug #48246).

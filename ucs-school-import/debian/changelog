@@ -43,8 +43,8 @@ ucs-school-import (17.0.2-1) unstable; urgency=low
 
 ucs-school-import (17.0.1-2) unstable; urgency=low
 
-  * Bug #47351: change default of normalization:firstname and
-    normalization:lastname
+  * Bug #47351: change default of normalize:firstname and
+    normalize:lastname
 
  -- Daniel Troeder <troeder@univention.de>  Wed, 16 Jan 2019 09:41:59 +0100
 
