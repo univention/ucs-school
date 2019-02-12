@@ -159,6 +159,8 @@ if [ $JS_LAST_EXECUTED_VERSION = 1 ]; then
 	append_ucr_policy_to_base ucsschool/import/roleshare no "$@"
 fi
 
+ucs_registerLDAPExtension "$@" --data /usr/share/ucs-school-metapackage/ucsschool-join-hook.py --data_type="join/pre-joinscripts"
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 ucs_addServiceToLocalhost 'UCS@school Education' "$@"
 
