@@ -253,6 +253,9 @@ class UserValidationError(UcsSchoolImportError):
 		super(UserValidationError, self).__init__(msg, *args, **kwargs)
 		self.validation_error = validation_error
 
+	def __str__(self):
+		return '{} {!r}'.format(self.message, self.validation_error)
+
 
 class WrongUserType(UcsSchoolImportError):
 	"""Wraps ucsschool.lib.models.base.WrongObjectType"""

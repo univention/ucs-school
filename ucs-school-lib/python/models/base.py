@@ -494,6 +494,10 @@ class UCSSchoolHelperAbstractClass(object):
 			self.invalidate_cache()
 
 	def create_without_hooks_roles(self, lo):
+		"""
+		Run by py:meth:`create_without_hooks()` before py:meth:`validate()`
+		(and thus before py:meth:`do_create()`).
+		"""
 		pass
 
 	def do_create(self, udm_obj, lo):
@@ -525,6 +529,8 @@ class UCSSchoolHelperAbstractClass(object):
 
 		if move_if_necessary is None:
 			move_if_necessary = self._meta.allow_school_change
+
+		self.update_ucsschool_roles()
 
 		if validate:
 			self.validate(lo, validate_unlikely_changes=True)
@@ -558,6 +564,11 @@ class UCSSchoolHelperAbstractClass(object):
 			self.invalidate_cache()
 
 	def modify_without_hooks_roles(self, udm_obj):
+		"""Run by py:meth:`modify_without_hooks()` before py:meth:`do_modify()`."""
+		pass
+
+	def update_ucsschool_roles(self):
+		"""Run by py:meth:`modify_without_hooks()` before py:meth:`validate()`."""
 		pass
 
 	def do_modify(self, udm_obj, lo):
@@ -609,7 +620,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self.do_move_roles(udm_obj, lo, old_school, new_school)
 
 	def do_move_roles(self, udm_obj, lo, old_school, new_school):
-		pass
+		self.update_ucsschool_roles()
 
 	def change_school(self, school, lo):
 		if self.school in self.schools:
@@ -1005,7 +1016,7 @@ class RoleSupportMixin(object):
 	_school_in_name_prefix = False
 
 	def get_schools(self):
-		return getattr(self, 'schools', [self.school])
+		return set(getattr(self, 'schools', []) + [self.school])
 
 	def get_schools_from_udm_obj(self, udm_obj):
 		if self._school_in_name:
@@ -1050,7 +1061,7 @@ class RoleSupportMixin(object):
 			roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
 		self.roles_as_dicts = roles
 		if old_roles != self.ucsschool_roles:
-			self.logger.info('Updating roles: %r -> %r...', old_roles, self.ucsschool_roles)
+			logger.info('Updating roles: %r -> %r...', old_roles, self.ucsschool_roles)
 			# cannot use do_modify() here, as it would delete the old object
 			lo.modify(self.dn, [('ucsschoolRole', old_roles, self.ucsschool_roles)])
 
@@ -1058,18 +1069,25 @@ class RoleSupportMixin(object):
 		# for now different roles in different schools are not supported
 		schools = self.get_schools()
 		for role in self.roles_as_dicts:
+			if role['context_type'] != 'school':
+				# check only context_type == 'school' for now
+				continue
 			if self.default_roles and role['role'] not in self.default_roles:
 				self.add_error(
 					'ucsschool_roles',
-					_('Role {!r} is not supported for this object.').format(role['role'])
+					_('Role {role}:{context_type}:{context} is not supported for {dn}.').format(dn=self.dn, **role)
 				)
 			if role['context'] not in schools:
 				self.add_error(
 					'ucsschool_roles',
-					_('Context {!r} is not supported for this object. Object is not in that school.').format(role['context'])
+					_('Context {role}:{context_type}:{context} is not allowed for {dn}. Object is not in that school.').format(dn=self.dn, **role)
 				)
 
 	def create_without_hooks_roles(self, lo):
+		"""
+		Run by py:meth:`create_without_hooks()` before py:meth:`validate()`
+		(and thus before py:meth:`do_create()`).
+		"""
 		if self.default_roles and not self.ucsschool_roles:
 			schools = self.get_schools()
 			self.ucsschool_roles = [
@@ -1078,19 +1096,30 @@ class RoleSupportMixin(object):
 				for school in schools
 			]
 
-	def modify_without_hooks_roles(self, udm_obj):
+	def update_ucsschool_roles(self):
 		"""
-		Add role(s) to object, if it got new/additional school(s), and object
-		has no role(s) in them yet.
+		Run by py:meth:`modify_without_hooks()` before py:meth:`validate()`.
+
+		Add :py:attr:`ucsschool_roles` entries of `context_type=school` to
+		object, if it got new/additional school(s) and object has no role(s)
+		in those yet.
+
+		Delete :py:attr:`ucsschool_roles` entries of `context_type=school` of
+		object, if it was removed from school(s).
 		"""
-		old_schools = set(self.get_schools_from_udm_obj(udm_obj))
-		cur_schools = self.get_schools()
-		new_schools = set(cur_schools) - old_schools
-		if new_schools:
-			roles = self.roles_as_dicts
-			for new_school in new_schools:
-				# only add role(s) if object has no roles in new school
-				if all(role['context'] != new_school for role in roles):
-					# add only role(s) of current Python class in new school
-					roles.extend([{'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles])
+		roles = self.roles_as_dicts
+		old_schools = set(role['context'] for role in roles)
+		cur_schools = set(self.get_schools())
+		new_schools = cur_schools - old_schools
+		removed_schools = old_schools - cur_schools
+		for new_school in new_schools:
+			# only add role(s) if object has no roles in new school
+			if any(role['context'] == new_school for role in roles):
+				continue
+			# add only role(s) of current Python class in new school
+			roles.extend({'context': new_school, 'context_type': 'school', 'role': role} for role in self.default_roles)
+		for role in deepcopy(roles):
+			if role['context_type'] == 'school' and role['context'] in removed_schools:
+				roles.remove(role)
+		if new_schools or removed_schools:
 			self.roles_as_dicts = roles

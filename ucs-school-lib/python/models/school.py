@@ -457,7 +457,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return success
 
 	def get_schools(self):
-		return [self.name]
+		return {self.name}
 
 	def _alter_udm_obj(self, udm_obj):
 		udm_obj.options.append('UCSschool-School-OU')

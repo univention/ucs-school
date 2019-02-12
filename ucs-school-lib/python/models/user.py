@@ -410,8 +410,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		# verify user is (or will be) in all schools of its school_classes
 		for school, classes in iteritems(self.school_classes):
-			if school.lower() not in (s.lower() for s in self.schools):
-				self.add_error('school_classes', _("School {school!r} in 'school_classes' is missing in the users 'schools' attribute.").format(school=school))
+			if school.lower() not in (s.lower() for s in self.schools + [self.school]):
+				self.add_error('school_classes', _("School {school!r} in 'school_classes' is missing in the users 'school(s)' attributes.").format(school=school))
 
 	def remove_from_school(self, school, lo):
 		if not self.exists(lo):

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-lib\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-07 11:43+0100\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2019-02-12 14:08+0100\n"
 "PO-Revision-Date: 2016-05-17 11:20+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -85,15 +85,16 @@ msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
 
 #: models/base.py:1058
-msgid "Role {!r} is not supported for this object."
-msgstr "Rolle {!r} wird für dieses Objekt nicht unterstützt."
+msgid "Role {role}:{context_type}:{context} is not supported for {dn}."
+msgstr "Rolle {role}:{context_type}:{context} wird für {dn} nicht unterstützt."
 
 #: models/base.py:1063
 msgid ""
-"Context {!r} is not supported for this object. Object is not in that school."
+"Context {role}:{context_type}:{context} is not allowed for {dn}. Object is "
+"not in that school."
 msgstr ""
-"Kontext {!r} wird für dieses Objekt nicht unterstützt. Objekt ist nicht an "
-"dieser Schule."
+"Kontext {role}:{context_type}:{context} ist für {dn} nicht erlaubt. Objekt "
+"ist nicht an dieser Schule."
 
 #: models/computer.py:82
 msgid "Groups"
@@ -370,10 +371,10 @@ msgstr ""
 
 #: models/user.py:414
 msgid ""
-"School {school!r} in 'school_classes' is missing in the users 'schools' "
-"attribute."
+"School {school!r} in 'school_classes' is missing in the users 'school(s)' "
+"attributes."
 msgstr ""
-"Schule {school!r} in 'school_classes' fehlt im 'schools' Attribut des "
+"Schule {school!r} in 'school_classes' fehlt im 'school(s)' Attributen des "
 "Benutzers."
 
 #: models/user.py:577
