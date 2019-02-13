@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-exam
-fix:
+fix: 8.0.2-3A~4.3.0.201901291020
 desc: |
  * Creating an exam with a whitespace at the beginning or end of the name created a traceback upon starting the exam. Whitespaces are now trimmed (Bug #48509).
 bug: [48509]
