@@ -44,7 +44,7 @@ from ucsschool.lib.roles import (
 	role_school_teacher_group, role_school_staff_group, role_school_student_group, role_school_domain_group)
 from ucsschool.lib.models.attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName, Roles
 from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
-from ucsschool.lib.models.group import BasicGroup, Group
+from ucsschool.lib.models.group import BasicGroup, BasicSchoolGroup, Group
 from ucsschool.lib.models.dhcp import DHCPService
 from ucsschool.lib.models.policy import DHCPDNSPolicy
 from ucsschool.lib.models.misc import Container, OU
@@ -186,7 +186,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		# cn=ouadmins
 		admin_group_container = 'cn=ouadmins,cn=groups,%s' % ucr.get('ldap/base')
-		group = BasicGroup.cache(self.group_name('admins', 'admins-'), self.name, container=admin_group_container)
+		group = BasicSchoolGroup.cache(self.group_name('admins', 'admins-'), self.name, container=admin_group_container)
 		group.ucsschool_roles = [create_ucsschool_role_string(role_school_admin_group, self.name)]
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)

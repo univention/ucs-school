@@ -72,7 +72,7 @@ class _MayHaveSchoolSuffix(object):
 		return self.name
 
 
-class Group(UCSSchoolHelperAbstractClass, RoleSupportMixin):
+class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	name = GroupName(_('Name'))
 	description = Description(_('Description'))
 	users = Users(_('Users'))
@@ -179,6 +179,10 @@ class BasicGroup(Group):
 	@classmethod
 	def get_container(cls, school=None):
 		return ucr.get('ldap/base')
+
+
+class BasicSchoolGroup(BasicGroup):
+	school = Group.school
 
 
 class SchoolGroup(Group, _MayHaveSchoolSuffix):
