@@ -1,0 +1,75 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Copyright 2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+"""
+Change all values 'win_compuer:school:*' to 'win_computer:school:*'.
+"""
+
+import sys
+import logging
+from logging.handlers import RotatingFileHandler
+
+import univention.admin.uldap
+from univention.config_registry import ConfigRegistry
+
+LOG_FILE = '/var/log/univention/ucsschool-roles-migration.log'
+LOG_DEBUG_FMT = '%(asctime)s %(levelname)-5s %(funcName)s:%(lineno)d  %(message)s'
+LOG_INFO_FMT = '%(message)s'
+LOG_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+ucr = ConfigRegistry()
+ucr.load()
+
+if ucr['server/role'] != 'domaincontroller_master':
+	print('This script can only be executed on the Domaincontroller Master.')
+	sys.exit(2)
+
+lo, po = univention.admin.uldap.getAdminConnection()
+
+logger = logging.getLogger('UcsSchoolRolesMigration')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+handler.setLevel(logging.INFO)
+handler.setFormatter(logging.Formatter(datefmt=LOG_DATETIME_FORMAT))
+logger.addHandler(handler)
+handler = RotatingFileHandler(LOG_FILE)
+handler.setLevel(logging.DEBUG)
+handler.setFormatter(logging.Formatter(LOG_DEBUG_FMT, LOG_DATETIME_FORMAT))
+logger.addHandler(handler)
+
+
+for dn, attr in lo.search('ucsschoolRole=win_compuer:school:*', attr=['ucsschoolRole']):
+	old_roles = attr['ucsschoolRole']
+	new_roles = [
+		'win_computer:school:{}'.format(role.split(':', 2)[2]) if role.startswith('win_compuer:school:') else role
+		for role in old_roles
+	]
+	logger.info('Changing "ucsschoolRole" of %r from %r to %r.', dn, old_roles, new_roles)
+	lo.modify(dn, [('ucsschoolRole', old_roles, new_roles)])
