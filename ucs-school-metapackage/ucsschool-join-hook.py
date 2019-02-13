@@ -37,7 +37,7 @@ import os
 import json
 from collections import namedtuple
 from ldap.filter import filter_format
-import univention.uldap
+import univention.admin
 from univention.config_registry import ConfigRegistry
 from univention.lib.package_manager import PackageManager
 
@@ -47,6 +47,7 @@ ucr.load()
 
 StdoutStderr = namedtuple('StdoutStderr', 'stdout stderr')
 SchoolMembership = namedtuple('school_membership', 'is_edu_school_member is_admin_school_member')
+
 
 def get_lo(options):
 	log.info('Connecting to LDAP as %r ...', options.binddn)
@@ -133,6 +134,7 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 		log.error('%s returned with exitcode %s:\n%s\n%s', ' '.join(cmd), proc.returncode, stderr, stdout)
 		sys.exit(1)
 	return StdoutStderr(stdout, stderr)
+
 
 def pre_joinscripts_hook(options):
 	package_manager = PackageManager(lock=False, always_noninteractive=True)
@@ -229,6 +231,7 @@ def main():
 	options.lo = get_lo(options)
 
 	pre_joinscripts_hook(options)
+
 
 if __name__ == '__main__':
 	main()
