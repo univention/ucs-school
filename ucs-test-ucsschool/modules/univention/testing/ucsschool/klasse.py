@@ -136,7 +136,8 @@ class Klasse(object):
 			'description': self.description,
 			'name': self.name,
 			'users': self.users,
-			'objectType': 'groups/group'
+			'objectType': 'groups/group',
+			'ucsschool_roles': [create_ucsschool_role_string(role_school_class, self.school)],
 		}
 		get_result = self.get()
 		if get_result != info:

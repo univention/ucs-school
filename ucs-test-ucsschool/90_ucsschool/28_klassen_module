@@ -24,7 +24,6 @@ def main():
 				klasse.check_get()
 				klassen.append(klasse)
 
-			# import pdb; pdb.set_trace()
 			klassen[0].check_query([klassen[0].name, klassen[1].name])
 
 			new_attrs = {'name': 'K2', 'description': 'K2 desc'}
