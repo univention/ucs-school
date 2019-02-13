@@ -134,7 +134,7 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 		sys.exit(1)
 	return StdoutStderr(stdout, stderr)
 
-def pre_joinscript_hook(options):
+def pre_joinscripts_hook(options):
 	package_manager = PackageManager(lock=False, always_noninteractive=True)
 
 	# do not do anything, if we are running within a docker container
@@ -197,7 +197,7 @@ def main():
 	parser.add_option('--master', dest='master_fqdn', action='store', default=None, help='FQDN of the UCS master domaincontroller')
 	parser.add_option('--binddn', dest='binddn', action='store', default=None, help='LDAP binddn')
 	parser.add_option('--bindpwdfile', dest='bindpwdfile', action='store', default=None, help='path to password file')
-	parser.add_option('--type', dest='hook_type', action='store', default=None, help='join hook type (currently only "pre-joinscript" supported)')
+	parser.add_option('--hooktype', dest='hook_type', action='store', default=None, help='join hook type (currently only "join/pre-joinscripts" supported)')
 	parser.add_option('-v', '--verbose', action='count', default=2, help='Increase verbosity')
 	(options, args) = parser.parse_args()
 
@@ -213,7 +213,7 @@ def main():
 		parser.error('The given path for --bindpwdfile is not valid')
 	if not options.hook_type:
 		parser.error('Please specify a hook type')
-	if options.hook_type in ('pre-join', 'post-joinscript'):
+	if options.hook_type in ('join/post-joinscripts'):
 		parser.error('The specified hook type is not supported by this script')
 
 	options.bindpw = open(options.bindpwdfile, 'r').read()
@@ -228,7 +228,7 @@ def main():
 	log = logging.getLogger(__name__)
 	options.lo = get_lo(options)
 
-	pre_joinscript_hook(options)
+	pre_joinscripts_hook(options)
 
 if __name__ == '__main__':
 	main()
