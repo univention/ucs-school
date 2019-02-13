@@ -1,6 +1,12 @@
+ucs-test-ucsschool (6.0.0-12) unstable; urgency=medium
+
+  * Bug #48668: schoolroom.py expect ucsschool_roles from umc
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 13 Feb 2019 14:48:22 +0100
+
 ucs-test-ucsschool (6.0.0-11) unstable; urgency=medium
 
-  * Bug #48667: klassen.py expect ucsschool_roles from umc
+  * Bug #48667: klasse.py expect ucsschool_roles from umc
 
  -- Jürn Brodersen <brodersen@univention.de>  Wed, 13 Feb 2019 14:23:54 +0100
 

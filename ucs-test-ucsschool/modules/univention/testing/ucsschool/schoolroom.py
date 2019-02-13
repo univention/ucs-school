@@ -3,6 +3,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+from ucsschool.lib.roles import create_ucsschool_role_string, role_computer_room
 
 
 class FailQuery(Exception):
@@ -153,8 +154,11 @@ class ComputerRoom(object):
 		new_attributes.update({'school': self.school, '$dn$': self.dn(), 'objectType': 'groups/group', 'hosts': new_attributes.get('computers')})
 		self.put(new_attributes)
 		current_attributes = self.get(True)
-		new_attributes.update({'name': self.name, '$dn$': self.dn()})
-		# new_attributes.update({'name': '%s-%s' % (self.school, self.name), '$dn$': self.dn()}) #FIXME workaround for Bug #35618
+		new_attributes.update({
+			'name': self.name,
+			'$dn$': self.dn(),
+			'ucsschool_roles': [create_ucsschool_role_string(role_computer_room, self.school)],
+		})
 		if current_attributes != new_attributes:
 			raise FailCheckPut('Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r' % (
 				self.name, current_attributes, new_attributes))
