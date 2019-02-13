@@ -388,7 +388,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
 			},
 			"maildomain": self.maildomain,
 			"scheme": {
-				"email": "<firstname>[0].<lastname>@<maildomain>",
+				"email": "<:umlauts><firstname>[0].<lastname>@<maildomain>",
 				"record_uid": "<firstname>;<lastname>;<email>",
 				"username": {
 					"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"

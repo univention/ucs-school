@@ -46,7 +46,7 @@ class Test(CLI_Import_v2_Tester):
 		self.source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
 		# default_config contains: ("csv:mapping:E-Mail": "email")
-		# and also: ("scheme:email", "<firstname>[0].<lastname>@<maildomain>")
+		# and also: ("scheme:email", "<:umlauts><firstname>[0].<lastname>@<maildomain>")
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:record_uid', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
@@ -58,7 +58,7 @@ class Test(CLI_Import_v2_Tester):
 			' -> filled email addresses from column')
 
 		config.update_entry('csv:mapping:E-Mail', 'email')
-		config.update_entry('scheme:email', '<firstname>[0].<lastname>@<maildomain>')
+		config.update_entry('scheme:email', '<:umlauts><firstname>[0].<lastname>@<maildomain>')
 
 		person_list = self.create_persons('student', 'teacher', 'staff', 'teacher_and_staff')
 		self.import_and_verify(person_list, config)

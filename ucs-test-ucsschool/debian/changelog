@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-10) unstable; urgency=low
+
+  * Bug #48651: adapt to changed default of normalize:firstname and
+    normalize:lastname
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Feb 2019 08:55:06 +0100
+
 ucs-test-ucsschool (6.0.0-9) unstable; urgency=low
 
   * Bug #48651: fix UCS version check
