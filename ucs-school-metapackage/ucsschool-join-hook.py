@@ -203,7 +203,7 @@ def main():
 
 	if not options.server_role:
 		parser.error('Please specify a server role')
-	if not options.master:
+	if not options.master_fqdn:
 		parser.error('Please specify a FQDN for the master domaincontroller')
 	if not options.binddn:
 		parser.error('Please specify a LDAP binddn')
