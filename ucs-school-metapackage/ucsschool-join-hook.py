@@ -65,8 +65,9 @@ def get_lo(options):
 
 
 def get_school_membership(options):  # type: (Any) -> SchoolMembership
-	filter_s = filter_format('(&(cn=univentionGroup)(uniqueMember=%s))', (ucr.get('ldap/hostdn'),))
+	filter_s = filter_format('(&(objectClass=univentionGroup)(uniqueMember=%s))', (ucr.get('ldap/hostdn'),))
 	grp_dn_list = options.lo.searchDn(filter=filter_s)
+	log.info('Host is member of following groups: %r', grp_dn_list)
 	is_edu_school_member = False
 	is_admin_school_member = False
 	for grp_dn in grp_dn_list:
@@ -145,6 +146,7 @@ def pre_joinscripts_hook(options):
 		return
 
 	pkg_list = determine_role_packages(options)
+	log.info('Determined role packages: %r', pkg_list)
 
 	# check if UCS@school app is installed/configured/included,
 	# if not, then install the same version used by domaincontroller_master
