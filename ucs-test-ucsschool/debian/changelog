@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-14) unstable; urgency=medium
+
+  * Bug #48651: Remove school attribute for domain admins
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 14 Feb 2019 15:23:12 +0100
+
 ucs-test-ucsschool (6.0.0-13) unstable; urgency=low
 
   * Bug #48678: old legacy import now sets options, ucsschool_roles and schools
