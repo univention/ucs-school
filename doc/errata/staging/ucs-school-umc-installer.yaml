@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-installer
-fix: 
+fix: 7.0.0-1A~4.4.0.201902141130
 desc: |
  * Fixed that in rare cases the UMC school installer did not install any school packages (Bug #48665).
 bug: [48665]
