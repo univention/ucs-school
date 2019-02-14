@@ -591,6 +591,7 @@ class Instance(Base):
 					proc = subprocess.Popen(['/usr/bin/apt-get', 'update'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
 					stdout, stderr = proc.communicate()
 					MODULE.info('Output of apt-get update:\nSTDOUT:\n%s\n\nSTDERR:\n%s\n' % (stdout, stderr))
+					_self.package_manager.reopen_cache()
 					_self.package_manager.progress_state.info('Package cache update completed')
 					if not _self.package_manager.install(*packages):
 						raise SchoolInstallerError(_('Failed to install packages.'))
