@@ -150,13 +150,13 @@ def pre_joinscripts_hook(options):
 	local_status = json.loads(result.stdout)
 	ucsschool_installed = any(x.startswith('ucsschool=') for x in local_status.get('installed', []))
 	if not ucsschool_installed:
-		result = call_cmd(options, 'ucr get version/version', on_master=True)
+		result = call_cmd(options, '/usr/sbin/ucr get version/version', on_master=True)
 		master_version = result.stdout.strip()
 		result = call_cmd(options, ['ucr', 'get', 'version/version'], on_master=False)
 		local_version = result.stdout.strip()
 		app_string = 'ucsschool'
 		if master_version == local_version:
-			result = call_cmd(options, 'univention-app info --as-json', on_master=True)
+			result = call_cmd(options, '/usr/bin/univention-app info --as-json', on_master=True)
 			master_app_info = json.loads(result.stdout)
 			# master_app_info:  {"compat": "4.3-1 errata0", "upgradable": [], "ucs": "4.3-1 errata0", "installed": ["ucsschool=4.3 v5"]}
 
