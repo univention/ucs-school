@@ -144,12 +144,15 @@ def pre_joinscripts_hook(options):
 		log.info('This is a docker container... stopping here')
 		return
 
+	pkg_list = determine_role_packages(options)
+
 	# check if UCS@school app is installed/configured/included,
 	# if not, then install the same version used by domaincontroller_master
 	result = call_cmd(options, ['univention-app', 'info', '--as-json'], on_master=False)
 	local_status = json.loads(result.stdout)
 	ucsschool_installed = any(x.startswith('ucsschool=') for x in local_status.get('installed', []))
-	if not ucsschool_installed:
+	# only install UCS@school if at least one package has to be installed
+	if not ucsschool_installed and pkg_list:
 		result = call_cmd(options, '/usr/sbin/ucr get version/version', on_master=True)
 		master_version = result.stdout.strip()
 		result = call_cmd(options, ['ucr', 'get', 'version/version'], on_master=False)
@@ -185,7 +188,6 @@ def pre_joinscripts_hook(options):
 			sys.exit(1)
 
 	# if not all packages are installed, then try to install them again
-	pkg_list = determine_role_packages(options)
 	if not all(package_manager.is_installed(pkg_name) for pkg_name in pkg_list):
 		subprocess.call(['univention-install', '--force-yes', '--yes'] + pkg_list)
 
