@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-18) unstable; urgency=medium
+
+  * Bug #47969: fix shebang in 62ucs-school-central-slave.inst
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 14 Feb 2019 23:45:32 +0100
+
 ucs-school-metapackage (12.0.0-17) unstable; urgency=low
 
   * Bug #47969: fix wrong search filter
