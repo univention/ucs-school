@@ -1,3 +1,10 @@
+ucs-school-metapackage (12.0.0-16) unstable; urgency=low
+
+  * Bug #47969: install UCS@school only if there is at least one meta
+    package about to be installed
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 14 Feb 2019 22:10:28 +0100
+
 ucs-school-metapackage (12.0.0-15) unstable; urgency=low
 
   * Bug #47969:
