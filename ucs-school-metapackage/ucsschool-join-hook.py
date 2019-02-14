@@ -176,7 +176,7 @@ def pre_joinscripts_hook(options):
 			'univention-app',
 			'install',
 			app_string,
-			'--skip-check must_have_valid_license',
+			'--skip-check', 'must_have_valid_license',
 			'--do-not-call-join-scripts'
 		]
 		returncode = subprocess.call(cmd)
