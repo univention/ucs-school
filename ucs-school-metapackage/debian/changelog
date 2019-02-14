@@ -1,18 +1,18 @@
 ucs-school-metapackage (12.0.0-14) unstable; urgency=medium
 
-  * Bug #46969: fix import
+  * Bug #47969: fix import
 
  -- Jürn Brodersen <brodersen@univention.de>  Wed, 13 Feb 2019 17:26:39 +0100
 
 ucs-school-metapackage (12.0.0-13) unstable; urgency=medium
 
-  * Bug #46969: fix commandline option name
+  * Bug #47969: fix commandline option name
 
  -- Jürn Brodersen <brodersen@univention.de>  Wed, 13 Feb 2019 16:33:07 +0100
 
 ucs-school-metapackage (12.0.0-12) unstable; urgency=low
 
-  * Bug #46969: Fix hook argument
+  * Bug #47969: Fix hook argument
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 13 Feb 2019 14:25:10 +0100
 
