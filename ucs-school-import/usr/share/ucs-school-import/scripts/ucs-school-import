@@ -1560,6 +1560,13 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		if profilePath:
 			object["profilepath"] = profilePath
 
+	role2option = {
+		role_pupil: 'ucsschoolStudent',
+		role_staff: 'ucsschoolStaff',
+		role_teacher: 'ucsschoolTeacher',
+	}
+	object.options.extend([role2option[role] for role in roles])
+	object["school"] = [person.sNr]
 	object["ucsschoolRole"] = []
 	for role in (role_pupil, role_staff, role_teacher):
 		if role in roles:

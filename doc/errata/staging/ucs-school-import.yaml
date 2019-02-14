@@ -12,4 +12,5 @@ desc: |
  * A users school_classes are now removed, if its entry in the school_classes column is empty (Bug #48045).
  * Activate substring search for ucs@school roles (Bug #48246).
  * An OID collision in the UCS@school schema has been fixed. This is just a precaution. Problems are not known at this time (Bug #45538).
-bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246]
+ * The old legacy import now sets options, ucsschool_roles and schools (Bug #48678).
+bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246, 48678]

@@ -66,7 +66,6 @@ class Person(object):
 		self.firstname = uts.random_name()
 		self.lastname = uts.random_name()
 		self.username = uts.random_name()
-		self.legacy = False
 		self.legacy_v2 = False
 		self.school = school
 		self.schools = [school]
@@ -273,7 +272,7 @@ class Person(object):
 			ucsschoolSourceUID=[self.source_uid] if self.source_uid else ['LegacyDB'] if self.legacy_v2 else [],
 			ucsschoolRecordUID=[self.record_uid] if self.record_uid else [self.username] if self.legacy_v2 else [],
 			description=[self.description] if self.description else [],
-			ucsschoolSchool=[] if self.legacy else self.schools,
+			ucsschoolSchool=self.schools,
 			univentionBirthday=[self.birthday] if self.birthday else [],
 			sambaLogonScript=[samba_logon_script] if samba_logon_script and not self.is_staff() else [],
 			sambaHomeDrive=[homedrive] if homedrive and not self.is_staff() else [],
