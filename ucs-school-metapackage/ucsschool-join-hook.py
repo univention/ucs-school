@@ -176,6 +176,17 @@ def pre_joinscripts_hook(options):
 					options.master_fqdn)
 				sys.exit(1)
 
+		log.info('Updating app center information...')
+		cmd = [
+			'univention-app',
+			'update',
+			app_string,
+		]
+		returncode = subprocess.call(cmd)
+		if returncode:
+			log.error('%s failed with exit code %s!', ' '.join(cmd), returncode)
+			sys.exit(1)
+
 		log.info('Installing %s ...', app_string)
 		cmd = [
 			'univention-app',
