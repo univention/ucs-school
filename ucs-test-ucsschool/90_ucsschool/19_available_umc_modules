@@ -138,33 +138,40 @@ def main():
 				serverRole = ucr.get('server/role')
 				print 'Role = ', serverRole
 				singleMaster = ucr.is_true('ucsschool/singlemaster', False)
+				basedn = ucr.get('ldap/base')
 
 				# Create ou, teacher, student, staff member, schooladmin, domainadmin
 				school, oudn = schoolenv.create_ou(name_edudc=host)
-				tea, teadn = schoolenv.create_user(school, is_teacher=True)
-				staf, stafdn = schoolenv.create_user(school, is_staff=True)
-				stu, studn = schoolenv.create_user(school)
-				utils.wait_for_replication_and_postrun()
+				users = []
 
-				basedn = ucr.get('ldap/base')
+				tea, teadn = schoolenv.create_user(school, is_teacher=True)
+				users.append((tea, 'teacher'))
+
+				# staff is not replicated to login to dc-slave
+				if (serverRole != 'domaincontroller_slave'):
+					staf, stafdn = schoolenv.create_user(school, is_staff=True)
+					users.append((staf, 'staff'))
+
+				stu, studn = schoolenv.create_user(school)
+				users.append((stu, 'student'))
+
 				position = 'cn=admins,cn=users,ou=%s,%s' % (school, basedn)
 				groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, basedn)]
 				dn, schooladmin = udm.create_user(position=position, groups=groups)
+				users.append((schooladmin, 'schooladmin'))
+
 				groups = ["cn=Domain Admins,cn=groups,%s" % (basedn,)]
 				dn, domainadmin = udm.create_user(position=position, groups=groups)
+				users.append((domainadmin, 'domainadmin'))
+
 				utils.wait_for_replication_and_postrun()
-
-				users = [(stu, 'student'), (tea, 'teacher'), (staf, 'staff'), (schooladmin, 'schooladmin'), (domainadmin, 'domainadmin')]
-
 				for (user, userType) in users:
-					# staff is not able to login to dc-slave
-					if (userType != 'staff' or serverRole != 'domaincontroller_slave'):
-						client = Client(host, user, 'univention')
-						print 'usertype=', userType
-						modules = client.umc_get('modules/list').data['modules']
-						modules = [(x['id'], x.get('flavor')) for x in modules]
-						print 'modules = ', modules
-						checkModules(modules, userType, serverRole, singleMaster)
+					client = Client(host, user, 'univention')
+					print 'usertype=', userType
+					modules = client.umc_get('modules/list').data['modules']
+					modules = [(x['id'], x.get('flavor')) for x in modules]
+					print 'modules = ', modules
+					checkModules(modules, userType, serverRole, singleMaster)
 
 
 if __name__ == '__main__':

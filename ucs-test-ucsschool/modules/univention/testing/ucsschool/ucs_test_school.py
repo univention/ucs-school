@@ -535,7 +535,7 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-		utils.verify_ldap_object(user_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in roles]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(user_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in roles]}, strict=False, should_exist=True)
 		return username, user_dn
 
 	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None, mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
