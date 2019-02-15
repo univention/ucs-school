@@ -566,7 +566,7 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 		return school_admin, dn
 
-	def create_domain_admin(self, username=None, password='univention'):
+	def create_domain_admin(self, ou_name, username=None, password='univention'):
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
 		if username is None:

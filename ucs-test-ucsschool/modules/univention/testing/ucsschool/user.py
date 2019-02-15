@@ -4,6 +4,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
 import univention.testing.utils as utils
 from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
@@ -147,6 +148,7 @@ class User(Person):
 			'email': self.mail,
 			'objectType': 'users/user',
 			'school_classes': {},
+			'ucsschool_roles': set(self.ucsschool_roles),
 		}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
 			info.update({'school_classes': self.school_classes})
@@ -157,14 +159,29 @@ class User(Person):
 		get_result = self.get()
 		# Type_name is only used for display, Ignored
 		info['type_name'] = get_result['type_name']
-		# ignore OU order
+		# ignore order
 		get_result['schools'] = set(get_result['schools'])
+		get_result['ucsschool_roles'] = set(get_result['ucsschool_roles'])
 		if get_result != info:
 			diff = []
 			for key in (set(get_result.keys()) | set(info.keys())):
 				if get_result.get(key) != info.get(key):
 					diff.append('%s: Got:\n%r; expected:\n%r' % (key, get_result.get(key), info.get(key)))
 			raise GetCheckFail('Failed get request for user %s:\n%s' % (self.username, '\n'.join(diff)))
+
+	@property
+	def ucsschool_roles(self):
+		roles = {
+			'staff': [role_staff],
+			'student': [role_student],
+			'teacher': [role_teacher],
+			'teacherAndStaff': [role_staff, role_teacher],
+			'teachersAndStaff': [role_staff, role_teacher],  # TODO: fix inconsistency
+		}
+		ret = []
+		for school in set([self.school] + self.schools):
+			ret.extend([create_ucsschool_role_string(role, school) for role in roles[self.typ]])
+		return ret
 
 	def type_name(self):
 		if self.typ == 'student':
@@ -173,7 +190,7 @@ class User(Person):
 			return 'Teacher'
 		elif self.typ == 'staff':
 			return 'Staff'
-		elif self.typ == 'teacherAndStaff':
+		elif self.typ in ('teacherAndStaff', 'teachersAndStaff'):  # TODO: fix inconsistency
 			return 'Teacher and Staff'
 
 	def query(self):

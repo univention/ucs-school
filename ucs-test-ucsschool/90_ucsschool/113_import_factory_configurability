@@ -275,7 +275,7 @@ class FactoryConfTest(object):
 		jsout = json.load(outfile)
 		if len(jsout) != 8:
 			utils.fail("Expected %d objects in export, found %d." % (8, len(jsout)))
-		vn_in = {ImportUser.normalize(x["Vorname"]) for x in users}
+		vn_in = {x["Vorname"] for x in users}
 		vn_out = {x["firstname"] for x in jsout}
 		if vn_in.difference(vn_out):
 			utils.fail("Input and output does not match:\nvn_in=%r\nvn_out=%r\nvn_in.difference(vn_out)=%r" % (
