@@ -180,7 +180,6 @@ def pre_joinscripts_hook(options):
 		cmd = [
 			'univention-app',
 			'update',
-			app_string,
 		]
 		returncode = subprocess.call(cmd)
 		if returncode:
