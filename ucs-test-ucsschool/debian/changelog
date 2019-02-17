@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-18) unstable; urgency=medium
+
+  * Bug #48651: Do not wait for staff replication on slave
+
+ -- Jürn Brodersen <brodersen@univention.de>  Sun, 17 Feb 2019 19:05:24 +0100
+
 ucs-test-ucsschool (6.0.0-17) unstable; urgency=medium
 
   * Bug #48099: Respect ignore_warning flag
@@ -6,7 +12,7 @@ ucs-test-ucsschool (6.0.0-17) unstable; urgency=medium
 
 ucs-test-ucsschool (6.0.0-16) unstable; urgency=medium
 
-  * Bug #48651: Fix various problems with due to not replicated objects
+  * Bug #48651: Fix various problems due to not replicated objects
 
  -- Jürn Brodersen <brodersen@univention.de>  Fri, 15 Feb 2019 15:12:10 +0100
 
