@@ -777,7 +777,7 @@ class UmcComputer(object):
 		passwd = account.bindpw
 		self.client.authenticate(admin, passwd)
 
-	def create(self, should_succeed=True):
+	def create(self, should_succeed=True, ignore_warning=True):
 		"""Creates object Computer"""
 		flavor = 'schoolwizards/computers'
 		param = [{
@@ -788,7 +788,8 @@ class UmcComputer(object):
 				'ip_address': self.ip_address,
 				'mac_address': self.mac_address.lower(),
 				'subnet_mask': self.subnet_mask,
-				'inventory_number': self.inventory_number
+				'inventory_number': self.inventory_number,
+				'ignore_warning': ignore_warning
 			},
 			'options': None
 		}]
