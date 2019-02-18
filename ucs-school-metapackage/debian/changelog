@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-24) unstable; urgency=medium
+
+  * Bug 47941: revert last commit
+
+ -- Felix Botner <botner@univention.de>  Mon, 18 Feb 2019 15:04:51 +0100
+
 ucs-school-metapackage (12.0.0-23) unstable; urgency=medium
 
   * Bug 47941: set connector/s4/mapping/dc/disable_delete_in_ucs?false
