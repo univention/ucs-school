@@ -6,6 +6,7 @@ from univention.testing.ucsschool.workgroup import Workgroup
 from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
+from ucsschool.lib.roles import create_ucsschool_role_string, role_ip_computer, role_mac_computer, role_win_computer
 from univention.testing.umc import Client
 from univention.lib.umc import ConnectionError
 import copy
@@ -838,6 +839,11 @@ class UmcComputer(object):
 			return reqResult[0]
 
 	def check_get(self):
+		typ2roles = {
+			'windows': [create_ucsschool_role_string(role_win_computer, self.school)],
+			'macos': [create_ucsschool_role_string(role_mac_computer, self.school)],
+			'ipmanagedclient': [create_ucsschool_role_string(role_ip_computer, self.school)],
+		}
 		info = {
 			'$dn$': self.dn(),
 			'school': self.school,
@@ -849,7 +855,8 @@ class UmcComputer(object):
 			'inventory_number': self.inventory_number,
 			'zone': None,
 			'type_name': self.type_name(),
-			'objectType': 'computers/%s' % self.typ
+			'objectType': 'computers/%s' % self.typ,
+			'ucsschool_roles': typ2roles[self.typ],
 		}
 		get_result = self.get()
 		if get_result != info:
