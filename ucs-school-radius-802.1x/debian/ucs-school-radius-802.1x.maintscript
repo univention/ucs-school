@@ -5,3 +5,10 @@ rm_conffile /etc/univention/templates/files/etc/freeradius/modules/mschap 5.0.0~
 rm_conffile /etc/univention/templates/files/etc/freeradius/radiusd.conf 5.0.0~
 rm_conffile /etc/univention/templates/files/etc/freeradius/sites-available/default 5.0.0~
 rm_conffile /etc/univention/templates/files/etc/freeradius/sites-available/inner-tunnel 5.0.0~
+rm_conffile /etc/univention/templates/files/etc/freeradius/3.0/mods-available/eap 8.0.0~
+rm_conffile /etc/univention/templates/files/etc/freeradius/3.0/mods-available/ldap 8.0.0~
+rm_conffile /etc/univention/templates/files/etc/freeradius/3.0/mods-available/mschap 8.0.0~
+rm_conffile /etc/univention/templates/files/etc/freeradius/3.0/radiusd.conf 8.0.0~
+rm_conffile /etc/univention/templates/files/etc/freeradius/3.0/sites-available/default 8.0.0~
+rm_conffile /etc/univention/templates/files/etc/freeradius/3.0/sites-available/inner-tunnel 8.0.0~
+rm_conffile /etc/freeradius/clients.conf.example 8.0.0~
