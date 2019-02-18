@@ -8,6 +8,6 @@ Package: ucs-school-radius-802.1x
 Architecture: any
 Depends: univention-config-registry,
  univention-config,
- univention-radius
+ univention-radius (>= 6.0.2-2)
 Description: freeradius 802.1X integration package for Univention Corporate Server
  Sets up a freeradius RADIUS server to support 802.1X authenticators

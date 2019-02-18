@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (7.0.1-4) unstable; urgency=medium
+
+  * Bug #46018: Add version to dependency on univention-radius
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 18 Feb 2019 16:51:05 +0100
+
 ucs-school-radius-802.1x (7.0.1-3) unstable; urgency=medium
 
   * Bug #46018: Use config and code from univention-radius
