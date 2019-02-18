@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.2-4) unstable; urgency=low
+
+  * Bug #48099: Fix typo
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 18 Feb 2019 08:29:05 +0100
+
 ucs-school-lib (11.0.2-3) unstable; urgency=low
 
   * Bug #48099: Extend validation for computer object
