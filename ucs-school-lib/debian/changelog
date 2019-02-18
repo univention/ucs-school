@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-8) unstable; urgency=medium
+
+  * Bug #48099: Fix typo
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 18 Feb 2019 08:32:50 +0100
+
 ucs-school-lib (12.1.0-7) unstable; urgency=medium
 
   * Bug #48647: Add a new BasicSchoolGroup which supports the school attribute

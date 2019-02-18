@@ -155,7 +155,7 @@ msgstr ""
 msgid ""
 "The specified IP and subnet mask will cause the creation of a new network "
 "during the creation of the computer object."
-msgstr "Die festgelegte IP Adresse und Netzmaske werden bei Erstellung des Computers "
+msgstr "Die festgelegte IP-Adresse und Netzmaske werden bei Erstellung des Computers "
 "dazu führen, dass auch ein neues Netz angelegt wird."
 
 #: models/computer.py:271
