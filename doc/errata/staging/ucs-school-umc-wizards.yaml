@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-wizards
-fix: 10.0.1-2A~4.3.0.201902071126
+fix: 10.0.1-3A~4.3.0.201902181139
 desc: |
  * The computer wizard now asks for a confirmation before creating a new computer object, if the validation returns a warning (Bug #48099).
 bug: [48099]
