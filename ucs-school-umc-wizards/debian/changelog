@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (10.0.1-3) unstable; urgency=medium
+
+  * Bug #48099: Optimize object iteration in create_computer
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 18 Feb 2019 11:38:15 +0100
+
 ucs-school-umc-wizards (10.0.1-2) unstable; urgency=medium
 
   * Bug #48099: Respect validation warning in computer wizard

@@ -342,8 +342,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		ignore_warnings = [option.get('object', {}).get('ignore_warning', False) for option in request.options]
 		ignore_warnings.reverse()
 		ret = {}
-		objs = list(iter_objects_in_request(request, ldap_user_write))
-		for obj in objs:
+		for obj in iter_objects_in_request(request, ldap_user_write):
 			ignore_warning = ignore_warnings.pop()
 			obj.validate(ldap_user_read)
 			if obj.errors:
