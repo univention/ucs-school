@@ -32,6 +32,7 @@
 . /usr/share/univention-lib/all.sh
 
 univention-config-registry set \
+	connector/s4/mapping/dc/disable_delete_in_ucs?false \
 	directory/manager/samba3/legacy?yes \
 	connector/s4/mapping/sid_to_ucs?no \
 	connector/s4/mapping/sid_to_s4?yes \
