@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-wizards
+fix: 11.0.0-2A~4.4.0.201902181135
+desc: |
+ * Upon computer creation the user now has to validate the creation of additional networks and gets and error if an overlapping subnet would be created (Bug #48099).
+bug: [48099]
