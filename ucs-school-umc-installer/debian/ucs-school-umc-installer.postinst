@@ -33,6 +33,7 @@
 #DEBHELPER#
 
 # make sure the installer is visible to root on an unjoined system
-/usr/sbin/univention-management-console-acls allow --user root --host "*" --command 'schoolinstaller/*'
+# This line was deactivated due to Bug #48681. This line should be reactivated with fixing Bug #48708
+# /usr/sbin/univention-management-console-acls allow --user root --host "*" --command 'schoolinstaller/*'
 
 exit 0

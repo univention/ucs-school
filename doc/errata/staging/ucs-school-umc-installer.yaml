@@ -6,4 +6,5 @@ src: ucs-school-umc-installer
 fix: 7.0.0-1A~4.4.0.201902141130
 desc: |
  * Fixed that in rare cases the UMC school installer did not install any school packages (Bug #48665).
-bug: [48665]
+ * Deactivate the acess of schoolinstaller/ umcp commands for root in postinst script (Bug #48681).
+bug: [48665, 48681]

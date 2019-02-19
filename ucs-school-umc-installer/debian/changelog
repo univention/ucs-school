@@ -1,3 +1,9 @@
+ucs-school-umc-installer (7.0.0-2) unstable; urgency=medium
+
+  * Bug #48681: deactivate root access to schoolinstaller/ umcp commands
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 19 Feb 2019 14:35:25 +0100
+
 ucs-school-umc-installer (7.0.0-1) unstable; urgency=medium
 
   * Bug #48665: update PackageManager cache after apt update
