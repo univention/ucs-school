@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-25) unstable; urgency=medium
+
+  * Bug 48699: Add reworked logo
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 19 Feb 2019 08:32:55 +0100
+
 ucs-school-metapackage (12.0.0-24) unstable; urgency=medium
 
   * Bug 47941: revert last commit
