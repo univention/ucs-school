@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=19
+VERSION=20
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -118,6 +118,7 @@ ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/s
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolAdminGroup.py || die
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
 ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
+ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_role_computers.py || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
@@ -496,6 +497,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set CLIName="ucsschoolRole" \
 	--set objectClass="ucsschoolServer" \
 	--set ldapMapping="ucsschoolRole" \
+	--set hook=UcsschoolRoleComputers \
 	--set syntax="string" \
 	--set mayChange="1" \
 	--set multivalue="1" \
@@ -508,6 +510,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append module="computers/macos" \
 	--append module="computers/windows" \
 	--append module="computers/ipmanagedclient" \
+	--append module="computers/ubuntu" \
 	--set tabName="UCS@school" \
 	--set shortDescription="Role of UCS@school object." \
 	--set longDescription="Role of UCS@school object." \
@@ -516,6 +519,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set CLIName="ucsschoolRole" \
 	--set objectClass="ucsschoolComputer" \
 	--set ldapMapping="ucsschoolRole" \
+	--set hook=UcsschoolRoleComputers \
 	--set syntax="string" \
 	--set mayChange="1" \
 	--set multivalue="1" \
@@ -544,6 +548,15 @@ if [ $JS_LAST_EXECUTED_VERSION = 19 ] && [ $server_role = domaincontroller_maste
 	/usr/share/ucs-school-import/scripts/fix_ucsschool_roles
 fi
 if [ $JS_LAST_EXECUTED_VERSION -lt 19 ] && [ $server_role = domaincontroller_master ]; then
+	univention-directory-manager settings/extended_attribute modify "$@" \
+		--dn "cn=ucsschoolRoleComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--set hook=UcsschoolRoleComputers || die
+
+	univention-directory-manager settings/extended_attribute modify "$@" \
+		--dn "cn=ucsschoolRoleClientComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append module="computers/ubuntu" \
+		--set hook=UcsschoolRoleComputers || die
+
 	if ! is_ucr_true ucsschool/feature/roles/skip_migration; then
 		python /usr/share/ucs-school-import/scripts/migrate_ucsschool_roles --modify --all-objects || die
 	fi

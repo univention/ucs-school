@@ -1,3 +1,9 @@
+ucs-school-import (17.0.4-5) unstable; urgency=low
+
+  * Bug #48519: attach UDM hook to UDM computer objects
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 18 Feb 2019 16:15:46 +0100
+
 ucs-school-import (17.0.4-4) unstable; urgency=low
 
   * Bug #48678: old legacy import now sets options, ucsschool_roles and schools

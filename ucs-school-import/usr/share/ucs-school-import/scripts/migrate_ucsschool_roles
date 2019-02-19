@@ -192,6 +192,7 @@ class UcsSchoolRolesMigration(object):
 			self.search_classes.append((WindowsComputer, 'ucsschoolComputer'))
 			self.search_classes.append((MacComputer, 'ucsschoolComputer'))
 			self.search_classes.append((IPComputer, 'ucsschoolComputer'))
+			# TODO: missing: computers/linux, computers/ubuntu
 		if self.args.class_shares or self.args.all_objects:
 			self.search_classes.append((ClassShare, 'ucsschoolShare'))
 		if self.args.work_group_shares or self.args.all_objects:
