@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-radius-802.1x
+fix: 7.0.1-4A~4.4.0.201902181655
+desc: |
+ * Extend the univention-radius package instead of replacing it. This means ucs-school-radius-802.1x now depends on the univention-radius package which will be installed automatically as a dependency (Bug #46018).
+bug: [46018]
