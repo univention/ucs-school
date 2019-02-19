@@ -44,8 +44,6 @@ NAME="S4 SlavePDC"
 eval "$(univention-config-registry shell)"
 
 # This join script is a Workaround for Bug #30105: 
-# Create dns-<hostname> before univention_samaccountname_ldap_check
-# is registered by 97libunivention-ldb-modules.inst.
 # This code was copied from UCS 3.1-0 98univention-samba4-dns.inst
 
 # samba4 allowed on this system?
@@ -78,14 +76,6 @@ domaindn="DC=${kerberos_realm//./,DC=}"	# that's what /usr/share/pyshared/samba/
 if ! ldbsearch -H "$LDB_URI" -b "$domaindn" -s base dn 2>/dev/null| grep -qi ^"dn: $domaindn"; then
 	echo "Samba4 backend database not available yet, exiting joinscript $(basename "$0")."
 	exit 1
-fi
-
-if [ "$samba4_role" != "RODC" ]; then
-	univention_samba4_wait_for_rid_set	## Replication of local RID Pool required for SAM account creation
-	/usr/share/univention-samba4/scripts/create_spn_account.sh \
-		--samaccountname "dns-$hostname" \
-		--serviceprincipalname "DNS/$hostname.$domainname" \
-		--privatekeytab dns.keytab "$@"
 fi
 
 _create_default_s4_groups ()

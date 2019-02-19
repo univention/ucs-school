@@ -1,18 +1,25 @@
+ucs-school-metapackage (12.0.0-26) unstable; urgency=medium
+
+  * Bug #47957: no longer create dns SPN in
+    96univention-samba4slavepdc.inst
+
+ -- Felix Botner <botner@univention.de>  Tue, 19 Feb 2019 10:39:51 +0100
+
 ucs-school-metapackage (12.0.0-25) unstable; urgency=medium
 
-  * Bug 48699: Add reworked logo
+  * Bug #48699: Add reworked logo
 
  -- Ole Schwiegert <schwiegert@univention.de>  Tue, 19 Feb 2019 08:32:55 +0100
 
 ucs-school-metapackage (12.0.0-24) unstable; urgency=medium
 
-  * Bug 47941: revert last commit
+  * Bug #47941: revert last commit
 
  -- Felix Botner <botner@univention.de>  Mon, 18 Feb 2019 15:04:51 +0100
 
 ucs-school-metapackage (12.0.0-23) unstable; urgency=medium
 
-  * Bug 47941: set connector/s4/mapping/dc/disable_delete_in_ucs?false
+  * Bug #47941: set connector/s4/mapping/dc/disable_delete_in_ucs?false
     for "central" connector
 
  -- Felix Botner <botner@univention.de>  Mon, 18 Feb 2019 13:22:23 +0100
