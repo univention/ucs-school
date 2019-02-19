@@ -168,6 +168,15 @@ ucs_registerLDAPExtension "$@" --data /usr/share/ucs-school-metapackage/ucsschoo
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
+if [[ "$server_role" = domaincontroller_master ]]; then
+	ucsschoolRole=dc_master
+else
+	ucsschoolRole=dc_backup
+fi
+univention-directory-manager computers/domaincontroller_master modify "$@" \
+	--dn "$ldap_hostdn" \
+	--append "ucsschoolRole=${ucsschoolRole}:school:-" || die
+
 systemctl try-restart univention-s4-connector.service || true
 
 if is_ucr_true "ucsschool/join/create_demo"; then

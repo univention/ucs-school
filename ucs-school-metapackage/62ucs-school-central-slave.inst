@@ -61,6 +61,10 @@ fi
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 ucs_addServiceToLocalhost 'UCS@school Central' "$@"
 
+univention-directory-manager computers/domaincontroller_slave modify "$@" \
+	--dn "$ldap_hostdn" \
+	--append "ucsschoolRole=dc_slave:school:-" || die
+
 joinscript_save_current_version
 
 exit 0

@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-27) unstable; urgency=low
+
+  * Bug #48519: set ucsschoolRole property when joining
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 19 Feb 2019 17:28:35 +0100
+
 ucs-school-metapackage (12.0.0-26) unstable; urgency=medium
 
   * Bug #47957: no longer create dns SPN in
