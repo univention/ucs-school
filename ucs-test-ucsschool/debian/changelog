@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-21) unstable; urgency=medium
+
+  * Bug #48651: added some tests
+
+ -- Felix Botner <botner@univention.de>  Tue, 19 Feb 2019 13:58:21 +0100
+
 ucs-test-ucsschool (6.0.0-20) unstable; urgency=low
 
   * Bug #48651: fix import error
