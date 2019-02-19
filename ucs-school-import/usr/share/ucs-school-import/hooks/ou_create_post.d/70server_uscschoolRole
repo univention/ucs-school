@@ -1,0 +1,86 @@
+#!/bin/bash
+#
+# Copyright 2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+#
+# Sets the ucsscchoolRole property on the school server (either singlemaster or
+# slave).
+#
+
+[ $# -ne 2 ] && echo "USAGE: $(basename $0) FILE DN" && exit 1
+
+. /usr/share/univention-lib/ucr.sh
+
+eval "$(ucr shell)"
+
+ou="$(awk -F '\t' '{print $1}' "$1")"
+ou_lower="${ou,,}"
+
+dcname="$(awk -F '\t' '{print $2}' "$1")"
+if [ -z "$dcname" ] ; then
+	dcname="dc${ou}-01.${domainname}"
+else
+	dcname="${dcname}.${domainname}"
+fi
+
+if is_ucr_true "ucsschool/singlemaster" ; then
+	univention-directory-manager computers/domaincontroller_master modify \
+		--dn "$ldap_hostdn" \
+		--append "ucsschoolRole=single_master:school:$ou"
+else
+	adm_netz_dn="cn=OU${ou_lower}-DC-Verwaltungsnetz"
+	edu_netz_dn="cn=OU${ou_lower}-DC-Edukativnetz"
+	base="cn=ucsschool,cn=groups,${ldap_base}"
+
+	adm_server_dn="$(univention-ldapsearch -LLL -b "$base" "$adm_netz_dn" uniqueMember | ldapsearch-wrapper | egrep "^uniqueMember" | cut -f 2- -d ' ')"
+	edu_server_dn="$(univention-ldapsearch -LLL -b "$base" "$edu_netz_dn" uniqueMember | ldapsearch-wrapper | egrep "^uniqueMember" | cut -f 2- -d ' ')"
+
+	if [[ -n "$adm_server_dn" ]]; then
+		uot="$(univention-ldapsearch -LLL -b "$adm_server_dn" | egrep ^univentionObjectType)"
+		if [[ "$uot" = "univentionObjectType: computers/domaincontroller_slave" ]]; then
+			univention-directory-manager computers/domaincontroller_slave modify \
+				--dn "$adm_server_dn" \
+				--append "ucsschoolRole=dc_slave_admin:school:$ou"
+		else
+			echo "A DC slave was expected at ${adm_server_dn}. Not setting ucsscchoolRole property."
+		fi
+	fi
+
+	if [[ -n "$edu_server_dn" ]]; then
+		uot="$(univention-ldapsearch -LLL -b "$edu_server_dn" | egrep ^univentionObjectType)"
+		if [[ "$uot" = "univentionObjectType: computers/domaincontroller_slave" ]]; then
+			univention-directory-manager computers/domaincontroller_slave modify \
+				--dn "$edu_server_dn" \
+				--append "ucsschoolRole=dc_slave_edu:school:$ou"
+		else
+			echo "A DC slave was expected at ${edu_server_dn}. Not setting ucsscchoolRole property."
+		fi
+	fi
+fi
+
+exit 0
