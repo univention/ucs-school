@@ -345,8 +345,8 @@ class SchoolSearchBase(object):
 
 
 class SchoolBaseModule(Base):
-	"""This classe serves as base class for UCS@school UMC modules that need
-	LDAP access. It initiates the list of availabe OUs (self.availableSchools) and
+	"""This class serves as base class for UCS@school UMC modules that need
+	LDAP access. It initiates the list of available OUs (self.availableSchools) and
 	initiates the search bases (self.searchBase). set_bind_function() is called
 	automatically to allow LDAP connections. In order to integrate this class
 	into a module, use the following paradigm:

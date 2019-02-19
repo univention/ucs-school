@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-9) unstable; urgency=low
+
+  * Bug #48519: add role string constants for Linux and Ubuntu clients
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 19 Feb 2019 17:27:29 +0100
+
 ucs-school-lib (12.1.0-8) unstable; urgency=medium
 
   * Bug #48099: Fix typo
