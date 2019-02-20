@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-10) unstable; urgency=low
+
+  * Bug #48651: fix AttributeError: 'module' object has no attribute 'utils'
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 20 Feb 2019 09:59:46 +0100
+
 ucs-school-lib (12.1.0-9) unstable; urgency=low
 
   * Bug #48519: add role string constants for Linux and Ubuntu clients
