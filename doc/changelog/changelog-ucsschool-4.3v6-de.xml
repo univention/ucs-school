@@ -275,7 +275,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-users 14.0.3-1A~4.3.0.201812202240 -->
 <!-- CHANGELOG:2019-01-16:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-02-20" lang="en">
+					<title>Released on 2019-02-20:</title>
+					<!-- START ucs-school-umc-exam 8.0.2-3A~4.3.0.201901291020 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>8.0.2-3A~4.3.0.201901291020</emphasis>:
+						<itemizedlist>
+							<listitem><para>Creating an exam with a whitespace at the beginning or end of the name created a traceback upon starting the exam. Whitespaces are now trimmed (<u:bug>48509</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 8.0.2-3A~4.3.0.201901291020 -->
+<!-- CHANGELOG:2019-02-20:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
