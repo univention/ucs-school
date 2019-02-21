@@ -180,16 +180,3 @@ Description: UCS@school meta package for central Slave servers
  an integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
-
-Package: ucs-school-backup
-Architecture: all
-Pre-Depends: univention-config
-Depends: univention-config,
- shell-ucs-school (>= 5.0.38),
- python-ucs-school (>= 5.0.3-17),
-Description: UCS@school meta package for Backup servers
- .
- This package is part of Univention Corporate Server (UCS),
- an integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
