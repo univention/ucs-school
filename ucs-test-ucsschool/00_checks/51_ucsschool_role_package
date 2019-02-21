@@ -14,6 +14,7 @@ ucr.load()
 role_packages = {
 	'dc_master': 'ucs-school-master',
 	'dc_slave_edu': 'ucs-school-slave',
+	'dc_slave': 'ucs-school-central-slave',
 	'dc_backup': 'ucs-school-backup',
 }
 
