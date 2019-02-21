@@ -251,7 +251,7 @@ def main():
 		parser.error('The given path for --bindpwdfile is not valid')
 	if not options.hook_type:
 		parser.error('Please specify a hook type')
-	if options.hook_type in ('join/post-joinscripts'):
+	if options.hook_type in ('join/post-joinscripts', ):
 		parser.error('The specified hook type is not supported by this script')
 
 	options.bindpw = open(options.bindpwdfile, 'r').read()
