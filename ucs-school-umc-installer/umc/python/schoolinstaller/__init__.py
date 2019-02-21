@@ -355,7 +355,7 @@ class Instance(Base):
 		'''Returns 'singlemaster', 'multiserver', or None'''
 		if self.package_manager.is_installed('ucs-school-singlemaster'):
 			return 'singlemaster'
-		elif self.package_manager.is_installed('ucs-school-slave') or self.package_manager.is_installed('ucs-school-nonedu-slave') or self.package_manager.is_installed('ucs-school-master'):
+		elif any(self.package_manager.is_installed(package) for package in ['ucs-school-slave', 'ucs-school-nonedu-slave', 'ucs-school-central-slave', 'ucs-school-master']):
 			return 'multiserver'
 		return None
 

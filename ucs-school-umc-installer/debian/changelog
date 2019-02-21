@@ -1,3 +1,9 @@
+ucs-school-umc-installer (7.0.0-4) unstable; urgency=medium
+
+  * Bug #48697: Recognize if a central slave is configured already
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 21 Feb 2019 14:46:22 +0100
+
 ucs-school-umc-installer (7.0.0-3) unstable; urgency=medium
 
   * Bug #48681: Completely remove postinst script
