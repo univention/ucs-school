@@ -3,8 +3,9 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-installer
-fix: 7.0.0-3A~4.4.0.201902200837
+fix: 7.0.0-4A~4.4.0.201902211449
 desc: |
  * Fixed the UMC school installer in rare cases not installing any school packages (Bug #48665).
  * Remove an unnecessary postinst script (Bug #48681).
+ * Recognizes a configured central slave and aborts installation (Bug #48697).
 bug: [48665, 48681]
