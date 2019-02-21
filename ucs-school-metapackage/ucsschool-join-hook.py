@@ -104,12 +104,33 @@ def get_school_membership(options):  # type: (Any) -> SchoolMembership
 	return SchoolMembership(is_edu_school_member, is_admin_school_member)
 
 
-def determine_role_packages(options):
+def determine_role_packages(options, package_manager):
 	if options.server_role in ('domaincontroller_master',):
 		return []
-	if options.server_role in ('domaincontroller_backup',):
-		return ['ucs-school-backup']
-	if options.server_role in ('domaincontroller_slave',):
+
+	elif options.server_role in ('domaincontroller_backup',):
+		# if metapackage is already installed, then stick with it and don't change it
+		for pkg_name in ('ucs-school-master', 'ucs-school-singlemaster',):
+			if package_manager.is_installed(pkg_name):
+				log.info('Found installed metapackage %r. Reusing it.', pkg_name)
+				return [pkg_name]
+		# if no metapackage has been found, determine package type via master's UCR variable
+		result = call_cmd(options, '/usr/sbin/ucr get ucsschool/singlemaster', on_master=True)
+		if ucr.is_true(value=result.stdout.strip()):
+			log.info('Master is a UCS@school single server system')
+			return ['ucs-school-singlemaster']
+		else:
+			log.info('Master is part of a multi server environment')
+			return ['ucs-school-master']
+
+	elif options.server_role in ('domaincontroller_slave',):
+		# if metapackage is already installed, then stick with it and don't change it
+		for pkg_name in ('ucs-school-slave', 'ucs-school-nonedu-slave', 'ucs-school-central-slave'):
+			if package_manager.is_installed(pkg_name):
+				log.info('Found installed metapackage %r. Reusing it.', pkg_name)
+				return [pkg_name]
+
+		# if no metapackage has been found, then determine slave type via group memberships
 		membership = get_school_membership(options)
 		if membership.is_edu_school_member:
 			return ['ucs-school-slave']
@@ -117,8 +138,10 @@ def determine_role_packages(options):
 			return ['ucs-school-nonedu-slave']
 		else:
 			return ['ucs-school-central-slave']
-	if options.server_role in ('memberserver',):
+
+	elif options.server_role in ('memberserver',):
 		return []
+
 	log.warn('System role %r not found!', options.server_role)
 	return []
 
@@ -138,14 +161,14 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 
 
 def pre_joinscripts_hook(options):
-	package_manager = PackageManager(lock=False, always_noninteractive=True)
-
 	# do not do anything, if we are running within a docker container
 	if ucr.get('docker/container/uuid'):
 		log.info('This is a docker container... stopping here')
 		return
 
-	pkg_list = determine_role_packages(options)
+	package_manager = PackageManager(lock=False, always_noninteractive=True)
+
+	pkg_list = determine_role_packages(options, package_manager)
 	log.info('Determined role packages: %r', pkg_list)
 
 	# check if UCS@school app is installed/configured/included,
@@ -206,7 +229,6 @@ def pre_joinscripts_hook(options):
 
 def main():
 	global log
-	global lo
 
 	parser = optparse.OptionParser()
 	parser.add_option('--server-role', dest='server_role', default=None, action='store', help='server role of this system')
@@ -242,6 +264,11 @@ def main():
 	logging.basicConfig(stream=sys.stderr, level=level)
 
 	log = logging.getLogger(__name__)
+
+	if ucr.is_false('ucsschool/join/hook/join/pre-joinscripts', False):
+		log.warn('UCS@school join hook has been disabled via UCR variable ucsschool/join/hook/join/pre-joinscripts.')
+		sys.exit(0)
+
 	options.lo = get_lo(options)
 
 	pre_joinscripts_hook(options)

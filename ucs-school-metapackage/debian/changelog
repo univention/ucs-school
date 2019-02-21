@@ -1,6 +1,7 @@
 ucs-school-metapackage (12.0.0-28) unstable; urgency=low
 
   * Bug #47957: remove ucs-school-backup
+  * Bug #47969: update detection/determination of metapackages in join hook
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 21 Feb 2019 16:05:10 +0100
 
