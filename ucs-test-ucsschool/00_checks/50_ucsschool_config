@@ -15,7 +15,7 @@ def check_setting(setting, value):
 	if ucr[setting] != value:
 		utils.fail('{} not correctly configured (is {}, should be {})'.format(setting, value, ucr[setting]))
 
-settings = {
+settings_connector = {
 	'connector/s4/mapping/sid_to_s4': 'yes',
 	'connector/s4/mapping/sid_to_ucs': 'no',
 	'connector/s4/mapping/syncmode': 'sync',
@@ -26,13 +26,22 @@ settings = {
 	'connector/s4/mapping/dns/ignorelist': '_ldap._tcp.Default-First-Site-Name._site',
 }
 
+settings_samba = {
+	'samba4/ldb/sam/module/prepend': 'univention_samaccountname_ldap_check',
+}
+
 settings_school_slave = {
 	'connector/s4/mapping/user/ignorelist': 'root,ucs-s4sync,krbtgt,Guest',
 	'connector/s4/allow/secondary': 'true',
 }
 
+
+if utils.package_installed('univention-samba4'):
+	for setting, value in settings_samba.iteritems():
+		check_setting(setting, value)
+
 if utils.package_installed('univention-s4-connector'):
-	for setting, value in settings.iteritems():
+	for setting, value in settings_connector.iteritems():
 		check_setting(setting, value)
 
 if utils.package_installed('ucs-school-slave'):
