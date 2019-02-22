@@ -1,3 +1,10 @@
+ucs-school-import (17.0.4-7) unstable; urgency=low
+
+  * Bug #48045: figure out why the school_class property is empty and handle
+    accordingly
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 22 Feb 2019 12:46:39 +0100
+
 ucs-school-import (17.0.4-6) unstable; urgency=low
 
   * Bug #48519: UDM hook to add ucsschoolRole property to computer client

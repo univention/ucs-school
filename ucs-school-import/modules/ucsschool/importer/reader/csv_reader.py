@@ -318,6 +318,8 @@ class CsvReader(BaseReader):
 		:return: key->input_data-value mapping
 		:rtype: dict
 		"""
+		if not input_data:
+			return {}
 		if not self.fieldnames:
 			self.read().next()
 		dict_reader_mapping = dict(zip(self.fieldnames, input_data))

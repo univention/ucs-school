@@ -185,7 +185,8 @@ class UserImport(object):
 						user, user.source_uid, user.record_uid, user.action), entry_count=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
-					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes=%r udm_properties=%r...", action_str, user, user.source_uid, user.record_uid, user.to_dict(), user.udm_properties)
+					_user = user.to_dict()  # sorted output
+					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes: {%s}...", action_str, user, user.source_uid, user.record_uid, ', '.join('{!r}: {!r}'.format(k, _user[k]) for k in sorted(_user.keys())))
 				password = user.password  # save password of new user for later export (NewUserPasswordCsvExporter)
 				try:
 					if user.action == "A":

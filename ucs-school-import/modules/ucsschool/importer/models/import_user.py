@@ -604,8 +604,23 @@ class ImportUser(User):
 		"""
 		if isinstance(self, Staff):
 			self.school_classes = dict()  # type: Dict[str, Dict[str, List[str]]]
-		elif isinstance(self.school_classes, dict):
+		elif isinstance(self.school_classes, dict) and self.school_classes:
 			pass
+		elif isinstance(self.school_classes, dict) and not self.school_classes:
+			input_dict = self.reader.get_data_mapping(self.input_data)
+			if input_dict.get('school_classes') == '':
+				# mapping exists and csv field is empty -> empty property, except if config says otherwise
+				if self.old_user and self.config.get('school_classes_keep_if_empty', False):
+					self.logger.info(
+						'Reverting school_classes of %r to previous value %r.',
+						self, self.old_user.school_classes)
+					self.school_classes = self.old_user.school_classes
+			elif 'school_classes' not in input_dict:
+				# no mapping -> try to get previous data
+				if self.old_user:
+					self.school_classes = self.old_user.school_classes
+			else:
+				raise RuntimeError('Input data contains school_classes data, but self.school_classes is empty.')
 		elif isinstance(self.school_classes, string_types):
 			res = defaultdict(list)
 			self.school_classes = self.school_classes.strip(" \n\r\t,")
@@ -629,17 +644,6 @@ class ImportUser(User):
 			self.school_classes = dict()
 		else:
 			raise RuntimeError("Unknown data in attribute 'school_classes': {!r}".format(self.school_classes))
-		if (
-				not self.school_classes and
-				self.old_user and
-				self.old_user.school_classes and
-				self.config.get('school_classes_keep_if_empty', False)
-		):
-			self.logger.info(
-				'Reverting school_classes of %r to %r, because school_classes_keep_if_empty=%r and new school_classes=%r.',
-				self, self.old_user.school_classes, self.config.get('school_classes_keep_if_empty', False),
-				self.school_classes)
-			self.school_classes = self.old_user.school_classes
 		return self.school_classes
 
 	def make_disabled(self):  # type: () -> str
