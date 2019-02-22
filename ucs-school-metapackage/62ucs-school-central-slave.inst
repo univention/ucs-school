@@ -46,16 +46,9 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		samba4/ldb/sam/module/prepend="univention_samaccountname_ldap_check" \
 		samba/script/addmachine='/usr/share/univention-samba/addmachine.sh "%u"' \
 		samba/share/sysvol/readonly?no \
-		samba4/sysvol/sync/host?"$master_hostname" # Don't use the FQDN, Bug #27247
+		samba4/sysvol/sync/host?"$master_hostname" # Do not use the FQDN, Bug #27247
 
 	test -x /etc/init.d/samba && /etc/init.d/samba status >/dev/null && /etc/init.d/samba restart
-fi
-
-if [ $JS_LAST_EXECUTED_VERSION = 0 ]; then
-	if [ -e /usr/share/univention-samba4/lib/all.sh ]; then
-		. /usr/share/univention-samba4/lib/all.sh
-		samba4_ldb_sam_module_prepend || true
-	fi
 fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"

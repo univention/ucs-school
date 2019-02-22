@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-31) unstable; urgency=medium
+
+  * Bug #48740: remove samba4_ldb_sam_module_prepend from ucs@school join scripts
+
+ -- Felix Botner <botner@univention.de>  Fri, 22 Feb 2019 14:26:54 +0100
+
 ucs-school-metapackage (12.0.0-30) unstable; urgency=low
 
   * Bug #47969: increase log level of join hook
