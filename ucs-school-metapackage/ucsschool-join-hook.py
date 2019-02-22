@@ -224,6 +224,7 @@ def pre_joinscripts_hook(options):
 
 	# if not all packages are installed, then try to install them again
 	if not all(package_manager.is_installed(pkg_name) for pkg_name in pkg_list):
+		log.info('Not all required packages installed - calling univention-install...')
 		subprocess.call(['univention-install', '--force-yes', '--yes'] + pkg_list)
 
 
@@ -236,7 +237,7 @@ def main():
 	parser.add_option('--binddn', dest='binddn', action='store', default=None, help='LDAP binddn')
 	parser.add_option('--bindpwdfile', dest='bindpwdfile', action='store', default=None, help='path to password file')
 	parser.add_option('--hooktype', dest='hook_type', action='store', default=None, help='join hook type (currently only "join/pre-joinscripts" supported)')
-	parser.add_option('-v', '--verbose', action='count', default=2, help='Increase verbosity')
+	parser.add_option('-v', '--verbose', action='count', default=3, help='Increase verbosity')
 	(options, args) = parser.parse_args()
 
 	if not options.server_role:
@@ -273,6 +274,7 @@ def main():
 
 	pre_joinscripts_hook(options)
 
+	log.info('ucsschool-join-hook.py is done')
 
 if __name__ == '__main__':
 	main()
