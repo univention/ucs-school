@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.0-2) unstable; urgency=low
+
+  * Bug #48731: use call_joinscripts instead of calling join scripts directly
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 24 Feb 2019 00:25:26 +0100
+
 ucs-school-umc-exam (9.0.0-1) unstable; urgency=low
 
   * Bug #48509: The exam name is now trimmed for the folder name

@@ -1,0 +1,144 @@
+#!/usr/bin/python
+# vim:set fileencoding=utf-8:
+"""
+Install Python modules to separate area
+"""
+from __future__ import print_function
+from os import walk, chdir, getcwd, makedirs, link, unlink
+from os.path import join, isdir, dirname, basename, relpath, abspath, samefile
+from sys import stderr
+from glob import glob
+from errno import EEXIST, ENOENT
+from logging import getLogger, basicConfig, FATAL, ERROR, WARN, INFO, DEBUG
+from optparse import OptionParser
+from doctest import testmod
+
+
+PREFIX = 'usr/share/pyshared/'
+SUFFIX = '.py'
+
+log = None
+opt = None
+dst_dir = None
+
+
+def main():
+	args = parse_args()
+	cwd = getcwd()
+	for pkg_dir in args:
+		log.debug('Package %s...', pkg_dir)
+		if not isdir(pkg_dir):
+			continue
+		try:
+			chdir(pkg_dir)
+			process_package()
+		finally:
+			chdir(cwd)
+
+
+def parse_args():
+	usage = '%prog [options] <target-directory> [<package-directories>...]'
+	parser = OptionParser(usage=usage)
+	parser.add_option('--verbose', '-v', action='count', default=0, help='Increase verbosity')
+	parser.add_option('--dry-run', '-n', action='store_true', help='Do not copy')
+	parser.add_option('--run-test', action='callback', help='Run doctest', callback=lambda option, opt, value, parser: testmod())
+	global opt
+	opt, args = parser.parse_args()
+
+	try:
+		global dst_dir
+		dst_dir = abspath(args.pop(0))
+	except ValueError:
+		parser.error("Missing target directory")
+
+	if not args:
+		for root, dirs, _files in walk('.'):
+			if 'debian' in dirs:
+				args.append(root)
+				del dirs[:]
+
+	LEVELS = [FATAL, ERROR, WARN, INFO, DEBUG]
+	try:
+		level = LEVELS[opt.verbose]
+	except IndexError:
+		level = LEVELS[-1]
+	basicConfig(stream=stderr, level=level)
+
+	global log
+	log = getLogger(__name__)
+
+	return args
+
+
+def process_package():
+	for files in glob('debian/*install'):
+		log.debug('Install %s', files)
+		with open(files, 'r') as stream:
+			for line in stream:
+				line = line.strip()
+				if not line:
+					continue
+				if line.startswith('#'):
+					continue
+				for src, dst in process_line(line):
+					install(src, dst)
+
+
+def process_line(line):
+	"""
+	>>> list(process_line("usr"))
+	[("usr", "usr")]
+	>>> list(process_line("usr	prefix/"))
+	[("usr", "prefix/usr")]
+	>>> list(process_line("src/*.py"))
+	[("src/__init__.py", "__init__.py")]
+	>>> list(process_line("src/*.py	prefix/"))
+	[("src/__init__.py", "prefix/__init__.py")]
+	"""
+	log.debug("processing line: %r", line)
+	args = [_.strip('/') for _ in line.split()]
+	dst = args.pop() if len(args) >= 2 else dirname(args[0])
+
+	for src in args:
+		for fn in glob(src):
+			if isdir(fn):
+				for root, dirs, files in walk(fn):
+					for name in files:
+						src_path = join(root, name)
+						dst_path = join(dst, relpath(src_path, dirname(fn)))
+						yield (src_path, dst_path)
+			else:
+				yield (fn, join(dst, basename(fn)))
+
+
+def install(src, dst):
+	if not src.endswith(SUFFIX):
+		return
+	if not dst.startswith(PREFIX):
+		return
+	dst = join(dst_dir, dst[len(PREFIX):])
+	log.info('%s	->	%s' % (src, dst))
+	if opt.dry_run:
+		return
+	try:
+		makedirs(dirname(dst))
+	except EnvironmentError as ex:
+		if ex.errno != EEXIST:
+			log.error('mkdir: %s', ex)
+			return
+	try:
+		if samefile(src, dst):
+			return
+		unlink(dst)
+	except EnvironmentError as ex:
+		if ex.errno != ENOENT:
+			log.error('samefile/unlink: %s', ex)
+			return
+	try:
+		link(src, dst)
+	except EnvironmentError as ex:
+		log.error('link: %s', ex)
+
+
+if __name__ == '__main__':
+	main()
