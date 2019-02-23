@@ -1,3 +1,9 @@
+ucs-school-import (17.0.4-8) unstable; urgency=low
+
+  * Bug #48731: use call_joinscript instead of calling the joinscript directly
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 24 Feb 2019 00:11:49 +0100
+
 ucs-school-import (17.0.4-7) unstable; urgency=low
 
   * Bug #48045: figure out why the school_class property is empty and handle
