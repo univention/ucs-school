@@ -1,3 +1,11 @@
+ucs-school-metapackage (12.0.0-34) unstable; urgency=low
+
+  * Bug #48731: if /var/univention-join/status is empty/non-existant when
+    starting the join hook, the hook takes care, that the file is
+    empty/non-existant upon leaving the hook
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 24 Feb 2019 00:22:55 +0100
+
 ucs-school-metapackage (12.0.0-33) unstable; urgency=low
 
   * Bug #48731: remove debug output to 00ucs-school-app-version-check.inst
