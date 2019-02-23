@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.0-1) unstable; urgency=low
+
+  * Bug #48731: use call_joinscript instead of calling join scripts directly
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 24 Feb 2019 00:17:22 +0100
+
 ucs-school-ldap-acls-master (17.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4
