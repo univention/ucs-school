@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 #
 # UCS@school
 #  join script to check version of app on master
