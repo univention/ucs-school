@@ -31,7 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 #DEBHELPER#
-. /usr/share/univention-lib/ucr.sh
+. /usr/share/univention-lib/all.sh
 
 univention-config-registry set \
 	ucsschool/ldap/district/enable?false \
@@ -95,9 +95,7 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 8.0.47-1; then
 	fi
 fi
 
-if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
-	/usr/lib/univention-install/35ucs-school-import.inst || true
-fi
+call_joinscript 35ucs-school-import.inst
 
 # Bug #27549: no longer required after update to UCS@school 3.1
 if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 9.0.5; then
