@@ -48,6 +48,40 @@ ucr.load()
 StdoutStderr = namedtuple('StdoutStderr', 'stdout stderr')
 SchoolMembership = namedtuple('school_membership', 'is_edu_school_member is_admin_school_member')
 
+class KeepEmptyStatusFile(object):
+	'''
+	KeepEmptyStatusFile is a context manager:
+	fetches status (mode, owner, group, content) of /var/univention-join/status upon instantiation
+	and resets the file status upon leaving the context if the file was empty/non-existant.
+	'''
+	def __init__(self):  # type: () -> None
+		self.content = None
+		self.stats = None
+		self.fn = '/var/univention-join/status'
+		if os.path.exists(self.fn):
+			with open(self.fn, 'r') as fd:
+				self.content = fd.read()
+			self.stats = os.stat(self.fn)
+			log.info('KeepEmptyStatusFile: Saved state of %r', self.fn)
+		else:
+			log.info('KeepEmptyStatusFile: %r does not exist', self.fn)
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		# reset status file to it's old state if it was empty before
+		if self.content is None or self.content == '':
+			if os.path.exists(self.fn) and self.content is None:
+				log.info('KeepEmptyStatusFile: removing %r', self.fn)
+				os.remove(self.fn)
+			if self.content is not None:
+				log.info('KeepEmptyStatusFile: restoring content, mode and owner of %r', self.fn)
+				with open(self.fn, 'w') as fd:
+					fd.write(self.content)
+				os.chown(self.fn, self.stats.st_uid, self.stats.st_gid)
+				os.chmod(self.fn, self.stats.st_mode)
+
 
 def get_lo(options):
 	log.info('Connecting to LDAP as %r ...', options.binddn)
@@ -272,7 +306,8 @@ def main():
 
 	options.lo = get_lo(options)
 
-	pre_joinscripts_hook(options)
+	with KeepEmptyStatusFile():
+		pre_joinscripts_hook(options)
 
 	log.info('ucsschool-join-hook.py is done')
 
