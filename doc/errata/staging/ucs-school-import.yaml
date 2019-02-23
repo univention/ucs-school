@@ -13,4 +13,5 @@ desc: |
  * Activate substring search for ucs@school roles (Bug #48246).
  * An OID collision in the UCS@school schema has been fixed. This is just a precaution. Problems are not known at this time (Bug #45538).
  * The old legacy import now sets options, ucsschool_roles and schools (Bug #48678).
-bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246, 48678]
+ * The postinst scripts now use <command>call_joinscript</command> instead of calling join scripts directly (Bug #48731).
+bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246, 48678, 48731]
