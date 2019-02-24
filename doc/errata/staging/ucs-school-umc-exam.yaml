@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.0-1A~4.4.0.201901290952
+fix: 9.0.0-2A~4.4.0.201902240136
 desc: |
  * Creating an exam with a whitespace at the beginning or end of the name created a traceback upon starting the exam. Whitespaces are now trimmed (Bug #48509).
  * The postinst scripts now use <command>call_joinscript</command> instead of calling join scripts directly (Bug #48731).
