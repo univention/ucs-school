@@ -6,4 +6,5 @@ src: ucs-school-umc-wizards
 fix: 11.0.0-2A~4.4.0.201902181135
 desc: |
  * Upon computer creation the user now has to validate the creation of additional networks and gets and error if an overlapping subnet would be created (Bug #48099).
-bug: [48099]
+ * It is now possible to specify an administrative slave when creating a new school (Bug #48743).
+bug: [48099, 48743]
