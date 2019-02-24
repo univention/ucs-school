@@ -1,1 +1,3 @@
+00ucs-school-app-version-check.inst usr/lib/univention-install/
 62ucs-school-central-slave.inst usr/lib/univention-install/
+63ucs-school-portal-entry.inst usr/lib/univention-install/
