@@ -1,3 +1,10 @@
+ucs-school-metapackage (12.0.0-35) unstable; urgency=low
+
+  * Bug #47957: remove unused call_joinscript calls
+  * Bug #47957: add missing joinscripts in ucs-school-central-slave
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 24 Feb 2019 01:54:07 +0100
+
 ucs-school-metapackage (12.0.0-34) unstable; urgency=low
 
   * Bug #48731: if /var/univention-join/status is empty/non-existant when
