@@ -10,4 +10,5 @@ desc: |
  * Fix typo on demo portal (Bug #48540).
  * Adds the reworked logo (Bug #48699).
  * The postinst scripts now use <command>call_joinscript</command> instead of calling join scripts directly (Bug #48731).
-bug: [47957, 48384, 48540, 48699, 48731]
+ * Add the new UCS@school logo (Bug #48699).
+bug: [47957, 48384, 48540, 48699, 48731, 48699]
