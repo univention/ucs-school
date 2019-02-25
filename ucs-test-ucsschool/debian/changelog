@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-5) unstable; urgency=low
+
+  * Bug #48722: Fix 110_set_default-umc-users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 25 Feb 2019 13:39:10 +0100
+
 ucs-test-ucsschool (5.0.4-4) unstable; urgency=low
 
   * Bug #48099: adjust ucs-test script to use ignore_warning option

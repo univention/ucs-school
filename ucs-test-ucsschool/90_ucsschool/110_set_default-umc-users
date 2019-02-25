@@ -6,7 +6,6 @@
 ## packages: []
 
 from univention.config_registry import handler_set
-from univention.admin.uexceptions import noObject
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
@@ -18,22 +17,22 @@ def main():
 		# That's why the import should be after setting the ucr variable
 		import univention.testing.ucsschool.ucs_test_school as utu
 		with utu.UCSTestSchool() as schoolenv:
+			from ucsschool.lib.models.utils import ucr # For some reason necessary to update the ucr
+			ucr.load() # properly with the new value for create_ou(cli=False)
 			for cli in (True, False):
 				school, oudn = schoolenv.create_ou(use_cli=cli, use_cache=False)
 				utils.wait_for_replication_and_postrun()
 				base = "cn=Domain Users %s,cn=groups,%s" % (school.lower(), schoolenv.get_ou_base_dn(school))
-				print('*** Checking school {!r} (cli={}'.format(school, cli))
+				print('*** Checking school {!r} (cli={})'.format(school, cli))
 				try:
 					expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get('ldap/base'),)
-					found_attr = schoolenv.lo.search(base=base, scope='base', attr=['univentionPolicyReference'])[0][1]['univentionPolicyReference']
+					found_attr = schoolenv.lo.search(base=base, scope='base', attr=['univentionPolicyReference'])[0][1].get('univentionPolicyReference', [])
 					if expected_attr in found_attr:
-						utils.fail('Incorrect attributes found: %r\nexpected: %r' % (
+						utils.fail('Attributes found: %r\nNot expected: %r' % (
 							found_attr, expected_attr))
 				except IndexError:
 					utils.fail('Attribute %s was not found in ldap object %r' % (
 						'univentionPolicyReference', base))
-				except noObject as exc:
-					print ('*** OK: Cought expected exception: %r' % exc)
 
 
 if __name__ == '__main__':

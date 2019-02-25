@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.2-5) unstable; urgency=low
+
+  * Bug #48722: Fix creation of Domain Users $OU
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 25 Feb 2019 14:41:56 +0100
+
 ucs-school-lib (11.0.2-4) unstable; urgency=low
 
   * Bug #48099: Fix typo
