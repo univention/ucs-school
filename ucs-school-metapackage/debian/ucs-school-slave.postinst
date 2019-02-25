@@ -165,6 +165,7 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.0-6; then
 	old_ignore="$(ucr get connector/s4/mapping/user/ignorelist)"
 	new_ignore=''
 	dnsname="dns-$(hostname)"
+	OIFS="$IFS"
 	IFS=$','
 	if echo "$old_ignore" | grep -q -w "$dnsname"; then
 		for i in $old_ignore; do
@@ -172,7 +173,7 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.0-6; then
 			test -n "$new_ignore" && new_ignore+=","
 			new_ignore+="$i"
 		done
-		unset IFS
+		IFS="$OIFS"
 		if [ -n "$new_ignore" ]; then
 			test ! "$old_ignore" = "$new_ignore" && ucr set connector/s4/mapping/user/ignorelist="$new_ignore"
 		else
@@ -180,7 +181,7 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.0-6; then
 		fi
 		[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
 	fi
-	unset IFS
+	IFS="$OIFS"
 fi
 
 /etc/init.d/univention-directory-listener crestart
