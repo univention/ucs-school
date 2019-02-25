@@ -1,3 +1,9 @@
+ucs-school-import (17.0.4-9) unstable; urgency=low
+
+  * Bug #48722: Edit UCRV description for ucsschool/import/attach/policy/default-umc-users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 25 Feb 2019 09:26:12 +0100
+
 ucs-school-import (17.0.4-8) unstable; urgency=low
 
   * Bug #48731: use call_joinscript instead of calling the joinscript directly
