@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-24) unstable; urgency=medium
+
+  * Bug #48722: fix 110_set_default-umc-users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 25 Feb 2019 12:14:44 +0100
+
 ucs-test-ucsschool (6.0.0-23) unstable; urgency=medium
 
   * Bug #48651: added some tests
