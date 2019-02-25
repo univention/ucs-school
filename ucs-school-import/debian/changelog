@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-3) unstable; urgency=low
+
+  * Bug #48722: Specify description of ucsschool/import/attach/policy/default-umc-users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 25 Feb 2019 12:43:02 +0100
+
 ucs-school-import (16.0.3-2) unstable; urgency=low
 
   * Bug #45538: revert changes of last changelog entry
