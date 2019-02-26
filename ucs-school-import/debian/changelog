@@ -1,3 +1,9 @@
+ucs-school-import (17.0.4-10) unstable; urgency=low
+
+  * Bug #48519: fix ucsschoolRole migration script regarding case of OUs
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Feb 2019 17:35:59 +0100
+
 ucs-school-import (17.0.4-9) unstable; urgency=low
 
   * Bug #48722: Edit UCRV description for ucsschool/import/attach/policy/default-umc-users

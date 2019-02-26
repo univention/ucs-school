@@ -544,7 +544,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set multivalue="1" \
 	--set disableUDMWeb=1 || die
 
-if [ $JS_LAST_EXECUTED_VERSION = 19 ] && [ $server_role = domaincontroller_master ]; then
+if [ $JS_LAST_EXECUTED_VERSION -le 19 ] && [ $server_role = domaincontroller_master ]; then
 	/usr/share/ucs-school-import/scripts/fix_ucsschool_roles
 fi
 if [ $JS_LAST_EXECUTED_VERSION -lt 19 ] && [ $server_role = domaincontroller_master ]; then

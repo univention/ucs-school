@@ -167,7 +167,8 @@ class UcsSchoolRolesMigration(object):
 		)
 		self.args = argp.parse_args()
 
-		all_schools = sorted([s.name for s in School.get_all(lo)])
+		self.all_school_objs = School.get_all(lo)
+		all_schools = sorted([s.name for s in self.all_school_objs])
 		if self.args.schools:
 			schools = sorted([s.strip() for s in self.args.schools.split(',') if s.strip()])
 			for school in schools:
@@ -312,7 +313,12 @@ class UcsSchoolRolesMigration(object):
 			def grp_dn_to_school(grp_dn):
 				m = ou_regex.match(grp_dn)
 				if m:
-					return m.groupdict().get('ou')
+					mixed_case_ou = m.groupdict().get('ou')
+					for school in self.all_school_objs:
+						if school.name.lower() == mixed_case_ou.lower():
+							return school.name
+					else:
+						raise RuntimeError('Unknown OU {!r} in group DN {!r}.'.format(mixed_case_ou, grp_dn))
 
 			def host_and_ous(filter_s, attr, grp_type, type_msg):
 				host_dn_to_ous = {}
