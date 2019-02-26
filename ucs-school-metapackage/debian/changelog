@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-43) unstable; urgency=low
+
+  * Bug #48734: added ucsschool.* images to ucs-school-central-slave
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 26 Feb 2019 16:02:53 +0100
+
 ucs-school-metapackage (12.0.0-42) unstable; urgency=low
 
   * Bug #48790: recommend http-api-import +-ui on dc master
