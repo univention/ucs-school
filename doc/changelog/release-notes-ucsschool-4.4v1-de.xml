@@ -260,7 +260,7 @@ Checking ldap_schema ...                          OK
 			<title>HTTP import API</title>
 			<itemizedlist>
 				<listitem><simpara>
-					FIX ME FIX ME FIX ME
+					The meta packages for DC master now recommend the installation of the HTTP-API import backend and frontend.
 				</simpara></listitem>
 			</itemizedlist>
 		</section>

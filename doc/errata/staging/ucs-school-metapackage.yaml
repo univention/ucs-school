@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-metapackage
-fix: 12.0.0-37A~4.4.0.201902251422
+fix: 12.0.0-42A~4.4.0.201902261543
 desc: |
  * Dummy Entry for samba simplification. Needs to be amended!
  * Add LDAP indices for ucsschoolRole (Bug #48384).
