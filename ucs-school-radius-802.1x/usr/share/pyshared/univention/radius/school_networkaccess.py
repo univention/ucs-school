@@ -47,7 +47,7 @@ class SchoolNetworkAccess(NetworkAccess):
 		self.load_info()
 
 	def load_info(self):
-		self.logger.debug('Loading proxy rules from ucr')
+		self.logger.debug('Loading proxy rules from UCR')
 		for key in self.configRegistry:
 			if key.startswith('proxy/filter/usergroup/'):
 				group = key[len('proxy/filter/usergroup/'):]
