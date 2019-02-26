@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-44) unstable; urgency=low
+
+  * Bug #48519: revert: don't die in update situation
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Feb 2019 17:41:06 +0100
+
 ucs-school-metapackage (12.0.0-43) unstable; urgency=low
 
   * Bug #48734: added ucsschool.* images to ucs-school-central-slave

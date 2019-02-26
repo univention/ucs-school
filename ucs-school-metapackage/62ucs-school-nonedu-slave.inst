@@ -192,7 +192,7 @@ for oudn in $(servers_school_ous) ; do
 	ouname="$(school_ou "$oudn")"
 	univention-directory-manager computers/domaincontroller_slave modify "$@" \
 		--dn "$ldap_hostdn" \
-		--append "ucsschoolRole=dc_slave_admin:school:${ouname}"
+		--append "ucsschoolRole=dc_slave_admin:school:${ouname}" || die
 done
 
 univention-directory-listener-ctrl resync ucsschool-s4-branch-site
