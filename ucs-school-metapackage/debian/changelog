@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-42) unstable; urgency=low
+
+  * Bug #48790: recommend http-api-import +-ui on dc master
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Feb 2019 15:40:16 +0100
+
 ucs-school-metapackage (12.0.0-41) unstable; urgency=low
 
   * Bug #48519: don't die in update situation
