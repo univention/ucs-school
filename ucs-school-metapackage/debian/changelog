@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-41) unstable; urgency=low
+
+  * Bug #48519: don't die in update situation
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Feb 2019 14:34:06 +0100
+
 ucs-school-metapackage (12.0.0-40) unstable; urgency=medium
 
   * Bug #48534: fix IFS unset
