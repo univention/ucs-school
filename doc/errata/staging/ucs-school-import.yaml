@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 
+fix: 16.0.3-4A~4.3.0.201902261750
 desc: |
  * The UCS@school import frameworks ImportUser class has been made more accessable to 3rd party software (Bug #48423).
  * The UCS@school import is now forward compatible to the renaming of record_uid and source_uid in UCS@school 4.4v1 (Bug #48478).
