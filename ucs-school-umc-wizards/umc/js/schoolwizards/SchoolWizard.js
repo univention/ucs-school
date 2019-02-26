@@ -84,7 +84,7 @@ define([
 					name: 'dc_name_administrative',
 					label: _('Name of administrative school server (optional)'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$',
-					description: _('Name of the administrative domaincontroller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The name of the administrative server may not be equal to the educational server! A administrative school server does not have to be specified.'),
+					description: _('Name of the administrative domaincontroller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The name of the administrative server may not be equal to the educational server! An administrative school server does not have to be specified.'),
 					maxLength: 12,
 					required: false,
 					visible: !this.editMode && !this.singleMaster

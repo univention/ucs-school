@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-4) unstable; urgency=low
+
+  * Bug #48743: fixed typo in tooltip
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 26 Feb 2019 11:56:06 +0100
+
 ucs-school-umc-wizards (11.0.0-3) unstable; urgency=low
 
   * Bug #48743: allow creation of administrative slaves via schools wizard
