@@ -69,12 +69,12 @@ class SchoolNetworkAccess(NetworkAccess):
 		self.logger.debug('Loaded group_info {}'.format(self.group_info))
 
 	def check_proxy_filter_policy(self):
-		self.logger.debug('Checking proxy rules network access')
+		self.logger.debug('Checking UCR proxy rules for user')
 		access = self.evaluate_proxy_network_access(self.username)
 		if access:
-			self.logger.info('Proxy rules allow attempt to login')
+			self.logger.info('Login attempt permitted by UCR proxy rules')
 		else:
-			self.logger.info('Proxy rules deny username attempt to login')
+			self.logger.info('Login attempt denied by UCR proxy rules')
 		return access
 
 	def evaluate_proxy_network_access(self, username):
