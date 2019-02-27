@@ -117,7 +117,7 @@ The resources ``status`` attribute will be updated by the import process.
 It may have one of the following values: ``New``, ``Scheduled``, ``Started``, ``Aborted``, ``Finished`` (`models.py:52 <https://github.com/univention/ucs-school/blob/b7d90f21fa89134163610859b8abf1132d0e8d96/ucs-school-import/modules/ucsschool/http_api/import_api/models.py#L52>`_).
 That value is shown in the "Status" column of the UMCs "User Imports" list.
 
-The resources ``result.status`` attribute may be set to the percentage of the import jobs progress and will be shown in the UMC modules progress bar.
+The resources ``result.result.percentage`` attribute may be set to the percentage of the import jobs progress and will be shown in the UMC modules progress bar.
 
 
 Create operation

@@ -35,7 +35,7 @@ class HttpApiImportTester(ImportTestbase):
 		roles = self.all_roles if roles is None else roles
 		user_dns = [] if user_dns is None else user_dns
 
-		return self.udm.create_group(
+		group_dn, group_name = self.udm.create_group(
 			position='cn=groups,{}'.format(ou_dn),
 			options=['posix', 'samba', 'ucsschoolImportGroup'],
 			append={
@@ -44,6 +44,18 @@ class HttpApiImportTester(ImportTestbase):
 				'ucsschoolImportSchool': allowed_ou_names,
 			}
 		)
+		utils.verify_ldap_object(
+			group_dn,
+			expected_attr={
+				'cn': [group_name],
+				'ucsschoolImportRole': roles,
+				'ucsschoolImportSchool': allowed_ou_names,
+				'uniqueMember': user_dns
+			},
+			strict=False,
+			should_exist=True
+		)
+		return group_dn, group_name
 
 	def run_http_import_through_python_client(
 			self,
