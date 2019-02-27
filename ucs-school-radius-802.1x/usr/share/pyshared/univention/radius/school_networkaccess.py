@@ -85,7 +85,7 @@ class SchoolNetworkAccess(NetworkAccess):
 		matching_groups = {group: info for group, info in self.group_info.iteritems() if group in groups}
 		if not matching_groups:
 			self.logger.debug('DENY: user {} not found in any WLAN enabled group'.format(username))
-			self.logger.debug('DENY: user {} groups={}'.format(groups))
+			self.logger.debug('DENY: user {} groups={}'.format(username, groups))
 			self.logger.debug('DENY: WLAN enabled groups={}'.format(self.group_info.keys()))
 			return False
 		max_priority = max(rule[0] for rule in matching_groups.values())
