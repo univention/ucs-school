@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (7.0.1-6) unstable; urgency=medium
+
+  * Bug #46018: fix syntax error and update wording of debug output
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 18 Feb 2019 16:51:05 +0100
+
 ucs-school-radius-802.1x (7.0.1-5) unstable; urgency=medium
 
   * Bug #46018: Fix typo
