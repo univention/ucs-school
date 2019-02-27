@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-metapackage
-fix: 12.0.0-42A~4.4.0.201902261543
+fix: 12.0.0-45A~4.4.0.201902271031
 desc: |
  * Dummy Entry for samba simplification. Needs to be amended!
  * Add LDAP indices for ucsschoolRole (Bug #48384).
@@ -13,4 +13,5 @@ desc: |
  * Add the new UCS@school logo (Bug #48699).
  * The meta packages have been adapted to handle the simplified installation (Bug #47969).
  * The meta packages for DC master now recommend the installation of the HTTP-API import backend and frontend (Bug #48790).
-bug: [47957, 48384, 48540, 48699, 48731, 48699, 47969, 48790]
+ * Set ucsschoolRole property for domain controllers during join (Bug #48226).
+bug: [47957, 48384, 48540, 48699, 48731, 48699, 47969, 48790, 48226]
