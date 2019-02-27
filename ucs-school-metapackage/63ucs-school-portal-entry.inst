@@ -80,7 +80,7 @@ fi
 
 # If portal_entry exists: modify, else create, or if it exists and 'create' is
 # used, the "--append portal" will have no effect.
-if udm settings/portal_entry list "$@" --filter cn=teacherconsole | egrep -q ^DN; then
+if udm settings/portal_entry list "$@" --filter cn=teacherconsole | egrep ^DN > /dev/null; then
 	OPERATION="modify --dn=cn=teacherconsole,cn=portal,cn=univention,$ldap_base"
 else
 	OPERATION=create
