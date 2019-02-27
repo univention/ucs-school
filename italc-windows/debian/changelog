@@ -1,3 +1,9 @@
+italc-windows (5.0.0-2) unstable; urgency=low
+
+  * Bug #37828: use fixed DN for iTALC samba share for DC master and DC backup
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 27 Feb 2019 10:53:47 +0100
+
 italc-windows (5.0.0-1) unstable; urgency=low
 
   * Bug #45988: bumped version

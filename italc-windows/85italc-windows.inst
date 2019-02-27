@@ -36,6 +36,7 @@
 VERSION=1
 
 . /usr/share/univention-join/joinscripthelper.lib
+. /usr/share/univention-lib/all.sh
 
 eval "$(ucr shell)"
 
@@ -44,19 +45,28 @@ joinscript_init
 set -e
 
 # determine OU
-ou_base="$(univention-ldapsearch -xLLL "(&(objectClass=ucsschoolOrganizationalUnit)(ucsschoolHomeShareFileServer=$ldap_hostdn))" dn | ldapsearch-wrapper | sed -nre 's/^dn: //p' | head -1)"
-if [ -z "$ou_base" ] ; then
-	echo "ERROR: $(basename "$0"): cannot determine ou ldap base for $ldap_hostdn"
-	exit 1
+
+if [ "$server_role" = "domaincontroller_master" -o "$server_role" = "domaincontroller_backup" ] ; then
+	position="cn=shares,${ldap_base}"
+	name_suffix="-$hostname"
+else
+	ou_base="$(univention-ldapsearch -xLLL "(&(objectClass=ucsschoolOrganizationalUnit)(ucsschoolHomeShareFileServer=$ldap_hostdn))" dn | ldapsearch-wrapper | sed -nre 's/^dn: //p' | head -1)"
+	if [ -z "$ou_base" ] ; then
+		echo "ERROR: $(basename "$0"): cannot determine ou ldap base for $ldap_hostdn"
+		exit 1
+	fi
+	# create missing containers
+	udm container/cn create "$@" --ignore_exists --set name="shares" --position "${ou_base}"
+	position="cn=shares,${ou_base}"
+	name_suffix=""
 fi
 
-# create missing containers
-udm container/cn create "$@" --ignore_exists --set name="shares" --position "${ou_base}"
 
 # create iTALC share providing iTALC binaries
 udm shares/share create "$@" --ignore_exists \
-	--position "cn=shares,${ou_base}" \
-	--set name="iTALC-Installation" \
+	--position "$position" \
+	--set name="iTALC-Installation${name_suffix}" \
+	--set sambaName="iTALC-Installation" \
 	--set "host=${hostname}.${domainname}" \
 	--set "path=/usr/share/italc-windows" \
 	--set "directorymode=0755" \
