@@ -38,6 +38,7 @@ joinscript_init
 
 eval "$(ucr shell)"
 . /usr/share/univention-lib/all.sh
+. /usr/share/ucs-school-lib/base.sh
 
 append_ucr_policy_to_base() {
 	local policy_dn_list
