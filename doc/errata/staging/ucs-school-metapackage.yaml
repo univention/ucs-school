@@ -13,5 +13,5 @@ desc: |
  * Add the new UCS@school logo (Bug #48699).
  * The meta packages have been adapted to handle the simplified installation (Bug #47969).
  * The meta packages for DC master now recommend the installation of the HTTP-API import backend and frontend (Bug #48790).
- * Set ucsschoolRole property for domain controllers during join (Bug #48226).
-bug: [47957, 48384, 48540, 48699, 48731, 48699, 47969, 48790, 48226]
+ * Set ucsschoolRole property for domain controllers during join (Bug #48519).
+bug: [47957, 48384, 48540, 48699, 48731, 48699, 47969, 48790, 48519]
