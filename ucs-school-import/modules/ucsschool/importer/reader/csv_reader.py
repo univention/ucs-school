@@ -192,7 +192,7 @@ class CsvReader(BaseReader):
 		:param str mapping_value: the value in config["csv"]["mapping"]
 		:param str csv_value: the associated value from the CSV line
 		:param ImportUser import_user: the object to modify
-		:return: True if the field was handles here. It will be ignored in map(). False if map() should handle the field.
+		:return: True if the field was handled here. It will be ignored in map(). False if map() should handle the field.
 		:rtype: bool
 		"""
 		if mapping_value == "__ignore":

@@ -67,6 +67,27 @@ class Test(CLI_Import_v2_Tester):
 			except authFail:
 				self.log.info('OK: deactivated user cannot bind to LDAP server.')
 
+		self.log.info('*** Importing deactivated users, activating them...')
+		for person in person_list:
+			person.set_active()
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		wait_for_drs_replication(filter_format('cn=%s', (person_list[-1].username,)))
+		for person in person_list:
+			person.verify()
+			udm_user = User.from_dn(person.dn, None, self.lo).get_udm_object(self.lo)
+			self.log.info('disabled: %r', udm_user.get('disabled'))
+			self.log.info('locked: %r', udm_user.get('locked'))
+			self.log.info('userexpiry: %r', udm_user.get('userexpiry'))
+			try:
+				univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+				self.log.info('OK: reactivated user can bind to LDAP server.')
+			except authFail:
+				self.fail('Reactivated user cannot bind to LDAP server.')
+
 
 if __name__ == '__main__':
 	Test().run()
