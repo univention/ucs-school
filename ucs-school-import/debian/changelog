@@ -1,3 +1,9 @@
+ucs-school-import (17.0.5-1) unstable; urgency=low
+
+  * Bug #48836: remove ucs-school-join-secondary-samba4
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 03 Mar 2019 20:57:00 +0100
+
 ucs-school-import (17.0.4-10) unstable; urgency=low
 
   * Bug #48519: fix ucsschoolRole migration script regarding case of OUs
