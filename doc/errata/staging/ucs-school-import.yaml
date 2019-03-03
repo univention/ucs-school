@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.4-9A~4.4.0.201902251230
+fix: 17.0.5-1A~4.4.0.201903032100
 desc: |
  * The UCS@school import frameworks ImportUser class has been made more accessable to 3rd party software (Bug #48423).
  * Activate the role feature by default (Bug #48226).
@@ -15,4 +15,5 @@ desc: |
  * The old legacy import now sets options, ucsschool_roles and schools (Bug #48678).
  * The postinst scripts now use <command>call_joinscript</command> instead of calling join scripts directly (Bug #48731).
  * Specify description of <envar>ucsschool/import/attach/policy/default-umc-users</envar> (Bug #48722).
-bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246, 48678, 48731, 48722]
+ * Starting with UCS@school 4.4, it is no longer supported to create secondary slaves for a school server. Therefore the script <filename>ucs-school-join-secondary-samba4</filename> has been removed (Bug #48836).
+bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246, 48678, 48731, 48722, 48836]
