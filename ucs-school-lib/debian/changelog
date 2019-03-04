@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-13) unstable; urgency=low
+
+  * Bug #48732: remove handling of role for secondary school slave
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Mar 2019 12:42:04 +0100
+
 ucs-school-lib (12.1.0-12) unstable; urgency=medium
 
   * Bug #48722: Fix Domain Users OU creation

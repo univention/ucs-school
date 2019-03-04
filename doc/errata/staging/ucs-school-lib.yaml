@@ -12,4 +12,5 @@ desc: |
  * A users school_classes are now removed, if the school_classes attribute is empty (Bug #48045).
  * Additional validation has been added for computer objects (Bug #48099).
  * Fix creation of Domain Users $OU if <envar>ucsschool/import/attach/policy/default-umc-users=no</envar> (Bug #48722)
-bug: [48428, 47885, 48429, 48226, 48045, 48226, 48647, 48099, 48741, 48722]
+ * Remove handling of role for secondary school slave (Bug #48732).
+bug: [48428, 47885, 48429, 48226, 48045, 48226, 48647, 48099, 48741, 48722, 48732]

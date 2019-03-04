@@ -49,7 +49,7 @@ from ucsschool.lib.models import (
 	AnyComputer, BasicGroup, ClassShare, WorkGroupShare, ComputerRoom, School, SchoolClass, SchoolDCSlave, User,
 	WorkGroup, SchoolGroup, MacComputer, WindowsComputer, IPComputer)
 from ucsschool.lib.roles import (
-	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu, role_dc_slave_edu_secondary,
+	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu,
 	role_dc_master, role_memberserver, role_dc_backup, role_memberserver_admin, role_memberserver_edu, role_dc_slave,
 	role_single_master, role_school, role_school_admin, role_school_admin_group, role_school_domain_group,
 	role_school_teacher_group, role_school_student_group, role_school_staff_group)
@@ -368,13 +368,7 @@ class UcsSchoolRolesMigration(object):
 						host_dn,
 						'ucsschoolServer'
 					)
-				else:
-					self.set_ldap_attr(
-						'DC slave edu secondary',
-						[create_ucsschool_role_string(role_dc_slave_edu_secondary, ou) for ou in ous],
-						host_dn,
-						'ucsschoolServer'
-					)
+				# else: slave not yet joined -> no services -> no role yet
 
 			mark_server('DC-Verwaltungsnetz', 'DC slave admin', role_dc_slave_admin)
 			mark_server('Member-Edukativnetz', 'member server edu', role_memberserver_edu)

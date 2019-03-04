@@ -40,8 +40,7 @@ from logging.handlers import RotatingFileHandler
 import univention.admin.uldap
 from univention.config_registry import ConfigRegistry
 from ucsschool.lib.roles import (
-	role_dc_slave_edu, role_dc_slave_edu_secondary, role_dc_slave_admin, role_memberserver_edu, role_memberserver_admin,
-	role_win_computer)
+	role_dc_slave_edu, role_dc_slave_admin, role_memberserver_edu, role_memberserver_admin, role_win_computer)
 from ucsschool.lib.models import School
 
 LOG_FILE = '/var/log/univention/ucsschool-roles-migration.log'
@@ -88,9 +87,7 @@ for dn, attr in lo.search('ucsschoolRole=win_compuer:school:*', attr=['ucsschool
 	logger.info('Changing "ucsschoolRole" of %r from %r to %r.', dn, old_roles, new_roles)
 	lo.modify(dn, [('ucsschoolRole', old_roles, new_roles)])
 
-for role in (
-	role_dc_slave_edu, role_dc_slave_edu_secondary, role_dc_slave_admin, role_memberserver_edu, role_memberserver_admin,
-):
+for role in (role_dc_slave_edu, role_dc_slave_admin, role_memberserver_edu, role_memberserver_admin):
 	for dn, attr in lo.search('(ucsschoolRole={}:school:*)'.format(role), attr=['ucsschoolRole']):
 		old_roles = attr['ucsschoolRole']
 		mixed_case_ous = [old_role.split(':', 2)[2] for old_role in old_roles]

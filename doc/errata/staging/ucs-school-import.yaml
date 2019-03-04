@@ -16,4 +16,5 @@ desc: |
  * The postinst scripts now use <command>call_joinscript</command> instead of calling join scripts directly (Bug #48731).
  * Specify description of <envar>ucsschool/import/attach/policy/default-umc-users</envar> (Bug #48722).
  * Starting with UCS@school 4.4, it is no longer supported to create secondary slaves for a school server. Therefore the script <filename>ucs-school-join-secondary-samba4</filename> has been removed (Bug #48836).
-bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246, 48678, 48731, 48722, 48836]
+ * Remove handling of role for secondary school slave (Bug #48732).
+bug: [45538, 48423, 48226, 47351, 48478, 48045, 48246, 48678, 48731, 48722, 48836, 48732]
