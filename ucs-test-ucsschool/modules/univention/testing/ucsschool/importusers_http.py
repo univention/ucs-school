@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import os
+import json
 import time
+import tempfile
 import univention.testing.utils as utils
 from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 try:
-	from typing import Optional, Tuple
+	from typing import Dict, Optional, Tuple
 	from ucsschool.http_api.client import Client, ResourceRepresentation
 except ImportError:
 	pass
 
 
 class HttpApiImportTester(ImportTestbase):
+	default_config_path = '/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json'
+	_default_config = {}
 
 	def create_import_security_group(
 			self,
@@ -57,6 +62,13 @@ class HttpApiImportTester(ImportTestbase):
 		)
 		return group_dn, group_name
 
+	@property
+	def default_config(self):
+		if not self._default_config:
+			with open(self.default_config_path, 'r') as fp:
+				self._default_config.update(json.load(fp))
+		return self._default_config
+
 	def run_http_import_through_python_client(
 			self,
 			client,  # type: Client
@@ -64,7 +76,8 @@ class HttpApiImportTester(ImportTestbase):
 			school,  # type: str
 			role,  # type: str
 			dryrun=True,  # type: Optional[bool]
-			timeout=600  # type: Optional[int]
+			timeout=600,  # type: Optional[int]
+			config=None,  # type: Optional[Dict[str, str]]
 	):
 		# type: (...) -> ResourceRepresentation.UserImportJobResource
 		"""
@@ -76,31 +89,76 @@ class HttpApiImportTester(ImportTestbase):
 		:param str role: UCS@school user role
 		:param bool dryrun: whether to do a dry-run or a real import
 		:param int timeout: seconds to wait for the import to finish
+		:param dict config: if not None: configuration to temporarily write to
+			`/var/lib/ucs-school-import/configs/user_import_http-api.json`
 		:return: UserImportJob resource representation object
 		:rtype: ResourceRepresentation.UserImportJobResource
 		"""
-		t0 = time.time()
-		import_job = client.userimportjob.create(
-			filename=filename,
-			school=school,
-			user_role=role,
-			dryrun=dryrun
-		)
-		while time.time() - t0 < timeout:
-			job = client.userimportjob.get(import_job.id)  # type: ResourceRepresentation.UserImportJobResource
-			if job.status in ('Finished', 'Aborted'):
-				return job
-			if job.result and isinstance(job.result.result, dict):
-				progress = float(job.result.result.get('percentage', 0.0))
-			else:
-				progress = 0.0
-			self.log.debug(
-				'Waiting for import job %r to finish (%d%% - %d/%ds)...',
-				import_job.id,
-				int(progress),
-				int(time.time() - t0),
-				timeout
+		if not config and config is not None:
+			self.log.warn('Empty "config" passed!')
+		with TempHttpApiConfig(config):
+			t0 = time.time()
+			import_job = client.userimportjob.create(
+				filename=filename,
+				school=school,
+				user_role=role,
+				dryrun=dryrun
 			)
-			time.sleep(1)
+			while time.time() - t0 < timeout:
+				job = client.userimportjob.get(import_job.id)  # type: ResourceRepresentation.UserImportJobResource
+				if job.status in ('Finished', 'Aborted'):
+					return job
+				if job.result and isinstance(job.result.result, dict):
+					progress = float(job.result.result.get('percentage', 0.0))
+				else:
+					progress = 0.0
+				self.log.debug(
+					'Waiting for import job %r to finish (%d%% - %d/%ds)...',
+					import_job.id,
+					int(progress),
+					int(time.time() - t0),
+					timeout
+				)
+				time.sleep(1)
+			else:
+				utils.fail('Import job did not finish in {} seconds.'.format(timeout))
+
+	def fail(self, msg, returncode=1, import_job=None):
+		"""
+		Print import jobs logfile, then print package versions, traceback and
+		error message.
+		"""
+		if import_job:
+			self.log.debug('------ Start logfile of job %r ------', import_job.id)
+			self.log.debug(import_job.log_file)
+			self.log.debug('------ End logfile of job %r ------', import_job.id)
 		else:
-			utils.fail('Import job did not finish in {} seconds.'.format(timeout))
+			self.log.debug('No import_job - no logfile.')
+		return super(HttpApiImportTester, self).fail(msg, returncode)
+
+
+class TempHttpApiConfig(object):
+	default_config_path = '/var/lib/ucs-school-import/configs/user_import_http-api.json'
+
+	def __init__(self, config):
+		self.config = config
+		if config is not None:
+			_fd, self.original_config_backup = tempfile.mkstemp(dir=os.path.dirname(self.default_config_path))
+
+	def __enter__(self):
+		if self.config is None:
+			return
+		# copy original to backup file. copy only content, leaving permissions intact.
+		with open(self.original_config_backup, 'w') as fpw:
+			with open(self.default_config_path, 'r') as fpr:
+				fpw.write(fpr.read())
+		with open(self.default_config_path, 'w') as fpw:
+			json.dump(self.config, fpw)
+
+	def __exit__(self, exc_type, exc_val, exc_tb):
+		if self.config is None:
+			return
+		with open(self.default_config_path, 'w') as fpw:
+			with open(self.original_config_backup, 'r') as fpr:
+				fpw.write(fpr.read())
+		os.remove(self.original_config_backup)

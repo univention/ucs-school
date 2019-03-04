@@ -92,14 +92,23 @@ class Test(HttpApiImportTester):
 			self.log.info('------ CSV file content:\n{}------ End ------'.format(open(tmpfile1.name).read()))
 			self.log.info('------ Starting import through HTTP-API Python client... ------')
 			role = random.choice(roles)
-			import_job = self.run_http_import_through_python_client(client, tmpfile1.name, self.ou_A.name, role, False)
+			import_job = self.run_http_import_through_python_client(
+				client,
+				tmpfile1.name,
+				self.ou_A.name,
+				role,
+				False,
+				config=self.default_config
+			)
 			self.log.debug('import_job=%r', import_job)
 			if import_job.status == 'Finished':
 				self.log.info(
 					'*** OK: import succeeded without "$OU-" in the class column, class names should start '
 					'with "$OU-"...')
 			else:
-				self.fail('Import failed: status={!r} result={!r}'.format(import_job.status, import_job.result.result))
+				self.fail(
+					'Import failed: status={!r} result={!r}'.format(import_job.status, import_job.result.result),
+					import_job=import_job)
 
 			with open(tmpfile1.name) as fp_in:
 				reader = DictReader(fp_in)
@@ -112,7 +121,8 @@ class Test(HttpApiImportTester):
 						if sc.school != self.ou_A.name or sc.name not in school_class_names_in_csv:
 							self.fail(
 								'Unexpected school class name: school={!r} and name={!r}, expected {!r} and one of {!r}.'.format(
-									sc.school, sc.name, self.ou_A.name, school_class_names_in_csv)
+									sc.school, sc.name, self.ou_A.name, school_class_names_in_csv),
+								import_job=import_job
 							)
 			self.log.info('*** OK: all school class names are as expected.')
 
@@ -134,14 +144,23 @@ class Test(HttpApiImportTester):
 			self.log.info('------ CSV file content:\n{}------ End ------'.format(open(tmpfile2.name).read()))
 			self.log.info('------ Starting import through HTTP-API Python client... ------')
 			role = random.choice(roles)
-			import_job = self.run_http_import_through_python_client(client, tmpfile2.name, self.ou_A.name, role, False)
+			import_job = self.run_http_import_through_python_client(
+				client,
+				tmpfile2.name,
+				self.ou_A.name,
+				role,
+				False,
+				config=self.default_config
+			)
 			self.log.debug('import_job=%r', import_job)
 			if import_job.status == 'Finished':
 				self.log.info(
 					'*** OK: import succeded with allowed "$OU-" in the class column, class names should start '
 					'with "$OU-$OU-"...')
 			else:
-				self.fail('Import failed: status={!r} result={!r}'.format(import_job.status, import_job.result.result))
+				self.fail(
+					'Import failed: status={!r} result={!r}'.format(import_job.status, import_job.result.result),
+					import_job=import_job)
 
 			with open(tmpfile1.name) as fp_in:
 				reader = DictReader(fp_in)
@@ -154,7 +173,8 @@ class Test(HttpApiImportTester):
 						if sc.school != self.ou_A.name or sc.name not in school_class_names_in_csv:
 							self.fail(
 								'Unexpected school class name: school={!r} and name={!r}, expected {!r} and one of {!r}.'.format(
-									sc.school, sc.name, self.ou_A.name, school_class_names_in_csv)
+									sc.school, sc.name, self.ou_A.name, school_class_names_in_csv),
+								import_job=import_job
 							)
 			self.log.info('*** OK: all school class names are as expected.')
 
@@ -188,12 +208,21 @@ class Test(HttpApiImportTester):
 			self.log.info('------ CSV file content:\n{}------ End ------'.format(open(tmpfile2.name).read()))
 			self.log.info('------ Starting import through HTTP-API Python client... ------')
 			role = random.choice(roles)
-			import_job = self.run_http_import_through_python_client(client, tmpfile2.name, self.ou_A.name, role, False)
+			import_job = self.run_http_import_through_python_client(
+				client,
+				tmpfile2.name,
+				self.ou_A.name,
+				role,
+				False,
+				config=self.default_config
+			)
 			self.log.debug('import_job=%r', import_job)
 			if import_job.status == 'Aborted':
 				self.log.info('OK: import failed: status=%r result=%r', import_job.status, import_job.result.result)
 			else:
-				self.fail('Import succeeded: status={!r} result={!r}'.format(import_job.status, import_job.result.result))
+				self.fail(
+					'Import succeeded: status={!r} result={!r}'.format(import_job.status, import_job.result.result),
+					import_job=import_job)
 
 
 if __name__ == '__main__':

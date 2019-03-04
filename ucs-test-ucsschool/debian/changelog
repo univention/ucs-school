@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-27) unstable; urgency=low
+
+  * Bug #48651: fix 219_import_users_umlauts_normalized and
+    302_http-api_class_column_no_school
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Mar 2019 11:51:32 +0100
+
 ucs-test-ucsschool (6.0.0-26) unstable; urgency=low
 
   * Bug #48651: test activating deactivated users

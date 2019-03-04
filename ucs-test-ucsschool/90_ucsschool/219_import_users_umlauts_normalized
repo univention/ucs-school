@@ -19,13 +19,7 @@ class Test(CLI_Import_v2_Tester):
 	ou_B = None
 	ou_C = None
 
-	def test(self):  # formerly test_create_modify_delete_user()
-		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			import user with role <role>
-			modify user with role <role> → changing group memberships
-			remove user with role <role>
-		"""
+	def test(self):
 		source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('source_uid', source_uid)
@@ -75,7 +69,6 @@ class Test(CLI_Import_v2_Tester):
 		fn_config = self.create_config_json(config=config)
 		self.save_ldap_status()
 		self.run_import(['-c', fn_config])
-		self.check_new_and_removed_users(4, 0)
 		for person in person_list:
 			person.update(
 				username=person._expected_names['username'],
