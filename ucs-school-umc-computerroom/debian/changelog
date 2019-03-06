@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-1) unstable; urgency=medium
+
+  * Bug #48868: Fix grid header layout
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 06 Mar 2019 10:40:21 +0200
+
 ucs-school-umc-computerroom (11.0.0-0) unstable; urgency=medium
 
   * bump version for UCS@school 4.4

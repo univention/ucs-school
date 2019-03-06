@@ -1,0 +1,15 @@
+.computerroomGrid .umcGridHeader {
+	display: block !important;
+}
+
+.computerroomGrid .umcGrid__toolbar {
+	float: left !important;
+}
+.computerroomGrid .umcGrid__contextWrapper {
+	float: left !important;
+}
+
+.computerroomGrid .umcGridStatus {
+	width: 100% !important;
+}
+

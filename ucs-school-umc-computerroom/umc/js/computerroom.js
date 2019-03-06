@@ -61,10 +61,11 @@ define([
 	"umc/widgets/ProgressBar",
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
-	"umc/i18n!umc/modules/computerroom"
+	"umc/i18n!umc/modules/computerroom",
+	"xstyle/css!./computerroom.css"
 ], function(declare, lang, array, ioQuery, aspect, on, topic, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
-            Dialog, Tooltip, styles, entities, UMCApp, dialog, tools, Grid, Button, Module, Page, Form,
-            ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
+			Dialog, Tooltip, styles, entities, UMCApp, dialog, tools, Grid, Button, Module, Page, Form,
+			ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
 	var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
@@ -169,7 +170,7 @@ define([
 				type: Text,
 				name: 'examEndTime',
 				'class': 'dijitButtonText umcExamEndTimeButton',
-				style: 'display: inline-block; vertical-align: middle;',
+				style: 'display: inline-block; vertical-align: middle; padding: 0 16px;',
 				visible: false
 			}, {
 				name: 'collect',
@@ -724,8 +725,10 @@ define([
 			this._objStore = new Observable(new Memory({ data: [], idProperty: 'id' }));
 
 			this._grid = new Grid({
+				'class': 'computerroomGrid',
 				moduleStore: this._objStore,
 				actions: lang.clone(this._actions),
+				dontUpdateActionsVisibility: true,
 				columns: columns,
 				sortIndex: 1,
 				footerFormatter: function(nItems, nItemsTotal) {
@@ -772,6 +775,7 @@ define([
 			array.forEach(this._headActionsTop, addButtonTo(_containerTop));
 
 			this._grid._header.addChild(_containerRight);
+			this._grid._header.addChild(this._grid._statusMessage);
 			this._grid._header.addChild(_containerTop, 0);
 		},
 
