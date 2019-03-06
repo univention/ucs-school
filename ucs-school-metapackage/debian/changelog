@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.0-50) unstable; urgency=medium
+
+  * Bug #48883: create ldap indices for school attributes on central slave
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 06 Mar 2019 16:09:19 +0100
+
 ucs-school-metapackage (12.0.0-49) unstable; urgency=low
 
   * Bug #48540: fix some typos in demo portal
