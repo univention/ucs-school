@@ -37,6 +37,14 @@ from os import listdir
 import os.path
 from collections import defaultdict
 
+try:
+	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+	import logging.Logger
+	from ucsschool.lib.pyhooks import PyHook
+	PyHookTV = TypeVar('PyHookTV', bound=PyHook)
+except ImportError:
+	pass
+
 
 class PyHooksLoader(object):
 	"""
@@ -47,9 +55,10 @@ class PyHooksLoader(object):
 	"""
 
 	# Dict[base_class_name, List[Class]]
-	_hook_classes = {}  # type: Dict[str, List[type]]
+	_hook_classes = {}  # type: Dict[str, List[PyHookTV]]
 
 	def __init__(self, base_dir, base_class, logger, filter_func=None):
+		# type: (str, Type[PyHookTV], logging.Logger, Optional[Callable[[Type[PyHookTV]], bool]]) -> None
 		"""
 
 		Hint: if you wish to pass a logging instance to a hook, add it to the
@@ -74,7 +83,7 @@ class PyHooksLoader(object):
 		self._filter_func = filter_func
 		self._pyhook_obj_cache = None
 
-	def drop_cache(self):
+	def drop_cache(self):  # type: () -> None
 		"""
 		Drop the cache of loaded hook classes and force a rerun of the
 		filesystem search, next time get_hook_classes() or get_pyhook_objects()
@@ -86,7 +95,7 @@ class PyHooksLoader(object):
 		if self.base_class_name in self._hook_classes:
 			del self._hook_classes[self.base_class_name]
 
-	def get_hook_classes(self):
+	def get_hook_classes(self):  # type: () -> List[PyHookTV]
 		"""
 		Search hook files in filesystem and load classes.
 		No objects are initialized, no sorting is done.
@@ -113,7 +122,7 @@ class PyHooksLoader(object):
 			self.logger.info("Found hook classes: %s", ", ".join(c.__name__ for c in self._hook_classes[self.base_class_name]))
 		return self._hook_classes[self.base_class_name]
 
-	def get_hook_objects(self, *args, **kwargs):
+	def get_hook_objects(self, *args, **kwargs):  # type: (*Any, **Any) -> List[PyHookTV]
 		"""
 		Get hook classes, initialize objects and sort by method and priority.
 
@@ -148,6 +157,7 @@ class PyHooksLoader(object):
 
 	@staticmethod
 	def _load_hook_class(cls_name, info, super_class):
+		# type: (str, Tuple[file, str, Tuple[str, str, int]], Type[PyHookTV]) -> Optional[Type[PyHookTV]]
 		res = imp.load_module(cls_name, *info)
 		for thing in dir(res):
 			candidate = getattr(res, thing)
