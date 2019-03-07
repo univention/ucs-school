@@ -38,6 +38,7 @@ from ucsschool.importer.exceptions import UcsSchoolImportError, UcsSchoolImportF
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
+from ucsschool.importer.utils.pre_read_pyhook import PreReadPyHook
 from ucsschool.importer.utils.result_pyhook import ResultPyHook
 from ucsschool.lib.models.utils import stopped_notifier
 from ucsschool.lib.pyhooks import PyHooksLoader
@@ -110,6 +111,8 @@ class MassImport(object):
 		user_import = self.factory.make_user_importer(self.dry_run)
 		exc = None
 		try:
+			user_import.progress_report(description='Running pre-read hooks: 0%.', percentage=0)
+			self.call_pyhook(PreReadPyHook, 'pre_read', self.config)
 			user_import.progress_report(description='Analyzing data: 1%.', percentage=1)
 			imported_users = user_import.read_input()
 			users_to_delete = user_import.detect_users_to_delete()
