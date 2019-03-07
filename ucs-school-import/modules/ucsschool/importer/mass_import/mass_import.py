@@ -53,7 +53,7 @@ class MassImport(object):
 	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
 	_result_pyhook_cache = None
 
-	def __init__(self, dry_run=True):
+	def __init__(self, dry_run=True):  # type: (Optional[bool]) -> None
 		"""
 		:param bool dry_run: set to False to actually commit changes to LDAP
 		"""
@@ -66,7 +66,7 @@ class MassImport(object):
 		self.errors = list()
 		self.user_import_stats_str = ''
 
-	def mass_import(self):
+	def mass_import(self):  # type: () -> None
 		with stopped_notifier():
 			self.import_computers()
 			self.import_groups()
@@ -98,7 +98,7 @@ class MassImport(object):
 	def import_routers(self):
 		pass
 
-	def import_users(self):
+	def import_users(self):  # type: () -> None
 		self.logger.info("------ Importing users... ------")
 		user_import = self.factory.make_user_importer(self.dry_run)
 		exc = None

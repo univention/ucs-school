@@ -39,12 +39,13 @@ from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfigura
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.configuration_checks import run_configuration_checks
 try:
-	from typing import List
+	from typing import Any, Dict, List, Optional, Type
+	import logging.Logger
 except ImportError:
 	pass
 
 
-def setup_configuration(conffiles, **kwargs):
+def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> ReadOnlyDict
 	config = Configuration(conffiles)
 	config.update(kwargs)
 	config.post_read(get_logger())
@@ -56,21 +57,21 @@ def setup_configuration(conffiles, **kwargs):
 
 class ConfigurationFile(object):
 
-	def __init__(self, filename):
+	def __init__(self, filename):  # type: (str) -> None
 		self.filename = filename
 		self.logger = get_logger()
 
-	def read(self):
+	def read(self):  # type: () -> Dict[str, Any]
 		self.logger.info("Reading configuration from %r...", self.filename)
 		with open(self.filename, "rb") as fp:
 			return json.load(fp)
 
-	def write(self, conf):
+	def write(self, conf):  # type: (str) -> None
 		self.logger.info("Writing configuration to %r...", self.filename)
 		with open(self.filename, "wb") as fp:
 			return json.dump(conf, fp)
 
-	def update(self, conf):
+	def update(self, conf):  # type: (**str) -> None
 		self.logger.info("Updating configuration in %r...", self.filename)
 		cur = self.read()
 		cur.update(conf)
@@ -81,7 +82,7 @@ class ConfigurationFile(object):
 class ReadOnlyDict(dict):
 
 	@classmethod
-	def _recursive_typed_update(cls, a, b):
+	def _recursive_typed_update(cls, a, b):  # type: (Dict[Any, Any], Dict[Any, Any]) -> Dict[Any, Any]
 		for k, v in b.items():
 			if isinstance(v, dict):
 				# recurse into nested dict
@@ -98,16 +99,16 @@ class ReadOnlyDict(dict):
 					a[k] = t(v)
 		return a
 
-	def update(self, E=None, **F):
+	def update(self, E=None, **F):  # type: (Optional[Dict[Any, Any]], **Any) -> None
 		self._recursive_typed_update(self, E)
 		if F:
 			self._recursive_typed_update(self, F)
 
 	@staticmethod
-	def __closed(*args, **kwargs):
+	def __closed(*args, **kwargs):  # type: (*Any, **Any) -> None
 		raise ReadOnlyConfiguration()
 
-	def post_read(self, logger):
+	def post_read(self, logger):  # type: (logging.Logger) -> None
 		try:
 			mandatory_attributes = self["mandatory_attributes"]
 			assert isinstance(mandatory_attributes, list)
@@ -141,7 +142,7 @@ class ReadOnlyDict(dict):
 		if self.get('source_uid') and not self.get('sourceUID'):
 			self['sourceUID'] = self['source_uid']
 
-	def close(self):
+	def close(self):  # type: () -> None
 		self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed  # noqa
 
 
@@ -150,9 +151,9 @@ class Configuration(object):
 	Singleton to the global configuration object.
 	"""
 	class __SingleConf:
-		conffiles = list()  # type: List[str]
+		conffiles = list()
 
-		def __init__(self, filenames):
+		def __init__(self, filenames):  # type: (List[str]) -> None
 			if not filenames:
 				raise InitialisationError("Configuration not yet loaded.")
 			self.config = None
@@ -172,7 +173,7 @@ class Configuration(object):
 
 	_instance = None
 
-	def __new__(cls, filename=None):
+	def __new__(cls, filenames=None):  # type: (Type[Configuration], Optional[List[str]]) -> ReadOnlyDict
 		if not cls._instance:
-			cls._instance = cls.__SingleConf(filename)
+			cls._instance = cls.__SingleConf(filenames)
 		return cls._instance.config

@@ -33,16 +33,18 @@
 Base class for UCS@school import tool cmdline frontends.
 """
 
-import sys
 import pprint
-from logging import StreamHandler
-import traceback
 
 from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose, add_file_handler, move_our_handlers_to_lib_logger
 from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
 from ucsschool.importer.configuration import Configuration, setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.exceptions import InitialisationError, TooManyErrors, UcsSchoolImportFatalError
+
+try:
+	from typing import List
+except ImportError:
+	pass
 
 
 class CommandLine(object):
@@ -88,7 +90,7 @@ class CommandLine(object):
 		return self.config
 
 	@property
-	def configuration_files(self):
+	def configuration_files(self):  # type: () -> List[str]
 		"""
 		IMPLEMENTME to add module specific configuration files:
 		res = super(YouClass, self).configuration_files

@@ -34,12 +34,16 @@ UCS@school new import tool cmdline frontend.
 """
 
 from ucsschool.importer.frontend.cmdline import CommandLine
+try:
+	from typing import List
+except ImportError:
+	pass
 
 
 class UserImportCommandLine(CommandLine):
 
 	@property
-	def configuration_files(self):
+	def configuration_files(self):  # type: () -> List[str]
 		"""
 		Add new user import specific configuration files.
 
