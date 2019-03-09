@@ -27,7 +27,8 @@
 		  <guimenu>Schulen</guimenu> erfolgen, welches sich in der Modulgruppe
 			<emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das
 			Suchen nach, sowie das Anlegen, Bearbeiten und Löschen von Schulen in der
-			&ucsUAS;-Umgebung.
+			&ucsUAS;-Umgebung. Bevor ein neuer Schulserver der &ucsUAS;-Domäne beitreten kann, muss
+			die dazugehörige Schule angelegt werden.
 		</para>
 		<section id="school:setup:umc:schools:create">
 		  <title>Anlegen von Schulen</title>
@@ -59,23 +60,33 @@
 			Einsatz.
 		  </para>
 		  <para>
-			In Single-Server-Umgebungen ist die Angabe eines Schulservernamens nicht erforderlich,
+			In Single-Server-Umgebungen ist die Angabe eines Rechnernamens für Schulserver nicht erforderlich,
 			während in Multi-Server-Umgebungen der <guimenu>Rechnername des Schulservers</guimenu> angegeben
 			werden muss.  Der eingetragene Schulserver wird automatisch als Dateiserver für Klassen- und
 			Benutzerfreigaben verwendet (siehe <xref linkend="school:setup:generic:windowsattributes"/> und
 			<xref linkend="school:windows:shares"/>).
+			Optional kann auch der <guimenu>Rechnername des Verwaltungsservers</guimenu> angegeben werden,
+			sofern dieser verwendet werden soll.
 		  </para>
 		  <para>
 			Nach dem erfolgreichen Anlegen der Schule über die Schaltfläche
 			<guimenu>Speichern</guimenu> erscheint eine Statusmeldung im oberen Teil der &ucsUMC;.
 		  </para>
+		  <caution>
+			  <para>
+				  Bei Schulservern bzw. Verwaltungsservern muss die Schule <emphasis>vor</emphasis> dem Domänenbeitritt
+				  des Systems angelegt und der Rechnername des Schulservers bzw. Verwaltungsservers an der Schule
+				  hinterlegt werden. Stimmen hinterlegter Rechnername und der Name des beitretenden Systems nicht überein,
+				  wird ein &ucsSlave; ohne &ucsUAS;-Funktionalität installiert und eingerichtet.
+			  </para>
+		  </caution>
 		  <note>
 			<para>
 			  Das Schulkürzel sollte ausschließlich aus Buchstaben (a-z und A-Z), Ziffern (0-9) oder dem Bindestrich (-) bestehen,
 			  da es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen bildet.
 			</para>
 			<para>
-			  Der Name des Schulservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
+			  Der Name des Schulservers bzw. Verwaltungsservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
 			  bestehen (a-z, 0-9 und -). Der Name darf nur mit einem Kleinbuchstaben beginnen, mit einem
 			  Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 12 Zeichen beschränkt. Bei
 			  Abweichungen von diesen Vorgaben kann es zu Problemen bei der Verwendung von Windows-Clients kommen.
@@ -95,6 +106,18 @@
 			Funktion dieser Freigabeserver wird in <xref linkend="school:setup:generic:windowsattributes"/> und
 			<xref linkend="school:windows:shares"/> beschrieben.
 		  </para>
+		  <para>
+			  Das nachträgliche Hinzufügen von Schulservern für das Verwaltungsnetz ist derzeit nicht über die UMC möglich.
+			  Auf der Kommandozeile kann dies jedoch über das Tool <command>create_ou</command> erreicht werden. Diesem Tool
+			  sind als Parameter der OU-Name, der Rechnername des existierenden Schulservers im Edukativnetz und der noch
+			  fehlende Rechnername für den Schulserver im Verwaltungsnetz zu übergeben. Im folgenden Beispiel wird für die
+			  Schule <literal>gymmitte</literal>, die bereits den Schulserver <literal>dcgymmitte</literal> im Edukativnetz einsetzt,
+			  zusätzlich der Schulserver <literal>admgymmitte</literal> für das Verwaltungsnetz hinterlegt:
+			  <programlisting language="sh">
+cd /usr/share/ucs-school-import/scripts/
+./create_ou gsmitte dcgymmitte admgymmitte
+			  </programlisting>
+		  </para>
 		</section>
 		<section id="school:setup:umc:schools:delete">
 		  <title>Löschen von Schulen</title>
@@ -104,7 +127,7 @@
 		  </para>
 		  <caution>
 			<simpara>
-			Das Löschen einer Schule umfasst auch das Entfernen aller damit verbundenen Objekte wie
+			Das Löschen einer Schule umfasst auch das unwiderrufliche Entfernen aller damit verbundenen Objekte wie
 			Benutzerkonten, Klassen, Arbeitsgruppen, Rechner, DHCP-Leases, Drucker und Freigaben! Das Löschen
 			einer Schule kann nicht rückgängig gemacht werden!
 			</simpara>

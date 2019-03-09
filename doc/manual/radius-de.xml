@@ -11,12 +11,12 @@
 <chapter id="radius">
 	<title>Authentifizierung des WLAN-Zugriffs über RADIUS</title>
 	<para>
-		RADIUS ist ein Authentifizierungsprotokoll für Rechner in
+		RADIUS ist ein Authentifizierungsprotokoll in
 		Computernetzen. Es wird in &ucsUAS; für die Authentifizierung von
 		Rechnern für den Wireless-LAN-Zugriff eingesetzt.
 	</para>
 	<para>
-		Der RADIUS-Server muss auf den <foreignphrase>Access Points</foreignphrase> konfiguriert werden.
+		Der RADIUS-Server muss auf den <foreignphrase>Access Points</foreignphrase> entsprechend konfiguriert werden.
 		Die vom Client übertragenen Benutzerkennungen werden dann durch den
 		festgelegten RADIUS-Server geprüft, der wiederum für die Authentifizierung auf
 		den UCS-Verzeichnisdienst zugreift.
@@ -32,9 +32,18 @@
 			Schulserver installiert sein.
 		</para>
 		<para>
-			Nun müssen alle <foreignphrase>Access Points</foreignphrase> der Schule in der Konfigurationsdatei
-			<filename>/etc/freeradius/clients.conf</filename> registriert werden. Pro <foreignphrase>Access
-			Point</foreignphrase> sollte ein zufälliges Passwort erstellt werden. Dies kann
+			Beginnend mit &ucsUAS; 4.4 wird während der Installation des Pakets <package>ucs-school-radius-802.1x</package>
+			auch automatisch die UCS-App <package>RADIUS</package> mit seinen zusätzlichen Features installiert. Die entsprechenden
+			RADIUS-Abschnitte des UCS-Handbuchs<biblioref linkend="ucs-handbuch"/> sind daher auch zu prüfen.
+		</para>
+		<para>
+			Nun müssen alle <foreignphrase>Access Points</foreignphrase> der Schule in der RADIUS-Konfiguration zusammen mit
+			einem Passwort hinterlegt werden, um einen Vertrauenskontext zwischen Access Point und RADIUS-Server zu schaffen.
+			Dies kann ab UCS 4.4 entweder in der UMC erfolgen, sofern für jeden Access Point ein Rechnerobjekt im LDAP-Verzeichnis
+			hinterlegt wird, oder wie bisher in der Konfigurationsdatei <filename>/etc/freeradius/clients.conf</filename>.
+		</para>
+		<para>
+			Pro <foreignphrase>Access Point</foreignphrase> sollte ein zufälliges Passwort erstellt werden. Dies kann
 			z.B. mit dem Befehl <command>makepasswd</command> geschehen. Die
 			Kurzbezeichnung ist frei wählbar. Ein Beispiel für einen solchen
 			Eintrag für einen <foreignphrase>Access Point</foreignphrase>:
@@ -65,19 +74,19 @@ client 192.168.100.101 {
 			<listitem>
 				<simpara>
 					Die IP-Adresse des Schulservers muss als RADIUS-Server angegeben
-					werden
+					werden.
 				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>
 					Der Radius-Port ist 1812 (sofern kein abweichender Port in
-					FreeRADIUS konfiguriert wurde)
+					FreeRADIUS konfiguriert wurde).
 				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>
-					Das in der <filename>/etc/freeradius/clients.conf</filename>
-					hinterlegte Passwort
+					Das in der UMC bzw. in der Datei <filename>/etc/freeradius/clients.conf</filename>
+					hinterlegte Passwort.
 				</simpara>
 			</listitem>
 		</itemizedlist>

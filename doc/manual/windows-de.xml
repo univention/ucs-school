@@ -143,8 +143,8 @@ ucr set ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	  Dienste <systemitem class="service">samba</systemitem> und <systemitem class="service">univention-directory-listener</systemitem> neu
 	  gestartet werden:
 	  <programlisting language="sh">
-invoke-rc.d samba restart
-invoke-rc.d univention-directory-listener restart
+service samba restart
+service univention-directory-listener restart
 	  </programlisting>
 	</para>
   </section>
