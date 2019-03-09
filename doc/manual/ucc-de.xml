@@ -230,7 +230,7 @@
 	  und muss manuell durch das Setzen der &ucsUCRV; <envar>squid/krb5auth=yes</envar> aktiviert
 	  werden. Anschließend ist auf dem Schulserver ein Neustart des Dienstes <systemitem class="service">squid</systemitem>
 	  notwendig, der entweder über das UMC-Modul <emphasis>Systemdienste</emphasis> oder auf der
-	  Kommandozeile über das Kommando <command>invoke-rc.d squid restart</command> durchgeführt werden
+	  Kommandozeile über das Kommando <command>service squid restart</command> durchgeführt werden
 	  kann.
 	</para>
   </section>
