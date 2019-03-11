@@ -9,4 +9,5 @@ desc: |
  * The UCS@school import is now forward compatible to the renaming of record_uid and source_uid in UCS@school 4.4v1 (Bug #48478).
  * Specify the description of <envar>ucsschool/import/attach/policy/default-umc-users</envar> (Bug #48722).
  * The ucsschoolRole migration script was fixed to not use lower case OU names on DC computer objects (Bug #48792).
-bug: [48423, 48478, 48722, 48792]
+ * An OID collision in the UCS@school schema has been fixed. This is just a precaution. Problems are not known at this time (Bug #45538).
+bug: [48423, 48478, 48722, 48792, 45538]
