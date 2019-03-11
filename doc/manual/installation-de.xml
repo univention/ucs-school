@@ -171,7 +171,7 @@
 	 		  </figure>
 	 		</para>
 	 		<para>
-	 		  Nach dem Abschluss der Installation über das App Center erfolgt die Konfiguration von &ucsUAS;. Dies wird mit dem
+	 		  Nach dem Abschluss der Installation über das App Center erfolgt die Konfiguration von &ucsUAS;. Diese wird mit dem
 	 		  &ucsUAS;-Konfigurationsassistenten durchgeführt. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu> erreichbar.
 	 		  <figure id="install-umc-wizard-master">
 	 		    <title>Starten des &ucsUAS;-Konfigurationsassistenten</title>
@@ -217,7 +217,7 @@
 			</para>
 			<para>
 				Es muss ein neues DC Backup-System installiert werden. Während des Domänenbeitritts (oder der Ausführung
-				von <command>univention-run-join-scripts</command>) wird auf diesem System durch den in den vorigen
+				von <command>univention-run-join-scripts</command>) werden auf diesem System durch den in den vorigen
 				Abschnitten bereits erwähnten &ucsUAS;-Join-Hook automatisch die gleichen Pakete wie auf dem DC Master
 				installiert. Es werden dabei jedoch nur die Softwarepakete installiert. Falls nach der Installation Änderungen
 				an der Konfiguration auf dem DC Master vorgenommen werden, müssen diese manuell auf den/die DC-Backup-Systeme
