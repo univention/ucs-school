@@ -39,19 +39,19 @@
 		<para>
 			Nun müssen alle <foreignphrase>Access Points</foreignphrase> der Schule in der RADIUS-Konfiguration zusammen mit
 			einem Passwort hinterlegt werden, um einen Vertrauenskontext zwischen Access Point und RADIUS-Server zu schaffen.
-			Dies kann ab UCS 4.4 entweder in der UMC erfolgen, sofern für jeden Access Point ein Rechnerobjekt im LDAP-Verzeichnis
-			hinterlegt wird, oder wie bisher in der Konfigurationsdatei <filename>/etc/freeradius/clients.conf</filename>.
+			Dies kann ab UCS 4.4 entweder in der &ucsUMC; erfolgen, sofern für jeden Access Point ein Rechnerobjekt im LDAP-Verzeichnis
+			hinterlegt wird, oder in der Konfigurationsdatei <filename>/etc/freeradius/3.0/clients.conf</filename>.
 		</para>
 		<para>
 			Pro <foreignphrase>Access Point</foreignphrase> sollte ein zufälliges Passwort erstellt werden. Dies kann
 			z.B. mit dem Befehl <command>makepasswd</command> geschehen. Die
 			Kurzbezeichnung ist frei wählbar. Ein Beispiel für einen solchen
-			Eintrag für einen <foreignphrase>Access Point</foreignphrase>:
+			Eintrag:
 		</para>
 		<programlisting>
-client 192.168.100.101 {
+client AP01 {
     secret = a9RPAeVG
-    shortname = AP01
+    ipaddr = 192.168.100.101
 }
 		</programlisting>
 	</section>
@@ -116,10 +116,10 @@ client 192.168.100.101 {
 		<para>
 			Die Konfiguration unterscheidet sich je nach Betriebssystem des Clients. Im
 			Univention Wiki findet sich eine exemplarische
-			Schritt-für-Schritt-Anleitung für die Einrichtung unter Windows XP:
-			<ulink url="http://wiki.univention.de/index.php?title=Einrichtung-WLAN-Authentifizierung-WinXP"/>,
-			sowie für die Einrichtung unter Windows 7:
-			<ulink url="http://wiki.univention.de/index.php?title=Einrichtung-WLAN-Authentifizierung-Win7"/>.
+			Schritt-für-Schritt-Anleitung für die Einrichtung unter
+			<ulink url="https://wiki.univention.de/index.php/Einrichtung_des_WLAN-Zugriffs_%C3%BCber_RADIUS_f%C3%BCr_Windows_7">Windows 7</ulink>,
+			sowie für die Einrichtung unter
+			<ulink url="https://wiki.univention.de/index.php/Einrichtung_des_WLAN-Zugriffs_%C3%BCber_RADIUS_f%C3%BCr_Windows_10">Windows 10</ulink>.
 		</para>
 	</section>
 
@@ -146,6 +146,8 @@ client 192.168.100.101 {
 			werden. Erfolgreiche Logins führen zu einem Logeintrag <computeroutput>Auth:
 			Login OK</computeroutput> und eine fehlgeschlagene Authentifizierung beispielsweise
 			zu <computeroutput>Auth: Login incorrect</computeroutput>.
+			Weitere Informationen zur Fehlersuche sind im UCS-Handbuch<biblioref linkend="ucs-handbuch"/>,
+			im Kapitel Radius, beschrieben.
 		</para>
 	</section>
 </chapter>
