@@ -342,6 +342,16 @@ Checking ldap_schema ...                          OK
 				</para></listitem>
 			</itemizedlist>
 		</section>
+		<section id="changelog:service:radius" lang="en">
+			<title>RADIUS</title>
+			<itemizedlist>
+				<listitem><para>
+					The package <literal>ucs-school-radius-802.1x</literal> has been revised and simplified. It now includes an addon for the RADIUS app from UCS.
+					This means <literal>ucs-school-radius-802.1x</literal> now depends on the univention-radius package which will be installed automatically as a dependency.
+					Therefore the features of the RADIUS app and the &ucsUAS; RADIUS integration are now provided in &ucsUAS; (<u:bug>46018</u:bug>).
+				</para></listitem>
+			</itemizedlist>
+		</section>
 		<section id="changelog:service:schoolinstaller" lang="en">
 			<title>UCS@school installer</title>
 			<itemizedlist>
@@ -373,66 +383,6 @@ Checking ldap_schema ...                          OK
 				<listitem><para>
 					The LDAP schema has been updated to activate substring search for the LDAP attribute <property>ucsschoolRole</property> (<u:bug>48246</u:bug>).
 				</para></listitem>
-			</itemizedlist>
-		</section>
-		<section id="changelog:service:radius" lang="en">
-			<title>RADIUS</title>
-			<itemizedlist>
-				<listitem><para>
-					The package <literal>ucs-school-radius-802.1x</literal> has been revised and simplified. It now includes an addon for the RADIUS app from UCS.
-					This means <literal>ucs-school-radius-802.1x</literal> now depends on the univention-radius package which will be installed automatically as a dependency.
-					Therefore the features of the RADIUS app and the &ucsUAS; RADIUS integration are now provided in &ucsUAS; (<u:bug>46018</u:bug>).
-				</para></listitem>
-			</itemizedlist>
-		</section>
-		<section id="changelog:service:italc" lang="en">
-			<title>iTALC</title>
-			<itemizedlist>
-				<listitem><simpara>
-					The detection of the correct place for the samba share <literal>iTALC-Installation</literal> in the
-					joinscript <filename>85italc-windows.inst</filename> has been fixed for single server environments (<u:bug>37828</u:bug>).
-				</simpara></listitem>
-			</itemizedlist>
-		</section>
-		<section id="changelog:service:schoollib" lang="en">
-			<title>UCS@school python library</title>
-			<itemizedlist>
-				<listitem><para>
-					A problem has been solved <literal>ucsschool</literal> library that returned the wrong shares when fetching all <literal>WorkGroupShares</literal> (<u:bug>48428</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The &ucsUAS; library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (<u:bug>47885</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					An error when filtering in a search for schools was fixed (<u:bug>48429</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					Activate the <property>ucsschoolRole</property> feature by default (<u:bug>48226</u:bug>, <u:bug>48226</u:bug>, <u:bug>48647</u:bug>, <u:bug>48741</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					A users <literal>school_classes</literal> are now removed, if the <literal>school_classes</literal> attribute is empty and specified in <literal>csv:mapping</literal> (<u:bug>48045</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					An additional validation has been added for computer objects to prevent new IP subnets etc. from being silently added (<u:bug>48099</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					If <envar>ucsschool/import/attach/policy/default-umc-users</envar> was set to <literal>no</literal>, the LDAP group <literal>Domain Users $OU</literal> had not been created erroneously.
-					This problem has been fixed (<u:bug>48722</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The handling of <property>ucsschoolRole</property> for secondary school slaves has been removed (<u:bug>48732</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					A user's <property>ucsschoolRole</property> attribute is now updated, when changing the school (<u:bug>48649</u:bug>).
-				</para></listitem>
-			</itemizedlist>
-		</section>
-		<section id="changelog:service:csvimport" lang="en">
-			<title>CSV-Import</title>
-			<itemizedlist>
-				<listitem><simpara>
-					The UMC module <guimenu>CSV-Import</guimenu> has been removed and will be automatically deinstalled during the update (<u:bug>48063</u:bug>).
-				</simpara></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:import" lang="en">
@@ -481,6 +431,39 @@ Checking ldap_schema ...                          OK
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
+		<section id="changelog:service:schoollib" lang="en">
+			<title>UCS@school python library</title>
+			<itemizedlist>
+				<listitem><para>
+					A problem has been solved <literal>ucsschool</literal> library that returned the wrong shares when fetching all <literal>WorkGroupShares</literal> (<u:bug>48428</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The &ucsUAS; library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (<u:bug>47885</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					An error when filtering in a search for schools was fixed (<u:bug>48429</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					Activate the <property>ucsschoolRole</property> feature by default (<u:bug>48226</u:bug>, <u:bug>48226</u:bug>, <u:bug>48647</u:bug>, <u:bug>48741</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					A users <literal>school_classes</literal> are now removed, if the <literal>school_classes</literal> attribute is empty and specified in <literal>csv:mapping</literal> (<u:bug>48045</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					An additional validation has been added for computer objects to prevent new IP subnets etc. from being silently added (<u:bug>48099</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					If <envar>ucsschool/import/attach/policy/default-umc-users</envar> was set to <literal>no</literal>, the LDAP group <literal>Domain Users $OU</literal> had not been created erroneously.
+					This problem has been fixed (<u:bug>48722</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The handling of <property>ucsschoolRole</property> for secondary school slaves has been removed (<u:bug>48732</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					A user's <property>ucsschoolRole</property> attribute is now updated, when changing the school (<u:bug>48649</u:bug>).
+				</para></listitem>
+			</itemizedlist>
+		</section>
 		<section id="changelog:service:wizards" lang="en">
 			<title>Schools</title>
 			<itemizedlist>
@@ -492,14 +475,6 @@ Checking ldap_schema ...                          OK
 				</para></listitem>
 			</itemizedlist>
 		</section>
-<!-- 		<section id="changelog:service:samba" lang="en"> -->
-<!-- 			<title>Samba</title> -->
-<!-- 			<itemizedlist> -->
-<!-- 				<listitem><simpara> -->
-<!-- 					FIX ME FIX ME FIX ME -->
-<!-- 				</simpara></listitem> -->
-<!-- 			</itemizedlist> -->
-<!-- 		</section> -->
 		<section id="changelog:service:passwordreset" lang="en">
 			<title>Password reset for students/teachers</title>
 			<itemizedlist>
@@ -526,5 +501,30 @@ Checking ldap_schema ...                          OK
 				</para></listitem>
 			</itemizedlist>
 		</section>
+		<section id="changelog:service:csvimport" lang="en">
+			<title>CSV-Import</title>
+			<itemizedlist>
+				<listitem><simpara>
+					The UMC module <guimenu>CSV-Import</guimenu> has been removed and will be automatically deinstalled during the update (<u:bug>48063</u:bug>).
+				</simpara></listitem>
+			</itemizedlist>
+		</section>
+		<section id="changelog:service:italc" lang="en">
+			<title>iTALC</title>
+			<itemizedlist>
+				<listitem><simpara>
+					The detection of the correct place for the samba share <literal>iTALC-Installation</literal> in the
+					joinscript <filename>85italc-windows.inst</filename> has been fixed for single server environments (<u:bug>37828</u:bug>).
+				</simpara></listitem>
+			</itemizedlist>
+		</section>
+<!-- 		<section id="changelog:service:samba" lang="en"> -->
+<!-- 			<title>Samba</title> -->
+<!-- 			<itemizedlist> -->
+<!-- 				<listitem><simpara> -->
+<!-- 					FIX ME FIX ME FIX ME -->
+<!-- 				</simpara></listitem> -->
+<!-- 			</itemizedlist> -->
+<!-- 		</section> -->
 	</chapter>
 </book>
