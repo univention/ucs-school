@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.3-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.3 v7 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.3 v6 nach 4.3 v7</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.3 v7
+Stand: 12.03.2019
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2018
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.3 v6 nach 4.3 v7.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:newerrata">
+			<title>Veränderungen im Updateprozess</title>
+			<para>
+				In der Vergangenheit wurden Updates für UCS@school immer als ein neues App-Update im Univention App Center bereitgestellt.
+				Beginnend mit UCS@school 4.2 v10 bzw. UCS@school 4.3 v4 wird dieser Prozess verschlankt. Kleinere Updates und Fehlerbereinigungen
+				(Errata für UCS@school), die keine Interaktion mit dem Administrator erforderlich machen, werden in Zukunft im Repository der
+				bereits veröffentlichten App-Version von UCS@school herausgegeben. Die Changelog-Dokumente, die wir mit jeder UCS@school-App-Version
+				herausgeben, werden	dann entsprechend um einen neuen Abschnitt erweitert, aus dem ersichtlich wird, zu welchem Zeitpunkt welche
+				Pakete veröffentlicht und welche Fehler dabei behoben wurden.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+				<section id="changelog:ucsschool:2019-03-12" lang="en">
+					<title>Released on 2019-03-12:</title>
+					<!-- START ucs-school-import 16.0.3-4A~4.3.0.201902261750 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>16.0.3-4A~4.3.0.201902261750</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UCS@school import framework's <literal>ImportUser</literal> class has been made more accessible to 3rd party software (<u:bug>48423</u:bug>).</para></listitem>
+
+							<listitem><para>The UCS@school import is now forward compatible to the renaming of <literal>record_uid</literal> and <literal>source_uid</literal> in UCS@school 4.4v1 (<u:bug>48478</u:bug>).</para></listitem>
+
+							<listitem><para>The description of the UCR variable <envar>ucsschool/import/attach/policy/default-umc-users</envar> has been clarified (<u:bug>48722</u:bug>).</para></listitem>
+
+							<listitem><para>The <literal>ucsschoolRole</literal> migration script was fixed to not use lower case OU names on DC computer objects (<u:bug>48792</u:bug>).</para></listitem>
+
+							<listitem><para>An OID collision in the UCS@school LDAP schema has been fixed. This is just a precaution. Problems are not known at this time (<u:bug>45538</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 16.0.3-4A~4.3.0.201902261750 -->
+					<!-- START ucs-school-lib 11.0.2-5A~4.3.0.201902251246 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>11.0.2-5A~4.3.0.201902251246</emphasis>:
+						<itemizedlist>
+							<listitem><para>The computer objects validation was extended to warn about the creation of new networks or network overlaps (<u:bug>48099</u:bug>).</para></listitem>
+
+							<listitem><para>If <envar>ucsschool/import/attach/policy/default-umc-users</envar> was set to <literal>no</literal>, the LDAP group <literal>Domain Users $OU</literal> had not been created erroneously. This problem has been fixed (<u:bug>48722</u:bug>).</para></listitem>
+
+							<listitem><para>An internal filter error while searching for schools was fixed (<u:bug>48429</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 11.0.2-5A~4.3.0.201902251246 -->
+					<!-- START ucs-school-roleshares 6.0.0-2A~4.3.0.201901160908 -->
+					<para>
+						Source package <emphasis>ucs-school-roleshares</emphasis> in version <emphasis>6.0.0-2A~4.3.0.201901160908</emphasis>:
+						<itemizedlist>
+							<listitem><para>Add support for the new join script API (<u:bug>47076</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-roleshares 6.0.0-2A~4.3.0.201901160908 -->
+					<!-- START ucs-school-umc-wizards 10.0.1-3A~4.3.0.201902181139 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>10.0.1-3A~4.3.0.201902181139</emphasis>:
+						<itemizedlist>
+							<listitem><para>The computer wizard now asks for a confirmation before creating a new computer object, if the validation returns a warning (<u:bug>48099</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 10.0.1-3A~4.3.0.201902181139 -->
+<!-- CHANGELOG:2019-03-12:APPEND -->
+				</section>
+<!-- CHANGELOG-NEW-SECTION -->
+
+		</section>
+	</chapter>
+</book>
