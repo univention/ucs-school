@@ -39,6 +39,7 @@ from __future__ import absolute_import
 
 import time
 import json
+import codecs
 import tempfile
 
 from ucsschool.importer.utils.logging import get_logger
@@ -139,5 +140,5 @@ class JsonWriter(BaseWriter):
 
 	def write_obj(self, obj):
 		self._objects.append(obj)
-		with open(self._filename, self._mode) as fp:
-			json.dump(self._objects, fp)
+		with codecs.open(self._filename, self._mode, encoding='utf-8') as fp:
+			json.dump(self._objects, fp, ensure_ascii=False)

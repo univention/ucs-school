@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-28) unstable; urgency=low
+
+  * Bug #48651: write UTF-8 encoded strings instead of unicode
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 11 Mar 2019 08:26:51 +0100
+
 ucs-test-ucsschool (6.0.0-27) unstable; urgency=low
 
   * Bug #48651: fix 219_import_users_umlauts_normalized and
