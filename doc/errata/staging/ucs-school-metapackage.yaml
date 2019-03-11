@@ -15,4 +15,7 @@ desc: |
  * The meta packages for DC master now recommend the installation of the HTTP-API import backend and frontend (Bug #48790).
  * Set ucsschoolRole property for domain controllers during join (Bug #48519).
  * Add missing image and fix broekn pipe (Bug #48734).
-bug: [47957, 48384, 48540, 48699, 48731, 48699, 47969, 48790, 48519, 48734, 48883]
+ * "dns-$hostname" is not added to the ignore list of univention-s4-connector anymore (Bug #48534).
+ * Updated handling of Samba4s LDB module (Bug #48740).
+ * Fixed join of DC backup with Samba4 into single server environment (Bug #48815).
+bug: [47957, 48384, 48540, 48699, 48731, 48699, 47969, 48790, 48519, 48734, 48883, 48534, 48740, 48815]
