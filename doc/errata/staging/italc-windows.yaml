@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: italc-windows
-fix: 
+fix: 5.0.0-2A~4.4.0.201902271109
 desc: |
  * The detection of the correct place for the samba share <literal>iTALC-Installation</literal> in the
    joinscript <filename>85italc-windows.inst</filename> has been fixed for single server environments (Bug #37828).

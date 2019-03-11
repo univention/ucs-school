@@ -3,7 +3,7 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-users
-fix: 14.0.3-1A~4.3.0.201812202240
+fix: 15.0.0-1A~4.4.0.201902111549
 desc: |
  * In environments with several hundred users in an OU, opening the UMC module "Passwords (students)" could take an extremely long time,
    making the module almost unusable. The responsible LDAP search has now been identified and replaced by a more powerful variant in
