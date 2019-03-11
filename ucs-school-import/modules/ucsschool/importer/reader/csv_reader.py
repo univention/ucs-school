@@ -165,8 +165,8 @@ class CsvReader(BaseReader):
 			self.fieldnames = reader.fieldnames
 			missing_columns = self._get_missing_columns()
 			if missing_columns:
-				raise ConfigurationError('Columns configured in csv:mapping missing: {}.'.format(
-					', '.join(missing_columns)))
+				raise ConfigurationError('Columns configured in csv:mapping missing: {!r}. Header found: {!r}'.format(
+					missing_columns, self.fieldnames))
 			for row in reader:
 				self.entry_count = reader.line_num
 				self.input_data = reader.row
