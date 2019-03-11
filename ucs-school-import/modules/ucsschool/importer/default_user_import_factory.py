@@ -38,7 +38,8 @@ from ucsschool.importer.factory import load_class
 from ucsschool.importer.exceptions import InitialisationError
 try:
 	from typing import Any, Iterable, Optional, TypeVar
-	ImportUserTV = TypeVar('ImportUserTV', bound=ucsschool.importer.models.import_user.ImportUser)
+	from ucsschool.importer.models.import_user import ImportUser
+	ImportUserTV = TypeVar('ImportUserTV', bound=ImportUser)
 except ImportError:
 	pass
 
