@@ -5,7 +5,7 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-lib
 fix: 11.0.2-5A~4.3.0.201902251246
 desc: |
- * The computer objects validation was extended to warn of new network creation or network overlaps (Bug #48099).
- * Fix the creation of Domain Users $OU if <envar>ucsschool/import/attach/policy/default-umc-users=no</envar> (Bug #48722).
- * * An internal filter error while searching for schools was fixed (Bug #48429).
+ * The computer objects validation was extended to warn about the creation of new networks or network overlaps (Bug #48099).
+ * If <envar>ucsschool/import/attach/policy/default-umc-users</envar> was set to <literal>no</literal>, the LDAP group <literal>Domain Users $OU</literal> had not been created erroneously. This problem has been fixed (Bug #48722).
+ * An internal filter error while searching for schools was fixed (Bug #48429).
 bug: [48099, 48722, 48429]
