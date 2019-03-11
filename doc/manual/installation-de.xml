@@ -50,7 +50,7 @@
 		  prüfen, da der hier beschriebene Prozess auf diesen Systemen nicht funktioniert.
 	  </para>
 	  <para>
-		  Der neue Installationsprozess nutzt das neue Feature <emphasis>Join Hooks</emphasis>, das ab &ucsUCS; 4.4 zur Verfügung steht.
+		  Der neue Installationsprozess nutzt das neue Feature <emphasis>Join-Hooks</emphasis>, das ab &ucsUCS; 4.4 zur Verfügung steht.
 		  Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsMaster; im LDAP-Verzeichnis hinterlegt und automatisch
 		  während des Join-Vorgangs bzw. während der Ausführung von Joinskripten ausgeführt. Der &ucsUAS;-Join-Hook installiert
 		  auf allen Systemen der Domäne automatisch die &ucsUAS;-App aus dem Univention App Center und installiert die auf dem
