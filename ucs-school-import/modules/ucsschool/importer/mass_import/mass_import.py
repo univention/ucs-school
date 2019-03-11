@@ -112,7 +112,7 @@ class MassImport(object):
 		exc = None
 		try:
 			user_import.progress_report(description='Running pre-read hooks: 0%.', percentage=0)
-			self.call_pyhook(PreReadPyHook, 'pre_read', self.config)
+			self.call_pyhook(PreReadPyHook, 'pre_read')
 			user_import.progress_report(description='Analyzing data: 1%.', percentage=1)
 			imported_users = user_import.read_input()
 			users_to_delete = user_import.detect_users_to_delete()
