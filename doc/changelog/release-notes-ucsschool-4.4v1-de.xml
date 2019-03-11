@@ -264,7 +264,7 @@ Checking ldap_schema ...                          OK
 			<para>
 				Nach dem Update des &ucsMaster; auf UCS 4.4/&ucsUAS; 4.4 muss auf allen anderen Systemen der Domäne der Befehl
 				<command>univention-run-join-scripts</command> auf der Kommandozeile ausgeführt werden, was den Join-Hook auf
-				jedem System erstmalig ausführt. Für die Erstinstalation der benötigten Pakete wird der Join-Hook je nach Rolle
+				jedem System erstmalig ausführt. Für die Erstinstallation der benötigten Pakete wird der Join-Hook je nach Rolle
 				des Systems und dessen Systemperformance mehrere Minuten benötigen. Dieser Vorgang darf dabei nicht abgebrochen
 				werden.
 			</para>
@@ -404,7 +404,7 @@ Checking ldap_schema ...                          OK
 					To return to the previous behavior add the key <varname>school_classes_keep_if_empty</varname> to the import configuration with a value of <literal>true</literal> (<u:bug>48045</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The UCS@school import framework's <literal>ImportUser</literal> class has been made more accessable to 3rd party software (<u:bug>48423</u:bug>).
+					The UCS@school import framework's <literal>ImportUser</literal> class has been made more accessible to 3rd party software (<u:bug>48423</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					&ucsUAS; now maintains a new LDAP attribute <property>ucsschoolRole</property> for most &ucsUAS; LDAP objects. The attribute contains information about the object's role within a specific scope (<u:bug>48226</u:bug>, <u:bug>48678</u:bug>, <u:bug>48732</u:bug>).
