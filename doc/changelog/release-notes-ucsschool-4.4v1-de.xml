@@ -40,24 +40,23 @@ feedback@univention.de
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
 		<para>
-			UCS@school 4.4 steht jetzt auch für das dritte Minor Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
+			UCS@school 4.4 steht jetzt auch für das vierte Minor-Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
 			umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 4.4
 			eingeflossen sind. Die wichtigsten Änderungen im Überblick:
 			<itemizedlist>
 				<listitem>
 					<para>
-						Für große Schulumgebungen bei Schulträgern wurde der Installationsprozess vereinfacht.
-						Bei der Neuinstallation von Systemen erkennt der Installationsprozess nun automatisch,
-						welche UCS@school-Pakete auf dem jeweiligen System benötigt werden. So wird z.B. bei
+						Für große Schulumgebungen bei Schulträgern wurde der Installationsprozess vereinfacht, wodurch
+						die Neuinstallation jetzt allgemein schneller abläuft. So wird z.B. bei
 						der Installation eines Schulservers automatisch erkannt, dass es sich um einen Schulserver
-						handelt und für welche Schule er konfiguriert werden soll.
+						handelt, welche Pakete benötigt werden und für welche Schule er konfiguriert werden soll.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
 						Standardmäßig wird nun bei fast allen UCS@school-Objekten (Benutzern,
 						Klassen, Arbeitsgruppen, Räumen, Schulen, ...) ein zusätzliches Rollenattribut gepflegt,
-						die vor allem die Anbindung externer Services vereinfacht.
+						das vor allem die Anbindung externer Services vereinfacht.
 					</para>
 				</listitem>
 				<listitem>
@@ -69,10 +68,9 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Mit UCS 4.4 bzw. &ucsUAS; 4.4 wurde die Integration von RADIUS mit der RADIUS-App aus UCS vereinheitlicht.
-						Wird das RADIUS-Feature in &ucsUAS; verwendet, wird ab sofort automatisch auch die RADIUS-App aus dem
-						Univention App Center nachinstalliert. &ucsUAS; bringt ab sofort nur noch ein Konfigurations-Addon für
-						die RADIUS-App mit.
+						Mit UCS 4.4 bzw. &ucsUAS; 4.4 wurde die Integration von RADIUS mit der RADIUS-App aus UCS vereinheitlicht
+						und verbessert. So stehen jetzt unter &ucsUAS; alle Features aus beiden Apps zur Verfügung. Darüber hinaus
+						wurde ein detailliertes Logging für Authentifizierungsanfragen implementiert.
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -111,8 +109,8 @@ feedback@univention.de
 				alternative Lösung für den Import verwendet werden.
                 Seit UCS@school 4.2 v6 wird das UMC-Modul <guimenu>Benutzerimport</guimenu> mit UCS@school ausgeliefert. Wir empfehlen die eigenen Importprozesse
                 zu prüfen und an das neue UMC-Modul anzupassen. Das UMC-Modul <guimenu>Benutzerimport</guimenu> beinhaltet alle wichtigen Funktionen
-                aus dem <guimenu>CSV_Import</guimenu> und darüber hinaus noch viele weitere Features. Weitere Informationen dazu sind im UCS@school Handbuch
-                (<ulink url="http://docs.software-univention.de/ucsschool-umc-import-handbuch-4.3.html"/>) zu finden.
+                aus dem <guimenu>CSV_Import</guimenu> und darüber hinaus noch viele weitere Features. Weitere Informationen dazu sind im UCS@school-Handbuch
+                (<ulink url="http://docs.software-univention.de/ucsschool-umc-import-handbuch-4.4.html"/>) zu finden.
 			</para>
 		</section>
 	</chapter>
@@ -282,25 +280,23 @@ Checking ldap_schema ...                          OK
 			</para>
 			<itemizedlist>
 				<listitem>
-					<para>
-						FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME FIX ME
-					</para>
+					<para>Chrome ab Version 71</para>
 				</listitem>
 				<listitem>
-					<para>Chrome ab Version 37</para>
+					<para>Firefox ab Version 60</para>
 				</listitem>
 				<listitem>
-					<para>Firefox ab Version 38</para>
+					<para>Safari und Safari Mobile ab Version 12</para>
 				</listitem>
 				<listitem>
-					<para>Internet Explorer ab Version 11</para>
-				</listitem>
-				<listitem>
-					<para>Safari und Safari Mobile ab Version 9</para>
+					<para>Microsoft Edge ab Version 18</para>
 				</listitem>
 			</itemizedlist>
-			<para>
-			  Auf älteren Browsern können Darstellungs- oder Performanceprobleme auftreten.
+            <para>
+                Der Internet Explorer wird ab diesem Release nicht mehr von &ucsUMC; unterstützt.
+            </para>
+            <para>
+				Auf älteren Browsern können Darstellungs- oder Performanceprobleme auftreten.
 			</para>
 	</chapter>
 
@@ -312,51 +308,130 @@ Checking ldap_schema ...                          OK
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="https://docs.software-univention.de/"/>.
 		</para>
+		<section id="changelog:service:general" lang="en">
+			<title>Generic issues</title>
+			<itemizedlist>
+				<listitem><para>
+					A typo on the demo portal has been fixed (<u:bug>48540</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The &ucsUAS; logo has been updated (<u:bug>48699</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The postinst scripts of all &ucsUAS; packages now use <command>call_joinscript</command> instead of calling join scripts directly (<u:bug>48731</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The meta packages have been adapted to handle the simplified installation process (<u:bug>47969</u:bug>, <u:bug>48883</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The meta packages for &ucsMaster; now recommend the installation of the HTTP-API import backend and frontend (<u:bug>48790</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The LDAP attribute <property>ucsschoolRole</property> of domain controller objects is now set during domain join (<u:bug>48519</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The installation process has been simplified for the &ucsUAS; administrator. On system roles other than &ucsMaster; the &ucsUAS; configuration wizard
+					does no longer have to be run manually. All necessary steps for installation of &ucsUAS; are done automatically during domain join if the corresponding
+					school was previously created in LDAP directory (<u:bug>47942</u:bug>, <u:bug>47940</u:bug>, <u:bug>47941</u:bug>, <u:bug>47954</u:bug>, <u:bug>47955</u:bug>, <u:bug>47957</u:bug>, <u:bug>47696</u:bug>. <u:bug>48534</u:bug>, <u:bug>48740</u:bug>, <u:bug>48734</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					Fixed join of DC backup with Samba4 into single server environment (<u:bug>48815</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					Support for the new join script API has been added to all affected packages (<u:bug>47076</u:bug>).
+				</para></listitem>
+			</itemizedlist>
+		</section>
 		<section id="changelog:service:schoolinstaller" lang="en">
 			<title>UCS@school installer</title>
 			<itemizedlist>
-				<listitem><simpara>
-					FIX ME FIX ME FIX ME
-				</simpara></listitem>
+				<listitem><para>
+					The installation process has been simplified for the &ucsUAS; administrator. On system roles other than &ucsMaster; the &ucsUAS; configuration wizard
+					does no longer have to be run manually. All necessary steps for installation of &ucsUAS; are done automatically during domain join if the corresponding
+					school was previously created in LDAP directory (<u:bug>47942</u:bug>, <u:bug>47940</u:bug>, <u:bug>47941</u:bug>, <u:bug>47954</u:bug>, <u:bug>47955</u:bug>, <u:bug>47957</u:bug>, <u:bug>47696</u:bug>. <u:bug>48534</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The &ucsUAS; configuration wizard now recognizes all already configured systems and shows a corresponding message (<u:bug>48697</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					In some rare cases the &ucsUAS; configuration wizard did not install any &ucsUAS; packages. This problem has been fixed (<u:bug>48665</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					An unnecessary postinst script has been removed (<u:bug>48681</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:LDAP" lang="en">
 			<title>LDAP</title>
 			<itemizedlist>
-				<listitem><simpara>
-					FIX ME FIX ME FIX ME
-				</simpara></listitem>
+				<listitem><para>
+					New LDAP indices have been added, e.g. for <property>ucsschoolRole</property> (<u:bug>48384</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					An OID collision in the &ucsUAS; LDAP schema has been fixed. This is just a precaution. Problems are not known at this time (<u:bug>45538</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The LDAP schema has been updated to activate substring search for the LDAP attribute <property>ucsschoolRole</property> (<u:bug>48246</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:radius" lang="en">
 			<title>RADIUS</title>
 			<itemizedlist>
-				<listitem><simpara>
-					FIX ME FIX ME FIX ME
-				</simpara></listitem>
+				<listitem><para>
+					The package <literal>ucs-school-radius-802.1x</literal> has been revised and simplified. It now includes an addon for the RADIUS app from UCS.
+					This means <literal>ucs-school-radius-802.1x</literal> now depends on the univention-radius package which will be installed automatically as a dependency.
+					Therefore the features of the RADIUS app and the &ucsUAS; RADIUS integration are now provided in &ucsUAS; (<u:bug>46018</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:italc" lang="en">
 			<title>iTALC</title>
 			<itemizedlist>
 				<listitem><simpara>
-					FIX ME FIX ME FIX ME
+					The detection of the correct place for the samba share <literal>iTALC-Installation</literal> in the
+					joinscript <filename>85italc-windows.inst</filename> has been fixed for single server environments (<u:bug>37828</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:schoollib" lang="en">
 			<title>UCS@school python library</title>
 			<itemizedlist>
-				<listitem><simpara>
-					FIX ME FIX ME FIX ME
-				</simpara></listitem>
+				<listitem><para>
+					A problem has been solved <literal>ucsschool</literal> library that returned the wrong shares when fetching all <literal>WorkGroupShares</literal> (<u:bug>48428</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The &ucsUAS; library has been extended to provide internal functions a faster way to query all users with certain criteria from LDAP (<u:bug>47885</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					An error when filtering in a search for schools was fixed (<u:bug>48429</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					Activate the <property>ucsschoolRole</property> feature by default (<u:bug>48226</u:bug>, <u:bug>48226</u:bug>, <u:bug>48647</u:bug>, <u:bug>48741</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					A users <literal>school_classes</literal> are now removed, if the <literal>school_classes</literal> attribute is empty and specified in <literal>csv:mapping</literal> (<u:bug>48045</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					An additional validation has been added for computer objects to prevent new IP subnets etc. from being silently added (<u:bug>48099</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					If <envar>ucsschool/import/attach/policy/default-umc-users</envar> was set to <literal>no</literal>, the LDAP group <literal>Domain Users $OU</literal> had not been created erroneously.
+					This problem has been fixed (<u:bug>48722</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The handling of <property>ucsschoolRole</property> for secondary school slaves has been removed (<u:bug>48732</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					A user's <property>ucsschoolRole</property> attribute is now updated, when changing the school (<u:bug>48649</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:csvimport" lang="en">
 			<title>CSV-Import</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The UMC module <package>CSV-Import</package> has been removed (<u:bug>48063</u:bug>).
+					The UMC module <guimenu>CSV-Import</guimenu> has been removed and will be automatically deinstalled during the update (<u:bug>48063</u:bug>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -364,19 +439,37 @@ Checking ldap_schema ...                          OK
 			<title>Import</title>
 			<itemizedlist>
 				<listitem><para>
-					The default of the settings <varname>normalize:firstname</varname> and <varname>normalize:lastname</varname> has been changed from <literal>true</literal> to <literal>false</literal>. As a consequence the displayName (if not set explicitly) will also not be normalized and will thus contain umlauts etc.
+					The default of the settings <varname>normalize:firstname</varname> and <varname>normalize:lastname</varname> has been changed from <literal>true</literal> to <literal>false</literal>. As a consequence the displayName (if not set explicitly) will also not be normalized and will thus contain umlauts etc. (<u:bug>47351</u:bug>).
 					<note><para>If the <varname>record_uid</varname> is calculated using a schema from <varname>firstname</varname> or <varname>lastname</varname>, then it might change now! Prepend <literal>&lt;:umlauts&gt;</literal> to the schemas in <literal>scheme:username</literal> to prevent this.</para></note>
 				</para></listitem>
 				<listitem><para>
-					To be more consistent with other variable names, the configuration key <varname>scheme:recordUID</varname> has been renamed to <varname>scheme:record_uid</varname>. The method <methodname>ImportUser.make_recordUID()</methodname> has also been renamed to <methodname>ImportUser.make_record_uid()</methodname>.
+					To be more consistent with other variable names, the configuration key <varname>scheme:recordUID</varname> has been renamed to <varname>scheme:record_uid</varname>. The method <methodname>ImportUser.make_recordUID()</methodname> has also been renamed to <methodname>ImportUser.make_record_uid()</methodname> (<u:bug>48478</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					To be more consistent with other variable names, the configuration key <varname>sourceUID</varname> and its associated command line argument <option>--sourceUID</option> have been renamed to <varname>source_uid</varname> and <option>--source_uid</option> respectively. The method <methodname>ImportUser.make_sourceUID()</methodname> has also been renamed to <methodname>ImportUser.make_source_uid()</methodname>.
+					To be more consistent with other variable names, the configuration key <varname>sourceUID</varname> and its associated command line argument <option>--sourceUID</option> have been renamed to <varname>source_uid</varname> and <option>--source_uid</option> respectively. The method <methodname>ImportUser.make_sourceUID()</methodname> has also been renamed to <methodname>ImportUser.make_source_uid()</methodname> (<u:bug>48478</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The <varname>school_classes</varname> user attribute (the class assignment) is now emptied, if the class field in a row of a CSV file is empty.
 					Before, the <varname>school_classes</varname> user attribute was actively restored in the case that a modification had completely emptied it.
-					To return to the previous behavior add the key <varname>school_classes_keep_if_empty</varname> to the import configuration with a value of <literal>true</literal>.
+					To return to the previous behavior add the key <varname>school_classes_keep_if_empty</varname> to the import configuration with a value of <literal>true</literal> (<u:bug>48045</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The UCS@school import framework's <literal>ImportUser</literal> class has been made more accessable to 3rd party software (<u:bug>48423</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					&ucsUAS; now maintains a new LDAP attribute <property>ucsschoolRole</property> for most &ucsUAS; LDAP objects. The attribute contains information about the object's role within a specific scope (<u:bug>48226</u:bug>, <u:bug>48678</u:bug>, <u:bug>48732</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					A user's <property>ucsschoolRole</property> attribute is now updated, when changing the school (<u:bug>48649</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The description of the UCR variable <envar>ucsschool/import/attach/policy/default-umc-users</envar> has been clarified (<u:bug>48722</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					Starting with &ucsUAS; 4.4, it is no longer supported to create secondary slaves for a school server. Therefore the script <filename>ucs-school-join-secondary-samba4</filename> has been removed (<u:bug>48836</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The handling of samba's local accounts "dns-$hostname" has been improved. The account is not added to the ignore list of <emphasis>univention-s4-connector</emphasis> anymore (<u:bug>48534</u:bug>).
 				</para></listitem>
 			</itemizedlist>
 		</section>
@@ -388,36 +481,49 @@ Checking ldap_schema ...                          OK
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
-		<section id="changelog:service:squid" lang="en">
-			<title>Proxy squid</title>
+		<section id="changelog:service:wizards" lang="en">
+			<title>Schools</title>
 			<itemizedlist>
-				<listitem><simpara>
-					FIX ME FIX ME FIX ME
-				</simpara></listitem>
+				<listitem><para>
+					Upon computer creation the user now has to validate the creation of additional networks and gets an error if an overlapping subnet would be created (<u:bug>48099</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					It is now possible to specify an administrative slave when creating a new school (<u:bug>48743</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 		</section>
-		<section id="changelog:service:samba" lang="en">
-			<title>Samba</title>
-			<itemizedlist>
-				<listitem><simpara>
-					FIX ME FIX ME FIX ME
-				</simpara></listitem>
-			</itemizedlist>
-		</section>
+<!-- 		<section id="changelog:service:samba" lang="en"> -->
+<!-- 			<title>Samba</title> -->
+<!-- 			<itemizedlist> -->
+<!-- 				<listitem><simpara> -->
+<!-- 					FIX ME FIX ME FIX ME -->
+<!-- 				</simpara></listitem> -->
+<!-- 			</itemizedlist> -->
+<!-- 		</section> -->
 		<section id="changelog:service:passwordreset" lang="en">
 			<title>Password reset for students/teachers</title>
 			<itemizedlist>
 				<listitem><simpara>
-					FIX ME FIX ME FIX ME
+					In environments with several hundred users in an OU, opening the UMC module <guimenu>Passwords (students)</guimenu> could take an extremely long time,
+					making the module almost unusable. The responsible LDAP query has now been identified and replaced by a more powerful variant in
+					order to considerably reduce loading times (<u:bug>47885</u:bug>).
 				</simpara></listitem>
+			</itemizedlist>
+		</section>
+		<section id="changelog:service:computerroom" lang="en">
+			<title>Computer room</title>
+			<itemizedlist>
+				<listitem><para>
+					The grid layout of the computer room module has been adapted to the design changes done for UCS 4.4 (<u:bug>48868</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 		</section>
 		<section id="changelog:service:exam" lang="en">
 			<title>Exam mode</title>
 			<itemizedlist>
-				<listitem><simpara>
-					FIX ME FIX ME FIX ME
-				</simpara></listitem>
+				<listitem><para>
+					Creating an exam with a whitespace at the beginning or end of the name created a traceback upon starting the exam. Whitespaces are now trimmed automatically (<u:bug>48509</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 		</section>
 	</chapter>
