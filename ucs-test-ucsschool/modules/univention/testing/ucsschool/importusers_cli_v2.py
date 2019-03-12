@@ -470,7 +470,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
 			writer.writerow(person_dict)
 		return fn
 
-	def raise_for_non_empty_config(self):
+	def check_for_non_empty_config(self, raise_exc=True):
 		base_dir = "/var/lib/ucs-school-import/configs/"
 		user_config = ["user_import.json"]
 		school_configs = ["{}.json".format(ou.name) for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None]
@@ -481,11 +481,29 @@ class CLI_Import_v2_Tester(ImportTestbase):
 				continue
 			with open(config_path, 'r') as config_file:
 				if len(json.load(config_file)) != 0:
-					raise ImportException('The config under "%s" seems to be non-empty. That often causes problems for tests. Please replace it with an empty config: "{}".' % (config_path,))
+					msg = 'The config under "%s" seems to be non-empty. That often causes problems for tests. Please replace it with an empty config: "{}".' % (config_path,)
+					if raise_exc:
+						raise ImportException(msg)
+					else:
+						self.log.warn('*' * 40)
+						self.log.warn(msg)
+						self.log.warn('*' * 40)
 
-	def run_import(self, args, fail_on_error=True, fail_on_preexisting_config=True):
-		if fail_on_preexisting_config is True:
-			self.raise_for_non_empty_config()
+	def check_for_non_empty_pyhooks(self, raise_exc=True):
+		path = '/usr/share/ucs-school-import/pyhooks'
+		dir_content = os.listdir(path)
+		if dir_content:
+			msg = 'The directory {!r} seems to be non-empty: {!r} That often causes problems for tests. Please remove all files in it.'.format(path, dir_content)
+			if raise_exc:
+				raise ImportException(msg)
+			else:
+				self.log.warn('*' * 40)
+				self.log.warn(msg)
+				self.log.warn('*' * 40)
+
+	def run_import(self, args, fail_on_error=True, fail_on_preexisting_config=True, fail_on_preexisting_pyhook=True):
+		self.check_for_non_empty_config(fail_on_preexisting_config)
+		self.check_for_non_empty_pyhooks(fail_on_preexisting_pyhook)
 		cmd = ['/usr/share/ucs-school-import/scripts/ucs-school-user-import'] + args
 		self.log.info('Starting import: %r', cmd)
 		sys.stdout.flush()

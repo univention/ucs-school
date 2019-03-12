@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-29) unstable; urgency=low
+
+  * Bug #48189: add test for pre-read hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 12 Mar 2019 18:11:51 +0100
+
 ucs-test-ucsschool (6.0.0-28) unstable; urgency=low
 
   * Bug #48651: write UTF-8 encoded strings instead of unicode

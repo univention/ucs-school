@@ -44,12 +44,12 @@ class Test(CLI_Import_v2_Tester):
 		super(Test, self).cleanup()
 
 	def test(self):
-		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		source_uid = 'source_uid-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 
 		roles = ('staff', 'student', 'teacher', 'teacher_and_staff')
@@ -82,7 +82,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('Creating PyHook %r...', TESTHOOKTARGET)
 		shutil.copy(TESTHOOKSOURCE, TESTHOOKTARGET)
 
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			person.verify()
