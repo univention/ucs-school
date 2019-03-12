@@ -82,7 +82,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('Creating PyHook %r...', TESTHOOKTARGET)
 		shutil.copy(TESTHOOKSOURCE, TESTHOOKTARGET)
 
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			person.verify()
