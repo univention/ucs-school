@@ -43,6 +43,9 @@ After that follow
 	"teacher_and_staff": bool [3]: if the new user should be activated
 },
 "csv": {
+	"allowed_missing_columns": list(str): names of columns for which no error will be raised if they are missing.
+	                                      Allows the use of the same configuration file for input files with different
+	                                      data.
 	"delimiter": str: character that separates the cells of two columns, will be auto-detected if not set
 	"header_lines": int: how many line to skip, if 1, first line will be used to create keys for dict
 	"incell-delimiter": {

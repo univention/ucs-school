@@ -16,6 +16,8 @@ configuration files overwrite settings from prior ones. The order is:
 6. Options set on the command line by --set and its aliases.
 
 
+"configuration_checks": list(str): names of Python modules with configuration checks to load from
+                                   /usr/share/ucs-school-import/checks
 "dry_run": bool: set to False if changes should be committed to LDAP
 "logfile": str: path to additional logfile
 "verbose": bool: if enabled, log output of level DEBUG will be send to the command line (stdout)
