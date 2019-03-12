@@ -1,12 +1,12 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Test ResultPyHooks
+## desc: Test PreReadPyHook
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [47302]
+## bugs: [48188]
 
 import re
 import os
