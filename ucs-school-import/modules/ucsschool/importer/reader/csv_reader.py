@@ -352,8 +352,13 @@ class CsvReader(BaseReader):
 		"""
 		return [
 			key for key, value in self.config['csv']['mapping'].items()
-			if key not in self.fieldnames and value != '__ignore'
+			if (
+				key not in self.fieldnames and
+				value != '__ignore' and
+				key not in self.config['csv'].get('allowed_missing_columns', [])
+			)
 		]
+
 
 class UTF8Recoder(object):
 	"""
