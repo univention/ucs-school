@@ -1092,10 +1092,19 @@ udm users/user
 				Die <literal>[0]</literal> im Beispiel bedeutet, dass nur das erste Zeichen des davor stehenden Attributes genommen wird. Es ist auch möglich Bereiche anzugeben. Weitere Informationen dazu finden sich im Kapitel <ulink url="http://docs.software-univention.de/handbuch-4.4.html#users:templates"><citetitle>Benutzervorlagen</citetitle></ulink> des UCS Handbuchs.
 			</para>
 			<para>
+				Um Zählervariablen nach Tests auf <literal>0</literal> zurück zu setzen, kann das Skript <filename>/usr/share/ucs-school-import/scripts/reset_username_counter</filename> verwendet werden.
+				Mit Hilfe eines Filters kann beschränkt werde, welche Zähler gelöscht werden sollen.
+				In einem Testlauf kann dies überorüft werden.
+				Mit der Option <option>--help</option> werden die Aufrufparameter angezeigt.
+			</para>
+			<section id="configuration:unique_usernames_and_email:extending">
+				<title>Programmierung neuer Zählervariablen</title>
+				<para>
 				Um neue Zählervariablen hinzuzufügen, muss von der Klasse <classname>ucsschool.importer.utils.username_handler.UsernameHandler</classname> abgeleitet und die Methode <methodname>counter_variable_to_function()</methodname> überschrieben werden (siehe <xref linkend="extending:subclassing"/>).
 				Um diese neuen Zählervariablen auch für Email-Adressen zu verwenden, muss <classname>ucsschool.importer.utils.username_handler.EmailHandler</classname> von der neuen, abgeleiteten <classname>UsernameHandler</classname> Klasse <emphasis>sowie</emphasis> von <classname>ucsschool.importer.utils.username_handler.EmailHandler</classname> abgeleitet werden.
 				Um Zählervariablen <emphasis>nur</emphasis> für Email-Adressen hinzuzufügen muss nur von der Klasse <classname>ucsschool.importer.utils.username_handler.EmailHandler</classname> abgeleitet, und oben beschriebene Methoden überschrieben werden.
-			</para>
+				</para>
+			</section>
 		</section>
 
 		<section id="configuration:deleting_users">

@@ -1,0 +1,117 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Copyright 2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+"""
+Reset counter of unique usernames and email addresses.
+"""
+
+import sys
+from argparse import ArgumentParser
+from ldap.dn import escape_dn_chars
+from ldap.filter import filter_format
+from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
+
+# python-future is in unmaintained, but this works too:
+try:
+	input = raw_input
+	# py2
+except NameError:
+	# py3
+	pass
+
+
+def parse_cmdline():
+	defaults = dict(
+		email=False,
+		pattern='*',
+		write=False,
+	)
+	parser = ArgumentParser(description='UCS@school import unique username/email purge tool')
+	parser.add_argument(
+		'-e', '--email', action='store_true',
+		help='Purge unique email address counters instead of usernames [default: %(default)s].')
+	parser.add_argument(
+		'-p', '--pattern', dest='pattern', type=str,
+		help='Pattern for LDAP filter to lookup username / email address counters to purge [default: %(default)s].')
+	parser.add_argument(
+		'-w', '--write', action='store_true',
+		help='Modify the LDAP. Default is %(default)s: make a dry-run.')
+	parser.set_defaults(**defaults)
+	return parser.parse_args()
+
+
+def main():
+	args = parse_cmdline()
+	print('Modify LDAP: {!r}'.format(args.write))
+	print('Attribute: {}'.format('email' if args.email else 'username'))
+	print('Pattern: {!r}'.format(args.pattern))
+
+	if args.email:
+		attribute_storage_name = 'email'
+	else:
+		attribute_storage_name = 'usernames'
+
+	if args.write:
+		lo, po = get_admin_connection()
+	else:
+		lo, po = get_unprivileged_connection()
+	ldap_base = 'cn=unique-{},cn=ucsschool,cn=univention,{}'.format(escape_dn_chars(attribute_storage_name), lo.base)
+	asterisk_repl = filter_format('%s', ('*',))
+	ldap_filter = filter_format('(&(objectClass=ucsschoolUsername)(cn=%s))', (args.pattern,)).replace(asterisk_repl, '*')
+
+	print('LDAP base: {!r}'.format(ldap_base))
+	print('LDAP filter: {!r}'.format(ldap_filter))
+	print('-' * 79)
+
+	dns = sorted(lo.searchDn(ldap_filter, base=ldap_base))
+	if not dns:
+		print('No counter objects found.')
+		sys.exit(0)
+	total = len(dns)
+	if args.write:
+		print('Would delete:')
+		print('  {}'.format('\n  '.join(dns)))
+		answer = input('Really reset the above {} counters? [y/N]:'.format(total))
+		if answer.lower() not in ('y', 'yes'):
+			print('Stopping as requested.')
+			sys.exit(1)
+
+	num_len = len(str(total))
+	msg = 'Deleting{} {:>%d} / {:>%d}: {!r}' % (num_len, num_len)
+	for num, dn in enumerate(dns, start=1):
+		print(msg.format('' if args.write else ' (dry-run)', num, total, dn))
+		if args.write:
+			lo.delete(dn)
+
+	print('Done.')
+
+
+if __name__ == "__main__":
+	sys.exit(main())
