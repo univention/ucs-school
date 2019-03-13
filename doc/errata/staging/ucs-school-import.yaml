@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.5-5A~4.4.0.201903131644
+desc: |
+ * A configuration key "csv:allowed_missing_columns" was added. It can be assigned a list of column names that are allowed to be missing in the input data (Bug #48655).
+ * Internal improvement: the PyHook loading code was consolidated (Bug #48958).
+bug: [48655, 48958]

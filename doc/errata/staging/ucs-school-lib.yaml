@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.1.0-14A~4.4.0.201903131643
+desc: |
+ * Internal improvement: improved type hints and Python 3 compatibility (Bug #48958).
+bug: [48958]
