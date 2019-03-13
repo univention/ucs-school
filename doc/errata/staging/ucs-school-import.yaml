@@ -6,4 +6,5 @@ src: ucs-school-import
 fix: 16.0.3-7A~4.3.0.201904082301
 desc: |
  * Additional special characters in usernames can now be configured through the configuration key username:allowed_special_chars. The default is backwards compatible and contains only the dot. Only dash and underscore can also be used (resulting in the configuration value ".-_") (Bug #49259).
-bug: [49259]
+ * Internal improvement: the PyHook loading code was consolidated (Bug #49268).
+bug: [49259, 49268]
