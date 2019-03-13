@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-6) unstable; urgency=low
+
+  * Bug #48189: add test for pre-read hook
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 17:08:26 +0100
+
 ucs-test-ucsschool (5.0.4-5) unstable; urgency=low
 
   * Bug #48722: Fix 110_set_default-umc-users

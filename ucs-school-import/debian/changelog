@@ -1,3 +1,10 @@
+ucs-school-import (16.0.3-6) unstable; urgency=low
+
+  * Bug #48189: add hook that runs before reading the input data
+  * add pre-read hook, that can change the column names in a CSV file
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 17:09:24 +0100
+
 ucs-school-import (16.0.3-5) unstable; urgency=low
 
   * Bug #48655: allow the configuration of columns missing in the input file
