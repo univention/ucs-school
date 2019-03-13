@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.0-14) unstable; urgency=low
+
+  * Bug #48958: improve type hints
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 16:37:11 +0100
+
 ucs-school-lib (12.1.0-13) unstable; urgency=low
 
   * Bug #48732: remove handling of role for secondary school slave
