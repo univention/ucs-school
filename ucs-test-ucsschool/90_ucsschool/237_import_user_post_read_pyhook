@@ -66,7 +66,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			person.update(firstname=person.lastname, lastname=person.firstname, birthday='2018-08-27')
