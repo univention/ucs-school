@@ -1,6 +1,6 @@
 ucs-test-ucsschool (5.0.4-6) unstable; urgency=low
 
-  * Bug #48189: add test for pre-read hook
+  * Bug #48188: add test for pre-read hook
 
  -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 17:08:26 +0100
 

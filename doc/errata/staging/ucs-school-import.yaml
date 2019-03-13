@@ -3,7 +3,9 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.3-5A~4.3.0.201903131613
+fix: 16.0.3-6A~4.3.0.201903131712
 desc: |
  * A configuration key "csv:allowed_missing_columns" was added. It can be assigned a list of column names that are allowed to be missing in the input data (Bug #48655).
-bug: [48655]
+ * A hook was added that runs before reading the input data (Bug #48188).
+ * An example pre-read hook was added, that can change the column names in a CSV file (Bug #48189).
+bug: [48655, 48188, 48189]
