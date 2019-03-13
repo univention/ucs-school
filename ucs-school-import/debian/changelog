@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-5) unstable; urgency=low
+
+  * Bug #48655: allow the configuration of columns missing in the input file
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 16:04:33 +0100
+
 ucs-school-import (16.0.3-4) unstable; urgency=low
 
   * Bug #48792: fix ucsschoolRole migration script regarding case of OUs
