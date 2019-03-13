@@ -33,10 +33,8 @@ Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has pas
 # <http://www.gnu.org/licenses/>.
 
 import sys
-import time
 import pprint
 import logging
-import os.path
 import datetime
 from argparse import ArgumentParser
 from ldap.filter import filter_format
@@ -45,9 +43,7 @@ from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLin
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.utils.logging import make_stdout_verbose
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
-from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.lib.models.utils import UniStreamHandler
-from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 
 a_user = None
@@ -174,24 +170,6 @@ def main():
 	# use factory.make_import_user() to get the user class from the import configuration
 	# (ImportUser, LegacyImportUser, CustomerImportUser ...)
 	a_user = factory.make_import_user([])
-
-	# let the import system initialize pyhooks now, so
-	# 1. in a dry-run the user has a chance to see when would happen
-	# 2. in a real run, it won't initialize it again for each user
-	if a_user._pyhook_cache is None:
-		path = config.get('hooks_dir_pyhook', a_user.pyhooks_base_path)
-		pyloader = PyHooksLoader(path, UserPyHook, logger)
-		a_user.__class__._pyhook_cache = pyloader.get_hook_objects(lo)
-	# find lib hook paths and pre-fill _empty_hook_paths cache for the same reasons as above
-	hook_path = a_user._meta.hook_path
-	for func_name, hook_time in (('remove', 'pre'), ('remove', 'post')):
-		path = os.path.join(a_user.hook_path, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
-		if os.path.isdir(path) and os.listdir(path):
-			logger.info('Hooks in %s will be executed.', path)
-		else:
-			logger.info('No hooks found or empty: %s', path)
-			a_user.__class__._empty_hook_paths.add(path)
-	logger.info('------')
 
 	today_s = datetime.datetime.today().strftime('%Y%m%d%H%M%SZ')
 	filter_s = filter_format('(&(objectClass=ucsschoolType)(ucsschoolPurgeTimestamp<=%s))', (today_s,))

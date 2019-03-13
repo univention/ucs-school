@@ -1,5 +1,6 @@
 {
 	"dry_run": false,
 	"logfile": "/var/log/univention/ucs-school-import.log",
+	"hooks_dir_pyhook": "/usr/share/ucs-school-import/pyhooks",
 	"verbose": true
 }

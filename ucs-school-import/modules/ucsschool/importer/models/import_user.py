@@ -56,9 +56,9 @@ from ucsschool.importer.exceptions import (
 	UserValidationError
 )
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
+from ucsschool.importer.utils.import_pyhook import get_import_pyhooks
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
@@ -106,9 +106,6 @@ class ImportUser(User):
 	ucr = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_ucr())  # type: ConfigRegistry
 	reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())  # type: BaseReader
 	logger = lazy_object_proxy.Proxy(get_logger)  # type: logging.Logger
-	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
-	_pyhook_cache = {}  # type: Dict[str, List[Callable]]
-	_format_pyhook_cache = {}  # type: Dict[str, List[Callable]]
 	_username_handler_cache = {}  # type: Dict[Tuple[int, bool], UsernameHandler]
 	_unique_email_handler_cache = {}  # type: Dict[bool, UsernameHandler]
 	# non-Attribute attributes (not in self._attributes) that can also be used
@@ -181,6 +178,10 @@ class ImportUser(User):
 		"""
 		return self._build_hook_line(*self.input_data)
 
+	@staticmethod
+	def _pyhook_supports_dry_run(kls):
+		return bool(getattr(kls, 'supports_dry_run', False))
+
 	def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
 		"""
 		Runs PyHooks, then ucs-school-libs fork hooks.
@@ -190,21 +191,6 @@ class ImportUser(User):
 		:return: return code of lib hooks
 		:rtype: bool: result of a legacy hook or None if no legacy hook ran
 		"""
-		def load_pyhook_only_if_supports_dry_run(klass):
-			return bool(getattr(klass, 'supports_dry_run', False))
-
-		if not self._pyhook_cache:
-			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
-			pyhooks_loader = PyHooksLoader(
-				path,
-				UserPyHook,
-				self.logger,
-				load_pyhook_only_if_supports_dry_run if self.config['dry_run'] else None
-			)
-			self._pyhook_cache.update(pyhooks_loader.get_hook_objects(lo=self.lo, dry_run=self.config['dry_run']))
-			if not self._pyhook_cache:
-				# prevent searching for non-existent hooks next time call_hooks() is called
-				self._pyhook_cache['_loaded'] = [lambda: True]
 		if hook_time == "post" and self.action in ["A", "M"] and not (self.config['dry_run'] and self.action == "A"):
 			# update self from LDAP if object exists (after A and M), except after a dry-run create
 			user = self.get_by_import_id(self.lo, self.source_uid, self.record_uid)
@@ -216,9 +202,15 @@ class ImportUser(User):
 			self.update(user)
 
 		self.in_hook = True
+		hooks = get_import_pyhooks(
+			UserPyHook,
+			self._pyhook_supports_dry_run if self.config['dry_run'] else None,
+			lo=self.lo,
+			dry_run=self.config['dry_run']
+		)  # result is cached on the lib side
 		meth_name = "{}_{}".format(hook_time, func_name)
 		try:
-			for func in self._pyhook_cache.get(meth_name, []):
+			for func in hooks.get(meth_name, []):
 				self.logger.debug(
 					"Running %s hook %s.%s for %s...",
 					meth_name, func.im_class.__name__, func.im_func.func_name, self)
@@ -244,17 +236,9 @@ class ImportUser(User):
 		:return: manipulated dictionary
 		:rtype: dict
 		"""
-		if not self._format_pyhook_cache:
-			# load hooks
-			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
-			pyloader = PyHooksLoader(path, FormatPyHook, self.logger)
-			self._format_pyhook_cache.update(pyloader.get_hook_objects())
-			if not self._format_pyhook_cache:
-				# prevent searching for non-existent hooks next time call_format_hook() is called
-				self._format_pyhook_cache['_loaded'] = [lambda x, y: True]
-
+		hooks = get_import_pyhooks(FormatPyHook)  # result is cached on the lib side
 		res = fields
-		for func in self._format_pyhook_cache.get('patch_fields_{}'.format(self.role_sting), []):
+		for func in hooks.get('patch_fields_{}'.format(self.role_sting), []):
 			if prop_name not in func.im_class.properties:
 				# ignore properties not in Hook.properties
 				continue
@@ -1106,6 +1090,13 @@ class ImportUser(User):
 				self.name, uut.dn, uut.source_uid, uut.record_uid))
 
 	def set_purge_timestamp(self, ts):  # type: (str) -> None
+		"""
+		Set the date at which the account whould be deleted by the
+		`ucs-school-purge-expired-users` script. Caller must run modify().
+
+		:param str ts: account deletion date "%Y-%m-%d" or ""
+		:return: None
+		"""
 		self._purge_ts = ts
 
 	@property
