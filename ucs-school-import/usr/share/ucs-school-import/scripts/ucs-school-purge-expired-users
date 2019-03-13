@@ -146,6 +146,7 @@ def main():
 	uic.args = parse_cmdline()
 	# overwrite 'verbose' setting from configuration files
 	uic.args.settings = {
+		'dry_run': uic.args.dry_run,
 		'verbose': uic.args.verbose,
 	}
 	# early logging configured by cmdline
@@ -191,9 +192,7 @@ def main():
 		roles = roles_from_ocs(attr['objectClass'])
 		user_obj = factory.make_import_user(roles)
 		user = user_obj.from_dn(dn, None, lo)
-
-		if not uic.args.dry_run:
-			user.remove(lo)
+		user.remove(lo)
 
 	logger.info('Finished.')
 

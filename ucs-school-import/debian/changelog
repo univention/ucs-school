@@ -1,6 +1,7 @@
 ucs-school-import (16.0.3-8) unstable; urgency=low
 
   * Bug #49268: add convenience wrapper for easy usage of PyHooksLoader
+  * honor dry-run when ImportUser class is used directly
 
  -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 16:34:44 +0100
 
