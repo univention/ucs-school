@@ -318,6 +318,13 @@ class ImportUser(User):
 			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
 		return res
 
+	def create_without_hooks_roles(self, lo):
+		if self.config['dry_run']:
+			self.logger.info("Dry-run: skipping user.create() for %s.", self)
+			return True
+		else:
+			return super(ImportUser, self).create_without_hooks_roles(lo)
+
 	@classmethod
 	def get_ldap_filter_for_user_role(cls):  # type: () -> str
 		if not cls.factory:
@@ -878,13 +885,24 @@ class ImportUser(User):
 				'Reverting school_classes of %r to %r, because school_classes_keep_if_empty=%r and new school_classes=%r.',
 				self, school_classes, self.config.get('school_classes_keep_if_empty', False), self.school_classes)
 			self.school_classes = school_classes
-		return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
+		if self.config['dry_run']:
+			self.logger.info("Dry-run: skipping user.modify() for %s.", self)
+			return True
+		else:
+			return super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def move(self, lo, udm_obj=None, force=False):
 		# type: (LoType, Optional[UdmObjectType], Optional[bool]) -> bool
 		self.lo = lo
 		self.check_schools(lo)
 		return super(ImportUser, self).move(lo, udm_obj, force)
+
+	def move_without_hooks(self, lo, udm_obj, force=False):
+		if self.config['dry_run']:
+			self.logger.info("Dry-run: skipping user.move() for %s.", self)
+			return True
+		else:
+			return super(ImportUser, self).move_without_hooks(lo, udm_obj, force)
 
 	@classmethod
 	def normalize(cls, s):  # type: (str) -> str
@@ -932,6 +950,13 @@ class ImportUser(User):
 	def remove(self, lo):  # type: (LoType) -> bool
 		self.lo = lo
 		return super(ImportUser, self).remove(lo)
+
+	def remove_without_hooks(self, lo):
+		if self.config['dry_run']:
+			self.logger.info("Dry-run: skipping user.remove() for %s.", self)
+			return True
+		else:
+			return super(ImportUser, self).remove_without_hooks(lo)
 
 	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
 		# type: (LoType, Optional[bool], Optional[bool]) -> None
