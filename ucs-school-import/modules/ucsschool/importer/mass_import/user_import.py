@@ -49,7 +49,7 @@ from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ucsschool.importer.utils.post_read_pyhook import PostReadPyHook
-from ucsschool.lib.pyhooks import PyHooksLoader
+from ucsschool.importer.utils.import_pyhook import run_import_pyhooks
 
 try:
 	from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
@@ -71,9 +71,6 @@ class UserImport(object):
 	5. log_stats()
 	6. get_result_data()
 	"""
-
-	pyhooks_base_path = "/usr/share/ucs-school-import/pyhooks"
-	_post_read_pyhook_cache = None
 
 	def __init__(self, dry_run=True):
 		"""
@@ -109,7 +106,7 @@ class UserImport(object):
 				self.logger.info("Done reading %d. user: %s", num, import_user)
 				self.imported_users.append(import_user)
 			except StopIteration:
-				self.call_post_read_hook_all_entries_read(self.imported_users, self.errors)
+				run_import_pyhooks(PostReadPyHook, 'all_entries_read', self.imported_users, self.errors)
 				break
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error reading %d. user: %s", num, exc)
@@ -117,28 +114,6 @@ class UserImport(object):
 			num += 1
 		self.logger.info("------ Read %d users from input data. ------", len(self.imported_users))
 		return self.imported_users
-
-	def call_post_read_hook_all_entries_read(self, imported_users, errors):
-		# type: (List[ImportUser], List[Any]) -> None
-		"""
-		Run code after all entries have been read. ImportUser objects for all
-		lines are passed to the hook. Also errors are passed. Please note that
-		the "entry_read" hook method may skip one or several input records, so
-		they may be missing in imported_users.
-		errors contains a list of catched errors/exceptions.
-
-		:param list[ImportUser] imported_users: list of ImportUser objects created from the input records
-		:param list[Exception] errors: list of exceptions that are caught during processing the input records
-		"""
-		if self._post_read_pyhook_cache is None:
-			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
-			pyloader = PyHooksLoader(path, PostReadPyHook, self.logger)
-			self._post_read_pyhook_cache = pyloader.get_hook_objects(self.connection)
-
-		func_name = 'all_entries_read'
-		for func in self._post_read_pyhook_cache.get(func_name, []):
-			self.logger.info("Running %s hook %s all entries...", func_name, func)
-			func(imported_users, errors)
 
 	def create_and_modify_users(self, imported_users):
 		# type: (List[ImportUser]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]

@@ -49,8 +49,8 @@ from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, ListSanitizer
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError
-from ucsschool.lib.models.utils import logger as lib_logger, add_module_logger_to_schoollib
-from ucsschool.lib.pyhooks import PyHooksLoader
+from ucsschool.lib.models.utils import add_module_logger_to_schoollib
+from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
 from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 
 import univention.admin.uexceptions
@@ -82,6 +82,7 @@ class Instance(SchoolBaseModule):
 		self._udm_modules = dict()
 		self._examGroup = None
 		self._examUserContainerDN = None
+		self.exam_user_pre_create_hooks = None
 
 	def examGroup(self, ldap_admin_write, ldap_position, school):
 		'''fetch the examGroup object, create it if missing'''
@@ -454,14 +455,14 @@ class Instance(SchoolBaseModule):
 
 		self.finished(request.id, {}, success=True)
 
-	@classmethod
-	def run_pre_create_hooks(cls, exam_user_dn, al, ldap_admin_write):
-		if cls._pre_create_hooks is None:
+	def run_pre_create_hooks(self, exam_user_dn, al, ldap_admin_write):
+		if not self.exam_user_pre_create_hooks:
 			add_module_logger_to_schoollib()
-			pyloader = PyHooksLoader(CREATE_USER_PRE_HOOK_DIR, ExamUserPyHook, lib_logger)
-			cls._pre_create_hooks = pyloader.get_hook_objects(ldap_admin_write, lib_logger)
+			pyhook_loader = ImportPyHookLoader(CREATE_USER_PRE_HOOK_DIR)
+			hooks = pyhook_loader.init_hook(ExamUserPyHook, lo=ldap_admin_write, dry_run=False)
+			self.exam_user_pre_create_hooks = hooks.get('pre_create', [])
 
-		for hook in cls._pre_create_hooks.get('pre_create', []):
+		for hook in self.exam_user_pre_create_hooks:
 			al = hook(exam_user_dn, al)
 
 		return al

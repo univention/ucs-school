@@ -41,7 +41,7 @@ from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.pre_read_pyhook import PreReadPyHook
 from ucsschool.importer.utils.result_pyhook import ResultPyHook
 from ucsschool.lib.models.utils import stopped_notifier
-from ucsschool.lib.pyhooks import PyHooksLoader
+from ucsschool.importer.utils.import_pyhook import run_import_pyhooks
 
 try:
 	from typing import Any, Optional, Type, TypeVar
@@ -112,7 +112,7 @@ class MassImport(object):
 		exc = None
 		try:
 			user_import.progress_report(description='Running pre-read hooks: 0%.', percentage=0)
-			self.call_pyhook(PreReadPyHook, 'pre_read')
+			run_import_pyhooks(PreReadPyHook, 'pre_read')
 			user_import.progress_report(description='Analyzing data: 1%.', percentage=1)
 			imported_users = user_import.read_input()
 			users_to_delete = user_import.detect_users_to_delete()
@@ -136,30 +136,7 @@ class MassImport(object):
 			self.logger.info("------ Writing user import summary to %s... ------", uis)
 			self.result_exporter.dump(user_import, uis)
 		result_data = user_import.get_result_data()
-		self.call_pyhook(ResultPyHook, 'user_result', result_data)
+		run_import_pyhooks(ResultPyHook, 'user_result', result_data)
 		self.logger.info("------ Importing users done. ------")
 		if exc:
 			raise exc
-
-	def call_pyhook(self, hook_cls, func_name, *args, **kwargs):
-		# type: (Type[ImportPyHookTV], str, *Any, **Any) -> None
-		"""
-		Run hook code
-		* before starting to read the input file (PreReadPyHook).
-		* after the import has been completed (ResultPyHook).
-
-		:param hook_cls: class object - load and run hooks that are a
-			subclass of this
-		:type hook_cls: ucsschool.importer.utils.import_pyhook.ImportPyHook
-		:param str func_name: name of method to run in each hook
-		:param args: arguments to pass to hooks
-		:param kwargs: arguments to pass to hooks
-		"""
-		if hook_cls not in self._pyhook_cache:
-			path = self.config.get('hooks_dir_pyhook', self.pyhooks_base_path)
-			pyloader = PyHooksLoader(path, hook_cls, self.logger)
-			self._pyhook_cache[hook_cls] = pyloader.get_hook_objects()
-
-		for func in self._pyhook_cache[hook_cls].get(func_name, []):
-			self.logger.info("Running %s %s hook %s ...", hook_cls.__name__, func_name, func)
-			func(*args, **kwargs)

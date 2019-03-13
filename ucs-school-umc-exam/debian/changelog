@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.0-3) unstable; urgency=low
+
+  * Bug #48958: use new ImportPyHookLoader convenience functions
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 16:36:05 +0100
+
 ucs-school-umc-exam (9.0.0-2) unstable; urgency=low
 
   * Bug #48731: use call_joinscripts instead of calling join scripts directly
