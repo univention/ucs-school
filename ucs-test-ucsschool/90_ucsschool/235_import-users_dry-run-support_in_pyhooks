@@ -53,7 +53,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** Creating PyHook with dry-run support (%r)...', TESTHOOKTARGETWITHSUPPORT)
 		with open(TESTHOOKTARGETWITHSUPPORT, 'wb') as fp:
 			fp.write(text.replace('%CLASSNAME%', 'HookSupportsDryRun').replace('%DRYRUNSUPPORT%', 'supports_dry_run = True'))
-		self.log.info('*** Creating PyHook with dry-run support (%r)...', TESTHOOKTARGETWITHSUPPORT)
+		self.log.info('*** Creating PyHook without dry-run support (%r)...', TESTHOOKTARGETWITHOUTSUPPORT)
 		with open(TESTHOOKTARGETWITHOUTSUPPORT, 'wb') as fp:
 			fp.write(text.replace('%CLASSNAME%', 'HookNoDryRun').replace('%DRYRUNSUPPORT%', ''))
 
@@ -105,10 +105,10 @@ class Test(CLI_Import_v2_Tester):
 				if os.path.exists(path):
 					self.log.info('##### OK: %r exists', path)
 				else:
-					self.fail('Expected path does not exist: %r', path)
+					self.fail('Expected path does not exist: {!r}'.format(path))
 			else:
 				if os.path.exists(path):
-					self.fail('Path expected to not exist: %r', path)
+					self.fail('Path expected to not exist: {!r}'.format(path))
 				else:
 					self.log.info('##### OK: %r does not exist', path)
 			# check HookNoDryRun
@@ -117,10 +117,10 @@ class Test(CLI_Import_v2_Tester):
 				if os.path.exists(path):
 					self.log.info('##### OK: %r exists', path)
 				else:
-					self.fail('Expected does not exist: %r', path)
+					self.fail('Expected does not exist: {!r}'.format(path))
 			else:
 				if os.path.exists(path):
-					self.fail('Path expected to not exist: %r', path)
+					self.fail('Path expected to not exist: {!r}'.format(path))
 				else:
 					self.log.info('##### OK: %r does not exist', path)
 
