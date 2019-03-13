@@ -1,3 +1,9 @@
+ucs-school-lib (11.0.2-6) unstable; urgency=low
+
+  * Bug #49268: improve type hints
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 16:37:11 +0100
+
 ucs-school-lib (11.0.2-5) unstable; urgency=low
 
   * Bug #48722: Fix creation of Domain Users $OU
