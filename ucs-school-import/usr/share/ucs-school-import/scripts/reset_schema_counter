@@ -51,20 +51,29 @@ def parse_cmdline():
 	defaults = dict(
 		email=False,
 		pattern='*',
+		username=False,
 		write=False,
 	)
-	parser = ArgumentParser(description='UCS@school import unique username/email purge tool')
+	parser = ArgumentParser(description='UCS@school import tool to reset counters of unique names from schema.')
 	parser.add_argument(
 		'-e', '--email', action='store_true',
-		help='Purge unique email address counters instead of usernames [default: %(default)s].')
+		help='Purge unique email address counters [default: %(default)s].')
+	parser.add_argument(
+		'-u', '--username', action='store_true',
+		help='Purge unique username counters [default: %(default)s].')
 	parser.add_argument(
 		'-p', '--pattern', dest='pattern', type=str,
-		help='Pattern for LDAP filter to lookup username / email address counters to purge [default: %(default)s].')
+		help='Pattern for LDAP filter to lookup which counters to purge [default: %(default)s].')
 	parser.add_argument(
 		'-w', '--write', action='store_true',
 		help='Modify the LDAP. Default is %(default)s: make a dry-run.')
 	parser.set_defaults(**defaults)
-	return parser.parse_args()
+	args = parser.parse_args()
+	if not any((args.email, args.username)):
+		parser.error('Either "--email" or "--username" must be used.')
+	elif args.email and args.username:
+		parser.error('Only one of "--email" and "--username" must be used.')
+	return args
 
 
 def main():
@@ -75,8 +84,11 @@ def main():
 
 	if args.email:
 		attribute_storage_name = 'email'
-	else:
+	elif args.username:
 		attribute_storage_name = 'usernames'
+	else:
+		# This shouldn't happen, should be checked by parse_cmdline().
+		raise RuntimeError('Missing argument which objects to reset.')
 
 	if args.write:
 		lo, po = get_admin_connection()

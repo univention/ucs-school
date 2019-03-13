@@ -1092,10 +1092,12 @@ udm users/user
 				Die <literal>[0]</literal> im Beispiel bedeutet, dass nur das erste Zeichen des davor stehenden Attributes genommen wird. Es ist auch möglich Bereiche anzugeben. Weitere Informationen dazu finden sich im Kapitel <ulink url="http://docs.software-univention.de/handbuch-4.4.html#users:templates"><citetitle>Benutzervorlagen</citetitle></ulink> des UCS Handbuchs.
 			</para>
 			<para>
-				Um Zählervariablen nach Tests auf <literal>0</literal> zurück zu setzen, kann das Skript <filename>/usr/share/ucs-school-import/scripts/reset_username_counter</filename> verwendet werden.
+				Um Zählervariablen nach Tests auf <literal>0</literal> zurück zu setzen, kann das Skript <filename>/usr/share/ucs-school-import/scripts/reset_schema_counter</filename> verwendet werden.
 				Mit Hilfe eines Filters kann beschränkt werde, welche Zähler gelöscht werden sollen.
 				In einem Testlauf kann dies überorüft werden.
 				Mit der Option <option>--help</option> werden die Aufrufparameter angezeigt.
+				Standardmäßig werden die Zähler für Benutzernamen zurück gesetzt.
+				Um Zähler für E-Mail-Adressen zu löschen, muss <option>--email</option> verwendet werden.
 			</para>
 			<section id="configuration:unique_usernames_and_email:extending">
 				<title>Programmierung neuer Zählervariablen</title>
