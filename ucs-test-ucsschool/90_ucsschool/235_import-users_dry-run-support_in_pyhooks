@@ -160,7 +160,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		for person in person_list:
 			utils.verify_ldap_object(
 				person.dn,
@@ -177,7 +177,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** 2/8 Importing a user from each role (create), without dry-run (real run)...')
 		config.update_entry('dry_run', False)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -199,7 +199,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -218,7 +218,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** 4/8 Importing a user from each role (modify), without dry-run (real run)...')
 		config.update_entry('dry_run', False)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -241,7 +241,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			person.update(school=self.ou_A.name)  # dry-run did'nt change LDAP, check needs old value
@@ -261,7 +261,7 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('dry_run', False)
 		# CSV still contains school=ou_B.name
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			person.update(school=self.ou_B.name)  # this time it must have changed
@@ -282,7 +282,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=[], mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -300,7 +300,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** 8/8 Importing a user from each role (move), without dry-run (real run)...')
 		config.update_entry('dry_run', False)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(

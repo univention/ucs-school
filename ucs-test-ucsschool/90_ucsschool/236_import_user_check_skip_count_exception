@@ -71,7 +71,7 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
 		try:
-			self.run_import(['-c', fn_config])
+			self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		except ImportException:
 			self.log.info('OK: import failed.')
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[2].username)))

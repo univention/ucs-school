@@ -70,7 +70,7 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
 		self.create_pyhook('create', 'user.birthday = "1907-06-05"')
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -82,7 +82,7 @@ class Test(CLI_Import_v2_Tester):
 
 		self.log.info('*** 2/6 Importing a user from each role, pre_modify without error...')
 		self.create_pyhook('modify', 'user.birthday = "1908-07-06"')
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -101,7 +101,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			#
@@ -131,7 +131,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_config = self.create_config_json(values=config)
 		self.create_pyhook('create', 'user.birthday = "190706-05"')
 		try:
-			self.run_import(['-c', fn_config])
+			self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 			self.fail('Import did not fail.')
 		except ImportException:
 			self.log.info('OK: import failed.')
@@ -148,7 +148,7 @@ class Test(CLI_Import_v2_Tester):
 		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
-		self.run_import(['-c', fn_config])
+		self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication('cn={}'.format(escape_filter_chars(person_list[-1].username)))
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -160,7 +160,7 @@ class Test(CLI_Import_v2_Tester):
 		self.log.info('*** 5/6 Now importing again for pre_modify with error...')
 		self.create_pyhook('modify', 'user.birthday = "1908-0706"')
 		try:
-			self.run_import(['-c', fn_config])
+			self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 			self.fail('Import did not fail.')
 		except ImportException:
 			self.log.info('OK: import failed.')
@@ -185,7 +185,7 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(values=config)
 		try:
-			self.run_import(['-c', fn_config])
+			self.run_import(['-c', fn_config], fail_on_preexisting_pyhook=False)
 			self.fail('Import did not fail.')
 		except ImportException:
 			self.log.info('OK: import failed.')

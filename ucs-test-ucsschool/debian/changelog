@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-11) unstable; urgency=low
+
+  * Bug #48189: adapt tests to check_for_non_empty_pyhooks
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 13:47:58 +0100
+
 ucs-test-ucsschool (5.0.4-10) unstable; urgency=low
 
   * Bug #49266: test configuration hook
