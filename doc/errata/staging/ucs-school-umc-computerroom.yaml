@@ -2,9 +2,8 @@ product: ucsschool
 release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-exam
-fix: 9.0.0-3A~4.4.0.201903131647
+src: ucs-school-umc-computerroom
+fix: 
 desc: |
- * Internal improvement: use the consolidated PyHook loading code (Bug #48958).
  * Preparations for better browser cache-control have been implemented. (Bug #48995)
-bug: [48655, 48958, 48995]
+bug: [48995]
