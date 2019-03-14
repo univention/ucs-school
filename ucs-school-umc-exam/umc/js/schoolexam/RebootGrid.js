@@ -83,9 +83,8 @@ define([
 						icon = 'demo-offline';
 					}
 					var widget = new Text({});
-					widget.set('content', lang.replace('<img src="{path}/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
-						path: require.toUrl('dijit/themes/umc/icons'),
-						icon: icon,
+					widget.set('content', lang.replace('<img src="{src}" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
+						src: require.toUrl(lang.replace('dijit/themes/umc/icons/16x16/computerroom-{0}.png', [icon])),
 						value: value
 					}));
 					return widget;

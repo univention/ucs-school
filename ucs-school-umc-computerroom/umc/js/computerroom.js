@@ -68,10 +68,15 @@ define([
 			ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
-	var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
 	styles.insertCssRule('.umc .dojoxGridCell .dijitButtonText', 'text-decoration: none;');
-	styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
-	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
+	styles.insertCssRule(
+		'.umcIconCollectFiles',
+		lang.replace('background-image: url({0}); width: 16px; height: 16px;', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-collect-files.png')])
+	);
+	styles.insertCssRule(
+		'.umcIconFinishExam',
+		lang.replace('background-image: url({0}); width: 16px; height: 16px;', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-finish-exam.png')])
+	);
 	styles.insertCssRule('.umcRedColor, .umcRedColor .dijitButtonText', 'color: red!important;');
 
 	var isConnected = function(item) { return item.connection === 'connected'; };
@@ -643,9 +648,8 @@ define([
 						status_ = _('The computer is currently participating in a presentation');
 					}
 					var widget = new Text({});
-					widget.set('content', lang.replace('<img src="{path}/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
-						path: require.toUrl('dijit/themes/umc/icons'),
-						icon: icon,
+					widget.set('content', lang.replace('<img src="{src}" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
+						src: require.toUrl(lang.replace('dijit/themes/umc/icons/16x16/computerroom-{0}.png', [icon])),
 						value: value
 					}));
 					this.own(widget);
