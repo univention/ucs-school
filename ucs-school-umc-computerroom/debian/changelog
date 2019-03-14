@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-2) unstable; urgency=medium
+
+  * Bug #48995: adjust require.toUrl() call for dojoConfig.cacheBust
+
+ -- Johannes Keiser <keiser@univention.de>  Thu, 14 Mar 2019 16:04:17 +0100
+
 ucs-school-umc-computerroom (11.0.0-1) unstable; urgency=medium
 
   * Bug #48868: Fix grid header layout

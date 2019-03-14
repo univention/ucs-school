@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.0-4) unstable; urgency=medium
+
+  * Bug #48995: adjust require.toUrl() call for dojoConfig.cacheBust
+
+ -- Johannes Keiser <keiser@univention.de>  Thu, 14 Mar 2019 16:04:58 +0100
+
 ucs-school-umc-exam (9.0.0-3) unstable; urgency=low
 
   * Bug #48958: use new ImportPyHookLoader convenience functions
