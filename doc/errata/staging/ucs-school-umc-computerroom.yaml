@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-computerroom
-fix: 
+fix: 11.0.0-2A~4.4.0.201903141616
 desc: |
  * Preparations for better browser cache-control have been implemented. (Bug #48995)
 bug: [48995]
