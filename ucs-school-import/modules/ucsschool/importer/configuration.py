@@ -93,10 +93,8 @@ class ReadOnlyDict(dict):
 				if v is None or callable(v):
 					a[k] = v
 				else:
-					# If the the value in a is more specific (than str) than in
-					# b, cast to that type.
 					t = type(v)
-					if isinstance(v, string_types) and a.get(k):
+					if isinstance(t, string_types) and a.get(k):
 						t = type(a[k])
 					a[k] = t(v)
 		return a
