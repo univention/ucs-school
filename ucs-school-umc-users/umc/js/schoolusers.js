@@ -99,13 +99,13 @@ define([
 				name: 'passwordexpiry',
 				label: _('Password change required'),
 				width: '40%',
-				'formatter': function(key) {
-					days = Number(key)
+				formatter: function(key) {
+					var days = Number(key);
 					if (days == -1) {
 						return _('never');
 					} else if (days == 0) {
 						return _('now');
-					} else if (days == NaN) { // This should never happen!
+					} else if (isNan(days)) { // This should never happen!
 						return "NaN";
 					} else if (days == 1) {
 						return _('in %s day', days);
@@ -118,7 +118,8 @@ define([
 			this._grid = new Grid({
 				actions: actions,
 				columns: columns,
-				moduleStore: this.moduleStore
+				moduleStore: this.moduleStore,
+				defaultAction: 'reset'
 			});
 
 			this._searchPage.addChild(this._grid);
