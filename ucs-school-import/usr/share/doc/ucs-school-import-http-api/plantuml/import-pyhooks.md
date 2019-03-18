@@ -1,14 +1,17 @@
 @startuml
 actor User
 participant "ucs-school-user-import"
+participant PreReadPyHook
 participant PostReadPyHook
 participant FormatPyHook
 participant UserPyHook
 participant ResultPyHook
 
 User -> "ucs-school-user-import": Start import
+"ucs-school-user-import" -> PreReadPyHook
+note over PreReadPyHook: pre_read():\nCalled before reading the CSV file\n(config, lo, logger available)
+PreReadPyHook -> "ucs-school-user-import"
 note over "ucs-school-user-import": Load CSV file
-
 note over "ucs-school-user-import": Trim leading/trailing whitespace
 
 "ucs-school-user-import" -> PostReadPyHook
