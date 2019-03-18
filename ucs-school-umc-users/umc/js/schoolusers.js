@@ -44,7 +44,7 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/SearchBox",
-	"umc/widgets/TextBox",
+	"umc/widgets/PasswordBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/CheckBox",
 	"umc/widgets/Text",
@@ -53,7 +53,7 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/schoolusers"
 ], function(declare, lang, array, on, locale, Deferred, Dialog, entities, dialog, tools, Module,
-            Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
+            Grid, Page, Form, SearchBox, PasswordBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 
 	return declare("umc.modules.schoolusers", [ Module ], {
 		idProperty: 'id',
@@ -295,7 +295,8 @@ define([
 					label: _('User has to change password on next login')
 				}, {
 					name: 'newPassword',
-					type: TextBox,
+					type: PasswordBox,
+					showRevealToggle: true,
 					required: true,
 					label: _('New password')
 				}],
