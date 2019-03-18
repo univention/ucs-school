@@ -36,6 +36,7 @@ import os
 import os.path
 import pwd
 import grp
+from contextlib import contextmanager
 import univention.admin.modules
 
 
@@ -75,3 +76,9 @@ def get_ldap_mapping_for_udm_property(udm_prop, udm_type):
 	:rtype: str
 	"""
 	return univention.admin.modules.get(udm_type).mapping.mapName(udm_prop)
+
+
+@contextmanager
+def noop():
+	"""Context manager that does nothing."""
+	yield None
