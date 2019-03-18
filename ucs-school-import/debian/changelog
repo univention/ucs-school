@@ -1,3 +1,9 @@
+ucs-school-import (17.0.5-6) unstable; urgency=low
+
+  * Bug #48959: add pre-read hook that can modify CSV headers
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 18 Mar 2019 11:08:42 +0100
+
 ucs-school-import (17.0.5-5) unstable; urgency=low
 
   * Bug #48958: add convenience wrapper for easy usage of PyHooksLoader
