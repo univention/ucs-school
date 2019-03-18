@@ -22,12 +22,12 @@ class Test(CLI_Import_v2_Tester):
 	ou_C = None
 
 	def test(self):
-		source_uid = 'sourceUID-{}'.format(uts.random_string())
+		source_uid = 'source_uid-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:Benutzername', 'name')
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
 		config.update_entry('csv:mapping:role', '__role')
-		config.update_entry('sourceUID', source_uid)
+		config.update_entry('source_uid', source_uid)
 		config.update_entry('user_role', None)
 
 		roles = ('staff', 'student', 'teacher', 'teacher_and_staff')
