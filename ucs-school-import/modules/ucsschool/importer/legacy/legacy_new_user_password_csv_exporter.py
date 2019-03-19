@@ -34,8 +34,8 @@ Write the passwords of newly created users to a CSV file.
 
 from csv import excel_tab
 
-from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
-from ucsschool.importer.configuration import Configuration
+from ..writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
+from ..configuration import Configuration
 
 
 class LegacyNewUserPasswordCsvExporter(NewUserPasswordCsvExporter):

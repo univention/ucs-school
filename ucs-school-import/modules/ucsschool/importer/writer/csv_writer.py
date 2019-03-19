@@ -36,7 +36,7 @@ from csv import DictWriter, excel, QUOTE_ALL
 import os
 from stat import S_IRUSR, S_IWUSR
 
-from ucsschool.importer.writer.base_writer import BaseWriter
+from .base_writer import BaseWriter
 
 
 class CsvWriter(BaseWriter):

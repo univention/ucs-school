@@ -36,9 +36,9 @@ from ldap.filter import filter_format
 
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
-from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
-	ImportTeachersAndStaff, ImportUser
-from ucsschool.importer.exceptions import MissingUid, UnknownAction
+from ..models.import_user import (
+	ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser)
+from ..exceptions import MissingUid, UnknownAction
 
 
 class LegacyImportUser(ImportUser):

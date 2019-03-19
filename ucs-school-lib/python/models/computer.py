@@ -35,15 +35,15 @@ from ldap.filter import escape_filter_chars
 
 from univention.admin.uexceptions import nextFreeIp
 
-from ucsschool.lib.models.attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
-from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass, MultipleObjectsError
+from .attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, MultipleObjectsError
 
-from ucsschool.lib.roles import role_ip_computer, role_mac_computer, role_win_computer
+from ..roles import role_ip_computer, role_mac_computer, role_win_computer
 
-from ucsschool.lib.models.dhcp import DHCPServer, AnyDHCPService
-from ucsschool.lib.models.network import Network
-from ucsschool.lib.models.group import BasicGroup
-from ucsschool.lib.models.utils import ucr, _, logger
+from .dhcp import DHCPServer, AnyDHCPService
+from .network import Network
+from .group import BasicGroup
+from .utils import ucr, _
 
 
 class AnyComputer(UCSSchoolHelperAbstractClass):

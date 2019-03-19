@@ -34,9 +34,9 @@ from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
 import ipaddr
 
-from ucsschool.lib.models.attributes import DHCPServiceName, Attribute, DHCPSubnetName, DHCPSubnetMask, BroadcastAddress, DHCPServiceAttribute, DHCPServerName
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-from ucsschool.lib.models.utils import ucr, _, logger
+from .attributes import DHCPServiceName, Attribute, DHCPSubnetName, DHCPSubnetMask, BroadcastAddress, DHCPServiceAttribute, DHCPServerName
+from .base import UCSSchoolHelperAbstractClass
+from .utils import ucr, _
 
 
 class DHCPService(UCSSchoolHelperAbstractClass):

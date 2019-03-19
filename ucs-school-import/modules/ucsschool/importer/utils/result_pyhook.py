@@ -32,10 +32,10 @@
 Base class for all Python based Result-Pyhooks.
 """
 
-from ucsschool.importer.utils.import_pyhook import ImportPyHook
+from .import_pyhook import ImportPyHook
 try:
 	import typing
-	from ucsschool.importer.mass_import.user_import import UserImportData
+	from ..mass_import.user_import import UserImportData
 except ImportError:
 	pass
 

@@ -48,11 +48,11 @@ import univention.admin.objects as udm_objects
 from univention.admin.filter import conjunction, expression
 from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 
-from ucsschool.lib.schoolldap import SchoolSearchBase, LDAP_Connection
-from ucsschool.lib.models.meta import UCSSchoolHelperMetaClass
-from ucsschool.lib.models.attributes import CommonName, Roles, SchoolAttribute, ValidationError
-from ucsschool.lib.models.utils import ucr, _, logger
-from ucsschool.lib.roles import create_ucsschool_role_string
+from ..schoolldap import SchoolSearchBase, LDAP_Connection
+from .meta import UCSSchoolHelperMetaClass
+from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
+from .utils import ucr, _
+from ..roles import create_ucsschool_role_string
 
 try:
 	from typing import Iterable, Dict, List

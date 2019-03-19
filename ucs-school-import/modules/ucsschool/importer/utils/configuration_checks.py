@@ -60,16 +60,17 @@ Then add a configuration entry to ``/var/lib/ucs-school-import/configs/user_impo
 	}
 """
 
+from __future__ import absolute_import
 import inspect
 from operator import itemgetter
 from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.exceptions import UcsSchoolImportFatalError
-from ucsschool.importer.utils.ldap_connection import get_readonly_connection, get_unprivileged_connection
+from ..exceptions import UcsSchoolImportFatalError
+from .ldap_connection import get_readonly_connection, get_unprivileged_connection
 
 try:
 	from typing import List, Type
-	from ucsschool.importer.configuration import ReadOnlyDict
+	from ..configuration import ReadOnlyDict
 except ImportError:
 	pass
 

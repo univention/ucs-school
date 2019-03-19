@@ -35,11 +35,11 @@ Base class for UCS@school import tool cmdline frontends.
 
 import pprint
 
-from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose, add_file_handler, move_our_handlers_to_lib_logger
-from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
-from ucsschool.importer.configuration import Configuration, setup_configuration
-from ucsschool.importer.factory import setup_factory
-from ucsschool.importer.exceptions import InitialisationError, TooManyErrors, UcsSchoolImportFatalError
+from ucsschool.lib.models.utils import get_stream_handler, get_file_handler, UniStreamHandler
+from .parse_user_import_cmdline import ParseUserImportCmdline
+from ..configuration import Configuration, setup_configuration
+from ..factory import setup_factory
+from ..exceptions import InitialisationError
 
 try:
 	from typing import List

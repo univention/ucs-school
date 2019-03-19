@@ -39,17 +39,17 @@ import univention.admin.modules
 
 from univention.config_registry import handler_set
 from univention.admin.uexceptions import noObject
-from ucsschool.lib.roles import (
+from ..roles import (
 	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu, role_school, role_school_admin_group,
 	role_school_teacher_group, role_school_staff_group, role_school_student_group, role_school_domain_group)
-from ucsschool.lib.models.attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName, Roles
-from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
-from ucsschool.lib.models.group import BasicGroup, BasicSchoolGroup, Group
-from ucsschool.lib.models.dhcp import DHCPService
-from ucsschool.lib.models.policy import DHCPDNSPolicy
-from ucsschool.lib.models.misc import Container, OU
-from ucsschool.lib.models.computer import AnyComputer, SchoolDCSlave, SchoolDC
-from ucsschool.lib.models.utils import flatten, ucr, _, logger
+from .attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName, Roles
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .group import BasicGroup, BasicSchoolGroup, Group
+from .dhcp import DHCPService
+from .policy import DHCPDNSPolicy
+from .misc import Container, OU
+from .computer import AnyComputer, SchoolDCSlave, SchoolDC
+from .utils import flatten, ucr, _
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):

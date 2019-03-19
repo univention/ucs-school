@@ -35,14 +35,14 @@ Base class for all Python based import hooks.
 from ucsschool.lib.pyhooks import PyHook
 from ucsschool.lib.pyhooks import PyHooksLoader
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.exceptions import InitialisationError
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
+from ..configuration import Configuration
+from ..exceptions import InitialisationError
+from .ldap_connection import get_admin_connection, get_readonly_connection
 try:
 	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 	import logging.Logger
 	import univention.admin.uldap.access
-	from ucsschool.importer.utils.import_pyhook import ImportPyHook
+	from .import_pyhook import ImportPyHook
 	ImportPyHookTV = TypeVar('ImportPyHookTV', bound=ImportPyHook)
 except ImportError:
 	pass

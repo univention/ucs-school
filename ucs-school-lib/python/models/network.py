@@ -34,10 +34,10 @@ from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.models.attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-from ucsschool.lib.models.dhcp import DHCPSubnet
-from ucsschool.lib.models.utils import ucr, _, logger
+from .attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
+from .base import UCSSchoolHelperAbstractClass
+from .dhcp import DHCPSubnet
+from .utils import ucr, _
 
 
 class Network(UCSSchoolHelperAbstractClass):

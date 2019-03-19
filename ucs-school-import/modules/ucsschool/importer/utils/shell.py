@@ -51,16 +51,16 @@ import json
 import os.path
 import pprint
 
-from ucsschool.importer.configuration import setup_configuration as _setup_configuration
-from ucsschool.importer.factory import setup_factory as _setup_factory
 from ucsschool.importer.utils.logging import get_logger as _get_logger
-from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
-from ucsschool.importer.utils.ldap_connection import (
+from ..configuration import setup_configuration as _setup_configuration
+from ..factory import setup_factory as _setup_factory
+from ..models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
+from .ldap_connection import (
 	get_admin_connection as _get_admin_connection,
 	get_machine_connection as _get_machine_connection,
 	get_unprivileged_connection as _get_unprivileged_connection)
-from ucsschool.importer.exceptions import UcsSchoolImportFatalError
-from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
+from ..exceptions import UcsSchoolImportFatalError
+from ..frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
 from ucsschool.lib.models import *  # noqa
 
 assert ImportStaff

@@ -35,8 +35,7 @@ import inspect
 import logging
 import lazy_object_proxy
 import univention.admin.modules as udm_modules
-
-from ucsschool.lib.models.attributes import Attribute
+from .attributes import Attribute
 
 
 class UCSSchoolHelperOptions(object):

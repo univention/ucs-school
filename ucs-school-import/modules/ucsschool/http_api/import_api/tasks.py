@@ -47,9 +47,9 @@ from celery.utils.log import get_task_logger
 from django.core.exceptions import ObjectDoesNotExist
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from ucsschool.importer.exceptions import InitialisationError, UcsSchoolImportError, UcsSchoolImportFatalError
-from ucsschool.http_api.import_api.models import UserImportJob, Logfile, PasswordsFile, SummaryFile
-from ucsschool.http_api.import_api.constants import JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
-from ucsschool.http_api.import_api.http_api_import_frontend import HttpApiImportFrontend
+from .models import UserImportJob, Logfile, PasswordsFile, SummaryFile
+from .constants import JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
+from .http_api_import_frontend import HttpApiImportFrontend
 
 
 logger = get_task_logger(__name__)

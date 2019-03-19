@@ -43,7 +43,7 @@ from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.mod
 import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 from ucsschool.http_api.import_api.import_logging import logger
-from ucsschool.http_api.import_api.constants import (
+from .constants import (
 	JOB_ABORTED, JOB_CHOICES, JOB_FINISHED, JOB_NEW, JOB_SCHEDULED, JOB_STARTED, JOB_STATES
 )
 

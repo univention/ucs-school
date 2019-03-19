@@ -39,7 +39,7 @@ import random
 import string
 
 from ucsschool.lib.models.utils import ucr
-from ucsschool.importer.models.import_user import ImportUser
+from ..models.import_user import ImportUser
 from ucsschool.importer.utils.logging import get_logger
 
 TEST_DATA_FILE = "/usr/share/doc/ucs-school-import/test_data.json.gz"

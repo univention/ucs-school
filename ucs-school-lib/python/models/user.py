@@ -37,16 +37,16 @@ from six import iteritems
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
 
-from ucsschool.lib.roles import role_exam_user, role_pupil, role_teacher, role_staff, role_student
-from ucsschool.lib.models.utils import create_passwd
-from ucsschool.lib.models.attributes import (
+from ..roles import role_exam_user, role_pupil, role_teacher, role_staff, role_student
+from .utils import create_passwd
+from .attributes import (
 	Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools, Roles)
-from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
-from ucsschool.lib.models.school import School
-from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup, SchoolGroup
-from ucsschool.lib.models.computer import AnyComputer
-from ucsschool.lib.models.misc import MailDomain
-from ucsschool.lib.models.utils import ucr, _, logger
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
+from .school import School
+from .group import Group, SchoolClass, WorkGroup, SchoolGroup
+from .computer import AnyComputer
+from .misc import MailDomain
+from .utils import ucr, _
 
 from univention.admin.uexceptions import noObject
 from univention.admin.filter import conjunction, parse

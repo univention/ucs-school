@@ -34,8 +34,8 @@ Legacy mass import class.
 
 import copy
 from univention.admin.uexceptions import noObject
-from ucsschool.importer.mass_import.user_import import UserImport
-from ucsschool.importer.exceptions import CreationError, DeletionError, UnknownAction
+from ..mass_import.user_import import UserImport
+from ..exceptions import CreationError, DeletionError, UnknownAction
 
 
 class LegacyUserImport(UserImport):

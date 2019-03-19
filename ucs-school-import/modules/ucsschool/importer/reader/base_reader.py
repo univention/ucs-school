@@ -32,13 +32,13 @@
 Base class of all input readers.
 """
 
-from ucsschool.importer.exceptions import UcsSchoolImportSkipImportRecord
-from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.factory import Factory
-from ucsschool.importer.utils.post_read_pyhook import PostReadPyHook
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
-from ucsschool.importer.utils.import_pyhook import run_import_pyhooks
+from ..exceptions import UcsSchoolImportSkipImportRecord
+from ..configuration import Configuration
+from ..factory import Factory
+from ..utils.post_read_pyhook import PostReadPyHook
+from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
+from ..utils.import_pyhook import run_import_pyhooks
 
 try:
 	from typing import Dict, List

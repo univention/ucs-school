@@ -32,10 +32,10 @@
 
 import os.path
 
-from ucsschool.lib.models.attributes import Roles, ShareName, SchoolClassAttribute
-from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
-from ucsschool.lib.models.utils import ucr, _, logger
-from ucsschool.lib.roles import role_school_class_share, role_workgroup_share
+from .attributes import Roles, ShareName, SchoolClassAttribute
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .utils import ucr, _
+from ..roles import role_school_class_share, role_workgroup_share
 
 from univention.udm import UDM
 from ldap.filter import filter_format

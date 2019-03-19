@@ -30,10 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.models.attributes import EmptyAttributes
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-
-from ucsschool.lib.models.utils import _, logger
+from .attributes import EmptyAttributes
+from .base import UCSSchoolHelperAbstractClass
+from .utils import _
 
 
 class Policy(UCSSchoolHelperAbstractClass):

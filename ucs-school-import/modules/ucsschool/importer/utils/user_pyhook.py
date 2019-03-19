@@ -33,7 +33,7 @@
 Base class for all Python based User hooks.
 """
 
-from ucsschool.importer.utils.import_pyhook import ImportPyHook
+from .import_pyhook import ImportPyHook
 
 
 class UserPyHook(ImportPyHook):

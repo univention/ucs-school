@@ -34,13 +34,13 @@ import univention.admin.modules as udm_modules
 
 udm_modules.update()
 
-from ucsschool.lib.models.school import *
-from ucsschool.lib.models.user import *
-from ucsschool.lib.models.group import *
-from ucsschool.lib.models.computer import *
-from ucsschool.lib.models.dhcp import *
-from ucsschool.lib.models.network import *
-from ucsschool.lib.models.policy import *
-from ucsschool.lib.models.misc import *
-from ucsschool.lib.models.share import *
+from .school import *
+from .user import *
+from .group import *
+from .computer import *
+from .dhcp import *
+from .network import *
+from .policy import *
+from .misc import *
+from .share import *
 import utils

@@ -45,10 +45,10 @@ from rest_framework.exceptions import ParseError, PermissionDenied
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from ucsschool.lib.models.utils import ucr
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
-from ucsschool.http_api.import_api.models import (
+from .models import (
 	JOB_NEW, JOB_SCHEDULED, Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob)
 from ucsschool.http_api.import_api.import_logging import logger
-from ucsschool.http_api.import_api.tasks import dry_run, import_users
+from .tasks import dry_run, import_users
 try:
 	from typing import Tuple
 except ImportError:

@@ -34,10 +34,9 @@ from univention.admin.uexceptions import objectExists
 import univention.admin.uldap as udm_uldap
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.models.attributes import ContainerPath
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-
-from ucsschool.lib.models.utils import ucr, _, logger
+from .attributes import ContainerPath
+from .base import UCSSchoolHelperAbstractClass
+from .utils import ucr, _
 
 
 class MailDomain(UCSSchoolHelperAbstractClass):

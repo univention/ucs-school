@@ -33,8 +33,8 @@
 Class to export test user data from TestUserCreator to CSV.
 """
 
-from ucsschool.importer.writer.csv_writer import CsvWriter
-from ucsschool.importer.writer.result_exporter import ResultExporter
+from .csv_writer import CsvWriter
+from .result_exporter import ResultExporter
 
 
 class TestUserCsvExporter(ResultExporter):

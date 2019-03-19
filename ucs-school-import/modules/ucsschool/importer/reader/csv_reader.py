@@ -39,9 +39,9 @@ import sys
 from six import string_types
 import magic
 
-from ucsschool.importer.contrib.csv import DictReader
-from ucsschool.importer.reader.base_reader import BaseReader
-from ucsschool.importer.exceptions import ConfigurationError, InitialisationError, NoRole, UnknownRole, UnknownProperty
+from ..contrib.csv import DictReader
+from .base_reader import BaseReader
+from ..exceptions import ConfigurationError, InitialisationError, NoRole, UnknownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
@@ -49,7 +49,7 @@ import univention.admin.modules
 try:
 	from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
 	from csv import Dialect
-	from ucsschool.importer.models.import_user import ImportUser
+	from ..models.import_user import ImportUser
 except ImportError:
 	pass
 

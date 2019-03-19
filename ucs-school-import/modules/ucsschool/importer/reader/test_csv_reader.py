@@ -32,8 +32,8 @@
 CSV reader for CSV files created by TestUserCsvExporter.
 """
 
-from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.reader.csv_reader import CsvReader
+from ..configuration import Configuration
+from ..reader.csv_reader import CsvReader
 
 
 class TestCsvReader(CsvReader):

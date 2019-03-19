@@ -33,7 +33,7 @@
 Base class for all Python based Post-Read-Pyhooks.
 """
 
-from ucsschool.importer.utils.import_pyhook import ImportPyHook
+from .import_pyhook import ImportPyHook
 
 
 class PostReadPyHook(ImportPyHook):

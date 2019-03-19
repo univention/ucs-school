@@ -46,29 +46,29 @@ from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndSta
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
 from ucsschool.lib.models.utils import create_passwd, ucr
-from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import (
+from ..configuration import Configuration
+from ..factory import Factory
+from ..exceptions import (
 	BadPassword, EmptyFormatResultError, EmptyMandatoryAttribute, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
 	MissingUid, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsernameAtAll,
 	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
 	UserValidationError
 )
-from ucsschool.importer.utils.user_pyhook import UserPyHook
-from ucsschool.importer.utils.format_pyhook import FormatPyHook
-from ucsschool.importer.utils.import_pyhook import get_import_pyhooks
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
-from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
+from ..utils.user_pyhook import UserPyHook
+from ..utils.format_pyhook import FormatPyHook
+from ..utils.import_pyhook import get_import_pyhooks
+from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
+from ..utils.utils import get_ldap_mapping_for_udm_property
 
 
 try:
 	from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
-	from ucsschool.importer.configuration import ReadOnlyDict
-	from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
-	from ucsschool.importer.utils.username_handler import UsernameHandler
-	from ucsschool.importer.reader.base_reader import BaseReader
-	from ucsschool.importer.utils.ldap_connection import LoType, UdmObjectType
+	from ..configuration import ReadOnlyDict
+	from ..default_user_import_factory import DefaultUserImportFactory
+	from ..utils.username_handler import UsernameHandler
+	from ..reader.base_reader import BaseReader
+	from ..utils.ldap_connection import LoType, UdmObjectType
 	from univention.config_registry import ConfigRegistry
 except ImportError:
 	pass

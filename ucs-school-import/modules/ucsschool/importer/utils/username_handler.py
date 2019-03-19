@@ -37,8 +37,8 @@ import string
 from six import string_types
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject, objectExists
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
-from ucsschool.importer.exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
+from .ldap_connection import get_admin_connection, get_unprivileged_connection
+from ..exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
 from ucsschool.importer.utils.logging import get_logger
 
 

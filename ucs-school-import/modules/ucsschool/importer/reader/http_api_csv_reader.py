@@ -32,8 +32,8 @@
 CSV reader for CSV files created for HTTP-API import.
 """
 
-from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.reader.csv_reader import CsvReader
+from ..configuration import Configuration
+from .csv_reader import CsvReader
 from ucsschool.lib.models.user import Staff
 
 
