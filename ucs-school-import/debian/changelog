@@ -13,7 +13,7 @@ ucs-school-import (17.0.5-5) unstable; urgency=low
 
 ucs-school-import (17.0.5-4) unstable; urgency=low
 
-  * Bug #42131: rename counter putrge script
+  * Bug #42131: rename counter purge script
 
  -- Daniel Troeder <troeder@univention.de>  Wed, 13 Mar 2019 10:42:23 +0100
 
