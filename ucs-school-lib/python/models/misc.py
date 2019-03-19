@@ -54,7 +54,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 class OU(UCSSchoolHelperAbstractClass):
 
 	def create(self, lo, validate=True):
-		logger.info('Creating %r', self)
+		self.logger.info('Creating %r', self)
 		pos = udm_uldap.position(ucr.get('ldap/base'))
 		pos.setDn(self.position)
 		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos)

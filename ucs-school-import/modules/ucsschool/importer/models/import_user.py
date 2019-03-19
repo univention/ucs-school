@@ -55,7 +55,6 @@ from ucsschool.importer.exceptions import (
 	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
 	UserValidationError
 )
-from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
 from ucsschool.importer.utils.import_pyhook import get_import_pyhooks
@@ -65,7 +64,6 @@ from ucsschool.importer.utils.utils import get_ldap_mapping_for_udm_property
 
 try:
 	from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
-	import logging
 	from ucsschool.importer.configuration import ReadOnlyDict
 	from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
 	from ucsschool.importer.utils.username_handler import UsernameHandler
@@ -105,7 +103,6 @@ class ImportUser(User):
 	factory = lazy_object_proxy.Proxy(lambda: Factory())  # type: DefaultUserImportFactory
 	ucr = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_ucr())  # type: ConfigRegistry
 	reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())  # type: BaseReader
-	logger = lazy_object_proxy.Proxy(get_logger)  # type: logging.Logger
 	_username_handler_cache = {}  # type: Dict[Tuple[int, bool], UsernameHandler]
 	_unique_email_handler_cache = {}  # type: Dict[bool, UsernameHandler]
 	# non-Attribute attributes (not in self._attributes) that can also be used

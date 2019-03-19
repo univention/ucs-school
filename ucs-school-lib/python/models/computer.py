@@ -105,27 +105,27 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 				try:
 					udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
 				except MultipleObjectsError:
-					logger.error('Found more than one DC Slave with hostname "%s"', self.name)
+					self.logger.error('Found more than one DC Slave with hostname "%s"', self.name)
 					return False
 				if udm_obj is None:
-					logger.error('Cannot find DC Slave with hostname "%s"', self.name)
+					self.logger.error('Cannot find DC Slave with hostname "%s"', self.name)
 					return False
 			old_dn = udm_obj.dn
 			school = self.get_school_obj(lo)
 			group_dn = school.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
 			if group_dn not in udm_obj['groups']:
-				logger.error('%r has no LDAP access to %r', self, school)
+				self.logger.error('%r has no LDAP access to %r', self, school)
 				return False
 			if old_dn == self.dn:
-				logger.info('DC Slave "%s" is already located in "%s" - stopping here', self.name, self.school)
+				self.logger.info('DC Slave "%s" is already located in "%s" - stopping here', self.name, self.school)
 			self.set_dn(old_dn)
 			if self.exists_outside_school(lo):
 				if not force:
-					logger.error('DC Slave "%s" is located in another OU - %s', self.name, udm_obj.dn)
-					logger.error('Use force=True to override')
+					self.logger.error('DC Slave "%s" is located in another OU - %s', self.name, udm_obj.dn)
+					self.logger.error('Use force=True to override')
 					return False
 			if school is None:
-				logger.error('Cannot move DC Slave object - School does not exist: %r', school)
+				self.logger.error('Cannot move DC Slave object - School does not exist: %r', school)
 				return False
 			self.modify_without_hooks(lo)
 			if school.class_share_file_server == old_dn:
@@ -148,8 +148,8 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 				dhcp_server = DHCPServer(name=self.name, school=self.school, dhcp_service=own_dhcp_service)
 				dhcp_server.create(lo)
 
-			logger.info('Move complete')
-			logger.warning('The DC Slave has to be rejoined into the domain!')
+			self.logger.info('Move complete')
+			self.logger.warning('The DC Slave has to be rejoined into the domain!')
 		finally:
 			self.invalidate_cache()
 		return True
@@ -186,7 +186,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		ipv4_network = self.get_ipv4_network()
 		if ipv4_network:
 			if self._ip_is_set_to_subnet(ipv4_network):
-				logger.info('IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!')
+				self.logger.info('IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!')
 				udm_obj['ip'] = ''
 			else:
 				udm_obj['ip'] = str(ipv4_network.ip)
@@ -199,7 +199,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			try:
 				udm_obj['network'] = network.dn
 			except nextFreeIp:
-				logger.error('Tried to set IP automatically, but failed! %r is full', network)
+				self.logger.error('Tried to set IP automatically, but failed! %r is full', network)
 				raise nextFreeIp(_('There are no free addresses left in the subnet!'))
 
 	@classmethod
@@ -227,7 +227,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		try:
 			return IPv4Network(network_str)
 		except (AddressValueError, NetmaskValueError, ValueError):
-			logger.warning('Unparsable network: %r', network_str)
+			self.logger.warning('Unparsable network: %r', network_str)
 
 	def _ip_is_set_to_subnet(self, ipv4_network=None):
 		ipv4_network = ipv4_network or self.get_ipv4_network()

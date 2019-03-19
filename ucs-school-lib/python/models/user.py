@@ -152,29 +152,29 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def _legacy_is_student(cls, school, dn):
-		logger.warning('Using deprecated method is_student()')
+		cls.logger.warning('Using deprecated method is_student()')
 		return dn.endswith(cls.get_search_base(school).students)
 
 	@classmethod
 	def _legacy_is_exam_student(cls, school, dn):
-		logger.warning('Using deprecated method is_exam_student()')
+		cls.logger.warning('Using deprecated method is_exam_student()')
 		return dn.endswith(cls.get_search_base(school).examUsers)
 
 	@classmethod
 	def _legacy_is_teacher(cls, school, dn):
-		logger.warning('Using deprecated method is_teacher()')
+		cls.logger.warning('Using deprecated method is_teacher()')
 		search_base = cls.get_search_base(school)
 		return dn.endswith(search_base.teachers) or dn.endswith(search_base.teachersAndStaff) or dn.endswith(search_base.admins)
 
 	@classmethod
 	def _legacy_is_staff(cls, school, dn):
-		logger.warning('Using deprecated method is_staff()')
+		cls.logger.warning('Using deprecated method is_staff()')
 		search_base = cls.get_search_base(school)
 		return dn.endswith(search_base.staff) or dn.endswith(search_base.teachersAndStaff)
 
 	@classmethod
 	def _legacy_is_admininstrator(cls, school, dn):
-		logger.warning('Using deprecated method is_admininstrator()')
+		cls.logger.warning('Using deprecated method is_admininstrator()')
 		return dn.endswith(cls.get_search_base(school).admins)
 
 	def __check_object_class(self, lo, object_class, fallback):
@@ -229,7 +229,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		self.create_mail_domain(lo)
 		password_created = False
 		if not self.password:
-			logger.debug('No password given. Generating random one')
+			self.logger.debug('No password given. Generating random one')
 			old_password = self.password  # None or ''
 			self.password = create_passwd(dn=self.dn)
 			password_created = True
@@ -270,9 +270,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			# change self.schools back, so schools can be removed by remove_from_school()
 			self.schools = udm_obj['school']
 		for removed_school in removed_schools:
-			logger.info('Removing %r from school %r...', self, removed_school)
+			self.logger.info('Removing %r from school %r...', self, removed_school)
 			if not self.remove_from_school(removed_school, lo):
-				logger.error('Error removing %r from school %r.', self, removed_school)
+				self.logger.error('Error removing %r from school %r.', self, removed_school)
 				return False
 
 		# remove SchoolClasses the user is not part of anymore
@@ -285,7 +285,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				continue
 			classes = self.school_classes.get(school_class.school, [])
 			if school_class.name not in classes and school_class.get_relative_name() not in classes:
-				logger.debug('Removing %r from SchoolClass %r.', self, group_dn)
+				self.logger.debug('Removing %r from SchoolClass %r.', self, group_dn)
 				udm_obj['groups'].remove(group_dn)
 
 		# make sure user is in all mandatory groups and school classes
@@ -293,7 +293,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		groups_to_add = filter(lambda dn: dn.lower() not in current_groups, mandatory_groups)
 		# [dn for dn in mandatory_groups if dn.lower() not in current_groups]
 		if groups_to_add:
-			logger.debug('Adding %r to groups %r.', self, groups_to_add)
+			self.logger.debug('Adding %r to groups %r.', self, groups_to_add)
 			udm_obj['groups'].extend(groups_to_add)
 		return super(User, self).do_modify(udm_obj, lo)
 
@@ -301,7 +301,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		super(User, self).do_school_change(udm_obj, lo, old_school)
 		school = self.school
 
-		logger.info('User is part of the following groups: %r', udm_obj['groups'])
+		self.logger.info('User is part of the following groups: %r', udm_obj['groups'])
 		self.remove_from_groups_of_school(old_school, lo)
 		self._udm_obj_searched = False
 		self.school_classes.pop(old_school, None)
@@ -351,7 +351,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			if self.shall_create_mail_domain():
 				mail_domain.create(lo)
 			else:
-				logger.warning('Not allowed to create %r.', mail_domain)
+				self.logger.warning('Not allowed to create %r.', mail_domain)
 
 	def set_default_options(self, udm_obj):
 		for option in self.get_default_options():
@@ -415,15 +415,15 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def remove_from_school(self, school, lo):
 		if not self.exists(lo):
-			logger.warning('User does not exists, not going to remove.')
+			self.logger.warning('User does not exists, not going to remove.')
 			return False
 		try:
 			(self.schools or [school]).remove(school)
 		except ValueError:
-			logger.warning('User is not part of school %r. Not removing.', school)
+			self.logger.warning('User is not part of school %r. Not removing.', school)
 			return False
 		if not self.schools:
-			logger.warning('User %r not part of any school, removing it.', self)
+			self.logger.warning('User %r not part of any school, removing it.', self)
 			return self.remove(lo)
 		if self.school == school:
 			if not self.change_school(self.schools[0], lo):
@@ -441,7 +441,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				except ValueError:
 					pass
 				else:
-					logger.info('Removing %r from group %r of school %r.', self.dn, group.dn, school)
+					self.logger.info('Removing %r from group %r of school %r.', self.dn, group.dn, school)
 					group.modify(lo)
 
 	def get_group_dn(self, group_name, school):
@@ -584,9 +584,9 @@ class Student(User):
 		try:
 			exam_user = ExamStudent.from_student_dn(lo, old_school, self.old_dn)
 		except noObject as exc:
-			logger.info('No exam user for %r found: %s', self.old_dn, exc)
+			self.logger.info('No exam user for %r found: %s', self.old_dn, exc)
 		else:
-			logger.info('Removing exam user %r', exam_user.dn)
+			self.logger.info('Removing exam user %r', exam_user.dn)
 			exam_user.remove(lo)
 
 		super(Student, self).do_school_change(udm_obj, lo, old_school)

@@ -72,7 +72,7 @@ class Share(UCSSchoolHelperAbstractClass):
 				udm_obj.options.remove('nfs')  # deactivate NFS
 			except ValueError:
 				pass
-		logger.info('Creating share on "%s"', udm_obj['host'])
+		self.logger.info('Creating share on "%s"', udm_obj['host'])
 		return super(Share, self).do_create(udm_obj, lo)
 
 	def get_share_path(self):
@@ -116,7 +116,7 @@ class Share(UCSSchoolHelperAbstractClass):
 		if len(ou_attr_ldap_access_write) > 0:
 			alternative_server_dn = ou_attr_ldap_access_write['univentionLDAPAccessWrite'][0]
 			if len(ou_attr_ldap_access_write) > 1:
-				logger.warning('more than one corresponding univentionLDAPAccessWrite found at ou=%s', self.school)
+				self.logger.warning('more than one corresponding univentionLDAPAccessWrite found at ou=%s', self.school)
 
 		# build fqdn of alternative server and set serverfqdn
 		if alternative_server_dn:
