@@ -35,6 +35,7 @@ Database / Resource models
 
 from __future__ import unicode_literals
 import codecs
+import logging
 from ldap.filter import escape_filter_chars
 from django.db import models
 from django.conf import settings
@@ -42,7 +43,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
-from ucsschool.http_api.import_api.import_logging import logger
 from .constants import (
 	JOB_ABORTED, JOB_CHOICES, JOB_FINISHED, JOB_NEW, JOB_SCHEDULED, JOB_STARTED, JOB_STATES
 )
@@ -281,6 +281,7 @@ class TextArtifact(models.Model):
 				with codecs.open(self.path, 'rb', encoding='utf-8') as fp:
 					self.text = fp.read()
 			except IOError as exc:
+				logger = logging.getLogger(__name__)
 				logger.error('Could not read %r: %s', self.path, exc)
 				return ''
 		return self.text

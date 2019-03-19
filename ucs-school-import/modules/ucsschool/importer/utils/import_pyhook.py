@@ -32,15 +32,15 @@
 Base class for all Python based import hooks.
 """
 
+from __future__ import absolute_import
+import logging
 from ucsschool.lib.pyhooks import PyHook
 from ucsschool.lib.pyhooks import PyHooksLoader
-from ucsschool.importer.utils.logging import get_logger
 from ..configuration import Configuration
 from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 try:
 	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
-	import logging.Logger
 	import univention.admin.uldap.access
 	from .import_pyhook import ImportPyHook
 	ImportPyHookTV = TypeVar('ImportPyHookTV', bound=ImportPyHook)
@@ -74,15 +74,18 @@ class ImportPyHook(PyHook):
 			try:
 				config = Configuration()
 				self.dry_run = config['dry_run']
+				"""Whether this is a dry-run"""
 			except InitialisationError:
 				self.dry_run = False
 		else:
 			self.dry_run = dry_run
 		if lo is None:
-			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]
+			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]  # type: univention.admin.uldap.access
 		else:
 			self.lo = lo  # reuse LDAP object
-		self.logger = get_logger()  # Python logging instance
+			"""LDAP connection object"""
+		self.logger = logging.getLogger(__name__)  # type: logging.Logger
+		"""Python logging instance"""
 
 
 class ImportPyHookLoader(object):
@@ -96,7 +99,7 @@ class ImportPyHookLoader(object):
 
 	def __init__(self, pyhooks_base_path):
 		self.pyhooks_base_path = pyhooks_base_path
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)  # type: logging.Logger
 
 	def init_hook(self, hook_cls, filter_func=None, *args, **kwargs):
 		# type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]

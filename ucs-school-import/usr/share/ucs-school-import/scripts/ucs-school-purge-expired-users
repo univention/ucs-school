@@ -39,11 +39,10 @@ import datetime
 from argparse import ArgumentParser
 from ldap.filter import filter_format
 
+from ucsschool.lib.models.utils import UniStreamHandler
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.factory import setup_factory
-from ucsschool.importer.utils.logging import make_stdout_verbose
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
-from ucsschool.lib.models.utils import UniStreamHandler
 
 
 a_user = None
@@ -87,10 +86,6 @@ def parse_cmdline():
 	args = parser.parse_args()
 	if args.quiet and args.verbose:
 		parser.error('Options "quiet" and "verbose" are mutually exclusive.')
-	if args.quiet:
-		monkey_patch_logging()
-	if args.verbose:
-		make_stdout_verbose()
 	return args
 
 
@@ -112,32 +107,6 @@ def shadow_expire2date(shadow_expire):
 	return datetime.datetime.utcfromtimestamp(int(shadow_expire) * 3600 * 24).date()
 
 
-def monkey_patch_logging():
-	def callHandlers(self, record):
-		from logging import raiseExceptions
-
-		c = self
-		found = 0
-		while c:
-			for hdlr in c.handlers:
-				found = found + 1
-				# patch is here:
-				if (
-					record.levelno >= logging.ERROR or
-					record.levelno >= hdlr.level and not isinstance(hdlr, UniStreamHandler)
-				):
-					hdlr.handle(record)
-			if not c.propagate:
-				c = None  # break out
-			else:
-				c = c.parent
-		if (found == 0) and raiseExceptions and not self.manager.emittedNoHandlerWarning:
-			sys.stderr.write("No handlers could be found for logger \"%s\"\n" % self.name)
-			self.manager.emittedNoHandlerWarning = 1
-
-	logging.Logger.callHandlers = callHandlers
-
-
 def main():
 	global a_user
 
@@ -152,6 +121,16 @@ def main():
 	# early logging configured by cmdline
 	uic.setup_logging(uic.args.verbose, uic.args.logfile)
 	logger = uic.logger
+	if uic.args.quiet:
+		loglevel = logging.ERROR
+	elif uic.args.verbose:
+		loglevel = logging.DEBUG
+	else:
+		loglevel = logging.INFO
+	logger.setLevel(loglevel)
+	for handler in logger.handlers:
+		if isinstance(handler, UniStreamHandler):
+			handler.setLevel(loglevel)
 
 	logger.info('------ UCS@school import tool starting ------')
 	if uic.args.conffile:

@@ -46,7 +46,6 @@ from ldap.filter import filter_format
 
 config_registry = univention.config_registry.ConfigRegistry()
 config_registry.load()
-logger = logging.getLogger(__name__)
 _hooks = None
 
 
@@ -126,6 +125,8 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 
 	if display_name is None:
 		display_name = ou_name
+
+	logger = logging.getLogger(__name__)
 
 	new_school = School(name=ou_name, dc_name=edu_name, dc_name_administrative=admin_name,
 						display_name=display_name)

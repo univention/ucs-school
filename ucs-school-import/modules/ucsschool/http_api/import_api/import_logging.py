@@ -40,15 +40,7 @@ from django.conf import settings
 
 FILE_HANDLER_NAME = 'http_api.log'
 
-
-logging.basicConfig(
-	# datefmt=settings.UCSSCHOOL_IMPORT['logging']['api_datefmt'],
-	# format=settings.UCSSCHOOL_IMPORT['logging']['api_format'],
-	level=logging.INFO
-)
-
-
-logger = logging.getLogger('import_http_api')
+logger = logging.getLogger(__name__)
 
 if FILE_HANDLER_NAME not in [h.name for h in logger.handlers]:
 	_file_handler = logging.FileHandler(settings.UCSSCHOOL_IMPORT['logging']['api_logfile'])

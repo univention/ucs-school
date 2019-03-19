@@ -33,6 +33,7 @@ Default mass import class.
 """
 
 import datetime
+import logging
 
 from ..exceptions import UcsSchoolImportError, UcsSchoolImportFatalError
 from ..factory import Factory
@@ -66,7 +67,7 @@ class MassImport(object):
 		"""
 		self.dry_run = dry_run
 		self.config = Configuration()
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.factory = Factory()
 		self.result_exporter = self.factory.make_result_exporter()
 		self.password_exporter = self.factory.make_password_exporter()

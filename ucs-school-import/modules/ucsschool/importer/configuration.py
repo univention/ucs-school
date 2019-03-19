@@ -34,23 +34,23 @@ Configuration classes.
 """
 
 import json
+import logging
 from six import string_types
-from ucsschool.importer.utils.logging import get_logger
 from .exceptions import InitialisationError, ReadOnlyConfiguration
 from .utils.configuration_checks import run_configuration_checks
 try:
 	from typing import Any, Dict, List, Optional, Type
-	import logging.Logger
 except ImportError:
 	pass
 
 
 def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> ReadOnlyDict
+	logger = logging.getLogger(__name__)
 	config = Configuration(conffiles)
 	config.update(kwargs)
-	config.post_read(get_logger())
+	config.post_read(logger)
 	config.close()
-	get_logger().info("Finished reading configuration, starting checks...")
+	logger.info("Finished reading configuration, starting checks...")
 	run_configuration_checks(config)
 	return config
 
@@ -59,7 +59,7 @@ class ConfigurationFile(object):
 
 	def __init__(self, filename):  # type: (str) -> None
 		self.filename = filename
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 
 	def read(self):  # type: () -> Dict[str, Any]
 		self.logger.info("Reading configuration from %r...", self.filename)

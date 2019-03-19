@@ -32,8 +32,8 @@
 Default implementation of the Abstract Factory.
 """
 
+import logging
 from ucsschool.lib.models.utils import ucr
-from ucsschool.importer.utils.logging import get_logger
 from .factory import load_class
 from .exceptions import InitialisationError
 try:
@@ -55,7 +55,7 @@ class DefaultUserImportFactory(object):
 	def __init__(self):  # type: () -> None
 		from .configuration import Configuration
 		self.config = Configuration()
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.load_methods_from_config()
 
 	def load_methods_from_config(self):  # type: () -> None

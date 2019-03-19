@@ -47,11 +47,12 @@
 Module to ease interactive use of import system.
 """
 
+from __future__ import absolute_import
 import json
+import logging
 import os.path
 import pprint
 
-from ucsschool.importer.utils.logging import get_logger as _get_logger
 from ..configuration import setup_configuration as _setup_configuration
 from ..factory import setup_factory as _setup_factory
 from ..models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
@@ -61,6 +62,7 @@ from .ldap_connection import (
 	get_unprivileged_connection as _get_unprivileged_connection)
 from ..exceptions import UcsSchoolImportFatalError
 from ..frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
+from ucsschool.lib.models.utils import get_stream_handler, UniStreamHandler
 from ucsschool.lib.models import *  # noqa
 
 assert ImportStaff
@@ -75,9 +77,15 @@ _config_args = {
 	"verbose": True
 }
 try:
-	_config_args.update(json.load(open(os.path.expanduser("~/.import_shell_args"), "rb")))
+	with open(os.path.expanduser("~/.import_shell_args"), "rb") as fp:
+		_config_args.update(json.load(fp))
 except IOError as exc:
 	pass
+
+logger = logging.getLogger('ucsschool')
+logger.setLevel(logging.DEBUG)
+if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
+	logger.addHandler(get_stream_handler('DEBUG'))
 
 _ui = _UserImportCommandLine()
 _config_files = _ui.configuration_files
@@ -87,7 +95,6 @@ if os.path.exists(os.path.expanduser("~/.import_shell_config")):
 config = _setup_configuration(_config_files, **_config_args)
 _ui.setup_logging(config["verbose"], config["logfile"])
 factory = _setup_factory(config["factory"])
-logger = _get_logger()
 try:
 	lo, _po = _get_admin_connection()
 except UcsSchoolImportFatalError:

@@ -32,7 +32,7 @@
 Base class of all input readers.
 """
 
-from ucsschool.importer.utils.logging import get_logger
+import logging
 from ..exceptions import UcsSchoolImportSkipImportRecord
 from ..configuration import Configuration
 from ..factory import Factory
@@ -60,7 +60,7 @@ class BaseReader(object):
 		:param dict kwargs: optional parameters for use in derived classes
 		"""
 		self.config = Configuration()
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.lo, self.position = get_readonly_connection() if self.config['dry_run'] else get_admin_connection()
 		self.filename = filename
 		self.header_lines = header_lines

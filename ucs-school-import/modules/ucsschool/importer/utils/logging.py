@@ -31,7 +31,9 @@
 Central place to get logger for import.
 """
 
-from ucsschool.lib.models.utils import get_logger as get_lib_logger, logger as lib_logger
+from __future__ import absolute_import
+import logging
+from ucsschool.lib.models.utils import get_file_handler, UniFileHandler, UniStreamHandler
 
 try:
 	from typing import Optional
@@ -40,11 +42,27 @@ except ImportError:
 
 
 def get_logger():  # type: () -> logging.Logger
-	return get_lib_logger("import")
+	"""
+	Get a logging instance with name `ucsschool`.
+
+	.. deprecated:: 4.4 v2
+		Use `logging.getLogger(__name__)` and :py:func:`get_stream_handler()`,
+		:py:func:`get_file_handler()`.
+
+	:return: Logger
+	:rtype: logging.Logger
+	"""
+	logger = logging.getLogger('ucsschool.import')
+	logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
+	return logger
 
 
 def make_stdout_verbose():  # type: () -> logging.Logger
-	return get_lib_logger("import", "DEBUG")
+	logger = logging.getLogger('ucsschool.import')
+	for handler in logger.handlers:
+		if isinstance(handler, UniStreamHandler):
+			handler.setLevel(logging.DEBUG)
+	return logger
 
 
 def add_file_handler(filename, uid=None, gid=None, mode=None):
@@ -53,13 +71,25 @@ def add_file_handler(filename, uid=None, gid=None, mode=None):
 		info_filename = "{}.info".format(filename[:-4])
 	else:
 		info_filename = "{}.info".format(filename)
-	handler_kwargs = {'fuid': uid, 'fgid': gid, 'fmode': mode}
-	get_lib_logger("import", "DEBUG", filename, handler_kwargs=handler_kwargs)
-	return get_lib_logger("import", "INFO", target=info_filename, handler_kwargs=handler_kwargs)
+	logger = logging.getLogger('ucsschool.import')
+	if not any(isinstance(handler, UniFileHandler) for handler in logger.handlers):
+		logger.addHandler(get_file_handler('DEBUG', filename, uid, gid, mode))
+		# TODO: bug to remove INFO file, or only create >=WARN/ERROR
+		logger.addHandler(get_file_handler('INFO', info_filename, uid, gid, mode))
+	return logger
 
 
 def move_our_handlers_to_lib_logger():  # type: () -> None
-	import_logger = get_logger()
+	"""
+	Move logging handlers from `ucsschool.import` to `ucsschool` logger.
+
+	.. deprecated:: 4.4 v2
+		Use `logging.getLogger(__name__)` and :py:func:`get_stream_handler()`,
+		:py:func:`get_file_handler()` for the logger hierarchie required.
+	"""
+	import_logger = logging.getLogger('ucsschool.import')
+	import_logger.warn('move_our_handlers_to_lib_logger() is deprecated.')
+	school_logger = logging.getLogger('ucsschool')
 	for handler in import_logger.handlers:
-		lib_logger.addHandler(handler)
+		school_logger.addHandler(handler)
 		import_logger.removeHandler(handler)

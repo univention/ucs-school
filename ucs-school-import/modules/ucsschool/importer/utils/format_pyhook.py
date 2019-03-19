@@ -32,8 +32,9 @@
 Base class for all Python based format hooks.
 """
 
+from __future__ import absolute_import
+import logging
 from ucsschool.lib.pyhooks import PyHook
-from ucsschool.importer.utils.logging import get_logger
 
 
 class FormatPyHook(PyHook):
@@ -59,7 +60,8 @@ class FormatPyHook(PyHook):
 
 	def __init__(self, *args, **kwargs):
 		super(FormatPyHook, self).__init__(*args, **kwargs)
-		self.logger = get_logger()  # Python logging instance
+		self.logger = logging.getLogger(__name__)
+		"""Python logging instance"""
 
 	def patch_fields_staff(self, property_name, fields):
 		"""

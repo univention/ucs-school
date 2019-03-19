@@ -35,6 +35,7 @@ Default user import class.
 
 import sys
 import copy
+import logging
 from collections import defaultdict
 import datetime
 
@@ -44,7 +45,6 @@ from ucsschool.lib.models.attributes import ValidationError
 from ..exceptions import (
 	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction,
 	UserValidationError, WrongUserType)
-from ucsschool.importer.utils.logging import get_logger
 from ..factory import Factory
 from ..configuration import Configuration
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
@@ -83,7 +83,7 @@ class UserImport(object):
 		self.modified_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
 		self.deleted_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
 		self.config = Configuration()  # type: ReadOnlyDict
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()

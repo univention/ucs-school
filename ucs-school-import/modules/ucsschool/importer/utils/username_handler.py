@@ -32,14 +32,15 @@
 Create historically unique usernames/email addresses.
 """
 
+from __future__ import absolute_import
 import re
 import string
+import logging
 from six import string_types
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject, objectExists
 from .ldap_connection import get_admin_connection, get_unprivileged_connection
 from ..exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
-from ucsschool.importer.utils.logging import get_logger
 
 
 class NameCounterStorageBackend(object):
@@ -271,7 +272,7 @@ class UsernameHandler(object):
 		"""
 		self.max_length = max_length
 		self.dry_run = dry_run
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.storage_backend = self.get_storage_backend()
 		self.logger.debug('%r storage_backend=%r', self,  self.storage_backend.__class__.__name__)
 		self.replacement_variable_pattern = re.compile(r'(%s)' % '|'.join(map(re.escape, self.counter_variable_to_function.keys())), flags=re.I)

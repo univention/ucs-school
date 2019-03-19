@@ -19,6 +19,7 @@ from collections import Mapping
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 from univention.admin.uexceptions import noObject, ldapError
+from ucsschool.lib.models.utils import get_stream_handler, UniStreamHandler
 from univention.testing.ucsschool.importusers import Person
 import univention.testing.ucr
 import univention.testing.udm
@@ -81,7 +82,7 @@ class PyHooks(object):
 		self.hook_basedir = hook_basedir if hook_basedir else '/usr/share/ucs-school-import/pyhooks'
 		self.tmpdir = tempfile.mkdtemp(prefix='pyhook.', dir='/tmp')
 		self.cleanup_files = set()
-		self.log = logging.getLogger('PyHooks')
+		self.log = logging.getLogger(__name__)
 
 	def create_hooks(self):
 		"""
@@ -345,19 +346,10 @@ class ImportTestbase(object):
 
 	@staticmethod
 	def _get_logger():
-		logger = logging.getLogger('ucs-test-ucsschool')
+		logger = logging.getLogger('ucsschool')
 		logger.setLevel(logging.DEBUG)
-		handler_name = 'ucs-test-ucsschool'
-		if handler_name not in [h.name for h in logger.handlers]:
-			formatter = ColorFormatter(
-				fmt='%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d: %(message)s',
-				datefmt='%Y-%m-%d %H:%M:%S'
-			)
-			handler = logging.StreamHandler(stream=sys.stdout)
-			handler.setFormatter(formatter)
-			handler.setLevel(logging.DEBUG)
-			handler.name = handler_name
-			logger.addHandler(handler)
+		if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
+			logger.addHandler(get_stream_handler('DEBUG'))
 		return logger
 
 

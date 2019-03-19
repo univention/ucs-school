@@ -24,13 +24,11 @@ from univention.testing.udm import UCSTestUDM
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.admin.uldap import explodeDn
-from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import TestUserCsvExporter
-from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose
+from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 CONFIG = os.path.join(os.path.dirname(__file__), "factoryconftest.json")
-make_stdout_verbose()
 
 
 class Bunch(object):
@@ -49,7 +47,7 @@ class FactoryConfTest(object):
 		self.ou_name2 = None
 		self.ou_dn2 = None
 		self.lo = None
-		self.logger = get_logger()
+		self.logger = ImportTestbase._get_logger()
 		self.test_user_exporter = TestUserCsvExporter()
 		self.test_user_creator = None
 
