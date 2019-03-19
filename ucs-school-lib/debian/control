@@ -16,7 +16,8 @@ Depends: ${misc:Depends},
  python-six,
  univention-management-console,
  python-univention-directory-manager,
- python-univention-lib
+ python-univention-lib,
+ python-colorlog,
 Provides: ${python:Provides}
 Description: UCS@school - common Python modules
  This package contains Python modules used by various

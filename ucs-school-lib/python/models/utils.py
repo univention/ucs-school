@@ -43,6 +43,7 @@ import subprocess
 
 from six import string_types
 from psutil import process_iter, NoSuchProcess
+import colorlog
 
 from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
@@ -50,7 +51,7 @@ from univention.config_registry import ConfigRegistry
 import univention.debug as ud
 
 try:
-	from typing import Any, AnyStr, Dict, List, Optional, Tuple
+	from typing import Any, AnyStr, Dict, List, Optional, Tuple, Union
 except ImportError:
 	pass
 
@@ -76,18 +77,12 @@ CMDLINE_LOG_FORMATS["NOTSET"] = CMDLINE_LOG_FORMATS["DEBUG"]
 LOG_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 _handler_cache = dict()
-_module_handler = None
 _pw_length_cache = dict()
 
 
 # "global" ucr for ucsschool.lib.models
 ucr = ConfigRegistry()
 ucr.load()
-
-logger = logging.getLogger("ucsschool")
-# Must set this higher than NOTSET or the root loggers level (WARN)
-# will be used.
-logger.setLevel(logging.DEBUG)
 
 
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
@@ -101,6 +96,10 @@ def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> lo
 
 
 class UniFileHandler(TimedRotatingFileHandler):
+	"""
+	TimedRotatingFileHandler that can set file permissions and removes
+	password entries from from dicts in args.
+	"""
 	def __init__(
 			self,
 			filename,  # type: AnyStr
@@ -136,7 +135,11 @@ class UniFileHandler(TimedRotatingFileHandler):
 		super(UniFileHandler, self).emit(record)
 
 
-class UniStreamHandler(logging.StreamHandler):
+class UniStreamHandler(colorlog.StreamHandler):
+	"""
+	Colorizing console stream handler that removes password entries from from
+	dicts in args.
+	"""
 	def __init__(
 			self,
 			stream=None,  # type: file
@@ -145,7 +148,10 @@ class UniStreamHandler(logging.StreamHandler):
 			fmode=None  # type: Optional[int]
 	):
 		# type: (...) -> None
-		# ignore fuid, fgid, fmode
+		"""
+		`fuid`, `fgid` and `fmode` are here only for similarity of interface
+		to UniFileHandler and are ignored.
+		"""
 		super(UniStreamHandler, self).__init__(stream)
 
 	def emit(self, record):
@@ -191,19 +197,33 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
 		# or:
 		add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
 	"""
-	return get_logger(name, level, stream, formatter_kwargs={"fmt": log_format, "datefmt": None})
+	logger = logging.getLogger(name or 'ucsschool')
+	if logger.level < logging.DEBUG:
+		# Must set this higher than NOTSET or the root loggers level (WARN)
+		# will be used.
+		logger.setLevel(logging.DEBUG)
+	if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
+		logger.addHandler(get_stream_handler(level, stream=stream, fmt=log_format))
+	return logger
 
 
-def add_module_logger_to_schoollib():  # type: () -> logging.Handler
-	global _module_handler
-	if _module_handler is None:
+def add_module_logger_to_schoollib():
+	# type: () -> None
+	logger = logging.getLogger('ucsschool')
+	if logger.level < logging.DEBUG:
+		# Must set this higher than NOTSET or the root loggers level (WARN)
+		# will be used.
+		logger.setLevel(logging.DEBUG)
+	if not any(handler.name in ('ucsschool_mem_handler', 'ucsschool_mod_handler') for handler in logger.handlers):
 		module_handler = ModuleHandler(udebug_facility=ud.MODULE)
-		_module_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
-		_module_handler.setLevel(logging.DEBUG)
-		logger.addHandler(_module_handler)
+		module_handler.setLevel(logging.DEBUG)
+		module_handler.set_name('ucsschool_mod_handler')
+		memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
+		memory_handler.setLevel(logging.DEBUG)
+		memory_handler.set_name('ucsschool_mem_handler')
+		logger.addHandler(memory_handler)
 	else:
 		logger.info('add_module_logger_to_schoollib() should only be called once! Skipping...')
-	return _module_handler
 
 
 def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
@@ -283,6 +303,83 @@ def flatten(list_of_lists):  # type: (List[List[Any]]) -> List[Any]
 	return ret
 
 
+def loglevel_int2str(level):  # type: (Union[int, str]) -> str
+	"""Convert numeric loglevel to string name."""
+	if isinstance(level, int):
+		return logging.getLevelName(level)
+	else:
+		return level
+
+
+def nearest_known_loglevel(level):
+	"""
+	Get loglevel nearest to those known in `CMDLINE_LOG_FORMATS` and
+	`FILE_LOG_FORMATS`.
+	"""
+	# TODO: smarter algo than just looking at highest and lowest
+	if level in FILE_LOG_FORMATS:
+		return level
+	if isinstance(level, int):
+		int_level = level
+	else:
+		int_level = logging._levelNames.get(level, 10)
+	if int_level <= logging.DEBUG:
+		return logging.DEBUG
+	elif int_level >= logging.CRITICAL:
+		return logging.CRITICAL
+	else:
+		return logging.INFO
+
+
+def get_stream_handler(level, stream=None, fmt=None, datefmt=None):
+	# type: (Union[int, str], Optional[file], Optional[str], Optional[str]) -> logging.Handler
+	"""
+	Create a colored stream handler, usually for the console.
+
+	:param level: log level
+	:type level: int or str
+	:param file stream: opened file to write to (/dev/stdout if None)
+	:param str fmt: log message format (will be passt to a Formatter instance)
+	:param str datefmt: date format (will be passt to a Formatter instance)
+	:return: a handler
+	:rtype: logging.Handler
+	"""
+	fmt = '%(log_color)s{}'.format(fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))])
+	datefmt = datefmt or LOG_DATETIME_FORMAT
+	formatter = colorlog.ColoredFormatter(fmt=fmt, datefmt=datefmt)
+	handler = UniStreamHandler(stream=stream)
+	handler.setFormatter(formatter)
+	handler.setLevel(level)
+	return handler
+
+
+def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None):
+	# type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler
+	"""
+	Create a :py:class:`UniFileHandler` (TimedRotatingFileHandler) for logging
+	to a file.
+
+	:param level: log level
+	:type level: int or str
+	:param str filename: path of file to write to
+	:param str fmt: log message format (will be passt to a Formatter instance)
+	:param str datefmt: date format (will be passt to a Formatter instance)
+	:param int uid: user that the file should belong to (current user if None)
+	:param int gid: group that the file should belong to (current users
+		primary group if None)
+	:param int mode: permissions of the file
+	:return: a handler
+	:rtype: logging.Handler
+	"""
+	fmt = fmt or FILE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
+	datefmt = datefmt or LOG_DATETIME_FORMAT
+	formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
+	handler = UniFileHandler(filename, when="D", backupCount=10000000, fuid=uid, fgid=gid, fmode=mode)
+	handler.setFormatter(formatter)
+	handler.setLevel(level)
+	return handler
+
+
 def get_logger(
 		name,  # type: AnyStr
 		level="INFO",  # type: Optional[AnyStr]
@@ -293,6 +390,10 @@ def get_logger(
 	# type: (...) -> logging.Logger
 	"""
 	Get a logger object below the ucsschool root logger.
+
+	.. deprecated:: 4.4 v2
+		Use `logging.getLogger(__name__)` and :py:func:`get_stream_handler()`,
+		:py:func:`get_file_handler()`.
 
 	* The logger will use UniStreamHandler(StreamHandler) for streams
 	  (sys.stdout etc) and UniFileHandler(TimedRotatingFileHandler) for files if
@@ -345,12 +446,14 @@ def get_logger(
 
 	if isinstance(target, file) or hasattr(target, "write"):
 		handler_defaults = dict(cls=UniStreamHandler, stream=target)
-		fmt = CMDLINE_LOG_FORMATS[level]
+		fmt = '%(log_color)s{}'.format(CMDLINE_LOG_FORMATS[level])
+		fmt_cls = colorlog.ColoredFormatter
 	else:
 		handler_defaults = dict(cls=UniFileHandler, filename=target, when="D", backupCount=10000000)
 		fmt = FILE_LOG_FORMATS[level]
+		fmt_cls = logging.Formatter
 	handler_defaults.update(handler_kwargs)
-	fmt_kwargs = dict(cls=logging.Formatter, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
+	fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
 	fmt_kwargs.update(formatter_kwargs)
 
 	if _logger.level == logging.NOTSET:
@@ -374,6 +477,7 @@ def get_logger(
 		handler.setFormatter(formatter)
 		_logger.addHandler(handler)
 		_handler_cache[cache_key] = handler
+	_logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
 	return _logger
 
 
@@ -394,6 +498,7 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 	:raises RuntimeError: if stopping failed and ``strict=True``
 	"""
 	service_name = 'univention-directory-notifier'
+	logger = logging.getLogger(__name__)
 
 	def _run(args):
 		process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -405,7 +510,7 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 		return process.returncode == 0
 
 	notifier_running = False
-	logger.warning('Stopping %s', service_name)
+	logger.info('Stopping %s', service_name)
 	for process in process_iter():
 		try:
 			if process.name() == service_name:
@@ -427,7 +532,7 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 	try:
 		yield
 	finally:
-		logger.warning('Starting %s', service_name)
+		logger.info('Starting %s', service_name)
 		if not notifier_running:
 			logger.warning('Notifier was not running! Skipping')
 		else:
