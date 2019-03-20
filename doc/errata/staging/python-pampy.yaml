@@ -6,4 +6,4 @@ src: python-pampy
 fix: 1.8.4-1A~4.3.0.201903160731
 desc: |
  * The python-pampy package now handles Unicode strings.
-bug: [48137]
+bug: [49051]
