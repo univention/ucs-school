@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: python-pampy
+fix: 1.8.4-1A~4.3.0.201903160731
+desc: |
+ * The python-pampy package now handles Unicode strings.
+bug: [48137]
