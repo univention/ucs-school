@@ -7,4 +7,4 @@ fix: 9.0.0-4A~4.4.0.201903141619
 desc: |
  * Internal improvement: use the consolidated PyHook loading code (Bug #48958).
  * Preparations for better browser cache-control have been implemented. (Bug #48995)
-bug: [48655, 48958, 48995]
+bug: [48958, 48995]
