@@ -223,7 +223,7 @@ CELERYD_MAX_TASKS_PER_CHILD = 1
 # import settings
 UCSSCHOOL_IMPORT = {
 	'logging': {
-		'api_datefmt': LOG_DATETIME_FORMAT,
+		'api_datefmt': str(LOG_DATETIME_FORMAT),
 		'api_format': CMDLINE_LOG_FORMATS['DEBUG'],
 		'api_level': logging.DEBUG if DEBUG else logging.INFO,
 		'api_logfile': os.path.join(LOG_DIR, 'http_api.log'),

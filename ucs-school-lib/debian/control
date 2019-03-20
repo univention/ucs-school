@@ -18,6 +18,7 @@ Depends: ${misc:Depends},
  python-univention-directory-manager,
  python-univention-lib,
  python-colorlog,
+ python-ruamel.yaml,
 Provides: ${python:Provides}
 Description: UCS@school - common Python modules
  This package contains Python modules used by various

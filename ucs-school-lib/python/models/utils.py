@@ -44,6 +44,8 @@ import subprocess
 from six import string_types
 from psutil import process_iter, NoSuchProcess
 import colorlog
+import lazy_object_proxy
+import ruamel.yaml
 
 from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
@@ -58,23 +60,21 @@ except ImportError:
 
 # "global" translation for ucsschool.lib.models
 _ = Translation('python-ucs-school').translate
+LOGGING_CONFIG_PATH = '/etc/ucsschool/logging.yaml'
 
-FILE_LOG_FORMATS = dict(
-	DEBUG="%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s",
-	INFO="%(asctime)s %(levelname)-5s %(message)s"
-)
-for lvl in ["CRITICAL", "ERROR", "WARN", "WARNING"]:
-	FILE_LOG_FORMATS[lvl] = FILE_LOG_FORMATS["INFO"]
-FILE_LOG_FORMATS["NOTSET"] = FILE_LOG_FORMATS["DEBUG"]
-CMDLINE_LOG_FORMATS = dict(
-	DEBUG="%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s",
-	INFO="%(message)s",
-	WARN="%(levelname)-5s  %(message)s"
-)
-for lvl in ["CRITICAL", "ERROR", "WARNING"]:
-	CMDLINE_LOG_FORMATS[lvl] = CMDLINE_LOG_FORMATS["WARN"]
-CMDLINE_LOG_FORMATS["NOTSET"] = CMDLINE_LOG_FORMATS["DEBUG"]
-LOG_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
+	with open(path, 'r') as fp:
+		config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
+		config['cmdline']['WARN'] = config['cmdline']['WARNING']
+		config['file']['WARN'] = config['file']['WARNING']
+	return config
+
+
+_logging_config = lazy_object_proxy.Proxy(_load_logging_config)
+CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['cmdline'])
+FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['file'])
+LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config['date'])
 
 _handler_cache = dict()
 _pw_length_cache = dict()
@@ -345,7 +345,7 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None):
 	:rtype: logging.Handler
 	"""
 	fmt = '%(log_color)s{}'.format(fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))])
-	datefmt = datefmt or LOG_DATETIME_FORMAT
+	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
 	formatter = colorlog.ColoredFormatter(fmt=fmt, datefmt=datefmt)
 	handler = UniStreamHandler(stream=stream)
 	handler.setFormatter(formatter)
@@ -372,7 +372,7 @@ def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None
 	:rtype: logging.Handler
 	"""
 	fmt = fmt or FILE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
-	datefmt = datefmt or LOG_DATETIME_FORMAT
+	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
 	formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
 	handler = UniFileHandler(filename, when="D", backupCount=10000000, fuid=uid, fgid=gid, fmode=mode)
 	handler.setFormatter(formatter)
@@ -542,3 +542,21 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 				logger.info('%s started', service_name)
 			else:
 				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command))  # correct: shlex... unnecessary
+
+
+def _write_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> None
+	cmdline_warn = CMDLINE_LOG_FORMATS.pop('WARN')
+	file_warn = FILE_LOG_FORMATS.pop('WARN')
+	with open(path, 'w') as fp:
+		ruamel.yaml.dump(
+			{
+				'date': str(LOG_DATETIME_FORMAT),
+				'cmdline': collections.OrderedDict(CMDLINE_LOG_FORMATS),
+				'file': collections.OrderedDict(FILE_LOG_FORMATS),
+			},
+			fp,
+			ruamel.yaml.RoundTripDumper,
+			indent=4
+		)
+	CMDLINE_LOG_FORMATS['WARN'] = cmdline_warn
+	FILE_LOG_FORMATS['WARN'] = file_warn
