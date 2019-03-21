@@ -1,3 +1,10 @@
+ucs-school-umc-users (15.0.0-2) unstable; urgency=medium
+
+  * Bug #47646: use PasswordBox with reveal toggle for
+    the Passwords module
+
+ -- Johannes Keiser <keiser@univention.de>  Thu, 21 Mar 2019 17:14:02 +0100
+
 ucs-school-umc-users (15.0.0-1) unstable; urgency=low
 
   * Bug #47885: use faster method _user_ldap() from schoolldap.py to query
