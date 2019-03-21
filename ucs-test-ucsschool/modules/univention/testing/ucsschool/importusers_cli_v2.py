@@ -26,7 +26,6 @@ import univention.testing.udm
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-import univention.testing.format.text
 from univention.testing.ucs_samba import wait_for_drs_replication
 try:
 	from univention.testing.ucs_samba import DRSReplicationFailed
@@ -540,46 +539,3 @@ class UniqueObjectTester(CLI_Import_v2_Tester):
 		utils.verify_ldap_object(dn, expected_attr=attrs, strict=True, should_exist=True)
 		self.log.debug('%s object %r:\n%s', obj_name, dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(dn)))
 		self.log.info('%s object has been found and is correct.', obj_name)
-
-
-class ColorFormatter(logging.Formatter):
-	# BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE
-	_colors = {
-		'CRITICAL': 'RED',
-		'DEBUG': 'WHITE',
-		'ERROR': 'RED',
-		'EXCEPTION': 'RED',
-		'FATAL': 'RED',
-		'INFO': 'YELLOW',
-		'NOTSET': 'WHITE',
-		'WARN': 'CYAN',
-		'WARNING': 'CYAN',
-	}
-
-	def __init__(self, fmt=None, datefmt=None):
-		super(ColorFormatter, self).__init__(fmt, datefmt)
-
-		self.utext = univention.testing.format.text.Text()
-		self.colorize = False
-		if sys.stdout.isatty():
-			self.colorize = True
-		else:
-			# try to use the stdout of the parent process if it's ucs-test
-			ppid = os.getppid()
-			if 'ucs-test' in open('/proc/{}/cmdline'.format(ppid), 'rb').read():
-				fd = open('/proc/{}/fd/1'.format(ppid), 'a')
-				if fd.isatty():
-					self.utext.term = univention.testing.format.text._Term(fd)
-					self.colorize = True
-
-	def format(self, record):
-		msg = super(ColorFormatter, self).format(record)
-
-		if self.colorize:
-			return '{}{}{}'.format(
-				getattr(self.utext.term, self._colors[record.levelname]),
-				msg,
-				self.utext.term.NORMAL
-			)
-		else:
-			return msg
