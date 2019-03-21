@@ -34,11 +34,13 @@ Django Views
 """
 
 from __future__ import unicode_literals
+import logging
 try:
 	from urllib2 import urlparse
 except ImportError:
 	from urllib import parse as urlparse  # Python3
 from ldap.filter import filter_format
+import lazy_object_proxy
 from django.db.models import Q
 from django.http import Http404
 from rest_framework import status
@@ -52,8 +54,8 @@ from rest_framework.permissions import BasePermission, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_filters import CharFilter, MultipleChoiceFilter
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
-from ucsschool.http_api.import_api.models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
-from ucsschool.http_api.import_api.serializers import (
+from .models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
+from .serializers import (
 	UserImportJobCreationValidator,
 	UserImportJobSerializer,
 	LogFileSerializer,
@@ -62,7 +64,9 @@ from ucsschool.http_api.import_api.serializers import (
 	SummarySerializer,
 	SchoolSerializer,
 )
-from ucsschool.http_api.import_api.import_logging import logger
+
+
+logger = lazy_object_proxy.Proxy(lambda: logging.Logger(__name__))  # type: logging.Logger
 
 
 class UserImportJobFilter(FilterSet):

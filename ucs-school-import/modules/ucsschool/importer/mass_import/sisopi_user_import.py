@@ -37,12 +37,12 @@ import copy
 
 from ldap.filter import filter_format
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import InvalidSchools, UserValidationError
-from ucsschool.importer.mass_import.user_import import UserImport
+from ..exceptions import InvalidSchools, UserValidationError
+from .user_import import UserImport
 
 try:
 	from typing import Optional, Union
-	from ucsschool.importer.models.import_user import ImportUser
+	from ..models.import_user import ImportUser
 except ImportError:
 	pass
 

@@ -32,9 +32,9 @@
 Write the passwords of newly created users to a CSV file.
 """
 
-from ucsschool.importer.factory import Factory
-from ucsschool.importer.models.import_user import ImportUser
-from ucsschool.importer.writer.result_exporter import ResultExporter
+from ..factory import Factory
+from ..models.import_user import ImportUser
+from ..writer.result_exporter import ResultExporter
 
 
 class NewUserPasswordCsvExporter(ResultExporter):

@@ -30,10 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.models.attributes import EmptyAttributes
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-
-from ucsschool.lib.models.utils import _, logger
+from .attributes import EmptyAttributes
+from .base import UCSSchoolHelperAbstractClass
+from .utils import _
 
 
 class Policy(UCSSchoolHelperAbstractClass):
@@ -49,19 +48,19 @@ class Policy(UCSSchoolHelperAbstractClass):
 			try:
 				lo.modify(obj.dn, [('objectClass', '', 'univentionPolicyReference')])
 			except:
-				logger.warning('Objectclass univentionPolicyReference cannot be added to %r', obj)
+				self.logger.warning('Objectclass univentionPolicyReference cannot be added to %r', obj)
 				return
 		# add the missing policy
 		pl = lo.get(obj.dn, ['univentionPolicyReference'])
-		logger.info('Attaching %r to %r', self, obj)
+		self.logger.info('Attaching %r to %r', self, obj)
 		if self.dn.lower() not in map(lambda x: x.lower(), pl.get('univentionPolicyReference', [])):
 			modlist = [('univentionPolicyReference', '', self.dn)]
 			try:
 				lo.modify(obj.dn, modlist)
 			except:
-				logger.warning('Policy %s cannot be referenced to %r', self, obj)
+				self.logger.warning('Policy %s cannot be referenced to %r', self, obj)
 		else:
-			logger.info('Already attached!')
+			self.logger.info('Already attached!')
 
 
 class UMCPolicy(Policy):

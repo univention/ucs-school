@@ -35,13 +35,13 @@
 
 import sys
 import logging
-from logging.handlers import RotatingFileHandler
 
 import univention.admin.uldap
 from univention.config_registry import ConfigRegistry
 from ucsschool.lib.roles import (
 	role_dc_slave_edu, role_dc_slave_admin, role_memberserver_edu, role_memberserver_admin, role_win_computer)
 from ucsschool.lib.models import School
+from ucsschool.lib.models.utils import get_stream_handler, get_file_handler
 
 LOG_FILE = '/var/log/univention/ucsschool-roles-migration.log'
 LOG_DEBUG_FMT = '%(asctime)s %(levelname)-5s %(funcName)s:%(lineno)d  %(message)s'
@@ -56,15 +56,9 @@ if ucr['server/role'] != 'domaincontroller_master':
 	sys.exit(2)
 
 logger = logging.getLogger('UcsSchoolRolesMigration')
-logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler()
-handler.setLevel(logging.INFO)
-handler.setFormatter(logging.Formatter(datefmt=LOG_DATETIME_FORMAT))
-logger.addHandler(handler)
-handler = RotatingFileHandler(LOG_FILE)
-handler.setLevel(logging.DEBUG)
-handler.setFormatter(logging.Formatter(LOG_DEBUG_FMT, LOG_DATETIME_FORMAT))
-logger.addHandler(handler)
+logger.setLevel('DEBUG')
+logger.addHandler(get_stream_handler('INFO'))
+logger.addHandler(get_file_handler('DEBUG', LOG_FILE))
 
 lo, po = univention.admin.uldap.getAdminConnection()
 all_school_objs = School.get_all(lo)

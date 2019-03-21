@@ -37,7 +37,7 @@ import os
 import os.path
 from argparse import ArgumentParser
 
-from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
+from ..frontend.parse_user_import_cmdline import ParseUserImportCmdline
 
 
 class LegacyUserImportParseUserImportCmdline(ParseUserImportCmdline):

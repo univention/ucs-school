@@ -35,27 +35,27 @@ Default user import class.
 
 import sys
 import copy
+import logging
 from collections import defaultdict
 import datetime
 
 from ldap.filter import filter_format
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import (
+from ..exceptions import (
 	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction,
 	UserValidationError, WrongUserType)
-from ucsschool.importer.factory import Factory
-from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_readonly_connection
-from ucsschool.importer.utils.post_read_pyhook import PostReadPyHook
-from ucsschool.importer.utils.import_pyhook import run_import_pyhooks
+from ..factory import Factory
+from ..configuration import Configuration
+from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
+from ..utils.post_read_pyhook import PostReadPyHook
+from ..utils.import_pyhook import run_import_pyhooks
 
 try:
 	from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
-	from ucsschool.importer.models.import_user import ImportUser
-	from ucsschool.importer.configuration import ReadOnlyDict
-	from ucsschool.importer.exceptions import UcsSchoolImportError
+	from ..models.import_user import ImportUser
+	from ..configuration import ReadOnlyDict
+	from ..exceptions import UcsSchoolImportError
 except ImportError:
 	pass
 
@@ -83,7 +83,7 @@ class UserImport(object):
 		self.modified_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
 		self.deleted_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
 		self.config = Configuration()  # type: ReadOnlyDict
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()

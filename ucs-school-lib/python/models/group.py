@@ -34,13 +34,13 @@ from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName, Hosts, Users, Roles
-from ucsschool.lib.models.base import RoleSupportMixin, UCSSchoolHelperAbstractClass
-from ucsschool.lib.models.misc import OU, Container
-from ucsschool.lib.models.share import ClassShare, WorkGroupShare
-from ucsschool.lib.models.policy import UMCPolicy
-from ucsschool.lib.models.utils import ucr, _, logger
-from ucsschool.lib.roles import role_computer_room, role_school_class, role_workgroup
+from .attributes import GroupName, Description, Attribute, SchoolClassName, Hosts, Users, Roles
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .misc import OU, Container
+from .share import ClassShare, WorkGroupShare
+from .policy import UMCPolicy
+from .utils import ucr, _
+from ..roles import role_computer_room, role_school_class, role_workgroup
 
 
 class _MayHaveSchoolPrefix(object):
@@ -121,12 +121,12 @@ class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def add_umc_policy(self, policy_dn, lo):
 		if not policy_dn or policy_dn.lower() == 'none':
-			logger.warning('No policy added to %r', self)
+			self.logger.warning('No policy added to %r', self)
 			return
 		try:
 			policy = UMCPolicy.from_dn(policy_dn, self.school, lo)
 		except noObject:
-			logger.warning('Object to be referenced does not exist (or is no UMC-Policy): %s', policy_dn)
+			self.logger.warning('Object to be referenced does not exist (or is no UMC-Policy): %s', policy_dn)
 		else:
 			policy.attach(self, lo)
 

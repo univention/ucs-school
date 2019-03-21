@@ -34,7 +34,7 @@ Create LDAP connections for import.
 """
 
 from univention.admin import uldap
-from ucsschool.importer.exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
+from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
 try:
 	from typing import Tuple

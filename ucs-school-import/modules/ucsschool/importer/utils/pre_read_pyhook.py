@@ -32,11 +32,11 @@
 Base class for all Python based pre-read hooks.
 """
 
-from ucsschool.importer.utils.import_pyhook import ImportPyHook
-from ucsschool.importer.configuration import Configuration
+from .import_pyhook import ImportPyHook
+from ..configuration import Configuration
 try:
 	import typing
-	from ucsschool.importer.configuration import ReadOnlyDict
+	from ..configuration import ReadOnlyDict
 except ImportError:
 	pass
 

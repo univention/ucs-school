@@ -31,10 +31,11 @@
 # <http://www.gnu.org/licenses/>.
 
 from functools import partial
-
+import inspect
+import logging
+import lazy_object_proxy
 import univention.admin.modules as udm_modules
-
-from ucsschool.lib.models.attributes import Attribute
+from .attributes import Attribute
 
 
 class UCSSchoolHelperOptions(object):
@@ -99,4 +100,5 @@ class UCSSchoolHelperMetaClass(type):
 		cls = super(UCSSchoolHelperMetaClass, mcs).__new__(mcs, cls_name, bases, dict(attrs))
 		cls._attributes = attributes
 		cls._meta = UCSSchoolHelperOptions(cls, meta)
+		cls.logger = lazy_object_proxy.Proxy(lambda: logging.getLogger(inspect.getmodule(cls).__name__))  # type: logging.Logger
 		return cls

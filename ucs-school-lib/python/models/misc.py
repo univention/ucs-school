@@ -34,10 +34,9 @@ from univention.admin.uexceptions import objectExists
 import univention.admin.uldap as udm_uldap
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.models.attributes import ContainerPath
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-
-from ucsschool.lib.models.utils import ucr, _, logger
+from .attributes import ContainerPath
+from .base import UCSSchoolHelperAbstractClass
+from .utils import ucr, _
 
 
 class MailDomain(UCSSchoolHelperAbstractClass):
@@ -54,7 +53,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 class OU(UCSSchoolHelperAbstractClass):
 
 	def create(self, lo, validate=True):
-		logger.info('Creating %r', self)
+		self.logger.info('Creating %r', self)
 		pos = udm_uldap.position(ucr.get('ldap/base'))
 		pos.setDn(self.position)
 		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos)

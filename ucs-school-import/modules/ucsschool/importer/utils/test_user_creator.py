@@ -32,18 +32,17 @@
 """
 Class to create lots of test users.
 """
-
+from __future__ import absolute_import
 import gzip
 import json
 import random
 import string
+import logging
 
 from ucsschool.lib.models.utils import ucr
-from ucsschool.importer.models.import_user import ImportUser
-from ucsschool.importer.utils.logging import get_logger
+from ..models.import_user import ImportUser
 
 TEST_DATA_FILE = "/usr/share/doc/ucs-school-import/test_data.json.gz"
-logger = get_logger()
 
 
 class TestUserCreator(object):
@@ -64,6 +63,7 @@ class TestUserCreator(object):
 		self.staffteachers = list()
 		self.class_names = list()
 		self.class_name_generators = dict()
+		self.logger = logging.getLogger(__name__)
 		self.test_data = self.get_test_data(TEST_DATA_FILE)
 		self.mail_domain = self._get_maildomain()
 
@@ -79,7 +79,7 @@ class TestUserCreator(object):
 			for letter in string.ascii_lowercase:
 				self.class_names.append("{}{}".format(grade, letter))
 				if len(self.class_names) * len(self.ous) >= self.num_classes:
-					logger.info("Created %d class names for %d schools.", len(self.class_names), len(self.ous))
+					self.logger.info("Created %d class names for %d schools.", len(self.class_names), len(self.ous))
 					return self.class_names
 
 	def _get_new_given_name(self):
@@ -170,7 +170,7 @@ class TestUserCreator(object):
 					# [staff]teachers can be in multiple classes
 					user["Klassen"] = dict([(school, [self._get_class_name(school) for _x in range(self.num_inclasses)]) for school in user["Schulen"]])
 				total_users_count += 1
-				logger.debug("(%d/%d) Created: %r", total_users_count, total_users_num, user)
+				self.logger.debug("(%d/%d) Created: %r", total_users_count, total_users_num, user)
 				yield user
-			logger.info("Created %d %ss.", num, kind)
-		logger.info("Created a total of %d users.", total_users_count)
+			self.logger.info("Created %d %ss.", num, kind)
+		self.logger.info("Created a total of %d users.", total_users_count)

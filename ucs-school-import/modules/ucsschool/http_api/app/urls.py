@@ -38,7 +38,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 # from rest_framework.documentation import include_docs_urls  # DRF >= 3.6.0
-from ucsschool.http_api.import_api import views
+from ..import_api import views
 
 
 router = routers.DefaultRouter()

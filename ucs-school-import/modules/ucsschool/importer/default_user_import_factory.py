@@ -32,13 +32,13 @@
 Default implementation of the Abstract Factory.
 """
 
+import logging
 from ucsschool.lib.models.utils import ucr
-from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.factory import load_class
-from ucsschool.importer.exceptions import InitialisationError
+from .factory import load_class
+from .exceptions import InitialisationError
 try:
 	from typing import Any, Iterable, Optional, TypeVar
-	from ucsschool.importer.models.import_user import ImportUser
+	from .models.import_user import ImportUser
 	ImportUserTV = TypeVar('ImportUserTV', bound=ImportUser)
 except ImportError:
 	pass
@@ -53,9 +53,9 @@ class DefaultUserImportFactory(object):
 	"""
 
 	def __init__(self):  # type: () -> None
-		from ucsschool.importer.configuration import Configuration
+		from .configuration import Configuration
 		self.config = Configuration()
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.load_methods_from_config()
 
 	def load_methods_from_config(self):  # type: () -> None
@@ -132,7 +132,7 @@ class DefaultUserImportFactory(object):
 		:return: a reader object
 		:rtype: BaseReader
 		"""
-		from ucsschool.importer.reader.csv_reader import CsvReader
+		from .reader.csv_reader import CsvReader
 		if self.config["input"]["type"] == "csv":
 			kwargs.update(dict(
 				filename=self.config["input"]["filename"],
@@ -154,7 +154,7 @@ class DefaultUserImportFactory(object):
 		:rtype: ImportUser
 		"""
 		from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-		from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
+		from .models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
 			ImportTeachersAndStaff, ImportUser
 		if not cur_user_roles:
 			return ImportUser(*arg, **kwargs)
@@ -177,7 +177,7 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`MassImport` object
 		:rtype: MassImport
 		"""
-		from ucsschool.importer.mass_import.mass_import import MassImport
+		from .mass_import.mass_import import MassImport
 		return MassImport(dry_run=dry_run)
 
 	def make_password_exporter(self, *arg, **kwargs):
@@ -190,7 +190,7 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`ResultExporter` object
 		:rtype: NewUserPasswordCsvExporter
 		"""
-		from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
+		from .writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
 		return NewUserPasswordCsvExporter(*arg, **kwargs)
 
 	def make_result_exporter(self, *arg, **kwargs):
@@ -203,7 +203,7 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`ResultExporter` object
 		:rtype: UserImportCsvResultExporter
 		"""
-		from ucsschool.importer.writer.user_import_csv_result_exporter import UserImportCsvResultExporter
+		from .writer.user_import_csv_result_exporter import UserImportCsvResultExporter
 		return UserImportCsvResultExporter(*arg, **kwargs)
 
 	def make_user_importer(self, dry_run=True):
@@ -215,7 +215,7 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`UserImport` object
 		:rtype: UserImport
 		"""
-		from ucsschool.importer.mass_import.user_import import UserImport
+		from .mass_import.user_import import UserImport
 		return UserImport(dry_run=dry_run)
 
 	def make_ucr(self):  # type: () -> univention.config_registry.ConfigRegistry
@@ -237,7 +237,7 @@ class DefaultUserImportFactory(object):
 		:return: an :py:class:`EmailHandler` object
 		:rtype: EmailHandler
 		"""
-		from ucsschool.importer.utils.username_handler import EmailHandler
+		from .utils.username_handler import EmailHandler
 		return EmailHandler(max_length, dry_run)
 
 	def make_username_handler(self, max_length, dry_run=True):
@@ -250,7 +250,7 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`UsernameHandler` object
 		:rtype: UsernameHandler
 		"""
-		from ucsschool.importer.utils.username_handler import UsernameHandler
+		from .utils.username_handler import UsernameHandler
 		return UsernameHandler(max_length, dry_run)
 
 	def make_user_writer(self, *arg, **kwargs):
@@ -263,5 +263,5 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`ucsschool.importer.writer.BaseWriter` object
 		:rtype: CsvWriter
 		"""
-		from ucsschool.importer.writer.csv_writer import CsvWriter
+		from .writer.csv_writer import CsvWriter
 		return CsvWriter(*arg, **kwargs)

@@ -32,13 +32,14 @@ Tool to create lots of test users.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import datetime
 import sys
+import datetime
+import logging
 import os.path
 from argparse import ArgumentParser, REMAINDER
 import subprocess
 
-from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose
+from ucsschool.lib.models.utils import get_stream_handler
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvExporter, TestUserCsvExporter
 
@@ -93,8 +94,6 @@ def parse_cmdline():
 		args.OU = [args.OU[0]]
 		args.nostart = True
 	args.schools = min(args.schools, len(args.OU))
-	if args.verbose:
-		make_stdout_verbose()
 	return args
 
 
@@ -124,8 +123,14 @@ def log_conf_hint(args, logger):
 
 
 def main():
-	logger = get_logger()
 	args = parse_cmdline()
+	logger = logging.getLogger('ucsschool.import')
+	if args.verbose:
+		level = 'DEBUG'
+	else:
+		level = 'INFO'
+	logger.setLevel(level)
+	logger.addHandler(get_stream_handler(level))
 	logger.info("------ Creating user information... ------")
 	test_user_creator = TestUserCreator(args.OU, staff=args.staff, students=args.students, teachers=args.teachers, staffteachers=args.staffteachers, classes=args.classes, inclasses=args.inclasses, schools=args.schools, email=args.email)
 	test_user_creator.make_classes()

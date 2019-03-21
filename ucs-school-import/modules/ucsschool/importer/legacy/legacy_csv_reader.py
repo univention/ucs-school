@@ -32,8 +32,8 @@
 CSV reader for CSV files using the legacy import format.
 """
 
-from ucsschool.importer.reader.csv_reader import CsvReader
-from ucsschool.importer.exceptions import NoRole, UnknownRole
+from ..reader.csv_reader import CsvReader
+from ..exceptions import NoRole, UnknownRole
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 

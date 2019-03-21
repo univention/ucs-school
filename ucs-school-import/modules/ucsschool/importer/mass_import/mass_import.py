@@ -33,19 +33,19 @@ Default mass import class.
 """
 
 import datetime
+import logging
 
-from ucsschool.importer.exceptions import UcsSchoolImportError, UcsSchoolImportFatalError
-from ucsschool.importer.factory import Factory
-from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.utils.pre_read_pyhook import PreReadPyHook
-from ucsschool.importer.utils.result_pyhook import ResultPyHook
+from ..exceptions import UcsSchoolImportError, UcsSchoolImportFatalError
+from ..factory import Factory
+from ..configuration import Configuration
+from ..utils.pre_read_pyhook import PreReadPyHook
+from ..utils.result_pyhook import ResultPyHook
+from ..utils.import_pyhook import run_import_pyhooks
 from ucsschool.lib.models.utils import stopped_notifier
-from ucsschool.importer.utils.import_pyhook import run_import_pyhooks
 
 try:
 	from typing import Any, Optional, Type, TypeVar
-	from ucsschool.importer.utils.import_pyhook import ImportPyHook
+	from ..utils.import_pyhook import ImportPyHook
 	ImportPyHookTV = TypeVar('ImportPyHookTV', bound=ImportPyHook)
 except ImportError:
 	pass
@@ -67,7 +67,7 @@ class MassImport(object):
 		"""
 		self.dry_run = dry_run
 		self.config = Configuration()
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 		self.factory = Factory()
 		self.result_exporter = self.factory.make_result_exporter()
 		self.password_exporter = self.factory.make_password_exporter()

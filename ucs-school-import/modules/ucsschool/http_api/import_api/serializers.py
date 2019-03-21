@@ -36,7 +36,9 @@ Model/HTTP-API Serializers
 from __future__ import unicode_literals
 import os
 import datetime
+import logging
 import collections
+import lazy_object_proxy
 from ldap.filter import filter_format
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -45,10 +47,9 @@ from rest_framework.exceptions import ParseError, PermissionDenied
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
 from ucsschool.lib.models.utils import ucr
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
-from ucsschool.http_api.import_api.models import (
+from .models import (
 	JOB_NEW, JOB_SCHEDULED, Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob)
-from ucsschool.http_api.import_api.import_logging import logger
-from ucsschool.http_api.import_api.tasks import dry_run, import_users
+from .tasks import dry_run, import_users
 try:
 	from typing import Tuple
 except ImportError:
@@ -89,6 +90,8 @@ class UsernameField(serializers.CharField):
 
 
 class UserImportJobCreationValidator(object):
+	logger = lazy_object_proxy.Proxy(lambda: logging.getLogger(__name__))  # type: logging.Logger
+
 	def __init__(self, request):
 		self.request = request
 
@@ -105,7 +108,7 @@ class UserImportJobCreationValidator(object):
 			msg = 'User {!r} is not allowed to start an import job for school {!r} and role {!r}.'.format(
 				self.request.user.username, data['school'].name, data['user_role']
 				)
-			logger.error(msg)
+			self.logger.error(msg)
 			raise PermissionDenied(msg)
 
 	@classmethod
@@ -126,7 +129,7 @@ class UserImportJobCreationValidator(object):
 		args = tuple(args)
 		res = lo.searchDn(filter_format(filter_s, args))
 		if not res:
-			logger.error('Not allowed: username: %r school: %r role: %r', username, school, role)
+			cls.logger.error('Not allowed: username: %r school: %r role: %r', username, school, role)
 		return bool(res)
 
 
@@ -143,6 +146,10 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('id', 'url', 'date_created', 'dryrun', 'input_file', 'principal', 'result', 'school', 'status', 'user_role', 'log_file', 'password_file', 'summary_file')
 		read_only_fields = ('id', 'created', 'status', 'result', 'principal', 'source_uid')
 
+	def __init__(self, *args, **kwargs):
+		super(UserImportJobSerializer, self).__init__(*args, **kwargs)
+		self.logger = logging.getLogger(__name__)
+
 	def get_validators(self):
 		validators = super(UserImportJobSerializer, self).get_validators()
 		validators.append(UserImportJobCreationValidator(self.context['request']))
@@ -153,7 +160,7 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		Create UserImportJob object with correct values (ignore most user input)
 		and queue a task.
 		"""
-		logger.debug('validated_data=%r', validated_data)
+		self.logger.debug('validated_data=%r', validated_data)
 
 		validated_data['task_id'] = ''
 		validated_data['status'] = JOB_NEW
@@ -162,9 +169,9 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 		validated_data['basedir'] = ''
 		if ucr.is_true('ucsschool/import/http_api/set_source_uid', True):
 			validated_data['source_uid'] = '{}-{}'.format(validated_data['school'].name, validated_data['user_role']).lower()
-			logger.info('Settings source_uid to %r.', validated_data['source_uid'])
+			self.logger.info('Settings source_uid to %r.', validated_data['source_uid'])
 		else:
-			logger.info('Keeping source_uid from configuration.')
+			self.logger.info('Keeping source_uid from configuration.')
 		instance = super(UserImportJobSerializer, self).create(validated_data)
 		instance.basedir = os.path.join(
 			settings.UCSSCHOOL_IMPORT['import_jobs_basedir'],
@@ -172,10 +179,10 @@ class UserImportJobSerializer(serializers.HyperlinkedModelSerializer):
 			str(instance.pk))
 		instance.save(update_fields=('basedir',))
 		if instance.dryrun:
-			logger.info('Scheduling dry-run for ImportJob with ID %r.', instance.pk)
+			self.logger.info('Scheduling dry-run for ImportJob with ID %r.', instance.pk)
 			result = dry_run.delay(instance.pk)
 		else:
-			logger.info('Scheduling real ImportJob with ID %r.', instance.pk)
+			self.logger.info('Scheduling real ImportJob with ID %r.', instance.pk)
 			result = import_users.delay(instance.pk)
 		instance.task_id = result.task_id
 		instance.status = JOB_SCHEDULED

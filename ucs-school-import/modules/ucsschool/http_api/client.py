@@ -50,6 +50,7 @@ from six import string_types
 import requests
 import magic
 from univention.config_registry import ConfigRegistry
+from ucsschool.lib.models.utils import get_stream_handler
 try:
 	from typing import Any, AnyStr, Callable, Dict, List, Union
 except ImportError:
@@ -402,18 +403,12 @@ class Client(object):
 		if not hasattr(logging, 'LOG_RESPONSE'):
 			logging.addLevelName(cls.LOG_RESPONSE, 'RESPONSE')
 
-		logger = logging.getLogger('import_http_api_client')
+		logger = logging.getLogger(__name__)
 		logger.request = lambda msg, *args, **kwargs: logger.log(cls.LOG_REQUEST, msg, *args, **kwargs)
 		logger.response = lambda msg, *args, **kwargs: logger.log(cls.LOG_RESPONSE, msg, *args, **kwargs)
 
 		if not logger.handlers:
-			handler = logging.StreamHandler()
-			handler.setFormatter(logging.Formatter(
-				fmt='%(asctime)s %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d  %(message)s',
-				datefmt='%Y-%m-%d %H:%M:%S'
-			))
-			handler.setLevel(log_level)
-			logger.addHandler(handler)
+			logger.addHandler(get_stream_handler(log_level))
 		if log_level > logger.level:
 			logger.setLevel(log_level)
 		return logger

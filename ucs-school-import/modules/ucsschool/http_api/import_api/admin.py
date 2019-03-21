@@ -38,8 +38,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from djcelery.models import TaskMeta
-from ucsschool.http_api.import_api.models import Logfile, PasswordsFile, School, SummaryFile, UserImportJob
-from ucsschool.http_api.import_api.import_logging import logger
+from .models import Logfile, PasswordsFile, School, SummaryFile, UserImportJob
 
 
 class UserQueryFilterMixin(object):

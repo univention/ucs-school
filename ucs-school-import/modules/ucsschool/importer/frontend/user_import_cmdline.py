@@ -33,7 +33,7 @@
 UCS@school new import tool cmdline frontend.
 """
 
-from ucsschool.importer.frontend.cmdline import CommandLine
+from .cmdline import CommandLine
 try:
 	from typing import List
 except ImportError:

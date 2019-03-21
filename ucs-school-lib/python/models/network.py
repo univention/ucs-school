@@ -34,10 +34,10 @@ from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.models.attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
-from ucsschool.lib.models.dhcp import DHCPSubnet
-from ucsschool.lib.models.utils import ucr, _, logger
+from .attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
+from .base import UCSSchoolHelperAbstractClass
+from .dhcp import DHCPSubnet
+from .utils import ucr, _
 
 
 class Network(UCSSchoolHelperAbstractClass):
@@ -117,10 +117,10 @@ class Network(UCSSchoolHelperAbstractClass):
 			try:
 				ipv4_network = IPv4Network(network_str)
 			except (AddressValueError, NetmaskValueError, ValueError):
-				logger.warning('Unparsable network: %r', network_str)
+				cls.logger.warning('Unparsable network: %r', network_str)
 			else:
 				netmask = str(ipv4_network.netmask)  # e.g. '255.255.255.0'
-			logger.debug('Network mask: %r is %r', dn, netmask)
+			cls.logger.debug('Network mask: %r is %r', dn, netmask)
 			cls._netmask_cache[dn] = netmask
 		return cls._netmask_cache[dn]
 

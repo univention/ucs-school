@@ -35,10 +35,10 @@ Singleton to the factory currently in use.
 
 import importlib
 
-from ucsschool.importer.exceptions import InitialisationError
+from .exceptions import InitialisationError
 try:
 	from typing import Optional, Type
-	from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
+	from .default_user_import_factory import DefaultUserImportFactory
 except ImportError:
 	pass
 

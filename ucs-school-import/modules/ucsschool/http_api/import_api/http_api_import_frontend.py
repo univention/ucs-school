@@ -44,7 +44,7 @@ from celery.states import STARTED as CELERY_STATES_STARTED
 from ucsschool.importer.factory import load_class
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.exceptions import InitialisationError
-from ucsschool.http_api.import_api.utils import get_wsgi_uid_gid
+from .utils import get_wsgi_uid_gid
 
 
 class ArgParseFake(object):

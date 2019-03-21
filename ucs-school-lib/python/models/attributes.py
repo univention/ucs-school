@@ -40,8 +40,8 @@ from univention.admin.syntax import (
 	netmask, UDM_Objects, string)
 from univention.admin.uexceptions import valueError
 
-from ucsschool.lib.roles import all_roles
-from ucsschool.lib.models.utils import ucr, _
+from ..roles import all_roles
+from .utils import ucr, _
 
 
 class ValidationError(Exception):

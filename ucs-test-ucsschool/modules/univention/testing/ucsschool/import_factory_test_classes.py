@@ -42,16 +42,16 @@ import json
 import codecs
 import tempfile
 
-from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
 from ucsschool.importer.writer.user_import_csv_result_exporter import UserImportCsvResultExporter
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.importer.writer.base_writer import BaseWriter
+from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 
-logger = get_logger()
+logger = ImportTestbase._get_logger()
 
 
 class NullImport(MassImport):

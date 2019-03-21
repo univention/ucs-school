@@ -40,6 +40,7 @@ import stat
 import logging
 from univention.config_registry import ConfigRegistry
 from django.conf import global_settings
+from ucsschool.lib.models.utils import CMDLINE_LOG_FORMATS, LOG_DATETIME_FORMAT
 
 
 ucr = ConfigRegistry()
@@ -222,8 +223,8 @@ CELERYD_MAX_TASKS_PER_CHILD = 1
 # import settings
 UCSSCHOOL_IMPORT = {
 	'logging': {
-		'api_datefmt': '%Y-%m-%d %H:%M:%S',
-		'api_format': '%(asctime)s %(levelname)-8s %(module)s.%(funcName)s:%(lineno)d  %(message)s',
+		'api_datefmt': str(LOG_DATETIME_FORMAT),
+		'api_format': CMDLINE_LOG_FORMATS['DEBUG'],
 		'api_level': logging.DEBUG if DEBUG else logging.INFO,
 		'api_logfile': os.path.join(LOG_DIR, 'http_api.log'),
 	},

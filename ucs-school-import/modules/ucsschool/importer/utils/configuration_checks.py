@@ -60,16 +60,17 @@ Then add a configuration entry to ``/var/lib/ucs-school-import/configs/user_impo
 	}
 """
 
+from __future__ import absolute_import
 import inspect
+import logging
 from operator import itemgetter
 from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader
-from ucsschool.importer.utils.logging import get_logger
-from ucsschool.importer.exceptions import UcsSchoolImportFatalError
-from ucsschool.importer.utils.ldap_connection import get_readonly_connection, get_unprivileged_connection
+from ..exceptions import UcsSchoolImportFatalError
+from .ldap_connection import get_readonly_connection, get_unprivileged_connection
 
 try:
 	from typing import List, Type
-	from ucsschool.importer.configuration import ReadOnlyDict
+	from ..configuration import ReadOnlyDict
 except ImportError:
 	pass
 
@@ -97,14 +98,14 @@ class ConfigurationChecks(object):
 			self.lo, po = get_readonly_connection()
 		except UcsSchoolImportFatalError:
 			self.lo, po = get_unprivileged_connection()
-		self.logger = get_logger()
+		self.logger = logging.getLogger(__name__)
 
 
 def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
 	def is_module_in_config(kls):  # type: (Type[object]) -> bool
 		return kls.__module__ in config.get('configuration_checks', [])
 
-	logger = get_logger()
+	logger = logging.getLogger(__name__)
 	loader = PyHooksLoader(CONFIG_CHECKS_CODE_DIR, ConfigurationChecks, logger, is_module_in_config)
 	config_check_classes = loader.get_hook_classes()  # type: List[Type[ConfigurationChecks]]
 	for kls in config_check_classes:

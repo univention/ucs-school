@@ -34,12 +34,13 @@ Base class for UCS@school import tool cmdline frontends.
 """
 
 import pprint
+import logging
 
-from ucsschool.importer.utils.logging import get_logger, make_stdout_verbose, add_file_handler, move_our_handlers_to_lib_logger
-from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
-from ucsschool.importer.configuration import Configuration, setup_configuration
-from ucsschool.importer.factory import setup_factory
-from ucsschool.importer.exceptions import InitialisationError, TooManyErrors, UcsSchoolImportFatalError
+from ucsschool.lib.models.utils import get_stream_handler, get_file_handler, UniStreamHandler
+from .parse_user_import_cmdline import ParseUserImportCmdline
+from ..configuration import Configuration, setup_configuration
+from ..factory import setup_factory
+from ..exceptions import InitialisationError
 
 try:
 	from typing import List
@@ -50,7 +51,7 @@ except ImportError:
 class CommandLine(object):
 
 	def __init__(self):
-		self.logger = get_logger()
+		self.logger = None  # type: logging.Logger
 		self.args = None
 		self.config = None
 		self.factory = None
@@ -63,12 +64,13 @@ class CommandLine(object):
 		return self.args
 
 	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None):
-		if stdout:
-			make_stdout_verbose()
+		self.logger = logging.getLogger('ucsschool')
+		self.logger.setLevel(logging.DEBUG)
+		if not any(isinstance(handler, UniStreamHandler) for handler in self.logger.handlers):
+			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
-			add_file_handler(filename, uid, gid, mode)
-		# make ucsschool.lib use our logging
-		move_our_handlers_to_lib_logger()
+				self.logger.addHandler(get_file_handler('DEBUG', filename, uid, gid, mode))
+		return self.logger
 
 	def setup_config(self):
 		configs = self.configuration_files
