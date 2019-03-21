@@ -14,7 +14,8 @@ Depends: ucs-test-libs,
  python-pycurl,
  python-pytest,
  eapol,
- ${misc:Depends}
+ ${misc:Depends},
+ python-ucs-school (>= 12.1.0-15),
 Provides: ucs-test-module
 Description: Additional UCS@school tests for ucs-test
  This package includes some UCS@school related tests for ucs-test.
