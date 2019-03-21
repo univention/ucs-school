@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-users
-fix: 
+fix: 15.0.0-2A~4.4.0.201903211724
 desc: |
  * The password in the "Passwords (teachers)" and "Passwords (students)" modules is now 
    hidden by default and can be shown in clear text via a toggle button (Bug #47646).
