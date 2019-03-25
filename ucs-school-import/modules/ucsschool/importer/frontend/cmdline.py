@@ -66,7 +66,13 @@ class CommandLine(object):
 	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None):
 		self.logger = logging.getLogger('ucsschool')
 		self.logger.setLevel(logging.DEBUG)
-		if not any(isinstance(handler, UniStreamHandler) for handler in self.logger.handlers):
+		# we're called twice:
+		# once after parsing the cmdline, if no `-v` was given, INFO is used,
+		# then again after reading the configuration files, the loglevel may be different now
+		for handler in self.logger.handlers:
+			if isinstance(handler, UniStreamHandler):
+				handler.setLevel(logging.DEBUG if stdout else logging.INFO)
+		else:
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
 				self.logger.addHandler(get_file_handler('DEBUG', filename, uid, gid, mode))

@@ -1,3 +1,9 @@
+ucs-school-import (17.0.5-8) unstable; urgency=low
+
+  * Bug #49037: adjust handlers loglevel after reading configuration
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 25 Mar 2019 09:36:48 +0100
+
 ucs-school-import (17.0.5-7) unstable; urgency=low
 
   * Bug #49037: use lib provided loggers and handlers
