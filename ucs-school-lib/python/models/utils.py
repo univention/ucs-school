@@ -346,7 +346,7 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None):
 	"""
 	fmt = '%(log_color)s{}'.format(fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))])
 	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
-	formatter = colorlog.ColoredFormatter(fmt=fmt, datefmt=datefmt)
+	formatter = colorlog.TTYColoredFormatter(fmt=fmt, datefmt=datefmt)
 	handler = UniStreamHandler(stream=stream)
 	handler.setFormatter(formatter)
 	handler.setLevel(level)
@@ -447,7 +447,7 @@ def get_logger(
 	if isinstance(target, file) or hasattr(target, "write"):
 		handler_defaults = dict(cls=UniStreamHandler, stream=target)
 		fmt = '%(log_color)s{}'.format(CMDLINE_LOG_FORMATS[level])
-		fmt_cls = colorlog.ColoredFormatter
+		fmt_cls = colorlog.TTYColoredFormatter
 	else:
 		handler_defaults = dict(cls=UniFileHandler, filename=target, when="D", backupCount=10000000)
 		fmt = FILE_LOG_FORMATS[level]
