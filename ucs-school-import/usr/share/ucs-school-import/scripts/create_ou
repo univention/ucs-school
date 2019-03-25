@@ -65,12 +65,20 @@ def main():
 		'--infile', action='store', type='string',
 		dest='infile', default=None,
 		help='CSV file for mass import of ou\'s. Format is ou_name,display_name,edu_name,admin_name,share_name. If given parameters are overwritten.')
+	parser.add_option("--alter-dhcpd-base", action="store", type='choice', choices=("true", "false", "auto"), dest="alter_dhcpd_base", default="auto",
+					help='This option sets whether the UCR variable dhcpd/ldap/base should be modified during school creation on singleserver environments.'
+						'The possible values are true, false and auto.')
 
 	(options, args,) = parser.parse_args()
 	logger = logging.getLogger(__name__)
 	logger.setLevel('INFO')
 	logger.addHandler(get_stream_handler('INFO'))
 	ou_tuples = list()  # (ou_name,display_name,edu_name,admin_name,share_name)
+	alter_dhcpd_base = None
+	if options.alter_dhcpd_base == "true":
+		alter_dhcpd_base = True
+	elif options.alter_dhcpd_base == "false":
+		alter_dhcpd_base = False
 	if options.infile:
 		try:
 			with open(options.infile, 'r') as fd:
@@ -107,7 +115,7 @@ def main():
 	for ou_name, display_name, edu_name, admin_name, share_name in ou_tuples:
 		logger.info('Create OU: %s', ou_name)
 		try:
-			create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master)
+			create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master, alter_dhcpd_base)
 		except (ValueError, uidAlreadyUsed) as e:
 			logger.error(e)
 			logger.error('Skip OU: %s', ou_name)
