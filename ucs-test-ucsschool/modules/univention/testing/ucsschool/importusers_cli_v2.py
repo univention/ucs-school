@@ -81,7 +81,7 @@ class PyHooks(object):
 		self.hook_basedir = hook_basedir if hook_basedir else '/usr/share/ucs-school-import/pyhooks'
 		self.tmpdir = tempfile.mkdtemp(prefix='pyhook.', dir='/tmp')
 		self.cleanup_files = set()
-		self.log = logging.getLogger(__name__)
+		self.log = ImportTestbase._get_logger()
 
 	def create_hooks(self):
 		"""
@@ -159,11 +159,13 @@ class MyHook(UserPyHook):
 		for fn in list(self.cleanup_files):
 			try:
 				os.remove(fn)
+				self.log.debug('Removed %r.', fn)
 			except (IOError, OSError):
 				self.log.warning('Failed to remove %r' % (fn,))
 			if fn.endswith('.py'):
 				try:
 					os.remove('%sc' % (fn,))  # also remove .pyc files
+					self.log.debug('Removed %sc.', fn)
 				except (IOError, OSError):
 					pass
 			self.cleanup_files.remove(fn)
@@ -179,7 +181,7 @@ class ImportTestbase(object):
 	def __init__(self):
 		self.ucr = univention.testing.ucr.UCSTestConfigRegistry()
 		self.ucr.load()
-		self.log = self._get_logger()  # type: logging.Logger
+		self.log = self._get_logger()
 		self.lo = None  # will be initialized in run()
 		self.ldap_status = None  # type: Set[str]
 		self.schoolenv = None  # type: univention.testing.ucsschool.UCSTestSchool  # will be initialized in run()
@@ -344,7 +346,7 @@ class ImportTestbase(object):
 		return res
 
 	@staticmethod
-	def _get_logger():
+	def _get_logger():  # type: () -> logging.Logger
 		logger = logging.getLogger('ucsschool')
 		logger.setLevel(logging.DEBUG)
 		if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):

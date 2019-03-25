@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Import users via CLI v2
-## tags: [apptest,ucsschool,ucsschool_import1]
+## desc: Imported users found using record_uid
+## tags: [apptest,ucsschool,ucsschool_import1,logging]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
@@ -57,7 +57,7 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('input:filename', fn_csv)
 		fn_config = self.create_config_json(config=config)
 		self.save_ldap_status()
-		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.run_import(['-c', fn_config, '-i', fn_csv], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication(filter_format('cn=%s', (person_list[-1].username,)))
 
 		self.check_new_and_removed_users(8, 0)
@@ -81,7 +81,7 @@ class Test(CLI_Import_v2_Tester):
 		self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'], fn_csv=fn_csv)
 		fn_config = self.create_config_json(values=config)
 		self.save_ldap_status()
-		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.run_import(['-c', fn_config, '-i', fn_csv], fail_on_preexisting_pyhook=False)
 		wait_for_drs_replication(filter_format('cn=%s', (person_list[-1].username,)))
 		self.check_new_and_removed_users(0, 0)
 
@@ -101,7 +101,7 @@ class Test(CLI_Import_v2_Tester):
 		self.create_csv_file(person_list=person_list[1::2], mapping=config['csv']['mapping'], fn_csv=fn_csv)
 		fn_config = self.create_config_json(values=config)
 		self.save_ldap_status()
-		self.run_import(['-c', fn_config, '-i', fn_csv])
+		self.run_import(['-c', fn_config, '-i', fn_csv], fail_on_preexisting_pyhook=False)
 		self.check_new_and_removed_users(0, 4)
 
 		for person in person_list:
