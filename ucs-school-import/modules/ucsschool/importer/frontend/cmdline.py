@@ -72,7 +72,7 @@ class CommandLine(object):
 		for handler in self.logger.handlers:
 			if isinstance(handler, UniStreamHandler):
 				handler.setLevel(logging.DEBUG if stdout else logging.INFO)
-		else:
+		if not any(isinstance(handler, UniStreamHandler) for handler in self.logger.handlers):
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
 				self.logger.addHandler(get_file_handler('DEBUG', filename, uid, gid, mode))
