@@ -18,6 +18,7 @@ import datetime
 from collections import Mapping
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
+import colorlog
 from univention.admin.uexceptions import noObject, ldapError
 from ucsschool.lib.models.utils import get_stream_handler, UniStreamHandler
 from univention.testing.ucsschool.importusers import Person
@@ -347,10 +348,40 @@ class ImportTestbase(object):
 
 	@staticmethod
 	def _get_logger():  # type: () -> logging.Logger
+		# If we are run by ucs-test on the cmdline, the TTY is taken by ucs-test, not us. Then we'll force the use of
+		# colorlog.ColoredFormatter, which will colorize output regardless of having our own TTY.
+		# If ucs-test is run by Jenkins, it won't have the TTY itself, we'll use colorlog.TTYColoredFormatter in that
+		# case, which will not colorize the output.
+		colorize = False
+		if sys.stdout.isatty():
+			colorize = True
+		else:
+			# try to use the stdout of the parent process if it's ucs-test
+			ppid = os.getppid()
+			with open('/proc/{}/cmdline'.format(ppid), 'r') as fp:
+				if 'ucs-test' in fp.read():
+					fd = open('/proc/{}/fd/1'.format(ppid), 'a')
+					if fd.isatty():
+						colorize = True
+
+		if colorize:
+			# tells ucssschool.models.utils.get_stream_handler() to use ColoredFormatter instead of TTYColoredFormatter
+			# this is required for import processes spawned by us to also ignore the missing TTY
+			os.environ['UCSSCHOOL_FORCE_COLOR_TERM'] = '1'
+
 		logger = logging.getLogger('ucsschool')
 		logger.setLevel(logging.DEBUG)
-		if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
-			logger.addHandler(get_stream_handler('DEBUG'))
+		for handler in logger.handlers:
+			if isinstance(handler, UniStreamHandler):
+				if colorize and isinstance(handler.formatter, colorlog.TTYColoredFormatter):
+					_handler = get_stream_handler('DEBUG', cls=colorlog.ColoredFormatter)
+					handler.setFormatter(_handler.formatter)
+				break
+		else:
+			if colorize:
+				logger.addHandler(get_stream_handler('DEBUG', cls=colorlog.ColoredFormatter))
+			else:
+				logger.addHandler(get_stream_handler('DEBUG'))
 		return logger
 
 
@@ -497,7 +528,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
 	def run_import(self, args, fail_on_error=True, fail_on_preexisting_config=True, fail_on_preexisting_pyhook=True):
 		self.check_for_non_empty_config(fail_on_preexisting_config)
 		self.check_for_non_empty_pyhooks(fail_on_preexisting_pyhook)
-		cmd = ['/usr/share/ucs-school-import/scripts/ucs-school-user-import'] + args
+		cmd = ['/usr/share/ucs-school-import/scripts/ucs-school-user-import', '-v'] + args
 		self.log.info('Starting import: %r', cmd)
 		sys.stdout.flush()
 		sys.stderr.flush()

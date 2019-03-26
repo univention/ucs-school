@@ -60,9 +60,10 @@ from ucsschool.lib.roles import (
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.models.group import ComputerRoom
-
-add_stream_logger_to_schoollib()
-random.seed()
+try:
+	from typing import Dict, List, Tuple
+except ImportError:
+	pass
 
 
 TEST_OU_CACHE_FILE = '/var/lib/ucs-test/ucsschool-test-ous.json'
@@ -103,6 +104,8 @@ class UCSTestSchool(object):
 	CN_STAFF = _ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
 
 	def __init__(self):
+		add_stream_logger_to_schoollib()
+		random.seed()
 		self._cleanup_ou_names = set()
 		self._ldap_objects_in_test_ous = dict()  # type: Dict[str, Set[str]]
 		self.lo = self.open_ldap_connection()

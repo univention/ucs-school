@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-34) unstable; urgency=low
+
+  * Bug #49037: force colorized output if run interactively by ucs-test but
+    not when run from jenkins
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Mar 2019 15:45:36 +0100
+
 ucs-test-ucsschool (6.0.0-33) unstable; urgency=low
 
   * Bug #49037: adjust test to pyhook test and logging
