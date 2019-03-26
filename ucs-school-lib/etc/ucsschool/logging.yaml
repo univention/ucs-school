@@ -8,6 +8,15 @@ cmdline: !!omap
 -   WARNING: '%(levelname)-5s  %(message)s'
 -   ERROR: '%(levelname)-5s  %(message)s'
 -   CRITICAL: '%(levelname)-5s  %(message)s'
+colors: !!omap
+-   NOTSET: white
+-   RESPONSE: white
+-   REQUEST: white
+-   DEBUG: white
+-   INFO: reset
+-   WARNING: yellow
+-   ERROR: red
+-   CRITICAL: bold_red
 file: !!omap
 -   NOTSET: '%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s'
 -   RESPONSE: '%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s'

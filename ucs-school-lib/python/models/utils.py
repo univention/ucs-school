@@ -66,8 +66,6 @@ LOGGING_CONFIG_PATH = '/etc/ucsschool/logging.yaml'
 def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
 	with open(path, 'r') as fp:
 		config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
-		config['cmdline']['WARN'] = config['cmdline']['WARNING']
-		config['file']['WARN'] = config['file']['WARNING']
 	return config
 
 
@@ -75,6 +73,7 @@ _logging_config = lazy_object_proxy.Proxy(_load_logging_config)
 CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['cmdline'])
 FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['file'])
 LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config['date'])
+LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config['colors'])
 
 _handler_cache = dict()
 _pw_length_cache = dict()
@@ -331,8 +330,8 @@ def nearest_known_loglevel(level):
 		return logging.INFO
 
 
-def get_stream_handler(level, stream=None, fmt=None, datefmt=None):
-	# type: (Union[int, str], Optional[file], Optional[str], Optional[str]) -> logging.Handler
+def get_stream_handler(level, stream=None, fmt=None, datefmt=None, cls=None):
+	# type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler
 	"""
 	Create a colored stream handler, usually for the console.
 
@@ -341,12 +340,24 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None):
 	:param file stream: opened file to write to (/dev/stdout if None)
 	:param str fmt: log message format (will be passt to a Formatter instance)
 	:param str datefmt: date format (will be passt to a Formatter instance)
+	:param type cls: Formatter class to use, defaults to
+		:py:class:`colorlog.TTYColoredFormatter`, unless the environment
+		variable `UCSSCHOOL_FORCE_COLOR_TERM` is set, then
+		:py:class:`colorlog.ColoredFormatter` is used
 	:return: a handler
 	:rtype: logging.Handler
 	"""
 	fmt = '%(log_color)s{}'.format(fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))])
 	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
-	formatter = colorlog.TTYColoredFormatter(fmt=fmt, datefmt=datefmt)
+	formatter_kwargs = {'fmt': fmt, 'datefmt': datefmt}
+	if os.environ and 'UCSSCHOOL_FORCE_COLOR_TERM' in os.environ:
+		color_cls = colorlog.ColoredFormatter
+	else:
+		color_cls = colorlog.TTYColoredFormatter
+	cls = cls or color_cls
+	if issubclass(cls, colorlog.ColoredFormatter):
+		formatter_kwargs['log_colors'] = LOG_COLORS
+	formatter = cls(**formatter_kwargs)
 	handler = UniStreamHandler(stream=stream)
 	handler.setFormatter(formatter)
 	handler.setLevel(level)
@@ -455,6 +466,8 @@ def get_logger(
 	handler_defaults.update(handler_kwargs)
 	fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
 	fmt_kwargs.update(formatter_kwargs)
+	if issubclass(fmt_cls, colorlog.ColoredFormatter):
+		fmt_kwargs['log_colors'] = LOG_COLORS
 
 	if _logger.level == logging.NOTSET:
 		# fresh logger
@@ -545,18 +558,15 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 
 
 def _write_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> None
-	cmdline_warn = CMDLINE_LOG_FORMATS.pop('WARN')
-	file_warn = FILE_LOG_FORMATS.pop('WARN')
 	with open(path, 'w') as fp:
 		ruamel.yaml.dump(
 			{
 				'date': str(LOG_DATETIME_FORMAT),
 				'cmdline': collections.OrderedDict(CMDLINE_LOG_FORMATS),
+				'colors': collections.OrderedDict(LOG_COLORS),
 				'file': collections.OrderedDict(FILE_LOG_FORMATS),
 			},
 			fp,
 			ruamel.yaml.RoundTripDumper,
 			indent=4
 		)
-	CMDLINE_LOG_FORMATS['WARN'] = cmdline_warn
-	FILE_LOG_FORMATS['WARN'] = file_warn
