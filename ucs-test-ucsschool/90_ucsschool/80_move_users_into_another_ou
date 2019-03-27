@@ -12,11 +12,11 @@ from univention.testing.udm import UCSTestUDM
 import univention.testing.strings as uts
 from univention.testing import utils
 from ucsschool.lib.models import User, SchoolClass, WorkGroup
-from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
+from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 import univention.config_registry
 
 
-logger = ImportTestbase._get_logger()
+logger = get_ucsschool_logger()
 
 
 def main():

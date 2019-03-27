@@ -48,10 +48,10 @@ from ucsschool.importer.writer.user_import_csv_result_exporter import UserImport
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.importer.writer.base_writer import BaseWriter
-from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
+from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 
-logger = ImportTestbase._get_logger()
+logger = get_ucsschool_logger()
 
 
 class NullImport(MassImport):

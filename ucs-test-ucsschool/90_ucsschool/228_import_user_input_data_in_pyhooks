@@ -20,13 +20,13 @@ import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
-from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 TESTHOOKSOURCE = os.path.join(os.path.dirname(__file__), 'test228_input_data_pyhookpy')
 TESTHOOKTARGET = '/usr/share/ucs-school-import/pyhooks/test228_input_data_pyhook.py'
 
-logger = ImportTestbase._get_logger()
+logger = get_ucsschool_logger()
 logger.info('*** Copying %r to %r...', TESTHOOKSOURCE, TESTHOOKTARGET)
 shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 

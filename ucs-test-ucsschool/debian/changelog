@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-35) unstable; urgency=low
+
+  * Bug #49037: make get_ucsschool_logger() accessable for all tests
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 27 Mar 2019 07:38:50 +0100
+
 ucs-test-ucsschool (6.0.0-34) unstable; urgency=low
 
   * Bug #49037: force colorized output if run interactively by ucs-test but

@@ -18,10 +18,9 @@ import datetime
 from collections import Mapping
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
-import colorlog
 from univention.admin.uexceptions import noObject, ldapError
-from ucsschool.lib.models.utils import get_stream_handler, UniStreamHandler
 from univention.testing.ucsschool.importusers import Person
+from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 import univention.testing.ucr
 import univention.testing.udm
 import univention.testing.strings as uts
@@ -82,7 +81,7 @@ class PyHooks(object):
 		self.hook_basedir = hook_basedir if hook_basedir else '/usr/share/ucs-school-import/pyhooks'
 		self.tmpdir = tempfile.mkdtemp(prefix='pyhook.', dir='/tmp')
 		self.cleanup_files = set()
-		self.log = ImportTestbase._get_logger()
+		self.log = get_ucsschool_logger()
 
 	def create_hooks(self):
 		"""
@@ -182,7 +181,7 @@ class ImportTestbase(object):
 	def __init__(self):
 		self.ucr = univention.testing.ucr.UCSTestConfigRegistry()
 		self.ucr.load()
-		self.log = self._get_logger()
+		self.log = get_ucsschool_logger()
 		self.lo = None  # will be initialized in run()
 		self.ldap_status = None  # type: Set[str]
 		self.schoolenv = None  # type: univention.testing.ucsschool.UCSTestSchool  # will be initialized in run()
@@ -205,10 +204,10 @@ class ImportTestbase(object):
 		self.log.debug('LDAP status saved.')
 
 	def diff_ldap_status(self):
-		print('Reading LDAP status to check differences...')
+		self.log.debug('Reading LDAP status to check differences...')
 		res = utu.UCSTestSchool.diff_ldap_status(self.lo, self.ldap_status)
-		print('New objects: {!r}'.format(res.new))
-		print('Removed objects: {!r}'.format(res.removed))
+		self.log.debug('New objects: {!r}'.format(res.new))
+		self.log.debug('Removed objects: {!r}'.format(res.removed))
 		return res
 
 	@classmethod
@@ -348,40 +347,11 @@ class ImportTestbase(object):
 
 	@staticmethod
 	def _get_logger():  # type: () -> logging.Logger
-		# If we are run by ucs-test on the cmdline, the TTY is taken by ucs-test, not us. Then we'll force the use of
-		# colorlog.ColoredFormatter, which will colorize output regardless of having our own TTY.
-		# If ucs-test is run by Jenkins, it won't have the TTY itself, we'll use colorlog.TTYColoredFormatter in that
-		# case, which will not colorize the output.
-		colorize = False
-		if sys.stdout.isatty():
-			colorize = True
-		else:
-			# try to use the stdout of the parent process if it's ucs-test
-			ppid = os.getppid()
-			with open('/proc/{}/cmdline'.format(ppid), 'r') as fp:
-				if 'ucs-test' in fp.read():
-					fd = open('/proc/{}/fd/1'.format(ppid), 'a')
-					if fd.isatty():
-						colorize = True
-
-		if colorize:
-			# tells ucssschool.models.utils.get_stream_handler() to use ColoredFormatter instead of TTYColoredFormatter
-			# this is required for import processes spawned by us to also ignore the missing TTY
-			os.environ['UCSSCHOOL_FORCE_COLOR_TERM'] = '1'
-
+		force_ucsschool_logger_colorized_if_has_tty()
 		logger = logging.getLogger('ucsschool')
 		logger.setLevel(logging.DEBUG)
-		for handler in logger.handlers:
-			if isinstance(handler, UniStreamHandler):
-				if colorize and isinstance(handler.formatter, colorlog.TTYColoredFormatter):
-					_handler = get_stream_handler('DEBUG', cls=colorlog.ColoredFormatter)
-					handler.setFormatter(_handler.formatter)
-				break
-		else:
-			if colorize:
-				logger.addHandler(get_stream_handler('DEBUG', cls=colorlog.ColoredFormatter))
-			else:
-				logger.addHandler(get_stream_handler('DEBUG'))
+		if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
+			logger.addHandler(get_stream_handler('DEBUG'))
 		return logger
 
 

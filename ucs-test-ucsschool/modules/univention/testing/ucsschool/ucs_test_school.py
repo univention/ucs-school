@@ -37,9 +37,11 @@ API for testing UCS@school and cleaning up after performed tests
 from __future__ import absolute_import
 
 import os
+import sys
 import json
 import ldap
 import random
+import logging
 import tempfile
 import subprocess
 import traceback
@@ -58,7 +60,7 @@ from ucsschool.lib.roles import (
 	create_ucsschool_role_string, role_computer_room, role_school_admin, role_school_class, role_student, role_staff,
 	role_teacher, role_workgroup)
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
-from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib, get_stream_handler, UniStreamHandler
 from ucsschool.lib.models.group import ComputerRoom
 try:
 	from typing import Dict, List, Tuple
@@ -67,6 +69,43 @@ except ImportError:
 
 
 TEST_OU_CACHE_FILE = '/var/lib/ucs-test/ucsschool-test-ous.json'
+
+
+def force_ucsschool_logger_colorized_if_has_tty():
+	"""
+	Force the logger "ucsschool" returned by
+	:py:func:`ucsschool.models.utils.get_stream_handler()` (and used in
+	:py:func:`add_stream_logger_to_schoollib()`) to colorize terminal output in
+	case our process has a TTY or our parents process if it's called "ucs-test"
+	and has a TTY.
+
+	If ucs-test is run by Jenkins, it won't have the TTY itself, in which case
+	the output won't be colorized.
+	"""
+	colorize = False
+	if sys.stdout.isatty():
+		colorize = True
+	else:
+		# try to use the stdout of the parent process if it's ucs-test
+		ppid = os.getppid()
+		with open('/proc/{}/cmdline'.format(ppid), 'r') as fp:
+			if 'ucs-test' in fp.read():
+				fd = open('/proc/{}/fd/1'.format(ppid), 'a')
+				if fd.isatty():
+					colorize = True
+	if colorize:
+		# Tell ucssschool.models.utils.UCSTTYColoredFormatter to force colorization.
+		# This is required for import processes spawned by us to also ignore the missing TTY.
+		os.environ['UCSSCHOOL_FORCE_COLOR_TERM'] = '1'
+
+
+def get_ucsschool_logger():  # type: () -> logging.Logger
+	force_ucsschool_logger_colorized_if_has_tty()
+	logger = logging.getLogger('ucsschool')
+	logger.setLevel(logging.DEBUG)
+	if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
+		logger.addHandler(get_stream_handler('DEBUG'))
+	return logger
 
 
 class SchoolError(Exception):
