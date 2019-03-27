@@ -186,6 +186,18 @@ class ModuleHandler(logging.Handler):
 		ud.debug(self._udebug_facility, udebug_level, msg)
 
 
+class UCSTTYColoredFormatter(colorlog.TTYColoredFormatter):
+	"""
+	Subclass of :py:class:`colorlog.TTYColoredFormatter` that will force
+	colorization on, in case UCSSCHOOL_FORCE_COLOR_TERM is found in env.
+	"""
+	def color(self, log_colors, level_name):
+		if os.environ and 'UCSSCHOOL_FORCE_COLOR_TERM' in os.environ:
+			return colorlog.ColoredFormatter.color(self, log_colors, level_name)
+		else:
+			return super(UCSTTYColoredFormatter, self).color(log_colors, level_name)
+
+
 def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=None, name=None):
 	# type: (Optional[AnyStr], Optional[file], Optional[AnyStr], Optional[AnyStr]) -> logging.Logger
 	"""
@@ -330,7 +342,7 @@ def nearest_known_loglevel(level):
 		return logging.INFO
 
 
-def get_stream_handler(level, stream=None, fmt=None, datefmt=None, cls=None):
+def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None):
 	# type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler
 	"""
 	Create a colored stream handler, usually for the console.
@@ -340,24 +352,18 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, cls=None):
 	:param file stream: opened file to write to (/dev/stdout if None)
 	:param str fmt: log message format (will be passt to a Formatter instance)
 	:param str datefmt: date format (will be passt to a Formatter instance)
-	:param type cls: Formatter class to use, defaults to
-		:py:class:`colorlog.TTYColoredFormatter`, unless the environment
-		variable `UCSSCHOOL_FORCE_COLOR_TERM` is set, then
-		:py:class:`colorlog.ColoredFormatter` is used
+	:param type fmt_cls: Formatter class to use, defaults to
+		:py:class:`UCSTTYColoredFormatter`
 	:return: a handler
 	:rtype: logging.Handler
 	"""
 	fmt = '%(log_color)s{}'.format(fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))])
 	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
 	formatter_kwargs = {'fmt': fmt, 'datefmt': datefmt}
-	if os.environ and 'UCSSCHOOL_FORCE_COLOR_TERM' in os.environ:
-		color_cls = colorlog.ColoredFormatter
-	else:
-		color_cls = colorlog.TTYColoredFormatter
-	cls = cls or color_cls
-	if issubclass(cls, colorlog.ColoredFormatter):
+	fmt_cls = fmt_cls or UCSTTYColoredFormatter
+	if issubclass(fmt_cls, colorlog.ColoredFormatter):
 		formatter_kwargs['log_colors'] = LOG_COLORS
-	formatter = cls(**formatter_kwargs)
+	formatter = fmt_cls(**formatter_kwargs)
 	handler = UniStreamHandler(stream=stream)
 	handler.setFormatter(formatter)
 	handler.setLevel(level)
