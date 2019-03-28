@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-36) unstable; urgency=low
+
+  * Bug #48651: schoollists are shown on DC master
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 28 Mar 2019 13:23:33 +0100
+
 ucs-test-ucsschool (6.0.0-35) unstable; urgency=low
 
   * Bug #49037: make get_ucsschool_logger() accessable for all tests
