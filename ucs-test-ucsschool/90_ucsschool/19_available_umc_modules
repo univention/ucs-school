@@ -38,7 +38,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 	ignoreList = [('lib', None)]
 
 	# Lehrer auf dem DC Master
-	dc_teacher = defaultList + [('schoolgroups', 'workgroup-admin'), ('schoolusers', 'student')]
+	dc_teacher = defaultList + [('schoolgroups', 'workgroup-admin'), ('schoolusers', 'student'), ('schoollists', None)]
 	# Lehrer auf dem Schul-DC
 	dcs_teacher = defaultList + [
 		('computerroom', None),
@@ -51,7 +51,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		('schoollists', None),
 	]
 	# Schuladmin sollte auf dem DC Master
-	dc_schooladmin = defaultList + [('schoolusers', 'student'), ('schoolusers', 'teacher'), ('schoolrooms', None), ('schoolgroups', 'workgroup-admin'), ('schoolgroups', 'class'), ('schoolgroups', 'teacher'), ]
+	dc_schooladmin = defaultList + [('schoolusers', 'student'), ('schoolusers', 'teacher'), ('schoolrooms', None), ('schoolgroups', 'workgroup-admin'), ('schoolgroups', 'class'), ('schoolgroups', 'teacher'), ('schoollists', None)]
 	# Schuladmin sollte auf dem Schul-DC
 	dcs_schooladmin = defaultList + [
 		('computerroom', None),
@@ -82,6 +82,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		('schoolgroups', 'class'),
 		('schoolgroups', 'teacher'),
 		('schoolgroups', 'workgroup-admin'),
+		('schoollists', None),
 	]
 	# Domanenadministrator auf dem Schul-DC
 	dcs_domainadmin = defaultList + [
@@ -100,6 +101,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		('internetrules', 'admin'),
 		('internetrules', 'assign'),
 		('lessontimes', None),
+		('schoollists', None),
 	]
 	checks = {
 		('student', 'domaincontroller_master', False): defaultList,
