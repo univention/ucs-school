@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-7) unstable; urgency=low
+
+  * Bug #48651: improve readability of test
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 28 Mar 2019 15:46:51 +0100
+
 ucs-test-ucsschool (5.0.4-6) unstable; urgency=low
 
   * Bug #48188: add test for pre-read hook
