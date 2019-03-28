@@ -121,15 +121,14 @@ def checkModules(modules, userType, serverRole, singleMaster):
 		('domainadmin', 'domaincontroller_master', True): listUnion(dc_domainadmin, dcs_domainadmin)
 	}
 	modules = removeListFromOther(modules, ignoreList)
+	res = checks[(userType, serverRole, singleMaster)]
 	if userType != 'domainadmin':
-		if sorted(modules) != sorted(checks[(userType, serverRole, singleMaster)]):
-			utils.fail('Modules (%r) for %s and %s are not correct' % (
-				modules, userType, serverRole))
+		success = set(modules) == set(res)
 	else:
-		success = contains(modules, checks[(userType, serverRole, singleMaster)])
-		if not success:
-			utils.fail('Modules (%r) for %s and %s are not correct' % (
-				modules, userType, serverRole))
+		success = contains(modules, res)
+	if not success:
+		utils.fail('Modules for %s and %s are not correct.\nExpected: %r\nFound:    %r' % (
+			userType, serverRole, sorted(res), sorted(modules)))
 
 
 def main():
@@ -167,7 +166,7 @@ def main():
 				users.append((domainadmin, 'domainadmin'))
 
 				utils.wait_for_replication_and_postrun()
-				for (user, userType) in users:
+				for user, userType in users:
 					client = Client(host, user, 'univention')
 					print 'usertype=', userType
 					modules = client.umc_get('modules/list').data['modules']
