@@ -64,22 +64,22 @@ def main():
 			# check if DC on school DC is correct
 			for school in schools:
 				try:
-					dn = lo.search(filter=filter_format('(&(objectClass=univentionHost)(cn=%s))', (school.admin_server.name,)))[0][0]
+					dn = lo.search(filter=filter_format('(&(objectClass=univentionHost)(cn=%s))', (school.edu_server.name,)))[0][0]
 				except IndexError:
-					print '\n\nERROR: Looks like the non-edu domaincontroller {} does not exist in LDAP\n\n'.format(school.admin_server.dn)
+					print '\n\nERROR: Looks like the edu domaincontroller {} does not exist in LDAP\n\n'.format(school.edu_server.dn)
 					raise
-				if school.admin_server.dn != dn:
-					raise Exception('Looks like the non-edu domaincontroller dn {} does not match expected DN {}\n\n'.format(dn, school.admin_server.dn))
+				if school.edu_server.dn != dn:
+					raise Exception('Looks like the edu domaincontroller dn {} does not match expected DN {}\n\n'.format(dn, school.edu_server.dn))
 
 				# Bug 41818: administrative school server can only replicate staff users and teacher-staff users
-				acl = Acl(school.name, school.admin_server.dn, 'ALLOWED')
+				acl = Acl(school.name, school.edu_server.dn, 'ALLOWED')
 				# following attribute list is incomplete, but gives a rough idea if replication of this user is allowed
 				attr_list = ['uid', 'givenName', 'sn', 'uidNumber', 'userPassword', 'sambaHomePath', 'gidNumber', 'krb5Key', 'sambaSID']
 				for user_dn, allowance in (
-						(staff_dn, 'ALLOWED'),
+						(staff_dn, 'DENIED'),
 						(teastaff_dn, 'ALLOWED'),
-						(tea_dn, 'DENIED'),
-						(stu_dn, 'DENIED')):
+						(tea_dn, 'ALLOWED'),
+						(stu_dn, 'ALLOWED')):
 					acl.assert_acl(user_dn, 'read', attr_list, allowance)
 
 
