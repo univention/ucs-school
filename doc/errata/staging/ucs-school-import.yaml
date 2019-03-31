@@ -6,9 +6,9 @@ src: ucs-school-import
 fix: 17.0.5-9A~4.4.0.201903261550
 desc: |
  * The script <filename>/usr/share/ucs-school-import/scripts/reset_schema_counter</filename> was added. It can be used to reset unique username and email counters (Bug #42131).
- * A configuration key "csv:allowed_missing_columns" was added. It can be assigned a list of column names that are allowed to be missing in the input data (Bug #49050).
+ * A configuration key <literal>csv:allowed_missing_columns</literal> was added. It can be assigned a list of column names that are allowed to be missing in the input data (Bug #49050).
  * Internal improvement: the PyHook loading code was consolidated (Bug #48958).
  * Before reading the input data, <literal>pre-read</literal> hooks are now executed (Bug #49049).
- * A <literal>pre-read</literal> hook was added, that can rename the columns of a CSV file before it is read. To activate it, copy <filename>/usr/share/ucs-school-import/pyhooks-available/pre_read_modify_csv_header.py</filename> to <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> (Bug #49048).
+ * An example <literal>pre-read</literal> hook was added, that can rename the columns of a CSV file before it is read. To activate it, copy <filename>/usr/share/ucs-school-import/pyhooks-available/pre_read_modify_csv_header.py</filename> to <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> (Bug #49048).
  * Internal improvement: better logging configuration (Bug #49037).
 bug: [42131, 49050, 48958, 49049, 49048, 49037]
