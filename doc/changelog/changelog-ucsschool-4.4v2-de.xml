@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.4-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.4 v2 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.4 v1 nach 4.4 v2</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.4 v2
+Stand: 31.03.2019
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2019
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.4 v1 nach 4.4 v2.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:newerrata">
+			<title>Updateprozess</title>
+			<para>
+				Größere Updates für UCS@school werden im Univention Appcenter als eigenständiges App-Update herausgegeben.
+				Kleinere Updates und Fehlerbereinigungen (Errata für UCS@school), die keine Interaktion mit dem Administrator erforderlich machen, werden im Repository der
+				bereits veröffentlichten App-Version von UCS@school herausgegeben. Die Changelog-Dokumente, die Univention mit jeder UCS@school-App-Version
+				herausgibt, werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem ersichtlich wird, zu welchem Zeitpunkt welche
+				Pakete veröffentlicht und welche Fehler dabei behoben wurden.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+				<section id="changelog:ucsschool:2019-03-31" lang="en">
+					<title>Released on 2019-03-31:</title>
+					<!-- START python-pampy 1.8.4-1A~4.3.0.201903160731 -->
+					<para>
+						Source package <emphasis>python-pampy</emphasis> in version <emphasis>1.8.4-1A~4.3.0.201903160731</emphasis>:
+						<itemizedlist>
+							<listitem><para>The python-pampy package now handles Unicode strings (<u:bug>49051</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END python-pampy 1.8.4-1A~4.3.0.201903160731 -->
+					<!-- START ucs-school-import 17.0.5-9A~4.4.0.201903261550 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.5-9A~4.4.0.201903261550</emphasis>:
+						<itemizedlist>
+							<listitem><para>The script <filename>/usr/share/ucs-school-import/scripts/reset_schema_counter</filename> was added. It can be used to reset unique username and email counters (<u:bug>42131</u:bug>).</para></listitem>
+
+							<listitem><para>A configuration key <literal>csv:allowed_missing_columns</literal> was added. It can be assigned a list of column names that are allowed to be missing in the input data (<u:bug>49050</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: the PyHook loading code was consolidated (<u:bug>48958</u:bug>).</para></listitem>
+
+							<listitem><para>Before reading the input data, <literal>pre-read</literal> hooks are now executed (<u:bug>49049</u:bug>).</para></listitem>
+
+							<listitem><para>An example <literal>pre-read</literal> hook was added, that can rename the columns of a CSV file before it is read. To activate it, copy <filename>/usr/share/ucs-school-import/pyhooks-available/pre_read_modify_csv_header.py</filename> to <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> (<u:bug>49048</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: better logging configuration (<u:bug>49037</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.5-9A~4.4.0.201903261550 -->
+					<!-- START ucs-school-lib 12.1.0-18A~4.4.0.201903270740 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.0-18A~4.4.0.201903270740</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: better type hints and Python 3 compatibility (<u:bug>48958</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: better logging configuration (<u:bug>49037</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.0-18A~4.4.0.201903270740 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-2A~4.4.0.201903141616 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-2A~4.4.0.201903141616</emphasis>:
+						<itemizedlist>
+							<listitem><para>Preparations for better browser cache-control have been implemented. (<u:bug>48995</u:bug>)</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-2A~4.4.0.201903141616 -->
+					<!-- START ucs-school-umc-exam 9.0.0-4A~4.4.0.201903141619 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.0-4A~4.4.0.201903141619</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: use the consolidated PyHook loading code (<u:bug>48958</u:bug>).</para></listitem>
+
+							<listitem><para>Preparations for better browser cache-control have been implemented. (<u:bug>48995</u:bug>)</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.0-4A~4.4.0.201903141619 -->
+					<!-- START ucs-school-umc-users 15.0.0-2A~4.4.0.201903211724 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-users</emphasis> in version <emphasis>15.0.0-2A~4.4.0.201903211724</emphasis>:
+						<itemizedlist>
+							<listitem><para>The password in the "Passwords (teachers)" and "Passwords (students)" modules is now  hidden by default and can be shown in clear text via a toggle button (<u:bug>47646</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-users 15.0.0-2A~4.4.0.201903211724 -->
+<!-- CHANGELOG:2019-03-31:APPEND -->
+				</section>
+<!-- CHANGELOG-NEW-SECTION -->
+
+		</section>
+	</chapter>
+</book>
