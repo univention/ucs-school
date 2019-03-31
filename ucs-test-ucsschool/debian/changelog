@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-38) unstable; urgency=low
+
+  * Bug #48137: add test 303_http-api_auth_test
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 31 Mar 2019 21:58:56 +0200
+
 ucs-test-ucsschool (6.0.0-37) unstable; urgency=low
 
   * Bug #48651: improve readability of test
