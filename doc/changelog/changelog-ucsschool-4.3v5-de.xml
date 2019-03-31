@@ -16,11 +16,12 @@
 		<legalnotice>
 			<literallayout>
 Version 4.3 v5
-Stand: 07. September 2018
+Stand: 31. März 2019
+Freigabe: 07. September 2018
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2018
+(c) 2002-2019
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -114,7 +115,7 @@ feedback@univention.de
 
 					<listitem><para>Internal change: a new PyHook <literal>ResultPyHook</literal> has been introduced, which is executed after the import has finished (<u:bug>47302</u:bug>).</para></listitem>
 
-					<listitem><para>It is now possible to deactivate the normalization for first name and last name. The boolean config options <literal>normalization:firstname</literal> and <literal>normalization:lastname</literal> have been added (<u:bug>47304</u:bug>).</para></listitem>
+					<listitem><para>It is now possible to deactivate the normalization for first name and last name. The boolean config options <literal>normalize:firstname</literal> and <literal>normalize:lastname</literal> have been added (<u:bug>47304</u:bug>).</para></listitem>
 
 					<listitem><para>The CSV import via ucs-school-user-import is now able to handle UTF-8 files with byte order mark (UTF-8 BOM) correctly. In the past the BOM was interpreted as user data (<u:bug>47305</u:bug>).</para></listitem>
 

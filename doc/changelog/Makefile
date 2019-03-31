@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-MAIN := changelog-ucsschool-4.3v7-de
+MAIN := changelog-ucsschool-4.3v5-de changelog-ucsschool-4.3v8-de
 STYLESHEET := univention_extdocs
 OPTIONS += --stringparam ulink.show 0
 
