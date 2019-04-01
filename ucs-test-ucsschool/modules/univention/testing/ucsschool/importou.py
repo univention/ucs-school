@@ -19,7 +19,7 @@ import univention.config_registry
 from univention.config_registry.interfaces import Interfaces
 
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
-from ucsschool.lib.models import School, User
+from ucsschool.lib.models import School, User, DHCPServer
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
 
@@ -53,6 +53,10 @@ class DCisMemberOfGroup(Exception):
 
 
 class DhcpdLDAPBase(Exception):
+	pass
+
+
+class DhcpServerLocation(Exception):
 	pass
 
 
@@ -107,7 +111,7 @@ def get_school_ou_from_dn(dn, ucr=None):
 	return oulist[-1]
 
 
-def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_displayname=None):
+def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_displayname=None, alter_dhcpd_base=None):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
 	if dc:
 		cmd_block.append(dc)
@@ -117,6 +121,12 @@ def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_
 		cmd_block.append('--displayName=%s' % ou_displayname)
 	if sharefileserver:
 		cmd_block.append('--sharefileserver=%s' % sharefileserver)
+	if alter_dhcpd_base is None:
+		cmd_block.append('--alter-dhcpd-base=%s' % 'auto')
+	elif alter_dhcpd_base:
+		cmd_block.append('--alter-dhcpd-base=%s' % 'true')
+	elif not alter_dhcpd_base:
+		cmd_block.append('--alter-dhcpd-base=%s' % 'false')
 
 	print 'cmd_block: %r' % cmd_block
 	retcode = subprocess.call(cmd_block, shell=False)
@@ -124,7 +134,7 @@ def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_
 		raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 
-def create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname):
+def create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname, alter_dhcpd_base=None):
 	kwargs = {'name': ou, 'dc_name': dc}
 	if dc_administrative:
 		kwargs['dc_name_administrative'] = dc_administrative
@@ -133,6 +143,8 @@ def create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayn
 		kwargs['home_share_file_server'] = sharefileserver
 	if ou_displayname:
 		kwargs['display_name'] = ou_displayname
+	if alter_dhcpd_base is not None:
+		kwargs[alter_dhcpd_base] = alter_dhcpd_base
 
 	# invalidate caches and reload UCR
 	ucsschool.lib.models.utils.ucr.load()
@@ -226,7 +238,7 @@ def get_ou_base(ou, district_enable):
 	return ou_base
 
 
-def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, unset_dhcpd_base=True, use_cli_api=True, use_python_api=False):
+def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, unset_dhcpd_base=True, alter_dhcpd_base_option=None, use_cli_api=True, use_python_api=False):
 
 	assert(use_cli_api != use_python_api)
 
@@ -281,9 +293,9 @@ def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, o
 		dc_name = 'dc%s-01' % ou
 
 	if use_cli_api:
-		create_ou_cli(ou, dc, dc_administrative, sharefileserver, ou_displayname)
+		create_ou_cli(ou, dc, dc_administrative, sharefileserver, ou_displayname, alter_dhcpd_base_option)
 	if use_python_api:
-		create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname)
+		create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname, alter_dhcpd_base_option)
 
 	if move_dc_after_create_ou:
 		move_domaincontroller_to_ou_cli(dc_name, ou)
@@ -699,3 +711,65 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
 				finally:
 					for ou_name in cleanup_ou_list:
 						remove_ou(ou_name)
+
+
+def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
+	with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:
+		create_mail_domain(ucr, udm)
+		cleanup_ou_list = []
+		try:
+			# reset DHCPD ldap search base which is also to be tested
+			univention.config_registry.handler_unset(['dhcpd/ldap/base'])
+			ucr.load()
+			ou_name = uts.random_name()
+			print '\n*** Creating OU #1 (ou_name=%s) ***\n' % (ou_name)
+			cleanup_ou_list.append(ou_name)
+			try:
+				create_and_verify_ou(
+					ucr,
+					ou=ou_name,
+					ou_displayname=ou_name,
+					dc=None, dc_administrative=None,
+					sharefileserver=None,
+					singlemaster=True,
+					noneducational_create_objects=False,
+					district_enable=False,
+					default_dcs=None,
+					dhcp_dns_clearou=True,
+					unset_dhcpd_base=False,
+					do_cleanup=False,
+					use_cli_api=use_cli_api,
+					use_python_api=use_python_api,
+					alter_dhcpd_base_option=False
+				)
+			except DhcpdLDAPBase as e:
+				print('dhcpd/ldap/base unset as expected!')
+			for i in (True, None):
+				ou_name = uts.random_name()
+				print '\n*** Creating OU with alter-dhcpd-base: %s (ou_name=%s) ***\n' % (i, ou_name)
+				cleanup_ou_list.append(ou_name)
+				create_and_verify_ou(
+					ucr,
+					ou=ou_name,
+					ou_displayname=ou_name,
+					dc=None, dc_administrative=None,
+					sharefileserver=None,
+					singlemaster=True,
+					noneducational_create_objects=False,
+					district_enable=False,
+					default_dcs=None,
+					dhcp_dns_clearou=True,
+					unset_dhcpd_base=False,
+					do_cleanup=False,
+					use_cli_api=use_cli_api,
+					use_python_api=use_python_api,
+					alter_dhcpd_base_option=i
+				)
+				if 'ou=%s' % cleanup_ou_list[1] not in ucr.get('dhcpd/ldap/base'):
+					raise DhcpdLDAPBase('Wrong dhcpd/ldap/base value set!: %s' % ucr.get('dhcpd/ldap/base'))
+				lo = univention.admin.uldap.getAdminConnection()[0]
+				if len(DHCPServer.get_all(lo, cleanup_ou_list[1])) != 1:
+					raise DhcpServerLocation('No DHCP Server found in ou %s, but was expected.' % cleanup_ou_list[1])
+		finally:
+			for ou_name in cleanup_ou_list:
+				remove_ou(ou_name)

@@ -102,7 +102,7 @@ def create_school():
 			break
 	if not school_exists:
 		try:
-			subprocess.check_call(['python', '/usr/share/ucs-school-import/scripts/create_ou', '--displayName={}'.format(SCHOOL[1]), SCHOOL[0], hostname_demoschool])
+			subprocess.check_call(['python', '/usr/share/ucs-school-import/scripts/create_ou', '--displayName={}'.format(SCHOOL[1]), '--alter-dhcpd-base=false', SCHOOL[0], hostname_demoschool])
 		except subprocess.CalledProcessError as e:
 			print('The following error occured while creating the Demo School object: \n')
 			print(e)

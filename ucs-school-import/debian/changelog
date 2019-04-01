@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-1) unstable; urgency=low
+
+  * Bug #48469: Add alter-dhcpd-base option for school creation
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 01 Apr 2019 13:13:13 +0100
+
 ucs-school-import (17.0.5-9) unstable; urgency=low
 
   * Bug #49037: prevent adding 2nd stream handler

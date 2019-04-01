@@ -102,7 +102,7 @@ class Hooks(object):
 		return self.__run('post', module, action, **kwargs)
 
 
-def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master):
+def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master, alter_dhcpd_base=None):
 	"""Raises ValueError, uidAlreadyUsed"""
 	global _hooks
 	# TODO: REMOVE WITH Bug #48141
@@ -129,7 +129,7 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 	logger = logging.getLogger(__name__)
 
 	new_school = School(name=ou_name, dc_name=edu_name, dc_name_administrative=admin_name,
-						display_name=display_name)
+						display_name=display_name, alter_dhcpd_base=alter_dhcpd_base)
 
 	# TODO: Reevaluate this validation after CNAME changes are implemented
 	share_dn = ''
