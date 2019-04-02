@@ -718,7 +718,6 @@ def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
 		create_mail_domain(ucr, udm)
 		cleanup_ou_list = []
 		try:
-			# reset DHCPD ldap search base which is also to be tested
 			univention.config_registry.handler_unset(['dhcpd/ldap/base'])
 			ucr.load()
 			ou_name = uts.random_name()
@@ -770,6 +769,32 @@ def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
 				lo = univention.admin.uldap.getAdminConnection()[0]
 				if len(DHCPServer.get_all(lo, cleanup_ou_list[1])) != 1:
 					raise DhcpServerLocation('No DHCP Server found in ou %s, but was expected.' % cleanup_ou_list[1])
+			univention.config_registry.handler_unset(['dhcpd/ldap/base'])
+			ucr.load()
+			ou_name = uts.random_name()
+			print '\n*** Creating OU with alter-dhcpd-base: None (ou_name=%s) ***\n' % (ou_name)
+			cleanup_ou_list.append(ou_name)
+			create_and_verify_ou(
+				ucr,
+				ou=ou_name,
+				ou_displayname=ou_name,
+				dc=None, dc_administrative=None,
+				sharefileserver=None,
+				singlemaster=True,
+				noneducational_create_objects=False,
+				district_enable=False,
+				default_dcs=None,
+				dhcp_dns_clearou=True,
+				unset_dhcpd_base=False,
+				do_cleanup=False,
+				use_cli_api=use_cli_api,
+				use_python_api=use_python_api,
+				alter_dhcpd_base_option=None
+			)
+			if 'ou=%s' % cleanup_ou_list[-1] not in ucr.get('dhcpd/ldap/base'):
+				raise DhcpdLDAPBase('Wrong dhcpd/ldap/base value set! Expected to find ou: %s; found: %s' % (cleanup_ou_list[-1], ucr.get('dhcpd/ldap/base')))
+			if len(DHCPServer.get_all(lo, cleanup_ou_list[-1])) != 1:
+				raise DhcpServerLocation('No DHCP Server found in ou %s, but was expected.' % cleanup_ou_list[-1])
 		finally:
 			for ou_name in cleanup_ou_list:
 				remove_ou(ou_name)

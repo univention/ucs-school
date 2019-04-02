@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-40) unstable; urgency=low
+
+  * Bug #48469: fix 30_import-create_ou_alter_dhcpd_base
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Apr 2019 08:52:21 +0200
+
 ucs-test-ucsschool (6.0.0-39) unstable; urgency=low
 
   * Bug #48469: add test 30_import-create_ou_alter_dhcpd_base

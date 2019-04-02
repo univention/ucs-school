@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.1-2) unstable; urgency=low
+
+  * Bug #48469: Add handling for alter-dhcpd-base option equals None
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Apr 2019 08:24:01 +0100
+
 ucs-school-lib (12.1.1-1) unstable; urgency=low
 
   * Bug #48469: Add alter-dhcpd-base option to lib

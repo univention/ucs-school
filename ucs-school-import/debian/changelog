@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-2) unstable; urgency=low
+
+  * Bug #48469: Fix typo
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Apr 2019 08:28:45 +0100
+
 ucs-school-import (17.0.6-1) unstable; urgency=low
 
   * Bug #48469: Add alter-dhcpd-base option for school creation

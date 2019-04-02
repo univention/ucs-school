@@ -70,7 +70,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	def __init__(self, name=None, school=None, alter_dhcpd_base=None, **kwargs):
 		super(School, self).__init__(name=name, **kwargs)
 		self.display_name = self.display_name or self.name
-		self.alter_dhcpd_base = alter_dhcpd_base
+		self.alter_dhcpd_base = alter_dhcpd_base if alter_dhcpd_base is not None else not bool(ucr.get('dhcpd/ldap/base', ''))
 
 	def validate(self, lo, validate_unlikely_changes=False):
 		super(School, self).validate(lo, validate_unlikely_changes)

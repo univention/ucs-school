@@ -67,7 +67,7 @@ def main():
 		help='CSV file for mass import of ou\'s. Format is ou_name,display_name,edu_name,admin_name,share_name. If given parameters are overwritten.')
 	parser.add_option("--alter-dhcpd-base", action="store", type='choice', choices=("true", "false", "auto"), dest="alter_dhcpd_base", default="auto",
 					help='This option sets whether the UCR variable dhcpd/ldap/base should be modified during school creation on singleserver environments.'
-						'The possible values are true, false and auto.')
+						' The possible values are true, false and auto.')
 
 	(options, args,) = parser.parse_args()
 	logger = logging.getLogger(__name__)
