@@ -94,6 +94,10 @@ After that follow
 "user_deletion": DEPRECATED - use deletion_grace_period instead,
 "user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)
 "username": {
+	"allowed_special_chars": str [1]:   characters that are allowed in usernames, additionally to a-z, A-Z and 0-9.
+	                                    Defaults to only the dot. To add the hyphen, use ".-" (a string, not a list).
+	                                    The characters listed here will never be used as first or last character in a
+	                                    username.
 	"max_length": {
 		"default":           int [2]:	maximum length of a username. If scheme:username contains a COUNTER variable
 										it will be reduced by 3 for counter digits. Default and maximum: 20.

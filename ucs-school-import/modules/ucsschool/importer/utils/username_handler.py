@@ -35,9 +35,11 @@ Create historically unique usernames/email addresses.
 import re
 import string
 from six import string_types
+import lazy_object_proxy
 from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject, objectExists
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
+from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
 from ucsschool.importer.utils.logging import get_logger
 try:
@@ -207,7 +209,7 @@ class MemoryStorageBackend(NameCounterStorageBackend):
 
 class UsernameHandler(object):
 	"""
-	>>> BAD_CHARS = ''.join(sorted(set(map(chr, range(128))) - set('.1032547698ACBEDGFIHKJMLONQPSRUTWVYXZacbedgfihkjmlonqpsrutwvyxz')))
+	>>> BAD_CHARS = ''.join(sorted(set(map(chr, range(128))) - set(UsernameHandler(20).allowed_chars)))
 	>>> UsernameHandler(20).format_username('Max.Mustermann')
 	'Max.Mustermann'
 	>>> UsernameHandler(20).format_username('Foo[COUNTER2][COUNTER2]')   # doctest: +IGNORE_EXCEPTION_DETAIL
@@ -264,7 +266,6 @@ class UsernameHandler(object):
 	>>> UsernameHandler(20).format_username('[FOObar]')
 	'FOObar'
 	"""
-	allowed_chars = string.ascii_letters + string.digits + "."
 	attribute_name = 'username'
 	attribute_storage_name = 'usernames'
 
@@ -278,12 +279,17 @@ class UsernameHandler(object):
 		self.max_length = max_length
 		self.dry_run = dry_run
 		self.logger = get_logger()
+		self.config = lazy_object_proxy.Proxy(lambda: Configuration())
 		self.storage_backend = self.get_storage_backend()
 		self.logger.debug('%r storage_backend=%r', self,  self.storage_backend.__class__.__name__)
 		self.replacement_variable_pattern = re.compile(r'(%s)' % '|'.join(map(re.escape, self.counter_variable_to_function.keys())), flags=re.I)
 
 	def __repr__(self):  # type: () -> str
 		return '{}(max_length={!r}, dry_run={!r})'.format(self.__class__.__name__, self.max_length, self.dry_run)
+
+	@property
+	def allowed_chars(self):  # type: () -> str
+		return string.ascii_letters + string.digits + str(self.config["username"]["allowed_special_chars"])
 
 	def get_storage_backend(self):  # type: () -> NameCounterStorageBackend
 		"""
@@ -315,10 +321,14 @@ class UsernameHandler(object):
 				''.join(sorted(bad_chars)),
 				self.attribute_name,
 				name)
-		if name.startswith(".") or name.endswith("."):
-			self.logger.warn("Removing disallowed dot from start and end of %s %r.", self.attribute_name, name)
-			name = name.strip(".")
-		return name.translate(None, bad_chars)
+		for char in self.config["username"]["allowed_special_chars"]:
+			if name.startswith(char) or name.endswith(char):
+				self.logger.warn(
+					"Removing disallowed character %r from start and end of %s %r.",
+					char, self.attribute_name, name
+				)
+				name = name.strip(char)
+		return str(name).translate(None, bad_chars)
 
 	def format_name(self, name, max_length=None):  # type: (str, Optional[int]) -> str
 		"""
@@ -442,7 +452,6 @@ class EmailHandler(UsernameHandler):
 	* Maximum length of an email address is 254 characters.
 	* Applies counters [ALWAYSCOUNTER/COUNTER2] to local part (left of @) only.
 	"""
-	allowed_chars = None  # type: str  # almost everything is allowed in email addresses (with complicated restrictions)
 	attribute_name = 'email'
 	attribute_storage_name = 'email'
 
@@ -453,6 +462,11 @@ class EmailHandler(UsernameHandler):
 		if True store for one run only in memory
 		"""
 		super(EmailHandler, self).__init__(max_length, dry_run)
+		# almost everything is allowed in email addresses (with complicated restrictions)
+
+	@property
+	def allowed_chars(self):  # type: () -> str
+		return ''
 
 	def remove_bad_chars(self, name):  # type: (str) -> str
 		"""
