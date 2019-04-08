@@ -40,10 +40,15 @@ from univention.admin.uexceptions import noObject, objectExists
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
 from ucsschool.importer.exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
 from ucsschool.importer.utils.logging import get_logger
-
+try:
+	from typing import Callable, Dict, Optional
+	import univention.admin.uldap.access
+	import univention.admin.uldap.position
+except ImportError:
+	pass
 
 class NameCounterStorageBackend(object):
-	def create(self, name, value):
+	def create(self, name, value):  # type: (str, int) -> None
 		"""
 		Store a value for a new name.
 
@@ -54,7 +59,7 @@ class NameCounterStorageBackend(object):
 		"""
 		raise NotImplementedError()
 
-	def modify(self, name, old_value, new_value):
+	def modify(self, name, old_value, new_value):  # type: (str, int, int) -> None
 		"""
 		Store a value for an existing name.
 
@@ -66,7 +71,7 @@ class NameCounterStorageBackend(object):
 		"""
 		raise NotImplementedError()
 
-	def retrieve(self, name):
+	def retrieve(self, name):  # type: (str) -> int
 		"""
 		Retrieve a value for a name.
 
@@ -77,7 +82,7 @@ class NameCounterStorageBackend(object):
 		"""
 		raise NotImplementedError()
 
-	def remove(self, name):
+	def remove(self, name):  # type: (str) -> None
 		"""
 		Remove a name from storage.
 
@@ -86,7 +91,7 @@ class NameCounterStorageBackend(object):
 		"""
 		raise NotImplementedError()
 
-	def purge(self):
+	def purge(self):  # type: () -> None
 		"""
 		Remove *all* names from storage. *NEVER* do this in a production environment!
 
@@ -101,13 +106,14 @@ class LdapStorageBackend(NameCounterStorageBackend):
 	'cn=unique-<attribute_name>,cn=ucsschool,cn=univention,<base>'.
 	"""
 	def __init__(self, attribute_storage_name, lo=None, pos=None):
+		# type: (str, Optional[univention.admin.uldap.access], Optional[univention.admin.uldap.position]) -> None
 		if lo and pos:
 			self.lo, _pos = lo, pos
 		else:
 			self.lo, _pos = get_admin_connection()
 		self.ldap_base = 'cn=unique-{},cn=ucsschool,cn=univention,{}'.format(escape_dn_chars(attribute_storage_name), self.lo.base)
 
-	def create(self, name, value):
+	def create(self, name, value):  # type: (str, int) -> None
 		try:
 			self.lo.add(
 				"cn={},{}".format(escape_dn_chars(name), self.ldap_base),
@@ -119,7 +125,7 @@ class LdapStorageBackend(NameCounterStorageBackend):
 		except objectExists:
 			raise NameKeyExists("Cannot create key {!r} - already exists.".format(name))
 
-	def modify(self, name, old_value, new_value):
+	def modify(self, name, old_value, new_value):  # type: (str, int, int) -> None
 		try:
 			self.lo.modify(
 				"cn={},{}".format(escape_dn_chars(name), self.ldap_base),
@@ -128,7 +134,7 @@ class LdapStorageBackend(NameCounterStorageBackend):
 		except noObject:
 			raise NoValueStored("Name {!r} not found.".format(name))
 
-	def retrieve(self, name):
+	def retrieve(self, name):  # type: (str) -> int
 		try:
 			res = self.lo.get(
 				"cn={},{}".format(escape_dn_chars(name), self.ldap_base),
@@ -140,13 +146,13 @@ class LdapStorageBackend(NameCounterStorageBackend):
 		except ValueError as exc:
 			raise BadValueStored("Value for name {!r} has wrong format: {}".format(name, exc))
 
-	def remove(self, name):
+	def remove(self, name):  # type: (str) -> None
 		try:
 			self.lo.delete("cn={},{}".format(escape_dn_chars(name), self.ldap_base))
 		except noObject:
 			pass
 
-	def purge(self):
+	def purge(self):  # type: () -> None
 		"""
 		Remove *all* names from storage. *NEVER* do this in a production environment!
 
@@ -157,18 +163,18 @@ class LdapStorageBackend(NameCounterStorageBackend):
 
 
 class MemoryStorageBackend(NameCounterStorageBackend):
-	def __init__(self, attribute_storage_name):
-		self._mem_store = dict()
+	def __init__(self, attribute_storage_name):  # type: (str) -> None
+		self._mem_store = dict()  # type: Dict[str, int]
 		lo, po = get_unprivileged_connection()
 		self.ldap_backend = LdapStorageBackend(attribute_storage_name, lo, po)
 
-	def create(self, name, value):
+	def create(self, name, value):  # type: (str, int) -> None
 		self._mem_store[name] = value
 
-	def modify(self, name, old_value, new_value):
+	def modify(self, name, old_value, new_value):  # type: (str, int, int) -> None
 		self._mem_store[name] = new_value
 
-	def retrieve(self, name):
+	def retrieve(self, name):  # type: (str) -> int
 		try:
 			res = self._mem_store[name]
 		except KeyError:
@@ -176,7 +182,7 @@ class MemoryStorageBackend(NameCounterStorageBackend):
 			self._mem_store[name] = res
 		return res
 
-	def remove(self, name):
+	def remove(self, name):  # type: (str) -> None
 		"""
 		This will remove the key only from memory. It may still be stored in
 		the LDAP backend.
@@ -189,7 +195,7 @@ class MemoryStorageBackend(NameCounterStorageBackend):
 		except KeyError:
 			pass
 
-	def purge(self):
+	def purge(self):  # type: () -> None
 		"""
 		This will remove keys only from memory. They may still be stored in
 		the LDAP backend.
@@ -262,7 +268,7 @@ class UsernameHandler(object):
 	attribute_name = 'username'
 	attribute_storage_name = 'usernames'
 
-	def __init__(self, max_length, dry_run=True):
+	def __init__(self, max_length, dry_run=True):  # type: (int, bool) -> None
 		"""
 		:param int max_length: created usernames will be no longer
 		than this
@@ -276,10 +282,10 @@ class UsernameHandler(object):
 		self.logger.debug('%r storage_backend=%r', self,  self.storage_backend.__class__.__name__)
 		self.replacement_variable_pattern = re.compile(r'(%s)' % '|'.join(map(re.escape, self.counter_variable_to_function.keys())), flags=re.I)
 
-	def __repr__(self):
+	def __repr__(self):  # type: () -> str
 		return '{}(max_length={!r}, dry_run={!r})'.format(self.__class__.__name__, self.max_length, self.dry_run)
 
-	def get_storage_backend(self):
+	def get_storage_backend(self):  # type: () -> NameCounterStorageBackend
 		"""
 		:return: NameCounterStorageBackend instance
 		:rtype: NameCounterStorageBackend
@@ -289,7 +295,7 @@ class UsernameHandler(object):
 		else:
 			return LdapStorageBackend(attribute_storage_name=self.attribute_storage_name)
 
-	def remove_bad_chars(self, name):
+	def remove_bad_chars(self, name):  # type: (str) -> str
 		"""
 		Remove characters disallowed for names.
 		* Name must only contain numbers, letters and dots, and may not be 'admin'!
@@ -314,7 +320,7 @@ class UsernameHandler(object):
 			name = name.strip(".")
 		return name.translate(None, bad_chars)
 
-	def format_name(self, name, max_length=None):
+	def format_name(self, name, max_length=None):  # type: (str, Optional[int]) -> str
 		"""
 		Create a username/email from <name>, possibly replacing a counter variable.
 		* This is intended to be called before/by/after ImportUser.format_from_scheme().
@@ -330,6 +336,7 @@ class UsernameHandler(object):
 		:param int max_length: overwrite max length specified at object instanciation time
 		:return: unique name
 		:rtype: str
+		:raises FormatError: if more than one counter variable was found in the scheme
 		"""
 		assert isinstance(name, string_types)
 		PATTERN_FUNC_MAXLENGTH = 3  # maximum a counter function can produce is len('999')
@@ -366,14 +373,14 @@ class UsernameHandler(object):
 		username = username.strip('.')
 		return username
 
-	def format_username(self, name):
+	def format_username(self, name):  # type: (str) -> str
 		"""
 		Deprecated method. Please use format_name() instead.
 		"""
 		return self.format_name(name)
 
 	@property
-	def counter_variable_to_function(self):
+	def counter_variable_to_function(self):  # type: () -> Dict[str, Callable[[str], str]]
 		"""
 		Subclass->override this to support other variables than [ALWAYSCOUNTER]
 		and [COUNTER2] or change their meaning. Add/Modify corresponding
@@ -389,7 +396,7 @@ class UsernameHandler(object):
 			"[COUNTER2]": self.counter2
 		}
 
-	def always_counter(self, name_base):
+	def always_counter(self, name_base):  # type: (str) -> str
 		"""
 		[ALWAYSCOUNTER]
 
@@ -399,7 +406,7 @@ class UsernameHandler(object):
 		"""
 		return self.get_and_raise(name_base, "1")
 
-	def counter2(self, name_base):
+	def counter2(self, name_base):  # type: (str) -> str
 		"""
 		[COUNTER2]
 
@@ -409,7 +416,7 @@ class UsernameHandler(object):
 		"""
 		return self.get_and_raise(name_base, "")
 
-	def get_and_raise(self, name_base, initial_value):
+	def get_and_raise(self, name_base, initial_value):  # type: (str, str) -> str
 		"""
 		Returns the current counter value or initial_value if unset and stores
 		it raised by 1.
@@ -422,10 +429,11 @@ class UsernameHandler(object):
 		try:
 			num = self.storage_backend.retrieve(name_base)
 			self.storage_backend.modify(name_base, num, num + 1)
+			res = str(num)
 		except NoValueStored:  # not handling BadValueStored, because a data corruption should stop the import
-			num = initial_value
+			res = initial_value
 			self.storage_backend.create(name_base, 2)
-		return str(num)
+		return res
 
 
 class EmailHandler(UsernameHandler):
@@ -438,7 +446,7 @@ class EmailHandler(UsernameHandler):
 	attribute_name = 'email'
 	attribute_storage_name = 'email'
 
-	def __init__(self, max_length=254, dry_run=True):
+	def __init__(self, max_length=254, dry_run=True):  # type: (int, bool) -> None
 		"""
 		:param int max_length maximum length of email address
 		:param bool dry_run: if False use LDAP to store already-used email addresses
@@ -446,7 +454,7 @@ class EmailHandler(UsernameHandler):
 		"""
 		super(EmailHandler, self).__init__(max_length, dry_run)
 
-	def remove_bad_chars(self, name):
+	def remove_bad_chars(self, name):  # type: (str) -> str
 		"""
 		Space is actually allowed (inside a quoted string), but we'll remove
 		it anyway. (Although technically allowed, not all mail servers support it.)
@@ -459,7 +467,7 @@ class EmailHandler(UsernameHandler):
 				self.attribute_name, name)
 		return str(name).translate(None, bad_chars)
 
-	def format_name(self, name, max_length=None):
+	def format_name(self, name, max_length=None):  # type: (str, Optional[int]) -> str
 		local_part, _at, domain_part = name.rpartition('@')
 		max_length = max_length or self.max_length - len(domain_part) - 1  # 1 = len(@)
 		if max_length < 1:
