@@ -827,6 +827,14 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>20</literal></entry>
 							</row>
+<!-- username:allowed_special_chars -->
+							<row>
+								<entry morerows="1"><varname>username: \ allowed_special_chars</varname></entry>
+								<entry>Enthält die erlaubten Sonderzeichen in Benutzernamen. Außer dem Punkt sind Bindestrich und Unterstrich erlaubt. Die Liste wird als ein <classname>string</classname> dargestellt und wäre für alle drei Zeichen: <literal>.-_</literal></entry>
+							</row>
+							<row>
+								<entry align="right">Standard (<classname>string</classname>): <literal>.</literal></entry>
+							</row>
 						</tbody>
 					</tgroup>
 				</table>
