@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.6-2A~4.4.0.201904020858
+fix: 17.0.6-3A~4.4.0.201904082238
 desc: |
  * It is now possible to enforce the override behavior for <envar>dhcpd/ldap/base</envar> during school creation (Bug #48469).
-bug: [48469]
+ * Additional special characters in usernames can now be configured through the configuration key username:allowed_special_chars. The default is backwards compatible and contains only the dot. Only dash and underscore can also be used (resulting in the configuration value ".-_") (Bug #49260).
+bug: [48469, 49260]
