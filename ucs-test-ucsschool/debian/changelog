@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-41) unstable; urgency=low
+
+  * Bug #49260: test configuration of allowed special characters in username
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 08 Apr 2019 22:36:41 +0200
+
 ucs-test-ucsschool (6.0.0-40) unstable; urgency=low
 
   * Bug #48469: fix 30_import-create_ou_alter_dhcpd_base
