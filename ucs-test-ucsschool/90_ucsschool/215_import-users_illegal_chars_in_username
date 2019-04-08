@@ -45,6 +45,11 @@ class Test(UniqueObjectTester):
 		* "Username must only contain numbers, letters and dots, and may not be 'admin'!"
 		* but no dot at beginning
 		"""
+		self.import_test1()
+		self.import_test2()
+		self.unit_tests()
+
+	def import_test1(self):
 		config = copy.deepcopy(self.default_config)
 		source_uid = 'source_uid-%s' % (uts.random_string(),)
 		config.update_entry('source_uid', source_uid)
@@ -134,8 +139,74 @@ class Test(UniqueObjectTester):
 				username_length_length = 20
 			person.update(username=self.remove_bad_chars("2{}".format(lastname[:username_length_length - 3])))
 			utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
+		self.log.info('*** OK import_test1')
 
+	def import_test2(self):
+		"""check username:allowed_special_chars (Bug #49259 / Bug #49260)"""
+		self.log.info('*** Importing with username:allowed_special_chars="-+" (no dot)')
+
+		config = copy.deepcopy(self.default_config)
+		source_uid = 'source_uid-%s' % (uts.random_string(),)
+		config.update_entry('source_uid', source_uid)
+		config.update_entry('csv:mapping:record_uid', 'record_uid')
+		config.update_entry('csv:mapping:role', '__role')
+		config.update_entry('user_role', None)
+		config.update_entry('username:allowed_special_chars', '-_')
+		config.update_entry('scheme:username:default', "<firstname><lastname><:umlauts>")
+
+		persons = list()
+		for role, schar in (('teacher', '-'), ('student', '.'), ('staff', '-'), ('teacher_and_staff', '_')):
+			person = Person(self.ou_A.name, role)
+			if role == 'staff':
+				firstname = schar + uts.random_name(random.randint(4, 8))
+				lastname = uts.random_name(4) + schar
+			else:
+				firstname = uts.random_name(random.randint(2, 4)) + schar + uts.random_name(random.randint(2, 4))
+				lastname = uts.random_name(4)
+			person.update(
+				record_uid=uts.random_name(),
+				source_uid=source_uid,
+				username=None,
+				firstname=firstname,
+				lastname=lastname,
+			)
+			persons.append(person)
+			self.log.info('*** Importing %r with firstname=%r lastname=%r', role, firstname, lastname)
+
+		fn_csv = self.create_csv_file(person_list=persons, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(config=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config, '-i', fn_csv])
+		utils.wait_for_replication()
+		self.check_new_and_removed_users(len(persons), 0)
+		for person in persons:
+			if person.role == 'staff':
+				person.update(username='{}{}'.format(person.firstname, person.lastname).strip('-'))
+				utils.verify_ldap_object(
+					person.dn,
+					expected_attr={'uid': [person.username]},
+					strict=False, should_exist=True)
+			elif person.role == 'student':
+				person.update(username='{}{}'.format(person.firstname.replace('.', ''), person.lastname))
+				utils.verify_ldap_object(
+					person.dn,
+					expected_attr={'uid': [person.username]},
+					strict=False, should_exist=True)
+			elif person.role in ('teacher', 'teacher_and_staff'):
+				person.update(username='{}{}'.format(person.firstname, person.lastname))
+				utils.verify_ldap_object(
+					person.dn,
+					expected_attr={'uid': [person.username]},
+					strict=False, should_exist=True)
+		self.log.info('*** OK import_test2')
+
+	def unit_tests(self):
 		self.log.info('*** Starting unit test for UsernameHandler.format_username() (1/5)')
+		# prevent "InitialisationError: Configuration not yet loaded."
+		from ucsschool.importer.utils.shell import config as _config
+		assert _config
+
 		unh = UsernameHandler(15)  # 20 - len("exam-")
 		name12 = uts.random_username(12)  # 15 - 3
 		usernames = {
