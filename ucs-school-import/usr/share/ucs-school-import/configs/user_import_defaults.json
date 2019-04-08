@@ -35,6 +35,7 @@
 	"tolerate_errors": 0,
 	"user_role": null,
 	"username": {
+		"allowed_special_chars": ".",
 		"max_length": {
 			"default": 20,
 			"student": 15
