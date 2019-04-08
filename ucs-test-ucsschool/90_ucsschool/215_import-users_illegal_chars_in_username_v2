@@ -12,6 +12,8 @@ import doctest
 from ucsschool.importer.utils.username_handler import UsernameHandler, MemoryStorageBackend
 import ucsschool.importer.utils.username_handler
 ucsschool.importer.utils.username_handler.noObject = KeyError
+from ucsschool.importer.utils.shell import config  # prevent "InitialisationError: Configuration not yet loaded."
+assert config
 
 
 static_memory_storage_backend = MemoryStorageBackend('usernames')
