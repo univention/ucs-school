@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-9) unstable; urgency=low
+
+  * Bug #49259: test configuration of allowed special characters in username
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 08 Apr 2019 23:00:34 +0200
+
 ucs-test-ucsschool (5.0.4-8) unstable; urgency=low
 
   * Bug #48137: add test 303_http-api_auth_test

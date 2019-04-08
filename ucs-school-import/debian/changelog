@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-7) unstable; urgency=low
+
+  * Bug #49259: allow configuration of allowed special characters in username
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 08 Apr 2019 23:00:13 +0200
+
 ucs-school-import (16.0.3-6) unstable; urgency=low
 
   * Bug #48188: add hook that runs before reading the input data
