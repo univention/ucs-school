@@ -38,6 +38,8 @@ from six import string_types
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging import get_logger
 from ucsschool.importer.utils.configuration_checks import run_configuration_checks
+from ucsschool.importer.utils.import_pyhook import run_import_pyhooks
+from ucsschool.importer.utils.config_pyhook import ConfigPyHook
 try:
 	from typing import Any, Dict, List, Optional, Type
 	import logging.Logger
@@ -48,6 +50,7 @@ except ImportError:
 def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> ReadOnlyDict
 	config = Configuration(conffiles)
 	config.update(kwargs)
+	run_import_pyhooks(ConfigPyHook, 'post_config_files_read', config, conffiles, kwargs)
 	config.check_mandatory_attributes(get_logger())
 	config.close()
 	get_logger().info("Finished reading configuration, starting checks...")
