@@ -42,8 +42,7 @@ from .ldap_connection import get_admin_connection, get_readonly_connection
 try:
 	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 	import univention.admin.uldap.access
-	from .import_pyhook import ImportPyHook
-	ImportPyHookTV = TypeVar('ImportPyHookTV', bound=ImportPyHook)
+	ImportPyHookTV = TypeVar('ImportPyHookTV', bound='ImportPyHook')
 except ImportError:
 	pass
 
@@ -64,7 +63,7 @@ class ImportPyHook(PyHook):
 
 	(1) Hooks are only executed during dry-runs, if the class attribute
 	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-	with `supports_dry_run == True` should not modify LDAP objects.
+	with `supports_dry_run == True` must not modify LDAP objects.
 	Therefore the LDAP connection object self.lo will be a read-only connection
 	during a dry-run.
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
@@ -90,6 +89,7 @@ class ImportPyHook(PyHook):
 			self.dry_run = dry_run
 		if lo is None:
 			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]  # type: univention.admin.uldap.access
+			"""LDAP connection object"""
 		else:
 			self.lo = lo  # reuse LDAP object
 			"""LDAP connection object"""

@@ -54,7 +54,7 @@ class UserPyHook(ImportPyHook):
 
 	(1) Hooks are only executed during dry-runs, if the class attribute
 	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-	with `supports_dry_run == True` should not modify LDAP objects.
+	with `supports_dry_run == True` must not modify LDAP objects.
 	Therefore the LDAP connection object self.lo will be a read-only connection
 	during a dry-run.
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
