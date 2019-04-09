@@ -1,18 +1,28 @@
 @startuml
 actor User
 participant "ucs-school-user-import"
+participant ConfigPyHook
+participant PreReadPyHook
 participant PostReadPyHook
 participant FormatPyHook
 participant UserPyHook
 participant ResultPyHook
 
 User -> "ucs-school-user-import": Start import
-note over "ucs-school-user-import": Load CSV file
 
+"ucs-school-user-import" -> ConfigPyHook
+note over ConfigPyHook: post_config_files_read():\nCalled after reading the configuration files and command line arguments,\nbut before making the configuration object read-only.\n(config, lo, logger available)
+ConfigPyHook -> "ucs-school-user-import"
+
+"ucs-school-user-import" -> PreReadPyHook
+note over PreReadPyHook: pre_read():\nCalled before reading the CSV file\n(config, lo, logger available)
+PreReadPyHook -> "ucs-school-user-import"
+
+note over "ucs-school-user-import": Load CSV file
 note over "ucs-school-user-import": Trim leading/trailing whitespace
 
 "ucs-school-user-import" -> PostReadPyHook
-note over PostReadPyHook: entry_read():\nAdjust or skip data record directly after reading it\n(lo+logger available)
+note over PostReadPyHook: entry_read():\nAdjust or skip data record directly after reading it. Executed after each entry.\n(lo+logger available)
 PostReadPyHook -> "ucs-school-user-import"
 
 "ucs-school-user-import" -> PostReadPyHook
