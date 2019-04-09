@@ -48,7 +48,7 @@ def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> Rea
 	logger = logging.getLogger(__name__)
 	config = Configuration(conffiles)
 	config.update(kwargs)
-	config.post_read(logger)
+	config.check_mandatory_attributes(logger)
 	config.close()
 	logger.info("Finished reading configuration, starting checks...")
 	run_configuration_checks(config)
@@ -108,7 +108,7 @@ class ReadOnlyDict(dict):
 	def __closed(*args, **kwargs):  # type: (*Any, **Any) -> None
 		raise ReadOnlyConfiguration()
 
-	def post_read(self, logger):  # type: (logging.Logger) -> None
+	def check_mandatory_attributes(self, logger):  # type: (logging.Logger) -> None
 		try:
 			mandatory_attributes = self["mandatory_attributes"]
 			assert isinstance(mandatory_attributes, list)
