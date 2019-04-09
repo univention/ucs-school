@@ -38,6 +38,8 @@ import logging
 from six import string_types
 from .exceptions import InitialisationError, ReadOnlyConfiguration
 from .utils.configuration_checks import run_configuration_checks
+from .utils.import_pyhook import run_import_pyhooks
+from .utils.config_pyhook import ConfigPyHook
 try:
 	from typing import Any, Dict, List, Optional, Type
 except ImportError:
@@ -48,6 +50,7 @@ def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> Rea
 	logger = logging.getLogger(__name__)
 	config = Configuration(conffiles)
 	config.update(kwargs)
+	run_import_pyhooks(ConfigPyHook, 'post_config_files_read', config, conffiles, kwargs)
 	config.check_mandatory_attributes(logger)
 	config.close()
 	logger.info("Finished reading configuration, starting checks...")
