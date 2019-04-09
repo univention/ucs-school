@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-42) unstable; urgency=low
+
+  * Bug #49267: test configuration hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 09 Apr 2019 13:27:13 +0200
+
 ucs-test-ucsschool (6.0.0-41) unstable; urgency=low
 
   * Bug #49260: test configuration of allowed special characters in username

@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-4) unstable; urgency=low
+
+  * Bug #49265: create configuration hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 09 Apr 2019 13:26:18 +0200
+
 ucs-school-import (17.0.6-3) unstable; urgency=low
 
   * Bug #49260: allow configuration of allowed special characters in username
