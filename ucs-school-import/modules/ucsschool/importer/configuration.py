@@ -48,7 +48,7 @@ except ImportError:
 def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> ReadOnlyDict
 	config = Configuration(conffiles)
 	config.update(kwargs)
-	config.post_read(get_logger())
+	config.check_mandatory_attributes(get_logger())
 	config.close()
 	get_logger().info("Finished reading configuration, starting checks...")
 	run_configuration_checks(config)
@@ -108,7 +108,7 @@ class ReadOnlyDict(dict):
 	def __closed(*args, **kwargs):  # type: (*Any, **Any) -> None
 		raise ReadOnlyConfiguration()
 
-	def post_read(self, logger):  # type: (logging.Logger) -> None
+	def check_mandatory_attributes(self, logger):  # type: (logging.Logger) -> None
 		try:
 			mandatory_attributes = self["mandatory_attributes"]
 			assert isinstance(mandatory_attributes, list)
