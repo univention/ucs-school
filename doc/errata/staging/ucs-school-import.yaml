@@ -3,8 +3,10 @@ release: "4.3"
 version: [1]
 scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-import
-fix: 16.0.3-7A~4.3.0.201904082301
+fix: 16.0.3-9A~4.3.0.201904091601
 desc: |
  * Additional special characters in usernames can now be configured through the configuration key username:allowed_special_chars. The default is backwards compatible and contains only the dot. Only dash and underscore can also be used (resulting in the configuration value ".-_") (Bug #49259).
  * Internal improvement: the PyHook loading code was consolidated (Bug #49268).
-bug: [49259, 49268]
+ * A hook was added that allows to modify the configuration after reading the configuration files and applying the command line arguments. The base class is <classname>ucsschool.importer.utils.config_pyhook.ConfigPyHook</classname> (Bug #49264).
+ * A hook was implemented that manipulates the configuration depending on the imported user role (Bug #49266).
+bug: [49259, 49268, 49264, 49266]
