@@ -36,7 +36,6 @@ from __future__ import absolute_import
 import logging
 from ucsschool.lib.pyhooks import PyHook
 from ucsschool.lib.pyhooks import PyHooksLoader
-from ..configuration import Configuration
 from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 try:
@@ -79,6 +78,7 @@ class ImportPyHook(PyHook):
 		"""
 		super(ImportPyHook, self).__init__(*args, **kwargs)
 		if dry_run is None:
+			from ..configuration import Configuration
 			try:
 				config = Configuration()
 				self.dry_run = config['dry_run']
@@ -176,6 +176,7 @@ def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
 	"""
 	global __import_pyhook_loader_instance
 	if not __import_pyhook_loader_instance:
+		from ..configuration import Configuration
 		try:
 			config = Configuration()
 			path = config.get('hooks_dir_pyhook', '/usr/share/ucs-school-import/pyhooks')
