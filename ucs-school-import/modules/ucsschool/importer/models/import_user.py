@@ -328,10 +328,6 @@ class ImportUser(User):
 
 	@classmethod
 	def get_ldap_filter_for_user_role(cls):  # type: () -> str
-		if not cls.factory:
-			cls.factory = Factory()
-		if not cls.config:
-			cls.config = Configuration()
 		# convert cmdline / config name to ucsschool.lib role(s)
 		if not cls.config["user_role"]:
 			roles = ()  # type: Iterable[str]
@@ -413,8 +409,6 @@ class ImportUser(User):
 			except KeyError:
 				pass
 		roles = user_dict.pop("roles", [])
-		if not cls.factory:
-			cls.factory = Factory()
 		return cls.factory.make_import_user(roles, **user_dict)
 
 	def _alter_udm_obj(self, udm_obj):  # type: (UdmObjectType) -> None
