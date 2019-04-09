@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-9) unstable; urgency=low
+
+  * Bug #49264: create configuration hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 09 Apr 2019 15:58:37 +0200
+
 ucs-school-import (16.0.3-8) unstable; urgency=low
 
   * Bug #49268: add convenience wrapper for easy usage of PyHooksLoader
