@@ -42,8 +42,7 @@ try:
 	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 	import logging.Logger
 	import univention.admin.uldap.access
-	from ucsschool.importer.utils.import_pyhook import ImportPyHook
-	ImportPyHookTV = TypeVar('ImportPyHookTV', bound=ImportPyHook)
+	ImportPyHookTV = TypeVar('ImportPyHookTV', bound='ImportPyHook')
 except ImportError:
 	pass
 
@@ -54,12 +53,21 @@ class ImportPyHook(PyHook):
 	"""
 	Base class for Python based import hooks.
 
-	Hooks are only executed during dry-runs, if the class attribute
-	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-	should to not modify LDAP objects during a dry run.
+	* self.dry_run     # whether hook is executed during a dry-run (1)
+	* self.lo          # LDAP connection object (2)
+	* self.logger      # Python logging instance
 
-	:py:attr:`self.lo` is a read-write cn=admin connection in a real run,
-	read-only cn=admin connection during a dry-run.
+	If multiple hook classes are found, hook functions with higher
+	priority numbers run before those with lower priorities. None disables
+	a function (no need to remove it / comment it out).
+
+	(1) Hooks are only executed during dry-runs, if the class attribute
+	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
+	with `supports_dry_run == True` must not modify LDAP objects.
+	Therefore the LDAP connection object self.lo will be a read-only connection
+	during a dry-run.
+	(2) Read-write cn=admin connection in a real run, read-only cn=admin
+	connection during a dry-run.
 	"""
 	supports_dry_run = False  # if True hook will be executed during a dry-run
 
@@ -79,7 +87,8 @@ class ImportPyHook(PyHook):
 		else:
 			self.dry_run = dry_run
 		if lo is None:
-			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]
+			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]  # type: univention.admin.uldap.access
+			"""LDAP connection object"""
 		else:
 			self.lo = lo  # reuse LDAP object
 		self.logger = get_logger()  # Python logging instance
