@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-12) unstable; urgency=low
+
+  * Bug #49259: fix error from backporting test
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 10 Apr 2019 11:38:09 +0200
+
 ucs-test-ucsschool (5.0.4-11) unstable; urgency=low
 
   * Bug #48189: adapt tests to check_for_non_empty_pyhooks

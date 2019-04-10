@@ -78,7 +78,7 @@ class Test(CLI_Import_v2_Tester):
 		source_uid = 'source_uid-{}'.format(uts.random_string())
 		config = copy.deepcopy(self.default_config)
 		config.update_entry('csv:mapping:recordUID', 'record_uid')
-		config.update_entry('source_uid', source_uid)
+		config.update_entry('sourceUID', source_uid)
 		config.update_entry('scheme:username:default', '<:umlauts><firstname><lastname>')
 		config.update_entry('include:by_role:student', self.student_conf_path)
 		config.update_entry('include:by_role:teacher', self.teacher_conf_path)
