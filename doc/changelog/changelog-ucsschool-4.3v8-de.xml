@@ -97,7 +97,45 @@ feedback@univention.de
 					<!-- END ucs-school-import 16.0.3-6A~4.3.0.201903131712 -->
 <!-- CHANGELOG:2019-03-31:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-04-11" lang="en">
+					<title>Released on 2019-04-11:</title>
+					<!-- START ucs-school-import 16.0.3-9A~4.3.0.201904091601 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>16.0.3-9A~4.3.0.201904091601</emphasis>:
+						<itemizedlist>
+							<listitem><para>Additional special characters in usernames can now be configured by the new configuration key <literal>username:allowed_special_chars</literal>. The default value is backwards compatible with previous UCS@school versions and contains only the dot. Besides the dot, only dash and underscore can also be used (resulting in the configuration value ".-_") (<u:bug>49259</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: the PyHook loading code was consolidated (<u:bug>49268</u:bug>).</para></listitem>
+
+							<listitem><para>A hook was added that allows to modify the configuration after reading the configuration files and applying the command line arguments. The base class is <classname>ucsschool.importer.utils.config_pyhook.ConfigPyHook</classname> (<u:bug>49264</u:bug>).</para></listitem>
+
+							<listitem><para>A hook was implemented that manipulates the configuration depending on the imported user role (<u:bug>49266</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 16.0.3-9A~4.3.0.201904091601 -->
+					<!-- START ucs-school-lib 11.0.2-6A~4.3.0.201904091600 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>11.0.2-6A~4.3.0.201904091600</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: improved type hints and Python 3 compatibility (<u:bug>49268</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 11.0.2-6A~4.3.0.201904091600 -->
+					<!-- START ucs-school-umc-exam 8.0.2-4A~4.3.0.201904091604 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>8.0.2-4A~4.3.0.201904091604</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: use the consolidated PyHook loading code (<u:bug>49268</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 8.0.2-4A~4.3.0.201904091604 -->
+<!-- CHANGELOG:2019-04-11:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
