@@ -46,6 +46,18 @@ Description[de]=Definiert den Zeitpunkt, an dem das Skript exam-and-room-cleanup
 Type=string
 Categories=ucsschool-exam
 
+[ucsschool/exam/cron/backup]
+Description[en]=Specifies the point in time when the script exam-backup is called by cron (default is every 5 minutes; example: "*/5 * * * *")
+Description[de]=Definiert den Zeitpunkt, an dem das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig alle 5 Minuten; Beispiel: "*/5 * * * *")
+Type=string
+Categories=ucsschool-exam
+
+[ucsschool/exam/cron/backup/activated]
+Description[en]=Specifies if the script exam-backup is called by cron automatically (default is True")
+Description[de]=Definiert, ob das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig aktiviert")
+Type=string
+Categories=ucsschool-exam
+
 [ucsschool/exam/cron/cleanup/options]
 Description[en]=Specifies additional options for the script exam-and-room-cleanup (no additional options by default)
 Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup (standardmäßig keine zusätzlichen Optionen)
