@@ -6,7 +6,7 @@ src: ucs-school-import
 fix: 17.0.6-4A~4.4.0.201904091329
 desc: |
  * It is now possible to enforce the override behavior for <envar>dhcpd/ldap/base</envar> during school creation (Bug #48469).
- * Additional special characters in usernames can now be configured by the configuration key <literal>username:allowed_special_chars</literal>. The default value is backwards compatible with previous UCS@school versions and contains only the dot. Besides the dot, only dash and underscore can also be used (resulting in the configuration value ".-_") (Bug #49260).
+ * Additional special characters in usernames can now be configured by the new configuration key <literal>username:allowed_special_chars</literal>. The default value is backwards compatible with previous UCS@school versions and contains only the dot. Besides the dot, only dash and underscore can also be used (resulting in the configuration value ".-_") (Bug #49260).
  * A hook was added that allows to modify the configuration after reading the configuration files and applying the command line arguments. The base class is <classname>ucsschool.importer.utils.config_pyhook.ConfigPyHook</classname> (Bug #49265).
  * A hook was implemented that manipulates the configuration depending on the imported user role (Bug #49267).
 bug: [48469, 49260, 49265, 49267]
