@@ -142,7 +142,45 @@ feedback@univention.de
 					<!-- END ucs-school-umc-users 15.0.0-2A~4.4.0.201903211724 -->
 <!-- CHANGELOG:2019-03-31:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-04-11" lang="en">
+					<title>Released on 2019-04-11:</title>
+					<!-- START ucs-school-import 17.0.6-4A~4.4.0.201904091329 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.6-4A~4.4.0.201904091329</emphasis>:
+						<itemizedlist>
+							<listitem><para>It is now possible to enforce the override behavior for <envar>dhcpd/ldap/base</envar> during school creation (<u:bug>48469</u:bug>).</para></listitem>
+
+							<listitem><para>Additional special characters in usernames can now be configured by the new configuration key <literal>username:allowed_special_chars</literal>. The default value is backwards compatible with previous UCS@school versions and contains only the dot. Besides the dot, only dash and underscore can also be used (resulting in the configuration value ".-_") (<u:bug>49260</u:bug>).</para></listitem>
+
+							<listitem><para>A hook was added that allows to modify the configuration after reading the configuration files and applying the command line arguments. The base class is <classname>ucsschool.importer.utils.config_pyhook.ConfigPyHook</classname> (<u:bug>49265</u:bug>).</para></listitem>
+
+							<listitem><para>A hook was implemented that manipulates the configuration depending on the imported user role (<u:bug>49267</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.6-4A~4.4.0.201904091329 -->
+					<!-- START ucs-school-lib 12.1.1-2A~4.4.0.201904020901 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.1-2A~4.4.0.201904020901</emphasis>:
+						<itemizedlist>
+							<listitem><para>It is now possible to enforce the override behavior for <envar>dhcpd/ldap/base</envar> during school creation (<u:bug>48469</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.1-2A~4.4.0.201904020901 -->
+					<!-- START ucs-school-metapackage 12.0.1-1A~4.4.0.201904011404 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.1-1A~4.4.0.201904011404</emphasis>:
+						<itemizedlist>
+							<listitem><para>During the creation of the demoschool <envar>dhcpd/ldap/base</envar> is not modified and thus the school created afterwards will take over the DHCP service (<u:bug>48469</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.1-1A~4.4.0.201904011404 -->
+<!-- CHANGELOG:2019-04-11:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
