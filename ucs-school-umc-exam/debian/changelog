@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.0-5) unstable; urgency=low
+
+  * Bug #49227: add script and cron job that regularely collects exam results
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Apr 2019 15:34:54 +0200
+
 ucs-school-umc-exam (9.0.0-4) unstable; urgency=medium
 
   * Bug #48995: adjust require.toUrl() call for dojoConfig.cacheBust

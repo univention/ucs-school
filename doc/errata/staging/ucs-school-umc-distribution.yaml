@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-distribution
+fix: 
+desc: |
+ * Collected files can now be stored read-only (Bug #49227).
+bug: [49227]
