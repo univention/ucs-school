@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.0-1) unstable; urgency=low
+
+  * Bug #49227: add possibility to make collected files read-onle
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Apr 2019 15:48:12 +0200
+
 ucs-school-umc-distribution (17.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4

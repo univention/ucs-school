@@ -577,7 +577,7 @@ class Project(_Dict):
 
 		return len(usersFailed) == 0
 
-	def collect(self, dirsFailed=None):
+	def collect(self, dirsFailed=None, readOnly=False):
 		if not isinstance(dirsFailed, list):
 			dirsFailed = []
 
@@ -612,6 +612,9 @@ class Project(_Dict):
 					for root, dirs, files in os.walk(targetdir):
 						for momo in dirs + files:
 							os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))
+						if readOnly:
+							for file in files:
+								os.chmod(os.path.join(root, file), 0o400)
 
 				except (OSError, IOError, ValueError):
 					MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
