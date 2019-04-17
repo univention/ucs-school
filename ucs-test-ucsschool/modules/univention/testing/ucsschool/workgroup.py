@@ -70,8 +70,8 @@ class Workgroup(object):
 			exception_strings = [
 				'The groupname is already in use as groupname or as username',
 				'Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet',
-				'Die Arbeitsgruppe \'%s\' existiert bereits!' % group_fullname,
-				'The workgroup \'%s\' already exists!' % group_fullname
+				'Die Arbeitsgruppe u\'%s\' existiert bereits!' % group_fullname,
+				'The workgroup u\'%s\' already exists!' % group_fullname
 			]
 			for entry in exception_strings:
 				if expect_creation_fails_due_to_duplicated_name and entry in str(exc.message):
