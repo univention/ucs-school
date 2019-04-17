@@ -90,7 +90,7 @@ class Rule(object):
 		'''domains can be a list of strings or a list of index-string-type tuples.'''
 		self._domains = []
 		for i in domains:
-			if isinstance(i, str):
+			if isinstance(i, basestring):
 				self._domains.append((-1, i, self.type))
 			else:
 				self._domains.append(i)

@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src:  ucs-school-lib
+fix: 
+desc: |
+ * Fixed a bug which prevented domain lists in internetrules to be changed. (Bug #49312).
+bug: [49312]
