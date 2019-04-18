@@ -66,7 +66,7 @@ class Test(HttpApiImportTester):
 		time.sleep(4)
 
 		self.log.info('------ Connecting to HTTP-API... ------')
-		client = Client(username, password, log_level=logging.DEBUG)
+		client = Client(username.decode('utf-8'), password.decode('utf-8'), log_level=logging.DEBUG)
 
 		self.log.info('------ Creating user information... ------')
 		test_user_creator = TestUserCreator(
