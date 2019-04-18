@@ -30,8 +30,8 @@ def main():
 
 			try:
 				client = Client(
-					name=school_admin,
-					password=password,
+					name=school_admin.decode('utf-8'),
+					password=password.decode('utf-8'),
 					server='{}.{}'.format(ucr['hostname'], ucr['domainname']),
 					log_level=Client.LOG_RESPONSE,
 					ssl_verify=True,
@@ -50,6 +50,7 @@ def main():
 				else:
 					print('*** Authentication failed for unknown reason! Test does not fail because school_admin was not explicitly allowed to use import.')
 					print('*** Nevertheless bug #48137 does not seem to happen.')
+					raise
 
 
 if __name__ == '__main__':
