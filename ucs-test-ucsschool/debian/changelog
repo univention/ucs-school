@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-43) unstable; urgency=low
+
+  * Bug #49317: when creating a user with a password policy reference, use a
+    password with a fitting length
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 18 Apr 2019 08:46:10 +0200
+
 ucs-test-ucsschool (6.0.0-42) unstable; urgency=low
 
   * Bug #49267: test configuration hook
