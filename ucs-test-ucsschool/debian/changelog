@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-44) unstable; urgency=medium
+
+  * Bug #49315, #49316, #49322, #49323: fix tests
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 18 Apr 2019 13:19:21 +0200
+
 ucs-test-ucsschool (6.0.0-43) unstable; urgency=low
 
   * Bug #49317: when creating a user with a password policy reference, use a
