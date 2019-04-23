@@ -149,13 +149,13 @@
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/cron/backup/activated</envar>
-						definiert, ob das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig deaktiviert)
+						definiert, ob das Skript <command>exam-backup</command> automatisch durch cron gestartet wird (standardmäßig deaktiviert)
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/cron/backup</envar>
-						definiert den Zeitpunkt, an dem das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig alle 5 Minuten; Beispiel: "*/5 * * * *")
+						definiert den Zeitpunkt, an dem das Skript <command>exam-backup</command> automatisch durch cron gestartet wird (standardmäßig alle 5 Minuten; Beispiel: "*/5 * * * *")
 					</simpara>
 				</listitem>
 			</itemizedlist>

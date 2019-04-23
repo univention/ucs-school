@@ -1102,7 +1102,7 @@ udm users/user
 			<para>
 				Um Zählervariablen nach Tests auf <literal>0</literal> zurück zu setzen, kann das Skript <filename>/usr/share/ucs-school-import/scripts/reset_schema_counter</filename> verwendet werden.
 				Mit Hilfe eines Filters kann beschränkt werde, welche Zähler gelöscht werden sollen.
-				In einem Testlauf kann dies überorüft werden.
+				In einem Testlauf kann dies überprüft werden.
 				Mit der Option <option>--help</option> werden die Aufrufparameter angezeigt.
 				Standardmäßig werden die Zähler für Benutzernamen zurück gesetzt.
 				Um Zähler für E-Mail-Adressen zu löschen, muss <option>--email</option> verwendet werden.
