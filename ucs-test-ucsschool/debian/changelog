@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-46) unstable; urgency=medium
+
+  * Bug #47160: Add tests for distributing empty projects
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 23 Apr 2019 15:06:12 +0200
+
 ucs-test-ucsschool (6.0.0-45) unstable; urgency=low
 
   * Bug #49323: wait for DRS so kerberos auth works

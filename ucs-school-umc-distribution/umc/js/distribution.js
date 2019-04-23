@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/Deferred",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Grid",
@@ -41,7 +42,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/modules/distribution/DetailPage",
 	"umc/i18n!umc/modules/distribution"
-], function(declare, lang, dialog, tools, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
+], function(declare, lang, Deferred, dialog, tools, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	var cmpUsername = function(a, b) {
 		return a && b && a.toLowerCase() == b.toLowerCase();
@@ -214,55 +215,66 @@ define([
 		},
 
 		_distribute: function(ids, items) {
+
 			if (!items[0].recipients) {
 				// no recipients have been added to project, abort
 				dialog.alert(_('Error: No recipients have been assigned to the project!'));
 				return;
 			}
-
-			if (!items[0].files) {
+			var check1 = new Deferred();
+			if (!items[0].files && !items[0].isDistributed) {
 				// no files have been added to project, abort
-				dialog.alert(_('Error: No files have been assign to the project!'));
-				return;
+				dialog.confirm(_('Warning: No files have been assigned to the project!'), [{
+					label: _('Cancel'),
+					callback: function() {check1.reject({log: false});}
+				}, {
+					label: _('Distribute empty project'),
+					callback: function() {check1.resolve();},
+					'default': true
+				}]);
+			} else {
+				check1.resolve();
 			}
 
 			var msg = items[0].isDistributed ?
 				_('Please confirm to collect the project <i>%s</i>.', items[0].description) :
 				_('Please confirm to distribute the project <i>%s</i>.', items[0].description);
-			dialog.confirm(msg, [{
-				label: _('Cancel'),
-				name: 'cancel'
-			}, {
-				label: items[0].isDistributed ? _('Collect project') : _('Distribute project'),
-				name: 'doit',
-				'default': true
-			}]).then(lang.hitch(this, function(response) {
-				if (response === 'doit') {
-					// collect or distribute the project, according to its current state
-					var cmd = items[0].isDistributed ? 'distribution/collect' : 'distribution/distribute';
-					this.standbyDuring(this.umcpCommand(cmd, ids)).then(lang.hitch(this, function(response) {
-						// prompt any errors to the user
-						if (response.result instanceof Array && response.result.length > 0) {
-							var res = response.result[0];
-							if (!res.success) {
-								dialog.alert(_('The following error occurred: %s', res.details));
+			var check2 = new Deferred();
+			check1.then(function() {
+				dialog.confirm(msg, [{
+					label: _('Cancel'),
+					callback: function() {check2.reject({log: false});}
+				}, {
+					label: items[0].isDistributed ? _('Collect project') : _('Distribute project'),
+					callback: function() {check2.resolve();},
+					'default': true
+				}]);
+			}, function() {check2.reject({log: false});});
+			check2.then(lang.hitch(this, function() {
+				// collect or distribute the project, according to its current state
+				var cmd = items[0].isDistributed ? 'distribution/collect' : 'distribution/distribute';
+				this.standbyDuring(this.umcpCommand(cmd, ids)).then(lang.hitch(this, function(response) {
+					// prompt any errors to the user
+					if (response.result instanceof Array && response.result.length > 0) {
+						var res = response.result[0];
+						if (!res.success) {
+							dialog.alert(_('The following error occurred: %s', res.details));
+						}
+						else {
+							if (items[0].isDistributed) {
+								dialog.notify(_('The project files have been collected successfully.'));
 							}
 							else {
-								if (items[0].isDistributed) {
-									dialog.notify(_('The project files have been collected successfully.'));
-								}
-								else {
-									dialog.notify(_('The project files have been distributed successfully.'));
-								}
+								dialog.notify(_('The project files have been distributed successfully.'));
 							}
 						}
+					}
 
-						// update the grid if a project has been distributed
-						if (!items[0].isDistributed) {
-							this.moduleStore.onChange();
-						}
-					}));
-				}
+					// update the grid if a project has been distributed
+					if (!items[0].isDistributed) {
+						this.moduleStore.onChange();
+					}
+				}));
 			}));
 		},
 

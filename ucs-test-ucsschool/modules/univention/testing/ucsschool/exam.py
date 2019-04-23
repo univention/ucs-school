@@ -253,7 +253,7 @@ html5
 	def check_collect(self):
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
-		path = '/home/%s/Klassenarbeiten/%s' % (admin, self.name)
+		path = '/home/%s/Klassenarbeiten/%s-Ergebnisse' % (admin, self.name)
 		path_files = get_dir_files(path)
 		if not set(self.files).issubset(set(path_files)):
 			utils.fail('%r were not collected to %r' % (self.files, path))

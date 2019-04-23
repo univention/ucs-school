@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.0-2) unstable; urgency=medium
+
+  * Bug #47160: Allow distribution of empty projects
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 23 Apr 2019 14:53:02 +0200
+
 ucs-school-umc-distribution (17.0.0-1) unstable; urgency=low
 
   * Bug #49227: add possibility to make collected files read-onle

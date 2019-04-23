@@ -146,8 +146,12 @@ msgid "Edit the selected distribution project."
 msgstr "Das ausgewählte Verteilungsprojekt bearbeiten."
 
 #: umc/js/distribution.js:225
-msgid "Error: No files have been assign to the project!"
-msgstr "Fehler: Keine Datei wurden dem Projekt hinzugefügt!"
+msgid "Warning: No files have been assigned to the project!"
+msgstr "Warnung: Keine Datei wurden dem Projekt hinzugefügt!"
+
+#: umc/js/distribution.js:231
+msgid "Distribute empty project"
+msgstr "Projekt leer verteilen"
 
 #: umc/js/distribution.js:219
 msgid "Error: No recipients have been assigned to the project!"
