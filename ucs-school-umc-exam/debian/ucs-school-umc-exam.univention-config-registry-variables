@@ -53,8 +53,8 @@ Type=string
 Categories=ucsschool-exam
 
 [ucsschool/exam/cron/backup/activated]
-Description[en]=Specifies if the script exam-backup is called by cron automatically (default is True")
-Description[de]=Definiert, ob das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig aktiviert")
+Description[en]=Specifies if the script exam-backup is called by cron automatically (default is False")
+Description[de]=Definiert, ob das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig deaktiviert")
 Type=string
 Categories=ucsschool-exam
 
