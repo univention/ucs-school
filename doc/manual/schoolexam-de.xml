@@ -157,6 +157,7 @@
 					definiert den Zeitpunkt, an dem das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig alle 5 Minuten; Beispiel: "*/5 * * * *")
 				</listitem>
 			</itemizedlist>
+			Wenn diese Funktionalität aktiviert wird, sollte dabei dringend der Bedarf an Speicherplatz berücksichtigt werden, der hier anfällt. Sollte beispielsweise eine Klasse von 25 Schülern eine 45 Minuten andauernde Arbeit schreiben und es werden dabei alle 5 Minuten ungefähr 10MB pro Schüler gesichert, so fallen dabei ungefähr 2.2 GB an Daten an.
 		</para>
 	</section>
 
