@@ -157,6 +157,10 @@ def jsonDecode(val):
 		elif x['__type__'] == TYPE_GROUP:
 			return Group(**x)
 		elif x['__type__'] == TYPE_PROJECT:
+			if 'isDistributed' not in x:
+				#  Guess distribution status for projects created prior fixing bug #47160
+				files = [ifn for ifn in x.files if os.path.exists(os.path.join(x.cachedir, ifn))]
+				x['isDistributed'] = len(files) != len(x.files)
 			return Project(**x)
 		else:
 			return _Dict(**x)
@@ -243,6 +247,7 @@ class Project(_Dict):
 			atJobNumCollect=None,  # int
 			sender=None,  # User
 			recipients=[],  # [ (User|Group) , ...]
+			isDistributed=False,
 		)
 
 		# update specified entries
@@ -283,16 +288,6 @@ class Project(_Dict):
 	def user_projectdir(self, user):
 		'''Return the absolute path of the project dir for the specified user.'''
 		return os.path.join(user.homedir, POSTFIX_DATADIR_RECIPIENT, self.name)
-
-	@property
-	def isDistributed(self):
-		'''True if files have already been distributed.'''
-		# distributed files can still be found in the internal property 'files',
-		# however, upon distribution they are removed from the cache directory;
-		# thus, if one of the specified files does not exist, the project has
-		# already been distributed
-		files = [ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn))]
-		return len(files) != len(self.files)
 
 	def _convStr2Time(self, key):
 		'''Converts the string value of the specified key in the internal dict
@@ -356,17 +351,8 @@ class Project(_Dict):
 			raise ValueError(_('The specified project directory may at most be 254 characters long.'))
 		if not (isinstance(self.description, basestring) and self.description):
 			raise ValueError(_('The given project description must be non-empty.'))
-		# if not (isinstance(self.files, list)): # and self.files):
-		#	raise ValueError(_('At least one file must be specified.'))
-		# if not (isinstance(self.recipients, list)): # and self.recipients):
-		#	raise ValueError(_('At least one recipient must be specified.'))
 		if not self.sender or not self.sender.username or not self.sender.homedir:
 			raise ValueError(_('A valid project owner needs to be specified.'))
-		# TODO: the following checks are necessary to make sure that the project name
-		#      has not been used so far:
-		# sender_projectdir -> does not exist yet?
-		# recipients projectdir -> does not exist yet?
-		# date in the future?
 
 	def isNameInUse(self):
 		'''Verifies whether the given project name is already in use.'''
@@ -380,39 +366,22 @@ class Project(_Dict):
 
 	def save(self):
 		'''Save project data to disk and create job. In case of any errors, an IOError is raised.'''
-		backupFile = '.%s.bak' % self.projectfile
+		self._unregister_at_jobs()
+		self._createCacheDir()
+		self._write_projectfile()
+
+	def _update_at_jobs(self):
+		self._unregister_at_jobs()
+		self._register_at_jobs()
+
+	def _write_projectfile(self):
+		new_projecfile = '.%s.new' % self.projectfile
 		try:
-			# update at-jobs
-			self._unregister_at_jobs()
-			self._register_at_jobs()
-
-			# try to save backup of old file
-			try:
-				os.rename(self.projectfile, backupFile)
-			except (OSError, IOError) as e:
-				pass
-
-			# save the project file
-			with open(self.projectfile, 'w') as fd:
+			with open(new_projecfile, 'w') as fd:
 				fd.write(jsonEncode(self))
-
-			# create cache directory
-			self._createCacheDir()
-		except (OSError, IOError) as e:
-			# try to restore backup copy
-			try:
-				os.rename(backupFile, self.projectfile)
-			except (OSError, IOError) as e:
-				pass
-
-			# raise a new IOError
-			raise IOError(_('Could not save project file: %s (%s)') % (self.projectfile, str(e)))
-
-		# try to remove backup file
-		try:
-			os.remove(backupFile)
-		except (OSError, IOError) as e:
-			pass
+			os.rename(new_projecfile, self.projectfile)
+		except EnvironmentError as exc:
+			raise IOError(_('Could not save project file: %s (%s)') % (self.projectfile, str(exc)))
 
 	def _createCacheDir(self):
 		'''Create cache directory.'''
@@ -532,11 +501,6 @@ class Project(_Dict):
 		#       yet they are still kept in the internal list of files
 		files = [ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn))]
 
-		if not files:
-			# no files to distribute
-			MODULE.info('No new files to distribute in project: %s' % self.name)
-			return
-
 		# make sure all necessary directories exist
 		self._createProjectDir()
 
@@ -563,6 +527,8 @@ class Project(_Dict):
 				except (OSError, IOError) as e:
 					MODULE.error('failed to chown "%s": %s' % (target, str(e)))
 					usersFailed.append(user)
+			else:
+				MODULE.info('No new files to distribute in project: %s' % self.name)
 
 		# remove cached files
 		for fn in files:
@@ -574,6 +540,8 @@ class Project(_Dict):
 					MODULE.info('file has already been distributed: %s' % src)
 			except (OSError, IOError) as e:
 				MODULE.error('failed to remove file: %s [%s]' % (src, e))
+		self.isDistributed = True
+		self._write_projectfile()
 
 		return len(usersFailed) == 0
 
@@ -678,10 +646,12 @@ class Project(_Dict):
 
 		try:
 			# load project dictionary from JSON file
-			fd = open(fn_project, 'r')
-			project = jsonDecode(fd.read())
-			# project = Project(tmpDict.dict)
-			fd.close()
+			with open(fn_project, 'r') as fd:
+				project = jsonDecode(fd.read())
+			if not project.isDistributed:
+				#  Projects created before bug #47160 was fixed didn't save their distribution status
+				files = [ifn for ifn in project.files if os.path.exists(os.path.join(project.cachedir, ifn))]
+				project.isDistributed = len(files) != len(project.files)
 
 			# convert _Dict instances to User
 			if project.sender:
@@ -724,10 +694,10 @@ def initPaths():
 	try:
 		if not os.path.exists(DISTRIBUTION_DATA_PATH):
 			os.makedirs(DISTRIBUTION_DATA_PATH, 0o700)
-	except:
+	except EnvironmentError:
 		MODULE.error('error occured while creating %s' % DISTRIBUTION_DATA_PATH)
 	try:
 		os.chmod(DISTRIBUTION_DATA_PATH, 0o700)
 		os.chown(DISTRIBUTION_DATA_PATH, 0, 0)
-	except:
+	except EnvironmentError:
 		MODULE.error('error occured while fixing permissions of %s' % DISTRIBUTION_DATA_PATH)
