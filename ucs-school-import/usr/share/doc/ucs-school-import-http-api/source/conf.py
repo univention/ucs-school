@@ -76,7 +76,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'UCS@school HTTP-API import documentation'
-copyright = u'2018, ucsschool-maintainers@univention.de'
+copyright = u'2019, ucsschool-maintainers@univention.de'
 author = u'ucsschool-maintainers@univention.de'
 
 # The version info for the project you're documenting, acts as replacement for
