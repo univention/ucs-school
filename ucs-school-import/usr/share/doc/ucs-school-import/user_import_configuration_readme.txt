@@ -99,12 +99,15 @@ After that follow
 	                                    Defaults to only the dot. To add the hyphen, use ".-" (a string, not a list).
 	                                    The characters listed here will never be used as first or last character in a
 	                                    username.
-	"max_length": {
-		"default":           int [2]:	maximum length of a username. If scheme:username contains a COUNTER variable
-										it will be reduced by 3 for counter digits. Default and maximum: 20.
-		"student":           int [3]: 	maximum length of a username. If scheme:username contains a COUNTER variable
-										it will be reduced by 3 for counter digits. Default and maximum: 15
-										(20 - length of "exam-" prefix).
+	"max_length": {                     IMPORTANT:
+	                                    * If Window clients < 8.1 are in use, the maximum username lenght must
+	                                    not exceed 20, or logging into them will not be possible!
+	                                    * If scheme:username contains a COUNTER variable the maximum length of a
+	                                    username will be reduced by 3 for counter digits.
+	                                    * For students the maximum length of a username will be further reduced by the
+	                                    length of the "exam-" prefix (usually "exam-", so by 5).
+		"default":           int [2]:	maximum length of a username for all user roles not explicitely defined, default: 20.
+		"student":           int [3]: 	maximum length of a students username, default: 15 (20 - length of "exam-" prefix).
 		"staff":             int [3]: 	see "default".
 		"teacher":           int [3]: 	see "default".
 		"teacher_and_staff": int [3]: 	see "default".
