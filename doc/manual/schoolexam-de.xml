@@ -142,6 +142,22 @@
 				</listitem>
 			</itemizedlist>
 		</para>
+		<para>
+			Mit &ucsUAS; 4.4v3 gibt es die Möglichkeit in regelmäßigen Abständen Sicherungskopien aller Schülerdaten zu speichern, während sie sich in einer Klassenarbeit befinden. Diese Sicherungskopien werden in einem separaten Ordner im Heimatverzeichnis des Lehrers gespeichert, welcher die Klassenarbeit durchführt.
+			Diese Funktionalität ist in dieser Version standardmäßig deaktiviert und kann über die folgenden &ucsUCRV;n konfiguriert werden:
+			<itemizedlist>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/cron/backup/activated</envar>
+						definiert, ob das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig deaktiviert")
+					</simpara>
+				</listitem>
+				<listitem>
+					<envar>ucsschool/exam/cron/backup</envar>
+					definiert den Zeitpunkt, an dem das Skript exam-backup automatisch durch cron gestartet wird (standardmäßig alle 5 Minuten; Beispiel: "*/5 * * * *")
+				</listitem>
+			</itemizedlist>
+		</para>
 	</section>
 
 	<section id="school:exam:gpo">
