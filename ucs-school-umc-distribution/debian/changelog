@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.0-3) unstable; urgency=medium
+
+  * Bug #47160: fix distribution status for old projects
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 23 Apr 2019 15:56:01 +0200
+
 ucs-school-umc-distribution (17.0.0-2) unstable; urgency=medium
 
   * Bug #47160: Allow distribution of empty projects

@@ -159,8 +159,9 @@ def jsonDecode(val):
 		elif x['__type__'] == TYPE_PROJECT:
 			if 'isDistributed' not in x:
 				#  Guess distribution status for projects created prior fixing bug #47160
-				files = [ifn for ifn in x.files if os.path.exists(os.path.join(x.cachedir, ifn))]
-				x['isDistributed'] = len(files) != len(x.files)
+				cachedir = os.path.join(DISTRIBUTION_DATA_PATH, '%s.data' % x['name'])
+				files = [ifn for ifn in x['files'] if os.path.exists(os.path.join(cachedir, ifn))]
+				x['isDistributed'] = len(files) != len(x['files'])
 			return Project(**x)
 		else:
 			return _Dict(**x)
