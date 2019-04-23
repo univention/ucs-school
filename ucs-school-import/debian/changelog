@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-5) unstable; urgency=low
+
+  * Bug #47222: allow usernames longer than 20 characters
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 23 Apr 2019 16:27:42 +0200
+
 ucs-school-import (17.0.6-4) unstable; urgency=low
 
   * Bug #49265: create configuration hook

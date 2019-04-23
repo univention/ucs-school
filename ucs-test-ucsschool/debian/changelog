@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-47) unstable; urgency=low
+
+  * Bug #47222: test long usernames
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 23 Apr 2019 16:29:20 +0200
+
 ucs-test-ucsschool (6.0.0-46) unstable; urgency=medium
 
   * Bug #47160: Add tests for distributing empty projects
