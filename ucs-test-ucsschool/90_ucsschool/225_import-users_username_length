@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [45577]
+## bugs: [45577, 47222]
 
 import copy
 import random

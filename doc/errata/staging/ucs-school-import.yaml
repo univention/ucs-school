@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 
+fix: 17.0.6-5A~4.4.0.201904231636
 desc: |
  * Usernames are now allowed to be longer than <literal>20</literal> characters. <emphasis>Important:</emphasis> If Window clients older than <literal>8.1</literal> are in use, the maximum username lenght must not exceed <literal>20</literal>, or logging into them will not be possible! (Bug #47222).
 bug: [47222]
