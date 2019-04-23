@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-distribution
-fix: 17.0.0-1A~4.4.0.201904121558
+fix: 17.0.0-2A~4.4.0.201904231520
 desc: |
  * Collected files can now be stored read-only (Bug #49227).
-bug: [49227]
+ * Adding files to projects prior to distribution is now optional (Bug #47160).
+bug: [49227, 47160]
