@@ -367,7 +367,7 @@ class Project(_Dict):
 
 	def save(self):
 		'''Save project data to disk and create job. In case of any errors, an IOError is raised.'''
-		self._unregister_at_jobs()
+		self._update_at_jobs()
 		self._createCacheDir()
 		self._write_projectfile()
 

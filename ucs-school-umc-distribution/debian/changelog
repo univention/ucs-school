@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.0-4) unstable; urgency=medium
+
+  * Bug #47160: fix typo that broke automatic distribution
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 24 Apr 2019 11:49:50 +0200
+
 ucs-school-umc-distribution (17.0.0-3) unstable; urgency=medium
 
   * Bug #47160: fix distribution status for old projects
