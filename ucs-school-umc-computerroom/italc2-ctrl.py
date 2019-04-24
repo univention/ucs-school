@@ -39,11 +39,13 @@ import notifier.signals
 import optparse
 import getpass
 
-script_dir = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())))
-sys.path.insert(0, os.path.join(script_dir, 'umc/python/computerroom'))
-sys.path.insert(0, '/usr/share/pyshared/univention/management/console/modules/computerroom')
+try:
+	from univention.management.console.modules.computerroom import italc2
+except ImportError:
+	script_dir = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())))
+	sys.path.insert(0, os.path.join(script_dir, 'umc/python/computerroom'))
+	import italc2
 
-import italc2
 import ucsschool.lib.schoolldap as usl
 import univention.config_registry as ucr
 
