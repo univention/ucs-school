@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-6) unstable; urgency=medium
+
+  * Bug #49329: Speedup lookup for school syntax classes (used in UDM module)
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 30 Apr 2019 17:41:39 +0200
+
 ucs-school-import (17.0.6-5) unstable; urgency=low
 
   * Bug #47222: allow usernames longer than 20 characters

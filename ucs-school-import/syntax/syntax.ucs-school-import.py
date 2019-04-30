@@ -1,4 +1,5 @@
-from univention.admin.syntax import UDM_Objects, UDM_Attribute, select
+from univention.admin.syntax import UDM_Objects, select
+import re
 import univention.admin.localization
 
 translation = univention.admin.localization.translation("univention-admin-syntax-ucsschool_import")
@@ -13,11 +14,13 @@ class UCSSchool_Server_DN(UDM_Objects):
 	simple = True
 
 
-class ucsschoolSchools(UDM_Attribute):
-	udm_module = 'container/ou'
+class ucsschoolSchools(UDM_Objects):
+	udm_modules = ('container/ou', )
 	udm_filter = 'objectClass=ucsschoolOrganizationalUnit'
-	attribute = 'name'
-	label_format = '%(displayName)s'
+	regex = re.compile('^.+$')
+	key = '%(name)s'
+	label = '%(displayName)s'
+	use_objects = False
 
 
 class ucsschoolTypes(select):
