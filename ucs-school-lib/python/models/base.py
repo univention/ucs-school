@@ -803,7 +803,6 @@ class UCSSchoolHelperAbstractClass(object):
 		cls.logger.debug('Getting all %s of %s with filter %r', cls.__name__, school, complete_filter)
 		ret = []
 		for udm_obj in cls.lookup(lo, school, complete_filter, superordinate=superordinate):
-			udm_obj.open()
 			try:
 				ret.append(cls.from_udm_obj(udm_obj, school, lo))
 			except NoObject:
