@@ -843,7 +843,10 @@ feedback@univention.de
 			<section id="concepts_names_servers">
 				<title>Zentrale Server</title>
 				<para>
-					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+					<literallayout>
+						<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
+						<emphasis>Rechnernamen möglichst nicht mit einer Zahl beginnen.</emphasis>
+					</literallayout>
 				</para>
 				<para>
 					Zentrale Server:
@@ -865,20 +868,23 @@ feedback@univention.de
 			<section id="concepts_names_clients-and-servers">
 				<title>Rechner und Schulserver</title>
 				<para>
-					<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+					<literallayout>
+						<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+						<emphasis>Rechnernamen möglichst nicht mit einer Zahl beginnen.</emphasis>
+					</literallayout>
 				</para>
 				<para>
 					Rechner:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Betriebssystem][Gebäude/Etage/Raum][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiele: <systemitem class="service">042win033-001</systemitem>, <systemitem class="service">042win033-002</systemitem>, <systemitem class="service">011mac001-011</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">s42-win033-001</systemitem>, <systemitem class="service">s42-win033-002</systemitem>, <systemitem class="service">011mac001-011</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Netzgeräte, wie Router, Switches, USV, Drucker:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Gerätetyp][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">s42rou001-001</systemitem>, <systemitem class="service">s42swi002-003</systemitem>, <systemitem class="service">s11usv000-001</systemitem>, <systemitem class="service">s12dru002-012</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
