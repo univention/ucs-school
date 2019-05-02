@@ -34,11 +34,11 @@ import optparse
 import sys
 import csv
 import logging
-import univention.config_registry
 from univention.admin.uexceptions import uidAlreadyUsed
 from univention.admin.uldap import getAdminConnection
 from ucsschool.lib.create_ou import create_ou
-from ucsschool.lib.models.utils import get_stream_handler
+from ucsschool.lib.models import School
+from ucsschool.lib.models.utils import get_stream_handler, ucr
 
 
 def main():
@@ -65,14 +65,20 @@ def main():
 		'--infile', action='store', type='string',
 		dest='infile', default=None,
 		help='CSV file for mass import of ou\'s. Format is ou_name,display_name,edu_name,admin_name,share_name. If given parameters are overwritten.')
-	parser.add_option("--alter-dhcpd-base", action="store", type='choice', choices=("true", "false", "auto"), dest="alter_dhcpd_base", default="auto",
-					help='This option sets whether the UCR variable dhcpd/ldap/base should be modified during school creation on singleserver environments.'
-						' The possible values are true, false and auto.')
-
+	parser.add_option(
+		"--alter-dhcpd-base", action="store", type='choice',
+		choices=("true", "false", "auto"), dest="alter_dhcpd_base", default="auto",
+		help='This option sets whether the UCR variable dhcpd/ldap/base should be modified during school creation on singleserver environments.'
+			' The possible values are true, false and auto.')
+	parser.add_option(
+		"-v", "--verbose", action="store_true", default=False,
+		help="Display debug output.",
+	)
 	(options, args,) = parser.parse_args()
-	logger = logging.getLogger(__name__)
-	logger.setLevel('INFO')
-	logger.addHandler(get_stream_handler('INFO'))
+	logger = logging.getLogger('ucsschool')
+	log_level = 'DEBUG' if options.verbose else 'INFO'
+	logger.setLevel(log_level)
+	logger.addHandler(get_stream_handler(log_level))
 	ou_tuples = list()  # (ou_name,display_name,edu_name,admin_name,share_name)
 	alter_dhcpd_base = None
 	if options.alter_dhcpd_base == "true":
@@ -104,16 +110,18 @@ def main():
 		parser.print_help()
 		sys.exit(1)
 
-	config_registry = univention.config_registry.ConfigRegistry()
-	config_registry.load()
-	baseDN = config_registry['ldap/base']
-	is_single_master = config_registry.is_true('ucsschool/singlemaster', False)
-	hostname = config_registry.get('hostname')
+	baseDN = ucr['ldap/base']
+	is_single_master = ucr.is_true('ucsschool/singlemaster', False)
+	hostname = ucr.get('hostname')
 	lo, pos = getAdminConnection()
 	exit_value = 0
 
 	for ou_name, display_name, edu_name, admin_name, share_name in ou_tuples:
 		logger.info('Create OU: %s', ou_name)
+		if School(name=ou_name).exists(lo):
+			logger.error('Skip existing OU: %s', ou_name)
+			exit_value = 1
+			continue
 		try:
 			create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master, alter_dhcpd_base)
 		except (ValueError, uidAlreadyUsed) as e:
