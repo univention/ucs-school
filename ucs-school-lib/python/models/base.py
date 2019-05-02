@@ -396,6 +396,16 @@ class UCSSchoolHelperAbstractClass(object):
 
 		In the lib, post-hooks are only called if the corresponding function returns True
 		'''
+
+		def run(args):
+			self.logger.debug('Starting %r...', args)
+			process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+			stdout, stderr = process.communicate()
+			self.logger.debug('Command %r finished with exit code %r.', args, process.returncode)
+			if stdout:
+				self.logger.debug('Command stdout and stderr:\n%s', stdout.strip())
+			return process.returncode
+
 		# verify path
 		hook_path = self._meta.hook_path
 		path = os.path.join(self.hook_path, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
@@ -425,11 +435,12 @@ class UCSSchoolHelperAbstractClass(object):
 
 			# invoke hook scripts
 			# <script> <temporary file> [<ldap dn>]
-			command = ['run-parts', path, '--arg', tmpfile.name]
+			command = ['run-parts', '--verbose', '--report', '--arg', tmpfile.name]
 			if dn:
 				command.extend(('--arg', dn))
+			command.extend(('--', path))
 
-			ret_code = subprocess.call(command)
+			ret_code = run(command)
 
 			return ret_code == 0
 
