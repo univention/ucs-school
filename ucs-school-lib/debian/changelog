@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.1-5) unstable; urgency=low
+
+  * Bug #48141: log hook execution
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 02 May 2019 17:35:05 +0200
+
 ucs-school-lib (12.1.1-4) unstable; urgency=medium
 
   * Bug #49329: Do not double open a UDM object during get_all()

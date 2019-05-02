@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-8) unstable; urgency=low
+
+  * Bug #48141: remove duplicate hook execution
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 02 May 2019 17:35:30 +0200
+
 ucs-school-import (17.0.6-7) unstable; urgency=medium
 
   * Bug #49329: Increase joinscript version to register new sytax class
