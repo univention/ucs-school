@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-7) unstable; urgency=medium
+
+  * Bug #49329: Increase joinscript version to register new sytax class
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 02 May 2019 15:03:20 +0200
+
 ucs-school-import (17.0.6-6) unstable; urgency=medium
 
   * Bug #49329: Speedup lookup for school syntax classes (used in UDM module)
