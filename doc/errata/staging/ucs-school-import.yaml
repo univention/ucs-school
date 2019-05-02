@@ -3,8 +3,9 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.6-7A~4.4.0.201905021508
+fix: 17.0.6-8A~4.4.0.201905021738
 desc: |
  * Usernames are now allowed to be longer than <literal>20</literal> characters. <emphasis>Important:</emphasis> If Window clients older than <literal>8.1</literal> are in use, the maximum username lenght must not exceed <literal>20</literal>, or logging into them will not be possible! (Bug #47222).
  * Improved lookup performance of the shipped syntax classes that slowed down the opening of user objects considerably when a lot of schools exist. (Bug #49329).
-bug: [47222, 49329]
+ * Duplicate hook execution code was removed (Bug #48141).
+bug: [47222, 49329, 48141]
