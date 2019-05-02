@@ -352,6 +352,8 @@ class ImportTestbase(object):
 		logger.setLevel(logging.DEBUG)
 		if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
 			logger.addHandler(get_stream_handler('DEBUG'))
+		for handler in logger.handlers:
+			handler.setLevel(logging.DEBUG)
 		return logger
 
 
