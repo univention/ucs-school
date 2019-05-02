@@ -11,6 +11,7 @@
 import copy
 import random
 from ldap.filter import filter_format
+from ucsschool.lib.models.utils import ucr_username_max_length
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
 from univention.testing.ucsschool.importusers import Person
@@ -68,9 +69,9 @@ class Test(CLI_Import_v2_Tester):
 				self.log.debug('*** role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
 				# default configuration
 				if person.role == 'student':
-					exp_len = 15
+					exp_len = ucr_username_max_length - 5
 				else:
-					exp_len = 20
+					exp_len = ucr_username_max_length
 
 				if len(username) != exp_len:
 					self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
@@ -133,7 +134,7 @@ class Test(CLI_Import_v2_Tester):
 					exp_len = username_lengths[person.role]
 				except KeyError:
 					if person.role == 'student':
-						exp_len = 15  # from user_import_defaults.json
+						exp_len = min(ucr_username_max_length - 5, 15)  # min(UCRV, user_import_defaults.json)
 					else:
 						exp_len = username_lengths['default']
 
@@ -202,7 +203,7 @@ class Test(CLI_Import_v2_Tester):
 					exp_len = username_lengths[person.role]
 				except KeyError:
 					if person.role == 'student':
-						exp_len = 15  # from user_import_defaults.json
+						exp_len = min(ucr_username_max_length - 5, 15)  # min(UCRV, user_import_defaults.json)
 					else:
 						exp_len = username_lengths['default']
 

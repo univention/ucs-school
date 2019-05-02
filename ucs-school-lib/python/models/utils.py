@@ -69,6 +69,12 @@ def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> 
 	return config
 
 
+def _ucr():
+	ucr = ConfigRegistry()
+	ucr.load()
+	return ucr
+
+
 _logging_config = lazy_object_proxy.Proxy(_load_logging_config)
 CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['cmdline'])
 FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['file'])
@@ -77,11 +83,8 @@ LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config['colors'])
 
 _handler_cache = dict()
 _pw_length_cache = dict()
-
-
-# "global" ucr for ucsschool.lib.models
-ucr = ConfigRegistry()
-ucr.load()
+ucr = lazy_object_proxy.Proxy(_ucr)  # "global" ucr for ucsschool.lib.models
+ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool/username/max_length", 20)))
 
 
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord

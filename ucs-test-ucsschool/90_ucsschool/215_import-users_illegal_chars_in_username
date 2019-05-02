@@ -13,11 +13,12 @@ import string
 import random
 import time
 from ldap.filter import filter_format
+from ucsschool.lib.models.utils import ucr_username_max_length
+from ucsschool.importer.utils.username_handler import UsernameHandler
+from ucsschool.importer.exceptions import FormatError
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
-from ucsschool.importer.utils.username_handler import UsernameHandler
-from ucsschool.importer.exceptions import FormatError
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import UniqueObjectTester
 
@@ -91,9 +92,9 @@ class Test(UniqueObjectTester):
 		# check usernames
 		for person, lastname in names.items():
 			if person.role == 'student':
-				username_length_length = 15
+				username_length_length = ucr_username_max_length - 5
 			else:
-				username_length_length = 20
+				username_length_length = ucr_username_max_length
 			person.update(username=self.remove_bad_chars("{}1".format(lastname[:username_length_length - 3])))
 			utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
 			wait_for_drs_replication(filter_format('cn=%s', (person.username,)))  # wait for creation before deletion
@@ -134,9 +135,9 @@ class Test(UniqueObjectTester):
 		utils.wait_for_replication()
 		for person, lastname in names.items():
 			if person.role == 'student':
-				username_length_length = 15
+				username_length_length = ucr_username_max_length - 5
 			else:
-				username_length_length = 20
+				username_length_length = ucr_username_max_length
 			person.update(username=self.remove_bad_chars("2{}".format(lastname[:username_length_length - 3])))
 			utils.verify_ldap_object(person.dn, expected_attr={'uid': [person.username]}, strict=False, should_exist=True)
 		self.log.info('*** OK import_test1')

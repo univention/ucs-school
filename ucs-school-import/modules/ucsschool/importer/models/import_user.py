@@ -45,7 +45,7 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_t
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
-from ucsschool.lib.models.utils import create_passwd, ucr
+from ucsschool.lib.models.utils import create_passwd, ucr, ucr_username_max_length
 from ..configuration import Configuration
 from ..factory import Factory
 from ..exceptions import (
@@ -94,7 +94,7 @@ class ImportUser(User):
 	record_uid = RecordUID("RecordUID")
 
 	config = lazy_object_proxy.Proxy(lambda: Configuration())  # type: ReadOnlyDict
-	default_username_max_length = 20  # may be lowered in __init__()
+	default_username_max_length = ucr_username_max_length  # may be lowered in __init__()
 	no_overwrite_attributes = lazy_object_proxy.Proxy(lambda: ucr.get(
 		"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
 		"mailPrimaryAddress uid"
@@ -1359,9 +1359,9 @@ class ImportUser(User):
 	@property
 	def _default_username_max_length(self):  # type: () -> int
 		try:
-			return self.config['username']['max_length']['default']
+			return min(self.config['username']['max_length']['default'], ucr_username_max_length)
 		except KeyError:
-			return 20
+			return ucr_username_max_length
 
 	@property
 	def username_max_length(self):  # type: () -> int
@@ -1369,7 +1369,7 @@ class ImportUser(User):
 			res = self.config['username']['max_length'][self.role_sting]
 		except KeyError:
 			res = self._default_username_max_length
-		return max(0, res)
+		return max(0, min(res, ucr_username_max_length))
 
 
 class ImportStaff(ImportUser, Staff):
@@ -1377,12 +1377,13 @@ class ImportStaff(ImportUser, Staff):
 
 
 class ImportStudent(ImportUser, Student):
-	default_username_max_length = 15  # may be lowered in __init__()
+	default_username_max_length = lazy_object_proxy.Proxy(lambda: ucr_username_max_length - 5)  # may be lowered in __init__()
 
 	@property
 	def _default_username_max_length(self):  # type: () -> int
 		res = super(ImportStudent, self)._default_username_max_length
-		return min(res, 20 - len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")))
+		ucr_exam_prefix_len = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+		return min(res, ucr_username_max_length - ucr_exam_prefix_len)
 
 
 class ImportTeacher(ImportUser, Teacher):

@@ -55,11 +55,13 @@ define([
 			return tools.ucr([
 				'ucsschool/ldap/default/userprefix/exam',
 				'ucsschool/ldap/check/username/lengthlimit'
+				'ucsschool/username/max_length'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
 				this._checkMaxUsernameLength = result['ucsschool/ldap/check/username/lengthlimit'] || "true";
-				this._maxUsernameLength = 20 - this._examUserPrefix.length;
+				this._maxUsernameLengthUcr = result['ucsschool/username/max_length'] || 20;
+				this._maxUsernameLength = this._maxUsernameLengthUcr - this._examUserPrefix.length;
 			}));
         },
 

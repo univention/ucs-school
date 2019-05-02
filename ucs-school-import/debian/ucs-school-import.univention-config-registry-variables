@@ -159,3 +159,9 @@ Description[de]=Definiert Parameter für das Programm ucs-school-purge-expired-u
 Description[en]=Defines parameters for the ucs-school-purge-expired-users program. If the variable is unset, '--quiet --logfile /var/log/univention/ucs-school-purge-expired-users/ucs-school-purge-expired-users.log' is used.
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/username/max_length]
+Description[de]=Maximale Länge eines Benutzernamens. Wenn Window Clients vor 8.1 verwendet werden darf diese 20 nicht übersteigen, oder es wird nicht möglich sein sich in diese einzuloggen. Standard: 20
+Description[en]=Maximum length of usernames. If Window clients before 8.1 are in use, the maximum username lenght must not exceed 20, or logging into them will not be possible. Default: 20
+Type=int
+Categories=ucsschool-base

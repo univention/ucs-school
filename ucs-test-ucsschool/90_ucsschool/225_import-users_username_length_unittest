@@ -11,6 +11,7 @@
 import copy
 import univention.testing.strings as uts
 import univention.config_registry
+from ucsschool.lib.models.utils import ucr_username_max_length
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 from ucsschool.importer.utils.configuration_checks import run_configuration_checks
 from ucsschool.importer.utils.shell import ImportStudent, ImportTeacher
@@ -29,17 +30,17 @@ class Test(CLI_Import_v2_Tester):
 		Bug #45577: allow import with usernames longer than 15 characters
 		"""
 		self.log.info('*** checking installed configuration')
-		assert ImportStudent.default_username_max_length == 15
-		assert ImportTeacher.default_username_max_length == 20
-		assert ImportStudent().default_username_max_length == 15
-		assert ImportTeacher().default_username_max_length == 20
-		assert ImportStudent().username_max_length == 15
-		assert ImportTeacher().username_max_length == 20
+		assert ImportStudent.default_username_max_length == ucr_username_max_length - 5
+		assert ImportTeacher.default_username_max_length == ucr_username_max_length
+		assert ImportStudent().default_username_max_length == ucr_username_max_length - 5
+		assert ImportTeacher().default_username_max_length == ucr_username_max_length
+		assert ImportStudent().username_max_length == ucr_username_max_length - 5
+		assert ImportTeacher().username_max_length == ucr_username_max_length
 
 		config = copy.deepcopy(ImportStudent().config)
 		config['dry_run'] = True
 		config['scheme'] = {'username': {'default': '<:umlauts><firstname>[0].<lastname><:lower>[ALWAYSCOUNTER]'}}
-		config['username'] = {'max_length': {'default': 20, 'student': 15}}
+		config['username'] = {'max_length': {'default': ucr_username_max_length, 'student': ucr_username_max_length - 5}}
 		run_configuration_checks(config)
 		self.log.info('*** OK: default configuration: %r', config)
 		cursor = 0
@@ -81,7 +82,7 @@ class Test(CLI_Import_v2_Tester):
 							# 	lastname_length, lastname, student.name, len(student.name)
 							# )
 							self.usernames.append(student.name)
-							if len(student.name) > 15:
+							if len(student.name) > ucr_username_max_length - 5:
 								self.fail('Username {!r} of student has length {}.'.format(student.name, len(student.name)))
 							firstname = uts.random_username(firstname_length)
 							assert len(firstname) == firstname_length
@@ -97,7 +98,7 @@ class Test(CLI_Import_v2_Tester):
 							# 	lastname_length, lastname, teacher.name, len(teacher.name)
 							# )
 							self.usernames.append(teacher.name)
-							if len(teacher.name) > 20:
+							if len(teacher.name) > ucr_username_max_length:
 								self.fail('Username {!r} of teacher has length {}.'.format(teacher.name, len(teacher.name)))
 			self.log.info('*** Tested %d usernames for exam_prefix_length %d...', len(self.usernames) - cursor, exam_prefix_length)
 			cursor = len(self.usernames)
