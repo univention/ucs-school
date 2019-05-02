@@ -180,7 +180,7 @@
 				Sollen zusätzlich zu den automatisch erzeugten Gruppen neue angelegt werden, so muss an diesen zum einen die Option <literal>UCS@school Import-Berechtigungen</literal> aktiviert, und zum anderen die UMC-Richtlinie <literal>cn=schoolimport-all,cn=UMC,cn=policies,<replaceable>$LDAP_BASE</replaceable></literal> zugewiesen werden.
 			</para>
 			<para>
-				Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/spool/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
+				Alle an einem Import-Job beteiligten, und von ihm erzeugten, Dateien finden sich unter <filename class="directory">/var/lib/ucs-school-import/jobs/<replaceable>$JAHR</replaceable>/<replaceable>$JOB-ID</replaceable>/</filename>: Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter neuer Benutzer, Zusammenfassung).
 			</para>
 		</section>
 
