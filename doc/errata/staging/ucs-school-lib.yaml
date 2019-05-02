@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src:  ucs-school-lib
-fix: 12.1.1-3A~4.4.0.201904171634
+fix: 12.1.1-4A~4.4.0.201905021355
 desc: |
  * Fixed a bug which prevented domain lists in internetrules to be changed. (Bug #49312).
-bug: [49312]
+ * Getting all UDM objects opened every object twice unnecessarily. (Bug #49329).
+bug: [49312, 49329]
