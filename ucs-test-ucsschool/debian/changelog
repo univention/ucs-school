@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-49) unstable; urgency=low
+
+  * Bug #47222: revert code premitting usernames longer than 20 characters
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 03 May 2019 10:43:49 +0200
+
 ucs-test-ucsschool (6.0.0-48) unstable; urgency=low
 
   * Bug #48141: test run-part hook execution
