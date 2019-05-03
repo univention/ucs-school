@@ -75,20 +75,22 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 		for role in ('default', 'staff', 'teacher', 'teacher_and_staff'):
 			username_max_length = self.config["username"]["max_length"].get(role, 20)
 			if username_max_length > 20:
-				self.logger.warning(
-					"Configuration value of username:max_length:%s is higher than 20. "
-					"Logging into Windows < 8.1 will not be possible.",
-					role)
+				raise InitialisationError(
+					"Configuration value of username:max_length:{} must be 20 or less.".format(role)
+				)
 
 	def test_exam_user_prefix_length(self):
-		exam_user_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
-		exam_user_prefix_length = len(exam_user_prefix)
-		student_username_max_length = self.config["username"]["max_length"].get("student", 20)
+		exam_user_prefix_length = len(ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+		student_username_max_length = self.config["username"]["max_length"].get("student", 20 - exam_user_prefix_length)
 		if student_username_max_length > 20 - exam_user_prefix_length:
-			self.logger.warning(
-				"Configuration value of username:max_length:student is higher than %d (20 - length(%r)). "
-				"Exam users will not be able to log into Windows < 8.1.",
-				20 - exam_user_prefix_length, exam_user_prefix)
+			raise InitialisationError(
+				"Configuration value of username:max_length:student must be {} or less. Found username::max_length={!r} "
+				"UCR ucsschool/ldap/default/userprefix/exam={!r} exam_user_prefix_length={!r}.".format(
+					20 - exam_user_prefix_length,
+					self.config["username"]["max_length"],
+					ucr.get("ucsschool/ldap/default/userprefix/exam"),
+					exam_user_prefix_length)
+			)
 
 	def test_user_role_role_mapping_combination(self):
 		if self.config['user_role'] and '__role' in self.config['csv']['mapping'].values():
