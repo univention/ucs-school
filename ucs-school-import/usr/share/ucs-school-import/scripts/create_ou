@@ -37,7 +37,6 @@ import logging
 from univention.admin.uexceptions import uidAlreadyUsed
 from univention.admin.uldap import getAdminConnection
 from ucsschool.lib.create_ou import create_ou
-from ucsschool.lib.models import School
 from ucsschool.lib.models.utils import get_stream_handler, ucr
 
 
@@ -118,10 +117,6 @@ def main():
 
 	for ou_name, display_name, edu_name, admin_name, share_name in ou_tuples:
 		logger.info('Create OU: %s', ou_name)
-		if School(name=ou_name).exists(lo):
-			logger.error('Skip existing OU: %s', ou_name)
-			exit_value = 1
-			continue
 		try:
 			create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master, alter_dhcpd_base)
 		except (ValueError, uidAlreadyUsed) as e:
