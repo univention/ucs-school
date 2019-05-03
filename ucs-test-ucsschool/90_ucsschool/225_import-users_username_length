@@ -34,188 +34,137 @@ class Test(CLI_Import_v2_Tester):
 		config.update_entry('user_role', None)
 		del config['csv']['mapping']['E-Mail']
 
-		def test_default_settings():
-			self.log.info('*** 1/2 Importing a user from each role (default settings)...')
+		self.log.info('*** 1/2 Importing a user from each role (default settings)...')
 
-			person_list = list()
-			for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-				person = Person(self.ou_A.name, role)
-				record_uid = 'record_uid-%s' % (uts.random_string(),)
-				person.update(
-					record_uid=record_uid,
-					source_uid=source_uid,
-					firstname=uts.random_username(),
-					lastname=uts.random_username(),
-					username=None,  # let the import generate the attributes value
-					mail=None,  # let the import generate the attributes value
-				)
-				person_list.append(person)
-			fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(values=config)
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config])
-			self.check_new_and_removed_users(4, 0)
+		person_list = list()
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			person = Person(self.ou_A.name, role)
+			record_uid = 'record_uid-%s' % (uts.random_string(),)
+			person.update(
+				record_uid=record_uid,
+				source_uid=source_uid,
+				firstname=uts.random_username(),
+				lastname=uts.random_username(),
+				username=None,  # let the import generate the attributes value
+				mail=None,  # let the import generate the attributes value
+			)
+			person_list.append(person)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		self.check_new_and_removed_users(4, 0)
 
-			filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
-			for person in person_list:
-				filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
-				res = self.lo.search(filter=filter_s)
-				if len(res) != 1:
-					self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
-				dn = res[0][0]
-				username = res[0][1]['uid'][0]
-				self.log.debug('*** role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
-				# default configuration
+		filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
+		for person in person_list:
+			filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
+			res = self.lo.search(filter=filter_s)
+			if len(res) != 1:
+				self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
+			dn = res[0][0]
+			username = res[0][1]['uid'][0]
+			self.log.debug('*** role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
+			# default configuration
+			if person.role == 'student':
+				exp_len = 15
+			else:
+				exp_len = 20
+
+			if len(username) != exp_len:
+				self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
+			else:
+				self.log.info('*** OK: Username %r of %r has expected length {!r}.', username, person.role, exp_len)
+
+		self.log.info('*** OK 1/3: All %r users were created correctly.', len(person_list))
+		self.log.info('*** 2/3: Importing a user from each role (custom username:max_length settings)...')
+
+		username_lengths = {
+			'student': random.randint(5, 15),  # keep in legal range
+			'teacher': random.randint(5, 20),
+			'staff': random.randint(5, 20),
+			'teacher_and_staff': random.randint(5, 20),
+		}
+		del username_lengths[random.choice(username_lengths.keys())]  # use default value
+		del username_lengths[random.choice(username_lengths.keys())]  # use default value
+		username_lengths['default'] = random.randint(5, 20)
+		self.log.info('*** username_lengths=%r', username_lengths)
+		for k, v in username_lengths.items():
+			config.update_entry('username:max_length:{}'.format(k), v)
+		source_uid = 'source_uid-{}'.format(uts.random_string())
+		config.update_entry('source_uid', source_uid)
+		config.update_entry('input:filename', fn_csv)
+
+		person_list = list()
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			person = Person(self.ou_A.name, role)
+			record_uid = 'record_uid-%s' % (uts.random_string(),)
+			person.update(
+				record_uid=record_uid,
+				source_uid=source_uid,
+				firstname=uts.random_username(20),
+				lastname=uts.random_username(20),
+				username=None,
+				mail=None,
+			)
+			person_list.append(person)
+		fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+		config.update_entry('input:filename', fn_csv)
+		fn_config = self.create_config_json(values=config)
+		self.save_ldap_status()
+		self.run_import(['-c', fn_config])
+		self.check_new_and_removed_users(4, 0)
+
+		filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
+		for person in person_list:
+			filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
+			res = self.lo.search(filter=filter_s)
+			if len(res) != 1:
+				self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
+			dn = res[0][0]
+			username = res[0][1]['uid'][0]
+			self.log.debug('*** role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
+			# special configuration with lower max_length
+			try:
+				exp_len = username_lengths[person.role]
+			except KeyError:
 				if person.role == 'student':
-					exp_len = 15
+					exp_len = 15  # from user_import_defaults.json
 				else:
-					exp_len = 20
+					exp_len = username_lengths['default']
 
-				if len(username) != exp_len:
-					self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
-				else:
-					self.log.info('*** OK: Username %r of %r has expected length {!r}.', username, person.role, exp_len)
+			if len(username) != exp_len:
+				self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
+			else:
+				self.log.info('*** OK: Username %r of %r has expected length {!r}.', username, person.role, exp_len)
 
-			self.log.info('*** OK 1/3: All %r users were created correctly.', len(person_list))
+		self.log.info('*** OK 2/3: All %r users were created correctly.', len(person_list))
+		self.log.info('*** 3/3: Importing a user from each role (invalid username:max_length settings)...')
 
-		def test_custom_settings():
-			self.log.info('*** 2/3: Importing a user from each role (custom username:max_length settings)...')
-
-			username_lengths = {
-				'student': random.randint(5, 15),  # keep in legal range
-				'teacher': random.randint(5, 20),
-				'staff': random.randint(5, 20),
-				'teacher_and_staff': random.randint(5, 20),
-			}
-			# use default values for two roles
-			for _ in range(2):
-				role_uses_default = random.choice(username_lengths.keys())
-				del username_lengths[role_uses_default]
-			username_lengths['default'] = random.randint(5, 20)
-			self.log.info('*** username_lengths=%r', username_lengths)
-			for k, v in username_lengths.items():
-				config.update_entry('username:max_length:{}'.format(k), v)
-			source_uid = 'source_uid-{}'.format(uts.random_string())
-			config.update_entry('source_uid', source_uid)
-
-			person_list = list()
-			for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-				person = Person(self.ou_A.name, role)
-				record_uid = 'record_uid-%s' % (uts.random_string(),)
-				person.update(
-					record_uid=record_uid,
-					source_uid=source_uid,
-					firstname=uts.random_username(20),
-					lastname=uts.random_username(20),
-					username=None,
-					mail=None,
-				)
-				person_list.append(person)
-			fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
+		# keep all in legal range
+		username_lengths = {
+			'default': 20,
+			'student': 15,
+			'teacher': 20,
+			'staff': 20,
+			'teacher_and_staff': 20,
+		}
+		old_key = None
+		# raise one after another to high
+		for k, v in username_lengths.items():
+			config.update_entry('username:max_length:{}'.format(k), v + 1)
+			if old_key:
+				config.update_entry('username:max_length:{}'.format(old_key), username_lengths[old_key])
+			old_key = k
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
-			self.run_import(['-c', fn_config])
-			self.check_new_and_removed_users(4, 0)
+			try:
+				self.run_import(['-c', fn_config])
+				self.fail('Import should have failed because of to high value for username_length of {!r}: {!r}.'.format(k, v + 1))
+			except ImportException as exc:
+				self.log.info('*** OK: expected ImportException.')
 
-			filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
-			for person in person_list:
-				filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
-				res = self.lo.search(filter=filter_s)
-				if len(res) != 1:
-					self.fail('Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
-				dn = res[0][0]
-				username = res[0][1]['uid'][0]
-				self.log.debug('*** role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
-				# special configuration with lower max_length
-				try:
-					exp_len = username_lengths[person.role]
-				except KeyError:
-					if person.role == 'student':
-						exp_len = 15  # from user_import_defaults.json
-					else:
-						exp_len = username_lengths['default']
-
-				if len(username) != exp_len:
-					self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
-				else:
-					self.log.info('*** OK: Username %r of %r has expected length {!r}.', username, person.role, exp_len)
-
-			self.log.info('*** OK 2/3: All %r users were created correctly.', len(person_list))
-
-		def test_settings_higher_than_20():
-			self.log.info('*** 3/3: Importing a user from each role (custom username:max_length settings higher than 20)...')
-
-			username_lengths = {
-				'student': random.randint(31, 55),
-				'teacher': random.randint(31, 55),
-				'staff': random.randint(31, 55),
-				'teacher_and_staff': random.randint(31, 55),
-			}
-			# use default values for two roles
-			for _ in range(2):
-				role_uses_default = random.choice(username_lengths.keys())
-				del username_lengths[role_uses_default]
-				try:
-					del config['username']['max_length'][role_uses_default]
-				except KeyError:
-					pass
-			username_lengths['default'] = random.randint(21, 30)
-			self.log.info('*** username_lengths=%r', username_lengths)
-			for k, v in username_lengths.items():
-				config.update_entry('username:max_length:{}'.format(k), v)
-			source_uid = 'source_uid-{}'.format(uts.random_string())
-			config.update_entry('source_uid', source_uid)
-
-			person_list = list()
-			for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-				person = Person(self.ou_A.name, role)
-				record_uid = 'record_uid-%s' % (uts.random_string(),)
-				person.update(
-					record_uid=record_uid,
-					source_uid=source_uid,
-					firstname=uts.random_username(30),
-					lastname=uts.random_username(30),
-					username=None,
-					mail=None,
-				)
-				person_list.append(person)
-			fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(values=config)
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config])
-			self.check_new_and_removed_users(4, 0)
-
-			filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
-			for person in person_list:
-				filter_s = '(&{}{})'.format(filter_src, filter_format('(ucsschoolRecordUID=%s)', (person.record_uid,)))
-				res = self.lo.search(filter=filter_s)
-				if len(res) != 1:
-					self.fail(
-						'Search with filter={!r} did not return 1 result:\n{}'.format(filter_s, '\n'.join(repr(res))))
-				dn = res[0][0]
-				username = res[0][1]['uid'][0]
-				self.log.debug('*** role=%r username=%r len(username)=%r dn=%r', person.role, username, len(username), dn)
-				try:
-					exp_len = username_lengths[person.role]
-				except KeyError:
-					if person.role == 'student':
-						exp_len = 15  # from user_import_defaults.json
-					else:
-						exp_len = username_lengths['default']
-
-				if len(username) != exp_len:
-					self.fail('Length of username {!r} of {!r} is {}, expected {} (dn={!r}).'.format(username, person.role, len(username), exp_len, dn))
-				else:
-					self.log.info('*** OK: Username %r of %r has expected length {!r}.', username, person.role, exp_len)
-
-			self.log.info('*** OK 3/3: All %r users were created correctly.', len(person_list))
-
-		test_default_settings()
-		test_custom_settings()
-		test_settings_higher_than_20()
+		self.log.info('*** OK 3/3: All imports failed as expected.')
 
 
 if __name__ == '__main__':
