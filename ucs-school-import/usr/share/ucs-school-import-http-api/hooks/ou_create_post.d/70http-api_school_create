@@ -41,8 +41,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
 django.setup()
 
 # create Django School object
+from ucsschool.http_api.import_api.models import School
 try:
-	from ucsschool.http_api.import_api.models import School
 	School.update_from_ldap(ou)
 except RuntimeError as exc:
 	# handle running in other Django app process
