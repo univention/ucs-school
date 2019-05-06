@@ -11,6 +11,7 @@
 import copy
 import random
 from ldap.filter import filter_format
+import univention.config_registry
 from ucsschool.lib.models.utils import ucr_username_max_length
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
@@ -145,8 +146,8 @@ class Test(CLI_Import_v2_Tester):
 
 			self.log.info('*** OK 2/3: All %r users were created correctly.', len(person_list))
 
-		def test_settings_higher_than_20():
-			self.log.info('*** 3/3: Importing a user from each role (custom username:max_length settings higher than 20)...')
+		def test_settings_higher_than_20(set_ucr):
+			self.log.info('*** 3/3: Importing a user from each role (custom username:max_length settings higher than 20) and UCR is%s set...', '' if set_ucr else ' NOT')
 
 			username_lengths = {
 				'student': random.randint(31, 55),
@@ -184,9 +185,25 @@ class Test(CLI_Import_v2_Tester):
 				person_list.append(person)
 			fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
 			config.update_entry('input:filename', fn_csv)
+			if set_ucr:
+				univention.config_registry.handler_set(['ucsschool/username/max_length=60'])
+				ucr_username_max_length = int(self.ucr.get("ucsschool/username/max_length", 20))
+			else:
+				if self.ucr.get('ucsschool/username/max_length') is not None:
+					univention.config_registry.handler_unset(['ucsschool/username/max_length'])
+				ucr_username_max_length = int(self.ucr.get("ucsschool/username/max_length", 20))
+			self.log.info('*** UCRV ucsschool/username/max_length = %r', self.ucr.get("ucsschool/username/max_length"))
+			self.log.info('*** ucr_username_max_length = %r', ucr_username_max_length)
 			fn_config = self.create_config_json(values=config)
 			self.save_ldap_status()
-			self.run_import(['-c', fn_config])
+			try:
+				self.run_import(['-c', fn_config])
+				if not set_ucr:
+					self.fail('Import should have failed, because UCRV was not set and username:max_length:* to high.')
+			except ImportException:
+				if not set_ucr:
+					self.log.info('OK: Import failed as expected.')
+					return
 			self.check_new_and_removed_users(4, 0)
 
 			filter_src = filter_format('(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)', (source_uid,))
@@ -216,7 +233,8 @@ class Test(CLI_Import_v2_Tester):
 
 		test_default_settings()
 		test_custom_settings()
-		test_settings_higher_than_20()
+		test_settings_higher_than_20(set_ucr=False)  # without setting the UCRV, settings > 20 should be ignored
+		test_settings_higher_than_20(set_ucr=True)
 
 
 if __name__ == '__main__':

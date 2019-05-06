@@ -35,7 +35,7 @@ See docstring of module ucsschool.importer.utils.configuration_checks on how to
 add your own checks.
 """
 
-from ucsschool.lib.models.utils import ucr
+from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
 
@@ -63,27 +63,33 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 				"The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'.")
 
 	def test_username_max_length(self):
+		self.logger.info('UCRV ucsschool/username/max_length=%r', ucr.get('ucsschool/username/max_length'))
 		for role in ('default', 'staff', 'student', 'teacher', 'teacher_and_staff'):
 			try:
 				username_max_length = self.config["username"]["max_length"][role]
+				if username_max_length < 4:
+					raise InitialisationError(
+						"Configuration value of username:max_length:{} must be higher than 3.".format(role)
+					)
+				if username_max_length > ucr_username_max_length:
+					raise InitialisationError(
+						"Configuration value of username:max_length:{} is {!r}, but must not be higher than UCR variable "
+						"ucsschool/username/max_length ({}).".format(role, username_max_length, int(ucr_username_max_length))
+					)
 			except KeyError:
-				continue
-			if username_max_length < 4:
-				raise InitialisationError(
-					"Configuration value of username:max_length:{} must be higher than 3.".format(role)
-				)
-		for role in ('default', 'staff', 'teacher', 'teacher_and_staff'):
-			username_max_length = self.config["username"]["max_length"].get(role, 20)
+				pass
+
+			username_max_length = self.config["username"]["max_length"].get(role, ucr_username_max_length)
 			if username_max_length > 20:
 				self.logger.warning(
-					"Configuration value of username:max_length:%s is higher than 20. "
+					"Configuration value of username:max_length:%s (%d) is higher than 20. "
 					"Logging into Windows < 8.1 will not be possible.",
-					role)
+					username_max_length, role)
 
 	def test_exam_user_prefix_length(self):
 		exam_user_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
 		exam_user_prefix_length = len(exam_user_prefix)
-		student_username_max_length = self.config["username"]["max_length"].get("student", 20)
+		student_username_max_length = self.config["username"]["max_length"].get("student", ucr_username_max_length)
 		if student_username_max_length > 20 - exam_user_prefix_length:
 			self.logger.warning(
 				"Configuration value of username:max_length:student is higher than %d (20 - length(%r)). "
