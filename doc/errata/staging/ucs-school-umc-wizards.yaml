@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-wizards
+fix: 11.0.0-5A~4.4.0.201905061457
+desc: |
+ * Usernames are now allowed to be longer than <literal>20</literal> characters. See <package>ucs-school-import</package> for more information (Bug #47222).
+bug: [47222]

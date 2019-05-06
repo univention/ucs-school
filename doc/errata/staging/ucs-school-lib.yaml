@@ -3,9 +3,10 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src:  ucs-school-lib
-fix: 12.1.1-5A~4.4.0.201905021737
+fix: 12.1.1-6A~4.4.0.201905061453
 desc: |
  * Fixed a bug which prevented domain lists in internetrules to be changed. (Bug #49312).
  * Getting all UDM objects opened every object twice unnecessarily. (Bug #49329).
  * Hook execution ist now logged (Bug #48141).
-bug: [49312, 49329, 48141]
+ * Usernames are now allowed to be longer than <literal>20</literal> characters. See <package>ucs-school-import</package> for more information (Bug #47222).
+bug: [49312, 49329, 48141, 47222]
