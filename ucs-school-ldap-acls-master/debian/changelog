@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (16.0.4-1) unstable; urgency=low
+
+  * Bug #48924: give permission for administrative slaves/memberservers to
+    read/replicate multi-OU staff users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 06 May 2019 13:57:00 +0200
+
 ucs-school-ldap-acls-master (16.0.3-1) unstable; urgency=low
 
   * Bug #48068: added UCR variable ucsschool/ldap/replicate_staff_to_edu
