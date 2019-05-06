@@ -546,7 +546,7 @@ class Project(_Dict):
 
 		return len(usersFailed) == 0
 
-	def collect(self, dirsFailed=None, readOnly=False):
+	def collect(self, dirsFailed=None, readOnly=False, compress=False):
 		if not isinstance(dirsFailed, list):
 			dirsFailed = []
 
@@ -557,8 +557,9 @@ class Project(_Dict):
 		for recipient in self.getRecipients():
 			# guess a proper directory name (in case with " versionX" suffix)
 			dirVersion = 1
+			compressed_suffix = '.zip' if compress else ''
 			targetdir = os.path.join(self.sender_projectdir, recipient.username)
-			while os.path.exists(targetdir):
+			while os.path.exists('{}{}'.format(targetdir, compressed_suffix)):
 				dirVersion += 1
 				targetdir = os.path.join(self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion))
 
@@ -574,10 +575,18 @@ class Project(_Dict):
 						# !important" don't let symlinks be copied (e.g. /etc/shadow).
 						# don't use shutil.copytree(symlinks=True) for this as it changes the owner + mode + flags of the symlinks afterwards
 						return [name for name in names if os.path.islink(os.path.join(src, name))]
-					shutil.copytree(srcdir, targetdir, ignore=ignore)
+					# zip is hard coded for now. But it could be possible to make it configurable
+					if compress and 'zip' in (e[0] for e in shutil.get_archive_formats()):
+						shutil.make_archive(targetdir, 'zip', srcdir)
+					else:
+						shutil.copytree(srcdir, targetdir, ignore=ignore)
 
+					# Necessary for correct filename in the permission fixing
+					targetdir = targetdir + compressed_suffix
 					# fix permission
 					os.chown(targetdir, int(self.sender.uidNumber), int(self.sender.gidNumber))
+					if compress:
+						os.chmod(targetdir, 0o600)
 					for root, dirs, files in os.walk(targetdir):
 						for momo in dirs + files:
 							os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))
