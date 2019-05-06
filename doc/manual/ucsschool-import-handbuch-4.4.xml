@@ -821,9 +821,11 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 							</row>
 <!-- username:max_length:default -->
 							<row>
-								<entry morerows="2"><varname>username: \ max_length: \ default</varname></entry>
-								<entry>Länge eines Benutzernamens, wenn keine Konfiguration speziell für diesen Benutzertyp (<literal>username:max_length:staff</literal> etc) existiert.</entry>
-								<entry><emphasis>Achtung: </emphasis>Benutzerkonten mit Benutzernamen über 20 Zeichen Länge sind vom Support für Samba, Samba4-connector und Active Directory-connector ausgeschlossen. Wenn Window Clients vor 8.1 verwendet werden, darf die Länge Benutzernamen 20 nicht übersteigen, oder es wird nicht möglich sein sich in diese einzuloggen.</entry>
+								<entry morerows="1"><varname>username: \ max_length: \ default</varname></entry>
+								<entry>
+									<para>Länge eines Benutzernamens, wenn keine Konfiguration speziell für diesen Benutzertyp (<literal>username:max_length:staff</literal> etc) existiert.</para>
+									<para><emphasis>Achtung: </emphasis>Benutzerkonten mit Benutzernamen über 20 Zeichen Länge sind vom Support für Samba, Samba4-connector und Active Directory-connector ausgeschlossen. Wenn Window Clients vor 8.1 verwendet werden, darf die Länge Benutzernamen 20 nicht übersteigen, oder es wird nicht möglich sein sich in diese einzuloggen.</para>
+								</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>int</classname>): <literal>20</literal></entry>
