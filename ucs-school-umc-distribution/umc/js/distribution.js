@@ -45,7 +45,7 @@ define([
 ], function(declare, lang, Deferred, dialog, tools, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	var cmpUsername = function(a, b) {
-		return a && b && a.toLowerCase() == b.toLowerCase();
+		return a && b && a.toLowerCase() === b.toLowerCase();
 	};
 
 	return declare("umc.modules.distribution", [ Module ], {
@@ -217,40 +217,26 @@ define([
 		_distribute: function(ids, items) {
 
 			if (!items[0].recipients) {
-				// no recipients have been added to project, abort
 				dialog.alert(_('Error: No recipients have been assigned to the project!'));
 				return;
 			}
-			var check1 = new Deferred();
-			if (!items[0].files && !items[0].isDistributed) {
-				// no files have been added to project, abort
-				dialog.confirm(_('Warning: No files have been assigned to the project!'), [{
-					label: _('Cancel'),
-					callback: function() {check1.reject({log: false});}
-				}, {
-					label: _('Distribute empty project'),
-					callback: function() {check1.resolve();},
-					'default': true
-				}]);
-			} else {
-				check1.resolve();
-			}
 
-			var msg = items[0].isDistributed ?
-				_('Please confirm to collect the project <i>%s</i>.', items[0].description) :
-				_('Please confirm to distribute the project <i>%s</i>.', items[0].description);
-			var check2 = new Deferred();
-			check1.then(function() {
-				dialog.confirm(msg, [{
-					label: _('Cancel'),
-					callback: function() {check2.reject({log: false});}
-				}, {
-					label: items[0].isDistributed ? _('Collect project') : _('Distribute project'),
-					callback: function() {check2.resolve();},
-					'default': true
-				}]);
-			}, function() {check2.reject({log: false});});
-			check2.then(lang.hitch(this, function() {
+			var msg = _('Please confirm to collect the project <i>%s</i>.', items[0].description);
+			if (!items[0].isDistributed && items[0].files) {
+				msg = _('Please confirm to distribute the project <i>%s</i>.', items[0].description);
+			} else if (!items[0].isDistributed && !items[0].files) {
+				msg = _('Warning: No files have been assigned to the project!<br>Please confirm to distribute the empty project <i>%s</i>.', items[0].description);
+			}
+			var stepConfirmation = new Deferred();
+			dialog.confirm(msg, [{
+				label: _('Cancel'),
+				callback: function() {stepConfirmation.reject({log: false});}
+			}, {
+				label: items[0].isDistributed ? _('Collect project') : _('Distribute project'),
+				callback: function() {stepConfirmation.resolve();},
+				'default': true
+			}]);
+			stepConfirmation.then(lang.hitch(this, function() {
 				// collect or distribute the project, according to its current state
 				var cmd = items[0].isDistributed ? 'distribution/collect' : 'distribution/distribute';
 				this.standbyDuring(this.umcpCommand(cmd, ids)).then(lang.hitch(this, function(response) {
@@ -279,7 +265,7 @@ define([
 		},
 
 		_editObject: function(ids, items) {
-			if (this.moduleFlavor == 'teacher' && !cmpUsername(items[0].sender, tools.status('username'))) {
+			if (this.moduleFlavor === 'teacher' && !cmpUsername(items[0].sender, tools.status('username'))) {
 				// a teacher may only edit his own project
 				dialog.alert(_('Only the owner of a project is able to edit its details. If necessary, you are able to transfer the ownership of a project to your account by executing the action "adopt".'));
 				return;

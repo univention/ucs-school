@@ -145,10 +145,6 @@ msgstr "Bearbeiten"
 msgid "Edit the selected distribution project."
 msgstr "Das ausgewählte Verteilungsprojekt bearbeiten."
 
-#: umc/js/distribution.js:225
-msgid "Warning: No files have been assigned to the project!"
-msgstr "Warnung: Keine Datei wurden dem Projekt hinzugefügt!"
-
 #: umc/js/distribution.js:231
 msgid "Distribute empty project"
 msgstr "Projekt leer verteilen"
@@ -224,6 +220,16 @@ msgstr ""
 msgid "Please confirm to distribute the project <i>%s</i>."
 msgstr ""
 "Bitte bestätigen Sie, um Dateien des ausgewählten Projektes <i>%s</i> zu "
+"verteilen."
+
+#: umc/js/distribution.js:228
+#, javascript-format
+msgid ""
+"Warning: No files have been assigned to the project!<br>"
+"Please confirm to distribute the empty project <i>%s</i>."
+msgstr ""
+"Warnung: Keine Datei wurden dem Projekt hinzugefügt!<br>"
+"Bitte bestätigen Sie, um das leere ausgewählte Projekt <i>%s</i> zu "
 "verteilen."
 
 #: umc/js/distribution.js:315

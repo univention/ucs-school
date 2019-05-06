@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.0-5) unstable; urgency=medium
+
+  * Bug #47160: Remove separate confirmation dialog for empty projects
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 06 May 2019 11:20:34 +0200
+
 ucs-school-umc-distribution (17.0.0-4) unstable; urgency=medium
 
   * Bug #47160: fix typo that broke automatic distribution
