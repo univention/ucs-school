@@ -100,6 +100,10 @@ After that follow
 	                                    The characters listed here will never be used as first or last character in a
 	                                    username.
 	"max_length": {                     IMPORTANT:
+	                                    * Users with usernames longer than 20 characters are excluded from the support
+	                                    regarding Samba, Samba4 connector app and Active Directory connector app.
+	                                    If using a "max_length" value above 20, users with usernames shorter than 21 are
+	                                    still supported.
 	                                    * If Window clients < 8.1 are in use, the maximum username lenght must
 	                                    not exceed 20, or logging into them will not be possible!
 	                                    * If scheme:username contains a COUNTER variable the maximum length of a
