@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-11) unstable; urgency=low
+
+  * Bug #47222: allow usernames longer than 20 characters
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 May 2019 14:49:42 +0200
+
 ucs-school-import (17.0.6-10) unstable; urgency=low
 
   * Bug #47222: revert code premitting usernames longer than 20 characters

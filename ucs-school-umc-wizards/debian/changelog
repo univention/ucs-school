@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-5) unstable; urgency=low
+
+  * Bug #47222: allow usernames longer than 20 characters
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 May 2019 14:50:42 +0200
+
 ucs-school-umc-wizards (11.0.0-4) unstable; urgency=low
 
   * Bug #48743: fixed typo in tooltip
