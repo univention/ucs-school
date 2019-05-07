@@ -252,7 +252,7 @@ msgid ""
 "%s characters. Please choose a shorter username."
 msgstr ""
 "Microsoft Active Directory begrenzt Benutzernamen auf 20 Zeichen. Um "
-"Anmeldeprobleme mit Prüfungsbenutzern zu vermeiden, sollten Benutzernamen "
+"Anmeldeprobleme mit Prüfungsbenutzern zu vermeiden, dürfen Benutzernamen "
 "nicht länger als %s Zeichen sein. Bitte wählen Sie einen kürzeren "
 "Benutzernamen."
 
