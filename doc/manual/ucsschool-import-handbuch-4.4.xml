@@ -825,7 +825,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 								<entry>
 									<para>Länge eines Benutzernamens, wenn keine Konfiguration speziell für diesen Benutzertyp (<literal>username:max_length:staff</literal> etc) existiert.</para>
 									<para><emphasis>Achtung: </emphasis>Benutzerkonten mit Benutzernamen über 20 Zeichen Länge sind vom Support für Samba, Samba4-connector und Active Directory-connector ausgeschlossen. Für eine fehlerfreie Funktionalität von Windows-Clients, in der Domäne, dürfen Benutzernamen nicht über mehr als 20 Zeichen verfügen.</para>
-									<para>Der Wert darf den der &ucsUCR;-Variablen ucsschool/username/max_length nicht überschreiten.</para>
+									<para>Der Wert darf den der &ucsUCR;-Variablen <envar>ucsschool/username/max_length</envar> nicht überschreiten.</para>
 									<para>Der Wert von <literal>username:max_length:student</literal> wird automatisch berechnet, wenn nicht explizit gesetzt. Er muss um die Länge des <varname>exam-prefix</varname> (normalerweise <literal>exam-</literal>, also 5) niedriger sein, als der von <literal>username:max_length:default</literal>.</para>
 								</entry>
 							</row>
