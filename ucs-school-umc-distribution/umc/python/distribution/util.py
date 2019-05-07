@@ -547,16 +547,38 @@ class Project(_Dict):
 
 		return len(usersFailed) == 0
 
-	def _next_target_dir(self, recipient):
-		targetdir = os.path.join(self.sender_projectdir, recipient.username)
-		all_versions = list((int(number) for number in itertools.chain(*[re.findall(r'version(\d+)', entry) for entry in os.listdir(self.sender_projectdir)])))
+	def _next_target(self, recipient):
+		all_versions = list((int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in os.listdir(self.sender_projectdir)])))
 		current_version = max([0] + all_versions)
-		first_target_exists = os.path.exists(targetdir)
-		if current_version == 0 and first_target_exists:  # only the first backup was created so far -> next version is 2
-			targetdir = os.path.join(self.sender_projectdir, '%s version2' % recipient.username)
-		elif current_version != 0:  # We can just count up
-			targetdir = os.path.join(self.sender_projectdir, '%s version%d' % (recipient.username, current_version + 1))
-		return targetdir
+		return os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, current_version+1))
+
+	def prune_results(self, limit):
+		"""
+		This function removes collected results from students as long as the number of existing collected results
+		is bigger than the given limit. It starts from the oldest version and works its way up.
+		:param limit: The number of collected results to prune to. Negative numbers are cropped to 0
+		:type limit: int
+		:return: The number of deleted results per student
+		"""
+
+		def _delete_result(target):
+			try:
+				if os.path.isfile(target + '.zip'):
+					os.remove(target+'.zip')
+				else:
+					shutil.rmtree(target)
+			except (OSError, IOError, ValueError):
+				MODULE.warn('Deletion failed: "%s"' % (target))
+				MODULE.info('Traceback:\n%s' % traceback.format_exc())
+
+		limit = max((limit, 0))
+		projectdir_content = os.listdir(self.sender_projectdir)
+		for recipient in self.getRecipients():
+			all_versions = list((int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in projectdir_content])))
+			all_versions.sort(reverse=True)
+			while len(all_versions) > limit:
+				target = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, all_versions.pop()))
+				_delete_result(target)
 
 	def collect(self, dirsFailed=None, readOnly=False, compress=False):
 		if not isinstance(dirsFailed, list):
@@ -568,7 +590,7 @@ class Project(_Dict):
 		# collect data from all recipients
 		for recipient in self.getRecipients():
 			compressed_suffix = '.zip' if compress else ''
-			targetdir = self._next_target_dir(recipient)
+			targetdir = self._next_target(recipient)
 
 			# copy entire directory of the recipient
 			srcdir = os.path.join(self.user_projectdir(recipient))
