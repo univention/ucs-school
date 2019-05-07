@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.0-7A~4.4.0.201904231130
+fix: 9.0.0-8A~4.4.0.201905071152
 desc: |
  * The students result files of a running exam can now be automatically collected. The default is to collect them every <literal>5</literal> minutes. The interval can be configured using the UCR variable <envar>ucsschool/exam/cron/backup</envar>. The feature can be switched on by setting <envar>ucsschool/exam/cron/backup/activated</envar> to <literal>true</literal>. (Bug #49227).
-bug: [49227]
+ * The ou_create_post execution time is now logged (Bug #49423).
+bug: [49227, 49423]
