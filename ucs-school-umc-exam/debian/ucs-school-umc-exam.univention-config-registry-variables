@@ -64,6 +64,12 @@ Description[de]=Definiert, ob das Backup der Examdaten eines Schülers komprimie
 Type=bool
 Categories=ucsschool-exam
 
+[ucsschool/exam/backup/limit]
+Description[en]=Specifies the maximum amount of backups per student and exam. The default is 40 and the minimum is 1. Numbers smaller than that deactivate the limit.
+Description[de]=Definiert die maximale Anzahl an Zwischenergebnissen, die pro Schüler und Klassenarbeit vorgehalten werden. Der Standardwert ist 40 und das Minimum ist 1. Kleinere Zahlen deaktivieren das Limit.
+Type=int
+Categories=ucsschool-exam
+
 [ucsschool/exam/cron/cleanup/options]
 Description[en]=Specifies additional options for the script exam-and-room-cleanup (no additional options by default)
 Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup (standardmäßig keine zusätzlichen Optionen)
