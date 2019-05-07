@@ -118,13 +118,13 @@ define([
 						if (tools.isTrue(this._checkMaxUsernameLength)) {
 							var widget = this.getWidget('item', 'name');
 							if (widget) {
-								widget.set('invalidMessage', _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength));
+								widget.set('invalidMessage', _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames must not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength));
 							}
 							return value.length <= this._maxUsernameLength;
 						}
 						return true;
 					}),
-					invalidMessage: _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength)
+					invalidMessage: _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames must not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength)
 				}, {
 					type: ComboBox,
 					name: 'school_classes',
