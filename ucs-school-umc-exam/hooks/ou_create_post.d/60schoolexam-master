@@ -34,6 +34,8 @@
 
 [ $# -ne 2 ] && echo "USAGE: $(basename $0) FILE DN" && exit 1
 
+echo "$(date) $(basename $0) Start"
+
 . /usr/share/univention-lib/ucr.sh
 
 eval "$(ucr shell)"
@@ -62,6 +64,6 @@ udm groups/group create --ignore_exists \
 	--position "cn=ucsschool,cn=groups,${ldap_base}" \
 	--set name="${ou_specific_examgroupname}"
 
-echo "$(basename $0): Exam container 'cn=${examusers},ou=${ou}${district}' and group '${ou_specific_examgroupname}' created."
+echo "$(date) $(basename $0): Exam container 'cn=${examusers},ou=${ou}${district}' and group '${ou_specific_examgroupname}' created."
 
 exit 0
