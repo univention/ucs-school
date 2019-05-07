@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.6-12A~4.4.0.201905071149
+fix: 17.0.6-13A~4.4.0.201905071623
 desc: |
  * Improved lookup performance of the shipped syntax classes that slowed down the opening of user objects considerably when a lot of schools exist. (Bug #49329).
  * Duplicate hook execution code was removed (Bug #48141).
