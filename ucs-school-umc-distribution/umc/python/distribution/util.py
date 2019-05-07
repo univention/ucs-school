@@ -258,6 +258,15 @@ class Project(_Dict):
 		else:
 			self.update(_props)
 
+	@staticmethod
+	def _get_directory_size(src):
+		needed_space = 0
+		for (path, dirs, files) in os.walk(src):
+			for file in files:
+				filename = os.path.join(path, file)
+				needed_space += os.path.getsize(filename)
+		return needed_space
+
 	@property
 	def projectfile(self):
 		'''The absolute project path to the project file.'''
@@ -547,18 +556,31 @@ class Project(_Dict):
 
 		return len(usersFailed) == 0
 
+	def _all_versions(self, recipient):
+		"""
+		Returns a generator containing all version numbers of existing results for a given recipient.
+		:param recipient: The recipient to get the versions for
+		:type recipient: User
+		:return: iterator(int)
+		"""
+		return (int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in os.listdir(self.sender_projectdir)]))
+
 	def _next_target(self, recipient):
-		all_versions = list((int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in os.listdir(self.sender_projectdir)])))
-		current_version = max([0] + all_versions)
+		current_version = max([0] + list(self._all_versions(recipient)))
 		return os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, current_version+1))
 
-	def prune_results(self, limit):
+	def _get_available_space(self):
+		statvfs = os.statvfs(self.sender_projectdir)
+		return statvfs.f_frsize * statvfs.f_bavail
+
+	def prune_results(self, limit, username=None):
 		"""
 		This function removes collected results from students as long as the number of existing collected results
 		is bigger than the given limit. It starts from the oldest version and works its way up.
 		:param limit: The number of collected results to prune to. Negative numbers are cropped to 0
 		:type limit: int
-		:return: The number of deleted results per student
+		:param username: If the value is set, the pruning is restricted to the specified user
+		:type username: None | string
 		"""
 
 		def _delete_result(target):
@@ -574,7 +596,9 @@ class Project(_Dict):
 		limit = max((limit, 0))
 		projectdir_content = os.listdir(self.sender_projectdir)
 		for recipient in self.getRecipients():
-			all_versions = list((int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in projectdir_content])))
+			if username and recipient.username != username:
+				continue
+			all_versions = list(self._all_versions(recipient))
 			all_versions.sort(reverse=True)
 			while len(all_versions) > limit:
 				target = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, all_versions.pop()))
@@ -594,6 +618,22 @@ class Project(_Dict):
 
 			# copy entire directory of the recipient
 			srcdir = os.path.join(self.user_projectdir(recipient))
+			# check space requirements
+			src_size = self._get_directory_size(srcdir)
+			available_space = self._get_available_space()
+			if available_space - src_size < 0:
+				MODULE.warn('not enough space to copy from %s to %s' % (srcdir, targetdir))
+				versions = list(self._all_versions(recipient))
+				versions.sort(reverse=True)
+				oldest_version = versions.pop()
+				oldest_result = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, oldest_version))
+				oldest_result_size = self._get_directory_size(oldest_result)
+				if ((available_space - src_size) * -1) < oldest_result_size:
+					MODULE.warn('creating necessary space, by deleting oldest collected result')
+					self.prune_results(len(versions), username=recipient.username)
+				else:
+					MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
+					dirsFailed.append(srcdir)
 			MODULE.info('collecting data for user "%s" from %s to %s' % (recipient.username, srcdir, targetdir))
 			if not os.path.isdir(srcdir):
 				MODULE.info('Source directory does not exist (no files distributed?)')
