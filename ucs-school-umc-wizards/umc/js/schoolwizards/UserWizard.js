@@ -54,7 +54,7 @@ define([
 		loadVariables: function() {
 			return tools.ucr([
 				'ucsschool/ldap/default/userprefix/exam',
-				'ucsschool/ldap/check/username/lengthlimit'
+				'ucsschool/ldap/check/username/lengthlimit',
 				'ucsschool/username/max_length'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
