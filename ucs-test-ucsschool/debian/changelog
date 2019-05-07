@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-51) unstable; urgency=low
+
+  * Bug #47222: handle username_max_length changes
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 May 2019 16:15:08 +0200
+
 ucs-test-ucsschool (6.0.0-50) unstable; urgency=low
 
   * Bug #47222: test usernames longer than 20 characters

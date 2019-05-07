@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [45577]
+## bugs: [45577, 47222]
 
 import copy
 import univention.testing.strings as uts
@@ -27,14 +27,13 @@ class Test(CLI_Import_v2_Tester):
 
 	def test(self):
 		"""
-		Bug #45577: allow import with usernames longer than 15 characters
+		Bug #45577, #47222: allow import with usernames longer than 15 characters
 		"""
+		if self.ucr.get('ucsschool/username/max_length') is not None:
+			univention.config_registry.handler_unset(['ucsschool/username/max_length'])
+
 		self.log.info('*** checking installed configuration')
-		assert ImportStudent.default_username_max_length == ucr_username_max_length - 5
-		assert ImportTeacher.default_username_max_length == ucr_username_max_length
-		assert ImportStudent().default_username_max_length == ucr_username_max_length - 5
-		assert ImportTeacher().default_username_max_length == ucr_username_max_length
-		assert ImportStudent().username_max_length == ucr_username_max_length - 5
+		assert ImportStudent().username_max_length <= ucr_username_max_length - 5
 		assert ImportTeacher().username_max_length == ucr_username_max_length
 
 		config = copy.deepcopy(ImportStudent().config)
@@ -63,9 +62,7 @@ class Test(CLI_Import_v2_Tester):
 					self.log.debug('***   config["username"]["max_length"]=%r', config['username']['max_length'])
 					run_configuration_checks(config)
 					ImportStudent.config = config
-					ImportStudent.default_username_max_length = ImportStudent._default_username_max_length
 					ImportTeacher.config = config
-					ImportTeacher.default_username_max_length = ImportTeacher._default_username_max_length
 					for firstname_length in range(3, 21):
 						firstname = uts.random_username(firstname_length)
 						assert len(firstname) == firstname_length
