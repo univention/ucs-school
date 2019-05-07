@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# Copyright 2017-2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+#
+#  Concatenation of previous:
+#  * 53importgroup_create (Creates a Import Group)
+#  * 70http-api_school_create (update Django School objects from LDAP)
+#
+
+[[ $# -ne 2 ]] && echo "USAGE: $(basename $0) FILE DN" && exit 1
+
+echo "$(date) $(basename $0) Start"
+
+. /usr/share/univention-lib/ucr.sh
+
+eval "$(ucr shell)"
+
+ou="$(awk -F '\t' '{print $1}' "$1")"
+if is_ucr_true "ucsschool/ldap/district/enable" ; then
+	district=",ou=${ou:0:2}"
+else
+	district=""
+fi
+
+
+echo "$(date) $(basename $0) ou: '$ou' district: '$district'"
+
+
+53importgroup_create () {
+	#
+	# 53importgroup_create (Creates a Import Group)
+	#
+	# arg1: camelcase OU
+	# arg2: district
+	#
+	local ou="$1"
+	local district="$2"
+
+	echo "$(date) $(basename $0): 53importgroup_create"
+
+	udm groups/group create \
+		--position "cn=groups,ou=$ou${district},$ldap_base" \
+		--set name="$ou-import-all" \
+		--set description="Default group for UCS@school user imports" \
+		--policy-reference "cn=schoolimport-all,cn=UMC,cn=policies,$ldap_base" || exit $?
+
+	udm groups/group modify \
+		--dn "cn=$ou-import-all,cn=groups,ou=$ou${district},$ldap_base" \
+		--append-option "ucsschoolImportGroup" \
+		--set ucsschoolImportSchool="$ou" \
+		--append ucsschoolImportRole=student \
+		--append ucsschoolImportRole=staff \
+		--append ucsschoolImportRole=teacher_and_staff \
+		--append ucsschoolImportRole=teacher || exit $?
+
+	echo "$(date) $(basename $0) (53importgroup_create): done."
+}
+
+70http_api_school_create () {
+	#
+	# 70http-api_school_create (update Django School objects from LDAP)
+	#
+	# arg1: camelcase OU
+	#
+	local ou="$1"
+
+	echo "$(date) $(basename $0): 70http_api_school_create"
+
+	/usr/bin/python /usr/share/pyshared/ucsschool/http_api/manage.py updateschools --ou "$ou"
+
+	echo "$(date) $(basename $0) (70http_api_school_create): done."
+}
+
+
+if is_ucr_true "ucsschool/import/generate/import/group"; then
+	53importgroup_create "$ou" "$district"
+else
+	echo "$(basename $0): creation of the Import Group has been disabled by ucsschool/import/generate/import/group"
+fi
+
+70http_api_school_create "$ou"
+
+exit 0

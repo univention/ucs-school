@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-12) unstable; urgency=low
+
+  * Bug #49423: unify ou_create_post scripts to reduce thier execution time
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 May 2019 11:33:05 +0200
+
 ucs-school-import (17.0.6-11) unstable; urgency=low
 
   * Bug #47222: allow usernames longer than 20 characters

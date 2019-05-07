@@ -1,0 +1,251 @@
+#!/bin/bash
+
+# Copyright 2010-2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+#
+#  Concatenation of previous:
+#  * 40dhcpsearchbase_create (Creates a UCR-policy for DHCP searchbase)
+#  * 45dhcpdns_create (Creates a UCR-policy for DHCP DNS settings)
+#  * 52marktplatz_create (Creates a Markplatz share for the specified OUs)
+#  * 70server_uscschoolRole (Sets the ucsscchoolRole property on the school server (either singlemaster or slave)
+#
+
+[[ $# -ne 2 ]] && echo "USAGE: $(basename $0) FILE DN" && exit 1
+
+echo "$(date) $(basename $0) Start"
+
+. /usr/share/univention-lib/ucr.sh
+
+eval "$(ucr shell)"
+
+ou="$(awk -F '\t' '{print $1}' "$1")"
+ou_lower="${ou,,}"
+dcname="$(awk -F '\t' '{print $2}' "$1")"
+
+if [[ -z "$dcname" ]]; then
+	dcname="dc${ou}-01.${domainname}"
+else
+	dcname="${dcname}.${domainname}"
+fi
+
+if is_ucr_true "ucsschool/ldap/district/enable"; then
+	district=",ou=${ou:0:2}"
+else
+	district=""
+fi
+
+echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' district: '$district'"
+
+
+40dhcpsearchbase_create () {
+	#
+	# 40dhcpsearchbase_create (Creates a UCR-policy for DHCP searchbase)
+	#
+	# arg1: lowercase OU
+	# arg2: district
+	#
+	local ou_lower="$1"
+	local district="$2"
+
+	echo "$(date) $(basename $0): 40dhcpsearchbase_create"
+
+	# create policy
+	univention-directory-manager policies/registry create \
+		--ignore_exists \
+		--position "cn=policies,ou=${ou_lower}${district},${ldap_base}" \
+		--set "name=ou-default-ucr-policy"
+
+	# add value to policy
+	univention-directory-manager policies/registry modify \
+		--dn "cn=ou-default-ucr-policy,cn=policies,ou=${ou_lower}${district},${ldap_base}" \
+		--append "registry=dhcpd/ldap/base cn=dhcp,ou=${ou_lower}${district},${ldap_base}"
+
+	# link to OU
+	univention-directory-manager container/ou modify \
+		--dn "ou=${ou_lower}${district},${ldap_base}" \
+		--policy-reference "cn=ou-default-ucr-policy,cn=policies,ou=${ou_lower}${district},${ldap_base}"
+
+	echo "$(date) $(basename $0) (40dhcpsearchbase_create): done - added new UCR policy cn=ou-default-ucr-policy,cn=policies,ou=${ou_lower}${district},${ldap_base} to OU ou=${ou_lower}${district},${ldap_base}"
+}
+
+45dhcpdns_create () {
+	#
+	# 45dhcpdns_create (Creates a UCR-policy for DHCP DNS settings)
+	#   create dhcp dns policies for all local OUs (Bug #31930)
+	#
+	# arg1: lowercase OU
+	#
+	local ou_lower="$1"
+	local IFS="
+	"
+
+	echo "$(date) $(basename $0): 45dhcpdns_create"
+
+	# determine list of available OUs
+	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" "(&(objectClass=ucsschoolOrganizationalUnit)(ou=$ou_lower))" dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+		# create dhcp dns policy if missing
+		udm policies/dhcp_dns create --ignore_exists \
+			--position "cn=policies,$oudn" \
+			--set name="dhcp-dns-$ou_lower"
+
+		# in a single server environment, the master is the DNS server
+		if is_ucr_true "ucsschool/singlemaster"; then
+			if [[ "$server_role" = "domaincontroller_master" ]]; then
+				udm policies/dhcp_dns modify \
+					--dn "cn=dhcp-dns-$ou_lower,cn=policies,$oudn" \
+					--set domain_name_servers="$(get_default_ip_address)" \
+					--set domain_name="$domainname"
+			fi
+		fi
+
+		# assign dhcp dns policy to dhcp container if missing
+		udm container/cn modify \
+			--dn "cn=dhcp,$oudn" \
+			--policy-reference "cn=dhcp-dns-${ou_lower},cn=policies,$oudn"
+	done
+	echo "$(date) $(basename $0) (45dhcpdns_create): done"
+}
+
+52marktplatz_create () {
+	#
+	#  52marktplatz_create (Creates a Markplatz share for the specified OUs)
+	#
+	# arg1: camelcase OU
+	# arg2: district
+	#
+	local ou="$1"
+	local district="$2"
+
+	echo "$(date) $(basename $0): 52marktplatz_create"
+
+	sharepath="$ucsschool_import_generate_share_marktplatz_sharepath"
+	if [[ -z "$sharepath" ]]; then
+		if [[ -z "$ucsschool_import_roleshare" ]] || is_ucr_true "ucsschool/import/roleshare"; then
+			sharepath="/home/$ou/groups/Marktplatz"
+		else
+			sharepath="/home/groups/Marktplatz"
+		fi
+	fi
+
+	sharemode="$ucsschool_import_generate_share_marktplatz_permissions"
+	if [[ -z "$sharemode" ]]; then
+		sharemode="0777"
+	fi
+
+	sharegrp="$ucsschool_import_generate_share_marktplatz_group"
+	if [[ -z "$sharegrp" ]]; then
+		sharegrp="Domain Users"
+	fi
+	grpuidnumber="$(univention-ldapsearch -LLL "(&(objectclass=univentionGroup)(cn=${sharegrp}))" gidNumber | sed -ne 's/^gidNumber: //p')"
+
+	udm shares/share create --ignore_exists \
+		--position "cn=shares,ou=${ou}${district},${ldap_base}" \
+		--set name=Marktplatz \
+		--set "host=${dcname}" \
+		--set "path=${sharepath}" \
+		--set "directorymode=${sharemode}" \
+		--set "group=${grpuidnumber}"
+
+	echo "$(date) $(basename $0) (52marktplatz_create): done - added new share Markplatz for server ${dcname}"
+}
+
+70server_uscschoolRole () {
+	#
+	#  70server_uscschoolRole (Sets the ucsscchoolRole property on the school server (either singlemaster or slave)
+	#
+	# arg1: camelcase OU
+	# arg2: lowercase OU
+	# arg3: hostname of school server for OU
+	#
+
+	local ou="$1"
+	local ou_lower="$2"
+	local dcname="$3"
+	local adm_netz_dn edu_netz_dn base adm_server_dn edu_server_dn uot
+
+	echo "$(date) $(basename $0): 70server_uscschoolRole"
+
+	if is_ucr_true "ucsschool/singlemaster" ; then
+		univention-directory-manager computers/domaincontroller_master modify \
+			--dn "$ldap_hostdn" \
+			--append "ucsschoolRole=single_master:school:$ou"
+	else
+		adm_netz_dn="cn=OU${ou_lower}-DC-Verwaltungsnetz"
+		edu_netz_dn="cn=OU${ou_lower}-DC-Edukativnetz"
+		base="cn=ucsschool,cn=groups,${ldap_base}"
+
+		adm_server_dn="$(univention-ldapsearch -LLL -b "$base" "$adm_netz_dn" uniqueMember | ldapsearch-wrapper | egrep "^uniqueMember" | cut -f 2- -d ' ')"
+		edu_server_dn="$(univention-ldapsearch -LLL -b "$base" "$edu_netz_dn" uniqueMember | ldapsearch-wrapper | egrep "^uniqueMember" | cut -f 2- -d ' ')"
+
+		if [[ -n "$adm_server_dn" ]]; then
+			uot="$(univention-ldapsearch -LLL -b "$adm_server_dn" | egrep ^univentionObjectType)"
+			if [[ "$uot" = "univentionObjectType: computers/domaincontroller_slave" ]]; then
+				univention-directory-manager computers/domaincontroller_slave modify \
+					--dn "$adm_server_dn" \
+					--append "ucsschoolRole=dc_slave_admin:school:$ou"
+			else
+				echo "A DC slave was expected at ${adm_server_dn}. Not setting ucsscchoolRole property."
+			fi
+		fi
+
+		if [[ -n "$edu_server_dn" ]]; then
+			uot="$(univention-ldapsearch -LLL -b "$edu_server_dn" | egrep ^univentionObjectType)"
+			if [[ "$uot" = "univentionObjectType: computers/domaincontroller_slave" ]]; then
+				univention-directory-manager computers/domaincontroller_slave modify \
+					--dn "$edu_server_dn" \
+					--append "ucsschoolRole=dc_slave_edu:school:$ou"
+			else
+				echo "A DC slave was expected at ${edu_server_dn}. Not setting ucsscchoolRole property."
+			fi
+		fi
+	fi
+	echo "$(date) $(basename $0) (70server_uscschoolRole): done."
+}
+
+
+if ! is_ucr_true "ucsschool/import/generate/policy/dhcp/searchbase"; then
+	echo "$(date) $(basename $0) (40dhcpsearchbase_create): creation of UCR policy for DHCP searchbase has been disabled by ucsschool/import/generate/policy/dhcp/searchbase"
+else
+	40dhcpsearchbase_create "$ou_lower" "$district"
+fi
+
+if ! is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
+	echo "$(date) $(basename $0) (45dhcpdns_create): creation of DHCP DNS policy has been disabled by ucsschool/import/generate/policy/dhcp/dns/set_per_ou"
+else
+	45dhcpdns_create "$ou_lower"
+fi
+
+if ! is_ucr_true "ucsschool/import/generate/share/marktplatz"; then
+	echo "$(date) $(basename $0) (52marktplatz_create): creation of share 'Marktplatz' has been disabled by ucsschool/import/generate/share/marktplatz"
+else
+	52marktplatz_create "$ou" "$district"
+fi
+
+70server_uscschoolRole "$ou" "$ou_lower" "$dcname"
+
+exit 0
