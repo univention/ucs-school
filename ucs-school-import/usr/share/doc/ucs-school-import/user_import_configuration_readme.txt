@@ -104,6 +104,8 @@ After that follow
 	                                    regarding Samba, Samba4 connector app and Active Directory connector app.
 	                                    If using a "max_length" value above 20, users with usernames shorter than 21 are
 	                                    still supported.
+	                                    * The value must not be higher than the value of the UCR variable
+	                                    ucsschool/username/max_length.
 	                                    * If Window clients < 8.1 are in use, the maximum username lenght must
 	                                    not exceed 20, or logging into them will not be possible!
 	                                    * If scheme:username contains a COUNTER variable the maximum length of a
