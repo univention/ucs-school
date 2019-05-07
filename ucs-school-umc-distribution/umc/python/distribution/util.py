@@ -36,6 +36,7 @@ import re
 import json
 import errno
 import shutil
+import itertools
 import traceback
 from pipes import quote
 from datetime import datetime
@@ -546,6 +547,17 @@ class Project(_Dict):
 
 		return len(usersFailed) == 0
 
+	def _next_target_dir(self, recipient):
+		targetdir = os.path.join(self.sender_projectdir, recipient.username)
+		all_versions = list((int(number) for number in itertools.chain(*[re.findall(r'version(\d+)', entry) for entry in os.listdir(self.sender_projectdir)])))
+		current_version = max([0] + all_versions)
+		first_target_exists = os.path.exists(targetdir)
+		if current_version == 0 and first_target_exists:  # only the first backup was created so far -> next version is 2
+			targetdir = os.path.join(self.sender_projectdir, '%s version2' % recipient.username)
+		elif current_version != 0:  # We can just count up
+			targetdir = os.path.join(self.sender_projectdir, '%s version%d' % (recipient.username, current_version + 1))
+		return targetdir
+
 	def collect(self, dirsFailed=None, readOnly=False, compress=False):
 		if not isinstance(dirsFailed, list):
 			dirsFailed = []
@@ -555,13 +567,8 @@ class Project(_Dict):
 
 		# collect data from all recipients
 		for recipient in self.getRecipients():
-			# guess a proper directory name (in case with " versionX" suffix)
-			dirVersion = 1
 			compressed_suffix = '.zip' if compress else ''
-			targetdir = os.path.join(self.sender_projectdir, recipient.username)
-			while os.path.exists('{}{}'.format(targetdir, compressed_suffix)):
-				dirVersion += 1
-				targetdir = os.path.join(self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion))
+			targetdir = self._next_target_dir(recipient)
 
 			# copy entire directory of the recipient
 			srcdir = os.path.join(self.user_projectdir(recipient))
