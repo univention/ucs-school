@@ -41,6 +41,10 @@ from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
 
 
 class DefaultConfigurationChecks(ConfigurationChecks):
+	"""
+	Default configuration checks. Should always be executed.
+	Run in alphanumerical order.
+	"""
 	def test_minimal_mandatory_attributes(self):
 		try:
 			mandatory_attributes = self.config["mandatory_attributes"]
@@ -63,7 +67,6 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 				"The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'.")
 
 	def test_username_max_length(self):
-		self.logger.info('UCRV ucsschool/username/max_length=%r', ucr.get('ucsschool/username/max_length'))
 		for role in ('default', 'staff', 'student', 'teacher', 'teacher_and_staff'):
 			try:
 				username_max_length = self.config["username"]["max_length"][role]
@@ -77,14 +80,13 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 						"ucsschool/username/max_length ({}).".format(role, username_max_length, int(ucr_username_max_length))
 					)
 			except KeyError:
-				pass
+				username_max_length = ucr_username_max_length
 
-			username_max_length = self.config["username"]["max_length"].get(role, ucr_username_max_length)
-			if username_max_length > 20:
+			if username_max_length > 20 and role != 'default':
 				self.logger.warning(
 					"Configuration value of username:max_length:%s (%d) is higher than 20. "
 					"Logging into Windows < 8.1 will not be possible.",
-					username_max_length, role)
+					role, username_max_length)
 
 	def test_exam_user_prefix_length(self):
 		exam_user_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")

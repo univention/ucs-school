@@ -36,6 +36,7 @@ Configuration classes.
 import json
 import logging
 from six import string_types
+from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from .exceptions import InitialisationError, ReadOnlyConfiguration
 from .utils.configuration_checks import run_configuration_checks
 from .utils.import_pyhook import run_import_pyhooks
@@ -50,12 +51,35 @@ def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> Rea
 	logger = logging.getLogger(__name__)
 	config = Configuration(conffiles)
 	config.update(kwargs)
+	_set_username_maxlength(config, logger)
 	run_import_pyhooks(ConfigPyHook, 'post_config_files_read', config, conffiles, kwargs)
 	config.check_mandatory_attributes(logger)
 	config.close()
 	logger.info("Finished reading configuration, starting checks...")
 	run_configuration_checks(config)
 	return config
+
+
+def _set_username_maxlength(config, logger):  # type: (ReadOnlyDict, logging.Logger) -> None
+	ucrv = ucr.get('ucsschool/username/max_length')
+	logger.info('UCRV ucsschool/username/max_length: %r', ucrv)
+	try:
+		default = config['username']['max_length']['default']
+	except KeyError:
+		default = int(ucr_username_max_length)  # convert lazy proxy object to int
+		config['username'].setdefault('max_length', {})['default'] = default
+		logger.info(
+			'Set value of configuration key username:max_length:default to%s value of UCR variable '
+			'ucsschool/username/max_length: %d.', ' default' if ucrv is None else '', default)
+	try:
+		student = config['username']['max_length']['student']
+	except KeyError:
+		exam_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
+		student = default - len(exam_prefix)
+		config['username']['max_length']['student'] = student
+		logger.info(
+			'Set value of configuration key username:max_length:student to username:max_length:default reduced by '
+			'length of the exam-prefix (%r): %d.', exam_prefix, student)
 
 
 class ConfigurationFile(object):

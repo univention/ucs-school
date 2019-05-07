@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-13) unstable; urgency=low
+
+  * Bug #47222: always calculate username_max_length for default and student
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 May 2019 16:14:06 +0200
+
 ucs-school-import (17.0.6-12) unstable; urgency=low
 
   * Bug #49423: unify ou_create_post scripts to reduce thier execution time
