@@ -33,9 +33,9 @@
 #  * 70http-api_school_create (update Django School objects from LDAP)
 #
 
-[[ $# -ne 2 ]] && echo "USAGE: $(basename $0) FILE DN" && exit 1
+[[ $# -ne 2 ]] && echo "USAGE: $(basename "$0") FILE DN" && exit 1
 
-echo "$(date) $(basename $0) Start"
+echo "$(date) $(basename "$0") Start"
 
 . /usr/share/univention-lib/ucr.sh
 
@@ -49,7 +49,7 @@ else
 fi
 
 
-echo "$(date) $(basename $0) ou: '$ou' district: '$district'"
+echo "$(date) $(basename "$0") ou: '$ou' district: '$district'"
 
 
 53importgroup_create () {
@@ -62,7 +62,7 @@ echo "$(date) $(basename $0) ou: '$ou' district: '$district'"
 	local ou="$1"
 	local district="$2"
 
-	echo "$(date) $(basename $0): 53importgroup_create"
+	echo "$(date) $(basename "$0"): 53importgroup_create"
 
 	udm groups/group create \
 		--position "cn=groups,ou=$ou${district},$ldap_base" \
@@ -79,7 +79,7 @@ echo "$(date) $(basename $0) ou: '$ou' district: '$district'"
 		--append ucsschoolImportRole=teacher_and_staff \
 		--append ucsschoolImportRole=teacher || exit $?
 
-	echo "$(date) $(basename $0) (53importgroup_create): done."
+	echo "$(date) $(basename "$0") (53importgroup_create): done."
 }
 
 70http_api_school_create () {
@@ -90,19 +90,19 @@ echo "$(date) $(basename $0) ou: '$ou' district: '$district'"
 	#
 	local ou="$1"
 
-	echo "$(date) $(basename $0): 70http_api_school_create"
+	echo "$(date) $(basename "$0"): 70http_api_school_create"
 
 	unset DJANGO_SETTINGS_MODULE
 	/usr/bin/python /usr/share/pyshared/ucsschool/http_api/manage.py updateschools --ou "$ou"
 
-	echo "$(date) $(basename $0) (70http_api_school_create): done."
+	echo "$(date) $(basename "$0") (70http_api_school_create): done."
 }
 
 
 if is_ucr_true "ucsschool/import/generate/import/group"; then
 	53importgroup_create "$ou" "$district"
 else
-	echo "$(basename $0): creation of the Import Group has been disabled by ucsschool/import/generate/import/group"
+	echo "$(basename "$0"): creation of the Import Group has been disabled by ucsschool/import/generate/import/group"
 fi
 
 70http_api_school_create "$ou"
