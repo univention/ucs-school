@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (16.0.4-2) unstable; urgency=low
+
+  * Bug #49434: remove ACLs for creating/modifying shares as teacher
+
+ -- Florian Best <best@univention.de>  Wed, 08 May 2019 17:47:14 +0200
+
 ucs-school-ldap-acls-master (16.0.4-1) unstable; urgency=low
 
   * Bug #48924: give permission for administrative slaves/memberservers to
