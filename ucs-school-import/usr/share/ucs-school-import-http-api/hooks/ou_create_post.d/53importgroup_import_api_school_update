@@ -68,7 +68,7 @@ echo "$(date) $(basename "$0") ou: '$ou' district: '$district'"
 		--position "cn=groups,ou=$ou${district},$ldap_base" \
 		--set name="$ou-import-all" \
 		--set description="Default group for UCS@school user imports" \
-		--policy-reference "cn=schoolimport-all,cn=UMC,cn=policies,$ldap_base" || exit $?
+		--policy-reference "cn=schoolimport-all,cn=UMC,cn=policies,$ldap_base" || return $?
 
 	udm groups/group modify \
 		--dn "cn=$ou-import-all,cn=groups,ou=$ou${district},$ldap_base" \
@@ -77,7 +77,7 @@ echo "$(date) $(basename "$0") ou: '$ou' district: '$district'"
 		--append ucsschoolImportRole=student \
 		--append ucsschoolImportRole=staff \
 		--append ucsschoolImportRole=teacher_and_staff \
-		--append ucsschoolImportRole=teacher || exit $?
+		--append ucsschoolImportRole=teacher || return $?
 
 	echo "$(date) $(basename "$0") (53importgroup_create): done."
 }
@@ -98,13 +98,13 @@ echo "$(date) $(basename "$0") ou: '$ou' district: '$district'"
 	echo "$(date) $(basename "$0") (70http_api_school_create): done."
 }
 
-
+rv=0
 if is_ucr_true "ucsschool/import/generate/import/group"; then
-	53importgroup_create "$ou" "$district"
+	53importgroup_create "$ou" "$district" || rv=$?
 else
 	echo "$(basename "$0"): creation of the Import Group has been disabled by ucsschool/import/generate/import/group"
 fi
 
-70http_api_school_create "$ou"
+70http_api_school_create "$ou" || rv=$?
 
-exit 0
+exit $rv

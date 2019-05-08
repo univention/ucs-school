@@ -78,17 +78,17 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 	univention-directory-manager policies/registry create \
 		--ignore_exists \
 		--position "cn=policies,ou=${ou_lower}${district},${ldap_base}" \
-		--set "name=ou-default-ucr-policy"
+		--set "name=ou-default-ucr-policy" || return $?
 
 	# add value to policy
 	univention-directory-manager policies/registry modify \
 		--dn "cn=ou-default-ucr-policy,cn=policies,ou=${ou_lower}${district},${ldap_base}" \
-		--append "registry=dhcpd/ldap/base cn=dhcp,ou=${ou_lower}${district},${ldap_base}"
+		--append "registry=dhcpd/ldap/base cn=dhcp,ou=${ou_lower}${district},${ldap_base}" || return $?
 
 	# link to OU
 	univention-directory-manager container/ou modify \
 		--dn "ou=${ou_lower}${district},${ldap_base}" \
-		--policy-reference "cn=ou-default-ucr-policy,cn=policies,ou=${ou_lower}${district},${ldap_base}"
+		--policy-reference "cn=ou-default-ucr-policy,cn=policies,ou=${ou_lower}${district},${ldap_base}" || return $?
 
 	echo "$(date) $(basename $0) (40dhcpsearchbase_create): done - added new UCR policy cn=ou-default-ucr-policy,cn=policies,ou=${ou_lower}${district},${ldap_base} to OU ou=${ou_lower}${district},${ldap_base}"
 }
@@ -111,7 +111,7 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 		# create dhcp dns policy if missing
 		udm policies/dhcp_dns create --ignore_exists \
 			--position "cn=policies,$oudn" \
-			--set name="dhcp-dns-$ou_lower"
+			--set name="dhcp-dns-$ou_lower" || return $?
 
 		# in a single server environment, the master is the DNS server
 		if is_ucr_true "ucsschool/singlemaster"; then
@@ -119,14 +119,14 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 				udm policies/dhcp_dns modify \
 					--dn "cn=dhcp-dns-$ou_lower,cn=policies,$oudn" \
 					--set domain_name_servers="$(get_default_ip_address)" \
-					--set domain_name="$domainname"
+					--set domain_name="$domainname" || return $?
 			fi
 		fi
 
 		# assign dhcp dns policy to dhcp container if missing
 		udm container/cn modify \
 			--dn "cn=dhcp,$oudn" \
-			--policy-reference "cn=dhcp-dns-${ou_lower},cn=policies,$oudn"
+			--policy-reference "cn=dhcp-dns-${ou_lower},cn=policies,$oudn" || return $?
 	done
 	echo "$(date) $(basename $0) (45dhcpdns_create): done"
 }
@@ -169,7 +169,7 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 		--set "host=${dcname}" \
 		--set "path=${sharepath}" \
 		--set "directorymode=${sharemode}" \
-		--set "group=${grpuidnumber}"
+		--set "group=${grpuidnumber}" || return $?
 
 	echo "$(date) $(basename $0) (52marktplatz_create): done - added new share Markplatz for server ${dcname}"
 }
@@ -193,7 +193,7 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 	if is_ucr_true "ucsschool/singlemaster" ; then
 		univention-directory-manager computers/domaincontroller_master modify \
 			--dn "$ldap_hostdn" \
-			--append "ucsschoolRole=single_master:school:$ou"
+			--append "ucsschoolRole=single_master:school:$ou" || return $?
 	else
 		adm_netz_dn="cn=OU${ou_lower}-DC-Verwaltungsnetz"
 		edu_netz_dn="cn=OU${ou_lower}-DC-Edukativnetz"
@@ -207,7 +207,7 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 			if [[ "$uot" = "univentionObjectType: computers/domaincontroller_slave" ]]; then
 				univention-directory-manager computers/domaincontroller_slave modify \
 					--dn "$adm_server_dn" \
-					--append "ucsschoolRole=dc_slave_admin:school:$ou"
+					--append "ucsschoolRole=dc_slave_admin:school:$ou" || return $?
 			else
 				echo "A DC slave was expected at ${adm_server_dn}. Not setting ucsscchoolRole property."
 			fi
@@ -218,7 +218,7 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 			if [[ "$uot" = "univentionObjectType: computers/domaincontroller_slave" ]]; then
 				univention-directory-manager computers/domaincontroller_slave modify \
 					--dn "$edu_server_dn" \
-					--append "ucsschoolRole=dc_slave_edu:school:$ou"
+					--append "ucsschoolRole=dc_slave_edu:school:$ou" || return $?
 			else
 				echo "A DC slave was expected at ${edu_server_dn}. Not setting ucsscchoolRole property."
 			fi
@@ -228,24 +228,25 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 }
 
 
+rv=0
 if ! is_ucr_true "ucsschool/import/generate/policy/dhcp/searchbase"; then
 	echo "$(date) $(basename $0) (40dhcpsearchbase_create): creation of UCR policy for DHCP searchbase has been disabled by ucsschool/import/generate/policy/dhcp/searchbase"
 else
-	40dhcpsearchbase_create "$ou_lower" "$district"
+	40dhcpsearchbase_create "$ou_lower" "$district" || rv=$?
 fi
 
 if ! is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 	echo "$(date) $(basename $0) (45dhcpdns_create): creation of DHCP DNS policy has been disabled by ucsschool/import/generate/policy/dhcp/dns/set_per_ou"
 else
-	45dhcpdns_create "$ou_lower"
+	45dhcpdns_create "$ou_lower" || rv=$?
 fi
 
 if ! is_ucr_true "ucsschool/import/generate/share/marktplatz"; then
 	echo "$(date) $(basename $0) (52marktplatz_create): creation of share 'Marktplatz' has been disabled by ucsschool/import/generate/share/marktplatz"
 else
-	52marktplatz_create "$ou" "$district"
+	52marktplatz_create "$ou" "$district" || rv=$?
 fi
 
-70server_uscschoolRole "$ou" "$ou_lower" "$dcname"
+70server_uscschoolRole "$ou" "$ou_lower" "$dcname" || rv=$?
 
-exit 0
+exit $rv
