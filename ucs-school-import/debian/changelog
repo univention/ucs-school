@@ -1,3 +1,12 @@
+ucs-school-import (17.0.6-14) unstable; urgency=low
+
+  * Bug #49423: unset DJANGO_SETTINGS_MODULE env before importing Django
+  * Bug #49423: print API name
+  * Bug #49423: quoting
+  * Bug #49423: execute each function in hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 08 May 2019 17:28:27 +0200
+
 ucs-school-import (17.0.6-13) unstable; urgency=low
 
   * Bug #47222: always calculate username_max_length for default and student
