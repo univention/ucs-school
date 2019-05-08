@@ -63,4 +63,6 @@ class Command(BaseCommand):
 					School.update_from_ldap(ou)
 				except RuntimeError as exc:
 					raise CommandError(str(exc))
-		self.stdout.write('Known schools now: {}.'.format(', '.join(School.objects.all().values_list('name', flat=True))))
+		self.stderr.write('Known schools in UCS@school import API now: {}.'.format(
+			', '.join(School.objects.all().values_list('name', flat=True)))
+		)
