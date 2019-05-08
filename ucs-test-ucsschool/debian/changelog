@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-52) unstable; urgency=low
+
+  * Bug #48141: enable debug output
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 08 May 2019 13:36:35 +0200
+
 ucs-test-ucsschool (6.0.0-51) unstable; urgency=low
 
   * Bug #47222: handle username_max_length changes

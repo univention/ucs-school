@@ -50,7 +50,7 @@ def main():
 
 			# Using ucs-school-import
 			def process_school_cli(school, dc_name, should_fail=True):
-				cmd = ['/usr/share/ucs-school-import/scripts/create_ou', school, dc_name]
+				cmd = ['/usr/share/ucs-school-import/scripts/create_ou', '--verbose', school, dc_name]
 				pop = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 				err = pop.communicate()
 				if pop.returncode:

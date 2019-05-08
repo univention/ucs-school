@@ -112,7 +112,7 @@ def get_school_ou_from_dn(dn, ucr=None):
 
 
 def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_displayname=None, alter_dhcpd_base=None):
-	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
+	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', '--verbose', ou]
 	if dc:
 		cmd_block.append(dc)
 	if dc_administrative:
