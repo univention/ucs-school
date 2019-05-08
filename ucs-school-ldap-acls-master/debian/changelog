@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.0-2) unstable; urgency=medium
+
+  * Bug #49434: remove ACLs for creating/modifying shares as teacher
+
+ -- Florian Best <best@univention.de>  Wed, 08 May 2019 17:47:14 +0200
+
 ucs-school-ldap-acls-master (17.0.0-1) unstable; urgency=low
 
   * Bug #48731: use call_joinscript instead of calling join scripts directly
