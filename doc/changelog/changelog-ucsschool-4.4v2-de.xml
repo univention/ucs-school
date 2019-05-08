@@ -179,7 +179,73 @@ feedback@univention.de
 					<!-- END ucs-school-metapackage 12.0.1-1A~4.4.0.201904011404 -->
 <!-- CHANGELOG:2019-04-11:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-05-08" lang="en">
+					<title>Released on 2019-05-08:</title>
+					<!-- START ucs-school-import 17.0.6-14A~4.4.0.201905081729 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.6-14A~4.4.0.201905081729</emphasis>:
+						<itemizedlist>
+							<listitem><para>Improved lookup performance of the shipped syntax classes that slowed down the opening of user objects considerably when a lot of schools exist (<u:bug>49329</u:bug>).</para></listitem>
+
+							<listitem><para>Duplicate hook execution code was removed (<u:bug>48141</u:bug>).</para></listitem>
+
+							<listitem><para>Usernames are now allowed to be longer than <literal>20</literal> characters. <emphasis>Important:</emphasis>  Users with usernames longer than 20 characters are excluded from the support regarding Samba, Samba4 connector app and Active Directory connector app. Users with usernames shorter than 21 are still supported. If Windows clients older than <literal>Windows 8.1</literal> are in use, the maximum username lenght must not exceed <literal>20</literal> characters, or logging into them will not be possible! Set <envar>ucsschool/username/max_length</envar> to allow UMC wizards and user import to create users with usernames longer than 20 characters (<u:bug>47222</u:bug>).</para></listitem>
+
+							<listitem><para>The execution time of ou_create_post scripts has been reduced by joining six scripts into two (<u:bug>49423</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.6-14A~4.4.0.201905081729 -->
+					<!-- START ucs-school-lib 12.1.1-6A~4.4.0.201905061453 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.1-6A~4.4.0.201905061453</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fixed a bug which prevented domain lists in internetrules to be changed. (<u:bug>49312</u:bug>).</para></listitem>
+
+							<listitem><para>Getting all UDM objects opened every object twice unnecessarily. (<u:bug>49329</u:bug>).</para></listitem>
+
+							<listitem><para>Hook execution ist now logged (<u:bug>48141</u:bug>).</para></listitem>
+
+							<listitem><para>Usernames are now allowed to be longer than <literal>20</literal> characters. See <package>ucs-school-import</package> for more information (<u:bug>47222</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.1-6A~4.4.0.201905061453 -->
+					<!-- START ucs-school-umc-distribution 17.0.0-5A~4.4.0.201905061217 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-distribution</emphasis> in version <emphasis>17.0.0-5A~4.4.0.201905061217</emphasis>:
+						<itemizedlist>
+							<listitem><para>Collected files can now be stored read-only (<u:bug>49227</u:bug>).</para></listitem>
+
+							<listitem><para>Adding files to projects prior to distribution is now optional (<u:bug>47160</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-distribution 17.0.0-5A~4.4.0.201905061217 -->
+					<!-- START ucs-school-umc-exam 9.0.0-8A~4.4.0.201905071152 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.0-8A~4.4.0.201905071152</emphasis>:
+						<itemizedlist>
+							<listitem><para>The students result files of a running exam can now be automatically collected. The default is to collect them every <literal>5</literal> minutes. The interval can be configured using the UCR variable <envar>ucsschool/exam/cron/backup</envar>. The feature can be switched on by setting <envar>ucsschool/exam/cron/backup/activated</envar> to <literal>true</literal>. (<u:bug>49227</u:bug>).</para></listitem>
+
+							<listitem><para>The execution time of the ou_create_post hook is now logged (<u:bug>49423</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.0-8A~4.4.0.201905071152 -->
+					<!-- START ucs-school-umc-wizards 11.0.0-5A~4.4.0.201905071507 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.0-5A~4.4.0.201905071507</emphasis>:
+						<itemizedlist>
+							<listitem><para>Usernames are now allowed to be longer than <literal>20</literal> characters. See <package>ucs-school-import</package> for more information (<u:bug>47222</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.0-5A~4.4.0.201905071507 -->
+<!-- CHANGELOG:2019-05-08:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 		</section>
