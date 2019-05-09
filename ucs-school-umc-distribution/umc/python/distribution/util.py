@@ -296,6 +296,16 @@ class Project(_Dict):
 	def atJobCollect(self):
 		return atjobs.load(self.atJobNumCollect)
 
+	# The number of results collected for each student.
+	@property
+	def num_results(self):
+		# This only works because two requirements are fullfilled:
+		# - A project always has at least one recipient
+		# - All recipients have the same number of collected results
+		# If any of that changes this property has to be modified!
+
+		return len(self._all_versions(self.getRecipients()[0]))
+
 	def user_projectdir(self, user):
 		'''Return the absolute path of the project dir for the specified user.'''
 		return os.path.join(user.homedir, POSTFIX_DATADIR_RECIPIENT, self.name)
@@ -566,54 +576,65 @@ class Project(_Dict):
 		return (int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in os.listdir(self.sender_projectdir)]))
 
 	def _next_target(self, recipient):
+		"""
+		Generates the next target path/zip path for a given recipient.
+		:param recipient: The recipient to generate the target for
+		:type recipient: User
+		:return: The path to the folder/zip (str)
+		"""
 		current_version = max([0] + list(self._all_versions(recipient)))
 		return os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, current_version+1))
 
 	def _get_available_space(self):
+		"""
+		Calculates the available space in the project directory of the sender aka teacher.
+		:return: The available space in bytes
+		"""
 		statvfs = os.statvfs(self.sender_projectdir)
 		return statvfs.f_frsize * statvfs.f_bavail
 
-	def prune_results(self, limit, username=None):
-		"""
-		This function removes collected results from students as long as the number of existing collected results
-		is bigger than the given limit. It starts from the oldest version and works its way up.
-		:param limit: The number of collected results to prune to. Negative numbers are cropped to 0
-		:type limit: int
-		:param username: If the value is set, the pruning is restricted to the specified user
-		:type username: None | string
-		"""
-
-		def _delete_result(target):
-			try:
-				if os.path.isfile(target + '.zip'):
-					os.remove(target+'.zip')
-				else:
-					shutil.rmtree(target)
-			except (OSError, IOError, ValueError):
-				MODULE.warn('Deletion failed: "%s"' % (target))
-				MODULE.info('Traceback:\n%s' % traceback.format_exc())
-
-		limit = max((limit, 0))
-		projectdir_content = os.listdir(self.sender_projectdir)
-		for recipient in self.getRecipients():
-			if username and recipient.username != username:
-				continue
-			all_versions = list(self._all_versions(recipient))
-			all_versions.sort(reverse=True)
-			while len(all_versions) > limit:
-				target = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, all_versions.pop()))
-				_delete_result(target)
+	# After changing requirements this added function is no longer required, but kept for future reference
+	# def prune_results(self, limit, username=None):
+	# 	"""
+	# 	This function removes collected results from students as long as the number of existing collected results
+	# 	is bigger than the given limit. It starts from the oldest version and works its way up.
+	# 	:param limit: The number of collected results to prune to. Negative numbers are cropped to 0
+	# 	:type limit: int
+	# 	:param username: If the value is set, the pruning is restricted to the specified user
+	# 	:type username: None or string
+	# 	"""
+	#
+	# 	def _delete_result(target):
+	# 		try:
+	# 			if os.path.isfile(target + '.zip'):
+	# 				os.remove(target+'.zip')
+	# 			else:
+	# 				shutil.rmtree(target)
+	# 		except (OSError, IOError, ValueError):
+	# 			MODULE.warn('Deletion failed: "%s"' % (target))
+	# 			MODULE.info('Traceback:\n%s' % traceback.format_exc())
+	#
+	# 	limit = max((limit, 0))
+	# 	projectdir_content = os.listdir(self.sender_projectdir)
+	# 	for recipient in self.getRecipients():
+	# 		if username and recipient.username != username:
+	# 			continue
+	# 		all_versions = list(self._all_versions(recipient))
+	# 		all_versions.sort(reverse=True)
+	# 		while len(all_versions) > limit:
+	# 			target = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, all_versions.pop()))
+	# 			_delete_result(target)
 
 	def collect(self, dirsFailed=None, readOnly=False, compress=False):
 		if not isinstance(dirsFailed, list):
 			dirsFailed = []
+		compressed_suffix = '.zip' if compress else ''
 
 		# make sure all necessary directories exist
 		self._createProjectDir()
 
 		# collect data from all recipients
 		for recipient in self.getRecipients():
-			compressed_suffix = '.zip' if compress else ''
 			targetdir = self._next_target(recipient)
 
 			# copy entire directory of the recipient
@@ -623,17 +644,8 @@ class Project(_Dict):
 			available_space = self._get_available_space()
 			if available_space - src_size < 0:
 				MODULE.warn('not enough space to copy from %s to %s' % (srcdir, targetdir))
-				versions = list(self._all_versions(recipient))
-				versions.sort(reverse=True)
-				oldest_version = versions.pop()
-				oldest_result = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, oldest_version))
-				oldest_result_size = self._get_directory_size(oldest_result)
-				if ((available_space - src_size) * -1) < oldest_result_size:
-					MODULE.warn('creating necessary space, by deleting oldest collected result')
-					self.prune_results(len(versions), username=recipient.username)
-				else:
-					MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
-					dirsFailed.append(srcdir)
+				dirsFailed.append(srcdir)
+				continue
 			MODULE.info('collecting data for user "%s" from %s to %s' % (recipient.username, srcdir, targetdir))
 			if not os.path.isdir(srcdir):
 				MODULE.info('Source directory does not exist (no files distributed?)')

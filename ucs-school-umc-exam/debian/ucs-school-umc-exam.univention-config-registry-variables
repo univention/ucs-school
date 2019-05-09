@@ -65,8 +65,8 @@ Type=bool
 Categories=ucsschool-exam
 
 [ucsschool/exam/backup/limit]
-Description[en]=Specifies the maximum amount of backups per student and exam. The default is 40 and the minimum is 1. Numbers smaller than that deactivate the limit.
-Description[de]=Definiert die maximale Anzahl an Zwischenergebnissen, die pro Schüler und Klassenarbeit vorgehalten werden. Der Standardwert ist 40 und das Minimum ist 1. Kleinere Zahlen deaktivieren das Limit.
+Description[en]=Specifies the maximum amount of backups per student and exam. The default is 40 and the value needs to be greater than 0. If the limit is reached, no further backups are saved.
+Description[de]=Definiert die maximale Anzahl an Zwischenergebnissen, die pro Schüler und Klassenarbeit gespeichert werden. Der Standardwert ist 40 und muss größer als 1 sein. Wenn das Limit erreicht ist, werden keine weiteren Backups gespeichert.
 Type=int
 Categories=ucsschool-exam
 
