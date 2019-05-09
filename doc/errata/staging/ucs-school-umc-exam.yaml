@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-exam
+fix: 9.0.0-9A~4.4.0.201905091301
+desc: |
+ * The number of exam backup files is now limited and is compressed into a zip archive by default (Bug #49333).
+bug: [49333]
