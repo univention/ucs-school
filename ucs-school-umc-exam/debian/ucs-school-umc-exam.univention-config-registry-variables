@@ -58,6 +58,18 @@ Description[de]=Definiert, ob das Skript exam-backup automatisch durch cron gest
 Type=string
 Categories=ucsschool-exam
 
+[ucsschool/exam/backup/compress]
+Description[en]=Specifies if the exam data backup should be compressed. Default is true
+Description[de]=Definiert, ob das Backup der Examdaten eines Schülers komprimiert werden soll. Standardmäßig aktiviert.
+Type=bool
+Categories=ucsschool-exam
+
+[ucsschool/exam/backup/limit]
+Description[en]=Specifies the maximum amount of backups per student and exam. The default is 40 and the value needs to be greater than 0. If the limit is reached, no further backups are saved.
+Description[de]=Definiert die maximale Anzahl an Zwischenergebnissen, die pro Schüler und Klassenarbeit gespeichert werden. Der Standardwert ist 40 und muss größer als 1 sein. Wenn das Limit erreicht ist, werden keine weiteren Backups gespeichert.
+Type=int
+Categories=ucsschool-exam
+
 [ucsschool/exam/cron/cleanup/options]
 Description[en]=Specifies additional options for the script exam-and-room-cleanup (no additional options by default)
 Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup (standardmäßig keine zusätzlichen Optionen)

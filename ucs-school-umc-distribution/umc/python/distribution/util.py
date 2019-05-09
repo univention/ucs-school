@@ -36,6 +36,7 @@ import re
 import json
 import errno
 import shutil
+import itertools
 import traceback
 from pipes import quote
 from datetime import datetime
@@ -257,6 +258,15 @@ class Project(_Dict):
 		else:
 			self.update(_props)
 
+	@staticmethod
+	def _get_directory_size(src):
+		needed_space = 0
+		for (path, dirs, files) in os.walk(src):
+			for file in files:
+				filename = os.path.join(path, file)
+				needed_space += os.path.getsize(filename)
+		return needed_space
+
 	@property
 	def projectfile(self):
 		'''The absolute project path to the project file.'''
@@ -285,6 +295,16 @@ class Project(_Dict):
 	@property
 	def atJobCollect(self):
 		return atjobs.load(self.atJobNumCollect)
+
+	# The number of results collected for each student.
+	@property
+	def num_results(self):
+		# This only works because two requirements are fullfilled:
+		# - A project always has at least one recipient
+		# - All recipients have the same number of collected results
+		# If any of that changes this property has to be modified!
+
+		return len(self._all_versions(self.getRecipients()[0]))
 
 	def user_projectdir(self, user):
 		'''Return the absolute path of the project dir for the specified user.'''
@@ -546,24 +566,86 @@ class Project(_Dict):
 
 		return len(usersFailed) == 0
 
-	def collect(self, dirsFailed=None, readOnly=False):
+	def _all_versions(self, recipient):
+		"""
+		Returns a generator containing all version numbers of existing results for a given recipient.
+		:param recipient: The recipient to get the versions for
+		:type recipient: User
+		:return: iterator(int)
+		"""
+		return (int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in os.listdir(self.sender_projectdir)]))
+
+	def _next_target(self, recipient):
+		"""
+		Generates the next target path/zip path for a given recipient.
+		:param recipient: The recipient to generate the target for
+		:type recipient: User
+		:return: The path to the folder/zip (str)
+		"""
+		current_version = max([0] + list(self._all_versions(recipient)))
+		return os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, current_version+1))
+
+	def _get_available_space(self):
+		"""
+		Calculates the available space in the project directory of the sender aka teacher.
+		:return: The available space in bytes
+		"""
+		statvfs = os.statvfs(self.sender_projectdir)
+		return statvfs.f_frsize * statvfs.f_bavail
+
+	# After changing requirements this added function is no longer required, but kept for future reference
+	# def prune_results(self, limit, username=None):
+	# 	"""
+	# 	This function removes collected results from students as long as the number of existing collected results
+	# 	is bigger than the given limit. It starts from the oldest version and works its way up.
+	# 	:param limit: The number of collected results to prune to. Negative numbers are cropped to 0
+	# 	:type limit: int
+	# 	:param username: If the value is set, the pruning is restricted to the specified user
+	# 	:type username: None or string
+	# 	"""
+	#
+	# 	def _delete_result(target):
+	# 		try:
+	# 			if os.path.isfile(target + '.zip'):
+	# 				os.remove(target+'.zip')
+	# 			else:
+	# 				shutil.rmtree(target)
+	# 		except (OSError, IOError, ValueError):
+	# 			MODULE.warn('Deletion failed: "%s"' % (target))
+	# 			MODULE.info('Traceback:\n%s' % traceback.format_exc())
+	#
+	# 	limit = max((limit, 0))
+	# 	projectdir_content = os.listdir(self.sender_projectdir)
+	# 	for recipient in self.getRecipients():
+	# 		if username and recipient.username != username:
+	# 			continue
+	# 		all_versions = list(self._all_versions(recipient))
+	# 		all_versions.sort(reverse=True)
+	# 		while len(all_versions) > limit:
+	# 			target = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, all_versions.pop()))
+	# 			_delete_result(target)
+
+	def collect(self, dirsFailed=None, readOnly=False, compress=False):
 		if not isinstance(dirsFailed, list):
 			dirsFailed = []
+		compressed_suffix = '.zip' if compress else ''
 
 		# make sure all necessary directories exist
 		self._createProjectDir()
 
 		# collect data from all recipients
 		for recipient in self.getRecipients():
-			# guess a proper directory name (in case with " versionX" suffix)
-			dirVersion = 1
-			targetdir = os.path.join(self.sender_projectdir, recipient.username)
-			while os.path.exists(targetdir):
-				dirVersion += 1
-				targetdir = os.path.join(self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion))
+			targetdir = self._next_target(recipient)
 
 			# copy entire directory of the recipient
 			srcdir = os.path.join(self.user_projectdir(recipient))
+			# check space requirements
+			src_size = self._get_directory_size(srcdir)
+			available_space = self._get_available_space()
+			if available_space - src_size < 0:
+				MODULE.warn('not enough space to copy from %s to %s' % (srcdir, targetdir))
+				dirsFailed.append(srcdir)
+				continue
 			MODULE.info('collecting data for user "%s" from %s to %s' % (recipient.username, srcdir, targetdir))
 			if not os.path.isdir(srcdir):
 				MODULE.info('Source directory does not exist (no files distributed?)')
@@ -574,10 +656,18 @@ class Project(_Dict):
 						# !important" don't let symlinks be copied (e.g. /etc/shadow).
 						# don't use shutil.copytree(symlinks=True) for this as it changes the owner + mode + flags of the symlinks afterwards
 						return [name for name in names if os.path.islink(os.path.join(src, name))]
-					shutil.copytree(srcdir, targetdir, ignore=ignore)
+					# zip is hard coded for now. But it could be possible to make it configurable
+					if compress and 'zip' in (e[0] for e in shutil.get_archive_formats()):
+						shutil.make_archive(targetdir, 'zip', srcdir)
+					else:
+						shutil.copytree(srcdir, targetdir, ignore=ignore)
 
+					# Necessary for correct filename in the permission fixing
+					targetdir = targetdir + compressed_suffix
 					# fix permission
 					os.chown(targetdir, int(self.sender.uidNumber), int(self.sender.gidNumber))
+					if compress:
+						os.chmod(targetdir, 0o600)
 					for root, dirs, files in os.walk(targetdir):
 						for momo in dirs + files:
 							os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))

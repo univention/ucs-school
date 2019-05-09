@@ -45,6 +45,13 @@ def main():
 	ucr = ConfigRegistry()
 	ucr.load()
 
+	compress = ucr.is_true('ucsschool/exam/backup/compress', True)
+	try:
+		limit = max((int(ucr.get('ucsschool/exam/backup/limit', 40)), 1))
+	except ValueError:
+		logger.error('ucsschool/exam/backup/limit does not contain a valid number. Falling back to default')
+		limit = 40
+
 	util.distribution.POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = '-Zwischenergebnisse'
 
 	for entry in os.listdir(util.distribution.DISTRIBUTION_DATA_PATH):
@@ -53,7 +60,10 @@ def main():
 			if not project:
 				logger.error('Examfile for {} could not be opened and thus no backup of the students data was created!'.format(entry))
 				continue
-			project.collect(readOnly=True)
+			if project.num_results < limit:
+				project.collect(readOnly=True, compress=compress)
+			else:
+				logger.warning('Results for {} were not collected. The limit has been reached.'.format(entry))
 
 
 
