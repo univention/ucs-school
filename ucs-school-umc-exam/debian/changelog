@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.0-9) unstable; urgency=low
+
+  * Bug #49333: Use limit for regular exam backups
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 09 May 2019 12:58:54 +0200
+
 ucs-school-umc-exam (9.0.0-8) unstable; urgency=low
 
   * Bug #49423: log ou_create_post execution time
