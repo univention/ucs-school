@@ -41,9 +41,9 @@ def main():
 			acl.assert_student_group('write')
 
 			shares_dn = 'cn=shares,%s' % utu.UCSTestSchool().get_ou_base_dn(school)
-			acl.assert_shares(shares_dn, 'write')
+			acl.assert_shares(shares_dn, 'read')
 			shares_dn = 'cn=Marktplatz,cn=shares,%s' % utu.UCSTestSchool().get_ou_base_dn(school)
-			acl.assert_shares(shares_dn, 'write')
+			acl.assert_shares(shares_dn, 'read')
 			shares_dn = 'cn=klassen,cn=shares,%s' % utu.UCSTestSchool().get_ou_base_dn(school)
 			acl.assert_shares(shares_dn, 'read')
 
