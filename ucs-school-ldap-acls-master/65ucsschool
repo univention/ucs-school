@@ -242,6 +242,7 @@ access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STA
 # DC-Slaves muessen die Benutzer ihrer Schule lesen und schreiben duerfen
 access to dn.regex="^uid=([^,]+),cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@USERATTRS@$@
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
+	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
 	by * +0 break
 access to dn.regex="^uid=([^,]+),cn=@$@EXAM@$@,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@USERATTRS@$@
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
