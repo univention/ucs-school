@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-0) unstable; urgency=low
+
+  * Bug #49443: Change default behavior of exam student home dir deletion
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 10 May 2019 11:56:34 +0200
+
 ucs-school-umc-exam (9.0.0-9) unstable; urgency=low
 
   * Bug #49333: Use limit for regular exam backups
