@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-54) unstable; urgency=low
+
+  * Bug #48924: add/update LDAP ACL test script for edu/adm slave
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 06 May 2019 13:58:58 +0200
+
 ucs-test-ucsschool (6.0.0-53) unstable; urgency=medium
 
   * Bug #49434: adjust test cases
