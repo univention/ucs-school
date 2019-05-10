@@ -571,8 +571,10 @@ class Project(_Dict):
 		Returns a generator containing all version numbers of existing results for a given recipient.
 		:param recipient: The recipient to get the versions for
 		:type recipient: User
-		:return: iterator(int)
+		:return: iterable(int)
 		"""
+		if not os.path.exists(self.sender_projectdir):
+			return ()
 		return (int(number) for number in itertools.chain(*[re.findall(r'{}-(\d+)'.format(recipient.username), entry) for entry in os.listdir(self.sender_projectdir)]))
 
 	def _next_target(self, recipient):
