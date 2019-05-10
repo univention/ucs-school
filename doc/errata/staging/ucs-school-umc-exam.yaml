@@ -6,4 +6,5 @@ src: ucs-school-umc-exam
 fix: 9.0.0-9A~4.4.0.201905091301
 desc: |
  * The number of exam backup files is now limited and is compressed into a zip archive by default (Bug #49333).
-bug: [49333]
+ * The home folders of exam accounts are now kept by default and are not deleted anymore. Also <envar>ucsschool/exam/user/homedir/autoremove</envar> is unset once upon updating to restore the default behavior. To restore the previous behavior you have to set the variable to <literal>yes</literal> again (Bug #49443).
+bug: [49333, 49443]

@@ -102,6 +102,11 @@
 					<envar>ucsschool/ldap/default/container/exam</envar> ist der Name des Containers, unterhalb dem die Klassenarbeitskonten gespeichert werden. Standardmäßig ist der Name auf <literal>examusers</literal> gesetzt. Die LDAP-Position des Containers ist direkt unterhalb der Schul-OU.
 					</simpara>
 				</listitem>
+				<listitem>
+					<simpara>
+					<envar>ucsschool/exam/user/homedir/autoremove</envar> definiert, ob beim automatischen Löschen der Prüfungsbenutzer auch deren Heimatverzeichnis gelöscht werden soll. Der Standard ist <literal>no</literal>
+					</simpara>
+				</listitem>
 			</itemizedlist>
 		</para>
 		<para>
