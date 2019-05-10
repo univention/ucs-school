@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-distribution
-fix: 17.0.1-1A~4.4.0.201905101448
+fix: 17.0.1-2A~4.4.0.201905101644
 desc: |
  * The collection of results can now be compressed in a zip archive (used by backup mechanism). (Bug #49333).
 bug: [49333]
