@@ -304,7 +304,7 @@ class Project(_Dict):
 		# - All recipients have the same number of collected results
 		# If any of that changes this property has to be modified!
 
-		return len(self._all_versions(self.getRecipients()[0]))
+		return len(list(self._all_versions(self.getRecipients()[0])))
 
 	def user_projectdir(self, user):
 		'''Return the absolute path of the project dir for the specified user.'''

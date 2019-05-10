@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.1-2) unstable; urgency=medium
+
+  * Bug #49333: Fix error with generator length calculation
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 10 May 2019 16:42:13 +0200
+
 ucs-school-umc-distribution (17.0.1-1) unstable; urgency=medium
 
   * Bug #49333: Fix error in num_results prop
