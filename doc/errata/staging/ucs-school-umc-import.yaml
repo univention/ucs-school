@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-import
+fix: 2.0.0-1A~4.4.0.201905132202
+desc: |
+ * Internal improvement: fixed Debian package dependency (Bug #49217).
+bug: [49217]
