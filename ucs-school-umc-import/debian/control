@@ -15,7 +15,8 @@ Package: ucs-school-umc-import
 Architecture: all
 Depends: ${misc:Depends},
  univention-management-console-server,
- ucs-school-import-http-api-client (>= 16.0.2-1)
+ ucs-school-import-http-api-client (>= 17.0.6-15),
+ ucs-school-import-http-api-common (>= 17.0.6-15),
 Description: Automatic UCS@school user import
  Automatic UCS@school user import
  .
