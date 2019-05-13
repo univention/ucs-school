@@ -275,10 +275,6 @@ def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, o
 	base_dn = ucr.get('ldap/base')
 	ou_base = get_ou_base(ou, district_enable)
 
-	# create hooks
-	(pre_hook, pre_hook_successful) = import_ou_create_pre_hook(ou, ou_base, dc, singlemaster)
-	(post_hook, post_hook_successful) = import_ou_create_post_hook(ou, ou_base, dc, singlemaster)
-
 	move_dc_after_create_ou = False
 
 	# does dc exist?
@@ -291,6 +287,10 @@ def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, o
 		dc_name = dc
 	else:
 		dc_name = 'dc%s-01' % ou
+
+	# create hooks
+	(pre_hook, pre_hook_successful) = import_ou_create_pre_hook(ou, ou_base, dc_name, singlemaster)
+	(post_hook, post_hook_successful) = import_ou_create_post_hook(ou, ou_base, dc_name, singlemaster)
 
 	if use_cli_api:
 		create_ou_cli(ou, dc, dc_administrative, sharefileserver, ou_displayname, alter_dhcpd_base_option)
