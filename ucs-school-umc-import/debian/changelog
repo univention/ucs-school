@@ -1,3 +1,9 @@
+ucs-school-umc-import (1.0.1-6) unstable; urgency=low
+
+  * Bug #48576: depend on package containing constants.py
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 13 May 2019 21:36:49 +0200
+
 ucs-school-umc-import (1.0.1-5) unstable; urgency=low
 
   * Bug #47911: add ucsschool/import/http_api/client/server and
