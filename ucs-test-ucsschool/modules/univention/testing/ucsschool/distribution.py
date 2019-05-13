@@ -96,6 +96,7 @@ class Distribution(object):
 			self.client = connection
 		else:
 			self.client = Client(None, admin, passwd)
+		self.distributed_version = 1
 
 	def query(self, filt='private', pattern=''):
 		"""Calles 'distribution/query'
@@ -428,8 +429,7 @@ html5
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
 			files = [x for x, y in self.files]
-			if files != existingFiles:
-				utils.fail('Project files were not distributed for user %s' % (user,))
+			assert files == existingFiles, 'Project files were not distributed for user %s:\n%r!=%r' % (user, files, existingFiles)
 
 	def collect(self):
 		"""Calls 'distribution/collect'"""
@@ -447,13 +447,12 @@ html5
 		"""
 		print 'Checking %s collection' % (self.name,)
 		for user in users:
-			path = self.getUserFilesPath(user, 'collect')
+			path = self.getUserFilesPath(user, 'collect', self.distributed_version)
 			print 'file_path=', path
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
 			files = [x for x, y in self.files]
-			if files != existingFiles:
-				utils.fail('Project files were not collected for user %s' % (user,))
+			assert files == existingFiles, 'Project files were not collected for user %s:\n%r!=%r' % (user, files, existingFiles)
 
 	def remove(self):
 		"""Calls 'distribution/remove'"""
@@ -496,7 +495,7 @@ html5
 		if not (project_name in q):
 			utils.fail('Project %s was not adopted successfully' % (project_name,))
 
-	def getUserFilesPath(self, user, purpose='distribute'):
+	def getUserFilesPath(self, user, purpose='distribute', version=1):
 		"""Gets the correct files path for a specific user depending on
 		the value of the ucr variable ucsschool/import/roleshare.\n
 		:param user: user name
@@ -517,7 +516,7 @@ html5
 				path = '/home/{0}/schueler/{1}/{2}/{3}'.format(self.school, user, recipient_dir_name, self.name)
 		elif purpose == 'collect':
 			if roleshare == 'no' or roleshare is False:
-				path = '/home/{0}/{1}/{2}{3}/{4}/'.format(self.sender, sender_dir_suffix, self.name, project_dir_name, user)
+				path = '/home/{0}/{1}/{2}{3}/{4}/'.format(self.sender, sender_dir_suffix, self.name, project_dir_name, user, version)
 			else:
-				path = '/home/{0}/lehrer/{1}/{2}/{3}{4}/{5}'.format(self.school, self.sender, sender_dir_name, self.name, project_dir_suffix, user)
+				path = '/home/{0}/lehrer/{1}/{2}/{3}{4}/{5}-{6:03d}'.format(self.school, self.sender, sender_dir_name, self.name, project_dir_suffix, user, version)
 		return path
