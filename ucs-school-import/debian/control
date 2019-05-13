@@ -55,7 +55,7 @@ Architecture: all
 Depends: ${misc:Depends},
  univention-config,
  ucs-school-import (= ${source:Version}),
- ucs-school-import-http-api-common (= ${source:Version}),
+ ucs-school-import-http-api-common (>= ${source:Version}),
  univention-celery (>=1.0.0-1),
  python-django (>=1.8),
  python-djangorestframework (>= 3.4.0-2),
@@ -97,6 +97,10 @@ Homepage: https://www.univention.de/produkte/ucsschool/
 Package: ucs-school-import-http-api-common
 Architecture: all
 Depends: ${misc:Depends}
+Replaces:
+ ucs-school-import-http-api (<< 17.0.6-15)
+Breaks:
+ ucs-school-import-http-api (<< 17.0.6-15)
 Description: UCS@school: Common files for UCS@school API client and server
  This package provides common files of the RESTful HTTP API client and server.
  .
