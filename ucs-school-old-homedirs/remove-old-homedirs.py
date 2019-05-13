@@ -49,6 +49,7 @@ TARGET_BLACKLIST = ["/", "/boot", "/sys", "/proc", "/etc", "/dev"]
 
 target_dir = listener.configRegistry.get("ucsschool/listener/oldhomedir/targetdir")
 fs_types = listener.configRegistry.get("ucsschool/listener/oldhomedir/fs_types", DEFAUL_FS).split(":")
+exam_remove = listener.configRegistry.is_true("ucsschool/exam/user/homedir/autoremove", False)
 
 
 def check_target_dir(dir):
@@ -141,6 +142,9 @@ def warn(msg):
 def handler(dn, new, old, command):
 	if old and not new and command != "r":  # user was deleted or moved to another OU
 		uid = old["uid"][0]
+		if not exam_remove and 'ucsschoolExam' in old['objectClass']:
+			warn("ignoring exam user {!r}, as ucsschool/exam/user/homedir/autoremove is set to False.".format(uid))
+			return
 
 		home_dir = old.get("homeDirectory", [None])[0]
 		if not home_dir:

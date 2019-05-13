@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (14.0.1-0) unstable; urgency=low
+
+  * Bug #49443: Respect UCRV for exam user home dir deletion
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 13 May 2019 10:08:21 +0200
+
 ucs-school-old-homedirs (14.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4
