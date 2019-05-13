@@ -78,7 +78,7 @@ class ConfigPyHook(ImportPyHook):
 		returned.
 
 		:param ReadOnlyDict config: configuration that will be used by the
-		import if not modified here, not yet read-only.
+			import if not modified here, not yet read-only.
 		:param list used_conffiles: configuration files read and applied
 		:param dict used_kwargs: command line options read and applied
 		:return: config dict

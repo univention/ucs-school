@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-10) unstable; urgency=low
+
+  * Bug #48576: move Python module required by client to common package
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 13 May 2019 18:15:33 +0200
+
 ucs-school-import (16.0.3-9) unstable; urgency=low
 
   * Bug #49264: create configuration hook
