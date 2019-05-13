@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-1) unstable; urgency=low
+
+  * Bug #49333: Improve logging for exam backup
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 13 May 2019 10:21:44 +0200
+
 ucs-school-umc-exam (9.0.1-0) unstable; urgency=low
 
   * Bug #49443: Change default behavior of exam student home dir deletion
