@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
+src: ucs-school-import
+fix: 16.0.3-10A~4.3.0.201905132130
+desc: |
+ * Internal improvement: a Python module was moved into another Debian package (Bug #48576).
+bug: [48576]
