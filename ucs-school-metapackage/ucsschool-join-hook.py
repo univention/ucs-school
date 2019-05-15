@@ -261,7 +261,7 @@ def main():
 		level = LEVELS[options.verbose]
 	except IndexError:
 		level = LEVELS[-1]
-	logging.basicConfig(stream=sys.stderr, level=level)
+	logging.basicConfig(stream=sys.stderr, level=level, format='%(asctime)s ucsschool-join-hook: [%(levelname)s] %(message)s')
 
 	log = logging.getLogger(__name__)
 
