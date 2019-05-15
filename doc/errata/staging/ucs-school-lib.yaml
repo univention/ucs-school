@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.1.1-7A~4.4.0.201905152002
+desc: |
+ * Create correct hostname for school dc, when not set and not a singleserver (Bug #49462).
+bug: [49462]
