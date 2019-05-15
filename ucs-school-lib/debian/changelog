@@ -1,3 +1,10 @@
+ucs-school-lib (12.1.1-7) unstable; urgency=low
+
+  * Bug #49462: create correct hostname for school dc, when not set and not a
+    singleserver
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 May 2019 19:52:39 +0200
+
 ucs-school-lib (12.1.1-6) unstable; urgency=low
 
   * Bug #47222: load ucr lazily, add property for ucsschool/username/max_length

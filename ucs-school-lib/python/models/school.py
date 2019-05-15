@@ -95,7 +95,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def build_hook_line(self, hook_time, func_name):
 		if func_name == 'create':
-			return self._build_hook_line(self.name, self.get_dc_name(or_fallback=False))
+			return self._build_hook_line(self.name, self.get_dc_name())
 
 	def get_district(self):
 		if ucr.is_true('ucsschool/ldap/district/enable'):
@@ -234,7 +234,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		else:
 			return 'dc%s-01' % self.name.lower()
 
-	def get_dc_name(self, administrative=False, or_fallback=True):
+	def get_dc_name(self, administrative=False):
 		if ucr.is_true('ucsschool/singlemaster', False):
 			return ucr.get('hostname')
 		elif self.dc_name:
@@ -243,10 +243,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			else:
 				return self.dc_name
 		else:
-			if or_fallback:
-				return self.get_dc_name_fallback(administrative=administrative)
-			else:
-				return None
+			return self.get_dc_name_fallback(administrative=administrative)
 
 	def get_share_fileserver_dn(self, set_by_self, lo):
 		if set_by_self:
