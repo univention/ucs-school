@@ -38,7 +38,7 @@ import json
 from collections import namedtuple
 from ldap.filter import filter_format
 import univention.admin
-from univention.config_registry import ConfigRegistry
+from univention.config_registry import ConfigRegistry, handler_set
 from univention.lib.package_manager import PackageManager
 
 log = logging.getLogger(__name__)
@@ -151,12 +151,38 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 		cmd = ['univention-ssh', '/etc/machine.secret', '{}$@{}'.format(ucr.get('hostname'), options.master_fqdn), cmd]
 	else:
 		assert isinstance(cmd, (list, tuple))
+	log.info('Calling %r ...', cmd)
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	stdout, stderr = proc.communicate()
 	if proc.returncode:
 		log.error('%s returned with exitcode %s:\n%s\n%s', ' '.join(cmd), proc.returncode, stderr, stdout)
 		sys.exit(1)
 	return StdoutStderr(stdout, stderr)
+
+
+def activate_repository():  # type: () -> None
+	'''
+	Bug #49475: on UCS 4.4-0 DVDs the UCR variable repository/online is false and therefore
+	an installation via univention-app will fail. This is a workaround until the installation
+	media has been fixed/adapted.
+	'''
+	log.info('repository/online: %r', ucr.get('repository/online'))
+	if ucr.is_false('repository/online', False):
+		log.warn('The online repository is deactivated.')
+		log.warn(
+			'Reactivating it and starting update to latest errata for UCS %s-%s.',
+			ucr.get('version/version'),
+			ucr.get('version/patchlevel'))
+		handler_set(['repository/online=true'])
+		cmd = [
+			'univention-upgrade',
+			'--updateto={}-{}'.format(ucr.get('version/version'), ucr.get('version/patchlevel')),
+			'--noninteractive',
+		]
+		log.info('Calling %r ...', cmd)
+		returncode = subprocess.call(cmd)
+		if returncode:
+			log.error('%s failed with exit code %s!', ' '.join(cmd), returncode)
 
 
 def pre_joinscripts_hook(options):
@@ -175,6 +201,8 @@ def pre_joinscripts_hook(options):
 	result = call_cmd(options, ['univention-app', 'info', '--as-json'], on_master=False)
 	local_status = json.loads(result.stdout)
 	ucsschool_installed = any(x.startswith('ucsschool=') for x in local_status.get('installed', []))
+	log.info('Installed packages: %r', local_status.get('installed'))
+	log.info('Is ucsschool already installed? %r', ucsschool_installed)
 	# only install UCS@school if at least one package has to be installed
 	if not ucsschool_installed and pkg_list:
 		result = call_cmd(options, '/usr/sbin/ucr get version/version', on_master=True)
@@ -182,6 +210,8 @@ def pre_joinscripts_hook(options):
 		result = call_cmd(options, ['ucr', 'get', 'version/version'], on_master=False)
 		local_version = result.stdout.strip()
 		app_string = 'ucsschool'
+		log.info('Master version: %r', master_version)
+		log.info('Local version: %r', local_version)
 		if master_version == local_version:
 			result = call_cmd(options, '/usr/bin/univention-app info --as-json', on_master=True)
 			master_app_info = json.loads(result.stdout)
@@ -197,6 +227,8 @@ def pre_joinscripts_hook(options):
 					'UCS@school does not seem to be installed on %s! Cannot get app version of UCS@school on DC master!',
 					options.master_fqdn)
 				sys.exit(1)
+
+		activate_repository()
 
 		log.info('Updating app center information...')
 		cmd = [
@@ -261,9 +293,10 @@ def main():
 		level = LEVELS[options.verbose]
 	except IndexError:
 		level = LEVELS[-1]
-	logging.basicConfig(stream=sys.stderr, level=level)
+	logging.basicConfig(stream=sys.stderr, level=level, format='%(asctime)s ucsschool-join-hook: [%(levelname)s] %(message)s')
 
 	log = logging.getLogger(__name__)
+	log.info('ucsschool-join-hook.py has been started')
 
 	if ucr.is_false('ucsschool/join/hook/join/pre-joinscripts', False):
 		log.warn('UCS@school join hook has been disabled via UCR variable ucsschool/join/hook/join/pre-joinscripts.')
