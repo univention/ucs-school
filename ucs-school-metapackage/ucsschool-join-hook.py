@@ -38,7 +38,7 @@ import json
 from collections import namedtuple
 from ldap.filter import filter_format
 import univention.admin
-from univention.config_registry import ConfigRegistry
+from univention.config_registry import ConfigRegistry, handler_set
 from univention.lib.package_manager import PackageManager
 
 log = logging.getLogger(__name__)
@@ -160,11 +160,38 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 	return StdoutStderr(stdout, stderr)
 
 
+def activate_repository():  # type: () -> None
+	'''
+	Bug #49475: on UCS 4.4-0 DVDs the UCR variable repository/online is false and therefore
+	an installation via univention-app will fail. This is a workaround until the installation
+	media has been fixed/adapted.
+	'''
+	log.info('repository/online: %r', ucr.get('repository/online'))
+	if ucr.is_false('repository/online', False):
+		log.warn('The online repository is deactivated.')
+		log.warn(
+			'Reactivating it and starting update to latest errata for UCS %s-%s.',
+			ucr.get('version/version'),
+			ucr.get('version/patchlevel'))
+		handler_set(['repository/online=true'])
+		cmd = [
+			'univention-upgrade',
+			'--updateto={}-{}'.format(ucr.get('version/version'), ucr.get('version/patchlevel')),
+			'--noninteractive',
+		]
+		log.info('Calling %r ...', cmd)
+		returncode = subprocess.call(cmd)
+		if returncode:
+			log.error('%s failed with exit code %s!', ' '.join(cmd), returncode)
+
+
 def pre_joinscripts_hook(options):
 	# do not do anything, if we are running within a docker container
 	if ucr.get('docker/container/uuid'):
 		log.info('This is a docker container... stopping here')
 		return
+
+	activate_repository()
 
 	package_manager = PackageManager(lock=False, always_noninteractive=True)
 
@@ -230,6 +257,7 @@ def pre_joinscripts_hook(options):
 	if not all(package_manager.is_installed(pkg_name) for pkg_name in pkg_list):
 		log.info('Not all required packages installed - calling univention-install...')
 		subprocess.call(['univention-install', '--force-yes', '--yes'] + pkg_list)
+
 
 
 def main():
