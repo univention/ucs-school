@@ -151,6 +151,7 @@ def call_cmd(options, cmd, on_master=False):  # type: (Any, Union[str, List[str]
 		cmd = ['univention-ssh', '/etc/machine.secret', '{}$@{}'.format(ucr.get('hostname'), options.master_fqdn), cmd]
 	else:
 		assert isinstance(cmd, (list, tuple))
+	log.info('Calling %r ...', cmd)
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	stdout, stderr = proc.communicate()
 	if proc.returncode:
@@ -175,6 +176,8 @@ def pre_joinscripts_hook(options):
 	result = call_cmd(options, ['univention-app', 'info', '--as-json'], on_master=False)
 	local_status = json.loads(result.stdout)
 	ucsschool_installed = any(x.startswith('ucsschool=') for x in local_status.get('installed', []))
+	log.info('Installed packages: %r', local_status.get('installed'))
+	log.info('Is ucsschool already installed? %r', ucsschool_installed)
 	# only install UCS@school if at least one package has to be installed
 	if not ucsschool_installed and pkg_list:
 		result = call_cmd(options, '/usr/sbin/ucr get version/version', on_master=True)
@@ -182,6 +185,8 @@ def pre_joinscripts_hook(options):
 		result = call_cmd(options, ['ucr', 'get', 'version/version'], on_master=False)
 		local_version = result.stdout.strip()
 		app_string = 'ucsschool'
+		log.info('Master version: %r', master_version)
+		log.info('Local version: %r', local_version)
 		if master_version == local_version:
 			result = call_cmd(options, '/usr/bin/univention-app info --as-json', on_master=True)
 			master_app_info = json.loads(result.stdout)
@@ -264,6 +269,7 @@ def main():
 	logging.basicConfig(stream=sys.stderr, level=level, format='%(asctime)s ucsschool-join-hook: [%(levelname)s] %(message)s')
 
 	log = logging.getLogger(__name__)
+	log.info('ucsschool-join-hook.py has been started')
 
 	if ucr.is_false('ucsschool/join/hook/join/pre-joinscripts', False):
 		log.warn('UCS@school join hook has been disabled via UCR variable ucsschool/join/hook/join/pre-joinscripts.')
