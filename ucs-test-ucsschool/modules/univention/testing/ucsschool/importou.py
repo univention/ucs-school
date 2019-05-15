@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import stat
 import random
 import subprocess
 import string
@@ -171,57 +172,49 @@ def import_ou_create_pre_hook(ou, ou_base, dc, singlemaster):
 	pre_hook_base = os.path.join(HOOK_BASEDIR, 'ou_create_pre.d')
 	pre_hook = os.path.join(pre_hook_base, uts.random_name())
 
-	pre_hook_fd = open(pre_hook, 'w+')
 	successful_file = '%s-successful' % pre_hook
 
-	pre_hook_fd.write('''#!/bin/sh
+	with open(pre_hook, 'w+') as pre_hook_fd:
+		pre_hook_fd.write('''#!/bin/sh
 set -x
 cat $1
-univention-ldapsearch -b "%(ou_base)s" >/dev/null && exit 1
-''' % {'ou_base': ou_base})
+univention-ldapsearch -b "%(ou_base)s" >/dev/null && exit 1\n''' % {'ou_base': ou_base})
+		if singlemaster:
+			pre_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+		elif dc:
+			pre_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+		else:
+			pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
 
-	if singlemaster:
-		pre_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
-	elif dc:
-		pre_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
-	else:
-		pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+		pre_hook_fd.write('touch "%s"' % successful_file)
+		os.fchmod(pre_hook_fd.fileno(), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
 
-	pre_hook_fd.write('touch "%s"' % successful_file)
-
-	pre_hook_fd.close()
-	os.chmod(pre_hook, 0o755)
-
-	return (pre_hook, successful_file)
+	return pre_hook, successful_file
 
 
 def import_ou_create_post_hook(ou, ou_base, dc, singlemaster):
 	post_hook_base = os.path.join(HOOK_BASEDIR, 'ou_create_post.d')
 	post_hook = os.path.join(post_hook_base, uts.random_name())
 
-	post_hook_fd = open(post_hook, 'w+')
 	successful_file = '%s-successful' % post_hook
 
-	post_hook_fd = open(post_hook, 'w+')
-	post_hook_fd.write('''#!/bin/sh
+	with open(post_hook, 'w+') as post_hook_fd:
+		post_hook_fd.write('''#!/bin/sh
 set -x
 cat $1
 test "%(ou_base)s" = "$2" || exit 1
-univention-ldapsearch -b "$2" >/dev/null || exit 1
-''' % {'ou_base': ou_base})
-	if singlemaster:
-		post_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou})
-	elif dc:
-		post_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
-	else:
-		post_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou})
+univention-ldapsearch -b "$2" >/dev/null || exit 1\n''' % {'ou_base': ou_base})
+		if singlemaster:
+			post_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou})
+		elif dc:
+			post_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+		else:
+			post_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou})
 
-	post_hook_fd.write('touch "%s"' % successful_file)
+		post_hook_fd.write('touch "%s"' % successful_file)
+		os.fchmod(post_hook_fd.fileno(), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
 
-	post_hook_fd.close()
-	os.chmod(post_hook, 0o755)
-
-	return (post_hook, successful_file)
+	return post_hook, successful_file
 
 
 def get_ou_base(ou, district_enable):
