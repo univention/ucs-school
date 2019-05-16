@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-11) unstable; urgency=low
+
+  * Bug #48576: run update-python-modules before using manage.py
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 16 May 2019 08:52:23 +0200
+
 ucs-school-import (16.0.3-10) unstable; urgency=low
 
   * Bug #48576: move Python module required by client to common package
