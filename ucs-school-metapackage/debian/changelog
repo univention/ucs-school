@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.2-2) unstable; urgency=low
+
+  * Bug #49475: do not perform package update but only a package list update
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 May 2019 15:57:50 +0200
+
 ucs-school-metapackage (12.0.2-1) unstable; urgency=low
 
   * Bug #49475: activate online repository in join hook and perform an

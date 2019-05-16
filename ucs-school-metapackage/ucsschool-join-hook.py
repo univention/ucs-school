@@ -168,17 +168,9 @@ def activate_repository():  # type: () -> None
 	'''
 	log.info('repository/online: %r', ucr.get('repository/online'))
 	if ucr.is_false('repository/online', False):
-		log.warn('The online repository is deactivated.')
-		log.warn(
-			'Reactivating it and starting update to latest errata for UCS %s-%s.',
-			ucr.get('version/version'),
-			ucr.get('version/patchlevel'))
+		log.warn('The online repository is deactivated. Reactivating it.')
 		handler_set(['repository/online=true'])
-		cmd = [
-			'univention-upgrade',
-			'--updateto={}-{}'.format(ucr.get('version/version'), ucr.get('version/patchlevel')),
-			'--noninteractive',
-		]
+		cmd = ['/usr/bin/apt-get', 'update']
 		log.info('Calling %r ...', cmd)
 		returncode = subprocess.call(cmd)
 		if returncode:
