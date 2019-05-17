@@ -52,17 +52,19 @@ define([
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/ProgressInfo",
 	"umc/widgets/SearchForm",
+	"umc/i18n/tools",
 	"umc/i18n!umc/modules/schoollists"
 ], function(declare, lang, array, on, locale, Deferred, Dialog, entities, dialog, tools, Module,
-            Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Button, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
+			Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Button, Text, ContainerWidget, ProgressInfo,
+			SearchForm, i18nTools, _) {
 
 	return declare("umc.modules.schoollists", [ Module ], {
 		idProperty: 'id',
 		_searchPage: null,
 
 		openDownload: function(result) {
-			var utf_bom = "\uFEFF";
-			var blob = new Blob([utf_bom + result.result.csv], {type: 'text/csv'});
+			var utfBom = "\uFEFF";
+			var blob = new Blob([utfBom + result.result.csv], {type: 'text/csv'});
 			var url = URL.createObjectURL(blob);
 			if (window.navigator && window.navigator.msSaveOrOpenBlob) {
 				// IE doesn't open objectURLs directly
@@ -78,13 +80,25 @@ define([
 			link.remove();
 		},
 
+		guessCsvSeparator: function() {
+			// The default csv separator in excel is usually a comma in case the decimal separator is a dot
+			// and a semicolon in case it is a comma
+			var floatNnumber = 0.5;
+			var umcLang = i18nTools.defaultLang();
+			var localizedFloat = floatNnumber.toLocaleString(umcLang);
+			if (localizedFloat.indexOf(',') !== -1) {
+				return ';';
+			}
+			return ',';
+		},
+
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			this.standby(true);
 
 			this._searchPage = new Page({
-				helpText: _("This module lets you export class and workgroup lists. The lists are in the CSV format. If you have problems opening the exported file, ensure the encoding is set to UTF-8 and the field seperator is set to use commas (\",\").<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>")
+				helpText: _("This module lets you export class and workgroup lists. The lists are in the CSV format. If you have problems opening the exported file, ensure the encoding is set to UTF-8 and the field separator is set to \"%s\".<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>", this.guessCsvSeparator())
 			});
 
 			this.addChild(this._searchPage);
@@ -138,7 +152,8 @@ define([
 				onSearch: lang.hitch(this, function(values) {
 					this.umcpCommand('schoollists/csvlist', {
 						school: values.school,
-						group: values.group
+						group: values.group,
+						separator: this.guessCsvSeparator()
 					}).then(lang.hitch(this, 'openDownload'));
 				})
 			});

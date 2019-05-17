@@ -36,7 +36,7 @@ import StringIO
 from ldap.dn import explode_dn
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules.sanitizers import DNSanitizer
+from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 from univention.management.console.modules.decorators import sanitize
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSanitizer
@@ -50,14 +50,16 @@ class Instance(SchoolBaseModule):
 	@sanitize(
 		school=SchoolSanitizer(required=True),
 		group=DNSanitizer(required=True, minimum=1),
+		separator=StringSanitizer(required=True),
 	)
 	@LDAP_Connection()
 	def csv_list(self, request, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
 		group = request.options['group']
+		separator = request.options['separator']
 		csvfile = StringIO.StringIO()
 		fieldnames = [_('Firstname'), _('Lastname'), _('Class'), _('Username')]
-		writer = csv.writer(csvfile)
+		writer = csv.writer(csvfile, delimiter=str(separator))
 		writer.writerow(fieldnames)
 		for student in self.students(ldap_user_read, school, group):
 			class_display_name = student.school_classes[school][0].split('-', 1)[1]

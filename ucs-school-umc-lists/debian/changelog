@@ -1,3 +1,9 @@
+ucs-school-umc-lists (2.0.0-1) unstable; urgency=medium
+
+  * Bug #48504: Change csv separator according to the current umc language settings
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 17 May 2019 16:53:45 +0200
+
 ucs-school-umc-lists (2.0.0-0) unstable; urgency=medium
 
   * bump version for UCS@school 4.4
