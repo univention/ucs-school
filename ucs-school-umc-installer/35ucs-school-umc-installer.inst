@@ -44,6 +44,9 @@ umc_init
 umc_operation_create "schoolinstaller-all" "UCS@school installer" "" "schoolinstaller/*"
 umc_policy_append "default-umc-all" "schoolinstaller-all"
 
+# Bug #49046 / Bug #49511: set the UCRV now, so that the app settings show an enabled checkbox
+univention-config-registry set ucsschool/join/create_demo?yes
+
 joinscript_save_current_version
 
 exit 0

@@ -47,9 +47,11 @@ from univention.config_registry import ConfigRegistry
 ucr = ConfigRegistry()
 ucr.load()
 
+
 def is_valid_ou_name(name):
 	""" check if given OU name is valid """
 	return bool(re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', name))
+
 
 def configure_ucsschool(options):  # type: (Any) -> None
 	connection = univention.lib.umc.Client(
@@ -136,6 +138,7 @@ def configure_ucsschool(options):  # type: (Any) -> None
 		print 'ERROR: Failed to restart UMC'
 		print 'OUTPUT: %s' % (msg_body,)
 	print 'UMC successfully restarted.'
+
 
 def install_app(options):  # type: (Any) -> None
 	fd = open('/var/log/univention/ucsschool-slave-installer.log', 'a')

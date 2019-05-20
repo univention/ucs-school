@@ -67,7 +67,7 @@ define([
 			this.pages = [{
 				name: 'setup',
 				headerText: _('UCS@school - server setup'),
-				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different environment types: the single server environment and the multi server environment. The selection of an environment type has implications for the following installation steps. Further information for the selected environment type will be displayed below.</p>') + _('<p>During the installation of UCS@school a demo school including some users and a portal will be configured for testing purposes. If you do not wish that, please set the UCR variable <emp>ucsschool/join/create_demo</emp> to <emp>no</emp> prior to the installation.</p>'),
+				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different environment types: the single server environment and the multi server environment. The selection of an environment type has implications for the following installation steps. Further information for the selected environment type will be displayed below.</p>') + _('<p>During the installation of UCS@school a demo school including some users and a portal will be configured for testing purposes. If you do not wish that, please set the UCR variable <emp>ucsschool/join/create_demo</emp> to <emp>no</emp> prior to the installation (select the UCS@school app in the App Center and click on <emph>App settings</emph>).</p>'),
 				widgets: [{
 					type: ComboBox,
 					name: 'setup',

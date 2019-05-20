@@ -1,3 +1,10 @@
+ucs-school-umc-installer (7.0.0-5) unstable; urgency=low
+
+  * Bug #49046: inform, that the creation of the demoschool is configurable
+    via app settings
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 20 May 2019 17:29:20 +0200
+
 ucs-school-umc-installer (7.0.0-4) unstable; urgency=medium
 
   * Bug #48697: Recognize if a central slave is configured already
