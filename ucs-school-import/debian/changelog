@@ -1,6 +1,7 @@
 ucs-school-import (16.0.3-12) unstable; urgency=low
 
   * Bug #48576: reload (instead of restart) services that support it
+  * Bug #48576: fix Python modules installation path
 
  -- Daniel Troeder <troeder@univention.de>  Mon, 20 May 2019 10:19:40 +0200
 
