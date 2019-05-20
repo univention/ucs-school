@@ -244,7 +244,32 @@ feedback@univention.de
 					<!-- END ucs-school-umc-wizards 11.0.0-5A~4.4.0.201905071507 -->
 <!-- CHANGELOG:2019-05-08:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-05-20" lang="en">
+					<title>Released on 2019-05-20:</title>
+					<!-- START ucs-school-ldap-acls-master 17.0.1-1A~4.4.0.201905101706 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>17.0.1-1A~4.4.0.201905101706</emphasis>:
+						<itemizedlist>
+							<listitem><para>Teachers and Staff cannot modify or create arbitrary shares anymore due to security concerns (<u:bug>49434</u:bug>).</para></listitem>
+
+							<listitem><para>Due to a ACL problem, multi-OU staff users were not replicated to all administrative school slaves. This problem has been fixed (<u:bug>48924</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 17.0.1-1A~4.4.0.201905101706 -->
+					<!-- START ucs-school-metapackage 12.0.2-2A~4.4.0.201905161706 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.2-2A~4.4.0.201905161706</emphasis>:
+						<itemizedlist>
+							<listitem><para>The installation of school slaves and backups failed, if the join is performed directly within the UCS installer. This problem has now been fixed by activating the online repository during installation if this is not the case (<u:bug>49475</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.2-2A~4.4.0.201905161706 -->
+<!-- CHANGELOG:2019-05-20:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
