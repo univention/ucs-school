@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.6-17A~4.4.0.201905201022
+fix: 17.0.6-18A~4.4.0.201905201030
 desc: |
  * Internal improvement: a Python module was moved into another Debian package (Bug #49217).
 bug: [49217]
