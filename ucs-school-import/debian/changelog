@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-12) unstable; urgency=low
+
+  * Bug #48576: reload (instead of restart) services that support it
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 20 May 2019 10:19:40 +0200
+
 ucs-school-import (16.0.3-11) unstable; urgency=low
 
   * Bug #48576: run update-python-modules before using manage.py

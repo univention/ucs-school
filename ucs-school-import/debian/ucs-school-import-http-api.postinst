@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # UCS@school HTTP import API
 #  postinst script for the debian package
@@ -70,10 +70,14 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt 16.0.2-12 ; then
 fi
 
 systemctl daemon-reload
-for SERVICE in  rabbitmq-server celery-worker-ucsschool-import postgresql ucs-school-import-http-api apache2;
+for SERVICE in postgresql apache2;
+do
+	echo "Reloading $SERVICE..."
+    deb-systemd-invoke reload "$SERVICE.service"
+done
+for SERVICE in rabbitmq-server celery-worker-ucsschool-import ucs-school-import-http-api;
 do
 	echo "Restarting $SERVICE..."
     deb-systemd-invoke restart "$SERVICE.service"
 done
-
 exit 0
