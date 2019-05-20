@@ -4,19 +4,19 @@
 #    ../ucsschool/http_api/client.py                     -> ucs-school-import-http-api-client.install
 modules/ucsschool/http_api/manage.py                     usr/share/pyshared/ucsschool/http_api/
 modules/ucsschool/http_api/app/                          usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/management/        usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/migrations/        usr/share/pyshared/ucsschool/http_api/
+modules/ucsschool/http_api/import_api/management/        usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/migrations/        usr/share/pyshared/ucsschool/http_api/import_api/
 #    ../ucsschool/http_api/import_api/__init__.py        -> ucs-school-import-http-api-common.install
 #    ../ucsschool/http_api/import_api/constants.py       -> ucs-school-import-http-api-common.install
-modules/ucsschool/http_api/import_api/admin.py           usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/apps.py            usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/http_api_import_frontend.py  usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/import_logging.py  usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/models.py          usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/serializers.py     usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/tasks.py           usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/utils.py           usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/views.py           usr/share/pyshared/ucsschool/http_api/
+modules/ucsschool/http_api/import_api/admin.py           usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/apps.py            usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/http_api_import_frontend.py  usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/import_logging.py  usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/models.py          usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/serializers.py     usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/tasks.py           usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/utils.py           usr/share/pyshared/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/views.py           usr/share/pyshared/ucsschool/http_api/import_api/import constants
 modules/ucsschool/http_api/de.mo                usr/share/locale/de/LC_MESSAGES/
 usr/share/ucs-school-import-http-api/hooks/ou_create_post.d/* usr/share/ucs-school-import/hooks/ou_create_post.d/
 usr/share/ucs-school-import-http-api/templates  usr/share/ucs-school-import-http-api/
