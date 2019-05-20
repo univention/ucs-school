@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-installer
+fix: 7.0.0-5A~4.4.0.201905201731
+desc: |
+ * The installer now sets the UCRV ucsschool/join/create_demo in its join script and informs the user, that it can be set using the app settings. (Bug #49046).
+bug: [49046]
