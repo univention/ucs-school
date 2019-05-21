@@ -40,6 +40,7 @@ import itertools
 import traceback
 from pipes import quote
 from datetime import datetime
+from six import iteritems, string_types
 
 from univention.lib import atjobs
 from univention.lib.i18n import Translation
@@ -121,7 +122,7 @@ class _Dict(object):
 		'''Update internal dict with the dict given as parameter.'''
 		# copy entries from the given dict over to the project properties
 		_dict = self.dict
-		for k, v in props.iteritems():
+		for k, v in iteritems(props):
 			if k in _dict:
 				_dict[k] = v
 
@@ -174,7 +175,7 @@ class User(_Dict):
 
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(self, TYPE_USER, unixhome='', username='', uidNumber='', gidNumber='', firstname='', lastname='', dn='')
+		super(User, self).__init__(TYPE_USER, unixhome='', username='', uidNumber='', gidNumber='', firstname='', lastname='', dn='')
 
 		# update specified entries
 		if len(args):
@@ -190,7 +191,7 @@ class User(_Dict):
 class Group(_Dict):
 
 	def __init__(self, *args, **_props):
-		_Dict.__init__(self, TYPE_GROUP, dn='', name='', members=[])
+		super(Group, self).__init__(TYPE_GROUP, dn='', name='', members=[])
 		# update specified entries
 		if len(args):
 			self.update(args[0])
@@ -237,8 +238,7 @@ class Project(_Dict):
 
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(
-			self,
+		super(Project, self).__init__(
 			TYPE_PROJECT,
 			name=None,
 			description=None,
@@ -328,7 +328,7 @@ class Project(_Dict):
 		if time is None:
 			# unset value
 			_dict[key] = None
-		elif isinstance(time, basestring):
+		elif isinstance(time, string_types):
 			# a string a saved directly to the internal dict
 			_dict[key] = time
 		elif isinstance(time, datetime):
@@ -356,7 +356,7 @@ class Project(_Dict):
 	def validate(self):
 		'''Validate the project data. In case of any errors with the data,
 		a ValueError with a proper error message is raised.'''
-		if not (isinstance(self.name, basestring) and self.name):
+		if not (isinstance(self.name, string_types) and self.name):
 			raise ValueError(_('The given project directory name must be non-empty.'))
 		# disallow certain characters to avoid problems in Windows/Mac/Unix systems:
 		# http://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
@@ -371,7 +371,7 @@ class Project(_Dict):
 			raise ValueError(_('The specified project directory may not end with a space.'))
 		if len(self.name) >= 255:
 			raise ValueError(_('The specified project directory may at most be 254 characters long.'))
-		if not (isinstance(self.description, basestring) and self.description):
+		if not (isinstance(self.description, string_types) and self.description):
 			raise ValueError(_('The given project description must be non-empty.'))
 		if not self.sender or not self.sender.username or not self.sender.homedir:
 			raise ValueError(_('A valid project owner needs to be specified.'))
@@ -475,25 +475,25 @@ class Project(_Dict):
 		if self.starttime and self.starttime > datetime.now():
 			MODULE.info('register at-jobs: starttime = %s' % self.starttime)
 			cmd = """'%s' --distribute %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
-			print 'register at-jobs: starttime = %s  cmd = %s' % (self.starttime, cmd)
+			print('register at-jobs: starttime = %s  cmd = %s' % (self.starttime, cmd))
 			atJob = atjobs.add(cmd, self.starttime)
 			if atJob and self.starttime:
 				self.atJobNumDistribute = atJob.nr
 			if not atJob:
 				MODULE.warn('registration of at-job failed')
-				print 'registration of at-job failed'
+				print('registration of at-job failed')
 
 		# register the collecting job, only if a deadline is given
 		if self.deadline and self.deadline > datetime.now():
 			MODULE.info('register at-jobs: deadline = %s' % self.deadline)
-			print 'register at-jobs: deadline = %s' % self.deadline
+			print('register at-jobs: deadline = %s' % self.deadline)
 			cmd = """'%s' --collect %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
 			atJob = atjobs.add(cmd, self.deadline)
 			if atJob:
 				self.atJobNumCollect = atJob.nr
 			else:
 				MODULE.warn('registration of at-job failed')
-				print 'registration of at-job failed'
+				print('registration of at-job failed')
 
 	def _unregister_at_jobs(self):
 		# remove at-jobs
@@ -780,7 +780,7 @@ class Project(_Dict):
 				projectlist.append(project)
 
 		# sort final result
-		projectlist.sort(cmp=lambda x, y: cmp(x.name.lower(), y.name.lower()))
+		projectlist.sort(key=lambda x: x.lower())
 		return projectlist
 
 

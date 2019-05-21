@@ -36,6 +36,7 @@ import sys
 import tempfile
 import shutil
 from datetime import datetime, timedelta
+from six import reraise as raise_
 
 from univention.lib.i18n import Translation
 from univention.management.console.modules import UMC_Error
@@ -328,7 +329,7 @@ class Instance(SchoolBaseModule):
 						shutil.rmtree(ipath)
 					except (IOError, OSError):
 						pass
-			raise UMC_Error, exc, etraceback
+			raise_(UMC_Error, exc, etraceback)
 		self._cleanTmpDir()
 		return {'success': True, 'name': iprops.get('name')}
 
