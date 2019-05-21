@@ -181,14 +181,6 @@ else
     su - postgres -c "createdb -E UTF8 -O $POSTGRES_USER -T template0 $POSTGRES_DB" || die
 fi
 
-# Bug #48576: if this joinscript is run before the python-support trigger,
-# then Python modules won't be found when required below by manage.py.
-# TODO: Remove once we have migrated to dh_python2
-if which update-python-modules >/dev/null 2>&1; then
-	update-python-modules $(for I in /usr/share/python-support/ucs-school-import*.public; do basename $I; done)
-	update-python-modules --post-install
-fi
-
 unset DJANGO_SETTINGS_MODULE
 python /usr/share/pyshared/ucsschool/http_api/manage.py check --no-color --deploy || die
 echo "Collecting static files..."

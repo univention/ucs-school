@@ -1,3 +1,9 @@
+ucs-school-import (16.0.3-13) unstable; urgency=low
+
+  * Bug #48576: retry without update-python-modules
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 21 May 2019 14:46:20 +0200
+
 ucs-school-import (16.0.3-12) unstable; urgency=low
 
   * Bug #48576: reload (instead of restart) services that support it
