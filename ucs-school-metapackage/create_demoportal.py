@@ -58,13 +58,14 @@ else:
 	hostname_demoschool = "DEMOSCHOOL"
 hostdn = ucr.get('ldap/hostdn')
 demo_password = ''.join(random.choice(string.ascii_uppercase) for _ in range(16))
-if os.path.isfile('/etc/demoschool.secret'):
-	with open('/etc/demoschool.secret', 'r') as fd:
+demo_secret_path = '/etc/ucsschool/demoschool.secret'
+if os.path.isfile(demo_secret_path):
+	with open(demo_secret_path, 'r') as fd:
 		demo_password = fd.read().rstrip('\n')
 else:
-	with open('/etc/demoschool.secret', 'w') as fd:
+	with open(demo_secret_path, 'w') as fd:
 		fd.write(demo_password)
-	os.chmod('/etc/demoschool.secret', 0640)
+		os.fchmod(fd.fileno(), 0640)
 
 # (name, displayName)
 SCHOOL = ('DEMOSCHOOL', 'Demo School')

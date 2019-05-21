@@ -35,7 +35,7 @@
     einem Portal konfiguriert. Die Schule trägt den Namen <emphasis>DEMOSCHOOL</emphasis> und kann für eigene Tests verwendet werden.
 	Das Passwort für die automatisch angelegten Nutzer <systemitem class="username">demo_student</systemitem>,
     <systemitem class="username">demo_teacher</systemitem> und <systemitem class="username">demo_admin</systemitem> befindet sich in der Datei
-    <filename>/etc/demoschool.secret</filename>. Um das Anlegen der Demonstrationsschule zu verhindern,
+    <filename>/etc/ucsschool/demoschool.secret</filename>. Um das Anlegen der Demonstrationsschule zu verhindern,
 	muss die UCR-Variable <envar>ucsschool/join/create_demo</envar> auf den Wert <literal>no</literal> gesetzt werden,
     bevor der &ucsUAS;-Konfigurations-Assistent durchlaufen wird. Das Setzen der UCR-Variable ist entweder über das UMC-Modul
 	<guimenu>Univention Configuration Registry</guimenu> oder auf der Kommandozeile mit dem Befehl

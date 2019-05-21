@@ -160,6 +160,14 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.0-6; then
 	IFS="$OIFS"
 fi
 
+# Bug 49515: store demo user password in ucsschool config dir
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.2-3; then  # TODO: update package version
+	if [ -e /etc/demoschool.secret ]; then
+		[ -d /etc/ucsschool ] || mkdir -p /etc/ucsschool
+		mv /etc/demoschool.secret /etc/ucsschool
+	fi
+fi
+
 /etc/init.d/univention-directory-listener crestart
 
 call_joinscript 00ucs-school-app-version-check.inst
