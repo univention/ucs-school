@@ -34,3 +34,19 @@ Ganz grobes Konzept:
 1. Die Änderung der UCR-Variablen für squidguard triggert automatisch ein UCR-Modul.
 1. Das UCR-Modul schreibt die Daten der UCR-Variablen in Text-Dateien für Squidguard und ruft ein Tool zum Konvertieren der Text-Datei in eine Squidguard-Datenbank auf.
 1. Abschließend triggert das UCR-Modul einen Reload über einen speziellen Daemon, der dafür sorgt, dass der Squid (**Achtung**: squid, nicht squidguard! squidguard ist ein Helperprozess von squid) max. 1x pro 15 Sekunden neugestartet wird.
+
+
+## Samba
+
+### LDB-Modul
+
+Für UCS@school haben wir ein LDB-Modul für Samba entwickelt, welches dafür sorgt, dass a) beim Joinvorgang eines Windows-Clients das entsprechende Rechnerobjekt vom UDM angelegt wird (nicht vom AD selbst!) und b) dieses Rechnerobjekt unterhalb der "richtigen" OU und *nicht* im zentralen Container angelegt wird.
+Das LDB-Modul wird auf folgenden Systemen vom Metapaket installiert und aktiviert:
+
+- Multiserver-Umgebung:
+  - Schulserver (edukativ UND Verwaltung)
+- Singleserver-Umgebung:
+  - DC Master
+  - DC Backup
+
+Auf allen anderen Rollen ist das Modul nicht aktiv und joinende Windowsclients legen dann Rechnerobjekte direkt in den zentralen Containern und nicht unterhalb der Schul-OUs an.
