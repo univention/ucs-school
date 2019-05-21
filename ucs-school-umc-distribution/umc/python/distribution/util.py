@@ -780,7 +780,7 @@ class Project(_Dict):
 				projectlist.append(project)
 
 		# sort final result
-		projectlist.sort(key=lambda x: x.lower())
+		projectlist.sort(key=lambda x: x.name.lower())
 		return projectlist
 
 
