@@ -203,6 +203,7 @@ class Instance(SchoolBaseModule):
 				description=request.options['name'],
 				files=request.options.get('files'),
 				sender=sender,
+				room=request.options['room'],
 			))
 			my.project.validate()
 			my.project.save()
@@ -375,6 +376,9 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(5)
 
 		def _finished(thread, result, request):
+			my.project.starttime = datetime.datetime.now()
+			my.project.save()
+
 			# mark the progress state as finished
 			progress.info(_('finished...'))
 			progress.finish()
@@ -533,3 +537,24 @@ class Instance(SchoolBaseModule):
 
 		thread = notifier.threads.Simple('start_exam', _thread, _finished)
 		thread.run()
+
+	@simple_response
+	def query(self):
+		"""
+		Get all exams (both running and planned).
+
+		:return: list of projects
+		:rtype: list(dict)
+		"""
+		return [
+			{
+				'name': project.name,
+				'sender': project.sender.username,  # teacher / admin
+				'recipients': [r.username for r in project.recipients],  # students
+				'starttime': project.starttime.strftime('%H:%M'),
+				'files': len(project.files),
+				'isDistributed': project.isDistributed,  # if True, exam has started
+				'room': ComputerRoom.get_name_from_dn(project.room),
+		}
+			for project in util.distribution.Project.list()
+		]

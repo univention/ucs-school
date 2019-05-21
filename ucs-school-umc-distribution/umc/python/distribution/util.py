@@ -250,6 +250,7 @@ class Project(_Dict):
 			sender=None,  # User
 			recipients=[],  # [ (User|Group) , ...]
 			isDistributed=False,
+			room=None,  # str
 		)
 
 		# update specified entries
