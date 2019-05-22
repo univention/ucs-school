@@ -34,19 +34,21 @@ Loader for Python based hooks.
 """
 
 import imp
+import importlib
 import inspect
 import logging
 import os.path
+import sys
 from collections import defaultdict
 from os import listdir
 
-from six import iteritems
+from six import iteritems, reraise, string_types
 
 try:
     import logging.Logger
-    from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+    from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
-    from ucsschool.lib.pyhooks import PyHook
+    from .pyhooks import PyHook
 
     PyHookTV = TypeVar("PyHookTV", bound=PyHook)
 except ImportError:
@@ -64,9 +66,8 @@ class PyHooksLoader(object):
     _hook_classes = {}  # type: Dict[str, List[Type[PyHookTV]]]
 
     def __init__(self, base_dir, base_class, logger=None, filter_func=None):
-        # type: (str, Type[PyHookTV], Optional[logging.Logger], Optional[Callable[[Type[PyHookTV]], bool]]) -> None  # noqa: E501
+        # type: (str, Union[str, Type[PyHookTV]], Optional[logging.Logger], Optional[Callable[[Type[PyHookTV]], bool]]) -> None  # noqa: E501
         """
-
         Hint: if you wish to pass a logging instance to a hook, add it to the
         arguments list of :py:meth:`get_hook_objects()` and receive it in the
         hooks :py:meth:`__init__()` method.
@@ -76,21 +77,21 @@ class PyHooksLoader(object):
         Thus its signature is `(type) -> bool`.
 
         :param str base_dir: path to a directory containing Python files
-        :param type base_class: only subclasses of this class will be imported
+        :param base_class: only subclasses of this class will be imported. This can be either a class
+            object or the fully dotted Python path to a class (the latter helps to prevent import loops).
+        :type base_class: str or type
         :param logging.Logger logger: Python logging instance to use for loader logging (deprecated,
             ignored)
         :param Callable filter_func: function that takes a class and returns a bool
         """
         self.base_dir = base_dir
-        self.base_class = base_class
-        self.base_class_name = base_class.__name__
+        self.base_class = self.hook_cls2importpyhook(base_class, "base_class")
+        self.base_class_name = self.base_class.__name__
         self.logger = logging.getLogger(__name__)  # type: logging.Logger
-        if filter_func:
-            assert callable(filter_func), "'filter_func' must be a callable, got {!r}.".format(
-                filter_func
-            )
+        if filter_func and not callable(filter_func):
+            raise TypeError("Argument 'filter_func' must be a callable, got {!r}.".format(filter_func))
         self._filter_func = filter_func
-        self._pyhook_obj_cache = None  # type: Dict[str, List[Callable[..., Any]]]
+        self._pyhook_obj_cache = None  # type: Union[None, Dict[str, List[Callable[..., Any]]]]
 
     def drop_cache(self):  # type: () -> None
         """
@@ -123,8 +124,13 @@ class PyHooksLoader(object):
                 filter_func = lambda x: True  # noqa: E731
             for filename in listdir(self.base_dir):
                 if filename.endswith(".py") and os.path.isfile(os.path.join(self.base_dir, filename)):
-                    info = imp.find_module(filename[:-3], [self.base_dir])
-                    a_class = self._load_hook_class(filename[:-3], info, self.base_class)
+                    info = None
+                    try:
+                        info = imp.find_module(filename[:-3], [self.base_dir])
+                        a_class = self._load_hook_class(filename[:-3], info, self.base_class)
+                    finally:
+                        if info and isinstance(info, tuple) and info[0] is not None:
+                            info[0].close()
                     if a_class:
                         if filter_func(a_class):
                             self._hook_classes[self.base_class_name].append(a_class)
@@ -152,7 +158,19 @@ class PyHooksLoader(object):
         :rtype: Dict[str, List[Callable]]
         """
         if self._pyhook_obj_cache is None:
-            pyhook_objs = [pyhook_cls(*args, **kwargs) for pyhook_cls in self.get_hook_classes()]
+            pyhook_objs = []
+            for pyhook_cls in self.get_hook_classes():
+                try:
+                    pyhook_objs.append(pyhook_cls(*args, **kwargs))
+                except Exception as exc:
+                    self.logger.exception(
+                        "Initializing hook class %r with args=%r and kwargs=%r: %s",
+                        pyhook_cls,
+                        args,
+                        kwargs,
+                        exc,
+                    )
+                    reraise(*sys.exc_info())
 
             # fill cache: find all enabled hook methods
             methods = defaultdict(list)  # type: Dict[str, List[Tuple[Callable[..., Any], int]]]
@@ -195,9 +213,13 @@ class PyHooksLoader(object):
         return self._pyhook_obj_cache
 
     @staticmethod
-    def _load_hook_class(cls_name, info, super_class):
+    def _load_hook_class(module_name, info, super_class):
         # type: (str, Tuple[IO, str, Tuple[str, str, int]], Type[PyHookTV]) -> Optional[Type[PyHookTV]]
-        res = imp.load_module(cls_name, *info)
+        try:
+            res = imp.load_module(module_name, *info)
+        except (ImportError, NameError) as exc:
+            logging.getLogger(__name__).exception("Loading modul %r (%r): %s", module_name, info[1], exc)
+            return None
         for thing in dir(res):
             candidate = getattr(res, thing)
             if (
@@ -207,3 +229,30 @@ class PyHooksLoader(object):
             ):
                 return candidate
         return None
+
+    @staticmethod
+    def hook_cls2importpyhook(hook_cls_arg, arg_name):
+        # type: (Union[Type[PyHookTV], str], str) -> Type[PyHookTV]
+        error_msg = (
+            "Argument {!r} must be a class object or the fully dotted Python path to a class.".format(
+                arg_name
+            )
+        )
+        if isinstance(hook_cls_arg, string_types):
+            try:
+                _module_name, _class_name = hook_cls_arg.rsplit(".", 1)
+                _module = importlib.import_module(_module_name)
+                base_class = getattr(_module, _class_name)  # type: Type[PyHookTV]
+            except (AttributeError, ImportError, ValueError) as exc:
+                raise TypeError("{} : {}".format(error_msg, exc))
+            if not inspect.isclass(base_class):
+                raise ValueError(
+                    "Loaded module {!r} and its attribute {!r}, but it is not a class.".format(
+                        _module, base_class
+                    )
+                )
+        elif inspect.isclass(hook_cls_arg):
+            base_class = hook_cls_arg  # type: Type[PyHookTV]
+        else:
+            raise TypeError(error_msg)
+        return base_class

@@ -7,11 +7,12 @@
 ## packages:
 ##   - python-ucs-school
 
+import pytest
+
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.config_registry import handler_set, handler_unset
 from ucsschool.lib.models.share import MarketplaceShare
 from ucsschool.lib.models.utils import ucr
-import pytest
+from univention.config_registry import handler_set, handler_unset
 
 
 @pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])

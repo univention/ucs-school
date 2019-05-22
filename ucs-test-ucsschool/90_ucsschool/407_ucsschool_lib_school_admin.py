@@ -12,10 +12,9 @@
 # $ pytest -s -l -v ./......py::test_create
 #
 
-from univention.testing.ucsschool.conftest import UserType
-
 import univention.testing.utils as utils
 from ucsschool.lib.models.user import SchoolAdmin
+from univention.testing.ucsschool.conftest import UserType
 
 
 def test_create(create_ou, lo, user_ldap_attributes, user_school_attributes):
