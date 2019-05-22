@@ -42,6 +42,8 @@ import datetime
 import ldap
 import notifier
 
+from univention.admin.uexceptions import noObject
+
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
@@ -57,7 +59,13 @@ from univention.lib.umc import Client, ConnectionError, HTTPError
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
-from ucsschool.lib.models import ComputerRoom, User
+from ucsschool.lib.models import ComputerRoom, Group, User
+from ucsschool.lib.models.base import WrongObjectType
+
+try:
+	from typing import Any, Dict, List, Optional, Pattern
+except ImportError:
+	pass
 
 _ = Translation('ucs-school-umc-exam').translate
 
@@ -574,3 +582,43 @@ class Instance(SchoolBaseModule):
 					filter == 'all' or compare_dn(project.sender.dn, self.user_dn)
 			)
 		]
+
+	@sanitize(
+		groups=ListSanitizer(DNSanitizer(minimum=1), required=True, min_elements=1)
+	)
+	@LDAP_Connection()
+	def groups2students(self, request, ldap_user_read=None):
+		"""
+		Get members of passed groups. Only students are returned.
+
+		request.options must contain a key `groups` with a list of DNs (only
+		ucsschool.lib WorkGroup and SchoolClass are supported).
+		The UMC call will return the dict with group_dn -> list of dicts.
+		"""
+		students = {}
+		for group_dn in sorted(request.options['groups']):
+			try:
+				group_obj = Group.from_dn(group_dn, None, ldap_user_read)
+			except (WrongObjectType, noObject) as exc:
+				MODULE.error('DN {!r} does not exist or is not a work group or school class: {}'.format(group_dn, exc))
+				raise UMC_Error(_('Error loading group DN {!r}.').format(group_dn))
+
+			students[group_dn] = []
+			school_class_name = group_obj.name[len(group_obj.school) + 1:]
+
+			for user_dn in sorted(group_obj.users):
+				try:
+					user_obj = User.from_dn(user_dn, None, ldap_user_read)
+				except (WrongObjectType, noObject) as exc:
+					MODULE.warn('Ignoring DN {!r} - it does not exist or is not a school user: {}'.format(user_dn, exc))
+					continue
+
+				if user_obj.is_student(ldap_user_read):
+					students[group_dn].append({
+						'dn': user_dn,
+						'firstname': user_obj.firstname,
+						'lastname': user_obj.lastname,
+						'school_class': school_class_name
+					})
+
+		self.finished(request.id, students)   # cannot use @simple_response with @LDAP_Connection :/

@@ -17,5 +17,6 @@
 	<command name="schoolexam/progress" function="progress"/>
 	<command name="schoolexam/lesson_end" function="lesson_end"/>
 	<command name="schoolexam/query" function="query"/>
+	<command name="schoolexam/groups2students" function="groups2students"/>
   </module>
 </umc>
