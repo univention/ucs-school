@@ -46,8 +46,10 @@ from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, ListSanitizer, DNSanitizer
+from univention.management.console.modules.sanitizers import (
+	StringSanitizer, DictSanitizer, ListSanitizer, DNSanitizer, PatternSanitizer, ChoicesSanitizer)
 from univention.management.console.modules.schoolexam import util
+from univention.management.console.modules.distribution import compare_dn
 
 from univention.lib.i18n import Translation
 from univention.lib.umc import Client, ConnectionError, HTTPError
@@ -538,11 +540,20 @@ class Instance(SchoolBaseModule):
 		thread = notifier.threads.Simple('start_exam', _thread, _finished)
 		thread.run()
 
+	@sanitize(
+		pattern=PatternSanitizer(required=False, default='.*'),
+		filter=ChoicesSanitizer(['all', 'private'], default='private')
+	)
 	@simple_response
-	def query(self):
+	def query(self, pattern, filter):  # type: (Pattern[str], str) -> List[Dict[str, Any]]
 		"""
 		Get all exams (both running and planned).
 
+		:param _sre.SRE_Pattern pattern: pattern that the result lists
+			project names is matched against, defaults to `.*` (compiled by
+			decorator).
+		:param str filter: filter result list by project creator ("sender").
+			Must be either `all` or `private`, defaults to `private`.
 		:return: list of projects
 		:rtype: list(dict)
 		"""
@@ -551,10 +562,15 @@ class Instance(SchoolBaseModule):
 				'name': project.name,
 				'sender': project.sender.username,  # teacher / admin
 				'recipients': [r.username for r in project.recipients],  # students
-				'starttime': project.starttime.strftime('%H:%M'),
+				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M'),
 				'files': len(project.files),
 				'isDistributed': project.isDistributed,  # if True, exam has started
 				'room': ComputerRoom.get_name_from_dn(project.room),
 		}
 			for project in util.distribution.Project.list()
+			if
+					pattern.match(project.name)
+			and (
+					filter == 'all' or compare_dn(project.sender.dn, self.user_dn)
+			)
 		]
