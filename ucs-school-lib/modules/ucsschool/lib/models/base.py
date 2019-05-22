@@ -28,10 +28,25 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
+import inspect
 from copy import deepcopy
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
+from functools import lru_cache
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
+import lazy_object_proxy
 import ldap
 from ldap import explode_dn
 from ldap.dn import escape_dn_chars
@@ -43,9 +58,11 @@ from univention.admin.filter import conjunction, expression
 from univention.admin.uexceptions import noObject
 from univention.admin.uldap import LoType, PoType, getAdminConnection, getMachineConnection
 
+from ..pyhooks.pyhooks_loader import PyHooksLoader
 from ..roles import create_ucsschool_role_string
 from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
+from .hook import KelvinHook
 from .meta import UCSSchoolHelperMetaClass
 from .utils import _, env_or_ucr
 from .validator import validate
@@ -53,6 +70,14 @@ from .validator import validate
 SuperOrdinateType = Union[str, UdmObject]
 UldapFilter = Union[str, conjunction, expression]
 UCSSchoolModel = TypeVar("UCSSchoolModel", bound="UCSSchoolHelperAbstractClass")
+
+PYHOOKS_PATH = "/var/lib/ucs-school-import/kelvin-hooks/"
+PYHOOKS_BASE_CLASS = "ucsschool.lib.models.hook.Hook"
+_pyhook_loader: PyHooksLoader = lazy_object_proxy.Proxy(
+    lambda: PyHooksLoader(
+        PYHOOKS_PATH, PYHOOKS_BASE_CLASS, filter_func=lambda x: issubclass(x, KelvinHook)
+    )
+)
 
 
 class NoObject(noObject):
@@ -276,13 +301,16 @@ class UCSSchoolHelperAbstractClass(object):
         self.old_dn = self.dn
         self.errors: Dict[str, List[str]] = {}
         self.warnings: Dict[str, List[str]] = {}
+        self._in_hook = False  # if a hook is currently running
 
     @classmethod
+    @lru_cache(maxsize=1)
     def get_admin_connection(cls) -> Tuple[LoType, PoType]:
         """get a cached ldap connection to the DC Master using this host's credentials"""
         return getAdminConnection()
 
     @classmethod
+    @lru_cache(maxsize=1)
     def get_machine_connection(cls) -> Tuple[LoType, PoType]:
         """get a cached ldap connection to the DC Master using this host's credentials"""
         return getMachineConnection()
@@ -412,11 +440,81 @@ class UCSSchoolHelperAbstractClass(object):
             return False
         return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
+    async def _call_pyhooks(self, hook_time: str, func_name: str, udm: UDM) -> None:
+        """
+        Run Python based hooks (`*.py` files in `/usr/share/u-s-i/pyhooks`
+        containing a subclass of :py:class:`ucsschool.lib.models.hook.Hook`).
+
+        :param str hook_time: `pre` or `post`
+        :param str func_name: `create`, `modify`, `move` or `remove`
+        :param lo: UDM REST Client instance
+        :return: None
+        :rtype: None
+        """
+        self._in_hook = True
+        lo, _ = self.get_admin_connection()
+        all_hooks = _pyhook_loader.get_hook_objects(udm=udm, lo=lo)
+        meth_name = "{}_{}".format(hook_time, func_name)
+        try:
+            for func in all_hooks.get(meth_name, []):  # type: Callable[..., Any]
+                if issubclass(self.__class__, func.__self__.model):
+                    func_py_name = f"{func.__self__.__class__.__name__}.{func.__name__}"
+                    self.logger.debug(
+                        "Running %s hook %s for %s...",
+                        meth_name,
+                        func_py_name,
+                        self,
+                    )
+                    if not inspect.iscoroutinefunction(func):
+                        raise TypeError(f"Hook method {func_py_name} must be an async function.")
+                    func.__self__.udm = udm  # update UDM instance to the current one
+                    await func(self)
+        finally:
+            self._in_hook = False
+
     async def call_hooks(self, udm: UDM, hook_time: str, func_name: str) -> Optional[bool]:
-        # self.logger.debug(
-        #     "NotImplemented: %s.call_hooks(%r, %r)", self.__class__.__name__, hook_time, func_name
-        # )
+        """
+        Calls Python based hooks (*.py files in /usr/share/u-s-i/pyhooks).
+
+        In the case of `post`, this method is only called, if the corresponding
+        function (`create()`, `modify()`, `move()` or `remove()`) returned
+        `True`.
+
+        :param str hook_time: `pre` or `post`
+        :param str func_name: `create`, `modify`, `move` or `remove`
+        :param udm: UDM REST Client instance
+        :return: `or`d return value of legacy hooks or True if no hook ran
+        :rtype: bool: `or`d return value of legacy hooks or True if no hook ran
+        """
+        self.logger.debug(
+            "Starting %s.call_hooks(%r, %r) for %r.",
+            self.__class__.__name__,
+            hook_time,
+            func_name,
+            self,
+        )
+        await self._call_pyhooks(hook_time, func_name, udm)
         return True
+
+    def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
+        """Must be overridden if the model wants to support hooks.
+        Do so by something like:
+        return self._build_hook_line(self.attr1, self.attr2, 'constant')
+        """
+        return None
+
+    @classmethod
+    def hook_init(cls, hook):  # type: (PYHOOKS_BASE_CLASS) -> None
+        """
+        Overwrite this method to add individual initialization code to all
+        hooks of a ucsschool.lib.model class.
+        (See `.SchoolClass.hook_init()` for an example.)
+
+        :param hook: instance of a subclass of :py:class:`ucsschool.lib.model.hook.Hook`
+        :return: None
+        :rtype: None
+        """
+        pass
 
     async def _alter_udm_obj(self, udm_obj: UdmObject) -> None:
         for name, attr in iteritems(self._attributes):
@@ -434,9 +532,16 @@ class UCSSchoolHelperAbstractClass(object):
         If the object does not yet exist, creates it, returns True and
         calls post-hooks.
         """
-        await self.call_hooks(lo, "pre", "create")
+        if self._in_hook:
+            # prevent recursion
+            self.logger.warning(
+                "Running create() from within a hook, skipping hook execution. Please use "
+                "create_without_hooks() from within hooks."
+            )
+        else:
+            await self.call_hooks(lo, "pre", "create")
         success = await self.create_without_hooks(lo, validate)
-        if success:
+        if success and not self._in_hook:
             await self.call_hooks(lo, "post", "create")
         return success
 
@@ -505,9 +610,16 @@ class UCSSchoolHelperAbstractClass(object):
         If the object exists, modifies it, returns True and
         calls post-hooks.
         """
-        await self.call_hooks(lo, "pre", "modify")
+        if self._in_hook:
+            # prevent recursion
+            self.logger.warning(
+                "Running modify() from within a hook, skipping hook execution. Please use "
+                "modify_without_hooks() from within hooks."
+            )
+        else:
+            await self.call_hooks(lo, "pre", "modify")
         success = await self.modify_without_hooks(lo, validate, move_if_necessary)
-        if success:
+        if success and not self._in_hook:
             await self.call_hooks(lo, "post", "modify")
         return success
 
@@ -572,9 +684,16 @@ class UCSSchoolHelperAbstractClass(object):
         await udm_obj.save()
 
     async def move(self, lo: UDM, udm_obj: UdmObject = None, force: bool = False) -> bool:
-        await self.call_hooks(lo, "pre", "move")
+        if self._in_hook:
+            # prevent recursion
+            self.logger.warning(
+                "Running move() from within a hook, skipping hook execution. Please use "
+                "move_without_hooks() from within hooks."
+            )
+        else:
+            await self.call_hooks(lo, "pre", "move")
         success = await self.move_without_hooks(lo, udm_obj, force)
-        if success:
+        if success and not self._in_hook:
             await self.call_hooks(lo, "post", "move")
         return success
 
@@ -634,9 +753,16 @@ class UCSSchoolHelperAbstractClass(object):
         If the object exists, removes it, returns True and
         calls post-hooks.
         """
-        await self.call_hooks(lo, "pre", "remove")
+        if self._in_hook:
+            # prevent recursion
+            self.logger.warning(
+                "Running remove() from within a hook, skipping hook execution. Please use "
+                "remove_without_hooks() from within hooks."
+            )
+        else:
+            await self.call_hooks(lo, "pre", "remove")
         success = await self.remove_without_hooks(lo)
-        if success:
+        if success and not self._in_hook:
             await self.call_hooks(lo, "post", "remove")
         return success
 

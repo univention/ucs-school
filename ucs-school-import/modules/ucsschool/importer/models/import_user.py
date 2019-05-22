@@ -99,7 +99,6 @@ from ..factory import Factory
 from ..utils.format_pyhook import FormatPyHook
 from ..utils.import_pyhook import get_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
-from ..utils.user_pyhook import UserPyHook
 from ..utils.username_handler import UsernameHandler
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
@@ -239,7 +238,7 @@ class ImportUser(User):
 
         self.in_hook = True
         hooks = get_import_pyhooks(
-            UserPyHook,
+            "ucsschool.importer.utils.user_pyhook.UserPyHook",
             self._pyhook_supports_dry_run if self.config["dry_run"] else None,
             lo=self.ldap_lo_rw,
             dry_run=self.config["dry_run"],

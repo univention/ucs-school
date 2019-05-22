@@ -57,16 +57,16 @@ class noObject(base):
 
 # class permissionDenied(base):
 # 	message = _('Permission denied.')
-#
-#
-# class ldapError(base):
-# 	message = _('LDAP Error')
-#
-# 	def __init__(self, *args, **kwargs):
-# 		self.original_exception = kwargs.pop('original_exception', None)
-# 		super(ldapError, self).__init__(*args, **kwargs)
-#
-#
+
+
+class ldapError(base):
+    message = _("LDAP Error")
+
+    def __init__(self, *args, **kwargs):
+        self.original_exception = kwargs.pop("original_exception", None)
+        super(ldapError, self).__init__(*args, **kwargs)
+
+
 # class ldapTimeout(base):
 # 	message = _('The specified timeout for the LDAP search has been exceeded.')
 #

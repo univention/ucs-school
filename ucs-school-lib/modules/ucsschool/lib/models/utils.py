@@ -31,8 +31,10 @@
 
 import collections
 import copy
+import grp
 import logging
 import os
+import pwd
 import string
 import subprocess
 import sys
@@ -103,11 +105,11 @@ def env_or_ucr(key: str) -> str:
         return ucr[key]
 
 
-_logging_config = lazy_object_proxy.Proxy(_load_logging_config)
-CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["cmdline"])
-FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["file"])
-LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config["date"])
-LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config["colors"])
+_logging_config: Dict[str, Dict[str, str]] = lazy_object_proxy.Proxy(_load_logging_config)
+CMDLINE_LOG_FORMATS: Dict[str, str] = lazy_object_proxy.Proxy(lambda: _logging_config["cmdline"])
+FILE_LOG_FORMATS: Dict[str, str] = lazy_object_proxy.Proxy(lambda: _logging_config["file"])
+LOG_DATETIME_FORMAT: str = lazy_object_proxy.Proxy(lambda: _logging_config["date"])
+LOG_COLORS: Dict[str, str] = lazy_object_proxy.Proxy(lambda: _logging_config["colors"])
 
 APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -115,8 +117,8 @@ APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
-_handler_cache = dict()
-_pw_length_cache = dict()
+_handler_cache: Dict[str, logging.Handler] = {}
+_pw_length_cache: Dict[str, int] = {}
 _udm_kwargs: Dict[str, str] = {}
 ucr: ConfigRegistry = lazy_object_proxy.Proxy(_ucr)  # "global" ucr for ucsschool.lib.models
 ucr_username_max_length: int = lazy_object_proxy.Proxy(
@@ -276,7 +278,8 @@ def add_stream_logger_to_schoollib(
         from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
         add_stream_logger_to_schoollib()
         # or:
-        add_stream_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
+        add_stream_logger_to_schoollib(level='ERROR', stream=sys.stdout,
+            log_format='ERROR (or worse): %(message)s')
     """
     logger = logging.getLogger(name or "ucsschool")
     if logger.level < logging.DEBUG:
