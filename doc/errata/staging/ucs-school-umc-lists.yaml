@@ -6,4 +6,4 @@ src: ucs-school-umc-lists
 fix: 2.0.0-1A~4.4.0.201905171721
 desc: |
  * The separation character for exported csv files is now set according to the users UMC language setting (Bug #48504).
-bug: [48505]
+bug: [48504]
