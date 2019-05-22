@@ -5,7 +5,7 @@
 ## tags: [apptest,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
-## bugs: [41818]
+## bugs: [41818,48924]
 
 import attr
 from univention.testing.ucsschool.acl import Acl
@@ -31,8 +31,8 @@ def main():
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			schools = []
 			for i in xrange(2):
-				name_edudc = 'dcmyschool{}-01'.format(i)
-				name_admindc = 'dcmyschool{}v-01'.format(i)
+				name_edudc = 'e-myschool{}'.format(i)
+				name_admindc = 'a-myschool{}'.format(i)
 				name, dn = schoolenv.create_ou(
 					ou_name='myschool{}'.format(i),
 					name_edudc=name_edudc,

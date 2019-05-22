@@ -1,3 +1,9 @@
+ucs-test-ucsschool (5.0.4-15) unstable; urgency=low
+
+  * Bug #48924: fix dc name length in 75_ldap_acls_*edu_server
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 22 May 2019 13:29:53 +0200
+
 ucs-test-ucsschool (5.0.4-14) unstable; urgency=low
 
   * Bug #49434: adjust test cases
