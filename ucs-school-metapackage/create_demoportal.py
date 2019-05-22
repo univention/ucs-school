@@ -115,12 +115,12 @@ def create_school():
 	teacher.create(lo)
 	school_staff = Staff(firstname='Demo', lastname='Staff', name='demo_admin', password=demo_password, school=SCHOOL[0])
 	school_staff.create(lo)
+	# make staff user a school admin
 	admin_group = module_groups.lookup(None, lo, 'name=admins-{}'.format(SCHOOL[0]), pos.getBase())[0].dn
-	school_admin_user = module_users.lookup(None, lo, 'username=demo_admin', school_staff.get_own_container())[0]
-	school_admin_user.open()
-	school_admin_user['groups'].append(admin_group)
-	school_admin_user.modify()
-
+	school_staff_udm = school_staff.get_udm_object(lo)
+	school_staff_udm.options.append('ucsschoolAdministrator')
+	school_staff_udm['groups'].append(admin_group)
+	school_staff_udm.modify()
 
 def create_portal():
 	to_create = list()
