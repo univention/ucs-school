@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-20) unstable; urgency=low
+
+  * Bug #48576: depend on same version of -common package
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 22 May 2019 15:29:10 +0200
+
 ucs-school-import (17.0.6-19) unstable; urgency=low
 
   * Bug #49217: retry without update-python-modules
