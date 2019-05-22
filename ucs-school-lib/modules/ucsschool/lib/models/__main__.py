@@ -32,6 +32,7 @@ import importlib
 import logging
 import sys
 from operator import attrgetter
+from typing import Dict, Iterable, List, NamedTuple, Set, Tuple, Type
 
 import click
 from ldap.filter import escape_filter_chars
@@ -41,25 +42,17 @@ import univention.admin.modules as udm_modules
 from ucsschool.lib.models.base import (
     MultipleObjectsError,
     NoObject,
+    UCSSchoolModel,
     UnknownModel,
     WrongModel,
     WrongObjectType,
 )
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import get_stream_handler, ucr
+from udm_rest_client import UdmObject
 from univention.admin.filter import conjunction, expression, parse, walk
 from univention.admin.uexceptions import ldapError, noObject
 from univention.admin.uldap import access as LoType, getAdminConnection, position as PoType
-
-try:
-    from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
-
-    if TYPE_CHECKING:
-        import univention.admin.handlers.simpleLdap
-        from ucsschool.lib.models.base import UCSSchoolModel
-except ImportError:
-    pass
-
 
 ModuleAndClass = NamedTuple("ModuleAndClass", [("module_name", str), ("class_name", str)])
 
@@ -473,7 +466,7 @@ def list_objs(
         filter_str = udm_filter_from_school_filter(filter_str)
         model_cls.init_udm_module(lo)
         try:
-            udm_objs: List[univention.admin.handlers.simpleLdap] = udm_modules.lookup(
+            udm_objs: List[UdmObject] = udm_modules.lookup(
                 module_name=model_cls._meta.udm_module,
                 co=None,
                 lo=lo,

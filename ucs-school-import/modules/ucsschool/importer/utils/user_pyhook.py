@@ -32,6 +32,10 @@
 """
 Base class for all Python based User hooks.
 """
+from typing import TYPE_CHECKING, Dict, Union
+
+if TYPE_CHECKING:
+    from ucsschool.importer.models.import_user import ImportUser
 
 from .import_pyhook import ImportPyHook
 
@@ -83,9 +87,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         "post_move": None,
         "pre_remove": None,
         "post_remove": None,
-    }
+    }  # type: Dict[str, Union[int, None]]
 
-    async def pre_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def pre_create(self, user: "ImportUser") -> None:
         """
         Run code before creating a user.
 
@@ -97,8 +101,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
-    async def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def post_create(self, user: "ImportUser") -> None:
         """
         Run code after creating a user.
 
@@ -111,8 +116,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
-    async def pre_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def pre_modify(self, user: "ImportUser") -> None:
         """
         Run code before modifying a user.
 
@@ -122,8 +128,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. :py:class:`ImportUser`)
         :return: None
         """
+        pass
 
-    async def post_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def post_modify(self, user: "ImportUser") -> None:
         """
         Run code after modifying a user.
 
@@ -138,8 +145,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
-    async def pre_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def pre_move(self, user: "ImportUser") -> None:
         """
         Run code before changing a users primary school (position).
 
@@ -149,8 +157,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
-    async def post_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def post_move(self, user: "ImportUser") -> None:
         """
         Run code after changing a users primary school (position).
 
@@ -163,8 +172,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
-    async def pre_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def pre_remove(self, user: "ImportUser") -> None:
         """
         Run code before deleting a user.
 
@@ -174,8 +184,9 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
-    async def post_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+    async def post_remove(self, user: "ImportUser") -> None:
         """
         Run code after deleting a user.
 
@@ -187,3 +198,4 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass

@@ -70,6 +70,8 @@ For example::
 Python hooks for user object management (import hooks)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+*Read next chapter about hooks for non-user objects like school classes.*
+
 The directory ``/var/lib/ucs-school-import/kelvin-hooks`` is mounted as a *volume* into the Docker container, so it can be accessed from the host. The directory content is scanned when the Kelvin API server starts.
 If it contains classes that inherit from ``ucsschool.importer.utils.import_pyhook.ImportPyHook``, they are executed when users are managed through the Kelvin API.
 The hooks are very similar to the Python hooks for the UCS\@school import (see `Handbuch zur CLI-Import-Schnittstelle`_).
@@ -97,6 +99,58 @@ For example::
         await udm_user_obj.save()  # UDM REST Client object: "save", not "modify"
 
 
+Python hooks for pre- and post-object-modification actions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Read previous chapter about hooks for user objects.*
+
+Since version ``1.4.2`` of the *UCS\@school Kelvin REST API* app it is possible to execute custom Python code before and after the creation, modification, moving or deletion of any UCS\@school object.
+
+To use the hook functionality a Python class deriving from ``ucsschool.lib.models.hook.Hook`` (`https://github.com/.../hook.py <https://github.com/univention/ucs-school/blob/feature/kelvin/ucs-school-lib/modules/ucsschool/lib/models/hook.py>`_) must be created.
+
+In the class methods ``pre_create()``, ``post_create()``, ``pre_modify()`` and so on can be implemented. They will be executed at the specified time.
+
+The Python module with the hook class must be stored in the directory ``/var/lib/ucs-school-import/kelvin-hooks``.
+
+Two examples can be found at `https://github.com/.../hook_example1.py
+<https://github.com/univention/ucs-school/blob/feature/kelvin/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example1.py>`_ and `https://github.com/.../hook_example2.py
+<https://github.com/univention/ucs-school/blob/feature/kelvin/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example2.py>`_.
+
+The API for those hooks is almost identical to the one described in `Python hooks for user object management (import hooks)`_.
+The main differences are that the attribute ``self.dry_run`` does not exist, a UCR instance is available in ``self.ucr`` and the class attribute ``model``.
+
+The class attribute ``model`` is used to determine for objects of which classes (models) the hook should be executed.
+The hook will also be executed for subclasses of the one defined here.
+If for example ``model = Teacher`` (from module ``ucsschool.lib.models.user``), the hooks methods would also be execute for objects of ``TeachersAndStaff``, but not for those of type ``Staff`` or ``Student`` (as they are not derived from ``Teacher``).
+
+The class attribute ``priority`` defines the order in which methods of hooks for the same type (same ``model``) are executed, or if they are deactivated.
+Methods with higher numbers are executed before those with lower numbers.
+If the value is ``None`` the method will not run.
+
+The methods ``pre_create()``, ``post_modify()`` and so on receive the object being modified and return ``None``.
+The type of ``obj`` is the one in ``model`` (or a subclass).
+
+To add custom initialization code, ``__init__()`` can be implemented the following way::
+
+    from ucsschool.lib.models.hook import Hook
+    # from udm_rest_client import UDM
+    # from univention.admin.uldap import LoType
+
+    class MailForSchoolClass(Hook):
+        def __init__(self, udm: UDM, lo: LoType = None, *args, **kwargs) -> None:
+            super(MailForSchoolClass, self).__init__(udm, lo, *args, **kwargs)
+            # From here on self.lo, self.logger and self.ucr are available.
+            # You code here.
+
+To activate a hook, or or a change to a hook, restart the *UCS\@school Kelvin REST API* Docker container::
+
+    /etc/init.d/docker-app-ucsschool-kelvin-rest-api restart
+
+
+Further reading about the UCS\@school hooks is available for German readers in `Handbuch zur CLI-Import-Schnittstelle`_ chapter "12. Pre- und Post-Hook-Skripte für den Import".
+Please note that the example in that text is for the synchronous variant, missing the ``async/await`` keywords and not using the UDM REST API client. Compare with the examples linked in this chapter.
+
+
 File locations
 --------------
 
@@ -114,12 +168,13 @@ User object (import) configuration
 The directory contains the file ``kelvin.json``, which is the top level configuration file for the UCS\@school import code that is executed as part of the *UCS\@school Kelvin REST API* that runs inside the Docker container when user objects are managed.
 
 
-Python hooks for user management
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Python hooks
+^^^^^^^^^^^^
 
 ``/var/lib/ucs-school-import/kelvin-hooks`` is a volume mounted into the docker container, so it can be accessed from the host.
-Its purpose is explained above in chapter `Python hooks for user object management (import hooks)`_.
+Its purpose is explained above in chapters `Python hooks for user object management (import hooks)`_ and `Python hooks for pre- and post-object-modification actions`_.
 
 
 .. _`Handbuch zur CLI-Import-Schnittstelle`: https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html
 .. _`Python UDM REST Client`: https://udm-rest-client.readthedocs.io/en/latest/
+.. _`Handbuch für Administratoren`: https://docs.software-univention.de/ucsschool-handbuch-4.4.html

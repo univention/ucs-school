@@ -34,22 +34,14 @@ Base class for all Python based format hooks.
 
 from __future__ import absolute_import
 
-import logging
-
-from ucsschool.lib.pyhooks import PyHook
+from ucsschool.importer.utils.import_pyhook import ImportPyHook
 
 
-class FormatPyHook(PyHook):
+class FormatPyHook(ImportPyHook):
     """
     Format hook base class
 
-    The base class' :py:meth:`__init__()` provides a logger instance:
-
-    self.logger      # Python logging instance
-
-    If multiple hook classes are found, hook functions with higher
-    priority numbers run before those with lower priorities. None disables
-    a function.
+    See ImportPyHook base class for documentation regarding the class' attributes.
     """
 
     priority = {
@@ -60,11 +52,6 @@ class FormatPyHook(PyHook):
     }
     # The hook will be run only for property names in this list.
     properties = ()
-
-    def __init__(self, *args, **kwargs):
-        super(FormatPyHook, self).__init__(*args, **kwargs)
-        self.logger = logging.getLogger(__name__)
-        """Python logging instance"""
 
     def patch_fields_staff(self, property_name, fields):
         """

@@ -118,7 +118,8 @@ def getAdminConnection(start_tls=2, decode_ignorelist=[], reconnect=True):
     :return: A LDAP access object.
     :rtype: univention.uldap.access
     """
-    bindpw = open(CN_ADMIN_PASSWORD_FILE).read().rstrip("\n")
+    with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
+        bindpw = fp.read().rstrip("\n")
     host = env_or_ucr("ldap/master")
     base_dn = env_or_ucr("ldap/base")
     port = int(env_or_ucr("ldap/master/port", "7389"))
