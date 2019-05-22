@@ -428,6 +428,9 @@ define([
 			// adjust the label of the 'finish' button on the 'finished' page
 			button = this.getPage('finished')._footerButtons.finish;
 			button.set('label', _('Open computer room'));
+
+			button = this.getPage('finished')._footerButtons.cancel;
+			button.set('label', _('Close Wizard'))
 		},
 
 		postCreate: function() {
@@ -589,8 +592,10 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			// deactivate this, because the wizard can be closed via the header
-			// button anyways
+			var pages = ['reboot'];
+			if (pages.indexOf(pageName) === -1) {
+				return true;
+			}
 			return false;
 		},
 
