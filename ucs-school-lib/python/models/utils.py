@@ -100,14 +100,14 @@ def _ucr():  # type: () -> ConfigRegistry
     return ucr
 
 
-_logging_config = lazy_object_proxy.Proxy(_load_logging_config)
-CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["cmdline"])
-FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["file"])
-LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config["date"])
-LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config["colors"])
+_logging_config = lazy_object_proxy.Proxy(_load_logging_config)  # type: Dict[str, Dict[str, str]]
+CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["cmdline"])  # type: Dict[str, str]
+FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["file"])  # type: Dict[str, str]
+LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config["date"])  # type: str
+LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config["colors"])  # type: Dict[str, str]
 
-_handler_cache = dict()
-_pw_length_cache = dict()
+_handler_cache = dict()  # type: Dict[str, logging.Handler]
+_pw_length_cache = dict()  # type: Dict[str, int]
 ucr = lazy_object_proxy.Proxy(_ucr)  # type: ConfigRegistry  # "global" ucr for ucsschool.lib.models
 ucr_username_max_length = lazy_object_proxy.Proxy(
     lambda: int(ucr.get("ucsschool/username/max_length", 20))
@@ -291,9 +291,9 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
     Outputs all log messages of the models code to a stream (default: "stderr")::
 
         from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
-        add_module_logger_to_schoollib()
+        add_stream_logger_to_schoollib()
         # or:
-        add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout,
+        add_stream_logger_to_schoollib(level='ERROR', stream=sys.stdout,
             log_format='ERROR (or worse): %(message)s')
     """
     logger = logging.getLogger(name or "ucsschool")
@@ -570,7 +570,7 @@ def get_logger(
         fmt = FILE_LOG_FORMATS[level]
         fmt_cls = logging.Formatter
     handler_defaults.update(handler_kwargs)
-    fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
+    fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=str(LOG_DATETIME_FORMAT))
     fmt_kwargs.update(formatter_kwargs)
     if issubclass(fmt_cls, colorlog.ColoredFormatter):
         fmt_kwargs["log_colors"] = LOG_COLORS

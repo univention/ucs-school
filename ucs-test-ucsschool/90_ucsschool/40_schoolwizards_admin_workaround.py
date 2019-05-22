@@ -8,11 +8,11 @@
 from typing import List
 
 import pytest
-from univention.testing.ucsschool.conftest import UserType
 
 from ucsschool.lib.models.user import User
 from univention.config_registry import handler_get, handler_set, handler_unset
 from univention.lib.umc import BadRequest, Client
+from univention.testing.ucsschool.conftest import UserType
 from univention.udm import UDM
 
 

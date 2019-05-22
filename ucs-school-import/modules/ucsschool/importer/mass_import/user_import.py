@@ -202,10 +202,10 @@ class UserImport(object):
                             )
                             if self.errors:
                                 raise ValidationError(user.errors.copy())
-                            user.call_hooks("pre", "create")
+                            user.call_hooks("pre", "create", self.connection)
                             self.logger.info("Dry-run: skipping user.create() for %s.", user)
                             success = True
-                            user.call_hooks("post", "create")
+                            user.call_hooks("post", "create", self.connection)
                         else:
                             success = user.create(lo=self.connection)
                     elif user.action == "M":
@@ -217,10 +217,10 @@ class UserImport(object):
                             )
                             if self.errors:
                                 raise ValidationError(user.errors.copy())
-                            user.call_hooks("pre", "modify")
+                            user.call_hooks("pre", "modify", self.connection)
                             self.logger.info("Dry-run: skipping user.modify() for %s.", user)
                             success = True
-                            user.call_hooks("post", "modify")
+                            user.call_hooks("post", "modify", self.connection)
                         else:
                             success = user.modify(lo=self.connection)
                     else:
@@ -534,13 +534,13 @@ class UserImport(object):
                     ),
                     validation_error=ValidationError(user.errors.copy()),
                 )
-            user.call_hooks("pre", "move")
+            user.call_hooks("pre", "move", self.connection)
             self.logger.info(
                 "Dry-run: would move %s from %r to %r.", user, user.school, imported_user.school
             )
             user._unique_ids_replace_dn(user.dn, imported_user.dn)
             res = True
-            user.call_hooks("post", "move")
+            user.call_hooks("post", "move", self.connection)
         else:
             res = user.change_school(imported_user.school, self.connection)
         if not res:
@@ -598,7 +598,7 @@ class UserImport(object):
             # immediate deletion already happened above
             pass
         elif self.dry_run:
-            user.call_hooks("pre", "remove")
+            user.call_hooks("pre", "remove", self.connection)
             self.logger.info(
                 "Dry-run: not expiring, deactivating or setting the purge timestamp for %s.", user
             )
@@ -609,7 +609,7 @@ class UserImport(object):
                     validation_error=ValidationError(user.errors.copy()),
                 )
             success = True
-            user.call_hooks("post", "remove")
+            user.call_hooks("post", "remove", self.connection)
         elif modified:
             success = user.modify(lo=self.connection)
         else:
@@ -646,9 +646,9 @@ class UserImport(object):
         """
         self.logger.info("Deleting user %s...", user)
         if self.dry_run:
-            user.call_hooks("pre", "remove")
+            user.call_hooks("pre", "remove", self.connection)
             self.logger.info("Dry-run: not removing user %s.", user)
-            user.call_hooks("post", "remove")
+            user.call_hooks("post", "remove", self.connection)
             return True
         else:
             return user.remove(self.connection)

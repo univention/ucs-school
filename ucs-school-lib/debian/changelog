@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.26) unstable; urgency=low
+
+  * Bug #49557: add support for Python based hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 19 May 2021 09:11:13 +0200
+
 ucs-school-lib (12.2.25) unstable; urgency=low
 
   * Bug #52945: use full path to model imports

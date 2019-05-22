@@ -1,3 +1,9 @@
+ucs-school-import (17.0.60) unstable; urgency=low
+
+  * Bug #49557: add support for Python based hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 19 May 2021 09:10:53 +0200
+
 ucs-school-import (17.0.59) unstable; urgency=medium
 
   * Bug #49102: allow null for not set schema values

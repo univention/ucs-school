@@ -30,10 +30,10 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
-import subprocess
 import tempfile
 from copy import deepcopy
 
+import lazy_object_proxy
 import ldap
 from ldap import explode_dn
 from ldap.dn import escape_dn_chars
@@ -46,11 +46,12 @@ import univention.admin.uldap as udm_uldap
 from univention.admin.filter import conjunction, expression
 from univention.admin.uexceptions import noObject
 
+from ..pyhooks.pyhooks_loader import PyHooksLoader
 from ..roles import create_ucsschool_role_string
 from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
-from .utils import _, ucr
+from .utils import _, exec_cmd, ucr
 from .validator import validate
 
 try:
@@ -63,8 +64,17 @@ try:
     SuperOrdinateType = Union[str, UdmObject]
     UldapFilter = Union[str, conjunction, expression]
     UCSSchoolModel = TypeVar("UCSSchoolModel", bound="UCSSchoolHelperAbstractClass")
+    UCSSchoolHelperAbstractClassTV = TypeVar(
+        "UCSSchoolHelperAbstractClassTV", bound="UCSSchoolHelperAbstractClass"
+    )
 except ImportError:
     pass
+
+PYHOOKS_PATH = "/usr/share/ucs-school-import/pyhooks"
+PYHOOKS_BASE_CLASS = "ucsschool.lib.models.hook.Hook"
+_pyhook_loader = lazy_object_proxy.Proxy(
+    lambda: PyHooksLoader(PYHOOKS_PATH, PYHOOKS_BASE_CLASS)
+)  # type: PyHooksLoader
 
 
 class NoObject(noObject):
@@ -306,6 +316,7 @@ class UCSSchoolHelperAbstractClass(object):
         self.old_dn = self.dn  # type: str
         self.errors = {}  # type: Dict[str, List[str]]
         self.warnings = {}  # type: Dict[str, List[str]]
+        self._in_hook = False  # if a hook is currently running
 
     @classmethod
     def get_machine_connection(cls):  # type: () -> LoType
@@ -439,49 +450,36 @@ class UCSSchoolHelperAbstractClass(object):
             return False
         return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-    def call_hooks(self, hook_time, func_name):  # type: (str, str) -> Optional[bool]
-        """Calls run-parts in
-        os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
-        if self.build_hook_line(hook_time, func_name) returns a non-empty string
-
-        Usage in lib itself:
-            hook_time in ['pre', 'post']
-            func_name in ['create', 'modify', 'remove']
-
-        In the lib, post-hooks are only called if the corresponding function returns True
+    def _call_legacy_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
         """
+        Run legacy fork hooks (run-parts /usr/share/u-s-i/hooks).
 
-        def run(args):  # type: (Sequence[str]) -> int
-            self.logger.debug("Starting %r...", args)
-            process = subprocess.Popen(  # nosec
-                args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
-            stdout, stderr = process.communicate()
-            self.logger.debug("Command %r finished with exit code %r.", args, process.returncode)
-            if stdout:
-                self.logger.debug("Command stdout and stderr:\n%s", stdout.strip())
-            return process.returncode
-
+        :param str hook_time: `pre` or `post`
+        :param str func_name: `create`, `modify`, `move` or `remove`
+        :return: return code of hooks or True if no legacy hook ran
+        :rtype: bool
+        """
         # verify path
         hook_path = self._meta.hook_path
         path = os.path.join(self.hook_path, "%s_%s_%s.d" % (hook_path, func_name, hook_time))
         if path in self._empty_hook_paths:
-            return None
+            return True
         if not os.path.isdir(path) or not os.listdir(path):
-            self.logger.debug("%s not found or empty.", path)
+            self.logger.debug("Hook directory %s not found or empty.", path)
             self._empty_hook_paths.add(path)
-            return None
-        self.logger.debug("%s shall be executed", path)
+            return True
+        self.logger.debug("Hooks in %s shall be executed", path)
 
-        dn = None
         if hook_time == "post":
             dn = self.old_dn
+        else:
+            dn = None
 
-        self.logger.debug("Building hook line: %r.build_hook_line(%r, %r)", self, hook_time, func_name)
+        self.logger.debug("Building hook line: %s.build_hook_line(%r, %r)", self, hook_time, func_name)
         line = self.build_hook_line(hook_time, func_name)
         if not line:
-            self.logger.debug("No line. Skipping!")
-            return None
+            self.logger.debug("No line created. Skipping.")
+            return True
         line = line.strip() + "\n"
 
         # create temporary file with data
@@ -496,9 +494,72 @@ class UCSSchoolHelperAbstractClass(object):
                 command.extend(("--arg", dn))
             command.extend(("--", path))
 
-            ret_code = run(command)
+            self.logger.debug("Executing command %r...", command)
+            ret_code, stdout, stderr = exec_cmd(command, log=True)
+            self.logger.debug("Command %r finished with exit code %r.", command, ret_code)
 
             return ret_code == 0
+
+    def _call_pyhooks(self, hook_time, func_name, lo):
+        # type: (str, str, LoType) -> None
+        """
+        Run Python based hooks (`*.py` files in `/usr/share/u-s-i/pyhooks`
+        containing a subclass of :py:class:`ucsschool.lib.models.hook.Hook`).
+
+        :param str hook_time: `pre` or `post`
+        :param str func_name: `create`, `modify`, `move` or `remove`
+        :param univention.admin.uldap.access lo: LDAP connection object
+        :return: None
+        :rtype: None
+        """
+        self._in_hook = True
+        all_hooks = _pyhook_loader.get_hook_objects(lo)
+        meth_name = "{}_{}".format(hook_time, func_name)
+        try:
+            for func in all_hooks.get(meth_name, []):
+                if issubclass(self.__class__, func.im_class.model):
+                    self.logger.debug(
+                        "Running %s hook %s.%s for %s...",
+                        meth_name,
+                        func.im_class.__name__,
+                        func.im_func.func_name,
+                        self,
+                    )
+                    func(self)
+        finally:
+            self._in_hook = False
+
+    def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, LoType) -> bool
+        """
+        Calls legacy hooks (run-parts /usr/share/u-s-i/hooks) and then Python
+        based hooks (*.py files in /usr/share/u-s-i/pyhooks).
+
+        In the case of `post`, this method is only called, if the corresponding
+        function (`create()`, `modify()`, `move()` or `remove()`) returned
+        `True`.
+
+        :param str hook_time: `pre` or `post`
+        :param str func_name: `create`, `modify`, `move` or `remove`
+        :param univention.admin.uldap.access lo: LDAP connection object
+        :return: `or`d return value of legacy hooks or True if no hook ran
+        :rtype: bool: `or`d return value of legacy hooks or True if no hook ran
+        """
+        lo_name = lo.__class__.__name__
+        if lo_name == "access":
+            lo_name = "lo"
+        self.logger.debug(
+            "Starting %s.call_hooks(%r, %r, %s(%r)) for %r.",
+            self.__class__.__name__,
+            hook_time,
+            func_name,
+            lo_name,
+            lo.binddn,
+            self,
+        )
+
+        res = self._call_legacy_hooks(hook_time, func_name)
+        self._call_pyhooks(hook_time, func_name, lo)
+        return res
 
     def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
         """Must be overridden if the model wants to support hooks.
@@ -506,6 +567,19 @@ class UCSSchoolHelperAbstractClass(object):
         return self._build_hook_line(self.attr1, self.attr2, 'constant')
         """
         return None
+
+    @classmethod
+    def hook_init(cls, hook):  # type: (PYHOOKS_BASE_CLASS) -> None
+        """
+        Overwrite this method to add individual initialization code to all
+        hooks of a ucsschool.lib.model class.
+        (See `.SchoolClass.hook_init()` for an example.)
+
+        :param hook: instance of a subclass of :py:class:`ucsschool.lib.model.hook.Hook`
+        :return: None
+        :rtype: None
+        """
+        pass
 
     def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
         for name, attr in iteritems(self._attributes):
@@ -523,10 +597,17 @@ class UCSSchoolHelperAbstractClass(object):
         If the object does not yet exist, creates it, returns True and
         calls post-hooks.
         """
-        self.call_hooks("pre", "create")
+        if self._in_hook:
+            # prevent recursion
+            self.logger.warning(
+                "Running create() from within a hook, skipping hook execution. Please use "
+                "create_without_hooks() from within hooks."
+            )
+        else:
+            self.call_hooks("pre", "create", lo)
         success = self.create_without_hooks(lo, validate)
-        if success:
-            self.call_hooks("post", "create")
+        if success and not self._in_hook:
+            self.call_hooks("post", "create", lo)
         return success
 
     def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
@@ -589,10 +670,10 @@ class UCSSchoolHelperAbstractClass(object):
         If the object exists, modifies it, returns True and
         calls post-hooks.
         """
-        self.call_hooks("pre", "modify")
+        self.call_hooks("pre", "modify", lo)
         success = self.modify_without_hooks(lo, validate, move_if_necessary)
         if success:
-            self.call_hooks("post", "modify")
+            self.call_hooks("post", "modify", lo)
         return success
 
     def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
@@ -656,10 +737,17 @@ class UCSSchoolHelperAbstractClass(object):
 
     def move(self, lo, udm_obj=None, force=False):
         # type: (LoType, Optional[UdmObject], Optional[bool]) -> bool
-        self.call_hooks("pre", "move")
+        if self._in_hook:
+            # prevent recursion
+            self.logger.warning(
+                "Running move() from within a hook, skipping hook execution. Please use "
+                "move_without_hooks() from within hooks."
+            )
+        else:
+            self.call_hooks("pre", "move", lo)
         success = self.move_without_hooks(lo, udm_obj, force)
-        if success:
-            self.call_hooks("post", "move")
+        if success and not self._in_hook:
+            self.call_hooks("post", "move", lo)
         return success
 
     def move_without_hooks(self, lo, udm_obj, force=False):
@@ -718,10 +806,17 @@ class UCSSchoolHelperAbstractClass(object):
         If the object exists, removes it, returns True and
         calls post-hooks.
         """
-        self.call_hooks("pre", "remove")
+        if self._in_hook:
+            # prevent recursion
+            self.logger.warning(
+                "Running remove() from within a hook, skipping hook execution. Please use "
+                "remove_without_hooks() from within hooks."
+            )
+        else:
+            self.call_hooks("pre", "remove", lo)
         success = self.remove_without_hooks(lo)
-        if success:
-            self.call_hooks("post", "remove")
+        if success and not self._in_hook:
+            self.call_hooks("post", "remove", lo)
         return success
 
     def remove_without_hooks(self, lo):  # type: (LoType) -> bool

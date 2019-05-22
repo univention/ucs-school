@@ -7,15 +7,16 @@
 ## packages:
 ##   - python-ucs-school
 
+import pytest
+
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.misc import Container
+from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.roles import role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.testing.utils import verify_ldap_object
-from ucsschool.lib.models.utils import ucr
-import pytest
 from univention.config_registry import handler_set, handler_unset
+from univention.testing.utils import verify_ldap_object
 
 
 @pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.225) unstable; urgency=low
+
+  * Bug #49557: add support for Python based hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 19 May 2021 09:12:05 +0200
+
 ucs-test-ucsschool (6.0.224) unstable; urgency=medium
 
   * Bug #52853: ucs-test add package
