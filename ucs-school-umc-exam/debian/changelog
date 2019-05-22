@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-5) unstable; urgency=low
+
+  * Bug #49525: change result of groups2students()
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 22 May 2019 12:45:01 +0200
+
 ucs-school-umc-exam (9.0.1-4) unstable; urgency=low
 
   * Bug #49525: add 'groups2students' UMC call to get students in school

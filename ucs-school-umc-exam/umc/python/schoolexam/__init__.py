@@ -596,29 +596,31 @@ class Instance(SchoolBaseModule):
 		The UMC call will return the dict with group_dn -> list of dicts.
 		"""
 		students = {}
-		for group_dn in sorted(request.options['groups']):
+		for group_dn in request.options['groups']:
 			try:
 				group_obj = Group.from_dn(group_dn, None, ldap_user_read)
 			except (WrongObjectType, noObject) as exc:
 				MODULE.error('DN {!r} does not exist or is not a work group or school class: {}'.format(group_dn, exc))
 				raise UMC_Error(_('Error loading group DN {!r}.').format(group_dn))
 
-			students[group_dn] = []
 			school_class_name = group_obj.name[len(group_obj.school) + 1:]
 
-			for user_dn in sorted(group_obj.users):
+			for user_dn in group_obj.users:
 				try:
 					user_obj = User.from_dn(user_dn, None, ldap_user_read)
 				except (WrongObjectType, noObject) as exc:
 					MODULE.warn('Ignoring DN {!r} - it does not exist or is not a school user: {}'.format(user_dn, exc))
 					continue
 
-				if user_obj.is_student(ldap_user_read):
-					students[group_dn].append({
-						'dn': user_dn,
-						'firstname': user_obj.firstname,
-						'lastname': user_obj.lastname,
-						'school_class': school_class_name
-					})
-
-		self.finished(request.id, students)   # cannot use @simple_response with @LDAP_Connection :/
+				if user_obj.is_student(ldap_user_read) and not user_obj.is_exam_student(ldap_user_read):
+					if user_dn in students:
+						students[user_dn]['school_classes'].append(school_class_name)
+					else:
+						students[user_dn] = {
+							'dn': user_dn,
+							'firstname': user_obj.firstname,
+							'lastname': user_obj.lastname,
+							'school_classes': [school_class_name]
+						}
+		res = sorted(students.values(), key=lambda x: x['dn'])
+		self.finished(request.id, res)   # cannot use @simple_response with @LDAP_Connection :/
