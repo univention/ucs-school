@@ -122,16 +122,17 @@ def create_school():
 	school_staff_udm['groups'].append(admin_group)
 	school_staff_udm.modify()
 
+
 def create_portal():
 	to_create = list()
 	pos_portal = position(pos.getBase())
 	pos_category = position(pos.getBase())
 
 	entry_groups = dict(
-		domainadmin = '',
-		schooladmin = '',
-		teacher = '',
-		everyone = ''
+		domainadmin='',
+		schooladmin='',
+		teacher='',
+		everyone=''
 		)
 	try:
 		entry_groups['domainadmin'] = module_groups.lookup(None, lo, 'name=Domain Admins', pos.getBase())[0].dn
@@ -211,19 +212,19 @@ def create_portal():
 
 
 def run():
-	'''
+	"""
 	This function creates a demo school and demo portal for testing and demonstration purposes
-	'''
+	"""
 	create_school()
 	create_portal()
 	sys.exit(0)
 
 
 def already_exists(check_obj):
-	'''
+	"""
 	Checks if a given object already exists in the LDAP
 	(works only with portal, portal categories and portal entries)
-	'''
+	"""
 	obj_type = type(check_obj)
 	if obj_type == module_portal.object:
 		return len(module_portal.lookup(None, lo, 'name={}'.format(check_obj.get('name')), base=check_obj.position.getBase())) > 0
