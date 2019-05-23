@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-users
+fix: 15.0.0-3A~4.4.0.201905230838
+desc: |
+ * A typo in the javascript code caused a malfunction while displaying students in certain situations. This problem has been fixed (Bug #49492).
+bug: [49492]
