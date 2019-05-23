@@ -1,9 +1,9 @@
 product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
+release: "4.3"
+version: [1]
+scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-ldap-acls-master
-fix: 
+fix: 16.0.4-2A~4.3.0.201905201715
 desc: |
  * Teachers and Staff cannot modify or create arbitrary shares anymore due to security concerns (Bug #49434).
 bug: [49434]
