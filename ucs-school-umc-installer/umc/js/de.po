@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-05-20 16:42+0200\n"
+"POT-Creation-Date: 2018-12-05 08:15+0100\n"
 "PO-Revision-Date: 2017-03-08 17:42+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -25,15 +25,13 @@ msgid ""
 "<p>During the installation of UCS@school a demo school including some users "
 "and a portal will be configured for testing purposes. If you do not wish "
 "that, please set the UCR variable <emp>ucsschool/join/create_demo</emp> to "
-"<emp>no</emp> prior to the installation (select the UCS@school app in the "
-"App Center and click on <emph>App settings</emph>).</p>"
+"<emp>no</emp> prior to the installation.</p>"
 msgstr ""
 "<p>Während der Installation von UCS@school wird zu Testzwecken eine "
 "Demoschule inklusive einiger Nutzer und einem Portal vorkonfiguriert. Zur "
 "Deaktivierung dieser Funktion setzen Sie bitte die UCR Variable "
 "<emp>ucsschool/join/create_demo</emp> auf <emph>no</emph>, bevor Sie mit der "
-"Installation fortfahren (wählen Sie die UCS@school App im App Center aus und "
-"klicken Sie auf <emph>App-Einstellungen</emph>).</p>"
+"Installation fortfahren.</p>"
 
 #: umc/js/schoolinstaller.js:100
 msgid ""
@@ -91,6 +89,14 @@ msgstr ""
 "Anmeldedienste für Mitarbeiter in der Verwaltung).</p><p>In den meisten "
 "Fällen ist die Konfiguration des Domänencontroller Slave als edukativer "
 "Schulserver sinnvoll.</p>"
+
+#: umc/js/schoolinstaller.js:109
+msgid ""
+"<p>The local server role is slave domain controller, for which only a multi "
+"server environment can be configured.</p>"
+msgstr ""
+"<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann nur "
+"für eine Multi-Server-Umgebung konfiguriert werden.</p>"
 
 #: umc/js/schoolinstaller.js:70
 msgid ""
@@ -222,7 +228,7 @@ msgstr ""
 "Bitte geben Sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um "
 "dieses System als Domänencontroller Slave für UCS@school zu konfigurieren."
 
-#: umc/js/schoolinstaller.js:508
+#: umc/js/schoolinstaller.js:277 umc/js/schoolinstaller.js:508
 msgid "Install"
 msgstr "Installieren"
 
@@ -257,7 +263,7 @@ msgid "Name of the school"
 msgstr "Name der Schule"
 
 #: umc/js/schoolinstaller.js:247
-#, javascript-format
+#, python-format
 msgid "New school classes can be created with the %s."
 msgstr "Neue Schulklassen können mit dem %s erstellt werden."
 
@@ -300,7 +306,7 @@ msgid "Starting the configuration process..."
 msgstr "Beginne den Konfigurationsprozess..."
 
 #: umc/js/schoolinstaller.js:250
-#, javascript-format
+#, python-format
 msgid ""
 "Teachers and students can be added to the UCS@school domain with the %s."
 msgstr ""
@@ -308,12 +314,12 @@ msgstr ""
 "werden."
 
 #: umc/js/schoolinstaller.js:253
-#, javascript-format
+#, python-format
 msgid "Teachers can be assigned to classes with the %s."
 msgstr "Lehrer können mit dem %s Klassen zugeordnet werden."
 
 #: umc/js/schoolinstaller.js:305
-#, javascript-format
+#, python-format
 msgid "The DNS settings can be adjusted in the %s."
 msgstr "Die DNS-Einstellungen können im %s angepasst werden."
 
@@ -431,16 +437,9 @@ msgid "Warning:"
 msgstr "Warnung:"
 
 #: umc/js/schoolinstaller.js:256
-#, javascript-format
+#, python-format
 msgid "Workgroups can be created and managed with the %s."
 msgstr "Arbeitsgruppen können mit dem %s erstellt und verwaltet werden."
-
-#~ msgid ""
-#~ "<p>The local server role is slave domain controller, for which only a "
-#~ "multi server environment can be configured.</p>"
-#~ msgstr ""
-#~ "<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann "
-#~ "nur für eine Multi-Server-Umgebung konfiguriert werden.</p>"
 
 #~ msgid "Close"
 #~ msgstr "Schließen"
