@@ -105,7 +105,7 @@ define([
 						return _('never');
 					} else if (days == 0) {
 						return _('now');
-					} else if (isNan(days)) { // This should never happen!
+					} else if (isNaN(days)) { // This should never happen!
 						return "NaN";
 					} else if (days == 1) {
 						return _('in %s day', days);
