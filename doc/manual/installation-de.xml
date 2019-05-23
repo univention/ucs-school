@@ -37,9 +37,9 @@
     <systemitem class="username">demo_teacher</systemitem> und <systemitem class="username">demo_admin</systemitem> befindet sich in der Datei
     <filename>/etc/demoschool.secret</filename>. Um das Anlegen der Demonstrationsschule zu verhindern,
 	muss die UCR-Variable <envar>ucsschool/join/create_demo</envar> auf den Wert <literal>no</literal> gesetzt werden,
-    bevor der &ucsUAS;-Konfigurations-Assistent durchlaufen wird. Das Setzen der UCR-Variable ist mit Hilfe der <guimenu>App-Einstellungen</guimenu> möglich (im Appcenter die &ucsUAS; App öffnen), oder wie üblich durch das UMC-Modul
-	<guimenu>Univention Configuration Registry</guimenu> bzw. auf der Kommandozeile mit dem Befehl
-	<command>ucr set ucsschool/join/create_demo=no</command>.
+    bevor der &ucsUAS;-Konfigurations-Assistent durchlaufen wird. Das Setzen der UCR-Variable ist entweder über das UMC-Modul
+	<guimenu>Univention Configuration Registry</guimenu> oder auf der Kommandozeile mit dem Befehl
+	<command>ucr set ucsschool/join/create_demo=no</command> möglich.
   </para>
 
   <caution>
