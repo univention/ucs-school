@@ -43,6 +43,10 @@ define([
 	"umc/modules/schoolexam/RebootGrid",
 	"umc/widgets/Wizard",
 	"umc/widgets/Module",
+	"umc/widgets/Page",
+	"umc/widgets/Grid",
+	"umc/widgets/SearchForm",
+	"umc/widgets/SearchBox",
 	"umc/widgets/TextBox",
 	"umc/widgets/Text",
 	"umc/widgets/TextArea",
@@ -55,7 +59,7 @@ define([
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
 ], function(declare, lang, array, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, Wizard, Module,
-			TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
+			Page, Grid, SearchForm, SearchBox, TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
 	    name = name.trim();
@@ -428,6 +432,9 @@ define([
 			// adjust the label of the 'finish' button on the 'finished' page
 			button = this.getPage('finished')._footerButtons.finish;
 			button.set('label', _('Open computer room'));
+
+			button = this.getPage('finished')._footerButtons.cancel;
+			button.set('label', _('Close Wizard'))
 		},
 
 		postCreate: function() {
@@ -589,8 +596,10 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			// deactivate this, because the wizard can be closed via the header
-			// button anyways
+			var pages = ['reboot'];
+			if (pages.indexOf(pageName) === -1) {
+				return true;
+			}
 			return false;
 		},
 
@@ -761,12 +770,111 @@ define([
 	});
 
 	return declare("umc.modules.schoolexam", [ Module ], {
+		idProperty: 'name',
 		// internal reference to the installer
 		_examWizard: null,
+		_searchPage: null,
+		_grid: null,
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
+			this._searchPage = new Page({
+				fullWidth: true,
+				headerText: this.description,
+				helpText: ''
+			});
+			this.addChild(this._searchPage);
+			// define grid actions
+			var actions = [{
+				name: 'add',
+				label: _('Start new exam'),
+				description: _('Create a new exam'),
+				iconClass: 'umcIconAdd',
+				isContextAction: false,
+				isStandardAction: true,
+				callback: lang.hitch(this, '_newObject')
+			}];
+
+			// define the grid columns
+			var columns = [{
+				name: 'name',
+				label: _('Name'),
+				width: 'auto'
+			}, {
+				name: 'sender',
+				label: _('Owner'),
+				width: 'auto'
+			}, {
+				name: 'isDistributed',
+				label: _('Status'),
+				width: 'auto',
+				formatter: lang.hitch(this, function(isDistributed) {
+					return isDistributed ? _('started') : _('pending');
+				})
+			}, {
+				name: 'files',
+				label: _('#Files'),
+				width: 'auto'
+			}, {
+				name: 'room',
+				label: _('Room'),
+				width: 'auto'
+			}];
+
+			this._grid = new Grid({
+				actions: actions,
+				columns: columns,
+				moduleStore: this.moduleStore,
+				query: { pattern: '' },
+				gridOptions: {
+					selectionMode: 'none'
+				}
+			});
+
+			this._searchPage.addChild(this._grid);
+
+			// add remaining elements of the search form
+			var widgets = [{
+				type: ComboBox,
+				name: 'filter',
+				label: 'Filter',
+				staticValues: [
+					{ id: 'private', label: _('Only own exams') },
+					{ id: 'all', label: _('All exams') }
+				]
+			}, {
+				type: SearchBox,
+				name: 'pattern',
+				inlineLabel: _('Search...'),
+				description: _('Specifies the substring pattern which is searched for in the exams.'),
+				label: _('Search pattern'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
+			}];
+
+			var layout = [
+				[ 'filter', 'pattern' ]
+			];
+
+			this._searchForm = new SearchForm({
+				region: 'top',
+				hideSubmitButton: true,
+				widgets: widgets,
+				layout: layout,
+				onSearch: lang.hitch(this, function(values) {
+					this._grid.filter(values);
+				})
+			});
+
+			this._searchPage.addChild(this._searchForm);
+
+			// we need to call page's startup method manually as all widgets have
+			// been added to the page container object
+			this._searchPage.startup();
+		},
+		_newObject: function() {
 			this._examWizard = new ExamWizard({
 				'class': 'umcCard',
 				umcpCommand: lang.hitch(this, 'umcpCommand')
@@ -774,11 +882,14 @@ define([
 			this.addChild(this._examWizard);
 
 			this._examWizard.on('finished', lang.hitch(this, function() {
-				topic.publish('/umc/tabs/close', this);
+				this.selectChild(this._searchPage);
+				this._examWizard.destroy()
 			}));
 			this._examWizard.on('cancel', lang.hitch(this, function() {
-				topic.publish('/umc/tabs/close', this);
+				this.selectChild(this._searchPage);
+				this._examWizard.destroy()
 			}));
+			this.selectChild(this._examWizard);
 		}
 	});
 });
