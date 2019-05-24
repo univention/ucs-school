@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-59) unstable; urgency=low
+
+  * Bug #47222: fix minimal default username length
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 May 2019 08:29:37 +0200
+
 ucs-test-ucsschool (6.0.0-58) unstable; urgency=low
 
   * Bug #48924: fix dc name length in 75_ldap_acls_*edu_server

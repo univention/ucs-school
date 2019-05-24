@@ -100,7 +100,7 @@ class Test(CLI_Import_v2_Tester):
 			for _ in range(2):
 				role_uses_default = random.choice(username_lengths.keys())
 				del username_lengths[role_uses_default]
-			username_lengths['default'] = random.randint(5, 20)
+			username_lengths['default'] = random.randint(9, 20)  # min length is 4, if student is unset and default is used, it must be at least 4 + len('exam-') = 9
 			self.log.info('*** username_lengths=%r', username_lengths)
 			for k, v in username_lengths.items():
 				config.update_entry('username:max_length:{}'.format(k), v)
