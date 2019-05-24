@@ -593,7 +593,10 @@ class Instance(SchoolBaseModule):
 
 		request.options must contain a key `groups` with a list of DNs (only
 		ucsschool.lib WorkGroup and SchoolClass are supported).
-		The UMC call will return the dict with group_dn -> list of dicts.
+
+		The UMC call will return a list of dicts::
+
+			[{'dn': …, 'firstname': …, 'lastname': …, 'school_classes': …}, …]
 		"""
 		students = {}
 		for group_dn in request.options['groups']:
