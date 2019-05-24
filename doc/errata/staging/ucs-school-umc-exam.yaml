@@ -8,4 +8,5 @@ desc: |
  * The number of exam backup files is now limited and is compressed into a zip archive by default (Bug #49333).
  * The home folders of exam accounts are now kept by default and are not deleted anymore. Also <envar>ucsschool/exam/user/homedir/autoremove</envar> is unset once upon updating to restore the default behavior. To restore the previous behavior you have to set the variable to <literal>yes</literal> again (Bug #49443).
  * A list of exams can now be retrieved with a UMC call (Bug #49519).
-bug: [49333, 49443, 49519]
+ * A list of students in a school class or work group can now be retrieved with a UMC call (Bug #49525).
+bug: [49333, 49443, 49519, 49525]
