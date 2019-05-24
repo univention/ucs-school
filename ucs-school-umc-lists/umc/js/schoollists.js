@@ -61,10 +61,31 @@ define([
 	return declare("umc.modules.schoollists", [ Module ], {
 		idProperty: 'id',
 		_searchPage: null,
+		_csvFormat: 'excel',
+
+		convert2UTF16le: function(str) {
+			// Convert function from https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
+			var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+			var bufView = new Uint16Array(buf);
+			for (var i=0, strLen=str.length; i < strLen; i++) {
+				bufView[i] = str.charCodeAt(i);
+			}
+			return buf;
+		},
+
+		getCsvBlob: function(encoding, result) {
+			var csv;
+			var utfBom = "\uFEFF";
+			if (encoding === 'utf16le') {
+				csv = this.convert2UTF16le(utfBom + result.result.csv);
+			} else {
+				csv = result.result.csv;
+			}
+			return new Blob([csv], {type: 'text/csv'});
+		},
 
 		openDownload: function(result) {
-			var utfBom = "\uFEFF";
-			var blob = new Blob([utfBom + result.result.csv], {type: 'text/csv'});
+			var blob = this.getCsvBlob(this._csvFormat === 'excel' ? 'utf16le' : 'utf8', result);
 			var url = URL.createObjectURL(blob);
 			if (window.navigator && window.navigator.msSaveOrOpenBlob) {
 				// IE doesn't open objectURLs directly
@@ -80,25 +101,20 @@ define([
 			link.remove();
 		},
 
-		guessCsvSeparator: function() {
-			// The default csv separator in excel is usually a comma in case the decimal separator is a dot
-			// and a semicolon in case it is a comma
-			var floatNnumber = 0.5;
-			var umcLang = i18nTools.defaultLang();
-			var localizedFloat = floatNnumber.toLocaleString(umcLang);
-			if (localizedFloat.indexOf(',') !== -1) {
-				return ';';
-			}
-			return ',';
-		},
-
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			this.standby(true);
 
 			this._searchPage = new Page({
-				helpText: _("This module lets you export class and workgroup lists. The lists are in the CSV format. If you have problems opening the exported file, ensure the encoding is set to UTF-8 and the field separator is set to \"%s\".<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>", this.guessCsvSeparator())
+				helpText: _(
+					'This module lets you export class and workgroup lists. The lists are in the CSV format. ' +
+					'If you have problems opening the exported file, ensure the encoding is set to UTF-16 ' +
+					'and the field seperator is set to tabs.' +
+					"<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>" +
+					"<p>If you can't open that file you can try to export the list in an alternative format " +
+					'which is UTF-8 encoded and uses commas as field separators.</p>'
+				)
 			});
 
 			this.addChild(this._searchPage);
@@ -127,12 +143,27 @@ define([
 				}
 			}, {
 				type: Button,
-				name: 'csv',
+				name: 'csvUtf16',
 				description: _('Download a list of group members'),
-				label: _('Export'),
-				style: "margin: 0;",
+				label: _('Export (Recommended)'),
+				style: "margin: 0; width: 30em;",
 				onClick: lang.hitch(this, function() {
 					if (this._searchForm.validate()) {
+						this._csvFormat = 'excel';
+						this._searchForm.submit();
+					} else {
+						dialog.alert(_('Please select a class or workgroup.'));
+					}
+				})
+			}, {
+				type: Button,
+				name: 'csvUtf8',
+				description: _('Download a list of group members (in an alternative format)'),
+				label: _('Export (Alternative format)'),
+				style: "margin: 0; width: 30em;",
+				onClick: lang.hitch(this, function() {
+					if (this._searchForm.validate()) {
+						this._csvFormat = 'alternative';
 						this._searchForm.submit();
 					} else {
 						dialog.alert(_('Please select a class or workgroup.'));
@@ -141,7 +172,9 @@ define([
 			}];
 
 			var layout = [
-				['school', 'group', 'csv']
+				['school', 'group'],
+				['csvUtf16'],
+				['csvUtf8']
 			];
 
 			this._searchForm = new SearchForm({
@@ -153,7 +186,7 @@ define([
 					this.umcpCommand('schoollists/csvlist', {
 						school: values.school,
 						group: values.group,
-						separator: this.guessCsvSeparator()
+						separator: this._csvFormat === 'excel' ? '\t' : ','
 					}).then(lang.hitch(this, 'openDownload'));
 				})
 			});

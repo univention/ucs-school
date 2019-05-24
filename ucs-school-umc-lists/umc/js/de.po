@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lists\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-11-14 13:37+0100\n"
+"POT-Creation-Date: 2019-05-24 13:34+0200\n"
 "PO-Revision-Date: 2012-03-01 18:15+0100\n"
 "Last-Translator: package@univention.de\n"
 "Language-Team: Univention\n"
@@ -12,27 +12,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: umc/js/schoollists.js:137
 msgid "Class or workgroup"
 msgstr "Klasse oder Arbeitsgruppe"
 
-msgid "School"
-msgstr "Schule"
-
-msgid "Export"
-msgstr "Export"
-
-msgid "Select a class or workgroup."
-msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
-
-msgid "Select the school."
-msgstr "Auswahl der Schule."
-
+#: umc/js/schoollists.js:147
 msgid "Download a list of group members"
 msgstr "Liste der Gruppenmitglieder herunterladen"
 
+#: umc/js/schoollists.js:161
+msgid "Download a list of group members (in an alternative format)"
+msgstr "Liste der Gruppenmitglieder herunterladen (in einem alternativen Format)"
+
+#: umc/js/schoollists.js:162
+msgid "Export (Alternative format)"
+msgstr "Export (Alternatives Foramt)"
+
+#: umc/js/schoollists.js:148
+msgid "Export (Recommended)"
+msgstr "Export (Empfohlen)"
+
+#: umc/js/schoollists.js:155 umc/js/schoollists.js:169
 msgid "Please select a class or workgroup."
 msgstr "Bitte eine Klasse oder Arbeitsgruppe auswählen."
 
+#: umc/js/schoollists.js:126
+msgid "School"
+msgstr "Schule"
+
+#: umc/js/schoollists.js:136
+msgid "Select a class or workgroup."
+msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
+
+#: umc/js/schoollists.js:125
+msgid "Select the school."
+msgstr "Auswahl der Schule."
+
+#: umc/js/schoollists.js:111
 msgid ""
-"This module lets you export class and workgroup lists. The lists are in the CSV format. If you have problems opening the exported file, ensure the encoding is set to UTF-8 and the field separator is set to \"%s\".<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>"
-msgstr "Dieses Modul ermöglicht es, Klassen- und Arbeitsgruppenlisten zu exportieren. Die Listen werden im CSV-Format ausgegeben. Die Datei ist UTF-8-kodiert und nutzt \"%s\" als Feldtrenner.<p><a target='_blank' href=modules/schoollists/lo_import_hl_de.png>Hilfe für LibreOffice</a></p>"
+"This module lets you export class and workgroup lists. The lists are in the "
+"CSV format. If you have problems opening the exported file, ensure the "
+"encoding is set to UTF-16 and the field seperator is set to tabs.<p><a "
+"target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for "
+"LibreOffice</a></p><p>If you can't open that file you can try to export the "
+"list in an alternative format which is UTF-8 encoded and uses commas as field "
+"separators.</p>"
+msgstr ""
+"Dieses Modul ermöglicht es, Klassen- und Arbeitsgruppenlisten zu "
+"exportieren. Die Listen werden im CSV-Format ausgegeben. Die Datei ist UTF-16-"
+"kodiert und nutzt Tabs als Feldtrenner.<p><a target='_blank' href=modules/"
+"schoollists/lo_import_hl_de.png>Hilfe für LibreOffice</a></p><p>Wenn Sie diese Datei nicht "
+"öffnen können, probieren Sie den Export im alternativen Format, dieser ist UTF-8-kodiert und "
+"nutzt Kommas als Feldtrenner.</p>"
