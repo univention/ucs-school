@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-60) unstable; urgency=low
+
+  * Bug #49556: check execution of shell hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 27 May 2019 16:49:06 +0200
+
 ucs-test-ucsschool (6.0.0-59) unstable; urgency=low
 
   * Bug #47222: fix minimal default username length
