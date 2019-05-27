@@ -41,6 +41,7 @@ define([
 	"umc/dialog",
 	"umc/tools",
 	"umc/modules/schoolexam/RebootGrid",
+	"umc/modules/schoolexam/RecipientsGrid",
 	"umc/widgets/Wizard",
 	"umc/widgets/Module",
 	"umc/widgets/Page",
@@ -58,7 +59,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, Wizard, Module,
+], function(declare, lang, array, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, RecipientsGrid, Wizard, Module,
 			Page, Grid, SearchForm, SearchBox, TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
@@ -79,6 +80,7 @@ define([
 		_progressBar: null,
 		_userPrefix: null,
 		_grid: null,
+		_recipientsGrid: null,
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -130,7 +132,8 @@ define([
 				layout: [
 					'school',
 					['room', 'info'],
-					'recipients'
+					'recipients',
+					'grid_title'
 				],
 				widgets: [{
 					name: 'school',
@@ -212,7 +215,15 @@ define([
 							return data.result;
 						});
 					}),
-					autoSearch: true
+					autoSearch: true,
+					onChange: lang.hitch(this, function(newValue) {
+						var groups = newValue.map(function(obj) {return obj['id']});
+						this._recipientsGrid.setGroups(groups);
+					})
+				}, {
+					type: Text,
+					name: 'grid_title',
+					content: '<h2>' + _('Participants') + '</h2>',
 				}]
 			}, {
 				name: 'files',
@@ -398,6 +409,13 @@ define([
 			getIP.then(lang.hitch(this, function(ipaddresses) {
 				this._grid.set('teacherIPs', ipaddresses);
 			}));
+
+			// create recipient detail grid manually
+			var advancedPage = this.getPage('advanced');
+			this._recipientsGrid = new RecipientsGrid({
+				umcpCommand: lang.hitch(this, 'umcpCommand')
+			});
+			advancedPage.addChild(this._recipientsGrid);
 
 			// get value for lesson end time
 			var endTimeDeferred = this.umcpCommand('schoolexam/lesson_end');
