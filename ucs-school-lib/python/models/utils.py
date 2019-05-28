@@ -597,3 +597,23 @@ def _write_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) ->
 			ruamel.yaml.RoundTripDumper,
 			indent=4
 		)
+
+
+def execute_command(cmd, logger):  # type: (List[str], logging.Logger) -> int
+	"""
+	Execute an external process. Stdout and stderr will be merged and logged
+	using the provided logging instance.
+
+	:param list(str) cmd: command to execute
+	:param logging.Logger logger: logging instance to write debug information
+		and command output to.
+	:return: exit code
+	:rtype: int
+	"""
+	logger.debug('Executing command %r...', cmd)
+	process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	stdout, stderr = process.communicate()
+	logger.debug('Command %r finished with exit code %r.', cmd, process.returncode)
+	if stdout:
+		logger.debug('Command stdout and stderr:\n%s', stdout.strip())
+	return process.returncode

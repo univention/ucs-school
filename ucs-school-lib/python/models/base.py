@@ -33,7 +33,6 @@
 import os.path
 from copy import deepcopy
 import tempfile
-import subprocess
 from six import iteritems
 
 import ldap
@@ -51,7 +50,7 @@ from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 from ..schoolldap import SchoolSearchBase, LDAP_Connection
 from .meta import UCSSchoolHelperMetaClass
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
-from .utils import ucr, _
+from .utils import ucr, _, execute_command
 from ..roles import create_ucsschool_role_string
 
 try:
@@ -386,7 +385,8 @@ class UCSSchoolHelperAbstractClass(object):
 		return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
 	def call_hooks(self, hook_time, func_name):
-		'''Calls run-parts in
+		"""
+		Calls run-parts in
 		os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
 		if self.build_hook_line(hook_time, func_name) returns a non-empty string
 
@@ -395,37 +395,33 @@ class UCSSchoolHelperAbstractClass(object):
 			func_name in ['create', 'modify', 'remove']
 
 		In the lib, post-hooks are only called if the corresponding function returns True
-		'''
 
-		def run(args):
-			self.logger.debug('Starting %r...', args)
-			process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-			stdout, stderr = process.communicate()
-			self.logger.debug('Command %r finished with exit code %r.', args, process.returncode)
-			if stdout:
-				self.logger.debug('Command stdout and stderr:\n%s', stdout.strip())
-			return process.returncode
-
+		:param str hook_time: `pre` or `post`
+		:param str func_name: `create`, `modify`, `move` or `remove`
+		:return: return code of hooks or True if no hook ran
+		:rtype: bool
+		"""
 		# verify path
 		hook_path = self._meta.hook_path
 		path = os.path.join(self.hook_path, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
 		if path in self._empty_hook_paths:
-			return None
+			return True
 		if not os.path.isdir(path) or not os.listdir(path):
-			self.logger.debug('%s not found or empty.', path)
+			self.logger.debug('Hook directory %s not found or empty.', path)
 			self._empty_hook_paths.add(path)
-			return None
-		self.logger.debug('%s shall be executed', path)
+			return True
+		self.logger.debug('Hooks in %s will be executed.', path)
 
-		dn = None
 		if hook_time == 'post':
 			dn = self.old_dn
+		else:
+			dn = None
 
-		self.logger.debug('Building hook line: %r.build_hook_line(%r, %r)', self, hook_time, func_name)
+		self.logger.debug('Building hook line: %s.build_hook_line(%r, %r)', self, hook_time, func_name)
 		line = self.build_hook_line(hook_time, func_name)
 		if not line:
-			self.logger.debug('No line. Skipping!')
-			return None
+			self.logger.debug('No line created. Skipping.')
+			return True
 		line = line.strip() + '\n'
 
 		# create temporary file with data
@@ -440,7 +436,7 @@ class UCSSchoolHelperAbstractClass(object):
 				command.extend(('--arg', dn))
 			command.extend(('--', path))
 
-			ret_code = run(command)
+			ret_code = execute_command(command, self.logger)
 
 			return ret_code == 0
 
