@@ -34,6 +34,7 @@ import os.path
 from copy import deepcopy
 import tempfile
 from six import iteritems
+import lazy_object_proxy
 
 import ldap
 from ldap import explode_dn
@@ -51,12 +52,18 @@ from ..schoolldap import SchoolSearchBase, LDAP_Connection
 from .meta import UCSSchoolHelperMetaClass
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .utils import ucr, _, execute_command
+from ..pyhooks.pyhooks_loader import PyHooksLoader
 from ..roles import create_ucsschool_role_string
 
 try:
-	from typing import Iterable, Dict, List
+	from typing import Any, Callable, Iterable, Dict, List, TypeVar
+	UCSSchoolHelperAbstractClassTV = TypeVar('UCSSchoolHelperAbstractClassTV', bound='UCSSchoolHelperAbstractClass')
 except ImportError:
 	pass
+
+PYHOOKS_PATH = '/usr/share/ucs-school-import/pyhooks'
+PYHOOKS_BASE_CLASS = 'ucsschool.lib.models.hook.Hook'
+_pyhook_loader = lazy_object_proxy.Proxy(lambda: PyHooksLoader(PYHOOKS_PATH, PYHOOKS_BASE_CLASS))  # type: PyHooksLoader
 
 
 class NoObject(noObject):
@@ -384,22 +391,13 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-	def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, univention.admin.uldap.access) -> None
+	def _call_legacy_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
 		"""
-		Calls run-parts in
-		os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
-		if self.build_hook_line(hook_time, func_name) returns a non-empty string
-
-		Usage in lib itself:
-			hook_time in ['pre', 'post']
-			func_name in ['create', 'modify', 'remove']
-
-		In the lib, post-hooks are only called if the corresponding function returns True
+		Run legacy fork hooks (run-parts /usr/share/u-s-i/hooks).
 
 		:param str hook_time: `pre` or `post`
 		:param str func_name: `create`, `modify`, `move` or `remove`
-		:param univention.admin.uldap.access lo: LDAP connection object
-		:return: return code of hooks or True if no hook ran
+		:return: return code of hooks or True if no legacy hook ran
 		:rtype: bool
 		"""
 		# verify path
@@ -441,12 +439,76 @@ class UCSSchoolHelperAbstractClass(object):
 
 			return ret_code == 0
 
+	def _call_pyhooks(self, hook_time, func_name, lo):  # type: (str, str, univention.admin.uldap.access) -> None
+		"""
+		Run Python based hooks (`*.py` files in `/usr/share/u-s-i/pyhooks`
+		containing a subclass of :py:class:`ucsschool.lib.models.hook.Hook`).
+
+		:param str hook_time: `pre` or `post`
+		:param str func_name: `create`, `modify`, `move` or `remove`
+		:param univention.admin.uldap.access lo: LDAP connection object
+		:return: None
+		:rtype: None
+		"""
+		# TODO: should we reload the object from LDAP, in case it was modified by UDM or a UDM hook?
+
+		self.in_hook = True
+		all_hooks = _pyhook_loader.get_hook_objects(lo)
+		meth_name = "{}_{}".format(hook_time, func_name)
+		try:
+			for func in all_hooks.get(meth_name, []):
+				if func.im_class.model is self.__class__:
+					self.logger.debug(
+						"Running %s hook %s.%s for %s...",
+						meth_name, func.im_class.__name__, func.im_func.func_name, self)
+					func(self)
+		finally:
+			self.in_hook = False
+
+	def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, univention.admin.uldap.access) -> bool
+		"""
+		Calls both legacy fork hooks (run-parts /usr/share/u-s-i/hooks) and
+		Python based hooks (*.py files in /usr/share/u-s-i/pyhooks).
+
+		In the case of `post`, this method is only called, if the corresponding
+		function (`create()`, `modify()`, `move()` or `remove()`) returned
+		`True`.
+
+		:param str hook_time: `pre` or `post`
+		:param str func_name: `create`, `modify`, `move` or `remove`
+		:param univention.admin.uldap.access lo: LDAP connection object
+		:return: `or`d return value of legacy hooks or True if no hook ran
+		:rtype: bool: `or`d return value of legacy hooks or True if no hook ran
+		"""
+		lo_name = lo.__class__.__name__
+		if lo_name == 'access':
+			lo_name = 'lo'
+		self.logger.debug(
+			'Starting %s.call_hooks(%r, %r, %s(%r)) for %r.',
+			self.__class__.__name__, hook_time, func_name, lo_name, lo.binddn, self)
+
+		res = self._call_legacy_hooks(hook_time, func_name)
+		self._call_pyhooks(hook_time, func_name, lo)
+		return res
+
 	def build_hook_line(self, hook_time, func_name):
 		'''Must be overridden if the model wants to support hooks.
 		Do so by something like:
 		return self._build_hook_line(self.attr1, self.attr2, 'constant')
 		'''
 		return None
+
+	@classmethod
+	def hook_init(cls, hook):  # type: ('ucsschool.lib.models.hook.Hook') -> None
+		"""
+		Overwrite this method to add individual initialization code to all
+		hooks of a ucsschool.lib.model class.
+
+		:param Hook hook: instance of a subclass of :py:class:`ucsschool.lib.model.hook.Hook`
+		:return: None
+		:rtype: None
+		"""
+		pass
 
 	def _alter_udm_obj(self, udm_obj):
 		for name, attr in iteritems(self._attributes):

@@ -247,6 +247,25 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 			return  # is a workgroup
 		return cls
 
+	@classmethod
+	def hook_init(cls, hook):  # type: ('ucsschool.lib.models.hook.Hook') -> None
+		"""
+		Add method :py:func:`get_share` to SchoolClass hooks, to make the
+		associated share easily accessible in hooks.
+
+		:param Hook hook: instance of a subclass of :py:class:`ucsschool.lib.model.hook.Hook`
+		:return: None
+		:rtype: None
+		"""
+		def get_share(grp):
+			share = cls.ShareClass.from_school_group(grp)
+			if not share.school_group:
+				# fix empty attr
+				# TODO: investigate if this should be generally fixed
+				share.school_group = grp
+			return share
+		hook.get_share = get_share
+
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 	default_roles = [role_workgroup]
