@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-05-27 10:52+0200\n"
+"POT-Creation-Date: 2019-05-28 15:06+0200\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,6 @@ msgstr ""
 "an und definieren Sie eine Endzeit.</p>"
 
 #: umc/js/schoolexam.js:326
-#, python-brace-format
 msgid ""
 "<p>The preparation of the exam was successful. A summary of the exam "
 "properties is displayed below.<p><p>Press the button \"Open computer room\" "
@@ -211,22 +210,21 @@ msgstr "Diese Dateien werden für die Klassenarbeit an die Schüler verteilt"
 msgid "Groups that are participating in the exam"
 msgstr "Die an der Klassenarbeit teilnehmenden Gruppen"
 
-#: umc/js/schoolexam.js:778
-#, python-format
+#: umc/js/schoolexam.js:760
+#, javascript-format
 msgid ""
 "In this computer room the exam \"%s\" is currently being executed by %s."
 msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" von %s "
 "durchgeführt."
 
-#: umc/js/schoolexam.js:781
-#, python-format
+#: umc/js/schoolexam.js:763
+#, javascript-format
 msgid "In this computer room the exam \"%s\" is currently being written."
 msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" durchgeführt."
 
-#: umc/js/schoolexam.js:272
-#, python-brace-format
+#: umc/js/schoolexam.js:261
 msgid "List of allowed websites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 
@@ -443,7 +441,7 @@ msgstr ""
 "\"*\", \":\", \"|\", \"\"\", \"<\", \">\", \"$\", \"'\"."
 
 #: umc/js/schoolexam.js:630
-#, python-format
+#, javascript-format
 msgid ""
 "The room %s cannot be chosen as the exam \"%s\" is currently being "
 "conducted. Please make sure that the exam is finished via the module "
@@ -459,12 +457,12 @@ msgid "The time when the exam ends"
 msgstr "Der Endzeitpunkt der Klassenarbeit"
 
 #: umc/js/schoolexam.js:784
-#, python-format
+#, javascript-format
 msgid "This computer room is currently in use by %s."
 msgstr "Dieser Computerraum wird derzeit verwendet von %s."
 
 #: umc/js/schoolexam.js:649
-#, python-format
+#, javascript-format
 msgid ""
 "This computer room is currently in use by %s. You can take control over the "
 "room, however, the current teacher will be prompted a notification and its "

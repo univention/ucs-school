@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam-master\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-05-03 17:16+0200\n"
+"POT-Creation-Date: 2019-05-28 15:06+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolexam-master/__init__.py:436
+#: umc/python/schoolexam-master/__init__.py:408
 #, python-format
 msgid "Could not remove exam user %r: %s"
 msgstr "Klassenarbeitsbenutzerkonto %r konnte nicht gelöscht werden: %s"
 
-#: umc/python/schoolexam-master/__init__.py:275
+#: umc/python/schoolexam-master/__init__.py:280
 #, python-format
 msgid ""
 "ERROR: Creation of exam user account failed\n"
@@ -26,17 +26,17 @@ msgstr ""
 "FEHLER: Anlegen des Klassenarbeitsbenutzerkontos fehlgeschlagen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:239
+#: umc/python/schoolexam-master/__init__.py:245
 #, python-format
 msgid "Exam for user %s"
 msgstr "Klassenarbeit für Benutzer %s"
 
-#: umc/python/schoolexam-master/__init__.py:421
+#: umc/python/schoolexam-master/__init__.py:393
 #, python-format
 msgid "Exam student %r not found."
 msgstr "Klassenarbeitsbenutzerkonto %r nicht gefunden."
 
-#: umc/python/schoolexam-master/__init__.py:130
+#: umc/python/schoolexam-master/__init__.py:139
 #, python-format
 msgid ""
 "Failed to create exam container\n"
@@ -45,7 +45,7 @@ msgstr ""
 "Container für Klassenarbeitsbenutzer konnte nicht angelegt werden\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:107
+#: umc/python/schoolexam-master/__init__.py:116
 #, python-format
 msgid ""
 "Failed to create exam group\n"
@@ -54,11 +54,7 @@ msgstr ""
 "Klassenarbeitsgruppe konnte nicht angelegt werden\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:401
-msgid "Invalid data in request."
-msgstr "Ungültige Daten in Anfrage."
-
-#: umc/python/schoolexam-master/__init__.py:187
+#: umc/python/schoolexam-master/__init__.py:195
 #, python-format
 msgid ""
 "Requested exam username %s is not allowed according to settings/"
@@ -67,19 +63,22 @@ msgstr ""
 "Gewünschter Klassenarbeitsbenutzername %s ist nicht erlaubtgemäß des Objekts "
 "settings/prohibited_username %s"
 
-#: umc/python/schoolexam-master/__init__.py:155
-#: umc/python/schoolexam-master/__init__.py:390
+#: umc/python/schoolexam-master/__init__.py:350
+#, python-format
+msgid "Student %(user_dn)r or exam user not found: %(exc)r."
+msgstr ""
+"Schüler %(user_dn)r oder Klassenarbeitsbenutzer nicht gefunden: %(exc)r."
+
+#: umc/python/schoolexam-master/__init__.py:163
 #, python-format
 msgid "Student %r not found."
 msgstr "Schüler %r nicht gefunden."
 
-#: umc/python/schoolexam-master/__init__.py:176
-#: umc/python/schoolexam-master/__init__.py:196
+#: umc/python/schoolexam-master/__init__.py:184
+#: umc/python/schoolexam-master/__init__.py:204
 #, python-format
 msgid "The exam account does already exist for: %s"
 msgstr "Der Klassenarbeitsbenutzername %s existiert schon"
 
-#: umc/python/schoolexam-master/__init__.py:346
-#, python-format
-msgid "Student %(user_dn)r or exam user not found: %(exc)r."
-msgstr "Schüler %(user_dn)r oder Klassenarbeitsbenutzer nicht gefunden: %(exc)r."
+#~ msgid "Invalid data in request."
+#~ msgstr "Ungültige Daten in Anfrage."
