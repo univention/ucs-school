@@ -81,8 +81,8 @@ class PyHooksLoader(object):
 		self.base_class = base_class
 		self.base_class_name = base_class.__name__
 		self.logger = logging.getLogger(__name__)  # type: logging.Logger
-		if filter_func:
-			assert callable(filter_func), "'filter_func' must be a callable, got {!r}.".format(filter_func)
+		if filter_func and not callable(filter_func):
+			raise TypeError("Argument 'filter_func' must be a callable, got {!r}.".format(filter_func))
 		self._filter_func = filter_func
 		self._pyhook_obj_cache = None  # type: Dict[str, List[Callable[[...], Any]]]
 
