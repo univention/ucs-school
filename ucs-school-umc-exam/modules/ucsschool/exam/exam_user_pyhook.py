@@ -31,18 +31,14 @@ Base class for all Python based exam user hooks.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.pyhooks import PyHook
+from ucsschool.importer.utils.import_pyhook import ImportPyHook
 
 
-class ExamUserPyHook(PyHook):
-	def __init__(self, lo, logger, *args, **kwargs):
-		"""
-		:param lo: LDAP object
-		:param logger: Python logging instance
-		"""
-		super(ExamUserPyHook, self).__init__(*args, **kwargs)
-		self.lo = lo  # LDAP object
-		self.logger = logger  # Python logging instance
+class ExamUserPyHook(ImportPyHook):
+	"""
+	See docstring of :py:class:`ucsschool.importer.utils.import_pyhook.ImportPyHook`
+	to learn about the attributes available to the hooks methods.
+	"""
 
 	# If multiple hook classes are found, hook functions with higher
 	# priority numbers run before those with lower priorities. None disables
