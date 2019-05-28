@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-61) unstable; urgency=low
+
+  * Bug #49556: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 28 May 2019 07:27:37 +0200
+
 ucs-test-ucsschool (6.0.0-60) unstable; urgency=low
 
   * Bug #49556: check execution of shell hooks
