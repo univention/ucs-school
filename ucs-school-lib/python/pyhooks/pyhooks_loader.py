@@ -115,8 +115,13 @@ class PyHooksLoader(object):
 				filter_func = lambda x: True
 			for filename in listdir(self.base_dir):
 				if filename.endswith(".py") and os.path.isfile(os.path.join(self.base_dir, filename)):
-					info = imp.find_module(filename[:-3], [self.base_dir])
-					a_class = self._load_hook_class(filename[:-3], info, self.base_class)
+					info = None
+					try:
+						info = imp.find_module(filename[:-3], [self.base_dir])
+						a_class = self._load_hook_class(filename[:-3], info, self.base_class)
+					finally:
+						if info and isinstance(info, tuple) and info[0] is not None:
+							info[0].close()
 					if a_class:
 						if filter_func(a_class):
 							self._hook_classes[self.base_class_name].append(a_class)
