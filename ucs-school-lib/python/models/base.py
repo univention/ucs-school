@@ -384,7 +384,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-	def call_hooks(self, hook_time, func_name, lo):
+	def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, univention.admin.uldap.access) -> None
 		"""
 		Calls run-parts in
 		os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
