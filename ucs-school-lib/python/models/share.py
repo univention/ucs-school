@@ -77,7 +77,9 @@ class Share(UCSSchoolHelperAbstractClass):
 
 	def get_share_path(self):
 		if ucr.is_true('ucsschool/import/roleshare', True):
-			return '/home/%s/groups/%s' % (self.school_group.school, self.name)
+			# TODO: investigate why `school_group` is not set
+			school = self.school_group.school if self.school_group else self.school
+			return '/home/%s/groups/%s' % (school, self.name)
 		else:
 			return '/home/groups/%s' % self.name
 
@@ -167,6 +169,8 @@ class ClassShare(RoleSupportMixin, Share):
 
 	def get_share_path(self):
 		if ucr.is_true('ucsschool/import/roleshare', True):
-			return '/home/%s/groups/klassen/%s' % (self.school_group.school, self.name)
+			# TODO: investigate why `school_group` is not set
+			school = self.school_group.school if self.school_group else self.school
+			return '/home/%s/groups/klassen/%s' % (school, self.name)
 		else:
 			return '/home/groups/klassen/%s' % self.name

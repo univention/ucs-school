@@ -105,8 +105,7 @@ def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
 	def is_module_in_config(kls):  # type: (Type[object]) -> bool
 		return kls.__module__ in config.get('configuration_checks', [])
 
-	logger = logging.getLogger(__name__)
-	loader = PyHooksLoader(CONFIG_CHECKS_CODE_DIR, ConfigurationChecks, logger, is_module_in_config)
+	loader = PyHooksLoader(CONFIG_CHECKS_CODE_DIR, ConfigurationChecks, filter_func=is_module_in_config)
 	config_check_classes = loader.get_hook_classes()  # type: List[Type[ConfigurationChecks]]
 	for kls in config_check_classes:
 		cc = kls(config)

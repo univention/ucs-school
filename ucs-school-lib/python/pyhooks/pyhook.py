@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@school
-"""
-Base class for all Python based hooks.
-"""
 # Copyright 2016-2019 Univention GmbH
 #
 # http://www.univention.de/
@@ -31,6 +27,10 @@ Base class for all Python based hooks.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Base class for all Python based hooks.
+"""
+
 
 class PyHook(object):
 	"""
@@ -44,5 +44,5 @@ class PyHook(object):
 	# a function.
 	priority = {}
 
-	def __init__(self, *arg, **kwargs):
+	def __init__(self, *args, **kwargs):
 		pass

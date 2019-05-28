@@ -32,6 +32,7 @@
 
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
+from six import string_types
 
 from univention.admin.uexceptions import nextFreeIp
 
@@ -172,7 +173,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	DEFAULT_PREFIX_LEN = 24  # 255.255.255.0
 
 	def get_inventory_numbers(self):
-		if isinstance(self.inventory_number, basestring):
+		if isinstance(self.inventory_number, string_types):
 			return [inv.strip() for inv in self.inventory_number.split(',')]
 		if isinstance(self.inventory_number, (list, tuple)):
 			return list(self.inventory_number)
@@ -288,7 +289,6 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 					continue
 				if own_network_ip4.overlaps(network[1]):
 					self.add_error('subnet_mask', _('The newly created network would overlap with the existing network {}').format(network[0]))
-
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
