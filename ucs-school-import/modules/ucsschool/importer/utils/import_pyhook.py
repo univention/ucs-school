@@ -38,7 +38,7 @@ from ucsschool.lib.pyhooks import PyHook, PyHooksLoader
 from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 try:
-	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
 	import univention.admin.uldap.access
 	ImportPyHookTV = TypeVar('ImportPyHookTV', bound='ImportPyHook')
 except ImportError:
@@ -110,10 +110,16 @@ class ImportPyHookLoader(object):
 		self.logger = logging.getLogger(__name__)  # type: logging.Logger
 
 	def init_hook(self, hook_cls, filter_func=None, *args, **kwargs):
-		# type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
+		# type: (Union[Type[ImportPyHookTV], str], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
 		"""
 		Load and initialize hook class `hook_cls`.
 
+		:param hook_cls: class object - load and run hooks that are a
+			subclass of this
+		:type hook_cls: ucsschool.importer.utils.import_pyhook.ImportPyHook or str
+		:param filter_func: function to filter out undesired hook classes (takes a
+			class and returns a bool), passed to PyHooksLoader
+		:type filter_func: callable or None
 		:param tuple args: arguments to pass to __init__ of hooks
 		:param dict kwargs: arguments to pass to __init__ of hooks
 		:return: mapping from method names to list of methods of initialized
@@ -122,10 +128,15 @@ class ImportPyHookLoader(object):
 		"""
 		# The PyHook objects themselves are already cached by PyHooksLoader, but we don't want to initialize a
 		# PyHooksLoader each time we run a hook, so we'll keep a dict linking directly to all PyHooksLoader caches.
-		if hook_cls not in self._pyhook_obj_cache:
-			pyhooks_loader = PyHooksLoader(self.pyhooks_base_path, hook_cls, self.logger, filter_func)
-			self._pyhook_obj_cache[hook_cls] = pyhooks_loader.get_hook_objects(*args, **kwargs)
-		return self._pyhook_obj_cache[hook_cls]
+
+		base_class = PyHooksLoader.hook_cls2importpyhook(hook_cls, 'hook_cls')
+		if not issubclass(base_class, ImportPyHook):
+			raise TypeError("Argument 'hook_cls' must be a subclass of ImportPyHook.")
+
+		if base_class not in self._pyhook_obj_cache:
+			pyhooks_loader = PyHooksLoader(self.pyhooks_base_path, base_class, self.logger, filter_func)
+			self._pyhook_obj_cache[base_class] = pyhooks_loader.get_hook_objects(*args, **kwargs)
+		return self._pyhook_obj_cache[base_class]
 
 	def call_hooks(self, hook_cls, func_name, *args, **kwargs):
 		# type: (Type[ImportPyHookTV], str, *Any, **Any) -> List[Any]
@@ -150,7 +161,7 @@ class ImportPyHookLoader(object):
 
 
 def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
-	# type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
+	# type: (Union[Type[ImportPyHookTV], str], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
 	"""
 	Retrieve (and initialize subclasses of :py:class:`hook_cls`, if not yet
 	done) pyhooks of type `hook_cls`. Results are cached.
@@ -161,9 +172,9 @@ def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
 
 	Convenience function for easy usage of PyHooksLoader.
 
-	:param hook_cls: class object - load and run hooks that are a
-		subclass of this
-	:type hook_cls: ucsschool.importer.utils.import_pyhook.ImportPyHook
+	:param hook_cls: class object or fully dotted Python path to a class
+		definition - load and run hooks that are a subclass of this
+	:type hook_cls: ucsschool.importer.utils.import_pyhook.ImportPyHook or str
 	:param filter_func: function to filter out undesired hook classes (takes a
 		class and returns a bool), passed to PyHooksLoader
 	:type filter_func: callable or None
@@ -190,16 +201,16 @@ def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
 
 
 def run_import_pyhooks(hook_cls, func_name, *args, **kwargs):
-	# type: (Type[ImportPyHookTV], str, *Any, **Any) -> List[Any]
+	# type: (Union[Type[ImportPyHookTV], str], str, *Any, **Any) -> List[Any]
 	"""
 	Execute method `func_name` of subclasses of `hook_cls`, load and
 	initialize if required.
 
 	Convenience function for easy usage of PyHooksLoader.
 
-	:param hook_cls: class object - load and run hooks that are a
-		subclass of this
-	:type hook_cls: ucsschool.importer.utils.import_pyhook.ImportPyHook
+	:param hook_cls: class object or fully dotted Python path to a class
+		definition - load and run hooks that are a subclass of this
+	:type hook_cls: ucsschool.importer.utils.import_pyhook.ImportPyHook or str
 	:param str func_name: name of method to run in each hook
 	:param args: arguments to pass to hook function `func_name`
 	:param kwargs: arguments to pass to hook function `func_name`
