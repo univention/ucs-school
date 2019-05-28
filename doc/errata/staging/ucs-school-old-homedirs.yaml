@@ -2,7 +2,7 @@ product: ucsschool
 release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-old-homedir
+src: ucs-school-old-homedirs
 fix: 14.0.1-0A~4.4.0.201905131011
 desc: |
  * The listener now handles exam users correctly as configured in <envar>ucsschool/exam/user/homedir/autoremove</envar> (Bug #49443).
