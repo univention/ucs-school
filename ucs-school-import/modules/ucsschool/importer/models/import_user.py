@@ -177,19 +177,23 @@ class ImportUser(User):
 	def _pyhook_supports_dry_run(kls):
 		return bool(getattr(kls, 'supports_dry_run', False))
 
-	def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
+	def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, univention.admin.uldap.access) -> bool
 		"""
 		Runs PyHooks, then ucs-school-libs fork hooks.
 
 		:param str hook_time: `pre` or `post`
 		:param str func_name: `create`, `modify`, `move` or `remove`
+		:param univention.admin.uldap.access lo: LDAP connection object
 		:return: return code of lib hooks
 		:rtype: bool: result of a legacy hook or None if no legacy hook ran
 		"""
+		if lo != self.lo:
+			self.logger.warn('Received "lo" (%r) is not the same as self.lo (%r).', lo, self.lo)
+
 		if hook_time == "post" and self.action in ["A", "M"] and not (self.config['dry_run'] and self.action == "A"):
 			# update self from LDAP if object exists (after A and M), except after a dry-run create
-			user = self.get_by_import_id(self.lo, self.source_uid, self.record_uid)
-			user_udm = user.get_udm_object(self.lo)
+			user = self.get_by_import_id(lo, self.source_uid, self.record_uid)
+			user_udm = user.get_udm_object(lo)
 			# copy only those UDM properties from LDAP that were originally
 			# set in self.udm_properties
 			for k in self.udm_properties.keys():
@@ -200,7 +204,7 @@ class ImportUser(User):
 		hooks = get_import_pyhooks(
 			'ucsschool.importer.utils.user_pyhook.UserPyHook',
 			self._pyhook_supports_dry_run if self.config['dry_run'] else None,
-			lo=self.lo,
+			lo=lo,
 			dry_run=self.config['dry_run']
 		)  # result is cached on the lib side
 		meth_name = "{}_{}".format(hook_time, func_name)
@@ -220,7 +224,7 @@ class ImportUser(User):
 				self.hook_path = self.config['hooks_dir_legacy']
 			except KeyError:
 				pass
-			return super(ImportUser, self).call_hooks(hook_time, func_name)
+			return super(ImportUser, self).call_hooks(hook_time, func_name, lo)
 
 	def call_format_hook(self, prop_name, fields):  # type: (str, Dict[str, Any]) -> Dict[str, Any]
 		"""
