@@ -4,8 +4,8 @@
 ## exposure: dangerous
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
-## packages: [ucs-school-import]
-## bugs: []
+## packages: [python-ucs-school, ucs-school-import]
+## bugs: [49556]
 
 import os
 import re
@@ -110,6 +110,7 @@ class TestLegacyHooks(TestCase):
 	times = ('pre', 'post')
 	objects = {}
 	ou_name = ou_dn = None
+	ou2_name = ou2_dn = None
 	import_config = None
 	progress_counter = 0
 
@@ -124,9 +125,11 @@ class TestLegacyHooks(TestCase):
 
 	@classmethod
 	def tearDownClass(cls):
-		# cls.ucr_test.revert_to_original_registry()
-		# cls.udm_test.cleanup()
 		cls.ucs_test_school.cleanup()
+		try:
+			os.remove(RESULTFILE)
+		except OSError:
+			pass
 
 	def setUp(self):
 		with open(RESULTFILE, 'w') as fp:
@@ -228,7 +231,10 @@ class TestLegacyHooks(TestCase):
 			self.progress_counter, len(self.func2model), self.model.__name__)
 		self._check_test_setup()
 
-		obj = self.objects[self.model]
+		try:
+			obj = self.objects[self.model]
+		except KeyError:
+			raise KeyError('No object found for class {!r}. Probably create() failed.'.format(self.model.__name__))
 		# try to change an attribute, not that it'd be necessary, but it can't hurt either
 		if hasattr(obj, 'display_name'):
 			obj.display_name = uts.random_name()
@@ -270,7 +276,10 @@ class TestLegacyHooks(TestCase):
 			self.progress_counter, len(self.func2model), self.model.__name__, self.ou_name, self.ou2_name)
 		self._check_test_setup()
 
-		obj = self.objects[self.model]
+		try:
+			obj = self.objects[self.model]
+		except KeyError:
+			raise KeyError('No object found for class {!r}. Probably create() failed.'.format(self.model.__name__))
 		if hasattr(obj, 'schools'):
 			obj.change_school(self.ou2_name, self.lo)
 		else:
@@ -315,7 +324,10 @@ class TestLegacyHooks(TestCase):
 			logger.info('Model School does not support "remove" method.')
 			return
 
-		obj = self.objects[self.model]
+		try:
+			obj = self.objects[self.model]
+		except KeyError:
+			raise KeyError('No object found for class {!r}. Probably create() failed.'.format(self.model.__name__))
 		obj.remove(self.lo)
 		with open(RESULTFILE, 'r') as fp:
 			txt = fp.read()

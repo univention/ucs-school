@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.0-62) unstable; urgency=low
+
+  * Bug #49556: make inherited errors more obvious
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 29 May 2019 08:01:06 +0200
+
 ucs-test-ucsschool (6.0.0-61) unstable; urgency=low
 
   * Bug #49556: fix typo
