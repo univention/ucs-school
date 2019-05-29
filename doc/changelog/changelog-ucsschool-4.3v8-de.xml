@@ -147,7 +147,39 @@ feedback@univention.de
 					<!-- END ucs-school-ldap-acls-master 16.0.4-1A~4.3.0.201905101711 -->
 <!-- CHANGELOG:2019-05-20:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-05-29" lang="en">
+					<title>Released on 2019-05-29:</title>
+					<!-- START ucs-school-import 16.0.3-14A~4.3.0.201905221535 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>16.0.3-14A~4.3.0.201905221535</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: a Python module was moved into another Debian package (<u:bug>48576</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 16.0.3-14A~4.3.0.201905221535 -->
+					<!-- START ucs-school-ldap-acls-master 16.0.4-2A~4.3.0.201905201715 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>16.0.4-2A~4.3.0.201905201715</emphasis>:
+						<itemizedlist>
+							<listitem><para>For security reasons, direct LDAP access has been restricted for teachers and staff. They can no longer create any shares in LDAP directly. This has no effect on the functionality of UCS@school (<u:bug>49507</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 16.0.4-2A~4.3.0.201905201715 -->
+					<!-- START ucs-school-umc-import 1.0.1-6A~4.3.0.201905132138 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-import</emphasis> in version <emphasis>1.0.1-6A~4.3.0.201905132138</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: fixed Debian package dependency (<u:bug>48576</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-import 1.0.1-6A~4.3.0.201905132138 -->
+<!-- CHANGELOG:2019-05-29:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
