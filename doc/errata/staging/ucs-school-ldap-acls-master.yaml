@@ -5,5 +5,5 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-ldap-acls-master
 fix: 16.0.4-2A~4.3.0.201905201715
 desc: |
- * For security reasons, direct LDAP access has been restricted for teachers and staff. You can no longer create any shares in LDAP. This has no effect on the functionality of UCS@school (Bug #49507).
+ * For security reasons, direct LDAP access has been restricted for teachers and staff. They can no longer create any shares in LDAP directly. This has no effect on the functionality of UCS@school (Bug #49507).
 bug: [49507]
