@@ -268,7 +268,74 @@ feedback@univention.de
 					<!-- END ucs-school-metapackage 12.0.2-2A~4.4.0.201905161706 -->
 <!-- CHANGELOG:2019-05-20:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-05-29" lang="en">
+					<title>Released on 2019-05-29:</title>
+					<!-- START ucs-school-import 17.0.6-20A~4.4.0.201905221531 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.6-20A~4.4.0.201905221531</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: a Python module was moved into another Debian package (<u:bug>49217</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.6-20A~4.4.0.201905221531 -->
+					<!-- START ucs-school-old-homedirs 14.0.1-0A~4.4.0.201905131011 -->
+					<para>
+						Source package <emphasis>ucs-school-old-homedirs</emphasis> in version <emphasis>14.0.1-0A~4.4.0.201905131011</emphasis>:
+						<itemizedlist>
+							<listitem><para>The listener now handles exam users correctly as configured in <envar>ucsschool/exam/user/homedir/autoremove</envar> (<u:bug>49443</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-old-homedirs 14.0.1-0A~4.4.0.201905131011 -->
+					<!-- START ucs-school-umc-distribution 17.0.1-4A~4.4.0.201905211712 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-distribution</emphasis> in version <emphasis>17.0.1-4A~4.4.0.201905211712</emphasis>:
+						<itemizedlist>
+							<listitem><para>The collection of results can now be compressed in a zip archive (used by backup mechanism). (<u:bug>49333</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvements required for the exam mode (<u:bug>49519</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-distribution 17.0.1-4A~4.4.0.201905211712 -->
+					<!-- START ucs-school-umc-exam 9.0.1-6A~4.4.0.201905241024 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-6A~4.4.0.201905241024</emphasis>:
+						<itemizedlist>
+							<listitem><para>The number of exam backup files is now limited and is compressed into a zip archive by default (<u:bug>49333</u:bug>).</para></listitem>
+
+							<listitem><para>The home directories of exam accounts are now kept by default and are not deleted anymore. Also the UCR variable <envar>ucsschool/exam/user/homedir/autoremove</envar> is unset once upon updating to restore the default behavior. To restore the previous behavior, you have to set the UCR variable back to <literal>yes</literal> again (<u:bug>49443</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: a list of exams can now be retrieved via a UMC call (<u:bug>49519</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: a list of students in a school class or work group can now be retrieved via a UMC call (<u:bug>49525</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-6A~4.4.0.201905241024 -->
+					<!-- START ucs-school-umc-import 2.0.0-1A~4.4.0.201905132202 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-import</emphasis> in version <emphasis>2.0.0-1A~4.4.0.201905132202</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: fixed Debian package dependency (<u:bug>49217</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-import 2.0.0-1A~4.4.0.201905132202 -->
+					<!-- START ucs-school-umc-users 15.0.0-3A~4.4.0.201905230838 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-users</emphasis> in version <emphasis>15.0.0-3A~4.4.0.201905230838</emphasis>:
+						<itemizedlist>
+							<listitem><para>A typo in the javascript code caused a malfunction while displaying students in certain situations. This problem has been fixed (<u:bug>49492</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-users 15.0.0-3A~4.4.0.201905230838 -->
+<!-- CHANGELOG:2019-05-29:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
