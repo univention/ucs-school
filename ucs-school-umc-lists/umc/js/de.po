@@ -26,7 +26,7 @@ msgstr "Liste der Gruppenmitglieder herunterladen (in einem alternativen Format)
 
 #: umc/js/schoollists.js:162
 msgid "Export (Alternative format)"
-msgstr "Export (Alternatives Foramt)"
+msgstr "Export (Alternatives Format)"
 
 #: umc/js/schoollists.js:148
 msgid "Export (Recommended)"
@@ -52,7 +52,7 @@ msgstr "Auswahl der Schule."
 msgid ""
 "This module lets you export class and workgroup lists. The lists are in the "
 "CSV format. If you have problems opening the exported file, ensure the "
-"encoding is set to UTF-16 and the field seperator is set to tabs.<p><a "
+"encoding is set to UTF-16 and the field separator is set to tabs.<p><a "
 "target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for "
 "LibreOffice</a></p><p>If you can't open that file you can try to export the "
 "list in an alternative format which is UTF-8 encoded and uses commas as field "
@@ -62,5 +62,5 @@ msgstr ""
 "exportieren. Die Listen werden im CSV-Format ausgegeben. Die Datei ist UTF-16-"
 "kodiert und nutzt Tabs als Feldtrenner.<p><a target='_blank' href=modules/"
 "schoollists/lo_import_hl_de.png>Hilfe für LibreOffice</a></p><p>Wenn Sie diese Datei nicht "
-"öffnen können, probieren Sie den Export im alternativen Format, dieser ist UTF-8-kodiert und "
+"öffnen können, probieren Sie den Export im alternativen Format. Dieser ist UTF-8-kodiert und "
 "nutzt Kommas als Feldtrenner.</p>"

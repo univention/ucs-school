@@ -110,7 +110,7 @@ define([
 				helpText: _(
 					'This module lets you export class and workgroup lists. The lists are in the CSV format. ' +
 					'If you have problems opening the exported file, ensure the encoding is set to UTF-16 ' +
-					'and the field seperator is set to tabs.' +
+					'and the field separator is set to tabs.' +
 					"<p><a target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for LibreOffice</a></p>" +
 					"<p>If you can't open that file you can try to export the list in an alternative format " +
 					'which is UTF-8 encoded and uses commas as field separators.</p>'
