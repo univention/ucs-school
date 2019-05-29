@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-lists
-fix: 2.0.0-2A~4.4.0.201905241405
+fix: 2.0.0-3A~4.4.0.201905292316
 desc: |
  * Improved compatibility for the exported csv file. The recommended export is using UTF-16 with tabs as separators which seems to be the most compatible format. In case UTF-16 is not supported an UTF-8 export is still available (Bug #48504).
 bug: [48504]
