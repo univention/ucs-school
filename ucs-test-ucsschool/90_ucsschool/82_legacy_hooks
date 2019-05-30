@@ -33,6 +33,15 @@ BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), 'test82_legacy_hook.sh')
 LEGACY_HOOK_BASE_PATH = '/usr/share/ucs-school-import/hooks'
 RESULTFILE = '/tmp/test82_result.txt'
+EXPECTED_CLASSES = [
+	'AnyComputer', 'AnyDHCPService', 'BasicGroup', 'BasicSchoolGroup', 'ClassShare', 'ComputerRoom', 'Container',
+	'DHCPDNSPolicy', 'DHCPServer', 'DHCPService', 'DHCPSubnet', 'DNSReverseZone', 'ExamStudent', 'Group', 'ImportStaff',
+	'ImportStudent', 'ImportTeacher', 'ImportTeachersAndStaff', 'ImportUser', 'IPComputer', 'LegacyImportStaff',
+	'LegacyImportStudent', 'LegacyImportTeacher', 'LegacyImportTeachersAndStaff', 'LegacyImportUser', 'MacComputer',
+	'MailDomain', 'Network', 'OU', 'Policy', 'School', 'SchoolClass', 'SchoolComputer', 'SchoolDC', 'SchoolDCSlave',
+	'SchoolGroup', 'Share', 'Staff', 'Student', 'Teacher', 'TeachersAndStaff', 'UCCComputer', 'UMCPolicy', 'User',
+	'WindowsComputer', 'WorkGroup', 'WorkGroupShare'
+]
 
 logger = get_ucsschool_logger()
 
@@ -164,6 +173,13 @@ class TestLegacyHooks(TestCase):
 		for path in self._created_dirs:
 			logger.debug('os.rmdir(%r)', path)
 			os.rmdir(path)
+
+	def test_000_classes(self):
+		self.assertSequenceEqual(
+			[m.__name__ for m in self.models],
+			EXPECTED_CLASSES,
+			'Did not find the classes that were expected. Expected:\n{!r}\nGot:\n{!r}'.format(
+				EXPECTED_CLASSES, self.models))
 
 	@classmethod
 	def _create_hook_dirs(cls, hook_type, method_name):
