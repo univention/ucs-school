@@ -1,8 +1,16 @@
 ucs-test-ucsschool (6.0.0-63) unstable; urgency=low
 
+<<<<<<< HEAD
   * Bug #49557: check if ucsschool.lib model classes changed
 
  -- Daniel Troeder <troeder@univention.de>  Thu, 30 May 2019 08:59:59 +0200
+=======
+  * Bug #35447:
+    - add 75_ldap_acls_specific_tests
+    - updated 78_ldap_acls_dump
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 31 May 2019 18:20:07 +0200
+>>>>>>> Bug #35447: add changelog entry
 
 ucs-test-ucsschool (6.0.0-62) unstable; urgency=low
 
