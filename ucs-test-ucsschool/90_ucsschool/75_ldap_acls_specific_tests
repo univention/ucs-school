@@ -1,0 +1,262 @@
+#!/usr/share/ucs-test/runner python
+# coding=utf-8
+## desc: check specific LDAP access permissions
+## roles: [domaincontroller_master]
+## tags: [ucsschool,ucsschool_base1]
+## timeout: 3600
+## exposure: dangerous
+## packages: [ucs-school-ldap-acls-master]
+
+from __future__ import print_function
+
+import os
+import sys
+import time
+import ldap
+import pytest
+
+import univention.admin.uldap
+import univention.testing.ucr as ucr_test
+import univention.testing.udm
+import univention.testing.strings as uts
+import univention.testing.ucsschool.ucs_test_school as utu
+
+class MyObj(object):
+	def __init__(self, name, dn):
+		self.name = name
+		self.dn = dn
+
+class ACLTester(object):
+	def __init__(self, ucr, actor_dn):
+		self.actor_dn = actor_dn
+		self.lo = univention.admin.uldap.access(
+			host=ucr['ldap/master'],
+			port=int(ucr.get('ldap/master/port', '7389')),
+			base=ucr['ldap/base'],
+			binddn=actor_dn,
+			bindpw='univention',
+		)
+		self.errors = []  # type: List[str]
+		print('ACTOR: {}'.format(self.actor_dn))
+
+	def test_attribute(self, dn, attribute, permission):
+		print('test_attribute({!r}, {!r}, {!r})'.format(dn, attribute, permission))
+		assert permission in ('none', 'read', 'write')
+		if permission == 'none':
+			result = self.lo.get(dn)
+			if result.get(attribute) is not None:
+				self.errors.append('Expected that {!r} has no permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+		elif permission == 'read':
+			result = self.lo.get(dn)
+			if result.get(attribute) is None:
+				self.errors.append('Expected that {!r} has permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+			try:
+				self.lo.modify(dn, [[attribute, result.get(attribute), ['TEST']]])
+				self.lo.modify(dn, [[attribute, ['TEST'], result.get(attribute)]])
+				self.errors.append('Expected that {!r} has only permission to read attribute {!r} from {!r} but is also able to write'.format(self.actor_dn, attribute, dn))
+			except univention.admin.uexceptions.permissionDenied:
+				pass
+		elif permission == 'write':
+			result = self.lo.get(dn)
+			if result.get(attribute) is None:
+				self.errors.append('Expected that {!r} has permission to write {!r} to {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+			try:
+				self.lo.modify(dn, [[attribute, result.get(attribute), ['TEST']]])
+				self.lo.modify(dn, [[attribute, ['TEST'], result.get(attribute)]])
+			except univention.admin.uexceptions.permissionDenied:
+				self.errors.append('Expected that {!r} has permission to write {!r} to {!r} but can only read: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+
+	def print_errors(self):
+		if not self.errors:
+			print('Everything fine with {!r}'.format(self.actor_dn))
+			return
+		print('Errors with actor dn {!r}'.format(self.actor_dn))
+		for i, msg in enumerate(self.errors):
+			print('ERROR {}) {}'.format(i, msg))
+		raise Exception('There were {} ACL errors'.format(len(self.errors)))
+
+class Bunch(object):
+	def __init__(self, **kwds):
+		self.__dict__.update(kwds)
+
+
+class LDAPACLCheck(object):
+	def __init__(self, ucr, udm, schoolenv):
+		self.ucr = ucr
+		self.udm = udm
+		self.schoolenv = schoolenv
+		self.lo = univention.admin.uldap.getAdminConnection()[0]
+		self.generic = Bunch()
+		self.schoolA = Bunch()
+		self.schoolB = Bunch()
+		self.setup()
+
+	def setup(self):
+		print('---[START /etc/ldap/slapd.conf]---', file=sys.stderr)
+		print(open('/etc/ldap/slapd.conf', 'r').read(), file=sys.stderr)
+		print('---[END /etc/ldap/slapd.conf]---', file=sys.stderr)
+		sys.stderr.flush()
+
+		self.generic.master = MyObj(self.ucr['hostname'], self.lo.searchDn(filter='univentionObjectType=computers/domaincontroller_master')[0])
+		self.generic.backup = MyObj('schoolTestBackup', self.udm.create_object(
+			"computers/domaincontroller_backup",
+			name='schoolTestBackup',
+			position="cn=dc,cn=computers,%(ldap/base)s" % self.ucr,
+			domain=self.ucr.get('domainname'),
+			mac=uts.random_mac(),
+			ip=uts.random_ip(),
+		))
+		self.generic.slave = MyObj('schoolTestSlave', self.udm.create_object(
+			"computers/domaincontroller_slave",
+			name='schoolTestSlave',
+			position="cn=dc,cn=computers,%(ldap/base)s" % self.ucr,
+			domain=self.ucr.get('domainname'),
+			mac=uts.random_mac(),
+			ip=uts.random_ip(),
+		))
+		self.generic.member = MyObj('schoolTestMember', self.udm.create_object(
+			"computers/memberserver",
+			name='schoolTestMember',
+			position="cn=computers,%(ldap/base)s" % self.ucr,
+			domain=self.ucr.get('domainname'),
+			mac=uts.random_mac(),
+			ip=uts.random_ip(),
+		))
+		self.generic.winclient = MyObj('schoolTestWinDom', self.udm.create_object(
+			"computers/windows",
+			name='schoolTestWinDom',
+			position="cn=computers,%(ldap/base)s" % self.ucr,
+			mac=uts.random_mac(),
+			ip=uts.random_ip(),
+		))
+		self.generic.domain_user = MyObj('domainUser', self.udm.create_user(username='domainUser')[0])
+		self.generic.domain_admin = MyObj('Administrator', 'uid=Administrator,cn=users,%(ldap/base)s' % self.ucr)
+
+		for suffix, school in (('A', self.schoolA), ('B', self.schoolB), ):
+			print('---{}-----------------------------------------------------'.format(suffix))
+			school.name, school.dn = self.schoolenv.create_ou(ou_name='school%s' % (suffix,), name_edudc='schooldc%s' % (suffix,))
+
+			if suffix == 'A':
+				schools = [self.schoolA.name]
+			else:
+				schools = [self.schoolA.name, self.schoolB.name]
+			school.teacher = MyObj(*self.schoolenv.create_user(school.name, username='teacher%s' % (suffix,), schools=schools, is_teacher=True,
+																				classes='%s-class1' % (school.name,)))
+			school.teacher_staff = MyObj(*self.schoolenv.create_user(school.name, username='teachstaff%s' % (suffix,), schools=schools, is_teacher=True, is_staff=True,
+																				classes='%s-class1' % (school.name,)))
+			school.staff = MyObj(*self.schoolenv.create_user(school.name, username='staff%s' % (suffix,), schools=schools, is_staff=True))
+			school.student = MyObj(*self.schoolenv.create_user(school.name, username='student%s' % (suffix,), schools=schools,
+																				classes='%s-class1' % (school.name,)))
+			school.admin1 = MyObj(*self.schoolenv.create_school_admin(school.name, username='schooladmin1%s' % (suffix,), schools=schools))
+			school.admin2 = MyObj(*self.schoolenv.create_school_admin(school.name, username='schooladmin2%s' % (suffix,), schools=schools))
+
+			school.schoolserver = MyObj(None, self.lo.searchDn(base=school.dn, filter='univentionObjectType=computers/domaincontroller_slave')[0])
+
+			school.winclient = MyObj(
+				'schoolwin%s' % (suffix,),
+				self.udm.create_object(
+					"computers/windows",
+					name='schoolwin%s' % (suffix,),
+					position="cn=computers,%s" % (school.dn,),
+					mac=uts.random_mac(),
+					ip=uts.random_ip(),
+				))
+
+			# create additional class, first workgroup and first computer room
+			school.class2 = MyObj(
+				'{}-class2'.format(school.name),
+				self.schoolenv.create_school_class(
+					school.name, class_name='class2', description='Test class 2',
+					users=[school.student.dn, school.teacher.dn]
+			))
+			school.workgroup1 = MyObj(
+				'{}-wg1'.format(school.name),
+				self.schoolenv.create_workgroup(
+					school.name, workgroup_name='wg1', description='Test workgroup',
+					users=[school.student.dn, school.teacher.dn]
+				))
+			school.room1 = MyObj(*self.schoolenv.create_computerroom(school.name, name='room1', description='Test room1'))
+
+
+	def test_schooladmin_pw_reset(self):
+		'''
+		Bug #35447:
+		Check if schooladmins are able to reset passwords of
+		- students
+		- teachers
+		- teachers and staff
+		- staff
+		But not
+		- other schooladmins of same/other OU
+		- domain admins
+		- global users
+		'''
+
+		acl_tester = ACLTester(self.ucr, self.schoolA.admin1.dn)
+		for permission, dn in [
+				# generic
+				('none', self.generic.domain_admin.dn),
+				('none', self.generic.domain_user.dn),
+				# school A
+				('write', self.schoolA.student.dn),
+				('write', self.schoolA.teacher.dn),
+				('write', self.schoolA.teacher_staff.dn),
+				('write', self.schoolA.staff.dn),
+				('read', self.schoolA.admin1.dn),
+				('read', self.schoolA.admin2.dn),
+				# school B
+				('write', self.schoolB.student.dn),
+				('write', self.schoolB.teacher.dn),
+				('write', self.schoolB.teacher_staff.dn),
+				('write', self.schoolB.staff.dn),
+				('read', self.schoolB.admin1.dn),
+				('read', self.schoolB.admin2.dn),
+		]:
+			acl_tester.test_attribute(dn, 'userPassword', permission)
+		acl_tester.print_errors()
+
+		acl_tester = ACLTester(self.ucr, self.schoolB.admin1.dn)
+		for permission, dn in [
+				# generic
+				('none', self.generic.domain_admin.dn),
+				('none', self.generic.domain_user.dn),
+				# school A
+				('write', self.schoolA.student.dn),
+				('write', self.schoolA.teacher.dn),
+				('write', self.schoolA.teacher_staff.dn),
+				('write', self.schoolA.staff.dn),
+				('read', self.schoolA.admin1.dn),
+				('read', self.schoolA.admin2.dn),
+				# school B
+				('write', self.schoolB.student.dn),
+				('write', self.schoolB.teacher.dn),
+				('write', self.schoolB.teacher_staff.dn),
+				('write', self.schoolB.staff.dn),
+				('read', self.schoolB.admin1.dn),
+				('read', self.schoolB.admin2.dn),
+		]:
+			acl_tester.test_attribute(dn, 'userPassword', permission)
+		acl_tester.print_errors()
+
+	def run_all_tests(self):
+		self.test_schooladmin_pw_reset()
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with univention.testing.udm.UCSTestUDM() as udm:
+			with ucr_test.UCSTestConfigRegistry() as ucr:
+
+				test_suite = LDAPACLCheck(ucr, udm, schoolenv)
+				test_suite.run_all_tests()
+
+				# for debugging purposes
+				if os.path.exists('/tmp/75_ldap_acls_specific_tests.debug'):
+					fn = '/tmp/75_ldap_acls_specific_tests.continue'
+					print('=== DEBUGGING MODE ===')
+					print('Waiting for cleanup until {!r} exists...'.format(fn))
+					while not os.path.exists(fn):
+						time.sleep(1)
+
+if __name__ == '__main__':
+	main()
