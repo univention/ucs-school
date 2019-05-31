@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 # coding=utf-8
-## desc: Dump access to all available objects and compare with rulse of 4.1R2v9
+## desc: dump LDAP access to all available objects
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,ucsschool_base1]
 ## timeout: 3600
@@ -10,12 +10,11 @@
 import re
 import os
 import sys
-import ldif
-import shutil
 import time
 import subprocess
 import traceback
 from multiprocessing import Pool
+import ldif
 
 import univention.admin.uldap
 import univention.testing.ucr as ucr_test
@@ -122,7 +121,7 @@ def run_one_test(args):
 				print >>sys.stdout, 'Thread %02d (pid %d): %05d/%05d' % (thread_id, os.getpid(), j, len_dn_list)
 				sys.stdout.flush()
 
-			entry = {}
+			entry = {}  # type: Dict[str, Set[str]]
 			cmd = ['slapacl', '-d0', '-D', binddn, '-b', dn]
 			process = subprocess.Popen(cmd, stderr=subprocess.PIPE)
 			_, stderr = process.communicate()
@@ -220,14 +219,14 @@ class LDAPDiffCheck(object):
 
 			# create additional class, first workgroup and first computer room
 			school.class2_name, school.class2_dn = self.schoolenv.create_school_class(
-				school.name, class_name=None, description='Test class 2',
+				school.name, class_name='class2', description='Test class 2',
 				users=[school.student_dn, school.teacher_dn]
 			)
 			school.workgroup1_name, school.workgroup1_dn = self.schoolenv.create_workgroup(
-				school.name, workgroup_name=None, description='Test workgroup',
+				school.name, workgroup_name='wg1', description='Test workgroup',
 				users=[school.student_dn, school.teacher_dn]
 			)
-			school.room1_name = self.schoolenv.create_computerroom(school.name, description='Test room1')[0]
+			school.room1_name = self.schoolenv.create_computerroom(school.name, name='room1', description='Test room1')[0]
 
 	def collect_dns(self, valid_ou_names=None):
 		valid_ous = valid_ou_names or [',ou=%s' % (x,) for x in [self.schoolA.name, self.schoolB.name, 'Domain Controllers']]
@@ -283,41 +282,7 @@ def main():
 				test_suite = LDAPDiffCheck(ucr, udm, schoolenv)
 				test_suite.collect_dns()
 
-				BASE_DIR = '/etc/univention/templates/files/etc/ldap/slapd.conf.d'
-				FN_TEMPL1_ORIG = os.path.join(BASE_DIR, '61ucsschool_presettings')
-				FN_TEMPL2_ORIG = os.path.join(BASE_DIR, '65ucsschool')
-				FN_TEMPL1_BACKUP = FN_TEMPL1_ORIG + '.BACKUP'
-				FN_TEMPL2_BACKUP = FN_TEMPL2_ORIG + '.BACKUP'
-				FN_TEMPL1_TEST = '78_ldap_acls_dump.oldconfig.61ucsschool_presettings'
-				FN_TEMPL2_TEST = '78_ldap_acls_dump.oldconfig.65ucsschool'
-				now = int(time.time())
-				try:
-					print '\n'
-					shutil.move(FN_TEMPL1_ORIG, FN_TEMPL1_BACKUP)
-					shutil.move(FN_TEMPL2_ORIG, FN_TEMPL2_BACKUP)
-					with open(FN_TEMPL1_ORIG, 'w') as fd_dst, open(FN_TEMPL1_TEST, 'r') as fd_src:
-						fd_dst.write(fd_src.read())
-					with open(FN_TEMPL2_ORIG, 'w') as fd_dst, open(FN_TEMPL2_TEST, 'r') as fd_src:
-						fd_dst.write(fd_src.read())
-					subprocess.check_call(['ucr', 'commit', '/etc/ldap/slapd.conf'])
-					if subprocess.check_call(['invoke-rc.d', 'slapd', 'restart']):
-						utu.fail('Restarting slapd with test config 1 failed!')
-					time.sleep(3)
-					testdir = '/var/log/univention/78_ldap_acls_dump.%d.oldconfig' % (now,)
-					test_suite.run_all_tests(testdir)
-				except Exception:
-					print >>sys.stderr, 'SOMETHING FAILED WITH OLD CONFIG'
-					print >>sys.stderr, traceback.format_exc()
-					raise
-				finally:
-					shutil.move(FN_TEMPL1_BACKUP, FN_TEMPL1_ORIG)
-					shutil.move(FN_TEMPL2_BACKUP, FN_TEMPL2_ORIG)
-					subprocess.call(['ucr', 'commit', '/etc/ldap/slapd.conf'])
-					subprocess.call(['invoke-rc.d', 'slapd', 'restart'])
-					time.sleep(3)
-
-				print '\n'
-				testdir = '/var/log/univention/78_ldap_acls_dump.%d.newconfig' % (now,)
+				testdir = '/var/log/univention/78_ldap_acls_dump.{}'.format(int(time.time()))
 				test_suite.run_all_tests(testdir)
 
 				print 'Use following command for diff:'
