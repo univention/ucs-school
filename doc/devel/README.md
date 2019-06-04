@@ -50,3 +50,58 @@ Das LDB-Modul wird auf folgenden Systemen vom Metapaket installiert und aktivier
   - DC Backup
 
 Auf allen anderen Rollen ist das Modul nicht aktiv und joinende Windowsclients legen dann Rechnerobjekte direkt in den zentralen Containern und nicht unterhalb der Schul-OUs an.
+
+## LDAP-ACLs
+
+### Soll-Status prüfen
+
+In ucs-test-ucsschool gibt es das Skript `75_ldap_acls_specific_tests`, welches Tests enthält, die den Soll-Zustand überprüfen: kann der Schuladmin von Schule A nur die Schüler/Lehrer/Staff-Passwörter seiner Schule zurücksetzen, aber nicht die Passwörter von Schuladmins oder anderen Schule usw. Das Skript wird/soll nach und nach erweitert werden. Es erstellt automatisch 3 Schulen mit allen (schulübergreifenden) Benutzertypen, allen Rechnertypen, Klassen, Arbeitsgruppen und Räumen.
+
+### Auswirkungen von ACL-Änderungen überprüfen
+
+In ucs-test-ucsschool gibt es außerdem das Skript `78_ldap_acls_dump`. Es erstellt automatisch 3 Schulen mit allen (schulübergreifenden) Benutzertypen, allen Rechnertypen, Klassen, Arbeitsgruppen und Räumen. Anschließend wird für alle 29 Objekttypen (cn=admin, DC Master, DC Backup, ..., Lehrer, Schüler, Mitarbeiter, Schuladmins, Windows-Clients, SchulDC) eine via `slapacl` eine Abfrage für alle Objekte im LDAP und in den drei TestOUs gemacht und die Zugriffsberechtigungen für die Attribute in jeweils eine Datei geschrieben (`/var/log/univention/78_ldap_acls_dump.TIMESTAMP/dn??.ldif`). In dem Verzeichnis liegt auch eine Datei `dn.txt` wo das Mapping der zwischen DN und Datei wieder aufgelöst wird.
+
+#### Welchen Mehrwert hat man dadurch? 
+Man kann den Dump der Zugriffsberechtigungen jetzt **VOR** und **NACH** einer LDAP-ACL-Änderung erstellen und sich die Änderungen zwischen den beiden Dumpts über das Skript `78_ldap_acls_dump.diff` (auch in ucs-test-ucsschool) anzeigen lassen.
+
+    # cd /usr/share/ucs-test/90_ucsschool/
+	# ./78_ldap_acls_dump -vf
+	<LDAP-ACL-Änderungen durchführen und slapd neustarten>
+	# ./78_ldap_acls_dump -vf
+    # ./78_ldap_acls_dump.diff
+
+**Hinweis:** Für `78_ldap_acls_dump.diff` werden die Tools `HLdiff` und `diff-ldif` aus dem Toolshed benötigt. Einfach vorher nach `/usr/bin/` der Testinstanz kopieren.
+
+Die Ausgabe des Diff-Tools sieht wie folgt aus:
+
+    /var/log/univention/78_ldap_acls_dump.1558281264/dn20.ldif
+	/var/log/univention/78_ldap_acls_dump.1558282573/dn20.ldif
+    
+     dn: uid=staffA,cn=mitarbeiter,cn=users,ou=schoolA,dc=nstx,dc=local
+    +userPassword: =wrscxd
+    -userPassword: =rscxd
+     univentionObjectType: =rscxd
+     uidNumber: =rscxd
+     uid: =rscxd
+     ucsschoolSchool: =rscxd
+     ucsschoolRole: =rscxd
+     structuralObjectClass: =rscxd
+     sn: =rscxd
+     sambaSID: =rscxd
+    +sambaPwdLastSet: =wrscxd
+    -sambaPwdLastSet: =rscxd
+     sambaPrimaryGroupSID: =rscxd
+    +sambaPasswordHistory: =wrscxd
+    -sambaPasswordHistory: =rscxd
+    +sambaNTPassword: =wrscxd
+    -sambaNTPassword: =rscxd
+     sambaBadPasswordTime: =rscxd
+    +sambaBadPasswordCount: =wrscxd
+    -sambaBadPasswordCount: =rscxd
+    +sambaAcctFlags: =wrscxd
+    -sambaAcctFlags: =rscxd
+     objectClass: =rscxd
+     modifyTimestamp: =rscxd
+     modifiersName: =rscxd
+     memberOf: =rscxd
+	 [...]
