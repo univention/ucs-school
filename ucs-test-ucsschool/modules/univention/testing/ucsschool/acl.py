@@ -13,6 +13,8 @@ from univention.uldap import getMachineConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.strings as uts
+import univention.testing.udm as udm_test
+
 
 
 class FailAcl(Exception):
@@ -46,68 +48,41 @@ def run_commands(cmdlist, argdict):
 	return result_list
 
 
-def create_group_in_container(container_dn):
-	"""
-	Create random group in a specific container:
+class CreateContextManager(object):
+	udm_module = ''
+	create_kwargs = {}
 
-	:param str container_dn: container dn to create the group in
-	"""
-	cmd = [
-		'udm', 'groups/group', 'create',
-		'--position', '%(container)s',
-		'--set', 'name=%(group_name)s'
-	]
-	out, err = run_commands([cmd], {
-		'container': container_dn,
-		'group_name': uts.random_name()
-	})[0]
-	if out:
-		return out.split(': ')[1].strip()
+	def __init__(self, container_dn, **kwargs):
+		"""
+		Create random object in a specific container:
 
+		:param str container_dn: container dn to create the object in
+		:param kwargs: arguments to pass to `udm.create_object()` additionally to cls.create_kwargs
+		"""
+		self.container_dn = container_dn
+		self.create_kwargs.update(kwargs)
+		self.udm = None
+		self.dn = ''
 
-def create_dc_slave_in_container(container_dn):
-	"""
-	Create random computer in a specific container:
+	def __enter__(self):
+		self.udm = udm_test.UCSTestUDM()
+		self.dn = self.udm.create_object(self.udm_module, position=self.container_dn, **self.create_kwargs)
+		return self.dn
 
-	:param str container_dn: container dn to create the group in
-	"""
-	cmd = [
-		'udm', 'computers/domaincontroller_slave', 'create',
-		'--position', '%(container)s',
-		'--set', 'name=%(name)s'
-	]
-	out, err = run_commands([cmd], {
-		'container': container_dn,
-		'name': uts.random_name(),
-		'uidNumber': uts.random_int()
-	})[0]
-	if out:
-		return out.split(': ')[1].strip()
+	def __exit__(self, exc_type, exc_value, etraceback):
+		if exc_type:
+			print('*** Cleanup after exception: %s %s' % (exc_type, exc_value))
+		self.udm.cleanup()
 
 
-def create_user_in_container(container_dn):
-	"""
-	Create random user in a specific container:
+class CreateGroupInContainer(CreateContextManager):
+	udm_module = 'groups/group'
+	create_kwargs = {'name': uts.random_name()}
 
-	:param str container_dn: container dn to create the user in
-	"""
-	cmd = [
-		'udm', 'users/user', 'create',
-		'--position', '%(container)s',
-		'--set', 'username=%(username)s',
-		'--set', 'firstname=%(firstname)s',
-		'--set', 'lastname=%(lastname)s',
-		'--set', 'password=%(password)s',
-	]
-	out, err = run_commands([cmd], {
-		'container': container_dn,
-		'username': uts.random_name(),
-		'firstname': uts.random_name(),
-		'lastname': uts.random_name(),
-		'password': uts.random_string(),
-	})[0]
-	if out:
-		return out.split(': ')[1].strip()
+
+class CreateDCSlaveInContainer(CreateContextManager):
+	udm_module = 'computers/domaincontroller_slave'
+	create_kwargs = {'name': uts.random_name()}
 
 
 class Acl(object):
@@ -209,12 +184,12 @@ class Acl(object):
 	def assert_room(self, room_dn, access):
 		"""Lehrer und ouadmins duerfen Raum-Gruppen anlegen und bearbeiten
 		"""
-		target_dn = 'cn=raeume,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
+		container_dn = 'cn=raeume,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
 		attrs = [
 			'children',
 			'entry',
 		]
-		self.assert_acl(target_dn, access, attrs)
+		self.assert_acl(container_dn, access, attrs)
 		# access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),dc=najjar,dc=am$$"
 		# filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
 		attrs = [
@@ -229,62 +204,62 @@ class Acl(object):
 			'univentionGroupType',
 		]
 		self.assert_acl(room_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(target_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+		with CreateDCSlaveInContainer(container_dn) as target_dn:
+			self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_teacher_group(self, access):
 		"""Lehrer, Mitarbeiter und Mitglieder der lokalen Administratoren
 		duerfen Arbeitsgruppen anlegen und aendern
 		"""
-		group_dn = 'cn=lehrer,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
+		group_container = 'cn=lehrer,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
 		attrs = [
 			'children',
 			'entry',
 		]
-		self.assert_acl(group_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(group_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
-		group_dn = create_group_in_container(group_dn)
-		# access to dn.regex="^cn=([^,]+),(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),dc=najjar,dc=am$$"
-		# filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
-		attrs = [
-			'sambaGroupType',
-			'cn',
-			'description',
-			'objectClass',
-			'memberUid',
-			'univentionObjectType',
-			'gidNumber',
-			'sambaSID',
-			'uniqueMember',
-			'univentionGroupType',
-		]
-		self.assert_acl(group_dn, access, attrs)
+		self.assert_acl(group_container, access, attrs)
+		with CreateDCSlaveInContainer(group_container) as target_dn:
+			self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+			with CreateGroupInContainer(group_container) as group_dn:
+				# access to dn.regex="^cn=([^,]+),(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),dc=najjar,dc=am$$"
+				# filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
+				attrs = [
+					'sambaGroupType',
+					'cn',
+					'description',
+					'objectClass',
+					'memberUid',
+					'univentionObjectType',
+					'gidNumber',
+					'sambaSID',
+					'uniqueMember',
+					'univentionGroupType',
+				]
+				self.assert_acl(group_dn, access, attrs)
 
 	def assert_student_group(self, access):
-		group_dn = 'cn=schueler,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
+		group_container = 'cn=schueler,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
 		attrs = [
 			'children',
 			'entry',
 		]
-		self.assert_acl(group_dn, access, attrs)
+		self.assert_acl(group_container, access, attrs)
 
-		target_dn = create_dc_slave_in_container(group_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
-		group_dn = create_group_in_container(group_dn)
-		attrs = [
-			'sambaGroupType',
-			'cn',
-			'description',
-			'objectClass',
-			'memberUid',
-			'univentionObjectType',
-			'gidNumber',
-			'sambaSID',
-			'uniqueMember',
-			'univentionGroupType',
-		]
-		self.assert_acl(group_dn, access, attrs)
+		with CreateDCSlaveInContainer(group_container) as target_dn:
+			self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+			with CreateGroupInContainer(group_container) as group_dn:
+				attrs = [
+					'sambaGroupType',
+					'cn',
+					'description',
+					'objectClass',
+					'memberUid',
+					'univentionObjectType',
+					'gidNumber',
+					'sambaSID',
+					'uniqueMember',
+					'univentionGroupType',
+				]
+				self.assert_acl(group_dn, access, attrs)
 
 	def assert_share_object_access(self, share_dn, access, access_allowance='ALLOWED'):
 		"""
@@ -343,8 +318,8 @@ class Acl(object):
 			'entry',
 		]
 		self.assert_acl(shares_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(shares_dn)
-		self.assert_acl(target_dn, 'write', attrs, access_allowance='DENIED')
+		with CreateDCSlaveInContainer(shares_dn) as target_dn:
+			self.assert_acl(target_dn, 'write', attrs, access_allowance='DENIED')
 
 	def assert_temps(self, access):
 		"""Mitglieder der lokalen Administratoren muessen einige temporaere
@@ -358,18 +333,21 @@ class Acl(object):
 			'entry',
 		]
 		self.assert_acl(temp_dn, access, attrs)
+
 		temp_dn = 'cn=gid,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(temp_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+		with CreateDCSlaveInContainer(temp_dn) as target_dn:
+			self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+
 		temp_dn = 'cn=mac,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(temp_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+		with CreateDCSlaveInContainer(temp_dn) as target_dn:
+			self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+
 		temp_dn = 'cn=groupName,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(temp_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+		with CreateDCSlaveInContainer(temp_dn) as target_dn:
+			self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_gid_temps(self, access):
 		base_dn = self.ucr.get('ldap/base')
@@ -380,8 +358,8 @@ class Acl(object):
 			'univentionLastUsedValue'
 		]
 		self.assert_acl(temp_dn, access, attrs)
-		target_dn = create_dc_slave_in_container(temp_dn)
-		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
+		with CreateDCSlaveInContainer(temp_dn) as target_dn:
+			self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_ou(self, access):
 		"""Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben
