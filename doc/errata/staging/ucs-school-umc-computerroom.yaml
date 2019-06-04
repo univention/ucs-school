@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-computerroom
+fix: 11.0.0-3A~4.4.0.201906040844
+desc: |
+ * The computer room module now verifies room DNS more rigorous (Bug #43039).
+bug: [43039]
