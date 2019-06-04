@@ -32,6 +32,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
+import re
 import shlex
 import fcntl
 import signal
@@ -44,6 +45,7 @@ import traceback
 import subprocess
 from random import Random
 from pipes import quote
+import lazy_object_proxy
 
 from ipaddr import IPAddress
 from ldap.filter import filter_format
@@ -60,8 +62,6 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.log import MODULE
 
 import univention.admin.uexceptions as udm_exceptions
-
-from univention.uldap import explodeDn
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.schoollessons import SchoolLessons
@@ -80,6 +80,9 @@ _ = Translation('ucs-school-umc-computerroom').translate
 ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
 FN_SCREENSHOT_DENIED = _('/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg')
 FN_SCREENSHOT_NOTREADY = _('/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg')
+ROOM_DN_REGEX_TEMPLATE = r'cn=([a-zA-Z0-9_][a-zA-Z0-9. _-]+?[a-zA-Z0-9_]+?),cn={container},cn=groups,ou=(\w+?),{ldap_base}'
+ROOM_DN_REGEX_COMPILED = lazy_object_proxy.Proxy(lambda: re.compile(ROOM_DN_REGEX_TEMPLATE.format(
+	container=ucr.get('ucsschool/ldap/default/container/rooms', 'raeume'), ldap_base=ucr['ldap/base'])))
 
 
 def compare_dn(a, b):
@@ -87,13 +90,9 @@ def compare_dn(a, b):
 
 
 def _getRoomFile(roomDN):
-	if roomDN.startswith('cn='):
-		dnParts = explodeDn(roomDN, True)
-		if not dnParts:
-			MODULE.warn('Could not split room DN: %s' % roomDN)
-			raise UMC_Error(_('Invalid room DN: %s') % roomDN)
-		return os.path.join(ROOMDIR, dnParts[0])
-	return os.path.join(ROOMDIR, roomDN)
+	"""Get path to a room file from a computer rooms DN."""
+	room_name = ComputerRoomDNSanitizer(required=True, _return_room_name=True).sanitize('roomDN', {'roomDN': roomDN})
+	return os.path.join(ROOMDIR, room_name)
 
 
 def _isUmcProcess(pid):
@@ -235,6 +234,26 @@ class ComputerSanitizer(StringSanitizer):
 			raise UMC_Error('Unknown computer')
 
 
+class ComputerRoomDNSanitizer(DNSanitizer):
+	def __init__(self, *args, **kwargs):
+		# don't want to modify request.options, so cannot use "may_change_value"
+		try:
+			self._return_room_name = kwargs.pop('_return_room_name')
+		except KeyError:
+			self._return_room_name = False
+		super(ComputerRoomDNSanitizer, self).__init__(*args, **kwargs)
+
+	def _sanitize(self, value, name, further_args):
+		value = super(ComputerRoomDNSanitizer, self)._sanitize(value, name, further_args)
+		m = ROOM_DN_REGEX_COMPILED.match(value)
+		if m and self._return_room_name:
+			return m.groups()[0]
+		elif m and not self._return_room_name:
+			return value
+		else:
+			raise UMC_Error(_('Invalid room DN: %s') % value)
+
+
 class Plugin(object):
 
 	gettext_domain = 'ucs-school-umc-computerroom'
@@ -311,7 +330,7 @@ class Instance(SchoolBaseModule):
 		"""Returns a list of available internet rules"""
 		self.finished(request.id, [x.name for x in internetrules.list()])
 
-	@sanitize(room=DNSanitizer(required=True))
+	@sanitize(room=ComputerRoomDNSanitizer(required=True))
 	@LDAP_Connection()
 	def room_acquire(self, request, ldap_user_read=None):
 		"""Acquires the specified computerroom"""
@@ -625,7 +644,7 @@ class Instance(SchoolBaseModule):
 		_updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, examEndTime=None)
 
 	@sanitize(
-		room=DNSanitizer(required=True),
+		room=ComputerRoomDNSanitizer(required=True),
 		exam=StringSanitizer(required=True),
 		examDescription=StringSanitizer(required=True),
 		examEndTime=StringSanitizer(required=True),

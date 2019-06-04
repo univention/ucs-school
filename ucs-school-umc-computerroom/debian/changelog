@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-3) unstable; urgency=low
+
+  * Bug #43039: ensure room DN argument is valid
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 04 Jun 2019 08:42:52 +0200
+
 ucs-school-umc-computerroom (11.0.0-2) unstable; urgency=medium
 
   * Bug #48995: adjust require.toUrl() call for dojoConfig.cacheBust
