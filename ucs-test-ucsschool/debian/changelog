@@ -1,4 +1,4 @@
-ucs-test-ucsschool (6.0.0-65) unstable; urgency=low
+ucs-test-ucsschool (6.0.3) unstable; urgency=low
 
   * Bug #35447: merged code for generating a multischool test environment
     with all objects
