@@ -62,13 +62,13 @@ In ucs-test-ucsschool gibt es das Skript `75_ldap_acls_specific_tests`, welches 
 In ucs-test-ucsschool gibt es außerdem das Skript `78_ldap_acls_dump`. Es erstellt automatisch 3 Schulen mit allen (schulübergreifenden) Benutzertypen, allen Rechnertypen, Klassen, Arbeitsgruppen und Räumen. Anschließend wird für alle 29 Objekttypen (cn=admin, DC Master, DC Backup, ..., Lehrer, Schüler, Mitarbeiter, Schuladmins, Windows-Clients, SchulDC) eine via `slapacl` eine Abfrage für alle Objekte im LDAP und in den drei TestOUs gemacht und die Zugriffsberechtigungen für die Attribute in jeweils eine Datei geschrieben (`/var/log/univention/78_ldap_acls_dump.TIMESTAMP/dn??.ldif`). In dem Verzeichnis liegt auch eine Datei `dn.txt` wo das Mapping der zwischen DN und Datei wieder aufgelöst wird.
 
 #### Welchen Mehrwert hat man dadurch? 
-Man kann den Dump der Zugriffsberechtigungen jetzt **VOR** und **NACH** einer LDAP-ACL-Änderung erstellen und sich die Änderungen zwischen den beiden Dumpts über das Skript `78_ldap_acls_dump.diff` (auch in ucs-test-ucsschool) anzeigen lassen.
+Man kann den Dump der Zugriffsberechtigungen jetzt **VOR** und **NACH** einer LDAP-ACL-Änderung erstellen und sich die Änderungen zwischen den beiden Dumps über das Skript `78_ldap_acls_dump.diff` (auch in ucs-test-ucsschool) anzeigen lassen. Dabei wird für jede Datei, die verglichen wird, ein `less` gestartet.
 
     # cd /usr/share/ucs-test/90_ucsschool/
 	# ./78_ldap_acls_dump -vf
 	<LDAP-ACL-Änderungen durchführen und slapd neustarten>
 	# ./78_ldap_acls_dump -vf
-    # ./78_ldap_acls_dump.diff
+    # ./78_ldap_acls_dump.diff /var/log/univention/78_ldap_acls_dump.1558281264/ /var/log/univention/78_ldap_acls_dump.1558282573/
 
 **Hinweis:** Für `78_ldap_acls_dump.diff` werden die Tools `HLdiff` und `diff-ldif` aus dem Toolshed benötigt. Einfach vorher nach `/usr/bin/` der Testinstanz kopieren.
 
@@ -104,4 +104,4 @@ Die Ausgabe des Diff-Tools sieht wie folgt aus:
      modifyTimestamp: =rscxd
      modifiersName: =rscxd
      memberOf: =rscxd
-	 [...]
+    [...]
