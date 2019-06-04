@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.0-65) unstable; urgency=low
+
+  * Bug #35447: merged code for generating a multischool test environment
+    with all objects
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 04 Jun 2019 12:46:28 +0200
+
 ucs-test-ucsschool (6.0.2) unstable; urgency=low
 
   * Bug #35447: delete created objects

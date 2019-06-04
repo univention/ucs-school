@@ -139,97 +139,14 @@ def run_one_test(args):
 	return msg
 
 
-class Bunch(object):
-	def __init__(self, **kwds):
-		self.__dict__.update(kwds)
-
-
-class LDAPDiffCheck(object):
+class LDAPDiffCheck(utu.AutoMultiSchoolEnv):
 	def __init__(self, ucr, udm, schoolenv):
-		self.ucr = ucr
-		self.udm = udm
-		self.schoolenv = schoolenv
-		self.lo = univention.admin.uldap.getAdminConnection()[0]
-		self.generic = Bunch()
-		self.schoolA = Bunch()
-		self.schoolB = Bunch()
-		self.setup()
-
-	def setup(self):
-		self.generic.master_dn = self.lo.searchDn(filter='univentionObjectType=computers/domaincontroller_master')[0]
-		self.generic.backup_dn = self.udm.create_object(
-			"computers/domaincontroller_backup",
-			name='schoolTestBackup',
-			position="cn=dc,cn=computers,%(ldap/base)s" % self.ucr,
-			domain=self.ucr.get('domainname'),
-			mac=uts.random_mac(),
-			ip=uts.random_ip(),
-		)
-		self.generic.slave_dn = self.udm.create_object(
-			"computers/domaincontroller_slave",
-			name='schoolTestSlave',
-			position="cn=dc,cn=computers,%(ldap/base)s" % self.ucr,
-			domain=self.ucr.get('domainname'),
-			mac=uts.random_mac(),
-			ip=uts.random_ip(),
-		)
-		self.generic.member_dn = self.udm.create_object(
-			"computers/memberserver",
-			name='schoolTestMember',
-			position="cn=computers,%(ldap/base)s" % self.ucr,
-			domain=self.ucr.get('domainname'),
-			mac=uts.random_mac(),
-			ip=uts.random_ip(),
-		)
-		self.generic.winclient_dn = self.udm.create_object(
-			"computers/windows",
-			name='schoolTestWinDom',
-			position="cn=computers,%(ldap/base)s" % self.ucr,
-			mac=uts.random_mac(),
-			ip=uts.random_ip(),
-		)
-		self.generic.domain_user_dn = self.udm.create_user(username='domainUser')[0]
-
-		for suffix, school in (('A', self.schoolA), ('B', self.schoolB), ):
-			print '---%s-----------------------------------------------------' % (suffix,)
-			school.name, school.dn = self.schoolenv.create_ou(ou_name='school%s' % (suffix,), name_edudc='schooldc%s' % (suffix,))
-
-			if suffix == 'A':
-				schools = [self.schoolA.name]
-			else:
-				schools = [self.schoolA.name, self.schoolB.name]
-			school.teacher_name, school.teacher_dn = self.schoolenv.create_user(school.name, username='teacher%s' % (suffix,), schools=schools, is_teacher=True,
-																				classes='%s-class1' % (school.name,))
-			school.teacher_staff_name, school.teacher_staff_dn = self.schoolenv.create_user(school.name, username='teachstaff%s' % (suffix,), schools=schools, is_teacher=True, is_staff=True,
-																				classes='%s-class1' % (school.name,))
-			school.staff_name, school.staff_dn = self.schoolenv.create_user(school.name, username='staff%s' % (suffix,), schools=schools, is_staff=True)
-			school.student_name, school.student_dn = self.schoolenv.create_user(school.name, username='student%s' % (suffix,), schools=schools,
-																				classes='%s-class1' % (school.name,))
-			school.admin_name, school.admin_dn = self.schoolenv.create_school_admin(school.name, username='schooladmin%s' % (suffix,), schools=schools)
-
-			school.schoolserver_dn = self.lo.searchDn(base=school.dn, filter='univentionObjectType=computers/domaincontroller_slave')[0]
-
-			school.winclient_dn = self.udm.create_object(
-				"computers/windows",
-				name='schoolwin%s' % (suffix,),
-				position="cn=computers,%s" % (school.dn,),
-				mac=uts.random_mac(),
-				ip=uts.random_ip(),
-			)
-
-			# create additional class, first workgroup and first computer room
-			school.class2_name, school.class2_dn = self.schoolenv.create_school_class(
-				school.name, class_name='class2', description='Test class 2',
-				users=[school.student_dn, school.teacher_dn]
-			)
-			school.workgroup1_name, school.workgroup1_dn = self.schoolenv.create_workgroup(
-				school.name, workgroup_name='wg1', description='Test workgroup',
-				users=[school.student_dn, school.teacher_dn]
-			)
-			school.room1_name = self.schoolenv.create_computerroom(school.name, name='room1', description='Test room1')[0]
+		# type: (ucr_test.UCSTestConfigRegistry, univention.testing.udm.UCSTestUDM, utu.UCSTestSchool) -> None
+		super(LDAPDiffCheck, self).__init__(ucr, udm, schoolenv)
+		self.dn_list = None  # type: Optional[List[str]]
 
 	def collect_dns(self, valid_ou_names=None):
-		valid_ous = valid_ou_names or [',ou=%s' % (x,) for x in [self.schoolA.name, self.schoolB.name, 'Domain Controllers']]
+		valid_ous = valid_ou_names or [',ou=%s' % (x,) for x in [self.schoolA.name, self.schoolB.name, self.schoolC.name, 'Domain Controllers']]
 		self.dn_list = [dn for dn in self.lo.searchDn() if (
 			(not dn.startswith('ou=') and (',ou=' not in dn)) or    # accept all NON-OU objects
 			(any([x in dn for x in valid_ous])))]                   # and all objects of "valid" OUs to get comparable results
@@ -241,29 +158,36 @@ class LDAPDiffCheck(object):
 
 		work_items = [(result_dir, i, binddn, self.dn_list) for i, binddn in enumerate([
 			'cn=admin,%(ldap/base)s' % self.ucr,
-			self.generic.master_dn,
-			self.generic.backup_dn,
-			self.generic.slave_dn,
-			self.generic.member_dn,
-			self.generic.winclient_dn,
+			self.generic.master.dn,
+			self.generic.backup.dn,
+			self.generic.slave.dn,
+			self.generic.member.dn,
+			self.generic.winclient.dn,
 			'uid=Administrator,cn=users,%(ldap/base)s' % self.ucr,
-			self.generic.domain_user_dn,
-			self.schoolA.schoolserver_dn,
-			self.schoolB.schoolserver_dn,
-			self.schoolA.winclient_dn,
-			self.schoolB.winclient_dn,
-			self.schoolA.teacher_dn,
-			self.schoolB.teacher_dn,
-			self.schoolA.student_dn,
-			self.schoolB.student_dn,
-			self.schoolA.teacher_staff_dn,
-			self.schoolB.teacher_staff_dn,
-			self.schoolA.staff_dn,
-			self.schoolB.staff_dn,
-			self.schoolA.admin_dn,
-			self.schoolB.admin_dn,
+			self.generic.domain_user.dn,
+			self.schoolA.schoolserver.dn,
+			self.schoolB.schoolserver.dn,
+			self.schoolC.schoolserver.dn,
+			self.schoolA.winclient.dn,
+			self.schoolB.winclient.dn,
+			self.schoolC.winclient.dn,
+			self.schoolA.teacher.dn,
+			self.schoolB.teacher.dn,
+			self.schoolC.teacher.dn,
+			self.schoolA.student.dn,
+			self.schoolB.student.dn,
+			self.schoolC.student.dn,
+			self.schoolA.teacher_staff.dn,
+			self.schoolB.teacher_staff.dn,
+			self.schoolC.teacher_staff.dn,
+			self.schoolA.staff.dn,
+			self.schoolB.staff.dn,
+			self.schoolC.staff.dn,
+			self.schoolA.admin1.dn,
+			self.schoolB.admin1.dn,
+			self.schoolC.admin1.dn,
 		])]
-		for result_dir, i, binddn, dn_list in work_items:
+		for result_dir, i, binddn, _ in work_items:
 			with open(os.path.join(result_dir, 'dn.txt'), 'a+') as fd:
 				fd.write('%02d ==> %s\n' % (i, binddn))
 
