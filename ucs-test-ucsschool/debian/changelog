@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.4) unstable; urgency=low
+
+  * Bug #43039: fix test
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 05 Jun 2019 09:04:49 +0200
+
 ucs-test-ucsschool (6.0.3) unstable; urgency=low
 
   * Bug #35447: merged code for generating a multischool test environment
