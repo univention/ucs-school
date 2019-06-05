@@ -45,6 +45,7 @@ import logging
 import tempfile
 import subprocess
 import traceback
+import lazy_object_proxy
 from ldap import LDAPError
 from collections import defaultdict
 
@@ -63,7 +64,7 @@ from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaf
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib, get_stream_handler, UniStreamHandler
 from ucsschool.lib.models.group import ComputerRoom
 try:
-	from typing import Dict, List, Tuple
+	from typing import Dict, List, Optional, Tuple
 except ImportError:
 	pass
 
@@ -108,6 +109,9 @@ def get_ucsschool_logger():  # type: () -> logging.Logger
 	return logger
 
 
+logger = lazy_object_proxy.Proxy(get_ucsschool_logger)  # type: logging.Logger
+
+
 class SchoolError(Exception):
 	pass
 
@@ -126,21 +130,20 @@ class Bunch(object):
 
 
 class UCSTestSchool(object):
-	_ucr = univention.testing.ucr.UCSTestConfigRegistry()
-	_ucr.load()
+	ucr = lazy_object_proxy.Proxy(lambda: univention.testing.ucr.UCSTestConfigRegistry().__enter__())
 	_test_ous = dict()  # type: Dict[str, List[Tuple[str]]]
 
-	LDAP_BASE = _ucr['ldap/base']
+	LDAP_BASE = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr['ldap/base'])
 
 	PATH_CMD_BASE = '/usr/share/ucs-school-import/scripts'
 	PATH_CMD_CREATE_OU = os.path.join(PATH_CMD_BASE, 'create_ou')
 	PATH_CMD_IMPORT_USER = os.path.join(PATH_CMD_BASE, 'import_user')
 
-	CN_STUDENT = _ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
-	CN_TEACHERS = _ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-	CN_TEACHERS_STAFF = _ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-	CN_ADMINS = _ucr.get('ucsschool/ldap/default/container/admins', 'admins')
-	CN_STAFF = _ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+	CN_STUDENT = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr.get('ucsschool/ldap/default/container/pupils', 'schueler'))
+	CN_TEACHERS = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer'))
+	CN_TEACHERS_STAFF = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter'))
+	CN_ADMINS = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr.get('ucsschool/ldap/default/container/admins', 'admins'))
+	CN_STAFF = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter'))
 
 	def __init__(self):
 		add_stream_logger_to_schoollib()
@@ -155,11 +158,11 @@ class UCSTestSchool(object):
 
 	def __exit__(self, exc_type, exc_value, etraceback):
 		if exc_type:
-			print '*** Cleanup after exception: %s %s' % (exc_type, exc_value)
+			logger.exception('*** Cleanup after exception: %s %s\n%s', exc_type, exc_value)
 		try:
 			self.cleanup()
-		except:
-			print ''.join(traceback.format_exception(exc_type, exc_value, etraceback))
+		except Exception as exc:
+			logger.exception('*** Error during cleanup: %s', exc)
 			raise
 
 	@classmethod
@@ -177,8 +180,8 @@ class UCSTestSchool(object):
 
 		account = utils.UCSTestDomainAdminCredentials()
 		if not ldap_server:
-			ldap_server = cls._ucr.get('ldap/master')
-		port = int(cls._ucr.get('ldap/server/port', 7389))
+			ldap_server = cls.ucr.get('ldap/master')
+		port = int(cls.ucr.get('ldap/server/port', 7389))
 
 		try:
 			if admin:
@@ -186,7 +189,7 @@ class UCSTestSchool(object):
 			elif machine:
 				lo = udm_uldap.getMachineConnection(ldap_master=True)[0]
 			else:
-				lo = udm_uldap.access(host=ldap_server, port=port, base=cls._ucr.get('ldap/base'), binddn=account.binddn, bindpw=account.bindpw, start_tls=2)
+				lo = udm_uldap.access(host=ldap_server, port=port, base=cls.ucr.get('ldap/base'), binddn=account.binddn, bindpw=account.bindpw, start_tls=2)
 		except noObject:
 			raise
 		except LDAPError as exc:
@@ -208,11 +211,11 @@ class UCSTestSchool(object):
 
 		msg = None
 		cmd = [udm_test.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, module, 'remove', '--dn', dn]
-		print '*** Calling following command: %r' % cmd
+		logger.info('*** Calling following command: %r', cmd)
 		retval = subprocess.call(cmd)
 		if retval:
 			msg = '*** ERROR: failed to remove UCS@school %s object: %s' % (module, dn)
-			print msg
+			logger.error(msg)
 		return msg
 
 	def _set_password(self, userdn, password, raise_exceptions=False):
@@ -229,23 +232,26 @@ class UCSTestSchool(object):
 
 		msg = None
 		cmd = [udm_test.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, 'users/user', 'modify', '--dn', dn, '--set', 'password=%s' % password]
-		print '*** Calling following command: %r' % cmd
+		logger.info('*** Calling following command: %r', cmd)
 		retval = subprocess.call(cmd)
 		if retval:
 			msg = 'ERROR: failed to set password for UCS@school user %s' % (userdn)
-			print msg
+			logger.info(msg)
 		return msg
 
 	def cleanup(self, wait_for_replication=True):
 		""" Cleanup all objects created by the UCS@school test environment """
-		print('Performing UCSTestSchool cleanup...')
+		logger.info('Performing UCSTestSchool cleanup...')
 		for ou_name in self._cleanup_ou_names:
 			self.cleanup_ou(ou_name, wait_for_replication=False)
 
 		if self._ldap_objects_in_test_ous:
 			# create_ou() was used with use_cache=True
 			for k, v in self._ldap_objects_in_test_ous.items():
-				res = self.diff_ldap_status(self.lo, v, k)
+				try:
+					res = self.diff_ldap_status(self.lo, v, k)
+				except noObject:
+					continue
 				for dn in res.new:
 					filter_s, base = dn.split(',', 1)
 					objs = self.lo.search(filter_s, base=base, attr=['univentionObjectType'])
@@ -254,23 +260,25 @@ class UCSTestSchool(object):
 						if univention_object_type:
 							self.udm._cleanup.setdefault(univention_object_type[0], []).append(dn)
 						else:
-							print('*** Removing LDAP object without "univentionObjectType" directly (not using UDM): {!r}'.format(dn))
+							logger.info('*** Removing LDAP object without "univentionObjectType" directly (not using UDM): %r', dn)
 							try:
 								self.lo.delete(dn)
 							except noObject as exc:
-								print('*** {}'.format(exc))
+								logger.error('*** %s', exc)
 
+		logger.info('Performing UDM cleanup...')
 		self.udm.cleanup()
+		logger.info('Performing UCR cleanup...')
+		self.ucr.revert_to_original_registry()
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-		print('UCSTestSchool cleanup done')
+		logger.info('UCSTestSchool cleanup done')
 
 	def cleanup_ou(self, ou_name, wait_for_replication=True):
 		""" Removes the given school ou and all its corresponding objects like groups """
 
-		print ''
-		print '*** Purging OU %r and related objects' % (ou_name,)
+		logger.info('*** Purging OU %r and related objects', ou_name)
 		# remove OU specific groups
 		for grpdn in (
 			'cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
@@ -280,16 +288,16 @@ class UCSTestSchool(object):
 			'cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
 			'cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s',
 		):
-			grpdn = grpdn % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
+			grpdn = grpdn % {'ou': ou_name, 'basedn': self.ucr.get('ldap/base')}
 			self._remove_udm_object('groups/group', grpdn)
 
 		# remove OU recursively
-		if self._ucr.is_true('ucsschool/ldap/district/enable'):
-			oudn = 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % {'ou': ou_name, 'district': ou_name[0:2], 'basedn': self._ucr.get('ldap/base')}
+		if self.ucr.is_true('ucsschool/ldap/district/enable'):
+			oudn = 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % {'ou': ou_name, 'district': ou_name[0:2], 'basedn': self.ucr.get('ldap/base')}
 		else:
-			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
+			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self.ucr.get('ldap/base')}
 		self._remove_udm_object('container/ou', oudn)
-		print '*** Purging OU %s and related objects (%s): done\n\n' % (ou_name, oudn)
+		logger.info('*** Purging OU %s and related objects (%s): done\n\n', ou_name, oudn)
 
 		for ou_list in self._test_ous.values():
 			try:
@@ -303,11 +311,11 @@ class UCSTestSchool(object):
 	@classmethod
 	def check_name_edudc(cls, name_edudc):
 		if isinstance(name_edudc, str):
-			if name_edudc.lower() == cls._ucr.get('ldap/master', '').split('.', 1)[0].lower():
-				print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc to None'
+			if name_edudc.lower() == cls.ucr.get('ldap/master', '').split('.', 1)[0].lower():
+				logger.info('*** It is not allowed to set the master as name_edudc ==> resetting name_edudc to None')
 				name_edudc = None
-			elif any([name_edudc.lower() == backup.split('.', 1)[0].lower() for backup in cls._ucr.get('ldap/backup', '').split(' ')]):
-				print '*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc to None'
+			elif any([name_edudc.lower() == backup.split('.', 1)[0].lower() for backup in cls.ucr.get('ldap/backup', '').split(' ')]):
+				logger.info('*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc to None')
 				name_edudc = None
 		return name_edudc
 
@@ -338,7 +346,7 @@ class UCSTestSchool(object):
 		cache_key = (ou_name, name_edudc, name_admindc, displayName, name_share_file_server, use_cli)
 		if use_cache and self._test_ous.get(cache_key):
 			res = random.choice(self._test_ous[cache_key])
-			print('*** Found {} OUs in cache for arguments {!r}, using {!r}.'.format(len(self._test_ous[cache_key]), cache_key, res))
+			logger.info('*** Found %d OUs in cache for arguments %r, using %r.', len(self._test_ous[cache_key]), cache_key, res)
 			self._ldap_objects_in_test_ous.setdefault(res[1], set()).update(self.get_ldap_status(self.lo, res[1]))
 			return res
 
@@ -368,13 +376,11 @@ class UCSTestSchool(object):
 			if displayName:
 				kwargs['display_name'] = displayName
 
-			print ''
-			print '*** Creating new OU %r' % (ou_name,)
+			logger.info('*** Creating new OU %r', ou_name)
 			School.invalidate_all_caches()
 			School.init_udm_module(self.lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			result = School(**kwargs).create(self.lo)
-			print '*** Result of School(...).create(): %r' % (result,)
-			print '\n\n'
+			logger.info('*** Result of School(...).create(): %r', result)
 		else:
 			# build command line
 			cmd = [self.PATH_CMD_CREATE_OU]
@@ -384,7 +390,7 @@ class UCSTestSchool(object):
 			if name_edudc:
 				cmd += [name_edudc]
 
-			print '*** Calling following command: %r' % cmd
+			logger.info('*** Calling following command: %r', cmd)
 			retval = subprocess.call(cmd)
 			if retval:
 				utils.fail('create_ou failed with exitcode %s' % retval)
@@ -394,7 +400,7 @@ class UCSTestSchool(object):
 
 		ou_dn = 'ou=%s,%s' % (ou_name, self.LDAP_BASE)
 		if use_cache:
-			print('*** Storing OU {!r} in cache with key {!r}.'.format(ou_name, cache_key))
+			logger.info('*** Storing OU %r in cache with key %r.', ou_name, cache_key)
 			self._test_ous.setdefault(cache_key, []).append((ou_name, ou_dn))
 			self._ldap_objects_in_test_ous.setdefault(ou_dn, set()).update(self.get_ldap_status(self.lo, ou_dn))
 			self.store_test_ous()
@@ -420,7 +426,7 @@ class UCSTestSchool(object):
 		cache_key = (None, name_edudc, name_admindc, displayName, name_share_file_server, use_cli)
 		while len(self._test_ous.setdefault(cache_key, [])) < num:
 			ou_name, ou_dn = self.create_ou(None, name_edudc, name_admindc, displayName, name_share_file_server, use_cli, wait_for_replication, False)
-			print('*** Storing OU {!r} in cache with key {!r}.'.format(ou_name, cache_key))
+			logger.info('*** Storing OU %r in cache with key %r.', ou_name, cache_key)
 			self._test_ous.setdefault(cache_key, []).append((ou_name, ou_dn))
 			self.store_test_ous()
 			self._cleanup_ou_names.remove(ou_name)
@@ -428,7 +434,7 @@ class UCSTestSchool(object):
 		res = self._test_ous[cache_key][:num]
 		for ou_name, ou_dn in res:
 			self._ldap_objects_in_test_ous.setdefault(ou_dn, set()).update(self.get_ldap_status(self.lo, ou_dn))
-		print('*** Chose {}/{} OUs from cache for arguments {!r}: {!r}.'.format(len(res), len(self._test_ous[cache_key]), cache_key, res))
+		logger.info('*** Chose %d/%d OUs from cache for arguments %r: %r.', len(res), len(self._test_ous[cache_key]), cache_key, res)
 		return res
 
 	def get_district(self, ou_name):
@@ -444,7 +450,7 @@ class UCSTestSchool(object):
 		return '%(school)s,%(district)s%(basedn)s' % {
 			'school': 'ou=%s' % ou_name,
 			'basedn': self.LDAP_BASE,
-			'district': 'ou=%s,' % self.get_district(ou_name) if self._ucr.is_true('ucsschool/ldap/district/enable') else ''
+			'district': 'ou=%s,' % self.get_district(ou_name) if self.ucr.is_true('ucsschool/ldap/district/enable') else ''
 		}
 
 	def get_user_container(self, ou_name, is_teacher=False, is_staff=False):
@@ -529,7 +535,7 @@ class UCSTestSchool(object):
 				tmp_file.flush()
 
 				cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
-				print '*** Calling following command: %r' % cmd
+				logger.info('*** Calling following command: %r', cmd)
 				retval = subprocess.call(cmd)
 				if retval:
 					utils.fail('import_user failed with exitcode %s' % retval)
@@ -561,7 +567,7 @@ class UCSTestSchool(object):
 				'disabled': not is_active,
 				"school_classes": dict(school_classes)
 			}
-			print '*** Creating new user %r with %r.' % (username, kwargs)
+			logger.info('*** Creating new user %r with %r.', username, kwargs)
 			User.invalidate_all_caches()
 			User.init_udm_module(self.lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			cls = Student
@@ -573,7 +579,7 @@ class UCSTestSchool(object):
 				cls = Staff
 			roles = cls.default_roles
 			result = cls(**kwargs).create(self.lo)
-			print '*** Result of %s(...).create(): %r' % (cls.__name__, result,)
+			logger.info('*** Result of %s(...).create(): %r', cls.__name__, result)
 
 		if wait_for_replication:
 			utils.wait_for_replication()
@@ -644,11 +650,11 @@ class UCSTestSchool(object):
 			'description': description,
 			'users': users or [],
 		}
-		print('*** Creating new school class "{}" with {}...'.format(class_name, kwargs))
+		logger.info('*** Creating new school class %r with %r...', class_name, kwargs)
 		SchoolClass.invalidate_all_caches()
 		SchoolClass.init_udm_module(self.lo)
 		result = SchoolClass(**kwargs).create(self.lo)
-		print('*** Result of SchoolClass(...).create(): {}'.format(result))
+		logger.info('*** Result of SchoolClass(...).create(): %r', result)
 
 		if wait_for_replication:
 			utils.wait_for_replication()
@@ -672,11 +678,11 @@ class UCSTestSchool(object):
 			'description': description,
 			'users': users or [],
 		}
-		print('*** Creating new WorkGroup "{}" with {}...'.format(workgroup_name, kwargs))
+		logger.info('*** Creating new WorkGroup %r with %r...', workgroup_name, kwargs)
 		WorkGroup.invalidate_all_caches()
 		WorkGroup.init_udm_module(self.lo)
 		result = WorkGroup(**kwargs).create(self.lo)
-		print('*** Result of WorkGroup(...).create(): {}'.format(result))
+		logger.info('*** Result of WorkGroup(...).create(): %r', result)
 
 		if wait_for_replication:
 			utils.wait_for_replication()
@@ -710,10 +716,10 @@ class UCSTestSchool(object):
 			'description': description,
 			'hosts': host_members,
 		}
-		print '*** Creating new room %r' % (name,)
+		logger.info('*** Creating new room %r', name)
 		obj = ComputerRoom(**kwargs)
 		result = obj.create(self.lo)
-		print '*** Result of ComputerRoom(...).create(): %r' % (result,)
+		logger.info('*** Result of ComputerRoom(...).create(): %r', result)
 		if wait_for_replication:
 			utils.wait_for_replication()
 		utils.verify_ldap_object(obj.dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_computer_room, ou_name)]}, strict=False, should_exist=True)
@@ -737,7 +743,7 @@ class UCSTestSchool(object):
 	def delete_test_ous(self):
 		if not self._test_ous:
 			self.load_test_ous()
-		print('self._test_ous={!r}'.format(self._test_ous))
+		logger.info('self._test_ous=%r', self._test_ous)
 		all_test_ous = []
 		for test_ous in self._test_ous.values():
 			all_test_ous.extend([ou_name for ou_name, on_dn in test_ous])
@@ -752,7 +758,7 @@ class UCSTestSchool(object):
 			with open(TEST_OU_CACHE_FILE, 'rb') as fp:
 				loaded = json.load(fp)
 		except IOError as exc:
-			print('*** Warning: reading {!r}: {}'.format(TEST_OU_CACHE_FILE, exc))
+			logger.info('*** Warning: reading %r: %s', TEST_OU_CACHE_FILE, exc)
 			return
 		keys = loaded.pop('keys')
 		values = loaded.pop('values')
@@ -772,7 +778,7 @@ class UCSTestSchool(object):
 			try:
 				json.dump(res, fp)
 			except IOError as exc:
-				print('*** Error writing to {!r}: {}'.format(TEST_OU_CACHE_FILE, exc))
+				logger.info('*** Error writing to %r: %s', TEST_OU_CACHE_FILE, exc)
 
 	@staticmethod
 	def get_ldap_status(lo, base=''):
@@ -926,26 +932,26 @@ if __name__ == '__main__':
 	with UCSTestSchool() as schoolenv:
 		# create ou
 		ou_name, ou_dn = schoolenv.create_ou(displayName='')  # FIXME: displayName has been disabled for backward compatibility
-		print 'NEW OU'
-		print '  ', ou_name
-		print '  ', ou_dn
+		logger.info('NEW OU')
+		logger.info('  %r', ou_name)
+		logger.info('  %r', ou_dn)
 		# create user
 		user_name, user_dn = schoolenv.create_user(ou_name)
-		print 'NEW USER'
-		print '  ', user_name
-		print '  ', user_dn
+		logger.info('NEW USER')
+		logger.info('  %r', user_name)
+		logger.info('  %r', user_dn)
 		# create user
 		user_name, user_dn = schoolenv.create_user(ou_name, is_teacher=True)
-		print 'NEW USER'
-		print '  ', user_name
-		print '  ', user_dn
+		logger.info('NEW USER')
+		logger.info('  %r', user_name)
+		logger.info('  %r', user_dn)
 		# create user
 		user_name, user_dn = schoolenv.create_user(ou_name, is_staff=True)
-		print 'NEW USER'
-		print '  ', user_name
-		print '  ', user_dn
+		logger.info('NEW USER')
+		logger.info('  %r', user_name)
+		logger.info('  %r', user_dn)
 		# create user
 		user_name, user_dn = schoolenv.create_user(ou_name, is_teacher=True, is_staff=True)
-		print 'NEW USER'
-		print '  ', user_name
-		print '  ', user_dn
+		logger.info('NEW USER')
+		logger.info('  %r', user_name)
+		logger.info('  %r', user_dn)
