@@ -632,6 +632,7 @@ class UCSTestSchool(object):
 		return global_user, dn
 
 	def create_school_class(self, ou_name, class_name=None, description=None, users=None, wait_for_replication=True):
+		# type: (str, Optional[str], Optional[str], Optional[List[str]], Optional[bool]) -> Tuple[str, str]
 		if class_name is None:
 			class_name = uts.random_username()
 		if not class_name.startswith('{}-'.format(ou_name)):
@@ -784,10 +785,12 @@ class UCSTestSchool(object):
 		removed_objects = old_ldap_status - new_ldap_status
 		return Bunch(new=new_objects, removed=removed_objects)
 
+
 class NameDnObj(object):
 	def __init__(self, name=None, dn=None):  # type: (str, str) -> None
 		self.name = name
 		self.dn = dn
+
 
 class AutoMultiSchoolEnv_Generic(object):
 	def __init__(self):  # type: () -> None
@@ -798,6 +801,7 @@ class AutoMultiSchoolEnv_Generic(object):
 		self.winclient = None  # type: Optional[NameDnObj]
 		self.domain_admin = None  # type: Optional[NameDnObj]
 		self.domain_user = None  # type: Optional[NameDnObj]
+
 
 class AutoMultiSchoolEnv_School(object):
 	def __init__(self):  # type: () -> None
@@ -815,23 +819,25 @@ class AutoMultiSchoolEnv_School(object):
 		self.workgroup1 = None  # type: Optional[NameDnObj]
 		self.room1 = None  # type: Optional[NameDnObj]
 
-class AutoMultiSchoolEnv(object):
-	def __init__(self, ucr, udm, schoolenv):
-		# type: (univention.testing.ucr.UCSTestConfigRegistry, univention.testing.udm.UCSTestUDM, UCSTestSchool) -> None
-		self.ucr = ucr
-		self.udm = udm
-		self.schoolenv = schoolenv
-		self.lo = univention.admin.uldap.getAdminConnection()[0]
+
+class AutoMultiSchoolEnv(UCSTestSchool):
+	def __init__(self):  # type: () -> None
+		super(AutoMultiSchoolEnv, self).__init__()
+
 		self.generic = AutoMultiSchoolEnv_Generic()
 		self.schoolA = AutoMultiSchoolEnv_School()
 		self.schoolB = AutoMultiSchoolEnv_School()
 		self.schoolC = AutoMultiSchoolEnv_School()
 
-		print >>sys.stderr, '---[START /etc/ldap/slapd.conf]---'
-		print >>sys.stderr, open('/etc/ldap/slapd.conf', 'r').read()
-		print >>sys.stderr, '---[END /etc/ldap/slapd.conf]---'
-		sys.stderr.flush()
+	def __enter__(self):
+		logger.info('---[START /etc/ldap/slapd.conf]---')
+		logger.info(open('/etc/ldap/slapd.conf', 'r').read())
+		logger.info('---[END /etc/ldap/slapd.conf]---')
+		for handler in logger.handlers:
+			handler.flush()
+		return super(AutoMultiSchoolEnv, self).__enter__()
 
+	def create_multi_env_global_objects(self):
 		self.generic.master = NameDnObj(self.ucr['hostname'], self.lo.searchDn(filter='univentionObjectType=computers/domaincontroller_master')[0])
 		self.generic.backup = NameDnObj('schoolTestBackup', self.udm.create_object(
 			"computers/domaincontroller_backup",
@@ -867,9 +873,10 @@ class AutoMultiSchoolEnv(object):
 		self.generic.domain_user = NameDnObj('domainUser', self.udm.create_user(username='domainUser')[0])
 		self.generic.domain_admin = NameDnObj('Administrator', 'uid=Administrator,cn=users,%(ldap/base)s' % self.ucr)
 
+	def create_multi_env_school_objects(self):
 		for suffix, school in (('A', self.schoolA), ('B', self.schoolB), ('C', self.schoolC), ):
-			print('---{}-----------------------------------------------------'.format(suffix))
-			school.name, school.dn = self.schoolenv.create_ou(ou_name='school%s' % (suffix,), name_edudc='schooldc%s' % (suffix,))
+			logger.info('---%s-----------------------------------------------------', suffix)
+			school.name, school.dn = self.create_ou(ou_name='school%s' % (suffix,), name_edudc='schooldc%s' % (suffix,))
 
 			schools = {
 				'A': [self.schoolA.name],
@@ -877,17 +884,17 @@ class AutoMultiSchoolEnv(object):
 				'C': [self.schoolC.name],
 			}[suffix]
 
-			school.teacher = NameDnObj(*self.schoolenv.create_user(school.name, username='teacher%s' % (suffix,), schools=schools, is_teacher=True,
+			school.teacher = NameDnObj(*self.create_user(school.name, username='teacher%s' % (suffix,), schools=schools, is_teacher=True,
 																				classes='%s-class1' % (school.name,)))
-			school.teacher_staff = NameDnObj(*self.schoolenv.create_user(school.name, username='teachstaff%s' % (suffix,), schools=schools, is_teacher=True, is_staff=True,
+			school.teacher_staff = NameDnObj(*self.create_user(school.name, username='teachstaff%s' % (suffix,), schools=schools, is_teacher=True, is_staff=True,
 																				classes='%s-class1' % (school.name,)))
-			school.staff = NameDnObj(*self.schoolenv.create_user(school.name, username='staff%s' % (suffix,), schools=schools, is_staff=True))
-			school.student = NameDnObj(*self.schoolenv.create_user(school.name, username='student%s' % (suffix,), schools=schools,
+			school.staff = NameDnObj(*self.create_user(school.name, username='staff%s' % (suffix,), schools=schools, is_staff=True))
+			school.student = NameDnObj(*self.create_user(school.name, username='student%s' % (suffix,), schools=schools,
 																				classes='%s-class1' % (school.name,)))
-			school.admin1 = NameDnObj(*self.schoolenv.create_school_admin(school.name, username='schooladmin1%s' % (suffix,), schools=schools))
-			school.admin2 = NameDnObj(*self.schoolenv.create_school_admin(school.name, username='schooladmin2%s' % (suffix,), schools=schools))
+			school.admin1 = NameDnObj(*self.create_school_admin(school.name, username='schooladmin1%s' % (suffix,), schools=schools))
+			school.admin2 = NameDnObj(*self.create_school_admin(school.name, username='schooladmin2%s' % (suffix,), schools=schools))
 
-			school.schoolserver = NameDnObj(None, self.lo.searchDn(base=school.dn, filter='univentionObjectType=computers/domaincontroller_slave')[0])
+			school.schoolserver = NameDnObj('', self.lo.searchDn(base=school.dn, filter='univentionObjectType=computers/domaincontroller_slave')[0])
 
 			school.winclient = NameDnObj(
 				'schoolwin%s' % (suffix,),
@@ -902,18 +909,17 @@ class AutoMultiSchoolEnv(object):
 			# create additional class, first workgroup and first computer room
 			school.class2 = NameDnObj(
 				'{}-class2'.format(school.name),
-				self.schoolenv.create_school_class(
+				self.create_school_class(
 					school.name, class_name='class2', description='Test class 2',
 					users=[school.student.dn, school.teacher.dn]
-			))
+			)[1])
 			school.workgroup1 = NameDnObj(
 				'{}-wg1'.format(school.name),
-				self.schoolenv.create_workgroup(
+				self.create_workgroup(
 					school.name, workgroup_name='wg1', description='Test workgroup',
 					users=[school.student.dn, school.teacher.dn]
-				))
-			school.room1 = NameDnObj(*self.schoolenv.create_computerroom(school.name, name='room1', description='Test room1'))
-
+				)[1])
+			school.room1 = NameDnObj(*self.create_computerroom(school.name, name='room1', description='Test room1'))
 
 
 if __name__ == '__main__':
