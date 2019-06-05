@@ -8,21 +8,19 @@
 ## packages: [ucs-school-ldap-acls-master]
 
 from __future__ import print_function
-
 import os
-import sys
 import time
 
 import univention.admin.uldap
-import univention.testing.ucr as ucr_test
 import univention.testing.udm
-import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
+
 
 class MyObj(object):
 	def __init__(self, name, dn):
 		self.name = name
 		self.dn = dn
+
 
 class ACLTester(object):
 	def __init__(self, ucr, actor_dn):
@@ -35,10 +33,10 @@ class ACLTester(object):
 			bindpw='univention',
 		)
 		self.errors = []  # type: List[str]
-		print('ACTOR: {}'.format(self.actor_dn))
+		logger.info('ACTOR: %s', self.actor_dn)
 
 	def test_attribute(self, dn, attribute, permission):
-		print('test_attribute({!r}, {!r}, {!r})'.format(dn, attribute, permission))
+		logger.info('test_attribute(%r, %r, %r)',  dn, attribute, permission)
 		assert permission in ('none', 'read', 'write')
 		if permission == 'none':
 			result = self.lo.get(dn)
@@ -80,7 +78,7 @@ class ACLTester(object):
 		))
 
 
-class LDAPACLCheck(utu.AutoMultiSchoolEnv):
+class LDAPACLCheck(AutoMultiSchoolEnv):
 	def run_all_tests(self):  # type: () -> None
 		self.test_schooladmin_pw_reset()
 
@@ -198,8 +196,8 @@ def main():
 		# for debugging purposes
 		if os.path.exists('/tmp/75_ldap_acls_specific_tests.debug'):
 			fn = '/tmp/75_ldap_acls_specific_tests.continue'
-			print('=== DEBUGGING MODE ===')
-			print('Waiting for cleanup until {!r} exists...'.format(fn))
+			logger.info('=== DEBUGGING MODE ===')
+			logger.info('Waiting for cleanup until %r exists...', fn)
 			while not os.path.exists(fn):
 				time.sleep(1)
 
