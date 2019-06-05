@@ -108,7 +108,7 @@ class LDAPACLCheck(utu.AutoMultiSchoolEnv):
 				('write', self.schoolA.teacher.dn),
 				('write', self.schoolA.teacher_staff.dn),
 				('write', self.schoolA.staff.dn),
-				('read', self.schoolA.admin1.dn),
+				('write', self.schoolA.admin1.dn),
 				('read', self.schoolA.admin2.dn),
 				# school B
 				('write', self.schoolB.student.dn),
@@ -118,12 +118,12 @@ class LDAPACLCheck(utu.AutoMultiSchoolEnv):
 				('read', self.schoolB.admin1.dn),
 				('read', self.schoolB.admin2.dn),
 				# school C
-				('read', self.schoolC.student.dn),
-				('read', self.schoolC.teacher.dn),
-				('read', self.schoolC.teacher_staff.dn),
-				('read', self.schoolC.staff.dn),
-				('read', self.schoolC.admin1.dn),
-				('read', self.schoolC.admin2.dn),
+				('none', self.schoolC.student.dn),
+				('none', self.schoolC.teacher.dn),
+				('none', self.schoolC.teacher_staff.dn),
+				('none', self.schoolC.staff.dn),
+				('none', self.schoolC.admin1.dn),
+				('none', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
 		acl_tester.raise_on_error()
@@ -145,15 +145,15 @@ class LDAPACLCheck(utu.AutoMultiSchoolEnv):
 				('write', self.schoolB.teacher.dn),
 				('write', self.schoolB.teacher_staff.dn),
 				('write', self.schoolB.staff.dn),
-				('read', self.schoolB.admin1.dn),
+				('write', self.schoolB.admin1.dn),
 				('read', self.schoolB.admin2.dn),
 				# school C
-				('read', self.schoolC.student.dn),
-				('read', self.schoolC.teacher.dn),
-				('read', self.schoolC.teacher_staff.dn),
-				('read', self.schoolC.staff.dn),
-				('read', self.schoolC.admin1.dn),
-				('read', self.schoolC.admin2.dn),
+				('none', self.schoolC.student.dn),
+				('none', self.schoolC.teacher.dn),
+				('none', self.schoolC.teacher_staff.dn),
+				('none', self.schoolC.staff.dn),
+				('none', self.schoolC.admin1.dn),
+				('none', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
 		acl_tester.raise_on_error()
@@ -164,25 +164,25 @@ class LDAPACLCheck(utu.AutoMultiSchoolEnv):
 				('none', self.generic.domain_admin.dn),
 				('none', self.generic.domain_user.dn),
 				# school A
-				('read', self.schoolA.student.dn),
-				('read', self.schoolA.teacher.dn),
-				('read', self.schoolA.teacher_staff.dn),
-				('read', self.schoolA.staff.dn),
-				('read', self.schoolA.admin1.dn),
-				('read', self.schoolA.admin2.dn),
+				('none', self.schoolA.student.dn),
+				('none', self.schoolA.teacher.dn),
+				('none', self.schoolA.teacher_staff.dn),
+				('none', self.schoolA.staff.dn),
+				('none', self.schoolA.admin1.dn),
+				('none', self.schoolA.admin2.dn),
 				# school B
-				('read', self.schoolB.student.dn),
-				('read', self.schoolB.teacher.dn),
-				('read', self.schoolB.teacher_staff.dn),
-				('read', self.schoolB.staff.dn),
-				('read', self.schoolB.admin1.dn),
-				('read', self.schoolB.admin2.dn),
+				('none', self.schoolB.student.dn),
+				('none', self.schoolB.teacher.dn),
+				('none', self.schoolB.teacher_staff.dn),
+				('none', self.schoolB.staff.dn),
+				('none', self.schoolB.admin1.dn),
+				('none', self.schoolB.admin2.dn),
 				# school C
 				('write', self.schoolC.student.dn),
 				('write', self.schoolC.teacher.dn),
 				('write', self.schoolC.teacher_staff.dn),
 				('write', self.schoolC.staff.dn),
-				('read', self.schoolC.admin1.dn),
+				('write', self.schoolC.admin1.dn),
 				('read', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
