@@ -9,18 +9,17 @@
 
 import re
 import os
-import sys
 import time
 import subprocess
-import traceback
 from multiprocessing import Pool
 import ldif
 
-import univention.admin.uldap
-import univention.testing.ucr as ucr_test
-import univention.testing.udm
-import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
+
+try:
+	from typing import Dict, List, Optional, Set
+except ImportError:
+	pass
 
 # OUTPUT of "slapacl -d0 -D cn=admin,dc=nstx,dc=local -b uid=Administrator,cn=users,dc=nstx,dc=local 2>&1"
 # ==> PLEASE NOTE THAT BINARY VALUES (LIKE "KRB5KEY") MAY CONTAIN LINEBREAKS THAT MAKE PARSING HARDER!
@@ -118,9 +117,9 @@ def run_one_test(args):
 		len_dn_list = len(dn_list)
 		for j, dn in enumerate(dn_list):
 			if j % 50 == 0:
-				print >>sys.stdout, 'Thread %02d (pid %d): %05d/%05d' % (thread_id, os.getpid(), j, len_dn_list)
-				sys.stdout.flush()
-
+				logger.debug('Process %02d (pid %d): %05d/%05d', thread_id, os.getpid(), j, len_dn_list)
+				for handler in logger.handlers:
+					handler.flush()
 			entry = {}  # type: Dict[str, Set[str]]
 			cmd = ['slapacl', '-d0', '-D', binddn, '-b', dn]
 			process = subprocess.Popen(cmd, stderr=subprocess.PIPE)
@@ -131,18 +130,16 @@ def run_one_test(args):
 				if attr not in ('authcDN',):  # ignore some attributes
 					entry.setdefault(attr, set()).add(normalize_permission(value.strip()))
 			writer.unparse(dn, entry)
-		msg = '*** Runtime for parse_acls(Thread %02d - pid %d): %fs' % (thread_id, os.getpid(), time.time() - time_start,)
+		msg = '*** Runtime for parse_acls(Process %02d - pid %d): %fs' % (thread_id, os.getpid(), time.time() - time_start,)
 	except Exception:
-		print >>sys.stderr, 'TRACEBACK IN THREAD %d (%s):' % (thread_id, binddn)
-		print >>sys.stderr, traceback.format_exc()
+		logger.exception('TRACEBACK IN PROCESS %d (%s):', thread_id, binddn)
 		raise
 	return msg
 
 
-class LDAPDiffCheck(utu.AutoMultiSchoolEnv):
-	def __init__(self, ucr, udm, schoolenv):
-		# type: (ucr_test.UCSTestConfigRegistry, univention.testing.udm.UCSTestUDM, utu.UCSTestSchool) -> None
-		super(LDAPDiffCheck, self).__init__(ucr, udm, schoolenv)
+class LDAPDiffCheck(AutoMultiSchoolEnv):
+	def __init__(self):  # type: () -> None
+		super(LDAPDiffCheck, self).__init__()
 		self.dn_list = None  # type: Optional[List[str]]
 
 	def collect_dns(self, valid_ou_names=None):
@@ -192,33 +189,32 @@ class LDAPDiffCheck(utu.AutoMultiSchoolEnv):
 				fd.write('%02d ==> %s\n' % (i, binddn))
 
 		results = pool.imap_unordered(run_one_test, work_items)
-		print 'DONE'
-		print repr(results)
+		logger.info('DONE')
+		logger.info(repr(results))
 		for result in results:
-			print result
+			logger.info(result)
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		with univention.testing.udm.UCSTestUDM() as udm:
-			with ucr_test.UCSTestConfigRegistry() as ucr:
+	with LDAPDiffCheck() as test_suite:
+		test_suite.collect_dns()
 
-				test_suite = LDAPDiffCheck(ucr, udm, schoolenv)
-				test_suite.collect_dns()
+		testdir = '/var/log/univention/78_ldap_acls_dump.{}'.format(int(time.time()))
+		test_suite.create_multi_env_global_objects()
+		test_suite.create_multi_env_school_objects()
+		test_suite.run_all_tests(testdir)
 
-				testdir = '/var/log/univention/78_ldap_acls_dump.{}'.format(int(time.time()))
-				test_suite.run_all_tests(testdir)
+		logger.info('Use following command for diff:')
+		logger.info('./78_ldap_acls_dump.diff')
 
-				print 'Use following command for diff:'
-				print './78_ldap_acls_dump.diff'
+		# for debugging purposes
+		if os.path.exists('/tmp/78_ldap_acls_dump.debug'):
+			fn = '/tmp/78_ldap_acls_dump.continue'
+			logger.info('=== DEBUGGING MODE ===')
+			logger.info('Waiting for cleanup until %r exists...', fn)
+			while not os.path.exists(fn):
+				time.sleep(1)
 
-				# for debugging purposes
-				if os.path.exists('/tmp/78_ldap_acls_dump.debug'):
-					fn = '/tmp/78_ldap_acls_dump.continue'
-					print '=== DEBUGGING MODE ==='
-					print 'Waiting for cleanup until {!r} exists...'.format(fn)
-					while not os.path.exists(fn):
-						time.sleep(1)
 
 if __name__ == '__main__':
 	main()
