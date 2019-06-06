@@ -98,6 +98,10 @@ class Instance(SchoolBaseModule):
 			room.name = '%(school)s-%(name)s' % group_props
 			room.set_dn(room.dn)
 		success = room.create(ldap_user_write)
+		for computer_dn in group_props.get('teacher_computers'):
+			computer = SchoolComputer.from_dn(computer_dn, group_props.get('school'), ldap_user_read)
+			computer.make_teacher_computer()
+			computer.modify(ldap_user_write, False)
 		self.finished(request.id, [success])
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))

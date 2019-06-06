@@ -38,7 +38,7 @@ from univention.admin.uexceptions import nextFreeIp
 from .attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, MultipleObjectsError
 
-from ..roles import role_ip_computer, role_mac_computer, role_win_computer
+from ..roles import role_ip_computer, role_mac_computer, role_win_computer, create_ucsschool_role_string, role_teacher_computer
 
 from .dhcp import DHCPServer, AnyDHCPService
 from .network import Network
@@ -178,6 +178,11 @@ class SchoolComputer(UCSSchoolHelperAbstractClass, RoleSupportMixin):
 		if isinstance(self.inventory_number, (list, tuple)):
 			return list(self.inventory_number)
 		return []
+
+	def make_teacher_computer(self):
+		teacher_computer_role_str = create_ucsschool_role_string(role_teacher_computer, self.school)
+		if teacher_computer_role_str not in self.ucsschool_roles:
+			self.ucsschool_roles.append(teacher_computer_role_str)
 
 	def _alter_udm_obj(self, udm_obj):
 		super(SchoolComputer, self)._alter_udm_obj(udm_obj)
