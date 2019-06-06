@@ -235,7 +235,7 @@ def create_and_verify_printers(use_cli_api=True, use_python_api=False, nr_printe
 	assert(use_cli_api != use_python_api)
 
 	with utu.UCSTestSchool() as schoolenv:
-		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get('hostname'))
 
 		print '********** Generate school data'
 		printer_import = PrinterImport(ou_name, nr_printers=nr_printers)

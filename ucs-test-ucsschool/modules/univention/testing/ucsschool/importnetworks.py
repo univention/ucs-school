@@ -282,7 +282,7 @@ def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networ
 	assert(use_cli_api != use_python_api)
 
 	with utu.UCSTestSchool() as schoolenv:
-		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get('hostname'))
 
 		print '********** Generate school data'
 		network_import = NetworkImport(ou_name, nr_networks=nr_networks)

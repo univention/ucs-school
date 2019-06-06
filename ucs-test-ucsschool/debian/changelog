@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.6) unstable; urgency=low
+
+  * Bug #35447: adapt to API change
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 06 Jun 2019 08:33:01 +0200
+
 ucs-test-ucsschool (6.0.5) unstable; urgency=low
 
   * Bug #35447: make AutoMultiSchoolEnv a subclass of UCSTestSchool and thus

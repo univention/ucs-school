@@ -255,7 +255,7 @@ def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5
 	assert(use_cli_api != use_python_api)
 
 	with utu.UCSTestSchool() as schoolenv:
-		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get('hostname'))
 
 		print '********** Generate school data'
 		group_import = GroupImport(ou_name, nr_groups=nr_groups)

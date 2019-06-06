@@ -12,13 +12,12 @@ from univention.testing.umc import Client
 import datetime
 from univention.testing import utils
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
-		with ucr_test.UCSTestConfigRegistry() as ucr:
+			ucr = schoolenv.ucr
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
 			open_ldap_co = schoolenv.open_ldap_connection()
@@ -55,8 +54,6 @@ def main():
 				ucr.get('domainname'),
 				ucr.get('ldap/base')
 			)
-
-			ucr = schoolenv._ucr
 
 			did_fail = False
 

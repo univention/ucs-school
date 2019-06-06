@@ -415,7 +415,7 @@ def create_and_verify_computers(use_cli_api=True, use_python_api=False, nr_windo
 	assert(use_cli_api != use_python_api)
 
 	with utu.UCSTestSchool() as schoolenv:
-		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv._ucr.get('hostname'))
+		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get('hostname'))
 
 		print '********** Generate school data'
 		computer_import = ComputerImport(ou_name, nr_windows=nr_windows, nr_memberserver=nr_memberserver, nr_macos=nr_macos, nr_ipmanagedclient=nr_ipmanagedclient)

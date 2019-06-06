@@ -88,7 +88,7 @@ def create_mail_domain(ucr, udm):
 def remove_ou(ou_name):
 	schoolenv = UCSTestSchool()
 	# the reload is necessary, otherwise the UCR variables are not up-to-date
-	schoolenv._ucr.load()
+	schoolenv.ucr.load()
 	schoolenv.cleanup_ou(ou_name)
 
 
