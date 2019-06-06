@@ -85,6 +85,11 @@ class Instance(SchoolBaseModule):
 		room = ComputerRoom.from_dn(request.options[0], None, ldap_user_read)
 		result = room.to_dict()
 		result['computers'] = result.get('hosts')
+		result['teacher_computers'] = list()
+		for host_dn in result.get('hosts'):
+			host = SchoolComputer.from_dn(host_dn, None, ldap_user_read)
+			if host.is_teacher_computer():
+				result['teacher_computers'].append(host_dn)
 		self.finished(request.id, [result])
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))

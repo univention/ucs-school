@@ -39,10 +39,11 @@ define([
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiObjectSelect",
+	"umc/widgets/MultiSelect",
 	"umc/widgets/Grid",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, array, tools, Page, Form, TextBox, Text, ComboBox, MultiObjectSelect, Grid, StandbyMixin, _) {
+], function(declare, lang, array, tools, Page, Form, TextBox, Text, ComboBox, MultiObjectSelect, MultiSelect, Grid, StandbyMixin, _) {
 
 	return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
 		moduleStore: null,
@@ -123,6 +124,9 @@ define([
 					return tmp;
 				},
 				autoSearch: false
+			}, { // This MultiSelect is just an invisible widget to give access to the teacher_computers field!
+				type: MultiSelect,
+				name: 'teacher_computers'
 			}];
 
 			// specify the layout... additional dicts are used to group form elements
@@ -172,6 +176,9 @@ define([
 				content: '<h2>' + _('Teacher computer') + '</h2>'
 			}));
 			this.addChild(this._grid);
+			this._form.on('Loaded', lang.hitch(this, function() {
+				this._grid._grid.selectIDs(this._form.getWidget('teacher_computers').value); // TODO: We need a public select function in Grid widget!
+			}));
 		},
 
 		_save: function() {
