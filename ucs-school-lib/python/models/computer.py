@@ -251,12 +251,12 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 	def validate(self, lo, validate_unlikely_changes=False):
 		super(SchoolComputer, self).validate(lo, validate_unlikely_changes)
-		if self.ip_address:
-			name, ip_address = escape_filter_chars(self.name), escape_filter_chars(self.ip_address)
+		for ip_address in self.ip_address:
+			name, ip_address = escape_filter_chars(self.name), escape_filter_chars(ip_address)
 			if AnyComputer.get_first_udm_obj(lo, '&(!(cn=%s))(ip=%s)' % (name, ip_address)):
 				self.add_error('ip_address', _('The ip address is already taken by another computer. Please change the ip address.'))
-		if self.mac_address:
-			name, mac_address = escape_filter_chars(self.name), escape_filter_chars(self.mac_address)
+		for mac_address in self.mac_address:
+			name, mac_address = escape_filter_chars(self.name), escape_filter_chars(mac_address)
 			if AnyComputer.get_first_udm_obj(lo, '&(!(cn=%s))(mac=%s)' % (name, mac_address)):
 				self.add_error('mac_address', _('The mac address is already taken by another computer. Please change the mac address.'))
 		own_network = self.get_network()
