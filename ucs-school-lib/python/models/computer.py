@@ -179,19 +179,17 @@ class SchoolComputer(UCSSchoolHelperAbstractClass, RoleSupportMixin):
 			return list(self.inventory_number)
 		return []
 
-	def make_teacher_computer(self):
-		"""
-		Marks the computer as a teacher computer by applying the according role
-		"""
-		teacher_computer_role_str = create_ucsschool_role_string(role_teacher_computer, self.school)
-		if teacher_computer_role_str not in self.ucsschool_roles:
-			self.ucsschool_roles.append(teacher_computer_role_str)
-
-	def is_teacher_computer(self):
-		"""
-		:return: True if teacher computer else False
-		"""
+	@property
+	def teacher_computer(self):
 		return create_ucsschool_role_string(role_teacher_computer, self.school) in self.ucsschool_roles
+
+	@teacher_computer.setter
+	def teacher_computer(self, new_value):
+		role_str = create_ucsschool_role_string(role_teacher_computer, self.school)
+		if new_value and role_str not in self.ucsschool_roles:
+			self.ucsschool_roles.append(role_str)
+		elif not new_value and role_str in self.ucsschool_roles:
+			self.ucsschool_roles.remove(role_str)
 
 	def _alter_udm_obj(self, udm_obj):
 		super(SchoolComputer, self)._alter_udm_obj(udm_obj)
