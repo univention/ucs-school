@@ -108,9 +108,31 @@ define([
 			this.inherited(arguments);
 		},
 
+		finishEditMode: function(currentPage) {
+			var values = this.getValues();
+			if (typeof(values['mac_address']) === 'string') {
+				values['mac_address'] = [values['mac_address']]
+			}
+			if (typeof(values['ip_address']) === 'string') {
+				values['ip_address'] = [values['ip_address']]
+			}
+			values.$dn$ = this.$dn$;
+			values.school = this.school;
+			return this.standbyDuring(this.store.put(values)).then(lang.hitch(this, function(response) {
+				if (response.result) {
+					dialog.alert(entities.encode(response.result.message));
+				} else {
+					this.onFinished();  // close this wizard
+				}
+				return currentPage;
+			}));
+		},
+
 		_createObject: function(ignore_warning, chained_d) {
 			var deferred = chained_d || new Deferred();
 			var values = this.getValues();
+			values['ip_address'] = [values['ip_address']];
+			values['mac_address'] = [values['mac_address']];
 			values['ignore_warning'] = ignore_warning || false;
 			this.standbyDuring(this.store.add(values)).then(lang.hitch(this,
 				function(response) {
