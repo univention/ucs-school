@@ -334,7 +334,30 @@ feedback@univention.de
 					<!-- END ucs-school-umc-users 15.0.0-3A~4.4.0.201905230838 -->
 <!-- CHANGELOG:2019-05-29:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-06-07" lang="en">
+					<title>Released on 2019-06-07:</title>
+					<!-- START ucs-school-import 17.0.6-21A~4.4.0.201906071431 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.6-21A~4.4.0.201906071431</emphasis>:
+						<itemizedlist>
+							<listitem><para>Due to not updated byte compiled python files after an update from UCS 4.3 to UCS 4.4, UCS@school 4.3 code was used in an UCS 4.4 environment which resulted in various tracebacks. This has been fixed (<u:bug>49609</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.6-21A~4.4.0.201906071431 -->
+					<!-- START ucs-school-umc-import 2.0.0-2A~4.4.0.201906071429 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-import</emphasis> in version <emphasis>2.0.0-2A~4.4.0.201906071429</emphasis>:
+						<itemizedlist>
+							<listitem><para>Due to not updated byte compiled python files after an update from UCS 4.3 to UCS 4.4, UCS@school 4.3 code was used in an UCS 4.4 environment which resulted in various tracebacks. This has been fixed (<u:bug>49609</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-import 2.0.0-2A~4.4.0.201906071429 -->
+<!-- CHANGELOG:2019-06-07:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
