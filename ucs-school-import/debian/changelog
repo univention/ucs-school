@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-21) unstable; urgency=medium
+
+  * Bug #49609: Version bump
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 07 Jun 2019 13:57:43 +0200
+
 ucs-school-import (17.0.6-20) unstable; urgency=low
 
   * Bug #48576: depend on same version of -common package

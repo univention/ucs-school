@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import.yaml
+fix: 
+desc: |
+ * Due to not updated byte compiled python files after an update from UCS 4.3 to UCS 4.4, UCS@school 4.3 code was used in an UCS 4.4 environment which resulted in various tracebacks. This has been fixed (Bug #49609).
+bug: [49609]
