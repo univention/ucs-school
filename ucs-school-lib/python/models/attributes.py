@@ -249,6 +249,7 @@ class Users(Attribute):
 class IPAddress(Attribute):
 	udm_name = 'ip'
 	syntax = ipAddress
+	value_type = list
 
 
 class SubnetMask(Attribute):
@@ -286,6 +287,7 @@ class Netmask(Attribute):
 class MACAddress(Attribute):
 	udm_name = 'mac'
 	syntax = MAC_Address
+	value_type = list
 
 
 class InventoryNumber(Attribute):

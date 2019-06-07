@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.1-8) unstable; urgency=low
+
+  * Bug #49608: fix mac_address and ip_address attributes
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 07 Jun 2019 12:04:02 +0200
+
 ucs-school-lib (12.1.1-7) unstable; urgency=low
 
   * Bug #49462: create correct hostname for school dc, when not set and not a
