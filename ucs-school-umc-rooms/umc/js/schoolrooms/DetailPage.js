@@ -168,8 +168,13 @@ define([
 				query: {}
 			});
 
-			this._form.getWidget('computers').watch('value', lang.hitch(this, function() {
-				this._grid.update(true)
+			this._form.getWidget('computers').watch('value', lang.hitch(this, function(name, oldValue, newValue) {
+				newValue.forEach(lang.hitch(this, function(el) {
+					if (el.teacher_computer) {
+						this._grid._grid.select(el.id);
+					}
+				}));
+				this._grid.update(true);
 			}));
 			this.addChild(Text({
 				name: 'grid_title',

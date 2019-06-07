@@ -57,7 +57,8 @@ class Instance(SchoolBaseModule):
 
 		result = [{
 			'label': x.name,
-			'id': x.dn
+			'id': x.dn,
+			'teacher_computer': x.teacher_computer
 		} for x in SchoolComputer.get_all(ldap_user_read, request.options['school'], pattern)]
 		result = sorted(result, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x['label'])  # TODO: still necessary?
 
@@ -88,7 +89,7 @@ class Instance(SchoolBaseModule):
 		result['teacher_computers'] = list()
 		for host_dn in result.get('hosts'):
 			host = SchoolComputer.from_dn(host_dn, None, ldap_user_read)
-			if host.is_teacher_computer():
+			if host.teacher_computer:
 				result['teacher_computers'].append(host_dn)
 		self.finished(request.id, [result])
 
@@ -103,10 +104,7 @@ class Instance(SchoolBaseModule):
 			room.name = '%(school)s-%(name)s' % group_props
 			room.set_dn(room.dn)
 		success = room.create(ldap_user_write)
-		for computer_dn in group_props.get('teacher_computers'):
-			computer = SchoolComputer.from_dn(computer_dn, group_props.get('school'), ldap_user_read)
-			computer.make_teacher_computer()
-			computer.modify(ldap_user_write, False)
+		self._set_teacher_computers(group_props.get('computers'), group_props.get('teacher_computers'), ldap_user_read, ldap_user_write)
 		self.finished(request.id, [success])
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
@@ -121,7 +119,7 @@ class Instance(SchoolBaseModule):
 			room.name = '%(school)s-%(name)s' % group_props
 		room.set_dn(group_props['$dn$'])
 		room.modify(ldap_user_write)
-
+		self._set_teacher_computers(group_props.get('computers'), group_props.get('teacher_computers'), ldap_user_read, ldap_user_write)
 		self.finished(request.id, [True])
 
 	@sanitize(DictSanitizer(dict(object=ListSanitizer(DNSanitizer(required=True), min_elements=1))))
@@ -138,3 +136,31 @@ class Instance(SchoolBaseModule):
 			return
 
 		self.finished(request.id, [{'success': True}])
+
+	@staticmethod
+	def _set_teacher_computers(all_computers, teacher_computers, ldap_user_read, ldap_user_write):
+		"""
+		All computers in teacher_computers become teacher computers.
+		All computers that are in all_computers, but not in teacher_computers become non teacher computers.
+		:param all_computers: All computers present in a room
+		:param teacher_computers: All computers in the room designated to become teacher computers
+		:param ldap_user_read: ldap bind with read access
+		:param ldap_user_write: ldap bind with write access
+		"""
+		# Make teacher computers
+		for computer_dn in teacher_computers:
+			try:
+				computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_read)
+				computer.teacher_computer = True
+				computer.modify(ldap_user_write, False)
+			except udm_exceptions.noObject:
+				pass
+		# Remove teacher computer on deselected
+		non_teacher_computer = set(all_computers).difference(teacher_computers)
+		for computer_dn in non_teacher_computer:
+			try:
+				computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_read)
+				computer.teacher_computer = False
+				computer.modify(ldap_user_write, False)
+			except udm_exceptions.noObject:
+				pass
