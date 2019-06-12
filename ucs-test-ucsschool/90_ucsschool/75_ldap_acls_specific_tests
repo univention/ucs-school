@@ -106,7 +106,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('write', self.schoolA.teacher.dn),
 				('write', self.schoolA.teacher_staff.dn),
 				('write', self.schoolA.staff.dn),
-				('write', self.schoolA.admin1.dn),
+				('read', self.schoolA.admin1.dn),
 				('read', self.schoolA.admin2.dn),
 				# school B
 				('write', self.schoolB.student.dn),
@@ -143,7 +143,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('write', self.schoolB.teacher.dn),
 				('write', self.schoolB.teacher_staff.dn),
 				('write', self.schoolB.staff.dn),
-				('write', self.schoolB.admin1.dn),
+				('read', self.schoolB.admin1.dn),
 				('read', self.schoolB.admin2.dn),
 				# school C
 				('none', self.schoolC.student.dn),
@@ -180,7 +180,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('write', self.schoolC.teacher.dn),
 				('write', self.schoolC.teacher_staff.dn),
 				('write', self.schoolC.staff.dn),
-				('write', self.schoolC.admin1.dn),
+				('read', self.schoolC.admin1.dn),
 				('read', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
