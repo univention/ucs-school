@@ -44,7 +44,6 @@ import random
 import logging
 import tempfile
 import subprocess
-import traceback
 import lazy_object_proxy
 from ldap import LDAPError
 from collections import defaultdict
@@ -478,25 +477,53 @@ class UCSTestSchool(object):
 		return 'cn=%s-%s,cn=shares,%s' % (ou_name, group_name, self.get_ou_base_dn(ou_name))
 
 	def create_teacher(self, *args, **kwargs):
+		"""
+		Accepts same arguments as :py:func:`create_user()`, and sets `is_staff`
+		and `is_teacher`accordingly.
+		"""
 		return self.create_user(*args, is_teacher=True, is_staff=False, **kwargs)
 
 	def create_student(self, *args, **kwargs):
+		"""
+		Accepts same arguments as :py:func:`create_user()`, and sets `is_staff`
+		and `is_teacher`accordingly.
+		"""
 		return self.create_user(*args, is_teacher=False, is_staff=False, **kwargs)
 
 	def create_exam_student(self, *args, **kwargs):
-		pass
+		"""NOT FUNCTIONAL!"""
+		raise NotImplementedError
 
 	def create_staff(self, *args, **kwargs):
+		"""
+		Accepts same arguments as :py:func:`create_user()`, and sets `is_staff`
+		and `is_teacher`accordingly.
+		"""
 		return self.create_user(*args, is_staff=True, is_teacher=False, **kwargs)
 
 	def create_teacher_and_staff(self, *args, **kwargs):
+		"""
+		Accepts same arguments as :py:func:`create_user()`, and sets `is_staff`
+		and `is_teacher`accordingly.
+		"""
 		return self.create_user(*args, is_staff=True, is_teacher=True, **kwargs)
 
 	def create_user(
-		self, ou_name, schools=None, username=None, firstname=None, lastname=None, classes=None,
-		mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention',
-		use_cli=False, wait_for_replication=True
-	):
+			self,
+			ou_name,  # type: str
+			schools=None,  # type: Optional[List[str]]
+			username=None,  # type: Optional[str]
+			firstname=None,  # type: Optional[str]
+			lastname=None,  # type: Optional[str]
+			classes=None,  # type: Optional[str]
+			mailaddress=None,  # type: Optional[str]
+			is_teacher=False,  # type: Optional[bool]
+			is_staff=False,  # type: Optional[bool]
+			is_active=True,  # type: Optional[bool]
+			password='univention',  # type: Optional[str]
+			use_cli=False,  # type: Optional[bool]
+			wait_for_replication=True  # type: Optional[bool]
+	):  # type: (...) -> Tuple[str, str]
 		"""
 		Create a user in specified OU with given attributes. If attributes are not specified, random
 		values will be used for username, firstname and lastname. If password is not None, the given
@@ -586,35 +613,66 @@ class UCSTestSchool(object):
 			utils.verify_ldap_object(user_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in roles]}, strict=False, should_exist=True)
 		return username, user_dn
 
-	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None, mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
-		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
-		groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (ou_name, self.LDAP_BASE)]
-		if username is None:
-			username = uts.random_username()
-		if firstname is None:
-			firstname = uts.random_string(length=10, numeric=False)
-		if lastname is None:
-			lastname = uts.random_string(length=10, numeric=False)
-		if mailaddress is None:
-			mailaddress = ''
-		kwargs = {
-			'school': schools or ou_name,  # use all schools or fall back to single ou_name
-#		   	'schools': schools,   # property not available via UDM
-			'username': username,
-			'firstname': firstname,
-			'lastname': lastname,
-			'email': mailaddress,
-			'password': password,
-			'disabled': not(is_active),
-			'options': ['ucsschoolAdministrator'],
-		}
-		kwargs['ucsschool_role'] = [role_school_admin]
-		dn, school_admin = self.udm.create_user(position=position, groups=groups, **kwargs)
-		if wait_for_replication:
-			utils.wait_for_replication()
+	def create_school_admin(
+			self,
+			ou_name,  # type: str
+			schools=None,  # type: Optional[List[str]]
+			is_staff=None,  # type: Optional[bool]
+			is_teacher=None,  # type: Optional[bool]
+			*args,
+			**kwargs
+	):  # type: (...) -> Tuple[str, str]
+		"""Accepts same arguments as :py:func:`create_user()`."""
+		schools = schools if schools else [ou_name]
+		assert ou_name in schools
+		groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, self.LDAP_BASE) for school in schools]
+		if is_staff is None:
+			is_staff = random.choice((True, False))
+		if is_teacher is None:
+			is_teacher = random.choice((True, False))
+		tmp_role = not is_staff and not is_teacher
+		school_admin, dn = self.create_user(
+			ou_name=ou_name,
+			schools=schools,
+			is_staff=is_staff or tmp_role,
+			is_teacher=is_teacher,  # add a role, or create_user() will create a student, remove role later
+			*args,
+			**kwargs
+		)
+		user = User.from_dn(dn, ou_name, self.lo)
+		user_udm = user.get_udm_object(self.lo)
+		user_udm['groups'].extend(groups)
+		user_udm.options.append('ucsschoolAdministrator')
+		if tmp_role:
+			# remove temporary role
+			user_udm.options.remove('ucsschoolStaff')
+			for s in schools:
+				user_udm['ucsschoolRole'].remove(create_ucsschool_role_string(role_staff, s))
+		# TODO: investigate: the school_admin role should automatically be added
+		user_udm['ucsschoolRole'].extend(create_ucsschool_role_string(role_school_admin, s) for s in schools)
+		user_udm.modify()
+		expected_ocs = {'ucsschoolAdministrator'}
+		roles = []
+		if is_staff:
+			expected_ocs.add('ucsschoolStaff')
+			roles.extend(create_ucsschool_role_string(role_staff, s) for s in schools)
+		if is_teacher:
+			expected_ocs.add('ucsschoolTeacher')
+			roles.extend(create_ucsschool_role_string(role_teacher, s) for s in schools)
+		roles.extend(create_ucsschool_role_string(role_school_admin, s) for s in schools)
+		utils.verify_ldap_object(
+			dn,
+			expected_attr={'ucsschoolSchool': schools, 'ucsschoolRole': roles, 'objectClass': expected_ocs},
+			strict=False,
+			should_exist=True)
 		return school_admin, dn
 
-	def create_domain_admin(self, ou_name, username=None, password='univention'):
+	def create_domain_admin(
+			self,
+			ou_name,  # type: str
+			username=None,  # type: Optional[str]
+			password='univention'  # type: Optional[str]
+	):  # type: (...) -> Tuple[str, str]
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
 		if username is None:
@@ -626,7 +684,11 @@ class UCSTestSchool(object):
 		dn, domain_admin = self.udm.create_user(position=position, groups=groups, **kwargs)
 		return domain_admin, dn
 
-	def create_global_user(self, username=None, password='univention'):
+	def create_global_user(
+			self,
+			username=None,  # type: Optional[str]
+			password='univention'  # type: Optional[str]
+	):  # type: (...) -> Tuple[str, str]
 		position = 'cn=users,%s' % (self.LDAP_BASE,)
 		if username is None:
 			username = uts.random_username()
@@ -637,8 +699,14 @@ class UCSTestSchool(object):
 		dn, global_user = self.udm.create_user(position=position, **kwargs)
 		return global_user, dn
 
-	def create_school_class(self, ou_name, class_name=None, description=None, users=None, wait_for_replication=True):
-		# type: (str, Optional[str], Optional[str], Optional[List[str]], Optional[bool]) -> Tuple[str, str]
+	def create_school_class(
+			self,
+			ou_name,  # type: str
+			class_name=None,  # type: Optional[str]
+			description=None,  # type: Optional[str]
+			users=None,  # type: Optional[List[str]]
+			wait_for_replication=True  # type: Optional[bool]
+	):  # type: (...) -> Tuple[str, str]
 		if class_name is None:
 			class_name = uts.random_username()
 		if not class_name.startswith('{}-'.format(ou_name)):

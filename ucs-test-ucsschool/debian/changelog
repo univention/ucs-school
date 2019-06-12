@@ -1,6 +1,7 @@
 ucs-test-ucsschool (6.0.7) unstable; urgency=low
 
   * Bug #35447: users cannot modify their own password via ldap.modify
+  * create correct school admin
 
  -- Daniel Troeder <troeder@univention.de>  Wed, 12 Jun 2019 16:20:17 +0200
 
