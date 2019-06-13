@@ -757,7 +757,7 @@ class UCSTestSchool(object):
 		utils.verify_ldap_object(grp_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_workgroup, ou_name)]}, strict=False, should_exist=True)
 		return workgroup_name, grp_dn
 
-	def create_computerroom(self, ou_name, name=None, description=None, host_members=None, wait_for_replication=True):
+	def create_computerroom(self, ou_name, name=None, description=None, host_members=None, wait_for_replication=True, teacher_computers=[]):
 		"""
 		Create a room in specified OU with given attributes. If attributes are not specified, random
 		values will be used for roomname and description.
@@ -783,6 +783,7 @@ class UCSTestSchool(object):
 			'name': '%s-%s' % (ou_name, name),
 			'description': description,
 			'hosts': host_members,
+			'teacher_computers': teacher_computers
 		}
 		logger.info('*** Creating new room %r', name)
 		obj = ComputerRoom(**kwargs)
