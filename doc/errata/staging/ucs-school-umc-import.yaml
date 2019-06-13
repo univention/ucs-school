@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-import
-fix:
+fix: 2.0.0-3A~4.4.0.201906131459
 desc: |
  * If external SSL certificates (from e.g. let's encrypt) are used on the domaincontroller master and master's FQDN
    differs from the FQDNs within the SSL certificate, the UMC module "Benutzerimport" threw a traceback. The new
