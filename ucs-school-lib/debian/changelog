@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.1-9) unstable; urgency=low
+
+  * Bug #49608: fix get_ipv4_network method
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 13 Jun 2019 09:30:32 +0200
+
 ucs-school-lib (12.1.1-8) unstable; urgency=low
 
   * Bug #49608: fix mac_address and ip_address attributes

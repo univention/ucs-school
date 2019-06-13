@@ -220,10 +220,12 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def get_ipv4_network(self):
-		if self.subnet_mask is not None:
-			network_str = '%s/%s' % (self.ip_address, self.subnet_mask)
+		if self.subnet_mask is not None and len(self.ip_address) > 0:
+			network_str = '%s/%s' % (self.ip_address[0], self.subnet_mask)
+		elif len(self.ip_address) > 0:
+			network_str = str(self.ip_address[0])
 		else:
-			network_str = str(self.ip_address)
+			network_str = ''
 		try:
 			return IPv4Network(network_str)
 		except (AddressValueError, NetmaskValueError, ValueError):
