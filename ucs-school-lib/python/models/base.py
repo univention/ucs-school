@@ -1082,11 +1082,6 @@ class RoleSupportMixin(object):
 			if role['context_type'] != 'school':
 				# check only context_type == 'school' for now
 				continue
-			if self.default_roles and role['role'] not in self.default_roles:
-				self.add_error(
-					'ucsschool_roles',
-					_('Role {role}:{context_type}:{context} is not supported for {dn}.').format(dn=self.dn, **role)
-				)
 			if role['context'] not in schools:
 				self.add_error(
 					'ucsschool_roles',
