@@ -88,6 +88,7 @@ class Instance(SchoolBaseModule):
 		result['computers'] = result.get('hosts')
 		result['teacher_computers'] = list()
 		for host_dn in result.get('hosts'):
+			host = SchoolComputer.from_dn(host_dn, None, ldap_user_read) # Please remove with Bug #49611
 			host = SchoolComputer.from_dn(host_dn, None, ldap_user_read)
 			if host.teacher_computer:
 				result['teacher_computers'].append(host_dn)
@@ -150,17 +151,19 @@ class Instance(SchoolBaseModule):
 		# Make teacher computers
 		for computer_dn in teacher_computers:
 			try:
+				computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_read) # Please remove with Bug #49611
 				computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_read)
 				computer.teacher_computer = True
-				computer.modify(ldap_user_write, False)
+				computer.modify(ldap_user_write)
 			except udm_exceptions.noObject:
 				pass
 		# Remove teacher computer on deselected
 		non_teacher_computer = set(all_computers).difference(teacher_computers)
 		for computer_dn in non_teacher_computer:
 			try:
+				computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_read) # Please remove with Bug #49611
 				computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_read)
 				computer.teacher_computer = False
-				computer.modify(ldap_user_write, False)
+				computer.modify(ldap_user_write)
 			except udm_exceptions.noObject:
 				pass

@@ -429,6 +429,7 @@ class Instance(SchoolBaseModule):
 		teacher_pc_role = create_ucsschool_role_string(role_teacher_computer, room.school)
 		exam_hosts = list()
 		for host in room.hosts:
+			host_obj = SchoolComputer.from_dn(host, None, ldap_user_read) # Please remove with Bug #49611
 			host_obj = SchoolComputer.from_dn(host, None, ldap_user_read)
 		if teacher_pc_role not in host_obj.ucsschool_roles:
 			exam_hosts.append(host)
