@@ -160,13 +160,12 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 		allow_school_change = True
 
 
-class SchoolComputer(UCSSchoolHelperAbstractClass, RoleSupportMixin):
+class SchoolComputer(UCSSchoolHelperAbstractClass):
 	ip_address = IPAddress(_('IP address'), required=True)
 	subnet_mask = SubnetMask(_('Subnet mask'))
 	mac_address = MACAddress(_('MAC address'), required=True)
 	inventory_number = InventoryNumber(_('Inventory number'))
 	zone = Attribute(_('Zone'))
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 
 	type_name = _('Computer')
 
@@ -344,8 +343,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass, RoleSupportMixin):
 		name_is_unique = True
 
 
-class WindowsComputer(SchoolComputer):
+class WindowsComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Windows system')
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_win_computer]
 
 	class Meta(SchoolComputer.Meta):
@@ -353,8 +353,9 @@ class WindowsComputer(SchoolComputer):
 		hook_path = 'computer'
 
 
-class MacComputer(SchoolComputer):
+class MacComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Mac OS X')
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_mac_computer]
 
 	class Meta(SchoolComputer.Meta):
@@ -362,8 +363,9 @@ class MacComputer(SchoolComputer):
 		hook_path = 'computer'
 
 
-class IPComputer(SchoolComputer):
+class IPComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Device with IP address')
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_ip_computer]
 
 	class Meta(SchoolComputer.Meta):

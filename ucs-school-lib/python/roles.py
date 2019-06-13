@@ -78,7 +78,8 @@ all_roles = (
 	role_memberserver_admin, role_memberserver_edu, role_school, role_school_admin, role_school_admin_group,
 	role_school_class, role_school_class_share, role_single_master, role_student, role_workgroup, role_workgroup_share,
 	role_school_domain_group, role_school_teacher_group, role_school_staff_group, role_school_student_group,
-	role_ip_computer, role_linux_computer, role_mac_computer, role_ubuntu_computer, role_win_computer, role_teacher_computer
+	role_ip_computer, role_linux_computer, role_mac_computer, role_ubuntu_computer, role_win_computer,
+	role_teacher_computer
 )
 
 
