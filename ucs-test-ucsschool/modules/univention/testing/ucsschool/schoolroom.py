@@ -40,11 +40,12 @@ class FailRemove(Exception):
 
 class ComputerRoom(object):
 
-	def __init__(self, school, name=None, description=None, host_members=[]):
+	def __init__(self, school, name=None, description=None, host_members=[], teacher_computers=[]):
 		self.school = school
 		self.name = name if name else uts.random_name()
 		self.description = description if description else uts.random_name()
 		self.host_members = host_members if host_members else []
+		self.teacher_computers = teacher_computers
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		self.client = Client.get_test_connection()
@@ -59,6 +60,7 @@ class ComputerRoom(object):
 				'name': self.name,
 				'description': self.description,
 				'computers': self.host_members,
+				'teacher_computers': self.teacher_computers
 			},
 			'options': None
 		}]
@@ -133,6 +135,7 @@ class ComputerRoom(object):
 				'name': new_name,
 				'description': new_description,
 				'computers': new_host_members,
+				'teacher_computers': new_attributes.get('teacher_computers', self.teacher_computers),
 				'$dn$': self.dn(),
 			},
 			'options': None
