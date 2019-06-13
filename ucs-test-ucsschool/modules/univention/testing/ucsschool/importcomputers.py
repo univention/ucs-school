@@ -88,8 +88,8 @@ class Computer:
 
 	def __init__(self, school, ctype):
 		self.name = uts.random_name()
-		self.mac = random_mac()
-		self.ip = random_ip()
+		self.mac = [random_mac()]
+		self.ip = [random_ip()]
 		self.school = school
 		self.ctype = ctype
 

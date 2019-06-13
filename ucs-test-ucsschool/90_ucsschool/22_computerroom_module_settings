@@ -36,14 +36,14 @@ def main():
 		client = Client(None, teacher, 'univention', automatic_reauthentication=True)
 
 		# preparing the network loop
-		nethelper.add_loop(created_computers[0].ip, created_computers[1].ip)
+		nethelper.add_loop(created_computers[0].ip[0], created_computers[1].ip[0])
 
 		# the actual test
 		room.test_settings(
 			school,
 			teacher,
 			teacher_dn,
-			created_computers[1].ip,
+			created_computers[1].ip[0],
 			ucr,
 			client)
 
