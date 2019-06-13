@@ -105,7 +105,7 @@ class Instance(SchoolBaseModule):
 			room.name = '%(school)s-%(name)s' % group_props
 			room.set_dn(room.dn)
 		success = room.create(ldap_user_write)
-		self._set_teacher_computers(group_props.get('computers'), group_props.get('teacher_computers'), ldap_user_read, ldap_user_write)
+		self._set_teacher_computers(group_props.get('computers', []), group_props.get('teacher_computers', []), ldap_user_read, ldap_user_write)
 		self.finished(request.id, [success])
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
@@ -120,7 +120,7 @@ class Instance(SchoolBaseModule):
 			room.name = '%(school)s-%(name)s' % group_props
 		room.set_dn(group_props['$dn$'])
 		room.modify(ldap_user_write)
-		self._set_teacher_computers(group_props.get('computers'), group_props.get('teacher_computers'), ldap_user_read, ldap_user_write)
+		self._set_teacher_computers(group_props.get('computers', []), group_props.get('teacher_computers', []), ldap_user_read, ldap_user_write)
 		self.finished(request.id, [True])
 
 	@sanitize(DictSanitizer(dict(object=ListSanitizer(DNSanitizer(required=True), min_elements=1))))
