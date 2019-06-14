@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (16.1.0-0) unstable; urgency=medium
+
+  * Bug #48080: Allow setting of teacher computers in room management
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 14 Jun 2019 08:32:03 +0200
+
 ucs-school-umc-rooms (16.0.0-0) unstable; urgency=medium
 
   * bump version for UCS@school 4.4

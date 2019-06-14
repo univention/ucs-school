@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.2-0) unstable; urgency=low
+
+  * Bug #48080: Add teacher_computer role to lib
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 14 Jun 2019 08:29:12 +0200
+
 ucs-school-lib (12.1.1-9) unstable; urgency=low
 
   * Bug #49608: fix get_ipv4_network method
