@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-rooms
+fix: 16.1.0-0A~4.4.0.201906140839
+desc: |
+ * Teacher computers can now be defined in the room management module (Bug #48080).
+bug: [48080]
