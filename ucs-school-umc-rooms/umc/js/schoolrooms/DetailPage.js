@@ -36,16 +36,20 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/TextBox",
+	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiObjectSelect",
+	"umc/widgets/MultiSelect",
+	"umc/widgets/Grid",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, array, tools, Page, Form, TextBox, ComboBox, MultiObjectSelect, StandbyMixin, _) {
+], function(declare, lang, array, tools, Page, Form, TextBox, Text, ComboBox, MultiObjectSelect, MultiSelect, Grid, StandbyMixin, _) {
 
 	return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
 		moduleStore: null,
 
 		_form: null,
+		_grid: null,
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -120,6 +124,9 @@ define([
 					return tmp;
 				},
 				autoSearch: false
+			}, { // This MultiSelect is just an invisible widget to give access to the teacher_computers field!
+				type: MultiSelect,
+				name: 'teacher_computers'
 			}];
 
 			// specify the layout... additional dicts are used to group form elements
@@ -150,10 +157,38 @@ define([
 
 			// hook to onSubmit event of the form
 			this._form.on('submit', lang.hitch(this, '_save'));
+
+			this._grid = new Grid({
+				actions: [],
+				columns: [{
+					name: 'label',
+					label: _('Computers')
+				}],
+				moduleStore: this._form.getWidget('computers')._objectStore,
+				query: {}
+			});
+
+			this._form.getWidget('computers').watch('value', lang.hitch(this, function(name, oldValue, newValue) {
+				newValue.forEach(lang.hitch(this, function(el) {
+					if (el.teacher_computer) {
+						this._grid._grid.select(el.id);
+					}
+				}));
+				this._grid.update(true);
+			}));
+			this.addChild(Text({
+				name: 'grid_title',
+				content: '<h2>' + _('Teacher computer') + '</h2>'
+			}));
+			this.addChild(this._grid);
+			this._form.on('Loaded', lang.hitch(this, function() {
+				this._grid._grid.selectIDs(this._form.getWidget('teacher_computers').value); // TODO: We need a public select function in Grid widget!
+			}));
 		},
 
 		_save: function() {
 			var values = this._form.get('value');
+			values['teacher_computers'] = this._grid.getSelectedIDs();
 			var deferred = null;
 			var nameWidget = this._form.getWidget('name');
 

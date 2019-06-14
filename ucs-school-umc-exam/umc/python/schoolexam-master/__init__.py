@@ -48,7 +48,8 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, ListSanitizer
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
-from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError
+from ucsschool.lib.roles import role_teacher_computer, create_ucsschool_role_string
+from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError, SchoolComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
 from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
@@ -415,7 +416,7 @@ class Instance(SchoolBaseModule):
 	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def set_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
-		'''Add all member hosts of a given computer room to the special exam group.'''
+		'''Add all member hosts except teacher_computers of a given computer room to the special exam group.'''
 
 		roomdn = request.options['roomdn']
 		try:
@@ -425,10 +426,17 @@ class Instance(SchoolBaseModule):
 		except univention.admin.uexceptions.ldapError:
 			raise
 
+		teacher_pc_role = create_ucsschool_role_string(role_teacher_computer, room.school)
+		exam_hosts = list()
+		for host in room.hosts:
+			host_obj = SchoolComputer.from_dn(host, None, ldap_user_read) # Please remove with Bug #49611
+			host_obj = SchoolComputer.from_dn(host, None, ldap_user_read)
+		if teacher_pc_role not in host_obj.ucsschool_roles:
+			exam_hosts.append(host)
 		# Add all host members of room to examGroup
-		host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room.hosts]
+		host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in exam_hosts]
 		examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
-		examGroup.fast_member_add(room.hosts, host_uid_list)  # adds any uniqueMember and member listed if not already present
+		examGroup.fast_member_add(exam_hosts, host_uid_list)  # adds any uniqueMember and member listed if not already present
 
 		self.finished(request.id, {}, success=True)
 

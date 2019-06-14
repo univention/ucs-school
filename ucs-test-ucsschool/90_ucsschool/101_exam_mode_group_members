@@ -46,14 +46,14 @@ def main():
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [student2.dn]})
 
 				# import random computers
-				computers = Computers(open_ldap_co, school, 2, 0, 0)
-				pc1, pc2 = computers.create()
+				computers = Computers(open_ldap_co, school, 3, 0, 0)
+				pc1, pc2, pc3 = computers.create()
 
 				# set 2 computer rooms to contain the created computers
 				room1 = Room(school, host_members=pc1.dn)
-				room2 = Room(school, host_members=pc2.dn)
+				room2 = Room(school, host_members=[pc2.dn, pc3.dn], teacher_computers=[pc2.dn])
 				for room in [room1, room2]:
-					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
+					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members, teacher_computers=room.teacher_computers)
 
 				# Set an exam and start it
 				current_time = datetime.now()
@@ -67,8 +67,8 @@ def main():
 				exam.start()
 
 				try:
-					expected_memberUid = ["%s$" % pc2.name, "exam-%s" % stu, "exam-%s" % student2.name]
-					expected_uniqueMember = ["%s" % pc2.dn, "uid=exam-%s,cn=examusers,%s" % (stu, oudn), "uid=exam-%s,cn=examusers,%s" % (student2.name, oudn)]
+					expected_memberUid = ["%s$" % pc3.name, "exam-%s" % stu, "exam-%s" % student2.name]
+					expected_uniqueMember = ["%s" % pc3.dn, "uid=exam-%s,cn=examusers,%s" % (stu, oudn), "uid=exam-%s,cn=examusers,%s" % (student2.name, oudn)]
 
 					# Get the current attributes values
 					lo = getMachineConnection()

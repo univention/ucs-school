@@ -915,6 +915,15 @@ feedback@univention.de
 		  </figure>
 		</para>
 		<para>
+			Über die Liste <guimenu>Lehrercomputer</guimenu> können einzelne Computer des Raumes als Lehrercomputer markiert
+			werden. Während einer Klassenarbeit unterliegt ein Lehrercomputer nicht den selben Restriktionen, wie andere Rechner
+			des Raumes. Somit hat der Lehrer an diesem Rechner weiterhin Zugriff auf alle Dateifreigaben und kann das Internet
+			uneingeschränkt nutzen.
+			Sollte sich ein Lehrercomputer in mehreren Räumen befinden, so gilt er in allen Räumen als Lehrercomputer.
+			Ebenso wird er in allen Räumen wieder zu einem normalen Rechner sobald er in einem seiner Räume als Lehrercomputer
+			abgewählt wird.
+		</para>
+		<para>
 		  Bereits angelegte Computerräume können auch nachträglich über das jeweilige Icon bearbeitet
 		  oder gelöscht werden.
 		</para>
