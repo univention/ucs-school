@@ -108,7 +108,7 @@
 		</para>
 		<caution>
 		  <para>
-			&ucsUAS; unterstützt derzeit nur einen Schulserver pro Standort. Darüber hinaus können
+			&ucsUAS; unterstützt derzeit für Edukativ- und Verwaltungsnetz jeweils nur einen Schulserver pro Standort. Darüber hinaus können
 			UCS-Systeme mit der Rolle <emphasis>Memberserver</emphasis> installiert und an den Schul-Standorten betrieben
 			werden. Diese zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit
 			&ucsUAS;-Funktionalitäten eingesetzt werden; z.B. wird das Sperren von Dateifreigaben über die
