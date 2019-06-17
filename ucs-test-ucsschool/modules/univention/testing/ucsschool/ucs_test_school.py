@@ -619,6 +619,7 @@ class UCSTestSchool(object):
 			schools=None,  # type: Optional[List[str]]
 			is_staff=None,  # type: Optional[bool]
 			is_teacher=None,  # type: Optional[bool]
+			wait_for_replication=True,  # type: Optional[bool]
 			*args,
 			**kwargs
 	):  # type: (...) -> Tuple[str, str]
@@ -636,6 +637,7 @@ class UCSTestSchool(object):
 			schools=schools,
 			is_staff=is_staff or tmp_role,
 			is_teacher=is_teacher,  # add a role, or create_user() will create a student, remove role later
+			wait_for_replication=wait_for_replication,
 			*args,
 			**kwargs
 		)
@@ -651,6 +653,8 @@ class UCSTestSchool(object):
 		# TODO: investigate: the school_admin role should automatically be added
 		user_udm['ucsschoolRole'].extend(create_ucsschool_role_string(role_school_admin, s) for s in schools)
 		user_udm.modify()
+		if wait_for_replication:
+			utils.wait_for_replication()
 		expected_ocs = {'ucsschoolAdministrator'}
 		roles = []
 		if is_staff:

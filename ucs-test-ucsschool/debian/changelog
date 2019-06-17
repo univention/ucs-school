@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.10) unstable; urgency=low
+
+  * Bug #35447: wait for replication when creating school admin
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 Jun 2019 09:42:20 +0200
+
 ucs-test-ucsschool (6.0.9) unstable; urgency=low
 
   * Bug #48080: Add tests for teacher computers
