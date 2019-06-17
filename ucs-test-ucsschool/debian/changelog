@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.11) unstable; urgency=low
+
+  * Bug #49608: fix test not extracting ip from list
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 17 Jun 2019 10:23:12 +0200
+
 ucs-test-ucsschool (6.0.10) unstable; urgency=low
 
   * Bug #35447: wait for replication when creating school admin

@@ -88,9 +88,9 @@ def main():
 						raise NotOk()
 
 					for setting in settings:
-						if setting.printmode == 'none' and setting.ip not in ucr.get('samba/printmode/hosts/none', ''):
+						if setting.printmode == 'none' and setting.ip[0] not in ucr.get('samba/printmode/hosts/none', ''):
 							raise NotOk()
-						elif setting.printmode == 'default' and (setting.ip in ucr.get('samba/printmode/hosts/all', '') or setting.ip in ucr.get('samba/printmode/hosts/none', '')):
+						elif setting.printmode == 'default' and (setting.ip[0] in ucr.get('samba/printmode/hosts/all', '') or setting.ip[0] in ucr.get('samba/printmode/hosts/none', '')):
 							raise NotOk()
 					print '---OK---'
 				except NotOk:
