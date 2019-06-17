@@ -60,7 +60,8 @@ define([
 					name: 'school_classes',
 					label: _('School classes'),
 					formatter: function(value, user) {
-						return user['school_classes'].toString()
+						var list_str = user['school_classes'].toString();
+						return list_str.replace(/,/g, ', ')
 					}
 				}
 			]
