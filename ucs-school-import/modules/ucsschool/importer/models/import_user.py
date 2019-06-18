@@ -169,7 +169,10 @@ class ImportUser(User):
 		:return: return code of lib hooks
 		:rtype: int
 		"""
-		return self._build_hook_line(*self.input_data)
+		if self.input_data:
+			return self._build_hook_line(*self.input_data)
+		else:
+			return super(ImportUser, self).build_hook_line(hook_time, func_name)
 
 	@staticmethod
 	def _pyhook_supports_dry_run(kls):
