@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.12) unstable; urgency=low
+
+  * Bug #49608: fix test not extracting mac/ip from list
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 18 Jun 2019 11:00:59 +0200
+
 ucs-test-ucsschool (6.0.11) unstable; urgency=low
 
   * Bug #49608: fix test not extracting ip from list

@@ -118,11 +118,11 @@ class Computer:
 		line += delimiter
 		line += self.name
 		line += delimiter
-		line += self.mac
+		line += self.mac[0]
 		line += delimiter
 		line += self.school
 		line += delimiter
-		line += self.ip
+		line += self.ip[0]
 		line += delimiter
 		if self.inventorynumbers:
 			line += ','.join(self.inventorynumbers)
@@ -133,14 +133,14 @@ class Computer:
 		return line
 
 	def expected_attributes(self):
-		attr = {}
-		attr['cn'] = [self.name]
-		attr['macAddress'] = [self.mac]
-		attr['aRecord'] = [self.ip]
+		attr = {
+			'cn': [self.name],
+			'macAddress': self.mac,
+			'aRecord': self.ip,
+			'univentionObjectType': ['computers/%s' % self.ctype],
+		}
 		if self.inventorynumbers:
 			attr['univentionInventoryNumber'] = self.inventorynumbers
-		attr['univentionObjectType'] = ['computers/%s' % self.ctype]
-
 		return attr
 
 	def verify(self):
