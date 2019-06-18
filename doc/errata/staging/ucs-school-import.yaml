@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 
+desc: |
+ * Fixed hook execution when using the ImportUser class without an import job (Bug #49556).
+bug: [49556]

@@ -1,3 +1,10 @@
+ucs-school-import (17.0.6-22) unstable; urgency=low
+
+  * Bug #49556: fix hook execution when using the ImportUser class without an
+    import job
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 18 Jun 2019 10:37:12 +0200
+
 ucs-school-import (17.0.6-21) unstable; urgency=medium
 
   * Bug #49609: Version bump
