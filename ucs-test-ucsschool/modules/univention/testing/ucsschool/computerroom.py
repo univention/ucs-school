@@ -798,7 +798,7 @@ class UmcComputer(object):
 		print 'Creating Computer %s' % (self.name,)
 		print 'param = %s' % (param,)
 		reqResult = self.client.umc_command('schoolwizards/computers/add', param, flavor).result
-		if should_succeed and reqResult[0]['result']:
+		if should_succeed and reqResult[0]['result'] is True:
 			utils.wait_for_replication()
 		elif not should_succeed and reqResult[0]['result'].get('error'):
 			print 'Expected creation failed for computer (%r)\nReturn Message: %r' % (self.name, reqResult[0]['result']['error'])
@@ -816,8 +816,8 @@ class UmcComputer(object):
 			'options': None
 		}]
 		reqResult = self.client.umc_command('schoolwizards/computers/remove', param, flavor).result
-		if not reqResult[0]:
-			raise RemoveFail('Unable to remove computer (%s)' % self.name)
+		if not reqResult[0] is True:
+			raise RemoveFail('Unable to remove computer (%s): %r' % (self.name, reqResult))
 		else:
 			utils.wait_for_replication()
 
@@ -835,7 +835,7 @@ class UmcComputer(object):
 		}]
 		reqResult = self.client.umc_command('schoolwizards/computers/get', param, flavor).result
 		if not reqResult[0]:
-			raise GetFail('Unable to get computer (%s)' % self.name)
+			raise GetFail('Unable to get computer (%s): %r' % (self.name, reqResult))
 		else:
 			return reqResult[0]
 
@@ -874,7 +874,7 @@ class UmcComputer(object):
 		elif self.typ == 'ipmanagedclient':
 			return 'Gerät mit IP-Adresse'
 
-	def edit(self, new_attributes):
+	def edit(self, name=None, ip_address=None, subnet_mask=None, mac_address=None, inventory_number=None):
 		"""Edit object computer"""
 		flavor = 'schoolwizards/computers'
 		param = [{
@@ -883,23 +883,23 @@ class UmcComputer(object):
 				'name': self.name,
 				'school': self.school,
 				'type': self.typ,
-				'ip_address': new_attributes.get('ip_address') if new_attributes.get('ip_address') else [self.ip_address],
-				'mac_address': new_attributes.get('mac_address').lower() if new_attributes.get('mac_address') else [self.mac_address],
-				'subnet_mask': new_attributes.get('subnet_mask') if new_attributes.get('subnet_mask') else self.subnet_mask,
-				'inventory_number': new_attributes.get('inventory_number') if new_attributes.get('inventory_number') else self.inventory_number,
+				'ip_address': [ip_address or self.ip_address],
+				'mac_address': [(mac_address or self.mac_address).lower()],
+				'subnet_mask': subnet_mask or self.subnet_mask,
+				'inventory_number': inventory_number or self.inventory_number,
 			},
 			'options': None
 		}]
 		print 'Editing computer %s' % (self.name,)
 		print 'param = %s' % (param,)
 		reqResult = self.client.umc_command('schoolwizards/computers/put', param, flavor).result
-		if not reqResult[0]:
-			raise EditFail('Unable to edit computer (%s) with the parameters (%r)' % (self.name, param))
+		if reqResult[0] is not True:
+			raise EditFail('Unable to edit computer (%s) with the parameters (%r): %r' % (self.name, param, reqResult))
 		else:
-			self.ip_address = new_attributes.get('ip_address')
-			self.mac_address = new_attributes.get('mac_address').lower()
-			self.subnet_mask = new_attributes.get('subnet_mask')
-			self.inventory_number = new_attributes.get('inventory_number')
+			self.ip_address = ip_address
+			self.mac_address = mac_address.lower() if mac_address else None
+			self.subnet_mask = subnet_mask
+			self.inventory_number = inventory_number
 			utils.wait_for_replication()
 
 	def query(self):
@@ -913,12 +913,12 @@ class UmcComputer(object):
 		reqResult = self.client.umc_command('schoolwizards/computers/query', param, flavor).result
 		return reqResult
 
-	def check_query(self, computers):
-		q = self.query()
-		k = [x['name'] for x in q]
-		if not set(computers).issubset(set(k)):
+	def check_query(self, computer_names):
+		reqResult = self.query()
+		names_in_result = {x['name'] for x in reqResult}
+		if not set(computer_names).issubset(names_in_result):
 			raise QueryCheckFail('computers from query do not contain the existing computers, found (%r), expected (%r)' % (
-				k, computers))
+				names_in_result, computer_names))
 
 	def verify_ldap(self, should_exist):
 		print 'verifying computer %s' % self.name

@@ -26,20 +26,16 @@ def main():
 				pc.verify_ldap(True)
 				pcs.append(pc)
 
-			pcs[0].check_query([x.name for x in pcs])
+			pcs[0].check_query({x.name for x in pcs})
 
-			computer_with_existing_name = UmcComputer(school, 'windows', name=pcs[0].name)
-			computer_with_existing_name.create(pcs[0].name)
-
-			computer_with_existing_ip = UmcComputer(school, 'macos', ip_address=pcs[0].ip_address)
-			computer_with_existing_ip.create('IP')
-
-			computer_with_existing_mac = UmcComputer(school, 'ipmanagedclient', mac_address=pcs[0].mac_address)
-			computer_with_existing_mac.create('MAC')
-
-			new_attrs = {'ip_address': random_ip(), 'mac_address': random_mac(), 'subnet_mask': '255.255.0.0', 'inventory_number': '5'}
+			new_attrs = {
+				'ip_address': random_ip(),
+				'mac_address': random_mac(),
+				'subnet_mask': '255.255.0.0',
+				'inventory_number': '5'
+			}
 			for pc in pcs:
-				pc.edit(new_attrs)
+				pc.edit(**new_attrs)
 				pc.check_get()
 				pc.verify_ldap(True)
 				pc.remove()
