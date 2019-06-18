@@ -1,8 +1,15 @@
+ucs-test-ucsschool (6.0.16) unstable; urgency=low
+
+  * Bug #49556: adapt test
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 18 Jun 2019 14:18:42 +0200
+
 ucs-test-ucsschool (6.0.15) unstable; urgency=medium
 
   * Bug #35447: skip test until merge
 
  -- Jürn Brodersen <brodersen@univention.de>  Tue, 18 Jun 2019 14:14:51 +0200
+=======
 
 ucs-test-ucsschool (6.0.14) unstable; urgency=low
 

@@ -23,6 +23,10 @@ import univention.testing.strings as uts
 from univention.testing.ucsschool.importcomputers import random_ip
 from univention.testing.ucsschool.importcomputers import random_mac
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger, UCSTestSchool
+try:
+	from typing import Type
+except ImportError:
+	pass
 
 MODULE_PATHS = (
 	('/usr/share/pyshared/ucsschool/lib/models', 'ucsschool.lib.models'),
@@ -82,7 +86,7 @@ def check_lines_for_pattern_and_words(lines, pattern, *words):
 class TestLegacyHooksMeta(type):
 	def __new__(mcls, cls_name, bases, attrs):
 		logger.debug('Creating test methods...')
-		cls = super(TestLegacyHooksMeta, mcls).__new__(mcls, cls_name, bases, attrs)  # type: TestLegacyHooks
+		cls = super(TestLegacyHooksMeta, mcls).__new__(mcls, cls_name, bases, attrs)  # type: Type[TestLegacyHooks]
 		cls.models = get_ucsschool_model_classes()
 		cls.func2model = {}
 		school_base_abc_source = inspect.getsourcelines(UCSSchoolHelperAbstractClass.build_hook_line)
@@ -141,9 +145,13 @@ class TestLegacyHooks(TestCase):
 			pass
 
 	def setUp(self):
+		self._created_dirs = []
+		self._created_hooks = []
 		with open(RESULTFILE, 'w') as fp:
 			fp.truncate()
 		test_method_name = self.id().rsplit('.', 1)[-1]  # 'test_ComputerRoom_create'
+		if test_method_name == 'test_000_classes':
+			return
 		self.operation_name = test_method_name.rsplit('_', 1)[-1]  # 'create'
 		self.model = self.func2model[test_method_name]  # <class ComputerRoom>
 		try:
@@ -153,7 +161,6 @@ class TestLegacyHooks(TestCase):
 		logger.debug('setUp() %r (hook path: %r)', test_method_name, self.hook_type)  # create line break
 		self.model._empty_hook_paths = set()
 		self._created_dirs, all_dirs = self._create_hook_dirs(self.hook_type, self.operation_name)
-		self._created_hooks = []
 		with open(TEST_HOOK_SOURCE, 'r') as fpr:
 			hook_source_text = fpr.read()
 		for _dir in all_dirs:
@@ -381,8 +388,8 @@ class TestLegacyHooks(TestCase):
 		return self.model(
 			school=self.ou_name,
 			name=uts.random_username(),
-			ip_address=random_ip(),
-			mac_address=random_mac(),
+			ip_address=[random_ip()],
+			mac_address=[random_mac()],
 		)
 	_setup_MacComputer = _setup_IPComputer
 	_setup_WindowsComputer = _setup_IPComputer
