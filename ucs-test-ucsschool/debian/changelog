@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.19) unstable; urgency=medium
+
+  * Bug #49680: add test 50_ucs-school-schoollists
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 18 Jun 2019 17:39:14 +0200
+
 ucs-test-ucsschool (6.0.18) unstable; urgency=low
 
   * Bug #35447: create admins from teachers to temporarily fix slave dc
