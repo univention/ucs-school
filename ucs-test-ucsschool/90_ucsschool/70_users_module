@@ -112,6 +112,7 @@ def main():
 				user.get()
 				user.verify()
 				user.remove()
+				wait_for_drs_replication(filter_format('cn=%s', (user.username,)), should_exist=False)
 				utils.wait_for_replication()
 				user.verify()
 
@@ -125,6 +126,7 @@ def main():
 				user.verify()
 				user.remove()
 				utils.wait_for_replication()
+				wait_for_drs_replication(filter_format('cn=%s', (user.username,)), should_exist=False)
 				user.verify()
 
 
