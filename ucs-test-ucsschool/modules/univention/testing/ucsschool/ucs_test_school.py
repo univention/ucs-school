@@ -594,9 +594,6 @@ class UCSTestSchool(object):
 				'disabled': not is_active,
 				"school_classes": dict(school_classes)
 			}
-			logger.info('*** Creating new user %r with %r.', username, kwargs)
-			User.invalidate_all_caches()
-			User.init_udm_module(self.lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			cls = Student
 			if is_teacher and is_staff:
 				cls = TeachersAndStaff
@@ -604,6 +601,9 @@ class UCSTestSchool(object):
 				cls = Teacher
 			elif not is_teacher and is_staff:
 				cls = Staff
+			logger.info('*** Creating new %s %r with %r.', cls.__name__, username, kwargs)
+			User.invalidate_all_caches()
+			User.init_udm_module(self.lo)  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			roles = cls.default_roles
 			result = cls(**kwargs).create(self.lo)
 			logger.info('*** Result of %s(...).create(): %r', cls.__name__, result)
@@ -632,6 +632,7 @@ class UCSTestSchool(object):
 		if is_teacher is None:
 			is_teacher = random.choice((True, False))
 		tmp_role = not is_staff and not is_teacher
+		logger.info('*** Creating new SchoolAdmin from school user (is_staff=%r, is_teacher=%r)...', is_staff, is_teacher)
 		school_admin, dn = self.create_user(
 			ou_name=ou_name,
 			schools=schools,
@@ -653,6 +654,7 @@ class UCSTestSchool(object):
 		# TODO: investigate: the school_admin role should automatically be added
 		user_udm['ucsschoolRole'].extend(create_ucsschool_role_string(role_school_admin, s) for s in schools)
 		user_udm.modify()
+		logger.info('*** SchoolAdmin created from %s ***', user.__class__.__name__)
 		if wait_for_replication:
 			utils.wait_for_replication()
 		expected_ocs = {'ucsschoolAdministrator'}
