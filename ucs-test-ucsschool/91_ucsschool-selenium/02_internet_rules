@@ -39,7 +39,7 @@ class UMCTester(object):
 		self.selenium.enter_input_combobox('priority', priority)
 		if submit:
 			self.selenium.click_button('Save')
-			self.selenium.wait_for_text(name)
+			self.selenium.wait_for_text(name)  # rule name should show up in grid
 
 	def test_umc(self):
 		with utu.UCSTestSchool() as schoolenv:
@@ -61,15 +61,17 @@ class UMCTester(object):
 			assert priority == '9', 'Priority is {}, not 9 as expected'.format(priority)
 			assert d1 == 'example.com', 'Domain entry 1 is n{}, not example.com as expected'.format(d1)
 			assert d1 == 'example.com', 'Domain entry 1 is n{}, not example.com as expected'.format(d2)
+
 			self.create_internet_rule(rulename_blacklist, 'blacklist', 9, [], submit=False)
 			self.selenium.click_button('Save')
-			self.selenium.wait_for_text(_('Notification'))
+			self.selenium.wait_for_text(_('Notification'))  # Notification: rule name already exists
 			self.selenium.click_button('Ok')
+			self.selenium.wait_until_all_dialogues_closed()
 			self.selenium.click_button('Back to overview')
 			self.selenium.click_checkbox_of_grid_entry(rulename_blacklist)
 			self.selenium.click_button('Delete')
 			self.selenium.click_button('Remove rule')
-
+			self.selenium.end_umc_session()
 
 
 if __name__ == '__main__':
