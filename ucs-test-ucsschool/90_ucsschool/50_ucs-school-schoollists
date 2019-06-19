@@ -32,12 +32,11 @@ def main():
 		admin = account.username
 		passwd = account.bindpw
 
-		connection = Client(host)
+		connection = Client(host, language='en_US')
 		connection.authenticate(admin, passwd)
 		for separator in [',', '\t']:
 			options = {'school': school_name, 'group': class_dn, 'separator': separator}
 			class_list = connection.umc_command('schoollists/csvlist', options).result
-			print(class_list)
 			expected_class_list = {
 				u'csv': u'Firstname{sep}Lastname{sep}Class{sep}Username\r\n{first}{sep}{last}{sep}{cls_name}{sep}{uid}\r\n'.format(
 					sep=separator,
@@ -48,7 +47,8 @@ def main():
 				),
 				u'filename': u'{}.csv'.format(class_name),
 			}
-			print(expected_class_list)
+			print('Expected: {}'.format(expected_class_list))
+			print('Received: {}'.format(class_list))
 			assert class_list == expected_class_list
 
 
