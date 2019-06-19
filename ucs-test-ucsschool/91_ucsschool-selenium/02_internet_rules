@@ -47,7 +47,7 @@ class UMCTester(object):
 			schoolname, schooldn = schoolenv.create_ou()
 			rulename_blacklist = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
 
-			# Reset password for user
+			# create new internet rule
 			self.selenium.do_login()
 			self.selenium.open_module(_('Define internet rules'))
 			self.selenium.wait_for_text(_('Unbeschränkt'))
@@ -62,6 +62,7 @@ class UMCTester(object):
 			assert d1 == 'example.com', 'Domain entry 1 is n{}, not example.com as expected'.format(d1)
 			assert d1 == 'example.com', 'Domain entry 1 is n{}, not example.com as expected'.format(d2)
 
+			# check if duplicate rule names are detected upon creation
 			self.create_internet_rule(rulename_blacklist, 'blacklist', 9, [], submit=False)
 			self.selenium.click_button('Save')
 			self.selenium.wait_for_text(_('Notification'))  # Notification: rule name already exists
