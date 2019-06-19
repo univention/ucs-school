@@ -10,7 +10,7 @@ Standards-Version: 3.6.1
 Package: ucs-test-ucsschool
 Architecture: all
 Depends: ucs-test-libs,
- ucs-test-framework,
+ ucs-test-framework (>= 9.0.2-90),
  python-pycurl,
  python-pytest,
  python-attr,
