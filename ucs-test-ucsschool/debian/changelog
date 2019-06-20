@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.23) unstable; urgency=low
+
+  * Bug #49462: prevent "OSError: File exists"
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 20 Jun 2019 09:06:14 +0200
+
 ucs-test-ucsschool (6.0.22) unstable; urgency=low
 
   * Bug #48651: add retry_on_error to 80_move_users_into_another_ou

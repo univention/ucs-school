@@ -10,10 +10,11 @@
 
 import os
 import shutil
+import datetime
 import univention.testing.ucsschool.importou as eio
 
 HOOKS_DIR = '/usr/share/ucs-school-import/hooks/ou_create_post.d'
-BACKUP_DIR = '/usr/share/ucs-school-import/hooks/ou_create_post.d.bak'
+BACKUP_DIR = '/usr/share/ucs-school-import/hooks/ou_create_post.d.bak.{}'.format(datetime.datetime.now().isoformat())
 
 if __name__ == '__main__':
 	try:
