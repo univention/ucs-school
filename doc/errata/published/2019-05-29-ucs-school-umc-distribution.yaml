@@ -7,4 +7,5 @@ fix: 17.0.1-4A~4.4.0.201905211712
 desc: |
  * The collection of results can now be compressed in a zip archive (used by backup mechanism). (Bug #49333).
  * Internal improvements required for the exam mode (Bug #49519).
-bug: [49333, 49519]
+ * Added the examStarted field to project files (Bug #49701).
+bug: [49333, 49519, 49701]
