@@ -431,8 +431,8 @@ class Instance(SchoolBaseModule):
 		for host in room.hosts:
 			host_obj = SchoolComputer.from_dn(host, None, ldap_user_read) # Please remove with Bug #49611
 			host_obj = SchoolComputer.from_dn(host, None, ldap_user_read)
-		if teacher_pc_role not in host_obj.ucsschool_roles:
-			exam_hosts.append(host)
+			if teacher_pc_role not in host_obj.ucsschool_roles:
+				exam_hosts.append(host)
 		# Add all host members of room to examGroup
 		host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in exam_hosts]
 		examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
