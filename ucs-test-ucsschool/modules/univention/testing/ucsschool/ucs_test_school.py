@@ -62,6 +62,7 @@ from ucsschool.lib.roles import (
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib, get_stream_handler, UniStreamHandler
 from ucsschool.lib.models.group import ComputerRoom
+from ucsschool.lib.models.computer import SchoolComputer
 try:
 	from typing import Dict, List, Optional, Tuple
 except ImportError:
@@ -788,13 +789,18 @@ class UCSTestSchool(object):
 			'school': ou_name,
 			'name': '%s-%s' % (ou_name, name),
 			'description': description,
-			'hosts': host_members,
-			'teacher_computers': teacher_computers
+			'hosts': host_members
 		}
 		logger.info('*** Creating new room %r', name)
 		obj = ComputerRoom(**kwargs)
 		result = obj.create(self.lo)
 		logger.info('*** Result of ComputerRoom(...).create(): %r', result)
+		logger.info('*** Setting up teacher computers: {}'.format(teacher_computers))
+		for teacher_pc in teacher_computers:
+			pc = SchoolComputer.from_dn(teacher_pc, ou_name, self.lo)
+			pc.teacher_computer = True
+			pc.modify(self.lo)
+		logger.info('*** Teacher computer set up')
 		if wait_for_replication:
 			utils.wait_for_replication()
 		utils.verify_ldap_object(obj.dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role_computer_room, ou_name)]}, strict=False, should_exist=True)

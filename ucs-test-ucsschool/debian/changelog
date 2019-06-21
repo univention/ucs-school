@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.24) unstable; urgency=low
+
+  * Bug #48080: fix 101_exam_mode_group_members
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 21 Jun 2019 07:59:11 +0200
+
 ucs-test-ucsschool (6.0.23) unstable; urgency=low
 
   * Bug #49462: prevent "OSError: File exists"
