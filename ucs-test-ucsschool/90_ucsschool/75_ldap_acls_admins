@@ -20,10 +20,10 @@ def main():
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			school_admin, school_admin_dn = schoolenv.create_school_admin(school)
 
-			staff, staff_dn = schoolenv.create_user(school, is_staff=True)
-			tea_staff, tea_staff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
-			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
-			stu, stu_dn = schoolenv.create_user(school)
+			staff, staff_dn = schoolenv.create_staff(school)
+			tea_staff, tea_staff_dn = schoolenv.create_teacher_and_staff(school)
+			tea, tea_dn = schoolenv.create_teacher(school)
+			stu, stu_dn = schoolenv.create_student(school)
 			class_name, class_dn = schoolenv.create_school_class(school)
 
 			open_ldap_co = schoolenv.open_ldap_connection()

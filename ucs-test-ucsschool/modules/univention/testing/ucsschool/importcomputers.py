@@ -84,7 +84,7 @@ def random_ip(ip_iter=IP_Iter()):
 	return ip_iter.next()
 
 
-class Computer:
+class Computer(object):
 
 	def __init__(self, school, ctype):
 		self.name = uts.random_name()
@@ -177,25 +177,25 @@ class Computer:
 class Windows(Computer):
 
 	def __init__(self, school):
-		Computer.__init__(self, school, 'windows')
+		super(Windows, self).__init__(school, 'windows')
 
 
 class Memberserver(Computer):
 
 	def __init__(self, school):
-		Computer.__init__(self, school, 'memberserver')
+		super(Memberserver, self).__init__(school, 'memberserver')
 
 
 class MacOS(Computer):
 
 	def __init__(self, school):
-		Computer.__init__(self, school, 'macos')
+		super(MacOS, self).__init__(school, 'macos')
 
 
 class IPManagedClient(Computer):
 
 	def __init__(self, school):
-		Computer.__init__(self, school, 'ipmanagedclient')
+		super(IPManagedClient, self).__init__(school, 'ipmanagedclient')
 
 
 class ImportFile:
