@@ -79,6 +79,7 @@ class ComputerRoom(object):
 				print 'School room (%r) addition failed as expected.' % (self.name,)
 
 	def verify_ldap(self, must_exist=True):
+		# TODO: verify all attributes of object
 		utils.verify_ldap_object(self.dn(), should_exist=must_exist)
 
 	def get(self, should_exist=True):

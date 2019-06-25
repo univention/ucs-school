@@ -31,6 +31,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+try:
+	from typing import List
+except ImportError:
+	pass
 from univention.lib.i18n import Translation
 from univention.management.console.modules.sanitizers import StringSanitizer, StringSanitizer as DNSanitizer, DictSanitizer, ListSanitizer
 from univention.management.console.modules.decorators import sanitize
@@ -139,7 +143,12 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, [{'success': True}])
 
 	@staticmethod
-	def _set_teacher_computers(all_computers, teacher_computers, ldap_user_read, ldap_user_write):
+	def _set_teacher_computers(
+			all_computers,  # type: List[str]
+			teacher_computers,  # type: List[str]
+			ldap_user_read,  # type: univention.admin.uldap.access
+			ldap_user_write  # type: univention.admin.uldap.access
+	):  # type (...) -> None
 		"""
 		All computers in teacher_computers become teacher computers.
 		All computers that are in all_computers, but not in teacher_computers become non teacher computers.

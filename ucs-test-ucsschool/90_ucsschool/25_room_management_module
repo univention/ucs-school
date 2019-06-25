@@ -27,6 +27,7 @@ def main():
 			room = ComputerRoom(school, host_members=[computers_dns[0], computers_dns[1]], teacher_computers=[computers_dns[1]])
 			room.add()
 			room.verify_ldap(must_exist=True)
+			# TODO: move this test to ComputerRoom.verify_ldap() and remove here
 			umc_room = room.get()
 			if len(umc_room['teacher_computers']) != 1 and computers_dns[1] not in umc_room['teacher_computers']:
 				utils.fail('Exactly {} should be in {}'.format(computers_dns[1], umc_room['teacher_computers']))

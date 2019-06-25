@@ -179,11 +179,13 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return []
 
 	@property
-	def teacher_computer(self):
+	def teacher_computer(self):  # type: () -> bool
+		"""True if the computer is a teachers computer."""
 		return create_ucsschool_role_string(role_teacher_computer, self.school) in self.ucsschool_roles
 
 	@teacher_computer.setter
-	def teacher_computer(self, new_value):
+	def teacher_computer(self, new_value):  # type: (bool) -> None
+		"""Un/mark computer as a teachers computer."""
 		role_str = create_ucsschool_role_string(role_teacher_computer, self.school)
 		if new_value and role_str not in self.ucsschool_roles:
 			self.ucsschool_roles.append(role_str)

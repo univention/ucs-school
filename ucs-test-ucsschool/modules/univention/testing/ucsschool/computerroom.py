@@ -89,14 +89,14 @@ class ComputerImport(object):
 
 class Room(object):
 
-	def __init__(self, school, name=None, dn=None, description=None, host_members=None, teacher_computers=[]):
+	def __init__(self, school, name=None, dn=None, description=None, host_members=None, teacher_computers=None):
 		self.school = school
 		self.name = name if name else uts.random_name()
 		self.dn = dn if dn else 'cn=%s-%s,cn=raeume,cn=groups,%s' % (
 			school, self.name, utu.UCSTestSchool().get_ou_base_dn(school))
 		self.description = description if description else uts.random_name()
 		self.host_members = host_members or []
-		self.teacher_computers = teacher_computers
+		self.teacher_computers = teacher_computers or []
 
 	def get_room_user(self, client):
 		print 'Executing command: computerroom/rooms in school:', self.school
