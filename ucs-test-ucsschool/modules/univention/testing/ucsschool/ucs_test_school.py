@@ -64,7 +64,7 @@ from ucsschool.lib.models.utils import add_stream_logger_to_schoollib, get_strea
 from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.computer import SchoolComputer
 try:
-	from typing import Dict, List, Optional, Tuple
+	from typing import Dict, List, Optional, Set, Tuple
 except ImportError:
 	pass
 
@@ -398,7 +398,9 @@ class UCSTestSchool(object):
 		if wait_for_replication:
 			utils.wait_for_replication()
 
-		ou_dn = 'ou=%s,%s' % (ou_name, self.LDAP_BASE)
+		if self.ucr.is_true('ucsschool/ldap/district/enable'):
+			logger.warning('******* district mode is enabled!! *******')
+		ou_dn = self.get_ou_base_dn(ou_name)
 		if use_cache:
 			logger.info('*** Storing OU %r in cache with key %r.', ou_name, cache_key)
 			self._test_ous.setdefault(cache_key, []).append((ou_name, ou_dn))
@@ -611,7 +613,8 @@ class UCSTestSchool(object):
 
 		if wait_for_replication:
 			utils.wait_for_replication()
-			utils.verify_ldap_object(user_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in roles]}, strict=False, should_exist=True)
+
+		utils.verify_ldap_object(user_dn, expected_attr={'ucsschoolRole': [create_ucsschool_role_string(role, ou_name) for role in roles]}, strict=False, should_exist=True)
 		return username, user_dn
 
 	def create_school_admin(

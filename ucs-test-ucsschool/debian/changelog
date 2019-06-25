@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.25) unstable; urgency=low
+
+  * Bug #35447: warn if district mode is enabled
+  * always verify created user
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 25 Jun 2019 17:05:00 +0200
+
 ucs-test-ucsschool (6.0.24) unstable; urgency=low
 
   * Bug #48080: fix 101_exam_mode_group_members
