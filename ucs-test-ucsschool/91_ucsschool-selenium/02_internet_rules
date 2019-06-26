@@ -49,9 +49,10 @@ class UMCTester(object):
 
 			# create new internet rule
 			self.selenium.do_login()
-			self.selenium.open_module(_('Define internet rules'))
+			self.selenium.open_module(_('Define internet rules'), wait_for_standby=False)
+			self.selenium.wait_until_standby_animation_appears_and_disappears(appear_timeout=15, disappear_timeout=60)
 			self.selenium.wait_for_text(_('Unbeschränkt'))
-			self.create_internet_rule(rulename_blacklist, 'blacklist', 9, ['example.com', 'example2.com'])
+			self.create_internet_rule(rulename_blacklist, 'Blacklist', 9, ['example.com', 'example2.com'])
 			ucr.load()
 			priority = ucr.get('proxy/filter/setting/{}/priority'.format(rulename_blacklist))
 			list_type = ucr.get('proxy/filter/setting/{}/filtertype'.format(rulename_blacklist))
@@ -63,7 +64,7 @@ class UMCTester(object):
 			assert d1 == 'example.com', 'Domain entry 1 is n{}, not example.com as expected'.format(d2)
 
 			# check if duplicate rule names are detected upon creation
-			self.create_internet_rule(rulename_blacklist, 'blacklist', 9, [], submit=False)
+			self.create_internet_rule(rulename_blacklist, 'Blacklist', 9, [], submit=False)
 			self.selenium.click_button('Save')
 			self.selenium.wait_for_text(_('Notification'))  # Notification: rule name already exists
 			self.selenium.click_button('Ok')
