@@ -385,6 +385,15 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-umc-import 2.0.0-3A~4.4.0.201906131459 -->
+					<!-- START ucs-school-umc-lists 2.0.0-3A~4.4.0.201905292316 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-lists</emphasis> in version <emphasis>2.0.0-3A~4.4.0.201905292316</emphasis>:
+						<itemizedlist>
+							<listitem><para>Improved compatibility for the exported CSV file. The recommended export is now using UTF-16 with tabs as separators which seems to be the most compatible format. In case UTF-16 is not supported an UTF-8 export is still available (<u:bug>48504</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-lists 2.0.0-3A~4.4.0.201905292316 -->
 <!-- CHANGELOG:2019-06-26:APPEND -->
 				</section>
 <!-- CHANGELOG-NEW-SECTION -->
