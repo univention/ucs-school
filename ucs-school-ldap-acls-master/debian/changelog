@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.1-2) unstable; urgency=low
+
+  * Bug #48080: OU-Admins are allowed to write ucsschoolRole on computer obj
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 26 Jun 2019 15:34:54 +0200
+
 ucs-school-ldap-acls-master (17.0.1-1) unstable; urgency=low
 
   * Bug #48924: give permission for administrative slaves/memberservers to
