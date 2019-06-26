@@ -356,7 +356,39 @@ feedback@univention.de
 					<!-- END ucs-school-umc-import 2.0.0-2A~4.4.0.201906071429 -->
 <!-- CHANGELOG:2019-06-07:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-06-26" lang="en">
+					<title>Released on 2019-06-26:</title>
+					<!-- START ucs-school-import 17.0.6-22A~4.4.0.201906181039 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.6-22A~4.4.0.201906181039</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fixed hook execution when using the ImportUser class without an import job (<u:bug>49556</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.6-22A~4.4.0.201906181039 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-3A~4.4.0.201906040844 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-3A~4.4.0.201906040844</emphasis>:
+						<itemizedlist>
+							<listitem><para>The computer room module now verifies room DNs more rigorous (<u:bug>43039</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-3A~4.4.0.201906040844 -->
+					<!-- START ucs-school-umc-import 2.0.0-3A~4.4.0.201906131459 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-import</emphasis> in version <emphasis>2.0.0-3A~4.4.0.201906131459</emphasis>:
+						<itemizedlist>
+							<listitem><para>If external SSL certificates (from e.g. let's encrypt) are used on the domaincontroller master and master's FQDN differs from the FQDNs within the SSL certificate, the UMC module "Benutzerimport" threw a traceback. The new UCR variables <envar>ucsschool/import/http_api/client/server</envar> and <envar>ucsschool/import/http_api/client/ssl_verify</envar> now allow to specify the correct FQDN used in the SSL certificates resp. to disable SSL checks at all (the latter one is NOT recommended!) (<u:bug>49400</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-import 2.0.0-3A~4.4.0.201906131459 -->
+<!-- CHANGELOG:2019-06-26:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
