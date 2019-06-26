@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (16.1.0-1) unstable; urgency=medium
+
+  * Bug #48080: Fix typo
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 26 Jun 2019 15:33:12 +0200
+
 ucs-school-umc-rooms (16.1.0-0) unstable; urgency=medium
 
   * Bug #48080: Allow setting of teacher computers in room management
