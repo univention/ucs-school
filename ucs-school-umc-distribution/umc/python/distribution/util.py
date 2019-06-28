@@ -339,6 +339,13 @@ class Project(_Dict):
 			raise ValueError('property "%s" needs to be of type str or datetime' % key)
 
 	@property
+	def exam_started(self):
+		'''
+		If True the exam is currently running, else it has not been started yet.
+		'''
+		return self.dict['examStarted']
+
+	@property
 	def starttime(self):
 		return self._convStr2Time('starttime')
 
