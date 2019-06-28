@@ -569,14 +569,15 @@ class Instance(SchoolBaseModule):
 		return [
 			{
 				'name': project.name,
-				'sender': project.sender.username,  # teacher / admin
+				'sender': project.sender.username,  # teacher / admins
 				'recipients': [r.username for r in project.recipients],  # students
-				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M'),
-				'files': len(project.files),
-				'isDistributed': project.isDistributed,  # if True, exam has started
-				'room': ComputerRoom.get_name_from_dn(project.room),
+				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M') if project.starttime else '',
+				'files': len(project.files) if project.files else 0,
+				'isDistributed': project.isDistributed,
+				'examStarted': project.examStarted,  # if True, exam has started
+				'room': ComputerRoom.get_name_from_dn(project.room) if project.room else '',
 		}
-			for project in util.distribution.Project.list()
+			for project in util.distribution.Project.list(only_started=False)
 			if
 					pattern.match(project.name)
 			and (

@@ -824,11 +824,11 @@ define([
 				label: _('Owner'),
 				width: 'auto'
 			}, {
-				name: 'isDistributed',
+				name: 'examStarted',
 				label: _('Status'),
 				width: 'auto',
-				formatter: lang.hitch(this, function(isDistributed) {
-					return isDistributed ? _('started') : _('pending');
+				formatter: lang.hitch(this, function(examStarted) {
+					return examStarted ? _('started') : _('pending');
 				})
 			}, {
 				name: 'files',
