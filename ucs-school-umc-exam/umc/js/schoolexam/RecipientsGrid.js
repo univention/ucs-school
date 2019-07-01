@@ -46,7 +46,6 @@ define([
 				selectionMode: 'none'
 			};
 			this.moduleStore = new Observable(new Memory({ data: [], idProperty: 'dn' }));
-			console.log(this.moduleStore);
 			this.actions = [];
 			this.columns = [
 				{
