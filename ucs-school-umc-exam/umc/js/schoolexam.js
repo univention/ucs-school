@@ -145,7 +145,6 @@ define([
 				}, {
 					name: 'room',
 					type: ComboBox,
-					required: true,
 					label: _('Computer room'),
 					description: _('Choose the computer room in which the exam will take place'),
 					depends: 'school',
@@ -184,19 +183,8 @@ define([
 				}, {
 					type: MultiObjectSelect,
 					name: 'recipients',
-					required: true,
 					dialogTitle: _('Participating classes/workgroups'),
 					label: _('Participating classes/workgroups'),
-					// FIXME: MultiObjectSelect is broken :( :/
-					//validator: lang.hitch(this, function(value) { return this.getWidget('advanced', 'recipients').get('value').length; }),
-					//invalidMessage: '',
-					validate: lang.hitch(this, function() {
-						var valid = this.getWidget('advanced', 'recipients').get('value').length;
-						if (!valid) {
-							dialog.alert(_('No class or workgroup has been selected for the exam. Please select at least one class or workgroup.'));
-						}
-						return valid;
-					}),
 					description: _('Groups that are participating in the exam'),
 					queryWidgets: [{
 						type: ComboBox,
@@ -623,8 +611,24 @@ define([
 
 		_validate: function() {
 			var invalidNextPage = new Deferred();
+			var values = this.getValues();
+
+			if (values.recipients.length === 0) {
+				// At least one recipient has to be chosen!
+				dialog.alert(_('No class or workgroup has been selected for the exam. Please select at least one class or workgroup.'));
+				invalidNextPage.reject('advanced');
+				return invalidNextPage;
+			}
 
 			var room = this._getCurrentRoom();
+
+			if (!room) {
+				// a room has to be selected!
+				dialog.alert(_('No room has been selected for the exam. Please select a room.'));
+				invalidNextPage.reject('advanced');
+				return invalidNextPage;
+			}
+
 			if (room && room.exam) {
 				// block room if an exam is being written
 				dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', room.label, room.examDescription));

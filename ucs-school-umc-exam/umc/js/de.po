@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-07-01 08:43+0200\n"
+"POT-Creation-Date: 2019-07-01 09:46+0200\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolexam.js:835
+#: umc/js/schoolexam.js:852
 msgid "#Files"
 msgstr "#Dateien"
 
@@ -108,7 +108,7 @@ msgstr ""
 msgid "Access permissions for shares"
 msgstr "Zugriffsberechtigungen für Freigaben"
 
-#: umc/js/schoolexam.js:862
+#: umc/js/schoolexam.js:879
 msgid "All exams"
 msgstr "Alle Klassenarbeiten"
 
@@ -130,7 +130,7 @@ msgstr ""
 msgid "An error ocurred"
 msgstr "Ein Fehler trat auf"
 
-#: umc/js/schoolexam.js:673
+#: umc/js/schoolexam.js:690
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler trat auf."
 
@@ -138,7 +138,7 @@ msgstr "Ein unerwarteter Fehler trat auf."
 msgid "Assign internet rules"
 msgstr "Internetregeln zuweisen"
 
-#: umc/js/schoolexam.js:651
+#: umc/js/schoolexam.js:668
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -150,7 +150,7 @@ msgstr "Auswahl des Computerraumes, in dem die Klassenarbeit statt finden wird"
 msgid "Choose the school"
 msgstr "Auswahl der Schule"
 
-#: umc/js/schoolexam.js:455
+#: umc/js/schoolexam.js:456
 msgid "Close Wizard"
 msgstr "Wizard schließen"
 
@@ -162,7 +162,7 @@ msgstr "Computerraum"
 msgid "Configure share access"
 msgstr "Freigabezugriff konfigurieren"
 
-#: umc/js/schoolexam.js:595
+#: umc/js/schoolexam.js:596
 msgid "Continue without reboot"
 msgstr "Weiter ohne Neustart"
 
@@ -182,7 +182,7 @@ msgstr "Verzeichnisname"
 msgid "Distribute teaching materials"
 msgstr "Unterrichtsmaterial verteilen"
 
-#: umc/js/schoolexam.js:509
+#: umc/js/schoolexam.js:510
 msgid "Distributed teaching materials"
 msgstr "Verteilte Unterrichtsmaterialien"
 
@@ -224,16 +224,16 @@ msgstr ""
 msgid "List of allowed websites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 
-#: umc/js/schoolexam.js:820 umc/js/schoolexam/RecipientsGrid.js:54
+#: umc/js/schoolexam.js:837 umc/js/schoolexam/RecipientsGrid.js:54
 #: umc/js/schoolexam/RebootGrid.js:79
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/schoolexam.js:486
+#: umc/js/schoolexam.js:487
 msgid "Next"
 msgstr "Weiter"
 
-#: umc/js/schoolexam.js:196
+#: umc/js/schoolexam.js:196 umc/js/schoolexam.js:631
 msgid ""
 "No class or workgroup has been selected for the exam. Please select at least "
 "one class or workgroup."
@@ -245,6 +245,12 @@ msgstr ""
 msgid "No reboot necessary"
 msgstr "Kein Neustart notwendig"
 
+#: umc/js/schoolexam.js:640
+msgid "No room has been selected for the exam. Please select a room."
+msgstr ""
+"Für die Klassenarbeit wurde kein Raum ausgewählt. "
+"Bitte wählen Sie einen Raum aus."
+
 #: umc/js/schoolexam/RebootGrid.js:106
 msgid "Not connected / powered down"
 msgstr "Nicht verbunden / ausgeschaltet"
@@ -253,15 +259,15 @@ msgstr "Nicht verbunden / ausgeschaltet"
 msgid "Note"
 msgstr "Hinweis"
 
-#: umc/js/schoolexam.js:861
+#: umc/js/schoolexam.js:878
 msgid "Only own exams"
 msgstr "Nur eigene Klassenarbeiten"
 
-#: umc/js/schoolexam.js:452
+#: umc/js/schoolexam.js:453
 msgid "Open computer room"
 msgstr "Computerraum öffnen"
 
-#: umc/js/schoolexam.js:824
+#: umc/js/schoolexam.js:841
 msgid "Owner"
 msgstr "Eigentümer"
 
@@ -281,7 +287,7 @@ msgstr "Eigene Internetregeln"
 msgid "Planned end of exam"
 msgstr "Geplantes Ende der Klassenarbeit"
 
-#: umc/js/schoolexam.js:593
+#: umc/js/schoolexam.js:594
 msgid ""
 "Please confirm to reboot all computers marked as <i>Reboot necessary</i> "
 "immediately."
@@ -324,7 +330,7 @@ msgstr ""
 "Bitte definieren Sie mindestens eine erlaubte Webseite oder wählen Sie eine "
 "andere Internetregel."
 
-#: umc/js/schoolexam.js:809 umc/js/schoolexam.js:810
+#: umc/js/schoolexam.js:826 umc/js/schoolexam.js:827
 msgid "Prepare new exam"
 msgstr "Eine neue Klassenarbeit anlegen"
 
@@ -332,7 +338,7 @@ msgstr "Eine neue Klassenarbeit anlegen"
 msgid "Reboot"
 msgstr "Neustart"
 
-#: umc/js/schoolexam.js:598
+#: umc/js/schoolexam.js:599
 msgid "Reboot computers"
 msgstr "Rechner neustarten"
 
@@ -348,7 +354,7 @@ msgstr "Ausgewählte Rechner neustarten"
 msgid "Reboot student computers"
 msgstr "Schülerrechner neustarten"
 
-#: umc/js/schoolexam.js:736
+#: umc/js/schoolexam.js:753
 msgid "Rebooting computers"
 msgstr "Rechner neustarten"
 
@@ -356,7 +362,7 @@ msgstr "Rechner neustarten"
 msgid "Regulate share access"
 msgstr "Freigabezugriff steuern"
 
-#: umc/js/schoolexam.js:839
+#: umc/js/schoolexam.js:856
 msgid "Room"
 msgstr "Raum"
 
@@ -372,11 +378,11 @@ msgstr "Schulklassen"
 msgid "Search name"
 msgstr "Suchname"
 
-#: umc/js/schoolexam.js:869
+#: umc/js/schoolexam.js:886
 msgid "Search pattern"
 msgstr "Suchbegriff"
 
-#: umc/js/schoolexam.js:867
+#: umc/js/schoolexam.js:884
 msgid "Search..."
 msgstr "Suche..."
 
@@ -398,7 +404,7 @@ msgstr "Raum und Teilnehmer auswählen"
 msgid "Set up internet rules"
 msgstr "Internetregeln definieren"
 
-#: umc/js/schoolexam.js:868
+#: umc/js/schoolexam.js:885
 msgid "Specifies the substring pattern which is searched for in the exams."
 msgstr "Gibt die Zeichenkette an, nach der die Klassenarbeiten gesucht werden."
 
@@ -406,19 +412,19 @@ msgstr "Gibt die Zeichenkette an, nach der die Klassenarbeiten gesucht werden."
 msgid "Start a new exam"
 msgstr "Eine neue Klassenarbeit starten"
 
-#: umc/js/schoolexam.js:489
+#: umc/js/schoolexam.js:490
 msgid "Start exam"
 msgstr "Klassenarbeit starten"
 
-#: umc/js/schoolexam.js:683
+#: umc/js/schoolexam.js:700
 msgid "Starting the configuration process..."
 msgstr "Beginn des Konfigurationsprozesses..."
 
-#: umc/js/schoolexam.js:828
+#: umc/js/schoolexam.js:845
 msgid "Status"
 msgstr "Status"
 
-#: umc/js/schoolexam.js:655
+#: umc/js/schoolexam.js:672
 msgid "Take over"
 msgstr "Übernehmen"
 
@@ -484,11 +490,11 @@ msgstr "Benutzer"
 msgid "Web access profile"
 msgstr "Internetregeln"
 
-#: umc/js/schoolexam.js:831
+#: umc/js/schoolexam.js:848
 msgid "pending"
 msgstr "ausstehend"
 
-#: umc/js/schoolexam.js:831
+#: umc/js/schoolexam.js:848
 msgid "started"
 msgstr "gestartet"
 
