@@ -806,8 +806,8 @@ define([
 			// define grid actions
 			var actions = [{
 				name: 'add',
-				label: _('Start new exam'),
-				description: _('Create a new exam'),
+				label: _('Prepare new exam'),
+				description: _('Prepare new exam'),
 				iconClass: 'umcIconAdd',
 				isContextAction: false,
 				isStandardAction: true,

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-05-28 15:06+0200\n"
+"POT-Creation-Date: 2019-07-01 08:43+0200\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,10 +166,6 @@ msgstr "Freigabezugriff konfigurieren"
 msgid "Continue without reboot"
 msgstr "Weiter ohne Neustart"
 
-#: umc/js/schoolexam.js:810
-msgid "Create a new exam"
-msgstr "Eine neue Klassenarbeit anlegen"
-
 #: umc/js/schoolexam.js:263
 msgid "Default (global settings)"
 msgstr "Standard (globale Einstellungen)"
@@ -228,8 +224,8 @@ msgstr ""
 msgid "List of allowed websites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 
-#: umc/js/schoolexam.js:820 umc/js/schoolexam/RebootGrid.js:79
-#: umc/js/schoolexam/RecipientsGrid.js:57
+#: umc/js/schoolexam.js:820 umc/js/schoolexam/RecipientsGrid.js:54
+#: umc/js/schoolexam/RebootGrid.js:79
 msgid "Name"
 msgstr "Name"
 
@@ -328,6 +324,10 @@ msgstr ""
 "Bitte definieren Sie mindestens eine erlaubte Webseite oder wählen Sie eine "
 "andere Internetregel."
 
+#: umc/js/schoolexam.js:809 umc/js/schoolexam.js:810
+msgid "Prepare new exam"
+msgstr "Eine neue Klassenarbeit anlegen"
+
 #: umc/js/schoolexam/RebootGrid.js:94
 msgid "Reboot"
 msgstr "Neustart"
@@ -364,7 +364,7 @@ msgstr "Raum"
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolexam/RecipientsGrid.js:64
+#: umc/js/schoolexam/RecipientsGrid.js:61
 msgid "School classes"
 msgstr "Schulklassen"
 
@@ -409,10 +409,6 @@ msgstr "Eine neue Klassenarbeit starten"
 #: umc/js/schoolexam.js:489
 msgid "Start exam"
 msgstr "Klassenarbeit starten"
-
-#: umc/js/schoolexam.js:809
-msgid "Start new exam"
-msgstr "Eine neue Klassenarbeit starten"
 
 #: umc/js/schoolexam.js:683
 msgid "Starting the configuration process..."
@@ -498,3 +494,6 @@ msgstr "gestartet"
 
 #~ msgid "Restrict access to home directory"
 #~ msgstr "Zugriff auf Heimatverzeichnis beschränken"
+
+#~ msgid "Start new exam"
+#~ msgstr "Eine neue Klassenarbeit starten"
