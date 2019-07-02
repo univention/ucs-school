@@ -183,7 +183,7 @@ class TestS4SIDAllocation(TestSamba4):
 			# check, as the s4-connector was previously stopped.
 			test_user_dn = UDM.create_user(password='univention',
 			                               username=test_username,
-			                               check_for_drs_replication=False)[0]
+			                               wait_for=False)[0]
 
 			test_user_dn_exploded = ldap.dn.str2dn(test_user_dn)
 			(_attr, test_user_cn, _flags) = test_user_dn_exploded[0][0]

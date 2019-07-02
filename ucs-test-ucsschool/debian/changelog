@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.27) unstable; urgency=medium
+
+  * Bug #49415: fix 96_samba4_sid_allocation
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 02 Jul 2019 14:30:40 +0200
+
 ucs-test-ucsschool (6.0.26) unstable; urgency=low
 
   * Bug #47978: fix selenium/*
