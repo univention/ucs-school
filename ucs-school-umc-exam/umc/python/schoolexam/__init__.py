@@ -218,7 +218,7 @@ class Instance(SchoolBaseModule):
 					os.remove(i_target)
 				except OSError:
 					pass
-		return True
+		return project
 
 	@sanitize(StringSanitizer(required=True))
 	@LDAP_Connection()
@@ -259,7 +259,8 @@ class Instance(SchoolBaseModule):
 	@require_password
 	@LDAP_Connection()
 	def add(self, request, ldap_user_read=None):
-		self.finished(request.id, self._save_exam(request))
+		self._save_exam(request)
+		self.finished(request.id, True)
 
 	@sanitize(
 		name=StringSanitizer(required=True),
@@ -276,7 +277,8 @@ class Instance(SchoolBaseModule):
 	@require_password
 	@LDAP_Connection()
 	def put(self, request, ldap_user_read=None):
-		self.finished(request.id, self._save_exam(request, update=True))
+		self._save_exam(request, update=True)
+		self.finished(request.id, True)
 
 	@sanitize(
 		name=StringSanitizer(required=True),
@@ -318,33 +320,12 @@ class Instance(SchoolBaseModule):
 			raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
 
 		def _thread():
-			# make sure that a project with the same name does not exist
+			project = util.distribution.Project.load(request.options.get('name', ''))
 			directory = request.options['directory']
-			# get absolute path of project file and test for existance
-			fn_test_project = util.distribution.Project.sanitize_project_filename(directory)
-			if os.path.exists(fn_test_project):
-				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % (directory,))
-
-			# validate the project data and save project
-			my.project = util.distribution.Project(dict(
-				name=directory,
-				description=request.options['name'],
-				files=request.options.get('files'),
-				sender=sender,
-				room=request.options['room'],
-			))
-			my.project.validate()
-			my.project.save()
-
-			# copy files into project directory
-			if self._tmpDir:
-				for ifile in my.project.files:
-					isrc = os.path.join(self._tmpDir, ifile)
-					itarget = os.path.join(my.project.cachedir, ifile)
-					if os.path.exists(isrc):
-						# copy file to cachedir
-						shutil.move(isrc, itarget)
-						os.chown(itarget, 0, 0)
+			if project:
+				my.project = self._save_exam(request, update=True, ldap_user_read=ldap_user_read)
+			else:
+				my.project = self._save_exam(request, update=False, ldap_user_read=ldap_user_read)
 
 			# open a new connection to the master UMC
 			try:
