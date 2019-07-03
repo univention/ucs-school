@@ -387,7 +387,6 @@ class Instance(SchoolBaseModule):
 
 		def _finished(thread, result, request):
 			my.project.starttime = datetime.datetime.now()
-			my.project.examStarted = True
 			my.project.save()
 
 			# mark the progress state as finished
