@@ -11,6 +11,9 @@
 	<command name="schoolexam/upload" function="upload"/>
 	<command name="schoolexam/internetrules" function="internetrules"/>
 	<command name="schoolexam/room/validate" function="validate_room"/>
+	<command name="schoolexam/exam/add" function="add"/>
+	<command name="schoolexam/exam/put" function="put"/>
+	<command name="schoolexam/exam/get" function="get"/>
 	<command name="schoolexam/exam/start" function="start_exam"/>
 	<command name="schoolexam/exam/finish" function="finish_exam"/>
 	<command name="schoolexam/exam/collect" function="collect_exam"/>

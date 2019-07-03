@@ -52,11 +52,12 @@ from univention.management.console.modules.sanitizers import (
 	StringSanitizer, DictSanitizer, ListSanitizer, DNSanitizer, PatternSanitizer, ChoicesSanitizer)
 from univention.management.console.modules.schoolexam import util
 from univention.management.console.modules.distribution import compare_dn
+import univention.admin.uexceptions as udm_exceptions
 
 from univention.lib.i18n import Translation
 from univention.lib.umc import Client, ConnectionError, HTTPError
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer, Display
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, Group, User
@@ -159,6 +160,123 @@ class Instance(SchoolBaseModule):
 	@simple_response
 	def progress(self):
 		return self._progress_state.poll()
+
+	@LDAP_Connection()
+	def _save_exam(self, request, update=False, ldap_user_read=None):
+		"""
+		Creates or updates an exam with the information given in the request object
+		:param request: The request containing all information about the exam
+		:param update: If True it is expected that an exam with the same name already exists and will be updated
+		:return: True if successful, else Exception
+		"""
+		# create a User object for the teacher
+		sender = util.distribution.openRecipients(self.user_dn, ldap_user_read)
+		recipients = [util.distribution.openRecipients(i_dn, ldap_user_read) for i_dn in request.options.get('recipients', [])]
+		recipients = [recipient for recipient in recipients if recipient]
+		new_values = dict(
+				name=request.options['directory'],
+				description=request.options['name'],
+				files=request.options.get('files'),
+				sender=sender,
+				room=request.options['room'],
+				recipients=recipients,
+				deadline=request.options['examEndTime']
+			)
+		if not sender:
+			raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
+		project = util.distribution.Project.load(request.options.get('name', ''))
+		orig_files = []
+		if update:
+			if not project:
+				raise UMC_Error(_('The specified exam does not exist: %s') % request.options.get('name', ''))
+			# make sure that the project owner himself is modifying the project
+			if not compare_dn(project.sender.dn, self.user_dn):
+				raise UMC_Error(_('The exam can only be modified by the owner himself.'))
+			if project.isDistributed:
+				raise UMC_Error(_('The exam was already started and can not be modified anymore!'))
+			orig_files = project.files
+			project.update(new_values)
+		else:
+			if project:
+				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % new_values['directory'])
+			project = util.distribution.Project(new_values)
+		project.validate()
+		project.save()
+		# copy files into project directory
+		if self._tmpDir:
+			for i_file in project.files:
+				i_src = os.path.join(self._tmpDir, i_file)
+				i_target = os.path.join(project.cachedir, i_file)
+				if os.path.exists(i_src):
+					# copy file to cachedir
+					shutil.move(i_src, i_target)
+					os.chown(i_target, 0, 0)
+		if update:
+			for i_file in set(orig_files) - set(project.files):
+				i_target = os.path.join(project.cachedir, i_file)
+				try:
+					os.remove(i_target)
+				except OSError:
+					pass
+		return True
+
+	@sanitize(StringSanitizer(required=True))
+	@LDAP_Connection()
+	def get(self, request, ldap_user_read=None):
+		result = []
+		for project in [util.distribution.Project.load(iid) for iid in request.options]:
+			if not project:
+				continue
+			# make sure that only the project owner himself (or an admin) is able
+			# to see the content of a project
+			if not compare_dn(project.sender.dn, self.user_dn):
+				raise UMC_Error(_('Exam details are only visible to the exam owner himself.'), status=403)
+			props = project.dict
+			props['sender'] = props['sender'].username
+			recipients = []
+			for recip in props['recipients']:
+				recipients.append({
+					'id': recip.dn,
+					'label': recip.type == util.distribution.TYPE_USER and Display.user(recip.dict) or recip.name
+				})
+			props['recipients'] = recipients
+			props['examEndTime'] = props['deadline']
+			result.append(props)
+		self.finished(request.id, result)
+
+	@sanitize(
+		name=StringSanitizer(required=True),
+		room=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
+		directory=StringSanitizer(required=True),
+		shareMode=StringSanitizer(required=True),
+		internetRule=StringSanitizer(required=True),
+		customRule=StringSanitizer(),
+		examEndTime=StringSanitizer(required=True),
+		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
+		files=ListSanitizer(StringSanitizer()),
+	)
+	@require_password
+	@LDAP_Connection()
+	def add(self, request, ldap_user_read=None):
+		self.finished(request.id, self._save_exam(request))
+
+	@sanitize(
+		name=StringSanitizer(required=True),
+		room=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
+		directory=StringSanitizer(required=True),
+		shareMode=StringSanitizer(required=True),
+		internetRule=StringSanitizer(required=True),
+		customRule=StringSanitizer(),
+		examEndTime=StringSanitizer(required=True),
+		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
+		files=ListSanitizer(StringSanitizer()),
+	)
+	@require_password
+	@LDAP_Connection()
+	def put(self, request, ldap_user_read=None):
+		self.finished(request.id, self._save_exam(request, update=True))
 
 	@sanitize(
 		name=StringSanitizer(required=True),
@@ -569,7 +687,7 @@ class Instance(SchoolBaseModule):
 			{
 				'name': project.name,
 				'sender': project.sender.username,  # teacher / admins
-				'recipients': [r.username for r in project.recipients],  # students
+				# 'recipients': [r.username for r in project.recipients],  # currently broken
 				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M') if project.starttime else '',
 				'files': len(project.files) if project.files else 0,
 				'isDistributed': project.isDistributed,
