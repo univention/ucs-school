@@ -77,6 +77,7 @@ define([
 		umcpCommand: null,
 		autoValidate: true,
 		standbyOpacity: 1.0,
+		examName: null,
 		_progressBar: null,
 		_userPrefix: null,
 		_grid: null,
@@ -427,6 +428,16 @@ define([
 			allReady.push(ucrDeferred);
 			allReady.push(endTimeDeferred);
 			allReady.push(getIP);
+			if (this.examName) {
+				this.getWidget('general', 'name').set('disabled', true);
+				var getDeferred = this.umcpCommand('schoolexam/exam/get', [this.examName]);
+				allReady.push(getDeferred);
+				getDeferred.then(lang.hitch(this, function(response) {
+					var values = response.result[0];
+					this.setWizardValues(values);
+				}))
+			}
+
 			all(allReady).then(lang.hitch(this, function() {
 				this.standby(false);
 			}));
@@ -455,6 +466,12 @@ define([
 			this._grid.on('reboot', lang.hitch(this, '_reboot'));
 		},
 
+		setWizardValues: function(values) {
+			array.forEach(this.pages, lang.hitch(this, function(page) {
+				this._pages[page.name]._form.setFormValues(values);
+			}));
+		},
+
 		isPageVisible: function(pageName) {
 			var visible = this.inherited(arguments);
 			if (pageName == 'files') {
@@ -478,6 +495,20 @@ define([
 				}
 				this._pages[pageName]._footerButtons.next.set('label', label);
 			}
+		},
+
+		getFooterButtons(pageName) {
+			buttons = this.inherited(arguments);
+			var pages = ['general', 'advanced', 'files', 'proxy_settings', 'share_settings'];
+			if (pages.indexOf(pageName) !== -1) {
+				buttons.push({
+				name: 'save',
+				defaultButton: false,
+				label: 'SAVE EXAM',
+				callback: lang.hitch(this, '_saveExam')
+				});
+			}
+			return buttons;
 		},
 
 		_updateSuccessPage: function() {
@@ -670,6 +701,23 @@ define([
 			return invalidNextPage;
 		},
 
+		_saveExam: function() {
+			var values = this.getValues();
+			if (!values.name) {
+				dialog.alert('Please enter a room name!');
+				return;
+			}
+			if (this.examName) {
+				this.umcpCommand('schoolexam/exam/put', values).then(lang.hitch(this, function(result) {
+					this.emit('Cancel');
+				}))
+			} else {
+				this.umcpCommand('schoolexam/exam/add', values).then(lang.hitch(this, function(result) {
+					this.emit('Cancel');
+				}))
+			}
+		},
+
 		_startExam: function() {
 			var nextPage = new Deferred();
 
@@ -815,7 +863,19 @@ define([
 				iconClass: 'umcIconAdd',
 				isContextAction: false,
 				isStandardAction: true,
-				callback: lang.hitch(this, '_newObject')
+				callback: lang.hitch(this, '_openWizard', false)
+			}, {
+				name: 'edit',
+				label: _('Edit exam'),
+				description: _('Edit exam'),
+				iconClass: 'umcIconEdit',
+				isContextAction: true,
+				isMultiAction: false,
+				isStandardAction: true,
+				callback: lang.hitch(this, '_openWizard', true),
+				canExecute: lang.hitch(this, function(exam) {
+					return !exam.isDistributed;
+				})
 			}];
 
 			// define the grid columns
@@ -848,10 +908,7 @@ define([
 				actions: actions,
 				columns: columns,
 				moduleStore: this.moduleStore,
-				query: { pattern: '' },
-				gridOptions: {
-					selectionMode: 'none'
-				}
+				query: { pattern: '' }
 			});
 
 			this._searchPage.addChild(this._grid);
@@ -896,10 +953,11 @@ define([
 			// been added to the page container object
 			this._searchPage.startup();
 		},
-		_newObject: function() {
+		_openWizard: function(editMode) {
 			this._examWizard = new ExamWizard({
 				'class': 'umcCard',
-				umcpCommand: lang.hitch(this, 'umcpCommand')
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				examName: editMode ? this._grid.getSelectedIDs()[0] : null
 			});
 			this.addChild(this._examWizard);
 
