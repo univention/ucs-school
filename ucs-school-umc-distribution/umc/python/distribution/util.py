@@ -250,7 +250,6 @@ class Project(_Dict):
 			sender=None,  # User
 			recipients=[],  # [ (User|Group) , ...]
 			isDistributed=False,
-			examStarted=False,
 			room=None,  # str
 		)
 
@@ -337,13 +336,6 @@ class Project(_Dict):
 			_dict[key] = datetime.strftime(time, '%Y-%m-%d %H:%M')
 		else:
 			raise ValueError('property "%s" needs to be of type str or datetime' % key)
-
-	@property
-	def exam_started(self):
-		'''
-		If True the exam is currently running, else it has not been started yet.
-		'''
-		return self.dict['examStarted']
 
 	@property
 	def starttime(self):
@@ -772,7 +764,7 @@ class Project(_Dict):
 		return project
 
 	@staticmethod
-	def list(only_started=True):
+	def list(only_distributed=False):
 		fn_projectlist = os.listdir(DISTRIBUTION_DATA_PATH)
 		MODULE.info('distribution_search: WALK = %s' % fn_projectlist)
 		projectlist = []
@@ -785,9 +777,9 @@ class Project(_Dict):
 			# load the project and add it to the result list
 			project = Project.load(fname)
 			if project:
-				if only_started and 'examStarted' in project.dict and project.dict['examStarted']:
+				if only_distributed and 'isDistributed' in project.dict and project.dict['isDistributed']:
 					projectlist.append(project)
-				elif not only_started:
+				elif not only_distributed:
 					projectlist.append(project)
 
 		# sort final result

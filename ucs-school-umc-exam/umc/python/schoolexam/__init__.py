@@ -574,10 +574,9 @@ class Instance(SchoolBaseModule):
 				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M') if project.starttime else '',
 				'files': len(project.files) if project.files else 0,
 				'isDistributed': project.isDistributed,
-				'examStarted': project.examStarted,  # if True, exam has started
 				'room': ComputerRoom.get_name_from_dn(project.room) if project.room else '',
 		}
-			for project in util.distribution.Project.list(only_started=False)
+			for project in util.distribution.Project.list()
 			if
 					pattern.match(project.name)
 			and (

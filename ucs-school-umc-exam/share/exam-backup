@@ -54,7 +54,7 @@ def main():
 
 	util.distribution.POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = '-Zwischenergebnisse'
 
-	for project in util.distribution.Project.list():
+	for project in util.distribution.Project.list(only_distributed=True):
 		if project.num_results < limit:
 			project.collect(readOnly=True, compress=compress)
 		else:
