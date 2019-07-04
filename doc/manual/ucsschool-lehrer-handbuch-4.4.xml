@@ -464,7 +464,7 @@ feedback@univention.de
 		<section id="lehrerdoku:klassenarbeit:start">
 		  <title>Einrichten einer Klassenarbeit</title>
 		  <para>
-			Eine neue Klassenarbeit kann über den Knopf <guimenu>Eine neue Klassenarbeit starten</guimenu> eingerichtet werden.
+			Eine neue Klassenarbeit kann über den Knopf <guimenu>Eine neue Klassenarbeit vorbereiten</guimenu> eingerichtet werden.
 			In mehreren Schritten werden alle Einstellungen für die Klassenarbeit festgelegt.
 		  </para>
 		  <orderedlist>
@@ -514,6 +514,12 @@ feedback@univention.de
 		  <para>
 			  Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu> werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt.
 			  Dies kann je nach Serverauslastung, Geschwindigkeit der Verbindung zum Server und Anzahl der Schüler und Rechner im Raum einige Minuten dauern.
+		  </para>
+		  <para>
+			  Alternativ kann man die Klassenarbeit jederzeit über die Schaltfläche <guimenu>Klassenarbeit speichern</guimenu> zur späteren Bearbeitung abspeichern.
+			  Dazu muss lediglich ein Name angegeben werden. Auf der Übersicht können solche Klassenarbeiten über die Schaltfläche <guimenu>Klassenarbeit bearbeiten</guimenu>
+			  erneut geladen und weiter angepasst, oder, falls alle notwendigen Informationen vorhanden sind, gestartet werden. Nur die ursprünglichen Autoren
+			  dürfen Klassenarbeiten im Nachhinein bearbeiten oder starten.
 		  </para>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:neustart">
