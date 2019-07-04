@@ -16,12 +16,6 @@ import univention.testing.udm
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
 
-class MyObj(object):
-	def __init__(self, name, dn):
-		self.name = name
-		self.dn = dn
-
-
 class ACLTester(object):
 	def __init__(self, ucr, actor_dn):
 		self.actor_dn = actor_dn
