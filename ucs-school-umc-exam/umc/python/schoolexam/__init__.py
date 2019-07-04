@@ -38,6 +38,7 @@ import time
 import traceback
 import subprocess
 import datetime
+from itertools import chain
 
 import ldap
 import notifier
@@ -668,7 +669,8 @@ class Instance(SchoolBaseModule):
 			{
 				'name': project.name,
 				'sender': project.sender.username,  # teacher / admins
-				# 'recipients': [r.username for r in project.recipients],  # currently broken
+				'recipientsGroups': [g.name for g in project.recipients if g.type == util.distribution.TYPE_GROUP],
+				'recipientsStudents': self._get_project_students(project),
 				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M') if project.starttime else '',
 				'files': len(project.files) if project.files else 0,
 				'isDistributed': project.isDistributed,
@@ -681,6 +683,11 @@ class Instance(SchoolBaseModule):
 					filter == 'all' or compare_dn(project.sender.dn, self.user_dn)
 			)
 		]
+
+	def _get_project_students(self, project):
+		students = [s for s in project.recipients if s.type == util.distribution.TYPE_USER]
+		students += list(chain.from_iterable(g.members for g in project.recipients if g.type == util.distribution.TYPE_GROUP))
+		return list(set(s.username for s in students))
 
 	@sanitize(
 		groups=ListSanitizer(DNSanitizer(minimum=1), required=True, min_elements=1)

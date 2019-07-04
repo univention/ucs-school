@@ -888,10 +888,6 @@ define([
 				label: _('Name'),
 				width: 'auto'
 			}, {
-				name: 'sender',
-				label: _('Owner'),
-				width: 'auto'
-			}, {
 				name: 'isDistributed',
 				label: _('Status'),
 				width: 'auto',
@@ -899,9 +895,22 @@ define([
 					return isDistributed ? _('started') : _('pending');
 				})
 			}, {
-				name: 'files',
-				label: _('#Files'),
-				width: 'auto'
+				name: 'recipientsStudents',
+				label: _('#Students'),
+				width: 'auto',
+				formatter: lang.hitch(this, function(recipientsStudents) {
+					return recipientsStudents.length;
+				})
+			}, {
+				name: 'recipientsGroups',
+				label: _('Classes'),
+				width: 'auto',
+				formatter: lang.hitch(this, function(recipientsGroups) {
+					if (recipientsGroups.length  === 0) {
+						return '';
+					}
+					return recipientsGroups.join(', ');
+				})
 			}, {
 				name: 'room',
 				label: _('Room'),
@@ -967,11 +976,12 @@ define([
 
 			this._examWizard.on('finished', lang.hitch(this, function() {
 				this.selectChild(this._searchPage);
-				this._examWizard.destroy()
+				this._examWizard.destroy();
 			}));
 			this._examWizard.on('cancel', lang.hitch(this, function() {
+				this._grid.filter(this._grid.query);  // cancel is also called after saving or starting an exam
 				this.selectChild(this._searchPage);
-				this._examWizard.destroy()
+				this._examWizard.destroy();
 			}));
 			this.selectChild(this._examWizard);
 		}
