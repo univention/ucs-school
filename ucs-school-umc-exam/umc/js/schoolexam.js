@@ -875,7 +875,7 @@ define([
 				isStandardAction: true,
 				callback: lang.hitch(this, '_openWizard', true),
 				canExecute: lang.hitch(this, function(exam) {
-					return !exam.isDistributed;
+					return !exam.isDistributed && exam['sender'] === tools.status()['username'];
 				})
 			}];
 
