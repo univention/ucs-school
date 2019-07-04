@@ -6,20 +6,29 @@
 ## timeout: 3600
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
+## bugs: [35447]
 
+# This test creates 3 school OUs containing users, groups and computers:
+# 1) "schoolA", whose user members are single-school users in "schoolA"
+# 2) "schoolB", whose user members are multi-school users in "schoolA" AND "schoolB"
+# 3) "schoolC", whose user members are single-school users in "schoolC"
+# and additionally some central/global users/computers are also created.
+#
+# WARNING: ACL tests are run by actively modifying the LDAP directory!
+#
+# For debugging purposes, you can create /tmp/75_ldap_acls_specific_tests.debug before
+# starting the test. Then, the environment is set up, and the script waits for the
+# existance of /tmp/75_ldap_acls_specific_tests.continue before the actual tests and
+# cleanup tasks are performed.
+
+
+from __future__ import absolute_import
 from __future__ import print_function
 import os
 import time
-
 import univention.admin.uldap
 import univention.testing.udm
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
-
-
-class MyObj(object):
-	def __init__(self, name, dn):
-		self.name = name
-		self.dn = dn
 
 
 class ACLTester(object):
@@ -40,8 +49,14 @@ class ACLTester(object):
 		assert permission in ('none', 'read', 'write')
 		if permission == 'none':
 			result = self.lo.get(dn)
-			if result.get(attribute) is not None:
-				self.errors.append('Expected that {!r} has no permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+			try:
+				self.lo.modify(dn, [[attribute, result.get(attribute), ['TEST']]])
+				self.lo.modify(dn, [[attribute, ['TEST'], result.get(attribute)]])
+				self.errors.append('Expected that {!r} has NO permission to read attribute {!r} from {!r} but is also able to write'.format(self.actor_dn, attribute, dn))
+			except univention.admin.uexceptions.permissionDenied:
+				if result.get(attribute) is not None:
+					self.errors.append('Expected that {!r} has NO permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+
 		elif permission == 'read':
 			result = self.lo.get(dn)
 			if result.get(attribute) is None:
@@ -52,6 +67,7 @@ class ACLTester(object):
 				self.errors.append('Expected that {!r} has only permission to read attribute {!r} from {!r} but is also able to write'.format(self.actor_dn, attribute, dn))
 			except univention.admin.uexceptions.permissionDenied:
 				pass
+
 		elif permission == 'write':
 			result = self.lo.get(dn)
 			if result.get(attribute) is None:
@@ -124,6 +140,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('none', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
+			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
+			acl_tester.test_attribute(dn, 'krb5Key', permission)
 		acl_tester.raise_on_error()
 
 		acl_tester = ACLTester(self.ucr, self.schoolB.admin1.dn)
@@ -154,6 +172,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('none', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
+			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
+			acl_tester.test_attribute(dn, 'krb5Key', permission)
 		acl_tester.raise_on_error()
 
 		acl_tester = ACLTester(self.ucr, self.schoolC.admin1.dn)
@@ -184,6 +204,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('read', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
+			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
+			acl_tester.test_attribute(dn, 'krb5Key', permission)
 		acl_tester.raise_on_error()
 
 
@@ -191,7 +213,6 @@ def main():
 	with LDAPACLCheck() as test_suite:
 		test_suite.create_multi_env_global_objects()
 		test_suite.create_multi_env_school_objects()
-		test_suite.run_all_tests()
 
 		# for debugging purposes
 		if os.path.exists('/tmp/75_ldap_acls_specific_tests.debug'):
@@ -200,6 +221,8 @@ def main():
 			logger.info('Waiting for cleanup until %r exists...', fn)
 			while not os.path.exists(fn):
 				time.sleep(1)
+
+		test_suite.run_all_tests()
 
 
 if __name__ == '__main__':
