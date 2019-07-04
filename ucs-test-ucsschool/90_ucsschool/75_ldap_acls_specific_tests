@@ -6,6 +6,21 @@
 ## timeout: 3600
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
+## bugs: [35447]
+
+# This test creates 3 school OUs containing users, groups and computers:
+# 1) "schoolA", whose user members are single-school users in "schoolA"
+# 2) "schoolB", whose user members are multi-school users in "schoolA" AND "schoolB"
+# 3) "schoolC", whose user members are single-school users in "schoolC"
+# and additionally some central/global users/computers are also created.
+#
+# WARNING: ACL tests are run by actively modifying the LDAP directory!
+#
+# For debugging purposes, you can create /tmp/75_ldap_acls_specific_tests.debug before
+# starting the test. Then, the environment is set up, and the script waits for the
+# existance of /tmp/75_ldap_acls_specific_tests.continue before the actual tests and
+# cleanup tasks are performed.
+
 
 from __future__ import print_function
 import os
