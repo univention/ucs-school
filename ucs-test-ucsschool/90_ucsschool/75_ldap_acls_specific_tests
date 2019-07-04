@@ -191,7 +191,6 @@ def main():
 	with LDAPACLCheck() as test_suite:
 		test_suite.create_multi_env_global_objects()
 		test_suite.create_multi_env_school_objects()
-		test_suite.run_all_tests()
 
 		# for debugging purposes
 		if os.path.exists('/tmp/75_ldap_acls_specific_tests.debug'):
@@ -200,6 +199,8 @@ def main():
 			logger.info('Waiting for cleanup until %r exists...', fn)
 			while not os.path.exists(fn):
 				time.sleep(1)
+
+		test_suite.run_all_tests()
 
 
 if __name__ == '__main__':
