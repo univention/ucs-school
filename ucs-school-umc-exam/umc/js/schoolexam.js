@@ -434,6 +434,7 @@ define([
 				allReady.push(getDeferred);
 				getDeferred.then(lang.hitch(this, function(response) {
 					var values = response.result[0];
+					values['school'] = /cn=(.*)-/.exec(values['room'])[1].split('-')[0];
 					this.setWizardValues(values);
 				}))
 			}
