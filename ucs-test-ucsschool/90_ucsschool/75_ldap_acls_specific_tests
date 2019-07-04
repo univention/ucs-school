@@ -22,10 +22,10 @@
 # cleanup tasks are performed.
 
 
+from __future__ import absolute_import
 from __future__ import print_function
 import os
 import time
-
 import univention.admin.uldap
 import univention.testing.udm
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
