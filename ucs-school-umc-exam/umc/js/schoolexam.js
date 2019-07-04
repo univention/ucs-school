@@ -505,7 +505,7 @@ define([
 				buttons.push({
 				name: 'save',
 				defaultButton: false,
-				label: 'SAVE EXAM',
+				label: _('Save exam'),
 				callback: lang.hitch(this, '_saveExam')
 				});
 			}
