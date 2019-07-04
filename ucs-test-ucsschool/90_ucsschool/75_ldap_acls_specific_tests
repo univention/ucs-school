@@ -34,8 +34,14 @@ class ACLTester(object):
 		assert permission in ('none', 'read', 'write')
 		if permission == 'none':
 			result = self.lo.get(dn)
-			if result.get(attribute) is not None:
-				self.errors.append('Expected that {!r} has no permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+			try:
+				self.lo.modify(dn, [[attribute, result.get(attribute), ['TEST']]])
+				self.lo.modify(dn, [[attribute, ['TEST'], result.get(attribute)]])
+				self.errors.append('Expected that {!r} has NO permission to read attribute {!r} from {!r} but is also able to write'.format(self.actor_dn, attribute, dn))
+			except univention.admin.uexceptions.permissionDenied:
+				if result.get(attribute) is not None:
+					self.errors.append('Expected that {!r} has NO permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+
 		elif permission == 'read':
 			result = self.lo.get(dn)
 			if result.get(attribute) is None:
@@ -46,6 +52,7 @@ class ACLTester(object):
 				self.errors.append('Expected that {!r} has only permission to read attribute {!r} from {!r} but is also able to write'.format(self.actor_dn, attribute, dn))
 			except univention.admin.uexceptions.permissionDenied:
 				pass
+
 		elif permission == 'write':
 			result = self.lo.get(dn)
 			if result.get(attribute) is None:
