@@ -118,6 +118,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('none', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
+			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
+			acl_tester.test_attribute(dn, 'krb5Key', permission)
 		acl_tester.raise_on_error()
 
 		acl_tester = ACLTester(self.ucr, self.schoolB.admin1.dn)
@@ -148,6 +150,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('none', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
+			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
+			acl_tester.test_attribute(dn, 'krb5Key', permission)
 		acl_tester.raise_on_error()
 
 		acl_tester = ACLTester(self.ucr, self.schoolC.admin1.dn)
@@ -178,6 +182,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('read', self.schoolC.admin2.dn),
 		]:
 			acl_tester.test_attribute(dn, 'userPassword', permission)
+			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
+			acl_tester.test_attribute(dn, 'krb5Key', permission)
 		acl_tester.raise_on_error()
 
 
