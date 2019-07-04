@@ -8,15 +8,21 @@
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-webproxy]
 
+
 from univention.testing.ucsschool.simplecurl import SimpleCurl
 from univention.config_registry import handler_set, handler_unset
 from univention.testing.umc import Client
 import pycurl
 import subprocess
+import time
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+
+
+class WrongStatusError(Exception):
+	pass
 
 
 def resetPasswd(host, userdn, flavor, nextLogin):
@@ -32,10 +38,11 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 	admin = account.username
 	passwd = account.bindpw
 	connection.authenticate(admin, passwd)
-	if connection.umc_command('schoolusers/password/reset', options, flavor).result:
-		return newpassword
-	else:
+	if not connection.umc_command('schoolusers/password/reset', options, flavor).result:
 		utils.fail('Password reset for (%r) unsuccessful' % (userdn,))
+	subprocess.check_call(['service', 'squid', 'reload'])  # reset squid credential cache (basic auth)
+	time.sleep(2)  # reset ntlm auth helper cache
+	return newpassword
 
 
 def authProxy(host, url, name, passwd, authTyp, expected_response):
@@ -44,7 +51,7 @@ def authProxy(host, url, name, passwd, authTyp, expected_response):
 	curl = SimpleCurl(proxy=host, username=name, password=passwd, auth=authTyp)
 	result = curl.response(url)
 	if result != expected_response:
-		utils.fail('Proxy %s fails and returns %s, while expected  to return %s' % (
+		raise WrongStatusError('Proxy %s fails and returns %s, while expected  to return %s' % (
 			auth_text,
 			result,
 			expected_response))
@@ -60,13 +67,14 @@ def main():
 				'squid/basicauth/children=1',
 				'squid/ntlmauth=yes',
 				'squid/ntlmauth/children=1',
-				'squid/ntlmauth/cache/timeout=10',
+				'squid/ntlmauth/cache/timeout=1',
 			])
 			handler_unset(['squid/ntlmauth/keepalive'])
 			subprocess.Popen(["/etc/init.d/squid", "restart"], stdin=subprocess.PIPE).communicate()
 			with utu.UCSTestSchool() as schoolenv:
 				school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 				stu, studn = schoolenv.create_user(school)
+				utils.wait_for()
 
 				print 'check student auth with initial state'
 				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 200)
@@ -74,18 +82,19 @@ def main():
 
 				print "resetting student user password"
 				newpasswd = resetPasswd(host, studn, 'student', False)
-				utils.wait_for_replication_and_postrun()
+				utils.wait_for()
 
 				print "check student auth with the old password"
-				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
-				# DISABLED DUE TO BUG 44303: credentials ttl for basic auth is currently hardcoded to 2 hours
-				# authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
+				#  retry to avoid errors due to slow replication
+				utils.retry_on_error(lambda: authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
+				utils.retry_on_error(lambda: authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
 
 				print 'check student auth with the new password'
 				authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
 				authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
 
 				tea, teadn = schoolenv.create_user(school, is_teacher=True)
+				utils.wait_for()
 
 				print 'check teacher auth with initial state'
 				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 200)
@@ -93,11 +102,12 @@ def main():
 
 				print 'resetting teacher user password'
 				newpasswd = resetPasswd(host, teadn, 'teacher', False)
-				utils.wait_for_replication_and_postrun()
+				utils.wait_for()
 
 				print 'check teacher auth with the old password'
-				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407)
-				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407)
+				#  retry to avoid errors due to slow replication
+				utils.retry_on_error(lambda: authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
+				utils.retry_on_error(lambda: authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
 
 				print 'check teacher auth with the new password'
 				authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
