@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.30) unstable; urgency=low
+
+  * Bug #35447: moved checks from 75_ldap_acls_admins to
+    75_ldap_acls_specific_tests
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 05 Jul 2019 17:40:45 +0200
+
 ucs-test-ucsschool (6.0.29) unstable; urgency=low
 
   * Bug #35447: fixed 23_password_reset
