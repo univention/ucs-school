@@ -18,7 +18,7 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			school_admin, school_admin_dn = schoolenv.create_school_admin(school)
+			school_admin, school_admin_dn = schoolenv.create_school_admin(school, is_staff=False, is_teacher=True)
 
 			staff, staff_dn = schoolenv.create_staff(school)
 			tea_staff, tea_staff_dn = schoolenv.create_teacher_and_staff(school)
@@ -41,13 +41,13 @@ def main():
 
 			acl.assert_base_dn('read')
 
-			acl.assert_student(stu_dn, 'write')
+			# moved to "75_ldap_acls_specific_tests"
+			# acl.assert_student(stu_dn, 'write')
+			# acl.assert_user(tea_dn, 'write')
+			# acl.assert_user(staff_dn, 'write')
+			# acl.assert_user(tea_staff_dn, 'write')
 
 			acl.assert_room(room.dn(), 'write')
-
-			acl.assert_user(tea_dn, 'write')
-			acl.assert_user(staff_dn, 'write')
-			acl.assert_user(tea_staff_dn, 'write')
 
 			acl.assert_teacher_group('write')
 			acl.assert_student_group('write')

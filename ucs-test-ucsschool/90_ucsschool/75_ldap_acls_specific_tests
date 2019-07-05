@@ -26,10 +26,38 @@ from __future__ import absolute_import
 from __future__ import print_function
 import os
 import time
+import random
 import univention.admin.uldap
 import univention.testing.udm
+import univention.testing.strings as uts
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
+ATTR2TYPE = {
+	'krb5KeyVersionNumber': 'str_int',
+	'sambaPwdLastSet': 'str_int',
+	'shadowLastChange': 'str_int',
+	'shadowMax': 'str_int',
+	'sambaBadPasswordCount': 'str_int',
+}
+
+PASSWORD_ATTRIBUTES = [
+	'krb5KeyVersionNumber',
+#	'krb5KDCFlags',
+	'krb5Key',
+#	'krb5PasswordEnd',
+#	'sambaAcctFlags',
+	'sambaPwdLastSet',
+	'sambaLMPassword',
+	'sambaNTPassword',
+#	'shadowLastChange',
+	'shadowMax',
+	'userPassword',
+	'pwhistory',
+#	'sambaPwdCanChange',
+#	'sambaPwdMustChange',
+	'sambaPasswordHistory',
+#	'sambaBadPasswordCount',
+]
 
 class ACLTester(object):
 	def __init__(self, ucr, actor_dn):
@@ -44,14 +72,23 @@ class ACLTester(object):
 		self.errors = []  # type: List[str]
 		logger.info('ACTOR: %s', self.actor_dn)
 
-	def test_attribute(self, dn, attribute, permission):
+	def test_attribute(self, dn, attribute, permission, is_int=False):
 		logger.info('test_attribute(%r, %r, %r)',  dn, attribute, permission)
 		assert permission in ('none', 'read', 'write')
+
+		attr_type = ATTR2TYPE.get(attribute, 'str')
+		if attr_type == 'str':
+			value = [uts.random_string()]  # type: Union[str, List[str]]
+		elif attr_type == 'str_int':
+			value = str(random.randint(100000, 999999))
+		else:
+			raise Exception('Unknown attribute type: {}'.format(attr_type))
+
 		if permission == 'none':
 			result = self.lo.get(dn)
 			try:
-				self.lo.modify(dn, [[attribute, result.get(attribute), ['TEST']]])
-				self.lo.modify(dn, [[attribute, ['TEST'], result.get(attribute)]])
+				self.lo.modify(dn, [[attribute, result.get(attribute), value]])
+				self.lo.modify(dn, [[attribute, value, result.get(attribute)]])
 				self.errors.append('Expected that {!r} has NO permission to read attribute {!r} from {!r} but is also able to write'.format(self.actor_dn, attribute, dn))
 			except univention.admin.uexceptions.permissionDenied:
 				if result.get(attribute) is not None:
@@ -59,24 +96,23 @@ class ACLTester(object):
 
 		elif permission == 'read':
 			result = self.lo.get(dn)
-			if result.get(attribute) is None:
-				self.errors.append('Expected that {!r} has permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+# Disabled on purpose: object attributes may be empty
+#			if result.get(attribute) is None:
+#				self.errors.append('Expected that {!r} has permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
 			try:
-				self.lo.modify(dn, [[attribute, result.get(attribute), ['TEST']]])
-				self.lo.modify(dn, [[attribute, ['TEST'], result.get(attribute)]])
+				self.lo.modify(dn, [[attribute, result.get(attribute), value]])
+				self.lo.modify(dn, [[attribute, value, result.get(attribute)]])
 				self.errors.append('Expected that {!r} has only permission to read attribute {!r} from {!r} but is also able to write'.format(self.actor_dn, attribute, dn))
 			except univention.admin.uexceptions.permissionDenied:
 				pass
 
 		elif permission == 'write':
 			result = self.lo.get(dn)
-			if result.get(attribute) is None:
-				self.errors.append('Expected that {!r} has permission to write {!r} to {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
 			try:
-				self.lo.modify(dn, [[attribute, result.get(attribute), ['TEST']]])
-				self.lo.modify(dn, [[attribute, ['TEST'], result.get(attribute)]])
+				self.lo.modify(dn, [[attribute, result.get(attribute), value]])
+				self.lo.modify(dn, [[attribute, value, result.get(attribute)]])
 			except univention.admin.uexceptions.permissionDenied:
-				self.errors.append('Expected that {!r} has permission to write {!r} to {!r} but can only read: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+				self.errors.append('Expected that {!r} has permission to modify {!r} of {!r} but can only read: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
 
 	def raise_on_error(self):
 		"""
@@ -96,7 +132,23 @@ class ACLTester(object):
 
 class LDAPACLCheck(AutoMultiSchoolEnv):
 	def run_all_tests(self):  # type: () -> None
+		self.test_schooladmin_base_dn()
 		self.test_schooladmin_pw_reset()
+
+	def test_schooladmin_base_dn(self):  # type: () -> None
+		'''
+		Check if school admin is able to modify a selected list of attributes
+		at LDAP base dn.
+		'''
+		acl_tester = ACLTester(self.ucr, self.schoolA.admin1.dn)
+		for attr_name in [
+				'univentionObjectType',
+				'univentionPolicyReference',
+				'krb5RealmName',
+				'msGPOLink',
+		]:
+			acl_tester.test_attribute(self.ucr.get('ldap/base'), attr_name, 'read')
+
 
 	def test_schooladmin_pw_reset(self):  # type: () -> None
 		'''
@@ -139,9 +191,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('none', self.schoolC.admin1.dn),
 				('none', self.schoolC.admin2.dn),
 		]:
-			acl_tester.test_attribute(dn, 'userPassword', permission)
-			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
-			acl_tester.test_attribute(dn, 'krb5Key', permission)
+			for attr_name in PASSWORD_ATTRIBUTES:
+				acl_tester.test_attribute(dn, attr_name, permission)
 		acl_tester.raise_on_error()
 
 		acl_tester = ACLTester(self.ucr, self.schoolB.admin1.dn)
@@ -171,9 +222,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('none', self.schoolC.admin1.dn),
 				('none', self.schoolC.admin2.dn),
 		]:
-			acl_tester.test_attribute(dn, 'userPassword', permission)
-			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
-			acl_tester.test_attribute(dn, 'krb5Key', permission)
+			for attr_name in PASSWORD_ATTRIBUTES:
+				acl_tester.test_attribute(dn, attr_name, permission)
 		acl_tester.raise_on_error()
 
 		acl_tester = ACLTester(self.ucr, self.schoolC.admin1.dn)
@@ -203,9 +253,8 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('read', self.schoolC.admin1.dn),
 				('read', self.schoolC.admin2.dn),
 		]:
-			acl_tester.test_attribute(dn, 'userPassword', permission)
-			acl_tester.test_attribute(dn, 'sambaNTPassword', permission)
-			acl_tester.test_attribute(dn, 'krb5Key', permission)
+			for attr_name in PASSWORD_ATTRIBUTES:
+				acl_tester.test_attribute(dn, attr_name, permission)
 		acl_tester.raise_on_error()
 
 
