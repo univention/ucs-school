@@ -434,8 +434,10 @@ define([
 				allReady.push(getDeferred);
 				getDeferred.then(lang.hitch(this, function(response) {
 					var values = response.result[0];
+					if (values['room']) {
 					// This expects the rooms to be in the correct OU in the LDAP!
 					values['school'] = /ou=([^,]*),/.exec(values['room'])[1];
+					}
 					this.setWizardValues(values);
 				}))
 			}
