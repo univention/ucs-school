@@ -593,7 +593,7 @@ class Instance(SchoolBaseModule):
 				# get a list of user accounts in parallel exams
 				parallelUsers = dict([
 					(iuser.username, iproject.description)
-					for iproject in util.distribution.Project.list()
+					for iproject in util.distribution.Project.list(only_distributed=True)
 					if iproject.name != project.name
 					for iuser in iproject.recipients
 				])
@@ -652,8 +652,8 @@ class Instance(SchoolBaseModule):
 		pattern=PatternSanitizer(required=False, default='.*'),
 		filter=ChoicesSanitizer(['all', 'private'], default='private')
 	)
-	@simple_response
-	def query(self, pattern, filter):  # type: (Pattern[str], str) -> List[Dict[str, Any]]
+	@LDAP_Connection()
+	def query(self, request, ldap_user_read=None):
 		"""
 		Get all exams (both running and planned).
 
@@ -665,29 +665,29 @@ class Instance(SchoolBaseModule):
 		:return: list of projects
 		:rtype: list(dict)
 		"""
-		return [
+		pattern = request.options['pattern']
+		filter = request.options['filter']
+		result = [
 			{
 				'name': project.name,
 				'sender': project.sender.username,  # teacher / admins
 				'recipientsGroups': [g.name for g in project.recipients if g.type == util.distribution.TYPE_GROUP],
-				'recipientsStudents': self._get_project_students(project),
+				'recipientsStudents': self._get_project_students(project, ldap_user_read),
 				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M') if project.starttime else '',
 				'files': len(project.files) if project.files else 0,
 				'isDistributed': project.isDistributed,
 				'room': ComputerRoom.get_name_from_dn(project.room) if project.room else '',
-		}
+			}
 			for project in util.distribution.Project.list()
-			if
-					pattern.match(project.name)
-			and (
-					filter == 'all' or compare_dn(project.sender.dn, self.user_dn)
-			)
+			if pattern.match(project.name) and (filter == 'all' or compare_dn(project.sender.dn, self.user_dn))
 		]
+		self.finished(request.id, result)   # cannot use @simple_response with @LDAP_Connection :/
 
-	def _get_project_students(self, project):
+	def _get_project_students(self, project, lo):
 		students = [s for s in project.recipients if s.type == util.distribution.TYPE_USER]
 		students += list(chain.from_iterable(g.members for g in project.recipients if g.type == util.distribution.TYPE_GROUP))
-		return list(set(s.username for s in students))
+		students = set((s.username, s.dn) for s in students)
+		return [s[0] for s in students if User.from_dn(s[1], None, lo).is_student(lo)]
 
 	@sanitize(
 		groups=ListSanitizer(DNSanitizer(minimum=1), required=True, min_elements=1)
