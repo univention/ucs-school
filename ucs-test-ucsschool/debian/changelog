@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.31) unstable; urgency=low
+
+  * Bug #35447: fix 24_password_reset_acl
+  * Bug #35447: fix 04_ucs-school-reset-password-check
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 08 Jul 2019 10:39:10 +0200
+
 ucs-test-ucsschool (6.0.30) unstable; urgency=low
 
   * Bug #35447: moved checks from 75_ldap_acls_admins to
