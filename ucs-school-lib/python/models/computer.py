@@ -198,23 +198,23 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		if inventory_numbers:
 			udm_obj['inventoryNumber'] = inventory_numbers
 		ipv4_network = self.get_ipv4_network()
-		if ipv4_network:
+		if ipv4_network and len(udm_obj['ip']) < 2:
 			if self._ip_is_set_to_subnet(ipv4_network):
 				self.logger.info('IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!')
-				udm_obj['ip'] = ''
+				udm_obj['ip'] = []
 			else:
-				udm_obj['ip'] = str(ipv4_network.ip)
-		# set network after ip. Otherwise UDM does not do any
-		#   nextIp magic...
-		network = self.get_network()
-		if network:
-			# reset network, so that next line triggers free ip
-			udm_obj.old_network = None
-			try:
-				udm_obj['network'] = network.dn
-			except nextFreeIp:
-				self.logger.error('Tried to set IP automatically, but failed! %r is full', network)
-				raise nextFreeIp(_('There are no free addresses left in the subnet!'))
+				udm_obj['ip'] = [str(ipv4_network.ip)]
+			# set network after ip. Otherwise UDM does not do any
+			#   nextIp magic...
+			network = self.get_network()
+			if network:
+				# reset network, so that next line triggers free ip
+				udm_obj.old_network = None
+				try:
+					udm_obj['network'] = network.dn
+				except nextFreeIp:
+					self.logger.error('Tried to set IP automatically, but failed! %r is full', network)
+					raise nextFreeIp(_('There are no free addresses left in the subnet!'))
 
 	@classmethod
 	def get_container(cls, school):

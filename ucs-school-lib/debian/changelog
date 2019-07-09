@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.2-1) unstable; urgency=low
+
+  * Bug #49608: Fix modify for computer objects to retain multiple ip and mac
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Jul 2019 09:29:01 +0200
+
 ucs-school-lib (12.1.2-0) unstable; urgency=low
 
   * Bug #48080: Add teacher_computer role to lib
