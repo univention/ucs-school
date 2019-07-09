@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.1.2-0A~4.4.0.201906140838
+fix: 12.1.2-1A~4.4.0.201907090931
 desc: |
  * Create correct hostname for school dc, when not set and not a singleserver (Bug #49462).
  * Fix value_type of ip_address and mac_address (Bug #49608).
