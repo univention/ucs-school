@@ -251,8 +251,12 @@
 				Nach dem Anlegen der Schule muss ein UCS-System mit der Systemrolle <emphasis>&ucsSlave;</emphasis> installiert werden.
 				Die Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Während der Installation ist
 				darauf zu achten, dass der Rechnername bei der Installation mit dem Namen des Schulservers übereinstimmt, der beim
-				Anlegen der Schule angegeben wurde. Für die Installation &ucsUAS; muss im UCS-Installer keine zusätzliche Software
-				ausgewählt werden.
+				Anlegen der Schule angegeben wurde. Nach der Angabe des Schulservernamens wird vom UCS-Installer die Rolle abgefragt,
+				die der Schulserver in der &ucsUAS;-Domäne übernehmen soll. Für einen edukativen Schulserver ist hier
+				<guimenu>Schulserver im Edukativnetz</guimenu> auszuwählen. Der UCS-Installer gleicht die gemachte Angabe mit der
+				Konfiguration der bereits angelegten Schule ab und weist ggf. auf Widersprüche hin.
+				Für die Installation von &ucsUAS; muss im UCS-Installer keine zusätzliche Software	ausgewählt werden. Für &ucsUAS;
+				notwendige Softwarepakete werden automatisch mitinstalliert.
 	 		</para>
 	 		<para>
 	 			Nach der UCS-Installation und erfolgreichem Domänenbeitritt ist auf dem System auch die &ucsUAS;-App installiert.
@@ -292,7 +296,9 @@
 	 		  Die Installation eines Verwaltungsserver erfolgt analog zur in <xref linkend="school:installation:slave"/>
 	 		  beschriebenen Installation des Schulservers. Auch hier muss <emphasis>vor</emphasis> dem Domänenbeitritt der
 			  Rechnername des Verwaltungsservers an der Schule eingetragen werden. Der <xref linkend="school:setup:umc:schools:modify"/>
-			  beschreibt dies für bestehende Schulen.
+			  beschreibt dies für bestehende Schulen. Abweichend zur Installation eines edukativen Schulservers muss bei der
+			  Installation eines Verwaltungsservers als Rolle <guimenu>Schulserver im Verwaltungsnetz</guimenu> ausgewählt werden.
+			  Auch hier wird ggf. bei festgestellten Widersprüchen ein Hinweis angezeigt.
 	 		</para>
 			<note>
 	 			<para>
