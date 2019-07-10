@@ -251,7 +251,7 @@
 				Nach dem Anlegen der Schule muss ein UCS-System mit der Systemrolle <emphasis>&ucsSlave;</emphasis> installiert werden.
 				Die Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Während der Installation ist
 				darauf zu achten, dass der Rechnername bei der Installation mit dem Namen des Schulservers übereinstimmt, der beim
-				Anlegen der Schule angegeben wurde. Nach der Angabe des Schulservernamens wird vom UCS-Installer die Rolle abgefragt,
+				Anlegen der Schule angegeben wurde. Nach der Angabe des Schulservernamens wird vom UCS-Installer ab UCS 4.4-1 die Rolle abgefragt,
 				die der Schulserver in der &ucsUAS;-Domäne übernehmen soll. Für einen edukativen Schulserver ist hier
 				<guimenu>Schulserver im Edukativnetz</guimenu> auszuwählen. Der UCS-Installer gleicht die gemachte Angabe mit der
 				Konfiguration der bereits angelegten Schule ab und weist ggf. auf Widersprüche hin.
@@ -297,7 +297,7 @@
 	 		  beschriebenen Installation des Schulservers. Auch hier muss <emphasis>vor</emphasis> dem Domänenbeitritt der
 			  Rechnername des Verwaltungsservers an der Schule eingetragen werden. Der <xref linkend="school:setup:umc:schools:modify"/>
 			  beschreibt dies für bestehende Schulen. Abweichend zur Installation eines edukativen Schulservers muss bei der
-			  Installation eines Verwaltungsservers als Rolle <guimenu>Schulserver im Verwaltungsnetz</guimenu> ausgewählt werden.
+			  Installation eines Verwaltungsservers (ab UCS 4.4-1) als Rolle <guimenu>Schulserver im Verwaltungsnetz</guimenu> ausgewählt werden.
 			  Auch hier wird ggf. bei festgestellten Widersprüchen ein Hinweis angezeigt.
 	 		</para>
 			<note>
