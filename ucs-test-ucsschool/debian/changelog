@@ -1,3 +1,11 @@
+ucs-test-ucsschool (6.0.32) unstable; urgency=low
+
+  * Bug #49462:
+    adopt libs used by 35_import-computers_via_* and
+    30_import-create_ou_via_* to match new behaviour of verify_ldap_object
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 10 Jul 2019 14:29:17 +0200
+
 ucs-test-ucsschool (6.0.31) unstable; urgency=low
 
   * Bug #35447: fix 24_password_reset_acl

@@ -158,7 +158,7 @@ class Computer(object):
 		else:
 			for group_dn in [verwaltung_member_group1, verwaltung_member_group2]:
 				try:
-					utils.verify_ldap_object(group_dn, expected_attr={'uniqueMember': [self.dn]}, strict=False, should_exist=True)
+					utils.verify_ldap_object(group_dn, expected_attr={'uniqueMember': [self.dn]}, strict=False, should_exist=True, retry_count=0)
 					raise WrongMembership()
 				except utils.LDAPObjectValueMissing:
 					pass
@@ -168,7 +168,7 @@ class Computer(object):
 		else:
 			for group_dn in [edukativ_member_group1, edukativ_member_group2]:
 				try:
-					utils.verify_ldap_object(group_dn, expected_attr={'uniqueMember': [self.dn]}, strict=False, should_exist=True)
+					utils.verify_ldap_object(group_dn, expected_attr={'uniqueMember': [self.dn]}, strict=False, should_exist=True, retry_count=0)
 					raise WrongMembership()
 				except utils.LDAPObjectValueMissing:
 					pass

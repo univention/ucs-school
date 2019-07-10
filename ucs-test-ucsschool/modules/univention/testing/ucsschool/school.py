@@ -427,7 +427,7 @@ class School(object):
 		if dhcp_dns_clearou:
 			utils.verify_ldap_object(dhcp_dns_clearou_dn, expected_attr={'emptyAttributes': ['univentionDhcpDomainNameServers']}, should_exist=must_exist)
 			try:
-				utils.verify_ldap_object(ou_base, expected_attr={'univentionPolicyReference': [dhcp_dns_clearou_dn]}, should_exist=must_exist)
+				utils.verify_ldap_object(ou_base, expected_attr={'univentionPolicyReference': [dhcp_dns_clearou_dn]}, should_exist=must_exist, retry_count=0)
 			except utils.LDAPObjectUnexpectedValue:
 				# ignore other policies
 				pass
