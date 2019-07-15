@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-distribution
+fix: 17.0.1-5A~4.4.0.201907151426
+desc: |
+ * Improve exam mode (Bug #49637).
+ * Support for unstarted exams in the backend (Bug #49701).
+bug: [49637, 49701]
