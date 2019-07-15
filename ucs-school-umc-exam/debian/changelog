@@ -1,3 +1,16 @@
+ucs-school-umc-exam (9.0.1-9) unstable; urgency=low
+
+  * Bug #49637: Improve exam mode
+  * Bug #49554
+  * Bug #49701
+  * Bug #49744
+  * Bug #49763
+  * Bug #49765
+  * Bug #49782
+  * Bug #49801
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 15 Jul 2019 14:00:00 +0200
+
 ucs-school-umc-exam (9.0.1-8) unstable; urgency=low
 
   * Bug #48080: Fix indentation error
