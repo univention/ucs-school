@@ -25,6 +25,10 @@ class FinishFail(Exception):
 	pass
 
 
+class SaveFail(Exception):
+	pass
+
+
 def get_dir_files(dir_path, recursive=True):
 	result = []
 	for f in glob.glob('%s/*' % dir_path):
@@ -146,6 +150,48 @@ class Exam(object):
 		print 'Start exam response = ', reqResult
 		if not reqResult['success']:
 			raise StartFail('Unable to start exam (%r)' % (param,))
+
+	def save(self, update=False, fields=None):
+		"""Saves an exam. If fields is a list only the given values are set in the request"""
+		param = {
+			'school': '',
+			'name': '',
+			'room': '',
+			'examEndTime': '',
+			'recipients': [],
+			'directory': '',
+			'files': [],
+			'shareMode': '',
+			'internetRule': '',
+			'customRule': ''
+		}
+		if fields is None:
+			param = {
+				'school': self.school,
+				'name': self.name,
+				'room': self.room,
+				'examEndTime': self.examEndTime,
+				'recipients': self.recipients,
+				'directory': self.directory,
+				'files': self.files,
+				'shareMode': self.shareMode,
+				'internetRule': self.internetRule,
+				'customRule': self.customRule
+			}
+		else:
+			for field in fields:
+				param[field] = getattr(self, field, '')
+		print('Saving exam {}'.format(self.name))
+		command = 'put' if update else 'add'
+		reqResult = self.client.umc_command('schoolexam/exam/{}'.format(command), param).result
+		print('Save exam response = {}'.format(reqResult))
+		if not reqResult:
+			raise SaveFail('Unable to {} exam {!r}'.format(command, param))
+
+	def get(self):
+		"""Gets an exam and returns result"""
+		reqResult = self.client.umc_command('schoolexam/exam/get', [self.name]).result
+		return reqResult
 
 	def finish(self):
 		"""Finish an exam"""

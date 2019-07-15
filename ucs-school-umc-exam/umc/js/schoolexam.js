@@ -41,8 +41,13 @@ define([
 	"umc/dialog",
 	"umc/tools",
 	"umc/modules/schoolexam/RebootGrid",
+	"umc/modules/schoolexam/RecipientsGrid",
 	"umc/widgets/Wizard",
 	"umc/widgets/Module",
+	"umc/widgets/Page",
+	"umc/widgets/Grid",
+	"umc/widgets/SearchForm",
+	"umc/widgets/SearchBox",
 	"umc/widgets/TextBox",
 	"umc/widgets/Text",
 	"umc/widgets/TextArea",
@@ -54,8 +59,8 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, Wizard, Module,
-			TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
+], function(declare, lang, array, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, RecipientsGrid, Wizard, Module,
+			Page, Grid, SearchForm, SearchBox, TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
 	    name = name.trim();
@@ -72,9 +77,11 @@ define([
 		umcpCommand: null,
 		autoValidate: true,
 		standbyOpacity: 1.0,
+		examName: null,
 		_progressBar: null,
 		_userPrefix: null,
 		_grid: null,
+		_recipientsGrid: null,
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -126,7 +133,8 @@ define([
 				layout: [
 					'school',
 					['room', 'info'],
-					'recipients'
+					'recipients',
+					'grid_title'
 				],
 				widgets: [{
 					name: 'school',
@@ -138,7 +146,6 @@ define([
 				}, {
 					name: 'room',
 					type: ComboBox,
-					required: true,
 					label: _('Computer room'),
 					description: _('Choose the computer room in which the exam will take place'),
 					depends: 'school',
@@ -177,19 +184,8 @@ define([
 				}, {
 					type: MultiObjectSelect,
 					name: 'recipients',
-					required: true,
 					dialogTitle: _('Participating classes/workgroups'),
 					label: _('Participating classes/workgroups'),
-					// FIXME: MultiObjectSelect is broken :( :/
-					//validator: lang.hitch(this, function(value) { return this.getWidget('advanced', 'recipients').get('value').length; }),
-					//invalidMessage: '',
-					validate: lang.hitch(this, function() {
-						var valid = this.getWidget('advanced', 'recipients').get('value').length;
-						if (!valid) {
-							dialog.alert(_('No class or workgroup has been selected for the exam. Please select at least one class or workgroup.'));
-						}
-						return valid;
-					}),
 					description: _('Groups that are participating in the exam'),
 					queryWidgets: [{
 						type: ComboBox,
@@ -208,7 +204,15 @@ define([
 							return data.result;
 						});
 					}),
-					autoSearch: true
+					autoSearch: true,
+					onChange: lang.hitch(this, function(newValue) {
+						var groups = newValue.map(function(obj) {return obj['id']});
+						this._recipientsGrid.setGroups(groups);
+					})
+				}, {
+					type: Text,
+					name: 'grid_title',
+					content: '<h2>' + _('Participants') + '</h2>',
 				}]
 			}, {
 				name: 'files',
@@ -395,6 +399,13 @@ define([
 				this._grid.set('teacherIPs', ipaddresses);
 			}));
 
+			// create recipient detail grid manually
+			var advancedPage = this.getPage('advanced');
+			this._recipientsGrid = new RecipientsGrid({
+				umcpCommand: lang.hitch(this, 'umcpCommand')
+			});
+			advancedPage.addChild(this._recipientsGrid);
+
 			// get value for lesson end time
 			var endTimeDeferred = this.umcpCommand('schoolexam/lesson_end');
 			endTimeDeferred.then(lang.hitch(this, function(data) {
@@ -417,6 +428,20 @@ define([
 			allReady.push(ucrDeferred);
 			allReady.push(endTimeDeferred);
 			allReady.push(getIP);
+			if (this.examName) {
+				this.getWidget('general', 'name').set('disabled', true);
+				var getDeferred = this.umcpCommand('schoolexam/exam/get', [this.examName]);
+				allReady.push(getDeferred);
+				getDeferred.then(lang.hitch(this, function(response) {
+					var values = response.result[0];
+					if (values['room']) {
+					// This expects the rooms to be in the correct OU in the LDAP!
+					values['school'] = /ou=([^,]*),/.exec(values['room'])[1];
+					}
+					this.setWizardValues(values);
+				}))
+			}
+
 			all(allReady).then(lang.hitch(this, function() {
 				this.standby(false);
 			}));
@@ -428,6 +453,9 @@ define([
 			// adjust the label of the 'finish' button on the 'finished' page
 			button = this.getPage('finished')._footerButtons.finish;
 			button.set('label', _('Open computer room'));
+
+			button = this.getPage('finished')._footerButtons.cancel;
+			button.set('label', _('Close Wizard'))
 		},
 
 		postCreate: function() {
@@ -440,6 +468,12 @@ define([
 			aspect.after(this.getPage('finished'), '_onShow', lang.hitch(this, '_updateSuccessPage'));
 
 			this._grid.on('reboot', lang.hitch(this, '_reboot'));
+		},
+
+		setWizardValues: function(values) {
+			array.forEach(this.pages, lang.hitch(this, function(page) {
+				this._pages[page.name]._form.setFormValues(values);
+			}));
 		},
 
 		isPageVisible: function(pageName) {
@@ -465,6 +499,20 @@ define([
 				}
 				this._pages[pageName]._footerButtons.next.set('label', label);
 			}
+		},
+
+		getFooterButtons(pageName) {
+			buttons = this.inherited(arguments);
+			var pages = ['general', 'advanced', 'files', 'proxy_settings', 'share_settings'];
+			if (pages.indexOf(pageName) !== -1) {
+				buttons.push({
+				name: 'save',
+				defaultButton: false,
+				label: _('Save exam'),
+				callback: lang.hitch(this, '_saveExam')
+				});
+			}
+			return buttons;
 		},
 
 		_updateSuccessPage: function() {
@@ -589,15 +637,33 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			// deactivate this, because the wizard can be closed via the header
-			// button anyways
+			var pages = ['reboot'];
+			if (pages.indexOf(pageName) === -1) {
+				return true;
+			}
 			return false;
 		},
 
 		_validate: function() {
 			var invalidNextPage = new Deferred();
+			var values = this.getValues();
+
+			if (values.recipients.length === 0) {
+				// At least one recipient has to be chosen!
+				dialog.alert(_('No class or workgroup has been selected for the exam. Please select at least one class or workgroup.'));
+				invalidNextPage.reject('advanced');
+				return invalidNextPage;
+			}
 
 			var room = this._getCurrentRoom();
+
+			if (!room) {
+				// a room has to be selected!
+				dialog.alert(_('No room has been selected for the exam. Please select a room.'));
+				invalidNextPage.reject('advanced');
+				return invalidNextPage;
+			}
+
 			if (room && room.exam) {
 				// block room if an exam is being written
 				dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', room.label, room.examDescription));
@@ -637,6 +703,23 @@ define([
 			}
 
 			return invalidNextPage;
+		},
+
+		_saveExam: function() {
+			var values = this.getValues();
+			if (!values.name) {
+				dialog.alert('Please enter a room name!');
+				return;
+			}
+			if (this.examName) {
+				this.umcpCommand('schoolexam/exam/put', values).then(lang.hitch(this, function(result) {
+					this.emit('Cancel');
+				}))
+			} else {
+				this.umcpCommand('schoolexam/exam/add', values).then(lang.hitch(this, function(result) {
+					this.emit('Cancel');
+				}))
+			}
 		},
 
 		_startExam: function() {
@@ -761,24 +844,146 @@ define([
 	});
 
 	return declare("umc.modules.schoolexam", [ Module ], {
+		idProperty: 'name',
 		// internal reference to the installer
 		_examWizard: null,
+		_searchPage: null,
+		_grid: null,
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
+			this._searchPage = new Page({
+				fullWidth: true,
+				headerText: this.description,
+				helpText: ''
+			});
+			this.addChild(this._searchPage);
+			// define grid actions
+			var actions = [{
+				name: 'add',
+				label: _('Prepare new exam'),
+				description: _('Prepare new exam'),
+				iconClass: 'umcIconAdd',
+				isContextAction: false,
+				isStandardAction: true,
+				callback: lang.hitch(this, '_openWizard', false)
+			}, {
+				name: 'edit',
+				label: _('Edit exam'),
+				description: _('Edit exam'),
+				iconClass: 'umcIconEdit',
+				isContextAction: true,
+				isMultiAction: false,
+				isStandardAction: true,
+				callback: lang.hitch(this, '_openWizard', true),
+				canExecute: lang.hitch(this, function(exam) {
+					return !exam.isDistributed && exam['sender'] === tools.status()['username'];
+				})
+			}];
+
+			// define the grid columns
+			var columns = [{
+				name: 'name',
+				label: _('Name'),
+				width: 'auto'
+			}, {
+				name: 'isDistributed',
+				label: _('Status'),
+				width: 'auto',
+				formatter: lang.hitch(this, function(isDistributed) {
+					return isDistributed ? _('started') : _('pending');
+				})
+			}, {
+				name: 'recipientsStudents',
+				label: _('#Students'),
+				width: 'auto',
+				formatter: lang.hitch(this, function(recipientsStudents) {
+					return recipientsStudents.length;
+				})
+			}, {
+				name: 'recipientsGroups',
+				label: _('Classes'),
+				width: 'auto',
+				formatter: lang.hitch(this, function(recipientsGroups) {
+					if (recipientsGroups.length  === 0) {
+						return '';
+					}
+					return recipientsGroups.join(', ');
+				})
+			}, {
+				name: 'room',
+				label: _('Room'),
+				width: 'auto'
+			}];
+
+			this._grid = new Grid({
+				actions: actions,
+				columns: columns,
+				moduleStore: this.moduleStore,
+				query: { pattern: '' }
+			});
+
+			this._searchPage.addChild(this._grid);
+
+			// add remaining elements of the search form
+			var widgets = [{
+				type: ComboBox,
+				name: 'filter',
+				label: 'Filter',
+				staticValues: [
+					{ id: 'private', label: _('Only own exams') },
+					{ id: 'all', label: _('All exams') }
+				]
+			}, {
+				type: SearchBox,
+				name: 'pattern',
+				inlineLabel: _('Search...'),
+				description: _('Specifies the substring pattern which is searched for in the exams.'),
+				label: _('Search pattern'),
+				onSearch: lang.hitch(this, function() {
+					this._searchForm.submit();
+				})
+			}];
+
+			var layout = [
+				[ 'filter', 'pattern' ]
+			];
+
+			this._searchForm = new SearchForm({
+				region: 'top',
+				hideSubmitButton: true,
+				widgets: widgets,
+				layout: layout,
+				onSearch: lang.hitch(this, function(values) {
+					this._grid.filter(values);
+				})
+			});
+
+			this._searchPage.addChild(this._searchForm);
+
+			// we need to call page's startup method manually as all widgets have
+			// been added to the page container object
+			this._searchPage.startup();
+		},
+		_openWizard: function(editMode) {
 			this._examWizard = new ExamWizard({
 				'class': 'umcCard',
-				umcpCommand: lang.hitch(this, 'umcpCommand')
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				examName: editMode ? this._grid.getSelectedIDs()[0] : null
 			});
 			this.addChild(this._examWizard);
 
 			this._examWizard.on('finished', lang.hitch(this, function() {
-				topic.publish('/umc/tabs/close', this);
+				this.selectChild(this._searchPage);
+				this._examWizard.destroy();
 			}));
 			this._examWizard.on('cancel', lang.hitch(this, function() {
-				topic.publish('/umc/tabs/close', this);
+				this._grid.filter(this._grid.query);  // cancel is also called after saving or starting an exam
+				this.selectChild(this._searchPage);
+				this._examWizard.destroy();
 			}));
+			this.selectChild(this._examWizard);
 		}
 	});
 });

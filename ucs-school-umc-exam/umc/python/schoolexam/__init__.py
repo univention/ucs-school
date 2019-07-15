@@ -38,6 +38,7 @@ import time
 import traceback
 import subprocess
 import datetime
+from itertools import chain
 
 import ldap
 import notifier
@@ -52,11 +53,12 @@ from univention.management.console.modules.sanitizers import (
 	StringSanitizer, DictSanitizer, ListSanitizer, DNSanitizer, PatternSanitizer, ChoicesSanitizer)
 from univention.management.console.modules.schoolexam import util
 from univention.management.console.modules.distribution import compare_dn
+import univention.admin.uexceptions as udm_exceptions
 
 from univention.lib.i18n import Translation
 from univention.lib.umc import Client, ConnectionError, HTTPError
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer, Display
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, Group, User
@@ -160,6 +162,125 @@ class Instance(SchoolBaseModule):
 	def progress(self):
 		return self._progress_state.poll()
 
+	@LDAP_Connection()
+	def _save_exam(self, request, update=False, ldap_user_read=None):
+		"""
+		Creates or updates an exam with the information given in the request object
+		:param request: The request containing all information about the exam
+		:param update: If True it is expected that an exam with the same name already exists and will be updated
+		:return: True if successful, else Exception
+		"""
+		# create a User object for the teacher
+		sender = util.distribution.openRecipients(self.user_dn, ldap_user_read)
+		recipients = [util.distribution.openRecipients(i_dn, ldap_user_read) for i_dn in request.options.get('recipients', [])]
+		recipients = [recipient for recipient in recipients if recipient]
+		new_values = dict(
+				name=request.options['directory'],
+				description=request.options['name'],
+				files=request.options.get('files'),
+				sender=sender,
+				room=request.options['room'],
+				recipients=recipients,
+				deadline=request.options['examEndTime']
+			)
+		if not sender:
+			raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
+		project = util.distribution.Project.load(request.options.get('name', ''))
+		orig_files = []
+		if update:
+			if not project:
+				raise UMC_Error(_('The specified exam does not exist: %s') % request.options.get('name', ''))
+			# make sure that the project owner himself is modifying the project
+			if not compare_dn(project.sender.dn, self.user_dn):
+				raise UMC_Error(_('The exam can only be modified by the owner himself.'))
+			if project.isDistributed:
+				raise UMC_Error(_('The exam was already started and can not be modified anymore!'))
+			orig_files = project.files
+			project.update(new_values)
+		else:
+			if project:
+				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % new_values['directory'])
+			project = util.distribution.Project(new_values)
+		project.validate()
+		project.save()
+		# copy files into project directory
+		if self._tmpDir:
+			for i_file in project.files:
+				i_src = os.path.join(self._tmpDir, i_file)
+				i_target = os.path.join(project.cachedir, i_file)
+				if os.path.exists(i_src):
+					# copy file to cachedir
+					shutil.move(i_src, i_target)
+					os.chown(i_target, 0, 0)
+		if update:
+			for i_file in set(orig_files) - set(project.files):
+				i_target = os.path.join(project.cachedir, i_file)
+				try:
+					os.remove(i_target)
+				except OSError:
+					pass
+		return project
+
+	@sanitize(StringSanitizer(required=True))
+	@LDAP_Connection()
+	def get(self, request, ldap_user_read=None):
+		result = []
+		for project in [util.distribution.Project.load(iid) for iid in request.options]:
+			if not project:
+				continue
+			# make sure that only the project owner himself (or an admin) is able
+			# to see the content of a project
+			if not compare_dn(project.sender.dn, self.user_dn):
+				raise UMC_Error(_('Exam details are only visible to the exam owner himself.'), status=403)
+			props = project.dict
+			props['sender'] = props['sender'].username
+			recipients = []
+			for recip in props['recipients']:
+				recipients.append({
+					'id': recip.dn,
+					'label': recip.type == util.distribution.TYPE_USER and Display.user(recip.dict) or recip.name
+				})
+			props['recipients'] = recipients
+			props['examEndTime'] = props['deadline']
+			result.append(props)
+		self.finished(request.id, result)
+
+	@sanitize(
+		name=StringSanitizer(required=True),
+		room=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
+		directory=StringSanitizer(required=True),
+		shareMode=StringSanitizer(required=True),
+		internetRule=StringSanitizer(required=True),
+		customRule=StringSanitizer(),
+		examEndTime=StringSanitizer(required=True),
+		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
+		files=ListSanitizer(StringSanitizer()),
+	)
+	@require_password
+	@LDAP_Connection()
+	def add(self, request, ldap_user_read=None):
+		self._save_exam(request)
+		self.finished(request.id, True)
+
+	@sanitize(
+		name=StringSanitizer(required=True),
+		room=StringSanitizer(required=True),
+		school=SchoolSanitizer(required=True),
+		directory=StringSanitizer(required=True),
+		shareMode=StringSanitizer(required=True),
+		internetRule=StringSanitizer(required=True),
+		customRule=StringSanitizer(),
+		examEndTime=StringSanitizer(required=True),
+		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
+		files=ListSanitizer(StringSanitizer()),
+	)
+	@require_password
+	@LDAP_Connection()
+	def put(self, request, ldap_user_read=None):
+		self._save_exam(request, update=True)
+		self.finished(request.id, True)
+
 	@sanitize(
 		name=StringSanitizer(required=True),
 		room=StringSanitizer(required=True),
@@ -200,33 +321,12 @@ class Instance(SchoolBaseModule):
 			raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
 
 		def _thread():
-			# make sure that a project with the same name does not exist
+			project = util.distribution.Project.load(request.options.get('name', ''))
 			directory = request.options['directory']
-			# get absolute path of project file and test for existance
-			fn_test_project = util.distribution.Project.sanitize_project_filename(directory)
-			if os.path.exists(fn_test_project):
-				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % (directory,))
-
-			# validate the project data and save project
-			my.project = util.distribution.Project(dict(
-				name=directory,
-				description=request.options['name'],
-				files=request.options.get('files'),
-				sender=sender,
-				room=request.options['room'],
-			))
-			my.project.validate()
-			my.project.save()
-
-			# copy files into project directory
-			if self._tmpDir:
-				for ifile in my.project.files:
-					isrc = os.path.join(self._tmpDir, ifile)
-					itarget = os.path.join(my.project.cachedir, ifile)
-					if os.path.exists(isrc):
-						# copy file to cachedir
-						shutil.move(isrc, itarget)
-						os.chown(itarget, 0, 0)
+			if project:
+				my.project = self._save_exam(request, update=True, ldap_user_read=ldap_user_read)
+			else:
+				my.project = self._save_exam(request, update=False, ldap_user_read=ldap_user_read)
 
 			# open a new connection to the master UMC
 			try:
@@ -493,7 +593,7 @@ class Instance(SchoolBaseModule):
 				# get a list of user accounts in parallel exams
 				parallelUsers = dict([
 					(iuser.username, iproject.description)
-					for iproject in util.distribution.Project.list()
+					for iproject in util.distribution.Project.list(only_distributed=True)
 					if iproject.name != project.name
 					for iuser in iproject.recipients
 				])
@@ -552,8 +652,8 @@ class Instance(SchoolBaseModule):
 		pattern=PatternSanitizer(required=False, default='.*'),
 		filter=ChoicesSanitizer(['all', 'private'], default='private')
 	)
-	@simple_response
-	def query(self, pattern, filter):  # type: (Pattern[str], str) -> List[Dict[str, Any]]
+	@LDAP_Connection()
+	def query(self, request, ldap_user_read=None):
 		"""
 		Get all exams (both running and planned).
 
@@ -565,23 +665,29 @@ class Instance(SchoolBaseModule):
 		:return: list of projects
 		:rtype: list(dict)
 		"""
-		return [
+		pattern = request.options['pattern']
+		filter = request.options['filter']
+		result = [
 			{
 				'name': project.name,
-				'sender': project.sender.username,  # teacher / admin
-				'recipients': [r.username for r in project.recipients],  # students
-				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M'),
-				'files': len(project.files),
-				'isDistributed': project.isDistributed,  # if True, exam has started
-				'room': ComputerRoom.get_name_from_dn(project.room),
-		}
+				'sender': project.sender.username,  # teacher / admins
+				'recipientsGroups': [g.name for g in project.recipients if g.type == util.distribution.TYPE_GROUP],
+				'recipientsStudents': self._get_project_students(project, ldap_user_read),
+				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M') if project.starttime else '',
+				'files': len(project.files) if project.files else 0,
+				'isDistributed': project.isDistributed,
+				'room': ComputerRoom.get_name_from_dn(project.room) if project.room else '',
+			}
 			for project in util.distribution.Project.list()
-			if
-					pattern.match(project.name)
-			and (
-					filter == 'all' or compare_dn(project.sender.dn, self.user_dn)
-			)
+			if pattern.match(project.name) and (filter == 'all' or compare_dn(project.sender.dn, self.user_dn))
 		]
+		self.finished(request.id, result)   # cannot use @simple_response with @LDAP_Connection :/
+
+	def _get_project_students(self, project, lo):
+		students = [s for s in project.recipients if s.type == util.distribution.TYPE_USER]
+		students += list(chain.from_iterable(g.members for g in project.recipients if g.type == util.distribution.TYPE_GROUP))
+		students = set((s.username, s.dn) for s in students)
+		return [s[0] for s in students if User.from_dn(s[1], None, lo).is_student(lo)]
 
 	@sanitize(
 		groups=ListSanitizer(DNSanitizer(minimum=1), required=True, min_elements=1)

@@ -54,16 +54,11 @@ def main():
 
 	util.distribution.POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = '-Zwischenergebnisse'
 
-	for entry in os.listdir(util.distribution.DISTRIBUTION_DATA_PATH):
-		if os.path.isfile(os.path.join(util.distribution.DISTRIBUTION_DATA_PATH, entry)):
-			project = util.distribution.Project.load(entry)
-			if not project:
-				logger.error('Examfile for %s could not be opened and thus no backup of the students data was created!', entry)
-				continue
-			if project.num_results < limit:
-				project.collect(readOnly=True, compress=compress)
-			else:
-				logger.warning('Results for %s were not collected. The limit has been reached.', entry)
+	for project in util.distribution.Project.list(only_distributed=True):
+		if project.num_results < limit:
+			project.collect(readOnly=True, compress=compress)
+		else:
+			logger.warning('Results for %s were not collected. The limit has been reached.', project.name)
 
 
 

@@ -452,10 +452,19 @@ feedback@univention.de
 		<para>
 		  Im Folgenden werden die einzelnen Schritte zum Erstellen einer Klassenarbeit kurz beschrieben.
 		</para>
+		<section id="lehrerdoku:klassenarbeit:overview">
+			<title>Übersicht der Klassenarbeiten</title>
+			<figure id="fig:klassenarbeit:overview">
+			<title>Übersicht über die Klassenarbeiten anzeigen</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/exam_3_overview.png"/>
+		  </figure>
+			Beim Öffnen des &ucsUMC;-Moduls <guimenu>Klassenarbeiten</guimenu> zeigt sich zuerst eine Übersichtsseite, die alle Informationen über gerade laufende Klassenarbeiten anzeigt.
+			Dabei kann man Auswählen, ob man nur die eigenen Klassenarbeiten angezeigt bekommen möchte oder auch die aller Kolleginnen und Kollegen.
+		</section>
 		<section id="lehrerdoku:klassenarbeit:start">
 		  <title>Einrichten einer Klassenarbeit</title>
 		  <para>
-			Eine neue Klassenarbeit kann über das &ucsUMC;-Modul <guimenu>Klassenarbeit starten</guimenu> eingerichtet werden.
+			Eine neue Klassenarbeit kann über den Knopf <guimenu>Eine neue Klassenarbeit vorbereiten</guimenu> eingerichtet werden.
 			In mehreren Schritten werden alle Einstellungen für die Klassenarbeit festgelegt.
 		  </para>
 		  <orderedlist>
@@ -476,7 +485,8 @@ feedback@univention.de
 			</listitem>
 			<listitem>
 				<simpara>
-					Im zweiten Schritt muss der Computerraum in dem die Arbeit geschrieben werden soll sowie mindestens eine teilnehmende Klasse bzw. Arbeitsgruppe angegeben werden.
+					Im zweiten Schritt muss der Computerraum in dem die Arbeit geschrieben werden soll, sowie mindestens eine teilnehmende Klasse bzw. Arbeitsgruppe, angegeben werden.
+					Die einzelnen Mitglieder der ausgewählten Gruppen werden zusätzlich auf dieser Seite angezeigt.
 					Falls weitere Einstellungsmöglichkeiten aktiviert wurden, werden diese auf den folgenden Seiten des Assistenten angezeigt.
 				</simpara>
 			</listitem>
@@ -504,6 +514,12 @@ feedback@univention.de
 		  <para>
 			  Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu> werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt.
 			  Dies kann je nach Serverauslastung, Geschwindigkeit der Verbindung zum Server und Anzahl der Schüler und Rechner im Raum einige Minuten dauern.
+		  </para>
+		  <para>
+			  Alternativ kann man die Klassenarbeit jederzeit über die Schaltfläche <guimenu>Klassenarbeit speichern</guimenu> zur späteren Bearbeitung abspeichern.
+			  Dazu muss lediglich ein Name angegeben werden. Auf der Übersicht können solche Klassenarbeiten über die Schaltfläche <guimenu>Klassenarbeit bearbeiten</guimenu>
+			  erneut geladen und weiter angepasst, oder, falls alle notwendigen Informationen vorhanden sind, gestartet werden. Nur die ursprünglichen Autoren
+			  dürfen Klassenarbeiten im Nachhinein bearbeiten oder starten.
 		  </para>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:neustart">

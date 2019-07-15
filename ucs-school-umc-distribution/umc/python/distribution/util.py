@@ -159,7 +159,7 @@ def jsonDecode(val):
 		elif x['__type__'] == TYPE_GROUP:
 			return Group(**x)
 		elif x['__type__'] == TYPE_PROJECT:
-			if 'isDistributed' not in x:
+			if 'isDistributed' not in x and 'files' in x:
 				#  Guess distribution status for projects created prior fixing bug #47160
 				cachedir = os.path.join(DISTRIBUTION_DATA_PATH, '%s.data' % x['name'])
 				files = [ifn for ifn in x['files'] if os.path.exists(os.path.join(cachedir, ifn))]
@@ -764,7 +764,7 @@ class Project(_Dict):
 		return project
 
 	@staticmethod
-	def list():
+	def list(only_distributed=False):
 		fn_projectlist = os.listdir(DISTRIBUTION_DATA_PATH)
 		MODULE.info('distribution_search: WALK = %s' % fn_projectlist)
 		projectlist = []
@@ -777,7 +777,10 @@ class Project(_Dict):
 			# load the project and add it to the result list
 			project = Project.load(fname)
 			if project:
-				projectlist.append(project)
+				if only_distributed and 'isDistributed' in project.dict and project.dict['isDistributed']:
+					projectlist.append(project)
+				elif not only_distributed:
+					projectlist.append(project)
 
 		# sort final result
 		projectlist.sort(key=lambda x: x.name.lower())
