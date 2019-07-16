@@ -30,8 +30,7 @@
 
 from univention.management.console.ldap import get_admin_connection
 from univention.admin.uldap import position
-from ucsschool.lib.models import School, Student, Teacher, Staff, SchoolClass
-from univention.config_registry import ConfigRegistry
+from ucsschool.lib.models import School, Student, Teacher, Staff, SchoolClass, ucr
 import univention.admin.modules as modules
 import sys
 import os
@@ -41,8 +40,6 @@ import json
 import string
 import random
 
-ucr = ConfigRegistry()
-ucr.load()
 lo, pos = get_admin_connection()
 modules.update()
 module_portal = modules.get('settings/portal')
@@ -57,14 +54,15 @@ if is_single_master:
 else:
 	hostname_demoschool = "DEMOSCHOOL"
 hostdn = ucr.get('ldap/hostdn')
-demo_password = ''.join(random.choice(string.ascii_uppercase) for _ in range(16))
-if os.path.isfile('/etc/demoschool.secret'):
-	with open('/etc/demoschool.secret', 'r') as fd:
-		demo_password = fd.read().rstrip('\n')
+demo_secret_path = '/etc/ucsschool/demoschool.secret'
+if os.path.isfile(demo_secret_path):
+	with open(demo_secret_path, 'r') as fd:
+		demo_password = fd.read().strip()
 else:
-	with open('/etc/demoschool.secret', 'w') as fd:
+	demo_password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+	with open(demo_secret_path, 'w') as fd:
+		os.fchmod(fd.fileno(), 0o640)
 		fd.write(demo_password)
-	os.chmod('/etc/demoschool.secret', 0640)
 
 # (name, displayName)
 SCHOOL = ('DEMOSCHOOL', 'Demo School')
@@ -91,6 +89,7 @@ ENTRIES = [
 	('ucsschool_demo_users', 'User Management', 'Benutzerverwaltung', 'User Management', 'Benutzerverwaltung', '/univention/management/#module=schoolwizards:schoolwizards/users:0:', 'contacts', 'schooladmin'),
 	('ucsschool_demo_admin', 'Administration', 'Administration', 'Administration', 'Administration', '/univention/management/', 'admin', 'everyone')
 ]
+
 
 def create_school():
 	school_exists = False
@@ -121,7 +120,6 @@ def create_school():
 	school_admin_user.open()
 	school_admin_user['groups'].append(admin_group)
 	school_admin_user.modify()
-
 
 
 def create_portal():
@@ -211,6 +209,7 @@ def create_portal():
 		if not already_exists(o):
 			o.create()
 
+
 def run():
 	'''
 	This function creates a demo school and demo portal for testing and demonstration purposes
@@ -234,7 +233,6 @@ def already_exists(check_obj):
 		return len(module_portal_e.lookup(None, lo, 'name={}'.format(check_obj.get('name')), base=check_obj.position.getBase())) > 0
 	else:
 		raise ValueError('The checked object is no portal[_entry|_category] object!')
-
 
 
 if __name__ == '__main__':

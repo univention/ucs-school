@@ -137,6 +137,14 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.1-2; then
 	[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
 fi
 
+# Bug 49515: store demo user password in ucsschool config dir
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt 12.0.2-3; then
+	if [ -e /etc/demoschool.secret ]; then
+		[ -d /etc/ucsschool ] || mkdir -p /etc/ucsschool
+		mv /etc/demoschool.secret /etc/ucsschool
+	fi
+fi
+
 /etc/init.d/univention-directory-listener crestart
 
 call_joinscript 62ucs-school-singlemaster.inst
