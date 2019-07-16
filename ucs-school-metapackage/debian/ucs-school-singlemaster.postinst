@@ -138,7 +138,7 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.1-2; then
 fi
 
 # Bug 49515: store demo user password in ucsschool config dir
-if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.2-3; then  # TODO: update package version
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt 12.0.2-3; then
 	if [ -e /etc/demoschool.secret ]; then
 		[ -d /etc/ucsschool ] || mkdir -p /etc/ucsschool
 		mv /etc/demoschool.secret /etc/ucsschool
