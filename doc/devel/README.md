@@ -72,6 +72,8 @@ Man kann den Dump der Zugriffsberechtigungen jetzt **VOR** und **NACH** einer LD
 
 **Hinweis:** Für `78_ldap_acls_dump.diff` werden die Tools `HLdiff` und `diff-ldif` aus dem Toolshed benötigt. Einfach vorher nach `/usr/bin/` der Testinstanz kopieren.
 
+**WARNUNG: `slapacl` scheint nicht immer den korrekten Output zu liefern! Im Test hat sich gezeigt, dass `slapacl` `read`-Permissions vermeldet hat, der User aber trotzdem ein `write` machen konnte!**
+
 Die Ausgabe des Diff-Tools sieht wie folgt aus:
 
     /var/log/univention/78_ldap_acls_dump.1558281264/dn20.ldif
