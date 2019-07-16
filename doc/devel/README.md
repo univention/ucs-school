@@ -105,3 +105,13 @@ Die Ausgabe des Diff-Tools sieht wie folgt aus:
      modifiersName: =rscxd
      memberOf: =rscxd
     [...]
+
+## /etc/ucsschool/
+
+### /etc/ucsschool/logging.yaml
+
+Logging settings for CLI output format, file output format and colors. Used by ucs-school-lib.
+
+### /etc/ucsschool/demoschool.secret
+
+The password of the demoschool users is stored in this file.
