@@ -112,8 +112,20 @@ Die Ausgabe des Diff-Tools sieht wie folgt aus:
 
 ### /etc/ucsschool/logging.yaml
 
-Logging settings for CLI output format, file output format and colors. Used by ucs-school-lib.
+Logging settings for CLI output format, file output format and colors (`utils.CMDLINE_LOG_FORMATS`, `utils.FILE_LOG_FORMATS`, `utils.LOG_DATETIME_FORMAT`, `utils.LOG_COLORS`).
+
+Used by `utils.get_stream_handler()` and `utils.get_file_handler()`.
+
+Use `models.utils._write_logging_config()` to update it.
 
 ### /etc/ucsschool/demoschool.secret
 
 The password of the demoschool users is stored in this file.
+
+## /etc/ucsschool-import/
+
+* `django_key.secret`: _A secret key for a particular Django installation. This is used to provide cryptographic signing, and should be set to a unique, unpredictable value._: https://docs.djangoproject.com/en/1.10/ref/settings/#std:setting-SECRET_KEY
+* `ldap_unprivileged.secret`: userDN and password used to open an unprivileged read-write LDAP connection with `ucsschool.importer.utils.ldap_connection.get_unprivileged_connection()`
+* `postgres.secret`: password of user `importhttpapi` to access the PostgreSQL database `importhttpapi`
+* `rabbitmq.secret`: password Celery uses to access rabbitMQ
+* `settings.py`: Django configuration file for HTTP-API for CSV import
