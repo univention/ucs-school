@@ -113,13 +113,17 @@ def create_school():
 	student.create(lo)
 	teacher = Teacher(firstname='Demo', lastname='Teacher', name='demo_teacher', password=demo_password, school=SCHOOL[0])
 	teacher.create(lo)
-	school_staff = Staff(firstname='Demo', lastname='Staff', name='demo_admin', password=demo_password, school=SCHOOL[0])
-	school_staff.create(lo)
+	staff = Staff(firstname='Demo', lastname='Staff', name='demo_staff', password=demo_password, school=SCHOOL[0])
+	staff.create(lo)
+	# create school admin from teacher
+	admin = Teacher(firstname='Demo', lastname='Admin', name='demo_admin', password=demo_password, school=SCHOOL[0])
+	admin.create(lo)
 	admin_group = module_groups.lookup(None, lo, 'name=admins-{}'.format(SCHOOL[0]), pos.getBase())[0].dn
-	school_admin_user = module_users.lookup(None, lo, 'username=demo_admin', school_staff.get_own_container())[0]
-	school_admin_user.open()
-	school_admin_user['groups'].append(admin_group)
-	school_admin_user.modify()
+	admin_udm = admin.get_udm_object(lo)
+	admin_udm.options.append('ucsschoolAdministrator')
+	admin_udm['groups'].append(admin_group)
+	admin_udm['description'] = 'School Admin for {} created from teacher account.'.format(SCHOOL[0])
+	admin_udm.modify()
 
 
 def create_portal():
@@ -128,10 +132,10 @@ def create_portal():
 	pos_category = position(pos.getBase())
 
 	entry_groups = dict(
-		domainadmin = '',
-		schooladmin = '',
-		teacher = '',
-		everyone = ''
+		domainadmin='',
+		schooladmin='',
+		teacher='',
+		everyone=''
 		)
 	try:
 		entry_groups['domainadmin'] = module_groups.lookup(None, lo, 'name=Domain Admins', pos.getBase())[0].dn
@@ -211,19 +215,19 @@ def create_portal():
 
 
 def run():
-	'''
+	"""
 	This function creates a demo school and demo portal for testing and demonstration purposes
-	'''
+	"""
 	create_school()
 	create_portal()
 	sys.exit(0)
 
 
 def already_exists(check_obj):
-	'''
+	"""
 	Checks if a given object already exists in the LDAP
 	(works only with portal, portal categories and portal entries)
-	'''
+	"""
 	obj_type = type(check_obj)
 	if obj_type == module_portal.object:
 		return len(module_portal.lookup(None, lo, 'name={}'.format(check_obj.get('name')), base=check_obj.position.getBase())) > 0
