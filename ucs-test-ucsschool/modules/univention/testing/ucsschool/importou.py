@@ -5,6 +5,7 @@ import stat
 import random
 import subprocess
 import string
+from six import string_types
 
 import univention.testing.utils as utils
 import univention.testing.strings as uts
@@ -558,51 +559,49 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
 				raise
 
 
-def import_ou_basics(use_cli_api=True, use_python_api=False):
-	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
-		with univention.testing.udm.UCSTestUDM() as udm:
-			create_mail_domain(ucr, udm)
-			for dc_administrative in [None, 'generate']:
-				for dc in [None, 'generate']:
-					for singlemaster in [True, False]:
-						for noneducational_create_object in [True, False]:
-							for district_enable in [True, False]:
-								for default_dcs in [None, 'edukativ', uts.random_string()]:
-									for dhcp_dns_clearou in [True, False]:
-										for sharefileserver in [None, 'generate']:
-											if singlemaster and dc == 'generate':
-												continue
-											if not dc and dc_administrative:
-												continue  # cannot specify administrative dc without educational dc
-											if not noneducational_create_object and dc_administrative:
-												print 'NOTE: cannot create administrative DC without administrative objects in LDAP'
-												continue
-											if sharefileserver:
-												sharefileserver = uts.random_name()
-												udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
-											ou_name = uts.random_name()
-											# character set contains multiple whitespaces to increase chance to get several words
-											charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
-											ou_displayname = uts.random_string(length=random.randint(1, 50), charset=charset)
-											try:
-												create_and_verify_ou(
-													ucr,
-													ou=ou_name,
-													ou_displayname=ou_displayname,
-													dc=(uts.random_name() if dc else None),
-													dc_administrative=(uts.random_name() if dc_administrative else None),
-													sharefileserver=sharefileserver,
-													singlemaster=singlemaster,
-													noneducational_create_objects=noneducational_create_object,
-													district_enable=district_enable,
-													default_dcs=default_dcs,
-													dhcp_dns_clearou=dhcp_dns_clearou,
-													use_cli_api=use_cli_api,
-													use_python_api=use_python_api,
-												)
-											finally:
-												remove_ou(ou_name)
-		utils.wait_for_replication()
+def parametrization_id_base64_decode(val):
+	if isinstance(val, string_types) and val.strip().endswith('='):
+		try:
+			return val.decode('base64').strip().decode('ascii', errors='replace')
+		except ValueError:
+			return val
+	else:
+		return val
+
+
+def generate_import_ou_basics_test_data(use_cli_api=True, use_python_api=False):
+	for dc_administrative in [None, 'generate']:
+		for dc in [None, 'generate']:
+			for singlemaster in [True, False]:
+				for noneducational_create_object in [True, False]:
+					for district_enable in [True, False]:
+						for default_dcs in [None, 'edukativ', uts.random_string()]:
+							for dhcp_dns_clearou in [True, False]:
+								for sharefileserver in [None, 'generate']:
+									if singlemaster and dc == 'generate':
+										continue
+									if not dc and dc_administrative:
+										continue  # cannot specify administrative dc without educational dc
+									if not noneducational_create_object and dc_administrative:
+										continue  # cannot create administrative DC without administrative objects in LDAP
+									ou_name = uts.random_name()
+									# character set contains multiple whitespaces to increase chance to get several words
+									charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
+									ou_displayname = uts.random_string(length=random.randint(1, 50), charset=charset)
+									yield (
+										ou_name,
+										ou_displayname.encode('base64'),  # pytest doesn't like non-ascii chars in parametrization args
+										uts.random_name() if dc else None,
+										uts.random_name() if dc_administrative else None,
+										bool(sharefileserver),
+										singlemaster,
+										noneducational_create_object,
+										district_enable,
+										default_dcs,
+										dhcp_dns_clearou,
+										use_cli_api,
+										use_python_api,
+									)
 
 
 def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
