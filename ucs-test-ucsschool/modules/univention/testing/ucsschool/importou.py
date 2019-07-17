@@ -311,6 +311,9 @@ def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, o
 
 	if do_cleanup:
 		remove_ou(ou)
+		if district_enable:
+			cn = ou_base.split(',', 1)[1]
+			remove_ou(cn)
 
 
 def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
@@ -421,6 +424,11 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	if noneducational_create_objects:
 		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_staff]}, should_exist=must_exist)
 
+	check_group_membership(ou, dc_name, base_dn, lo, must_exist)
+	check_dhcp(ou_base, dc_name, singlemaster, dhcp_dns_clearou, ucr, must_exist)
+
+
+def check_group_membership(ou, dc_name, base_dn, lo, must_exist):
 	dcmaster_module = univention.admin.modules.get("computers/domaincontroller_master")
 	dcbackup_module = univention.admin.modules.get("computers/domaincontroller_backup")
 	dcslave_module = univention.admin.modules.get("computers/domaincontroller_slave")
@@ -461,6 +469,8 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 		elif not is_master_or_backup and not membership:
 			raise DCMembership()
 
+
+def check_dhcp(ou_base, dc_name, singlemaster, dhcp_dns_clearou, ucr, must_exist):
 	ucr.load()
 	if not singlemaster:
 		# in multiserver setups all dhcp settings have to be checked
