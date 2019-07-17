@@ -311,9 +311,6 @@ def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, o
 
 	if do_cleanup:
 		remove_ou(ou)
-		if district_enable:
-			cn = ou_base.split(',', 1)[1]
-			remove_ou(cn)
 
 
 def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):

@@ -293,8 +293,10 @@ class UCSTestSchool(object):
 
 		# remove OU recursively
 		if self.ucr.is_true('ucsschool/ldap/district/enable'):
-			oudn = 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % {'ou': ou_name, 'district': ou_name[0:2], 'basedn': self.ucr.get('ldap/base')}
+			district_ou_dn = 'ou=%(district)s,%(basedn)s' % {'district': ou_name[0:2], 'basedn': self.ucr.get('ldap/base')}
+			oudn = 'ou=%(ou)s,%(district_ou_dn)s' % {'ou': ou_name, 'district_ou_dn': district_ou_dn}
 		else:
+			district_ou_dn = ''
 			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self.ucr.get('ldap/base')}
 		self._remove_udm_object('container/ou', oudn)
 		logger.info('*** Purging OU %s and related objects (%s): done\n\n', ou_name, oudn)
@@ -305,8 +307,12 @@ class UCSTestSchool(object):
 			except ValueError:
 				pass
 
-		if wait_for_replication:
-			utils.wait_for_replication()
+		if district_ou_dn:
+			logger.info('*** Deleting district OU %s (%s)...', ou_name[0:2], district_ou_dn)
+			self._remove_udm_object('container/ou', district_ou_dn)
+
+			if wait_for_replication:
+				utils.wait_for_replication()
 
 	@classmethod
 	def check_name_edudc(cls, name_edudc):
