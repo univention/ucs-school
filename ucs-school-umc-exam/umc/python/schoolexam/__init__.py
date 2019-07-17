@@ -163,6 +163,27 @@ class Instance(SchoolBaseModule):
 		return self._progress_state.poll()
 
 	@LDAP_Connection()
+	def _user_can_modify(self, user, exam, ldap_user_read=None):
+		"""
+		Checks whether the given user is allowed to modify the given exam or not.
+		Domain Admin: Can always modify
+		School Admin: Can modify if exam owner is in own school
+		Else: if owner is caller
+		:param user: The user school object
+		:param exam: The exam to be modified
+		:return: True if user can modify else False
+		"""
+		if user.dn == exam.sender.dn:
+			return True
+		sender_user = User.from_dn(exam.sender.dn, None, ldap_user_read)
+		if user.is_administrator(ldap_user_read) and len(set(sender_user.schools).intersection(user.schools)) != 0:
+			return True
+		admin_group_dn = 'cn=Domain Admins,cn=groups,' + ucr['ldap/base']
+		if admin_group_dn in user.get_udm_object(ldap_user_read)['groups']:
+			return True
+		return False
+
+	@LDAP_Connection()
 	def _save_exam(self, request, update=False, ldap_user_read=None):
 		"""
 		Creates or updates an exam with the information given in the request object
@@ -221,6 +242,24 @@ class Instance(SchoolBaseModule):
 					pass
 		return project
 
+	@LDAP_Connection()
+	def _delete_exam(self, name, ldap_user_read=None):
+		"""
+		Deletes an exam project file including the uploaded data if the exam was not started yet and the caller is
+		authorized to do so.
+		:param name: Name of the exam to delete
+		:return: True if exam was deleted, else False
+		"""
+		exam = util.distribution.Project.load(name)
+		if not exam:
+			return False
+		if exam.isDistributed:
+			return False
+		if not self._user_can_modify(User.from_dn(ldap_user_read.whoami(), None, ldap_user_read) ,exam):
+			return False
+		exam.purge()
+		return True
+
 	@sanitize(StringSanitizer(required=True))
 	@LDAP_Connection()
 	def get(self, request, ldap_user_read=None):
@@ -262,6 +301,16 @@ class Instance(SchoolBaseModule):
 	def add(self, request, ldap_user_read=None):
 		self._save_exam(request)
 		self.finished(request.id, True)
+
+	@sanitize(
+		exams=ListSanitizer(StringSanitizer(minimum=1), required=True)
+	)
+	@LDAP_Connection()
+	def delete(self, request, ldap_user_read=None):
+		result = []
+		for exam in request.options['exams']:
+			result.append(self._delete_exam(exam))
+		self.finished(request.id, result)
 
 	@sanitize(
 		name=StringSanitizer(required=True),
