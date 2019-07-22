@@ -63,6 +63,12 @@ def main():
 					examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
 					recipients=[klasse_dn]  # list of classes dns
 				)
+				exam2 = Exam(
+					school=school,
+					room=room.dn,  # room dn
+					examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+					recipients=[klasse_dn]  # list of classes dns
+				)
 				try:
 					exam.save(fields=['recipients', 'school'])
 					raise Exception('Exam should not have been saved due to missing name')
@@ -83,6 +89,13 @@ def main():
 				assert result['recipients'] == []
 				assert not result['isDistributed']
 				assert result['examEndTime'] == ''
+				# Testing exam deletion
+				exam.start()
+				result = exam.delete()
+				assert not any(result)
+				exam2.save(fields=['name', 'room', 'school', 'directory'])
+				result = exam2.delete()
+				assert all(result)
 				wait_replications_check_rejected_uniqueMember(existing_rejects)
 
 
