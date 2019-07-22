@@ -14,4 +14,6 @@ desc: |
  * Move wizard data verification to the end (Bug #49765).
  * Allow exam to be prepared without starting them (Bug #49782).
  * Adjust overview grid to show more useful information (Bug #49801).
-bug: [48080,49637, 49554, 49701, 49744, 49763, 49765, 49782, 49801]
+ * Add UMC call to delete unstarted exams (Bug #49859).
+ * Add delete action to the overview grid of the exam module (Bug #49884).
+bug: [48080,49637, 49554, 49701, 49744, 49763, 49765, 49782, 49801, 49859, 49884]

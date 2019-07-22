@@ -519,7 +519,8 @@ feedback@univention.de
 			  Alternativ kann man die Klassenarbeit jederzeit über die Schaltfläche <guimenu>Klassenarbeit speichern</guimenu> zur späteren Bearbeitung abspeichern.
 			  Dazu muss lediglich ein Name angegeben werden. Auf der Übersicht können solche Klassenarbeiten über die Schaltfläche <guimenu>Klassenarbeit bearbeiten</guimenu>
 			  erneut geladen und weiter angepasst, oder, falls alle notwendigen Informationen vorhanden sind, gestartet werden. Nur die ursprünglichen Autoren
-			  dürfen Klassenarbeiten im Nachhinein bearbeiten oder starten.
+			  dürfen Klassenarbeiten im Nachhinein bearbeiten oder starten. Zudem können Lehrer jederzeit ihre vorbereiteten Klassenarbeiten löschen, solange diese noch
+			  nicht gestartet worden sind. Administratoren können jede vorbereitete und noch nicht gestartete Klassenarbeit löschen.
 		  </para>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:neustart">

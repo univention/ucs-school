@@ -193,6 +193,11 @@ class Exam(object):
 		reqResult = self.client.umc_command('schoolexam/exam/get', [self.name]).result
 		return reqResult
 
+	def delete(self):
+		"""Deletes an exam and returns result"""
+		reqResult = self.client.umc_command('schoolexam/exam/delete', {'exams': [self.name]}).result
+		return reqResult
+
 	def finish(self):
 		"""Finish an exam"""
 		param = {'exam': self.name, 'room': self.room}

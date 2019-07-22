@@ -880,6 +880,18 @@ define([
 				canExecute: lang.hitch(this, function(exam) {
 					return !exam.isDistributed && exam['sender'] === tools.status()['username'];
 				})
+			}, {
+				name: 'delete',
+				label: _('Delete exam(s)'),
+				description: _('Delete exam(s)'),
+				iconClass: 'umcIconDelete',
+				isContextAction: true,
+				isMultiAction: true,
+				isStandardAction: true,
+				callback: lang.hitch(this, '_deleteExams'),
+				canExecute: lang.hitch(this, function(exam) {
+					return !exam.isDistributed && exam['callerCanModify'];
+				})
 			}];
 
 			// define the grid columns
@@ -984,6 +996,21 @@ define([
 				this._examWizard.destroy();
 			}));
 			this.selectChild(this._examWizard);
+		},
+
+		_deleteExams: function() {
+			var exams = this._grid.getSelectedIDs();
+			dialog.confirm(_('Do you really want to delete %s?', exams.join(', ')), [{
+				label: _('Delete'),
+				callback: lang.hitch(this, function() {
+					this.umcpCommand('schoolexam/exam/delete', {exams: exams}).then(lang.hitch(this, function() {
+						this._grid.filter(this._grid.query);
+					}))
+				})
+			}, {
+				label: _('Cancel'),
+				default: true
+			}], _('Delete exam(s)'));
 		}
 	});
 });

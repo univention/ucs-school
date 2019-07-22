@@ -12,6 +12,7 @@
 	<command name="schoolexam/internetrules" function="internetrules"/>
 	<command name="schoolexam/room/validate" function="validate_room"/>
 	<command name="schoolexam/exam/add" function="add"/>
+	<command name="schoolexam/exam/delete" function="delete"/>
 	<command name="schoolexam/exam/put" function="put"/>
 	<command name="schoolexam/exam/get" function="get"/>
 	<command name="schoolexam/exam/start" function="start_exam"/>
