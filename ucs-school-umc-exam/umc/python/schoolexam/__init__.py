@@ -53,7 +53,6 @@ from univention.management.console.modules.sanitizers import (
 	StringSanitizer, DictSanitizer, ListSanitizer, DNSanitizer, PatternSanitizer, ChoicesSanitizer)
 from univention.management.console.modules.schoolexam import util
 from univention.management.console.modules.distribution import compare_dn
-import univention.admin.uexceptions as udm_exceptions
 
 from univention.lib.i18n import Translation
 from univention.lib.umc import Client, ConnectionError, HTTPError
@@ -735,10 +734,20 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, result)   # cannot use @simple_response with @LDAP_Connection :/
 
 	def _get_project_students(self, project, lo):
-		students = [s for s in project.recipients if s.type == util.distribution.TYPE_USER]
-		students += list(chain.from_iterable(g.members for g in project.recipients if g.type == util.distribution.TYPE_GROUP))
-		students = set((s.username, s.dn) for s in students)
-		return [s[0] for s in students if User.from_dn(s[1], None, lo).is_student(lo)]
+		temp_students = [s for s in project.recipients if s.type == util.distribution.TYPE_USER]
+		temp_students += list(chain.from_iterable(g.members for g in project.recipients if g.type == util.distribution.TYPE_GROUP))
+		project_students = []
+		for student in set((s.username, s.dn) for s in temp_students):
+			try:
+				user_obj = User.from_dn(student[1], None, lo)
+			except noObject:
+				MODULE.warn('DN "%s" is stored as part of project "%s" but does not exist.' % (student[1], project.name,))
+				continue
+			if not project.isDistributed and user_obj.is_student(lo) and not user_obj.is_exam_student(lo):
+				project_students.append(student[0])
+			elif project.isDistributed and user_obj.is_exam_student(lo):
+				project_students.append(student[0])
+		return project_students
 
 	@sanitize(
 		groups=ListSanitizer(DNSanitizer(minimum=1), required=True, min_elements=1)
