@@ -716,6 +716,7 @@ class Instance(SchoolBaseModule):
 		"""
 		pattern = request.options['pattern']
 		filter = request.options['filter']
+		user = User.from_dn(ldap_user_read.whoami(), None, ldap_user_read)
 		result = [
 			{
 				'name': project.name,
@@ -725,6 +726,7 @@ class Instance(SchoolBaseModule):
 				'starttime': project.starttime.strftime('%Y-%m-%d %H:%M') if project.starttime else '',
 				'files': len(project.files) if project.files else 0,
 				'isDistributed': project.isDistributed,
+				'callerCanModify': self._user_can_modify(user, project),
 				'room': ComputerRoom.get_name_from_dn(project.room) if project.room else '',
 			}
 			for project in util.distribution.Project.list()
