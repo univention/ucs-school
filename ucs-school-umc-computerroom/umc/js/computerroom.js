@@ -105,6 +105,9 @@ define([
 		// make sure the computerroom module can only be opened once
 		unique: true,
 
+		//flag to determine if the close module dialog was confirmed before
+		toBeClosed: false,
+
 		// the property field that acts as unique identifier for the object
 		idProperty: '$dn$',
 
@@ -147,6 +150,39 @@ define([
 		_headActions: null,
 		_headButtons: null,
 		_changeSettingsLabel: null,
+
+		onClose: function(value) {
+			if(!this.roomInfo.exam || this.toBeClosed) {
+				return true
+			}
+			if(value === undefined) { // If using header button Close the function is called twice - once with param once without
+				return false
+			}
+			body =
+			dialog.confirm(_('Do you really want to close the computerroom module? If so the exam will be finished and all documents from the exam users will be collected into the corresponding folder in your home directory. If you continue without finishing the exam you can return to the computerroom module and continue the exam. Please do not forget to finish the exam then.'), [
+				{
+					name: 'cancel',
+					label: _('Cancel')
+				},
+				{
+					name: 'finish',
+					label: _('Finish exam'),
+					default: true
+				},
+				{
+					name: 'continue',
+					label: _('Continue without finishing')
+				}
+			], 'Close computerroom module').then(lang.hitch(this, function(result) {
+				 if(result === 'finish') {
+					this._finishExam();
+				} else if (result === 'continue') {
+				 	this.toBeClosed = true;
+					topic.publish('/umc/tabs/close', this);
+				}
+			}));
+			return false
+		},
 
 		uninitialize: function() {
 			this.inherited(arguments);
