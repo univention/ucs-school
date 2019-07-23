@@ -5,6 +5,6 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-ldap-acls-master
 fix: 17.0.2-1A~4.4.0.201907042205
 desc: |
- * OU admins can now write the ucsschoolRole attr on computer objects (Bug #48080).
- * Security fix: OU admins are no longer able to reset passwords of other school admins or domain admins within a school OU (Bug #35447).
+ * The LDAP permissions (ACLs) have been adapted to allo school admins to write the <literal>ucsschoolRole</literal> attribute on computer objects (Bug #48080).
+ * Security fix: school admins are no longer able to reset passwords of other school admins or domain admins within a school OU (Bug #35447).
 bug: [35447, 48080]

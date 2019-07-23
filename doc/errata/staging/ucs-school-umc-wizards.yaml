@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-wizards
 fix: 11.0.0-6A~4.4.0.201906071212
 desc: |
- * Fix request type of ip_address and mac_address to send the correct data to the UMC server (Bug #49608).
+ * Internal improvement: The data type of the <literal>ip_address</literal> and <literal>mac_address</literal> values of computer objects has been fixed (Bug #49608).
 bug: [49608]

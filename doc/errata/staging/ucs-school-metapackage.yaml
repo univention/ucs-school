@@ -5,6 +5,6 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-metapackage
 fix: 12.0.2-4A~4.4.0.201907161034
 desc: |
- * The demo user password is now stored in <filename>/etc/ucsschool/demoschool.secret</filename> (Bug #49515).
- * The <literal>ucsschoolAdministrator</literal> option is now enabled for the demo admin user. An existing <literal>demo_admin</literal> user is updated. In new installations separated staff, teacher and admin users are created (Bug #49531).
+ * The passwords of demo users is now stored in <filename>/etc/ucsschool/demoschool.secret</filename> (Bug #49515).
+ * The <literal>ucsschoolAdministrator</literal> option is now enabled for the <literal>demo_admin</literal> user. An existing <literal>demo_admin</literal> user is updated. In new installations separated staff, teacher and admin users are created (Bug #49531).
 bug: [49515, 49531]
