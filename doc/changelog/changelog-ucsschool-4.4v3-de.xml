@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.4-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.4 v3 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.4 v2 nach 4.4 v3</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.4 v3
+Stand: 23.07.2019
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2019
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.4 v2 nach 4.4 v3.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:newerrata">
+			<title>Updateprozess</title>
+			<para>
+				Größere Updates für UCS@school werden im Univention Appcenter als eigenständiges App-Update herausgegeben.
+				Kleinere Updates und Fehlerbereinigungen (Errata für UCS@school), die keine Interaktion mit dem Administrator erforderlich machen, werden im Repository der
+				bereits veröffentlichten App-Version von UCS@school herausgegeben. Die Changelog-Dokumente, die Univention mit jeder UCS@school-App-Version
+				herausgibt, werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem ersichtlich wird, zu welchem Zeitpunkt welche
+				Pakete veröffentlicht und welche Fehler dabei behoben wurden.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+				<section id="changelog:ucsschool:2019-07-23" lang="en">
+					<title>Released on 2019-07-23:</title>
+					<!-- START ucs-school-ldap-acls-master 17.0.2-1A~4.4.0.201907042205 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>17.0.2-1A~4.4.0.201907042205</emphasis>:
+						<itemizedlist>
+							<listitem><para>The LDAP permissions (ACLs) have been adapted to allow school admins to write the <literal>ucsschoolRole</literal> attribute on computer objects (<u:bug>48080</u:bug>).</para></listitem>
+
+							<listitem><para>Security fix: school admins are no longer able to reset passwords of other school admins or domain admins within a school OU (<u:bug>35447</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 17.0.2-1A~4.4.0.201907042205 -->
+					<!-- START ucs-school-lib 12.1.2-1A~4.4.0.201907090931 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.2-1A~4.4.0.201907090931</emphasis>:
+						<itemizedlist>
+							<listitem><para>The automatically created hostname for school DCs in multi server environments is now correct (<u:bug>49462</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: The data type of the <literal>ip_address</literal> and <literal>mac_address</literal> values of computer objects has been fixed (<u:bug>49608</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: the role <literal>teacher_computer</literal> has been added for computers that are used by teachers, so they can be excluded from network access restrictions (<u:bug>48080</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.2-1A~4.4.0.201907090931 -->
+					<!-- START ucs-school-metapackage 12.0.2-4A~4.4.0.201907161034 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.2-4A~4.4.0.201907161034</emphasis>:
+						<itemizedlist>
+							<listitem><para>The passwords of demo users is now stored in <filename>/etc/ucsschool/demoschool.secret</filename> (<u:bug>49515</u:bug>).</para></listitem>
+
+							<listitem><para>The <literal>ucsschoolAdministrator</literal> option is now enabled for the <literal>demo_admin</literal> user. An existing <literal>demo_admin</literal> user is updated. In new installations separated staff, teacher and admin users are created (<u:bug>49531</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.2-4A~4.4.0.201907161034 -->
+					<!-- START ucs-school-umc-distribution 17.0.1-5A~4.4.0.201907151426 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-distribution</emphasis> in version <emphasis>17.0.1-5A~4.4.0.201907151426</emphasis>:
+						<itemizedlist>
+							<listitem><para>Various improvements have been made to the exam mode, see referenced bugs for details (<u:bug>49637</u:bug>).</para></listitem>
+
+							<listitem><para>The exam mode backend now supports unstarted exams (<u:bug>49701</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-distribution 17.0.1-5A~4.4.0.201907151426 -->
+					<!-- START ucs-school-umc-exam 9.0.1-12A~4.4.0.201907221622 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-12A~4.4.0.201907221622</emphasis>:
+						<itemizedlist>
+							<listitem><para>Teacher computers are now exempt from the internet and share access restrictions during an exam (<u:bug>48080</u:bug>).</para></listitem>
+
+							<listitem><para>Various improvements have been made to the exam mode, see referenced bugs for details (<u:bug>49637</u:bug>).</para></listitem>
+
+							<listitem><para>The group members of exams are now shown in the exam wizard while choosing participating groups (<u:bug>49554</u:bug>).</para></listitem>
+
+							<listitem><para>The exam mode backend now supports unstarted exams (<u:bug>49701</u:bug>).</para></listitem>
+
+							<listitem><para>The exam mode frontend now supports unstarted exams (<u:bug>49744</u:bug>).</para></listitem>
+
+							<listitem><para>The exam mode frontend has been adapted to allow the preparation of exams in advance (<u:bug>49763</u:bug>).</para></listitem>
+
+							<listitem><para>The input data verification has been moved to the end of the exam configuration wizard (<u:bug>49765</u:bug>).</para></listitem>
+
+							<listitem><para>Exams are now allowed to be prepared without starting them (<u:bug>49782</u:bug>).</para></listitem>
+
+							<listitem><para>The exam overview table has been adjusted to show more useful information (<u:bug>49801</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: a UMC call was added to delete unstarted exams (<u:bug>49859</u:bug>).</para></listitem>
+
+							<listitem><para>A delete action was added to the exam overview (<u:bug>49884</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-12A~4.4.0.201907221622 -->
+					<!-- START ucs-school-umc-rooms 16.1.0-1A~4.4.0.201906261544 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-rooms</emphasis> in version <emphasis>16.1.0-1A~4.4.0.201906261544</emphasis>:
+						<itemizedlist>
+							<listitem><para>Teacher computers can now be defined in the room management module. This is useful if they should be exempt from network access restrictions (<u:bug>48080</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-rooms 16.1.0-1A~4.4.0.201906261544 -->
+					<!-- START ucs-school-umc-wizards 11.0.0-6A~4.4.0.201906071212 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.0-6A~4.4.0.201906071212</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: The data type of the <literal>ip_address</literal> and <literal>mac_address</literal> values of computer objects has been fixed (<u:bug>49608</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.0-6A~4.4.0.201906071212 -->
+<!-- CHANGELOG:2019-07-23:APPEND -->
+				</section>
+<!-- CHANGELOG-NEW-SECTION -->
+
+		</section>
+	</chapter>
+</book>
