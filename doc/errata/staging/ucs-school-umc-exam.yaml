@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-12A~4.4.0.201907221622
+fix: 9.0.1-13A~4.4.0.201907240848
 desc: |
  * Teacher computers are now exempt from the internet and share access restrictions during an exam (Bug #48080).
  * Various improvements have been made to the exam mode, see referenced bugs for details (Bug #49637).
