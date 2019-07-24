@@ -56,6 +56,7 @@ from univention.management.console.modules.distribution import compare_dn
 
 from univention.lib.i18n import Translation
 from univention.lib.umc import Client, ConnectionError, HTTPError
+from univention.lib.misc import custom_groupname
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase, SchoolSanitizer, Display
 from ucsschool.lib import internetrules
@@ -177,7 +178,7 @@ class Instance(SchoolBaseModule):
 		sender_user = User.from_dn(exam.sender.dn, None, ldap_user_read)
 		if user.is_administrator(ldap_user_read) and len(set(sender_user.schools).intersection(user.schools)) != 0:
 			return True
-		admin_group_dn = 'cn=Domain Admins,cn=groups,' + ucr['ldap/base']
+		admin_group_dn = 'cn={},cn=groups,{}'.format(custom_groupname('Domain Admins', ucr), ucr['ldap/base'])
 		if admin_group_dn in user.get_udm_object(ldap_user_read)['groups']:
 			return True
 		return False
@@ -260,8 +261,7 @@ class Instance(SchoolBaseModule):
 		return True
 
 	@sanitize(StringSanitizer(required=True))
-	@LDAP_Connection()
-	def get(self, request, ldap_user_read=None):
+	def get(self, request):
 		result = []
 		for project in [util.distribution.Project.load(iid) for iid in request.options]:
 			if not project:
@@ -295,17 +295,14 @@ class Instance(SchoolBaseModule):
 		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
 		files=ListSanitizer(StringSanitizer()),
 	)
-	@require_password
-	@LDAP_Connection()
-	def add(self, request, ldap_user_read=None):
+	def add(self, request):
 		self._save_exam(request)
 		self.finished(request.id, True)
 
 	@sanitize(
 		exams=ListSanitizer(StringSanitizer(minimum=1), required=True)
 	)
-	@LDAP_Connection()
-	def delete(self, request, ldap_user_read=None):
+	def delete(self, request):
 		result = []
 		for exam in request.options['exams']:
 			result.append(self._delete_exam(exam))
@@ -324,8 +321,7 @@ class Instance(SchoolBaseModule):
 		files=ListSanitizer(StringSanitizer()),
 	)
 	@require_password
-	@LDAP_Connection()
-	def put(self, request, ldap_user_read=None):
+	def put(self, request):
 		self._save_exam(request, update=True)
 		self.finished(request.id, True)
 
