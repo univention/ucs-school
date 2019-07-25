@@ -1,0 +1,115 @@
+#!/usr/share/ucs-test/runner /usr/share/ucs-test/selenium
+# -*- coding: utf-8 -*-
+## desc: Test the computerroom module. Specifically exiting it during exam mode
+## roles: [domaincontroller_master]
+## tags: [apptest,ucsschool,ucsschool_selenium]
+## exposure: dangerous
+## packages:
+##   - ucs-school-master | ucs-school-singlemaster
+
+import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing import selenium
+from univention.admin import localization
+from datetime import datetime, timedelta
+import univention.testing.ucr as ucr_test
+import univention.testing.udm
+from univention.testing.ucsschool.exam import Exam, get_s4_rejected, wait_replications_check_rejected_uniqueMember
+from univention.testing.ucsschool.computerroom import Room, Computers
+
+translator = localization.translation('ucs-test-selenium')
+_ = translator.translate
+
+
+class UMCTester(object):
+
+	def _open_computer_room(self, school, room_name):
+		self.selenium.open_module(_('Computer room'), wait_for_standby=False)
+		self.selenium.wait_until_standby_animation_appears_and_disappears(appear_timeout=15, disappear_timeout=60)
+		self.selenium.wait_for_text(_('School'))
+		self.selenium.wait_for_text(_('Computer room'))
+		self.selenium.enter_input_combobox('school', school)
+		try:
+			self.selenium.wait_for_text(room_name, timeout=10)
+		except:
+			pass
+		self.selenium.enter_input_combobox('room', room_name)
+		self.selenium.click_button(_('Select room'))
+		self.selenium.wait_until_all_dialogues_closed()
+
+	def test_umc(self):
+		with univention.testing.udm.UCSTestUDM() as udm:
+			with utu.UCSTestSchool() as schoolenv:
+				with ucr_test.UCSTestConfigRegistry() as ucr:
+					open_ldap_co = schoolenv.open_ldap_connection()
+					ucr.load()
+					print(' ** Initial Status')
+					existing_rejects = get_s4_rejected()
+
+					if ucr.is_true('ucsschool/singlemaster'):
+						edudc = None
+					else:
+						edudc = ucr.get('hostname')
+					school, oudn = schoolenv.create_ou(name_edudc=edudc)
+					klasse_dn = udm.create_object('groups/group', name='%s-AA1' % school, position="cn=klassen,cn=schueler,cn=groups,%s" % oudn)
+					tea, teadn = schoolenv.create_user(school, is_teacher=True)
+					stu, studn = schoolenv.create_user(school)
+
+					udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
+					udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
+
+					print (' ** After Creating users and classes')
+					wait_replications_check_rejected_uniqueMember(existing_rejects)
+
+					# importing random computer
+					computers = Computers(open_ldap_co, school, 1, 0, 0)
+					created_computers = computers.create()
+					created_computers_dn = computers.get_dns(created_computers)
+
+					room = Room(school, host_members=created_computers_dn[0])
+
+					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
+
+
+					self.selenium.do_login()
+					self._open_computer_room(school, room.name)
+					self.selenium.click_button(_('Close'))  # No exam running, should just close the module
+					self.selenium.wait_for_text(_('Education'))
+
+					current_time = datetime.now()
+					chosen_time = current_time + timedelta(hours=2)
+
+					print(' ** After creating the rooms')
+					wait_replications_check_rejected_uniqueMember(existing_rejects)
+
+					exam = Exam(
+						school=school,
+						room=room.dn,  # room dn
+						examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+						recipients=[klasse_dn]  # list of classes dns
+					)
+
+					exam.start()
+					self._open_computer_room(school, room.name)
+					self.selenium.click_button(_('Close'))
+					self.selenium.click_button(_('Cancel'))
+					try:
+						self.selenium.wait_until_all_dialogues_closed()
+					except:
+						pass
+					self.selenium.click_button(_('Close'))
+					self.selenium.click_button(_('Continue without finishing'))
+					self.selenium.wait_for_text(_('Education'))
+					self._open_computer_room(school, room.name)
+					self.selenium.click_button(_('Close'))
+					self.selenium.click_element("//*[contains(@class, 'dijitDialog')]//span[contains(@class, 'dijitButtonText')][text() = 'Finish exam']")
+					self.selenium.wait_for_text(_('Confirmation'))
+					self.selenium.click_element("//*[contains(@class, 'dijitDialog')]//span[contains(@class, 'dijitButtonText')][text() = 'Finish exam']")
+					self.selenium.wait_for_text(_('Notification'))
+
+
+if __name__ == '__main__':
+	with selenium.UMCSeleniumTest() as s:
+		umc_tester = UMCTester()
+		umc_tester.selenium = s
+
+		umc_tester.test_umc()
