@@ -16,7 +16,7 @@
 		<legalnotice>
 			<literallayout>
 Version 4.4 v3
-Stand: 23.07.2019
+Stand: 25.07.2019
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
@@ -70,8 +70,8 @@ feedback@univention.de
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
-				<section id="changelog:ucsschool:2019-07-23" lang="en">
-					<title>Released on 2019-07-23:</title>
+				<section id="changelog:ucsschool:2019-07-25" lang="en">
+					<title>Released on 2019-07-25:</title>
 					<!-- START ucs-school-ldap-acls-master 17.0.2-1A~4.4.0.201907042205 -->
 					<para>
 						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>17.0.2-1A~4.4.0.201907042205</emphasis>:
@@ -118,9 +118,9 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-umc-distribution 17.0.1-5A~4.4.0.201907151426 -->
-					<!-- START ucs-school-umc-exam 9.0.1-12A~4.4.0.201907221622 -->
+					<!-- START ucs-school-umc-exam 9.0.1-13A~4.4.0.201907240848 -->
 					<para>
-						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-12A~4.4.0.201907221622</emphasis>:
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-13A~4.4.0.201907240848</emphasis>:
 						<itemizedlist>
 							<listitem><para>Teacher computers are now exempt from the internet and share access restrictions during an exam (<u:bug>48080</u:bug>).</para></listitem>
 
@@ -146,7 +146,7 @@ feedback@univention.de
 
 						</itemizedlist>
 					</para>
-					<!-- END ucs-school-umc-exam 9.0.1-12A~4.4.0.201907221622 -->
+					<!-- END ucs-school-umc-exam 9.0.1-13A~4.4.0.201907240848 -->
 					<!-- START ucs-school-umc-rooms 16.1.0-1A~4.4.0.201906261544 -->
 					<para>
 						Source package <emphasis>ucs-school-umc-rooms</emphasis> in version <emphasis>16.1.0-1A~4.4.0.201906261544</emphasis>:
@@ -165,7 +165,7 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-umc-wizards 11.0.0-6A~4.4.0.201906071212 -->
-<!-- CHANGELOG:2019-07-23:APPEND -->
+<!-- CHANGELOG:2019-07-25:APPEND -->
 				</section>
 <!-- CHANGELOG-NEW-SECTION -->
 
