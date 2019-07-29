@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-23) unstable; urgency=low
+
+  * Bug #47381: don't stop notifier during dry-run
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 29 Jul 2019 14:24:23 +0200
+
 ucs-school-import (17.0.6-22) unstable; urgency=low
 
   * Bug #49556: fix hook execution when using the ImportUser class without an
