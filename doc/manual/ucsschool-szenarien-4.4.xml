@@ -2369,6 +2369,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
 					url="https://docs.software-univention.de/ucsschool-umc-import-handbuch-4.4.html">Handbuch grafischer Benutzer-Import</ulink>
 				nachzulesen.
 			</para>
+		</section>
 	</chapter>
 	<!-- <chapter id="additional-services"> -->
 	<!-- 	<title>Weitere Angebote einrichten</title> -->
