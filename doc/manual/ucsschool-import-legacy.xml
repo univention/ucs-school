@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="ucsschool-4.4-import">
+	<bookinfo>
+		<title>
+			&ucsUAS;
+		</title>
+		<subtitle>
+			Handbuch Legacy Benutzerimport
+		</subtitle>
+		<legalnotice>
+			<literallayout>
+				Version 4.4 v1
+				Stand: 12. März 2019
+			</literallayout>
+			<literallayout lang="">
+				Alle Rechte vorbehalten./ All rights reserved.
+				(c) 2016-2019
+				Univention GmbH
+				Mary-Somerville-Straße 1
+				28359 Bremen
+				Deutschland
+				feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="import_users-classes">
+		<title>Benutzer / Klassen</title>
+		<para>
+			Der Import von Benutzerkonten erleichtert die Pflege,
+			insbesondere in sehr großen Umgebungen.  Mit den bereitgestellten Importskripten kann
+			ebenfalls der Schuljahreswechsel durchgeführt werden.
+		</para>
+		<para>
+			Das Datenformat der CSV-Datei ist im <ulink
+				url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html#configuration:mapping">&ucsUAS;-Handbuch</ulink>
+			beschrieben.  Folgende Informationen müssen enthalten sein:
+			<itemizedlist>
+				<listitem><para>Vorname</para></listitem>
+				<listitem><para>Nachname</para></listitem>
+				<listitem><para>Schulen</para></listitem>
+				<listitem><para>Klassen</para></listitem>
+			</itemizedlist>
+			In der Datei <ulink
+				url="ucsschool-import-vorlagen.xlsx"/> sind Vorlagen in
+			den Tabellen <emphasis>Benutzer</emphasis> und
+			<emphasis>Klassen</emphasis> vorhanden.  Das weitere Vorgehen
+			ist wie folgt:
+		</para>
+		<para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Die CSV-Datei <filename>students.csv</filename> ist
+						auf dem &ucsMaster; in folgendem Verzeichnis
+						abzulegen:
+						<filename>/usr/local/ucsschool/import_data/</filename>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Die CSV-Datei aus der Vorlage enthält noch zwei Kopfzeilen, die mit
+						dem Zeichen <literal>#</literal> beginnen, diese
+						müssen vor der weiteren Verarbeitung entfernt
+						werden:
+						<programlisting>
+							<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/students.csv
+							]]>
+						</programlisting>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Der Import kann abschließend mit folgendem Befehl
+						ausgeführt werden:
+						<programlisting>
+							<![CDATA[
+/usr/share/ucs-school-import/scripts/import_user \
+/usr/local/ucsschool/import_data/students.csv
+							]]>
+						</programlisting>
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			Beim Import von Klassen ist analog vorzugehen:
+		</para>
+		<para>
+			<itemizedlist>
+				<listitem>
+					<para>>
+						Die CSV-Datei <filename>klassen.csv</filename> ist
+						auf dem &ucsMaster; in folgendem Verzeichnis
+						abzulegen:
+						<filename>/usr/local/ucsschool/import_data/</filename>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Die CSV-Datei aus der Vorlage enthält noch zwei Kopfzeilen, die mit
+						dem Zeichen <literal>#</literal> beginnen, diese
+						müssen vor der weiteren Verarbeitung entfernt
+						werden:
+						<programlisting>
+							<![CDATA[
+sed -i '1,2d' /usr/local/ucsschool/import_data/klassen.csv
+							]]>
+						</programlisting>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Der Import kann abschließend mit folgendem Befehl
+						ausgeführt werden:
+						<programlisting>
+							<![CDATA[
+/usr/share/ucs-school-import/scripts/import_groups \
+/usr/local/ucsschool/import_data/klassen.csv
+							]]>
+						</programlisting>
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</chapter>
+
+	<bibliography id="bibliography">
+		<bibliomixed id="ucs-handbuch"/>
+	</bibliography>
+</book>
