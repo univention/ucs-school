@@ -152,13 +152,12 @@ define([
 		_changeSettingsLabel: null,
 
 		onClose: function(value) {
-			if(!this.roomInfo.exam || this.toBeClosed) {
-				return true
+			if(!this.roomInfo || !this.roomInfo.exam || this.toBeClosed) {
+				return true;
 			}
 			if(value === undefined) { // If using header button Close the function is called twice - once with param once without
-				return false
+				return false;
 			}
-			body =
 			dialog.confirm(_('Do you really want to close the computerroom module? If so the exam will be finished and all documents from the exam users will be collected into the corresponding folder in your home directory. If you continue without finishing the exam you can return to the computerroom module and continue the exam. Please do not forget to finish the exam then.'), [
 				{
 					name: 'cancel',
@@ -173,7 +172,7 @@ define([
 					name: 'continue',
 					label: _('Continue without finishing')
 				}
-			], 'Close computerroom module').then(lang.hitch(this, function(result) {
+			], _('Close computerroom module')).then(lang.hitch(this, function(result) {
 				 if(result === 'finish') {
 					this._finishExam();
 				} else if (result === 'continue') {
@@ -181,7 +180,7 @@ define([
 					topic.publish('/umc/tabs/close', this);
 				}
 			}));
-			return false
+			return false;
 		},
 
 		uninitialize: function() {
