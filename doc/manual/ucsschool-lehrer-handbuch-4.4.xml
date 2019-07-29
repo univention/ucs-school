@@ -452,14 +452,16 @@ feedback@univention.de
 		<para>
 		  Im Folgenden werden die einzelnen Schritte zum Erstellen einer Klassenarbeit kurz beschrieben.
 		</para>
-		<section id="lehrerdoku:klassenarbeit:overview">
-			<title>Übersicht der Klassenarbeiten</title>
-			<figure id="fig:klassenarbeit:overview">
+	  <section id="lehrerdoku:klassenarbeit:overview">
+		<title>Übersicht der Klassenarbeiten</title>
+		<figure id="fig:klassenarbeit:overview">
 			<title>Übersicht über die Klassenarbeiten anzeigen</title>
 			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/exam_3_overview.png"/>
-		  </figure>
+		</figure>
+		<para>
 			Beim Öffnen des &ucsUMC;-Moduls <guimenu>Klassenarbeiten</guimenu> zeigt sich zuerst eine Übersichtsseite, die alle Informationen über gerade laufende Klassenarbeiten anzeigt.
 			Dabei kann man Auswählen, ob man nur die eigenen Klassenarbeiten angezeigt bekommen möchte oder auch die aller Kolleginnen und Kollegen.
+		</para>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:start">
 		  <title>Einrichten einer Klassenarbeit</title>
