@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.1.3A~4.4.0.201907301424
+desc: |
+ * When logging, passwords are removed more reliably (Bug #49938).
+bug: [49938]
