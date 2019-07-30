@@ -55,6 +55,7 @@ def test_password_not_in_arg_is_logged(random_logger):
 	assert random_string in txt
 	assert password_string in txt
 	assert "random_arg: {!r}".format(random_arg) in txt
+	os.remove(logger.handlers[-1].baseFilename)
 
 
 def test_password_in_single_arg_is_not_logged(random_logger):
@@ -73,6 +74,7 @@ def test_password_in_single_arg_is_not_logged(random_logger):
 	assert "bar" in txt
 	assert "password" in txt
 	assert dict_with_pw["bar"] in txt
+	os.remove(logger.handlers[-1].baseFilename)
 
 
 def test_password_in_multiple_args_is_not_logged(random_logger):
@@ -98,3 +100,4 @@ def test_password_in_multiple_args_is_not_logged(random_logger):
 	assert random_dict3.keys()[0] in txt
 	assert random_dict2.values()[0] in txt
 	assert random_dict3.values()[0] in txt
+	os.remove(logger.handlers[-1].baseFilename)
