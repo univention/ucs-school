@@ -88,11 +88,20 @@ ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool
 
 
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
-	for index, arg in enumerate(record.args):
-		if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
+	if isinstance(record.args, tuple):
+		# multiple arguments
+		for index, arg in enumerate(record.args):
+			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
+				# don't change original record arguments as it would change the objects being logged
+				args = copy.deepcopy(record.args)
+				args[index]['password'] = '*' * 8
+				record.args = args
+	else:
+		# one argument
+		if isinstance(record.args, collections.Mapping) and isinstance(record.args.get('password'), string_types):
 			# don't change original record arguments as it would change the objects being logged
 			args = copy.deepcopy(record.args)
-			args[index]['password'] = '*' * 8
+			args['password'] = '*' * 8
 			record.args = args
 	return record
 
