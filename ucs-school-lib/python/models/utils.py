@@ -88,9 +88,20 @@ ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool
 
 
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
+	def replace_password(obj, attr):
+		ori = getattr(obj, attr)
+		if isinstance(ori, collections.Mapping) and isinstance(ori.get('password'), string_types):
+			# don't change original record arguments as it would change the objects being logged
+			new_dict = copy.deepcopy(ori)
+			new_dict['password'] = '*' * 8
+			setattr(obj, attr, new_dict)
+
+	# check args
 	if isinstance(record.args, tuple):
 		# multiple arguments
 		for index, arg in enumerate(record.args):
+			# cannot call replace_password() to replace single arg, because a tuple is not mutable,
+			# -> have to replace all of record.args
 			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
 				# don't change original record arguments as it would change the objects being logged
 				args = copy.deepcopy(record.args)
@@ -98,11 +109,9 @@ def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> lo
 				record.args = args
 	else:
 		# one argument
-		if isinstance(record.args, collections.Mapping) and isinstance(record.args.get('password'), string_types):
-			# don't change original record arguments as it would change the objects being logged
-			args = copy.deepcopy(record.args)
-			args['password'] = '*' * 8
-			record.args = args
+		replace_password(record, 'args')
+	# check msg
+	replace_password(record, 'msg')
 	return record
 
 
