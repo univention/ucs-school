@@ -34,7 +34,7 @@ UCS@school legacy import tool cmdline frontend.
 """
 
 from ..frontend.user_import_cmdline import UserImportCommandLine
-from ..utils.utils import noop
+from ..utils.utils import nullcontext
 from .legacy_user_import_parse_cmdline import LegacyUserImportParseUserImportCmdline
 from ucsschool.lib.models.utils import stopped_notifier
 
@@ -62,6 +62,6 @@ class LegacyUserImportCommandLine(UserImportCommandLine):
 
 	def do_import(self):
 		importer = self.factory.make_mass_importer(self.config["dry_run"])
-		with noop() if self.config['dry_run'] else stopped_notifier():
+		with nullcontext() if self.config['dry_run'] else stopped_notifier():
 			importer.import_users()
 		self.errors = importer.errors

@@ -41,7 +41,7 @@ from ..configuration import Configuration
 from ..utils.pre_read_pyhook import PreReadPyHook
 from ..utils.result_pyhook import ResultPyHook
 from ..utils.import_pyhook import run_import_pyhooks
-from ..utils.utils import noop
+from ..utils.utils import nullcontext
 from ucsschool.lib.models.utils import stopped_notifier
 
 try:
@@ -76,7 +76,7 @@ class MassImport(object):
 		self.user_import_stats_str = ''
 
 	def mass_import(self):  # type: () -> None
-		with noop() if self.dry_run else stopped_notifier():
+		with nullcontext() if self.dry_run else stopped_notifier():
 			self.import_computers()
 			self.import_groups()
 			self.import_inventory_numbers()

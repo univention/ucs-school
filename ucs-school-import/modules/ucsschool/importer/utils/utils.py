@@ -79,6 +79,6 @@ def get_ldap_mapping_for_udm_property(udm_prop, udm_type):
 
 
 @contextmanager
-def noop():
+def nullcontext():
 	"""Context manager that does nothing."""
 	yield None

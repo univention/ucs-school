@@ -1,3 +1,9 @@
+ucs-school-import (17.0.6-24) unstable; urgency=medium
+
+  * Bug #47381: rename noop -> nullcontext
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 31 Jul 2019 17:13:03 +0200
+
 ucs-school-import (17.0.6-23) unstable; urgency=low
 
   * Bug #47381: don't stop notifier during dry-run
