@@ -33,18 +33,19 @@ and central memberserver objects.
 
 import inspect
 from six import iteritems
-from univention.admin.hook import simpleHook
+from univention.admin.hook import simpleHook  # pylint: disable=no-name-in-module,import-error
 try:
 	from ucsschool.lib.roles import (
 		create_ucsschool_role_string, role_ip_computer, role_linux_computer, role_mac_computer, role_memberserver,
 		role_ubuntu_computer, role_win_computer
 	)
 	from ucsschool.lib.models import School
-	_no_school_lib = False
+	from ucsschool.lib.models.utils import ucr
+	_NO_SCHOOL_LIB = False
 except ImportError:
-	_no_school_lib = True
+	_NO_SCHOOL_LIB = True
 else:
-	_udm_module_name2oc_role = {
+	_UDM_MODULE_NAME2OC_ROLE = {
 		'computers/domaincontroller_backup': ('ucsschoolServer', 'ignore'),  # ignore, done in join script
 		'computers/domaincontroller_master': ('ucsschoolServer', 'ignore'),  # ignore, done in join script
 		'computers/domaincontroller_slave': ('ucsschoolServer', 'ignore'),  # ignore, done in join script
@@ -56,22 +57,38 @@ else:
 		'computers/ubuntu': ('ucsschoolComputer', role_ubuntu_computer),
 	}
 try:
-	from typing import Dict, List, Set, Tuple
+	from typing import Dict, List, Set, Tuple, Union  # pylint: disable=unused-import
+	AddType = Tuple[str, List[str]]  # pylint: disable=invalid-name
+	ModType = Tuple[str, List[str], List[str]]  # pylint: disable=invalid-name
 except ImportError:
 	pass
 
 
 class UcsschoolRoleComputers(simpleHook):
+	"""
+	UDM hook to set UCS@schools `ucsschool_roles` attribute on client computer
+	and central memberserver objects.
+	"""
 	type = 'UcsschoolRoleComputers'
 
+	def __init__(self, *args, **kwargs):
+		super(UcsschoolRoleComputers, self).__init__(*args, **kwargs)
+		self.is_master_or_backup = ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup')
+
 	def hook_ldap_addlist(self, obj, al=None):
+		al = al or []
+		if _NO_SCHOOL_LIB or not self.is_master_or_backup:
+			return al
 		return self.add_ocs_and_ucschool_roles(obj, al, 'add')
 
 	def hook_ldap_modlist(self, obj, ml=None):
+		ml = ml or []
+		if _NO_SCHOOL_LIB or not self.is_master_or_backup:
+			return ml
 		return self.add_ocs_and_ucschool_roles(obj, ml, 'mod')
 
 	def add_ocs_and_ucschool_roles(self, obj, aml, operation):
-		# type: (univention.admin.handlers.simpleComputer, List[str], str) -> List[str]
+		# type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]], str) -> List[Union[AddType, ModType]]
 		"""
 		Append `objectClass` and `ucsschoolRole` entries to add/change list.
 
@@ -81,13 +98,8 @@ class UcsschoolRoleComputers(simpleHook):
 		:return: (possibly) modified add/change list
 		:rtype: list(tuple(str))
 		"""
-		if aml is None:
-			aml = []
-		if _no_school_lib:
-			return aml
-
 		udm_module_name = getattr(type(obj), 'module', inspect.getmodule(obj).module)
-		oc, role_str = _udm_module_name2oc_role[udm_module_name]
+		oc, role_str = _UDM_MODULE_NAME2OC_ROLE[udm_module_name]
 
 		if role_str == 'ignore':
 			return aml
@@ -96,7 +108,7 @@ class UcsschoolRoleComputers(simpleHook):
 		existing_ocs, existing_roles = self._existing_ocs_roles(obj, aml)
 
 		if oc not in existing_ocs:
-			if operation is 'add':
+			if operation == 'add':
 				aml.append(('objectClass', [oc]))
 			else:
 				aml.append(('objectClass', [], [oc]))
@@ -112,7 +124,7 @@ class UcsschoolRoleComputers(simpleHook):
 		roles = {create_ucsschool_role_string(role_str, school) for school in obj_schools}
 		missing_roles = roles - existing_roles
 		if missing_roles:
-			if operation is 'add':
+			if operation == 'add':
 				aml.append(('ucsschoolRole', list(missing_roles)))
 			else:
 				aml.append(('ucsschoolRole', [], list(missing_roles)))
@@ -143,7 +155,7 @@ class UcsschoolRoleComputers(simpleHook):
 
 	@staticmethod
 	def _existing_ocs_roles(obj, aml):
-		# type: (univention.admin.handlers.simpleComputer, List[Tuple[str, str, str]]) -> Tuple[Set[str], Set[str]]
+		# type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[str], Set[str]]
 		"""Get objectClasses and ucsschoolRoles from obj."""
 		existing_ocs = set(obj.oldattr.get('objectClass', []))
 		existing_roles = set(obj.get('ucsschoolRole', []))

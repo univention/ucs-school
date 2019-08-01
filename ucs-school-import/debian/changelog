@@ -1,3 +1,10 @@
+ucs-school-import (17.0.7) unstable; urgency=low
+
+  * Bug #49917: prevent running the UcsschoolRoleComputers UDM hook on non
+    master/backup systems
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 01 Aug 2019 12:48:42 +0200
+
 ucs-school-import (17.0.6-24) unstable; urgency=medium
 
   * Bug #47381: rename noop -> nullcontext
