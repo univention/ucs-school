@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.7A~4.4.0.201908011252
+fix: 17.0.8A~4.4.0.201908011257
 desc: |
  * The <literal>univention-directory-notifier</literal> is not stopped anymore, when a dry-run is performed. This improves the speed of dry-runs (Bug #47381).
  * A bug creating s4-connector-rejects on DC slave systems has been fixed (Bug #49917).
