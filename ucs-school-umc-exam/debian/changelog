@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-14) unstable; urgency=medium
+
+   * Bug #49953: Make exam folders in exam user homes immutable during exam
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 09 Aug 2019 10:28:05 +0200
+
 ucs-school-umc-exam (9.0.1-13) unstable; urgency=medium
 
    * Bug #49859: Apply Juerns patch to improve code quality
