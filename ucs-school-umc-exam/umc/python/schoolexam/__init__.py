@@ -99,6 +99,23 @@ class Instance(SchoolBaseModule):
 			shutil.rmtree(self._tmpDir, ignore_errors=True)
 			self._tmpDir = None
 
+	@staticmethod
+	def set_datadir_immutable(project, flag=True):
+		"""
+		Sets or unsets the immutable bit on the recipients datadir depending on the flag
+		:param project: The project to draw the recipients from
+		:param flag: True to set the flag, False to unset
+		"""
+		modifier = '+i' if flag else '-i'
+		for user in project.getRecipients():
+			# make datadir immutable
+			datadir = os.path.dirname(project.user_projectdir(user).rstrip('/'))
+			if os.path.exists(datadir):
+				try:
+					subprocess.check_call(['chattr', modifier, datadir])
+				except subprocess.CalledProcessError as e:
+					MODULE.error('Could not set the immutable bit on {}'.format(datadir))
+
 	@file_upload
 	@sanitize(DictSanitizer(dict(
 		filename=StringSanitizer(required=True),
@@ -495,6 +512,7 @@ class Instance(SchoolBaseModule):
 			progress.component(_('Distributing exam files'))
 			progress.info('')
 			my.project.distribute()
+			Instance.set_datadir_immutable(my.project, True)
 			progress.add_steps(20)
 
 			# prepare room settings via UMCP...
@@ -612,6 +630,8 @@ class Instance(SchoolBaseModule):
 			progress.component(_('Collecting exam files...'))
 			if project:
 				project.collect()
+				# remove immutable bit from folders
+				Instance.set_datadir_immutable(project, False)
 			progress.add_steps(10)
 
 			# open a new connection to the master UMC
