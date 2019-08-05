@@ -511,6 +511,7 @@ class Instance(SchoolBaseModule):
 			# distribute exam files
 			progress.component(_('Distributing exam files'))
 			progress.info('')
+			Instance.set_datadir_immutable(my.project, False)
 			my.project.distribute()
 			Instance.set_datadir_immutable(my.project, True)
 			progress.add_steps(20)
