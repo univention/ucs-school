@@ -40,4 +40,8 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 9.0.0-9; then
  	univention-config-registry unset ucsschool/exam/user/homedir/autoremove
  fi
 
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 9.0.1-18; then
+ 	univention-config-registry set set ucsschool/exam/default/show/restart=True
+ fi
+
 exit 0
