@@ -34,13 +34,13 @@ and central memberserver objects.
 import inspect
 from six import iteritems
 from univention.admin.hook import simpleHook  # pylint: disable=no-name-in-module,import-error
-from ucsschool.lib.models.utils import ucr
 try:
 	from ucsschool.lib.roles import (
 		create_ucsschool_role_string, role_ip_computer, role_linux_computer, role_mac_computer, role_memberserver,
 		role_ubuntu_computer, role_win_computer
 	)
 	from ucsschool.lib.models import School
+	from ucsschool.lib.models.utils import ucr
 	_NO_SCHOOL_LIB = False
 except ImportError:
 	_NO_SCHOOL_LIB = True
@@ -73,6 +73,9 @@ class UcsschoolRoleComputers(simpleHook):
 
 	def __init__(self, *args, **kwargs):
 		super(UcsschoolRoleComputers, self).__init__(*args, **kwargs)
+		if _NO_SCHOOL_LIB:
+			self.is_master_or_backup = False
+			return
 		self.is_master_or_backup = ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup')
 
 	def hook_ldap_addlist(self, obj, al=None):
