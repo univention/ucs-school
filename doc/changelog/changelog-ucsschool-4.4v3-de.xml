@@ -189,6 +189,15 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-lib 12.1.4A~4.4.0.201907301859 -->
+					<!-- START ucs-school-import 17.0.10A~4.4.0.201908051526 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.10A~4.4.0.201908051526</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fix an error in a UDM hook, crashing on systems without the <package>ucs-school-lib</package> package (<u:bug>49963</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.10A~4.4.0.201908051526 -->
 <!-- CHANGELOG:2019-08-05:APPEND -->
 				</section>
 <!-- CHANGELOG-NEW-SECTION -->
