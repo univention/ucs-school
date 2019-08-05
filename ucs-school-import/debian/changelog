@@ -1,3 +1,10 @@
+ucs-school-import (17.0.9) unstable; urgency=medium
+
+  * Bug #49963: fix UcsschoolRoleComputers UDM hook on systems without
+    schoollib
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 05 Aug 2019 14:52:03 +0200
+
 ucs-school-import (17.0.8) unstable; urgency=low
 
   * Bug #49917: force redistribution of UDM hook
