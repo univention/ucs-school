@@ -167,7 +167,32 @@ feedback@univention.de
 					<!-- END ucs-school-umc-wizards 11.0.0-6A~4.4.0.201906071212 -->
 <!-- CHANGELOG:2019-07-25:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-08-05" lang="en">
+					<title>Released on 2019-08-05:</title>
+					<!-- START ucs-school-import 17.0.8A~4.4.0.201908011257 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.8A~4.4.0.201908011257</emphasis>:
+						<itemizedlist>
+							<listitem><para>The <literal>univention-directory-notifier</literal> is not stopped anymore, when a dry-run is performed. This improves the speed of dry-runs (<u:bug>47381</u:bug>).</para></listitem>
+
+							<listitem><para>A bug creating s4-connector-rejects on DC slave systems has been fixed (<u:bug>49917</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.8A~4.4.0.201908011257 -->
+					<!-- START ucs-school-lib 12.1.4A~4.4.0.201907301859 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.4A~4.4.0.201907301859</emphasis>:
+						<itemizedlist>
+							<listitem><para>When logging, passwords are removed more reliably (<u:bug>49938</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.4A~4.4.0.201907301859 -->
+<!-- CHANGELOG:2019-08-05:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
