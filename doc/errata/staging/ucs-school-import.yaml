@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
 fix: 17.0.10A~4.4.0.201908051526
 desc: |
- * Fix an error UcsschoolRoleComputers UDM hook on systems without the ucs-school-lib package (Bug #49963).
+ * Fix an error in a UDM hook, crashing on systems without the <package>ucs-school-lib</package> package (Bug #49963).
 bug: [49963]
