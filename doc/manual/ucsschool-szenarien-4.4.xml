@@ -2361,13 +2361,19 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
 			</para>
 			<para>
 				Für &ucsUAS; gibt es momentan mehrere Möglichkeiten Nutzer und Klassen in das System zu importieren.
-				Der alte Nutzerimport, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach <ulink
-					url="https://docs.software-univention.de/ucsschool-import-legacy.html">&ucsUAS; Legacy Import</ulink>
-				ausgelagert. Es wird allerdings empfohlen die neue Import Schnittstelle zu verwenden. Die Verwendung ist im
-				<ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
-				Die Einrichtung und Verwendung des zugehörigen &ucsUMC; Moduls ist in <ulink
-					url="https://docs.software-univention.de/ucsschool-umc-import-handbuch-4.4.html">Handbuch grafischer Benutzer-Import</ulink>
+			</para>
+			<para>
+				Die Konfiguration des kommandozeilenbasierten Benutzerimports ist im <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
+			</para>
+			<para>
+				Die Einrichtung und Verwendung des zugehörigen &ucsUMC; Moduls ist im
+				<ulink url="https://docs.software-univention.de/ucsschool-umc-import-handbuch-4.4.html">Handbuch grafischer Benutzer-Import</ulink>
 				nachzulesen.
+			</para>
+			<para>
+				Die Dokumentation des alten Nutzerimports, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach
+				<ulink url="https://docs.software-univention.de/ucsschool-import-legacy.html">&ucsUAS; Legacy Import</ulink>
+				ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird.
 			</para>
 		</section>
 	</chapter>

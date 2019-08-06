@@ -142,8 +142,4 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/klassen.csv
 			</itemizedlist>
 		</para>
 	</chapter>
-
-	<bibliography id="bibliography">
-		<bibliomixed id="ucs-handbuch"/>
-	</bibliography>
 </book>
