@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-computerroom
+fix: 
+desc: |
+ * Do not execute arbitrary code code from at jobs inside the umc computerroom module if room settings are changed (Bug #40367).
+bug: [40367]

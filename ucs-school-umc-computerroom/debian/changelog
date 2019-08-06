@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-4) unstable; urgency=medium
+
+  * Bug #40367: Improve room reset
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 05 Aug 2019 18:27:01 +0200
+
 ucs-school-umc-computerroom (11.0.0-3) unstable; urgency=low
 
   * Bug #43039: ensure room DN argument is valid
