@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (10.0.2-6) unstable; urgency=medium
+
+  * Bug #50083: Improve room reset
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 09 Sep 2019 11:20:18 +0200
+
 ucs-school-umc-computerroom (10.0.2-5) unstable; urgency=medium
 
   * Bug #43080: Disable submit button if no room is selected (comment #12)

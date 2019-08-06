@@ -32,7 +32,6 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
-import shlex
 import fcntl
 import signal
 import psutil
@@ -49,6 +48,7 @@ from ipaddr import IPAddress
 from ldap.filter import filter_format
 
 from univention.management.console.config import ucr
+from univention.config_registry.frontend import ucr_update
 
 from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
@@ -136,16 +136,16 @@ def _updateRoomInfo(roomDN, **kwargs):
 	'''Update infos for a room, i.e., leave unspecified values untouched.'''
 	info = _readRoomInfo(roomDN)
 	new_info = dict()
-	for key in ('user', 'cmd', 'exam', 'examDescription', 'examEndTime'):
+	for key in ('user', 'exam', 'examDescription', 'examEndTime', 'atjobID'):
 		# set the specified value (can also be None for deleting the attribute)
 		# or fallback to currently set value
 		new_info[key] = kwargs.get(key, info.get(key))
 	_writeRoomInfo(roomDN, **new_info)
 
 
-def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None, examEndTime=None):
+def _writeRoomInfo(roomDN, user=None, exam=None, examDescription=None, examEndTime=None, atjobID=None):
 	'''Set infos for a room and lock the room.'''
-	info = dict(room=roomDN, user=user, cmd=cmd, exam=exam, examDescription=examDescription, examEndTime=examEndTime, pid=os.getpid())
+	info = dict(room=roomDN, user=user, exam=exam, examDescription=examDescription, examEndTime=examEndTime, atjobID=atjobID, pid=os.getpid())
 	MODULE.info('Writing info file for room "%s": %s' % (roomDN, info))
 	try:
 		# write user DN in the room file
@@ -203,6 +203,36 @@ def prevent_ucc(func=None, condition=None):
 				raise UMC_Error(_('Action unavailable for UCC clients.'))
 		return func(self, request, *args, **kwargs)
 	return _decorated
+
+
+def reset_room_settings(room, hosts):
+	unset_vars = [
+		'samba/printmode/room/{}',
+		'samba/sharemode/room/{}',
+		'proxy/filter/room/{}/rule',
+	]
+	extract_from_vars = [
+		'samba/printmode/hosts/none',
+		'cups/printmode/hosts/none',
+		'samba/othershares/hosts/deny',
+		'samba/share/Marktplatz/hosts/deny',
+		'proxy/filter/room/{}/ip',
+	]
+	update_vars = {key.format(room): None for key in unset_vars}
+	ucr.load()
+	hosts = set(hosts)
+
+	for variable in (v.format(room) for v in extract_from_vars):
+		if ucr.get(variable):
+			old = set(ucr[variable].split(' '))
+		else:
+			old = set()
+		new = old.difference(hosts)
+		if new:
+			update_vars[variable] = ' '.join(new)
+		else:
+			update_vars[variable] = None
+	ucr_update(ucr, update_vars)
 
 
 class IPAddressSanitizer(Sanitizer):
@@ -558,6 +588,26 @@ class Instance(SchoolBaseModule):
 		response = content.replace('@%@HOSTNAME@%@', hostname).replace('@%@PORT@%@', port)
 		self.finished(request.id, response, mimetype='application/x-vnc')
 
+	def _read_rules_end_at(self):
+		room_file = _getRoomFile(self._italc.roomDN)
+		rule_end_at = None
+		if os.path.exists(room_file):
+			roomInfo = _readRoomInfo(self._italc.roomDN)
+			atjob_id = roomInfo.get('atjobID')
+			if atjob_id is not None:
+				job = atjobs.load(atjob_id, extended=True)
+				if job is not None and job.execTime >= datetime.datetime.now():
+					rule_end_at = job.execTime
+		else:
+			# Fallback in case the roomInfo file was deleted
+			MODULE.warn('No room file {}'.format(self._italc.roomDN))
+			for job in atjobs.list(extended=True):
+				if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
+					if job.execTime >= datetime.datetime.now():
+						rule_end_at = job.execTime
+					break
+		return rule_end_at
+
 	@simple_response
 	def settings_get(self):
 		"""Return the current settings for a room"""
@@ -578,18 +628,6 @@ class Instance(SchoolBaseModule):
 				custom_rules.append(ucr[key])
 
 		printMode = ucr.get('samba/printmode/room/%s' % self._italc.room, 'default')
-		# find AT jobs for the room and execute it to remove current settings
-		jobs = atjobs.list(extended=True)
-		for job in jobs:
-			if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
-				if job.execTime >= datetime.datetime.now():
-					self._ruleEndAt = job.execTime
-				break
-		else:
-			self._ruleEndAt = None
-
-		if rule == 'none' and shareMode == 'all' and printMode == 'default':
-			self._ruleEndAt = None
 
 		# find end of lesson
 		period = self._lessons.current
@@ -601,6 +639,11 @@ class Instance(SchoolBaseModule):
 				period = period.time()
 		else:
 			period = period.end
+
+		if rule == 'none' and shareMode == 'all' and printMode == 'default':
+			self._ruleEndAt = None
+		else:
+			self._ruleEndAt = self._read_rules_end_at()
 
 		if self._ruleEndAt:
 			time = self._ruleEndAt.time()
@@ -658,24 +701,18 @@ class Instance(SchoolBaseModule):
 		if not self._italc.school or not self._italc.room:
 			raise UMC_Error('no room selected')
 
-		# find AT jobs for the room and execute it to remove current settings
+		# find AT jobs for the room at remove them
 		jobs = atjobs.list(extended=True)
 		for job in jobs:
 			if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
 				job.rm()
-				subprocess.call(shlex.split(job.command))
+
+		hosts = self._italc.ipAddresses(students_only=True)
+		reset_room_settings(self._italc.room, hosts)
+		_updateRoomInfo(self._italc.roomDN, atjobID=None)
 
 		roomInfo = _readRoomInfo(self._italc.roomDN)
 		in_exam_mode = roomInfo.get('exam')
-
-		# for the exam mode, remove current settings before setting new ones
-		if in_exam_mode and roomInfo.get('cmd'):
-			MODULE.info('unsetting room settings for exam (%s): %s' % (roomInfo['exam'], roomInfo['cmd']))
-			try:
-				subprocess.call(shlex.split(roomInfo['cmd']))
-			except (OSError, IOError):
-				MODULE.warn('Failed to reinitialize current room settings: %s' % roomInfo['cmd'])
-			_updateRoomInfo(self._italc.roomDN, cmd=None)
 
 		# reset to defaults. No atjob is necessary.
 		if internetRule == 'none' and shareMode == 'all' and printMode == 'default':
@@ -687,37 +724,27 @@ class Instance(SchoolBaseModule):
 		# collect new settings
 		vset = {}
 		vappend = {}
-		vunset = []
 		vunset_now = []
-		vextract = []
-		hosts = self._italc.ipAddresses(students_only=True)
 
 		# print mode
-		if printMode in ('none',):
-			vextract.append('samba/printmode/hosts/%s' % printMode)
-			vappend[vextract[-1]] = hosts
-			vextract.append('cups/printmode/hosts/%s' % printMode)
-			vappend[vextract[-1]] = hosts
-			vunset.append('samba/printmode/room/%s' % self._italc.room)
-			vset[vunset[-1]] = printMode
+		if printMode == 'none':
+			vappend['samba/printmode/hosts/%s' % printMode] = hosts
+			vappend['cups/printmode/hosts/%s' % printMode] = hosts
+			vset['samba/printmode/room/%s' % self._italc.room] = printMode
 		else:
 			vunset_now.append('samba/printmode/room/%s' % self._italc.room)
 
 		# share mode
 		if shareMode == 'home':
-			vunset.append('samba/sharemode/room/%s' % self._italc.room)
-			vset[vunset[-1]] = shareMode
-			vextract.append('samba/othershares/hosts/deny')
-			vappend[vextract[-1]] = hosts
-			vextract.append('samba/share/Marktplatz/hosts/deny')
-			vappend[vextract[-1]] = hosts
+			vset['samba/sharemode/room/%s' % self._italc.room] = shareMode
+			vappend['samba/othershares/hosts/deny'] = hosts
+			vappend['samba/share/Marktplatz/hosts/deny'] = hosts
 		else:
 			vunset_now.append('samba/sharemode/room/%s' % self._italc.room)
 
 		# internet rule
 		if internetRule != 'none':
-			vextract.append('proxy/filter/room/%s/ip' % self._italc.room)
-			vappend[vextract[-1]] = hosts
+			vappend['proxy/filter/room/%s/ip' % self._italc.room] = hosts
 			if internetRule == 'custom':
 				# remove old rules
 				i = 1
@@ -728,8 +755,7 @@ class Instance(SchoolBaseModule):
 						i += 1
 					else:
 						break
-				vunset.append('proxy/filter/room/%s/rule' % self._italc.room)
-				vset[vunset[-1]] = self._username
+				vset['proxy/filter/room/%s/rule' % self._italc.room] = self._username
 				vset['proxy/filter/setting-user/%s/filtertype' % self._username] = 'whitelist-block'
 				i = 1
 				for domain in (customRule or '').split('\n'):
@@ -745,8 +771,7 @@ class Instance(SchoolBaseModule):
 						vset['proxy/filter/setting-user/%s/domain/whitelisted/%d' % (self._username, i)] = parsed.path
 						i += 1
 			else:
-				vunset.append('proxy/filter/room/%s/rule' % self._italc.room)
-				vset[vunset[-1]] = internetRule
+				vset['proxy/filter/room/%s/rule' % self._italc.room] = internetRule
 		else:
 			vunset_now.append('proxy/filter/room/%s/ip' % self._italc.room)
 			vunset_now.append('proxy/filter/room/%s/rule' % self._italc.room)
@@ -768,10 +793,7 @@ class Instance(SchoolBaseModule):
 			MODULE.info('New value: %s' % new)
 			new = old.union(new)
 			MODULE.info('Merged value of %s: %s' % (key, new))
-			if not new:
-				MODULE.info('Unset variable %s' % key)
-				vunset.append(key)
-			else:
+			if new:
 				vset[key] = ' '.join(new)
 
 		# Workaround for bug 30450:
@@ -785,8 +807,6 @@ class Instance(SchoolBaseModule):
 		else:
 			# remove empty items ('""') in list
 			vset[varname] = ' '.join([x for x in vset[varname].split(' ') if x != '""'])
-		if varname in vunset:
-			vunset.remove(varname)
 
 		# set values
 		ucr_vars = sorted('%s=%s' % x for x in vset.items())
@@ -794,18 +814,10 @@ class Instance(SchoolBaseModule):
 		handler_set(ucr_vars)
 
 		# create at job to remove settings
-		unset_vars = ['-r %s' % quote(x) for x in vunset]
-		MODULE.info('Will remove: %s' % ' '.join(unset_vars))
-		extract_vars = ['-e %s' % quote(x) for x in vextract]
-		MODULE.info('Will extract: %s' % ' '.join(extract_vars))
-
-		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % (' '.join(unset_vars), ' '.join(extract_vars), ' '.join(quote(x) for x in hosts))
+		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules --room %s' % (quote(self._italc.roomDN))
 		MODULE.info('command for reinitialization is: %s' % (cmd,))
 
-		if in_exam_mode:
-			# Command for the exam mode to be executed manually when changing the settings again...
-			_updateRoomInfo(self._italc.roomDN, cmd=cmd)
-		else:
+		if not in_exam_mode:
 			starttime = datetime.datetime.now()
 			MODULE.info('Now: %s' % starttime)
 			MODULE.info('Endtime: %s' % period)
@@ -815,7 +827,8 @@ class Instance(SchoolBaseModule):
 
 			# AT job for the normal case
 			MODULE.info('Remove settings at %s' % (starttime,))
-			atjobs.add(cmd, starttime, {Instance.ATJOB_KEY: self._italc.room})
+			atjob_id = atjobs.add(cmd, starttime, {Instance.ATJOB_KEY: self._italc.room}).nr
+			_updateRoomInfo(self._italc.roomDN, atjobID=atjob_id)
 			self._ruleEndAt = starttime
 
 		self.reset_smb_connections()

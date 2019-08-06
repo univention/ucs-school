@@ -35,15 +35,27 @@ from univention.config_registry import ConfigRegistry, handler_set, handler_unse
 from optparse import OptionParser
 import os
 import subprocess
+from univention.management.console.modules.computerroom import reset_room_settings
+from ucsschool.lib.models.group import ComputerRoom
+from univention.admin.uldap import getMachineConnection
+import univention.admin.uexceptions as udm_exceptions
 
-if __name__ == '__main__':
-	parser = OptionParser()
 
-	parser.add_option('-r', '--remove', action='append', dest='remove', default=[])
-	parser.add_option('-e', '--extract', action='append', dest='extract', default=[])
+def deactivate_rules(roomDN):
+	lo, po = getMachineConnection()
+	try:
+		room = ComputerRoom.from_dn(roomDN, None, lo)
+	except udm_exceptions.noObject:
+		return
+	hosts = list()
+	for pc in room.get_computers(lo):
+		hosts += pc.ip_address
+	reset_room_settings(room.get_relative_name(), hosts)
+	# reload cups
+	subprocess.call(['service', 'cups', 'reload'])
 
-	options, hosts = parser.parse_args()
 
+def deprecated_deactivate_rules(options, hosts):
 	ucr = ConfigRegistry()
 	ucr.load()
 
@@ -70,3 +82,18 @@ if __name__ == '__main__':
 	# reload cups
 	if os.path.exists('/etc/init.d/cups'):
 		subprocess.call(['/etc/init.d/cups', 'reload'])
+
+
+if __name__ == '__main__':
+	parser = OptionParser()
+
+	parser.add_option('-r', '--remove', action='append', dest='remove', default=[])  # Deprecated
+	parser.add_option('-e', '--extract', action='append', dest='extract', default=[])  # Deprecated
+	parser.add_option('-o', '--room', action='append', dest='rooms', default=[])
+
+	options, hosts = parser.parse_args()
+
+	for room in options.rooms:
+		deactivate_rules(room)
+	else:
+		deprecated_deactivate_rules(options, hosts)
