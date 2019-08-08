@@ -878,7 +878,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 			</para>
 			<para>
 				Folgendes Beispiel zeigt wie der Import von drei Schülern an zwei Schulen konfiguriert werden kann.
-				Die Schulverwaltungssoftware hat folgendes CSV produziert:
+				Die Schulverwaltungssoftware hat folgendes CSV produziert (anderes Beispiel <ulink url="user_new_example.csv">hier zum Download</ulink>, UTF-16, tab-getrennt):
 				<programlisting>
 "Schulen","Vorname","Nachname","Klassen","Mailadresse","phone"
 "schule1,schule2","Anton","Meyer","schule1-1A,schule2-2B","anton@schule.local",""

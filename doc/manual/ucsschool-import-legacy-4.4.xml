@@ -102,13 +102,13 @@
 		  </tgroup>
 		</table>
 		<para>
-		  Ein Beispiel für eine Importdatei:
+		  Ein Beispiel für eine Importdatei (<ulink url="user_legacy_example.csv">hier zum Download</ulink>, UTF-16, tab-getrennt):
 		</para>
 		<programlisting>
-	A  max   Meyer  Max     g123m  g123m-1A           max@schule.edu   0 1 0
-	M  m.we  Weber  Moritz  g123m  g123m-1A,g123m-2D  mw@schule.edu    1 1 0
-	D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
-	</programlisting>
+A  max   Meyer  Max     g123m  g123m-1A           max@schule.edu   0 1 0
+M  m.we  Weber  Moritz  g123m  g123m-1A,g123m-2D  mw@schule.edu    1 1 0
+D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
+	    </programlisting>
 		<para>
 		  Über das Feld <emphasis>Aktion</emphasis> kann die Art der Benutzermodifikation gesteuert
 		  werden. Folgende Aktionen sind definiert:
