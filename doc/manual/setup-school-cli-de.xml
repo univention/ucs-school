@@ -26,6 +26,7 @@
   </caution>
 
   <section id="school:setup:cli:importusers">
+	<title>Pflege von Benutzerkonten für Schüler, Lehrer und Mitarbeiter</title>
 	<para>
 		Für &ucsUAS; gibt es momentan mehrere Möglichkeiten Nutzer in das System zu importieren.
 	</para>
