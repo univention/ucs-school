@@ -58,7 +58,7 @@
 		<para>
 		  Für punktuelle Anpassungen - etwa ein Schulwechsel mitten im Schuljahr -
 		  besteht die Möglichkeit einzelne Schüler manuell zu bearbeiten. Dies
-		  wird in <xref linkend="school:setup:umc:user"/> beschrieben.
+		  wird im &ucsUAS; Handbuch für Administratoren, Kapitel <ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:setup:umc:user">Verwaltung einzelner Benutzerkonten</ulink> beschrieben.
 		</para>
 		<para>
 		  Der Import der Schuldaten ist bei Single- und Multi-Server-Umgebungen identisch.
