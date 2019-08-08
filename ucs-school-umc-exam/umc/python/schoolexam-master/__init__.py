@@ -145,6 +145,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(
 		userdn=StringSanitizer(required=True),
+		room=StringSanitizer(required=True),
 		description=StringSanitizer(default=''),
 		school=StringSanitizer(default='')
 	)
@@ -158,10 +159,17 @@ class Instance(SchoolBaseModule):
 
 		school = request.options['school']
 		userdn = request.options['userdn']
+		room_dn = request.options['room']
 		try:
 			user = Student.from_dn(userdn, None, ldap_admin_write)
 		except univention.admin.uexceptions.noObject:
 			raise UMC_Error(_('Student %r not found.') % (userdn,))
+		except univention.admin.uexceptions.ldapError:
+			raise
+		try:
+			room = ComputerRoom.from_dn(room_dn, None, ldap_user_read)
+		except univention.admin.uexceptions.noObject:
+			raise UMC_Error('Room %r not found.' % (room_dn,))
 		except univention.admin.uexceptions.ldapError:
 			raise
 
@@ -300,6 +308,7 @@ class Instance(SchoolBaseModule):
 					if 'temporary' not in value:
 						value += ['temporary']
 				al.append((key, value))
+				al.append(('sambaUserWorkstations', ','.join([c.name for c in room.get_computers(ldap_admin_write)])))
 
 			if not foundUniventionObjectFlag and 'univentionObjectFlag' not in blacklisted_attributes:
 				al.append(('univentionObjectFlag', ['temporary']))
