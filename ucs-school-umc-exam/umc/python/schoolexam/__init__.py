@@ -99,6 +99,24 @@ class Instance(SchoolBaseModule):
 			shutil.rmtree(self._tmpDir, ignore_errors=True)
 			self._tmpDir = None
 
+	@staticmethod
+	def set_datadir_immutable_flag(users, project, flag=True):
+		"""
+		Sets or unsets the immutable bit on the recipients datadir depending on the flag
+		:param project: The project to calculate the project directory
+		:param users: The users to (un)set the immutable bit for
+		:param flag: True to set the flag, False to unset
+		"""
+		modifier = '+i' if flag else '-i'
+		for user in users:
+			# make datadir immutable
+			datadir = os.path.dirname(project.user_projectdir(user).rstrip('/'))
+			if os.path.exists(datadir):
+				try:
+					subprocess.check_call(['chattr', modifier, datadir])
+				except subprocess.CalledProcessError as e:
+					MODULE.error('Could not set the immutable bit on {}'.format(datadir))
+
 	@file_upload
 	@sanitize(DictSanitizer(dict(
 		filename=StringSanitizer(required=True),
@@ -494,7 +512,9 @@ class Instance(SchoolBaseModule):
 			# distribute exam files
 			progress.component(_('Distributing exam files'))
 			progress.info('')
+			Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
 			my.project.distribute()
+			Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
 			progress.add_steps(20)
 
 			# prepare room settings via UMCP...
@@ -612,6 +632,7 @@ class Instance(SchoolBaseModule):
 			progress.component(_('Collecting exam files...'))
 			if project:
 				project.collect()
+				# remove immutable bit from folders
 			progress.add_steps(10)
 
 			# open a new connection to the master UMC
@@ -649,6 +670,7 @@ class Instance(SchoolBaseModule):
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
 						if iuser.username not in parallelUsers:
+							Instance.set_datadir_immutable_flag([iuser], project, False)
 							# remove first the home directory, if enabled
 							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', False):
 								shutil.rmtree(iuser.unixhome, ignore_errors=True)
