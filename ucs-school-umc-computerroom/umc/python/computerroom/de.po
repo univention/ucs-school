@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-10-01 09:46+0200\n"
+"POT-Creation-Date: 2019-11-07 07:34+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,23 +12,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/computerroom/__init__.py:81
+#: umc/python/computerroom/__init__.py:82
 msgid "/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg"
 msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_denied_de.jpg"
 
-#: umc/python/computerroom/__init__.py:82
+#: umc/python/computerroom/__init__.py:83
 msgid "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"
 msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_notready_de.jpg"
 
-#: umc/python/computerroom/__init__.py:482
+#: umc/python/computerroom/__init__.py:483
 msgid "A different user is already running a computer room session."
 msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
 
-#: umc/python/computerroom/__init__.py:199
+#: umc/python/computerroom/__init__.py:200
 msgid "Action unavailable for UCC clients."
 msgstr "Aktion nicht verfügbar für UCC-Klienten."
 
-#: umc/python/computerroom/__init__.py:708
+#: umc/python/computerroom/__init__.py:709
 msgid ""
 "In this room an exam is currently already written. Please select another "
 "room."
@@ -36,10 +36,10 @@ msgstr ""
 "In diesem Raum wird derzeit schon eine Klassenarbeit geschrieben. Bitte "
 "wählen Sie einen anderen Raum."
 
-#: umc/python/computerroom/__init__.py:278
-#: umc/python/computerroom/__init__.py:282
-#: umc/python/computerroom/__init__.py:285
-#: umc/python/computerroom/__init__.py:291
+#: umc/python/computerroom/__init__.py:279
+#: umc/python/computerroom/__init__.py:283
+#: umc/python/computerroom/__init__.py:286
+#: umc/python/computerroom/__init__.py:292
 #, python-format
 msgid "Invalid room DN: %s"
 msgstr "Ungültige Raum-DN: %s"
