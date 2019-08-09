@@ -189,7 +189,8 @@ class Instance(SchoolBaseModule):
 		Creates or updates an exam with the information given in the request object
 		:param request: The request containing all information about the exam
 		:param update: If True it is expected that an exam with the same name already exists and will be updated
-		:return: True if successful, else Exception
+		:return: univention.management.console.modules.distribution.util.Project
+		:raises: UMC_Error
 		"""
 		# create a User object for the teacher
 		sender = util.distribution.openRecipients(self.user_dn, ldap_user_read)
