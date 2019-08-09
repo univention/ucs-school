@@ -100,7 +100,7 @@ class Instance(SchoolBaseModule):
 			self._tmpDir = None
 
 	@staticmethod
-	def set_datadir_immutable(users, project, flag=True):
+	def set_datadir_immutable_flag(users, project, flag=True):
 		"""
 		Sets or unsets the immutable bit on the recipients datadir depending on the flag
 		:param project: The project to calculate the project directory
@@ -512,9 +512,9 @@ class Instance(SchoolBaseModule):
 			# distribute exam files
 			progress.component(_('Distributing exam files'))
 			progress.info('')
-			Instance.set_datadir_immutable(my.project.getRecipients(), my.project, False)
+			Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
 			my.project.distribute()
-			Instance.set_datadir_immutable(my.project.getRecipients(), my.project, True)
+			Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
 			progress.add_steps(20)
 
 			# prepare room settings via UMCP...
@@ -670,7 +670,7 @@ class Instance(SchoolBaseModule):
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
 						if iuser.username not in parallelUsers:
-							Instance.set_datadir_immutable([iuser], project, False)
+							Instance.set_datadir_immutable_flag([iuser], project, False)
 							# remove first the home directory, if enabled
 							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', False):
 								shutil.rmtree(iuser.unixhome, ignore_errors=True)
