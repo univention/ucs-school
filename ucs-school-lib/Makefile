@@ -33,9 +33,9 @@
 PKG := ucs-school-lib
 VERSION := $(shell dpkg-parsechangelog | sed -ne 's/^Version: //p')
 
-PO_FILE := python/de.po
-MO_FILE := python/python-ucs-school.mo
-PYTHON_FILES := $(shell find python -name "*.py")
+PO_FILE := modules/ucsschool/lib/de.po
+MO_FILE := modules/ucsschool/lib/python-ucs-school.mo
+PYTHON_FILES := $(shell find modules -name "*.py")
 INST_DIR := $(DESTDIR)/usr/share/locale/de/LC_MESSAGES/
 
 .PHONY: build

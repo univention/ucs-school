@@ -1,0 +1,5 @@
+colorlog
+ruamel.yaml
+six
+univention-config-registry>=14
+# python-univention-lib ?
