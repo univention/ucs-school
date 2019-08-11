@@ -51,7 +51,6 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, ADMIN_WRIT
 from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.lib.roles import role_teacher_computer, create_ucsschool_role_string
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError, SchoolComputer
-from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
 from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 
@@ -528,7 +527,6 @@ class Instance(SchoolBaseModule):
 
 	def run_pre_create_hooks(self, exam_user_dn, al, ldap_admin_write):
 		if not self.exam_user_pre_create_hooks:
-			add_module_logger_to_schoollib()
 			pyhook_loader = ImportPyHookLoader(CREATE_USER_PRE_HOOK_DIR)
 			hooks = pyhook_loader.init_hook(ExamUserPyHook, lo=ldap_admin_write, dry_run=False)
 			self.exam_user_pre_create_hooks = hooks.get('pre_create', [])
