@@ -45,10 +45,10 @@ import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
+from univention.admin import uldap
 from univention.admin.filter import conjunction, expression
-from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 
-from ..schoolldap import SchoolSearchBase, LDAP_Connection
+from ..schoolldap import SchoolSearchBase
 from .meta import UCSSchoolHelperMetaClass
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .utils import ucr, _
@@ -297,12 +297,10 @@ class UCSSchoolHelperAbstractClass(object):
 		self.errors = {}  # type: Dict[str, List[str]]
 		self.warnings = {}  # type: Dict[str, List[str]]
 
-	@classmethod
-	@LDAP_Connection()
-	def get_machine_connection(cls, ldap_user_read=None, ldap_machine_write=None):
-		# type: (Optional[LoType], Optional[LoType]) -> LoType
-		"""Shortcut to get a cached ldap connection to the DC Master using this host's credentials"""
-		return ldap_machine_write
+	@staticmethod
+	def get_machine_connection():
+		"""get a ldap connection to the DC Master using this host's credentials"""
+		return uldap.getMachineConnection()[0]
 
 	@property
 	def position(self):
@@ -852,10 +850,14 @@ class UCSSchoolHelperAbstractClass(object):
 		return ret
 
 	@classmethod
-	def build_easy_filter(cls, filter_str):  # type: (str) -> Optional[conjunction]
+	def build_easy_filter(cls, filter_str):
+		def escape_filter_chars_exc_asterisk(value):
+			value = ldap.filter.escape_filter_chars(value)
+			value = value.replace(r'\2a', '*')
+			return value
+
 		if filter_str:
-			sanitizer = LDAPSearchSanitizer()
-			filter_str = sanitizer.sanitize('filter_str', {'filter_str': filter_str})
+			filter_str = escape_filter_chars_exc_asterisk(filter_str)
 			expressions = []
 			for key in cls._attrs_for_easy_filter():
 				expressions.append(expression(key, filter_str))
