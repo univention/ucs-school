@@ -117,11 +117,10 @@ class SMB_Process(dict):
 
 class SMB_Status(list):
 
-	def __init__(self, testdata=None):
+	def __init__(self):
 		list.__init__(self)
 		self.logger = logging.getLogger(__name__)
 		self.logger.addHandler(get_file_handler(logging.DEBUG, '/var/log/univention/smbstatus.log'))
-		self.parse(testdata)
 
 	def parse(self, testdata=None):
 		while self:
@@ -170,7 +169,7 @@ def usage():
 
 if __name__ == '__main__':
 	if len(sys.argv) == 1:
-		status = SMB_Status()
+		status = SMB_Status().parse()
 	elif len(sys.argv) == 2:
 		try:
 			testdata = open(sys.argv[1], 'rb').read()
@@ -178,7 +177,7 @@ if __name__ == '__main__':
 			print('Error: Cannot read {!r}\n'.format(sys.argv[1]))
 			usage()
 			sys.exit(1)
-		status = SMB_Status(testdata=testdata.split('\n'))
+		status = SMB_Status().parse(testdata=testdata.split('\n'))
 	else:
 		usage()
 		sys.exit(1)
