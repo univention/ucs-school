@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.39) unstable; urgency=low
+
+  * Bug #49995: add test 207a_import-users_school_change_and_classes to
+    reproduce regression
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 11 Aug 2019 22:30:58 +0200
+
 ucs-test-ucsschool (6.0.38) unstable; urgency=medium
 
   * Bug #40367: Disable cache for 22_computerroom_module_settings 
