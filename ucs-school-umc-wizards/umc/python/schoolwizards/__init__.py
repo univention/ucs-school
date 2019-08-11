@@ -46,7 +46,6 @@ import univention.admin.modules as udm_modules
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE, ADMIN_WRITE
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.models import SchoolClass, School, User, Student, Teacher, Staff, TeachersAndStaff, SchoolComputer, WindowsComputer, MacComputer, IPComputer, UCCComputer
-from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
 
@@ -132,10 +131,6 @@ def sanitize_object(**kwargs):
 
 
 class Instance(SchoolBaseModule, SchoolImport):
-
-	def init(self):
-		super(Instance, self).init()
-		add_module_logger_to_schoollib()
 
 	@simple_response
 	def is_singlemaster(self):

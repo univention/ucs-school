@@ -44,16 +44,11 @@ import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE
 from ucsschool.lib.school_umc_base import SchoolBaseModule, LDAP_Filter, SchoolSanitizer
 from ucsschool.lib.models import ComputerRoom, SchoolComputer
-from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
 _ = Translation('ucs-school-umc-rooms').translate
 
 
 class Instance(SchoolBaseModule):
-
-	def init(self):
-		super(Instance, self).init()
-		add_module_logger_to_schoollib()
 
 	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()

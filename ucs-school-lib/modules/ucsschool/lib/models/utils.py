@@ -50,7 +50,6 @@ import ruamel.yaml
 from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
 from univention.config_registry import ConfigRegistry
-import univention.debug as ud
 
 try:
 	from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union
@@ -225,9 +224,9 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
 	Outputs all log messages of the models code to a stream (default: "stderr")::
 
 		from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
-		add_module_logger_to_schoollib()
+		add_stream_logger_to_schoollib()
 		# or:
-		add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
+		add_stream_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
 	"""
 	logger = logging.getLogger(name or 'ucsschool')
 	if logger.level < logging.DEBUG:
@@ -237,25 +236,6 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
 	if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
 		logger.addHandler(get_stream_handler(level, stream=stream, fmt=log_format))
 	return logger
-
-
-def add_module_logger_to_schoollib():
-	# type: () -> None
-	logger = logging.getLogger('ucsschool')
-	if logger.level < logging.DEBUG:
-		# Must set this higher than NOTSET or the root loggers level (WARN)
-		# will be used.
-		logger.setLevel(logging.DEBUG)
-	if not any(handler.name in ('ucsschool_mem_handler', 'ucsschool_mod_handler') for handler in logger.handlers):
-		module_handler = ModuleHandler(udebug_facility=ud.MODULE)
-		module_handler.setLevel(logging.DEBUG)
-		module_handler.set_name('ucsschool_mod_handler')
-		memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
-		memory_handler.setLevel(logging.DEBUG)
-		memory_handler.set_name('ucsschool_mem_handler')
-		logger.addHandler(memory_handler)
-	else:
-		logger.info('add_module_logger_to_schoollib() should only be called once! Skipping...')
 
 
 def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
