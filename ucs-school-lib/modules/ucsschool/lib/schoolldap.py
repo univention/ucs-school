@@ -33,13 +33,19 @@
 import re
 
 from ldap.dn import explode_dn
-from univention.config_registry import ConfigRegistry
 try:
 	from typing import Any, Dict, List, Optional, Tuple
 	from univention.admin.uldap import access as LoType
 	from univention.admin.handlers import simpleLdap as UdmObject
 except ImportError:
 	pass
+
+import univention.uldap
+from univention.config_registry import ConfigRegistry
+
+
+ucr = ConfigRegistry()
+ucr.load()
 
 
 class SchoolSearchBase(object):

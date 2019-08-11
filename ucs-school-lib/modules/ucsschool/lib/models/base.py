@@ -45,6 +45,7 @@ import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
+from univention.admin import uldap
 from univention.admin.filter import conjunction, expression
 
 from ..schoolldap import SchoolSearchBase
@@ -296,12 +297,10 @@ class UCSSchoolHelperAbstractClass(object):
 		self.errors = {}  # type: Dict[str, List[str]]
 		self.warnings = {}  # type: Dict[str, List[str]]
 
-	@classmethod
-	def get_machine_connection(cls):
-		"""get a cached ldap connection to the DC Master using this host's credentials"""
-		if not cls._machine_connection:
-			cls._machine_connection = udm_uldap.getMachineConnection()[0]
-		return cls._machine_connection
+	@staticmethod
+	def get_machine_connection():
+		"""get a ldap connection to the DC Master using this host's credentials"""
+		return uldap.getMachineConnection()[0]
 
 	@property
 	def position(self):
@@ -851,8 +850,8 @@ class UCSSchoolHelperAbstractClass(object):
 		return ret
 
 	@classmethod
-	def build_easy_filter(cls, filter_str):  # type: (str) -> Optional[conjunction]
-		def escape_filter_chars_exc_asterisk(value):  # type: (str) -> str
+	def build_easy_filter(cls, filter_str):
+		def escape_filter_chars_exc_asterisk(value):
 			value = ldap.filter.escape_filter_chars(value)
 			value = value.replace(r'\2a', '*')
 			return value
