@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -33,6 +33,8 @@
 
 import re
 import functools
+
+import six
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
@@ -87,8 +89,8 @@ def iter_objects_in_request(request, lo, require_dn=False):
 	}[request.flavor]
 	for obj_props in request.options:
 		obj_props = obj_props['object']
-		for key, value in obj_props.iteritems():
-			if isinstance(value, basestring):
+		for key, value in six.iteritems(obj_props):
+			if isinstance(value, six.string_types):
 				obj_props[key] = value.strip()
 		if issubclass(klass, User):
 			klass = USER_TYPES.get(obj_props.get('type'), User)
@@ -106,7 +108,7 @@ def iter_objects_in_request(request, lo, require_dn=False):
 				obj = klass.from_dn(dn, obj_props.get('school'), lo)
 			except noObject:
 				raise UMC_Error(_('The %s %r does not exists or might have been removed in the meanwhile.') % (getattr(klass, 'type_name', klass.__name__), obj_props['name']))
-			for key, value in obj_props.iteritems():
+			for key, value in six.iteritems(obj_props):
 				if key in obj._attributes:
 					setattr(obj, key, value)
 		else:

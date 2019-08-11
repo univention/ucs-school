@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -56,6 +55,12 @@ from .utils import ucr, _
 from univention.admin.uexceptions import noObject
 from univention.admin.filter import conjunction, parse
 import univention.admin.modules as udm_modules
+
+
+try:
+	unicode_s = unicode  # py2
+except NameError:
+	unicode_s = str  # py3
 
 
 class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
@@ -193,9 +198,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
 		ocs = set(udm_obj.oldattr.get('objectClass', []))
-		if ocs >= set(['ucsschoolTeacher', 'ucsschoolStaff']):
+		if ocs >= {'ucsschoolTeacher', 'ucsschoolStaff'}:
 			return TeachersAndStaff
-		if ocs >= set(['ucsschoolExam', 'ucsschoolStudent']):
+		if ocs >= {'ucsschoolExam', 'ucsschoolStudent'}:
 			return ExamStudent
 		if 'ucsschoolTeacher' in ocs:
 			return Teacher
@@ -568,7 +573,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		filter_object_type = conjunction('&', [parse(cls.type_filter), parse(filter_format('ucsschoolSchool=%s', [school]))])
 		if filter_s:
 			filter_object_type = conjunction('&', [filter_object_type, parse(filter_s)])
-		objects = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=unicode(filter_object_type), scope='sub', superordinate=superordinate)
+		objects = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=unicode_s(filter_object_type), scope='sub', superordinate=superordinate)
 		objects.extend(obj for obj in super(User, cls).lookup(lo, school, filter_s, superordinate=superordinate) if not any(obj.dn == x.dn for x in objects))
 		return objects
 

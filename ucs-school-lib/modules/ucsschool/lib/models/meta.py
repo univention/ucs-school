@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -33,6 +32,7 @@
 from functools import partial
 import inspect
 import logging
+import six
 import lazy_object_proxy
 import univention.admin.modules as udm_modules
 from .attributes import Attribute
@@ -56,7 +56,7 @@ class UCSSchoolHelperOptions(object):
 				# happens when the udm_module is not in the standard package
 				#   i.e. computers/ucc
 				return
-			for key, attr in klass._attributes.iteritems():
+			for key, attr in six.iteritems(klass._attributes):
 				# sanity checks whether we specified everything correctly
 				if attr.udm_name and not attr.extended:
 					# extended? only available after module_init(lo)
@@ -92,7 +92,7 @@ class UCSSchoolHelperMetaClass(type):
 				attributes.update(base._attributes)
 			if meta is None and hasattr(base, '_meta'):
 				meta = base._meta
-		for name, value in attrs.iteritems():
+		for name, value in six.iteritems(attrs):
 			if name in attributes:
 				del attributes[name]
 			if isinstance(value, Attribute):

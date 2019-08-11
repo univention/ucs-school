@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -377,8 +376,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 					hostlist = lo.get(group_dn, ['uniqueMember']).get('uniqueMember', [])
 				except ldap.NO_SUCH_OBJECT:
 					hostlist = []
-				except Exception, e:
-					self.logger.error('cannot read %s: %s', group_dn, e)
+				except Exception as exc:
+					self.logger.error('cannot read %s: %s', group_dn, exc)
 					return
 
 				if hostlist:
