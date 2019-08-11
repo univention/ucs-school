@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -30,6 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import six
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
 try:
@@ -194,7 +194,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return super(SchoolComputer, cls).lookup(lo, school, school_computer_filter, superordinate)
 
 	def get_inventory_numbers(self):  # type: () -> List[str]
-		if isinstance(self.inventory_number, basestring):
+		if isinstance(self.inventory_number, six.string_types):
 			return [inv.strip() for inv in self.inventory_number.split(',')]
 		if isinstance(self.inventory_number, (list, tuple)):
 			return list(self.inventory_number)

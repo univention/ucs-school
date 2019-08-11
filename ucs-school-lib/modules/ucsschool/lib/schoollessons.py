@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib
@@ -35,10 +35,14 @@ from univention.lib import locking
 from univention.management.console.log import MODULE
 from univention.lib.i18n import Translation
 
-import ConfigParser
+try:
+	import ConfigParser  # py2
+except ImportError:
+	from configparser import ConfigParser  # py3
 import datetime
 import re
 import shutil
+import six
 
 LESSONS_FILE = '/var/lib/ucs-school-lib/lessons.ini'
 LESSONS_BACKUP = '/var/lib/ucs-school-lib/lessons.bak'
@@ -58,14 +62,14 @@ class Lesson(object):
 			raise AttributeError(_('Overlapping lessons are not allowed'))
 
 	def _check_name(self, string):
-		if not isinstance(string, basestring):
+		if not isinstance(string, six.string_types):
 			raise TypeError('string expected')
 		for char in '\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f[]\x7f':
 			string = string.replace(char, '')
 		return string
 
 	def _parse_time(self, string):
-		if not isinstance(string, basestring):
+		if not isinstance(string, six.string_types):
 			raise TypeError('string expected')
 		m = Lesson.TIME_REGEX.match(string)
 		if not m:
@@ -111,8 +115,8 @@ class SchoolLessons(ConfigParser.ConfigParser):
 			try:
 				l = Lesson(sec, self.get(sec, 'begin'), self.get(sec, 'end'))
 				self.add(l)
-			except (AttributeError, TypeError), e:
-				MODULE.warn('Lesson %s could not be added: %s' % (sec, str(e)))
+			except (AttributeError, TypeError) as exc:
+				MODULE.warn('Lesson %s could not be added: %s' % (sec, str(exc)))
 
 	def remove(self, lesson):
 		if isinstance(lesson, Lesson):
@@ -121,7 +125,7 @@ class SchoolLessons(ConfigParser.ConfigParser):
 		self._lessons[:] = [l for l in self._lessons if l.name != lesson]
 
 	def add(self, lesson, begin=None, end=None):
-		if isinstance(lesson, basestring):
+		if isinstance(lesson, six.string_types):
 			lesson = Lesson(lesson, begin, end)
 
 		# ensure there is no intersection between the lessons

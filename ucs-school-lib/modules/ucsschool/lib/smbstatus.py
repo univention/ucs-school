@@ -1,8 +1,5 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
-#
-# Univention Lib
-#   Parser for smbstatus
 #
 # Copyright 2012-2019 Univention GmbH
 #
@@ -30,6 +27,10 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+"""
+Parser for smbstatus
+"""
 
 import re
 import sys
