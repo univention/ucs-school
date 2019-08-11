@@ -15,7 +15,7 @@ from univention.testing.umc import Client
 
 def main():
 	with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr, NetworkRedirector() as nethelper:
-		school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+		school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'), use_cache=False)
 		teacher, teacher_dn = schoolenv.create_user(school, is_teacher=True)
 		open_ldap_co = schoolenv.open_ldap_connection()
 
