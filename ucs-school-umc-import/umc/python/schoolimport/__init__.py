@@ -43,7 +43,7 @@ from univention.management.console.modules.decorators import simple_response, fi
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.modules.mixins import ProgressMixin
 
-from ucsschool.lib.schoolldap import SchoolBaseModule
+from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.http_api.import_api.constants import JOB_ABORTED, JOB_FINISHED
 from ucsschool.http_api.client import Client, ConnectionError, PermissionError, ObjectNotFound, ServerError
 

@@ -46,7 +46,7 @@ except ImportError:
 	sys.path.insert(0, os.path.join(script_dir, 'umc/python/computerroom'))
 	import italc2
 
-import ucsschool.lib.schoolldap as usl
+from ucsschool.lib.school_umc_base import set_credentials
 import univention.config_registry as ucr
 
 italcManager = None
@@ -132,7 +132,7 @@ if __name__ == '__main__':
 	if options.askpass:
 		options.password = getpass.getpass('password> ')
 
-	usl.set_credentials('uid=%s,cn=users,%s' % (options.username, config.get('ldap/base')), options.password)
+	set_credentials('uid=%s,cn=users,%s' % (options.username, config.get('ldap/base')), options.password)
 
 	italcManager = italc2.ITALC_Manager()
 	italcManager.school = options.school

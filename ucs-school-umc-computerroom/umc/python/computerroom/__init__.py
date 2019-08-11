@@ -63,7 +63,7 @@ from univention.management.console.log import MODULE
 import univention.admin.uexceptions as udm_exceptions
 from univention.admin.syntax import gid
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
+from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules

@@ -46,7 +46,7 @@ from univention.management.console.modules.decorators import sanitize, simple_re
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
+from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.models import School, User
 
 import univention.admin.modules as udm_modules

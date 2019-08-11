@@ -16,7 +16,7 @@ import univention.testing.utils as utils
 import univention.testing.ucr as testing_ucr
 import univention.testing.ucsschool.ucs_test_school as testing_ucsschool
 from univention.admin.uldap import explodeDn
-from ucsschool.lib.schoolldap import LDAP_Connection, set_credentials, MACHINE_READ
+from ucsschool.lib.school_umc_base import LDAP_Connection, set_credentials, MACHINE_READ
 from ucsschool.lib.models import School
 import ucsschool.lib.roleshares as roleshares
 from ucsschool.lib.roles import role_pupil

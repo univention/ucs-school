@@ -38,7 +38,7 @@ from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.roles import role_teacher, supported_roles
 from univention.management.console.log import MODULE
 from univention.management.console.modules.decorators import simple_response
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE
+from ucsschool.lib.school_umc_base import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE
 from univention.admin.filter import conjunction, expression
 from univention.config_registry import ConfigRegistry
 import univention.admin.modules as udm_modules
