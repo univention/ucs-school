@@ -592,11 +592,15 @@ class ImportUser(User):
 			input_dict = self.reader.get_data_mapping(self.input_data)
 			if input_dict.get('school_classes') == '':
 				# mapping exists and csv field is empty -> empty property, except if config says otherwise
+				# keep only classes of schools that the user is still a member of (Bug #49995)
 				if self.old_user and self.config.get('school_classes_keep_if_empty', False):
 					self.logger.info(
 						'Reverting school_classes of %r to previous value %r.',
 						self, self.old_user.school_classes)
-					self.school_classes = self.old_user.school_classes
+					self.school_classes = dict(
+						(school, classes) for school, classes in iteritems(self.old_user.school_classes)
+						if school in self.schools
+					)
 			elif 'school_classes' not in input_dict:
 				# no mapping -> try to get previous data
 				if self.old_user:
@@ -870,12 +874,16 @@ class ImportUser(User):
 		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		if not self.school_classes and self.config.get('school_classes_keep_if_empty', False):
 			# empty classes input means: don't change existing classes (Bug #42288)
+			# except removing classes from schools that user is not a member of anymore (Bug #49995)
 			udm_obj = self.get_udm_object(lo)
 			school_classes = self.get_school_classes(udm_obj, self)
 			self.logger.info(
 				'Reverting school_classes of %r to %r, because school_classes_keep_if_empty=%r and new school_classes=%r.',
 				self, school_classes, self.config.get('school_classes_keep_if_empty', False), self.school_classes)
-			self.school_classes = school_classes
+			self.school_classes = dict(
+				(school, classes) for school, classes in iteritems(school_classes)
+				if school in self.schools
+			)
 		if self.config['dry_run']:
 			self.logger.info("Dry-run: skipping user.modify() for %s.", self)
 			return True
