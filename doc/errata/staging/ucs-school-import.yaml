@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.11A~4.4.0.201908120945
+desc: |
+ * An error was fixed that happened when a user was move to another school, and the setting <envar>school_classes_keep_if_empty</envar> was enabled (Bug #49995).
+bug: [49995]
