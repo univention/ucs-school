@@ -33,7 +33,7 @@ import re
 from ldap.filter import escape_filter_chars, filter_format
 
 from univention.lib.i18n import Translation
-from univention.lib.school_umc_ldap_connection import LDAP_Connection, set_bind_function
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, set_bind_function
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject
 import univention.admin.modules as udm_modules
