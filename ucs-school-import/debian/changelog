@@ -1,3 +1,10 @@
+ucs-school-import (17.0.11) unstable; urgency=low
+
+  * Bug #49995: fix handling of school_classes_keep_if_empty when moving users
+    to another school
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 12 Aug 2019 09:42:46 +0200
+
 ucs-school-import (17.0.10) unstable; urgency=medium
 
   * Bug #49963: fix UcsschoolRoleComputers UDM hook on systems without
