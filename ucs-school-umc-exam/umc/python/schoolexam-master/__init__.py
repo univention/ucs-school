@@ -411,6 +411,8 @@ class Instance(SchoolBaseModule):
 
 		userdn = request.options['userdn']
 		school = request.options['school']
+		# Might be put into the lib at some point:
+		# https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		user_uid = userdn.split(',')[0][len('uid={}'.format(examUserPrefix)):]
 		user_module = univention.udm.UDM(ldap_admin_write, 1).get('users/user')
@@ -426,8 +428,8 @@ class Instance(SchoolBaseModule):
 				orig_udm.save()
 			except univention.admin.uexceptions.noObject:
 				raise UMC_Error(_('Exam student %r not found.') % (userdn[len(examUserPrefix):],))
-			except univention.admin.uexceptions.ldapError:
-				raise
+		if len(search_result) == 0:
+			raise UMC_Error(_('Exam student %r not found.') % (userdn[len(examUserPrefix):],))
 		try:
 			user = ExamStudent.from_dn(userdn, None, ldap_user_read)
 		except univention.admin.uexceptions.noObject:
