@@ -36,7 +36,7 @@ import string
 import sys
 import logging
 import collections
-from logging.handlers import MemoryHandler, TimedRotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler
 from contextlib import contextmanager
 import subprocess
 
@@ -46,8 +46,8 @@ import colorlog
 import lazy_object_proxy
 import ruamel.yaml
 
-from univention.lib.policy_result import policy_result
-from univention.lib.i18n import Translation
+# from univention.lib.policy_result import policy_result
+# from univention.lib.i18n import Translation
 from univention.config_registry import ConfigRegistry
 
 try:
@@ -57,8 +57,18 @@ except ImportError:
 
 
 # "global" translation for ucsschool.lib.models
-_ = Translation('python-ucs-school').translate
+# _ = Translation('python-ucs-school').translate
+# TODO: get i18n module from univention.lib
+def _(s):
+	return s
+
+
 LOGGING_CONFIG_PATH = '/etc/ucsschool/logging.yaml'
+
+
+# TODO: get base/univention-policy/python-lib/policy_result.py and static univention-policy-result binary
+def policy_result(dn):
+	return [8]
 
 
 def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
@@ -176,33 +186,6 @@ class UniStreamHandler(colorlog.StreamHandler):
 		"""remove password from from dicts in args"""
 		_remove_password_from_log_record(record)
 		super(UniStreamHandler, self).emit(record)
-
-
-class ModuleHandler(logging.Handler):
-	"""Adapter: use Python logging but emit through univention debug"""
-	LOGGING_TO_UDEBUG = dict(
-		CRITICAL=ud.ERROR,
-		ERROR=ud.ERROR,
-		WARN=ud.WARN,
-		WARNING=ud.WARN,
-		INFO=ud.PROCESS,
-		DEBUG=ud.INFO,
-		NOTSET=ud.INFO
-	)
-
-	def __init__(self, level=logging.NOTSET, udebug_facility=ud.LISTENER):
-		# type: (Optional[int], Optional[int]) -> None
-		self._udebug_facility = udebug_facility
-		super(ModuleHandler, self).__init__(level)
-
-	def emit(self, record):
-		"""log to univention debug, remove password from dicts in args"""
-		_remove_password_from_log_record(record)
-		msg = self.format(record)
-		if isinstance(msg, unicode):
-			msg = msg.encode("utf-8")
-		udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
-		ud.debug(self._udebug_facility, udebug_level, msg)
 
 
 class UCSTTYColoredFormatter(colorlog.TTYColoredFormatter):
