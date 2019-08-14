@@ -40,6 +40,7 @@ from logging.handlers import TimedRotatingFileHandler
 from contextlib import contextmanager
 import subprocess
 
+from pkg_resources import resource_stream
 from six import string_types
 from psutil import process_iter, NoSuchProcess
 import colorlog
@@ -63,7 +64,6 @@ def _(s):
 	return s
 
 
-LOGGING_CONFIG_PATH = '/etc/ucsschool/logging.yaml'
 
 
 # TODO: get base/univention-policy/python-lib/policy_result.py and static univention-policy-result binary
@@ -71,10 +71,9 @@ def policy_result(dn):
 	return [8]
 
 
-def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
-	with open(path, 'r') as fp:
-		config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
-	return config
+def _load_logging_config():  # type: () -> Dict[str, Dict[str, str]]
+	with resource_stream("ucsschool.lib", "logging.yaml") as fp:
+		return ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
 
 
 def _ucr():  # type: () -> ConfigRegistry
@@ -188,18 +187,6 @@ class UniStreamHandler(colorlog.StreamHandler):
 		super(UniStreamHandler, self).emit(record)
 
 
-class UCSTTYColoredFormatter(colorlog.TTYColoredFormatter):
-	"""
-	Subclass of :py:class:`colorlog.TTYColoredFormatter` that will force
-	colorization on, in case UCSSCHOOL_FORCE_COLOR_TERM is found in env.
-	"""
-	def color(self, log_colors, level_name):
-		if os.environ and 'UCSSCHOOL_FORCE_COLOR_TERM' in os.environ:
-			return colorlog.ColoredFormatter.color(self, log_colors, level_name)
-		else:
-			return super(UCSTTYColoredFormatter, self).color(log_colors, level_name)
-
-
 def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=None, name=None):
 	# type: (Optional[AnyStr], Optional[file], Optional[AnyStr], Optional[AnyStr]) -> logging.Logger
 	"""
@@ -218,6 +205,18 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
 	if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
 		logger.addHandler(get_stream_handler(level, stream=stream, fmt=log_format))
 	return logger
+
+
+class UCSTTYColoredFormatter(colorlog.TTYColoredFormatter):
+	"""
+	Subclass of :py:class:`colorlog.TTYColoredFormatter` that will force
+	colorization on, in case UCSSCHOOL_FORCE_COLOR_TERM is found in env.
+	"""
+	def color(self, log_colors, level_name):
+		if os.environ and 'UCSSCHOOL_FORCE_COLOR_TERM' in os.environ:
+			return colorlog.ColoredFormatter.color(self, log_colors, level_name)
+		else:
+			return super(UCSTTYColoredFormatter, self).color(log_colors, level_name)
 
 
 def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
@@ -316,7 +315,10 @@ def nearest_known_loglevel(level):
 	if isinstance(level, int):
 		int_level = level
 	else:
-		int_level = logging._levelNames.get(level, 10)
+		try:
+			int_level = logging._levelNames.get(level, 10)  # py2
+		except AttributeError:
+			int_level = logging._nameToLevel.get(level, 10)  # py3
 	if int_level <= logging.DEBUG:
 		return logging.DEBUG
 	elif int_level >= logging.CRITICAL:
@@ -340,12 +342,16 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
 	:return: a handler
 	:rtype: logging.Handler
 	"""
+	if stream is None:
+		stream = sys.stderr
 	fmt = '%(log_color)s{}'.format(fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))])
 	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
 	formatter_kwargs = {'fmt': fmt, 'datefmt': datefmt}
 	fmt_cls = fmt_cls or UCSTTYColoredFormatter
 	if issubclass(fmt_cls, colorlog.ColoredFormatter):
 		formatter_kwargs['log_colors'] = LOG_COLORS
+	if issubclass(fmt_cls, colorlog.TTYColoredFormatter):
+		formatter_kwargs['stream'] = stream
 	formatter = fmt_cls(**formatter_kwargs)
 	handler = UniStreamHandler(stream=stream)
 	handler.setFormatter(formatter)
@@ -573,7 +579,7 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command))  # correct: shlex... unnecessary
 
 
-def _write_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> None
+def _write_logging_config(path):  # type: (str) -> None
 	with open(path, 'w') as fp:
 		ruamel.yaml.dump(
 			{

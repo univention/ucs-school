@@ -7,13 +7,13 @@ Goals
 -----
 
 * The ``ucsschool.lib`` package can be used on any Linux distro.
-* The ``ucsschool.lib`` package should be installable using Python ``setuptools`` on any Linux distro.
+* The ``ucsschool.lib`` package can be installed using Python ``setuptools``.
 
 Consequences and constraints
 ----------------------------
 
 * Modules in the ``ucsschool.lib`` package can be used without a local installation of UDM.
-* UDMs HTTP-API interface are used to make modifications to LDAP.
+* UDMs HTTP-API interface is used to make modifications to LDAP.
 * Direct LDAP access is allowed, but cannot use the ``uldap`` module.
 
 Current development state / how to install

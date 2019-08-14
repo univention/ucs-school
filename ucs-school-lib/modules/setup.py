@@ -49,6 +49,7 @@ setuptools.setup(
     url="https://www.univention.de/",
     install_requires=requirements,
     packages=["ucsschool", "ucsschool.lib", "ucsschool.lib.models", "ucsschool.lib.pyhooks"],
+    package_data = {'ucsschool.lib': ['*.yaml']},
     license="GNU Affero General Public License v3",
     classifiers=[
         "Programming Language :: Python :: 2",
