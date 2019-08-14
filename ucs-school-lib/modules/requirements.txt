@@ -1,6 +1,5 @@
 colorlog
 lazy-object-proxy
-psutil
 python-ldap
 ruamel.yaml
 six

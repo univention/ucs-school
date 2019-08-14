@@ -42,7 +42,6 @@ import subprocess
 
 from pkg_resources import resource_stream
 from six import string_types
-from psutil import process_iter, NoSuchProcess
 import colorlog
 import lazy_object_proxy
 import ruamel.yaml
@@ -62,8 +61,6 @@ except ImportError:
 # TODO: get i18n module from univention.lib
 def _(s):
 	return s
-
-
 
 
 # TODO: get base/univention-policy/python-lib/policy_result.py and static univention-policy-result binary
@@ -386,109 +383,6 @@ def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None
 	return handler
 
 
-def get_logger(
-		name,  # type: AnyStr
-		level="INFO",  # type: Optional[AnyStr]
-		target=sys.stdout,  # type: Optional[file]
-		handler_kwargs=None,  # type: Optional[Dict[AnyStr, Any]]
-		formatter_kwargs=None  # type: Optional[Dict[AnyStr, Any]]
-):
-	# type: (...) -> logging.Logger
-	"""
-	Get a logger object below the ucsschool root logger.
-
-	.. deprecated:: 4.4 v2
-		Use `logging.getLogger(__name__)` and :py:func:`get_stream_handler()`,
-		:py:func:`get_file_handler()`.
-
-	* The logger will use UniStreamHandler(StreamHandler) for streams
-	  (sys.stdout etc) and UniFileHandler(TimedRotatingFileHandler) for files if
-	  not configured differently through handler_kwargs[cls].
-	* A call with the same name will return the same logging object.
-	* There is only one handler per name-target combination.
-	* If name and target are the same, and only the log level changes, it will
-	  return the logging object with the same handlers and change both the log
-	  level of the respective handler and of the logger object to be the lowest
-	  of the previous and the new level.
-	* Complete output customization is possible, setting kwargs for the
-	  constructors of the handler and formatter.
-	* Using custom handler and formatter classes is possible by configuring
-	  the 'cls' key of handler_kwargs and formatter_kwargs.
-
-	:param name: str: will be appended to "ucsschool." as name of the logger
-	:param level: str: loglevel (DEBUG, INFO etc)
-	:param target: stream (open file) or a str (file path)
-	:param handler_kwargs: dict: will be passed to the handlers constructor.
-		It cannot be used to modify a handler, as it is only used at creation time.
-		If it has a key 'cls' it will be used as handler instead of UniFileHandler
-		or UniStreamHandler. It should be a subclass of one of those!
-	:param formatter_kwargs: dict: will be passed to the formatters constructor,
-		if it has a key 'cls' it will be used to create a formatter instead of
-		logging.Formatter.
-	:return: a python logging object
-	"""
-	if not name:
-		name = "noname"
-	if isinstance(target, file) or hasattr(target, "write"):
-		# file like object
-		filename = target.name
-	else:
-		filename = target
-	cache_key = "{}-{}".format(name, filename)
-	_logger = logging.getLogger("ucsschool.{}".format(name))
-
-	if cache_key in _handler_cache and getattr(logging, level) >= _handler_cache[cache_key].level:
-		return _logger
-
-	# The logger objects level must be the lowest of all handlers, or handlers
-	# with a higher level will not be able to log anything.
-	if getattr(logging, level) < _logger.level:
-		_logger.setLevel(level)
-
-	if not isinstance(handler_kwargs, dict):
-		handler_kwargs = dict()
-	if not isinstance(formatter_kwargs, dict):
-		formatter_kwargs = dict()
-
-	if isinstance(target, file) or hasattr(target, "write"):
-		handler_defaults = dict(cls=UniStreamHandler, stream=target)
-		fmt = '%(log_color)s{}'.format(CMDLINE_LOG_FORMATS[level])
-		fmt_cls = colorlog.TTYColoredFormatter
-	else:
-		handler_defaults = dict(cls=UniFileHandler, filename=target, when="D", backupCount=10000000)
-		fmt = FILE_LOG_FORMATS[level]
-		fmt_cls = logging.Formatter
-	handler_defaults.update(handler_kwargs)
-	fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
-	fmt_kwargs.update(formatter_kwargs)
-	if issubclass(fmt_cls, colorlog.ColoredFormatter):
-		fmt_kwargs['log_colors'] = LOG_COLORS
-
-	if _logger.level == logging.NOTSET:
-		# fresh logger
-		_logger.setLevel(level)
-
-	if cache_key in _handler_cache:
-		# Check if loglevel from this request is lower than the one used in
-		# the cached loggers handler. We do only lower level, never raise it.
-		if getattr(logging, level) < _handler_cache[cache_key].level:
-			handler = _handler_cache[cache_key]
-			handler.setLevel(level)
-			formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
-			handler.setFormatter(formatter)
-	else:
-		# Create handler and formatter from scratch.
-		handler = handler_defaults.pop("cls")(**handler_defaults)
-		handler.set_name("ucsschool.{}".format(name))
-		handler.setLevel(level)
-		formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
-		handler.setFormatter(formatter)
-		_logger.addHandler(handler)
-		_handler_cache[cache_key] = handler
-	_logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
-	return _logger
-
-
 def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
 	# type: (Sequence[str], Optional[bool], Optional[bool], **Any) -> Tuple[int, str, str]
 	"""
@@ -523,60 +417,10 @@ def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
 
 @contextmanager
 def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
-	"""
-	Stops univention-directory-notifier while in a block and starts it in the
-	end. Service if stopped/started by /etc/init.d.
-
-	Will not start if ``ucr get notifier/autostart=no`` -- but *will* stop!
-
-	::
-
-		with stopped_notifier():
-			...
-
-	:param bool strict: raise RuntimeError if stopping fails
-	:raises RuntimeError: if stopping failed and ``strict=True``
-	"""
-	service_name = 'univention-directory-notifier'
-	logger = logging.getLogger(__name__)
-
-	def _run(args):
-		returncode, stdout, stderr = exec_cmd(args, log=True)
-		return returncode == 0
-
-	notifier_running = False
-	logger.info('Stopping %s', service_name)
-	for process in process_iter():
-		try:
-			if process.name() == service_name:
-				notifier_running = True
-				break
-		except (IOError, NoSuchProcess):
-			pass
-	if not notifier_running:
-		logger.warning('%s is not running! Skipping', service_name)
-	else:
-		if _run(['/etc/init.d/%s' % service_name, 'stop']):
-			logger.info('%s stopped', service_name)
-		else:
-			logger.error('Failed to stop %s...', service_name)
-			if strict:
-				raise RuntimeError('Failed to stop %s, but this seems to be very important (strict=True was specified)' % service_name)
-			else:
-				logger.warning('In the end, will try to start it nonetheless')
 	try:
 		yield
 	finally:
-		logger.info('Starting %s', service_name)
-		if not notifier_running:
-			logger.warning('Notifier was not running! Skipping')
-		else:
-			start_disabled = ucr.is_false('notifier/autostart', False)
-			command = ['/etc/init.d/%s' % service_name, 'start']
-			if not start_disabled and _run(command):
-				logger.info('%s started', service_name)
-			else:
-				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command))  # correct: shlex... unnecessary
+		pass
 
 
 def _write_logging_config(path):  # type: (str) -> None
