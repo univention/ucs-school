@@ -1,6 +1,8 @@
 colorlog
+lazy-object-proxy
+psutil
 python-ldap
-# python-univention-lib ?
 ruamel.yaml
 six
 univention-config-registry>=14
+# univention-lib ?
