@@ -200,7 +200,21 @@ feedback@univention.de
 					<!-- END ucs-school-import 17.0.10A~4.4.0.201908051526 -->
 <!-- CHANGELOG:2019-08-05:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-08-14" lang="en">
+					<title>Released on 2019-08-14:</title>
+					<!-- START ucs-school-import 17.0.11A~4.4.0.201908120945 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.11A~4.4.0.201908120945</emphasis>:
+						<itemizedlist>
+							<listitem><para>An error was fixed that happened when a user was moved to another school and the setting <envar>school_classes_keep_if_empty</envar> was enabled (<u:bug>49995</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.11A~4.4.0.201908120945 -->
+<!-- CHANGELOG:2019-08-14:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 		</section>
