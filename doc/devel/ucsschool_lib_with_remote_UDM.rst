@@ -30,9 +30,11 @@ Development can be done on any Linux distro using virtualenv::
 
 	$ cd $UCSSCHOOL-REPO
 	$ git checkout dtroeder/ucsschool.no.udm
-	$ pip install -e ucs-school-lib/modules/
+	$ pip install univention-lib-slim
+	$ pip install univention-directory-manager-modules-slim
+	$ pip install -e ucs-school-lib/modules
 
-Test installation::
+Test UCR installation::
 
 	$ sudo touch /etc/univention/base.conf
 	$ sudo chown $USER /etc/univention/base*
@@ -45,3 +47,22 @@ Test installation::
 	$ echo -en "\nfoo: bar" >> /etc/univention/base.conf
 
 	$ python -c 'from ucsschool.lib.models.utils import ucr; assert ucr.get("foo") == "bar"'
+
+
+Status
+------
+
+Import OK::
+
+	import ucsschool.lib.i18n
+	import ucsschool.lib.models.attributes
+	import ucsschool.lib.models.utils
+	import ucsschool.lib.roles
+	import ucsschool.lib.smbstatus
+	import ucsschool.lib.pyhooks.pyhook
+	import ucsschool.lib.pyhooks.pyhooks_loader
+
+Execution tested::
+
+	ucsschool.lib.models.utils.*
+

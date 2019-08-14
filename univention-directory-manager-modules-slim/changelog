@@ -1,0 +1,5 @@
+univention-directory-manager-modules (14.0.13-9) unstable; urgency=medium
+
+  * Bug #49092: revert adding properties
+
+ -- Florian Best <best@univention.de>  Wed, 14 Aug 2019 15:02:22 +0200

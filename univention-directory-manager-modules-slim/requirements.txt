@@ -1,0 +1,3 @@
+ipaddr
+python-ldap
+univention-lib
