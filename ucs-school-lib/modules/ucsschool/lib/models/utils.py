@@ -47,7 +47,7 @@ import lazy_object_proxy
 import ruamel.yaml
 
 # from univention.lib.policy_result import policy_result
-# from univention.lib.i18n import Translation
+from univention.lib.i18n import Translation
 from univention.config_registry import ConfigRegistry
 
 try:
@@ -57,15 +57,12 @@ except ImportError:
 
 
 # "global" translation for ucsschool.lib.models
-# _ = Translation('python-ucs-school').translate
-# TODO: get i18n module from univention.lib
-def _(s):
-	return s
+_ = Translation('python-ucs-school').translate
 
 
 # TODO: get base/univention-policy/python-lib/policy_result.py and static univention-policy-result binary
-def policy_result(dn):
-	return [8]
+def policy_result(dn):  # type: (str) -> Tuple[Dict[str, List[Any]], Dict[str, str]]
+	return {"univentionPWLength": ["8"]}, {"univentionPWLength": "Policy-DN"}
 
 
 def _load_logging_config():  # type: () -> Dict[str, Dict[str, str]]

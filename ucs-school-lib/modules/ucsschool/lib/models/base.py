@@ -40,11 +40,11 @@ from ldap import explode_dn
 from ldap.filter import escape_filter_chars
 from ldap.dn import escape_dn_chars
 
-import univention.admin.uldap as udm_uldap
+#import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
-import univention.admin.modules as udm_modules
-import univention.admin.objects as udm_objects
-from univention.admin import uldap
+#import univention.admin.modules as udm_modules
+#import univention.admin.objects as udm_objects
+#from univention.admin import uldap
 from univention.admin.filter import conjunction, expression
 
 from ..schoolldap import SchoolSearchBase
