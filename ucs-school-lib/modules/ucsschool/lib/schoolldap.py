@@ -39,7 +39,7 @@ try:
 except ImportError:
 	pass
 
-import univention.uldap
+from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
 
 

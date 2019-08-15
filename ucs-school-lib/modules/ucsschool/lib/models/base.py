@@ -40,11 +40,10 @@ from ldap import explode_dn
 from ldap.filter import escape_filter_chars
 from ldap.dn import escape_dn_chars
 
-#import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
-#import univention.admin.modules as udm_modules
-#import univention.admin.objects as udm_objects
-#from univention.admin import uldap
+import univention.admin.modules as udm_modules
+import univention.admin.objects as udm_objects
+from univention.admin import uldap
 from univention.admin.filter import conjunction, expression
 
 from ..schoolldap import SchoolSearchBase
@@ -492,7 +491,7 @@ class UCSSchoolHelperAbstractClass(object):
 			if self.errors:
 				raise ValidationError(self.errors.copy())
 
-		pos = udm_uldap.position(ucr.get('ldap/base'))
+		pos = uldap.position(ucr.get('ldap/base'))
 		container = self.position
 		if not container:
 			self.logger.error('%r cannot determine a container. Unable to create!', self)
@@ -794,7 +793,7 @@ class UCSSchoolHelperAbstractClass(object):
 	def init_udm_module(cls, lo):  # type: (LoType) -> None
 		if cls._meta.udm_module in cls._initialized_udm_modules:
 			return
-		pos = udm_uldap.position(lo.base)
+		pos = uldap.position(lo.base)
 		udm_modules.init(lo, pos, udm_modules.get(cls._meta.udm_module))
 		cls._initialized_udm_modules.append(cls._meta.udm_module)
 
