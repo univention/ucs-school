@@ -33,7 +33,7 @@ import os.path
 from copy import deepcopy
 import tempfile
 import subprocess
-from six import iteritems
+from six import iteritems, add_metaclass
 
 import ldap
 from ldap import explode_dn
@@ -100,6 +100,7 @@ class MultipleObjectsError(Exception):
 		self.objs = objs
 
 
+@add_metaclass(UCSSchoolHelperMetaClass)
 class UCSSchoolHelperAbstractClass(object):
 	"""
 	Base class of all UCS@school models.

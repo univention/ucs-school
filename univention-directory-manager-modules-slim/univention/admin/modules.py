@@ -27,9 +27,18 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-def get():
-	# TODO
-	pass
+import ruamel.yaml
+from univention.admin.client import UDM
+
+
+def get_dev_connection():
+	with open("/etc/univention/master.secret") as fp:
+		return ruamel.yaml.load(fp, Loader=ruamel.yaml.Loader)
+
+
+def get(name):
+	"""return UDM module"""
+	return UDM.http(**get_dev_connection()).version(0).get(name)
 
 
 def lookup():
