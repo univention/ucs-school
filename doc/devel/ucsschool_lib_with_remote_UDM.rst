@@ -16,8 +16,8 @@ Consequences and constraints
 * UDMs HTTP-API interface is used to make modifications to LDAP.
 * Direct LDAP access is allowed, but cannot use the ``uldap`` module.
 
-Current development state / how to install
-------------------------------------------
+Installation
+------------
 
 Development can be done on any Linux distro using virtualenv::
 
@@ -48,21 +48,49 @@ Test UCR installation::
 
 	$ python -c 'from ucsschool.lib.models.utils import ucr; assert ucr.get("foo") == "bar"'
 
+Test logging::
+
+	$ python -c 'import logging; from ucsschool.lib.models.utils import get_file_handler, get_stream_handler; logger = logging.getLogger("foo"); logger.setLevel("DEBUG"); logger.addHandler(get_file_handler("DEBUG", "/tmp/log")); logger.addHandler(get_stream_handler("DEBUG")); logger.debug("debug msg"); logger.error("error msg")'
+	$ cat /tmp/log
+
 
 Status
 ------
 
-Import OK::
+Import possible::
 
-	import ucsschool.lib.i18n
-	import ucsschool.lib.models.attributes
-	import ucsschool.lib.models.utils
-	import ucsschool.lib.roles
-	import ucsschool.lib.smbstatus
-	import ucsschool.lib.pyhooks.pyhook
-	import ucsschool.lib.pyhooks.pyhooks_loader
+	ucsschool.lib.i18n
+	ucsschool.lib.models
+	ucsschool.lib.models.attributes
+	ucsschool.lib.models.base
+	ucsschool.lib.models.dhcp
+	ucsschool.lib.models.meta
+	ucsschool.lib.models.misc
+	ucsschool.lib.models.network
+	ucsschool.lib.models.policy
+	ucsschool.lib.models.utils
+	ucsschool.lib.pyhooks
+	ucsschool.lib.pyhooks.pyhook
+	ucsschool.lib.pyhooks.pyhooks_loader
+	ucsschool.lib.roles
+	ucsschool.lib.schoolldap
+	ucsschool.lib.smbstatus
 
-Execution tested::
+Import error::
+
+	ucsschool.lib.info
+	ucsschool.lib.internetrules
+	ucsschool.lib.roleshares
+	ucsschool.lib.school_umc_base
+	ucsschool.lib.school_umc_ldap_connection
+	ucsschool.lib.models.computer
+	ucsschool.lib.models.group
+	ucsschool.lib.models.school
+	ucsschool.lib.models.share
+	ucsschool.lib.models.user
+	ucsschool.lib.schoollessons
+
+Code execution tested::
 
 	ucsschool.lib.models.utils.*
 

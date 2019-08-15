@@ -37,7 +37,7 @@ try:
 except ImportError:
 	pass
 
-import univention.uldap
+from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
 
 
@@ -80,7 +80,7 @@ class SchoolSearchBase(object):
 		"""
 		school_dn = cls.getOUDN(dn)
 		if school_dn:
-			return univention.uldap.explodeDn(school_dn, True)[0]
+			return explode_dn(school_dn, True)[0]
 
 	@classmethod
 	def getOUDN(cls, dn):  # type: (str) -> str
@@ -210,7 +210,7 @@ class SchoolSearchBase(object):
 		# a workgroup cannot lie in a sub directory
 		if not groupDN.endswith(self.workgroups):
 			return False
-		return len(univention.uldap.explodeDn(groupDN)) - len(univention.uldap.explodeDn(self.workgroups)) == 1
+		return len(explode_dn(groupDN)) - len(explode_dn(self.workgroups)) == 1
 
 	def isGroup(self, groupDN):  # type: (str) -> bool
 		return groupDN.endswith(self.groups)
