@@ -60,6 +60,18 @@ Test logging::
 	$ cat /tmp/log
 
 
+Store machine credentials (if not in app container)::
+
+	import ruamel.yaml
+	with open("/etc/univention/master.secret", "w") as fp:
+		ruamel.yaml.dump({
+			"uri": "http://10.200.3.66/univention/udm/",
+			"username": "Administrator",
+			"password": "univention"},
+			fp, ruamel.yaml.RoundTripDumper, indent=4
+		)
+
+
 Status
 ------
 

@@ -51,7 +51,7 @@ class SchoolSearchBase(object):
 	def __init__(self, availableSchools, school=None, dn=None, ldapBase=None):
 		self._ldapBase = ldapBase or ucr.get('ldap/base')
 
-		from ucsschool.lib.models import School
+		from ucsschool.lib.models.school import School
 		self._school = school or availableSchools[0]
 		self._schoolDN = dn or School.cache(self.school).dn
 

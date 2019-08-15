@@ -36,7 +36,7 @@ from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .utils import ucr, _
 from ..roles import role_school_class_share, role_workgroup_share
 
-from univention.udm import UDM
+from univention.admin.client import UDM
 from ldap.filter import filter_format
 
 
@@ -149,7 +149,7 @@ class WorkGroupShare(RoleSupportMixin, Share):
 		filtered_shares = []
 		search_base = cls.get_search_base(school)
 		for share in shares:
-			groups = UDM(lo).version(1).get('groups/group').search(filter_format('name=%s', [share.name]), base=search_base.groups)
+			groups = UDM.using_lo(lo).version(1).get('groups/group').search(filter_format('name=%s', [share.name]), base=search_base.groups)
 			if any((search_base.isWorkgroup(g.dn) for g in groups)):
 				filtered_shares.append(share)
 		return filtered_shares

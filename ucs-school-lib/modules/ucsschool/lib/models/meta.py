@@ -50,33 +50,40 @@ class UCSSchoolHelperOptions(object):
 			udm_module_short = self.udm_module.split('/')[1]
 		self.set_from_meta_object(meta, 'udm_module_short', udm_module_short)
 		self.set_from_meta_object(meta, 'hook_path', udm_module_short)  # default same as udm_module_short
-		if self.udm_module:
-			module = udm_modules.get(self.udm_module)
-			if not module:
-				# happens when the udm_module is not in the standard package
-				#   i.e. computers/ucc
-				return
-			for key, attr in six.iteritems(klass._attributes):
-				# sanity checks whether we specified everything correctly
-				if attr.udm_name and not attr.extended:
-					# extended? only available after module_init(lo)
-					#   we have to trust ourselved here
-					if attr.udm_name not in module.property_descriptions:
-						raise RuntimeError('%s\'s attribute "%s" has no counterpart in the %s\'s property_descriptions ("%s")!' % (klass.__name__, key, self.udm_module, attr.udm_name))
-			udm_name = klass._attributes['name'].udm_name
-			ldap_name = module.mapping.mapName(udm_name)
-			self.ldap_name_part = ldap_name
-			ldap_map_function = partial(module.mapping.mapValue, udm_name)
-			self.ldap_map_function = ldap_map_function
-			ldap_unmap_function = partial(module.mapping.unmapValue, module.mapping.mapName(udm_name))
-			self.ldap_unmap_function = ldap_unmap_function
-		else:
-			# this is to not let models fail when accessing obj.dn
-			#   note that without an udm_module it is not possible
-			#   to save an object
-			self.ldap_name_part = 'cn'
-			self.ldap_map_function = lambda name: name
-			self.ldap_unmap_function = lambda name: name
+		# if self.udm_module:
+		# 	module = udm_modules.get(self.udm_module)
+		# 	if not module:
+		# 		# happens when the udm_module is not in the standard package
+		# 		#   i.e. computers/ucc
+		# 		return
+		# 	for key, attr in six.iteritems(klass._attributes):
+		# 		# sanity checks whether we specified everything correctly
+		# 		if attr.udm_name and not attr.extended:
+		# 			# extended? only available after module_init(lo)
+		# 			#   we have to trust ourselved here
+		# 			if attr.udm_name not in module.property_descriptions:
+		# 				raise RuntimeError('%s\'s attribute "%s" has no counterpart in the %s\'s property_descriptions ("%s")!' % (klass.__name__, key, self.udm_module, attr.udm_name))
+		# 	udm_name = klass._attributes['name'].udm_name
+		# 	# ldap_name = module.mapping.mapName(udm_name)
+		# 	# self.ldap_name_part = ldap_name
+		# 	# ldap_map_function = partial(module.mapping.mapValue, udm_name)
+		# 	# self.ldap_map_function = ldap_map_function
+		# 	# ldap_unmap_function = partial(module.mapping.unmapValue, module.mapping.mapName(udm_name))
+		# 	# self.ldap_unmap_function = ldap_unmap_function
+		# 	self.ldap_name_part = 'cn'
+		# 	self.ldap_map_function = lambda name: name
+		# 	self.ldap_unmap_function = lambda name: name
+		# else:
+		# 	# this is to not let models fail when accessing obj.dn
+		# 	#   note that without an udm_module it is not possible
+		# 	#   to save an object
+		# 	self.ldap_name_part = 'cn'
+		# 	self.ldap_map_function = lambda name: name
+		# 	self.ldap_unmap_function = lambda name: name
+		self.ldap_name_part = 'cn'
+		self.ldap_map_function = lambda name: name
+		self.ldap_unmap_function = lambda name: name
+
 
 	def set_from_meta_object(self, meta, name, default):
 		setattr(self, name, getattr(meta, name, default))
