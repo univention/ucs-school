@@ -54,9 +54,9 @@ from ..roles import create_ucsschool_role_string
 
 try:
 	from typing import Any, Iterable, Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
-	import univention.admin.handlers.simpleLdap
+	from univention.admin.client import Object, UDM
 	from univention.admin.uldap import access as LoType, position as PoType
-	UdmObject = univention.admin.handlers.simpleLdap
+	UdmObject = Object
 	SuperOrdinateType = Union[str, UdmObject]
 	UldapFilter = Union[str, conjunction, expression]
 	UCSSchoolModel = TypeVar('UCSSchoolModel', bound='UCSSchoolHelperAbstractClass')
@@ -792,11 +792,12 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def init_udm_module(cls, lo):  # type: (LoType) -> None
-		if cls._meta.udm_module in cls._initialized_udm_modules:
-			return
-		pos = uldap.position(lo.base)
-		udm_modules.init(lo, pos, udm_modules.get(cls._meta.udm_module))
-		cls._initialized_udm_modules.append(cls._meta.udm_module)
+		# if cls._meta.udm_module in cls._initialized_udm_modules:
+		# 	return
+		# pos = uldap.position(lo.base)
+		# udm_modules.init(lo, pos, udm_modules.get(cls._meta.udm_module))
+		# cls._initialized_udm_modules.append(cls._meta.udm_module)
+		pass
 
 	@classmethod
 	def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
@@ -825,7 +826,8 @@ class UCSSchoolHelperAbstractClass(object):
 		complete_filter = str(complete_filter)
 		cls.logger.debug('Getting all %s of %s with filter %r', cls.__name__, school, complete_filter)
 		ret = []
-		for udm_obj in cls.lookup(lo, school, complete_filter, superordinate=superordinate):
+		objs = list(cls.lookup(lo, school, complete_filter, superordinate=superordinate))
+		for udm_obj in objs:
 			try:
 				ret.append(cls.from_udm_obj(udm_obj, school, lo))
 			except NoObject:
@@ -836,7 +838,8 @@ class UCSSchoolHelperAbstractClass(object):
 	def lookup(cls, lo, school, filter_s='', superordinate=None):
 		# type: (LoType, str, Optional[UldapFilter], Optional[SuperOrdinateType]) -> List[UdmObject]
 		try:
-			return udm_modules.lookup(cls._meta.udm_module, None, lo, filter=filter_s, base=cls.get_container(school), scope='sub', superordinate=superordinate)
+			res = list(udm_modules.lookup(cls._meta.udm_module, None, lo, filter=filter_s, base=cls.get_container(school), scope='sub', superordinate=superordinate))
+			return res
 		except noObject:
 			cls.logger.warning('Error while getting all %s of %s: probably %r does not exist!', cls.__name__, school, cls.get_container(school))
 			return []
@@ -885,7 +888,7 @@ class UCSSchoolHelperAbstractClass(object):
 				# while Group must be converted into ComputerRoom, etc. and User must be converted into Student, etc.
 				raise WrongModel(udm_obj.dn, klass, cls)
 			return klass.from_udm_obj(udm_obj, school, lo)
-		udm_obj.open()
+		# udm_obj.open()
 		attrs = {'school': cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
 		if cls.supports_schools():
 			attrs['schools'] = udm_obj['school']

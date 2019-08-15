@@ -81,11 +81,16 @@ Import possible::
 	ucsschool.lib.models
 	ucsschool.lib.models.attributes
 	ucsschool.lib.models.base
+	ucsschool.lib.models.computer
 	ucsschool.lib.models.dhcp
+	ucsschool.lib.models.group
 	ucsschool.lib.models.meta
 	ucsschool.lib.models.misc
 	ucsschool.lib.models.network
 	ucsschool.lib.models.policy
+	ucsschool.lib.models.school
+	ucsschool.lib.models.share
+	ucsschool.lib.models.user
 	ucsschool.lib.models.utils
 	ucsschool.lib.pyhooks
 	ucsschool.lib.pyhooks.pyhook
@@ -101,14 +106,11 @@ Import error::
 	ucsschool.lib.roleshares
 	ucsschool.lib.school_umc_base
 	ucsschool.lib.school_umc_ldap_connection
-	ucsschool.lib.models.computer
-	ucsschool.lib.models.group
-	ucsschool.lib.models.school
-	ucsschool.lib.models.share
-	ucsschool.lib.models.user
 	ucsschool.lib.schoollessons
 
 Code execution tested::
 
 	ucsschool.lib.models.utils.*
-
+	ucsschool.lib.models.computer.AnyComputer.get_all
+	ucsschool.lib.models.groups.SchoolClass.get_all
+	ucsschool.lib.models.user.User.get_all

@@ -32,6 +32,7 @@
 from ldap.filter import filter_format
 import re
 import univention.admin.uexceptions
+from six import string_types
 
 
 class conjunction(object):
@@ -63,7 +64,7 @@ class conjunction(object):
 		"""
 		if not self.expressions:
 			return ''
-		return '(%s%s)' % (self.type, ''.join(map(unicode, self.expressions)))
+		return '(%s%s)' % (self.type, ''.join(map(str, self.expressions)))
 
 	def __unicode__(self):
 		return self.__str__()
@@ -173,8 +174,11 @@ def parse(filter_s, begin=0, end=-1):
 	conjunction('&', [expression('key', 'va)!(ue', '=')])
 	"""
 	# filter is already parsed
-	if not isinstance(filter_s, basestring):
+	if not isinstance(filter_s, string_types):
 		return filter_s
+
+	if not filter_s:
+		return expression()
 
 	def split(str):
 		expressions = []
@@ -268,7 +272,7 @@ def replace_fqdn_filter(filter_s):
 	>>> replace_fqdn_filter('(|(fqdn=host.domain.tld)(fqdn=other.domain.tld2))')
 	'(|(&(cn=host)(associatedDomain=domain.tld))(&(cn=other)(associatedDomain=domain.tld2)))'
 	"""
-	if not isinstance(filter_s, basestring):
+	if not isinstance(filter_s, string_types):
 		return filter_s
 	return FQDN_REGEX.sub(_replace_fqdn_filter, filter_s)
 
@@ -282,6 +286,18 @@ def _replace_fqdn_filter(match):
 		host = domain = value
 		operator = '|'
 	return '(%s(cn=%s)(associatedDomain=%s))' % (operator, host, domain)
+
+
+def flatten_filter(filter_):
+	res = []
+	def fl(fi):
+		if isinstance(fi, expression):
+			res.append(fi)
+		if isinstance(fi, conjunction):
+			for f in fi.expressions:
+				fl(f)
+	fl(filter_)
+	return res
 
 
 if __name__ == '__main__':
