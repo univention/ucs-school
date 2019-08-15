@@ -19,6 +19,12 @@ Consequences and constraints
 Installation
 ------------
 
+The following libs have to be installed:
+    python3.7
+    python3.7-dev
+    libldap2-dev
+    libsasl2-dev
+
 Development can be done on any Linux distro using virtualenv::
 
 	$ virtualenv -p python3.7 ~/virtenvs/schoollib
@@ -37,7 +43,7 @@ Development can be done on any Linux distro using virtualenv::
 Test UCR installation::
 
 	$ sudo touch /etc/univention/base.conf
-	$ sudo chown $USER /etc/univention/base*
+	$ sudo chown $USER /etc/univention/
 	$ sudo mkdir -p /var/cache/univention-config
 	$ sudo chown $USER /var/cache/univention-config
 
