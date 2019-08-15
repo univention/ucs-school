@@ -104,7 +104,7 @@ def LDAP_Connection(*connection_types):
 				kwargs['ldap_position'] = po
 			if add_search_base:
 				MODULE.warn('Using deprecated LDAP_Connection.search_base parameter.')
-				from ucsschool.lib.models import School
+				from ucsschool.lib.models.school import School
 				from univention.management.console.protocol.message import Message
 				if len(args) > 1 and isinstance(args[1], Message) and isinstance(args[1].options, dict) and args[1].options.get('school'):
 					school = args[1].options['school']

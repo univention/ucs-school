@@ -523,3 +523,4 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	class Meta:
 		udm_module = 'container/ou'
 		udm_filter = 'objectClass=ucsschoolOrganizationalUnit'
+		ldap_name_part = 'ou'

@@ -197,7 +197,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
-		ocs = set(udm_obj.oldattr.get('objectClass', []))
+		ocs = {k for k, v in udm_obj.options.items() if v}
 		if ocs >= {'ucsschoolTeacher', 'ucsschoolStaff'}:
 			return TeachersAndStaff
 		if ocs >= {'ucsschoolExam', 'ucsschoolStudent'}:

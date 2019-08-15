@@ -45,6 +45,7 @@ class UCSSchoolHelperOptions(object):
 		self.set_from_meta_object(meta, 'udm_filter', '')
 		self.set_from_meta_object(meta, 'name_is_unique', False)
 		self.set_from_meta_object(meta, 'allow_school_change', False)
+		self.set_from_meta_object(meta, 'ldap_name_part', 'cn')
 		udm_module_short = None
 		if self.udm_module:
 			udm_module_short = self.udm_module.split('/')[1]
@@ -80,7 +81,7 @@ class UCSSchoolHelperOptions(object):
 		# 	self.ldap_name_part = 'cn'
 		# 	self.ldap_map_function = lambda name: name
 		# 	self.ldap_unmap_function = lambda name: name
-		self.ldap_name_part = 'cn'
+		# self.ldap_name_part = 'cn'
 		self.ldap_map_function = lambda name: name
 		self.ldap_unmap_function = lambda name: name
 

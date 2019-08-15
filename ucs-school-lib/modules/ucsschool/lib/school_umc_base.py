@@ -104,7 +104,7 @@ class SchoolBaseModule(Base):
 	@LDAP_Connection()
 	def schools(self, request, ldap_user_read=None):
 		"""Returns a list of all available school"""
-		from ucsschool.lib.models import School
+		from ucsschool.lib.models.school import School
 		schools = School.from_binddn(ldap_user_read)
 		if not schools:
 			raise UMC_Error(_('Could not find any school. You have to create a school before continuing. Use the "Schools" UMC module to create one.'), status=503, result={'no_school_found': True})
@@ -125,7 +125,7 @@ class SchoolBaseModule(Base):
 	def classes(self, request, ldap_user_read=None):
 		"""Returns a list of all classes of the given school"""
 		school = request.options['school']
-		from ucsschool.lib.models import SchoolClass
+		from ucsschool.lib.models.group import SchoolClass
 		self.finished(request.id, self._groups(ldap_user_read, school, SchoolClass.get_container(school), request.options['pattern']))
 
 	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
@@ -133,7 +133,7 @@ class SchoolBaseModule(Base):
 	def workgroups(self, request, ldap_user_read=None):
 		"""Returns a list of all working groups of the given school"""
 		school = request.options['school']
-		from ucsschool.lib.models import WorkGroup
+		from ucsschool.lib.models.group import WorkGroup
 		self.finished(request.id, self._groups(ldap_user_read, school, WorkGroup.get_container(school), request.options['pattern'], 'one'))
 
 	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
@@ -143,7 +143,7 @@ class SchoolBaseModule(Base):
 		# use as base the path for 'workgroups', as it incorporates workgroups and classes
 		# when searching with scope 'sub'
 		school = request.options['school']
-		from ucsschool.lib.models import WorkGroup
+		from ucsschool.lib.models.group import WorkGroup
 		self.finished(request.id, self._groups(ldap_user_read, school, WorkGroup.get_container(school), request.options['pattern']))
 
 	@sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=''))
@@ -151,7 +151,7 @@ class SchoolBaseModule(Base):
 	def rooms(self, request, ldap_user_read=None):
 		"""Returns a list of all available school"""
 		school = request.options['school']
-		from ucsschool.lib.models import ComputerRoom
+		from ucsschool.lib.models.group import ComputerRoom
 		self.finished(request.id, self._groups(ldap_user_read, school, ComputerRoom.get_container(school), request.options['pattern']))
 
 	def _users(self, ldap_connection, school, group=None, user_type=None, pattern=''):
