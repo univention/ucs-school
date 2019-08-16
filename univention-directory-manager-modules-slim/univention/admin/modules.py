@@ -27,25 +27,87 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
 import logging
-from typing import List
+from collections import namedtuple
+from typing import Dict, List
 import ruamel.yaml
+from univention.config_registry import ConfigRegistry
 from univention.admin.client import UDM
 from univention.admin.filter import parse as filter_parse, flatten_filter
 from .client import Object, Module
 
 
+MACHINE_PASSWORD_FILE = "/etc/machine.secret"
+MachinePWCache = namedtuple("MachinePWCache", ["mtime", "password"])
 logger = logging.getLogger(__name__)
+ucr = ConfigRegistry()
+ucr.load()
+_udm_http = None
 
 
-def get_dev_connection():
-	with open("/etc/univention/master.secret") as fp:
-		return ruamel.yaml.load(fp, Loader=ruamel.yaml.Loader)
+class ConnectionData(object):
+	"""
+	Connection details as it would be in a app Docker container.
+	"""
+	_machine_pw = MachinePWCache(0, "")
+
+	@classmethod
+	def _env_or_ucr(cls, key):  # type: (str) -> str
+		try:
+			return os.environ[key.replace("/", "_")]
+		except KeyError:
+			return ucr[key]
+
+	@classmethod
+	def ldap_base(cls):  # type: () -> str
+		return cls._env_or_ucr("ldap/base")
+
+	@classmethod
+	def ldap_hostdn(cls):  # type: () -> str
+		return cls._env_or_ucr("ldap/hostdn")
+
+	@classmethod
+	def ldap_server_name(cls):  # type: () -> str
+		return cls._env_or_ucr("ldap/server/name")
+
+	@classmethod
+	def machine_password(cls):  # type: () -> str
+		"""
+		For developers: will try os.environ["ldap_machine_password"]
+		before reading from /etc/machine.secret.
+		"""
+		try:
+			return os.environ["ldap_machine_password"]
+		except KeyError:
+			pass
+
+		mtime = os.stat(MACHINE_PASSWORD_FILE).st_mtime
+		if cls._machine_pw.mtime == mtime:
+			return cls._machine_pw.password
+		else:
+			with open(MACHINE_PASSWORD_FILE, "r") as fp:
+				pw = fp.read()
+				pw = pw.strip()
+			cls._machine_pw = MachinePWCache(mtime, pw)
+			return pw
+
+	@classmethod
+	def uri(cls):  # type: () -> str
+		# TODO: should be HTTPS
+		return "http://{}/univention/udm/".format(cls.ldap_server_name())
 
 
 def get(name):  # type: (str) -> Module
 	"""return UDM module"""
-	return UDM.http(**get_dev_connection()).version(0).get(name)
+	global _udm_http
+	if not _udm_http:
+		_udm_http = UDM.http(
+			uri=ConnectionData.uri(),
+			username=ConnectionData.ldap_hostdn(),
+			password=ConnectionData.machine_password()
+		).version(0)
+	return _udm_http.get(name)
 
 
 def lookup(module_name, co, lo_udm, filter='', base='', superordinate=None, scope='sub'):
