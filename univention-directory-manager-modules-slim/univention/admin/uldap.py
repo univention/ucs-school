@@ -27,11 +27,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-def getMachineConnection():
+
+class Position(object):
+	def __init__(self, dn):
+		self.dn = dn
+
+	def getDn(self):
+		return self.dn
+
+	def setDn(self, dn):
+		self.dn = dn
+
+	def __str__(self):
+		return self.dn
+
+
+def getMachineConnection(*args, **kwargs):
 	# TODO
 	pass
 
 
-def position():
-	# TODO
-	pass
+def position(base):
+	return Position(base)

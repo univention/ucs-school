@@ -271,6 +271,9 @@ class Module(Client):
 	def property_descriptions(self):
 		return self.create_template().properties
 
+	def object(self, co, lo, position, dn='', superordinate=None, attributes=None):
+		return self.create_template(position, superordinate)
+
 
 class ShallowObject(Client):
 
@@ -324,6 +327,15 @@ class Object(Client):
 			return self._modify()
 		else:
 			return self._create()
+
+	def create(self, *args, **kwargs):
+		return self.save()
+
+	modify = create
+
+	@property
+	def info(self):
+		return self.properties
 
 	def delete(self, remove_referring=False):
 		return self.client.make_request('DELETE', self.uri)
