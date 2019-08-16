@@ -59,16 +59,18 @@ Setup machine account (would be done by appcenter when starting container)::
 
 	$ echo -n "YBqavF9AnMxM" | sudo tee /etc/machine.secret
 
-To overwrite the machine connection data in the current terminal (it seems you *must* do that for now, because the UDM HTTP API does cot support machine accounts yet)::
+To overwrite the machine connection data in the current terminal::
 
 	$ export ldap_base="dc=uni,dc=dtr"
 	$ export ldap_hostdn="Administrator"
 	$ export ldap_server_name="10.200.3.66"
 	$ export ldap_machine_password="univention"
 
-Test UDM HHTP API connection credentials::
+Test UDM HTTP API connection credentials::
 
 	$ python -c 'from univention.admin.modules import get; print(get("users/user"))'
+
+If you have connection problems, uncomment the ``print()`` statement in the ``get()`` function in ``univention-directory-manager-modules-slim/univention/admin/modules.py`` and rebuild the package with ``pip install univention-directory-manager-modules-slim/``.
 
 Test logging::
 
