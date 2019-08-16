@@ -1,4 +1,5 @@
-.. to compile run: rst2html5 ucsschool_lib_with_remote_UDM.rst ucsschool_lib_with_remote_UDM.html
+.. to compile run:
+..     $ rst2html5 ucsschool_lib_with_remote_UDM.rst ucsschool_lib_with_remote_UDM.html
 
 ucsschool.lib with remote UDM
 ==============================
@@ -25,7 +26,7 @@ The following libs have to be installed:
     libldap2-dev
     libsasl2-dev
 
-Development can be done on any Linux distro using virtualenv::
+Development can be done on any Linux distro using ``virtualenv``::
 
 	$ virtualenv -p python3.7 ~/virtenvs/schoollib
 	$ . ~/dev/virtenvs/schoollib/bin/activate
@@ -40,36 +41,39 @@ Development can be done on any Linux distro using virtualenv::
 	$ pip install univention-directory-manager-modules-slim
 	$ pip install -e ucs-school-lib/modules
 
-Test UCR installation::
+Setup UCR::
 
 	$ sudo touch /etc/univention/base.conf
-	$ sudo chown $USER /etc/univention/
+	$ sudo chown -R $USER /etc/univention/
 	$ sudo mkdir -p /var/cache/univention-config
 	$ sudo chown $USER /var/cache/univention-config
 
-	$ python -c 'from univention.config_registry import handler_set; handler_set(["foo=bar"])'
-	# nothing happens to base.conf -> handler_set() does not work yet :(
-	# so fake it for now:
-	$ echo -en "\nfoo: bar" >> /etc/univention/base.conf
+Setup machine account (would be done by appcenter when starting container)::
 
-	$ python -c 'from ucsschool.lib.models.utils import ucr; assert ucr.get("foo") == "bar"'
+	# handler_set() does not work yet :(
+	# so fake it for now with your test-VMs data:
+
+	$ echo -en "\nldap/base: dc=uni,dc=dtr" >> /etc/univention/base.conf
+	$ echo -en "\nldap/hostdn: cn=m150,cn=dc,cn=computers,dc=uni,dc=dtr" >> /etc/univention/base.conf
+	$ echo -en "\nldap/server/name: m150.uni.dtr" >> /etc/univention/base.conf
+
+	$ echo -n "YBqavF9AnMxM" | sudo tee /etc/machine.secret
+
+To overwrite the machine connection data in the current terminal (it seems you *must* do that for now, because the UDM HTTP API does cot support machine accounts yet)::
+
+	$ export ldap_base="dc=uni,dc=dtr"
+	$ export ldap_hostdn="Administrator"
+	$ export ldap_server_name="10.200.3.66"
+	$ export ldap_machine_password="univention"
+
+Test UDM HHTP API connection credentials::
+
+	$ python -c 'from univention.admin.modules import get; print(get("users/user"))'
 
 Test logging::
 
 	$ python -c 'import logging; from ucsschool.lib.models.utils import get_file_handler, get_stream_handler; logger = logging.getLogger("foo"); logger.setLevel("DEBUG"); logger.addHandler(get_file_handler("DEBUG", "/tmp/log")); logger.addHandler(get_stream_handler("DEBUG")); logger.debug("debug msg"); logger.error("error msg")'
 	$ cat /tmp/log
-
-
-Store machine credentials (if not in app container)::
-
-	import ruamel.yaml
-	with open("/etc/univention/master.secret", "w") as fp:
-		ruamel.yaml.dump({
-			"uri": "http://10.200.3.66/univention/udm/",
-			"username": "Administrator",
-			"password": "univention"},
-			fp, ruamel.yaml.RoundTripDumper, indent=4
-		)
 
 
 Status
@@ -114,3 +118,4 @@ Code execution tested::
 	ucsschool.lib.models.computer.AnyComputer.get_all
 	ucsschool.lib.models.groups.SchoolClass.get_all
 	ucsschool.lib.models.user.User.get_all
+	ucsschool.lib.models.user.User.modify
