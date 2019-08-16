@@ -30,8 +30,8 @@
 import os
 import logging
 from collections import namedtuple
-from typing import Dict, List
-import ruamel.yaml
+from typing import List
+from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
 from univention.admin.client import UDM
 from univention.admin.filter import parse as filter_parse, flatten_filter
@@ -68,6 +68,14 @@ class ConnectionData(object):
 		return cls._env_or_ucr("ldap/hostdn")
 
 	@classmethod
+	def ldap_machine_account_username(cls):  # type: () -> str
+		hostdn = cls.ldap_hostdn()
+		if hostdn.startswith("cn=") or hostdn.startswith("uid="):
+			return "{}$".format(explode_dn(hostdn, True)[0])
+		else:
+			return hostdn
+
+	@classmethod
 	def ldap_server_name(cls):  # type: () -> str
 		return cls._env_or_ucr("ldap/server/name")
 
@@ -102,9 +110,14 @@ def get(name):  # type: (str) -> Module
 	"""return UDM module"""
 	global _udm_http
 	if not _udm_http:
+		# print("uri={uri} username={username} password={password}".format(
+		# 	uri=ConnectionData.uri(),
+		# 	username=ConnectionData.ldap_machine_account_username(),
+		# 	password=ConnectionData.machine_password())
+		# )
 		_udm_http = UDM.http(
 			uri=ConnectionData.uri(),
-			username=ConnectionData.ldap_hostdn(),
+			username=ConnectionData.ldap_machine_account_username(),
 			password=ConnectionData.machine_password()
 		).version(0)
 	return _udm_http.get(name)
