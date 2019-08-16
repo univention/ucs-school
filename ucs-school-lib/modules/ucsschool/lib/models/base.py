@@ -500,7 +500,7 @@ class UCSSchoolHelperAbstractClass(object):
 		try:
 			pos.setDn(container)
 			udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, superordinate=self.get_superordinate(lo))
-			udm_obj.open()
+			# udm_obj.open()
 
 			# here is the real logic
 			self.do_create(udm_obj, lo)
@@ -564,7 +564,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 
 		try:
-			old_attrs = deepcopy(udm_obj.info)
+			old_attrs = deepcopy(udm_obj.properties)
 			self.modify_without_hooks_roles(udm_obj)
 			self.do_modify(udm_obj, lo)
 			# get it fresh from the database
@@ -692,7 +692,7 @@ class UCSSchoolHelperAbstractClass(object):
 				name = explode_dn(dn, 1)[0]
 			except ldap.DECODING_ERROR:
 				name = ''
-			return cls._meta.ldap_unmap_function([name])
+			return cls._meta.ldap_unmap_function(name)
 
 	@classmethod
 	def get_school_from_dn(cls, dn):  # type: (str) -> str
@@ -733,7 +733,7 @@ class UCSSchoolHelperAbstractClass(object):
 		self._udm_obj_searched = False
 		'''
 		self.init_udm_module(lo)
-		if self._udm_obj_searched is False or (self._udm_obj and self._udm_obj.lo.binddn != lo.binddn):
+		if self._udm_obj_searched is False:
 			dn = self.old_dn or self.dn
 			superordinate = self.get_superordinate(lo)
 			if dn is None:
@@ -752,8 +752,8 @@ class UCSSchoolHelperAbstractClass(object):
 					self._udm_obj = udm_modules.lookup(self._meta.udm_module, None, lo, scope='base', base=dn, superordinate=superordinate)[0]
 				except (noObject, IndexError):
 					self._udm_obj = None
-				else:
-					self._udm_obj.open()
+				# else:
+				# 	self._udm_obj.open()
 			self._udm_obj_searched = True
 		return self._udm_obj
 
@@ -974,7 +974,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if len(objs) > 1:
 			raise MultipleObjectsError(objs)
 		obj = objs[0]
-		obj.open()
+		# obj.open()
 		return obj
 
 	@classmethod
