@@ -355,16 +355,15 @@ class Object(Client):
 		obj = self.module.get(self.dn)
 		self._copy_from_obj(obj)
 
-	def save(self):
-		if self.dn:
-			return self._modify()
-		else:
-			return self._create()
+	def save(self):  # type: () -> None
+		# DN is always set in ucsschool objects.
+		raise RuntimeError("Don't use this, use create() oder modify() directly.")
 
 	def create(self, *args, **kwargs):
-		return self.save()
+		return self._create()
 
-	modify = create
+	def modify(self, *args, **kwargs):
+		return self._modify()
 
 	@property
 	def info(self):  # type: () -> Dict[str, Any]
