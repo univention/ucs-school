@@ -30,7 +30,10 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
-from collections import Mapping
+try:
+	from collections.abc import Mapping  # py3
+except ImportError:
+	from collections import Mapping  # py2
 from six import iteritems
 try:
 	from typing import Dict, List, Optional

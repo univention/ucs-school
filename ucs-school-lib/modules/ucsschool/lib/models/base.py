@@ -258,9 +258,10 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def invalidate_cache(cls):  # type: () -> None
-		for key in cls._cache.keys():
-			if key[0] == cls.__name__:
-				cls._cache.pop(key)
+		# fix also in 4.4: RuntimeError: dictionary changed size during iteration
+		keys_to_remove = [key for key in cls._cache.keys() if key[0] == cls.__name__]
+		for key in keys_to_remove:
+			del cls._cache[key]
 
 	@classmethod
 	def supports_school(cls):  # type: () -> bool

@@ -92,22 +92,36 @@ class Share(UCSSchoolHelperAbstractClass):
 				udm_obj['sambaForceGroup'] = '+%s' % self.name
 		return super(Share, self).do_modify(udm_obj, lo)
 
+	@staticmethod
+	def get_server_udm_object(dn, lo_udm):
+		mod = lo_udm.get("computers/domaincontroller_slave")
+		try:
+			return mod.get(dn)
+		except HTTPError:
+			pass
+		mod = lo_udm.get("computers/domaincontroller_master")
+		try:
+			return mod.get(dn)
+		except HTTPError:
+			return None
+
 	def get_server_fqdn(self, lo):
 		domainname = ucr.get('domainname')
 		school = self.get_school_obj(lo)
 		school_dn = school.dn
 
 		# fetch serverfqdn from OU
-		result = lo.get(school_dn, ['ucsschoolClassShareFileServer'])
-		if result:
-			server_domain_name = lo.get(result['ucsschoolClassShareFileServer'][0], ['associatedDomain'])
-			if server_domain_name:
-				server_domain_name = server_domain_name['associatedDomain'][0]
-			else:
+		# TODO: change this also in 4.4
+		from .school import School
+		class_share_file_server_dn = School.from_dn(school_dn, None, lo).get_udm_object(lo)['ucsschoolClassShareFileServer']
+		if class_share_file_server_dn:
+			server_udm = self.get_server_udm_object(class_share_file_server_dn, lo)
+			server_domain_name = server_udm["domain"]
+			if not server_domain_name:
 				server_domain_name = domainname
-			result = lo.get(result['ucsschoolClassShareFileServer'][0], ['cn'])
+			result = server_udm["name"]
 			if result:
-				return '%s.%s' % (result['cn'][0], server_domain_name)
+				return '%s.%s' % (result, server_domain_name)
 
 		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
 		ou_attr_ldap_access_write = lo.get(school_dn, ['univentionLDAPAccessWrite'])
