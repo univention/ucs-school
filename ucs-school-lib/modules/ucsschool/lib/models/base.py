@@ -951,11 +951,15 @@ class UCSSchoolHelperAbstractClass(object):
 				cls.logger.warn('Unable to guess school from %r', dn)
 		try:
 			cls.logger.debug('Looking up %s with dn %r', cls.__name__, dn)
-			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base', superordinate=superordinate)[0]
+			mod = lo.get(cls._meta.udm_module)  # type: Module
+			udm_obj = mod.get(dn)  # type: Object
+			return cls.from_udm_obj(udm_obj, school, lo)
+		except HTTPError as exc:
+			if exc.code in (404, 422):
+				raise noObject(str(exc))
 		except IndexError:
 			# happens when cls._meta.udm_module does not "match" the dn
 			raise WrongObjectType(dn, cls)
-		return cls.from_udm_obj(udm_obj, school, lo)
 
 	@classmethod
 	def get_only_udm_obj(cls, lo, filter_str, superordinate=None, base=None):
