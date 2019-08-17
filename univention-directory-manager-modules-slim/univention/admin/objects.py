@@ -27,11 +27,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-def get_superordinate():
+def get_superordinate(*args, **kwargs):
 	# TODO
 	pass
 
 
-def performCleanup():
+def performCleanup(*args, **kwargs):
 	# TODO
 	pass

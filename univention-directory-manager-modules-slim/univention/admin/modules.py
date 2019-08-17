@@ -34,8 +34,9 @@ from typing import Any, List, Optional
 from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
 from univention.admin.client import UDM
+from univention.admin.uexceptions import noObject
 from univention.admin.filter import parse as filter_parse, flatten_filter
-from .client import Object, Module
+from .client import HTTPError, Object, Module
 
 
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
@@ -106,8 +107,7 @@ class ConnectionData(object):
 		return "http://{}/univention/udm/".format(cls.ldap_server_name())
 
 
-def get(name):  # type: (str) -> Module
-	"""return UDM module"""
+def get_machine_connection():  # type: () -> UDM
 	global _udm_http
 	if not _udm_http:
 		# print("uri={uri} username={username} password={password}".format(
@@ -120,7 +120,12 @@ def get(name):  # type: (str) -> Module
 			username=ConnectionData.ldap_machine_account_username(),
 			password=ConnectionData.machine_password()
 		).version(0)
-	return _udm_http.get(name)
+	return _udm_http
+
+
+def get(name):  # type: (str) -> Module
+	"""return UDM module"""
+	return get_machine_connection().get(name)
 
 
 def lookup(module_name, co, lo_udm, filter='', base='', superordinate=None, scope='sub'):
@@ -132,7 +137,11 @@ def lookup(module_name, co, lo_udm, filter='', base='', superordinate=None, scop
 	else:
 		args = dict(((filter_s_parsed.variable, filter_s_parsed.value),)) if filter_s_parsed.variable else {}
 	res = mod.search(filter=args, position=base, scope=scope, superordinate=superordinate, opened=True)
-	return list(res)
+	try:
+		return list(res)
+	except HTTPError as exc:
+		if exc.code in (404, 422):
+			raise noObject(str(exc))
 
 
 def init():
