@@ -38,7 +38,7 @@ class Position(object):
 	def setDn(self, dn):
 		self.dn = dn
 
-	def __str__(self):
+	def __repr__(self):
 		return self.dn
 
 

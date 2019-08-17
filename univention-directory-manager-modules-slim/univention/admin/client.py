@@ -372,6 +372,9 @@ class Object(Client):
 	def delete(self, remove_referring=False):
 		return self.client.make_request('DELETE', self.uri)
 
+	def remove(self, *args, **kwargs):
+		return self.delete()
+
 	def _modify(self):
 		data = {
 			'properties': self.props,
@@ -427,3 +430,6 @@ class Object(Client):
 
 	def __setitem__(self, key, value):
 		self.properties[key] = value
+
+	def __contains__(self, item):
+		return item in self.properties
