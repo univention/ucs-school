@@ -30,7 +30,7 @@
 import os
 import logging
 from collections import namedtuple
-from typing import List
+from typing import Any, List, Optional
 from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
 from univention.admin.client import UDM
@@ -124,7 +124,7 @@ def get(name):  # type: (str) -> Module
 
 
 def lookup(module_name, co, lo_udm, filter='', base='', superordinate=None, scope='sub'):
-	# type: (...) -> List[Object]
+	# type: (str, Any, UDM, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Object]
 	mod = lo_udm.get(module_name)  # type: Module
 	filter_s_parsed = filter_parse(filter)
 	if hasattr(filter_s_parsed, "expressions"):

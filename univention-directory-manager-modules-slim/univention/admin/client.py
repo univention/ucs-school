@@ -49,8 +49,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import sys
-# import logging
+import logging
+from typing import Any, Dict, Iterable, Iterator, Optional, Union
 import requests
+from requests.compat import urljoin, quote_plus
 from ldap.dn import explode_dn
 
 if sys.version_info.major > 2:
@@ -61,7 +63,7 @@ else:
 	httplib._MAXHEADERS = 1000
 
 
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class HTTPError(Exception):
@@ -111,7 +113,7 @@ class Session(object):
 		}.get(method.upper(), sess.get)
 
 	def make_request(self, method, uri, data=None, **headers):
-		#print('{} {}'.format(method, uri))
+		# logger.debug("%s %r (data=%r, headers=%r)", method, uri, data, headers)
 		if method in ('GET', 'HEAD'):
 			params = data
 			json = None
@@ -120,7 +122,7 @@ class Session(object):
 			json = data
 		return self.get_method(method)(uri, params=params, json=json, headers=dict(self.default_headers, **headers))
 
-	def eval_response(self, response):
+	def eval_response(self, response):  # type: (requests.Response) -> Dict[str, Any]
 		if response.status_code >= 299:
 			msg = '{} {}: {}'.format(response.request.method, response.url, response.status_code)
 			try:
@@ -143,17 +145,18 @@ class Session(object):
 
 class Client(object):
 
-	def __init__(self, client):
+	def __init__(self, client):  # type: (Session) -> None
 		self.client = client
 
 
 class UDM(Client):
 
 	@classmethod
-	def http(cls, uri, username, password):
+	def http(cls, uri, username, password):  # type: (str, str, str) -> UDM
 		return cls(uri, username, password)
 
 	def __init__(self, uri, username, password, *args, **kwargs):
+		# type: (str, str, str, *Any, **Any) -> None
 		self.uri = uri
 		self.username = username
 		self.password = password
@@ -161,12 +164,12 @@ class UDM(Client):
 		super(UDM, self).__init__(Session(self), *args, **kwargs)
 
 	@classmethod
-	def using_lo(cls, lo):
+	def using_lo(cls, lo):  # type: (...) -> UDM
 		url = "http://{}/univention/udm/".format(lo.host)
 		username = explode_dn(lo.binddn, True)[0]
 		return UDM.http(url, username, lo.bindpw)
 
-	def modules(self):
+	def modules(self):  # type: () -> Iterator[Module]
 		# TODO: cache - needs server side support
 		resp = self.client.make_request('GET', self.uri)
 		prefix_modules = self.client.eval_response(resp)['_links']['udm/relation/object-modules']
@@ -176,11 +179,11 @@ class UDM(Client):
 			for module_info in module_infos:
 				yield Module(self, module_info['href'], module_info['name'], module_info['title'])
 
-	def version(self, api_version):
+	def version(self, api_version):  # type: (str) -> UDM
 		self._api_version = api_version
 		return self
 
-	def obj_by_dn(self, dn):
+	def obj_by_dn(self, dn):  # type: (str) -> Object
 		# TODO: Needed?
 		raise NotImplementedError()
 
@@ -196,6 +199,7 @@ class UDM(Client):
 class Module(Client):
 
 	def __init__(self, udm, uri, name, title, *args, **kwargs):
+		# type: (UDM, str, str, str, *Any, **Any) -> None
 		super(Module, self).__init__(udm.client, *args, **kwargs)
 		self.uri = uri
 		self.username = udm.username
@@ -204,7 +208,7 @@ class Module(Client):
 		self.title = title
 		self.relations = {}
 
-	def load_relations(self):
+	def load_relations(self):  # type: () -> None
 		if self.relations:
 			return
 		resp = self.client.make_request('GET', self.uri)
@@ -213,22 +217,23 @@ class Module(Client):
 	def __repr__(self):
 		return 'Module(uri={}, name={})'.format(self.uri, self.name)
 
-	def new(self, superordinate=None):
+	def new(self, superordinate=None):  # type: (Optional[str]) -> Object
 		return Object(self, None, {}, [], {}, None, superordinate, None)
 
 	def get(self, dn):
 		for obj in self.search(position=dn, scope='base'):
 			return obj.open()
 
-	def get_by_entry_uuid(self, uuid):
+	def get_by_entry_uuid(self, uuid):  # type: (str) -> Object
 		for obj in self.search(filter={'entryUUID': uuid}, scope='base'):
 			return obj.open()
 
-	def get_by_id(self, dn):
+	def get_by_id(self, dn):  # type: (str) -> Object
 		# TODO: Needed?
 		raise NotImplementedError()
 
 	def search(self, filter=None, position=None, scope='sub', hidden=False, superordinate=None, opened=False):
+		# type: (...) -> Union[Object, ShallowObject]
 		data = {}
 		if filter:
 			for prop, val in filter.items():
@@ -283,7 +288,7 @@ class ShallowObject(Client):
 		self.dn = dn
 		self.uri = uri
 
-	def open(self):
+	def open(self):  # type: () -> Object
 		resp = self.client.make_request('GET', self.uri)
 		entry = self.client.eval_response(resp)
 		return Object(self.module, entry['dn'], entry['properties'], entry['options'], entry['policies'], entry['position'], entry.get('superordinate'), entry['uri'], etag=resp.headers.get('Etag'), last_modified=resp.headers.get('Last-Modified'))
@@ -295,14 +300,15 @@ class ShallowObject(Client):
 class Object(Client):
 
 	@property
-	def props(self):
+	def props(self):  # type: () -> Dict[str, Any]
 		return self.properties
 
 	@props.setter
-	def props(self, props):
+	def props(self, props):  # type: (Dict[str, Any]) -> None
 		self.properties = props
 
 	def __init__(self, module, dn, properties, options, policies, position, superordinate, uri, etag=None, last_modified=None, *args, **kwargs):
+		# type: (Module, Optional[str], Dict[str, Any], Dict[str, bool], Dict[str, Any], str, str, str, Optional[Any], Optional[Any], *Any, **Any) -> None
 		super(Object, self).__init__(module.client, *args, **kwargs)
 		self.dn = dn
 		self.properties = properties
@@ -318,7 +324,7 @@ class Object(Client):
 	def __repr__(self):
 		return 'Object(module={}, dn={}, uri={})'.format(self.module.name, self.dn, self.uri)
 
-	def reload(self):
+	def reload(self):  # type: () -> None
 		obj = self.module.get(self.dn)
 		self._copy_from_obj(obj)
 
@@ -334,7 +340,7 @@ class Object(Client):
 	modify = create
 
 	@property
-	def info(self):
+	def info(self):  # type: () -> Dict[str, Any]
 		return self.properties
 
 	def delete(self, remove_referring=False):
@@ -352,6 +358,7 @@ class Object(Client):
 			# 'If-Unmodified-Since': self.last_modified,  # FIXME: only if one second passed
 			'If-Match': self.etag,
 		}.items() if value)
+		# logger.debug("******* data=%r", data)
 		resp = self.client.make_request('PUT', self.uri, data=data, **headers)
 		entry = self.client.eval_response(resp)
 		if resp.status_code == 201:  # move()
@@ -380,6 +387,7 @@ class Object(Client):
 			'position': self.position,
 			'superordinate': self.superordinate,
 		}
+		# logger.debug("******* data=%r", data)
 		resp = self.client.make_request('POST', self.module.uri, data=data)
 		if resp.status_code in (200, 201):
 			uri = resp.headers['Location']
