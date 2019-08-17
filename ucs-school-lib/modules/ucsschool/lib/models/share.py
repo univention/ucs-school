@@ -125,6 +125,7 @@ class Share(UCSSchoolHelperAbstractClass):
 				return '%s.%s' % (result, server_domain_name)
 
 		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+		raise NotImplementedError("TODO: I think univentionLDAPAccessWrite has no UDM property.")
 		ou_attr_ldap_access_write = lo.get(school_dn, ['univentionLDAPAccessWrite'])
 		alternative_server_dn = None
 		if len(ou_attr_ldap_access_write) > 0:

@@ -45,6 +45,7 @@ import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 from univention.admin import uldap
 from univention.admin.filter import conjunction, expression
+from univention.admin.client import HTTPError
 
 from ..schoolldap import SchoolSearchBase
 from .meta import UCSSchoolHelperMetaClass
@@ -54,7 +55,7 @@ from ..roles import create_ucsschool_role_string
 
 try:
 	from typing import Any, Iterable, Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
-	from univention.admin.client import Object, UDM
+	from univention.admin.client import Module, Object, UDM
 	from univention.admin.uldap import access as LoType, position as PoType
 	UdmObject = Object
 	SuperOrdinateType = Union[str, UdmObject]
@@ -213,7 +214,6 @@ class UCSSchoolHelperAbstractClass(object):
 	"""
 	__metaclass__ = UCSSchoolHelperMetaClass
 	_cache = {}  # type: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel]
-	_machine_connection = None
 	_search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
 	_initialized_udm_modules = []  # type: List[str]
 	_empty_hook_paths = set()  # type: Set[str]
@@ -300,9 +300,7 @@ class UCSSchoolHelperAbstractClass(object):
 	@classmethod
 	def get_machine_connection(cls):
 		"""get a cached ldap connection to the DC Master using this host's credentials"""
-		if not cls._machine_connection:
-			cls._machine_connection = uldap.getMachineConnection()[0]
-		return cls._machine_connection
+		return udm_modules.get_machine_connection()
 
 	@property
 	def position(self):
@@ -466,6 +464,7 @@ class UCSSchoolHelperAbstractClass(object):
 				value = getattr(self, name)
 				if value is not None and attr.map_to_udm:
 					udm_obj[attr.udm_name] = value
+		# TODO: move g[s]et_default_options() from User here to update udm_obj.options
 
 	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
 		'''
@@ -500,7 +499,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		try:
 			pos.setDn(container)
-			udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, superordinate=self.get_superordinate(lo))
+			udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, dn=self.dn, superordinate=self.get_superordinate(lo), options={"ucsschoolTeacher": True})
 			# udm_obj.open()
 
 			# here is the real logic
@@ -618,7 +617,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self.logger.warning('No UDM object found to move from (%r)', self)
 			return False
 		if self.supports_school() and self.get_school_obj(lo) is None:
-			self.logger.warn('%r wants to move itself to a not existing school', self)
+			self.logger.warning('%r wants to move itself to a not existing school', self)
 			return False
 		self.logger.info('Moving %r to %r', udm_obj.dn, self)
 		if udm_obj.dn == self.dn:
@@ -948,7 +947,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if school is None and cls.supports_school():
 			school = cls.get_school_from_dn(dn)
 			if school is None:
-				cls.logger.warn('Unable to guess school from %r', dn)
+				cls.logger.warning('Unable to guess school from %r', dn)
 		try:
 			cls.logger.debug('Looking up %s with dn %r', cls.__name__, dn)
 			mod = lo.get(cls._meta.udm_module)  # type: Module
