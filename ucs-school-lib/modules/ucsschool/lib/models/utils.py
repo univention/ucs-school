@@ -240,11 +240,11 @@ def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
 	pw = list()
 	specials_allowed = length / 5  # 20% specials in a password is enough
 	specials = list(specials) if specials else []
-	lowercase = list(string.lowercase)
+	lowercase = list(string.ascii_lowercase)
 	for char in ('i', 'l', 'o'):
 		# remove chars that are easy to mistake for one another
 		lowercase.remove(char)
-	uppercase = list(string.uppercase)
+	uppercase = list(string.ascii_uppercase)
 	for char in ('I', 'L', 'O'):
 		uppercase.remove(char)
 	digits = list(string.digits)

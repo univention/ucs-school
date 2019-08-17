@@ -368,8 +368,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def set_default_options(self, udm_obj):
 		for option in self.get_default_options():
-			if option not in udm_obj.options:
-				udm_obj.options.append(option)
+			udm_obj.options[option] = True
 
 	@classmethod
 	def get_default_options(cls):
@@ -584,6 +583,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		udm_module = 'users/user'
 		name_is_unique = True
 		allow_school_change = False
+		ldap_name_part = 'uid'
 
 
 class Student(User):
