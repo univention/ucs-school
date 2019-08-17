@@ -161,6 +161,7 @@ class UDM(Client):
 		self.username = username
 		self.password = password
 		self._api_version = None
+		self._modules_cache = {}  # type: Dict[str, Module]
 		super(UDM, self).__init__(Session(self), *args, **kwargs)
 
 	@classmethod
@@ -187,10 +188,17 @@ class UDM(Client):
 		# TODO: Needed?
 		raise NotImplementedError()
 
-	def get(self, name):
-		for module in self.modules():
-			if module.name == name:
-				return module
+	def get(self, name):  # type: (str) -> Module
+		if name not in self._modules_cache:
+			# Add only requested module to cache -> run self.modules() each
+			# time a new module is requested.
+			# If lots of modules are in use, it may be faster to do this once
+			# for all modules. But that seems an unlikely scenario.
+			for module in self.modules():
+				if module.name == name:
+					self._modules_cache[name] = module
+					break
+		return self._modules_cache[name]
 
 	def __repr__(self):
 		return 'UDM(uri={}, username={}, password=****, version={})'.format(self.uri, self.username, self._api_version)
