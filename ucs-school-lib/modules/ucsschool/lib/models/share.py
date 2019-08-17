@@ -36,7 +36,7 @@ from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .utils import ucr, _
 from ..roles import role_school_class_share, role_workgroup_share
 
-from univention.admin.client import UDM
+from univention.admin.client import HTTPError, UDM
 from ldap.filter import filter_format
 
 
@@ -58,17 +58,18 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_obj['host'] = self.get_server_fqdn(lo)
 		udm_obj['path'] = self.get_share_path()
 		udm_obj['writeable'] = '1'
+		udm_obj['sambaName'] = None  # UDM HTTP API fails on empty string
 		udm_obj['sambaWriteable'] = '1'
 		udm_obj['sambaBrowseable'] = '1'
 		udm_obj['sambaForceGroup'] = '+%s' % self.name
 		udm_obj['sambaCreateMode'] = '0770'
 		udm_obj['sambaDirectoryMode'] = '0770'
 		udm_obj['owner'] = '0'
-		udm_obj['group'] = gid
+		udm_obj['group'] = str(gid)  # UDM HTTP API wants this as string
 		udm_obj['directorymode'] = '0770'
 		if ucr.is_false('ucsschool/default/share/nfs', True):
 			try:
-				udm_obj.options.remove('nfs')  # deactivate NFS
+				udm_obj.options.pop('nfs', None)  # deactivate NFS
 			except ValueError:
 				pass
 		self.logger.info('Creating share on "%s"', udm_obj['host'])

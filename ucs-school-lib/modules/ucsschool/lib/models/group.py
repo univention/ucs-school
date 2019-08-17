@@ -218,7 +218,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 				share.name = self.name
 		success = super(SchoolClass, self).modify_without_hooks(lo, validate, move_if_necessary)
 		if success:
-			lo_machine = self.get_machine_connection()
+			lo_machine = lo  # self.get_machine_connection()
 			if share.exists(lo_machine):
 				success = share.modify(lo_machine)
 			else:
