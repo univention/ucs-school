@@ -70,13 +70,26 @@ Test UDM HTTP API connection credentials::
 
 	$ python -c 'from univention.admin.modules import get; print(get("users/user"))'
 
-If you have connection problems, uncomment the ``print()`` statement in the ``get()`` function in ``univention-directory-manager-modules-slim/univention/admin/modules.py`` and rebuild the package with ``pip install univention-directory-manager-modules-slim/``.
+If you have connection problems, uncomment the ``print()`` statement in the ``get_machine_connection()`` function in ``univention-directory-manager-modules-slim/univention/admin/modules.py`` and rebuild the package with ``pip install univention-directory-manager-modules-slim/``.
 
 Test logging::
 
 	$ python -c 'import logging; from ucsschool.lib.models.utils import get_file_handler, get_stream_handler; logger = logging.getLogger("foo"); logger.setLevel("DEBUG"); logger.addHandler(get_file_handler("DEBUG", "/tmp/log")); logger.addHandler(get_stream_handler("DEBUG")); logger.debug("debug msg"); logger.error("error msg")'
 	$ cat /tmp/log
 
+
+Tests
+-----
+Automated tests are currently run from within the virtualenv. So they have no access to UDM. As they should use a different channel than the ucsschool.lib does (UDM HTTP-API), they issue commands via SSH. For that to work make sure your SSH key is stored without password on your UDM HTTP-API server, using the FQDN from UCR (``ldap/server/name``).
+
+To run the tests, execute::
+
+	$ cd $UCSSCHOOL-REPO/ucs-school-lib/modules
+	$ python setup.py -v test
+	# use "python -m pytest" for more control, e.g.:
+	$ python -m pytest -l -s -v --lf
+
+Once we have a UCS\@school HTTP-API, tests can be started from the UCS side.
 
 Status
 ------
@@ -118,6 +131,12 @@ Code execution tested::
 
 	ucsschool.lib.models.utils.*
 	ucsschool.lib.models.computer.AnyComputer.get_all
+	ucsschool.lib.models.groups.SchoolClass.create
 	ucsschool.lib.models.groups.SchoolClass.get_all
+	ucsschool.lib.models.groups.SchoolClass.modify
+	ucsschool.lib.models.groups.SchoolClass.remove
+	ucsschool.lib.models.user.User.create
 	ucsschool.lib.models.user.User.get_all
 	ucsschool.lib.models.user.User.modify
+	ucsschool.lib.models.user.User.remove
+

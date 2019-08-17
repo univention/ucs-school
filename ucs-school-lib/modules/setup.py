@@ -18,7 +18,8 @@ except ImportError:
     from urllib.request import urlretrieve  # py3
 import setuptools
 
-changelog_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "debian", "changelog")
+dir_here = os.path.dirname(os.path.abspath(__file__))
+changelog_path = os.path.join(os.path.dirname(dir_here), "debian", "changelog")
 chlog_regex = re.compile(r"^(?P<package>.+?) \((?P<version>.+?)\) \w+;")
 PIP_FALLBACK_URL = "https://raw.githubusercontent.com/univention/ucs-school/4.4/ucs-school-lib/debian/changelog"
 
@@ -36,8 +37,11 @@ with open(changelog_path) as fp:
         print("Could not parse find package name and version in {}.".format(changelog_path))
         sys.exit(1)
 
-with open("requirements.txt") as fp:
+with open(os.path.join(dir_here, "requirements.txt")) as fp:
     requirements = fp.read().splitlines()
+
+with open(os.path.join(dir_here, "requirements_test.txt")) as fp:
+    requirements_test = fp.read().splitlines()
 
 setuptools.setup(
     name=m.groupdict()["package"],
@@ -48,6 +52,8 @@ setuptools.setup(
     long_description="Common UCS@school Python modules",
     url="https://www.univention.de/",
     install_requires=requirements,
+    setup_requires=["pytest-runner"],
+    tests_require=requirements_test,
     packages=["ucsschool", "ucsschool.lib", "ucsschool.lib.models", "ucsschool.lib.pyhooks"],
     package_data = {'ucsschool.lib': ['*.yaml']},
     license="GNU Affero General Public License v3",
