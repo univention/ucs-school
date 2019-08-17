@@ -19,6 +19,7 @@ from univention.admin.uldap import explodeDn
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, set_credentials, MACHINE_READ
 from ucsschool.lib.models import School
 import ucsschool.lib.roleshares as roleshares
+import ucsschool.lib.roleshares_umc as roleshares_umc
 from ucsschool.lib.roles import role_pupil
 try:
 	from univention.testing.ucs_samba import wait_for_drs_replication
@@ -69,7 +70,7 @@ def run_cmd(cmd, shell=False, print_output=True):
 
 
 def access_user_dir(authname, school_id, serverfqdn, username, userfilename, password='univention', testwrite=True, write_access=False, read_access=True):
-	roleshare = "//%s/%s" % (serverfqdn, roleshares.roleshare_name(role_pupil, school_id, ucr))
+	roleshare = "//%s/%s" % (serverfqdn, roleshares_umc.roleshare_name(role_pupil, school_id, ucr))
 	print "INFO: Testing access to student roleshare for share %s by user %s" % (roleshare, authname)
 
 	smbcmd = "dir %s" % (username,)
@@ -109,7 +110,7 @@ def access_roleshare_student_on_all_school_fileservers(school_id, name_student, 
 	print "INFO: teacher-staff name = %s" % (name_teacherstaff,)
 	print "INFO: staff name = %s" % (name_staff,)
 	print "INFO: student name = %s" % (name_student,)
-	for fqdn in roleshares.fileservers_for_school(school_id):
+	for fqdn in roleshares_umc.fileservers_for_school(school_id):
 		# trigger home creation for stu1 and create a test file
 		userfilename = "testfile1"
 		create_testfile_on_homeshare(fqdn, name_student, password, userfilename)
@@ -146,7 +147,7 @@ def create_roleshare_student(school_id):
 
 def prepare_fileservers(school_id):
 	tested_servers = []
-	for fqdn in roleshares.fileservers_for_school(school_id):
+	for fqdn in roleshares_umc.fileservers_for_school(school_id):
 		if smb_server_online(fqdn):
 			if not smb_server_offers_roleshare_student(fqdn, school_id):
 				print "INFO: Manually creating roleshares for %s" % (school_id,)
