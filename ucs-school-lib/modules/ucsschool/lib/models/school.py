@@ -288,11 +288,13 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def get_administrative_server_names(self, lo):
 		dn = self.get_administrative_group_name('administrative', ou_specific=True, as_dn=True)
-		return lo.get(dn, ['uniqueMember']).get('uniqueMember', [])
+		# TODO: this should also be done in 4.4
+		return Group.from_dn(dn, None, lo).get_udm_object(lo)['hosts']
 
 	def get_educational_server_names(self, lo):
 		dn = self.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
-		return lo.get(dn, ['uniqueMember']).get('uniqueMember', [])
+		# TODO: this should also be done in 4.4
+		return Group.from_dn(dn, None, lo).get_udm_object(lo)['hosts']
 
 	def add_host_to_dc_group(self, lo):
 		self.logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r', self.name, self.dc_name)
