@@ -228,9 +228,12 @@ class Module(Client):
 	def new(self, superordinate=None):  # type: (Optional[str]) -> Object
 		return Object(self, None, {}, [], {}, None, superordinate, None)
 
-	def get(self, dn):
-		for obj in self.search(position=dn, scope='base'):
-			return obj.open()
+	def get(self, dn, attr=None, required=False, exceptions=False):
+		# type: (str, Optional[Iterable[str]], Optional[bool], Optional[bool]) -> Object
+		uri = urljoin(self.uri, quote_plus(dn))  # not HATEOAS but _much_ faster than searching
+		resp = self.client.make_request('GET', uri)
+		entry = self.client.eval_response(resp)
+		return Object(self, entry['dn'], entry['properties'], entry['options'], entry['policies'], entry['position'], entry.get('superordinate'), entry['uri'])
 
 	def get_by_entry_uuid(self, uuid):  # type: (str) -> Object
 		for obj in self.search(filter={'entryUUID': uuid}, scope='base'):
