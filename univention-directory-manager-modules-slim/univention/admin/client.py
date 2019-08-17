@@ -261,34 +261,50 @@ class Module(Client):
 		resp = self.client.make_request('GET', self.relations['search'][0]['href'], data=data)
 		entries = self.client.eval_response(resp)['entries']
 		for entry in entries:
+			# logger.debug("** entry=%r", entry)
 			if opened:
 				yield Object(self, entry['dn'], entry['properties'], entry['options'], entry['policies'], entry['position'], entry.get('superordinate'), entry['uri'])  # NOTE: this is missing last-modified, therefore no conditional request is done on modification!
 			else:
 				yield ShallowObject(self, entry['dn'], entry['uri'])
 
 	def create(self, properties, options, policies, position, superordinate=None):
-		obj = self.create_template(position=position, superordinate=superordinate)
+		# logger.debug("***** properties=%r options=%r policies=%r position=%r superordinate=%r", properties, options, policies, position, superordinate)
+		obj = self.create_template(position=position, superordinate=superordinate, options=options)
 		obj.options = options
 		obj.properties = properties
 		obj.policies = policies
 		obj.position = position
 		obj.superordinate = superordinate
-		obj.save()
+		obj.create()
 		return obj
 
-	def create_template(self, position=None, superordinate=None):
+	def create_template(self, position=None, superordinate=None, options=None):
+		# trasmitting `position` and `options`, but both doen't get added to the response :/
+		# I informed the core board via chat.
 		self.load_relations()
-		data = {'position': position, 'superordinate': superordinate}
+		data = {'position': str(position), 'superordinate': superordinate, 'options': options}
+		# logger.debug("***** create_template() data=%r", data)
 		resp = self.client.make_request('GET', self.relations['create-form'][0]['href'], data=data)
 		entry = self.client.eval_response(resp)['entry']
-		return Object(self, None, entry['properties'], entry['options'], entry['policies'], entry['position'], entry.get('superordinate'), self.uri)
+		# logger.debug("***** create_template() entry=%r", entry)
+		return Object(
+			module=self,
+			dn=None,
+			properties=entry['properties'],
+			options=entry['options'] or options,  # workaround
+			policies=entry['policies'],
+			position=entry['position'] or data['position'],  # workaround
+			superordinate=entry.get('superordinate'),
+			uri=self.uri
+		)
 
 	@property
 	def property_descriptions(self):
 		return self.create_template().properties
 
-	def object(self, co, lo, position, dn='', superordinate=None, attributes=None):
-		return self.create_template(position, superordinate)
+	def object(self, co, lo, position, dn='', superordinate=None, attributes=None, options=None):
+		# logger.debug("***** dn=%r position=%r superordinate=%r options=%r", dn, position, superordinate,options)
+		return self.create_template(position=position, superordinate=superordinate, options=options)
 
 
 class ShallowObject(Client):
