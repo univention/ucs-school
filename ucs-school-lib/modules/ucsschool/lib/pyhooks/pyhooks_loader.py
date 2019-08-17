@@ -142,7 +142,7 @@ class PyHooksLoader(object):
 			methods = defaultdict(list)  # type: Dict[str, List[Tuple[Callable[[...], Any], int]]]
 			for pyhook_obj in pyhook_objs:
 				if not hasattr(pyhook_obj, "priority") or not isinstance(pyhook_obj.priority, dict):
-					self.logger.warn('Ignoring hook %r without/invalid "priority" attribute.', pyhook_obj)
+					self.logger.warning('Ignoring hook %r without/invalid "priority" attribute.', pyhook_obj)
 					continue
 				for meth_name, prio in iteritems(pyhook_obj.priority):
 					if hasattr(pyhook_obj, meth_name) and isinstance(pyhook_obj.priority.get(meth_name), int):
@@ -150,7 +150,7 @@ class PyHooksLoader(object):
 					elif hasattr(pyhook_obj, meth_name) and pyhook_obj.priority.get(meth_name) is None:
 						pass
 					else:
-						self.logger.warn('Ignoring invalid priority item (%r : %r).', meth_name, prio)
+						self.logger.warning('Ignoring invalid priority item (%r : %r).', meth_name, prio)
 			# sort by priority
 			self._pyhook_obj_cache = dict()
 			for meth_name, meth_list in iteritems(methods):
