@@ -29,10 +29,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ldap.filter import filter_format
 import re
-import univention.admin.uexceptions
+import logging
+
 from six import string_types
+from ldap.filter import filter_format
+import univention.admin.uexceptions
+
+
+logger = logging.getLogger(__name__)
 
 
 class conjunction(object):
@@ -290,12 +295,19 @@ def _replace_fqdn_filter(match):
 
 def flatten_filter(filter_):
 	res = []
+
 	def fl(fi):
-		if isinstance(fi, expression):
-			res.append(fi)
 		if isinstance(fi, conjunction):
+			if fi.type == "|":
+				logger.warning("OR is currently not supported by the UDM HTTP API.: %r", fi)
+				return
 			for f in fi.expressions:
 				fl(f)
+		elif isinstance(fi, expression):
+			res.append(fi)
+		else:
+			raise RuntimeError("Unkown object (type {}): {!r}", type(filter_), filter_)
+
 	fl(filter_)
 	return res
 
