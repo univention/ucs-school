@@ -808,6 +808,7 @@ class UCSSchoolHelperAbstractClass(object):
 		If filter_str is given, all udm properties with include_in_default_search are
 		queried for that string (so that it should be the value)
 		'''
+		# cls.logger.debug("**** school=%r filter_str=%r", school, filter_str)
 		cls.init_udm_module(lo)
 		complete_filter = cls._meta.udm_filter
 		if complete_filter and not complete_filter.startswith('('):
@@ -837,6 +838,7 @@ class UCSSchoolHelperAbstractClass(object):
 	@classmethod
 	def lookup(cls, lo, school, filter_s='', superordinate=None):
 		# type: (LoType, str, Optional[UldapFilter], Optional[SuperOrdinateType]) -> List[UdmObject]
+		# cls.logger.debug("**** school=%r filter_s=%r", school, filter_s)
 		try:
 			res = list(udm_modules.lookup(cls._meta.udm_module, None, lo, filter=filter_s, base=cls.get_container(school), scope='sub', superordinate=superordinate))
 			return res
@@ -874,6 +876,7 @@ class UCSSchoolHelperAbstractClass(object):
 		'''Creates a new instance with attributes of the udm_obj.
 		Uses get_class_for_udm_obj()
 		'''
+		# cls.logger.debug("**** udm_obj=%r school=%r", udm_obj, school)
 		cls.init_udm_module(lo)
 		klass = cls.get_class_for_udm_obj(udm_obj, school)
 		if klass is None:

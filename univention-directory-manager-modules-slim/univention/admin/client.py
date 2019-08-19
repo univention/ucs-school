@@ -50,6 +50,8 @@ from __future__ import unicode_literals
 
 import sys
 import logging
+import traceback
+from pathlib import Path
 from typing import Any, Dict, Iterable, Iterator, Optional, Union
 import requests
 from requests.compat import urljoin, quote_plus
@@ -114,6 +116,10 @@ class Session(object):
 
 	def make_request(self, method, uri, data=None, **headers):
 		# logger.debug("%s %r (data=%r, headers=%r)", method, uri, data, headers)
+		# stack_trace = traceback.format_list(traceback.extract_stack()[-7:-1])
+		# pyroot = str(Path(__file__).parent.parent.parent)
+		# stack_trace = '\n'.join(line.replace(pyroot, "PYTHON") for line in stack_trace)
+		# logger.debug("Call stack:\n%s", stack_trace)
 		if method in ('GET', 'HEAD'):
 			params = data
 			json = None
@@ -205,7 +211,6 @@ class UDM(Client):
 
 
 class Module(Client):
-
 	def __init__(self, udm, uri, name, title, *args, **kwargs):
 		# type: (UDM, str, str, str, *Any, **Any) -> None
 		super(Module, self).__init__(udm.client, *args, **kwargs)
@@ -232,6 +237,7 @@ class Module(Client):
 
 	def get(self, dn, attr=None, required=False, exceptions=False):
 		# type: (str, Optional[Iterable[str]], Optional[bool], Optional[bool]) -> Object
+		# logger.debug("*** dn=%r", dn)
 		uri = urljoin(self.uri, quote_plus(dn))  # not HATEOAS but _much_ faster than searching
 		resp = self.client.make_request('GET', uri)
 		entry = self.client.eval_response(resp)
@@ -247,6 +253,10 @@ class Module(Client):
 
 	def search(self, filter=None, position=None, scope='sub', hidden=False, superordinate=None, opened=False):
 		# type: (...) -> Union[Object, ShallowObject]
+		# logger.debug(
+		# 	"*** filter=%r position=%r scope=%r hidden=%r superordinate=%r opened=%r",
+		# 	filter, position, scope, hidden, superordinate, opened
+		# )
 		data = {}
 		if filter:
 			for prop, val in filter.items():
@@ -319,6 +329,7 @@ class ShallowObject(Client):
 		self.uri = uri
 
 	def open(self):  # type: () -> Object
+		# logger.debug("**** %s.open()", self)
 		resp = self.client.make_request('GET', self.uri)
 		entry = self.client.eval_response(resp)
 		return Object(self.module, entry['dn'], entry['properties'], entry['options'], entry['policies'], entry['position'], entry.get('superordinate'), entry['uri'], etag=resp.headers.get('Etag'), last_modified=resp.headers.get('Last-Modified'))
