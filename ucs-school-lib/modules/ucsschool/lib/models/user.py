@@ -576,7 +576,10 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		if filter_s:
 			filter_object_type = conjunction('&', [filter_object_type, parse(filter_s)])
 		objects = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=unicode_s(filter_object_type), scope='sub', superordinate=superordinate)
-		objects.extend(obj for obj in super(User, cls).lookup(lo, school, filter_s, superordinate=superordinate) if not any(obj.dn == x.dn for x in objects))
+		# legacy objects (find by position in LDAP) support:
+		more_objs = super(User, cls).lookup(lo, school, filter_s, superordinate=superordinate)
+		dns = {o.dn for o in objects}
+		objects.extend(obj for obj in more_objs if obj.dn not in dns)
 		return objects
 
 	class Meta:
