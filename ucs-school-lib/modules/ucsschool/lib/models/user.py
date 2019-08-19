@@ -230,6 +230,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
+		# cls.logger.debug("**** udm_obj=%r school=%r", udm_obj, school)
 		obj = super(User, cls).from_udm_obj(udm_obj, school, lo)
 		obj.password = None
 		obj.school_classes = cls.get_school_classes(udm_obj, obj)
@@ -572,6 +573,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def lookup(cls, lo, school, filter_s='', superordinate=None):
+		# cls.logger.debug("**** school=%r filter_s=%r", school, filter_s)
 		filter_object_type = conjunction('&', [parse(cls.type_filter), parse(filter_format('ucsschoolSchool=%s', [school]))])
 		if filter_s:
 			filter_object_type = conjunction('&', [filter_object_type, parse(filter_s)])

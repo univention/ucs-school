@@ -130,6 +130,10 @@ def get(name):  # type: (str) -> Module
 
 def lookup(module_name, co, lo_udm, filter='', base='', superordinate=None, scope='sub'):
 	# type: (str, Any, UDM, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Object]
+	# logger.debug(
+	# 	"*** module_name=%r co=%r lo_udm=%r filter=%r base=%r superordinate=%r scope=%r",
+	# 	module_name, co, lo_udm, filter, base, superordinate, scope
+	# )
 	mod = lo_udm.get(module_name)  # type: Module
 	filter_s_parsed = filter_parse(filter)
 	if hasattr(filter_s_parsed, "expressions"):
