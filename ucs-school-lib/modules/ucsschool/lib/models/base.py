@@ -826,7 +826,7 @@ class UCSSchoolHelperAbstractClass(object):
 		complete_filter = str(complete_filter)
 		cls.logger.debug('Getting all %s of %s with filter %r', cls.__name__, school, complete_filter)
 		ret = []
-		objs = list(cls.lookup(lo, school, complete_filter, superordinate=superordinate))
+		objs = cls.lookup(lo, school, complete_filter, superordinate=superordinate)
 		for udm_obj in objs:
 			try:
 				ret.append(cls.from_udm_obj(udm_obj, school, lo))
