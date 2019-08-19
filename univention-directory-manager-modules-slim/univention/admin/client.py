@@ -214,13 +214,15 @@ class Module(Client):
 		self.password = udm.password
 		self.name = name
 		self.title = title
-		self.relations = {}
+		self._relations = {}
+		self._template_cache = {}
 
-	def load_relations(self):  # type: () -> None
-		if self.relations:
-			return
-		resp = self.client.make_request('GET', self.uri)
-		self.relations = self.client.eval_response(resp).get('_links', {})
+	@property
+	def relations(self):  # type: () -> Dict[str, Any]
+		if not self._relations:
+			resp = self.client.make_request('GET', self.uri)
+			self._relations = self.client.eval_response(resp).get('_links', {})
+		return self._relations
 
 	def __repr__(self):
 		return 'Module(uri={}, name={})'.format(self.uri, self.name)
@@ -257,7 +259,6 @@ class Module(Client):
 		data['hidden'] = '1' if hidden else ''
 		if opened:
 			data['properties'] = '*'
-		self.load_relations()
 		resp = self.client.make_request('GET', self.relations['search'][0]['href'], data=data)
 		entries = self.client.eval_response(resp)['entries']
 		for entry in entries:
@@ -281,11 +282,13 @@ class Module(Client):
 	def create_template(self, position=None, superordinate=None, options=None):
 		# trasmitting `position` and `options`, but both doen't get added to the response :/
 		# I informed the core board via chat.
-		self.load_relations()
 		data = {'position': str(position), 'superordinate': superordinate, 'options': options}
 		# logger.debug("***** create_template() data=%r", data)
-		resp = self.client.make_request('GET', self.relations['create-form'][0]['href'], data=data)
-		entry = self.client.eval_response(resp)['entry']
+		key = set(data.items())
+		if key not in self._template_cache:
+			resp = self.client.make_request('GET', self.relations['create-form'][0]['href'], data=data)
+			self._template_cache[key] = self.client.eval_response(resp)['entry']
+		entry = self._template_cache[key]
 		# logger.debug("***** create_template() entry=%r", entry)
 		return Object(
 			module=self,
