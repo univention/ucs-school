@@ -49,3 +49,10 @@ Then open http://127.0.0.1:8000/kelvin/api/v1/docs in your browser.
 
 Tests
 -----
+
+...
+
+TODOs
+-----
+
+Change signatures back to using ``name`` (instead of ``username`` and ``class_name``), when https://github.com/encode/starlette/pull/611 has been merged.
