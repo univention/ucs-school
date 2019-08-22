@@ -1,0 +1,13 @@
+aiofiles
+async-lru
+async-property
+diskcache
+fastapi==0.35.0
+lazy-object-proxy
+ldap3
+pyjwt
+pydantic[ujson,email]==0.30
+python-multipart
+ucs-school-lib
+univention-config-registry
+uvicorn

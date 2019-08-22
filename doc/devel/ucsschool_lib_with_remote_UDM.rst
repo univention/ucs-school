@@ -56,6 +56,7 @@ Setup machine account (would be done by appcenter when starting container)::
 	$ echo -en "\nldap/base: dc=uni,dc=dtr" >> /etc/univention/base.conf
 	$ echo -en "\nldap/hostdn: cn=m150,cn=dc,cn=computers,dc=uni,dc=dtr" >> /etc/univention/base.conf
 	$ echo -en "\nldap/server/name: m150.uni.dtr" >> /etc/univention/base.conf
+	$ echo -en "\nldap/server/port: 7389" >> /etc/univention/base.conf
 
 	$ echo -n "YBqavF9AnMxM" | sudo tee /etc/machine.secret
 
