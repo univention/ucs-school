@@ -49,6 +49,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import sys
+import copy
 import logging
 import traceback
 from pathlib import Path
@@ -279,6 +280,7 @@ class Module(Client):
 				yield ShallowObject(self, entry['dn'], entry['uri'])
 
 	def create(self, properties, options, policies, position, superordinate=None):
+		# type: (Dict[str, Any], Dict[str, str], List[str], univention.admin.uldap.position, Optional[str]) -> Object
 		# logger.debug("***** properties=%r options=%r policies=%r position=%r superordinate=%r", properties, options, policies, position, superordinate)
 		obj = self.create_template(position=position, superordinate=superordinate, options=options)
 		obj.options = options
@@ -290,16 +292,19 @@ class Module(Client):
 		return obj
 
 	def create_template(self, position=None, superordinate=None, options=None):
+		# type: (Optional[univention.admin.uldap.position], Optional[str], Optional[Dict[str, str]]) -> Object
 		# trasmitting `position` and `options`, but both doen't get added to the response :/
 		# I informed the core board via chat.
 		data = {'position': str(position), 'superordinate': superordinate, 'options': options}
-		# logger.debug("***** create_template() data=%r", data)
-		key = set(data.items())
+		# logger.debug("***** data=%r", data)
+		key = copy.deepcopy(data)
+		key['options'] = tuple(sorted(options.items()))
+		key = tuple(key.items())
 		if key not in self._template_cache:
 			resp = self.client.make_request('GET', self.relations['create-form'][0]['href'], data=data)
 			self._template_cache[key] = self.client.eval_response(resp)['entry']
 		entry = self._template_cache[key]
-		# logger.debug("***** create_template() entry=%r", entry)
+		# logger.debug("***** entry=%r", entry)
 		return Object(
 			module=self,
 			dn=None,
@@ -312,7 +317,7 @@ class Module(Client):
 		)
 
 	@property
-	def property_descriptions(self):
+	def property_descriptions(self):  # type: () -> Dict[str, Any]
 		return self.create_template().properties
 
 	def object(self, co, lo, position, dn='', superordinate=None, attributes=None, options=None):

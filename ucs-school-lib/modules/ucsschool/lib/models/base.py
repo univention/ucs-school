@@ -66,7 +66,12 @@ except ImportError:
 
 
 class NoObject(noObject):
-	pass
+	def __init__(self, *args, dn=None, type=None):
+		self.dn = dn
+		self.type = type
+		if not args:
+			args = ("Could not fiund object of type {!r} with DN {!r}.".format(self.type, self.dn),)
+		super(NoObject, self).__init__(*args)
 
 
 class UnknownModel(NoObject):
@@ -958,7 +963,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return cls.from_udm_obj(udm_obj, school, lo)
 		except HTTPError as exc:
 			if exc.code in (404, 422):
-				raise noObject(str(exc))
+				raise NoObject(dn=dn, type=cls.__name__)
 		except IndexError:
 			# happens when cls._meta.udm_module does not "match" the dn
 			raise WrongObjectType(dn, cls)
