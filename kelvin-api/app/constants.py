@@ -8,7 +8,6 @@ APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = Path(APP_BASE_PATH, "conf")
 LOG_FILE_PATH = Path("/var/log/univention/kelvin-api/http.log")
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
-RPC_ADDR = "tcp://127.0.0.1:6789"
 STATIC_FILE_CHANGELOG = "changelog.html"
 STATIC_FILE_README = "readme.html"
 TOKEN_SIGN_SECRET_FILE = Path(APP_CONFIG_BASE_PATH, "tokens.secret")
