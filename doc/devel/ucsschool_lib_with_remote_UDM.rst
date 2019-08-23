@@ -106,6 +106,20 @@ To run the tests, execute::
 
 Once we have a UCS\@school HTTP-API, tests can be started from the UCS side.
 
+
+Performance
+^^^^^^^^^^^
+To run the performance tests, install Python 3.7 on UCS (see above for instructions) and execute::
+
+	$ export ldap_hostdn="Administrator"
+	$ export ldap_machine_password="univention"
+	$ cd $UCSSCHOOL-REPO/ucs-school-lib/modules
+	# ucsschool.lib over HTTP
+	$ ~/virtenvs/schoollib/bin/python3.7 ucsschool/lib/tests/performance.py
+	# ucsschool.lib over python-udm (LDAP)
+	$ /usr/bin/python2.7 ucsschool/lib/tests/performance.py
+
+
 Status
 ------
 
