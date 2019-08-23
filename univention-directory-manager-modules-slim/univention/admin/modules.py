@@ -151,3 +151,6 @@ def lookup(module_name, co, lo_udm, filter='', base='', superordinate=None, scop
 def init():
 	# TODO
 	pass
+
+def update():
+	pass

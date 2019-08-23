@@ -20,16 +20,29 @@ Consequences and constraints
 Installation
 ------------
 
-The following libs have to be installed:
-    python3.7
-    python3.7-dev
-    libldap2-dev
-    libsasl2-dev
+The following libs have to be installed on a Debian Buster system::
+
+	$ apt install python3.7 python3.7-dev libldap2-dev libsasl2-dev virtualenv
+
+When working on a UCS 4.4, install Python 3.7 from source::
+
+	$ univention-install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev  libncursesw5-dev xz-utils tk-dev
+	$ wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz
+	$ tar xzf Python-3.7.4.tgz
+	$ cd Python-3.7.4
+	$ ./configure --enable-optimizations --with-ensurepip=install
+	$ make -j $(nproc)
+	# zzz ~1h...
+	$ make altinstall
+
+LDAP and SASL libs are also needed::
+
+	$ univention-install -y libldap2-dev libsasl2-dev
 
 Development can be done on any Linux distro using ``virtualenv``::
 
 	$ virtualenv -p python3.7 ~/virtenvs/schoollib
-	$ . ~/dev/virtenvs/schoollib/bin/activate
+	$ . ~/virtenvs/schoollib/bin/activate
 
 	$ cd $UCS-REPO
 	$ git checkout dtroeder/ucr.pip.installable
@@ -37,18 +50,19 @@ Development can be done on any Linux distro using ``virtualenv``::
 
 	$ cd $UCSSCHOOL-REPO
 	$ git checkout dtroeder/ucsschool.no.udm
-	$ pip install univention-lib-slim
-	$ pip install univention-directory-manager-modules-slim
+	$ pip install univention-lib-slim/
+	# '/' at end is important, or pip will search pypi for "univention-lib-slim"
+	$ pip install univention-directory-manager-modules-slim/
 	$ pip install -e ucs-school-lib/modules
 
-Setup UCR::
+Setup UCR, *if not on UCS*::
 
 	$ sudo touch /etc/univention/base.conf
 	$ sudo chown -R $USER /etc/univention/
 	$ sudo mkdir -p /var/cache/univention-config
 	$ sudo chown $USER /var/cache/univention-config
 
-Setup machine account (would be done by appcenter when starting container)::
+Setup machine account, *if not on UCS* (would be done by appcenter when starting container)::
 
 	# handler_set() does not work yet :(
 	# so fake it for now with your test-VMs data:
