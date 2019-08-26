@@ -10,9 +10,19 @@ from typing import Dict, List, Optional, Tuple
 import requests
 
 try:
-	PARALLELISM = int(sys.argv[1])
+	NUM_USERS = int(sys.argv[1])
 except (ValueError, IndexError):
-	print("Usage: {} <paralellism>")
+	print("Usage: {} <num users> <paralellism>".format(sys.argv[0]))
+	sys.exit(1)
+
+try:
+	PARALLELISM = int(sys.argv[2])
+except (ValueError, IndexError):
+	print("Usage: {} <num users> <paralellism>".format(sys.argv[0]))
+	sys.exit(1)
+
+if not NUM_USERS % PARALLELISM == 0:
+	print("<Number of users> modulus <paralellism> mus be zero.")
 	sys.exit(1)
 
 SCHOOL_OU = "DEMOSCHOOL"
@@ -99,6 +109,7 @@ def create_objs_via_UDM_HTTP_API_parallel(school, num, parallelism):
 	map_async_result = pool.map_async(create_objs_via_UDM_HTTP_API_sequential, kwargs)
 	results = map_async_result.get()
 	t1 = time.time() - t0
+	pool.close()
 	dns = []
 	for res in results:
 		dns.extend(res)
@@ -133,7 +144,9 @@ def read_objs_via_UDM_HTTP_API_parallel(dns, parallelism):  # type: (List[str], 
 	t0 = time.time()
 	map_async_result = pool.map_async(read_objs_via_UDM_HTTP_API, kwargs)
 	results = map_async_result.get()
-	return time.time() - t0
+	res = time.time() - t0
+	pool.close()
+	return res
 
 
 def modify_objs_via_UDM_HTTP_API(school_dns):  # type: (Tuple[str, List[str]]) -> float
@@ -194,6 +207,7 @@ def modify_objs_via_UDM_HTTP_API_parallel(school, dns, parallelism):  # type: (s
 	pool = Pool(processes=parallelism)
 	map_async_result = pool.map_async(modify_objs_via_UDM_HTTP_API, kwargs)
 	results = map_async_result.get()
+	pool.close()
 	return sum(results)
 
 
@@ -222,31 +236,33 @@ def delete_objs_via_UDM_HTTP_API_parallel(dns, parallelism):  # type: (List[str]
 	t0 = time.time()
 	map_async_result = pool.map_async(delete_obj_via_UDM_HTTP_API, kwargs)
 	results = map_async_result.get()
-	return time.time() - t0
+	res = time.time() - t0
+	pool.close()
+	return res
 
 
 def main():  # type: () -> None
 	print("Starting HTTP tests (parallelism={})...".format(PARALLELISM))
 	print("Connection args: {!r} {!r}".format(BASE_URL, AUTH))
-	print("Creating 1000 Users...")
-	t_1000_1, dns = create_objs_via_UDM_HTTP_API_parallel(SCHOOL_OU, 1000, PARALLELISM)
+	print("Creating {} Users...".format(NUM_USERS))
+	t_1000_1, dns = create_objs_via_UDM_HTTP_API_parallel(SCHOOL_OU, NUM_USERS, PARALLELISM)
 	time.sleep(30)
 
-	print("Reading 1000 Users...")
+	print("Reading {} Users...".format(NUM_USERS))
 	t_1000_2 = read_objs_via_UDM_HTTP_API_parallel(dns, PARALLELISM)
 
-	print("Modifying 1000 Users...")
+	print("Modifying {} Users...".format(NUM_USERS))
 	t_1000_3 = modify_objs_via_UDM_HTTP_API_parallel(SCHOOL_OU, dns, PARALLELISM)
 	time.sleep(15)
 
-	print("Deleting 1000 Users...")
+	print("Deleting {} Users...".format(NUM_USERS))
 	t_1000_4 = delete_objs_via_UDM_HTTP_API_parallel(dns, PARALLELISM)
 
 	print("Results:")
-	print("Seconds for creating   1000 Users: {:02.2f}".format(t_1000_1))
-	print("Seconds for reading    1000 Users: {:02.2f}".format(t_1000_2))
-	print("Seconds for modifying  1000 Users: {:02.2f}".format(t_1000_3))
-	print("Seconds for deleting   1000 Users: {:02.2f}".format(t_1000_4))
+	print("Seconds for creating   {} Users: {:02.2f}".format(NUM_USERS, t_1000_1))
+	print("Seconds for reading    {} Users: {:02.2f}".format(NUM_USERS, t_1000_2))
+	print("Seconds for modifying  {} Users: {:02.2f}".format(NUM_USERS, t_1000_3))
+	print("Seconds for deleting   {} Users: {:02.2f}".format(NUM_USERS, t_1000_4))
 
 
 if __name__ == "__main__":
