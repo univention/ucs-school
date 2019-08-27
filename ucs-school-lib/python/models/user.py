@@ -325,8 +325,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		script_path = self.get_samba_netlogon_script_path()
 		if script_path is not None:
 			udm_obj['scriptpath'] = script_path
-		if udm_obj['departmentNumber'] == old_school:
-			udm_obj['departmentNumber'] = school
+		if udm_obj['departmentNumber'] == [old_school]:
+			udm_obj['departmentNumber'] = [school]
 		if school not in udm_obj['school']:
 			udm_obj['school'].append(school)
 		if old_school in udm_obj['school']:
@@ -336,7 +336,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	def _alter_udm_obj(self, udm_obj):
 		if self.email is not None:
 			udm_obj['e-mail'] = self.email
-		udm_obj['departmentNumber'] = self.school
+		udm_obj['departmentNumber'] = [self.school]
 		ret = super(User, self)._alter_udm_obj(udm_obj)
 		return ret
 

@@ -64,7 +64,7 @@ class Test(CLI_Import_v2_Tester):
 				strict=False,
 				should_exist=False
 			)
-		self.log.info('OK: import succeeded.')
+		self.log.info('OK: dry-run succeeded.')
 
 		self.log.info('*** 2.1 Importing (create) a new user of each role with birthday in bad format.')
 		self.log.info('*** 2.1 should fail for non-dry-run..')
@@ -96,9 +96,9 @@ class Test(CLI_Import_v2_Tester):
 		fn_config = self.create_config_json(config=config)
 		try:
 			self.run_import(['-c', fn_config, '-i', fn_csv])
-			self.fail('Import did not fail.')
+			self.fail('Dry-run did not fail.')
 		except ImportException:
-			self.log.info('OK: import failed.')
+			self.log.info('OK: dry-run failed.')
 
 		for person in person_list:
 			utils.verify_ldap_object(
@@ -138,9 +138,9 @@ class Test(CLI_Import_v2_Tester):
 		fn_config = self.create_config_json(config=config)
 		try:
 			self.run_import(['-c', fn_config, '-i', fn_csv])
-			self.fail('Import did not fail.')
+			self.fail('Dry-run did not fail.')
 		except ImportException:
-			self.log.info('OK: import failed.')
+			self.log.info('OK: dry-run failed.')
 
 		for person in person_list_success:
 			person.update(birthday=person.old_birthday)

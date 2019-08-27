@@ -98,7 +98,7 @@ def main():
 				# TODO: add sambaHomeDrive sambaHomePath sambaLogonScript sambaProfilePath
 			}
 			oldinfo = user.get_udm_object(lo).info
-			if oldinfo.get('departmentNumber') != a:
+			if oldinfo.get('departmentNumber') != [a]:
 				attrs.pop('departmentNumber')
 
 			user.change_school(b, lo)

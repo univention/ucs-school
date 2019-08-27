@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.41) unstable; urgency=low
+
+  * Bug #50066: adjust test after change to departmentNumber in UCS 4.4
+    erratum 239 (Bug #49092)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 27 Aug 2019 17:50:09 +0200
+
 ucs-test-ucsschool (6.0.40) unstable; urgency=low
 
   * Bug #49995: add user with two schools and school classes to test
