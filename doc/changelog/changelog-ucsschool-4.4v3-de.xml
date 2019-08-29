@@ -213,7 +213,21 @@ feedback@univention.de
 					<!-- END ucs-school-import 17.0.11A~4.4.0.201908120945 -->
 <!-- CHANGELOG:2019-08-14:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-08-29" lang="en">
+					<title>Released on 2019-08-29:</title>
+					<!-- START ucs-school-lib 12.1.5A~4.4.0.201908271804 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.5A~4.4.0.201908271804</emphasis>:
+						<itemizedlist>
+							<listitem><para>UCS@school code can now handle the change of the UDM property <envar>departmentNumber</envar> from being a single value property to a multi value property (<u:bug>50066</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.5A~4.4.0.201908271804 -->
+<!-- CHANGELOG:2019-08-29:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
