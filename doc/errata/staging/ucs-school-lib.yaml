@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
 fix: 12.1.5A~4.4.0.201908271804
 desc: |
- * UCS@school code can now handle the change of the UDM property <envar>departmentNumber</envar> from being a sinlge value property to a multi value property (Bug #50066).
+ * UCS@school code can now handle the change of the UDM property <envar>departmentNumber</envar> from being a single value property to a multi value property (Bug #50066).
 bug: [50066]
