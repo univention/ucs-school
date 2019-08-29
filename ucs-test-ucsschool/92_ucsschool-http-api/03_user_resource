@@ -1,0 +1,274 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: test operations on user resource using HTTP interface
+## tags: [apptest, SKIP]
+## exposure: dangerous
+## packages:
+##   - ucs-school-http-api-bb
+## bugs: []
+
+from __future__ import unicode_literals
+import time
+import requests
+from multiprocessing import Pool
+from unittest import main
+try:
+	from urlparse import urljoin  # py2
+except ImportError:
+	from urllib.parse import urljoin  # py3
+import univention.testing.strings as uts
+from univention.testing.ucsschool.bb_api import api_call, API_ROOT_URL, create_remote_static, HttpApiUserTestBase, RESSOURCE_URLS, partial_update_remote_static, setup_logging
+from ucsschool.lib.models import Staff as LibStaff, User as LibUser
+try:
+	from typing import Any, Dict, List, Optional, Text, Tuple
+except ImportError:
+	pass
+
+
+class Test(HttpApiUserTestBase):
+
+	def test_01_list_resource_from_external(self):
+		response = requests.get(RESSOURCE_URLS['users'], headers=self.auth_headers)
+		res = response.json()
+		self.assertIsInstance(res, list, repr(res))
+		self.assertIsInstance(res[0], dict, repr(res))
+		self.assertIn('name', res[0], repr(res))
+		self.assertIn('firstname', res[0], repr(res))
+
+	def test_02_create_user_parallel_from_external_different_classes(self):
+		parallelism = 20
+		self.logger.info('*** Using OUs %r and %r, parallelism=%d.', self.itb.ou_A.name, self.itb.ou_B.name, parallelism)
+		attrs = [self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name]) for _i in range(parallelism)]
+		for _attr in attrs:
+			self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(_attr))
+
+		pool = Pool(processes=parallelism)
+		job_args = [(self.auth_headers, attr) for attr in attrs]
+		t0 = time.time()
+		map_async_result = pool.map_async(create_remote_static, job_args)
+		results = map_async_result.get()
+		t1 = time.time()
+		self.logger.info('***** got %d results in %d seconds', len(results), t1 - t0)
+		self.logger.debug('***** results=%r', results)
+		errors = []
+		for r in results:
+			try:
+				self.schoolenv.udm._cleanup.setdefault('users/user', []).append(r['dn'])
+			except KeyError:
+				# continue to collect user DNs, so we can cleanup as much as possible
+				errors.append('Result without DN: {!r}.'.format(r))
+		if errors:
+			self.fail(' '.join(errors))
+		for num, result in enumerate(results, start=1):
+			self.logger.info('*** Checking result %d/%d (%r)...', num, parallelism, result['name'])
+			user = self.get_import_user(result['dn'])
+			self.compare_import_user_and_resource(user, result)
+			self.logger.info('*** OK: LDAP <-> resource')
+			# now compare with attrs
+			for attr in attrs:
+				if attr['name'] == user.name:
+					break
+			else:
+				self.fail('Could not find user with name {!r} in attrs.'.format(user.name))
+			import_user_cls = user.__class__
+			user2 = import_user_cls(**attr)
+			user2.disabled = '1' if attr['disabled'] else '0'
+			user2.password = ''
+			user2.roles = user.roles
+			user2.school = self.itb.ou_A.name
+			user2.schools = [self.itb.ou_A.name, self.itb.ou_B.name]
+			user2.ucsschool_roles = user.ucsschool_roles  # not in attr
+			self.compare_import_user_and_resource(user2, result, 'ATTR')
+			self.logger.info('*** OK: attr <-> resource')
+
+	def test_03_create_user_parallel_from_external_same_classes(self):
+		parallelism = 20
+		self.logger.info('*** Using OUs %r and %r, parallelism=%d.', self.itb.ou_A.name, self.itb.ou_B.name, parallelism)
+		attrs = [self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name]) for _i in range(parallelism)]
+		for _attr in attrs:
+			self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(_attr))
+
+		# put everyone (except staff) into same classes
+		everyone_classes = {}
+		for attr in attrs:
+			if attr['school_classes']:
+				everyone_classes = attr['school_classes']
+				# TODO: create bug report for this, or handle in API server:
+				# work around school.lib failing when trying to create same class (and share) in two processes
+				group_dns = self.extract_class_dns(attr)
+				for group_dn in group_dns:
+					self.logger.debug('*** Creating group %r...', group_dn)
+					LibUser.get_or_create_group_udm_object(group_dn, self.lo)
+				break
+		for attr in attrs:
+			if not (len(attr['roles']) == 1 and '/staff/' in attr['roles'][0]):
+				# don't set school_classes on staff
+				attr['school_classes'] = everyone_classes
+		pool = Pool(processes=parallelism)
+		job_args = [(self.auth_headers, attr) for attr in attrs]
+		t0 = time.time()
+		map_async_result = pool.map_async(create_remote_static, job_args)
+		results = map_async_result.get()
+		t1 = time.time()
+		self.logger.info('***** got %d results in %d seconds', len(results), t1 - t0)
+		self.logger.debug('***** results=%r', results)
+		errors = []
+		for r in results:
+			try:
+				self.schoolenv.udm._cleanup.setdefault('users/user', []).append(r['dn'])
+			except KeyError:
+				# continue to collect user DNs, so we can cleanup as much as possible
+				errors.append('Result without DN: {!r}.'.format(r))
+		if errors:
+			self.fail(' '.join(errors))
+		for num, result in enumerate(results, start=1):
+			self.logger.info('*** Checking result %d/%d (%r)...', num, parallelism, result['name'])
+			user = self.get_import_user(result['dn'])
+			self.compare_import_user_and_resource(user, result)
+			self.logger.info('*** OK: LDAP <-> resource')
+			# now compare with attrs
+			for attr in attrs:
+				if attr['name'] == user.name:
+					break
+			else:
+				self.fail('Could not find user with name {!r} in attrs.'.format(user.name))
+			import_user_cls = user.__class__
+			user2 = import_user_cls(**attr)
+			user2.disabled = '1' if attr['disabled'] else '0'
+			user2.password = ''
+			user2.roles = user.roles
+			user2.school = self.itb.ou_A.name
+			user2.schools = [self.itb.ou_A.name, self.itb.ou_B.name]
+			user2.ucsschool_roles = user.ucsschool_roles  # not in attr
+			self.compare_import_user_and_resource(user2, result, 'ATTR')
+			self.logger.info('*** OK: attr <-> resource')
+
+	def test_04_partial_update_user_parallel_from_external_different_classes(self):
+		parallelism = 20
+		self.logger.info('*** Using OUs %r and %r, parallelism=%d.', self.itb.ou_A.name, self.itb.ou_B.name, parallelism)
+		# create users sequentially and using WSGI interface
+		jobs = []
+		for _i in range(parallelism):
+			create_attrs = self.make_user_attrs(
+				[self.itb.ou_A.name, self.itb.ou_B.name],
+				school=self.itb.ou_A.name,  # overwrite URLs
+				schools=[self.itb.ou_A.name, self.itb.ou_B.name],  # overwrite URLs
+			)
+			del create_attrs["roles"]
+			self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
+			user_obj = self.create_import_user(**create_attrs)
+			self.logger.info('*** Created: %r', user_obj.to_dict())
+			roles = tuple(user_obj.roles)
+			if roles == ('pupil',):
+				roles = ('student',)
+			attrs_new = self.make_user_attrs(
+				[self.itb.ou_A.name, self.itb.ou_B.name],
+				partial=True,
+				name=user_obj.name,
+				roles=roles,
+				source_uid=user_obj.source_uid,
+				record_uid=user_obj.record_uid,
+			)
+			if isinstance(user_obj, LibStaff):
+				create_attrs["school_classes"] = {}
+				if "school_classes" in attrs_new:
+					attrs_new["school_classes"] = {}
+			self.logger.info('*** attrs_new=%r', attrs_new)
+			self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(attrs_new))
+			jobs.append((create_attrs, attrs_new))
+
+		# modify users in parallel and using HTTP
+		pool = Pool(processes=parallelism)
+		t0 = time.time()
+		map_async_result = pool.map_async(
+			partial_update_remote_static,
+			[(self.auth_headers, job[0]['name'], job[1]) for job in jobs]
+		)
+		results = map_async_result.get()
+		t1 = time.time()
+		self.logger.info('***** got %d results in %d seconds', len(results), t1 - t0)
+		self.logger.debug('***** results=%r', results)
+		for num, result in enumerate(results, start=1):
+			self.logger.info('*** Checking result %d/%d (%r)...', num, parallelism, result.get('name', 'N/A'))
+			user = self.get_import_user(result['dn'])
+			self.compare_import_user_and_resource(user, result)
+			self.logger.info('*** OK: LDAP <-> resource')
+			# now compare with attrs
+			for job in jobs:
+				if job[0]['name'] == user.name:
+					attr, new_attrs = job
+					for k, v in new_attrs.items():
+						if k == 'school_classes' and not v:
+							# special case `school_classes`: if newly empty but previously non-empty -> use old value
+							# see end of ImportUser.make_classes()
+							# Bug #48045
+							continue
+						attr[k] = v
+					break
+			else:
+				self.fail('Could not find user with name {!r} in jobs.'.format(user.name))
+			import_user_cls = user.__class__
+			user2 = import_user_cls(**attr)
+			user2.disabled = '1' if attr['disabled'] else '0'
+			user2.password = ''
+			user2.roles = user.roles
+			user2.school = self.itb.ou_A.name
+			user2.schools = [self.itb.ou_A.name, self.itb.ou_B.name]
+			user2.ucsschool_roles = user.ucsschool_roles  # not in attr
+			self.compare_import_user_and_resource(user2, result, 'ATTR')
+			self.logger.info('*** OK: attr <-> resource')
+
+	def test_05_rename_single_user(self):
+		self.logger.info('*** Using OUs %r and %r.', self.itb.ou_A.name, self.itb.ou_B.name)
+		name_old = uts.random_username()
+		self.logger.info('*** creating user with username %r', name_old)
+		create_attrs = self.make_user_attrs(
+			[self.itb.ou_A.name],
+			school=self.itb.ou_A.name,  # overwrite URLs
+			schools=[self.itb.ou_A.name],  # overwrite URLs
+			partial=False,
+			name=name_old
+		)
+		del create_attrs["roles"]
+		self.logger.info('*** create_attrs=%r', create_attrs)
+		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
+		old_user_obj = self.create_import_user(**create_attrs)
+		self.logger.info('*** API call (create) returned: %r', old_user_obj)
+
+		name_new = uts.random_username()
+		self.logger.info('*** renaming user from %r to %r', name_old, name_new)
+		self.schoolenv.udm._cleanup.setdefault('users/user', []).append(old_user_obj.dn.replace(name_old, name_new))
+		modify_attrs = {'name': name_new}
+		self.logger.info('*** modify_attrs=%r', modify_attrs)
+		resource_new = partial_update_remote_static((self.auth_headers, name_old, modify_attrs))
+		self.logger.info('*** API call (modify) returned: %r', resource_new)
+		self.assertEqual(name_new, resource_new['name'])
+		user = self.get_import_user(resource_new['dn'])
+		self.assertEqual(name_new, user.name)
+		url = urljoin(RESSOURCE_URLS['users'], name_new + "/")
+		self.assertEqual(resource_new["url"], url)
+		resource_new2 = api_call('get', url, headers=self.auth_headers)
+		self.assertDictEqual(resource_new, resource_new2)
+		url = urljoin(RESSOURCE_URLS['users'], name_old + "/")
+		response = requests.get(url, headers=self.auth_headers)
+		self.assertEqual(response.status_code, 404)
+		self.compare_import_user_and_resource(user, resource_new)
+		self.logger.info('*** OK: LDAP <-> resource')
+
+	def test_06_create_user_without_name(self):
+		self.logger.info('*** Using OUs %r and %r.', self.itb.ou_A.name, self.itb.ou_B.name)
+		attrs = self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name])
+		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(attrs))
+		del attrs['name']
+		self.logger.debug('*** attrs=%r', attrs)
+		username_begin = "{}.{}".format(attrs["firstname"], attrs["lastname"])
+		result = create_remote_static((self.auth_headers, attrs))
+		self.assertEqual(result["name"][:15], username_begin[:15])
+		user = self.get_import_user(result['dn'])
+		self.assertEqual(user.name[:15], username_begin[:15])
+		self.compare_import_user_and_resource(user, result)
+		self.logger.info('*** OK: LDAP <-> resource')
+
+
+if __name__ == '__main__':
+	main(verbosity=2)
