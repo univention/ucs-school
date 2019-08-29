@@ -53,7 +53,7 @@ from univention.config_registry import ConfigRegistry
 import univention.debug as ud
 
 try:
-	from typing import Any, AnyStr, Dict, List, Optional, Tuple, Union
+	from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union
 except ImportError:
 	pass
 
@@ -69,7 +69,7 @@ def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> 
 	return config
 
 
-def _ucr():
+def _ucr():  # type: () -> ConfigRegistry
 	ucr = ConfigRegistry()
 	ucr.load()
 	return ucr
@@ -83,8 +83,8 @@ LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config['colors'])
 
 _handler_cache = dict()
 _pw_length_cache = dict()
-ucr = lazy_object_proxy.Proxy(_ucr)  # "global" ucr for ucsschool.lib.models
-ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool/username/max_length", 20)))
+ucr = lazy_object_proxy.Proxy(_ucr)  # type: ConfigRegistry  # "global" ucr for ucsschool.lib.models
+ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool/username/max_length", 20)))  # type: int
 
 
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
@@ -521,6 +521,38 @@ def get_logger(
 	return _logger
 
 
+def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
+	# type: (Sequence[str], Optional[bool], Optional[bool], **Any) -> Tuple[int, str, str]
+	"""
+	Execute command.
+
+	:param list(str) cmd: command line as list of strings
+	:param bool log: log text returned in stdout (with level INFO) and text
+		returned in stderr (with level ERROR)
+	:param bool raise_exc: raise RunTime
+	:param dict kwargs: arguments to pass to `subprocess.Popen()` call
+	:return: 3-tuple: returncode (int), stdout (str), stderr (str)
+	:rtype: tuple(int, str, str)
+	:raises subprocess.CalledProcessError: if raise_exc is True and the return
+		code was != 0
+	:raises OSError: if cmd[0] does not exist: "No such file or directory"
+	"""
+	assert all(isinstance(arg, string_types) for arg in cmd)
+	kwargs["stdout"] = kwargs.get("stdout", subprocess.PIPE)
+	kwargs["stderr"] = kwargs.get("stderr", subprocess.PIPE)
+	process = subprocess.Popen(cmd, **kwargs)
+	stdout, stderr = process.communicate()
+	if log:
+		logger = logging.getLogger(__name__)
+		if stdout:
+			logger.info(stdout)
+		if stderr:
+			logger.error(stderr)
+	if raise_exc and process.returncode:
+		raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd, output=stderr or stdout)
+	return process.returncode, stdout, stderr
+
+
 @contextmanager
 def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 	"""
@@ -541,13 +573,8 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 	logger = logging.getLogger(__name__)
 
 	def _run(args):
-		process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stdout, stderr = process.communicate()
-		if stdout:
-			logger.info(stdout)
-		if stderr:
-			logger.error(stderr)
-		return process.returncode == 0
+		returncode, stdout, stderr = exec_cmd(args, log=True)
+		return returncode == 0
 
 	notifier_running = False
 	logger.info('Stopping %s', service_name)
