@@ -44,7 +44,7 @@
 	<chapter id="audience">
 		<title>Zielgruppe</title>
 		<para>
-			Dieses Handbuch richtet sich an Administratoren und Programmierer. Die Import Software ist im Auslieferungszustand stark konfigurierbar, kann aber zusätzlich programmatisch erweitert werden. In diesem Handbuch werden der Ablauf eines Importvorganges, Konfigurationsoptionen und Programmierschnittstellen beschrieben.
+			Dieses Handbuch richtet sich an Administratoren und Programmierer. Die Importsoftware ist im Auslieferungszustand stark konfigurierbar, kann aber zusätzlich programmatisch erweitert werden. In diesem Handbuch werden der Ablauf eines Importvorganges, Konfigurationsoptionen und Programmierschnittstellen beschrieben.
 		</para>
 	</chapter>
 
