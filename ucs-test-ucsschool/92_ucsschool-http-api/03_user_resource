@@ -1,10 +1,9 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: test operations on user resource using HTTP interface
-## tags: [apptest, SKIP]
+## tags: [apptest, ucs-school-http-api]
 ## exposure: dangerous
-## packages:
-##   - ucs-school-http-api-bb
+## packages: [ucs-school-http-api-bb]
 ## bugs: []
 
 from __future__ import unicode_literals

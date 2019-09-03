@@ -30,8 +30,8 @@ When modifying a user, the ``source_uid`` and ``record_uid`` attributes must not
 Installation
 ------------
 
-1. Checkout git repository
-2. Build and install ``ucs-school-http-api-bb``
+1. Checkout git repository or add ``http://192.168.0.10/build2/ucs_4.4-0-min-brandenburg/`` to ``sources.list``
+2. Build and/or install ``ucs-school-http-api-bb``
 3. Enable debugging::
 
 	$ ucr set \
@@ -105,6 +105,19 @@ Or on the command line::
 The token has to be used in every request to the API, e.g.::
 
 	$ curl -H "Authorization: Token eb0a88f554af2107681c3ec7f65ee43836dbfde4" ...
+
+
+Tests
+-----
+
+Install the package ``ucs-test-ucs-school-http-api-bb`` and run::
+
+	$ ucs-test -E dangerous -s ucsschool-http-api-bb
+
+
+Or install the package ``ucs-test-ucsschool`` and run::
+
+	$ ucs-test -E dangerous -s ucsschool-http-api
 
 
 Examples
