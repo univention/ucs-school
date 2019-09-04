@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.1.6A~4.4.0.201909031727
+fix: 12.1.7A~4.4.0.201909041215
 desc: |
  * Internal improvement: added common function to execute external programs (Bug #50087).
-bug: [50087]
+ * Internal improvement: Fix lookup in SchoolComputer model (Bug #49311).
+bug: [50087, 49311]
