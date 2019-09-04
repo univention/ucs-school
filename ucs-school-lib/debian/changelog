@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.7) unstable; urgency=low
+
+  * Bug #49311: fix lookup for SchoolComputer
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 04 Sep 2019 12:10:44 +0200
+
 ucs-school-lib (12.1.6) unstable; urgency=low
 
   * Bug #50087: add utility function to execute external programs

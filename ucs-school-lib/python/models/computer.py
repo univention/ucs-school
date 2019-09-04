@@ -33,6 +33,7 @@
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
 
+from univention.admin.filter import conjunction, expression, parse
 from univention.admin.uexceptions import nextFreeIp
 
 from .attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
@@ -170,6 +171,19 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	type_name = _('Computer')
 
 	DEFAULT_PREFIX_LEN = 24  # 255.255.255.0
+
+	@classmethod
+	def lookup(cls, lo, school, filter_s='', superordinate=None):
+		"""
+		This override limits the returned objects to actual ucsschoolComputers. Does not contain
+		SchoolDC slaves and others anymore.
+		"""
+		object_class_filter = expression('objectClass', 'ucsschoolComputer', '=')
+		if filter_s:
+			school_computer_filter = conjunction('&', [object_class_filter, parse(filter_s)])
+		else:
+			school_computer_filter = object_class_filter
+		return super(SchoolComputer, cls).lookup(lo, school, school_computer_filter, superordinate)
 
 	def get_inventory_numbers(self):
 		if isinstance(self.inventory_number, basestring):
