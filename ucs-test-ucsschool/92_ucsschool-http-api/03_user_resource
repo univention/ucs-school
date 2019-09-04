@@ -264,7 +264,7 @@ class Test(HttpApiUserTestBase):
 		result = create_remote_static((self.auth_headers, attrs))
 		self.assertEqual(result["name"][:15], username_begin[:15])
 		user = self.get_import_user(result['dn'])
-		self.assertEqual(user.name[:15], username_begin[:15])
+		self.assertEqual(user.name, username_begin[:len(user.name)])
 		self.compare_import_user_and_resource(user, result)
 		self.logger.info('*** OK: LDAP <-> resource')
 
