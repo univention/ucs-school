@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-14A~4.4.0.201908091031
+fix: 9.0.1-15A~4.4.0.201909041517
 desc: |
  * During an exam the exam folder in the exam users home cannot be removed or renamed anymore (Bug #49953).
-bug: [49953]
+ * Add login restrictions for exam and original users during running exams (Bug #49960).
+bug: [49953, 49960]
