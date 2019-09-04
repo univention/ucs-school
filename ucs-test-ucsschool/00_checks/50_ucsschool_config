@@ -7,13 +7,16 @@
 import univention.testing.utils as utils
 import univention.config_registry
 import sys
+from six import iteritems
 
 ucr = univention.config_registry.ConfigRegistry()
 ucr.load()
 
+
 def check_setting(setting, value):
 	if ucr[setting] != value:
 		utils.fail('{} not correctly configured (is {}, should be {})'.format(setting, value, ucr[setting]))
+
 
 settings_connector = {
 	'connector/s4/mapping/sid_to_s4': 'yes',
@@ -22,7 +25,6 @@ settings_connector = {
 	'connector/s4/mapping/msprintconnectionpolicy': 'yes',
 	'connector/s4/mapping/wmifilter': 'yes',
 	'connector/s4/mapping/gpo': 'true',
-	'connector/s4/mapping/syncmode': 'sync',
 	'connector/s4/mapping/dns/ignorelist': '_ldap._tcp.Default-First-Site-Name._site',
 }
 
@@ -37,15 +39,22 @@ settings_school_slave = {
 
 
 if utils.package_installed('univention-samba4'):
-	for setting, value in settings_samba.iteritems():
+	for setting, value in iteritems(settings_samba):
+		if setting == 'samba4/ldb/sam/module/prepend' and not any((
+				utils.package_installed('ucs-school-singlemaster'),
+				utils.package_installed('ucs-school-slave'),
+				utils.package_installed('ucs-school-nonedu-slave'),
+		)):
+			# Bug #49726: test only on slave / singlemaster
+			continue
 		check_setting(setting, value)
 
 if utils.package_installed('univention-s4-connector'):
-	for setting, value in settings_connector.iteritems():
+	for setting, value in iteritems(settings_connector):
 		check_setting(setting, value)
 
 if utils.package_installed('ucs-school-slave'):
-	for setting, value in settings_school_slave.iteritems():
+	for setting, value in iteritems(settings_school_slave):
 		check_setting(setting, value)
 
 sys.exit(0)
