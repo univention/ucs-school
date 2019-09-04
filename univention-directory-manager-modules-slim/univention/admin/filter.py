@@ -183,7 +183,7 @@ def parse(filter_s, begin=0, end=-1):
 		return filter_s
 
 	if not filter_s:
-		return expression()
+		raise RuntimeError("Empty filter_s argument.")
 
 	def split(str):
 		expressions = []
