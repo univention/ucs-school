@@ -1,5 +1,5 @@
 .. to compile run:
-..     $ rst2html5 kelvin-api.rst kelvib-api.html
+..     $ rst2html5 kelvin-api.rst kelvin-api.html
 
 Kelvin API
 ==========
