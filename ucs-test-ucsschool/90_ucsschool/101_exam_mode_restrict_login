@@ -26,7 +26,7 @@ def main():
 				open_ldap_co = schoolenv.open_ldap_connection()
 				ucr.load()
 
-				print '# create test users and classes'
+				print('# create test users and classes')
 				if ucr.is_true('ucsschool/singlemaster'):
 					edudc = None
 				else:
@@ -49,17 +49,17 @@ def main():
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
 				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [student2.dn]})
 
-				print '# import random computers'
+				print('# import random computers')
 				computers = Computers(open_ldap_co, school, 2, 0, 0)
 				pc1, pc2 = computers.create()
 
-				print '# set 2 computer rooms to contain the created computers'
+				print('# set 2 computer rooms to contain the created computers')
 				room1 = Room(school, host_members=pc1.dn)
 				room2 = Room(school, host_members=pc2.dn)
 				for room in [room1, room2]:
 					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 
-				print '# Set an exam and start it'
+				print('# Set an exam and start it')
 				current_time = datetime.now()
 				chosen_time = current_time + timedelta(hours=2)
 				exam = Exam(
@@ -77,13 +77,13 @@ def main():
 
 				for dn in exam_member_dns:
 					result = open_ldap_co.get(dn, ['sambaUserWorkstations'], True)
-					assert result['sambaUserWorkstations'] == [pc2.name]
+					assert result.get('sambaUserWorkstations') == [pc2.name]
 				result = open_ldap_co.get(student2.dn, ['sambaUserWorkstations'], True)
-				assert result['sambaUserWorkstations'] == ['$OTHERPC']
-				print '# stopping exam'
+				assert result.get('sambaUserWorkstations') == ['$OTHERPC']
+				print('# stopping exam')
 				exam.finish()
 				result = open_ldap_co.get(student2.dn, ['sambaUserWorkstations'], True)
-				assert result['sambaUserWorkstations'] == ['OTHERPC']
+				assert result.get('sambaUserWorkstations') == ['OTHERPC']
 
 
 if __name__ == '__main__':
