@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-15) unstable; urgency=medium
+
+   * Bug #49960: Add login restrictions for exam and original users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 04 Sep 2019 15:13:44 +0200
+
 ucs-school-umc-exam (9.0.1-14) unstable; urgency=medium
 
    * Bug #49953: Make exam folders in exam user homes immutable during exam

@@ -232,6 +232,12 @@ eval "$(ucr shell)"
 		<section id="school:exam:gpo:group">
 			<title>Windows-Anmeldung im Prüfungsraum auf Mitglieder der Klassenarbeitsgruppe beschränken</title>
 			<para>
+				Mit &ucsUAS; 4.4v4 werden die Windows-Anmeldungen während einer Klassenarbeit automatisch von &ucsUAS; verwaltet. Dabei werden über das Nutzerattribut <envar>sambaUserWorkstations</envar> alle Schülerkonten der Klassenarbeitsgruppe
+				auf die Rechner des Computerraumes beschränkt. Zusätzlich wird verhindert, dass sich der originale Nutzer an einem Windowsrechner anmelden kann. Dieser Mechanismus kommt ohne die hier beschriebene Einrichtung von Windows Gruppenrichtlinien aus
+				und erfordert daher keinen Neustart der Rechner. Sollten keine weiteren Gruppenrichtlinien eingerichtet worden sein, müssen die Rechner vor oder nach einer Klassenarbeit überhaupt nicht mehr neugestartet werden. In diesem Fall kann die Aufforderung der Lehrer
+				zum Neustart der Rechner während der Einrichtung von Klassenarbeiten über die &ucsUCRV; <envar>ucsschool/exam/default/show/restart</envar> abgeschaltet werden.
+			</para>
+			<para>
 				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, wird dringend empfohlen, als erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist.
 			</para>
 			<para>

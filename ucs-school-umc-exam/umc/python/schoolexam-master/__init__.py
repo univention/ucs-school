@@ -56,6 +56,7 @@ from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 
 import univention.admin.uexceptions
 import univention.admin.modules
+import univention.udm
 
 from univention.lib.i18n import Translation
 _ = Translation('ucs-school-umc-exam-master').translate
@@ -145,6 +146,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(
 		userdn=StringSanitizer(required=True),
+		room=StringSanitizer(default=''),
 		description=StringSanitizer(default=''),
 		school=StringSanitizer(default='')
 	)
@@ -154,18 +156,35 @@ class Instance(SchoolBaseModule):
 		The exam account is added to a special exam group to allow GPOs and other restrictions
 		to be enforced via the name of this group.
 		The group has to be created earlier, e.g. by create_ou (ucs-school-import).
+		This function also restricts the login of the original user
 		'''
 
 		school = request.options['school']
 		userdn = request.options['userdn']
+		room_dn = request.options['room']
 		try:
 			user = Student.from_dn(userdn, None, ldap_admin_write)
 		except univention.admin.uexceptions.noObject:
 			raise UMC_Error(_('Student %r not found.') % (userdn,))
 		except univention.admin.uexceptions.ldapError:
 			raise
+		room = None
+		if room_dn != '':
+			try:
+				room = ComputerRoom.from_dn(room_dn, None, ldap_user_read)
+			except univention.admin.uexceptions.noObject:
+				raise UMC_Error('Room %r not found.' % (room_dn,))
 
 		user_orig = user.get_udm_object(ldap_admin_write)
+		if len(user_orig['sambaUserWorkstations']) == 0:
+			user_orig['sambaUserWorkstations'] = ['$']
+		else:
+			new_value = []
+			for ws in user_orig['sambaUserWorkstations']:
+				new_ws = ws if ws.startswith('$') else '${}'.format(ws)
+				new_value.append(new_ws)
+			user_orig['sambaUserWorkstations'] = new_value
+		user_orig.modify()
 
 		# uid and DN of exam_user
 		exam_user_uid = "".join((self._examUserPrefix, user_orig['username']))
@@ -261,6 +280,8 @@ class Instance(SchoolBaseModule):
 				# ignore blacklisted attributes
 				if key in blacklisted_attributes:
 					continue
+				if key == 'sambaUserWorkstations':  # special handling for this attribute
+					continue
 				# ignore blacklisted attribute values
 				keyBlacklist = getBlacklistSet('ucsschool/exam/user/ldap/blacklist/%s' % key)
 				value = [x for x in value if x not in keyBlacklist]
@@ -300,6 +321,8 @@ class Instance(SchoolBaseModule):
 					if 'temporary' not in value:
 						value += ['temporary']
 				al.append((key, value))
+				if room:
+					al.append(('sambaUserWorkstations', ','.join([c.name for c in room.get_computers(ldap_admin_write)])))
 
 			if not foundUniventionObjectFlag and 'univentionObjectFlag' not in blacklisted_attributes:
 				al.append(('univentionObjectFlag', ['temporary']))
@@ -384,10 +407,30 @@ class Instance(SchoolBaseModule):
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None):
 		'''Remove an exam account cloned from a given user account.
+		Also the original sambaUserWorkstations of the original user are restored.
 		The exam account is removed from the special exam group.'''
 
 		userdn = request.options['userdn']
 		school = request.options['school']
+		# Might be put into the lib at some point:
+		# https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f
+		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
+		user_uid = userdn.split(',')[0][len('uid={}'.format(examUserPrefix)):]
+		user_module = univention.udm.UDM(ldap_admin_write, 1).get('users/user')
+		search_result = list(user_module.search(filter_format('uid=%s', [user_uid])))
+		if len(search_result) == 1:
+			try:
+				orig_udm = search_result[0]
+				new_value = []
+				for ws in orig_udm.props.sambaUserWorkstations:
+					new_ws = ws[1:] if ws.startswith('$') else ws
+					new_value.append(new_ws)
+				orig_udm.props.sambaUserWorkstations = [ws for ws in new_value if len(ws) > 0]
+				orig_udm.save()
+			except univention.admin.uexceptions.noObject:
+				raise UMC_Error(_('Exam student %r not found.') % (userdn[len(examUserPrefix):],))
+		if len(search_result) == 0:
+			raise UMC_Error(_('Exam student %r not found.') % (userdn[len(examUserPrefix):],))
 		try:
 			user = ExamStudent.from_dn(userdn, None, ldap_user_read)
 		except univention.admin.uexceptions.noObject:
