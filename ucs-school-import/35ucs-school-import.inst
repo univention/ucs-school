@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=22
+VERSION=23
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -607,6 +607,15 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 12 ] ; then
 	univention-directory-manager settings/extended_attribute modify "$@" \
 	--dn="cn=ucsschoolSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set hook=UcsschoolUserOptions || die
+fi
+
+# Bug #50116: correct wrong domaincontroller_slaves object during initial installation
+# and during  updates from 4.4v3 and before. This code block should be the last one
+# within the join script.
+if [ $JS_LAST_EXECUTED_VERSION -lt 23 ] && [ $server_role = domaincontroller_master ]; then
+	if ! is_ucr_true ucsschool/update/skip-slave-object-correction ; then
+		/usr/share/ucs-school-import/scripts/fix_ucsschool_slaves
+	fi
 fi
 
 stop_udm_cli_server
