@@ -35,6 +35,37 @@ Ganz grobes Konzept:
 1. Das UCR-Modul schreibt die Daten der UCR-Variablen in Text-Dateien für Squidguard und ruft ein Tool zum Konvertieren der Text-Datei in eine Squidguard-Datenbank auf.
 1. Abschließend triggert das UCR-Modul einen Reload über einen speziellen Daemon, der dafür sorgt, dass der Squid (**Achtung**: squid, nicht squidguard! squidguard ist ein Helperprozess von squid) max. 1x pro 15 Sekunden neugestartet wird.
 
+## Meta-Netlogon-Skript
+
+An den Usern wird von UCS@school automatisch im Sambaattribut `sambaNetlogonPath` ein Meta-Netlogon-Skript eingetragen, welches dann auf dem Windows-Client ausgeführt wird und dann mindestens ein anderes Netlogon-Skript ausführt.
+Welche Skripte ausgeführt werden, kann über `ucsschool/netlogon/.*` konfiguriert werden. Im Standardfall wird ein userspezifisches Logonskript ausführt, welches für das Laufwerksmapping zuständig ist:
+
+    ucsschool/netlogon/ucs-school-netlogon-user-logonscripts/script: user\%USERNAME%.vbs
+
+Kunden und Univention-Komponenten können auch eigene Skripte dort eintragen:
+
+    ucsschool/netlogon/EINDEUTIGERNAME/script: pfad\zum\Skript\relativ\zur\netlogon\share\wurzel\myscript.bat
+
+Das Meta-Netlogon-Skript ist für alle User identisch. D.h. man muss in den konfigurierten Skripten entsprechend reagieren, falls sie nicht für alle User ausgeführt werden sollen.
+
+## Netlogon-Skripte: Laufwerksmapping auf Windows-Clients
+
+An welcher Stelle werden die automatischen Laufwerksmappings für Windowsclients (K: für Klassenfreigaben, M: für Marktplatz) definiert?
+
+Das passiert über das Paket `ucs-school-netlogon-user-logonscripts`, was ein Listener-Modul und einen Daemon mitbringt, der für alle User userspezifische Netlogon-Skripte erzeugt. Siehe dazu die diversen UCR-Variablen `ucsschool/userlogon/.*`
+
+Für UCS@school ist vorgesehen, dass jeder Schüler nur einer Klasse zugeordnet ist. Die Klassenfreigabe dieser Klasse wird im userspezifischen Netlogon-Skript automatisch auf einen Laufwerksbuchstaben gemappt, der über die UCR-Variable 
+`ucsschool/userlogon/classshareletter` definiert ist.
+
+Freigaben, die allen Usern zugeordnet werden sollen, wie z.B. dem Marktplatz, können ebenfalls über UCR-Variablen konfiguriert werden. Der Marktplatz wird über folgende UCR-Settings verknüpft:
+
+    ucsschool/userlogon/commonshares/letter/Unterrichtsmaterial: U
+    ucsschool/userlogon/commonshares/server/Unterrichtsmaterial: slave213
+    ucsschool/userlogon/commonshares/letter/Marktplatz: M
+    ucsschool/userlogon/commonshares/server/Marktplatz: slave213
+    ucsschool/userlogon/commonshares: Marktplatz,Unterrichtsmaterial
+
+"Marktplatz" und "Unterrichtsmaterial" sind hier jeweils die Namen der Freigabeen. `ucsschool/userlogon/commonshares` ist eine kommaseparierte Liste aller Freigaben, die für alle User verknüpft werden sollen.
 
 ## Samba
 
