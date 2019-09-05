@@ -164,3 +164,9 @@ The password of the demoschool users is stored in this file.
 * `postgres.secret`: password of user `importhttpapi` to access the PostgreSQL database `importhttpapi`
 * `rabbitmq.secret`: password Celery uses to access rabbitMQ
 * `settings.py`: Django configuration file for HTTP-API for CSV import
+
+## UCS@school-Import-Zählerobjekte
+
+Um fehlende Zählerobjekte für Benutzernamen-Präfixe zu erzeugen, kann folgender Schnippsel verwendet werden:
+
+    python -c "from ucsschool.importer.utils.username_handler import LdapStorageBackend; b = LdapStorageBackend('usernames'); b.create('${USERNAMEPREFIX}', ${NEXTNUMBER})"
