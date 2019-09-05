@@ -1,3 +1,10 @@
+ucs-school-import (17.0.12) unstable; urgency=low
+
+  * Bug #50116: add script for fixing wrong object classes and
+    ucsschoolRole attributes of domaincontroller slaves
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 05 Sep 2019 20:53:08 +0200
+
 ucs-school-import (17.0.11) unstable; urgency=low
 
   * Bug #49995: fix handling of school_classes_keep_if_empty when moving users
