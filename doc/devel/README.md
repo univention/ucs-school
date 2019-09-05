@@ -139,6 +139,10 @@ Die Ausgabe des Diff-Tools sieht wie folgt aus:
      memberOf: =rscxd
     [...]
 
+## RADIUS
+
+`ucs-school-radius-802.1x` erweitert das Paket `univention-radius` (aus UCS) um die Möglichkeit, über UCS@school-Internetregeln den Zugriff auf das WLAN zu steuern. Da die UCS@school-Internetregeln in UCR gespeichert werden, funktioniert das UCS@school-Paket nur sinnvoll auf dem Schulserver, wo die Regeln auch gepflegt werden. Man könnte es zwar auf einem zentralen System installieren, fällt dann mangels UCR-Daten aber auf den Funktionsumfang von `univention-radius` zurück.
+
 ## /etc/ucsschool/
 
 ### /etc/ucsschool/logging.yaml
