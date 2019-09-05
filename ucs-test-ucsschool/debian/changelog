@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.46) unstable; urgency=low
+
+  * Bug #50087: fix test
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 05 Sep 2019 12:37:23 +0200
+
 ucs-test-ucsschool (6.0.45) unstable; urgency=low
 
   * Bug #49960: Add test exam_mode_restrict_login
