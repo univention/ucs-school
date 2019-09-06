@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 
+desc: |
+ * A script (fix_ucsschool_slaves) has been added that automatically fixes broken domaincontroller slave object.
+   This script is automatically by the join script of the package <packagename>ucs-school-import</packagename>.
+   To prevent the automatic correction, set the UCR variable <envar>ucsschool/update/skip-slave-object-correction=true</envar> (Bug #50116).
+bug: [50116]
