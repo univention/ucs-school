@@ -1,0 +1,95 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Copyright 2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+from __future__ import absolute_import
+import logging
+from optparse import OptionParser
+from univention.admin.uldap import getAdminConnection
+from ucsschool.lib.models.utils import get_stream_handler, get_file_handler
+
+LOG_FILE = '/var/log/univention/ucsschool-fix-slave-objects.log'
+LOG_DEBUG_FMT = '%(asctime)s %(levelname)-5s %(funcName)s:%(lineno)d  %(message)s'
+LOG_INFO_FMT = '%(message)s'
+LOG_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+logger = logging.getLogger('main')
+
+
+def fix_slave(lo, slave_dn, slave_attrs, dry_run=True):
+	logger.debug('Checking %r', slave_dn)
+	logger.debug('Attributes: %r', slave_attrs)
+	roles = slave_attrs['ucsschoolRole']
+	object_classes = slave_attrs['objectClass']
+	mod_role = {
+		'old': roles,
+		'new': [role for role in roles if not role.startswith('win_computer:school:')],
+	}
+	mod_oc = {
+		'old': object_classes,
+		'new': [oc for oc in object_classes if oc not in ('univentionWindows', 'ucsschoolComputer')],
+	}
+	if mod_role['old'] != mod_role['new'] or mod_oc['old'] != mod_oc['new']:
+		logger.info('Will modify: %s', slave_dn)
+		logger.info('Roles: %r', mod_role)
+		logger.info('ObjectClass: %r', mod_oc)
+		if dry_run:
+			logger.info('DRY-RUN: skipping modification')
+		else:
+			lo.modify(slave_dn, (
+				('ucsschoolRole', mod_role['old'], mod_role['new']),
+				('objectClass', mod_oc['old'], mod_oc['new']),
+			))
+
+
+def main():
+	description = '''This script searches and checks for UCS@school school server objects in LDAP.
+If one of the wrong object classes (univentionWindows, ucsschoolComputer) is found,
+the wrong object class will be removed and the ucsschoolRole attribute corrected accordingly.'''
+	parser = OptionParser(description=description)
+	parser.add_option('--dry-run', action='store_true', dest='dry_run', help='do not make any changes')
+	parser.add_option('--verbose', action='store_true', dest='verbose', help='show detailed log output')
+	(options, args) = parser.parse_args()
+
+	logger.setLevel('DEBUG')
+	logger.addHandler(get_stream_handler('DEBUG' if options.verbose else 'INFO'))
+	logger.addHandler(get_file_handler('DEBUG', LOG_FILE))
+
+	logger.info('Looking for affected domaincontroller_slave objects...')
+	lo, po = getAdminConnection()
+	slaves = lo.search(
+		filter='(univentionObjectType=computers/domaincontroller_slave)',
+		attr=['objectClass', 'ucsschoolRole']
+	)
+	for slave_dn, slave_attrs in slaves:
+		fix_slave(lo, slave_dn, slave_attrs, dry_run=options.dry_run)
+
+
+if __name__ == '__main__':
+	main()
