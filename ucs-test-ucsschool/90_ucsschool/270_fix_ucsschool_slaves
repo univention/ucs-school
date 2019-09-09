@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-import,ucs-school-master]
 
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
 import subprocess
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -34,8 +36,8 @@ def main():
 		lo.modify(
 			dcdn,
 			[
-				['objectClass', attrs.get('objectClass', []), set(attrs.get('objectClass', [])) | set(['univentionWindows', 'ucsschoolComputer'])],
-				['ucsschoolRole', attrs.get('ucsschoolRole', []), set(attrs.get('ucsschoolRole', [])) | set(['win_computer:school:{}'.format(school)])],
+				['objectClass', attrs.get('objectClass', []), list(set(attrs.get('objectClass', [])) | set(['univentionWindows', 'ucsschoolComputer']))],
+				['ucsschoolRole', attrs.get('ucsschoolRole', []), list(set(attrs.get('ucsschoolRole', [])) | set(['win_computer:school:{}'.format(school)]))],
 			])
 
 		print('Starting fix_ucschool_slaves...')
