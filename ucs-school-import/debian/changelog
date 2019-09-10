@@ -1,3 +1,10 @@
+ucs-school-import (17.0.13) unstable; urgency=low
+
+  * Bug #50116: fix traceback in fix_ucschool_slaves if a slave is no
+    school slave
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 10 Sep 2019 09:34:53 +0200
+
 ucs-school-import (17.0.12) unstable; urgency=low
 
   * Bug #50116: add script for fixing wrong object classes and

@@ -45,8 +45,8 @@ logger = logging.getLogger('main')
 def fix_slave(lo, slave_dn, slave_attrs, dry_run=True):
 	logger.debug('Checking %r', slave_dn)
 	logger.debug('Attributes: %r', slave_attrs)
-	roles = slave_attrs['ucsschoolRole']
-	object_classes = slave_attrs['objectClass']
+	roles = slave_attrs.get('ucsschoolRole', [])
+	object_classes = slave_attrs.get('objectClass', [])
 	mod_role = {
 		'old': roles,
 		'new': [role for role in roles if not role.startswith('win_computer:school:')],
