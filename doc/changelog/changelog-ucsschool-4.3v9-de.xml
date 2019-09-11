@@ -77,7 +77,21 @@ feedback@univention.de
 						This is a pure maintenance release combining the previous release and its errata updates.
 					</para>
 				</section>
+				<section id="changelog:ucsschool:2019-09-11" lang="en">
+					<title>Released on 2019-09-11:</title>
+					<!-- START ucs-school-umc-computerroom 10.0.2-6A~4.3.0.201909091128 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>10.0.2-6A~4.3.0.201909091128</emphasis>:
+						<itemizedlist>
+							<listitem><para>The execution of arbitrary code from "at" jobs inside the UMC computerroom module is now prevented (<u:bug>50083</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 10.0.2-6A~4.3.0.201909091128 -->
+<!-- CHANGELOG:2019-09-11:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 		</section>
 	</chapter>
 </book>
