@@ -6,5 +6,5 @@ src: ucs-school-lib
 fix: 12.1.7A~4.4.0.201909041215
 desc: |
  * Internal improvement: added common function to execute external programs (Bug #50087).
- * Internal improvement: Fix lookup in SchoolComputer model (Bug #49311).
+ * Internal improvement: fix lookup in <literal>SchoolComputer</literal> model (Bug #49311).
 bug: [50087, 49311]
