@@ -226,7 +226,41 @@ feedback@univention.de
 					<!-- END ucs-school-lib 12.1.5A~4.4.0.201908271804 -->
 <!-- CHANGELOG:2019-08-29:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-09-11" lang="en">
+					<title>Released on 2019-09-11:</title>
+					<!-- START ucs-school-import 17.0.13A~4.4.0.201909100937 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.13A~4.4.0.201909100937</emphasis>:
+						<itemizedlist>
+							<listitem><para>A script (<command>/usr/share/ucs-school-import/scripts/fix_ucsschool_slaves</command>) has been added that automatically fixes broken domaincontroller slave object. This script is started automatically by the join script of the package <package>ucs-school-import</package>. To prevent the automatic correction, set the UCR variable <envar>ucsschool/update/skip-slave-object-correction=true</envar> before updating. All checks and changes are recorded in the log file <filename>/var/log/univention/ucsschool-fix-slave-objects.log</filename>(<u:bug>50116</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.13A~4.4.0.201909100937 -->
+					<!-- START ucs-school-lib 12.1.7A~4.4.0.201909041215 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.7A~4.4.0.201909041215</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: added common function to execute external programs (<u:bug>50087</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: fix lookup in <literal>SchoolComputer</literal> model (<u:bug>49311</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.7A~4.4.0.201909041215 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-4A~4.4.0.201908081356 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-4A~4.4.0.201908081356</emphasis>:
+						<itemizedlist>
+							<listitem><para>The execution of arbitrary code from "at" jobs inside the UMC computerroom module is now prevented (<u:bug>40367</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-4A~4.4.0.201908081356 -->
+<!-- CHANGELOG:2019-09-11:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
