@@ -163,7 +163,7 @@ define([
 
 		load: function(id) {
 			// this._form.getWidget('name').setValid(null);
-			this.standbyDuring(this._form.load(id));
+			return this.standbyDuring(this._form.load(id));
 		},
 
 		onClose: function(dn, objectType) {

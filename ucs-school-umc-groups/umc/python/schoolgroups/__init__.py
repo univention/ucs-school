@@ -111,12 +111,14 @@ class Instance(SchoolBaseModule):
 		except udm_exceptions.noObject:
 			raise UMC_Error('unknown object')
 
-		school = group.school
 		result = group.to_dict()
 
 		if request.flavor == 'teacher':
-			classes = SchoolClass.get_all(ldap_user_read, school, filter_str=filter_format('uniqueMember=%s', (group_dn,)))
-			result['classes'] = [{'id': class_.dn, 'label': class_.get_relative_name()} for class_ in classes]
+			schools = group.schools
+			classes = []
+			for school in schools:
+				classes += SchoolClass.get_all(ldap_user_read, school, filter_str=filter_format('uniqueMember=%s', (group_dn,)))
+			result['classes'] = [{'id': class_.dn, 'label': class_.get_relative_name(), 'school': class_.school} for class_ in classes]
 			self.finished(request.id, [result])
 			return
 		result['members'] = self._filter_members(request, group, result.pop('users', []), ldap_user_read)
@@ -276,7 +278,6 @@ class Instance(SchoolBaseModule):
 	@sanitize(**{
 		'$dn$': StringSanitizer(required=True),
 		'classes': ListSanitizer(StringSanitizer(required=True), required=True),
-		'school': SchoolSanitizer(required=True),
 	})
 	@LDAP_Connection(USER_READ, MACHINE_WRITE)
 	def add_teacher_to_classes(self, request, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
@@ -289,25 +290,31 @@ class Instance(SchoolBaseModule):
 		except udm_exceptions.noObject:
 			raise UMC_Error('The user is not a teacher.')
 
-		original_classes = set([x.dn for x in SchoolClass.get_all(ldap_machine_write, request.options['school'], filter_format('uniqueMember=%s', (teacher.dn,)))])
+		original_classes = set()
+		for school in teacher.schools:
+			original_classes.update(x.dn for x in SchoolClass.get_all(ldap_user_read, school, filter_format('uniqueMember=%s', (teacher.dn,))))
 		classes_to_remove = original_classes - classes
 		classes_to_add = classes - original_classes
 
 		failed = []
 		for classdn in (classes_to_add | classes_to_remove):
 			try:
-				class_ = SchoolClass.from_dn(classdn, teacher.school, ldap_machine_write)
-			except udm_exceptions.noObject:
+				class_ = SchoolClass.from_dn(classdn, None, ldap_user_read)
+			except udm_exceptions.noObject as exc:
 				failed.append(classdn)
+				MODULE.error('Could not load class %s: %s' % (classdn, exc))
 				continue
 
 			if classdn in classes_to_add and teacher.dn not in class_.users:
+				MODULE.info('Adding teacher %s to class %s' % (teacher.dn, classdn))
 				class_.users.append(teacher.dn)
 			elif classdn in classes_to_remove and teacher.dn in class_.users:
+				MODULE.info('Removing teacher %s from class %s' % (teacher.dn, classdn))
 				class_.users.remove(teacher.dn)
 			try:
 				if not class_.modify(ldap_machine_write):
 					failed.append(classdn)
+					MODULE.error('Could not add teacher %s to class %s (udm modify failed)' % (teacher.dn, classdn))
 			except udm_exceptions.base as exc:
 				MODULE.error('Could not add teacher %s to class %s: %s' % (teacher.dn, classdn, exc))
 				failed.append(classdn)

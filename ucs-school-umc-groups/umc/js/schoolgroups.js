@@ -167,6 +167,7 @@ define([
 
 		_editObject: function(ids, items) {
 			var detailPage = this.createDetailPage();
+			detailPage.set('school', this._searchForm.getWidget('school').get('value'));
 			detailPage.disableFields(true);
 			this.selectChild(detailPage);
 			detailPage.load(ids[0]);
@@ -210,7 +211,9 @@ define([
 				formatter: lang.hitch(this, function(values, id, all_values) {
 					var classes = [];
 					tools.forIn(values, function(school, school_classes) {
-						classes = classes.concat(array.map(school_classes, function(value) { return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1); }));
+						classes = classes.concat(array.map(school_classes, function(value) {
+							return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1) + ' (' + school + ')';
+						}));
 					});
 					return classes.join(', ');
 				})
