@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-5) unstable; urgency=medium
+
+  * Bug #40367: Add safety dialog when closing computer room in exam mode
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 12 Sep 2019 09:08:43 +0200
+
 ucs-school-umc-computerroom (11.0.0-4) unstable; urgency=medium
 
   * Bug #40367: Improve room reset
