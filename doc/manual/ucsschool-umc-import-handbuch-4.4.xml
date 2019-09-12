@@ -268,7 +268,7 @@
 --conffile '/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json' \
 --infile 'test_users_2018-07-04_12:31:46.csv'
 			</programlisting>
-			'ROLE' muss mit <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> oder <literal>teacher_and_staff</literal> ersetzt werden, und <literal>SchuleEins</literal> mit der entsprechenden <replaceable>OU</replaceable> (in <literal>'schuleeins-ROLE'</literal> in Kleinbuchstaben).
+			<envar>ROLE</envar> muss mit <literal>student</literal>, <literal>staff</literal>, <literal>teacher</literal> oder <literal>teacher_and_staff</literal> ersetzt werden, und <literal>SchuleEins</literal> mit der entsprechenden <replaceable>OU</replaceable> (in <literal>'schuleeins-ROLE'</literal> in Kleinbuchstaben).
 		</para>
 	</chapter>
 </book>

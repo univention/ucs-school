@@ -32,12 +32,12 @@
 
   <para>
     In beiden Varianten wird standardmäßig bei der Erstinstallation von &ucsUAS; auf dem &ucsMaster; eine Demonstrationsschule inklusive Testnutzern und
-    einem Portal konfiguriert. Die Schule trägt den Namen <emphasis>DEMOSCHOOL</emphasis> und kann für eigene Tests verwendet werden.
+    einem Portal konfiguriert. Die Schule trägt den Namen <wordasword>DEMOSCHOOL</wordasword> und kann für eigene Tests verwendet werden.
 	Das Passwort für die automatisch angelegten Nutzer <systemitem class="username">demo_student</systemitem>,
     <systemitem class="username">demo_teacher</systemitem> und <systemitem class="username">demo_admin</systemitem> befindet sich in der Datei
     <filename>/etc/ucsschool/demoschool.secret</filename>. Um das Anlegen der Demonstrationsschule zu verhindern,
 	muss die UCR-Variable <envar>ucsschool/join/create_demo</envar> auf den Wert <literal>no</literal> gesetzt werden,
-    bevor der &ucsUAS;-Konfigurations-Assistent durchlaufen wird. Das Setzen der UCR-Variable ist entweder über das UMC-Modul
+    bevor der &ucsUAS;-Konfigurationsassistent durchlaufen wird. Das Setzen der UCR-Variable ist entweder über das UMC-Modul
 	<guimenu>Univention Configuration Registry</guimenu> oder auf der Kommandozeile mit dem Befehl
 	<command>ucr set ucsschool/join/create_demo=no</command> möglich.
   </para>
@@ -54,7 +54,7 @@
 		  Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsMaster; im LDAP-Verzeichnis hinterlegt und automatisch
 		  während des Join-Vorgangs bzw. während der Ausführung von Joinskripten ausgeführt. Der &ucsUAS;-Join-Hook installiert
 		  auf allen Systemen der Domäne automatisch die &ucsUAS;-App aus dem Univention App Center und installiert die auf dem
-		  jeweiligen System benötigten &ucsUAS;-Pakete, sofern diese fehlen. Für die Erstinstalation der Pakete wird der Join-Hook
+		  jeweiligen System benötigten &ucsUAS;-Pakete, sofern diese fehlen. Für die Erstinstallation der Pakete wird der Join-Hook
 		  je nach Rolle des Systems und dessen Systemperformance mehrere Minuten benötigen. Der Join-Vorgang darf dabei nicht abgebrochen werden.
 	  </para>
   </caution>
@@ -138,7 +138,7 @@
 	<section id="school:installation:master2">
 		<title>Installation einer Multi-Server-Umgebung</title>
 		<para>
-			Das Konzept der Multi-Server-Umgebung von &ucsUAS; sieht zentrale Server für Clouddienste wie Portal, Mail, Kalender,
+			Das Konzept der Multi-Server-Umgebung von &ucsUAS; sieht zentrale Server für Cloud-Dienste wie Portal, Mail, Kalender,
 			Dateiablage usw. kombiniert mit lokalen Schulservern für Anmeldedienste, IT-Infrastruktur und pädagogischen Funktionen
 			vor. Eine Übersicht an möglichen Szenarien wird im Dokument <biblioref linkend="ucs-school-scenario"/> dargestellt.
 			Der Installationsprozess für die unterschiedlichen Rechnerrollen in der &ucsUAS;-Domäne wird in den nachfolgenden
@@ -245,7 +245,7 @@
 	 			Soll ein Schulserver installiert werden, muss zunächst für diesen Schulserver eine Schule angelegt werden. Das
 				Anlegen von Schulen wird im <xref linkend="school:setup:umc:schools:create"/> ausführlich beschrieben.
 				Dieser Schritt muss zwingend <emphasis>vor</emphasis> der Installation des Schulservers bzw. seinem Domänenbeitritt
-				erfolgen, da dieser sonst als normales UCS-System ohne spezielle UCS@school-Funktionalitäten eingerichtet wird.
+				erfolgen, da dieser sonst als normales UCS-System ohne spezielle &ucsUAS;-Funktionalitäten eingerichtet wird.
 			</para>
 			<para>
 				Nach dem Anlegen der Schule muss ein UCS-System mit der Systemrolle <emphasis>&ucsSlave;</emphasis> installiert werden.

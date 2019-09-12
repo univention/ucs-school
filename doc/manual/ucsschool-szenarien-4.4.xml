@@ -2372,7 +2372,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
 			</para>
 			<para>
 				Die Dokumentation des alten Nutzerimports, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach
-				<ulink url="https://docs.software-univention.de/ucsschool-import-legacy.html">&ucsUAS; Legacy Import</ulink>
+				<ulink url="https://docs.software-univention.de/ucsschool-import-legacy.html">&ucsUAS; <wordasword>Legacy Import</wordasword></ulink>
 				ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird.
 			</para>
 		</section>

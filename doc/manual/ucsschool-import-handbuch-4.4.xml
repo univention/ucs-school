@@ -1585,7 +1585,7 @@ class MyHook(UserPyHook):
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							Da die Klassenvariable <code>supports_dry_run = True</code> gesetzt ist, wird der Hook auch während eines <option>dry-run</option> ausgeführt.
+							Da die Klassenvariable <code lang="">supports_dry_run = True</code> gesetzt ist, wird der Hook auch während eines <option>dry-run</option> ausgeführt.
 						</simpara>
 					</listitem>
 					<listitem>

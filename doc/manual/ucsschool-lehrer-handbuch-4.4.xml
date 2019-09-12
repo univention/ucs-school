@@ -459,7 +459,7 @@ feedback@univention.de
 			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/exam_3_overview.png"/>
 		</figure>
 		<para>
-			Beim Öffnen des &ucsUMC;-Moduls <guimenu>Klassenarbeiten</guimenu> zeigt sich zuerst eine Übersichtsseite, die alle Informationen über gerade laufende Klassenarbeiten anzeigt.
+			Beim Öffnen des Moduls <guimenu>Klassenarbeiten</guimenu> in der &ucsUMC;, zeigt sich zuerst eine Übersichtsseite, die alle Informationen über gerade laufende Klassenarbeiten anzeigt.
 			Dabei kann man Auswählen, ob man nur die eigenen Klassenarbeiten angezeigt bekommen möchte oder auch die aller Kolleginnen und Kollegen.
 		</para>
 		</section>
@@ -676,7 +676,7 @@ feedback@univention.de
 		<para>
 		  Das Modul <guimenu>Klassenlisten</guimenu> ermöglicht es, Klassen- und Arbeitsgruppenlisten
 		  zu exportieren. Die Listen werden im CSV-Format ausgegeben. Die Datei ist UTF-8-kodiert und
-		  nutzt Kommata als Feldtrenner (",").
+		  nutzt Kommata als Trennzeichen (",").
 		</para>
 		<para>
 		  <figure id="lists_export_0">

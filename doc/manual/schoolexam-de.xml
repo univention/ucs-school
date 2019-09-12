@@ -166,7 +166,7 @@
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/backup/compress</envar>
-						definiert, ob das Backup der Examdaten eines Schülers komprimiert werden soll. Standardmäßig aktiviert.
+						definiert, ob das Backup der Daten eines Schülers während einer Klassenarbeit komprimiert werden soll. Standardmäßig aktiviert.
 					</simpara>
 				</listitem>
 				<listitem>

@@ -35,7 +35,7 @@
 	</para>
 	<para>
 		Die Dokumentation des alten Nutzerimports, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach
-		<ulink url="https://docs.software-univention.de/ucsschool-import-legacy-4.4.html">&ucsUAS; Legacy Import</ulink>
+		<ulink url="https://docs.software-univention.de/ucsschool-import-legacy-4.4.html">&ucsUAS; <wordasword>Legacy Import</wordasword></ulink>
 		ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird.
 	</para>
   </section>
