@@ -176,8 +176,12 @@
 					</simpara>
 				</listitem>
 			</itemizedlist>
-			Wenn diese Funktionalität aktiviert wird, sollte dabei dringend der Bedarf an Speicherplatz berücksichtigt werden, der hier anfällt. Sollte beispielsweise eine Klasse von 25 Schülern eine 45 Minuten andauernde Arbeit schreiben und es werden dabei alle 5 Minuten ungefähr 10MB pro Schüler gesichert, so fallen dabei ungefähr 2.2 GB an Daten an.
 		</para>
+		<note>
+			<simpara>
+				Wenn diese Funktionalität aktiviert wird, sollte dabei dringend der Bedarf an Speicherplatz berücksichtigt werden, der hier anfällt. Sollte beispielsweise eine Klasse von 25 Schülern eine 45 Minuten dauernde Klassenarbeit schreiben und es werden dabei alle 5 Minuten ungefähr 10MB pro Schülerin oder Schüler gesichert, so fallen dabei ungefähr 2.2 GB an Daten an.
+			</simpara>
+		</note>
 	</section>
 
 	<section id="school:exam:gpo">
