@@ -1,4 +1,4 @@
-ucs-test-ucsschool (6.0.36) unstable; urgency=low
+ucs-test-ucsschool (6.0.49) unstable; urgency=low
 
   * Bug #49907: Add selenium test to test ending of exams in computerroom module
 
