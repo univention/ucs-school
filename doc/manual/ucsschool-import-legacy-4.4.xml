@@ -102,7 +102,7 @@
 		  </tgroup>
 		</table>
 		<para>
-		  Ein Beispiel für eine Importdatei (<ulink url="user_legacy_example.csv">hier zum Download</ulink>, UTF-16, tab-getrennt):
+		  Ein Beispiel für eine Importdatei (<ulink url="user_legacy_example.csv">hier zum Download</ulink>, UTF-16, <wordasword>tab-getrennt</wordasword>):
 		</para>
 		<programlisting>
 A  max   Meyer  Max     g123m  g123m-1A           max@schule.edu   0 1 0
