@@ -2,3 +2,4 @@
 **/.eggs
 **/*.ipynb*
 **/*.egg-info
+.idea
