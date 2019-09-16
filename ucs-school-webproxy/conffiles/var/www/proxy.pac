@@ -1,3 +1,5 @@
+@%@UCRWARNING=// @%@
+
 function FindProxyForURL(url, host) {
 @!@
 import json
