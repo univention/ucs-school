@@ -239,7 +239,7 @@ class Instance(SchoolBaseModule):
 			project.update(new_values)
 		else:
 			if project:
-				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % new_values['directory'])
+				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % new_values['name'])
 			project = util.distribution.Project(new_values)
 		project.validate()
 		project.save()
