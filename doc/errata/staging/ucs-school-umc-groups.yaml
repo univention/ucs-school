@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-groups
-fix: 
+fix: 9.0.0-1A~4.4.0.201909171127
 desc: |
  * Fixed class assignment for school admins, which were not able to add teachers to classes in some multi school scenarios.  (Bug #50008).
 bug: [50008]
