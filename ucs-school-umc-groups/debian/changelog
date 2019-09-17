@@ -1,3 +1,9 @@
+ucs-school-umc-groups (9.0.0-1) unstable; urgency=medium
+
+  * Bug #50008: Fix class assignment for multi school environments
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 16 Sep 2019 22:10:19 +0200
+
 ucs-school-umc-groups (9.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4
