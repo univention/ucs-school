@@ -1,6 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/py.test
 # -*- coding: utf-8 -*-
 ## desc: Check the teacher assignment umc module
+## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## tags: [apptest, ucsschool]
 ## bugs: [50008]
