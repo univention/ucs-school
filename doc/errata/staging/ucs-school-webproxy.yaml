@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-webproxy
+fix: 15.0.0-1A~4.4.0.201909161358
+desc: |
+ * Added ucr header warnings to configuration files which are manged through ucr (Bug #50197).
+bug: [50197]
