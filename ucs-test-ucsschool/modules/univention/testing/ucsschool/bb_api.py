@@ -315,7 +315,7 @@ class HttpApiUserTestBase(TestCase):
 						k, source, getattr(import_user, k), v, dn))
 
 	def make_user_attrs(self, ous, partial=False, **kwargs):
-		# type: (List[Text], Optional[bool], Optional[Dict[Text, Any]]) -> Dict[Text, Any]
+		# type: (List[Text], Optional[bool], **Any) -> Dict[Text, Any]
 		roles = kwargs.pop('roles', None) or random.choice((
 			('staff',),
 			('staff', 'teacher'),
@@ -323,7 +323,7 @@ class HttpApiUserTestBase(TestCase):
 			('teacher',),
 		))
 		res = {
-			'name': uts.random_username(),
+			'name': 'test{}'.format(uts.random_username()),
 			'birthday': "19{}-0{}-{}{}".format(
 				2 * uts.random_int(),
 				uts.random_int(1, 9),

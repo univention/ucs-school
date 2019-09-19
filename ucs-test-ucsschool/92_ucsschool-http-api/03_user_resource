@@ -269,5 +269,381 @@ class Test(HttpApiUserTestBase):
 		self.logger.info('*** OK: LDAP <-> resource')
 
 
+	def test_07_move_teacher_one_school_only(self):
+		self.logger.info('*** Going to move teacher from OU %r to %r ***', self.itb.ou_A.name, self.itb.ou_B.name)
+		self.logger.info('*** Using OUs %r and %r.', self.itb.ou_A.name, self.itb.ou_B.name)
+		create_attrs = self.make_user_attrs([self.itb.ou_A.name], partial=False, roles=('teacher',))
+		self.logger.info('*** create_attrs=%r', create_attrs)
+		self.assertEqual(create_attrs['school'].strip('/').split('/')[-1], self.itb.ou_A.name)
+		self.assertEqual(create_attrs['schools'], [create_attrs['school']])
+		self.assertEqual(create_attrs['school_classes'].keys(), [self.itb.ou_A.name])
+		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
+
+		create_result = create_remote_static((self.auth_headers, create_attrs))
+		self.logger.debug('*** create_result=%r', create_result)
+		self.assertEqual(create_result['name'], create_attrs['name'])
+		self.assertEqual(create_result['school'].strip('/').split('/')[-1], self.itb.ou_A.name)
+		self.assertEqual(create_result['schools'], [create_result['school']])
+		self.assertEqual(create_result['school_classes'], create_attrs['school_classes'])
+
+		user_old = self.get_import_user(create_result['dn'])
+		self.logger.debug('*** user_old.school_classes=%r', user_old.school_classes)
+		user_old_udm = user_old.get_udm_object(self.lo)
+		old_groups = user_old_udm['groups']
+		self.logger.info('*** old_groups=%r', old_groups)
+		for grp in old_groups:
+			self.assertIn(self.itb.ou_A.name, grp)
+			self.assertNotIn(self.itb.ou_B.name, grp)
+
+		modify_attrs = {
+			'school': create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name),
+			'schools': [create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name)],
+			'school_classes': {self.itb.ou_B.name: sorted([uts.random_username(4), uts.random_username(4)])},
+		}
+		self.logger.info('*** modify_attrs=%r', modify_attrs)
+
+		resource_new = partial_update_remote_static((self.auth_headers, create_result['name'], modify_attrs))
+		self.logger.info('*** API call (modify) returned: %r', resource_new)
+		self.assertEqual(create_result['name'], resource_new['name'])
+		self.assertEqual(modify_attrs['school_classes'], resource_new['school_classes'])
+
+		user = self.get_import_user(resource_new['dn'])
+		self.logger.debug('*** user.school_classes=%r', user.school_classes)
+		self.assertEqual(create_result['name'], user.name)
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		self.assertEqual(resource_new["url"], url)
+
+		resource_new2 = api_call('get', url, headers=self.auth_headers)
+		self.assertDictEqual(resource_new, resource_new2)
+
+		self.compare_import_user_and_resource(user, resource_new)
+		self.logger.info('*** OK: LDAP <-> resource')
+
+		user_new_udm = user.get_udm_object(self.lo)
+		new_groups = user_new_udm['groups']
+		self.logger.info('*** new_groups=%r', new_groups)
+		for grp in new_groups:
+			self.assertIn(self.itb.ou_B.name, grp)
+			self.assertNotIn(self.itb.ou_A.name, grp)
+
+	def test_08_move_teacher_remove_primary(self):
+		self.logger.info('*** Going to create teacher in OUs %r and %r, then remove it from primary (%r). ***', self.itb.ou_A.name, self.itb.ou_B.name, self.itb.ou_A.name)
+		self.logger.info('*** Using OUs %r and %r.', self.itb.ou_A.name, self.itb.ou_B.name)
+		create_attrs = self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name], partial=False, roles=('teacher',))
+		self.logger.info('*** create_attrs=%r', create_attrs)
+		self.assertEqual(create_attrs['school'].strip('/').split('/')[-1], self.itb.ou_A.name)
+		self.assertEqual(
+			[
+				create_attrs['schools'][0].strip('/').split('/')[-1],
+				create_attrs['schools'][1].strip('/').split('/')[-1]
+			],
+			[self.itb.ou_A.name, self.itb.ou_B.name]
+		)
+		self.assertEqual(create_attrs['school_classes'].keys(), [self.itb.ou_A.name, self.itb.ou_B.name])
+		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
+
+		create_result = create_remote_static((self.auth_headers, create_attrs))
+		self.logger.debug('*** create_result=%r', create_result)
+		self.assertEqual(create_result['name'], create_attrs['name'])
+		self.assertEqual(create_result['school'], create_attrs['school'])
+		self.assertEqual(create_result['schools'], create_attrs['schools'])
+		self.assertEqual(create_result['school_classes'], create_attrs['school_classes'])
+
+		user_old = self.get_import_user(create_result['dn'])
+		self.logger.debug('*** user_old.school_classes=%r', user_old.school_classes)
+		user_old_udm = user_old.get_udm_object(self.lo)
+		old_groups = user_old_udm['groups']
+		self.logger.info('*** old_groups=%r', old_groups)
+		for grp_name in (
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+		):
+			assert any(dn.startswith(grp_name) for dn in old_groups)
+
+		create_attrs_school_classes = dict(
+			(ou, ["{}-{}".format(ou, k) for k in kls])
+			for ou, kls in create_attrs['school_classes'].items()
+		)
+		self.logger.info('*** user_old.school_classes    =%r', user_old.school_classes)
+		self.logger.info('*** create_attrs_school_classes=%r', create_attrs_school_classes)
+		self.assertDictEqual(user_old.school_classes, create_attrs_school_classes)
+
+		modify_attrs = {
+			'school': create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name),
+			'schools': [create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name)],
+			'school_classes': {self.itb.ou_B.name: sorted([uts.random_username(4), uts.random_username(4)])},
+		}
+		self.logger.info('*** modify_attrs=%r', modify_attrs)
+
+		resource_new = partial_update_remote_static((self.auth_headers, create_result['name'], modify_attrs))
+		self.logger.info('*** API call (modify) returned: %r', resource_new)
+		self.assertEqual(create_result['name'], resource_new['name'])
+		self.assertEqual(modify_attrs['school_classes'], resource_new['school_classes'])
+
+		self.logger.debug('*** zzz...')
+		time.sleep(10)
+
+		user = self.get_import_user(resource_new['dn'])
+		self.logger.debug('*** user.school_classes=%r', user.school_classes)
+		self.assertEqual(create_result['name'], user.name)
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		self.assertEqual(resource_new["url"], url)
+
+		resource_new2 = api_call('get', url, headers=self.auth_headers)
+		self.assertDictEqual(resource_new, resource_new2)
+
+		self.compare_import_user_and_resource(user, resource_new)
+		self.logger.info('*** OK: LDAP <-> resource')
+
+		user_new_udm = user.get_udm_object(self.lo)
+		new_groups = user_new_udm['groups']
+		self.logger.info('*** new_groups=%r', new_groups)
+		for grp in new_groups:
+			self.assertIn(self.itb.ou_B.name, grp)
+			self.assertNotIn(self.itb.ou_A.name, grp)
+
+	def test_09_move_teacher_remove_primary_with_classes(self):
+		self.logger.info('*** Going to create teacher in OUs %r and %r, then remove it from primary (%r). ***', self.itb.ou_A.name, self.itb.ou_B.name, self.itb.ou_A.name)
+		self.logger.info('*** Using OUs %r and %r.', self.itb.ou_A.name, self.itb.ou_B.name)
+		create_attrs = self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name], partial=False, roles=('teacher',))
+		self.logger.info('*** create_attrs=%r', create_attrs)
+		self.assertEqual(create_attrs['school'].strip('/').split('/')[-1], self.itb.ou_A.name)
+		self.assertEqual(
+			[
+				create_attrs['schools'][0].strip('/').split('/')[-1],
+				create_attrs['schools'][1].strip('/').split('/')[-1]
+			],
+			[self.itb.ou_A.name, self.itb.ou_B.name]
+		)
+		self.assertEqual(create_attrs['school_classes'].keys(), [self.itb.ou_A.name, self.itb.ou_B.name])
+		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
+
+		create_result = create_remote_static((self.auth_headers, create_attrs))
+		self.logger.debug('*** create_result=%r', create_result)
+		self.assertEqual(create_result['name'], create_attrs['name'])
+		self.assertEqual(create_result['school'], create_attrs['school'])
+		self.assertEqual(create_result['schools'], create_attrs['schools'])
+		self.assertEqual(create_result['school_classes'], create_attrs['school_classes'])
+
+		user_old = self.get_import_user(create_result['dn'])
+		self.logger.debug('*** user_old.school_classes=%r', user_old.school_classes)
+		user_old_udm = user_old.get_udm_object(self.lo)
+		old_groups = user_old_udm['groups']
+		self.logger.info('*** old_groups=%r', old_groups)
+		for grp_name in (
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+		):
+			assert any(dn.startswith(grp_name) for dn in old_groups)
+
+		create_attrs_school_classes = dict(
+			(ou, ["{}-{}".format(ou, k) for k in kls])
+			for ou, kls in create_attrs['school_classes'].items()
+		)
+		self.logger.info('*** user_old.school_classes    =%r', user_old.school_classes)
+		self.logger.info('*** create_attrs_school_classes=%r', create_attrs_school_classes)
+		self.assertDictEqual(user_old.school_classes, create_attrs_school_classes)
+
+		modify_attrs = {
+			'school': create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name),
+			'schools': [create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name)],
+		}
+		self.logger.info('*** modify_attrs=%r', modify_attrs)
+		self.logger.debug('*** zzz...')
+		time.sleep(5)
+
+		resource_new = partial_update_remote_static((self.auth_headers, create_result['name'], modify_attrs))
+		self.logger.info('*** API call (modify) returned: %r', resource_new)
+		self.assertEqual(create_result['name'], resource_new['name'])
+		self.assertEqual(resource_new['school_classes'], {self.itb.ou_B.name: create_attrs['school_classes'][self.itb.ou_B.name]})
+		self.logger.debug('*** zzz...')
+		time.sleep(5)
+
+		user = self.get_import_user(resource_new['dn'])
+		self.logger.debug('*** user.school_classes=%r', user.school_classes)
+		self.assertEqual(user.school_classes, {self.itb.ou_B.name: ["{}-{}".format(self.itb.ou_B.name, k) for k in create_attrs['school_classes'][self.itb.ou_B.name]]})
+		self.assertEqual(create_result['name'], user.name)
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		self.assertEqual(resource_new["url"], url)
+
+		resource_new2 = api_call('get', url, headers=self.auth_headers)
+		self.assertDictEqual(resource_new, resource_new2)
+
+		self.compare_import_user_and_resource(user, resource_new)
+		self.logger.info('*** OK: LDAP <-> resource')
+
+		user_new_udm = user.get_udm_object(self.lo)
+		new_groups = user_new_udm['groups']
+		self.logger.info('*** new_groups=%r', new_groups)
+		for grp in new_groups:
+			self.assertIn(self.itb.ou_B.name, grp)
+			self.assertNotIn(self.itb.ou_A.name, grp)
+
+	def test_10_move_teacher_remove_primary_no_classes_in_new_school(self):
+		self.logger.info('*** Going to create teacher in OUs %r and %r, then remove it from primary (%r). ***', self.itb.ou_A.name, self.itb.ou_B.name, self.itb.ou_A.name)
+		self.logger.info('*** Using OUs %r and %r.', self.itb.ou_A.name, self.itb.ou_B.name)
+		create_attrs = self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name], partial=False, roles=('teacher',))
+		del create_attrs['school_classes'][self.itb.ou_B.name]
+		self.logger.info('*** create_attrs=%r', create_attrs)
+		self.assertEqual(create_attrs['school'].strip('/').split('/')[-1], self.itb.ou_A.name)
+		self.assertEqual(
+			[
+				create_attrs['schools'][0].strip('/').split('/')[-1],
+				create_attrs['schools'][1].strip('/').split('/')[-1]
+			],
+			[self.itb.ou_A.name, self.itb.ou_B.name]
+		)
+		self.assertEqual(create_attrs['school_classes'].keys(), [self.itb.ou_A.name])
+		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
+
+		create_result = create_remote_static((self.auth_headers, create_attrs))
+		self.logger.debug('*** create_result=%r', create_result)
+		self.assertEqual(create_result['name'], create_attrs['name'])
+		self.assertEqual(create_result['school'], create_attrs['school'])
+		self.assertEqual(create_result['schools'], create_attrs['schools'])
+		self.assertEqual(create_result['school_classes'], create_attrs['school_classes'])
+
+		user_old = self.get_import_user(create_result['dn'])
+		self.logger.debug('*** user_old.school_classes=%r', user_old.school_classes)
+		user_old_udm = user_old.get_udm_object(self.lo)
+		old_groups = user_old_udm['groups']
+		self.logger.info('*** old_groups=%r', old_groups)
+		for grp_name in (
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+		):
+			assert any(dn.startswith(grp_name) for dn in old_groups)
+
+		create_attrs_school_classes = dict(
+			(ou, ["{}-{}".format(ou, k) for k in kls])
+			for ou, kls in create_attrs['school_classes'].items()
+		)
+		self.logger.info('*** user_old.school_classes    =%r', user_old.school_classes)
+		self.logger.info('*** create_attrs_school_classes=%r', create_attrs_school_classes)
+		self.assertDictEqual(user_old.school_classes, create_attrs_school_classes)
+
+		modify_attrs = {
+			'school': create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name),
+			'schools': [create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name)],
+		}
+		self.logger.info('*** modify_attrs=%r', modify_attrs)
+		self.logger.debug('*** zzz...')
+		time.sleep(5)
+
+		resource_new = partial_update_remote_static((self.auth_headers, create_result['name'], modify_attrs))
+		self.logger.info('*** API call (modify) returned: %r', resource_new)
+		self.assertEqual(create_result['name'], resource_new['name'])
+		self.assertEqual(resource_new['school_classes'], {})
+		self.logger.debug('*** zzz...')
+		time.sleep(5)
+
+		user = self.get_import_user(resource_new['dn'])
+		self.logger.debug('*** user.school_classes=%r', user.school_classes)
+		self.assertEqual(user.school_classes, {})
+		self.assertEqual(create_result['name'], user.name)
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		self.assertEqual(resource_new["url"], url)
+
+		resource_new2 = api_call('get', url, headers=self.auth_headers)
+		self.assertDictEqual(resource_new, resource_new2)
+
+		self.compare_import_user_and_resource(user, resource_new)
+		self.logger.info('*** OK: LDAP <-> resource')
+
+		user_new_udm = user.get_udm_object(self.lo)
+		new_groups = user_new_udm['groups']
+		self.logger.info('*** new_groups=%r', new_groups)
+		for grp in new_groups:
+			self.assertIn(self.itb.ou_B.name, grp)
+			self.assertNotIn(self.itb.ou_A.name, grp)
+
+	def test_11_move_teacher_remove_primary_with_classes_and_rename(self):
+		self.logger.info('*** Going to create teacher in OUs %r and %r, then remove it from primary (%r) and rename it. ***', self.itb.ou_A.name, self.itb.ou_B.name, self.itb.ou_A.name)
+		self.logger.info('*** Using OUs %r and %r.', self.itb.ou_A.name, self.itb.ou_B.name)
+		create_attrs = self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name], partial=False, roles=('teacher',))
+		self.logger.info('*** create_attrs=%r', create_attrs)
+		self.assertEqual(create_attrs['school'].strip('/').split('/')[-1], self.itb.ou_A.name)
+		self.assertEqual(
+			[
+				create_attrs['schools'][0].strip('/').split('/')[-1],
+				create_attrs['schools'][1].strip('/').split('/')[-1]
+			],
+			[self.itb.ou_A.name, self.itb.ou_B.name]
+		)
+		self.assertEqual(create_attrs['school_classes'].keys(), [self.itb.ou_A.name, self.itb.ou_B.name])
+		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
+
+		create_result = create_remote_static((self.auth_headers, create_attrs))
+		self.logger.debug('*** create_result=%r', create_result)
+		self.assertEqual(create_result['name'], create_attrs['name'])
+		self.assertEqual(create_result['school'], create_attrs['school'])
+		self.assertEqual(create_result['schools'], create_attrs['schools'])
+		self.assertEqual(create_result['school_classes'], create_attrs['school_classes'])
+
+		user_old = self.get_import_user(create_result['dn'])
+		self.logger.debug('*** user_old.school_classes=%r', user_old.school_classes)
+		user_old_udm = user_old.get_udm_object(self.lo)
+		old_groups = user_old_udm['groups']
+		self.logger.info('*** old_groups=%r', old_groups)
+		for grp_name in (
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=lehrer-{0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_A.name),
+				'cn=Domain Users {0},cn=groups,ou={0},'.format(self.itb.ou_B.name),
+		):
+			assert any(dn.startswith(grp_name) for dn in old_groups)
+
+		create_attrs_school_classes = dict(
+			(ou, ["{}-{}".format(ou, k) for k in kls])
+			for ou, kls in create_attrs['school_classes'].items()
+		)
+		self.logger.info('*** user_old.school_classes    =%r', user_old.school_classes)
+		self.logger.info('*** create_attrs_school_classes=%r', create_attrs_school_classes)
+		self.assertDictEqual(user_old.school_classes, create_attrs_school_classes)
+
+		modify_attrs = {
+			'name': uts.random_username(),
+			'school': create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name),
+			'schools': [create_result['school'].replace(self.itb.ou_A.name, self.itb.ou_B.name)],
+		}
+		self.assertNotEqual(user_old.name, modify_attrs['name'])
+		self.logger.info('*** modify_attrs=%r', modify_attrs)
+		self.logger.debug('*** zzz...')
+		time.sleep(5)
+
+		resource_new = partial_update_remote_static((self.auth_headers, create_result['name'], modify_attrs))
+		self.logger.info('*** API call (modify) returned: %r', resource_new)
+		self.assertEqual(modify_attrs['name'], resource_new['name'])
+		self.assertEqual(resource_new['school_classes'], {self.itb.ou_B.name: create_attrs['school_classes'][self.itb.ou_B.name]})
+		self.logger.debug('*** zzz...')
+		time.sleep(5)
+
+		user = self.get_import_user(resource_new['dn'])
+		self.logger.debug('*** user.school_classes=%r', user.school_classes)
+		self.assertEqual(user.school_classes, {self.itb.ou_B.name: ["{}-{}".format(self.itb.ou_B.name, k) for k in create_attrs['school_classes'][self.itb.ou_B.name]]})
+		self.assertEqual(modify_attrs['name'], user.name)
+		url = urljoin(RESSOURCE_URLS['users'], modify_attrs['name'] + "/")
+		self.assertEqual(resource_new["url"], url)
+
+		resource_new2 = api_call('get', url, headers=self.auth_headers)
+		self.assertDictEqual(resource_new, resource_new2)
+
+		self.compare_import_user_and_resource(user, resource_new)
+		self.logger.info('*** OK: LDAP <-> resource')
+
+		user_new_udm = user.get_udm_object(self.lo)
+		new_groups = user_new_udm['groups']
+		self.logger.info('*** new_groups=%r', new_groups)
+		for grp in new_groups:
+			self.assertIn(self.itb.ou_B.name, grp)
+			self.assertNotIn(self.itb.ou_A.name, grp)
+
+
 if __name__ == '__main__':
 	main(verbosity=2)
