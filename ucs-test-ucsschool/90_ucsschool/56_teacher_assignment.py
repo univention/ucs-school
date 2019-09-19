@@ -1,7 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/bin/py.test
 # -*- coding: utf-8 -*-
 ## desc: Check the teacher assignment umc module
-## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## tags: [apptest, ucsschool]
 ## bugs: [50008]
@@ -15,12 +14,14 @@ from ucsschool.lib.models.group import SchoolClass
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.umc import Client
 import univention.testing.strings as uts
+from univention.testing.utils import wait_for_listener_replication
 
 
 @pytest.fixture(scope='module')
 def schoolenv():
 	with UCSTestSchool() as schoolenv:
-		schoolenv.schools = schoolenv.create_multiple_ous(2)
+		hostname = schoolenv.ucr['hostname']
+		schoolenv.schools = schoolenv.create_multiple_ous(2, name_edudc=hostname)
 		schoolenv.teachers = dict()
 		for school, school_dn in schoolenv.schools:
 			school_class, _ = schoolenv.create_school_class(school, uts.random_string())
@@ -56,6 +57,7 @@ class TestSchoolTeacherAssignmentDomainAdmin(object):
 			'$dn$': school_class_dn,
 			'members': visible_teachers + new_teachers,
 		}}])
+		wait_for_listener_replication()
 		if result.result is False:
 			raise ChangeTeachersError
 		schoolClass = SchoolClass.from_dn(school_class_dn, school, self.schoolenv.lo)
@@ -64,6 +66,7 @@ class TestSchoolTeacherAssignmentDomainAdmin(object):
 			'$dn$': school_class_dn,
 			'members': visible_teachers,
 		}}])
+		wait_for_listener_replication()
 		schoolClass = SchoolClass.from_dn(school_class_dn, school, self.schoolenv.lo)
 		assert set(self.__school_class_teachers(schoolClass)) == set(original_teachers)
 
@@ -97,7 +100,7 @@ class TestSchoolTeacherAssignmentSchoolAdmin(TestSchoolTeacherAssignmentDomainAd
 	@pytest.fixture(scope='class')
 	def client(self, schoolenv):
 		schools = schoolenv.schools
-		school_admin, school_admin_dn = schoolenv.create_school_admin(schools[0][0])
+		school_admin, school_admin_dn = schoolenv.create_school_admin(schools[0][0], is_teacher=True, is_staff=False)
 		return Client(username=school_admin, password='univention')
 
 
@@ -106,5 +109,10 @@ class TestSchoolTeacherAssignmentSchoolAdminSecondary(TestSchoolTeacherAssignmen
 	@pytest.fixture(scope='class')
 	def client(self, schoolenv):
 		schools = schoolenv.schools
-		school_admin, school_admin_dn = schoolenv.create_school_admin(schools[1][0], schools=[schools[0][0], schools[1][0]])
+		school_admin, school_admin_dn = schoolenv.create_school_admin(
+			schools[1][0],
+			is_teacher=True,
+			is_staff=False,
+			schools=[schools[0][0], schools[1][0]]
+		)
 		return Client(username=school_admin, password='univention')

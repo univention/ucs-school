@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.55) unstable; urgency=medium
+
+  * Bug #50008: fix 55_class_assignment.py/56_teacher_assignment.py for slaves
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 19 Sep 2019 18:02:21 +0200
+
 ucs-test-ucsschool (6.0.54) unstable; urgency=low
 
   * Issue #22159: add tests for moving users to other OUs
@@ -4038,8 +4044,6 @@ ucs-test-ucsschool (1.0.83-1) unstable; urgency=low
 
   * Bug #35746: add new test script for staff members
   * Bug #35746: add new test script for staff,teacher, teacher and staff,
-	admin users, this might be replaced by the first script after
-	being generalized.
 
  -- Ammar Najjar <najjar@univention.de>  Mon, 15 Sep 2014 12:53:05 +0200
 
