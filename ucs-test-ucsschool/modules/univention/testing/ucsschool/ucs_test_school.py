@@ -298,8 +298,19 @@ class UCSTestSchool(object):
 		else:
 			district_ou_dn = ''
 			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self.ucr.get('ldap/base')}
-		self._remove_udm_object('container/ou', oudn)
-		logger.info('*** Purging OU %s and related objects (%s): done\n\n', ou_name, oudn)
+
+		ok = True
+		try:
+			school = School.from_dn(oudn, None, self.lo)
+		except noObject:
+			logger.error('Cannot get school OU via DN: %s', oudn)
+		logger.info('Removing school %r (%s) ...', ou_name, oudn)
+		try:
+			school.remove(self.lo)
+		except noObject:
+			logger.error('Cannot remove school via DN: %s', oudn)
+		log_func = logger.info if ok else logger.error
+		log_func('*** Purging OU %s and related objects (%s): %s\n\n', ou_name, oudn, 'done' if ok else 'failed')
 
 		for ou_list in self._test_ous.values():
 			try:

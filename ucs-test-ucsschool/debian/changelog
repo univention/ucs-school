@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.53) unstable; urgency=low
+
+  * Bug #50229: remove OUs *AND* their children in 999_delete_test_ous
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 19 Sep 2019 16:35:56 +0200
+
 ucs-test-ucsschool (6.0.52) unstable; urgency=medium
 
   * Bug #49907: fix 91_ucsschool-selenium/03_computerroom_endExam
