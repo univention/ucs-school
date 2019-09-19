@@ -6,4 +6,5 @@ src: ucs-school-umc-computerroom
 fix: 11.0.0-5A~4.4.0.201909120915
 desc: |
  * Add a safety dialog when attempting to close the computerroom module without ending the exam beforehand (Bug #49907).
-bug: [49907]
+ * Fix an error for computerrooms containing umlauts in their name (Bug #50009).
+bug: [49907, 50009]

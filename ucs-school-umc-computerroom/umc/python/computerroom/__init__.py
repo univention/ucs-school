@@ -32,7 +32,6 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
-import re
 import fcntl
 import signal
 import psutil
@@ -44,9 +43,9 @@ import traceback
 import subprocess
 from random import Random
 from pipes import quote
-import lazy_object_proxy
 
 from ipaddr import IPAddress
+import ldap
 from ldap.filter import filter_format
 
 from univention.management.console.config import ucr
@@ -62,6 +61,7 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.log import MODULE
 
 import univention.admin.uexceptions as udm_exceptions
+from univention.admin.syntax import gid
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.schoollessons import SchoolLessons
@@ -80,9 +80,6 @@ _ = Translation('ucs-school-umc-computerroom').translate
 ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
 FN_SCREENSHOT_DENIED = _('/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg')
 FN_SCREENSHOT_NOTREADY = _('/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg')
-ROOM_DN_REGEX_TEMPLATE = r'cn=([a-zA-Z0-9_][a-zA-Z0-9. _-]+?[a-zA-Z0-9_]+?),cn={container},cn=groups,ou=(\w+?),{ldap_base}'
-ROOM_DN_REGEX_COMPILED = lazy_object_proxy.Proxy(lambda: re.compile(ROOM_DN_REGEX_TEMPLATE.format(
-	container=ucr.get('ucsschool/ldap/default/container/rooms', 'raeume'), ldap_base=ucr['ldap/base'])))
 
 
 def compare_dn(a, b):
@@ -275,10 +272,20 @@ class ComputerRoomDNSanitizer(DNSanitizer):
 
 	def _sanitize(self, value, name, further_args):
 		value = super(ComputerRoomDNSanitizer, self)._sanitize(value, name, further_args)
-		m = ROOM_DN_REGEX_COMPILED.match(value)
-		if m and self._return_room_name:
-			return m.groups()[0]
-		elif m and not self._return_room_name:
+		try:
+			room_name = unicode(ldap.dn.str2dn(value)[0][0][1])
+		except (KeyError, ldap.DECODING_ERROR):
+			raise UMC_Error(_('Invalid room DN: %s') % (value, ))
+		try:
+			gid.parse(room_name)
+		except udm_exceptions.valueError:
+			raise UMC_Error(_('Invalid room DN: %s') % (value, ))
+		if not os.path.basename(room_name) == room_name:
+			#  Check for path traversal
+			raise UMC_Error(_('Invalid room DN: %s') % (value, ))
+		if room_name and self._return_room_name:
+			return room_name
+		elif not self._return_room_name:
 			return value
 		else:
 			raise UMC_Error(_('Invalid room DN: %s') % value)
