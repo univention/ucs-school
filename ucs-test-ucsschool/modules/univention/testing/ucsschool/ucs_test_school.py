@@ -299,18 +299,21 @@ class UCSTestSchool(object):
 			district_ou_dn = ''
 			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self.ucr.get('ldap/base')}
 
+
+		# get list of OU and objects below - sorted by length, longest first (==> leafs first)
 		ok = True
-		try:
-			school = School.from_dn(oudn, None, self.lo)
-		except noObject:
-			logger.error('Cannot get school OU via DN: %s', oudn)
-		logger.info('Removing school %r (%s) ...', ou_name, oudn)
-		try:
-			school.remove(self.lo)
-		except noObject:
-			logger.error('Cannot remove school via DN: %s', oudn)
+		logger.info('Removing school %r (%s) and its children ...', ou_name, oudn)
+		obj_list = sorted(self.lo.searchDn(base=oudn, scope='sub'), key=lambda x: len(x), reverse=True)
+		for obj_dn in obj_list:
+			try:
+				self.lo.delete(obj_dn)
+			except LDAPError as exc:
+				logger.error('Cannot remove %r: %s', obj_dn, exc)
+				ok = False
+			else:
+				logger.info('Removed %s', obj_dn)
 		log_func = logger.info if ok else logger.error
-		log_func('*** Purging OU %s and related objects (%s): %s\n\n', ou_name, oudn, 'done' if ok else 'failed')
+		log_func('*** Purging OU %r and its children objects (%s): %s\n\n', ou_name, oudn, 'done' if ok else 'failed')
 
 		for ou_list in self._test_ous.values():
 			try:
