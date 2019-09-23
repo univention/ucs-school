@@ -303,15 +303,20 @@ class UCSTestSchool(object):
 		# get list of OU and objects below - sorted by length, longest first (==> leafs first)
 		ok = True
 		logger.info('Removing school %r (%s) and its children ...', ou_name, oudn)
-		obj_list = sorted(self.lo.searchDn(base=oudn, scope='sub'), key=lambda x: len(x), reverse=True)
-		for obj_dn in obj_list:
-			try:
-				self.lo.delete(obj_dn)
-			except LDAPError as exc:
-				logger.error('Cannot remove %r: %s', obj_dn, exc)
-				ok = False
-			else:
-				logger.info('Removed %s', obj_dn)
+		try:
+			obj_list = sorted(self.lo.searchDn(base=oudn, scope='sub'), key=lambda x: len(x), reverse=True)
+		except noObject:
+			logger.warn('OU has already been removed.')
+			ok = False
+		else:
+			for obj_dn in obj_list:
+				try:
+					self.lo.delete(obj_dn)
+				except LDAPError as exc:
+					logger.error('Cannot remove %r: %s', obj_dn, exc)
+					ok = False
+				else:
+					logger.info('Removed %s', obj_dn)
 		log_func = logger.info if ok else logger.error
 		log_func('*** Purging OU %r and its children objects (%s): %s\n\n', ou_name, oudn, 'done' if ok else 'failed')
 
