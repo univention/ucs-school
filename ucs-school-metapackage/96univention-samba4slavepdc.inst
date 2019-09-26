@@ -380,8 +380,10 @@ _update_groups ()
 
 _update_container ()
 {
-	udm container/cn create "$@" --ignore_exists --set name=System 
-	udm container/cn modify "$@" --dn "cn=System,$ldap_base" --set description='Builtin system settings' 
+	udm container/cn create "$@" --ignore_exists --set name=System
+	udm container/cn modify "$@" --dn "cn=System,$ldap_base" --set description='Builtin system settings'
+	udm container/cn create "$@" --ignore_exists --set name='Managed Service Accounts' --set description='Default container for managed service accounts'
+	udm container/cn create "$@" --ignore_exists --set name='PSPs' --position "cn=System,$ldap_base"
 }
 
 _demote_slavepdc_in_central_s4 ()
