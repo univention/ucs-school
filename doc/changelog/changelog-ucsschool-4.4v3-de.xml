@@ -259,7 +259,41 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 11.0.0-4A~4.4.0.201908081356 -->
 <!-- CHANGELOG:2019-09-11:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-09-26" lang="en">
+					<title>Released on 2019-09-26:</title>
+					<!-- START ucs-school-umc-computerroom 11.0.0-6A~4.4.0.201909192040 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-6A~4.4.0.201909192040</emphasis>:
+						<itemizedlist>
+							<listitem><para>Add a safety dialog when attempting to close the computerroom module without ending the exam beforehand (<u:bug>49907</u:bug>).</para></listitem>
+
+							<listitem><para>An error within the UMC module <package>computerrooms</package> has been fixed that was triggered when a room name contained umlauts and prevented the use of this room (<u:bug>50009</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-6A~4.4.0.201909192040 -->
+					<!-- START ucs-school-umc-groups 9.0.0-1A~4.4.0.201909171127 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-groups</emphasis> in version <emphasis>9.0.0-1A~4.4.0.201909171127</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fixed class assignment for school admins, which were not able to add teachers to classes in some multi school scenarios.  (<u:bug>50008</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-groups 9.0.0-1A~4.4.0.201909171127 -->
+					<!-- START ucs-school-webproxy 15.0.0-1A~4.4.0.201909161358 -->
+					<para>
+						Source package <emphasis>ucs-school-webproxy</emphasis> in version <emphasis>15.0.0-1A~4.4.0.201909161358</emphasis>:
+						<itemizedlist>
+							<listitem><para>Added missing header with UCR warning to configuration files which are manged through UCR (<u:bug>50197</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-webproxy 15.0.0-1A~4.4.0.201909161358 -->
+<!-- CHANGELOG:2019-09-26:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
