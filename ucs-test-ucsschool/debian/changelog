@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.59) unstable; urgency=medium
+
+  * Bug #50276: fix test 17_http_proxy_auth_after_passwd_reset_check
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 26 Sep 2019 15:15:44 +0200
+
 ucs-test-ucsschool (6.0.58) unstable; urgency=low
 
   * Bug #50229: remove OUs *AND* their children in 999_delete_test_ous

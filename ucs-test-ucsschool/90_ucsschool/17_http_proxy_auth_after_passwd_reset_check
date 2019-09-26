@@ -15,6 +15,7 @@ from univention.testing.umc import Client
 import pycurl
 import subprocess
 import time
+from functools import wraps
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -23,6 +24,14 @@ import univention.testing.utils as utils
 
 class WrongStatusError(Exception):
 	pass
+
+
+def retry_auth(func):
+	#  retry to avoid errors due to slow replication
+	@wraps(func)
+	def decorated(*args):
+		utils.retry_on_error(lambda: func(*args), exceptions=(WrongStatusError), retry_count=8, delay=2)
+	return decorated
 
 
 def resetPasswd(host, userdn, flavor, nextLogin):
@@ -40,11 +49,13 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 	connection.authenticate(admin, passwd)
 	if not connection.umc_command('schoolusers/password/reset', options, flavor).result:
 		utils.fail('Password reset for (%r) unsuccessful' % (userdn,))
+	utils.wait_for_listener_replication()
 	subprocess.check_call(['service', 'squid', 'reload'])  # reset squid credential cache (basic auth)
 	time.sleep(2)  # reset ntlm auth helper cache
 	return newpassword
 
 
+@retry_auth
 def authProxy(host, url, name, passwd, authTyp, expected_response):
 	auth_text = 'basic authentication' if authTyp == 1 else 'NTLM authentication'
 	print('Performing auth %r check' % (auth_text,))
@@ -85,9 +96,8 @@ def main():
 				utils.wait_for()
 
 				print('check student auth with the old password')
-				#  retry to avoid errors due to slow replication
-				utils.retry_on_error(lambda: authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
-				utils.retry_on_error(lambda: authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
+				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
+				authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
 
 				print('check student auth with the new password')
 				authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
@@ -105,9 +115,8 @@ def main():
 				utils.wait_for()
 
 				print('check teacher auth with the old password')
-				#  retry to avoid errors due to slow replication
-				utils.retry_on_error(lambda: authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
-				utils.retry_on_error(lambda: authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407), exceptions=(WrongStatusError), retry_count=4, delay=5)
+				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407)
+				authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407)
 
 				print('check teacher auth with the new password')
 				authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
