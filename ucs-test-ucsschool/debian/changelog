@@ -1,3 +1,12 @@
+ucs-test-ucsschool (6.0.60) unstable; urgency=low
+
+  * Bug #50229: 91_ucsschool-selenium/01_password_reset
+    - use a custom password for each test
+    - wait for LDAP modifications before starting a login attempt
+    - fix check if password is expired
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 26 Sep 2019 17:00:57 +0200
+
 ucs-test-ucsschool (6.0.59) unstable; urgency=medium
 
   * Bug #50276: fix test 17_http_proxy_auth_after_passwd_reset_check
