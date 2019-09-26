@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-metapackage
+fix: 12.0.2-5A~4.4.0.201909261042
+desc: |
+ * The containers "Managed Service Accounts" and "PSPs" new created before provisioning samba (Bug #48752).
+bug: [48752]
