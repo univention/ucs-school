@@ -17,12 +17,12 @@ import re
 import subprocess
 import tempfile
 import time
+from functools import wraps
 import univention.lib.atjobs as ula
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from univention.testing.ucs_samba import wait_for_s4connector
 
 
 class GetFail(Exception):
@@ -47,6 +47,22 @@ class RemoveFail(Exception):
 
 class EditFail(Exception):
 	pass
+
+
+class CmdCheckFail(Exception):
+	pass
+
+
+class CupsNotRunningError(Exception):
+	pass
+
+
+def retry_cmd(func):
+	#  retry to avoid errors due to slow replication
+	@wraps(func)
+	def decorated(*args, **kwargs):
+		utils.retry_on_error(lambda: func(*args, **kwargs), exceptions=(CmdCheckFail), retry_count=8, delay=2)
+	return decorated
 
 
 class ComputerImport(object):
@@ -253,6 +269,7 @@ class Room(object):
 		# Checking Atjobs list
 		self.check_atjobs(period, False)
 
+	@retry_cmd
 	def check_home_read(self, user, ip_address, passwd='univention', expected_result=0):
 		print '.... Check home read ....'
 		cmd_read_home = ['smbclient', '//%(ip)s/%(username)s', '-U', '%(user)s', '-c', 'dir']
@@ -266,8 +283,9 @@ class Room(object):
 		)
 		if read[0] != expected_result:
 			print 'FAIL .. Read home directory result (%r), expected (%r)' % (read[0], expected_result)
-			utils.fail('Read home directory result (%r), expected (%r)' % (read[0], expected_result))
+			raise CmdCheckFail('Read home directory result (%r), expected (%r)' % (read[0], expected_result))
 
+	@retry_cmd
 	def check_home_write(self, user, ip_address, passwd='univention', expected_result=0):
 		print '.... Check home write ....'
 		f = tempfile.NamedTemporaryFile(dir='/tmp')
@@ -284,8 +302,9 @@ class Room(object):
 		f.close()
 		if write[0] != expected_result:
 			print 'FAIL .. Write to home directory result (%r), expected (%r)' % (write[0], expected_result)
-			utils.fail('Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
+			raise CmdCheckFail('Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
 
+	@retry_cmd
 	def check_marktplatz_read(self, user, ip_address, passwd='univention', expected_result=0):
 		print '.... Check Marktplatz read ....'
 		cmd_read_marktplatz = ['smbclient', '//%(ip)s/Marktplatz', '-U', '%(user)s', '-c', 'dir']
@@ -298,8 +317,9 @@ class Room(object):
 		)
 		if read[0] != expected_result:
 			print 'FAIL .. Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result)
-			utils.fail('Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
+			raise CmdCheckFail('Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
 
+	@retry_cmd
 	def check_marktplatz_write(self, user, ip_address, passwd='univention', expected_result=0):
 		print '.... Check Marktplatz write ....'
 		f = tempfile.NamedTemporaryFile(dir='/tmp')
@@ -315,7 +335,7 @@ class Room(object):
 		f.close()
 		if write[0] != expected_result:
 			print 'FAIL .. Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result)
-			utils.fail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
+			raise CmdCheckFail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
 
 	def check_share_access(self, user, ip_address, expected_home_result, expected_marktplatz_result):
 		self.check_home_read(user, ip_address, expected_result=expected_home_result)
@@ -341,13 +361,13 @@ class Room(object):
 		printmodes = ['default', 'none']
 		sharemodes = ['all', 'home']
 		settings = itertools.product(rules, printmodes, sharemodes)
-		t = 120
+		t = 600
 
 		# Testing loop
 		for i, (rule, printMode, shareMode) in enumerate(settings):
 			period = datetime.time.strftime(
 				(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
-			t += 60
+			t += 300
 			print
 			print '*** %d -(internetRule, printMode, shareMode) = (%r, %r, %r) ----------' % (
 				i, rule, printMode, shareMode)
@@ -364,8 +384,15 @@ class Room(object):
 			self.check_room_settings(client, new_settings)
 			self.check_share_behavior(user, ip_address, shareMode)
 
+	@retry_cmd
 	def check_smb_print(self, ip, printer, user, expected_result):
 		print 'Checking print mode', '.' * 40
+		# ensure cups is running, otherwise jobs are not rejected
+		ucr = ucr_test.UCSTestConfigRegistry()
+		ucr.load()
+		cups_status = subprocess.check_output(['lpstat', '-h', ucr.get('cups/server', ''), '-r'])
+		if cups_status != 'scheduler is running\n':
+			raise CupsNotRunningError
 		f = tempfile.NamedTemporaryFile(dir='/tmp')
 		cmd_print = [
 			'smbclient', '//%(ip)s/%(printer)s',
@@ -383,7 +410,7 @@ class Room(object):
 		f.close()
 		if result != expected_result:
 			print 'FAIL .... smbclient print result (%r), expected (%r)' % (result, expected_result)
-			utils.fail('smbclient print result (%r), expected (%r)' % (result, expected_result))
+			raise CmdCheckFail('smbclient print result (%r), expected (%r)' % (result, expected_result))
 
 	def check_print_behavior(self, user, ip_address, printer, printMode):
 		if printMode == 'none':
@@ -416,13 +443,13 @@ class Room(object):
 			sharemodes = ['all', 'home']
 			settings = itertools.product(rules, printmodes, sharemodes)
 			settings_len = len(printmodes) * len(sharemodes) * len(rules)
-			t = 120
+			t = 600
 
 			# Testing loop
 			for i in xrange(settings_len):
 				period = datetime.time.strftime(
 					(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
-				t += 60
+				t += 300
 				rule, printMode, shareMode = next(settings)
 				print
 				print '***', i, '-(internetRule, printMode, shareMode) = (', \
@@ -484,13 +511,13 @@ class Room(object):
 			sharemodes = ['all', 'home']
 			settings = itertools.product(rules, printmodes, sharemodes)
 			settings_len = len(printmodes) * len(sharemodes) * len(rules)
-			t = 120
+			t = 600
 
 			# Testing loop
 			for i in xrange(settings_len):
 				period = datetime.time.strftime(
 					(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
-				t += 60
+				t += 300
 				rule, printMode, shareMode = next(settings)
 				print
 				print '***', i, '-(internetRule, printMode, shareMode) = (', \
@@ -544,7 +571,7 @@ class Room(object):
 			printmodes = ['default', 'none']
 			sharemodes = ['all', 'home']
 			settings = itertools.product(rules, printmodes, sharemodes)
-			t = 120
+			t = 600
 
 			utils.wait_for_replication()
 
@@ -567,7 +594,6 @@ class Room(object):
 				self.set_room_settings(client, new_settings)
 
 				utils.wait_for_replication_and_postrun()
-				wait_for_s4connector()
 
 				# give the CUPS and Samba server a little bit more time
 				time.sleep(15)
@@ -590,7 +616,7 @@ class Room(object):
 					white_page,
 					global_domains,
 					ucr)
-				t += 60
+				t += 300
 		finally:
 			group.remove()
 			remove_printer(printer, school, ucr.get('ldap/base'))

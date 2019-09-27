@@ -1,3 +1,12 @@
+ucs-test-ucsschool (6.0.61) unstable; urgency=medium
+
+  * Bug #50286: 90_ucsschool/22_computerroom_module_settings
+    - extend the exam run times to ensure the at jobs do to trigger
+    - retry the smbclient cmds to be more confident in case of errors
+    - check that cups is running, otherwise samba queues that job
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 27 Sep 2019 14:10:04 +0200
+
 ucs-test-ucsschool (6.0.60) unstable; urgency=low
 
   * Bug #50229: 91_ucsschool-selenium/01_password_reset
