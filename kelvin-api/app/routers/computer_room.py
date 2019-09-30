@@ -19,7 +19,6 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 from fastapi import APIRouter, HTTPException, Query
-from starlette.responses import UJSONResponse
 from ucsschool.lib.models.group import ComputerRoom
 from ..utils import get_logger
 
@@ -38,7 +37,7 @@ class ComputerRoomModel(BaseModel):
     )
 
 
-@router.get("/", response_class=UJSONResponse)
+@router.get("/")
 async def search(
     name_filer: str = Query(
         None,
@@ -60,12 +59,12 @@ async def search(
     ]
 
 
-@router.get("/{name}", response_class=UJSONResponse)
+@router.get("/{name}")
 async def get(name: str, school: str) -> ComputerRoomModel:
     return ComputerRoomModel(name=name, school=f"https://foo.bar/schools/{school}")
 
 
-@router.post("/", response_class=UJSONResponse, status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED)
 async def create(room: ComputerRoomModel) -> ComputerRoomModel:
     if room.name == "alsoerror":
         raise HTTPException(
@@ -75,14 +74,14 @@ async def create(room: ComputerRoomModel) -> ComputerRoomModel:
     return room
 
 
-@router.patch("/{name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.patch("/{name}", status_code=HTTP_200_OK)
 async def partial_update(name: str, room: ComputerRoomModel) -> ComputerRoomModel:
     if name != room.name:
         logger.info("Renaming room from %r to %r.", name, room.name)
     return room
 
 
-@router.put("/{name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.put("/{name}", status_code=HTTP_200_OK)
 async def complete_update(name: str, room: ComputerRoomModel) -> ComputerRoomModel:
     if name != room.name:
         logger.info("Renaming room from %r to %r.", name, room.name)

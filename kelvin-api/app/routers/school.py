@@ -20,7 +20,6 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 from fastapi import APIRouter, HTTPException, Query
-from starlette.responses import UJSONResponse
 from ucsschool.lib.models.school import School
 from ..utils import get_logger
 
@@ -45,7 +44,7 @@ class SchoolModel(BaseModel):
     )
 
 
-@router.get("/", response_class=UJSONResponse)
+@router.get("/")
 async def search(
     name_filer: str = Query(
         None,
@@ -57,12 +56,12 @@ async def search(
     return [SchoolModel(name="10a"), SchoolModel(name="8b")]
 
 
-@router.get("/{school_name}", response_class=UJSONResponse)
+@router.get("/{school_name}")
 async def get(school_name: str) -> SchoolModel:
     return SchoolModel(name=school_name)
 
 
-@router.post("/", response_class=UJSONResponse, status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED)
 async def create(school: SchoolModel) -> SchoolModel:
     if school.name == "alsoerror":
         raise HTTPException(
@@ -72,7 +71,7 @@ async def create(school: SchoolModel) -> SchoolModel:
     return school
 
 
-@router.patch("/{name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.patch("/{name}", status_code=HTTP_200_OK)
 async def partial_update(name: str, school: SchoolModel) -> SchoolModel:
     if name != school.name:
         raise HTTPException(
@@ -82,7 +81,7 @@ async def partial_update(name: str, school: SchoolModel) -> SchoolModel:
     return school
 
 
-@router.put("/{name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.put("/{name}", status_code=HTTP_200_OK)
 async def complete_update(name: str, school: SchoolModel) -> SchoolModel:
     if name != school.name:
         raise HTTPException(

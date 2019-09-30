@@ -19,7 +19,6 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 from fastapi import APIRouter, HTTPException, Query
-from starlette.responses import UJSONResponse
 from ucsschool.lib.roles import all_roles, create_ucsschool_role_string
 from ..utils import get_logger
 
@@ -32,7 +31,7 @@ class RoleModel(BaseModel):
     name: str
 
 
-@router.get("/", response_class=UJSONResponse)
+@router.get("/")
 async def search(
     name_filer: str = Query(
         None,
@@ -44,12 +43,12 @@ async def search(
     return [RoleModel(name="10a"), RoleModel(name="8b")]
 
 
-@router.get("/{name}", response_class=UJSONResponse)
+@router.get("/{name}")
 async def get(name: str) -> RoleModel:
     return RoleModel(name=name)
 
 
-@router.post("/", response_class=UJSONResponse, status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED)
 async def create(role: RoleModel) -> RoleModel:
     if role.name == "alsoerror":
         raise HTTPException(
@@ -58,7 +57,7 @@ async def create(role: RoleModel) -> RoleModel:
     return role
 
 
-@router.patch("/{name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.patch("/{name}", status_code=HTTP_200_OK)
 async def partial_update(name: str, role: RoleModel) -> RoleModel:
     if name != role.name:
         raise HTTPException(
@@ -67,7 +66,7 @@ async def partial_update(name: str, role: RoleModel) -> RoleModel:
     return role
 
 
-@router.put("/{name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.put("/{name}", status_code=HTTP_200_OK)
 async def complete_update(name: str, role: RoleModel) -> RoleModel:
     if name != role.name:
         raise HTTPException(

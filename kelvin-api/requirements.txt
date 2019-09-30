@@ -2,11 +2,11 @@ aiofiles
 async-lru
 async-property
 diskcache
-fastapi==0.35.0
+fastapi==0.39.0
 lazy-object-proxy
 ldap3
 pyjwt
-pydantic[ujson,email]==0.30
+pydantic[ujson,email]
 python-multipart
 ucs-school-lib
 univention-config-registry
