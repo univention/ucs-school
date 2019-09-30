@@ -22,7 +22,6 @@ from starlette.status import (
 )
 from fastapi import APIRouter, HTTPException, Query
 from starlette.requests import Request
-from starlette.responses import UJSONResponse
 from ucsschool.lib.models.attributes import SchoolClassName
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.group import SchoolClass
@@ -91,7 +90,7 @@ class SchoolClassPatchDocument(BaseModel):
 		return res
 
 
-@router.get("/", response_class=UJSONResponse)
+@router.get("/")
 async def search(
 	request: Request,
 	class_name: str = Query(
@@ -129,13 +128,13 @@ def get_lib_obj(class_name: str, school: str) -> SchoolClass:
 		)
 
 
-@router.get("/{school}/{class_name}", response_class=UJSONResponse)
+@router.get("/{school}/{class_name}")
 async def get(class_name: str, school: str, request: Request) -> SchoolClassModel:
 	sc = get_lib_obj(class_name, school)
 	return SchoolClassModel.from_lib_model(sc, request)
 
 
-@router.post("/", response_class=UJSONResponse, status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED)
 async def create(school_class: SchoolClassModel, request: Request) -> SchoolClassModel:
 	"""
 	Create a school class with all the information:
@@ -154,7 +153,7 @@ async def create(school_class: SchoolClassModel, request: Request) -> SchoolClas
 	return SchoolClassModel.from_lib_model(sc, request)
 
 
-@router.patch("/{school}/{class_name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.patch("/{school}/{class_name}", status_code=HTTP_200_OK)
 async def partial_update(class_name: str, school: str, school_class: SchoolClassPatchDocument, request: Request) -> SchoolClassModel:
 	sc_current = get_lib_obj(class_name, school)
 	changed = False
@@ -168,7 +167,7 @@ async def partial_update(class_name: str, school: str, school_class: SchoolClass
 	return SchoolClassModel.from_lib_model(sc_current, request)
 
 
-@router.put("/{school}/{class_name}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.put("/{school}/{class_name}", status_code=HTTP_200_OK)
 async def complete_update(
 	class_name: str, school: str, school_class: SchoolClassModel, request: Request
 ) -> SchoolClassModel:

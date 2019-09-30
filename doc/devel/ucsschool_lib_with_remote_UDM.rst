@@ -41,7 +41,7 @@ LDAP and SASL libs are also needed::
 
 Development can be done on any Linux distro using ``virtualenv``::
 
-	$ virtualenv -p python3.7 ~/virtenvs/schoollib
+	$ python3.7 -m venv ~/virtenvs/schoollib
 	$ . ~/virtenvs/schoollib/bin/activate
 
 	$ cd $UCS-REPO

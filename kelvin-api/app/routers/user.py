@@ -19,7 +19,6 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 from fastapi import APIRouter, HTTPException, Query
-from starlette.responses import UJSONResponse
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 from ..utils import get_logger
 
@@ -37,7 +36,7 @@ class UserModel(BaseModel):
     )
 
 
-@router.get("/", response_class=UJSONResponse)
+@router.get("/")
 async def search(
     name_filer: str = Query(
         None,
@@ -59,12 +58,12 @@ async def search(
     ]
 
 
-@router.get("/{username}", response_class=UJSONResponse)
+@router.get("/{username}")
 async def get(username: str) -> UserModel:
     return UserModel(name=username, school=f"https://foo.bar/schools/foo")
 
 
-@router.post("/", response_class=UJSONResponse, status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED)
 async def create(user: UserModel) -> UserModel:
     if user.name == "alsoerror":
         raise HTTPException(
@@ -74,14 +73,14 @@ async def create(user: UserModel) -> UserModel:
     return user
 
 
-@router.patch("/{username}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.patch("/{username}", status_code=HTTP_200_OK)
 async def partial_update(username: str, user: UserModel) -> UserModel:
     if username != user.name:
         logger.info("Renaming user from %r to %r.", username, user.name)
     return user
 
 
-@router.put("/{username}", response_class=UJSONResponse, status_code=HTTP_200_OK)
+@router.put("/{username}", status_code=HTTP_200_OK)
 async def complete_update(username: str, user: UserModel) -> UserModel:
     if username != user.name:
         logger.info("Renaming user from %r to %r.", username, user.name)
