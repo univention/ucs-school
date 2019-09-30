@@ -33,6 +33,11 @@
 import os.path
 from collections import Mapping
 from six import iteritems
+try:
+	from typing import Dict, List, Optional
+	from .base import UdmObject
+except ImportError:
+	pass
 
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
@@ -54,16 +59,16 @@ import univention.admin.modules as udm_modules
 
 
 class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
-	name = Username(_('Username'), aka=['Username', 'Benutzername'])
-	schools = Schools(_('Schools'))
-	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
-	lastname = Lastname(_('Last name'), aka=['Last name', 'Nachname'], required=True, unlikely_to_change=True)
-	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
-	email = Email(_('Email'), aka=['Email', 'E-Mail'], unlikely_to_change=True)
-	password = Password(_('Password'), aka=['Password', 'Passwort'])
-	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
-	school_classes = SchoolClassesAttribute(_('Class'), aka=['Class', 'Klasse'])
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	name = Username(_('Username'), aka=['Username', 'Benutzername'])  # type: str
+	schools = Schools(_('Schools'))  # type: List[str]
+	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)  # type: str
+	lastname = Lastname(_('Last name'), aka=['Last name', 'Nachname'], required=True, unlikely_to_change=True)  # type: str
+	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)  # type: str
+	email = Email(_('Email'), aka=['Email', 'E-Mail'], unlikely_to_change=True)  # type: str
+	password = Password(_('Password'), aka=['Password', 'Passwort'])  # type: Optional[str]
+	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])  # type: bool
+	school_classes = SchoolClassesAttribute(_('Class'), aka=['Class', 'Klasse'])  # type: Dict[str, List[str]]
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])  # type: List[str]
 
 	type_name = None
 	type_filter = '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent))'
@@ -592,11 +597,11 @@ class Student(User):
 		super(Student, self).do_school_change(udm_obj, lo, old_school)
 
 	@classmethod
-	def get_container(cls, school):
+	def get_container(cls, school):  # type: (str) -> UdmObject
 		return cls.get_search_base(school).students
 
 	@classmethod
-	def get_exam_container(cls, school):
+	def get_exam_container(cls, school):  # type: (str) -> str
 		return cls.get_search_base(school).examUsers
 
 	def get_specific_groups(self, lo):

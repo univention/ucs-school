@@ -55,7 +55,13 @@ from .utils import ucr, _
 from ..roles import create_ucsschool_role_string
 
 try:
-	from typing import Iterable, Dict, List
+	from typing import Any, Iterable, Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
+	import univention.admin.handlers.simpleLdap
+	from univention.admin.uldap import access as LoType, position as PoType
+	UdmObject = univention.admin.handlers.simpleLdap
+	SuperOrdinateType = Union[str, UdmObject]
+	UldapFilter = Union[str, conjunction, expression]
+	UCSSchoolModel = TypeVar('UCSSchoolModel', bound='UCSSchoolHelperAbstractClass')
 except ImportError:
 	pass
 
@@ -66,7 +72,7 @@ class NoObject(noObject):
 
 class UnknownModel(NoObject):
 
-	def __init__(self, dn, cls):
+	def __init__(self, dn, cls):  # type: (str, Type[UCSSchoolModel]) -> None
 		self.dn = dn
 		self.wrong_model = cls
 		super(UnknownModel, self).__init__('No python class: %r is not a %s' % (dn, cls.__name__))
@@ -74,7 +80,7 @@ class UnknownModel(NoObject):
 
 class WrongModel(NoObject):
 
-	def __init__(self, dn, model, wrong_model):
+	def __init__(self, dn, model, wrong_model):  # type: (str, Type[UCSSchoolModel], Type[UCSSchoolModel]) -> None
 		self.dn = dn
 		self.model = model
 		self.wrong_model = wrong_model
@@ -83,7 +89,7 @@ class WrongModel(NoObject):
 
 class WrongObjectType(NoObject):
 
-	def __init__(self, dn, cls):
+	def __init__(self, dn, cls):  # type: (str, Type[UCSSchoolModel]) -> None
 		self.dn = dn
 		self.wrong_model = cls
 		super(WrongObjectType, self).__init__('Wrong objectClass: %r is not a %r.' % (dn, cls.__name__))
@@ -91,7 +97,7 @@ class WrongObjectType(NoObject):
 
 class MultipleObjectsError(Exception):
 
-	def __init__(self, objs, *args, **kwargs):
+	def __init__(self, objs, *args, **kwargs):  # type: (Sequence[UCSSchoolModel], *Any, **Any) -> None
 		super(MultipleObjectsError, self).__init__(*args, **kwargs)
 		self.objs = objs
 
@@ -207,30 +213,32 @@ class UCSSchoolHelperAbstractClass(object):
 				hook_path = 'computer'
 	"""
 	__metaclass__ = UCSSchoolHelperMetaClass
-	_cache = {}
+	_cache = {}  # type: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel]
 
-	_search_base_cache = {}
-	_initialized_udm_modules = []
-	_empty_hook_paths = set()
+	_search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
+	_initialized_udm_modules = []  # type: List[str]
+	_empty_hook_paths = set()  # type: Set[str]
 
 	hook_sep_char = '\t'
 	hook_path = '/usr/share/ucs-school-import/hooks/'
 
-	name = CommonName(_('Name'), aka=['Name'])
-	school = SchoolAttribute(_('School'), aka=['School'])
+	name = CommonName(_('Name'), aka=['Name'])  # type: str
+	school = SchoolAttribute(_('School'), aka=['School'])  # type: str
 
 	@classmethod
-	def cache(cls, *args, **kwargs):
-		'''Initializes a new instance and caches it for subsequent calls.
+	def cache(cls, *args, **kwargs):  # type: (*Any, **Any) -> UCSSchoolModel
+		"""
+		Initializes a new instance and caches it for subsequent calls.
 		Useful when using School.cache(school_name) a lot in different
 		functions, in loops, etc.
-		'''
+		"""
+		# TODO: rewrite function to have optional positional 'name' and 'school' arguments
 		args = list(args)
 		if args:
 			kwargs['name'] = args.pop(0)
 		if args:
 			kwargs['school'] = args.pop(0)
-		key = [cls.__name__] + [(k, kwargs[k]) for k in sorted(kwargs)]
+		key = [cls.__name__] + [(k, kwargs[k]) for k in sorted(kwargs)]  # TODO: rewrite: sorted(kwargs.items())
 		key = tuple(key)
 		if key not in cls._cache:
 			obj = cls(**kwargs)
@@ -238,7 +246,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return cls._cache[key]
 
 	@classmethod
-	def invalidate_all_caches(cls):
+	def invalidate_all_caches(cls):  # type: () -> None
 		from ucsschool.lib.models.user import User
 		from ucsschool.lib.models.network import Network
 		from ucsschool.lib.models.utils import _pw_length_cache
@@ -250,20 +258,20 @@ class UCSSchoolHelperAbstractClass(object):
 		User._samba_home_path_cache.clear()
 
 	@classmethod
-	def invalidate_cache(cls):
+	def invalidate_cache(cls):  # type: () -> None
 		for key in cls._cache.keys():
 			if key[0] == cls.__name__:
 				cls._cache.pop(key)
 
 	@classmethod
-	def supports_school(cls):
+	def supports_school(cls):  # type: () -> bool
 		return 'school' in cls._attributes
 
 	@classmethod
-	def supports_schools(cls):
+	def supports_schools(cls):  # type: () -> bool
 		return 'schools' in cls._attributes
 
-	def __init__(self, name=None, school=None, **kwargs):
+	def __init__(self, name=None, school=None, **kwargs):  # type: (Optional[str], Optional[str], **Any) -> None
 		'''Initializes a new instance with kwargs.
 		Not every kwarg is accepted, though: The name
 		must be defined as a attribute at class level
@@ -286,12 +294,13 @@ class UCSSchoolHelperAbstractClass(object):
 		self.__position = None
 		self.old_dn = None
 		self.old_dn = self.dn
-		self.errors = {}
-		self.warnings = {}
+		self.errors = {}  # type: Dict[str, List[str]]
+		self.warnings = {}  # type: Dict[str, List[str]]
 
 	@classmethod
 	@LDAP_Connection()
 	def get_machine_connection(cls, ldap_user_read=None, ldap_machine_write=None):
+		# type: (Optional[LoType], Optional[LoType]) -> LoType
 		"""Shortcut to get a cached ldap connection to the DC Master using this host's credentials"""
 		return ldap_machine_write
 
@@ -307,7 +316,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self.__position = position
 
 	@property
-	def dn(self):
+	def dn(self):  # type: () -> str
 		'''Generates a DN where the lib would assume this
 		instance to be. Changing name or school of self will most
 		likely change the outcome of self.dn as well
@@ -317,7 +326,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return '%s=%s,%s' % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
 		return self.old_dn
 
-	def set_dn(self, dn):
+	def set_dn(self, dn):  # type: (str) -> None
 		'''Does not really set dn, as this is generated
 		on-the-fly. Instead, sets old_dn in case it was
 		missed in the beginning or after create/modify/remove/move
@@ -327,7 +336,7 @@ class UCSSchoolHelperAbstractClass(object):
 		self.position = ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
 		self.old_dn = dn
 
-	def validate(self, lo, validate_unlikely_changes=False):
+	def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
 		from ucsschool.lib.models.school import School
 		self.errors.clear()
 		self.warnings.clear()
@@ -360,23 +369,23 @@ class UCSSchoolHelperAbstractClass(object):
 								if new_value != old_value:
 									self.add_warning(name, _('The value changed from %(old)s. This seems unlikely.') % {'old': old_value})
 
-	def validate_roles(self, lo):
+	def validate_roles(self, lo):  # type: (LoType) -> None
 		pass
 
-	def add_warning(self, attribute, warning_message):
+	def add_warning(self, attribute, warning_message):  # type: (str, str) -> None
 		warnings = self.warnings.setdefault(attribute, [])
 		if warning_message not in warnings:
 			warnings.append(warning_message)
 
-	def add_error(self, attribute, error_message):
+	def add_error(self, attribute, error_message):  # type: (str, str) -> None
 		errors = self.errors.setdefault(attribute, [])
 		if error_message not in errors:
 			errors.append(error_message)
 
-	def exists(self, lo):
+	def exists(self, lo):  # type: (LoType) -> bool
 		return self.get_udm_object(lo) is not None
 
-	def exists_outside_school(self, lo):
+	def exists_outside_school(self, lo):  # type: (LoType) -> bool
 		if not self.supports_school():
 			return False
 		from ucsschool.lib.models.school import School
@@ -385,7 +394,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-	def call_hooks(self, hook_time, func_name):
+	def call_hooks(self, hook_time, func_name):  # type: (str, str) -> Optional[bool]
 		'''Calls run-parts in
 		os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
 		if self.build_hook_line(hook_time, func_name) returns a non-empty string
@@ -397,7 +406,7 @@ class UCSSchoolHelperAbstractClass(object):
 		In the lib, post-hooks are only called if the corresponding function returns True
 		'''
 
-		def run(args):
+		def run(args):  # type: (Sequence[str]) -> int
 			self.logger.debug('Starting %r...', args)
 			process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 			stdout, stderr = process.communicate()
@@ -444,21 +453,21 @@ class UCSSchoolHelperAbstractClass(object):
 
 			return ret_code == 0
 
-	def build_hook_line(self, hook_time, func_name):
+	def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
 		'''Must be overridden if the model wants to support hooks.
 		Do so by something like:
 		return self._build_hook_line(self.attr1, self.attr2, 'constant')
 		'''
 		return None
 
-	def _alter_udm_obj(self, udm_obj):
+	def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
 		for name, attr in iteritems(self._attributes):
 			if attr.udm_name:
 				value = getattr(self, name)
 				if value is not None and attr.map_to_udm:
 					udm_obj[attr.udm_name] = value
 
-	def create(self, lo, validate=True):
+	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
 		'''
 		Creates a new UDM instance.
 		Calls pre-hooks.
@@ -472,7 +481,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self.call_hooks('post', 'create')
 		return success
 
-	def create_without_hooks(self, lo, validate):
+	def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
 		if self.exists(lo):
 			return False
 		self.logger.info('Creating %r', self)
@@ -504,14 +513,14 @@ class UCSSchoolHelperAbstractClass(object):
 		finally:
 			self.invalidate_cache()
 
-	def create_without_hooks_roles(self, lo):
+	def create_without_hooks_roles(self, lo):  # type: (LoType) -> bool
 		"""
 		Run by py:meth:`create_without_hooks()` before py:meth:`validate()`
 		(and thus before py:meth:`do_create()`).
 		"""
 		pass
 
-	def do_create(self, udm_obj, lo):
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		'''Actual udm_obj manipulation. Override this if
 		you want to further change values of udm_obj, e.g.
 		def do_create(self, udm_obj, lo):
@@ -522,6 +531,7 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj.create()
 
 	def modify(self, lo, validate=True, move_if_necessary=None):
+		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		'''
 		Modifies an existing UDM instance.
 		Calls pre-hooks.
@@ -536,6 +546,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return success
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		self.logger.info('Modifying %r', self)
 
 		if move_if_necessary is None:
@@ -574,15 +585,15 @@ class UCSSchoolHelperAbstractClass(object):
 		finally:
 			self.invalidate_cache()
 
-	def modify_without_hooks_roles(self, udm_obj):
+	def modify_without_hooks_roles(self, udm_obj):  # type: (UdmObject) -> bool
 		"""Run by py:meth:`modify_without_hooks()` before py:meth:`do_modify()`."""
 		pass
 
-	def update_ucsschool_roles(self):
+	def update_ucsschool_roles(self):  # type: () -> None
 		"""Run by py:meth:`modify_without_hooks()` before py:meth:`validate()`."""
 		pass
 
-	def do_modify(self, udm_obj, lo):
+	def do_modify(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		'''Actual udm_obj manipulation. Override this if
 		you want to further change values of udm_obj, e.g.
 		def do_modify(self, udm_obj, lo):
@@ -592,7 +603,7 @@ class UCSSchoolHelperAbstractClass(object):
 		self._alter_udm_obj(udm_obj)
 		udm_obj.modify(ignore_license=1)
 
-	def move(self, lo, udm_obj=None, force=False):
+	def move(self, lo, udm_obj=None, force=False):  # type: (LoType, Optional[UdmObject], Optional[bool]) -> bool
 		self.call_hooks('pre', 'move')
 		success = self.move_without_hooks(lo, udm_obj, force)
 		if success:
@@ -600,6 +611,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return success
 
 	def move_without_hooks(self, lo, udm_obj, force=False):
+		# type: (LoType, Optional[UdmObject], Optional[bool]) -> bool
 		if udm_obj is None:
 			udm_obj = self.get_udm_object(lo)
 		if udm_obj is None:
@@ -623,17 +635,17 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		return True
 
-	def do_move(self, udm_obj, lo):
+	def do_move(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		old_school, new_school = self.get_school_from_dn(self.old_dn), self.get_school_from_dn(self.dn)
 		udm_obj.move(self.dn, ignore_license=1)
 		if self.supports_school() and old_school and old_school != new_school:
 			self.do_school_change(udm_obj, lo, old_school)
 			self.do_move_roles(udm_obj, lo, old_school, new_school)
 
-	def do_move_roles(self, udm_obj, lo, old_school, new_school):
+	def do_move_roles(self, udm_obj, lo, old_school, new_school):  # type: (UdmObject, LoType, str, str) -> None
 		self.update_ucsschool_roles()
 
-	def change_school(self, school, lo):
+	def change_school(self, school, lo):  # type: (str, LoType) -> bool
 		if self.school in self.schools:
 			self.schools.remove(self.school)
 		if school not in self.schools:
@@ -642,10 +654,10 @@ class UCSSchoolHelperAbstractClass(object):
 		self.position = self.get_own_container()
 		return self.move(lo, force=True)
 
-	def do_school_change(self, udm_obj, lo, old_school):
+	def do_school_change(self, udm_obj, lo, old_school):  # type: (UdmObject, LoType, str) -> None
 		self.logger.info('Going to move %r from school %r to %r', self.old_dn, old_school, self.school)
 
-	def remove(self, lo):
+	def remove(self, lo):  # type: (LoType) -> bool
 		'''
 		Removes an existing UDM instance.
 		Calls pre-hooks.
@@ -659,7 +671,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self.call_hooks('post', 'remove')
 		return success
 
-	def remove_without_hooks(self, lo):
+	def remove_without_hooks(self, lo):  # type: (LoType) -> bool
 		self.logger.info('Deleting %r', self)
 		udm_obj = self.get_udm_object(lo)
 		if udm_obj:
@@ -675,7 +687,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return False
 
 	@classmethod
-	def get_name_from_dn(cls, dn):
+	def get_name_from_dn(cls, dn):  # type: (str) -> str
 		if dn:
 			try:
 				name = explode_dn(dn, 1)[0]
@@ -684,22 +696,22 @@ class UCSSchoolHelperAbstractClass(object):
 			return cls._meta.ldap_unmap_function([name])
 
 	@classmethod
-	def get_school_from_dn(cls, dn):
+	def get_school_from_dn(cls, dn):  # type: (str) -> str
 		return SchoolSearchBase.getOU(dn)
 
 	@classmethod
-	def find_field_label_from_name(cls, field):
+	def find_field_label_from_name(cls, field):  # type: (str) -> str
 		for name, attr in cls._attributes.items():
 			if name == field:
 				return attr.label
 
-	def get_error_msg(self):
+	def get_error_msg(self):  # type: () -> str
 		return self.create_validation_msg(iteritems(self.errors))
 
-	def get_warning_msg(self):
+	def get_warning_msg(self):  # type: () -> str
 		return self.create_validation_msg(iteritems(self.warnings))
 
-	def create_validation_msg(self, items):
+	def create_validation_msg(self, items):  # type: (Iterable[Tuple[str, str]]) -> str
 		validation_msg = ''
 		for key, msg in items:
 			label = self.find_field_label_from_name(key)
@@ -712,7 +724,7 @@ class UCSSchoolHelperAbstractClass(object):
 			validation_msg += '%s: %s' % (label, msg_str)
 		return validation_msg[:-1]
 
-	def get_udm_object(self, lo):
+	def get_udm_object(self, lo):  # type: (LoType) -> UdmObject
 		'''Returns the UDM object that corresponds to self.
 		If self._meta.name_is_unique it searches for any UDM object
 		with self.name.
@@ -746,7 +758,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self._udm_obj_searched = True
 		return self._udm_obj
 
-	def get_school_obj(self, lo):
+	def get_school_obj(self, lo):  # type: (LoType) -> "School"
 		from ucsschool.lib.models.school import School
 		if not self.supports_school():
 			return None
@@ -757,22 +769,22 @@ class UCSSchoolHelperAbstractClass(object):
 			self.logger.warning('%r does not exist!', school)
 			return None
 
-	def get_superordinate(self, lo):
+	def get_superordinate(self, lo):  # type: (LoType) -> UdmObject
 		return None
 
-	def get_own_container(self):
+	def get_own_container(self):  # type: () -> Optional[str]
 		if self.supports_school() and not self.school:
 			return None
 		return self.get_container(self.school)
 
 	@classmethod
-	def get_container(cls, school):
+	def get_container(cls, school):  # type: (str) -> str
 		'''raises NotImplementedError by default. Needs to be overridden!
 		'''
 		raise NotImplementedError('%s.get_container()' % (cls.__name__,))
 
 	@classmethod
-	def get_search_base(cls, school_name):
+	def get_search_base(cls, school_name):  # type: (str) -> SchoolSearchBase
 		from ucsschool.lib.models.school import School
 		if school_name not in cls._search_base_cache:
 			school = School(name=school_name)
@@ -780,7 +792,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return cls._search_base_cache[school_name]
 
 	@classmethod
-	def init_udm_module(cls, lo):
+	def init_udm_module(cls, lo):  # type: (LoType) -> None
 		if cls._meta.udm_module in cls._initialized_udm_modules:
 			return
 		pos = udm_uldap.position(lo.base)
@@ -789,6 +801,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+		# type: (LoType, str, Optional[str], Optional[bool], Optional[SuperOrdinateType]) -> List[UCSSchoolModel]
 		'''
 		Returns a list of all objects that can be found in cls.get_container() with the
 		correct udm_module
@@ -822,6 +835,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def lookup(cls, lo, school, filter_s='', superordinate=None):
+		# type: (LoType, str, Optional[UldapFilter], Optional[SuperOrdinateType]) -> List[UdmObject]
 		try:
 			return udm_modules.lookup(cls._meta.udm_module, None, lo, filter=filter_s, base=cls.get_container(school), scope='sub', superordinate=superordinate)
 		except noObject:
@@ -829,7 +843,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return []
 
 	@classmethod
-	def _attrs_for_easy_filter(cls):
+	def _attrs_for_easy_filter(cls):  # type: () -> List[str]
 		ret = []
 		module = udm_modules.get(cls._meta.udm_module)
 		for key, prop in iteritems(module.property_descriptions):
@@ -838,7 +852,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return ret
 
 	@classmethod
-	def build_easy_filter(cls, filter_str):
+	def build_easy_filter(cls, filter_str):  # type: (str) -> Optional[conjunction]
 		if filter_str:
 			sanitizer = LDAPSearchSanitizer()
 			filter_str = sanitizer.sanitize('filter_str', {'filter_str': filter_str})
@@ -850,6 +864,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):  # Design fault. school is part of the DN or the ucsschoolSchool attribute.
+		# type: (UdmObject, str, LoType) -> UCSSchoolModel
 		'''Creates a new instance with attributes of the udm_obj.
 		Uses get_class_for_udm_obj()
 		'''
@@ -884,7 +899,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return obj
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
+	def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[UCSSchoolModel]
 		'''Returns cls by default.
 		Can be overridden for base classes:
 		class User(UCSSchoolHelperAbstractClass):
@@ -904,7 +919,7 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		return cls
 
-	def __repr__(self):
+	def __repr__(self):  # type: () -> str
 		dn = self.dn
 		dn = '%r, old_dn=%r' % (dn, self.old_dn) if dn != self.old_dn else repr(dn)
 		if self.supports_school():
@@ -912,11 +927,12 @@ class UCSSchoolHelperAbstractClass(object):
 		else:
 			return '%s(name=%r, dn=%s)' % (self.__class__.__name__, self.name, dn)
 
-	def __lt__(self, other):
+	def __lt__(self, other):  # type: (UCSSchoolModel) -> bool
 		return self.name < other.name
 
 	@classmethod
 	def from_dn(cls, dn, school, lo, superordinate=None):
+		# type: (str, str, LoType, Optional[SuperOrdinateType]) -> UCSSchoolModel
 		'''Returns a new instance based on the UDM object found at dn
 		raises noObject if the udm_module does not match the dn
 		or dn is not found
@@ -936,6 +952,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get_only_udm_obj(cls, lo, filter_str, superordinate=None, base=None):
+		# type: (LoType, str, Optional[str], Optional[SuperOrdinateType]) -> UdmObject
 		'''Returns the one UDM object of class cls._meta.udm_module that
 		matches a given filter.
 		If more than one is found, a MultipleObjectsError is raised
@@ -956,6 +973,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get_first_udm_obj(cls, lo, filter_str, superordinate=None):
+		# type: (LoType, str, Optional[Union[str, UdmObject]]) -> UdmObject
 		'''Returns the first UDM object of class cls._meta.udm_module that
 		matches a given filter
 		'''
@@ -967,11 +985,11 @@ class UCSSchoolHelperAbstractClass(object):
 			return obj
 
 	@classmethod
-	def find_udm_superordinate(cls, dn, lo):
+	def find_udm_superordinate(cls, dn, lo):  # type: (str, LoType) -> Optional[SuperOrdinateType]
 		module = udm_modules.get(cls._meta.udm_module)
 		return udm_objects.get_superordinate(module, None, lo, dn)
 
-	def to_dict(self):
+	def to_dict(self):  # type: () -> Dict[str, Any]
 		'''Returns a dictionary somewhat representing this instance.
 		This dictionary is usually used when sending the instance to
 		a browser as JSON.
@@ -983,13 +1001,13 @@ class UCSSchoolHelperAbstractClass(object):
 				ret[name] = getattr(self, name)
 		return ret
 
-	def __deepcopy__(self, memo):
+	def __deepcopy__(self, memo):  # type: (Dict[int]) -> UCSSchoolModel
 		id_self = id(self)
 		if not memo.get(id_self):
 			memo[id_self] = self.__class__(**self.to_dict())
 		return memo[id_self]
 
-	def _map_func_name_to_code(self, func_name):
+	def _map_func_name_to_code(self, func_name):  # type: (str) -> str
 		if func_name == 'create':
 			return 'A'
 		elif func_name == 'modify':
@@ -999,7 +1017,7 @@ class UCSSchoolHelperAbstractClass(object):
 		elif func_name == 'move':
 			return 'MV'
 
-	def _build_hook_line(self, *args):
+	def _build_hook_line(self, *args):  # type: (*Any) -> str
 		attrs = []
 		for arg in args:
 			val = arg
@@ -1021,14 +1039,14 @@ class RoleSupportMixin(object):
 
 	`ucsschool_roles = Roles(_('Roles'), aka=['Roles'])`
 	"""
-	default_roles = []
+	default_roles = []  # type: Set[str]
 	_school_in_name = False
 	_school_in_name_prefix = False
 
-	def get_schools(self):
+	def get_schools(self):  # type: () -> Set[str]
 		return set(getattr(self, 'schools', []) + [self.school])
 
-	def get_schools_from_udm_obj(self, udm_obj):
+	def get_schools_from_udm_obj(self, udm_obj):  # type: (UdmObject) -> List[str]
 		if self._school_in_name:
 			return [udm_obj.info['name']]
 		elif self._school_in_name_prefix:
@@ -1062,6 +1080,7 @@ class RoleSupportMixin(object):
 		self.ucsschool_roles = ['{role}:{context_type}:{context}'.format(**role) for role in roles]
 
 	def do_move_roles(self, udm_obj, lo, old_school, new_school):
+		# type: (UdmObject, LoType, str, str) -> None
 		old_roles = list(self.ucsschool_roles)
 		# remove all roles of old school
 		roles = [role for role in self.roles_as_dicts if role['context'] != old_school]
@@ -1075,7 +1094,7 @@ class RoleSupportMixin(object):
 			# cannot use do_modify() here, as it would delete the old object
 			lo.modify(self.dn, [('ucsschoolRole', old_roles, self.ucsschool_roles)])
 
-	def validate_roles(self, lo):
+	def validate_roles(self, lo):  # type: (LoType) -> None
 		# for now different roles in different schools are not supported
 		schools = self.get_schools()
 		for role in self.roles_as_dicts:
@@ -1088,7 +1107,7 @@ class RoleSupportMixin(object):
 					_('Context {role}:{context_type}:{context} is not allowed for {dn}. Object is not in that school.').format(dn=self.dn, **role)
 				)
 
-	def create_without_hooks_roles(self, lo):
+	def create_without_hooks_roles(self, lo):  # type: (LoType) -> None
 		"""
 		Run by py:meth:`create_without_hooks()` before py:meth:`validate()`
 		(and thus before py:meth:`do_create()`).
@@ -1101,7 +1120,7 @@ class RoleSupportMixin(object):
 				for school in schools
 			]
 
-	def update_ucsschool_roles(self):
+	def update_ucsschool_roles(self):  # type: () -> None
 		"""
 		Run by py:meth:`modify_without_hooks()` before py:meth:`validate()`.
 

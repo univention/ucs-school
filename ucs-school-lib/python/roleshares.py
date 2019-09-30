@@ -43,10 +43,17 @@ import univention.admin.uldap as udm_uldap
 from univention.admincli.admin import _2utf8
 from univention.lib.misc import custom_groupname
 import univention.admin.modules as udm_modules
+try:
+	from typing import Optional
+	from univention.config_registry import ConfigRegistry
+except ImportError:
+	pass
+
+
 udm_modules.update()
 
 
-def roleshare_name(role, school_ou, ucr):
+def roleshare_name(role, school_ou, ucr):  # type: (str, str, ConfigRegistry) -> str
 	custom_roleshare_name = ucr.get('ucsschool/import/roleshare/%s' % (role,))
 	if custom_roleshare_name:
 		return custom_roleshare_name
@@ -54,7 +61,7 @@ def roleshare_name(role, school_ou, ucr):
 		return '-'.join((ucs_school_name_i18n(role), school_ou))
 
 
-def roleshare_path(role, school_ou, ucr):
+def roleshare_path(role, school_ou, ucr):  # type: (str, str, ConfigRegistry) -> str
 	custom_roleshare_path = ucr.get('ucsschool/import/roleshare/%s/path' % (role,))
 	if custom_roleshare_path:
 		return custom_roleshare_path
@@ -62,7 +69,7 @@ def roleshare_path(role, school_ou, ucr):
 		return os.path.join(school_ou, ucs_school_name_i18n(role))
 
 
-def roleshare_home_subdir(school_ou, roles, ucr=None):
+def roleshare_home_subdir(school_ou, roles, ucr=None):  # type: (str, str, Optional[ConfigRegistry]) -> str
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()

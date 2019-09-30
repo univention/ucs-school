@@ -83,7 +83,7 @@ all_roles = (
 )
 
 
-def create_ucsschool_role_string(role, school):
+def create_ucsschool_role_string(role, school):  # type: (str, str) -> str
 	if role not in all_roles:
 		raise UnknownRole('Unknown role {!r}.'.format(role))
 	return '{}:school:{}'.format(role, school)

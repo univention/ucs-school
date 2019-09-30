@@ -37,9 +37,12 @@ from univention.admin.syntax import (
 	gid, string_numbers_letters_dots_spaces, uid_umlauts, iso8601Date,
 	primaryEmailAddressValidDomain, boolean, UserDN, GroupDN, ipAddress,
 	MAC_Address, disabled, reverseLookupSubnet, ipv4Address, v4netmask,
-	netmask, UDM_Objects, string)
+	netmask, UDM_Objects, string, simple)
 from univention.admin.uexceptions import valueError
-
+try:
+	from typing import Any, List, Optional, Type
+except ImportError:
+	pass
 from ..roles import all_roles
 from .utils import ucr, _
 
@@ -56,6 +59,7 @@ class Attribute(object):
 	value_default = None
 
 	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False, map_to_udm=True):
+		# type: (str, Optional[List[str]], Optional[str], Optional[bool], Optional[bool], Optional[bool], Optional[bool]) -> None
 		self.label = label
 		self.aka = aka or []  # also_known_as
 		self.required = required
@@ -64,7 +68,7 @@ class Attribute(object):
 		self.udm_name = udm_name or self.udm_name
 		self.map_to_udm = map_to_udm
 
-	def _validate_syntax(self, values, syntax=None):
+	def _validate_syntax(self, values, syntax=None):  # type: (List[Any], Optional[Type[simple]]) -> None
 		if syntax is None:
 			syntax = self.syntax
 		if syntax:
@@ -74,7 +78,7 @@ class Attribute(object):
 				except valueError as e:
 					raise ValueError(str(e))
 
-	def validate(self, value):
+	def validate(self, value):  # type: (Any) -> None
 		if value is not None:
 			if self.value_type and not isinstance(value, self.value_type):
 				raise ValueError(_('"%(label)s" needs to be a %(type)s') % {'type': self.value_type.__name__, 'label': self.label})
@@ -89,10 +93,10 @@ class CommonName(Attribute):
 	udm_name = 'name'
 	syntax = None
 
-	def __init__(self, label, aka=None):
+	def __init__(self, label, aka=None):  # type: (str, Optional[List[str]]) -> None
 		super(CommonName, self).__init__(label, aka=aka, required=True)
 
-	def validate(self, value):
+	def validate(self, value):  # type: (str) -> None
 		super(CommonName, self).validate(value)
 		escaped = escape_dn_chars(value)
 		if value != escaped:
@@ -118,7 +122,7 @@ class GroupName(CommonName):
 
 class SchoolClassName(GroupName):
 
-	def _validate_syntax(self, values, syntax=None):
+	def _validate_syntax(self, values, syntax=None):  # type: (List[Any], Optional[Type[simple]]) -> None
 		super(SchoolClassName, self)._validate_syntax(values)
 		# needs to check ShareName.syntax, too: SchoolClass will
 		#   create a share with its own name
@@ -142,7 +146,7 @@ class DHCPSubnetName(SubnetName):
 class SchoolName(CommonName):
 	udm_name = 'name'
 
-	def validate(self, value):
+	def validate(self, value):  # type: (str) -> None
 		super(SchoolName, self).validate(value)
 		if ucr.is_true('ucsschool/singlemaster', False):
 			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$')
@@ -152,7 +156,7 @@ class SchoolName(CommonName):
 
 class DCName(Attribute):
 
-	def validate(self, value):
+	def validate(self, value):  # type: (str) -> None
 		super(DCName, self).validate(value)
 		if value:
 			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$')
@@ -182,7 +186,7 @@ class Email(Attribute):
 	udm_name = 'mailPrimaryAddress'
 	syntax = primaryEmailAddressValidDomain
 
-	def validate(self, value):
+	def validate(self, value):  # type: (str) -> None
 		if value:
 			# do not validate ''
 			super(Email, self).validate(value)
@@ -324,7 +328,7 @@ class RolesSyntax(string):
 	regex = re.compile(r'^(?P<role>.+):(?P<context_type>.+):(?P<context>.+)$')
 
 	@classmethod
-	def parse(cls, text):
+	def parse(cls, text):  # type: (str) -> str
 		if not text:
 			return text
 		reg = cls.regex.match(text)

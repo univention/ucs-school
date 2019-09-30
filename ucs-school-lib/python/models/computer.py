@@ -32,6 +32,12 @@
 
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
+try:
+	from typing import Any, Dict, List, Optional, Type
+	from univention.admin.uldap import access as LoType
+	from .base import SuperOrdinateType, UdmObject
+except ImportError:
+	pass
 
 from univention.admin.filter import conjunction, expression, parse
 from univention.admin.uexceptions import nextFreeIp
@@ -50,7 +56,7 @@ from .utils import ucr, _
 class AnyComputer(UCSSchoolHelperAbstractClass):
 
 	@classmethod
-	def get_container(cls, school=None):
+	def get_container(cls, school=None):  # type: (Optional[str]) -> str
 		from ucsschool.lib.models.school import School
 		if school:
 			return School.cache(school).dn
@@ -65,11 +71,11 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 	# vs. group memberships
 
 	@classmethod
-	def get_container(cls, school):
+	def get_container(cls, school):  # type: (str) -> str
 		return 'cn=dc,cn=server,%s' % cls.get_search_base(school).computers
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
+	def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolDC]
 		try:
 			univention_object_class = udm_obj['univentionObjectClass']
 		except KeyError:
@@ -80,27 +86,28 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 
 
 class SchoolDCSlave(RoleSupportMixin, SchoolDC):
-	groups = Groups(_('Groups'))
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	groups = Groups(_('Groups'))  # type: List[str]
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])  # type: List[str]
 
-	def do_create(self, udm_obj, lo):
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		udm_obj['unixhome'] = '/dev/null'
 		udm_obj['shell'] = '/bin/bash'
 		udm_obj['primaryGroup'] = BasicGroup.cache('DC Slave Hosts').dn
 		return super(SchoolDCSlave, self).do_create(udm_obj, lo)
 
-	def _alter_udm_obj(self, udm_obj):
+	def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
 		if self.groups:
 			for group in self.groups:
 				if group not in udm_obj['groups']:
 					udm_obj['groups'].append(group)
 		return super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
-	def get_schools_from_udm_obj(self, udm_obj):
+	def get_schools_from_udm_obj(self, udm_obj):  # type: (UdmObject) -> str
 		# fixme: no idea how to find out old school
 		return self.school
 
 	def move_without_hooks(self, lo, udm_obj=None, force=False):
+		# type: (LoType, Optional[UdmObject], Optional[bool]) -> bool
 		try:
 			if udm_obj is None:
 				try:
@@ -162,11 +169,11 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 
 
 class SchoolComputer(UCSSchoolHelperAbstractClass):
-	ip_address = IPAddress(_('IP address'), required=True)
-	subnet_mask = SubnetMask(_('Subnet mask'))
-	mac_address = MACAddress(_('MAC address'), required=True)
-	inventory_number = InventoryNumber(_('Inventory number'))
-	zone = Attribute(_('Zone'))
+	ip_address = IPAddress(_('IP address'), required=True)  # type: List[str]
+	subnet_mask = SubnetMask(_('Subnet mask'))  # type: str
+	mac_address = MACAddress(_('MAC address'), required=True)  # type: List[str]
+	inventory_number = InventoryNumber(_('Inventory number'))  # type: str
+	zone = Attribute(_('Zone'))  # type: str
 
 	type_name = _('Computer')
 
@@ -174,6 +181,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def lookup(cls, lo, school, filter_s='', superordinate=None):
+		# type: (LoType, str, Optional[str], Optional[SuperOrdinateType]) -> List[UdmObject]
 		"""
 		This override limits the returned objects to actual ucsschoolComputers. Does not contain
 		SchoolDC slaves and others anymore.
@@ -185,7 +193,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			school_computer_filter = object_class_filter
 		return super(SchoolComputer, cls).lookup(lo, school, school_computer_filter, superordinate)
 
-	def get_inventory_numbers(self):
+	def get_inventory_numbers(self):  # type: () -> List[str]
 		if isinstance(self.inventory_number, basestring):
 			return [inv.strip() for inv in self.inventory_number.split(',')]
 		if isinstance(self.inventory_number, (list, tuple)):
@@ -206,7 +214,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		elif not new_value and role_str in self.ucsschool_roles:
 			self.ucsschool_roles.remove(role_str)
 
-	def _alter_udm_obj(self, udm_obj):
+	def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
 		super(SchoolComputer, self)._alter_udm_obj(udm_obj)
 		inventory_numbers = self.get_inventory_numbers()
 		if inventory_numbers:
@@ -231,23 +239,24 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 					raise nextFreeIp(_('There are no free addresses left in the subnet!'))
 
 	@classmethod
-	def get_container(cls, school):
+	def get_container(cls, school):  # type: (str) -> str
 		return cls.get_search_base(school).computers
 
-	def create(self, lo, validate=True):
+	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
 		if self.subnet_mask is None:
 			self.subnet_mask = self.DEFAULT_PREFIX_LEN
 		return super(SchoolComputer, self).create(lo, validate)
 
-	def create_without_hooks(self, lo, validate):
+	def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
 		self.create_network(lo)
 		return super(SchoolComputer, self).create_without_hooks(lo, validate)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		self.create_network(lo)
 		return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
 
-	def get_ipv4_network(self):
+	def get_ipv4_network(self):  # type: () -> IPv4Network
 		if self.subnet_mask is not None and len(self.ip_address) > 0:
 			network_str = '%s/%s' % (self.ip_address[0], self.subnet_mask)
 		elif len(self.ip_address) > 0:
@@ -259,12 +268,12 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		except (AddressValueError, NetmaskValueError, ValueError):
 			self.logger.warning('Unparsable network: %r', network_str)
 
-	def _ip_is_set_to_subnet(self, ipv4_network=None):
+	def _ip_is_set_to_subnet(self, ipv4_network=None):  # type: (IPv4Network) -> bool
 		ipv4_network = ipv4_network or self.get_ipv4_network()
 		if ipv4_network:
 			return ipv4_network.ip == ipv4_network.network
 
-	def get_network(self):
+	def get_network(self):  # type: () -> Network
 		ipv4_network = self.get_ipv4_network()
 		if ipv4_network:
 			network_name = '%s-%s' % (self.school.lower(), ipv4_network.network)
@@ -273,13 +282,13 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			broadcast = str(ipv4_network.broadcast)
 			return Network.cache(network_name, self.school, network=network, netmask=netmask, broadcast=broadcast)
 
-	def create_network(self, lo):
+	def create_network(self, lo):  # type: (LoType) -> Network
 		network = self.get_network()
 		if network:
 			network.create(lo)
 		return network
 
-	def validate(self, lo, validate_unlikely_changes=False):
+	def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
 		super(SchoolComputer, self).validate(lo, validate_unlikely_changes)
 		for ip_address in self.ip_address:
 			name, ip_address = escape_filter_chars(self.name), escape_filter_chars(ip_address)
@@ -305,7 +314,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
+	def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolComputer]
 		oc = udm_obj.lo.get(udm_obj.dn, ['objectClass'])
 		object_classes = oc.get('objectClass', [])
 		if 'univentionWindows' in object_classes:
@@ -318,7 +327,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			return IPComputer
 
 	@classmethod
-	def from_udm_obj(cls, udm_obj, school, lo):
+	def from_udm_obj(cls, udm_obj, school, lo):  # type: (UdmObject, str, LoType) -> SchoolComputer
 		from ucsschool.lib.models.school import School
 		obj = super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
 		obj.ip_address = udm_obj['ip']
@@ -336,7 +345,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		obj.inventory_number = ', '.join(udm_obj['inventoryNumber'])
 		return obj
 
-	def build_hook_line(self, hook_time, func_name):
+	def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
 		module_part = self._meta.udm_module.split('/')[1]
 		return self._build_hook_line(
 			module_part,
@@ -348,7 +357,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			self.zone
 		)
 
-	def to_dict(self):
+	def to_dict(self):  # type: () -> Dict[str, Any]
 		ret = super(SchoolComputer, self).to_dict()
 		ret['type_name'] = self.type_name
 		ret['type'] = self._meta.udm_module_short
@@ -361,7 +370,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 class WindowsComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Windows system')
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])  # type: List[str]
 	default_roles = [role_win_computer]
 
 	class Meta(SchoolComputer.Meta):
@@ -371,7 +380,7 @@ class WindowsComputer(RoleSupportMixin, SchoolComputer):
 
 class MacComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Mac OS X')
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])  # type: List[str]
 	default_roles = [role_mac_computer]
 
 	class Meta(SchoolComputer.Meta):
@@ -381,7 +390,7 @@ class MacComputer(RoleSupportMixin, SchoolComputer):
 
 class IPComputer(RoleSupportMixin, SchoolComputer):
 	type_name = _('Device with IP address')
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])  # type: List[str]
 	default_roles = [role_ip_computer]
 
 	class Meta(SchoolComputer.Meta):

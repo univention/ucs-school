@@ -53,6 +53,12 @@ from univention.management.console.ldap import get_machine_connection, get_admin
 from univention.management.console.modules import Base, UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
+try:
+	from typing import Any, Dict, List, Optional, Tuple
+	from univention.admin.uldap import access as LoType
+	from univention.admin.handlers import simpleLdap as UdmObject
+except ImportError:
+	pass
 
 # load UDM modules
 udm_modules.update()
@@ -194,7 +200,7 @@ class SchoolSearchBase(object):
 		self.group_prefix_staff = ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 
 	@classmethod
-	def getOU(cls, dn):
+	def getOU(cls, dn):  # type: (str) -> str
 		"""Return the school OU for a given DN.
 
 			>>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
@@ -205,7 +211,7 @@ class SchoolSearchBase(object):
 			return univention.uldap.explodeDn(school_dn, True)[0]
 
 	@classmethod
-	def getOUDN(cls, dn):
+	def getOUDN(cls, dn):  # type: (str) -> str
 		"""Return the School OU-DN part for a given DN.
 
 			>>> SchoolSearchBase.getOUDN('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
@@ -219,128 +225,128 @@ class SchoolSearchBase(object):
 	_RE_OUDN = re.compile('(?:^|,)(ou=.*)$', re.I)
 
 	@property
-	def dhcp(self):
+	def dhcp(self):  # type: () -> str
 		return "cn=dhcp,%s" % self.schoolDN
 
 	@property
-	def policies(self):
+	def policies(self):  # type: () -> str
 		return "cn=policies,%s" % self.schoolDN
 
 	@property
-	def networks(self):
+	def networks(self):  # type: () -> str
 		return "cn=networks,%s" % self.schoolDN
 
 	@property
-	def school(self):
+	def school(self):  # type: () -> str
 		return self._school
 
 	@property
-	def schoolDN(self):
+	def schoolDN(self):  # type: () -> str
 		return self._schoolDN
 
 	@property
-	def users(self):
+	def users(self):  # type: () -> str
 		return "cn=users,%s" % self.schoolDN
 
 	@property
-	def groups(self):
+	def groups(self):  # type: () -> str
 		return "cn=groups,%s" % self.schoolDN
 
 	@property
-	def workgroups(self):
+	def workgroups(self):  # type: () -> str
 		return "cn=%s,cn=groups,%s" % (self._containerStudents, self.schoolDN)
 
 	@property
-	def classes(self):
+	def classes(self):  # type: () -> str
 		return "cn=%s,cn=%s,cn=groups,%s" % (self._containerClass, self._containerStudents, self.schoolDN)
 
 	@property
-	def rooms(self):
+	def rooms(self):  # type: () -> str
 		return "cn=%s,cn=groups,%s" % (self._containerRooms, self.schoolDN)
 
 	@property
-	def students(self):
+	def students(self):  # type: () -> str
 		return "cn=%s,cn=users,%s" % (self._containerStudents, self.schoolDN)
 
 	@property
-	def teachers(self):
+	def teachers(self):  # type: () -> str
 		return "cn=%s,cn=users,%s" % (self._containerTeachers, self.schoolDN)
 
 	@property
-	def teachersAndStaff(self):
+	def teachersAndStaff(self):  # type: () -> str
 		return "cn=%s,cn=users,%s" % (self._containerTeachersAndStaff, self.schoolDN)
 
 	@property
-	def staff(self):
+	def staff(self):  # type: () -> str
 		return "cn=%s,cn=users,%s" % (self._containerStaff, self.schoolDN)
 
 	@property
-	def admins(self):
+	def admins(self):  # type: () -> str
 		return "cn=%s,cn=users,%s" % (self._containerAdmins, self.schoolDN)
 
 	@property
-	def classShares(self):
+	def classShares(self):  # type: () -> str
 		return "cn=%s,cn=shares,%s" % (self._containerClass, self.schoolDN)
 
 	@property
-	def shares(self):
+	def shares(self):  # type: () -> str
 		return "cn=shares,%s" % self.schoolDN
 
 	@property
-	def printers(self):
+	def printers(self):  # type: () -> str
 		return "cn=printers,%s" % self.schoolDN
 
 	@property
-	def computers(self):
+	def computers(self):  # type: () -> str
 		return "cn=computers,%s" % self.schoolDN
 
 	@property
-	def examUsers(self):
+	def examUsers(self):  # type: () -> str
 		return "cn=%s,%s" % (self._examUserContainerName, self.schoolDN)
 
 	@property
-	def globalGroupContainer(self):
+	def globalGroupContainer(self):  # type: () -> str
 		return "cn=ouadmins,cn=groups,%s" % (self._ldapBase,)
 
 	@property
-	def educationalDCGroup(self):
+	def educationalDCGroup(self):  # type: () -> str
 		return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	@property
-	def educationalMemberGroup(self):
+	def educationalMemberGroup(self):  # type: () -> str
 		return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	@property
-	def administrativeDCGroup(self):
+	def administrativeDCGroup(self):  # type: () -> str
 		return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	@property
-	def administrativeMemberGroup(self):
+	def administrativeMemberGroup(self):  # type: () -> str
 		return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	@property
-	def examGroupName(self):
+	def examGroupName(self):  # type: () -> str
 		# replace '%(ou)s' strings in generic exam_group_name
 		ucr_value_keywords = {'ou': self.school}
 		return self._examGroupNameTemplate % ucr_value_keywords
 
 	@property
-	def examGroup(self):
+	def examGroup(self):  # type: () -> str
 		return "cn=%s,cn=ucsschool,cn=groups,%s" % (self.examGroupName, self._ldapBase)
 
-	def isWorkgroup(self, groupDN):
+	def isWorkgroup(self, groupDN):  # type: (str) -> bool
 		# a workgroup cannot lie in a sub directory
 		if not groupDN.endswith(self.workgroups):
 			return False
 		return len(univention.uldap.explodeDn(groupDN)) - len(univention.uldap.explodeDn(self.workgroups)) == 1
 
-	def isGroup(self, groupDN):
+	def isGroup(self, groupDN):  # type: (str) -> bool
 		return groupDN.endswith(self.groups)
 
-	def isClass(self, groupDN):
+	def isClass(self, groupDN):  # type: (str) -> bool
 		return groupDN.endswith(self.classes)
 
-	def isRoom(self, groupDN):
+	def isRoom(self, groupDN):  # type: (str) -> bool
 		return groupDN.endswith(self.rooms)
 
 
@@ -365,7 +371,7 @@ class SchoolBaseModule(Base):
 	def init(self):
 		set_bind_function(self.bind_user_connection)
 
-	def bind_user_connection(self, lo):
+	def bind_user_connection(self, lo):  # type: (LoType) -> None
 		if not self.user_dn:  # ... backwards compatibility
 			# the DN is None if we have a local user (e.g., root)
 			# FIXME: the statement above is not completely true, user_dn is None also if the UMC server could not detect it (for whatever reason)
@@ -393,6 +399,7 @@ class SchoolBaseModule(Base):
 		self.finished(request.id, [{'id': school.name, 'label': school.display_name} for school in schools])
 
 	def _groups(self, ldap_connection, school, ldap_base, pattern=None, scope='sub'):
+		# type: (LoType, str, str, Optional[str], Optional[str]) -> List[Dict[str, str]]
 		"""Returns a list of all groups of the given school"""
 		# get list of all users matching the given pattern
 		ldapFilter = None
@@ -437,6 +444,7 @@ class SchoolBaseModule(Base):
 		self.finished(request.id, self._groups(ldap_user_read, school, ComputerRoom.get_container(school), request.options['pattern']))
 
 	def _users(self, ldap_connection, school, group=None, user_type=None, pattern=''):
+		# type: (LoType, str, Optional[str], Optional[str], Optional[str]) -> List[ucsschool.lib.models.User]
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
 		import ucsschool.lib.models
 		if not user_type:
@@ -492,6 +500,7 @@ class SchoolBaseModule(Base):
 		return users
 
 	def _users_ldap(self, ldap_connection, school, group=None, user_type=None, pattern='', attr=None):
+		# type: (LoType, str, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Tuple[str, Dict[str, Any]]]
 		"""
 		Returns a list of LDAP query result tuples (dn, attr) of all users
 		given  `pattern`, `school` (search base) and `group`.
@@ -554,26 +563,27 @@ class SchoolBaseModule(Base):
 class LDAP_Filter:
 
 	@staticmethod
-	def forSchool(school):
+	def forSchool(school):  # type: (str) -> str
 		return filter_format('(ucsschoolSchool=%s)', [school])
 
 	@staticmethod
-	def forUsers(pattern):
+	def forUsers(pattern):  # type: (str) -> str
 		return LDAP_Filter.forAll(pattern, ['lastname', 'username', 'firstname'])
 
 	@staticmethod
-	def forGroups(pattern, school=None):
+	def forGroups(pattern, school=None):  # type: (str, Optional[str]) -> str
 		# school parameter is deprecated
 		return LDAP_Filter.forAll(pattern, ['name', 'description'])
 
 	@staticmethod
-	def forComputers(pattern):
+	def forComputers(pattern):  # type: (str) -> str
 		return LDAP_Filter.forAll(pattern, ['name', 'description'], ['mac', 'ip'])
 
 	regWhiteSpaces = re.compile(r'\s+')
 
 	@staticmethod
 	def forAll(pattern, subMatch=[], fullMatch=[], prefixes={}):
+		# type: (str, Optional[List[str]], Optional[List[str]], Optional[Dict[str, Any]]) -> str
 		expressions = []
 		for iword in LDAP_Filter.regWhiteSpaces.split(pattern or ''):
 			# evaluate the subexpression (search word over different attributes)
@@ -601,7 +611,7 @@ class LDAP_Filter:
 class Display:
 
 	@staticmethod
-	def user(udm_object):
+	def user(udm_object):  # type: (UdmObject) -> str
 		fullname = udm_object['lastname']
 		if 'firstname' in udm_object and udm_object['firstname']:
 			fullname += ', %(firstname)s' % udm_object
@@ -609,7 +619,7 @@ class Display:
 		return fullname + ' (%(username)s)' % udm_object
 
 	@staticmethod
-	def user_ldap(ldap_object):
+	def user_ldap(ldap_object):  # type: (Dict[str, Any]) -> str
 		fullname = ldap_object.get('sn', [''])[0]
 		if ldap_object.get('givenName', [''])[0]:
 			fullname += ', %s' % ldap_object['givenName'][0]
