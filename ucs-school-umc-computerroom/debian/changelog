@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-8) unstable; urgency=medium
+
+  * Bug #50296: Fix typo in translation
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 01 Oct 2019 13:14:56 +0200
+
 ucs-school-umc-computerroom (11.0.0-7) unstable; urgency=medium
 
   * Bug #50296: improve text for closing dialog

@@ -323,7 +323,7 @@ msgstr "Eigene Internetregeln"
 
 #: umc/js/computerroom/SettingsDialog.js:59
 msgid "Personal settings for the computer room"
-msgstr "Benutzerdefnierte Einstellungen für den Computerraum"
+msgstr "Benutzerdefinierte Einstellungen für den Computerraum"
 
 #: umc/js/computerroom.js:1172
 msgid ""
