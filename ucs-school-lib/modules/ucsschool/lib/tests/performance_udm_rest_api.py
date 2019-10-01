@@ -1,12 +1,9 @@
 import sys
 import random
 import time
-try:
-	from urlparse import unquote  # py2
-except ImportError:
-	from urllib.parse import unquote  # py3
 from multiprocessing import Pool
 from typing import Dict, List, Optional, Tuple
+from six.moves.urllib.parse import unquote
 import requests
 
 try:
@@ -22,7 +19,7 @@ except (ValueError, IndexError):
 	sys.exit(1)
 
 if not NUM_USERS % PARALLELISM == 0:
-	print("<Number of users> modulus <paralellism> mus be zero.")
+	print("<Number of users> modulus <paralellism> must be zero.")
 	sys.exit(1)
 
 SCHOOL_OU = "DEMOSCHOOL"
@@ -63,9 +60,10 @@ def create_objs_via_UDM_HTTP_API_sequential(datas):  # type: (List[Dict[str, str
 		if resp.status_code != 201:
 			print("resp.status_code={!r}".format(resp.status_code))
 			print("resp.text={!r}".format(resp.text))
-			print("resp.json()={!r}".format(resp.json()))
+			if resp.text:
+				print("resp.json()={!r}".format(resp.json()))
 			print("resp.headers={!r}".format(resp.headers))
-			raise RuntimeError("User creation failed.")
+			raise RuntimeError("User creation failed. (HTTP {}: {}).".format(resp.status_code, resp.reason))
 		obj_url = resp.headers["Location"]
 		dn = unquote(obj_url.rsplit("/", 1)[-1])
 		res.append(dn)
@@ -125,7 +123,8 @@ def read_objs_via_UDM_HTTP_API(dns):  # type: (List[str]) -> None
 		if resp.status_code != 200:
 			print("resp.status_code={!r}".format(resp.status_code))
 			print("resp.text={!r}".format(resp.text))
-			print("resp.json()={!r}".format(resp.json()))
+			if resp.text:
+				print("resp.json()={!r}".format(resp.json()))
 			print("resp.headers={!r}".format(resp.headers))
 			raise RuntimeError("Reading User failed.")
 		assert resp.json()["dn"] == dn, "Wrong DN: {!r}".format(resp.json())
@@ -157,12 +156,13 @@ def modify_objs_via_UDM_HTTP_API(school_dns):  # type: (Tuple[str, List[str]]) -
 		obj_url = base_url + dn
 		headers = {"Accept": "application/json"}
 		resp = requests.get(obj_url, headers=headers, auth=AUTH)
-		if resp.status_code != 200:
+		if resp.status_code not in (200, 204):
 			print("resp.status_code={!r}".format(resp.status_code))
 			print("resp.text={!r}".format(resp.text))
-			print("resp.json()={!r}".format(resp.json()))
+			if resp.text:
+				print("resp.json()={!r}".format(resp.json()))
 			print("resp.headers={!r}".format(resp.headers))
-			raise RuntimeError("Reading {} failed.".format(kls.__name__))
+			raise RuntimeError("Reading users failed.")
 		obj_old = resp.json()
 		data = {
 			"position": obj_old["position"],
@@ -177,19 +177,21 @@ def modify_objs_via_UDM_HTTP_API(school_dns):  # type: (Tuple[str, List[str]]) -
 		t0 = time.time()
 		resp = requests.patch(obj_url, headers=headers, json=data, auth=AUTH)
 		t_delta += time.time() - t0
-		if resp.status_code != 200:
+		if resp.status_code not in (200, 204):
 			print("resp.status_code={!r}".format(resp.status_code))
 			print("resp.text={!r}".format(resp.text))
-			print("resp.json()={!r}".format(resp.json()))
+			if resp.text:
+				print("resp.json()={!r}".format(resp.json()))
 			print("resp.headers={!r}".format(resp.headers))
-			raise RuntimeError("Modification failed.")
+			raise RuntimeError("Modification failed (HTTP {}: {}).".format(resp.status_code, resp.reason))
 		resp = requests.get(obj_url, headers=headers, auth=AUTH)
 		if resp.status_code != 200:
 			print("resp.status_code={!r}".format(resp.status_code))
 			print("resp.text={!r}".format(resp.text))
-			print("resp.json()={!r}".format(resp.json()))
+			if resp.text:
+				print("resp.json()={!r}".format(resp.json()))
 			print("resp.headers={!r}".format(resp.headers))
-			raise RuntimeError("Reading {} failed.".format(kls.__name__))
+			raise RuntimeError("Reading users failed (HTTP {}: {}).".format(resp.status_code, resp.reason))
 		obj_new = resp.json()
 		assert obj_new["properties"]["firstname"] == data["properties"]["firstname"]
 		assert obj_new["properties"]["lastname"] == data["properties"]["lastname"]
@@ -216,12 +218,13 @@ def delete_obj_via_UDM_HTTP_API(dns):   # type: (List[str]) -> None
 	for dn in dns:
 		url = "{}/users/user/{}".format(BASE_URL, dn)
 		resp = requests.delete(url, headers=headers, auth=AUTH)
-		if resp.status_code != 200:
+		if resp.status_code not in (200, 204):
 			print("resp.status_code={!r}".format(resp.status_code))
 			print("resp.text={!r}".format(resp.text))
-			print("resp.json()={!r}".format(resp.json()))
+			if resp.text:
+				print("resp.json()={!r}".format(resp.json()))
 			print("resp.headers={!r}".format(resp.headers))
-			raise RuntimeError("Deleting User failed.")
+			raise RuntimeError("Deleting User failed. (HTTP {}: {}).".format(resp.status_code, resp.reason))
 
 
 def delete_objs_via_UDM_HTTP_API_parallel(dns, parallelism):  # type: (List[str], int) -> float
@@ -246,6 +249,7 @@ def main():  # type: () -> None
 	print("Connection args: {!r} {!r}".format(BASE_URL, AUTH))
 	print("Creating {} Users...".format(NUM_USERS))
 	t_1000_1, dns = create_objs_via_UDM_HTTP_API_parallel(SCHOOL_OU, NUM_USERS, PARALLELISM)
+	print("Sleeping 30s to let the system settle down...")
 	time.sleep(30)
 
 	print("Reading {} Users...".format(NUM_USERS))
@@ -253,16 +257,17 @@ def main():  # type: () -> None
 
 	print("Modifying {} Users...".format(NUM_USERS))
 	t_1000_3 = modify_objs_via_UDM_HTTP_API_parallel(SCHOOL_OU, dns, PARALLELISM)
+	print("Sleeping 15s to let the system settle down...")
 	time.sleep(15)
 
 	print("Deleting {} Users...".format(NUM_USERS))
 	t_1000_4 = delete_objs_via_UDM_HTTP_API_parallel(dns, PARALLELISM)
 
 	print("Results:")
-	print("Seconds for creating   {} Users: {:02.2f}".format(NUM_USERS, t_1000_1))
-	print("Seconds for reading    {} Users: {:02.2f}".format(NUM_USERS, t_1000_2))
-	print("Seconds for modifying  {} Users: {:02.2f}".format(NUM_USERS, t_1000_3))
-	print("Seconds for deleting   {} Users: {:02.2f}".format(NUM_USERS, t_1000_4))
+	print("Seconds for creating   {} Users: {:02.2f} ({:02.2f}/user)".format(NUM_USERS, t_1000_1, t_1000_1 / NUM_USERS))
+	print("Seconds for reading    {} Users: {:02.2f} ({:02.2f}/user)".format(NUM_USERS, t_1000_2, t_1000_2 / NUM_USERS))
+	print("Seconds for modifying  {} Users: {:02.2f} ({:02.2f}/user)".format(NUM_USERS, t_1000_3, t_1000_3 / NUM_USERS))
+	print("Seconds for deleting   {} Users: {:02.2f} ({:02.2f}/user)".format(NUM_USERS, t_1000_4, t_1000_4 / NUM_USERS))
 
 
 if __name__ == "__main__":
