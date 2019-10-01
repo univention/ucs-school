@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-07-29 09:58+0200\n"
+"POT-Creation-Date: 2019-10-01 09:57+0200\n"
 "PO-Revision-Date: 2012-05-24 14:32+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: umc/js/computerroom.js:1292
-#, python-format
+#, javascript-format
 msgid "%s minutes left"
 msgstr "%s Minuten verbleiben"
 
@@ -30,7 +30,7 @@ msgid "<b>At least one web site is required!</b>"
 msgstr "<b>Mindestens eine Webseite muss angegeben werden!</b>"
 
 #: umc/js/computerroom.js:1096
-#, python-format
+#, javascript-format
 msgid ""
 "<b>Note:</b> In this computer room the exam \"%s\" is currently being "
 "conducted by %s."
@@ -39,7 +39,7 @@ msgstr ""
 "\" von %s durchgeführt."
 
 #: umc/js/computerroom.js:1099
-#, python-format
+#, javascript-format
 msgid ""
 "<b>Note:</b> In this computer room the exam \"%s\" is currently being "
 "written."
@@ -48,7 +48,7 @@ msgstr ""
 "geschrieben."
 
 #: umc/js/computerroom.js:1102
-#, python-format
+#, javascript-format
 msgid "<b>Note:</b> This computer room is currently in use by %s."
 msgstr "<b>Hinweis:</b> Der Computerraum wird momentan verwendet von %s."
 
@@ -133,8 +133,8 @@ msgid "Choose the school"
 msgstr "Auswahl der Schule"
 
 #: umc/js/computerroom.js:175
-msgid "Close computerroom module"
-msgstr "Computerraum Modul schließen"
+msgid "Close exam mode"
+msgstr "Klassenarbeitsmodus schließen"
 
 #: umc/js/computerroom.js:1174
 msgid "Close module"
@@ -149,7 +149,7 @@ msgid "Computer room"
 msgstr "Computerraum"
 
 #: umc/js/computerroom.js:601
-#, python-format
+#, javascript-format
 msgid "Computer room: %s"
 msgstr "Computerraum: %s"
 
@@ -162,7 +162,7 @@ msgid "Continue without finishing"
 msgstr "Ohne Beenden fortfahren"
 
 #: umc/js/computerroom.js:1242
-#, python-format
+#, javascript-format
 msgid ""
 "Control over the computer room has been taken by \"%s\", your session has "
 "been closed. In case this behaviour was not intended, please contact the "
@@ -199,18 +199,19 @@ msgstr "Nicht mehr erinnern"
 
 #: umc/js/computerroom.js:161
 msgid ""
-"Do you really want to close the computerroom module? If so the exam will be "
-"finished and all documents from the exam users will be collected into the "
-"corresponding folder in your home directory. If you continue without "
-"finishing the exam you can return to the computerroom module and continue "
-"the exam. Please do not forget to finish the exam then."
+"Do you really want to close the exam mode? FINISH EXAM finishes the exam and "
+"the results of all participants will be copied into your home directory. "
+"CONTINUE WITHOUT FINISHING closes the tab and the exam continues. By opening "
+"the computeroom module again you can return to the exam mode. Please do not "
+"forget to finish the exam at a later time."
 msgstr ""
-"Möchten Sie das Computerraum Modul wirklich schließen? Wenn ja, wird zuerst "
-"der Klassenarbeitsmodus beendet und alle Dokumente der Prüfungsteilnehmer "
-"werden in den entsprechenden Ordner Ihres Heimatverzeichnisses kopiert. Wenn "
-"Sie ohne Beenden fortfahren, können Sie später den Computerraum und die "
-"Klassenarbeit wieder öffnen. Bitte vergessen Sie dann nicht die "
-"Klassenarbeit zu einem späteren Zeitpunkt zu beenden."
+"Möchten Sie den Klassenarbeitsmodus wirklich schließen? KLASSENARBEIT "
+"BEENDEN beendet die Klassenarbeit und alle Ergebnisse der Prüfungsteilnehmer "
+"werden in den Ordner Ihres Heimatverzeichnisses kopiert. OHNE BEENDEN "
+"FORTFAHREN schließt den TAB und der Klassenarbeitsmodus wird fortgesetzt. "
+"Durch Öffnen des Computerraum-Moduls gelangen Sie zurück zum "
+"Klassenarbeitsmodus. Bitte vergessen Sie in dem Fall nicht die Klassenarbeit "
+"später zu beenden."
 
 #: umc/js/computerroom.js:1171
 msgid "Do you want to create a computer room now or close the module?"
@@ -221,7 +222,7 @@ msgid "Exam files only"
 msgstr "Nur Prüfungsdateien"
 
 #: umc/js/computerroom.js:597
-#, python-format
+#, javascript-format
 msgid "Exam mode - %s"
 msgstr "Klassenarbeitsmodus - %s"
 
@@ -257,7 +258,6 @@ msgid "Large"
 msgstr "Groß"
 
 #: umc/js/computerroom/SettingsDialog.js:78
-#, python-brace-format
 msgid "List of allowed web sites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 
@@ -421,7 +421,7 @@ msgid "Take over"
 msgstr "Übernehmen"
 
 #: umc/js/computerroom.js:88
-#, python-format
+#, javascript-format
 msgid ""
 "The action is unavailable for UCC computers.<br>The following computers will "
 "be omitted: %s"
@@ -517,7 +517,7 @@ msgid "There are no computer rooms available"
 msgstr "Es sind keine Computerräume verfügbar"
 
 #: umc/js/computerroom.js:1188
-#, python-format
+#, javascript-format
 msgid ""
 "This computer room is currently in use by %s. You can take control over the "
 "room, however, the current teacher will be prompted a notification and its "
@@ -588,24 +588,22 @@ msgid "Windows"
 msgstr "Windows"
 
 #: umc/js/computerroom.js:774
-#, python-brace-format
 msgid "{0} computers are in this room"
 msgstr "{0} Computer befinden sich im Raum"
 
 #: umc/js/computerroom.js:777
-#, python-brace-format
 msgid "{0} powered off/misconfigured"
 msgstr "{0} ausgeschaltet/nicht konfiguriert"
 
 #: umc/js/computerroom.js:1265
-#, python-brace-format
 msgid "{time} minutes"
 msgstr "{time} Minuten"
 
-#: umc/js/computerroom/ScreenshotView.js:110
-#, python-brace-format
-msgid "{username} at {computer}"
-msgstr "{username} an {computer}"
+#~ msgid "Close computerroom module"
+#~ msgstr "Computerraum Modul schließen"
 
 #~ msgid "Free printing"
 #~ msgstr "Drucken möglich"
+
+#~ msgid "{username} at {computer}"
+#~ msgstr "{username} an {computer}"

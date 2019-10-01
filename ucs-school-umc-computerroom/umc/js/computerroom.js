@@ -158,7 +158,7 @@ define([
 			if(value === undefined) { // If using header button Close the function is called twice - once with param once without
 				return false;
 			}
-			dialog.confirm(_('Do you really want to close the computerroom module? If so the exam will be finished and all documents from the exam users will be collected into the corresponding folder in your home directory. If you continue without finishing the exam you can return to the computerroom module and continue the exam. Please do not forget to finish the exam then.'), [
+			dialog.confirm(_('Do you really want to close the exam mode? FINISH EXAM finishes the exam and the results of all participants will be copied into your home directory. CONTINUE WITHOUT FINISHING closes the tab and the exam continues. By opening the computeroom module again you can return to the exam mode. Please do not forget to finish the exam at a later time.'), [
 				{
 					name: 'cancel',
 					label: _('Cancel')
@@ -172,7 +172,7 @@ define([
 					name: 'continue',
 					label: _('Continue without finishing')
 				}
-			], _('Close computerroom module')).then(lang.hitch(this, function(result) {
+			], _('Close exam mode')).then(lang.hitch(this, function(result) {
 				 if(result === 'finish') {
 					this._finishExam();
 				} else if (result === 'continue') {
