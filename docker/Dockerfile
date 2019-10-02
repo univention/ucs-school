@@ -100,10 +100,11 @@ COPY kelvin-api.initd /tmp/
 COPY kelvin-api/ /kelvin/kelvin-api
 RUN	mv -v /tmp/kelvin-api.initd /etc/init.d/kelvin-api && \
 	rc-update add kelvin-api default && \
-	mkdir -pv /var/log/univention/kelvin-api && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
 	/kelvin/venv/bin/python3 /kelvin/kelvin-api/setup.py build_html && \
-    /kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/kelvin-api && \
+    /kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/kelvin-api[development] && \
 	source /kelvin/venv/bin/activate && \
 	make -C /kelvin/kelvin-api lint && \
-	make -C /kelvin/kelvin-api test
+	make -C /kelvin/kelvin-api test && \
+	make -C /kelvin/kelvin-api clean && \
+	rm -rf /root/.cache/
