@@ -89,7 +89,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 async def get_history():
     # TODO: use starlette.staticfiles instead (https://fastapi.tiangolo.com/tutorial/static-files/)
     async with aiofiles.open(
-        Path(__file__).parent.parent / STATIC_FILE_CHANGELOG
+        Path(__file__).parent.parent.parent / STATIC_FILE_CHANGELOG
     ) as fp:
         return await fp.read()
 
@@ -97,49 +97,49 @@ async def get_history():
 @app.get(f"{URL_API_PREFIX}/readme", response_class=HTMLResponse)
 async def get_readme():
     # TODO: use starlette.staticfiles instead (https://fastapi.tiangolo.com/tutorial/static-files/)
-    async with aiofiles.open(Path(__file__).parent.parent / STATIC_FILE_README) as fp:
+    async with aiofiles.open(Path(__file__).parent.parent.parent / STATIC_FILE_README) as fp:
         return await fp.read()
 
 
 app.include_router(
     school_class.router,
-    prefix="/classes",
+    prefix=f"{URL_API_PREFIX}/classes",
     tags=["classes"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
     computer_room.router,
-    prefix="/computer_rooms",
+    prefix=f"{URL_API_PREFIX}/computer_rooms",
     tags=["computer_rooms"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
     computer_client.router,
-    prefix="/computers",
+    prefix=f"{URL_API_PREFIX}/computers",
     tags=["computers"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
     role.router,
-    prefix="/roles",
+    prefix=f"{URL_API_PREFIX}/roles",
     tags=["roles"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
     school.router,
-    prefix="/schools",
+    prefix=f"{URL_API_PREFIX}/schools",
     tags=["schools"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
     computer_server.router,
-    prefix="/servers",
+    prefix=f"{URL_API_PREFIX}/servers",
     tags=["servers"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
     user.router,
-    prefix="/users",
+    prefix=f"{URL_API_PREFIX}/users",
     tags=["users"],
     dependencies=[Depends(get_current_active_user)],
 )
