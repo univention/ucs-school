@@ -4,16 +4,53 @@
 Kelvin API
 ==========
 
-Installation
-------------
+Building
+--------
+
+The Kelvin API will be delivered as a UCS app within a Docker container. To build the container run::
+
+	$ cd kelvin-api
+	$ make build-docker-image
+
+Tests
+-----
+
+Tests are run during Docker image built. To run them manually during development::
+
+	$ . ~/virtenvs/schoollib/bin/activate
+	$ cd kelvin-api
+	$ make test
+
+Code style
+----------
+
+Code style is checked during Docker image built. To check it manually during development::
+
+	$ . ~/virtenvs/schoollib/bin/activate
+	$ cd kelvin-api
+	$ make lint
+
+If a check related to PEP8 fails, run::
+
+	$ . ~/virtenvs/schoollib/bin/activate
+	$ cd kelvin-api
+	$ make format
+
+Coverage
+--------
+
+Code coverage is checked during every ``pytest`` run, so also during Docker image build. To start it manually read chapter `Tests`.
+
+Installation on developer PC
+----------------------------
 
 The ucs-school-lib Python package and all its dependencies are required. See `ucsschool_lib_with_remote_UDM.rst <ucsschool_lib_with_remote_UDM.rst>`_.
 
 Install the kelvin-api package::
 
+	$ . ~/virtenvs/schoollib/bin/activate
 	$ cd $UCSSCHOOL-GIT/kelvin-api
-	$ python setup.py build_html
-	$ pip3 install -e .
+	$ make install
 
 Create directory for log file::
 
@@ -38,17 +75,14 @@ Create secret key file for token signing::
 	$ sudo chown $USER /var/lib/univention-appcenter/apps/ucs-school-kelvin-api/conf/
 	$ openssl rand -hex 32 > /var/lib/univention-appcenter/apps/ucs-school-kelvin-api/conf/tokens.secret
 
-Running it
-----------
+Running it on developer PC
+--------------------------
 
 No Apache configuration yet, for now just start the ASGI server directly::
 
-	$ uvicorn app.main:app --reload
+	$ uvicorn ucsschool.kelvin.main:app --reload
 
 Then open http://127.0.0.1:8000/kelvin/api/v1/docs in your browser.
-
-Tests
------
 
 ...
 

@@ -61,7 +61,7 @@ lint: ## check source code style
 	black --check $(PY_FILES)
 	flake8 --max-line-length=90 $(PY_FILES) || echo "Ignored for now - lots of stubs"
 
-test: ## run tests quickly with the default Python
+test: ## run tests (with the current active Python interpreter)
 	python -m pytest
 
 coverage-html: test ## check code coverage, create HTML report and show in browser
@@ -74,7 +74,7 @@ dist: clean ## builds source and wheel package
 	ls -l dist
 
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	pip3 install -e .
 
 build-docker-image: clean ## build docker image
 	(cd ../docker && ./build_docker_image)
