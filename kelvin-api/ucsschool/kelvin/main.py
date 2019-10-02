@@ -97,7 +97,9 @@ async def get_history():
 @app.get(f"{URL_API_PREFIX}/readme", response_class=HTMLResponse)
 async def get_readme():
     # TODO: use starlette.staticfiles instead (https://fastapi.tiangolo.com/tutorial/static-files/)
-    async with aiofiles.open(Path(__file__).parent.parent.parent / STATIC_FILE_README) as fp:
+    async with aiofiles.open(
+        Path(__file__).parent.parent.parent / STATIC_FILE_README
+    ) as fp:
         return await fp.read()
 
 
