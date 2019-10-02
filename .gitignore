@@ -3,3 +3,5 @@
 **/*.ipynb*
 **/*.egg-info
 .idea/
+docker/build/
+docker/ucs/

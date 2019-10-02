@@ -31,15 +31,21 @@ class BuildHTMLCommand(setuptools.Command):
         pass
 
     def run(self):
+        for name in ("rst2html5.py", "rst2html5-3.py", "rst2html5", "rst2html5-3"):
+            rst2_html5_exe = shutil.which(name)
+            if rst2_html5_exe:
+                break
+        else:
+            raise RuntimeError("Cannot find 'rst2html5'.")
         if self.input_file:
             self.check_call(
-                ["rst2html5.py", self.input_file, f"{str(self.input_file)[:-3]}html"]
+                [rst2_html5_exe, self.input_file, f"{str(self.input_file)[:-3]}html"]
             )
         else:
             for entry in self.recursive_scandir(Path(__file__).parent):
                 if entry.is_file() and entry.name.endswith(".rst"):
                     self.check_call(
-                        ["rst2html5.py", entry.path, f"{str(entry.path)[:-3]}html"]
+                        [rst2_html5_exe, entry.path, f"{str(entry.path)[:-3]}html"]
                     )
 
     @classmethod
@@ -66,7 +72,7 @@ setuptools.setup(
     install_requires=requirements,
     setup_requires=["docutils", "pytest-runner"],
     tests_require=requirements_test,
-    packages=["app", "app.routers"],
+    packages=["ucsschool.kelvin", "ucsschool.kelvin.routers"],
     python_requires=">=3.7",
     license="GNU Affero General Public License v3",
     classifiers=[
