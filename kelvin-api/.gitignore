@@ -1,2 +1,6 @@
+.coverage
 changelog.html
 readme.html
+build/
+dist/
+htmlcov/
