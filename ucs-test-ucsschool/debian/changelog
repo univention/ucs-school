@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.63) unstable; urgency=medium
+
+  * Bug #50296: 91_ucsschool-selenium/03_computerroom_endExam
+    - Adjust dialog title search string
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 07 Oct 2019 11:07:07 +0200
+
 ucs-test-ucsschool (6.0.62) unstable; urgency=low
 
   * Issue #22159: test modify with empty school_class attribute

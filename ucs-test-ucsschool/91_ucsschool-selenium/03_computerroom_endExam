@@ -102,7 +102,7 @@ class UMCTester(object):
 					self.selenium.wait_for_text(_('Education'))
 					self._open_computer_room(school, room.name)
 					self.selenium.click_button(_('Close'))
-					self.selenium.click_element(expand_path('//*[text() = "Close computerroom module"]/ancestor::*[@containsClass="umcConfirmDialog"]//*[text() = "Finish exam"]'))
+					self.selenium.click_element(expand_path('//*[text() = "Close exam mode"]/ancestor::*[@containsClass="umcConfirmDialog"]//*[text() = "Finish exam"]'))
 					self.selenium.click_element(expand_path('//*[text() = "Confirmation"]/ancestor::*[@containsClass="umcConfirmDialog"]//*[text() = "Finish exam"]'))
 					self.selenium.wait_for_text(_('Notification'))
 
