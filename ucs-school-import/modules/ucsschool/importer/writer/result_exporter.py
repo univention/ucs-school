@@ -34,7 +34,7 @@ Base class for result exporters.
 
 import stat
 import os.path
-from ..utils.utils import mkdir_p
+from ucsschool.lib.models.utils import mkdir_p
 
 
 class ResultExporter(object):

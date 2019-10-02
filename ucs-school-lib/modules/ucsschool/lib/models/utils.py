@@ -30,6 +30,8 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
+import grp
+import pwd
 import copy
 from random import choice, shuffle
 import string
@@ -88,6 +90,37 @@ ucr = lazy_object_proxy.Proxy(_ucr)  # type: ConfigRegistry  # "global" ucr for 
 ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool/username/max_length", 20)))  # type: int
 
 
+def mkdir_p(dir_name, user, group, mode):  # type: (str, Union[str, int], Union[str, int], int) -> None
+	"""
+	Recursively create directories (like "mkdir -p").
+
+	:param str dir_name: path to create
+	:param str user: username of owner of new directories
+	:param str group: group name for ownership of new directories
+	:param octal mode: permission bits to set for new directories
+	:returns: None
+	:rtype: None
+	"""
+	if not dir_name:
+		return
+
+	parent = os.path.dirname(dir_name)
+	if not os.path.exists(parent):
+		mkdir_p(parent, user, group, mode)
+
+	if not os.path.exists(dir_name):
+		if isinstance(user, str):
+			uid = pwd.getpwnam(user).pw_uid
+		else:
+			uid = user
+		if isinstance(group, str):
+			gid = grp.getgrnam(group).gr_gid
+		else:
+			gid = group
+		os.mkdir(dir_name, mode)
+		os.chown(dir_name, uid, gid)
+
+
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
 	def replace_password(obj, attr):
 		ori = getattr(obj, attr)
@@ -142,6 +175,9 @@ class UniFileHandler(TimedRotatingFileHandler):
 
 	def _open(self):
 		"""set file permissions on log file"""
+		parent_dir = os.path.dirname(self.baseFilename)
+		if not os.path.exists(parent_dir):
+			mkdir_p(parent_dir, self._fuid, self._fgid, 0o755)
 		stream = super(UniFileHandler, self)._open()
 		file_stat = os.fstat(stream.fileno())
 		if file_stat.st_uid != self._fuid or file_stat.st_gid != self._fgid:

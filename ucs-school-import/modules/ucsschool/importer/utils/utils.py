@@ -32,38 +32,8 @@
 Diverse helper functions.
 """
 
-import os
-import os.path
-import pwd
-import grp
 from contextlib import contextmanager
 import univention.admin.modules
-
-
-def mkdir_p(dir_name, user, group, mode):
-	"""
-	Recursively create directories (like "mkdir -p").
-
-	:param str dir_name: path to create
-	:param str user: username of owner of new directories
-	:param str group: group name for ownership of new directories
-	:param octal mode: permission bits to set for new directories
-	:returns: None
-	:rtype: None
-	"""
-	if not dir_name:
-		return
-
-	uid = pwd.getpwnam(user).pw_uid
-	gid = grp.getgrnam(group).gr_gid
-	parent = os.path.dirname(dir_name)
-
-	if not os.path.exists(parent):
-		mkdir_p(parent, user, group, mode)
-
-	if not os.path.exists(dir_name):
-		os.mkdir(dir_name, mode)
-		os.chown(dir_name, uid, gid)
 
 
 def get_ldap_mapping_for_udm_property(udm_prop, udm_type):
