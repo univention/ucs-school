@@ -1,5 +1,5 @@
+from . import __version__
 from .constants import (
-    __version__,
     STATIC_FILE_CHANGELOG,
     STATIC_FILE_README,
     URL_API_PREFIX,
