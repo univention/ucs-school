@@ -26,7 +26,7 @@ import re
 
 logger = get_logger(__name__)
 router = APIRouter()
-_school_name_regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$')
+_school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
 
 
 def validate_school_name(name):
