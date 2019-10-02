@@ -18,7 +18,8 @@ fi
 APP_ID="ucsschool-kelvin"
 DOCKERFILE="$(basename "$(readlink -f Dockerfile)")"
 BASE_IMG="$(egrep ^FROM "$DOCKERFILE" | cut -d ' ' -f 2-)"
-APP_IMG="docker-test-upload.software-univention.de/${APP_ID}:${APP_VERSION}"
+APP_IMG_NO_VERSION="docker-test-upload.software-univention.de/${APP_ID}"
+APP_IMG="${APP_IMG_NO_VERSION}:${APP_VERSION}"
 
 if [ -n "$http_proxy" ]; then
     PROXY_ARGS="--build-arg http_proxy=$http_proxy --build-arg https_proxy=$http_proxy"
@@ -64,8 +65,11 @@ find build/ -name requirements.txt -exec cat {} + | egrep -v 'univention|school'
 echo "Building docker image..."
 docker build $PROXY_ARGS --build-arg version="$APP_VERSION" -t "$APP_IMG" build
 
+echo "Local Docker images:"
+docker images "$APP_IMG_NO_VERSION"
+
 if [ "$PUSH_DEV" = 1 ]; then
-  read -p "Push 'Y' if you are sure you want to push $APP_IMG to the docker registry. " -n 1 -r
+  read -p "Push 'Y' if you are sure you want to push '$APP_IMG' to the docker registry. " -n 1 -r
   echo
   if [[ $REPLY =~ ^[yY]$ ]]; then
     echo "Pushing image to docker registry..."
