@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (7.0.1-100) unstable; urgency=medium
+
+  * Bug# 50329: migrate from python-support to dh_python
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 01 Oct 2019 16:04:34 +0200
+
 ucs-school-radius-802.1x (7.0.1-6) unstable; urgency=medium
 
   * Bug #46018: fix syntax error and update wording of debug output

@@ -2,12 +2,44 @@ Source: ucs-school-radius-802.1x
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper, univention-config-dev, ucslint
+Build-Depends: debhelper,
+ univention-config-dev,
+ ucslint,
+ dh-python,
+ python-all,
+ python-debian,
+ python3-all,
+ python3-debian,
 
 Package: ucs-school-radius-802.1x
 Architecture: any
 Depends: univention-config-registry,
  univention-config,
- univention-radius (>= 6.0.2-2)
+ univention-radius (>= 6.0.2-2),
+ python-ucs-school-radius-802.1x,
+Description: freeradius 802.1X integration package for Univention Corporate Server
+ Sets up a freeradius RADIUS server to support 802.1X authenticators
+
+Package: python-ucs-school-radius-802.1x
+Architecture: any
+Depends: ${python:Depends},
+ univention-config-registry,
+ univention-config,
+ python-univention-radius (>= 6.0.2-14),
+ python-univention (>= 12.0.0-5),
+Provides:
+ ${python:Provides},
+Description: freeradius 802.1X integration package for Univention Corporate Server
+ Sets up a freeradius RADIUS server to support 802.1X authenticators
+
+Package: python3-ucs-school-radius-802.1x
+Architecture: any
+Depends: ${python:Depends},
+ univention-config-registry,
+ univention-config,
+ python3-univention-radius (>= 6.0.2-14),
+ python3-univention (>= 12.0.0-5),
+Provides:
+ ${python:Provides},
 Description: freeradius 802.1X integration package for Univention Corporate Server
  Sets up a freeradius RADIUS server to support 802.1X authenticators
