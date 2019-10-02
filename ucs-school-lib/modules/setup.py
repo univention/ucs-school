@@ -55,7 +55,7 @@ setuptools.setup(
     setup_requires=["pytest-runner"],
     tests_require=requirements_test,
     packages=["ucsschool", "ucsschool.lib", "ucsschool.lib.models", "ucsschool.lib.pyhooks"],
-    package_data = {'ucsschool.lib': ['*.yaml']},
+    package_data={'ucsschool.lib': ['*.yaml']},
     license="GNU Affero General Public License v3",
     classifiers=[
         "Programming Language :: Python :: 2",
