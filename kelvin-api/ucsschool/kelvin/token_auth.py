@@ -27,24 +27,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from datetime import datetime, timedelta
-import aiofiles
-import jwt
-from jwt import PyJWTError
-import lazy_object_proxy
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
-from starlette.status import HTTP_401_UNAUTHORIZED
 from .constants import (
     TOKEN_HASH_ALGORITHM,
     TOKEN_SIGN_SECRET_FILE,
-    URL_TOKEN_BASE,
     UCRV_TOKEN_TTL,
+    URL_TOKEN_BASE,
 )
 from .ldap_access import LDAPAccess, LdapUser
 from .utils import get_logger
+from datetime import datetime, timedelta
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+from jwt import PyJWTError
+from pydantic import BaseModel
+from starlette.status import HTTP_401_UNAUTHORIZED
 from ucsschool.lib.models.utils import ucr
+
+import aiofiles
+import jwt
+import lazy_object_proxy
 
 logger = get_logger(__name__)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=URL_TOKEN_BASE)
