@@ -62,13 +62,9 @@ lint: ## check source code style
 	flake8 --max-line-length=90 $(PY_FILES) || echo "Ignored for now - lots of stubs"
 
 test: ## run tests quickly with the default Python
-	python3 setup.py pytest
+	python -m pytest
 
-coverage: ## check code coverage quickly with the default Python
-	coverage run --source ucsschool.kelvin -m pytest
-	coverage report -m
-
-coverage-html: coverage ## check code coverage, create HTML report and show in browser
+coverage-html: test ## check code coverage, create HTML report and show in browser
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
@@ -80,5 +76,5 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
-build-docker-image: ## build docker image
+build-docker-image: clean ## build docker image
 	(cd ../docker && ./build_docker_image)

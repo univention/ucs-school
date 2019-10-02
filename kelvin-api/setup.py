@@ -16,6 +16,9 @@ import shutil
 with open(Path(__file__).parent / "requirements.txt") as fp:
     requirements = fp.read().splitlines()
 
+with open(Path(__file__).parent / "requirements_dev.txt") as fp:
+    requirements_dev = fp.read().splitlines()
+
 with open(Path(__file__).parent / "requirements_test.txt") as fp:
     requirements_test = fp.read().splitlines()
 
@@ -72,6 +75,9 @@ setuptools.setup(
     install_requires=requirements,
     setup_requires=["docutils", "pytest-runner"],
     tests_require=requirements_test,
+    extras_require={
+        "development": set(requirements + requirements_dev + requirements_test)
+    },
     packages=["ucsschool.kelvin", "ucsschool.kelvin.routers"],
     python_requires=">=3.7",
     license="GNU Affero General Public License v3",

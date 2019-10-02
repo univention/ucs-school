@@ -1,3 +1,5 @@
-faker
+coverage
+Faker
 pytest
 pytest-asyncio
+pytest-cov

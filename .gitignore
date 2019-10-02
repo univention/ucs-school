@@ -2,6 +2,7 @@
 **/.eggs
 **/*.ipynb*
 **/*.egg-info
+**/.coverage
 .idea/
 docker/build/
 docker/ucs/
