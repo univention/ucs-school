@@ -1,0 +1,28 @@
+#!/sbin/openrc-run
+
+command=/kelvin/venv/bin/uvicorn
+command_args="--reload --host 0.0.0.0 --port 8911 mv_idm_gw.http_api:app"
+name=idm-gw-rest-api
+description="IDM Gateway REST API (ASGI server)"
+
+start() {
+    ebegin "Starting IDM Gateway REST API"
+    start-stop-daemon --start --background --name idm-gw-rest-api --exec $command -- $command_args
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping IDM Gateway REST API"
+    pkill -INT -f multiprocessing || true
+    pkill -INT -f /mv-idm-gw/venv/bin/uvicorn || true
+    eend $?
+}
+status () {
+    if pgrep -f /mv-idm-gw/venv/bin/uvicorn > /dev/null; then
+        einfo "status: started"
+        return 0
+    else
+        einfo "status: stopped"
+        return 3
+    fi
+}

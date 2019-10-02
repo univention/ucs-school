@@ -1,0 +1,74 @@
+#!/bin/bash
+
+set -e
+
+
+APP_VERSION="$(cd ../kelvin-api; python3 -B -c 'import ucsschool.kelvin; print(ucsschool.kelvin.__version__)')"
+if [ "$1" = "--release" ]; then
+  RELEASE=1
+else
+  APP_VERSION="$APP_VERSION-test"
+fi
+
+PUSH_DEV=0
+if [ "$1" = "--push" ] || [ "$2" = "--push" ]; then
+  PUSH_DEV=1
+fi
+
+APP_ID="ucsschool-kelvin"
+DOCKERFILE="$(basename "$(readlink -f Dockerfile)")"
+BASE_IMG="$(egrep ^FROM "$DOCKERFILE" | cut -d ' ' -f 2-)"
+APP_IMG="docker-test-upload.software-univention.de/${APP_ID}:${APP_VERSION}"
+
+if [ -n "$http_proxy" ]; then
+    PROXY_ARGS="--build-arg http_proxy=$http_proxy --build-arg https_proxy=$http_proxy"
+fi
+
+echo "APP_ID=$APP_ID"
+echo "APP_VERSION=$APP_VERSION"
+echo "BASE_IMG=$BASE_IMG"
+echo "APP_IMG=$APP_IMG"
+echo "DOCKERFILE: $DOCKERFILE"
+echo "PROXY_ARGS: $PROXY_ARGS"
+
+echo "Updating base image..."
+docker pull "$BASE_IMG"
+
+if [ "$RELEASE" = "1" ]; then
+  echo "Removing old final image..."
+  docker rmi -f "$APP_IMG" || true
+fi
+
+echo "Updating/Downloading patched UCR..."
+UCS_REPO_DIR="ucs"
+UCS_BRANCH="dtroeder/ucr.pip.installable"
+UCR_DIR="$UCS_REPO_DIR/base/univention-config-registry"
+# try to use local git repo "~/git/ucs" when on developer machine
+if [ -e ~/git/ucs/.git/config ] && grep -q '4.4-2' ~/git/ucs/.git/config; then
+  REPO_URI="file://$HOME/git/ucs/"
+else
+  REPO_URI="https://git.knut.univention.de/univention/ucs.git"
+  GIT_ARGS="-c http.sslVerify=false"
+fi
+if ! [ -d "$UCR_DIR" ]; then
+  git $GIT_ARGS clone --depth=1 -b "$UCS_BRANCH" "$REPO_URI" "$UCS_REPO_DIR"
+fi
+(cd "$UCS_REPO_DIR" && git $GIT_ARGS pull)
+
+[ -d build ] || mkdir build
+rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim ../ucs-school-lib kelvin-api.initd Dockerfile build/
+
+# collect depenedies to minimize Docker image by installing and uninstalling in one step
+find build/ -name requirements.txt -exec cat {} + | egrep -v 'univention|school' | sort | uniq > build/requirements_all.txt
+
+echo "Building docker image..."
+docker build $PROXY_ARGS --build-arg version="$APP_VERSION" -t "$APP_IMG" build
+
+if [ "$PUSH_DEV" = 1 ]; then
+  read -p "Push 'Y' if you are sure you want to push $APP_IMG to the docker registry. " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Y]$ ]]; then
+    echo "Pushing image to docker registry..."
+    docker push "$APP_IMG"
+  fi
+fi
