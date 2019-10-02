@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+# Copyright 2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+download_univention-appcenter-control() {
+	if ! [[ -x univention-appcenter-control ]]; then
+		curl -s -o univention-appcenter-control https://provider-portal.software-univention.de/appcenter-selfservice/univention-appcenter-control
+		chmod +x univention-appcenter-control
+	fi
+}
+
+while [[ $# -gt 1 ]]; do
+	case $1 in
+		--app)
+			APP="$2"
+			shift
+			;;
+		*)
+			echo "Unknown option $1."
+			exit 1
+			;;
+	esac
+	shift
+done
+
+APP_VERSION="$(cd ../kelvin-api || exit 1; python3 -B -c 'import ucsschool.kelvin; print(ucsschool.kelvin.__version__)')"
+APP_VERSION_STRING="4.4/ucsschool-kelvin=$APP_VERSION"
+echo "App version in source code is: '$APP_VERSION'."
+echo "This suggests the app version string '4.4/ucsschool-kelvin=$APP_VERSION'."
+
+if ! [[ -e "$HOME/.univention-appcenter-user" ]] || ! [[ -e "$HOME/.univention-appcenter-pwd" ]]; then
+  echo -e "\nTo upload the files to the test appcenter you will now be asked for your"
+  echo "username and password. Hint: create ~/.univention-appcenter-user and"
+  echo "~/.univention-appcenter-pwd to skip the question."
+fi
+
+if [[ -z "$APP" ]]; then
+	echo "You must provide a valid app version string with --app. To find one run:"
+	echo "$ ./univention-appcenter-control status ucsschool-kelvin"
+	download_univention-appcenter-control
+	exit 1
+fi
+
+if [[ "$APP" != "$APP_VERSION_STRING" ]]; then
+  echo "WARNING: The app version string you supplied and the one from the source code"
+  echo "WARNING: do not match!"
+fi
+
+# upload to univention app provider portal
+download_univention-appcenter-control
+
+echo -e "\nFiles to upload:\n-------------------------------------------------------------------------------"
+find -type f | egrep -v 'univention-appcenter-control|push_config_to_appcenter' | sort
+
+read -n1 -r -p "Press any key to continue or Ctrl-C to abort."
+echo
+
+./univention-appcenter-control upload "$APP" $(find -type f | egrep -v 'univention-appcenter-control|push_config_to_appcenter' | sort)
