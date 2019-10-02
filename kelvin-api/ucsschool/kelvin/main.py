@@ -60,8 +60,12 @@ async def no_object_exception_handler(request: Request, exc: NoObject):
 
 
 @app.exception_handler(SchooLibValidationError)
-async def school_lib_validation_exception_handler(request: Request, exc: SchooLibValidationError):
-    return UJSONResponse(status_code=HTTP_400_BAD_REQUEST, content={"message": str(exc)})
+async def school_lib_validation_exception_handler(
+    request: Request, exc: SchooLibValidationError
+):
+    return UJSONResponse(
+        status_code=HTTP_400_BAD_REQUEST, content={"message": str(exc)}
+    )
 
 
 @app.post(URL_TOKEN_BASE, response_model=Token)
