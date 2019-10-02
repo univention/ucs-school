@@ -65,7 +65,7 @@ Create admin group on the UCS@school host::
 
 	$ udm groups/group create --ignore_exists \
 		--position "cn=groups,$(ucr get ldap/base)" \
-		--set name="kelvin-users" \
+		--set name="ucsschool-kelvin-admins" \
 		--set description="Users that are allowed to connect to the Kelvin API." \
 		--append "users=uid=Administrator,cn=users,$(ucr get ldap/base)"
 
@@ -73,7 +73,7 @@ Create secret key file for token signing::
 
 	$ sudo mkdir -p /var/lib/univention-appcenter/apps/ucs-school-kelvin-api/conf/
 	$ sudo chown $USER /var/lib/univention-appcenter/apps/ucs-school-kelvin-api/conf/
-	$ openssl rand -hex 32 > /var/lib/univention-appcenter/apps/ucs-school-kelvin-api/conf/tokens.secret
+	$ openssl rand -hex 32 > /var/lib/univention-appcenter/apps/ucsschool-kelvin/conf/tokens.secret
 
 Running it on developer PC
 --------------------------
