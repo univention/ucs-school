@@ -4,12 +4,14 @@
 # Install: pip3 install -e .
 #
 
-import os
-from typing import Iterable
 from pathlib import Path
 from subprocess import check_call
+from typing import Iterable
+from ucsschool.kelvin import __version__
+
+import os
 import setuptools
-from app import __version__
+import shutil
 
 with open(Path(__file__).parent / "requirements.txt") as fp:
     requirements = fp.read().splitlines()

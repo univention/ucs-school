@@ -1,32 +1,31 @@
-from typing import Any, Dict, List
-from pydantic import (
-	BaseModel,
-	Protocol,
-	PydanticValueError,
-	Schema,
-	SecretStr,
-	StrBytes,
-	UrlStr,
-	validator,
-	ValidationError,
-)
-from starlette.status import (
-	HTTP_200_OK,
-	HTTP_201_CREATED,
-	HTTP_204_NO_CONTENT,
-	HTTP_400_BAD_REQUEST,
-	HTTP_401_UNAUTHORIZED,
-	HTTP_404_NOT_FOUND,
-	HTTP_409_CONFLICT,
-	HTTP_422_UNPROCESSABLE_ENTITY,
-)
+from ..utils import get_lo_udm, get_logger, name_from_dn, url_to_dn, url_to_name
 from fastapi import APIRouter, HTTPException, Query
+from pydantic import (
+    BaseModel,
+    Protocol,
+    PydanticValueError,
+    Schema,
+    SecretStr,
+    StrBytes,
+    UrlStr,
+    ValidationError,
+    validator,
+)
 from starlette.requests import Request
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+    HTTP_409_CONFLICT,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
+from typing import Any, Dict, List
 from ucsschool.lib.models.attributes import SchoolClassName
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.group import SchoolClass
-from ..utils import get_logger, get_lo_udm, name_from_dn, url_to_dn, url_to_name
-
 
 logger = get_logger(__name__)
 router = APIRouter()
