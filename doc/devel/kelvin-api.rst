@@ -54,8 +54,8 @@ Install the kelvin-api package::
 
 Create directory for log file::
 
-	$ sudo mkdir -p /var/log/univention/kelvin-api/
-	$ sudo chown $USER /var/log/univention/kelvin-api/
+	$ sudo mkdir -p /var/log/univention/ucs-school-kelvin/
+	$ sudo chown $USER /var/log/univention/ucs-school-kelvin/
 
 Make sure UCR is setup::
 

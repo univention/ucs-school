@@ -51,7 +51,7 @@ File locations
 Logfiles
 ^^^^^^^^
 
-``/var/log/univention/kelvin-api`` is a volume mounted into the docker container, so it can be accessed from the host.
+``/var/log/univention/ucs-school-kelvin`` is a volume mounted into the docker container, so it can be accessed from the host.
 
 The directory contains the file ``http.log``, which is the log of the HTTP-API (both ASGI server and API application).
 

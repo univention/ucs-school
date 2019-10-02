@@ -67,7 +67,7 @@ docker build $PROXY_ARGS --build-arg version="$APP_VERSION" -t "$APP_IMG" build
 if [ "$PUSH_DEV" = 1 ]; then
   read -p "Push 'Y' if you are sure you want to push $APP_IMG to the docker registry. " -n 1 -r
   echo
-  if [[ $REPLY =~ ^[Y]$ ]]; then
+  if [[ $REPLY =~ ^[yY]$ ]]; then
     echo "Pushing image to docker registry..."
     docker push "$APP_IMG"
   fi
