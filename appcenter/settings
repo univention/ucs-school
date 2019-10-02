@@ -1,0 +1,5 @@
+[ucsschool/kelvin/access_tokel_ttl]
+Type = Int
+Description = Number of minutes a token retrieved from the Kelvin API is valid.
+Description[de] = Anzahl der Minuten die ein Token, der von der Kelvin-API bezogen wurde, gültig ist.
+InitialValue = 60
