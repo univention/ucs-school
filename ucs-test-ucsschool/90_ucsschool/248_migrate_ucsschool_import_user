@@ -150,26 +150,34 @@ def main():
 			fd_migrate.flush()
 
 			# test user guessing
-			for source_uid in (None, uts.random_string()):
-				cmd = [
-					'/usr/share/ucs-school-import/scripts/migrate_ucsschool_import_user',
-					'--modify-record-uid',
-					'--input-file={}'.format(fd_migrate.name),
-				]
-				if source_uid is not None:
-					cmd.append('--source-uid={}'.format(source_uid))
-				subprocess.call(cmd)
-
-				# check users
-				for user in unambiguous_users:
-					result = lo.search(base=user.dn)
-					assert result, 'Could not find {} in LDAP'.format(user.dn)
+			for dry_run in ('--dry-run', ''):
+				for source_uid in (None, uts.random_string()):
+					cmd = [
+						'/usr/share/ucs-school-import/scripts/migrate_ucsschool_import_user',
+						'--modify-record-uid',
+						'--input-file={}'.format(fd_migrate.name),
+					]
 					if source_uid is not None:
-						assert result[0][1].get('ucsschoolSourceUID', [''])[0] == source_uid
-					else:
-						assert result[0][1].get('ucsschoolSourceUID', [''])[0] != source_uid
-					assert result[0][1].get('ucsschoolRecordUID', [''])[0] == user.record_uid
-					assert result[0][1].get('uid', [''])[0] == user.username
+						cmd.append('--source-uid={}'.format(source_uid))
+					if dry_run:
+						cmd.append(dry_run)
+					subprocess.call(cmd)
+
+					# check users
+					for user in unambiguous_users:
+						result = lo.search(base=user.dn)
+						assert result, 'Could not find {} in LDAP'.format(user.dn)
+						if dry_run:
+							assert result[0][1].get('ucsschoolSourceUID', [''])[0] != source_uid
+							assert result[0][1].get('ucsschoolRecordUID', [''])[0] != user.record_uid
+							assert result[0][1].get('uid', [''])[0] == user.username
+						else:
+							if source_uid is not None:
+								assert result[0][1].get('ucsschoolSourceUID', [''])[0] == source_uid
+							else:
+								assert result[0][1].get('ucsschoolSourceUID', [''])[0] != source_uid
+							assert result[0][1].get('ucsschoolRecordUID', [''])[0] == user.record_uid
+							assert result[0][1].get('uid', [''])[0] == user.username
 
 			print("*\n*** Test was successful.\n*")
 
