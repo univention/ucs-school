@@ -1,3 +1,10 @@
+ucs-school-import (17.0.14) unstable; urgency=low
+
+  * Bug #50321: the script migrate_ucsschool_import_user for migration of
+    RecordUID and SourceUID has been added.
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 04 Oct 2019 16:43:43 +0200
+
 ucs-school-import (17.0.13) unstable; urgency=low
 
   * Bug #50116: fix traceback in fix_ucschool_slaves if a slave is no
