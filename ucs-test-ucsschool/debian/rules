@@ -30,11 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-export DH_ALWAYS_EXCLUDE=.svn
-
 override_dh_auto_test:
 	dh_auto_test
 	ucslint
 
 %:
-	dh $@ --with python_support
+	dh $@ --with python2,python3 --buildsystem=pybuild

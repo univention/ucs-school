@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.63) unstable; urgency=low
+
+  * Bug #50325: migrate from python-support to dh_python
+  * create Python 3 modules
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 07 Oct 2019 16:44:49 +0200
+
 ucs-test-ucsschool (6.0.62) unstable; urgency=low
 
   * Issue #22159: test modify with empty school_class attribute

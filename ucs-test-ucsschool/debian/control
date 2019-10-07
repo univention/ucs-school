@@ -4,13 +4,17 @@ Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 8.0.0),
  ucslint,
- python-support
+ dh-python,
+ python-debian,
+ python-all,
+ python3-all,
 Standards-Version: 3.6.1
 
 Package: ucs-test-ucsschool
 Architecture: all
 Depends: ucs-test-libs,
  ucs-test-framework (>= 9.0.2-90),
+ python-univention (>= 12.0.0-5),
  python-pycurl,
  python-pytest,
  python-mock,
@@ -18,7 +22,11 @@ Depends: ucs-test-libs,
  python-requests,
  eapol,
  ${misc:Depends},
+ ${python:Depends},
+ ${python3:Depends},
  python-ucs-school (>= 12.1.0-15),
-Provides: ucs-test-module
+Provides: ucs-test-module,
+ ${python:Provides},
+ ${python3:Provides},
 Description: Additional UCS@school tests for ucs-test
  This package includes some UCS@school related tests for ucs-test.
