@@ -170,3 +170,7 @@ The password of the demoschool users is stored in this file.
 Um fehlende Zählerobjekte für Benutzernamen-Präfixe zu erzeugen, kann folgender Schnippsel verwendet werden:
 
     python -c "from ucsschool.importer.utils.username_handler import LdapStorageBackend; b = LdapStorageBackend('usernames'); b.create('${USERNAMEPREFIX}', ${NEXTNUMBER})"
+
+# Import
+## UMC-Modul "Benutzer-Import" / HTTP-API "Newton"
+*Aktuell noch nicht im Handbuch:* Beim Import über das UMC-Modul "Benutzer-Import" bzw. direkt über die Newton-HTTP-API (Massenimport via CSV-Datei) ist es möglich, additiv zur vorhandenen Konfiguration eine OU-spezifische Konfiguration hinzuzuladen. Diese muss pro OU in der Datei `/var/lib/ucs-school-import/configs/$OU.json` abgelegt werden.
