@@ -46,3 +46,8 @@ Set the UCR variable ``ucsschool/import/http_api/set_source_uid`` to ``no`` and 
 
 	ucr set ucsschool/import/http_api/set_source_uid=no
 	service ucs-school-import-http-api restart
+
+
+*If you want imported users to only be a member of one school at a time*, namely the one they were imported into lastly, and be immediately moved from any other school into the one being imported currently, the following config parameter can be set. Normally this behaviour is not wanted, thus the parameter is ``false`` by default. The imported users' memberships in school classes belonging to schools different from the one being imported currently will also be removed.
+
+* ``dont_keep_other_schools`` *must* be ``true``

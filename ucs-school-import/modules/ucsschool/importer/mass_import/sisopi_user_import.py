@@ -80,6 +80,7 @@ class SingleSourcePartialUserImport(UserImport):
 		"""
 		super(SingleSourcePartialUserImport, self).__init__(dry_run)
 		self.limbo_ou = self.config.get('limbo_ou')
+		self.dont_keep_other_schools = self.config.get('dont_keep_other_schools', False)
 
 	def prepare_imported_user(self, imported_user, old_user):  # type: (ImportUser, Optional[ImportUser]) -> ImportUser
 		"""
@@ -121,6 +122,14 @@ class SingleSourcePartialUserImport(UserImport):
 				imported_user.school = self.config['school']
 				imported_user.schools = [self.config['school']]
 				imported_user.reactivate()
+			elif self.dont_keep_other_schools is True:
+				self.logger.info(
+				    'User %r exists in other school(s). Moving to currently being imported school %r without keeping '
+				    'other schools because dont_keep_other_schools is true in config.',
+					old_user, self.config['school']
+				)
+				imported_user.school = self.config['school']
+				imported_user.schools.append(self.config['school'])
 			else:
 				self.logger.debug(
 					'config["school"]=%r config["limbo_ou"]=%r imported_user.school=%r imported_user.schools=%r '

@@ -65,4 +65,8 @@ class SingleSourcePartialImportConfigurationChecks(ConfigurationChecks):
 
 	def test_school_not_limbo(self):
 		if self.config['school'] == self.config['limbo_ou']:
-				raise InitialisationError('Importing into limbo ({!r}) OU is forbidden.'.format(self.config['limbo_ou']))
+			raise InitialisationError('Importing into limbo ({!r}) OU is forbidden.'.format(self.config['limbo_ou']))
+
+	def test_dont_keep_other_schools(self):
+		if type(self.config.get('dont_keep_other_schools', False)) is not bool:
+			raise InitialisationError('Non-boolean value configured for dont_keep_other_schools')
