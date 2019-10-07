@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 from univention.testing.ucsschool.importcomputers import Windows, MacOS, IPManagedClient, random_mac, random_ip
 from univention.testing.ucsschool.internetrule import InternetRule
 from univention.testing.ucsschool.simplecurl import SimpleCurl
@@ -115,14 +116,14 @@ class Room(object):
 		self.teacher_computers = teacher_computers or []
 
 	def get_room_user(self, client):
-		print 'Executing command: computerroom/rooms in school:', self.school
+		print('Executing command: computerroom/rooms in school:', self.school)
 		reqResult = client.umc_command('computerroom/rooms', {'school': self.school}).result
 		return [x.get('user') for x in reqResult if x['label'] == self.name][0]
 
 	def check_room_user(self, client, expected_user):
-		print 'Checking computer room(%s) users..........' % self.name
+		print('Checking computer room(%s) users..........' % self.name)
 		current_user = self.get_room_user(client)
-		print 'Room %s is in use by user %r' % (self.name, current_user)
+		print('Room %s is in use by user %r' % (self.name, current_user))
 		if current_user:
 			user_id = re.search(r'\((\w+)\)', current_user).group(1)
 		else:
@@ -132,60 +133,60 @@ class Room(object):
 				user_id, expected_user))
 
 	def aquire_room(self, client):
-		print 'Executing command: computerroom/room/acquire'
+		print('Executing command: computerroom/room/acquire')
 		return client.umc_command('computerroom/room/acquire', {'room': self.dn}).result
 
 	def checK_room_aquire(self, client, expected_answer):
-		print 'Checking room aquire... (%s)' % self.name
+		print('Checking room aquire... (%s)' % self.name)
 		answer = self.aquire_room(client)['message']
 		if answer == expected_answer:
-			print 'Room %s is %s' % (self.name, answer)
+			print('Room %s is %s' % (self.name, answer))
 		else:
 			utils.fail('Unexpected room aquire result: %s' % (answer,))
 
 	def get_room_computers(self, client):
-		print 'Executing command: computerroom/query... (%s)' % self.name
+		print('Executing command: computerroom/query... (%s)' % self.name)
 		reqResult = client.umc_command('computerroom/query', {'reload': False}).result
 		return [x['name'] for x in reqResult]
 
 	def check_room_computers(self, client, expected_computer_list):
-		print 'Checking room computers........... (%s)' % self.name
+		print('Checking room computers........... (%s)' % self.name)
 		current_computers = self.get_room_computers(client)
-		print 'Current computers in room %s are %r' % (self.name, current_computers)
+		print('Current computers in room %s are %r' % (self.name, current_computers))
 		for i, computer in enumerate(sorted(current_computers)):
 			if computer not in sorted(expected_computer_list)[i]:
 				utils.fail('Computers found %r do not match the expected: %r' % (
 					current_computers, expected_computer_list))
 
 	def set_room_settings(self, client, new_settings):
-		print 'Executing command: computerroom/settings/set'
-		print 'new_settings = %r' % (new_settings,)
+		print('Executing command: computerroom/settings/set')
+		print('new_settings = %r' % (new_settings,))
 		reqResult = client.umc_command('computerroom/settings/set', new_settings).result
 		return reqResult
 
 	def get_room_settings(self, client):
-		print 'Executing command: computerroom/settings/get'
+		print('Executing command: computerroom/settings/get')
 		reqResult = client.umc_command('computerroom/settings/get').result
 		return reqResult
 
 	def check_room_settings(self, client, expected_settings):
-		print 'Checking computerroom (%s) settings ...........' % self.name
+		print('Checking computerroom (%s) settings ...........' % self.name)
 		try:
 			current_settings = self.get_room_settings(client)
 			d = dict(expected_settings)  # copy dictionary
 			d['period'] = current_settings['period']
 			d['customRule'] = current_settings['customRule']  # TODO Bug 35258 remove
 			if current_settings != d:
-				print 'FAIL: Current settings (%r) do not match expected ones (%r)' % (current_settings, d)
+				print('FAIL: Current settings (%r) do not match expected ones (%r)' % (current_settings, d))
 				utils.fail('Current settings (%r) do not match expected ones (%r)' % (current_settings, d))
 		except ConnectionError as exc:
 			if '[Errno 4] ' in str(exc):
-				print 'failed to check room (%s) settings, exception [Errno4]' % self.name
+				print('failed to check room (%s) settings, exception [Errno4]' % self.name)
 			print("Exception: '%s' '%s' '%r'" % (str(exc), type(exc), exc))
 			raise
 
 	def get_internetRules(self, client):
-		print 'Executing command: computerroom/internetrules'
+		print('Executing command: computerroom/internetrules')
 		reqResult = client.umc_command('computerroom/internetrules').result
 		return reqResult
 
@@ -209,19 +210,19 @@ class Room(object):
 				exist = True
 				break
 		if exist == expected_existence:
-			print 'Atjob result at(%r) existance is expected (%r)' % (period, exist)
+			print('Atjob result at(%r) existance is expected (%r)' % (period, exist))
 		else:
-			print 'FAIL: Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)' % (period, expected_existence, exist)
-			print 'Found the following atjobs:'
+			print('FAIL: Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)' % (period, expected_existence, exist))
+			print('Found the following atjobs:')
 			for i, item in enumerate(ula.list()):
-				print 'Job %s: %s  owner=%s\n%s' % (i, item, item.owner, item.command)
+				print('Job %s: %s  owner=%s\n%s' % (i, item, item.owner, item.command))
 			utils.fail('Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)' % (period, expected_existence, exist))
 
 	def check_displayTime(self, client, period):
 		displayed_period = self.get_room_settings(client)['period'][0:-3]
 		if period == displayed_period:
-			print 'Time displayed (%r) is same as time at Atjobs (%r)' % (
-				displayed_period, period)
+			print('Time displayed (%r) is same as time at Atjobs (%r)' % (
+				displayed_period, period))
 		else:
 			utils.fail('Time displayed (%r) is different from time at Atjobs (%r)' % (
 				displayed_period, period))
@@ -243,7 +244,7 @@ class Room(object):
 		time_out = 30  # seconds
 		self.set_room_settings(client, new_settings)
 		for i in xrange(time_out, 0, -1):
-			print i
+			print(i)
 			if len(ula.list()) > ula_length:
 				break
 			else:
@@ -256,7 +257,7 @@ class Room(object):
 		# TODO FAILS because of Bug #35195
 		# self.check_displayTime(client, period)
 
-		print '*** Waiting 2 mins for settings to expire.............'
+		print('*** Waiting 2 mins for settings to expire.............')
 		time.sleep(2 * 60 + 2)
 		current_settings = self.get_room_settings(client)
 
@@ -271,7 +272,7 @@ class Room(object):
 
 	@retry_cmd
 	def check_home_read(self, user, ip_address, passwd='univention', expected_result=0):
-		print '.... Check home read ....'
+		print('.... Check home read ....')
 		cmd_read_home = ['smbclient', '//%(ip)s/%(username)s', '-U', '%(user)s', '-c', 'dir']
 		read = run_commands(
 			[cmd_read_home],
@@ -282,12 +283,12 @@ class Room(object):
 			}
 		)
 		if read[0] != expected_result:
-			print 'FAIL .. Read home directory result (%r), expected (%r)' % (read[0], expected_result)
+			print('FAIL .. Read home directory result (%r), expected (%r)' % (read[0], expected_result))
 			raise CmdCheckFail('Read home directory result (%r), expected (%r)' % (read[0], expected_result))
 
 	@retry_cmd
 	def check_home_write(self, user, ip_address, passwd='univention', expected_result=0):
-		print '.... Check home write ....'
+		print('.... Check home write ....')
 		f = tempfile.NamedTemporaryFile(dir='/tmp')
 		cmd_write_home = ['smbclient', '//%(ip)s/%(username)s', '-U', '%(user)s', '-c', 'put %(filename)s']
 		write = run_commands(
@@ -301,12 +302,12 @@ class Room(object):
 		)
 		f.close()
 		if write[0] != expected_result:
-			print 'FAIL .. Write to home directory result (%r), expected (%r)' % (write[0], expected_result)
+			print('FAIL .. Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
 			raise CmdCheckFail('Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
 
 	@retry_cmd
 	def check_marktplatz_read(self, user, ip_address, passwd='univention', expected_result=0):
-		print '.... Check Marktplatz read ....'
+		print('.... Check Marktplatz read ....')
 		cmd_read_marktplatz = ['smbclient', '//%(ip)s/Marktplatz', '-U', '%(user)s', '-c', 'dir']
 		read = run_commands(
 			[cmd_read_marktplatz],
@@ -316,12 +317,12 @@ class Room(object):
 			}
 		)
 		if read[0] != expected_result:
-			print 'FAIL .. Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result)
+			print('FAIL .. Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
 			raise CmdCheckFail('Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
 
 	@retry_cmd
 	def check_marktplatz_write(self, user, ip_address, passwd='univention', expected_result=0):
-		print '.... Check Marktplatz write ....'
+		print('.... Check Marktplatz write ....')
 		f = tempfile.NamedTemporaryFile(dir='/tmp')
 		cmd_write_marktplatz = ['smbclient', '//%(ip)s/Marktplatz', '-U', '%(user)s', '-c', 'put %(filename)s']
 		write = run_commands(
@@ -334,7 +335,7 @@ class Room(object):
 		)
 		f.close()
 		if write[0] != expected_result:
-			print 'FAIL .. Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result)
+			print('FAIL .. Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
 			raise CmdCheckFail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
 
 	def check_share_access(self, user, ip_address, expected_home_result, expected_marktplatz_result):
@@ -353,7 +354,7 @@ class Room(object):
 
 	def test_share_access_settings(self, user, ip_address, client):
 		self.aquire_room(client)
-		print self.get_room_settings(client)
+		print(self.get_room_settings(client))
 
 		# generate all the possible combinations for (rule, printmode, sharemode)
 		white_page = 'univention.de'
@@ -368,9 +369,9 @@ class Room(object):
 			period = datetime.time.strftime(
 				(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
 			t += 300
-			print
-			print '*** %d -(internetRule, printMode, shareMode) = (%r, %r, %r) ----------' % (
-				i, rule, printMode, shareMode)
+			print()
+			print('*** %d -(internetRule, printMode, shareMode) = (%r, %r, %r) ----------' % (
+				i, rule, printMode, shareMode))
 			new_settings = {
 				'customRule': white_page,
 				'printMode': printMode,
@@ -386,7 +387,7 @@ class Room(object):
 
 	@retry_cmd
 	def check_smb_print(self, ip, printer, user, expected_result):
-		print 'Checking print mode', '.' * 40
+		print('Checking print mode', '.' * 40)
 		# ensure cups is running, otherwise jobs are not rejected
 		ucr = ucr_test.UCSTestConfigRegistry()
 		ucr.load()
@@ -409,7 +410,7 @@ class Room(object):
 		)[0]
 		f.close()
 		if result != expected_result:
-			print 'FAIL .... smbclient print result (%r), expected (%r)' % (result, expected_result)
+			print('FAIL .... smbclient print result (%r), expected (%r)' % (result, expected_result))
 			raise CmdCheckFail('smbclient print result (%r), expected (%r)' % (result, expected_result))
 
 	def check_print_behavior(self, user, ip_address, printer, printMode):
@@ -451,9 +452,9 @@ class Room(object):
 					(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
 				t += 300
 				rule, printMode, shareMode = next(settings)
-				print
-				print '***', i, '-(internetRule, printMode, shareMode) = (', \
-					rule, ',', printMode, ',', shareMode, ')', '-' * 10
+				print()
+				print('***', i, '-(internetRule, printMode, shareMode) = (', \
+					rule, ',', printMode, ',', shareMode, ')', '-' * 10)
 				new_settings = {
 					'customRule': white_page,
 					'printMode': printMode,
@@ -487,7 +488,7 @@ class Room(object):
 				rule_in_control = expected_rule
 
 		localCurl.close()
-		print 'RULE IN CONTROL = ', rule_in_control
+		print('RULE IN CONTROL = ', rule_in_control)
 		if rule_in_control != expected_rule:
 			utils.fail('rule in control (%s) does not match the expected one (%s)' % (rule_in_control, expected_rule))
 
@@ -519,9 +520,9 @@ class Room(object):
 					(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
 				t += 300
 				rule, printMode, shareMode = next(settings)
-				print
-				print '***', i, '-(internetRule, printMode, shareMode) = (', \
-					rule, ',', printMode, ',', shareMode, ')', '-' * 10
+				print()
+				print('***', i, '-(internetRule, printMode, shareMode) = (', \
+					rule, ',', printMode, ',', shareMode, ')', '-' * 10)
 				new_settings = {
 					'customRule': white_page,
 					'printMode': printMode,
@@ -579,9 +580,9 @@ class Room(object):
 			for i, (rule, printMode, shareMode) in enumerate(settings):
 				period = datetime.time.strftime(
 					(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
-				print
-				print '*** %d -(internetRule, printMode, shareMode, period) = (%r, %r, %r, %r) ----------' % (
-					i, rule, printMode, shareMode, period)
+				print()
+				print('*** %d -(internetRule, printMode, shareMode, period) = (%r, %r, %r, %r) ----------' % (
+					i, rule, printMode, shareMode, period))
 				new_settings = {
 					'customRule': white_page,
 					'printMode': printMode,
@@ -635,15 +636,15 @@ class Room(object):
 			'shareMode': shareMode,
 			'internetRule': internetRule
 		}
-		print
-		print '----------DEBUG-----------'
-		print 'old_period = %r' % (partial_old_settings.get('period'), )
-		print 'new_period = %r' % (period, )
+		print()
+		print('----------DEBUG-----------')
+		print('old_period = %r' % (partial_old_settings.get('period'), ))
+		print('new_period = %r' % (period, ))
 		partial_old_settings = partial_old_settings.copy()
 		partial_old_settings.pop('period')
 		# if there is no change in settings, no atjob is added
-		print 'old=', partial_old_settings
-		print 'new=', partial_new_settings
+		print('old=', partial_old_settings)
+		print('new=', partial_new_settings)
 		self.check_atjobs(period, partial_old_settings != partial_new_settings)
 
 		# check internetrules
@@ -672,7 +673,7 @@ def get_banpage(ucr):
 
 
 def clean_folder(path):
-	print 'Cleaning folder %r .....' % path
+	print('Cleaning folder %r .....' % path)
 	for root, _, filenames in os.walk(path):
 		for f in filenames:
 			file_path = os.path.join(root, f)
@@ -689,7 +690,7 @@ def run_commands(cmdlist, argdict):
 		cmd = copy.deepcopy(cmd)
 		for i, val in enumerate(cmd):
 			cmd[i] = val % argdict
-		print '*** %r' % cmd
+		print('*** %r' % cmd)
 		result = subprocess.call(cmd)
 		result_list.append(result)
 	return result_list
@@ -712,14 +713,14 @@ def add_printer(name, school, hostname, domainname, ldap_base):
 		'--binddn', 'uid=Administrator,cn=users,%(ldap_base)s',
 		'--bindpwd', 'univention'
 	]
-	print run_commands(
+	print(run_commands(
 		[cmd_add_printer], {
 			'name': name,
 			'school': school,
 			'hostname': hostname,
 			'domainname': domainname,
 			'ldap_base': ldap_base,
-		})
+		}))
 
 	utils.wait_for_replication_and_postrun()
 
@@ -732,13 +733,13 @@ def remove_printer(name, school, ldap_base):
 		'udm', 'shares/printer', 'remove',
 		'--dn', 'cn=%(name)s,cn=printers,ou=%(school)s,%(ldap_base)s'
 	]
-	print run_commands(
+	print(run_commands(
 		[cmd_remove_printer], {
 			'name': name,
 			'school': school,
 			'ldap_base': ldap_base
 		}
-	)
+	))
 
 
 class Computers(object):
@@ -757,7 +758,7 @@ class Computers(object):
 			nr_macos=self.nr_macos,
 			nr_ipmanagedclient=self.nr_ipmanagedclient)
 
-		print '********** Create computers'
+		print('********** Create computers')
 		computer_import.run_import(self.open_ldap_co)
 
 		created_computers = []
@@ -821,13 +822,13 @@ class UmcComputer(object):
 			},
 			'options': None
 		}]
-		print 'Creating Computer %s' % (self.name,)
-		print 'param = %s' % (param,)
+		print('Creating Computer %s' % (self.name,))
+		print('param = %s' % (param,))
 		reqResult = self.client.umc_command('schoolwizards/computers/add', param, flavor).result
 		if should_succeed and reqResult[0]['result'] is True:
 			utils.wait_for_replication()
 		elif not should_succeed and reqResult[0]['result'].get('error'):
-			print 'Expected creation failed for computer (%r)\nReturn Message: %r' % (self.name, reqResult[0]['result']['error'])
+			print('Expected creation failed for computer (%r)\nReturn Message: %r' % (self.name, reqResult[0]['result']['error']))
 		else:
 			raise CreateFail('Unable to create computer (%r)\nRequest Result: %r' % (param, reqResult))
 
@@ -916,8 +917,8 @@ class UmcComputer(object):
 			},
 			'options': None
 		}]
-		print 'Editing computer %s' % (self.name,)
-		print 'param = %s' % (param,)
+		print('Editing computer %s' % (self.name,))
+		print('param = %s' % (param,))
 		reqResult = self.client.umc_command('schoolwizards/computers/put', param, flavor).result
 		if reqResult[0] is not True:
 			raise EditFail('Unable to edit computer (%s) with the parameters (%r): %r' % (self.name, param, reqResult))
@@ -947,5 +948,5 @@ class UmcComputer(object):
 				names_in_result, computer_names))
 
 	def verify_ldap(self, should_exist):
-		print 'verifying computer %s' % self.name
+		print('verifying computer %s' % self.name)
 		utils.verify_ldap_object(self.dn(), should_exist=should_exist)

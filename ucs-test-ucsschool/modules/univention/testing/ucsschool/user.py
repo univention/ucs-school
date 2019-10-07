@@ -4,6 +4,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
 import univention.testing.utils as utils
 from univention.testing.umc import Client
@@ -102,8 +103,8 @@ class User(Person):
 			},
 			'options': None
 		}]
-		print '#### Creating user %s' % (self.username,)
-		print '#### param = %s' % (param,)
+		print('#### Creating user %s' % (self.username,))
+		print('#### param = %s' % (param,))
 		reqResult = self.client.umc_command('schoolwizards/users/add', param, flavor).result
 		if not reqResult[0]:
 			raise CreateFail('Unable to create user (%r)' % (param,))
@@ -259,8 +260,8 @@ class User(Person):
 			'object': object_props,
 			'options': None
 		}]
-		print '#### Editing user %s' % (self.username,)
-		print '#### param = %s' % (param,)
+		print('#### Editing user %s' % (self.username,))
+		print('#### param = %s' % (param,))
 		reqResult = self.client.umc_command('schoolwizards/users/put', param, flavor).result
 		if not reqResult[0]:
 			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username, param))

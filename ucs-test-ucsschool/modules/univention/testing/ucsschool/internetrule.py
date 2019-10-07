@@ -7,6 +7,7 @@ All the operations related to internet rules
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
 from .randomdomain import RandomDomain
 from univention.testing.umc import Client
 import random
@@ -75,8 +76,8 @@ class InternetRule(object):
 				'priority': self.priority
 			}
 		}]
-		print 'defining rule %s with UMCP:%s' % (self.name, 'internetrules/add')
-		print 'param = %r' % (param,)
+		print('defining rule %s with UMCP:%s' % (self.name, 'internetrules/add'))
+		print('param = %r' % (param,))
 		reqResult = self.client.umc_command('internetrules/add', param).result
 		if not reqResult[0]['success']:
 			utils.fail('Unable to define rule (%r)' % (param,))
@@ -85,7 +86,7 @@ class InternetRule(object):
 		"""gets internet rule via UMCP\n
 		:param should_exist: True if the rule is expected to be found
 		:type should_exist: bool"""
-		print 'Calling %s for %s' % ('internetrules/get', self.name)
+		print('Calling %s for %s' % ('internetrules/get', self.name))
 		reqResult = self.client.umc_command('internetrules/get', [self.name]).result
 		if bool(reqResult) != should_exist:
 			utils.fail('Unexpected fetching result for internet rule (%r)' % (self.name))
@@ -120,8 +121,8 @@ class InternetRule(object):
 			},
 			'options': {'name': self.name}
 		}]
-		print 'Modifying rule %s with UMCP:%s' % (self.name, 'internetrules/put')
-		print 'param = %r' % (param,)
+		print('Modifying rule %s with UMCP:%s' % (self.name, 'internetrules/put'))
+		print('param = %r' % (param,))
 		reqResult = self.client.umc_command('internetrules/put', param).result
 		if not reqResult[0]['success']:
 			utils.fail('Unable to modify rule (%r)' % (param,))
@@ -134,7 +135,7 @@ class InternetRule(object):
 
 	def remove(self):
 		"""removes internet rule via UMCP"""
-		print 'Calling %s for %s' % ('internetrules/remove', self.name)
+		print('Calling %s for %s' % ('internetrules/remove', self.name))
 		options = [{'object': self.name}]
 		reqResult = self.client.umc_command('internetrules/remove', options).result
 		if not reqResult[0]['success']:
@@ -149,7 +150,7 @@ class InternetRule(object):
 		:param should_match:
 		:type  should_match: bool
 		"""
-		print 'Checking UCR for %s' % self.name
+		print('Checking UCR for %s' % self.name)
 		self.ucr.load()
 		# extract related items from ucr
 		exItems = dict([(key.split('/')[-1], value) for (key, value) in self.ucr.items() if self.name in key])
@@ -200,8 +201,8 @@ class InternetRule(object):
 		else:
 			name = self.name
 		param = [{'group': groupdn, 'rule': name}]
-		print 'Assigning rule %s to %s: %s' % (self.name, groupType, groupName)
-		print 'param = %r' % (param,)
+		print('Assigning rule %s to %s: %s' % (self.name, groupType, groupName))
+		print('param = %r' % (param,))
 		result = self.client.umc_command('internetrules/groups/assign', param).result
 		if not result:
 			utils.fail('Unable to assign internet rule to workgroup (%r)' % (param,))
@@ -213,7 +214,7 @@ class InternetRule(object):
 		"""Get all defined rules via UMCP\n
 		:returns: [str] list of rules names
 		"""
-		print 'Calling %s = get all defined rules' % ('internetrules/query')
+		print('Calling %s = get all defined rules' % ('internetrules/query'))
 		ruleList = []
 		rules = self.client.umc_command('internetrules/query', {'pattern': ''}).result
 		ruleList = sorted([(x['name']) for x in rules])
@@ -253,7 +254,7 @@ class Check(object):
 	def checkRules(self):
 		"""Check if the assigned internet rules are correct UMCP"""
 		for groupName, ruleName in self.groupRuleCouples:
-			print 'Checking %s rules' % (groupName)
+			print('Checking %s rules' % (groupName))
 			param = {
 				'school': self.school,
 				'pattern': groupName
@@ -270,7 +271,7 @@ class Check(object):
 		"""Check ucr variables for groups/ classes internet rules"""
 		self.ucr.load()
 		for groupName, ruleName in self.groupRuleCouples:
-			print 'Checking %s UCR variables' % (groupName)
+			print('Checking %s UCR variables' % (groupName))
 			groupid = 'proxy/filter/groupdefault/%s-%s' % (
 				self.school, groupName)
 			if self.ucr.get(groupid) != ruleName:

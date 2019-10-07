@@ -4,6 +4,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
 import pycurl
 import StringIO
 import time
@@ -71,16 +72,16 @@ class SimpleCurl(object):
 			self.curl.setopt(pycurl.HTTPPOST, postData)
 		buf = StringIO.StringIO()
 		self.curl.setopt(pycurl.WRITEFUNCTION, buf.write)
-		print 'getting page:', url
+		print('getting page:', url)
 		for i in xrange(60):
 			try:
 				self.curl.perform()
 				break
 			except Exception:
 				time.sleep(1)
-				print '.'
+				print('.')
 				if i == 59:
-					print 'Requested page could not be fetched'
+					print('Requested page could not be fetched')
 					raise
 				continue
 		page = buf.getvalue()

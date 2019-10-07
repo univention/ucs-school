@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import ldap
 import os
 import smbpasswd
@@ -174,7 +175,7 @@ class Person(object):
 			elif hasattr(self, key):
 				setattr(self, key, kwargs[key])
 			else:
-				print 'ERROR: cannot update Person(): unknown option %r=%r' % (key, kwargs[key])
+				print('ERROR: cannot update Person(): unknown option %r=%r' % (key, kwargs[key]))
 
 	def move_school_classes(self, old_school, new_school):
 		assert new_school in self.schools
@@ -363,7 +364,7 @@ class Person(object):
 			role_group_dn = 'cn=%s%s,cn=groups,%s' % (self.grp_prefix, school, get_school_base(school))
 			utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
 
-		print 'person OK: %s' % self.username
+		print('person OK: %s' % self.username)
 
 	def update_from_ldap(self, lo, attrs, source_uid=None, record_uid=None):
 		# type: (univention.admin.uldap.access, List[str], Optional[str], Optional[str]) -> None
@@ -469,9 +470,9 @@ class ImportFile:
 				self._run_import_via_python_api()
 			pre_result = hooks.get_pre_result()
 			post_result = hooks.get_post_result()
-			print 'PRE  HOOK result:\n%s' % pre_result
-			print 'POST HOOK result:\n%s' % post_result
-			print 'SCHOOL DATA     :\n%s' % str(self.user_import)
+			print('PRE  HOOK result:\n%s' % pre_result)
+			print('POST HOOK result:\n%s' % post_result)
+			print('SCHOOL DATA     :\n%s' % str(self.user_import))
 			if pre_result != post_result != str(self.user_import):
 				raise UserHookResult()
 		finally:
@@ -479,12 +480,12 @@ class ImportFile:
 			try:
 				os.remove(self.import_file)
 			except OSError as e:
-				print 'WARNING: %s not removed. %s' % (self.import_file, e)
+				print('WARNING: %s not removed. %s' % (self.import_file, e))
 
 	def _run_import_via_cli(self):
 		cmd_block = [self.cli_path, self.import_file]
 
-		print 'cmd_block: %r' % cmd_block
+		print('cmd_block: %r' % cmd_block)
 		retcode = subprocess.call(cmd_block, shell=False)
 		if retcode:
 			raise ImportUser('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
@@ -520,7 +521,7 @@ class ImportFile:
 
 		for user in self.user_import.students:
 			kwargs = _set_kwargs(user)
-			print '* student username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print('* student username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs))
 			if user.mode == 'A':
 				StudentLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -530,7 +531,7 @@ class ImportFile:
 
 		for user in self.user_import.teachers:
 			kwargs = _set_kwargs(user)
-			print '* teacher username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print('* teacher username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs))
 			if user.mode == 'A':
 				TeacherLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -540,7 +541,7 @@ class ImportFile:
 
 		for user in self.user_import.staff:
 			kwargs = _set_kwargs(user)
-			print '* staff username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print('* staff username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs))
 			if user.mode == 'A':
 				StaffLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -550,7 +551,7 @@ class ImportFile:
 
 		for user in self.user_import.teacher_staff:
 			kwargs = _set_kwargs(user)
-			print '* teacher_staff username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs)
+			print('* teacher_staff username=%r mode=%r kwargs=%r' % (user.username, user.mode, kwargs))
 			if user.mode == 'A':
 				TeachersAndStaffLib(**kwargs).create(lo)
 			elif user.mode == 'M':
@@ -734,30 +735,30 @@ class UserImport:
 def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=None, nr_students=3, nr_teachers=3, nr_staff=3, nr_teacher_staff=3):
 	assert(use_cli_api != use_python_api)
 
-	print '********** Generate school data'
+	print('********** Generate school data')
 	user_import = UserImport(school_name=school_name, nr_students=nr_students, nr_teachers=nr_teachers, nr_staff=nr_staff, nr_teacher_staff=nr_teacher_staff)
 	import_file = ImportFile(use_cli_api, use_python_api)
 
-	print user_import
+	print(user_import)
 
 	if use_cli_api:
 		for user in user_import.students + user_import.staff + user_import.teachers + user_import.teacher_staff:
 			user.legacy_v2 = True
 
-	print '********** Create users'
+	print('********** Create users')
 	import_file.run_import(user_import)
 	utils.wait_for_replication()
 	wait_for_s4connector()
 	user_import.verify()
 
-	print '********** Modify users'
+	print('********** Modify users')
 	user_import.modify()
 	import_file.run_import(user_import)
 	utils.wait_for_replication()
 	wait_for_s4connector()
 	user_import.verify()
 
-	print '********** Delete users'
+	print('********** Delete users')
 	user_import.delete()
 	import_file.run_import(user_import)
 	utils.wait_for_replication()
@@ -830,14 +831,14 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 									'ucsschool/import/set/serverprofile/path',
 								])
 
-							print ''
-							print '**** import_users_basics:'
-							print '****    singlemaster: %s' % singlemaster
-							print '****    samba_home_server: %s' % samba_home_server
-							print '****    profile_path_server: %s' % profile_path_server
-							print '****    home_server_at_ou: %s' % home_server_at_ou
-							print '****    windows_profile_server: %s' % windows_profile_server
-							print ''
+							print('')
+							print('**** import_users_basics:')
+							print('****    singlemaster: %s' % singlemaster)
+							print('****    samba_home_server: %s' % samba_home_server)
+							print('****    profile_path_server: %s' % profile_path_server)
+							print('****    home_server_at_ou: %s' % home_server_at_ou)
+							print('****    windows_profile_server: %s' % windows_profile_server)
+							print('')
 							create_and_verify_users(use_cli_api, use_python_api, school_name, 3, 3, 3, 3)
 						finally:
 							remove_ou(school_name)

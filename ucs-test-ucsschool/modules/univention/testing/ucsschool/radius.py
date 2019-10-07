@@ -1,3 +1,4 @@
+from __future__ import print_function
 from univention.testing.ucsschool.computerroom import run_commands
 import tempfile
 
@@ -19,7 +20,7 @@ def write_peap_config_file(conf_file, username, password):
 
 def peap_auth(username, password, radius_secret):
 	peap_conf_file = tempfile.NamedTemporaryFile(suffix='.conf', dir='/tmp')
-	print ' ** Creating temp config file %s' % peap_conf_file.name
+	print(' ** Creating temp config file %s' % peap_conf_file.name)
 	write_peap_config_file(peap_conf_file, username, password)
 	peap_conf_file.flush()
 	peap_auth_cmd = ['eapol_test', '-c', '%(peap_conf_file)s', '-s', '%(radius_secret)s']
@@ -29,7 +30,7 @@ def peap_auth(username, password, radius_secret):
 
 
 def test_peap_auth(username, password, radius_secret, should_succeed=True):
-	print '*** PEAP AUTH: user: %s, password: %s, should_succeed: %r' % (username, password, should_succeed), '-' * 40
+	print('*** PEAP AUTH: user: %s, password: %s, should_succeed: %r' % (username, password, should_succeed), '-' * 40)
 	auth_result = peap_auth(username, password, radius_secret)
 	if auth_result != should_succeed:
 		raise TestFail('PEAP authentication unexpected result (%r), while the expected is (%r)\nUser=%s' % (

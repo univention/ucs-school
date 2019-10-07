@@ -4,6 +4,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
 from univention.testing.ucsschool.importcomputers import random_ip
 from univention.testing.ucsschool.importou import DCNotFound, DCMembership, DhcpdLDAPBase, TYPE_DC_ADMINISTRATIVE
 from univention.testing.ucsschool.importou import get_ou_base, verify_dc, get_school_ou_from_dn, TYPE_DC_EDUCATIONAL
@@ -55,7 +56,7 @@ def create_dc_slave(udm, school=None):
 		def dns_reverse(ip):
 			return 'zoneName=%s.in-addr.arpa,cn=dns,%s' % ('.'.join(reversed(ip.split('.')[:3])), ucr.get('ldap/base'))
 
-		print 'Creating DC Slave (%s)' % name
+		print('Creating DC Slave (%s)' % name)
 		position = 'cn=dc,cn=computers,%s' % ldap_base
 		if not ucr.is_true('ucsschool/singlemaster', False):
 			position = 'cn=dc,cn=server,cn=computers,ou=%s,%s' % (school, ldap_base)
@@ -126,8 +127,8 @@ class School(object):
 			},
 			'options': None
 		}]
-		print 'Creating school %s' % (self.name,)
-		print 'param = %s' % (param,)
+		print('Creating school %s' % (self.name,))
+		print('param = %s' % (param,))
 		reqResult = self.client.umc_command('schoolwizards/schools/add', param, flavor).result
 		if reqResult[0] is not True:
 			raise CreateFail('Unable to create school (%r)' % (reqResult,))
@@ -173,7 +174,7 @@ class School(object):
 
 	def remove(self):
 		"""Remove school"""
-		print 'Removing school: %s' % self.name
+		print('Removing school: %s' % self.name)
 		flavor = 'schoolwizards/schools'
 		param = [{
 			'object': {
@@ -221,8 +222,8 @@ class School(object):
 			},
 			'options': None
 		}]
-		print 'Editing school %s' % (self.name,)
-		print 'param = %s' % (param,)
+		print('Editing school %s' % (self.name,))
+		print('param = %s' % (param,))
 		reqResult = self.client.umc_command('schoolwizards/schools/put', param, flavor).result
 		if not reqResult[0]:
 			raise EditFail('Unable to edit school (%s) with the parameters (%r)' % (self.name, param))
@@ -242,7 +243,7 @@ class School(object):
 		self.verify_ou(self.name, self.dc_name, self.ucr, homeshare, classshare, None, should_exist)
 
 	def verify_ou(self, ou, dc, ucr, homesharefileserver, classsharefileserver, dc_administrative, must_exist):
-		print '*** Verifying OU (%s) ... ' % ou
+		print('*** Verifying OU (%s) ... ' % ou)
 		ucr.load()
 
 		dc_name = ucr.get('hostname')
@@ -408,15 +409,15 @@ class School(object):
 			if not old_dhcpd_ldap_base:
 				# seems to be the first OU, so check the variable settings
 				if ucr.get('dhcpd/ldap/base') != "cn=dhcp,%s" % (ou_base,):
-					print 'ERROR: dhcpd/ldap/base =', ucr.get('dhcpd/ldap/base')
-					print 'ERROR: expected base =', dhcp_dn
+					print('ERROR: dhcpd/ldap/base =', ucr.get('dhcpd/ldap/base'))
+					print('ERROR: expected base =', dhcp_dn)
 					raise DhcpdLDAPBase()
 
 			# use the UCR value and check if the DHCP service exists
 			dhcp_dn = dhcpd_ldap_base
 
 		# dhcp
-		print 'LDAP base of dhcpd = %r' % dhcp_dn
+		print('LDAP base of dhcpd = %r' % dhcp_dn)
 		dhcp_service_dn = "cn=%s,%s" % (get_school_ou_from_dn(dhcp_dn, ucr), dhcp_dn)
 		dhcp_server_dn = "cn=%s,%s" % (dc_name, dhcp_service_dn)
 		if must_exist:

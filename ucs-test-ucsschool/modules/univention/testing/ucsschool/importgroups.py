@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import os
 import string
 import subprocess
@@ -71,7 +72,7 @@ class Group:
 		return attr
 
 	def verify(self):
-		print 'verify group: %s' % self.name
+		print('verify group: %s' % self.name)
 
 		if self.mode == 'D':
 			utils.verify_ldap_object(self.dn, should_exist=False)
@@ -107,9 +108,9 @@ class ImportFile:
 				self._run_import_via_python_api()
 			pre_result = hooks.get_pre_result()
 			post_result = hooks.get_post_result()
-			print 'PRE  HOOK result:\n%s' % pre_result
-			print 'POST HOOK result:\n%s' % post_result
-			print 'SCHOOL DATA     :\n%s' % str(self.group_import)
+			print('PRE  HOOK result:\n%s' % pre_result)
+			print('POST HOOK result:\n%s' % post_result)
+			print('SCHOOL DATA     :\n%s' % str(self.group_import))
 			if pre_result != post_result != str(self.group_import):
 				raise GroupHookResult()
 		finally:
@@ -117,12 +118,12 @@ class ImportFile:
 			try:
 				os.remove(self.import_file)
 			except OSError as e:
-				print 'WARNING: %s not removed. %s' % (self.import_file, e)
+				print('WARNING: %s not removed. %s' % (self.import_file, e))
 
 	def _run_import_via_cli(self):
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_group', self.import_file]
 
-		print 'cmd_block: %r' % cmd_block
+		print('cmd_block: %r' % cmd_block)
 		retcode = subprocess.call(cmd_block, shell=False)
 		if retcode:
 			raise ImportGroup('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
@@ -257,21 +258,21 @@ def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5
 	with utu.UCSTestSchool() as schoolenv:
 		ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get('hostname'))
 
-		print '********** Generate school data'
+		print('********** Generate school data')
 		group_import = GroupImport(ou_name, nr_groups=nr_groups)
 		print(group_import)
 		import_file = ImportFile(use_cli_api, use_python_api)
 
-		print '********** Create groups'
+		print('********** Create groups')
 		import_file.run_import(group_import)
 		group_import.verify()
 
-		print '********** Modify groups'
+		print('********** Modify groups')
 		group_import.modify()
 		import_file.run_import(group_import)
 		group_import.verify()
 
-		print '********** Delete groups'
+		print('********** Delete groups')
 		group_import.delete()
 		import_file.run_import(group_import)
 		group_import.verify()
