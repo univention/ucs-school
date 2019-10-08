@@ -46,6 +46,27 @@ If the build suceeds, you'll be asked::
 Type (upper case) ``Y`` to start the push.
 
 
+Update (un)join script and settings of app
+------------------------------------------
+
+The app settings and the join and unjoin scripts are in a ``appcenter`` directory in the UCS\@school git repository. There is also a script ``push_config_to_appcenter`` that can be used to upload those files to the Univention App Provider Portal::
+
+	$ cd $UCSSCHOOL-GIT
+	$ git checkout dtroeder/ucsschool.no.udm
+	$ cd appcenter
+
+	# download the 'univention-appcenter-control' script:
+	$ ./push_config_to_appcenter
+
+	# list existing app versions:
+	$ ./univention-appcenter-control status ucsschool-kelvin
+
+	# push file to Univention App Provider Portal
+	$ ./push_config_to_appcenter --app 4.4/ucsschool-kelvin=0.1.0
+
+
+*Hint:* To upload the files to the App Provider Portal you will be asked for your username and password. Create ``~/.univention-appcenter-user`` (containing your username for the App Provider Portal) and ``~/.univention-appcenter-pwd`` (with your users password) to skip the question.
+
 Tests
 -----
 
