@@ -38,6 +38,7 @@ import copy
 import logging
 from collections import defaultdict
 import datetime
+import six
 
 from ldap.filter import filter_format
 from ucsschool.lib.models.base import NoObject, WrongObjectType
@@ -194,7 +195,7 @@ class UserImport(object):
 						# delete
 						continue
 				except ValidationError as exc:
-					raise UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
+					raise six.reraise(UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2])
 
 				if success:
 					self.logger.info("Success %s %d/%d %s (source_uid:%s record_uid: %s).", action_str.lower(), usernum, self.imported_users_len, user, user.source_uid, user.record_uid)
@@ -229,7 +230,7 @@ class UserImport(object):
 		try:
 			return import_user.get_by_import_id(self.connection, import_user.source_uid, import_user.record_uid)
 		except WrongObjectType as exc:
-			raise WrongUserType, WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user), sys.exc_info()[2]
+			raise six.reraise(WrongUserType, WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user), sys.exc_info()[2])
 
 	def prepare_imported_user(self, imported_user, old_user):
 		# type: (ImportUser, Optional[ImportUser]) -> ImportUser
