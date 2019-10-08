@@ -1,3 +1,9 @@
+ucs-school-import (17.0.15) unstable; urgency=low
+
+  * Bug #50321: reuse encoding and dialect of input file in migrate_ucsschool_import_user
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 08 Oct 2019 16:10:12 +0200
+
 ucs-school-import (17.0.14) unstable; urgency=low
 
   * Bug #50321: the script migrate_ucsschool_import_user for migration of

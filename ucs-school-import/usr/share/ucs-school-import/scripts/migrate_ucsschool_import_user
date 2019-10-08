@@ -233,13 +233,9 @@ class UcsSchoolUserMigration(object):
 
 		# write new CSV file
 		with open(self.args.output_file, 'wb') as fd_out:
-			# use dialect of input file
-			# use encoding of input file
-			# alternatively use Excel-safe settings: tab-separated CSV file, encoded to UTF-16
-			dialect.doublequote = True
-			dialect.quoting = csv.QUOTE_ALL
-			writer = csv.writer(fd_out, dialect=dialect)
-			# if ambiguous_entries:
+			# use the same dialect and encoding as in the input file
+			fd_out_e = codecs.getwriter(encoding)(fd_out)
+			writer = csv.writer(fd_out_e, dialect=dialect)
 			writer.writerow(['This CSV file consists of 2 sections:'])
 			writer.writerow(['The first section lists all problematic users for whom either *no* or *several* user names were found'])
 			writer.writerow(['in LDAP by first and last name. These entries must be checked and corrected manually. The entries of the'])
@@ -249,9 +245,6 @@ class UcsSchoolUserMigration(object):
 			writer.writerow(['This file contains {} ambiguous entries and {} unambiguous entries.'.format(len(ambiguous_entries), len(results))])
 			writer.writerow(['After completion of the corrections, the lines with this text paragraph must be removed!'])
 			writer.writerow([''])
-			# else ambiguous_entries:
-			#     self.logger.info("No ambiguous entries and and %d unambiguous entries found.", len(results))
-			# endif ambiguous_entries
 			writer.writerow(['username', 'record_uid', 'comment', 'input_data'])
 			for entry in ambiguous_entries:
 				writer.writerow(entry.to_csv())
