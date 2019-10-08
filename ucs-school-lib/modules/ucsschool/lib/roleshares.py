@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
 import os
 import sys
 import univention.config_registry
@@ -113,9 +114,9 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		udm_obj['sambaCustomSettings'] = [('admin users', '@"%s" @"%s"' % (teacher_groupname, custom_groupname_domainadmins))]
 		udm_obj.create()
 	except univention.admin.uexceptions.objectExists as exc:
-		print 'Object exists: %s' % (exc.args[0],)
+		print('Object exists: %s' % (exc.args[0],))
 	else:
-		print 'Object created: %s' % _2utf8(udm_obj.dn)
+		print('Object created: %s' % _2utf8(udm_obj.dn))
 
 
 @LDAP_Connection(MACHINE_READ)
@@ -126,7 +127,7 @@ def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None):
 		if 'associatedDomain' in ldap_obj:
 			fqdn = ".".join((ldap_obj['cn'][0], ldap_obj['associatedDomain'][0]))
 	except IndexError:
-		print 'Could not determine FQDN for %s' % (server_dn,)
+		print('Could not determine FQDN for %s' % (server_dn,))
 	return fqdn
 
 
@@ -144,7 +145,7 @@ def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None
 		try:
 			fqdn = fqdn_from_serverdn(server_dn)
 		except univention.admin.uexceptions.noObject:
-			print 'Ignoring non-existant ucsschoolHomeShareFileServer "%s"' % (server_dn,)
+			print('Ignoring non-existant ucsschoolHomeShareFileServer "%s"' % (server_dn,))
 			continue
 		if fqdn:
 			server_list.append(fqdn)
@@ -183,7 +184,7 @@ def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=N
 		if name in supported_role_aliases:
 			name = supported_role_aliases[name]
 		if name not in supported_roles:
-			print 'Given role is not supported. Only supported roles are %s' % (supported_roles,)
+			print('Given role is not supported. Only supported roles are %s' % (supported_roles,))
 			sys.exit(1)
 		roles.append(name)
 
@@ -195,7 +196,7 @@ def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=N
 	all_visible_schools = [x.name for x in schools]
 	for school_ou in school_list:
 		if school_ou not in all_visible_schools:
-			print 'School not found: %s' (school_ou,)
+			print('School not found: %s' (school_ou,))
 
 	for school in schools:
 		if school_list and school.name not in school_list:

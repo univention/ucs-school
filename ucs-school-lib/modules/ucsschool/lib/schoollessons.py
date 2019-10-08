@@ -111,7 +111,7 @@ class SchoolLessons(ConfigParser.ConfigParser):
 			try:
 				l = Lesson(sec, self.get(sec, 'begin'), self.get(sec, 'end'))
 				self.add(l)
-			except (AttributeError, TypeError), e:
+			except (AttributeError, TypeError) as e:
 				MODULE.warn('Lesson %s could not be added: %s' % (sec, str(e)))
 
 	def remove(self, lesson):

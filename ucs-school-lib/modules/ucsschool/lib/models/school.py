@@ -377,7 +377,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 					hostlist = lo.get(group_dn, ['uniqueMember']).get('uniqueMember', [])
 				except ldap.NO_SUCH_OBJECT:
 					hostlist = []
-				except Exception, e:
+				except Exception as e:
 					self.logger.error('cannot read %s: %s', group_dn, e)
 					return
 

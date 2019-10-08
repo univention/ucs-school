@@ -1,3 +1,11 @@
+ucs-school-lib (12.1.8) unstable; urgency=low
+
+  * Bug #50328: migrate from python-support to dh_python
+  * py2/3 print function (libfuturize.fixes.fix_print_with_import)
+  * py2/3 exception handling (lib2to3.fixes.fix_except)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 08 Oct 2019 11:40:36 +0200
+
 ucs-school-lib (12.1.7) unstable; urgency=low
 
   * Bug #49311: fix lookup for SchoolComputer
