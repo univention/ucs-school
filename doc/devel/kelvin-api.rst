@@ -12,6 +12,40 @@ The Kelvin API will be delivered as a UCS app within a Docker container. To buil
 	$ cd kelvin-api
 	$ make build-docker-image
 
+Pushing image to Docker registry
+--------------------------------
+
+To push the Docker image to Univentions Docker registry, the image has to be built on the host ``docker.knut.univention.de``::
+
+	$ ssh root@docker.knut.univention.de
+	# list existing images
+	$ docker images docker-test-upload.software-univention.de/ucsschool-kelvin
+	# update ucsschool repo (branch dtroeder/ucsschool.no.udm)
+	$ cd ucsschool-kelvin/ucsschool
+	$ git pull
+
+Optionally sync not yet commited changes from your local git repo to the server::
+
+	$ cd $UCSSCHOOL-GIT
+	$ git checkout dtroeder/ucsschool.no.udm
+	$ rsync -avn --delete --exclude --exclude .git --exclude docker/build --exclude docker/ucs ./ root@docker.knut.univention.de:ucsschool-kelvin/ucsschool/
+	# check output, changes should be only recent commits and your changes
+	# if OK: remove '-n' from rsync cmdline
+
+Build image on the ``docker`` host and push it to the Docker registry::
+
+	$ ssh root@docker.knut.univention.de
+	$ cd ucsschool-kelvin/ucsschool/docker
+	$ git pull
+	$ ./build_docker_image --push
+
+If the build suceeds, you'll be asked::
+
+	Push 'Y' if you are sure you want to push 'docker-test-upload.software-univention.de/ucsschool-kelvin:0.1.0-test' to the docker registry.
+
+Type (upper case) ``Y`` to start the push.
+
+
 Tests
 -----
 

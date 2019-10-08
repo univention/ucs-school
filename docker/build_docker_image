@@ -54,7 +54,7 @@ fi
 if ! [ -d "$UCR_DIR" ]; then
   git $GIT_ARGS clone --depth=1 -b "$UCS_BRANCH" "$REPO_URI" "$UCS_REPO_DIR"
 fi
-(cd "$UCS_REPO_DIR" && git $GIT_ARGS pull)
+(cd "$UCS_REPO_DIR" && git checkout "$UCS_BRANCH" && git $GIT_ARGS pull)
 
 [ -d build ] || mkdir build
 rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim ../ucs-school-lib kelvin-api.initd Dockerfile build/

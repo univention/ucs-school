@@ -74,9 +74,9 @@ RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/ap
     sed -i 's/\tcgroup_add_service/\t#cgroup_add_service/g' /lib/rc/sh/openrc-run.sh && \
     sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh && \
     python3.7 -m venv --system-site-packages /kelvin/venv && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --upgrade --compile pip && \
+	/kelvin/venv/bin/pip3 install --no-cache-dir --compile --upgrade pip && \
+	/kelvin/venv/bin/pip3 install --no-cache-dir --compile black python-debian && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile -r /tmp/requirements_all.txt && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile black && \
     apk del --no-cache \
         gcc \
         musl-dev \
