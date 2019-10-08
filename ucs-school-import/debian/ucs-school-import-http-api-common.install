@@ -1,3 +1,0 @@
-modules/ucsschool/http_api/__init__.py          usr/share/pyshared/ucsschool/http_api/
-modules/ucsschool/http_api/import_api/__init__.py      usr/share/pyshared/ucsschool/http_api/import_api/
-modules/ucsschool/http_api/import_api/constants.py     usr/share/pyshared/ucsschool/http_api/import_api/

@@ -9,9 +9,13 @@ Build-Depends: debhelper (>> 10),
  python-sphinx-rtd-theme,
  make,
  python2.7-doc,
- default-jre
+ default-jre,
+ dh-python,
+ python-debian,
+ python-all,
+ python3-debian,
+ python3-all,
 Standards-Version: 3.8.2
-XS-Python-Version: 2.7
 
 Package: ucs-school-import
 Architecture: all
@@ -19,13 +23,46 @@ Depends: univention-directory-manager,
  ucs-school-import-schema (= ${source:Version}),
  univention-policy-tools (>= 5.0.8),
  shell-ucs-school (>= 5.0.38),
- python-ucs-school (>= 12.1.0-15),
  shell-univention-lib,
  univention-config,
  univention-join,
- python-univention,
+ python-ucs-school-import,
+Description: UCS@school: Importing objects like users and computers
+ This package provides scripts for importing objects like users, groups,
+ networks and computers.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python-ucs-school-import
+Architecture: all
+Depends: ${python:Depends},
+ python-ucs-school (>= 12.1.8),
+ python-univention (>= 12.0.0-5),
  python-univention-lib,
  python-lazy-object-proxy,
+Provides: ${python:Provides},
+Description: UCS@school: Importing objects like users and computers
+ This package provides scripts for importing objects like users, groups,
+ networks and computers.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python3-ucs-school-import
+Architecture: all
+Depends: ${python:Depends},
+ python3-ucs-school (>= 12.1.8),
+ python3-univention (>= 12.0.0-5),
+ python3-univention-lib,
+ python3-lazy-object-proxy,
+Provides: ${python:Provides},
 Description: UCS@school: Importing objects like users and computers
  This package provides scripts for importing objects like users, groups,
  networks and computers.
@@ -53,19 +90,13 @@ Description: UCS@school: LDAP import schema and custom attributes
 Package: ucs-school-import-http-api
 Architecture: all
 Depends: ${misc:Depends},
+ python-ucs-school-import-http-api,
  univention-config,
  ucs-school-import (= ${source:Version}),
  ucs-school-import-http-api-common (= ${source:Version}),
  univention-celery (>=1.0.0-1),
- python-django (>=1.8),
- python-djangorestframework (>= 3.4.0-2),
- python-django-celery (>=3.1.16-1),
- python-django-filter (>=1.0.1-1),
  gunicorn (>=19.0-1),
  univention-postgresql,
- python-psycopg2 (>=2.5.4),
- python-django-pam (>=1.2.0-1),
- python-pampy (>=1.8.2-1),
 Recommends: ucs-school-umc-import
 Conflicts: python3-celery,
  python-django-filters (<<1.0.0),
@@ -78,15 +109,113 @@ Description: UCS@school: RESTful API for importing users
  refer to: http://www.univention.de/
 Homepage: https://www.univention.de/produkte/ucsschool/
 
-Package: ucs-school-import-http-api-client
+Package: python-ucs-school-import-http-api
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${python:Depends},
+ python-ucs-school-import-http-api-common (= ${source:Version}),
+ python-django (>=1.8),
+ python-djangorestframework (>= 3.4.0-2),
+ python-django-celery (>=3.1.16-1),
+ python-django-filter (>=1.0.1-1),
+ python-psycopg2 (>=2.5.4),
+ python-django-pam (>=1.2.0-1),
+ python-pampy (>=1.8.2-1),
+Provides: ${python:Provides},
+Conflicts: python3-celery,
+ python-django-filters (<<1.0.0),
+Description: UCS@school: RESTful API for importing users
+ This package provides a service for importing users using a RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python3-ucs-school-import-http-api
+Architecture: all
+Depends: ${python:Depends},
+ python3-ucs-school-import-http-api-common (= ${source:Version}),
+ python3-django (>=1.8),
+ python3-djangorestframework (>= 3.4.0-2),
+ python3-django-celery (>=3.1.16-1),
+ python3-django-filter (>=1.0.1-1),
+ python3-psycopg2 (>=2.5.4),
+ python3-django-pam (>=1.2.0-1),
+ python3-pampy (>=1.8.2-1),
+Provides: ${python:Provides},
+Conflicts: python3-celery,
+ python-django-filters (<<1.0.0),
+Description: UCS@school: RESTful API for importing users
+ This package provides a service for importing users using a RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python-ucs-school-import-http-api-client
+Architecture: all
+Depends: ${python:Depends},
  python-requests,
  python-magic,
  python-univention-config-registry,
- ucs-school-import-http-api-common (= ${source:Version}),
+ python-ucs-school-import-http-api-common (= ${source:Version}),
+Provides: ${python:Provides},
 Description: UCS@school: Python client library for the US@school API
  This package provides a Python client for accessing the RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python3-ucs-school-import-http-api-client
+Architecture: all
+Depends: ${python:Depends},
+ python3-requests,
+ python3-magic,
+ python3-univention-config-registry,
+ python3-ucs-school-import-http-api-common (= ${source:Version}),
+Provides: ${python:Provides},
+Description: UCS@school: Python client library for the US@school API
+ This package provides a Python client for accessing the RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python-ucs-school-import-http-api-common
+Architecture: all
+Depends: ${python:Depends}
+Replaces:
+ ucs-school-import-http-api (<< 17.0.6-15)
+Provides: ${python:Provides},
+Breaks:
+ ucs-school-import-http-api (<< 17.0.6-15)
+Description: UCS@school: Common files for UCS@school API client and server
+ This package provides common files of the RESTful HTTP API client and server.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python3-ucs-school-import-http-api-common
+Architecture: all
+Depends: ${python:Depends}
+Replaces:
+ ucs-school-import-http-api (<< 17.0.6-15)
+Provides: ${python:Provides},
+Breaks:
+ ucs-school-import-http-api (<< 17.0.6-15)
+Description: UCS@school: Common files for UCS@school API client and server
+ This package provides common files of the RESTful HTTP API client and server.
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing

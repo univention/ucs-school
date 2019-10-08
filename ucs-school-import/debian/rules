@@ -29,6 +29,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+export PYBUILD_NAME=ucs-school-import
+
 PO_FILES := $(shell find udm_hook syntax modules -name '*.po')
 MO_FILES := $(PO_FILES:%.po=%.mo)
 
@@ -78,4 +80,4 @@ override_dh_auto_test:
 	ucslint
 
 %:
-	dh $@ --with python_support --with systemd
+	dh $@ --with python2,python3 --with systemd --buildsystem=pybuild
