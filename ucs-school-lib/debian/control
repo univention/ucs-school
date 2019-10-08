@@ -4,6 +4,9 @@ Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper (>= 8),
+ python-debian,
+ python3-debian,
+ dh-python,
  ucslint,
  univention-config-dev,
  python-all,
@@ -24,6 +27,7 @@ Depends:
  python-colorlog,
  python-ruamel.yaml,
  python-univention (>= 12.0.0-5),
+ python-ucs-school-namespace,
 Provides: ${python:Provides}
 Description: UCS@school - common Python modules
  This package contains Python modules used by various
@@ -57,6 +61,25 @@ Description: UCS@school - common Python modules
  integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
+
+
+Package: python-ucs-school-namespace
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python:Depends},
+ python-support,
+Provides: ${python:Provides}
+Breaks: ucs-school-import (<< 17.0.14),
+Description: UCS@school - Python 2 namespace module
+ This package declares the 'ucsschool' namespace for Python 2
+ packages using python-support.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: https://www.univention.de/
+
 
 Package: shell-ucs-school
 Architecture: all

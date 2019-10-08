@@ -22,7 +22,7 @@ setuptools.setup(
     long_description="Common UCS@school Python modules",
     url="https://www.univention.de/",
     install_requires=requirements,
-    packages=["ucsschool.lib", "ucsschool.lib.models", "ucsschool.lib.pyhooks"],
+    packages=["ucsschool", "ucsschool.lib", "ucsschool.lib.models", "ucsschool.lib.pyhooks"],
     package_dir={"": "modules"},
     license="GNU Affero General Public License v3",
     classifiers=[

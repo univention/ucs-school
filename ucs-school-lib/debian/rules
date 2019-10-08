@@ -30,17 +30,24 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+export PYBUILD_NAME=ucs-school
+
 override_dh_auto_install:
 	dh_auto_install
 	univention-install-config-registry-info
 
 override_dh_auto_test:
 	ucslint
-	dh_auto_test
+	#dh_auto_test
 
 override_dh_auto_build:
 	make l10n
 	dh_auto_build
+
+override_dh_python2:
+	dh_python2
+	install -d debian/python-ucs-school-namespace/usr/share/pyshared/ucsschool
+	install modules/ucsschool/__init__.py debian/python-ucs-school-namespace/usr/share/pyshared/ucsschool/
 
 override_dh_auto_clean:
 	make clean

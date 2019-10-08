@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.9) unstable; urgency=medium
+
+  * Bug #50328: Add python namespace package
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 08 Oct 2019 13:35:50 +0200
+
 ucs-school-lib (12.1.8) unstable; urgency=low
 
   * Bug #50328: migrate from python-support to dh_python
