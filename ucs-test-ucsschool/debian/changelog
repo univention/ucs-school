@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.64) unstable; urgency=low
+
+  * Bug #50321: add test for migrate_ucsschool_import_user
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 04 Oct 2019 16:34:33 +0200
+
 ucs-test-ucsschool (6.0.63) unstable; urgency=medium
 
   * Bug #50296: 91_ucsschool-selenium/03_computerroom_endExam

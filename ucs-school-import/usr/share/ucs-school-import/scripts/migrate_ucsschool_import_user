@@ -1,0 +1,322 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Copyright 2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+"""
+Tool that helps administrators to migrate from the old import (import_user
+or UMC module "CSV-Import") to the new imports (ucs-school-import-user or
+UMC module "Benutzer-Import").
+"""
+
+from __future__ import absolute_import, print_function
+import csv
+import os
+import sys
+import argparse
+import logging
+import codecs
+import attr
+
+from ldap.filter import filter_format
+import univention.admin.uldap
+from univention.config_registry import ConfigRegistry
+from ucsschool.lib.models.utils import get_stream_handler, get_file_handler
+from ucsschool.importer.reader.csv_reader import CsvReader
+try:
+	from typing import Optional
+	from univention.admin.uldap import access as LoType, position as PoType
+except ImportError:
+	pass
+
+
+LOG_FILE = '/var/log/univention/ucs-school-migration-import-user.log'
+
+ucr = ConfigRegistry()
+ucr.load()
+
+if ucr.get('server/role') != 'domaincontroller_master':
+	print('This script can only be executed on the Domaincontroller Master.')
+	sys.exit(2)
+
+
+@attr.s
+class Entry(object):
+	username = attr.ib()  # type: Optional[str]
+	record_uid = attr.ib()  # type: str
+	reason = attr.ib()  # type: Optional[str]
+	csv_line = attr.ib()  # type: Optional[str]
+
+	def to_csv(self):
+		return [
+			self.username if self.username else '',
+			self.record_uid,
+			self.reason if self.reason else '',
+			self.csv_line if self.csv_line else '',
+		]
+
+
+class UcsSchoolUserMigration(object):
+
+	def __init__(self):  # type: () -> None
+		argp = argparse.ArgumentParser(
+			description='Tool that helps administrators to migrate from the old import (import_user or UMC module '
+			'"CSV-Import") to the new imports (ucs-school-import-user or UMC module "Benutzer-Import").',
+			epilog='Logfile: {}'.format(LOG_FILE)
+		)
+		argp.add_argument(
+			'--dry-run',
+			action='store_true',
+			help='If set, a dry run is performed.'
+		)
+		argp.add_argument(
+			'--modify-record-uid',
+			action='store_true',
+			help='Sets the UCS@school record UID according to specified CSV file for each user. Please specify --input-file.'
+		)
+		argp.add_argument(
+			'--source-uid',
+			action='store',
+			help='Also set the source UID for all affected users to the specified value.'
+		)
+		argp.add_argument(
+			'--guess-usernames',
+			action='store_true',
+			help='Tries to guess usernames based on first name and last name. Please also specify --column-firstname, '
+			'--column-lastname, --column-record-uid and --input-file (Hint: this action does not support --dry-run).'
+		)
+		argp.add_argument(
+			'--column-firstname',
+			action='store',
+			type=int,
+			help='Column number that contains the first name. Counting starts with 1 (1 == first column).'
+		)
+		argp.add_argument(
+			'--column-lastname',
+			action='store',
+			type=int,
+			help='Column number that contains the last name. Counting starts with 1 (1 == first column).'
+		)
+		argp.add_argument(
+			'--column-record-uid',
+			action='store',
+			type=int,
+			help='Column number that contains the record UID. Counting starts with 1 (1 == first column).'
+		)
+		argp.add_argument(
+			'--input-file',
+			action='store',
+			help='Path to input CSV file'
+		)
+		argp.add_argument(
+			'--output-file',
+			action='store',
+			help='Path to output CSV file'
+		)
+		self.args = argp.parse_args()
+
+		self.logger = logging.getLogger('ImportUserMigration')
+		self.logger.setLevel('DEBUG')
+		self.logger.addHandler(get_stream_handler('INFO'))
+		self.logger.addHandler(get_file_handler('DEBUG', LOG_FILE))
+		self.logger.debug('Given arguments: %r', sys.argv)
+
+		def fatal_argp(msg):
+			self.logger.error(msg)
+			argp.error(msg)
+
+		if self.args.guess_usernames and not all([
+				self.args.input_file,
+				self.args.output_file,
+				self.args.column_firstname,
+				self.args.column_lastname,
+				self.args.column_record_uid
+		]):
+			fatal_argp(
+				'For guessing usernames, the filenames for input and output CSV files and the columns for first '
+				'name, last name and record UID have to be specified!')
+
+		if self.args.modify_record_uid and not self.args.input_file:
+			fatal_argp("A CSV file must be specified to modify the user's record UID.")
+
+		if not os.path.exists(self.args.input_file):
+			fatal_argp('Input file {!r} does not exist!'.format(self.args.input_file))
+		try:
+			with open(self.args.input_file, 'r') as fd:
+				fd.read(1)
+		except (IOError, OSError) as exc:
+			fatal_argp('Cannot open {!r}: {}'.format(self.args.input_file, exc))
+
+		if self.args.guess_usernames and os.path.exists(self.args.output_file):
+			fatal_argp('Output file {!r} does already exist!'.format(self.args.output_file))
+
+		self.lo = None  # type: Optional[LoType]
+		self.po = None  # type: Optional[PoType]
+
+	def run(self):
+		self.lo, self.po = univention.admin.uldap.getAdminConnection()
+
+		if self.args.guess_usernames:
+			self.guess_usernames()
+		elif self.args.modify_record_uid:
+			self.modify_record_uid()
+		else:
+			raise NotImplementedError()
+
+	def guess_usernames(self):
+		# get encoding and CSV dialect
+		encoding = CsvReader.get_encoding(self.args.input_file)
+		with open(self.args.input_file, 'r') as fp:
+			dialect = csv.Sniffer().sniff(fp.read())
+
+		results = []
+		ambiguous_entries = []
+
+		# read CSV file
+		with open(self.args.input_file) as fd_in:
+			fd_in_e = codecs.getreader(encoding)(fd_in)
+			for i, row in enumerate(csv.reader(fd_in_e, dialect=dialect), start=1):
+				if i == 1:
+					# skip header
+					continue
+				if i % 50 == 0:
+					self.logger.info('Processing line %d ...', i)
+
+				try:
+					firstname = row[self.args.column_firstname - 1]
+					lastname = row[self.args.column_lastname - 1]
+					record_uid = row[self.args.column_record_uid - 1]
+				except IndexError:
+					self.logger.error('Line %d does not contain firstname, lastname and record_uid!', i)
+					continue
+
+				filter_s = filter_format('(&(objectClass=ucsschoolType)(givenName=%s)(sn=%s))', (firstname, lastname))
+				result = self.lo.search(filter=filter_s, required=False)
+				if len(result) == 1:
+					username = result[0][1].get('uid', [None])[0]
+					results.append(Entry(username, record_uid, None, None))
+				elif not result:
+					# user(name) not found
+					ambiguous_entries.append(Entry(None, record_uid, 'no user found in LDAP', ' § '.join(row)))
+				else:
+					username_list = [entry[1].get('uid', ['---'])[0] for entry in result]
+					ambiguous_entries.append(Entry(
+						None,
+						record_uid,
+						'multiple users found: {}'.format(','.join(username_list)),
+						' § '.join(row)))
+
+		# write new CSV file
+		with open(self.args.output_file, 'wb') as fd_out:
+			# use dialect of input file
+			# use encoding of input file
+			# alternatively use Excel-safe settings: tab-separated CSV file, encoded to UTF-16
+			dialect.doublequote = True
+			dialect.quoting = csv.QUOTE_ALL
+			writer = csv.writer(fd_out, dialect=dialect)
+			# if ambiguous_entries:
+			writer.writerow(['This CSV file consists of 2 sections:'])
+			writer.writerow(['The first section lists all problematic users for whom either *no* or *several* user names were found'])
+			writer.writerow(['in LDAP by first and last name. These entries must be checked and corrected manually. The entries of the'])
+			writer.writerow(['first section can be recognized by a note in the comment column and the column for the user name being empty.'])
+			writer.writerow(['The second section contains all entries for which exactly one user was found in LDAP with the specified'])
+			writer.writerow(['first and last name. These should nevertheless be checked again for correctness.'])
+			writer.writerow(['This file contains {} ambiguous entries and {} unambiguous entries.'.format(len(ambiguous_entries), len(results))])
+			writer.writerow(['After completion of the corrections, the lines with this text paragraph must be removed!'])
+			writer.writerow([''])
+			# else ambiguous_entries:
+			#     self.logger.info("No ambiguous entries and and %d unambiguous entries found.", len(results))
+			# endif ambiguous_entries
+			writer.writerow(['username', 'record_uid', 'comment', 'input_data'])
+			for entry in ambiguous_entries:
+				writer.writerow(entry.to_csv())
+			for entry in results:
+				writer.writerow(entry.to_csv())
+
+	def modify_record_uid(self):
+		# get encoding and CSV dialect
+		encoding = CsvReader.get_encoding(self.args.input_file)
+		with open(self.args.input_file, 'r') as fp:
+			dialect = csv.Sniffer().sniff(fp.read())
+
+		with open(self.args.input_file) as fd_in:
+			fd_in_e = codecs.getreader(encoding)(fd_in)
+			for i, row in enumerate(csv.reader(fd_in_e, dialect=dialect), start=1):
+				if i == 1 and row[0] == "username" and row[1] == "record_uid":
+					# skip header
+					continue
+
+				try:
+					username = row[0]
+					record_uid = row[1]
+				except IndexError:
+					self.logger.error('Line %d does not contain username and record_uid!', i)
+					sys.exit(1)
+
+				filter_s = filter_format('(&(objectClass=ucsschoolType)(uid=%s))', (username,))
+				result = self.lo.search(filter=filter_s, required=False)
+				if len(result) == 0:
+					self.logger.error('User %r not found in LDAP!', username)
+					continue
+				if len(result) != 1:
+					self.logger.error('User %r found multiple times in LDAP!', username)
+					continue
+
+				user_dn, attrs = result[0]
+				ml = [
+					(
+						'ucsschoolRecordUID',
+						attrs.get('ucsschoolRecordUID', []),
+						[record_uid]
+					),
+				]
+				if self.args.source_uid:
+					ml.append((
+						'ucsschoolSourceUID',
+						attrs.get('ucsschoolSourceUID', []),
+						[self.args.source_uid]
+					))
+				self.logger.info(
+					'%sUser: %r   record_uid: %r ==> %r   source_uid: %r ==> %r',
+					'DRYRUN: ' if self.args.dry_run else '',
+					username,
+					attrs.get('ucsschoolRecordUID', [None])[0],
+					record_uid,
+					attrs.get('ucsschoolSourceUID', [None])[0],
+					self.args.source_uid if self.args.source_uid else attrs.get('ucsschoolSourceUID', [None])[0]
+				)
+				if not self.args.dry_run:
+					try:
+						self.lo.modify(user_dn, ml)
+					except Exception as exc:
+						self.logger.exception('Failed to update user %r: %s', user_dn, exc)
+
+
+if __name__ == '__main__':
+	usum = UcsSchoolUserMigration()
+	usum.run()
