@@ -2,24 +2,53 @@ Source: ucs-school-lib
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7),
+Build-Depends:
+ debhelper (>= 8),
  ucslint,
  univention-config-dev,
  python-all,
- python-support (>= 0.90)
+ python3-all,
 Standards-Version: 3.8.2
 
 Package: python-ucs-school
 Architecture: all
-Depends: ${misc:Depends},
+Depends:
+ ucs-school-lib-common,
+ ${misc:Depends},
  ${python:Depends},
  python-six,
  univention-management-console,
+ python-univention-management-console,
  python-univention-directory-manager,
  python-univention-lib,
  python-colorlog,
  python-ruamel.yaml,
+ python-univention (>= 12.0.0-5),
 Provides: ${python:Provides}
+Description: UCS@school - common Python modules
+ This package contains Python modules used by various
+ components of UCS@school.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: python3-ucs-school
+Architecture: all
+Depends:
+ ucs-school-lib-common,
+ ${misc:Depends},
+ ${python3:Depends},
+ python3-six,
+ univention-management-console,
+ python3-univention-management-console,
+ python3-univention-directory-manager,
+ python3-univention-lib,
+ python3-colorlog,
+ python3-ruamel.yaml,
+ python3-univention (>= 12.0.0-5),
+Provides: ${python3:Provides},
 Description: UCS@school - common Python modules
  This package contains Python modules used by various
  components of UCS@school.
@@ -35,6 +64,19 @@ Depends: ${misc:Depends}
 Description: UCS@school - common shell functions
  This package contains shell functions used by various
  components of UCS@school.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-lib-common
+Architecture: all
+Depends:
+ ${misc:Depends}
+Description: UCS@school - common files of ucs-school-lib
+ This package contains files used by multiple ucs-school-lib
+ packages.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing

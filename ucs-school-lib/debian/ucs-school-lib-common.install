@@ -1,4 +1,3 @@
-modules/ucsschool/ usr/share/pyshared/
 modules/ucsschool/lib/*.mo usr/share/locale/de/LC_MESSAGES/
 lessons.ini usr/share/ucs-school-lib/
 smbstatus_testdata.txt usr/share/ucs-school-lib/
