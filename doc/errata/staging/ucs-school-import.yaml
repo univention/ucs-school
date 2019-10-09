@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.15A~4.4.0.201910081610
+fix: 17.0.16A~4.4.0.201910091241
 desc: |
- * The script migrate_ucsschool_import_user has been added and can help to migrate user from the old legacy import to the actual import mechanisms (Bug #50321).
+ * The script <filename>migrate_ucsschool_import_user</filename> has been added and can help to migrate user from the old legacy import to the actual import mechanisms (Bug #50321).
 bug: [50321]
