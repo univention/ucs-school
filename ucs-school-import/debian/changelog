@@ -1,3 +1,9 @@
+ucs-school-import (17.0.16) unstable; urgency=low
+
+  * Bug #50321: use ASCII character as delimiter in migrate_ucsschool_import_user
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 09 Oct 2019 12:40:51 +0200
+
 ucs-school-import (17.0.15) unstable; urgency=low
 
   * Bug #50321: reuse encoding and dialect of input file in migrate_ucsschool_import_user

@@ -222,14 +222,14 @@ class UcsSchoolUserMigration(object):
 					results.append(Entry(username, record_uid, None, None))
 				elif not result:
 					# user(name) not found
-					ambiguous_entries.append(Entry(None, record_uid, 'no user found in LDAP', ' § '.join(row)))
+					ambiguous_entries.append(Entry(None, record_uid, 'no user found in LDAP', ' $ '.join(row)))
 				else:
 					username_list = [entry[1].get('uid', ['---'])[0] for entry in result]
 					ambiguous_entries.append(Entry(
 						None,
 						record_uid,
 						'multiple users found: {}'.format(','.join(username_list)),
-						' § '.join(row)))
+						' $ '.join(row)))
 
 		# write new CSV file
 		with open(self.args.output_file, 'wb') as fd_out:
