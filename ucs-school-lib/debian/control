@@ -72,7 +72,7 @@ Depends:
  ${python:Depends},
  python-support,
 Provides: ${python:Provides}
-Breaks: ucs-school-import (<< 17.0.14),
+Breaks: ucs-school-import (<< 17.0.100),
 Description: UCS@school - Python 2 namespace module
  This package declares the 'ucsschool' namespace for Python 2
  packages using python-support.
