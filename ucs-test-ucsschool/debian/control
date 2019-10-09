@@ -6,6 +6,7 @@ Build-Depends: debhelper (>= 8.0.0),
  ucslint,
  dh-python,
  python-debian,
+ python3-debian,
  python-all,
  python3-all,
 Standards-Version: 3.6.1
