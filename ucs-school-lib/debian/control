@@ -6,6 +6,8 @@ Build-Depends:
  debhelper (>= 8),
  python-debian,
  python3-debian,
+ python-setuptools,
+ python3-setuptools,
  dh-python,
  ucslint,
  univention-config-dev,
