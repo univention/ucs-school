@@ -292,7 +292,30 @@ feedback@univention.de
 					<!-- END ucs-school-webproxy 15.0.0-1A~4.4.0.201909161358 -->
 <!-- CHANGELOG:2019-09-26:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-10-09" lang="en">
+					<title>Released on 2019-10-09:</title>
+					<!-- START ucs-school-import 17.0.16A~4.4.0.201910091241 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.16A~4.4.0.201910091241</emphasis>:
+						<itemizedlist>
+							<listitem><para>The script <filename>migrate_ucsschool_import_user</filename> has been added and can help to migrate user from the old legacy import to the actual import mechanisms (<u:bug>50321</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.16A~4.4.0.201910091241 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-8A~4.4.0.201910011317 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-8A~4.4.0.201910011317</emphasis>:
+						<itemizedlist>
+							<listitem><para>Improve text on closing dialog during running exam (<u:bug>50296</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-8A~4.4.0.201910011317 -->
+<!-- CHANGELOG:2019-10-09:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
