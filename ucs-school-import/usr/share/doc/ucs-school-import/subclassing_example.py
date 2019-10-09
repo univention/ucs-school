@@ -10,7 +10,7 @@
 #    and for a subclass.
 #
 #    The DefaultUserImportFactory code can be found in
-#    /usr/share/pyshared/ucsschool/importer/default_user_import_factory.py
+#    python -m ucsschool.importer.default_user_import_factory
 #
 
 #

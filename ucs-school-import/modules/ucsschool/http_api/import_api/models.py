@@ -107,8 +107,8 @@ class Role(models.Model):
 #
 # To use this, install the code, and create and activate the required
 # migrations with:
-# /usr/share/pyshared/ucsschool/http_api/manage.py makemigrations
-# /usr/share/pyshared/ucsschool/http_api/manage.py migrate
+# python -m ucsschool.http_api.manage makemigrations
+# python -m ucsschool.http_api.manage migrate
 #
 
 # from django.contrib.auth import get_user_model

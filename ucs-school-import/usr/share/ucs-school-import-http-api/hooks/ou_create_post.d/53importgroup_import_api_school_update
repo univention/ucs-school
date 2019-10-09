@@ -93,7 +93,7 @@ echo "$(date) $(basename "$0") ou: '$ou' district: '$district'"
 	echo "$(date) $(basename "$0"): 70http_api_school_create"
 
 	unset DJANGO_SETTINGS_MODULE
-	/usr/bin/python /usr/share/pyshared/ucsschool/http_api/manage.py updateschools --ou "$ou"
+	/usr/bin/python -m ucsschool.http_api.manage updateschools --ou "$ou"
 
 	echo "$(date) $(basename "$0") (70http_api_school_create): done."
 }

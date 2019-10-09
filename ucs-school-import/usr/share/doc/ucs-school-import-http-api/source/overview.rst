@@ -77,7 +77,7 @@ The contents of the file should look similar to this::
 .. [#apache_conf_file] Apaches configuration file is ``/etc/apache2/sites-available/ucs-school-import-http-api.conf``.
 .. [#UCRV_gunicorn_port] Gunicorns listeneing port is configurable through UCRV
 .. [#gunicorn_conf_file] Gunicorns configuration file is ``/etc/gunicorn.d/ucs-school-import``.
-.. [#django_config] Djangos configuration file is ``/usr/share/pyshared/ucsschool/http_api/app/settings.py``. But to handle configuration files the Debian way, that file contains just a function to read ``/etc/ucsschool-import/settings.py``, where the real configuration can be found.
+.. [#django_config] Djangos configuration file is ``/usr/lib/pymodules/python2.7/ucsschool/http_api/app/settings.py``. But to handle configuration files the Debian way, that file contains just a function to read ``/etc/ucsschool-import/settings.py``, where the real configuration can be found.
 .. [#django_logfile] Django ``/var/log/univention/ucs-school-import/http_api.log``.
-.. [#django_routes] Requests are routed according to ``/usr/share/pyshared/ucsschool/http_api/app/urls.py``.
+.. [#django_routes] Requests are routed according to ``/usr/lib/pymodules/python2.7/ucsschool/http_api/app/urls.py``.
 .. [#join_script] ``60ucs-school-import-http-api.uinst``
