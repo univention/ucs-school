@@ -29,6 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+export DH_VERBOSE=1
 export PYBUILD_NAME=ucs-school-netlogon-user-logonscripts
 
 override_dh_auto_test:
