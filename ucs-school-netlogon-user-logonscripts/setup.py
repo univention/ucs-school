@@ -12,7 +12,7 @@ realname, email_address = parseaddr(dsc['Maintainer'])
 setup(
 	packages=['ucsschool.netlogon'],
 	package_dir={'': 'python'},
-	description='UCS@school Netlogon Script Updater',
+	description='Univention UCS@school Netlogon Script Updater',
 
 	url='https://www.univention.de/',
 	license='GNU Affero General Public License v3',
