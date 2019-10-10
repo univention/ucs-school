@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (15.0.0-100) unstable; urgency=low
+
+  * Bug #50327: switch to dh_python
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 10 Oct 2019 15:19:22 +0200
+
 ucs-school-netlogon-user-logonscripts (15.0.0-1) unstable; urgency=medium
 
   * Bug #48699: Add reworked logo
