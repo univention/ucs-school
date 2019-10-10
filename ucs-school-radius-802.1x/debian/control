@@ -17,14 +17,17 @@ Depends: univention-config-registry,
  univention-config,
  univention-radius (>= 6.0.2-2),
  python-ucs-school-radius-802.1x,
+ ${misc:Depends},
 Description: freeradius 802.1X integration package for Univention Corporate Server
  Sets up a freeradius RADIUS server to support 802.1X authenticators
 
 Package: python-ucs-school-radius-802.1x
 Architecture: any
 Depends: ${python:Depends},
+ ${misc:Depends},
  univention-config-registry,
  univention-config,
+ python-univention-config-registry,
  python-univention-radius (>= 6.0.2-14),
  python-univention (>= 12.0.0-5),
 Provides:
@@ -35,8 +38,10 @@ Description: freeradius 802.1X integration package for Univention Corporate Serv
 Package: python3-ucs-school-radius-802.1x
 Architecture: any
 Depends: ${python:Depends},
+ ${misc:Depends},
  univention-config-registry,
  univention-config,
+ python3-univention-config-registry,
  python3-univention-radius (>= 6.0.2-14),
  python3-univention (>= 12.0.0-5),
 Provides:
