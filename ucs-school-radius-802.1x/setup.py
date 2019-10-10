@@ -12,7 +12,7 @@ realname, email_address = parseaddr(dsc['Maintainer'])
 setup(
     py_modules=['univention.radius.school_networkaccess'],
     package_dir={'': 'modules'},
-    description='Univention UCS@school Radius',
+    description='Univention UCS@school RADIUS',
 
     url='https://www.univention.de/',
     license='GNU Affero General Public License v3',
