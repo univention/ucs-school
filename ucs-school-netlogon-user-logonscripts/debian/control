@@ -24,7 +24,10 @@ Depends:
  ucs-school-netlogon,
  shell-univention-lib,
  univention-config,
- python-ucs-school-netlogon-user-logonscripts | python3-ucs-school-netlogon-user-logonscripts,
+ ${misc:Depends},
+ python-ucs-school-netlogon-user-logonscripts,
+ python-univention-directory-manager,
+ python-univention-debug,
 Description: UCS@school userspecific netlogon scripts
  This package provides a listener-module that creates
  specific netlogon scripts for each local user.
@@ -38,7 +41,8 @@ Package: python-ucs-school-netlogon-user-logonscripts
 Architecture: all
 Depends:
  ${python:Depends},
- univention-config-registry,
+ ${misc:Depends},
+ python-univention-config-registry,
  python-ucs-school-namespace,
 Provides:
  ${python:Provides},
@@ -55,7 +59,8 @@ Package: python3-ucs-school-netlogon-user-logonscripts
 Architecture: all
 Depends:
  ${python3:Depends},
- univention-config-registry,
+ ${misc:Depends},
+ python3-univention-config-registry,
 Provides:
  ${python3:Provides},
 Description: UCS@school userspecific netlogon scripts
