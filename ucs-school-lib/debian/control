@@ -99,6 +99,7 @@ Package: ucs-school-lib-common
 Architecture: all
 Depends:
  ${misc:Depends}
+Breaks: python-ucs-school (<< 17.0.100),
 Description: UCS@school - common files of ucs-school-lib
  This package contains files used by multiple ucs-school-lib
  packages.
