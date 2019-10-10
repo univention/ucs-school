@@ -165,6 +165,7 @@ Depends: ${python:Depends},
  python-univention-config-registry,
  python-ucs-school-import-http-api-common (= ${source:Version}),
 Provides: ${python:Provides},
+ ucs-school-import-http-api-client,
 Description: UCS@school: Python client library for the US@school API
  This package provides a Python client for accessing the RESTful HTTP API.
  .
