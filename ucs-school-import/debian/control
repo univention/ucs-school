@@ -43,6 +43,7 @@ Depends: ${python:Depends},
  python-ucs-school (>= 12.1.8),
  python-univention (>= 12.0.0-5),
  python-univention-lib,
+ python-ucs-school-namespace,
  python-lazy-object-proxy,
  python-six,
 Provides: ${python:Provides},
@@ -206,7 +207,7 @@ Homepage: https://www.univention.de/produkte/ucsschool/
 
 Package: python-ucs-school-import-http-api-common
 Architecture: all
-Depends: ${python:Depends}
+Depends: ${python:Depends}, python-ucs-school-namespace
 Replaces:
  ucs-school-import-http-api (<< 17.0.6-15)
 Provides: ${python:Provides},
