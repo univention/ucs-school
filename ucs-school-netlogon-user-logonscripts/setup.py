@@ -1,8 +1,6 @@
 #!/usr/bin/python2.7
-#
-# Univention UCS@school
-#
-# Copyright 2007-2019 Univention GmbH
+
+# Copyright 2019 Univention GmbH
 #
 # http://www.univention.de/
 #
