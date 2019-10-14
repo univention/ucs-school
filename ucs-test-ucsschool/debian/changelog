@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.65) unstable; urgency=medium
+
+  * Bug #50037: Add test case 115_modify_userattributes_and_ldap_acl
+
+ -- Florian Best <best@univention.de>  Mon, 14 Oct 2019 20:12:52 +0200
+
 ucs-test-ucsschool (6.0.64) unstable; urgency=low
 
   * Bug #50321: add test for migrate_ucsschool_import_user

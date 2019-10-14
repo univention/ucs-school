@@ -299,7 +299,6 @@ class UCSTestSchool(object):
 			district_ou_dn = ''
 			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self.ucr.get('ldap/base')}
 
-
 		# get list of OU and objects below - sorted by length, longest first (==> leafs first)
 		ok = True
 		logger.info('Removing school %r (%s) and its children ...', ou_name, oudn)
