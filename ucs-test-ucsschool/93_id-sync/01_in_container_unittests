@@ -1,0 +1,10 @@
+#!/usr/share/ucs-test/runner bash
+## desc: In-container unit tests
+## exposure: safe
+## tags: [id_sync]
+
+CMD="/id-sync/venv/bin/python -m pytest -l -v /id-sync/src/unittests"
+
+echo "Running in container: '$CMD'"
+
+univention-app shell id-sync $CMD
