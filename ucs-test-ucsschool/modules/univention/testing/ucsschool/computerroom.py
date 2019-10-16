@@ -390,9 +390,9 @@ class Room(object):
 		# ensure cups is running, otherwise jobs are not rejected
 		ucr = ucr_test.UCSTestConfigRegistry()
 		ucr.load()
-		cups_status = subprocess.check_output(['lpstat', '-h', ucr.get('cups/server', ''), '-r'])
+		cups_status = subprocess.check_output(['lpstat', '-h', ucr.get('cups/server', ''), '-r'], env={'LC_ALL': 'C'})
 		if cups_status != 'scheduler is running\n':
-			raise CupsNotRunningError
+			raise CupsNotRunningError('CUPS status reported: "{}"'.format(cups_status))
 		f = tempfile.NamedTemporaryFile(dir='/tmp')
 		cmd_print = [
 			'smbclient', '//%(ip)s/%(printer)s',
