@@ -18,10 +18,10 @@ def listUnion(firstList, secondList):
 
 
 def contains(big, small):
-	print 'small =', small
-	print 'big =', big
+	print('small = {}'.format(small))
+	print('big = {}'.format(big))
 	intersection = [x for x in small if x in big]
-	print 'intersect=', intersection
+	print('intersect = {}'.format(intersection))
 	return sorted(intersection) == sorted(small)
 
 
@@ -35,7 +35,7 @@ def removeListFromOther(big, small):
 
 def checkModules(modules, userType, serverRole, singleMaster):
 	defaultList = []
-	ignoreList = [('lib', None)]
+	ignoreList = [('lib', None), (u'passwordreset', None)]
 
 	# Lehrer auf dem DC Master
 	dc_teacher = defaultList + [('schoolgroups', 'workgroup-admin'), ('schoolusers', 'student'), ('schoollists', None)]
@@ -127,8 +127,8 @@ def checkModules(modules, userType, serverRole, singleMaster):
 	else:
 		success = contains(modules, res)
 	if not success:
-		utils.fail('Modules for %s and %s are not correct.\nExpected: %r\nFound:    %r' % (
-			userType, serverRole, sorted(res), sorted(modules)))
+		utils.fail('Modules for "%r" are not correct.\nExpected: %r\nFound:    %r' % (
+			(userType, serverRole, singleMaster, ), sorted(res), sorted(modules)))
 
 
 def main():
@@ -137,7 +137,7 @@ def main():
 			with ucr_test.UCSTestConfigRegistry() as ucr:
 				host = ucr.get('hostname')
 				serverRole = ucr.get('server/role')
-				print 'Role = ', serverRole
+				print('Role = '.format(serverRole))
 				singleMaster = ucr.is_true('ucsschool/singlemaster', False)
 				basedn = ucr.get('ldap/base')
 
@@ -168,10 +168,10 @@ def main():
 				utils.wait_for_replication_and_postrun()
 				for user, userType in users:
 					client = Client(host, user, 'univention')
-					print 'usertype=', userType
+					print('usertype='.format(userType))
 					modules = client.umc_get('modules/list').data['modules']
 					modules = [(x['id'], x.get('flavor')) for x in modules]
-					print 'modules = ', modules
+					print('modules = '.format(modules))
 					checkModules(modules, userType, serverRole, singleMaster)
 
 

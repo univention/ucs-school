@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.67) unstable; urgency=medium
+
+  * Bug #50364: 90_ucsschool/19_available_umc_modules ignore selfservice
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 16 Oct 2019 18:45:40 +0200
+
 ucs-test-ucsschool (6.0.66) unstable; urgency=medium
 
   * Bug #50286: fix 90_ucsschool/22_computerroom_module_settings
