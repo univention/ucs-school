@@ -3,7 +3,7 @@
 ## exposure: safe
 ## tags: [id_sync]
 
-CMD="/id-sync/venv/bin/python -m pytest -l -v /id-sync/src/unittests"
+CMD="/id-sync/venv/bin/python -m pytest -l -v /id-sync/src/tests/unittests"
 
 echo "Running in container: '$CMD'"
 
