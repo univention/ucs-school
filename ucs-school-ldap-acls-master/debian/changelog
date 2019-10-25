@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (17.0.3-1) unstable; urgency=low
+
+  * Bug #50274: fix ACL regression caused by bug 49734 - LDAP ACLs on DC
+    slaves are not required
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 25 Oct 2019 16:05:28 +0200
+
 ucs-school-ldap-acls-master (17.0.2-1) unstable; urgency=low
 
   * Bug #35447: prevent school admins from changing other school admins passwords

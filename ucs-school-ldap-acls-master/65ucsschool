@@ -279,7 +279,10 @@ access to dn.regex="^(.+,)?cn=(users|kerberos|computers),@%@ldap/base@%@$$"
 	by * +0 break
 """
 
-print replace_ucr_variables(aclset)
+if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
+	print replace_ucr_variables(aclset)
+else:
+	print '# no ACL required on domaincontroller_slave'
 @!@
 
 # end 65ucsschool

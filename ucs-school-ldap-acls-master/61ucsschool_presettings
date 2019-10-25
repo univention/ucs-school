@@ -1,5 +1,9 @@
 # start 61ucsschool_presettings
 
+@!@
+# -*- coding: utf-8 -*-
+
+aclset = '''
 # grant at least read access to school slave controllers to operational attributes, if not limited later on
 access to attrs="structuralObjectClass,entryUUID,creatorsName,createTimestamp,entryCSN,modifiersName,modifyTimestamp"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd break
@@ -106,5 +110,12 @@ access to dn.regex="^(.*,)?cn=(cups|ppolicy|packages|services|templates|admin-se
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
+'''
+
+if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
+	print aclset
+else:
+	print '# no ACL required on domaincontroller_slave'
+@!@
 
 # end 61ucsschool_presettings
