@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.71) unstable; urgency=low
+
+  * Bug #50416: add test for school class changes
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 25 Oct 2019 17:34:15 +0200
+
 ucs-test-ucsschool (6.0.70) unstable; urgency=low
 
   * Bug #50366: update paths of tests
