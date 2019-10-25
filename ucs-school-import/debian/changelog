@@ -1,3 +1,9 @@
+ucs-school-import (17.0.17) unstable; urgency=low
+
+  * Bug #50416: handle stale OU name cache
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 25 Oct 2019 17:37:03 +0200
+
 ucs-school-import (17.0.16) unstable; urgency=low
 
   * Bug #50321: use ASCII character as delimiter in migrate_ucsschool_import_user

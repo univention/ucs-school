@@ -291,8 +291,16 @@ class ImportUser(User):
 		schools.add(self.school)
 		if additional_schools:
 			schools.update(additional_schools)
+		all_school_names = self.get_all_school_names(lo)
 		for school in schools:
-			if school not in self.get_all_school_names(lo):
+			if school not in all_school_names:
+				# retry for case where create_ou ran parallel to this process
+				# may happen with HTTP-API
+				self.__class__._all_school_names = []
+				all_school_names = self.get_all_school_names(self.lo)
+				if school in all_school_names:
+					continue
+				self.logger.debug("Known schools: %r", all_school_names)
 				raise UnknownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
 	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
@@ -1370,6 +1378,11 @@ class ImportUser(User):
 			return self.config['username']['max_length'][self.role_sting]
 		except KeyError:
 			return self.config['username']['max_length']['default']
+
+	@classmethod
+	def invalidate_cache(cls):
+		super(ImportUser, cls).invalidate_cache()
+		cls._all_school_names = []
 
 
 class ImportStaff(ImportUser, Staff):
