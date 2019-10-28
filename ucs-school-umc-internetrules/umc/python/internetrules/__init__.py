@@ -44,7 +44,7 @@ from univention.management.console.log import MODULE
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, SchoolSanitizer
+from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, LDAP_Filter, SchoolSanitizer
 from ucsschool.lib.models import Group
 import ucsschool.lib.internetrules as rules
 

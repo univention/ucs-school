@@ -41,7 +41,7 @@ from univention.management.console.log import MODULE
 
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE, MACHINE_WRITE, SchoolSanitizer
+from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE, MACHINE_WRITE, SchoolSanitizer
 from ucsschool.lib.models import User, Teacher, TeachersAndStaff, SchoolClass, WorkGroup
 
 _ = Translation('ucs-school-umc-groups').translate

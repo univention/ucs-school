@@ -41,7 +41,7 @@ from univention.management.console.modules.decorators import sanitize
 
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE, SchoolSanitizer
+from ucsschool.lib.school_umc_base import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE, SchoolSanitizer
 from ucsschool.lib.models import ComputerRoom, SchoolComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
