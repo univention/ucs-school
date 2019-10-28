@@ -2,7 +2,7 @@
 # coding=utf-8
 ## desc: check specific LDAP access permissions
 ## roles: [domaincontroller_master]
-## tags: [apptest, ucsschool,ucsschool_base1,SKIP]
+## tags: [apptest, ucsschool,ucsschool_base1]
 ## timeout: 3600
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
