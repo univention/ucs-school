@@ -6,5 +6,5 @@ src: ucs-school-ldap-acls-master
 fix: 
 desc: |
  * Fixed a regression of LDAP ACLs on slave domaincontrollers that could occur with the latest errata state when
-   simultaneously using the UCR variable <envar>ucsschool/ldap/replicate_staff_to_edu</envar>  (Bug #50274).
+   enabling the UCR variable <envar>ucsschool/ldap/replicate_staff_to_edu</envar> on both DC master and DC slave (Bug #50274).
 bug: [50274]
