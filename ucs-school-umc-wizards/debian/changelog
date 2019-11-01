@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-7) unstable; urgency=low
+
+  * Bug #47418: remove UMC code from schoolldap module
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:42 +0100
+
 ucs-school-umc-wizards (11.0.0-6) unstable; urgency=low
 
   * Bug #49608: fix mac_address and ip_address from string to list

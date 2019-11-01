@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (4.0.0-2) unstable; urgency=low
+
+  * Bug #47418: remove UMC code from schoolldap module
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:37:59 +0100
+
 ucs-school-l10n-fr (4.0.0-1) unstable; urgency=low
 
   * Bug #48063: remove ucs-school-umc-csv-import translations

@@ -1,3 +1,9 @@
+ucs-school-umc-users (15.0.0-4) unstable; urgency=low
+
+  * Bug #47418: remove UMC code from schoolldap module
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:42 +0100
+
 ucs-school-umc-users (15.0.0-3) unstable; urgency=medium
 
   * Bug #49492: Fix a typo that could cause the grid to malfunction

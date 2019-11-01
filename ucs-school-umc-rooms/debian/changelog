@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (16.1.0-2) unstable; urgency=low
+
+  * Bug #47418: remove UMC code from schoolldap module
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:42 +0100
+
 ucs-school-umc-rooms (16.1.0-1) unstable; urgency=medium
 
   * Bug #48080: Fix typo

@@ -1,3 +1,9 @@
+ucs-school-umc-lists (2.0.0-4) unstable; urgency=low
+
+  * Bug #47418: remove UMC code from schoolldap module
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:41 +0100
+
 ucs-school-umc-lists (2.0.0-3) unstable; urgency=low
 
   * Bug #48504: fixed spelling
