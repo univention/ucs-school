@@ -34,7 +34,7 @@ from univention.management.console.log import MODULE
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib.schoolldap import SchoolBaseModule
+from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.lib.schoollessons import SchoolLessons
 
 _ = Translation('ucs-school-umc-lessontimes').translate
