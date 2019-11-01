@@ -1331,13 +1331,15 @@ systemctl restart univention-s4-connector.service
 			<para>
 				Folgendes muss auf dem DC Master ausgeführt werden:
 				<programlisting>
+# UCR Variablen verfügbar machen
+eval "$(ucr shell)"
+
 # Name (Alias) des Servers auf dem das Heimatverzeichnis liegt (wird vom Import ausgewertet)
 ucr set ucsschool/import/set/sambahome=schoolserver
 
-# DNS Forward-Eintrag einrichten (school.local durch korrekte Domäne ersetzen,
-# IP-Adresse eines zentralen Server, z.B. des DC Master, verwenden)
+# DNS Forward-Eintrag einrichten (IP-Adresse eines zentralen Servers, z.B. des DC Masters, verwenden)
 udm dns/host_record create \
-    --superordinate "zoneName=school.local,cn=dns,$ldap_base" \
+    --superordinate "zoneName=$domainname,cn=dns,$ldap_base" \
     --set name=schoolserver \
     --set a=172.16.1.1
 				</programlisting>
