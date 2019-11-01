@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.73) unstable; urgency=low
+
+  * Bug #35447: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:29:32 +0100
+
 ucs-test-ucsschool (6.0.72) unstable; urgency=low
 
   * Bug #50274: add 75_ldap_acls_staff_on_edu_servers

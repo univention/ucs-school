@@ -158,7 +158,7 @@ class UCSTestSchool(object):
 
 	def __exit__(self, exc_type, exc_value, etraceback):
 		if exc_type:
-			logger.exception('*** Cleanup after exception: %s %s\n%s', exc_type, exc_value)
+			logger.exception('*** Cleanup after exception: %s %s', exc_type, exc_value)
 		try:
 			self.cleanup()
 		except Exception as exc:
