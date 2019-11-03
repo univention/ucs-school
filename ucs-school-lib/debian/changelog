@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.9) unstable; urgency=low
+
+  * Bug #47418: fix typo in import
+
+ -- Daniel Troeder <troeder@univention.de>  Sun, 03 Nov 2019 10:10:31 +0100
+
 ucs-school-lib (12.1.8) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module

@@ -45,7 +45,7 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules import Base, UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
-from univention.lib.school_umc_ldap_connection import LDAP_Connection, set_bind_function
+from .school_umc_ldap_connection import LDAP_Connection, set_bind_function
 try:
 	from typing import Any, Dict, List, Optional, Tuple
 	from univention.admin.uldap import access as LoType
