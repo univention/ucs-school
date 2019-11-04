@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.74) unstable; urgency=low
+
+  * Bug #47418: fix import
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 Nov 2019 08:11:33 +0100
+
 ucs-test-ucsschool (6.0.73) unstable; urgency=low
 
   * Bug #35447: fix typo
