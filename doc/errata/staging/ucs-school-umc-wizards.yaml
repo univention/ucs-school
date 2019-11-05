@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-wizards
+fix: 11.0.0-8A~4.4.0.201911050945
+desc: |
+ * Internal improvement: separate UMC and non-UMC code in schoolldap module (Bug #47418).
+bug: [47418]
