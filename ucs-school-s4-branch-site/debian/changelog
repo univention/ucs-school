@@ -1,8 +1,8 @@
-ucs-school-s4-branch-site (7.0.0-1) unstable; urgency=low
+ucs-school-s4-branch-site (7.0.0-2) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
 
- -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:40 +0100
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:41 +0100
 
 ucs-school-s4-branch-site (7.0.0-0) unstable; urgency=medium
 

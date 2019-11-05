@@ -15,7 +15,7 @@ Architecture: all
 Depends: ${misc:Depends},
  univention-management-console,
  ucs-school-umc-common,
- python-ucs-school,
+ python-ucs-school (>= 12.1.9),
  shell-ucs-school,
 Description: UMC module to generate CSV lists
  This package provides a Univention Management Console module that allows

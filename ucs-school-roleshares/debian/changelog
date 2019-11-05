@@ -1,14 +1,10 @@
-ucs-school-roleshares (7.0.0-3) unstable; urgency=low
-
-  * Bug #47418: fix import
-
- -- Daniel Troeder <troeder@univention.de>  Mon, 04 Nov 2019 08:12:17 +0100
-
-ucs-school-roleshares (7.0.0-2) unstable; urgency=low
+ucs-school-roleshares (7.0.0-4) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
+  * Bug #47418: fix import
+  * Bug #47418: fix dependency
 
- -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:40 +0100
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 Nov 2019 09:14:41 +0100
 
 ucs-school-roleshares (7.0.0-1) unstable; urgency=low
 

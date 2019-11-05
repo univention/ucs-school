@@ -16,7 +16,7 @@ Depends: ${misc:Depends},
  univention-management-console,
  univention-config-registry,
  ucs-school-umc-common,
- python-ucs-school,
+ python-ucs-school (>= 12.1.9),
  shell-ucs-school,
  python-univention-directory-manager
 Description: UMC module to configure the lesson times

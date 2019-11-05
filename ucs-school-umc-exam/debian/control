@@ -16,6 +16,7 @@ Architecture: all
 Depends: ${misc:Depends},
  univention-management-console-server,
  ucs-school-umc-distribution,
+ python-ucs-school (>= 12.1.9),
 Description: Starts a new exam for a specified computer room
  Starts a new exam for a specified computer room
  .

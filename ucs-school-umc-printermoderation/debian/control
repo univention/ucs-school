@@ -19,7 +19,8 @@ Depends: ${misc:Depends},
  poppler-utils,
  shell-ucs-school,
  shell-univention-lib,
- python-cups
+ python-cups,
+ python-ucs-school (>= 12.1.9),
 Description: UCS@school UMC module for moderating print
  This package contains a UMC module for moderating print jobs of students
  .

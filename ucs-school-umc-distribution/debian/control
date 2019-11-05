@@ -17,7 +17,7 @@ Depends: ${misc:Depends},
  python-univention-lib,
  univention-config-registry,
  ucs-school-umc-common,
- python-ucs-school,
+ python-ucs-school (>= 12.1.9),
  shell-ucs-school
 Description: UMC module to distribute/collect teaching material to/from student home directories
  This package provides a Univention Management Console module to distribute

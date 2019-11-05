@@ -1,8 +1,8 @@
-univention-management-console-module-selective-udm (8.0.0-1) unstable; urgency=low
+univention-management-console-module-selective-udm (8.0.0-2) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
 
- -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:42 +0100
+ -- Daniel Troeder <troeder@univention.de>  Fri, 01 Nov 2019 21:39:43 +0100
 
 univention-management-console-module-selective-udm (8.0.0-0) unstable; urgency=medium
 
