@@ -314,7 +314,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 11.0.0-8A~4.4.0.201910011317 -->
 <!-- CHANGELOG:2019-10-09:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-11-06" lang="en">
+					<title>Released on 2019-11-06:</title>
+					<!-- START ucs-school-ldap-acls-master 17.0.3-1A~4.4.0.201910291353 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>17.0.3-1A~4.4.0.201910291353</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fixed a regression of LDAP ACLs on slave domaincontrollers that could occur with the latest errata state when using the UCR variable <envar>ucsschool/ldap/replicate_staff_to_edu</envar> (<u:bug>50274</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 17.0.3-1A~4.4.0.201910291353 -->
+<!-- CHANGELOG:2019-11-06:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
