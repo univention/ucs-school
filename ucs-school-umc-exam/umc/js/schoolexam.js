@@ -78,6 +78,7 @@ define([
 		autoValidate: true,
 		standbyOpacity: 1.0,
 		examName: null,
+		_showRestart: false,
 		_progressBar: null,
 		_userPrefix: null,
 		_grid: null,
@@ -350,6 +351,7 @@ define([
 			var ucrDeferred = tools.ucr([
 				'umc/server/upload/max',
 				'ucsschool/ldap/default/userprefix/exam',
+				'ucsschool/exam/default/show/restart',
 				'ucsschool/exam/default/room',
 				'ucsschool/exam/default/shares',
 				'ucsschool/exam/default/internet',
@@ -358,7 +360,7 @@ define([
 				// cache the user prefix and update help text
 				this._userPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
 				this.getPage('finished').set('helpText', lang.replace(this.getPage('finished').get('helpText'), {prefix: this._userPrefix}));
-
+				this._showRestart = tools.isTrue(result['ucsschool/exam/default/show/restart']);
 				// max upload size and some form values
 				setMaxSize(result['umc/server/upload/max'] || 10240);
 				setValue('share_settings', 'shareMode', result['ucsschool/exam/default/shares']);
@@ -752,7 +754,11 @@ define([
 			preparationDeferred.then(lang.hitch(this, function() {
 				// everything fine open the computerroom and close the exam wizard
 				this.standby(false);
-				nextPage.resolve('reboot');
+				if (!this._showRestart) {
+					nextPage.resolve('finished');
+				} else {
+					nextPage.resolve('reboot');
+				}
 			}), lang.hitch(this, function() {
 				// handle any kind of errors
 				this.standby(false);

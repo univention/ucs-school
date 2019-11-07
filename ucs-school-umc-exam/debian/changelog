@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-19) unstable; urgency=low
+
+  * Bug #49961: Create UCRV to toggle PC restart screen during exam start
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 07 Nov 2019 07:43:12 +0100
+
 ucs-school-umc-exam (9.0.1-18) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module

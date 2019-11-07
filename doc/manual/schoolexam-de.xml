@@ -145,6 +145,12 @@
 						definiert, ob beim Starten des Klassenarbeitsmodus das Auswahlkästchen <guimenu>Freigabezugriff konfigurieren</guimenu> automatisch vorausgewählt ist. Mögliche Werte sind <literal>true</literal> (Auswahlkästchen vorausgewählt) oder <literal>false</literal> (Auswahlkästchen nicht vorausgewählt).
 					</simpara>
 				</listitem>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/default/show/restart</envar>
+						definiert, ob die Seite zum Neustarten der Schülerrechner angezeigt werden soll. Standardmäßig deaktiviert.
+					</simpara>
+				</listitem>
 			</itemizedlist>
 		</para>
 		<para>

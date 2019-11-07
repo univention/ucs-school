@@ -532,8 +532,12 @@ feedback@univention.de
 			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/exam_1_reboot.png"/>
 		  </figure>
 		  <para>
-			Um die Einrichtung der Klassenarbeit abzuschließen, ist es wichtig, dass alle Schülerrechner des Computerraums neu gestartet werden.
-			Nur durch einen Neustart der betroffenen Rechner können spezifische Berechtigungen und Rechnerkonfigurationen, die für den Klassenarbeitsmodus vorgesehen sind, wirksam werden.
+			Je nach Konfiguration der Schülerrechner kann es notwendig sein, dass alle Schülerrechner des Computerraums neu gestartet werden.
+			Nur durch einen Neustart der betroffenen Rechner können einige spezifische Berechtigungen und Rechnerkonfigurationen, die für den Klassenarbeitsmodus vorgesehen sind, wirksam werden.
+		  </para>
+		  <para>
+			Sollte dieser Dialog beim Starten einer Klassenarbeit nicht erscheinen, ist ein Neustart der Schülerrechner in dieser Umgebung nicht notwendig und wurde bewusst von einem Administrator so eingerichtet.
+			In diesem Fall kann der Abschnitt übersprungen werden und es ist nicht erforderlich, die Computer manuell neu zu starten.
 		  </para>
 		  <para>
 			Das Klassenarbeitsmodul bietet eine Hilfsfunktion an, so dass dieser Vorgang weitgehend automatisiert durchgeführt werden kann.

@@ -145,6 +145,7 @@ define([
 		_nUpdateFailures: 0,
 
 		_vncEnabled: false,
+		_showRebootNote: false,
 
 		// buttons above grid
 		_headActions: null,
@@ -514,7 +515,7 @@ define([
 
 		_preRendering: function() {
 			return all([
-				this._setVncSettings(),
+				this._loadUCR(),
 				this._loadPlugins()
 			]);
 		},
@@ -525,13 +526,14 @@ define([
 			this.renderScreenshotPage();
 		},
 
-		_setVncSettings: function() {
+		_loadUCR: function() {
 			// get UCR Variable for enabled VNC
-			var getVncSettings = tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled');
-			getVncSettings.then(lang.hitch(this, function(result) {
+			var getUCR = tools.ucr(['ucsschool/umc/computerroom/ultravnc/enabled', 'ucsschool/exam/default/show/restart']);
+			getUCR.then(lang.hitch(this, function(result) {
 				this._vncEnabled = tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
+				this._showRebootNote = tools.isTrue(result['ucsschool/exam/default/show/restart'])
 			}));
-			return getVncSettings;
+			return getUCR;
 		},
 
 		_guessRoomOfTeacher: function() {
@@ -999,7 +1001,11 @@ define([
 				})).then(lang.hitch(this, function() {
 					// on success, prompt info to user
 					if (this._progressBar.getErrors().errors.length === 0) {
-						dialog.alert(_("<p>The exam has been successfully finished. All related exam documents have been collected from the students' home directories.</p><p><b>Note:</b> All computers need to be either switched off or rebooted before they can be used again for regular schooling.</p>"));
+						var message = _("<p>The exam has been successfully finished. All related exam documents have been collected from the students' home directories.</p>");
+						if (this._showRebootNote) {
+							message += _("<p><b>Note:</b> All computers need to be either switched off or rebooted before they can be used again for regular schooling.</p>")
+						}
+						dialog.alert(message);
 						delete info.exam;
 						delete info.examDescription;
 						delete info.examEndTime;

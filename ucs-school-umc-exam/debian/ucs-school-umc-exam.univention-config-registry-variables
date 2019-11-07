@@ -40,6 +40,12 @@ Description[de]=Definiert, ob die Checkbox "Freigabezugriff konfigurieren" im UM
 Type=bool
 Categories=ucsschool-exam
 
+[ucsschool/exam/default/show/restart]
+Description[en]=Specifies if the wizard shows the page to restart the students PCs. False by default.
+Description[de]=Definiert, ob die Seite zum Neustarten der Schülerrechner angezeigt werden soll. Standardmäßig deaktiviert.
+Type=bool
+Categories=ucsschool-exam
+
 [ucsschool/exam/cron/cleanup]
 Description[en]=Specifies the point in time when the script exam-and-room-cleanup is called by cron (disabled by default; example: "30 2 * * *")
 Description[de]=Definiert den Zeitpunkt, an dem das Skript exam-and-room-cleanup automatisch durch cron gestartet wird (standardmäßig deaktiviert; Beispiel: "30 2 * * *")
