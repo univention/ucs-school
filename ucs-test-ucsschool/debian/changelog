@@ -1,8 +1,8 @@
-ucs-test-ucsschool (6.0.78) unstable; urgency=low
+ucs-test-ucsschool (6.0.79) unstable; urgency=low
 
   * Bug #50457: app was renamed
 
- -- Daniel Troeder <troeder@univention.de>  Thu, 07 Nov 2019 08:26:31 +0100
+ -- Daniel Troeder <troeder@univention.de>  Thu, 07 Nov 2019 08:26:32 +0100
 
 ucs-test-ucsschool (6.0.75) unstable; urgency=low
 

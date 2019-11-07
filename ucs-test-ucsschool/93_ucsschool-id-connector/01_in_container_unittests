@@ -4,7 +4,7 @@
 ## tags: [ucsschool-id-connector]
 
 APP="ucsschool-id-connector"
-CMD="/id-sync/venv/bin/python -m pytest -l -v /$APP/src/tests/unittests"
+CMD="/$APP/venv/bin/python -m pytest -l -v /$APP/src/tests/unittests"
 
 echo "Running in container: '$CMD'"
 
