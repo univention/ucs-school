@@ -1,10 +1,11 @@
 #!/usr/share/ucs-test/runner bash
 ## desc: In-container unit tests
 ## exposure: safe
-## tags: [id_sync]
+## tags: [ucsschool-id-connector]
 
-CMD="/id-sync/venv/bin/python -m pytest -l -v /id-sync/src/tests/unittests"
+APP="ucsschool-id-connector"
+CMD="/id-sync/venv/bin/python -m pytest -l -v /$APP/src/tests/unittests"
 
 echo "Running in container: '$CMD'"
 
-univention-app shell id-sync $CMD
+univention-app shell "$APP" $CMD

@@ -1,9 +1,10 @@
 #!/usr/share/ucs-test/runner bash
 ## desc: In-container integration tests
 ## exposure: dangerous
-## tags: [id_sync]
+## tags: [ucsschool-id-connector]
 
-CMD="/id-sync/venv/bin/python -m pytest -l -v /id-sync/src/tests/integration_tests"
+APP="ucsschool-id-connector"
+CMD="/id-sync/venv/bin/python -m pytest -l -v /$APP/src/tests/integration_tests"
 
 echo "IP of Traeger 1:         $(</var/www/bb-api-IP_traeger1.txt)"
 echo "BB-API Key of Traeger 1: $(</var/www/bb-api-key_traeger1.txt)"
@@ -12,4 +13,4 @@ echo "BB-API Key of Traeger 2: $(</var/www/bb-api-key_traeger2.txt)"
 
 echo "Running in container: '$CMD'"
 
-univention-app shell id-sync $CMD
+univention-app shell "$APP" $CMD
