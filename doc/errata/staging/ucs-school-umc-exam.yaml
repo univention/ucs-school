@@ -10,4 +10,5 @@ desc: |
  * A login restrictions for exam and original users during running exams (Bug #49960).
  * A proper error message is shown, when trying to create an exam with a name that is already in use (Bug #49902).
  * Internal improvement: separate UMC and non-UMC code in schoolldap module (Bug #47418).
-bug: [47418, 49953, 49960, 49902]
+ * Create UCRV to toggle PC restart screen during exam start (Bug #49961)
+bug: [47418, 49953, 49960, 49902, 49961]

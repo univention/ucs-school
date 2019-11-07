@@ -6,4 +6,5 @@ src: ucs-school-umc-computerroom
 fix: 11.0.0-10A~4.4.0.201911050927
 desc: |
  * Internal improvement: separate UMC and non-UMC code in schoolldap module (Bug #47418).
-bug: [47418]
+ * Create UCRV to toggle PC restart screen during exam start (Bug #49961)
+bug: [47418, 49961]
