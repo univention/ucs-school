@@ -23,9 +23,11 @@ if __name__ == '__main__':
 	with utu.UCSTestSchool() as schoolenv, udm_test.UCSTestUDM() as udm, ucr_test.UCSTestConfigRegistry() as ucr:
 		host = ucr.get('hostname')
 		school, oudn = schoolenv.create_ou(name_edudc=host)
+
+		handler_set(['umc/self-service/profiledata/enabled=true'])
+
 		if 'l' not in ucr.get('self-service/ldap_attributes', '').split(','):
 			handler_set(["self-service/ldap_attributes=%s,l" % ucr.get('self-service/ldap_attributes', '')])
-		handler_set(["self-service/ldap_attributes=%s,l" % ucr.get('self-service/ldap_attributes', '')])
 
 		_, user = schoolenv.create_teacher(school)
 		utils.verify_ldap_object(user)
