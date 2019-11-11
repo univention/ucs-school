@@ -38,10 +38,10 @@ ucr set ucsschool/exam/default/checkbox/distribution?true
 
 if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 9.0.0-9; then
  	univention-config-registry unset ucsschool/exam/user/homedir/autoremove
- fi
+fi
 
-if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 9.0.1-18; then
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt 9.0.1-20; then
  	univention-config-registry set set ucsschool/exam/default/show/restart=True
- fi
+fi
 
 exit 0

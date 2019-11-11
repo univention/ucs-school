@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-20) unstable; urgency=low
+
+  * Bug #49961: fix postinst
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 11 Nov 2019 11:42:43 +0100
+
 ucs-school-umc-exam (9.0.1-19) unstable; urgency=low
 
   * Bug #49961: Create UCRV to toggle PC restart screen during exam start
