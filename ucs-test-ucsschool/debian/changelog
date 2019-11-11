@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.84) unstable; urgency=medium
+
+  * Bug #50462: fix import error in new kelvin tests
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 11 Nov 2019 11:11:02 +0100
+
 ucs-test-ucsschool (6.0.83) unstable; urgency=medium
 
   * Bug #50473: fix 115_modify_userattributes_and_ldap_acl for upgrades from 4.3

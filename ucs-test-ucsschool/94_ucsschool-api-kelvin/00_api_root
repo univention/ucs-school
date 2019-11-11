@@ -9,7 +9,7 @@
 from __future__ import unicode_literals
 import requests
 from unittest import main, TestCase
-from univention.testing.ucsschool.bb_api import API_ROOT_URL, HttpApiUserTestBase, RESSOURCE_URLS, setup_logging
+from univention.testing.ucsschool.kelvin_api import API_ROOT_URL, HttpApiUserTestBase, RESSOURCE_URLS, setup_logging
 
 logger = setup_logging("univention.testing.ucsschool")
 

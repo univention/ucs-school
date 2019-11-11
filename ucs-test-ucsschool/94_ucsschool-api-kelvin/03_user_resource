@@ -17,7 +17,7 @@ try:
 except ImportError:
 	from urllib.parse import urljoin  # py3
 import univention.testing.strings as uts
-from univention.testing.ucsschool.bb_api import api_call, API_ROOT_URL, create_remote_static, HttpApiUserTestBase, RESSOURCE_URLS, partial_update_remote_static, setup_logging
+from univention.testing.ucsschool.kelvin_api import api_call, API_ROOT_URL, create_remote_static, HttpApiUserTestBase, RESSOURCE_URLS, partial_update_remote_static, setup_logging
 from ucsschool.lib.models import Staff as LibStaff, User as LibUser
 try:
 	from typing import Any, Dict, List, Optional, Text, Tuple
