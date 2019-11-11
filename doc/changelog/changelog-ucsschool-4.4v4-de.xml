@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.4-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.4 v4 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von UCS@school 4.4 v3 nach 4.4 v4</subtitle> -->
+		<legalnotice>
+			<literallayout>
+Version 4.4 v4
+Stand: 13.11.2019
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2019
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.4 v3 nach 4.4 v4.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:newerrata">
+			<title>Updateprozess</title>
+			<para>
+				Größere Updates für UCS@school werden im Univention Appcenter als eigenständiges App-Update herausgegeben.
+				Kleinere Updates und Fehlerbereinigungen (Errata für UCS@school), die keine Interaktion mit dem Administrator erforderlich machen, werden im Repository der
+				bereits veröffentlichten App-Version von UCS@school herausgegeben. Die Changelog-Dokumente, die Univention mit jeder UCS@school-App-Version
+				herausgibt, werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem ersichtlich wird, zu welchem Zeitpunkt welche
+				Pakete veröffentlicht und welche Fehler dabei behoben wurden.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+				<section id="changelog:ucsschool:2019-11-11" lang="en">
+					<title>Released on 2019-11-11:</title>
+					<!-- START ucs-school-l10n-fr 4.0.0-2A~4.4.0.201911012149 -->
+					<para>
+						Source package <emphasis>ucs-school-l10n-fr</emphasis> in version <emphasis>4.0.0-2A~4.4.0.201911012149</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-l10n-fr 4.0.0-2A~4.4.0.201911012149 -->
+					<!-- START ucs-school-lib 12.1.9A~4.4.0.201911031011 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.9A~4.4.0.201911031011</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.9A~4.4.0.201911031011 -->
+					<!-- START ucs-school-metapackage 12.0.2-5A~4.4.0.201909261042 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.2-5A~4.4.0.201909261042</emphasis>:
+						<itemizedlist>
+							<listitem><para>The containers "Managed Service Accounts" and "PSPs" new created before provisioning samba (<u:bug>48752</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.2-5A~4.4.0.201909261042 -->
+					<!-- START ucs-school-roleshares 7.0.0-4A~4.4.0.201911050924 -->
+					<para>
+						Source package <emphasis>ucs-school-roleshares</emphasis> in version <emphasis>7.0.0-4A~4.4.0.201911050924</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-roleshares 7.0.0-4A~4.4.0.201911050924 -->
+					<!-- START ucs-school-s4-branch-site 7.0.0-2A~4.4.0.201911050926 -->
+					<para>
+						Source package <emphasis>ucs-school-s4-branch-site</emphasis> in version <emphasis>7.0.0-2A~4.4.0.201911050926</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-s4-branch-site 7.0.0-2A~4.4.0.201911050926 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-11A~4.4.0.201911070856 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-11A~4.4.0.201911070856</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+							<listitem><para>Create UCRV to toggle PC restart screen during exam start (<u:bug>49961</u:bug>)</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-11A~4.4.0.201911070856 -->
+					<!-- START ucs-school-umc-distribution 17.0.1-7A~4.4.0.201911050929 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-distribution</emphasis> in version <emphasis>17.0.1-7A~4.4.0.201911050929</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-distribution 17.0.1-7A~4.4.0.201911050929 -->
+					<!-- START ucs-school-umc-exam 9.0.1-20A~4.4.0.201911111320 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-20A~4.4.0.201911111320</emphasis>:
+						<itemizedlist>
+							<listitem><para>During an exam the exam folder in the exam users home directory cannot be removed or renamed anymore. This change prevents problems collecting the exam if the exam folder has been accidentally modified (<u:bug>49953</u:bug>).</para></listitem>
+
+							<listitem><para>A login restrictions for exam and original users during running exams (<u:bug>49960</u:bug>).</para></listitem>
+
+							<listitem><para>A proper error message is shown, when trying to create an exam with a name that is already in use (<u:bug>49902</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+							<listitem><para>Create UCRV to toggle PC restart screen during exam start (<u:bug>49961</u:bug>)</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-20A~4.4.0.201911111320 -->
+					<!-- START ucs-school-umc-groups 9.0.0-3A~4.4.0.201911050932 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-groups</emphasis> in version <emphasis>9.0.0-3A~4.4.0.201911050932</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-groups 9.0.0-3A~4.4.0.201911050932 -->
+					<!-- START ucs-school-umc-helpdesk 15.0.0-2A~4.4.0.201911050934 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-helpdesk</emphasis> in version <emphasis>15.0.0-2A~4.4.0.201911050934</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-helpdesk 15.0.0-2A~4.4.0.201911050934 -->
+					<!-- START ucs-school-umc-import 2.0.0-5A~4.4.0.201911050935 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-import</emphasis> in version <emphasis>2.0.0-5A~4.4.0.201911050935</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-import 2.0.0-5A~4.4.0.201911050935 -->
+					<!-- START ucs-school-umc-internetrules 15.0.0-2A~4.4.0.201911050936 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-internetrules</emphasis> in version <emphasis>15.0.0-2A~4.4.0.201911050936</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-internetrules 15.0.0-2A~4.4.0.201911050936 -->
+					<!-- START ucs-school-umc-lessontimes 7.0.0-2A~4.4.0.201911050938 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-lessontimes</emphasis> in version <emphasis>7.0.0-2A~4.4.0.201911050938</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-lessontimes 7.0.0-2A~4.4.0.201911050938 -->
+					<!-- START ucs-school-umc-lists 2.0.0-5A~4.4.0.201911050939 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-lists</emphasis> in version <emphasis>2.0.0-5A~4.4.0.201911050939</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-lists 2.0.0-5A~4.4.0.201911050939 -->
+					<!-- START ucs-school-umc-printermoderation 16.0.0-2A~4.4.0.201911050940 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-printermoderation</emphasis> in version <emphasis>16.0.0-2A~4.4.0.201911050940</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-printermoderation 16.0.0-2A~4.4.0.201911050940 -->
+					<!-- START ucs-school-umc-rooms 16.1.0-4A~4.4.0.201911050942 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-rooms</emphasis> in version <emphasis>16.1.0-4A~4.4.0.201911050942</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-rooms 16.1.0-4A~4.4.0.201911050942 -->
+					<!-- START ucs-school-umc-users 15.0.0-5A~4.4.0.201911050943 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-users</emphasis> in version <emphasis>15.0.0-5A~4.4.0.201911050943</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-users 15.0.0-5A~4.4.0.201911050943 -->
+					<!-- START ucs-school-umc-wizards 11.0.0-8A~4.4.0.201911050945 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.0-8A~4.4.0.201911050945</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.0-8A~4.4.0.201911050945 -->
+					<!-- START univention-management-console-module-selective-udm 8.0.0-2A~4.4.0.201911050946 -->
+					<para>
+						Source package <emphasis>univention-management-console-module-selective-udm</emphasis> in version <emphasis>8.0.0-2A~4.4.0.201911050946</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END univention-management-console-module-selective-udm 8.0.0-2A~4.4.0.201911050946 -->
+<!-- CHANGELOG:2019-11-11:APPEND -->
+				</section>
+<!-- CHANGELOG-NEW-SECTION -->
+
+		</section>
+	</chapter>
+</book>
