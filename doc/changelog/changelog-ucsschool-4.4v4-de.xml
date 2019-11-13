@@ -80,7 +80,7 @@ feedback@univention.de
 							Klassenarbeitsmodus sowohl das Benutzerobjekt des Klassenarbeitsbenutzers als auch des
 							ursprünglichen Benutzers automatisch angepasst, um die Anmeldung dieser Benutzer an
 							Windows-Computern einzuschränken. Der Benutzer der Klassenarbeit darf sich nur an den
-							Windows-Computern des Raumes anmelden, in dem die Klassenarbeit geschrieben wird. Zusätzloich ist
+							Windows-Computern des Raumes anmelden, in dem die Klassenarbeit geschrieben wird. Zusätzlich ist
 							für den entsprechenden ursprünglichen Benutzer die Anmeldung auf allen Windows-Systemen der Domäne
 							während des Klassentests gesperrt. Dabei ist zu beachten, dass diese Anmeldebeschränkung nur die
 							Windows-Computer der UCS@school-Domäne betrifft. Außerdem betrifft die Anmeldebeschränkung, ähnlich
