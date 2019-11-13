@@ -71,7 +71,45 @@ feedback@univention.de
 		<section id="changelog:exammode">
 			<title>Spezielle Hinweise zum Klassenarbeitsmodus</title>
 			<para>
-				
+				Mit diesem UCS@school-Release sind umfangreiche Verbesserungen und Änderungen am Klassenarbeitsmodus vorgenommen worden, die ggf. manuelle Schritte notwendig machen:
+				<itemizedlist>
+					<listitem>
+						<para>
+							Bisher musste die Anmeldebeschränkung der Benutzer während eines
+							Klassentests über computerbezogene GPOs umgesetzt werden. Ab diesem Release wird beim Start eines
+							Klassenarbeitsmodus sowohl das Benutzerobjekt des Klassenarbeitsbenutzers als auch des
+							ursprünglichen Benutzers automatisch angepasst, um die Anmeldung dieser Benutzer an
+							Windows-Computern einzuschränken. Der Benutzer der Klassenarbeit darf sich nur an den
+							Windows-Computern des Raumes anmelden, in dem die Klassenarbeit geschrieben wird. Zusätzloich ist
+							für den entsprechenden ursprünglichen Benutzer die Anmeldung auf allen Windows-Systemen der Domäne
+							während des Klassentests gesperrt. Dabei ist zu beachten, dass diese Anmeldebeschränkung nur die
+							Windows-Computer der UCS@school-Domäne betrifft. Außerdem betrifft die Anmeldebeschränkung, ähnlich
+							wie die bisherige GPO-Richtlinie, weder externe Dienste noch Nicht-Windows-Systeme.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Durch die oben genannte Änderung der Anmeldebeschränkung entfällt in den
+							meisten Fällen der Bedarf für computerbezogene GPOs. Bei Neuinstallationen von UCS@school wird daher
+							beim Starten einer Klassenarbeit der Reboot für Windows-Computer per default nicht mehr
+							angeboten/forciert. Dieser Schritt wird dann im UMC-Modul beim Starten einer Klassenarbeit
+							übersprungen. Auf bestehenden UCS@school-Installationen wird automatisch die UCR-Variable
+							<envar>ucsschool/exam/default/show/restart</envar> auf den Wert <literal>yes</literal> gesetzt, um
+							das alte Verhalten beizubehalten. Auf UCS@school-Systemen, die direkt mit Version 4.4v4 installiert
+							wurden, ist diese Variable nicht gesetzt und aktiviert damit das neue Verhalten.  Daher ist bei
+							einer Neuinstallation eines UCS@school-Systems bzw. beim Hinzufügen von weiteren Schulservern darauf
+							zu achten, dass die UCR-Variable auf allen Systemen passend gesetzt ist.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Während einer Klassenarbeit kann der Klassenarbeitsordner im
+							Heimatverzeichnis des Prüfungsbenutzers nicht mehr umbenannt oder entfernt werden. Diese Änderung
+							wurde vorgenommen, um Probleme beim Einsammeln von Prüfungsergebnissen vorzubeugen, die durch das
+							versehentliche Umbenennen, Verschieben oder Löschen des Ordners hervorgerufen wurden.
+						</para>
+					</listitem>
+				</itemizedlist>
 			</para>
 		</section>
 
