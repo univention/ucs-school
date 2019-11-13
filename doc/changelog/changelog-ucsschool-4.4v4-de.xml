@@ -68,10 +68,17 @@ feedback@univention.de
 			</para>
 		</section>
 
+		<section id="changelog:exammode">
+			<title>Spezielle Hinweise zum Klassenarbeitsmodus</title>
+			<para>
+				
+			</para>
+		</section>
+
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
-				<section id="changelog:ucsschool:2019-11-11" lang="en">
-					<title>Released on 2019-11-11:</title>
+				<section id="changelog:ucsschool:2019-11-13" lang="en">
+					<title>Released on 2019-11-13:</title>
 					<!-- START ucs-school-l10n-fr 4.0.0-2A~4.4.0.201911012149 -->
 					<para>
 						Source package <emphasis>ucs-school-l10n-fr</emphasis> in version <emphasis>4.0.0-2A~4.4.0.201911012149</emphasis>:
@@ -94,7 +101,7 @@ feedback@univention.de
 					<para>
 						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.2-5A~4.4.0.201909261042</emphasis>:
 						<itemizedlist>
-							<listitem><para>The containers "Managed Service Accounts" and "PSPs" new created before provisioning samba (<u:bug>48752</u:bug>).</para></listitem>
+							<listitem><para>The containers <literal>Managed Service Accounts</literal> and <literal>PSPs</literal> within the LDAP base were frequent triggers for rejects of the S4 connector. The two containers are now created before Samba 4 is provisioned, so this error no longer occurs (<u:bug>48752</u:bug>).</para></listitem>
 
 						</itemizedlist>
 					</para>
@@ -123,7 +130,7 @@ feedback@univention.de
 						<itemizedlist>
 							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
 
-							<listitem><para>Create UCRV to toggle PC restart screen during exam start (<u:bug>49961</u:bug>)</para></listitem>
+							<listitem><para>When exiting the class work mode, a reboot of Windows computers is no longer mandatory, depending on the configuration. Therefore, the UCR variable <envar>ucsschool/exam/default/show/restart</envar> is now evaluated when exiting the class work mode and the corresponding dialog is only displayed if required (<u:bug>49961</u:bug>).</para></listitem>
 
 						</itemizedlist>
 					</para>
@@ -137,23 +144,23 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-umc-distribution 17.0.1-7A~4.4.0.201911050929 -->
-					<!-- START ucs-school-umc-exam 9.0.1-20A~4.4.0.201911111320 -->
+					<!-- START ucs-school-umc-exam 9.0.1-21A~4.4.0.201911131224 -->
 					<para>
-						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-20A~4.4.0.201911111320</emphasis>:
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-21A~4.4.0.201911131224</emphasis>:
 						<itemizedlist>
-							<listitem><para>During an exam the exam folder in the exam users home directory cannot be removed or renamed anymore. This change prevents problems collecting the exam if the exam folder has been accidentally modified (<u:bug>49953</u:bug>).</para></listitem>
+							<listitem><para>During an exam the exam folder in the exam user's home directory cannot be removed or renamed anymore. This change prevents problems while collecting the exam results if the exam folder has been accidentally renamed, moved or deleted (<u:bug>49953</u:bug>).</para></listitem>
 
-							<listitem><para>A login restrictions for exam and original users during running exams (<u:bug>49960</u:bug>).</para></listitem>
+							<listitem><para>Previously, the logon restriction of users during an exam had to be implemented using computer-related GPOs. Starting with this release, when an exam is started, the user object of both the exam user and the original user is automatically adjusted to restrict the logon of these users. The exam user may only log on to the Windows computers of the room in which the exam is written. For the corresponding original user, the login on all Windows systems of the domain is locked during the exam. This logon restriction only affects the Windows computers of the UCS@school domain. Similar to the previous GPO policy, it does not affect external services or non-Windows systems (<u:bug>49960</u:bug>).</para></listitem>
 
-							<listitem><para>A proper error message is shown, when trying to create an exam with a name that is already in use (<u:bug>49902</u:bug>).</para></listitem>
+							<listitem><para>The above-mentioned change to the logon restrictions  eliminates in most cases the need for computer-related GPOs. For new installations of UCS@school, the reboot for Windows computers is no longer offered/forced when starting an exam. The step is then skipped when starting a test. On existing UCS@school installations, the UCR variable <envar>ucsschool/exam/default/show/restart</envar> is automatically set to <literal>yes</literal> to retain the old behavior. Therefore, when reinstalling a UCS@school system or adding additional school servers, make sure that the UCR variable is set appropriately on all systems (<u:bug>49961</u:bug>).</para></listitem>
+
+							<listitem><para>A proper error message is now shown, when trying to create an exam with a name that is already in use (<u:bug>49902</u:bug>).</para></listitem>
 
 							<listitem><para>Internal improvement: separate UMC and non-UMC code in schoolldap module (<u:bug>47418</u:bug>).</para></listitem>
 
-							<listitem><para>Create UCRV to toggle PC restart screen during exam start (<u:bug>49961</u:bug>)</para></listitem>
-
 						</itemizedlist>
 					</para>
-					<!-- END ucs-school-umc-exam 9.0.1-20A~4.4.0.201911111320 -->
+					<!-- END ucs-school-umc-exam 9.0.1-21A~4.4.0.201911131224 -->
 					<!-- START ucs-school-umc-groups 9.0.0-3A~4.4.0.201911050932 -->
 					<para>
 						Source package <emphasis>ucs-school-umc-groups</emphasis> in version <emphasis>9.0.0-3A~4.4.0.201911050932</emphasis>:
@@ -253,7 +260,7 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END univention-management-console-module-selective-udm 8.0.0-2A~4.4.0.201911050946 -->
-<!-- CHANGELOG:2019-11-11:APPEND -->
+<!-- CHANGELOG:2019-11-13:APPEND -->
 				</section>
 <!-- CHANGELOG-NEW-SECTION -->
 
