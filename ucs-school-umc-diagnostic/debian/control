@@ -1,0 +1,24 @@
+Source: ucs-school-umc-diagnostic
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 7.0.50~),
+ dh-python,
+ univention-management-console-dev (>= 11.0.4-37),
+ python-all,
+ python3-all,
+ ucslint,
+Standards-Version: 3.7.2
+
+Package: ucs-school-umc-diagnostic
+Architecture: all
+Depends: ${python:Depends}, ${python3:Depends},
+ ${misc:Depends},
+ univention-management-console-server (>= 11.0.4-37),
+ univention-management-console-module-diagnostic (>= 5.0.1-21),
+Description: System Diagnosis modules for UCS@school
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
