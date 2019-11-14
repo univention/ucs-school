@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-1) unstable; urgency=low
+
+  * Loosen build dependency for now
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 14 Nov 2019 17:28:41 +0100
+
 ucs-school-umc-diagnostic (1.0.0-0) unstable; urgency=medium
 
   * Initial import
