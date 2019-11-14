@@ -1,4 +1,4 @@
-ucs-school-umc-diagnostic (1.0.0-1) unstable; urgency=low
+ucs-school-umc-diagnostic (1.0.0-2) unstable; urgency=low
 
   * Loosen build dependency for now
 
