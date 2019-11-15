@@ -21,3 +21,15 @@ Description[de]=Der Wert "yes" verhindert die Anzeige von Screenshots von Lehrer
 Description[en]=By setting this variable to "yes", screenshots of teacher's computers are not shown in computer room module (default: yes).
 Type=bool
 Categories=management-umc
+
+[ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces]
+Description[de]=Eine leerzeichen-separierte Liste mit Netzwerkschnittstellen, über die keine WakeOnLAN-Paket verschickt werden sollen (Standard: lo)
+Description[en]=A space-separated list of network interfaces that should not be used to send wake-on-LAN packets (default: lo)
+Type=str
+Categories=management-umc
+
+[ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes]
+Description[de]=Eine leerzeichen-separierte liste mit Prefixes von Netzwerkschnittstellen, über die keine WakeOnLAN-Pakete verschickt werden sollen (Standard: tun docker)
+Description[en]=A space-separated list of network interface prefixes that should not be used to send WakeOnLAN packets (default: tun docker)
+Type=str
+Categories=management-umc

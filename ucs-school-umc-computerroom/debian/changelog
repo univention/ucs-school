@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-12) unstable; urgency=low
+
+  * Bug #49970: use python code to send wake-on-LAN packets
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 15 Nov 2019 16:51:57 +0100
+
 ucs-school-umc-computerroom (11.0.0-11) unstable; urgency=low
 
   * Bug #49961: Create UCRV to toggle PC restart screen during exam start

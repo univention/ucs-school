@@ -53,6 +53,7 @@ import notifier.threads
 
 from PyQt4.QtCore import QObject, pyqtSlot
 
+import wakeonlan
 import italc
 import ldap
 import sip
@@ -607,7 +608,12 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		# if self._core and self.macAddress:
 		# 	self._core.powerOnComputer( self.macAddress )
 		if self.macAddress:
-			subprocess.Popen(['/usr/bin/wakeonlan', self.macAddress])
+			blacklisted_interfaces = [x for x in ucr.get('ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces', '').split() if x]
+			blacklisted_interface_prefixes = [x for x in ucr.get('ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes', '').split() if x]
+			wakeonlan.send_wol_packet(
+				self.macAddress,
+				blacklisted_interfaces=blacklisted_interfaces,
+				blacklisted_interface_prefixes=blacklisted_interface_prefixes)
 		else:
 			MODULE.error('%s: no MAC address set - skipping powerOn' % (self.ipAddress,))
 
