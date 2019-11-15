@@ -378,5 +378,14 @@
             Variable der Wert <literal>true</literal> hinterlegt, ist das Betrachten der Desktop-Ansicht von
             Rechnern, an denen Lehrer angemeldet sind, nicht mehr möglich.
         </para>
+		<para>
+			Über die Aktion <guimenu>Computer einschalten</guimenu> können WakeOnLAN-Pakete an die
+			betreffenden Rechner verschickt werden, um diese einzuschalten.  Ab UCS@school 4.4v4 werden diese
+			WakeOnLAN-Pakete über alle Netzwerkschnittstellen des UCS@school-Systems verschickt. Falls die
+			Pakete auf bestimmten Netzwerkschnittstellen nicht verschickt werden sollen, können diese Schnittstellen über die
+			UCR-Variablen <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces</envar> und
+			<envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes</envar> festgelegt
+			werden. Dabei sind die einzelnen Werte durch Leerzeichen zu trennen, z.B. <literal>tun docker</literal>.
+		</para>
     </section>
 </chapter>
