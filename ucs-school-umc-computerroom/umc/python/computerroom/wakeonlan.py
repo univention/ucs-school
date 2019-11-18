@@ -34,6 +34,12 @@ from __future__ import absolute_import
 
 import netifaces
 import socket
+import argparse
+
+try:
+	from typing import Optional, Iterable, Set
+except ImportError:
+	pass
 
 BROADCAST_IP = '255.255.255.255'
 DEFAULT_PORT = 9
@@ -110,7 +116,23 @@ def send_wol_packet(mac_address, blacklisted_interfaces=None, blacklisted_interf
 
 
 if __name__ == '__main__':
+
+	desc = '''console tool for sending wake-on-LAN (WOL) magic packets. Example: %(prog)s 11:22:33:44:55:66 -b lo wlan0 -p docker tun'''
+	parser = argparse.ArgumentParser(description=desc)
+
+	parser.add_argument('mac_address', metavar='MAC', type=str, help='a MAC address (e.g. 11:22:33:44:55:66)')
+	parser.add_argument(
+		'-b', '--blacklisted-interface', dest='blacklisted_interfaces', action='store',
+		metavar='INTERFACE',
+		type=str, nargs='+', help='list of blacklisted network interfaces (e.g. "lo wlan0")')
+	parser.add_argument(
+		'-p', '--blacklisted-interface-prefix', dest='blacklisted_interface_prefixes', action='store',
+		metavar='INTERFACE',
+		type=str, nargs='+', help='list of blacklisted network interface prefixes (e.g. "tun docker")')
+
+	args = parser.parse_args()
+	print repr(args)
 	send_wol_packet(
-		'12:34:56:78:9A:BC',
-		blacklisted_interfaces=['lo'],
-		blacklisted_interface_prefixes=['tun', 'docker'])
+		args.mac_address,
+		blacklisted_interfaces=args.blacklisted_interfaces,
+		blacklisted_interface_prefixes=args.blacklisted_interface_prefixes)
