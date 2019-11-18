@@ -1,3 +1,11 @@
+ucs-school-umc-computerroom (11.0.0-14) unstable; urgency=low
+
+  * Bug #49970: removed unused import
+  * Bug #49970: updated UCRV descriptions
+  * Bug #49970: add executable flag for wakeonlan.py
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 18 Nov 2019 22:57:17 +0100
+
 ucs-school-umc-computerroom (11.0.0-13) unstable; urgency=low
 
   * Bug #49970: remove unused dependency
