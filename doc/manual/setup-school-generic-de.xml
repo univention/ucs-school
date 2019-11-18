@@ -379,9 +379,9 @@
             Rechnern, an denen Lehrer angemeldet sind, nicht mehr möglich.
         </para>
 		<para>
-			Über die Aktion <guimenu>Computer einschalten</guimenu> können WakeOnLAN-Pakete an die
+			Über die Aktion <guimenu>Computer einschalten</guimenu> können <foreignphrase>WakeOnLAN</foreignphrase>-Pakete an die
 			betreffenden Rechner verschickt werden, um diese einzuschalten.  Ab UCS@school 4.4v4 werden diese
-			WakeOnLAN-Pakete über alle Netzwerkschnittstellen des UCS@school-Systems verschickt. Falls die
+			<foreignphrase>WakeOnLAN</foreignphrase>-Pakete über alle Netzwerkschnittstellen des UCS@school-Systems verschickt. Falls die
 			Pakete auf bestimmten Netzwerkschnittstellen nicht verschickt werden sollen, können diese Schnittstellen über die
 			UCR-Variablen <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces</envar> und
 			<envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes</envar> festgelegt
