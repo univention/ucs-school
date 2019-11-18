@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-computerroom
-fix: 11.0.0-13A~4.4.0.201911181321
+fix: 11.0.0-14A~4.4.0.201911182308
 desc: |
  * Until now, wake-on-LAN packets were only sent out via an external tool via the network interface to which the
    default route was assigned. The UMC module <package>computerroom</package> now creates these packages itself
