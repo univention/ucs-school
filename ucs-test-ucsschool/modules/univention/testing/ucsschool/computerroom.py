@@ -846,6 +846,7 @@ class UmcComputer(object):
 			raise RemoveFail('Unable to remove computer (%s): %r' % (self.name, reqResult))
 		else:
 			utils.wait_for_replication()
+			utils.wait_for_s4connector_replication()
 
 	def dn(self):
 		return 'cn=%s,cn=computers,%s' % (self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
