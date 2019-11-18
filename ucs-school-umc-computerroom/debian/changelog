@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (11.0.0-13) unstable; urgency=low
+
+  * Bug #49970: remove unused dependency
+  * Bug #49970: replace debug snippet with CLI argument parser
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 18 Nov 2019 10:26:43 +0100
+
 ucs-school-umc-computerroom (11.0.0-12) unstable; urgency=low
 
   * Bug #49970: use python code to send wake-on-LAN packets
