@@ -30,10 +30,9 @@
 import os
 from collections import namedtuple
 from datetime import datetime
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional
 
 import aiofiles
-import lazy_object_proxy
 from ldap3 import AUTO_BIND_TLS_BEFORE_BIND, SIMPLE, Connection, Entry, Server
 from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
 from ldap3.utils.conv import escape_filter_chars
@@ -58,21 +57,21 @@ MachinePWCache = namedtuple("MachinePWCache", ["mtime", "password"])
 
 
 class LDAPAccess:
-    ldap_base: str = ucr["ldap/base"]
-    host: str = ucr["ldap/server/name"]
-    host_dn: str = ucr["ldap/hostdn"]
-    port: int = int(ucr["ldap/server/port"])
+    ldap_base: str
+    host: str
+    host_dn: str
+    port: int
     _machine_pw = MachinePWCache(0, "")
 
     def __init__(self, ldap_base=None, host=None, host_dn=None, port=None):
         if ldap_base:
-            self.ldap_base = ldap_base
+            self.ldap_base = ldap_base or ucr["ldap/base"]
         if host:
-            self.host = host
+            self.host = host or ucr["ldap/server/name"]
         if host_dn:
-            self.host_dn = host_dn
+            self.host_dn = host_dn or ucr["ldap/hostdn"]
         if port:
-            self.port = port
+            self.port = port or int(ucr["ldap/server/port"])
         self.server = Server(host=self.host, port=self.port, get_info="ALL")
 
     @classmethod
@@ -89,12 +88,14 @@ class LDAPAccess:
 
     async def check_auth_and_get_user(
         self, username: str, password: str
-    ) -> Union[LdapUser, None]:
+    ) -> Optional[LdapUser]:
         user_dn = await self.get_dn_of_user(username)
         if user_dn:
             admin_group_members = await self.admin_group_members()
             if user_dn in admin_group_members:
-                return await self.get_user(username, user_dn, password)
+                return await self.get_user(
+                    username, user_dn, password, school_only=False
+                )
             else:
                 logger.debug(
                     "User %r not member of group %r.", username, API_USERS_GROUP_NAME
@@ -169,7 +170,8 @@ class LDAPAccess:
         bind_dn: str = None,
         bind_pw: str = None,
         attributes: List[str] = None,
-    ) -> Union[LdapUser, None]:
+        school_only=True,
+    ) -> Optional[LdapUser]:
         if not attributes:
             attributes = [
                 "displayName",
@@ -179,6 +181,14 @@ class LDAPAccess:
                 "uid",
             ]
         filter_s = f"(uid={escape_filter_chars(username)})"
+        if school_only:
+            filter_s = (
+                f"(&{filter_s}(|"
+                f"(objectClass=ucsschoolStaff)"
+                f"(objectClass=ucsschoolStudent)"
+                f"(objectClass=ucsschoolTeacher)"
+                f"))"
+            )
         results = await self.search(
             filter_s,
             attributes,

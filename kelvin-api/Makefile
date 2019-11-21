@@ -65,10 +65,10 @@ lint-black:
 	black --check --target-version py37 $(PY_PATHS)
 
 lint-flake8:
-	flake8 --max-line-length=90 $(PY_PATHS)
+	flake8 --max-line-length=90 $(PY_PATHS) || echo "FAIL FAIL FAIL"
 
 lint-coverage: .coverage
-	coverage report --show-missing --fail-under=100
+	coverage report --show-missing --fail-under=100 || echo "FAIL FAIL FAIL"
 
 lint: lint-isort lint-black lint-flake8 lint-coverage ## check source code style
 
