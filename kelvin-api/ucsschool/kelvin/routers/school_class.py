@@ -1,4 +1,5 @@
-from ..utils import get_lo_udm, get_logger, name_from_dn, url_to_dn, url_to_name
+from typing import Any, Dict, List
+
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import (
     BaseModel,
@@ -22,10 +23,12 @@ from starlette.status import (
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
-from typing import Any, Dict, List
+
 from ucsschool.lib.models.attributes import SchoolClassName
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.group import SchoolClass
+
+from ..utils import get_lo_udm, get_logger, name_from_dn, url_to_dn, url_to_name
 
 logger = get_logger(__name__)
 router = APIRouter()

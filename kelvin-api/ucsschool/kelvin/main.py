@@ -1,3 +1,21 @@
+from datetime import timedelta
+from pathlib import Path
+
+import aiofiles
+import lazy_object_proxy
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+from starlette.requests import Request
+from starlette.responses import HTMLResponse, UJSONResponse
+from starlette.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_404_NOT_FOUND,
+)
+
+from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
+from ucsschool.lib.models.base import NoObject
+
 from . import __version__
 from .constants import (
     STATIC_FILE_CHANGELOG,
@@ -16,28 +34,12 @@ from .routers import (
     user,
 )
 from .token_auth import (
+    Token,
     create_access_token,
     get_current_active_user,
     get_token_ttl,
-    Token,
 )
 from .utils import enable_ucsschool_lib_debugging, get_logger
-from datetime import timedelta
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
-from pathlib import Path
-from starlette.requests import Request
-from starlette.responses import HTMLResponse, UJSONResponse
-from starlette.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_401_UNAUTHORIZED,
-    HTTP_404_NOT_FOUND,
-)
-from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
-from ucsschool.lib.models.base import NoObject
-
-import aiofiles
-import lazy_object_proxy
 
 enable_ucsschool_lib_debugging()
 logger = get_logger(__name__)

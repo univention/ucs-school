@@ -26,7 +26,9 @@ export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
-PY_FILES := setup.py ucsschool/
+PY_MODULES := tests ucsschool
+PY_PATHS := setup.py $(PY_MODULES)
+PY_FILES := $(shell find $(PY_PATHS) -name '*.py')
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -38,7 +40,7 @@ clean-build: ## remove build artifacts
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
+	find . -name '*.egg' -exec rm -fr {} +
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
@@ -53,18 +55,33 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 format: ## format source code
-	isort --apply --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --force-alphabetical-sort-within-sections --recursive $(PY_FILES)
-	black  $(PY_FILES)
+	isort --apply --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --recursive $(PY_PATHS)
+	black --target-version py37 $(PY_PATHS)
 
-lint: ## check source code style
-	isort --check-only --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --force-alphabetical-sort-within-sections --recursive $(PY_FILES)
-	black --check $(PY_FILES)
-	flake8 --max-line-length=90 $(PY_FILES) || echo "Ignored for now - lots of stubs"
+lint-isort:
+	isort --check-only --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --recursive $(PY_PATHS)
+
+lint-black:
+	black --check --target-version py37 $(PY_PATHS)
+
+lint-flake8:
+	flake8 --max-line-length=90 $(PY_PATHS)
+
+lint-coverage: .coverage
+	coverage report --show-missing --fail-under=100
+
+lint: lint-isort lint-black lint-flake8 lint-coverage ## check source code style
 
 test: ## run tests (with the current active Python interpreter)
-	python -m pytest
+	python -m pytest -l -v
 
-coverage-html: test ## check code coverage, create HTML report and show in browser
+.coverage: $(PY_FILES)
+	coverage run --source tests,ucsschool -m pytest
+
+coverage: .coverage ## check code coverage with the current Python interpreter
+	coverage report --show-missing
+
+coverage-html: coverage ## check code coverage, create HTML report and show in browser
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
