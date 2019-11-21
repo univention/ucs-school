@@ -1,19 +1,21 @@
-from .constants import LOG_FILE_PATH
+import logging
+import re
+from typing import Any, Dict, List, Union
+
+import univention.admin.modules as udm_modules
 from fastapi import HTTPException
 from ldap.dn import escape_dn_chars, explode_dn  # TODO: use ldap3
 from pydantic import UrlStr
 from starlette.datastructures import URL
 from starlette.requests import Request
 from starlette.status import HTTP_404_NOT_FOUND
-from typing import Any, Dict, List, Union
-from ucsschool.lib.models.base import NoObject
-from ucsschool.lib.models.utils import get_file_handler, get_stream_handler, ucr
-from univention.admin.client import Object, UDM
+from univention.admin.client import UDM, Object
 from univention.admin.uexceptions import noObject
 
-import logging
-import re
-import univention.admin.modules as udm_modules
+from ucsschool.lib.models.base import NoObject
+from ucsschool.lib.models.utils import get_file_handler, get_stream_handler, ucr
+
+from .constants import LOG_FILE_PATH
 
 
 def enable_ucsschool_lib_debugging():

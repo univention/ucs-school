@@ -27,20 +27,22 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from .constants import API_USERS_GROUP_NAME, MACHINE_PASSWORD_FILE
-from .utils import get_logger
+import os
 from collections import namedtuple
 from datetime import datetime
-from ldap3 import AUTO_BIND_TLS_BEFORE_BIND, Connection, Entry, Server, SIMPLE
-from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
-from ldap3.utils.conv import escape_filter_chars
-from pydantic import BaseModel
 from typing import Any, Dict, List, Union
-from ucsschool.lib.models.utils import ucr
 
 import aiofiles
 import lazy_object_proxy
-import os
+from ldap3 import AUTO_BIND_TLS_BEFORE_BIND, SIMPLE, Connection, Entry, Server
+from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
+from ldap3.utils.conv import escape_filter_chars
+from pydantic import BaseModel
+
+from ucsschool.lib.models.utils import ucr
+
+from .constants import API_USERS_GROUP_NAME, MACHINE_PASSWORD_FILE
+from .utils import get_logger
 
 
 class LdapUser(BaseModel):

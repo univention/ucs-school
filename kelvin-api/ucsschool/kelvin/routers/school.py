@@ -1,4 +1,6 @@
-from ..utils import get_logger
+import re
+from typing import List
+
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import (
     BaseModel,
@@ -19,10 +21,10 @@ from starlette.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND,
 )
-from typing import List
+
 from ucsschool.lib.models.school import School
 
-import re
+from ..utils import get_logger
 
 logger = get_logger(__name__)
 router = APIRouter()
