@@ -1,15 +1,8 @@
-#
-# Dockerfile optimized for fast image rebuilds
-#
-
-FROM alpine:edge
+FROM alpine:latest
 
 ARG version
 
 VOLUME /var/log
-
-LABEL "description"="UCS@school Kelvin-API" \
-    "version"="$version"
 
 WORKDIR /kelvin
 
@@ -17,38 +10,13 @@ EXPOSE 7890
 
 CMD ["/sbin/init"]
 
+LABEL "description"="UCS@school Kelvin-API" \
+    "version"="$version"
+
 # package and Python dependency installation, base system configuration,
 # and uninstallation - all in one step to keep image small
-COPY requirements_all.txt /tmp/
-RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories && \
-    apk add --no-cache \
-        busybox-initscripts \
-        gcc \
-        make \
-        musl-dev \
-        openldap-dev \
-        openrc \
-        python3 \
-        python3-dev \
-        py3-aiohttp \
-        py3-attrs \
-        py3-colorlog@testing \
-        py3-docutils \
-        py3-flake8 \
-        py3-isort \
-        py3-jwt \
-        py3-lazy-object-proxy@testing \
-        py3-ldap3 \
-        py3-msgpack \
-        py3-packaging \
-        py3-pytest \
-        py3-pytest-runner \
-        py3-requests \
-        py3-setproctitle \
-        py3-simplejson \
-        py3-ujson@testing \
-        py3-yarl \
-        tzdata && \
+COPY apline_apk_list requirements_all.txt /tmp/
+RUN apk add --no-cache $(cat /tmp/apline_apk_list) && \
     cp -v /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
     echo "Europe/Berlin" > /etc/timezone && \
     # Disable getty's
@@ -75,10 +43,15 @@ RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/ap
     sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh && \
     python3.7 -m venv --system-site-packages /kelvin/venv && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile --upgrade pip && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile black python-debian && \
+	# build ujson from source https://github.com/esnme/ultrajson/issues/326
+	/kelvin/venv/bin/pip3 install git+git://github.com/esnme/ultrajson.git && \
+	# python-debian for UCR
+	/kelvin/venv/bin/pip3 install --no-cache-dir --compile python-debian && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile -r /tmp/requirements_all.txt && \
     apk del --no-cache \
+        g++ \
         gcc \
+        git \
         musl-dev \
         python3-dev && \
 	rm -rf /tmp/*
@@ -87,8 +60,7 @@ RUN echo '@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/ap
 COPY univention-config-registry/ /tmp/univention-config-registry
 COPY univention-lib-slim/ /tmp/univention-lib-slim
 COPY univention-directory-manager-modules-slim/ /tmp/univention-directory-manager-modules-slim
-RUN /kelvin/venv/bin/pip3 install --no-cache-dir --upgrade --compile pip && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-config-registry/python && \
+RUN /kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-config-registry/python && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-lib-slim && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-directory-manager-modules-slim && \
 	rm -rf /tmp/*

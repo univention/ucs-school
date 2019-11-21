@@ -57,10 +57,10 @@ fi
 (cd "$UCS_REPO_DIR" && git checkout "$UCS_BRANCH" && git $GIT_ARGS pull)
 
 [ -d build ] || mkdir build
-rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim ../ucs-school-lib kelvin-api.initd Dockerfile build/
+rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim ../ucs-school-lib kelvin-api.initd apline_apk_list Dockerfile build/
 
-# collect depenedies to minimize Docker image by installing and uninstalling in one step
-find build/ -name requirements.txt -exec cat {} + | egrep -v 'univention|school' | sort | uniq > build/requirements_all.txt
+# collect dependencies to minimize Docker image by installing and uninstalling in one step
+find build/ -name 'requirements*.txt' -exec cat {} + | egrep -v 'univention|school' | sort | uniq > build/requirements_all.txt
 
 echo "Building docker image..."
 docker build $PROXY_ARGS --build-arg version="$APP_VERSION" -t "$APP_IMG" build
