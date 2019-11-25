@@ -15,7 +15,7 @@ LABEL "description"="UCS@school Kelvin-API" \
 
 # package and Python dependency installation, base system configuration,
 # and uninstallation - all in one step to keep image small
-COPY apline_apk_list requirements_all.txt /tmp/
+COPY apline_apk_list openapi-generator-cli-*.jar requirements_all.txt /tmp/
 RUN apk add --no-cache $(cat /tmp/apline_apk_list) && \
     cp -v /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
     echo "Europe/Berlin" > /etc/timezone && \
@@ -41,12 +41,19 @@ RUN apk add --no-cache $(cat /tmp/apline_apk_list) && \
     # Can't do cgroups
     sed -i 's/\tcgroup_add_service/\t#cgroup_add_service/g' /lib/rc/sh/openrc-run.sh && \
     sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh && \
+    mkdir -pv /kelvin/openapi-generator/build /kelvin/openapi-generator/jar && \
+    mv /tmp/openapi-generator-cli-*.jar /kelvin/openapi-generator/jar && \
     python3.7 -m venv --system-site-packages /kelvin/venv && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile --upgrade pip && \
 	# build ujson from source https://github.com/esnme/ultrajson/issues/326
 	/kelvin/venv/bin/pip3 install git+git://github.com/esnme/ultrajson.git && \
 	# python-debian for UCR
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile python-debian && \
+	# install pre-build openapi-client-udm package, not yet built against app host
+	/kelvin/venv/bin/pip3 install --no-cache-dir --compile -i https://test.pypi.org/simple/ openapi-client-udm && \
+	# install most current udm_rest_client package (instead of the one from pypi)
+	/kelvin/venv/bin/pip3 install git+git://github.com/univention/python-udm-rest-api-client.git && \
+	# install all remaining Python requirements
 	/kelvin/venv/bin/pip3 install --no-cache-dir --compile -r /tmp/requirements_all.txt && \
     apk del --no-cache \
         g++ \

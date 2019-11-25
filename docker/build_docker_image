@@ -6,8 +6,6 @@ set -e
 APP_VERSION="$(cd ../kelvin-api; python3 -B -c 'import ucsschool.kelvin; print(ucsschool.kelvin.__version__)')"
 if [ "$1" = "--release" ]; then
   RELEASE=1
-else
-  APP_VERSION="$APP_VERSION-test"
 fi
 
 PUSH_DEV=0
@@ -58,6 +56,12 @@ fi
 
 [ -d build ] || mkdir build
 rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim ../ucs-school-lib kelvin-api.initd apline_apk_list Dockerfile build/
+
+# download OpenAPI Generator JAR file
+OPENAPI_CLIENT_GENERATOR_JAR="$(wget -O - https://raw.githubusercontent.com/univention/python-udm-rest-api-client/master/update_openapi_client | egrep '^JAR_URL = ' | cut -f 3 -d ' ')"
+if ! ls -l build/openapi-generator-cli-*.jar 2>/dev/null; then
+  wget -P build/ "${OPENAPI_CLIENT_GENERATOR_JAR//\"}"
+fi
 
 # collect dependencies to minimize Docker image by installing and uninstalling in one step
 find build/ -name 'requirements*.txt' -exec cat {} + | egrep -v 'univention|school' | sort | uniq > build/requirements_all.txt
