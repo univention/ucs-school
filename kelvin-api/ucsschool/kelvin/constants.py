@@ -4,6 +4,7 @@ API_USERS_GROUP_NAME = "ucsschool-kelvin-admins"
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = Path(APP_BASE_PATH, "conf")
+CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 LOG_FILE_PATH = Path("/var/log/univention/ucs-school-kelvin/http.log")
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
 STATIC_FILE_CHANGELOG = "changelog.html"

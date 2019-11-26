@@ -32,6 +32,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import aiofiles
+from async_property import async_cached_property
 from ldap3 import AUTO_BIND_TLS_BEFORE_BIND, SIMPLE, Connection, Entry, Server
 from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
 from ldap3.utils.conv import escape_filter_chars
@@ -39,7 +40,7 @@ from pydantic import BaseModel
 
 from ucsschool.lib.models.utils import ucr
 
-from .constants import API_USERS_GROUP_NAME, MACHINE_PASSWORD_FILE
+from .constants import API_USERS_GROUP_NAME, CN_ADMIN_PASSWORD_FILE, MACHINE_PASSWORD_FILE
 from .utils import get_logger
 
 
@@ -65,8 +66,16 @@ class LDAPAccess:
         self.host = host or ucr["ldap/server/name"]
         self.host_dn = host_dn or ucr["ldap/hostdn"]
         self.port = port or int(ucr["ldap/server/port"])
-        self.machine_password = await self._load_password(MACHINE_PASSWORD_FILE)
+        self.cn_admin = "cn=admin"
         self.server = Server(host=self.host, port=self.port, get_info="ALL")
+
+    @async_cached_property
+    async def cn_admin_password(self):
+        return await self._load_password(CN_ADMIN_PASSWORD_FILE)
+
+    @async_cached_property
+    async def machine_password(self):
+        return await self._load_password(MACHINE_PASSWORD_FILE)
 
     @classmethod
     async def _load_password(cls, path: Path) -> str:
@@ -104,7 +113,7 @@ class LDAPAccess:
     ) -> List[Entry]:
         base = base or self.ldap_base
         bind_dn = bind_dn or self.host_dn
-        bind_pw = bind_pw or await self.machine_password()
+        bind_pw = bind_pw or await self.machine_password
         try:
             with Connection(
                 self.server,
@@ -121,7 +130,7 @@ class LDAPAccess:
             logger.exception(
                 "When connecting to %r with bind_dn %r: %s",
                 self.server.host,
-                self.host_dn,
+                bind_dn,
                 exc,
             )
             raise

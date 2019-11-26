@@ -37,6 +37,7 @@ VERSION=1
 
 APP_ID="ucsschool-kelvin"
 ADMIN_GROUP="ucsschool-kelvin-admins"
+CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
 TOKEN_SIGN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/tokens.secret"
 
 . /usr/share/univention-join/joinscripthelper.lib || exit 1
@@ -54,6 +55,18 @@ main () {
         echo "Using existing token key."
     fi
 
+    if ! [ -e "$CN_ADMIN_SECRET_FILE" ]; then
+        echo "Storing cn=admin password in $CN_ADMIN_SECRET_FILE."
+        touch "$CN_ADMIN_SECRET_FILE"
+        chown root:root "$CN_ADMIN_SECRET_FILE"
+        chmod 640 "$CN_ADMIN_SECRET_FILE"
+        cat /etc/ldap.secret > "$CN_ADMIN_SECRET_FILE" || die
+    else
+        echo "Using existing password file."
+    fi
+
+  echo "Creating group for users that are allowed to connect to the Kelvin API"
+  echo "($ADMIN_GROUP)..."
 	univention-directory-manager groups/group create "$@" --ignore_exists \
 		--position "cn=groups,$ldap_base" \
 		--set name="$ADMIN_GROUP" \
