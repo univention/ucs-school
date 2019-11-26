@@ -27,9 +27,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os
-from collections import namedtuple
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import aiofiles
@@ -53,7 +52,6 @@ class LdapUser(BaseModel):
 
 
 logger = get_logger(__name__)
-MachinePWCache = namedtuple("MachinePWCache", ["mtime", "password"])
 
 
 class LDAPAccess:
@@ -61,26 +59,20 @@ class LDAPAccess:
     host: str
     host_dn: str
     port: int
-    _machine_pw = MachinePWCache(0, "")
 
     def __init__(self, ldap_base=None, host=None, host_dn=None, port=None):
         self.ldap_base = ldap_base or ucr["ldap/base"]
         self.host = host or ucr["ldap/server/name"]
         self.host_dn = host_dn or ucr["ldap/hostdn"]
         self.port = port or int(ucr["ldap/server/port"])
+        self.machine_password = await self._load_password(MACHINE_PASSWORD_FILE)
         self.server = Server(host=self.host, port=self.port, get_info="ALL")
 
     @classmethod
-    async def machine_password(cls) -> str:
-        mtime = os.stat(MACHINE_PASSWORD_FILE).st_mtime
-        if cls._machine_pw.mtime == mtime:
-            return cls._machine_pw.password
-        else:
-            async with aiofiles.open(MACHINE_PASSWORD_FILE, "r") as fp:
-                pw = await fp.read()
-                pw = pw.strip()
-            cls._machine_pw = MachinePWCache(mtime, pw)
-            return pw
+    async def _load_password(cls, path: Path) -> str:
+        async with aiofiles.open(path, "r") as fp:
+            pw = await fp.read()
+        return pw.strip()
 
     async def check_auth_and_get_user(
         self, username: str, password: str
