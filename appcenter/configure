@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. /kelvin/venv/bin/activate
+
+update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure $docker_host_name
+/etc/init.d/kelvin-api restart
