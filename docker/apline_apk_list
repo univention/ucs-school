@@ -2,6 +2,7 @@ busybox-initscripts
 g++
 gcc
 git
+libstdc++
 openjdk11-jre-headless
 make
 musl-dev
