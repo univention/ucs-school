@@ -64,14 +64,10 @@ class LDAPAccess:
     _machine_pw = MachinePWCache(0, "")
 
     def __init__(self, ldap_base=None, host=None, host_dn=None, port=None):
-        if ldap_base:
-            self.ldap_base = ldap_base or ucr["ldap/base"]
-        if host:
-            self.host = host or ucr["ldap/server/name"]
-        if host_dn:
-            self.host_dn = host_dn or ucr["ldap/hostdn"]
-        if port:
-            self.port = port or int(ucr["ldap/server/port"])
+        self.ldap_base = ldap_base or ucr["ldap/base"]
+        self.host = host or ucr["ldap/server/name"]
+        self.host_dn = host_dn or ucr["ldap/hostdn"]
+        self.port = port or int(ucr["ldap/server/port"])
         self.server = Server(host=self.host, port=self.port, get_info="ALL")
 
     @classmethod
@@ -220,6 +216,6 @@ class LDAPAccess:
             return results[0]["uniqueMember"].values
         else:
             logger.error(
-                "Reading %r from LDAP: results=%r", API_USERS_GROUP_NAME, results
+                "Reading group %r from LDAP: results=%r", API_USERS_GROUP_NAME, results
             )
             return []
