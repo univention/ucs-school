@@ -54,10 +54,11 @@ if ! [ -d "$UCR_DIR" ]; then
 fi
 (cd "$UCS_REPO_DIR" && git checkout "$UCS_BRANCH" && git $GIT_ARGS pull)
 
+echo "Copying files to build directory..."
 [ -d build ] || mkdir build
 rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim ../ucs-school-lib kelvin-api.initd apline_apk_list Dockerfile build/
 
-# download OpenAPI Generator JAR file
+echo "Downloading OpenAPI Generator JAR file..."
 OPENAPI_CLIENT_GENERATOR_JAR="$(wget -O - https://raw.githubusercontent.com/univention/python-udm-rest-api-client/master/update_openapi_client | egrep '^JAR_URL = ' | cut -f 3 -d ' ')"
 if ! ls -l build/openapi-generator-cli-*.jar 2>/dev/null; then
   wget -P build/ "${OPENAPI_CLIENT_GENERATOR_JAR//\"}"
