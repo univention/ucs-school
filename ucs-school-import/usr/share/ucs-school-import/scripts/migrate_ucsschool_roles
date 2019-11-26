@@ -270,9 +270,8 @@ class UcsSchoolRolesMigration(object):
 					roles = [
 						create_ucsschool_role_string(role, school) for role in cls.default_roles
 					]
-					search_result = lo.search(filter_format('univentionObjectType=%s', (cls.Meta.udm_module,)), base=cls.get_container(school))
-					dns = [result[0] for result in search_result]
-					for dn in dns:
+					search_result = lo.searchDn(filter_format('(&(univentionObjectType=%s)(!(objectClass=ucsschoolComputer)))', (cls.Meta.udm_module,)), base=cls.get_container(school))
+					for dn in search_result:
 						self.set_ldap_attr(cls.__name__, roles, dn, 'ucsschoolComputer')
 
 		if self.search_servers_central:
