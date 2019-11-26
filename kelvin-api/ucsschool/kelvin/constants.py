@@ -1,6 +1,6 @@
 from pathlib import Path
 
-API_USERS_GROUP_NAME = "kelvin-users"
+API_USERS_GROUP_NAME = "ucsschool-kelvin-admins"
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = Path(APP_BASE_PATH, "conf")
