@@ -41,7 +41,7 @@ feedback@univention.de
 	<chapter id="changelog:main">
 		<title>&ucsUAS;-Update</title>
 		<para>
-			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.4 v3 nach 4.4 v4.
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.4 v4 nach 4.4 v5.
 			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
 			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
 		</para>
@@ -71,9 +71,9 @@ feedback@univention.de
 		<section id="changelog:migrationscript">
 			<title>Spezielle Hinweise zum Migrationsskript für &ucsUAS;-Rollen</title>
 			<para>
-				Mit dem Errata Update vom 11.09.2019 hat sich eine Regression in das Migrationsskript für &ucsUAS;-Rollen eingeschlichen.
-				Sollten Sie im Zeitraum vom 11.09.2019 bis zum 27.11.2019 Ihr &ucsUAS; von einer Version kleiner als 4.4v1 geupdated haben,
-				dann konsultieren Sie bitte den folgenden Artikel auf univetion help: <ulink url="https://help.univention.com/t/keyerror-ucsschoolrole-in-computerroom-room-aquire-and-schoolwizards-computers-query/13718" />
+				Mit dem Errata Update vom 11.09.2019 gab es eine Regression im Migrationsskript für &ucsUAS;-Rollen.
+				Sollten Sie im Zeitraum vom 11.09.2019 bis zum 27.11.2019 Ihr &ucsUAS; von einer Version kleiner als 4.4v1 aktualisiert haben,
+				dann konsultieren Sie bitte den folgenden Artikel auf univention help: <ulink url="https://help.univention.com/t/keyerror-ucsschoolrole-in-computerroom-room-aquire-and-schoolwizards-computers-query/13718" />
 			</para>
 		</section>
 <!-- CHANGELOG-NEW-SECTION -->
