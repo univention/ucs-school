@@ -263,6 +263,17 @@ class UcsSchoolRolesMigration(object):
 						roles.extend([create_ucsschool_role_string(role_school_admin, skool) for skool in schools])
 					self.set_ldap_attr(cls.__name__, roles, obj.dn, oc)
 
+			# Necessary because of Bug #50349
+			if self.args.computers_school or self.args.all_objects:
+				self.logger.info('- Looking in school {} for windows, macos or ipmanaged computers without proper objectClass'.format(school))
+				for cls in (WindowsComputer, MacComputer, IPComputer):
+					roles = [
+						create_ucsschool_role_string(role, school) for role in cls.default_roles
+					]
+					search_result = lo.searchDn(filter_format('(&(univentionObjectType=%s)(!(objectClass=ucsschoolComputer)))', (cls.Meta.udm_module,)), base=cls.get_container(school))
+					for dn in search_result:
+						self.set_ldap_attr(cls.__name__, roles, dn, 'ucsschoolComputer')
+
 		if self.search_servers_central:
 			self.logger.info('---------------------------------------------------------------')
 			self.logger.info('Checking central servers...')
