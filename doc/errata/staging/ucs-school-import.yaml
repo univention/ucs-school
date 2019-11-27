@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.18A~4.4.0.201911271049
+desc: |
+ * Fixed a regression in migrate_ucsschool_roles script that could skip SchoolComputers during migration. For more information look at <ulink url="https://help.univention.com/t/keyerror-ucsschoolrole-in-computerroom-room-aquire-and-schoolwizards-computers-query/13718" />(Bug #50349).
+bug: [50349]
