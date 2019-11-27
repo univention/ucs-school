@@ -313,7 +313,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 11.0.0-14A~4.4.0.201911182308 -->
 <!-- CHANGELOG:2019-11-21:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2019-11-27" lang="en">
+					<title>Released on 2019-11-27:</title>
+					<!-- START ucs-school-import 17.0.18A~4.4.0.201911271049 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.18A~4.4.0.201911271049</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fixed a regression in the migrate_ucsschool_roles script that could skip SchoolComputers during migration. For more information please visit <ulink url="https://help.univention.com/t/keyerror-ucsschoolrole-in-computerroom-room-aquire-and-schoolwizards-computers-query/13718" />(<u:bug>50349</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.18A~4.4.0.201911271049 -->
+<!-- CHANGELOG:2019-11-27:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 		</section>
