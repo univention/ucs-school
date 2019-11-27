@@ -1,3 +1,9 @@
+ucs-school-import (17.0.18) unstable; urgency=low
+
+  * Bug #50349: fix regression in migrate_ucsschool_role script
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 27 Nov 2019 10:35:22 +020
+
 ucs-school-import (17.0.17) unstable; urgency=low
 
   * Bug #50416: handle stale OU name cache
