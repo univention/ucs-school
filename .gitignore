@@ -7,3 +7,6 @@
 appcenter/univention-appcenter-control
 docker/build/
 docker/ucs/
+**/venv
+**/build
+**/dist
