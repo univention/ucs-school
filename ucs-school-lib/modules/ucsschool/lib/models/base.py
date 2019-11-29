@@ -31,7 +31,6 @@
 
 from copy import deepcopy
 from typing import Any, Iterable, Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
-import warnings
 
 from six import iteritems, add_metaclass
 import ldap
@@ -306,8 +305,7 @@ class UCSSchoolHelperAbstractClass(object):
 		likely change the outcome of self.dn as well
 		'''
 		if self.name and self.position:
-			name = self._meta.ldap_map_function(self.name)
-			return '%s=%s,%s' % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
+			return '%s=%s,%s' % (self._meta.ldap_name_part, escape_dn_chars(self.name), self.position)
 		return self.old_dn
 
 	def set_dn(self, dn: str) -> None:
@@ -621,7 +619,7 @@ class UCSSchoolHelperAbstractClass(object):
 				name = explode_dn(dn, 1)[0]
 			except ldap.DECODING_ERROR:
 				name = ''
-			return cls._meta.ldap_unmap_function(name)
+			return name
 
 	@classmethod
 	def get_school_from_dn(cls, dn: str) -> str:
