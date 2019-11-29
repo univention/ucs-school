@@ -41,35 +41,35 @@ from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
 
 
-ucr = ConfigRegistry()
-ucr.load()
-
-
 class SchoolSearchBase(object):
 	"""Deprecated utility class that generates DNs of common school containers for a OU"""
+	ucr = None
 
 	def __init__(self, availableSchools, school=None, dn=None, ldapBase=None):
-		self._ldapBase = ldapBase or ucr.get('ldap/base')
+		if not self.ucr:
+			self.__class__.ucr = ConfigRegistry()
+			self.ucr.load()
+		self._ldapBase = ldapBase or self.ucr.get('ldap/base')
 
 		from ucsschool.lib.models.school import School
 		self._school = school or availableSchools[0]
 		self._schoolDN = dn or School.cache(self.school).dn
 
 		# prefixes
-		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
-		self._containerStudents = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
-		self._containerStaff = ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
-		self._containerTeachersAndStaff = ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-		self._containerTeachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-		self._containerClass = ucr.get('ucsschool/ldap/default/container/class', 'klassen')
-		self._containerRooms = ucr.get('ucsschool/ldap/default/container/rooms', 'raeume')
-		self._examUserContainerName = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
-		self._examGroupNameTemplate = ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
+		self._containerAdmins = self.ucr.get('ucsschool/ldap/default/container/admins', 'admins')
+		self._containerStudents = self.ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
+		self._containerStaff = self.ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+		self._containerTeachersAndStaff = self.ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
+		self._containerTeachers = self.ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+		self._containerClass = self.ucr.get('ucsschool/ldap/default/container/class', 'klassen')
+		self._containerRooms = self.ucr.get('ucsschool/ldap/default/container/rooms', 'raeume')
+		self._examUserContainerName = self.ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
+		self._examGroupNameTemplate = self.ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
-		self.group_prefix_students = ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
-		self.group_prefix_teachers = ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
-		self.group_prefix_admins = ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
-		self.group_prefix_staff = ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
+		self.group_prefix_students = self.ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
+		self.group_prefix_teachers = self.ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
+		self.group_prefix_admins = self.ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
+		self.group_prefix_staff = self.ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 
 	@classmethod
 	def getOU(cls, dn):  # type: (str) -> str
