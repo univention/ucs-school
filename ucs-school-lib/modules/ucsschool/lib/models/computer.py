@@ -345,18 +345,6 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		obj.inventory_number = ', '.join(udm_obj['inventoryNumber'])
 		return obj
 
-	def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
-		module_part = self._meta.udm_module.split('/')[1]
-		return self._build_hook_line(
-			module_part,
-			self.name,
-			self.mac_address,
-			self.school,
-			self.get_ipv4_network(),
-			','.join(self.get_inventory_numbers()),
-			self.zone
-		)
-
 	def to_dict(self):  # type: () -> Dict[str, Any]
 		ret = super(SchoolComputer, self).to_dict()
 		ret['type_name'] = self.type_name
@@ -375,7 +363,6 @@ class WindowsComputer(RoleSupportMixin, SchoolComputer):
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/windows'
-		hook_path = 'computer'
 
 
 class MacComputer(RoleSupportMixin, SchoolComputer):
@@ -385,7 +372,6 @@ class MacComputer(RoleSupportMixin, SchoolComputer):
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/macos'
-		hook_path = 'computer'
 
 
 class IPComputer(RoleSupportMixin, SchoolComputer):
@@ -395,7 +381,6 @@ class IPComputer(RoleSupportMixin, SchoolComputer):
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/ipmanagedclient'
-		hook_path = 'computer'
 
 
 class UCCComputer(SchoolComputer):
@@ -403,4 +388,3 @@ class UCCComputer(SchoolComputer):
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/ucc'
-		hook_path = 'computer'

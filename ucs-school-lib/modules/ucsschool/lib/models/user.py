@@ -513,26 +513,6 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	def is_active(self):
 		return self.disabled != '1'
 
-	def build_hook_line(self, hook_time, func_name):
-		code = self._map_func_name_to_code(func_name)
-		is_teacher = isinstance(self, Teacher) or isinstance(self, TeachersAndStaff)
-		is_staff = isinstance(self, Staff) or isinstance(self, TeachersAndStaff)
-		school_class = ','.join(self.school_classes.get(self.school, []))  # legacy format: only classes of the primary school
-		return self._build_hook_line(
-			code,
-			self.name,
-			self.lastname,
-			self.firstname,
-			self.school,
-			school_class,
-			'',  # TODO: rights?
-			self.email,
-			is_teacher,
-			self.is_active(),
-			is_staff,
-			self.password,
-		)
-
 	def to_dict(self):
 		ret = super(User, self).to_dict()
 		display_name = []
