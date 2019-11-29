@@ -29,28 +29,27 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os
-import grp
-import pwd
-import copy
-from random import choice, shuffle
-import string
-import sys
-import logging
 import collections
-from logging.handlers import TimedRotatingFileHandler
-from contextlib import contextmanager
+import copy
+import grp
+import logging
+import os
+import pwd
+import string
 import subprocess
+import sys
+from contextlib import contextmanager
+from logging.handlers import TimedRotatingFileHandler
+from random import choice, shuffle
 
-from pkg_resources import resource_stream
-from six import string_types
 import colorlog
 import lazy_object_proxy
 import ruamel.yaml
-
+from pkg_resources import resource_stream
+from six import string_types
+from univention.config_registry import ConfigRegistry
 # from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
-from univention.config_registry import ConfigRegistry
 
 try:
 	from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union

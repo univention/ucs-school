@@ -31,8 +31,10 @@
 
 import inspect
 import logging
-import six
+
 import lazy_object_proxy
+import six
+
 from .attributes import Attribute
 
 

@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import json
-from univention.admin.uldap import getAdminConnection
-from univention.admin.uexceptions import noObject
+
 from ucsschool.lib.models.group import SchoolClass
-from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.user import (
+    ExamStudent,
+    Staff,
+    Student,
+    Teacher,
+    TeachersAndStaff,
+    User,
+)
+from univention.admin.uexceptions import noObject
+from univention.admin.uldap import getAdminConnection
 
 lo, po = getAdminConnection()
 

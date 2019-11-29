@@ -30,14 +30,23 @@
 # <http://www.gnu.org/licenses/>.
 from typing import List, Optional
 
+import ipaddr
 from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
-import ipaddr
+
 from udm_rest_client import UDM, UdmObject
 
-from .attributes import DHCPServiceName, Attribute, DHCPSubnetName, DHCPSubnetMask, BroadcastAddress, DHCPServiceAttribute, DHCPServerName
+from .attributes import (
+    Attribute,
+    BroadcastAddress,
+    DHCPServerName,
+    DHCPServiceAttribute,
+    DHCPServiceName,
+    DHCPSubnetMask,
+    DHCPSubnetName,
+)
 from .base import SuperOrdinateType, UCSSchoolHelperAbstractClass
-from .utils import ucr, _
+from .utils import _, ucr
 
 
 class DHCPService(UCSSchoolHelperAbstractClass):

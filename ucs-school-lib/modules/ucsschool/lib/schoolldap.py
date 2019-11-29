@@ -30,6 +30,10 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
+
+from ldap.dn import explode_dn
+from univention.config_registry import ConfigRegistry
+
 try:
 	from typing import Any, Dict, List, Optional, Tuple
 	from univention.admin.uldap import access as LoType
@@ -37,8 +41,6 @@ try:
 except ImportError:
 	pass
 
-from ldap.dn import explode_dn
-from univention.config_registry import ConfigRegistry
 
 
 class SchoolSearchBase(object):

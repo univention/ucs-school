@@ -30,34 +30,51 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
+
+import univention.admin.modules as udm_modules
+from ldap.dn import escape_dn_chars, explode_dn
+from ldap.filter import escape_filter_chars, filter_format
+from six import iteritems
+from univention.admin.filter import conjunction, parse
+from univention.admin.uexceptions import noObject
+
+from ..roles import role_exam_user, role_pupil, role_staff, role_student, role_teacher
+from .attributes import (
+    Birthday,
+    Disabled,
+    Email,
+    Firstname,
+    Lastname,
+    Password,
+    Roles,
+    SchoolClassesAttribute,
+    Schools,
+    Username,
+)
+from .base import (
+    RoleSupportMixin,
+    UCSSchoolHelperAbstractClass,
+    UnknownModel,
+    WrongModel,
+)
+from .computer import AnyComputer
+from .group import Group, SchoolClass, SchoolGroup, WorkGroup
+from .misc import MailDomain
+from .school import School
+from .utils import _, create_passwd, ucr
+
 try:
 	from collections.abc import Mapping  # py3
 except ImportError:
 	from collections import Mapping  # py2
-from six import iteritems
 try:
 	from typing import Dict, List, Optional
 	from .base import UdmObject
 except ImportError:
 	pass
 
-from ldap.dn import escape_dn_chars, explode_dn
-from ldap.filter import escape_filter_chars, filter_format
 
-from ..roles import role_exam_user, role_pupil, role_teacher, role_staff, role_student
-from .utils import create_passwd
-from .attributes import (
-	Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools, Roles)
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
-from .school import School
-from .group import Group, SchoolClass, WorkGroup, SchoolGroup
-from .computer import AnyComputer
-from .misc import MailDomain
-from .utils import ucr, _
 
-from univention.admin.uexceptions import noObject
-from univention.admin.filter import conjunction, parse
-import univention.admin.modules as udm_modules
 
 
 try:

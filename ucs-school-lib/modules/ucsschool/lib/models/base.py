@@ -30,25 +30,40 @@
 # <http://www.gnu.org/licenses/>.
 
 from copy import deepcopy
-from typing import Any, Iterable, Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
-from six import iteritems, add_metaclass
 import ldap
 from ldap import explode_dn
-from ldap.filter import escape_filter_chars
 from ldap.dn import escape_dn_chars
-
-from univention.admin.uexceptions import noObject
-from univention.admin.uldap import position as uldap_position, getAdminConnection, getMachineConnection
+from ldap.filter import escape_filter_chars
+from six import add_metaclass, iteritems
 from univention.admin.filter import conjunction, expression
-from udm_rest_client import UDM, UdmObject, UdmModule, NoObject as UdmNoObject
+from univention.admin.uexceptions import noObject
+from univention.admin.uldap import (
+    getAdminConnection,
+    getMachineConnection,
+    position as uldap_position,
+)
 
-from ..schoolldap import SchoolSearchBase
-from .meta import UCSSchoolHelperMetaClass
-from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
-from .utils import env_or_ucr, ucr, _
+from udm_rest_client import UDM, NoObject as UdmNoObject, UdmModule, UdmObject
+
 from ..roles import create_ucsschool_role_string
-
+from ..schoolldap import SchoolSearchBase
+from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
+from .meta import UCSSchoolHelperMetaClass
+from .utils import _, env_or_ucr, ucr
 
 SuperOrdinateType = Union[str, UdmObject]
 UldapFilter = Union[str, conjunction, expression]

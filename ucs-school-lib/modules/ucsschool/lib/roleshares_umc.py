@@ -32,19 +32,27 @@
 
 import os
 import sys
+
+import univention.admin.modules as udm_modules
+import univention.admin.uexceptions
+import univention.admin.uldap as udm_uldap
 import univention.config_registry
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.school import School
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE, MACHINE_READ
-import univention.admin.uexceptions
-import univention.admin.uldap as udm_uldap
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+from ucsschool.lib.school_umc_ldap_connection import (
+    MACHINE_READ,
+    USER_READ,
+    USER_WRITE,
+    LDAP_Connection,
+)
 from univention.admincli.admin import _2utf8
 from univention.lib.misc import custom_groupname
-import univention.admin.modules as udm_modules
-udm_modules.update()
+
 from .roleshares import roleshare_name, roleshare_path
+
+udm_modules.update()
 
 @LDAP_Connection(USER_READ, USER_WRITE)
 def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group=None, ucr=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):

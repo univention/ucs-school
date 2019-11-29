@@ -32,25 +32,39 @@
 from typing import List
 
 import ldap
-from ldap.filter import escape_filter_chars, filter_format
-from ldap.dn import escape_dn_chars
-
-import univention.admin.objects
 import univention.admin.modules
-
-from univention.config_registry import handler_set
+import univention.admin.objects
+from ldap.dn import escape_dn_chars
+from ldap.filter import escape_filter_chars, filter_format
 from univention.admin.uexceptions import noObject
+from univention.config_registry import handler_set
+
 from ..roles import (
-	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu, role_school, role_school_admin_group,
-	role_school_teacher_group, role_school_staff_group, role_school_student_group, role_school_domain_group)
-from .attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName, Roles
+    create_ucsschool_role_string,
+    role_dc_slave_admin,
+    role_dc_slave_edu,
+    role_school,
+    role_school_admin_group,
+    role_school_domain_group,
+    role_school_staff_group,
+    role_school_student_group,
+    role_school_teacher_group,
+)
+from .attributes import (
+    Attribute,
+    DCName,
+    DisplayName,
+    Roles,
+    SchoolName,
+    ShareFileServer,
+)
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
-from .group import BasicGroup, BasicSchoolGroup, Group
+from .computer import AnyComputer, SchoolDC, SchoolDCSlave
 from .dhcp import DHCPService
+from .group import BasicGroup, BasicSchoolGroup, Group
+from .misc import OU, Container
 from .policy import DHCPDNSPolicy
-from .misc import Container, OU
-from .computer import AnyComputer, SchoolDCSlave, SchoolDC
-from .utils import flatten, ucr, _
+from .utils import _, flatten, ucr
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
