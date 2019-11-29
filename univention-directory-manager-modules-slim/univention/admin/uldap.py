@@ -42,9 +42,14 @@ class Position(object):
 		return self.dn
 
 
+def getAdminConnection(*args, **kwargs):
+	# TODO
+	raise NotImplementedError
+
+
 def getMachineConnection(*args, **kwargs):
 	# TODO
-	pass
+	raise NotImplementedError
 
 
 def position(base):

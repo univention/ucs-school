@@ -33,17 +33,14 @@ from collections import namedtuple
 from typing import Any, List, Optional
 from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
-from univention.admin.client import UDM
-from univention.admin.uexceptions import noObject
-from univention.admin.filter import parse as filter_parse, flatten_filter
-from .client import HTTPError, Object, Module
+from .uexceptions import noObject
+from .filter import parse as filter_parse, flatten_filter
+from .client import UDM, HTTPError, Object, Module
 
 
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
 MachinePWCache = namedtuple("MachinePWCache", ["mtime", "password"])
 logger = logging.getLogger(__name__)
-ucr = ConfigRegistry()
-ucr.load()
 _udm_http = None
 
 
@@ -52,13 +49,21 @@ class ConnectionData(object):
 	Connection details as it would be in a app Docker container.
 	"""
 	_machine_pw = MachinePWCache(0, "")
+	_ucr = None
+
+	@classmethod
+	def ucr(cls):
+		if not cls._ucr:
+			cls._ucr = ConfigRegistry()
+			cls._ucr.load()
+		return cls._ucr
 
 	@classmethod
 	def _env_or_ucr(cls, key):  # type: (str) -> str
 		try:
 			return os.environ[key.replace("/", "_")]
 		except KeyError:
-			return ucr[key]
+			return cls.ucr()[key]
 
 	@classmethod
 	def ldap_base(cls):  # type: () -> str
