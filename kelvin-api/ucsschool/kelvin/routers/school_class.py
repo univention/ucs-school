@@ -6,9 +6,9 @@ from pydantic import (
     Protocol,
     PydanticValueError,
     Schema,
+    HttpUrl,
     SecretStr,
     StrBytes,
-    UrlStr,
     ValidationError,
     validator,
 )
@@ -37,13 +37,14 @@ router = APIRouter()
 class SchoolClassModel(BaseModel):
     dn: str = None
     name: str
-    school: UrlStr
+    school: HttpUrl
     description: str = None
     ucsschool_roles: List[str] = Schema(
         None, title="Roles of this object. Don't change if unsure."
     )
-    url: UrlStr = None
-    users: List[UrlStr] = None
+    url: HttpUrl = None
+    users: List[HttpUrl] = None
+
 
     @classmethod
     def from_lib_model(cls, obj: SchoolClass, request: Request) -> "SchoolClassModel":

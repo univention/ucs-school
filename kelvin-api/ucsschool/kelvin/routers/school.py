@@ -9,7 +9,7 @@ from pydantic import (
     Schema,
     SecretStr,
     StrBytes,
-    UrlStr,
+    HttpUrl,
     ValidationError,
     validator,
 )

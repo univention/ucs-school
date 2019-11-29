@@ -8,7 +8,7 @@ from pydantic import (
     Schema,
     SecretStr,
     StrBytes,
-    UrlStr,
+    HttpUrl,
     ValidationError,
     validator,
 )
@@ -32,7 +32,7 @@ router = APIRouter()
 class ComputerClientModel(BaseModel):
     dn: str = None
     name: str
-    school: UrlStr
+    school: HttpUrl
     description: str = None
     ucsschool_roles: List[str] = Schema(
         None, title="Roles of this object. Don't change if unsure."
