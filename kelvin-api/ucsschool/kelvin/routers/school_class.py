@@ -1,13 +1,8 @@
 from typing import Any, Dict, List
-from urllib.parse import urlparse, quote, unquote, ParseResult
+from urllib.parse import ParseResult, quote, unquote, urlparse
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import (
-    BaseModel,
-    Field,
-    HttpUrl,
-    validator,
-)
+from pydantic import BaseModel, Field, HttpUrl, validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -25,7 +20,6 @@ from udm_rest_client import UDM, NoObject as UdmNoObject
 from ..ldap_access import udm_kwargs
 from ..urls import name_from_dn, url_to_dn, url_to_name
 from ..utils import get_logger
-
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -59,8 +53,12 @@ class SchoolClassModel(BaseModel):
         kwargs = obj.to_dict()
         del kwargs["objectType"]
         kwargs["dn"] = kwargs.pop("$dn$")
-        kwargs["school"] = cls.scheme_and_quote(request.url_for("get", school_name=obj.school))
-        kwargs["url"] = cls.scheme_and_quote(request.url_for("get", class_name=kwargs["name"], school=obj.school))
+        kwargs["school"] = cls.scheme_and_quote(
+            request.url_for("get", school_name=obj.school)
+        )
+        kwargs["url"] = cls.scheme_and_quote(
+            request.url_for("get", class_name=kwargs["name"], school=obj.school)
+        )
         kwargs["users"] = [
             cls.scheme_and_quote(request.url_for("get", username=name_from_dn(dn)))
             for dn in obj.users
@@ -72,10 +70,13 @@ class SchoolClassModel(BaseModel):
         del kwargs["dn"]
         del kwargs["url"]
         # TODO: have an OU cache, to fix upper/lower/camel case of 'school'
-        kwargs["school"] = url_to_name(request, "school", self.unscheme_and_unquote(self.school))
+        kwargs["school"] = url_to_name(
+            request, "school", self.unscheme_and_unquote(self.school)
+        )
         kwargs["name"] = f"{kwargs['school']}-{self.name}"
         kwargs["users"] = [
-            await url_to_dn(request, "user", self.unscheme_and_unquote(user)) for user in (self.users or [])
+            await url_to_dn(request, "user", self.unscheme_and_unquote(user))
+            for user in (self.users or [])
         ]  # this is expensive :/
         return SchoolClass(**kwargs)
 
@@ -135,7 +136,9 @@ async def search(
     return [SchoolClassModel.from_lib_model(sc, request) for sc in scs]
 
 
-async def get_lib_obj(udm: UDM, class_name: str, school: str, dn: str = None) -> SchoolClass:
+async def get_lib_obj(
+    udm: UDM, class_name: str, school: str, dn: str = None
+) -> SchoolClass:
     dn = dn or SchoolClass(name=f"{school}-{class_name}", school=school).dn
     try:
         return await SchoolClass.from_dn(dn, school, udm)
@@ -185,7 +188,9 @@ async def partial_update(
     async with UDM(**await udm_kwargs()) as udm:
         sc_current = await get_lib_obj(udm, class_name, school)
         changed = False
-        for attr, new_value in (await school_class.to_modify_kwargs(school, request)).items():
+        for attr, new_value in (
+            await school_class.to_modify_kwargs(school, request)
+        ).items():
             current_value = getattr(sc_current, attr)
             if new_value != current_value:
                 setattr(sc_current, attr, new_value)
@@ -222,9 +227,7 @@ async def complete_update(
 
 
 @router.delete("/{school}/{class_name}", status_code=HTTP_204_NO_CONTENT)
-async def delete(
-    class_name: str, school: str, request: Request
-) -> None:
+async def delete(class_name: str, school: str, request: Request) -> None:
     async with UDM(**await udm_kwargs()) as udm:
         sc = await get_lib_obj(udm, class_name, school)
         if await sc.exists(udm):

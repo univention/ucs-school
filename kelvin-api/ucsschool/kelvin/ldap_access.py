@@ -40,9 +40,13 @@ from pydantic import BaseModel
 
 from ucsschool.lib.models.utils import env_or_ucr
 
-from .constants import API_USERS_GROUP_NAME, CN_ADMIN_PASSWORD_FILE, MACHINE_PASSWORD_FILE, UCS_SSL_CA_CERT
+from .constants import (
+    API_USERS_GROUP_NAME,
+    CN_ADMIN_PASSWORD_FILE,
+    MACHINE_PASSWORD_FILE,
+    UCS_SSL_CA_CERT,
+)
 from .utils import get_logger
-
 
 logger = get_logger(__name__)
 _udm_kwargs: Dict[str, Any] = {}
@@ -51,12 +55,14 @@ _udm_kwargs: Dict[str, Any] = {}
 async def udm_kwargs():
     if not _udm_kwargs:
         ldap_access = LDAPAccess()
-        _udm_kwargs.update({
-            "username": ldap_access.cn_admin,
-            "password": await ldap_access.cn_admin_password,
-            "url": f"https://{ldap_access.host}/univention/udm/",
-            "ssl_ca_cert": UCS_SSL_CA_CERT,
-        })
+        _udm_kwargs.update(
+            {
+                "username": ldap_access.cn_admin,
+                "password": await ldap_access.cn_admin_password,
+                "url": f"https://{ldap_access.host}/univention/udm/",
+                "ssl_ca_cert": UCS_SSL_CA_CERT,
+            }
+        )
     return _udm_kwargs
 
 
