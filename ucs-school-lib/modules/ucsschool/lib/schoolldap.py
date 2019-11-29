@@ -43,19 +43,16 @@ from ldap.dn import explode_dn
 from univention.config_registry import ConfigRegistry
 
 
-ucr = ConfigRegistry()
-ucr.load()
-
-
 class SchoolSearchBase(object):
 	"""Deprecated utility class that generates DNs of common school containers for a OU"""
+	ucr = None
 
 	ucr = None  # type: ConfigRegistry
 
 	def __init__(self, availableSchools, school=None, dn=None, ldapBase=None):
 		if not self.ucr:
-			self._load_ucr()
-
+			self.__class__.ucr = ConfigRegistry()
+			self.ucr.load()
 		self._ldapBase = ldapBase or self.ucr.get('ldap/base')
 
 		from ucsschool.lib.models.school import School
@@ -77,12 +74,6 @@ class SchoolSearchBase(object):
 		self.group_prefix_teachers = self.ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
 		self.group_prefix_admins = self.ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
 		self.group_prefix_staff = self.ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
-
-	@classmethod
-	def _load_ucr(cls):  # type: () -> ConfigRegistry
-		cls.ucr = ConfigRegistry()
-		cls.ucr.load()
-		return cls.ucr
 
 	@classmethod
 	def getOU(cls, dn):  # type: (str) -> str
