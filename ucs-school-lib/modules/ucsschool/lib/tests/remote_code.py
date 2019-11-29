@@ -9,53 +9,53 @@ from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, Teac
 lo, po = getAdminConnection()
 
 
-def create_school_class(**kwargs):
+async def create_school_class(**kwargs):
 	sc = SchoolClass(**kwargs)
 	print(sc.dn)
-	sc.create(lo)
+	await sc.create(lo)
 
 
-def school_class_to_dict(dn):
-	sc = SchoolClass.from_dn(dn, None, lo)
+async def school_class_to_dict(dn):
+	sc = await SchoolClass.from_dn(dn, None, lo)
 	print(json.dumps(sc.to_dict()))
 
 
-def remove_school_class(dn):
-	sc = SchoolClass.from_dn(dn, None, lo)
-	print(sc.remove(lo))
+async def remove_school_class(dn):
+	sc = await SchoolClass.from_dn(dn, None, lo)
+	print(await sc.remove(lo))
 
 
-def school_class_exits(dn):
+async async def school_class_exits(dn):
 	try:
-		sc = SchoolClass.from_dn(dn, None, lo)
-		sc.exists(lo)
+		sc = await SchoolClass.from_dn(dn, None, lo)
+		await sc.exists(lo)
 		print("True")
 	except noObject:
 		print("False")
 
 
-def create_user(**kwargs):
+async def create_user(**kwargs):
 	user_cls = kwargs.pop("user_cls")
 	cls = globals()[user_cls]
 	user = cls(**kwargs)
 	print(user.dn)
-	user.create(lo)
+	await user.create(lo)
 
 
-def user_to_dict(dn):
-	user = User.from_dn(dn, None, lo)
+async def user_to_dict(dn):
+	user = await User.from_dn(dn, None, lo)
 	print(json.dumps(user.to_dict()))
 
 
-def remove_user(dn):
-	user = User.from_dn(dn, None, lo)
-	print(user.remove(lo))
+async def remove_user(dn):
+	user = await User.from_dn(dn, None, lo)
+	print(await user.remove(lo))
 
 
-def user_exits(dn):
+async def user_exits(dn):
 	try:
-		user = User.from_dn(dn, None, lo)
-		user.exists(lo)
+		user = await User.from_dn(dn, None, lo)
+		await user.exists(lo)
 		print("True")
 	except noObject:
 		print("False")

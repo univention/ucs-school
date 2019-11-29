@@ -229,9 +229,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return User
 
 	@classmethod
-	def from_udm_obj(cls, udm_obj, school, lo):
+	async def from_udm_obj(cls, udm_obj, school, lo):
 		# cls.logger.debug("**** udm_obj=%r school=%r", udm_obj, school)
-		obj = super(User, cls).from_udm_obj(udm_obj, school, lo)
+		obj = await super(User, cls).from_udm_obj(udm_obj, school, lo)
 		obj.password = None
 		obj.school_classes = cls.get_school_classes(udm_obj, obj)
 		return obj
@@ -275,8 +275,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			self.password = old_password
 		return success
 
-	def do_modify(self, udm_obj, lo):
-		self.create_mail_domain(lo)
+	async def do_modify(self, udm_obj, lo):
+		await self.create_mail_domain(lo)
 		self.password = self.password or None
 
 		removed_schools = set(udm_obj['school']) - set(self.schools)
@@ -285,7 +285,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			self.schools = udm_obj['school']
 		for removed_school in removed_schools:
 			self.logger.info('Removing %r from school %r...', self, removed_school)
-			if not self.remove_from_school(removed_school, lo):
+			if not await self.remove_from_school(removed_school, lo):
 				self.logger.error('Error removing %r from school %r.', self, removed_school)
 				return False
 
@@ -294,7 +294,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		mandatory_groups = self.groups_used(lo)
 		for group_dn in [dn for dn in udm_obj['groups'] if dn not in mandatory_groups]:
 			try:
-				school_class = SchoolClass.from_dn(group_dn, None, lo)
+				school_class = await SchoolClass.from_dn(group_dn, None, lo)
 			except noObject:
 				continue
 			classes = self.school_classes.get(school_class.school, [])
@@ -347,11 +347,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			udm_obj['school'].remove(old_school)
 		udm_obj.modify(ignore_license=True)
 
-	def _alter_udm_obj(self, udm_obj):
+	async def _alter_udm_obj(self, udm_obj):
 		if self.email is not None:
 			udm_obj['e-mail'] = self.email
 		udm_obj['departmentNumber'] = [self.school]
-		ret = super(User, self)._alter_udm_obj(udm_obj)
+		ret = await super(User, self)._alter_udm_obj(udm_obj)
 		return ret
 
 	def get_mail_domain(self):
@@ -359,11 +359,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			domain_name = self.email.split('@')[-1]
 			return MailDomain.cache(domain_name)
 
-	def create_mail_domain(self, lo):
+	async def create_mail_domain(self, lo):
 		mail_domain = self.get_mail_domain()
-		if mail_domain is not None and not mail_domain.exists(lo):
+		if mail_domain is not None and not await mail_domain.exists(lo):
 			if self.shall_create_mail_domain():
-				mail_domain.create(lo)
+				await mail_domain.create(lo)
 			else:
 				self.logger.warning('Not allowed to create %r.', mail_domain)
 
@@ -426,8 +426,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			if school.lower() not in (s.lower() for s in self.schools + [self.school]):
 				self.add_error('school_classes', _("School {school!r} in 'school_classes' is missing in the users 'school(s)' attributes.").format(school=school))
 
-	def remove_from_school(self, school, lo):
-		if not self.exists(lo):
+	async def remove_from_school(self, school, lo):
+		if not await self.exists(lo):
 			self.logger.warning('User does not exists, not going to remove.')
 			return False
 		try:
@@ -439,10 +439,10 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			self.logger.warning('User %r not part of any school, removing it.', self)
 			return self.remove(lo)
 		if self.school == school:
-			if not self.change_school(self.schools[0], lo):
+			if not await self.change_school(self.schools[0], lo):
 				return False
 		else:
-			self.remove_from_groups_of_school(school, lo)
+			await self.remove_from_groups_of_school(school, lo)
 		self.school_classes.pop(school, None)
 		return True
 
@@ -460,12 +460,12 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	def get_group_dn(self, group_name, school):
 		return Group.cache(group_name, school).dn
 
-	def get_class_dn(self, class_name, school, lo):
+	async def get_class_dn(self, class_name, school, lo):
 		# Bug #32337: check if the class exists without OU prefix
 		# if it does not exist the class name with OU prefix is used
 		school_class = SchoolClass.cache(class_name, school)
 		if school_class.get_relative_name() == school_class.name:
-			if not school_class.exists(lo):
+			if not await school_class.exists(lo):
 				class_name = '%s-%s' % (school, class_name)
 				school_class = SchoolClass.cache(class_name, school)
 		return school_class.dn
@@ -689,7 +689,7 @@ class ExamStudent(Student):
 		return cls.get_search_base(school).examUsers
 
 	@classmethod
-	def from_student_dn(cls, lo, school, dn):
+	async def from_student_dn(cls, lo, school, dn):
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], cls.get_container(school))
-		return cls.from_dn(dn, school, lo)
+		return await cls.from_dn(dn, school, lo)

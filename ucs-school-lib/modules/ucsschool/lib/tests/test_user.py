@@ -1,12 +1,12 @@
 from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff, User
 
 
-def test_read_user(new_user_via_ssh, lo_udm, remove_user_via_ssh):
+async def test_read_user(new_user_via_ssh, lo_udm, remove_user_via_ssh):
 	print("** new_user_via_ssh={!r}\n".format(new_user_via_ssh))
 	dn, attr = new_user_via_ssh
 	user_cls = attr.pop("user_cls")
 	print(f"** user_cls={user_cls!r}")
-	user = User.from_dn(dn, "DEMOSCHOOL", lo_udm)
+	user = await User.from_dn(dn, "DEMOSCHOOL", lo_udm)
 	print("** type(user)=%r user.to_dict()={!r}".format(type(user), user.to_dict()))
 	assert user.__class__.__name__ == user_cls
 	try:
@@ -21,17 +21,17 @@ def test_read_user(new_user_via_ssh, lo_udm, remove_user_via_ssh):
 	finally:
 		result, returncode = remove_user_via_ssh(dn)
 		assert returncode == 0
-	assert not User(**attr).exists(lo_udm)
+	assert not await User(**attr).exists(lo_udm)
 
 
-def test_create_user(user_attrs, lo_udm, scp_code, get_user_via_ssh, remove_user_via_ssh):
+async def test_create_user(user_attrs, lo_udm, scp_code, get_user_via_ssh, remove_user_via_ssh):
 	user_cls = user_attrs.pop("user_cls")
 	print(f"** user_cls={user_cls!r}")
 	cls = globals()[user_cls]
 	print(f"** cls={cls!r}")
 	user = cls(**user_attrs)
 	print("** type(user)=%r user.to_dict()={!r}".format(type(user), user.to_dict()))
-	user.create(lo_udm)
+	await user.create(lo_udm)
 	result, returncode = get_user_via_ssh(user.dn)
 	print("** result={!r} returncode={!r}".format(result, returncode))
 	assert isinstance(result, dict)
@@ -49,17 +49,17 @@ def test_create_user(user_attrs, lo_udm, scp_code, get_user_via_ssh, remove_user
 	finally:
 		result, returncode = remove_user_via_ssh(user.dn)
 		assert returncode == 0
-	assert not User(**user_attrs).exists(lo_udm)
+	assert not await User(**user_attrs).exists(lo_udm)
 
 
-def test_remove_user(new_user_via_ssh, lo_udm, user_exists_via_ssh):
+async def test_remove_user(new_user_via_ssh, lo_udm, user_exists_via_ssh):
 	print("** new_user_via_ssh={!r}\n".format(new_user_via_ssh))
 	dn, attr = new_user_via_ssh
-	user = User.from_dn(dn, "DEMOSCHOOL", lo_udm)
+	user = await User.from_dn(dn, "DEMOSCHOOL", lo_udm)
 	dn = user.dn
 	print("** user.dn={!r}".format(user.dn))
-	user.remove(lo_udm)
+	await user.remove(lo_udm)
 	result, returncode = user_exists_via_ssh(dn)
 	print("** result={!r} returncode={!r}".format(result, returncode))
 	assert result is False
-	assert not User(**attr).exists(lo_udm)
+	assert not await User(**attr).exists(lo_udm)

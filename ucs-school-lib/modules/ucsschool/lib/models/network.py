@@ -61,13 +61,13 @@ class Network(UCSSchoolHelperAbstractClass):
 				break
 		return '.'.join(self.network.split('.')[:subnetbytes])
 
-	def create_without_hooks(self, lo, validate):
+	async def create_without_hooks(self, lo, validate):
 		dns_reverse_zone = DNSReverseZone.cache(self.get_subnet())
 		dns_reverse_zone.create(lo)
 
 		dhcp_service = self.get_school_obj(lo).get_dhcp_service()
 		dhcp_subnet = DHCPSubnet(name=self.network, school=self.school, subnet_mask=self.netmask, broadcast=self.broadcast, dhcp_service=dhcp_service)
-		dhcp_subnet.create(lo)
+		await dhcp_subnet.create(lo)
 
 		# TODO:
 		# set netbios and router for dhcp subnet
@@ -84,7 +84,7 @@ class Network(UCSSchoolHelperAbstractClass):
 		#	print 'setting nameserver'
 		#	set_nameserver_for_subnet (network, nameserver, schoolNr)
 
-		return super(Network, self).create_without_hooks(lo, validate)
+		return await super(Network, self).create_without_hooks(lo, validate)
 
 	def do_create(self, udm_obj, lo):
 		from ucsschool.lib.models.school import School

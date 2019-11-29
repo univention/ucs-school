@@ -32,15 +32,12 @@
 import six
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
-try:
-	from typing import Any, Dict, List, Optional, Type
-	from univention.admin.uldap import access as LoType
-	from .base import SuperOrdinateType, UdmObject
-except ImportError:
-	pass
+from typing import Any, Dict, List, Optional, Type
+from .base import SuperOrdinateType
 
 from univention.admin.filter import conjunction, expression, parse
 from univention.admin.uexceptions import nextFreeIp
+from udm_rest_client import UDM, UdmObject
 
 from .attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, MultipleObjectsError
@@ -56,7 +53,7 @@ from .utils import ucr, _
 class AnyComputer(UCSSchoolHelperAbstractClass):
 
 	@classmethod
-	def get_container(cls, school=None):  # type: (Optional[str]) -> str
+	def get_container(cls, school: str = None) -> str:
 		from ucsschool.lib.models.school import School
 		if school:
 			return School.cache(school).dn
@@ -71,11 +68,11 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 	# vs. group memberships
 
 	@classmethod
-	def get_container(cls, school):  # type: (str) -> str
+	def get_container(cls, school: str) -> str:
 		return 'cn=dc,cn=server,%s' % cls.get_search_base(school).computers
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolDC]
+	async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Type["SchoolDC"]:
 		try:
 			univention_object_class = udm_obj['univentionObjectClass']
 		except KeyError:
@@ -86,28 +83,27 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 
 
 class SchoolDCSlave(RoleSupportMixin, SchoolDC):
-	groups = Groups(_('Groups'))  # type: List[str]
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])  # type: List[str]
+	groups: List[str] = Groups(_('Groups'))
+	ucsschool_roles: List[str] = Roles(_('Roles'), aka=['Roles'])
 
-	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+	async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
 		udm_obj['unixhome'] = '/dev/null'
 		udm_obj['shell'] = '/bin/bash'
 		udm_obj['primaryGroup'] = BasicGroup.cache('DC Slave Hosts').dn
-		return super(SchoolDCSlave, self).do_create(udm_obj, lo)
+		return await super(SchoolDCSlave, self).do_create(udm_obj, lo)
 
-	def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
+	async def _alter_udm_obj(self, udm_obj: UdmObject) -> None:
 		if self.groups:
 			for group in self.groups:
 				if group not in udm_obj['groups']:
 					udm_obj['groups'].append(group)
-		return super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
+		return await super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
-	def get_schools_from_udm_obj(self, udm_obj):  # type: (UdmObject) -> str
+	async def get_schools_from_udm_obj(self, udm_obj: UdmObject) -> str:
 		# fixme: no idea how to find out old school
 		return self.school
 
-	def move_without_hooks(self, lo, udm_obj=None, force=False):
-		# type: (LoType, Optional[UdmObject], Optional[bool]) -> bool
+	async def move_without_hooks(self, lo: UDM, udm_obj: UdmObject = None, force: bool = False) -> bool:
 		try:
 			if udm_obj is None:
 				try:
@@ -135,16 +131,16 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 			if school is None:
 				self.logger.error('Cannot move DC Slave object - School does not exist: %r', school)
 				return False
-			self.modify_without_hooks(lo)
+			await self.modify_without_hooks(lo)
 			if school.class_share_file_server == old_dn:
 				school.class_share_file_server = self.dn
 			if school.home_share_file_server == old_dn:
 				school.home_share_file_server = self.dn
-			school.modify_without_hooks(lo)
+			await school.modify_without_hooks(lo)
 
 			removed = False
 			# find dhcp server object by checking all dhcp service objects
-			for dhcp_service in AnyDHCPService.get_all(lo, None):
+			for dhcp_service in await AnyDHCPService.get_all(lo, None):
 				for dhcp_server in dhcp_service.get_servers(lo):
 					if dhcp_server.name == self.name and not dhcp_server.dn.endswith(',%s' % school.dn):
 						dhcp_server.remove(lo)
@@ -154,7 +150,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 				own_dhcp_service = school.get_dhcp_service()
 
 				dhcp_server = DHCPServer(name=self.name, school=self.school, dhcp_service=own_dhcp_service)
-				dhcp_server.create(lo)
+				await dhcp_server.create(lo)
 
 			self.logger.info('Move complete')
 			self.logger.warning('The DC Slave has to be rejoined into the domain!')
@@ -180,8 +176,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	DEFAULT_PREFIX_LEN = 24  # 255.255.255.0
 
 	@classmethod
-	def lookup(cls, lo, school, filter_s='', superordinate=None):
-		# type: (LoType, str, Optional[str], Optional[SuperOrdinateType]) -> List[UdmObject]
+	async def lookup(cls, lo: UDM, school: str, filter_s: str = "", superordinate: SuperOrdinateType = None) -> List[UdmObject]:
 		"""
 		This override limits the returned objects to actual ucsschoolComputers. Does not contain
 		SchoolDC slaves and others anymore.
@@ -191,9 +186,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			school_computer_filter = conjunction('&', [object_class_filter, parse(filter_s)])
 		else:
 			school_computer_filter = object_class_filter
-		return super(SchoolComputer, cls).lookup(lo, school, school_computer_filter, superordinate)
+		return await super(SchoolComputer, cls).lookup(lo, school, school_computer_filter, superordinate)
 
-	def get_inventory_numbers(self):  # type: () -> List[str]
+	def get_inventory_numbers(self) -> List[str]:
 		if isinstance(self.inventory_number, six.string_types):
 			return [inv.strip() for inv in self.inventory_number.split(',')]
 		if isinstance(self.inventory_number, (list, tuple)):
@@ -201,12 +196,12 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return []
 
 	@property
-	def teacher_computer(self):  # type: () -> bool
+	def teacher_computer(self) -> bool:
 		"""True if the computer is a teachers computer."""
 		return create_ucsschool_role_string(role_teacher_computer, self.school) in self.ucsschool_roles
 
 	@teacher_computer.setter
-	def teacher_computer(self, new_value):  # type: (bool) -> None
+	def teacher_computer(self, new_value: bool) -> None:
 		"""Un/mark computer as a teachers computer."""
 		role_str = create_ucsschool_role_string(role_teacher_computer, self.school)
 		if new_value and role_str not in self.ucsschool_roles:
@@ -214,8 +209,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		elif not new_value and role_str in self.ucsschool_roles:
 			self.ucsschool_roles.remove(role_str)
 
-	def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
-		super(SchoolComputer, self)._alter_udm_obj(udm_obj)
+	async def _alter_udm_obj(self, udm_obj: UdmObject) -> None:
+		await super(SchoolComputer, self)._alter_udm_obj(udm_obj)
 		inventory_numbers = self.get_inventory_numbers()
 		if inventory_numbers:
 			udm_obj['inventoryNumber'] = inventory_numbers
@@ -242,19 +237,19 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):  # type: (str) -> str
 		return cls.get_search_base(school).computers
 
-	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
+	async def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
 		if self.subnet_mask is None:
 			self.subnet_mask = self.DEFAULT_PREFIX_LEN
-		return super(SchoolComputer, self).create(lo, validate)
+		return await super(SchoolComputer, self).create(lo, validate)
 
-	def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
+	async def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
 		self.create_network(lo)
-		return super(SchoolComputer, self).create_without_hooks(lo, validate)
+		return await super(SchoolComputer, self).create_without_hooks(lo, validate)
 
-	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+	async def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		# type: (LoType, Optional[bool], Optional[bool]) -> bool
 		self.create_network(lo)
-		return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
+		return await super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def get_ipv4_network(self):  # type: () -> IPv4Network
 		if self.subnet_mask is not None and len(self.ip_address) > 0:
@@ -288,7 +283,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			network.create(lo)
 		return network
 
-	def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
+	async def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
 		super(SchoolComputer, self).validate(lo, validate_unlikely_changes)
 		for ip_address in self.ip_address:
 			name, ip_address = escape_filter_chars(self.name), escape_filter_chars(ip_address)
@@ -300,7 +295,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 				self.add_error('mac_address', _('The mac address is already taken by another computer. Please change the mac address.'))
 		own_network = self.get_network()
 		own_network_ip4 = self.get_ipv4_network()
-		if own_network and not own_network.exists(lo):
+		if own_network and not await own_network.exists(lo):
 			self.add_warning('subnet_mask', _('The specified IP and subnet mask will cause the creation of a new network during the creation of the computer object.'))
 			networks = [(network[1]['cn'][0],
 						IPv4Network(network[1]['univentionNetwork'][0] + '/' + network[1]['univentionNetmask'][0])) for
@@ -327,9 +322,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			return IPComputer
 
 	@classmethod
-	def from_udm_obj(cls, udm_obj, school, lo):  # type: (UdmObject, str, LoType) -> SchoolComputer
+	async def from_udm_obj(cls, udm_obj, school, lo):  # type: (UdmObject, str, LoType) -> SchoolComputer
 		from ucsschool.lib.models.school import School
-		obj = super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
+		obj = await super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
 		obj.ip_address = udm_obj['ip']
 		school_obj = School.cache(obj.school)
 		edukativnetz_group = school_obj.get_administrative_group_name('educational', domain_controller=False, as_dn=True)

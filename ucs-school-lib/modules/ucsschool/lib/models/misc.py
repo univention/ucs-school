@@ -29,9 +29,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.admin.uexceptions import objectExists
-import univention.admin.uldap as udm_uldap
-import univention.admin.modules as udm_modules
+from univention.admin.uldap import position as uldap_position
+from udm_rest_client import UDM
 
 from .attributes import ContainerPath
 from .base import UCSSchoolHelperAbstractClass
@@ -42,7 +41,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 	school = None
 
 	@classmethod
-	def get_container(cls, school=None):
+	def get_container(cls, school: str = None) -> str:
 		return 'cn=domain,cn=mail,%s' % ucr.get('ldap/base')
 
 	class Meta:
@@ -51,28 +50,29 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 
 class OU(UCSSchoolHelperAbstractClass):
 
-	def create(self, lo, validate=True):
+	async def create(self, lo: UDM, validate: bool = True):
 		self.logger.info('Creating %r', self)
-		pos = udm_uldap.position(ucr.get('ldap/base'))
+		pos = uldap_position(ucr.get('ldap/base'))
 		pos.setDn(self.position)
-		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos)
-		udm_obj.open()
-		udm_obj['name'] = self.name
-		try:
-			self.do_create(udm_obj, lo)
-		except objectExists as exc:
-			return exc.args[0]
-		else:
-			return udm_obj.dn
+		udm_obj = await lo.get(self._meta.udm_module).new()
+		udm_obj.props.name = self.name
+		# try:
+		# 	self.do_create(udm_obj, lo)
+		# except objectExists as exc:
+		# 	return exc.args[0]
+		# else:
+		# 	return udm_obj.dn
+		await self.do_create(udm_obj, lo)
+		return udm_obj.dn
 
-	def modify(self, lo, validate=True, move_if_necessary=None):
+	async def modify(self, lo: UDM, validate: bool = True, move_if_necessary: bool = None):
 		raise NotImplementedError()
 
-	def remove(self, lo):
+	async def remove(self, lo: UDM):
 		raise NotImplementedError()
 
 	@classmethod
-	def get_container(cls, school):
+	def get_container(cls, school: str):
 		return cls.get_search_base(school).schoolDN
 
 	class Meta:

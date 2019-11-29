@@ -28,20 +28,16 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+from typing import List, Optional
 
 from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
 import ipaddr
+from udm_rest_client import UDM, UdmObject
 
 from .attributes import DHCPServiceName, Attribute, DHCPSubnetName, DHCPSubnetMask, BroadcastAddress, DHCPServiceAttribute, DHCPServerName
-from .base import UCSSchoolHelperAbstractClass
+from .base import SuperOrdinateType, UCSSchoolHelperAbstractClass
 from .utils import ucr, _
-try:
-	from typing import Any, List, Optional
-	from univention.admin.uldap import access as LoType
-	from .base import UdmObject
-except ImportError:
-	pass
 
 
 class DHCPService(UCSSchoolHelperAbstractClass):
@@ -49,7 +45,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 	hostname = Attribute(_('Hostname'))  # type: str
 	domainname = Attribute(_('Domain'))  # type: str
 
-	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, UDM) -> None
 		udm_obj.options.append('options')
 		udm_obj['option'] = ['wpad "http://%s.%s/proxy.pac"' % (self.hostname, self.domainname)]
 		return super(DHCPService, self).do_create(udm_obj, lo)
@@ -59,7 +55,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 		return cls.get_search_base(school).dhcp
 
 	def add_server(self, dc_name, lo, force_dhcp_server_move=False):
-		# type: (str, LoType, Optional[bool]) -> None
+		# type: (str, UDM, Optional[bool]) -> None
 		"""
 		Create the given DHCP server within the DHCP service. If the DHCP server
 		object already exists somewhere else within the LDAP tree, it may be moved
@@ -125,7 +121,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 			self.logger.info('No DHCP server named %s found! Creating new one!', dc_name)
 			dhcp_server.create(lo)
 
-	def get_servers(self, lo):  # type: (LoType) -> List[DHCPServer]
+	def get_servers(self, lo):  # type: (UDM) -> List[DHCPServer]
 		ret = []
 		for dhcp_server in DHCPServer.get_all(lo, self.school, superordinate=self):
 			dhcp_server.dhcp_service = self
@@ -143,7 +139,7 @@ class AnyDHCPService(DHCPService):
 	def get_container(cls, school=None):  # type: (str) -> str
 		return ucr.get('ldap/base')
 
-	def get_servers(self, lo):  # type: (LoType) -> List[DHCPServer]
+	def get_servers(self, lo):  # type: (UDM) -> List[DHCPServer]
 		old_name = self.name
 		old_position = self.position
 		old_dn = str2dn(self.old_dn or self.dn)
@@ -168,12 +164,12 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):  # type: (str) -> str
 		return cls.get_search_base(school).dhcp
 
-	def get_superordinate(self, lo):  # type: (LoType) -> UdmObject
+	async def get_superordinate(self, lo: UDM) -> Optional[SuperOrdinateType]:
 		if self.dhcp_service:
-			return self.dhcp_service.get_udm_object(lo)
+			return await self.dhcp_service.get_udm_object(lo)
 
 	@classmethod
-	def find_any_dn_with_name(cls, name, lo):  # type: (str, LoType) -> str
+	def find_any_dn_with_name(cls, name, lo):  # type: (str, UDM) -> str
 		cls.logger.debug('Searching first dhcpServer with cn=%s', name)
 		try:
 			dn = lo.searchDn(filter=filter_format('(&(objectClass=dhcpServer)(cn=%s))', [name]), base=ucr.get('ldap/base'))[0]
@@ -201,9 +197,9 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):  # type: (str) -> str
 		return cls.get_search_base(school).dhcp
 
-	def get_superordinate(self, lo):  # type: (LoType) -> UdmObject
+	async def get_superordinate(self, lo: UDM) -> Optional[SuperOrdinateType]:
 		if self.dhcp_service:
-			return self.dhcp_service.get_udm_object(lo)
+			return await self.dhcp_service.get_udm_object(lo)
 
 	def get_ipv4_subnet(self):  # type: () -> ipaddr.IPv4Network
 		network_str = '%s/%s' % (self.name, self.subnet_mask)
@@ -213,7 +209,7 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
 			self.logger.info('%r is no valid IPv4Network:\n%s', network_str, exc)
 
 	@classmethod
-	def find_all_dns_below_base(cls, dn, lo):  # type: (str, LoType) -> List[str]
+	def find_all_dns_below_base(cls, dn, lo):  # type: (str, UDM) -> List[str]
 		cls.logger.debug('Searching all univentionDhcpSubnet in %r', dn)
 		return lo.searchDn(filter='(objectClass=univentionDhcpSubnet)', base=dn)
 
