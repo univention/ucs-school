@@ -38,10 +38,26 @@ from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
 from ldap3.utils.conv import escape_filter_chars
 from pydantic import BaseModel
 
-from ucsschool.lib.models.utils import ucr
+from ucsschool.lib.models.utils import env_or_ucr
 
-from .constants import API_USERS_GROUP_NAME, CN_ADMIN_PASSWORD_FILE, MACHINE_PASSWORD_FILE
+from .constants import API_USERS_GROUP_NAME, CN_ADMIN_PASSWORD_FILE, MACHINE_PASSWORD_FILE, UCS_SSL_CA_CERT
 from .utils import get_logger
+
+
+logger = get_logger(__name__)
+_udm_kwargs: Dict[str, Any] = {}
+
+
+async def udm_kwargs():
+    if not _udm_kwargs:
+        ldap_access = LDAPAccess()
+        _udm_kwargs.update({
+            "username": ldap_access.cn_admin,
+            "password": await ldap_access.cn_admin_password,
+            "url": f"https://{ldap_access.host}/univention/udm/",
+            "ssl_ca_cert": UCS_SSL_CA_CERT,
+        })
+    return _udm_kwargs
 
 
 class LdapUser(BaseModel):
@@ -52,9 +68,6 @@ class LdapUser(BaseModel):
     attributes: Dict[str, List[Any]] = None
 
 
-logger = get_logger(__name__)
-
-
 class LDAPAccess:
     ldap_base: str
     host: str
@@ -62,10 +75,10 @@ class LDAPAccess:
     port: int
 
     def __init__(self, ldap_base=None, host=None, host_dn=None, port=None):
-        self.ldap_base = ldap_base or ucr["ldap/base"]
-        self.host = host or ucr["ldap/server/name"]
-        self.host_dn = host_dn or ucr["ldap/hostdn"]
-        self.port = port or int(ucr["ldap/server/port"])
+        self.ldap_base = ldap_base or env_or_ucr("ldap/base")
+        self.host = host or env_or_ucr("ldap/server/name")
+        self.host_dn = host_dn or env_or_ucr("ldap/hostdn")
+        self.port = port or int(env_or_ucr("ldap/server/port"))
         self.cn_admin = "cn=admin"
         self.server = Server(host=self.host, port=self.port, get_info="ALL")
 
@@ -149,13 +162,13 @@ class LDAPAccess:
             return ""
 
     @staticmethod
-    def user_is_disabled(ldap_result):
+    def user_is_disabled(ldap_result: Entry) -> bool:
         return (
             "D" in ldap_result["sambaAcctFlags"].value
             or ldap_result["krb5KDCFlags"].value == 254
             or (
                 "shadowExpire" in ldap_result
-                and ldap_result["shadowExpire"].value
+                and ldap_result["shadowExpire"].value is not None
                 and ldap_result["shadowExpire"].value
                 < datetime.now().timestamp() / 3600 / 24
             )
