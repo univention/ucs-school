@@ -114,22 +114,22 @@ def create_ucsschool_objs_sequential(kls, num):
 	return time.time() - t0, dns
 
 
-def read_ucsschool_objs_sequential(kls_name_school_dns):  # type: (Tuple[str, str, List[str]]) -> float
+async def read_ucsschool_objs_sequential(kls_name_school_dns):  # type: (Tuple[str, str, List[str]]) -> float
 	kls_name, school, dns = kls_name_school_dns
 	kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
 	lo = get_lo()
 	t0 = time.time()
 	for dn in dns:
-		obj = kls.from_dn(dn, school, lo)
+		obj = await kls.from_dn(dn, school, lo)
 		assert obj.name in dn
 	return time.time() - t0
 
 
-def modify_ucsschool_obj(kls_name_school_dn):  # type: (Tuple[str, str, str]) -> float
+async def modify_ucsschool_obj(kls_name_school_dn):  # type: (Tuple[str, str, str]) -> float
 	kls_name, school, dn = kls_name_school_dn
 	kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
 	lo = get_lo()
-	obj = kls.from_dn(dn, school, lo)
+	obj = await kls.from_dn(dn, school, lo)
 	assert obj.name in dn
 	if isinstance(obj, Group):
 		obj.description = random_string(20)
@@ -140,9 +140,9 @@ def modify_ucsschool_obj(kls_name_school_dn):  # type: (Tuple[str, str, str]) ->
 	else:
 		raise NotImplementedError("Unknown type of obj {!r}.".format(obj))
 	t0 = time.time()
-	obj.modify(lo)
+	await obj.modify(lo)
 	t_delta = time.time() - t0
-	obj_new = kls.from_dn(dn, school, lo)
+	obj_new = await kls.from_dn(dn, school, lo)
 	if isinstance(obj, Group):
 		assert obj_new.description == obj.description
 		assert obj_new.users == obj.users
@@ -162,13 +162,13 @@ def modify_ucsschool_objs_sequential(kls_name_school_dns):  # type: (Tuple[str, 
 	return t_delta
 
 
-def delete_ucsschool_objs_sequential(kls, dns):
+async def delete_ucsschool_objs_sequential(kls, dns):
 	# type: (Type[UCSSchoolHelperAbstractClass], List[str]) -> float
 	print("Deleting {} {} sequentially...".format(len(dns), kls.__name__))
 	lo = get_lo()
 	t0 = time.time()
 	for dn in dns:
-		kls.from_dn(dn, SCHOOL_OU, lo).remove(lo)
+		await kls.from_dn(dn, SCHOOL_OU, lo).remove(lo)
 	return time.time() - t0
 
 
@@ -287,11 +287,11 @@ def modify_ucsschool_objs_parallel(kls, school, dns, parallelism):
 	return time.time() - t0
 
 
-def delete_obj_via_ucsschool_lib(kls_name_dn):  # type: (Tuple[str, str]) -> None
+async def delete_obj_via_ucsschool_lib(kls_name_dn):  # type: (Tuple[str, str]) -> None
 	kls_name, dn = kls_name_dn
 	kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
 	lo = get_lo()
-	kls.from_dn(dn, SCHOOL_OU, lo).remove(lo)
+	await kls.from_dn(dn, SCHOOL_OU, lo).remove(lo)
 
 
 def delete_objs_parallel_via_ucsschool_lib(kls, dns, parallelism):

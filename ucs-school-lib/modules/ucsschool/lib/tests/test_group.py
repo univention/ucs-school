@@ -1,7 +1,7 @@
 from ucsschool.lib.models.group import SchoolClass
 
 
-def test_read_school_class(new_school_class_via_ssh, lo_udm, remove_class_via_ssh):
+async def test_read_school_class(new_school_class_via_ssh, lo_udm, remove_class_via_ssh):
 	print("** new_school_class_via_ssh={!r}\n".format(new_school_class_via_ssh))
 	dn, attr = new_school_class_via_ssh
 	sc = SchoolClass.from_dn(dn, "DEMOSCHOOL", lo_udm)
@@ -18,13 +18,13 @@ def test_read_school_class(new_school_class_via_ssh, lo_udm, remove_class_via_ss
 	finally:
 		result, returncode = remove_class_via_ssh(dn)
 		assert returncode == 0
-	assert not SchoolClass(**attr).exists(lo_udm)
+	assert not await SchoolClass(**attr).exists(lo_udm)
 
 
-def test_create_school_class(school_class_attrs, lo_udm, scp_code, get_school_class_via_ssh, remove_class_via_ssh):
+async def test_create_school_class(school_class_attrs, lo_udm, scp_code, get_school_class_via_ssh, remove_class_via_ssh):
 	sc = SchoolClass(**school_class_attrs)
 	print("** sc.to_dict()={!r}".format(sc.to_dict()))
-	sc.create(lo_udm)
+	await sc.create(lo_udm)
 	result, returncode = get_school_class_via_ssh(sc.dn)
 	print("** result={!r} returncode={!r}".format(result, returncode))
 	assert isinstance(result, dict)
@@ -40,17 +40,17 @@ def test_create_school_class(school_class_attrs, lo_udm, scp_code, get_school_cl
 	finally:
 		result, returncode = remove_class_via_ssh(sc.dn)
 		assert returncode == 0
-	assert not SchoolClass(**school_class_attrs).exists(lo_udm)
+	assert not await SchoolClass(**school_class_attrs).exists(lo_udm)
 
 
-def test_remove_school_class(new_school_class_via_ssh, lo_udm, school_class_exists_via_ssh):
+async def test_remove_school_class(new_school_class_via_ssh, lo_udm, school_class_exists_via_ssh):
 	print("** new_school_class_via_ssh={!r}\n".format(new_school_class_via_ssh))
 	dn, attr = new_school_class_via_ssh
-	sc = SchoolClass.from_dn(dn, "DEMOSCHOOL", lo_udm)
+	sc = await SchoolClass.from_dn(dn, "DEMOSCHOOL", lo_udm)
 	dn = sc.dn
 	print("** sc.dn={!r}".format(sc.dn))
-	sc.remove(lo_udm)
+	await sc.remove(lo_udm)
 	result, returncode = school_class_exists_via_ssh(dn)
 	print("** result={!r} returncode={!r}".format(result, returncode))
 	assert result is False
-	assert not SchoolClass(**attr).exists(lo_udm)
+	assert not await SchoolClass(**attr).exists(lo_udm)

@@ -160,7 +160,7 @@ class WorkGroupShare(RoleSupportMixin, Share):
 	Bug #48428
 	'''
 	@classmethod
-	def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+	async def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
 		shares = super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
 		filtered_shares = []
 		search_base = cls.get_search_base(school)

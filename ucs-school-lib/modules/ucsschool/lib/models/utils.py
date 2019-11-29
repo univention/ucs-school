@@ -78,6 +78,13 @@ def _ucr():  # type: () -> ConfigRegistry
 	return ucr
 
 
+def env_or_ucr(key: str) -> str:
+	try:
+		return os.environ[key.replace("/", "_")]
+	except KeyError:
+		return ucr[key]
+
+
 _logging_config = lazy_object_proxy.Proxy(_load_logging_config)
 CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['cmdline'])
 FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['file'])

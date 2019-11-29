@@ -80,7 +80,7 @@ class SchoolClassModel(BaseModel):
         return SchoolClass(**kwargs)
 
     @validator("name")
-    def check_name(cls, value):
+    def check_name(cls, value: str) -> str:
         SchoolClassName("name").validate(value)
         return value
 
