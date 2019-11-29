@@ -1,6 +1,19 @@
 #!/bin/sh
 
-. /kelvin/venv/bin/activate
+APP_ID="ucsschool-kelvin"
+CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
+CN_ADMIN_SECRET_FILE_ULDAP_LOCATION="/etc/ldap.secret"
 
-update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure $docker_host_name
+echo "Copying cn=admin to ${CN_ADMIN_SECRET_FILE_ULDAP_LOCATION}..."
+cp -av "$CN_ADMIN_SECRET_FILE" "$CN_ADMIN_SECRET_FILE_ULDAP_LOCATION"
+
+echo "Building OpenAPI client library using host ${docker_host_name}..."
+. /kelvin/venv/bin/activate
+update_openapi_client \
+  --generator java \
+  --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar \
+  --insecure \
+  $docker_host_name
+
+echo "Restating Kelvin API server..."
 /etc/init.d/kelvin-api restart
