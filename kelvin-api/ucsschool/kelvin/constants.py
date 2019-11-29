@@ -12,6 +12,7 @@ STATIC_FILE_README = "readme.html"
 TOKEN_SIGN_SECRET_FILE = Path(APP_CONFIG_BASE_PATH, "tokens.secret")
 TOKEN_HASH_ALGORITHM = "HS256"
 UCRV_TOKEN_TTL = "ucsschool/kelvin/access_tokel_ttl"
+UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 URL_KELVIN_BASE = "/kelvin"
 URL_API_PREFIX = f"{URL_KELVIN_BASE}/api/v1"
 URL_TOKEN_BASE = f"{URL_KELVIN_BASE}/api/token"
