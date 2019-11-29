@@ -204,27 +204,12 @@ class UCSSchoolHelperAbstractClass(object):
 		:py:meth:``validate()`` can be further customized.
 
 	Hooks:
-		Before :py:meth:``create``, :py:meth:``modify``, :py:meth:``move`` and :py:meth:``remove``,
-		hooks are called if :py:meth:``build_hook_line()``
-		returns something. If the operation was successful, another set of hooks
-		are called.
-
-		``/usr/share/ucs-school-import/hooks/%(module)s_{create|modify|move|remove}_{pre|post}.d/``
-		are called with the name of a temporary file containing the hook_line via run-parts.
-		``%(module)s`` is ``'ucc'`` for ``cls._meta.udm_module == 'computers/ucc'`` by default and
-		can be explicitely set with::
-
-			class Meta:
-				hook_path = 'computer'
+		# TODO: implement pyhooks
 	"""
 	__metaclass__ = UCSSchoolHelperMetaClass
 	_cache = {}  # type: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel]
 	_search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
 	_initialized_udm_modules = []  # type: List[str]
-	_empty_hook_paths = set()  # type: Set[str]
-
-	hook_sep_char = '\t'
-	hook_path = '/usr/share/ucs-school-import/hooks/'
 
 	name = CommonName(_('Name'), aka=['Name'])  # type: str
 	school = SchoolAttribute(_('School'), aka=['School'])  # type: str
@@ -397,71 +382,9 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-	def call_hooks(self, hook_time, func_name):  # type: (str, str) -> Optional[bool]
-		'''Calls run-parts in
-		os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
-		if self.build_hook_line(hook_time, func_name) returns a non-empty string
-
-		Usage in lib itself:
-			hook_time in ['pre', 'post']
-			func_name in ['create', 'modify', 'remove']
-
-		In the lib, post-hooks are only called if the corresponding function returns True
-		'''
-
-		def run(args):  # type: (Sequence[str]) -> int
-			self.logger.debug('Starting %r...', args)
-			process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-			stdout, stderr = process.communicate()
-			self.logger.debug('Command %r finished with exit code %r.', args, process.returncode)
-			if stdout:
-				self.logger.debug('Command stdout and stderr:\n%s', stdout.strip())
-			return process.returncode
-
-		# verify path
-		hook_path = self._meta.hook_path
-		path = os.path.join(self.hook_path, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
-		if path in self._empty_hook_paths:
-			return None
-		if not os.path.isdir(path) or not os.listdir(path):
-			self.logger.debug('%s not found or empty.', path)
-			self._empty_hook_paths.add(path)
-			return None
-		self.logger.debug('%s shall be executed', path)
-
-		dn = None
-		if hook_time == 'post':
-			dn = self.old_dn
-
-		self.logger.debug('Building hook line: %r.build_hook_line(%r, %r)', self, hook_time, func_name)
-		line = self.build_hook_line(hook_time, func_name)
-		if not line:
-			self.logger.debug('No line. Skipping!')
-			return None
-		line = line.strip() + '\n'
-
-		# create temporary file with data
-		with tempfile.NamedTemporaryFile() as tmpfile:
-			tmpfile.write(line)
-			tmpfile.flush()
-
-			# invoke hook scripts
-			# <script> <temporary file> [<ldap dn>]
-			command = ['run-parts', '--verbose', '--report', '--arg', tmpfile.name]
-			if dn:
-				command.extend(('--arg', dn))
-			command.extend(('--', path))
-
-			ret_code = run(command)
-
-			return ret_code == 0
-
-	def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
-		'''Must be overridden if the model wants to support hooks.
-		Do so by something like:
-		return self._build_hook_line(self.attr1, self.attr2, 'constant')
-		'''
-		return None
+	def call_hooks(self, hook_time: str, func_name: str) -> Optional[bool]:
+		self.logger.warning("NotImplemented: call_hooks(%r, %r)", hook_time, func_name)
+		return True
 
 	def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
 		for name, attr in iteritems(self._attributes):
@@ -1034,19 +957,6 @@ class UCSSchoolHelperAbstractClass(object):
 			return 'D'
 		elif func_name == 'move':
 			return 'MV'
-
-	def _build_hook_line(self, *args):  # type: (*Any) -> str
-		attrs = []
-		for arg in args:
-			val = arg
-			if arg is None:
-				val = ''
-			if arg is False:
-				val = 0
-			if arg is True:
-				val = 1
-			attrs.append(str(val))
-		return self.hook_sep_char.join(attrs)
 
 
 class RoleSupportMixin(object):
