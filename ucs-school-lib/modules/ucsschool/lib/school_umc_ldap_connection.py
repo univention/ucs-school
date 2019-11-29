@@ -32,9 +32,12 @@
 import inspect
 from functools import wraps
 
+from univention.management.console.ldap import (
+    get_admin_connection,
+    get_machine_connection,
+    get_user_connection,
+)
 from univention.management.console.log import MODULE
-from univention.management.console.ldap import get_machine_connection, get_admin_connection, get_user_connection
-
 
 __bind_callback = None
 

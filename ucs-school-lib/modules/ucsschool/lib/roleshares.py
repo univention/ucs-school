@@ -32,8 +32,10 @@ Role specific shares
 """
 
 import os
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+
 from ucsschool.lib.i18n import ucs_school_name_i18n
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+
 try:
 	from typing import Optional
 	from univention.config_registry import ConfigRegistry

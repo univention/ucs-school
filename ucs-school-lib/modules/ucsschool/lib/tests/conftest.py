@@ -4,11 +4,10 @@ import subprocess
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Tuple
 
-from faker import Faker
 import pytest
+from faker import Faker
 from univention.admin.client import UDM
 from univention.admin.modules import ConnectionData
-
 
 REMOTE_CODE_MODULE_NAME = "remote_code"
 REMOTE_CODE_FILE_PATH = Path(__file__).parent / f"{REMOTE_CODE_MODULE_NAME}.py"

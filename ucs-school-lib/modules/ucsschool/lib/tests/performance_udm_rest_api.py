@@ -1,10 +1,11 @@
-import sys
 import random
+import sys
 import time
 from multiprocessing import Pool
 from typing import Dict, List, Optional, Tuple
-from six.moves.urllib.parse import unquote
+
 import requests
+from six.moves.urllib.parse import unquote
 
 try:
 	NUM_USERS = int(sys.argv[1])

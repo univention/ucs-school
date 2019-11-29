@@ -1,4 +1,11 @@
-from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.user import (
+    ExamStudent,
+    Staff,
+    Student,
+    Teacher,
+    TeachersAndStaff,
+    User,
+)
 
 
 async def test_read_user(new_user_via_ssh, lo_udm, remove_user_via_ssh):

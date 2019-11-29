@@ -32,15 +32,24 @@
 from typing import Any, AsyncIterator, Dict, List, Optional, Type
 
 from ldap.dn import str2dn
-from udm_rest_client import UDM, UdmObject, NoObject as UdmNoObject
 
-from .attributes import GroupName, Description, Attribute, SchoolClassName, Hosts, Users, Roles
+from udm_rest_client import UDM, NoObject as UdmNoObject, UdmObject
+
+from ..roles import role_computer_room, role_school_class, role_workgroup
+from .attributes import (
+    Attribute,
+    Description,
+    GroupName,
+    Hosts,
+    Roles,
+    SchoolClassName,
+    Users,
+)
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UCSSchoolModel
 from .misc import OU, Container
-from .share import ClassShare, WorkGroupShare
 from .policy import UMCPolicy
-from .utils import ucr, _
-from ..roles import role_computer_room, role_school_class, role_workgroup
+from .share import ClassShare, WorkGroupShare
+from .utils import _, ucr
 
 
 class _MayHaveSchoolPrefix(object):

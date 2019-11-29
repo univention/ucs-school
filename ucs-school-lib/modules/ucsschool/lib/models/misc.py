@@ -30,11 +30,12 @@
 # <http://www.gnu.org/licenses/>.
 
 from univention.admin.uldap import position as uldap_position
+
 from udm_rest_client import UDM
 
 from .attributes import ContainerPath
 from .base import UCSSchoolHelperAbstractClass
-from .utils import ucr, _
+from .utils import _, ucr
 
 
 class MailDomain(UCSSchoolHelperAbstractClass):

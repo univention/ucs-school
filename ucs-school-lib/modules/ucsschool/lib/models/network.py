@@ -29,14 +29,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
-
+from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
 from univention.admin.uexceptions import noObject
 
 from .attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
 from .base import UCSSchoolHelperAbstractClass
 from .dhcp import DHCPSubnet
-from .utils import ucr, _
+from .utils import _, ucr
 
 
 class Network(UCSSchoolHelperAbstractClass):

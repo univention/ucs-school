@@ -1,11 +1,11 @@
-import sys
 import random
+import sys
 import time
 from multiprocessing import Pool
 from typing import Any, Dict, List, Optional, Tuple
+
 from univention.udm import UDM
 from univention.udm.base import BaseModule, BaseObject
-
 
 try:
 	PARALLELISM = int(sys.argv[1])

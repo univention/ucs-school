@@ -32,12 +32,12 @@
 Parser for smbstatus
 """
 
-import re
-import sys
 import logging
+import re
 import subprocess
-from ucsschool.lib.models.utils import get_file_handler
+import sys
 
+from ucsschool.lib.models.utils import get_file_handler
 
 REGEX_LOCKED_FILES = re.compile(r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$')
 REGEX_USERS = re.compile(r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s*')
