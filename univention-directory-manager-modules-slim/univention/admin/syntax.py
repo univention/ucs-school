@@ -38,12 +38,13 @@ try:
 except ImportError:
 	pass
 import ipaddr
-from . import uexceptions
-from . import localization
+from .uexceptions import valueError
+# from . import localization
 
 
-translation = localization.translation('univention/admin')
-_ = translation.translate
+# translation = localization.translation('univention/admin')
+# _ = translation.translate
+_ = lambda x: x
 
 
 class ClassProperty(object):
@@ -105,12 +106,12 @@ class simple(ISyntax):
 		Validate the value by parsing it.
 
 		:return: the parsed textual value.
-		:raises uexceptions.valueError: if the value is invalid.
+		:raises valueError: if the value is invalid.
 		"""
 		if text is None or self.regex is None or self.regex.match(text) is not None:
 			return text
 		else:
-			raise uexceptions.valueError(self.error_message)
+			raise valueError(self.error_message)
 
 	@classmethod
 	def new(self):
@@ -233,7 +234,7 @@ class emailAddress(simple):
 			'@' in text and \
 			not text.endswith('@'):
 			return text
-		raise uexceptions.valueError(_("Not a valid email address!"))
+		raise valueError(_("Not a valid email address!"))
 
 
 class emailAddressValidDomain(emailAddress):
@@ -266,7 +267,7 @@ class emailAddressValidDomain(emailAddress):
 					faillist.append(mailaddress)
 
 		if faillist:
-			raise uexceptions.valueError(self.errMsgDomain % (', '.join(faillist),))
+			raise valueError(self.errMsgDomain % (', '.join(faillist),))
 
 
 class primaryEmailAddressValidDomain(emailAddressValidDomain):
@@ -306,11 +307,11 @@ class uid_umlauts(simple):
 	@classmethod
 	def parse(self, text):
 		if " " in text:
-			raise uexceptions.valueError(_("Spaces are not allowed in the username!"))
+			raise valueError(_("Spaces are not allowed in the username!"))
 		if self._re.match(text) is not None:
 			return text
 		else:
-			raise uexceptions.valueError(_("Username must only contain numbers, letters and dots!"))
+			raise valueError(_("Username must only contain numbers, letters and dots!"))
 
 
 class boolean(simple):
@@ -399,10 +400,10 @@ class UDM_Objects(ISyntax):
 	@classmethod
 	def parse(self, text):
 		if not self.empty_value and not text:
-			raise uexceptions.valueError(_('An empty value is not allowed'))
+			raise valueError(_('An empty value is not allowed'))
 		if not text or not self.regex or self.regex.match(text) is not None:
 			return text
-		raise uexceptions.valueError(self.error_message)
+		raise valueError(self.error_message)
 
 
 class UserDN(UDM_Objects):
@@ -443,7 +444,7 @@ class ipAddress(simple):
 		try:
 			return str(ipaddr.IPAddress(text))
 		except ValueError:
-			raise uexceptions.valueError(_("Not a valid IP address!"))
+			raise valueError(_("Not a valid IP address!"))
 
 
 class MAC_Address(simple):
@@ -484,7 +485,7 @@ class MAC_Address(simple):
 				tmpList.append(tmpStr[i:i + 2])
 			return ':'.join(tmpList).lower()
 		else:
-			raise uexceptions.valueError(self.error_message)
+			raise valueError(self.error_message)
 
 
 class disabled(boolean):
@@ -532,7 +533,7 @@ class ipv4Address(simple):
 		try:
 			return str(ipaddr.IPv4Address(text))
 		except ValueError:
-			raise uexceptions.valueError(_("Not a valid IP address!"))
+			raise valueError(_("Not a valid IP address!"))
 
 
 class integer(simple):
@@ -572,7 +573,7 @@ class integer(simple):
 		if self._re.match(text) is not None:
 			return text
 		else:
-			raise uexceptions.valueError(_("Value must be a number!"))
+			raise valueError(_("Value must be a number!"))
 
 
 class v4netmask(simple):
@@ -636,7 +637,7 @@ class v4netmask(simple):
 				errors = 1
 		if errors:
 			# FIXME: always raise exception here!
-			raise uexceptions.valueError(_("Not a valid netmask!"))
+			raise valueError(_("Not a valid netmask!"))
 
 
 class netmask(simple):
@@ -668,7 +669,7 @@ class netmask(simple):
 			return str(ipaddr.IPv4Network('0.0.0.0/%s' % (text, )).prefixlen)
 		except ValueError:
 			pass
-		raise uexceptions.valueError(_("Not a valid netmask!"))
+		raise valueError(_("Not a valid netmask!"))
 
 
 if __name__ == '__main__':

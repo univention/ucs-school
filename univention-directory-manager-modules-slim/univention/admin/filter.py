@@ -34,7 +34,7 @@ import logging
 
 from six import string_types
 from ldap.filter import filter_format
-import univention.admin.uexceptions
+from .uexceptions import valueInvalidSyntax
 
 
 logger = logging.getLogger(__name__)
@@ -221,7 +221,7 @@ def parse(filter_s, begin=0, end=-1):
 		return c
 	else:
 		if filter_s.find('=') == -1:
-			raise univention.admin.uexceptions.valueInvalidSyntax()
+			raise valueInvalidSyntax()
 
 		# new expression
 		if '<=' in filter_s:
