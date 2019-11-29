@@ -3,12 +3,12 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import (
     BaseModel,
+    Field,
+    HttpUrl,
     Protocol,
     PydanticValueError,
-    Field,
     SecretStr,
     StrBytes,
-    HttpUrl,
     ValidationError,
     validator,
 )

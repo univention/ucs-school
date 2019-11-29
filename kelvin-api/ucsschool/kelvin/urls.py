@@ -1,6 +1,7 @@
 from ldap.dn import escape_dn_chars, explode_dn  # TODO: use ldap3
 from starlette.datastructures import URL
 from starlette.requests import Request
+
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM
@@ -44,8 +45,12 @@ async def url_to_dn(request: Request, obj_type: str, url: str) -> str:
     elif obj_type == "user":
         async with UDM(**await udm_kwargs()) as udm:
             filter_s = f"(&(objectClass=ucsschoolType)(uid={escape_dn_chars(name)}))"
-            async for obj in udm.get("users/user").search(filter_s, base=env_or_ucr("ldap/base")):
+            async for obj in udm.get("users/user").search(
+                filter_s, base=env_or_ucr("ldap/base")
+            ):
                 return obj.dn
             else:
-                raise NoObject(f"Could not find object of type {obj_type!r} with URL {url!r}.")
+                raise NoObject(
+                    f"Could not find object of type {obj_type!r} with URL {url!r}."
+                )
     raise NotImplemented(f"Don't know how to create DN for obj_type {obj_type!r}.")
