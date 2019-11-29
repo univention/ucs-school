@@ -5,7 +5,7 @@ from pydantic import (
     BaseModel,
     Protocol,
     PydanticValueError,
-    Schema,
+    Field,
     HttpUrl,
     SecretStr,
     StrBytes,

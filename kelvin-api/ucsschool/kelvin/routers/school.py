@@ -6,7 +6,7 @@ from pydantic import (
     BaseModel,
     Protocol,
     PydanticValueError,
-    Schema,
+    Field,
     SecretStr,
     StrBytes,
     HttpUrl,
@@ -41,7 +41,7 @@ def validate_school_name(name):
 class SchoolModel(BaseModel):
     dn: str = None
     name: str
-    ucsschool_roles: List[str] = Schema(
+    ucsschool_roles: List[str] = Field(
         None, title="Roles of this object. Don't change if unsure."
     )
 

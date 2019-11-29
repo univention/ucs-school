@@ -5,7 +5,7 @@ from pydantic import (
     BaseModel,
     Protocol,
     PydanticValueError,
-    Schema,
+    Field,
     SecretStr,
     StrBytes,
     HttpUrl,
@@ -34,7 +34,7 @@ class ComputerRoomModel(BaseModel):
     name: str
     school: HttpUrl
     description: str = None
-    ucsschool_roles: List[str] = Schema(
+    ucsschool_roles: List[str] = Field(
         None, title="Roles of this object. Don't change if unsure."
     )
 
