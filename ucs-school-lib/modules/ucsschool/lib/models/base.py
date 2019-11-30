@@ -31,17 +31,17 @@
 
 from copy import deepcopy
 from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
+	Any,
+	Dict,
+	Iterable,
+	List,
+	Optional,
+	Sequence,
+	Set,
+	Tuple,
+	Type,
+	TypeVar,
+	Union,
 )
 
 import ldap
@@ -52,9 +52,9 @@ from six import add_metaclass, iteritems
 from univention.admin.filter import conjunction, expression
 from univention.admin.uexceptions import noObject
 from univention.admin.uldap import (
-    getAdminConnection,
-    getMachineConnection,
-    position as uldap_position,
+	getAdminConnection,
+	getMachineConnection,
+	position as uldap_position,
 )
 
 from udm_rest_client import UDM, NoObject as UdmNoObject, UdmModule, UdmObject

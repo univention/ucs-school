@@ -40,26 +40,26 @@ from univention.admin.uexceptions import nextFreeIp
 from udm_rest_client import UDM, UdmObject
 
 from ..roles import (
-    create_ucsschool_role_string,
-    role_ip_computer,
-    role_mac_computer,
-    role_teacher_computer,
-    role_win_computer,
+	create_ucsschool_role_string,
+	role_ip_computer,
+	role_mac_computer,
+	role_teacher_computer,
+	role_win_computer,
 )
 from .attributes import (
-    Attribute,
-    Groups,
-    InventoryNumber,
-    IPAddress,
-    MACAddress,
-    Roles,
-    SubnetMask,
+	Attribute,
+	Groups,
+	InventoryNumber,
+	IPAddress,
+	MACAddress,
+	Roles,
+	SubnetMask,
 )
 from .base import (
-    MultipleObjectsError,
-    RoleSupportMixin,
-    SuperOrdinateType,
-    UCSSchoolHelperAbstractClass,
+	MultipleObjectsError,
+	RoleSupportMixin,
+	SuperOrdinateType,
+	UCSSchoolHelperAbstractClass,
 )
 from .dhcp import AnyDHCPService, DHCPServer
 from .group import BasicGroup

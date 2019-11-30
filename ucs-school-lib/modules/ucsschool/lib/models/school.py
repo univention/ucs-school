@@ -40,23 +40,23 @@ from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
 
 from ..roles import (
-    create_ucsschool_role_string,
-    role_dc_slave_admin,
-    role_dc_slave_edu,
-    role_school,
-    role_school_admin_group,
-    role_school_domain_group,
-    role_school_staff_group,
-    role_school_student_group,
-    role_school_teacher_group,
+	create_ucsschool_role_string,
+	role_dc_slave_admin,
+	role_dc_slave_edu,
+	role_school,
+	role_school_admin_group,
+	role_school_domain_group,
+	role_school_staff_group,
+	role_school_student_group,
+	role_school_teacher_group,
 )
 from .attributes import (
-    Attribute,
-    DCName,
-    DisplayName,
-    Roles,
-    SchoolName,
-    ShareFileServer,
+	Attribute,
+	DCName,
+	DisplayName,
+	Roles,
+	SchoolName,
+	ShareFileServer,
 )
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .computer import AnyComputer, SchoolDC, SchoolDCSlave

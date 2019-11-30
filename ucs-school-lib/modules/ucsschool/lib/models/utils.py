@@ -41,6 +41,7 @@ import sys
 from contextlib import contextmanager
 from logging.handlers import TimedRotatingFileHandler
 from random import choice, shuffle
+from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union
 
 import colorlog
 import lazy_object_proxy
@@ -50,12 +51,6 @@ from six import string_types
 from univention.config_registry import ConfigRegistry
 # from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
-
-try:
-	from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union
-except ImportError:
-	pass
-
 
 # "global" translation for ucsschool.lib.models
 _ = Translation('python-ucs-school').translate

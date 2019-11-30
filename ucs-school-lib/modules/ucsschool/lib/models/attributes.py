@@ -30,37 +30,33 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
+from typing import Any, List, Optional, Type
 
 from ldap.dn import escape_dn_chars
 from univention.admin.syntax import (
-    GroupDN,
-    MAC_Address,
-    UDM_Objects,
-    UserDN,
-    boolean,
-    disabled,
-    gid,
-    ipAddress,
-    ipv4Address,
-    iso8601Date,
-    netmask,
-    primaryEmailAddressValidDomain,
-    reverseLookupSubnet,
-    simple,
-    string,
-    string_numbers_letters_dots_spaces,
-    uid_umlauts,
-    v4netmask,
+	GroupDN,
+	MAC_Address,
+	UDM_Objects,
+	UserDN,
+	boolean,
+	disabled,
+	gid,
+	ipAddress,
+	ipv4Address,
+	iso8601Date,
+	netmask,
+	primaryEmailAddressValidDomain,
+	reverseLookupSubnet,
+	simple,
+	string,
+	string_numbers_letters_dots_spaces,
+	uid_umlauts,
+	v4netmask,
 )
 from univention.admin.uexceptions import valueError
 
 from ..roles import all_roles
 from .utils import _, ucr
-
-try:
-	from typing import Any, List, Optional, Type
-except ImportError:
-	pass
 
 
 class ValidationError(Exception):
