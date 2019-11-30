@@ -40,7 +40,7 @@ class Policy(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):
 		return cls.get_search_base(school).policies
 
-	def attach(self, obj, lo):
+	async def attach(self, obj, lo):
 		# add univentionPolicyReference if neccessary
 		oc = lo.get(obj.dn, ['objectClass'])
 		if 'univentionPolicyReference' not in oc.get('objectClass', []):

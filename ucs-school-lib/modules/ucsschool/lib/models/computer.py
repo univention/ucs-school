@@ -124,7 +124,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 		try:
 			if udm_obj is None:
 				try:
-					udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
+					udm_obj = await self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
 				except MultipleObjectsError:
 					self.logger.error('Found more than one DC Slave with hostname "%s"', self.name)
 					return False
@@ -132,7 +132,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 					self.logger.error('Cannot find DC Slave with hostname "%s"', self.name)
 					return False
 			old_dn = udm_obj.dn
-			school = self.get_school_obj(lo)
+			school = await self.get_school_obj(lo)
 			group_dn = school.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
 			if group_dn not in udm_obj['groups']:
 				self.logger.error('%r has no LDAP access to %r', self, school)
@@ -140,7 +140,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 			if old_dn == self.dn:
 				self.logger.info('DC Slave "%s" is already located in "%s" - stopping here', self.name, self.school)
 			self.set_dn(old_dn)
-			if self.exists_outside_school(lo):
+			if await self.exists_outside_school(lo):
 				if not force:
 					self.logger.error('DC Slave "%s" is located in another OU - %s', self.name, udm_obj.dn)
 					self.logger.error('Use force=True to override')
@@ -158,9 +158,9 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
 			removed = False
 			# find dhcp server object by checking all dhcp service objects
 			for dhcp_service in await AnyDHCPService.get_all(lo, None):
-				for dhcp_server in dhcp_service.get_servers(lo):
+				for dhcp_server in await dhcp_service.get_servers(lo):
 					if dhcp_server.name == self.name and not dhcp_server.dn.endswith(',%s' % school.dn):
-						dhcp_server.remove(lo)
+						await dhcp_server.remove(lo)
 						removed = True
 
 			if removed:
@@ -260,12 +260,12 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return await super(SchoolComputer, self).create(lo, validate)
 
 	async def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
-		self.create_network(lo)
+		await self.create_network(lo)
 		return await super(SchoolComputer, self).create_without_hooks(lo, validate)
 
 	async def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		# type: (LoType, Optional[bool], Optional[bool]) -> bool
-		self.create_network(lo)
+		await self.create_network(lo)
 		return await super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def get_ipv4_network(self):  # type: () -> IPv4Network
@@ -294,21 +294,21 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			broadcast = str(ipv4_network.broadcast)
 			return Network.cache(network_name, self.school, network=network, netmask=netmask, broadcast=broadcast)
 
-	def create_network(self, lo):  # type: (LoType) -> Network
+	async def create_network(self, lo):  # type: (LoType) -> Network
 		network = self.get_network()
 		if network:
-			network.create(lo)
+			await network.create(lo)
 		return network
 
 	async def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
-		super(SchoolComputer, self).validate(lo, validate_unlikely_changes)
+		await super(SchoolComputer, self).validate(lo, validate_unlikely_changes)
 		for ip_address in self.ip_address:
 			name, ip_address = escape_filter_chars(self.name), escape_filter_chars(ip_address)
-			if AnyComputer.get_first_udm_obj(lo, '&(!(cn=%s))(ip=%s)' % (name, ip_address)):
+			if await AnyComputer.get_first_udm_obj(lo, '&(!(cn=%s))(ip=%s)' % (name, ip_address)):
 				self.add_error('ip_address', _('The ip address is already taken by another computer. Please change the ip address.'))
 		for mac_address in self.mac_address:
 			name, mac_address = escape_filter_chars(self.name), escape_filter_chars(mac_address)
-			if AnyComputer.get_first_udm_obj(lo, '&(!(cn=%s))(mac=%s)' % (name, mac_address)):
+			if await AnyComputer.get_first_udm_obj(lo, '&(!(cn=%s))(mac=%s)' % (name, mac_address)):
 				self.add_error('mac_address', _('The mac address is already taken by another computer. Please change the mac address.'))
 		own_network = self.get_network()
 		own_network_ip4 = self.get_ipv4_network()
@@ -326,7 +326,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolComputer]
+	async def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolComputer]
 		oc = udm_obj.lo.get(udm_obj.dn, ['objectClass'])
 		object_classes = oc.get('objectClass', [])
 		if 'univentionWindows' in object_classes:
@@ -352,7 +352,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			obj.zone = 'verwaltung'
 		network_dn = udm_obj['network']
 		if network_dn:
-			netmask = Network.get_netmask(network_dn, school, lo)
+			netmask = await Network.get_netmask(network_dn, school, lo)
 			obj.subnet_mask = netmask
 		obj.inventory_number = ', '.join(udm_obj['inventoryNumber'])
 		return obj
