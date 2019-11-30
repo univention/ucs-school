@@ -516,7 +516,7 @@ class UCSSchoolHelperAbstractClass(object):
 			same = old_attrs == udm_obj.info
 			if move_if_necessary:
 				if udm_obj.dn != self.dn:
-					if self.move_without_hooks(lo, udm_obj, force=True):
+					if await self.move_without_hooks(lo, udm_obj, force=True):
 						same = False
 			if same:
 				self.logger.info('%r not modified. Nothing changed', self)
@@ -559,7 +559,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if udm_obj is None:
 			self.logger.warning('No UDM object found to move from (%r)', self)
 			return False
-		if self.supports_school() and self.get_school_obj(lo) is None:
+		if self.supports_school() and await self.get_school_obj(lo) is None:
 			self.logger.warning('%r wants to move itself to a not existing school', self)
 			return False
 		self.logger.info('Moving %r to %r', udm_obj.dn, self)
@@ -568,7 +568,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		if force or self._meta.allow_school_change:
 			try:
-				self.do_move(udm_obj, lo)
+				await self.do_move(udm_obj, lo)
 			finally:
 				self.invalidate_cache()
 			self.set_dn(self.dn)
@@ -698,7 +698,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self._udm_obj_searched = True
 		return self._udm_obj
 
-	async def get_school_obj(self, lo: UDM) -> "School":
+	async def get_school_obj(self, lo: UDM) -> "ucsschool.lib.models.school.School":
 		from ucsschool.lib.models.school import School
 		if not self.supports_school():
 			return None

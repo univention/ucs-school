@@ -62,9 +62,9 @@ class Network(UCSSchoolHelperAbstractClass):
 
 	async def create_without_hooks(self, lo, validate):
 		dns_reverse_zone = DNSReverseZone.cache(self.get_subnet())
-		dns_reverse_zone.create(lo)
+		await dns_reverse_zone.create(lo)
 
-		dhcp_service = self.get_school_obj(lo).get_dhcp_service()
+		dhcp_service = await self.get_school_obj(lo).get_dhcp_service()
 		dhcp_subnet = DHCPSubnet(name=self.network, school=self.school, subnet_mask=self.netmask, broadcast=self.broadcast, dhcp_service=dhcp_service)
 		await dhcp_subnet.create(lo)
 
@@ -85,7 +85,7 @@ class Network(UCSSchoolHelperAbstractClass):
 
 		return await super(Network, self).create_without_hooks(lo, validate)
 
-	def do_create(self, udm_obj, lo):
+	async def do_create(self, udm_obj, lo):
 		from ucsschool.lib.models.school import School
 		# TODO:
 		# if iprange:
@@ -96,7 +96,7 @@ class Network(UCSSchoolHelperAbstractClass):
 		udm_obj['dnsEntryZoneForward'] = 'zoneName=%s,cn=dns,%s' % (ucr.get('domainname'), ucr.get('ldap/base'))
 		reversed_subnet = '.'.join(reversed(self.get_subnet().split('.')))
 		udm_obj['dnsEntryZoneReverse'] = 'zoneName=%s.in-addr.arpa,cn=dns,%s' % (reversed_subnet, ucr.get('ldap/base'))
-		return super(Network, self).do_create(udm_obj, lo)
+		return await super(Network, self).do_create(udm_obj, lo)
 
 	@classmethod
 	def invalidate_cache(cls):
@@ -104,10 +104,10 @@ class Network(UCSSchoolHelperAbstractClass):
 		cls._netmask_cache.clear()
 
 	@classmethod
-	def get_netmask(cls, dn, school, lo):
+	async def get_netmask(cls, dn, school, lo):
 		if dn not in cls._netmask_cache:
 			try:
-				network = cls.from_dn(dn, school, lo)
+				network = await cls.from_dn(dn, school, lo)
 			except noObject:
 				return
 			netmask = network.netmask  # e.g. '24'
@@ -134,10 +134,10 @@ class DNSReverseZone(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school=None):
 		return 'cn=dns,%s' % ucr.get('ldap/base')
 
-	def do_create(self, udm_obj, lo):
+	async def do_create(self, udm_obj, lo):
 		udm_obj['nameserver'] = ucr.get('ldap/master')
 		udm_obj['contact'] = 'root@%s' % ucr.get('domainname')
-		return super(DNSReverseZone, self).do_create(udm_obj, lo)
+		return await super(DNSReverseZone, self).do_create(udm_obj, lo)
 
 	class Meta:
 		udm_module = 'dns/reverse_zone'

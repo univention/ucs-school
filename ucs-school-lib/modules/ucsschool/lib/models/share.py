@@ -53,9 +53,9 @@ class Share(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):
 		return cls.get_search_base(school).shares
 
-	def do_create(self, udm_obj, lo):
-		gid = self.school_group.get_udm_object(lo)['gidNumber']
-		udm_obj['host'] = self.get_server_fqdn(lo)
+	async def do_create(self, udm_obj, lo):
+		gid = await self.school_group.get_udm_object(lo)['gidNumber']
+		udm_obj['host'] = await self.get_server_fqdn(lo)
 		udm_obj['path'] = self.get_share_path()
 		udm_obj['writeable'] = '1'
 		udm_obj['sambaName'] = None  # UDM HTTP API fails on empty string
@@ -73,7 +73,7 @@ class Share(UCSSchoolHelperAbstractClass):
 			except ValueError:
 				pass
 		self.logger.info('Creating share on "%s"', udm_obj['host'])
-		return super(Share, self).do_create(udm_obj, lo)
+		return await super(Share, self).do_create(udm_obj, lo)
 
 	def get_share_path(self):
 		if ucr.is_true('ucsschool/import/roleshare', True):
@@ -81,7 +81,7 @@ class Share(UCSSchoolHelperAbstractClass):
 		else:
 			return '/home/groups/%s' % self.name
 
-	def do_modify(self, udm_obj, lo):
+	async def do_modify(self, udm_obj, lo):
 		old_name = self.get_name_from_dn(self.old_dn)
 		if old_name != self.name:
 			head, tail = os.path.split(udm_obj['path'])
@@ -91,10 +91,10 @@ class Share(UCSSchoolHelperAbstractClass):
 				udm_obj['sambaName'] = self.name
 			if udm_obj['sambaForceGroup'] == '+%s' % old_name:
 				udm_obj['sambaForceGroup'] = '+%s' % self.name
-		return super(Share, self).do_modify(udm_obj, lo)
+		return await super(Share, self).do_modify(udm_obj, lo)
 
 	@staticmethod
-	def get_server_udm_object(dn, lo_udm):
+	async def get_server_udm_object(dn, lo_udm):
 		mod = lo_udm.get("computers/domaincontroller_slave")
 		try:
 			return mod.get(dn)
@@ -106,17 +106,17 @@ class Share(UCSSchoolHelperAbstractClass):
 		except HTTPError:
 			return None
 
-	def get_server_fqdn(self, lo):
+	async def get_server_fqdn(self, lo):
 		domainname = ucr.get('domainname')
-		school = self.get_school_obj(lo)
+		school = await self.get_school_obj(lo)
 		school_dn = school.dn
 
 		# fetch serverfqdn from OU
 		# TODO: change this also in 4.4
 		from .school import School
-		class_share_file_server_dn = School.from_dn(school_dn, None, lo).get_udm_object(lo)['ucsschoolClassShareFileServer']
+		class_share_file_server_dn = await School.from_dn(school_dn, None, lo).get_udm_object(lo)['ucsschoolClassShareFileServer']
 		if class_share_file_server_dn:
-			server_udm = self.get_server_udm_object(class_share_file_server_dn, lo)
+			server_udm = await self.get_server_udm_object(class_share_file_server_dn, lo)
 			server_domain_name = server_udm["domain"]
 			if not server_domain_name:
 				server_domain_name = domainname
@@ -161,7 +161,7 @@ class WorkGroupShare(RoleSupportMixin, Share):
 	'''
 	@classmethod
 	async def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
-		shares = super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
+		shares = await super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
 		filtered_shares = []
 		search_base = cls.get_search_base(school)
 		for share in shares:

@@ -194,16 +194,16 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			administrative_group_names.extend(self.get_administrative_group_name('administrative', domain_controller='both', ou_specific='both'))  # same with Verwaltungsnetz
 		for administrative_group_name in administrative_group_names:
 			group = BasicGroup.cache(name=administrative_group_name, container=administrative_group_container)
-			group.create(lo)
+			await group.create(lo)
 
 		# cn=ouadmins
 		admin_group_container = 'cn=ouadmins,cn=groups,%s' % ucr.get('ldap/base')
 		group = BasicSchoolGroup.cache(self.group_name('admins', 'admins-'), self.name, container=admin_group_container)
 		group.ucsschool_roles = [create_ucsschool_role_string(role_school_admin_group, self.name)]
-		group.create(lo)
+		await group.create(lo)
 		await group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)
 		try:
-			udm_obj = group.get_udm_object(lo)
+			udm_obj = await group.get_udm_object(lo)
 		except noObject:
 			self.logger.error('Could not load OU admin group %r for adding "school" value', group.dn)
 		else:
@@ -216,26 +216,26 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		# cn=schueler
 		group = Group.cache(self.group_name('pupils', 'schueler-'), self.name)
 		group.ucsschool_roles = [create_ucsschool_role_string(role_school_student_group, self.name)]
-		group.create(lo)
+		await group.create(lo)
 		await group.add_umc_policy(self.get_umc_policy_dn('pupils'), lo)
 
 		# cn=lehrer
 		group = Group.cache(self.group_name('teachers', 'lehrer-'), self.name)
 		group.ucsschool_roles = [create_ucsschool_role_string(role_school_teacher_group, self.name)]
-		group.create(lo)
+		await group.create(lo)
 		await group.add_umc_policy(self.get_umc_policy_dn('teachers'), lo)
 
 		# cn=mitarbeiter
 		if self.shall_create_administrative_objects():
 			group = Group.cache(self.group_name('staff', 'mitarbeiter-'), self.name)
 			group.ucsschool_roles = [create_ucsschool_role_string(role_school_staff_group, self.name)]
-			group.create(lo)
+			await group.create(lo)
 			await group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
 
 		# cn=Domain Users %s
 		group = Group.cache("Domain Users %s" % (self.name,), self.name)
 		group.ucsschool_roles = [create_ucsschool_role_string(role_school_domain_group, self.name)]
-		group.create(lo)
+		await group.create(lo)
 		if ucr.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 			await group.add_umc_policy("cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get('ldap/base'),), lo)
 
@@ -256,7 +256,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		else:
 			return self.get_dc_name_fallback(administrative=administrative)
 
-	def get_share_fileserver_dn(self, set_by_self, lo):
+	async def get_share_fileserver_dn(self, set_by_self, lo):
 		if set_by_self:
 			set_by_self = self.get_name_from_dn(set_by_self) or set_by_self
 		hostname = set_by_self or self.get_dc_name()
@@ -265,18 +265,18 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			host = SchoolDC(name=hostname, school=self.name)
 			return host.dn
 
-		host = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(hostname))
+		host = await AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(hostname))
 		if host:
 			return host.dn
 		else:
 			self.logger.warning('Could not find %s. Using this host as ShareFileServer ("%s").', hostname, ucr.get('hostname'))
 			return ucr.get('ldap/hostdn')
 
-	def get_class_share_file_server(self, lo):
-		return self.get_share_fileserver_dn(self.class_share_file_server, lo)
+	async def get_class_share_file_server(self, lo):
+		return await self.get_share_fileserver_dn(self.class_share_file_server, lo)
 
-	def get_home_share_file_server(self, lo):
-		return self.get_share_fileserver_dn(self.home_share_file_server, lo)
+	async def get_home_share_file_server(self, lo):
+		return await self.get_share_fileserver_dn(self.home_share_file_server, lo)
 
 	def get_administrative_group_name(self, group_type, domain_controller=True, ou_specific=False, as_dn=False):
 		if domain_controller == 'both':
@@ -298,14 +298,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		else:
 			return name
 
-	def get_administrative_server_names(self, lo):
+	async def get_administrative_server_names(self, lo):
 		dn = self.get_administrative_group_name('administrative', ou_specific=True, as_dn=True)
 		# TODO: this should also be done in 4.4
 		mod = univention.admin.modules.get('groups/group')
 		udm_obj = mod.get(dn)
 		return udm_obj['hosts']
 
-	def get_educational_server_names(self, lo):
+	async def get_educational_server_names(self, lo):
 		dn = self.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
 		# TODO: this should also be done in 4.4
 		mod = univention.admin.modules.get('groups/group')
@@ -368,21 +368,21 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		if await dc.exists(lo):
 			self.logger.info('%r exists. Setting groups, do not move to %r!', dc, self)
 			# call dc.move() if really necessary to move
-			return dc.modify(lo, move_if_necessary=False)
+			return await dc.modify(lo, move_if_necessary=False)
 		else:
-			existing_host = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(name))
+			existing_host = await AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(name))
 			if existing_host:
 				self.logger.error('Given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.', name)
 				return False
-			return dc.create(lo)
+			return await dc.create(lo)
 
-	def add_domain_controllers(self, lo):
+	async def add_domain_controllers(self, lo):
 		self.logger.info('School.add_domain_controllers(): ou_name=%r', self.name)
 		school_dcs = ucr.get('ucsschool/ldap/default/dcs', 'edukativ').split()
 		for dc in school_dcs:
 			administrative = dc == 'verwaltung'
 			dc_name = self.get_dc_name(administrative=administrative)
-			server = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(dc_name))
+			server = await AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(dc_name))
 			self.logger.info('School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  server=%r', administrative, dc_name, self.dc_name, server)
 			if not server and not self.dc_name:
 				if administrative:
@@ -401,11 +401,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				if hostlist:
 					continue  # if at least one DC has control over this OU then jump to next 'school_dcs' item ==> do not create default slave objects
 
-				self.create_dc_slave(lo, dc_name, administrative=administrative)
+				await self.create_dc_slave(lo, dc_name, administrative=administrative)
 
 			dhcp_service = self.get_dhcp_service(dc_name)
-			dhcp_service.create(lo)
-			dhcp_service.add_server(dc_name, lo)
+			await dhcp_service.create(lo)
+			await dhcp_service.add_server(dc_name, lo)
 			return True
 
 	def get_dhcp_service(self, hostname=None):
@@ -442,19 +442,19 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			await self.create_default_containers(lo)
 			await self.create_default_groups(lo)
 			await self.add_host_to_dc_group(lo)
-			if not self.add_domain_controllers(lo):
+			if not await self.add_domain_controllers(lo):
 				return False
 			if self.dc_name_administrative:
 				await self.create_dc_slave(lo, self.dc_name_administrative, administrative=True)
 				dhcp_service = self.get_dhcp_service(self.dc_name_administrative)
-				dhcp_service.create(lo)
-				dhcp_service.add_server(self.dc_name_administrative, lo)
+				await dhcp_service.create(lo)
+				await dhcp_service.add_server(self.dc_name_administrative, lo)
 		finally:
 			self.logger.debug('Resetting share file servers from None to %r and %r', saved_home_share_file_server, saved_class_share_file_server)
 			self.class_share_file_server = saved_class_share_file_server
 			self.home_share_file_server = saved_home_share_file_server
-		self.class_share_file_server = self.get_class_share_file_server(lo)
-		self.home_share_file_server = self.get_home_share_file_server(lo)
+		self.class_share_file_server = await self.get_class_share_file_server(lo)
+		self.home_share_file_server = await self.get_home_share_file_server(lo)
 		self.logger.debug('Now it is %r and %r - %r should be modified accordingly', self.home_share_file_server, self.class_share_file_server, self)
 		await self.modify_without_hooks(lo)
 
@@ -463,7 +463,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		if ucr.is_true('ucsschool/import/generate/policy/dhcp/dns/clearou', False):
 			policy = DHCPDNSPolicy(name='dhcp-dns-clear', school=self.name, empty_attributes=['univentionDhcpDomainNameServers'])
 			await policy.create(lo)
-			policy.attach(self, lo)
+			await policy.attach(self, lo)
 
 		return success
 
@@ -486,7 +486,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 					schools.append(await cls.from_dn(cls(name=ou).dn, None, lo))
 				except noObject:
 					pass
-			return cls._filter_local_schools(schools, lo)
+			return await cls._filter_local_schools(schools, lo)
 
 		if 'ou=' in lo.binddn:
 			# user has no ucsschoolSchool attribute (not migrated yet)
@@ -497,7 +497,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			cls.logger.debug('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s', school_dn)
 			school = await cls.from_dn(school_dn, None, lo)
 			cls.logger.debug('Schools from binddn: Found school: %r', school)
-			return cls._filter_local_schools([school], lo)
+			return await cls._filter_local_schools([school], lo)
 
 		cls.logger.warning('Schools from binddn: Unable to identify OU of this account - showing all local OUs!')
 		return await School.get_all(lo)
@@ -505,8 +505,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	@classmethod
 	async def from_udm_obj(cls, udm_obj, school, lo):
 		obj = await super(School, cls).from_udm_obj(udm_obj, school, lo)
-		obj.educational_servers = obj.get_educational_server_names(lo)
-		obj.administrative_servers = obj.get_administrative_server_names(lo)
+		obj.educational_servers = await obj.get_educational_server_names(lo)
+		obj.administrative_servers = await obj.get_administrative_server_names(lo)
 		return obj
 
 	@classmethod
@@ -517,13 +517,13 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			cls.logger.debug('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			ous = [x.strip() for x in oulist.split(',')]
 			schools = [school for school in schools if school.name in ous]
-		return cls._filter_local_schools(schools, lo)
+		return await cls._filter_local_schools(schools, lo)
 
 	@classmethod
-	def _filter_local_schools(cls, schools, lo):
+	async def _filter_local_schools(cls, schools, lo):
 		if ucr.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
 			return schools
-		return [school for school in schools if any(ucr.get('ldap/hostdn', '').lower() == x.lower() for x in school.get_administrative_server_names(lo) + school.get_educational_server_names(lo))]
+		return [school for school in schools if any(ucr.get('ldap/hostdn', '').lower() == x.lower() for x in await school.get_administrative_server_names(lo) + school.get_educational_server_names(lo))]
 
 	@classmethod
 	def _attrs_for_easy_filter(cls):
