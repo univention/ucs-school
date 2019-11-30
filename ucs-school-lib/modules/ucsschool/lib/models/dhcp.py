@@ -28,6 +28,7 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
 from typing import List, Optional
 
 import ipaddr
@@ -37,13 +38,13 @@ from ldap.filter import filter_format
 from udm_rest_client import UDM, UdmObject
 
 from .attributes import (
-    Attribute,
-    BroadcastAddress,
-    DHCPServerName,
-    DHCPServiceAttribute,
-    DHCPServiceName,
-    DHCPSubnetMask,
-    DHCPSubnetName,
+	Attribute,
+	BroadcastAddress,
+	DHCPServerName,
+	DHCPServiceAttribute,
+	DHCPServiceName,
+	DHCPSubnetMask,
+	DHCPSubnetName,
 )
 from .base import SuperOrdinateType, UCSSchoolHelperAbstractClass
 from .utils import _, ucr

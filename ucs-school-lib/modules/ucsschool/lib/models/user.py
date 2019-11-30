@@ -30,6 +30,8 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
+from collections.abc import Mapping
+from typing import Dict, List, Optional
 
 import univention.admin.modules as udm_modules
 from ldap.dn import escape_dn_chars, explode_dn
@@ -38,24 +40,26 @@ from six import iteritems
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject
 
+from udm_rest_client import UdmObject
+
 from ..roles import role_exam_user, role_pupil, role_staff, role_student, role_teacher
 from .attributes import (
-    Birthday,
-    Disabled,
-    Email,
-    Firstname,
-    Lastname,
-    Password,
-    Roles,
-    SchoolClassesAttribute,
-    Schools,
-    Username,
+	Birthday,
+	Disabled,
+	Email,
+	Firstname,
+	Lastname,
+	Password,
+	Roles,
+	SchoolClassesAttribute,
+	Schools,
+	Username,
 )
 from .base import (
-    RoleSupportMixin,
-    UCSSchoolHelperAbstractClass,
-    UnknownModel,
-    WrongModel,
+	RoleSupportMixin,
+	UCSSchoolHelperAbstractClass,
+	UnknownModel,
+	WrongModel,
 )
 from .computer import AnyComputer
 from .group import Group, SchoolClass, SchoolGroup, WorkGroup
@@ -63,24 +67,7 @@ from .misc import MailDomain
 from .school import School
 from .utils import _, create_passwd, ucr
 
-try:
-	from collections.abc import Mapping  # py3
-except ImportError:
-	from collections import Mapping  # py2
-try:
-	from typing import Dict, List, Optional
-	from .base import UdmObject
-except ImportError:
-	pass
-
-
-
-
-
-try:
-	unicode_s = unicode  # py2
-except NameError:
-	unicode_s = str  # py3
+unicode_s = str  # py3
 
 
 class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
