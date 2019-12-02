@@ -10,7 +10,7 @@ from starlette.status import (
     HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
-)
+    HTTP_409_CONFLICT)
 
 from ucsschool.lib.models.user import User  # Staff, Student, Teacher, TeachersAndStaff,
 from udm_rest_client import UDM  # , NoObject as UdmNoObject
@@ -19,6 +19,7 @@ from ..ldap_access import udm_kwargs
 from ..utils import get_logger
 from .base import UcsSchoolBaseModel, get_lib_obj
 from .role import SchoolUserRole
+from ..urls import url_to_name
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -27,6 +28,8 @@ router = APIRouter()
 class UserModel(UcsSchoolBaseModel):
     dn: str = None
     name: str
+    firstname: str
+    lastname: str
     school: HttpUrl
     role: SchoolUserRole
 
@@ -37,12 +40,15 @@ class UserModel(UcsSchoolBaseModel):
     def _from_lib_model_kwargs(cls, obj: User, request: Request) -> Dict[str, Any]:
         kwargs = super()._from_lib_model_kwargs(obj, request)
         kwargs["role"] = SchoolUserRole.from_lib_roles(obj.roles)
-        kwargs["url"] = None  # TODO
+        kwargs["url"] = cls.scheme_and_quote(
+            request.url_for("get", username=kwargs["name"])
+        )
         return kwargs
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        # TODO
+        if not kwargs["ucsschool_roles"]:
+            kwargs["ucsschool_roles"] = self.role.as_lib_roles(url_to_name(request, 'school', self.school))
         return kwargs
 
 
@@ -55,18 +61,27 @@ async def search(
         min_length=3,
     ),
     school_filter: str = Query(
-        None, title="List only users in school with this name (not URL). ", min_length=3
+        ..., title="List only users in school with this name (not URL). ", min_length=3
     ),
 ) -> List[UserModel]:
+    """
+    Search for school users.
+
+    - **name**: name of the school user, use '*' for inexact search (optional)
+    - **school**: school the user belongs to, **case sensitive** (required)
+    """
     logger.debug(
         "Searching for users with: name_filter=%r school_filter=%r",
         name_filter,
         school_filter,
     )
-    return [
-        UserModel(name="10a", school="https://foo.bar/schools/gsmitte"),
-        UserModel(name="8b", school="https://foo.bar/schools/gsmitte"),
-    ]
+    if name_filter:
+        filter_str = f"username={name_filter}"
+    else:
+        filter_str = None
+    async with UDM(**await udm_kwargs()) as udm:
+        users = await User.get_all(udm, school_filter, filter_str)
+        return [UserModel.from_lib_model(user, request) for user in users]
 
 
 @router.get("/{username}")
@@ -87,12 +102,24 @@ async def get(username: str, request: Request) -> UserModel:
 
 @router.post("/", status_code=HTTP_201_CREATED)
 async def create(user: UserModel, request: Request) -> UserModel:
-    if user.name == "alsoerror":
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid user name."
-        )
-    user.dn = "cn=foo-bar,cn=users,dc=test"
-    return user
+    """
+    Create a school user with all the information:
+
+    - **name**: name of the school user (required)
+    - **firstname**: name of the school user (required)
+    - **lastname**: name of the school user (required)
+    - **school**: school the class belongs to (required)
+    - **role**: One of either student, staff, teacher, teachers_and_staff
+    """
+    user = await user.as_lib_model(request)
+    async with UDM(**await udm_kwargs()) as udm:
+        if await user.exists(udm):
+            raise HTTPException(
+                status_code=HTTP_409_CONFLICT, detail="School user exists."
+            )
+        else:
+            await user.create(udm)
+    return UserModel.from_lib_model(user, request)
 
 
 @router.patch("/{username}", status_code=HTTP_200_OK)
