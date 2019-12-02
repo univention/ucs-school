@@ -2,7 +2,6 @@ import re
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, Field
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -34,9 +33,6 @@ def validate_school_name(name):
 class SchoolModel(UcsSchoolBaseModel):
     dn: str = None
     name: str
-    ucsschool_roles: List[str] = Field(
-        None, title="Roles of this object. Don't change if unsure."
-    )
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = School

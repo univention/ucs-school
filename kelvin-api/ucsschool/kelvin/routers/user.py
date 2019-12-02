@@ -27,9 +27,6 @@ class UserModel(UcsSchoolBaseModel):
     dn: str = None
     name: str
     school: HttpUrl
-    ucsschool_roles: List[str] = Field(
-        None, title="Roles of this object. Don't change if unsure."
-    )
     role: SchoolUserRole
 
     class Config(UcsSchoolBaseModel.Config):

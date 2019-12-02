@@ -34,9 +34,6 @@
 #     name: str
 #     school: HttpUrl
 #     description: str = None
-#     ucsschool_roles: List[str] = Field(
-#         None, title="Roles of this object. Don't change if unsure."
-#     )
 #
 #
 # @router.get("/")

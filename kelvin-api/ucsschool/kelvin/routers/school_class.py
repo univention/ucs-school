@@ -29,10 +29,6 @@ class SchoolClassModel(UcsSchoolBaseModel):
     name: str
     school: HttpUrl
     description: str = None
-    ucsschool_roles: List[str] = Field(
-        None, title="Roles of this object. Don't change if unsure."
-    )
-    url: HttpUrl = None
     users: List[HttpUrl] = None
 
     class Config(UcsSchoolBaseModel.Config):
@@ -43,6 +39,9 @@ class SchoolClassModel(UcsSchoolBaseModel):
         cls, obj: SchoolClass, request: Request
     ) -> Dict[str, Any]:
         kwargs = super()._from_lib_model_kwargs(obj, request)
+        kwargs["url"] = cls.scheme_and_quote(
+            request.url_for("get", class_name=kwargs["name"], school=obj.school)
+        )
         kwargs["users"] = [
             cls.scheme_and_quote(request.url_for("get", username=name_from_dn(dn)))
             for dn in obj.users

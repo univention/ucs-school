@@ -1,15 +1,15 @@
 import abc
-from typing import Any, Dict, Type
+from typing import Any, Dict, List, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
 import ujson
 from fastapi import HTTPException
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, HttpUrl, validator
 from starlette.requests import Request
 from starlette.status import HTTP_404_NOT_FOUND
 
-from ucsschool.lib.models.base import UCSSchoolModel
-from udm_rest_client import UDM, NoObject as UdmNoObject
+from ucsschool.lib.models.base import NoObject, UCSSchoolModel
+from udm_rest_client import UDM
 
 from ..urls import url_to_name
 
@@ -45,6 +45,11 @@ async def get_lib_obj(
 
 
 class UcsSchoolBaseModel(BaseModel, abc.ABC):
+    ucsschool_roles: List[str] = Field(
+        None, title="Roles of this object. Don't change if unsure."
+    )
+    url: HttpUrl = None
+
     class Config:
         lib_class: Type[UCSSchoolModel]
         json_loads = ujson.loads
@@ -79,9 +84,6 @@ class UcsSchoolBaseModel(BaseModel, abc.ABC):
             kwargs["school"] = cls.scheme_and_quote(
                 request.url_for("get", school_name=obj.school)
             )
-        kwargs["url"] = cls.scheme_and_quote(
-            request.url_for("get", class_name=kwargs["name"], school=obj.school)
-        )
         return kwargs
 
     async def as_lib_model(self, request: Request) -> UCSSchoolModel:
