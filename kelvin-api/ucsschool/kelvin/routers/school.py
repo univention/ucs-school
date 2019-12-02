@@ -17,7 +17,7 @@ from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
 from ..utils import get_logger
-from .base import get_lib_obj, UcsSchoolBaseModel
+from .base import UcsSchoolBaseModel, get_lib_obj
 
 logger = get_logger(__name__)
 router = APIRouter()

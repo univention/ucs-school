@@ -1,5 +1,4 @@
 from datetime import timedelta
-from pathlib import Path
 
 import aiofiles
 import lazy_object_proxy
@@ -26,15 +25,7 @@ from .constants import (
     URL_TOKEN_BASE,
 )
 from .ldap_access import LDAPAccess
-from .routers import (
-    computer_client,
-    computer_room,
-    computer_server,
-    role,
-    school,
-    school_class,
-    user,
-)
+from .routers import role, school, school_class, user
 from .token_auth import (
     Token,
     create_access_token,
@@ -107,18 +98,18 @@ app.include_router(
     tags=["classes"],
     dependencies=[Depends(get_current_active_user)],
 )
-app.include_router(
-    computer_room.router,
-    prefix=f"{URL_API_PREFIX}/computer_rooms",
-    tags=["computer_rooms"],
-    dependencies=[Depends(get_current_active_user)],
-)
-app.include_router(
-    computer_client.router,
-    prefix=f"{URL_API_PREFIX}/computers",
-    tags=["computers"],
-    dependencies=[Depends(get_current_active_user)],
-)
+# app.include_router(
+#     computer_room.router,
+#     prefix=f"{URL_API_PREFIX}/computer_rooms",
+#     tags=["computer_rooms"],
+#     dependencies=[Depends(get_current_active_user)],
+# )
+# app.include_router(
+#     computer_client.router,
+#     prefix=f"{URL_API_PREFIX}/computers",
+#     tags=["computers"],
+#     dependencies=[Depends(get_current_active_user)],
+# )
 app.include_router(
     role.router,
     prefix=f"{URL_API_PREFIX}/roles",
@@ -131,12 +122,12 @@ app.include_router(
     tags=["schools"],
     dependencies=[Depends(get_current_active_user)],
 )
-app.include_router(
-    computer_server.router,
-    prefix=f"{URL_API_PREFIX}/servers",
-    tags=["servers"],
-    dependencies=[Depends(get_current_active_user)],
-)
+# app.include_router(
+#     computer_server.router,
+#     prefix=f"{URL_API_PREFIX}/servers",
+#     tags=["servers"],
+#     dependencies=[Depends(get_current_active_user)],
+# )
 app.include_router(
     user.router,
     prefix=f"{URL_API_PREFIX}/users",

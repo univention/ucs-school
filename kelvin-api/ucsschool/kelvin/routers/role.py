@@ -1,36 +1,36 @@
+from enum import Enum
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import (
-    BaseModel,
-    Field,
-    HttpUrl,
-    Protocol,
-    PydanticValueError,
-    SecretStr,
-    StrBytes,
-    ValidationError,
-    validator,
-)
+from pydantic import BaseModel
+from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
-    HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND,
 )
 
-from ucsschool.lib.roles import all_roles, create_ucsschool_role_string
+# from ucsschool.lib.roles import all_roles, create_ucsschool_role_string
+from udm_rest_client import UDM
 
+from ..ldap_access import udm_kwargs
 from ..utils import get_logger
+from .base import get_lib_obj
 
 logger = get_logger(__name__)
 router = APIRouter()
 
 
+class SchoolUserRole(str, Enum):
+    staff = "staff"
+    student = "student"
+    teacher = "teacher"
+
+
 class RoleModel(BaseModel):
-    name: str
+    name: SchoolUserRole
 
 
 @router.get("/")
@@ -75,3 +75,14 @@ async def complete_update(name: str, role: RoleModel) -> RoleModel:
             status_code=HTTP_400_BAD_REQUEST, detail="Renaming roles is not supported."
         )
     return role
+
+
+@router.delete("/{name}", status_code=HTTP_204_NO_CONTENT)
+async def delete(name: str, request: Request) -> None:
+    async with UDM(**await udm_kwargs()) as udm:
+        sc = await get_lib_obj(udm, SchoolUserRole, name, None)
+        if await sc.exists(udm):
+            await sc.remove(udm)
+        else:
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="TODO")
+    return None
