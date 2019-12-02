@@ -42,15 +42,21 @@ class BuildHTMLCommand(setuptools.Command):
         else:
             raise RuntimeError("Cannot find 'rst2html5'.")
         if self.input_file:
-            self.check_call(
-                [rst2_html5_exe, self.input_file, f"{str(self.input_file)[:-3]}html"]
-            )
+            target_dir = Path(self.input_file).parent / "static"
+            if not target_dir.exists():
+                print(f"mkdir -p {target_dir!s}")
+                target_dir.mkdir(parents=True)
+            target_file = target_dir / f"{str(Path(self.input_file).name)[:-3]}html"
+            self.check_call([rst2_html5_exe, self.input_file, str(target_file)])
         else:
             for entry in self.recursive_scandir(Path(__file__).parent):
                 if entry.is_file() and entry.name.endswith(".rst"):
-                    self.check_call(
-                        [rst2_html5_exe, entry.path, f"{str(entry.path)[:-3]}html"]
-                    )
+                    target_dir = Path(entry.path).parent / "static"
+                    if not target_dir.exists():
+                        print(f"mkdir -p {target_dir!s}")
+                        target_dir.mkdir(parents=True)
+                    target_file = target_dir / f"{str(entry.name)[:-3]}html"
+                    self.check_call([rst2_html5_exe, entry.path, str(target_file)])
 
     @classmethod
     def recursive_scandir(cls, path: Path) -> Iterable[os.DirEntry]:
