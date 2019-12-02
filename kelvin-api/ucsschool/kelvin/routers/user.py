@@ -1,41 +1,39 @@
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import (
-    BaseModel,
-    Field,
-    HttpUrl,
-    Protocol,
-    PydanticValueError,
-    SecretStr,
-    StrBytes,
-    ValidationError,
-    validator,
-)
+from pydantic import Field, HttpUrl
+from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
-    HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND,
 )
 
-from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.user import User  # Staff, Student, Teacher, TeachersAndStaff,
+from udm_rest_client import UDM  # , NoObject as UdmNoObject
 
+from ..ldap_access import udm_kwargs
 from ..utils import get_logger
+from .base import UcsSchoolBaseModel, get_lib_obj
+from .role import SchoolUserRole
 
 logger = get_logger(__name__)
 router = APIRouter()
 
 
-class UserModel(BaseModel):
+class UserModel(UcsSchoolBaseModel):
     dn: str = None
     name: str
     school: HttpUrl
     ucsschool_roles: List[str] = Field(
         None, title="Roles of this object. Don't change if unsure."
     )
+    role: SchoolUserRole
+
+    class Config(UcsSchoolBaseModel.Config):
+        lib_class = User
 
 
 @router.get("/")
@@ -87,3 +85,14 @@ async def complete_update(username: str, user: UserModel) -> UserModel:
     if username != user.name:
         logger.info("Renaming user from %r to %r.", username, user.name)
     return user
+
+
+@router.delete("/{username}", status_code=HTTP_204_NO_CONTENT)
+async def delete(username: str, request: Request) -> None:
+    async with UDM(**await udm_kwargs()) as udm:
+        sc = await get_lib_obj(udm, User, username, None)
+        if await sc.exists(udm):
+            await sc.remove(udm)
+        else:
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="TODO")
+    return None

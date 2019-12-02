@@ -2,29 +2,22 @@ import re
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import (
-    BaseModel,
-    Field,
-    HttpUrl,
-    Protocol,
-    PydanticValueError,
-    SecretStr,
-    StrBytes,
-    ValidationError,
-    validator,
-)
+from pydantic import BaseModel, Field
+from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
-    HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND,
 )
 
 from ucsschool.lib.models.school import School
+from udm_rest_client import UDM
 
+from ..ldap_access import udm_kwargs
 from ..utils import get_logger
+from .base import get_lib_obj, UcsSchoolBaseModel
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -38,12 +31,15 @@ def validate_school_name(name):
         raise ValueError(f"Invalid name for a school (OU): {name!r}")
 
 
-class SchoolModel(BaseModel):
+class SchoolModel(UcsSchoolBaseModel):
     dn: str = None
     name: str
     ucsschool_roles: List[str] = Field(
         None, title="Roles of this object. Don't change if unsure."
     )
+
+    class Config(UcsSchoolBaseModel.Config):
+        lib_class = School
 
 
 @router.get("/")
@@ -91,3 +87,14 @@ async def complete_update(name: str, school: SchoolModel) -> SchoolModel:
             detail="Renaming schools is not supported.",
         )
     return school
+
+
+@router.delete("/{name}", status_code=HTTP_204_NO_CONTENT)
+async def delete(name: str, request: Request) -> None:
+    async with UDM(**await udm_kwargs()) as udm:
+        sc = await get_lib_obj(udm, School, name, None)
+        if await sc.exists(udm):
+            await sc.remove(udm)
+        else:
+            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="TODO")
+    return None

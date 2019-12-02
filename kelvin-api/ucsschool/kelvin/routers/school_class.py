@@ -1,8 +1,7 @@
 from typing import Any, Dict, List
-from urllib.parse import ParseResult, quote, unquote, urlparse
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel, Field, HttpUrl, validator
+from pydantic import BaseModel, Field, HttpUrl
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -13,19 +12,19 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from ucsschool.lib.models.attributes import SchoolClassName
 from ucsschool.lib.models.group import SchoolClass
-from udm_rest_client import UDM, NoObject as UdmNoObject
+from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
 from ..urls import name_from_dn, url_to_dn, url_to_name
 from ..utils import get_logger
+from .base import UcsSchoolBaseModel, get_lib_obj
 
 logger = get_logger(__name__)
 router = APIRouter()
 
 
-class SchoolClassModel(BaseModel):
+class SchoolClassModel(UcsSchoolBaseModel):
     dn: str = None
     name: str
     school: HttpUrl
@@ -36,54 +35,28 @@ class SchoolClassModel(BaseModel):
     url: HttpUrl = None
     users: List[HttpUrl] = None
 
-    @classmethod
-    def scheme_and_quote(cls, url: str) -> str:
-        up: ParseResult = urlparse(url)
-        replaced = up._replace(scheme="https", path=quote(up.path))
-        return replaced.geturl()
+    class Config(UcsSchoolBaseModel.Config):
+        lib_class = SchoolClass
 
     @classmethod
-    def unscheme_and_unquote(cls, url: str) -> str:
-        up: ParseResult = urlparse(url)
-        replaced = up._replace(scheme="http", path=unquote(up.path))
-        return replaced.geturl()
-
-    @classmethod
-    def from_lib_model(cls, obj: SchoolClass, request: Request) -> "SchoolClassModel":
-        kwargs = obj.to_dict()
-        del kwargs["objectType"]
-        kwargs["dn"] = kwargs.pop("$dn$")
-        kwargs["school"] = cls.scheme_and_quote(
-            request.url_for("get", school_name=obj.school)
-        )
-        kwargs["url"] = cls.scheme_and_quote(
-            request.url_for("get", class_name=kwargs["name"], school=obj.school)
-        )
+    def _from_lib_model_kwargs(
+        cls, obj: SchoolClass, request: Request
+    ) -> Dict[str, Any]:
+        kwargs = super()._from_lib_model_kwargs(obj, request)
         kwargs["users"] = [
             cls.scheme_and_quote(request.url_for("get", username=name_from_dn(dn)))
             for dn in obj.users
         ]
-        return cls(**kwargs)
+        return kwargs
 
-    async def as_lib_model(self, request: Request) -> SchoolClass:
-        kwargs = self.dict()
-        del kwargs["dn"]
-        del kwargs["url"]
-        # TODO: have an OU cache, to fix upper/lower/camel case of 'school'
-        kwargs["school"] = url_to_name(
-            request, "school", self.unscheme_and_unquote(self.school)
-        )
+    async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
+        kwargs = await super()._as_lib_model_kwargs(request)
         kwargs["name"] = f"{kwargs['school']}-{self.name}"
         kwargs["users"] = [
             await url_to_dn(request, "user", self.unscheme_and_unquote(user))
             for user in (self.users or [])
         ]  # this is expensive :/
-        return SchoolClass(**kwargs)
-
-    @validator("name")
-    def check_name(cls, value: str) -> str:
-        SchoolClassName("name").validate(value)
-        return value
+        return kwargs
 
 
 class SchoolClassPatchDocument(BaseModel):
@@ -136,23 +109,10 @@ async def search(
     return [SchoolClassModel.from_lib_model(sc, request) for sc in scs]
 
 
-async def get_lib_obj(
-    udm: UDM, class_name: str, school: str, dn: str = None
-) -> SchoolClass:
-    dn = dn or SchoolClass(name=f"{school}-{class_name}", school=school).dn
-    try:
-        return await SchoolClass.from_dn(dn, school, udm)
-    except UdmNoObject:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
-            detail=f"No school class with name={class_name!r} and school={school!r} found.",
-        )
-
-
 @router.get("/{school}/{class_name}")
 async def get(class_name: str, school: str, request: Request) -> SchoolClassModel:
     async with UDM(**await udm_kwargs()) as udm:
-        sc = await get_lib_obj(udm, class_name, school)
+        sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     return SchoolClassModel.from_lib_model(sc, request)
 
 
@@ -186,7 +146,9 @@ async def partial_update(
     request: Request,
 ) -> SchoolClassModel:
     async with UDM(**await udm_kwargs()) as udm:
-        sc_current = await get_lib_obj(udm, class_name, school)
+        sc_current = await get_lib_obj(
+            udm, SchoolClass, f"{school}-{class_name}", school
+        )
         changed = False
         for attr, new_value in (
             await school_class.to_modify_kwargs(school, request)
@@ -210,7 +172,9 @@ async def complete_update(
             detail="Moving of class to other school is not allowed.",
         )
     async with UDM(**await udm_kwargs()) as udm:
-        sc_current = await get_lib_obj(udm, class_name, school)
+        sc_current = await get_lib_obj(
+            udm, SchoolClass, f"{school}-{class_name}", school
+        )
         changed = False
         sc_request = await school_class.as_lib_model(request)
         for attr in SchoolClass._attributes.keys():
@@ -229,7 +193,7 @@ async def complete_update(
 @router.delete("/{school}/{class_name}", status_code=HTTP_204_NO_CONTENT)
 async def delete(class_name: str, school: str, request: Request) -> None:
     async with UDM(**await udm_kwargs()) as udm:
-        sc = await get_lib_obj(udm, class_name, school)
+        sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
         if await sc.exists(udm):
             await sc.remove(udm)
         else:
