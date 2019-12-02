@@ -74,7 +74,7 @@ def _ucr():  # type: () -> ConfigRegistry
 
 def env_or_ucr(key: str) -> str:
 	try:
-		return os.environ[key.replace("/", "_")]
+		return os.environ[key.replace("/", "_").upper()]
 	except KeyError:
 		return ucr[key]
 
