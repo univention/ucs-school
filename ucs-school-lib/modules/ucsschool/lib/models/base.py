@@ -75,7 +75,7 @@ class NoObject(noObject):
 		self.dn = dn
 		self.type = type
 		if not args:
-			args = ("Could not fiund object of type {!r} with DN {!r}.".format(self.type, self.dn),)
+			args = ("Could not find object of type {!r} with DN {!r}.".format(self.type, self.dn),)
 		super(NoObject, self).__init__(*args)
 
 

@@ -53,4 +53,4 @@ async def url_to_dn(request: Request, obj_type: str, url: str) -> str:
                 raise NoObject(
                     f"Could not find object of type {obj_type!r} with URL {url!r}."
                 )
-    raise NotImplemented(f"Don't know how to create DN for obj_type {obj_type!r}.")
+    raise NotImplementedError(f"Don't know how to create DN for obj_type {obj_type!r}.")

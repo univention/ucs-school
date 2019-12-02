@@ -3,13 +3,14 @@ from pathlib import Path
 API_USERS_GROUP_NAME = "ucsschool-kelvin-admins"
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
-APP_CONFIG_BASE_PATH = Path(APP_BASE_PATH, "conf")
+APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 LOG_FILE_PATH = Path("/var/log/univention/ucs-school-kelvin/http.log")
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
 STATIC_FILES_PATH = Path("/kelvin/kelvin-api/static")
 STATIC_FILE_CHANGELOG = STATIC_FILES_PATH / "changelog.html"
 STATIC_FILE_README = STATIC_FILES_PATH / "readme.html"
+TOKEN_SIGN_SECRET_FILE = APP_CONFIG_BASE_PATH / "tokens.secret"
 TOKEN_HASH_ALGORITHM = "HS256"
 UCRV_TOKEN_TTL = "ucsschool/kelvin/access_tokel_ttl"
 UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
