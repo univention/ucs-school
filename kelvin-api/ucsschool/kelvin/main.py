@@ -7,6 +7,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, UJSONResponse
+from starlette.staticfiles import StaticFiles
 from starlette.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
@@ -20,6 +21,7 @@ from . import __version__
 from .constants import (
     STATIC_FILE_CHANGELOG,
     STATIC_FILE_README,
+    STATIC_FILES_PATH,
     URL_API_PREFIX,
     URL_TOKEN_BASE,
 )
@@ -89,19 +91,13 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 @app.get(f"{URL_API_PREFIX}/changelog", response_class=HTMLResponse)
 async def get_history():
-    # TODO: use starlette.staticfiles instead (https://fastapi.tiangolo.com/tutorial/static-files/)
-    async with aiofiles.open(
-        Path(__file__).parent.parent.parent / STATIC_FILE_CHANGELOG
-    ) as fp:
+    async with aiofiles.open(STATIC_FILE_CHANGELOG) as fp:
         return await fp.read()
 
 
 @app.get(f"{URL_API_PREFIX}/readme", response_class=HTMLResponse)
 async def get_readme():
-    # TODO: use starlette.staticfiles instead (https://fastapi.tiangolo.com/tutorial/static-files/)
-    async with aiofiles.open(
-        Path(__file__).parent.parent.parent / STATIC_FILE_README
-    ) as fp:
+    async with aiofiles.open(STATIC_FILE_README) as fp:
         return await fp.read()
 
 
@@ -146,4 +142,9 @@ app.include_router(
     prefix=f"{URL_API_PREFIX}/users",
     tags=["users"],
     dependencies=[Depends(get_current_active_user)],
+)
+app.mount(
+    f"{URL_API_PREFIX}/static",
+    StaticFiles(directory=str(STATIC_FILES_PATH)),
+    name="static",
 )
