@@ -82,7 +82,7 @@ class LDAPAccess:
 
     def __init__(self, ldap_base=None, host=None, host_dn=None, port=None):
         self.ldap_base = ldap_base or env_or_ucr("ldap/base")
-        self.host = host or env_or_ucr("ldap/server/name")
+        self.host = host or env_or_ucr("ldap/master")
         self.host_dn = host_dn or env_or_ucr("ldap/hostdn")
         self.port = port or int(env_or_ucr("ldap/server/port"))
         self.cn_admin = "cn=admin"
