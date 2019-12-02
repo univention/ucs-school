@@ -15,8 +15,8 @@ LABEL "description"="UCS@school Kelvin-API" \
 
 # package and Python dependency installation, base system configuration,
 # and uninstallation - all in one step to keep image small
-COPY apline_apk_list openapi-generator-cli-*.jar requirements_all.txt /tmp/
-RUN apk add --no-cache $(cat /tmp/apline_apk_list) && \
+COPY alpine_apk_list openapi-generator-cli-*.jar requirements_all.txt /tmp/
+RUN apk add --no-cache $(cat /tmp/alpine_apk_list) && \
     cp -v /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
     echo "Europe/Berlin" > /etc/timezone && \
     # Disable getty's
