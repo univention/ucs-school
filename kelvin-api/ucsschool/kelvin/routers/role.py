@@ -35,13 +35,13 @@ class RoleModel(BaseModel):
 
 @router.get("/")
 async def search(
-    name_filer: str = Query(
+    name_filter: str = Query(
         None,
         title="List roles with this name. '*' can be used for an inexact search.",
         min_length=3,
     ),
 ) -> List[RoleModel]:
-    logger.debug("Searching for roles with: name_filer=%r", name_filer)
+    logger.debug("Searching for roles with: name_filter=%r", name_filter)
     return [RoleModel(name="10a"), RoleModel(name="8b")]
 
 

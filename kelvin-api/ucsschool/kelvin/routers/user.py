@@ -38,7 +38,8 @@ class UserModel(UcsSchoolBaseModel):
 
 @router.get("/")
 async def search(
-    name_filer: str = Query(
+    request: Request,
+    name_filter: str = Query(
         None,
         title="List users with this name. '*' can be used for an inexact search.",
         min_length=3,
@@ -48,8 +49,8 @@ async def search(
     ),
 ) -> List[UserModel]:
     logger.debug(
-        "Searching for users with: name_filer=%r school_filter=%r",
-        name_filer,
+        "Searching for users with: name_filter=%r school_filter=%r",
+        name_filter,
         school_filter,
     )
     return [

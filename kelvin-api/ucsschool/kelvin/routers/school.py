@@ -44,13 +44,13 @@ class SchoolModel(UcsSchoolBaseModel):
 
 @router.get("/")
 async def search(
-    name_filer: str = Query(
+    name_filter: str = Query(
         None,
         title="List schools with this name. '*' can be used for an inexact search.",
         min_length=3,
     ),
 ) -> List[SchoolModel]:
-    logger.debug("Searching for schools with: name_filer=%r", name_filer)
+    logger.debug("Searching for schools with: name_filter=%r", name_filter)
     return [SchoolModel(name="10a"), SchoolModel(name="8b")]
 
 

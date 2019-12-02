@@ -41,7 +41,7 @@
 #
 # @router.get("/")
 # async def search(
-#     name_filer: str = Query(
+#     name_filter: str = Query(
 #         None,
 #         title="List rooms with this name. '*' can be used for an inexact search.",
 #         min_length=3,
@@ -51,8 +51,8 @@
 #     ),
 # ) -> List[ComputerRoomModel]:
 #     logger.debug(
-#         "Searching for rooms with: name_filer=%r school_filter=%r",
-#         name_filer,
+#         "Searching for rooms with: name_filter=%r school_filter=%r",
+#         name_filter,
 #         school_filter,
 #     )
 #     return [
