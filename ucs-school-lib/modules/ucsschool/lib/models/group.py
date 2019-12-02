@@ -117,7 +117,7 @@ class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return self.is_computer_room(self.school, self.dn)
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Type[UCSSchoolModel]:
+	async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Type[UCSSchoolModel]:
 		if cls.is_school_class(school, udm_obj.dn):
 			return SchoolClass
 		elif cls.is_computer_room(school, udm_obj.dn):
@@ -236,7 +236,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 		return ret
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type[UCSSchoolModel]]:
+	async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type[UCSSchoolModel]]:
 		if not cls.is_school_class(school, udm_obj.dn):
 			return  # is a workgroup
 		return cls
@@ -251,7 +251,7 @@ class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 		return cls.get_search_base(school).workgroups
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type[UCSSchoolModel]]:
+	async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type[UCSSchoolModel]]:
 		if not cls.is_school_workgroup(school, udm_obj.dn):
 			return
 		return cls

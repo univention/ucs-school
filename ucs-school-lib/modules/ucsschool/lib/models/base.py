@@ -799,7 +799,7 @@ class UCSSchoolHelperAbstractClass(object):
 		Creates a new instance with attributes of the udm_obj.
 		Uses get_class_for_udm_obj()
 		"""
-		klass = cls.get_class_for_udm_obj(udm_obj, school)
+		klass = await cls.get_class_for_udm_obj(udm_obj, school)
 		if klass is None:
 			cls.logger.warning('UDM object %r does not correspond to a Python class in the UCS school lib.', udm_obj.dn)
 			raise UnknownModel(udm_obj.dn, cls)
@@ -829,13 +829,13 @@ class UCSSchoolHelperAbstractClass(object):
 		return obj
 
 	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type[UCSSchoolModel]]:
+	async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type[UCSSchoolModel]]:
 		"""
 		Returns cls by default.
 		Can be overridden for base classes:
 		class User(UCSSchoolHelperAbstractClass):
 			@classmethod
-			def get_class_for_udm_obj(cls, udm_obj, school)
+			async def get_class_for_udm_obj(cls, udm_obj, school)
 				if something:
 					return SpecialUser
 				return cls
