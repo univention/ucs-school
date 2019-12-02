@@ -692,7 +692,7 @@ class UCSSchoolHelperAbstractClass(object):
 			else:
 				self.logger.debug('Getting %s UDM object by dn: %s', self.__class__.__name__, dn)
 				try:
-					self._udm_obj = [lo.get(self._meta.udm_module).search(base=dn, scope='base')][0]
+					self._udm_obj = [obj async for obj in lo.get(self._meta.udm_module).search(base=dn, scope='base')][0]
 				except (UdmNoObject, IndexError):
 					self._udm_obj = None
 			self._udm_obj_searched = True
