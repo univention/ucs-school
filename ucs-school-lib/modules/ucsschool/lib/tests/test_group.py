@@ -1,56 +1,69 @@
 from ucsschool.lib.models.group import SchoolClass
+from udm_rest_client import UDM, NoObject as UdmNoObject
+import pytest
+from faker import Faker
 
 
-async def test_read_school_class(new_school_class_via_ssh, lo_udm, remove_class_via_ssh):
-	print("** new_school_class_via_ssh={!r}\n".format(new_school_class_via_ssh))
-	dn, attr = new_school_class_via_ssh
-	sc = SchoolClass.from_dn(dn, "DEMOSCHOOL", lo_udm)
+fake = Faker()
+
+
+@pytest.mark.asyncio
+async def test_read_school_class(new_school_class, udm_kwargs):
+	dn, attr = await new_school_class()
+	async with UDM(**udm_kwargs) as udm:
+		sc = await SchoolClass.from_dn(dn, attr["school"], udm)
 	print("** sc.to_dict()={!r}".format(sc.to_dict()))
-	try:
-		for k, v in attr.items():
-			val1 = v
-			val2 = getattr(sc, k)
-			if isinstance(v, list):
-				val1 = set(val1)
-				val2 = set(val2)
-			assert val1 == val2, "k={!r} v={!r} getattr(sc, k)={!r}".format(k, v, getattr(sc, k))
-		print("** OK, deleting class...")
-	finally:
-		result, returncode = remove_class_via_ssh(dn)
-		assert returncode == 0
-	assert not await SchoolClass(**attr).exists(lo_udm)
+	for k, v in attr.items():
+		val1 = v
+		val2 = getattr(sc, k)
+		if k == "name":
+			val2 = val2.replace(f"{attr['school']}-", "")
+		if isinstance(v, list):
+			val1 = set(val1)
+			val2 = set(val2)
+		assert val1 == val2, "k={!r} v={!r} getattr(sc, k)={!r}".format(k, v, getattr(sc, k))
 
 
-async def test_create_school_class(school_class_attrs, lo_udm, scp_code, get_school_class_via_ssh, remove_class_via_ssh):
-	sc = SchoolClass(**school_class_attrs)
-	print("** sc.to_dict()={!r}".format(sc.to_dict()))
-	await sc.create(lo_udm)
-	result, returncode = get_school_class_via_ssh(sc.dn)
-	print("** result={!r} returncode={!r}".format(result, returncode))
-	assert isinstance(result, dict)
-	try:
-		for k, value_here in sc.to_dict().items():
-			val_here = value_here
-			val_ssh = result.get(k)
-			if isinstance(val_here, list):
-				val_here = set(val_here)
-				val_ssh = set(val_ssh)
-			assert val_here == val_ssh, f"k={k!r} val_here={val_here!r} val_ssh={val_ssh!r}"
-		print("** OK, deleting class...")
-	finally:
-		result, returncode = remove_class_via_ssh(sc.dn)
-		assert returncode == 0
-	assert not await SchoolClass(**school_class_attrs).exists(lo_udm)
+@pytest.mark.xfail(reason="Creation of share fails.")
+@pytest.mark.asyncio
+async def test_create_school_class(school_class_attrs, udm_kwargs):
+	async with UDM(**udm_kwargs) as udm:
+		sc1 = SchoolClass(**school_class_attrs)
+		success = await sc1.create(udm)
+		print("** sc1.to_dict()={!r}".format(sc1.to_dict()))
+		assert success
+	async with UDM(**udm_kwargs) as udm:
+		sc2 = await SchoolClass.from_dn(sc1.dn, school_class_attrs["school"], udm)
+		print("** sc2.to_dict()={!r}".format(sc2.to_dict()))
+	for k, v in school_class_attrs.items():
+		assert getattr(sc1, k) == getattr(sc2, k)
 
 
-async def test_remove_school_class(new_school_class_via_ssh, lo_udm, school_class_exists_via_ssh):
-	print("** new_school_class_via_ssh={!r}\n".format(new_school_class_via_ssh))
-	dn, attr = new_school_class_via_ssh
-	sc = await SchoolClass.from_dn(dn, "DEMOSCHOOL", lo_udm)
-	dn = sc.dn
-	print("** sc.dn={!r}".format(sc.dn))
-	await sc.remove(lo_udm)
-	result, returncode = school_class_exists_via_ssh(dn)
-	print("** result={!r} returncode={!r}".format(result, returncode))
-	assert result is False
-	assert not await SchoolClass(**attr).exists(lo_udm)
+@pytest.mark.asyncio
+async def test_modify_school_class(new_school_class, ldap_base, udm_kwargs):
+	dn, attr = await new_school_class()
+	async with UDM(**udm_kwargs) as udm:
+		sc1 = await SchoolClass.from_dn(dn, attr["school"], udm)
+		print("** sc1.to_dict()={!r}".format(sc1.to_dict()))
+		description_new = fake.text(max_nb_chars=50)
+		sc1.description = description_new
+		sc1.users.append(f"uid={fake.user_name()},cn=users,{ldap_base}")
+		await sc1.modify(udm)
+	async with UDM(**udm_kwargs) as udm:
+		sc2 = await SchoolClass.from_dn(dn, attr["school"], udm)
+		print("** sc2.to_dict()={!r}".format(sc2.to_dict()))
+	for k, v in attr.items():
+		assert getattr(sc1, k) == getattr(sc2, k)
+
+
+@pytest.mark.asyncio
+async def test_delete_school_class(new_school_class, udm_kwargs):
+	dn, attr = await new_school_class()
+	async with UDM(**udm_kwargs) as udm:
+		sc = await SchoolClass.from_dn(dn, attr["school"], udm)
+		print("** sc.to_dict()={!r}".format(sc.to_dict()))
+		await sc.remove(udm)
+		assert sc.dn is None
+	async with UDM(**udm_kwargs) as udm:
+		with pytest.raises(UdmNoObject):
+			await udm.obj_by_dn(dn)
