@@ -507,13 +507,13 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 
 		try:
-			old_attrs = deepcopy(udm_obj.properties)
+			old_attrs = deepcopy(udm_obj.props)
 			await self.modify_without_hooks_roles(udm_obj)
 			await self.do_modify(udm_obj, lo)
 			# get it fresh from the database
 			self.set_dn(self.dn)
 			udm_obj = await self.get_udm_object(lo)
-			same = old_attrs == udm_obj.info
+			same = old_attrs == deepcopy(udm_obj.props)
 			if move_if_necessary:
 				if udm_obj.dn != self.dn:
 					if await self.move_without_hooks(lo, udm_obj, force=True):
