@@ -12,7 +12,7 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 
-from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher, create_ucsschool_role_string
 
 # from ucsschool.lib.roles import all_roles, create_ucsschool_role_string
 from udm_rest_client import UDM
@@ -39,6 +39,21 @@ class SchoolUserRole(str, Enum):
             return cls.teachers_and_staff
         else:
             return cls(lib_roles[0])
+
+    def as_lib_roles(self, school: str) -> List[str]:
+        """
+        Creates a list containing the role(s) in lib format.
+        :param school: The school to create the role for.
+        :return: The list containing the SchoolUserRole representation for consumation by the school lib.
+        """
+        if self.value == self.staff:
+            return [create_ucsschool_role_string(role_staff, school)]
+        elif self.value == self.student:
+            return [create_ucsschool_role_string(role_pupil, school)]
+        elif self.value == self.teacher:
+            return [create_ucsschool_role_string(role_teacher, school)]
+        elif self.value == self.teachers_and_staff:
+            return [create_ucsschool_role_string(role_staff, school), create_ucsschool_role_string(role_teacher, school)]
 
 
 class RoleModel(BaseModel):
