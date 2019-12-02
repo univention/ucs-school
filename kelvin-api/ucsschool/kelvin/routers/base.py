@@ -17,17 +17,30 @@ from ..urls import url_to_name
 async def get_lib_obj(
     udm: UDM,
     lib_cls: Type[UCSSchoolModel],
-    name: str,
+    name: str = None,
     school: str = None,
     dn: str = None,
 ) -> UCSSchoolModel:
+    """
+    Either `dn` or both `name` and `school` must be provided.
+
+    :param UDM udm: already open()ed UDM instance
+    :param type lib_cls: class (type) the object should be of
+    :param str name: `name` attribute of object
+    :param str school: `school` (OU) attribute of object
+    :param str dn: DN of object
+    :return: ucsschool.lib.model object
+    :raises HTTPException: if no object could be found
+    """
+    if not dn and not (name and school):
+        raise TypeError("Either 'dn' or both 'name' and 'school' must be provided.")
     dn = dn or lib_cls(name=name, school=school).dn
     try:
         return await lib_cls.from_dn(dn, school, udm)
-    except UdmNoObject:
+    except NoObject:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
-            detail=f"No {lib_cls} with name={name!r} and school={school!r} found.",
+            detail=f"No {lib_cls.__name__} with name={name!r} and school={school!r} found.",
         )
 
 
