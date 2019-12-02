@@ -7,7 +7,6 @@ from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
-    HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
@@ -193,8 +192,5 @@ async def complete_update(
 async def delete(class_name: str, school: str, request: Request) -> None:
     async with UDM(**await udm_kwargs()) as udm:
         sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
-        if await sc.exists(udm):
-            await sc.remove(udm)
-        else:
-            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="TODO")
+        await sc.remove(udm)
     return None
