@@ -1,6 +1,7 @@
-from typing import List
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, HTTPException, Query
+from ldap.filter import escape_filter_chars
 from pydantic import Field, HttpUrl
 from starlette.requests import Request
 from starlette.status import (
@@ -32,6 +33,18 @@ class UserModel(UcsSchoolBaseModel):
     class Config(UcsSchoolBaseModel.Config):
         lib_class = User
 
+    @classmethod
+    def _from_lib_model_kwargs(cls, obj: User, request: Request) -> Dict[str, Any]:
+        kwargs = super()._from_lib_model_kwargs(obj, request)
+        kwargs["role"] = SchoolUserRole.from_lib_roles(obj.roles)
+        kwargs["url"] = None  # TODO
+        return kwargs
+
+    async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
+        kwargs = await super()._as_lib_model_kwargs(request)
+        # TODO
+        return kwargs
+
 
 @router.get("/")
 async def search(
@@ -57,12 +70,23 @@ async def search(
 
 
 @router.get("/{username}")
-async def get(username: str) -> UserModel:
-    return UserModel(name=username, school=f"https://foo.bar/schools/foo")
+async def get(username: str, request: Request) -> UserModel:
+    async with UDM(**await udm_kwargs()) as udm:
+        async for udm_obj in udm.get("users/user").search(
+            f"uid={escape_filter_chars(username)}"
+        ):
+            break
+        else:
+            raise HTTPException(
+                status_code=HTTP_404_NOT_FOUND,
+                detail=f"No User with username {username!r} found.",
+            )
+        user = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    return UserModel.from_lib_model(user, request)
 
 
 @router.post("/", status_code=HTTP_201_CREATED)
-async def create(user: UserModel) -> UserModel:
+async def create(user: UserModel, request: Request) -> UserModel:
     if user.name == "alsoerror":
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST, detail="Invalid user name."
@@ -72,14 +96,16 @@ async def create(user: UserModel) -> UserModel:
 
 
 @router.patch("/{username}", status_code=HTTP_200_OK)
-async def partial_update(username: str, user: UserModel) -> UserModel:
+async def partial_update(username: str, user: UserModel, request: Request) -> UserModel:
     if username != user.name:
         logger.info("Renaming user from %r to %r.", username, user.name)
     return user
 
 
 @router.put("/{username}", status_code=HTTP_200_OK)
-async def complete_update(username: str, user: UserModel) -> UserModel:
+async def complete_update(
+    username: str, user: UserModel, request: Request
+) -> UserModel:
     if username != user.name:
         logger.info("Renaming user from %r to %r.", username, user.name)
     return user
@@ -88,9 +114,15 @@ async def complete_update(username: str, user: UserModel) -> UserModel:
 @router.delete("/{username}", status_code=HTTP_204_NO_CONTENT)
 async def delete(username: str, request: Request) -> None:
     async with UDM(**await udm_kwargs()) as udm:
-        sc = await get_lib_obj(udm, User, username, None)
-        if await sc.exists(udm):
-            await sc.remove(udm)
+        async for udm_obj in udm.get("users/user").search(
+            f"uid={escape_filter_chars(username)}"
+        ):
+            break
         else:
-            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="TODO")
+            raise HTTPException(
+                status_code=HTTP_404_NOT_FOUND,
+                detail=f"No User with username {username!r} found.",
+            )
+        user = await get_lib_obj(udm, User, dn=udm_obj.dn)
+        await user.remove(udm)
     return None
