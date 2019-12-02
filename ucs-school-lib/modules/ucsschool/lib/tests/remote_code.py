@@ -33,7 +33,7 @@ async def remove_school_class(dn):
 	print(await sc.remove(lo))
 
 
-async async def school_class_exits(dn):
+async def school_class_exits(dn):
 	try:
 		sc = await SchoolClass.from_dn(dn, None, lo)
 		await sc.exists(lo)
