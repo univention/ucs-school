@@ -26,6 +26,13 @@ Das hängt damit zusammen, dass die primäre Gruppe der Benutzer in der Standard
 Container unterhalb von `cn=groups,ou=SCHULE,dc=example,dc=com` sowie darin enthaltene Gruppen sollten laut ACL nicht auf "fremde" Schulserver syncronisiert werden. D.h. Klassen und Arbeitsgruppen sind nur auf "ihrem" Schulserver vorhanden.
 
 
+#### Hat es einen technischen Grund, dass UCS@school User nicht direktes Mitglied von Domain Users sind?
+Bei 30k-60k User in einer Gruppe dauert eine einzelne LDAP-Änderung an einer Gruppe (nur *einen* User aufnehmen oder entfernen) gerne mal 5 Sekunden. Dadurch dauert dann z.B. die Aufnahme von 5.000 neuen Usern zum Schuljahreswechsel viel zu lange.
+
+
+
+
+
 ## Squid / Squidguard
 
 Ganz grobes Konzept:
@@ -92,7 +99,7 @@ In ucs-test-ucsschool gibt es das Skript `75_ldap_acls_specific_tests`, welches 
 
 In ucs-test-ucsschool gibt es außerdem das Skript `78_ldap_acls_dump`. Es erstellt automatisch 3 Schulen mit allen (schulübergreifenden) Benutzertypen, allen Rechnertypen, Klassen, Arbeitsgruppen und Räumen. Anschließend wird für alle 29 Objekttypen (cn=admin, DC Master, DC Backup, ..., Lehrer, Schüler, Mitarbeiter, Schuladmins, Windows-Clients, SchulDC) eine via `slapacl` eine Abfrage für alle Objekte im LDAP und in den drei TestOUs gemacht und die Zugriffsberechtigungen für die Attribute in jeweils eine Datei geschrieben (`/var/log/univention/78_ldap_acls_dump.TIMESTAMP/dn??.ldif`). In dem Verzeichnis liegt auch eine Datei `dn.txt` wo das Mapping der zwischen DN und Datei wieder aufgelöst wird.
 
-#### Welchen Mehrwert hat man dadurch? 
+#### Welchen Mehrwert hat man dadurch?
 Man kann den Dump der Zugriffsberechtigungen jetzt **VOR** und **NACH** einer LDAP-ACL-Änderung erstellen und sich die Änderungen zwischen den beiden Dumps über das Skript `78_ldap_acls_dump.diff` (auch in ucs-test-ucsschool) anzeigen lassen. Dabei wird für jede Datei, die verglichen wird, ein `less` gestartet.
 
     # cd /usr/share/ucs-test/90_ucsschool/
@@ -171,6 +178,25 @@ Um fehlende Zählerobjekte für Benutzernamen-Präfixe zu erzeugen, kann folgend
 
     python -c "from ucsschool.importer.utils.username_handler import LdapStorageBackend; b = LdapStorageBackend('usernames'); b.create('${USERNAMEPREFIX}', ${NEXTNUMBER})"
 
+# Klassenarbeitsmodus / Exam-Mode
+
+#### Kann man, nachdem man eine Klasenarbeit erfolgreich beendet hat, sofort eine neue starten? Mit der gleichen Klasse?
+Ja, das sollte gehen. (Wir gehen mal davon aus, dass sich die Klassenarbeit ordentlich wieder beendet hat. Falls da noch Überbleibsel in der Config übrig geblieben sind￼, kann es natürlich zu Folgefehlern kommen).
+
+#### Kann das Starten einer Klassenarbeit scheitern, wenn die Replikation zwischen Master und Slave zu träge ist?
+Ganz klares `Jein`. Das Exam-Modul auf dem Slave wendet sich an den Master, um dort die Exam-User anzulegen bzw. später wieder zu löschen. Nach dem Anlegen der Exam-User auf dem Master wartet das Exam-Modul auf dem Slave bis zu 30 Minuten, dass die Exam-User auch auf den Slave repliziert wurden. Wenn die Replikation so langsam ist, dass der 30min-Timeout gerissen wird, dann lautet die Antwort eindeutig `Ja`, aber dann kann man den Exam-Modus auch nicht mehr kurzfristig sinnvoll einsetzen.
+
+
 # Import
 ## UMC-Modul "Benutzer-Import" / HTTP-API "Newton"
 *Aktuell noch nicht im Handbuch:* Beim Import über das UMC-Modul "Benutzer-Import" bzw. direkt über die Newton-HTTP-API (Massenimport via CSV-Datei) ist es möglich, additiv zur vorhandenen Konfiguration eine OU-spezifische Konfiguration hinzuzuladen. Diese muss pro OU in der Datei `/var/lib/ucs-school-import/configs/$OU.json` abgelegt werden.
+
+
+## Schulübergreifende Benutzerkonten
+
+### Darf ein schulübergreifender Benutzer eigentlich in beiden "Domain Users $OU"-Gruppen sein? Oder muss er? 
+- Er muss in allen `Domain Users $OU`-Gruppen enthalten sein.
+- Er muss für alle OUs Einträge in den Attributen `ucsschoolSchool` und `ucsschoolRole` haben.
+- Er muss z.B. als Schüler in beiden Gruppen `schueler-$OU` enthalten sein.
+
+
