@@ -12,6 +12,8 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+
 # from ucsschool.lib.roles import all_roles, create_ucsschool_role_string
 from udm_rest_client import UDM
 
@@ -27,6 +29,16 @@ class SchoolUserRole(str, Enum):
     staff = "staff"
     student = "student"
     teacher = "teacher"
+    teachers_and_staff = "teachers_and_staff"
+
+    @classmethod
+    def from_lib_roles(cls, lib_roles: List[str]):
+        if role_pupil in lib_roles:
+            return cls.student
+        if role_staff in lib_roles and role_teacher in lib_roles:
+            return cls.teachers_and_staff
+        else:
+            return cls(lib_roles[0])
 
 
 class RoleModel(BaseModel):
