@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
 
@@ -21,7 +22,7 @@ enable_ucsschool_lib_debugging()
 _logger = logging.getLogger(__name__)
 
 
-def get_logger(name: str) -> logging.Logger:
+def get_logger(name: str, path: Path = LOG_FILE_PATH) -> logging.Logger:
     """
     Create logger with name `name` and attach file and stream handlers.
     Call from your module like this `get_logger(__name__)`.
@@ -36,7 +37,7 @@ def get_logger(name: str) -> logging.Logger:
         handler = get_stream_handler(logging.DEBUG)
         handler.set_name("kelvin-api")
         logger.addHandler(handler)
-        handler = get_file_handler(logging.DEBUG, LOG_FILE_PATH)
+        handler = get_file_handler(logging.DEBUG, path)
         handler.set_name("kelvin-api")
         logger.addHandler(handler)
     return logger
