@@ -8,7 +8,6 @@ from unittest.mock import patch
 import pytest
 from faker import Faker
 
-import ucsschool.kelvin.constants
 import ucsschool.kelvin.utils
 
 faker = Faker()
@@ -89,17 +88,15 @@ def temp_file_func():
 def setup_logging(temp_dir_session):
     ori_get_logger = ucsschool.kelvin.utils.get_logger
     tmp_log_path = temp_dir_session()
+    tmp_log_file = Path("/tmp/log")
 
-    def utils_get_logger(
-        name: str = None, path: Path = ucsschool.kelvin.constants.LOG_FILE_PATH
-    ):
-        path = tmp_log_path / path.name
-        print(f"\n **** log directory is: {path} ****")
-        return ori_get_logger(name, path)
+    def utils_get_logger(name: str = None, path: Path = tmp_log_file):
+        tmp_log_file = tmp_log_path / path.name
+        return ori_get_logger(name, tmp_log_file)
 
-    with patch(
-        "ucsschool.kelvin.utils.get_logger", utils_get_logger,
-    ):
+    with patch.object(
+        ucsschool.kelvin.utils, "get_logger", utils_get_logger,
+    ), patch.object(ucsschool.kelvin.utils, "LOG_FILE_PATH", tmp_log_file):
         yield
     ucsschool.kelvin.utils.get_logger = ori_get_logger
 
