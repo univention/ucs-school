@@ -1,13 +1,13 @@
 import os
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Tuple
-from functools import lru_cache
 
 import pytest
 from faker import Faker
-from udm_rest_client import UDM, NoObject as UdmNoObject
 from univention.config_registry import ConfigRegistry
 
+from udm_rest_client import UDM, NoObject as UdmNoObject
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -20,104 +20,111 @@ fake = Faker()
 
 @lru_cache(maxsize=1)
 def ucr() -> ConfigRegistry:
-	ucr = ConfigRegistry()
-	ucr.load()
-	return ucr
+    ucr = ConfigRegistry()
+    ucr.load()
+    return ucr
 
 
 @lru_cache(maxsize=32)
 def env_or_ucr(key: str) -> str:
-	try:
-		return os.environ[key.replace("/", "_").upper()]
-	except KeyError:
-		return ucr()[key]
+    try:
+        return os.environ[key.replace("/", "_").upper()]
+    except KeyError:
+        return ucr()[key]
 
 
 @pytest.fixture(scope="session")
 def ldap_base():
-	return env_or_ucr("ldap/base")
+    return env_or_ucr("ldap/base")
 
 
 @pytest.fixture(scope="session")
 def udm_kwargs() -> Dict[str, Any]:
-	with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
-		cn_admin_password = fp.read().strip()
-	host = env_or_ucr("ldap/master")
-	return {
-		"username": "cn=admin",
-		"password": cn_admin_password,
-		"url": f"https://{host}/univention/udm/",
-		"ssl_ca_cert": UCS_SSL_CA_CERT,
-	}
+    with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
+        cn_admin_password = fp.read().strip()
+    host = env_or_ucr("ldap/master")
+    return {
+        "username": "cn=admin",
+        "password": cn_admin_password,
+        "url": f"https://{host}/univention/udm/",
+        "ssl_ca_cert": UCS_SSL_CA_CERT,
+    }
 
 
 @pytest.fixture
 def school_class_attrs(ldap_base):
-	def _func() -> Dict[str, str]:
-		return {
-			"name": fake.user_name(),
-			"school": "DEMOSCHOOL",
-			"description": fake.text(max_nb_chars=50),
-			"users": [
-				f"uid={fake.user_name()},cn=users,{ldap_base}",
-				f"uid={fake.user_name()},cn=users,{ldap_base}",
-			],
-		}
-	return _func()
+    def _func() -> Dict[str, str]:
+        return {
+            "name": fake.user_name(),
+            "school": "DEMOSCHOOL",
+            "description": fake.text(max_nb_chars=50),
+            "users": [
+                f"uid={fake.user_name()},cn=users,{ldap_base}",
+                f"uid={fake.user_name()},cn=users,{ldap_base}",
+            ],
+        }
+
+    return _func()
 
 
 @pytest.fixture
 async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
-	created_school_classes = []
-	created_school_shares = []
+    created_school_classes = []
+    created_school_shares = []
 
-	async def _func() -> Tuple[str, Dict[str, str]]:
-		async with UDM(**udm_kwargs) as udm:
-			grp_obj = await udm.get("groups/group").new()
-			grp_obj.position = f"cn=klassen,cn=schueler,cn=groups,ou={school_class_attrs['school']},{ldap_base}"
-			grp_obj.props.name = f"{school_class_attrs['school']}-{school_class_attrs['name']}"
-			grp_obj.props.description = school_class_attrs["description"]
-			grp_obj.props.users = school_class_attrs["users"]
-			await grp_obj.save()
-			created_school_classes.append(grp_obj.dn)
-			print("Created new SchoolClass: {!r}".format(grp_obj))
-			print(f"grp_obj.props={grp_obj.props!r}")
+    async def _func() -> Tuple[str, Dict[str, str]]:
+        async with UDM(**udm_kwargs) as udm:
+            grp_obj = await udm.get("groups/group").new()
+            grp_obj.position = f"cn=klassen,cn=schueler,cn=groups,ou={school_class_attrs['school']},{ldap_base}"
+            grp_obj.props.name = (
+                f"{school_class_attrs['school']}-{school_class_attrs['name']}"
+            )
+            grp_obj.props.description = school_class_attrs["description"]
+            grp_obj.props.users = school_class_attrs["users"]
+            await grp_obj.save()
+            created_school_classes.append(grp_obj.dn)
+            print("Created new SchoolClass: {!r}".format(grp_obj))
+            print(f"grp_obj.props={grp_obj.props!r}")
 
-			share_obj = await udm.get("shares/share").new()
-			share_obj.position = f"cn=klassen,cn=shares,ou={school_class_attrs['school']},{ldap_base}"
-			share_obj.props.name = grp_obj.props.name
-			share_obj.props.host = f"{school_class_attrs['school']}.{env_or_ucr('domainname')}"
-			share_obj.props.owner = 0
-			share_obj.props.group = 0
-			share_obj.props.path = f"/home/tmp/{grp_obj.props.name}"
-			share_obj.props.directorymode = "0770"
-			await share_obj.save()
-			created_school_shares.append(share_obj.dn)
-			print("Created new ClassShare: {!r}".format(share_obj))
+            share_obj = await udm.get("shares/share").new()
+            share_obj.position = (
+                f"cn=klassen,cn=shares,ou={school_class_attrs['school']},{ldap_base}"
+            )
+            share_obj.props.name = grp_obj.props.name
+            share_obj.props.host = (
+                f"{school_class_attrs['school']}.{env_or_ucr('domainname')}"
+            )
+            share_obj.props.owner = 0
+            share_obj.props.group = 0
+            share_obj.props.path = f"/home/tmp/{grp_obj.props.name}"
+            share_obj.props.directorymode = "0770"
+            await share_obj.save()
+            created_school_shares.append(share_obj.dn)
+            print("Created new ClassShare: {!r}".format(share_obj))
 
-		return grp_obj.dn, school_class_attrs
+        return grp_obj.dn, school_class_attrs
 
-	yield _func
+    yield _func
 
-	async with UDM(**udm_kwargs) as udm:
-		grp_mod = udm.get("groups/group")
-		for dn in created_school_classes:
-			try:
-				grp_obj = await grp_mod.get(dn)
-			except UdmNoObject:
-				print(f"SchoolClass {dn!r} does not exist (anymore).")
-				continue
-			await grp_obj.delete()
-			print(f"Deleted SchoolClass {dn!r}.")
-		share_mod = udm.get("shares/share")
-		for dn in created_school_shares:
-			try:
-				share_obj = await share_mod.get(dn)
-			except UdmNoObject:
-				print(f"ClassShare {dn!r} does not exist (anymore).")
-				continue
-			await share_obj.delete()
-			print(f"Deleted ClassShare {dn!r}.")
+    async with UDM(**udm_kwargs) as udm:
+        grp_mod = udm.get("groups/group")
+        for dn in created_school_classes:
+            try:
+                grp_obj = await grp_mod.get(dn)
+            except UdmNoObject:
+                print(f"SchoolClass {dn!r} does not exist (anymore).")
+                continue
+            await grp_obj.delete()
+            print(f"Deleted SchoolClass {dn!r}.")
+        share_mod = udm.get("shares/share")
+        for dn in created_school_shares:
+            try:
+                share_obj = await share_mod.get(dn)
+            except UdmNoObject:
+                print(f"ClassShare {dn!r} does not exist (anymore).")
+                continue
+            await share_obj.delete()
+            print(f"Deleted ClassShare {dn!r}.")
 
 
 # @pytest.fixture
