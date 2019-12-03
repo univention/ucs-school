@@ -7,13 +7,13 @@ CN_ADMIN_SECRET_FILE_ULDAP_LOCATION="/etc/ldap.secret"
 echo "Copying cn=admin to ${CN_ADMIN_SECRET_FILE_ULDAP_LOCATION}..."
 cp -av "$CN_ADMIN_SECRET_FILE" "$CN_ADMIN_SECRET_FILE_ULDAP_LOCATION"
 
-echo "Building OpenAPI client library using host ${docker_host_name}..."
+echo "Building OpenAPI client library using host ${DOCKER_HOST_NAME}..."
 . /kelvin/venv/bin/activate
 update_openapi_client \
   --generator java \
   --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar \
   --insecure \
-  $docker_host_name
+  $DOCKER_HOST_NAME
 
 echo "Restating Kelvin API server..."
 /etc/init.d/kelvin-api restart
