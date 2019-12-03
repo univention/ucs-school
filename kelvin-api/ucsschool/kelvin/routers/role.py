@@ -1,7 +1,9 @@
+import logging
 from enum import Enum
+from functools import lru_cache
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from starlette.requests import Request
 from starlette.status import (
@@ -12,17 +14,23 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 
-from ucsschool.lib.roles import role_pupil, role_staff, role_teacher, create_ucsschool_role_string
-
-# from ucsschool.lib.roles import all_roles, create_ucsschool_role_string
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    role_pupil,
+    role_staff,
+    role_teacher,
+)
 from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
-from ..utils import get_logger
 from .base import get_lib_obj
 
-logger = get_logger(__name__)
 router = APIRouter()
+
+
+@lru_cache(maxsize=1)
+def get_logger() -> logging.Logger:
+    return logging.getLogger(__name__)
 
 
 class SchoolUserRole(str, Enum):
@@ -44,7 +52,8 @@ class SchoolUserRole(str, Enum):
         """
         Creates a list containing the role(s) in lib format.
         :param school: The school to create the role for.
-        :return: The list containing the SchoolUserRole representation for consumation by the school lib.
+        :return: The list containing the SchoolUserRole representation for
+            consumation by the school lib.
         """
         if self.value == self.staff:
             return [create_ucsschool_role_string(role_staff, school)]
@@ -53,7 +62,10 @@ class SchoolUserRole(str, Enum):
         elif self.value == self.teacher:
             return [create_ucsschool_role_string(role_teacher, school)]
         elif self.value == self.teachers_and_staff:
-            return [create_ucsschool_role_string(role_staff, school), create_ucsschool_role_string(role_teacher, school)]
+            return [
+                create_ucsschool_role_string(role_staff, school),
+                create_ucsschool_role_string(role_teacher, school),
+            ]
 
 
 class RoleModel(BaseModel):
@@ -67,6 +79,7 @@ async def search(
         title="List roles with this name. '*' can be used for an inexact search.",
         min_length=3,
     ),
+    logger: logging.Logger = Depends(get_logger),
 ) -> List[RoleModel]:
     logger.debug("Searching for roles with: name_filter=%r", name_filter)
     return [RoleModel(name="10a"), RoleModel(name="8b")]

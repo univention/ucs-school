@@ -1,28 +1,33 @@
+import logging
+from functools import lru_cache
 from typing import Any, Dict, List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import Field, HttpUrl
+from pydantic import HttpUrl
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
-    HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
-    HTTP_409_CONFLICT)
+    HTTP_409_CONFLICT,
+)
 
 from ucsschool.lib.models.user import User  # Staff, Student, Teacher, TeachersAndStaff,
 from udm_rest_client import UDM  # , NoObject as UdmNoObject
 
 from ..ldap_access import udm_kwargs
-from ..utils import get_logger
+from ..urls import url_to_name
 from .base import UcsSchoolBaseModel, get_lib_obj
 from .role import SchoolUserRole
-from ..urls import url_to_name
 
-logger = get_logger(__name__)
 router = APIRouter()
+
+
+@lru_cache(maxsize=1)
+def get_logger() -> logging.Logger:
+    return logging.getLogger(__name__)
 
 
 class UserModel(UcsSchoolBaseModel):
@@ -48,7 +53,9 @@ class UserModel(UcsSchoolBaseModel):
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
         if not kwargs["ucsschool_roles"]:
-            kwargs["ucsschool_roles"] = self.role.as_lib_roles(url_to_name(request, 'school', self.school))
+            kwargs["ucsschool_roles"] = self.role.as_lib_roles(
+                url_to_name(request, "school", self.school)
+            )
         return kwargs
 
 
@@ -63,6 +70,7 @@ async def search(
     school_filter: str = Query(
         ..., title="List only users in school with this name (not URL). ", min_length=3
     ),
+    logger: logging.Logger = Depends(get_logger),
 ) -> List[UserModel]:
     """
     Search for school users.
@@ -123,7 +131,12 @@ async def create(user: UserModel, request: Request) -> UserModel:
 
 
 @router.patch("/{username}", status_code=HTTP_200_OK)
-async def partial_update(username: str, user: UserModel, request: Request) -> UserModel:
+async def partial_update(
+    username: str,
+    user: UserModel,
+    request: Request,
+    logger: logging.Logger = Depends(get_logger),
+) -> UserModel:
     if username != user.name:
         logger.info("Renaming user from %r to %r.", username, user.name)
     return user
@@ -131,7 +144,10 @@ async def partial_update(username: str, user: UserModel, request: Request) -> Us
 
 @router.put("/{username}", status_code=HTTP_200_OK)
 async def complete_update(
-    username: str, user: UserModel, request: Request
+    username: str,
+    user: UserModel,
+    request: Request,
+    logger: logging.Logger = Depends(get_logger),
 ) -> UserModel:
     if username != user.name:
         logger.info("Renaming user from %r to %r.", username, user.name)
