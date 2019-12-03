@@ -47,9 +47,7 @@ from .constants import (
     URL_TOKEN_BASE,
 )
 from .ldap_access import LDAPAccess, LdapUser
-from .utils import get_logger
 
-logger = get_logger(__name__)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=URL_TOKEN_BASE)
 _secret_key = ""
 ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)

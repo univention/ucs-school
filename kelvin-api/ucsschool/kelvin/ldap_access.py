@@ -27,6 +27,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -46,9 +47,9 @@ from .constants import (
     MACHINE_PASSWORD_FILE,
     UCS_SSL_CA_CERT,
 )
-from .utils import get_logger
 
-logger = get_logger(__name__)
+# from .utils import get_logger
+
 _udm_kwargs: Dict[str, Any] = {}
 
 
@@ -81,6 +82,7 @@ class LDAPAccess:
     port: int
 
     def __init__(self, ldap_base=None, host=None, host_dn=None, port=None):
+        self.logger = logging.getLogger(__name__)
         self.ldap_base = ldap_base or env_or_ucr("ldap/base")
         self.host = host or env_or_ucr("ldap/master")
         self.host_dn = host_dn or env_or_ucr("ldap/hostdn")
@@ -113,12 +115,12 @@ class LDAPAccess:
                     username, user_dn, password, school_only=False
                 )
             else:
-                logger.debug(
+                self.logger.debug(
                     "User %r not member of group %r.", username, API_USERS_GROUP_NAME
                 )
                 return None
         else:
-            logger.debug("No such user in LDAP: %r.", username)
+            self.logger.debug("No such user in LDAP: %r.", username)
             return None
 
     async def search(
@@ -146,7 +148,7 @@ class LDAPAccess:
         except LDAPExceptionError as exc:
             if isinstance(exc, LDAPBindError) and not raise_on_bind_error:
                 return []
-            logger.exception(
+            self.logger.exception(
                 "When connecting to %r with bind_dn %r: %s",
                 self.server.host,
                 bind_dn,
@@ -235,7 +237,7 @@ class LDAPAccess:
         if len(results) == 1:
             return results[0]["uniqueMember"].values
         else:
-            logger.error(
+            self.logger.error(
                 "Reading group %r from LDAP: results=%r", API_USERS_GROUP_NAME, results
             )
             return []

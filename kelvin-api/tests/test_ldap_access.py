@@ -25,8 +25,6 @@ async def test_ldap_access_props(temp_file_func, random_name):
     with patch.object(
         ucsschool.kelvin.ldap_access, "CN_ADMIN_PASSWORD_FILE", tmp_file1
     ), patch("ucsschool.kelvin.ldap_access.MACHINE_PASSWORD_FILE", tmp_file2), patch(
-        "ucsschool.kelvin.ldap_access.get_logger"
-    ), patch(
         "ucsschool.kelvin.ldap_access._udm_kwargs", {}
     ):
         ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
@@ -43,9 +41,7 @@ async def test_udm_kwargs_fake(temp_file_func, random_name):
     tmp_file2 = temp_file_func()
     with patch("ucsschool.kelvin.ldap_access.CN_ADMIN_PASSWORD_FILE", tmp_file1), patch(
         "ucsschool.kelvin.ldap_access.MACHINE_PASSWORD_FILE", tmp_file2
-    ), patch("ucsschool.kelvin.ldap_access.get_logger"), patch(
-        "ucsschool.kelvin.ldap_access._udm_kwargs", {}
-    ):
+    ), patch("ucsschool.kelvin.ldap_access._udm_kwargs", {}):
         udm_kwargs = await ucsschool.kelvin.ldap_access.udm_kwargs()
     assert udm_kwargs["username"] == "cn=admin"
     assert udm_kwargs["password"] == txt1

@@ -1,4 +1,6 @@
+import logging
 from datetime import timedelta
+from functools import lru_cache
 
 import aiofiles
 import lazy_object_proxy
@@ -32,11 +34,10 @@ from .token_auth import (
     get_current_active_user,
     get_token_ttl,
 )
-from .utils import enable_ucsschool_lib_debugging, get_logger
+from .utils import setup_logging
 
-enable_ucsschool_lib_debugging()
-logger = get_logger(__name__)
 ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)
+
 
 app = FastAPI(
     title="Kelvin API",
@@ -47,6 +48,11 @@ app = FastAPI(
     openapi_url=f"{URL_API_PREFIX}/openapi.json",
     default_response_class=UJSONResponse,
 )
+
+
+@lru_cache(maxsize=1)
+def get_logger() -> logging.Logger:
+    return logging.getLogger(__name__)
 
 
 @app.exception_handler(NoObject)
@@ -64,7 +70,10 @@ async def school_lib_validation_exception_handler(
 
 
 @app.post(URL_TOKEN_BASE, response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    logger: logging.Logger = Depends(get_logger),
+):
     user = await ldap_auth_instance.check_auth_and_get_user(
         form_data.username, form_data.password
     )
@@ -139,3 +148,4 @@ app.mount(
     StaticFiles(directory=str(STATIC_FILES_PATH)),
     name="static",
 )
+setup_logging()

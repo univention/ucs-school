@@ -83,22 +83,19 @@ def temp_file_func():
             pass
 
 
-# Monkey patch get_logger() for the whole test session
+# Monkey patch setup_logging() for the whole test session
 @pytest.fixture(scope="session")
 def setup_logging(temp_dir_session):
-    ori_get_logger = ucsschool.kelvin.utils.get_logger
-    tmp_log_path = temp_dir_session()
-    tmp_log_file = Path("/tmp/log")
+    tmp_log_file = Path(mkstemp()[1])
 
-    def utils_get_logger(name: str = None, path: Path = tmp_log_file):
-        tmp_log_file = tmp_log_path / path.name
-        return ori_get_logger(name, tmp_log_file)
-
-    with patch.object(
-        ucsschool.kelvin.utils, "get_logger", utils_get_logger,
-    ), patch.object(ucsschool.kelvin.utils, "LOG_FILE_PATH", tmp_log_file):
+    with patch.object(ucsschool.kelvin.utils, "LOG_FILE_PATH", tmp_log_file):
+        print(f" -- logging to {tmp_log_file!s} --")
         yield
-    ucsschool.kelvin.utils.get_logger = ori_get_logger
+
+    try:
+        tmp_log_file.unlink()
+    except FileNotFoundError:
+        pass
 
 
 @pytest.fixture

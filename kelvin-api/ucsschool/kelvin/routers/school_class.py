@@ -16,10 +16,8 @@ from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
 from ..urls import name_from_dn, url_to_dn, url_to_name
-from ..utils import get_logger
 from .base import UcsSchoolBaseModel, get_lib_obj
 
-logger = get_logger(__name__)
 router = APIRouter()
 
 

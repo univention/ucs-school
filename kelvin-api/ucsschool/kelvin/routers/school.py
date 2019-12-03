@@ -1,7 +1,9 @@
+import logging
 import re
+from functools import lru_cache
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -15,12 +17,15 @@ from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
-from ..utils import get_logger
 from .base import UcsSchoolBaseModel, get_lib_obj
 
-logger = get_logger(__name__)
 router = APIRouter()
 _school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
+
+
+@lru_cache(maxsize=1)
+def get_logger() -> logging.Logger:
+    return logging.getLogger(__name__)
 
 
 def validate_school_name(name):
@@ -45,6 +50,7 @@ async def search(
         title="List schools with this name. '*' can be used for an inexact search.",
         min_length=3,
     ),
+    logger: logging.Logger = Depends(get_logger),
 ) -> List[SchoolModel]:
     logger.debug("Searching for schools with: name_filter=%r", name_filter)
     return [SchoolModel(name="10a"), SchoolModel(name="8b")]
