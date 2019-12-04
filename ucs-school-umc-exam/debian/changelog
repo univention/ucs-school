@@ -2,6 +2,7 @@ ucs-school-umc-exam (9.0.1-22) unstable; urgency=low
 
   * Bug #50588: cache exam container per OU
   * cache computers in room
+  * improve logging
 
  -- Daniel Troeder <troeder@univention.de>  Wed, 04 Dec 2019 09:14:56 +0100
 

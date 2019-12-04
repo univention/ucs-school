@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam-master\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-05-28 15:06+0200\n"
+"POT-Creation-Date: 2019-12-04 09:29+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolexam-master/__init__.py:408
+#: umc/python/schoolexam-master/__init__.py:472
 #, python-format
-msgid "Could not remove exam user %r: %s"
-msgstr "Klassenarbeitsbenutzerkonto %r konnte nicht gelöscht werden: %s"
+msgid "Could not remove exam user %(userdn)r: %(exc)s"
+msgstr "Klassenarbeitsbenutzerkonto %(userdn)r konnte nicht gelöscht werden: "
+"%(exc)s"
 
-#: umc/python/schoolexam-master/__init__.py:280
+#: umc/python/schoolexam-master/__init__.py:307
 #, python-format
 msgid ""
 "ERROR: Creation of exam user account failed\n"
@@ -26,17 +27,31 @@ msgstr ""
 "FEHLER: Anlegen des Klassenarbeitsbenutzerkontos fehlgeschlagen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:245
+#: umc/python/schoolexam-master/__init__.py:270
 #, python-format
 msgid "Exam for user %s"
 msgstr "Klassenarbeit für Benutzer %s"
 
-#: umc/python/schoolexam-master/__init__.py:393
+#: umc/python/schoolexam-master/__init__.py:451
+#: umc/python/schoolexam-master/__init__.py:453
+#: umc/python/schoolexam-master/__init__.py:457
 #, python-format
 msgid "Exam student %r not found."
 msgstr "Klassenarbeitsbenutzerkonto %r nicht gefunden."
 
-#: umc/python/schoolexam-master/__init__.py:139
+#: umc/python/schoolexam-master/__init__.py:396
+#, python-format
+msgid "Exam user %(exam_user_uid)r not found."
+msgstr "Klassenarbeitsbenutzerkonto %(exam_user_uid)r nicht gefunden."
+
+#: umc/python/schoolexam-master/__init__.py:350
+#, python-format
+msgid ""
+"ExamStudent %(exam_user_dn)r added to LDAP but cannot be loaded: %(exc)r."
+msgstr ""
+"Klassenarbeitsbenutzer %(exam_user_dn)r wurde dem LDAP hinzugefügt, konnte aber nicht geladen werden: %(exc)r."
+
+#: umc/python/schoolexam-master/__init__.py:145
 #, python-format
 msgid ""
 "Failed to create exam container\n"
@@ -45,7 +60,7 @@ msgstr ""
 "Container für Klassenarbeitsbenutzer konnte nicht angelegt werden\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:116
+#: umc/python/schoolexam-master/__init__.py:120
 #, python-format
 msgid ""
 "Failed to create exam group\n"
@@ -54,28 +69,29 @@ msgstr ""
 "Klassenarbeitsgruppe konnte nicht angelegt werden\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:195
+#: umc/python/schoolexam-master/__init__.py:220
 #, python-format
 msgid ""
-"Requested exam username %s is not allowed according to settings/"
-"prohibited_username object %s"
+"Requested exam username %(exam_user_uid)s is not allowed according to "
+"settings/prohibited_username object %(prohibited_object_name)s"
 msgstr ""
-"Gewünschter Klassenarbeitsbenutzername %s ist nicht erlaubtgemäß des Objekts "
-"settings/prohibited_username %s"
+"Gewünschter Klassenarbeitsbenutzername %(exam_user_uid)s ist nicht "
+"erlaubtgemäß des Objekts settings/prohibited_username "
+"%(prohibited_object_name)s"
 
-#: umc/python/schoolexam-master/__init__.py:350
+#: umc/python/schoolexam-master/__init__.py:392
 #, python-format
-msgid "Student %(user_dn)r or exam user not found: %(exc)r."
+msgid "Student %(user_dn)r not found: %(exc)r."
 msgstr ""
-"Schüler %(user_dn)r oder Klassenarbeitsbenutzer nicht gefunden: %(exc)r."
+"Schüler %(user_dn)r nicht gefunden: %(exc)r."
 
-#: umc/python/schoolexam-master/__init__.py:163
+#: umc/python/schoolexam-master/__init__.py:173
 #, python-format
 msgid "Student %r not found."
 msgstr "Schüler %r nicht gefunden."
 
-#: umc/python/schoolexam-master/__init__.py:184
-#: umc/python/schoolexam-master/__init__.py:204
+#: umc/python/schoolexam-master/__init__.py:209
+#: umc/python/schoolexam-master/__init__.py:229
 #, python-format
 msgid "The exam account does already exist for: %s"
 msgstr "Der Klassenarbeitsbenutzername %s existiert schon"

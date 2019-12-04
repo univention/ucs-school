@@ -435,6 +435,7 @@ class Instance(SchoolBaseModule):
 			student_dns = set()
 			usersReplicated = set()
 			for iuser in users:
+				MODULE.process("Requesting exam user to be created: {!r}".format(iuser.dn))
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 				try:
 					ires = client.umc_command('schoolexam-master/create-exam-user', dict(
@@ -445,13 +446,14 @@ class Instance(SchoolBaseModule):
 					examuser_dn = ires.get('examuserdn')
 					examUsers.add(examuser_dn)
 					student_dns.add(iuser.dn)
-					MODULE.info('Exam user has been created: %r' % examuser_dn)
+					MODULE.process('Exam user has been created: {!r}'.format(examuser_dn))
 				except (ConnectionError, HTTPError) as exc:
 					MODULE.warn('Could not create exam user account for %r: %s' % (iuser.dn, exc))
 
 				# indicate the the user has been processed
 				progress.add_steps(percentPerUser)
 
+			MODULE.process("Sending DNs to add to group to master: {!r}".format(student_dns))
 			client.umc_command('schoolexam-master/add-exam-users-to-groups', dict(
 				users=list(student_dns),
 				school=request.options['school'],

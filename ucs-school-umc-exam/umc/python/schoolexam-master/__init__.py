@@ -162,10 +162,11 @@ class Instance(SchoolBaseModule):
 		The group has to be created earlier, e.g. by create_ou (ucs-school-import).
 		This function also restricts the login of the original user
 		'''
-
 		school = request.options['school']
 		userdn = request.options['userdn']
 		room_dn = request.options['room']
+		MODULE.info('create_exam_user() school={!r} userdn={!r} room={!r} description={!r}'.format(school, userdn, room_dn, request.options['description']))
+
 		try:
 			user = Student.from_dn(userdn, None, ldap_admin_write)
 		except univention.admin.uexceptions.noObject:
@@ -216,7 +217,7 @@ class Instance(SchoolBaseModule):
 		# Check if it's blacklisted
 		for prohibited_object in univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, ''):
 			if exam_user_uid in prohibited_object['usernames']:
-				raise UMC_Error(_('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % (exam_user_uid, prohibited_object['name']))
+				raise UMC_Error(_('Requested exam username %(exam_user_uid)s is not allowed according to settings/prohibited_username object %(prohibited_object_name)s') % {"exam_user_uid": exam_user_uid, "prohibited_object_name": prohibited_object['name']})
 
 		# Allocate new uid
 		alloc = []
@@ -342,6 +343,15 @@ class Instance(SchoolBaseModule):
 			# And create the exam_user
 			ldap_admin_write.add(exam_user_dn, al)
 
+			# test if it worked
+			try:
+				exam_student = ExamStudent.from_dn(exam_user_dn, None, ldap_admin_write)
+			except univention.admin.uexceptions.noObject as exc:
+				raise UMC_Error(_('ExamStudent %(exam_user_dn)r added to LDAP but cannot be loaded: %(exc)r.') % {'exam_user_dn': exam_user_dn, 'exc': exc})
+			except univention.admin.uexceptions.ldapError:
+				raise
+			MODULE.process("ExamStudent created sucessfully: {!r}".format(exam_student))
+
 		except BaseException:  # noqa
 			for i, j in alloc:
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
@@ -368,19 +378,22 @@ class Instance(SchoolBaseModule):
 		"""
 		Add previously created exam users to groups.
 		"""
+		MODULE.info('add_exam_users_to_groups() school={!r} users={!r}'.format(request.options['school'], request.options['users']))
 		self._room_host_cache.clear()
+
 		groups = defaultdict(dict)
 		exam_group = self.examGroup(ldap_admin_write, ldap_position, request.options['school'])
 
 		for user_dn in request.options['users']:
+			MODULE.process("Adding exam student {!r} to exam group {!r}...".format(user_dn, exam_group['name']))
 			try:
 				ori_student = Student.from_dn(user_dn, None, ldap_admin_write)
-				exam_user_uid = ''.join((self._examUserPrefix, ori_student.name))
-				exam_student = ExamStudent.get_only_udm_obj(ldap_admin_write, filter_format('uid=%s', (exam_user_uid,)))
 			except univention.admin.uexceptions.noObject as exc:
-				raise UMC_Error(_('Student %(user_dn)r or exam user not found: %(exc)r.') % {'user_dn': user_dn, 'exc': exc})
-			except univention.admin.uexceptions.ldapError:
-				raise
+				raise UMC_Error(_('Student %(user_dn)r not found: %(exc)r.') % {'user_dn': user_dn, 'exc': exc})
+			exam_user_uid = ''.join((self._examUserPrefix, ori_student.name))
+			exam_student = ExamStudent.get_only_udm_obj(ldap_admin_write, filter_format('uid=%s', (exam_user_uid,)))
+			if exam_student is None:
+				raise UMC_Error(_('Exam user %(exam_user_uid)r not found.') % {'exam_user_uid': exam_user_uid})
 
 			udm_ori_student = ori_student.get_udm_object(ldap_admin_write)
 			groups[udm_ori_student['primaryGroup']].setdefault('dns', set()).add(exam_student.dn)
@@ -456,7 +469,7 @@ class Instance(SchoolBaseModule):
 			else:
 				user.remove(ldap_admin_write)
 		except univention.admin.uexceptions.ldapError as exc:
-			raise UMC_Error(_('Could not remove exam user %r: %s') % (userdn, exc,))
+			raise UMC_Error(_('Could not remove exam user %(userdn)r: %(exc)s') % {"userdn": userdn, "exc": exc})
 
 		self.finished(request.id, {}, success=True)
 
