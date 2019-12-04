@@ -69,6 +69,7 @@ CREATE_USER_PRE_HOOK_DIR = '/usr/share/ucs-school-exam-master/pyhooks/create_exa
 class Instance(SchoolBaseModule):
 	_pre_create_hooks = None
 	_room_host_cache = {}
+	_examUserContainerDN = {}
 
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
@@ -85,7 +86,6 @@ class Instance(SchoolBaseModule):
 		# cache objects
 		self._udm_modules = dict()
 		self._examGroup = None
-		self._examUserContainerDN = None
 		self.exam_user_pre_create_hooks = None
 
 	def examGroup(self, ldap_admin_write, ldap_position, school):
@@ -122,8 +122,10 @@ class Instance(SchoolBaseModule):
 		return self._examGroup
 
 	def examUserContainerDN(self, ldap_admin_write, ldap_position, school):
-		'''lookup examUserContainerDN, create it if missing'''
-		if not self._examUserContainerDN:
+		"""
+		lookup examUserContainerDN, create it if missing
+		"""
+		if school not in self._examUserContainerDN:
 			search_base = School.get_search_base(school)
 			examUsers = search_base.examUsers
 			examUserContainerName = search_base._examUserContainerName
@@ -142,9 +144,9 @@ class Instance(SchoolBaseModule):
 				except univention.admin.uexceptions.base:
 					raise UMC_Error(_('Failed to create exam container\n%s') % traceback.format_exc())
 
-			self._examUserContainerDN = examUsers
+			self._examUserContainerDN[school] = examUsers
 
-		return self._examUserContainerDN
+		return self._examUserContainerDN[school]
 
 	@sanitize(
 		userdn=StringSanitizer(required=True),
