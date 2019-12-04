@@ -69,6 +69,7 @@ CREATE_USER_PRE_HOOK_DIR = '/usr/share/ucs-school-exam-master/pyhooks/create_exa
 class Instance(SchoolBaseModule):
 	_pre_create_hooks = None
 	_examUserContainerDN = {}
+	_room_host_cache = {}
 
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
@@ -325,7 +326,9 @@ class Instance(SchoolBaseModule):
 						value += ['temporary']
 				al.append((key, value))
 				if room:
-					al.append(('sambaUserWorkstations', ','.join([c.name for c in room.get_computers(ldap_admin_write)])))
+					if room not in self._room_host_cache:
+						self._room_host_cache[room] = room.get_computers(ldap_admin_write)
+					al.append(('sambaUserWorkstations', ','.join([c.name for c in self._room_host_cache[room]])))
 
 			if not foundUniventionObjectFlag and 'univentionObjectFlag' not in blacklisted_attributes:
 				al.append(('univentionObjectFlag', ['temporary']))
@@ -365,6 +368,7 @@ class Instance(SchoolBaseModule):
 		"""
 		Add previously created exam users to groups.
 		"""
+		self._room_host_cache.clear()
 		groups = defaultdict(dict)
 		exam_group = self.examGroup(ldap_admin_write, ldap_position, request.options['school'])
 
