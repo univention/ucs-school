@@ -114,7 +114,7 @@ class UserImportCsvResultExporter(ResultExporter):
 			success=int(not is_error),
 			error=int(is_error),
 			action=user.action,
-			role=user.role_sting if user.roles else "",
+			role=user.role_string if user.roles else "",
 			username=user.name,
 			schools=" ".join(user.schools) if user.schools else user.school,
 			firstname=user.firstname,

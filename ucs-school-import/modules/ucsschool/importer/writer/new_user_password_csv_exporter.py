@@ -74,7 +74,7 @@ class NewUserPasswordCsvExporter(ResultExporter):
 		return dict(
 			username=user.name,
 			password=user.password,
-			role=user.role_sting,
+			role=user.role_string,
 			lastname=user.lastname,
 			firstname=user.firstname,
 			schools=",".join(user.schools),

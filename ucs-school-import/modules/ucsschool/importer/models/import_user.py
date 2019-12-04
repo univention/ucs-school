@@ -234,13 +234,13 @@ class ImportUser(User):
 		"""
 		hooks = get_import_pyhooks(FormatPyHook)  # result is cached on the lib side
 		res = fields
-		for func in hooks.get('patch_fields_{}'.format(self.role_sting), []):
+		for func in hooks.get('patch_fields_{}'.format(self.role_string), []):
 			if prop_name not in func.im_class.properties:
 				# ignore properties not in Hook.properties
 				continue
 			self.logger.debug(
 				"Running patch_fields_%s hook %s for property name %r for user %s...",
-				self.role_sting, func, prop_name, self)
+				self.role_string, func, prop_name, self)
 			res = func(prop_name, res)
 		return res
 
@@ -648,14 +648,14 @@ class ImportUser(User):
 			return self.disabled
 
 		try:
-			activate = self.config["activate_new_users"][self.role_sting]
+			activate = self.config["activate_new_users"][self.role_string]
 		except KeyError:
 			try:
 				activate = self.config["activate_new_users"]["default"]
 			except KeyError:
 				raise UnknownDisabledSetting(
 					"Cannot find 'disabled' ('activate_new_users') setting for role '{}' or 'default'.".format(
-						self.role_sting),
+						self.role_string),
 					self.entry_count,
 					import_user=self)
 		self.disabled = "0" if activate else "1"
@@ -1142,7 +1142,7 @@ class ImportUser(User):
 		self._purge_ts = ts
 
 	@property
-	def role_sting(self):  # type: () -> str
+	def role_string(self):  # type: () -> str
 		"""
 		Mapping from self.roles to string used in configuration.
 
@@ -1158,6 +1158,8 @@ class ImportUser(User):
 				return "teacher"
 		else:
 			return "staff"
+
+	role_sting = role_string
 
 	@property
 	def school_classes_as_str(self):  # type: () -> str
@@ -1193,13 +1195,13 @@ class ImportUser(User):
 		:rtype: str
 		"""
 		try:
-			scheme = unicode(self.config["scheme"]["username"][self.role_sting])
+			scheme = unicode(self.config["scheme"]["username"][self.role_string])
 		except KeyError:
 			try:
 				scheme = unicode(self.config["scheme"]["username"]["default"])
 			except KeyError:
 				raise NoUsernameAtAll("Cannot find scheme to create username for role '{}' or 'default'.".format(
-					self.role_sting), self.entry_count, import_user=self)
+					self.role_string), self.entry_count, import_user=self)
 		# force transcription of german umlauts
 		return "<:umlauts>{}".format(scheme)
 
@@ -1375,7 +1377,7 @@ class ImportUser(User):
 	@property
 	def username_max_length(self):  # type: () -> int
 		try:
-			return self.config['username']['max_length'][self.role_sting]
+			return self.config['username']['max_length'][self.role_string]
 		except KeyError:
 			return self.config['username']['max_length']['default']
 
