@@ -19,6 +19,7 @@ from ucsschool.lib.roles import (
     role_pupil,
     role_staff,
     role_teacher,
+    role_student
 )
 from udm_rest_client import UDM
 
@@ -42,7 +43,7 @@ class SchoolUserRole(str, Enum):
     @classmethod
     def from_lib_roles(cls, lib_roles: List[str]):
         role_concat = ','.join(lib_roles)
-        if role_pupil in role_concat:
+        if role_pupil in role_concat or role_student in role_concat:
             return cls.student
         if role_staff in role_concat and role_teacher in role_concat:
             return cls.teachers_and_staff
