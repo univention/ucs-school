@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import HttpUrl
+from pydantic import HttpUrl, BaseModel
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -44,7 +44,7 @@ class UserModel(UcsSchoolBaseModel):
     @classmethod
     def _from_lib_model_kwargs(cls, obj: User, request: Request) -> Dict[str, Any]:
         kwargs = super()._from_lib_model_kwargs(obj, request)
-        kwargs["role"] = SchoolUserRole.from_lib_roles(obj.roles)
+        kwargs["role"] = SchoolUserRole.from_lib_roles(obj.ucsschool_roles)
         kwargs["url"] = cls.scheme_and_quote(
             request.url_for("get", username=kwargs["name"])
         )
@@ -57,6 +57,22 @@ class UserModel(UcsSchoolBaseModel):
                 url_to_name(request, "school", self.school)
             )
         return kwargs
+
+
+class UserPatchModel(BaseModel):
+    name: str = None
+    firstname: str = None
+    lastname: str = None
+
+    async def to_modify_kwargs(self) -> Dict[str, Any]:
+        res = {}
+        if self.name:
+            res['name'] = self.name
+        if self.firstname:
+            res['firstname'] = self.firstname
+        if self.lastname:
+            res['lastname'] = self.lastname
+        return res
 
 
 @router.get("/")
@@ -133,13 +149,30 @@ async def create(user: UserModel, request: Request) -> UserModel:
 @router.patch("/{username}", status_code=HTTP_200_OK)
 async def partial_update(
     username: str,
-    user: UserModel,
+    user: UserPatchModel,
     request: Request,
     logger: logging.Logger = Depends(get_logger),
 ) -> UserModel:
-    if username != user.name:
-        logger.info("Renaming user from %r to %r.", username, user.name)
-    return user
+    async with UDM(**await udm_kwargs()) as udm:
+        async for udm_obj in udm.get("users/user").search(
+            f"uid={escape_filter_chars(username)}"
+        ):
+            break
+        else:
+            raise HTTPException(
+                status_code=HTTP_404_NOT_FOUND,
+                detail=f"No User with username {username!r} found.",
+            )
+        user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
+        changed = False
+        for attr, new_value in (await user.to_modify_kwargs()).items():
+            current_value = getattr(user_current, attr)
+            if new_value != current_value:
+                setattr(user_current, attr, new_value)
+                changed = True
+        if changed:
+            await user_current.modify(udm)
+    return UserModel.from_lib_model(user_current, request)
 
 
 @router.put("/{username}", status_code=HTTP_200_OK)
@@ -149,9 +182,32 @@ async def complete_update(
     request: Request,
     logger: logging.Logger = Depends(get_logger),
 ) -> UserModel:
-    if username != user.name:
-        logger.info("Renaming user from %r to %r.", username, user.name)
-    return user
+    async with UDM(**await udm_kwargs()) as udm:
+        async for udm_obj in udm.get("users/user").search(
+            f"uid={escape_filter_chars(username)}"
+        ):
+            break
+        else:
+            raise HTTPException(
+                status_code=HTTP_404_NOT_FOUND,
+                detail=f"No User with username {username!r} found.",
+            )
+        user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
+        changed = False
+        user_request = await user.as_lib_model(request)
+        for (
+            attr
+        ) in User._attributes.keys():  # TODO: Should not access private interface!
+            current_value = getattr(user_current, attr)
+            new_value = getattr(user_request, attr)
+            if attr in ("ucsschool_roles", "users") and new_value is None:
+                new_value = []
+            if new_value != current_value:
+                setattr(user_current, attr, new_value)
+                changed = True
+        if changed:
+            await user_current.modify(udm)
+    return UserModel.from_lib_model(user_current, request)
 
 
 @router.delete("/{username}", status_code=HTTP_204_NO_CONTENT)
