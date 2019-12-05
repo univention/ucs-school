@@ -41,11 +41,16 @@ class SchoolUserRole(str, Enum):
 
     @classmethod
     def from_lib_roles(cls, lib_roles: List[str]):
-        if role_pupil in lib_roles:
+        role_concat = ','.join(lib_roles)
+        if role_pupil in role_concat:
             return cls.student
-        if role_staff in lib_roles and role_teacher in lib_roles:
+        if role_staff in role_concat and role_teacher in role_concat:
             return cls.teachers_and_staff
-        else:
+        if role_teacher in role_concat:
+            return cls.teacher
+        if role_staff in role_concat:
+            return cls.staff
+        else:  # Should never happen and throws exception
             return cls(lib_roles[0])
 
     def as_lib_roles(self, school: str) -> List[str]:
