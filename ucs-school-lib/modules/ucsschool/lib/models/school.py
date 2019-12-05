@@ -36,6 +36,7 @@ import univention.admin.modules
 import univention.admin.objects
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
+from udm_rest_client import UDM
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
 
@@ -298,19 +299,19 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		else:
 			return name
 
-	async def get_administrative_server_names(self, lo):
+	async def get_administrative_server_names(self, lo: UDM):
 		dn = self.get_administrative_group_name('administrative', ou_specific=True, as_dn=True)
 		# TODO: this should also be done in 4.4
-		mod = univention.admin.modules.get('groups/group')
-		udm_obj = mod.get(dn)
-		return udm_obj['hosts']
+		mod = lo.get('groups/group')
+		udm_obj = await mod.get(dn)
+		return udm_obj.props.hosts
 
-	async def get_educational_server_names(self, lo):
+	async def get_educational_server_names(self, lo: UDM):
 		dn = self.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
 		# TODO: this should also be done in 4.4
-		mod = univention.admin.modules.get('groups/group')
-		udm_obj = mod.get(dn)
-		return udm_obj['hosts']
+		mod = lo.get('groups/group')
+		udm_obj = await mod.get(dn)
+		return udm_obj.props.hosts
 
 	async def add_host_to_dc_group(self, lo):
 		self.logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r', self.name, self.dc_name)
@@ -323,9 +324,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				# Should be validated, but stays here as well in case validation was deactivated
 			po = univention.admin.uldap.position(lo.base)  # Sadly we need this here to access non school specific computers. TODO: Use Daniels simple API if merged into product
 			univention.admin.modules.update()
-			mod = univention.admin.modules.get('computers/domaincontroller_slave')
-			if not mod.initialized:
-				univention.admin.modules.init(lo, po, mod)
+			mod = lo.get('computers/domaincontroller_slave')
 			slave_dcs = lo.search('(&(objectClass=univentionDomainController)(cn={})(univentionServerRole=slave))'.format(dc_name_l))
 			if len(slave_dcs):
 				dn, attr = slave_dcs[0]
