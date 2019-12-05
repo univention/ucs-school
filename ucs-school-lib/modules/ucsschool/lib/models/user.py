@@ -33,14 +33,13 @@ import os.path
 from collections.abc import Mapping
 from typing import Dict, List, Optional
 
-import univention.admin.modules as udm_modules
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
 from six import iteritems
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject
 
-from udm_rest_client import UdmObject
+from udm_rest_client import UdmObject, UDM
 
 from ..roles import role_exam_user, role_pupil, role_staff, role_student, role_teacher
 from .attributes import (
@@ -255,11 +254,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		udm_obj.props.groups = await self.groups_used(lo)
 		subdir = self.get_roleshare_home_subdir()
 		udm_obj.props.unixhome = '/home/' + os.path.join(subdir, self.name)
-		udm_obj.props.overridePWHistory = '1'
-		udm_obj.props.overridePWLength = '1'
+		udm_obj.props.overridePWHistory = True
+		udm_obj.props.overridePWLength = True
 		if self.disabled is None:
-			udm_obj.props.disabled = '0'
-		if 'mailbox' in udm_obj:
+			udm_obj.props.disabled = False
+		if hasattr(udm_obj.props, 'mailbox'):
 			udm_obj.props.mailbox = '/var/spool/%s/' % self.name
 		samba_home = await self.get_samba_home_path(lo)
 		if samba_home:
@@ -372,7 +371,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				self.logger.warning('Not allowed to create %r.', mail_domain)
 
 	async def set_default_options(self, udm_obj):
-		udm_obj.options.extend(self.get_default_options)
+		udm_obj.options.extend(self.get_default_options())
 
 	@classmethod
 	def get_default_options(cls):
@@ -555,12 +554,13 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return cls.get_search_base(school).users
 
 	@classmethod
-	async def lookup(cls, lo, school, filter_s='', superordinate=None):
+	async def lookup(cls, lo: UDM, school, filter_s='', superordinate=None):
 		# cls.logger.debug("**** school=%r filter_s=%r", school, filter_s)
 		filter_object_type = conjunction('&', [parse(cls.type_filter), parse(filter_format('ucsschoolSchool=%s', [school]))])
 		if filter_s:
 			filter_object_type = conjunction('&', [filter_object_type, parse(filter_s)])
-		objects = await udm_modules.lookup(cls._meta.udm_module, None, lo, filter=unicode_s(filter_object_type), scope='sub', superordinate=superordinate)
+		objects = [o async for o in lo.get(cls._meta.udm_module).search(filter_s=unicode_s(filter_object_type), scope='sub')]
+		# objects = await udm_modules.lookup(cls._meta.udm_module, None, lo, filter=unicode_s(filter_object_type), scope='sub', superordinate=superordinate)
 		# legacy objects (find by position in LDAP) support:
 		more_objs = await super(User, cls).lookup(lo, school, filter_s, superordinate=superordinate)
 		dns = {o.dn for o in objects}
