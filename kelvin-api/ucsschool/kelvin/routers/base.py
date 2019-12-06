@@ -45,10 +45,10 @@ async def get_lib_obj(
 
 
 class UcsSchoolBaseModel(BaseModel, abc.ABC):
-    ucsschool_roles: List[str] = Field(
-        None, title="Roles of this object. Don't change if unsure."
-    )
-    url: HttpUrl = None
+    # ucsschool_roles: List[str] = Field(
+    #    None, title="Roles of this object. Don't change if unsure."
+    # )
+    # url: HttpUrl = None
 
     class Config:
         lib_class: Type[UCSSchoolModel]
@@ -67,18 +67,19 @@ class UcsSchoolBaseModel(BaseModel, abc.ABC):
         return replaced.geturl()
 
     @classmethod
-    def from_lib_model(
-        cls, obj: UCSSchoolModel, request: Request
+    async def from_lib_model(
+        cls, obj: UCSSchoolModel, request: Request, udm: UDM
     ) -> "UcsSchoolBaseModel":
-        kwargs = cls._from_lib_model_kwargs(obj, request)
+        kwargs = await cls._from_lib_model_kwargs(obj, request, udm)
         return cls(**kwargs)
 
     @classmethod
-    def _from_lib_model_kwargs(
-        cls, obj: UCSSchoolModel, request: Request
+    async def _from_lib_model_kwargs(
+        cls, obj: UCSSchoolModel, request: Request, udm: UDM
     ) -> Dict[str, Any]:
         kwargs = obj.to_dict()
-        del kwargs["objectType"]
+        if "objectType" in kwargs:
+            del kwargs["objectType"]
         kwargs["dn"] = kwargs.pop("$dn$")
         if obj.supports_school():
             kwargs["school"] = cls.scheme_and_quote(
@@ -92,8 +93,10 @@ class UcsSchoolBaseModel(BaseModel, abc.ABC):
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = self.dict()
-        del kwargs["dn"]
-        del kwargs["url"]
+        if "dn" in kwargs:
+            del kwargs["dn"]
+        if "dn" in kwargs:
+            del kwargs["url"]
         if self.Config.lib_class.supports_school():
             # TODO: have an OU cache, to fix upper/lower/camel case of 'school'
             kwargs["school"] = url_to_name(
@@ -111,3 +114,12 @@ class UcsSchoolBaseModel(BaseModel, abc.ABC):
         if cls.Config.lib_class.supports_school():
             cls.Config.lib_class.school.validate(value)
         return value
+
+
+class BasePatchModel(BaseModel):
+    async def to_modify_kwargs(self) -> Dict[str, Any]:
+        res = {}
+        for key, value in self.dict().items():
+            if value:
+                res[key] = value
+        return res
