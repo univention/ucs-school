@@ -29,6 +29,11 @@ def url_to_name(request: Request, obj_type: str, url: str) -> str:
         calc_url = request.url_for("get", username=name)
         if url != calc_url:
             raise no_object_exception
+    elif obj_type == "role":
+        name = URL(url).path.rstrip("/").split("/")[-1]
+        calc_url = request.url_for("get", role_name=name)
+        if url != calc_url:
+            raise no_object_exception
     else:
         raise no_object_exception
     return name
