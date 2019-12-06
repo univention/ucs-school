@@ -4,7 +4,7 @@ from functools import lru_cache
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -19,7 +19,7 @@ from ucsschool.lib.roles import (
     role_pupil,
     role_staff,
     role_teacher,
-    role_student
+    role_student,
 )
 from udm_rest_client import UDM
 
@@ -42,7 +42,7 @@ class SchoolUserRole(str, Enum):
 
     @classmethod
     def from_lib_roles(cls, lib_roles: List[str]):
-        role_concat = ','.join(lib_roles)
+        role_concat = ",".join(lib_roles)
         if role_pupil in role_concat or role_student in role_concat:
             return cls.student
         if role_staff in role_concat and role_teacher in role_concat:
@@ -73,13 +73,19 @@ class SchoolUserRole(str, Enum):
                 create_ucsschool_role_string(role_teacher, school),
             ]
 
+    def to_url(self, request: Request):
+        return request.url_for("get", role_name=self.value)
+
 
 class RoleModel(BaseModel):
-    name: SchoolUserRole
+    name: str
+    display_name: str
+    url: HttpUrl
 
 
 @router.get("/")
 async def search(
+    request: Request,
     name_filter: str = Query(
         None,
         title="List roles with this name. '*' can be used for an inexact search.",
@@ -88,12 +94,24 @@ async def search(
     logger: logging.Logger = Depends(get_logger),
 ) -> List[RoleModel]:
     logger.debug("Searching for roles with: name_filter=%r", name_filter)
-    return [RoleModel(name="10a"), RoleModel(name="8b")]
+    return [
+        RoleModel(name=role.name, display_name=role.name, url=role.to_url(request))
+        for role in (
+            SchoolUserRole.staff,
+            SchoolUserRole.teacher,
+            SchoolUserRole.student,
+            SchoolUserRole.teachers_and_staff,
+        )
+    ]
 
 
-@router.get("/{name}")
-async def get(name: str) -> RoleModel:
-    return RoleModel(name=name)
+@router.get("/{role_name}")
+async def get(request: Request, role_name: str) -> RoleModel:
+    return RoleModel(
+        name=role_name,
+        display_name=role_name,
+        url=SchoolUserRole(role_name).to_url(request),
+    )
 
 
 @router.post("/", status_code=HTTP_201_CREATED)
