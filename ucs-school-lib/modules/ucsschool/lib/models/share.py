@@ -30,19 +30,21 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
+from typing import List, Optional
 
 from ldap.filter import filter_format
 from univention.admin.client import UDM, HTTPError
+from udm_rest_client import UDM, NoObject as UdmNoObject, UdmObject
 
 from ..roles import role_school_class_share, role_workgroup_share
 from .attributes import Roles, SchoolClassAttribute, ShareName
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .base import RoleSupportMixin, SuperOrdinateType, UCSSchoolModel, UCSSchoolHelperAbstractClass
 from .utils import _, ucr
 
 
 class Share(UCSSchoolHelperAbstractClass):
-	name = ShareName(_('Name'))
-	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)
+	name: str = ShareName(_('Name'))
+	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)  # type: SchoolClass
 
 	@classmethod
 	def from_school_group(cls, school_group):
@@ -53,60 +55,60 @@ class Share(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):
 		return cls.get_search_base(school).shares
 
-	async def do_create(self, udm_obj, lo):
-		gid = await self.school_group.get_udm_object(lo)['gidNumber']
-		udm_obj['host'] = await self.get_server_fqdn(lo)
-		udm_obj['path'] = self.get_share_path()
-		udm_obj['writeable'] = '1'
-		udm_obj['sambaName'] = None  # UDM HTTP API fails on empty string
-		udm_obj['sambaWriteable'] = '1'
-		udm_obj['sambaBrowseable'] = '1'
-		udm_obj['sambaForceGroup'] = '+%s' % self.name
-		udm_obj['sambaCreateMode'] = '0770'
-		udm_obj['sambaDirectoryMode'] = '0770'
-		udm_obj['owner'] = '0'
-		udm_obj['group'] = str(gid)  # UDM HTTP API wants this as string
-		udm_obj['directorymode'] = '0770'
+	async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
+		gid: int = (await self.school_group.get_udm_object(lo)).props.gidNumber
+		udm_obj.props.host = await self.get_server_fqdn(lo)
+		udm_obj.props.path = self.get_share_path()
+		udm_obj.props.writeable = True
+		udm_obj.props.sambaName = None  # UDM HTTP API fails on empty string
+		udm_obj.props.sambaWriteable = True
+		udm_obj.props.sambaBrowseable = True
+		udm_obj.props.sambaForceGroup = '+%s' % self.name
+		udm_obj.props.sambaCreateMode = '0770'
+		udm_obj.props.sambaDirectoryMode = '0770'
+		udm_obj.props.owner = 0
+		udm_obj.props.group = gid
+		udm_obj.props.directorymode = '0770'
 		if ucr.is_false('ucsschool/default/share/nfs', True):
 			try:
-				udm_obj.options.pop('nfs', None)  # deactivate NFS
+				udm_obj.options.remove('nfs')  # deactivate NFS
 			except ValueError:
 				pass
-		self.logger.info('Creating share on "%s"', udm_obj['host'])
+		self.logger.info('Creating share on "%s"', udm_obj.props.host)
 		return await super(Share, self).do_create(udm_obj, lo)
 
-	def get_share_path(self):
+	def get_share_path(self) -> str:
 		if ucr.is_true('ucsschool/import/roleshare', True):
 			return '/home/%s/groups/%s' % (self.school_group.school, self.name)
 		else:
 			return '/home/groups/%s' % self.name
 
-	async def do_modify(self, udm_obj, lo):
+	async def do_modify(self, udm_obj: UdmObject, lo: UDM) -> None:
 		old_name = self.get_name_from_dn(self.old_dn)
 		if old_name != self.name:
-			head, tail = os.path.split(udm_obj['path'])
+			head, tail = os.path.split(udm_obj.props.path)
 			tail = self.name
-			udm_obj['path'] = os.path.join(head, tail)
-			if udm_obj['sambaName'] == old_name:
-				udm_obj['sambaName'] = self.name
-			if udm_obj['sambaForceGroup'] == '+%s' % old_name:
-				udm_obj['sambaForceGroup'] = '+%s' % self.name
+			udm_obj.props.path = os.path.join(head, tail)
+			if udm_obj.props.sambaName == old_name:
+				udm_obj.props.sambaName = self.name
+			if udm_obj.props.sambaForceGroup == '+%s' % old_name:
+				udm_obj.props.sambaForceGroup = '+%s' % self.name
 		return await super(Share, self).do_modify(udm_obj, lo)
 
 	@staticmethod
-	async def get_server_udm_object(dn, lo_udm):
-		mod = lo_udm.get("computers/domaincontroller_slave")
+	async def get_server_udm_object(dn: str, lo: UDM) -> Optional[UdmObject]:
+		mod = lo.get("computers/domaincontroller_slave")
 		try:
-			return mod.get(dn)
+			return await mod.get(dn)
 		except HTTPError:
 			pass
-		mod = lo_udm.get("computers/domaincontroller_master")
+		mod = lo.get("computers/domaincontroller_master")
 		try:
-			return mod.get(dn)
+			return await mod.get(dn)
 		except HTTPError:
 			return None
 
-	async def get_server_fqdn(self, lo):
+	async def get_server_fqdn(self, lo: UDM) -> Optional[str]:
 		domainname = ucr.get('domainname')
 		school = await self.get_school_obj(lo)
 		school_dn = school.dn
@@ -114,17 +116,20 @@ class Share(UCSSchoolHelperAbstractClass):
 		# fetch serverfqdn from OU
 		# TODO: change this also in 4.4
 		from .school import School
-		class_share_file_server_dn = await School.from_dn(school_dn, None, lo).get_udm_object(lo)['ucsschoolClassShareFileServer']
+		school: School = await School.from_dn(school_dn, None, lo)
+		school_udm_obj = await school.get_udm_object(lo)
+		class_share_file_server_dn: str = school_udm_obj.props.ucsschoolClassShareFileServer
 		if class_share_file_server_dn:
 			server_udm = await self.get_server_udm_object(class_share_file_server_dn, lo)
-			server_domain_name = server_udm["domain"]
+			server_domain_name = server_udm.props.domain
 			if not server_domain_name:
 				server_domain_name = domainname
-			result = server_udm["name"]
+			result = server_udm.props.name
 			if result:
 				return '%s.%s' % (result, server_domain_name)
 
 		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+		# TODO: this is broken! get uldap instance here
 		raise NotImplementedError("TODO: I think univentionLDAPAccessWrite has no UDM property.")
 		ou_attr_ldap_access_write = lo.get(school_dn, ['univentionLDAPAccessWrite'])
 		alternative_server_dn = None
@@ -150,24 +155,28 @@ class Share(UCSSchoolHelperAbstractClass):
 
 
 class WorkGroupShare(RoleSupportMixin, Share):
+	"""
+	This method was overwritten to identify WorkGroupShares and distinct them
+	from other shares of the school.
+	If at some point a lookup is implemented that uses the role attribute which
+	is reliable this code can be removed.
+	Bug #48428
+	"""
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_workgroup_share]
 	_school_in_name_prefix = True
 
-	'''
-	This method was overwritten to identify WorkGroupShares and distinct them from other shares of the school.
-	If at some point a lookup is implemented that uses the role attribute which is reliable this code can be removed.
-	Bug #48428
-	'''
 	@classmethod
-	async def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+	async def get_all(cls, lo: UDM, school: str = None, filter_str: str = None, easy_filter: str = False, superordinate: SuperOrdinateType = None) -> List[UCSSchoolModel]:
 		shares = await super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
 		filtered_shares = []
 		search_base = cls.get_search_base(school)
+		grp_mod = lo.get('groups/group')
 		for share in shares:
-			groups = UDM.using_lo(lo).version(1).get('groups/group').search(filter_format('name=%s', [share.name]), base=search_base.groups)
-			if any((search_base.isWorkgroup(g.dn) for g in groups)):
-				filtered_shares.append(share)
+			filter_s = filter_format('name=%s', (share.name,))
+			async for group in grp_mod.search(filter_s, base=search_base.groups):
+				if search_base.isWorkgroup(group.dn):
+					filtered_shares.append(share)
 		return filtered_shares
 
 
