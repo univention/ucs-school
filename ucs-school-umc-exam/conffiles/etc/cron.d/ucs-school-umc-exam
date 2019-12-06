@@ -6,6 +6,6 @@ timestamp_cleanup = configRegistry.get('ucsschool/exam/cron/cleanup', '# 30 2 * 
 options_cleanup = configRegistry.get('ucsschool/exam/cron/cleanup/options', '')
 timestamp_backup = configRegistry.get('ucsschool/exam/cron/backup', '*/5 * * * *')
 backup_activated = '' if configRegistry.is_true('ucsschool/exam/cron/backup/activated', False) else '# '
-print '%s root /usr/share/ucs-school-exam/exam-and-room-cleanup %s' % (timestamp_cleanup, options_cleanup)
-print '%s%s root /usr/share/ucs-school-exam/exam-backup 2>&1 | logger' % (backup_activated, timestamp_backup)
+print('%s root /usr/share/ucs-school-exam/exam-and-room-cleanup %s' % (timestamp_cleanup, options_cleanup))
+print('%s%s root /usr/share/ucs-school-exam/exam-backup 2>&1 | logger' % (backup_activated, timestamp_backup))
 @!@
