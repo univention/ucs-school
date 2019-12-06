@@ -19,7 +19,7 @@ from udm_rest_client import UDM  # , NoObject as UdmNoObject
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
-from .base import UcsSchoolBaseModel, get_lib_obj
+from .base import UcsSchoolBaseModel, get_lib_obj, BasePatchModel
 from .role import SchoolUserRole
 
 router = APIRouter()
@@ -30,49 +30,89 @@ def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
 
 
-class UserModel(UcsSchoolBaseModel):
-    dn: str = None
+class UserBaseModel(UcsSchoolBaseModel):
+    email: str = None
+    record_uid: str = None
+    source_uid: str = None
+    birthday: str = None
+    disabled: bool = False
     name: str
     firstname: str
     lastname: str
+    udm_properties: Dict[str, Any] = None  # TODO: None or {} as default?
     school: HttpUrl
-    role: SchoolUserRole
+    schools: List[HttpUrl]
+    school_classes: Dict[str, List[str]] = {}
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = User
 
+
+class UserCreateModel(UserBaseModel):
+    roles: List[HttpUrl]
+
+    async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
+        kwargs = await super()._as_lib_model_kwargs(request)
+        kwargs["school"] = url_to_name(request, "school", self.school)
+        kwargs["schools"] = [
+            url_to_name(request, "school", school) for school in self.schools
+        ]
+        roles = []
+        for role in self.roles:
+            for r in SchoolUserRole(url_to_name(request, "role", role)).as_lib_roles(
+                kwargs["school"]
+            ):
+                roles.append(r)
+        kwargs["ucsschool_roles"] = roles
+        return kwargs
+
+
+class UserModel(UserBaseModel):
+    dn: str
+    url: HttpUrl
+    ucsschool_roles: List[str]
+    roles: List[HttpUrl] = []
+
     @classmethod
-    def _from_lib_model_kwargs(cls, obj: User, request: Request) -> Dict[str, Any]:
-        kwargs = super()._from_lib_model_kwargs(obj, request)
-        kwargs["role"] = SchoolUserRole.from_lib_roles(obj.ucsschool_roles)
+    async def _from_lib_model_kwargs(
+        cls, obj: User, request: Request, udm: UDM
+    ) -> Dict[str, Any]:
+        kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
+        kwargs["schools"] = [kwargs["school"]]
         kwargs["url"] = cls.scheme_and_quote(
             request.url_for("get", username=kwargs["name"])
         )
+        udm_obj = await obj.get_udm_object(udm)
+        role = SchoolUserRole.from_lib_roles(obj.ucsschool_roles)
+        kwargs[
+            "source_uid"
+        ] = udm_obj.props.ucsschoolSourceUID
+        kwargs[
+            "record_uid"
+        ] = udm_obj.props.ucsschoolRecordUID
+        kwargs["roles"] = [role.to_url(request)]
+
         return kwargs
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        if not kwargs["ucsschool_roles"]:
-            kwargs["ucsschool_roles"] = self.role.as_lib_roles(
-                url_to_name(request, "school", self.school)
-            )
         return kwargs
 
 
-class UserPatchModel(BaseModel):
+class UserPatchModel(BasePatchModel):
+    email: str = None
+    record_uid: str = None
+    source_uid: str = None
+    birthday: str = None
+    disabled: bool = False
     name: str = None
     firstname: str = None
     lastname: str = None
-
-    async def to_modify_kwargs(self) -> Dict[str, Any]:
-        res = {}
-        if self.name:
-            res['name'] = self.name
-        if self.firstname:
-            res['firstname'] = self.firstname
-        if self.lastname:
-            res['lastname'] = self.lastname
-        return res
+    udm_properties: Dict[str, Any] = None  # TODO: None or {} as default?
+    school: HttpUrl = None
+    schools: List[HttpUrl] = None
+    school_classes: Dict[str, List[str]] = {}
+    roles: List[HttpUrl] = []
 
 
 @router.get("/")
@@ -81,10 +121,10 @@ async def search(
     name_filter: str = Query(
         None,
         title="List users with this name. '*' can be used for an inexact search.",
-        min_length=3,
+        min_length=2,
     ),
     school_filter: str = Query(
-        ..., title="List only users in school with this name (not URL). ", min_length=3
+        ..., title="List only users in school with this name (not URL). ", min_length=2
     ),
     logger: logging.Logger = Depends(get_logger),
 ) -> List[UserModel]:
@@ -105,11 +145,18 @@ async def search(
         filter_str = None
     async with UDM(**await udm_kwargs()) as udm:
         users = await User.get_all(udm, school_filter, filter_str)
-        return [UserModel.from_lib_model(user, request) for user in users]
+        return [await UserModel.from_lib_model(user, request, udm) for user in users]
 
 
 @router.get("/{username}")
-async def get(username: str, request: Request) -> UserModel:
+async def get(
+    username: str, request: Request, logger: logging.Logger = Depends(get_logger)
+) -> UserModel:
+    """
+    Search for specific school user.
+
+    - **username**: name of the school user (required)
+    """
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
             f"uid={escape_filter_chars(username)}"
@@ -121,11 +168,15 @@ async def get(username: str, request: Request) -> UserModel:
                 detail=f"No User with username {username!r} found.",
             )
         user = await get_lib_obj(udm, User, dn=udm_obj.dn)
-    return UserModel.from_lib_model(user, request)
+        return await UserModel.from_lib_model(user, request, udm)
 
 
 @router.post("/", status_code=HTTP_201_CREATED)
-async def create(user: UserModel, request: Request) -> UserModel:
+async def create(
+    user: UserCreateModel,
+    request: Request,
+    logger: logging.Logger = Depends(get_logger),
+) -> UserModel:
     """
     Create a school user with all the information:
 
@@ -143,7 +194,7 @@ async def create(user: UserModel, request: Request) -> UserModel:
             )
         else:
             await user.create(udm)
-    return UserModel.from_lib_model(user, request)
+        return await UserModel.from_lib_model(user, request, udm)
 
 
 @router.patch("/{username}", status_code=HTTP_200_OK)
@@ -153,6 +204,14 @@ async def partial_update(
     request: Request,
     logger: logging.Logger = Depends(get_logger),
 ) -> UserModel:
+    """
+    Patch a school user with partial information
+
+    - **name**: name of the school user
+    - **firstname**: first name of the school user
+    - **lastname**: last name of the school user
+    - **role**: One of either student, staff, teacher, teachers_and_staff
+    """
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
             f"uid={escape_filter_chars(username)}"
@@ -172,16 +231,25 @@ async def partial_update(
                 changed = True
         if changed:
             await user_current.modify(udm)
-    return UserModel.from_lib_model(user_current, request)
+        return await UserModel.from_lib_model(user_current, request, udm)
 
 
 @router.put("/{username}", status_code=HTTP_200_OK)
 async def complete_update(
     username: str,
-    user: UserModel,
+    user: UserCreateModel,
     request: Request,
     logger: logging.Logger = Depends(get_logger),
 ) -> UserModel:
+    """
+    Update a school user with all the information:
+
+    - **name**: name of the school user (required)
+    - **firstname**: name of the school user (required)
+    - **lastname**: name of the school user (required)
+    - **school**: school the class belongs to (required)
+    - **role**: One of either student, staff, teacher, teachers_and_staff
+    """
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
             f"uid={escape_filter_chars(username)}"
@@ -207,11 +275,14 @@ async def complete_update(
                 changed = True
         if changed:
             await user_current.modify(udm)
-    return UserModel.from_lib_model(user_current, request)
+        return await UserModel.from_lib_model(user_current, request, udm)
 
 
 @router.delete("/{username}", status_code=HTTP_204_NO_CONTENT)
 async def delete(username: str, request: Request) -> None:
+    """
+    Delete a school user
+    """
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
             f"uid={escape_filter_chars(username)}"
