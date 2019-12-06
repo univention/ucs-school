@@ -32,10 +32,10 @@ class SchoolClassModel(UcsSchoolBaseModel):
         lib_class = SchoolClass
 
     @classmethod
-    def _from_lib_model_kwargs(
-        cls, obj: SchoolClass, request: Request
+    async def _from_lib_model_kwargs(
+        cls, obj: SchoolClass, request: Request, udm: UDM
     ) -> Dict[str, Any]:
-        kwargs = super()._from_lib_model_kwargs(obj, request)
+        kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
         kwargs["url"] = cls.scheme_and_quote(
             request.url_for("get", class_name=kwargs["name"], school=obj.school)
         )
@@ -102,14 +102,14 @@ async def search(
         filter_str = None
     async with UDM(**await udm_kwargs()) as udm:
         scs = await SchoolClass.get_all(udm, school_name, filter_str)
-    return [SchoolClassModel.from_lib_model(sc, request) for sc in scs]
+        return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
 
 
 @router.get("/{school}/{class_name}")
 async def get(class_name: str, school: str, request: Request) -> SchoolClassModel:
     async with UDM(**await udm_kwargs()) as udm:
         sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
-    return SchoolClassModel.from_lib_model(sc, request)
+        return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
 @router.post("/", status_code=HTTP_201_CREATED)
@@ -131,7 +131,7 @@ async def create(school_class: SchoolClassModel, request: Request) -> SchoolClas
             )
         else:
             await sc.create(udm)
-    return SchoolClassModel.from_lib_model(sc, request)
+        return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
 @router.patch("/{school}/{class_name}", status_code=HTTP_200_OK)
@@ -155,7 +155,7 @@ async def partial_update(
                 changed = True
         if changed:
             await sc_current.modify(udm)
-    return SchoolClassModel.from_lib_model(sc_current, request)
+        return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
 @router.put("/{school}/{class_name}", status_code=HTTP_200_OK)
@@ -183,7 +183,7 @@ async def complete_update(
                 changed = True
         if changed:
             await sc_current.modify(udm)
-    return SchoolClassModel.from_lib_model(sc_current, request)
+        return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
 @router.delete("/{school}/{class_name}", status_code=HTTP_204_NO_CONTENT)

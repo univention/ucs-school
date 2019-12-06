@@ -84,12 +84,8 @@ class UserModel(UserBaseModel):
         )
         udm_obj = await obj.get_udm_object(udm)
         role = SchoolUserRole.from_lib_roles(obj.ucsschool_roles)
-        kwargs[
-            "source_uid"
-        ] = udm_obj.props.ucsschoolSourceUID
-        kwargs[
-            "record_uid"
-        ] = udm_obj.props.ucsschoolRecordUID
+        kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
+        kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
         kwargs["roles"] = [role.to_url(request)]
 
         return kwargs
