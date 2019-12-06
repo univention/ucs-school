@@ -54,14 +54,14 @@ class UcsSchoolBaseModel(BaseModel, abc.ABC):
         lib_class: Type[UCSSchoolModel]
         json_loads = ujson.loads
 
-    @classmethod
-    def scheme_and_quote(cls, url: str) -> str:
+    @staticmethod
+    def scheme_and_quote(url: str) -> str:
         up: ParseResult = urlparse(url)
         replaced = up._replace(scheme="https", path=quote(up.path))
         return replaced.geturl()
 
-    @classmethod
-    def unscheme_and_unquote(cls, url: str) -> str:
+    @staticmethod
+    def unscheme_and_unquote(url: str) -> str:
         up: ParseResult = urlparse(url)
         replaced = up._replace(scheme="http", path=unquote(up.path))
         return replaced.geturl()
