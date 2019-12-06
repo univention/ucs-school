@@ -4,5 +4,5 @@
 @!@
 timestamp = configRegistry.get('ucsschool/exam/cron/cleanup-master', '# 30 3 * * *')
 options = configRegistry.get('ucsschool/exam/cron/cleanup-master/options', '')
-print '%s root /usr/share/ucs-school-exam-master/exam-and-room-cleanup %s' % (timestamp, options)
+print('%s root /usr/share/ucs-school-exam-master/exam-and-room-cleanup %s' % (timestamp, options))
 @!@
