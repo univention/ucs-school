@@ -73,7 +73,7 @@ class SchoolClassPatchDocument(BaseModel):
             res["ucsschool_roles"] = self.ucsschool_roles
         if self.users:
             res["users"] = [
-                await url_to_dn(request, "user", user) for user in (self.users or [])
+                await url_to_dn(request, "user", UcsSchoolBaseModel.unscheme_and_unquote(user)) for user in (self.users or [])
             ]  # this is expensive :/
         return res
 
@@ -162,7 +162,7 @@ async def partial_update(
 async def complete_update(
     class_name: str, school: str, school_class: SchoolClassModel, request: Request
 ) -> SchoolClassModel:
-    if school != url_to_name(request, "school", school_class.school):
+    if school != url_to_name(request, "school", UcsSchoolBaseModel.unscheme_and_unquote(school_class.school)):
         raise HTTPException(
             status_code=HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Moving of class to other school is not allowed.",
