@@ -1,10 +1,11 @@
 import logging
+import datetime
 from functools import lru_cache
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import HttpUrl, BaseModel
+from pydantic import HttpUrl
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -14,7 +15,7 @@ from starlette.status import (
     HTTP_409_CONFLICT,
 )
 
-from ucsschool.lib.models.user import User  # Staff, Student, Teacher, TeachersAndStaff,
+from ucsschool.lib.models.user import User
 from udm_rest_client import UDM  # , NoObject as UdmNoObject
 
 from ..ldap_access import udm_kwargs
@@ -31,15 +32,15 @@ def get_logger() -> logging.Logger:
 
 
 class UserBaseModel(UcsSchoolBaseModel):
-    email: str = None
-    record_uid: str = None
-    source_uid: str = None
-    birthday: str = None
+    email: str = ""
+    record_uid: str = ""
+    source_uid: str = ""
+    birthday: datetime.date = None
     disabled: bool = False
     name: str
     firstname: str
     lastname: str
-    udm_properties: Dict[str, Any] = None  # TODO: None or {} as default?
+    udm_properties: Dict[str, Any] = {}
     school: HttpUrl
     schools: List[HttpUrl]
     school_classes: Dict[str, List[str]] = {}
@@ -49,7 +50,7 @@ class UserBaseModel(UcsSchoolBaseModel):
 
 
 class UserCreateModel(UserBaseModel):
-    roles: List[HttpUrl]
+    role: HttpUrl
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
@@ -58,20 +59,17 @@ class UserCreateModel(UserBaseModel):
             url_to_name(request, "school", school) for school in self.schools
         ]
         roles = []
-        for role in self.roles:
-            for r in SchoolUserRole(url_to_name(request, "role", role)).as_lib_roles(
-                kwargs["school"]
-            ):
-                roles.append(r)
+        for r in SchoolUserRole(url_to_name(request, "role", self.role)).as_lib_roles(
+            kwargs["school"]
+        ):
+            roles.append(r)
         kwargs["ucsschool_roles"] = roles
         return kwargs
 
 
 class UserModel(UserBaseModel):
     dn: str
-    url: HttpUrl
-    ucsschool_roles: List[str]
-    roles: List[HttpUrl] = []
+    role: HttpUrl
 
     @classmethod
     async def _from_lib_model_kwargs(
@@ -86,7 +84,7 @@ class UserModel(UserBaseModel):
         role = SchoolUserRole.from_lib_roles(obj.ucsschool_roles)
         kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
-        kwargs["roles"] = [role.to_url(request)]
+        kwargs["role"] = role.to_url(request)
 
         return kwargs
 
@@ -96,19 +94,19 @@ class UserModel(UserBaseModel):
 
 
 class UserPatchModel(BasePatchModel):
-    email: str = None
-    record_uid: str = None
-    source_uid: str = None
-    birthday: str = None
+    email: str = ""
+    record_uid: str = ""
+    source_uid: str = ""
+    birthday: datetime.date = None
     disabled: bool = False
-    name: str = None
-    firstname: str = None
-    lastname: str = None
-    udm_properties: Dict[str, Any] = None  # TODO: None or {} as default?
-    school: HttpUrl = None
-    schools: List[HttpUrl] = None
+    name: str = ""
+    firstname: str = ""
+    lastname: str = ""
+    udm_properties: Dict[str, Any] = {}
+    school: HttpUrl = ""
+    schools: List[HttpUrl] = []
     school_classes: Dict[str, List[str]] = {}
-    roles: List[HttpUrl] = []
+    role: HttpUrl = ""
 
 
 @router.get("/")
@@ -182,6 +180,7 @@ async def create(
     - **school**: school the class belongs to (required)
     - **role**: One of either student, staff, teacher, teachers_and_staff
     """
+    user.Config.lib_class = SchoolUserRole(url_to_name(request, "role", user.role)).get_lib_class()
     user = await user.as_lib_model(request)
     async with UDM(**await udm_kwargs()) as udm:
         if await user.exists(udm):
@@ -246,6 +245,7 @@ async def complete_update(
     - **school**: school the class belongs to (required)
     - **role**: One of either student, staff, teacher, teachers_and_staff
     """
+    user.Config.lib_class = SchoolUserRole(url_to_name(request, "role", user.role)).get_lib_class()
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
             f"uid={escape_filter_chars(username)}"
