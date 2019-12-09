@@ -32,9 +32,9 @@ def get_logger() -> logging.Logger:
 
 
 class UserBaseModel(UcsSchoolBaseModel):
-    email: str = ""
-    record_uid: str = ""
-    source_uid: str = ""
+    email: str = None
+    record_uid: str = None
+    source_uid: str = None
     birthday: datetime.date = None
     disabled: bool = False
     name: str
@@ -64,6 +64,9 @@ class UserCreateModel(UserBaseModel):
         ):
             roles.append(r)
         kwargs["ucsschool_roles"] = roles
+        kwargs["birthday"] = str(self.birthday)
+        if not kwargs["email"]:
+            del kwargs["email"]
         return kwargs
 
 
