@@ -125,7 +125,7 @@ def mkdir_p(dir_name, user, group, mode):  # type: (str, Union[str, int], Union[
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
 	def replace_password(obj, attr):
 		ori = getattr(obj, attr)
-		if isinstance(ori, collections.Mapping) and isinstance(ori.get('password'), string_types):
+		if isinstance(ori, collections.abc.Mapping) and isinstance(ori.get('password'), string_types):
 			# don't change original record arguments as it would change the objects being logged
 			new_dict = copy.deepcopy(ori)
 			new_dict['password'] = '*' * 8
