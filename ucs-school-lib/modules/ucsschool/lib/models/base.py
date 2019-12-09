@@ -443,7 +443,6 @@ class UCSSchoolHelperAbstractClass(object):
 			if not udm_obj.superordinate:
 				# TODO: remove this, once new() has been fixed
 				udm_obj.superordinate = superordinate_obj
-			udm_obj.options.append("ucsschoolTeacher")
 			udm_obj.position = pos.getDn()
 			# udm_obj._api_obj.position = udm_obj.position  # prevent move()
 
