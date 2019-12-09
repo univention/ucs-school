@@ -155,10 +155,9 @@ def create_random_users(
 ):  # TODO: Extend with schools and school_classes if resources are done
     usernames = list()
 
-    def _create_random_users(roles: Dict[str, int]) -> Dict[str, List[str]]:
-        users = {}
+    def _create_random_users(roles: Dict[str, int]):
+        users = []
         for role, amount in roles.items():
-            users[role] = []
             for i in range(amount):
                 user_data = create_random_user_data(role)
                 response = requests.post(
@@ -167,7 +166,7 @@ def create_random_users(
                     data=user_data.json(),
                 )
                 assert response.status_code == 201
-                users[role].append(user_data.name)
+                users.append(user_data)
                 usernames.append(user_data.name)
         return users
 

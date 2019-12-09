@@ -3,7 +3,7 @@ import pytest
 import ucsschool.kelvin.constants
 from ucsschool.kelvin.ldap_access import udm_kwargs
 from ucsschool.kelvin.routers.role import SchoolUserRole
-from ucsschool.kelvin.routers.user import UserModel
+from ucsschool.kelvin.routers.user import UserModel, UserCreateModel
 from ucsschool.lib.models.user import User
 from udm_rest_client import UDM
 
@@ -75,15 +75,12 @@ async def test_get(auth_header, url_fragment, create_random_users):
     users = create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
     )
-    usernames = []
-    for role in users:
-        usernames.extend(users[role])
     async with UDM(**await udm_kwargs()) as udm:
-        for username in usernames:
-            lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={username}")
+        for user in users:
+            lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
             assert len(lib_users) == 1
             response = requests.get(
-                f"{url_fragment}/users/{username}", headers=auth_header
+                f"{url_fragment}/users/{user.name}", headers=auth_header
             )
             assert type(response.json()) == dict
             api_user = UserModel(**response.json())
@@ -115,9 +112,29 @@ async def test_create(auth_header, url_fragment, create_random_user_data):
 
 @must_run_in_container
 @pytest.mark.asyncio
-async def test_put(auth_header, url_fragment):
+async def test_put(
+    auth_header, url_fragment, create_random_users, create_random_user_data
+):
+    users = create_random_users(
+        {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
+    )
     async with UDM(**await udm_kwargs()) as udm:
-        assert False
+        for user in users:
+            new_user_data = create_random_user_data(user.role.split("/")[-1]).dict()
+            del new_user_data["name"]
+            del new_user_data["record_uid"]
+            del new_user_data["source_uid"]
+            modified_user = UserCreateModel(**{**user.dict(), **new_user_data})
+            response = requests.put(
+                f"{url_fragment}/users/{user.name}",
+                headers=auth_header,
+                data=modified_user.json(),
+            )
+            assert response.status_code == 200
+            api_user = UserModel(**response.json())
+            lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+            assert len(lib_users) == 1
+            await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
 @must_run_in_container
