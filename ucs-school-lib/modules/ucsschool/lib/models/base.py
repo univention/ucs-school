@@ -436,15 +436,12 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		try:
 			pos.setDn(container)
-			# udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, dn=self.dn, superordinate=self.get_superordinate(lo), options={"ucsschoolTeacher": True})
-			# udm_obj.open()
 			superordinate_obj = await self.get_superordinate(lo)
 			udm_obj = await lo.get(self._meta.udm_module).new(superordinate=superordinate_obj)
 			if not udm_obj.superordinate:
 				# TODO: remove this, once new() has been fixed
 				udm_obj.superordinate = superordinate_obj
 			udm_obj.position = pos.getDn()
-			# udm_obj._api_obj.position = udm_obj.position  # prevent move()
 
 			# here is the real logic
 			await self.do_create(udm_obj, lo)
