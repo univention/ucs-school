@@ -55,7 +55,6 @@ import pprint
 
 from ..configuration import setup_configuration as _setup_configuration
 from ..factory import setup_factory as _setup_factory
-from ..models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
 from .ldap_connection import (
 	get_admin_connection as _get_admin_connection,
 	get_machine_connection as _get_machine_connection,
@@ -65,11 +64,6 @@ from ..frontend.user_import_cmdline import UserImportCommandLine as _UserImportC
 from ucsschool.lib.models.utils import get_stream_handler as _get_stream_handler, UniStreamHandler as _UniStreamHandler
 from ucsschool.lib.models import *  # noqa
 
-assert ImportStaff
-assert ImportStudent
-assert ImportTeacher
-assert ImportTeachersAndStaff
-assert ImportUser
 
 _config_args = {
 	"dry_run": False,
@@ -107,3 +101,9 @@ logger.info("------ UCS@school import tool configured ------")
 logger.info("Used configuration files: %s.", config.conffiles)
 logger.info("Using command line arguments: %r", _config_args)
 logger.info("Configuration is:\n%s", pprint.pformat(config))
+from ..models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
+assert ImportStaff
+assert ImportStudent
+assert ImportTeacher
+assert ImportTeachersAndStaff
+assert ImportUser
