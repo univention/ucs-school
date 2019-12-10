@@ -87,6 +87,7 @@ def get_unprivileged_connection():  # type: () -> (Tuple[LoType, PoType])
 
 	:rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
 	"""
+	return get_machine_connection()
 	global _unprivileged_connection, _unprivileged_position
 	if not _unprivileged_connection or not _unprivileged_position:
 		with open('/etc/ucsschool-import/ldap_unprivileged.secret') as fp:

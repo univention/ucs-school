@@ -38,8 +38,6 @@ from .factory import load_class
 from .exceptions import InitialisationError
 try:
 	from typing import Any, Iterable, Optional, TypeVar
-	from .models.import_user import ImportUser
-	ImportUserTV = TypeVar('ImportUserTV', bound=ImportUser)
 except ImportError:
 	pass
 

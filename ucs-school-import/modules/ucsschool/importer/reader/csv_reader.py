@@ -36,6 +36,7 @@ from csv import reader as csv_reader, Sniffer, Error as CsvError
 import codecs
 import sys
 
+import six
 from six import string_types
 import magic
 
@@ -44,7 +45,6 @@ from .base_reader import BaseReader
 from ..exceptions import ConfigurationError, InitialisationError, NoRole, UnknownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
-import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
 try:
 	from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
@@ -139,7 +139,7 @@ class CsvReader(BaseReader):
 			try:
 				dialect = self.get_dialect(fp)
 			except CsvError as exc:
-				raise InitialisationError, InitialisationError("Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(exc)), sys.exc_info()[2]
+				six.reraise(InitialisationError, InitialisationError("Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(exc)), sys.exc_info()[2])
 			fp.seek(0)
 			encoding = self.get_encoding(fp)
 			self.logger.debug('Reading %r with encoding %r.', self.filename, encoding)
@@ -294,7 +294,7 @@ class CsvReader(BaseReader):
 			else:
 				# must be a UDM property
 				try:
-					prop_desc = udm_user_module.property_descriptions[v]
+					prop_desc = usersmod.property_descriptions[v]
 				except KeyError:
 					raise UnknownProperty("Unknown UDM property: '{}'.".format(v), entry_count=self.entry_count, import_user=import_user)
 				if prop_desc.multivalue:

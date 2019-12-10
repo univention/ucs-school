@@ -99,9 +99,9 @@ class ImportUser(User):
 		"mailPrimaryAddress uid"
 	).split())  # type: List[str]
 	_unique_ids = defaultdict(dict)  # type: Dict[str, Dict[str, str]]
-	factory = lazy_object_proxy.Proxy(lambda: Factory())  # type: DefaultUserImportFactory
-	ucr = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_ucr())  # type: ConfigRegistry
-	reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())  # type: BaseReader
+	factory = Factory()  # type: DefaultUserImportFactory
+	ucr = factory.make_ucr()  # type: ConfigRegistry
+	reader = factory.make_reader()  # type: BaseReader
 	_username_handler_cache = {}  # type: Dict[Tuple[int, bool], UsernameHandler]
 	_unique_email_handler_cache = {}  # type: Dict[bool, UsernameHandler]
 	# non-Attribute attributes (not in self._attributes) that can also be used
