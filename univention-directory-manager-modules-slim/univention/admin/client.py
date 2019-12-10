@@ -180,10 +180,10 @@ class UDM(Client):
 	def modules(self):  # type: () -> Iterator[Module]
 		# TODO: cache - needs server side support
 		resp = self.client.make_request('GET', self.uri)
-		prefix_modules = self.client.eval_response(resp)['_links']['udm/relation/object-modules']
+		prefix_modules = self.client.eval_response(resp)['_links']['udm:object-modules']
 		for prefix_module in prefix_modules:
 			resp = self.client.make_request('GET', prefix_module['href'])
-			module_infos = self.client.eval_response(resp).get('_links', {}).get('udm/relation/object-types', [])
+			module_infos = self.client.eval_response(resp).get('_links', {}).get('udm:object-types', [])
 			for module_info in module_infos:
 				yield Module(self, module_info['href'], module_info['name'], module_info['title'])
 
