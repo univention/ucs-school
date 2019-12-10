@@ -75,11 +75,17 @@ RUN /kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-confi
 # copy and install project - separate last step for fast image rebuilds
 # install packages 'editable', so we can work directly on them
 COPY ucs-school-lib/ /kelvin/ucs-school-lib
+COPY ucs-school-import/ /kelvin/ucs-school-import
 COPY kelvin-api.initd /tmp/
 COPY kelvin-api/ /kelvin/kelvin-api
 RUN	mv -v /tmp/kelvin-api.initd /etc/init.d/kelvin-api && \
 	rc-update add kelvin-api default && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
+	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
+	cp -r /kelvin/ucs-school-import/usr/share/ucs-school-import /usr/share/ && \
+	mkdir -p /usr/share/ucs-school-import/pyhooks && \
+	mkdir -p /var/lib/ucs-school-import && \
+	cp -r /kelvin/ucs-school-import/empty_configs /var/lib/ucs-school-import/configs && \
 	/kelvin/venv/bin/python3 /kelvin/kelvin-api/setup.py build_html && \
     /kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/kelvin-api[development] && \
 	source /kelvin/venv/bin/activate && \

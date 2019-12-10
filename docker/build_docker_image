@@ -56,7 +56,17 @@ fi
 
 echo "Copying files to build directory..."
 [ -d build ] || mkdir build
-rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim ../ucs-school-lib kelvin-api.initd alpine_apk_list Dockerfile build/
+rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim \
+ ../ucs-school-lib ../ucs-school-import kelvin-api.initd alpine_apk_list Dockerfile build/
+
+echo "Create empty import configs"
+mkdir -p build/ucs-school-import/empty_configs
+for FILE in global user_import user_import_legacy user_import_http-api; do
+	if ! [ -e build/ucs-school-import/empty_configs/${FILE}.json ]; then
+		echo '{}' > build/ucs-school-import/empty_configs/${FILE}.json
+	fi
+done
+
 
 echo "Downloading OpenAPI Generator JAR file..."
 OPENAPI_CLIENT_GENERATOR_JAR="$(wget -O - https://raw.githubusercontent.com/univention/python-udm-rest-api-client/master/update_openapi_client | egrep '^JAR_URL = ' | cut -f 3 -d ' ')"
