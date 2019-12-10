@@ -21,11 +21,22 @@ fake = Faker()
 
 
 @pytest.mark.asyncio
-async def test_read_school_class(new_school_class, udm_kwargs):
+async def test_school_class_exists(new_school_class, udm_kwargs):
+    dn, attr = await new_school_class()
+    async with UDM(**udm_kwargs) as udm:
+        sc0 = await SchoolClass.from_dn(dn, attr["school"], udm)
+        assert await sc0.exists(udm) is True
+        sc1 = SchoolClass(name=f"{attr['school']}-{attr['name']}", school=attr["school"])
+        assert await sc1.exists(udm) is True
+        sc2 = SchoolClass(name=f"{attr['school']}-{fake.pystr()}", school=attr["school"])
+        assert await sc2.exists(udm) is False
+
+
+@pytest.mark.asyncio
+async def test_school_class_from_dn(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         sc = await SchoolClass.from_dn(dn, attr["school"], udm)
-    print("** sc.to_dict()={!r}".format(sc.to_dict()))
     for k, v in attr.items():
         val1 = v
         val2 = getattr(sc, k)
@@ -39,44 +50,50 @@ async def test_read_school_class(new_school_class, udm_kwargs):
         )
 
 
-@pytest.mark.xfail(reason="Creation of share fails.")
 @pytest.mark.asyncio
-async def test_create_school_class(school_class_attrs, udm_kwargs):
+async def test_school_class_create(school_class_attrs, udm_kwargs):
+    sc_attrs = school_class_attrs()
     async with UDM(**udm_kwargs) as udm:
-        sc1 = SchoolClass(**school_class_attrs)
+        sc1 = SchoolClass(**sc_attrs)
         success = await sc1.create(udm)
-        print("** sc1.to_dict()={!r}".format(sc1.to_dict()))
         assert success
     async with UDM(**udm_kwargs) as udm:
-        sc2 = await SchoolClass.from_dn(sc1.dn, school_class_attrs["school"], udm)
-        print("** sc2.to_dict()={!r}".format(sc2.to_dict()))
-    for k, v in school_class_attrs.items():
-        assert getattr(sc1, k) == getattr(sc2, k)
+        sc2 = await SchoolClass.from_dn(sc1.dn, sc_attrs["school"], udm)
+    for key, exp_value in sc_attrs.items():
+        found_value = getattr(sc2, key)
+        if isinstance(exp_value, list):
+            exp_value = set(exp_value)
+            found_value = set(found_value)
+        assert exp_value == found_value
 
 
 @pytest.mark.asyncio
-async def test_modify_school_class(new_school_class, ldap_base, udm_kwargs):
+async def test_school_class_modify(new_school_class, new_user, ldap_base, udm_kwargs):
     dn, attr = await new_school_class()
+    dn_user, attr_user = await new_user("student")
     async with UDM(**udm_kwargs) as udm:
         sc1 = await SchoolClass.from_dn(dn, attr["school"], udm)
-        print("** sc1.to_dict()={!r}".format(sc1.to_dict()))
         description_new = fake.text(max_nb_chars=50)
         sc1.description = description_new
-        sc1.users.append(f"uid={fake.user_name()},cn=users,{ldap_base}")
+        sc1.users.append(dn_user)
         await sc1.modify(udm)
     async with UDM(**udm_kwargs) as udm:
         sc2 = await SchoolClass.from_dn(dn, attr["school"], udm)
-        print("** sc2.to_dict()={!r}".format(sc2.to_dict()))
     for k, v in attr.items():
-        assert getattr(sc1, k) == getattr(sc2, k)
+        exp_value = getattr(sc1, k)
+        found_value = getattr(sc2, k)
+        if k == "users":
+            exp_value = set(exp_value)
+            exp_value.add(dn_user)
+            found_value = set(found_value)
+        assert exp_value == found_value
 
 
 @pytest.mark.asyncio
-async def test_delete_school_class(new_school_class, udm_kwargs):
+async def test_school_class_remove(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         sc = await SchoolClass.from_dn(dn, attr["school"], udm)
-        print("** sc.to_dict()={!r}".format(sc.to_dict()))
         await sc.remove(udm)
         assert sc.dn is None
     async with UDM(**udm_kwargs) as udm:

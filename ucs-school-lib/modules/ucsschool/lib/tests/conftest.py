@@ -64,7 +64,7 @@ def school_class_attrs(ldap_base):
             ],
         }
 
-    return _func()
+    return _func
 
 
 @pytest.fixture
@@ -74,25 +74,25 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
 
     async def _func() -> Tuple[str, Dict[str, str]]:
         async with UDM(**udm_kwargs) as udm:
+            sc_attrs = school_class_attrs()
             grp_obj = await udm.get("groups/group").new()
-            grp_obj.position = f"cn=klassen,cn=schueler,cn=groups,ou={school_class_attrs['school']},{ldap_base}"
+            grp_obj.position = f"cn=klassen,cn=schueler,cn=groups,ou={sc_attrs['school']},{ldap_base}"
             grp_obj.props.name = (
-                f"{school_class_attrs['school']}-{school_class_attrs['name']}"
+                f"{sc_attrs['school']}-{sc_attrs['name']}"
             )
-            grp_obj.props.description = school_class_attrs["description"]
-            grp_obj.props.users = school_class_attrs["users"]
+            grp_obj.props.description = sc_attrs["description"]
+            grp_obj.props.users = sc_attrs["users"]
             await grp_obj.save()
             created_school_classes.append(grp_obj.dn)
             print("Created new SchoolClass: {!r}".format(grp_obj))
-            print(f"grp_obj.props={grp_obj.props!r}")
 
             share_obj = await udm.get("shares/share").new()
             share_obj.position = (
-                f"cn=klassen,cn=shares,ou={school_class_attrs['school']},{ldap_base}"
+                f"cn=klassen,cn=shares,ou={sc_attrs['school']},{ldap_base}"
             )
             share_obj.props.name = grp_obj.props.name
             share_obj.props.host = (
-                f"{school_class_attrs['school']}.{env_or_ucr('domainname')}"
+                f"{sc_attrs['school']}.{env_or_ucr('domainname')}"
             )
             share_obj.props.owner = 0
             share_obj.props.group = 0
@@ -102,7 +102,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
             created_school_shares.append(share_obj.dn)
             print("Created new ClassShare: {!r}".format(share_obj))
 
-        return grp_obj.dn, school_class_attrs
+        return grp_obj.dn, sc_attrs
 
     yield _func
 
