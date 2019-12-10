@@ -87,7 +87,7 @@ RUN	mv -v /tmp/kelvin-api.initd /etc/init.d/kelvin-api && \
 	mkdir -p /var/lib/ucs-school-import && \
 	cp -r /kelvin/ucs-school-import/empty_configs /var/lib/ucs-school-import/configs && \
 	/kelvin/venv/bin/python3 /kelvin/kelvin-api/setup.py build_html && \
-    /kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/kelvin-api[development] && \
+	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/kelvin-api[development] && \
 	source /kelvin/venv/bin/activate && \
 	(cd /kelvin/ucs-school-lib/modules && python -m pytest) && \
 	make -C /kelvin/kelvin-api lint && \
