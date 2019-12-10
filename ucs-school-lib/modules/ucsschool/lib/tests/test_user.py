@@ -38,6 +38,17 @@ async def test_user_exists(new_user, udm_kwargs):
         assert await user2.exists(udm) is False
 
 
+@pytest.mark.asyncio
+async def test_user_type_is_converted(new_user, role2class, udm_kwargs):
+    async with UDM(**udm_kwargs) as udm:
+        for user_type in ("staff", "student", "teacher", "teacher_and_staff"):
+            dn, attr = await new_user(user_type)
+            user0 = await User.from_dn(dn, attr["school"][0], udm)
+            assert await user0.exists(udm) is True
+            exp_cls = role2class[user_type]
+            assert isinstance(user0, exp_cls)
+
+
 @pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
 @pytest.mark.asyncio
 async def test_user_from_dn(new_user_via_ssh, lo_udm, remove_user_via_ssh):
