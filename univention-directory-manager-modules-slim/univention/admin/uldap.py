@@ -28,6 +28,8 @@
 # <http://www.gnu.org/licenses/>.
 
 
+import univention.admin.uldap_docker as uldap_docker
+
 class Position(object):
 	def __init__(self, dn):
 		self.dn = dn
@@ -43,18 +45,20 @@ class Position(object):
 
 
 def getAdminConnection(*args, **kwargs):
-	# TODO
-	raise NotImplementedError
+	lo = uldap_docker.getAdminConnection(*args, **kwargs)
+	po = Position(lo.base)
+	return lo, po
 
 
 def getMachineConnection(*args, **kwargs):
-	# TODO
-	raise NotImplementedError
+	lo = uldap_docker.getMachineConnection(*args, **kwargs)
+	po = Position(lo.base)
+	return lo, po
 
 
 def position(base):
 	return Position(base)
 
 
-class access():
+class access(uldap_docker.access):
 	pass

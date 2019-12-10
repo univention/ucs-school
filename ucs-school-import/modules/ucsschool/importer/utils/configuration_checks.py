@@ -94,10 +94,7 @@ class ConfigurationChecks(object):
 	"""
 	def __init__(self, config):  # type: (ReadOnlyDict) -> None
 		self.config = config
-		try:
-			self.lo, po = get_readonly_connection()
-		except UcsSchoolImportFatalError:
-			self.lo, po = get_unprivileged_connection()
+		self.lo, po = get_unprivileged_connection()
 		self.logger = logging.getLogger(__name__)
 
 
