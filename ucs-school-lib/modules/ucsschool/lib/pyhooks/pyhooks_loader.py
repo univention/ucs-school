@@ -122,7 +122,7 @@ class PyHooksLoader(object):
 						if filter_func(a_class):
 							self._hook_classes[self.base_class_name].append(a_class)
 						else:
-							self.logger.info("Hook class %r filtered out by %s().", a_class.__name__, filter_func.func_name)
+							self.logger.info("Hook class %r filtered out by %s().", a_class.__name__, filter_func.__name__)
 			self.logger.info("Found hook classes: %s", ", ".join(c.__name__ for c in self._hook_classes[self.base_class_name]))
 		return self._hook_classes[self.base_class_name]
 
