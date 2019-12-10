@@ -1,4 +1,5 @@
 import pytest
+from faker import Faker
 from ucsschool.lib.models.user import (
     ExamStudent,
     Staff,
@@ -7,6 +8,7 @@ from ucsschool.lib.models.user import (
     TeachersAndStaff,
     User,
 )
+from udm_rest_client import UDM, NoObject as UdmNoObject
 
 
 def _inside_docker():
@@ -21,6 +23,19 @@ pytestmark = pytest.mark.skipif(
     not _inside_docker(),
     reason="Must run inside Docker container started by appcenter.",
 )
+fake = Faker()
+
+
+@pytest.mark.asyncio
+async def test_user_exists(new_user, udm_kwargs):
+    dn, attr = await new_user("student")
+    async with UDM(**udm_kwargs) as udm:
+        user0 = await User.from_dn(dn, attr["school"][0], udm)
+        assert await user0.exists(udm) is True
+        user1 = User(name=attr["username"], school=attr["school"][0])
+        assert await user1.exists(udm) is True
+        user2 = User(name=fake.pystr(), school=attr["school"][0])
+        assert await user2.exists(udm) is False
 
 
 @pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
