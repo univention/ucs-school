@@ -68,6 +68,26 @@ def school_class_attrs(ldap_base):
 
 
 @pytest.fixture
+def users_user_props(ldap_base):
+    def _func() -> Dict[str, str]:
+        fn = fake.first_name()
+        ln = fake.last_name()
+        return {
+            "firstname": fn,
+            "lastname": ln,
+            "username": f"test.{fn}.{ln}".lower(),
+            "school": ["DEMOSCHOOL"],
+            "birthday": fake.date_of_birth(minimum_age=6, maximum_age=65),
+            "mailPrimaryAddress": None,
+            "description": fake.text(max_nb_chars=50),
+            "password": fake.password(),
+            "disabled": False,
+        }
+
+    return _func
+
+
+@pytest.fixture
 async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
     created_school_classes = []
     created_school_shares = []
@@ -127,3 +147,46 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
             print(f"Deleted ClassShare {dn!r}.")
 
 
+@pytest.fixture
+async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
+    created_users = []
+
+    async def _func(role) -> Tuple[str, Dict[str, str]]:
+        assert role in ("staff", "student", "teacher", "teacher_and_staff")
+        user_props = users_user_props()
+        options = {
+            "staff": ("ucsschoolStaff",),
+            "student": ("ucsschoolStudent",),
+            "teacher": ("ucsschoolTeacher",),
+            "teacher_and_staff": ("ucsschoolStaff", "ucsschoolTeacher"),
+        }[role]
+        position = {
+            "student": f"cn=schueler,cn=groups,ou={user_props['school'][0]},{ldap_base}"
+        }[role]
+        async with UDM(**udm_kwargs) as udm:
+            user_obj = await udm.get("users/user").new()
+            user_obj.options.extend(options)
+            user_obj.position = position
+            user_obj.props.update(user_props)
+            if role != "staff":
+                cls_dn1, _ = await new_school_class()
+                cls_dn2, _ = await new_school_class()
+                user_obj.props.groups.extend([cls_dn1, cls_dn2])
+            await user_obj.save()
+            created_users.append(user_obj.dn)
+            print(f"Created new {role!r}: {user_obj!r}")
+
+        return user_obj.dn, user_props
+
+    yield _func
+
+    async with UDM(**udm_kwargs) as udm:
+        user_mod = udm.get("users/user")
+        for dn in created_users:
+            try:
+                user_obj = await user_mod.get(dn)
+            except UdmNoObject:
+                print(f"User {dn!r} does not exist (anymore).")
+                continue
+            await user_obj.delete()
+            print(f"Deleted user {dn!r}.")
