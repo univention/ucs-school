@@ -5,6 +5,7 @@ from typing import Any, Dict, Tuple
 
 import pytest
 from faker import Faker
+from ucsschool.lib.roles import create_ucsschool_role_string
 from univention.config_registry import ConfigRegistry
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from udm_rest_client import UDM, NoObject as UdmNoObject
@@ -97,10 +98,10 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
         async with UDM(**udm_kwargs) as udm:
             sc_attrs = school_class_attrs()
             grp_obj = await udm.get("groups/group").new()
-            grp_obj.position = f"cn=klassen,cn=schueler,cn=groups,ou={sc_attrs['school']},{ldap_base}"
-            grp_obj.props.name = (
-                f"{sc_attrs['school']}-{sc_attrs['name']}"
+            grp_obj.position = (
+                f"cn=klassen,cn=schueler,cn=groups,ou={sc_attrs['school']},{ldap_base}"
             )
+            grp_obj.props.name = f"{sc_attrs['school']}-{sc_attrs['name']}"
             grp_obj.props.description = sc_attrs["description"]
             grp_obj.props.users = sc_attrs["users"]
             await grp_obj.save()
@@ -112,9 +113,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
                 f"cn=klassen,cn=shares,ou={sc_attrs['school']},{ldap_base}"
             )
             share_obj.props.name = grp_obj.props.name
-            share_obj.props.host = (
-                f"{sc_attrs['school']}.{env_or_ucr('domainname')}"
-            )
+            share_obj.props.host = f"{sc_attrs['school']}.{env_or_ucr('domainname')}"
             share_obj.props.owner = 0
             share_obj.props.group = 0
             share_obj.props.path = f"/home/tmp/{grp_obj.props.name}"
@@ -155,7 +154,16 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
     async def _func(role) -> Tuple[str, Dict[str, str]]:
         assert role in ("staff", "student", "teacher", "teacher_and_staff")
         user_props = users_user_props()
-        school_search_base = SchoolSearchBase(user_props['school'])
+        if role == "teacher_and_staff":
+            user_props["ucsschoolRole"] = [
+                create_ucsschool_role_string("teacher", user_props["school"][0]),
+                create_ucsschool_role_string("teacher", user_props["school"][0]),
+            ]
+        else:
+            user_props["ucsschoolRole"] = [
+                create_ucsschool_role_string(role, user_props["school"][0])
+            ]
+        school_search_base = SchoolSearchBase(user_props["school"])
         options = {
             "staff": ("ucsschoolStaff",),
             "student": ("ucsschoolStudent",),
@@ -200,8 +208,8 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
 @pytest.fixture
 def role2class():
     return {
-            "staff": ucsschool.lib.models.user.Staff,
-            "student": ucsschool.lib.models.user.Student,
-            "teacher": ucsschool.lib.models.user.Teacher,
-            "teacher_and_staff": ucsschool.lib.models.user.TeachersAndStaff,
-        }
+        "staff": ucsschool.lib.models.user.Staff,
+        "student": ucsschool.lib.models.user.Student,
+        "teacher": ucsschool.lib.models.user.Teacher,
+        "teacher_and_staff": ucsschool.lib.models.user.TeachersAndStaff,
+    }

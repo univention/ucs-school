@@ -49,78 +49,94 @@ async def test_user_type_is_converted(new_user, role2class, udm_kwargs):
             assert isinstance(user0, exp_cls)
 
 
-@pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
 @pytest.mark.asyncio
-async def test_user_from_dn(new_user_via_ssh, lo_udm, remove_user_via_ssh):
-    print("** new_user_via_ssh={!r}\n".format(new_user_via_ssh))
-    dn, attr = new_user_via_ssh
-    user_cls = attr.pop("user_cls")
-    print(f"** user_cls={user_cls!r}")
-    user = await User.from_dn(dn, "DEMOSCHOOL", lo_udm)
-    print("** type(user)=%r user.to_dict()={!r}".format(type(user), user.to_dict()))
-    assert user.__class__.__name__ == user_cls
-    try:
-        for k, v in attr.items():
-            val1 = v
-            val2 = getattr(user, k)
-            if isinstance(v, list):
-                val1 = set(val1)
-                val2 = set(val2)
-            assert val1 == val2, "k={!r} v={!r} getattr(user, k)={!r}".format(
-                k, v, getattr(user, k)
-            )
-        print("** OK, deleting user...")
-    finally:
-        result, returncode = remove_user_via_ssh(dn)
-        assert returncode == 0
-    assert not await User(**attr).exists(lo_udm)
+async def test_read_user(new_user, udm_kwargs):
+    cls_mapping = {
+        "student": Student,
+        "teacher": Teacher,
+        "teacher_and_staff": TeachersAndStaff,
+        "staff": Staff,
+    }
+    async with UDM(**udm_kwargs) as lo_udm:
+        for user_role in ("student", "teacher", "staff", "teacher_and_staff"):
+            user_cls = cls_mapping[user_role]
+            dn, attr = await new_user(user_role)
+            user = await user_cls.from_dn(dn, attr["school"][0], lo_udm)
+            assert await user.exists(lo_udm)
+            del attr["description"]
+            del attr["password"]
+            del attr["ucsschoolRole"]
+            for k, v in attr.items():
+                if k == "username":
+                    val1 = v
+                    val2 = getattr(user, "name")
+                elif k == "school":
+                    val1 = v
+                    val2 = [getattr(user, k)]
+                elif k == "birthday":
+                    val1 = str(v)
+                    val2 = getattr(user, k)
+                elif k == "mailPrimaryAddress":
+                    val1 = v
+                    val2 = getattr(user, "email")
+                else:
+                    val1 = v
+                    val2 = getattr(user, k)
+                if isinstance(v, list):
+                    val1 = set(val1)
+                    val2 = set(val2)
+                assert val1 == val2, "k={!r} v={!r} getattr(user, k)={!r}".format(
+                    k, v, getattr(user, k)
+                )
 
 
-@pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
+# @pytest.mark.asyncio
+# async def test_create_user(
+#     create_new_user, udm_kwargs
+# ):
+#     async with UDM(**udm_kwargs) as lo_udm:
+#         user_cls = user_attrs.pop("user_cls")
+#         print(f"** user_cls={user_cls!r}")
+#         cls = globals()[user_cls]
+#         print(f"** cls={cls!r}")
+#         user = cls(**user_attrs)
+#         print("** type(user)=%r user.to_dict()={!r}".format(type(user), user.to_dict()))
+#         await user.create(lo_udm)
+#         result, returncode = get_user_via_ssh(user.dn)
+#         print("** result={!r} returncode={!r}".format(result, returncode))
+#         assert isinstance(result, dict)
+#         try:
+#             for k, value_here in user.to_dict().items():
+#                 val_here = value_here
+#                 val_ssh = result.get(k)
+#                 if k == "disabled" and isinstance(val_ssh, str):
+#                     val_ssh = bool(int(val_ssh))
+#                 if isinstance(val_here, list):
+#                     val_here = set(val_here)
+#                     val_ssh = set(val_ssh)
+#                 assert (
+#                     val_here == val_ssh
+#                 ), f"k={k!r} val_here={val_here!r} val_ssh={val_ssh!r}"
+#             print("** OK, deleting user...")
+#         finally:
+#             result, returncode = remove_user_via_ssh(user.dn)
+#             assert returncode == 0
+#         assert not await User(**user_attrs).exists(lo_udm)
+
+
 @pytest.mark.asyncio
-async def test_user_create(
-        users_user_props, lo_udm, scp_code, get_user_via_ssh, remove_user_via_ssh
-):
-    user_props = users_user_props()
-    user_cls = user_props.pop("user_cls")
-    print(f"** user_cls={user_cls!r}")
-    cls = globals()[user_cls]
-    print(f"** cls={cls!r}")
-    user = cls(**user_props)
-    print("** type(user)=%r user.to_dict()={!r}".format(type(user), user.to_dict()))
-    await user.create(lo_udm)
-    result, returncode = get_user_via_ssh(user.dn)
-    print("** result={!r} returncode={!r}".format(result, returncode))
-    assert isinstance(result, dict)
-    try:
-        for k, value_here in user.to_dict().items():
-            val_here = value_here
-            val_ssh = result.get(k)
-            if k == "disabled" and isinstance(val_ssh, str):
-                val_ssh = bool(int(val_ssh))
-            if isinstance(val_here, list):
-                val_here = set(val_here)
-                val_ssh = set(val_ssh)
-            assert (
-                val_here == val_ssh
-            ), f"k={k!r} val_here={val_here!r} val_ssh={val_ssh!r}"
-        print("** OK, deleting user...")
-    finally:
-        result, returncode = remove_user_via_ssh(user.dn)
-        assert returncode == 0
-    assert not await User(**user_props).exists(lo_udm)
-
-
-@pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
-@pytest.mark.asyncio
-async def test_user_remove(new_user_via_ssh, lo_udm, user_exists_via_ssh):
-    print("** new_user_via_ssh={!r}\n".format(new_user_via_ssh))
-    dn, attr = new_user_via_ssh
-    user = await User.from_dn(dn, "DEMOSCHOOL", lo_udm)
-    dn = user.dn
-    print("** user.dn={!r}".format(user.dn))
-    await user.remove(lo_udm)
-    result, returncode = user_exists_via_ssh(dn)
-    print("** result={!r} returncode={!r}".format(result, returncode))
-    assert result is False
-    assert not await User(**attr).exists(lo_udm)
+async def test_remove_user(udm_kwargs, new_user):
+    cls_mapping = {
+        "student": Student,
+        "teacher": Teacher,
+        "teacher_and_staff": TeachersAndStaff,
+        "staff": Staff,
+    }
+    async with UDM(**udm_kwargs) as lo_udm:
+        for user_role in ("student", "teacher", "staff", "teacher_and_staff"):
+            user_cls = cls_mapping[user_role]
+            dn, attr = await new_user(user_role)
+            user = await user_cls.from_dn(dn, attr["school"][0], lo_udm)
+            assert await user.exists(lo_udm)
+            await user.remove(lo_udm)
+            assert not await user.exists(lo_udm)
