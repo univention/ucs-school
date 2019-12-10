@@ -90,38 +90,48 @@ async def test_read_user(new_user, udm_kwargs):
                 )
 
 
-# @pytest.mark.asyncio
-# async def test_create_user(
-#     create_new_user, udm_kwargs
-# ):
-#     async with UDM(**udm_kwargs) as lo_udm:
-#         user_cls = user_attrs.pop("user_cls")
-#         print(f"** user_cls={user_cls!r}")
-#         cls = globals()[user_cls]
-#         print(f"** cls={cls!r}")
-#         user = cls(**user_attrs)
-#         print("** type(user)=%r user.to_dict()={!r}".format(type(user), user.to_dict()))
-#         await user.create(lo_udm)
-#         result, returncode = get_user_via_ssh(user.dn)
-#         print("** result={!r} returncode={!r}".format(result, returncode))
-#         assert isinstance(result, dict)
-#         try:
-#             for k, value_here in user.to_dict().items():
-#                 val_here = value_here
-#                 val_ssh = result.get(k)
-#                 if k == "disabled" and isinstance(val_ssh, str):
-#                     val_ssh = bool(int(val_ssh))
-#                 if isinstance(val_here, list):
-#                     val_here = set(val_here)
-#                     val_ssh = set(val_ssh)
-#                 assert (
-#                     val_here == val_ssh
-#                 ), f"k={k!r} val_here={val_here!r} val_ssh={val_ssh!r}"
-#             print("** OK, deleting user...")
-#         finally:
-#             result, returncode = remove_user_via_ssh(user.dn)
-#             assert returncode == 0
-#         assert not await User(**user_attrs).exists(lo_udm)
+@pytest.mark.asyncio
+async def test_create_user(new_school_class, users_user_props, udm_kwargs):
+    async with UDM(**udm_kwargs) as lo_udm:
+        for user_cls in (Student, Teacher, Staff, TeachersAndStaff):
+            user_props = users_user_props()
+            user_props["name"] = user_props["username"]
+            user_props["email"] = user_props["mailPrimaryAddress"]
+            user_props["school"] = user_props["school"][0]
+            user_props["birthday"] = str(user_props["birthday"])
+            if user_cls != Staff:
+                cls_dn1, cls_attr1 = await new_school_class()
+                cls_dn2, cls_attr2 = await new_school_class()
+                user_props["school_classes"] = {
+                    "DEMOSCHOOL": [
+                        f"DEMOSCHOOL-{cls_attr1['name']}",
+                        f"DEMOSCHOOL-{cls_attr2['name']}",
+                    ]
+                }
+            user = user_cls(**user_props)
+            await user.create(lo_udm)
+            assert await user.exists(lo_udm)
+            udm_user = await lo_udm.get("users/user").get(user.dn)
+            print(udm_user.__dict__)
+            del user_props["description"]
+            del user_props["password"]
+            del user_props["name"]  # tested by username
+            del user_props["email"]  # tested by mailPrimaryAddress
+            if user_cls != Staff:
+                del user_props["school_classes"]
+            for k, v in user_props.items():
+                if k == "school":
+                    val1 = [v]
+                    val2 = getattr(udm_user.props, k)
+                else:
+                    val1 = v
+                    val2 = getattr(udm_user.props, k)
+                if isinstance(v, list):
+                    val1 = set(val1)
+                    val2 = set(val2)
+                assert val1 == val2, "k={!r} v={!r} getattr(user, k)={!r}".format(
+                    k, v, getattr(udm_user.props, k)
+                )
 
 
 @pytest.mark.asyncio
