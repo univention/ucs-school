@@ -77,10 +77,10 @@ class noObject(base):
 #
 # class insufficientInformation(base):
 # 	message = _('Information provided is not sufficient.')
-#
-#
-# class noProperty(base):
-# 	message = _('No such property.')
+
+
+class noProperty(base):
+	message = _('No such property.')
 
 
 class valueError(base):

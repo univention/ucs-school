@@ -54,3 +54,7 @@ def getMachineConnection(*args, **kwargs):
 
 def position(base):
 	return Position(base)
+
+
+class access():
+	pass
