@@ -1,1 +1,2 @@
 ucs-school-lib
+python-magic

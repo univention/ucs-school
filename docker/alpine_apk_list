@@ -24,3 +24,4 @@ py3-setproctitle
 py3-simplejson
 py3-yarl
 tzdata
+libmagic
