@@ -24,7 +24,8 @@ pytestmark = pytest.mark.skipif(
 
 
 @pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
-async def test_read_user(new_user_via_ssh, lo_udm, remove_user_via_ssh):
+@pytest.mark.asyncio
+async def test_user_from_dn(new_user_via_ssh, lo_udm, remove_user_via_ssh):
     print("** new_user_via_ssh={!r}\n".format(new_user_via_ssh))
     dn, attr = new_user_via_ssh
     user_cls = attr.pop("user_cls")
@@ -50,14 +51,16 @@ async def test_read_user(new_user_via_ssh, lo_udm, remove_user_via_ssh):
 
 
 @pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
-async def test_create_user(
-    user_attrs, lo_udm, scp_code, get_user_via_ssh, remove_user_via_ssh
+@pytest.mark.asyncio
+async def test_user_create(
+        users_user_props, lo_udm, scp_code, get_user_via_ssh, remove_user_via_ssh
 ):
-    user_cls = user_attrs.pop("user_cls")
+    user_props = users_user_props()
+    user_cls = user_props.pop("user_cls")
     print(f"** user_cls={user_cls!r}")
     cls = globals()[user_cls]
     print(f"** cls={cls!r}")
-    user = cls(**user_attrs)
+    user = cls(**user_props)
     print("** type(user)=%r user.to_dict()={!r}".format(type(user), user.to_dict()))
     await user.create(lo_udm)
     result, returncode = get_user_via_ssh(user.dn)
@@ -79,11 +82,12 @@ async def test_create_user(
     finally:
         result, returncode = remove_user_via_ssh(user.dn)
         assert returncode == 0
-    assert not await User(**user_attrs).exists(lo_udm)
+    assert not await User(**user_props).exists(lo_udm)
 
 
 @pytest.mark.xfail(reason="Convert to use UDM REST API instead of SSH.")
-async def test_remove_user(new_user_via_ssh, lo_udm, user_exists_via_ssh):
+@pytest.mark.asyncio
+async def test_user_remove(new_user_via_ssh, lo_udm, user_exists_via_ssh):
     print("** new_user_via_ssh={!r}\n".format(new_user_via_ssh))
     dn, attr = new_user_via_ssh
     user = await User.from_dn(dn, "DEMOSCHOOL", lo_udm)
