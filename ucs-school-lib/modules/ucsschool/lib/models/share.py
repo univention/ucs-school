@@ -33,7 +33,6 @@ import os.path
 from typing import List, Optional
 
 from ldap.filter import filter_format
-from univention.admin.client import UDM, HTTPError
 from udm_rest_client import UDM, NoObject as UdmNoObject, UdmObject
 
 from ..roles import role_school_class_share, role_workgroup_share
@@ -100,12 +99,12 @@ class Share(UCSSchoolHelperAbstractClass):
 		mod = lo.get("computers/domaincontroller_slave")
 		try:
 			return await mod.get(dn)
-		except HTTPError:
+		except UdmNoObject:
 			pass
 		mod = lo.get("computers/domaincontroller_master")
 		try:
 			return await mod.get(dn)
-		except HTTPError:
+		except UdmNoObject:
 			return None
 
 	async def get_server_fqdn(self, lo: UDM) -> Optional[str]:
