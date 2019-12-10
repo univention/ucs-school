@@ -138,6 +138,7 @@ async def test_put(
 
 
 @must_run_in_container
+@pytest.mark.xfail(reason="NotImplementedYet")
 @pytest.mark.asyncio
 async def test_patch(auth_header, url_fragment):
     async with UDM(**await udm_kwargs()) as udm:
