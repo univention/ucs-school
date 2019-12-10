@@ -153,7 +153,7 @@ def lookup(module_name, co, lo_udm, filter='', base='', superordinate=None, scop
 			raise noObject(str(exc))
 
 
-def init():
+def init(lo, po, usersmod):
 	# TODO
 	pass
 
