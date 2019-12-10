@@ -107,7 +107,7 @@ def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
 	config_check_classes = loader.get_hook_classes()  # type: List[Type[ConfigurationChecks]]
 	for kls in config_check_classes:
 		cc = kls(config)
-		test_methods = inspect.getmembers(cc, lambda x: inspect.ismethod(x) and x.func_name.startswith('test_'))
+		test_methods = inspect.getmembers(cc, lambda x: inspect.ismethod(x) and x.__name__.startswith('test_'))
 		test_methods.sort(key=itemgetter(0))
 		for name, method in test_methods:
 			method()
