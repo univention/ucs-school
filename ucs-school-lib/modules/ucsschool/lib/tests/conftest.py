@@ -8,6 +8,7 @@ from faker import Faker
 from univention.config_registry import ConfigRegistry
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from udm_rest_client import UDM, NoObject as UdmNoObject
+import ucsschool.lib.models.user
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -194,3 +195,13 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
                 continue
             await user_obj.delete()
             print(f"Deleted user {dn!r}.")
+
+
+@pytest.fixture
+def role2class():
+    return {
+            "staff": ucsschool.lib.models.user.Staff,
+            "student": ucsschool.lib.models.user.Student,
+            "teacher": ucsschool.lib.models.user.Teacher,
+            "teacher_and_staff": ucsschool.lib.models.user.TeachersAndStaff,
+        }
