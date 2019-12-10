@@ -83,7 +83,9 @@ RUN	mv -v /tmp/kelvin-api.initd /etc/init.d/kelvin-api && \
 	/kelvin/venv/bin/python3 /kelvin/kelvin-api/setup.py build_html && \
     /kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/kelvin-api[development] && \
 	source /kelvin/venv/bin/activate && \
+	(cd /kelvin/ucs-school-lib/modules && python -m pytest) && \
 	make -C /kelvin/kelvin-api lint && \
 	make -C /kelvin/kelvin-api test && \
 	make -C /kelvin/kelvin-api clean && \
+	find /kelvin -name .pytest_cache -exec rm -rf '{}' + && \
 	rm -rf /root/.cache/
