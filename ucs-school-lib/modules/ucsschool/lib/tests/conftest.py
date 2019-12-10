@@ -6,7 +6,7 @@ from typing import Any, Dict, Tuple
 import pytest
 from faker import Faker
 from univention.config_registry import ConfigRegistry
-
+from ucsschool.lib.schoolldap import SchoolSearchBase
 from udm_rest_client import UDM, NoObject as UdmNoObject
 
 APP_ID = "ucsschool-kelvin"
@@ -154,6 +154,7 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
     async def _func(role) -> Tuple[str, Dict[str, str]]:
         assert role in ("staff", "student", "teacher", "teacher_and_staff")
         user_props = users_user_props()
+        school_search_base = SchoolSearchBase(user_props['school'])
         options = {
             "staff": ("ucsschoolStaff",),
             "student": ("ucsschoolStudent",),
@@ -161,7 +162,10 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
             "teacher_and_staff": ("ucsschoolStaff", "ucsschoolTeacher"),
         }[role]
         position = {
-            "student": f"cn=schueler,cn=groups,ou={user_props['school'][0]},{ldap_base}"
+            "staff": school_search_base.staff,
+            "student": school_search_base.students,
+            "teacher": school_search_base.teachers,
+            "teacher_and_staff": school_search_base.teachersAndStaff,
         }[role]
         async with UDM(**udm_kwargs) as udm:
             user_obj = await udm.get("users/user").new()
