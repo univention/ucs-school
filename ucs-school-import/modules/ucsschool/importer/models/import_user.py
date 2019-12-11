@@ -37,7 +37,6 @@ import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 from six import iteritems, string_types
-import lazy_object_proxy
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
@@ -45,7 +44,7 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_t
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
-from ucsschool.lib.models.utils import create_passwd, ucr, ucr_username_max_length
+from ucsschool.lib.models.utils import create_passwd, ucr
 from ..configuration import Configuration
 from ..factory import Factory
 from ..exceptions import (
@@ -93,15 +92,7 @@ class ImportUser(User):
 	source_uid = SourceUID("SourceUID")
 	record_uid = RecordUID("RecordUID")
 
-	config = lazy_object_proxy.Proxy(lambda: Configuration())  # type: ReadOnlyDict
-	no_overwrite_attributes = lazy_object_proxy.Proxy(lambda: ucr.get(
-		"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
-		"mailPrimaryAddress uid"
-	).split())  # type: List[str]
 	_unique_ids = defaultdict(dict)  # type: Dict[str, Dict[str, str]]
-	factory = Factory()  # type: DefaultUserImportFactory
-	ucr = factory.make_ucr()  # type: ConfigRegistry
-	reader = factory.make_reader()  # type: BaseReader
 	_username_handler_cache = {}  # type: Dict[Tuple[int, bool], UsernameHandler]
 	_unique_email_handler_cache = {}  # type: Dict[bool, UsernameHandler]
 	# non-Attribute attributes (not in self._attributes) that can also be used
@@ -155,6 +146,25 @@ class ImportUser(User):
 		self._used_methods = defaultdict(list)  # type: Dict[str, List[FunctionSignature]]  # recursion prevention
 		self.lo = kwargs.pop('lo', None)  # type: LoType
 		super(ImportUser, self).__init__(name, school, **kwargs)
+
+	@property
+	def config(self) -> ReadOnlyDict:
+		return Configuration()
+
+	@property
+	def factory(self) -> DefaultUserImportFactory:
+		return Factory()
+
+	@property
+	def no_overwrite_attributes(self) -> List[str]:
+		return ucr.get(
+			"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
+			"mailPrimaryAddress uid"
+		).split()
+
+	@property
+	def reader(self) -> BaseReader:
+		return self.factory.make_reader()
 
 	def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> int
 		"""
@@ -499,7 +509,7 @@ class ImportUser(User):
 
 	@lo.setter
 	def lo(self, value):  # type: (LoType) -> None
-		cn_admin_dn = 'cn=admin,{}'.format(self.ucr['ldap/base'])
+		cn_admin_dn = 'cn=admin,{}'.format(ucr['ldap/base'])
 		assert not (self.config['dry_run'] and value == cn_admin_dn)  # TODO: 1. compare with lo.lo.binddn, 2. don't use assert, raise an exception
 		self._lo = value
 
@@ -694,7 +704,7 @@ class ImportUser(User):
 			maildomain = self.config.get("maildomain")
 			if not maildomain:
 				try:
-					maildomain = self.ucr["mail/hosteddomains"].split()[0]
+					maildomain = ucr["mail/hosteddomains"].split()[0]
 				except (AttributeError, IndexError):
 					if "email" in self.config["mandatory_attributes"] or "mailPrimaryAttribute" in self.config["mandatory_attributes"]:
 						raise MissingMailDomain(

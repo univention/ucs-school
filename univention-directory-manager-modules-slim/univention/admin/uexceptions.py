@@ -378,15 +378,15 @@ class nextFreeIp(base):
 #
 # class notValidUser(base):
 # 	message = _('Only existing users are allowed.')
-#
-#
-# class templateSyntaxError(base):
-# 	message = _('Invalid syntax in default value. Check these templates: %s.')
-#
-# 	def __init__(self, templates):
-# 		self.templates = templates
-#
-#
+
+
+class templateSyntaxError(base):
+	message = _('Invalid syntax in default value. Check these templates: %s.')
+
+	def __init__(self, templates):
+		self.templates = templates
+
+
 # class nagiosTimeperiodUsed(base):
 # 	message = _('Timeperiod Object still in use!')
 #
