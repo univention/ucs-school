@@ -23,6 +23,9 @@ settings_connector = {
 	'connector/s4/mapping/sid_to_ucs': 'no',
 	'connector/s4/mapping/syncmode': 'sync',
 	'connector/s4/mapping/msprintconnectionpolicy': 'yes',
+	'connector/s4/mapping/msgpwl': 'yes',
+	'connector/s4/mapping/msgpipsec': 'yes',
+	'connector/s4/mapping/msgpsi': 'yes',
 	'connector/s4/mapping/wmifilter': 'yes',
 	'connector/s4/mapping/gpo': 'true',
 	'connector/s4/mapping/dns/ignorelist': '_ldap._tcp.Default-First-Site-Name._site',
@@ -41,9 +44,9 @@ settings_school_slave = {
 if utils.package_installed('univention-samba4'):
 	for setting, value in iteritems(settings_samba):
 		if setting == 'samba4/ldb/sam/module/prepend' and not any((
-				utils.package_installed('ucs-school-singlemaster'),
-				utils.package_installed('ucs-school-slave'),
-				utils.package_installed('ucs-school-nonedu-slave'),
+			utils.package_installed('ucs-school-singlemaster'),
+			utils.package_installed('ucs-school-slave'),
+			utils.package_installed('ucs-school-nonedu-slave'),
 		)):
 			# Bug #49726: test only on slave / singlemaster
 			continue
