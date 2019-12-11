@@ -134,7 +134,6 @@ async def test_put(
             await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
-@pytest.mark.xfail(reason="NotImplementedYet")
 @pytest.mark.asyncio
 async def test_patch(auth_header, url_fragment, create_random_users, create_random_user_data):
     users = create_random_users(
