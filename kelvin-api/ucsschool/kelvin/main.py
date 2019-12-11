@@ -17,9 +17,11 @@ from starlette.status import (
 
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
+from ucsschool.lib.models.utils import get_file_handler
 
 from . import __version__
 from .constants import (
+    LOG_FILE_PATH,
     STATIC_FILE_CHANGELOG,
     STATIC_FILE_README,
     STATIC_FILES_PATH,
@@ -34,7 +36,6 @@ from .token_auth import (
     get_current_active_user,
     get_token_ttl,
 )
-from .utils import setup_logging
 
 ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)
 
@@ -53,6 +54,25 @@ app = FastAPI(
 @lru_cache(maxsize=1)
 def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
+
+
+@app.on_event("startup")
+def setup_logging() -> None:
+    for name in (
+        None,
+        "requests",
+        "univention",
+        "ucsschool",
+        "uvicorn.access",
+        "uvicorn.error",
+    ):
+        logger = logging.getLogger(name)
+        logger.setLevel(logging.DEBUG)
+    file_handler = get_file_handler(logging.DEBUG, str(LOG_FILE_PATH))
+    logger = logging.getLogger()
+    logger.addHandler(file_handler)
+    logger = logging.getLogger("uvicorn.access")
+    logger.addHandler(file_handler)
 
 
 @app.exception_handler(NoObject)
@@ -148,4 +168,3 @@ app.mount(
     StaticFiles(directory=str(STATIC_FILES_PATH)),
     name="static",
 )
-setup_logging()
