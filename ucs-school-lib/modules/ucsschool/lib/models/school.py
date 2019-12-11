@@ -516,7 +516,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			cls.logger.debug('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			ous = [x.strip() for x in oulist.split(',')]
 			schools = [school for school in schools if school.name in ous]
-		return await cls._filter_local_schools(schools, lo)
+		return schools
 
 	@classmethod
 	async def _filter_local_schools(cls, schools, lo):
