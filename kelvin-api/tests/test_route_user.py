@@ -1,9 +1,10 @@
 import requests
 import pytest
+import random
 import ucsschool.kelvin.constants
 from ucsschool.kelvin.ldap_access import udm_kwargs
 from ucsschool.kelvin.routers.role import SchoolUserRole
-from ucsschool.kelvin.routers.user import UserModel, UserCreateModel
+from ucsschool.kelvin.routers.user import UserModel, UserCreateModel, UserPatchModel
 from ucsschool.lib.models.user import User
 from udm_rest_client import UDM
 
@@ -138,11 +139,26 @@ async def test_put(
 
 
 @must_run_in_container
-@pytest.mark.xfail(reason="NotImplementedYet")
 @pytest.mark.asyncio
-async def test_patch(auth_header, url_fragment):
+async def test_patch(auth_header, url_fragment, create_random_users, create_random_user_data):
+    users = create_random_users(
+        {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
+    )
     async with UDM(**await udm_kwargs()) as udm:
-        assert False
+        for user in users:
+            new_user_data = create_random_user_data(user.role.split("/")[-1]).dict()
+            del new_user_data["name"]
+            del new_user_data["record_uid"]
+            del new_user_data["source_uid"]
+            for key in random.sample(new_user_data.keys(), random.randint(1, len(new_user_data.keys()))):
+                del new_user_data[key]
+            patch_user = UserPatchModel(**new_user_data)
+            response = requests.patch(f"{url_fragment}/users/{user.name}", headers=auth_header, data=patch_user.json())
+            assert response.status_code == 200
+            api_user = UserModel(**response.json())
+            lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+            assert len(lib_users) == 1
+            await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
 @must_run_in_container
