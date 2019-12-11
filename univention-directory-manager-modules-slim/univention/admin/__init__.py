@@ -33,26 +33,14 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import copy
-import sys
 import re
 import unicodedata
+from typing import Any, List, Type, Union
+from .uexceptions import templateSyntaxError, valueError
 
-from ldap.filter import filter_format
+configRegistry = {}
+basestring = unicode = str
 
-import univention.config_registry
-# import univention.debug as ud
-def ud(*args, **kwargs):
-	pass
-try:
-	from typing import Any, List, Optional, Type, Union  # noqa F401
-except ImportError:
-	pass
-
-__all__ = ('configRegistry', 'ucr_overwrite_properties', 'pattern_replace', 'property', 'option', 'ucr_overwrite_module_layout', 'ucr_overwrite_layout', 'extended_attribute', 'tab', 'field', 'policiesGroup', 'modules', 'objects', 'syntax', 'hook', 'mapping')
-
-
-configRegistry = univention.config_registry.ConfigRegistry()
-configRegistry.load()
 
 def pattern_replace(pattern, object):
 	"""
@@ -356,8 +344,8 @@ class property:
 						self.syntax.parse(d)
 			elif defaults:
 				self.syntax.parse(defaults)
-		except univention.admin.uexceptions.valueError:
-			raise univention.admin.uexceptions.templateSyntaxError([t['name'] for t in self.templates])
+		except valueError:
+			raise templateSyntaxError([t['name'] for t in self.templates])
 
 	def matches(self, options):
 		if not self.options:
