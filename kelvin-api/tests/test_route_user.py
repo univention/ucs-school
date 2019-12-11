@@ -9,7 +9,7 @@ from ucsschool.lib.models.user import User
 from udm_rest_client import UDM
 
 
-must_run_in_container = pytest.mark.skipif(
+pytestmark = pytest.mark.skipif(
     not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
     reason="Must run inside Docker container started by appcenter.",
 )
@@ -50,7 +50,6 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):
             assert value == getattr(lib_user, key)
 
 
-@must_run_in_container
 @pytest.mark.asyncio
 async def test_search(auth_header, url_fragment, create_random_users):
     create_random_users(
@@ -70,7 +69,6 @@ async def test_search(auth_header, url_fragment, create_random_users):
             await compare_lib_api_user(lib_user, api_user, udm, url_fragment)
 
 
-@must_run_in_container
 @pytest.mark.asyncio
 async def test_get(auth_header, url_fragment, create_random_users):
     users = create_random_users(
@@ -88,7 +86,6 @@ async def test_get(auth_header, url_fragment, create_random_users):
             await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
-@must_run_in_container
 @pytest.mark.asyncio
 async def test_create(auth_header, url_fragment, create_random_user_data):
     async with UDM(**await udm_kwargs()) as udm:
@@ -111,7 +108,6 @@ async def test_create(auth_header, url_fragment, create_random_user_data):
         )
 
 
-@must_run_in_container
 @pytest.mark.asyncio
 async def test_put(
     auth_header, url_fragment, create_random_users, create_random_user_data
@@ -138,7 +134,7 @@ async def test_put(
             await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
-@must_run_in_container
+@pytest.mark.xfail(reason="NotImplementedYet")
 @pytest.mark.asyncio
 async def test_patch(auth_header, url_fragment, create_random_users, create_random_user_data):
     users = create_random_users(
@@ -161,7 +157,6 @@ async def test_patch(auth_header, url_fragment, create_random_users, create_rand
             await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
-@must_run_in_container
 @pytest.mark.asyncio
 async def test_delete(auth_header, url_fragment, create_random_user_data):
     async with UDM(**await udm_kwargs()) as udm:
