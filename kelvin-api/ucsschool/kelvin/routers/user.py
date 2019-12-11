@@ -106,10 +106,21 @@ class UserPatchModel(BasePatchModel):
     firstname: str = ""
     lastname: str = ""
     udm_properties: Dict[str, Any] = {}
-    school: HttpUrl = ""
-    schools: List[HttpUrl] = []
+    school: HttpUrl = None
+    schools: List[HttpUrl] = None
     school_classes: Dict[str, List[str]] = {}
-    role: HttpUrl = ""
+
+    async def to_modify_kwargs(self) -> Dict[str, Any]:
+        kwargs = await super().to_modify_kwargs()
+        for key, value in kwargs.items():
+            if key == "schools":
+                print(kwargs)
+                kwargs["schools"] = [str(school).split("/")[-1] for school in value]
+            elif key == "school":
+                kwargs["school"] = str(value).split("/")[-1]
+            elif key == "birthday":
+                kwargs[key] = str(value)
+        return kwargs
 
 
 @router.get("/")
@@ -265,6 +276,8 @@ async def complete_update(
         for (
             attr
         ) in User._attributes.keys():  # TODO: Should not access private interface!
+            if attr in ("school", "schools"):
+                continue  # school change is handled separately
             current_value = getattr(user_current, attr)
             new_value = getattr(user_request, attr)
             if attr in ("ucsschool_roles", "users") and new_value is None:
