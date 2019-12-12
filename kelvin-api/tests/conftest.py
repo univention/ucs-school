@@ -1,18 +1,93 @@
 import os
 import shutil
+from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
-from typing import Callable, List, Dict
+from typing import Any, Callable, List, Dict, Tuple
 from unittest.mock import patch
 import requests
 
 import pytest
+import factory
 from faker import Faker
 
 import ucsschool.kelvin.main
+from udm_rest_client import UDM
+from univention.config_registry import ConfigRegistry
+import ucsschool.lib.models.base
+import ucsschool.lib.models.group
+import ucsschool.lib.models.user
 from ucsschool.kelvin.routers.user import UserCreateModel
 
-faker = Faker()
+
+APP_ID = "ucsschool-kelvin"
+APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
+APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
+CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
+UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
+fake = Faker()
+
+
+@lru_cache(maxsize=1)
+def ucr() -> ConfigRegistry:
+    ucr = ConfigRegistry()
+    ucr.load()
+    return ucr
+
+
+@lru_cache(maxsize=32)
+def env_or_ucr(key: str) -> str:
+    try:
+        return os.environ[key.replace("/", "_").upper()]
+    except KeyError:
+        return ucr()[key]
+
+
+@pytest.fixture(scope="session")
+def ldap_base():
+    return env_or_ucr("ldap/base")
+
+
+class SchoolClassFactory(factory.Factory):
+    class Meta:
+        model = ucsschool.lib.models.group.SchoolClass
+
+    name = factory.LazyFunction(
+        lambda: f"DEMOSCHOOL-test.{fake.user_name()}")
+    school = "DEMOSCHOOL"
+    description = factory.Faker("text", max_nb_chars=50)
+    users = factory.List([])
+
+
+class UserFactory(factory.Factory):
+    class Meta:
+        model = ucsschool.lib.models.user.User
+
+    name = factory.Faker("user_name")
+    school = "DEMOSCHOOL"
+    schools = factory.List(["DEMOSCHOOL"])
+    firstname = factory.Faker("first_name")
+    lastname = factory.Faker("last_name")
+    birthday = factory.LazyFunction(
+        lambda: fake.date_of_birth(minimum_age=6, maximum_age=65).strftime("%Y-%m-%d"))
+    email = None
+    description = factory.Faker("text", max_nb_chars=50)
+    password = factory.Faker("password")
+    disabled = False
+    school_classes = factory.Dict({})
+
+
+@pytest.fixture(scope="session")
+def udm_kwargs() -> Dict[str, Any]:
+    with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
+        cn_admin_password = fp.read().strip()
+    host = env_or_ucr("ldap/master")
+    return {
+        "username": "cn=admin",
+        "password": cn_admin_password,
+        "url": f"https://{host}/univention/udm/",
+        "ssl_ca_cert": UCS_SSL_CA_CERT,
+    }
 
 
 @pytest.fixture(scope="session")
@@ -118,7 +193,7 @@ def setup_logging(temp_dir_session):
 
 @pytest.fixture
 def random_name() -> Callable[[], str]:
-    return faker.first_name
+    return fake.first_name
 
 
 @pytest.fixture
@@ -126,14 +201,14 @@ def create_random_user_data(
     url_fragment,
 ):  # TODO: Extend with schools and school classes if ressources are done
     def _create_random_user_data(role: str):
-        f_name = faker.first_name()
-        l_name = faker.last_name()
+        f_name = fake.first_name()
+        l_name = fake.last_name()
         name = f"{f_name}-{l_name}"
         data = dict(
             email="",
             record_uid=name,
             source_uid="KELVIN",
-            birthday=faker.date(),
+            birthday=fake.date(),
             disabled=False,
             name=name,
             firstname=f_name,
@@ -177,3 +252,39 @@ def create_random_users(
             f"{url_fragment}/users/{username}", headers=auth_header
         )
         assert response.status_code == 204
+
+
+@pytest.fixture
+def new_school_class_obj():
+    return lambda: SchoolClassFactory()
+
+
+@pytest.fixture
+async def new_school_class(udm_kwargs, ldap_base, new_school_class_obj):
+    """Create a new school class"""
+    created_school_classes = []
+
+    async def _func(**kwargs) -> Tuple[str, Dict[str, Any]]:
+        sc: ucsschool.lib.models.group.SchoolClass = new_school_class_obj()
+        for k, v in kwargs.items():
+            setattr(sc, k, v)
+
+        async with UDM(**udm_kwargs) as udm:
+            success = await sc.create(udm)
+            assert success
+            created_school_classes.append(sc.dn)
+            print("Created new SchoolClass: {!r}".format(sc))
+
+        return sc.dn, sc.to_dict()
+
+    yield _func
+
+    async with UDM(**udm_kwargs) as udm:
+        for dn in created_school_classes:
+            try:
+                obj = await ucsschool.lib.models.group.SchoolClass.from_dn(dn, None, udm)
+            except ucsschool.lib.models.base.NoObject:
+                print(f"SchoolClass {dn!r} does not exist (anymore).")
+                continue
+            await obj.remove(udm)
+            print(f"Deleted SchoolClass {dn!r}.")

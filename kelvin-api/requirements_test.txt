@@ -1,4 +1,5 @@
 coverage
+factory_boy
 Faker
 pytest
 pytest-asyncio
