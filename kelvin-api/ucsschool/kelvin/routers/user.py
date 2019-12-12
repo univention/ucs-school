@@ -1,5 +1,5 @@
-import logging
 import datetime
+import logging
 from functools import lru_cache
 from typing import Any, Dict, List
 
@@ -16,11 +16,11 @@ from starlette.status import (
 )
 
 from ucsschool.lib.models.user import User
-from udm_rest_client import UDM  # , NoObject as UdmNoObject
+from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
-from .base import UcsSchoolBaseModel, get_lib_obj, BasePatchModel
+from .base import BasePatchModel, UcsSchoolBaseModel, get_lib_obj
 from .role import SchoolUserRole
 
 router = APIRouter()
@@ -194,7 +194,9 @@ async def create(
     - **school**: school the class belongs to (required)
     - **role**: One of either student, staff, teacher, teachers_and_staff
     """
-    user.Config.lib_class = SchoolUserRole(url_to_name(request, "role", user.role)).get_lib_class()
+    user.Config.lib_class = SchoolUserRole(
+        url_to_name(request, "role", user.role)
+    ).get_lib_class()
     user = await user.as_lib_model(request)
     async with UDM(**await udm_kwargs()) as udm:
         if await user.exists(udm):
@@ -259,7 +261,9 @@ async def complete_update(
     - **school**: school the class belongs to (required)
     - **role**: One of either student, staff, teacher, teachers_and_staff
     """
-    user.Config.lib_class = SchoolUserRole(url_to_name(request, "role", user.role)).get_lib_class()
+    user.Config.lib_class = SchoolUserRole(
+        url_to_name(request, "role", user.role)
+    ).get_lib_class()
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
             f"uid={escape_filter_chars(username)}"

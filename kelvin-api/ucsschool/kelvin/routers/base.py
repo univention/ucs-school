@@ -46,7 +46,7 @@ async def get_lib_obj(
 
 class UcsSchoolBaseModel(BaseModel, abc.ABC):
     ucsschool_roles: List[str] = Field(
-       None, title="Roles of this object. Don't change if unsure."
+        None, title="Roles of this object. Don't change if unsure."
     )
     url: HttpUrl = None
 

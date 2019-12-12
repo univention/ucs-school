@@ -12,7 +12,6 @@ from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.user import User
 from udm_rest_client import UDM
 
-
 fake = Faker()
 pytestmark = pytest.mark.skipif(
     not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
@@ -122,7 +121,7 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
 async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_obj):
     lib_obj: SchoolClass = new_school_class_obj()
     attrs = {
-        "name": lib_obj.name[len(lib_obj.school) + 1:],
+        "name": lib_obj.name[len(lib_obj.school) + 1 :],  # noqa: E203
         "school": f"{url_fragment}/schools/{lib_obj.school}",
         "description": lib_obj.description,
         "users": lib_obj.users,
@@ -138,14 +137,25 @@ async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_ob
         assert response.status_code == 201
         api_obj = SchoolClassModel(**json_resp)
         assert lib_obj.dn == api_obj.dn
-        assert await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm) is True
+        assert (
+            await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm)
+            is True
+        )
         await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
         await SchoolClass(name=lib_obj.name, school=lib_obj.school).remove(udm)
-        assert await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm) is False
+        assert (
+            await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm)
+            is False
+        )
 
 
 async def change_operation(
-    auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users, operation
+    auth_header,
+    url_fragment,
+    udm_kwargs,
+    new_school_class,
+    create_random_users,
+    operation,
 ):
     assert operation in ("patch", "put")
     users_data = create_random_users(
@@ -158,7 +168,12 @@ async def change_operation(
     else:
         raise RuntimeError("No student in user data.")
     async with UDM(**udm_kwargs) as udm:
-        students = [obj async for obj in udm.get("users/user").search(filter_format("uid=%s", (student_data.name,)))]
+        students = [
+            obj
+            async for obj in udm.get("users/user").search(
+                filter_format("uid=%s", (student_data.name,))
+            )
+        ]
         assert len(students) == 1
         first_student_dn = students[0].dn
         sc1_dn, sc1_attr = await new_school_class(users=[first_student_dn])
@@ -170,32 +185,32 @@ async def change_operation(
         assert lib_obj.users == [first_student_dn]
         # verify users exist in LDAP
         for user_data in users_data:
-            assert await User(name=user_data.name, school=user_data.school).exists(udm) is True
+            assert (
+                await User(name=user_data.name, school=user_data.school).exists(udm)
+                is True
+            )
         # execute PATCH/PUT
         change_data = {
             "description": fake.text(max_nb_chars=50),
             "users": [
-                f"{url_fragment}/users/{user_data.name}"
-                for user_data in users_data
-            ]
+                f"{url_fragment}/users/{user_data.name}" for user_data in users_data
+            ],
         }
         if operation == "put":
             change_data["name"] = sc1_attr["name"]
             change_data["school"] = f"{url_fragment}/schools/{sc1_attr['school']}"
         url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
         requests_method = getattr(requests, operation)
-        response = requests_method(
-            url,
-            headers=auth_header,
-            json=change_data,
-        )
+        response = requests_method(url, headers=auth_header, json=change_data,)
         json_resp = response.json()
         assert response.status_code == 200
         # check response
         api_obj = SchoolClassModel(**json_resp)
         assert api_obj.dn == sc1_dn
         assert api_obj.description == change_data["description"]
-        assert {api_obj.unscheme_and_unquote(url) for url in api_obj.users} == set(change_data["users"])
+        assert {api_obj.unscheme_and_unquote(url) for url in api_obj.users} == set(
+            change_data["users"]
+        )
         usernames_in_response = {url2username(url) for url in api_obj.users}
         # check LDAP content
         lib_obj: SchoolClass = await SchoolClass.from_dn(
@@ -210,14 +225,28 @@ async def change_operation(
 async def test_put(
     auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users
 ):
-    await change_operation(auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users, operation="put")
+    await change_operation(
+        auth_header,
+        url_fragment,
+        udm_kwargs,
+        new_school_class,
+        create_random_users,
+        operation="put",
+    )
 
 
 @pytest.mark.asyncio
 async def test_patch(
     auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users
 ):
-    await change_operation(auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users, operation="patch")
+    await change_operation(
+        auth_header,
+        url_fragment,
+        udm_kwargs,
+        new_school_class,
+        create_random_users,
+        operation="patch",
+    )
 
 
 @pytest.mark.asyncio
@@ -234,6 +263,4 @@ async def test_delete(auth_header, url_fragment, udm_kwargs, new_school_class):
     assert response.status_code == 204
     async with UDM(**udm_kwargs) as udm:
         with pytest.raises(NoObject):
-            await SchoolClass.from_dn(
-                sc1_dn, sc1_attr["school"], udm
-            )
+            await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
