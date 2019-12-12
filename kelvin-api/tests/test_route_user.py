@@ -165,9 +165,30 @@ async def test_patch(
 
 
 @pytest.mark.asyncio
+async def test_school_change(auth_header, url_fragment, create_random_users, create_random_schools, udm_kwargs):
+    schools = await create_random_schools(2)
+    school1_dn, school1_attr = schools[0]
+    school2_dn, school2_attr = schools[1]
+    user = create_random_users({"student": 1}, school=f"{url_fragment}/schools/{school1_attr['name']}")[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1_attr["name"], f"username={user.name}")
+        assert len(lib_users) == 1
+        assert lib_users[0].school == school1_attr["name"]
+        assert lib_users[0].schools == [school1_attr["name"]]
+        patch_model = UserPatchModel(school=f"{url_fragment}/schools/{school2_attr['name']}")
+        response = requests.patch(f"{url_fragment}/users/{user.name}", headers=auth_header, data=patch_model.json())
+        assert response.status_code == 200
+        api_user = UserModel(**response.json())
+        lib_users = await User.get_all(udm, school1_attr["name"], f"username={user.name}")
+        assert api_user.school == f"{url_fragment}/schools/{school2_attr['name']}"
+        assert lib_users[0].school == school2_attr['name']
+
+
+
+@pytest.mark.asyncio
 async def test_delete(auth_header, url_fragment, create_random_user_data, udm_kwargs):
     async with UDM(**udm_kwargs) as udm:
-        r_user = create_random_user_data("student")
+        r_user = create_random_user_data(role="student")
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
         response = requests.post(

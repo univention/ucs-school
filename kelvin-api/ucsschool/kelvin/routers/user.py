@@ -236,13 +236,18 @@ async def partial_update(
             )
         user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
         changed = False
-        for attr, new_value in (await user.to_modify_kwargs()).items():
+        to_change = (await user.to_modify_kwargs())
+        for attr, new_value in to_change.items():
+            if attr in ("school", "schools"):
+                continue  # School move handled separately
             current_value = getattr(user_current, attr)
             if new_value != current_value:
                 setattr(user_current, attr, new_value)
                 changed = True
         if changed:
             await user_current.modify(udm)
+        if "school" in to_change:
+            await user_current.change_school(to_change["school"], udm)
         return await UserModel.from_lib_model(user_current, request, udm)
 
 
