@@ -57,7 +57,7 @@ def udm_kwargs() -> Dict[str, Any]:
 def school_class_attrs(ldap_base):
     def _func() -> Dict[str, str]:
         return {
-            "name": fake.user_name(),
+            "name": f"test.{fake.user_name()}",
             "school": "DEMOSCHOOL",
             "description": fake.text(max_nb_chars=50),
             "users": [
@@ -91,6 +91,7 @@ def users_user_props(ldap_base):
 
 @pytest.fixture
 async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
+    """Create a new school class"""
     created_school_classes = []
     created_school_shares = []
 
@@ -149,6 +150,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
 
 @pytest.fixture
 async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
+    """Create a new user"""
     created_users = []
 
     async def _func(role) -> Tuple[str, Dict[str, str]]:
@@ -213,3 +215,57 @@ def role2class():
         "teacher": ucsschool.lib.models.user.Teacher,
         "teacher_and_staff": ucsschool.lib.models.user.TeachersAndStaff,
     }
+
+
+@pytest.fixture
+def cn_attrs(ldap_base):
+    raise NotImplementedError
+
+
+@pytest.fixture
+async def new_cn(udm_kwargs, ldap_base, cn_attrs):
+    """Create a new container"""
+    created_cns = []
+
+    async def _func() -> Tuple[str, Dict[str, str]]:
+        async with UDM(**udm_kwargs) as udm:
+            attr = cn_attrs()
+            obj = await udm.get("container/cn").new()
+            obj.position = f"ou={attr['school']},{ldap_base}"
+            obj.props.name = attr['name']
+            obj.props.description = attr["description"]
+            await obj.save()
+            created_cns.append(obj.dn)
+            print("Created new container: {!r}".format(obj))
+
+        return obj.dn, attr
+
+    yield _func
+
+    async with UDM(**udm_kwargs) as udm:
+        mod = udm.get("container/cn")
+        for dn in created_cns:
+            try:
+                obj = await mod.get(dn)
+            except UdmNoObject:
+                print(f"Container {dn!r} does not exist (anymore).")
+                continue
+            await obj.delete()
+            print(f"Deleted container {dn!r}.")
+
+
+@pytest.fixture
+def ou_attrs(ldap_base):
+    raise NotImplementedError
+
+
+@pytest.fixture
+async def new_ou(udm_kwargs, ldap_base, ou_attrs):
+    """Create a new school (OU)"""
+    created_ous = []
+
+    async def _func() -> Tuple[str, Dict[str, str]]:
+        raise NotImplementedError
+        print("Created new OU: {!r}".format('TODO'))
+    yield _func
+    print(f"Deleted OU 'TODO'.")

@@ -40,6 +40,7 @@ async def test_user_exists(new_user, udm_kwargs):
 
 @pytest.mark.asyncio
 async def test_user_type_is_converted(new_user, role2class, udm_kwargs):
+    """aka test_*_get_class_for_udm_obj()"""
     async with UDM(**udm_kwargs) as udm:
         for user_type in ("staff", "student", "teacher", "teacher_and_staff"):
             dn, attr = await new_user(user_type)
