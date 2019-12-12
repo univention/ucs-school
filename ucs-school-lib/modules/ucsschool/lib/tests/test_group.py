@@ -1,6 +1,7 @@
 import pytest
 from faker import Faker
-from ucsschool.lib.models.group import SchoolClass
+from ldap.filter import filter_format
+from ucsschool.lib.models.group import Group, SchoolClass
 
 from udm_rest_client import UDM, NoObject as UdmNoObject
 
@@ -30,6 +31,75 @@ async def test_school_class_exists(new_school_class, udm_kwargs):
         assert await sc1.exists(udm) is True
         sc2 = SchoolClass(name=f"{attr['school']}-{fake.pystr()}", school=attr["school"])
         assert await sc2.exists(udm) is False
+
+
+@pytest.mark.asyncio
+async def test_school_class_from_dn(new_school_class, udm_kwargs):
+    dn, attr = await new_school_class()
+    async with UDM(**udm_kwargs) as udm:
+        obj = await SchoolClass.from_dn(dn, attr["school"], udm)
+    for key, value in attr.items():
+        exp_value = value
+        found_value = getattr(obj, key)
+        if key == "name":
+            exp_value = f"{attr['school']}-{exp_value}"
+        if isinstance(exp_value, list):
+            exp_value = set(exp_value)
+            found_value = set(found_value)
+        assert exp_value == found_value
+
+
+@pytest.mark.asyncio
+async def test_school_class_from_udm_obj(new_school_class, udm_kwargs):
+    dn, attr = await new_school_class()
+    async with UDM(**udm_kwargs) as udm:
+        udm_mod = udm.get(SchoolClass._meta.udm_module)
+        udm_obj = await udm_mod.get(dn)
+        obj = await SchoolClass.from_udm_obj(udm_obj, attr["school"], udm)
+        for key, value in attr.items():
+            exp_value = value
+            found_value = getattr(obj, key)
+            if key == "name":
+                exp_value = f"{attr['school']}-{exp_value}"
+            if isinstance(exp_value, list):
+                exp_value = set(exp_value)
+                found_value = set(found_value)
+            assert exp_value == found_value
+
+
+@pytest.mark.asyncio
+async def test_school_class_get_all(new_school_class, udm_kwargs):
+    dn, attr = await new_school_class()
+    async with UDM(**udm_kwargs) as udm:
+        for obj in await SchoolClass.get_all(udm, attr["school"]):
+            if obj.dn == dn:
+                break
+        else:
+            raise AssertionError(
+                f"DN {dn!r} not found in SchoolClass.get_all(udm, {attr['school']})."
+            )
+        filter_str = filter_format("(cn=%s)", (f"{attr['school']}-{attr['name']}",))
+        objs = await SchoolClass.get_all(udm, attr["school"], filter_str=filter_str)
+        assert len(objs) == 1
+        for key, value in attr.items():
+            exp_value = value
+            found_value = getattr(objs[0], key)
+            if key == "name":
+                exp_value = f"{attr['school']}-{exp_value}"
+            if isinstance(exp_value, list):
+                exp_value = set(exp_value)
+                found_value = set(found_value)
+            assert exp_value == found_value
+
+
+@pytest.mark.asyncio
+async def test_school_class_get_class_for_udm_obj(new_school_class, udm_kwargs):
+    dn, attr = await new_school_class()
+    async with UDM(**udm_kwargs) as udm:
+        obj = await SchoolClass.from_dn(dn, attr["school"], udm)
+        udm_obj = await obj.get_udm_object(udm)
+        udm_class = await Group.get_class_for_udm_obj(udm_obj, attr["school"])
+        assert udm_class is SchoolClass
 
 
 @pytest.mark.asyncio
@@ -87,6 +157,28 @@ async def test_school_class_modify(new_school_class, new_user, ldap_base, udm_kw
             exp_value.add(dn_user)
             found_value = set(found_value)
         assert exp_value == found_value
+
+
+@pytest.mark.xfail(reason="new_ou() NotImplementedYet")
+@pytest.mark.asyncio
+async def test_school_class_move(new_school_class, new_ou, ldap_base, udm_kwargs):
+    dn, attr = await new_school_class()
+    ou_dn, ou_attr = new_ou()
+    new_school = ou_attr["name"]
+    async with UDM(**udm_kwargs) as udm:
+        obj1 = await SchoolClass.from_dn(dn, attr["school"], udm)
+        obj1.school = new_school
+        obj1.change_school(new_school, udm)
+        assert f"ou={new_school}" in obj1.dn
+        assert f"ou={attr['school']}" not in obj1.dn
+        obj2 = await SchoolClass.from_dn(obj1.dn, new_school, udm)
+        for k, v in attr.items():
+            exp_value = getattr(obj1, k)
+            found_value = getattr(obj2, k)
+            if isinstance(exp_value, list):
+                exp_value = set(exp_value)
+                found_value = set(found_value)
+            assert exp_value == found_value
 
 
 @pytest.mark.asyncio
