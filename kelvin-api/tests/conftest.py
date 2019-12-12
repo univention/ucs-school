@@ -9,7 +9,7 @@ import requests
 import pytest
 from faker import Faker
 
-import ucsschool.kelvin.utils
+import ucsschool.kelvin.main
 from ucsschool.kelvin.routers.user import UserCreateModel
 
 faker = Faker()
@@ -106,7 +106,7 @@ def temp_file_func():
 def setup_logging(temp_dir_session):
     tmp_log_file = Path(mkstemp()[1])
 
-    with patch.object(ucsschool.kelvin.utils, "LOG_FILE_PATH", tmp_log_file):
+    with patch.object(ucsschool.kelvin.main, "LOG_FILE_PATH", tmp_log_file):
         print(f" -- logging to {tmp_log_file!s} --")
         yield
 
