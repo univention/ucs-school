@@ -1,8 +1,8 @@
 import pytest
 from faker import Faker
 from ldap.filter import filter_format
-from ucsschool.lib.models.group import Group, SchoolClass
 
+from ucsschool.lib.models.group import Group, SchoolClass
 from udm_rest_client import UDM, NoObject as UdmNoObject
 
 
@@ -27,9 +27,13 @@ async def test_school_class_exists(new_school_class, udm_kwargs):
     async with UDM(**udm_kwargs) as udm:
         sc0 = await SchoolClass.from_dn(dn, attr["school"], udm)
         assert await sc0.exists(udm) is True
-        sc1 = SchoolClass(name=f"{attr['school']}-{attr['name']}", school=attr["school"])
+        sc1 = SchoolClass(
+            name=f"{attr['school']}-{attr['name']}", school=attr["school"]
+        )
         assert await sc1.exists(udm) is True
-        sc2 = SchoolClass(name=f"{attr['school']}-{fake.pystr()}", school=attr["school"])
+        sc2 = SchoolClass(
+            name=f"{attr['school']}-{fake.pystr()}", school=attr["school"]
+        )
         assert await sc2.exists(udm) is False
 
 

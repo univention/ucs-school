@@ -3,6 +3,7 @@ import time
 from typing import Dict, List, Optional, Tuple, Type, Union
 
 import requests
+
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.user import Teacher, User
