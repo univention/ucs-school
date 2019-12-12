@@ -575,7 +575,9 @@ class UCSSchoolHelperAbstractClass(object):
 
 	async def do_move(self, udm_obj: UdmObject, lo: UDM) -> None:
 		old_school, new_school = self.get_school_from_dn(self.old_dn), self.get_school_from_dn(self.dn)
-		await udm_obj.move(self.dn, ignore_license=1)
+		udm_obj.position = self.dn
+		await udm_obj.save()
+		# await udm_obj.move(self.dn, ignore_license=1)
 		if self.supports_school() and old_school and old_school != new_school:
 			await self.do_school_change(udm_obj, lo, old_school)
 			await self.do_move_roles(udm_obj, lo, old_school, new_school)
