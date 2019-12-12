@@ -64,11 +64,8 @@
             über den Punkt <emphasis>Einstellungen ändern</emphasis> den
             Druckmodus für einen einzelnen Computerraum beeinflussen. Die oben beschriebenen Einschränkungen für
             Schüler werden dabei als <emphasis>Standard (globale Einstellungen)</emphasis> beschrieben. Darüber
-            hinaus können auch die Druckmodi <emphasis>Drucken deaktiviert</emphasis> und <emphasis>Drucken
-            möglich
-        </emphasis> ausgewählt werden, die das Drucken von den Rechnern des Computerraums entweder
-            vollständig untersagen oder - unabhängig der gemachten Voreinstellungen - auf allen physikalischen
-            Druckern erlauben.
+            hinaus kann auch der Druckmodus <emphasis>Drucken deaktiviert</emphasis> ausgewählt werden, der das Drucken
+			von den Rechnern des Computerraums vollständig untersagt.
         </para>
 
         <section id="school:setup:generic:moderated-printer">
