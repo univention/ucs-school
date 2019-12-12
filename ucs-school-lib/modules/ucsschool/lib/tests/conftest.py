@@ -5,11 +5,12 @@ from typing import Any, Dict, Tuple
 
 import pytest
 from faker import Faker
+
+import ucsschool.lib.models.user
 from ucsschool.lib.roles import create_ucsschool_role_string
-from univention.config_registry import ConfigRegistry
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from udm_rest_client import UDM, NoObject as UdmNoObject
-import ucsschool.lib.models.user
+from univention.config_registry import ConfigRegistry
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -232,7 +233,7 @@ async def new_cn(udm_kwargs, ldap_base, cn_attrs):
             attr = cn_attrs()
             obj = await udm.get("container/cn").new()
             obj.position = f"ou={attr['school']},{ldap_base}"
-            obj.props.name = attr['name']
+            obj.props.name = attr["name"]
             obj.props.description = attr["description"]
             await obj.save()
             created_cns.append(obj.dn)
@@ -266,6 +267,7 @@ async def new_ou(udm_kwargs, ldap_base, ou_attrs):
 
     async def _func() -> Tuple[str, Dict[str, str]]:
         raise NotImplementedError
-        print("Created new OU: {!r}".format('TODO'))
+        print(f"Created new OU: {TODO!r}")
+
     yield _func
     print(f"Deleted OU 'TODO'.")
