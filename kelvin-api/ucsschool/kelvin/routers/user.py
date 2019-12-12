@@ -14,8 +14,8 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
 )
-from ucsschool.importer.models.import_user import ImportUser
 
+from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.user import User
 from udm_rest_client import UDM
 

@@ -18,7 +18,6 @@ from starlette.status import (
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.utils import get_file_handler
-from .import_config import get_import_config
 
 from . import __version__
 from .constants import (
@@ -29,6 +28,7 @@ from .constants import (
     URL_API_PREFIX,
     URL_TOKEN_BASE,
 )
+from .import_config import get_import_config
 from .ldap_access import LDAPAccess
 from .routers import role, school, school_class, user
 from .token_auth import (
