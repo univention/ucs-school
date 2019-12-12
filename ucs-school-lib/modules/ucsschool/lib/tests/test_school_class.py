@@ -22,7 +22,7 @@ fake = Faker()
 
 
 @pytest.mark.asyncio
-async def test_school_class_exists(new_school_class, udm_kwargs):
+async def test_exists(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         sc0 = await SchoolClass.from_dn(dn, attr["school"], udm)
@@ -38,7 +38,7 @@ async def test_school_class_exists(new_school_class, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_school_class_from_dn(new_school_class, udm_kwargs):
+async def test_from_dn(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         obj = await SchoolClass.from_dn(dn, attr["school"], udm)
@@ -54,7 +54,7 @@ async def test_school_class_from_dn(new_school_class, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_school_class_from_udm_obj(new_school_class, udm_kwargs):
+async def test_from_udm_obj(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         udm_mod = udm.get(SchoolClass._meta.udm_module)
@@ -72,7 +72,7 @@ async def test_school_class_from_udm_obj(new_school_class, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_school_class_get_all(new_school_class, udm_kwargs):
+async def test_get_all(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         for obj in await SchoolClass.get_all(udm, attr["school"]):
@@ -97,17 +97,19 @@ async def test_school_class_get_all(new_school_class, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_school_class_get_class_for_udm_obj(new_school_class, udm_kwargs):
+async def test_get_class_for_udm_obj(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
+        udm_obj = await udm.get(SchoolClass._meta.udm_module).get(dn)
+        klass = await Group.get_class_for_udm_obj(udm_obj, attr["school"])
+        assert klass is SchoolClass
         obj = await SchoolClass.from_dn(dn, attr["school"], udm)
-        udm_obj = await obj.get_udm_object(udm)
-        udm_class = await Group.get_class_for_udm_obj(udm_obj, attr["school"])
-        assert udm_class is SchoolClass
+        assert await obj.exists(udm) is True
+        assert isinstance(obj, SchoolClass)
 
 
 @pytest.mark.asyncio
-async def test_school_class_from_dn(new_school_class, udm_kwargs):
+async def test_from_dn(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         sc = await SchoolClass.from_dn(dn, attr["school"], udm)
@@ -125,12 +127,12 @@ async def test_school_class_from_dn(new_school_class, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_school_class_create(school_class_attrs, udm_kwargs):
+async def test_create(school_class_attrs, udm_kwargs):
     sc_attrs = school_class_attrs()
     async with UDM(**udm_kwargs) as udm:
         sc1 = SchoolClass(**sc_attrs)
         success = await sc1.create(udm)
-        assert success
+        assert success is True
     async with UDM(**udm_kwargs) as udm:
         sc2 = await SchoolClass.from_dn(sc1.dn, sc_attrs["school"], udm)
     for key, exp_value in sc_attrs.items():
@@ -142,7 +144,7 @@ async def test_school_class_create(school_class_attrs, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_school_class_modify(new_school_class, new_user, ldap_base, udm_kwargs):
+async def test_modify(new_school_class, new_user, ldap_base, udm_kwargs):
     dn, attr = await new_school_class()
     dn_user, attr_user = await new_user("student")
     async with UDM(**udm_kwargs) as udm:
@@ -150,7 +152,8 @@ async def test_school_class_modify(new_school_class, new_user, ldap_base, udm_kw
         description_new = fake.text(max_nb_chars=50)
         sc1.description = description_new
         sc1.users.append(dn_user)
-        await sc1.modify(udm)
+        success = await sc1.modify(udm)
+        assert success is True
     async with UDM(**udm_kwargs) as udm:
         sc2 = await SchoolClass.from_dn(dn, attr["school"], udm)
     for k, v in attr.items():
@@ -165,14 +168,15 @@ async def test_school_class_modify(new_school_class, new_user, ldap_base, udm_kw
 
 @pytest.mark.xfail(reason="new_ou() NotImplementedYet")
 @pytest.mark.asyncio
-async def test_school_class_move(new_school_class, new_ou, ldap_base, udm_kwargs):
+async def test_move(new_school_class, new_ou, ldap_base, udm_kwargs):
     dn, attr = await new_school_class()
     ou_dn, ou_attr = new_ou()
     new_school = ou_attr["name"]
     async with UDM(**udm_kwargs) as udm:
         obj1 = await SchoolClass.from_dn(dn, attr["school"], udm)
         obj1.school = new_school
-        obj1.change_school(new_school, udm)
+        success = obj1.change_school(new_school, udm)
+        assert success is True
         assert f"ou={new_school}" in obj1.dn
         assert f"ou={attr['school']}" not in obj1.dn
         obj2 = await SchoolClass.from_dn(obj1.dn, new_school, udm)
@@ -186,11 +190,12 @@ async def test_school_class_move(new_school_class, new_ou, ldap_base, udm_kwargs
 
 
 @pytest.mark.asyncio
-async def test_school_class_remove(new_school_class, udm_kwargs):
+async def test_remove(new_school_class, udm_kwargs):
     dn, attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         sc = await SchoolClass.from_dn(dn, attr["school"], udm)
-        await sc.remove(udm)
+        success = await sc.remove(udm)
+        assert success is True
         assert sc.dn is None
     async with UDM(**udm_kwargs) as udm:
         with pytest.raises(UdmNoObject):
