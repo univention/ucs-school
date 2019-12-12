@@ -102,6 +102,9 @@ class ImportUser(User):
 	_all_school_names = None  # type: List[str]
 	_all_usernames = {}  # type: Dict[str, UsernameUniquenessTuple]
 	_attribute_udm_names = None  # type: Dict[str, str]
+	_factory = None  # type: DefaultUserImportFactory
+	_no_overwrite_attributes = []  # type: List[str]
+	_reader = None  # type: BaseReader
 	_prop_regex = re.compile(r'<(.*?)(:.*?)*>')
 	_prop_providers = {
 		'birthday': 'make_birthday',
@@ -153,18 +156,24 @@ class ImportUser(User):
 
 	@property
 	def factory(self) -> DefaultUserImportFactory:
-		return Factory()
+		if not self._factory:
+			self.__class__._factory = Factory()
+		return self._factory
 
 	@property
 	def no_overwrite_attributes(self) -> List[str]:
-		return ucr.get(
-			"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
-			"mailPrimaryAddress uid"
-		).split()
+		if not self._no_overwrite_attributes:
+			self._no_overwrite_attributes.extend(ucr.get(
+				"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
+				"mailPrimaryAddress uid"
+			).split())
+		return self._no_overwrite_attributes
 
 	@property
 	def reader(self) -> BaseReader:
-		return self.factory.make_reader()
+		if not self._reader:
+			self.__class__._reader = self.factory.make_reader()
+		return self._reader
 
 	def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> int
 		"""
