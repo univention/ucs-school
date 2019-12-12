@@ -3,22 +3,21 @@ import shutil
 from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
-from typing import Any, Callable, List, Dict, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 from unittest.mock import patch
-import requests
 
-import pytest
 import factory
+import pytest
+import requests
 from faker import Faker
+from univention.config_registry import ConfigRegistry
 
 import ucsschool.kelvin.main
-from udm_rest_client import UDM
-from univention.config_registry import ConfigRegistry
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
 from ucsschool.kelvin.routers.user import UserCreateModel
-
+from udm_rest_client import UDM
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -52,8 +51,7 @@ class SchoolClassFactory(factory.Factory):
     class Meta:
         model = ucsschool.lib.models.group.SchoolClass
 
-    name = factory.LazyFunction(
-        lambda: f"DEMOSCHOOL-test.{fake.user_name()}")
+    name = factory.LazyFunction(lambda: f"DEMOSCHOOL-test.{fake.user_name()}")
     school = "DEMOSCHOOL"
     description = factory.Faker("text", max_nb_chars=50)
     users = factory.List([])
@@ -69,7 +67,8 @@ class UserFactory(factory.Factory):
     firstname = factory.Faker("first_name")
     lastname = factory.Faker("last_name")
     birthday = factory.LazyFunction(
-        lambda: fake.date_of_birth(minimum_age=6, maximum_age=65).strftime("%Y-%m-%d"))
+        lambda: fake.date_of_birth(minimum_age=6, maximum_age=65).strftime("%Y-%m-%d")
+    )
     email = None
     description = factory.Faker("text", max_nb_chars=50)
     password = factory.Faker("password")
@@ -282,7 +281,9 @@ async def new_school_class(udm_kwargs, ldap_base, new_school_class_obj):
     async with UDM(**udm_kwargs) as udm:
         for dn in created_school_classes:
             try:
-                obj = await ucsschool.lib.models.group.SchoolClass.from_dn(dn, None, udm)
+                obj = await ucsschool.lib.models.group.SchoolClass.from_dn(
+                    dn, None, udm
+                )
             except ucsschool.lib.models.base.NoObject:
                 print(f"SchoolClass {dn!r} does not exist (anymore).")
                 continue
