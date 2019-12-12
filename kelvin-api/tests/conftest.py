@@ -15,9 +15,11 @@ import ucsschool.kelvin.main
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
+from ucsschool.lib.models import School
 from ucsschool.kelvin.routers.user import UserCreateModel
 from udm_rest_client import UDM
 from univention.config_registry import ConfigRegistry
+from udm_rest_client import UDM, NoObject
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -199,7 +201,7 @@ def random_name() -> Callable[[], str]:
 def create_random_user_data(
     url_fragment,
 ):  # TODO: Extend with schools and school classes if ressources are done
-    def _create_random_user_data(role: str):
+    def _create_random_user_data(**kwargs):
         f_name = fake.first_name()
         l_name = fake.last_name()
         name = f"{f_name}-{l_name}"
@@ -216,8 +218,9 @@ def create_random_user_data(
             school=f"{url_fragment}/schools/DEMOSCHOOL",
             schools=[f"{url_fragment}/schools/DEMOSCHOOL"],
             school_classes={"DEMOSCHOOL": ["DEMOSCHOOL-Democlass"]},
-            role=f"{url_fragment}/roles/{role}",
         )
+        for key, value in kwargs.items():
+            data[key] = value
         return UserCreateModel(**data)
 
     return _create_random_user_data
@@ -229,11 +232,13 @@ def create_random_users(
 ):  # TODO: Extend with schools and school_classes if resources are done
     usernames = list()
 
-    def _create_random_users(roles: Dict[str, int]):
+    def _create_random_users(roles: Dict[str, int], **data_kwargs):
         users = []
         for role, amount in roles.items():
             for i in range(amount):
-                user_data = create_random_user_data(role)
+                user_data = create_random_user_data(
+                    role=f"{url_fragment}/roles/{role}", **data_kwargs
+                )
                 response = requests.post(
                     f"{url_fragment}/users/",
                     headers={"Content-Type": "application/json", **auth_header},
@@ -289,3 +294,30 @@ async def new_school_class(udm_kwargs, ldap_base, new_school_class_obj):
                 continue
             await obj.remove(udm)
             print(f"Deleted SchoolClass {dn!r}.")
+
+
+@pytest.fixture
+async def create_random_schools(udm_kwargs):
+    async def _create_random_schools(amount: int) -> List[Tuple[str, Any]]:
+        if amount > 2:
+            assert False, "At the moment only one or two schools can be requested."
+        demo_school = (
+            f"ou=DEMOSCHOOL,{env_or_ucr('ldap/base')}",
+            dict(name="DEMOSCHOOL"),
+        )
+        demo_school_2 = (
+            f"ou=DEMOSCHOOL2,{env_or_ucr('ldap/base')}",
+            dict(name="DEMOSCHOOL2"),
+        )
+        if amount == 1:
+            return [demo_school]
+        async with UDM(**udm_kwargs) as udm:
+            try:
+                await udm.get("container/ou").get(demo_school_2[0])
+            except NoObject as e:
+                assert (
+                    False
+                ), "To run the tests properly you need to have a school named DEMOSCHOOL2 at the moment!"
+        return [demo_school, demo_school_2]
+
+    return _create_random_schools
