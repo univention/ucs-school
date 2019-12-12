@@ -2,7 +2,6 @@ import requests
 import pytest
 import random
 import ucsschool.kelvin.constants
-from ucsschool.kelvin.ldap_access import udm_kwargs
 from ucsschool.kelvin.routers.role import SchoolUserRole
 from ucsschool.kelvin.routers.user import UserModel, UserCreateModel, UserPatchModel
 from ucsschool.lib.models.user import User
@@ -51,11 +50,11 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):
 
 
 @pytest.mark.asyncio
-async def test_search(auth_header, url_fragment, create_random_users):
+async def test_search(auth_header, url_fragment, create_random_users, udm_kwargs):
     create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
     )
-    async with UDM(**await udm_kwargs()) as udm:
+    async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL")
         response = requests.get(
             f"{url_fragment}/users",
@@ -70,11 +69,11 @@ async def test_search(auth_header, url_fragment, create_random_users):
 
 
 @pytest.mark.asyncio
-async def test_get(auth_header, url_fragment, create_random_users):
+async def test_get(auth_header, url_fragment, create_random_users, udm_kwargs):
     users = create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
     )
-    async with UDM(**await udm_kwargs()) as udm:
+    async with UDM(**udm_kwargs) as udm:
         for user in users:
             lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
             assert len(lib_users) == 1
@@ -87,8 +86,8 @@ async def test_get(auth_header, url_fragment, create_random_users):
 
 
 @pytest.mark.asyncio
-async def test_create(auth_header, url_fragment, create_random_user_data):
-    async with UDM(**await udm_kwargs()) as udm:
+async def test_create(auth_header, url_fragment, create_random_user_data, udm_kwargs):
+    async with UDM(**udm_kwargs) as udm:
         r_user = create_random_user_data("student")
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
@@ -110,12 +109,12 @@ async def test_create(auth_header, url_fragment, create_random_user_data):
 
 @pytest.mark.asyncio
 async def test_put(
-    auth_header, url_fragment, create_random_users, create_random_user_data
+    auth_header, url_fragment, create_random_users, create_random_user_data, udm_kwargs
 ):
     users = create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
     )
-    async with UDM(**await udm_kwargs()) as udm:
+    async with UDM(**udm_kwargs) as udm:
         for user in users:
             new_user_data = create_random_user_data(user.role.split("/")[-1]).dict()
             del new_user_data["name"]
@@ -135,11 +134,13 @@ async def test_put(
 
 
 @pytest.mark.asyncio
-async def test_patch(auth_header, url_fragment, create_random_users, create_random_user_data):
+async def test_patch(
+    auth_header, url_fragment, create_random_users, create_random_user_data, udm_kwargs
+):
     users = create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
     )
-    async with UDM(**await udm_kwargs()) as udm:
+    async with UDM(**udm_kwargs) as udm:
         for user in users:
             new_user_data = create_random_user_data(user.role.split("/")[-1]).dict()
             del new_user_data["name"]
@@ -157,8 +158,8 @@ async def test_patch(auth_header, url_fragment, create_random_users, create_rand
 
 
 @pytest.mark.asyncio
-async def test_delete(auth_header, url_fragment, create_random_user_data):
-    async with UDM(**await udm_kwargs()) as udm:
+async def test_delete(auth_header, url_fragment, create_random_user_data, udm_kwargs):
+    async with UDM(**udm_kwargs) as udm:
         r_user = create_random_user_data("student")
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
