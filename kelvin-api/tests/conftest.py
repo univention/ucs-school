@@ -10,7 +10,6 @@ import factory
 import pytest
 import requests
 from faker import Faker
-from univention.config_registry import ConfigRegistry
 
 import ucsschool.kelvin.main
 import ucsschool.lib.models.base
@@ -18,6 +17,7 @@ import ucsschool.lib.models.group
 import ucsschool.lib.models.user
 from ucsschool.kelvin.routers.user import UserCreateModel
 from udm_rest_client import UDM
+from univention.config_registry import ConfigRegistry
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)

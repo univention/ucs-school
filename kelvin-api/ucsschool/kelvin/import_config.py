@@ -32,20 +32,21 @@
 Diverse helper functions.
 """
 
-import sys
-import pprint
 import logging
+import pprint
+import sys
+
 from six import reraise as raise_
-from ucsschool.importer.exceptions import UcsSchoolImportError
+
 from ucsschool.importer.configuration import (
-    setup_configuration as _setup_configuration,
     Configuration,
+    setup_configuration as _setup_configuration,
 )
+from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.factory import setup_factory as _setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import (
     UserImportCommandLine as _UserImportCommandLine,
 )
-
 
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None

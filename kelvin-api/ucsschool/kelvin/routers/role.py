@@ -5,12 +5,6 @@ from typing import List, Type
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, HttpUrl
-from ucsschool.importer.models.import_user import (
-    ImportStudent,
-    ImportTeacher,
-    ImportTeachersAndStaff,
-    ImportStaff,
-)
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -20,6 +14,12 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
 )
 
+from ucsschool.importer.models.import_user import (
+    ImportStaff,
+    ImportStudent,
+    ImportTeacher,
+    ImportTeachersAndStaff,
+)
 from ucsschool.lib.models.base import UCSSchoolModel
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
