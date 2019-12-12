@@ -162,7 +162,6 @@ async def test_create(new_school_class, users_user_props, udm_kwargs, role: Role
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-@pytest.mark.xfail(reason="NotImplementedYet")
 async def test_modify(
     new_school_class, users_user_props, new_user, udm_kwargs, role: Role
 ):
@@ -182,6 +181,9 @@ async def test_modify(
         success = await user.modify(udm)
         assert success is True
         user = await role.klass.from_dn(dn, attr["school"], udm)
+    attr["firstname"] = firstname
+    attr["lastname"] = lastname
+    attr["birthday"] = birthday
     compare_attr_and_lib_user(attr, user)
 
 
