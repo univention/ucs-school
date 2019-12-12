@@ -5,6 +5,12 @@ from typing import List, Type
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, HttpUrl
+from ucsschool.importer.models.import_user import (
+    ImportStudent,
+    ImportTeacher,
+    ImportTeachersAndStaff,
+    ImportStaff,
+)
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -15,7 +21,6 @@ from starlette.status import (
 )
 
 from ucsschool.lib.models.base import UCSSchoolModel
-from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_pupil,
@@ -58,10 +63,10 @@ class SchoolUserRole(str, Enum):
 
     def get_lib_class(self) -> Type[UCSSchoolModel]:
         mapping = dict(
-            staff=Staff,
-            student=Student,
-            teacher=Teacher,
-            teachers_and_staff=TeachersAndStaff,
+            staff=ImportStaff,
+            student=ImportStudent,
+            teacher=ImportTeacher,
+            teachers_and_staff=ImportTeachersAndStaff,
         )
         return mapping[self.value]
 

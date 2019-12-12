@@ -18,6 +18,7 @@ from starlette.status import (
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.utils import get_file_handler
+from .import_config import get_import_config
 
 from . import __version__
 from .constants import (
@@ -49,6 +50,11 @@ app = FastAPI(
     openapi_url=f"{URL_API_PREFIX}/openapi.json",
     default_response_class=UJSONResponse,
 )
+
+
+@app.on_event("startup")
+def configure_import():
+    get_import_config()
 
 
 @lru_cache(maxsize=1)

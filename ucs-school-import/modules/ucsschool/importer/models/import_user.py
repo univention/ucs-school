@@ -37,6 +37,7 @@ import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 from six import iteritems, string_types
+from udm_rest_client import UDM
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
@@ -294,7 +295,7 @@ class ImportUser(User):
 				if dn == old_dn:
 					cls._unique_ids[category][value] = new_dn
 
-	def check_schools(self, lo, additional_schools=None):  # type: (LoType, Optional[Iterable[str]]) -> None
+	async def check_schools(self, lo: UDM, additional_schools: Optional[Iterable[str]]=None) -> None:
 		"""
 		Verify that the "school" and "schools" attributes are correct.
 		Check is case sensitive (Bug #42456).
@@ -311,7 +312,7 @@ class ImportUser(User):
 		if additional_schools:
 			schools.update(additional_schools)
 		for school in schools:
-			if school not in self.get_all_school_names(lo):
+			if school not in await self.get_all_school_names(lo):
 				raise UnknownSchoolName('School {!r} does not exist.'.format(school), input=self.input_data, entry_count=self.entry_count, import_user=self)
 
 	def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
@@ -426,17 +427,17 @@ class ImportUser(User):
 		roles = user_dict.pop("roles", [])
 		return cls.factory.make_import_user(roles, **user_dict)
 
-	def _alter_udm_obj(self, udm_obj):  # type: (UdmObjectType) -> None
+	async def _alter_udm_obj(self, udm_obj):  # type: (UdmObjectType) -> None
 		self._prevent_mapped_attributes_in_udm_properties()
-		super(ImportUser, self)._alter_udm_obj(udm_obj)
+		await super(ImportUser, self)._alter_udm_obj(udm_obj)
 		if self._userexpiry is not None:
-			udm_obj["userexpiry"] = self._userexpiry
+			udm_obj.props["userexpiry"] = self._userexpiry
 		if self._purge_ts is not None:
-			udm_obj["ucsschoolPurgeTimestamp"] = self._purge_ts
+			udm_obj.props["ucsschoolPurgeTimestamp"] = self._purge_ts
 
 		for property_, value in (self.udm_properties or {}).items():
 			try:
-				udm_obj[property_] = value
+				udm_obj.props[property_] = value
 			except (KeyError, noProperty) as exc:
 				raise UnknownProperty(
 					"UDM property '{}' could not be set. {}: {}".format(property_, exc.__class__.__name__, exc),
@@ -461,9 +462,10 @@ class ImportUser(User):
 				)
 
 	@classmethod
-	def get_all_school_names(cls, lo):  # type: (LoType) -> Iterable[str]
+	async def get_all_school_names(cls, lo: UDM) -> Iterable[str]:
 		if not cls._all_school_names:
-			cls._all_school_names = [s.name for s in School.get_all(lo)]
+			schools = await School.get_all(lo)
+			cls._all_school_names = [s.name for s in schools]
 		return cls._all_school_names
 
 	def has_purge_timestamp(self, connection):  # type: (LoType) -> bool
@@ -976,8 +978,7 @@ class ImportUser(User):
 		else:
 			return super(ImportUser, self).remove_without_hooks(lo)
 
-	def validate(self, lo, validate_unlikely_changes=False, check_username=False):
-		# type: (LoType, Optional[bool], Optional[bool]) -> None
+	async def validate(self, lo: UDM, validate_unlikely_changes: Optional[bool] = False, check_username: Optional[bool]=False):
 		"""
 		Runs self-tests in the following order:
 
@@ -1025,7 +1026,7 @@ class ImportUser(User):
 			if len(self.password or '') < self.config["password_length"]:
 				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]), entry_count=self.entry_count, import_user=self)
 
-		super(ImportUser, self).validate(lo, validate_unlikely_changes)
+		await super(ImportUser, self).validate(lo, validate_unlikely_changes)
 
 		_ma = None
 		mandatory_attributes = {}
@@ -1107,7 +1108,7 @@ class ImportUser(User):
 							"Invalid school class name: {!r}".format(school_class),
 							entry_count=self.entry_count, import_user=self)
 
-		self.check_schools(lo)
+		await self.check_schools(lo)
 
 		if UNIQUENESS not in skip_tests:
 			if not self._all_usernames:
