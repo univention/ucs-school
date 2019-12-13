@@ -161,9 +161,12 @@ async def change_operation(
     users_data = create_random_users(
         {"student": 2, "teacher": 1, "teachers_and_staff": 1}
     )
+    student_data = None
     for user_data in users_data:
-        if user_data.role.endswith("student"):
-            student_data = user_data
+        for role in user_data.roles:
+            if role.endswith("student"):
+                student_data = user_data
+        if student_data:
             break
     else:
         raise RuntimeError("No student in user data.")

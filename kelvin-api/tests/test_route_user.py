@@ -37,11 +37,15 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: 
         elif key == "udm_properties":
             for key, value in value.items():
                 assert value == getattr(udm_obj, key)
-        elif key == "role":
-            assert (
-                value.split("/")[-1]
-                == SchoolUserRole.from_lib_roles(lib_user.ucsschool_roles).value
+        elif key == "roles":
+            api_roles = set([role.split("/")[-1] for role in value])
+            lib_roles = set(
+                [
+                    SchoolUserRole.from_lib_role(role).value
+                    for role in lib_user.ucsschool_roles
+                ]
             )
+            assert api_roles == lib_roles
         elif key == "birthday":
             if value:
                 assert str(value) == getattr(lib_user, key)
@@ -52,7 +56,7 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: 
 
 
 @pytest.mark.asyncio
-async def test_search(auth_header, url_fragment, create_random_users, udm_kwargs):
+async def test_user_search(auth_header, url_fragment, create_random_users, udm_kwargs):
     create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
     )
@@ -71,7 +75,7 @@ async def test_search(auth_header, url_fragment, create_random_users, udm_kwargs
 
 
 @pytest.mark.asyncio
-async def test_get(auth_header, url_fragment, create_random_users, udm_kwargs):
+async def test_user_get(auth_header, url_fragment, create_random_users, udm_kwargs):
     users = create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teachers_and_staff": 2}
     )
@@ -88,9 +92,11 @@ async def test_get(auth_header, url_fragment, create_random_users, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_create(auth_header, url_fragment, create_random_user_data, udm_kwargs):
+async def test_user_create(
+    auth_header, url_fragment, create_random_user_data, udm_kwargs
+):
     async with UDM(**udm_kwargs) as udm:
-        r_user = create_random_user_data(role=f"{url_fragment}/roles/student")
+        r_user = create_random_user_data(roles=[f"{url_fragment}/roles/student"])
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
         response = requests.post(
@@ -110,7 +116,7 @@ async def test_create(auth_header, url_fragment, create_random_user_data, udm_kw
 
 
 @pytest.mark.asyncio
-async def test_put(
+async def test_user_put(
     auth_header, url_fragment, create_random_users, create_random_user_data, udm_kwargs
 ):
     users = create_random_users(
@@ -118,7 +124,7 @@ async def test_put(
     )
     async with UDM(**udm_kwargs) as udm:
         for user in users:
-            new_user_data = create_random_user_data(role=user.role).dict()
+            new_user_data = create_random_user_data(roles=user.roles).dict()
             del new_user_data["name"]
             del new_user_data["record_uid"]
             del new_user_data["source_uid"]
@@ -136,7 +142,7 @@ async def test_put(
 
 
 @pytest.mark.asyncio
-async def test_patch(
+async def test_user_patch(
     auth_header, url_fragment, create_random_users, create_random_user_data, udm_kwargs
 ):
     users = create_random_users(
@@ -144,7 +150,7 @@ async def test_patch(
     )
     async with UDM(**udm_kwargs) as udm:
         for user in users:
-            new_user_data = create_random_user_data(role=user.role).dict()
+            new_user_data = create_random_user_data(roles=user.roles).dict()
             del new_user_data["name"]
             del new_user_data["record_uid"]
             del new_user_data["source_uid"]
@@ -201,9 +207,11 @@ async def test_school_change(
 
 
 @pytest.mark.asyncio
-async def test_delete(auth_header, url_fragment, create_random_user_data, udm_kwargs):
+async def test_user_delete(
+    auth_header, url_fragment, create_random_user_data, udm_kwargs
+):
     async with UDM(**udm_kwargs) as udm:
-        r_user = create_random_user_data(role=f"{url_fragment}/roles/student")
+        r_user = create_random_user_data(roles=[f"{url_fragment}/roles/student"])
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
         response = requests.post(

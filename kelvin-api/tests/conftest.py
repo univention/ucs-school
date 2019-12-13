@@ -205,7 +205,7 @@ def create_random_user_data(
         f_name = fake.first_name()
         l_name = fake.last_name()
         name = f"{f_name}-{l_name}"
-        domainname = env_or_ucr('domainname')
+        domainname = env_or_ucr("domainname")
         data = dict(
             email=f"{fake.domain_word()}@{domainname}",
             record_uid=name,
@@ -237,15 +237,24 @@ def create_random_users(
         users = []
         for role, amount in roles.items():
             for i in range(amount):
-                user_data = create_random_user_data(
-                    role=f"{url_fragment}/roles/{role}", **data_kwargs
-                )
+                if role == "teachers_and_staff":
+                    user_data = create_random_user_data(
+                        roles=[
+                            f"{url_fragment}/roles/staff",
+                            f"{url_fragment}/roles/teacher",
+                        ],
+                        **data_kwargs,
+                    )
+                else:
+                    user_data = create_random_user_data(
+                        roles=[f"{url_fragment}/roles/{role}"], **data_kwargs
+                    )
                 response = requests.post(
                     f"{url_fragment}/users/",
                     headers={"Content-Type": "application/json", **auth_header},
                     data=user_data.json(),
                 )
-                assert response.status_code == 201
+                assert response.status_code == 201, f"{response.__dict__}"
                 users.append(user_data)
                 usernames.append(user_data.name)
         return users

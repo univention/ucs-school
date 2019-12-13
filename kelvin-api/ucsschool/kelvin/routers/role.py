@@ -45,32 +45,31 @@ class SchoolUserRole(str, Enum):
     staff = "staff"
     student = "student"
     teacher = "teacher"
-    teachers_and_staff = "teachers_and_staff"
 
     @classmethod
-    def from_lib_roles(cls, lib_roles: List[str]):
-        role_concat = ",".join(lib_roles)
-        if role_pupil in role_concat or role_student in role_concat:
+    def from_lib_role(cls, lib_role: str) -> "SchoolUserRole":
+        if role_pupil in lib_role or role_student in lib_role:
             return cls.student
-        if role_staff in role_concat and role_teacher in role_concat:
-            return cls.teachers_and_staff
-        if role_teacher in role_concat:
+        if role_teacher in lib_role:
             return cls.teacher
-        if role_staff in role_concat:
+        if role_staff in lib_role:
             return cls.staff
         else:  # Should never happen and throws exception
-            return cls(lib_roles[0])
+            return cls(lib_role)
 
-    def get_lib_class(self) -> Type[UCSSchoolModel]:
-        mapping = dict(
-            staff=ImportStaff,
-            student=ImportStudent,
-            teacher=ImportTeacher,
-            teachers_and_staff=ImportTeachersAndStaff,
-        )
-        return mapping[self.value]
+    @classmethod
+    def get_lib_class(cls, roles: List["SchoolUserRole"]):
+        mapping = dict(staff=ImportStaff, student=ImportStudent, teacher=ImportTeacher)
+        if cls.staff in roles and cls.teacher in roles:
+            return ImportTeachersAndStaff
+        elif len(roles) == 1:
+            return mapping[roles[0].value]
+        else:
+            raise Exception(
+                f"This should never happen! Tried to get LibClass for {roles}"
+            )
 
-    def as_lib_roles(self, school: str) -> List[str]:
+    def as_lib_role(self, school: str) -> str:
         """
         Creates a list containing the role(s) in lib format.
         :param school: The school to create the role for.
@@ -78,16 +77,11 @@ class SchoolUserRole(str, Enum):
             consumation by the school lib.
         """
         if self.value == self.staff:
-            return [create_ucsschool_role_string(role_staff, school)]
+            return create_ucsschool_role_string(role_staff, school)
         elif self.value == self.student:
-            return [create_ucsschool_role_string(role_pupil, school)]
+            return create_ucsschool_role_string(role_pupil, school)
         elif self.value == self.teacher:
-            return [create_ucsschool_role_string(role_teacher, school)]
-        elif self.value == self.teachers_and_staff:
-            return [
-                create_ucsschool_role_string(role_staff, school),
-                create_ucsschool_role_string(role_teacher, school),
-            ]
+            return create_ucsschool_role_string(role_teacher, school)
 
     def to_url(self, request: Request):
         return request.url_for("get", role_name=self.value)
@@ -116,7 +110,6 @@ async def search(
             SchoolUserRole.staff,
             SchoolUserRole.teacher,
             SchoolUserRole.student,
-            SchoolUserRole.teachers_and_staff,
         )
     ]
 

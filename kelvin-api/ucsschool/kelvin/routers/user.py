@@ -43,7 +43,7 @@ class UserBaseModel(UcsSchoolBaseModel):
     udm_properties: Dict[str, Any] = {}
     schools: List[HttpUrl]
     school_classes: Dict[str, List[str]] = {}
-    role: HttpUrl
+    roles: List[HttpUrl]
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = ImportUser
@@ -59,13 +59,12 @@ class UserCreateModel(UserBaseModel):
             url_to_name(request, "school", self.unscheme_and_unquote(school))
             for school in self.schools
         ]
-        roles = []
-        role = self.unscheme_and_unquote(self.role)
-        for r in SchoolUserRole(url_to_name(request, "role", role)).as_lib_roles(
-            kwargs["school"]
-        ):
-            roles.append(r)
-        kwargs["ucsschool_roles"] = roles
+        kwargs["ucsschool_roles"] = [
+            SchoolUserRole(url_to_name(request, "role", role)).as_lib_role(
+                kwargs["school"]
+            )
+            for role in self.roles
+        ]
         kwargs["birthday"] = str(self.birthday)
         if not kwargs["email"]:
             del kwargs["email"]
@@ -83,10 +82,10 @@ class UserModel(UserBaseModel, APIAttributesMixin):
             request.url_for("get", username=kwargs["name"])
         )
         udm_obj = await obj.get_udm_object(udm)
-        role = SchoolUserRole.from_lib_roles(obj.ucsschool_roles)
+        roles = [SchoolUserRole.from_lib_role(role) for role in obj.ucsschool_roles]
         kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
-        kwargs["role"] = cls.scheme_and_quote(role.to_url(request))
+        kwargs["roles"] = [cls.scheme_and_quote(role.to_url(request)) for role in roles]
 
         return kwargs
 
@@ -192,9 +191,16 @@ async def create(
     - **school**: school the class belongs to (required)
     - **role**: One of either student, staff, teacher, teachers_and_staff
     """
-    user.Config.lib_class = SchoolUserRole(
-        url_to_name(request, "role", UserModel.unscheme_and_unquote(user.role))
-    ).get_lib_class()
+    user.Config.lib_class = SchoolUserRole.get_lib_class(
+        [
+            SchoolUserRole(
+                url_to_name(
+                    request, "role", UcsSchoolBaseModel.unscheme_and_unquote(role)
+                )
+            )
+            for role in user.roles
+        ]
+    )
     user = await user.as_lib_model(request)
     async with UDM(**await udm_kwargs()) as udm:
         if await user.exists(udm):
@@ -264,9 +270,16 @@ async def complete_update(
     - **school**: school the class belongs to (required)
     - **role**: One of either student, staff, teacher, teachers_and_staff
     """
-    user.Config.lib_class = SchoolUserRole(
-        url_to_name(request, "role", user.role)
-    ).get_lib_class()
+    user.Config.lib_class = SchoolUserRole.get_lib_class(
+        [
+            SchoolUserRole(
+                url_to_name(
+                    request, "role", UcsSchoolBaseModel.unscheme_and_unquote(role)
+                )
+            )
+            for role in user.roles
+        ]
+    )
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
             f"uid={escape_filter_chars(username)}"
