@@ -52,11 +52,6 @@ app = FastAPI(
 )
 
 
-@app.on_event("startup")
-def configure_import():
-    get_import_config()
-
-
 @lru_cache(maxsize=1)
 def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
@@ -79,6 +74,11 @@ def setup_logging() -> None:
     logger.addHandler(file_handler)
     logger = logging.getLogger("uvicorn.access")
     logger.addHandler(file_handler)
+
+
+@app.on_event("startup")
+def configure_import():
+    get_import_config()
 
 
 @app.exception_handler(NoObject)

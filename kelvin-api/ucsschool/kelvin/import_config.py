@@ -69,7 +69,7 @@ def init_ucs_school_import_framework(**config_kwargs):
 
     _config_args = {
         "dry_run": False,
-        "logfile": "/var/log/univention/ucs-school-http-api-bb/ucs-school-import.log",
+        "logfile": None,
         "skip_tests": ["uniqueness"],
     }
     _config_args.update(config_kwargs)
@@ -82,7 +82,9 @@ def init_ucs_school_import_framework(**config_kwargs):
                 'Missing "mapped_udm_properties" in configuration checks, e.g.: '
                 '{.., "configuration_checks": ["defaults", "mapped_udm_properties"], ..}'
             )
-        _ui.setup_logging(config["verbose"], config["logfile"])
+        # no need to call _ui.setup_logging(), because we configure logger and
+        # handlers for 'ucsschool.*' and 'univention.*' in
+        # ucsschool.kelvin.main.setup_logging()
         _setup_factory(config["factory"])  # noqa
     except UcsSchoolImportError as exc:
         logger.exception("Error initializing UCS@school import framework: %s", exc)
