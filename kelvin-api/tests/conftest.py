@@ -1,5 +1,6 @@
 import os
 import shutil
+import random
 from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
@@ -205,11 +206,11 @@ def create_random_user_data(
         l_name = fake.last_name()
         name = f"{f_name}-{l_name}"
         data = dict(
-            email="",
+            email=fake.safe_email(),
             record_uid=name,
             source_uid="KELVIN",
             birthday=fake.date(),
-            disabled=False,
+            disabled=random.choice([True, False]),
             name=name,
             firstname=f_name,
             lastname=l_name,

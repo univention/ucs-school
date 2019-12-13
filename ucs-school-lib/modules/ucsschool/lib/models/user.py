@@ -352,7 +352,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	async def _alter_udm_obj(self, udm_obj):
 		if self.email is not None:
-			setattr(udm_obj.props, 'e-mail', self.email)
+			setattr(udm_obj.props, 'e-mail', [self.email])
 		udm_obj.props.departmentNumber = [self.school]
 		ret = await super(User, self)._alter_udm_obj(udm_obj)
 		return ret
@@ -413,7 +413,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				})
 		if self.email:
 			name, email = escape_filter_chars(self.name), escape_filter_chars(self.email)
-			if await self.get_first_udm_obj(lo, '&(!(uid=%s))(mailPrimaryAddress=%s)' % (name, email)):
+			if await self.get_first_udm_obj(lo, '(&(!(uid=%s))(mailPrimaryAddress=%s))' % (name, email)):
 				self.add_error('email', _('The email address is already taken by another user. Please change the email address.'))
 			# mail_domain = self.get_mail_domain(lo)
 			# if not mail_domain.exists(lo) and not self.shall_create_mail_domain():
