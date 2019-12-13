@@ -88,7 +88,7 @@ class UserModel(UserBaseModel):
         role = SchoolUserRole.from_lib_roles(obj.ucsschool_roles)
         kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
-        kwargs["role"] = role.to_url(request)
+        kwargs["role"] = cls.scheme_and_quote(role.to_url(request))
 
         return kwargs
 
