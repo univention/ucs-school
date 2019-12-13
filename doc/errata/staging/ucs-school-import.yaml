@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.19A~4.4.0.201912101148
+fix: 17.0.20A~4.4.0.201912131551
 desc: |
  * The fix_ucsschool_slave script has been adapted to keep objects with the wrong
    ucsscoolRole win_computer from reappearing again after a resync.
