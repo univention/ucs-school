@@ -205,8 +205,9 @@ def create_random_user_data(
         f_name = fake.first_name()
         l_name = fake.last_name()
         name = f"{f_name}-{l_name}"
+        domainname = env_or_ucr('domainname')
         data = dict(
-            email=fake.safe_email(),
+            email=f"{fake.domain_word()}@{domainname}",
             record_uid=name,
             source_uid="KELVIN",
             birthday=fake.date(),
