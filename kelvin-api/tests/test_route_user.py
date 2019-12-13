@@ -166,6 +166,7 @@ async def test_patch(
 
 
 @pytest.mark.asyncio
+@pytest.mark.xfail
 async def test_school_change(
     auth_header, url_fragment, create_random_users, create_random_schools, udm_kwargs
 ):
