@@ -26,6 +26,8 @@ Depends: univention-directory-manager,
  python-univention,
  python-univention-lib,
  python-lazy-object-proxy,
+ python-ldap,
+ python-univention-config-registry,
 Description: UCS@school: Importing objects like users and computers
  This package provides scripts for importing objects like users, groups,
  networks and computers.

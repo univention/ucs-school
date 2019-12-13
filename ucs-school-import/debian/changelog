@@ -1,3 +1,9 @@
+ucs-school-import (17.0.20) unstable; urgency=medium
+
+  * Bug #50280: enhancement of fix_ucs_school_slaves
+
+ -- Julia Bremer <bremer@univention.de>  Fri, 13 Dec 2019 15:10:37 +0100
+
 ucs-school-import (17.0.19) unstable; urgency=medium
 
   * Bug #50280: make fix_ucsschool_slaves fix the userAccountControl attribute
