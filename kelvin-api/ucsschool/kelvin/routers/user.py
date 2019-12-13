@@ -55,9 +55,12 @@ class UserCreateModel(UserBaseModel):
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        kwargs["school"] = url_to_name(request, "school", self.unscheme_and_unquote(self.school))
+        kwargs["school"] = url_to_name(
+            request, "school", self.unscheme_and_unquote(self.school)
+        )
         kwargs["schools"] = [
-            url_to_name(request, "school", self.unscheme_and_unquote(school)) for school in self.schools
+            url_to_name(request, "school", self.unscheme_and_unquote(school))
+            for school in self.schools
         ]
         roles = []
         role = self.unscheme_and_unquote(self.role)

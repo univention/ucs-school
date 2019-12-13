@@ -15,11 +15,10 @@ import ucsschool.kelvin.main
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
-from ucsschool.lib.models import School
 from ucsschool.kelvin.routers.user import UserCreateModel
-from udm_rest_client import UDM
-from univention.config_registry import ConfigRegistry
+from ucsschool.lib.models import School
 from udm_rest_client import UDM, NoObject
+from univention.config_registry import ConfigRegistry
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -314,10 +313,11 @@ async def create_random_schools(udm_kwargs):
         async with UDM(**udm_kwargs) as udm:
             try:
                 await udm.get("container/ou").get(demo_school_2[0])
-            except NoObject as e:
-                assert (
-                    False
-                ), "To run the tests properly you need to have a school named DEMOSCHOOL2 at the moment!"
+            except NoObject:
+                raise AssertionError(
+                    "To run the tests properly you need to have a school named "
+                    "DEMOSCHOOL2 at the moment!"
+                )
         return [demo_school, demo_school_2]
 
     return _create_random_schools
