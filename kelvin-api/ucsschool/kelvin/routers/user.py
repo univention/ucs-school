@@ -21,7 +21,7 @@ from udm_rest_client import UDM, APICommunicationError
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
-from .base import BasePatchModel, UcsSchoolBaseModel, get_lib_obj
+from .base import BasePatchModel, UcsSchoolBaseModel, get_lib_obj, APIAttributesMixin
 from .role import SchoolUserRole
 
 router = APIRouter()
@@ -38,21 +38,18 @@ class UserBaseModel(UcsSchoolBaseModel):
     source_uid: str = None
     birthday: datetime.date = None
     disabled: bool = False
-    name: str
     firstname: str
     lastname: str
     udm_properties: Dict[str, Any] = {}
-    school: HttpUrl
     schools: List[HttpUrl]
     school_classes: Dict[str, List[str]] = {}
+    role: HttpUrl
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = ImportUser
 
 
 class UserCreateModel(UserBaseModel):
-    role: HttpUrl
-
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
         kwargs["school"] = url_to_name(
@@ -75,10 +72,7 @@ class UserCreateModel(UserBaseModel):
         return kwargs
 
 
-class UserModel(UserBaseModel):
-    dn: str
-    role: HttpUrl
-
+class UserModel(UserBaseModel, APIAttributesMixin):
     @classmethod
     async def _from_lib_model_kwargs(
         cls, obj: User, request: Request, udm: UDM
@@ -94,10 +88,6 @@ class UserModel(UserBaseModel):
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
         kwargs["role"] = cls.scheme_and_quote(role.to_url(request))
 
-        return kwargs
-
-    async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
-        kwargs = await super()._as_lib_model_kwargs(request)
         return kwargs
 
 
@@ -128,7 +118,7 @@ class UserPatchModel(BasePatchModel):
         return kwargs
 
 
-@router.get("/")
+@router.get("/", response_model=List[UserModel])
 async def search(
     request: Request,
     name_filter: str = Query(
@@ -164,7 +154,7 @@ async def search(
         return [await UserModel.from_lib_model(user, request, udm) for user in users]
 
 
-@router.get("/{username}")
+@router.get("/{username}", response_model=UserModel)
 async def get(
     username: str, request: Request, logger: logging.Logger = Depends(get_logger)
 ) -> UserModel:
@@ -187,7 +177,7 @@ async def get(
         return await UserModel.from_lib_model(user, request, udm)
 
 
-@router.post("/", status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED, response_model=UserModel)
 async def create(
     user: UserCreateModel,
     request: Request,
@@ -216,7 +206,7 @@ async def create(
         return await UserModel.from_lib_model(user, request, udm)
 
 
-@router.patch("/{username}", status_code=HTTP_200_OK)
+@router.patch("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
 async def partial_update(
     username: str,
     user: UserPatchModel,
@@ -258,7 +248,7 @@ async def partial_update(
         return await UserModel.from_lib_model(user_current, request, udm)
 
 
-@router.put("/{username}", status_code=HTTP_200_OK)
+@router.put("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
 async def complete_update(
     username: str,
     user: UserCreateModel,

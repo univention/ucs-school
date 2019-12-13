@@ -16,15 +16,12 @@ from udm_rest_client import UDM, APICommunicationError
 
 from ..ldap_access import udm_kwargs
 from ..urls import name_from_dn, url_to_dn, url_to_name
-from .base import UcsSchoolBaseModel, get_lib_obj
+from .base import UcsSchoolBaseModel, get_lib_obj, APIAttributesMixin
 
 router = APIRouter()
 
 
-class SchoolClassModel(UcsSchoolBaseModel):
-    dn: str = None
-    name: str
-    school: HttpUrl
+class SchoolClassCreateModel(UcsSchoolBaseModel):
     description: str = None
     users: List[HttpUrl] = None
 
@@ -33,7 +30,7 @@ class SchoolClassModel(UcsSchoolBaseModel):
 
     @classmethod
     async def _from_lib_model_kwargs(
-        cls, obj: SchoolClass, request: Request, udm: UDM
+            cls, obj: SchoolClass, request: Request, udm: UDM
     ) -> Dict[str, Any]:
         kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
         kwargs["url"] = cls.scheme_and_quote(
@@ -47,12 +44,18 @@ class SchoolClassModel(UcsSchoolBaseModel):
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        kwargs["name"] = f"{kwargs['school']}-{self.name}"
+        school_name = url_to_name(request, 'school', self.unscheme_and_unquote(kwargs['school']))
+        kwargs["name"] = f"{school_name}-{self.name}"
         kwargs["users"] = [
             await url_to_dn(request, "user", self.unscheme_and_unquote(user))
             for user in (self.users or [])
         ]  # this is expensive :/
         return kwargs
+
+
+class SchoolClassModel(SchoolClassCreateModel, APIAttributesMixin):
+    pass
+
 
 
 class SchoolClassPatchDocument(BaseModel):
@@ -119,7 +122,7 @@ async def get(class_name: str, school: str, request: Request) -> SchoolClassMode
 
 
 @router.post("/", status_code=HTTP_201_CREATED)
-async def create(school_class: SchoolClassModel, request: Request) -> SchoolClassModel:
+async def create(school_class: SchoolClassCreateModel, request: Request) -> SchoolClassModel:
     """
     Create a school class with all the information:
 
@@ -166,7 +169,7 @@ async def partial_update(
 
 @router.put("/{school}/{class_name}", status_code=HTTP_200_OK)
 async def complete_update(
-    class_name: str, school: str, school_class: SchoolClassModel, request: Request
+    class_name: str, school: str, school_class: SchoolClassCreateModel, request: Request
 ) -> SchoolClassModel:
     if school != url_to_name(
         request, "school", UcsSchoolBaseModel.unscheme_and_unquote(school_class.school)

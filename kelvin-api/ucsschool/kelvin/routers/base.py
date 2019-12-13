@@ -44,12 +44,7 @@ async def get_lib_obj(
         )
 
 
-class UcsSchoolBaseModel(BaseModel, abc.ABC):
-    ucsschool_roles: List[str] = Field(
-        None, title="Roles of this object. Don't change if unsure."
-    )
-    url: HttpUrl = None
-
+class LibModelHelperMixin(BaseModel):
     class Config:
         lib_class: Type[UCSSchoolModel]
         json_loads = ujson.loads
@@ -69,7 +64,7 @@ class UcsSchoolBaseModel(BaseModel, abc.ABC):
     @classmethod
     async def from_lib_model(
         cls, obj: UCSSchoolModel, request: Request, udm: UDM
-    ) -> "UcsSchoolBaseModel":
+    ) -> "LibModelHelperMixin":
         kwargs = await cls._from_lib_model_kwargs(obj, request, udm)
         return cls(**kwargs)
 
@@ -97,12 +92,27 @@ class UcsSchoolBaseModel(BaseModel, abc.ABC):
             del kwargs["dn"]
         if "dn" in kwargs:
             del kwargs["url"]
+        return kwargs
+
+
+class APIAttributesMixin(BaseModel):
+    ucsschool_roles: List[str]
+    url: HttpUrl
+    dn: str
+
+
+class UcsSchoolBaseModel(LibModelHelperMixin, abc.ABC):
+    school: HttpUrl
+    name: str
+
+    async def as_lib_model(self, request: Request) -> UCSSchoolModel:
+        kwargs = await self._as_lib_model_kwargs(request)
         if self.Config.lib_class.supports_school():
             # TODO: have an OU cache, to fix upper/lower/camel case of 'school'
             kwargs["school"] = url_to_name(
                 request, "school", self.unscheme_and_unquote(self.school)
             )
-        return kwargs
+            return self.Config.lib_class(**kwargs)
 
     @validator("name", check_fields=False)
     def check_name(cls, value: str) -> str:
