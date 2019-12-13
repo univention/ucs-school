@@ -17,7 +17,7 @@ from starlette.status import (
 
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.user import User
-from udm_rest_client import UDM
+from udm_rest_client import UDM, APICommunicationError
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
@@ -153,7 +153,10 @@ async def search(
     else:
         filter_str = None
     async with UDM(**await udm_kwargs()) as udm:
-        users = await User.get_all(udm, school_filter, filter_str)
+        try:
+            users = await User.get_all(udm, school_filter, filter_str)
+        except APICommunicationError as e:
+            raise HTTPException(status_code=e.status, detail=e.reason)
         return [await UserModel.from_lib_model(user, request, udm) for user in users]
 
 
