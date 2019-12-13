@@ -155,8 +155,8 @@ async def search(
     async with UDM(**await udm_kwargs()) as udm:
         try:
             users = await User.get_all(udm, school_filter, filter_str)
-        except APICommunicationError as e:
-            raise HTTPException(status_code=e.status, detail=e.reason)
+        except APICommunicationError as exc:
+            raise HTTPException(status_code=exc.status, detail=exc.reason)
         return [await UserModel.from_lib_model(user, request, udm) for user in users]
 
 
@@ -239,7 +239,7 @@ async def partial_update(
             )
         user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
         changed = False
-        to_change = (await user.to_modify_kwargs())
+        to_change = await user.to_modify_kwargs()
         for attr, new_value in to_change.items():
             if attr in ("school", "schools"):
                 continue  # School move handled separately

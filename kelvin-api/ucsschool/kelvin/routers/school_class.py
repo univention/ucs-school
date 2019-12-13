@@ -106,8 +106,8 @@ async def search(
     async with UDM(**await udm_kwargs()) as udm:
         try:
             scs = await SchoolClass.get_all(udm, school_name, filter_str)
-        except APICommunicationError as e:
-            raise HTTPException(status_code=e.status, detail=e.reason)
+        except APICommunicationError as exc:
+            raise HTTPException(status_code=exc.status, detail=exc.reason)
         return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
 
 
