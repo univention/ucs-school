@@ -89,7 +89,7 @@ async def test_get(auth_header, url_fragment, create_random_users, udm_kwargs):
 @pytest.mark.asyncio
 async def test_create(auth_header, url_fragment, create_random_user_data, udm_kwargs):
     async with UDM(**udm_kwargs) as udm:
-        r_user = create_random_user_data("student")
+        r_user = create_random_user_data(role=f"{url_fragment}/roles/student")
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
         response = requests.post(
@@ -117,7 +117,7 @@ async def test_put(
     )
     async with UDM(**udm_kwargs) as udm:
         for user in users:
-            new_user_data = create_random_user_data(user.role.split("/")[-1]).dict()
+            new_user_data = create_random_user_data(role=user.role).dict()
             del new_user_data["name"]
             del new_user_data["record_uid"]
             del new_user_data["source_uid"]
@@ -143,7 +143,7 @@ async def test_patch(
     )
     async with UDM(**udm_kwargs) as udm:
         for user in users:
-            new_user_data = create_random_user_data(user.role.split("/")[-1]).dict()
+            new_user_data = create_random_user_data(role=user.role).dict()
             del new_user_data["name"]
             del new_user_data["record_uid"]
             del new_user_data["source_uid"]
@@ -188,7 +188,7 @@ async def test_school_change(auth_header, url_fragment, create_random_users, cre
 @pytest.mark.asyncio
 async def test_delete(auth_header, url_fragment, create_random_user_data, udm_kwargs):
     async with UDM(**udm_kwargs) as udm:
-        r_user = create_random_user_data(role="student")
+        r_user = create_random_user_data(role=f"{url_fragment}/roles/student")
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
         response = requests.post(

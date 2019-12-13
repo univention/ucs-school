@@ -311,7 +311,7 @@ class ImportUser(User):
 		schools.add(self.school)
 		if additional_schools:
 			schools.update(additional_schools)
-		all_school_names = self.get_all_school_names(lo)
+		all_school_names = await self.get_all_school_names(lo)
 		for school in schools:
 			if school not in all_school_names:
 				# retry for case where create_ou ran parallel to this process
