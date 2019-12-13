@@ -55,12 +55,13 @@ class UserCreateModel(UserBaseModel):
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        kwargs["school"] = url_to_name(request, "school", self.school)
+        kwargs["school"] = url_to_name(request, "school", self.unscheme_and_unquote(self.school))
         kwargs["schools"] = [
-            url_to_name(request, "school", school) for school in self.schools
+            url_to_name(request, "school", self.unscheme_and_unquote(school)) for school in self.schools
         ]
         roles = []
-        for r in SchoolUserRole(url_to_name(request, "role", self.role)).as_lib_roles(
+        role = self.unscheme_and_unquote(self.role)
+        for r in SchoolUserRole(url_to_name(request, "role", role)).as_lib_roles(
             kwargs["school"]
         ):
             roles.append(r)
@@ -199,7 +200,7 @@ async def create(
     - **role**: One of either student, staff, teacher, teachers_and_staff
     """
     user.Config.lib_class = SchoolUserRole(
-        url_to_name(request, "role", user.role)
+        url_to_name(request, "role", UserModel.unscheme_and_unquote(user.role))
     ).get_lib_class()
     user = await user.as_lib_model(request)
     async with UDM(**await udm_kwargs()) as udm:
