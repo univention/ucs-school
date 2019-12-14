@@ -62,6 +62,7 @@ def setup_logging() -> None:
     for name in (
         None,
         "requests",
+        "udm_rest_client",
         "univention",
         "ucsschool",
         "uvicorn.access",
@@ -70,9 +71,11 @@ def setup_logging() -> None:
         logger = logging.getLogger(name)
         logger.setLevel(logging.DEBUG)
     file_handler = get_file_handler(logging.DEBUG, str(LOG_FILE_PATH))
-    logger = logging.getLogger()
-    logger.addHandler(file_handler)
     logger = logging.getLogger("uvicorn.access")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(file_handler)
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
     logger.addHandler(file_handler)
 
 
