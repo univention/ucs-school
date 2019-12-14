@@ -6,3 +6,4 @@ six
 univention-config-registry
 univention-directory-manager-modules
 univention-lib
+udm-rest-client>=0.2.1
