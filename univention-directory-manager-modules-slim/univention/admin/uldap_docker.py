@@ -49,6 +49,7 @@ except ImportError:
 	pass
 
 logger = logging.getLogger(__name__)
+basestring = unicode = str
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -285,7 +286,7 @@ class access(object):
 		if value is None:
 			return value
 		elif isinstance(value, (list, tuple)):
-			return map(self.__encode, value)
+			return list(map(self.__encode, value))
 		else:
 			return value
 
@@ -300,9 +301,9 @@ class access(object):
 		elif isinstance(entry, tuple) and len(entry) == 2:
 			return (entry[0], self.__recode_attribute(entry[0], entry[1]))
 		elif isinstance(entry, (list, tuple)):
-			return map(self.__recode_entry, entry)
+			return list(map(self.__recode_entry, entry))
 		elif isinstance(entry, dict):
-			return dict(map(lambda k_v: (k_v[0], self.__recode_attribute(k_v[0], k_v[1])), entry.items()))
+			return dict(list(map(lambda k_v: (k_v[0], self.__recode_attribute(k_v[0], k_v[1])), entry.items())))
 		else:
 			return entry
 
