@@ -575,7 +575,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	async def do_move(self, udm_obj: UdmObject, lo: UDM) -> None:
 		old_school, new_school = self.get_school_from_dn(self.old_dn), self.get_school_from_dn(self.dn)
-		udm_obj.position = self.dn
+		udm_obj.position = self.position
 		await udm_obj.save()
 		# await udm_obj.move(self.dn, ignore_license=1)
 		if self.supports_school() and old_school and old_school != new_school:
@@ -1008,8 +1008,8 @@ class RoleSupportMixin(object):
 		if old_roles != self.ucsschool_roles:
 			self.logger.info('Updating roles: %r -> %r...', old_roles, self.ucsschool_roles)
 			# cannot use do_modify() here, as it would delete the old object
-			lo_admin = self.get_admin_connection()
-			lo_admin.modify(self.dn, [('ucsschoolRole', old_roles, self.ucsschool_roles)])
+			lo_admin, po = self.get_admin_connection()
+			lo_admin.modify(self.dn, [('ucsschoolRole', old_roles, [r.encode("utf-8") for r in self.ucsschool_roles])])
 
 	async def validate_roles(self, lo: UDM) -> None:
 		# for now different roles in different schools are not supported

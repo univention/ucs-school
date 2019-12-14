@@ -348,7 +348,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			udm_obj.props.school.append(school)
 		if old_school in udm_obj.props.school:
 			udm_obj.props.school.remove(old_school)
-		udm_obj.modify(ignore_license=True)
+		await udm_obj.save()
 
 	async def _alter_udm_obj(self, udm_obj):
 		if self.email is not None:

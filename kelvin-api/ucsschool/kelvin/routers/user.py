@@ -13,11 +13,12 @@ from starlette.status import (
     HTTP_204_NO_CONTENT,
     HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
+    HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.user import User
-from udm_rest_client import UDM, APICommunicationError
+from udm_rest_client import UDM, APICommunicationError, MoveError
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
@@ -240,8 +241,26 @@ async def partial_update(
         user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
         changed = False
         to_change = await user.to_modify_kwargs()
+        move = False
         for attr, new_value in to_change.items():
-            if attr in ("school", "schools"):
+            if attr == "school" and new_value not in (
+                to_change.get("schools") or user_current.schools
+            ):
+                raise HTTPException(
+                    status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"New 'school' value {new_value!r} not in current or future 'schools'.",
+                )
+            if attr == "school" and new_value != user_current.school:
+                move = True
+                new_school = new_value
+                new_schools = to_change.get("schools") or list(
+                    set(user_current.schools + [new_value])
+                )
+                continue  # School move handled separately
+            if attr == "schools" and user_current.school not in new_value:
+                move = True
+                new_school = to_change.get("school") or sorted(new_value)[0]
+                new_schools = new_value
                 continue  # School move handled separately
             current_value = getattr(user_current, attr)
             if new_value != current_value:
@@ -249,8 +268,12 @@ async def partial_update(
                 changed = True
         if changed:
             await user_current.modify(udm)
-        if "school" in to_change:
-            await user_current.change_school(to_change["school"], udm)
+        if move:
+            user_current.schools = new_schools
+            try:
+                await user_current.change_school(new_school, udm)
+            except MoveError as exc:
+                logger.exception("Moving %r: %s", user_current, exc)
         return await UserModel.from_lib_model(user_current, request, udm)
 
 
