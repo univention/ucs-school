@@ -4,7 +4,7 @@ from urllib.parse import ParseResult, quote, unquote, urlparse
 
 import ujson
 from fastapi import HTTPException
-from pydantic import BaseModel, Field, HttpUrl, validator
+from pydantic import BaseModel, HttpUrl, validator
 from starlette.requests import Request
 from starlette.status import HTTP_404_NOT_FOUND
 

@@ -22,7 +22,7 @@ from udm_rest_client import UDM, APICommunicationError, MoveError
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
-from .base import BasePatchModel, UcsSchoolBaseModel, get_lib_obj, APIAttributesMixin
+from .base import APIAttributesMixin, BasePatchModel, UcsSchoolBaseModel, get_lib_obj
 from .role import SchoolUserRole
 
 router = APIRouter()
@@ -109,7 +109,6 @@ class UserPatchModel(BasePatchModel):
         kwargs = await super().to_modify_kwargs()
         for key, value in kwargs.items():
             if key == "schools":
-                print(kwargs)
                 kwargs["schools"] = [str(school).split("/")[-1] for school in value]
             elif key == "school":
                 kwargs["school"] = str(value).split("/")[-1]
@@ -190,7 +189,7 @@ async def create(
     - **firstname**: name of the school user (required)
     - **lastname**: name of the school user (required)
     - **school**: school the class belongs to (required)
-    - **role**: One of either student, staff, teacher, teachers_and_staff
+    - **role**: One of either student, staff, teacher, teacher_and_staff
     """
     user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
@@ -213,7 +212,9 @@ async def create(
         return await UserModel.from_lib_model(user, request, udm)
 
 
-@router.patch("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
+@router.patch(  # noqa: C901
+    "/{username}", status_code=HTTP_200_OK, response_model=UserModel
+)
 async def partial_update(
     username: str,
     user: UserPatchModel,
@@ -226,7 +227,7 @@ async def partial_update(
     - **name**: name of the school user
     - **firstname**: first name of the school user
     - **lastname**: last name of the school user
-    - **role**: One of either student, staff, teacher, teachers_and_staff
+    - **role**: One of either student, staff, teacher, teacher_and_staff
     """
     async with UDM(**await udm_kwargs()) as udm:
         async for udm_obj in udm.get("users/user").search(
@@ -291,7 +292,7 @@ async def complete_update(
     - **firstname**: name of the school user (required)
     - **lastname**: name of the school user (required)
     - **school**: school the class belongs to (required)
-    - **role**: One of either student, staff, teacher, teachers_and_staff
+    - **role**: One of either student, staff, teacher, teacher_and_staff
     """
     user.Config.lib_class = SchoolUserRole.get_lib_class(
         [

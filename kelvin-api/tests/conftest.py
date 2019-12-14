@@ -1,6 +1,6 @@
 import os
-import shutil
 import random
+import shutil
 from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
@@ -17,7 +17,6 @@ import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
 from ucsschool.kelvin.routers.user import UserCreateModel
-from ucsschool.lib.models import School
 from udm_rest_client import UDM, NoObject
 from univention.config_registry import ConfigRegistry
 
@@ -200,14 +199,14 @@ def random_name() -> Callable[[], str]:
 @pytest.fixture
 def create_random_user_data(
     url_fragment,
-):  # TODO: Extend with schools and school classes if ressources are done
-    def _create_random_user_data(**kwargs):
+):  # TODO: Extend with schools and school classes if resources are done
+    def _create_random_user_data(**kwargs) -> UserCreateModel:
         f_name = fake.first_name()
         l_name = fake.last_name()
-        name = f"{f_name}-{l_name}"
+        name = f"test.{f_name}.{l_name}"
         domainname = env_or_ucr("domainname")
         data = dict(
-            email=f"{fake.domain_word()}@{domainname}",
+            email=f"{name}mail@{domainname}".lower(),
             record_uid=name,
             source_uid="KELVIN",
             birthday=fake.date(),
@@ -233,11 +232,13 @@ def create_random_users(
 ):  # TODO: Extend with schools and school_classes if resources are done
     usernames = list()
 
-    def _create_random_users(roles: Dict[str, int], **data_kwargs):
+    def _create_random_users(
+        roles: Dict[str, int], **data_kwargs
+    ) -> List[UserCreateModel]:
         users = []
         for role, amount in roles.items():
             for i in range(amount):
-                if role == "teachers_and_staff":
+                if role == "teacher_and_staff":
                     user_data = create_random_user_data(
                         roles=[
                             f"{url_fragment}/roles/staff",
@@ -265,7 +266,7 @@ def create_random_users(
         response = requests.delete(
             f"{url_fragment}/users/{username}", headers=auth_header
         )
-        assert response.status_code == 204
+        assert response.status_code in (204, 404)
 
 
 @pytest.fixture
@@ -327,7 +328,8 @@ async def create_random_schools(udm_kwargs):
             except NoObject:
                 raise AssertionError(
                     "To run the tests properly you need to have a school named "
-                    "DEMOSCHOOL2 at the moment!"
+                    "DEMOSCHOOL2 at the moment! Execute *on the host*: "
+                    "'/usr/share/ucs-school-import/scripts/create_ou DEMOSCHOOL2'"
                 )
         return [demo_school, demo_school_2]
 

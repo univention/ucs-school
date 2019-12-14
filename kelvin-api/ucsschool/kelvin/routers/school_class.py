@@ -16,7 +16,7 @@ from udm_rest_client import UDM, APICommunicationError
 
 from ..ldap_access import udm_kwargs
 from ..urls import name_from_dn, url_to_dn, url_to_name
-from .base import UcsSchoolBaseModel, get_lib_obj, APIAttributesMixin
+from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj
 
 router = APIRouter()
 
@@ -30,7 +30,7 @@ class SchoolClassCreateModel(UcsSchoolBaseModel):
 
     @classmethod
     async def _from_lib_model_kwargs(
-            cls, obj: SchoolClass, request: Request, udm: UDM
+        cls, obj: SchoolClass, request: Request, udm: UDM
     ) -> Dict[str, Any]:
         kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
         kwargs["url"] = cls.scheme_and_quote(
@@ -44,7 +44,9 @@ class SchoolClassCreateModel(UcsSchoolBaseModel):
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        school_name = url_to_name(request, 'school', self.unscheme_and_unquote(kwargs['school']))
+        school_name = url_to_name(
+            request, "school", self.unscheme_and_unquote(kwargs["school"])
+        )
         kwargs["name"] = f"{school_name}-{self.name}"
         kwargs["users"] = [
             await url_to_dn(request, "user", self.unscheme_and_unquote(user))
@@ -55,7 +57,6 @@ class SchoolClassCreateModel(UcsSchoolBaseModel):
 
 class SchoolClassModel(SchoolClassCreateModel, APIAttributesMixin):
     pass
-
 
 
 class SchoolClassPatchDocument(BaseModel):
@@ -122,7 +123,9 @@ async def get(class_name: str, school: str, request: Request) -> SchoolClassMode
 
 
 @router.post("/", status_code=HTTP_201_CREATED)
-async def create(school_class: SchoolClassCreateModel, request: Request) -> SchoolClassModel:
+async def create(
+    school_class: SchoolClassCreateModel, request: Request
+) -> SchoolClassModel:
     """
     Create a school class with all the information:
 

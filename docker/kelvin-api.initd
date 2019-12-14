@@ -1,6 +1,7 @@
 #!/sbin/openrc-run
 
 command=/kelvin/venv/bin/uvicorn
+# TODO: remove "--reload" argument for final release
 command_args="--reload --host 0.0.0.0 --port 8911 ucsschool.kelvin.main:app"
 name=kelvin-api
 description="UCS@school Kelvin API (ASGI server)"
