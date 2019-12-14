@@ -20,10 +20,8 @@ from ucsschool.importer.models.import_user import (
     ImportTeacher,
     ImportTeachersAndStaff,
 )
-from ucsschool.lib.models.base import UCSSchoolModel
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
-    role_pupil,
     role_staff,
     role_student,
     role_teacher,
@@ -48,7 +46,7 @@ class SchoolUserRole(str, Enum):
 
     @classmethod
     def from_lib_role(cls, lib_role: str) -> "SchoolUserRole":
-        if role_pupil in lib_role or role_student in lib_role:
+        if role_student in lib_role:
             return cls.student
         if role_teacher in lib_role:
             return cls.teacher
@@ -79,7 +77,7 @@ class SchoolUserRole(str, Enum):
         if self.value == self.staff:
             return create_ucsschool_role_string(role_staff, school)
         elif self.value == self.student:
-            return create_ucsschool_role_string(role_pupil, school)
+            return create_ucsschool_role_string(role_student, school)
         elif self.value == self.teacher:
             return create_ucsschool_role_string(role_teacher, school)
 
