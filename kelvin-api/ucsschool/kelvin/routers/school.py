@@ -1,26 +1,22 @@
 import logging
-import re
+
+# import re
 from functools import lru_cache
 from typing import List
 
+import ujson
 from fastapi import APIRouter, Depends, HTTPException, Query
-from starlette.requests import Request
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-)
+from ldap.filter import escape_filter_chars
+from pydantic import BaseModel
+from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
 
-from ..ldap_access import udm_kwargs
-from .base import UcsSchoolBaseModel, get_lib_obj
+from .base import udm_ctx
 
 router = APIRouter()
-_school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
+# _school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
 
 
 @lru_cache(maxsize=1)
@@ -28,22 +24,30 @@ def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
 
 
-def validate_school_name(name):
-    # TODO: this should use ucsschool.lib.models.attributes.SchoolName.validate()
-    # but there is a useless conditional...
-    if not _school_name_regex.match(name):
-        raise ValueError(f"Invalid name for a school (OU): {name!r}")
+# def validate_school_name(name):
+#     # TODO: this should use ucsschool.lib.models.attributes.SchoolName.validate()
+#     # but there is a useless conditional...
+#     if not _school_name_regex.match(name):
+#         raise ValueError(f"Invalid name for a school (OU): {name!r}")
 
 
-class SchoolModel(UcsSchoolBaseModel):
+class SchoolModel(BaseModel):
     dn: str = None
     name: str
+    display_name: str = None
+    dc_name: str = None
+    dc_name_administrative: str = None
+    class_share_file_server: str = None
+    home_share_file_server: str = None
+    educational_servers: List[str] = []
+    administrative_servers: List[str] = []
+    ucsschool_roles: List[str] = []
 
-    class Config(UcsSchoolBaseModel.Config):
-        lib_class = School
+    class Config:
+        json_loads = ujson.loads
 
 
-@router.get("/")
+@router.get("/", response_model=List[SchoolModel])
 async def search(
     name_filter: str = Query(
         None,
@@ -52,52 +56,40 @@ async def search(
         title="name",
     ),
     logger: logging.Logger = Depends(get_logger),
+    udm: UDM = Depends(udm_ctx),
 ) -> List[SchoolModel]:
     logger.debug("Searching for schools with: name_filter=%r", name_filter)
-    return [SchoolModel(name="10a"), SchoolModel(name="8b")]
+    if name_filter:
+        filter_str = "ou={}".format(
+            escape_filter_chars(name_filter).replace(r"\2a", "*")
+        )
+    else:
+        filter_str = None
+    logger.debug("*** filter_str=%r", filter_str)
+    schools = [
+        school.to_dict() for school in await School.get_all(udm, filter_str=filter_str)
+    ]
+    for school in schools:
+        school["dn"] = school.pop("$dn$")
+    return [SchoolModel(**school) for school in schools]
 
 
-@router.get("/{school_name}")
-async def get(school_name: str) -> SchoolModel:
-    return SchoolModel(name=school_name)
+@router.get("/{school_name}", response_model=SchoolModel)
+async def get(
+    school_name: str = Query(
+        None, alias="name", description="School (OU) with this name.", title="name",
+    ),
+    udm: UDM = Depends(udm_ctx),
+) -> SchoolModel:
+    school_udm = await School(name=school_name).get_udm_object(udm)
+    if not school_udm:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="School not found.")
+    school = await School.from_udm_obj(school_udm, school_name, udm)
+    school_dict = school.to_dict()
+    school_dict["dn"] = school_dict.pop("$dn$")
+    return SchoolModel(**school_dict)
 
 
-@router.post("/", status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolModel)
 async def create(school: SchoolModel) -> SchoolModel:
-    if school.name == "alsoerror":
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid school name."
-        )
-    school.dn = f"ou={school.name},dc=test"
-    return school
-
-
-@router.patch("/{name}", status_code=HTTP_200_OK)
-async def partial_update(name: str, school: SchoolModel) -> SchoolModel:
-    if name != school.name:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
-            detail="Renaming schools is not supported.",
-        )
-    return school
-
-
-@router.put("/{name}", status_code=HTTP_200_OK)
-async def complete_update(name: str, school: SchoolModel) -> SchoolModel:
-    if name != school.name:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
-            detail="Renaming schools is not supported.",
-        )
-    return school
-
-
-@router.delete("/{name}", status_code=HTTP_204_NO_CONTENT)
-async def delete(name: str, request: Request) -> None:
-    async with UDM(**await udm_kwargs()) as udm:
-        sc = await get_lib_obj(udm, School, name, None)
-        if await sc.exists(udm):
-            await sc.remove(udm)
-        else:
-            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="TODO")
-    return None
+    raise NotImplementedError
