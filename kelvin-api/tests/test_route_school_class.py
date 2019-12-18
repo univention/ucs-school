@@ -85,9 +85,7 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
     assert sc1_dn in [c.dn for c in lib_classes]
     assert sc2_dn in [c.dn for c in lib_classes]
     response = requests.get(
-        f"{url_fragment}/classes",
-        headers=auth_header,
-        params={"school_name": "DEMOSCHOOL"},
+        f"{url_fragment}/classes", headers=auth_header, params={"school": "DEMOSCHOOL"},
     )
     json_resp = response.json()
     assert response.status_code == 200

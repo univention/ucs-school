@@ -84,7 +84,7 @@ async def test_search(auth_header, url_fragment, create_random_users, udm_kwargs
         response = requests.get(
             f"{url_fragment}/users",
             headers=auth_header,
-            params={"school_filter": "DEMOSCHOOL"},
+            params={"school": "DEMOSCHOOL"},
         )
         api_users = {data["name"]: UserModel(**data) for data in response.json()}
         assert len(api_users.keys()) == len(lib_users)
