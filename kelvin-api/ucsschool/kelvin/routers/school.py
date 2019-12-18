@@ -1,6 +1,4 @@
 import logging
-
-# import re
 from functools import lru_cache
 from typing import List
 
@@ -16,19 +14,11 @@ from udm_rest_client import UDM
 from .base import udm_ctx
 
 router = APIRouter()
-# _school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
 
 
 @lru_cache(maxsize=1)
 def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
-
-
-# def validate_school_name(name):
-#     # TODO: this should use ucsschool.lib.models.attributes.SchoolName.validate()
-#     # but there is a useless conditional...
-#     if not _school_name_regex.match(name):
-#         raise ValueError(f"Invalid name for a school (OU): {name!r}")
 
 
 class SchoolModel(BaseModel):

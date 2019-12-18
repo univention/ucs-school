@@ -1,3 +1,4 @@
+import re
 from typing import Any, Dict, List, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
@@ -12,6 +13,8 @@ from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
+
+school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
 
 
 async def get_lib_obj(
@@ -125,7 +128,14 @@ class UcsSchoolBaseModel(LibModelHelperMixin):
     @validator("school", check_fields=False)
     def check_school_name(cls, value: str) -> str:
         if cls.Config.lib_class.supports_school():
-            cls.Config.lib_class.school.validate(value)
+            # ucsschool.lib.models.attributes.SchoolName.validate has a
+            # conditional we can't fulfill, so this is a copy of that code
+            if isinstance(value, HttpUrl):
+                check_val = value.path.rsplit("/", 1)[-1]
+            else:
+                check_val = value
+            if not school_name_regex.match(check_val):
+                raise ValueError(f"Invalid name for a school (OU): {value!r}")
         return value
 
 
