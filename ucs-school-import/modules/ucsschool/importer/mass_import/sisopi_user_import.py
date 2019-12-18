@@ -158,7 +158,7 @@ class SingleSourcePartialUserImport(UserImport):
 			(self.config["source_uid"], self.config['school'])
 		)
 
-	def do_delete(self, user):
+	async def do_delete(self, user):
 		"""
 		Delete or deactivate a user.
 
@@ -183,7 +183,7 @@ class SingleSourcePartialUserImport(UserImport):
 				imported_user = copy.deepcopy(user)
 				imported_user.school = sorted(user.schools)[0]
 				self.logger.info('User will be moved to school %r.', imported_user.school)
-				user = self.school_move(imported_user, user)
+				user = await self.school_move(imported_user, user)
 				user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
 				# no modify() required, because the move takes care of it
 			else:
@@ -195,14 +195,14 @@ class SingleSourcePartialUserImport(UserImport):
 			imported_user.school = self.limbo_ou
 			imported_user.schools = [self.limbo_ou]
 			imported_user.school_classes = {}
-			user = self.school_move(imported_user, user)
+			user = await self.school_move(imported_user, user)
 			user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
 			modified |= self.deactivate_user_now(user)
 
 		if self.dry_run:
 			user.call_hooks('pre', 'remove')
 			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
-			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+			await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 			if self.errors:
 				raise UserValidationError(
 					'ValidationError when deleting {}.'.format(user),
@@ -210,7 +210,7 @@ class SingleSourcePartialUserImport(UserImport):
 			success = True
 			user.call_hooks('post', 'remove')
 		elif modified:
-			success = user.modify(lo=self.connection)
+			success = await user.modify(lo=self.connection)
 		else:
 			# not a dry_run, but user was not modified, because user was not deactivated
 			success = True

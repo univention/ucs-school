@@ -33,7 +33,6 @@
 Default user import class.
 """
 
-import sys
 import copy
 import logging
 from collections import defaultdict
@@ -137,7 +136,7 @@ class UserImport(object):
 			percentage = 10 + 90 * usernum / self.imported_users_len  # 10% - 100%
 			self.progress_report(
 				description='Creating and modifying users: {}%.'.format(percentage),
-				percentage=percentage,
+				percentage=int(percentage),
 				done=usernum,
 				total=self.imported_users_len,
 				errors=len(self.errors)
@@ -146,7 +145,7 @@ class UserImport(object):
 				continue
 			try:
 				self.logger.debug("Creating / modifying user %d/%d %s...", usernum, self.imported_users_len, imported_user)
-				user = self.determine_add_modify_action(imported_user)
+				user = await self.determine_add_modify_action(imported_user)
 				cls_name = user.__class__.__name__
 
 				try:
@@ -168,7 +167,7 @@ class UserImport(object):
 						err = CreationError  # type: Union[Type[CreationError], Type[ModificationError]]
 						store = self.added_users[cls_name]  # type: List[Dict[str, Any]]
 						if self.dry_run:
-							user.validate(self.connection, validate_unlikely_changes=True, check_username=True)
+							await user.validate(self.connection, validate_unlikely_changes=True, check_username=True)
 							if self.errors:
 								raise ValidationError(user.errors.copy())
 							user.call_hooks('pre', 'create')
@@ -176,12 +175,12 @@ class UserImport(object):
 							success = True
 							user.call_hooks('post', 'create')
 						else:
-							success = user.create(lo=self.connection)
+							success = await user.create(lo=self.connection)
 					elif user.action == "M":
 						err = ModificationError
 						store = self.modified_users[cls_name]
 						if self.dry_run:
-							user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+							await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 							if self.errors:
 								raise ValidationError(user.errors.copy())
 							user.call_hooks('pre', 'modify')
@@ -189,12 +188,12 @@ class UserImport(object):
 							success = True
 							user.call_hooks('post', 'modify')
 						else:
-							success = user.modify(lo=self.connection)
+							success = await user.modify(lo=self.connection)
 					else:
 						# delete
 						continue
 				except ValidationError as exc:
-					raise UserValidationError, UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user), sys.exc_info()[2]
+					raise UserValidationError("ValidationError when {} {} " "(source_uid:{} record_uid: {}): {}".format(action_str.lower(), user, user.source_uid, user.record_uid, exc), validation_error=exc, import_user=user) from exc
 
 				if success:
 					self.logger.info("Success %s %d/%d %s (source_uid:%s record_uid: %s).", action_str.lower(), usernum, self.imported_users_len, user, user.source_uid, user.record_uid)
@@ -216,7 +215,7 @@ class UserImport(object):
 		self.logger.info("------ Created %d users, modified %d users. ------", num_added_users, num_modified_users)
 		return self.errors, self.added_users, self.modified_users
 
-	def find_importuser_in_ldap(self, import_user):  # type: (ImportUser) -> ImportUser
+	async def find_importuser_in_ldap(self, import_user):  # type: (ImportUser) -> ImportUser
 		"""
 		Fetch fresh :py:class:`ImportUser` object from LDAP.
 
@@ -227,9 +226,9 @@ class UserImport(object):
 		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
 		"""
 		try:
-			return import_user.get_by_import_id(self.connection, import_user.source_uid, import_user.record_uid)
+			return await import_user.get_by_import_id(self.connection, import_user.source_uid, import_user.record_uid)
 		except WrongObjectType as exc:
-			raise WrongUserType, WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user), sys.exc_info()[2]
+			raise WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user) from exc
 
 	def prepare_imported_user(self, imported_user, old_user):
 		# type: (ImportUser, Optional[ImportUser]) -> ImportUser
@@ -250,7 +249,7 @@ class UserImport(object):
 		imported_user.action = 'M' if old_user else 'A'
 		return imported_user
 
-	def determine_add_modify_action(self, imported_user):  # type: (ImportUser) -> ImportUser
+	async def determine_add_modify_action(self, imported_user):  # type: (ImportUser) -> ImportUser
 		"""
 		Determine what to do with the ImportUser. Should set attribute `action`
 		to either `A` or `M`. If set to `M` the returned user must be a opened
@@ -264,7 +263,7 @@ class UserImport(object):
 		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
 		"""
 		try:
-			user = self.find_importuser_in_ldap(imported_user)
+			user = await self.find_importuser_in_ldap(imported_user)
 		except NoObject:
 			# no user found -> create
 			return self.prepare_imported_user(imported_user, None)
@@ -283,9 +282,9 @@ class UserImport(object):
 					'User will change school. Previous school: %r, new school: %r.',
 					user.school, imported_user.school
 				)
-				user = self.school_move(imported_user, user)
+				user = await self.school_move(imported_user, user)
 		user.update(imported_user)
-		if user.disabled != "0" or user.has_expiry(self.connection) or user.has_purge_timestamp(self.connection):
+		if user.disabled != "0" or await user.has_expiry(self.connection) or await user.has_purge_timestamp(self.connection):
 			self.logger.info(
 				"Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is "
 				"non-empty), reactivating user.",
@@ -320,7 +319,7 @@ class UserImport(object):
 		attr = ['ucsschoolSourceUID', 'ucsschoolRecordUID']
 		filter_s = self.get_existing_users_search_filter()
 		self.logger.debug('Searching with filter=%r', filter_s)
-		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
+		ucs_ldap_users = await self.connection.search(filter_s, attr=attr)
 		return [
 			(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8'))
 			for lu in ucs_ldap_users
@@ -346,7 +345,7 @@ class UserImport(object):
 		self.logger.debug("users_to_delete=%r", users_to_delete)
 		return users_to_delete
 
-	def delete_users(self, users=None):
+	async def delete_users(self, users=None):
 		# type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]]]
 		"""
 		Delete users.
@@ -367,13 +366,13 @@ class UserImport(object):
 			percentage = 10 * num / len(users)  # 0% - 10%
 			self.progress_report(
 				description='Deleting users: {}.'.format(percentage),
-				percentage=percentage,
+				percentage=int(percentage),
 				done=num,
 				total=len(users),
 				errors=len(self.errors)
 			)
 			try:
-				user = a_user.get_by_import_id(self.connection, source_uid, record_uid)
+				user = await a_user.get_by_import_id(self.connection, source_uid, record_uid)
 				user.action = "D"  # mark for logging/csv-output purposes
 				user.input_data = input_data  # most likely empty list (except in legacy import)
 			except NoObject as exc:
@@ -382,7 +381,7 @@ class UserImport(object):
 					source_uid, record_uid, input_data, exc)
 				continue
 			try:
-				success = self.do_delete(user)
+				success = await self.do_delete(user)
 				if success:
 					self.logger.info(
 						"Success deleting %d/%d %r (source_uid:%s record_uid: %s).", num, len(users),
@@ -400,7 +399,7 @@ class UserImport(object):
 		self.logger.info("------ Deleted %d users. ------", sum(map(len, self.deleted_users.values())))
 		return self.errors, self.deleted_users
 
-	def school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
+	async def school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
 		"""
 		Change users primary school.
 
@@ -410,10 +409,10 @@ class UserImport(object):
 		:rtype: ImportUser
 		"""
 		self.logger.info("Moving %s from school %r to %r...", user, user.school, imported_user.school)
-		user = self.do_school_move(imported_user, user)
+		user = await self.do_school_move(imported_user, user)
 		return user
 
-	def do_school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
+	async def do_school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
 		"""
 		Change users primary school - :py:meth:`school_move()` without calling Python
 		hooks (ucsschool lib calls executables anyway).
@@ -424,8 +423,8 @@ class UserImport(object):
 		:rtype: ImportUser
 		"""
 		if self.dry_run:
-			user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
-			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+			await user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
+			await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 			if self.errors:
 				raise UserValidationError(
 					'ValidationError when moving {} from {!r} to {!r}.'.format(
@@ -437,14 +436,14 @@ class UserImport(object):
 			res = True
 			user.call_hooks('post', 'move')
 		else:
-			res = user.change_school(imported_user.school, self.connection)
+			res = await user.change_school(imported_user.school, self.connection)
 		if not res:
 			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school), entry_count=imported_user.entry_count, import_user=imported_user)
 		# refetch user from LDAP
-		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
+		user = await imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
 		return user
 
-	def do_delete(self, user):  # type: (ImportUser) -> bool
+	async def do_delete(self, user):  # type: (ImportUser) -> bool
 		"""
 		Delete or deactivate a user.
 
@@ -463,10 +462,10 @@ class UserImport(object):
 			# just delete, ignore deactivation setting
 			if deletion_grace == 0:
 				# delete user right now
-				success = self.delete_user_now(user)
+				success = await self.delete_user_now(user)
 			else:
 				# delete user later
-				modified |= self.set_deletion_grace(user, deletion_grace)
+				modified |= await self.set_deletion_grace(user, deletion_grace)
 		else:
 			# deactivate first, delete later
 			if deactivation_grace == 0:
@@ -477,7 +476,7 @@ class UserImport(object):
 				modified |= self.set_deactivation_grace(user, deactivation_grace)
 
 			# delete user later
-			modified |= self.set_deletion_grace(user, deletion_grace)
+			modified |= await self.set_deletion_grace(user, deletion_grace)
 
 		if success is not None:
 			# immediate deletion already happened above
@@ -485,7 +484,7 @@ class UserImport(object):
 		elif self.dry_run:
 			user.call_hooks('pre', 'remove')
 			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
-			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+			await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 			if self.errors:
 				raise UserValidationError(
 					'ValidationError when deleting {}.'.format(user),
@@ -493,7 +492,7 @@ class UserImport(object):
 			success = True
 			user.call_hooks('post', 'remove')
 		elif modified:
-			success = user.modify(lo=self.connection)
+			success = await user.modify(lo=self.connection)
 		else:
 			# not a dry_run, but user was not modified, because
 			# disabled / expiration date / purge timestamp were already set
@@ -518,7 +517,7 @@ class UserImport(object):
 			user.deactivate()
 			return True
 
-	def delete_user_now(self, user):  # type: (ImportUser) -> bool
+	async def delete_user_now(self, user):  # type: (ImportUser) -> bool
 		"""
 		Truly delete the user.
 
@@ -533,7 +532,7 @@ class UserImport(object):
 			user.call_hooks('post', 'remove')
 			return True
 		else:
-			return user.remove(self.connection)
+			return await user.remove(self.connection)
 
 	def set_deactivation_grace(self, user, grace):  # type: (ImportUser, int) -> bool
 		"""
@@ -548,7 +547,7 @@ class UserImport(object):
 		if user.disabled == '1':
 			self.logger.info('User %s is already disabled. No account expiration date is set.', user)
 			return False
-		elif user.has_expiry(self.connection):
+		elif await user.has_expiry(self.connection):
 			self.logger.info('An account expiration date is already set for user %s. The entry remains unchanged.', user)
 			return False
 		else:
@@ -558,7 +557,7 @@ class UserImport(object):
 			user.expire(expiry_str)
 			return True
 
-	def set_deletion_grace(self, user, grace):  # type: (ImportUser, int) -> bool
+	async def set_deletion_grace(self, user, grace):  # type: (ImportUser, int) -> bool
 		"""
 		Sets the account deletion timestamp (UDM attribute `ucsschoolPurgeTimestamp`)
 		on the user object. Does not run :py:meth:`user.modify()`.
@@ -568,7 +567,7 @@ class UserImport(object):
 		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
-		if user.has_purge_timestamp(self.connection):
+		if await user.has_purge_timestamp(self.connection):
 			self.logger.info('User %s is already scheduled for deletion. The entry remains unchanged.', user)
 			return False
 		else:
@@ -584,7 +583,7 @@ class UserImport(object):
 		"""
 		self.logger.info("------ User import statistics ------")
 		lines = ["Read users from input data: {}".format(self.imported_users_len)]
-		cls_names = self.added_users.keys()
+		cls_names = list(self.added_users.keys())
 		cls_names.extend(self.modified_users.keys())
 		cls_names.extend(self.deleted_users.keys())
 		cls_names = set(cls_names)
