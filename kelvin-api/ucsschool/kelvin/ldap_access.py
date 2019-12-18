@@ -48,9 +48,7 @@ from .constants import (
     UCS_SSL_CA_CERT,
 )
 
-# from .utils import get_logger
-
-_udm_kwargs: Dict[str, Any] = {}
+_udm_kwargs: Dict[str, str] = {}
 
 
 async def udm_kwargs():

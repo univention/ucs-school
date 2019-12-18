@@ -37,7 +37,7 @@ import datetime
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 from six import iteritems, string_types
-from udm_rest_client import UDM
+from udm_rest_client import UDM, UdmObject
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
@@ -55,23 +55,17 @@ from ..exceptions import (
 	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
 	UserValidationError
 )
-from ..utils.user_pyhook import UserPyHook
 from ..utils.format_pyhook import FormatPyHook
 from ..utils.import_pyhook import get_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
 
-try:
-	from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
-	from ..configuration import ReadOnlyDict
-	from ..default_user_import_factory import DefaultUserImportFactory
-	from ..utils.username_handler import UsernameHandler
-	from ..reader.base_reader import BaseReader
-	from ..utils.ldap_connection import LoType, UdmObjectType
-	from univention.config_registry import ConfigRegistry
-except ImportError:
-	pass
+from typing import Any, cast, Dict, Iterable, List, Optional, Tuple, Type, Union
+from ..configuration import ReadOnlyDict
+from ..default_user_import_factory import DefaultUserImportFactory
+from ..utils.username_handler import UsernameHandler
+from ..reader.base_reader import BaseReader
 
 
 FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
@@ -129,14 +123,14 @@ class ImportUser(User):
 		:param str school: OU
 		:param kwargs: attributes to set on user object
 		"""
-		self.action = None  # type: str                     # "A", "D" or "M"
+		self.action = None  # type: Optional[str]           # "A", "D" or "M"
 		self.entry_count = 0                                # line/node number of input data
 		self.udm_properties = dict()  # type: Dict[str, Any]  # UDM properties from input, that are not storedin Attributes
 		self.input_data = list()  # type: List[str]         # raw input data created by SomeReader.read()
 		self.old_user = None  # type: Optional[ImportUser]  # user in LDAP, when modifying
 		self.in_hook = False                                # if a hook is currently running
 
-		self._lo = None  # type: LoType
+		self._lo = None  # type: Optional[UDM]
 
 		for attr in self._additional_props:
 			try:
@@ -148,7 +142,7 @@ class ImportUser(User):
 		self._userexpiry = None  # type: str
 		self._purge_ts = None  # type: str
 		self._used_methods = defaultdict(list)  # type: Dict[str, List[FunctionSignature]]  # recursion prevention
-		self.lo = kwargs.pop('lo', None)  # type: LoType
+		self.lo = kwargs.pop('lo', None)  # type: Optional[UDM]
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	@property

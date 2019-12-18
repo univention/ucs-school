@@ -31,7 +31,7 @@
 
 import os.path
 from collections.abc import Mapping
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Type, Union
 
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
@@ -202,7 +202,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return fallback(self.school, self.dn)
 
 	@classmethod
-	async def get_class_for_udm_obj(cls, udm_obj, school):
+	async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Union[None, Type["ImportUser"]]:
 		ocs = set(udm_obj.options)
 		if ocs >= {'ucsschoolTeacher', 'ucsschoolStaff'}:
 			return TeachersAndStaff
