@@ -20,9 +20,14 @@ from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.user import User
 from udm_rest_client import UDM, APICommunicationError, MoveError
 
-from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
-from .base import APIAttributesMixin, BasePatchModel, UcsSchoolBaseModel, get_lib_obj
+from .base import (
+    APIAttributesMixin,
+    BasePatchModel,
+    UcsSchoolBaseModel,
+    get_lib_obj,
+    udm_ctx,
+)
 from .role import SchoolUserRole
 
 router = APIRouter()
@@ -138,6 +143,7 @@ async def search(
         title="name",
     ),
     logger: logging.Logger = Depends(get_logger),
+    udm: UDM = Depends(udm_ctx),
 ) -> List[UserModel]:
     """
     Search for school users.
@@ -168,25 +174,27 @@ async def search(
 
 @router.get("/{username}", response_model=UserModel)
 async def get(
-    username: str, request: Request, logger: logging.Logger = Depends(get_logger)
+    username: str,
+    request: Request,
+    logger: logging.Logger = Depends(get_logger),
+    udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Search for specific school user.
 
     - **username**: name of the school user (required)
     """
-    async with UDM(**await udm_kwargs()) as udm:
-        async for udm_obj in udm.get("users/user").search(
-            f"uid={escape_filter_chars(username)}"
-        ):
-            break
-        else:
-            raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
-                detail=f"No User with username {username!r} found.",
-            )
-        user = await get_lib_obj(udm, User, dn=udm_obj.dn)
-        return await UserModel.from_lib_model(user, request, udm)
+    async for udm_obj in udm.get("users/user").search(
+        f"uid={escape_filter_chars(username)}"
+    ):
+        break
+    else:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=f"No User with username {username!r} found.",
+        )
+    user = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    return await UserModel.from_lib_model(user, request, udm)
 
 
 @router.post("/", status_code=HTTP_201_CREATED, response_model=UserModel)
@@ -194,6 +202,7 @@ async def create(
     user: UserCreateModel,
     request: Request,
     logger: logging.Logger = Depends(get_logger),
+    udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Create a school user with all the information:
@@ -215,14 +224,11 @@ async def create(
         ]
     )
     user = await user.as_lib_model(request)
-    async with UDM(**await udm_kwargs()) as udm:
-        if await user.exists(udm):
-            raise HTTPException(
-                status_code=HTTP_409_CONFLICT, detail="School user exists."
-            )
-        else:
-            await user.create(udm)
-        return await UserModel.from_lib_model(user, request, udm)
+    if await user.exists(udm):
+        raise HTTPException(status_code=HTTP_409_CONFLICT, detail="School user exists.")
+    else:
+        await user.create(udm)
+    return await UserModel.from_lib_model(user, request, udm)
 
 
 @router.patch(  # noqa: C901
@@ -233,6 +239,7 @@ async def partial_update(
     user: UserPatchModel,
     request: Request,
     logger: logging.Logger = Depends(get_logger),
+    udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Patch a school user with partial information
@@ -242,53 +249,52 @@ async def partial_update(
     - **lastname**: last name of the school user
     - **role**: One of either student, staff, teacher, teacher_and_staff
     """
-    async with UDM(**await udm_kwargs()) as udm:
-        async for udm_obj in udm.get("users/user").search(
-            f"uid={escape_filter_chars(username)}"
+    async for udm_obj in udm.get("users/user").search(
+        f"uid={escape_filter_chars(username)}"
+    ):
+        break
+    else:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=f"No User with username {username!r} found.",
+        )
+    user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    changed = False
+    to_change = await user.to_modify_kwargs()
+    move = False
+    for attr, new_value in to_change.items():
+        if attr == "school" and new_value not in (
+            to_change.get("schools") or user_current.schools
         ):
-            break
-        else:
             raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
-                detail=f"No User with username {username!r} found.",
+                status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"New 'school' value {new_value!r} not in current or future 'schools'.",
             )
-        user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
-        changed = False
-        to_change = await user.to_modify_kwargs()
-        move = False
-        for attr, new_value in to_change.items():
-            if attr == "school" and new_value not in (
-                to_change.get("schools") or user_current.schools
-            ):
-                raise HTTPException(
-                    status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail=f"New 'school' value {new_value!r} not in current or future 'schools'.",
-                )
-            if attr == "school" and new_value != user_current.school:
-                move = True
-                new_school = new_value
-                new_schools = to_change.get("schools") or list(
-                    set(user_current.schools + [new_value])
-                )
-                continue  # School move handled separately
-            if attr == "schools" and user_current.school not in new_value:
-                move = True
-                new_school = to_change.get("school") or sorted(new_value)[0]
-                new_schools = new_value
-                continue  # School move handled separately
-            current_value = getattr(user_current, attr)
-            if new_value != current_value:
-                setattr(user_current, attr, new_value)
-                changed = True
-        if changed:
-            await user_current.modify(udm)
-        if move:
-            user_current.schools = new_schools
-            try:
-                await user_current.change_school(new_school, udm)
-            except MoveError as exc:
-                logger.exception("Moving %r: %s", user_current, exc)
-        return await UserModel.from_lib_model(user_current, request, udm)
+        if attr == "school" and new_value != user_current.school:
+            move = True
+            new_school = new_value
+            new_schools = to_change.get("schools") or list(
+                set(user_current.schools + [new_value])
+            )
+            continue  # School move handled separately
+        if attr == "schools" and user_current.school not in new_value:
+            move = True
+            new_school = to_change.get("school") or sorted(new_value)[0]
+            new_schools = new_value
+            continue  # School move handled separately
+        current_value = getattr(user_current, attr)
+        if new_value != current_value:
+            setattr(user_current, attr, new_value)
+            changed = True
+    if changed:
+        await user_current.modify(udm)
+    if move:
+        user_current.schools = new_schools
+        try:
+            await user_current.change_school(new_school, udm)
+        except MoveError as exc:
+            logger.exception("Moving %r: %s", user_current, exc)
+    return await UserModel.from_lib_model(user_current, request, udm)
 
 
 @router.put("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
@@ -297,6 +303,7 @@ async def complete_update(
     user: UserCreateModel,
     request: Request,
     logger: logging.Logger = Depends(get_logger),
+    udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Update a school user with all the information:
@@ -317,51 +324,46 @@ async def complete_update(
             for role in user.roles
         ]
     )
-    async with UDM(**await udm_kwargs()) as udm:
-        async for udm_obj in udm.get("users/user").search(
-            f"uid={escape_filter_chars(username)}"
-        ):
-            break
-        else:
-            raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
-                detail=f"No User with username {username!r} found.",
-            )
-        user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
-        changed = False
-        user_request = await user.as_lib_model(request)
-        for (
-            attr
-        ) in User._attributes.keys():  # TODO: Should not access private interface!
-            if attr in ("school", "schools"):
-                continue  # school change is handled separately
-            current_value = getattr(user_current, attr)
-            new_value = getattr(user_request, attr)
-            if attr in ("ucsschool_roles", "users") and new_value is None:
-                new_value = []
-            if new_value != current_value:
-                setattr(user_current, attr, new_value)
-                changed = True
-        if changed:
-            await user_current.modify(udm)
-        return await UserModel.from_lib_model(user_current, request, udm)
+    async for udm_obj in udm.get("users/user").search(
+        f"uid={escape_filter_chars(username)}"
+    ):
+        break
+    else:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=f"No User with username {username!r} found.",
+        )
+    user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    changed = False
+    user_request = await user.as_lib_model(request)
+    for attr in User._attributes.keys():  # TODO: Should not access private interface!
+        if attr in ("school", "schools"):
+            continue  # school change is handled separately
+        current_value = getattr(user_current, attr)
+        new_value = getattr(user_request, attr)
+        if attr in ("ucsschool_roles", "users") and new_value is None:
+            new_value = []
+        if new_value != current_value:
+            setattr(user_current, attr, new_value)
+            changed = True
+    if changed:
+        await user_current.modify(udm)
+    return await UserModel.from_lib_model(user_current, request, udm)
 
 
 @router.delete("/{username}", status_code=HTTP_204_NO_CONTENT)
-async def delete(username: str, request: Request) -> None:
+async def delete(username: str, request: Request, udm: UDM = Depends(udm_ctx),) -> None:
     """
     Delete a school user
     """
-    async with UDM(**await udm_kwargs()) as udm:
-        async for udm_obj in udm.get("users/user").search(
-            f"uid={escape_filter_chars(username)}"
-        ):
-            break
-        else:
-            raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
-                detail=f"No User with username {username!r} found.",
-            )
-        user = await get_lib_obj(udm, User, dn=udm_obj.dn)
-        await user.remove(udm)
-    return None
+    async for udm_obj in udm.get("users/user").search(
+        f"uid={escape_filter_chars(username)}"
+    ):
+        break
+    else:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=f"No User with username {username!r} found.",
+        )
+    user = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    await user.remove(udm)

@@ -10,6 +10,7 @@ from starlette.status import HTTP_404_NOT_FOUND
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
 from udm_rest_client import UDM
 
+from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
 
 
@@ -135,3 +136,8 @@ class BasePatchModel(BaseModel):
             if value:
                 res[key] = value
         return res
+
+
+async def udm_ctx():
+    async with UDM(**await udm_kwargs()) as udm:
+        yield udm

@@ -14,9 +14,8 @@ from starlette.status import (
 from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError
 
-from ..ldap_access import udm_kwargs
 from ..urls import name_from_dn, url_to_dn, url_to_name
-from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj
+from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, udm_ctx
 
 router = APIRouter()
 
@@ -99,6 +98,7 @@ async def search(
         description="List classes with this name. (optional, ``*`` can be used for an inexact search).",
         title="name",
     ),
+    udm: UDM = Depends(udm_ctx),
 ) -> List[SchoolClassModel]:
     """
     Search for school classes.
@@ -110,24 +110,24 @@ async def search(
         filter_str = f"name={school}-{class_name}"
     else:
         filter_str = None
-    async with UDM(**await udm_kwargs()) as udm:
-        try:
-            scs = await SchoolClass.get_all(udm, school, filter_str)
-        except APICommunicationError as exc:
-            raise HTTPException(status_code=exc.status, detail=exc.reason)
-        return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
+    try:
+        scs = await SchoolClass.get_all(udm, school, filter_str)
+    except APICommunicationError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.reason)
+    return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
 
 
 @router.get("/{school}/{class_name}")
-async def get(class_name: str, school: str, request: Request) -> SchoolClassModel:
-    async with UDM(**await udm_kwargs()) as udm:
-        sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
-        return await SchoolClassModel.from_lib_model(sc, request, udm)
+async def get(
+    class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx)
+) -> SchoolClassModel:
+    sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
+    return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
 @router.post("/", status_code=HTTP_201_CREATED)
 async def create(
-    school_class: SchoolClassCreateModel, request: Request
+    school_class: SchoolClassCreateModel, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> SchoolClassModel:
     """
     Create a school class with all the information:
@@ -139,14 +139,13 @@ async def create(
     - **ucsschool_roles**: list of tags of the form $ROLE:$CONTEXT_TYPE:$CONTEXT (optional)
     """
     sc = await school_class.as_lib_model(request)
-    async with UDM(**await udm_kwargs()) as udm:
-        if await sc.exists(udm):
-            raise HTTPException(
-                status_code=HTTP_409_CONFLICT, detail="School class exists."
-            )
-        else:
-            await sc.create(udm)
-        return await SchoolClassModel.from_lib_model(sc, request, udm)
+    if await sc.exists(udm):
+        raise HTTPException(
+            status_code=HTTP_409_CONFLICT, detail="School class exists."
+        )
+    else:
+        await sc.create(udm)
+    return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
 @router.patch("/{school}/{class_name}", status_code=HTTP_200_OK)
@@ -155,27 +154,29 @@ async def partial_update(
     school: str,
     school_class: SchoolClassPatchDocument,
     request: Request,
+    udm: UDM = Depends(udm_ctx),
 ) -> SchoolClassModel:
-    async with UDM(**await udm_kwargs()) as udm:
-        sc_current = await get_lib_obj(
-            udm, SchoolClass, f"{school}-{class_name}", school
-        )
-        changed = False
-        for attr, new_value in (
-            await school_class.to_modify_kwargs(school, request)
-        ).items():
-            current_value = getattr(sc_current, attr)
-            if new_value != current_value:
-                setattr(sc_current, attr, new_value)
-                changed = True
-        if changed:
-            await sc_current.modify(udm)
-        return await SchoolClassModel.from_lib_model(sc_current, request, udm)
+    sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
+    changed = False
+    for attr, new_value in (
+        await school_class.to_modify_kwargs(school, request)
+    ).items():
+        current_value = getattr(sc_current, attr)
+        if new_value != current_value:
+            setattr(sc_current, attr, new_value)
+            changed = True
+    if changed:
+        await sc_current.modify(udm)
+    return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
 @router.put("/{school}/{class_name}", status_code=HTTP_200_OK)
 async def complete_update(
-    class_name: str, school: str, school_class: SchoolClassCreateModel, request: Request
+    class_name: str,
+    school: str,
+    school_class: SchoolClassCreateModel,
+    request: Request,
+    udm: UDM = Depends(udm_ctx),
 ) -> SchoolClassModel:
     if school != url_to_name(
         request, "school", UcsSchoolBaseModel.unscheme_and_unquote(school_class.school)
@@ -184,28 +185,25 @@ async def complete_update(
             status_code=HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Moving of class to other school is not allowed.",
         )
-    async with UDM(**await udm_kwargs()) as udm:
-        sc_current = await get_lib_obj(
-            udm, SchoolClass, f"{school}-{class_name}", school
-        )
-        changed = False
-        sc_request = await school_class.as_lib_model(request)
-        for attr in SchoolClass._attributes.keys():
-            current_value = getattr(sc_current, attr)
-            new_value = getattr(sc_request, attr)
-            if attr in ("ucsschool_roles", "users") and new_value is None:
-                new_value = []
-            if new_value != current_value:
-                setattr(sc_current, attr, new_value)
-                changed = True
-        if changed:
-            await sc_current.modify(udm)
-        return await SchoolClassModel.from_lib_model(sc_current, request, udm)
+    sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
+    changed = False
+    sc_request = await school_class.as_lib_model(request)
+    for attr in SchoolClass._attributes.keys():
+        current_value = getattr(sc_current, attr)
+        new_value = getattr(sc_request, attr)
+        if attr in ("ucsschool_roles", "users") and new_value is None:
+            new_value = []
+        if new_value != current_value:
+            setattr(sc_current, attr, new_value)
+            changed = True
+    if changed:
+        await sc_current.modify(udm)
+    return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
 @router.delete("/{school}/{class_name}", status_code=HTTP_204_NO_CONTENT)
-async def delete(class_name: str, school: str, request: Request) -> None:
-    async with UDM(**await udm_kwargs()) as udm:
-        sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
-        await sc.remove(udm)
-    return None
+async def delete(
+    class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx),
+) -> None:
+    sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
+    await sc.remove(udm)
