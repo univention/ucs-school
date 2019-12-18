@@ -5,7 +5,6 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
 fix: 17.0.20A~4.4.0.201912131551
 desc: |
- * The fix_ucsschool_slave script has been adapted to keep objects with the wrong
-   ucsscoolRole win_computer from reappearing again after a resync.
-   (Bug #50280).
+ * The script <command>fix_ucsschool_slave</command> has been adapted to keep objects with the wrong
+   UCS@school role <literal>win_computer</literal> from reappearing again after a resync (Bug #50280).
 bug: [50280]
