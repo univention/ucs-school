@@ -89,7 +89,10 @@ class UserModel(UserBaseModel, APIAttributesMixin):
         cls, obj: User, request: Request, udm: UDM
     ) -> Dict[str, Any]:
         kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
-        kwargs["schools"] = [kwargs["school"]]
+        kwargs["schools"] = sorted(
+            cls.scheme_and_quote(request.url_for("get", school_name=school))
+            for school in obj.schools
+        )
         kwargs["url"] = cls.scheme_and_quote(
             request.url_for("get", username=kwargs["name"])
         )
