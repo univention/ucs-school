@@ -61,6 +61,7 @@ def get_logger() -> logging.Logger:
 def setup_logging() -> None:
     for name in (
         None,
+        "fastapi",
         "requests",
         "udm_rest_client",
         "univention",

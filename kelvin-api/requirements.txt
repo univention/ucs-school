@@ -2,7 +2,7 @@ aiofiles
 async-lru
 async-property
 diskcache
-fastapi==0.44.0
+fastapi==0.45.0
 lazy-object-proxy
 ldap3
 pyasn1-modules>=0.2.7
