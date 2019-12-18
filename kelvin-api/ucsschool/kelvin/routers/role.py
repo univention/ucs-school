@@ -113,7 +113,10 @@ async def search(
 
 
 @router.get("/{role_name}")
-async def get(request: Request, role_name: str) -> RoleModel:
+async def get(
+    request: Request,
+    role_name: SchoolUserRole = Query(..., alias="name", title="name",),
+) -> RoleModel:
     return RoleModel(
         name=role_name,
         display_name=role_name,

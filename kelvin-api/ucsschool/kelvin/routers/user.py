@@ -120,21 +120,28 @@ class UserPatchModel(BasePatchModel):
 @router.get("/", response_model=List[UserModel])
 async def search(
     request: Request,
-    name_filter: str = Query(
-        None,
-        title="List users with this name. '*' can be used for an inexact search.",
+    school: str = Query(
+        ...,
+        description="List only users in school with this name (not URL), exact match only.",
         min_length=2,
     ),
-    school_filter: str = Query(
-        ..., title="List only users in school with this name (not URL). ", min_length=2
+    username: str = Query(
+        None,
+        alias="name",
+        description="List users with this username. '*' can be used for an inexact search.",
+        title="name",
     ),
     logger: logging.Logger = Depends(get_logger),
 ) -> List[UserModel]:
     """
     Search for school users.
 
-    - **name**: name of the school user, use '*' for inexact search (optional)
-    - **school**: school the user belongs to, **case sensitive** (required)
+    All parameters are optional and most support the use of ``*`` for inexact searches.
+
+    Limiting the *school*s to search greatly reduces the execution time.
+
+    - **school**: school (OU) the user belongs to
+    - **username**: username of the school user
     """
     logger.debug(
         "Searching for users with: name_filter=%r school_filter=%r",

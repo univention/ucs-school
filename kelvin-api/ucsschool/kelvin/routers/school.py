@@ -47,8 +47,9 @@ class SchoolModel(UcsSchoolBaseModel):
 async def search(
     name_filter: str = Query(
         None,
-        title="List schools with this name. '*' can be used for an inexact search.",
-        min_length=3,
+        alias="name",
+        description="List schools with this name. '*' can be used for an inexact search.",
+        title="name",
     ),
     logger: logging.Logger = Depends(get_logger),
 ) -> List[SchoolModel]:

@@ -88,28 +88,31 @@ class SchoolClassPatchDocument(BaseModel):
 @router.get("/")
 async def search(
     request: Request,
+    school: str = Query(
+        ...,
+        description="Name of school (``OU``) in which to search for classes (case sensitive, exact match, **required**).",
+        min_length=2,
+    ),
     class_name: str = Query(
         None,
-        title="List classes with this name. '*' can be used for an inexact search.",
-        min_length=3,
-    ),
-    school_name: str = Query(
-        ..., title="Name of school in which classes are (case sensitive)."
+        alias="name",
+        description="List classes with this name. (optional, ``*`` can be used for an inexact search).",
+        title="name",
     ),
 ) -> List[SchoolClassModel]:
     """
     Search for school classes.
 
-    - **name**: name of the school class, use '*' for inexact search (optional)
-    - **school**: school the class belongs to, **case sensitive** (required)
+    - **school**: school (``OU``) the classes belong to, **case sensitive**, exact match only (required)
+    - **name**: names of school classes to look for, use ``*`` for inexact search (optional)
     """
     if class_name:
-        filter_str = f"name={school_name}-{class_name}"
+        filter_str = f"name={school}-{class_name}"
     else:
         filter_str = None
     async with UDM(**await udm_kwargs()) as udm:
         try:
-            scs = await SchoolClass.get_all(udm, school_name, filter_str)
+            scs = await SchoolClass.get_all(udm, school, filter_str)
         except APICommunicationError as exc:
             raise HTTPException(status_code=exc.status, detail=exc.reason)
         return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
