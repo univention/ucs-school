@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field, HttpUrl
 from starlette.requests import Request
 from starlette.status import (
@@ -84,7 +84,7 @@ class SchoolClassPatchDocument(BaseModel):
         return res
 
 
-@router.get("/")
+@router.get("/", response_model=List[SchoolClassModel])
 async def search(
     request: Request,
     school: str = Query(
@@ -117,7 +117,7 @@ async def search(
     return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
 
 
-@router.get("/{school}/{class_name}")
+@router.get("/{school}/{class_name}", response_model=SchoolClassModel)
 async def get(
     class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx)
 ) -> SchoolClassModel:
@@ -125,7 +125,7 @@ async def get(
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
-@router.post("/", status_code=HTTP_201_CREATED)
+@router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolClassModel)
 async def create(
     school_class: SchoolClassCreateModel, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> SchoolClassModel:
@@ -148,7 +148,9 @@ async def create(
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
-@router.patch("/{school}/{class_name}", status_code=HTTP_200_OK)
+@router.patch(
+    "/{school}/{class_name}", status_code=HTTP_200_OK, response_model=SchoolClassModel
+)
 async def partial_update(
     class_name: str,
     school: str,
@@ -170,7 +172,9 @@ async def partial_update(
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
-@router.put("/{school}/{class_name}", status_code=HTTP_200_OK)
+@router.put(
+    "/{school}/{class_name}", status_code=HTTP_200_OK, response_model=SchoolClassModel
+)
 async def complete_update(
     class_name: str,
     school: str,
