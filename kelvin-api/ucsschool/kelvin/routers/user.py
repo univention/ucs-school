@@ -97,10 +97,12 @@ class UserModel(UserBaseModel, APIAttributesMixin):
             request.url_for("get", username=kwargs["name"])
         )
         udm_obj = await obj.get_udm_object(udm)
-        roles = [SchoolUserRole.from_lib_role(role) for role in obj.ucsschool_roles]
+        roles = sorted(
+            {SchoolUserRole.from_lib_role(role) for role in obj.ucsschool_roles}
+        )
+        kwargs["roles"] = [cls.scheme_and_quote(role.to_url(request)) for role in roles]
         kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
-        kwargs["roles"] = [cls.scheme_and_quote(role.to_url(request)) for role in roles]
 
         return kwargs
 
