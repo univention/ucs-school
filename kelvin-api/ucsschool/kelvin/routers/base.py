@@ -1,4 +1,3 @@
-import abc
 from typing import Any, Dict, List, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
@@ -101,9 +100,12 @@ class APIAttributesMixin(BaseModel):
     dn: str
 
 
-class UcsSchoolBaseModel(LibModelHelperMixin, abc.ABC):
+class UcsSchoolBaseModel(LibModelHelperMixin):
     school: HttpUrl
     name: str
+
+    class Config(LibModelHelperMixin.Config):
+        ...
 
     async def as_lib_model(self, request: Request) -> UCSSchoolModel:
         kwargs = await self._as_lib_model_kwargs(request)

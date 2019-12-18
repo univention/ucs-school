@@ -51,6 +51,9 @@ class UserBaseModel(UcsSchoolBaseModel):
 
 
 class UserCreateModel(UserBaseModel):
+    class Config(UserBaseModel.Config):
+        ...
+
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
         kwargs["school"] = url_to_name(
@@ -73,6 +76,9 @@ class UserCreateModel(UserBaseModel):
 
 
 class UserModel(UserBaseModel, APIAttributesMixin):
+    class Config(UserBaseModel.Config):
+        ...
+
     @classmethod
     async def _from_lib_model_kwargs(
         cls, obj: User, request: Request, udm: UDM
