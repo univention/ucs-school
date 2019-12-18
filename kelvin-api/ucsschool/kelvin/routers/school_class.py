@@ -89,13 +89,15 @@ async def search(
     request: Request,
     school: str = Query(
         ...,
-        description="Name of school (``OU``) in which to search for classes (case sensitive, exact match, **required**).",
+        description="Name of school (``OU``) in which to search for classes "
+        "(case sensitive, exact match, **required**).",
         min_length=2,
     ),
     class_name: str = Query(
         None,
         alias="name",
-        description="List classes with this name. (optional, ``*`` can be used for an inexact search).",
+        description="List classes with this name. (optional, ``*`` can be used "
+        "for an inexact search).",
         title="name",
     ),
     udm: UDM = Depends(udm_ctx),
@@ -103,8 +105,10 @@ async def search(
     """
     Search for school classes.
 
-    - **school**: school (``OU``) the classes belong to, **case sensitive**, exact match only (required)
-    - **name**: names of school classes to look for, use ``*`` for inexact search (optional)
+    - **school**: school (``OU``) the classes belong to, **case sensitive**,
+        exact match only (required)
+    - **name**: names of school classes to look for, use ``*`` for inexact
+        search (optional)
     """
     if class_name:
         filter_str = f"name={school}-{class_name}"
@@ -136,7 +140,8 @@ async def create(
     - **school**: school the class belongs to (required)
     - **description**: additional text (optional)
     - **users**: list of URLs to User resources (optional)
-    - **ucsschool_roles**: list of tags of the form $ROLE:$CONTEXT_TYPE:$CONTEXT (optional)
+    - **ucsschool_roles**: list of tags of the form
+        $ROLE:$CONTEXT_TYPE:$CONTEXT (optional)
     """
     sc = await school_class.as_lib_model(request)
     if await sc.exists(udm):
