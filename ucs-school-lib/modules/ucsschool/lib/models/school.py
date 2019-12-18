@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from typing import List
+from typing import List, Dict, Iterable
 
 import ldap
 import univention.admin.modules
@@ -37,6 +37,7 @@ import univention.admin.objects
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 from udm_rest_client import UDM
+from univention.admin.filter import conjunction
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
 
@@ -82,6 +83,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	default_roles = [role_school]
 	_school_in_name = True
+	_school_obj_cache: Dict[str, "School"] = {}
 
 	def __init__(self, name=None, school=None, alter_dhcpd_base=None, **kwargs):
 		super(School, self).__init__(name=name, **kwargs)
@@ -509,8 +511,25 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return obj
 
 	@classmethod
-	async def get_all(cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True):
-		schools = await super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
+	async def get_all(cls, lo: UDM, filter_str: str = None, easy_filter: str = False, respect_local_oulist=True) -> Iterable["School"]:
+		# When no easy_filter is used:
+		# A direct LDAP request (for speed) is done always to check for new or
+		# OUs. The ucsschool.lib School objects are cached.
+		if easy_filter:
+			schools = await super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
+		else:
+			complete_filter = f"({cls.Meta.udm_filter})"
+			if filter_str and not filter_str.startswith('('):
+				filter_str = f'({filter_str})'
+			if filter_str:
+				complete_filter = conjunction("&", [complete_filter, filter_str])
+			ldap_lo, ldap_po = cls.get_admin_connection()
+			schools = []
+			for dn, attrs in ldap_lo.search(str(complete_filter), attr=["ou"]):
+				ou = attrs["ou"][0].decode()
+				if ou.lower() not in cls._school_obj_cache:
+					cls._school_obj_cache[ou.lower()] = await School.from_dn(dn, None, lo)
+				schools.append(cls._school_obj_cache[ou.lower()])
 		oulist = ucr.get('ucsschool/local/oulist')
 		if oulist and respect_local_oulist:
 			cls.logger.debug('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
