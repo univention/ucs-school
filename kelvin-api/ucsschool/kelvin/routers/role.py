@@ -1,18 +1,10 @@
-import logging
 from enum import Enum
-from functools import lru_cache
 from typing import List
+from urllib.parse import SplitResult, urlsplit
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Query
 from pydantic import BaseModel, HttpUrl
 from starlette.requests import Request
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-)
 
 from ucsschool.importer.models.import_user import (
     ImportStaff,
@@ -26,17 +18,8 @@ from ucsschool.lib.roles import (
     role_student,
     role_teacher,
 )
-from udm_rest_client import UDM
-
-from ..ldap_access import udm_kwargs
-from .base import get_lib_obj
 
 router = APIRouter()
-
-
-@lru_cache(maxsize=1)
-def get_logger() -> logging.Logger:
-    return logging.getLogger(__name__)
 
 
 class SchoolUserRole(str, Enum):
@@ -81,8 +64,10 @@ class SchoolUserRole(str, Enum):
         elif self.value == self.teacher:
             return create_ucsschool_role_string(role_teacher, school)
 
-    def to_url(self, request: Request):
-        return request.url_for("get", role_name=self.value)
+    def to_url(self, request: Request) -> HttpUrl:
+        url = request.url_for("get", role_name=self.value)
+        _url: SplitResult = urlsplit(url)
+        return HttpUrl(url, scheme=_url.scheme, host=_url.netloc)
 
 
 class RoleModel(BaseModel):
@@ -91,17 +76,11 @@ class RoleModel(BaseModel):
     url: HttpUrl
 
 
-@router.get("/")
-async def search(
-    request: Request,
-    name_filter: str = Query(
-        None,
-        title="List roles with this name. '*' can be used for an inexact search.",
-        min_length=3,
-    ),
-    logger: logging.Logger = Depends(get_logger),
-) -> List[RoleModel]:
-    logger.debug("Searching for roles with: name_filter=%r", name_filter)
+@router.get("/", response_model=List[RoleModel])
+async def search(request: Request,) -> List[RoleModel]:
+    """
+    List all available roles.
+    """
     return [
         RoleModel(name=role.name, display_name=role.name, url=role.to_url(request))
         for role in (
@@ -112,7 +91,7 @@ async def search(
     ]
 
 
-@router.get("/{role_name}")
+@router.get("/{role_name}", response_model=RoleModel)
 async def get(
     request: Request,
     role_name: SchoolUserRole = Query(..., alias="name", title="name",),
@@ -122,41 +101,3 @@ async def get(
         display_name=role_name,
         url=SchoolUserRole(role_name).to_url(request),
     )
-
-
-@router.post("/", status_code=HTTP_201_CREATED)
-async def create(role: RoleModel) -> RoleModel:
-    if role.name == "alsoerror":
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Invalid role name."
-        )
-    return role
-
-
-@router.patch("/{name}", status_code=HTTP_200_OK)
-async def partial_update(name: str, role: RoleModel) -> RoleModel:
-    if name != role.name:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Renaming roles is not supported."
-        )
-    return role
-
-
-@router.put("/{name}", status_code=HTTP_200_OK)
-async def complete_update(name: str, role: RoleModel) -> RoleModel:
-    if name != role.name:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail="Renaming roles is not supported."
-        )
-    return role
-
-
-@router.delete("/{name}", status_code=HTTP_204_NO_CONTENT)
-async def delete(name: str, request: Request) -> None:
-    async with UDM(**await udm_kwargs()) as udm:
-        sc = await get_lib_obj(udm, SchoolUserRole, name, None)
-        if await sc.exists(udm):
-            await sc.remove(udm)
-        else:
-            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="TODO")
-    return None
