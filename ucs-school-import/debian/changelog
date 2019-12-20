@@ -1,3 +1,9 @@
+ucs-school-import (17.0.21) unstable; urgency=low
+
+  * Bug #50515: fix bad function calls leading to wrong logfile ownership
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 20 Dec 2019 11:14:04 +0100
+
 ucs-school-import (17.0.20) unstable; urgency=medium
 
   * Bug #50280: enhancement of fix_ucs_school_slaves
