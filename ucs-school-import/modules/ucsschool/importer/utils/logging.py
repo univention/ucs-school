@@ -73,9 +73,9 @@ def add_file_handler(filename, uid=None, gid=None, mode=None):
 		info_filename = "{}.info".format(filename)
 	logger = logging.getLogger('ucsschool.import')
 	if not any(isinstance(handler, UniFileHandler) for handler in logger.handlers):
-		logger.addHandler(get_file_handler('DEBUG', filename, uid, gid, mode))
+		logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
 		# TODO: bug to remove INFO file, or only create >=WARN/ERROR
-		logger.addHandler(get_file_handler('INFO', info_filename, uid, gid, mode))
+		logger.addHandler(get_file_handler('INFO', info_filename, uid=uid, gid=gid, mode=mode))
 	return logger
 
 
