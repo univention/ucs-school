@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 
+fix: 17.0.21A~4.4.0.201912201118
 desc: |
  * An erroneous function call was fixed, that was leading to wrong ownership of logfiles, which in turn produced empty logfiles (Bug #50515).
 bug: [50515]
