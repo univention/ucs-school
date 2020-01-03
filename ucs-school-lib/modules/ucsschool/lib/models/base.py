@@ -802,7 +802,7 @@ class UCSSchoolHelperAbstractClass(object):
 			cls.logger.warning('UDM object %r does not correspond to a Python class in the UCS school lib.', udm_obj.dn)
 			raise UnknownModel(udm_obj.dn, cls)
 		if klass is not cls:
-			cls.logger.info('UDM object %s is not %s, but actually %s', udm_obj.dn, cls.__name__, klass.__name__)
+			cls.logger.debug('UDM object %s is not %s, but actually %s', udm_obj.dn, cls.__name__, klass.__name__)
 			if not issubclass(klass, cls):
 				# security!
 				# ExamStudent must not be converted into Teacher/Student/etc.,
