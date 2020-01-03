@@ -99,14 +99,18 @@ class UserCreateModel(UserBaseModel):
             for school in self.schools
         ]
         kwargs["ucsschool_roles"] = [
-            SchoolUserRole(url_to_name(request, "role", role)).as_lib_role(
-                kwargs["school"]
-            )
+            SchoolUserRole(
+                url_to_name(request, "role", self.unscheme_and_unquote(role))
+            ).as_lib_role(kwargs["school"])
             for role in self.roles
         ]
         kwargs["birthday"] = str(self.birthday)
         if not kwargs["email"]:
             del kwargs["email"]
+        kwargs["roles"] = [
+            url_to_name(request, "role", self.unscheme_and_unquote(role_url))
+            for role_url in self.roles
+        ]
         return kwargs
 
 
@@ -361,7 +365,7 @@ async def get(
     udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
-    Search for specific school user.
+    Fetch a specific school user.
 
     - **username**: name of the school user (required)
     """

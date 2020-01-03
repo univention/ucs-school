@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List
-from urllib.parse import SplitResult, urlsplit
+from urllib.parse import ParseResult, urlparse
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, HttpUrl
@@ -66,8 +66,9 @@ class SchoolUserRole(str, Enum):
 
     def to_url(self, request: Request) -> HttpUrl:
         url = request.url_for("get", role_name=self.value)
-        _url: SplitResult = urlsplit(url)
-        return HttpUrl(url, scheme=_url.scheme, host=_url.netloc)
+        up: ParseResult = urlparse(url)
+        replaced = up._replace(scheme="https")
+        return HttpUrl(replaced.geturl(), scheme="https", host=up.netloc)
 
 
 class RoleModel(BaseModel):
@@ -85,8 +86,8 @@ async def search(request: Request,) -> List[RoleModel]:
         RoleModel(name=role.name, display_name=role.name, url=role.to_url(request))
         for role in (
             SchoolUserRole.staff,
-            SchoolUserRole.teacher,
             SchoolUserRole.student,
+            SchoolUserRole.teacher,
         )
     ]
 

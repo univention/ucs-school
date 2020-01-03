@@ -1,4 +1,7 @@
+from typing import Union
+
 from ldap.dn import escape_dn_chars, explode_dn  # TODO: use ldap3
+from pydantic import HttpUrl
 from starlette.datastructures import URL
 from starlette.requests import Request
 
@@ -13,9 +16,13 @@ def name_from_dn(dn):
     return explode_dn(dn, 1)[0]
 
 
-def url_to_name(request: Request, obj_type: str, url: str) -> str:
+def url_to_name(request: Request, obj_type: str, url: Union[str, HttpUrl]) -> str:
     if not url:
         return url
+    if isinstance(url, HttpUrl):
+        url = str(url)
+    if url.startswith("https"):
+        raise RuntimeError(f"Missed unscheme_and_unquote() for URL {url!r}.")
     no_object_exception = NoObject(
         f"Could not find object of type {obj_type!r} with URL {url!r}."
     )
