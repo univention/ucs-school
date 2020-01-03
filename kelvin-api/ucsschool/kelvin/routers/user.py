@@ -3,7 +3,7 @@ import logging
 from collections.abc import Sequence
 from functools import lru_cache
 from operator import attrgetter
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
@@ -18,7 +18,7 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from udm_rest_client import UDM, APICommunicationError, MoveError
+from ucsschool.importer.configuration import ReadOnlyDict
 from ucsschool.importer.models.import_user import (
     ImportStaff,
     ImportStudent,
@@ -27,8 +27,11 @@ from ucsschool.importer.models.import_user import (
     ImportUser,
 )
 from ucsschool.lib.models.school import School
+from udm_rest_client import UDM, APICommunicationError, MoveError, UdmObject
 from univention.admin.filter import conjunction, expression
 
+from ..exceptions import UnknownUDMProperty
+from ..import_config import get_import_config
 from ..urls import url_to_name
 from .base import (
     APIAttributesMixin,
@@ -52,6 +55,17 @@ def accepted_udm_properties() -> Set[str]:
     return set(ImportUser._attributes.keys()).union(
         set(get_import_config().get("mapped_udm_properties", []))
     )
+
+
+def get_udm_properties(udm_obj: UdmObject) -> Dict[str, Any]:
+    config: ReadOnlyDict = get_import_config()
+    udm_properties = {}
+    for prop in config.get("mapped_udm_properties", []):
+        try:
+            udm_properties[prop] = udm_obj.props[prop]
+        except KeyError:
+            raise UnknownUDMProperty("Unknown UDM property {prop!r}.")
+    return udm_properties
 
 
 class UserBaseModel(UcsSchoolBaseModel):
@@ -119,7 +133,7 @@ class UserModel(UserBaseModel, APIAttributesMixin):
         kwargs["roles"] = [cls.scheme_and_quote(role.to_url(request)) for role in roles]
         kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
-
+        kwargs["udm_properties"] = get_udm_properties(udm_obj)
         return kwargs
 
 
@@ -501,9 +515,14 @@ async def complete_update(
             detail=f"No User with username {username!r} found.",
         )
     user_current = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
+    udm_user_current = await user_current.get_udm_object(udm)
+    current_udm_properties = get_udm_properties(udm_user_current)
+    user_current.udm_properties.update(current_udm_properties)
+
     changed = False
     user_request = await user.as_lib_model(request)
-    for attr in User._attributes.keys():  # TODO: Should not access private interface!
+    # TODO: Should not access private interface:
+    for attr in list(ImportUser._attributes.keys()) + ["udm_properties"]:
         if attr in ("school", "schools"):
             continue  # school change is handled separately
         current_value = getattr(user_current, attr)
