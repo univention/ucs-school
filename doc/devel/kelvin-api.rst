@@ -28,7 +28,7 @@ Optionally sync not yet commited changes from your local git repo to the server:
 
 	$ cd $UCSSCHOOL-GIT
 	$ git checkout dtroeder/ucsschool.no.udm
-	$ rsync -avn --delete --exclude --exclude .git --exclude docker/build --exclude docker/ucs ./ root@docker.knut.univention.de:ucsschool-kelvin/ucsschool/
+	$ rsync -avn --delete --exclude docker/build --exclude docker/ucs --exclude .idea/ --exclude .git --exclude doc --exclude 'italc*' --exclude '*-umc-*' --exclude .pytest_cache --exclude __pycache__ ./ root@docker:ucsschool-kelvin/ucsschool/
 	# check output, changes should be only recent commits and your changes
 	# if OK: remove '-n' from rsync cmdline
 

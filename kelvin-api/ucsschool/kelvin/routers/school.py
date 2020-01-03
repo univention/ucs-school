@@ -74,7 +74,8 @@ async def search(
     name_filter: str = Query(
         None,
         alias="name",
-        description="List schools with this name. '*' can be used for an inexact search. (optional)",
+        description="List schools with this name. '*' can be used for an "
+        "inexact search. (optional)",
         title="name",
     ),
     logger: logging.Logger = Depends(get_logger),
