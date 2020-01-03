@@ -45,6 +45,7 @@ import shutil
 import datetime
 import subprocess
 import requests
+from typing import Any, Dict, List, Optional, Text, Tuple
 from unittest import TestCase
 try:
 	from urlparse import urljoin  # py2
@@ -63,11 +64,6 @@ from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.configuration import setup_configuration as _setup_configuration, Configuration
 from ucsschool.importer.factory import setup_factory as _setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
-
-try:
-	from typing import Any, Dict, List, Optional, Text, Tuple
-except ImportError:
-	pass
 
 
 IMPORT_CONFIG = {

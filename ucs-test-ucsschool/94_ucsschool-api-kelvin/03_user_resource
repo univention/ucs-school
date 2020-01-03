@@ -221,7 +221,6 @@ class Test(HttpApiUserTestBase):
 			import_user_cls = user.__class__
 			user2 = import_user_cls(**attr)
 			user2.disabled = '1' if attr['disabled'] else '0'
-			self.logger.debug("####### attr['disabled']=%r -> %r (%r)", attr['disabled'], user2.disabled, user2.name)
 			user2.password = ''
 			user2.roles = user.roles
 			user2.school = self.itb.ou_A.name
