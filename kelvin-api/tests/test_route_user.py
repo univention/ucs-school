@@ -64,8 +64,8 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: 
         elif key == "source_uid":
             assert value == udm_obj.props.ucsschoolSourceUID
         elif key == "udm_properties":
-            for key, value in value.items():
-                assert value == getattr(udm_obj.props, key)
+            for prop, prop_val in value.items():
+                assert prop_val == getattr(udm_obj.props, prop)
         elif key == "roles":
             api_roles = set([role.split("/")[-1] for role in value])
             lib_roles = set(
