@@ -99,14 +99,14 @@ class LibModelHelperMixin(BaseModel):
 
 
 class APIAttributesMixin(BaseModel):
-    ucsschool_roles: List[str]
-    url: HttpUrl
     dn: str
+    url: HttpUrl
+    ucsschool_roles: List[str]
 
 
 class UcsSchoolBaseModel(LibModelHelperMixin):
-    school: HttpUrl
     name: str
+    school: HttpUrl
 
     class Config(LibModelHelperMixin.Config):
         ...

@@ -25,12 +25,12 @@ class SchoolModel(BaseModel):
     dn: str = None
     name: str
     display_name: str = None
+    administrative_servers: List[str] = []
+    class_share_file_server: str = None
     dc_name: str = None
     dc_name_administrative: str = None
-    class_share_file_server: str = None
-    home_share_file_server: str = None
     educational_servers: List[str] = []
-    administrative_servers: List[str] = []
+    home_share_file_server: str = None
     ucsschool_roles: List[str] = []
 
     class Config:

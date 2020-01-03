@@ -69,17 +69,17 @@ def get_udm_properties(udm_obj: UdmObject) -> Dict[str, Any]:
 
 
 class UserBaseModel(UcsSchoolBaseModel):
-    email: str = None
-    record_uid: str = None
-    source_uid: str = None
-    birthday: datetime.date = None
-    disabled: bool = False
     firstname: str
     lastname: str
-    udm_properties: Dict[str, Any] = {}
+    birthday: datetime.date = None
+    disabled: bool = False
+    email: str = None
+    record_uid: str = None
+    roles: List[HttpUrl]
     schools: List[HttpUrl]
     school_classes: Dict[str, List[str]] = {}
-    roles: List[HttpUrl]
+    source_uid: str = None
+    udm_properties: Dict[str, Any] = {}
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = ImportUser
@@ -138,18 +138,18 @@ class UserModel(UserBaseModel, APIAttributesMixin):
 
 
 class UserPatchModel(BasePatchModel):
-    email: str = ""
-    record_uid: str = ""
-    source_uid: str = ""
-    birthday: datetime.date = None
-    disabled: bool = False
     name: str = ""
     firstname: str = ""
     lastname: str = ""
-    udm_properties: Dict[str, Any] = {}
+    birthday: datetime.date = None
+    disabled: bool = False
+    email: str = ""
+    record_uid: str = ""
     school: HttpUrl = None
     schools: List[HttpUrl] = None
     school_classes: Dict[str, List[str]] = {}
+    source_uid: str = ""
+    udm_properties: Dict[str, Any] = {}
 
     async def to_modify_kwargs(self) -> Dict[str, Any]:
         kwargs = await super().to_modify_kwargs()
