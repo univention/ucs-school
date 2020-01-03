@@ -18,7 +18,6 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from ucsschool.lib.models.user import User
 from udm_rest_client import UDM, APICommunicationError, MoveError
 from ucsschool.importer.models.import_user import (
     ImportStaff,
@@ -103,7 +102,7 @@ class UserModel(UserBaseModel, APIAttributesMixin):
 
     @classmethod
     async def _from_lib_model_kwargs(
-        cls, obj: User, request: Request, udm: UDM
+        cls, obj: ImportUser, request: Request, udm: UDM
     ) -> Dict[str, Any]:
         kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
         kwargs["schools"] = sorted(
@@ -361,7 +360,7 @@ async def get(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
-    user = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
     return await UserModel.from_lib_model(user, request, udm)
 
 
@@ -426,7 +425,7 @@ async def partial_update(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
-    user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    user_current = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
     changed = False
     to_change = await user.to_modify_kwargs()
     move = False
@@ -501,7 +500,7 @@ async def complete_update(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
-    user_current = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    user_current = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
     changed = False
     user_request = await user.as_lib_model(request)
     for attr in User._attributes.keys():  # TODO: Should not access private interface!
@@ -533,5 +532,5 @@ async def delete(username: str, request: Request, udm: UDM = Depends(udm_ctx),) 
             status_code=HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
-    user = await get_lib_obj(udm, User, dn=udm_obj.dn)
+    user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
     await user.remove(udm)
