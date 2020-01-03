@@ -20,13 +20,16 @@ pytestmark = pytest.mark.skipif(
     reason="Must run inside Docker container started by appcenter.",
 )
 
-MAPPED_UDM_PROPERTIES = (
+MAPPED_UDM_PROPERTIES = [
     "title",
     "description",
     "employeeType",
+    "organisation",
+    "phone",
     "uidNumber",
     "gidNumber",
-)  # keep in sync with conftest.py::MAPPED_UDM_PROPERTIES
+]  # keep in sync with conftest.py::MAPPED_UDM_PROPERTIES
+random.shuffle(MAPPED_UDM_PROPERTIES)
 UserType = Type[Union[Staff, Student, Teacher, TeachersAndStaff, User]]
 Role = NamedTuple("Role", [("name", str), ("klass", UserType)])
 USER_ROLES: List[Role] = [
@@ -196,9 +199,12 @@ async def test_search_filter_udm_properties(
     random_name,
     filter_param: str,
 ):
-    if filter_param in ("title", "description", "employeeType"):
+    if filter_param in ("title", "description", "employeeType", "organisation"):
         filter_value = random_name()
         create_kwargs = {"udm_properties": {filter_param: filter_value}}
+    elif filter_param == "phone":
+        filter_value = random_name()
+        create_kwargs = {"udm_properties": {filter_param: [random_name(), filter_value, random_name()]}}
     else:
         create_kwargs = {}
     role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
@@ -212,8 +218,10 @@ async def test_search_filter_udm_properties(
         udm_user = await import_user.get_udm_object(udm)
         if filter_param in ("uidNumber", "gidNumber"):
             filter_value = udm_user.props[filter_param]
+        elif filter_param == "phone":
+            assert set(udm_user.props[filter_param]) == set(create_kwargs["udm_properties"][filter_param])
         else:
-            assert udm_user.props[filter_param] == filter_value
+            assert udm_user.props[filter_param] == create_kwargs["udm_properties"][filter_param]
         params = {filter_param: filter_value}
         response = requests.get(
             f"{url_fragment}/users", headers=auth_header, params=params,
@@ -224,6 +232,11 @@ async def test_search_filter_udm_properties(
             assert len(api_users) == 1
         assert user.name in api_users
         api_user = api_users[user.name]
+        created_value = api_user.udm_properties[filter_param]
+        if filter_param == "phone":
+            assert set(created_value) == set(create_kwargs["udm_properties"][filter_param])
+        else:
+            assert created_value == filter_value
         await compare_lib_api_user(import_user, api_user, udm, url_fragment)
 
 
@@ -243,6 +256,8 @@ async def test_get(
             "title": random_name(),
             "description": random_name(),
             "employeeType": random_name(),
+            "organisation": random_name(),
+            "phone": [random_name(), random_name()],
         }
     }
     user = create_random_users({role.name: 1}, **create_kwargs)[0]
@@ -256,7 +271,10 @@ async def test_get(
         assert response.status_code == 200, response.reason
         api_user = UserModel(**response.json())
         for k, v in create_kwargs["udm_properties"].items():
-            assert api_user.udm_properties.get(k) == v
+            if isinstance(v, (tuple, list)):
+                assert set(api_user.udm_properties.get(k, [])) == set(v)
+            else:
+                assert api_user.udm_properties.get(k) == v
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
@@ -298,6 +316,8 @@ async def test_create(
     )
     title = random_name()
     r_user.udm_properties["title"] = title
+    phone = [random_name(), random_name()]
+    r_user.udm_properties["phone"] = phone
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
@@ -311,7 +331,10 @@ async def test_create(
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
         assert api_user.udm_properties["title"] == title
-        assert (await lib_users[0].get_udm_object(udm)).props.title == title
+        assert set(api_user.udm_properties["phone"]) == set(phone)
+        udm_props = (await lib_users[0].get_udm_object(udm)).props
+        assert udm_props.title == title
+        assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
         requests.delete(
             f"{url_fragment}/users/{r_user.name}", headers=auth_header,
@@ -338,7 +361,8 @@ async def test_put(
     del new_user_data["record_uid"]
     del new_user_data["source_uid"]
     title = random_name()
-    new_user_data["udm_properties"] = {"title": title}
+    phone = [random_name(), random_name()]
+    new_user_data["udm_properties"] = {"title": title, "phone": phone}
     modified_user = UserCreateModel(**{**user.dict(), **new_user_data})
     response = requests.put(
         f"{url_fragment}/users/{user.name}",
@@ -352,7 +376,10 @@ async def test_put(
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
         assert api_user.udm_properties["title"] == title
-        assert (await lib_users[0].get_udm_object(udm)).props.title == title
+        assert set(api_user.udm_properties["phone"]) == set(phone)
+        udm_props = (await lib_users[0].get_udm_object(udm)).props
+        assert udm_props.title == title
+        assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
@@ -378,7 +405,8 @@ async def test_patch(
     ):
         del new_user_data[key]
     title = random_name()
-    new_user_data["udm_properties"] = {"title": title}
+    phone = [random_name(), random_name()]
+    new_user_data["udm_properties"] = {"title": title, "phone": phone}
     patch_user = UserPatchModel(**new_user_data)
     response = requests.patch(
         f"{url_fragment}/users/{user.name}",
@@ -392,7 +420,10 @@ async def test_patch(
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
         assert api_user.udm_properties["title"] == title
-        assert (await lib_users[0].get_udm_object(udm)).props.title == title
+        assert set(api_user.udm_properties["phone"]) == set(phone)
+        udm_props = (await lib_users[0].get_udm_object(udm)).props
+        assert udm_props.title == title
+        assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 

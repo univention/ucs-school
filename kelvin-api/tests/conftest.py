@@ -42,6 +42,8 @@ MAPPED_UDM_PROPERTIES = (
     "title",
     "description",
     "employeeType",
+    "organisation",
+    "phone",
     "uidNumber",
     "gidNumber",
 )  # keep in sync with test_route_user.py::MAPPED_UDM_PROPERTIES
