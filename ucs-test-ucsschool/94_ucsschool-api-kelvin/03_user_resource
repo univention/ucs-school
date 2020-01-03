@@ -17,7 +17,7 @@ try:
 except ImportError:
 	from urllib.parse import urljoin  # py3
 import univention.testing.strings as uts
-from univention.testing.ucsschool.kelvin_api import api_call, API_ROOT_URL, create_remote_static, HttpApiUserTestBase, RESSOURCE_URLS, partial_update_remote_static
+from univention.testing.ucsschool.kelvin_api import api_call, create_remote_static, HttpApiUserTestBase, RESSOURCE_URLS, partial_update_remote_static
 from ucsschool.lib.models import Staff as LibStaff, User as LibUser
 try:
 	from typing import Any, Dict, List, Optional, Text, Tuple
@@ -28,12 +28,15 @@ except ImportError:
 class Test(HttpApiUserTestBase):
 
 	def test_01_list_resource_from_external(self):
-		response = requests.get(RESSOURCE_URLS['users'], headers=self.auth_headers)
+		response = requests.get(RESSOURCE_URLS['users'], headers=self.auth_headers, params={"school": "DEMOSCHOOL"})
 		res = response.json()
 		self.assertIsInstance(res, list, repr(res))
 		self.assertIsInstance(res[0], dict, repr(res))
 		self.assertIn('name', res[0], repr(res))
 		self.assertIn('firstname', res[0], repr(res))
+		all_usernames_in_response = [user["name"] for user in res]
+		for lib_user in LibUser.get_all(self.lo, "DEMOSCHOOL"):
+			self.assertIn(lib_user.name, all_usernames_in_response)
 
 	def test_02_create_user_parallel_from_external_different_classes(self):
 		parallelism = 20
@@ -78,6 +81,9 @@ class Test(HttpApiUserTestBase):
 			user2.school = self.itb.ou_A.name
 			user2.schools = [self.itb.ou_A.name, self.itb.ou_B.name]
 			user2.ucsschool_roles = user.ucsschool_roles  # not in attr
+			# add mapped udm_properties not in attr
+			mup = self.import_config["mapped_udm_properties"]
+			user2.udm_properties.update(dict((prop, None) for prop in mup if prop not in user2.udm_properties))
 			self.compare_import_user_and_resource(user2, result, 'ATTR')
 			self.logger.info('*** OK: attr <-> resource')
 
@@ -101,7 +107,7 @@ class Test(HttpApiUserTestBase):
 					LibUser.get_or_create_group_udm_object(group_dn, self.lo)
 				break
 		for attr in attrs:
-			if not (len(attr['roles']) == 1 and '/staff/' in attr['roles'][0]):
+			if not (len(attr['roles']) == 1 and attr['roles'][0].endswith("/staff")):
 				# don't set school_classes on staff
 				attr['school_classes'] = everyone_classes
 		pool = Pool(processes=parallelism)
@@ -140,6 +146,9 @@ class Test(HttpApiUserTestBase):
 			user2.school = self.itb.ou_A.name
 			user2.schools = [self.itb.ou_A.name, self.itb.ou_B.name]
 			user2.ucsschool_roles = user.ucsschool_roles  # not in attr
+			# add mapped udm_properties not in attr
+			mup = self.import_config["mapped_udm_properties"]
+			user2.udm_properties.update(dict((prop, None) for prop in mup if prop not in user2.udm_properties))
 			self.compare_import_user_and_resource(user2, result, 'ATTR')
 			self.logger.info('*** OK: attr <-> resource')
 
@@ -158,6 +167,7 @@ class Test(HttpApiUserTestBase):
 			self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(create_attrs))
 			user_obj = self.create_import_user(**create_attrs)
 			self.logger.info('*** Created: %r', user_obj.to_dict())
+			assert create_attrs["disabled"] == user_obj.disabled
 			roles = tuple(user_obj.roles)
 			if roles == ('pupil',):
 				roles = ('student',)
@@ -168,6 +178,7 @@ class Test(HttpApiUserTestBase):
 				roles=roles,
 				source_uid=user_obj.source_uid,
 				record_uid=user_obj.record_uid,
+				disabled=create_attrs["disabled"],  # TODO: changing 'disabled' in parallel fails
 			)
 			if isinstance(user_obj, LibStaff):
 				create_attrs["school_classes"] = {}
@@ -210,11 +221,15 @@ class Test(HttpApiUserTestBase):
 			import_user_cls = user.__class__
 			user2 = import_user_cls(**attr)
 			user2.disabled = '1' if attr['disabled'] else '0'
+			self.logger.debug("####### attr['disabled']=%r -> %r (%r)", attr['disabled'], user2.disabled, user2.name)
 			user2.password = ''
 			user2.roles = user.roles
 			user2.school = self.itb.ou_A.name
 			user2.schools = [self.itb.ou_A.name, self.itb.ou_B.name]
 			user2.ucsschool_roles = user.ucsschool_roles  # not in attr
+			# add mapped udm_properties not in attr
+			mup = self.import_config["mapped_udm_properties"]
+			user2.udm_properties.update(dict((prop, None) for prop in mup if prop not in user2.udm_properties))
 			self.compare_import_user_and_resource(user2, result, 'ATTR')
 			self.logger.info('*** OK: attr <-> resource')
 
@@ -245,11 +260,11 @@ class Test(HttpApiUserTestBase):
 		self.assertEqual(name_new, resource_new['name'])
 		user = self.get_import_user(resource_new['dn'])
 		self.assertEqual(name_new, user.name)
-		url = urljoin(RESSOURCE_URLS['users'], name_new + "/")
+		url = urljoin(RESSOURCE_URLS['users'], name_new)
 		self.assertEqual(resource_new["url"], url)
 		resource_new2 = api_call('get', url, headers=self.auth_headers)
 		self.assertDictEqual(resource_new, resource_new2)
-		url = urljoin(RESSOURCE_URLS['users'], name_old + "/")
+		url = urljoin(RESSOURCE_URLS['users'], name_old)
 		response = requests.get(url, headers=self.auth_headers)
 		self.assertEqual(response.status_code, 404)
 		self.compare_import_user_and_resource(user, resource_new)
@@ -268,7 +283,6 @@ class Test(HttpApiUserTestBase):
 		self.assertEqual(user.name, username_begin[:len(user.name)])
 		self.compare_import_user_and_resource(user, result)
 		self.logger.info('*** OK: LDAP <-> resource')
-
 
 	def test_07_move_teacher_one_school_only(self):
 		self.logger.info('*** Going to move teacher from OU %r to %r ***', self.itb.ou_A.name, self.itb.ou_B.name)
@@ -311,7 +325,7 @@ class Test(HttpApiUserTestBase):
 		user = self.get_import_user(resource_new['dn'])
 		self.logger.debug('*** user.school_classes=%r', user.school_classes)
 		self.assertEqual(create_result['name'], user.name)
-		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'])
 		self.assertEqual(resource_new["url"], url)
 
 		resource_new2 = api_call('get', url, headers=self.auth_headers)
@@ -389,7 +403,7 @@ class Test(HttpApiUserTestBase):
 		user = self.get_import_user(resource_new['dn'])
 		self.logger.debug('*** user.school_classes=%r', user.school_classes)
 		self.assertEqual(create_result['name'], user.name)
-		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'])
 		self.assertEqual(resource_new["url"], url)
 
 		resource_new2 = api_call('get', url, headers=self.auth_headers)
@@ -468,7 +482,7 @@ class Test(HttpApiUserTestBase):
 		self.logger.debug('*** user.school_classes=%r', user.school_classes)
 		self.assertDictEqual(user.school_classes, {self.itb.ou_B.name: ["{}-{}".format(self.itb.ou_B.name, k) for k in create_attrs['school_classes'][self.itb.ou_B.name]]})
 		self.assertEqual(create_result['name'], user.name)
-		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'])
 		self.assertEqual(resource_new["url"], url)
 
 		resource_new2 = api_call('get', url, headers=self.auth_headers)
@@ -548,7 +562,7 @@ class Test(HttpApiUserTestBase):
 		self.logger.debug('*** user.school_classes=%r', user.school_classes)
 		self.assertEqual(user.school_classes, {})
 		self.assertEqual(create_result['name'], user.name)
-		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'])
 		self.assertEqual(resource_new["url"], url)
 
 		resource_new2 = api_call('get', url, headers=self.auth_headers)
@@ -629,7 +643,7 @@ class Test(HttpApiUserTestBase):
 		self.logger.debug('*** user.school_classes=%r', user.school_classes)
 		self.assertDictEqual(user.school_classes, {self.itb.ou_B.name: ["{}-{}".format(self.itb.ou_B.name, k) for k in create_attrs['school_classes'][self.itb.ou_B.name]]})
 		self.assertEqual(modify_attrs['name'], user.name)
-		url = urljoin(RESSOURCE_URLS['users'], modify_attrs['name'] + "/")
+		url = urljoin(RESSOURCE_URLS['users'], modify_attrs['name'])
 		self.assertEqual(resource_new["url"], url)
 
 		resource_new2 = api_call('get', url, headers=self.auth_headers)
@@ -697,7 +711,7 @@ class Test(HttpApiUserTestBase):
 		self.logger.debug('*** user.school_classes=%r', user.school_classes)
 		self.assertEqual(user.school_classes, {})
 		self.assertEqual(create_result['name'], user.name)
-		url = urljoin(RESSOURCE_URLS['users'], create_result['name'] + "/")
+		url = urljoin(RESSOURCE_URLS['users'], create_result['name'])
 		self.assertEqual(resource_new["url"], url)
 
 		resource_new2 = api_call('get', url, headers=self.auth_headers)

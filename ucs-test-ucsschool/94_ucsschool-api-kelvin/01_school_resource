@@ -15,6 +15,7 @@ try:
 	from urlparse import urljoin  # py2
 except ImportError:
 	from urllib.parse import urljoin  # py3
+from six import string_types
 import univention.testing.strings as uts
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.lib.models.school import School as LibSchool
@@ -52,24 +53,25 @@ class Test(TestCase):
 		self.assertEqual(response.status_code, 200, 'response.status_code = {} for URL  -> {!r}'.format(
 			response.status_code, response.url, response.text))
 		res = response.json()
-		self.assertIsInstance(res, dict)
-		self.assertIn('results', res)
-		self.assertIsInstance(res['results'], list)
-		self.assertIsInstance(res['results'][0], dict)
-		self.assertIn('name', res['results'][0])
-		self.assertIn('class_share_file_server', res['results'][0])
+		self.assertIsInstance(res, list)
+		obj = res[0]
+		for attr in ("dn", "name", "display_name", "dc_name", "dc_name_administrative", "class_share_file_server", "home_share_file_server"):
+			self.assertIn(attr, obj)
+			self.assertIsInstance(obj[attr], (string_types, type(None)))
+		for attr in ("educational_servers", "administrative_servers", "ucsschool_roles"):
+			self.assertIn(attr, obj)
+			self.assertIsInstance(obj[attr], list)
 
 	def test_04_get_existing_ous(self):
 		res = LibSchool.get_all(self.lo)
 		if len(res) < 1:
-			logger.error('No school was not found.')
-			return
+			raise RuntimeError('No school was not found.')
 
 		udm = UDM.admin().version(1)
 		for school in res:
 			logger.info('*** school.to_dict()=%r', school.to_dict())
 			response = requests.get(
-				urljoin(RESSOURCE_URLS['schools'], school.name + "/"),
+				urljoin(RESSOURCE_URLS['schools'], school.name),
 				headers=self.auth_headers
 			)
 			self.assertEqual(response.status_code, 200, 'response.status_code = {} for URL  -> {!r}'.format(
