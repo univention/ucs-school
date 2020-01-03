@@ -80,6 +80,10 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: 
                 assert str(value) == getattr(lib_user, key)
             else:
                 assert value == getattr(lib_user, key)
+        elif key == "school_classes":
+            for school, classes in value.items():
+                assert school in lib_user.school_classes
+                assert set(classes) == set(kls.replace(f"{school}-", "") for kls in lib_user.school_classes[school])
         else:
             assert value == getattr(lib_user, key)
 

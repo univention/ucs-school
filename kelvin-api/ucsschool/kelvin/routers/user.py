@@ -137,6 +137,10 @@ class UserModel(UserBaseModel, APIAttributesMixin):
         kwargs["roles"] = [cls.scheme_and_quote(role.to_url(request)) for role in roles]
         kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
+        kwargs["school_classes"] = dict(
+            (school, sorted(kls.replace("{}-".format(school), "") for kls in kwargs["school_classes"][school]))
+            for school in sorted(kwargs["school_classes"].keys())
+        )
         kwargs["udm_properties"] = get_udm_properties(udm_obj)
         return kwargs
 
