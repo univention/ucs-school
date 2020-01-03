@@ -35,7 +35,6 @@ Test base code.
 
 from __future__ import unicode_literals
 import os
-import re
 import sys
 import json
 import pprint
@@ -51,6 +50,7 @@ try:
 	from urlparse import urljoin  # py2
 except ImportError:
 	from urllib.parse import urljoin  # py3
+from urllib3.exceptions import InsecureRequestWarning
 from six import reraise as raise_
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -76,36 +76,42 @@ IMPORT_CONFIG = {
 		datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")),
 	"default": "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json",
 }
-
-print("*** UCS@school HTTP-API 'Kelvin' activated ***")
-# HTTP_API = "kelvin"
-_localhost_root_url = "https://{}.{}/kelvin/api/v1/".format(ucr["hostname"], ucr["domainname"])
+URL_BASE_PATH = "/kelvin/api/v1/"
+_localhost_root_url = "https://{}.{}{}".format(ucr["hostname"], ucr["domainname"], URL_BASE_PATH)
 API_ROOT_URL = ucr.get("tests/ucsschool/http-api/root_url", _localhost_root_url).rstrip("/") + "/"
-print("*** API_ROOT_URL={!r} ***".format(API_ROOT_URL))
 RESSOURCE_URLS = {
 	"roles": urljoin(API_ROOT_URL, "roles/"),
 	"schools": urljoin(API_ROOT_URL, "schools/"),
 	"users": urljoin(API_ROOT_URL, "users/"),
 }
-KELVIN_TOKEN_URL = API_ROOT_URL.replace("/v1/", "/token/")
+KELVIN_TOKEN_URL = API_ROOT_URL.replace("/v1/", "/token")
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
+requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 
-def setup_logging(name):
-	logger = logging.getLogger("ucsschool")
-	if "kelvintests" in [h.name for h in logger.handlers]:
-		handler = [h for h in logger.handlers if h.name == "kelvintests"][0]
-	else:
-		handler = get_stream_handler(logging.DEBUG)
-		handler.set_name("kelvintests")
+print("*** API_ROOT_URL={!r} ***".format(API_ROOT_URL))
+print("*** KELVIN_TOKEN_URL={!r} ***".format(KELVIN_TOKEN_URL))
+print("*** RESSOURCE_URLS={!r} ***".format(RESSOURCE_URLS))
+
+
+def setup_logging():
+	# set log level on loggers we're interested in
+	for _name in (
+			None,
+			"requests",
+			"univention",
+			"ucsschool",
+	):
+		logger = logging.getLogger(_name)
 		logger.setLevel(logging.DEBUG)
-		logger.addHandler(handler)
-	logger = logging.getLogger(name)
-	if "kelvintests" not in [h.name for h in logger.handlers]:
-		logger.setLevel(logging.DEBUG)
-		logger.addHandler(handler)
-	return logger
+	# capture output of root logger
+	logger = logging.getLogger()
+	handler = get_stream_handler(logging.DEBUG)
+	logger.addHandler(handler)
+
+
+setup_logging()
 
 
 class InitialisationError(Exception):
@@ -113,10 +119,19 @@ class InitialisationError(Exception):
 
 
 class HttpApiUserTestBase(TestCase):
-	mapped_udm_properties = ['organisation', 'phone']
+	mapped_udm_properties = [
+		"description",
+		"gidNumber",
+		"employeeType",
+		"organisation",
+		"phone",
+		"title",
+		"uidNumber",
+	]  # keep in sync with kelvin-api/tests/conftest.py::MAPPED_UDM_PROPERTIES
+	# until the import configuration can be set / bind mounted into the container
 	ucrvs2set = []
-	should_restart_api_server = True
-	logger = setup_logging("univention.testing.ucsschool")
+	should_restart_api_server = False
+	logger = logging.getLogger("univention.testing.ucsschool")
 
 	@classmethod
 	def setUpClass(cls):
@@ -137,12 +152,10 @@ class HttpApiUserTestBase(TestCase):
 		if cls.should_restart_api_server:
 			# for testing through HTTP (using WSGI directly not affected)
 			cls.restart_api_server()
-		exec_cmd(["/usr/share/pyshared/bb/http_api/users/manage.py", "updateschools"])
 
 	@classmethod
 	def tearDownClass(cls):
 		cls.itb.cleanup()
-		exec_cmd(["/usr/share/pyshared/bb/http_api/users/manage.py", "updateschools"])
 		cls.revert_import_config()
 		if cls.should_restart_api_server:
 			cls.restart_api_server()
@@ -155,10 +168,10 @@ class HttpApiUserTestBase(TestCase):
 		)
 		if resp.ok:
 			res = resp.json()
-			print("*** Got a token via HTTP from UCS@school HTTP-API. ***")
+			print("*** Got a token via HTTP from the Kelvin API. ***")
 			return res["token_type"], res["access_token"]
 		else:
-			raise RuntimeError("Failed retrieving token from Kelvin API: ({}) {}".format(resp.status_code, resp.reason))
+			raise RuntimeError("Failed retrieving token from Kelvin API at {!r}: ({!r}) {!r}".format(resp.url, resp.status_code, resp.reason))
 
 	@classmethod
 	def set_up_import_config(cls):
@@ -322,11 +335,9 @@ class HttpApiUserTestBase(TestCase):
 
 	@classmethod
 	def restart_api_server(cls):
-		pass
-		#if HTTP_API == "BB":
-		#	cls.logger.info('*** Restarting ucs-school-http-api-bb...')
-		#	subprocess.call(['service', 'ucs-school-http-api-bb', 'restart'])
-		#	time.sleep(10)
+		cls.logger.info('*** Restarting ucs-school-http-api-bb...')
+		subprocess.call(['service', 'docker-app-ucsschool-kelvin', 'restart'])
+		time.sleep(20)
 
 	@staticmethod
 	def get_class_dn(class_name, school, lo):
@@ -399,13 +410,13 @@ def init_ucs_school_import_framework(**config_kwargs):
 
 	_config_args = {
 		'dry_run': False,
-		'logfile': '/var/log/univention/ucs-school-http-api-bb/ucs-school-import.log',
+		'logfile': "/var/log/univention/ucs-school-kelvin/http.log",
 		'skip_tests': ['uniqueness'],
 	}
 	_config_args.update(config_kwargs)
 	_ui = _UserImportCommandLine()
 	_config_files = _ui.configuration_files
-	logger = setup_logging("univention.testing.ucsschool")
+	logger = logging.getLogger("univention.testing.ucsschool")
 	try:
 		config = _setup_configuration(_config_files, **_config_args)
 		if 'mapped_udm_properties' not in config.get('configuration_checks', []):

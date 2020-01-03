@@ -77,15 +77,7 @@ IMPORT_CONFIG = {
 	"default": "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json",
 }
 
-if ucr.is_true("tests/ucsschool/http-api/bb", False):
-	print("*** BB-API activated ***")
-	HTTP_API = "BB"
-	_localhost_root_url = "https://{}.{}/api-bb/".format(ucr["hostname"], ucr["domainname"])
-else:
-	print("*** UCS@school HTTP-API activated ***")
-	HTTP_API = "ucsschool"
-	_localhost_root_url = "https://{}.{}/kelvin/api/v1/".format(ucr["hostname"], ucr["domainname"])
-API_ROOT_URL = ucr.get("tests/ucsschool/http-api/root_url", _localhost_root_url).rstrip("/") + "/"
+API_ROOT_URL = "https://{}.{}/api-bb/".format(ucr["hostname"], ucr["domainname"])
 print("*** API_ROOT_URL={!r} ***".format(API_ROOT_URL))
 RESSOURCE_URLS = {
 	"roles": urljoin(API_ROOT_URL, "roles/"),
@@ -97,20 +89,23 @@ _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
 
 
-def setup_logging(name):
-	logger = logging.getLogger("ucsschool")
-	if "kelvintests" in [h.name for h in logger.handlers]:
-		handler = [h for h in logger.handlers if h.name == "kelvintests"][0]
-	else:
-		handler = get_stream_handler(logging.DEBUG)
-		handler.set_name("kelvintests")
+def setup_logging():
+	# set log level on loggers we're interested in
+	for _name in (
+			None,
+			"requests",
+			"univention",
+			"ucsschool",
+	):
+		logger = logging.getLogger(_name)
 		logger.setLevel(logging.DEBUG)
-		logger.addHandler(handler)
-	logger = logging.getLogger(name)
-	if "kelvintests" not in [h.name for h in logger.handlers]:
-		logger.setLevel(logging.DEBUG)
-		logger.addHandler(handler)
-	return logger
+	# capture output of root logger
+	logger = logging.getLogger()
+	handler = get_stream_handler(logging.DEBUG)
+	logger.addHandler(handler)
+
+
+setup_logging()
 
 
 class InitialisationError(Exception):
@@ -119,17 +114,14 @@ class InitialisationError(Exception):
 
 class HttpApiUserTestBase(TestCase):
 	mapped_udm_properties = ['organisation', 'phone']
-	if HTTP_API == "BB":
-		ucrvs2set = [
-			'bb/http_api/users/wsgi_server_capture_output=true',
-			'bb/http_api/users/django_debug=true',
-			'bb/http_api/users/wsgi_server_loglevel=debug',
-			'bb/http_api/users/wsgi_server_workers=8',
-		]
-	else:
-		ucrvs2set = []
+	ucrvs2set = [
+		'bb/http_api/users/wsgi_server_capture_output=true',
+		'bb/http_api/users/django_debug=true',
+		'bb/http_api/users/wsgi_server_loglevel=debug',
+		'bb/http_api/users/wsgi_server_workers=8',
+	]
 	should_restart_api_server = True
-	logger = setup_logging("univention.testing.ucsschool")
+	logger = logging.getLogger("univention.testing.ucsschool")
 
 	@classmethod
 	def setUpClass(cls):
@@ -162,46 +154,34 @@ class HttpApiUserTestBase(TestCase):
 
 	@classmethod
 	def get_token(cls):  # type: () -> Tuple[str, str]
-		if HTTP_API == "BB":
-			token = ucr.get("tests/ucsschool/http-api/bb/token")
-			if token:
-				print("*** Got a token from UCR. ***")
-				return "Token", token.strip()
-			token_from_django_cmd_local = [
-					"/usr/share/pyshared/bb/http_api/users/manage.py",
-					"shell",
-					"-c",
-					"from rest_framework.authtoken.models import Token; print(Token.objects.first().key)",
-					]
-			if os.path.exists("/usr/share/pyshared/bb/http_api/users/manage.py"):
-				returncode, stdout, stderr = exec_cmd(token_from_django_cmd_local, raise_exc=True)
-				print("*** Got a token from local BB-API installation. ***")
-				return "Token", stdout.strip()
-			else:
-				m = re.match(r"https://(.+?)/.+", API_ROOT_URL)
-				if m:
-					host = m.groups()[0]
-					print("Tyring to get BB-API token via SSH...")
-					token_from_django_cmd_ssh = token_from_django_cmd_local
-					token_from_django_cmd_ssh[-1] = "'{}'".format(token_from_django_cmd_ssh[-1])
-					returncode, stdout, stderr = exec_cmd(
-						["ssh", host, " ".join(token_from_django_cmd_ssh)],
-						raise_exc=True
-					)
-					print("*** Got a token from remote BB-API installation. ***")
-					return "Token", stdout.strip()
-			raise RuntimeError("No token available for BB-API.")
+		token = ucr.get("tests/ucsschool/http-api/bb/token")
+		if token:
+			print("*** Got a token from UCR. ***")
+			return "Token", token.strip()
+		token_from_django_cmd_local = [
+				"/usr/share/pyshared/bb/http_api/users/manage.py",
+				"shell",
+				"-c",
+				"from rest_framework.authtoken.models import Token; print(Token.objects.first().key)",
+				]
+		if os.path.exists("/usr/share/pyshared/bb/http_api/users/manage.py"):
+			returncode, stdout, stderr = exec_cmd(token_from_django_cmd_local, raise_exc=True)
+			print("*** Got a token from local BB-API installation. ***")
+			return "Token", stdout.strip()
 		else:
-			resp = requests.post(
-				KELVIN_TOKEN_URL,
-				data={"username": "Administrator", "password": "univention"}
-			)
-			if resp.ok:
-				res = resp.json()
-				print("*** Got a token via HTTP from UCS@school HTTP-API. ***")
-				return res["token_type"], res["access_token"]
-			else:
-				raise RuntimeError("Failed retrieving token from Kelvin API: ({}) {}".format(resp.status_code, resp.reason))
+			m = re.match(r"https://(.+?)/.+", API_ROOT_URL)
+			if m:
+				host = m.groups()[0]
+				print("Tyring to get BB-API token via SSH...")
+				token_from_django_cmd_ssh = token_from_django_cmd_local
+				token_from_django_cmd_ssh[-1] = "'{}'".format(token_from_django_cmd_ssh[-1])
+				returncode, stdout, stderr = exec_cmd(
+					["ssh", host, " ".join(token_from_django_cmd_ssh)],
+					raise_exc=True
+				)
+				print("*** Got a token from remote BB-API installation. ***")
+				return "Token", stdout.strip()
+		raise RuntimeError("No token available for BB-API.")
 
 	@classmethod
 	def set_up_import_config(cls):
@@ -365,10 +345,9 @@ class HttpApiUserTestBase(TestCase):
 
 	@classmethod
 	def restart_api_server(cls):
-		if HTTP_API == "BB":
-			cls.logger.info('*** Restarting ucs-school-http-api-bb...')
-			subprocess.call(['service', 'ucs-school-http-api-bb', 'restart'])
-			time.sleep(10)
+		cls.logger.info('*** Restarting ucs-school-http-api-bb...')
+		subprocess.call(['service', 'ucs-school-http-api-bb', 'restart'])
+		time.sleep(10)
 
 	@staticmethod
 	def get_class_dn(class_name, school, lo):
@@ -447,7 +426,7 @@ def init_ucs_school_import_framework(**config_kwargs):
 	_config_args.update(config_kwargs)
 	_ui = _UserImportCommandLine()
 	_config_files = _ui.configuration_files
-	logger = setup_logging("univention.testing.ucsschool")
+	logger = logging.getLogger("univention.testing.ucsschool")
 	try:
 		config = _setup_configuration(_config_files, **_config_args)
 		if 'mapped_udm_properties' not in config.get('configuration_checks', []):

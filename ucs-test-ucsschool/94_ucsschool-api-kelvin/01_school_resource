@@ -7,6 +7,7 @@
 ## bugs: []
 
 from __future__ import unicode_literals
+import logging
 import requests
 from unittest import main, TestCase
 from ldap.filter import filter_format
@@ -18,10 +19,10 @@ import univention.testing.strings as uts
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.lib.models.school import School as LibSchool
 from univention.udm import UDM
-from univention.testing.ucsschool.kelvin_api import API_ROOT_URL, HttpApiUserTestBase, RESSOURCE_URLS, setup_logging
+from univention.testing.ucsschool.kelvin_api import HttpApiUserTestBase, RESSOURCE_URLS
 
 
-logger = setup_logging("univention.testing.ucsschool")
+logger = logging.getLogger("univention.testing.ucsschool")
 
 
 class Test(TestCase):
