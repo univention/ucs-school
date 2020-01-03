@@ -1,6 +1,8 @@
 import datetime
 import logging
+from collections.abc import Sequence
 from functools import lru_cache
+from operator import attrgetter
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -16,9 +18,17 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.user import User
 from udm_rest_client import UDM, APICommunicationError, MoveError
+from ucsschool.importer.models.import_user import (
+    ImportStaff,
+    ImportStudent,
+    ImportTeacher,
+    ImportTeachersAndStaff,
+    ImportUser,
+)
+from ucsschool.lib.models.school import School
+from univention.admin.filter import conjunction, expression
 
 from ..urls import url_to_name
 from .base import (
@@ -36,6 +46,13 @@ router = APIRouter()
 @lru_cache(maxsize=1)
 def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=1)
+def accepted_udm_properties() -> Set[str]:
+    return set(ImportUser._attributes.keys()).union(
+        set(get_import_config().get("mapped_udm_properties", []))
+    )
 
 
 class UserBaseModel(UcsSchoolBaseModel):
@@ -133,48 +150,194 @@ class UserPatchModel(BasePatchModel):
         return kwargs
 
 
-@router.get("/", response_model=List[UserModel])
+def all_query_params(
+    query_params: Mapping[str, Any], the_locals: Dict[str, Any], known_args: List[str]
+) -> Tuple[str, Any]:
+    for var in known_args:
+        if var == "username":
+            yield "name", the_locals[var]
+            continue
+        yield var, the_locals[var]
+    for param, values in query_params.items():
+        if param not in known_args + ["name"]:
+            yield param, values
+
+
+def search_query_params_to_ldap_filter(  # noqa: C901
+    query_params: Iterable[Tuple[str, Any]],
+    user_class: Type[ImportUser],
+    accepted_properties: Set[str],
+) -> Optional[str]:
+    filter_parts = []
+    for param, values in query_params:
+        if param == "roles":
+            # already handled
+            continue
+        if values is None:
+            # unused parameter
+            continue
+        if param == "birthday":
+            values = values.strftime("%Y-%m-%d")
+        if param == "disabled":
+            values = str(int(values))
+        if param == "school":
+            # already handled
+            continue
+        if param in accepted_properties:
+            if param in user_class._attributes.keys():
+                udm_name = user_class._attributes[param].udm_name
+            else:
+                # mapped_udm_properties
+                udm_name = param
+            if not isinstance(values, Sequence) or isinstance(values, str):
+                # prevent iterating over string, bool etc
+                values = [values]
+            filter_parts.extend(
+                [
+                    expression(udm_name, escape_filter_chars(val).replace(r"\2a", "*"))
+                    for val in values
+                ]
+            )
+    if filter_parts:
+        return str(conjunction("&", filter_parts))
+    else:
+        return None
+
+
+@router.get("/", response_model=List[UserModel])  # noqa: C901
 async def search(
     request: Request,
     school: str = Query(
-        ...,
-        description="List only users in school with this name (not URL), exact match only.",
-        min_length=2,
+        None,
+        description="List only users that are members of the school (OU) with "
+        "this name (not URL), exact match only.",
     ),
     username: str = Query(
-        None,
-        alias="name",
-        description="List users with this username. '*' can be used for an inexact search.",
-        title="name",
+        None, alias="name", description="List users with this username.", title="name",
     ),
+    ucsschool_roles: List[str] = Query(None, regex="^.+:.+:.+$",),
+    email: str = Query(None, regex="^.+@.+$",),
+    record_uid: str = Query(None),
+    source_uid: str = Query(None),
+    birthday: datetime.date = Query(
+        None,
+        alias="birthday",
+        description="Exact match only. Format must be YYYY-MM-DD.",
+    ),
+    disabled: bool = Query(None),
+    firstname: str = Query(None),
+    lastname: str = Query(None),
+    roles: List[SchoolUserRole] = Query(None),
     logger: logging.Logger = Depends(get_logger),
+    accepted_properties: Set[str] = Depends(accepted_udm_properties),
     udm: UDM = Depends(udm_ctx),
 ) -> List[UserModel]:
     """
     Search for school users.
 
-    All parameters are optional and most support the use of ``*`` for inexact searches.
+    All parameters are optional and (unless noted) support the use of ``*``
+    for wildcard searches.
 
-    Limiting the *school*s to search greatly reduces the execution time.
+    Limiting the **school**s to search in, greatly reduces the execution time.
 
-    - **school**: school (OU) the user belongs to
-    - **username**: username of the school user
+    - **school**: list users enlisted in matching school(s) (name of OU, not
+        URL)
+    - **username**: list users with matching username
+    - **ucsschool_roles**: list users that have such an entry in their list of
+        ucsschool_roles
+    - **email**: the users "primaryMailAddress", used only when the email is
+        hosted on UCS, not to be confused with the contact property "e-mail"
+    - **record_uid**: identifier unique to the upstream database referenced in
+        source_uid, used by the UCS@school import
+    - **source_uid**: identifier of the upstream database, used by the
+        UCS@school import
+    - **birthday**: birthday of user, **exact match only, format: YYYY-MM-DD**
+    - **disabled**: **true** to list only disabled users, **false** to list
+        only active users
+    - **firstname**: given name of users to look for
+    - **lastname**: family name of users to look for
+    - **roles**: **list** of roles the user should have, **allowed values:
+        ["staff"], ["student"], ["teacher"], ["staff", "teacher"]**
+    - **additional query parameters**: additionally to the above parameters,
+        any UDM property can be used to filter, e.g.
+        **?uidNumber=12345&city=Bremen**
     """
     logger.debug(
-        "Searching for users with: name_filter=%r school_filter=%r",
-        name_filter,
-        school_filter,
+        "Searching for users with: school=%r username=%r ucsschool_roles=%r "
+        "email=%r record_uid=%r source_uid=%r birthday=%r disabled=%r "
+        "roles=%r request.query_params=%r",
+        school,
+        username,
+        ucsschool_roles,
+        email,
+        record_uid,
+        source_uid,
+        birthday,
+        disabled,
+        roles,
+        request.query_params,
     )
-    if name_filter:
-        filter_str = f"username={name_filter}"
+    _known_args = [
+        "school",
+        "username",
+        "ucsschool_roles",
+        "email",
+        "record_uid",
+        "source_uid",
+        "birthday",
+        "disabled",
+        "roles",
+    ]
+
+    if roles is None:
+        user_class = ImportUser
+    elif set(roles) == {SchoolUserRole.staff}:
+        user_class = ImportStaff
+    elif set(roles) == {SchoolUserRole.student}:
+        user_class = ImportStudent
+    elif set(roles) == {SchoolUserRole.teacher}:
+        user_class = ImportTeacher
+    elif set(roles) == {SchoolUserRole.staff, SchoolUserRole.teacher}:
+        user_class = ImportTeachersAndStaff
     else:
-        filter_str = None
-    async with UDM(**await udm_kwargs()) as udm:
-        try:
-            users = await User.get_all(udm, school_filter, filter_str)
-        except APICommunicationError as exc:
-            raise HTTPException(status_code=exc.status, detail=exc.reason)
-        return [await UserModel.from_lib_model(user, request, udm) for user in users]
+        raise HTTPException(
+            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Unknown value for 'roles' property: {roles!r}",
+        )
+
+    if school:
+        school_filter = f"(ou={escape_filter_chars(school)})".replace(r"\2a", "*")
+    else:
+        school_filter = None
+
+    query_params = all_query_params(request.query_params, locals(), _known_args)
+    filter_str = search_query_params_to_ldap_filter(
+        query_params, user_class, accepted_properties
+    )
+    logger.debug(
+        "Looking for %r with school_filter=%r and filter_str=%r",
+        user_class.__name__,
+        school_filter,
+        filter_str,
+    )
+    try:
+        schools = await School.get_all(udm, school_filter)
+        if not schools:
+            raise HTTPException(
+                status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Unknown school {school!r}.",
+            )
+        user_dns = set()
+        users = []
+        for s in schools:
+            for user in await user_class.get_all(udm, s.name, filter_str):
+                if user.dn not in user_dns:  # deduplicate ou overlapping users
+                    users.append(user)
+                    user_dns.add(user.dn)
+    except APICommunicationError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.reason)
+    users.sort(key=attrgetter("name"))
+    return [await UserModel.from_lib_model(user, request, udm) for user in users]
 
 
 @router.get("/{username}", response_model=UserModel)
