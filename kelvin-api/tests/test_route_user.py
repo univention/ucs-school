@@ -83,7 +83,10 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: 
         elif key == "school_classes":
             for school, classes in value.items():
                 assert school in lib_user.school_classes
-                assert set(classes) == set(kls.replace(f"{school}-", "") for kls in lib_user.school_classes[school])
+                assert set(classes) == set(
+                    kls.replace(f"{school}-", "")
+                    for kls in lib_user.school_classes[school]
+                )
         else:
             assert value == getattr(lib_user, key)
 
@@ -208,7 +211,11 @@ async def test_search_filter_udm_properties(
         create_kwargs = {"udm_properties": {filter_param: filter_value}}
     elif filter_param == "phone":
         filter_value = random_name()
-        create_kwargs = {"udm_properties": {filter_param: [random_name(), filter_value, random_name()]}}
+        create_kwargs = {
+            "udm_properties": {
+                filter_param: [random_name(), filter_value, random_name()]
+            }
+        }
     else:
         create_kwargs = {}
     role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
@@ -223,9 +230,14 @@ async def test_search_filter_udm_properties(
         if filter_param in ("uidNumber", "gidNumber"):
             filter_value = udm_user.props[filter_param]
         elif filter_param == "phone":
-            assert set(udm_user.props[filter_param]) == set(create_kwargs["udm_properties"][filter_param])
+            assert set(udm_user.props[filter_param]) == set(
+                create_kwargs["udm_properties"][filter_param]
+            )
         else:
-            assert udm_user.props[filter_param] == create_kwargs["udm_properties"][filter_param]
+            assert (
+                udm_user.props[filter_param]
+                == create_kwargs["udm_properties"][filter_param]
+            )
         params = {filter_param: filter_value}
         response = requests.get(
             f"{url_fragment}/users", headers=auth_header, params=params,
@@ -238,7 +250,9 @@ async def test_search_filter_udm_properties(
         api_user = api_users[user.name]
         created_value = api_user.udm_properties[filter_param]
         if filter_param == "phone":
-            assert set(created_value) == set(create_kwargs["udm_properties"][filter_param])
+            assert set(created_value) == set(
+                create_kwargs["udm_properties"][filter_param]
+            )
         else:
             assert created_value == filter_value
         await compare_lib_api_user(import_user, api_user, udm, url_fragment)
