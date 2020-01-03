@@ -51,7 +51,7 @@ try:
 except ImportError:
 	from urllib.parse import urljoin  # py3
 from urllib3.exceptions import InsecureRequestWarning
-from six import reraise as raise_
+from six import reraise as raise_, iteritems
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
@@ -79,6 +79,7 @@ IMPORT_CONFIG = {
 URL_BASE_PATH = "/kelvin/api/v1/"
 _localhost_root_url = "https://{}.{}{}".format(ucr["hostname"], ucr["domainname"], URL_BASE_PATH)
 API_ROOT_URL = ucr.get("tests/ucsschool/http-api/root_url", _localhost_root_url).rstrip("/") + "/"
+OPENAPI_JSON_URL = urljoin(API_ROOT_URL, "openapi.json")
 RESSOURCE_URLS = {
 	"roles": urljoin(API_ROOT_URL, "roles/"),
 	"schools": urljoin(API_ROOT_URL, "schools/"),
@@ -91,6 +92,7 @@ requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 
 print("*** API_ROOT_URL={!r} ***".format(API_ROOT_URL))
+print("*** OPENAPI_JSON_URL={!r} ***".format(OPENAPI_JSON_URL))
 print("*** KELVIN_TOKEN_URL={!r} ***".format(KELVIN_TOKEN_URL))
 print("*** RESSOURCE_URLS={!r} ***".format(RESSOURCE_URLS))
 
@@ -269,11 +271,14 @@ class HttpApiUserTestBase(TestCase):
 				# Could be the same test as for 'school_classes', but lists are not necessarily in order (for example
 				# phone, e-mail, etc), so converting them to sets:
 				self.assertSetEqual(set(import_user.udm_properties.keys()), set(v.keys()))
-				for udm_k, udm_v in import_user.udm_properties.items():
+				udm_properties = empty_str2none(import_user.udm_properties)
+				for udm_k, udm_v in iteritems(udm_properties):
 					msg = 'Value of attribute {!r} in {} is {!r} and in resource is {!r} ({!r}).'.format(
 						k, source, getattr(import_user, k), v, dn)
 					if isinstance(udm_v, list):
 						self.assertSetEqual(set(udm_v), set(v[udm_k]), msg)
+					elif isinstance(udm_v, dict):
+						self.assertDictEqual(udm_v, v[udm_k], msg)
 					else:
 						self.assertEqual(udm_v, v[udm_k], msg)
 			elif getattr(import_user, k) is None and v == '':
@@ -306,13 +311,13 @@ class HttpApiUserTestBase(TestCase):
 			'lastname': uts.random_username(),
 			'password': uts.random_username(16),
 			'record_uid': uts.random_username(),
-			'roles': [urljoin(RESSOURCE_URLS['roles'], role + "/") for role in roles],
-			'school': urljoin(RESSOURCE_URLS['schools'], ous[0] + "/"),
+			'roles': [urljoin(RESSOURCE_URLS['roles'], role) for role in roles],
+			'school': urljoin(RESSOURCE_URLS['schools'], ous[0]),
 			'school_classes': {} if roles == ('staff',) else dict(
 				(ou, sorted([uts.random_username(4), uts.random_username(4)]))
 				for ou in ous
 			),
-			'schools': [urljoin(RESSOURCE_URLS['schools'], ou + "/") for ou in ous],
+			'schools': [urljoin(RESSOURCE_URLS['schools'], ou) for ou in ous],
 			'source_uid': self.import_config['source_uid'],
 			'udm_properties': {
 				'phone': [uts.random_username(), uts.random_username()],
@@ -393,7 +398,7 @@ def create_remote_static(attribs):
 def partial_update_remote_static(old_username_and_new_attrs):
 	# type: (Tuple[Dict[Text, Text], Text, Dict[Text, Any]]) -> Dict[Text, Any]
 	auth_headers, old_username, new_attrs = old_username_and_new_attrs
-	url = urljoin(RESSOURCE_URLS['users'], old_username + "/")
+	url = urljoin(RESSOURCE_URLS['users'], old_username)
 	return api_call('patch', url, json_data=new_attrs, headers=auth_headers)
 
 
@@ -437,3 +442,16 @@ def init_ucs_school_import_framework(**config_kwargs):
 	logger.info('Configuration is:\n%s', pprint.pformat(config))
 	_ucs_school_import_framework_initialized = True
 	return config
+
+
+def empty_str2none(udm_props):  # type: (Dict[str, Any]) -> Dict[str, Any]
+	res = {}
+	for k, v in iteritems(udm_props):
+		if isinstance(v, dict):
+			res[k] = empty_str2none(v)
+		elif isinstance(v, list):
+			res[k] = [None if vv == "" else vv for vv in v]
+		else:
+			if v == "":
+				res[k] = None
+	return res
