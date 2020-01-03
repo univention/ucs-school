@@ -93,7 +93,7 @@ class LibModelHelperMixin(BaseModel):
         kwargs = self.dict()
         if "dn" in kwargs:
             del kwargs["dn"]
-        if "dn" in kwargs:
+        if "url" in kwargs:
             del kwargs["url"]
         return kwargs
 

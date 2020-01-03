@@ -40,6 +40,7 @@ from six import reraise as raise_
 
 from ucsschool.importer.configuration import (
     Configuration,
+    ReadOnlyDict,
     setup_configuration as _setup_configuration,
 )
 from ucsschool.importer.exceptions import UcsSchoolImportError
@@ -47,6 +48,8 @@ from ucsschool.importer.factory import setup_factory as _setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import (
     UserImportCommandLine as _UserImportCommandLine,
 )
+
+from .constants import IMPORT_FRAMEWORK_INIT_DEFAULT_KWARGS
 
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
@@ -57,7 +60,7 @@ class InitialisationError(Exception):
     pass
 
 
-def init_ucs_school_import_framework(**config_kwargs):
+def init_ucs_school_import_framework(**config_kwargs) -> ReadOnlyDict:
     global _ucs_school_import_framework_initialized, _ucs_school_import_framework_error
 
     if _ucs_school_import_framework_initialized:
@@ -99,11 +102,8 @@ def init_ucs_school_import_framework(**config_kwargs):
     return config
 
 
-def get_import_config():
+def get_import_config() -> ReadOnlyDict:
     if _ucs_school_import_framework_initialized:
         return Configuration()
     else:
-        return init_ucs_school_import_framework(
-            source_uid="Kelvin",
-            configuration_checks=["defaults", "mapped_udm_properties"],
-        )
+        return init_ucs_school_import_framework(**IMPORT_FRAMEWORK_INIT_DEFAULT_KWARGS)

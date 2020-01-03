@@ -5,6 +5,10 @@ APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
+IMPORT_FRAMEWORK_INIT_DEFAULT_KWARGS = {
+    "source_uid": "Kelvin",
+    "configuration_checks": ["defaults", "mapped_udm_properties"],
+}
 LOG_FILE_PATH = Path("/var/log/univention/ucs-school-kelvin/http.log")
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
 STATIC_FILES_PATH = Path("/kelvin/kelvin-api/static")

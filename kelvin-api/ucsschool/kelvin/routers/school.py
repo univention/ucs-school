@@ -55,7 +55,6 @@ async def search(
         )
     else:
         filter_str = None
-    logger.debug("*** filter_str=%r", filter_str)
     schools = [
         school.to_dict() for school in await School.get_all(udm, filter_str=filter_str)
     ]
