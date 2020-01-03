@@ -1,6 +1,10 @@
+import datetime
+import json
 import os
 import random
 import shutil
+import subprocess
+import time
 from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
@@ -16,6 +20,7 @@ import ucsschool.kelvin.main
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
+from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import UserCreateModel
 from udm_rest_client import UDM, NoObject
 from univention.config_registry import ConfigRegistry
@@ -25,6 +30,22 @@ APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
+IMPORT_CONFIG = {
+    "active": Path("/var/lib/ucs-school-import/configs/user_import.json"),
+    "bak": Path(
+        "/var/lib/ucs-school-import/configs/user_import.json.bak.{}".format(
+            datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        )
+    ),
+}
+MAPPED_UDM_PROPERTIES = (
+    "title",
+    "description",
+    "employeeType",
+    "uidNumber",
+    "gidNumber",
+)  # keep in sync with test_route_user.py::MAPPED_UDM_PROPERTIES
+
 fake = Faker()
 
 
@@ -239,17 +260,13 @@ def create_random_users(
         for role, amount in roles.items():
             for i in range(amount):
                 if role == "teacher_and_staff":
-                    user_data = create_random_user_data(
-                        roles=[
-                            f"{url_fragment}/roles/staff",
-                            f"{url_fragment}/roles/teacher",
-                        ],
-                        **data_kwargs,
-                    )
+                    roles_ulrs = [
+                        f"{url_fragment}/roles/staff",
+                        f"{url_fragment}/roles/teacher",
+                    ]
                 else:
-                    user_data = create_random_user_data(
-                        roles=[f"{url_fragment}/roles/{role}"], **data_kwargs
-                    )
+                    roles_ulrs = [f"{url_fragment}/roles/{role}"]
+                user_data = create_random_user_data(roles=roles_ulrs, **data_kwargs)
                 response = requests.post(
                     f"{url_fragment}/users/",
                     headers={"Content-Type": "application/json", **auth_header},
@@ -334,3 +351,44 @@ async def create_random_schools(udm_kwargs):
         return [demo_school, demo_school_2]
 
     return _create_random_schools
+
+
+@pytest.fixture(scope="session")
+def add_udm_properties_to_import_config():
+    if IMPORT_CONFIG["active"].exists():
+        print(f"Moving {IMPORT_CONFIG['active']!r} to {IMPORT_CONFIG['bak']!r}.")
+        shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
+        config_file = IMPORT_CONFIG["bak"]
+        with open(config_file, "r") as fp:
+            config = json.load(fp)
+    else:
+        config = {"configuration_checks": ["defaults", "mapped_udm_properties"]}
+    config["mapped_udm_properties"] = config.get("mapped_udm_properties", [])
+    config["mapped_udm_properties"].extend(MAPPED_UDM_PROPERTIES)
+    config["mapped_udm_properties"] = sorted(set(config["mapped_udm_properties"]))
+    config["verbose"] = True
+    with open(IMPORT_CONFIG["active"], "w") as fp:
+        json.dump(config, fp, indent=4)
+    print(f"Wrote config to {IMPORT_CONFIG['active']!r}: {config!r}")
+    print("Restarting Kelvin API server...")
+    subprocess.call(["/etc/init.d/kelvin-api", "restart"])
+    time.sleep(3)
+
+    yield
+
+    if IMPORT_CONFIG["bak"].exists():
+        print(f"Moving {IMPORT_CONFIG['bak']!r} to {IMPORT_CONFIG['active']!r}.")
+        shutil.move(IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"])
+        print("Restarting Kelvin API server...")
+        subprocess.call(["/etc/init.d/kelvin-api", "restart"])
+        time.sleep(3)
+
+
+@pytest.fixture(scope="session")
+def import_config(add_udm_properties_to_import_config):
+    # add_udm_properties_to_import_config() is already executed before collecting by setup.cfg
+    config = get_import_config()
+    assert set(MAPPED_UDM_PROPERTIES).issubset(
+        set(config.get("mapped_udm_properties", []))
+    )
+    return config
