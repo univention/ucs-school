@@ -307,8 +307,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		# make sure user is in all mandatory groups and school classes
 		current_groups = set(grp_dn.lower() for grp_dn in udm_obj.props.groups)
-		groups_to_add = filter(lambda dn: dn.lower() not in current_groups, mandatory_groups)
-		# [dn for dn in mandatory_groups if dn.lower() not in current_groups]
+		groups_to_add = [dn for dn in mandatory_groups if dn.lower() not in current_groups]
 		if groups_to_add:
 			self.logger.debug('Adding %r to groups %r.', self, groups_to_add)
 			udm_obj.props.groups.extend(groups_to_add)
