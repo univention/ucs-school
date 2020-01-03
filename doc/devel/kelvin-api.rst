@@ -70,11 +70,32 @@ The app settings and the join and unjoin scripts are in a ``appcenter`` director
 Tests
 -----
 
-Tests are run during Docker image built. To run them manually during development::
+Unit tests are run during Docker image built.
+Integration tests have to be run manually during development::
 
 	$ . ~/virtenvs/schoollib/bin/activate
 	$ cd kelvin-api
 	$ make test
+
+ucs-tests are in ``ucs-test-ucsschool/94_ucsschool-api-kelvin``.
+They require at least the following import configuration in ``/var/lib/ucs-school-import/configs/user_import.json``::
+
+	{
+		"configuration_checks": [
+			"defaults",
+			"mapped_udm_properties"
+		],
+		"mapped_udm_properties": [
+			"description",
+			"gidNumber",
+			"employeeType",
+			"organisation",
+			"phone",
+			"title",
+			"uidNumber"
+		]
+	}
+
 
 Code style
 ----------
