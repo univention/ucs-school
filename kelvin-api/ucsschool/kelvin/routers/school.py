@@ -2,11 +2,10 @@ import logging
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
-import ujson
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
 from starlette.requests import Request
-from starlette.status import HTTP_201_CREATED
+from starlette.status import HTTP_201_CREATED, HTTP_405_METHOD_NOT_ALLOWED
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
@@ -21,7 +20,7 @@ def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
 
 
-class SchoolModel(APIAttributesMixin, LibModelHelperMixin):
+class SchoolCreateModel(LibModelHelperMixin):
     name: str
     display_name: str = None
     administrative_servers: List[str] = []
@@ -30,11 +29,18 @@ class SchoolModel(APIAttributesMixin, LibModelHelperMixin):
     dc_name_administrative: str = None
     educational_servers: List[str] = []
     home_share_file_server: str = None
+    ucsschool_roles: List[str] = []
+
+    class Config(LibModelHelperMixin.Config):
+        lib_class = School
+
+
+class SchoolModel(SchoolCreateModel, APIAttributesMixin):
 
     _dn2name: Dict[str, str] = {}
 
-    class Config(LibModelHelperMixin.Config):
-        json_loads = ujson.loads
+    class Config(SchoolCreateModel.Config):
+        ...
 
     @classmethod
     async def _from_lib_model_kwargs(
@@ -118,8 +124,8 @@ async def get(
 
 
 @router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolModel)
-async def create(school: SchoolModel) -> SchoolModel:
+async def create(school: SchoolCreateModel) -> SchoolModel:
     """
     **Not implemented yet!**
     """
-    raise NotImplementedError
+    raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError")
