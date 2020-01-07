@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 
+desc: |
+ * A premature cache purge leading to a huge slowdown of the UCS@school user import was fixed (Bug #50689).
+bug: [50689]

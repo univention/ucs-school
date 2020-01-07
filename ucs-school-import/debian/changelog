@@ -1,3 +1,10 @@
+ucs-school-import (17.0.22) unstable; urgency=low
+
+  * Bug #50689: do not purge OU name cache after every
+    creation/modification/move/deletion of an ImportUser
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Jan 2020 11:31:26 +0100
+
 ucs-school-import (17.0.21) unstable; urgency=low
 
   * Bug #50515: fix bad function calls leading to wrong logfile ownership
