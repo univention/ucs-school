@@ -710,7 +710,7 @@ class UCSSchoolHelperAbstractClass(object):
 	def get_warning_msg(self):  # type: () -> str
 		return self.create_validation_msg(iteritems(self.warnings))
 
-	def create_validation_msg(self, items):  # type: (Iterable[Tuple[str, str]]) -> str
+	def create_validation_msg(self, items):  # type: (Iterable[Tuple[str, List[str]]]) -> str
 		validation_msg = ''
 		for key, msg in items:
 			label = self.find_field_label_from_name(key)
