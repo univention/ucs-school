@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 
+fix: 17.0.22A~4.4.0.202001071153
 desc: |
  * A premature cache purge leading to a huge slowdown of the UCS@school user import was fixed (Bug #50689).
 bug: [50689]
