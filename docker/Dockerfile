@@ -84,6 +84,7 @@ RUN	mv -v /tmp/kelvin-api.initd /etc/init.d/kelvin-api && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
 	cp -r /kelvin/ucs-school-import/usr/share/ucs-school-import /usr/share/ && \
 	cp kelvin-api/usr/share/ucs-school-import/configs/kelvin_defaults.json /usr/share/ucs-school-import/configs/ && \
+	cp kelvin-api/usr/share/ucs-school-import/checks/*.py /usr/share/ucs-school-import/checks/ && \
 	mkdir -p /usr/share/ucs-school-import/pyhooks && \
 	mkdir -p /var/lib/ucs-school-import && \
 	cp -r /kelvin/ucs-school-import/empty_configs /var/lib/ucs-school-import/configs && \

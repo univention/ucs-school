@@ -2,7 +2,8 @@
   "source_uid": "Kelvin",
   "configuration_checks": [
     "defaults",
-    "mapped_udm_properties"
+    "mapped_udm_properties",
+    "class_overwrites"
   ],
   "dry_run": false,
   "logfile": null,
