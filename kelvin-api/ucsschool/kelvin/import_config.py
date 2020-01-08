@@ -36,6 +36,7 @@ import logging
 import pprint
 import sys
 from pathlib import Path
+from typing import List
 
 from six import reraise as raise_
 
