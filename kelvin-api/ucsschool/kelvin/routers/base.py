@@ -43,7 +43,7 @@ async def get_lib_obj(
     except NoObject:
         raise HTTPException(
             status_code=HTTP_404_NOT_FOUND,
-            detail=f"No {lib_cls.__name__} with name={name!r} and school={school!r} found.",
+            detail=f"No {lib_cls.__name__} with name={name!r} dn={dn!r} and school={school!r} found.",
         )
 
 

@@ -297,12 +297,7 @@ async def test_get(
 
 
 def test_get_empty_udm_properties_are_returned(
-    auth_header,
-    url_fragment,
-    create_random_users,
-    random_name,
-    import_config,
-    udm_kwargs,
+    auth_header, url_fragment, create_random_users, import_config, udm_kwargs,
 ):
     role: Role = random.choice(USER_ROLES)
     create_kwargs = {"udm_properties": {}}
@@ -387,7 +382,7 @@ async def test_put(
         headers=auth_header,
         data=modified_user.json(),
     )
-    assert response.status_code == 200
+    assert response.status_code == 200, response.reason
     api_user = UserModel(**response.json())
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
@@ -431,7 +426,7 @@ async def test_patch(
         headers=auth_header,
         data=patch_user.json(),
     )
-    assert response.status_code == 200
+    assert response.status_code == 200, response.reason
     api_user = UserModel(**response.json())
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
@@ -447,6 +442,80 @@ async def test_patch(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+async def test_delete(
+    auth_header, url_fragment, create_random_users, udm_kwargs, role: Role
+):
+    r_user = create_random_users({role.name: 1})[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_users[0], role.klass)
+        response = requests.delete(
+            f"{url_fragment}/users/{r_user.name}", headers=auth_header,
+        )
+        assert response.status_code == 204, response.reason
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
+        assert len(lib_users) == 0
+
+
+def test_delete_non_existent(auth_header, url_fragment, random_name):
+    response = requests.delete(
+        f"{url_fragment}/users/{random_name}", headers=auth_header,
+    )
+    assert response.status_code == 404, response.reason
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_rename(
+    auth_header,
+    url_fragment,
+    create_random_users,
+    create_random_user_data,
+    random_name,
+    import_config,
+    udm_kwargs,
+    role: Role,
+    method: str,
+):
+    if method == "patch":
+        user = create_random_users({role.name: 1})[0]
+        new_name = f"t.new.{random_name()}.{random_name()}"
+        response = requests.patch(
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json={"name": new_name},
+        )
+    elif method == "put":
+        user_data = create_random_user_data(roles=[url_fragment, url_fragment]).dict()
+        del user_data["roles"]
+        user = create_random_users({role.name: 1}, **user_data)[0]
+        new_name = f"t.new.{random_name()}.{random_name()}"
+        old_data = user.dict()
+        del old_data["name"]
+        modified_user = UserCreateModel(name=new_name, **old_data)
+        response = requests.put(
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=modified_user.json(),
+        )
+    assert (
+        response.status_code == 200
+    ), f"{response.reason} -- {response.content[:4096]}"
+    api_user = UserModel(**response.json())
+    assert api_user.name == new_name
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 0
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={new_name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_users[0], role.klass)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("method", ("patch", "put"))
 async def test_school_change(
     auth_header,
     url_fragment,
@@ -454,6 +523,7 @@ async def test_school_change(
     create_random_schools,
     udm_kwargs,
     role: Role,
+    method: str,
 ):
     schools = await create_random_schools(2)
     school1_dn, school1_attr = schools[0]
@@ -479,14 +549,34 @@ async def test_school_change(
         assert set(lib_users[0].ucsschool_roles) == roles
         url = f"{url_fragment}/schools/{school2_attr['name']}"
         _url: SplitResult = urlsplit(url)
-        new_school_url = HttpUrl(url, scheme=_url.scheme, host=_url.netloc)
-        patch_model = UserPatchModel(school=new_school_url, schools=[new_school_url])
-        patch_data = patch_model.dict()
-        response = requests.patch(
-            f"{url_fragment}/users/{user.name}", headers=auth_header, json=patch_data,
+        new_school_url = HttpUrl(
+            url, path=_url.path, scheme=_url.scheme, host=_url.netloc
         )
+        if method == "patch":
+            patch_model = UserPatchModel(
+                school=new_school_url, schools=[new_school_url]
+            )
+            patch_data = patch_model.dict()
+            response = requests.patch(
+                f"{url_fragment}/users/{user.name}",
+                headers=auth_header,
+                json=patch_data,
+            )
+        elif method == "put":
+            old_data = user.dict()
+            del old_data["school"]
+            del old_data["schools"]
+            del old_data["school_classes"]
+            modified_user = UserCreateModel(
+                school=new_school_url, schools=[new_school_url], **old_data
+            )
+            response = requests.put(
+                f"{url_fragment}/users/{user.name}",
+                headers=auth_header,
+                data=modified_user.json(),
+            )
         json_response = response.json()
-        assert response.status_code == 200
+        assert response.status_code == 200, response.reason
         async for udm_user in udm.get("users/user").search(
             filter_format("uid=%s", (user.name,))
         ):
@@ -512,28 +602,3 @@ async def test_school_change(
         else:
             roles = {f"{role.name}:school:{school2_attr['name']}"}
         assert set(lib_users[0].ucsschool_roles) == roles
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_delete(
-    auth_header, url_fragment, create_random_users, udm_kwargs, role: Role
-):
-    r_user = create_random_users({role.name: 1})[0]
-    async with UDM(**udm_kwargs) as udm:
-        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
-        assert len(lib_users) == 1
-        assert isinstance(lib_users[0], role.klass)
-        response = requests.delete(
-            f"{url_fragment}/users/{r_user.name}", headers=auth_header,
-        )
-        assert response.status_code == 204
-        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
-        assert len(lib_users) == 0
-
-
-def test_delete_non_existent(auth_header, url_fragment, random_name):
-    response = requests.delete(
-        f"{url_fragment}/users/{random_name}", headers=auth_header,
-    )
-    assert response.status_code == 404

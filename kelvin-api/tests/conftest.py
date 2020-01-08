@@ -275,6 +275,7 @@ def create_random_users(
                     data=user_data.json(),
                 )
                 assert response.status_code == 201, f"{response.__dict__}"
+                print(f"Created user {user_data.name!r} ({user_data.roles!r}).")
                 users.append(user_data)
                 usernames.append(user_data.name)
         return users

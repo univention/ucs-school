@@ -16,6 +16,7 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
+    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
 from ucsschool.importer.configuration import ReadOnlyDict
@@ -68,6 +69,14 @@ def get_udm_properties(udm_obj: UdmObject) -> Dict[str, Any]:
     return udm_properties
 
 
+async def get_import_user(udm: UDM, dn: str) -> ImportUser:
+    user = await get_lib_obj(udm, ImportUser, dn=dn)
+    udm_user_current = await user.get_udm_object(udm)
+    current_udm_properties = get_udm_properties(udm_user_current)
+    user.udm_properties.update(current_udm_properties)
+    return user
+
+
 class UserBaseModel(UcsSchoolBaseModel):
     firstname: str
     lastname: str
@@ -79,6 +88,7 @@ class UserBaseModel(UcsSchoolBaseModel):
     schools: List[HttpUrl]
     school_classes: Dict[str, List[str]] = {}
     source_uid: str = None
+    ucsschool_roles: List[str] = []
     udm_properties: Dict[str, Any] = {}
 
     class Config(UcsSchoolBaseModel.Config):
@@ -388,7 +398,7 @@ async def get(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
-    user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
+    user = await get_import_user(udm, udm_obj.dn)
     return await UserModel.from_lib_model(user, request, udm)
 
 
@@ -426,6 +436,56 @@ async def create(
     return await UserModel.from_lib_model(user, request, udm)
 
 
+async def change_school(
+    udm: UDM,
+    logger: logging.Logger,
+    user: ImportUser,
+    new_school: str,
+    new_schools: List[str],
+) -> ImportUser:
+    if new_school not in (new_schools or user.schools):
+        raise HTTPException(
+            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"New 'school' {new_school!r} not in current or future 'schools'.",
+        )
+    if new_school == user.school:
+        return user
+    logger.info("Moving %r from OU %r to OU %r...", user, user.school, new_school)
+    new_schools = new_schools or list(set(user.schools + [new_school]))
+    user.schools = new_schools
+    try:
+        await user.change_school(new_school, udm)
+    except MoveError as exc:
+        error_msg = (
+            f"Moving {user!r} from OU {user.school!r} to OU " f"{new_school!r}: {exc}"
+        )
+        logger.exception(error_msg)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail=error_msg,
+        )
+    return await get_import_user(udm, user.dn)
+
+
+async def rename_user(
+    udm: UDM, logger: logging.Logger, user: ImportUser, new_name: str
+) -> ImportUser:
+    if user.name == new_name:
+        return user
+    logger.info("Renaming %r to %r...", user, new_name)
+    old_name = user.name
+    user.name = new_name
+    res = await user.move(udm, force=True)
+    if not res:
+        user.name = old_name
+        error_msg = f"Failed to rename {user!r} to {new_name!r}: {user.errors!r}"
+        logger.error(error_msg)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail=error_msg,
+        )
+    user = await get_import_user(udm, user.dn)
+    return user
+
+
 @router.patch(  # noqa: C901
     "/{username}", status_code=HTTP_200_OK, response_model=UserModel
 )
@@ -453,42 +513,35 @@ async def partial_update(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
-    user_current = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
-    changed = False
     to_change = await user.to_modify_kwargs()
-    move = False
+    user_current = await get_import_user(udm, udm_obj.dn)
+
+    # 1. move
+    try:
+        new_school = to_change["school"]
+        new_schools = to_change.get("schools", [])
+        user_current = await change_school(
+            udm, logger, user_current, new_school, new_schools
+        )
+    except KeyError:
+        pass
+
+    # 2. rename
+    try:
+        new_name = to_change["name"]
+        user_current = await rename_user(udm, logger, user_current, new_name)
+    except KeyError:
+        pass
+
+    # 3. modify
+    changed = False
     for attr, new_value in to_change.items():
-        if attr == "school" and new_value not in (
-            to_change.get("schools") or user_current.schools
-        ):
-            raise HTTPException(
-                status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=f"New 'school' value {new_value!r} not in current or future 'schools'.",
-            )
-        if attr == "school" and new_value != user_current.school:
-            move = True
-            new_school = new_value
-            new_schools = to_change.get("schools") or list(
-                set(user_current.schools + [new_value])
-            )
-            continue  # School move handled separately
-        if attr == "schools" and user_current.school not in new_value:
-            move = True
-            new_school = to_change.get("school") or sorted(new_value)[0]
-            new_schools = new_value
-            continue  # School move handled separately
         current_value = getattr(user_current, attr)
         if new_value != current_value:
             setattr(user_current, attr, new_value)
             changed = True
     if changed:
         await user_current.modify(udm)
-    if move:
-        user_current.schools = new_schools
-        try:
-            await user_current.change_school(new_school, udm)
-        except MoveError as exc:
-            logger.exception("Moving %r: %s", user_current, exc)
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
@@ -509,6 +562,15 @@ async def complete_update(
     - **school**: school the class belongs to (required)
     - **role**: One of either student, staff, teacher, teacher_and_staff
     """
+    async for udm_obj in udm.get("users/user").search(
+        f"uid={escape_filter_chars(username)}"
+    ):
+        break
+    else:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=f"No User with username {username!r} found.",
+        )
     user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
             SchoolUserRole(
@@ -519,29 +581,29 @@ async def complete_update(
             for role in user.roles
         ]
     )
-    async for udm_obj in udm.get("users/user").search(
-        f"uid={escape_filter_chars(username)}"
-    ):
-        break
-    else:
-        raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
-            detail=f"No User with username {username!r} found.",
-        )
-    user_current = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
-    udm_user_current = await user_current.get_udm_object(udm)
-    current_udm_properties = get_udm_properties(udm_user_current)
-    user_current.udm_properties.update(current_udm_properties)
-
-    changed = False
     user_request = await user.as_lib_model(request)
+    user_current = await get_import_user(udm, udm_obj.dn)
+
+    # 1. move
+    new_school = user_request.school
+    new_schools = user_request.schools
+    user_current = await change_school(
+        udm, logger, user_current, new_school, new_schools
+    )
+
+    # 2. rename
+    new_name = user_request.name
+    user_current = await rename_user(udm, logger, user_current, new_name)
+
+    # 3. modify
+    changed = False
     # TODO: Should not access private interface:
     for attr in list(ImportUser._attributes.keys()) + ["udm_properties"]:
         if attr in ("school", "schools"):
-            continue  # school change is handled separately
+            continue  # school change was already handled above
         current_value = getattr(user_current, attr)
         new_value = getattr(user_request, attr)
-        if attr in ("ucsschool_roles", "users") and new_value is None:
+        if attr == "ucsschool_roles" and new_value is None:
             new_value = []
         if new_value != current_value:
             setattr(user_current, attr, new_value)
