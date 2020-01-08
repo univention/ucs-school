@@ -32,7 +32,11 @@ To use the API, a `JSON Web Token (JWT) <https://en.wikipedia.org/wiki/JSON_Web_
 
 Example ``curl`` command to retrieve a token::
 
-    $ curl -i -k -X POST --data 'username=Administrator&password=s3cr3t' https://FQDN/kelvin/api/token
+    $ curl -i -k -X POST \
+        -H "Content-Type:application/x-www-form-urlencoded" \
+        -d "username=Administrator" \
+        -d "password=univention" \
+        https://m66.uni.dtr/kelvin/api/token
 
 Only members of the group ``kelvin-users`` are allowed to access the HTTP-API.
 

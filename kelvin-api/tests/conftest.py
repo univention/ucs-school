@@ -120,11 +120,14 @@ def url_fragment():
 
 @pytest.fixture(scope="session")
 def auth_header(url_fragment):
-    response_json = requests.post(
-        f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/token",
+    url = url_fragment.replace("v1", "token")
+    response = requests.post(
+        url,
         headers={"Content-Type": "application/x-www-form-urlencoded"},
         data=dict(username="Administrator", password="univention"),
-    ).json()
+    )
+    assert response.status_code == 200, f"{response.__dict__!r}"
+    response_json = response.json()
     auth_header = {"Authorization": f"Bearer {response_json['access_token']}"}
     return auth_header
 
@@ -375,7 +378,12 @@ def add_udm_properties_to_import_config():
     print(f"Wrote config to {IMPORT_CONFIG['active']!r}: {config!r}")
     print("Restarting Kelvin API server...")
     subprocess.call(["/etc/init.d/kelvin-api", "restart"])
-    time.sleep(3)
+    # wait for server to become ready
+    while True:
+        response = requests.get(f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar")
+        if response.status_code == 404:
+            break
+        # else: 502 Proxy Error
 
     yield
 
