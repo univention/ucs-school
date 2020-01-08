@@ -1,0 +1,12 @@
+{
+  "source_uid": "Kelvin",
+  "configuration_checks": [
+    "defaults",
+    "mapped_udm_properties"
+  ],
+  "dry_run": false,
+  "logfile": null,
+  "skip_tests": [
+    "uniqueness"
+  ]
+}
