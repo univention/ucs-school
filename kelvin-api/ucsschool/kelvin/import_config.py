@@ -35,6 +35,7 @@ Diverse helper functions.
 import logging
 import pprint
 import sys
+from pathlib import Path
 
 from six import reraise as raise_
 
@@ -49,8 +50,6 @@ from ucsschool.importer.frontend.user_import_cmdline import (
     UserImportCommandLine as _UserImportCommandLine,
 )
 
-from .constants import IMPORT_FRAMEWORK_INIT_DEFAULT_KWARGS
-
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
 logger = logging.getLogger(__name__)
@@ -58,6 +57,16 @@ logger = logging.getLogger(__name__)
 
 class InitialisationError(Exception):
     pass
+
+
+class KelvinUserImportCommandLine(_UserImportCommandLine):
+    @property
+    def configuration_files(self):  # type: () -> List[str]
+        res = super(KelvinUserImportCommandLine, self).configuration_files
+        res.append("/usr/share/ucs-school-import/configs/kelvin_defaults.json")
+        if Path("/var/lib/ucs-school-import/configs/kelvin.json").is_file():
+            res.append("/var/lib/ucs-school-import/configs/kelvin.json")
+        return res
 
 
 def init_ucs_school_import_framework(**config_kwargs) -> ReadOnlyDict:
@@ -70,13 +79,9 @@ def init_ucs_school_import_framework(**config_kwargs) -> ReadOnlyDict:
         # return here after raising an InitialisationError
         raise _ucs_school_import_framework_error
 
-    _config_args = {
-        "dry_run": False,
-        "logfile": None,
-        "skip_tests": ["uniqueness"],
-    }
+    _config_args = {}
     _config_args.update(config_kwargs)
-    _ui = _UserImportCommandLine()
+    _ui = KelvinUserImportCommandLine()
     _config_files = _ui.configuration_files
     try:
         config = _setup_configuration(_config_files, **_config_args)
@@ -106,4 +111,4 @@ def get_import_config() -> ReadOnlyDict:
     if _ucs_school_import_framework_initialized:
         return Configuration()
     else:
-        return init_ucs_school_import_framework(**IMPORT_FRAMEWORK_INIT_DEFAULT_KWARGS)
+        return init_ucs_school_import_framework()
