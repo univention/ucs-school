@@ -11,7 +11,6 @@ from subprocess import check_call
 from typing import Iterable
 
 import setuptools
-
 from ucsschool.kelvin import __version__
 
 with open(Path(__file__).parent / "requirements.txt") as fp:

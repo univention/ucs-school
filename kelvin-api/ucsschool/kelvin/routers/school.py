@@ -128,4 +128,6 @@ async def create(school: SchoolCreateModel) -> SchoolModel:
     """
     **Not implemented yet!**
     """
-    raise HTTPException(status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError")
+    raise HTTPException(
+        status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError"
+    )
