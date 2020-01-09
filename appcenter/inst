@@ -39,6 +39,7 @@ APP_ID="ucsschool-kelvin"
 ADMIN_GROUP="ucsschool-kelvin-admins"
 CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
 TOKEN_SIGN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/tokens.secret"
+KELVIN_IMPORT_CONFIG_FILE="/var/lib/ucs-school-import/configs/kelvin.json"
 
 . /usr/share/univention-join/joinscripthelper.lib || exit 1
 . /usr/share/univention-appcenter/joinscripthelper.sh || exit 1
@@ -63,6 +64,11 @@ main () {
         cat /etc/ldap.secret > "$CN_ADMIN_SECRET_FILE" || die
     else
         echo "Using existing password file."
+    fi
+
+    if ! [ -e "$KELVIN_IMPORT_CONFIG_FILE" ]; then
+      echo "Creating empty config file for the Import Framework used by Kelvin."
+      echo "{}" > $KELVIN_IMPORT_CONFIG_FILE
     fi
 
   echo "Creating group for users that are allowed to connect to the Kelvin API"
