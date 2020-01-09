@@ -363,6 +363,14 @@ async def create_random_schools(udm_kwargs):
 @pytest.fixture(scope="session")
 def add_udm_properties_to_import_config():
     if IMPORT_CONFIG["active"].exists():
+        with open(IMPORT_CONFIG["active"], "r") as fp:
+            config = json.load(fp)
+        if set(MAPPED_UDM_PROPERTIES).issubset(set(config["mapped_udm_properties"])):
+            print("Import config fine, not restarting server.")
+            yield
+            return
+
+    if IMPORT_CONFIG["active"].exists():
         print(f"Moving {IMPORT_CONFIG['active']!r} to {IMPORT_CONFIG['bak']!r}.")
         shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
         config_file = IMPORT_CONFIG["bak"]
