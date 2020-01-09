@@ -19,11 +19,16 @@ def test_missing_checks(reset_import_config):
     reset_import_config()
     with pytest.raises(UcsSchoolImportError) as exc_info:
         init_ucs_school_import_framework(configuration_checks=["mapped_udm_properties"])
-    assert 'Missing "class_overwrites" in configuration checks' in exc_info.value.args[0]
+    assert (
+        'Missing "class_overwrites" in configuration checks' in exc_info.value.args[0]
+    )
     reset_import_config()
     with pytest.raises(UcsSchoolImportError) as exc_info:
         init_ucs_school_import_framework(configuration_checks=["class_overwrites"])
-    assert 'Missing "mapped_udm_properties" in configuration checks' in exc_info.value.args[0]
+    assert (
+        'Missing "mapped_udm_properties" in configuration checks'
+        in exc_info.value.args[0]
+    )
     reset_import_config()
     init_ucs_school_import_framework(
         configuration_checks=["mapped_udm_properties", "class_overwrites"]
