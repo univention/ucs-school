@@ -50,6 +50,7 @@ from ucsschool.importer.factory import setup_factory as _setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import (
     UserImportCommandLine as _UserImportCommandLine,
 )
+from .constants import IMPORT_CONFIG_FILE_DEFAULT, IMPORT_CONFIG_FILE_USER
 
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
@@ -62,11 +63,11 @@ class InitialisationError(Exception):
 
 class KelvinUserImportCommandLine(_UserImportCommandLine):
     @property
-    def configuration_files(self):  # type: () -> List[str]
+    def configuration_files(self) -> List[str]:
         res = super(KelvinUserImportCommandLine, self).configuration_files
-        res.append("/usr/share/ucs-school-import/configs/kelvin_defaults.json")
-        if Path("/var/lib/ucs-school-import/configs/kelvin.json").is_file():
-            res.append("/var/lib/ucs-school-import/configs/kelvin.json")
+        res.append(str(IMPORT_CONFIG_FILE_DEFAULT))
+        if IMPORT_CONFIG_FILE_USER.is_file():
+            res.append(str(IMPORT_CONFIG_FILE_USER))
         return res
 
 
