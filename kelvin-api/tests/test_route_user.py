@@ -45,7 +45,9 @@ def role_id(value: Role) -> str:
     return value.name
 
 
-async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: C901
+async def compare_lib_api_user(
+    lib_user: ImportUser, api_user: UserModel, udm: UDM, url_fragment: str
+) -> None:  # noqa: C901
     udm_obj = await lib_user.get_udm_object(udm)
     for key, value in api_user.dict().items():
         if key == "school":
@@ -81,6 +83,8 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: 
             else:
                 assert value == getattr(lib_user, key)
         elif key == "school_classes":
+            if isinstance(lib_user, Staff):
+                assert value == {}
             for school, classes in value.items():
                 assert school in lib_user.school_classes
                 assert set(classes) == set(
@@ -95,7 +99,7 @@ async def compare_lib_api_user(lib_user, api_user, udm, url_fragment):  # noqa: 
 async def test_search_no_filter(
     auth_header, url_fragment, create_random_users, udm_kwargs
 ):
-    users = create_random_users(
+    users = await create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teacher_and_staff": 2}
     )
     async with UDM(**udm_kwargs) as udm:
@@ -160,7 +164,7 @@ async def test_search_filter(
         create_kwargs = {"school": school2_url, "schools": [school1_url, school2_url]}
     else:
         create_kwargs = {}
-    user = create_random_users({role: 1}, **create_kwargs)[0]
+    user = (await create_random_users({role: 1}, **create_kwargs))[0]
     async with UDM(**udm_kwargs) as udm:
         import_user: ImportUser = (
             await ImportUser.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={user.name}")
@@ -219,7 +223,7 @@ async def test_search_filter_udm_properties(
     else:
         create_kwargs = {}
     role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
-    user = create_random_users({role: 1}, **create_kwargs)[0]
+    user = (await create_random_users({role: 1}, **create_kwargs))[0]
     async with UDM(**udm_kwargs) as udm:
         import_user: ImportUser = (
             await ImportUser.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={user.name}")
@@ -278,7 +282,7 @@ async def test_get(
             "phone": [random_name(), random_name()],
         }
     }
-    user = create_random_users({role.name: 1}, **create_kwargs)[0]
+    user = (await create_random_users({role.name: 1}, **create_kwargs))[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await ImportUser.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
@@ -296,12 +300,13 @@ async def test_get(
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
 
 
-def test_get_empty_udm_properties_are_returned(
+@pytest.mark.asyncio
+async def test_get_empty_udm_properties_are_returned(
     auth_header, url_fragment, create_random_users, import_config, udm_kwargs,
 ):
     role: Role = random.choice(USER_ROLES)
     create_kwargs = {"udm_properties": {}}
-    user = create_random_users({role.name: 1}, **create_kwargs)[0]
+    user = (await create_random_users({role.name: 1}, **create_kwargs))[0]
     response = requests.get(f"{url_fragment}/users/{user.name}", headers=auth_header)
     assert response.status_code == 200, response.reason
     api_user = UserModel(**response.json())
@@ -324,22 +329,26 @@ async def test_create(
         roles = ["staff", "teacher"]
     else:
         roles = [role.name]
-    r_user = create_random_user_data(
+    r_user = await create_random_user_data(
         roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
     )
     title = random_name()
     r_user.udm_properties["title"] = title
     phone = [random_name(), random_name()]
     r_user.udm_properties["phone"] = phone
+    data = r_user.json()
+    print(f"POST data={data!r}")
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
         response = requests.post(
             f"{url_fragment}/users/",
             headers={"Content-Type": "application/json", **auth_header},
-            data=r_user.json(),
+            data=data,
         )
-        api_user = UserModel(**response.json())
+        assert response.status_code == 201, f"{response.__dict__!r}"
+        response_json = response.json()
+        api_user = UserModel(**response_json)
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
@@ -368,8 +377,8 @@ async def test_put(
     udm_kwargs,
     role: Role,
 ):
-    user = create_random_users({role.name: 1})[0]
-    new_user_data = create_random_user_data(roles=user.roles).dict()
+    user = (await create_random_users({role.name: 1}))[0]
+    new_user_data = (await create_random_user_data(roles=user.roles)).dict()
     del new_user_data["name"]
     del new_user_data["record_uid"]
     del new_user_data["source_uid"]
@@ -408,8 +417,8 @@ async def test_patch(
     udm_kwargs,
     role: Role,
 ):
-    user = create_random_users({role.name: 1})[0]
-    new_user_data = create_random_user_data(roles=user.roles).dict()
+    user = (await create_random_users({role.name: 1}))[0]
+    new_user_data = (await create_random_user_data(roles=user.roles)).dict()
     del new_user_data["name"]
     del new_user_data["record_uid"]
     del new_user_data["source_uid"]
@@ -445,7 +454,7 @@ async def test_patch(
 async def test_delete(
     auth_header, url_fragment, create_random_users, udm_kwargs, role: Role
 ):
-    r_user = create_random_users({role.name: 1})[0]
+    r_user = (await create_random_users({role.name: 1}))[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 1
@@ -478,19 +487,23 @@ async def test_rename(
     udm_kwargs,
     role: Role,
     method: str,
+    schedule_delete_user,
 ):
     if method == "patch":
-        user = create_random_users({role.name: 1})[0]
+        user = (await create_random_users({role.name: 1}))[0]
         new_name = f"t.new.{random_name()}.{random_name()}"
+        schedule_delete_user(new_name)
         response = requests.patch(
             f"{url_fragment}/users/{user.name}",
             headers=auth_header,
             json={"name": new_name},
         )
     elif method == "put":
-        user_data = create_random_user_data(roles=[url_fragment, url_fragment]).dict()
+        user_data = (
+            await create_random_user_data(roles=[url_fragment, url_fragment])
+        ).dict()
         del user_data["roles"]
-        user = create_random_users({role.name: 1}, **user_data)[0]
+        user = (await create_random_users({role.name: 1}, **user_data))[0]
         new_name = f"t.new.{random_name()}.{random_name()}"
         old_data = user.dict()
         del old_data["name"]
@@ -528,8 +541,10 @@ async def test_school_change(
     schools = await create_random_schools(2)
     school1_dn, school1_attr = schools[0]
     school2_dn, school2_attr = schools[1]
-    user = create_random_users(
-        {role.name: 1}, school=f"{url_fragment}/schools/{school1_attr['name']}"
+    user = (
+        await create_random_users(
+            {role.name: 1}, school=f"{url_fragment}/schools/{school1_attr['name']}"
+        )
     )[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(

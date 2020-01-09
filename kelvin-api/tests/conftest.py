@@ -224,18 +224,21 @@ def random_name() -> Callable[[], str]:
 
 
 @pytest.fixture
-def create_random_user_data(
-    url_fragment,
-):  # TODO: Extend with schools and school classes if resources are done
-    def _create_random_user_data(**kwargs) -> UserCreateModel:
+def create_random_user_data(url_fragment, new_school_class):
+    async def _create_random_user_data(**kwargs) -> UserCreateModel:
         f_name = fake.first_name()
         l_name = fake.last_name()
-        name = f"test.{f_name}.{l_name}"
+        name = f"test.{f_name}.{l_name}"[:15].rstrip(".")
         domainname = env_or_ucr("domainname")
+        if set(url.split("/")[-1] for url in kwargs["roles"]) == {"staff"}:
+            school_classes = {}
+        else:
+            sc_dn, sc_attr = await new_school_class()
+            school_classes = {"DEMOSCHOOL": ["DEMOSCHOOL-Democlass", sc_attr["name"]]}
         data = dict(
             email=f"{name}mail@{domainname}".lower(),
             record_uid=name,
-            source_uid="KELVIN",
+            source_uid="Kelvin",
             birthday=fake.date(),
             disabled=random.choice([True, False]),
             name=name,
@@ -244,7 +247,7 @@ def create_random_user_data(
             udm_properties={},
             school=f"{url_fragment}/schools/DEMOSCHOOL",
             schools=[f"{url_fragment}/schools/DEMOSCHOOL"],
-            school_classes={"DEMOSCHOOL": ["DEMOSCHOOL-Democlass"]},
+            school_classes=school_classes,
         )
         for key, value in kwargs.items():
             data[key] = value
@@ -255,11 +258,9 @@ def create_random_user_data(
 
 @pytest.fixture
 def create_random_users(
-    create_random_user_data, url_fragment, auth_header
+    create_random_user_data, url_fragment, auth_header, schedule_delete_user
 ):  # TODO: Extend with schools and school_classes if resources are done
-    usernames = list()
-
-    def _create_random_users(
+    async def _create_random_users(
         roles: Dict[str, int], **data_kwargs
     ) -> List[UserCreateModel]:
         users = []
@@ -272,7 +273,9 @@ def create_random_users(
                     ]
                 else:
                     roles_ulrs = [f"{url_fragment}/roles/{role}"]
-                user_data = create_random_user_data(roles=roles_ulrs, **data_kwargs)
+                user_data = await create_random_user_data(
+                    roles=roles_ulrs, **data_kwargs
+                )
                 response = requests.post(
                     f"{url_fragment}/users/",
                     headers={"Content-Type": "application/json", **auth_header},
@@ -281,10 +284,20 @@ def create_random_users(
                 assert response.status_code == 201, f"{response.__dict__}"
                 print(f"Created user {user_data.name!r} ({user_data.roles!r}).")
                 users.append(user_data)
-                usernames.append(user_data.name)
+                schedule_delete_user(user_data.name)
         return users
 
-    yield _create_random_users
+    return _create_random_users
+
+
+@pytest.fixture
+def schedule_delete_user(auth_header, url_fragment):
+    usernames = []
+
+    def _func(username: str):
+        usernames.append(username)
+
+    yield _func
 
     for username in usernames:
         response = requests.delete(

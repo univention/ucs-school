@@ -156,7 +156,7 @@ async def change_operation(
     operation,
 ):
     assert operation in ("patch", "put")
-    users_data = create_random_users(
+    users_data = await create_random_users(
         {"student": 2, "teacher": 1, "teacher_and_staff": 1}
     )
     student_data = None
