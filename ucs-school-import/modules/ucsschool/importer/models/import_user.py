@@ -1251,6 +1251,8 @@ class ImportUser(User):
 		all_fields = self.call_format_hook(prop_name, all_fields)
 
 		res = self.prop._replace(scheme, all_fields)
+		# univention.admin.property._replace() returns bytes now!
+		res = res.decode("utf-8")
 		if not res:
 			self.logger.warning("Created empty '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
 				prop_name=prop_name, scheme=scheme, data=all_fields))

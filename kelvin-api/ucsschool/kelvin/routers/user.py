@@ -107,6 +107,8 @@ class UserBaseModel(UcsSchoolBaseModel):
 
 
 class UserCreateModel(UserBaseModel):
+    name: str = ""
+
     class Config(UserBaseModel.Config):
         ...
 
@@ -441,9 +443,8 @@ async def create(
     try:
         user.prepare_uids()
         user_importer = get_user_importer()
-        user = await user_importer.determine_add_modify_action(
-            user
-        )  # -> user.prepare_all()
+        # user_importer.determine_add_modify_action() will call user.prepare_all()
+        user = await user_importer.determine_add_modify_action(user)
         if user.action != "A":
             raise HTTPException(
                 status_code=HTTP_409_CONFLICT,

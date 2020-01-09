@@ -36,6 +36,7 @@ from __future__ import absolute_import
 import re
 import string
 import logging
+from functools import lru_cache
 from six import string_types
 import lazy_object_proxy
 from ldap.dn import escape_dn_chars
@@ -290,6 +291,7 @@ class UsernameHandler(object):
 		return '{}(max_length={!r}, dry_run={!r})'.format(self.__class__.__name__, self.max_length, self.dry_run)
 
 	@property
+	@lru_cache(maxsize=1)
 	def allowed_chars(self):  # type: () -> str
 		return string.ascii_letters + string.digits + str(self.config["username"]["allowed_special_chars"])
 
@@ -302,6 +304,10 @@ class UsernameHandler(object):
 			return MemoryStorageBackend(attribute_storage_name=self.attribute_storage_name)
 		else:
 			return LdapStorageBackend(attribute_storage_name=self.attribute_storage_name)
+
+	@lru_cache(maxsize=128)
+	def bad_chars_to_translate_table(self, bad_chars):  # type: (str) -> Dict[int, None]
+		return dict((ord(x), None) for x in bad_chars)
 
 	def remove_bad_chars(self, name):  # type: (str) -> str
 		"""
@@ -330,7 +336,7 @@ class UsernameHandler(object):
 					char, self.attribute_name, name
 				)
 				name = name.strip(char)
-		return str(name).translate(None, bad_chars)
+		return str(name).translate(self.bad_chars_to_translate_table(bad_chars))
 
 	def format_name(self, name, max_length=None):  # type: (str, Optional[int]) -> str
 		"""
@@ -481,7 +487,7 @@ class EmailHandler(UsernameHandler):
 				"Removing disallowed characters %r from %s %r.",
 				''.join(sorted(bad_chars)),
 				self.attribute_name, name)
-		return str(name).translate(None, bad_chars)
+		return str(name).translate(self.bad_chars_to_translate_table(bad_chars))
 
 	def format_name(self, name, max_length=None):  # type: (str, Optional[int]) -> str
 		local_part, _at, domain_part = name.rpartition('@')

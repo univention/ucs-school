@@ -11,7 +11,6 @@ import ucsschool.kelvin.constants
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.kelvin.routers.role import SchoolUserRole
 from ucsschool.kelvin.routers.user import UserCreateModel, UserModel, UserPatchModel
-from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 from udm_rest_client import UDM
 
@@ -323,6 +322,7 @@ async def test_create(
     random_name,
     import_config,
     udm_kwargs,
+    schedule_delete_user,
     role: Role,
 ):
     if role.name == "teacher_and_staff":
@@ -341,6 +341,7 @@ async def test_create(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 0
+        schedule_delete_user(r_user.name)
         response = requests.post(
             f"{url_fragment}/users/",
             headers={"Content-Type": "application/json", **auth_header},
@@ -358,11 +359,49 @@ async def test_create(
         assert udm_props.title == title
         assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-        requests.delete(
-            f"{url_fragment}/users/{r_user.name}", headers=auth_header,
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+async def test_create_without_username(
+    auth_header,
+    url_fragment,
+    create_random_user_data,
+    random_name,
+    import_config,
+    reset_import_config,
+    udm_kwargs,
+    add_to_import_config,
+    schedule_delete_user,
+    role: Role,
+):
+    if role.name == "teacher_and_staff":
+        roles = ["staff", "teacher"]
+    else:
+        roles = [role.name]
+    r_user = await create_random_user_data(
+        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
+    )
+    r_user.name = ""
+    data = r_user.json()
+    print(f"POST data={data!r}")
+    expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
+        assert len(lib_users) == 0
+        schedule_delete_user(expected_name)
+        response = requests.post(
+            f"{url_fragment}/users/",
+            headers={"Content-Type": "application/json", **auth_header},
+            data=data,
         )
-        with pytest.raises(NoObject):
-            await User.from_dn(lib_users[0].dn, lib_users[0].school, udm)
+        assert response.status_code == 201, f"{response.__dict__!r}"
+        response_json = response.json()
+        api_user = UserModel(**response_json)
+        assert api_user.name == expected_name
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_users[0], role.klass)
 
 
 @pytest.mark.asyncio
