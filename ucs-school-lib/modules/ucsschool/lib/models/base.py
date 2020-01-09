@@ -673,7 +673,7 @@ class UCSSchoolHelperAbstractClass(object):
 		If you want to re-search, you need to explicitely set
 		self._udm_obj_searched = False
 		"""
-		if self._udm_obj_searched is False:
+		if self._udm_obj_searched is False or self._udm_obj is None:
 			dn = self.old_dn or self.dn
 			superordinate = await self.get_superordinate(lo)
 			if dn is None:
@@ -901,7 +901,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return obj
 
 	@classmethod
-	async def get_first_udm_obj(cls, lo: UDM, filter_str: str, superordinate: SuperOrdinateType = None) -> UdmObject:
+	async def get_first_udm_obj(cls, lo: UDM, filter_str: str, superordinate: SuperOrdinateType = None) -> Optional[UdmObject]:
 		"""
 		Returns the first UDM object of class cls._meta.udm_module that
 		matches a given filter
