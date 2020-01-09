@@ -70,6 +70,7 @@ from ..reader.base_reader import BaseReader
 
 FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
 UsernameUniquenessTuple = namedtuple('UsernameUniquenessTuple', ['record_uid', 'source_uid', 'dn'])
+GLOBAL_SOURCE_UID = "global_source_uid"
 UNIQUENESS = 'uniqueness'
 unicode = str
 
@@ -132,6 +133,7 @@ class ImportUser(User):
 		self.in_hook = False                                # if a hook is currently running
 
 		self._lo = None  # type: Optional[UDM]
+		self._skip_tests = set(self.config.get('skip_tests', []))
 
 		for attr in self._additional_props:
 			try:
@@ -708,7 +710,7 @@ class ImportUser(User):
 		Set the ucsschoolSourceUID (source_uid) (if not already set).
 		"""
 		if self.source_uid:
-			if self.source_uid != self.config["source_uid"]:
+			if self.source_uid != self.config["source_uid"] and GLOBAL_SOURCE_UID not in self._skip_tests:
 				raise NotSupportedError("Source_uid '{}' differs to configured source_uid '{}'.".format(
 					self.source_uid, self.config["source_uid"]))
 		else:
@@ -836,7 +838,7 @@ class ImportUser(User):
 			res = await self.modify_without_hooks(lo, validate, move_if_necessary)
 		else:
 			res = await super(ImportUser, self).modify(lo, validate, move_if_necessary)
-		if self.old_user and self.old_user.name != self.name and UNIQUENESS not in self.config.get('skip_tests', []):
+		if self.old_user and self.old_user.name != self.name and UNIQUENESS not in self._skip_tests:
 			del self._all_usernames[self.old_user.name]
 			self._all_usernames[self.name] = UsernameUniquenessTuple(self.record_uid, self.source_uid, self.dn)
 		return res
@@ -961,8 +963,6 @@ class ImportUser(User):
 		:raises InvalidSchoolClasses: ...
 		:raises InvalidSchools: ...
 		"""
-		skip_tests = self.config.get('skip_tests', [])
-
 		# check `name` 1st: it must be set, or `dn` will be empty, leading to AttributeError in `User.validate()`
 		if check_username:
 			if not self.name:
@@ -999,7 +999,7 @@ class ImportUser(User):
 				raise EmptyMandatoryAttribute("Mandatory attribute {!r} has empty value.".format(k), attr_name=k)
 
 		# don't run uniqueness checks from within a post_move hook
-		if not self.in_hook and UNIQUENESS not in skip_tests:
+		if not self.in_hook and UNIQUENESS not in self._skip_tests:
 			if self._unique_ids["record_uid"].get(self.record_uid, self.dn) != self.dn:
 				raise UniqueIdError('record_uid {!r} has already been used in this import by {!r}.'.format(
 					self.record_uid, self._unique_ids["record_uid"][self.record_uid]), entry_count=self.entry_count, import_user=self
@@ -1060,7 +1060,7 @@ class ImportUser(User):
 
 		await self.check_schools(lo)
 
-		if UNIQUENESS not in skip_tests:
+		if UNIQUENESS not in self._skip_tests:
 			ldap_lo = get_readonly_connection()
 			if not self._all_usernames:
 				# fetch usernames of all users only once per import job

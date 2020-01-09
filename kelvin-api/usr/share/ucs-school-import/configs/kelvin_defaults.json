@@ -8,6 +8,7 @@
   "dry_run": false,
   "logfile": null,
   "skip_tests": [
+    "global_source_uid",
     "uniqueness"
   ]
 }
