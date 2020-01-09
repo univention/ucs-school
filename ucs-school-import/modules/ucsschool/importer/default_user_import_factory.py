@@ -151,12 +151,12 @@ class DefaultUserImportFactory(object):
 		:return: object of :py:class:`ImportUser` subclass or :py:class:`ImportUser` if `cur_user_roles` was empty
 		:rtype: ImportUser
 		"""
-		from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+		from ucsschool.lib.roles import role_pupil, role_student, role_teacher, role_staff
 		from .models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
 			ImportTeachersAndStaff, ImportUser
 		if not cur_user_roles:
 			return ImportUser(*arg, **kwargs)
-		if role_pupil in cur_user_roles:
+		if role_pupil in cur_user_roles or role_student in cur_user_roles:
 			return ImportStudent(*arg, **kwargs)
 		if role_teacher in cur_user_roles:
 			if role_staff in cur_user_roles:
