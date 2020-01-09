@@ -4,7 +4,6 @@ import os
 import random
 import shutil
 import subprocess
-import time
 from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
@@ -20,7 +19,7 @@ import ucsschool.kelvin.main
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
-from ucsschool.importer.configuration import Configuration
+from ucsschool.importer.configuration import Configuration, ReadOnlyDict
 from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import UserCreateModel
 from udm_rest_client import UDM, NoObject
@@ -374,64 +373,85 @@ async def create_random_schools(udm_kwargs):
 
 
 @pytest.fixture(scope="session")
-def add_udm_properties_to_import_config():
-    if IMPORT_CONFIG["active"].exists():
-        with open(IMPORT_CONFIG["active"], "r") as fp:
-            config = json.load(fp)
-        if set(MAPPED_UDM_PROPERTIES).issubset(set(config["mapped_udm_properties"])):
-            print("Import config fine, not restarting server.")
-            yield
-            return
+def add_to_import_config():
 
-    if IMPORT_CONFIG["active"].exists():
-        print(f"Moving {IMPORT_CONFIG['active']!r} to {IMPORT_CONFIG['bak']!r}.")
-        shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
-        config_file = IMPORT_CONFIG["bak"]
-        with open(config_file, "r") as fp:
-            config = json.load(fp)
-    else:
-        config = {"configuration_checks": ["defaults", "mapped_udm_properties"]}
-    config["mapped_udm_properties"] = config.get("mapped_udm_properties", [])
-    config["mapped_udm_properties"].extend(MAPPED_UDM_PROPERTIES)
-    config["mapped_udm_properties"] = sorted(set(config["mapped_udm_properties"]))
-    config["verbose"] = True
-    with open(IMPORT_CONFIG["active"], "w") as fp:
-        json.dump(config, fp, indent=4)
-    print(f"Wrote config to {IMPORT_CONFIG['active']!r}: {config!r}")
-    print("Restarting Kelvin API server...")
-    subprocess.call(["/etc/init.d/kelvin-api", "restart"])
-    # wait for server to become ready
-    while True:
-        response = requests.get(
-            f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar"
-        )
-        if response.status_code == 404:
-            break
-        # else: 502 Proxy Error
+    def wait_for_server() -> None:
+        while True:
+            response = requests.get(
+                f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar"
+            )
+            if response.status_code == 404:
+                break
+            # else: 502 Proxy Error
 
-    yield
+    def _func(**kwargs) -> None:
+        if IMPORT_CONFIG["active"].exists():
+            no_restart = False
+            with open(IMPORT_CONFIG["active"], "r") as fp:
+                config = json.load(fp)
+            for k, v in kwargs.items():
+                if isinstance(v, list):
+                    new_value = set(v)
+                    old_value = set(config.get(k))
+                    if new_value.issubset(old_value):
+                        no_restart = True
+                else:
+                    new_value = v
+                    old_value = config.get(k)
+                    if old_value == new_value:
+                        no_restart = True
+            if no_restart:
+                print(f"Import config contains {kwargs!r} -> not restarting server.")
+                return
+
+        if IMPORT_CONFIG["active"].exists():
+            with open(IMPORT_CONFIG["active"], "r") as fp:
+                config = json.load(fp)
+            if not IMPORT_CONFIG['bak'].exists():
+                print(f"Moving {IMPORT_CONFIG['active']!s} to {IMPORT_CONFIG['bak']!s}.")
+                shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
+            config.update(kwargs)
+        else:
+            config = kwargs
+        with open(IMPORT_CONFIG["active"], "w") as fp:
+            json.dump(config, fp, indent=4)
+        print(f"Wrote config to {IMPORT_CONFIG['active']!s}: {config!r}")
+        print("Restarting Kelvin API server...")
+        subprocess.call(["/etc/init.d/kelvin-api", "restart"])
+        wait_for_server()
+
+    yield _func
 
     if IMPORT_CONFIG["bak"].exists():
         print(f"Moving {IMPORT_CONFIG['bak']!r} to {IMPORT_CONFIG['active']!r}.")
         shutil.move(IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"])
         print("Restarting Kelvin API server...")
         subprocess.call(["/etc/init.d/kelvin-api", "restart"])
-        time.sleep(3)
+        wait_for_server()
 
 
 @pytest.fixture(scope="session")
-def import_config(add_udm_properties_to_import_config):
-    # add_udm_properties_to_import_config() is already executed before collecting by setup.cfg
+def setup_import_config(add_to_import_config) -> None:
+    add_to_import_config(
+        mapped_udm_properties=MAPPED_UDM_PROPERTIES,
+        scheme={"username": {"default": "<:lower>test.<firstname>[:2].<lastname>[:3]"}},
+    )
+
+
+@pytest.fixture(scope="session")
+def import_config(setup_import_config) -> ReadOnlyDict:
+    # setup_import_config() is already executed before collecting by setup.cfg
     config = get_import_config()
     assert set(MAPPED_UDM_PROPERTIES).issubset(
         set(config.get("mapped_udm_properties", []))
     )
+    assert "username" in config.get("scheme", {})
     return config
 
 
 @pytest.fixture
 def reset_import_config():
-    def _func():
+    def _func() -> None:
         ucsschool.kelvin.import_config._ucs_school_import_framework_initialized = False
         ucsschool.kelvin.import_config._ucs_school_import_framework_error = None
         Configuration._instance = None
