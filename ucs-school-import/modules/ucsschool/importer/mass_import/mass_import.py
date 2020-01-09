@@ -75,7 +75,7 @@ class MassImport(object):
 		self.errors = list()
 		self.user_import_stats_str = ''
 
-	def mass_import(self):  # type: () -> None
+	async def mass_import(self):  # type: () -> None
 		with nullcontext() if self.dry_run else stopped_notifier():
 			self.import_computers()
 			self.import_groups()
@@ -84,7 +84,7 @@ class MassImport(object):
 			self.import_ous()
 			self.import_printers()
 			self.import_routers()
-			self.import_users()
+			await self.import_users()
 
 	def import_computers(self):
 		pass
@@ -107,7 +107,7 @@ class MassImport(object):
 	def import_routers(self):
 		pass
 
-	def import_users(self):  # type: () -> None
+	async def import_users(self):  # type: () -> None
 		self.logger.info("------ Importing users... ------")
 		user_import = self.factory.make_user_importer(self.dry_run)
 		exc = None
@@ -116,9 +116,9 @@ class MassImport(object):
 			run_import_pyhooks(PreReadPyHook, 'pre_read')
 			user_import.progress_report(description='Analyzing data: 1%.', percentage=1)
 			imported_users = user_import.read_input()
-			users_to_delete = user_import.detect_users_to_delete()
+			users_to_delete = await user_import.detect_users_to_delete()
 			user_import.delete_users(users_to_delete)  # 0% - 10%
-			user_import.create_and_modify_users(imported_users)  # 90% - 100%
+			await user_import.create_and_modify_users(imported_users)  # 90% - 100%
 		except UcsSchoolImportError as exc:
 			user_import.errors.append(exc)
 			self.logger.exception(exc)

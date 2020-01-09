@@ -40,7 +40,7 @@ from ..exceptions import CreationError, DeletionError, UnknownAction
 
 class LegacyUserImport(UserImport):
 
-	def detect_users_to_delete(self):
+	async def detect_users_to_delete(self):
 		"""
 		No need to compare input and LDAP. Action was written in the CSV file
 		and is already stored in user.action.

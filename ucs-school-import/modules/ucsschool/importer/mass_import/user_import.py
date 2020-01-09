@@ -39,8 +39,10 @@ from collections import defaultdict
 import datetime
 
 from ldap.filter import filter_format
+from udm_rest_client import UDM
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import ValidationError
+from ucsschool.lib.models.utils import env_or_ucr
 from ..exceptions import (
 	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction,
 	UserValidationError, WrongUserType)
@@ -57,6 +59,25 @@ try:
 	from ..exceptions import UcsSchoolImportError
 except ImportError:
 	pass
+
+CN_ADMIN_PASSWORD_FILE = "/var/lib/univention-appcenter/apps/ucsschool-kelvin/conf/cn_admin.secret"
+UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
+_udm_kwargs = {}  # type: Dict[str, str]
+
+
+def udm_kwargs():  # type: () -> Dict[str, str]
+	global _udm_kwargs
+	if not _udm_kwargs:
+		host = env_or_ucr("ldap/master")
+		with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
+			cn_admin_password = fp.read().strip()
+		_udm_kwargs = {
+				"username": "cn=admin",
+				"password": cn_admin_password,
+				"url": f"https://{host}/univention/udm/",
+				"ssl_ca_cert": UCS_SSL_CA_CERT,
+			}
+	return _udm_kwargs
 
 
 class UserImport(object):
@@ -84,8 +105,10 @@ class UserImport(object):
 		self.config = Configuration()  # type: ReadOnlyDict
 		self.logger = logging.getLogger(__name__)
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
+		self.udm = UDM(**udm_kwargs())
+		self.udm.session.open()
 		self.factory = Factory()
-		self.reader = self.factory.make_reader()
+		# self.reader = self.factory.make_reader()
 		self.imported_users_len = 0
 
 	def read_input(self):  # type: () -> List[ImportUser]
@@ -114,7 +137,7 @@ class UserImport(object):
 		self.logger.info("------ Read %d users from input data. ------", len(self.imported_users))
 		return self.imported_users
 
-	def create_and_modify_users(self, imported_users):
+	async def create_and_modify_users(self, imported_users):
 		# type: (List[ImportUser]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]
 		"""
 		Create and modify users.
@@ -167,7 +190,7 @@ class UserImport(object):
 						err = CreationError  # type: Union[Type[CreationError], Type[ModificationError]]
 						store = self.added_users[cls_name]  # type: List[Dict[str, Any]]
 						if self.dry_run:
-							await user.validate(self.connection, validate_unlikely_changes=True, check_username=True)
+							await user.validate(self.udm, validate_unlikely_changes=True, check_username=True)
 							if self.errors:
 								raise ValidationError(user.errors.copy())
 							user.call_hooks('pre', 'create')
@@ -175,12 +198,12 @@ class UserImport(object):
 							success = True
 							user.call_hooks('post', 'create')
 						else:
-							success = await user.create(lo=self.connection)
+							success = await user.create(lo=self.udm)
 					elif user.action == "M":
 						err = ModificationError
 						store = self.modified_users[cls_name]
 						if self.dry_run:
-							await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+							await user.validate(self.udm, validate_unlikely_changes=True, check_username=False)
 							if self.errors:
 								raise ValidationError(user.errors.copy())
 							user.call_hooks('pre', 'modify')
@@ -188,7 +211,7 @@ class UserImport(object):
 							success = True
 							user.call_hooks('post', 'modify')
 						else:
-							success = await user.modify(lo=self.connection)
+							success = await user.modify(lo=self.udm)
 					else:
 						# delete
 						continue
@@ -226,7 +249,7 @@ class UserImport(object):
 		:raises WrongUserType: if the user in LDAP is not of the same type as the `import_user` object
 		"""
 		try:
-			return await import_user.get_by_import_id(self.connection, import_user.source_uid, import_user.record_uid)
+			return await import_user.get_by_import_id(self.udm, import_user.source_uid, import_user.record_uid)
 		except WrongObjectType as exc:
 			raise WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user) from exc
 
@@ -284,7 +307,7 @@ class UserImport(object):
 				)
 				user = await self.school_move(imported_user, user)
 		user.update(imported_user)
-		if user.disabled != "0" or await user.has_expiry(self.connection) or await user.has_purge_timestamp(self.connection):
+		if user.disabled != "0" or await user.has_expiry(self.udm) or await user.has_purge_timestamp(self.udm):
 			self.logger.info(
 				"Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is "
 				"non-empty), reactivating user.",
@@ -319,13 +342,13 @@ class UserImport(object):
 		attr = ['ucsschoolSourceUID', 'ucsschoolRecordUID']
 		filter_s = self.get_existing_users_search_filter()
 		self.logger.debug('Searching with filter=%r', filter_s)
-		ucs_ldap_users = await self.connection.search(filter_s, attr=attr)
+		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
 		return [
 			(lu[1]["ucsschoolSourceUID"][0].decode('utf-8'), lu[1]["ucsschoolRecordUID"][0].decode('utf-8'))
 			for lu in ucs_ldap_users
 		]
 
-	def detect_users_to_delete(self):  # type: () -> List[Tuple[str, str, List[str]]]
+	async def detect_users_to_delete(self):  # type: () -> List[Tuple[str, str, List[str]]]
 		"""
 		Find difference between source database and UCS user database.
 
@@ -338,7 +361,7 @@ class UserImport(object):
 			self.logger.info("------ Looking only for users with action='D' (no_delete=%r) ------", self.config["no_delete"])
 			return [(user.source_uid, user.record_uid, user.input_data) for user in self.imported_users if user.action == 'D']
 
-		ucs_user_ids = set(self.get_ids_of_existing_users())
+		ucs_user_ids = set(await self.get_ids_of_existing_users())
 		imported_user_ids = set((iu.source_uid, iu.record_uid) for iu in self.imported_users)
 		users_to_delete = ucs_user_ids - imported_user_ids
 		users_to_delete = [(u[0], u[1], []) for u in users_to_delete]
@@ -372,7 +395,7 @@ class UserImport(object):
 				errors=len(self.errors)
 			)
 			try:
-				user = await a_user.get_by_import_id(self.connection, source_uid, record_uid)
+				user = await a_user.get_by_import_id(self.udm, source_uid, record_uid)
 				user.action = "D"  # mark for logging/csv-output purposes
 				user.input_data = input_data  # most likely empty list (except in legacy import)
 			except NoObject as exc:
@@ -423,8 +446,8 @@ class UserImport(object):
 		:rtype: ImportUser
 		"""
 		if self.dry_run:
-			await user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
-			await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+			await user.check_schools(lo=self.udm, additional_schools=[imported_user.school])
+			await user.validate(self.udm, validate_unlikely_changes=True, check_username=False)
 			if self.errors:
 				raise UserValidationError(
 					'ValidationError when moving {} from {!r} to {!r}.'.format(
@@ -436,11 +459,11 @@ class UserImport(object):
 			res = True
 			user.call_hooks('post', 'move')
 		else:
-			res = await user.change_school(imported_user.school, self.connection)
+			res = await user.change_school(imported_user.school, self.udm)
 		if not res:
 			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school), entry_count=imported_user.entry_count, import_user=imported_user)
 		# refetch user from LDAP
-		user = await imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
+		user = await imported_user.get_by_import_id(self.udm, imported_user.source_uid, imported_user.record_uid)
 		return user
 
 	async def do_delete(self, user):  # type: (ImportUser) -> bool
@@ -473,7 +496,7 @@ class UserImport(object):
 				modified |= self.deactivate_user_now(user)
 			else:
 				# deactivate user later
-				modified |= self.set_deactivation_grace(user, deactivation_grace)
+				modified |= await self.set_deactivation_grace(user, deactivation_grace)
 
 			# delete user later
 			modified |= await self.set_deletion_grace(user, deletion_grace)
@@ -484,7 +507,7 @@ class UserImport(object):
 		elif self.dry_run:
 			user.call_hooks('pre', 'remove')
 			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
-			await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+			await user.validate(self.udm, validate_unlikely_changes=True, check_username=False)
 			if self.errors:
 				raise UserValidationError(
 					'ValidationError when deleting {}.'.format(user),
@@ -492,7 +515,7 @@ class UserImport(object):
 			success = True
 			user.call_hooks('post', 'remove')
 		elif modified:
-			success = await user.modify(lo=self.connection)
+			success = await user.modify(lo=self.udm)
 		else:
 			# not a dry_run, but user was not modified, because
 			# disabled / expiration date / purge timestamp were already set
@@ -532,9 +555,9 @@ class UserImport(object):
 			user.call_hooks('post', 'remove')
 			return True
 		else:
-			return await user.remove(self.connection)
+			return await user.remove(self.udm)
 
-	def set_deactivation_grace(self, user, grace):  # type: (ImportUser, int) -> bool
+	async def set_deactivation_grace(self, user, grace):  # type: (ImportUser, int) -> bool
 		"""
 		Sets the account expiration date (UDM attribute `userexpiry`) on the
 		user object. Does not run :py:meth:`user.modify()`.
@@ -547,7 +570,7 @@ class UserImport(object):
 		if user.disabled == '1':
 			self.logger.info('User %s is already disabled. No account expiration date is set.', user)
 			return False
-		elif await user.has_expiry(self.connection):
+		elif await user.has_expiry(self.udm):
 			self.logger.info('An account expiration date is already set for user %s. The entry remains unchanged.', user)
 			return False
 		else:
@@ -567,7 +590,7 @@ class UserImport(object):
 		:return: whether any changes were made to the object and user.modify() is required
 		:rtype: bool
 		"""
-		if await user.has_purge_timestamp(self.connection):
+		if await user.has_purge_timestamp(self.udm):
 			self.logger.info('User %s is already scheduled for deletion. The entry remains unchanged.', user)
 			return False
 		else:

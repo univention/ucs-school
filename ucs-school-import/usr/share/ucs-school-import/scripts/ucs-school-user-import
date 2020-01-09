@@ -33,13 +33,14 @@ UCS@school import tool.
 # <http://www.gnu.org/licenses/>.
 
 import sys
+import asyncio
 
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 
 
 def main():
 	ui = UserImportCommandLine()
-	return ui.main()
+	return asyncio.run(ui.main())
 
 
 if __name__ == "__main__":

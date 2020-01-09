@@ -33,13 +33,14 @@ UCS@school import tool for legacy csv format.
 # <http://www.gnu.org/licenses/>.
 
 import sys
+import asyncio
 
 from ucsschool.importer.legacy.legacy_user_import_cmdline import LegacyUserImportCommandLine
 
 
 def main():
 	ui = LegacyUserImportCommandLine()
-	return ui.main()
+	return asyncio.run(ui.main())
 
 
 if __name__ == "__main__":

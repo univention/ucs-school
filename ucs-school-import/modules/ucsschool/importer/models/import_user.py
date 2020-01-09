@@ -285,15 +285,18 @@ class ImportUser(User):
 	@classmethod
 	def get_ldap_filter_for_user_role(cls):  # type: () -> str
 		# convert cmdline / config name to ucsschool.lib role(s)
-		if not cls.config["user_role"]:
+		config = Configuration()
+		if not config["user_role"]:
 			roles = ()  # type: Iterable[str]
-		elif cls.config["user_role"] == 'student':
+		elif config["user_role"] == 'student':
 			roles = (role_pupil,)
-		elif cls.config["user_role"] == 'teacher_and_staff':
+		elif config["user_role"] == 'teacher_and_staff':
 			roles = (role_teacher, role_staff)
 		else:
-			roles = (cls.config["user_role"],)
-		a_user = cls.factory.make_import_user(roles)
+			roles = (config["user_role"],)
+		if not cls._factory:
+			cls._factory = Factory()
+		a_user = cls._factory.make_import_user(roles)
 		return a_user.type_filter
 
 	@classmethod
@@ -323,22 +326,23 @@ class ImportUser(User):
 		if obj:
 			return await cls.from_udm_obj(obj, None, connection)
 		else:
-			ldap_lo = get_readonly_connection()
-			dns = await ldap_lo.searchDn(filter_format(
+			ldap_lo, ldap_po = get_readonly_connection()
+			dns = ldap_lo.searchDn(filter_format(
 					"(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
 					(source_uid, record_uid)
 			))
 			if dns:
 				raise WrongObjectType(dns[0], cls)
 			else:
+				config = Configuration()
 				raise NoObject("No {} with source_uid={!r} and record_uid={!r} found.".format(
-					cls.config.get("user_role", "user") or "User", source_uid, record_uid))
+					config.get("user_role", "user") or "User", source_uid, record_uid))
 
 	def deactivate(self):  # type: () -> None
 		"""
 		Deactivate user account. Caller must run modify().
 		"""
-		self.disabled = "1"
+		self.disabled = True
 
 	def expire(self, expiry):  # type: (str) -> None
 		"""
@@ -366,7 +370,9 @@ class ImportUser(User):
 			except KeyError:
 				pass
 		roles = user_dict.pop("roles", [])
-		return cls.factory.make_import_user(roles, **user_dict)
+		if not cls._factory:
+			cls._factory = Factory()
+		return cls._factory.make_import_user(roles, **user_dict)
 
 	async def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
 		self._prevent_mapped_attributes_in_udm_properties()
@@ -493,8 +499,8 @@ class ImportUser(User):
 		if new_user:
 			self.make_password()
 		if self.password:
-			self.udm_properties["overridePWHistory"] = "1"
-			self.udm_properties["overridePWLength"] = "1"
+			self.udm_properties["overridePWHistory"] = True
+			self.udm_properties["overridePWLength"] = True
 		self.make_classes()
 		self.make_birthday()
 		self.make_disabled()
@@ -908,7 +914,7 @@ class ImportUser(User):
 		"""
 		self.logger.info('Reactivating %s...', self)
 		self.expire("")
-		self.disabled = "0"
+		self.disabled = False
 		self.set_purge_timestamp("")
 
 	async def remove(self, lo):  # type: (UDM) -> bool

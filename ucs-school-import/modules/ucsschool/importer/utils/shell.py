@@ -50,7 +50,6 @@ Module to ease interactive use of import system.
 from __future__ import absolute_import
 import json
 import logging
-import os.path
 import pprint
 
 from ..configuration import setup_configuration as _setup_configuration
@@ -67,7 +66,7 @@ from ucsschool.lib.models import *  # noqa
 
 _config_args = {
 	"dry_run": False,
-	"source_uid": "TestDB",
+	"source_uid": "Kelvin",
 	"verbose": True
 }
 try:

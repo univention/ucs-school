@@ -142,7 +142,7 @@ class CommandLine(object):
 
 		self.factory = setup_factory(self.config["factory"])
 
-	def main(self):
+	async def main(self):
 		try:
 			self.prepare_import()
 		except InitialisationError as exc:
@@ -150,7 +150,7 @@ class CommandLine(object):
 			self.logger.exception(msg)
 			return 1
 		try:
-			self.do_import()
+			await self.do_import()
 
 			if self.errors:
 				# at least one non-fatal error
