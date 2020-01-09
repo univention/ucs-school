@@ -89,12 +89,14 @@ def init_ucs_school_import_framework(**config_kwargs) -> ReadOnlyDict:
         if "mapped_udm_properties" not in config.get("configuration_checks", []):
             raise UcsSchoolImportError(
                 'Missing "mapped_udm_properties" in configuration checks, e.g.: '
-                '{.., "configuration_checks": ["defaults", "mapped_udm_properties", "class_overwrites"], ..}'
+                '{.., "configuration_checks": ["defaults", "mapped_udm_properties", '
+                '"class_overwrites"], ..}'
             )
         if "class_overwrites" not in config.get("configuration_checks", []):
             raise UcsSchoolImportError(
                 'Missing "class_overwrites" in configuration checks, e.g.: '
-                '{.., "configuration_checks": ["defaults", "mapped_udm_properties", "class_overwrites"], ..}'
+                '{.., "configuration_checks": ["defaults", "mapped_udm_properties", '
+                '"class_overwrites"], ..}'
             )
         # no need to call _ui.setup_logging(), because we configure logger and
         # handlers for 'ucsschool.*' and 'univention.*' in

@@ -380,7 +380,9 @@ def add_udm_properties_to_import_config():
     subprocess.call(["/etc/init.d/kelvin-api", "restart"])
     # wait for server to become ready
     while True:
-        response = requests.get(f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar")
+        response = requests.get(
+            f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar"
+        )
         if response.status_code == 404:
             break
         # else: 502 Proxy Error
