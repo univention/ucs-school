@@ -20,6 +20,7 @@ import ucsschool.kelvin.main
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
+from ucsschool.importer.configuration import Configuration
 from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import UserCreateModel
 from udm_rest_client import UDM, NoObject
@@ -405,3 +406,13 @@ def import_config(add_udm_properties_to_import_config):
         set(config.get("mapped_udm_properties", []))
     )
     return config
+
+
+@pytest.fixture
+def reset_import_config():
+    def _func():
+        ucsschool.kelvin.import_config._ucs_school_import_framework_initialized = False
+        ucsschool.kelvin.import_config._ucs_school_import_framework_error = None
+        Configuration._instance = None
+
+    return _func
