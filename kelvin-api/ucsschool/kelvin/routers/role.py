@@ -1,17 +1,13 @@
 from enum import Enum
-from typing import List
+from typing import Dict, List, Tuple, Type
 from urllib.parse import ParseResult, urlparse
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, HttpUrl
 from starlette.requests import Request
 
-from ucsschool.importer.models.import_user import (
-    ImportStaff,
-    ImportStudent,
-    ImportTeacher,
-    ImportTeachersAndStaff,
-)
+from ucsschool.importer.factory import Factory
+from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_staff,
@@ -19,7 +15,10 @@ from ucsschool.lib.roles import (
     role_teacher,
 )
 
+from ..import_config import init_ucs_school_import_framework
+
 router = APIRouter()
+_roles_to_class = {}
 
 
 class SchoolUserRole(str, Enum):
@@ -39,16 +38,15 @@ class SchoolUserRole(str, Enum):
             return cls(lib_role)
 
     @classmethod
-    def get_lib_class(cls, roles: List["SchoolUserRole"]):
-        mapping = dict(staff=ImportStaff, student=ImportStudent, teacher=ImportTeacher)
-        if cls.staff in roles and cls.teacher in roles:
-            return ImportTeachersAndStaff
-        elif len(roles) == 1:
-            return mapping[roles[0].value]
-        else:
-            raise Exception(
-                f"This should never happen! Tried to get LibClass for {roles}"
-            )
+    def get_lib_class(cls, roles: List["SchoolUserRole"]) -> Type[ImportUser]:
+        role_names = sorted(role.name for role in roles) if roles else []
+        key = tuple(role_names)
+        if key not in _roles_to_class:
+            init_ucs_school_import_framework()
+            factory = Factory()
+            user: ImportUser = factory.make_import_user(role_names)
+            _roles_to_class[key] = user.__class__
+        return _roles_to_class[key]
 
     def as_lib_role(self, school: str) -> str:
         """

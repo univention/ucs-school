@@ -50,6 +50,7 @@ from ucsschool.importer.factory import setup_factory as _setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import (
     UserImportCommandLine as _UserImportCommandLine,
 )
+
 from .constants import IMPORT_CONFIG_FILE_DEFAULT, IMPORT_CONFIG_FILE_USER
 
 _ucs_school_import_framework_initialized = False

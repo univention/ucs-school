@@ -13,26 +13,25 @@ from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
-    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
 from ucsschool.importer.configuration import ReadOnlyDict
-from ucsschool.importer.models.import_user import (
-    ImportStaff,
-    ImportStudent,
-    ImportTeacher,
-    ImportTeachersAndStaff,
-    ImportUser,
-)
+from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
+from ucsschool.importer.exceptions import UcsSchoolImportError
+from ucsschool.importer.factory import Factory
+from ucsschool.importer.mass_import.user_import import UserImport
+from ucsschool.importer.models.import_user import ImportUser
+from ucsschool.lib.models.attributes import ValidationError as LibValidationError
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM, APICommunicationError, MoveError, UdmObject
 from univention.admin.filter import conjunction, expression
 
 from ..exceptions import UnknownUDMProperty
-from ..import_config import get_import_config
+from ..import_config import get_import_config, init_ucs_school_import_framework
 from ..urls import url_to_name
 from .base import (
     APIAttributesMixin,
@@ -56,6 +55,18 @@ def accepted_udm_properties() -> Set[str]:
     return set(ImportUser._attributes.keys()).union(
         set(get_import_config().get("mapped_udm_properties", []))
     )
+
+
+@lru_cache(maxsize=1)
+def get_factory() -> DefaultUserImportFactory:
+    init_ucs_school_import_framework()
+    return Factory()
+
+
+@lru_cache(maxsize=1)
+def get_user_importer() -> UserImport:
+    factory = get_factory()
+    return factory.make_user_importer(False)
 
 
 def get_udm_properties(udm_obj: UdmObject) -> Dict[str, Any]:
@@ -325,22 +336,17 @@ async def search(
         "disabled",
         "roles",
     ]
-
-    if roles is None:
-        user_class = ImportUser
-    elif set(roles) == {SchoolUserRole.staff}:
-        user_class = ImportStaff
-    elif set(roles) == {SchoolUserRole.student}:
-        user_class = ImportStudent
-    elif set(roles) == {SchoolUserRole.teacher}:
-        user_class = ImportTeacher
-    elif set(roles) == {SchoolUserRole.staff, SchoolUserRole.teacher}:
-        user_class = ImportTeachersAndStaff
-    else:
+    if roles and set(roles) not in (
+        {SchoolUserRole.staff},
+        {SchoolUserRole.student},
+        {SchoolUserRole.teacher},
+        {SchoolUserRole.staff, SchoolUserRole.teacher},
+    ):
         raise HTTPException(
             status_code=HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Unknown value for 'roles' property: {roles!r}",
         )
+    user_class = SchoolUserRole.get_lib_class(roles)
 
     if school:
         school_filter = f"(ou={escape_filter_chars(school)})".replace(r"\2a", "*")
@@ -431,8 +437,35 @@ async def create(
     user = await user.as_lib_model(request)
     if await user.exists(udm):
         raise HTTPException(status_code=HTTP_409_CONFLICT, detail="School user exists.")
+
+    try:
+        user.prepare_uids()
+        user_importer = get_user_importer()
+        user = await user_importer.determine_add_modify_action(
+            user
+        )  # -> user.prepare_all()
+        if user.action != "A":
+            raise HTTPException(
+                status_code=HTTP_409_CONFLICT,
+                detail=f"School user exists (name={user.name!r}, "
+                f"record_uid={user.record_uid!r}, "
+                f"source_uid={user.source_uid!r}).",
+            )
+        await user.validate(udm, validate_unlikely_changes=True, check_username=True)
+        logger.info("Going to create %s with %r...", user, user.to_dict())
+        res = await user.create(udm)
+    except (UcsSchoolImportError, LibValidationError) as exc:
+        error_msg = f"Failed to create {user!r}: {exc}"
+        logger.exception(error_msg)
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
+
+    if res:
+        logger.info("Success creating %r.", user)
     else:
-        await user.create(udm)
+        error_msg = f"Error creating {user!r}: {user.errors!r}"
+        logger.error(error_msg)
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
+
     return await UserModel.from_lib_model(user, request, udm)
 
 
@@ -461,7 +494,7 @@ async def change_school(
         )
         logger.exception(error_msg)
         raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail=error_msg,
+            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
         )
     return await get_import_user(udm, user.dn)
 
@@ -480,7 +513,7 @@ async def rename_user(
         error_msg = f"Failed to rename {user!r} to {new_name!r}: {user.errors!r}"
         logger.error(error_msg)
         raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail=error_msg,
+            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
         )
     user = await get_import_user(udm, user.dn)
     return user
