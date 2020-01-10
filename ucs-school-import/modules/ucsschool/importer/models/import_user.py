@@ -251,7 +251,11 @@ class ImportUser(User):
 				# retry for case where create_ou ran parallel to this process
 				# may happen with HTTP-API
 				self.__class__._all_school_names = []
+<<<<<<< HEAD
 				all_school_names = await self.get_all_school_names(self.lo)
+=======
+				all_school_names = self.get_all_school_names(lo)
+>>>>>>> cef46d4a871a27cf651ca60674aa2a234daa18e0
 				if school in all_school_names:
 					continue
 				self.logger.debug("Known schools: %r", all_school_names)
@@ -1343,11 +1347,6 @@ class ImportUser(User):
 			return self.config['username']['max_length'][self.role_sting]
 		except KeyError:
 			return self.config['username']['max_length']['default']
-
-	@classmethod
-	def invalidate_cache(cls):
-		super(ImportUser, cls).invalidate_cache()
-		cls._all_school_names = []
 
 
 class ImportStaff(ImportUser, Staff):

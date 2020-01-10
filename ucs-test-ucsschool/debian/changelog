@@ -1,3 +1,15 @@
+ucs-test-ucsschool (6.0.87) unstable; urgency=medium
+
+  * Bug #50594: adjust test case for new texts in login dialog
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 07 Jan 2020 17:31:57 +0100
+
+ucs-test-ucsschool (6.0.86) unstable; urgency=medium
+
+  * Bug #50687: fix importou.py dhcp subnet creation
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 06 Jan 2020 17:19:10 +0100
+
 ucs-test-ucsschool (6.0.85) unstable; urgency=low
 
   * Bug #50513: wait for s4connector after deleting objects

@@ -3,9 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.19A~4.4.0.201912101148
+fix: 17.0.22A~4.4.0.202001071153
 desc: |
- * The fix_ucsschool_slave script has been adapted to keep objects with the wrong
-   ucsscoolRole win_computer from reappearing again after a resync.
-   (Bug #50280).
-bug: [50280]
+ * A premature cache purge leading to a huge slowdown of the UCS@school user import was fixed (Bug #50689).
+bug: [50689]
