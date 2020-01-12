@@ -175,18 +175,18 @@ class UserModel(UserBaseModel, APIAttributesMixin):
 
 
 class UserPatchModel(BasePatchModel):
-    name: str = ""
-    firstname: str = ""
-    lastname: str = ""
+    name: str = None
+    firstname: str = None
+    lastname: str = None
     birthday: datetime.date = None
-    disabled: bool = False
-    email: str = ""
-    record_uid: str = ""
+    disabled: bool = None
+    email: str = None
+    record_uid: str = None
     school: HttpUrl = None
     schools: List[HttpUrl] = None
-    school_classes: Dict[str, List[str]] = {}
-    source_uid: str = ""
-    udm_properties: Dict[str, Any] = {}
+    school_classes: Dict[str, List[str]] = None
+    source_uid: str = None
+    udm_properties: Dict[str, Any] = None
 
     async def to_modify_kwargs(self) -> Dict[str, Any]:
         kwargs = await super().to_modify_kwargs()

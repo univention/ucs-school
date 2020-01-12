@@ -143,7 +143,7 @@ class BasePatchModel(BaseModel):
     async def to_modify_kwargs(self) -> Dict[str, Any]:
         res = {}
         for key, value in self.dict().items():
-            if value:
+            if value is not None:
                 res[key] = value
         return res
 
