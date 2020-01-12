@@ -15,7 +15,7 @@ import pytest
 import requests
 from faker import Faker
 
-import ucsschool.kelvin.main
+import ucsschool.kelvin.constants
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
@@ -24,6 +24,10 @@ from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import UserCreateModel
 from udm_rest_client import UDM, NoObject
 from univention.config_registry import ConfigRegistry
+
+# handle RuntimeError: Directory '/kelvin/kelvin-api/static' does not exist
+with patch("ucsschool.kelvin.constants.STATIC_FILES_PATH", "/tmp"):
+    import ucsschool.kelvin.main
 
 APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -207,7 +211,7 @@ def temp_file_func():
 def setup_logging(temp_dir_session):
     tmp_log_file = Path(mkstemp()[1])
 
-    with patch.object(ucsschool.kelvin.main, "LOG_FILE_PATH", tmp_log_file):
+    with patch("ucsschool.kelvin.main.LOG_FILE_PATH", tmp_log_file):
         print(f" -- logging to {tmp_log_file!s} --")
         yield
 
@@ -372,9 +376,8 @@ async def create_random_schools(udm_kwargs):
     return _create_random_schools
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session")  # noqa: C901
 def add_to_import_config():
-
     def wait_for_server() -> None:
         while True:
             response = requests.get(
@@ -385,6 +388,9 @@ def add_to_import_config():
             # else: 502 Proxy Error
 
     def _func(**kwargs) -> None:
+        if not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists():
+            # not in Docker container
+            return
         if IMPORT_CONFIG["active"].exists():
             no_restart = False
             with open(IMPORT_CONFIG["active"], "r") as fp:
@@ -407,8 +413,10 @@ def add_to_import_config():
         if IMPORT_CONFIG["active"].exists():
             with open(IMPORT_CONFIG["active"], "r") as fp:
                 config = json.load(fp)
-            if not IMPORT_CONFIG['bak'].exists():
-                print(f"Moving {IMPORT_CONFIG['active']!s} to {IMPORT_CONFIG['bak']!s}.")
+            if not IMPORT_CONFIG["bak"].exists():
+                print(
+                    f"Moving {IMPORT_CONFIG['active']!s} to {IMPORT_CONFIG['bak']!s}."
+                )
                 shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
             config.update(kwargs)
         else:

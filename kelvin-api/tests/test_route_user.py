@@ -44,9 +44,9 @@ def role_id(value: Role) -> str:
     return value.name
 
 
-async def compare_lib_api_user(
+async def compare_lib_api_user(  # noqa: C901
     lib_user: ImportUser, api_user: UserModel, udm: UDM, url_fragment: str
-) -> None:  # noqa: C901
+) -> None:
     udm_obj = await lib_user.get_udm_object(udm)
     for key, value in api_user.dict().items():
         if key == "school":
