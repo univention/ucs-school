@@ -40,8 +40,9 @@ class Test(HttpApiUserTestBase):
 
 	def test_02_create_user_parallel_from_external_different_classes(self):
 		parallelism = 20
-		self.logger.info('*** Using OUs %r and %r, parallelism=%d.', self.itb.ou_A.name, self.itb.ou_B.name, parallelism)
-		attrs = [self.make_user_attrs([self.itb.ou_A.name, self.itb.ou_B.name]) for _i in range(parallelism)]
+		ous = sorted([self.itb.ou_A.name, self.itb.ou_B.name])
+		self.logger.info('*** Using OUs %r and %r, parallelism=%d.', ous[0], ous[1], parallelism)
+		attrs = [self.make_user_attrs(ous) for _i in range(parallelism)]
 		for _attr in attrs:
 			self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(_attr))
 
@@ -78,8 +79,8 @@ class Test(HttpApiUserTestBase):
 			user2.disabled = '1' if attr['disabled'] else '0'
 			user2.password = ''
 			user2.roles = user.roles
-			user2.school = self.itb.ou_A.name
-			user2.schools = [self.itb.ou_A.name, self.itb.ou_B.name]
+			user2.school = ous[0]
+			user2.schools = ous
 			user2.ucsschool_roles = user.ucsschool_roles  # not in attr
 			# add mapped udm_properties not in attr
 			mup = self.import_config["mapped_udm_properties"]
@@ -276,11 +277,11 @@ class Test(HttpApiUserTestBase):
 		self.schoolenv.udm._cleanup.setdefault('groups/group', []).extend(self.extract_class_dns(attrs))
 		del attrs['name']
 		self.logger.debug('*** attrs=%r', attrs)
-		username_begin = "{}.{}".format(attrs["firstname"], attrs["lastname"])
+		expected_username = "test.{}.{}".format(attrs["firstname"][:2], attrs["lastname"][:3]).lower()
 		result = create_remote_static((self.auth_headers, attrs))
-		self.assertEqual(result["name"], username_begin[:len(result["name"])])
+		self.assertEqual(result["name"], expected_username)
 		user = self.get_import_user(result['dn'])
-		self.assertEqual(user.name, username_begin[:len(user.name)])
+		self.assertEqual(user.name, expected_username)
 		self.compare_import_user_and_resource(user, result)
 		self.logger.info('*** OK: LDAP <-> resource')
 
