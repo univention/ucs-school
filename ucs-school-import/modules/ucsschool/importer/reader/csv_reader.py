@@ -33,6 +33,7 @@ CSV reader for CSV files using the new import format.
 """
 
 from csv import reader as csv_reader, Sniffer, Error as CsvError
+import io
 import codecs
 import sys
 
@@ -40,18 +41,22 @@ import six
 from six import string_types
 import magic
 
+from udm_rest_client import UDM
 from ..contrib.csv import DictReader
 from .base_reader import BaseReader
 from ..exceptions import ConfigurationError, InitialisationError, NoRole, UnknownRole, UnknownProperty
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
-import univention.admin.modules
+from ucsschool.lib.models.utils import udm_rest_client_cn_admin_kwargs
 try:
 	from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
 	from csv import Dialect
 	from ..models.import_user import ImportUser
 except ImportError:
 	pass
+
+
+unicode = str
 
 
 class CsvReader(BaseReader):
@@ -80,8 +85,6 @@ class CsvReader(BaseReader):
 		"""
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
 		self.fieldnames = None  # type: Iterable[str]
-		usersmod = univention.admin.modules.get("users/user")
-		univention.admin.modules.init(self.lo, self.position, usersmod)
 
 	@staticmethod
 	def get_encoding(filename_or_file):  # type: (Union[str, BinaryIO]) -> str
@@ -98,7 +101,7 @@ class CsvReader(BaseReader):
 		if isinstance(filename_or_file, string_types):
 			with open(filename_or_file, 'rb') as fp:
 				txt = fp.read()
-		elif isinstance(filename_or_file, file):
+		elif isinstance(filename_or_file, io.TextIOWrapper):
 			old_pos = filename_or_file.tell()
 			txt = filename_or_file.read()
 			filename_or_file.seek(old_pos)
@@ -155,7 +158,7 @@ class CsvReader(BaseReader):
 
 				fpu = UTF8Recoder(fp, encoding)
 				_reader = csv_reader(fpu, dialect=dialect)
-				line = _reader.next()
+				line = next(_reader)
 				fp.seek(start)
 				header = map(str, range(len(line)))
 			csv_reader_args = dict(fieldnames=header, dialect=dialect)
@@ -172,7 +175,7 @@ class CsvReader(BaseReader):
 				self.input_data = reader.row
 				yield {
 					unicode(key, 'utf-8').strip(): unicode(value or "", 'utf-8').strip()
-					for key, value in row.iteritems()
+					for key, value in row.items()
 				}
 
 	def handle_input(
@@ -268,7 +271,7 @@ class CsvReader(BaseReader):
 			)
 		return roles
 
-	def map(self, input_data, cur_user_roles):  # type: (List[str], Iterable[str]) -> ImportUser
+	async def map(self, input_data, cur_user_roles):  # type: (List[str], Iterable[str]) -> ImportUser
 		"""
 		Creates a ImportUser object from a users dict. Data will not be
 		modified, just copied.
@@ -279,7 +282,7 @@ class CsvReader(BaseReader):
 		:return: ImportUser instance
 		:rtype: ImportUser
 		"""
-		import_user = self.factory.make_import_user(cur_user_roles)
+		import_user: ImportUser = self.factory.make_import_user(cur_user_roles)
 		attrib_names = self._get_attrib_name(import_user)
 		for k, v in self.config["csv"]["mapping"].items():
 			if k not in input_data:
@@ -293,11 +296,11 @@ class CsvReader(BaseReader):
 				setattr(import_user, v, input_data[k])
 			else:
 				# must be a UDM property
-				try:
-					prop_desc = usersmod.property_descriptions[v]
-				except KeyError:
+				async with UDM(**udm_rest_client_cn_admin_kwargs()) as udm:
+					udm_user = await import_user.get_udm_object(udm)
+				if not hasattr(udm_user.props, v):
 					raise UnknownProperty("Unknown UDM property: '{}'.".format(v), entry_count=self.entry_count, import_user=import_user)
-				if prop_desc.multivalue:
+				if isinstance(udm_user.props[v], list):
 					try:
 						delimiter = self.config["csv"]["incell-delimiter"][k]
 					except KeyError:
@@ -322,7 +325,7 @@ class CsvReader(BaseReader):
 		if not input_data:
 			return {}
 		if not self.fieldnames:
-			self.read().next()
+			next(self.read())
 		dict_reader_mapping = dict(zip(self.fieldnames, input_data))
 		res = dict()
 		for k, v in self.config["csv"]["mapping"].items():
@@ -376,4 +379,4 @@ class UTF8Recoder(object):
 		return self
 
 	def next(self):  # type: () -> str
-		return self.reader.next().encode("utf-8")
+		return next(self.reader).encode("utf-8")

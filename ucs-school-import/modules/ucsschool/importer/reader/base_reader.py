@@ -70,10 +70,10 @@ class BaseReader(object):
 		self.entry_count = 0    # line/node in input data
 		self.input_data = None  # input data, as raw as possible/sensible
 
-	def __iter__(self):
+	async def __aiter__(self):
 		return self
 
-	def next(self):
+	async def __anext__(self):
 		"""
 		Generates ImportUsers from input data.
 
@@ -81,7 +81,7 @@ class BaseReader(object):
 		:rtype: ImportUser
 		"""
 		while True:
-			input_dict = self.import_users.next()
+			input_dict = next(self.import_users)
 			self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
 			try:
 				run_import_pyhooks(PostReadPyHook, 'entry_read', self.entry_count, self.input_data, input_dict)
@@ -90,7 +90,7 @@ class BaseReader(object):
 				self.logger.info("Skipping input line %d as requested by PostReadPyHook: %s", self.entry_count, exc)
 
 		cur_user_roles = self.get_roles(input_dict)
-		cur_import_user = self.map(input_dict, cur_user_roles)
+		cur_import_user = await self.map(input_dict, cur_user_roles)
 		cur_import_user.entry_count = self.entry_count
 		cur_import_user.input_data = self.input_data
 		cur_import_user.prepare_uids()
@@ -107,7 +107,7 @@ class BaseReader(object):
 		"""
 		raise NotImplementedError()
 
-	def map(self, input_data, cur_user_roles):
+	async def map(self, input_data, cur_user_roles):
 		"""
 		IMPLEMENT ME
 		Creates a ImportUser object from a users dict (self.cur_entry). Data

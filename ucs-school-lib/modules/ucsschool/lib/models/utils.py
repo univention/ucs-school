@@ -85,8 +85,12 @@ FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['file'])
 LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config['date'])
 LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config['colors'])
 
+CN_ADMIN_PASSWORD_FILE = "/var/lib/univention-appcenter/apps/ucsschool-kelvin/conf/cn_admin.secret"
+UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
+
 _handler_cache = dict()
 _pw_length_cache = dict()
+_udm_kwargs = {}  # type: Dict[str, str]
 ucr = lazy_object_proxy.Proxy(_ucr)  # type: ConfigRegistry  # "global" ucr for ucsschool.lib.models
 ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool/username/max_length", 20)))  # type: int
 
@@ -470,3 +474,18 @@ def _write_logging_config(path):  # type: (str) -> None
 			ruamel.yaml.RoundTripDumper,
 			indent=4
 		)
+
+
+def udm_rest_client_cn_admin_kwargs():  # type: () -> Dict[str, str]
+	global _udm_kwargs
+	if not _udm_kwargs:
+		host = env_or_ucr("ldap/master")
+		with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
+			cn_admin_password = fp.read().strip()
+		_udm_kwargs = {
+				"username": "cn=admin",
+				"password": cn_admin_password,
+				"url": f"https://{host}/univention/udm/",
+				"ssl_ca_cert": UCS_SSL_CA_CERT,
+			}
+	return _udm_kwargs

@@ -42,7 +42,7 @@ from ldap.filter import filter_format
 from udm_rest_client import UDM
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.lib.models.utils import env_or_ucr
+from ucsschool.lib.models.utils import udm_rest_client_cn_admin_kwargs
 from ..exceptions import (
 	UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, TooManyErrors, UnknownAction,
 	UserValidationError, WrongUserType)
@@ -59,25 +59,6 @@ try:
 	from ..exceptions import UcsSchoolImportError
 except ImportError:
 	pass
-
-CN_ADMIN_PASSWORD_FILE = "/var/lib/univention-appcenter/apps/ucsschool-kelvin/conf/cn_admin.secret"
-UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
-_udm_kwargs = {}  # type: Dict[str, str]
-
-
-def udm_kwargs():  # type: () -> Dict[str, str]
-	global _udm_kwargs
-	if not _udm_kwargs:
-		host = env_or_ucr("ldap/master")
-		with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
-			cn_admin_password = fp.read().strip()
-		_udm_kwargs = {
-				"username": "cn=admin",
-				"password": cn_admin_password,
-				"url": f"https://{host}/univention/udm/",
-				"ssl_ca_cert": UCS_SSL_CA_CERT,
-			}
-	return _udm_kwargs
 
 
 class UserImport(object):
@@ -105,10 +86,10 @@ class UserImport(object):
 		self.config = Configuration()  # type: ReadOnlyDict
 		self.logger = logging.getLogger(__name__)
 		self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
-		self.udm = UDM(**udm_kwargs())
+		self.udm = UDM(**udm_rest_client_cn_admin_kwargs())
 		self.udm.session.open()
 		self.factory = Factory()
-		# self.reader = self.factory.make_reader()
+		self.reader = self.factory.make_reader()
 		self.imported_users_len = 0
 
 	def read_input(self):  # type: () -> List[ImportUser]
@@ -124,7 +105,7 @@ class UserImport(object):
 		self.logger.info("------ Starting to read users from input data... ------")
 		while True:
 			try:
-				import_user = self.reader.next()
+				import_user = next(self.reader)
 				self.logger.info("Done reading %d. user: %s", num, import_user)
 				self.imported_users.append(import_user)
 			except StopIteration:
