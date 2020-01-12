@@ -3,7 +3,7 @@
 # Univention Management Console
 #  Univention Directory Manager Module
 #
-# Copyright 2019 Univention GmbH
+# Copyright 2020 Univention GmbH
 #
 # http://www.univention.de/
 #
