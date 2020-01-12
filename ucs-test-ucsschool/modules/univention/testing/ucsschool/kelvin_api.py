@@ -58,7 +58,7 @@ import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 from univention.config_registry import handler_set
 from ucsschool.lib.models.group import SchoolClass
-from ucsschool.lib.models.utils import exec_cmd, get_stream_handler, ucr
+from ucsschool.lib.models.utils import get_stream_handler, ucr
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.configuration import setup_configuration as _setup_configuration, Configuration
@@ -308,18 +308,19 @@ class HttpApiUserTestBase(TestCase):
 			'password': uts.random_username(16),
 			'record_uid': uts.random_username(),
 			'roles': [urljoin(RESSOURCE_URLS['roles'], role) for role in roles],
-			'school': urljoin(RESSOURCE_URLS['schools'], ous[0]),
+			'school': urljoin(RESSOURCE_URLS['schools'], sorted(ous)[0]),
 			'school_classes': {} if roles == ('staff',) else dict(
 				(ou, sorted([uts.random_username(4), uts.random_username(4)]))
-				for ou in ous
+				for ou in sorted(ous)
 			),
-			'schools': [urljoin(RESSOURCE_URLS['schools'], ou) for ou in ous],
+			'schools': [urljoin(RESSOURCE_URLS['schools'], ou) for ou in sorted(ous)],
 			'source_uid': self.import_config['source_uid'],
 			'udm_properties': {
 				'phone': [uts.random_username(), uts.random_username()],
 				'organisation': uts.random_username(),
 			},
 		}
+		assert all(len(set(kl)) == 2 for kl in res["school_classes"].values())
 		if partial:
 			# remove all but n attributes
 			num_attrs = random.randint(1, 5)
