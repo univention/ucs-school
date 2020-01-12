@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 API_USERS_GROUP_NAME = "ucsschool-kelvin-admins"
@@ -5,6 +6,17 @@ APP_ID = "ucsschool-kelvin"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
+DEFAULT_LOG_LEVELS = {
+    None: logging.INFO,
+    "fastapi": logging.INFO,
+    "requests": logging.INFO,
+    "udm_rest_client": logging.INFO,
+    "univention": logging.INFO,
+    "ucsschool": logging.INFO,
+    "uvicorn.access": logging.INFO,
+    "uvicorn.error": logging.INFO,
+
+}
 IMPORT_CONFIG_FILE_DEFAULT = Path(
     "/usr/share/ucs-school-import/configs/kelvin_defaults.json"
 )

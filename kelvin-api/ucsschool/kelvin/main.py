@@ -17,10 +17,11 @@ from starlette.status import (
 
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
-from ucsschool.lib.models.utils import get_file_handler
+from ucsschool.lib.models.utils import env_or_ucr, get_file_handler
 
 from . import __version__
 from .constants import (
+    DEFAULT_LOG_LEVELS,
     LOG_FILE_PATH,
     STATIC_FILE_CHANGELOG,
     STATIC_FILE_README,
@@ -59,24 +60,21 @@ def get_logger() -> logging.Logger:
 
 @app.on_event("startup")
 def setup_logging() -> None:
-    for name in (
-        None,
-        "fastapi",
-        "requests",
-        "udm_rest_client",
-        "univention",
-        "ucsschool",
-        "uvicorn.access",
-        "uvicorn.error",
-    ):
+    min_level = env_or_ucr("ucsschool/kelvin/log_level")
+    if min_level not in ("DEBUG", "INFO", "WARNING", "ERROR"):
+        min_level = logging.ERROR
+    min_level = logging._checkLevel(min_level)
+    abs_min_level = min_level
+    for name, default_level in DEFAULT_LOG_LEVELS.items():
         logger = logging.getLogger(name)
-        logger.setLevel(logging.DEBUG)
-    file_handler = get_file_handler(logging.DEBUG, str(LOG_FILE_PATH))
+        logger.setLevel(min(default_level, min_level))
+        abs_min_level = min(min_level, logger.level)
+
+    file_handler = get_file_handler(abs_min_level, str(LOG_FILE_PATH))
     logger = logging.getLogger("uvicorn.access")
-    logger.setLevel(logging.INFO)
     logger.addHandler(file_handler)
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    logger.setLevel(abs_min_level)
     logger.addHandler(file_handler)
 
 

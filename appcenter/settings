@@ -3,3 +3,9 @@ Type = Int
 Description = Number of minutes a token retrieved from the Kelvin API is valid.
 Description[de] = Anzahl der Minuten die ein Token, der von der Kelvin-API bezogen wurde, gültig ist.
 InitialValue = 60
+
+[ucsschool/kelvin/log_level]
+Type = String
+Description = Log level for messages written to /var/log/univention/ucs-school-kelvin/http.log. Valid values are "DEBUG", "INFO", "WARNING" and "ERROR".
+Description[de] = Loglevel der Nachrichten die nach /var/log/univention/ucs-school-kelvin/http.log geschrieben werden. Gültige Werte sind "DEBUG", "INFO", "WARNING" and "ERROR".
+InitialValue = INFO
