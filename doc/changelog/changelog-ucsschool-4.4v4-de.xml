@@ -326,44 +326,7 @@ feedback@univention.de
 					<!-- END ucs-school-import 17.0.18A~4.4.0.201911271049 -->
 <!-- CHANGELOG:2019-11-27:APPEND -->
 				</section>
-				<section id="changelog:ucsschool:2019-12-18" lang="en">
-					<title>Released on 2019-12-18:</title>
-					<!-- START ucs-school-import 17.0.20A~4.4.0.201912131551 -->
-					<para>
-						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.20A~4.4.0.201912131551</emphasis>:
-						<itemizedlist>
-							<listitem><para>The script <command>fix_ucsschool_slave</command> has been adapted to keep objects with the wrong UCS@school role <literal>win_computer</literal> from reappearing again after a resync (<u:bug>50280</u:bug>).</para></listitem>
-
-						</itemizedlist>
-					</para>
-					<!-- END ucs-school-import 17.0.20A~4.4.0.201912131551 -->
-					<!-- START ucs-school-metapackage 12.0.2-6A~4.4.0.201912051307 -->
-					<para>
-						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.2-6A~4.4.0.201912051307</emphasis>:
-						<itemizedlist>
-							<listitem><para>During a re-join of DC school slaves, the LDAP attribute <literal>userAccountControl</literal> was set to demote these objects, which caused them to be recognized as normal Windows Host Objects by the S4 Connector. The S4 Connector then mistakenly appended the value <literal>win_computer</literal> to the LDAP attribute <literal>ucsschoolRole</literal>. This faulty behaviour has been fixed (<u:bug>50280</u:bug>).</para></listitem>
-
-						</itemizedlist>
-					</para>
-					<!-- END ucs-school-metapackage 12.0.2-6A~4.4.0.201912051307 -->
-<!-- CHANGELOG:2019-12-18:APPEND -->
-				</section>
-				<section id="changelog:ucsschool:2019-12-20" lang="en">
-					<title>Released on 2019-12-20:</title>
-					<!-- START ucs-school-import 17.0.21A~4.4.0.201912201118 -->
-					<para>
-						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.21A~4.4.0.201912201118</emphasis>:
-						<itemizedlist>
-							<listitem><para>An erroneous function call was fixed, that was leading to wrong ownership of logfiles, which in turn produced empty logfiles (<u:bug>50515</u:bug>).</para></listitem>
-
-						</itemizedlist>
-					</para>
-					<!-- END ucs-school-import 17.0.21A~4.4.0.201912201118 -->
-<!-- CHANGELOG:2019-12-20:APPEND -->
-				</section>
 <!-- CHANGELOG-NEW-SECTION -->
-
-
 
 
 

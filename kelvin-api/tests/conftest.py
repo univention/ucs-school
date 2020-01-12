@@ -1,5 +1,3 @@
-
-
 import datetime
 import json
 import os
@@ -128,9 +126,7 @@ def auth_header(url_fragment):
         headers={"Content-Type": "application/x-www-form-urlencoded"},
         data=dict(username="Administrator", password="univention"),
     )
-
     assert response.status_code == 200, f"{response.__dict__!r}"
-
     response_json = response.json()
     auth_header = {"Authorization": f"Bearer {response_json['access_token']}"}
     return auth_header

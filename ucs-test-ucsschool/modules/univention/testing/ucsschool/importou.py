@@ -624,7 +624,7 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 
 			default_ip = Interfaces().get_default_ip_address()
 			dhcp_subnet_properties = {
-				'subnet': default_ip.network,
+				'subnet': default_ip.ip,
 				'subnetmask': default_ip.prefixlen,
 			}
 			dhcp_subnet2 = udm.create_object('dhcp/subnet', superordinate=dhcp_service, **dhcp_subnet_properties)
@@ -656,7 +656,7 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 				# dhcp subnet2 should be copied
 				ou_base = get_ou_base(ou=ou_name, district_enable=False)
 				new_dhcp_service_dn = 'cn=%(ou)s,cn=dhcp,%(ou_base)s' % {'ou': ou_name, 'ou_base': ou_base}
-				new_dhcp_subnet2_dn = 'cn=%s,%s' % (default_ip.network, new_dhcp_service_dn)
+				new_dhcp_subnet2_dn = 'cn=%s,%s' % (default_ip.ip, new_dhcp_service_dn)
 				utils.verify_ldap_object(new_dhcp_subnet2_dn, should_exist=True)
 
 				# dhcp subnet1 should not be copied

@@ -94,49 +94,6 @@ async def compare_lib_api_user(
             assert value == getattr(lib_user, key)
 
 
-def compare_ldap_json_obj(dn, json_resp, url_fragment):
-    import univention.admin.uldap
-    lo, pos = univention.admin.uldap.getAdminConnection()
-    ldap_obj = lo.get(dn)
-    # assert True is False
-    for attr, value in json_resp.items():
-        if attr == "record_uid":
-            assert value == ldap_obj["ucsschoolRecordUID"][0].decode("utf-8")
-        elif attr == "ucsschool_roles":
-            assert value[0] == ldap_obj["ucsschoolRole"][0].decode("utf-8")
-        elif attr == "email":
-            assert value == ldap_obj["mail"][0].decode("utf-8")
-        elif attr == "source_uid":
-            assert value == ldap_obj["ucsschoolSourceUID"][0].decode("utf-8")
-        elif attr == "birthday":
-            assert value == ldap_obj["univentionBirthday"][0].decode("utf-8")
-        elif attr == "firstname":
-            assert value == ldap_obj["givenName"][0].decode("utf-8")
-        # ???
-        elif attr == "lastname":
-            assert value == ldap_obj["sn"][0].decode("utf-8")
-        elif attr == "school":
-            assert value.split("/")[-1] == ldap_obj["ucsschoolSchool"][0].decode("utf-8")
-
-        # needed ?
-        elif attr == "udm_properties":
-            for k, v in json_resp["udm_properties"].items():
-                if k == "organisation" and "o" in ldap_obj:
-                    assert v == ldap_obj["o"][0].decode("utf-8")
-                    continue
-
-                # ? strange attr.
-                if k == "phone" and "telephoneNumber" in ldap_obj:
-                    for p1, p2 in zip(v, ldap_obj["telephoneNumber"]):
-                        assert p1 == p2.decode("utf-8")
-                    continue
-
-                if type(v) is str:
-                    assert ldap_obj[k][0].decode("utf-8") == v
-                if type(v) is int:
-                    assert int(ldap_obj[k][0].decode("utf-8")) == v
-
-
 @pytest.mark.asyncio
 async def test_search_no_filter(
     auth_header, url_fragment, create_random_users, udm_kwargs
@@ -237,10 +194,6 @@ async def test_search_filter(
         assert user.name in api_users
         api_user = api_users[user.name]
         await compare_lib_api_user(import_user, api_user, udm, url_fragment)
-        json_resp = response.json()
-        resp = [r for r in json_resp if r["dn"] == api_user.dn][0]
-        compare_ldap_json_obj(api_user.dn, resp, url_fragment)
-
 
 
 @pytest.mark.asyncio
@@ -306,9 +259,7 @@ async def test_search_filter_udm_properties(
         else:
             assert created_value == filter_value
         await compare_lib_api_user(import_user, api_user, udm, url_fragment)
-        json_resp = response.json()
-        resp = [r for r in json_resp if r["dn"] == api_user.dn][0]
-        compare_ldap_json_obj(api_user.dn, resp, url_fragment)
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
@@ -346,10 +297,6 @@ async def test_get(
             else:
                 assert api_user.udm_properties.get(k) == v
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-        json_resp = response.json()
-        if type(json_resp) is list:
-            json_resp = [resp for resp in json_resp if resp['dn'] == api_user.dn][0]
-        compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
 
 
 @pytest.mark.asyncio
@@ -495,9 +442,6 @@ async def test_put(
         assert udm_props.title == title
         assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-        json_resp = response.json()
-        compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
-
 
 
 @pytest.mark.asyncio
@@ -542,8 +486,6 @@ async def test_patch(
         assert udm_props.title == title
         assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-        json_resp = response.json()
-        compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
 
 
 @pytest.mark.asyncio

@@ -29,18 +29,11 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
-
-import urllib
 import logging
 from optparse import OptionParser
-
-import ldap
-from ldap.filter import filter_format
-
-import univention.uldap
 from univention.admin.uldap import getAdminConnection
-from univention.config_registry import ConfigRegistry
 from ucsschool.lib.models.utils import get_stream_handler, get_file_handler
+import subprocess
 
 LOG_FILE = '/var/log/univention/ucsschool-fix-slave-objects.log'
 LOG_DEBUG_FMT = '%(asctime)s %(levelname)-5s %(funcName)s:%(lineno)d  %(message)s'
@@ -50,37 +43,14 @@ LOG_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 logger = logging.getLogger('main')
 
 
-def get_s4_lo():
-	ucr = ConfigRegistry()
-	ucr.load()
-	tls_mode = 0 if ucr.get('connector/s4/ldap/ssl') == "no" else 2
-
-	protocol = ucr.get('connector/s4/ldap/protocol', 'ldap').lower()
-	ldap_host_s4 = ucr.get('connector/s4/ldap/host')
-	ldap_port_s4 = int(ucr.get('connector/s4/ldap/port'))
-	ldap_base_s4 = ucr.get('connector/s4/ldap/base')
-	ldap_binddn_s4 = ucr.get('connector/s4/ldap/binddn')
-	ldap_bindpw_s4 = None
-	if ucr.get('connector/s4/ldap/bindpw'):
-		ldap_bindpw_s4 = open(ucr['connector/s4/ldap/bindpw']).read().strip('\n')
-	ldap_certificate_s4 = ucr.get('connector/s4/ldap/certificate')
-	if protocol == 'ldapi':
-		socket = urllib.quote(ucr.get('connector/s4/ldap/socket', ''), '')
-		ldap_uri_s4 = "%s://%s" % (protocol, socket)
-	else:
-		ldap_uri_s4 = "%s://%s:%d" % (protocol, ldap_host_s4, ldap_port_s4)
-
-	lo_s4 = univention.uldap.access(host=ldap_host_s4, port=ldap_port_s4, base=ldap_base_s4, binddn=ldap_binddn_s4, bindpw=ldap_bindpw_s4, start_tls=tls_mode, ca_certfile=ldap_certificate_s4, uri=ldap_uri_s4)
-	lo_s4.lo.set_option(ldap.OPT_REFERRALS, 0)
-	return lo_s4
-
-
-def fix_slave(lo, lo_s4, slave_dn, slave_attrs, dry_run=True):
+def fix_slave(lo, slave_dn, slave_attrs, dry_run=True):
 	logger.debug('Checking %r', slave_dn)
 	logger.debug('Attributes: %r', slave_attrs)
 	roles = slave_attrs.get('ucsschoolRole', [])
 	object_classes = slave_attrs.get('objectClass', [])
-	slave_cn = slave_attrs.get('cn', [''])[0]
+	slave_cn = slave_attrs.get('cn', [])
+	slave_s4_dn = ''
+	slave_uAC = ''
 
 	mod_role = {
 		'old': roles,
@@ -91,33 +61,38 @@ def fix_slave(lo, lo_s4, slave_dn, slave_attrs, dry_run=True):
 		'new': [oc for oc in object_classes if oc not in ('univentionWindows', 'ucsschoolComputer')],
 	}
 
+	output = subprocess.check_output(['univention-s4search', '--cross-ncs', '(&(cn=%s)(userAccountControl:1.2.840.113556.1.4.803:=4096))' % slave_cn[0]])
+	for line in output.splitlines():
+		if 'dn:' in line:
+			slave_s4_dn = line.split(': ')[1]
+		if 'userAccountControl' in line:
+			slave_uAC = int(line.split(': ')[1])
+
 	if mod_role['old'] != mod_role['new'] or mod_oc['old'] != mod_oc['new']:
 		logger.info('Will modify: %s', slave_dn)
 		logger.info('Roles: %r', mod_role)
 		logger.info('ObjectClass: %r', mod_oc)
-		if not dry_run:
+		if slave_uAC:
+			new_slave_uAC = int(slave_uAC) - 4096 + 532480
+			mod_uAC = {
+				'old': [slave_uAC],
+				'new': [new_slave_uAC],
+			}
+			logger.info('userAccountControl: %r', mod_uAC)
+		if dry_run:
+			logger.info('DRY-RUN: skipping modification')
+		else:
 			lo.modify(slave_dn, (
 				('ucsschoolRole', mod_role['old'], mod_role['new']),
 				('objectClass', mod_oc['old'], mod_oc['new']),
 			))
-
-		for slave_s4_dn, slave_s4_attr in lo_s4.search(filter_format('(&(cn=%s)(userAccountControl:1.2.840.113556.1.4.803:=4096))', [slave_cn]), attr=['userAccountControl']):
-			if slave_s4_dn is None:
-				continue  # referals
-			slave_account_control = int(slave_s4_attr['userAccountControl'][0])
-			new_slave_account_control = int(slave_account_control) & ~4096 | 8192 | 524288
-			if slave_account_control == new_slave_account_control:
-				continue
-
-			mod_account_control = [('userAccountControl', slave_s4_attr['userAccountControl'], [str(new_slave_account_control)])]
-			logger.info('userAccountControl: %r', mod_account_control)
-
-			# reset userAccountControl from workstation/server (4096) to DC (532480)
-			if not dry_run:
-				lo_s4.modify(slave_s4_dn, mod_account_control)
-
-		if dry_run:
-			logger.info('DRY-RUN: skipping modification')
+			if slave_s4_dn and slave_uAC:
+				# reset userAccountControl from workstation/server (4096) to DC (532480)
+				mod_str = 'dn: %s\nchangetype: modify\nreplace: userAccountControl\nuserAccountControl: %s\n\n' % (slave_s4_dn, new_slave_uAC)
+				p1 = subprocess.Popen(['ldbmodify', '-H', '/var/lib/samba/private/sam.ldb'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, shell=False)
+				(stdout, stderr) = p1.communicate(mod_str)
+				if p1.returncode != 0:
+					logger.error('Failed to set userAccountControl for Samba 4 object (%s)\n%s' % (slave_s4_dn, stderr))
 
 
 def main():
@@ -135,13 +110,12 @@ the wrong object class will be removed and the ucsschoolRole attribute corrected
 
 	logger.info('Looking for affected domaincontroller_slave objects...')
 	lo, po = getAdminConnection()
-	lo_s4 = get_s4_lo()
 	slaves = lo.search(
 		filter='(univentionObjectType=computers/domaincontroller_slave)',
 		attr=['objectClass', 'ucsschoolRole', 'cn']
 	)
 	for slave_dn, slave_attrs in slaves:
-		fix_slave(lo, lo_s4, slave_dn, slave_attrs, dry_run=options.dry_run)
+		fix_slave(lo, slave_dn, slave_attrs, dry_run=options.dry_run)
 
 
 if __name__ == '__main__':

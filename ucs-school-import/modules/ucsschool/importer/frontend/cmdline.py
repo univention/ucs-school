@@ -75,7 +75,7 @@ class CommandLine(object):
 		if not any(isinstance(handler, UniStreamHandler) for handler in self.logger.handlers):
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
-			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
+				self.logger.addHandler(get_file_handler('DEBUG', filename, uid, gid, mode))
 		return self.logger
 
 	def setup_config(self):
