@@ -28,11 +28,11 @@
 from typing import List
 
 import pytest
-import requests
 from faker import Faker
-from ldap.filter import filter_format
 
+import requests
 import ucsschool.kelvin.constants
+from ldap.filter import filter_format
 from ucsschool.kelvin.routers.school_class import SchoolClassModel
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.group import SchoolClass
@@ -101,6 +101,30 @@ async def compare_lib_api_obj(
             assert lib_value == getattr(api_obj, attr)
 
 
+def compare_ldap_json_obj(dn, json_resp, url_fragment):
+    import univention.admin.uldap
+
+    lo, pos = univention.admin.uldap.getAdminConnection()
+    ldap_obj = lo.get(dn)
+
+    for attr, value in json_resp.items():
+        if attr == "ucsschool_roles":
+            assert value[0] == ldap_obj["ucsschoolRole"][0].decode("utf-8")
+        elif attr == "description" and "description" in ldap_obj:
+            assert value == ldap_obj["description"][0].decode("utf-8")
+        elif attr == "users":
+            json_users = {url2username(url) for url in json_resp["users"]}
+            if json_users:
+                ldap_users = {name.decode("utf-8") for name in ldap_obj["memberUid"]}
+                assert json_users == ldap_users
+        elif attr == "dn":
+            assert f"cn={ldap_obj['cn'][0].decode('utf-8')}" in value
+        elif attr == "name":
+            assert value in ldap_obj["cn"][0].decode("utf-8")
+    if "univentionObjectType" in ldap_obj:
+        assert ldap_obj["univentionObjectType"] == [b"groups/group"]
+
+
 @pytest.mark.asyncio
 async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
     sc1_dn, sc1_attr = await new_school_class()
@@ -124,6 +148,8 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
     for lib_obj in lib_classes:
         api_obj = api_classes[lib_obj.name]
         await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
+        resp = [resp for resp in json_resp if resp["dn"] == api_obj.dn][0]
+        compare_ldap_json_obj(api_obj.dn, resp, url_fragment)
 
 
 @pytest.mark.asyncio
@@ -140,6 +166,7 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
     assert response.status_code == 200
     api_obj = SchoolClassModel(**json_resp)
     await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
+    compare_ldap_json_obj(json_resp["dn"], json_resp, url_fragment)
 
 
 @pytest.mark.asyncio
@@ -167,6 +194,7 @@ async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_ob
             is True
         )
         await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
+        compare_ldap_json_obj(json_resp["dn"], json_resp, url_fragment)
         await SchoolClass(name=lib_obj.name, school=lib_obj.school).remove(udm)
         assert (
             await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm)

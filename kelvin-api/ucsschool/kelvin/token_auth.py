@@ -37,7 +37,6 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError
 from pydantic import BaseModel
 from starlette.status import HTTP_401_UNAUTHORIZED
-
 from ucsschool.lib.models.utils import ucr
 
 from .constants import (
