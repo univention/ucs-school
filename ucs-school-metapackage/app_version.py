@@ -3,7 +3,7 @@
 #
 #  Check App version
 #
-# Copyright 2016-2019 Univention GmbH
+# Copyright 2016-2020 Univention GmbH
 #
 # http://www.univention.de/
 #

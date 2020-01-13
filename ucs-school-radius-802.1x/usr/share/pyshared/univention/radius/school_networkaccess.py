@@ -4,7 +4,7 @@
 # UCS@school RADIUS 802.1X
 #  NTLM-Authentication program
 #
-# Copyright (C) 2012-2019 Univention GmbH
+# Copyright (C) 2012-2020 Univention GmbH
 #
 # http://www.univention.de/
 #

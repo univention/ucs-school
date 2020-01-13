@@ -5,7 +5,7 @@
 """
 Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has passed.
 """
-# Copyright 2017-2019 Univention GmbH
+# Copyright 2017-2020 Univention GmbH
 #
 # http://www.univention.de/
 #

@@ -4,7 +4,7 @@
 # UCS@School Helpdesk
 #  univention admin helpdesk module
 #
-# Copyright 2006-2019 Univention GmbH
+# Copyright 2006-2020 Univention GmbH
 #
 # http://www.univention.de/
 #

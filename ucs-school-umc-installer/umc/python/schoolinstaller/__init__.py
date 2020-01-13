@@ -3,7 +3,7 @@
 # Univention Management Console
 #  This installation wizard guides the installation of UCS@school in the domain
 #
-# Copyright 2013-2019 Univention GmbH
+# Copyright 2013-2020 Univention GmbH
 #
 # http://www.univention.de/
 #
