@@ -28,11 +28,11 @@
 from typing import List
 
 import pytest
-from faker import Faker
-
 import requests
-import ucsschool.kelvin.constants
+from faker import Faker
 from ldap.filter import filter_format
+
+import ucsschool.kelvin.constants
 from ucsschool.kelvin.routers.school_class import SchoolClassModel
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.group import SchoolClass

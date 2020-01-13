@@ -37,6 +37,7 @@ from starlette.status import (
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
+
 from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError
 

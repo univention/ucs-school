@@ -31,6 +31,7 @@ from ldap.dn import escape_dn_chars, explode_dn  # TODO: use ldap3
 from pydantic import HttpUrl
 from starlette.datastructures import URL
 from starlette.requests import Request
+
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM

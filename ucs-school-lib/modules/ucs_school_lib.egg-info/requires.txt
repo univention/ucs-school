@@ -1,0 +1,9 @@
+colorlog
+lazy-object-proxy
+python-ldap
+ruamel.yaml
+six
+udm-rest-client>=0.2.1
+univention-config-registry
+univention-directory-manager-modules
+univention-lib

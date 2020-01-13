@@ -39,9 +39,9 @@ from unittest.mock import patch
 
 import factory
 import pytest
+import requests
 from faker import Faker
 
-import requests
 import ucsschool.kelvin.constants
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group

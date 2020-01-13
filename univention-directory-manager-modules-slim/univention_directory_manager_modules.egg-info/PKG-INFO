@@ -1,0 +1,13 @@
+Metadata-Version: 1.1
+Name: univention-directory-manager-modules
+Version: 14.0.13.post9
+Summary: UDM Python modules
+Home-page: https://www.univention.de/
+Author: Univention GmbH
+Author-email: packages@univention.de
+License: GNU Affero General Public License v3
+Description: UDM Python modules
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU Affero General Public License v3

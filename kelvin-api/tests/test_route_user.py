@@ -30,11 +30,11 @@ from typing import List, NamedTuple, Type, Union
 from urllib.parse import SplitResult, urlsplit
 
 import pytest
-
 import requests
-import ucsschool.kelvin.constants
 from ldap.filter import filter_format
 from pydantic import HttpUrl
+
+import ucsschool.kelvin.constants
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.kelvin.routers.role import SchoolUserRole
 from ucsschool.kelvin.routers.user import UserCreateModel, UserModel, UserPatchModel

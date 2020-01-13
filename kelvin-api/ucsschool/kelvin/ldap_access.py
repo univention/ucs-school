@@ -38,6 +38,7 @@ from ldap3 import AUTO_BIND_TLS_BEFORE_BIND, SIMPLE, Connection, Entry, Server
 from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
 from ldap3.utils.conv import escape_filter_chars
 from pydantic import BaseModel
+
 from ucsschool.lib.models.utils import env_or_ucr
 
 from .constants import (

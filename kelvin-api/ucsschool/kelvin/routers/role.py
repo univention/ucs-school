@@ -32,6 +32,7 @@ from urllib.parse import ParseResult, urlparse
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, HttpUrl
 from starlette.requests import Request
+
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.roles import (

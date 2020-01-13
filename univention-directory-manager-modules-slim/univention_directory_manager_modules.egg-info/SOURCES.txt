@@ -1,0 +1,15 @@
+univention/admin/__init__.py
+univention/admin/client.py
+univention/admin/filter.py
+univention/admin/localization.py
+univention/admin/modules.py
+univention/admin/objects.py
+univention/admin/syntax.py
+univention/admin/uexceptions.py
+univention/admin/uldap.py
+univention/admin/uldap_docker.py
+univention_directory_manager_modules.egg-info/PKG-INFO
+univention_directory_manager_modules.egg-info/SOURCES.txt
+univention_directory_manager_modules.egg-info/dependency_links.txt
+univention_directory_manager_modules.egg-info/requires.txt
+univention_directory_manager_modules.egg-info/top_level.txt
