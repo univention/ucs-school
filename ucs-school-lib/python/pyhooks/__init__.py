@@ -4,7 +4,7 @@
 """
 Python based hooks.
 """
-# Copyright 2017-2019 Univention GmbH
+# Copyright 2017-2020 Univention GmbH
 #
 # http://www.univention.de/
 #

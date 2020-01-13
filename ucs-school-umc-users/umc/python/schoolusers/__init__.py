@@ -3,7 +3,7 @@
 # Univention Management Console
 #  module: school accounts Module
 #
-# Copyright 2007-2019 Univention GmbH
+# Copyright 2007-2020 Univention GmbH
 #
 # http://www.univention.de/
 #

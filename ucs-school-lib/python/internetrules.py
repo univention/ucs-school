@@ -4,7 +4,7 @@
 # Univention Management Console
 #  module: Internet Rules Module
 #
-# Copyright 2012-2019 Univention GmbH
+# Copyright 2012-2020 Univention GmbH
 #
 # http://www.univention.de/
 #
