@@ -31,6 +31,7 @@ import os
 import random
 import shutil
 import subprocess
+import time
 from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
@@ -407,6 +408,7 @@ async def create_random_schools(udm_kwargs):
 def add_to_import_config():
     def wait_for_server() -> None:
         while True:
+            time.sleep(0.5)
             response = requests.get(
                 f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar"
             )

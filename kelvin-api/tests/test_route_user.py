@@ -121,7 +121,7 @@ async def compare_lib_api_user(  # noqa: C901
             assert value == getattr(lib_user, key)
 
 
-def compare_ldap_json_obj(dn, json_resp, url_fragment):
+def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
     import univention.admin.uldap
 
     lo, pos = univention.admin.uldap.getAdminConnection()
@@ -234,12 +234,16 @@ async def test_search_filter(
     else:
         create_kwargs = {}
     user = (await create_random_users({role: 1}, **create_kwargs))[0]
+    school = user.school.rsplit("/", 1)[-1]
     async with UDM(**udm_kwargs) as udm:
         import_user: ImportUser = (
-            await ImportUser.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={user.name}")
+            await ImportUser.get_all(udm, school, filter_str=f"uid={user.name}")
         )[0]
         assert user.name == import_user.name
         assert import_user.role_sting == role  # TODO: add 'r' when #47210 is fixed
+        if filter_param == "school":
+            assert school == school2_attr['name']
+            assert set(school.rsplit("/", 1)[-1] for school in user.schools) == {school1_attr['name'], school2_attr['name']}
 
         param_value = getattr(import_user, filter_param)
         if filter_param in ("source_uid", "disabled"):
@@ -258,13 +262,13 @@ async def test_search_filter(
             f"{url_fragment}/users", headers=auth_header, params=params,
         )
         assert response.status_code == 200, response.reason
-        api_users = {data["name"]: UserModel(**data) for data in response.json()}
+        json_resp = response.json()
+        api_users = {data["name"]: UserModel(**data) for data in json_resp}
         if filter_param not in ("disabled", "roles", "school"):
             assert len(api_users) == 1
         assert user.name in api_users
         api_user = api_users[user.name]
         await compare_lib_api_user(import_user, api_user, udm, url_fragment)
-        json_resp = response.json()
         resp = [r for r in json_resp if r["dn"] == api_user.dn][0]
         compare_ldap_json_obj(api_user.dn, resp, url_fragment)
 
