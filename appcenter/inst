@@ -40,6 +40,8 @@ ADMIN_GROUP="ucsschool-kelvin-admins"
 CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
 TOKEN_SIGN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/tokens.secret"
 KELVIN_IMPORT_CONFIG_FILE="/var/lib/ucs-school-import/configs/kelvin.json"
+KELVIN_IMPORTUSER_HOOKS_PATH="/var/lib/ucs-school-import/kelvin-hooks"
+KELVIN_IMPORTUSER_HOOKS_README="${KELVIN_IMPORTUSER_HOOKS_PATH}/README.txt"
 
 . /usr/share/univention-join/joinscripthelper.lib || exit 1
 . /usr/share/univention-appcenter/joinscripthelper.sh || exit 1
@@ -68,7 +70,14 @@ main () {
 
     if ! [ -e "$KELVIN_IMPORT_CONFIG_FILE" ]; then
       echo "Creating empty config file for the Import Framework used by Kelvin."
-      echo "{}" > $KELVIN_IMPORT_CONFIG_FILE
+      echo "{}" > "$KELVIN_IMPORT_CONFIG_FILE"
+    fi
+
+    if ! [ -e "$KELVIN_IMPORTUSER_HOOKS_README" ]; then
+      echo "The content of this directory is scanned when the Kelvin API
+server starts.
+If it contains hook classes that inherit from **TODO**, they are
+executed when users are managed through the Kelvin API." > "$KELVIN_IMPORTUSER_HOOKS_README"
     fi
 
   echo "Creating group for users that are allowed to connect to the Kelvin API"

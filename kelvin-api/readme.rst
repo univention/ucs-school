@@ -59,6 +59,21 @@ Logfiles
 
 The directory contains the file ``http.log``, which is the log of the HTTP-API (both ASGI server and API application).
 
+Configuration of user object management (import configuration)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``/var/lib/ucs-school-import/configs`` is a volume mounted into the docker container, so it can be accessed from the host.
+
+The directory contains the file ``kelvin.json``, which is the top level configuration file for the UCS@school import code that runs inside the Docker container when user objects are managed.
+
+
+Python hooks for user object management (import-user)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``/var/lib/ucs-school-import/kelvin-hooks`` is a volume mounted into the docker container, so it can be accessed from the host.
+
+ The directory content is scanned when the Kelvin API server starts.
+If it contains hook classes that inherit from **TODO**, they are executed when users are managed through the Kelvin API.
 
 Changelog
 ---------
