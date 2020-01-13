@@ -65,7 +65,7 @@ Other developers and licenses:
   [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./ica/src/ItalcSlaveManager.cpp: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./ica/src/RfbItalcCursor.h: GPL (v2 or later)
   [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2007-2008 Urs Wolfer <uwolfer @ kde.org>]
@@ -113,7 +113,7 @@ Other developers and licenses:
   [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
 
 ./ica/src/ScreenLockSlaveLauncher.cpp: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./ica/src/ScreenLockSlaveLauncher.h: GPL (v2 or later)
   [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
@@ -125,7 +125,7 @@ Other developers and licenses:
   [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
 
 ./ica/src/ItalcSlaveManager.h: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./ica/src/WindowsService.cpp: GPL (v2 or later)
   [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
@@ -1439,19 +1439,19 @@ Other developers and licenses:
   [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/src/Ipc/SlaveLauncher.cpp: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/src/Ipc/Master.cpp: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/src/Ipc/Core.cpp: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/src/Ipc/QtSlaveLauncher.cpp: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/src/Ipc/Slave.cpp: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/src/DecoratedMessageBox.cpp: GPL (v2 or later)
   [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
@@ -1555,19 +1555,19 @@ Other developers and licenses:
   [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/include/Ipc/Core.h: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/include/Ipc/Slave.h: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/include/Ipc/SlaveLauncher.h: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/include/Ipc/Master.h: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/include/Ipc/QtSlaveLauncher.h: GPL (v2 or later)
-  [Copyright: 2010-2019 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+  [Copyright: 2010-2020 Univention GmbH / 2010-2018 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
 ./lib/include/LogonAuthentication.h: GPL (v2 or later)
   [Copyright: 2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
