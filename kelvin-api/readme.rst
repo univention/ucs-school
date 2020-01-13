@@ -24,6 +24,9 @@ Explore API
 -----------
 
 Swagger / OpenAPI...
+/kelvin/api/v1/openapi.json
+/kelvin/api/v1/docs
+/kelvin/api/v1/redoc
 
 Authentication
 ^^^^^^^^^^^^^^
@@ -47,6 +50,18 @@ Examples
 --------
 
 curl...
+
+
+Known Issues
+-------------
+
+After adding an extended attribute, extended option or udm module an update of the openapi client is triggered.
+But the udm rest api isn't automatically reloaded (bug 50253), which prevents the openapi update from getting the changes.
+
+Update manually the openapi client manually if needed::
+
+   systemctl restart univention-directory-manager-rest.service
+   univention-app shell ucsschool-kelvin /bin/sh -c '. /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure $DOCKER_HOST_NAME'
 
 
 File locations
