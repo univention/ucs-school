@@ -886,8 +886,9 @@ class ImportUser(User):
 		:rtype: str
 		"""
 		if isinstance(s, string_types):
-			s = cls.prop._replace("<:umlauts>{}".format(s), {})
-		return s
+			# univention.admin.property._replace() returns bytes now!
+			s: bytes = cls.prop._replace("<:umlauts>{}".format(s), {})
+		return s.decode("utf-8")
 
 	def normalize_udm_properties(self):  # type: () -> None
 		"""
@@ -1250,9 +1251,9 @@ class ImportUser(User):
 		all_fields.update(kwargs)
 		all_fields = self.call_format_hook(prop_name, all_fields)
 
-		res = self.prop._replace(scheme, all_fields)
+		res: bytes = self.prop._replace(scheme, all_fields)
 		# univention.admin.property._replace() returns bytes now!
-		res = res.decode("utf-8")
+		res: str = res.decode("utf-8")
 		if not res:
 			self.logger.warning("Created empty '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
 				prop_name=prop_name, scheme=scheme, data=all_fields))
