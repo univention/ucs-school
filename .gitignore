@@ -1,0 +1,12 @@
+**/__pycache__/
+**/.eggs
+**/*.ipynb*
+**/*.egg-info
+**/.coverage
+.idea/
+appcenter/univention-appcenter-control
+docker/build/
+docker/ucs/
+**/venv
+**/build
+**/dist
