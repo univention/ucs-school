@@ -58,6 +58,7 @@ from ..exceptions import (
 from ..utils.format_pyhook import FormatPyHook
 from ..utils.import_pyhook import get_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
+from ..utils.user_pyhook import UserPyHook
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
 
@@ -177,6 +178,48 @@ class ImportUser(User):
 	def _pyhook_supports_dry_run(kls):
 		return bool(getattr(kls, 'supports_dry_run', False))
 
+	async def call_hooks(self, udm: UDM, hook_time: str, func_name: str) -> Optional[bool]:
+		"""
+		Runs Kelvin PyHooks.
+
+		:param UDM udm: UDM REST Client instance
+		:param str hook_time: `pre` or `post`
+		:param str func_name: `create`, `modify`, `move` or `remove`
+		:return: legacy: return code of lib hooks (always `None` in Kelvin)
+		:rtype: bool: result of a legacy hook or None if no legacy hook ran
+			(always `None` in Kelvin)
+		"""
+		if hook_time == "post" and self.action in ["A", "M"] and not (self.config['dry_run'] and self.action == "A"):
+			# update self from LDAP if object exists (after A and M), except after a dry-run create
+			user = await self.get_by_import_id(udm, self.source_uid, self.record_uid)
+			user_udm = await user.get_udm_object(udm)
+			# copy only those UDM properties from LDAP that were originally
+			# set in self.udm_properties
+			for k in self.udm_properties.keys():
+				user.udm_properties[k] = user_udm.props[k]
+			self.update(user)
+
+		self.in_hook = True
+		lo, _po = get_admin_connection()
+		hooks = get_import_pyhooks(
+			UserPyHook,
+			self._pyhook_supports_dry_run if self.config['dry_run'] else None,
+			lo=lo,
+			dry_run=self.config['dry_run'],
+			udm=udm
+		)  # result is cached on the lib side
+		meth_name = "{}_{}".format(hook_time, func_name)
+		try:
+			for func in hooks.get(meth_name, []):
+				func.__self__.udm = udm  # update UDM instance to the current one
+				self.logger.debug(
+					"Running %s hook %s.%s for %s...",
+					meth_name, func.__self__.__class__.__name__, func.__name__, self)
+				await func(self)
+		finally:
+			self.in_hook = False
+		return None
+
 	def call_format_hook(self, prop_name, fields):  # type: (str, Dict[str, Any]) -> Dict[str, Any]
 		"""
 		Run format hooks.
@@ -189,7 +232,8 @@ class ImportUser(User):
 		hooks = get_import_pyhooks(FormatPyHook)  # result is cached on the lib side
 		res = fields
 		for func in hooks.get('patch_fields_{}'.format(self.role_sting), []):
-			if prop_name not in func.im_class.properties:
+			hook_class = func.__self__.__class__
+			if prop_name not in hook_class.properties:
 				# ignore properties not in Hook.properties
 				continue
 			self.logger.debug(

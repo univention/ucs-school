@@ -174,10 +174,10 @@ class UserImport(object):
 							await user.validate(self.udm, validate_unlikely_changes=True, check_username=True)
 							if self.errors:
 								raise ValidationError(user.errors.copy())
-							user.call_hooks('pre', 'create')
+							await user.call_hooks(self.udm, 'pre', 'create')
 							self.logger.info("Dry-run: skipping user.create() for %s.", user)
 							success = True
-							user.call_hooks('post', 'create')
+							await user.call_hooks(self.udm, 'post', 'create')
 						else:
 							success = await user.create(lo=self.udm)
 					elif user.action == "M":
@@ -187,10 +187,10 @@ class UserImport(object):
 							await user.validate(self.udm, validate_unlikely_changes=True, check_username=False)
 							if self.errors:
 								raise ValidationError(user.errors.copy())
-							user.call_hooks('pre', 'modify')
+							await user.call_hooks(self.udm, 'pre', 'modify')
 							self.logger.info("Dry-run: skipping user.modify() for %s.", user)
 							success = True
-							user.call_hooks('post', 'modify')
+							await user.call_hooks(self.udm, 'post', 'modify')
 						else:
 							success = await user.modify(lo=self.udm)
 					else:
@@ -434,11 +434,11 @@ class UserImport(object):
 					'ValidationError when moving {} from {!r} to {!r}.'.format(
 						user, user.school, imported_user.school),
 					validation_error=ValidationError(user.errors.copy()))
-			user.call_hooks('pre', 'move')
+			await user.call_hooks(self.udm, 'pre', 'move')
 			self.logger.info("Dry-run: would move %s from %r to %r.", user, user.school, imported_user.school)
 			user._unique_ids_replace_dn(user.dn, imported_user.dn)
 			res = True
-			user.call_hooks('post', 'move')
+			await user.call_hooks(self.udm, 'post', 'move')
 		else:
 			res = await user.change_school(imported_user.school, self.udm)
 		if not res:
@@ -486,7 +486,7 @@ class UserImport(object):
 			# immediate deletion already happened above
 			pass
 		elif self.dry_run:
-			user.call_hooks('pre', 'remove')
+			await user.call_hooks(self.udm, 'pre', 'remove')
 			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
 			await user.validate(self.udm, validate_unlikely_changes=True, check_username=False)
 			if self.errors:
@@ -494,7 +494,7 @@ class UserImport(object):
 					'ValidationError when deleting {}.'.format(user),
 					validation_error=ValidationError(user.errors.copy()))
 			success = True
-			user.call_hooks('post', 'remove')
+			await user.call_hooks(self.udm, 'post', 'remove')
 		elif modified:
 			success = await user.modify(lo=self.udm)
 		else:
@@ -531,9 +531,9 @@ class UserImport(object):
 		"""
 		self.logger.info('Deleting user %s...', user)
 		if self.dry_run:
-			user.call_hooks('pre', 'remove')
+			await user.call_hooks(self.udm, 'pre', 'remove')
 			self.logger.info('Dry-run: not removing user %s.', user)
-			user.call_hooks('post', 'remove')
+			await user.call_hooks(self.udm, 'post', 'remove')
 			return True
 		else:
 			return await user.remove(self.udm)

@@ -33,32 +33,48 @@
 Base class for all Python based User hooks.
 """
 
+import univention.admin.uldap
+from udm_rest_client import UDM
+
 from .import_pyhook import ImportPyHook
 
 
-class UserPyHook(ImportPyHook):
+class KelvinUserHook:
+	...
+
+
+class UserPyHook(ImportPyHook, KelvinUserHook):
 	"""
 	Base class for Python based user import hooks.
 
-	An example is provided in /usr/share/doc/ucs-school-import/hook_example.py
+	When calling methods of ucsschool objects (e.g. ``ImportUser``,
+	``SchoolClass`` etc.) ``self.udm`` must be used instead of
+	``self.lo`` and those methods may have to be used with ``await``.
+	Thus hooks methods will be ``async``.
+	For example::
 
-	The base class' :py:meth:`__init__()` provides the following attributes:
+		async def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+			user.firstname = "Sam"
+			awaituser.modify(self.udm)
 
-	* self.dry_run     # whether hook is executed during a dry-run (1)
-	* self.lo          # LDAP connection object (2)
+			udm_user_obj = await user.get_udm_object(self.udm)
+			udm_user_obj["foo"] = "bar"
+			await udm_user_obj.save()  # UDM REST Client object: "save", not "modify"
+
+
+	* self.dry_run     # always ``False`` in the context of the Kelvin API
+	* self.lo          # LDAP connection object (1)
 	* self.logger      # Python logging instance
+	* self.udm         # UDM REST Client instance (2)
 
 	If multiple hook classes are found, hook functions with higher
 	priority numbers run before those with lower priorities. None disables
 	a function (no need to remove it / comment it out).
 
-	(1) Hooks are only executed during dry-runs, if the class attribute
-	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-	with `supports_dry_run == True` must not modify LDAP objects.
-	Therefore the LDAP connection object self.lo will be a read-only connection
-	during a dry-run.
-	(2) Read-write cn=admin connection in a real run, read-only cn=admin
-	connection during a dry-run.
+	(1) Read-write cn=admin LDAP connection, attention: LDAP attributes
+		returned by get() and search() are now ``bytes`´, not ``str``
+	(2) Read-write cn=admin UDM REST API connection, see
+		https://udm-rest-client.readthedocs.io/en/latest/
 	"""
 	priority = {
 		"pre_create": None,
@@ -71,7 +87,23 @@ class UserPyHook(ImportPyHook):
 		"post_remove": None,
 	}
 
-	def pre_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def __init__(
+		self,
+		lo: univention.admin.uldap.access = None,
+		dry_run: bool = None,
+		udm: UDM = None,
+		*args,
+		**kwargs,
+	) -> None:
+		"""
+		:param univention.admin.uldap.access lo: optional LDAP connection object
+		:param bool dry_run: whether hook is executed during a dry-run (always False)
+		:param UDM udm: UDM REST Client instance
+		"""
+		super(UserPyHook, self).__init__(lo, dry_run, *args, **kwargs)
+		self.udm = udm
+
+	def pre_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before creating a user.
 
@@ -84,7 +116,7 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after creating a user.
 
@@ -97,7 +129,7 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def pre_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def pre_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before modifying a user.
 
@@ -108,7 +140,7 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def post_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after modifying a user.
 
@@ -122,7 +154,7 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def pre_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def pre_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before changing a users primary school (position).
 
@@ -133,7 +165,7 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def post_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after changing a users primary school (position).
 
@@ -146,7 +178,7 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def pre_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def pre_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before deleting a user.
 
@@ -157,7 +189,7 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+	def post_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after deleting a user.
 

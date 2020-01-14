@@ -160,7 +160,13 @@ class PyHooksLoader(object):
 			self.logger.info(
 				"Loaded hooks: %r.",
 				dict([
-					(meth_name, ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths])
+					(
+						meth_name,
+						[
+							"{}.{}".format(m.__self__.__class__.__name__, m.__name__)
+							for m in meths
+						]
+					)
 					for meth_name, meths in iteritems(self._pyhook_obj_cache)
 				]))
 		return self._pyhook_obj_cache

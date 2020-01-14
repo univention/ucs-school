@@ -391,8 +391,11 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-	def call_hooks(self, hook_time: str, func_name: str) -> Optional[bool]:
-		self.logger.warning("NotImplemented: call_hooks(%r, %r)", hook_time, func_name)
+	async def call_hooks(self, udm: UDM, hook_time: str, func_name: str) -> Optional[bool]:
+		self.logger.debug(
+			"NotImplemented: %s.call_hooks(%r, %r)",
+			self.__class__.__name__, hook_time, func_name
+		)
 		return True
 
 	async def _alter_udm_obj(self, udm_obj: UdmObject) -> None:
@@ -411,10 +414,10 @@ class UCSSchoolHelperAbstractClass(object):
 		If the object does not yet exist, creates it, returns True and
 		calls post-hooks.
 		"""
-		self.call_hooks('pre', 'create')
+		await self.call_hooks(lo, 'pre', 'create')
 		success = await self.create_without_hooks(lo, validate)
 		if success:
-			self.call_hooks('post', 'create')
+			await self.call_hooks(lo, 'post', 'create')
 		return success
 
 	async def create_without_hooks(self, lo: UDM, validate: bool) -> bool:
@@ -478,10 +481,10 @@ class UCSSchoolHelperAbstractClass(object):
 		If the object exists, modifies it, returns True and
 		calls post-hooks.
 		'''
-		self.call_hooks('pre', 'modify')
+		await self.call_hooks(lo, 'pre', 'modify')
 		success = await self.modify_without_hooks(lo, validate, move_if_necessary)
 		if success:
-			self.call_hooks('post', 'modify')
+			await self.call_hooks(lo, 'post', 'modify')
 		return success
 
 	async def modify_without_hooks(self, lo: UDM, validate: bool = True, move_if_necessary: bool = None) -> bool:
@@ -543,10 +546,10 @@ class UCSSchoolHelperAbstractClass(object):
 		await udm_obj.save()
 
 	async def move(self, lo: UDM, udm_obj: UdmObject = None, force: bool = False) -> bool:
-		self.call_hooks('pre', 'move')
+		await self.call_hooks(lo, 'pre', 'move')
 		success = await self.move_without_hooks(lo, udm_obj, force)
 		if success:
-			self.call_hooks('post', 'move')
+			await self.call_hooks(lo, 'post', 'move')
 		return success
 
 	async def move_without_hooks(self, lo: UDM, udm_obj: UdmObject = None, force: bool = False) -> bool:
@@ -605,10 +608,10 @@ class UCSSchoolHelperAbstractClass(object):
 		If the object exists, removes it, returns True and
 		calls post-hooks.
 		'''
-		self.call_hooks('pre', 'remove')
+		await self.call_hooks(lo, 'pre', 'remove')
 		success = await self.remove_without_hooks(lo)
 		if success:
-			self.call_hooks('post', 'remove')
+			await self.call_hooks(lo, 'post', 'remove')
 		return success
 
 	async def remove_without_hooks(self, lo: UDM) -> bool:

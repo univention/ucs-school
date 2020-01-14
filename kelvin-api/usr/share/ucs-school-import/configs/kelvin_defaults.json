@@ -6,6 +6,7 @@
     "class_overwrites"
   ],
   "dry_run": false,
+  "hooks_dir_pyhook": "/var/lib/ucs-school-import/kelvin-hooks",
   "logfile": null,
   "skip_tests": [
     "global_source_uid",

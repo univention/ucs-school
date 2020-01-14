@@ -200,7 +200,7 @@ class SingleSourcePartialUserImport(UserImport):
 			modified |= self.deactivate_user_now(user)
 
 		if self.dry_run:
-			user.call_hooks('pre', 'remove')
+			await user.call_hooks(self.udm, 'pre', 'remove')
 			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
 			await user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
 			if self.errors:
@@ -208,7 +208,7 @@ class SingleSourcePartialUserImport(UserImport):
 					'ValidationError when deleting {}.'.format(user),
 					validation_error=ValidationError(user.errors.copy()))
 			success = True
-			user.call_hooks('post', 'remove')
+			await user.call_hooks(self.udm, 'post', 'remove')
 		elif modified:
 			success = await user.modify(lo=self.connection)
 		else:
