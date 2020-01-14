@@ -280,8 +280,14 @@ class HttpApiUserTestBase(TestCase):
 			elif getattr(import_user, k) is None and v == '':
 				continue
 			else:
+				if isinstance(v, list):
+					import_user_val = set(getattr(import_user, k))
+					resource_val = set(v)
+				else:
+					import_user_val = getattr(import_user, k)
+					resource_val = v
 				self.assertEqual(
-					getattr(import_user, k), v,
+					import_user_val, resource_val,
 					'Value of attribute {!r} in {} is {!r} and in resource is {!r} ({!r}).'.format(
 						k, source, getattr(import_user, k), v, dn))
 
