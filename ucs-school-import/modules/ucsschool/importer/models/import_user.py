@@ -41,7 +41,7 @@ from udm_rest_client import UDM, UdmObject
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
-from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff
+from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_staff, role_student, role_teacher
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
@@ -930,9 +930,11 @@ class ImportUser(User):
 		:rtype: str
 		"""
 		if isinstance(s, string_types):
-			# univention.admin.property._replace() returns bytes now!
-			s: bytes = cls.prop._replace("<:umlauts>{}".format(s), {})
-		return s.decode("utf-8")
+			# univention.admin.property._replace() may return bytes now
+			s: Union[bytes, str] = cls.prop._replace("<:umlauts>{}".format(s), {})
+			if isinstance(s, bytes):
+				s: str = s.decode("utf-8")
+		return s
 
 	def normalize_udm_properties(self):  # type: () -> None
 		"""
@@ -1157,7 +1159,7 @@ class ImportUser(User):
 		:return: one of `staff`, `student`, `teacher`, `teacher_and_staff`
 		:rtype: str
 		"""
-		if role_pupil in self.roles:
+		if role_pupil in self.roles or role_student in self.roles:
 			return "student"
 		elif role_teacher in self.roles:
 			if role_staff in self.roles:
@@ -1295,9 +1297,10 @@ class ImportUser(User):
 		all_fields.update(kwargs)
 		all_fields = self.call_format_hook(prop_name, all_fields)
 
-		res: bytes = self.prop._replace(scheme, all_fields)
-		# univention.admin.property._replace() returns bytes now!
-		res: str = res.decode("utf-8")
+		res: Union[bytes, str] = self.prop._replace(scheme, all_fields)
+		# univention.admin.property._replace() may return bytes now
+		if isinstance(res, bytes):
+			res: str = res.decode("utf-8")
 		if not res:
 			self.logger.warning("Created empty '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
 				prop_name=prop_name, scheme=scheme, data=all_fields))
