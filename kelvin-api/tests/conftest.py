@@ -404,18 +404,31 @@ async def create_random_schools(udm_kwargs):
     return _create_random_schools
 
 
-@pytest.fixture(scope="session")  # noqa: C901
-def add_to_import_config():
-    def wait_for_server() -> None:
-        while True:
-            time.sleep(0.5)
-            response = requests.get(
-                f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar"
-            )
-            if response.status_code == 404:
-                break
-            # else: 502 Proxy Error
+def restart_kelvin_api_server() -> None:
+    print("Restarting Kelvin API server...")
+    subprocess.call(["/etc/init.d/kelvin-api", "restart"])
+    while True:
+        time.sleep(0.5)
+        response = requests.get(
+            f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar"
+        )
+        if response.status_code == 404:
+            break
+        # else: 502 Proxy Error
 
+
+@pytest.fixture(scope="module")
+def restart_kelvin_api_server_module():
+    return restart_kelvin_api_server
+
+
+@pytest.fixture(scope="session")
+def restart_kelvin_api_server_session():
+    return restart_kelvin_api_server
+
+
+@pytest.fixture(scope="session")  # noqa: C901
+def add_to_import_config(restart_kelvin_api_server_session):
     def _func(**kwargs) -> None:
         if not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists():
             # not in Docker container
@@ -453,25 +466,24 @@ def add_to_import_config():
         with open(IMPORT_CONFIG["active"], "w") as fp:
             json.dump(config, fp, indent=4)
         print(f"Wrote config to {IMPORT_CONFIG['active']!s}: {config!r}")
-        print("Restarting Kelvin API server...")
-        subprocess.call(["/etc/init.d/kelvin-api", "restart"])
-        wait_for_server()
+        restart_kelvin_api_server_session()
 
     yield _func
 
     if IMPORT_CONFIG["bak"].exists():
         print(f"Moving {IMPORT_CONFIG['bak']!r} to {IMPORT_CONFIG['active']!r}.")
         shutil.move(IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"])
-        print("Restarting Kelvin API server...")
-        subprocess.call(["/etc/init.d/kelvin-api", "restart"])
-        wait_for_server()
+        restart_kelvin_api_server_session()
 
 
 @pytest.fixture(scope="session")
 def setup_import_config(add_to_import_config) -> None:
     add_to_import_config(
         mapped_udm_properties=MAPPED_UDM_PROPERTIES,
-        scheme={"username": {"default": "<:lower>test.<firstname>[:2].<lastname>[:3]"}},
+        scheme={
+            "firstname": "<lastname>",
+            "username": {"default": "<:lower>test.<firstname>[:2].<lastname>[:3]"}
+        },
     )
 
 
