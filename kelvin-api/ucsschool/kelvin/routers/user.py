@@ -152,7 +152,8 @@ class UserCreateModel(UserBaseModel):
             SchoolUserRole(
                 url_to_name(request, "role", self.unscheme_and_unquote(role))
             ).as_lib_role(school)
-            for role in self.roles for school in kwargs["schools"]
+            for role in self.roles
+            for school in kwargs["schools"]
         ]
         kwargs["birthday"] = str(self.birthday)
         if not kwargs["email"]:

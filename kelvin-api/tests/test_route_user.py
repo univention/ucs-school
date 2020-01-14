@@ -188,7 +188,7 @@ async def test_search_no_filter(
             compare_ldap_json_obj(api_user.dn, resp, url_fragment)
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio  # noqa: C901
 @pytest.mark.parametrize(
     "filter_param",
     (
@@ -242,8 +242,11 @@ async def test_search_filter(
         assert user.name == import_user.name
         assert import_user.role_sting == role  # TODO: add 'r' when #47210 is fixed
         if filter_param == "school":
-            assert school == school2_attr['name']
-            assert set(school.rsplit("/", 1)[-1] for school in user.schools) == {school1_attr['name'], school2_attr['name']}
+            assert school == school2_attr["name"]
+            assert set(school.rsplit("/", 1)[-1] for school in user.schools) == {
+                school1_attr["name"],
+                school2_attr["name"],
+            }
 
         param_value = getattr(import_user, filter_param)
         if filter_param in ("source_uid", "disabled"):

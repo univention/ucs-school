@@ -482,7 +482,7 @@ def setup_import_config(add_to_import_config) -> None:
         mapped_udm_properties=MAPPED_UDM_PROPERTIES,
         scheme={
             "firstname": "<lastname>",
-            "username": {"default": "<:lower>test.<firstname>[:2].<lastname>[:3]"}
+            "username": {"default": "<:lower>test.<firstname>[:2].<lastname>[:3]"},
         },
     )
 

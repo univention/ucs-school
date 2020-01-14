@@ -26,22 +26,23 @@
 # <http://www.gnu.org/licenses/>.
 
 import datetime
-import random
-import pytest
 import inspect
+import random
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Type, Union
+
+import pytest
 import requests
-import ucsschool.kelvin.constants
-from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
-from udm_rest_client import UDM
-from ucsschool.kelvin.routers.user import UserModel
 from faker import Faker
+
+import ucsschool.kelvin.constants
 import univention.admin.uldap_docker
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
 from ucsschool.importer.utils.user_pyhook import UserPyHook
-
+from ucsschool.kelvin.routers.user import UserModel
+from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
+from udm_rest_client import UDM
 
 pytestmark = pytest.mark.skipif(
     not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
@@ -62,17 +63,18 @@ fake = Faker()
 
 class FormatFirstnamePyHook(FormatPyHook):
     priority = {
-        'patch_fields_student': 10,
-        'patch_fields_teacher_and_staff': 10,
+        "patch_fields_student": 10,
+        "patch_fields_teacher_and_staff": 10,
     }
-    properties = ('firstname',)
+    properties = ("firstname",)
 
     def crazy_camel(self, property_name: str, fields: Dict[str, Any]) -> Dict[str, Any]:
         import random
-        fields['lastname'] = "".join(
+
+        fields["lastname"] = "".join(
             [
                 getattr(char, random.choice(("upper", "lower")))()
-                for char in fields['lastname']
+                for char in fields["lastname"]
             ]
         )
         return fields
@@ -101,8 +103,11 @@ class UserBirthdayPyHook(UserPyHook):
     ) -> None:
         from ucsschool.lib.models.utils import env_or_ucr
         from ucsschool.importer.utils.user_pyhook import KelvinUserHook
+
         assert isinstance(self, KelvinUserHook)
-        super(UserBirthdayPyHook, self).__init__(lo=lo, dry_run=dry_run, udm=udm, *args, **kwargs)
+        super(UserBirthdayPyHook, self).__init__(
+            lo=lo, dry_run=dry_run, udm=udm, *args, **kwargs
+        )
         self.logger.info("   -> THIS IS A KelvinUserHook")
         self.base_dn = env_or_ucr("ldap/base")
 
@@ -127,6 +132,7 @@ class UserBirthdayPyHook(UserPyHook):
 
     async def post_create(self, user: ImportUser) -> None:
         import datetime
+
         await self.test_lo()
         await self.test_udm()
         self.logger.info("   -> HAPPY BIRTHDAY")
@@ -155,6 +161,7 @@ class UserBirthdayPyHook(UserPyHook):
         await self.test_lo()
         await self.test_udm()
         from pathlib import Path
+
         Path("/tmp", user.name).touch()
         self.logger.info("   -> RIP")
 
@@ -214,7 +221,9 @@ async def test_format_pyhook(
     create_format_pyhook,
     role: Role,
 ):
-    hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "formattesthook.py"
+    hook_path = (
+        ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "formattesthook.py"
+    )
     with open(hook_path, "r") as fp:
         print(f"****** {hook_path!s} ******")
         print(fp.read())
@@ -259,7 +268,9 @@ async def test_user_pyhook(
     create_user_pyhook,
     role: Role,
 ):
-    hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "usertesthook.py"
+    hook_path = (
+        ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "usertesthook.py"
+    )
     with open(hook_path, "r") as fp:
         print(f"****** {hook_path!s} ******")
         print(fp.read())
