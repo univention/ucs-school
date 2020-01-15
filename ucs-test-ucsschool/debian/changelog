@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.88) unstable; urgency=low
+
+  * Bug #50678: updates for Kelvin API tests
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Jan 2020 17:20:52 +0100
+
 ucs-test-ucsschool (6.0.87) unstable; urgency=medium
 
   * Bug #50594: adjust test case for new texts in login dialog
