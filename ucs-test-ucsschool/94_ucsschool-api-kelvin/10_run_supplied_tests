@@ -1,0 +1,8 @@
+#!/usr/share/ucs-test/runner bash
+## desc: run tests in container which are supplied by the kelvin api
+## tags: [ucs_school_kelvin]
+## exposure: dangerous
+## packages: []
+## bugs: []
+
+univention-app shell ucsschool-kelvin sh -c ". venv/bin/activate; cd kelvin-api; make test"

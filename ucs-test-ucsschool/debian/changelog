@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.89) unstable; urgency=medium
+
+  * Bug #50678: 94_ucsschool-api-kelvin/10_run_supplied_tests
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 16 Jan 2020 00:12:12 +0100
+
 ucs-test-ucsschool (6.0.88) unstable; urgency=low
 
   * Bug #50678: updates for Kelvin API tests
