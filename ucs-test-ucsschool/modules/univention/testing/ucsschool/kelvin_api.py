@@ -128,7 +128,7 @@ class HttpApiUserTestBase(TestCase):
 	]  # keep in sync with kelvin-api/tests/conftest.py::MAPPED_UDM_PROPERTIES
 	# until the import configuration can be set / bind mounted into the container
 	ucrvs2set = []
-	should_restart_api_server = False
+	should_restart_api_server = True
 	logger = logging.getLogger("univention.testing.ucsschool")
 
 	@classmethod
