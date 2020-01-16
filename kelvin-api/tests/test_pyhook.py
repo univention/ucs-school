@@ -173,7 +173,9 @@ def create_pyhook(restart_kelvin_api_server_module):
 
     def _func(name, text):
         module_names.append(name)
-        hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
+        hook_path = (
+            ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
+        )
         with open(hook_path, "w") as fp:
             fp.write(text)
         restart_kelvin_api_server_module()
@@ -181,7 +183,9 @@ def create_pyhook(restart_kelvin_api_server_module):
     yield _func
 
     for name in module_names:
-        hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
+        hook_path = (
+            ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
+        )
         try:
             hook_path.unlink()
         except FileNotFoundError:
