@@ -1,0 +1,20 @@
+#!/usr/share/ucs-test/runner bash
+## desc: run tests in container which are supplied by the kelvin api
+## tags: [ucs_school_kelvin]
+## exposure: dangerous
+## packages: []
+## bugs: []
+
+APP="ucsschool-kelvin"
+MIN_COVERAGE=70
+
+declare -a CMD=(sh -c "
+. /kelvin/venv/bin/activate &&
+cd /kelvin/kelvin-api &&
+export MY_COVERAGE_REPORT_ARGS=\"--fail-under=$MIN_COVERAGE\" &&
+rm -f .coverage &&
+make coverage")
+
+echo "Running in container: ${CMD[@]}"
+
+univention-app shell "$APP" "${CMD[@]}" || (rv=$?; pkill -f '^/kelvin/venv/bin/python.*pytest$'; exit $rv)

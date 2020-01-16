@@ -1,0 +1,15 @@
+#!/usr/share/ucs-test/runner bash
+## desc: run linting tests in container which are supplied by the kelvin api
+## tags: [ucs_school_kelvin]
+## exposure: dangerous
+## packages: []
+## bugs: []
+
+APP="ucsschool-kelvin"
+declare -a CMD=(sh -c '
+. /kelvin/venv/bin/activate &&
+cd /kelvin/kelvin-api &&
+make lint')
+
+echo "Running in container: ${CMD[@]}"
+univention-app shell "$APP" "${CMD[@]}" || (rv=$?; pkill -f '^/kelvin/venv/bin/python.*pytest$'; exit $rv)

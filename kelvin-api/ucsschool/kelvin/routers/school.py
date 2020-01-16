@@ -29,10 +29,9 @@ import logging
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from ldap.filter import escape_filter_chars
 from starlette.requests import Request
-from starlette.status import HTTP_201_CREATED, HTTP_405_METHOD_NOT_ALLOWED
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM

@@ -79,7 +79,7 @@ test: ## run tests (with the current active Python interpreter)
 	coverage run --source tests,ucsschool -m pytest
 
 coverage: .coverage ## check code coverage with the current Python interpreter
-	coverage report --show-missing
+	coverage report --show-missing $(MY_COVERAGE_REPORT_ARGS)
 
 coverage-html: coverage ## check code coverage, create HTML report and show in browser
 	coverage html
