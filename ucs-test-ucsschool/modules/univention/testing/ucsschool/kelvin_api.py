@@ -187,8 +187,8 @@ class HttpApiUserTestBase(TestCase):
 		config['configuration_checks'] = ['defaults', 'mapped_udm_properties']
 		config['mapped_udm_properties'] = cls.mapped_udm_properties
 		config['scheme'] = {
-			'record_uid': '<firstname>.<lastname>',
-			'username': {'default': '<:umlauts><firstname>.<lastname><:lower>[COUNTER2]'}
+			'firstname': '<lastname>',
+			'username': {'default': '<:lower>test.<firstname>[:2].<lastname>[:3]'}
 		}
 		config['source_uid'] = 'TESTID'
 		config['verbose'] = True
@@ -343,9 +343,18 @@ class HttpApiUserTestBase(TestCase):
 
 	@classmethod
 	def restart_api_server(cls):
-		cls.logger.info('*** Restarting ucs-school-http-api-bb...')
-		subprocess.call(['service', 'docker-app-ucsschool-kelvin', 'restart'])
-		time.sleep(20)
+		cls.logger.info('*** Restarting Kelvin API server...')
+		subprocess.call([
+			'univention-app', 'shell',
+			'ucsschool-kelvin', '/etc/init.d/kelvin-api', 'restart'
+		])
+		while True:
+			time.sleep(0.5)
+			response = requests.get("{}/foobar".format(API_ROOT_URL))
+			if response.status_code == 404:
+				break
+		# else: 502 Proxy Error
+		cls.logger.info('*** done.')
 
 	@staticmethod
 	def get_class_dn(class_name, school, lo):

@@ -1,6 +1,7 @@
 ucs-test-ucsschool (6.0.90) unstable; urgency=low
 
   * Bug #50678: add tests for linting
+  * Bug #50678: fix import config and improve server restart time
 
  -- Daniel Troeder <troeder@univention.de>  Thu, 16 Jan 2020 09:27:33 +0100
 
