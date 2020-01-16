@@ -171,10 +171,15 @@ class PyHooksLoader(object):
 				]))
 		return self._pyhook_obj_cache
 
-	@staticmethod
-	def _load_hook_class(cls_name, info, super_class):
+	def _load_hook_class(self, cls_name, info, super_class):
 		# type: (str, Tuple[file, str, Tuple[str, str, int]], Type[PyHookTV]) -> Optional[Type[PyHookTV]]
-		res = imp.load_module(cls_name, *info)
+		try:
+			res = imp.load_module(cls_name, *info)
+		except Exception as exc:
+			self.logger.critical("*" * 79)
+			self.logger.critical("* Error loading hook: %s", exc, exc_info=True)
+			self.logger.critical("*" * 79)
+			return None
 		for thing in dir(res):
 			candidate = getattr(res, thing)
 			if inspect.isclass(candidate) and issubclass(candidate, super_class) and candidate is not super_class:
