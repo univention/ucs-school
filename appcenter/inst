@@ -116,6 +116,8 @@ For example::
         udm_user_obj = await user.get_udm_object(self.udm)
         udm_user_obj["foo"] = "bar"
         await udm_user_obj.save()  # UDM REST Client object: "save", not "modify"
+
+The "__pycache__" directory can be safely ignored.
 ' > "$KELVIN_IMPORTUSER_HOOKS_README"
     fi
 

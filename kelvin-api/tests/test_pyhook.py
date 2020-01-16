@@ -167,39 +167,50 @@ class UserBirthdayPyHook(UserPyHook):
 
 
 @pytest.fixture(scope="module")
-def create_format_pyhook(restart_kelvin_api_server_module):
-    path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "formattesthook.py"
-    with open(path, "w") as fp:
-        fp.write("from typing import Any, Dict\n")
-        fp.write("from ucsschool.importer.utils.format_pyhook import FormatPyHook\n\n")
-        fp.write(inspect.getsource(FormatFirstnamePyHook))
+def create_pyhook(restart_kelvin_api_server_module):
+    cache_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "__pycache__"
+    module_names = []
+
+    def _func(name, text):
+        module_names.append(name)
+        hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
+        with open(hook_path, "w") as fp:
+            fp.write(text)
+        restart_kelvin_api_server_module()
+
+    yield _func
+
+    for name in module_names:
+        hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
+        try:
+            hook_path.unlink()
+        except FileNotFoundError:
+            pass
+        for cache_file in cache_path.glob(f"{name}.*"):
+            cache_file.unlink()
     restart_kelvin_api_server_module()
-
-    yield
-
-    try:
-        path.unlink()
-    except FileNotFoundError:
-        pass
 
 
 @pytest.fixture(scope="module")
-def create_user_pyhook(restart_kelvin_api_server_module):
-    path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "usertesthook.py"
-    with open(path, "w") as fp:
-        fp.write("from udm_rest_client import UDM\n")
-        fp.write("import univention.admin.uldap_docker\n")
-        fp.write("from ucsschool.importer.models.import_user import ImportUser\n")
-        fp.write("from ucsschool.importer.utils.user_pyhook import UserPyHook\n\n")
-        fp.write(inspect.getsource(UserBirthdayPyHook))
-    restart_kelvin_api_server_module()
+def create_format_pyhook(create_pyhook):
+    text = f"""from typing import Any, Dict
+from ucsschool.importer.utils.format_pyhook import FormatPyHook
 
-    yield
+{inspect.getsource(FormatFirstnamePyHook)}
+"""
+    create_pyhook("formattesthook", text)
 
-    try:
-        path.unlink()
-    except FileNotFoundError:
-        pass
+
+@pytest.fixture(scope="module")
+def create_user_pyhook(create_pyhook):
+    text = f"""from udm_rest_client import UDM
+import univention.admin.uldap_docker
+from ucsschool.importer.models.import_user import ImportUser
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+
+{inspect.getsource(UserBirthdayPyHook)}
+"""
+    create_pyhook("usertesthook", text)
 
 
 def role_id(value: Role) -> str:
