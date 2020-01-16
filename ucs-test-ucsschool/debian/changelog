@@ -1,9 +1,9 @@
-ucs-test-ucsschool (6.0.90) unstable; urgency=low
+ucs-test-ucsschool (6.0.91) unstable; urgency=low
 
   * Bug #50678: add tests for linting
   * Bug #50678: fix import config and improve server restart time
 
- -- Daniel Troeder <troeder@univention.de>  Thu, 16 Jan 2020 09:27:33 +0100
+ -- Daniel Troeder <troeder@univention.de>  Thu, 16 Jan 2020 09:27:34 +0100
 
 ucs-test-ucsschool (6.0.89) unstable; urgency=medium
 
