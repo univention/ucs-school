@@ -111,24 +111,30 @@ class Test(TestCase):
 
 		response = requests.post(RESSOURCE_URLS['schools'], headers=self.auth_headers, json=attrs)
 		logger.info('*** response=%r', response)
-		logger.info('*** response.json()=%r', response.json())
-		self.assertEqual(response.status_code, 201, 'response.status_code = {} for URL  -> {!r}'.format(
-			response.status_code, response.url, response.text))
-
-		filter_s = filter_format('(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))', (attrs['name'],))
-		res = self.lo.search(filter=filter_s)
-		if len(res) != 1:
-			logger.error('School {!r} not found: search with filter={!r} did not return 1 result:\n{}'.format(
-				attrs['name'], filter_s, res))
-		school_dn = res[0][0]
-		school_attrs = res[0][1]
-		LibSchool.from_dn(school_dn, None, self.lo).remove(self.lo)
-		self.assertDictEqual(
-			{
-				'name': school_attrs['ou'][0],
-				'display_name': school_attrs['displayName'][0]
-			},
-			attrs)
+		self.assertEqual(
+			response.status_code,
+			405,
+			'response.status_code = {} for URL  -> {!r}'.format(
+				response.status_code, response.url, response.text)
+		)
+		# logger.info('*** response.json()=%r', response.json())
+		# self.assertEqual(response.status_code, 201, 'response.status_code = {} for URL  -> {!r}'.format(
+		# 	response.status_code, response.url, response.text))
+		#
+		# filter_s = filter_format('(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))', (attrs['name'],))
+		# res = self.lo.search(filter=filter_s)
+		# if len(res) != 1:
+		# 	logger.error('School {!r} not found: search with filter={!r} did not return 1 result:\n{}'.format(
+		# 		attrs['name'], filter_s, res))
+		# school_dn = res[0][0]
+		# school_attrs = res[0][1]
+		# LibSchool.from_dn(school_dn, None, self.lo).remove(self.lo)
+		# self.assertDictEqual(
+		# 	{
+		# 		'name': school_attrs['ou'][0],
+		# 		'display_name': school_attrs['displayName'][0]
+		# 	},
+		# 	attrs)
 
 
 if __name__ == '__main__':

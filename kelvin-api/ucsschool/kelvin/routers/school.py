@@ -150,11 +150,11 @@ async def get(
     return await SchoolModel.from_lib_model(school, request, udm)
 
 
-@router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolModel)
-async def create(school: SchoolCreateModel) -> SchoolModel:
-    """
-    **Not implemented yet!**
-    """
-    raise HTTPException(
-        status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError"
-    )
+# @router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolModel)
+# async def create(school: SchoolCreateModel) -> SchoolModel:
+#     """
+#     **Not implemented yet!**
+#     """
+#     raise HTTPException(
+#         status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError"
+#     )
