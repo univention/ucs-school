@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.92) unstable; urgency=low
+
+  * Bug #50720: expect deactivated route for school creation
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 16 Jan 2020 15:27:35 +0100
+
 ucs-test-ucsschool (6.0.91) unstable; urgency=low
 
   * Bug #50678: add tests for linting
