@@ -1,8 +1,8 @@
-ucs-test-ucsschool (6.0.93) UNRELEASED; urgency=medium
+ucs-test-ucsschool (6.0.93ubuntu1) UNRELEASED; urgency=medium
 
-  * 
+  * Bug #50722: Jenkins move user into another ou failing
 
- -- Tobias Wenzel <wenzel@stockholm.knut.univention.de>  Fri, 17 Jan 2020 11:27:47 +0100
+ -- Tobias Wenzel <twenzel@stockholm.knut.univention.de>  Fri, 17 Jan 2020 11:37:57 +0100
 
 ucs-test-ucsschool (6.0.92) unstable; urgency=low
 
