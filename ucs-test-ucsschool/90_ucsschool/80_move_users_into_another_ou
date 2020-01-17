@@ -105,7 +105,7 @@ def main():
 			assert user.dn != dn
 			assert b in user.dn
 			udm.wait_for('users/user', user.dn, everything=True)
-
+			udm.wait_for('groups/group', global_group_dn, everything=True)
 			utils.retry_on_error(
 				functools.partial(verify_user_move, lo, b, user, attrs, workgroup_dn, groups, oldinfo, grp1_name, grp2_name),
 				exceptions=(Exception,),
