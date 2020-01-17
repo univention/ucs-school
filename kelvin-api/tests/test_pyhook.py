@@ -281,6 +281,7 @@ async def test_user_pyhook(
     create_random_user_data,
     schedule_delete_user,
     create_user_pyhook,
+    schedule_delete_file,
     role: Role,
 ):
     hook_path = (
@@ -297,6 +298,7 @@ async def test_user_pyhook(
     r_user = await create_random_user_data(
         roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
     )
+    schedule_delete_file(Path("/tmp", r_user.name))
     data = r_user.json()
     print(f"POST data={data!r}")
     async with UDM(**udm_kwargs) as udm:

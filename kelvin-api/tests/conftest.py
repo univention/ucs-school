@@ -338,6 +338,22 @@ def schedule_delete_user(auth_header, url_fragment):
 
 
 @pytest.fixture
+def schedule_delete_file():
+    paths: List[Path] = []
+
+    def _func(path: Path):
+        paths.append(path)
+
+    yield _func
+
+    for path in paths:
+        try:
+            path.unlink()
+        except FileNotFoundError:
+            pass
+
+
+@pytest.fixture
 def new_school_class_obj():
     return lambda: SchoolClassFactory()
 
