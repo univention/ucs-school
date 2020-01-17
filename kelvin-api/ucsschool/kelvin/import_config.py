@@ -103,11 +103,16 @@ def init_ucs_school_import_framework(**config_kwargs) -> ReadOnlyDict:
         # ucsschool.kelvin.main.setup_logging()
         _setup_factory(config["factory"])  # noqa
     except UcsSchoolImportError as exc:
-        logger.exception("Error initializing UCS@school import framework: %s", exc)
+        logger.exception(
+            "Error initializing UCS@school import framework (inside Kelvin REST API): %s",
+            exc,
+        )
         etype, exc, etraceback = sys.exc_info()
         _ucs_school_import_framework_error = InitialisationError(str(exc))
         raise_(etype, exc, etraceback)
-    logger.info("------ UCS@school import tool configured ------")
+    logger.info(
+        "------ UCS@school import framework (inside Kelvin REST API) configured ------"
+    )
     logger.info("Used configuration files: %s.", config.conffiles)
     logger.info("Using command line arguments: %r", _config_args)
     logger.info("Configuration is:\n%s", pprint.pformat(config))

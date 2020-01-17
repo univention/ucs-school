@@ -19,17 +19,17 @@ To push the Docker image to Univentions Docker registry, the image has to be bui
 
 	$ ssh root@docker.knut.univention.de
 	# list existing images
-	$ docker images docker-test-upload.software-univention.de/ucsschool-kelvin
-	# update ucsschool repo (branch dtroeder/ucsschool.no.udm)
+	$ docker images docker-test-upload.software-univention.de/ucsschool-kelvin-rest-api
+	# update ucsschool repo (branch feature/kelvin)
 	$ cd ucsschool-kelvin/ucsschool
 	$ git pull
 
 Optionally sync not yet commited changes from your local git repo to the server::
 
 	$ cd $UCSSCHOOL-GIT
-	$ git checkout dtroeder/ucsschool.no.udm
+	$ git checkout feature/kelvin
 	$ make -C kelvin-api clean
-	$ rsync -avn --delete --exclude docker/build --exclude docker/ucs --exclude .idea/ --exclude .git --exclude doc --exclude 'italc*' --exclude '*-umc-*' --exclude .pytest_cache --exclude __pycache__ ./ root@docker:ucsschool-kelvin/ucsschool/
+	$ rsync -avn --delete ./ root@docker:ucsschool-kelvin/ucsschool/ --exclude docker/build --exclude docker/ucs --exclude .idea/ --exclude .git --exclude doc --exclude 'italc*' --exclude '*-umc-*' --exclude .pytest_cache --exclude __pycache__  --exclude '*.egg-info' --exclude '*.eggs'
 	# check output, changes should be only recent commits and your changes
 	# if OK: remove '-n' from rsync cmdline
 
@@ -40,9 +40,9 @@ Build image on the ``docker`` host and push it to the Docker registry::
 	$ git pull
 	$ ./build_docker_image --push
 
-If the build suceeds, you'll be asked::
+If the build succeeds, you'll be asked::
 
-	Push 'Y' if you are sure you want to push 'docker-test-upload.software-univention.de/ucsschool-kelvin:0.1.0-test' to the docker registry.
+	Push 'Y' if you are sure you want to push 'docker-test-upload.software-univention.de/ucsschool-kelvin-rest-api:1.0.0' to the docker registry.
 
 Type (upper case) ``Y`` to start the push.
 
@@ -53,18 +53,9 @@ Update (un)join script and settings of app
 The app settings and the join and unjoin scripts are in a ``appcenter`` directory in the UCS\@school git repository. There is also a script ``push_config_to_appcenter`` that can be used to upload those files to the Univention App Provider Portal::
 
 	$ cd $UCSSCHOOL-GIT
-	$ git checkout dtroeder/ucsschool.no.udm
+	$ git checkout feature/kelvin
 	$ cd appcenter
-
-	# download the 'univention-appcenter-control' script:
 	$ ./push_config_to_appcenter
-
-	# list existing app versions:
-	$ ./univention-appcenter-control status ucsschool-kelvin
-
-	# push file to Univention App Provider Portal
-	$ ./push_config_to_appcenter --app 4.4/ucsschool-kelvin=0.1.0
-
 
 *Hint:* To upload the files to the App Provider Portal you will be asked for your username and password. Create ``~/.univention-appcenter-user`` (containing your username for the App Provider Portal) and ``~/.univention-appcenter-pwd`` (with your users password) to skip the question.
 
@@ -118,6 +109,15 @@ Coverage
 
 Code coverage is checked during every ``pytest`` run, so also during Docker image build. To start it manually read chapter `Tests`.
 
+Auto-reload of API server during development
+--------------------------------------------
+
+The API server can be configured to reload itself, whenever a referenced Python module is changed::
+
+    $ univention-app shell ucsschool-kelvin-rest-api
+    $ export DEV=1
+    $ /etc/init.d/ucsschool-kelvin-rest-api restart
+
 Installation on developer PC
 ----------------------------
 
@@ -142,8 +142,8 @@ Create admin group on the UCS@school host::
 
 	$ udm groups/group create --ignore_exists \
 		--position "cn=groups,$(ucr get ldap/base)" \
-		--set name="ucsschool-kelvin-admins" \
-		--set description="Users that are allowed to connect to the Kelvin API." \
+		--set name="ucsschool-kelvin-rest-api-admins" \
+		--set description="Users that are allowed to connect to the UCS@school Kelvin REST API." \
 		--append "users=uid=Administrator,cn=users,$(ucr get ldap/base)"
 
 Create secret key file for token signing::

@@ -27,7 +27,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-APP_ID="ucsschool-kelvin"
+APP_ID="ucsschool-kelvin-rest-api"
 CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
 CN_ADMIN_SECRET_FILE_ULDAP_LOCATION="/etc/ldap.secret"
 
@@ -43,6 +43,6 @@ if [ "$1" = "install" ]; then
     --insecure \
     $DOCKER_HOST_NAME
 
-  echo "Restating Kelvin API server..."
-  /etc/init.d/kelvin-api restart
+  echo "Restating UCS@school Kelvin REST API server..."
+  /etc/init.d/ucsschool-kelvin-rest-api restart
 fi

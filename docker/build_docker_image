@@ -13,7 +13,7 @@ if [ "$1" = "--push" ] || [ "$2" = "--push" ]; then
   PUSH_DEV=1
 fi
 
-APP_ID="ucsschool-kelvin"
+APP_ID="ucsschool-kelvin-rest-api"
 DOCKERFILE="$(basename "$(readlink -f Dockerfile)")"
 BASE_IMG="$(egrep ^FROM "$DOCKERFILE" | cut -d ' ' -f 2-)"
 APP_IMG_NO_VERSION="docker-test-upload.software-univention.de/${APP_ID}"
@@ -57,7 +57,7 @@ fi
 echo "Copying files to build directory..."
 [ -d build ] || mkdir build
 rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim \
- ../ucs-school-lib ../ucs-school-import kelvin-api.initd alpine_apk_list Dockerfile build/
+ ../ucs-school-lib ../ucs-school-import ucsschool-kelvin-rest-api.initd alpine_apk_list Dockerfile build/
 
 echo "Create empty import configs"
 mkdir -p build/ucs-school-import/empty_configs

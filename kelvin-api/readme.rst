@@ -3,8 +3,8 @@ Kelvin API
 
 |python| |license| |code style|
 
-.. This file can be read on the installed system at https://FQDN/kelvin/api/v1/readme
-.. The changelog can be read on the installed system at https://FQDN/kelvin/api/v1/history
+.. This file can be read on the installed system at https://FQDN/ucsschool/kelvin/v1/readme
+.. The changelog can be read on the installed system at https://FQDN/ucsschool/kelvin/v1/changelog
 
 
 Installation
@@ -24,14 +24,15 @@ Explore API
 -----------
 
 Swagger / OpenAPI...
-/kelvin/api/v1/openapi.json
-/kelvin/api/v1/docs
-/kelvin/api/v1/redoc
+/ucsschool/kelvin/token
+/ucsschool/kelvin/v1/openapi.json
+/ucsschool/kelvin/v1/docs
+/ucsschool/kelvin/v1/redoc
 
 Authentication
 ^^^^^^^^^^^^^^
 
-To use the API, a `JSON Web Token (JWT) <https://en.wikipedia.org/wiki/JSON_Web_Token>`_ must be retrieved from ``https://FQDN/kelvin/api/token``. The token will be valid for a configurable amount of time (default 60 minutes), after which they must be renewed. To change the TTL, open the apps `app settings` in the app center. (When released as app - currently set the UCRV ``ucsschool/kelvin-api/access_tokel_ttl``).
+To use the API, a `JSON Web Token (JWT) <https://en.wikipedia.org/wiki/JSON_Web_Token>`_ must be retrieved from ``https://FQDN/ucsschool/kelvin/token``. The token will be valid for a configurable amount of time (default 60 minutes), after which they must be renewed. To change the TTL, open the apps `app settings` in the app center. (When released as app - currently set the UCRV ``ucsschool/kelvin-api/access_tokel_ttl``).
 
 Example ``curl`` command to retrieve a token::
 
@@ -39,7 +40,7 @@ Example ``curl`` command to retrieve a token::
         -H "Content-Type:application/x-www-form-urlencoded" \
         -d "username=Administrator" \
         -d "password=univention" \
-        https://m66.uni.dtr/kelvin/api/token
+        https://m66.uni.dtr/ucsschool/kelvin/token
 
 Only members of the group ``kelvin-users`` are allowed to access the HTTP-API.
 
@@ -61,7 +62,7 @@ But the udm rest api isn't automatically reloaded (bug 50253), which prevents th
 Update manually the openapi client manually if needed::
 
    systemctl restart univention-directory-manager-rest.service
-   univention-app shell ucsschool-kelvin /bin/sh -c '. /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure $DOCKER_HOST_NAME'
+   univention-app shell ucsschool-kelvin-rest-api /bin/sh -c '. /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure $DOCKER_HOST_NAME'
 
 
 File locations
@@ -70,7 +71,7 @@ File locations
 Logfiles
 ^^^^^^^^
 
-``/var/log/univention/ucs-school-kelvin`` is a volume mounted into the docker container, so it can be accessed from the host.
+``/var/log/univention/ucsschool-kelvin-rest-api`` is a volume mounted into the docker container, so it can be accessed from the host.
 
 The directory contains the file ``http.log``, which is the log of the HTTP-API (both ASGI server and API application).
 
@@ -79,7 +80,7 @@ Configuration of user object management (import configuration)
 
 ``/var/lib/ucs-school-import/configs`` is a volume mounted into the docker container, so it can be accessed from the host.
 
-The directory contains the file ``kelvin.json``, which is the top level configuration file for the UCS@school import code that runs inside the Docker container when user objects are managed.
+The directory contains the file ``kelvin.json``, which is the top level configuration file for the UCS@school import code that is executed as part of the `UCS@school Kelvin REST API` that runs inside the Docker container when user objects are managed.
 
 
 Python hooks for user object management (import-user)

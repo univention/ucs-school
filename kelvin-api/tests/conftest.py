@@ -57,7 +57,7 @@ from univention.config_registry import ConfigRegistry
 with patch("ucsschool.kelvin.constants.STATIC_FILES_PATH", "/tmp"):
     import ucsschool.kelvin.main
 
-APP_ID = "ucsschool-kelvin"
+APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
@@ -147,7 +147,7 @@ def udm_kwargs() -> Dict[str, Any]:
 
 @pytest.fixture(scope="session")
 def url_fragment():
-    return f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/v1"
+    return f"http://{os.environ['DOCKER_HOST_NAME']}/ucsschool/kelvin/v1"
 
 
 @pytest.fixture(scope="session")
@@ -406,11 +406,11 @@ async def create_random_schools(udm_kwargs):
 
 def restart_kelvin_api_server() -> None:
     print("Restarting Kelvin API server...")
-    subprocess.call(["/etc/init.d/kelvin-api", "restart"])
+    subprocess.call(["/etc/init.d/ucsschool-kelvin-rest-api", "restart"])
     while True:
         time.sleep(0.5)
         response = requests.get(
-            f"http://{os.environ['DOCKER_HOST_NAME']}/kelvin/api/foobar"
+            f"http://{os.environ['DOCKER_HOST_NAME']}/ucsschool/kelvin/api/foobar"
         )
         if response.status_code == 404:
             break

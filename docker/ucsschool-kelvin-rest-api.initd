@@ -1,19 +1,28 @@
 #!/sbin/openrc-run
 
+# for auto-reload during development run:
+# export DEV=1
+# /etc/init.d/ucsschool-kelvin-rest-api restart
+
+if [ "$DEV" = 1 ]; then
+    RELOAD="--reload"
+else
+    RELOAD=""
+fi
+
 command=/kelvin/venv/bin/uvicorn
-# TODO: remove "--reload" argument for final release
-command_args="--reload --host 0.0.0.0 --port 8911 ucsschool.kelvin.main:app"
-name=kelvin-api
-description="UCS@school Kelvin API (ASGI server)"
+command_args="$RELOAD --host 0.0.0.0 --port 8911 ucsschool.kelvin.main:app"
+name=ucsschool-kelvin-rest-api
+description="UCS@school Kelvin REST API server"
 
 start() {
-    ebegin "Starting UCS@school Kelvin API"
+    ebegin "Starting $description"
     start-stop-daemon --start --background --name "$name" --exec $command -- $command_args
     eend $?
 }
 
 stop() {
-    ebegin "Stopping UCS@school Kelvin API"
+    ebegin "Stopping $description"
     pkill -INT -f multiprocessing || true
     pkill -INT -f "$command" || true
     eend $?

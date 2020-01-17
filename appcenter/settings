@@ -1,11 +1,11 @@
 [ucsschool/kelvin/access_tokel_ttl]
 Type = Int
-Description = Number of minutes a token retrieved from the Kelvin API is valid.
-Description[de] = Anzahl der Minuten die ein Token, der von der Kelvin-API bezogen wurde, gültig ist.
+Description = Number of minutes a token retrieved from the UCS@school Kelvin REST API is valid.
+Description[de] = Anzahl der Minuten die ein Token, der von der UCS@school Kelvin REST API bezogen wurde, gültig ist.
 InitialValue = 60
 
 [ucsschool/kelvin/log_level]
 Type = String
-Description = Log level for messages written to /var/log/univention/ucs-school-kelvin/http.log. Valid values are "DEBUG", "INFO", "WARNING" and "ERROR". Defaults to "INFO".
-Description[de] = Loglevel der Nachrichten die nach /var/log/univention/ucs-school-kelvin/http.log geschrieben werden. Gültige Werte sind "DEBUG", "INFO", "WARNING" and "ERROR". Standard ist "INFO".
+Description = Log level for messages written to /var/log/univention/ucsschool-kelvin-rest-api/http.log. Valid values are "DEBUG", "INFO", "WARNING" and "ERROR". Defaults to "INFO".
+Description[de] = Loglevel der Nachrichten die nach /var/log/univention/ucsschool-kelvin-rest-api/http.log geschrieben werden. Gültige Werte sind "DEBUG", "INFO", "WARNING" and "ERROR". Standard ist "INFO".
 InitialValue = INFO

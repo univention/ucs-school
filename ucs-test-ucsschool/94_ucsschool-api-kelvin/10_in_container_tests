@@ -5,7 +5,7 @@
 ## packages: []
 ## bugs: []
 
-APP="ucsschool-kelvin"
+APP="ucsschool-kelvin-rest-api"
 MIN_COVERAGE=70
 
 declare -a CMD=(sh -c "

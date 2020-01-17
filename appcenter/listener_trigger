@@ -32,4 +32,5 @@ sleep 15
 if [ "$(cat /tmp/update)" = "$$" ]; then
     . /kelvin/venv/bin/activate
     update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure $DOCKER_HOST_NAME
+    /etc/init.d/ucsschool-kelvin-rest-api restart
 fi

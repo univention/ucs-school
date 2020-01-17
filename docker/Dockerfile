@@ -37,7 +37,7 @@ EXPOSE 7890
 
 CMD ["/sbin/init"]
 
-LABEL "description"="UCS@school Kelvin-API" \
+LABEL "description"="UCS@school Kelvin REST API" \
     "version"="$version"
 
 # package and Python dependency installation, base system configuration,
@@ -103,10 +103,10 @@ RUN /kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-confi
 # install packages 'editable', so we can work directly on them
 COPY ucs-school-lib/ /kelvin/ucs-school-lib
 COPY ucs-school-import/ /kelvin/ucs-school-import
-COPY kelvin-api.initd /tmp/
+COPY ucsschool-kelvin-rest-api.initd /tmp/
 COPY kelvin-api/ /kelvin/kelvin-api
-RUN	mv -v /tmp/kelvin-api.initd /etc/init.d/kelvin-api && \
-	rc-update add kelvin-api default && \
+RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest-api && \
+	rc-update add ucsschool-kelvin-rest-api default && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
 	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
 	cp -r /kelvin/ucs-school-import/usr/share/ucs-school-import /usr/share/ && \

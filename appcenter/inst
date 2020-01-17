@@ -35,8 +35,8 @@
 
 VERSION=1
 
-APP_ID="ucsschool-kelvin"
-ADMIN_GROUP="ucsschool-kelvin-admins"
+APP_ID="ucsschool-kelvin-rest-api"
+ADMIN_GROUP="$APP_ID-admins"
 CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
 TOKEN_SIGN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/tokens.secret"
 KELVIN_IMPORT_CONFIG_FILE="/var/lib/ucs-school-import/configs/kelvin.json"
@@ -74,7 +74,10 @@ main () {
     fi
 
     if ! [ -e "$KELVIN_IMPORTUSER_HOOKS_README" ]; then
-      echo 'The content of this directory is scanned when the Kelvin API
+      echo 'Directory for hooks for the UCS@school Kelvin REST API
+------------------------------------------------------
+
+The content of this directory is scanned when the Kelvin API
 server starts.
 If it contains hook classes that inherit from
 ``ucsschool.importer.utils.import_pyhook.ImportPyHook``, they are executed

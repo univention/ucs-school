@@ -35,7 +35,7 @@
 
 VERSION=1
 
-APP_ID="ucsschool-kelvin"
+APP_ID="ucsschool-kelvin-rest-api"
 
 . /usr/share/univention-join/joinscripthelper.lib
 

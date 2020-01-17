@@ -71,7 +71,7 @@ ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)
 
 app = FastAPI(
     title="Kelvin API",
-    description="UCS@school objects HTTP API",
+    description="UCS@school Kelvin REST API",
     version=__version__,
     docs_url=f"{URL_API_PREFIX}/docs",
     redoc_url=f"{URL_API_PREFIX}/redoc",
