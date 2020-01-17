@@ -2,7 +2,7 @@
 #
 # UCS@school python lib
 #
-# Copyright 2007-2018 Univention GmbH
+# Copyright 2007-2020 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -33,7 +33,6 @@ import re
 
 import univention.admin.modules as udm_modules
 from ldap.filter import escape_filter_chars, filter_format
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, set_bind_function
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
@@ -42,13 +41,20 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules import Base, UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
-
-__bind_callback = None
-_ = Translation('python-ucs-school').translate
+from .school_umc_ldap_connection import LDAP_Connection, set_bind_function
+try:
+	from typing import Any, Dict, List, Optional, Tuple
+	from univention.admin.uldap import access as LoType
+	from univention.admin.handlers import simpleLdap as UdmObject
+except ImportError:
+	pass
 
 # load UDM modules
 udm_modules.update()
 
+__bind_callback = None
+_ = Translation('python-ucs-school').translate
+unicode = str
 
 class SchoolSanitizer(StringSanitizer):
 
@@ -61,8 +67,8 @@ class SchoolSanitizer(StringSanitizer):
 
 
 class SchoolBaseModule(Base):
-	"""This classe serves as base class for UCS@school UMC modules that need
-	LDAP access. It initiates the list of availabe OUs (self.availableSchools) and
+	"""This class serves as base class for UCS@school UMC modules that need
+	LDAP access. It initiates the list of available OUs (self.availableSchools) and
 	initiates the search bases (self.searchBase). set_bind_function() is called
 	automatically to allow LDAP connections. In order to integrate this class
 	into a module, use the following paradigm:
@@ -81,7 +87,7 @@ class SchoolBaseModule(Base):
 	def init(self):
 		set_bind_function(self.bind_user_connection)
 
-	def bind_user_connection(self, lo):
+	def bind_user_connection(self, lo):  # type: (LoType) -> None
 		if not self.user_dn:  # ... backwards compatibility
 			# the DN is None if we have a local user (e.g., root)
 			# FIXME: the statement above is not completely true, user_dn is None also if the UMC server could not detect it (for whatever reason)
@@ -109,6 +115,7 @@ class SchoolBaseModule(Base):
 		self.finished(request.id, [{'id': school.name, 'label': school.display_name} for school in schools])
 
 	def _groups(self, ldap_connection, school, ldap_base, pattern=None, scope='sub'):
+		# type: (LoType, str, str, Optional[str], Optional[str]) -> List[Dict[str, str]]
 		"""Returns a list of all groups of the given school"""
 		# get list of all users matching the given pattern
 		ldapFilter = None
@@ -153,6 +160,7 @@ class SchoolBaseModule(Base):
 		self.finished(request.id, self._groups(ldap_user_read, school, ComputerRoom.get_container(school), request.options['pattern']))
 
 	def _users(self, ldap_connection, school, group=None, user_type=None, pattern=''):
+		# type: (LoType, str, Optional[str], Optional[str], Optional[str]) -> List[ucsschool.lib.models.User]
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
 		import ucsschool.lib.models
 		if not user_type:
@@ -205,33 +213,93 @@ class SchoolBaseModule(Base):
 			for cls in classes:
 				_users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
 				users.extend(user.get_udm_object(ldap_connection) for user in _users)
+		return users
 
+	def _users_ldap(self, ldap_connection, school, group=None, user_type=None, pattern='', attr=None):
+		# type: (LoType, str, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Tuple[str, Dict[str, Any]]]
+		"""
+		Returns a list of LDAP query result tuples (dn, attr) of all users
+		given  `pattern`, `school` (search base) and `group`.
+		"""
+		import ucsschool.lib.models
+		if not user_type:
+			classes = [ucsschool.lib.models.User]
+		elif user_type.lower() in ('teachers', 'teacher'):
+			classes = [ucsschool.lib.models.Teacher, ucsschool.lib.models.TeachersAndStaff]
+		elif user_type.lower() in ('student', 'students', 'pupil', 'pupils'):
+			classes = [ucsschool.lib.models.Student]
+		else:
+			raise TypeError('user_type %r unknown.' % (user_type,))
+
+		attr = attr or []
+		users = []
+		user_module = udm_modules.get('users/user')
+
+		if group not in (None, 'None'):
+			# The following code block prevents a massive performance loss if the group
+			# contains far less users than all available users. The else-block opens
+			# all available users ==> high LDAP load! (Bug #42167)
+
+			user_dns = ldap_connection.get(group).get('uniqueMember', [])
+			for userdn in set(user_dns):
+				search_filter_list = [LDAP_Filter.forSchool(school)]
+				if pattern:
+					search_filter_list.append(LDAP_Filter.forUsers(pattern))
+				for cls in classes:
+					search_filter_list.append(cls.type_filter)
+					# concatenate LDAP filters
+					search_filter = unicode(user_module.lookup_filter(
+						conjunction(
+							'&',
+							[parse(subfilter) for subfilter in search_filter_list]
+						)))
+					ldap_objs = ldap_connection.search(search_filter, base=userdn, attr=attr)
+					if len(ldap_objs) == 1:
+						users.append(ldap_objs[0])
+					# else:
+						# either: 'Possible group inconsistency detected: %r contains member %r but member was not
+						#         found in LDAP' % (group, userdn))
+						# or: DN does not belong to teacher/student (WrongModel)
+						# in both cases: ignore user
+		else:
+			for cls in classes:
+				filter_s = unicode(user_module.lookup_filter(
+					conjunction(
+						'&',
+						[
+							parse(LDAP_Filter.forSchool(school)),
+							parse(LDAP_Filter.forUsers(pattern)),
+							parse(cls.type_filter),
+						]
+					)))
+				users.extend(ldap_connection.search(filter=filter_s, attr=attr))
 		return users
 
 
 class LDAP_Filter:
 
 	@staticmethod
-	def forSchool(school):
+	def forSchool(school):  # type: (str) -> str
 		return filter_format('(ucsschoolSchool=%s)', [school])
 
 	@staticmethod
-	def forUsers(pattern):
+	def forUsers(pattern):  # type: (str) -> str
 		return LDAP_Filter.forAll(pattern, ['lastname', 'username', 'firstname'])
 
 	@staticmethod
-	def forGroups(pattern, school=None):
+	def forGroups(pattern, school=None):  # type: (str, Optional[str]) -> str
 		# school parameter is deprecated
 		return LDAP_Filter.forAll(pattern, ['name', 'description'])
 
 	@staticmethod
-	def forComputers(pattern):
+	def forComputers(pattern):  # type: (str) -> str
 		return LDAP_Filter.forAll(pattern, ['name', 'description'], ['mac', 'ip'])
 
 	regWhiteSpaces = re.compile(r'\s+')
 
 	@staticmethod
 	def forAll(pattern, subMatch=[], fullMatch=[], prefixes={}):
+		# type: (str, Optional[List[str]], Optional[List[str]], Optional[Dict[str, Any]]) -> str
 		expressions = []
 		for iword in LDAP_Filter.regWhiteSpaces.split(pattern or ''):
 			# evaluate the subexpression (search word over different attributes)
@@ -259,7 +327,7 @@ class LDAP_Filter:
 class Display:
 
 	@staticmethod
-	def user(udm_object):
+	def user(udm_object):  # type: (UdmObject) -> str
 		fullname = udm_object['lastname']
 		if 'firstname' in udm_object and udm_object['firstname']:
 			fullname += ', %(firstname)s' % udm_object
