@@ -11,5 +11,5 @@
 	url = ../doc-common
 	branch = master
 [submodule "doc/kelvin/sphinx-univention"]
-	path = doc/kelvin/sphinx-univention
+	path = doc/kelvin/docs/sphinx-univention
 	url = git@git.knut.univention.de:univention/internal/sphinx-univention.git
