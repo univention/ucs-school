@@ -1,0 +1,17 @@
+#!/usr/share/ucs-test/runner bash
+## desc: run tests in container which are supplied by the ucsschool.lib
+## tags: [ucs_school_kelvin]
+## exposure: dangerous
+## packages: []
+## bugs: []
+
+APP="ucsschool-kelvin-rest-api"
+
+declare -a CMD=(sh -c "
+. /kelvin/venv/bin/activate &&
+cd /kelvin/ucs-school-lib/modules &&
+python -m pytest")
+
+echo "Running in container: ${CMD[@]}"
+
+univention-app shell "$APP" "${CMD[@]}" || (rv=$?; pkill -f '^/kelvin/venv/bin/python.*pytest$'; exit $rv)
