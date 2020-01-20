@@ -1,4 +1,10 @@
-ucs-test-ucsschool (6.0.93ubuntu1) UNRELEASED; urgency=medium
+ucs-test-ucsschool (6.0.94) unstable; urgency=low
+
+  * Bug #50678: add in-container tests for ucsschool.lib
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 20 Jan 2020 12:15:30 +0100
+
+ucs-test-ucsschool (6.0.93) unstable; urgency=medium
 
   * Bug #50722: Jenkins move user into another ou failing
 

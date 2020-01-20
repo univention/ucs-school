@@ -1,19 +1,16 @@
 #!/usr/share/ucs-test/runner bash
-## desc: run tests in container which are supplied by the kelvin api
+## desc: run tests in container which are supplied by the ucsschool.lib
 ## tags: [ucs_school_kelvin]
 ## exposure: dangerous
 ## packages: []
 ## bugs: []
 
-APP="ucsschool-kelvin"
-MIN_COVERAGE=70
+APP="ucsschool-kelvin-rest-api"
 
 declare -a CMD=(sh -c "
 . /kelvin/venv/bin/activate &&
-cd /kelvin/kelvin-api &&
-export MY_COVERAGE_REPORT_ARGS=\"--fail-under=$MIN_COVERAGE\" &&
-rm -f .coverage &&
-make coverage")
+cd /kelvin/ucs-school-lib/modules &&
+python -m pytest")
 
 echo "Running in container: ${CMD[@]}"
 
