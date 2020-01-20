@@ -5,7 +5,7 @@
 ## packages: []
 ## bugs: []
 
-APP="ucsschool-kelvin"
+APP="ucsschool-kelvin-rest-api"
 declare -a CMD=(sh -c '
 . /kelvin/venv/bin/activate &&
 cd /kelvin/kelvin-api &&

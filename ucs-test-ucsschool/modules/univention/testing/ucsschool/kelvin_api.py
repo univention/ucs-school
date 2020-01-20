@@ -72,7 +72,8 @@ IMPORT_CONFIG = {
 		datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")),
 	"default": "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json",
 }
-URL_BASE_PATH = "/kelvin/api/v1/"
+APP_ID = 'ucsschool-kelvin-rest-api'
+URL_BASE_PATH = "/ucsschool/kelvin/v1/"
 _localhost_root_url = "https://{}.{}{}".format(ucr["hostname"], ucr["domainname"], URL_BASE_PATH)
 API_ROOT_URL = ucr.get("tests/ucsschool/http-api/root_url", _localhost_root_url).rstrip("/") + "/"
 OPENAPI_JSON_URL = urljoin(API_ROOT_URL, "openapi.json")
@@ -343,11 +344,12 @@ class HttpApiUserTestBase(TestCase):
 
 	@classmethod
 	def restart_api_server(cls):
-		cls.logger.info('*** Restarting Kelvin API server...')
-		subprocess.call([
-			'univention-app', 'shell',
-			'ucsschool-kelvin', '/etc/init.d/kelvin-api', 'restart'
-		])
+		cmd = [
+			'univention-app', 'shell', APP_ID,
+			'/etc/init.d/ucsschool-kelvin-rest-api', 'restart'
+		]
+		cls.logger.info('*** Restarting Kelvin API server: %r', cmd)
+		subprocess.call(cmd)
 		while True:
 			time.sleep(0.5)
 			response = requests.get("{}/foobar".format(API_ROOT_URL))
@@ -427,7 +429,7 @@ def init_ucs_school_import_framework(**config_kwargs):
 
 	_config_args = {
 		'dry_run': False,
-		'logfile': "/var/log/univention/ucs-school-kelvin/http.log",
+		'logfile': "/var/log/univention/ucsschool-kelvin-rest-api/http.log",
 		'skip_tests': ['uniqueness'],
 	}
 	_config_args.update(config_kwargs)
