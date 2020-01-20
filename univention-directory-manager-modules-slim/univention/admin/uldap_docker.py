@@ -51,7 +51,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 basestring = unicode = str
 
-APP_ID = "ucsschool-kelvin"
+APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
