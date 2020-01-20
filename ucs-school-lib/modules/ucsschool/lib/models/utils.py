@@ -85,7 +85,10 @@ FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['file'])
 LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config['date'])
 LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config['colors'])
 
-CN_ADMIN_PASSWORD_FILE = "/var/lib/univention-appcenter/apps/ucsschool-kelvin/conf/cn_admin.secret"
+APP_ID = "ucsschool-kelvin-rest-api"
+APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
+APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
+CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
 _handler_cache = dict()
