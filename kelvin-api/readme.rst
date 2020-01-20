@@ -32,7 +32,10 @@ Swagger / OpenAPI...
 Authentication
 ^^^^^^^^^^^^^^
 
-To use the API, a `JSON Web Token (JWT) <https://en.wikipedia.org/wiki/JSON_Web_Token>`_ must be retrieved from ``https://FQDN/ucsschool/kelvin/token``. The token will be valid for a configurable amount of time (default 60 minutes), after which they must be renewed. To change the TTL, open the apps `app settings` in the app center. (When released as app - currently set the UCRV ``ucsschool/kelvin-api/access_tokel_ttl``).
+To use the API, a `JSON Web Token (JWT) <https://en.wikipedia.org/wiki/JSON_Web_Token>`_ must be retrieved from ``https://FQDN/ucsschool/kelvin/token``.
+The token will be valid for a configurable amount of time (default 60 minutes), after which it must be renewed.
+To change the TTL, open the apps `app settings` in the app center.
+(When released as app - currently set the UCRV ``ucsschool/kelvin-api/access_tokel_ttl``).
 
 Example ``curl`` command to retrieve a token::
 
@@ -42,7 +45,7 @@ Example ``curl`` command to retrieve a token::
         -d "password=univention" \
         https://m66.uni.dtr/ucsschool/kelvin/token
 
-Only members of the group ``kelvin-users`` are allowed to access the HTTP-API.
+Only members of the group ``ucsschool-kelvin-rest-api-admins`` are allowed to access the HTTP-API.
 
 The user ``Administrator`` is automatically added to this group for testing purposes. In production the regular admin user accounts should be used.
 
@@ -80,7 +83,7 @@ Configuration of user object management (import configuration)
 
 ``/var/lib/ucs-school-import/configs`` is a volume mounted into the docker container, so it can be accessed from the host.
 
-The directory contains the file ``kelvin.json``, which is the top level configuration file for the UCS@school import code that is executed as part of the `UCS@school Kelvin REST API` that runs inside the Docker container when user objects are managed.
+The directory contains the file ``kelvin.json``, which is the top level configuration file for the UCS\@school import code that is executed as part of the `UCS\@school Kelvin REST API` that runs inside the Docker container when user objects are managed.
 
 
 Python hooks for user object management (import-user)
@@ -90,18 +93,18 @@ Python hooks for user object management (import-user)
 
 The directory content is scanned when the Kelvin API server starts.
 If it contains hook classes that inherit from ``ucsschool.importer.utils.import_pyhook.ImportPyHook``, they are executed when users are managed through the Kelvin API.
-The hooks are very similar to the Python hooks for the UCS@school import (see `UCS@school manual`_).
+The hooks are very similar to the Python hooks for the UCS\@school import (see `UCS@school manual`_).
 The differences are:
 
 * Python 3.7 only
 * Only three types of hooks are executed: ``UserPyHook``, ``FormatPyHook`` and ``ConfigPyHook`` (all located in modules in the ``ucsschool.importer.utils`` package).
 * ``self.dry_run`` is always ``False``
 * ``self.lo`` is always a LDAP connection with write permissions (``cn=admin``) as ``dry_run`` is always ``False``
-* ``FormatPyHook`` and ``ConfigPyHook`` are the same as in the UCS@school import, but a ``UserPyHook`` hook instance has an additional member ``self.udm``.
+* ``FormatPyHook`` and ``ConfigPyHook`` are the same as in the UCS\@school import, but a ``UserPyHook`` hook instance has an additional member ``self.udm``.
 
 ``self.udm`` is an instance of ``udm_rest_client.udm.UDM`` (see `Python UDM REST Client`_).
 It can be used to comfortably query the UDM REST API running on the DC master.
-When using the UCS@school lib or import, it must be used in most places that ``self.lo`` was used before.
+When using the UCS\@school lib or import, it must be used in most places that ``self.lo`` was used before.
 
 **Important**: When calling methods of ucsschool objects (e.g. ``ImportUser``, ``SchoolClass`` etc.) ``self.udm`` must be used instead of ``self.lo`` and those methods may have to be used with ``await``. Thus hooks methods will be ``async``.
 For example::
