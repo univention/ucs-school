@@ -123,6 +123,7 @@ async def compare_lib_api_user(  # noqa: C901
 
 def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
     import univention.admin.uldap
+
     lo, pos = univention.admin.uldap.getAdminConnection()
     ldap_obj = lo.get(dn)
     for attr, value in json_resp.items():
@@ -141,7 +142,9 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
         elif attr == "lastname" and "sn" in ldap_obj:
             assert value == ldap_obj["sn"][0].decode("utf-8")
         elif attr == "school" and "ucsschoolSchool" in ldap_obj:
-            assert value.split("/")[-1] in [s.decode('utf-8') for s in ldap_obj["ucsschoolSchool"]]
+            assert value.split("/")[-1] in [
+                s.decode("utf-8") for s in ldap_obj["ucsschoolSchool"]
+            ]
         elif attr == "udm_properties":
             for k, v in json_resp["udm_properties"].items():
                 if k == "organisation" and "o" in ldap_obj:
