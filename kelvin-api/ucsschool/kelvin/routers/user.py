@@ -636,7 +636,14 @@ async def partial_update(
             setattr(user_current, attr, new_value)
             changed = True
     if changed:
-        await user_current.modify(udm)
+        try:
+            await user_current.modify(udm)
+        except UcsSchoolImportError as exc:
+            logger.warning("Error modifying user %r with %r: %s", user_current, await request.json(), exc)
+            raise HTTPException(
+                status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=str(exc),
+            ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
