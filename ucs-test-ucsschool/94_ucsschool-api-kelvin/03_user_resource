@@ -17,6 +17,7 @@ try:
 except ImportError:
 	from urllib.parse import urljoin  # py3
 import univention.testing.strings as uts
+from univention.testing.utils import wait_for_replication
 from univention.testing.ucsschool.kelvin_api import api_call, create_remote_static, HttpApiUserTestBase, RESSOURCE_URLS, partial_update_remote_static
 from ucsschool.lib.models import Staff as LibStaff, User as LibUser
 try:
@@ -63,6 +64,7 @@ class Test(HttpApiUserTestBase):
 				errors.append('Result without DN: {!r}.'.format(r))
 		if errors:
 			self.fail(' '.join(errors))
+		wait_for_replication()
 		for num, result in enumerate(results, start=1):
 			self.logger.info('*** Checking result %d/%d (%r)...', num, parallelism, result['name'])
 			user = self.get_import_user(result['dn'])
@@ -130,6 +132,7 @@ class Test(HttpApiUserTestBase):
 				errors.append('Result without DN: {!r}.'.format(r))
 		if errors:
 			self.fail(' '.join(errors))
+		wait_for_replication()
 		for num, result in enumerate(results, start=1):
 			self.logger.info('*** Checking result %d/%d (%r)...', num, parallelism, result['name'])
 			user = self.get_import_user(result['dn'])
@@ -195,6 +198,7 @@ class Test(HttpApiUserTestBase):
 			jobs.append((create_attrs, attrs_new))
 
 		# modify users in parallel and using HTTP
+		wait_for_replication()
 		pool = Pool(processes=parallelism)
 		t0 = time.time()
 		map_async_result = pool.map_async(
@@ -205,6 +209,7 @@ class Test(HttpApiUserTestBase):
 		t1 = time.time()
 		self.logger.info('***** got %d results in %d seconds', len(results), t1 - t0)
 		self.logger.debug('***** results=%r', results)
+		wait_for_replication()
 		for num, result in enumerate(results, start=1):
 			self.logger.info('*** Checking result %d/%d (%r)...', num, parallelism, result.get('name', 'N/A'))
 			user = self.get_import_user(result['dn'])
