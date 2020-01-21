@@ -168,10 +168,14 @@ class UcsSchoolBaseModel(LibModelHelperMixin):
 
 
 class BasePatchModel(BaseModel):
-    async def to_modify_kwargs(self) -> Dict[str, Any]:
+    _guard = object()
+
+    async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:
+        json_body = await request.json()
         res = {}
         for key, value in self.dict().items():
-            if value is not None:
+            # ignore (default) None values unless explicitly requested
+            if value is not None or json_body.get(key, self._guard) is None:
                 res[key] = value
         return res
 

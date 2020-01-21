@@ -230,8 +230,8 @@ class UserPatchModel(BasePatchModel):
     source_uid: str = None
     udm_properties: Dict[str, Any] = None
 
-    async def to_modify_kwargs(self) -> Dict[str, Any]:
-        kwargs = await super().to_modify_kwargs()
+    async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:
+        kwargs = await super().to_modify_kwargs(request)
         for key, value in kwargs.items():
             if key == "schools":
                 kwargs["schools"] = [str(school).split("/")[-1] for school in value]
@@ -608,7 +608,7 @@ async def partial_update(
             status_code=HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
-    to_change = await user.to_modify_kwargs()
+    to_change = await user.to_modify_kwargs(request)
     user_current = await get_import_user(udm, udm_obj.dn)
 
     # 1. move
