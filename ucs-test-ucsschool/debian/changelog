@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.97) unstable; urgency=medium
+
+  * Bug # 50678: fix2 94_ucsschool-api-kelvin/03_user_resource
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 22 Jan 2020 00:12:03 +0100
+
 ucs-test-ucsschool (6.0.96) unstable; urgency=medium
 
   * Bug # 50678: fix 94_ucsschool-api-kelvin/03_user_resource
