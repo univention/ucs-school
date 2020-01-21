@@ -141,8 +141,10 @@ class UcsSchoolBaseModel(LibModelHelperMixin):
     async def as_lib_model(self, request: Request) -> UCSSchoolModel:
         kwargs = await self._as_lib_model_kwargs(request)
         if self.Config.lib_class.supports_school():
-            kwargs["school"] = url_to_name(
-                request, "school", self.unscheme_and_unquote(self.school)
+            kwargs["school"] = (
+                url_to_name(request, "school", self.unscheme_and_unquote(self.school))
+                if self.school
+                else self.school
             )
             return self.Config.lib_class(**kwargs)
 

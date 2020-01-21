@@ -34,7 +34,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Typ
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import HttpUrl
+from pydantic import HttpUrl, root_validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -134,20 +134,34 @@ class UserBaseModel(UcsSchoolBaseModel):
 
 
 class UserCreateModel(UserBaseModel):
-    name: str = ""
+    name: str = None
+    school: HttpUrl = None
+    schools: List[HttpUrl] = []
 
     class Config(UserBaseModel.Config):
         ...
 
+    @root_validator
+    def not_no_school_and_schools(cls, values):
+        if not values.get("school") and not values.get("schools"):
+            raise ValueError("At least one of 'school' and 'schools' must be set.")
+        return values
+
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        kwargs["school"] = url_to_name(
-            request, "school", self.unscheme_and_unquote(self.school)
+        kwargs["school"] = (
+            url_to_name(request, "school", self.unscheme_and_unquote(self.school))
+            if self.school
+            else self.school
         )
-        kwargs["schools"] = [
-            url_to_name(request, "school", self.unscheme_and_unquote(school))
-            for school in self.schools
-        ]
+        kwargs["schools"] = (
+            [
+                url_to_name(request, "school", self.unscheme_and_unquote(school))
+                for school in self.schools
+            ]
+            if self.schools
+            else self.schools
+        )
         kwargs["ucsschool_roles"] = [
             SchoolUserRole(
                 url_to_name(request, "role", self.unscheme_and_unquote(role))
@@ -155,7 +169,7 @@ class UserCreateModel(UserBaseModel):
             for role in self.roles
             for school in kwargs["schools"]
         ]
-        kwargs["birthday"] = str(self.birthday)
+        kwargs["birthday"] = str(self.birthday) if self.birthday else self.birthday
         if not kwargs["email"]:
             del kwargs["email"]
         kwargs["roles"] = [
