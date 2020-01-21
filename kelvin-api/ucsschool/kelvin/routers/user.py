@@ -234,11 +234,33 @@ class UserPatchModel(BasePatchModel):
         kwargs = await super().to_modify_kwargs(request)
         for key, value in kwargs.items():
             if key == "schools":
-                kwargs["schools"] = [str(school).split("/")[-1] for school in value]
+                if not isinstance(value, list) or value == []:
+                    raise HTTPException(
+                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail=f"No or empty list of school URLs in 'schools' property.",
+                    )
+                kwargs["schools"] = [url_to_name(request, "school", UserCreateModel.unscheme_and_unquote(school)) for school in value]
             elif key == "school":
-                kwargs["school"] = str(value).split("/")[-1]
+                if not value:
+                    raise HTTPException(
+                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail=f"No school URL in 'school' property.",
+                    )
+                kwargs["school"] = url_to_name(request, "school", UserCreateModel.unscheme_and_unquote(value))
             elif key == "birthday":
-                kwargs[key] = str(value)
+                kwargs[key] = str(value) if value else None
+            elif key == "disabled":
+                if not isinstance(value, bool):
+                    raise HTTPException(
+                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail="Non-boolean value in 'disabled' property.",
+                    )
+            elif key in ("school_classes", "udm_properties"):
+                if not isinstance(value, dict):
+                    raise HTTPException(
+                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail=f"Non-object/dict value in {key!r} property.",
+                    )
         return kwargs
 
 
