@@ -494,6 +494,106 @@ async def test_create_without_username(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("no_school_s", ("school", "schools"))
+async def test_create_minimal_attrs(
+    auth_header,
+    url_fragment,
+    create_random_user_data,
+    random_name,
+    import_config,
+    reset_import_config,
+    udm_kwargs,
+    add_to_import_config,
+    schedule_delete_user,
+    role: Role,
+    no_school_s: str,
+):
+    if role.name == "teacher_and_staff":
+        roles = ["staff", "teacher"]
+    else:
+        roles = [role.name]
+    r_user = await create_random_user_data(
+        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
+    )
+    data = r_user.dict()
+    for attr in (
+        "birthday",
+        "disabled",
+        no_school_s,
+        "email",
+        "name",
+        "source_uid",
+        "ucsschool_roles",
+        "udm_properties",
+    ):
+        del data[attr]
+    print(f"POST data={data!r}")
+    expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
+        assert len(lib_users) == 0
+        schedule_delete_user(expected_name)
+        response = requests.post(
+            f"{url_fragment}/users/",
+            headers={"Content-Type": "application/json", **auth_header},
+            json=data,
+        )
+        assert response.status_code == 201, f"{response.__dict__!r}"
+        response_json = response.json()
+        api_user = UserModel(**response_json)
+        assert api_user.name == expected_name
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_users[0], role.klass)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", [random.choice(USER_ROLES)], ids=role_id)
+@pytest.mark.parametrize("no_school_s", ("school", "schools"))
+async def test_create_requires_school_or_schools(
+    auth_header,
+    url_fragment,
+    create_random_user_data,
+    random_name,
+    import_config,
+    reset_import_config,
+    udm_kwargs,
+    add_to_import_config,
+    schedule_delete_user,
+    role: Role,
+    no_school_s: str,
+):
+    if role.name == "teacher_and_staff":
+        roles = ["staff", "teacher"]
+    else:
+        roles = [role.name]
+    r_user = await create_random_user_data(
+        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
+    )
+    data = r_user.dict()
+    data["birthday"] = data["birthday"].isoformat()
+    del data["school"]
+    del data["schools"]
+    print(f"POST data={data!r}")
+    expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
+        assert len(lib_users) == 0
+        schedule_delete_user(expected_name)
+        response = requests.post(
+            f"{url_fragment}/users/",
+            headers={"Content-Type": "application/json", **auth_header},
+            json=data,
+        )
+        assert response.status_code == 422, f"{response.__dict__!r}"
+        print(f"response.content={response.content!r}")
+        response_json = response.json()
+        print(f"response_json={response_json!r}")
+        assert "At least one of" in response_json["detail"][0]["msg"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_put(
     auth_header,
     url_fragment,
