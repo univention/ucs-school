@@ -239,14 +239,21 @@ class UserPatchModel(BasePatchModel):
                         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
                         detail=f"No or empty list of school URLs in 'schools' property.",
                     )
-                kwargs["schools"] = [url_to_name(request, "school", UserCreateModel.unscheme_and_unquote(school)) for school in value]
+                kwargs["schools"] = [
+                    url_to_name(
+                        request, "school", UserCreateModel.unscheme_and_unquote(school)
+                    )
+                    for school in value
+                ]
             elif key == "school":
                 if not value:
                     raise HTTPException(
                         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
                         detail=f"No school URL in 'school' property.",
                     )
-                kwargs["school"] = url_to_name(request, "school", UserCreateModel.unscheme_and_unquote(value))
+                kwargs["school"] = url_to_name(
+                    request, "school", UserCreateModel.unscheme_and_unquote(value)
+                )
             elif key == "birthday":
                 kwargs[key] = str(value) if value else None
             elif key == "disabled":
@@ -661,10 +668,14 @@ async def partial_update(
         try:
             await user_current.modify(udm)
         except UcsSchoolImportError as exc:
-            logger.warning("Error modifying user %r with %r: %s", user_current, await request.json(), exc)
+            logger.warning(
+                "Error modifying user %r with %r: %s",
+                user_current,
+                await request.json(),
+                exc,
+            )
             raise HTTPException(
-                status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=str(exc),
+                status_code=HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc),
             ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
