@@ -462,11 +462,30 @@ async def create(
     """
     Create a school user with all the information:
 
-    - **name**: name of the school user (required)
-    - **firstname**: name of the school user (required)
-    - **lastname**: name of the school user (required)
-    - **school**: school the class belongs to (required)
-    - **role**: One of either student, staff, teacher, teacher_and_staff
+    - **name**: name of the user (**required**, unless a template is configured)
+    - **firstname**: given name of the user (**required**)
+    - **lastname**: family name of the user (**required**)
+    - **school**: school (OU) the user belongs to (**required unless
+        schools is set**, URL of a **school** resource)
+    - **schools**: list of schools the user belongs to (**required unless
+        school is set**, list of URLs to **school** resources)
+    - **roles**: user type, one of staff, student, teacher or teacher and staff
+        (**required**, list of URLs to **role** resources)
+    - **password**: users password, a random one will be generated if unset
+        (optional)
+    - **email**: the users **primaryMailAddress**, used only when the email is
+        hosted on UCS, not to be confused with the contact property **e-mail**
+        (optional)
+    - **record_uid**: identifier unique to the upstream database referenced by
+        **source_uid** (**required**, used by the UCS@school import)
+    - **source_uid**: identifier of the upstream database (optional, will be
+        **Kelvin** if unset, used by the UCS@school import)
+    - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**)
+    - **disabled**: whether the user should be created deactivated (optional,
+        default if **false**)
+    - **udm_properties**: object with UDM properties (optional, e.g.
+        **{"street": "Luise Av."}**, must be configured in **kelvin.json** in
+        **mapped_udm_properties**, see documentation)
     """
     user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
