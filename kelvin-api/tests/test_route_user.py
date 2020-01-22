@@ -651,6 +651,7 @@ async def test_patch(
     del new_user_data["name"]
     del new_user_data["record_uid"]
     del new_user_data["source_uid"]
+    new_user_data["birthday"] = str(new_user_data["birthday"])
     for key in random.sample(
         new_user_data.keys(), random.randint(1, len(new_user_data.keys()))
     ):
@@ -658,11 +659,8 @@ async def test_patch(
     title = random_name()
     phone = [random_name(), random_name()]
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
-    patch_user = UserPatchModel(**new_user_data)
     response = requests.patch(
-        f"{url_fragment}/users/{user.name}",
-        headers=auth_header,
-        data=patch_user.json(),
+        f"{url_fragment}/users/{user.name}", headers=auth_header, json=new_user_data,
     )
     assert response.status_code == 200, response.reason
     api_user = UserModel(**response.json())
@@ -799,10 +797,7 @@ async def test_school_change(
             url, path=_url.path, scheme=_url.scheme, host=_url.netloc
         )
         if method == "patch":
-            patch_model = UserPatchModel(
-                school=new_school_url, schools=[new_school_url]
-            )
-            patch_data = patch_model.dict()
+            patch_data = dict(school=new_school_url, schools=[new_school_url])
             response = requests.patch(
                 f"{url_fragment}/users/{user.name}",
                 headers=auth_header,
