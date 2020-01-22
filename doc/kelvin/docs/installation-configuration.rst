@@ -68,7 +68,8 @@ Python hooks for user object management (import-user)
 The directory ``/var/lib/ucs-school-import/kelvin-hooks`` is mounted as a `volume` into the Docker container, so it can be accessed from the host. The directory content is scanned when the Kelvin API server starts.
 If it contains classes that inherit from ``ucsschool.importer.utils.import_pyhook.ImportPyHook``, they are executed when users are managed through the Kelvin API.
 The hooks are very similar to the Python hooks for the UCS\@school import (see `Handbuch zur CLI-Import-Schnittstelle`_).
-The differences are explained in chapter **TODO**.
+
+.. TODO: The differences are explained in chapter <>.
 
 
 .. _`Handbuch zur CLI-Import-Schnittstelle`: https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html

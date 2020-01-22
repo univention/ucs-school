@@ -13,7 +13,7 @@ Both UIs are created in the browser by JavaScript code using the `OpenAPI`_ spec
 The OpenAPI specification can be downloaded at: ``https://<fqdn>/ucsschool/kelvin/v1/openapi.json``.
 
 The Swagger UI allows direct interaction (reading, creating users etc.) with the API server.
-To use it, a token must first be retrieved by by clicking the ``Authorize`` button in the top right corner.
+To use it, a token must first be retrieved by clicking the ``Authorize`` button in the top right corner.
 In the pop-up, the username must be of a user in the group ``ucsschool-kelvin-rest-api-admins``.
 The user ``Administrator`` is added to this group by default.
 After supplying the password and clicking the ``Authorize`` button the pop-up can be closed.

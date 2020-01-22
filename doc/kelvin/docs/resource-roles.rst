@@ -19,7 +19,7 @@ The following JSON is an example Roles resource in the `UCS\@school Kelvin REST 
     {
         "display_name": "staff",
         "name": "staff",
-        "url": "https://m66.uni.dtr/ucsschool/kelvin/v1/roles/staff"
+        "url": "https://<fqdn>/ucsschool/kelvin/v1/roles/staff"
     }
 
 
@@ -57,17 +57,17 @@ The response body will be::
         {
             "display_name": "staff",
             "name": "staff",
-            "url": "https://m66.uni.dtr/ucsschool/kelvin/v1/roles/staff"
+            "url": "https://<fqdn>/ucsschool/kelvin/v1/roles/staff"
         },
         {
             "display_name": "student",
             "name": "student",
-            "url": "https://m66.uni.dtr/ucsschool/kelvin/v1/roles/student"
+            "url": "https://<fqdn>/ucsschool/kelvin/v1/roles/student"
         },
         {
             "display_name": "teacher",
             "name": "teacher",
-            "url": "https://m66.uni.dtr/ucsschool/kelvin/v1/roles/teacher"
+            "url": "https://<fqdn>/ucsschool/kelvin/v1/roles/teacher"
         }
     ]
 

@@ -38,7 +38,7 @@ The following JSON is an example Schools resource in the `UCS\@school Kelvin RES
         "home_share_file_server": "cn=dctest-01,cn=dc,cn=server,cn=computers,ou=test,dc=uni,dc=ven",
         "name": "test",
         "ucsschool_roles": ["school:school:test"],
-        "url": "https://m66.uni.dtr/ucsschool/kelvin/v1/schools/test"
+        "url": "https://<fqdn>/ucsschool/kelvin/v1/schools/test"
     }
 
 
@@ -92,7 +92,7 @@ The response body will be::
             "home_share_file_server": "DEMOSCHOOL",
             "name": "DEMOSCHOOL",
             "ucsschool_roles": ["school:school:DEMOSCHOOL"],
-            "url": "https://m66.uni.dtr/ucsschool/kelvin/v1/schools/DEMOSCHOOL"
+            "url": "https://<fqdn>/ucsschool/kelvin/v1/schools/DEMOSCHOOL"
         },
         ...
     ]

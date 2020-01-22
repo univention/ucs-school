@@ -43,7 +43,7 @@ Example ``curl`` command to retrieve a token::
         -H "Content-Type:application/x-www-form-urlencoded" \
         -d "username=Administrator" \
         -d "password=univention" \
-        https://m66.uni.dtr/ucsschool/kelvin/token
+        https://<fqdn>/ucsschool/kelvin/token
 
 Only members of the group ``ucsschool-kelvin-rest-api-admins`` are allowed to access the HTTP-API.
 

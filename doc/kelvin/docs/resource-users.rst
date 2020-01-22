@@ -92,7 +92,7 @@ When both ``school`` and ``schools`` are used, the value of ``school`` must be i
 
 school_classes
 ^^^^^^^^^^^^^^
-All school names in ``school_classes`` must exist (als URLs) in ``schools``.
+All school names in ``school_classes`` must exist (as URLs) in ``schools``.
 
 udm_properties
 ^^^^^^^^^^^^^^
