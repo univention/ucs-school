@@ -37,7 +37,7 @@ from pydantic import HttpUrl
 import ucsschool.kelvin.constants
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.kelvin.routers.role import SchoolUserRole
-from ucsschool.kelvin.routers.user import UserCreateModel, UserModel, UserPatchModel
+from ucsschool.kelvin.routers.user import UserCreateModel, UserModel
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 from udm_rest_client import UDM
 
