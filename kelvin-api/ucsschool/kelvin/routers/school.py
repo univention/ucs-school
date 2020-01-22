@@ -143,7 +143,7 @@ async def get(
     """
     Fetch a specific school (OU).
 
-    - **name**: name of the school (required)
+    - **name**: name of the school (**required**)
     """
     school = await School.from_dn(School(name=school_name).dn, None, udm)
     return await SchoolModel.from_lib_model(school, request, udm)

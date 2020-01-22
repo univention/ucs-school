@@ -117,7 +117,7 @@ async def search(
     school: str = Query(
         ...,
         description="Name of school (``OU``) in which to search for classes "
-        "(case sensitive, exact match, **required**).",
+        "(**case sensitive, exact match, required**).",
         min_length=2,
     ),
     class_name: str = Query(
@@ -163,8 +163,8 @@ async def create(
     """
     Create a school class with all the information:
 
-    - **name**: name of the school class (required)
-    - **school**: school the class belongs to (required)
+    - **name**: name of the school class (**required**)
+    - **school**: school the class belongs to (**required**)
     - **description**: additional text (optional)
     - **users**: list of URLs to User resources (optional)
     - **ucsschool_roles**: list of tags of the form

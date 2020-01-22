@@ -230,7 +230,7 @@ class UserPatchModel(BasePatchModel):
     source_uid: str = None
     udm_properties: Dict[str, Any] = None
 
-    async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:
+    async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:  # noqa: C901
         kwargs = await super().to_modify_kwargs(request)
         for key, value in kwargs.items():
             if key == "schools":
@@ -502,16 +502,20 @@ async def create(
         (**required**, list of URLs to **role** resources)
     - **password**: users password, a random one will be generated if unset
         (optional)
-    - **email**: the users **primaryMailAddress**, used only when the email is
-        hosted on UCS, not to be confused with the contact property **e-mail**
-        (optional)
+    - **email**: the users email address (**mailPrimaryAddress**), used only
+        when the email domain is hosted on UCS, not to be confused with the
+        contact property **e-mail** (optional)
     - **record_uid**: identifier unique to the upstream database referenced by
         **source_uid** (**required**, used by the UCS@school import)
     - **source_uid**: identifier of the upstream database (optional, will be
         **Kelvin** if unset, used by the UCS@school import)
+    - **school_classes**: school classes the user is a member of (optional,
+        format: **{"school1": ["class1", "class2"], "school2": ["class3"]}**)
     - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**)
     - **disabled**: whether the user should be created deactivated (optional,
         default if **false**)
+    - **ucsschool_roles**: list of roles the user has in to each school
+        (optional, auto-managed by system, setting and changing discouraged)
     - **udm_properties**: object with UDM properties (optional, e.g.
         **{"street": "Luise Av."}**, must be configured in **kelvin.json** in
         **mapped_udm_properties**, see documentation)
