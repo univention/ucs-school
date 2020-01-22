@@ -131,8 +131,10 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
             assert value == ldap_obj["ucsschoolRecordUID"][0].decode("utf-8")
         elif attr == "ucsschool_roles" and "ucsschoolRole" in ldap_obj:
             assert value[0] == ldap_obj["ucsschoolRole"][0].decode("utf-8")
-        elif attr == "email" and "mail" in ldap_obj:
-            assert value == ldap_obj["mail"][0].decode("utf-8")
+        elif attr == "email" and "mailPrimaryAddress" in ldap_obj:
+            assert value == ldap_obj["mail"][0].decode("utf-8") and value == ldap_obj[
+                "mailPrimaryAddress"
+            ][0].decode("utf-8")
         elif attr == "source_uid" and "ucsschoolSourceUID" in ldap_obj:
             assert value == ldap_obj["ucsschoolSourceUID"][0].decode("utf-8")
         elif attr == "birthday" and "univentionBirthday" in ldap_obj:
@@ -636,6 +638,7 @@ async def test_put(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("null_value", ("birthday", "email"))
 async def test_patch(
     auth_header,
     url_fragment,
@@ -645,6 +648,7 @@ async def test_patch(
     import_config,
     udm_kwargs,
     role: Role,
+    null_value: str,
 ):
     user = (await create_random_users({role.name: 1}))[0]
     new_user_data = (await create_random_user_data(roles=user.roles)).dict()
@@ -659,6 +663,7 @@ async def test_patch(
     title = random_name()
     phone = [random_name(), random_name()]
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
+    new_user_data[null_value] = None
     response = requests.patch(
         f"{url_fragment}/users/{user.name}", headers=auth_header, json=new_user_data,
     )
