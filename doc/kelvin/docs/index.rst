@@ -13,11 +13,6 @@ Welcome to UCS\@school Kelvin REST API's documentation!
    overview
    installation-configuration
    authentication-authorization
+   openapi
    resources
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
+   known-issues

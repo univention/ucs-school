@@ -81,6 +81,7 @@ html_last_updated_fmt = '%Y-%m-%d'
 html_show_copyright = False
 html_show_sphinx = False
 html_show_sourcelink = False
+html_use_index = False
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

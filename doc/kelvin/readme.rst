@@ -1,5 +1,5 @@
-Developer docu for building the UCS@school Kelvin REST API
-==========================================================
+Developer docu for building the UCS\@school Kelvin REST API
+===========================================================
 
 The Univention style is brought in by the git submodule ``sphinx-univention``.
 

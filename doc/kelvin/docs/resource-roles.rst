@@ -3,14 +3,35 @@ Resource Roles
 
 The ``Roles`` resource represents the roles a school user can have.
 Currently there are exactly three roles supported: ``staff``, ``student`` and ``teacher``.
-A user has either one of those roles or the combination ``[staff, teacher]``.
+A user has either one of those roles or the combination of ``staff`` and ``teacher``.
 
-The resource objects have no direct representation in the LDAP.
+The resource objects have no direct representation in LDAP.
 They are only required to classify user objects.
 
 The item list of the ``Roles`` resource is hard coded.
 It does only support listing objects.
 It does not support creating, modifying or deleting roles.
+
+Resource representation
+-----------------------
+The following JSON is an example Roles resource in the `UCS\@school Kelvin REST API`::
+
+    {
+        "display_name": "staff",
+        "name": "staff",
+        "url": "https://m66.uni.dtr/ucsschool/kelvin/v1/roles/staff"
+    }
+
+
+.. csv-table:: Property description
+   :header: "name", "value", "Description", "Notes"
+   :widths: 8, 5, 50, 18
+   :escape: '
+
+    "display_name", "string", "The name of the role (for views).", "read only"
+    "name", "string", "The name of the role (technically).", "read only"
+    "url", "URL", "The URL of the role object in the UCS\@school Kelvin API.", "read only"
+
 
 List / Search
 -------------

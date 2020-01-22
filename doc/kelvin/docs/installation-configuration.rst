@@ -5,7 +5,7 @@ Installation
 ------------
 
 The app `UCS\@school Kelvin REST API` *must* be installed on the DC master or DC backup.
-This can done either through the UMC module `Univention App Center` or on the command line::
+This can be done either through the UMC module `Univention App Center` or on the command line::
 
     $ univention-app install ucsschool-kelvin-rest-api
 
