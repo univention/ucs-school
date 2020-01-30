@@ -48,10 +48,11 @@ from univention.admin.uexceptions import noObject
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize
+from univention.management.console.modules.decorators import simple_response, file_upload, sanitize
 from univention.management.console.modules.sanitizers import (
 	StringSanitizer, DictSanitizer, ListSanitizer, DNSanitizer, PatternSanitizer, ChoicesSanitizer)
 from univention.management.console.modules.schoolexam import util
+from univention.management.console.modules import computerroom
 from univention.management.console.modules.distribution import compare_dn
 
 from univention.lib.i18n import Translation
@@ -100,6 +101,15 @@ class Instance(SchoolBaseModule):
 			MODULE.info('Clean up temporary directory: %s' % self._tmpDir)
 			shutil.rmtree(self._tmpDir, ignore_errors=True)
 			self._tmpDir = None
+
+	def _get_computerroom_module(self):
+		room_module = computerroom.Instance()
+		room_module.init()
+		room_module.user_dn = self.user_dn
+		room_module.username = self.username
+		room_module.password = self.password
+		room_module.auth_type = self.auth_type
+		return room_module
 
 	@staticmethod
 	def set_datadir_immutable_flag(users, project, flag=True):
@@ -341,7 +351,6 @@ class Instance(SchoolBaseModule):
 		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
 		files=ListSanitizer(StringSanitizer()),
 	)
-	@require_password
 	def put(self, request):
 		self._save_exam(request, update=True)
 		self.finished(request.id, True)
@@ -358,7 +367,6 @@ class Instance(SchoolBaseModule):
 		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
 		files=ListSanitizer(StringSanitizer()),
 	)
-	@require_password
 	@LDAP_Connection()
 	def start_exam(self, request, ldap_user_read=None, ldap_position=None):
 		# reset the current progress state
@@ -522,37 +530,25 @@ class Instance(SchoolBaseModule):
 			Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
 			progress.add_steps(20)
 
-			# prepare room settings via UMCP...
+			# prepare room settings via lib...
 			#   first step: acquire room
 			#   second step: adjust room settings
 			progress.component(_('Prepare room settings'))
-			try:
-				user_client = Client(None, self.username, self.password)
-			except (ConnectionError, HTTPError) as exc:
-				MODULE.warn('Authentication failed: %s' % (exc,))
-				raise UMC_Error(_('Could not connect to local UMC server.'))
 
 			room = request.options['room']
 			MODULE.info('Acquire room: %s' % (room,))
-			user_client.umc_command('computerroom/room/acquire', dict(
-				room=request.options['room'],
-			)).result
+			room_module = self._get_computerroom_module()
+			room_module._room_acquire(request.options['room'], ldap_user_read)
 			progress.add_steps(1)
 			MODULE.info('Adjust room settings:\n%s' % '\n'.join(['  %s=%s' % (k, v) for k, v in request.options.iteritems()]))
-			user_client.umc_command('computerroom/exam/start', dict(
-				room=room,
-				examDescription=request.options['name'],
-				exam=directory,
-				examEndTime=request.options.get('examEndTime'),
-			)).result
+			room_module._start_exam(room, directory, request.options['name'], request.options.get('examEndTime'))
 			progress.add_steps(4)
-			user_client.umc_command('computerroom/settings/set', dict(
-				room=room,
-				internetRule=request.options['internetRule'],
-				customRule=request.options.get('customRule'),
-				shareMode=request.options['shareMode'],
-				printMode='default',
-			)).result
+			room_module._settings_set(
+				'default',
+				request.options['internetRule'],
+				request.options['shareMode'],
+				customRule=request.options.get('customRule')
+			)
 			progress.add_steps(5)
 
 		def _finished(thread, result, request):

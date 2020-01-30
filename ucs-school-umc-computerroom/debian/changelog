@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-15) unstable; urgency=medium
+
+  * Bug #50772: Refactoring for better usage with the exam mode
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 29 Jan 2020 18:09:58 +0100
+
 ucs-school-umc-computerroom (11.0.0-14) unstable; urgency=low
 
   * Bug #49970: removed unused import

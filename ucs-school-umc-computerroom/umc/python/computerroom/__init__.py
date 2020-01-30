@@ -181,9 +181,9 @@ def _freeRoom(roomDN, userDN):
 def check_room_access(func):
 	"""Block access to session from other users"""
 
-	def _decorated(self, request):
+	def _decorated(self, *args, **kwargs):
 		self._checkRoomAccess()
-		return func(self, request)
+		return func(self, *args, **kwargs)
 	return _decorated
 
 
@@ -368,12 +368,8 @@ class Instance(SchoolBaseModule):
 		"""Returns a list of available internet rules"""
 		self.finished(request.id, [x.name for x in internetrules.list()])
 
-	@sanitize(room=ComputerRoomDNSanitizer(required=True))
-	@LDAP_Connection()
-	def room_acquire(self, request, ldap_user_read=None):
+	def _room_acquire(self, roomDN, ldap_user_read):
 		"""Acquires the specified computerroom"""
-		roomDN = request.options['room']
-
 		success = True
 		message = 'OK'
 
@@ -405,6 +401,16 @@ class Instance(SchoolBaseModule):
 		info = dict()
 		if success:
 			info = _readRoomInfo(roomDN)
+		return success, message, info
+
+	@sanitize(room=ComputerRoomDNSanitizer(required=True))
+	@LDAP_Connection()
+	def room_acquire(self, request, ldap_user_read=None):
+		"""Acquires the specified computerroom"""
+		roomDN = request.options['room']
+
+		success, message, info = self._room_acquire(roomDN, ldap_user_read)
+
 		self.finished(request.id, dict(
 			success=success,
 			message=message,
@@ -694,15 +700,8 @@ class Instance(SchoolBaseModule):
 		self._settings_set(printMode='default', internetRule='none', shareMode='all', customRule='')
 		_updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, examEndTime=None)
 
-	@sanitize(
-		room=ComputerRoomDNSanitizer(required=True),
-		exam=StringSanitizer(required=True),
-		examDescription=StringSanitizer(required=True),
-		examEndTime=StringSanitizer(required=True),
-	)
 	@check_room_access
-	@simple_response
-	def start_exam(self, room, exam, examDescription, examEndTime):
+	def _start_exam(self, room, exam, examDescription, examEndTime):
 		"""Start an exam in the current room"""
 		info = _readRoomInfo(room)
 		if info.get('exam'):
@@ -711,17 +710,28 @@ class Instance(SchoolBaseModule):
 		_updateRoomInfo(self._italc.roomDN, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
 
 	@sanitize(
+		room=ComputerRoomDNSanitizer(required=True),
+		exam=StringSanitizer(required=True),
+		examDescription=StringSanitizer(required=True),
+		examEndTime=StringSanitizer(required=True),
+	)
+	@simple_response
+	def start_exam(self, room, exam, examDescription, examEndTime):
+		"""Start an exam in the current room"""
+		self._start_exam(room, exam, examDescription, examEndTime)
+
+	@sanitize(
 		printMode=ChoicesSanitizer(['none', 'default'], required=True),
 		internetRule=StringSanitizer(required=True),
 		shareMode=ChoicesSanitizer(['home', 'all'], required=True),
 		period=PeriodSanitizer(default='00:00', required=False),
 		customRule=StringSanitizer(allow_none=True, required=False),
 	)
-	@check_room_access
 	@simple_response
 	def settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
 		return self._settings_set(printMode, internetRule, shareMode, period, customRule)
 
+	@check_room_access
 	def _settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
 		"""Defines settings for a room"""
 

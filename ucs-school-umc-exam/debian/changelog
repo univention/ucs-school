@@ -1,8 +1,14 @@
-ucs-school-umc-exam (9.0.1-23) unstable; urgency=low
+ucs-school-umc-exam (9.0.1-24) unstable; urgency=medium
 
   * Bug #50588: fix wrong ucsschool roles on exam users
 
  -- Ole Schwiegert <schwiegert@univention.de>  Thu, 06 Feb 2020 10:32:16 +0100
+
+ucs-school-umc-exam (9.0.1-23) unstable; urgency=low
+
+  * Bug #50772: The password dialog for users using saml has been removed
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 29 Jan 2020 18:09:26 +0100
 
 ucs-school-umc-exam (9.0.1-22) unstable; urgency=low
 
