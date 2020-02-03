@@ -33,3 +33,9 @@ Description[de]=Eine leerzeichen-separierte Liste von Präfixen von Netzwerkschn
 Description[en]=A space-separated list of network interface prefixes that should not be used to send WakeOnLAN packets (default: tun docker)
 Type=str
 Categories=management-umc
+
+[ucsschool/umc/computerroom/screenlock/interval]
+Description[de]=Bei einem Wert >0 werden gesperrte Rechner in Computerräumen regelmäßig erneut gesperrt. Der Wert entspricht dabei der Dauer in Sekunden (Standard: 5).
+Description[en]=If the value is >0, locked computers in computer rooms are locked again periodically. The set value is the interval time in seconds (default: 5).
+Type=str
+Categories=management-umc
