@@ -1,4 +1,4 @@
-from univention.testing.umc import Client
+from univention.testing.umc import Client, ClientSaml
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -40,7 +40,7 @@ class FailRemove(Exception):
 
 class ComputerRoom(object):
 
-	def __init__(self, school, name=None, description=None, host_members=[], teacher_computers=[]):
+	def __init__(self, school, name=None, description=None, host_members=[], teacher_computers=[], connection=None):
 		self.school = school
 		self.name = name if name else uts.random_name()
 		self.description = description if description else uts.random_name()
@@ -48,7 +48,7 @@ class ComputerRoom(object):
 		self.teacher_computers = teacher_computers
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
-		self.client = Client.get_test_connection()
+		self.client = connection if connection else Client.get_test_connection()
 
 	def dn(self):
 		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
@@ -177,3 +177,9 @@ class ComputerRoom(object):
 		utils.wait_for_replication()
 		if not reqResult[0]['success']:
 			raise FailRemove('Unable to remove school room (%r)' % (self.dn(),))
+
+
+class ComputerRoomSaml(ComputerRoom):
+	def __init__(self, *args, **kwargs):
+		kwargs.setdefault('connection', ClientSaml.get_test_connection())
+		super(ComputerRoomSaml, self).__init__(*args, **kwargs)

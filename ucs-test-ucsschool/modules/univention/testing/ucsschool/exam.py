@@ -7,7 +7,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.testing.umc import Client
+from univention.testing.umc import Client, ClientSaml
 from univention.testing.ucs_samba import wait_for_s4connector
 import glob
 import os
@@ -320,3 +320,10 @@ html5
 		path_files = get_dir_files(path)
 		if not set(self.files).issubset(set(path_files)):
 			utils.fail('%r were not uploaded to %r' % (self.files, path))
+
+
+class ExamSaml(Exam):
+
+	def __init__(self, *args, **kwargs):
+		kwargs.setdefault('connection', ClientSaml.get_test_connection())
+		super(ExamSaml, self).__init__(*args, **kwargs)
