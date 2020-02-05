@@ -361,7 +361,21 @@ feedback@univention.de
 					<!-- END ucs-school-import 17.0.21A~4.4.0.201912201118 -->
 <!-- CHANGELOG:2019-12-20:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-02-05" lang="en">
+					<title>Released on 2020-02-05:</title>
+					<!-- START ucs-school-import 17.0.22A~4.4.0.202001071153 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.22A~4.4.0.202001071153</emphasis>:
+						<itemizedlist>
+							<listitem><para>A premature cache purge leading to a huge slowdown of the UCS@school user import was fixed (<u:bug>50689</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.22A~4.4.0.202001071153 -->
+<!-- CHANGELOG:2020-02-05:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
