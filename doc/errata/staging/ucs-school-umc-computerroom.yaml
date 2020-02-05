@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-computerroom
+fix: 
+desc: |
+ * When a user is logged in using single sign in it is not required anymore for the user to type the password again to start an exam. (Bug #50772).
+bug: [50772]
