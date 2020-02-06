@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-22A~4.4.0.201912040940
+fix: 9.0.1-24A~4.4.0.202002062150
 desc: |
  * A problem when creating exams with students from multiple schools has been fixed (Bug #50588).
  * Exam user creation time has been reduced by caching the hosts in a computer room (Bug #50588).
