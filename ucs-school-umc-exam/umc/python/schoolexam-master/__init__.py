@@ -49,7 +49,7 @@ from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, ListSanitizer
 from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, ADMIN_WRITE, USER_READ
-from ucsschool.lib.roles import role_teacher_computer, create_ucsschool_role_string
+from ucsschool.lib.roles import role_teacher_computer, role_exam_user, create_ucsschool_role_string
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError, SchoolComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
@@ -205,6 +205,7 @@ class Instance(SchoolBaseModule):
 		else:
 			if school not in exam_user.schools:
 				exam_user.schools.append(school)
+				exam_user.ucsschool_roles.append(create_ucsschool_role_string(role_exam_user, school))
 				exam_user.modify(ldap_admin_write)
 			MODULE.warn(_('The exam account does already exist for: %s') % exam_user_uid)
 			self.finished(request.id, dict(
@@ -325,6 +326,8 @@ class Instance(SchoolBaseModule):
 					foundUniventionObjectFlag = True
 					if 'temporary' not in value:
 						value += ['temporary']
+				elif key == 'ucsschoolRole':
+						value = [create_ucsschool_role_string(role_exam_user, school)]
 				al.append((key, value))
 				if room:
 					if room not in self._room_host_cache:
@@ -465,6 +468,11 @@ class Instance(SchoolBaseModule):
 			if schools:
 				MODULE.warn('User %s will not be removed as he currently participates in another exam.' % (user.dn,))
 				user.schools = schools
+				role = create_ucsschool_role_string(role_exam_user, school)
+				try:
+					user.ucsschool_roles.remove(role)
+				except ValueError:
+					MODULE.warn('User %s did not have the excepted ucsschool role %s.' % (user.dn, role))
 				user.modify(ldap_admin_write)
 			else:
 				user.remove(ldap_admin_write)
