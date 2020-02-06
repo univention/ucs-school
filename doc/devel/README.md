@@ -186,6 +186,10 @@ Ja, das sollte gehen. (Wir gehen mal davon aus, dass sich die Klassenarbeit orde
 #### Kann das Starten einer Klassenarbeit scheitern, wenn die Replikation zwischen Master und Slave zu träge ist?
 Ganz klares `Jein`. Das Exam-Modul auf dem Slave wendet sich an den Master, um dort die Exam-User anzulegen bzw. später wieder zu löschen. Nach dem Anlegen der Exam-User auf dem Master wartet das Exam-Modul auf dem Slave bis zu 30 Minuten, dass die Exam-User auch auf den Slave repliziert wurden. Wenn die Replikation so langsam ist, dass der 30min-Timeout gerissen wird, dann lautet die Antwort eindeutig `Ja`, aber dann kann man den Exam-Modus auch nicht mehr kurzfristig sinnvoll einsetzen.
 
+#### Was macht einen ExamUser aus?
+* Das Objekt liegt im LDAP unter der primären OU des originalen Nutzers
+* Der ExamUser befindet sich nur in den Schulen, in denen er aktuell eine Klassenarbeit schreibt
+* Der ExamUser hat die Rolle exam_user:school:$OU für jede $OU in der er aktuell eine Klassenarbeit schreibt.
 
 # Import
 ## UMC-Modul "Benutzer-Import" / HTTP-API "Newton"
