@@ -1,0 +1,85 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Check ucschool remove from school consistency
+## tags: [ucsschool, diganostic_test]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## bugs: []
+
+from __future__ import absolute_import
+
+import subprocess
+import random
+from univention.uldap import getAdminConnection
+from univention.management.console.config import ucr
+
+
+UCSSCHOOLROLE = 'ucsschoolRole'
+UCSSCHOOLSCHOOL = 'ucsschoolSchool'
+
+
+def create_ous(names_of_ous):
+	res = 0
+	for school_name in names_of_ous:
+		res += subprocess.call('/usr/share/ucs-school-import/scripts/create_ou {}'.format(school_name), shell=True)
+	return res
+
+def remove_ous(names_of_ous):
+	res = 0
+	for school_name in names_of_ous:
+		res += subprocess.call('udm container/ou remove --dn={}'.format(school_name), shell=True)
+	return res
+
+def import_users_new(args):
+	print('*** import_users_new({!r})'.format(args))
+	subprocess.call('/usr/share/ucs-school-import/scripts/ucs-school-testuser-import {}'.format(args), shell=True)
+	return 0
+
+
+def remove_random_school_users_from(lo, n, group):
+	obj_list = lo.search(filter='(&(univentionObjectType=users/user)(ucsschoolRole=*))',
+						 attr=[group])
+	my_users =  random.sample(obj_list, n)
+	modified_users = []
+	for (dn, user) in my_users:
+		modified_users.append(lo.modify(dn=dn, changes=[(group, user[group], [])]))
+	print('*** Removed group {0} from {1}'.format(group, my_users))
+	return modified_users
+
+
+def main():
+	num_schools = 4
+	num_teacher = 50
+	num_students = 10000
+	num_classes = 200
+	n_user_mod = num_students//1000
+
+	if ucr.get('server/role') != 'domaincontroller_master':
+		raise
+	# Create some schools & import Students
+	schools = ['testschool{0}'.format(i) for i in range(1, num_schools+1)]
+	create_ous(schools)
+
+	args = '--teacher {0} --students {1} --classes {2} --schools 2 {3}'.format(num_teacher, num_students, num_classes, ' '.join(schools))
+	import_users_new(args)
+
+	# Select n users and remove reset the given attribute.
+	lo = getAdminConnection()
+	users_without_ucsschoolrole = remove_random_school_users_from(lo=lo, group=UCSSCHOOLROLE, n=n_user_mod//n_user_mod)
+	users_without_ucsschoolschool = remove_random_school_users_from(lo=lo, group=UCSSCHOOLSCHOOL, n=n_user_mod//n_user_mod)
+	bad_users = users_without_ucsschoolrole + users_without_ucsschoolschool
+
+	# Run diagnostic tool, capture and test if exceptions were thrown.
+	args = ['univention-run-diagnostic-checks','-t', '904_ucsschool_remove_from_school_consistenceny.py']
+	proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	out, err = proc.communicate()
+
+	for user in bad_users:
+		assert user not in err, '{0} should raise an Error'.format(user)
+
+	school_dns = [lo.searchDn(filter='ou={0}'.format(school))[0] for school in schools]
+	remove_ous(school_dns)
+
+
+if __name__ == '__main__':
+	main()
