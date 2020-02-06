@@ -327,7 +327,7 @@ class Instance(SchoolBaseModule):
 					if 'temporary' not in value:
 						value += ['temporary']
 				elif key == 'ucsschoolRole':
-						value = [create_ucsschool_role_string(role_exam_user, school)]
+					value = [create_ucsschool_role_string(role_exam_user, school)]
 				al.append((key, value))
 				if room:
 					if room not in self._room_host_cache:
