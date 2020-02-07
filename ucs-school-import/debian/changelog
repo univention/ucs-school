@@ -1,3 +1,9 @@
+ucs-school-import (17.0.23) unstable; urgency=medium
+
+  * Bug #50707: run ucs-school-purge-expired-users only on DC master 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 07 Feb 2020 11:50:09 +0100
+
 ucs-school-import (17.0.22) unstable; urgency=low
 
   * Bug #50689: do not purge OU name cache after every
