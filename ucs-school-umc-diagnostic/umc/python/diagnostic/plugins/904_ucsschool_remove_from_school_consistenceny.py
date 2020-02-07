@@ -42,11 +42,12 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 from univention.lib.i18n import Translation
+from ucsschool.lib.roles import role_school_class
 
 _ = Translation('ucs-school-umc-diagnostic').translate
 title = _('UCS@school Group Consistency')
 description = '\n'.join([
-	_('UCS@school users should not be part of a group inside a school, but not of the school group.'),
+	_('UCS@school: test for inconsistencies between class/working group memberships and school memberships.'),
 ])
 
 UCSSCHOOLROLE = 'ucsschoolRole'
@@ -60,23 +61,19 @@ def run(_umc_instance):
 	lo = getAdminConnection()
 
 	users = {}
-	obj_list = lo.search(filter='(&(univentionObjectType=users/user)(ucsschoolRole=*))', attr=[UCSSCHOOLROLE, UCSSCHOOLSCHOOL, 'uid'])
+	obj_list = lo.search(filter='(&(univentionObjectType=users/user)(ucsschoolRole=*))', attr=[UCSSCHOOLROLE, UCSSCHOOLSCHOOL])
 	for (obj_dn, obj_attrs) in obj_list:
 		ucsschool_roles = obj_attrs.get(UCSSCHOOLROLE, [])
 		roles = {role.split(':')[-1] for role in ucsschool_roles if ':school:' in role}
 		school = set(obj_attrs.get(UCSSCHOOLSCHOOL, []))
 		if school != roles:
 			problematic_objects.setdefault(obj_dn, []).append(
-				_('ucschoolrole {0} != ucsschoolSchool {1}').format(roles, school))
-		if roles and school and not(roles & school):
-			uid = obj_attrs.get('uid', [])
-			problematic_objects.setdefault(obj_dn, []).append(
-				_('{0} not part of the school {1}').format(uid[0], school))
+				_('{0} is not part of the school but in {1}').format(obj_dn, roles))
 		users[obj_dn] = school
 
 	obj_list = None
 
-	obj_list = lo.search(filter='(&(univentionObjectType=groups/group)(ucsschoolRole=school_class:school:*))', attr=[UCSSCHOOLROLE, 'uniqueMember'])
+	obj_list = lo.search(filter='(&(univentionObjectType=groups/group)(ucsschoolRole={0}:school:*))'.format(role_school_class), attr=[UCSSCHOOLROLE, 'uniqueMember'])
 	for (obj_dn, obj_attrs) in obj_list:
 		ums = obj_attrs.get('uniqueMember', [])
 		for um in ums:
@@ -87,7 +84,7 @@ def run(_umc_instance):
 				continue
 			if not (users[um] & grp_schools):
 				problematic_objects.setdefault(obj_dn, []).append(
-					_('{0} not part of the school {1}').format(um, grp_schools))
+					_('{0} is not part of the school {1}').format(um, grp_schools))
 
 	if problematic_objects:
 		details = '\n\n' + _('The following problems were found:')
@@ -99,7 +96,4 @@ def run(_umc_instance):
 
 
 if __name__ == '__main__':
-
 	run(None)
-	# from univention.management.console.modules.diagnostic import main
-	# main()
