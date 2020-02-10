@@ -385,14 +385,10 @@
             werden. Dabei sind die einzelnen Werte durch Leerzeichen zu trennen, z.B. <literal>tun docker</literal>.
         </para>
         <para>
-            Wenn ein Schüler einen Rechner über die Tastenkombination Str+Alt+Ent neustartet, kann er damit die Bildschirmsperre umgehen,
-            die von einem Lehrer über das Computerraum-Modul eingerichtet worden ist. Um diesem Problem entgegenzuwirken, überprüft der Computerraum in der aktuellen Version von &ucsUAS;
-            nun regelmäßig, ob alle gesperrten Rechner immer noch gesperrt sind. Ist dies nicht der Fall, wird der Rechner erneut gesperrt.
+            Ab Version 4.4v4 prüft das Computerraum-Modul von UCS@school in der Standardeinstellung regelmäßig, ob alle gesperrten Rechner weiterhin noch gesperrt sind,
+            um z.B. Rechner nach deren Neustart wieder in den gesperrten Zustand zu versetzen.
             Das Intervall, in dem die Überprüfung läuft, kann durch die &ucsUCR;-Variable <envar>ucsschool/umc/computerroom/screenlock/interval</envar>
-            konfiguriert werden. In der Standardkonfiguration läuft die Prüfung alle 5 Sekunden. Wenn Sie diese Prüfung abschalten wollen, müssen sie den Wert
-            der Variable auf 0 setzen.
-            Sollten Sie beim Betrieb des Computerraum-Moduls feststellen, dass Rechner manchmal ungewollt gesperrt werden, kann das an der Verzögerung der Kommunikation
-            zwischen &ucsUMC; und iTalc liegen. In diesem Fall empfiehlt es sich das Intervall über die &ucsUCR;-Variable etwas zu erhöhen.
+            konfiguriert werden. In der Standardkonfiguration wird die Prüfung alle 5 Sekunden durchgeführt. Wird der Wert der Variable auf 0 gesetzt, wird die Prüfung abgeschaltet.
         </para>
     </section>
 </chapter>
