@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-26) unstable; urgency=medium
+
+  * Bug #50588: Revert changes due to unexpected problems.
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 10 Feb 2020 11:57:44 +0100
+
 ucs-school-umc-exam (9.0.1-25) unstable; urgency=medium
 
   * Bug #50765: execute ucs-school-umc-exam/conffiles/etc/cron.d/ucs-school-umc-exam-master only on DC master
