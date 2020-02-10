@@ -7,5 +7,5 @@ options = configRegistry.get('ucsschool/import/purge-expired-users/options', '--
 if configRegistry.get('server/role') == 'domaincontroller_master':
 	print '%s root /usr/share/ucs-school-import/scripts/ucs-school-purge-expired-users %s' % (timestamp, options)
 else:
-	print 'Skipping ucs-school-purge-expired-users on backup.'
+	print '# Skipping ucs-school-purge-expired-users on backup.'
 @!@
