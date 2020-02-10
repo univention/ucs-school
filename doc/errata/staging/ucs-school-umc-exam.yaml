@@ -3,10 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-24A~4.4.0.202002062150
+fix: 9.0.1-27A~4.4.0.202002101204
 desc: |
- * A problem when creating exams with students from multiple schools has been fixed (Bug #50588).
- * Exam user creation time has been reduced by caching the hosts in a computer room (Bug #50588).
  * When a user is logged in using single sign in it is not required anymore for the user to type the password again to start an exam. (Bug #50772).
  * The cron job ucs-school-umc-exam/conffiles/etc/cron.d/ucs-school-umc-exam-master is also executed on DC backup systems since the master's meta package ucs-school-master is also installed on DC backup systems has been fixed (Bug #50765).
 bug: [50588, 50772, 50765]
