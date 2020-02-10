@@ -292,7 +292,7 @@ msgstr "Computerraum öffnen"
 
 #: umc/js/schoolexam.js:215
 msgid "Participants"
-msgstr ""
+msgstr "Teilnehmer"
 
 #: umc/js/schoolexam.js:187 umc/js/schoolexam.js:188
 msgid "Participating classes/workgroups"

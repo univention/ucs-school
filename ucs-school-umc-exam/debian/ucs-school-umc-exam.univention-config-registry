@@ -4,3 +4,4 @@ Variables: ucsschool/exam/cron/cleanup
 Variables: ucsschool/exam/cron/backup
 Variables: ucsschool/exam/cron/backup/activated
 Variables: ucsschool/exam/cron/cleanup/options
+Variables: server/role
