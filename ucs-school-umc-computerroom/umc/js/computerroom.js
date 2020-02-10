@@ -131,9 +131,12 @@ define([
 
 		_dataStore: null,
 		_objStore: null,
+		_toScreenLock: null,
+		_screenLockIntervalTime: 5000,
 
 		_updateTimer: null,
 		_examEndTimer: null,
+		_screenLockTimer: null,
 
 		_screenshotView: null,
 		_settingsDialog: null,
@@ -192,6 +195,10 @@ define([
 			if (this._examEndTimer !== null) {
 				window.clearTimeout(this._examEndTimer);
 				this._examEndTimer = null;
+			}
+			if (this._screenLockTimer !== null) {
+				window.clearInterval(this._screenLockTimer);
+				this._screenLockTimer = null;
 			}
 		},
 
@@ -484,6 +491,11 @@ define([
 		_lockScreen: function(lock, ids, items) {
 			array.forEach(items, lang.hitch(this, function(comp) {
 				if (this._canExecuteLockScreen(comp, !lock)) {
+					if (!lock && this._toScreenLock[comp.id]) {
+						delete this._toScreenLock[comp.id]
+					} else if (lock) {
+						this._toScreenLock[comp.id] = comp
+					}
 					this.umcpCommand('computerroom/lock', {
 						computer: comp.id,
 						device: 'screen',
@@ -528,10 +540,11 @@ define([
 
 		_loadUCR: function() {
 			// get UCR Variable for enabled VNC
-			var getUCR = tools.ucr(['ucsschool/umc/computerroom/ultravnc/enabled', 'ucsschool/exam/default/show/restart']);
+			var getUCR = tools.ucr(['ucsschool/umc/computerroom/ultravnc/enabled', 'ucsschool/exam/default/show/restart', 'ucsschool/umc/computerroom/screenlock/interval']);
 			getUCR.then(lang.hitch(this, function(result) {
 				this._vncEnabled = tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
-				this._showRebootNote = tools.isTrue(result['ucsschool/exam/default/show/restart'])
+				this._showRebootNote = tools.isTrue(result['ucsschool/exam/default/show/restart']);
+				this._screenLockIntervalTime = result['ucsschool/umc/computerroom/screenlock/interval'] * 1000 || 5000;
 			}));
 			return getUCR;
 		},
@@ -1215,8 +1228,13 @@ define([
 				window.clearTimeout(this._examEndTimer);
 				this._examEndTimer = null;
 			}
+			if (this._screenLockTimer) {
+				window.clearInterval(this._screenLockTimer);
+				this._screenLockTimer = null;
+			}
 
 			// remove all entries for the computer room
+			this._toScreenLock = {};
 			this._objStore.query().forEach(lang.hitch(this, function(item) {
 				this._objStore.remove(item.id);
 			}));
@@ -1230,7 +1248,22 @@ define([
 					this._objStore.put(item);
 				}, this);
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 2000);
+				if (this._screenLockIntervalTime > 0) {
+					this._screenLockTimer = window.setInterval(lang.hitch(this, '_screenLockInterval', {}), this._screenLockIntervalTime);
+				}
 			}));
+		},
+
+		_screenLockInterval: function() {
+			for (var id of Object.keys(this._toScreenLock)) {
+				if (this._canExecuteLockScreen(this._toScreenLock[id], false)) {
+					this.umcpCommand('computerroom/lock', {
+						computer: id,
+						device: 'screen',
+						lock: true
+					});
+				}
+			}
 		},
 
 		_updateRoom: function() {
@@ -1245,6 +1278,10 @@ define([
 				if (response.result.locked) {
 					// somebody stole our session...
 					// break the update loop, prompt a message and ask for choosing a new room
+					if (this._screenLockTimer) {
+						window.clearInterval(this._screenLockTimer);
+						this._screenLockTimer = null;
+					}
 					dialog.confirm(_('Control over the computer room has been taken by "%s", your session has been closed. In case this behaviour was not intended, please contact the other user. You can regain control over the computer room, by choosing it from the list of rooms again.', response.result.user), [{
 						name: 'ok',
 						label: _('Ok'),
@@ -1256,9 +1293,11 @@ define([
 				}
 
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 2000);
-
 				array.forEach(response.result.computers, function(item) {
 					this._objStore.put(item);
+					if (this._toScreenLock[item.id] || item.ScreenLock) {
+						this._toScreenLock[item.id] = item;
+					}
 				}, this);
 
 				if (response.result.computers.length) {
