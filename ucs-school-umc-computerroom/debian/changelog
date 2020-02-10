@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (11.0.0-16) unstable; urgency=medium
+
+  * Bug #50740: Resend screen lock signal, if computer is not locked
+  properly by italc
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 10 Feb 2020 09:00:02 +0100
+
 ucs-school-umc-computerroom (11.0.0-15) unstable; urgency=medium
 
   * Bug #50772: Refactoring for better usage with the exam mode
