@@ -96,5 +96,5 @@ def run(_umc_instance):
 
 
 if __name__ == '__main__':
-	from univention.management.console.modules.diagnostic import main
-	main()
+	run(None)
+
