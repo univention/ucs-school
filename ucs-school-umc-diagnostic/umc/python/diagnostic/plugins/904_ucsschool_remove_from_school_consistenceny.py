@@ -76,8 +76,8 @@ def run(_umc_instance):
 	obj_list = lo.search(filter='(&(univentionObjectType=groups/group)(ucsschoolRole={0}:school:*))'.format(role_school_class), attr=[UCSSCHOOLROLE, 'uniqueMember'])
 	for (obj_dn, obj_attrs) in obj_list:
 		ums = obj_attrs.get('uniqueMember', [])
+		grp_schools = {role.split(':')[-1] for role in obj_attrs[UCSSCHOOLROLE] if ':school:' in role}
 		for um in ums:
-			grp_schools = {role.split(':')[-1] for role in obj_attrs[UCSSCHOOLROLE] if ':school:' in role}
 			if um not in users:
 				problematic_objects.setdefault(obj_dn, []).append(
 					_('{0} has no ucsschoolRole, but is in group').format(um))

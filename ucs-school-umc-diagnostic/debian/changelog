@@ -1,6 +1,12 @@
+ucs-school-umc-diagnostic (1.0.0-4) unstable; urgency=medium
+
+  * Bug #50795: The dianostic module is made slightly more efficient by removing a redundant statement.
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 11 Feb 2020 16:18:08 +0100
+
 ucs-school-umc-diagnostic (1.0.0-3) unstable; urgency=medium
 
-  *  Bug 50795: Dianostic module & test
+  *  Bug #50795: Dianostic module which tests for inconsistencies between class/working group memberships and school memberships.
 
  -- Tobias Wenzel <wenzel@univention.de>  Thu, 06 Feb 2020 13:26:26 +0100
 
