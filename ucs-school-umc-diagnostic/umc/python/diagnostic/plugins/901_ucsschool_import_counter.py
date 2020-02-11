@@ -58,6 +58,40 @@ def run(_umc_instance):
 	problematic_objects = {}  # type: Dict[str, List[str]]
 
 	lo = getAdminConnection()
+
+	email_prefix2counter = {}
+	user_prefix2counter = {}
+	obj_list = lo.search(filter='(&(univentionObjectType=users/user)(ucsschoolRole=*))', attr=['uid', 'mailPrimaryAddress'])
+	for (obj_dn, obj_attrs) in obj_list:
+		uid = obj_attrs.get('uid')[0]
+		prefix = uid.rstrip('0123456789')
+		suffix = uid[len(prefix):]
+		if suffix == '':
+			suffix = 0
+		else:
+			suffix = int(suffix)
+		if prefix in user_prefix2counter:
+			if user_prefix2counter[prefix] < suffix:
+				user_prefix2counter[prefix] = suffix
+		else:
+			user_prefix2counter[prefix] = suffix
+
+		mPA = obj_attrs.get('mailPrimaryAddress', [None])[0]
+		if mPA is None:
+			continue
+		localpart = mPA.rsplit('@', 1)[0]
+		prefix = localpart.rstrip('0123456789')
+		suffix = localpart[len(prefix):]
+		if suffix == '':
+			suffix = 0
+		else:
+			suffix = int(suffix)
+		if prefix in email_prefix2counter:
+			if email_prefix2counter[prefix] < suffix:
+				email_prefix2counter[prefix] = suffix
+		else:
+			email_prefix2counter[prefix] = suffix
+
 	for counter_type in ('usernames', 'email'):
 		obj_list = lo.search(base='cn=unique-{},cn=ucsschool,cn=univention,{}'.format(counter_type, ucr.get('ldap/base')), scope='one')
 		for (obj_dn, obj_attrs) in obj_list:
@@ -70,25 +104,18 @@ def run(_umc_instance):
 				continue
 
 			# Check: ucsschoolUsernameNextNumber should be 2 or higher
-			if prefix_counter >= 2:
+			if prefix_counter <= 1:
 				problematic_objects.setdefault(obj_dn, []).append(_('{0}: counter={1}').format(obj_dn, value))
 
 			# Check: counter should be higher than existing users
-			max_user_counter = None  # type: Optional[int]
 			prefix = obj_attrs.get('cn', [None])[0]
-			if prefix is not None:
-				filter_s = filter_format('(uid=%s*)', (prefix,))
-				user_list = lo.search(filter=filter_s)
-				for (user_dn, user_attrs) in user_list:
-					suffix = user_attrs.get('uid')[0][len(prefix):]
-					try:
-						counter = int(suffix)
-					except ValueError:
-						continue
-					if max_user_counter is None or max_user_counter < counter:
-						max_user_counter = counter
-				if max_user_counter is not None and max_user_counter <= prefix_counter:
-					problematic_objects.setdefault(obj_dn, []).append(_('{0}: counter={1} but found user with uid {2}{3}').format(obj_dn, value, prefix, max_user_counter))
+			if counter_type == 'usernames':
+				user_prefix_counter = user_prefix2counter.get(prefix)
+			else:
+				user_prefix_counter = email_prefix2counter.get(prefix)
+			if user_prefix_counter is not None and user_prefix_counter >= prefix_counter:
+				problematic_objects.setdefault(obj_dn, []).append(_('{0}: {1} counter={2} but found user with uid {3}{4}').format(obj_dn, counter_type, value, prefix, user_prefix_counter))
+
 
 	if problematic_objects:
 		details = '\n\n' + _('The following objects have faulty counter values:')
