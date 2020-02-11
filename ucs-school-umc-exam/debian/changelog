@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-29) unstable; urgency=medium
+
+  * Bug #50765: Add server/role variable to ucs-school-umc-exam-master.univention-config-registry.
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 11 Feb 2020 09:58:49 +0100
+
 ucs-school-umc-exam (9.0.1-28) unstable; urgency=medium
 
   * Bug #50765: add comment to print statement and adjust ucs-school-umc-exam-master.

@@ -1,3 +1,9 @@
+ucs-school-import (17.0.25) unstable; urgency=medium
+
+  * Bug #50707: add server/role varaiable to debian/ucs-school-import.univention-config-registry.
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 11 Feb 2020 09:55:34 +0100
+
 ucs-school-import (17.0.24) unstable; urgency=medium
 
   * Bug #50707: add comment to print statement 
