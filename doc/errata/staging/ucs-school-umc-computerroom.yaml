@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-computerroom
-fix: 11.0.0-15A~4.4.0.202002062152
+fix: 11.0.0-17A~4.4.0.202002111527
 desc: |
  * When a user is logged in using single sign in it is not required anymore for the user to type the password again to start an exam. (Bug #50772).
-bug: [50772]
+ * The UMC resends the italc screen lock signal now, should it not arrive on the client computer (Bug #50740).
+bug: [50772, 50740]
