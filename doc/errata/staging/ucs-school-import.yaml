@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 
+fix: 17.0.25A~4.4.0.202002111008
 desc: |
  * ucs-school-purge-expired-users is run on DC master and DC backup has been fixed (Bug #50707).
 bug: [50707]
