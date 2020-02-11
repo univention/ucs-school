@@ -6,5 +6,5 @@ src: ucs-school-umc-exam
 fix: 9.0.1-29A~4.4.0.202002111005
 desc: |
  * When a user is logged in using single sign in it is not required anymore for the user to type the password again to start an exam. (Bug #50772).
- * The cron job ucs-school-umc-exam/conffiles/etc/cron.d/ucs-school-umc-exam-master is also executed on DC backup systems since the master's meta package ucs-school-master is also installed on DC backup systems has been fixed (Bug #50765).
+ * The cron job <command>/etc/cron.d/ucs-school-umc-exam-master</command> is no longer executed on DC backup systems to prevent concurrency problems (Bug #50765).
 bug: [50588, 50772, 50765]
