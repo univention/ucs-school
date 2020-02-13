@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
 fix: 17.0.25A~4.4.0.202002111008
 desc: |
- * ucs-school-purge-expired-users is run on DC master and DC backup has been fixed (Bug #50707).
+ * The cron job <command>/etc/cron.d/ucs-school-import</command> is no longer executed on DC backup systems to prevent concurrency problems (Bug #50707).
 bug: [50707]
