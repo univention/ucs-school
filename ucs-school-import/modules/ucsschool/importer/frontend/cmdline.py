@@ -85,7 +85,7 @@ class CommandLine(object):
 		try:
 			self.config = setup_configuration(configs, **self.args.settings)
 		except InitialisationError as exc:
-			self.logger.exception('Error setting up or checking the configuration: %s', exc)
+			self.logger.error('Error setting up or checking the configuration: %s', exc)
 			self.logger.error("Used configuration files: %s.", configs)
 			self.logger.error("Using command line arguments: %r", self.args.settings)
 			try:
@@ -94,7 +94,7 @@ class CommandLine(object):
 				self.logger.error("Configuration is:\n%s", pprint.pformat(config))
 			except InitialisationError:
 				pass
-			raise
+			raise exc
 		return self.config
 
 	@property
@@ -147,7 +147,7 @@ class CommandLine(object):
 			self.prepare_import()
 		except InitialisationError as exc:
 			msg = "InitialisationError: {}".format(exc)
-			self.logger.exception(msg)
+			self.logger.error(msg)
 			return 1
 		try:
 			self.do_import()
