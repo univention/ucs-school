@@ -3,7 +3,9 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-diagnostic
-fix: 
+fix: 1.0.0-4A~4.4.0.202002131015
 desc: |
- * Diagnostic module: Test for inconsistencies between class/working group memberships and school memberships (Bug #50795).
+ * If members of group inside a school are removed from the school, inconsistencies arise. 
+   The implemented diagnose module searches for these inconsistencies between class/working
+   group memberships and school memberships (Bug #50795).
 bug: [50795]
