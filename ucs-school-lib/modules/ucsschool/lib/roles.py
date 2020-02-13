@@ -82,7 +82,17 @@ all_roles = (
 )
 
 
-def create_ucsschool_role_string(role, school):  # type: (str, str) -> str
+def create_ucsschool_role_string(role, context, context_type='school', school=''):  # type: (str, str, str, str) -> str
+	"""
+	This function takes a role, a context_type and a context to create a valid ucsschoolRole string.
+	:param role: The role
+	:param context: The context
+	:param context_type: The context type
+	:param school: Old variable name for context. DEPRECATED! TODO: Should be removed in 4.4v5
+	:return: The valid ucsschoolRole string
+	"""
 	if role not in all_roles:
 		raise UnknownRole('Unknown role {!r}.'.format(role))
-	return '{}:school:{}'.format(role, school)
+	if school:
+		context = school
+	return '{}:{}:{}'.format(role, context_type, context)
