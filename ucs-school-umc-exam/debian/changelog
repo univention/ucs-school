@@ -1,6 +1,7 @@
 ucs-school-umc-exam (9.0.1-30) unstable; urgency=low
 
-  * Bug #50588: cache computers in room
+  * Bug #50817: cache computers in room
+  * Bug #50818: Improve logging in UMC exam module
 
  -- Ole Schwiegert <schwiegert@univention.de>  Thu, 13 Feb 2020 08:18:21 +0100
 
