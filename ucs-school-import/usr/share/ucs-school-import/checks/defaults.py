@@ -100,4 +100,11 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 
 	def test_user_role_role_mapping_combination(self):
 		if self.config['user_role'] and '__role' in self.config['csv']['mapping'].values():
-			raise InitialisationError("Using 'user_role' setting and '__role' mapping at the same time is not allowed.")
+			raise InitialisationError("Using 'user_role' setting and '__role' mapping at the same time is not allowed."
+
+	def test_maildomain_is_set(self):
+		if "<maildomain>" in self.config.get('scheme', {}).get('email', ''):
+			hosted_domains = ucr.get('mail/hosteddomains')
+			if not self.config['maildomain'] and not hosted_domains:
+				raise InitialisationError('No domain could be found in the configuration or under locally hosted domains.')
+
