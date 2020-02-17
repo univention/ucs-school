@@ -49,7 +49,7 @@ from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, ListSanitizer
 from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, ADMIN_WRITE, USER_READ
-from ucsschool.lib.roles import role_teacher_computer, create_ucsschool_role_string
+from ucsschool.lib.roles import role_teacher_computer, role_exam_user, context_type_exam, create_ucsschool_role_string, get_role_info
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError, SchoolComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
@@ -152,7 +152,8 @@ class Instance(SchoolBaseModule):
 		userdn=StringSanitizer(required=True),
 		room=StringSanitizer(default=''),
 		description=StringSanitizer(default=''),
-		school=StringSanitizer(default='')
+		school=StringSanitizer(default=''),
+		exam=StringSanitizer(default='')
 	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
@@ -165,6 +166,7 @@ class Instance(SchoolBaseModule):
 		school = request.options['school']
 		userdn = request.options['userdn']
 		room_dn = request.options['room']
+		exam = request.options['exam']
 		MODULE.info('create_exam_user() school={!r} userdn={!r} room={!r} description={!r}'.format(school, userdn, room_dn, request.options['description']))
 
 		try:
@@ -203,10 +205,15 @@ class Instance(SchoolBaseModule):
 		except (univention.admin.uexceptions.noObject, MultipleObjectsError):
 			pass  # we need to create the exam user
 		else:
+			MODULE.warn(_('The exam account does already exist for: %s') % exam_user_uid)
 			if school not in exam_user.schools:
 				exam_user.schools.append(school)
+			role_str = create_ucsschool_role_string(role_exam_user, "{}-{}".format(exam, school), context_type_exam)
+			if role_str not in exam_user.ucsschool_roles:
+				exam_user.ucsschool_roles.append(role_str)
 				exam_user.modify(ldap_admin_write)
-			MODULE.warn(_('The exam account does already exist for: %s') % exam_user_uid)
+			else:
+				MODULE.warn(_('The exam user "%s" already participates in the exam "%s". Do not add role') % exam_user.name, exam)
 			self.finished(request.id, dict(
 				success=True,
 				userdn=userdn,
@@ -298,7 +305,13 @@ class Instance(SchoolBaseModule):
 				elif key == 'objectClass':
 					value += ['ucsschoolExam']
 				elif key == 'ucsschoolSchool' and school:  # for backwards compatibility with UCS@school < 4.1R2 school might not be set
-					value = [school]
+					if exam:  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
+						value = user.schools
+					else:
+						value = [school]
+				elif key == 'ucsschoolRole' and exam:  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
+					value = [create_ucsschool_role_string(role_exam_user, s) for s in user.schools]
+					value.append(create_ucsschool_role_string(role_exam_user, "{}-{}".format(exam, school), context_type_exam))
 				elif key == 'homeDirectory':
 					user_orig_homeDirectory = value[0]
 					_tmp_split_path = user_orig_homeDirectory.rsplit(os.path.sep, 1)
@@ -423,6 +436,7 @@ class Instance(SchoolBaseModule):
 	@sanitize(
 		userdn=StringSanitizer(required=True),
 		school=StringSanitizer(default=''),
+		exam=StringSanitizer(default='')
 	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None):
@@ -432,6 +446,7 @@ class Instance(SchoolBaseModule):
 
 		userdn = request.options['userdn']
 		school = request.options['school']
+		exam = request.options['exam']
 		# Might be put into the lib at some point:
 		# https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
@@ -458,18 +473,34 @@ class Instance(SchoolBaseModule):
 		except univention.admin.uexceptions.ldapError:
 			raise
 
-		try:
-			schools = None
-			if school:
-				schools = list(set(user.schools) - set([school]))
-			if schools:
-				MODULE.warn('User %s will not be removed as he currently participates in another exam.' % (user.dn,))
-				user.schools = schools
-				user.modify(ldap_admin_write)
-			else:
-				user.remove(ldap_admin_write)
-		except univention.admin.uexceptions.ldapError as exc:
-			raise UMC_Error(_('Could not remove exam user %(userdn)r: %(exc)s') % {"userdn": userdn, "exc": exc})
+		if exam:
+			try:
+				exam_role = create_ucsschool_role_string(role_exam_user, "{}-{}".format(exam, school), context_type_exam)
+				exam_roles = [role for role in user.ucsschool_roles if get_role_info(role)[1] == context_type_exam]
+				if len(exam_roles) < 2:
+					user.remove(ldap_admin_write)
+				else:
+					MODULE.warn('User %s will not be removed as he currently participates in another exam.' % (user.dn,))
+					try:
+						user.ucsschool_roles.remove(exam_role)
+					except ValueError as exc:
+						raise UMC_Error(_('Could not remove exam role "%s" from %s: %s') % exam_role, userdn, exc)
+					user.modify(ldap_admin_write)
+			except univention.admin.uexceptions.ldapError as exc:
+				raise UMC_Error(_('Could not remove exam user %(userdn)r: %(exc)s') % {"userdn": userdn, "exc": exc})
+		else:  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
+			try:
+				schools = None
+				if school:
+					schools = list(set(user.schools) - set([school]))
+				if schools:
+					MODULE.warn('User %s will not be removed as he currently participates in another exam.' % (user.dn,))
+					user.schools = schools
+					user.modify(ldap_admin_write)
+				else:
+					user.remove(ldap_admin_write)
+			except univention.admin.uexceptions.ldapError as exc:
+				raise UMC_Error(_('Could not remove exam user %(userdn)r: %(exc)s') % {"userdn": userdn, "exc": exc})
 
 		self.finished(request.id, {}, success=True)
 
