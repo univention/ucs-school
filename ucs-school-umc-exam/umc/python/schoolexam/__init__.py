@@ -450,6 +450,7 @@ class Instance(SchoolBaseModule):
 						school=request.options['school'],
 						userdn=iuser.dn,
 						room=request.options['room'],
+						exam=request.options['name']
 					)).result
 					examuser_dn = ires.get('examuserdn')
 					examUsers.add(examuser_dn)
@@ -657,20 +658,13 @@ class Instance(SchoolBaseModule):
 
 			# delete exam users accounts
 			if project:
-				# get a list of user accounts in parallel exams
-				parallelUsers = dict([
-					(iuser.username, iproject.description)
-					for iproject in util.distribution.Project.list(only_distributed=True)
-					if iproject.name != project.name
-					for iuser in iproject.recipients
-				])
 
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
 				for iuser in project.recipients:
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
-						if iuser.username not in parallelUsers:
+						if iuser.username:
 							Instance.set_datadir_immutable_flag([iuser], project, False)
 							# remove first the home directory, if enabled
 							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', False):
@@ -680,10 +674,11 @@ class Instance(SchoolBaseModule):
 							client.umc_command('schoolexam-master/remove-exam-user', dict(
 								userdn=iuser.dn,
 								school=school,
+								exam=request.options['exam']
 							)).result
 							MODULE.info('Exam user has been removed: %s' % iuser.dn)
 						else:
-							MODULE.process('Cannot remove the user account %s as it is registered for the running exam "%s", as well' % (iuser.dn, parallelUsers[iuser.username]))
+							MODULE.process('Cannot remove the user account %s.' % iuser.dn)
 					except (ConnectionError, HTTPError) as e:
 						MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
 
