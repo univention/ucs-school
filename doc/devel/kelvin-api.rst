@@ -33,6 +33,8 @@ Optionally sync not yet commited changes from your local git repo to the server:
 	# check output, changes should be only recent commits and your changes
 	# if OK: remove '-n' from rsync cmdline
 
+If you want to build a new version of the docker image do not forget to increase the version number in kelvin-api/ucsschool/__init__.py as well as adding a new entry to the changelog.rst.
+
 Build image on the ``docker`` host and push it to the Docker registry::
 
 	$ ssh root@docker.knut.univention.de
@@ -45,6 +47,8 @@ If the build succeeds, you'll be asked::
 	Push 'Y' if you are sure you want to push 'docker-test-upload.software-univention.de/ucsschool-kelvin-rest-api:1.0.0' to the docker registry.
 
 Type (upper case) ``Y`` to start the push.
+
+In the App Provider Portal you can then create a new App version using the new image you just created.
 
 
 Update (un)join script and settings of app
