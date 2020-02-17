@@ -55,7 +55,7 @@ from univention.admin.syntax import (
 )
 from univention.admin.uexceptions import valueError
 
-from ..roles import all_roles
+from ..roles import all_roles, all_context_types
 from .utils import _, ucr
 
 
@@ -346,7 +346,7 @@ class RolesSyntax(string):
 		reg = cls.regex.match(text)
 		if not reg:
 			raise ValueError(_('Role has bad format'))
-		if reg.groupdict()['context_type'] != 'school':
+		if reg.groupdict()['context_type'] not in all_context_types:
 			raise ValueError(_('Unknown context type'))
 		if reg.groupdict()['role'] not in all_roles:
 			raise ValueError(_('Unknown role'))
