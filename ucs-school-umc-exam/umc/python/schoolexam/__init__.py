@@ -43,6 +43,8 @@ from itertools import chain
 import ldap
 import notifier
 
+from ldap.filter import filter_format
+
 from univention.admin.uexceptions import noObject
 
 from univention.management.console.config import ucr
@@ -66,6 +68,7 @@ from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, Group, User
 from ucsschool.lib.models.base import WrongObjectType
+from ucsschool.lib.roles import create_ucsschool_role_string, role_exam_user, context_type_exam, get_role_info
 
 try:
 	from typing import Any, Dict, List, Optional, Pattern
@@ -612,7 +615,8 @@ class Instance(SchoolBaseModule):
 		room=StringSanitizer(required=True),
 		exam=StringSanitizer(required=True),
 	)
-	def finish_exam(self, request):
+	@LDAP_Connection()
+	def finish_exam(self, request, ldap_user_read=None):
 		# reset the current progress state
 		# steps:
 		#   10 -> collecting exam files
@@ -658,27 +662,28 @@ class Instance(SchoolBaseModule):
 
 			# delete exam users accounts
 			if project:
+				# get a list of user accounts in parallel exams
+				exam_role_str = create_ucsschool_role_string(role_exam_user, '{}-{}'.format(project.name, school), context_type_exam)
+				recipients = ldap_user_read.search(filter_format('ucsschoolRole=%s', (exam_role_str,)), attr=['ucsschoolRole', 'uid'])
+				parallel_users = [user[0] for user in recipients if len([role for role in user[1]['ucsschoolRole'] if get_role_info(role)[1] == context_type_exam]) > 1]
 
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
 				for iuser in project.recipients:
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
-						if iuser.username:
+						# remove LDAP user entry
+						client.umc_command('schoolexam-master/remove-exam-user', dict(
+							userdn=iuser.dn,
+							school=school,
+							exam=request.options['exam']
+						)).result
+						if iuser.dn not in parallel_users:
 							Instance.set_datadir_immutable_flag([iuser], project, False)
 							# remove first the home directory, if enabled
 							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', False):
 								shutil.rmtree(iuser.unixhome, ignore_errors=True)
-
-							# remove LDAP user entry
-							client.umc_command('schoolexam-master/remove-exam-user', dict(
-								userdn=iuser.dn,
-								school=school,
-								exam=request.options['exam']
-							)).result
 							MODULE.info('Exam user has been removed: %s' % iuser.dn)
-						else:
-							MODULE.process('Cannot remove the user account %s.' % iuser.dn)
 					except (ConnectionError, HTTPError) as e:
 						MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
 
