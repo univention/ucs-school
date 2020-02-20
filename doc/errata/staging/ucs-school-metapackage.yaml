@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-metapackage
+fix: 
+desc: |
+ * When joining a backup onto a master, on which the UCRV ucsschool/join/create_demo has been set to 'no', no demoschool is created as expected (Bug #50578).
+bug: [50578]

@@ -173,12 +173,14 @@ univention-directory-manager computers/domaincontroller_master modify "$@" \
 systemctl try-restart univention-s4-connector.service || true
 
 if is_ucr_true "ucsschool/join/create_demo"; then
+	if [[ "$server_role" = domaincontroller_master ]]; then
 	[ -d /etc/ucsschool ] || mkdir -p /etc/ucsschool
 	touch /etc/ucsschool/demoschool.secret
 	chmod 640 /etc/ucsschool/demoschool.secret
 	makepasswd --chars 16 > /etc/ucsschool/demoschool.secret
 	python /usr/share/ucs-school-metapackage/scripts/create_demoportal.py
 	univention-config-registry set ucsschool/join/create_demo=no
+	fi
 fi
 
 # Fixes a typo in existing DEMOSCHOOL portals
