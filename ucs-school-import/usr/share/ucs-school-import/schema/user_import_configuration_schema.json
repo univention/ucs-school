@@ -1,0 +1,112 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"$comment": "Univention UCS@school Import configuration schema. License: GNU AGPL v3, Copyright 2021 Univention GmbH",
+	"title": "user-import",
+	"description": "Configuration of a user-import",
+	"type": "object",
+	"properties": {
+		"dry_run": {"type": "boolean"},
+		"logfile": {"type": "string"},
+		"verbose": {"type": "boolean"},
+		"classes": {"type": "object"},
+		"factory": {"type": "string"},
+		"input": {
+			"type": "object",
+			"properties": {
+				"filename": {"type": "string"},
+				"type": {"type": "string"}
+			}
+		},
+		"activate_new_users": {
+			"type": "object",
+			"properties": {
+				"default": {"type": "boolean"},
+				"student": {"type": "boolean"},
+				"teacher": {"type": "boolean"},
+				"staff": {"type": "boolean"},
+				"teacher_and_staff": {"type": "boolean"}
+			}
+		},
+		"csv": {
+			"type": "object",
+			"properties": {
+				"delimiter": {"type": "string"},
+				"mapping": {"type": "object"},
+				"header_lines": {"type": "integer"},
+				"incell-delimiter": {
+					"type": "object",
+					"properties": {
+						"default": {"type": "string"}
+					}
+				}
+			}
+		},
+		"deletion_grace_period": {
+			"type": "object",
+			"properties": {
+				"deactivation": {"type": "integer"},
+				"deletion": { "type": "integer"}
+			}
+		},
+		"normalize": {
+			"type": "object",
+			"properties": {
+				"firstname": {"type": "boolean"},
+				"lastname": {"type": "boolean"}
+			}
+		},
+		"scheme": {
+			"type": "object",
+			"properties": {
+				"email": {"type": "string"},
+				"record_uid": {"type": "string"},
+				"username": {
+					"type": "object",
+					"properties": {
+						"default": {"type": "string"},
+						"student": {"type": "string"},
+						"teacher": {"type": "string"},
+						"staff": {"type": "string"},
+						"teacher_and_staff": {"type": "string"}
+					}
+				},
+				"<udm attribute name>": {"type": "string"}
+			}
+		},
+		"maildomain": {"type": "string"},
+		"mandatory_attributes": {
+			"type": "array",
+			"items": {"type": "string"}
+		},
+		"no_delete": {"type": "boolean"},
+		"output": {
+			"type": "object",
+			"properties": {
+				"new_user_passwords": {"type": "string"},
+				"user_import_summary": {"type": "string"}
+			}
+		},
+		"password_length": {"type": "integer"},
+		"school": {"type": "string"},
+		"source_uid": {"type": "string"},
+		"tolerate_errors": {"type": "integer"},
+		"user_deletion": {"type": "object"},
+		"user_role": {"type": "string"},
+		"username": {
+			"type": "object",
+			"properties": {
+				"max_length": {
+					"type": "object",
+					"properties": {
+						"default": {"type": "integer"},
+						"student": {"type": "integer"},
+						"teacher": {"type": "integer"},
+						"staff": {"type": "integer"},
+						"teacher_and_staff": {"type": "integer"}
+					}
+				},
+				"allowed_special_chars": {"type": "string"}
+			}
+		}
+	}
+}

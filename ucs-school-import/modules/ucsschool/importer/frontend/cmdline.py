@@ -121,9 +121,8 @@ class CommandLine(object):
         try:
             self.config = setup_configuration(configs, **self.args.settings)
         except InitialisationError as exc:
-            self.logger.error("Error setting up or checking the configuration: %s", exc)
             self.logger.error("Used configuration files: %s.", configs)
-            self.logger.error("Using command line arguments: %r", self.args.settings)
+            self.logger.error("Used command line arguments: %r", self.args.settings)
             try:
                 # if it was a config check error, the config singleton already exists
                 config = Configuration()
@@ -251,6 +250,13 @@ class CommandLine(object):
                 msg = "Import finished normally but with errors."
                 self.logger.warning(msg)
                 return 2
+        except InitialisationError as exc:
+            if exc.log_traceback:
+                log = self.logger.exception
+            else:
+                log = self.logger.error
+            log(str(exc))
+            return 1
         except Exception as exc:  # pylint: disable=broad-except
             self.logger.exception("{}: {!s}".format(exc.__class__.__name__, exc))
             return 1
