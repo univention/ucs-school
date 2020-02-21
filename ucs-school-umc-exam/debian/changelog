@@ -1,3 +1,10 @@
+ucs-school-umc-exam (9.0.1-31) unstable; urgency=low
+
+  * Bug #50588: cache exam container per OU
+  * Bug #50819: Track exams on exam users by ucsschool role instead of school membership.
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 21 Feb 2020 14:32:44 +0100
+
 ucs-school-umc-exam (9.0.1-30) unstable; urgency=low
 
   * Bug #50817: cache computers in room

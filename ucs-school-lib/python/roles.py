@@ -36,6 +36,14 @@ class UnknownRole(Exception):
 	pass
 
 
+class UnknownContextType(Exception):
+	pass
+
+
+class InvalidUcsschoolRoleString(Exception):
+	pass
+
+
 role_pupil = 'pupil'  # attention: there is also "role_student"
 role_teacher = 'teacher'
 role_staff = 'staff'
@@ -82,8 +90,43 @@ all_roles = (
 	role_teacher_computer
 )
 
+context_type_school = 'school'
+context_type_exam = 'exam'
 
-def create_ucsschool_role_string(role, school):  # type: (str, str) -> str
+all_context_types = (context_type_school, context_type_exam)
+
+
+def create_ucsschool_role_string(role, context, context_type='school', school=''):  # type: (str, str, str, str) -> str
+	"""
+	This function takes a role, a context_type and a context to create a valid ucsschoolRole string.
+	:param role: The role
+	:param context: The context
+	:param context_type: The context type
+	:param school: Old variable name for context. DEPRECATED! TODO: Should be removed in 4.4v5
+	:return: The valid ucsschoolRole string
+	"""
 	if role not in all_roles:
 		raise UnknownRole('Unknown role {!r}.'.format(role))
-	return '{}:school:{}'.format(role, school)
+	if school:
+		context = school
+	return '{}:{}:{}'.format(role, context_type, context)
+
+
+def get_role_info(ucsschool_role_string):
+	"""
+	This function separates the individual elements of an ucsschool role string.
+	Raises InvalidUcsschoolRoleString if the string provided is no valid role string.
+	Raises UnknownRole if the role is unknown.
+	Raises UnknownContextType if the context type is unknown.
+	:param ucsschool_role_string: The role string to separate
+	:return: (role, context_type, context)
+	"""
+	try:
+		role, context_type, context = ucsschool_role_string.split(':')
+	except ValueError:
+		raise InvalidUcsschoolRoleString()
+	if role not in all_roles:
+		raise UnknownRole('The role string "{}" includes the unknown role "{}"'.format(ucsschool_role_string, role))
+	if context_type not in all_context_types:
+		raise UnknownContextType('The role string "{}" includes the unknown context type "{}"'.format(ucsschool_role_string, context_type))
+	return role, context_type, context_type

@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.10) unstable; urgency=low
+
+  * Bug #50819: Enable contexts other than school for ucsschool roles
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 21 Feb 2020 14:30:22 +0100
+
 ucs-school-lib (12.1.9) unstable; urgency=low
 
   * Bug #47418: fix typo in import
