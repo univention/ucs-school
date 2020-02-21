@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.100) unstable; urgency=medium
+
+  * Bug #50819: Test exam with students in multiple schools
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 21 Feb 2020 14:29:02 +0100
+
 ucs-test-ucsschool (6.0.99) unstable; urgency=medium
 
   * Bug #50772: Test exam and computerroom modules with saml
