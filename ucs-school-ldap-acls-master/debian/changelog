@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.4-1) unstable; urgency=low
+
+  * Bug #50830: limit read access to unique-usernames/unique-email counters
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 17 Feb 2020 14:30:14 +0100
+
 ucs-school-ldap-acls-master (17.0.3-1) unstable; urgency=low
 
   * Bug #50274: fix ACL regression caused by bug 49734 - LDAP ACLs on DC
