@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-exam
+fix: 9.0.1-31A~4.4.0.202002211439
+desc: |
+ * The current exams an exam user is participating in is now tracked by the ucsschool roles instead of school membership (Bug # 50819).
+ * The containers for exam users are now cached per OU (Bug #50588).
+bug: [50819, 50588]

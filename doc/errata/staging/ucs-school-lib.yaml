@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.1.10A~4.4.0.202002211437
+desc: |
+ * Context types other than school are now possible in ucsschool roles. The first new type is exam (Bug #50819).
+bug: [50819]
