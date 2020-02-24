@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-32) unstable; urgency=low
+
+  * Bug #50819: Create backwards compatibility with older masters
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 24 Feb 2020 08:23:12 +0100
+
 ucs-school-umc-exam (9.0.1-31) unstable; urgency=low
 
   * Bug #50588: cache exam container per OU

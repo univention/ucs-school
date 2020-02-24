@@ -666,19 +666,30 @@ class Instance(SchoolBaseModule):
 				exam_role_str = create_ucsschool_role_string(role_exam_user, '{}-{}'.format(project.name, school), context_type_exam)
 				recipients = ldap_user_read.search(filter_format('ucsschoolRole=%s', (exam_role_str,)), attr=['ucsschoolRole', 'uid'])
 				parallel_users = [user[0] for user in recipients if len([role for role in user[1]['ucsschoolRole'] if get_role_info(role)[1] == context_type_exam]) > 1]
+				# This is needed for backwards compatibility with any master
+				# that is not updated to use roles for exam membership yet.
+				exam_roles_exist = any(True for user in recipients if len(
+					[role for role in user[1]['ucsschoolRole'] if get_role_info(role)[1] == context_type_exam]) > 0)
+				parallel_users_old = dict([
+					(iuser.username, iproject.description)
+					for iproject in util.distribution.Project.list(only_distributed=True)
+					if iproject.name != project.name
+					for iuser in iproject.recipients
+				])
 
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
 				for iuser in project.recipients:
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
-						# remove LDAP user entry
-						client.umc_command('schoolexam-master/remove-exam-user', dict(
-							userdn=iuser.dn,
-							school=school,
-							exam=request.options['exam']
-						)).result
-						if iuser.dn not in parallel_users:
+						if exam_roles_exist or iuser.dn not in parallel_users_old:
+							# remove LDAP user entry
+							client.umc_command('schoolexam-master/remove-exam-user', dict(
+								userdn=iuser.dn,
+								school=school,
+								exam=request.options['exam']
+							)).result
+						if iuser.dn not in parallel_users or iuser.dn not in parallel_users_old:
 							Instance.set_datadir_immutable_flag([iuser], project, False)
 							# remove first the home directory, if enabled
 							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', False):
