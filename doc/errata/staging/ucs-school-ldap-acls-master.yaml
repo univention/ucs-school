@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-ldap-acls-master
 fix: 
 desc: |
- * By default, the access to the import counter objects in cn=unique-usernames,cn=ucsschool,cn=univention,LDAP_BASE and cn=unique-email,cn=ucsschool,cn=univention,LDAP_BASE is now rejected for systems with role domaincontroller slave and memberserver (Bug #50830).
+ * By default, the access to the import counter objects below cn=unique-usernames,cn=ucsschool,cn=univention,LDAP_BASE and cn=unique-email,cn=ucsschool,cn=univention,LDAP_BASE is now rejected for systems with role domaincontroller slave and memberserver (Bug #50830).
 bug: [50830]
