@@ -350,7 +350,10 @@ class UCSSchoolHelperAbstractClass(object):
 				self.add_error('name', _('The name is already used somewhere outside the school. It may not be taken twice and has to be changed.'))
 		if self.supports_school() and self.school:
 			if not School.cache(self.school).exists(lo):
-				self.add_error('school', _('The school "%s" does not exist. Please choose an existing one or create it.') % self.school)
+				self.add_error('school', _(
+					'The school %r does not exist. Please choose an existing '
+					'one or create it.') % (self.school,)
+				)
 		self.validate_roles(lo)
 		if validate_unlikely_changes:
 			if self.exists(lo):

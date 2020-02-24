@@ -74,9 +74,9 @@ msgstr ""
 #: models/base.py:351
 #, python-format
 msgid ""
-"The school \"%s\" does not exist. Please choose an existing one or create it."
+"The school %r does not exist. Please choose an existing one or create it."
 msgstr ""
-"Die Schule \"%s\" existiert nicht. Bitte wählen Sie eine existierende oder "
+"Die Schule %r existiert nicht. Bitte wählen Sie eine existierende oder "
 "erstellen Sie sie."
 
 #: models/base.py:367

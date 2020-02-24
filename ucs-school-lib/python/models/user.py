@@ -413,10 +413,28 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			self.add_error('school_classes', _(
 				"Type of 'school_classes' is {type!r}, but must be dictionary.").format(type=type(self.school_classes)))
 
+		for attr, schools in (
+			('schools', self.schools),
+			('school_classes', self.school_classes.keys()),
+		):
+			for school in schools:
+				if not School.cache(school).exists(lo):
+					self.add_error(attr, _(
+						'The school %r does not exist. Please choose an '
+						'existing one or create it.') % (school,)
+					)
+
 		# verify user is (or will be) in all schools of its school_classes
+		# case of non-string-OU has already been caught above
 		for school, classes in iteritems(self.school_classes):
-			if school.lower() not in (s.lower() for s in self.schools + [self.school]):
-				self.add_error('school_classes', _("School {school!r} in 'school_classes' is missing in the users 'school(s)' attributes.").format(school=school))
+			if (
+					isinstance(school, str) and
+					school.lower() not in (s.lower() for s in self.schools + [self.school])
+			):
+				self.add_error('school_classes', _(
+					"School {school!r} in 'school_classes' is missing in the "
+					"users 'school(s)' attributes.").format(school=school)
+				)
 
 	def remove_from_school(self, school, lo):
 		if not self.exists(lo):
