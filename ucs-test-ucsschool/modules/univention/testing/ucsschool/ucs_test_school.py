@@ -960,6 +960,7 @@ class AutoMultiSchoolEnv(UCSTestSchool):
 			domain=self.ucr.get('domainname'),
 			mac=uts.random_mac(),
 			ip=uts.random_ip(),
+			password='univention',
 		))
 		self.generic.slave = NameDnObj('schoolTestSlave', self.udm.create_object(
 			"computers/domaincontroller_slave",
@@ -968,6 +969,7 @@ class AutoMultiSchoolEnv(UCSTestSchool):
 			domain=self.ucr.get('domainname'),
 			mac=uts.random_mac(),
 			ip=uts.random_ip(),
+			password='univention',
 		))
 		self.generic.member = NameDnObj('schoolTestMember', self.udm.create_object(
 			"computers/memberserver",
@@ -976,6 +978,7 @@ class AutoMultiSchoolEnv(UCSTestSchool):
 			domain=self.ucr.get('domainname'),
 			mac=uts.random_mac(),
 			ip=uts.random_ip(),
+			password='univention',
 		))
 		self.generic.winclient = NameDnObj('schoolTestWinDom', self.udm.create_object(
 			"computers/windows",
@@ -1009,6 +1012,12 @@ class AutoMultiSchoolEnv(UCSTestSchool):
 			school.admin2 = NameDnObj(*self.create_school_admin(school.name, username='schooladmin2%s' % (suffix,), schools=schools))
 
 			school.schoolserver = NameDnObj('', self.lo.searchDn(base=school.dn, filter='univentionObjectType=computers/domaincontroller_slave')[0])
+# self.udm does not allow modification of existing objects
+# 			self.udm.modify_object(
+# 				'computers/domaincontroller_slave',
+# 				dn=school.schoolserver.dn,
+# 				password='univention',
+# 			)
 
 			school.winclient = NameDnObj(
 				'schoolwin%s' % (suffix,),

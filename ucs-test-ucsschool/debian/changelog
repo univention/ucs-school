@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.102) unstable; urgency=low
+
+  * Bug #50830: add ACL test for restricted access to import counter objects
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 25 Feb 2020 22:29:57 +0100
+
 ucs-test-ucsschool (6.0.101) unstable; urgency=medium
 
   * Bug #50819: Adjust test to check home dir removal
