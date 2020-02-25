@@ -671,7 +671,7 @@ class Instance(SchoolBaseModule):
 				exam_roles_exist = any(True for user in recipients if len(
 					[role for role in user[1]['ucsschoolRole'] if get_role_info(role)[1] == context_type_exam]) > 0)
 				parallel_users_old = dict([
-					(iuser.username, iproject.description)
+					(iuser.dn, iproject.description)
 					for iproject in util.distribution.Project.list(only_distributed=True)
 					if iproject.name != project.name
 					for iuser in iproject.recipients
