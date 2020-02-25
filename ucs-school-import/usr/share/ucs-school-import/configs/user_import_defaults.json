@@ -22,18 +22,18 @@
 		"deletion": 0
 	},
 	"scheme": {},
-	"maildomain": null,
+	"maildomain": "",
 	"mandatory_attributes": ["firstname", "lastname", "name", "record_uid", "school", "source_uid"],
 	"no_delete": false,
 	"output": {
-		"new_user_passwords": null,
+		"new_user_passwords": "",
 		"user_import_summary": "/var/lib/ucs-school-import/summary/%Y/%m/user_import_summary_%Y-%m-%d_%H:%M:%S.csv"
 	},
 	"password_length": 15,
-	"school": null,
-	"source_uid": null,
+	"school": "",
+	"source_uid": "",
 	"tolerate_errors": 0,
-	"user_role": null,
+	"user_role": "",
 	"username": {
 		"allowed_special_chars": "."
 	},

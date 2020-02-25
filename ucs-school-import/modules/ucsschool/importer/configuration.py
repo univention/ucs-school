@@ -35,12 +35,18 @@ Configuration classes.
 
 import json
 import logging
+from jsonschema import validate, ValidationError
 from six import string_types
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from .exceptions import InitialisationError, ReadOnlyConfiguration
 from .utils.configuration_checks import run_configuration_checks
 from .utils.import_pyhook import run_import_pyhooks
 from .utils.config_pyhook import ConfigPyHook
+
+
+USER_IMPORT_SCHEMA_FILE = '/usr/share/ucs-school-import/schema/user_schema.json'
+
+
 try:
 	from typing import Any, Dict, List, Optional, Type
 except ImportError:
@@ -51,6 +57,14 @@ def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> Rea
 	logger = logging.getLogger(__name__)
 	config = Configuration(conffiles)
 	config.update(kwargs)
+	try:
+		with open(USER_IMPORT_SCHEMA_FILE, 'rb') as schema_file:
+			schema = json.load(schema_file)
+		validate(instance=kwargs, schema=schema)
+	except ValidationError:
+		raise InitialisationError("Configuration does not match scheme: {}".format(kwargs))
+	except IOError:
+		raise InitialisationError("Could not open schema file: {}".format(USER_IMPORT_SCHEMA_FILE))
 	_set_username_maxlength(config, logger)
 	run_import_pyhooks(ConfigPyHook, 'post_config_files_read', config, conffiles, kwargs)
 	config.check_mandatory_attributes(logger)
@@ -167,21 +181,28 @@ class Configuration(object):
 			if not filenames:
 				raise InitialisationError("Configuration not yet loaded.")
 			self.config = None
+			schema = None
 			for filename in filenames:
 				try:
+					with open(USER_IMPORT_SCHEMA_FILE, 'rb') as schema_file:
+						schema = json.load(schema_file)
 					cf = ConfigurationFile(filename)
+					cf_obj = cf.read()
+					validate(instance=cf_obj, schema=schema)
 					if self.config:
-						self.config.update(cf.read())
+						self.config.update(cf_obj)
 					else:
-						self.config = ReadOnlyDict(cf.read())
+						self.config = ReadOnlyDict(cf_obj)
 					self.conffiles.append(filename)
 				except ValueError as ve:
 					raise InitialisationError("Error in configuration file '{}': {}.".format(filename, ve))
 				except IOError as exc:
 					raise InitialisationError("Error reading configuration file {}.".format(exc))
+				except ValidationError as exc:
+					raise InitialisationError("Configuration file does not match scheme {!r}: {}.".format(filename, exc))
 			self.config.conffiles = self.conffiles
-
 	_instance = None
+
 
 	def __new__(cls, filenames=None):  # type: (Type[Configuration], Optional[List[str]]) -> ReadOnlyDict
 		if not cls._instance:
