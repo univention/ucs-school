@@ -315,7 +315,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('read', self.schoolA.staff.dn),
 				('read', self.schoolA.admin1.dn),
 				('read', self.schoolA.admin2.dn),
-#				('none', self.schoolA.schoolserver.dn),
+				('none', self.schoolA.schoolserver.dn),
 				# school B
 				('read', self.schoolB.student.dn),
 				('read', self.schoolB.teacher.dn),
@@ -323,7 +323,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('read', self.schoolB.staff.dn),
 				('read', self.schoolB.admin1.dn),
 				('read', self.schoolB.admin2.dn),
-#				('none', self.schoolB.schoolserver.dn),
+				('none', self.schoolB.schoolserver.dn),
 				# school C
 				('read', self.schoolC.student.dn),
 				('read', self.schoolC.teacher.dn),
@@ -331,7 +331,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
 				('read', self.schoolC.staff.dn),
 				('read', self.schoolC.admin1.dn),
 				('read', self.schoolC.admin2.dn),
-#				('none', self.schoolC.schoolserver.dn),
+				('none', self.schoolC.schoolserver.dn),
 		]:
 			acl_tester = ACLTester(self.ucr, str(actor_dn))
 			for counter_dn in self.counter_dn_list:

@@ -1012,12 +1012,10 @@ class AutoMultiSchoolEnv(UCSTestSchool):
 			school.admin2 = NameDnObj(*self.create_school_admin(school.name, username='schooladmin2%s' % (suffix,), schools=schools))
 
 			school.schoolserver = NameDnObj('', self.lo.searchDn(base=school.dn, filter='univentionObjectType=computers/domaincontroller_slave')[0])
-# self.udm does not allow modification of existing objects
-# 			self.udm.modify_object(
-# 				'computers/domaincontroller_slave',
-# 				dn=school.schoolserver.dn,
-# 				password='univention',
-# 			)
+			# self.udm does not allow modification of existing objects
+			cmd = ['/usr/sbin/udm-test', 'computers/domaincontroller_slave', 'modify', '--dn', school.schoolserver.dn, '--set', 'password=univention']
+			child = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+			(stdout, stderr) = child.communicate()
 
 			school.winclient = NameDnObj(
 				'schoolwin%s' % (suffix,),
