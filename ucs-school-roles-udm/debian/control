@@ -1,0 +1,20 @@
+Source: ucs-school-roles-udm
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>> 10),
+ univention-config-dev,
+ ucslint,
+Standards-Version: 3.8.2
+
+Package: ucs-school-roles-udm
+Architecture: all
+Depends: shell-univention-lib,
+ univention-config,
+Description: Roles + Capabilities for UCS
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucs/

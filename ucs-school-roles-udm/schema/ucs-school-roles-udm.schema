@@ -1,0 +1,35 @@
+#
+# Copyright (C) 2020 Univention GmbH
+#
+# univention owns the namespace 10176.
+#
+#
+# Univention Authorization OID Prefix: 1.3.6.1.4.1.10176.4240
+#
+objectIdentifier univentionAuth 1.3.6.1.4.1.10176.4240
+
+attributetype ( univentionAuth:100
+        NAME 'univentionAuthIsSystemRole'
+        DESC 'is this object a default system role?'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( univentionAuth:101
+        NAME 'univentionAuthCapability'
+        DESC 'Univention authorization capability'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( univentionAuth:1 NAME 'univentionAuthorizationRole'
+       DESC 'Univention authorization role object'
+       ABSTRACT
+       MUST ( cn )
+	   MAY ( displayName $ description $ univentionAuthCapability $ univentionAuthIsSystemRole ))
+
+objectclass ( univentionAuth:2 NAME 'univentionAuthorizationCapability'
+       DESC 'Univention authorization capability object'
+       ABSTRACT
+       MUST ( cn )
+	   MAY ( displayName $ description ))
