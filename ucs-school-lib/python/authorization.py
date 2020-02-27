@@ -31,7 +31,11 @@ Module for authorization checks for the ucsschool lib.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from typing import List, Optional
+try:
+	# noinspection PyUnresolvedReferences
+	from typing import List, Optional
+except ImportError:
+	pass
 
 DELIMITER = ' '
 
@@ -119,6 +123,10 @@ class ContextRole:
 	def capabilities(self):  # type: () -> List[RoleCapability]
 		return self._capabilities
 
+	@property
+	def context(self):
+		return self._context
+
 
 def is_authorized(actor_context_roles, object_context_roles, capability_name):  # type: (List[ContextRole], List[ContextRole], str) -> bool
 	"""
@@ -136,5 +144,6 @@ def is_authorized(actor_context_roles, object_context_roles, capability_name):  
 			True for cap in a_capabilities if cap.targets_role(o_role))]
 		if affected_roles:
 			effective_roles.append(role)
-		# special handling will land here
-		return len(effective_roles) > 0
+	# special handling will land here
+	return len(effective_roles) > 0
+
