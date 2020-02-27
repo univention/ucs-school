@@ -41,14 +41,14 @@ object_name = short_description
 object_name_plural = _(u'UCS@school capabilties')
 long_description = short_description
 operations = ['add', 'edit', 'remove', 'search']
-default_containers = ["cn=ucsschool,cn=univention"]
+default_containers = ['cn=ucsschool', 'cn=univention']
 help_text = _(u'Check the UCS@school manual')
 
 options = {
 	'default': univention.admin.option(
 		short_description='',
 		default=True,
-		objectClasses=['cn', ],
+		objectClasses=['top', ],
 	),
 }
 
@@ -63,28 +63,30 @@ property_descriptions = {
 	),
 	'displayName': univention.admin.property(
 		short_description=_(u'Display name of the capability'),
-		long_description=short_description
+		long_description=short_description,
 		syntax=univention.admin.syntax.string,
 	),
 	'description': univention.admin.property(
 		short_description=_(u'Description of the capability'),
-		long_description=short_description
+		long_description=short_description,
 		syntax=univention.admin.syntax.string,
 	),
 }
 
-# layout = [
-#     Tab(_(u'General'), _(u'Settings'), layout=[
-#         Group(_('SAML identity provider settings'), layout=[
-#             ["id", ],
-#             ["LdapGetAttributes", ],
-#         ]),
-#     ]),
-# ]
+layout = [
+	Tab(_(u'General'), layout=[
+		Group(_('Capability settings'), layout=[
+			['name', ],
+			['displayName', ],
+			['description', ],
+		]),
+	]),
+]
 
 mapping = univention.admin.mapping.mapping()
-mapping.register('id', 'id', None, univention.admin.mapping.ListToString)
-mapping.register('LdapGetAttributes', 'LdapGetAttributes', None, None)
+mapping.register('name', 'name', None, None)
+mapping.register('displayName', 'displayName', None, None)
+mapping.register('description', 'description', None, None)
 
 
 class object(univention.admin.handlers.simpleLdap):
