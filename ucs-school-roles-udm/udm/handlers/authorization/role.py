@@ -77,7 +77,7 @@ property_descriptions = {
 		multivalue=True,
 		syntax=univention.admin.syntax.string,
 	),
-	'systemRole': univention.admin.property(
+	'isSystemRole': univention.admin.property(
 		short_description=_(u'Predefined read only role'),
 		long_description=_(u''),
 		syntax=univention.admin.syntax.TrueFalseUp,
