@@ -99,11 +99,20 @@ layout = [
 	]),
 ]
 
+
+def mapLinkValue(vals):
+	return [univention.admin.syntax.CapabiltySyntax.delimiter.join(val) for val in vals]
+
+
+def unmapLinkValue(vals):
+	return [val.split(univention.admin.syntax.CapabiltySyntax.delimiter) for val in vals]
+
+
 mapping = univention.admin.mapping.mapping()
 mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
 mapping.register('displayName', 'displayName', None, univention.admin.mapping.ListToString)
 mapping.register('description', 'description', None, univention.admin.mapping.ListToString)
-mapping.register('capability', 'univentionAuthCapability')
+mapping.register('capability', 'univentionAuthCapability', mapLinkValue, unmapLinkValue)
 mapping.register('systemRole', 'univentionAuthIsSystemRole', None, univention.admin.mapping.ListToString)
 
 
