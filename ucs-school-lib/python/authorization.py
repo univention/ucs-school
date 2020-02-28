@@ -207,18 +207,22 @@ def is_authorized(actor_context_roles, object_context_roles, capability_name):
 	:param object_context_roles: list of ContextRoles of the object
 	:type object_context_roles: list(ContextRole)
 	:param str capability_name: the capability required for the action
-	:return: whether the actor is allowed to to performce the desired action
+	:return: whether the actor is allowed to to perform the desired action
 	:rtype: bool
 	"""
 	effective_roles = []
 	for role in actor_context_roles:
-		a_capabilities = role.get_capabilities(capability_name)
-		if not a_capabilities:  # We are just interested in roles that have the capability
+		a_capability = role.get_capabilities(capability_name)
+		if not a_capability:  # We are just interested in roles that have the capability
 			continue
 		# We have to check that the roles that have the specified capability
-		# also match in the context and target_role with any given ContextRole of the object
-		affected_roles = [o_role for o_role in object_context_roles if role.context == o_role.context and any(
-			True for cap in a_capabilities if cap.targets_role(o_role))]
+		# also match the context and target_role with any given ContextRole of the object
+		affected_roles = [
+			o_role for o_role in object_context_roles
+			if role.context == o_role.context and any(
+				True for cap in a_capability if cap.targets_role(o_role)
+			)
+		]
 		if affected_roles:
 			effective_roles.append(role)
 	# special handling will land here
