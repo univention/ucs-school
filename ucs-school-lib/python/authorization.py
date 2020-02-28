@@ -37,10 +37,16 @@ try:
 	from typing import List, Optional, Dict
 except ImportError:
 	pass
-
+from enum import Enum
+from ucsschool.lib.roles import get_role_info
 from univention.udm import UDM
+from univention.udm.exceptions import NoObject
 
 DELIMITER = ' '
+
+
+class Capability(Enum):
+	CREATE_CLASS_LIST = 'ucsschool/create_class_list'
 
 
 class RoleCapability:
@@ -108,6 +114,27 @@ class ContextRole:
 		self._context_type = context_type
 
 	@classmethod
+	def _from_udm_object(cls, role_udm_obj, context, context_type):
+		"""
+		Takes a GenericObject from UDM (univention.udm) and returns a ContextRole object.
+		"""
+		capabilities = [RoleCapability.from_str(cap_str) for cap_str in role_udm_obj.props.capability]
+		return cls(role_udm_obj.props.name, role_udm_obj.props.displayName, capabilities, context, context_type)
+
+	@classmethod
+	def from_dn(cls, dn, context, context_type='school'):  # type: (str, str, Optional[str]) -> Optional[ContextRole]
+		"""
+		Creates a ContextRole object from a given dn pointing towards a ucsschool/role object.
+		Since that object is without context, it has to be provided additionally.
+		"""
+		role_module = UDM.machine().version(1).get('ucsschool/role')
+		try:
+			role_udm_obj = role_module.get(dn)
+			return cls._from_udm_object(role_udm_obj, context, context_type)
+		except NoObject:
+			return None
+
+	@classmethod
 	def from_role_str(cls, role_str):  # type: (str) -> Optional[ContextRole]
 		"""
 		Creates a ContextRole object from a given role string.
@@ -116,7 +143,12 @@ class ContextRole:
 		:return: ContextRole object or None if the role string is invalid or not found in LDAP
 		:rtype: ContextRole or None
 		"""
-		raise NotImplementedError
+		role_name, context_type, context = get_role_info(role_str)
+		role_module = UDM.machine().version(1).get('ucsschool/role')
+		search_result = list(role_module.search('name={}'.format(role_name)))
+		if search_result:
+			return cls._from_udm_object(search_result[0], context, context_type)
+		return None
 
 	@classmethod
 	def from_role_strings(cls, role_strings):  # type: (List[str]) -> List[ContextRole]
@@ -182,7 +214,6 @@ def croles_from_dn(dn):  # type: (str) -> List[ContextRole]
 	"""
 	Takes a dn and returns a list of ContextRoles by extracting the ucsschoolRole values
 	from the udm object identified by the dn.
-	TODO: Remove from this module to keep it free from dependencies to UDM
 
 	:param str dn: DN in LDAP
 	:return: list of ContextRoles attached to LDAP object
