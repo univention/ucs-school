@@ -33,9 +33,11 @@ Module for authorization checks for the ucsschool lib.
 
 try:
 	# noinspection PyUnresolvedReferences
-	from typing import List, Optional
+	from typing import List, Optional, Dict
 except ImportError:
 	pass
+
+from univention.udm import UDM
 
 DELIMITER = ' '
 
@@ -103,6 +105,21 @@ class ContextRole:
 		self._context = context
 		self._context_type = context_type
 
+	@classmethod
+	def from_role_str(cls, role_str):  # type: (str) -> Optional[ContextRole]
+		"""
+		Creates a ContextRole object from a given role string. If the role string is invalid or not found
+		in the LDAP None is returned.
+		"""
+		raise NotImplementedError
+
+	@classmethod
+	def from_role_strings(cls, role_strings):  # type: (List[str]) -> List[ContextRole]
+		"""
+		Creates a list of ContextRole objects from a list of role strings. Invalid role strings are filtered out.
+		"""
+		return [role for role in (cls.from_role_str(role_str) for role_str in role_strings) if role]
+
 	def has_capability(self, capability_name):  # type: (str) -> bool
 		"""
 		Checks if the ContextRole has a RoleCapability with a given name.
@@ -126,6 +143,29 @@ class ContextRole:
 	@property
 	def context(self):
 		return self._context
+
+
+def croles_from_dict(obj_dict):  # type: (Dict) -> List[ContextRole]
+	"""
+	Takes a dictionary and returns a list of ContextRoles by extracting the ucsschoolRole values from the dictionary.
+	"""
+	role_strings = obj_dict.get('ucsschoolRole', [])
+	return ContextRole.from_role_strings(role_strings)
+
+
+def croles_from_dn(dn):  # type: (str) -> List[ContextRole]
+	"""
+	Takes a dn and returns a list of ContextRoles by extracting the ucsschoolRole values
+	from the udm object identified by the dn.
+	TODO: Remove from this module to keep it free from dependencies to UDM
+	"""
+	udm = UDM.machine().version(1)
+	udm_obj = udm.obj_by_dn(dn)
+	try:
+		role_strings = udm_obj.props.ucsschoolRole
+	except AttributeError:
+		return []
+	return ContextRole.from_role_strings(role_strings)
 
 
 def is_authorized(actor_context_roles, object_context_roles, capability_name):  # type: (List[ContextRole], List[ContextRole], str) -> bool
