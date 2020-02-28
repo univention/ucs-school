@@ -48,6 +48,12 @@ DELIMITER = ' '
 class Capability(Enum):
 	CREATE_CLASS_LIST = 'ucsschool/create_class_list'
 
+	def __str__(self):
+		return self.value
+
+	def __repr__(self):
+		return self.__str__()
+
 
 class RoleCapability:
 	"""
