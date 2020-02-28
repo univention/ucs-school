@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # UCS@school lib
-#  module: UCS@school specific roles
 #
 # Copyright 2014-2020 Univention GmbH
 #
@@ -31,6 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+UCS@school specific roles
+"""
 try:
 	from typing import Optional, Tuple
 except ImportError:
