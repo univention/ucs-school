@@ -55,6 +55,10 @@ for fn in role.py capability.py ; do
 		--ucsversionstart "4.4-0" || die
 done
 
+ucs_registerLDAPExtension "$@" \
+	--udm_syntax /usr/lib/python2.7/dist-packages/univention/admin/syntax.d/authorization.py \
+	--ucsversionstart "4.4-0" || die
+
 create_cap () {
 	local name="$1"
 	local displayName="$2"
