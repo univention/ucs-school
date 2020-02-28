@@ -235,7 +235,7 @@ def croles_from_dn(dn):  # type: (str) -> List[ContextRole]
 
 
 def is_authorized(actor_context_roles, object_context_roles, capability_name):
-	# type: (List[ContextRole], List[ContextRole], str) -> bool
+	# type: (List[ContextRole], List[ContextRole], Union[str, Capability]) -> bool
 	"""
 	Check if actor is authorized to execute an action on an object.
 
@@ -248,6 +248,8 @@ def is_authorized(actor_context_roles, object_context_roles, capability_name):
 	:rtype: bool
 	"""
 	effective_roles = []
+	if type(capability_name) == Capability:
+		capability_name = capability_name.value
 	for role in actor_context_roles:
 		a_capability = role.get_capabilities(capability_name)
 		if not a_capability:  # We are just interested in roles that have the capability

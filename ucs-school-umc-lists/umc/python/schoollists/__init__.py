@@ -38,10 +38,13 @@ from ldap.dn import explode_dn
 from univention.lib.i18n import Translation
 from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules import UMC_Error
 
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.models.user import User
+from ucsschool.lib.roles import create_ucsschool_role_string
+from ucsschool.lib.authorization import is_authorized, croles_from_dn, ContextRole, Capability
 
 _ = Translation('ucs-school-umc-lists').translate
 
@@ -56,6 +59,9 @@ class Instance(SchoolBaseModule):
 	@LDAP_Connection()
 	def csv_list(self, request, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
+		croles_object = ContextRole.from_role_strings([create_ucsschool_role_string('school', school)])
+		if not is_authorized(croles_from_dn(ldap_user_read.binddn), croles_object, Capability.CREATE_CLASS_LIST):
+			raise UMC_Error(_('The user with dn "{}" does not have the capability {!s}'.format(ldap_user_read.binddn, Capability.CREATE_CLASS_LIST)))
 		group = request.options['group']
 		separator = request.options['separator']
 		csvfile = StringIO.StringIO()
