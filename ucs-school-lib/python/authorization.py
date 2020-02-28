@@ -55,7 +55,7 @@ class RoleCapability:
 	The difference is the optional target role component.
 	"""
 
-	def __init__(self, name, display_name, target_role):  # type: (str, str, str) -> RoleCapability
+	def __init__(self, name, display_name, target_role):  # type: (str, str, str) -> None
 		self._name = name
 		self._display_name = display_name
 		self._target_role = target_role
@@ -127,7 +127,7 @@ class ContextRole:
 		Creates a ContextRole object from a given dn pointing towards a ucsschool/role object.
 		Since that object is without context, it has to be provided additionally.
 		"""
-		role_module = UDM.machine().version(1).get('ucsschool/role')
+		role_module = UDM.machine().version(1).get('authorization/role')
 		try:
 			role_udm_obj = role_module.get(dn)
 			return cls._from_udm_object(role_udm_obj, context, context_type)
@@ -144,7 +144,7 @@ class ContextRole:
 		:rtype: ContextRole or None
 		"""
 		role_name, context_type, context = get_role_info(role_str)
-		role_module = UDM.machine().version(1).get('ucsschool/role')
+		role_module = UDM.machine().version(1).get('authorization/role')
 		search_result = list(role_module.search('name={}'.format(role_name)))
 		if search_result:
 			return cls._from_udm_object(search_result[0], context, context_type)
