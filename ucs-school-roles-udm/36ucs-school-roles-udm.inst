@@ -45,7 +45,11 @@ udm container/cn create "$@" --ignore_exists \
 	--position "cn=univention,$ldap_base" \
 	--set name="authorization" || die
 
-ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-roles-udm/schema/ucs-school-roles-udm.schema || die
+# register required UDM modules and UDM syntaxes in LDAP
+ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-roles-udm/schema/ucs-school-roles-udm.schema \
+	--udm_module /usr/lib/python2.7/dist-packages/univention/admin/handlers/authorization/role.py \
+	--udm_module /usr/lib/python2.7/dist-packages/univention/admin/handlers/authorization/capability.py \
+	|| die
 
 joinscript_save_current_version
 

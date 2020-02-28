@@ -1,2 +1,4 @@
 36ucs-school-roles-udm.inst           usr/lib/univention-install/
 schema/ucs-school-roles-udm.schema    usr/share/ucs-school-roles-udm/schema
+udm/handlers/authorization/*.py       usr/lib/python3/dist-packages/univention/admin/handlers/authorization/
+udm/handlers/authorization/*.py       usr/lib/python2.7/dist-packages/univention/admin/handlers/authorization/
