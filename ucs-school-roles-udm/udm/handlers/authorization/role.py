@@ -44,6 +44,7 @@ operations = ['add', 'edit', 'remove', 'search']
 default_containers = ['cn=authorization,cn=univention']
 help_text = _(u'An authorization role may be assigned to users and combines several capabilities.')
 
+
 options = {
 	'default': univention.admin.option(
 		short_description='',
@@ -75,7 +76,7 @@ property_descriptions = {
 		short_description=_(u'Capability of the role'),
 		long_description=_(u'Capability name of the role'),
 		multivalue=True,
-		syntax=univention.admin.syntax.string,
+		syntax=univention.admin.syntax.CapabiltySyntax,
 	),
 	'isSystemRole': univention.admin.property(
 		short_description=_(u'Predefined read only role'),
