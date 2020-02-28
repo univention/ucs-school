@@ -153,4 +153,4 @@ def get_role_info(ucsschool_role_string):  # type: (str) -> Tuple[str, str, str]
 			'The role string {!r} includes the unknown context type {!r}.'.format(
 				ucsschool_role_string, context_type)
 		)
-	return role, context_type, context_type
+	return role, context_type, context
