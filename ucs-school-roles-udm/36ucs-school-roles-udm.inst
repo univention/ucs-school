@@ -55,6 +55,46 @@ for fn in role.py capability.py ; do
 		--ucsversionstart "4.4-0" || die
 done
 
+create_cap () {
+	local name="$1"
+	local displayName="$2"
+	local description="$3"
+	shift 3
+	udm authorization/capability create "$@" \
+		--ignore_exists \
+		--position "cn=authorization,cn=univention,$ldap_base" \
+		--set name="$name" \
+		--set displayName="$displayName" \
+		--set description="$description" || die
+}
+
+create_cap "ucschool/password_reset" "Password reset" "Capability to allow the password reset for certain roles." "$@"
+create_cap "ucsschool/create_class_list" "Class list: create class list" "Capability to allow the creation a new class lists." "$@"
+
+udm authorization/role create "$@" \
+	--ignore_exists \
+	--position "cn=authorization,cn=univention,$ldap_base" \
+	--set name="teacher" \
+	--set displayName="UCS@school: Teacher" \
+	--set description="Default role for teachers in UCS@school" \
+	--set isSystemRole="TRUE" \
+	--append capability="ucsschool/password_reset student" \
+	--append capability="ucsschool/create_class_list" \
+	|| die
+
+udm authorization/role create "$@" \
+	--ignore_exists \
+	--position "cn=authorization,cn=univention,$ldap_base" \
+	--set name="school_admin" \
+	--set displayName="UCS@school: School Admin" \
+	--set description="Default role for school admins in UCS@school" \
+	--set isSystemRole="TRUE" \
+	--append capability="ucsschool/password_reset student" \
+	--append capability="ucsschool/password_reset teacher" \
+	--append capability="ucsschool/password_reset staff" \
+	--append capability="ucsschool/create_class_list" \
+	|| die
+
 joinscript_save_current_version
 
 exit 0
