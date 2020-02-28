@@ -31,18 +31,18 @@ from univention.admin.layout import Tab, Group
 import univention.admin.handlers
 import univention.admin.syntax
 
-translation = univention.admin.localization.translation('univention.admin.handlers.ucsschool-capability')
+translation = univention.admin.localization.translation('univention.admin.handlers.authorization-capability')
 _ = translation.translate
 
-module = 'ucsschool/capability'
+module = 'authorization/capability'
 childs = False
-short_description = _(u'UCS@school capabilty')
+short_description = _(u'Authorization: Capability')
 object_name = short_description
-object_name_plural = _(u'UCS@school capabilties')
+object_name_plural = _(u'Authorization: Capabilties')
 long_description = short_description
 operations = ['add', 'edit', 'remove', 'search']
 default_containers = ['cn=authorization,cn=univention']
-help_text = _(u'Check the UCS@school manual')
+help_text = _(u'Several capabilities may be combined by an authorization role object.')
 
 options = {
 	'default': univention.admin.option(
