@@ -41,7 +41,7 @@ object_name = short_description
 object_name_plural = _(u'UCS@school capabilties')
 long_description = short_description
 operations = ['add', 'edit', 'remove', 'search']
-default_containers = ['cn=ucsschool,cn=univention']
+default_containers = ['cn=authorization,cn=univention']
 help_text = _(u'Check the UCS@school manual')
 
 options = {

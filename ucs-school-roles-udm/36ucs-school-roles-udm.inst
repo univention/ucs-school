@@ -40,6 +40,11 @@ joinscript_init
 
 eval "$(ucr shell)"
 
+# create cn=authorization,cn=univention,$ldap_base
+udm container/cn create "$@" --ignore_exists \
+	--position "cn=univention,$ldap_base" \
+	--set name="authorization" || die
+
 ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-roles-udm/schema/ucs-school-roles-udm.schema || die
 
 joinscript_save_current_version
