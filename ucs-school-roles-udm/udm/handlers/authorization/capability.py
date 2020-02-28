@@ -55,7 +55,7 @@ options = {
 property_descriptions = {
 	'name': univention.admin.property(
 		short_description=_(u'Name of the capability'),
-		long_description=short_description,
+		long_description=_(u''),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		may_change=False,
@@ -63,12 +63,12 @@ property_descriptions = {
 	),
 	'displayName': univention.admin.property(
 		short_description=_(u'Display name of the capability'),
-		long_description=short_description,
+		long_description=_(u''),
 		syntax=univention.admin.syntax.string,
 	),
 	'description': univention.admin.property(
 		short_description=_(u'Description of the capability'),
-		long_description=short_description,
+		long_description=_(u''),
 		syntax=univention.admin.syntax.string,
 	),
 }
