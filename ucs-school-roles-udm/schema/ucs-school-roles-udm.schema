@@ -24,12 +24,10 @@ attributetype ( univentionAuth:101
 
 objectclass ( univentionAuth:1 NAME 'univentionAuthorizationRole'
        DESC 'Univention authorization role object'
-       ABSTRACT
        MUST ( cn )
 	   MAY ( displayName $ description $ univentionAuthCapability $ univentionAuthIsSystemRole ))
 
 objectclass ( univentionAuth:2 NAME 'univentionAuthorizationCapability'
        DESC 'Univention authorization capability object'
-       ABSTRACT
        MUST ( cn )
 	   MAY ( displayName $ description ))

@@ -41,14 +41,14 @@ object_name = short_description
 object_name_plural = _(u'UCS@school capabilties')
 long_description = short_description
 operations = ['add', 'edit', 'remove', 'search']
-default_containers = ['cn=ucsschool', 'cn=univention']
+default_containers = ['cn=ucsschool,cn=univention']
 help_text = _(u'Check the UCS@school manual')
 
 options = {
 	'default': univention.admin.option(
 		short_description='',
 		default=True,
-		objectClasses=['top', ],
+		objectClasses=['top', 'univentionAuthorizationCapability', ],
 	),
 }
 
@@ -84,9 +84,9 @@ layout = [
 ]
 
 mapping = univention.admin.mapping.mapping()
-mapping.register('name', 'name', None, None)
-mapping.register('displayName', 'displayName', None, None)
-mapping.register('description', 'description', None, None)
+mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
+mapping.register('displayName', 'displayName', None, univention.admin.mapping.ListToString)
+mapping.register('description', 'description', None, univention.admin.mapping.ListToString)
 
 
 class object(univention.admin.handlers.simpleLdap):

@@ -48,7 +48,7 @@ options = {
 	'default': univention.admin.option(
 		short_description='',
 		default=True,
-		objectClasses=['top', ],
+		objectClasses=['top', 'univentionAuthorizationRole', ],
 	),
 }
 
@@ -77,13 +77,21 @@ property_descriptions = {
 		multivalue=True,
 		syntax=univention.admin.syntax.string,
 	),
+	'systemRole': univention.admin.property(
+		short_description=_(u'Predefined read only role'),
+		long_description=short_description,
+		syntax=univention.admin.syntax.TrueFalseUp,
+		required=True,
+		default='FALSE',
+		may_change=False,
+	),
 }
 
 layout = [
 	Tab(_(u'General'), layout=[
 		Group(_('Role settings'), layout=[
 			['name', ],
-			['displayName', ],
+			['displayName', 'systemRole'],
 			['description', ],
 			['capability', ],
 		]),
@@ -91,10 +99,11 @@ layout = [
 ]
 
 mapping = univention.admin.mapping.mapping()
-mapping.register('name', 'name', None, None)
-mapping.register('displayName', 'displayName', None, None)
-mapping.register('description', 'description', None, None)
-mapping.register('capability', 'capability', None, None)
+mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
+mapping.register('displayName', 'displayName', None, univention.admin.mapping.ListToString)
+mapping.register('description', 'description', None, univention.admin.mapping.ListToString)
+mapping.register('capability', 'univentionAuthCapability')
+mapping.register('systemRole', 'univentionAuthIsSystemRole', None, univention.admin.mapping.ListToString)
 
 
 class object(univention.admin.handlers.simpleLdap):
