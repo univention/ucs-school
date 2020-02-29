@@ -69,14 +69,37 @@ class RoleCapability:
 	@classmethod
 	def from_str(cls, capability_str):  # type: (str) -> RoleCapability
 		"""
-		Parses a capability string how it would be attached to a ucsschool/role object in UDM.
+		Parses a singöe capability string how it can be found in the LDAP
+		attributes of ucsschool/role objects in UDM.
+
 		Example with whitespace delimiter: 'ucsschool/password_reset teacher'
+
+		:param str capability_str: entry in an LDAP attribute
+		:return: a RoleCapability object
+		:rtype: RoleCapability
 		"""
-		if DELIMITER in capability_str:
-			name, target_role = capability_str.split(DELIMITER)
+		return cls.from_udm_role_prop([capability_str])
+
+	@classmethod
+	def from_udm_role_prop(cls, capability_entry):  # type: (List[str]) -> RoleCapability
+		"""
+		Parses a capability entry how it would be attached to an
+		authorization/role object in UDM.
+
+		Example: ['ucsschool/password_reset', 'teacher']
+
+		:param capability_entry: content of an LDAP attribute: a list of strings
+		:type capability_entry: list(str)
+		:return: a RoleCapability object
+		:rtype: RoleCapability
+		"""
+		if len(capability_entry) == 1:
+			return cls(capability_entry[0], capability_entry[0], '')
+		elif len(capability_entry) == 2:
+			name, target_role = capability_entry
 			return cls(name, name, target_role)
 		else:
-			return cls(capability_str, capability_str, '')
+			raise RuntimeError("Unsupported capability_entry: {!r}".format(capability_entry))
 
 	def __eq__(self, other):
 		return self._name == other.name and self._target_role == other.target_role
