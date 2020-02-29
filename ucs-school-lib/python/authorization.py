@@ -47,6 +47,7 @@ DELIMITER = ' '
 
 class Capability(Enum):
 	CREATE_CLASS_LIST = 'ucsschool/create_class_list'
+	PASSWORD_RESET = 'ucsschool/password_reset'
 
 	def __str__(self):
 		return self.value
