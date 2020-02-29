@@ -34,7 +34,7 @@ Module for authorization checks for the ucsschool lib.
 
 try:
 	# noinspection PyUnresolvedReferences
-	from typing import List, Optional, Dict
+	from typing import Dict, List, Optional, Union
 except ImportError:
 	pass
 from enum import Enum
@@ -163,7 +163,10 @@ class ContextRole:
 		"""
 		Takes a GenericObject from UDM (univention.udm) and returns a ContextRole object.
 		"""
-		capabilities = [RoleCapability.from_str(cap_str) for cap_str in role_udm_obj.props.capability]
+		capabilities = [
+			RoleCapability.from_udm_role_prop(cap)
+			for cap in role_udm_obj.props.capability
+		]
 		return cls(role_udm_obj.props.name, role_udm_obj.props.displayName, capabilities, context, context_type)
 
 	@classmethod
@@ -201,7 +204,8 @@ class ContextRole:
 		Creates a list of ContextRole objects from a list of role strings.
 		Invalid role strings are filtered out.
 
-		:param str role_str: a ``ucsschool_role`` string
+		:param role_strings: a ``ucsschool_role`` string
+		:type role_strings: list(str)
 		:return: list of ContextRole objects
 		:rtype: list(ContextRole)
 		"""
@@ -209,7 +213,8 @@ class ContextRole:
 
 	def has_capability(self, capability_name):  # type: (str) -> bool
 		"""
-		Checks if the ContextRole has a RoleCapability with a given name.
+		Checks if the ContextRole has a RoleCapability with the given name
+		(regardless of target_role).
 
 		:param str capability_name: the name of a RoleCapability
 		:return: whether this ContextRole object has a RoleCapability
@@ -220,7 +225,7 @@ class ContextRole:
 	def get_capabilities(self, capability_name):  # type: (str) -> List[RoleCapability]
 		"""
 		Returns all RoleCapabilities with the given name that are attached to
-		the ContextRole.
+		the ContextRole (regardless of target_role).
 
 		:param str capability_name: the name of a RoleCapability
 		:return: list of RoleCapabilities with name ``capability_name`` that
@@ -247,7 +252,7 @@ def croles_from_dict(obj_dict):  # type: (Dict) -> List[ContextRole]
 	Takes a dictionary and returns a list of ContextRoles by extracting the
 	ucsschoolRole values from the dictionary.
 
-	:param dict obj_obj_dict: dictionary with ucsschoolRole values
+	:param dict obj_dict: dictionary with ucsschoolRole values
 	:return: list of ContextRoles
 	:rtype: list(ContextRole)
 	"""
@@ -273,7 +278,7 @@ def croles_from_dn(dn):  # type: (str) -> List[ContextRole]
 	return ContextRole.from_role_strings(role_strings)
 
 
-def is_authorized(actor_context_roles, object_context_roles, capability_name):
+def is_authorized(actor_context_roles, object_context_roles, capability):
 	# type: (List[ContextRole], List[ContextRole], Union[str, Capability]) -> bool
 	"""
 	Check if actor is authorized to execute an action on an object.
@@ -282,15 +287,16 @@ def is_authorized(actor_context_roles, object_context_roles, capability_name):
 	:type actor_context_roles: list(ContextRole)
 	:param object_context_roles: list of ContextRoles of the object
 	:type object_context_roles: list(ContextRole)
-	:param str capability_name: the capability required for the action
+	:param capability: the capability required for the action
+	:type capability: str or Capability object
 	:return: whether the actor is allowed to to perform the desired action
 	:rtype: bool
 	"""
 	effective_roles = []
-	if type(capability_name) == Capability:
-		capability_name = capability_name.value
+	if isinstance(capability, Capability):
+		capability = capability.value
 	for role in actor_context_roles:
-		a_capability = role.get_capabilities(capability_name)
+		a_capability = role.get_capabilities(capability)
 		if not a_capability:  # We are just interested in roles that have the capability
 			continue
 		# We have to check that the roles that have the specified capability
