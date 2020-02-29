@@ -74,6 +74,15 @@ create_cap "ucsschool/create_class_list" "Class list: create class list" "Capabi
 udm authorization/role create "$@" \
 	--ignore_exists \
 	--position "cn=authorization,cn=univention,$ldap_base" \
+	--set name="student" \
+	--set displayName="UCS@school: Student" \
+	--set description="Default role for stundents in UCS@school" \
+	--set isSystemRole="TRUE" \
+	|| die
+
+udm authorization/role create "$@" \
+	--ignore_exists \
+	--position "cn=authorization,cn=univention,$ldap_base" \
 	--set name="teacher" \
 	--set displayName="UCS@school: Teacher" \
 	--set description="Default role for teachers in UCS@school" \
