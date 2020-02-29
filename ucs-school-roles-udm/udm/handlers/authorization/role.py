@@ -105,6 +105,9 @@ def mapLinkValue(vals):
 
 
 def unmapLinkValue(vals):
+	# TODO: in the case of "no target" this function produces correct Python
+	# objects, but the UDM command line does not display it correctly. It
+	# shows only "None" for the capability entry.
 	return [val.split(univention.admin.syntax.CapabiltySyntax.delimiter) for val in vals]
 
 
