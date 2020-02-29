@@ -35,14 +35,14 @@ _ = translation.translate
 
 
 class CapabilityChoiceSyntax(univention.admin.syntax.UDM_Objects):
-	udm_modules = ('ucsschool/capability', )
+	udm_modules = ('authorization/capability', )
 	key = '%(name)s'
 	simple = True
 	regex = None
 
 
 class RoleChoiceSyntax(univention.admin.syntax.UDM_Objects):
-	udm_modules = ('ucsschool/role', )
+	udm_modules = ('authorization/role', )
 	key = '%(name)s'
 	simple = True
 	regex = None
