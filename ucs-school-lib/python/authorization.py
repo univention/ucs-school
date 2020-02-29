@@ -109,7 +109,11 @@ class RoleCapability:
 		return self.__str__()
 
 	def __str__(self):
-		return "{}{}{}".format(self._name, DELIMITER, self._target_role)
+		return "RoleCapability({!r}{}{})".format(
+			self._name,
+			DELIMITER if self._target_role else "",
+			repr(self._target_role) if self._target_role else ""
+		)
 
 	@property
 	def name(self):
@@ -142,6 +146,16 @@ class ContextRole:
 		self._capabilities = capabilities
 		self._context = context
 		self._context_type = context_type
+
+	def __repr__(self):
+		return self.__str__()
+
+	def __str__(self):
+		return "ContextRole({}{}: {!r})".format(
+			self._name,
+			"@{}".format(self._context) if self._context else "",
+			self._capabilities,
+		)
 
 	@classmethod
 	def _from_udm_object(cls, role_udm_obj, context, context_type):
