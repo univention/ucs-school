@@ -38,6 +38,7 @@ try:
 except ImportError:
 	pass
 from enum import Enum
+from ldap.filter import filter_format
 from ucsschool.lib.roles import get_role_info
 from univention.udm import UDM
 from univention.udm.exceptions import NoObject
@@ -189,7 +190,7 @@ class ContextRole:
 		"""
 		role_name, context_type, context = get_role_info(role_str)
 		role_module = UDM.machine().version(1).get('authorization/role')
-		search_result = list(role_module.search('name={}'.format(role_name)))
+		search_result = list(role_module.search(filter_format('name=%s', (role_name,))))
 		if search_result:
 			return cls._from_udm_object(search_result[0], context, context_type)
 		return None
