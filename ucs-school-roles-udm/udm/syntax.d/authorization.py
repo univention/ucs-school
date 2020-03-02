@@ -30,7 +30,7 @@
 import univention.admin.syntax
 
 
-translation = univention.admin.localization.translation('univention.admin.handlers.ucsschool-capability')
+translation = univention.admin.localization.translation('univention.admin.syntax.authorization')
 _ = translation.translate
 
 
