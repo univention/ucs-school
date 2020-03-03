@@ -56,6 +56,7 @@ from .utils import ucr, _
 from univention.admin.uexceptions import noObject
 from univention.admin.filter import conjunction, parse
 import univention.admin.modules as udm_modules
+import univention.admin.syntax as syntax
 
 
 class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
@@ -417,6 +418,10 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		for school, classes in iteritems(self.school_classes):
 			if school.lower() not in (s.lower() for s in self.schools + [self.school]):
 				self.add_error('school_classes', _("School {school!r} in 'school_classes' is missing in the users 'school(s)' attributes.").format(school=school))
+		# check syntax of all class names
+		for school, classes in iteritems(self.school_classes):
+			for class_name in classes:
+				syntax.is_syntax(class_name, syntax.gid)
 
 	def remove_from_school(self, school, lo):
 		if not self.exists(lo):
