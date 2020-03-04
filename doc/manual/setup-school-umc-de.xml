@@ -93,6 +93,39 @@
 			</para>
 		  </note>
 		</section>
+		<section id="school:setup:umc:schools:schoolserver-multiple-ous">
+			<title>Mehrere Schulen auf einem Schulserver verwalten</title>
+			<para>
+				Auf einem Schulserver können auf mehrere Schulen repliziert werden.
+				Vor dem Domänenbeitritt müssen die zu replizierenden Schulen auf dem DC Master existieren.
+				Beim Anlegen der Schulen muss im Feld <guimenu>Rechnername des Schulservers im Edukativnetz</guimenu>
+				der zu verwendende Schulserver angegeben werden. Alternativ können die Schulen über das Tool <command>create_ou</command> angelegt werden.
+				Als Beispiel werden die Schulen <literal>gymmitte1</literal> und <literal>gymmitte2</literal>
+				angelegt, die den Server <literal>dcgsmitte</literal> verwenden.
+			</para>
+			 <programlisting language="sh">
+cd /usr/share/ucs-school-import/scripts/
+./create_ou gsmitte1 dcgsmitte
+./create_ou gsmitte2 dcgsmitte
+			</programlisting>
+			<para>
+				Nach dem Domänenbeitritt, siehe  <xref linkend="school:installation:slave"/>, kann auf dem Server
+				<literal>dcgsmitte</literal> auf die angelegten auf die Schulen zugegriffen werden.
+			</para>
+			<caution>
+				<para>
+					DHCP-Server werden in dieser Einstellung nicht unterstützt.
+				</para>
+			</caution>
+		<note>
+			<para>
+				Mitglieder der Schule <literal>gymmitte1</literal> können sich an Rechnern
+				der Schule <literal>gymmitte2</literal> anmelden, auch wenn sie nicht Teil von <literal>gymmitte2</literal> sind.
+				Angemeldet über die UMC sehen Leherer nur Gruppen, die zu Schulen gehören,
+				bei denen sie Mitglied sind.
+			</para>
+		</note>
+		</section>
 		<section id="school:setup:umc:schools:modify">
 		  <title>Bearbeiten von Schulen</title>
 		  <para>
