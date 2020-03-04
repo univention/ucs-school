@@ -53,7 +53,7 @@ from .computer import AnyComputer
 from .misc import MailDomain
 from .utils import ucr, _
 
-from univention.admin.uexceptions import noObject
+from univention.admin.uexceptions import noObject, valueError
 from univention.admin.filter import conjunction, parse
 import univention.admin.modules as udm_modules
 import univention.admin.syntax as syntax
@@ -421,7 +421,10 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		# check syntax of all class names
 		for school, classes in iteritems(self.school_classes):
 			for class_name in classes:
-				syntax.is_syntax(class_name, syntax.gid)
+				try:
+					syntax.gid.parse(class_name)
+				except valueError as exc:
+					self.add_error('school_classes', str(exc))
 
 	def remove_from_school(self, school, lo):
 		if not self.exists(lo):

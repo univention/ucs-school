@@ -35,6 +35,7 @@ See docstring of module ucsschool.importer.utils.configuration_checks on how to
 add your own checks.
 """
 
+import string
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
@@ -65,6 +66,14 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 		if "user_deletion" in self.config:
 			raise InitialisationError(
 				"The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'.")
+
+	def test_school_class_invalid_char_replacement_is_valid_char(self):
+		valid_chars = string.ascii_letters + string.digits + " -."
+		try:
+			assert len(self.config.get("school_classes_invalid_character_replacement", "")) in (0, 1)
+			assert self.config["school_classes_invalid_character_replacement"] in valid_chars
+		except:
+			raise InitialisationError("school_classes_invalid_character_replacement must be one of {!r}".format(valid_chars))
 
 	def test_username_max_length(self):
 		for role in ('default', 'staff', 'student', 'teacher', 'teacher_and_staff'):
