@@ -34,6 +34,7 @@ Representation of a user read from a file.
 
 import re
 import datetime
+import string
 from collections import defaultdict, namedtuple
 from ldap.filter import filter_format
 from six import iteritems, string_types
@@ -656,6 +657,18 @@ class ImportUser(User):
 				cls_name = self.normalize(cls_name)
 				school = self.normalize(school)
 				klass_name = "{}-{}".format(school, cls_name)
+				char_replacement = self.config["school_classes_invalid_character_replacement"]
+				if char_replacement:
+					allowed_special = " -._"
+					whitelist = string.digits + string.ascii_letters + allowed_special
+					klass_name_old = klass_name # only for debug output
+					for character in klass_name:
+						if character not in whitelist:
+							klass_name = klass_name.replace(character, char_replacement)
+							self.logger.debug("Replaced character '{}' in '{}' with '{}'.".format(character, klass_name_old, char_replacement))
+					if klass_name != klass_name_old:
+						self.logger.debug("Class name changed from '{}' to '{}'.".format(klass_name_old, klass_name))
+
 				if klass_name not in res[school]:
 					res[school].append(klass_name)
 			self.school_classes = dict(res)

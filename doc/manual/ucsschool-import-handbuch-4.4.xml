@@ -839,7 +839,14 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): <literal>.</literal></entry>
+                            </row>
+							<row>
+								<entry morerows="1"><varname>school_classes_invalid_character_replacement</varname></entry>
+								<entry>Unerlaubte Zeichen im Namen einer Schulklasse (Erlaubt sind Zahlen, Buchstaben (keine Umlaute) und die Zeichen <literal>. -_</literal>), werden mit diesem Wert ersetzt.</entry>
 							</row>
+							<row>
+								<entry align="right">Standard (<classname>string</classname>): <literal>-</literal></entry>
+                            </row>
 						</tbody>
 					</tgroup>
 				</table>
