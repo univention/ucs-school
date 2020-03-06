@@ -35,10 +35,15 @@ See docstring of module ucsschool.importer.utils.configuration_checks on how to
 add your own checks.
 """
 
+
 import string
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
+
+
+# If a '[' or a ']' appears in a "scheme" field, it should be in one of these contexts
+SCHEME_ALLOWED_OCCURENCES = ("[\d*:\d*]", "[ALWAYSCOUNTER]", "[COUNTER2]")
 
 
 class DefaultConfigurationChecks(ConfigurationChecks):
