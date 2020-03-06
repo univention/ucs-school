@@ -40,7 +40,7 @@ from six import iteritems, string_types
 import lazy_object_proxy
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
-from univention.admin.syntax import gid as gid_syntax
+from univention.admin.syntax import gid as gid_syntax, date2 as date_syntax
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
@@ -575,7 +575,10 @@ class ImportUser(User):
 		Set User.birthday attribute.
 		"""
 		if self.birthday:
-			pass
+			try:
+				self.birthday = date_syntax.parse(self.birthday)
+			except valueError:
+				self.logger.error("Could not parse birthday.")
 		elif self._schema_write_check("birthday", "birthday", "univentionBirthday"):
 			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])  # type: str
 		elif self.old_user:
