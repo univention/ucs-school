@@ -32,7 +32,7 @@
 """
 Base class for UCS@school import tool cmdline frontends.
 """
-
+import os
 import pprint
 import logging
 
@@ -134,6 +134,7 @@ class CommandLine(object):
 		self.setup_config()
 		# logging configured by config file
 		self.setup_logging(self.config["verbose"], self.config["logfile"])
+		self.logger.info('### huhu ###')
 
 		self.logger.info("------ UCS@school import tool configured ------")
 		self.logger.info("Used configuration files: %s.", self.config.conffiles)
@@ -141,6 +142,11 @@ class CommandLine(object):
 		self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
 
 		self.factory = setup_factory(self.config["factory"])
+		last_log_symlink = "/var/log/univention/ucs-school-import/LAST-LOG"
+		if os.path.islink(last_log_symlink):
+			os.remove(last_log_symlink)
+		self.logger.info('create symlink from {} to {}'.format(last_log_symlink, self.args.logfile))
+		os.symlink(self.args.logfile, last_log_symlink)
 
 	def main(self):
 		try:
