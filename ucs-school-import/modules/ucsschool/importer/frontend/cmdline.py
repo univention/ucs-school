@@ -47,6 +47,15 @@ try:
 except ImportError:
 	pass
 
+LAST_FAIL_LOG_SYMLINK = "/var/log/univention/ucs-school-import/FAIL-LOG"
+LAST_LOG_SYMLINK = "/var/log/univention/ucs-school-import/LAST-LOG"
+
+
+def create_symlink(target, source):
+	if os.path.islink(target):
+		os.remove(target)
+	os.symlink(source, target)
+
 
 class CommandLine(object):
 
@@ -77,6 +86,9 @@ class CommandLine(object):
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
 			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
+			self.logger.info('create symlink from {} to {}'.format(LAST_LOG_SYMLINK, filename))
+			create_symlink(LAST_LOG_SYMLINK, filename)
+
 		if error_log_path:
 			self._error_log_handler = get_file_handler('DEBUG', error_log_path, uid=uid, gid=gid, mode=mode)
 			self.logger.addHandler(self._error_log_handler)
@@ -123,6 +135,10 @@ class CommandLine(object):
 		self.logger.info("------ Starting mass import... ------")
 		try:
 			importer.mass_import()
+		except Exception as exc:
+			logfile = os.path.realpath(LAST_LOG_SYMLINK)
+			self.logger.info('create symlink from {} to {}'.format(LAST_FAIL_LOG_SYMLINK, logfile))
+			create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
 		finally:
 			self.errors = importer.errors
 			self.user_import_summary_str = importer.user_import_stats_str
@@ -139,7 +155,6 @@ class CommandLine(object):
 		self.setup_config()
 		# logging configured by config file
 		self.setup_logging(self.config["verbose"], self.config["logfile"])
-		self.logger.info('### huhu ###')
 
 		self.logger.info("------ UCS@school import tool configured ------")
 		self.logger.info("Used configuration files: %s.", self.config.conffiles)
@@ -149,19 +164,16 @@ class CommandLine(object):
 			self._error_log_handler.setLevel('ERROR')
 
 		self.factory = setup_factory(self.config["factory"])
-		last_log_symlink = "/var/log/univention/ucs-school-import/LAST-LOG"
-		if os.path.islink(last_log_symlink):
-			os.remove(last_log_symlink)
-		self.logger.info('create symlink from {} to {}'.format(last_log_symlink, self.args.logfile))
-		os.symlink(self.args.logfile, last_log_symlink)
 
 	def main(self):
+
 		try:
 			self.prepare_import()
 		except InitialisationError as exc:
 			msg = "InitialisationError: {}".format(exc)
 			self.logger.exception(msg)
 			return 1
+
 		try:
 			self.do_import()
 
