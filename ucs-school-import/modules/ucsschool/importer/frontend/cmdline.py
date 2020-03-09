@@ -57,13 +57,14 @@ class CommandLine(object):
 		self.factory = None
 		self.errors = list()
 		self.user_import_summary_str = ''
+		self._error_log_handler = None
 
 	def parse_cmdline(self):
 		parser = ParseUserImportCmdline()
 		self.args = parser.parse_cmdline()
 		return self.args
 
-	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None):
+	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None, error_log_path=None):
 		self.logger = logging.getLogger('ucsschool')
 		self.logger.setLevel(logging.DEBUG)
 		# we're called twice:
@@ -76,6 +77,9 @@ class CommandLine(object):
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
 			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
+		if error_log_path:
+			self._error_log_handler = get_file_handler('DEBUG', error_log_path, uid=uid, gid=gid, mode=mode)
+			self.logger.addHandler(self._error_log_handler)
 		return self.logger
 
 	def setup_config(self):
@@ -140,6 +144,8 @@ class CommandLine(object):
 		self.logger.info("Used configuration files: %s.", self.config.conffiles)
 		self.logger.info("Using command line arguments: %r", self.args.settings)
 		self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
+		if self._error_log_handler:
+			self._error_log_handler.setLevel('ERROR')
 
 		self.factory = setup_factory(self.config["factory"])
 		last_log_symlink = "/var/log/univention/ucs-school-import/LAST-LOG"
