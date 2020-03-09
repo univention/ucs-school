@@ -134,6 +134,7 @@ class CommandLine(object):
 		self.setup_logging(self.args.verbose, self.args.logfile)
 
 		self.logger.info("------ UCS@school import tool starting ------")
+		self.logger.info("Import started from {}".format(self.__class__.__name__))
 
 		self.setup_config()
 		# logging configured by config file
