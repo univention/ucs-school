@@ -86,7 +86,7 @@ class CommandLine(object):
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
 			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
-			self.logger.info('create symlink from {} to {}'.format(LAST_LOG_SYMLINK, filename))
+			self.logger.info('Create symlink from {} to {}'.format(LAST_LOG_SYMLINK, filename))
 			create_symlink(LAST_LOG_SYMLINK, filename)
 
 		if error_log_path:
@@ -137,7 +137,7 @@ class CommandLine(object):
 			importer.mass_import()
 		except Exception as exc:
 			logfile = os.path.realpath(LAST_LOG_SYMLINK)
-			self.logger.info('create symlink from {} to {}'.format(LAST_FAIL_LOG_SYMLINK, logfile))
+			self.logger.info('Create symlink from {} to {}'.format(LAST_FAIL_LOG_SYMLINK, logfile))
 			create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
 		finally:
 			self.errors = importer.errors
@@ -155,6 +155,9 @@ class CommandLine(object):
 		self.setup_config()
 		# logging configured by config file
 		self.setup_logging(self.config["verbose"], self.config["logfile"])
+		with open(self.config["input"]["filename"]) as fin:
+			line = fin.readline()
+			self.logger.info("Input has format: {}.".format(line))
 
 		self.logger.info("------ UCS@school import tool configured ------")
 		self.logger.info("Used configuration files: %s.", self.config.conffiles)
