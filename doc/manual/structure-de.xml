@@ -344,9 +344,10 @@
 			<para><uri>cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=example,dc=com</uri></para>
 			<para>
 			  Diese Gruppen werden beim Erstellen der ersten Schul-OU einmalig angelegt und sind
-			  nicht OU-spezifisch. Sie enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die Schul-DCs
+			  nicht spezifisch für eine bestimmte OU. Sie enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die Schul-DCs
 			  oder die Memberserver der Schulstandorte, wobei diese jeweils nach Verwaltungsnetz und Edukativnetz
-			  getrennt werden. Domaincontroller Master und Domaincontroller Backup dürfen
+			  getrennt werden. Über diese Gruppen werden Zugriffsrechte von &ucsUAS;-Systemen auf die &ucsUAS;-LDAP-Strukturen gesteuert.
+			  Domaincontroller Master und Domaincontroller Backup dürfen
 			  <emphasis>kein</emphasis> Mitglied in einer dieser Gruppen sein!
 			</para>
 		  </listitem>
