@@ -147,7 +147,8 @@ class HttpApiImportFrontend(UserImportCommandLine):
 			filename=filename,
 			uid=self.wsgi_uid,
 			gid=self.wsgi_gid,
-			mode=stat.S_IRUSR | stat.S_IWUSR
+			mode=stat.S_IRUSR | stat.S_IWUSR,
+			error_log_path=os.path.join(self.basedir, 'ucs-school-import-error.log')
 		)
 
 	@property
