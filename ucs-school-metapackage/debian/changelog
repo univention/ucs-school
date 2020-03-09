@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.2-8) unstable; urgency=medium
+
+  * Bug #50905: unset nss/group/cachefile/check_member for better performance
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 09 Mar 2020 11:35:27 +0100
+
 ucs-school-metapackage (12.0.2-7) unstable; urgency=medium
 
   * Bug #50578: Don't create the demoschool while joining a backup if UCRV create_demo is set to 'no' on master.
