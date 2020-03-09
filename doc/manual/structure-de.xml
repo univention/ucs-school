@@ -163,6 +163,79 @@
 			  wie <wordasword>g123m</wordasword> oder <wordasword>gymmitte</wordasword> zum Einsatz.
 			</para>
 		</section>
+		<section id="structure:ou:schoolserver-multiple-ous">
+			<title>Replikation mehrerer Schulen auf einen Schulserver</title>
+			<para>
+				Im Normalfall repliziert ein Schulserver die LDAP-Daten für genau eine Schule. Es gibt jedoch
+				Szenarien, in denen es wünschenswert ist, wenn die LDAP-Daten (Benutzerkonten,
+				Gruppen, Rechnerkonten, Räume, ...) von mehreren Schulen auf einem Schulserver vorgehalten werden.
+				Beginnend mit UCS@school 4.4v5 bietet UCS@school die Möglichkeit an, dass sich mehrere Schulen
+				einen Schulserver teilen.
+			</para>
+			<para>
+				Dabei sind einige Randbedingungen zu beachten:
+				<itemizedlist>
+					<listitem>
+						<para>
+							Jede Schule darf dabei jedoch nur auf <emphasis>einen</emphasis> Schulserver repliziert werden.
+							Die Replikation einer Schule auf mehrere Schulserver ist nicht erlaubt und wird nicht unterstützt!
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Direkt nach dem Hinzufügen eines existierenden Schulservers zu einer
+							existierenden Schule muss der Schulserver neu in die Domäne gejoined werden. Das gleiche gilt auch
+							beim Anlegen einer neuen Schule unter Verwendung eines existierenden Schulservers.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der DHCP-Dienst wird auf Schulservern, die mehrere Schulen vorhalten,
+							<emphasis>nicht</emphasis> unterstützt.  Hier kann es in den Logdateien auf dem Schulserver ggf. zu
+							Fehlermeldungen des DHCP-Dienstes kommen, die in diesem Szenario ignoriert werden können.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Lehrkräfte können in der Univention Management Console nur die Benutzer,
+							Klassen, Arbeitsgruppen, Druckaufträge, Computerräume und Rechner der Schulen sehen, in denen sie
+							auch Mitglied sind. Eine Ausnahme bilden die UMC-Module <guimenu>Klassenarbeiten</guimenu> und
+							<guimenu>Materialien verteilen</guimenu>, welche die Klassenarbeiten und Verteilungsprojekte aller
+							Schulen angezeigt, die auf diesen Schulserver verwaltet werden, unabhängig davon, ob die Lehrkräfte
+							Mitglied der jeweiligen anderen Schulen sind.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Ein Computerraum kann nur einer einzelnen Schule zugeordnet werden. D.h
+							er kann nicht von mehreren Schulen aus genutzt bzw. geteilt werden. Werden zwei Räume mit dem
+							gleichen namen an unterschiedlichen Schulen erstellt, handelt es sich für &ucsUAS; um zwei
+							vollkommen unabhängige Räume.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die Freigaben aller dem Schulserver zugeordneten Schulen werden von dem
+							Dateiserver Samba angezeigt. Die Namen der Freigaben entsprechen i.d.R. dem Schema
+							<literal>$OU-$CLASS</literal> bzw. <literal>$OU-$WORKGROUP</literal>. Der Zugriff auf die
+							automatisch erstellten Freigaben wird über die Gruppenmitgliedschaften (Arbeitsgruppen/Klassen)
+							gesteuert.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Da der Schulserver die Authentifizierung für die Windows-Rechner
+							durchführt, ist es allen Benutzern der Schulen eines Schulservers möglich, sich auf allen
+							Windows-Rechnern anzumelden, die gegen den Schulserver gejoined wurden.
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Die Einrichtung mehrerer Schulen auf einem Schulserver wird in <xref
+				linkend="school:setup:umc:schools:schoolserver-multiple-ous"/> beschrieben.
+			</para>
+		</section>
 	</section>
 
 	<section id="structure:edunet-vs-adminnet">
