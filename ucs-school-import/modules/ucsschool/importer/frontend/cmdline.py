@@ -40,7 +40,7 @@ import sys
 
 import six
 
-from ucsschool.lib.models.utils import get_stream_handler, get_file_handler, UniStreamHandler
+from ucsschool.lib.models.utils import get_stream_handler, get_file_handler, UniFileHandler, UniStreamHandler
 from .parse_user_import_cmdline import ParseUserImportCmdline
 from ..configuration import Configuration, setup_configuration
 from ..factory import setup_factory
@@ -52,8 +52,8 @@ except ImportError:
 	pass
 
 CENTRAL_LOG_DIR = "/var/log/univention/ucs-school-import"
-LAST_FAIL_LOG_SYMLINK = "/var/log/univention/ucs-school-import/FAIL-LOG"
-LAST_LOG_SYMLINK = "/var/log/univention/ucs-school-import/LAST-LOG"
+LAST_FAIL_LOG_SYMLINK = os.path.join(CENTRAL_LOG_DIR, "LAST-FAIL")
+LAST_LOG_DEBUG_SYMLINK = os.path.join(CENTRAL_LOG_DIR, "LAST-LOG-DEBUG")
 LAST_LOG_ERROR_SYMLINK = os.path.join(CENTRAL_LOG_DIR, "LAST-LOG-ERROR")
 
 
@@ -96,7 +96,7 @@ class CommandLine(object):
 		]
 		if filename and not file_handlers:
 			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
-			self.create_symlink(filename, LAST_LOG_SYMLINK)
+			self.create_symlink(filename, LAST_LOG_DEBUG_SYMLINK)
 			log_dir = os.path.dirname(filename)
 			error_log_path = os.path.join(log_dir, 'ucs-school-import-error.log')
 			# set INFO level now, so the configuration will also end up in the logfile
@@ -148,11 +148,17 @@ class CommandLine(object):
 		try:
 			importer.mass_import()
 		except Exception:  # pylint: disable=broad-except
-			logfile = os.path.realpath(LAST_LOG_SYMLINK)
-			self.create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
-			dirname = os.path.split(os.path.dirname(logfile))[-1]
-			now = datetime.now()
-			link = os.path.join("/var/log/univention/ucs-school-import/", "FAIL-{}_{}".format(dirname, now.strftime("%Y-%m-%d_%H-%M")))
+			logfile = os.path.realpath(LAST_LOG_DEBUG_SYMLINK)
+			self.create_symlink(logfile, LAST_FAIL_LOG_SYMLINK)
+			if logfile.startswith("/var/lib/ucs-school-import"):
+				job_id = os.path.split(os.path.dirname(logfile))[-1]
+				job_id = "job_{:0>4}".format(job_id)
+			else:
+				job_id = "cmdline"
+			link = os.path.join(
+				CENTRAL_LOG_DIR,
+				"FAIL_{:%Y-%m-%d_%H:%M:%S}_{}".format(datetime.now(), job_id)
+			)
 			self.create_symlink(logfile, link)
 			etype, exc, etraceback = sys.exc_info()
 			six.reraise(etype, exc, etraceback)
