@@ -143,13 +143,32 @@ class CommandLine(object):
 		finally:
 			self.errors = importer.errors
 			self.user_import_summary_str = importer.user_import_stats_str
+			# log result to error log (was logged before at INFO level)
+			if self.user_import_summary_str:
+				log_msgs = (
+					"------ User import statistics ------\n"
+					"{}\n"
+					"------ End of user import statistics ------".format(self.user_import_summary_str)
+				)
+				record = self.logger.makeRecord(
+					self.logger.name,
+					logging.INFO,
+					'ucs-school-import-error.log',
+					0,
+					log_msgs,
+					(),
+					None,
+					'user_import_stats_str',
+					None,
+				)
+				self._error_log_handler.handle(record)
 			self.logger.info("------ Mass import finished. ------")
 
 	def prepare_import(self):
 		self.parse_cmdline()
 		# early logging configured by cmdline
 		self.setup_logging(self.args.verbose, self.args.logfile)
-
+		self.logger.info("Loading UCS@school import configuration...")
 		self.setup_config()
 		# logging configured by config file
 		self.setup_logging(self.config["verbose"], self.config["logfile"])
@@ -158,14 +177,13 @@ class CommandLine(object):
 
 		with open(self.config["input"]["filename"]) as fin:
 			line = fin.readline()
-			self.logger.info("Input has format: {}".format(line))
+			self.logger.info("First line of %r:\n%r", self.config["input"]["filename"], line)
 
 		self.logger.info("------ UCS@school import tool configured ------")
 		self.logger.info("Used configuration files: %s.", self.config.conffiles)
 		self.logger.info("Using command line arguments: %r", self.args.settings)
 		self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
-		if self._error_log_handler:
-			self._error_log_handler.setLevel('ERROR')
+		self._error_log_handler.setLevel('ERROR')
 
 		self.factory = setup_factory(self.config["factory"])
 
