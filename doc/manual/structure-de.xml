@@ -229,6 +229,14 @@
 							Windows-Rechnern anzumelden, die gegen den Schulserver gejoined wurden.
 						</para>
 					</listitem>
+					<listitem>
+						<para>
+							Das Teilen eines Schulservers durch mehrere Schulen beschränkt sich auf
+							die Schulserver des Edukativnetzes. Der Betrieb von mehreren Schulen auf einem Server des
+							Verwaltungsnetzes wird nicht unterstützt! Nähere Informationen zu Verwaltungs- und Edukativnetzen
+							finden sich in <xref linkend="structure:edunet-vs-adminnet"/>.
+						</para>
+					</listitem>
 				</itemizedlist>
 			</para>
 			<para>
