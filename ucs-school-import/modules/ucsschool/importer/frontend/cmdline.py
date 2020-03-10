@@ -53,12 +53,6 @@ LAST_FAIL_LOG_SYMLINK = "/var/log/univention/ucs-school-import/FAIL-LOG"
 LAST_LOG_SYMLINK = "/var/log/univention/ucs-school-import/LAST-LOG"
 
 
-def create_symlink(source, link_name):  # type: (str, str) -> None
-	if os.path.islink(link_name):
-		os.remove(link_name)
-	os.symlink(source, link_name)
-
-
 class CommandLine(object):
 	import_initiator = "unknown"
 
@@ -76,7 +70,7 @@ class CommandLine(object):
 		self.args = parser.parse_cmdline()
 		return self.args
 
-	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None, error_log_path=None):
+	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None):
 		self.logger = logging.getLogger('ucsschool')
 		self.logger.setLevel(logging.DEBUG)
 		# we're called twice:
@@ -89,11 +83,12 @@ class CommandLine(object):
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
 		if filename:
 			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
-			self.logger.info('Create symlink from {} to {}'.format(LAST_LOG_SYMLINK, filename))
-			create_symlink(filename, LAST_LOG_SYMLINK)
-
-		if error_log_path:
-			self._error_log_handler = get_file_handler('DEBUG', error_log_path, uid=uid, gid=gid, mode=mode)
+			self.create_symlink(filename, LAST_LOG_SYMLINK)
+			log_dir = os.path.dirname(filename)
+			error_log_path = os.path.join(log_dir, 'ucs-school-import-error.log')
+			# set INFO level now, so the configuration will also end up in the logfile
+			# will be raised to ERROR directly after logging the configuration
+			self._error_log_handler = get_file_handler('INFO', error_log_path, uid=uid, gid=gid, mode=mode)
 			self.logger.addHandler(self._error_log_handler)
 		return self.logger
 
@@ -140,13 +135,11 @@ class CommandLine(object):
 			importer.mass_import()
 		except Exception as exc:
 			logfile = os.path.realpath(LAST_LOG_SYMLINK)
-			self.logger.info('Create symlink from {} to {}'.format(LAST_FAIL_LOG_SYMLINK, logfile))
-			create_symlink(logfile, LAST_FAIL_LOG_SYMLINK)
+			self.create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
 			dirname = os.path.split(os.path.dirname(logfile))[-1]
 			now = datetime.now()
 			link = os.path.join("/var/log/univention/ucs-school-import/", "FAIL-{}_{}".format(dirname, now.strftime("%Y-%m-%d_%H-%M")))
-			self.logger.info('Create symlink from {} to {}'.format(link, logfile))
-			create_symlink(link, logfile)
+			self.create_symlink(logfile, link)
 		finally:
 			self.errors = importer.errors
 			self.user_import_summary_str = importer.user_import_stats_str
@@ -175,6 +168,13 @@ class CommandLine(object):
 			self._error_log_handler.setLevel('ERROR')
 
 		self.factory = setup_factory(self.config["factory"])
+
+	def create_symlink(self, source, link_name):  # type: (str, str) -> None
+		source = os.path.abspath(os.path.realpath(source))
+		self.logger.debug('Creating symlink from %r to %r.', source, link_name)
+		if os.path.islink(link_name):
+			os.remove(link_name)
+		os.symlink(source, link_name)
 
 	def main(self):
 
