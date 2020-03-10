@@ -73,17 +73,26 @@ class CommandLine(object):
 		return self.args
 
 	def setup_logging(self, stdout=False, filename=None, uid=None, gid=None, mode=None):
-		self.logger = logging.getLogger('ucsschool')
-		self.logger.setLevel(logging.DEBUG)
 		# we're called twice:
 		# once after parsing the cmdline, if no `-v` was given, INFO is used,
 		# then again after reading the configuration files, the loglevel may be different now
-		for handler in self.logger.handlers:
-			if isinstance(handler, UniStreamHandler):
-				handler.setLevel(logging.DEBUG if stdout else logging.INFO)
-		if not any(isinstance(handler, UniStreamHandler) for handler in self.logger.handlers):
+		self.logger = logging.getLogger('ucsschool')
+		self.logger.setLevel(logging.DEBUG)
+		# update existing stdout loggers, add one if none exist
+		stream_handlers = [
+			_handler for _handler in self.logger.handlers
+			if isinstance(_handler, UniStreamHandler)
+		]
+		for handler in stream_handlers:
+			handler.setLevel(logging.DEBUG if stdout else logging.INFO)
+		if not stream_handlers:
 			self.logger.addHandler(get_stream_handler('DEBUG' if stdout else 'INFO'))
-		if filename:
+		# add debug and error file handlers if non exist (and a filename was given)
+		file_handlers = [
+			_handler for _handler in self.logger.handlers
+			if isinstance(_handler, UniFileHandler)
+		]
+		if filename and not file_handlers:
 			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
 			self.create_symlink(filename, LAST_LOG_SYMLINK)
 			log_dir = os.path.dirname(filename)
