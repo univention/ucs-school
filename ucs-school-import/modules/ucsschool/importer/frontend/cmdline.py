@@ -60,6 +60,7 @@ def create_symlink(source, link_name):  # type: (str, str) -> None
 
 
 class CommandLine(object):
+	import_initiator = "unknown"
 
 	def __init__(self):
 		self.logger = None  # type: logging.Logger
@@ -160,7 +161,7 @@ class CommandLine(object):
 		# logging configured by config file
 		self.setup_logging(self.config["verbose"], self.config["logfile"])
 		self.logger.info("------ UCS@school import tool starting ------")
-		self.logger.info("Import started from {}".format(self.__class__.__name__))
+		self.logger.info("Import started by %s (class %r).", self.import_initiator, self.__class__.__name__)
 
 		with open(self.config["input"]["filename"]) as fin:
 			line = fin.readline()

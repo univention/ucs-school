@@ -41,6 +41,7 @@ except ImportError:
 
 
 class UserImportCommandLine(CommandLine):
+	import_initiator = "commandline"
 
 	@property
 	def configuration_files(self):  # type: () -> List[str]
