@@ -177,7 +177,7 @@
 				<itemizedlist>
 					<listitem>
 						<para>
-							Jede Schule darf dabei jedoch nur auf <emphasis>einen</emphasis> Schulserver repliziert werden.
+							Jede Schule darf nur auf <emphasis>einen</emphasis> Schulserver repliziert werden.
 							Die Replikation einer Schule auf mehrere Schulserver ist nicht erlaubt und wird nicht unterstützt!
 						</para>
 					</listitem>
