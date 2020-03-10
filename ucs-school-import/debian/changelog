@@ -1,3 +1,13 @@
+ucs-school-import (17.0.26) unstable; urgency=low
+
+  * Bug #50039: improve logging:
+  * create ucs-school-import-error.log
+  * log source of the import job
+  * log first line of the input file (CSV)
+  * create various symlinks in /var/log/univention/ucs-school-import
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 10 Mar 2020 20:16:43 +0100
+
 ucs-school-import (17.0.25) unstable; urgency=medium
 
   * Bug #50707: add server/role varaiable to debian/ucs-school-import.univention-config-registry.
