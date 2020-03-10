@@ -109,11 +109,9 @@
 						</para>
 						<para>
 							Auf der Kommandozeile ist die Zuweisung über das Kommando
-							<command>create_ou</command> sowohl beim Anlegen einer Schule als auch nachträglich für bereits
-							existierende Schulen möglich.  Im folgenden Beispiel werden die Schulen <literal>gymwest</literal>
+							<command>create_ou</command> beim Anlegen einer Schule möglich.  Im folgenden Beispiel werden die Schulen <literal>gymwest</literal>
 							und <literal>bswest</literal> angelegt, die den Schulserver <literal>dcwest</literal> verwenden
-							sollen. Bei einer nachträglichen Zuweisung des bereits existierenden Schulservers
-							<literal>dcwest</literal> zu diesen beiden Schulen sind die identischen Kommandos zu verwenden.
+							sollen.
 						</para>
 						<programlisting language="sh">
 cd /usr/share/ucs-school-import/scripts/
@@ -145,9 +143,8 @@ cd /usr/share/ucs-school-import/scripts/
 					</listitem>
 					<listitem>
 						<para>
-							Es ist zu beachten, dass bereits während der Schulserver-Zuweisung
-							bzw. während des Anlegens einer neuen Schule für den betroffenen Schulserver neue
-							Zugriffsberechtigungen auf das LDAP-Verzeichnis gesetzt werden, die den laufenden Betrieb negativ
+							Es ist zu beachten, dass bereits während des Anlegens einer neuen Schule für den betroffenen Schulserver neue
+							Zugriffsberechtigungen auf das LDAP-Verzeichnis gesetzt werden, die den laufenden Betrieb auf einem Schulserver negativ
 							beeinflussen können. Die Zuweisung bzw. das Anlegen der Schule sollte daher in einem geeigneten
 							Wartungsfenster stattfinden.
 						</para>
