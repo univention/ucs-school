@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 
+fix: 17.0.26A~4.4.0.202003102026
 desc: |
  * Logging of the import has been improved. A log file <filename>ucs-school-import-error.log</filename> with entries of log level <varname>ERROR</varname> and above is now created besides the regular log file <filename>ucs-school-import.log</filename>. The source of the import job is now printed to the log file. The first line of the input file (CSV) is now printed to the log file. Multiple symlinks are now created in the directory <filename>/var/log/univention/ucs-school-import</filename> to allow faster search for relevant log entries. (Bug #50039).
 bug: [50039]
