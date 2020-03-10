@@ -32,9 +32,11 @@
 """
 Base class for UCS@school import tool cmdline frontends.
 """
+import re
 import os
 import pprint
 import logging
+from datetime import datetime
 
 from ucsschool.lib.models.utils import get_stream_handler, get_file_handler, UniStreamHandler
 from .parse_user_import_cmdline import ParseUserImportCmdline
@@ -139,6 +141,12 @@ class CommandLine(object):
 			logfile = os.path.realpath(LAST_LOG_SYMLINK)
 			self.logger.info('Create symlink from {} to {}'.format(LAST_FAIL_LOG_SYMLINK, logfile))
 			create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
+			dirname = os.path.split(os.path.dirname(logfile))[-1]
+			now = datetime.now()
+			link = os.path.join("/var/log/univention/ucs-school-import/", "FAIL-{}_{}".format(dirname, now.strftime("%Y-%m-%d_%H-%M")))
+			self.logger.info('Create symlink from {} to {}'.format(link, logfile))
+			create_symlink(link, logfile)
+
 		finally:
 			self.errors = importer.errors
 			self.user_import_summary_str = importer.user_import_stats_str
@@ -157,7 +165,7 @@ class CommandLine(object):
 		self.setup_logging(self.config["verbose"], self.config["logfile"])
 		with open(self.config["input"]["filename"]) as fin:
 			line = fin.readline()
-			self.logger.info("Input has format: {}.".format(line))
+			self.logger.info("Input has format: {}".format(line))
 
 		self.logger.info("------ UCS@school import tool configured ------")
 		self.logger.info("Used configuration files: %s.", self.config.conffiles)
