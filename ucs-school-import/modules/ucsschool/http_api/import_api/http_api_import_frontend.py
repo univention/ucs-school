@@ -61,6 +61,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
 	# Especially we have to (not) catch the exceptions here, so they end up in the TaskResult.
 
 	http_api_specific_config = 'user_import_http-api.json'
+	import_initiator = "HTTP API"
 	reader_class = 'ucsschool.importer.reader.http_api_csv_reader.HttpApiCsvReader'
 
 	def __init__(self, import_job, task, logger):
