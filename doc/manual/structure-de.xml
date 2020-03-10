@@ -184,8 +184,9 @@
 					<listitem>
 						<para>
 							Direkt nach dem Hinzufügen eines existierenden Schulservers zu einer
-							neuen Schule muss der Schulserver erneut der Domäne beitreten (Rejoin). Anderenfalls kann
-							es zu Inkonsistenzen im LDAP-Verzeichnis aufgrund geänderter Zugriffsberechtigungen kommen.
+							neuen Schule muss der Schulserver erneut der Domäne beitreten (auf der Kommandozeile über den Befehl
+							<command>univention-join</command>). Anderenfalls kann es zu Inkonsistenzen im LDAP-Verzeichnis
+							aufgrund geänderter Zugriffsberechtigungen kommen.
 						</para>
 					</listitem>
 					<listitem>
@@ -209,7 +210,7 @@
 						<para>
 							Ein Computerraum kann nur einer einzelnen Schule zugeordnet werden. D.h
 							er kann nicht von mehreren Schulen aus genutzt bzw. geteilt werden. Werden zwei Räume mit dem
-							gleichen namen an unterschiedlichen Schulen erstellt, handelt es sich für &ucsUAS; um zwei
+							gleichen Namen an unterschiedlichen Schulen erstellt, handelt es sich für &ucsUAS; um zwei
 							vollkommen unabhängige Räume.
 						</para>
 					</listitem>
@@ -427,7 +428,7 @@
 			  Diese Gruppen werden beim Erstellen der ersten Schul-OU einmalig angelegt und sind
 			  nicht spezifisch für eine bestimmte OU. Sie enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die Schul-DCs
 			  oder die Memberserver der Schulstandorte, wobei diese jeweils nach Verwaltungsnetz und Edukativnetz
-			  getrennt werden. Über diese Gruppen werden Zugriffsrechte von &ucsUAS;-Systemen auf die &ucsUAS;-LDAP-Strukturen gesteuert.
+			  getrennt werden. Über diese Gruppen werden Zugriffsrechte von &ucsUAS;-Systemen auf die &ucsUAS;-Objekte im LDAP gesteuert.
 			  Domaincontroller Master und Domaincontroller Backup dürfen
 			  <emphasis>kein</emphasis> Mitglied in einer dieser Gruppen sein!
 			</para>
