@@ -93,6 +93,76 @@
 			</para>
 		  </note>
 		</section>
+		<section id="school:setup:umc:schools:schoolserver-multiple-ous">
+			<title>Mehrere Schulen auf einem Schulserver verwalten</title>
+			<para>
+				Wie in <xref linkend="structure:ou:schoolserver-multiple-ous"/> bereits beschrieben
+				wurde, können mehrerere Schulen auf einen Schulserver repliziert werden. Für die Einrichtung
+				sind zusätzliche Schritte notwendig, die nachfolgend beschrieben werden:
+				<itemizedlist>
+					<listitem>
+						<para>
+							In der UMC kann die Zuweisung eines Schulservers zu einer Schule nur
+							beim Anlegen der Schule erfolgen. Damit mehrere Schulen vom gleichen Schulserver verwaltet werden,
+							muss beim Anlegen der betreffenden Schulen im Feld <guimenu>Rechnername des Schulservers im
+							Edukativnetz</guimenu> der gleiche Name des Schulservers angegeben werden (siehe <xref linkend="fig:umc-multi-ou-create"/>).
+						</para>
+						<para>
+							Auf der Kommandozeile ist die Zuweisung über das Kommando
+							<command>create_ou</command> beim Anlegen einer Schule möglich.  Im folgenden Beispiel werden die Schulen <literal>gymwest</literal>
+							und <literal>bswest</literal> angelegt, die den Schulserver <literal>dcwest</literal> verwenden
+							sollen.
+						</para>
+						<programlisting language="sh">
+cd /usr/share/ucs-school-import/scripts/
+./create_ou gymwest dcwest
+./create_ou bswest dcwest
+						</programlisting>
+						<para>
+							<figure id="fig:umc-multi-ou-create">
+								<title>Anlegen einer neuen Schule</title>
+								<graphic scalefit="1" width="85%" align="center" fileref="illustrations44/umc-multi-ou-create.png"/>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Nach dem Anlegen der Schulen bzw. dem Zuweisen der Schulserver zu den
+							Schulen ist im UMC-Modul <guimenu>Schulen</guimenu> die betreffende Schule zu öffnen und dort unter
+							<guimenu>Erweiterte Einstellungen</guimenu> zu prüfen, ob die korrekten Dateiserver für
+							Heimatverzeichnisse und Klassenfreigaben hinterlegt sind (siehe <xref linkend="fig:umc-multi-ou-modify"/>). Diese Werte sind auch zu prüfen, wenn
+							diese in der Vergangenheit bereits korrekt waren, da sie ggf. während der Schulserver-Zuweisung neu
+							gesetzt werden.
+						</para>
+						<para>
+							<figure id="fig:umc-multi-ou-modify">
+								<title>Das Setzen von Dateiservern für eine Schule</title>
+								<graphic scalefit="1" width="85%" align="center" fileref="illustrations44/umc-multi-ou-modify.png"/>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Es ist zu beachten, dass bereits während des Anlegens einer neuen Schule für den betroffenen Schulserver neue
+							Zugriffsberechtigungen auf das LDAP-Verzeichnis gesetzt werden, die den laufenden Betrieb auf einem Schulserver negativ
+							beeinflussen können. Die Zuweisung bzw. das Anlegen der Schule sollte daher in einem geeigneten
+							Wartungsfenster stattfinden.
+						</para>
+						<para>
+							Falls ein bereits existierender Schulserver einer weiteren Schule
+							zugewiesen wurde, der bereits erfolgreich der &ucsUAS;-Domäne beigetreten ist,
+							<emphasis>muss</emphasis> dieser Schulserver den Domänenbeitritt erneut durchführen, um einen
+							konsistenten Zustand des LDAP-Verzeichnisses auf dem Schulserver herzustellen!
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<caution>
+				<para>
+					Die Verwendung des DHCP-Servers auf einem Schulserver, dem mehrere Schulen zugewiesen wurden, wird nicht unterstützt!
+				</para>
+			</caution>
+		</section>
 		<section id="school:setup:umc:schools:modify">
 		  <title>Bearbeiten von Schulen</title>
 		  <para>

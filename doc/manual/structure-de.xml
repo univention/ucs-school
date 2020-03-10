@@ -141,7 +141,7 @@
 				Ein Benutzerobjekt existiert im LDAP-Verzeichnis nur einmal an seiner primären Schule.
 				An die weiteren Schulen wird nur ein Ausschnitt des LDAP-Verzeichnisses dieser Schule
 				repliziert: sein Benutzerobjekt und die Standardgruppen.
-				Verlässt der Benutzer die Schule, wird sein Benutzerobjekt dort gelöscht nicht mehr dorthin repliziert.
+				Verlässt der Benutzer die Schule, wird sein Benutzerobjekt dort gelöscht bzw. nicht mehr dorthin repliziert.
 				Schulübergreifenden Benutzerkonten können nur mit Importskripten verwaltet werden.
 			</para>
 			<para>
@@ -161,6 +161,87 @@
 			  Bindestrich bestehen, da es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen
 			  bildet. Häufig kommen hier Schulnummern wie <emphasis>340</emphasis> oder zusammengesetzte Kürzel
 			  wie <wordasword>g123m</wordasword> oder <wordasword>gymmitte</wordasword> zum Einsatz.
+			</para>
+		</section>
+		<section id="structure:ou:schoolserver-multiple-ous">
+			<title>Replikation mehrerer Schulen auf einen Schulserver</title>
+			<para>
+				Im Normalfall repliziert ein Schulserver die LDAP-Daten für genau eine Schule. Es gibt jedoch
+				Szenarien, in denen es wünschenswert ist, wenn die LDAP-Daten (Benutzerkonten,
+				Gruppen, Rechnerkonten, Räume, ...) von mehreren Schulen auf einem Schulserver vorgehalten werden.
+				Beginnend mit UCS@school 4.4v5 bietet UCS@school die Möglichkeit an, dass sich mehrere Schulen
+				einen Schulserver teilen.
+			</para>
+			<para>
+				Dabei sind einige Randbedingungen zu beachten:
+				<itemizedlist>
+					<listitem>
+						<para>
+							Jede Schule darf nur auf <emphasis>einen</emphasis> Schulserver repliziert werden.
+							Die Replikation einer Schule auf mehrere Schulserver ist nicht erlaubt und wird nicht unterstützt!
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Direkt nach dem Hinzufügen eines existierenden Schulservers zu einer
+							neuen Schule muss der Schulserver erneut der Domäne beitreten (Rejoin). Anderenfalls kann
+							es zu Inkonsistenzen im LDAP-Verzeichnis aufgrund geänderter Zugriffsberechtigungen kommen.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Der DHCP-Dienst wird auf Schulservern, die mehrere Schulen vorhalten,
+							<emphasis>nicht</emphasis> unterstützt.  Hier kann es in den Logdateien auf dem Schulserver ggf. zu
+							Fehlermeldungen des DHCP-Dienstes kommen, die in diesem Szenario ignoriert werden können.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Lehrkräfte können in der Univention Management Console nur die Benutzer,
+							Klassen, Arbeitsgruppen, Druckaufträge, Computerräume und Rechner der Schulen sehen, in denen sie
+							auch Mitglied sind. Eine Ausnahme bilden die UMC-Module <guimenu>Klassenarbeiten</guimenu> und
+							<guimenu>Materialien verteilen</guimenu>, welche die Klassenarbeiten und Verteilungsprojekte aller
+							Schulen angezeigt, die auf diesen Schulserver verwaltet werden, unabhängig davon, ob die Lehrkräfte
+							Mitglied der jeweiligen anderen Schulen sind.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Ein Computerraum kann nur einer einzelnen Schule zugeordnet werden. D.h
+							er kann nicht von mehreren Schulen aus genutzt bzw. geteilt werden. Werden zwei Räume mit dem
+							gleichen namen an unterschiedlichen Schulen erstellt, handelt es sich für &ucsUAS; um zwei
+							vollkommen unabhängige Räume.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die Freigaben aller dem Schulserver zugeordneten Schulen werden von dem
+							Dateiserver Samba angezeigt. Die Namen der Freigaben entsprechen i.d.R. dem Schema
+							<literal>$OU-$CLASS</literal> bzw. <literal>$OU-$WORKGROUP</literal>. Der Zugriff auf die
+							automatisch erstellten Freigaben wird über die Gruppenmitgliedschaften (Arbeitsgruppen/Klassen)
+							gesteuert.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Da der Schulserver die Authentifizierung für die Windows-Rechner
+							durchführt, ist es allen Benutzern der Schulen eines Schulservers möglich, sich auf allen
+							Windows-Rechnern anzumelden, die gegen den Schulserver gejoined wurden.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Das Teilen eines Schulservers durch mehrere Schulen beschränkt sich auf
+							die Schulserver des Edukativnetzes. Der Betrieb von mehreren Schulen auf einem Server des
+							Verwaltungsnetzes wird nicht unterstützt! Nähere Informationen zu Verwaltungs- und Edukativnetzen
+							finden sich in <xref linkend="structure:edunet-vs-adminnet"/>.
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Die Einrichtung mehrerer Schulen auf einem Schulserver wird in <xref
+				linkend="school:setup:umc:schools:schoolserver-multiple-ous"/> beschrieben.
 			</para>
 		</section>
 	</section>
@@ -344,9 +425,10 @@
 			<para><uri>cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=example,dc=com</uri></para>
 			<para>
 			  Diese Gruppen werden beim Erstellen der ersten Schul-OU einmalig angelegt und sind
-			  nicht OU-spezifisch. Sie enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die Schul-DCs
+			  nicht spezifisch für eine bestimmte OU. Sie enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die Schul-DCs
 			  oder die Memberserver der Schulstandorte, wobei diese jeweils nach Verwaltungsnetz und Edukativnetz
-			  getrennt werden. Domaincontroller Master und Domaincontroller Backup dürfen
+			  getrennt werden. Über diese Gruppen werden Zugriffsrechte von &ucsUAS;-Systemen auf die &ucsUAS;-LDAP-Strukturen gesteuert.
+			  Domaincontroller Master und Domaincontroller Backup dürfen
 			  <emphasis>kein</emphasis> Mitglied in einer dieser Gruppen sein!
 			</para>
 		  </listitem>
