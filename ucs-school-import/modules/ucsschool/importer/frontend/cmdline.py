@@ -53,10 +53,10 @@ LAST_FAIL_LOG_SYMLINK = "/var/log/univention/ucs-school-import/FAIL-LOG"
 LAST_LOG_SYMLINK = "/var/log/univention/ucs-school-import/LAST-LOG"
 
 
-def create_symlink(target, source):
-	if os.path.islink(target):
-		os.remove(target)
-	os.symlink(source, target)
+def create_symlink(source, link_name):  # type: (str, str) -> None
+	if os.path.islink(link_name):
+		os.remove(link_name)
+	os.symlink(source, link_name)
 
 
 class CommandLine(object):
@@ -89,7 +89,7 @@ class CommandLine(object):
 		if filename:
 			self.logger.addHandler(get_file_handler('DEBUG', filename, uid=uid, gid=gid, mode=mode))
 			self.logger.info('Create symlink from {} to {}'.format(LAST_LOG_SYMLINK, filename))
-			create_symlink(LAST_LOG_SYMLINK, filename)
+			create_symlink(filename, LAST_LOG_SYMLINK)
 
 		if error_log_path:
 			self._error_log_handler = get_file_handler('DEBUG', error_log_path, uid=uid, gid=gid, mode=mode)
@@ -140,13 +140,12 @@ class CommandLine(object):
 		except Exception as exc:
 			logfile = os.path.realpath(LAST_LOG_SYMLINK)
 			self.logger.info('Create symlink from {} to {}'.format(LAST_FAIL_LOG_SYMLINK, logfile))
-			create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
+			create_symlink(logfile, LAST_FAIL_LOG_SYMLINK)
 			dirname = os.path.split(os.path.dirname(logfile))[-1]
 			now = datetime.now()
 			link = os.path.join("/var/log/univention/ucs-school-import/", "FAIL-{}_{}".format(dirname, now.strftime("%Y-%m-%d_%H-%M")))
 			self.logger.info('Create symlink from {} to {}'.format(link, logfile))
 			create_symlink(link, logfile)
-
 		finally:
 			self.errors = importer.errors
 			self.user_import_summary_str = importer.user_import_stats_str
