@@ -32,11 +32,13 @@
 """
 Base class for UCS@school import tool cmdline frontends.
 """
-import re
 import os
 import pprint
 import logging
 from datetime import datetime
+import sys
+
+import six
 
 from ucsschool.lib.models.utils import get_stream_handler, get_file_handler, UniStreamHandler
 from .parse_user_import_cmdline import ParseUserImportCmdline
@@ -133,13 +135,15 @@ class CommandLine(object):
 		self.logger.info("------ Starting mass import... ------")
 		try:
 			importer.mass_import()
-		except Exception as exc:
+		except Exception:
 			logfile = os.path.realpath(LAST_LOG_SYMLINK)
 			self.create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
 			dirname = os.path.split(os.path.dirname(logfile))[-1]
 			now = datetime.now()
 			link = os.path.join("/var/log/univention/ucs-school-import/", "FAIL-{}_{}".format(dirname, now.strftime("%Y-%m-%d_%H-%M")))
 			self.create_symlink(logfile, link)
+			etype, exc, etraceback = sys.exc_info()
+			six.reraise(etype, exc, etraceback)
 		finally:
 			self.errors = importer.errors
 			self.user_import_summary_str = importer.user_import_stats_str
