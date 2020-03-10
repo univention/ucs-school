@@ -105,7 +105,7 @@
 							In der UMC kann die Zuweisung eines Schulservers zu einer Schule nur
 							beim Anlegen der Schule erfolgen. Damit mehrere Schulen vom gleichen Schulserver verwaltet werden,
 							muss beim Anlegen der betreffenden Schulen im Feld <guimenu>Rechnername des Schulservers im
-							Edukativnetz</guimenu> der gleiche Name des Schulservers angegeben werden.
+							Edukativnetz</guimenu> der gleiche Name des Schulservers angegeben werden (siehe <xref linkend="fig:umc-multi-ou-create"/>).
 						</para>
 						<para>
 							Auf der Kommandozeile ist die Zuweisung über das Kommando
@@ -120,15 +120,27 @@ cd /usr/share/ucs-school-import/scripts/
 ./create_ou gymwest dcwest
 ./create_ou bswest dcwest
 						</programlisting>
+						<para>
+							<figure id="fig:umc-multi-ou-create">
+								<title>Anlegen einer neuen Schule</title>
+								<graphic scalefit="1" width="85%" align="center" fileref="illustrations44/umc-multi-ou-create.png"/>
+							</figure>
+						</para>
 					</listitem>
 					<listitem>
 						<para>
 							Nach dem Anlegen der Schulen bzw. dem Zuweisen der Schulserver zu den
 							Schulen ist im UMC-Modul <guimenu>Schulen</guimenu> die betreffende Schule zu öffnen und dort unter
 							<guimenu>Erweiterte Einstellungen</guimenu> zu prüfen, ob die korrekten Dateiserver für
-							Heimatverzeichnisse und Klassenfreigaben hinterlegt sind. Diese Werte sind auch zu prüfen, wenn
+							Heimatverzeichnisse und Klassenfreigaben hinterlegt sind (siehe <xref linkend="fig:umc-multi-ou-modify"/>). Diese Werte sind auch zu prüfen, wenn
 							diese in der Vergangenheit bereits korrekt waren, da sie ggf. während der Schulserver-Zuweisung neu
 							gesetzt werden.
+						</para>
+						<para>
+							<figure id="fig:umc-multi-ou-modify">
+								<title>Das Setzen von Dateiservern für eine Schule</title>
+								<graphic scalefit="1" width="85%" align="center" fileref="illustrations44/umc-multi-ou-modify.png"/>
+							</figure>
 						</para>
 					</listitem>
 					<listitem>
