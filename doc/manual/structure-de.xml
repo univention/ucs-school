@@ -185,7 +185,8 @@
 						<para>
 							Direkt nach dem Hinzufügen eines existierenden Schulservers zu einer
 							existierenden Schule muss der Schulserver neu in die Domäne gejoined werden. Das gleiche gilt auch
-							beim Anlegen einer neuen Schule unter Verwendung eines existierenden Schulservers.
+							beim Anlegen einer neuen Schule unter Verwendung eines existierenden Schulservers. Anderenfalls kann
+							es zu Inkonsistenzen im LDAP-Verzeichnis aufgrund geänderter Zugriffsberechtigungen kommen.
 						</para>
 					</listitem>
 					<listitem>
