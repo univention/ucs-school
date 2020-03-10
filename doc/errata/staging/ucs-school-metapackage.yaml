@@ -6,4 +6,5 @@ src: ucs-school-metapackage
 fix: 12.0.2-7A~4.4.0.202002201333
 desc: |
  * When joining a backup onto a master, on which the UCRV ucsschool/join/create_demo has been set to 'no', no demoschool is created as expected (Bug #50578).
-bug: [50578]
+ * To reduce the load on ldap servers in the domain the config registry value <envar>nss/group/cachefile/check_member</envar> has been unset. Which means the default behaviour has changed and group members are not checked for existence (Bug #50905).
+bug: [50578, 50905]
