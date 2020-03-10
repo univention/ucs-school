@@ -51,8 +51,10 @@ try:
 except ImportError:
 	pass
 
+CENTRAL_LOG_DIR = "/var/log/univention/ucs-school-import"
 LAST_FAIL_LOG_SYMLINK = "/var/log/univention/ucs-school-import/FAIL-LOG"
 LAST_LOG_SYMLINK = "/var/log/univention/ucs-school-import/LAST-LOG"
+LAST_LOG_ERROR_SYMLINK = os.path.join(CENTRAL_LOG_DIR, "LAST-LOG-ERROR")
 
 
 class CommandLine(object):
@@ -101,6 +103,7 @@ class CommandLine(object):
 			# will be raised to ERROR directly after logging the configuration
 			self._error_log_handler = get_file_handler('INFO', error_log_path, uid=uid, gid=gid, mode=mode)
 			self.logger.addHandler(self._error_log_handler)
+			self.create_symlink(error_log_path, LAST_LOG_ERROR_SYMLINK)
 		return self.logger
 
 	def setup_config(self):
