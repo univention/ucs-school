@@ -97,7 +97,7 @@
 			<title>Mehrere Schulen auf einem Schulserver verwalten</title>
 			<para>
 				Wie in <xref linkend="structure:ou:schoolserver-multiple-ous"/> bereits beschrieben
-				wurde, können auch mehrerere Schulen auf einen Schulserver repliziert werden. Für die Einrichtung
+				wurde, können mehrerere Schulen auf einen Schulserver repliziert werden. Für die Einrichtung
 				sind zusätzliche Schritte notwendig, die nachfolgend beschrieben werden:
 				<itemizedlist>
 					<listitem>
