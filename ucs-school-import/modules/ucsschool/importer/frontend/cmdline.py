@@ -144,7 +144,7 @@ class CommandLine(object):
 		self.logger.info("------ Starting mass import... ------")
 		try:
 			importer.mass_import()
-		except Exception:
+		except Exception:  # pylint: disable=broad-except
 			logfile = os.path.realpath(LAST_LOG_SYMLINK)
 			self.create_symlink(LAST_FAIL_LOG_SYMLINK, logfile)
 			dirname = os.path.split(os.path.dirname(logfile))[-1]
@@ -201,6 +201,16 @@ class CommandLine(object):
 		self.factory = setup_factory(self.config["factory"])
 
 	def create_symlink(self, source, link_name):  # type: (str, str) -> None
+		"""
+		Create a symlink file `link_name` that points to a file at `source`.
+		If `link_name` exists and is a symlink, it will first be deleted.
+		This is a wrapper around `os.symlink(source, link_name)`.
+
+		:param str source: the file that the symlink should point to
+		:param str link_name: the symlink file to create
+		:return: None
+		:rtype: None
+		"""
 		source = os.path.abspath(os.path.realpath(source))
 		self.logger.debug('Creating symlink from %r to %r.', source, link_name)
 		if os.path.islink(link_name):
@@ -208,14 +218,12 @@ class CommandLine(object):
 		os.symlink(source, link_name)
 
 	def main(self):
-
 		try:
 			self.prepare_import()
 		except InitialisationError as exc:
 			msg = "InitialisationError: {}".format(exc)
 			self.logger.exception(msg)
 			return 1
-
 		try:
 			self.do_import()
 
@@ -224,5 +232,5 @@ class CommandLine(object):
 				msg = 'Import finished normally but with errors.'
 				self.logger.warn(msg)
 				return 2
-		except Exception as exc:
+		except Exception as exc:  # pylint: disable=broad-except
 			return 1
