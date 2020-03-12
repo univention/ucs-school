@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has passed.
-"""
 # Copyright 2017-2020 Univention GmbH
 #
 # http://www.univention.de/
@@ -32,20 +29,27 @@ Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has pas
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has passed.
+"""
+
+import re
 import sys
 import pprint
 import logging
 import datetime
 from argparse import ArgumentParser
 from ldap.filter import filter_format
+try:
+	from typing import List
+	from ucsschool.importer.models.import_user import ImportUser
+except ImportError:
+	pass
 
-from ucsschool.lib.models.utils import UniStreamHandler
+from ucsschool.lib.models.utils import ucr, UniStreamHandler
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
-
-
-a_user = None
 
 
 def parse_cmdline():
@@ -89,13 +93,13 @@ def parse_cmdline():
 	return args
 
 
-def roles_from_ocs(ocs):
+def roles_from_ocs(ocs, a_user, school):  # type: (List[str], ImportUser, str) -> List[str]
 	class FakeUdmCls(object):
 		""""Fake UDM user object class for use with User.get_class_for_udm_obj()"""
 		def __init__(self, ocs):
 			self.oldattr = {'objectClass': ocs}
 
-	kls = a_user.get_class_for_udm_obj(FakeUdmCls(ocs), None)
+	kls = a_user.get_class_for_udm_obj(FakeUdmCls(ocs), school)
 	return kls.roles
 
 
@@ -108,8 +112,6 @@ def shadow_expire2date(shadow_expire):
 
 
 def main():
-	global a_user
-
 	# this closely follows ucsschool.importer.frontend.cmdline.CommandLine.main()
 	uic = UserImportCommandLine()
 	uic.args = parse_cmdline()
@@ -165,11 +167,19 @@ def main():
 			shadow_expire2date(attr['shadowExpire'][0]).strftime('%Y-%m-%d') if attr.get('shadowExpire') else None
 		)
 
+	ou_pattern = re.compile(r".*,ou=(\w+),{}$".format(ucr["ldap/base"]))
 	for dn, attr in expired_accounts:
 		logger.info('%sDeleting %r...', '(dry-run) ' if uic.args.dry_run else '', dn)
 
 		# get correct class to prevent ucsschool.lib warning 'UDM object <dn> is not .., but actually ..'
-		roles = roles_from_ocs(attr['objectClass'])
+		# try to get school name in case legacy user type detection is used
+		m = ou_pattern.match(dn)
+		if m:
+			school = m.groups()[0]
+		else:
+			school = ""
+		roles = roles_from_ocs(attr['objectClass'], a_user, school)
+		# use specific ImportUser class to execute correct hooks
 		user_obj = factory.make_import_user(roles)
 		user = user_obj.from_dn(dn, None, lo)
 		user.remove(lo)
