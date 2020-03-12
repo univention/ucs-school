@@ -34,6 +34,11 @@ Default command line frontend for import.
 
 from argparse import ArgumentParser
 import os
+from six import string_types
+try:
+	from typing import Any, Dict
+except ImportError:
+	pass
 
 
 class ParseUserImportCmdline(object):
@@ -159,10 +164,23 @@ class ParseUserImportCmdline(object):
 					v = {end: v}
 					start, symb, end = start.rpartition(":")
 				settings[k] = v
-		self.args.settings = settings
+		self.args.settings = self.apply_quirks(settings)
 
 		# only set shortcuts if they were set by the user
 		for k, v in self.defaults.items():
 			if getattr(self.args, k) != v:
 				self.args.settings[k] = getattr(self.args, k)
 		return self.args
+
+	def apply_quirks(self, settings):  # type: (Dict[str, Any]) -> Dict[str, Any]
+		"""
+		Apply modifications that cannot be done automatically.
+		"""
+		# A default for config["disabled_checks"] does not exist in any
+		# official config file, thus setting the value type in
+		# ReadOnlyDict._recursive_typed_update() will not work. Converting the
+		# string from the cmdline to a list here.
+		disabled_checks = settings.get("disabled_checks")
+		if isinstance(disabled_checks, string_types):
+			settings["disabled_checks"] = [s.strip() for s in disabled_checks.split(",")]
+		return settings
