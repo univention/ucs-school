@@ -273,17 +273,17 @@
 	</chapter>
 
 	<chapter id="sisopi">
-		<title>Szenario "Eine Quelle, partielle Importe" (single source, partial import - SiSoPi)</title>
+		<title>Szenario "Eine Quelle, partielle Importe" (<wordasword>single source, partial import - SiSoPi</wordasword>)</title>
 			<para>
 				Seit &ucsUAS; 4.3 v5 wird ein Szenario unterstützt, in dem es eine Quelldatenbank mit den Mitgliedern aller Schulen gibt, bei dem aber nicht zentral, sondern an allen Schulen einzeln importiert wird.
-				Der Import ist sowohl über die Kommandozeile als auch mit dem UMC-Modul (welches im Hintergrund die Import-HTTP-API verwendet) möglich.
+				Der Import ist sowohl über die Kommandozeile als auch mit dem UMC-Modul (welches im Hintergrund die <wordasword>Import-HTTP-API</wordasword> verwendet) möglich.
 			</para>
 		<section id="Features">
 			<title>Features</title>
 			<para>
 				<itemizedlist>
 					<listitem><para>
-						OU-übergreifende Benutzerkonten (ein Benutzer kann im mehreren Schulen sein)
+						<wordasword>OU-übergreifende</wordasword> Benutzerkonten (ein Benutzer kann im mehreren Schulen sein)
 					</para></listitem>
 					<listitem><para>
 						Jede Schule kann ihre Benutzer einzeln und zu einem beliebigen Zeitpunkt importieren.
@@ -291,8 +291,8 @@
 				</itemizedlist>
 			</para>
 		</section>
-		<section id="Vorraussetzungen">
-			<title>Vorraussetzungen</title>
+		<section id="Voraussetzungen">
+			<title>Voraussetzungen</title>
 			<para>
 				<itemizedlist>
 					<listitem><para>
