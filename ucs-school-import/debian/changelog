@@ -1,3 +1,10 @@
+ucs-school-import (17.0.27) unstable; urgency=low
+
+  * Bug #50806: remove SiSoPi documentation from package, was moved to
+    official UMC-import manual
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 16 Mar 2020 17:22:41 +0100
+
 ucs-school-import (17.0.26) unstable; urgency=low
 
   * Bug #50039: improve logging:
