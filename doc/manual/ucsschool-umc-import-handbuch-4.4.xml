@@ -318,7 +318,7 @@
 				Benutzerkonten die von ihrer letzten bzw. einzigen Schule ("A") entfernt wurden, werden 1. sofort deaktiviert und 2. in die "Zwischenschule" (<literal>limbo_ou</literal>) verschoben.
 			</para>
 			<para>
-				Soll ein Benutzer während eines Imports (an Schule "B") erstellt werden, existiert jedoch bereits ein Konto mit dessen <literal>record_uid</literal> in der "limbo OU", so wird dieses Konto statt dessen von dort zur Schule "B" verschoben und das Konto reaktiviert.
+				Soll ein Benutzer während eines Imports (an Schule "B") erstellt werden, existiert jedoch bereits ein Konto mit dessen <literal>record_uid</literal> in der "<wordasword>limbo</wordasword> OU", so wird dieses Konto statt dessen von dort zur Schule "B" verschoben und das Konto reaktiviert.
 			</para>
 		</section>
 		<section id="Installation_und_Konfiguration">
@@ -332,9 +332,9 @@
 			<para>
 				<itemizedlist>
 					<listitem><para><literal>deletion_grace_period:deactivation</literal> <emphasis>muss</emphasis> <literal>0</literal> sein.</para></listitem>
-					<listitem><para><literal>deletion_grace_period:deletion</literal> sollte (deutlich) größer als <literal>0</literal> sein. Es sollte die maximale Anzahl an Tagen sein, die ein Import von zwei Schulen auseinander liegen kann. Es ist die Zeit die ein Konto in der "limbo OU" verbringt, bevor es endgültig gelöscht wird.</para></listitem>
+					<listitem><para><literal>deletion_grace_period:deletion</literal> sollte (deutlich) größer als <literal>0</literal> sein. Es sollte die maximale Anzahl an Tagen sein, die ein Import von zwei Schulen auseinander liegen kann. Es ist die Zeit die ein Konto in der "<wordasword>limbo</wordasword> OU" verbringt, bevor es endgültig gelöscht wird.</para></listitem>
 				</itemizedlist>
-				Der Name der sog. "limbo OU" kann mit der Einstellung <literal>limbo_ou</literal> gesetzt werden.
+				Der Name der sog. "<wordasword>limbo</wordasword> OU" kann mit der Einstellung <literal>limbo_ou</literal> gesetzt werden.
 			</para>
 			<para>
 				Darüber hinaus muss die &ucsUCR;-Variable <envar>ucsschool/import/http_api/set_source_uid</envar> auf <literal>no</literal> gesetzt und der Import-HTTP-API-Server neu gestartet werden:
