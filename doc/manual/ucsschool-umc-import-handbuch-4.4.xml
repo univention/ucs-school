@@ -280,29 +280,33 @@
 			</para>
 		<section id="Features">
 			<title>Features</title>
-			<itemizedlist>
-				<listitem><para>
-					OU-übergreifende Benutzerkonten (ein Benutzer kann im mehreren Schulen sein)
-				</para></listitem>
-				<listitem><para>
-					Jede Schule kann ihre Benutzer einzeln und zu einem beliebigen Zeitpunkt importieren.
-				</para></listitem>
-			</itemizedlist>
+			<para>
+				<itemizedlist>
+					<listitem><para>
+						OU-übergreifende Benutzerkonten (ein Benutzer kann im mehreren Schulen sein)
+					</para></listitem>
+					<listitem><para>
+						Jede Schule kann ihre Benutzer einzeln und zu einem beliebigen Zeitpunkt importieren.
+					</para></listitem>
+				</itemizedlist>
+			</para>
 		</section>
 		<section id="Vorraussetzungen">
 			<title>Vorraussetzungen</title>
-			<itemizedlist>
-				<listitem><para>
-					Eine Datenbasis die alle Benutzer, mit je einem domänenweit eindeutigen Schlüssel (<literal>record_uid</literal>), enthält.
-				</para></listitem>
-				<listitem><para>
-					Die Quelldatenbank exportiert separate CSV Dateien pro Schule und Benutzerrolle.
-				</para></listitem>
-				<listitem><para>
-					Da Importe in zufälliger Reihenfolge stattfinden können, ist es möglich, dass beim Verschieben eines Benutzers, dieser erst in einer Schule gelöscht und in der anderen später angelegt wird.
-					Das Benutzerkonto darf in der Zwischenzeit nicht gelöscht werden.
-				</para></listitem>
-			</itemizedlist>
+			<para>
+				<itemizedlist>
+					<listitem><para>
+						Eine Datenbasis die alle Benutzer, mit je einem domänenweit eindeutigen Schlüssel (<literal>record_uid</literal>), enthält.
+					</para></listitem>
+					<listitem><para>
+						Die Quelldatenbank exportiert separate CSV Dateien pro Schule und Benutzerrolle.
+					</para></listitem>
+					<listitem><para>
+						Da Importe in zufälliger Reihenfolge stattfinden können, ist es möglich, dass beim Verschieben eines Benutzers, dieser erst in einer Schule gelöscht und in der anderen später angelegt wird.
+						Das Benutzerkonto darf in der Zwischenzeit nicht gelöscht werden.
+					</para></listitem>
+				</itemizedlist>
+			</para>
 		</section>
 		<section id="Implementierung">
 			<title>Implementierung</title>
@@ -325,11 +329,13 @@
 			<para>
 				Folgende Einstellungen sollten angepasst werden:
 			</para>
-			<itemizedlist>
-				<listitem><para><literal>deletion_grace_period:deactivation</literal> <emphasis>muss</emphasis> <literal>0</literal> sein.</para></listitem>
-				<listitem><para><literal>deletion_grace_period:deletion</literal> sollte (deutlich) größer als <literal>0</literal> sein. Es sollte die maximale Anzahl an Tagen sein, die ein Import von zwei Schulen auseinander liegen kann. Es ist die Zeit die ein Konto in der <literal>limbo OU</literal> verbringt, bevor es endgültig gelöscht wird.</para></listitem>
-			</itemizedlist>
-			Der Name der sog. <literal>limbo OU</literal> kann mit der Einstellung <literal>limbo_ou</literal> gesetzt werden.
+			<para>
+				<itemizedlist>
+					<listitem><para><literal>deletion_grace_period:deactivation</literal> <emphasis>muss</emphasis> <literal>0</literal> sein.</para></listitem>
+					<listitem><para><literal>deletion_grace_period:deletion</literal> sollte (deutlich) größer als <literal>0</literal> sein. Es sollte die maximale Anzahl an Tagen sein, die ein Import von zwei Schulen auseinander liegen kann. Es ist die Zeit die ein Konto in der <literal>limbo OU</literal> verbringt, bevor es endgültig gelöscht wird.</para></listitem>
+				</itemizedlist>
+				Der Name der sog. <literal>limbo OU</literal> kann mit der Einstellung <literal>limbo_ou</literal> gesetzt werden.
+			</para>
 			<para>
 				Darüber hinaus muss die &ucsUCR;-Variable <envar>ucsschool/import/http_api/set_source_uid</envar> auf <literal>no</literal> gesetzt und der Import-HTTP-API-Server neu gestartet werden:
 				<programlisting>
