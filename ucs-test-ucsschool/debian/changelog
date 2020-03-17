@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.104) unstable; urgency=low
+
+  * Bug #50406: add test for 'disabled_checks' feature 
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 17 Mar 2020 13:20:20 +0100
+
 ucs-test-ucsschool (6.0.103) unstable; urgency=low
 
   * Bug #50830: update ACL test for restricted access to import counter objects
