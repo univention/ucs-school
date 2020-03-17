@@ -345,5 +345,225 @@ service ucs-school-import-http-api restart
 				</programlisting>
 			</para>
 		</section>
+		<section id="Beispielaufbau">
+			<title>Beispielaufbau</title>
+			<para>
+				Für den Testaufbau werden zunächst zwei reguläre und die temporäre Schule erstellt:
+				<programlisting>
+/usr/share/ucs-school-import/scripts/create_ou schuleA
+/usr/share/ucs-school-import/scripts/create_ou schuleB
+/usr/share/ucs-school-import/scripts/create_ou limbo
+				</programlisting>
+				Nach dem Sichern der ursprünglichen Konfiguration wird die <wordasword>SiSoPi-Konfiguration</wordasword> aktiviert.
+				Üblicherweise würde die neue Konfiguration anschließend an die individuellen Erfordernisse angepasst werden.
+				Für den Testaufbau wurden <literal>csv</literal>, <literal>scheme</literal> und <literal>source_uid</literal> hinzugefügt.
+				<programlisting>
+cp -v /var/lib/ucs-school-import/configs/user_import.json{,.bak}
+cp -v /usr/share/ucs-school-import/configs/user_import_sisopi.json /var/lib/ucs-school-import/configs/user_import.json
+$EDITOR /var/lib/ucs-school-import/configs/user_import.json
+				</programlisting>
+				Tipp: mit folgendem Befehl kann die syntaktische Korrektheit der JSON-Datei geprüft werden.
+				Wenn die Datei syntaktisch korrekt ist, wird ihr Inhalt ausgegeben, bei einem Fehler wird statt dessen dieser angezeigt.
+				<programlisting>
+cat /var/lib/ucs-school-import/configs/user_import.json | python -m json.tool
+{
+    "classes": {
+        "user_importer": "ucsschool.importer.mass_import.sisopi_user_import.SingleSourcePartialUserImport"
+    },
+    "configuration_checks": [
+        "defaults",
+        "sisopi"
+    ],
+    "csv": {
+        "mapping": {
+            "Beschreibung": "description",
+            "EMail": "email",
+            "Klassen": "school_classes",
+            "Nachname": "lastname",
+            "Schule": "school",
+            "Telefon": "phone",
+            "Vorname": "firstname"
+        }
+    },
+    "deletion_grace_period": {
+        "deactivation": 0,
+        "deletion": 90
+    },
+    "limbo_ou": "limbo",
+    "scheme": {
+        "record_uid": "&lt;firstname&gt;.&lt;lastname&gt;",
+        "username": {
+            "default": "&lt;:umlauts&gt;&lt;firstname&gt;.&lt;lastname&gt;&lt;:lower&gt;[COUNTER2]"
+        }
+    },
+    "source_uid": "Test"
+}
+				</programlisting>
+				<programlisting>
+ucr set ucsschool/import/http_api/set_source_uid=no
+service ucs-school-import-http-api restart
+				</programlisting>
+			</para>
+			<para>
+				Nun werden für jede Schule je eine CSV Datei erzeugt:
+				<programlisting>
+/usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
+	--csvfile test_users_A-1.csv --nostart --httpapi --teachers 4 --classes 1 \
+	--inclasses 1 --schools 1 --verbose schuleA
+/usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
+	--csvfile test_users_B-1.csv --nostart --httpapi --teachers 4 --classes 1 \
+	--inclasses 1 --schools 1 --verbose schuleB
+				</programlisting>
+				<programlisting>
+cat test_users_A-1.csv
+
+"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
+"schuleA","Yola","Lenz","1a","A teacher.","+74-686-445678",""
+"schuleA","Iphigenie","Lemgo","1a","A teacher.","+63-727-768248",""
+"schuleA","Felix","Adams","1a","A teacher.","+15-263-530094",""
+"schuleA","Radomila","Meygger","1a","A teacher.","+11-364-599925",""
+				</programlisting>
+				<programlisting>
+cat test_users_B-1.csv
+
+"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
+"schuleB","Stan","Kinker","1a","A teacher.","+91-299-143803",""
+"schuleB","Jonathan","Heuelmann","1a","A teacher.","+74-656-351455",""
+"schuleB","Ingward","Bohnenkämper","1a","A teacher.","+24-351-217608",""
+"schuleB","Vincent","Störtländer","1a","A teacher.","+67-303-103581",""
+				</programlisting>
+			</para>
+			<para>
+				Der Import würde regulär über das UMC-Modul statt finden, wird für den Test aber an der Kommandozeile durchgeführt.
+				Beim Import an den beiden Schulen werden je view Lehrer angelegt:
+				<programlisting>
+/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+	--verbose --user_role teacher --infile test_users_A-1.csv --school schuleA
+
+------ User import statistics ------
+Read users from input data: 4
+Created ImportTeacher: 4
+  ['yola.lenz', 'iphigenie.lemgo', 'felix.adams', 'radomila.meygger']
+Modified ImportTeacher: 0
+Deleted ImportTeacher: 0
+Errors: 0
+------ End of user import statistics ------
+
+/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+	--verbose --user_role teacher --infile test_users_B-1.csv --school schuleB
+
+------ User import statistics ------
+Read users from input data: 4
+Created ImportTeacher: 4
+  ['stan.kinker', 'jonathan.heuelman', 'ingward.bohnenkae', 'vincent.stoertlae']
+Modified ImportTeacher: 0
+Deleted ImportTeacher: 0
+Errors: 0
+------ End of user import statistics ------
+				</programlisting>
+			</para>
+			<para>
+				Nun soll <literal>yola.lenz</literal> von <literal>schuleA</literal> nach <literal>schuleB</literal> verschoben werden.
+				Dazu wird eine CSV Datei <filename>test_users_A-2.csv</filename> ohne die Zeile mit <literal>"Yola","Lenz"</literal> aus <filename>test_users_A-1.csv</filename> erzeugt, sowie eben diese Zeile in <filename>test_users_B-2.csv</filename> eingefügt. Dort muss <literal>schuleA</literal> noch durch <literal>schuleB</literal> ersetzt werden.
+				Die neuen Dateien sehen wie folgt aus:
+				<programlisting>
+cat test_users_A-2.csv
+
+"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
+"schuleA","Iphigenie","Lemgo","1a","A teacher.","+63-727-768248",""
+"schuleA","Felix","Adams","1a","A teacher.","+15-263-530094",""
+"schuleA","Radomila","Meygger","1a","A teacher.","+11-364-599925",""
+				</programlisting>
+				<programlisting>
+cat test_users_B-2.csv
+
+"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
+"schuleB","Stan","Kinker","1a","A teacher.","+91-299-143803",""
+"schuleB","Jonathan","Heuelmann","1a","A teacher.","+74-656-351455",""
+"schuleB","Ingward","Bohnenkämper","1a","A teacher.","+24-351-217608",""
+"schuleB","Vincent","Störtländer","1a","A teacher.","+67-303-103581",""
+"schuleB","Yola","Lenz","1a","A teacher.","+74-686-445678",""
+				</programlisting>
+				Beim Import an <literal>schuleA</literal> wird <literal>yola.lenz</literal> scheinbar gelöscht. Tatsächlich wird sie aber in die Schule <literal>limbo</literal> verschoben:
+				<programlisting>
+udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
+DN: uid=yola.lenz,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;
+  school: schuleA
+
+/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+	--verbose --user_role teacher --infile test_users_A-2.csv --school schuleA
+
+[..]
+------ Deleting 1 users... ------
+Removing ImportTeacher(name='yola.lenz', school='schuleA', dn='uid=yola.lenz,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;') from school 'schuleA'...
+Moving ImportTeacher(name='yola.lenz', school='schuleA', dn='uid=yola.lenz,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;') to limbo school u'limbo'.
+[..]
+
+------ User import statistics ------
+Read users from input data: 3
+Modified ImportTeacher: 3
+  ['iphigenie.lemgo', 'felix.adams', 'radomila.meygger']
+Deleted ImportTeacher: 1
+  ['yola.lenz']
+Modified ImportTeacher: 0
+Deleted ImportTeacher: 0
+Errors: 0
+------ End of user import statistics ------
+
+udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
+DN: uid=yola.lenz,cn=lehrer,cn=users,ou=limbo,&lt;base dn&gt;
+  school: limbo
+				</programlisting>
+			</para>
+			<para>
+				Beim Import an <literal>schuleB</literal> wird <literal>yola.lenz</literal> aus der Schule <literal>limbo</literal> dort hin verschoben:
+				<programlisting>
+/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+	--verbose --user_role teacher --infile test_users_B-2.csv --school schuleB
+
+[..]
+User ImportTeacher(name='yola.lenz', school='limbo', dn='uid=yola.lenz,cn=lehrer,cn=users,ou=limbo,&lt;base dn&gt;') is in limbo school u'limbo', moving to 'schuleB'.
+Reactivating ImportTeacher(name=None, school='schuleB', dn=None)...
+User will change school. Previous school: 'limbo', new school: 'schuleB'.
+Moving ImportTeacher(name='yola.lenz', school='limbo', dn='uid=yola.lenz,cn=lehrer,cn=users,ou=limbo,&lt;base dn&gt;') from school 'limbo' to 'schuleB'...
+[..]
+
+------ User import statistics ------
+Read users from input data: 5
+Modified ImportTeacher: 5
+  ['stan.kinker', 'jonathan.heuelman', 'ingward.bohnenkae', 'vincent.stoertlae']
+  ['yola.lenz']
+Modified ImportTeacher: 0
+Deleted ImportTeacher: 0
+Errors: 0
+------ End of user import statistics ------
+
+udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
+DN: uid=yola.lenz,cn=lehrer,cn=users,ou=schuleB,&lt;base dn&gt;
+  school: schuleB
+				</programlisting>
+			</para>
+			<para>
+				Der umgekehrte Fall, in dem ein zu verschiebender Benutzer an der Zielschule importiert wird, bevor er an der ursprünglichen Schule gelöscht wird, kann z.B. folgendermaßen erzeugt werden:
+				Die Zeile von <literal>"Iphigenie","Lemgo"</literal> wird in das CSV der <literal>schuleB</literal> kopiert (Anpassen der Spalte <literal>"Schule"</literal> nicht vergessen) und aus dem CSV der <literal>schuleA</literal> entfernt.
+				Der Import wird nun an <literal>schuleB</literal> vor <literal>schuleA</literal> durchgeführt.
+				Zwischendurch wird die Lehrerin Mitglied beider Schulen sein.
+				Das Benuterkonto würde sich folgendermaßen ändern:
+				<programlisting>
+# vor dem Import:
+DN: uid=iphigenie.lemgo,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;
+  school: schuleA
+
+# nach dem Import an schuleB:
+DN: uid=iphigenie.lemgo,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;
+  school: schuleA
+  school: schuleB
+
+# nach dem Import an schuleA:
+DN: uid=iphigenie.lemgo,cn=lehrer,cn=users,ou=schuleB,&lt;base dn&gt;
+  school: schuleB
+				</programlisting>
+			</para>
+		</section>
 	</chapter>
 </book>
