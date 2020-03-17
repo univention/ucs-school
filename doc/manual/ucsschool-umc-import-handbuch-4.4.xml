@@ -355,7 +355,7 @@ service ucs-school-import-http-api restart
 /usr/share/ucs-school-import/scripts/create_ou limbo
 				</programlisting>
 				Nach dem Sichern der ursprünglichen Konfiguration wird die <wordasword>SiSoPi-Konfiguration</wordasword> aktiviert.
-				Üblicherweise würde die neue Konfiguration anschließend an die individuellen Erfordernisse angepasst werden.
+				Üblicherweise wird die neue Konfiguration anschließend an die individuellen Erfordernisse angepasst.
 				Für den Testaufbau wurden <literal>csv</literal>, <literal>scheme</literal> und <literal>source_uid</literal> hinzugefügt.
 				<programlisting>
 cp -v /var/lib/ucs-school-import/configs/user_import.json{,.bak}
@@ -405,14 +405,14 @@ service ucs-school-import-http-api restart
 				</programlisting>
 			</para>
 			<para>
-				Nun werden für jede Schule je eine CSV Datei erzeugt:
+				Nun wird für jede Schule eine zu importierende CSV Datei erzeugt:
 				<programlisting>
 /usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
-	--csvfile test_users_A-1.csv --nostart --httpapi --teachers 4 --classes 1 \
-	--inclasses 1 --schools 1 --verbose schuleA
+	--csvfile test_users_A-1.csv --nostart --httpapi --teachers 4 \
+	--classes 1 --inclasses 1 --schools 1 --verbose schuleA
 /usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
-	--csvfile test_users_B-1.csv --nostart --httpapi --teachers 4 --classes 1 \
-	--inclasses 1 --schools 1 --verbose schuleB
+	--csvfile test_users_B-1.csv --nostart --httpapi --teachers 4 \
+	--classes 1 --inclasses 1 --schools 1 --verbose schuleB
 				</programlisting>
 				<programlisting>
 cat test_users_A-1.csv
@@ -435,10 +435,11 @@ cat test_users_B-1.csv
 			</para>
 			<para>
 				Der Import würde regulär über das UMC-Modul statt finden, wird für den Test aber an der Kommandozeile durchgeführt.
-				Beim Import an den beiden Schulen werden je view Lehrer angelegt:
+				Beim Import an den beiden Schulen werden je vier Lehrer angelegt:
 				<programlisting>
 /usr/share/ucs-school-import/scripts/ucs-school-user-import \
-	--verbose --user_role teacher --infile test_users_A-1.csv --school schuleA
+	--verbose --user_role teacher --infile test_users_A-1.csv \
+	--school schuleA
 
 ------ User import statistics ------
 Read users from input data: 4
@@ -450,7 +451,8 @@ Errors: 0
 ------ End of user import statistics ------
 
 /usr/share/ucs-school-import/scripts/ucs-school-user-import \
-	--verbose --user_role teacher --infile test_users_B-1.csv --school schuleB
+	--verbose --user_role teacher --infile test_users_B-1.csv \
+	--school schuleB
 
 ------ User import statistics ------
 Read users from input data: 4
@@ -491,7 +493,8 @@ DN: uid=yola.lenz,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;
   school: schuleA
 
 /usr/share/ucs-school-import/scripts/ucs-school-user-import \
-	--verbose --user_role teacher --infile test_users_A-2.csv --school schuleA
+	--verbose --user_role teacher --infile test_users_A-2.csv \
+	--school schuleA
 
 [..]
 ------ Deleting 1 users... ------
@@ -519,7 +522,8 @@ DN: uid=yola.lenz,cn=lehrer,cn=users,ou=limbo,&lt;base dn&gt;
 				Beim Import an <literal>schuleB</literal> wird <literal>yola.lenz</literal> aus der Schule <literal>limbo</literal> dort hin verschoben:
 				<programlisting>
 /usr/share/ucs-school-import/scripts/ucs-school-user-import \
-	--verbose --user_role teacher --infile test_users_B-2.csv --school schuleB
+	--verbose --user_role teacher --infile test_users_B-2.csv \
+	--school schuleB
 
 [..]
 User ImportTeacher(name='yola.lenz', school='limbo', dn='uid=yola.lenz,cn=lehrer,cn=users,ou=limbo,&lt;base dn&gt;') is in limbo school u'limbo', moving to 'schuleB'.
@@ -548,7 +552,7 @@ DN: uid=yola.lenz,cn=lehrer,cn=users,ou=schuleB,&lt;base dn&gt;
 				Die Zeile von <literal>"Iphigenie","Lemgo"</literal> wird in das CSV der <literal>schuleB</literal> kopiert (Anpassen der Spalte <literal>"Schule"</literal> nicht vergessen) und aus dem CSV der <literal>schuleA</literal> entfernt.
 				Der Import wird nun an <literal>schuleB</literal> vor <literal>schuleA</literal> durchgeführt.
 				Zwischendurch wird die Lehrerin Mitglied beider Schulen sein.
-				Das Benuterkonto würde sich folgendermaßen ändern:
+				Das Benutzerkonto würde sich folgendermaßen ändern:
 				<programlisting>
 # vor dem Import:
 DN: uid=iphigenie.lemgo,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;
