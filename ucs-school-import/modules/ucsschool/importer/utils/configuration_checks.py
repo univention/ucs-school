@@ -108,9 +108,13 @@ def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
 	logger = logging.getLogger(__name__)
 	loader = PyHooksLoader(CONFIG_CHECKS_CODE_DIR, ConfigurationChecks, logger, is_module_in_config)
 	config_check_classes = loader.get_hook_classes()  # type: List[Type[ConfigurationChecks]]
+	disabled_checks = config.get("disabled_checks", [])
 	for kls in config_check_classes:
 		cc = kls(config)
 		test_methods = inspect.getmembers(cc, lambda x: inspect.ismethod(x) and x.func_name.startswith('test_'))
 		test_methods.sort(key=itemgetter(0))
 		for name, method in test_methods:
+			if name in disabled_checks:
+				logger.warning("Skipping configuration check %r.", name)
+				continue
 			method()
