@@ -1,3 +1,10 @@
+ucs-school-import (17.0.28) unstable; urgency=low
+
+  * Bug #50406: ucs-school-purge-expired-users does not fail anymore in SiSoPi
+    scenario (without 'school' in configuration)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 17 Mar 2020 13:14:01 +0100
+
 ucs-school-import (17.0.27) unstable; urgency=low
 
   * Bug #50806: remove SiSoPi documentation from package, was moved to
