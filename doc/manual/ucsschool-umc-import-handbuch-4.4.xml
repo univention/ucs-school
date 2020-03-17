@@ -283,7 +283,7 @@
 			<para>
 				<itemizedlist>
 					<listitem><para>
-						<wordasword>OU-übergreifende</wordasword> Benutzerkonten (ein Benutzer kann im mehreren Schulen sein)
+						<wordasword>OU-übergreifende</wordasword> Benutzerkonten (ein Benutzer kann in mehreren Schulen sein)
 					</para></listitem>
 					<listitem><para>
 						Jede Schule kann ihre Benutzer einzeln und zu einem beliebigen Zeitpunkt importieren.
@@ -296,13 +296,14 @@
 			<para>
 				<itemizedlist>
 					<listitem><para>
-						Eine Datenbasis die alle Benutzer, mit je einem domänenweit eindeutigen Schlüssel (<literal>record_uid</literal>), enthält.
+						Eine Datenbasis, die alle Benutzer mit je einem domänenweit eindeutigen Schlüssel (<literal>record_uid</literal>), enthält.
 					</para></listitem>
 					<listitem><para>
 						Die Quelldatenbank exportiert separate CSV Dateien pro Schule und Benutzerrolle.
 					</para></listitem>
 					<listitem><para>
-						Da Importe in zufälliger Reihenfolge stattfinden können, ist es möglich, dass beim Verschieben eines Benutzers, dieser erst in einer Schule gelöscht und in der anderen später angelegt wird.
+						Die Importe können in zufälliger Reihenfolge stattfinden.
+						Es ist es möglich, dass beim Verschieben eines Benutzers dieser zuerst in einer Schule gelöscht und in einer Anderen später angelegt wird.
 						Das Benutzerkonto darf in der Zwischenzeit nicht gelöscht werden.
 					</para></listitem>
 				</itemizedlist>
@@ -311,14 +312,14 @@
 		<section id="Implementierung">
 			<title>Implementierung</title>
 			<para>
-				Um das Verschieben eines Benutzers von Schule A nach Schule B in zwei Schritten zu ermöglichen  - einschließlich der Möglichkeit, dass der Benutzer zu erst in Schule A gelöscht und später in Schule B angelegt wird - wird eine "Zwischenschule" verwendet: die sog. <literal>limbo_ou</literal>.
+				Um das Verschieben eines Benutzers von Schule A nach Schule B in zwei Schritten zu ermöglichen  - einschließlich der Möglichkeit, dass der Benutzer zu erst in Schule A gelöscht und später in Schule B angelegt wird - wird eine temporäre Schule verwendet: die sog. <literal>limbo_ou</literal>.
 				Es handelt sich dabei um eine gewöhnliche Schule (<literal>OU</literal>), deren Name konfigurierbar ist (Standard ist <literal>limbo</literal>).
 			</para>
 			<para>
-				Benutzerkonten die von ihrer letzten bzw. einzigen Schule ("A") entfernt wurden, werden 1. sofort deaktiviert und 2. in die "Zwischenschule" (<literal>limbo_ou</literal>) verschoben.
+				Benutzerkonten, die von ihrer letzten bzw. einzigen Schule ("A") entfernt wurden, werden 1. sofort deaktiviert und 2. in die temporäre Schule (<literal>limbo_ou</literal>) verschoben.
 			</para>
 			<para>
-				Soll ein Benutzer während eines Imports (an Schule "B") erstellt werden, existiert jedoch bereits ein Konto mit dessen <literal>record_uid</literal> in der "<wordasword>limbo</wordasword> OU", so wird dieses Konto statt dessen von dort zur Schule "B" verschoben und das Konto reaktiviert.
+				Soll ein Benutzer während eines Imports (an Schule "B") erstellt werden, existiert jedoch bereits ein Konto mit dessen <literal>record_uid</literal> in der "<wordasword>limbo</wordasword> OU", so wird dieses Konto stattdessen von dort zur Schule "B" verschoben und das Konto reaktiviert.
 			</para>
 		</section>
 		<section id="Installation_und_Konfiguration">
