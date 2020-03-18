@@ -38,9 +38,12 @@
 # - is a displayName set?
 # - is a HomeShareFileServer and a ClassShareFileServer set?
 # - is a HomeShareFileServer and a ClassShareFileServer (not) set to the DC master in multi/single server environment?
-
 from __future__ import absolute_import
+<<<<<<< HEAD
 from ldap import NO_SUCH_OBJECT
+=======
+import ldap
+>>>>>>> Bug #50500: Add ucs-test for import counter
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
