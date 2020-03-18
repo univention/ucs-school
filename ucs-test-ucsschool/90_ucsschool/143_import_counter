@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
-## desc: Check ucschool ucsschool import counter diagnose module
-## tags: [ucsschool, diganostic_test]
+## desc: Check ucschool import counter diagnose module
+## tags: [ucsschool, diagnostic_test]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
@@ -118,7 +118,9 @@ class Test(UniqueObjectTester):
 			self.log.info('change {}: {}'.format(obj_dn,change))
 			uids.append(person.username)
 
+	# Run diagnostic tool, capture and test if exceptions were thrown.
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/901_ucsschool_import_counter.py']
+		# args = ['univention-run-diagnostic-checks', '-t', '901_ucsschool_import_counter.py']
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		errors = process.stderr.read()
 		self.log.info('altered {} ldap-objects'.format(len(uids)))
@@ -129,8 +131,6 @@ class Test(UniqueObjectTester):
 				raise Exception('diagnose-module did not find false value of {}.'.format(uid))
 			else:
 				self.log.info('diagnose-module did find false value of {}'.format(uid))
-		# todo (? lo.delete all unique-objects i created This might have unwanted consequeces.
-
 
 
 if __name__ == '__main__':

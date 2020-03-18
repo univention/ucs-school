@@ -73,7 +73,7 @@ def run(_umc_instance):
 		ucsschoolRoles = ou_attrs.get('ucsschoolRole', [])
 		if not ucsschoolRoles:
 			problematic_objects.setdefault(ou_dn, []).append(_('ucsschoolRole is not set'))
-		if not any(x.startswith('school:school:{}'.format(ou_attrs.get('ou')[0])) for x in ucsschoolRoles):
+		if ucsschoolRoles and not any(x.startswith('school:school:{}'.format(ou_attrs.get('ou')[0])) for x in ucsschoolRoles):
 			problematic_objects.setdefault(ou_dn, []).append(_('ucsschoolRole "school:school:{0}" not found').format(ou_attrs.get('ucsschoolRole')[0]))
 
 		if not ou_attrs.get('displayName', [None])[0]:
@@ -83,10 +83,13 @@ def run(_umc_instance):
 			value = ou_attrs.get(attr_name, [None])[0]
 			if not value:
 				problematic_objects.setdefault(ou_dn, []).append(_('{0} is not set').format(attr_name))
+				# i think this would be ok with/-out
+				continue
 			try:
 				lo.search(base=value, scope='base')
 			except NO_SUCH_OBJECT:
 				problematic_objects.setdefault(ou_dn, []).append(_('{0} contains invalid value: {1!r}').format(attr_name, value))
+				continue
 			if ucr.is_true('ucsschool/singlemaster', False) and value != ucr.get('ldap/hostdn'):  # WARNING: this line expects that check is performed on the DC master!
 				problematic_objects.setdefault(ou_dn, []).append(_('{0} is not set to master in a UCS@school single server environment').format(attr_name))
 			if not ucr.is_true('ucsschool/singlemaster', False) and value == ucr.get('ldap/hostdn'):  # WARNING: this line expects that check is performed on the DC master!

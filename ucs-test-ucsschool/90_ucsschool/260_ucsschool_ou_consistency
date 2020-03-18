@@ -1,0 +1,81 @@
+#!/usr/share/ucs-test/runner python
+## desc: Check ucschool ou consistency diagnose-module
+## roles: [domaincontroller_master]
+## tags: [ucsschool,diagnostic_test]
+## exposure: dangerous
+## packages: []
+## bugs: [50500]
+
+from __future__ import absolute_import
+from __future__ import print_function
+
+import subprocess
+from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
+
+
+class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
+
+	def run_all_tests(self):  # type: () -> None
+
+		ou_list = self.lo.search(filter='ou={}'.format(self.schoolA.name), base=self.ucr.get('ldap/base'), scope='one')
+		ou_a_dn, ou_a_attrs = ou_list[0]
+		ou_list = self.lo.search(filter='ou={}'.format(self.schoolB.name), base=self.ucr.get('ldap/base'), scope='one')
+		ou_b_dn, ou_b_attrs = ou_list[0]
+		ou_list = self.lo.search(filter='ou={}'.format(self.schoolC.name), base=self.ucr.get('ldap/base'), scope='one')
+		ou_c_dn, ou_c_attrs = ou_list[0]
+		assert 'ucsschoolOrganizationalUnit' in ou_a_attrs.get('objectClass', [])
+		assert 'ucsschoolOrganizationalUnit' in ou_b_attrs.get('objectClass', [])
+		assert 'ucsschoolOrganizationalUnit' in ou_c_attrs.get('objectClass', [])
+
+		expected_errors = []
+
+		self.lo.modify(ou_a_dn, [('ucsschoolRole', self.lo.get(ou_a_dn, ['ucsschoolRole'], required=True), [])])
+		expected_errors.append('ucsschoolRole is not set\n')
+		self.lo.modify(ou_b_dn, [('ucsschoolRole', self.lo.get(ou_b_dn, ['ucsschoolRole'], required=True), ["non-existent"])])
+		expected_errors.append('ucsschoolRole "school:school:non-existent" not found\n')
+
+		self.lo.modify(ou_a_dn, [('displayName', self.lo.get(ou_a_dn, ['displayName'], required=True), [])])
+		expected_errors.append('displayName is not set\n')
+
+		self.lo.modify(ou_a_dn, [('ucsschoolHomeShareFileServer', self.lo.get(ou_a_dn, ['ucsschoolHomeShareFileServer'], required=True), [])])
+		expected_errors.append('ucsschoolHomeShareFileServer is not set\n')
+		self.lo.modify(ou_a_dn, [('ucsschoolClassShareFileServer', self.lo.get(ou_a_dn, ['ucsschoolClassShareFileServer'], required=True), [])])
+		expected_errors.append('ucsschoolClassShareFileServer is not set\n')
+
+		# hacky idea: set ucr-v manually.
+		if not self.ucr.is_true('ucsschool/singlemaster', False):
+			self.lo.modify(ou_c_dn, [('ucsschoolHomeShareFileServer', self.lo.get(ou_c_dn, ['ucsschoolHomeShareFileServer']), [self.ucr.get('ldap/hostdn')])])
+			expected_errors.append('ucsschoolHomeShareFileServer is set to master in a UCS@school multi server environment\n')
+			self.lo.modify(ou_c_dn, [('ucsschoolClassShareFileServer', self.lo.get(ou_c_dn, ['ucsschoolClassShareFileServer']), [self.ucr.get('ldap/hostdn')])])
+			expected_errors.append('ucsschoolClassShareFileServer is set to master in a UCS@school multi server environment\n')
+		else:
+			self.lo.modify(ou_b_dn, [('ucsschoolHomeShareFileServer',
+									  self.lo.get(ou_b_dn, ['ucsschoolHomeShareFileServer'], required=True),
+									  [self.schoolA.winclient.dn])])
+			expected_errors.append(
+				'ucsschoolHomeShareFileServer is not set to master in a UCS@school single server environment\n')
+			self.lo.modify(ou_b_dn, [('ucsschoolClassShareFileServer',
+									  self.lo.get(ou_b_dn, ['ucsschoolClassShareFileServer'], required=True),
+									  [self.schoolA.winclient.dn])])
+			expected_errors.append('ucsschoolClassShareFileServer is not set to master in a UCS@school single server environment\n')
+
+		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/902_ucsschool_ou_consistency.py']
+		# args = ['univention-run-diagnostic-checks', '-t', '902_ucsschool_ou_consistency.py']
+		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		found_errors = process.stderr.read()
+		# Run diagnostic tool, capture and test if exceptions were thrown.
+		for error in expected_errors:
+			if error not in found_errors:
+				raise Exception('diagnose-module did not throw error {}'.format(error))
+			else:
+				print('diagnose-module did throw error {}'.format(error))
+
+
+def main():
+	with UCSSchoolOuConsistencyCheck() as test_suite:
+		test_suite.create_multi_env_school_objects()
+		test_suite.run_all_tests()
+
+
+if __name__ == '__main__':
+	main()
