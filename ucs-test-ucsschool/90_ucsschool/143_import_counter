@@ -124,6 +124,8 @@ class Test(UniqueObjectTester):
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		errors = process.stderr.read()
 		self.log.info('altered {} ldap-objects'.format(len(uids)))
+		if not errors:
+			raise Exception('diagnose-module did not find any false values!')
 		# Search for uids, because if uid mailPrimaryAddress are changed,
 		# I get the unique-mail/usernames object, but the uid is still in there.
 		for uid in uids:

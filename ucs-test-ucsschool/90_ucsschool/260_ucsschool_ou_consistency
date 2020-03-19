@@ -42,7 +42,6 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
 		self.lo.modify(ou_a_dn, [('ucsschoolClassShareFileServer', self.lo.get(ou_a_dn, ['ucsschoolClassShareFileServer'], required=True), [])])
 		expected_errors.append('ucsschoolClassShareFileServer is not set\n')
 
-		# hacky idea: set ucr-v manually.
 		if not self.ucr.is_true('ucsschool/singlemaster', False):
 			self.lo.modify(ou_c_dn, [('ucsschoolHomeShareFileServer', self.lo.get(ou_c_dn, ['ucsschoolHomeShareFileServer']), [self.ucr.get('ldap/hostdn')])])
 			expected_errors.append('ucsschoolHomeShareFileServer is set to master in a UCS@school multi server environment\n')
@@ -51,24 +50,24 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
 		else:
 			self.lo.modify(ou_b_dn, [('ucsschoolHomeShareFileServer',
 									  self.lo.get(ou_b_dn, ['ucsschoolHomeShareFileServer'], required=True),
-									  [self.schoolA.winclient.dn])])
+									  [self.schoolB.winclient.dn])])
 			expected_errors.append(
 				'ucsschoolHomeShareFileServer is not set to master in a UCS@school single server environment\n')
 			self.lo.modify(ou_b_dn, [('ucsschoolClassShareFileServer',
 									  self.lo.get(ou_b_dn, ['ucsschoolClassShareFileServer'], required=True),
-									  [self.schoolA.winclient.dn])])
+									  [self.schoolB.winclient.dn])])
 			expected_errors.append('ucsschoolClassShareFileServer is not set to master in a UCS@school single server environment\n')
 
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/902_ucsschool_ou_consistency.py']
 		# args = ['univention-run-diagnostic-checks', '-t', '902_ucsschool_ou_consistency.py']
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		found_errors = process.stderr.read()
+		if not found_errors:
+			raise Exception('diagnose-module did not find any false values!')
 		# Run diagnostic tool, capture and test if exceptions were thrown.
 		for error in expected_errors:
 			if error not in found_errors:
 				raise Exception('diagnose-module did not throw error {}'.format(error))
-			else:
-				print('diagnose-module did throw error {}'.format(error))
 
 
 def main():
