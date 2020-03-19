@@ -60,7 +60,7 @@ def find_all_problematic_objects(lo):  # type: (access) -> Set[str]
 	problematic_objects = set()
 	for obj_type in (
 		'computers/windows',
-		'computers/mac',
+		'computers/macos',
 		'computers/ipmanagedclient',
 		'computers/linux',
 		'computers/ubuntu',
@@ -111,7 +111,7 @@ def fix_computers(_umc_instance):
 			school = AnyComputer.get_school_from_dn(dn)
 			role = {
 				'computers/windows': create_ucsschool_role_string(role_win_computer, school),
-				'computers/mac': create_ucsschool_role_string(role_mac_computer, school),
+				'computers/macos': create_ucsschool_role_string(role_mac_computer, school),
 				'computers/ipmanagedclient': create_ucsschool_role_string(role_ip_computer, school),
 				'computers/linux': create_ucsschool_role_string(role_linux_computer, school),
 				'computers/ubuntu': create_ucsschool_role_string(role_ubuntu_computer, school),
