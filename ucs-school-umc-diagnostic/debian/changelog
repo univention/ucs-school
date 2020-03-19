@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-7) unstable; urgency=low
+
+  * Bug #50500: package cleanup
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 19 Mar 2020 18:00:09 +0100
+
 ucs-school-umc-diagnostic (1.0.0-6) unstable; urgency=low
 
   * Bug #50500: add missing .install file
