@@ -44,7 +44,7 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 	def mess_up_clients(self):  # type: () -> List
 		self.client_computers = self.create_client_computers()
 		assert len(self.client_computers) == 10
-		expected_warnings = []
+		computer_dns = []
 		num_computers = len(self.client_computers)
 		for i, computer in enumerate(self.client_computers):
 			self.lo.modify(computer.dn, [('ucsschoolRole', self.lo.get(computer.dn, ['ucsschoolRole'], required=True), [])])
@@ -53,11 +53,13 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 				if 'ucsschoolComputer' in objectClass['objectClass']:
 					objectClass['objectClass'].remove('ucsschoolComputer')
 				self.lo.modify(computer.dn, [('objectClass', self.lo.get(computer.dn, ['objectClass'], required=True), objectClass)])
-			expected_warnings.append('{}\n'.format(computer.dn))
-		return expected_warnings
+			computer_dns.append('{}\n'.format(computer.dn))
+		return computer_dns
 
 	def run_all_tests(self):  # type: () -> None
-		expected_warnings = self.mess_up_clients()
+		logger.info('Messed up the client computers.')
+		computer_dns = self.mess_up_clients()
+		logger.info('The dns should appear be in the warnings.')
 		# Run diagnostic tool, capture and test if exceptions were thrown.
 		diagnose_module = '903_ucsschool_schoolcomputers.py'
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py']
@@ -66,27 +68,29 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 		stderr = process.stderr.read()
 		if not stderr:
 			raise Exception('diagnose-module {} did not raise any warning!'.format(diagnose_module))
-		for warning in expected_warnings:
-			if warning not in stderr:
-				raise Exception('diagnose-module {} did not raise warning for {}!'.format(diagnose_module, warning))
-		# todo
-		# # # fix_computers(_umc_instance)
-		# # make sure no warning is raised.
-		# args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py']
-		# # args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
-		# process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		# stderr = process.stderr.read()
-		# # still possible, there are some errors, but not mine....
-		# for warning in expected_warnings:
-		# 	if warning in stderr:
-		# 		raise Exception('diagnose-module {} did not fix element {}!'.format(diagnose_module, warning))
-
+		for dn in computer_dns:
+			if dn not in stderr:
+				raise Exception('diagnose-module {} did not raise warning for {}!'.format(diagnose_module, dn))
+		logger.info('Ran diagnose-module successfully.')
+		logger.info('Fixing the messed up computers. The dns should not appear in the warnings.')
+		# make sure no warning is raised.
+		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py', 'fix']
+		# args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
+		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		stderr = process.stderr.read()
+		# The diagnose module will also output something if nothing can be fixed,
+		# and it's also possible other computers which were messed up before, were fixed.
+		for dn in computer_dns:
+			if dn in stderr:
+				raise Exception('diagnose-module {} did not fix element {}!'.format(diagnose_module, dn))
+		logger.info('Successfully fixed client computers.')
 
 
 def main():
 	with UCSSchoolSchoolComputers() as test_suite:
 		test_suite.create_multi_env_school_objects()
 		test_suite.run_all_tests()
+
 
 if __name__ == '__main__':
 	main()
