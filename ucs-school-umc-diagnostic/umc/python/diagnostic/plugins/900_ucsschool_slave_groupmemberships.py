@@ -42,6 +42,7 @@
 #
 # WARNING: is is not (yet) checked if the group memberships match to the ucsschoolRole attribute!
 
+from __future__ import absolute_import
 from ldap.filter import filter_format
 
 from univention.management.console.config import ucr
@@ -55,6 +56,7 @@ description = '\n'.join([
 	_('UCS@school Domaincontroller Slave objects rely on the membership within certain UCS@school LDAP groups.'),
 	_('Inconsistencies in these group memberships can trigger erratic behaviour of UCS@school.'),
 ])
+
 
 def run(_umc_instance):
 	if ucr.get('server/role') != 'domaincontroller_master':
