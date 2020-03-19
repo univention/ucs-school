@@ -91,48 +91,49 @@ class Test(UniqueObjectTester):
 			self.log.info('Username %r is expected with string "%s%s"', person.username, person.username_prefix, "1" if scheme == "ALWAYSCOUNTER" else "")
 			self.check_unique_obj('unique-usernames', person.username_prefix, '2')
 
-		lo = getAdminConnection()
-		uids = []
+		# Change ldap-values, such that the diagnose-modul should raise a warning.
+		expected_warnings =[]
 		for i, person in enumerate(person_list):
 			if i == 0:
 				new_mail = '{}{}@{}'.format(person.email_prefix, 3, self.maildomain)
+				new_uid = '{}{}'.format(person.username_prefix, 3)
 				change = [('mailPrimaryAddress', person.mail, new_mail)]
 				obj_dn = person.dn
+				expected_warnings.append('cn={0},cn=unique-email,cn=ucsschool,cn=univention,{1}: email counter=2 but found user with uid {2}\n'.format(person.username, ucr.get('ldap/base'), new_uid))
 			elif i == 1:
 				new_uid = '{}{}'.format(person.username_prefix, 3)
 				change = [('uid', person.username, new_uid)]
 				obj_dn = person.dn
+				expected_warnings.append('cn={0},cn=unique-usernames,cn=ucsschool,cn=univention,{1}: usernames counter=2 but found user with uid {2}\n'.format(person.username, ucr.get('ldap/base'), new_uid))
 			else:
 				unique_obj = 'unique-email' if i % 2 == 0 else 'unique-usernames'
 				if i < 4:
 					new_value = ['0']
+					expected_warnings.append('cn={},cn={},cn=ucsschool,cn=univention,{}: counter=0\n'.format(person.username, unique_obj,ucr.get('ldap/base')))
 				else:
 					new_value = []
-				obj_list = lo.searchDn(
+					expected_warnings.append('cn={},cn={},cn=ucsschool,cn=univention,{}: counter=\n'.format(person.username, unique_obj,ucr.get('ldap/base')))
+				obj_list = self.lo.searchDn(
 					base='cn={},cn=ucsschool,cn=univention,{}'.format(unique_obj,ucr.get('ldap/base')),
 					filter='cn={}'.format(person.username), scope='one')
 				obj_dn = obj_list[0]
 				change = [('ucsschoolUsernameNextNumber', ['2'], new_value)]
 
-			lo.modify(obj_dn, change)
+			self.lo.modify(obj_dn, change)
 			self.log.info('change {}: {}'.format(obj_dn,change))
-			uids.append(person.username)
 
-	# Run diagnostic tool, capture and test if exceptions were thrown.
+		# Run diagnostic tool, capture and test if exceptions were thrown.
+		diagnose_module = '901_ucsschool_import_counter.py'
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/901_ucsschool_import_counter.py']
 		# args = ['univention-run-diagnostic-checks', '-t', '901_ucsschool_import_counter.py']
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		errors = process.stderr.read()
-		self.log.info('altered {} ldap-objects'.format(len(uids)))
-		if not errors:
-			raise Exception('diagnose-module did not find any false values!')
-		# Search for uids, because if uid mailPrimaryAddress are changed,
-		# I get the unique-mail/usernames object, but the uid is still in there.
-		for uid in uids:
-			if uid not in errors:
-				raise Exception('diagnose-module did not find false value of {}.'.format(uid))
-			else:
-				self.log.info('diagnose-module did find false value of {}'.format(uid))
+		self.log.info('altered {} ldap-objects'.format(len(expected_warnings)))
+		stderr = process.stderr.read()
+		if not stderr:
+			raise Exception('diagnose-module {} did not raise any warning!'.format(diagnose_module))
+		for warning in expected_warnings:
+			if warning not in stderr:
+				raise Exception('diagnose-module {} did not raise warning {}!'.format(diagnose_module, warning))
 
 
 if __name__ == '__main__':
