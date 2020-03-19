@@ -41,7 +41,7 @@ from univention.admin.uexceptions import ldapError
 
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Critical, ProblemFixed, MODULE
-from univention.admin.uldap import getAdminConnection, access
+from univention.admin.uldap import getAdminConnection
 from ucsschool.lib.models import AnyComputer
 from ucsschool.lib.roles import (
 	create_ucsschool_role_string, role_win_computer, role_mac_computer, role_ip_computer,
@@ -137,4 +137,3 @@ actions = {
 
 if __name__ == '__main__':
 	run(None)
-
