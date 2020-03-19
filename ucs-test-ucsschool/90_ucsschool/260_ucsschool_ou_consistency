@@ -27,47 +27,48 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
 		assert 'ucsschoolOrganizationalUnit' in ou_b_attrs.get('objectClass', [])
 		assert 'ucsschoolOrganizationalUnit' in ou_c_attrs.get('objectClass', [])
 
-		expected_errors = []
-
+		# Change ldap-values, such that the diagnose-module should raise a warning.
+		expected_warnings = []
 		self.lo.modify(ou_a_dn, [('ucsschoolRole', self.lo.get(ou_a_dn, ['ucsschoolRole'], required=True), [])])
-		expected_errors.append('ucsschoolRole is not set\n')
+		expected_warnings.append('ucsschoolRole is not set\n')
 		self.lo.modify(ou_b_dn, [('ucsschoolRole', self.lo.get(ou_b_dn, ['ucsschoolRole'], required=True), ["non-existent"])])
-		expected_errors.append('ucsschoolRole "school:school:non-existent" not found\n')
+		expected_warnings.append('ucsschoolRole "school:school:non-existent" not found\n')
 
 		self.lo.modify(ou_a_dn, [('displayName', self.lo.get(ou_a_dn, ['displayName'], required=True), [])])
-		expected_errors.append('displayName is not set\n')
+		expected_warnings.append('displayName is not set\n')
 
 		self.lo.modify(ou_a_dn, [('ucsschoolHomeShareFileServer', self.lo.get(ou_a_dn, ['ucsschoolHomeShareFileServer'], required=True), [])])
-		expected_errors.append('ucsschoolHomeShareFileServer is not set\n')
+		expected_warnings.append('ucsschoolHomeShareFileServer is not set\n')
 		self.lo.modify(ou_a_dn, [('ucsschoolClassShareFileServer', self.lo.get(ou_a_dn, ['ucsschoolClassShareFileServer'], required=True), [])])
-		expected_errors.append('ucsschoolClassShareFileServer is not set\n')
+		expected_warnings.append('ucsschoolClassShareFileServer is not set\n')
 
 		if not self.ucr.is_true('ucsschool/singlemaster', False):
 			self.lo.modify(ou_c_dn, [('ucsschoolHomeShareFileServer', self.lo.get(ou_c_dn, ['ucsschoolHomeShareFileServer']), [self.ucr.get('ldap/hostdn')])])
-			expected_errors.append('ucsschoolHomeShareFileServer is set to master in a UCS@school multi server environment\n')
+			expected_warnings.append('ucsschoolHomeShareFileServer is set to master in a UCS@school multi server environment\n')
 			self.lo.modify(ou_c_dn, [('ucsschoolClassShareFileServer', self.lo.get(ou_c_dn, ['ucsschoolClassShareFileServer']), [self.ucr.get('ldap/hostdn')])])
-			expected_errors.append('ucsschoolClassShareFileServer is set to master in a UCS@school multi server environment\n')
+			expected_warnings.append('ucsschoolClassShareFileServer is set to master in a UCS@school multi server environment\n')
 		else:
 			self.lo.modify(ou_b_dn, [('ucsschoolHomeShareFileServer',
 									  self.lo.get(ou_b_dn, ['ucsschoolHomeShareFileServer'], required=True),
 									  [self.schoolB.winclient.dn])])
-			expected_errors.append(
+			expected_warnings.append(
 				'ucsschoolHomeShareFileServer is not set to master in a UCS@school single server environment\n')
 			self.lo.modify(ou_b_dn, [('ucsschoolClassShareFileServer',
 									  self.lo.get(ou_b_dn, ['ucsschoolClassShareFileServer'], required=True),
 									  [self.schoolB.winclient.dn])])
-			expected_errors.append('ucsschoolClassShareFileServer is not set to master in a UCS@school single server environment\n')
+			expected_warnings.append('ucsschoolClassShareFileServer is not set to master in a UCS@school single server environment\n')
 
+		# Run diagnostic tool, capture and test if exceptions were thrown.
+		diagnose_module = '902_ucsschool_ou_consistency.py'
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/902_ucsschool_ou_consistency.py']
 		# args = ['univention-run-diagnostic-checks', '-t', '902_ucsschool_ou_consistency.py']
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		found_errors = process.stderr.read()
-		if not found_errors:
-			raise Exception('diagnose-module did not find any false values!')
-		# Run diagnostic tool, capture and test if exceptions were thrown.
-		for error in expected_errors:
-			if error not in found_errors:
-				raise Exception('diagnose-module did not throw error {}'.format(error))
+		stderr = process.stderr.read()
+		if not stderr:
+			raise Exception('diagnose-module {} did not raise any warning!'.format(diagnose_module))
+		for warning in expected_warnings:
+			if warning not in stderr:
+				raise Exception('diagnose-module {} did not raise warning {}!'.format(diagnose_module, warning))
 
 
 def main():
