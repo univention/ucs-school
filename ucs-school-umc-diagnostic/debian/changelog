@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-5) unstable; urgency=low
+
+  * Bug #50500: bump version
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 19 Mar 2020 16:43:36 +0100
+
 ucs-school-umc-diagnostic (1.0.0-2) unstable; urgency=low
 
   * Loosen build dependency for now
