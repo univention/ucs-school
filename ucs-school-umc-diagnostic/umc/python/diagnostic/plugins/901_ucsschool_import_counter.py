@@ -36,7 +36,6 @@
 # - ucsschoolUsernameNextNumber is higher than highest suffix number of user with same prefix
 
 from __future__ import absolute_import
-from ldap.filter import filter_format
 
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
@@ -59,8 +58,8 @@ def run(_umc_instance):
 
 	lo = getAdminConnection()
 
-	email_prefix2counter = {}
-	user_prefix2counter = {}
+	email_prefix2counter = {}  # type: Dict[str, int]
+	user_prefix2counter = {}  # type: Dict[str, int]
 	obj_list = lo.search(filter='(&(univentionObjectType=users/user)(ucsschoolRole=*))', attr=['uid', 'mailPrimaryAddress'])
 	for (obj_dn, obj_attrs) in obj_list:
 		uid = obj_attrs.get('uid')[0]
@@ -100,12 +99,12 @@ def run(_umc_instance):
 			try:
 				prefix_counter = int(value)
 			except ValueError:
-				problematic_objects.setdefault(obj_dn, []).append(_('{0}: counter={1}').format(obj_dn, value))
+				problematic_objects.setdefault(obj_dn, []).append(_('{0}: counter={1!r} which is not an integer').format(obj_dn, value))
 				continue
 
 			# Check: ucsschoolUsernameNextNumber should be 2 or higher
 			if prefix_counter <= 1:
-				problematic_objects.setdefault(obj_dn, []).append(_('{0}: counter={1}').format(obj_dn, value))
+				problematic_objects.setdefault(obj_dn, []).append(_('{0}: counter={1!r} but the value should be 2 or higher').format(obj_dn, value))
 
 			# Check: counter should be higher than existing users
 			prefix = obj_attrs.get('cn', [None])[0]
@@ -114,8 +113,7 @@ def run(_umc_instance):
 			else:
 				user_prefix_counter = email_prefix2counter.get(prefix)
 			if user_prefix_counter is not None and user_prefix_counter >= prefix_counter:
-				problematic_objects.setdefault(obj_dn, []).append(_('{0}: {1} counter={2} but found user with uid {3}{4}').format(obj_dn, counter_type, value, prefix, user_prefix_counter))
-
+				problematic_objects.setdefault(obj_dn, []).append(_('{0}: {1} counter={2!r} but found user with uid {3}{4}').format(obj_dn, counter_type, value, prefix, user_prefix_counter))
 
 	if problematic_objects:
 		details = '\n\n' + _('The following objects have faulty counter values:')
