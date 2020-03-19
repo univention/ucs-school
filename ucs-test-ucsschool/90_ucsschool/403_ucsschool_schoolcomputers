@@ -1,0 +1,92 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Check diagnose-module 903_ucsschool_schoolcomputers
+## tags: [ucsschool, diganostic_test]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages: []
+## bugs: [50500]
+
+from __future__ import absolute_import
+from __future__ import print_function
+import subprocess
+from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
+from univention.testing.ucsschool.ucs_test_school import NameDnObj
+import univention.testing.strings as uts
+
+
+class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
+
+	def __init__(self):
+		super(UCSSchoolSchoolComputers, self).__init__()
+		self.client_computers = []
+
+	def create_client_computers(self):
+		client_computers = [self.schoolA.winclient, self.schoolB.winclient]
+		computer_types = ['macos', 'ipmanagedclient', 'linux', 'ubuntu']
+		for suffix in ('A', 'B'):
+			if suffix == 'A':
+				school_dn = self.schoolA.dn
+			else:
+				school_dn = self.schoolB.dn
+			for c_type in computer_types:
+				client_computers.append(NameDnObj(
+					'school{}{}'.format(c_type, suffix),
+					self.udm.create_object(
+						"computers/{}".format(c_type),
+						name='school{}{}'.format(c_type, suffix),
+						position="cn=computers,{}".format(school_dn),
+						mac=uts.random_mac(),
+						ip=uts.random_ip(),
+					)))
+		return client_computers
+
+	def mess_up_clients(self):  # type: () -> List
+		self.client_computers = self.create_client_computers()
+		assert len(self.client_computers) == 10
+		expected_warnings = []
+		num_computers = len(self.client_computers)
+		for i, computer in enumerate(self.client_computers):
+			self.lo.modify(computer.dn, [('ucsschoolRole', self.lo.get(computer.dn, ['ucsschoolRole'], required=True), [])])
+			if i > num_computers // 2:
+				objectClass = self.lo.get(computer.dn, ['objectClass'], required=True)
+				if 'ucsschoolComputer' in objectClass['objectClass']:
+					objectClass['objectClass'].remove('ucsschoolComputer')
+				self.lo.modify(computer.dn, [('objectClass', self.lo.get(computer.dn, ['objectClass'], required=True), objectClass)])
+			expected_warnings.append('{}\n'.format(computer.dn))
+		return expected_warnings
+
+	def run_all_tests(self):  # type: () -> None
+		expected_warnings = self.mess_up_clients()
+		# Run diagnostic tool, capture and test if exceptions were thrown.
+		diagnose_module = '903_ucsschool_schoolcomputers.py'
+		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py']
+		# args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
+		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		stderr = process.stderr.read()
+		if not stderr:
+			raise Exception('diagnose-module {} did not raise any warning!'.format(diagnose_module))
+		for warning in expected_warnings:
+			if warning not in stderr:
+				raise Exception('diagnose-module {} did not raise warning for {}!'.format(diagnose_module, warning))
+		# todo
+		# # # fix_computers(_umc_instance)
+		# # make sure no warning is raised.
+		# args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py']
+		# # args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
+		# process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		# stderr = process.stderr.read()
+		# # still possible, there are some errors, but not mine....
+		# for warning in expected_warnings:
+		# 	if warning in stderr:
+		# 		raise Exception('diagnose-module {} did not fix element {}!'.format(diagnose_module, warning))
+
+
+
+def main():
+	with UCSSchoolSchoolComputers() as test_suite:
+		test_suite.create_multi_env_school_objects()
+		test_suite.run_all_tests()
+
+if __name__ == '__main__':
+	main()
