@@ -39,11 +39,8 @@
 # - is a HomeShareFileServer and a ClassShareFileServer set?
 # - is a HomeShareFileServer and a ClassShareFileServer (not) set to the DC master in multi/single server environment?
 from __future__ import absolute_import
-<<<<<<< HEAD
+
 from ldap import NO_SUCH_OBJECT
-=======
-import ldap
->>>>>>> Bug #50500: Add ucs-test for import counter
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
@@ -83,13 +80,10 @@ def run(_umc_instance):
 			value = ou_attrs.get(attr_name, [None])[0]
 			if not value:
 				problematic_objects.setdefault(ou_dn, []).append(_('{0} is not set').format(attr_name))
-				# i think this would be ok with/-out
-				continue
 			try:
 				lo.search(base=value, scope='base')
 			except NO_SUCH_OBJECT:
 				problematic_objects.setdefault(ou_dn, []).append(_('{0} contains invalid value: {1!r}').format(attr_name, value))
-				continue
 			if ucr.is_true('ucsschool/singlemaster', False) and value != ucr.get('ldap/hostdn'):  # WARNING: this line expects that check is performed on the DC master!
 				problematic_objects.setdefault(ou_dn, []).append(_('{0} is not set to master in a UCS@school single server environment').format(attr_name))
 			if not ucr.is_true('ucsschool/singlemaster', False) and value == ucr.get('ldap/hostdn'):  # WARNING: this line expects that check is performed on the DC master!
