@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-## desc: Check ucschool ou consistency diagnose-module
+## desc: Check ucschool ou consistency diagnostic tool
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,diagnostic_test]
 ## exposure: dangerous
@@ -27,7 +27,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
 		assert 'ucsschoolOrganizationalUnit' in ou_b_attrs.get('objectClass', [])
 		assert 'ucsschoolOrganizationalUnit' in ou_c_attrs.get('objectClass', [])
 
-		# Change ldap-values, such that the diagnose-module should raise a warning.
+		logger.info('Change ldap-values of A-C, such that the diagnostic tool should raise a warning.')
 		expected_warnings = []
 		self.lo.modify(ou_a_dn, [('ucsschoolRole', self.lo.get(ou_a_dn, ['ucsschoolRole'], required=True), [])])
 		expected_warnings.append('ucsschoolRole is not set\n')
@@ -58,17 +58,18 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
 									  [self.schoolB.winclient.dn])])
 			expected_warnings.append('ucsschoolClassShareFileServer is not set to master in a UCS@school single server environment\n')
 
-		# Run diagnostic tool, capture and test if exceptions were thrown.
+		logger.info('Run diagnostic tool, capture the stderr and test if the expected warnings were raised.')
 		diagnose_module = '902_ucsschool_ou_consistency.py'
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/902_ucsschool_ou_consistency.py']
 		# args = ['univention-run-diagnostic-checks', '-t', '902_ucsschool_ou_consistency.py']
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		stderr = process.stderr.read()
 		if not stderr:
-			raise Exception('diagnose-module {} did not raise any warning!'.format(diagnose_module))
+			raise Exception('diagnostic tool {} did not raise any warning!'.format(diagnose_module))
 		for warning in expected_warnings:
 			if warning not in stderr:
-				raise Exception('diagnose-module {} did not raise warning {}!'.format(diagnose_module, warning))
+				raise Exception('diagnostic tool {} did not raise warning {}!'.format(diagnose_module, warning))
+		logger.info('Ran diagnostic tool {} successfully.'.format(diagnose_module))
 
 
 def main():

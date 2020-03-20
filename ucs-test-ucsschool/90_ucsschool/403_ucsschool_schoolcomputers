@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Check diagnose-module 903_ucsschool_schoolcomputers
+## desc: Check diagnostic tool 903_ucsschool_schoolcomputers
 ## tags: [ucsschool, diganostic_test]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
@@ -59,21 +59,19 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 	def run_all_tests(self):  # type: () -> None
 		logger.info('Messed up the client computers.')
 		computer_dns = self.mess_up_clients()
-		logger.info('The dns should appear be in the warnings.')
-		# Run diagnostic tool, capture and test if exceptions were thrown.
+		logger.info('Run diagnostic tool, capture and test if warnings were raised. The dns should appear be in the warnings.')
 		diagnose_module = '903_ucsschool_schoolcomputers.py'
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py']
 		# args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		stderr = process.stderr.read()
 		if not stderr:
-			raise Exception('diagnose-module {} did not raise any warning!'.format(diagnose_module))
+			raise Exception('diagnostic tool {} did not raise any warning!'.format(diagnose_module))
 		for dn in computer_dns:
 			if dn not in stderr:
-				raise Exception('diagnose-module {} did not raise warning for {}!'.format(diagnose_module, dn))
-		logger.info('Ran diagnose-module successfully.')
+				raise Exception('diagnostic tool {} did not raise warning for {}!'.format(diagnose_module, dn))
+		logger.info('Ran diagnostic tool {} successfully.'.format(diagnose_module))
 		logger.info('Fixing the messed up computers. The dns should not appear in the warnings.')
-		# make sure no warning is raised.
 		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py', 'fix']
 		# args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
 		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -82,7 +80,7 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 		# and it's also possible other computers which were messed up before, were fixed.
 		for dn in computer_dns:
 			if dn in stderr:
-				raise Exception('diagnose-module {} did not fix element {}!'.format(diagnose_module, dn))
+				raise Exception('diagnostic tool {} did not fix element {}!'.format(diagnose_module, dn))
 		logger.info('Successfully fixed client computers.')
 
 
