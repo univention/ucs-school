@@ -9,8 +9,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import subprocess
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
+from univention.management.console.modules.diagnostic import Instance, ProblemFixed, Warning, Critical
 
 
 class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
@@ -59,17 +59,21 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
 			expected_warnings.append('ucsschoolClassShareFileServer is not set to master in a UCS@school single server environment\n')
 
 		logger.info('Run diagnostic tool, capture the stderr and test if the expected warnings were raised.')
-		diagnose_module = '902_ucsschool_ou_consistency.py'
-		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/902_ucsschool_ou_consistency.py']
-		# args = ['univention-run-diagnostic-checks', '-t', '902_ucsschool_ou_consistency.py']
-		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stderr = process.stderr.read()
-		if not stderr:
-			raise Exception('diagnostic tool {} did not raise any warning!'.format(diagnose_module))
+		module_name = '902_ucsschool_ou_consistency'
+		instance = Instance()
+		instance.init()
+		module = instance.get(module_name)
+		out = None
+		try:
+			out = module.execute(None)
+		except Critical:
+			pass
+
+		assert out and out['success'] is False
 		for warning in expected_warnings:
-			if warning not in stderr:
-				raise Exception('diagnostic tool {} did not raise warning {}!'.format(diagnose_module, warning))
-		logger.info('Ran diagnostic tool {} successfully.'.format(diagnose_module))
+			if warning not in out['description']:
+				raise Exception('diagnostic tool {} did not raise warning {}!\n'.format(module_name, warning))
+		logger.info('Ran diagnostic tool {} successfully.'.format(module_name))
 
 
 def main():

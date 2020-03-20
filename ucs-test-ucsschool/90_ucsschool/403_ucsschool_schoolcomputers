@@ -9,10 +9,10 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
-import subprocess
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 from univention.testing.ucsschool.ucs_test_school import NameDnObj
 import univention.testing.strings as uts
+from univention.management.console.modules.diagnostic import Instance, ProblemFixed, Warning, Critical
 
 
 class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
@@ -21,7 +21,7 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 		super(UCSSchoolSchoolComputers, self).__init__()
 		self.client_computers = []
 
-	def create_client_computers(self):
+	def create_client_computers(self):  # type: () -> List
 		client_computers = [self.schoolA.winclient, self.schoolB.winclient]
 		computer_types = ['macos', 'ipmanagedclient', 'linux', 'ubuntu']
 		for suffix in ('A', 'B'):
@@ -53,35 +53,37 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 				if 'ucsschoolComputer' in objectClass['objectClass']:
 					objectClass['objectClass'].remove('ucsschoolComputer')
 				self.lo.modify(computer.dn, [('objectClass', self.lo.get(computer.dn, ['objectClass'], required=True), objectClass)])
-			computer_dns.append('{}\n'.format(computer.dn))
+			computer_dns.append('{}'.format(computer.dn))
 		return computer_dns
 
 	def run_all_tests(self):  # type: () -> None
 		logger.info('Messed up the client computers.')
 		computer_dns = self.mess_up_clients()
-		logger.info('Run diagnostic tool, capture and test if warnings were raised. The dns should appear be in the warnings.')
-		diagnose_module = '903_ucsschool_schoolcomputers.py'
-		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py']
-		# args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
-		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stderr = process.stderr.read()
-		if not stderr:
-			raise Exception('diagnostic tool {} did not raise any warning!'.format(diagnose_module))
+
+		logger.info('Run diagnostic tool, capture and test if warnings were raised. The dns of the client computers should appear be in the warnings.')
+		module_name = '903_ucsschool_schoolcomputers'
+		instance = Instance()
+		instance.init()
+		module = instance.get(module_name)
+		out = None
+		try:
+			out = module.execute(None)
+		except Critical:
+			pass
+
+		assert out and out['success'] is False
 		for dn in computer_dns:
-			if dn not in stderr:
-				raise Exception('diagnostic tool {} did not raise warning for {}!'.format(diagnose_module, dn))
-		logger.info('Ran diagnostic tool {} successfully.'.format(diagnose_module))
-		logger.info('Fixing the messed up computers. The dns should not appear in the warnings.')
-		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/903_ucsschool_schoolcomputers.py', 'fix']
-		# args = ['univention-run-diagnostic-checks', '-t', '903_ucsschool_schoolcomputers.py']
-		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stderr = process.stderr.read()
-		# The diagnose module will also output something if nothing can be fixed,
-		# and it's also possible other computers which were messed up before, were fixed.
-		for dn in computer_dns:
-			if dn in stderr:
-				raise Exception('diagnostic tool {} did not fix element {}!'.format(diagnose_module, dn))
-		logger.info('Successfully fixed client computers.')
+			if dn not in out['description']:
+				raise Exception('diagnostic tool {} did not raise warning for {}!\n'.format(module_name, dn))
+		logger.info('Ran diagnostic tool {} successfully.'.format(module_name))
+
+		try:
+			out = module.actions['fix_computers'](None)
+		except ProblemFixed:
+			assert out['success'] is False
+			logger.info('Successfully fixed client computers.')
+		except Critical as exc:
+			raise Exception('diagnostic tool (fix) {} failed: {}'.format(module_name, exc))
 
 
 def main():

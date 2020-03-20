@@ -15,9 +15,9 @@ from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers_cli_v2 import UniqueObjectTester
 from univention.testing.ucsschool.importusers import Person
 
-import subprocess
 from univention.management.console.config import ucr
 from univention.uldap import getAdminConnection
+from univention.management.console.modules.diagnostic import Instance, ProblemFixed, Warning, Critical
 
 
 class Test(UniqueObjectTester):
@@ -99,20 +99,20 @@ class Test(UniqueObjectTester):
 				new_uid = '{}{}'.format(person.username_prefix, 3)
 				change = [('mailPrimaryAddress', person.mail, new_mail)]
 				obj_dn = person.dn
-				expected_warnings.append('cn={0},cn=unique-email,cn=ucsschool,cn=univention,{1}: email counter=2 but found user with uid {2}\n'.format(person.username, ucr.get('ldap/base'), new_uid))
+				expected_warnings.append("cn={0},cn=unique-email,cn=ucsschool,cn=univention,{1}: email counter='2' but found user with uid {2}".format(person.username, ucr.get('ldap/base'), new_uid))
 			elif i == 1:
 				new_uid = '{}{}'.format(person.username_prefix, 3)
 				change = [('uid', person.username, new_uid)]
 				obj_dn = person.dn
-				expected_warnings.append('cn={0},cn=unique-usernames,cn=ucsschool,cn=univention,{1}: usernames counter=2 but found user with uid {2}\n'.format(person.username, ucr.get('ldap/base'), new_uid))
+				expected_warnings.append("cn={0},cn=unique-usernames,cn=ucsschool,cn=univention,{1}: usernames counter='2' but found user with uid {2}".format(person.username, ucr.get('ldap/base'), new_uid))
 			else:
 				unique_obj = 'unique-email' if i % 2 == 0 else 'unique-usernames'
 				if i < 4:
 					new_value = ['0']
-					expected_warnings.append('cn={},cn={},cn=ucsschool,cn=univention,{}: counter=0\n'.format(person.username, unique_obj,ucr.get('ldap/base')))
+					expected_warnings.append("cn={},cn={},cn=ucsschool,cn=univention,{}: counter='0'".format(person.username, unique_obj,ucr.get('ldap/base')))
 				else:
 					new_value = []
-					expected_warnings.append('cn={},cn={},cn=ucsschool,cn=univention,{}: counter=\n'.format(person.username, unique_obj,ucr.get('ldap/base')))
+					expected_warnings.append("cn={},cn={},cn=ucsschool,cn=univention,{}: counter=''".format(person.username, unique_obj,ucr.get('ldap/base')))
 				obj_list = self.lo.searchDn(
 					base='cn={},cn=ucsschool,cn=univention,{}'.format(unique_obj,ucr.get('ldap/base')),
 					filter='cn={}'.format(person.username), scope='one')
@@ -123,18 +123,21 @@ class Test(UniqueObjectTester):
 			self.log.info('change {}: {}'.format(obj_dn,change))
 
 		# Run diagnostic tool, capture and test if exceptions were thrown.
-		diagnose_module = '901_ucsschool_import_counter.py'
-		args = ['/root/ucs-school-umc-diagnostic/umc/python/diagnostic/plugins/901_ucsschool_import_counter.py']
-		# args = ['univention-run-diagnostic-checks', '-t', '901_ucsschool_import_counter.py']
-		process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		self.log.info('altered {} ldap-objects'.format(len(expected_warnings)))
-		stderr = process.stderr.read()
-		if not stderr:
-			raise Exception('diagnose-module {} did not raise any warning!'.format(diagnose_module))
-		for warning in expected_warnings:
-			if warning not in stderr:
-				raise Exception('diagnose-module {} did not raise warning {}!'.format(diagnose_module, warning))
+		module_name = '901_ucsschool_import_counter'
+		instance = Instance()
+		instance.init()
+		module = instance.get(module_name)
+		out = None
+		try:
+			out = module.execute(None)
+		except Critical:
+			pass
 
+		assert out and out['success'] is False
+		for warning in expected_warnings:
+			if warning.strip() not in out['description']:
+				raise Exception('diagnostic tool {} did not raise warning {}!\n'.format(module_name, warning))
+		self.log.info('Ran diagnostic tool {} successfully.'.format(module_name))
 
 if __name__ == '__main__':
 	Test().run()
