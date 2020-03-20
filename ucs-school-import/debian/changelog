@@ -1,3 +1,9 @@
+ucs-school-import (17.0.29) unstable; urgency=low
+
+  * Bug #50406: add missing dependency
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 20 Mar 2020 12:47:12 +0100
+
 ucs-school-import (17.0.28) unstable; urgency=low
 
   * Bug #50406: ucs-school-purge-expired-users does not fail anymore in SiSoPi
