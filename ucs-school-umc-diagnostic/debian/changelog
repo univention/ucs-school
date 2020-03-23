@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-8) unstable; urgency=medium
+
+  * Bug #50795: Adding diagnose module to display school inconsisistenicies.
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 23 Mar 2020 11:50:46 +0100
+
 ucs-school-umc-diagnostic (1.0.0-7) unstable; urgency=low
 
   * Bug #50500: package cleanup
