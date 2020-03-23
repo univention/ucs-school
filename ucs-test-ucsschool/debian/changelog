@@ -1,3 +1,12 @@
+ucs-test-ucsschool (6.0.105) unstable; urgency=low
+
+  * Bug #50795:
+    - renamed test 142_remove_from_school_consistency to
+      142_test_diagnostic_module_904
+    - updated test
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 23 Mar 2020 23:08:23 +0100
+
 ucs-test-ucsschool (6.0.104) unstable; urgency=low
 
   * Bug #50406: add test for 'disabled_checks' feature 
