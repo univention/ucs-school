@@ -77,16 +77,79 @@ feedback@univention.de
 			</para>
 		</section>
 
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog UCS@school 4.4v5</title>
+				<section id="changelog:ucsschool:2020-03-24" lang="en">
+					<title>Released on 2020-03-24:</title>
+					<!-- START ucs-school-import 17.0.29A~4.4.0.202003201250 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.29A~4.4.0.202003201250</emphasis>:
+						<itemizedlist>
+							<listitem><para>Logging of the import has been improved (<u:bug>50039</u:bug>):<itemizedlist><listitem><para>The log file <filename>/var/log/univention/ucs-school-import-error.log</filename> with entries of log level <varname>ERROR</varname> and above is now created besides the regular log file <filename>/var/log/univention/ucs-school-import.log</filename>.</para></listitem><listitem><para>The origin of the import job is now printed to the log file, so it is now possible to distinguish between jobs started on the command line and jobs started via the UMC module.</para></listitem><listitem><para>The first line of the input file (CSV) is now printed to the log file.</para></listitem><listitem><para>Multiple symlinks are now created in the directory <filename>/var/log/univention/ucs-school-import/</filename> to allow faster search for relevant log entries</para></listitem></itemizedlist></para></listitem>
+
+							<listitem><para>The SiSoPI documentation has been moved from the packages HTML documentation to the official UMC-import manual: https://docs.software-univention.de/ucsschool-umc-import-handbuch-4.4.html (<u:bug>50806</u:bug>).</para></listitem>
+
+							<listitem><para>The script <filename>ucs-school-purge-expired-users</filename> does not fail anymore in a scenario where <literal>school</literal> is not set in the import configuration (e.g. SiSoPI) (<u:bug>50406</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.29A~4.4.0.202003201250 -->
+					<!-- START ucs-school-lib 12.1.10A~4.4.0.202002211437 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.10A~4.4.0.202002211437</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal change: within the UCS@school LDAP attribute <literal>ucsschoolRole</literal> are now additional context types allowed. Besides the existing <literal>school</literal> the new type <literal>exam</literal> has been added (<u:bug>50819</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.10A~4.4.0.202002211437 -->
+					<!-- START ucs-school-metapackage 12.0.2-8A~4.4.0.202003101443 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.2-8A~4.4.0.202003101443</emphasis>:
+						<itemizedlist>
+							<listitem><para>When joining a Domaincontroller Backup into a UCS@school domain, demo schools are no longer created. The creation of demo schools is only performed during initial installation of UCS@school on the Domaincontroller Master (<u:bug>50578</u:bug>).</para></listitem>
+
+							<listitem><para>To reduce the load of LDAP servers in the UCS@school domain, the UCR variable <envar>nss/group/cachefile/check_member</envar> will be unset during the update to UCS@school 4.4v5 or higher. Thus the ldap-group-to-file mechanism no longer checks each group member for existence (<u:bug>50905</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.2-8A~4.4.0.202003101443 -->
+					<!-- START ucs-school-umc-diagnostic 1.0.0-9A~4.4.0.202003241232 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-diagnostic</emphasis> in version <emphasis>1.0.0-9A~4.4.0.202003241232</emphasis>:
+						<itemizedlist>
+							<listitem><para>The new package <package>ucs-school-umc-diagnostic</package> provides several diagnostic modules for UCS@school (<u:bug>50500</u:bug>, <u:bug>50795</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-diagnostic 1.0.0-9A~4.4.0.202003241232 -->
+					<!-- START ucs-school-umc-exam 9.0.1-34A~4.4.0.202002252150 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-34A~4.4.0.202002252150</emphasis>:
+						<itemizedlist>
+							<listitem><para>The tracking of exam users has been improved: in the past, problems could occur if users participated in several parallel tests and one of the tests was finished. The membership in exams is no longer recorded in LDAP via the attribute <literal>ucsschoolSchool</literal> but via an additional role entry in <literal>ucsschoolRole</literal> (<u:bug>50819</u:bug>).</para></listitem>
+
+							<listitem><para>The containers for exam users are now cached per OU. This fixes problems with exam users from multiple OUs (<u:bug>50588</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-34A~4.4.0.202002252150 -->
+<!-- CHANGELOG:2020-03-24:APPEND -->
+				</section>
+<!-- CHANGELOG-NEW-SECTION -->
+		</section>
+
 		<section id="changelog:changelog-4.4v4" lang="en">
 			<title>Errata updates in UCS@school 4.4v4</title>
 			<para>
 				After the release of UCS@school 4.4v4, some errata updates for UCS@school 4.4v4 were
 				released, which were usually applied automatically when the errata updates for UCS were applied. The
-				changes from the errata updates for UCS@school 4.4v4 are listed here again for clarity:
+				changes from the errata updates for UCS@school 4.4v4 are listed here again for clarity, since they are
+				also part of UCS@school 4.4v5:
 				<!-- Nach der Veröffentlichung von UCS@school 4.4v4 wurden einige Errata-Updates für UCS@school 4.4v4 veröffentlicht,
 					 die üblicherweise beim Einspielen der Errata-Updates für UCS automatisch miteingespielt wurden.
 					 Die Änderungen aus den Errata-Updates für UCS@school 4.4v4 sind der Übersichtlichkeit halber hier noch
-					 einmal aufgelistet: -->
+					 einmal aufgelistet, da sie auch Teil von UCS@school 4.4v5 sind: -->
 			</para>
 			<para>
 				Source package <emphasis>ucs-school-umc-computerroom</emphasis>:
@@ -125,11 +188,6 @@ feedback@univention.de
 
 				</itemizedlist>
 			</para>
-
-
-		<!-- CHANGELOG-NEW-SECTION -->
-
-
 		</section>
 	</chapter>
 </book>
