@@ -52,6 +52,7 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 				objectClass = self.lo.get(computer.dn, ['objectClass'], required=True)
 				if 'ucsschoolComputer' in objectClass['objectClass']:
 					objectClass['objectClass'].remove('ucsschoolComputer')
+					assert 'ucsschoolComputer' not in self.lo.get(computer.dn, ['objectClass'])
 				self.lo.modify(computer.dn, [('objectClass', self.lo.get(computer.dn, ['objectClass'], required=True), objectClass)])
 			computer_dns.append('{}'.format(computer.dn))
 		return computer_dns
