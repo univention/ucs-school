@@ -5,6 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-diagnostic
 fix: 1.0.0-8A~4.4.0.202003231157
 desc: |
- * The new package <package>ucs-school-umc-diagnostic</package> provides several diagnostic modules for UCS@school (Bug #50500).
- * Added a diagnostic module which provides a test for inconsistencies between working group memberships and school memberships (Bug #50795).
+ * The new package <package>ucs-school-umc-diagnostic</package> provides several diagnostic modules for UCS@school (Bug #50500, #50795).
 bug: [50500, 50795]
