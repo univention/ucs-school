@@ -103,7 +103,7 @@ def fix_computers(_umc_instance):
 		attrs = lo.get(dn)
 		ml = []
 		old_val = attrs.get('objectClass', [])
-		MODULE.info('old_val = {!r}'.format(old_val))
+		MODULE.process('old_val = {!r}'.format(old_val))
 		if 'ucsschoolComputer' not in old_val:
 			ml.append(['objectClass', old_val, old_val + ['ucsschoolComputer']])
 		MODULE.info('old_val = {!r}'.format(attrs.get('ucsschoolRole')))

@@ -95,7 +95,6 @@ def run(_umc_instance):
 		obj_list = lo.search(base='cn=unique-{},cn=ucsschool,cn=univention,{}'.format(counter_type, ucr.get('ldap/base')), scope='one')
 		for (obj_dn, obj_attrs) in obj_list:
 			value = obj_attrs.get('ucsschoolUsernameNextNumber', [''])[0]
-			### Check: convert counter to integer
 			try:
 				prefix_counter = int(value)
 			except ValueError:

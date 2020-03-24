@@ -14,10 +14,10 @@ from ldap.filter import filter_format
 from univention.management.console.modules.diagnostic import Instance, Warning
 
 
-class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
+class UCSSchoolSchoolConsistency(AutoMultiSchoolEnv):
 
 	def __init__(self):
-		super(UCSSchoolSchoolComputers, self).__init__()
+		super(UCSSchoolSchoolConsistency, self).__init__()
 		self.client_computers = []
 
 	def get_diagnostic_module(self):  # type: () -> Instance
@@ -64,7 +64,7 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
 
 
 def main():
-	with UCSSchoolSchoolComputers() as test_suite:
+	with UCSSchoolSchoolConsistency() as test_suite:
 		test_suite.create_multi_env_school_objects()
 		test_suite.run_all_tests()
 
