@@ -70,8 +70,8 @@ def run(_umc_instance):
 		ucsschoolRoles = ou_attrs.get('ucsschoolRole', [])
 		if not ucsschoolRoles:
 			problematic_objects.setdefault(ou_dn, []).append(_('ucsschoolRole is not set'))
-		if ucsschoolRoles and not any(x.startswith('school:school:{}'.format(ou_attrs.get('ou')[0])) for x in ucsschoolRoles):
-			problematic_objects.setdefault(ou_dn, []).append(_('ucsschoolRole "school:school:{0}" not found').format(ou_attrs.get('ucsschoolRole')[0]))
+		if ucsschoolRoles and not any(x == 'school:school:{}'.format(ou_attrs.get('ou')[0]) for x in ucsschoolRoles):
+			problematic_objects.setdefault(ou_dn, []).append(_('ucsschoolRole "school:school:{0}" not found').format(ou_attrs.get('ou')[0]))
 
 		if not ou_attrs.get('displayName', [None])[0]:
 			problematic_objects.setdefault(ou_dn, []).append(_('displayName is not set'))

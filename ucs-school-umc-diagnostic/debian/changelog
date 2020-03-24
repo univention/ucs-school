@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-9) unstable; urgency=low
+
+  * Bug #50500: fix logic error in diagnostic/plugins/902_ucsschool_ou_consistency.py
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 24 Mar 2020 12:30:27 +0100
+
 ucs-school-umc-diagnostic (1.0.0-8) unstable; urgency=medium
 
   * Bug #50795: Adding diagnose module to display school inconsisistenicies.
