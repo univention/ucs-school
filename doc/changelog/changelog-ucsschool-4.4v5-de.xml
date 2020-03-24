@@ -76,7 +76,58 @@ feedback@univention.de
 				dann konsultieren Sie bitte den folgenden Artikel auf univention help: <ulink url="https://help.univention.com/t/keyerror-ucsschoolrole-in-computerroom-room-aquire-and-schoolwizards-computers-query/13718" />
 			</para>
 		</section>
-<!-- CHANGELOG-NEW-SECTION -->
+
+		<section id="changelog:changelog-4.4v4" lang="en">
+			<title>Errata updates in UCS@school 4.4v4</title>
+			<para>
+				After the release of UCS@school 4.4v4, some errata updates for UCS@school 4.4v4 were
+				released, which were usually applied automatically when the errata updates for UCS were applied. The
+				changes from the errata updates for UCS@school 4.4v4 are listed here again for clarity:
+				<!-- Nach der Veröffentlichung von UCS@school 4.4v4 wurden einige Errata-Updates für UCS@school 4.4v4 veröffentlicht,
+					 die üblicherweise beim Einspielen der Errata-Updates für UCS automatisch miteingespielt wurden.
+					 Die Änderungen aus den Errata-Updates für UCS@school 4.4v4 sind der Übersichtlichkeit halber hier noch
+					 einmal aufgelistet: -->
+			</para>
+			<para>
+				Source package <emphasis>ucs-school-umc-computerroom</emphasis>:
+				<itemizedlist>
+					<listitem><para>Until now, wake-on-LAN packets were only sent out via an external tool via the network interface to which the default route was assigned. The UMC module <package>computerroom</package> now creates these packages itself and sends them by default on <emphasis>all</emphasis> interfaces unless the interface is on a blacklist (see UCR variables <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces</envar> and <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes</envar>) (<u:bug>49970</u:bug>).</para></listitem>
+					<listitem><para>If a user is logged in via single sign on, it is no longer necessary for the user to re-enter the password to start an exam (<u:bug>50772</u:bug>).</para></listitem>
+					<listitem><para>The UMC now sends the iTALC screen lock signal again if it does not arrive on the client computer or the client computer is no longer locked e.g. due to a reboot (<u:bug>50740</u:bug>).</para></listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Source package <emphasis>ucs-school-import</emphasis>:
+				<itemizedlist>
+					<listitem><para>Fixed a regression in the migrate_ucsschool_roles script that could skip SchoolComputers during migration. For more information please visit <ulink url="https://help.univention.com/t/keyerror-ucsschoolrole-in-computerroom-room-aquire-and-schoolwizards-computers-query/13718" />(<u:bug>50349</u:bug>).</para></listitem>
+					<listitem><para>The script <command>fix_ucsschool_slave</command> has been adapted to keep objects with the wrong UCS@school role <literal>win_computer</literal> from reappearing again after a resync (<u:bug>50280</u:bug>).</para></listitem>
+					<listitem><para>An erroneous function call was fixed, that was leading to wrong ownership of logfiles, which in turn produced empty logfiles (<u:bug>50515</u:bug>).</para></listitem>
+					<listitem><para>A premature cache purge leading to a huge slowdown of the UCS@school user import was fixed (<u:bug>50689</u:bug>).</para></listitem>
+					<listitem><para>The cron job <command>/etc/cron.d/ucs-school-import</command> is no longer executed on DC backup systems to prevent concurrency problems (<u:bug>50707</u:bug>).</para></listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Source package <emphasis>ucs-school-metapackage</emphasis>:
+				<itemizedlist>
+					<listitem><para>During a re-join of DC school slaves, the LDAP attribute <literal>userAccountControl</literal> was set to demote these objects, which caused them to be recognized as normal Windows Host Objects by the S4 Connector. The S4 Connector then mistakenly appended the value <literal>win_computer</literal> to the LDAP attribute <literal>ucsschoolRole</literal>. This faulty behaviour has been fixed (<u:bug>50280</u:bug>).</para></listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Source package <emphasis>ucs-school-umc-exam</emphasis>:
+				<itemizedlist>
+					<listitem><para>If a user is logged in via single sign on, it is no longer necessary for the user to re-enter the password to start an exam (<u:bug>50772</u:bug>).</para></listitem>
+
+					<listitem><para>The cron job <command>/etc/cron.d/ucs-school-umc-exam-master</command> is no longer executed on DC backup systems to prevent concurrency problems (<u:bug>50765</u:bug>).</para></listitem>
+
+					<listitem><para>The computers of computer rooms are now cached to improve performance during the start of an exam (<u:bug>50817</u:bug>, <u:bug>50588</u:bug>).</para></listitem>
+
+					<listitem><para>The logging of the Exam UMC module was improved (<u:bug>50818</u:bug>, <u:bug>50588</u:bug>).</para></listitem>
+
+				</itemizedlist>
+			</para>
+
+
+		<!-- CHANGELOG-NEW-SECTION -->
 
 
 		</section>
