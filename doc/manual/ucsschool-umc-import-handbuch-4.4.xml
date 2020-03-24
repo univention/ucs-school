@@ -312,7 +312,7 @@
 		<section id="Implementierung">
 			<title>Implementierung</title>
 			<para>
-				Um das Verschieben eines Benutzers von Schule A nach Schule B in zwei Schritten zu ermöglichen  - einschließlich der Möglichkeit, dass der Benutzer zu erst in Schule A gelöscht und später in Schule B angelegt wird - wird eine temporäre Schule verwendet: die sog. <literal>limbo_ou</literal>.
+				Um das Verschieben eines Benutzers von Schule A nach Schule B in zwei Schritten zu ermöglichen  - einschließlich der Möglichkeit, dass der Benutzer zuerst in Schule A gelöscht und später in Schule B angelegt wird - wird eine temporäre Schule verwendet: die sog. <literal>limbo_ou</literal>.
 				Es handelt sich dabei um eine gewöhnliche Schule (<literal>OU</literal>), deren Name konfigurierbar ist (Standard ist <literal>limbo</literal>).
 			</para>
 			<para>
@@ -333,15 +333,15 @@
 			<para>
 				<itemizedlist>
 					<listitem><para><literal>deletion_grace_period:deactivation</literal> <emphasis>muss</emphasis> <literal>0</literal> sein.</para></listitem>
-					<listitem><para><literal>deletion_grace_period:deletion</literal> sollte (deutlich) größer als <literal>0</literal> sein. Es sollte die maximale Anzahl an Tagen sein, die ein Import von zwei Schulen auseinander liegen kann. Es ist die Zeit die ein Konto in der "<wordasword>limbo</wordasword> OU" verbringt, bevor es endgültig gelöscht wird.</para></listitem>
+					<listitem><para><literal>deletion_grace_period:deletion</literal> sollte (deutlich) größer als <literal>0</literal> sein. Es sollte die maximale Anzahl an Tagen sein, die ein Import von zwei Schulen auseinander liegen kann. Das ist die Zeit die ein Konto in der "<wordasword>limbo</wordasword> OU" verbringt, bevor es endgültig gelöscht wird.</para></listitem>
 				</itemizedlist>
 				Der Name der sog. "<wordasword>limbo</wordasword> OU" kann mit der Einstellung <literal>limbo_ou</literal> gesetzt werden.
 			</para>
 			<para>
 				Darüber hinaus muss die &ucsUCR;-Variable <envar>ucsschool/import/http_api/set_source_uid</envar> auf <literal>no</literal> gesetzt und der Import-HTTP-API-Server neu gestartet werden:
 				<programlisting>
-ucr set ucsschool/import/http_api/set_source_uid=no
-service ucs-school-import-http-api restart
+# ucr set ucsschool/import/http_api/set_source_uid=no
+# service ucs-school-import-http-api restart
 				</programlisting>
 			</para>
 		</section>
@@ -350,22 +350,22 @@ service ucs-school-import-http-api restart
 			<para>
 				Für den Testaufbau werden zunächst zwei reguläre und die temporäre Schule erstellt:
 				<programlisting>
-/usr/share/ucs-school-import/scripts/create_ou schuleA
-/usr/share/ucs-school-import/scripts/create_ou schuleB
-/usr/share/ucs-school-import/scripts/create_ou limbo
+# /usr/share/ucs-school-import/scripts/create_ou schuleA
+# /usr/share/ucs-school-import/scripts/create_ou schuleB
+# /usr/share/ucs-school-import/scripts/create_ou limbo
 				</programlisting>
 				Nach dem Sichern der ursprünglichen Konfiguration wird die <wordasword>SiSoPi-Konfiguration</wordasword> aktiviert.
 				Üblicherweise wird die neue Konfiguration anschließend an die individuellen Erfordernisse angepasst.
 				Für den Testaufbau wurden <literal>csv</literal>, <literal>scheme</literal> und <literal>source_uid</literal> hinzugefügt.
 				<programlisting>
-cp -v /var/lib/ucs-school-import/configs/user_import.json{,.bak}
-cp -v /usr/share/ucs-school-import/configs/user_import_sisopi.json /var/lib/ucs-school-import/configs/user_import.json
-$EDITOR /var/lib/ucs-school-import/configs/user_import.json
+# cp -v /var/lib/ucs-school-import/configs/user_import.json{,.bak}
+# cp -v /usr/share/ucs-school-import/configs/user_import_sisopi.json /var/lib/ucs-school-import/configs/user_import.json
+# $EDITOR /var/lib/ucs-school-import/configs/user_import.json
 				</programlisting>
-				Tipp: mit folgendem Befehl kann die syntaktische Korrektheit der JSON-Datei geprüft werden.
-				Wenn die Datei syntaktisch korrekt ist, wird ihr Inhalt ausgegeben, bei einem Fehler wird statt dessen dieser angezeigt.
+				Tipp: Mit folgendem Befehl kann die syntaktische Korrektheit der JSON-Datei geprüft werden.
+				Wenn die Datei syntaktisch korrekt ist, wird ihr Inhalt ausgegeben, bei einem Fehler wird stattdessen dieser angezeigt.
 				<programlisting>
-cat /var/lib/ucs-school-import/configs/user_import.json | python -m json.tool
+# cat /var/lib/ucs-school-import/configs/user_import.json | python -m json.tool
 {
     "classes": {
         "user_importer": "ucsschool.importer.mass_import.sisopi_user_import.SingleSourcePartialUserImport"
@@ -400,22 +400,22 @@ cat /var/lib/ucs-school-import/configs/user_import.json | python -m json.tool
 }
 				</programlisting>
 				<programlisting>
-ucr set ucsschool/import/http_api/set_source_uid=no
-service ucs-school-import-http-api restart
+# ucr set ucsschool/import/http_api/set_source_uid=no
+# service ucs-school-import-http-api restart
 				</programlisting>
 			</para>
 			<para>
 				Nun wird für jede Schule eine zu importierende CSV Datei erzeugt:
 				<programlisting>
-/usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
+# /usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
 	--csvfile test_users_A-1.csv --nostart --httpapi --teachers 4 \
 	--classes 1 --inclasses 1 --schools 1 --verbose schuleA
-/usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
+# /usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
 	--csvfile test_users_B-1.csv --nostart --httpapi --teachers 4 \
 	--classes 1 --inclasses 1 --schools 1 --verbose schuleB
 				</programlisting>
 				<programlisting>
-cat test_users_A-1.csv
+# cat test_users_A-1.csv
 
 "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 "schuleA","Yola","Lenz","1a","A teacher.","+74-686-445678",""
@@ -424,7 +424,7 @@ cat test_users_A-1.csv
 "schuleA","Radomila","Meygger","1a","A teacher.","+11-364-599925",""
 				</programlisting>
 				<programlisting>
-cat test_users_B-1.csv
+# cat test_users_B-1.csv
 
 "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 "schuleB","Stan","Kinker","1a","A teacher.","+91-299-143803",""
@@ -434,10 +434,10 @@ cat test_users_B-1.csv
 				</programlisting>
 			</para>
 			<para>
-				Der Import würde regulär über das UMC-Modul statt finden, wird für den Test aber an der Kommandozeile durchgeführt.
+				Der Import würde regulär über das UMC-Modul statt finden, wird für diesen Test aber an der Kommandozeile durchgeführt.
 				Beim Import an den beiden Schulen werden je vier Lehrer angelegt:
 				<programlisting>
-/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+# /usr/share/ucs-school-import/scripts/ucs-school-user-import \
 	--verbose --user_role teacher --infile test_users_A-1.csv \
 	--school schuleA
 
@@ -450,7 +450,7 @@ Deleted ImportTeacher: 0
 Errors: 0
 ------ End of user import statistics ------
 
-/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+# /usr/share/ucs-school-import/scripts/ucs-school-user-import \
 	--verbose --user_role teacher --infile test_users_B-1.csv \
 	--school schuleB
 
@@ -469,7 +469,7 @@ Errors: 0
 				Dazu wird eine CSV Datei <filename>test_users_A-2.csv</filename> ohne die Zeile mit <literal>"Yola","Lenz"</literal> aus <filename>test_users_A-1.csv</filename> erzeugt, sowie eben diese Zeile in <filename>test_users_B-2.csv</filename> eingefügt. Dort muss <literal>schuleA</literal> noch durch <literal>schuleB</literal> ersetzt werden.
 				Die neuen Dateien sehen wie folgt aus:
 				<programlisting>
-cat test_users_A-2.csv
+# cat test_users_A-2.csv
 
 "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 "schuleA","Iphigenie","Lemgo","1a","A teacher.","+63-727-768248",""
@@ -477,7 +477,7 @@ cat test_users_A-2.csv
 "schuleA","Radomila","Meygger","1a","A teacher.","+11-364-599925",""
 				</programlisting>
 				<programlisting>
-cat test_users_B-2.csv
+# cat test_users_B-2.csv
 
 "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 "schuleB","Stan","Kinker","1a","A teacher.","+91-299-143803",""
@@ -488,11 +488,11 @@ cat test_users_B-2.csv
 				</programlisting>
 				Beim Import an <literal>schuleA</literal> wird <literal>yola.lenz</literal> scheinbar gelöscht. Tatsächlich wird sie aber in die Schule <literal>limbo</literal> verschoben:
 				<programlisting>
-udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
+# udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
 DN: uid=yola.lenz,cn=lehrer,cn=users,ou=schuleA,&lt;base dn&gt;
   school: schuleA
 
-/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+# /usr/share/ucs-school-import/scripts/ucs-school-user-import \
 	--verbose --user_role teacher --infile test_users_A-2.csv \
 	--school schuleA
 
@@ -513,7 +513,7 @@ Deleted ImportTeacher: 0
 Errors: 0
 ------ End of user import statistics ------
 
-udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
+# udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
 DN: uid=yola.lenz,cn=lehrer,cn=users,ou=limbo,&lt;base dn&gt;
   school: limbo
 				</programlisting>
@@ -521,7 +521,7 @@ DN: uid=yola.lenz,cn=lehrer,cn=users,ou=limbo,&lt;base dn&gt;
 			<para>
 				Beim Import an <literal>schuleB</literal> wird <literal>yola.lenz</literal> aus der Schule <literal>limbo</literal> dort hin verschoben:
 				<programlisting>
-/usr/share/ucs-school-import/scripts/ucs-school-user-import \
+# /usr/share/ucs-school-import/scripts/ucs-school-user-import \
 	--verbose --user_role teacher --infile test_users_B-2.csv \
 	--school schuleB
 
@@ -542,14 +542,14 @@ Deleted ImportTeacher: 0
 Errors: 0
 ------ End of user import statistics ------
 
-udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
+# udm users/user list --filter uid=yola.lenz | egrep 'DN|school:'
 DN: uid=yola.lenz,cn=lehrer,cn=users,ou=schuleB,&lt;base dn&gt;
   school: schuleB
 				</programlisting>
 			</para>
 			<para>
 				Der umgekehrte Fall, in dem ein zu verschiebender Benutzer an der Zielschule importiert wird, bevor er an der ursprünglichen Schule gelöscht wird, kann z.B. folgendermaßen erzeugt werden:
-				Die Zeile von <literal>"Iphigenie","Lemgo"</literal> wird in das CSV der <literal>schuleB</literal> kopiert (Anpassen der Spalte <literal>"Schule"</literal> nicht vergessen) und aus dem CSV der <literal>schuleA</literal> entfernt.
+				Die Zeile von <literal>"Iphigenie","Lemgo"</literal> wird in das CSV der <literal>schuleB</literal> kopiert, wobei die Spalte <literal>"Schule"</literal> angepasst und aus dem CSV der <literal>schuleA</literal> entfernt wird.
 				Der Import wird nun an <literal>schuleB</literal> vor <literal>schuleA</literal> durchgeführt.
 				Zwischendurch wird die Lehrerin Mitglied beider Schulen sein.
 				Das Benutzerkonto würde sich folgendermaßen ändern:
