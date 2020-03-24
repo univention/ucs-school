@@ -1,4 +1,4 @@
-ucs-test-ucsschool (6.0.105) unstable; urgency=low
+ucs-test-ucsschool (6.0.106) unstable; urgency=low
 
   * Bug #50500: added tests for diagnostic module 900-903
 
