@@ -1,5 +1,11 @@
 ucs-test-ucsschool (6.0.105) unstable; urgency=low
 
+  * Bug #50500: added tests for diagnostic module 900-903
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 24 Mar 2020 11:47:01 +0100
+
+ucs-test-ucsschool (6.0.105) unstable; urgency=low
+
   * Bug #50795:
     - renamed test 142_remove_from_school_consistency to
       142_test_diagnostic_module_904
