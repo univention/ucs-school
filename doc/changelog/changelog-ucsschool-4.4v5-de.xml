@@ -79,8 +79,8 @@ feedback@univention.de
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog UCS@school 4.4v5</title>
-				<section id="changelog:ucsschool:2020-03-24" lang="en">
-					<title>Released on 2020-03-24:</title>
+				<section id="changelog:ucsschool:2020-03-25" lang="en">
+					<title>Released on 2020-03-25:</title>
 					<!-- START ucs-school-import 17.0.29A~4.4.0.202003201250 -->
 					<para>
 						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.29A~4.4.0.202003201250</emphasis>:
@@ -111,6 +111,8 @@ feedback@univention.de
 
 							<listitem><para>To reduce the load of LDAP servers in the UCS@school domain, the UCR variable <envar>nss/group/cachefile/check_member</envar> will be unset during the update to UCS@school 4.4v5 or higher. Thus the ldap-group-to-file mechanism no longer checks each group member for existence (<u:bug>50905</u:bug>).</para></listitem>
 
+							<listitem><para>Automatically install new diagnostic modules on Domaincontroller Master and Domaincontroller Backup systems (<u:bug>50500</u:bug>).</para></listitem>
+
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-metapackage 12.0.2-8A~4.4.0.202003101443 -->
@@ -134,7 +136,7 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-umc-exam 9.0.1-34A~4.4.0.202002252150 -->
-<!-- CHANGELOG:2020-03-24:APPEND -->
+<!-- CHANGELOG:2020-03-25:APPEND -->
 				</section>
 <!-- CHANGELOG-NEW-SECTION -->
 		</section>
