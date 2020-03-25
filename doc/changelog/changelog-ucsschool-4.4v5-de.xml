@@ -103,19 +103,19 @@ feedback@univention.de
 						</itemizedlist>
 					</para>
 					<!-- END ucs-school-lib 12.1.10A~4.4.0.202002211437 -->
-					<!-- START ucs-school-metapackage 12.0.2-8A~4.4.0.202003101443 -->
+					<!-- START ucs-school-metapackage 12.0.3-1A~4.4.0.202003251252 -->
 					<para>
-						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.2-8A~4.4.0.202003101443</emphasis>:
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.3-1A~4.4.0.202003251252</emphasis>:
 						<itemizedlist>
 							<listitem><para>When joining a Domaincontroller Backup into a UCS@school domain, demo schools are no longer created. The creation of demo schools is only performed during initial installation of UCS@school on the Domaincontroller Master (<u:bug>50578</u:bug>).</para></listitem>
 
 							<listitem><para>To reduce the load of LDAP servers in the UCS@school domain, the UCR variable <envar>nss/group/cachefile/check_member</envar> will be unset during the update to UCS@school 4.4v5 or higher. Thus the ldap-group-to-file mechanism no longer checks each group member for existence (<u:bug>50905</u:bug>).</para></listitem>
 
-							<listitem><para>Automatically install new diagnostic modules on Domaincontroller Master and Domaincontroller Backup systems (<u:bug>50500</u:bug>).</para></listitem>
+							<listitem><para>New diagnostic modules are now automatically installed on Domaincontroller Master and Domaincontroller Backup systems (<u:bug>50500</u:bug>).</para></listitem>
 
 						</itemizedlist>
 					</para>
-					<!-- END ucs-school-metapackage 12.0.2-8A~4.4.0.202003101443 -->
+					<!-- END ucs-school-metapackage 12.0.3-1A~4.4.0.202003251252 -->
 					<!-- START ucs-school-umc-diagnostic 1.0.0-9A~4.4.0.202003241232 -->
 					<para>
 						Source package <emphasis>ucs-school-umc-diagnostic</emphasis> in version <emphasis>1.0.0-9A~4.4.0.202003241232</emphasis>:
