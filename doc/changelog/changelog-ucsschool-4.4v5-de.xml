@@ -55,6 +55,10 @@ feedback@univention.de
 				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
 				Produktivumgebung sein.
 			</para>
+			<para>
+				UCS@school 4.4v5 setzt für das Update bzw. die Neuinstallation mindestens die UCS-Version 4.4-3 voraus. Die betreffenden Systeme müssen
+				daher vor dem Update mindestens auf diese UCS-Version aktualisiert werden.
+			</para>
 		</section>
 
 		<section id="changelog:newerrata">
