@@ -3,9 +3,9 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-metapackage
-fix: 12.0.2-8A~4.4.0.202003101443
+fix: 12.0.3-1A~4.4.0.202003251252
 desc: |
  * When joining a Domaincontroller Backup into a UCS@school domain, demo schools are no longer created. The creation of demo schools is only performed during initial installation of UCS@school on the Domaincontroller Master (Bug #50578).
  * To reduce the load of LDAP servers in the UCS@school domain, the UCR variable <envar>nss/group/cachefile/check_member</envar> will be unset during the update to UCS@school 4.4v5 or higher. Thus the ldap-group-to-file mechanism no longer checks each group member for existence (Bug #50905).
- * Automatically install new diagnostic modules on Domaincontroller Master and Domaincontroller Backup systems (Bug #50500).
+ * New diagnostic modules are now automatically installed on Domaincontroller Master and Domaincontroller Backup systems (Bug #50500).
 bug: [50500,50578,50905]
