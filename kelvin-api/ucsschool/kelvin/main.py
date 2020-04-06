@@ -31,6 +31,7 @@ from functools import lru_cache
 
 import aiofiles
 import lazy_object_proxy
+import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.requests import Request
@@ -203,3 +204,9 @@ app.mount(
     StaticFiles(directory=str(STATIC_FILES_PATH)),
     name="static",
 )
+
+
+if __name__ == "__main__":
+    # this is here so the app can be run in a debugger, see
+    # https://fastapi.tiangolo.com/tutorial/debugging/
+    uvicorn.run(app, host="0.0.0.0", port=8000)
