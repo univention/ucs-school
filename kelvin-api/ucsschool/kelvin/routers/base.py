@@ -41,7 +41,7 @@ from udm_rest_client import UDM
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
 
-school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
+school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$")
 
 
 async def get_lib_obj(
