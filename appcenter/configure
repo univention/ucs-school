@@ -27,16 +27,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-APP_ID="ucsschool-kelvin-rest-api"
-CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
-CN_ADMIN_SECRET_FILE_ULDAP_LOCATION="/etc/ldap.secret"
 MACHINE_USER="$HOSTNAME\$"
 MACHINE_PASSWORD=$(cat /etc/machine.secret)
 
 if [ "$1" = "install" ]; then
-  echo "Copying cn=admin to ${CN_ADMIN_SECRET_FILE_ULDAP_LOCATION}..."
-  cp -av "$CN_ADMIN_SECRET_FILE" "$CN_ADMIN_SECRET_FILE_ULDAP_LOCATION"
-
   echo "Building OpenAPI client library using host ${DOCKER_HOST_NAME}..."
   . /kelvin/venv/bin/activate
   update_openapi_client \
