@@ -154,11 +154,25 @@ The "__pycache__" directory can be safely ignored.
   sleep 1  # prevent [502] Proxy Error, in case of access before UDM REST API is ready
 }
 
+check_openapi_client_knows_ucssschool() {
+  if ! univention-app shell "$APP_ID" /kelvin/venv/bin/python3 -c "import sys; from openapi_client_udm import UsersUserOptions; sys.exit(0 if 'ucsschool_administrator' in UsersUserOptions.openapi_types else 1)"; then
+    echo "Building OpenAPI client library in Docker container..."
+    MACHINE_USER="$(ucr get appcenter/apps/$APP_ID/hostdn | cut -d ',' -f 1 | cut -d '=' -f 2)\$"
+    MACHINE_PASSWORD_FILE="$(docker inspect --format='{{.GraphDriver.Data.MergedDir}}' "$(ucr get appcenter/apps/$APP_ID/container)")/etc/machine.secret"
+    MACHINE_PASSWORD="$(<"$MACHINE_PASSWORD_FILE")"
+    univention-app shell "$APP_ID" /bin/sh -c ". /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure --username \"$MACHINE_USER\" --password \"$MACHINE_PASSWORD\" \"\$DOCKER_HOST_NAME\""
+  else
+    echo "OpenAPI client library knows UCS@school types."
+  fi
+}
+
+
 joinscript_init
 
 eval $(ucr shell ldap/base appcenter/apps/ucsschool-kelvin-rest-api/hostdn)
 
 main "$@"
+check_openapi_client_knows_ucssschool
 
 joinscript_save_current_version
 exit $?
