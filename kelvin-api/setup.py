@@ -40,13 +40,13 @@ from typing import Iterable
 
 import setuptools
 
-with open(Path(__file__).parent / "requirements.txt") as fp:
+with (Path(__file__).parent / "requirements.txt").open("r") as fp:
     requirements = fp.read().splitlines()
 
-with open(Path(__file__).parent / "requirements_dev.txt") as fp:
+with (Path(__file__).parent / "requirements_dev.txt").open("r") as fp:
     requirements_dev = fp.read().splitlines()
 
-with open(Path(__file__).parent / "requirements_test.txt") as fp:
+with (Path(__file__).parent / "requirements_test.txt").open("r") as fp:
     requirements_test = fp.read().splitlines()
 
 with (Path(__file__).parent / "VERSION.txt").open("r") as fp:
