@@ -27,8 +27,8 @@
 
 import packaging.version
 
-import ucsschool.kelvin
+from ucsschool.kelvin.constants import APP_VERSION
 
 
 def test_parse_version():
-    packaging.version.parse(ucsschool.kelvin.__version__)
+    packaging.version.parse(str(APP_VERSION))

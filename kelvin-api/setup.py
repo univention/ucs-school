@@ -40,8 +40,6 @@ from typing import Iterable
 
 import setuptools
 
-from ucsschool.kelvin import __version__
-
 with open(Path(__file__).parent / "requirements.txt") as fp:
     requirements = fp.read().splitlines()
 
@@ -50,6 +48,9 @@ with open(Path(__file__).parent / "requirements_dev.txt") as fp:
 
 with open(Path(__file__).parent / "requirements_test.txt") as fp:
     requirements_test = fp.read().splitlines()
+
+with (Path(__file__).parent / "VERSION.txt").open("r") as fp:
+    version = fp.read().strip()
 
 
 class BuildHTMLCommand(setuptools.Command):
@@ -101,7 +102,7 @@ class BuildHTMLCommand(setuptools.Command):
 
 setuptools.setup(
     name="ucs-school-kelvin-api",
-    version=__version__,
+    version=version,
     author="Univention GmbH",
     author_email="packages@univention.de",
     description="UCS@school Kelvin REST API",

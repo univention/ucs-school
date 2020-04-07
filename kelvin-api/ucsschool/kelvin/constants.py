@@ -28,7 +28,25 @@
 import logging
 from pathlib import Path
 
+import lazy_object_proxy
+import pkg_resources
+
+
+def _app_version() -> str:
+    try:
+        return pkg_resources.get_distribution(APP_ID).version
+    except pkg_resources.DistributionNotFound:
+        pass
+    # pytest before installation, try to read VERSION.txt or simply return a dummy value
+    try:
+        with (Path(__file__).parent.parent.parent / "VERSION.txt").open("r") as fp:
+            return fp.read().strip()
+    except IOError:
+        return "1.1.0"
+
+
 APP_ID = "ucsschool-kelvin-rest-api"
+APP_VERSION = lazy_object_proxy.Proxy(_app_version)
 API_USERS_GROUP_NAME = f"{APP_ID}-admins"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"

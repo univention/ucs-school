@@ -46,8 +46,8 @@ from ucsschool.lib.models.attributes import ValidationError as SchooLibValidatio
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.utils import env_or_ucr, get_file_handler
 
-from . import __version__
 from .constants import (
+    APP_VERSION,
     DEFAULT_LOG_LEVELS,
     LOG_FILE_PATH,
     STATIC_FILE_CHANGELOG,
@@ -72,7 +72,7 @@ ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)
 app = FastAPI(
     title="Kelvin API",
     description="UCS@school Kelvin REST API",
-    version=__version__,
+    version=str(APP_VERSION),
     docs_url=f"{URL_API_PREFIX}/docs",
     redoc_url=f"{URL_API_PREFIX}/redoc",
     openapi_url=f"{URL_API_PREFIX}/openapi.json",

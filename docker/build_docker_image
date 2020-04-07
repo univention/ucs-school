@@ -2,8 +2,6 @@
 
 set -e
 
-
-APP_VERSION="$(cd ../kelvin-api; python3 -B -c 'import ucsschool.kelvin; print(ucsschool.kelvin.__version__)')"
 if [ "$1" = "--release" ]; then
   RELEASE=1
 fi
@@ -14,6 +12,7 @@ if [ "$1" = "--push" ] || [ "$2" = "--push" ]; then
 fi
 
 APP_ID="ucsschool-kelvin-rest-api"
+APP_VERSION="$(<../kelvin-api/VERSION.txt)" || exit 1
 DOCKERFILE="$(basename "$(readlink -f Dockerfile)")"
 BASE_IMG="$(egrep ^FROM "$DOCKERFILE" | cut -d ' ' -f 2-)"
 APP_IMG_NO_VERSION="docker-test-upload.software-univention.de/${APP_ID}"
