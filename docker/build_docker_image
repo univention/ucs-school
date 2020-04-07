@@ -2,15 +2,6 @@
 
 set -e
 
-if [ "$1" = "--release" ]; then
-  RELEASE=1
-fi
-
-PUSH_DEV=0
-if [ "$1" = "--push" ] || [ "$2" = "--push" ]; then
-  PUSH_DEV=1
-fi
-
 APP_ID="ucsschool-kelvin-rest-api"
 APP_VERSION="$(<../kelvin-api/VERSION.txt)" || exit 1
 DOCKERFILE="$(basename "$(readlink -f Dockerfile)")"
@@ -19,6 +10,26 @@ APP_IMG_NO_VERSION="docker-test-upload.software-univention.de/${APP_ID}"
 APP_IMG="${APP_IMG_NO_VERSION}:${APP_VERSION}"
 APP_IMG_NO_TEST_NO_VERSION="docker-upload.software-univention.de/${APP_ID}"
 APP_IMG_NO_TEST="${APP_IMG_NO_TEST_NO_VERSION}:${APP_VERSION}"
+DOCKER_REGISTRY_SERVER="docker.knut.univention.de"
+
+QUICK=0
+[ "$1" = "-q" ] && QUICK=1
+
+if [ "$1" = "--release" ] || [ "$2" = "--release" ] || [ "$3" = "--release" ]; then
+  RELEASE=1
+fi
+
+PUSH_DEV=0
+if [ "$1" = "--push" ] || [ "$2" = "--push" ] || [ "$3" = "--push" ]; then
+  PUSH_DEV=1
+fi
+if [ "$1" = "--yes" ] || [ "$2" = "--yes" ] || [ "$3" = "--yes" ]; then
+  PUSH_YES=1
+fi
+if [ "$PUSH_DEV" = 1 ] && [ "$(hostname -f)" != "$DOCKER_REGISTRY_SERVER" ]; then
+  echo "Pushing image to docker registry only possible on $DOCKER_REGISTRY_SERVER."
+  exit 1
+fi
 
 if [ -n "$http_proxy" ]; then
     PROXY_ARGS="--build-arg http_proxy=$http_proxy --build-arg https_proxy=$http_proxy"
@@ -31,12 +42,12 @@ echo "APP_IMG=$APP_IMG"
 echo "DOCKERFILE: $DOCKERFILE"
 echo "PROXY_ARGS: $PROXY_ARGS"
 
-echo "Updating base image..."
-docker pull "$BASE_IMG"
+if [ "$QUICK" = "0" ] || [ "$PUSH_DEV" = "1" ]; then
+     echo "Updating base image (use '-q' to skip)..."
+     docker pull "$BASE_IMG"
 
-if [ "$RELEASE" = "1" ]; then
-  echo "Removing old final image..."
-  docker rmi -f "$APP_IMG" || true
+     echo "Removing old final image (use '-q' to skip)..."
+     docker rmi -f "$APP_IMG" || true
 fi
 
 echo "Updating/Downloading patched UCR..."
@@ -75,17 +86,32 @@ if ! ls -l build/openapi-generator-cli-*.jar 2>/dev/null; then
   wget -P build/ "${OPENAPI_CLIENT_GENERATOR_JAR//\"}"
 fi
 
-# collect dependencies to minimize Docker image by installing and uninstalling in one step
+echo "Collecting all Python dependencies..."
+# ... to minimize Docker image by installing and uninstalling in one step
 find build/ -name 'requirements*.txt' -exec cat {} + | egrep -v 'univention|school' | sort | uniq > build/requirements_all.txt
 
 echo "Building docker image..."
-docker build $PROXY_ARGS --build-arg version="$APP_VERSION" -t "$APP_IMG" build
+if [ "$RELEASE" = 1 ]; then
+  BUILD_ARGS="--no-cache"
+fi
+docker build \
+  $PROXY_ARGS \
+  $BUILD_ARGS \
+  --build-arg app_id="$APP_ID" \
+  --build-arg date="$(date --iso-8601=seconds)" \
+  --build-arg version="$APP_VERSION" \
+  -t "$APP_IMG" \
+  build
 
 echo "Local Docker images:"
 docker images "$APP_IMG_NO_VERSION"
 
 if [ "$PUSH_DEV" = 1 ]; then
-  read -p "Push 'Y' if you are sure you want to push '$APP_IMG' to the docker registry. " -n 1 -r
+  if [ -z "$PUSH_YES" ]; then
+    read -p "Push 'Y' if you are sure you want to push '$APP_IMG' to the docker registry. " -n 1 -r
+  else
+    REPLY="y"
+  fi
   echo
   if [[ $REPLY =~ ^[yY]$ ]]; then
     echo "Removing 'test' from image tag..."

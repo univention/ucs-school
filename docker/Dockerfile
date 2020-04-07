@@ -27,6 +27,8 @@
 
 FROM alpine:3.10
 
+ARG app_id
+ARG date
 ARG version
 
 VOLUME /var/log
@@ -37,7 +39,8 @@ EXPOSE 7890
 
 CMD ["/sbin/init"]
 
-LABEL "description"="UCS@school Kelvin REST API" \
+LABEL "description"="Image of UCS app '$app_id'." \
+    "url"="https://www.univention.com/products/univention-app-center/app-catalog/$app_id/" \
     "version"="$version"
 
 # package and Python dependency installation, base system configuration,
@@ -71,17 +74,17 @@ RUN apk add --no-cache $(cat /tmp/alpine_apk_list) && \
     mkdir -pv /kelvin/openapi-generator/build /kelvin/openapi-generator/jar && \
     mv /tmp/openapi-generator-cli-*.jar /kelvin/openapi-generator/jar && \
     python3.7 -m venv --system-site-packages /kelvin/venv && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile --upgrade pip && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile --upgrade pip && \
 	# build ujson from source https://github.com/esnme/ultrajson/issues/326
-	/kelvin/venv/bin/pip3 install git+git://github.com/esnme/ultrajson.git && \
+	/kelvin/venv/bin/python3 -m pip install git+git://github.com/esnme/ultrajson.git && \
 	# python-debian for UCR
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile python-debian && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile python-debian && \
 	# install pre-build openapi-client-udm package, not yet built against app host
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile -i https://test.pypi.org/simple/ openapi-client-udm && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/simple/ openapi-client-udm && \
 	# install most current udm_rest_client package (instead of the one from pypi)
-	/kelvin/venv/bin/pip3 install git+git://github.com/univention/python-udm-rest-api-client.git && \
+	/kelvin/venv/bin/python3 -m pip install git+git://github.com/univention/python-udm-rest-api-client.git && \
 	# install all remaining Python requirements
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile -r /tmp/requirements_all.txt && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile -r /tmp/requirements_all.txt && \
     apk del --no-cache \
         g++ \
         gcc \
@@ -91,24 +94,25 @@ RUN apk add --no-cache $(cat /tmp/alpine_apk_list) && \
 	rm -rf /tmp/*
 
 # install univention libraries
-COPY univention-config-registry/ /tmp/univention-config-registry
 COPY univention-lib-slim/ /tmp/univention-lib-slim
 COPY univention-directory-manager-modules-slim/ /tmp/univention-directory-manager-modules-slim
-RUN /kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-config-registry/python && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-lib-slim && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --compile /tmp/univention-directory-manager-modules-slim && \
+RUN /kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/simple/ univention-config-registry && \
+    ln -sv /usr/bin/univention-config-registry /usr/bin/ucr && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile /tmp/univention-lib-slim && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile /tmp/univention-directory-manager-modules-slim && \
 	rm -rf /tmp/*
 
 # copy and install project - separate last step for fast image rebuilds
 # install packages 'editable', so we can work directly on them
+LABEL "release date"="$date"
 COPY ucs-school-lib/ /kelvin/ucs-school-lib
 COPY ucs-school-import/ /kelvin/ucs-school-import
 COPY ucsschool-kelvin-rest-api.initd /tmp/
 COPY kelvin-api/ /kelvin/kelvin-api
 RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest-api && \
 	rc-update add ucsschool-kelvin-rest-api default && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
 	cp -r /kelvin/ucs-school-import/usr/share/ucs-school-import /usr/share/ && \
 	cp kelvin-api/usr/share/ucs-school-import/configs/kelvin_defaults.json /usr/share/ucs-school-import/configs/ && \
 	cp kelvin-api/usr/share/ucs-school-import/checks/*.py /usr/share/ucs-school-import/checks/ && \
@@ -116,7 +120,7 @@ RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest
 	mkdir -p /var/lib/ucs-school-import && \
 	cp -r /kelvin/ucs-school-import/empty_configs /var/lib/ucs-school-import/configs && \
 	/kelvin/venv/bin/python3 /kelvin/kelvin-api/setup.py build_html && \
-	/kelvin/venv/bin/pip3 install --no-cache-dir --editable /kelvin/kelvin-api[development] && \
+	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --editable /kelvin/kelvin-api[development] && \
 	source /kelvin/venv/bin/activate && \
 	(cd /kelvin/ucs-school-lib/modules && python -m pytest) && \
 	make -C /kelvin/kelvin-api lint && \
