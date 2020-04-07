@@ -30,6 +30,8 @@
 APP_ID="ucsschool-kelvin-rest-api"
 CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
 CN_ADMIN_SECRET_FILE_ULDAP_LOCATION="/etc/ldap.secret"
+MACHINE_USER="$HOSTNAME\$"
+MACHINE_PASSWORD=$(cat /etc/machine.secret)
 
 if [ "$1" = "install" ]; then
   echo "Copying cn=admin to ${CN_ADMIN_SECRET_FILE_ULDAP_LOCATION}..."
@@ -41,6 +43,8 @@ if [ "$1" = "install" ]; then
     --generator java \
     --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar \
     --insecure \
+    -- username "$MACHINE_USER" \
+    -- password "$MACHINE_PASSWORD" \
     $DOCKER_HOST_NAME
 
   echo "Restating UCS@school Kelvin REST API server..."
