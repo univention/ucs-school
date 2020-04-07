@@ -37,10 +37,10 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
     --generator java \
     --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar \
     --insecure \
-    -- username "$MACHINE_USER" \
-    -- password "$MACHINE_PASSWORD" \
-    $DOCKER_HOST_NAME
-
-  echo "Restating UCS@school Kelvin REST API server..."
-  /etc/init.d/ucsschool-kelvin-rest-api restart
+    --username "$MACHINE_USER" \
+    --password "$MACHINE_PASSWORD" \
+    "$DOCKER_HOST_NAME"
 fi
+
+echo "Restating UCS@school Kelvin REST API server..."
+/etc/init.d/ucsschool-kelvin-rest-api restart

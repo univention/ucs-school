@@ -33,11 +33,11 @@
 #  Join script that runs on the docker host.
 #
 
-VERSION=1
+VERSION=2
 
 APP_ID="ucsschool-kelvin-rest-api"
 ADMIN_GROUP="$APP_ID-admins"
-UDM_REST_GROUP="UDM API enabled Machines"
+UDM_REST_GROUP="UDM-API-enabled-machines"
 CN_ADMIN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/cn_admin.secret"
 TOKEN_SIGN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/tokens.secret"
 KELVIN_IMPORT_CONFIG_FILE="/var/lib/ucs-school-import/configs/kelvin.json"
@@ -132,20 +132,27 @@ The "__pycache__" directory can be safely ignored.
 		--set name="$ADMIN_GROUP" \
 		--set description="Users that are allowed to connect to the Kelvin API." \
 		--append "users=uid=Administrator,cn=users,$ldap_base" || die
-}
-  echo "Creating group for machine accounts that are allowed to access the UDM REST API"
-  echo "($UDM_REST_GROUP)..."
+
+  echo "Creating group '$UDM_REST_GROUP' for machine accounts that are allowed to access the UDM REST API."
   univention-directory-manager groups/group create "$@" --ignore_exists \
     --position "cn=groups,$ldap_base" \
     --set name="$UDM_REST_GROUP" \
     --set description="Machine accounts that are allowed to connect to the UDM REST API." || die
-  echo "Adding Kelvin API machine account to $UDM_REST_GROUP"
+
+  UDM_REST_GROUP_DN="cn=$UDM_REST_GROUP,cn=groups,$ldap_base"
+
+  echo "Adding Kelvin API machine account '$appcenter_apps_ucsschool_kelvin_rest_api_hostdn' to group '$UDM_REST_GROUP'."
   univention-directory-manager groups/group modify \
-    --dn "cn=$UDM_REST_GROUP,cn=groups,$ldap_base" \
+    --dn "$UDM_REST_GROUP_DN" \
     --append users="$appcenter_apps_ucsschool_kelvin_rest_api_hostdn" || die
-  echo "Whitelisting new group for UDM REST API and restarting UDM REST API service"
-  ucr set directory/manager/rest/authorized-groups/udm-api-enabled-machines="cn=$UDM_REST_GROUP,cn=groups,$ldap_base" || die
+
+  echo "Whitelisting new group for UDM REST API."
+  ucr set directory/manager/rest/authorized-groups/udm-api-enabled-machines="$UDM_REST_GROUP_DN" || die
+
+  echo "Restarting UDM REST API service."
   service univention-directory-manager-rest restart || die
+  sleep 1  # prevent [502] Proxy Error, in case of access before UDM REST API is ready
+}
 
 joinscript_init
 
