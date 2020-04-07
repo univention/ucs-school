@@ -30,7 +30,7 @@
 MACHINE_USER="$HOSTNAME\$"
 MACHINE_PASSWORD=$(cat /etc/machine.secret)
 
-if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
+if [ "$1" = "upgrade" ] ; then
   echo "Building OpenAPI client library using host ${DOCKER_HOST_NAME}..."
   . /kelvin/venv/bin/activate
   update_openapi_client \
@@ -39,8 +39,8 @@ if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
     --insecure \
     --username "$MACHINE_USER" \
     --password "$MACHINE_PASSWORD" \
-    "$DOCKER_HOST_NAME"
-fi
+    "$DOCKER_HOST_NAME" || echo "==> Error can be ignored, if updating from version 1.0.x. The join script will rebuild the library."
 
-echo "Restating UCS@school Kelvin REST API server..."
-/etc/init.d/ucsschool-kelvin-rest-api restart
+  echo "Restating UCS@school Kelvin REST API server..."
+  /etc/init.d/ucsschool-kelvin-rest-api restart
+fi
