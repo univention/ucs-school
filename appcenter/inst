@@ -160,7 +160,7 @@ check_openapi_client_knows_ucssschool() {
     MACHINE_USER="$(ucr get appcenter/apps/$APP_ID/hostdn | cut -d ',' -f 1 | cut -d '=' -f 2)\$"
     MACHINE_PASSWORD_FILE="$(docker inspect --format='{{.GraphDriver.Data.MergedDir}}' "$(ucr get appcenter/apps/$APP_ID/container)")/etc/machine.secret"
     MACHINE_PASSWORD="$(<"$MACHINE_PASSWORD_FILE")"
-    univention-app shell "$APP_ID" /bin/sh -c ". /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure --username \"$MACHINE_USER\" --password \"$MACHINE_PASSWORD\" \"\$DOCKER_HOST_NAME\""
+    univention-app shell "$APP_ID" /bin/sh -c ". /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure --username \"$MACHINE_USER\" --password \"$MACHINE_PASSWORD\" \"\$DOCKER_HOST_NAME\" && /etc/init.d/ucsschool-kelvin-rest-api restart || exit 1"
   else
     echo "OpenAPI client library knows UCS@school types."
   fi
