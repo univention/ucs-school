@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (10.0.2-7) unstable; urgency=medium
+
+  * Bug #50968: Reset all computers in change_settings method
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 14 Apr 2020 08:45:22 +0200
+
 ucs-school-umc-computerroom (10.0.2-6) unstable; urgency=medium
 
   * Bug #50083: Improve room reset

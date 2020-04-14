@@ -708,7 +708,7 @@ class Instance(SchoolBaseModule):
 				job.rm()
 
 		hosts = self._italc.ipAddresses(students_only=True)
-		reset_room_settings(self._italc.room, hosts)
+		reset_room_settings(self._italc.room, self._italc.ipAddresses(students_only=False))
 		_updateRoomInfo(self._italc.roomDN, atjobID=None)
 
 		roomInfo = _readRoomInfo(self._italc.roomDN)
