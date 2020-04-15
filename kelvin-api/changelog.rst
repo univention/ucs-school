@@ -12,3 +12,7 @@ v1.0.0 (2020-01-20)
 v1.0.1 (2020-02-17)
 ...................
 * extended ucsschool lib to allow for context types other than school in ucsschool roles
+
+v1.1.0 (2020-04-15)
+...................
+* update UDM REST API Python Client lib to version ``0.4.0``, so it can handle authorized access to the UDM REST API OpenAPI schema
