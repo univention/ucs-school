@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-18) unstable; urgency=medium
+
+  * Bug #50852: Exempt teacher computers from share restrictions
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 16 Apr 2020 11:46:32 +0100
+
 ucs-school-umc-computerroom (11.0.0-17) unstable; urgency=medium
 
   * Bug #50740: Fix wrong ucrv description
