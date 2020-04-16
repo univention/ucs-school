@@ -41,6 +41,7 @@ import urlparse
 import importlib
 import traceback
 import subprocess
+import itertools
 from random import Random
 from pipes import quote
 
@@ -62,6 +63,7 @@ from univention.management.console.log import MODULE
 
 import univention.admin.uexceptions as udm_exceptions
 from univention.admin.syntax import gid
+from univention.admin.uldap import getMachineConnection
 
 from ucsschool.lib.school_umc_base import SchoolBaseModule, Display, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
@@ -743,8 +745,10 @@ class Instance(SchoolBaseModule):
 		for job in jobs:
 			if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
 				job.rm()
-
-		hosts = self._italc.ipAddresses(students_only=True)
+		lo, po = getMachineConnection()
+		hosts = list(itertools.chain.from_iterable([c.ip_address for c in ComputerRoom.from_dn(self._italc.roomDN, None,
+			lo).get_computers(
+			lo) if not c.teacher_computer]))
 		reset_room_settings(self._italc.room, hosts)
 		_updateRoomInfo(self._italc.roomDN, atjobID=None)
 
