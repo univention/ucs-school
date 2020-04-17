@@ -588,8 +588,8 @@ class ImportUser(User):
 		return self.birthday
 
 	def parse_date(self, text):  # type: (str) -> str
-		re_1 = re.compile('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')  # yyyy-mm-dd
-		re_2 = re.compile('^[0-9]{2}\.[0-9]{2}\.[0-9]{2, 4}$')  # dd.mm.yy or dd.mm.yyyy
+		re_1 = re.compile(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')  # yyyy-mm-dd
+		re_2 = re.compile(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{2, 4}$')  # dd.mm.yy or dd.mm.yyyy
 		re_3 = re.compile(r'^[0-9]{2}/[0-9]{2}/[0-9]{2, 4}$')  # mm/dd/yy or mm/dd/yyyy
 
 		year, month, day = 0, 0, 0
