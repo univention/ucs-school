@@ -40,7 +40,7 @@ from six import iteritems, string_types
 import lazy_object_proxy
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
-from univention.admin.syntax import gid as gid_syntax, date2 as date_syntax
+from univention.admin.syntax import gid as gid_syntax
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
@@ -587,20 +587,17 @@ class ImportUser(User):
 			self.birthday = None
 		return self.birthday
 
-	def parse_date(self, text):
-		re_1 = re.compile('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') # yyyy-mm-dd
-		re_2 = re.compile('^[0-9]{2}\.[0-9]{2}\.[0-9]{2}$') # dd.mm.yy
-		re_3 = re.compile('^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$') # dd.mm.yyyy
-		re_4 = re.compile('^[0-9]{2}/[0-9]{2}/[0-9]{2}$') # mm/dd/yy
-		re_5 = re.compile('^[0-9]{2}/[0-9]{2}/[0-9]{4}$') # mm/dd/yyyy
-		year, month, day = 0,0,0
-		if text is None:
-			return ''
+	def parse_date(self, text):  # type: (str) -> str
+		re_1 = re.compile('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')  # yyyy-mm-dd
+		re_2 = re.compile('^[0-9]{2}\.[0-9]{2}\.[0-9]{2, 4}$')  # dd.mm.yy or dd.mm.yyyy
+		re_3 = re.compile(r'^[0-9]{2}/[0-9]{2}/[0-9]{2, 4}$')  # mm/dd/yy or mm/dd/yyyy
+
+		year, month, day = 0, 0, 0
 		if re_1.match(text):
 			year, month, day = map(int, text.split('-', 2))
-		elif re_2.match(text) or re_3.match(text):
+		elif re_2.match(text):
 			day, month, year = map(int, text.split('.', 2))
-		elif re_4.match(text) or re_5.match(text):
+		elif re_3.match(text):
 			month, day, year = map(int, text.split('/', 2))
 		if 1 <= month <= 12 and 1 <= day <= 31:
 			if 1900 < year < 2100:
