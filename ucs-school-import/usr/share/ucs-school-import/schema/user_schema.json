@@ -4,6 +4,9 @@
 	"description": "Configuration of a user-import",
 	"type": "object",
 	"properties": {
+		"dry_run": {"type": "boolean"},
+		"logfile": {"type": "string"},
+		"verbose": {"type": "boolean"},
 		"classes": {"type": "object"},
 		"factory": {"type": "string"},
 		"input": {

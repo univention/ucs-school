@@ -186,6 +186,9 @@ class Configuration(object):
 				try:
 					with open(USER_IMPORT_SCHEMA_FILE, 'rb') as schema_file:
 						schema = json.load(schema_file)
+				except IOError as exc:
+					raise InitialisationError("Error reading json schema '{}': {}.".format(USER_IMPORT_SCHEMA_FILE, exc))
+				try:
 					cf = ConfigurationFile(filename)
 					cf_obj = cf.read()
 					validate(instance=cf_obj, schema=schema)
