@@ -603,9 +603,9 @@ class ImportUser(User):
 			if 1900 < year < 2100:
 				return '%d-%02d-%02d' % (year, month, day)
 			if 0 <= year <= 99:
-				if year >= 70:
-					return '19%02d-%02d-%02d' % (year, month, day)
-				return '20%02d-%02d-%02d' % (year, month, day)
+				if year <= 21:
+					return '20%02d-%02d-%02d' % (year, month, day)
+				return '19%02d-%02d-%02d' % (year, month, day)
 
 		raise ValueError
 
