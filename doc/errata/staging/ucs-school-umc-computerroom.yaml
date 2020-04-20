@@ -5,5 +5,5 @@ scope: ucs_4.3-0-ucs-school-4.3
 src: ucs-school-umc-computerroom
 fix: 10.0.2-7A~4.3.0.202004140851
 desc: |
- * Reset settings for all computers in computer room when changing them to prevent teacher computers from being locked into a wrong state (Bug #50968).
+ * Reset settings for all computers in computer room to prevent teacher computers from being blocked from accessing shares (Bug #50968).
 bug: [50968]
