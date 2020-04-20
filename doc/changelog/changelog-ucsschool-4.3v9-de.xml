@@ -90,7 +90,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 10.0.2-6A~4.3.0.201909091128 -->
 <!-- CHANGELOG:2019-09-11:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-04-20" lang="en">
+					<title>Released on 2020-04-20:</title>
+					<!-- START ucs-school-umc-computerroom 10.0.2-7A~4.3.0.202004140851 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>10.0.2-7A~4.3.0.202004140851</emphasis>:
+						<itemizedlist>
+							<listitem><para>Reset settings for all computers in computer room to prevent teacher computers from being blocked from accessing shares (<u:bug>50968</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 10.0.2-7A~4.3.0.202004140851 -->
+<!-- CHANGELOG:2020-04-20:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
