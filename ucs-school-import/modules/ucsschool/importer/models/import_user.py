@@ -589,8 +589,8 @@ class ImportUser(User):
 
 	def parse_date(self, text):  # type: (str) -> str
 		re_1 = re.compile(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')  # yyyy-mm-dd
-		re_2 = re.compile(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{2, 4}$')  # dd.mm.yy or dd.mm.yyyy
-		re_3 = re.compile(r'^[0-9]{2}/[0-9]{2}/[0-9]{2, 4}$')  # mm/dd/yy or mm/dd/yyyy
+		re_2 = re.compile(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{2,4}$')  # dd.mm.yy or dd.mm.yyyy
+		re_3 = re.compile(r'^[0-9]{2}/[0-9]{2}/[0-9]{2,4}$')  # mm/dd/yy or mm/dd/yyyy
 
 		year, month, day = 0, 0, 0
 		if re_1.match(text):
@@ -603,7 +603,7 @@ class ImportUser(User):
 			if 1900 < year < 2100:
 				return '%d-%02d-%02d' % (year, month, day)
 			if 0 <= year <= 99:
-				if year <= 21:
+				if year <= datetime.date.today().year % 100:
 					return '20%02d-%02d-%02d' % (year, month, day)
 				return '19%02d-%02d-%02d' % (year, month, day)
 
