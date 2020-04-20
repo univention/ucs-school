@@ -142,7 +142,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-exam 9.0.1-34A~4.4.0.202002252150 -->
 <!-- CHANGELOG:2020-03-25:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-04-20" lang="en">
+					<title>Released on 2020-04-20:</title>
+					<!-- START ucs-school-umc-computerroom 11.0.0-18A~4.4.0.202004161150 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-18A~4.4.0.202004161150</emphasis>:
+						<itemizedlist>
+							<listitem><para>Teacher computers are now properly exempt from the share restrictions in the computer room. This is valid during exams as well (<u:bug>50852</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-18A~4.4.0.202004161150 -->
+<!-- CHANGELOG:2020-04-20:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 		</section>
 
 		<section id="changelog:changelog-4.4v4" lang="en">
