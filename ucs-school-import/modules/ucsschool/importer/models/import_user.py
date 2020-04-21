@@ -575,7 +575,10 @@ class ImportUser(User):
 		Set User.birthday attribute.
 		"""
 		if self.birthday:
-			pass
+			try:
+				self.birthday = self.parse_date(self.birthday)
+			except ValueError:
+				self.logger.error("Could not parse birthday.")
 		elif self._schema_write_check("birthday", "birthday", "univentionBirthday"):
 			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])  # type: str
 		elif self.old_user:
@@ -583,6 +586,28 @@ class ImportUser(User):
 		elif self.birthday == '':
 			self.birthday = None
 		return self.birthday
+
+	def parse_date(self, text):  # type: (str) -> str
+		re_1 = re.compile(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$')  # yyyy-mm-dd
+		re_2 = re.compile(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{2,4}$')  # dd.mm.yy or dd.mm.yyyy
+		re_3 = re.compile(r'^[0-9]{2}/[0-9]{2}/[0-9]{2,4}$')  # mm/dd/yy or mm/dd/yyyy
+
+		year, month, day = 0, 0, 0
+		if re_1.match(text):
+			year, month, day = map(int, text.split('-', 2))
+		elif re_2.match(text):
+			day, month, year = map(int, text.split('.', 2))
+		elif re_3.match(text):
+			month, day, year = map(int, text.split('/', 2))
+		if 1 <= month <= 12 and 1 <= day <= 31:
+			if 1900 < year < 2100:
+				return '%d-%02d-%02d' % (year, month, day)
+			if 0 <= year <= 99:
+				if year <= datetime.date.today().year % 100:
+					return '20%02d-%02d-%02d' % (year, month, day)
+				return '19%02d-%02d-%02d' % (year, month, day)
+
+		raise ValueError
 
 	def make_classes(self):  # type: () -> Dict[str, Dict[str, List[str]]]
 		"""
