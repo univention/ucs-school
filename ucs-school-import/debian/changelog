@@ -1,3 +1,9 @@
+ucs-school-import (17.0.30) unstable; urgency=medium
+
+  * Bug #48138: add accepted birthday formats
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Tue, 21 Apr 2020 14:51:11 +0200
+
 ucs-school-import (17.0.29) unstable; urgency=low
 
   * Bug #50406: add missing dependency
