@@ -660,8 +660,8 @@ class ImportUser(User):
 				char_replacement = self.config["school_classes_invalid_character_replacement"]
 				if char_replacement:
 					allowed_special = " -._"
-					whitelist = string.digits + string.ascii_letters + allowed_special
-					klass_name_old = klass_name # only for debug output
+					whitelist = "".join([string.digits, string.ascii_letters, allowed_special])
+					klass_name_old = klass_name  # only for debug output
 					for character in klass_name:
 						if character not in whitelist:
 							klass_name = klass_name.replace(character, char_replacement)
