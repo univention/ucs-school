@@ -34,14 +34,16 @@
 import re
 from functools import wraps
 import logging
-from os import environ
+import os
 from pathlib import Path
 
+import lazy_object_proxy
 import ldap
 import ldap.schema
 import ldap.sasl
 from ldapurl import LDAPUrl
 from ldapurl import isLDAPUrl
+from univention.config_registry import ConfigRegistry
 
 try:
 	from typing import Any, Dict, List, Optional, Set, Tuple, Union  # noqa
@@ -55,6 +57,24 @@ APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
+
+
+
+def _ucr():  # type: () -> ConfigRegistry
+	ucr = ConfigRegistry()
+	ucr.load()
+	return ucr
+
+
+ucr = lazy_object_proxy.Proxy(_ucr)  # type: ConfigRegistry
+
+
+def env_or_ucr(key, default=None):  # type: (str, Any) -> str
+	try:
+		return os.environ[key.replace("/", "_").upper()]
+	except KeyError:
+		return ucr.get(key, default)
+
 
 def parentDn(dn, base=''):
 	# type: (str, str) -> Optional[str]
@@ -98,8 +118,10 @@ def getAdminConnection(start_tls=2, decode_ignorelist=[], reconnect=True):
 	:rtype: univention.uldap.access
 	"""
 	bindpw = open(CN_ADMIN_PASSWORD_FILE).read().rstrip('\n')
-	port = int(environ.get('LDAP_MASTER_PORT', '7389'))
-	return access(host=environ['LDAP_MASTER'], port=port, base=environ['LDAP_BASE'], binddn='cn=admin,' + environ['LDAP_BASE'], bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
+	host = env_or_ucr('ldap/master')
+	base_dn = env_or_ucr('ldap/base')
+	port = int(env_or_ucr('ldap/master/port', '7389'))
+	return access(host=host, port=port, base=base_dn, binddn='cn=admin,' + base_dn, bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
 
 
 def getMachineConnection(start_tls=2, decode_ignorelist=[], ldap_master=True, secret_file="/etc/machine.secret", reconnect=True):
@@ -116,17 +138,18 @@ def getMachineConnection(start_tls=2, decode_ignorelist=[], ldap_master=True, se
 	:return: A LDAP access object.
 	:rtype: univention.uldap.access
 	"""
-
 	bindpw = open(secret_file).read().rstrip('\n')
+	base_dn = env_or_ucr('ldap/base')
+	host_dn = env_or_ucr('ldap/hostdn')
+	port = int(env_or_ucr('ldap/master/port', '7389'))
 
 	if ldap_master:
 		# Connect to DC Master
-		port = int(environ.get('LDAP_MASTER_PORT', '7389'))
-		return access(host=environ['LDAP_MASTER'], port=port, base=environ['LDAP_BASE'], binddn=environ['LDAP_HOSTDN'], bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
+		host = env_or_ucr('ldap/master')
 	else:
 		# Connect to ldap/server/name
-		port = int(environ.get('LDAP_SERVER_PORT', '7389'))
-		return access(host=environ['LDAP_SERVER_NAME'], port=port, base=environ['LDAP_BASE'], binddn=environ['LDAP_HOSTDN'], bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
+		host = env_or_ucr('ldap/server/name')
+	return access(host=host, port=port, base=base_dn, binddn=host_dn, bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
 
 
 def _fix_reconnect_handling(func):
@@ -182,7 +205,7 @@ class access(object):
 		self.port = int(port) if port else None
 
 		if not self.port:  # if no explicit port is given
-			self.port = int(environ.get('LDAP_SERVER_PORT', 7389))
+			self.port = int(env_or_ucr('ldap/server/port', 7389))
 			if use_ldaps and self.port == 7389:  # adjust the standard port for ssl
 				self.port = 7636
 
