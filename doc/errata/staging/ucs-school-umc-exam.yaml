@@ -3,8 +3,9 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-37A~4.4.0.202004241728
+fix: 9.0.1-38A~4.4.0.202004241746
 desc: |
  * Internal improvement: more information on the internal state of the exam mode is now being logged (Bug #51167).
  * Errors during the start of an exam are now handled more safely (Bug #51166).
-bug: [51166, 51167]
+ * Internal improvement: Only send student users to the schoolexam-master module for exam user creation (Bug #51169).
+bug: [51166, 51167, 51169]
