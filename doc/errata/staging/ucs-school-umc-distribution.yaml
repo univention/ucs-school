@@ -2,8 +2,8 @@ product: ucsschool
 release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
-src: 
-fix: 
+src: ucs-school-umc-distribution
+fix: 17.0.1-8A~4.4.0.202004241433
 desc: |
  * Internal improvement (better logging of internal state) (Bug #51167).
 bug: [51167]
