@@ -72,7 +72,6 @@ if "schoolexam" not in [handler for handler in logger.handlers]:
 	_formatter = logging.Formatter(fmt='%(funcName)s:%(lineno)d  %(message)s')
 	_module_handler.setFormatter(_formatter)
 	logger.addHandler(_module_handler)
-PACKAGE_NAME = "ucs-school-umc-exam-master"
 
 
 class Instance(SchoolBaseModule):
@@ -82,14 +81,7 @@ class Instance(SchoolBaseModule):
 
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
-		try:
-			logger.info(
-				"Package %r installed in version %r.",
-				PACKAGE_NAME, get_package_version(PACKAGE_NAME)
-			)
-		except (NotInstalled, UnknownPackage) as exc:
-			logger.error("Error retrieving package verion: %s", exc)
-
+		self._log_package_version("ucs-school-umc-exam-master")
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		self._examGroupExcludeRegEx = None
 		try:
@@ -104,9 +96,20 @@ class Instance(SchoolBaseModule):
 		self._examGroup = None
 		self.exam_user_pre_create_hooks = None
 
+	@staticmethod
+	def _log_package_version(package_name):  # type: (str) -> None
+		try:
+			logger.info(
+				"Package %r installed in version %r.",
+				package_name, get_package_version(package_name)
+			)
+		except (NotInstalled, UnknownPackage) as exc:
+			logger.error("Error retrieving package verion: %s", exc)
+
 	def examGroup(self, ldap_admin_write, ldap_position, school):
 		'''fetch the examGroup object, create it if missing'''
 		if not self._examGroup:
+			logger.info('school=%r', school)
 			search_base = School.get_search_base(school)
 			examGroup = search_base.examGroup
 			examGroupName = search_base.examGroupName

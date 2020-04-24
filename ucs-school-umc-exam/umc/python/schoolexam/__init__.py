@@ -88,21 +88,13 @@ if "schoolexam" not in [handler for handler in logger.handlers]:
 	_formatter = logging.Formatter(fmt='%(funcName)s:%(lineno)d  %(message)s')
 	_module_handler.setFormatter(_formatter)
 	logger.addHandler(_module_handler)
-PACKAGE_NAME = "ucs-school-umc-exam"
 
 
 class Instance(SchoolBaseModule):
 
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
-		try:
-			logger.info(
-				"Package %r installed in version %r.",
-				PACKAGE_NAME, get_package_version(PACKAGE_NAME)
-			)
-		except (NotInstalled, UnknownPackage) as exc:
-			logger.error("Error retrieving package verion: %s", exc)
-
+		self._log_package_version("ucs-school-umc-exam")
 		self._tmpDir = None
 		self._progress_state = util.Progress()
 		self._lessons = SchoolLessons()
@@ -115,6 +107,16 @@ class Instance(SchoolBaseModule):
 	def destroy(self):
 		# clean temporary data
 		self._cleanTmpDir()
+
+	@staticmethod
+	def _log_package_version(package_name):  # type: (str) -> None
+		try:
+			logger.info(
+				"Package %r installed in version %r.",
+				package_name, get_package_version(package_name)
+			)
+		except (NotInstalled, UnknownPackage) as exc:
+			logger.error("Error retrieving package verion: %s", exc)
 
 	def _cleanTmpDir(self):
 		# copied from distribution module
