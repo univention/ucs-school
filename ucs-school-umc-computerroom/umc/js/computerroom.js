@@ -990,42 +990,49 @@ define([
 				}
 
 				// start finishing the exam
-				var info = lang.clone(this.get('roomInfo') || {});
-				this.umcpCommand('schoolexam/exam/finish', {
-					exam: info.exam,
-					room: info.room
-				});
-
-				// create a 'real' ProgressBar
-				var deferred = new Deferred();
-				this._progressBar.reset(_('Finishing exam...'));
-				this.standbyDuring(deferred, this._progressBar);
-				this._progressBar.auto('schoolexam/progress', {}, function() {
-					// when progress is finished, resolve the given Deferred object
-					deferred.resolve();
-				});
-
-				// things to do after finishing the exam
-				deferred.then(lang.hitch(this, function() {
-					return this.umcpCommand('computerroom/exam/finish', {
+				clearTimeout(this._updateTimer);
+				this._updateRoom().then(lang.hitch(this, function () {
+					var info = lang.clone(this.get('roomInfo') || {});
+					if (!info.exam) {
+						dialog.alert(_('There is no exam running in this room anymore. It seems like the exam was finished properly from somewhere else.'));
+						return;
+					}
+					this.umcpCommand('schoolexam/exam/finish', {
 						exam: info.exam,
 						room: info.room
 					});
-				})).then(lang.hitch(this, function() {
-					// on success, prompt info to user
-					if (this._progressBar.getErrors().errors.length === 0) {
-						var message = _("<p>The exam has been successfully finished. All related exam documents have been collected from the students' home directories.</p>");
-						if (this._showRebootNote) {
-							message += _("<p><b>Note:</b> All computers need to be either switched off or rebooted before they can be used again for regular schooling.</p>")
+	
+					// create a 'real' ProgressBar
+					var deferred = new Deferred();
+					this._progressBar.reset(_('Finishing exam...'));
+					this.standbyDuring(deferred, this._progressBar);
+					this._progressBar.auto('schoolexam/progress', {}, function() {
+						// when progress is finished, resolve the given Deferred object
+						deferred.resolve();
+					});
+	
+					// things to do after finishing the exam
+					deferred.then(lang.hitch(this, function() {
+						return this.umcpCommand('computerroom/exam/finish', {
+							exam: info.exam,
+							room: info.room
+						});
+					})).then(lang.hitch(this, function() {
+						// on success, prompt info to user
+						if (this._progressBar.getErrors().errors.length === 0) {
+							var message = _("<p>The exam has been successfully finished. All related exam documents have been collected from the students' home directories.</p>");
+							if (this._showRebootNote) {
+								message += _("<p><b>Note:</b> All computers need to be either switched off or rebooted before they can be used again for regular schooling.</p>")
+							}
+							dialog.alert(message);
+							delete info.exam;
+							delete info.examDescription;
+							delete info.examEndTime;
+							this.set('roomInfo', info);
+	
 						}
-						dialog.alert(message);
-						delete info.exam;
-						delete info.examDescription;
-						delete info.examEndTime;
-						this.set('roomInfo', info);
-
-					}
-				}));
+					}));
+				}))
 			}));
 		},
 
@@ -1267,7 +1274,7 @@ define([
 		},
 
 		_updateRoom: function() {
-			this.umcpCommand('computerroom/update', {}, false).then(lang.hitch(this, function(response) {
+			return this.umcpCommand('computerroom/update', {}, false).then(lang.hitch(this, function(response) {
 				var demo = false, demo_server = null, demo_user = null, demo_systems = 0;
 
 				if (this.get('roomInfo') !== response.result.room_info) {
