@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.11) unstable; urgency=low
+
+  * Bug #51167: add function to get the version of an installed Debian package
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Apr 2020 10:31:21 +0200
+
 ucs-school-lib (12.1.10) unstable; urgency=low
 
   * Bug #50819: Enable contexts other than school for ucsschool roles

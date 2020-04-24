@@ -41,6 +41,7 @@ from logging.handlers import MemoryHandler, TimedRotatingFileHandler
 from contextlib import contextmanager
 import subprocess
 
+import apt
 from six import string_types
 from psutil import process_iter, NoSuchProcess
 import colorlog
@@ -61,6 +62,22 @@ except ImportError:
 # "global" translation for ucsschool.lib.models
 _ = Translation('python-ucs-school').translate
 LOGGING_CONFIG_PATH = '/etc/ucsschool/logging.yaml'
+
+
+class NotInstalled(Exception):
+	"""
+	Raised by `get_package_version()` when the requested package is not
+	installed.
+	"""
+	pass
+
+
+class UnknownPackage(Exception):
+	"""
+	Raised by `get_package_version()` when the requested package is not
+	known in the Debian package cache.
+	"""
+	pass
 
 
 def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
@@ -624,3 +641,24 @@ def _write_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) ->
 			ruamel.yaml.RoundTripDumper,
 			indent=4
 		)
+
+
+def get_package_version(package_name):   # type: (str) -> str
+	"""
+	Retrieve the version of the Debian package `package_name` from the
+	Debian package cache.
+
+	:param str package_name: name of Debian package
+	:return: version of Debian package, if installed
+	:rtype: str
+	:raises NotInstalled: if the package is not installed
+	:raises UnknownPackage: if the package is unknown
+	"""
+	cache = apt.cache.Cache()
+	try:
+		package = cache[package_name]
+	except KeyError:
+		raise UnknownPackage("Debian package {!r} not in package cache.".format(package_name))
+	if not package:
+		raise NotInstalled("Debian package {!r} ist not installed.".format(package_name))
+	return package.installed.version
