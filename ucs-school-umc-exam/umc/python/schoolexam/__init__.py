@@ -39,6 +39,7 @@ import traceback
 import subprocess
 import datetime
 from itertools import chain
+import logging
 
 import ldap
 import notifier
@@ -46,9 +47,9 @@ import notifier
 from ldap.filter import filter_format
 
 from univention.admin.uexceptions import noObject
+import univention.debug
 
 from univention.management.console.config import ucr
-from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import simple_response, file_upload, sanitize
 from univention.management.console.modules.sanitizers import (
@@ -69,6 +70,7 @@ from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, Group, User
 from ucsschool.lib.models.base import WrongObjectType
 from ucsschool.lib.roles import create_ucsschool_role_string, role_exam_user, context_type_exam, get_role_info
+from ucsschool.lib.models.utils import get_package_version, ModuleHandler, NotInstalled, UnknownPackage
 
 try:
 	from typing import Any, Dict, List, Optional, Pattern
@@ -78,12 +80,29 @@ except ImportError:
 _ = Translation('ucs-school-umc-exam').translate
 
 CREATE_USER_POST_HOOK_DIR = '/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/'
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+if "schoolexam" not in [handler for handler in logger.handlers]:
+	_module_handler = ModuleHandler(udebug_facility=univention.debug.MODULE)
+	_module_handler.set_name("schoolexam")
+	_formatter = logging.Formatter(fmt='%(funcName)s:%(lineno)d  %(message)s')
+	_module_handler.setFormatter(_formatter)
+	logger.addHandler(_module_handler)
+PACKAGE_NAME = "ucs-school-umc-exam"
 
 
 class Instance(SchoolBaseModule):
 
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
+		try:
+			logger.info(
+				"Package %r installed in version %r.",
+				PACKAGE_NAME, get_package_version(PACKAGE_NAME)
+			)
+		except (NotInstalled, UnknownPackage) as exc:
+			logger.error("Error retrieving package verion: %s", exc)
+
 		self._tmpDir = None
 		self._progress_state = util.Progress()
 		self._lessons = SchoolLessons()
@@ -101,7 +120,7 @@ class Instance(SchoolBaseModule):
 		# copied from distribution module
 		# clean up the temporary upload directory
 		if self._tmpDir:
-			MODULE.info('Clean up temporary directory: %s' % self._tmpDir)
+			logger.info('Clean up temporary directory: %s', self._tmpDir)
 			shutil.rmtree(self._tmpDir, ignore_errors=True)
 			self._tmpDir = None
 
@@ -130,7 +149,7 @@ class Instance(SchoolBaseModule):
 				try:
 					subprocess.check_call(['chattr', modifier, datadir])
 				except subprocess.CalledProcessError as e:
-					MODULE.error('Could not set the immutable bit on {}'.format(datadir))
+					logger.error('Could not set the immutable bit on %r', datadir)
 
 	@file_upload
 	@sanitize(DictSanitizer(dict(
@@ -142,12 +161,12 @@ class Instance(SchoolBaseModule):
 		# create a temporary upload directory, if it does not already exist
 		if not self._tmpDir:
 			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
-			MODULE.info('Created temporary directory: %s' % self._tmpDir)
+			logger.info('upload() Created temporary directory: %r', self._tmpDir)
 
 		for file in request.options:
 			filename = self.__workaround_filename_bug(file)
 			destPath = os.path.join(self._tmpDir, filename)
-			MODULE.info('Received file %r, saving it to %r' % (file['tmpfile'], destPath))
+			logger.info('upload() Received file %r, saving it to %r', file['tmpfile'], destPath)
 			shutil.move(file['tmpfile'], destPath)
 
 		self.finished(request.id, None)
@@ -172,10 +191,10 @@ class Instance(SchoolBaseModule):
 		# the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
 		# Bug 46709/46710: start
 		if '\\' in filename:  # filename seems to be a UNC / windows path
-			MODULE.info('Filename seems to contain Windows path name or UNC - fixing filename')
+			logger.info('__workaround_filename_bug() Filename seems to contain Windows path name or UNC - fixing filename')
 			filename = filename.rsplit('\\', 1)[-1] or filename.replace('\\', '_').lstrip('_')
 		# Bug 46709/46710: end
-		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
+		logger.info('__workaround_filename_bug() Detected filename %r as %r', file['filename'], filename)
 		return filename
 
 	@simple_response
@@ -410,7 +429,7 @@ class Instance(SchoolBaseModule):
 				client = Client(master)
 				client.authenticate_with_machine_account()
 			except (ConnectionError, HTTPError) as exc:
-				MODULE.error('Could not connect to UMC on %s: %s' % (master, exc))
+				logger.error('start_exam() Could not connect to UMC on %s: %s', master, exc)
 				raise UMC_Error(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
 
 			# mark the computer room for exam mode
@@ -446,7 +465,7 @@ class Instance(SchoolBaseModule):
 			student_dns = set()
 			usersReplicated = set()
 			for iuser in users:
-				MODULE.process("Requesting exam user to be created: {!r}".format(iuser.dn))
+				logger.info("start_exam() Requesting exam user to be created: %r", iuser.dn)
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 				try:
 					ires = client.umc_command('schoolexam-master/create-exam-user', dict(
@@ -458,14 +477,14 @@ class Instance(SchoolBaseModule):
 					examuser_dn = ires.get('examuserdn')
 					examUsers.add(examuser_dn)
 					student_dns.add(iuser.dn)
-					MODULE.process('Exam user has been created: {!r}'.format(examuser_dn))
+					logger.info('start_exam() Exam user has been created: %r', examuser_dn)
 				except (ConnectionError, HTTPError) as exc:
-					MODULE.warn('Could not create exam user account for %r: %s' % (iuser.dn, exc))
+					logger.warn('start_exam() Could not create exam user account for %r: %s', iuser.dn, exc)
 
 				# indicate the the user has been processed
 				progress.add_steps(percentPerUser)
 
-			MODULE.process("Sending DNs to add to group to master: {!r}".format(student_dns))
+			logger.info("start_exam() Sending DNs to add to group to master: %r", student_dns)
 			client.umc_command('schoolexam-master/add-exam-users-to-groups', dict(
 				users=list(student_dns),
 				school=request.options['school'],
@@ -479,7 +498,7 @@ class Instance(SchoolBaseModule):
 			openAttempts = 30*60  # wait max. 30 minutes for replication
 			while (len(examUsers) > len(usersReplicated)) and (openAttempts > 0):
 				openAttempts -= 1
-				MODULE.info('waiting for replication to be finished, %s user objects missing' % (len(examUsers) - len(usersReplicated)))
+				logger.info('start_exam() waiting for replication to be finished, %d user objects missing', len(examUsers) - len(usersReplicated))
 				for idn in examUsers - usersReplicated:
 					try:
 						ldap_user_read.get(idn, required=True)
@@ -488,7 +507,7 @@ class Instance(SchoolBaseModule):
 					iuser = util.distribution.openRecipients(idn, ldap_user_read)
 					if not iuser:
 						continue  # not a users/user object
-					MODULE.info('user has been replicated: %s' % idn)
+					logger.info('user has been replicated: %r', idn)
 
 					# call hook scripts
 					if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):
@@ -508,7 +527,7 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(percentPerUser)
 
 			if openAttempts <= 0:
-				MODULE.error('replication timeout - %s user objects missing: %r ' % ((len(examUsers) - len(usersReplicated)), (examUsers - usersReplicated)))
+				logger.error('replication timeout - %d user objects missing: %r ', (len(examUsers) - len(usersReplicated)), (examUsers - usersReplicated))
 				raise UMC_Error(_('Replication timeout: could not create all exam users'))
 
 			# update the final list of recipients
@@ -520,11 +539,11 @@ class Instance(SchoolBaseModule):
 				cmd = ['/usr/lib/univention-pam/ldap-group-to-file.py']
 				if ucr.is_true('nss/group/cachefile/check_member', False):
 					cmd.append('--check_member')
-				MODULE.info('Updating local nss group cache...')
+				logger.info('Updating local nss group cache...')
 				if subprocess.call(cmd):
-					MODULE.error('Updating local nss group cache failed: %s' % ' '.join(cmd))
+					logger.error('Updating local nss group cache failed: %s', ' '.join(cmd))
 				else:
-					MODULE.info('Update of local nss group cache finished successfully.')
+					logger.info('Update of local nss group cache finished successfully.')
 
 			# distribute exam files
 			progress.component(_('Distributing exam files'))
@@ -540,11 +559,11 @@ class Instance(SchoolBaseModule):
 			progress.component(_('Prepare room settings'))
 
 			room = request.options['room']
-			MODULE.info('Acquire room: %s' % (room,))
+			logger.info('Acquire room: %s', room)
 			room_module = self._get_computerroom_module()
 			room_module._room_acquire(request.options['room'], ldap_user_read)
 			progress.add_steps(1)
-			MODULE.info('Adjust room settings:\n%s' % '\n'.join(['  %s=%s' % (k, v) for k, v in request.options.iteritems()]))
+			logger.info('Adjust room settings:\n%s', '\n'.join(['  %s=%s' % (k, v) for k, v in request.options.iteritems()]))
 			room_module._start_exam(room, directory, request.options['name'], request.options.get('examEndTime'))
 			progress.add_steps(4)
 			room_module._settings_set(
@@ -630,7 +649,7 @@ class Instance(SchoolBaseModule):
 		project = util.distribution.Project.load(request.options.get('exam'))
 		if not project:
 			# the project file does not exist... ignore problem
-			MODULE.warn('The project file for exam %s does not exist. Ignoring and finishing exam mode.' % request.options.get('exam'))
+			logger.warn('The project file for exam %s does not exist. Ignoring and finishing exam mode.', request.options.get('exam'))
 
 		def _thread():
 			# perform all actions inside a thread...
@@ -647,7 +666,7 @@ class Instance(SchoolBaseModule):
 				client = Client(master)
 				client.authenticate_with_machine_account()
 			except (ConnectionError, HTTPError) as exc:
-				MODULE.error('Could not connect to UMC on %s: %s' % (master, exc))
+				logger.error('Could not connect to UMC on %s: %s', master, exc)
 				raise UMC_Error(_('Could not connect to master server %s.') % (master,))
 
 			school = SchoolSearchBase.getOU(request.options['room'])
@@ -694,9 +713,9 @@ class Instance(SchoolBaseModule):
 							# remove first the home directory, if enabled
 							if ucr.is_true('ucsschool/exam/user/homedir/autoremove', False):
 								shutil.rmtree(iuser.unixhome, ignore_errors=True)
-							MODULE.info('Exam user has been removed: %s' % iuser.dn)
+							logger.info('Exam user has been removed: %r', iuser.dn)
 					except (ConnectionError, HTTPError) as e:
-						MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
+						logger.warn('Could not remove exam user account %r: %s', iuser.dn, e)
 
 					# indicate the user has been processed
 					progress.add_steps(percentPerUser)
@@ -711,7 +730,7 @@ class Instance(SchoolBaseModule):
 			# running until all actions have been completed
 			if isinstance(result, BaseException):
 				msg = ''.join(traceback.format_exception(*thread.exc_info))
-				MODULE.error('Exception during exam_finish: %s' % msg)
+				logger.error('Exception during exam_finish: %s', msg)
 				self.finished(request.id, dict(success=False))
 				progress.error(_('An unexpected error occurred during the preparation: %s') % result)
 			else:
@@ -772,7 +791,7 @@ class Instance(SchoolBaseModule):
 			try:
 				user_obj = User.from_dn(student[1], None, lo)
 			except noObject:
-				MODULE.warn('DN "%s" is stored as part of project "%s" but does not exist.' % (student[1], project.name,))
+				logger.warn('DN %r is stored as part of project %r but does not exist.', student[1], project.name)
 				continue
 			if not project.isDistributed and user_obj.is_student(lo) and not user_obj.is_exam_student(lo):
 				project_students.append(student[0])
@@ -800,7 +819,7 @@ class Instance(SchoolBaseModule):
 			try:
 				group_obj = Group.from_dn(group_dn, None, ldap_user_read)
 			except (WrongObjectType, noObject) as exc:
-				MODULE.error('DN {!r} does not exist or is not a work group or school class: {}'.format(group_dn, exc))
+				logger.error('DN %r does not exist or is not a work group or school class: %s', group_dn, exc)
 				raise UMC_Error(_('Error loading group DN {!r}.').format(group_dn))
 
 			school_class_name = group_obj.name[len(group_obj.school) + 1:]
@@ -809,7 +828,7 @@ class Instance(SchoolBaseModule):
 				try:
 					user_obj = User.from_dn(user_dn, None, ldap_user_read)
 				except (WrongObjectType, noObject) as exc:
-					MODULE.warn('Ignoring DN {!r} - it does not exist or is not a school user: {}'.format(user_dn, exc))
+					logger.warn('Ignoring DN %r - it does not exist or is not a school user: %s', user_dn, exc)
 					continue
 
 				if user_obj.is_student(ldap_user_read) and not user_obj.is_exam_student(ldap_user_read):

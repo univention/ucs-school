@@ -41,9 +41,9 @@ import re
 import os
 from ldap.filter import filter_format
 from collections import defaultdict
+import logging
 
 from univention.management.console.config import ucr
-from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, ListSanitizer
@@ -51,7 +51,7 @@ from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, ADMIN_WRITE, USER_READ
 from ucsschool.lib.roles import role_teacher_computer, role_exam_user, context_type_exam, create_ucsschool_role_string, get_role_info
 from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError, SchoolComputer
-from ucsschool.lib.models.utils import add_module_logger_to_schoollib
+from ucsschool.lib.models.utils import add_module_logger_to_schoollib, get_package_version, ModuleHandler, NotInstalled, UnknownPackage
 from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
 from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 
@@ -64,6 +64,15 @@ _ = Translation('ucs-school-umc-exam-master').translate
 univention.admin.modules.update()
 
 CREATE_USER_PRE_HOOK_DIR = '/usr/share/ucs-school-exam-master/pyhooks/create_exam_user_pre/'
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+if "schoolexam" not in [handler for handler in logger.handlers]:
+	_module_handler = ModuleHandler(udebug_facility=univention.debug.MODULE)
+	_module_handler.set_name("schoolexam")
+	_formatter = logging.Formatter(fmt='%(funcName)s:%(lineno)d  %(message)s')
+	_module_handler.setFormatter(_formatter)
+	logger.addHandler(_module_handler)
+PACKAGE_NAME = "ucs-school-umc-exam-master"
 
 
 class Instance(SchoolBaseModule):
@@ -73,6 +82,13 @@ class Instance(SchoolBaseModule):
 
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
+		try:
+			logger.info(
+				"Package %r installed in version %r.",
+				PACKAGE_NAME, get_package_version(PACKAGE_NAME)
+			)
+		except (NotInstalled, UnknownPackage) as exc:
+			logger.error("Error retrieving package verion: %s", exc)
 
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		self._examGroupExcludeRegEx = None
@@ -81,7 +97,7 @@ class Instance(SchoolBaseModule):
 			if value.strip():
 				self._examGroupExcludeRegEx = re.compile(value, re.I)
 		except Exception as ex:
-			MODULE.error('Failed to get/compile regexp provided by ucsschool/exam/group/ldap/blacklist/regex: %s' % (ex,))
+			logger.error('Failed to get/compile regexp provided by ucsschool/exam/group/ldap/blacklist/regex: %s', ex)
 
 		# cache objects
 		self._udm_modules = dict()
@@ -167,7 +183,7 @@ class Instance(SchoolBaseModule):
 		userdn = request.options['userdn']
 		room_dn = request.options['room']
 		exam = request.options['exam']
-		MODULE.info('create_exam_user() school={!r} userdn={!r} room={!r} description={!r}'.format(school, userdn, room_dn, request.options['description']))
+		logger.info('school=%r userdn=%r room=%r description=%r', school, userdn, room_dn, request.options['description'])
 
 		try:
 			user = Student.from_dn(userdn, None, ldap_admin_write)
@@ -205,7 +221,7 @@ class Instance(SchoolBaseModule):
 		except (univention.admin.uexceptions.noObject, MultipleObjectsError):
 			pass  # we need to create the exam user
 		else:
-			MODULE.warn(_('The exam account does already exist for: %s') % exam_user_uid)
+			logger.warning('The exam account does already exist for: %r', exam_user_uid)
 			if school not in exam_user.schools:
 				exam_user.schools.append(school)
 			role_str = create_ucsschool_role_string(role_exam_user, "{}-{}".format(exam, school), context_type_exam)
@@ -213,7 +229,7 @@ class Instance(SchoolBaseModule):
 				exam_user.ucsschool_roles.append(role_str)
 				exam_user.modify(ldap_admin_write)
 			else:
-				MODULE.warn(_('The exam user "%s" already participates in the exam "%s". Do not add role') % exam_user.name, exam)
+				logger.warn('The exam user %r already participates in the exam %r. Do not add role.', exam_user.name, exam)
 			self.finished(request.id, dict(
 				success=True,
 				userdn=userdn,
@@ -233,7 +249,7 @@ class Instance(SchoolBaseModule):
 			alloc.append(('uid', uid))
 		except univention.admin.uexceptions.noLock:
 			univention.admin.allocators.release(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
-			MODULE.warn(_('The exam account does already exist for: %s') % exam_user_uid)
+			logger.warning('The exam account does already exist for: %r', exam_user_uid)
 			self.finished(request.id, dict(
 				success=True,
 				userdn=userdn,
@@ -363,12 +379,12 @@ class Instance(SchoolBaseModule):
 				raise UMC_Error(_('ExamStudent %(exam_user_dn)r added to LDAP but cannot be loaded: %(exc)r.') % {'exam_user_dn': exam_user_dn, 'exc': exc})
 			except univention.admin.uexceptions.ldapError:
 				raise
-			MODULE.process("ExamStudent created sucessfully: {!r}".format(exam_student))
+			logger.info("ExamStudent created sucessfully: %r", exam_student)
 
-		except BaseException:  # noqa
+		except BaseException as exc:  # noqa
 			for i, j in alloc:
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
-			MODULE.error('Creation of exam user account failed: %s' % (traceback.format_exc(),))
+			logger.exception('Creation of exam user account failed: %s', exc)
 			raise
 
 		# finally confirm allocated IDs
@@ -392,13 +408,13 @@ class Instance(SchoolBaseModule):
 		Add previously created exam users to groups.
 		"""
 		self._room_host_cache.clear()
-		MODULE.info('add_exam_users_to_groups() school={!r} users={!r}'.format(request.options['school'], request.options['users']))
+		logger.info('school=%r users=%r', request.options['school'], request.options['users'])
 
 		groups = defaultdict(dict)
 		exam_group = self.examGroup(ldap_admin_write, ldap_position, request.options['school'])
 
 		for user_dn in request.options['users']:
-			MODULE.process("Adding exam student {!r} to exam group {!r}...".format(user_dn, exam_group['name']))
+			logger.info("Adding exam student %r to exam group %r...", user_dn, exam_group['name'])
 			try:
 				ori_student = Student.from_dn(user_dn, None, ldap_admin_write)
 			except univention.admin.uexceptions.noObject as exc:
@@ -425,10 +441,10 @@ class Instance(SchoolBaseModule):
 
 		for group_dn, users in groups.items():
 			if self._examGroupExcludeRegEx and self._examGroupExcludeRegEx.search(group_dn):
-				MODULE.info('create_exam_user(): ignoring group %r as requested via regexp' % (group_dn,))
+				logger.info('ignoring group %r as requested via regexp', group_dn)
 				continue
 			grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group_dn)
-			MODULE.info('Adding users %r to group %r...' % (users['uids'], group_dn))
+			logger.info('Adding users %r to group %r...', users['uids'], group_dn)
 			grpobj.fast_member_add(users['dns'], users['uids'])
 
 		self.finished(request.id, None)
@@ -480,7 +496,7 @@ class Instance(SchoolBaseModule):
 				if len(exam_roles) < 2:
 					user.remove(ldap_admin_write)
 				else:
-					MODULE.warn('User %s will not be removed as he currently participates in another exam.' % (user.dn,))
+					logger.warn('remove_exam_user() User %r will not be removed as he currently participates in another exam.', user.dn)
 					try:
 						user.ucsschool_roles.remove(exam_role)
 					except ValueError as exc:
@@ -494,7 +510,7 @@ class Instance(SchoolBaseModule):
 				if school:
 					schools = list(set(user.schools) - set([school]))
 				if schools:
-					MODULE.warn('User %s will not be removed as he currently participates in another exam.' % (user.dn,))
+					logger.warning('remove_exam_user() User %r will not be removed as he currently participates in another exam.', user.dn)
 					user.schools = schools
 					user.modify(ldap_admin_write)
 				else:
