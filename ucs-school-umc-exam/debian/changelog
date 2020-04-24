@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-38) unstable; urgency=low
+
+  * Bug #51169: Only send students for exam account creation to the schoolexam-master module
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 24 Apr 2020 17:45:32 +0200
+
 ucs-school-umc-exam (9.0.1-37) unstable; urgency=low
 
   * Bug #51166: handle execption from _thread() in _finished()
