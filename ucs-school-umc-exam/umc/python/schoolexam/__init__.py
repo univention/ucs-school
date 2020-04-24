@@ -96,7 +96,7 @@ class Instance(SchoolBaseModule):
 		SchoolBaseModule.__init__(self)
 		self._log_package_version("ucs-school-umc-exam")
 		self._tmpDir = None
-		self._progress_state = util.Progress()
+		self._progress_state = util.Progress(logger=logger)
 		self._lessons = SchoolLessons()
 
 	def init(self):

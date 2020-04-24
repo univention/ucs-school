@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.log import MODULE
+import logging
 from univention.management.console.config import ucr
 
 import univention.management.console.modules.distribution.util as distribution
@@ -41,7 +41,8 @@ distribution.POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/exam/datadir/recipie
 
 class Progress(object):
 
-	def __init__(self, max_steps=100):
+	def __init__(self, max_steps=100, logger=None):
+		self.logger = logger or logging.getLogger(__name__)
 		self.reset(max_steps)
 
 	def reset(self, max_steps=100):
@@ -66,13 +67,14 @@ class Progress(object):
 
 	def component(self, component):
 		self._component = component
+		self.logger.info(component)
 
 	def info(self, info):
-		MODULE.process('%s - %s' % (self._component, info))
+		self.logger.info('%s - %s', self._component, info)
 		self._info = info
 
 	def error(self, err):
-		MODULE.warn('%s - %s' % (self._component, err))
+		self.logger.warn('%s - %s', self._component, err)
 		self._errors.append(err)
 
 	def add_steps(self, steps=1):
