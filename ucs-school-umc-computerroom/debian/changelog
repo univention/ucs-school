@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-19) unstable; urgency=medium
+
+  * Bug #51165: Improve error handling in computerroom frontend
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 24 Apr 2020 14:47:03 +0100
+
 ucs-school-umc-computerroom (11.0.0-18) unstable; urgency=medium
 
   * Bug #50852: Exempt teacher computers from share restrictions
