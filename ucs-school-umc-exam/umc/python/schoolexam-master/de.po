@@ -35,17 +35,6 @@ msgstr ""
 msgid "Student %r not found."
 msgstr ""
 
-#: __init__.py:208 __init__.py:236
-#, python-format
-msgid "The exam account does already exist for: %s"
-msgstr ""
-
-#: __init__.py:216
-#, python-format
-msgid ""
-"The exam user \"%s\" already participates in the exam \"%s\". Do not add role"
-msgstr ""
-
 #: __init__.py:227
 #, python-format
 msgid ""
