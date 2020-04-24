@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.12) unstable; urgency=medium
+
+  * Bug #45683: added class name syntax check
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Fri, 24 Apr 2020 16:21:47 +0200
+
 ucs-school-lib (12.1.11) unstable; urgency=low
 
   * Bug #51167: add function to get the version of an installed Debian package

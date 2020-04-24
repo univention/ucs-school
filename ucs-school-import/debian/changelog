@@ -1,3 +1,9 @@
+ucs-school-import (17.0.31) unstable; urgency=medium
+
+  * Bug #45683: added checks for class name syntax
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Fri, 24 Apr 2020 16:20:05 +0200
+
 ucs-school-import (17.0.30) unstable; urgency=medium
 
   * Bug #48138: add accepted birthday formats
