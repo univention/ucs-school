@@ -593,6 +593,14 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(5)
 
 		def _finished(thread, result, request):
+			if isinstance(result, BaseException):
+				logger.error(
+					"Error in start_exam()->_thread(): %s\n%s",
+					result,
+					"".join(thread.trace + traceback.format_exception_only(*thread.exc_info[:2]))
+				)
+				raise UMC_Error(_("Error starting exam: %s") % (result,))
+
 			logger.info('result=%r', result)
 			my.project.starttime = datetime.datetime.now()
 			my.project.save()

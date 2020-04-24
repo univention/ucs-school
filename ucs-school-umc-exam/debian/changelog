@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-37) unstable; urgency=low
+
+  * Bug #51166: handle execption from _thread() in _finished()
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Apr 2020 17:26:45 +0200
+
 ucs-school-umc-exam (9.0.1-36) unstable; urgency=low
 
   * Bug #51167: don't save incomplete exam in case of prior error
