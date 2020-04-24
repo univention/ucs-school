@@ -83,6 +83,9 @@ class _Dict(object):
 		initDict['__type__'] = type
 		object.__setattr__(self, '_dict', initDict)
 
+	def __repr__(self):
+		return repr(self.dict)
+
 	# overwrite __setattr__ such that, e.g., project.cachedir can be called directly
 	def __setattr__(self, key, value):
 		_dict = object.__getattribute__(self, '_dict')
@@ -258,6 +261,9 @@ class Project(_Dict):
 			self.update(args[0])
 		else:
 			self.update(_props)
+
+	def __repr__(self):
+		return "Project(name={!r}) dict={!r}".format(self.name, self.dict)
 
 	@staticmethod
 	def _get_directory_size(src):

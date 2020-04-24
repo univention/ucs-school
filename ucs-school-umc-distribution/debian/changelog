@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.1-8) unstable; urgency=low
+
+  * Bug #51167: add __repr__ methods to Project and _Dict
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Apr 2020 14:20:37 +0200
+
 ucs-school-umc-distribution (17.0.1-7) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
