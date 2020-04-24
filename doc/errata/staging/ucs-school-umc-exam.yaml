@@ -3,8 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-35A~4.4.0.202004241437
+fix: 9.0.1-37A~4.4.0.202004241728
 desc: |
  * Internal improvement: more information on the internal state of the exam mode is now being logged (Bug #51167).
- * A bug leading to not being able to plan an exam in some cases has been fixed (Bug #51167).
-bug: [51167]
+ * Errors during the start of an exam are now handled more safely (Bug #51166).
+bug: [51166, 51167]
