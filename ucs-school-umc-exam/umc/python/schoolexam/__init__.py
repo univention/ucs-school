@@ -593,10 +593,7 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(5)
 
 		def _finished(thread, result, request):
-			if not my.project:
-				logger.warning("my.project is unset.")
-				my.project = self._save_exam(request, update=False, ldap_user_read=ldap_user_read)
-				logger.info("saved project=%r", my.project)
+			logger.info('result=%r', result)
 			my.project.starttime = datetime.datetime.now()
 			my.project.save()
 
