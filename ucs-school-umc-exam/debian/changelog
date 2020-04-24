@@ -1,3 +1,14 @@
+ucs-school-umc-exam (9.0.1-35) unstable; urgency=low
+
+  * Bug #51167: log function parameters
+  * Bug #51167: log project state
+  * Bug #51167: log progress
+  * Bug #51167: remove translations for log messages
+  * Bug #51167: use python logging->UD proxy
+  * Bug #51167: log Debian package version
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Apr 2020 14:27:07 +0200
+
 ucs-school-umc-exam (9.0.1-34) unstable; urgency=medium
 
   * Bug #50819: Fix home dir removal

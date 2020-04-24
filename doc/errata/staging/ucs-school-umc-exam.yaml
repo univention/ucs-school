@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-exam
+fix: 
+desc: |
+ * Internal improvement: more information on the internal state of the exam mode is now being logged (Bug #51167).
+ * A bug leading to not being able to plan an exam in some cases has been fixed (Bug #51167).
+bug: [51167]
