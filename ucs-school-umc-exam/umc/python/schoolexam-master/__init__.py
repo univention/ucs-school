@@ -186,8 +186,10 @@ class Instance(SchoolBaseModule):
 		userdn = request.options['userdn']
 		room_dn = request.options['room']
 		exam = request.options['exam']
-		logger.info('school=%r userdn=%r room=%r description=%r', school, userdn, room_dn, request.options['description'])
-
+		logger.info(
+			'school=%r userdn=%r room=%r description=%r',
+			school, userdn, room_dn, request.options['description']
+		)
 		try:
 			user = Student.from_dn(userdn, None, ldap_admin_write)
 		except univention.admin.uexceptions.noObject:
@@ -466,6 +468,7 @@ class Instance(SchoolBaseModule):
 		userdn = request.options['userdn']
 		school = request.options['school']
 		exam = request.options['exam']
+		logger.info('userdn=%r school=%r exam=%r', userdn, school, exam)
 		# Might be put into the lib at some point:
 		# https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
@@ -532,6 +535,7 @@ class Instance(SchoolBaseModule):
 		'''Add all member hosts except teacher_computers of a given computer room to the special exam group.'''
 
 		roomdn = request.options['roomdn']
+		logger.info('roomdn=%r', roomdn)
 		try:
 			room = ComputerRoom.from_dn(roomdn, None, ldap_user_read)
 		except univention.admin.uexceptions.noObject:
@@ -562,6 +566,7 @@ class Instance(SchoolBaseModule):
 		'''Remove all member hosts of a given computer room from the special exam group.'''
 
 		roomdn = request.options['roomdn']
+		logger.info('roomdn=%r', roomdn)
 		try:
 			room = ComputerRoom.from_dn(roomdn, None, ldap_user_read)
 		except univention.admin.uexceptions.noObject:

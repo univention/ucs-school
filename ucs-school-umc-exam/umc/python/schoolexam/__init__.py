@@ -143,6 +143,7 @@ class Instance(SchoolBaseModule):
 		:param users: The users to (un)set the immutable bit for
 		:param flag: True to set the flag, False to unset
 		"""
+		logger.info('users=%r project=%r flag=%r', users, project.dict, flag)
 		modifier = '+i' if flag else '-i'
 		for user in users:
 			# make datadir immutable
@@ -161,6 +162,7 @@ class Instance(SchoolBaseModule):
 	def upload(self, request):
 		# copied from distribution module
 		# create a temporary upload directory, if it does not already exist
+		logger.info('request.options=%r', request.options)
 		if not self._tmpDir:
 			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
 			logger.info('upload() Created temporary directory: %r', self._tmpDir)
@@ -174,6 +176,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, None)
 
 	def __workaround_filename_bug(self, file):
+		logger.info('file=%r', file)
 		# the following code block is a heuristic to support both: fixed and unfixed Bug #37716
 		filename = file['filename']
 		try:
@@ -227,6 +230,7 @@ class Instance(SchoolBaseModule):
 		:param exam: The exam to be modified
 		:return: True if user can modify else False
 		"""
+		logger.info('user=%r exam=%r', user, exam)
 		if user.dn == exam.sender.dn:
 			return True
 		sender_user = User.from_dn(exam.sender.dn, None, ldap_user_read)
@@ -246,6 +250,7 @@ class Instance(SchoolBaseModule):
 		:return: univention.management.console.modules.distribution.util.Project
 		:raises: UMC_Error
 		"""
+		logger.info('request.options=%r update=%r', request.options, update)
 		# create a User object for the teacher
 		sender = util.distribution.openRecipients(self.user_dn, ldap_user_read)
 		recipients = [util.distribution.openRecipients(i_dn, ldap_user_read) for i_dn in request.options.get('recipients', [])]
@@ -262,6 +267,7 @@ class Instance(SchoolBaseModule):
 		if not sender:
 			raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
 		project = util.distribution.Project.load(request.options.get('name', ''))
+		logger.info("loaded project=%r", project)
 		orig_files = []
 		if update:
 			if not project:
@@ -272,11 +278,13 @@ class Instance(SchoolBaseModule):
 			if project.isDistributed:
 				raise UMC_Error(_('The exam was already started and can not be modified anymore!'))
 			orig_files = project.files
+			logger.info("updating project=%r with new_values=%r", project, new_values)
 			project.update(new_values)
 		else:
 			if project:
 				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % new_values['name'])
 			project = util.distribution.Project(new_values)
+			logger.info("project=%r", project)
 		project.validate()
 		project.save()
 		# copy files into project directory
@@ -305,22 +313,27 @@ class Instance(SchoolBaseModule):
 		:param name: Name of the exam to delete
 		:return: True if exam was deleted, else False
 		"""
+		logger.info('name=%r', name)
 		exam = util.distribution.Project.load(name)
+		logger.info("loaded exam=%r", exam.dict)
 		if not exam:
 			return False
 		if exam.isDistributed:
 			return False
 		if not self._user_can_modify(User.from_dn(ldap_user_read.whoami(), None, ldap_user_read) ,exam):
 			return False
+		logger.info("purge exam=%r", exam.dict)
 		exam.purge()
 		return True
 
 	@sanitize(StringSanitizer(required=True))
 	def get(self, request):
+		logger.info('request.options=%r', request.options)
 		result = []
 		for project in [util.distribution.Project.load(iid) for iid in request.options]:
 			if not project:
 				continue
+			logger.info("loaded project=%r", project)#.dict)
 			# make sure that only the project owner himself (or an admin) is able
 			# to see the content of a project
 			if not compare_dn(project.sender.dn, self.user_dn):
@@ -393,6 +406,7 @@ class Instance(SchoolBaseModule):
 	)
 	@LDAP_Connection()
 	def start_exam(self, request, ldap_user_read=None, ldap_position=None):
+		logger.info('request.options=%r', request.options)
 		# reset the current progress state
 		# steps:
 		#   5  -> for preparing exam room
@@ -419,11 +433,13 @@ class Instance(SchoolBaseModule):
 
 		def _thread():
 			project = util.distribution.Project.load(request.options.get('name', ''))
+			logger.info("loaded project=%r", project)
 			directory = request.options['directory']
 			if project:
 				my.project = self._save_exam(request, update=True, ldap_user_read=ldap_user_read)
 			else:
 				my.project = self._save_exam(request, update=False, ldap_user_read=ldap_user_read)
+			logger.info("after saving exam: my.project=%r", my.project)
 
 			# open a new connection to the master UMC
 			try:
@@ -577,6 +593,10 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(5)
 
 		def _finished(thread, result, request):
+			if not my.project:
+				logger.warning("my.project is unset.")
+				my.project = self._save_exam(request, update=False, ldap_user_read=ldap_user_read)
+				logger.info("saved project=%r", my.project)
 			my.project.starttime = datetime.datetime.now()
 			my.project.save()
 
@@ -600,6 +620,7 @@ class Instance(SchoolBaseModule):
 
 				# in case a distribution project has already be written to disk, purge it
 				if my.project:
+					logger.info("purge my.project=%r", my.project)
 					my.project.purge()
 
 			self.thread_finished_callback(thread, response, request)
@@ -612,9 +633,11 @@ class Instance(SchoolBaseModule):
 	)
 	@simple_response
 	def collect_exam(self, exam):
+		logger.info('exam=%r', exam)
 		project = util.distribution.Project.load(exam)
 		if not project:
 			raise UMC_Error(_('No files have been distributed'))
+		logger.info("loaded project=%r", project)
 
 		project.collect()
 		return True
@@ -638,6 +661,7 @@ class Instance(SchoolBaseModule):
 	)
 	@LDAP_Connection()
 	def finish_exam(self, request, ldap_user_read=None):
+		logger.info('request.options=%r', request.options)
 		# reset the current progress state
 		# steps:
 		#   10 -> collecting exam files
@@ -649,6 +673,7 @@ class Instance(SchoolBaseModule):
 
 		# try to open project file
 		project = util.distribution.Project.load(request.options.get('exam'))
+		logger.info("loaded project=%r", project)
 		if not project:
 			# the project file does not exist... ignore problem
 			logger.warn('The project file for exam %s does not exist. Ignoring and finishing exam mode.', request.options.get('exam'))
@@ -697,6 +722,7 @@ class Instance(SchoolBaseModule):
 					if iproject.name != project.name
 					for iuser in iproject.recipients
 				])
+				logger.info("parallel_users_local=%r", parallel_users_local)
 
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
@@ -726,6 +752,7 @@ class Instance(SchoolBaseModule):
 
 		def _finished(thread, result):
 			# mark the progress state as finished
+			logger.info('result=%r', result)
 			progress.info(_('finished...'))
 			progress.finish()
 
@@ -739,7 +766,7 @@ class Instance(SchoolBaseModule):
 				self.finished(request.id, dict(success=True))
 
 				if project:
-					# purge project
+					logger.info("purge project=%r", project)
 					project.purge()
 
 				# remove uploaded files from cache
