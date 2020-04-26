@@ -36,14 +36,10 @@ add your own checks.
 """
 
 
-import string
+import re
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
-
-
-# If a '[' or a ']' appears in a "scheme" field, it should be in one of these contexts
-SCHEME_ALLOWED_OCCURENCES = ("[\d*:\d*]", "[ALWAYSCOUNTER]", "[COUNTER2]")
 
 
 class DefaultConfigurationChecks(ConfigurationChecks):
@@ -109,26 +105,28 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 			raise InitialisationError("Using 'user_role' setting and '__role' mapping at the same time is not allowed.")
 
 	def test_scheme_valid_format(self):
+		# If a '[' or a ']' appears in a "scheme" field, it should be in one of these contexts
 		def iterate_config(dictionary):
-			for value in dictionary.values():
-				if isinstance(value, dict):
-					iterate_config(value)
+			for scheme_field in dictionary.values():
+				if isinstance(scheme_field, dict):
+					iterate_config(scheme_field)
 				else:
 					# Check if '<' and '>' symbols occure equal times
-					if value.count("<") != value.count(">"):
+					if scheme_field.count("<") != scheme_field.count(">"):
 						raise InitialisationError("The numbers of '<' and '>' symbols are not identical.")
 					# Check if on each '<' symbol a '>' symbol follows
 					start = 0
 					while True:
-						opening = string.find(value, "<", start)
+						opening = scheme_field.find("<", start)
 						if opening == -1:
 							break
-						closing = string.find(value, ">", start)
+						closing = scheme_field.find(">", start)
 						if closing < opening:
 							raise InitialisationError("'<' and '>' are in wrong order.")
 						start = closing+1
 					# Check if a ']' or '[' symbol is used in an allowed context
-					if any(symbol in value for symbol in ["[", "]"]):
-						if not any(element in value for element in SCHEME_ALLOWED_OCCURENCES):
-							raise InitialisationError("Unallowed use symbol '[' or ']'.")
+					scheme_allowed_occurences = ("\[\d\]", "\[\d*:\d*\]", "\[ALWAYSCOUNTER\]", "\[COUNTER2\]")
+					rest = re.sub("|".join(scheme_allowed_occurences), "", scheme_field)
+					if any(symbol in rest for symbol in ["[", "]"]):
+						raise InitialisationError("Unallowed use of symbol '[' or ']'.")
 		iterate_config(self.config['scheme'])
