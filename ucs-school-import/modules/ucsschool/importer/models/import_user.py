@@ -99,8 +99,8 @@ class ImportUser(User):
 		"ucsschool/import/generate/user/attributes/no-overwrite-by-schema",
 		"mailPrimaryAddress uid"
 	).split())  # type: List[str]
-	if not no_overwrite_attributes: # is true when no-overwrite-by-schema was set to ""
-		no_overwrite_attributes = "mailPrimaryAddress uid".split()
+	if not no_overwrite_attributes:  # is true when no-overwrite-by-schema was set to ""
+		no_overwrite_attributes = ["mailPrimaryAddress", "uid"]
 	User.logger.debug("Used no-overwrite-attributes: {}".format(no_overwrite_attributes))
 	_unique_ids = defaultdict(dict)  # type: Dict[str, Dict[str, str]]
 	factory = lazy_object_proxy.Proxy(lambda: Factory())  # type: DefaultUserImportFactory
