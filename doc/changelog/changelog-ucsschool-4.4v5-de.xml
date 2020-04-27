@@ -155,7 +155,74 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 11.0.0-18A~4.4.0.202004161150 -->
 <!-- CHANGELOG:2020-04-20:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-04-27" lang="en">
+					<title>Released on 2020-04-27:</title>
+					<!-- START ucs-school-import 17.0.31A~4.4.0.202004241630 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.31A~4.4.0.202004241630</emphasis>:
+						<itemizedlist>
+							<listitem><para>Some birthday date formats could not be parsed correctly during an user import (e.g. dd.mm.yy). This fix adds various common formats that will be accepted. (<u:bug>48138</u:bug>)</para></listitem>
+
+							<listitem><para>A user import crashed when a class name contained unallowed characters (e.g. a backslash). This fix ensures, that such characters will be replaced with a configurable replacement character. (<u:bug>45683</u:bug>)</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.31A~4.4.0.202004241630 -->
+					<!-- START ucs-school-ldap-acls-master 17.0.4-1A~4.4.0.202002241104 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>17.0.4-1A~4.4.0.202002241104</emphasis>:
+						<itemizedlist>
+							<listitem><para>By default, the access to the import counter objects below cn=unique-usernames,cn=ucsschool,cn=univention,LDAP_BASE and cn=unique-email,cn=ucsschool,cn=univention,LDAP_BASE is now rejected for systems with role domaincontroller slave and memberserver (<u:bug>50830</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 17.0.4-1A~4.4.0.202002241104 -->
+					<!-- START ucs-school-lib 12.1.12A~4.4.0.202004241641 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.12A~4.4.0.202004241641</emphasis>:
+						<itemizedlist>
+							<listitem><para>A function for retrieving the version of an installed Debian package was added (<u:bug>51167</u:bug>).</para></listitem>
+
+							<listitem><para>A user import crashed when a class name contained unallowed characters (e.g. a backslash). This fix ensures, that such characters will be replaced with a configurable replacement character. (<u:bug>45683</u:bug>)</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.12A~4.4.0.202004241641 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-19A~4.4.0.202004241449 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-19A~4.4.0.202004241449</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UMC checks the computer room settings before finishing an exam now to prevent wrong behavior due to de-sync of the room state (<u:bug>51165</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-19A~4.4.0.202004241449 -->
+					<!-- START ucs-school-umc-distribution 17.0.1-8A~4.4.0.202004241433 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-distribution</emphasis> in version <emphasis>17.0.1-8A~4.4.0.202004241433</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement (better logging of internal state) (<u:bug>51167</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-distribution 17.0.1-8A~4.4.0.202004241433 -->
+					<!-- START ucs-school-umc-exam 9.0.1-38A~4.4.0.202004241746 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-38A~4.4.0.202004241746</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: more information on the internal state of the exam mode is now being logged (<u:bug>51167</u:bug>).</para></listitem>
+
+							<listitem><para>Errors during the start of an exam are now handled more safely (<u:bug>51166</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: Only send student users to the schoolexam-master module for exam user creation (<u:bug>51169</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-38A~4.4.0.202004241746 -->
+<!-- CHANGELOG:2020-04-27:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 
