@@ -1,3 +1,9 @@
+ucs-school-import (17.0.32) unstable; urgency=medium
+
+  * Bug #51003: fixed empty no-overwrite-attributes
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Mon, 27 Apr 2020 18:27:36 +0200
+
 ucs-school-import (17.0.31) unstable; urgency=medium
 
   * Bug #45683: added checks for class name syntax
