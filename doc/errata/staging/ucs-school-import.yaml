@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.31A~4.4.0.20200424163
+fix: 17.0.31A~4.4.0.202004241630
 desc: |
   * Some birthday date formats could not be parsed correctly during an user import (e.g. dd.mm.yy). This fix adds various common formats that will be accepted. (Bug #48138)
   * A user import crashed when a class name contained unallowed characters (e.g. a backslash). This fix ensures, that such characters will be replaced with a configurable replacement character. (Bug #45683)
