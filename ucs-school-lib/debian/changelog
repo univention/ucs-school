@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.13) unstable; urgency=medium
+
+  * Bug #51190: revert wrong fix
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Thu, 30 Apr 2020 12:17:40 +0200
+
 ucs-school-lib (12.1.12) unstable; urgency=medium
 
   * Bug #45683: added class name syntax check
