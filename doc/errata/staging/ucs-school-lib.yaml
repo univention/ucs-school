@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.1.13A~4.4.0.202004301222
+desc: |
+  * Improved error message when importing an invalid class name (Bug #51190).
+bug: [51190]
