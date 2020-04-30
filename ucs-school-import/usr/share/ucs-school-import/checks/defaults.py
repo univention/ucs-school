@@ -36,6 +36,7 @@ add your own checks.
 """
 
 
+import string
 import re
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from ucsschool.importer.exceptions import InitialisationError
