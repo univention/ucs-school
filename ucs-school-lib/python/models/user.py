@@ -424,7 +424,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				try:
 					syntax.gid.parse(class_name)
 				except valueError as exc:
-					self.add_error('school_classes', _('{}'.format(exc)))
+					self.add_error('school_classes', str(exc))
 
 	def remove_from_school(self, school, lo):
 		if not self.exists(lo):
