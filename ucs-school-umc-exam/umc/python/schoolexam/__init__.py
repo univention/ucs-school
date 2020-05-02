@@ -43,6 +43,8 @@ import logging
 
 import ldap
 import notifier
+from six import iteritems
+
 
 from ldap.filter import filter_format
 
@@ -143,7 +145,7 @@ class Instance(SchoolBaseModule):
 		:param users: The users to (un)set the immutable bit for
 		:param flag: True to set the flag, False to unset
 		"""
-		logger.info('users=%r project=%r flag=%r', users, project.dict, flag)
+		logger.info('users=%r project=%r flag=%r', [u.username for u in users], project.name, flag)
 		modifier = '+i' if flag else '-i'
 		for user in users:
 			# make datadir immutable
@@ -553,6 +555,7 @@ class Instance(SchoolBaseModule):
 			my.project.save()
 
 			# update local NSS group cache
+			progress.info("Updating local nss group cache...")
 			if ucr.is_true('nss/group/cachefile', True):
 				cmd = ['/usr/lib/univention-pam/ldap-group-to-file.py']
 				if ucr.is_true('nss/group/cachefile/check_member', False):
@@ -581,7 +584,7 @@ class Instance(SchoolBaseModule):
 			room_module = self._get_computerroom_module()
 			room_module._room_acquire(request.options['room'], ldap_user_read)
 			progress.add_steps(1)
-			logger.info('Adjust room settings:\n%s', '\n'.join(['  %s=%s' % (k, v) for k, v in request.options.iteritems()]))
+			logger.info('Adjust room settings:\n%s', '\n'.join(['  %s=%s' % (k, v) for k, v in iteritems(request.options)]))
 			room_module._start_exam(room, directory, request.options['name'], request.options.get('examEndTime'))
 			progress.add_steps(4)
 			room_module._settings_set(
@@ -720,6 +723,11 @@ class Instance(SchoolBaseModule):
 				# that is not updated to use roles for exam membership yet.
 				exam_roles_exist = any(True for user in recipients if len(
 					[role for role in user[1]['ucsschoolRole'] if get_role_info(role)[1] == context_type_exam]) > 0)
+				if exam_roles_exist and len(recipients) != len(project.recipients):
+					logger.warning(
+						"Found %d recipients through exam role, but %d through the project.",
+						len(recipients), len(project.recipients),
+					)
 
 				parallel_users_local = dict([
 					(iuser.dn, iproject.description)
@@ -753,6 +761,7 @@ class Instance(SchoolBaseModule):
 				else:
 					logger.info("No users to reduce groups found.")
 
+				logger.info("Deleting recipients...")
 				for iuser in project.recipients:
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
@@ -775,6 +784,7 @@ class Instance(SchoolBaseModule):
 					# indicate the user has been processed
 					progress.add_steps(percentPerUser)
 
+				logger.info("Finished removing exam accounts.")
 				progress.add_steps(percentPerUser)
 
 		def _finished(thread, result):

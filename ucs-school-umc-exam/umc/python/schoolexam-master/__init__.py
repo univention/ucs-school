@@ -531,9 +531,10 @@ class Instance(SchoolBaseModule):
 					new_value.append(new_ws)
 				orig_udm.props.sambaUserWorkstations = [ws for ws in new_value if len(ws) > 0]
 				orig_udm.save()
+				logger.info("Original user access has been restored for %r.", orig_udm)
 			except univention.admin.uexceptions.noObject:
 				raise UMC_Error(_('Exam student %r not found.') % (userdn[len(examUserPrefix):],))
-		if len(search_result) == 0:
+		elif len(search_result) == 0:
 			raise UMC_Error(_('Exam student %r not found.') % (userdn[len(examUserPrefix):],))
 		try:
 			user = ExamStudent.from_dn(userdn, None, ldap_user_read)
@@ -548,6 +549,7 @@ class Instance(SchoolBaseModule):
 				exam_roles = [role for role in user.ucsschool_roles if get_role_info(role)[1] == context_type_exam]
 				if len(exam_roles) < 2:
 					user.remove(ldap_admin_write)
+					logger.info("Exam user was removed: %r", user)
 				else:
 					logger.warn('remove_exam_user() User %r will not be removed as he currently participates in another exam.', user.dn)
 					try:
