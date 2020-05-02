@@ -42,7 +42,9 @@ import os
 from ldap.filter import filter_format
 from collections import defaultdict
 import logging
+from typing import Dict, List, Tuple
 
+from six import iteritems
 from univention.management.console.config import ucr
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
@@ -452,6 +454,51 @@ class Instance(SchoolBaseModule):
 			logger.info('Adding users %r to group %r...', users['uids'], group_dn)
 			grpobj.fast_member_add(users['dns'], users['uids'])
 
+		self.finished(request.id, None)
+
+	@sanitize(
+		userdns=ListSanitizer(DNSanitizer(required=True), required=True),
+		exam=StringSanitizer(default='')
+	)
+	@LDAP_Connection(USER_READ, ADMIN_WRITE)
+	def reduce_recipients_groups(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
+		"""
+		Reduce the groups the users are in to their primary group, executing
+		as few group modifications as possible.
+		"""
+		userdns = request.options["userdns"]  # type: List[str]
+		exam = request.options['exam']  # type: str
+		logger.info('userdns=%r exam=%r', userdns, exam)
+
+		remove_list = {}  # type: Dict[str, Tuple[List[str], List[str]]]
+		logger.info('Collecting groups of %d users...', len(userdns))
+		for user_dn in userdns:
+			user_ldap_obj = ldap_user_read.get(user_dn, attr=["uid", "gidNumber"])
+			user_name = user_ldap_obj["uid"][0]
+			users_primary_gid = user_ldap_obj["gidNumber"][0]
+			for group_dn, group_attrs in ldap_user_read.search(
+				filter_format('uniqueMember=%s', (user_dn,)),
+				attr=["dn", "gidNumber"],
+			):
+				if group_attrs["gidNumber"][0] != users_primary_gid:
+					try:
+						remove_list[group_dn][0].append(user_dn)
+						remove_list[group_dn][1].append(user_name)
+					except KeyError:
+						remove_list[group_dn] = ([user_dn], [user_name])
+		try:
+			module_groups = self._udm_modules["groups/group"]
+		except KeyError:
+			module_groups = univention.admin.modules.get("groups/group")
+			univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups)
+			self._udm_modules["groups/group"] = module_groups
+
+		for group_dn, (user_dns, user_names) in iteritems(remove_list):
+			logger.info("Removing %d users from group %r...", len(user_dns), group_dn)
+			grp_obj = module_groups.object(None, ldap_admin_write, ldap_position, group_dn)
+			grp_obj.fast_member_remove(user_dns, user_names)
+
+		logger.info("Finished reducing groups.")
 		self.finished(request.id, None)
 
 	@sanitize(

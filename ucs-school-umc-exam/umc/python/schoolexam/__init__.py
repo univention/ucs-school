@@ -731,6 +731,28 @@ class Instance(SchoolBaseModule):
 
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
+
+				users_to_reduce = []
+				for recipient_dn, recipient_attrs in recipients:
+					exam_roles = [
+						role
+						for role in recipient_attrs["ucsschoolRole"]
+						if get_role_info(role)[1] == context_type_exam
+					]
+					if len(exam_roles) == 1:
+						users_to_reduce.append(recipient_dn)
+				if users_to_reduce:
+					logger.info(
+						"Reducing groups of %d users (of %d total).",
+						len(users_to_reduce), len(recipients),
+					)
+					client.umc_command('schoolexam-master/reduce-recipients-groups', dict(
+						userdns=users_to_reduce,
+						exam=request.options['exam']
+					)).result
+				else:
+					logger.info("No users to reduce groups found.")
+
 				for iuser in project.recipients:
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:

@@ -1,3 +1,10 @@
+ucs-school-umc-exam (9.0.1-39) unstable; urgency=low
+
+  * Bug #51199: reduce ExamUser deletion time by removing them all at once
+    from their additional groups
+
+ -- Daniel Troeder <troeder@univention.de>  Sat, 02 May 2020 03:56:05 +0200
+
 ucs-school-umc-exam (9.0.1-38) unstable; urgency=low
 
   * Bug #51169: Only send students for exam account creation to the schoolexam-master module
