@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.4-2) unstable; urgency=low
+
+  * Bug #50669: limit access to user password data
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Sun, 03 May 2020 15:40:10 +0100
+
 ucs-school-ldap-acls-master (17.0.4-1) unstable; urgency=low
 
   * Bug #50830: limit read access to unique-usernames/unique-email counters
