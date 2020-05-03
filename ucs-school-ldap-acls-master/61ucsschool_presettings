@@ -122,6 +122,25 @@ access to dn.children="cn=unique-email,cn=ucsschool,cn=univention,@%@ldap/base@%
 	by set="user/univentionObjectType & [computers/memberserver]" none
 	by * +0 break
 
+# prevent unauthorized access to user password data as described in Bug #50669
+
+access to filter="(|(objectClass=ucsschoolAdministrator)(objectClass=univentionPerson))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
+	by self +0 break
+	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
+	by * +0 break
+
+access to filter="(|(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
+	by self +0 break
+	by set="user/objectClass & [ucsschoolAdministrator]" +0 break
+	by set="user/objectClass & ([ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
+	by * +0 break
+
+access to filter="objectClass=ucsschoolStudent" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
+	by self +0 break
+	by set="user/objectClass & [ucsschoolAdministrator]" +0 break
+	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolStaff])" none
+	by * +0 break
+
 '''
 
 if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
