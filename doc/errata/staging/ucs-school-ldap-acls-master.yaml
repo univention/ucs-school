@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-ldap-acls-master
+fix: 17.0.4-2A~4.4.0.202005031542
+desc: |
+ * The access to sensitive user data is now more restricted (Bug #50669).
+bug: [50669]
