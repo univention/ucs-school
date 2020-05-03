@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.107) unstable; urgency=low
+
+  * Bug #50669: added tests for user password data restrictions
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Sun, 03 May 2020 15:45:50 +0100
+
 ucs-test-ucsschool (6.0.106) unstable; urgency=low
 
   * Bug #50500: added tests for diagnostic module 900-903
