@@ -159,7 +159,7 @@ class Acl(object):
 		self.assert_acl(base_dn, access, attrs)
 
 	def assert_student(self, stu_dn, access):
-		"""Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern
+		"""Lehrer und OU-Admins duerfen Schueler-Passwoerter aendern
 		"""
 		attrs = [
 			'krb5KeyVersionNumber',

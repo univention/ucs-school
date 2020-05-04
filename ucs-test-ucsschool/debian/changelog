@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.108) unstable; urgency=low
+
+  * Bug #50669: Exclude staff from changing student password data
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 04 May 2020 10:37:05 +0100
+
 ucs-test-ucsschool (6.0.107) unstable; urgency=low
 
   * Bug #50669: added tests for user password data restrictions
