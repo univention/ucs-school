@@ -61,7 +61,7 @@ from univention.management.console.modules import computerroom
 from univention.management.console.modules.distribution import compare_dn
 
 from univention.lib.i18n import Translation
-from univention.lib.umc import Client, ConnectionError, HTTPError
+from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
 from univention.lib.misc import custom_groupname
 
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer, Display
@@ -758,15 +758,25 @@ class Instance(SchoolBaseModule):
 						users_to_reduce.append(recipient_dn)
 				if users_to_reduce:
 					logger.info(
-						"Reducing groups of %d users (of %d total).",
+						"Removing non-primary groups of %d users (of %d total).",
 						len(users_to_reduce), len(recipients),
 					)
-					client.umc_command('schoolexam-master/remove-users-from-non-primary-groups', dict(
-						userdns=users_to_reduce,
-						exam=request.options['exam']
-					)).result
+					umc_cmd = "schoolexam-master/remove-users-from-non-primary-groups"
+					try:
+						client.umc_command(umc_cmd, {
+							"userdns": users_to_reduce,
+							"exam": request.options['exam'],
+						}).result
+					except Forbidden as exc:
+						# DC Master has old package. No problem, as users will still be
+						# deleted in the next step, just slower.
+						logger.warning(
+							"Forbidden (HTTP %r): DC Master doesn't know UMC command %r. "
+							"Skipping non-primary-groups-removal optimization step.",
+							exc.code, umc_cmd
+						)
 				else:
-					logger.info("No users to reduce groups found.")
+					logger.info("No users to remove non-primary groups found.")
 
 				logger.info("Deleting recipients...")
 				for iuser in project.recipients:
