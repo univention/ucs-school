@@ -740,6 +740,13 @@ class Instance(SchoolBaseModule):
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
 
+				# Bug #51199:
+				# The following block speeds up the removal of several exam users by reducing the number
+				# of LDAP group changes. This is especially relevant if the exam users are included in
+				# many large groups (e.g. in several schools with many students). Each group change is
+				# very time consuming for large groups.
+				# Therefore, the group changes are first aggregated for several exam users and executed
+				# as one LDAP modification per group. Only after that the Exam users are actually deleted.
 				users_to_reduce = []
 				for recipient_dn, recipient_attrs in recipients:
 					exam_roles = [
@@ -754,7 +761,7 @@ class Instance(SchoolBaseModule):
 						"Reducing groups of %d users (of %d total).",
 						len(users_to_reduce), len(recipients),
 					)
-					client.umc_command('schoolexam-master/reduce-recipients-groups', dict(
+					client.umc_command('schoolexam-master/remove_users_from_non_primary_groups', dict(
 						userdns=users_to_reduce,
 						exam=request.options['exam']
 					)).result
