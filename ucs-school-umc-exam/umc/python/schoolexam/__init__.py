@@ -484,9 +484,14 @@ class Instance(SchoolBaseModule):
 			examUsers = set()
 			student_dns = set()
 			usersReplicated = set()
-			for iuser in users:
-				logger.info("start_exam() Requesting exam user to be created: %r", iuser.dn)
-				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+			for num, iuser in enumerate(users, start=1):
+				logger.info(
+					"start_exam() Requesting exam user %02d/%02d to be created: %r",
+					num, len(users), iuser.dn
+				)
+				progress.info('(%02d/%02d) %s, %s (%s)' % (
+					num, len(users), iuser.lastname, iuser.firstname, iuser.username
+				))
 				try:
 					ires = client.umc_command('schoolexam-master/create-exam-user', dict(
 						school=request.options['school'],
@@ -538,7 +543,9 @@ class Instance(SchoolBaseModule):
 
 					# mark the user as replicated
 					usersReplicated.add(idn)
-					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+					progress.info('(%02d/%02d) %s, %s (%s)' % (
+						len(usersReplicated), len(examUsers), iuser.lastname, iuser.firstname, iuser.username)
+					)
 					progress.add_steps(percentPerUser)
 
 				# wait a second
@@ -778,9 +785,11 @@ class Instance(SchoolBaseModule):
 				else:
 					logger.info("No users to remove non-primary groups found.")
 
-				logger.info("Deleting recipients...")
-				for iuser in project.recipients:
-					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+				logger.info("Deleting %d recipients...", len(project.recipients))
+				for num, iuser in enumerate(project.recipients, start=1):
+					progress.info('(%02d/%02d) %s, %s (%s)' % (
+						num, len(project.recipients), iuser.lastname, iuser.firstname, iuser.username)
+					)
 					try:
 						if exam_roles_exist or iuser.dn not in parallel_users_local:
 							# remove LDAP user entry
