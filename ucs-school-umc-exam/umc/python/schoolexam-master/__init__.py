@@ -461,17 +461,18 @@ class Instance(SchoolBaseModule):
 		exam=StringSanitizer(default='')
 	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def reduce_recipients_groups(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
+	def remove_users_from_non_primary_groups(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		"""
-		Reduce the groups the users are in to their primary group, executing
-		as few group modifications as possible.
+		This method removes the specified users (<userdns>) from their non-primary groups.
+		The changes are aggregated to make as few group modifications as possible, which is
+		done to improve performance when dealing with groups with lots of group members.
 		"""
 		userdns = request.options["userdns"]  # type: List[str]
 		exam = request.options['exam']  # type: str
-		logger.info('userdns=%r exam=%r', userdns, exam)
+		logger.info('Removing users from non-primary groups: userdns=%r exam=%r', userdns, exam)
 
 		remove_list = {}  # type: Dict[str, Tuple[List[str], List[str]]]
-		logger.info('Collecting groups of %d users...', len(userdns))
+		logger.info('Collecting non-primary groups of %d users...', len(userdns))
 		for user_dn in userdns:
 			user_ldap_obj = ldap_user_read.get(user_dn, attr=["uid", "gidNumber"])
 			user_name = user_ldap_obj["uid"][0]
@@ -498,7 +499,7 @@ class Instance(SchoolBaseModule):
 			grp_obj = module_groups.object(None, ldap_admin_write, ldap_position, group_dn)
 			grp_obj.fast_member_remove(user_dns, user_names)
 
-		logger.info("Finished reducing groups.")
+		logger.info("Finished removal from non-primary groups.")
 		self.finished(request.id, None)
 
 	@sanitize(

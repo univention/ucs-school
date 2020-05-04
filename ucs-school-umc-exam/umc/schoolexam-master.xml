@@ -6,7 +6,7 @@
 
 	<command name="schoolexam-master/create-exam-user" function="create_exam_user"/>
 	<command name="schoolexam-master/add-exam-users-to-groups" function="add_exam_users_to_groups"/>
-	<command name="schoolexam-master/reduce-recipients-groups" function="reduce_recipients_groups"/>
+	<command name="schoolexam-master/reduce-recipients-groups" function="remove_users_from_non_primary_groups"/>
 	<command name="schoolexam-master/remove-exam-user" function="remove_exam_user"/>
 	<command name="schoolexam-master/set-computerroom-exammode" function="set_computerroom_exammode"/>
 	<command name="schoolexam-master/unset-computerroom-exammode" function="unset_computerroom_exammode"/>
