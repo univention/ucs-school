@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.4-4) unstable; urgency=low
+
+  * Bug #50669: better identify global users in new ACLs
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 04 May 2020 12:32:35 +0100
+
 ucs-school-ldap-acls-master (17.0.4-3) unstable; urgency=low
 
   * Bug #50669: fix problem in new ACLs

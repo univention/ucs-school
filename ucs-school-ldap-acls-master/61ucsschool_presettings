@@ -124,7 +124,7 @@ access to dn.children="cn=unique-email,cn=ucsschool,cn=univention,@%@ldap/base@%
 
 # prevent unauthorized access to user password data as described in Bug #50669
 
-access to filter="(|(objectClass=ucsschoolAdministrator)(objectClass=univentionPerson))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
+access to filter="(|(objectClass=ucsschoolAdministrator)(&(univentionObjectType=users/user)(!(objectClass=ucsschoolType))))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
 	by self +0 break
 	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
 	by * +0 break
