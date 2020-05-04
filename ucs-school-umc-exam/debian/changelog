@@ -1,3 +1,11 @@
+ucs-school-umc-exam (9.0.1-40) unstable; urgency=low
+
+  * Bug #51199: safely handle not-yet-updated master missing new UMC function
+  * Bug #51199: fix UMC function name
+  * Bug #51199: improve user-visible progress report
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 04 May 2020 22:17:07 +0200
+
 ucs-school-umc-exam (9.0.1-39) unstable; urgency=low
 
   * Bug #51199: reduce ExamUser deletion time by removing them all at once
