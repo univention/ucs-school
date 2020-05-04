@@ -137,7 +137,7 @@ access to filter="(|(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))"
 
 access to filter="objectClass=ucsschoolStudent" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
 	by self +0 break
-	by set="user/objectClass & [ucsschoolAdministrator]" +0 break
+	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher])" +0 break
 	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolStaff])" none
 	by * +0 break
 

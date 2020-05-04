@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.4-3) unstable; urgency=low
+
+  * Bug #50669: fix problem in new ACLs
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 04 May 2020 10:31:50 +0100
+
 ucs-school-ldap-acls-master (17.0.4-2) unstable; urgency=low
 
   * Bug #50669: limit access to user password data
