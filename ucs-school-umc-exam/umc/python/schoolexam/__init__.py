@@ -761,7 +761,7 @@ class Instance(SchoolBaseModule):
 						"Reducing groups of %d users (of %d total).",
 						len(users_to_reduce), len(recipients),
 					)
-					client.umc_command('schoolexam-master/remove_users_from_non_primary_groups', dict(
+					client.umc_command('schoolexam-master/remove-users-from-non-primary-groups', dict(
 						userdns=users_to_reduce,
 						exam=request.options['exam']
 					)).result
