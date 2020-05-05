@@ -5,6 +5,7 @@
 ## exposure: safe
 ## packages:
 ##   - ucs-school-import
+## bugs: [48138]
 
 import datetime
 import random
@@ -25,9 +26,9 @@ test_data = [
 	"{1:02d}/{2:02d}/{0}".format(*random_date()),  # MM/DD/YYYY
 ]
 year, month, day = random_date()
-test_data.append("{:02d}.{:02d}.{}".format(day, month, year % 100))  # DD.MM.YY
+test_data.append("{:02d}.{:02d}.{:02d}".format(day, month, year % 100))  # DD.MM.YY
 year, month, day = random_date()
-test_data.append("{:02d}/{:02d}/{}".format(month, day, year % 100))  # MM/DD/YY
+test_data.append("{:02d}/{:02d}/{:02d}".format(month, day, year % 100))  # MM/DD/YY
 
 
 @pytest.mark.parametrize("test_date", test_data)
