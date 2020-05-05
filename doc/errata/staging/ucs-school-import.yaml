@@ -3,9 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.34A~4.4.0.202004301134
+fix: 17.0.35A~4.4.0.202005051459
 desc: |
-  * When ucsschool/import/generate/user/attributes/no-overwrite-by-schema was an empty string, the import would not recognize it as unset and assume all attributes should be overwritten - including uid and mailPrimaryAddress. This fix ensures that uid and mailPrimaryAddress will not be overwritten in that case.
-
-  * Schemes in user import configuration now get checked for valid format (correct usage of symbols '<', '>', '[' and ']')
+  * When ucsschool/import/generate/user/attributes/no-overwrite-by-schema was an empty string, the import would not recognize it as unset and assume all attributes should be overwritten - including uid and mailPrimaryAddress. This fix ensures that uid and mailPrimaryAddress will not be overwritten in that case (Bug #51003).
+  * Schemes in user import configurations now get checked for valid format (correct usage of symbols <envar><, >, [ and ]</envar>) (Bug #50894).
 bug: [51003, 50894]
