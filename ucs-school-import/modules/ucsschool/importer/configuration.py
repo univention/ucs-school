@@ -44,7 +44,7 @@ from .utils.import_pyhook import run_import_pyhooks
 from .utils.config_pyhook import ConfigPyHook
 
 
-USER_IMPORT_SCHEMA_FILE = '/usr/share/ucs-school-import/schema/user_schema.json'
+USER_IMPORT_SCHEMA_FILE = '/usr/share/ucs-school-import/schema/user_import_configuration_schema.json'
 
 
 try:
