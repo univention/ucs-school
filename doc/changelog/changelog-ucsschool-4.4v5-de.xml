@@ -221,7 +221,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-exam 9.0.1-38A~4.4.0.202004241746 -->
 <!-- CHANGELOG:2020-04-27:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-05-05" lang="en">
+					<title>Released on 2020-05-05:</title>
+					<!-- START ucs-school-umc-exam 9.0.1-40A~4.4.0.202005042218 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-40A~4.4.0.202005042218</emphasis>:
+						<itemizedlist>
+							<listitem><para>The time to finish an exam has been drastically reduced by optimizing the way exam users are deleted (<u:bug>51199</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-40A~4.4.0.202005042218 -->
+<!-- CHANGELOG:2020-05-05:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 		</section>
