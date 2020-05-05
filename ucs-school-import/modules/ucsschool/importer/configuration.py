@@ -56,15 +56,8 @@ except ImportError:
 def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> ReadOnlyDict
 	logger = logging.getLogger(__name__)
 	config = Configuration(conffiles)
+	ConfigurationFile("kwargs (cmdline args)").validate(kwargs)
 	config.update(kwargs)
-	try:
-		with open(USER_IMPORT_SCHEMA_FILE, 'rb') as schema_file:
-			schema = json.load(schema_file)
-		validate(instance=kwargs, schema=schema)
-	except ValidationError:
-		raise InitialisationError("Configuration does not match scheme: {}".format(kwargs))
-	except IOError:
-		raise InitialisationError("Could not open schema file: {}".format(USER_IMPORT_SCHEMA_FILE))
 	_set_username_maxlength(config, logger)
 	run_import_pyhooks(ConfigPyHook, 'post_config_files_read', config, conffiles, kwargs)
 	config.check_mandatory_attributes(logger)
@@ -97,15 +90,25 @@ def _set_username_maxlength(config, logger):  # type: (ReadOnlyDict, logging.Log
 
 
 class ConfigurationFile(object):
+	_schema = None  # type: Optional[Dict[str, Any]]
 
 	def __init__(self, filename):  # type: (str) -> None
 		self.filename = filename
 		self.logger = logging.getLogger(__name__)
 
 	def read(self):  # type: () -> Dict[str, Any]
+		"""
+		:raises InitialisationError: when the configuration file could not be
+			read or when it contained invalid JSON
+		"""
 		self.logger.info("Reading configuration from %r...", self.filename)
-		with open(self.filename, "rb") as fp:
-			return json.load(fp)
+		try:
+			with open(self.filename, "rb") as fp:
+				return json.load(fp)
+		except ValueError as ve:
+			raise InitialisationError("Error in configuration file {!r}: {}.".format(self.filename, ve))
+		except IOError as exc:
+			raise InitialisationError("Error reading configuration file {!r} {}.".format(self.filename, exc))
 
 	def write(self, conf):  # type: (str) -> None
 		self.logger.info("Writing configuration to %r...", self.filename)
@@ -118,6 +121,30 @@ class ConfigurationFile(object):
 		cur.update(conf)
 		with open(self.filename, "wb") as fp:
 			return json.dump(cur, fp)
+
+	@classmethod
+	def get_schema(cls):  # type: () -> Dict[str, Any]
+		"""
+		:raises InitialisationError: when the json schema cannot be read
+		"""
+		if not cls._schema:
+			try:
+				with open(USER_IMPORT_SCHEMA_FILE, "rb") as schema_file:
+					cls._schema = json.load(schema_file)
+			except IOError as exc:
+				raise InitialisationError("Error reading json schema {!r}: {}.".format(USER_IMPORT_SCHEMA_FILE, exc))
+		return cls._schema
+
+	def validate(self, cf_obj):  # type: (Dict[str, Any]) -> None
+		"""
+		:raises InitialisationError: when `cf_obj` does not conform to the
+			json schema
+		"""
+		self.logger.debug("Validating %r...", self.filename)
+		try:
+			validate(instance=cf_obj, schema=self.get_schema())
+		except ValidationError as exc:
+			raise InitialisationError("Schema validation failed for configuration file {!r}: {}.".format(self.filename, exc))
 
 
 class ReadOnlyDict(dict):
@@ -181,31 +208,17 @@ class Configuration(object):
 			if not filenames:
 				raise InitialisationError("Configuration not yet loaded.")
 			self.config = None
-			schema = None
 			for filename in filenames:
-				try:
-					with open(USER_IMPORT_SCHEMA_FILE, 'rb') as schema_file:
-						schema = json.load(schema_file)
-				except IOError as exc:
-					raise InitialisationError("Error reading json schema '{}': {}.".format(USER_IMPORT_SCHEMA_FILE, exc))
-				try:
-					cf = ConfigurationFile(filename)
-					cf_obj = cf.read()
-					validate(instance=cf_obj, schema=schema)
-					if self.config:
-						self.config.update(cf_obj)
-					else:
-						self.config = ReadOnlyDict(cf_obj)
-					self.conffiles.append(filename)
-				except ValueError as ve:
-					raise InitialisationError("Error in configuration file '{}': {}.".format(filename, ve))
-				except IOError as exc:
-					raise InitialisationError("Error reading configuration file {}.".format(exc))
-				except ValidationError as exc:
-					raise InitialisationError("Configuration file does not match scheme {!r}: {}.".format(filename, exc))
+				cf = ConfigurationFile(filename)
+				cf_obj = cf.read()
+				cf.validate(cf_obj)
+				if self.config:
+					self.config.update(cf_obj)
+				else:
+					self.config = ReadOnlyDict(cf_obj)
+				self.conffiles.append(filename)
 			self.config.conffiles = self.conffiles
 	_instance = None
-
 
 	def __new__(cls, filenames=None):  # type: (Type[Configuration], Optional[List[str]]) -> ReadOnlyDict
 		if not cls._instance:
