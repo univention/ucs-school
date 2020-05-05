@@ -14,8 +14,7 @@
 	Die Standardkonfiguration von &ucsUCS; und &ucsUAS; ist für Umgebungen mit bis zu 5.000
 	Benutzern optimiert worden. In größeren Umgebungen kann es notwendig werden, Anpassungen an der
 	Standardkonfiguration vorzunehmen. Die meisten Schritte werden bereits im <foreignphrase>UCS performance
-	guide</foreignphrase> <biblioref linkend="ucs-performance-guide"/> beschrieben. Bei &ucsUAS; muss das Backend für BIND dabei
-	zwingend auf Samba 4 gesetzt sein.
+	guide</foreignphrase> <biblioref linkend="ucs-performance-guide"/> beschrieben.
   </para>
   <para>
 	Darüber hinaus sollten einige Punkte bereits bei der Planung und dem Aufbau einer &ucsUAS;-Umgebung beachtet werden:
@@ -50,7 +49,11 @@
 
   <section id="school:performance:scaling">
 	<title>Skalierung von &ucsUAS; Samba 4 Umgebungen</title>
-
+	  <note>
+		<para>
+			Bei &ucsUAS; muss das Backend für BIND zwingend auf Samba 4 gesetzt sein (UCR-Variable <envar>dns/backend=samba4</envar>).
+		</para>
+	</note>
     <section id="school:performance:additionalMemberserver">
   	<title>Installation zusätzlicher Memberserver</title>
   	<para>
