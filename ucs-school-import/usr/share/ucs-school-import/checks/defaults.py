@@ -40,6 +40,7 @@ import string
 import re
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 from ucsschool.importer.exceptions import InitialisationError
+from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
 
 
@@ -115,6 +116,13 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 
 	def test_scheme_valid_format(self):
 		# If a '[' or a ']' appears in a "scheme" field, it should be in one of these contexts
+		factory = setup_factory(self.config['factory'])
+		username_handler = factory.make_username_handler(15)
+		counters = username_handler.counter_variable_to_function.keys()
+		counters_str = [r"\[{}\]".format(counter[1:-1]) for counter in counters]
+		scheme_allowed_occurences = [r"\[\d\]", r"\[\d*:\d*\]"] + counters_str
+		scheme_allowed_occurences_regex = re.compile("|".join(scheme_allowed_occurences))
+
 		def iterate_config(dictionary):
 			for scheme_field in dictionary.values():
 				if isinstance(scheme_field, dict):
@@ -133,9 +141,10 @@ class DefaultConfigurationChecks(ConfigurationChecks):
 						if closing < opening:
 							raise InitialisationError("'<' and '>' are in wrong order.")
 						start = closing+1
-					# Check if a ']' or '[' symbol is used in an allowed context
-					scheme_allowed_occurences = ("\[\d\]", "\[\d*:\d*\]", "\[ALWAYSCOUNTER\]", "\[COUNTER2\]")
-					rest = re.sub("|".join(scheme_allowed_occurences), "", scheme_field)
+					# remove allowed usages of '[..]' and check if any remain
+					rest = scheme_allowed_occurences_regex.sub("", scheme_field)
 					if any(symbol in rest for symbol in ["[", "]"]):
-						raise InitialisationError("Unallowed use of symbol '[' or ']'.")
+						raise InitialisationError(
+							"Erroneous use of square brackets in schema {!r}".format(scheme_field)
+						)
 		iterate_config(self.config['scheme'])
