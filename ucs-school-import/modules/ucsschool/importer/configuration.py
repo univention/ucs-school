@@ -106,9 +106,15 @@ class ConfigurationFile(object):
 			with open(self.filename, "rb") as fp:
 				return json.load(fp)
 		except ValueError as ve:
-			raise InitialisationError("Error in configuration file {!r}: {}.".format(self.filename, ve))
+			raise InitialisationError(
+				"Error in configuration file {!r}: {}.".format(self.filename, ve),
+				log_traceback=False,
+			)
 		except IOError as exc:
-			raise InitialisationError("Error reading configuration file {!r} {}.".format(self.filename, exc))
+			raise InitialisationError(
+				"Error reading configuration file {!r} {}.".format(self.filename, exc),
+				log_traceback=False,
+			)
 
 	def write(self, conf):  # type: (str) -> None
 		self.logger.info("Writing configuration to %r...", self.filename)
@@ -132,7 +138,10 @@ class ConfigurationFile(object):
 				with open(USER_IMPORT_SCHEMA_FILE, "rb") as schema_file:
 					cls._schema = json.load(schema_file)
 			except IOError as exc:
-				raise InitialisationError("Error reading json schema {!r}: {}.".format(USER_IMPORT_SCHEMA_FILE, exc))
+				raise InitialisationError(
+					"Error reading json schema {!r}: {}.".format(USER_IMPORT_SCHEMA_FILE, exc),
+					log_traceback=False,
+				)
 		return cls._schema
 
 	def validate(self, cf_obj):  # type: (Dict[str, Any]) -> None
@@ -144,7 +153,10 @@ class ConfigurationFile(object):
 		try:
 			validate(instance=cf_obj, schema=self.get_schema())
 		except ValidationError as exc:
-			raise InitialisationError("Schema validation failed for configuration file {!r}: {}.".format(self.filename, exc))
+			raise InitialisationError(
+				"Schema validation failed for configuration file {!r}: {}.".format(self.filename, exc),
+				log_traceback=False,
+			)
 
 
 class ReadOnlyDict(dict):

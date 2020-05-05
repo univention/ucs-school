@@ -94,7 +94,9 @@ class EmptyMandatoryAttribute(UcsSchoolImportError):
 
 
 class InitialisationError(UcsSchoolImportFatalError):
-	pass
+	def __init__(self, msg, log_traceback=True, *args, **kwargs):
+		super(InitialisationError, self).__init__(msg, *args, **kwargs)
+		self.log_traceback = log_traceback
 
 
 class InvalidBirthday(UcsSchoolImportError):
