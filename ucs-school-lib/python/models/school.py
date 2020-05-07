@@ -463,6 +463,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		):
 			grpdn = grpdn % {'ou': self.name, 'basedn': ucr.get('ldap/base')}
 			self._remove_udm_object('groups/group', grpdn, lo)
+
+			for container in user_containers:
+				for user in container:
+					user.remove_from_school(self.name, lo)
 		return success
 
 	def get_schools(self):
