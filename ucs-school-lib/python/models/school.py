@@ -452,6 +452,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return success
 
 	def remove_without_hooks(self, lo):
+		from ucsschool.lib.models.user import User
 		success = super(School, self).remove_without_hooks(lo)
 		for grpdn in (
 			'cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
@@ -464,9 +465,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			grpdn = grpdn % {'ou': self.name, 'basedn': ucr.get('ldap/base')}
 			self._remove_udm_object('groups/group', grpdn, lo)
 
-			for container in user_containers:
-				for user in container:
-					user.remove_from_school(self.name, lo)
+			for user in User.get_all(lo, self.name):
+				user.remove_from_school(self.name, lo)
 		return success
 
 	def get_schools(self):
