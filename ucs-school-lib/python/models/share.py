@@ -64,9 +64,11 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_obj['sambaForceGroup'] = '+%s' % self.name
 		udm_obj['sambaCreateMode'] = '0770'
 		udm_obj['sambaDirectoryMode'] = '0770'
+
 		udm_obj['owner'] = '0'
 		udm_obj['group'] = gid
 		udm_obj['directorymode'] = '0770'
+
 		if ucr.is_false('ucsschool/default/share/nfs', True):
 			try:
 				udm_obj.options.remove('nfs')  # deactivate NFS
@@ -170,3 +172,30 @@ class ClassShare(RoleSupportMixin, Share):
 			return '/home/%s/groups/klassen/%s' % (self.school_group.school, self.name)
 		else:
 			return '/home/groups/klassen/%s' % self.name
+
+	def do_create(self, udm_obj, lo):
+		# udm_obj['appendACL'] = 'edit me'
+
+		# an dieser stelle muss ich die sid eintragen
+		# import re
+		# import subprocess
+		# proc = subprocess.Popen(['samba-tool', 'ntacl', 'get', '--as-sddl', new['univentionSharePath'][0]],
+		#                         stdout=subprocess.PIPE)
+		# stdout, stderr = proc.communicate()
+		# res = re.search(r'(S-1-5-21.+?)D:', stdout)
+		# if res:
+		# 	group_sid = res.group(1)
+
+		# deny stuff. find out group later.
+		udm_obj['appendACL'] = '(D;OICI;0x00140000;;;{})'
+
+		# udm_obj['sambaNtAclSupport'] = '1'
+		# udm_obj['sambaInheritPermissions'] = '1'
+		# udm_obj['sambaInheritAcls'] = '1'
+		# save -> udm_obj ntacloverwrites
+		# wo wird share angelegt?
+		# udm_obj['sambaCustomSettings'] = [('acl map full control', '0'), ('dos filemode', 'no')]
+
+		return super(ClassShare, self).do_create(udm_obj, lo)
+
+

@@ -1,3 +1,21 @@
+ucs-school-lib (12.1.15) unstable; urgency=medium
+
+  * Bug #42182: testingasff
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Fri, 24 Apr 2020 16:21:47 +0200
+
+ucs-school-lib (12.1.14) unstable; urgency=medium
+
+  * Bug #42182: testingasff
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Fri, 24 Apr 2020 16:21:47 +0200
+
+ucs-school-lib (12.1.13) unstable; urgency=medium
+
+  * Bug #42182: testingasff
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Fri, 24 Apr 2020 16:21:47 +0200
+
 ucs-school-lib (12.1.12) unstable; urgency=medium
 
   * Bug #45683: added class name syntax check
