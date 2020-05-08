@@ -340,6 +340,9 @@
 		<para>
 			Die resultierende Konfiguration, die sich aus eingelesenen Konfigurationsdateien sowie verwendete Kommandozeilenparameter zusammenstellt, wird am Anfang jedes Importlaufes angezeigt und in alle Protokolldateien geschrieben. Um eine Konfiguration zu testen, kann ein Probelauf mit <option>--dry-run</option> gestartet (und jederzeit gefahrlos abgebrochen) werden. Der Parameter simuliert einen Import, ohne dass Änderungen an &ucsUAS;-Benutzern vorgenommen werden.
 		</para>
+		<para>
+            Eine detaillierte Beschreibung zu möglichen Konfigurationsoptionen befindet sich auch auf dem DC Master/Backup unter <filename>/usr/share/doc/ucs-school-import/global_configuration_readme.txt</filename> für Hilfe zur globalen Konfiguration sowie unter <filename>/usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz</filename> für den Benutzerimport.
+		</para>
 
 		<section id="configuration:cmdline_parameters">
 			<title>Kommandozeilenparameter</title>
