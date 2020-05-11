@@ -14,7 +14,6 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models import School, Share
 
-#			cmd = ("smbclient", "//" + ldap_master + "/sysvol", "--user=" + username + "%" + password, "--timeout=120", "--workgroup=" + domain_name.upper(), "--command=ls")
 
 def main():
 	with udm_test.UCSTestUDM() as udm:
@@ -31,13 +30,14 @@ def main():
 			#                              position="cn=klassen,cn=shares,%s" % oudn,
 			#                              host=schoolenv.ucr['hostname'],
 			#                              path=path)
+			# utils.verify_ldap_object(share_dn, strict=True, should_exist=True)
+
 			# # # is the share not created? didn't work.
 			# group_sid = schoolenv.lo.get(klasse_dn)['sambaSID'][0]
 			#
 			# print(path)
 			# proc = subprocess.Popen(['samba-tool', 'ntacl', 'get', '--as-sddl', path], stdout=subprocess.PIPE)
 			# stdout, stderr = proc.communicate()
-
 
 			for school in School.get_all(schoolenv.lo):
 
@@ -59,6 +59,9 @@ def main():
 								# Full control is ok, if it is stripped by the permission to change permissions.
 								if not re.match(r'.*?(D.+?0x00140000[^)]+?{}.*?).*'.format(sid), stdout):
 									utils.fail("The permissions of share {} can be changed.".format(share_udm["path"], name))
+
+
+
 
 
 if __name__ == '__main__':
