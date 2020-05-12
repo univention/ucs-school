@@ -57,7 +57,7 @@ def main():
 						for sid, name in sid_map:
 							if re.match(r'.*?(A.+?0x001f01ff[^)]+?{}.*?).*'.format(sid), stdout):
 								# Full control is ok, if it is stripped by the permission to change permissions.
-								if not re.match(r'.*?(D.+?0x00140000[^)]+?{}.*?).*'.format(sid), stdout):
+								if not re.match(r'.*?(D;OICI;WOWD[^)]+?{}.*?).*'.format(sid), stdout):
 									utils.fail("The permissions of share {} can be changed.".format(share_udm["path"], name))
 
 
