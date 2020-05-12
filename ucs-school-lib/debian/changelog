@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.14) unstable; urgency=medium
+
+  * Bug #47155: override remove_without_hooks
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Tue, 12 May 2020 18:15:51 +0200
+
 ucs-school-lib (12.1.13) unstable; urgency=medium
 
   * Bug #51190: revert wrong fix
