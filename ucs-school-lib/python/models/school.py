@@ -30,6 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import subprocess
 import ldap
 from ldap.filter import escape_filter_chars, filter_format
 from ldap.dn import escape_dn_chars
@@ -450,8 +451,47 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		return success
 
+	def remove_without_hooks(self, lo):
+		from ucsschool.lib.models.user import User
+		success = super(School, self).remove_without_hooks(lo)
+		for grpdn in (
+			'cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+			'cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s',
+		):
+			grpdn = grpdn % {'ou': self.name, 'basedn': ucr.get('ldap/base')}
+			self._remove_udm_object('groups/group', grpdn, lo)
+
+		for user in User.get_all(lo, self.name):
+			user.remove_from_school(self.name, lo)
+		return success
+
 	def get_schools(self):
 		return {self.name}
+
+	def _remove_udm_object(self, module, dn, lo, raise_exceptions=False):
+		"""
+		Tries to remove UDM object specified by given dn.
+		Return None on success or error message.
+		"""
+		try:
+			dn = lo.searchDn(base=dn)[0]
+		except (ldap.NO_SUCH_OBJECT, IndexError, noObject):
+			if raise_exceptions:
+				raise
+			return 'missing object'
+
+		msg = None
+		cmd = ['udm', module, 'remove', '--dn', dn]
+		self.logger.info('*** Calling following command: %r', cmd)
+		retval = subprocess.call(cmd)
+		if retval:
+			msg = '*** ERROR: failed to remove UCS@school %s object: %s' % (module, dn)
+			logger.error(msg)
+		return msg
 
 	def _alter_udm_obj(self, udm_obj):
 		udm_obj.options.append('UCSschool-School-OU')
