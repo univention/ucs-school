@@ -12,25 +12,37 @@ import subprocess
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.klasse import Klasse
+from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.ucs_samba import wait_for_s4connector
 
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
+		directories = []
 		school, oudn = schoolenv.create_ou()
 		klasse = Klasse(school=school)
 		klasse.create()
-		klasse.check_existence(True)
-		wait_for_s4connector()
+		klasse_path = "/home/{0}/groups/klassen/{0}-{1}".format(school, klasse.name)
 		group_sid = schoolenv.lo.get(klasse.dn())['sambaSID'][0]
-		path = "/home/{0}/groups/klassen/{0}-{1}".format(school, klasse.name)
-		proc = subprocess.Popen(['samba-tool', 'ntacl', 'get', '--as-sddl', path], stdout=subprocess.PIPE)
-		stdout, stderr = proc.communicate()
-		if re.match(r'.*?(A.+?0x001f01ff[^)]+?S-1-5-21.*?).*', stdout):
-			# Full control is ok, if it is stripped by the permission to change permissions
-			# and take ownership -> WOWD.
-			if not re.match(r'.*?(D;OICI;WOWD[^)]+?S-1-5-21.*?).*', stdout):
-				utils.fail("The permissions of share {} can be changed for {}.".format(path, group_sid))
+		directories.append((klasse_path, group_sid))
+
+		workgroup = Workgroup(school=school)
+		workgroup.create()
+		workgroup_path = "/home/{0}/groups/{0}-{1}".format(school, workgroup.name)
+		group_sid = schoolenv.lo.get(workgroup.dn())['sambaSID'][0]
+		directories.append((workgroup_path, group_sid))
+		wait_for_s4connector()
+
+		for path, group_sid in directories:
+			proc = subprocess.Popen(['samba-tool', 'ntacl', 'get', '--as-sddl', path], stdout=subprocess.PIPE)
+			stdout, stderr = proc.communicate()
+			if stderr:
+				utils.fail("Error during samba-tool execution {}".format(stderr))
+			if re.match(r'.*?(A.+?0x001f01ff[^)]+?S-1-5-21.*?).*', stdout):
+				# Full control is ok, if it is stripped by the permission to change permissions
+				# and take ownership -> WOWD.
+				if not re.match(r'.*?(D;OICI;WOWD[^)]+?S-1-5-21.*?).*', stdout):
+					utils.fail("The permissions of share {} can be changed for {}.".format(path, group_sid))
 
 
 if __name__ == '__main__':
