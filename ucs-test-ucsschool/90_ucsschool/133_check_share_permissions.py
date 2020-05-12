@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test if share-access don't leave permission change open for class members.
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,mysharetest]
 ## exposure: dangerous
 ## packages: []
 ## bugs: [42182]
