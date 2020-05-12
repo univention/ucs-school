@@ -161,7 +161,7 @@ class WorkGroupShare(RoleSupportMixin, Share):
 		# Deny change of permission for folder, subfolder and files.
 		# and take ownership.
 		samba_sid = lo.get(self.school_group.dn)['sambaSID'][0]
-		udm_obj['appendACL'] = '(D;OICI;0x00140000;;;{0})(D;OICI;0x00180000;;;{0})'.format(samba_sid)
+		udm_obj['appendACL'] = '(D;OICI;WOWD;;;{0})'.format(samba_sid)
 		return super(WorkGroupShare, self).do_create(udm_obj, lo)
 
 
@@ -184,7 +184,7 @@ class ClassShare(RoleSupportMixin, Share):
 		# Deny change of permission for folder, subfolder and files.
 		# and take ownership.
 		samba_sid = lo.get(self.school_group.dn)['sambaSID'][0]
-		udm_obj['appendACL'] = '(D;OICI;0x00140000;;;{0})(D;OICI;0x00180000;;;{0})'.format(samba_sid)
+		udm_obj['appendACL'] = '(D;OICI;WOWD;;;{0})'.format(samba_sid)
 		return super(ClassShare, self).do_create(udm_obj, lo)
 
 
