@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.110) unstable; urgency=medium
+
+  * Bug #47155: ou-DC/Member-Verwaltungsnetz and ouadmins in
+    School.ldap_verify are now tested against should_exist=must_exist
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 13 May 2020 16:33:17 +0200
+
 ucs-test-ucsschool (6.0.109) unstable; urgency=low
 
   * Bug #48138: fix birthday format test for single digit years
