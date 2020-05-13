@@ -31,8 +31,7 @@ def main():
 		workgroup_path = "/home/{0}/groups/{0}-{1}".format(school, workgroup.name)
 		group_sid = schoolenv.lo.get(workgroup.dn())['sambaSID'][0]
 		directories.append((workgroup_path, group_sid))
-		wait_for_s4connector()
-
+		utils.wait_for_listener_replication()
 		for path, group_sid in directories:
 			proc = subprocess.Popen(['samba-tool', 'ntacl', 'get', '--as-sddl', path], stdout=subprocess.PIPE)
 			stdout, stderr = proc.communicate()
