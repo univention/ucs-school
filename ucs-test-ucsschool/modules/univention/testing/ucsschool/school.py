@@ -322,14 +322,14 @@ class School(object):
 		if noneducational_create_objects:
 			utils.verify_ldap_object('cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn, should_exist=True)
 			utils.verify_ldap_object('cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn, should_exist=True)
-			utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=True)
-			utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=True)
+			utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=must_exist)
+			utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=must_exist)
 		# This will fail because we don't cleanup these groups in cleanup_ou
 		# else:
-		#	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
-		#	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
-		#	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
-		#	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
+		# 	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
+		# 	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
+		# 	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
+		# 	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
 
 		if not singlemaster:
 			verify_dc(ou, dc_name, TYPE_DC_EDUCATIONAL, base_dn, must_exist)
@@ -347,7 +347,7 @@ class School(object):
 		grp_policy_admins = ucr.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=UMC,cn=policies,%s' % base_dn)
 		grp_policy_staff = ucr.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % base_dn)
 
-		utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins], 'ucsschoolRole': [create_ucsschool_role_string(role_school_admin_group, ou)]}, should_exist=True)
+		utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins], 'ucsschoolRole': [create_ucsschool_role_string(role_school_admin_group, ou)]}, should_exist=must_exist)
 		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=must_exist)
 		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_teachers]}, should_exist=must_exist)
 

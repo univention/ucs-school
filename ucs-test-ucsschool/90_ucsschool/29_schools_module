@@ -8,6 +8,7 @@
 
 from univention.testing.ucsschool.school import School, create_dc_slave
 import univention.testing.udm as udm_test
+from univention.lib.umc import BadRequest
 import time
 
 
@@ -75,7 +76,12 @@ def main():
 
 		finally:
 			for school in schools:
-				school.remove()
+				try:
+					print 'Clean up remaining school %s after failed test.' % school.name
+					school.remove()
+				except BadRequest as br:
+					print 'Failed to remove remaining school %s after failed test.' % school.name
+
 
 
 if __name__ == '__main__':
