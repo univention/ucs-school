@@ -6,6 +6,5 @@ src: ucs-school-lib
 fix: 12.1.14A~4.4.0.202005121819
 desc: |
   * Improved error message when importing an invalid class name (Bug #51190).
-
   * When a school was deleted in the UMC, groups that belonged to that school did still remain. This fix ensures that those groups will be removed as well (Bug #47155).
 bug: [51190, 47155]
