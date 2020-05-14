@@ -41,8 +41,13 @@ from univention.udm import UDM
 from ldap.filter import filter_format
 
 try:
+	from typing import List
 	from .base import LoType, UdmObject
 except ImportError:
+	pass
+
+
+class NoSID(Exception):
 	pass
 
 
@@ -150,21 +155,30 @@ class DenyStudentsChangePermsMixin(object):
 	# folders, subfolder and files or to take ownership of them.
 	NTACL = '(D;OICI;WOWD;;;{SID})'
 
-	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-		# Deny change of permission for folder, subfolder and files.
-		# and take ownership by students.
+	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
 		search_base = self.get_search_base(self.school)
 		student_group_dn = "cn={}{},cn=groups,{}".format(
 			search_base.group_prefix_students, self.school, search_base.schoolDN
 		)
 		try:
 			samba_sid = lo.get(student_group_dn)['sambaSID'][0]
-			udm_obj['appendACL'] = [self.NTACL.format(SID=samba_sid)]
 		except (IndexError, KeyError):
-			self.logger.warning(
-				"Group %r has no/empty 'sambaSID' attribute, not setting NTACLs.",
-				student_group_dn
-			)
+			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(student_group_dn))
+		return [self.NTACL.format(SID=samba_sid)]
+
+	def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+		# Deny change of permission for folder, subfolder and files.
+		# and take ownership by students.
+		try:
+			udm_obj['appendACL'] = self.get_nt_acls(lo)
+		except NoSID as exc:
+			self.logger.warning("Not setting NTACLs for %s: %s", self.__class__.__name__, exc)
+			return
+		udm_obj['sambaInheritOwner'] = '1'
+		udm_obj['sambaInheritPermissions'] = '1'
+
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+		self.set_nt_acls(udm_obj, lo)
 		return super(DenyStudentsChangePermsMixin, self).do_create(udm_obj, lo)
 
 
