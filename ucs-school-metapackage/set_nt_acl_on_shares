@@ -32,7 +32,7 @@ import logging
 
 import univention.admin.uldap
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.share import ClassShare, WorkGroupShare
+from ucsschool.lib.models.share import ClassShare, WorkGroupShare, Share
 from ucsschool.lib.models.utils import get_stream_handler
 
 
@@ -53,6 +53,7 @@ def main():
 			"%02d / %02d: Checking shares of school %r...",
 			school_num, len(schools), school.name
 		)
+
 		class_shares = sorted(ClassShare.get_all(lo, school=school.name), key=lambda x: x.name)
 		work_group_shares = sorted(WorkGroupShare.get_all(lo, school=school.name), key=lambda x: x.name)
 		all_shares = [
@@ -60,6 +61,10 @@ def main():
 		] + [
 			("work group share", share) for share in work_group_shares
 		]
+
+		market_place = Share.get_all(lo, school.name, "name=Marktplatz")
+		if market_place:
+			all_shares.append(('market place', market_place[0]))
 
 		for share_num, (share_type, share) in enumerate(all_shares):
 			share_udm = share.get_udm_object(lo)

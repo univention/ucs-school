@@ -162,6 +162,9 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 		sharegrp="Domain Users"
 	fi
 	grpuidnumber="$(univention-ldapsearch -LLL "(&(objectclass=univentionGroup)(cn=${sharegrp}))" gidNumber | sed -ne 's/^gidNumber: //p')"
+	# deny change of permissions and take ownership for students
+	schueler_sid="$(univention-ldapsearch -LLL "(cn=schueler-${ou})" sambaSID |  sed -ne 's/^sambaSID: //p')"
+	appendACL="(D;OICI;WOWD;;;${schueler_sid})"
 
 	udm shares/share create --ignore_exists \
 		--position "cn=shares,ou=${ou}${district},${ldap_base}" \
@@ -169,7 +172,8 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 		--set "host=${dcname}" \
 		--set "path=${sharepath}" \
 		--set "directorymode=${sharemode}" \
-		--set "group=${grpuidnumber}" || return $?
+		--set "group=${grpuidnumber}" \
+		--set "appendACL=${appendACL}" || return $?
 
 	echo "$(date) $(basename $0) (52marktplatz_create): done - added new share Markplatz for server ${dcname}"
 }
