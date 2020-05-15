@@ -152,8 +152,9 @@ class DenyStudentsChangePermsMixin(object):
 	"""
 
 	# NT ACL to disallow students to deny students to change the permission of
-	# folders, subfolder and files or to take ownership of them.
-	NTACL = '(D;OICI;WOWD;;;{SID})'
+	# folders, subfolder and files or to take ownership of them as well as
+	# displaying them (RC).
+	NTACL = '(D;OICI;RCWOWD;;;{SID})'
 
 	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
 		search_base = self.get_search_base(self.school)
