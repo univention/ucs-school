@@ -51,7 +51,44 @@ class NoSID(Exception):
 	pass
 
 
-class Share(UCSSchoolHelperAbstractClass):
+class DenyStudentsChangePermsMixin(object):
+	"""
+	Mixin for UCS@school Share (sub)classes to prevent students from changing
+	the permissions in a share (Bug #42182).
+	"""
+
+	# NT ACL to disallow students to deny students to change the permission of
+	# folders, subfolder and files or to take ownership of them as well as
+	# displaying them (RC).
+	# D ~ deny, OI ~ Object inheritance, CI ~ container inheritance
+	# RC ~ display security attributes WO ~ take ownership
+	# WD ~ write security permissions
+	NTACL = '(D;OICI;RCWOWD;;;{SID})'
+
+	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+		search_base = self.get_search_base(self.school)
+		student_group_dn = "cn={}{},cn=groups,{}".format(
+			search_base.group_prefix_students, self.school, search_base.schoolDN
+		)
+		try:
+			samba_sid = lo.get(student_group_dn)['sambaSID'][0]
+		except (IndexError, KeyError):
+			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(student_group_dn))
+		return [self.NTACL.format(SID=samba_sid)]
+
+	def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+		# Deny change of permission for folder, subfolder and files.
+		# and take ownership by students.
+		try:
+			udm_obj['appendACL'] = self.get_nt_acls(lo)
+		except NoSID as exc:
+			self.logger.warning("Not setting NTACLs for %s: %s", self.__class__.__name__, exc)
+			return
+		udm_obj['sambaInheritOwner'] = '1'
+		udm_obj['sambaInheritPermissions'] = '1'
+
+
+class Share(UCSSchoolHelperAbstractClass, DenyStudentsChangePermsMixin):
 	name = ShareName(_('Name'))
 	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)
 
@@ -145,48 +182,7 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_module = 'shares/share'
 
 
-class DenyStudentsChangePermsMixin(object):
-	"""
-	Mixin for UCS@school Share (sub)classes to prevent students from changing
-	the permissions in a share (Bug #42182).
-	"""
-
-	# NT ACL to disallow students to deny students to change the permission of
-	# folders, subfolder and files or to take ownership of them as well as
-	# displaying them (RC).
-	# D ~ deny, OI ~ Object inheritance, CI ~ container inheritance
-	# RC ~ display security attributes WO ~ take ownership
-	# WD ~ write security permissions
-	NTACL = '(D;OICI;RCWOWD;;;{SID})'
-
-	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
-		search_base = self.get_search_base(self.school)
-		student_group_dn = "cn={}{},cn=groups,{}".format(
-			search_base.group_prefix_students, self.school, search_base.schoolDN
-		)
-		try:
-			samba_sid = lo.get(student_group_dn)['sambaSID'][0]
-		except (IndexError, KeyError):
-			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(student_group_dn))
-		return [self.NTACL.format(SID=samba_sid)]
-
-	def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-		# Deny change of permission for folder, subfolder and files.
-		# and take ownership by students.
-		try:
-			udm_obj['appendACL'] = self.get_nt_acls(lo)
-		except NoSID as exc:
-			self.logger.warning("Not setting NTACLs for %s: %s", self.__class__.__name__, exc)
-			return
-		udm_obj['sambaInheritOwner'] = '1'
-		udm_obj['sambaInheritPermissions'] = '1'
-
-	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-		self.set_nt_acls(udm_obj, lo)
-		return super(DenyStudentsChangePermsMixin, self).do_create(udm_obj, lo)
-
-
-class WorkGroupShare(DenyStudentsChangePermsMixin, RoleSupportMixin, Share):
+class WorkGroupShare(RoleSupportMixin, Share, DenyStudentsChangePermsMixin):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_workgroup_share]
 	_school_in_name_prefix = True
@@ -207,8 +203,12 @@ class WorkGroupShare(DenyStudentsChangePermsMixin, RoleSupportMixin, Share):
 				filtered_shares.append(share)
 		return filtered_shares
 
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+		self.set_nt_acls(udm_obj, lo)
+		return super(WorkGroupShare, self).do_create(udm_obj, lo)
 
-class ClassShare(DenyStudentsChangePermsMixin, RoleSupportMixin, Share):
+
+class ClassShare(RoleSupportMixin, Share, DenyStudentsChangePermsMixin):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_school_class_share]
 	_school_in_name_prefix = True
@@ -222,3 +222,7 @@ class ClassShare(DenyStudentsChangePermsMixin, RoleSupportMixin, Share):
 			return '/home/%s/groups/klassen/%s' % (self.school_group.school, self.name)
 		else:
 			return '/home/groups/klassen/%s' % self.name
+
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+		self.set_nt_acls(udm_obj, lo)
+		return super(ClassShare, self).do_create(udm_obj, lo)
