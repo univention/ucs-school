@@ -182,7 +182,7 @@ class Share(UCSSchoolHelperAbstractClass, DenyStudentsChangePermsMixin):
 		udm_module = 'shares/share'
 
 
-class WorkGroupShare(RoleSupportMixin, Share, DenyStudentsChangePermsMixin):
+class WorkGroupShare(RoleSupportMixin, Share):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_workgroup_share]
 	_school_in_name_prefix = True
@@ -208,7 +208,7 @@ class WorkGroupShare(RoleSupportMixin, Share, DenyStudentsChangePermsMixin):
 		return super(WorkGroupShare, self).do_create(udm_obj, lo)
 
 
-class ClassShare(RoleSupportMixin, Share, DenyStudentsChangePermsMixin):
+class ClassShare(RoleSupportMixin, Share):
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_school_class_share]
 	_school_in_name_prefix = True
