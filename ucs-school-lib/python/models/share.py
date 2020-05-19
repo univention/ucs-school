@@ -60,10 +60,15 @@ class DenyStudentsChangePermsMixin(object):
 	# NT ACL to disallow students to deny students to change the permission of
 	# folders, subfolder and files or to take ownership of them as well as
 	# displaying them (RC).
-	# D ~ deny, OI ~ Object inheritance, CI ~ container inheritance
-	# RC ~ display security attributes WO ~ take ownership
-	# WD ~ write security permissions
-	NTACL = '(D;OICI;RCWOWD;;;{SID})'
+	# D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container inheritance
+	# RC/ READ_CONTROL ~ display security attributes WO/ WRITE_OWNER ~ take ownership
+	# WD/ WRITE_DAC ~ write security permissions
+	# To make sure, puplis can edit folders&files in subfolders, they need to inherit edit 0x001301bf.
+	# At this point, everyone is allowed to do everything WD -> 0x001f01ff. This is needed
+	# to allow teachers and ou-admins file access and the permissions to change the permissions etc.
+	# We need to replace this by the groups to make this more secure.
+	# For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
+	NTACL = '(D;OICI;RCWOWD;;;{SID})(A;OICI;0x001301bf;;;{SID})(A;OICI;0x001f01ff;;;WD)'
 
 	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
 		search_base = self.get_search_base(self.school)
