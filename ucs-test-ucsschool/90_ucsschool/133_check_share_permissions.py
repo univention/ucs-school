@@ -6,6 +6,7 @@
 ## packages: []
 ## bugs: [42182]
 
+import os
 import re
 import subprocess
 
@@ -31,6 +32,22 @@ def check_permissions(sid, path, allowed=False):
 	return True
 
 
+def check_user_access(file, user_name, allowed):
+	cmd = 'echo "univention" | smbcacls {} --user={}'.format(file, user_name)
+	proc = subprocess.Popen(cmd, shell=True,
+	                        stdout=subprocess.PIPE,
+	                        stderr=subprocess.PIPE)
+	stdout, stderr = proc.communicate()
+	print(cmd)
+	print(stdout)
+	print(stderr)
+	if not allowed:
+		assert "NT_STATUS_ACCESS_DENIED" in stdout
+	else:
+		assert "NT_STATUS_ACCESS_DENIED" not in stdout
+
+
+
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		directories = []
@@ -50,40 +67,30 @@ def main():
 		directories.append(workgroup_path)
 
 		utils.wait_for_listener_replication()
-		import time
 
+		# auf was muss ich hier noch warten?
+
+		import time
+		time.sleep(10)
 		# das geht jetzt irgendwie schief.
 		# for path in directories:
 		# 	check_permissions(sid=schueler_sid, path=path)
 
-		# setfacl with user
-		# setfacl -m "user:h.schlemmer:--" /home/psg/groups/klassen/psg-hmhm
 
-		user_name, user_dn = schoolenv.create_student(school)
-		import os
-
-		# smbcacls //ucs-3303/psg-torch test   --user=h.schlemmer%univention
+		# todo test
 		# smbcacls //ucs-3303/psg-torch test  --delete="ACL:Everyone:ALLOWED/0x0/R" --user=h.schlemmer%univention
-		# Failed to open \test: NT_STATUS_ACCESS_DENIED
-		# touch test file
 		test_file = "{}/test".format(klasse_path)
 		os.mknod(test_file)
+		print("create {}".format(test_file))
 		assert os.path.exists(test_file)
 		share_file = "//{}/{} test".format(schoolenv.ucr.get('hostname'), klasse_dir)
-		# share does not exist?
-		cmd = 'echo "univention" | smbcacls {} --user={}'.format(share_file, user_name)
-		print(cmd)
-		proc = subprocess.Popen(cmd, shell=True,
-		                        stdout=subprocess.PIPE,
-		                        stderr=subprocess.PIPE)
-		stdout, stderr = proc.communicate()
 
-		print("#"*10)
-		print(stdout)
-		print('#'*10)
-		print(stderr)
-		print('#'*10)
-
+		student_name, _ = schoolenv.create_student(school)
+		check_user_access(share_file, user_name=student_name, allowed=False)
+		time.sleep(5)
+		# teacher hatte noch keinen zugriff.
+		teacher_name, _ = schoolenv.create_teacher(school)
+		check_user_access(share_file, user_name=teacher_name, allowed=True)
 
 
 if __name__ == '__main__':

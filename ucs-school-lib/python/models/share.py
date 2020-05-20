@@ -68,9 +68,15 @@ class DenyStudentsChangePermsMixin(object):
 	# to allow teachers and ou-admins file access and the permissions to change the permissions etc.
 	# We need to replace this by the groups to make this more secure.
 	# For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
-	NTACL = '(D;OICI;RCWOWD;;;{SID})(A;OICI;0x001301bf;;;{SID})(A;OICI;0x001f01ff;;;WD)'
+	# NTACL = '(D;OICI;WOWD;;;{SID})(A;OICI;0x001301bf;;;{SID})(A;OICI;0x001f01ff;;;WD)'
+	NTACLS = []
 
 	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+		"""
+			Get the schueler-ou sid to deny all students the
+			permissions to modify permissions and take ownership.
+			Derived classes may add more NTACLS.
+		"""
 		search_base = self.get_search_base(self.school)
 		student_group_dn = "cn={}{},cn=groups,{}".format(
 			search_base.group_prefix_students, self.school, search_base.schoolDN
@@ -79,7 +85,8 @@ class DenyStudentsChangePermsMixin(object):
 			samba_sid = lo.get(student_group_dn)['sambaSID'][0]
 		except (IndexError, KeyError):
 			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(student_group_dn))
-		return [self.NTACL.format(SID=samba_sid)]
+		self.NTACLS.append('(D;OICI;WOWD;;;{})'.format(samba_sid))
+		return self.NTACLS
 
 	def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		# Deny change of permission for folder, subfolder and files.
