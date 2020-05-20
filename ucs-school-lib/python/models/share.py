@@ -30,12 +30,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import grp
 import os.path
 
 from .attributes import Roles, ShareName, SchoolClassAttribute
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .utils import ucr, _
-from ..roles import role_school_class_share, role_workgroup_share
+from ..roles import role_marktplatz_share, role_school_class_share, role_workgroup_share
 
 from univention.udm import UDM
 from ldap.filter import filter_format
@@ -51,31 +52,32 @@ class NoSID(Exception):
 	pass
 
 
-class DenyStudentsChangePermsMixin(object):
+class SetNTACLsMixin(object):
 	"""
-	Mixin for UCS@school Share (sub)classes to prevent students from changing
-	the permissions in a share (Bug #42182).
+	Mixin for setting NTACLs of UCS@school Share (sub)classes. For example to
+	to prevent students from changing the permissions in a share (Bug #42182).
 	"""
-
-	# NT ACL to disallow students to deny students to change the permission of
-	# folders, subfolder and files or to take ownership of them as well as
-	# displaying them (RC).
-	# D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container inheritance
-	# RC/ READ_CONTROL ~ display security attributes WO/ WRITE_OWNER ~ take ownership
-	# WD/ WRITE_DAC ~ write security permissions
-	# To make sure, puplis can edit folders&files in subfolders, they need to inherit edit 0x001301bf.
-	# At this point, everyone is allowed to do everything WD -> 0x001f01ff. This is needed
-	# to allow teachers and ou-admins file access and the permissions to change the permissions etc.
-	# We need to replace this by the groups to make this more secure.
-	# For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
-	# NTACL = '(D;OICI;WOWD;;;{SID})(A;OICI;0x001301bf;;;{SID})(A;OICI;0x001f01ff;;;WD)'
-	NTACLS = []
 
 	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+		return []
+
+	def get_aces_deny_students_change_permissions(self, lo):  # type: (LoType) -> List[str]
 		"""
-			Get the schueler-ou sid to deny all students the
-			permissions to modify permissions and take ownership.
-			Derived classes may add more NTACLS.
+		Get the schueler-ou sid to deny all students the
+		permissions to modify permissions and take ownership.
+		Derived classes may add more NTACLS.
+
+		Sets NT ACLs to disallow students to deny students to change the permission of
+		folders, subfolder and files or to take ownership of them as well as
+		displaying them (RC).
+		D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container inheritance
+		RC/ READ_CONTROL ~ display security attributes WO/ WRITE_OWNER ~ take ownership
+		WD/ WRITE_DAC ~ write security permissions
+		To make sure, puplis can edit folders&files in subfolders, they need to inherit edit 0x001301bf.
+		At this point, everyone is allowed to do everything WD -> 0x001f01ff. This is needed
+		to allow teachers and ou-admins file access and the permissions to change the permissions etc.
+		We need to replace this by the groups to make this more secure.
+		For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
 		"""
 		search_base = self.get_search_base(self.school)
 		student_group_dn = "cn={}{},cn=groups,{}".format(
@@ -85,8 +87,20 @@ class DenyStudentsChangePermsMixin(object):
 			samba_sid = lo.get(student_group_dn)['sambaSID'][0]
 		except (IndexError, KeyError):
 			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(student_group_dn))
-		self.NTACLS.append('(D;OICI;WOWD;;;{})'.format(samba_sid))
-		return self.NTACLS
+		return ['(D;OICI;WOWD;;;{})'.format(samba_sid)]
+
+	def get_aces_market_place(self, lo):  # type: (LoType) -> List[str]
+		"""
+		TODO: explain ACE
+		"""
+		res = self.get_aces_deny_students_change_permissions(lo)
+		res.append("TODO")
+		return res
+
+	def get_aces_allow_school_class_full_access(self, lo):  # type: (LoType) -> List[str]
+		samba_sid = "TODO"
+		return ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
+
 
 	def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		# Deny change of permission for folder, subfolder and files.
@@ -99,22 +113,32 @@ class DenyStudentsChangePermsMixin(object):
 		udm_obj['sambaInheritOwner'] = '1'
 		udm_obj['sambaInheritPermissions'] = '1'
 
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+		self.set_nt_acls(udm_obj, lo)
+		return super(SetNTACLsMixin, self).do_create(udm_obj, lo)
 
-class Share(UCSSchoolHelperAbstractClass, DenyStudentsChangePermsMixin):
-	name = ShareName(_('Name'))
-	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)
 
+class SchoolGroupMixin(object):
 	@classmethod
 	def from_school_group(cls, school_group):
 		return cls(name=school_group.name, school=school_group.school, school_group=school_group)
 	from_school_class = from_school_group  # legacy
+
+	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+		gid = self.school_group.get_udm_object(lo)['gidNumber']
+		udm_obj['group'] = gid
+
+
+class Share(UCSSchoolHelperAbstractClass):
+	name = ShareName(_('Name'))
 
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).shares
 
 	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-		gid = self.school_group.get_udm_object(lo)['gidNumber']
+		share_grp = ucr.get("ucsschool/import/generate/share/marktplatz/group", "Domain Users")
+		share_grp_id = grp.getgrnam(share_grp).gr_gid
 		udm_obj['host'] = self.get_server_fqdn(lo)
 		udm_obj['path'] = self.get_share_path()
 		udm_obj['writeable'] = '1'
@@ -124,7 +148,7 @@ class Share(UCSSchoolHelperAbstractClass, DenyStudentsChangePermsMixin):
 		udm_obj['sambaCreateMode'] = '0770'
 		udm_obj['sambaDirectoryMode'] = '0770'
 		udm_obj['owner'] = '0'
-		udm_obj['group'] = gid
+		udm_obj['group'] = share_grp_id
 		udm_obj['directorymode'] = '0770'
 
 		if ucr.is_false('ucsschool/default/share/nfs', True):
@@ -194,7 +218,8 @@ class Share(UCSSchoolHelperAbstractClass, DenyStudentsChangePermsMixin):
 		udm_module = 'shares/share'
 
 
-class WorkGroupShare(RoleSupportMixin, Share):
+class WorkGroupShare(SetNTACLsMixin, SchoolGroupMixin, RoleSupportMixin, Share):
+	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_workgroup_share]
 	_school_in_name_prefix = True
@@ -215,12 +240,14 @@ class WorkGroupShare(RoleSupportMixin, Share):
 				filtered_shares.append(share)
 		return filtered_shares
 
-	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-		self.set_nt_acls(udm_obj, lo)
-		return super(WorkGroupShare, self).do_create(udm_obj, lo)
+	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+		res = self.get_aces_deny_students_change_permissions(lo)
+		res.extend(self.get_aces_allow_school_class_full_access(lo))
+		return res
 
 
-class ClassShare(RoleSupportMixin, Share):
+class ClassShare(SetNTACLsMixin, SchoolGroupMixin, RoleSupportMixin, Share):
+	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)
 	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
 	default_roles = [role_school_class_share]
 	_school_in_name_prefix = True
@@ -235,6 +262,30 @@ class ClassShare(RoleSupportMixin, Share):
 		else:
 			return '/home/groups/klassen/%s' % self.name
 
-	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-		self.set_nt_acls(udm_obj, lo)
-		return super(ClassShare, self).do_create(udm_obj, lo)
+	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+		res = self.get_aces_deny_students_change_permissions(lo)
+		res.extend(self.get_aces_allow_school_class_full_access(lo))
+		return res
+
+
+class MarketPlaceShare(SetNTACLsMixin, RoleSupportMixin, Share):
+	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
+	school_group = None
+	default_roles = [role_marktplatz_share]
+	_school_in_name_prefix = False
+
+	@classmethod
+	def get_container(cls, school):  # type: (str) -> str
+		return cls.get_search_base(school).shares
+
+	def get_share_path(self):  # type: () -> str
+		if ucr.is_true('ucsschool/import/roleshare', True):
+			return '/home/%s/groups/%s' % (self.school, self.name)
+		else:
+			return '/home/groups/%s' % self.name
+
+	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+		return self.get_aces_market_place(lo)
+
+	class Meta(Share.Meta):
+		udm_filter = '(&(univentionObjectType=shares/share)(cn=Marktplatz))'
