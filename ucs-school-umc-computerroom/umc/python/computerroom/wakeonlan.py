@@ -41,7 +41,6 @@ try:
 except ImportError:
 	pass
 
-BROADCAST_IP = '255.255.255.255'
 DEFAULT_PORT = 9
 
 
@@ -70,8 +69,9 @@ def get_local_ip_addresses(blacklisted_interfaces=None, blacklisted_interface_pr
 	return result
 
 
-def send_wol_packet(mac_address, blacklisted_interfaces=None, blacklisted_interface_prefixes=None):
-	# type: (str, Optional[Iterable[str]], Optional[Iterable[str]]) -> None
+def send_wol_packet(mac_address, blacklisted_interfaces=None, blacklisted_interface_prefixes=None,
+                    target_broadcast_ips=None):
+	# type: (str, Optional[Iterable[str]], Optional[Iterable[str]], Optional[Iterable[str]]) -> None
 	"""
 	Sends a WakeOnLan packet to the specified MAC address via
 	all interfaces (that are not blacklisted).
@@ -87,6 +87,8 @@ def send_wol_packet(mac_address, blacklisted_interfaces=None, blacklisted_interf
 	:type blacklisted_interfaces: None or Iterable[str]
 	:param blacklisted_interface_prefixes: iterable that returns a list of interface prefixes that shall be ignored
 	:type blacklisted_interface_prefixes: None or Iterable[str]
+	:param target_broadcast_ips: iterable that returns a list of target nets which are used for broadcasting
+	:type target_broadcast_ips: None or Iterable[str]
 	"""
 
 	# remove usual delimiter characters
@@ -107,12 +109,13 @@ def send_wol_packet(mac_address, blacklisted_interfaces=None, blacklisted_interf
 	payload = bytes(bytearray.fromhex(payload_hex))
 
 	for local_addr in get_local_ip_addresses(blacklisted_interfaces, blacklisted_interface_prefixes):
-		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-		sock.bind((local_addr, 0))
-		sock.connect((BROADCAST_IP, DEFAULT_PORT))
-		sock.send(payload)
-		sock.close()
+		for ip in target_broadcast_ips:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+			sock.bind((local_addr, 0))
+			sock.connect((ip, DEFAULT_PORT))
+			sock.send(payload)
+			sock.close()
 
 
 if __name__ == '__main__':
@@ -129,10 +132,19 @@ if __name__ == '__main__':
 		'-p', '--blacklisted-interface-prefix', dest='blacklisted_interface_prefixes', action='store',
 		metavar='INTERFACE',
 		type=str, nargs='+', help='list of blacklisted network interface prefixes (e.g. "tun docker")')
+	# do i have to define a default here if we set them in the ucr-v?
+	parser.add_argument(
+		'-t', '--target-broadcast-ips', dest='target_broadcast_ips', action='store',
+		metavar='INTERFACE',
+		type=str, nargs='*', help='list of target broadcast-ips',
+		default=['255.255.255.255']
+	)
 
 	args = parser.parse_args()
 	print repr(args)
 	send_wol_packet(
 		args.mac_address,
 		blacklisted_interfaces=args.blacklisted_interfaces,
-		blacklisted_interface_prefixes=args.blacklisted_interface_prefixes)
+		blacklisted_interface_prefixes=args.blacklisted_interface_prefixes,
+		target_broadcast_ips=args.target_broadcast_ips
+	)
