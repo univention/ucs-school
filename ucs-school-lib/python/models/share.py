@@ -89,18 +89,52 @@ class SetNTACLsMixin(object):
 			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(student_group_dn))
 		return ['(D;OICI;WOWD;;;{})'.format(samba_sid)]
 
+	def get_aces_work_group(self, lo):
+		res = self.get_aces_deny_students_change_permissions(lo)
+		if self.school_group:
+			group_dn = self.school_group.dn
+		else:
+			path = self.get_share_path()
+			group_name = os.path.split(os.path.dirname(path))[-1]
+			search_base = self.get_search_base(self.school)
+			group_dn = "cn={},cn=schueler,{}".format(group_name, search_base.groups())
+		try:
+			samba_sid = lo.get(group_dn)['sambaSID'][0]
+		except (IndexError, KeyError):
+			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(group_dn))
+		res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
+		return res
+
 	def get_aces_market_place(self, lo):  # type: (LoType) -> List[str]
 		"""
 		TODO: explain ACE
 		"""
 		res = self.get_aces_deny_students_change_permissions(lo)
-		res.append("TODO")
+		search_base = self.get_search_base(self.school)
+		domain_users_dn = "cn=Domain Users %s,%s" % (self.school.name.lower(), search_base.groups())
+		try:
+			samba_sid = lo.get(domain_users_dn)['sambaSID'][0]
+		except (IndexError, KeyError):
+			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(domain_users_dn))
+		res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
 		return res
 
-	def get_aces_allow_school_class_full_access(self, lo):  # type: (LoType) -> List[str]
-		samba_sid = "TODO"
-		return ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
-
+	def get_aces_class_group(self, lo):  # type: (LoType) -> List[str]
+		res = self.get_aces_deny_students_change_permissions(lo)
+		if self.school_group:
+			group_dn = self.school_group.dn
+		else:
+			path = self.get_share_path()
+			group_name = os.path.split(os.path.dirname(path))[-1]
+			search_base = self.get_search_base(self.school)
+			# please double check: are assigned teachers in cn=schueler,cn=schueler?
+			group_dn = "cn={},cn=klassen,cn=schueler,{}".format(group_name, search_base.groups())
+		try:
+			samba_sid = lo.get(group_dn)['sambaSID'][0]
+		except (IndexError, KeyError):
+			raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(group_dn))
+		res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
+		return res  # ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
 
 	def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		# Deny change of permission for folder, subfolder and files.
@@ -127,6 +161,7 @@ class SchoolGroupMixin(object):
 	def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
 		gid = self.school_group.get_udm_object(lo)['gidNumber']
 		udm_obj['group'] = gid
+		return super(SchoolGroupMixin, self).do_create(udm_obj, lo)
 
 
 class Share(UCSSchoolHelperAbstractClass):
@@ -241,9 +276,11 @@ class WorkGroupShare(SetNTACLsMixin, SchoolGroupMixin, RoleSupportMixin, Share):
 		return filtered_shares
 
 	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
-		res = self.get_aces_deny_students_change_permissions(lo)
-		res.extend(self.get_aces_allow_school_class_full_access(lo))
+		res = self.get_aces_work_group(lo)
+		# res.extend(self.get_aces_class_group(lo))
 		return res
+
+
 
 
 class ClassShare(SetNTACLsMixin, SchoolGroupMixin, RoleSupportMixin, Share):
@@ -263,9 +300,11 @@ class ClassShare(SetNTACLsMixin, SchoolGroupMixin, RoleSupportMixin, Share):
 			return '/home/groups/klassen/%s' % self.name
 
 	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
-		res = self.get_aces_deny_students_change_permissions(lo)
-		res.extend(self.get_aces_allow_school_class_full_access(lo))
+		res = self.get_aces_class_group(lo)
+		# res.extend(self.get_aces_class_group(lo))
 		return res
+
+
 
 
 class MarketPlaceShare(SetNTACLsMixin, RoleSupportMixin, Share):
@@ -286,6 +325,8 @@ class MarketPlaceShare(SetNTACLsMixin, RoleSupportMixin, Share):
 
 	def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
 		return self.get_aces_market_place(lo)
+
+
 
 	class Meta(Share.Meta):
 		udm_filter = '(&(univentionObjectType=shares/share)(cn=Marktplatz))'
