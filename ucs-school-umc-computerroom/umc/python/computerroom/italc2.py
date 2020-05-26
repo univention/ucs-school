@@ -609,10 +609,12 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		if self.macAddress:
 			blacklisted_interfaces = [x for x in ucr.get('ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces', '').split() if x]
 			blacklisted_interface_prefixes = [x for x in ucr.get('ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes', '').split() if x]
+			target_broadcast_ips = [x for x in ucr.get('ucsschool/umc/computerroom/wakeonlan/target_nets', '').split() if x]
 			wakeonlan.send_wol_packet(
 				self.macAddress,
 				blacklisted_interfaces=blacklisted_interfaces,
-				blacklisted_interface_prefixes=blacklisted_interface_prefixes)
+				blacklisted_interface_prefixes=blacklisted_interface_prefixes,
+				target_broadcast_ips=target_broadcast_ips)
 		else:
 			MODULE.error('%s: no MAC address set - skipping powerOn' % (self.ipAddress,))
 
