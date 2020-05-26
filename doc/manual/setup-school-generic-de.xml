@@ -383,6 +383,8 @@
             UCR-Variablen <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces</envar> und
             <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes</envar> festgelegt
             werden. Dabei sind die einzelnen Werte durch Leerzeichen zu trennen, z.B. <literal>tun docker</literal>.
+            Wenn sich die Zielrechner in einem anderen Netzwerk befinden, können über die UCR-Variable <envar>ucsschool/umc/computerroom/wakeonlan/target_nets</envar>
+            die Subnetze angepasst werden, an die Pakete gesendet werden. Dabei sind die einzelnen Werte durch Leerzeichen zu trennen, z.B. <literal>255.255.255.255 10.200.18.255</literal>.
         </para>
         <para>
             Ab Version 4.4v4 prüft das Computerraum-Modul von UCS@school in der Standardeinstellung regelmäßig, ob alle gesperrten Rechner weiterhin noch gesperrt sind,
