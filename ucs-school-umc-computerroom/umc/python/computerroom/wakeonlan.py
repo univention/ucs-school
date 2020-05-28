@@ -70,7 +70,7 @@ def get_local_ip_addresses(blacklisted_interfaces=None, blacklisted_interface_pr
 
 
 def send_wol_packet(mac_address, blacklisted_interfaces=None, blacklisted_interface_prefixes=None,
-                    target_broadcast_ips=None):
+                    target_broadcast_ips=['255.255.255.255']):
 	# type: (str, Optional[Iterable[str]], Optional[Iterable[str]], Optional[Iterable[str]]) -> None
 	"""
 	Sends a WakeOnLan packet to the specified MAC address via
@@ -132,7 +132,6 @@ if __name__ == '__main__':
 		'-p', '--blacklisted-interface-prefix', dest='blacklisted_interface_prefixes', action='store',
 		metavar='INTERFACE',
 		type=str, nargs='+', help='list of blacklisted network interface prefixes (e.g. "tun docker")')
-	# do i have to define a default here if we set them in the ucr-v?
 	parser.add_argument(
 		'-t', '--target-broadcast-ips', dest='target_broadcast_ips', action='store',
 		metavar='INTERFACE',
