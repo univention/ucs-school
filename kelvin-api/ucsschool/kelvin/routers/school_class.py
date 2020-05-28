@@ -28,7 +28,7 @@
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -53,6 +53,19 @@ class SchoolClassCreateModel(UcsSchoolBaseModel):
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = SchoolClass
+
+    @validator("name", "school", always=True, whole=True)
+    def check_name(cls, value: str, values: Dict[str, Any], config, field, **kwargs) -> str:
+        """
+        Validate 'OU-name' to prevent 'must be at least 2 characters long'
+        error when checking a class name with just one char.
+        """
+        if field.name != "name":
+            # validator will be executed for both fields, but we want to check only "name"
+            return value
+        class_name = f"{values['school']}-{values['name']}"
+        cls.Config.lib_class.name.validate(class_name)
+        return value
 
     @classmethod
     async def _from_lib_model_kwargs(
