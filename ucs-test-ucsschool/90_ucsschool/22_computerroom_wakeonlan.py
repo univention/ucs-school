@@ -12,15 +12,16 @@ import re
 import subprocess
 import socket
 
+from univention.management.console.modules import computerroom
 from univention.testing.ucsschool.computerroom import UmcComputer
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.management.console.modules import computerroom
+import univention.testing.utils as utils
 
 
 def main():
 	logger = utu.get_ucsschool_logger()
-	target_broadcast_ips = ['255.255.255.255', '1.2.3.4']
+	target_broadcast_ips = ['255.255.255.255', '10.200.47.254']
 	t_shark_timeout = 10
 	with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
 		school, _ = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
@@ -29,6 +30,7 @@ def main():
 		mac_address = computer.mac_address
 		hostname = socket.gethostname()
 		server_ip = socket.gethostbyname(hostname)
+
 		proc = subprocess.Popen(
 			['tshark', '-i', 'any', '-a', 'duration:20', 'src', 'host', server_ip],
 			stdout=subprocess.PIPE,
@@ -61,9 +63,11 @@ def main():
 			                           stdout, re.DOTALL)
 			if successful_send:
 				logger.info('Packages were successfully sent to {}'.format(b_ip))
-			elif 'Who has {}?'.format(b_ip) in stdout:
-				logger.info('An error occurred while sending the WoL signal to {}'.format(b_ip))
-				logger.info('This is the expected behaviour.')
+			elif '{}?'.format(b_ip) in stdout:
+				logger.info('Could not send WoL signal to {}'.format(b_ip))
+				logger.info('This is the expected behaviour, since it is not reachable.')
+			else:
+				utils.fail('Did not succeed to send WoL to {}'.format(b_ip))
 
 
 if __name__ == '__main__':
