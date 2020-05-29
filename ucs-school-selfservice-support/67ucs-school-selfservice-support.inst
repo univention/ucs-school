@@ -47,12 +47,13 @@ do
 if [ "$server_role" == "domaincontroller_master" ] || [ "$server_role" == "domaincontroller_backup" ];
 then
 	udm policies/registry create "$@" \
-		--position "cn=policies,ou=$OU,"$ldap_base"" \
-		--set name=Invitation \
+		--position "cn=policies,ou=$OU,$ldap_base" \
+		--set name=send_self_service_invitation \
 		--append registry="umc/self-service/invitation/enabled false"
-	udm computers/domaincontroller_slave "$@" \
-		--dn "cn=dc${OU}-1,cn=dc,cn=computers,ou=$OU,"$ldap_base"" \
-		--policy-reference "cn=dhcpd_ldap_base,cn=policies,ou=$ou,"$ldap_base""
+
+	udm container/dc modify "$@" \
+		--dn "$ldap_base" \
+		--policy-reference "cn=send_self_service_invitation,cn=policies,ou=$OU,$ldap_base"
 fi
 done
 
