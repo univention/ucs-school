@@ -55,12 +55,16 @@ SERVER_ROLES = ['domaincontroller_master', 'domaincontroller_backup', 'domaincon
 def run(_umc_instance):
 	if ucr.get('server/role') not in SERVER_ROLES:
 		return
-	cmd = ['/usr/bin/dpkg-query', '-W', '-f', '${Status}', 'samba']
+	cmd = ['/usr/bin/dpkg-query', '-W', '-f', '${Status},${Version}', 'samba']
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	stdout, stderr = p.communicate()
-	is_installed = stdout.endswith('ok installed')
+	installed, version = stdout.split(',')
+	is_installed = 'ok installed' in installed
+	is_correct_version = ':4.' in version
 	if ucr.get('dns/backend') != 'samba4' or not is_installed:
 		raise Problem('Samba4 is not installed correctly on this server.')
+	elif not is_correct_version:
+		raise Problem('Samba is installed but outdated.')
 
 
 if __name__ == '__main__':
