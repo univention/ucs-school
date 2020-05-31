@@ -30,19 +30,20 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-# 
+#
 # This module checks if the hosts role is either a master, slave or backup
 # domain controller and samba4 is installed (Bug #50503)
 
 from __future__ import absolute_import
 
 from univention.management.console.config import ucr
-from univention.management.console.modules.diagnostic import Warning
+from univention.management.console.modules.diagnostic import Problem
 from univention.lib.i18n import Translation
 
+import subprocess
 
 _ = Translation('ucs-school-umc-diagnostic').translate
-title = _('UCS@school Samba4 installed')
+title = _('UCS@school Check if Samba4 is installed')
 description = '\n'.join([
 	_('UCS@school: test that verifies that if the hosts role is a master, slave or backup DC and samba4 is installed.'),
 ])
@@ -54,8 +55,12 @@ SERVER_ROLES = ['domaincontroller_master', 'domaincontroller_backup', 'domaincon
 def run(_umc_instance):
 	if ucr.get('server/role') not in SERVER_ROLES:
 		return
-	if ucr.get('dns/backend') != 'samba4':
-		raise Warning('Samba4 is not installed on this server.')
+	cmd = ['/usr/bin/dpkg-query', '-W', '-f', '${Status}', 'samba']
+	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	stdout, stderr = p.communicate()
+	is_installed = stdout.endswith('ok installed')
+	if ucr.get('dns/backend') != 'samba4' or not is_installed:
+		raise Problem('Samba4 is not installed correctly on this server.')
 
 
 if __name__ == '__main__':
