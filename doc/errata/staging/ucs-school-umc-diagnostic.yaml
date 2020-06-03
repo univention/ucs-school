@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-diagnostic
 fix: 1.0.0-10A~4.4.0.202006031541
 desc: |
-  * In UCS we can switch backends for DNS by UCRV dns/backend from samba4 to ldap. This variable must be set to "samba4" for UCS@School school-slaves. This fix adds a diagnostic module which checks the if the value of dns/backend is set correctly for ucs@school systems. (Bug #50504).
+  * In UCS we can switch backends for DNS by UCRV dns/backend from samba4 to ldap. This variable must be set to "samba4" in UCS@school systems with the role dc master, dc slave and dc backup. This fix adds a diagnostic module which checks if the UCRV of dns/backend is set correctly. (Bug #50503).
 bug: [50503]
