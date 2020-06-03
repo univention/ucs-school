@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-10) unstable; urgency=medium
+
+  * Bug #50503: added diagnostic module to check backend
+
+ -- Toni Uwe Roehmeyer <roehmey@univention.de>  Wed, 03 Jun 2020 15:38:47 +0200
+
 ucs-school-umc-diagnostic (1.0.0-9) unstable; urgency=low
 
   * Bug #50500: fix logic error in diagnostic/plugins/902_ucsschool_ou_consistency.py
