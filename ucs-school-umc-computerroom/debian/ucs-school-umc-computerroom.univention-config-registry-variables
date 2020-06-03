@@ -35,7 +35,7 @@ Type=str
 Categories=management-umc
 
 [ucsschool/umc/computerroom/wakeonlan/target_nets]
-Description[de]=Eine leerzeichen-separierte Liste Broadcast IPs,  über die WakeOnLAN-Pakete verschickt werden sollen (Standard: 255.255.255.255)
+Description[de]=Eine leerzeichen-separierte von Liste Broadcast IPs, über die WakeOnLAN-Pakete verschickt werden sollen (Standard: 255.255.255.255)
 Description[en]=A space-separated list of broadcast ips that should be used to send WakeOnLAN packets (default: 255.255.255.255)
 Type=str
 Categories=management-umc

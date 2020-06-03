@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-20) unstable; urgency=medium
+
+  * Bug #51074: Added support for alternative WoL broadcast-ips 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 03 Jun 2020 10:41:41 +0200
+
 ucs-school-umc-computerroom (11.0.0-19) unstable; urgency=medium
 
   * Bug #51165: Improve error handling in computerroom frontend

@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-computerroom
+fix: 
+desc: |
+ * Users can now set the UCR-V <envar>ucsschool/umc/computerroom/wakeonlan/target_nets</envar> to send WoL signals to multiple alternative broadcast ips instead of the default 255.255.255.255 (Bug #51074).
+bug: [51074]
