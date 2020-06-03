@@ -4,7 +4,7 @@
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: [ucs-school-umc-computerroom]
+## packages: [ucs-school-umc-computerroom, tshark]
 
 import time
 import re
