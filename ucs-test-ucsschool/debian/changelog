@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.111) unstable; urgency=low
+
+  * Bug #51369: update Python path
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 03 Jun 2020 09:35:57 +0200
+
 ucs-test-ucsschool (6.0.110) unstable; urgency=medium
 
   * Bug #47155: ou-DC/Member-Verwaltungsnetz and ouadmins in
