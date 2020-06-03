@@ -45,7 +45,7 @@ import subprocess
 _ = Translation('ucs-school-umc-diagnostic').translate
 title = _('UCS@school Check if Samba4 is installed')
 description = '\n'.join([
-	_('UCS@school: test that verifies that if the hosts role is a master, slave or backup DC and samba4 is installed.'),
+	_('UCS@school: Test that checks if the host role is a master, slave or backup DC, samba4 is installed.'),
 ])
 
 
