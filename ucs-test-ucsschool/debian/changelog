@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.112) unstable; urgency=medium
+
+  * Bug #51074: ucs-test Send WoL to alternative broadcast ips 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 04 Jun 2020 13:51:10 +0200
+
 ucs-test-ucsschool (6.0.111) unstable; urgency=low
 
   * Bug #51369: update Python path

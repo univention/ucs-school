@@ -23,6 +23,7 @@ def main():
 	logger = utu.get_ucsschool_logger()
 	target_broadcast_ips = ['255.255.255.255', '10.200.47.254']
 	t_shark_timeout = 10
+	t_shark_duration = t_shark_timeout*3
 	with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
 		school, _ = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 		computer = UmcComputer(school, 'windows')
@@ -32,7 +33,7 @@ def main():
 		server_ip = socket.gethostbyname(hostname)
 
 		proc = subprocess.Popen(
-			['tshark', '-i', 'any', '-a', 'duration:20', 'src', 'host', server_ip],
+			['tshark', '-i', 'any', '-a', 'duration:{}'.format(t_shark_duration), 'src', 'host', server_ip],
 			stdout=subprocess.PIPE,
 			close_fds=True
 		)
@@ -63,7 +64,7 @@ def main():
 			                           stdout, re.DOTALL)
 			if successful_send:
 				logger.info('Packages were successfully sent to {}'.format(b_ip))
-			elif '{}?'.format(b_ip) in stdout:
+			elif '{}'.format(b_ip) in stdout:
 				logger.info('Could not send WoL signal to {}'.format(b_ip))
 				logger.info('This is the expected behaviour, since it is not reachable.')
 			else:
