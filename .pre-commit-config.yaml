@@ -1,0 +1,26 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/timothycrosley/isort
+    rev: 4.3.21
+    hooks:
+    -   id: isort
+        entry: isort -c
+    -   id: isort
+        alias: isort-edit
+        stages: [manual]
+        entry: isort
+-   repo: https://github.com/psf/black
+    rev: 19.10b0
+    hooks:
+    -   id: black
+        entry: black --check --diff --config .black
+    -   id: black
+        alias: black-edit
+        stages: [manual]
+        entry: black --config .black
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.2
+    hooks:
+    -   id: flake8
+        language_version: python2.7

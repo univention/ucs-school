@@ -1,0 +1,5 @@
+[flake8]
+exclude = doc/doc-common/,venv
+max-line-length = 105
+ignore = E203,E231,E266,E501,W503
+select = E1,E2,E3,E4,E5,W1,W2,W3,W5
