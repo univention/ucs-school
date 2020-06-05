@@ -48,7 +48,7 @@ if [ "$server_role" == "domaincontroller_master" ] || [ "$server_role" == "domai
 then
 	udm policies/registry create "$@" \
 		--position "cn=policies,ou=$OU,$ldap_base" \
-		--set name=send_self_service_invitation \
+		--set name="send_self_service_invitation" \
 		--append registry="umc/self-service/invitation/enabled false"
 
 	udm container/dc modify "$@" \
